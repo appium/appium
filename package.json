@@ -17,7 +17,7 @@
   "engines": [
     "node"
   ],
-  "main": "./lib/main",
+  "main": "./lib/app.js",
   "bin": {
     "appium": "./lib/bin.js"
   },
@@ -25,9 +25,10 @@
     "lib": "./lib"
   },
   "dependencies": {
+    "underscore": "~1.4.3",
+    "colors": "~0.6.0-1",
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "make test"
   }

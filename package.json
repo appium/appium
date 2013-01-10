@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0",
+  "version": "0.0.1",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -27,9 +27,12 @@
   "dependencies": {
     "underscore": "~1.4.3",
     "colors": "~0.6.0-1",
+    "router": "~0.6.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~1.8.1"
+  },
   "scripts": {
-    "test": "make test"
+    "test": "mocha test/unit"
   }
 }

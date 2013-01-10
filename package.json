@@ -1,0 +1,34 @@
+{
+  "name": "appium",
+  "description": "Selenium for Apps.",
+  "tags": [
+    "automation",
+    "javascript"
+  ],
+  "version": "0",
+  "author": "appium-discuss@googlegroups.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "engines": [
+    "node"
+  ],
+  "main": "./lib/main",
+  "bin": {
+    "appium": "./lib/bin.js"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "make test"
+  }
+}

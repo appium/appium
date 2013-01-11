@@ -12,6 +12,7 @@ var http = require('http')
 session = {
   sessionId: null
   , client: null
+  , queue: []
 };
 
 app.configure(function() {
@@ -61,6 +62,6 @@ session.client = appium(args.app, args.UDID, args.verbose);
 // Start the web server that receives all the commands
 server.listen(args.port, args.address, function() {
   session.sessionId = new Date().getTime();
-  var logMessage = "Appium started on "+args.address+":"+args.port;
+  var logMessage = "Appium session "+session.sessionId+" started on "+args.address+":"+args.port;
   console.log(logMessage.cyan);
 });

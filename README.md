@@ -21,6 +21,15 @@ CURL it:
 > curl 127.0.0.1:4723/wd/hub/status
 </pre>
 
+Before commiting code please run grunt to run test and check your changes against code quality standards:
+<pre>
+> grunt
+< Running "lint:all" (lint) task
+< Lint free.
+< 
+< Done, without errors.
+</pre>
+
 Using with a <a href="http://bitbeam.org">Bitbeambot</a>
 -----------
 

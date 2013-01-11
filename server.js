@@ -56,7 +56,7 @@ parser.addArgument([ '-p', '--port' ]
 var args = parser.parseArgs();
 
 // Instantiate the appium client
-session.client = new appium(args.app, args.UDID, args.verbose);
+session.client = appium(args.app, args.UDID, args.verbose);
 
 // Start the web server that receives all the commands
 server.listen(args.port, args.address, function() {

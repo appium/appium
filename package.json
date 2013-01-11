@@ -35,6 +35,7 @@
     "test": "mocha test/unit"
   },
   "devDependencies": {
-    "mocha": "~1.8.1"
+    "mocha": "~1.8.1",
+    "grunt": "~0.3.17"
   }
 }

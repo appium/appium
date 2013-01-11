@@ -17,20 +17,16 @@
   "engines": [
     "node"
   ],
-  "main": "./lib/app.js",
+  "main": "./app/server.js",
   "bin": {
-    "appium": "./lib/bin.js"
+    "appium": "./app/bin.js"
   },
   "directories": {
-    "lib": "./lib"
+    "lib": "./app"
   },
   "dependencies": {
     "underscore": "~1.4.3",
     "colors": "~0.6.0-1",
-    "router": "~0.6.2"
-  },
-  "devDependencies": {
-    "mocha": "~1.8.1"
   },
   "scripts": {
     "test": "mocha test/unit"

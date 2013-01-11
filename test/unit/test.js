@@ -1,4 +1,6 @@
 // Run with mocha by installing dev deps: npm install --dev
+// more docs on writing tests with mocha can be found here:
+// http://visionmedia.github.com/mocha/
 
 var assert = require("assert")
 describe('Array', function(){

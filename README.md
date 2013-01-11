@@ -11,7 +11,15 @@ There are two big benefits to testing with Appium:
 
 Quick Start
 -----------
+Run it:
+<pre>
+> node server.js --app blah -U blah
+</pre>
 
+CURL it:
+<pre>
+> curl 127.0.0.1:4723/wd/hub/status
+</pre>
 
 Using with a <a href="http://bitbeam.org">Bitbeambot</a>
 -----------

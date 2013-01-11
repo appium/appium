@@ -63,7 +63,7 @@ exports.executeScript = function(req, res) {
     iosResponse = session.client.proxy(requestData.script, true);
   }
   catch (e) {
-    var errObj = {sessionId: sessionId, 'status': 13, 'value': JSON.stringify(e)}
+    var errObj = {sessionId: sessionId, 'status': 13, 'value': JSON.stringify(e)};
     req.send(400, errObj);
   }
 

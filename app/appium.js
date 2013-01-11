@@ -1,5 +1,6 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/appium.py
+var routing = require('./routing');
 
 var Appium = function(app, uuid, verbose) {
   this.app = app;
@@ -8,12 +9,29 @@ var Appium = function(app, uuid, verbose) {
   this.instrumentsProcess = null;
 };
 
+Appium.prototype.attachTo = function(rest, cb) {
+  // Import the routing rules
+  routing(rest);
+  
+  if (cb) {
+    cb();
+  }
+};
+
 Appium.prototype.start = function(err, cb) {
   console.log('The appium client start function has been called!');
+  
+  if (cb) {
+    cb();
+  }
 };
 
 Appium.prototype.stop = function(err, cb) {
   console.log('The appium client stop function has been called!');
+  
+  if (cb) {
+    cb();
+  }
 };
 
 Appium.prototype.proxy = function(err, command, cb) {

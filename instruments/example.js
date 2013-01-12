@@ -34,17 +34,17 @@ var build = function(appRoot, cb) {
   });
 };
 
-var appRoot = '/Users/jlipps/Code/appium/sample-code/apps/TestApp/';
+var appRoot = path.resolve(__dirname, '../sample-code/apps/TestApp/');
 
 build(appRoot, function() {
-  var simApp = appRoot + 'build/Release-iphonesimulator/TestApp.app';
+  var simApp = path.resolve(appRoot, 'build/Release-iphonesimulator/TestApp.app');
   console.log("Launching instruments...");
   var inst = instruments(
     app
     , simApp
     , null
-    , '/Users/jlipps/Code/appium/instruments/bootstrap.js'
-    , '/Users/jlipps/Code/appium/app/uiauto/Automation.tracetemplate'
+    , path.resolve(__dirname, 'bootstrap_example.js')
+    , path.resolve(__dirname, '../app/uiauto/Automation.tracetemplate')
   );
 
   inst.launch(function() {

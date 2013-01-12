@@ -30,7 +30,8 @@ exports.createSession = function(req, res) {
 exports.getSession = function(req, res) {
   var sessionId = req.params.sessionId;
   var appResponse = {
-    status: 0
+    sessionId: sessionId
+    , status: 0
     , value: {
       version: '5.0'
       , webStorageEnabled: false

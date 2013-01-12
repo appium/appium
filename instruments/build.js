@@ -14,7 +14,7 @@ module.exports = function(appRoot, cb, sdk) {
   xcode.stdout.on('data', collect);
   xcode.stderr.on('data', collect);
   xcode.on('exit', function(code) {
-    if (code == 0) {
+    if (code === 0) {
       console.log("done");
       cb(null);
     } else {

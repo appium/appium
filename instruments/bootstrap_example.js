@@ -3,7 +3,7 @@ var target      = UIATarget.localTarget();
 var application = target.frontMostApp();
 var host = target.host();
 var mainWindow  = application.mainWindow();
-var elements = {}
+var elements = {};
 var bufferFlusher = [];
 // 16384 is apprently the buffer size used by instruments
 for (i=0; i < 16384; i++) {

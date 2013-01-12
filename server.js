@@ -6,7 +6,8 @@ var http = require('http')
   , server = http.createServer(rest)
   , ap = require('argparse').ArgumentParser
   , colors = require('colors')
-  , appium = require('./app/appium');
+  , appium = require('./app/appium')
+  , parser = require('./app/parser');
 
 session = {
   sessionId: null
@@ -23,34 +24,8 @@ rest.configure(function() {
   rest.use(rest.router);
 });
 
-// Setup all the command line argument parsing
-var parser = new ap({
-  version: '0.0.1',
-  addHelp: true,
-  description: 'A webdriver-compatible server for use with native and hybrid iOS applications.'
-});
-
-parser.addArgument([ '--app' ]
-  , { required: true, help: 'path to simulators .app file or the bundle_id of the desired target on device'
-});
-
-parser.addArgument([ '-V', '--verbose' ], { required: false, help: 'verbose mode' });
-parser.addArgument([ '-U', '--UDID' ]
-  , { required: true, help: 'unique device identifier of the SUT'
-});
-
-parser.addArgument([ '-a', '--address' ]
-  , { defaultValue: '127.0.0.1'
-  , required: false
-  , help: 'ip address to listen on'
-});
-
-parser.addArgument([ '-p', '--port' ]
-  , { defaultValue: 4723, required: false, help: 'port to listen on'
-});
-
-// Make sure we have all the args
-var args = parser.parseArgs();
+// Parse the command line arguments
+var args = parser().parseArgs();
 
 // Instantiate the appium client
 session.client = appium(args.app, args.UDID, args.verbose);

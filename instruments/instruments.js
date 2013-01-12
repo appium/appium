@@ -17,7 +17,7 @@ var Instruments = function(server, app, udid, bootstrap, template) {
     this.extendServer();
 };
 
-Instruments.prototype.launch = function(cb) {
+Instruments.prototype.launch = function(cb, exitCb) {
     if (typeof cb !== "undefined") {
         this.readyHandler = cb;
     }
@@ -36,8 +36,9 @@ Instruments.prototype.launch = function(cb) {
     proc.stderr.on('data', function(data) {
         self.errorStreamHandler(data)
     });
-    proc.stderr.on('exit', function(code) {
+    proc.on('exit', function(code) {
         console.log("Instruments exited with code " + code);
+        exitCb(code);
     });
 };
 
@@ -71,11 +72,17 @@ Instruments.prototype.extendServer = function(err, cb) {
         var commandId = parseInt(req.params.commandId);
         var result = req.params.result;
         if (typeof commandId != "undefined" && typeof result != "undefined") {
-            self.curCommand = null;
-            self.commandCallbacks[commandId](result);
-            res.send('OK');
+            if (!self.curCommand) {
+              res.send('ERROR: Not waiting for a command result');
+            } else if (commandId != self.curCommandId) {
+              res.send('ERROR: Command ID ' + commandId + ' does not match ' + self.curCommandId);
+            } else {
+              self.curCommand = null;
+              self.commandCallbacks[commandId](result);
+              res.send('OK');
+            }
         } else {
-            res.send('ERROR');
+            res.send('ERROR: Bad parameters sent');
         }
     });
     this.server.post('/instruments/ready', function(req, res) {

@@ -53,6 +53,8 @@ build(appRoot, function() {
       console.log("Got result from instruments: " + result);
       process.exit(0);
     });
+  }, function(code) {
+    process.exit(code);
   });
 });
 

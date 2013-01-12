@@ -14,6 +14,7 @@ var Instruments = function(server, app, udid, bootstrap, template) {
   this.commandCallbacks = [];
   this.resultHandler = this.defaultResultHandler;
   this.readyHandler = this.defaultReadyHandler;
+  this.proc = null;
   this.extendServer();
 };
 
@@ -22,11 +23,11 @@ Instruments.prototype.launch = function(cb, exitCb) {
     this.readyHandler = cb;
   }
   var self = this;
-  var proc = this.spawnInstruments();
-  proc.stdout.on('data', function(data) {
+  this.proc = this.spawnInstruments();
+  this.proc.stdout.on('data', function(data) {
     self.outputStreamHandler(data);
   });
-  proc.stderr.on('data', function(data) {
+  this.proc.stderr.on('data', function(data) {
     self.errorStreamHandler(data);
   });
 
@@ -36,14 +37,21 @@ Instruments.prototype.launch = function(cb, exitCb) {
     bye = exitCb;
   }
 
-  proc.on('exit', function(code) {
+  this.proc.on('exit', function(code) {
     console.log("Instruments exited with code " + code);
     bye(code);
   });
 };
 
+Instruments.prototype.shutdown = function(cb) {
+  this.proc.kill();
+  if (cb) {
+    cb();
+  }
+};
+
 Instruments.prototype.spawnInstruments = function() {
-  var args = ["-t", this.template], proc;
+  var args = ["-t", this.template];
   if (this.udid) {
     args = args.concat(["-w", this.udid]);
   }

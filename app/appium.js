@@ -29,13 +29,15 @@ Appium.prototype.start = function(cb) {
     console.log('The appium client start function has been called!');
     this.sessionId = new Date().getTime();
 
-    this.instruments = instruments(
-      this.rest
-      , path.resolve(__dirname, '../' + this.app)
-      , null
-      , path.resolve(__dirname, '../instruments/bootstrap_example.js')
-      , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
-    );
+    if (this.instruments === null) {
+      this.instruments = instruments(
+        this.rest
+        , path.resolve(__dirname, '../' + this.app)
+        , null
+        , path.resolve(__dirname, '../instruments/bootstrap_example.js')
+        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
+      );
+    }
 
     var me = this;
     me.instruments.launch(function() {
@@ -49,10 +51,14 @@ Appium.prototype.start = function(cb) {
 
 Appium.prototype.stop = function(cb) {
   console.log('The appium client stop function has been called!');
-  
-  if (cb) {
-    cb();
-  }
+  var me = this;
+  this.instruments.shutdown(function() {
+    me.sessionId = null;
+    
+    if (cb) {
+      cb();
+    }
+  });
 };
 
 Appium.prototype.proxy = function(command, cb) {

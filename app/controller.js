@@ -4,7 +4,7 @@
 exports.status = function(req, res) {
   // Build a JSON object to return to the client
   var status = {
-    sessionId: appium.sessionId || null
+    sessionId: req.appium.sessionId || null
     , status: 0
     , value: {
         build: {
@@ -48,15 +48,15 @@ exports.getSession = function(req, res) {
 
 exports.deleteSession = function(req, res) {
   var sessionId = req.params.sessionId;
-  appium.client.stop();
-  appium.started = false;
-  var appResponse = {
-    sessionId: sessionId
-    , status: 0
-    , value: {}  
-  };
+  req.appium.stop(function(err, instance) {
+    var appResponse = {
+      sessionId: sessionId
+      , status: 0
+      , value: {}  
+    };
 
-  req.send(appResponse);
+    res.send(appResponse);
+  });
 };
 
 exports.executeScript = function(req, res) {

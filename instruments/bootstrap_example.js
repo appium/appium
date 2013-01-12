@@ -81,7 +81,7 @@ while(runLoop) {
         var result = eval(command);
         console.log("####"+commandId+"####"+result+"####");
         var url = 'send_result/'+commandId+'/'+encodeURIComponent(result);
-        doCurl('GET', endpoint + url, function(err, res) {
+        doCurl('GET', endpoint + url, null, function(err, res) {
           console.log("Sent result to server");
         });
       }

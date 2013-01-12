@@ -14,7 +14,7 @@ app.configure(function() {
   app.use(app.router);
 });
 
-app.listen(5678, 'localhost', function() {
+app.listen(4723, 'localhost', function() {
   console.log("Appium server running");
 });
 

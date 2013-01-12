@@ -17,7 +17,7 @@ var console = {
   }
 };
 
-var endpoint = 'http://localhost:5678/instruments/';
+var endpoint = 'http://localhost:4723/instruments/';
 
 function delay(secs)
 {

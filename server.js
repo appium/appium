@@ -9,12 +9,6 @@ var http = require('http')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 
-session = {
-  sessionId: null
-  , client: null
-  , queue: []
-};
-
 rest.configure(function() {
   rest.use(express.favicon());
   rest.use(express.static(path.join(__dirname, '/app/static')));
@@ -27,13 +21,13 @@ rest.configure(function() {
 // Parse the command line arguments
 var args = parser().parseArgs();
 
-// Instantiate the appium client
-session.client = appium(args.app, args.UDID, args.verbose);
-session.client.attachTo(rest);
+// Instantiate the appium instance
+var appium = appium(args.app, args.UDID, args.verbose);
+// Hook up REST http interface
+appium.attachTo(rest);
 
 // Start the web server that receives all the commands
 server.listen(args.port, args.address, function() {
-  session.sessionId = new Date().getTime();
-  var logMessage = "Appium session "+session.sessionId+" started on "+args.address+":"+args.port;
+  var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
   console.log(logMessage.cyan);
 });

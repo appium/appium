@@ -4,7 +4,7 @@
 exports.status = function(req, res) {
   // Build a JSON object to return to the client
   var status = {
-    sessionId: session.sessionId || null
+    sessionId: appium.sessionId || null
     , status: 0
     , value: {
         build: {
@@ -17,9 +17,14 @@ exports.status = function(req, res) {
 
 exports.createSession = function(req, res) {
   // we can talk to the appium client from here
-  session.client.start();
-  session.started = true;
-  res.redirect("/wd/hub/session/"+session.sessionId);
+  req.appium.start(function(err, instance) {
+    if (err) {
+      // of course we need to deal with err according to the WDJP spec.
+      throw err;
+    }
+
+    res.redirect("/wd/hub/session/" + instance.sessionId);
+  });
 };
 
 exports.getSession = function(req, res) {
@@ -43,8 +48,8 @@ exports.getSession = function(req, res) {
 
 exports.deleteSession = function(req, res) {
   var sessionId = req.params.sessionId;
-  session.client.stop();
-  session.started = false;
+  appium.client.stop();
+  appium.started = false;
   var appResponse = {
     sessionId: sessionId
     , status: 0
@@ -60,7 +65,7 @@ exports.executeScript = function(req, res) {
   var iosResponse ='';
   var requestData = req.body;
   try {
-    iosResponse = session.client.proxy(requestData.script, true);
+    iosResponse = appium.client.proxy(requestData.script, true);
   }
   catch (e) {
     var errObj = {sessionId: sessionId, 'status': 13, 'value': JSON.stringify(e)};

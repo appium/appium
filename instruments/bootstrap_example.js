@@ -33,18 +33,16 @@ var doCurl = function(method, url, data, cb) {
   if (data) {
     for (var k in data) {
       if (data.hasOwnProperty(k)) {
-        //args = args.concat(['-d', k+"="+encodeURIComponent(data[k])]);
-        url += "/"+encodeURIComponent(data[k])
-        console.log(k+"="+encodeURIComponent(data[k]));
+        args = args.concat(['-d', k+"="+encodeURIComponent(data[k])]);
       }
     }
   }
   args.push(url);
-  console.log(url)
+  //console.log(url)
   res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
-  console.log(res.status);
-  console.log(res.stdout);
-  console.log(res.stderr);
+  //console.log(res.status);
+  //console.log(res.stdout);
+  //console.log(res.stderr);
   cb(null, res.stdout);
 };
 
@@ -79,13 +77,11 @@ while(runLoop) {
       if (err) {
         console.log("Error getting command: " + err);
       } else {
-        console.log("Executing command ID " + commandId + ": " + command);
+        console.log("Executing command " + commandId + ": " + command);
         var result = eval(command);
         console.log("####"+commandId+"####"+result+"####");
-        doCurl('GET', endpoint + 'send_result', {
-          commandId: commandId,
-          result: result
-        }, function(err, res) {
+        var url = 'send_result/'+commandId+'/'+encodeURIComponent(result);
+        doCurl('GET', endpoint + url, function(err, res) {
           console.log("Sent result to server");
         });
       }

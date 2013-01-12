@@ -27,11 +27,18 @@ Instruments.prototype.launch = function(cb, exitCb) {
     self.outputStreamHandler(data);
   });
   proc.stderr.on('data', function(data) {
-    self.errorStreamHandler(data)
+    self.errorStreamHandler(data);
   });
+
+  var bye = function(code) {
+  };
+  if (typeof exitCb === "function") {
+    bye = exitCb;
+  }
+
   proc.on('exit', function(code) {
     console.log("Instruments exited with code " + code);
-    exitCb(code);
+    bye(code);
   });
 };
 
@@ -73,7 +80,7 @@ Instruments.prototype.extendServer = function(err, cb) {
   });
   this.server.get('/instruments/send_result/:commandId?/:result?', function(req, res) {
     console.log(req.params);
-    var commandId = parseInt(req.params.commandId);
+    var commandId = parseInt(req.params.commandId, 10);
     var result = req.params.result;
     if (typeof commandId != "undefined" && typeof result != "undefined") {
       if (!self.curCommand) {
@@ -90,7 +97,7 @@ Instruments.prototype.extendServer = function(err, cb) {
     }
   });
   this.server.post('/instruments/ready', function(req, res) {
-    self.readyHandler()
+    self.readyHandler();
     res.send('OK');
   });
 };

@@ -31,8 +31,7 @@ Instruments.prototype.launch = function(cb, exitCb) {
     self.errorStreamHandler(data);
   });
 
-  var bye = function(code) {
-  };
+  var bye = function(code) {};
   if (typeof exitCb === "function") {
     bye = exitCb;
   }

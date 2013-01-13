@@ -102,3 +102,20 @@ exports.findElements = function(req, res) {
     res.send(result);
   });
 };
+
+exports.setValue = function(req, res) {
+  var sessionId = req.params.sessionId
+    , elementId = req.params.elementId
+    , body = req.body.value.join('')
+    , status = 0;
+
+  var command = ["elements['", elementId, "'].setValue('", body, "')"].join('');
+
+  req.appium.proxy(command, function(json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: ''
+    });
+  });
+};

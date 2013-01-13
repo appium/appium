@@ -76,7 +76,7 @@ Appium.prototype.stop = function(cb) {
 Appium.prototype.proxy = function(command, cb) {
   // was thinking we should use a queue for commands instead of writing to a file
   this.push([command, cb]);
-  console.log('Pushed command to appium work queue.' + command);
+  console.log('Pushed command to appium work queue: ' + command);
 };
 
 Appium.prototype.push = function(elem) {

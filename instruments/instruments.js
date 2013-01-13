@@ -117,7 +117,7 @@ Instruments.prototype.setResultHandler = function(handler) {
 };
 
 Instruments.prototype.defaultResultHandler = function(output) {
-  console.log("Got output from instruments: " + output);
+  console.log("[INST] " + output);
 };
 
 Instruments.prototype.defaultReadyHandler = function() {
@@ -125,22 +125,19 @@ Instruments.prototype.defaultReadyHandler = function() {
 };
 
 Instruments.prototype.outputStreamHandler = function(output) {
-  // do any kind of output nice-ification
-  var re = /\n(\*+)/gm;
+  var re = /(\n|^)\*+\n?/g;
   output = output.toString();
-  var result = output;
-  var match = re.exec(output);
-  if (match) {
-    console.log("got a match!");
-    result = output.replace(match[1], "");
+  output = output.replace(re, "");
+  if (output !== "") {
+    this.resultHandler(output);
   }
-  // if we're ready to send output back....
-  console.log(result);
-  this.resultHandler(result);
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  console.log("Stderr: " + output);
+  var re = /\n\*+/m;
+  output = output.toString();
+  var result = output.replace(re, "");
+  console.log("Stderr: " + result);
 };
 
 module.exports = function(server, app, udid, bootstrap, template) {

@@ -89,7 +89,8 @@ Appium.prototype.push = function(elem) {
 
     me.instruments.sendCommand(target[0], function(result) {
       if (typeof target[1] === 'function') {
-        target[1](result);
+        var jsonresult = JSON.parse(result);
+        target[1](jsonresult);
       }
 
       // maybe there's moar work to do

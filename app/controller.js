@@ -1,6 +1,22 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
 
+var findElement = function(req, res, ctx, many, cb) {
+  var strategy = req.body.using
+    , value = req.body.value
+    , ext = many ? 's' : '';
+
+  var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", value, "')"].join("");
+
+  req.appium.proxy(command, function(json) {
+    cb({
+      sessionId: req.appium.sessionId
+      , status: 0
+      , value: json
+    });
+  });
+};
+
 exports.status = function(req, res) {
   // Build a JSON object to return to the client
   var status = {
@@ -79,4 +95,10 @@ exports.executeScript = function(req, res) {
     , value: iosResponse
   };
   req.send(appResponse); 
+};
+
+exports.findElements = function(req, res) {
+  findElement(req, res, 'wd_frame', true, function(result) {
+    res.send(result);
+  });
 };

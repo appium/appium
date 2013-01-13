@@ -1,7 +1,8 @@
 // Wrapper around Apple's Instruments app
 //
 
-var spawn = require('child_process').spawn;
+var spawn = require('child_process').spawn,
+    express = require('express');
 
 var Instruments = function(server, app, udid, bootstrap, template) {
   this.server = server;
@@ -85,30 +86,29 @@ Instruments.prototype.extendServer = function(err, cb) {
     }
     // }
   });
-  this.server.post('/instruments/send_result/:commandId?', function(req, res) {
-    console.log(req.body);
+  this.server.post('/instruments/send_result/:commandId', function(req, res) {
     var commandId = parseInt(req.params.commandId, 10);
-    var result = req.body;
+    var result = req.body.result;
     if (typeof commandId != "undefined" && typeof result != "undefined") {
       if (!self.curCommand) {
-        res.send('ERROR: Not waiting for a command result');
+        res.send(500, {error: "Not waiting for a command result"});
       } else if (commandId != self.curCommandId) {
-        res.send('ERROR: Command ID ' + commandId + ' does not match ' + self.curCommandId);
+        res.send(500, {error: 'Command ID ' + commandId + ' does not match ' + self.curCommandId});
       } else {
         if (typeof result === "object" && typeof result.result !== "undefined") {
           result = result.result;
         }
         self.curCommand = null;
         self.commandCallbacks[commandId](result);
-        res.send('OK');
+        res.send({success: true});
       }
     } else {
-      res.send('ERROR: Bad parameters sent');
+      res.send(500, {error: 'Bad parameters sent'});
     }
   });
   this.server.post('/instruments/ready', function(req, res) {
     self.readyHandler();
-    res.send('OK');
+    res.send({success: true});
   });
 };
 

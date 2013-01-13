@@ -92,8 +92,12 @@ Appium.prototype.push = function(elem) {
         if (result === 'undefined') {
           target[1]();
         } else {
-          var jsonresult = JSON.parse(result);
-          target[1](jsonresult);
+          try {
+            var jsonresult = JSON.parse(result);
+            target[1](jsonresult);
+          } catch (e) {
+            target[1](result);
+          }
         }
       }
 

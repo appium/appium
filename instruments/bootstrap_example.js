@@ -1,21 +1,12 @@
+#import "helpers/console.js"
+#import "helpers/curl.js"
+
 // automation globals
 var target      = UIATarget.localTarget();
 var application = target.frontMostApp();
 var host = target.host();
 var mainWindow  = application.mainWindow();
 var elements = {};
-var bufLen = 16384; // 16384 is apprently the buffer size used by instruments
-
-var console = {
-  log: function(msg) {
-    var msgLen = msg.length;
-    var newMsg = msg + "\n";
-    for (i = 0; i < bufLen - msg.length; i++) {
-      newMsg += "*";
-    }
-    UIALogger.logMessage(newMsg);
-  }
-};
 
 var endpoint = 'http://localhost:4723/instruments/';
 
@@ -27,35 +18,6 @@ function delay(secs)
     do { curDate = new Date(); }
     while(curDate-date < (secs * 1000.0));
 }
-
-var doCurl = function(method, url, data) {
-  args = ["-i", "-X", method];
-  if (data) {
-    args = args.concat(['-d', JSON.stringify(data)]);
-    args = args.concat(["-H", "Content-Type: application/json"]);
-  }
-  args.push(url);
-  //console.log(url)
-  //console.log(args);
-  var res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
-  var response = res.stdout;
-  //console.log(res.stdout);
-  var splits = response.split("\r\n\r\n");
-  var status = 500, value = null;
-  if (!splits.length) {
-    console.log("Could not find status code!");
-  } else {
-    var header = splits[0].split("\n")[0];
-    value = splits.slice(1).join("");
-    var match = /\d\d\d/.exec(header);
-    if (!match) {
-      console.log("Could not find status code in " + header + "!");
-    } else {
-      status = parseInt(match[0], 10);
-    }
-  }
-  return {status: status, value: value}
-};
 
 doCurl('POST', endpoint + 'ready');
 

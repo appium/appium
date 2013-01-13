@@ -4,9 +4,7 @@ var application = target.frontMostApp();
 var host = target.host();
 var mainWindow  = application.mainWindow();
 var elements = {};
-var bufLen = 16384;
-var bufferFlusher = [];
-// 16384 is apprently the buffer size used by instruments
+var bufLen = 16384; // 16384 is apprently the buffer size used by instruments
 
 var console = {
   log: function(msg) {
@@ -16,7 +14,6 @@ var console = {
       newMsg += "*";
     }
     UIALogger.logMessage(newMsg);
-    //UIALogger.logDebug(bufferFlusher);
   }
 };
 
@@ -34,14 +31,12 @@ function delay(secs)
 var doCurl = function(method, url, data) {
   args = ["-i", "-X", method];
   if (data) {
-    for (var k in data) {
-      if (data.hasOwnProperty(k)) {
-        args = args.concat(['-d', k+"="+encodeURIComponent(data[k])]);
-      }
-    }
+    args = args.concat(['-d', JSON.stringify(data)]);
+    args = args.concat(["-H", "Content-Type: application/json"]);
   }
   args.push(url);
   //console.log(url)
+  //console.log(args);
   var res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
   var response = res.stdout;
   //console.log(res.stdout);
@@ -83,9 +78,12 @@ var getNextCommand = function() {
 };
 
 var sendCommandResult = function(commandId, result) {
-  var url = 'send_result/'+commandId+'/'+encodeURIComponent(result);
-  var res = doCurl('GET', endpoint + url);
-  console.log(res.status);
+  var url = 'send_result/'+commandId;
+  var res = doCurl('POST', endpoint + url, {result: result});
+  res = JSON.parse(res.value);
+  if (res.error) {
+    console.log("Error: " + res.error);
+  }
 };
 
 while(runLoop) {
@@ -93,9 +91,11 @@ while(runLoop) {
   if (cmd) {
     console.log("Executing command " + cmd.commandId + ": " + cmd.command);
     var result = eval(cmd.command);
+    if (typeof result === "undefined") {
+      result = false;
+    }
     console.log(cmd.commandId+": "+result);
     sendCommandResult(cmd.commandId, result);
-  } else {
-    delay(10);
   }
+  delay(1);
 }

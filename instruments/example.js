@@ -1,17 +1,14 @@
 var http = require('http')
-  , url = require('url')
   , express = require('express')
   , app = express()
   , path = require('path')
   , server = http.createServer(app)
-  , ap = require('argparse').ArgumentParser
-  , colors = require('colors')
   , spawn = require('child_process').spawn
   , build = require('./build')
   , instruments = require('./instruments');
 
 app.configure(function() {
-  app.use(express.bodyParser());
+  app.use(express.bodyParser()); // this is required
   app.use(app.router);
 });
 
@@ -38,16 +35,12 @@ build(appRoot, function(err) {
   );
 
   inst.launch(function() {
-    console.log('done launching');
-    inst.sendCommand("application.bundleID()", function(bundleId) {
-      console.log("Bundle ID is " + bundleId);
-      inst.sendCommand("mainWindow.textFields()[0].setValue('3');", function() {
-        inst.sendCommand("mainWindow.textFields()[1].setValue('5');", function() {
-          inst.sendCommand("mainWindow.buttons()[0].tap();", function() {
-            inst.sendCommand("mainWindow.staticTexts()[0].value()", function(sum) {
-              console.log("Sum should be 8 and is " + sum);
-              //process.exit(0);
-            });
+    inst.sendCommand("mainWindow.textFields()[0].setValue('3');", function() {
+      inst.sendCommand("mainWindow.textFields()[1].setValue('5');", function() {
+        inst.sendCommand("mainWindow.buttons()[0].tap();", function() {
+          inst.sendCommand("mainWindow.staticTexts()[0].value()", function(sum) {
+            console.log("Sum should be 8 and is " + sum);
+            //process.exit(0);
           });
         });
       });

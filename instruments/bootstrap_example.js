@@ -4,16 +4,19 @@ var application = target.frontMostApp();
 var host = target.host();
 var mainWindow  = application.mainWindow();
 var elements = {};
+var bufLen = 16384;
 var bufferFlusher = [];
 // 16384 is apprently the buffer size used by instruments
-for (i=0; i < 16384; i++) {
-    bufferFlusher.push('*');
-}
-bufferFlusher = bufferFlusher.join('');
 
 var console = {
   log: function(msg) {
-    UIALogger.logMessage(msg);
+    var msgLen = msg.length;
+    var newMsg = msg + "\n";
+    for (i = 0; i < bufLen - msg.length; i++) {
+      newMsg += "*";
+    }
+    UIALogger.logMessage(newMsg);
+    //UIALogger.logDebug(bufferFlusher);
   }
 };
 
@@ -28,8 +31,8 @@ function delay(secs)
     while(curDate-date < (secs * 1000.0));
 }
 
-var doCurl = function(method, url, data, cb) {
-  args = ["-X", method];
+var doCurl = function(method, url, data) {
+  args = ["-i", "-X", method];
   if (data) {
     for (var k in data) {
       if (data.hasOwnProperty(k)) {
@@ -39,54 +42,59 @@ var doCurl = function(method, url, data, cb) {
   }
   args.push(url);
   //console.log(url)
-  res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
-  //console.log(res.status);
+  var res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
+  var response = res.stdout;
   //console.log(res.stdout);
-  //console.log(res.stderr);
-  cb(null, res.stdout);
+  var splits = response.split("\r\n\r\n");
+  var status = 500, value = null;
+  if (!splits.length) {
+    console.log("Could not find status code!");
+  } else {
+    var header = splits[0].split("\n")[0];
+    value = splits.slice(1).join("");
+    var match = /\d\d\d/.exec(header);
+    if (!match) {
+      console.log("Could not find status code in " + header + "!");
+    } else {
+      status = parseInt(match[0], 10);
+    }
+  }
+  return {status: status, value: value}
 };
 
-doCurl('POST', endpoint + 'ready', null, function(err, res) {
-  console.log(res);
-});
+doCurl('POST', endpoint + 'ready');
 
 var runLoop = true;
-var gettingCommand = false;
 target.setTimeout(1);
 
-var getNextCommand = function(cb) {
-  gettingCommand = true;
-  doCurl('GET', endpoint + 'next_command', null, function(err, res) {
-    console.log("Evaluating command type");
-    if (res != "NONE") {
-      sepIndex = res.indexOf('|');
-      commandId = res.substr(0, sepIndex);
-      command = res.substr(sepIndex + 1);
-      cb(null, commandId, command);
-    } else {
-      cb("No command in queue");
-    }
-    gettingCommand = false;
-  });
+var getNextCommand = function() {
+  var res = doCurl('GET', endpoint + 'next_command');
+  if (res.status === 200) {
+    var val = res.value;
+    console.log("Result of get command is " + val);
+    sepIndex = val.indexOf('|');
+    commandId = val.substr(0, sepIndex);
+    command = val.substr(sepIndex + 1);
+    return {commandId: commandId, command: command};
+  } else {
+    console.log("There is no command to parse, or an error occurred");
+    return null;
+  }
 };
 
+var sendCommandResult = function(commandId, result) {
+  var url = 'send_result/'+commandId+'/'+encodeURIComponent(result);
+  var res = doCurl('GET', endpoint + url);
+};
 
 while(runLoop) {
-  if (!gettingCommand) {
-    getNextCommand(function(err, commandId, command) {
-      if (err) {
-        console.log("Error getting command: " + err);
-      } else {
-        console.log("Executing command " + commandId + ": " + command);
-        var result = eval(command);
-        console.log("####"+commandId+"####"+result+"####");
-        var url = 'send_result/'+commandId;
-        doCurl('POST', endpoint + url, {result: result}, function(err, res) {
-          console.log("Sent result to server");
-        });
-      }
-    });
+  var cmd = getNextCommand();
+  if (cmd) {
+    console.log("Executing command " + cmd.commandId + ": " + cmd.command);
+    var result = eval(cmd.command);
+    console.log("####"+cmd.commandId+"####"+result+"####");
+    sendCommandResult(cmd.commandId, result);
   } else {
-    delay(1);
+    delay(10);
   }
 }

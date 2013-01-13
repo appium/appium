@@ -11,6 +11,7 @@ var http = require('http')
   , instruments = require('./instruments');
 
 app.configure(function() {
+  app.use(express.bodyParser());
   app.use(app.router);
 });
 

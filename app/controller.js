@@ -69,7 +69,7 @@ exports.deleteSession = function(req, res) {
     var appResponse = {
       sessionId: sessionId
       , status: 0
-      , value: {}  
+      , value: {}
     };
 
     res.send(appResponse);
@@ -94,7 +94,7 @@ exports.executeScript = function(req, res) {
     , status: status
     , value: iosResponse
   };
-  req.send(appResponse); 
+  req.send(appResponse);
 };
 
 exports.findElements = function(req, res) {
@@ -104,7 +104,7 @@ exports.findElements = function(req, res) {
 };
 
 exports.setValue = function(req, res) {
-  var sessionId = req.params.sessionId
+  var sessionid = req.params.sessionid
     , elementId = req.params.elementId
     , body = req.body.value.join('')
     , status = 0;
@@ -116,6 +116,40 @@ exports.setValue = function(req, res) {
       sessionId: req.appium.sessionId
         , status: status
         , value: ''
+    });
+  });
+};
+
+exports.doClick = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , body = req.body.value
+    , status = 0;
+
+  var command = ["elements['", elementId, "'].tap()"].join('');
+
+  req.appium.proxy(command, function(json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: ''
+    });
+  });
+};
+
+exports.getText = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , body = req.body.value
+    , status = 0;
+
+  var command = ["elements['", elementId, "'].getText()"].join('');
+
+  req.appium.proxy(command, function(json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: json.toString()
     });
   });
 };

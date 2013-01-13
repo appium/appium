@@ -17,4 +17,6 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/execute', controller.executeScript);
   rest.post('/wd/hub/session/:sessionId?/elements', controller.findElements);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/value', controller.setValue);
+  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/click', controller.doClick);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/text', controller.getText);
 };

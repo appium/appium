@@ -1,28 +1,18 @@
 #import "helpers/console.js"
 #import "helpers/curl.js"
+#import "helpers/delay.js"
 
 // automation globals
 var target      = UIATarget.localTarget();
 var application = target.frontMostApp();
 var host = target.host();
 var mainWindow  = application.mainWindow();
-var elements = {};
-
 var endpoint = 'http://localhost:4723/instruments/';
-
-function delay(secs)
-{
-    var date = new Date();
-    var curDate = null;
-
-    do { curDate = new Date(); }
-    while(curDate-date < (secs * 1000.0));
-}
-
-doCurl('POST', endpoint + 'ready');
-
-var runLoop = true;
+// safe default
 target.setTimeout(1);
+
+// let server know we're alive
+doCurl('POST', endpoint + 'ready');
 
 var getNextCommand = function() {
   var res = doCurl('GET', endpoint + 'next_command');
@@ -48,7 +38,7 @@ var sendCommandResult = function(commandId, result) {
   }
 };
 
-while(runLoop) {
+while(true) {
   var cmd = getNextCommand();
   if (cmd) {
     console.log("Executing command " + cmd.commandId + ": " + cmd.command);
@@ -59,5 +49,5 @@ while(runLoop) {
     console.log(cmd.commandId+": "+result);
     sendCommandResult(cmd.commandId, result);
   }
-  delay(1);
+  delay(0.25);
 }

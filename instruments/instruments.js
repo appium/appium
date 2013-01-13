@@ -129,6 +129,7 @@ Instruments.prototype.outputStreamHandler = function(output) {
   output = output.toString();
   output = output.replace(re, "");
   if (output !== "") {
+    output = output.replace(/\n/m, "\n       ");
     this.resultHandler(output);
   }
 };

@@ -40,7 +40,7 @@ build(appRoot, function(err) {
         inst.sendCommand("mainWindow.buttons()[0].tap();", function() {
           inst.sendCommand("mainWindow.staticTexts()[0].value()", function(sum) {
             console.log("Sum should be 8 and is " + sum);
-            //process.exit(0);
+            inst.shutdown();
           });
         });
       });

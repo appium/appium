@@ -10,6 +10,8 @@ var Appium = function(app, uuid, verbose) {
   this.verbose = verbose;
   this.instruments = null;
   this.rest = null;
+  this.queue = [];
+  this.progress = 0;
   this.sessionId = null;
 };
 
@@ -34,7 +36,7 @@ Appium.prototype.start = function(cb) {
         this.rest
         , path.resolve(__dirname, '../' + this.app)
         , null
-        , path.resolve(__dirname, '../instruments/bootstrap_example.js')
+        , path.resolve(__dirname, '../instruments/bootstrap.js')
         , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
       );
     }
@@ -43,6 +45,10 @@ Appium.prototype.start = function(cb) {
     me.instruments.launch(function() {
       console.log('Instruments launched. Starting command poll loop for new commands.'.yellow);
       cb(null, me);
+    }, function(code) {
+      if (!code || code > 0) {
+        me.stop();
+      }
     });
   } else {
     cb('Session already in progress', null);
@@ -54,6 +60,8 @@ Appium.prototype.stop = function(cb) {
   var me = this;
   this.instruments.shutdown(function() {
     me.sessionId = null;
+    me.queue = [];
+    me.progress = 0;
     
     if (cb) {
       cb();
@@ -63,8 +71,34 @@ Appium.prototype.stop = function(cb) {
 
 Appium.prototype.proxy = function(command, cb) {
   // was thinking we should use a queue for commands instead of writing to a file
-  session.queue.push(command);
+  this.push([command, cb]);
   console.log('Pushed command to appium work queue.' + command);
+};
+
+Appium.prototype.push = function(elem) {
+  this.queue.push(elem);
+  var me = this;
+
+  var next = function() {
+    if (me.queue.length <= 0 || me.progess > 0) {
+      return;
+    }
+
+    var target = me.queue.shift();
+    me.progress++;
+
+    me.instruments.sendCommand(target[0], function(result) {
+      if (typeof target[1] === 'function') {
+        target[1](result);
+      }
+
+      // maybe there's moar work to do
+      me.progress--;
+      next();
+    });
+  };
+
+  next();
 };
 
 module.exports = function(app, uuid, version) {

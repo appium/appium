@@ -85,16 +85,19 @@ Instruments.prototype.extendServer = function(err, cb) {
     }
     // }
   });
-  this.server.get('/instruments/send_result/:commandId?/:result?', function(req, res) {
-    console.log(req.params);
+  this.server.post('/instruments/send_result/:commandId?', function(req, res) {
+    console.log(req.body);
     var commandId = parseInt(req.params.commandId, 10);
-    var result = req.params.result;
+    var result = req.body;
     if (typeof commandId != "undefined" && typeof result != "undefined") {
       if (!self.curCommand) {
         res.send('ERROR: Not waiting for a command result');
       } else if (commandId != self.curCommandId) {
         res.send('ERROR: Command ID ' + commandId + ' does not match ' + self.curCommandId);
       } else {
+        if (typeof result === "object" && typeof result.result !== "undefined") {
+          result = result.result;
+        }
         self.curCommand = null;
         self.commandCallbacks[commandId](result);
         res.send('OK');

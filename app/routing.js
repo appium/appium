@@ -15,4 +15,5 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?', controller.getSession);
   rest.delete('/wd/hub/session/:sessionId?', controller.deleteSession);
   rest.post('/wd/hub/session/:sessionId?/execute', controller.executeScript);
+  rest.post('/wd/hub/session/:sessionId?/elements', controller.findElements);
 };

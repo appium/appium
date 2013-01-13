@@ -59,7 +59,7 @@ Appium.prototype.stop = function(cb) {
   if (this.sessionId === null) {
     return;
   }
-  var me = this
+  var me = this;
 
   this.instruments.shutdown(function() {
     console.log('Shutting down appium session ' + me.sessionId);

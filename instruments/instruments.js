@@ -81,7 +81,7 @@ Instruments.prototype.extendServer = function(err, cb) {
     if (self.curCommand) {
       res.send(self.curCommandId+"|"+self.curCommand);
     } else {
-      res.send("NONE");
+      res.send(404, "Not Found");
     }
     // }
   });
@@ -126,9 +126,16 @@ Instruments.prototype.defaultReadyHandler = function() {
 
 Instruments.prototype.outputStreamHandler = function(output) {
   // do any kind of output nice-ification
+  var re = /\n(\*+)/gm;
+  output = output.toString();
   var result = output;
+  var match = re.exec(output);
+  if (match) {
+    console.log("got a match!");
+    result = output.replace(match[1], "");
+  }
   // if we're ready to send output back....
-  console.log(output);
+  console.log(result);
   this.resultHandler(result);
 };
 

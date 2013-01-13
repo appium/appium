@@ -28,8 +28,8 @@ Appium.prototype.attachTo = function(rest, cb) {
 
 Appium.prototype.start = function(cb) {
   if (this.sessionId === null) {
-    console.log('The appium client start function has been called!');
     this.sessionId = new Date().getTime();
+    console.log('Creating new appium session ' + this.sessionId);
 
     if (this.instruments === null) {
       this.instruments = instruments(
@@ -43,7 +43,7 @@ Appium.prototype.start = function(cb) {
 
     var me = this;
     me.instruments.launch(function() {
-      console.log('Instruments launched. Starting command poll loop for new commands.'.yellow);
+      console.log('Instruments launched. Starting poll loop for new commands.');
       cb(null, me);
     }, function(code) {
       if (!code || code > 0) {
@@ -56,12 +56,16 @@ Appium.prototype.start = function(cb) {
 };
 
 Appium.prototype.stop = function(cb) {
-  console.log('The appium client stop function has been called!');
-  var me = this;
+  if (this.sessionId === null) {
+    return;
+  }
+  var me = this
+
   this.instruments.shutdown(function() {
-    me.sessionId = null;
+    console.log('Shutting down appium session ' + me.sessionId);
     me.queue = [];
     me.progress = 0;
+    me.sessionId = null;
     
     if (cb) {
       cb();

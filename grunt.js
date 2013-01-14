@@ -49,8 +49,10 @@ module.exports = function(grunt) {
     build(appRoot, function(err) {
       if (err) {
         console.log(err);
+        done(false);
+      } else {
+        done(true);
       }
-      done();
     });
   });
 };

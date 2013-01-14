@@ -73,39 +73,41 @@ Instruments.prototype.sendCommand = function(cmd, cb) {
 
 Instruments.prototype.extendServer = function(err, cb) {
   var self = this;
+
   this.server.get('/instruments/next_command', function(req, res) {
-    // add timing logic etc...
-    // if ( should rate limit ) {
-    //   res.send(404, "Not Found");
-    // } else {
     console.log("instruments asking for command, it is " + self.curCommand);
     if (self.curCommand) {
       res.send(self.curCommandId+"|"+self.curCommand);
     } else {
       res.send(404, "Not Found");
     }
-    // }
   });
+
   this.server.post('/instruments/send_result/:commandId', function(req, res) {
     var commandId = parseInt(req.params.commandId, 10);
-    var result = req.body.result;
-    if (typeof commandId != "undefined" && typeof result != "undefined") {
-      if (!self.curCommand) {
-        res.send(500, {error: "Not waiting for a command result"});
-      } else if (commandId != self.curCommandId) {
-        res.send(500, {error: 'Command ID ' + commandId + ' does not match ' + self.curCommandId});
-      } else {
-        if (typeof result === "object" && typeof result.result !== "undefined") {
-          result = result.result;
-        }
-        self.curCommand = null;
-        self.commandCallbacks[commandId](result);
-        res.send({success: true});
-      }
+    if (!req.body) {
+      res.send(500, {error: "No result parameter found in POST body"});
     } else {
-      res.send(500, {error: 'Bad parameters sent'});
+      var result = req.body.result;
+      if (typeof commandId != "undefined" && typeof result != "undefined") {
+        if (!self.curCommand) {
+          res.send(500, {error: "Not waiting for a command result"});
+        } else if (commandId != self.curCommandId) {
+          res.send(500, {error: 'Command ID ' + commandId + ' does not match ' + self.curCommandId});
+        } else {
+          if (typeof result === "object" && typeof result.result !== "undefined") {
+            result = result.result;
+          }
+          self.curCommand = null;
+          self.commandCallbacks[commandId](result);
+          res.send({success: true});
+        }
+      } else {
+        res.send(500, {error: 'Bad parameters sent'});
+      }
     }
   });
+
   this.server.post('/instruments/ready', function(req, res) {
     self.readyHandler();
     res.send({success: true});
@@ -125,6 +127,9 @@ Instruments.prototype.defaultReadyHandler = function() {
 };
 
 Instruments.prototype.outputStreamHandler = function(output) {
+  // Instruments output is buffered, so for each log output we also output
+  // a stream of very many ****. This function strips those out so all we
+  // get is the log output we care about
   var re = /(\n|^)\*+\n?/g;
   output = output.toString();
   output = output.replace(re, "");
@@ -135,10 +140,7 @@ Instruments.prototype.outputStreamHandler = function(output) {
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  var re = /\n\*+/m;
-  output = output.toString();
-  var result = output.replace(re, "");
-  console.log("Stderr: " + result);
+  console.log("[INST STDERR] " + result);
 };
 
 module.exports = function(server, app, udid, bootstrap, template) {

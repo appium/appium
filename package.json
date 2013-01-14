@@ -33,7 +33,7 @@
     "rimraf": "~2.1.1"
   },
   "scripts": {
-    "test": "grunt unit"
+    "test": "grunt lint unit"
   },
   "devDependencies": {
     "mocha": "~1.8.1",

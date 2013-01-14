@@ -18,7 +18,7 @@ Build the app:
 
 Start it:
 
-    > node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app
+    > grunt appium
 
 Run functional tests (make sure Appium server is running as per command line above):
 

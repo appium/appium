@@ -1,4 +1,6 @@
-var server = require('./server.js');
+var server = require('./server.js')
+  , build = require('./build.js')
+  , path = require('path');
 
 module.exports = function(grunt) {
   grunt.initConfig({
@@ -39,5 +41,15 @@ module.exports = function(grunt) {
       , '127.0.0.1'
       , done
     );
+  });
+  grunt.registerTask('buildApp', "Build the test app", function() {
+    var done = this.async();
+    var appRoot = path.resolve(__dirname, '../sample-code/apps/TestApp/');
+    build(appRoot, function(err) {
+      if (err) {
+        console.log(err);
+      }
+      done();
+    });
   });
 };

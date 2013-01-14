@@ -36,7 +36,7 @@ Appium.prototype.start = function(cb) {
         this.rest
         , path.resolve(__dirname, '../' + this.app)
         , null
-        , path.resolve(__dirname, '../instruments/bootstrap.js')
+        , path.resolve(__dirname, 'uiauto/bootstrap.js')
         , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
       );
     }

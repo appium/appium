@@ -4,9 +4,9 @@ var routing = require('./routing')
   , path = require('path')
   , instruments = require('../instruments/instruments');
 
-var Appium = function(app, uuid, verbose) {
+var Appium = function(app, udid, verbose) {
   this.app = app;
-  this.uuid = uuid;
+  this.udid = udid;
   this.verbose = verbose;
   this.instruments = null;
   this.rest = null;
@@ -35,7 +35,7 @@ Appium.prototype.start = function(cb) {
       this.instruments = instruments(
         this.rest
         , path.resolve(__dirname, '../' + this.app)
-        , null
+        , this.udid
         , path.resolve(__dirname, 'uiauto/bootstrap.js')
         , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
       );
@@ -114,6 +114,6 @@ Appium.prototype.push = function(elem) {
   next();
 };
 
-module.exports = function(app, uuid, version) {
-  return new Appium(app, uuid, version);
+module.exports = function(app, udid, version) {
+  return new Appium(app, udid, version);
 };

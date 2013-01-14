@@ -28,4 +28,4 @@ module.exports = function() {
   });
 
   return parser;
-}; 
+};

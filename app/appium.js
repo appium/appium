@@ -20,7 +20,7 @@ Appium.prototype.attachTo = function(rest, cb) {
 
   // Import the routing rules
   routing(this);
-  
+
   if (cb) {
     cb();
   }
@@ -66,7 +66,7 @@ Appium.prototype.stop = function(cb) {
     me.queue = [];
     me.progress = 0;
     me.sessionId = null;
-    
+
     if (cb) {
       cb();
     }
@@ -116,4 +116,4 @@ Appium.prototype.push = function(elem) {
 
 module.exports = function(app, uuid, version) {
   return new Appium(app, uuid, version);
-}; 
+};

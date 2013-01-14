@@ -10,7 +10,7 @@ module.exports = function(appium) {
   // Make appium available to all REST http requests.
   rest.all('/wd/*', inject);
 
-  rest.get('/wd/hub/status', controller.status);
+  rest.get('/wd/hub/status', controller.getStatus);
   rest.post('/wd/hub/session', controller.createSession);
   rest.get('/wd/hub/session/:sessionId?', controller.getSession);
   rest.delete('/wd/hub/session/:sessionId?', controller.deleteSession);

@@ -18,7 +18,7 @@ var findElement = function(req, res, ctx, many, cb) {
   });
 };
 
-exports.status = function(req, res) {
+exports.getStatus = function(req, res) {
   // Build a JSON object to return to the client
   var status = {
     sessionId: req.appium.sessionId || null

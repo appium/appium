@@ -1,95 +1,53 @@
+#import "helpers/console.js"
+#import "helpers/curl.js"
+#import "helpers/delay.js"
 #import "appiumutils.js"
 
 // automation globals
 var target      = UIATarget.localTarget();
-var application = target.frontMostApp();
-var host = target.host();
-var mainWindow  = application.mainWindow();
-var wd_frame = mainWindow;
-var elements = {};
-var bufferFlusher = [];
-// 16384 is apprently the buffer size used by instruments
-for (i=0; i < 16384; i++) {
-    bufferFlusher.push('*');
-}
-bufferFlusher = bufferFlusher.join('');
-
-var console = {
-  log: function(msg) {
-    UIALogger.logMessage(msg);
-  }
-};
-
+var mainWindow  = target.frontMostApp().mainWindow();
 var endpoint = 'http://localhost:4723/instruments/';
 
-function delay(secs)
-{
-    var date = new Date();
-    var curDate = null;
-
-    do { curDate = new Date(); }
-    while(curDate-date < (secs * 1000.0));
-}
-
-var doCurl = function(method, url, data, cb) {
-  args = ["-X", method];
-  if (data) {
-    for (var k in data) {
-      if (data.hasOwnProperty(k)) {
-        args = args.concat(['-d', k+"="+encodeURIComponent(data[k])]);
-      }
-    }
-  }
-  args.push(url);
-  //console.log(url)
-  res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
-  //console.log(res.status);
-  //console.log(res.stdout);
-  //console.log(res.stderr);
-  cb(null, res.stdout);
-};
-
-doCurl('POST', endpoint + 'ready', null, function(err, res) {
-  console.log(res);
-});
-
-var runLoop = true;
-var gettingCommand = false;
+// safe default
 target.setTimeout(1);
 
-var getNextCommand = function(cb) {
-  gettingCommand = true;
-  doCurl('GET', endpoint + 'next_command', null, function(err, res) {
-    console.log("Evaluating command type");
-    if (res != "NONE") {
-      sepIndex = res.indexOf('|');
-      commandId = res.substr(0, sepIndex);
-      command = res.substr(sepIndex + 1);
-      cb(null, commandId, command);
-    } else {
-      cb("No command in queue");
-    }
-    gettingCommand = false;
-  });
+// let server know we're alive
+doCurl('POST', endpoint + 'ready');
+
+var getNextCommand = function() {
+  var res = doCurl('GET', endpoint + 'next_command');
+  if (res.status === 200) {
+    var val = res.value;
+    sepIndex = val.indexOf('|');
+    commandId = val.substr(0, sepIndex);
+    command = val.substr(sepIndex + 1);
+    return {commandId: commandId, command: command};
+  } else {
+    console.log("There is no command to parse, or an error occurred");
+    return null;
+  }
 };
 
-
-while(runLoop) {
-  if (!gettingCommand) {
-    getNextCommand(function(err, commandId, command) {
-      if (err) {
-        console.log("Error getting command: " + err);
-      } else {
-        console.log("Executing command " + commandId + ": " + command);
-        var result = eval(command);
-        console.log("####"+commandId+"####"+result+"####");
-        var url = 'send_result/'+commandId;
-        doCurl('POST', endpoint + url, {result: result}, function(err, res) {
-          console.log("Sent result to server");
-        });
-      }
-    });
+var sendCommandResult = function(commandId, result) {
+  var url = 'send_result/'+commandId;
+  var res = doCurl('POST', endpoint + url, {result: result});
+  res = JSON.parse(res.value);
+  if (res.error) {
+    console.log("Error sending result: " + res.error);
   } else {
-    delay(1);
+    console.log("Sent result for command " + commandId);
+  }
+};
+
+while(true) {
+  var cmd = getNextCommand();
+  if (cmd) {
+    console.log("Executing command " + cmd.commandId + ": " + cmd.command);
+    var result = eval(cmd.command);
+    if (typeof result === "undefined") {
+      result = false;
+    }
+    console.log("Result of command " + cmd.commandId + ": " + result);
+    sendCommandResult(cmd.commandId, result);
   }
 }

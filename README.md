@@ -14,7 +14,7 @@ Quick Start
 -----------
 Build the app:
 
-    > cd sample-code/apps/TestApp; xcodebuild -sdk iphonesimulator6.0
+    > grunt buildApp
 
 Start it:
 

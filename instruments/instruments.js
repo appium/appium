@@ -15,8 +15,17 @@ var Instruments = function(server, app, udid, bootstrap, template) {
   this.commandCallbacks = [];
   this.resultHandler = this.defaultResultHandler;
   this.readyHandler = this.defaultReadyHandler;
+  this.shutdownHandler = this.defaultShutdownHandler;
   this.proc = null;
   this.extendServer();
+  this.shutdownTimeout = 5;
+  this.debug = false;
+};
+
+Instruments.prototype.setDebug = function(debug) {
+  if (typeof debug === "undefined") {
+    this.debug = debug;
+  }
 };
 
 Instruments.prototype.launch = function(cb, exitCb) {
@@ -45,9 +54,10 @@ Instruments.prototype.launch = function(cb, exitCb) {
 
 Instruments.prototype.shutdown = function(cb) {
   this.proc.kill();
-  if (cb) {
-    cb();
+  if (typeof cb === "function") {
+    this.shutdownHandler = cb;
   }
+  this.shutdownTimeoutObj = setTimeout(this.shutdownHandler, 1000 * this.shutdownTimeout);
 };
 
 Instruments.prototype.spawnInstruments = function() {
@@ -119,24 +129,46 @@ Instruments.prototype.setResultHandler = function(handler) {
 };
 
 Instruments.prototype.defaultResultHandler = function(output) {
-  console.log("[INST] " + output);
+  // if we have multiple log lines, indent non-first ones
+  if (output !== "") {
+    output = output.replace(/\n/m, "\n       ");
+    console.log("[INST] " + output);
+  }
 };
 
 Instruments.prototype.defaultReadyHandler = function() {
   console.log("Instruments is ready and waiting!");
 };
 
-Instruments.prototype.outputStreamHandler = function(output) {
+Instruments.prototype.clearBufferChars = function(output) {
   // Instruments output is buffered, so for each log output we also output
   // a stream of very many ****. This function strips those out so all we
   // get is the log output we care about
   var re = /(\n|^)\*+\n?/g;
   output = output.toString();
   output = output.replace(re, "");
-  if (output !== "") {
-    output = output.replace(/\n/m, "\n       ");
-    this.resultHandler(output);
+  return output;
+};
+
+Instruments.prototype.outputStreamHandler = function(output) {
+  output = this.clearBufferChars(output);
+  this.lookForShutdownInfo(output);
+  this.resultHandler(output);
+};
+
+Instruments.prototype.lookForShutdownInfo = function(output) {
+  var re = /Instruments Trace Complete.+Output : ([^\)]+)\)/;
+  var match = re.exec(output);
+  if (match) {
+    if(typeof this.shutdownTimeoutObj !== "undefined") {
+      clearTimeout(this.shutdownTimeoutObj);
+    }
+    this.shutdownHandler(match[1]);
   }
+};
+
+Instruments.prototype.defaultShutdownHandler = function(traceDir) {
+  console.log("Trace dir is " + traceDir);
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {

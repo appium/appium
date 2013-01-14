@@ -140,7 +140,7 @@ Instruments.prototype.outputStreamHandler = function(output) {
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  console.log("[INST STDERR] " + result);
+  console.log("[INST STDERR] " + output);
 };
 
 module.exports = function(server, app, udid, bootstrap, template) {

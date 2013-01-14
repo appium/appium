@@ -10,10 +10,19 @@ var http = require('http')
   , parser = require('./app/parser');
 
 rest.configure(function() {
+  var bodyParser = express.bodyParser()
+    , parserWrap = function(req, res, next) {
+        // wd.js sends us http POSTs with empty body which will make bodyParser fail.
+        if (parseInt(req.get('content-length'), 10) <= 0) {
+          return next();
+        }
+        bodyParser(req, res, next);
+      };
+
   rest.use(express.favicon());
   rest.use(express.static(path.join(__dirname, '/app/static')));
   rest.use(express.logger('dev'));
-  rest.use(express.bodyParser());
+  rest.use(parserWrap);
   rest.use(express.methodOverride());
   rest.use(rest.router);
 });

@@ -11,14 +11,14 @@ There are two big benefits to testing with Appium:
 
 Quick Start
 -----------
-Run it:
+Start it:
 <pre>
-$ node server.js --app blah -U blah
+> node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app -U 1234
 </pre>
 
-CURL it:
+Run it:
 <pre>
-$ curl 127.0.0.1:4723/wd/hub/status
+> mocha -v --timeout 60000 test/functional/simple.js
 </pre>
 
 Before commiting code please run grunt to run test and check your changes against code quality standards:

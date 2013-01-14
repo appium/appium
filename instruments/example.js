@@ -30,7 +30,7 @@ build(appRoot, function(err) {
     app
     , simApp
     , null
-    , path.resolve(__dirname, 'bootstrap_example.js')
+    , path.resolve(__dirname, '../app/uiauto/bootstrap.js')
     , path.resolve(__dirname, '../app/uiauto/Automation.tracetemplate')
   );
 

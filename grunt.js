@@ -45,7 +45,7 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('buildApp', "Build the test app", function() {
     var done = this.async();
-    var appRoot = path.resolve(__dirname, '../sample-code/apps/TestApp/');
+    var appRoot = path.resolve(__dirname, 'sample-code/apps/TestApp/');
     build(appRoot, function(err) {
       if (err) {
         console.log(err);

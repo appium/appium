@@ -16,9 +16,19 @@ Start it:
 > node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app -U 1234
 </pre>
 
-Run it:
+Run functional tests:
 <pre>
-> mocha -v --timeout 60000 test/functional/simple.js
+> grunt functional
+</pre>
+
+Run unit tests:
+<pre>
+> grunt unit
+</pre>
+
+Run all tests:
+<pre>
+> grunt test
 </pre>
 
 Before commiting code please run grunt to run test and check your changes against code quality standards:

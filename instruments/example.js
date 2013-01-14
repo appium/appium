@@ -35,6 +35,7 @@ build(appRoot, function(err) {
     );
 
     inst.launch(function() {
+      inst.setDebug(true);
       inst.sendCommand("mainWindow.textFields()[0].setValue('3');", function() {
         inst.sendCommand("mainWindow.textFields()[1].setValue('5');", function() {
           inst.sendCommand("mainWindow.buttons()[0].tap();", function() {

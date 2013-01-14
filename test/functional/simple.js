@@ -29,7 +29,7 @@ describe('load calc app', function() {
     });
   };
 
-  var driver = wd.remote('127.0.0.1', 8080);
+  var driver = wd.remote('127.0.0.1', 4723);
   return it('should fill two fields with numbers', function(done) {
     driver.init(caps, function(err, sessionId) {
       populate(driver, function(elems) {

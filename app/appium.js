@@ -84,7 +84,7 @@ Appium.prototype.push = function(elem) {
   var me = this;
 
   var next = function() {
-    if (me.queue.length <= 0 || me.progess > 0) {
+    if (me.queue.length <= 0 || me.progress > 0) {
       return;
     }
 

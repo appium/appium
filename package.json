@@ -36,6 +36,8 @@
   },
   "devDependencies": {
     "mocha": "~1.8.1",
-    "grunt": "~0.3.17"
+    "grunt": "~0.3.17",
+    "wd": "0.0.27",
+    "assert": "~0.4.9"
   }
 }

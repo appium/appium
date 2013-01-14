@@ -4,8 +4,8 @@
 #import "lib/appiumutils.js"
 
 // automation globals
-var target      = UIATarget.localTarget();
-var mainWindow  = target.frontMostApp().mainWindow();
+var target = UIATarget.localTarget();
+var wd_frame = target.frontMostApp().mainWindow();
 var endpoint = 'http://localhost:4723/instruments/';
 
 // safe default

@@ -9,6 +9,7 @@ var findElement = function(req, res, ctx, many, cb) {
   var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", value, "')"].join("");
 
   req.appium.proxy(command, function(json) {
+    json = many ? json : json[0];
     cb({
       sessionId: req.appium.sessionId
       , status: 0
@@ -49,7 +50,7 @@ exports.getSession = function(req, res) {
     sessionId: sessionId
     , status: 0
     , value: {
-      version: '5.0'
+      version: '6.0'
       , webStorageEnabled: false
       , locationContextEnabled: false
       , browserName: 'iOS'
@@ -123,7 +124,6 @@ exports.setValue = function(req, res) {
 exports.doClick = function(req, res) {
   var sessionid = req.params.sessionid
     , elementId = req.params.elementId
-    , body = req.body.value
     , status = 0;
 
   var command = ["elements['", elementId, "'].tap()"].join('');
@@ -140,7 +140,6 @@ exports.doClick = function(req, res) {
 exports.getText = function(req, res) {
   var sessionid = req.params.sessionid
     , elementId = req.params.elementId
-    , body = req.body.value
     , status = 0;
 
   var command = ["elements['", elementId, "'].getText()"].join('');

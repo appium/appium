@@ -1,8 +1,9 @@
 // Wrapper around Apple's Instruments app
 //
 
-var spawn = require('child_process').spawn,
-    express = require('express');
+var spawn = require('child_process').spawn
+  , colors = require('colors')
+  , express = require('express');
 
 var Instruments = function(server, app, udid, bootstrap, template) {
   this.server = server;
@@ -19,13 +20,18 @@ var Instruments = function(server, app, udid, bootstrap, template) {
   this.proc = null;
   this.extendServer();
   this.shutdownTimeout = 5;
-  this.debug = false;
+  this.debugMode = false;
 };
 
 Instruments.prototype.setDebug = function(debug) {
   if (typeof debug === "undefined") {
-    this.debug = debug;
+    debug = true;
   }
+  this.debugMode = debug;
+};
+
+Instruments.prototype.debug = function(msg) {
+  console.log(("[INSTSERVER] " + msg).grey);
 };
 
 Instruments.prototype.launch = function(cb, exitCb) {
@@ -47,7 +53,7 @@ Instruments.prototype.launch = function(cb, exitCb) {
   }
 
   this.proc.on('exit', function(code) {
-    console.log("Instruments exited with code " + code);
+    self.debug("Instruments exited with code " + code);
     bye(code);
   });
 };
@@ -85,7 +91,7 @@ Instruments.prototype.extendServer = function(err, cb) {
   var self = this;
 
   this.server.get('/instruments/next_command', function(req, res) {
-    console.log("instruments asking for command, it is " + self.curCommand);
+    self.debug("Being asked for the next command, it is " + self.curCommand);
     if (self.curCommand) {
       res.send(self.curCommandId+"|"+self.curCommand);
     } else {

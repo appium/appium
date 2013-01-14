@@ -44,6 +44,7 @@ Appium.prototype.start = function(cb) {
     var me = this;
     me.instruments.launch(function() {
       console.log('Instruments launched. Starting poll loop for new commands.');
+      me.instruments.setDebug(true);
       cb(null, me);
     }, function(code) {
       if (!code || code > 0) {

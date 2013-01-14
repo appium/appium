@@ -14,7 +14,7 @@ module.exports = function() {
 
   parser.addArgument([ '-V', '--verbose' ], { required: false, help: 'verbose mode' });
   parser.addArgument([ '-U', '--UDID' ]
-    , { required: true, help: 'unique device identifier of the SUT'
+    , { required: false, help: 'unique device identifier of the SUT'
   });
 
   parser.addArgument([ '-a', '--address' ]

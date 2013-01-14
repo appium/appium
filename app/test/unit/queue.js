@@ -5,7 +5,7 @@
 var assert = require('assert')
   , appium = require('../../appium');
 
-describe('appium queues commands', function() {
+describe('Appium', function() {
   // we'd like to test appium.proxy; mock instruments
   var inst = appium(null, null, null);
       inst.instruments = {};
@@ -15,21 +15,23 @@ describe('appium queues commands', function() {
         setTimeout(function() { cb([cmd, to]); }, to);
       };
 
-  return it('should execute one at a time keeping the seq straight', function(done) {
-    var intercept = []
-      , iterations = 100
-      , check = function(result) {
-        intercept.push(result);
-        if (intercept.length >= iterations) {
-          for (var x=0; x < iterations; x++) {
-            assert.equal(intercept[x][0], x);
+  describe('#proxy()', function() {
+    return it('should execute one command at a time keeping the seq sync', function(done) {
+      var intercept = []
+        , iterations = 100
+        , check = function(result) {
+          intercept.push(result);
+          if (intercept.length >= iterations) {
+            for (var x=0; x < iterations; x++) {
+              assert.equal(intercept[x][0], x);
+            }
+            done();
           }
-          done();
-        }
-      };
+        };
 
-    for (var i=0; i < iterations; i++) {
-      inst.proxy(i, check);
-    }
+      for (var i=0; i < iterations; i++) {
+        inst.proxy(i, check);
+      }
+    });
   });
 });

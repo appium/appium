@@ -16,11 +16,9 @@ describe('appium queues commands', function() {
       };
 
   return it('should execute one at a time keeping the seq straight', function(done) {
-    var intercept = [];
-    var iterations = 100;
-
-    for (var i=0; i < iterations; i++) {
-      inst.proxy(i, function(result) {
+    var intercept = []
+      , iterations = 100
+      , check = function(result) {
         intercept.push(result);
         if (intercept.length >= iterations) {
           for (var x=0; x < iterations; x++) {
@@ -28,7 +26,10 @@ describe('appium queues commands', function() {
           }
           done();
         }
-      });
+      };
+
+    for (var i=0; i < iterations; i++) {
+      inst.proxy(i, check);
     }
   });
 });

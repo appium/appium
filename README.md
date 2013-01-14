@@ -11,9 +11,13 @@ There are two big benefits to testing with Appium:
 
 Quick Start
 -----------
+Build the app:
+
+    > cd sample-code/apps/TestApp; xcodebuild -sdk iphonesimulator6.0
+
 Start it:
 <pre>
-> node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app -U 1234
+> node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app
 </pre>
 
 Run functional tests (make sure Appium server is running as per command line above):
@@ -36,7 +40,7 @@ Before commiting code please run grunt to run test and check your changes agains
 $ grunt
 Running "lint:all" (lint) task
 Lint free.
- 
+
 Done, without errors.
 </pre>
 
@@ -47,7 +51,7 @@ Using with a <a href="http://bitbeam.org">Bitbeambot</a>
 Contributing
 ------------
 
-Fork the project, make a change, and send a pull request! 
+Fork the project, make a change, and send a pull request!
 
 Mailing List
 -----------

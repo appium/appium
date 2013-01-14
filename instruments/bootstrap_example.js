@@ -4,10 +4,9 @@
 
 // automation globals
 var target      = UIATarget.localTarget();
-var application = target.frontMostApp();
-var host = target.host();
-var mainWindow  = application.mainWindow();
+var mainWindow  = target.frontMostApp().mainWindow();
 var endpoint = 'http://localhost:4723/instruments/';
+
 // safe default
 target.setTimeout(1);
 
@@ -18,7 +17,6 @@ var getNextCommand = function() {
   var res = doCurl('GET', endpoint + 'next_command');
   if (res.status === 200) {
     var val = res.value;
-    console.log("Result of get command is " + val);
     sepIndex = val.indexOf('|');
     commandId = val.substr(0, sepIndex);
     command = val.substr(sepIndex + 1);
@@ -34,7 +32,9 @@ var sendCommandResult = function(commandId, result) {
   var res = doCurl('POST', endpoint + url, {result: result});
   res = JSON.parse(res.value);
   if (res.error) {
-    console.log("Error: " + res.error);
+    console.log("Error sending result: " + res.error);
+  } else {
+    console.log("Sent result for command " + commandId);
   }
 };
 
@@ -46,8 +46,7 @@ while(true) {
     if (typeof result === "undefined") {
       result = false;
     }
-    console.log(cmd.commandId+": "+result);
+    console.log("Result of command " + cmd.commandId + ": " + result);
     sendCommandResult(cmd.commandId, result);
   }
-  delay(0.25);
 }

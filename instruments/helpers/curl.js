@@ -1,3 +1,5 @@
+var system = UIATarget.localTarget().host();
+
 var doCurl = function(method, url, data) {
   args = ["-i", "-X", method];
   if (data) {
@@ -7,7 +9,7 @@ var doCurl = function(method, url, data) {
   args.push(url);
   //console.log(url)
   //console.log(args);
-  var res = host.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
+  var res = system.performTaskWithPathArgumentsTimeout("/usr/bin/curl", args, 10);
   var response = res.stdout;
   //console.log(res.stdout);
   var splits = response.split("\r\n\r\n");

@@ -1,3 +1,6 @@
+// This is basically a port of webdriver-test.py
+// https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
+
 var wd = require('wd')
   , assert = require("assert")
   , caps = {

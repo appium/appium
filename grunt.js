@@ -11,7 +11,19 @@ module.exports = function(grunt) {
         }
       }
     }
+    , mochaTest: {
+      functional: ['test/functional/*.js']
+      , unit: ['app/test/unit/*.js']
+    }
+    , mochaTestConfig: {
+      options: {
+        timeout: 60000
+      }
+    }
   });
 
-  grunt.registerTask('default', 'lint');
+  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.registerTask('test', 'mochaTest:unit');
+  grunt.registerTask('functional', 'mochaTest:functional');
+  grunt.registerTask('default', 'lint test');
 };

@@ -23,7 +23,8 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.registerTask('test', 'mochaTest:unit');
+  grunt.registerTask('test', 'mochaTest:*');
   grunt.registerTask('functional', 'mochaTest:functional');
+  grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('default', 'lint test');
 };

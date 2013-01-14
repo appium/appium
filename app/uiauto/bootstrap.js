@@ -1,3 +1,4 @@
+#import "lib/mechanic.js"
 #import "lib/console.js"
 #import "lib/curl.js"
 #import "lib/delay.js"

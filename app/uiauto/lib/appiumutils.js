@@ -19,6 +19,8 @@
  *	under the License.
  */
 
+#import "mechanic.js"
+
 // Obtaining Device Property Information like Name, OS ver, Model etc
 
  function getDeviceDetail() {
@@ -33,7 +35,7 @@
 
 // Misc utils
 
-/* Deactivating the app for specified duration in Seconds. 
+/* Deactivating the app for specified duration in Seconds.
 Useful to test multi-taskig (moving app to background) */
 function deactivateApp(timeInSeconds){
  UIATarget.localTarget().deactivateAppForDuration(timeInSeconds);
@@ -382,7 +384,7 @@ touchFlickFromSpeed = function(xSpeed, ySpeed) {
     var options = {
         startOffset : {
             x : 0.5 - .5 * x,
-            y : 0.5 - .5 * y 
+            y : 0.5 - .5 * y
         },
         endOffset : {
             x : 0.5 + .5 * x,

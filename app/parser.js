@@ -27,5 +27,9 @@ module.exports = function() {
     , { defaultValue: 4723, required: false, help: 'port to listen on'
   });
 
+  parser.addArgument([ '-r', '--remove' ]
+    , { defaultValue: true, required: false, help: 'remove Instruments trace directories'
+  });
+
   return parser;
 };

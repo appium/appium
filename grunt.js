@@ -39,6 +39,7 @@ module.exports = function(grunt) {
       , true
       , 4723
       , '127.0.0.1'
+      , true
       , done
     );
   });

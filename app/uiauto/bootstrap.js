@@ -5,7 +5,8 @@
 
 // automation globals
 var target = UIATarget.localTarget();
-var wd_frame = target.frontMostApp().mainWindow();
+var mainWindow = target.frontMostApp().mainWindow();
+var wd_frame = mainWindow;
 var endpoint = 'http://localhost:4723/instruments/';
 
 // safe default

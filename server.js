@@ -9,7 +9,7 @@ var http = require('http')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 
-var main = function(app, udid, verbose, port, address, doneCb) {
+var main = function(app, udid, verbose, port, address, remove, doneCb) {
   if (typeof doneCb === "undefined") {
     doneCb = function() {};
   }
@@ -31,7 +31,7 @@ var main = function(app, udid, verbose, port, address, doneCb) {
     rest.use(rest.router);
   });
   // Instantiate the appium instance
-  var appiumServer = appium(app, udid, verbose);
+  var appiumServer = appium(app, udid, verbose, remove);
   // Hook up REST http interface
   appiumServer.attachTo(rest);
   // Start the web server that receives all the commands
@@ -45,7 +45,7 @@ var main = function(app, udid, verbose, port, address, doneCb) {
 if (require.main === module) {
   // Parse the command line arguments
   var args = parser().parseArgs();
-  main(args.app, args.UDID, args.verbose, args.port, args.address);
+  main(args.app, args.UDID, args.verbose, args.port, args.address, args.remove);
 }
 
 module.exports.run = main;

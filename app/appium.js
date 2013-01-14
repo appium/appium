@@ -2,9 +2,10 @@
 // https://github.com/hugs/appium/blob/master/appium/appium.py
 var routing = require('./routing')
   , path = require('path')
+  , rimraf = require('rimraf')
   , instruments = require('../instruments/instruments');
 
-var Appium = function(app, udid, verbose) {
+var Appium = function(app, udid, verbose, removeTraceDir) {
   this.app = app;
   this.udid = udid;
   this.verbose = verbose;
@@ -13,6 +14,7 @@ var Appium = function(app, udid, verbose) {
   this.queue = [];
   this.progress = 0;
   this.sessionId = null;
+  this.removeTraceDir = removeTraceDir;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -62,15 +64,16 @@ Appium.prototype.stop = function(cb) {
   }
   var me = this;
 
-  this.instruments.shutdown(function() {
-    console.log('Shutting down appium session ' + me.sessionId);
+  console.log('Shutting down appium session ' + me.sessionId);
+  this.instruments.shutdown(function(traceDir) {
     me.queue = [];
     me.progress = 0;
     me.sessionId = null;
-
-    if (cb) {
-      cb();
-    }
+    rimraf(traceDir, function() {
+      if (cb) {
+        cb();
+      }
+    });
   });
 };
 

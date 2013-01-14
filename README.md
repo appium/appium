@@ -5,9 +5,8 @@ Appium is a test automation tool for use with native and hybrid iOS applications
 
 There are two big benefits to testing with Appium:
 
-1: Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile your app or modify in any way to be able to test automate it.
-
-2: With Appium, you are able to write your test in your choice of programming language, using the Selenium WebDriver API and language-specific client libraries. If you only used UIAutomation, you would be required to write tests in JavaScript, and only run the tests through the Instruments application. With Appium, you can test your native iOS app with any language, and with your preferred dev tools.
+1.  Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile your app or modify in any way to be able to test automate it.
+2.  With Appium, you are able to write your test in your choice of programming language, using the Selenium WebDriver API and language-specific client libraries. If you only used UIAutomation, you would be required to write tests in JavaScript, and only run the tests through the Instruments application. With Appium, you can test your native iOS app with any language, and with your preferred dev tools.
 
 Quick Start
 -----------
@@ -16,44 +15,36 @@ Build the app:
     > cd sample-code/apps/TestApp; xcodebuild -sdk iphonesimulator6.0
 
 Start it:
-<pre>
-> node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app
-</pre>
+
+    > node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app
 
 Run functional tests (make sure Appium server is running as per command line above):
-<pre>
-> grunt functional
-</pre>
+
+    > grunt functional
 
 Run unit tests:
-<pre>
-> grunt unit
-</pre>
+
+    > grunt unit
 
 Run all tests:
-<pre>
-> grunt test
-</pre>
+
+    > grunt test
 
 Before commiting code please run grunt to run test and check your changes against code quality standards:
-<pre>
-$ grunt
-Running "lint:all" (lint) task
-Lint free.
 
-Done, without errors.
-</pre>
+    $ grunt
+    Running "lint:all" (lint) task
+    Lint free.
 
-Using with a <a href="http://bitbeam.org">Bitbeambot</a>
+    Done, without errors.
+
+Using with a [Bitbeambot](http://bitbeam.org)
 -----------
-
 
 Contributing
 ------------
-
 Fork the project, make a change, and send a pull request!
 
 Mailing List
 -----------
-
-<a href="https://groups.google.com/d/forum/appium-discuss">Discussion Group</a>
+[Discussion Group](https://groups.google.com/d/forum/appium-discuss)

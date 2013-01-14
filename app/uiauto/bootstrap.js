@@ -1,7 +1,7 @@
-#import "helpers/console.js"
-#import "helpers/curl.js"
-#import "helpers/delay.js"
-#import "helpers/appiumutils.js"
+#import "lib/console.js"
+#import "lib/curl.js"
+#import "lib/delay.js"
+#import "lib/appiumutils.js"
 
 // automation globals
 var target      = UIATarget.localTarget();

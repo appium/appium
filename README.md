@@ -16,7 +16,7 @@ Start it:
 > node server.js --app ./sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app -U 1234
 </pre>
 
-Run functional tests:
+Run functional tests (make sure Appium server is running as per command line above):
 <pre>
 > grunt functional
 </pre>

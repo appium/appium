@@ -70,7 +70,7 @@ describe('load calc app', function() {
     });
   });
 
-  return it('should confirm that button is displayed', function(done){
+  it('should confirm that button is displayed', function(done){
     driver.init(caps, function(err, sessionId){
       driver.elementsByTagName('textField', function(err, elems) {
         elems[0].displayed(function(err, value){
@@ -97,5 +97,18 @@ describe('load calc app', function() {
   //     });
   //   });
   // });
+
+  return it('should return app source', function(done){
+    driver.init(caps, function(err, sessionId){
+      driver.source(function(err, value) {
+        assert.notEqual(value.indexOf("UIATextField"), -1);
+        assert.notEqual(value.indexOf("UIAButton"), -1);
+        assert.notEqual(value.indexOf("UIAStaticText"), -1);
+        driver.quit(function() {
+          done();
+        });
+      });
+    });
+  });
 
 });

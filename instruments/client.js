@@ -2,6 +2,7 @@ var net = require('net')
   , ap = require('argparse').ArgumentParser;
 
 var main = function() {
+  "use strict";
   var parser = new ap({
     version: '0.0.1',
   });

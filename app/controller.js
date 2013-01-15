@@ -1,5 +1,6 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
+"use strict";
 
 exports.getStatus = function(req, res) {
   // Build a JSON object to return to the client
@@ -58,28 +59,6 @@ exports.deleteSession = function(req, res) {
 
     res.send(appResponse);
   });
-};
-
-exports.executeScript = function(req, res) {
-  // 'not implemented';
-  var sessionId = req.params.sessionId;
-  var status = 0;
-  var iosResponse ='';
-  var requestData = req.body;
-  try {
-    iosResponse = device.client.proxy(requestData.script, true);
-  }
-  catch (e) {
-    var errObj = {sessionId: sessionId, 'status': 13, 'value': JSON.stringify(e)};
-    req.send(400, errObj);
-  }
-
-  var appResponse = {
-    sessionId: session_id
-    , status: status
-    , value: iosResponse
-  };
-  req.send(appResponse);
 };
 
 exports.findElements = function(req, res) {

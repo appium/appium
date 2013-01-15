@@ -116,3 +116,18 @@ exports.getText = function(req, res) {
     });
   });
 };
+
+exports.keys = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , keys = req.body.value.join('')
+    , status = 0;
+
+  req.device.keys(elementId, keys, function(err, json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: ''
+    });
+  });
+};

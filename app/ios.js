@@ -177,6 +177,23 @@ IOS.prototype.getPageSource = function(cb) {
   });
 };
 
+IOS.prototype.getAlertText = function(cb) {
+  this.proxy("target.frontMostApp().alert().name()", function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.postAcceptAlert = function(cb) {
+  this.proxy("target.frontMostApp().alert().defaultButton().tap()", function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.postDismissAlert = function(cb) {
+  this.proxy("target.frontMostApp().alert().cancelButton().tap()", function(json) {
+    cb(null, json);
+  });
+};
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

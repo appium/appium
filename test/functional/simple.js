@@ -64,9 +64,23 @@ describe('load calc app', function() {
     });
   });
   // using sendKeysToActiveElement
-  return it('should fill two fields with numbers - sendKeys', function(done) {
+  it('should fill two fields with numbers - sendKeys', function(done) {
     driver.init(caps, function(err, sessionId) {
       populate("driver", driver, _.bind(computeAndCheck, this, done));
     });
   });
+
+  return it('should confirm that button is displayed', function(done){
+    driver.init(caps, function(err, sessionId){
+      driver.elementsByTagName('textField', function(err, elems) {
+        elems[0].displayed(function(err, value){
+          assert.equal(value, true);
+          driver.quit(function() {
+            done();
+          });
+        });
+      });
+    });
+  });
+
 });

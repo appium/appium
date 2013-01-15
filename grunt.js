@@ -33,13 +33,13 @@ module.exports = function(grunt) {
   grunt.registerTask('default', 'lint test');
   grunt.registerTask('appium', "Start the Appium server", function() {
     var done = this.async();
-    server.run(
-      './sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app'
-      , null
-      , true
-      , 4723
-      , '127.0.0.1'
-      , true
+    server.run({
+      app: './sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app'
+      , udid: null
+      , verbose: true
+      , port: 4723
+      , address: '127.0.0.1'
+      , remove: true }
       , done
     );
   });

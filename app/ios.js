@@ -11,6 +11,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.queue = [];
   this.progress = 0;
   this.removeTraceDir = removeTraceDir;
+  this.onStop = function(code) {};
 };
 
 IOS.prototype.start = function(cb) {
@@ -30,24 +31,20 @@ IOS.prototype.start = function(cb) {
     me.instruments.setDebug(true);
     cb(null, me);
   }, function(code) {
-    if (!code || code > 0) {
-      me.stop();
-    }
+    this.onStop(code);
   });
 };
 
 IOS.prototype.stop = function(cb) {
   var me = this;
+  if (cb) {
+    this.onStop = cb;
+  }
 
   this.instruments.shutdown(function(traceDir) {
     me.queue = [];
     me.progress = 0;
-    // did this ever work?
-    //rimraf(traceDir, function() {
-      if (cb) {
-        cb();
-      }
-    ///});
+    rimraf(traceDir);
   });
 };
 

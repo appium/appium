@@ -3,24 +3,101 @@
 
 var spawn = require('child_process').spawn
   , colors = require('colors')
-  , express = require('express');
+  , fs = require('fs')
+  , _ = require('underscore')
+  , net = require('net');
 
-var Instruments = function(server, app, udid, bootstrap, template) {
-  this.server = server;
+var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.app = app;
   this.udid = udid;
   this.bootstrap = bootstrap;
   this.template = template;
+  this.commandQueue = [];
   this.curCommand = null;
-  this.curCommandId = -1;
-  this.commandCallbacks = [];
   this.resultHandler = this.defaultResultHandler;
   this.readyHandler = this.defaultReadyHandler;
-  this.shutdownHandler = this.defaultShutdownHandler;
+  this.exitHandler = this.defaultExitHandler;
+  this.hasExited = false;
+  this.shutdownHandler = _.bind(function() {
+    this.hasShutdown = true;
+    this.doExit();
+  }, this);
+  this.traceDir = null;
+  this.hasConnected = false;
+  this.hasShutdown = false;
   this.proc = null;
-  this.extendServer();
-  this.shutdownTimeout = 5;
   this.debugMode = false;
+  this.sock = sock;
+  this.onReceiveCommand = null;
+  this.eventRouter = {
+    'cmd': this.commandHandler
+  };
+  if (!sock) {
+    this.sock = '/tmp/instruments_sock';
+  }
+  try {
+    fs.unlinkSync(this.sock);
+  } catch (Exception) {}
+  if (typeof cb !== "undefined") {
+    this.readyHandler = cb;
+  }
+  if (typeof exitCb !== "undefined") {
+    this.exitHandler = exitCb;
+  }
+
+  var self = this;
+  this.server = net.createServer(function(c) {
+    if (!self.hasConnected) {
+      self.hasConnected = true;
+      self.debug("Instruments is ready to receive commands");
+      self.readyHandler(self);
+    }
+    c.setEncoding('utf8');
+    c.on('data', function(data) {
+      data = JSON.parse(data);
+      _.bind(self.eventRouter[data.event], self)(data, c);
+    });
+  });
+  this.server.listen(this.sock, function() {
+    self.debug("Instruments socket server started at " + self.sock);
+    self.launch();
+  });
+};
+
+Instruments.prototype.commandHandler = function(data, c) {
+  var hasResult = typeof data.result !== "undefined";
+  if (hasResult && !this.curCommand) {
+    console.log("Got a result when we weren't expecting one! Ignoring it");
+  } else if (!hasResult && this.curCommand) {
+    console.log("Instruments didn't send a result even though we were expecting one");
+    hasResult = true;
+    data.result = false;
+  }
+
+  if (hasResult) {
+    if (data.result) {
+      this.debug("Got result from instruments: " + data.result);
+    } else {
+      this.debug("Got null result from instruments");
+    }
+    this.curCommand.cb(data.result);
+    this.curCommand = null;
+  }
+
+  this.waitForCommand(_.bind(function() {
+    this.curCommand = this.commandQueue.shift();
+    this.onReceiveCommand = null;
+    this.debug("Sending command to instruments: " + this.curCommand.cmd);
+    c.write(JSON.stringify({nextCommand: this.curCommand.cmd}));
+  }, this));
+};
+
+Instruments.prototype.waitForCommand = function(cb) {
+  if (this.commandQueue.length) {
+    cb();
+  } else {
+    this.onReceiveCommand = cb;
+  }
 };
 
 Instruments.prototype.setDebug = function(debug) {
@@ -34,10 +111,7 @@ Instruments.prototype.debug = function(msg) {
   console.log(("[INSTSERVER] " + msg).grey);
 };
 
-Instruments.prototype.launch = function(cb, exitCb) {
-  if (typeof cb !== "undefined") {
-    this.readyHandler = cb;
-  }
+Instruments.prototype.launch = function() {
   var self = this;
   this.proc = this.spawnInstruments();
   this.proc.stdout.on('data', function(data) {
@@ -47,23 +121,17 @@ Instruments.prototype.launch = function(cb, exitCb) {
     self.errorStreamHandler(data);
   });
 
-  var bye = function(code) {};
-  if (typeof exitCb === "function") {
-    bye = exitCb;
-  }
-
   this.proc.on('exit', function(code) {
     self.debug("Instruments exited with code " + code);
-    bye(code);
+    self.exitCode = code;
+    self.hasExited = true;
+    self.doExit();
   });
 };
 
-Instruments.prototype.shutdown = function(cb) {
+Instruments.prototype.shutdown = function() {
   this.proc.kill();
-  if (typeof cb === "function") {
-    this.shutdownHandler = cb;
-  }
-  this.shutdownTimeoutObj = setTimeout(this.shutdownHandler, 1000 * this.shutdownTimeout);
+  this.shutdownTimeoutObj = setTimeout(this.shutdownHandler, 3000 * this.shutdownTimeout);
 };
 
 Instruments.prototype.spawnInstruments = function() {
@@ -78,56 +146,10 @@ Instruments.prototype.spawnInstruments = function() {
 };
 
 Instruments.prototype.sendCommand = function(cmd, cb) {
-  if (this.curCommand) {
-    cb("Command in progress");
-  } else {
-    this.curCommandId++;
-    this.curCommand = cmd;
-    this.commandCallbacks[this.curCommandId] = cb;
+  this.commandQueue.push({cmd: cmd, cb: cb});
+  if (this.onReceiveCommand) {
+    this.onReceiveCommand();
   }
-};
-
-Instruments.prototype.extendServer = function(err, cb) {
-  var self = this;
-
-  this.server.get('/instruments/next_command', function(req, res) {
-    self.debug("Being asked for the next command, it is " + self.curCommand);
-    if (self.curCommand) {
-      res.send(self.curCommandId+"|"+self.curCommand);
-    } else {
-      res.send(404, "Not Found");
-    }
-  });
-
-  this.server.post('/instruments/send_result/:commandId', function(req, res) {
-    var commandId = parseInt(req.params.commandId, 10);
-    if (!req.body) {
-      res.send(500, {error: "No result parameter found in POST body"});
-    } else {
-      var result = req.body.result;
-      if (typeof commandId != "undefined" && typeof result != "undefined") {
-        if (!self.curCommand) {
-          res.send(500, {error: "Not waiting for a command result"});
-        } else if (commandId != self.curCommandId) {
-          res.send(500, {error: 'Command ID ' + commandId + ' does not match ' + self.curCommandId});
-        } else {
-          if (typeof result === "object" && typeof result.result !== "undefined") {
-            result = result.result;
-          }
-          self.curCommand = null;
-          self.commandCallbacks[commandId](result);
-          res.send({success: true});
-        }
-      } else {
-        res.send(500, {error: 'Bad parameters sent'});
-      }
-    }
-  });
-
-  this.server.post('/instruments/ready', function(req, res) {
-    self.readyHandler();
-    res.send({success: true});
-  });
 };
 
 Instruments.prototype.setResultHandler = function(handler) {
@@ -138,11 +160,11 @@ Instruments.prototype.defaultResultHandler = function(output) {
   // if we have multiple log lines, indent non-first ones
   if (output !== "") {
     output = output.replace(/\n/m, "\n       ");
-    console.log("[INST] " + output);
+    console.log(("[INST] " + output).blue);
   }
 };
 
-Instruments.prototype.defaultReadyHandler = function() {
+Instruments.prototype.defaultReadyHandler = function(inst) {
   console.log("Instruments is ready and waiting!");
 };
 
@@ -166,21 +188,24 @@ Instruments.prototype.lookForShutdownInfo = function(output) {
   var re = /Instruments Trace Complete.+Output : ([^\)]+)\)/;
   var match = re.exec(output);
   if (match) {
-    if(typeof this.shutdownTimeoutObj !== "undefined") {
-      clearTimeout(this.shutdownTimeoutObj);
-    }
-    this.shutdownHandler(match[1]);
+    this.traceDir = match[1];
   }
 };
 
-Instruments.prototype.defaultShutdownHandler = function(traceDir) {
-  console.log("Trace dir is " + traceDir);
+Instruments.prototype.doExit = function() {
+  if (this.hasShutdown && this.hasExited) {
+    this.exitHandler(this.exitCode, this.traceDir);
+  }
 };
+
+Instruments.prototype.defaultExitHandler = function(code, traceDir) {
+  console.log("Instruments exited with code " + code + " and trace dir " + traceDir);
+}
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  console.log("[INST STDERR] " + output);
+  console.log(("[INST STDERR] " + output).yellow);
 };
 
-module.exports = function(server, app, udid, bootstrap, template) {
-  return new Instruments(server, app, udid, bootstrap, template);
+module.exports = function(server, app, udid, bootstrap, template, sock, cb, exitCb) {
+  return new Instruments(server, app, udid, bootstrap, template, sock, cb, exitCb);
 };

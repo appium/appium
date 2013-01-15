@@ -116,3 +116,98 @@ exports.getText = function(req, res) {
     });
   });
 };
+
+exports.keys = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , keys = req.body.value.join('')
+    , status = 0;
+
+  req.device.keys(elementId, keys, function(err, json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: ''
+    });
+  });
+};
+
+exports.elementDisplayed = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , status = 0;
+
+  req.device.elementDisplayed(elementId, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.elementEnabled = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , status = 0;
+
+  req.device.elementEnabled(elementId, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.getPageSource = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.getPageSource(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.getAlertText = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.getAlertText(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.postAcceptAlert = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.postAcceptAlert(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.postDismissAlert = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.postDismissAlert(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};

@@ -16,6 +16,10 @@ target.setTimeout(1);
 var cmd = getFirstCommand();
 var noErrors = true;
 
+UIATarget.onAlert = function(){
+  return true;
+};
+
 while(noErrors) {
   if (cmd) {
     console.log("Got new command from instruments: " + cmd);
@@ -32,4 +36,3 @@ while(noErrors) {
     noErrors = false;
   }
 }
-

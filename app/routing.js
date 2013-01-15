@@ -20,6 +20,13 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/value', controller.setValue);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/click', controller.doClick);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/text', controller.getText);
+  rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/displayed', controller.elementDisplayed);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
+  rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
+  rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
+  rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
+  rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg

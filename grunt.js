@@ -1,3 +1,4 @@
+"use strict";
 var server = require('./server.js')
   , build = require('./build.js')
   , path = require('path');
@@ -13,6 +14,8 @@ module.exports = function(grunt) {
           laxcomma: true
           , es5: true
           , trailing: true
+          , node: true
+          , strict: true
         }
       }
     }

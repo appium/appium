@@ -1,5 +1,6 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/appium.py
+"use strict";
 var routing = require('./routing')
   , ios = require('./ios');
 

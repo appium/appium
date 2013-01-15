@@ -1,5 +1,6 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
+"use strict";
 
 exports.getStatus = function(req, res) {
   // Build a JSON object to return to the client

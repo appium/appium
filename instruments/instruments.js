@@ -1,5 +1,5 @@
 // Wrapper around Apple's Instruments app
-//
+"use strict";
 
 var spawn = require('child_process').spawn
   , colors = require('colors')

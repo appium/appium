@@ -41,6 +41,7 @@
     "grunt": "~0.3.17",
     "wd": "0.0.27",
     "assert": "~0.4.9",
-    "grunt-mocha-test": "0.0.1"
+    "grunt-mocha-test": "0.0.1",
+    "request": "~2.12.0"
   }
 }

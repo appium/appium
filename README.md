@@ -16,9 +16,9 @@ Build the app:
 
     > grunt buildApp
 
-Start it:
+Start it (can be brought back to foreground with 'fg' command):
 
-    > grunt appium
+    > grunt appium &
 
 Run functional tests (make sure Appium server is running as per command line above):
 

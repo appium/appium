@@ -9,7 +9,13 @@ var sendResultAndGetNext = function(result) {
   if (typeof result !== "undefined") {
     args = args.concat(['-r', JSON.stringify(result)]);
   }
-  var res = system.performTaskWithPathArgumentsTimeout('/usr/local/bin/node', args, 20);
+  try {
+    var res = system.performTaskWithPathArgumentsTimeout('/usr/local/bin/node', args, 30);
+  } catch(e) {
+    console.log("Socket timed out waiting for a new command, why wasn't there one?");
+    return null;
+  }
+
   if (res.exitCode !== 0) {
     console.log("Error talking with instruments client, here's stderr:");
     console.log(res.stderr);

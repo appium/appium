@@ -1,8 +1,9 @@
 "use strict";
 var path = require('path')
   , rimraf = require('rimraf')
-  , instruments = require('../instruments/instruments')
-  , sock = '/tmp/instruments_sock';
+  , UUID = require('uuid-js')
+  , fs = require('fs')
+  , instruments = require('../instruments/instruments');
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.rest = rest;
@@ -147,8 +148,15 @@ IOS.prototype.getText = function(elementId, cb) {
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
-  console.log("send keys to active elem", keys);
   var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.elementDisplayed = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].isDisplayed()"].join('');
 
   this.proxy(command, function(json) {
     cb(null, json);

@@ -1,7 +1,7 @@
+/*global describe:true, it:true */
 "use strict";
 
-var assert = require('assert')
-  , rest = require('express')()
+var rest = require('express')()
   , appium = require('../../appium');
 
 describe('Appium', function() {

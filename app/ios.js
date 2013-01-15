@@ -17,6 +17,16 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.progress = 0;
   this.removeTraceDir = removeTraceDir;
   this.onStop = function(code, traceDir) {};
+  this.capabilities = {
+      version: '6.0'
+      , webStorageEnabled: false
+      , locationContextEnabled: false
+      , browserName: 'iOS'
+      , platform: 'MAC'
+      , javascriptEnabled: true
+      , databaseEnabled: false
+      , takesScreenshot: false
+  };
 };
 
 IOS.prototype.start = function(cb) {

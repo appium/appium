@@ -83,4 +83,19 @@ describe('load calc app', function() {
     });
   });
 
+  // TODO: add a disabled button to the app so we can test it!
+  // TODO: wd.js has no enabled method
+  // it('should confirm that button is enabled', function(done){
+  //   driver.init(caps, function(err, sessionId){
+  //     driver.elementsByTagName('textField', function(err, elems) {
+  //       elems[0].enabled(function(err, value){
+  //         assert.equal(value, true);
+  //         driver.quit(function() {
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   });
+  // });
+
 });

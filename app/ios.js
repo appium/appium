@@ -153,6 +153,14 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
   });
 };
 
+IOS.prototype.elementEnabled = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].isEnabled()"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

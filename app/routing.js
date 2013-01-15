@@ -22,4 +22,5 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/text', controller.getText);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/displayed', controller.elementDisplayed);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
 };

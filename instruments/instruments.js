@@ -200,7 +200,7 @@ Instruments.prototype.doExit = function() {
 
 Instruments.prototype.defaultExitHandler = function(code, traceDir) {
   console.log("Instruments exited with code " + code + " and trace dir " + traceDir);
-}
+};
 
 Instruments.prototype.errorStreamHandler = function(output) {
   console.log(("[INST STDERR] " + output).yellow);

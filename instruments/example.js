@@ -31,7 +31,7 @@ build(appRoot, function(err) {
   };
 
   var onExit = function(code, traceDir) {
-    console.log("Instruments exited " + (code == 0 ? "cleanly" : "with code " + code));
+    console.log("Instruments exited " + (code === 0 ? "cleanly" : "with code " + code));
     if (traceDir) {
       rimraf(traceDir, function() {
         console.log("Deleted tracedir");

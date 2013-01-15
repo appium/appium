@@ -28,8 +28,7 @@ describe('load calc app', function() {
           elem.sendKeys(val, function() {
             next(num);
           });
-        }
-        else if (type == "driver") {
+        } else if (type == "driver") {
           elem.click(function() {
             driver.keys(val, function(){
               next(num);

@@ -16,41 +16,11 @@ target.setTimeout(1);
 var cmd = getFirstCommand();
 var noErrors = true;
 
-<<<<<<< HEAD
-while(noErrors) {
-=======
-var getNextCommand = function() {
-  var res = doCurl('GET', endpoint + 'next_command');
-  if (res.status === 200) {
-    var val = res.value;
-    sepIndex = val.indexOf('|');
-    commandId = val.substr(0, sepIndex);
-    command = val.substr(sepIndex + 1);
-    return {commandId: commandId, command: command};
-  } else {
-    console.log("There is no command to parse, or an error occurred");
-    return null;
-  }
-};
-
 UIATarget.onAlert = function(){
   return true;
 };
 
-var sendCommandResult = function(commandId, result) {
-  var url = 'send_result/'+commandId;
-  var res = doCurl('POST', endpoint + url, {result: result});
-  res = JSON.parse(res.value);
-  if (res.error) {
-    console.log("Error sending result: " + res.error);
-  } else {
-    console.log("Sent result for command " + commandId);
-  }
-};
-
-while(true) {
-  var cmd = getNextCommand();
->>>>>>> updating sample project to contain alert triggering button,
+while(noErrors) {
   if (cmd) {
     console.log("Got new command from instruments: " + cmd);
     var result = eval(cmd);
@@ -66,4 +36,3 @@ while(true) {
     noErrors = false;
   }
 }
-

@@ -33,19 +33,17 @@ exports.getSession = function(req, res) {
   var appResponse = {
     sessionId: sessionId
     , status: 0
-    , value: {
-      version: '6.0'
-      , webStorageEnabled: false
-      , locationContextEnabled: false
-      , browserName: 'iOS'
-      , platform: 'MAC'
-      , javascriptEnabled: true
-      , databaseEnabled: false
-      , takesScreenshot: false
-    }
+    , value: req.device.capabilities
   };
 
   res.send(appResponse);
+};
+
+exports.getSessions = function(req, res) {
+  res.send([{
+    id: req.appium.sessionId
+    , capabilities: req.device.capabilities
+  }]);
 };
 
 exports.deleteSession = function(req, res) {

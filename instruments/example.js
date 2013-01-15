@@ -46,7 +46,7 @@ build(appRoot, function(err) {
   var inst = instruments(
     simApp
     , null
-    , path.resolve(__dirname, 'bootstrap.js')
+    , path.resolve(__dirname, '../app/uiauto/bootstrap.js')
     , path.resolve(__dirname, '../app/uiauto/Automation.tracetemplate')
     , '/tmp/instruments_sock'
     , onLaunch

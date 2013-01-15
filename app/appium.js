@@ -11,16 +11,6 @@ var Appium = function(args) {
   this.active = null;
   this.device = null;
   this.sessionId = null;
-  this.capabilities = {
-      version: '6.0'
-      , webStorageEnabled: false
-      , locationContextEnabled: false
-      , browserName: 'iOS'
-      , platform: 'MAC'
-      , javascriptEnabled: true
-      , databaseEnabled: false
-      , takesScreenshot: false
-  };
 };
 
 Appium.prototype.attachTo = function(rest, cb) {

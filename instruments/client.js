@@ -1,14 +1,9 @@
+"use strict";
+
 var net = require('net')
   , ap = require('argparse').ArgumentParser;
 
-var main = function() {
-  "use strict";
-  var parser = new ap({
-    version: '0.0.1',
-  });
-  parser.addArgument(['-r', '--result'], {defaultValue: null, required: false});
-  parser.addArgument(['-s', '--socket'], {defaultValue: '/tmp/instruments_sock', required: false});
-  var args = parser.parseArgs();
+var connect = function(args) {
   var client = net.connect({path: args.socket}, function() {
     var data = {event: "cmd"};
     if (args.result) {
@@ -26,5 +21,16 @@ var main = function() {
 };
 
 if (module === require.main) {
-  main();
+  var parser = new ap({
+    version: '0.0.1',
+  });
+  parser.addArgument(['-r', '--result'], {defaultValue: null, required: false});
+  parser.addArgument(['-s', '--socket'], {defaultValue: '/tmp/instruments_sock', required: false});
+  var args = parser.parseArgs();
+  connect(args);
 }
+
+module.exports.connect = function(result, socket) {
+  var args = {result: result, socket: socket};
+  connect(args);
+};

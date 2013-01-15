@@ -159,3 +159,16 @@ exports.elementEnabled = function(req, res) {
     });
   });
 };
+
+exports.getPageSource = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.getPageSource(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};

@@ -134,6 +134,15 @@ IOS.prototype.getText = function(elementId, cb) {
   });
 };
 
+IOS.prototype.keys = function(elementId, keys, cb) {
+  console.log("send keys to active elem", keys);
+  var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

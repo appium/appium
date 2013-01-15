@@ -12,6 +12,7 @@ module.exports = function(grunt) {
         options: {
           laxcomma: true
           , es5: true
+          , trailing: true
         }
       }
     }

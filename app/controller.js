@@ -33,7 +33,7 @@ exports.getSession = function(req, res) {
   var appResponse = {
     sessionId: sessionId
     , status: 0
-    , value: req.appium.capabilities
+    , value: req.device.capabilities
   };
 
   res.send(appResponse);
@@ -42,7 +42,7 @@ exports.getSession = function(req, res) {
 exports.getSessions = function(req, res) {
   res.send([{
     id: req.appium.sessionId
-    , capabilities: req.appium.capabilities
+    , capabilities: req.device.capabilities
   }]);
 };
 

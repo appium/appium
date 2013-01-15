@@ -24,4 +24,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/displayed', controller.elementDisplayed);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
   rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
+  rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
+  rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
+  rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
 };

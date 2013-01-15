@@ -98,7 +98,7 @@ describe('load calc app', function() {
   //   });
   // });
 
-  return it('should return app source', function(done){
+  it('should return app source', function(done){
     driver.init(caps, function(err, sessionId){
       driver.source(function(err, value) {
         assert.notEqual(value.indexOf("UIATextField"), -1);
@@ -106,6 +106,28 @@ describe('load calc app', function() {
         assert.notEqual(value.indexOf("UIAStaticText"), -1);
         driver.quit(function() {
           done();
+        });
+      });
+    });
+  });
+
+  return it('should interact with alert', function(done){
+    driver.init(caps, function(err, sessionId){
+      driver.elementsByTagName('button', function(err, buttons) {
+        buttons[1].click(function() {
+          driver.acceptAlert(function(){
+            buttons[1].click(function() {
+              driver.alertText(function(err, value){
+                // maybe we could get alert body text too?
+                assert.equal(value, "Cool title");
+                driver.dismissAlert(function(){
+                  driver.quit(function() {
+                    done();
+                  });
+                });
+              });
+            });
+          });
         });
       });
     });

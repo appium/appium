@@ -29,6 +29,10 @@ var getNextCommand = function() {
   }
 };
 
+UIATarget.onAlert = function(){
+  return true;
+};
+
 var sendCommandResult = function(commandId, result) {
   var url = 'send_result/'+commandId;
   var res = doCurl('POST', endpoint + url, {result: result});

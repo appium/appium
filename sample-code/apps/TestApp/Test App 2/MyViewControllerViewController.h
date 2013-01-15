@@ -28,5 +28,6 @@
 @property (retain, nonatomic) IBOutlet UIButton *computeSumButton;
 
 - (IBAction)computeAction:(id)sender;
+- (IBAction)showAlert:(id)sender;
 
 @end

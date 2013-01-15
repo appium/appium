@@ -193,3 +193,42 @@ exports.getPageSource = function(req, res) {
     });
   });
 };
+
+exports.getAlertText = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.getAlertText(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.postAcceptAlert = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.postAcceptAlert(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
+exports.postDismissAlert = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.postDismissAlert(function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};

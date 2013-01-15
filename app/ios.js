@@ -1,8 +1,11 @@
 "use strict";
 var path = require('path')
   , rimraf = require('rimraf')
-  , instruments = require('../instruments/instruments')
-  , sock = '/tmp/instruments_sock';
+  , UUID = require('uuid-js')
+  , fs = require('fs')
+  , sock = '/tmp/instruments_sock'
+  , instruments = require('../instruments/instruments');
+
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.rest = rest;
@@ -146,6 +149,53 @@ IOS.prototype.getText = function(elementId, cb) {
   });
 };
 
+IOS.prototype.keys = function(elementId, keys, cb) {
+  var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.elementDisplayed = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].isDisplayed()"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.elementEnabled = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].isEnabled()"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.getPageSource = function(cb) {
+  this.proxy("wd_frame.getPageSource()", function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.getAlertText = function(cb) {
+  this.proxy("target.frontMostApp().alert().name()", function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.postAcceptAlert = function(cb) {
+  this.proxy("target.frontMostApp().alert().defaultButton().tap()", function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.postDismissAlert = function(cb) {
+  this.proxy("target.frontMostApp().alert().cancelButton().tap()", function(json) {
+    cb(null, json);
+  });
+};
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

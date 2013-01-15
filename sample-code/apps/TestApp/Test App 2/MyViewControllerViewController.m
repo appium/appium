@@ -80,4 +80,14 @@
 	[answerLabel setText:newLabelValue];
 	[answerLabel setAccessibilityLabel:newLabelValue];
 }
+
+- (IBAction)showAlert:(id)sender {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cool title"
+                                                    message:@"this alert is so cool."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"OK", nil];
+    [alert show];
+    [alert release];
+}
 @end

@@ -171,6 +171,12 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
   });
 };
 
+IOS.prototype.getPageSource = function(cb) {
+  this.proxy("wd_frame.getPageSource()", function(json) {
+    cb(null, json);
+  });
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

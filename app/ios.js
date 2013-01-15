@@ -5,6 +5,7 @@ var path = require('path')
   , fs = require('fs')
   , instruments = require('../instruments/instruments');
 
+
 var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.rest = rest;
   this.app = app;

@@ -20,6 +20,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/value', controller.setValue);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/click', controller.doClick);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/text', controller.getText);
+  rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg

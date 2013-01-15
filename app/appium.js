@@ -56,6 +56,7 @@ Appium.prototype.stop = function(cb) {
   console.log('Shutting down appium session...');
   this.device.stop(function() {
     me.sessionId = null;
+    me.devices = {};
     if (cb) {
       cb(me.sessionId);
     }

@@ -26,6 +26,7 @@ IOS.prototype.start = function(cb) {
   };
 
   var onExit = function(code, traceDir) {
+    this.instruments = null;
     if (me.removeTraceDir && traceDir) {
       rimraf(traceDir, function() {
         me.onStop(code);

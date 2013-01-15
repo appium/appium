@@ -3,11 +3,11 @@
 // http://visionmedia.github.com/mocha/
 
 var assert = require('assert')
-  , appium = require('../../appium');
+  , ios = require('../../ios');
 
 describe('Appium', function() {
-  // we'd like to test appium.proxy; mock instruments
-  var inst = appium(null, null, null);
+  // we'd like to test ios.proxy; mock instruments
+  var inst = ios(null, null, null);
       inst.instruments = {};
       inst.instruments.sendCommand = function(cmd, cb) {
         // let's pretend we've got some latency here.

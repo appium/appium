@@ -7,7 +7,7 @@
 var assert = require('assert')
   , ios = require('../../ios');
 
-describe('Appium', function() {
+describe('IOS', function() {
   // we'd like to test ios.proxy; mock instruments
   var inst = ios(null, null, null);
       inst.instruments = {};

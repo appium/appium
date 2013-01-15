@@ -12,13 +12,18 @@ There are two big benefits to testing with Appium:
 
 Quick Start
 -----------
-Build the app:
+Download UICatalog:
 
-    > grunt buildApp
+    > grunt downloadApp
+
+Build an app:
+
+    > grunt buildApp:UICatalog
+    > grunt buildApp:TestApp
 
 Start it (can be brought back to foreground with 'fg' command):
 
-    > grunt appium &
+    > grunt appium:TestApp &
 
 Run functional tests (make sure Appium server is running as per command line above):
 

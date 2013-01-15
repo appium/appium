@@ -4,3 +4,4 @@ node_modules
 xcuserdata
 sample-code/apps/TestApp/build
 *.sublime-*
+sample-code/apps/UICatalog*

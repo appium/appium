@@ -11,9 +11,9 @@ var main = function() {
   var client = net.connect({path: args.socket}, function() {
     var data = {event: "cmd"};
     if (args.result) {
-      data['result'] = JSON.parse(args.result);
+      data.result = JSON.parse(args.result);
     }
-    var data = JSON.stringify(data);
+    data = JSON.stringify(data);
     client.write(data);
   });
   client.on('data', function(data) {

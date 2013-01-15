@@ -1,5 +1,4 @@
 {
-  "indent": 2,
   "laxcomma": true,
   "strict": true,
   "undef": true,

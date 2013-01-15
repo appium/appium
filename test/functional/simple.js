@@ -3,6 +3,7 @@
 
 var wd = require('wd')
   , assert = require("assert")
+  , _ = require("underscore")
   , caps = {
       browserName: 'iOS'
       , platform: 'Mac'
@@ -11,8 +12,9 @@ var wd = require('wd')
 
 describe('load calc app', function() {
 
-  var values = [];
-  var populate = function(driver, cb) {
+  var values = null;
+  var populate = function(type, driver, cb) {
+    values = [];
     driver.elementsByTagName('textField', function(err, elems) {
       var next = function(num) {
         if (num >= elems.length) {
@@ -21,32 +23,50 @@ describe('load calc app', function() {
         var val = Math.round(Math.random()*10);
         values.push(val);
         var elem = elems[num++];
-        elem.sendKeys(val, function() {
-          next(num);
-        });
+
+        if(type === "elem"){
+          elem.sendKeys(val, function() {
+            next(num);
+          });
+        }else if(type == "driver"){
+          elem.click(function() {
+            driver.keys(val, function(){
+              next(num);
+            });
+          });
+        }
       };
       next(0);
     });
   };
 
-  var driver = wd.remote('127.0.0.1', 4723);
-  return it('should fill two fields with numbers', function(done) {
-    driver.init(caps, function(err, sessionId) {
-      populate(driver, function(elems) {
-        driver.elementsByTagName('button', function(err, buttons) {
-          buttons[0].click(function() {
-            driver.elementsByTagName('staticText', function(err, elems) {
-              elems[0].text(function(err, text) {
-                var sum = values[0] + values[1];
-                assert.equal(parseInt(text, 10), sum);
-                driver.quit(function() {
-                  done();
-                });
-              });
+  var computeAndCheck = function(done){
+    driver.elementsByTagName('button', function(err, buttons) {
+      buttons[0].click(function() {
+        driver.elementsByTagName('staticText', function(err, elems) {
+          elems[0].text(function(err, text) {
+            var sum = values[0] + values[1];
+            assert.equal(parseInt(text, 10), sum);
+            driver.quit(function() {
+              done();
             });
           });
         });
       });
+    });
+  };
+
+  var driver = wd.remote('127.0.0.1', 4723);
+  // using findElementsAndSetKeys
+  it('should fill two fields with numbers', function(done) {
+    driver.init(caps, function(err, sessionId) {
+      populate("elem", driver, _.bind(computeAndCheck, this, done));
+    });
+  });
+  // using sendKeysToActiveElement
+  return it('should fill two fields with numbers - sendKeys', function(done) {
+    driver.init(caps, function(err, sessionId) {
+      populate("driver", driver, _.bind(computeAndCheck, this, done));
     });
   });
 });

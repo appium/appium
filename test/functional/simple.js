@@ -5,6 +5,7 @@
 
 var wd = require('wd')
   , assert = require("assert")
+  , http = require("http")
   , caps = {
       browserName: 'iOS'
       , platform: 'Mac'
@@ -46,6 +47,20 @@ describe('load calc app', function() {
               });
             });
           });
+        });
+      });
+    });
+  });
+});
+
+describe('check getSessions', function() {
+  var driver = wd.remote('127.0.0.1', 4723);
+  driver.init(caps, function(err, sessionId) {
+    return it('should return appear in the sessions returned', function(done) {
+      http.get("http://localhost:4723/sessions", function(sessions) {
+        assert.equal(sessionId, sessions[0].id);
+        driver.quit(function() {
+          done();
         });
       });
     });

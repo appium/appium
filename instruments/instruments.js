@@ -18,26 +18,18 @@ var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.readyHandler = this.defaultReadyHandler;
   this.exitHandler = this.defaultExitHandler;
   this.hasExited = false;
-  this.shutdownHandler = _.bind(function() {
-    this.hasShutdown = true;
-    this.doExit();
-  }, this);
-  this.traceDir = null;
   this.hasConnected = false;
   this.hasShutdown = false;
+  this.traceDir = null;
   this.proc = null;
   this.debugMode = false;
-  this.sock = sock;
   this.onReceiveCommand = null;
   this.eventRouter = {
     'cmd': this.commandHandler
   };
-  if (!sock) {
-    this.sock = '/tmp/instruments_sock';
+  if (typeof sock === "undefined") {
+    sock = '/tmp/instruments_sock';
   }
-  try {
-    fs.unlinkSync(this.sock);
-  } catch (Exception) {}
   if (typeof cb !== "undefined") {
     this.readyHandler = cb;
   }
@@ -45,24 +37,81 @@ var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
     this.exitHandler = exitCb;
   }
 
-  var self = this;
-  this.server = net.createServer(function(c) {
-    if (!self.hasConnected) {
-      self.hasConnected = true;
-      self.debug("Instruments is ready to receive commands");
-      self.readyHandler(self);
+  this.startSocketServer(sock);
+
+};
+
+
+/* INITIALIZATION */
+
+Instruments.prototype.startSocketServer = function(sock) {
+  // remove socket if it currently exists
+  try {
+    fs.unlinkSync(sock);
+  } catch (Exception) {}
+
+  var server = net.createServer(_.bind(function(conn) {
+    if (!this.hasConnected) {
+      this.hasConnected = true;
+      this.debug("Instruments is ready to receive commands");
+      this.readyHandler(this);
     }
-    c.setEncoding('utf8');
-    c.on('data', function(data) {
+    conn.setEncoding('utf8'); // get strings from sockets rather than buffers
+
+    conn.on('data', _.bind(function(data) {
+      // when data comes in, route it according to the "event" property
       data = JSON.parse(data);
-      _.bind(self.eventRouter[data.event], self)(data, c);
-    });
+      if (!_.has(data, 'event')) {
+        console.log("Error: socket data came in witout event, it was:");
+        console.log(JSON.stringify(data));
+      } else if (!_.has(this.eventRouter, data.event)) {
+        console.log("Error: socket is asking for event '" + data.event +
+                    "' which doesn't exist");
+      } else {
+        this.debug("Socket data being routed for '" + data.event + "' event");
+        _.bind(this.eventRouter[data.event], this)(data, conn);
+      }
+    }, this));
+
+  }, this));
+
+  server.listen(sock, _.bind(function() {
+    this.debug("Instruments socket server started at " + sock);
+    this.launch();
+  }, this));
+};
+
+Instruments.prototype.launch = function() {
+  var self = this;
+  this.proc = this.spawnInstruments();
+  this.proc.stdout.on('data', function(data) {
+    self.outputStreamHandler(data);
   });
-  this.server.listen(this.sock, function() {
-    self.debug("Instruments socket server started at " + self.sock);
-    self.launch();
+  this.proc.stderr.on('data', function(data) {
+    self.errorStreamHandler(data);
+  });
+
+  this.proc.on('exit', function(code) {
+    self.debug("Instruments exited with code " + code);
+    self.exitCode = code;
+    self.hasExited = true;
+    self.doExit();
   });
 };
+
+Instruments.prototype.spawnInstruments = function() {
+  var args = ["-t", this.template];
+  if (this.udid) {
+    args = args.concat(["-w", this.udid]);
+  }
+  args = args.concat([this.app]);
+  args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
+  args = args.concat(["-e", "UIARESULTSPATH", '/tmp']);
+  return spawn("/usr/bin/instruments", args);
+};
+
+
+/* COMMAND LIFECYCLE */
 
 Instruments.prototype.commandHandler = function(data, c) {
   var hasResult = typeof data.result !== "undefined";
@@ -100,51 +149,6 @@ Instruments.prototype.waitForCommand = function(cb) {
   }
 };
 
-Instruments.prototype.setDebug = function(debug) {
-  if (typeof debug === "undefined") {
-    debug = true;
-  }
-  this.debugMode = debug;
-};
-
-Instruments.prototype.debug = function(msg) {
-  console.log(("[INSTSERVER] " + msg).grey);
-};
-
-Instruments.prototype.launch = function() {
-  var self = this;
-  this.proc = this.spawnInstruments();
-  this.proc.stdout.on('data', function(data) {
-    self.outputStreamHandler(data);
-  });
-  this.proc.stderr.on('data', function(data) {
-    self.errorStreamHandler(data);
-  });
-
-  this.proc.on('exit', function(code) {
-    self.debug("Instruments exited with code " + code);
-    self.exitCode = code;
-    self.hasExited = true;
-    self.doExit();
-  });
-};
-
-Instruments.prototype.shutdown = function() {
-  this.proc.kill();
-  this.shutdownTimeoutObj = setTimeout(this.shutdownHandler, 3000 * this.shutdownTimeout);
-};
-
-Instruments.prototype.spawnInstruments = function() {
-  var args = ["-t", this.template];
-  if (this.udid) {
-    args = args.concat(["-w", this.udid]);
-  }
-  args = args.concat([this.app]);
-  args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
-  args = args.concat(["-e", "UIARESULTSPATH", '/tmp']);
-  return spawn("/usr/bin/instruments", args);
-};
-
 Instruments.prototype.sendCommand = function(cmd, cb) {
   this.commandQueue.push({cmd: cmd, cb: cb});
   if (this.onReceiveCommand) {
@@ -152,21 +156,23 @@ Instruments.prototype.sendCommand = function(cmd, cb) {
   }
 };
 
-Instruments.prototype.setResultHandler = function(handler) {
-  this.resultHandler = handler;
+
+/* PROCESS MANAGEMENT */
+
+Instruments.prototype.shutdown = function() {
+  this.proc.kill();
+  this.hasShutdown = true;
+  this.doExit();
 };
 
-Instruments.prototype.defaultResultHandler = function(output) {
-  // if we have multiple log lines, indent non-first ones
-  if (output !== "") {
-    output = output.replace(/\n/m, "\n       ");
-    console.log(("[INST] " + output).blue);
+Instruments.prototype.doExit = function() {
+  if (this.hasShutdown && this.hasExited) {
+    this.exitHandler(this.exitCode, this.traceDir);
   }
 };
 
-Instruments.prototype.defaultReadyHandler = function(inst) {
-  console.log("Instruments is ready and waiting!");
-};
+
+/* INSTRUMENTS STREAM MANIPULATION*/
 
 Instruments.prototype.clearBufferChars = function(output) {
   // Instruments output is buffered, so for each log output we also output
@@ -184,6 +190,10 @@ Instruments.prototype.outputStreamHandler = function(output) {
   this.resultHandler(output);
 };
 
+Instruments.prototype.errorStreamHandler = function(output) {
+  console.log(("[INST STDERR] " + output).yellow);
+};
+
 Instruments.prototype.lookForShutdownInfo = function(output) {
   var re = /Instruments Trace Complete.+Output : ([^\)]+)\)/;
   var match = re.exec(output);
@@ -192,20 +202,47 @@ Instruments.prototype.lookForShutdownInfo = function(output) {
   }
 };
 
-Instruments.prototype.doExit = function() {
-  if (this.hasShutdown && this.hasExited) {
-    this.exitHandler(this.exitCode, this.traceDir);
+
+/* DEFAULT HANDLERS */
+
+Instruments.prototype.setResultHandler = function(handler) {
+  this.resultHandler = handler;
+};
+
+Instruments.prototype.defaultResultHandler = function(output) {
+  // if we have multiple log lines, indent non-first ones
+  if (output !== "") {
+    output = output.replace(/\n/m, "\n       ");
+    console.log(("[INST] " + output).blue);
   }
+};
+
+Instruments.prototype.defaultReadyHandler = function() {
+  console.log("Instruments is ready and waiting!");
 };
 
 Instruments.prototype.defaultExitHandler = function(code, traceDir) {
   console.log("Instruments exited with code " + code + " and trace dir " + traceDir);
 };
 
-Instruments.prototype.errorStreamHandler = function(output) {
-  console.log(("[INST STDERR] " + output).yellow);
+
+/* MISC */
+
+Instruments.prototype.setDebug = function(debug) {
+  if (typeof debug === "undefined") {
+    debug = true;
+  }
+  this.debugMode = debug;
 };
+
+Instruments.prototype.debug = function(msg) {
+  console.log(("[INSTSERVER] " + msg).grey);
+};
+
+
+/* NODE EXPORTS */
 
 module.exports = function(server, app, udid, bootstrap, template, sock, cb, exitCb) {
   return new Instruments(server, app, udid, bootstrap, template, sock, cb, exitCb);
 };
+

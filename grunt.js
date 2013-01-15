@@ -35,8 +35,8 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.registerTask('test', 'mochaTest:*');
-  grunt.registerTask('functional', 'mochaTest:functional');
+  grunt.registerTask('test', 'buildApp mochaTest:*');
+  grunt.registerTask('functional', 'buildApp mochaTest:functional');
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('default', 'lint test');
   grunt.registerTask('appium', "Start the Appium server", function(appName) {

@@ -1,3 +1,4 @@
+"use strict";
 var ap = require('argparse').ArgumentParser;
 
 // Setup all the command line argument parsing

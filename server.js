@@ -1,11 +1,9 @@
+"use strict";
 var http = require('http')
-  , url = require('url')
   , express = require('express')
   , rest = express()
   , path = require('path')
   , server = http.createServer(rest)
-  , ap = require('argparse').ArgumentParser
-  , colors = require('colors')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 

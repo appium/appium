@@ -3,3 +3,4 @@ node_modules
 *.trace
 xcuserdata
 sample-code/apps/TestApp/build
+*.sublime-*

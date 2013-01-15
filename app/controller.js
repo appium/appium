@@ -152,3 +152,17 @@ exports.keys = function(req, res) {
     });
   });
 };
+
+exports.elementDisplayed = function(req, res) {
+  var sessionid = req.params.sessionid
+    , elementId = req.params.elementId
+    , status = 0;
+
+  req.device.elementDisplayed(elementId, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};

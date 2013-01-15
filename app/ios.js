@@ -42,11 +42,12 @@ IOS.prototype.stop = function(cb) {
   this.instruments.shutdown(function(traceDir) {
     me.queue = [];
     me.progress = 0;
-    rimraf(traceDir, function() {
+    // did this ever work?
+    //rimraf(traceDir, function() {
       if (cb) {
         cb();
       }
-    });
+    ///});
   });
 };
 
@@ -89,6 +90,48 @@ IOS.prototype.push = function(elem) {
   };
 
   next();
+};
+
+IOS.prototype.findElements = function(selector, cb) {
+  var me = this;
+  var findElement = function(value, ctx, many, cb) {
+    var ext = many ? 's' : '';
+
+    var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", value, "')"].join("");
+
+    me.proxy(command, function(json) {
+      json = many ? json : json[0];
+      cb(null, json);
+    });
+  };
+
+  findElement(selector, 'wd_frame', true, function(err, res) {
+    cb(null, res);
+  });
+};
+
+IOS.prototype.setValue = function(elementId, value, cb) {
+  var command = ["elements['", elementId, "'].setValue('", value, "')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.click = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].tap()"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.getText = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].getText()"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
 };
 
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {

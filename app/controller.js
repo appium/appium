@@ -1,23 +1,6 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
 
-var findElement = function(req, res, ctx, many, cb) {
-  var strategy = req.body.using
-    , value = req.body.value
-    , ext = many ? 's' : '';
-
-  var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", value, "')"].join("");
-
-  req.device.proxy(command, function(json) {
-    json = many ? json : json[0];
-    cb({
-      sessionId: req.appium.sessionId
-      , status: 0
-      , value: json
-    });
-  });
-};
-
 exports.getStatus = function(req, res) {
   // Build a JSON object to return to the client
   var status = {
@@ -40,7 +23,7 @@ exports.createSession = function(req, res) {
       throw err;
     }
 
-    res.redirect("/wd/hub/session/" + instance.sessionId);
+    res.redirect("/wd/hub/session/" + req.appium.sessionId);
   });
 };
 
@@ -78,6 +61,7 @@ exports.deleteSession = function(req, res) {
 };
 
 exports.executeScript = function(req, res) {
+  // 'not implemented';
   var sessionId = req.params.sessionId;
   var status = 0;
   var iosResponse ='';
@@ -99,20 +83,25 @@ exports.executeScript = function(req, res) {
 };
 
 exports.findElements = function(req, res) {
-  findElement(req, res, 'wd_frame', true, function(result) {
-    res.send(result);
+  var strategy = req.body.using
+    , value = req.body.value;
+
+  req.device.findElements(value, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+      , status: 0
+      , value: result
+    });
   });
 };
 
 exports.setValue = function(req, res) {
-  var sessionid = req.params.sessionid
+  var sessionId = req.params.sessionid
     , elementId = req.params.elementId
-    , body = req.body.value.join('')
+    , value = req.body.value.join('')
     , status = 0;
 
-  var command = ["elements['", elementId, "'].setValue('", body, "')"].join('');
-
-  req.device.proxy(command, function(json) {
+  req.device.setValue(elementId, value, function(err, result) {
     res.send({
       sessionId: req.appium.sessionId
         , status: status
@@ -126,9 +115,7 @@ exports.doClick = function(req, res) {
     , elementId = req.params.elementId
     , status = 0;
 
-  var command = ["elements['", elementId, "'].tap()"].join('');
-
-  req.device.proxy(command, function(json) {
+  req.device.click(elementId, function(err, json) {
     res.send({
       sessionId: req.appium.sessionId
         , status: status
@@ -142,13 +129,11 @@ exports.getText = function(req, res) {
     , elementId = req.params.elementId
     , status = 0;
 
-  var command = ["elements['", elementId, "'].getText()"].join('');
-
-  req.device.proxy(command, function(json) {
+  req.device.getText(elementId, function(err, result) {
     res.send({
       sessionId: req.appium.sessionId
         , status: status
-        , value: json.toString()
+        , value: result.toString()
     });
   });
 };

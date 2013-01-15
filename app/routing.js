@@ -4,6 +4,7 @@ module.exports = function(appium) {
   var rest = appium.rest
     , inject = function(req, res, next) {
         req.appium = appium;
+        req.device = appium.device;
         next();
       };
 

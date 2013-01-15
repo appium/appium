@@ -9,10 +9,13 @@ var http = require('http')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 
-var main = function(app, udid, verbose, port, address, remove, doneCb) {
+var main = function(args, doneCb) {
   if (typeof doneCb === "undefined") {
     doneCb = function() {};
   }
+  // in case we'll support blackberry at some point
+  args.device = 'iOS';
+
   rest.configure(function() {
     var bodyParser = express.bodyParser()
       , parserWrap = function(req, res, next) {
@@ -31,12 +34,12 @@ var main = function(app, udid, verbose, port, address, remove, doneCb) {
     rest.use(rest.router);
   });
   // Instantiate the appium instance
-  var appiumServer = appium(app, udid, verbose, remove);
+  var appiumServer = appium(args);
   // Hook up REST http interface
   appiumServer.attachTo(rest);
   // Start the web server that receives all the commands
-  server.listen(port, address, function() {
-    var logMessage = "Appium REST http interface listener started on "+address+":"+port;
+  server.listen(args.port, args.address, function() {
+    var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
     console.log(logMessage.cyan);
   });
   server.on('close', doneCb);
@@ -45,7 +48,7 @@ var main = function(app, udid, verbose, port, address, remove, doneCb) {
 if (require.main === module) {
   // Parse the command line arguments
   var args = parser().parseArgs();
-  main(args.app, args.UDID, args.verbose, args.port, args.address, args.remove);
+  main(args);
 }
 
 module.exports.run = main;

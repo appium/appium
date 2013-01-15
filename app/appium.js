@@ -1,20 +1,15 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/appium.py
 var routing = require('./routing')
-  , path = require('path')
-  , rimraf = require('rimraf')
-  , instruments = require('../instruments/instruments');
+  , ios = require('./ios');
 
-var Appium = function(app, udid, verbose, removeTraceDir) {
-  this.app = app;
-  this.udid = udid;
-  this.verbose = verbose;
-  this.instruments = null;
+var Appium = function(args) {
+  this.args = args;
   this.rest = null;
-  this.queue = [];
-  this.progress = 0;
+  this.devices = {};
+  this.active = null;
+  this.device = null;
   this.sessionId = null;
-  this.removeTraceDir = removeTraceDir;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -33,91 +28,43 @@ Appium.prototype.start = function(cb) {
     this.sessionId = new Date().getTime();
     console.log('Creating new appium session ' + this.sessionId);
 
-    if (this.instruments === null) {
-      this.instruments = instruments(
-        this.rest
-        , path.resolve(__dirname, '../' + this.app)
-        , this.udid
-        , path.resolve(__dirname, 'uiauto/bootstrap.js')
-        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
-      );
+    // in future all the blackberries go here.
+    this.active = 'iOS';
+    if (typeof this.devices[this.active] === 'undefined') {
+      this.devices[this.active] = ios(this.rest, this.args.app, this.args.UDID, this.args.verbose, this.args.remove);
     }
+    this.device = this.devices[this.active];
 
-    var me = this;
-    me.instruments.launch(function() {
-      console.log('Instruments launched. Starting poll loop for new commands.');
-      me.instruments.setDebug(true);
-      cb(null, me);
-    }, function(code) {
-      if (!code || code > 0) {
-        me.stop();
-      }
+    this.device.start(function(err, device) {
+      cb(err, device);
     });
-  } else {
-    cb('Session already in progress', null);
   }
+};
+
+Appium.prototype.proxy = function(cmd, cb) {
+  this.device.proxy(cmd, cb);
 };
 
 Appium.prototype.stop = function(cb) {
   if (this.sessionId === null) {
     return;
   }
+
   var me = this;
 
-  console.log('Shutting down appium session ' + me.sessionId);
-  this.instruments.shutdown(function(traceDir) {
-    me.queue = [];
-    me.progress = 0;
+  this.device.stop(function() {
+    console.log('Shutting down appium session.');
     me.sessionId = null;
-    rimraf(traceDir, function() {
-      if (cb) {
-        cb();
-      }
-    });
+    if (cb) {
+      cb(me.sessionId);
+    }
   });
 };
 
-Appium.prototype.proxy = function(command, cb) {
-  // was thinking we should use a queue for commands instead of writing to a file
-  this.push([command, cb]);
-  console.log('Pushed command to appium work queue: ' + command);
+Appium.prototype.device = function() {
+  return this.devices[this.active];
 };
 
-Appium.prototype.push = function(elem) {
-  this.queue.push(elem);
-  var me = this;
-
-  var next = function() {
-    if (me.queue.length <= 0 || me.progress > 0) {
-      return;
-    }
-
-    var target = me.queue.shift();
-    me.progress++;
-
-    me.instruments.sendCommand(target[0], function(result) {
-      if (typeof target[1] === 'function') {
-        if (result === 'undefined') {
-          target[1]();
-        } else {
-          try {
-            var jsonresult = JSON.parse(result);
-            target[1](jsonresult);
-          } catch (e) {
-            target[1](result);
-          }
-        }
-      }
-
-      // maybe there's moar work to do
-      me.progress--;
-      next();
-    });
-  };
-
-  next();
-};
-
-module.exports = function(app, udid, version) {
-  return new Appium(app, udid, version);
+module.exports = function(args) {
+  return new Appium(args);
 };

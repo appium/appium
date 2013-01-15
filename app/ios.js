@@ -3,7 +3,7 @@ var path = require('path')
   , rimraf = require('rimraf')
   , UUID = require('uuid-js')
   , fs = require('fs')
-  , sock = '/tmp/instruments_sock';
+  , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments');
 
 

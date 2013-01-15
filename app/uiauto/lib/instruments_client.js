@@ -5,12 +5,12 @@ var system = UIATarget.localTarget().host();
 var clientPath = 'instruments/client.js';
 
 var sendResultAndGetNext = function(result) {
-  var args = [clientPath, '-s', '/tmp/instruments_sock'];
+  var args = [clientPath, '-s', '/tmp/instruments_sock'], res;
   if (typeof result !== "undefined") {
     args = args.concat(['-r', JSON.stringify(result)]);
   }
   try {
-    var res = system.performTaskWithPathArgumentsTimeout('/usr/local/bin/node', args, 30);
+    res = system.performTaskWithPathArgumentsTimeout('/usr/local/bin/node', args, 30);
   } catch(e) {
     console.log("Socket timed out waiting for a new command, why wasn't there one?");
     return null;

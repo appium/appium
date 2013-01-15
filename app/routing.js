@@ -110,4 +110,4 @@ module.exports = function(appium) {
 // rest.get('/wd/hub/session/:sessionId/session_storage/size     --> Get the number of items in the storage.
 // rest.post('/wd/hub/session/:sessionId/log     --> Get the log for a given log type.
 // rest.get('/wd/hub/session/:sessionId/log/types     --> Get available log types.
-// rest.get('/wd/hub/session/:sessionId/application_cache/status     --> Get the status of the html5 application cache. 
+// rest.get('/wd/hub/session/:sessionId/application_cache/status     --> Get the status of the html5 application cache.

@@ -1,5 +1,7 @@
 // This is basically a port of webdriver-test.py
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
+/*global describe:true, it:true */
+"use strict";
 
 var wd = require('wd')
   , assert = require("assert")
@@ -10,7 +12,6 @@ var wd = require('wd')
     };
 
 describe('load calc app', function() {
-
   var values = [];
   var populate = function(driver, cb) {
     driver.elementsByTagName('textField', function(err, elems) {

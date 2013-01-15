@@ -8,7 +8,7 @@ var findElement = function(req, res, ctx, many, cb) {
 
   var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", value, "')"].join("");
 
-  req.appium.proxy(command, function(json) {
+  req.device.proxy(command, function(json) {
     json = many ? json : json[0];
     cb({
       sessionId: req.appium.sessionId
@@ -33,7 +33,7 @@ exports.getStatus = function(req, res) {
 };
 
 exports.createSession = function(req, res) {
-  // we can talk to the appium client from here
+  // we can talk to the device client from here
   req.appium.start(function(err, instance) {
     if (err) {
       // of course we need to deal with err according to the WDJP spec.
@@ -83,7 +83,7 @@ exports.executeScript = function(req, res) {
   var iosResponse ='';
   var requestData = req.body;
   try {
-    iosResponse = appium.client.proxy(requestData.script, true);
+    iosResponse = device.client.proxy(requestData.script, true);
   }
   catch (e) {
     var errObj = {sessionId: sessionId, 'status': 13, 'value': JSON.stringify(e)};
@@ -112,7 +112,7 @@ exports.setValue = function(req, res) {
 
   var command = ["elements['", elementId, "'].setValue('", body, "')"].join('');
 
-  req.appium.proxy(command, function(json) {
+  req.device.proxy(command, function(json) {
     res.send({
       sessionId: req.appium.sessionId
         , status: status
@@ -128,7 +128,7 @@ exports.doClick = function(req, res) {
 
   var command = ["elements['", elementId, "'].tap()"].join('');
 
-  req.appium.proxy(command, function(json) {
+  req.device.proxy(command, function(json) {
     res.send({
       sessionId: req.appium.sessionId
         , status: status
@@ -144,7 +144,7 @@ exports.getText = function(req, res) {
 
   var command = ["elements['", elementId, "'].getText()"].join('');
 
-  req.appium.proxy(command, function(json) {
+  req.device.proxy(command, function(json) {
     res.send({
       sessionId: req.appium.sessionId
         , status: status

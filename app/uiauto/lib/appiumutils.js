@@ -106,16 +106,16 @@ UIAElement.prototype.findElements = function(by) {
             if (child.hasChildren()) // big optimization
                 findElements(child, tagName, text);
         }
-    }
-    findElements(this, tagName, text)
+    };
+    findElements(this, tagName, text);
     return foundElements;
-}
+};
 
 // @param by "type[/text]"
 UIAElement.prototype.findElement = function(by) {
-    var tagName;
-    var text;
-    var sep = by.indexOf('/');
+    var tagName
+    , text
+    , sep = by.indexOf('/');
     if (sep != -1) {
         tagName = by.substring(0, sep);
         text = by.substring(sep + 1);
@@ -128,22 +128,21 @@ UIAElement.prototype.findElement = function(by) {
     var findElement = function(element, tagName, text) {
         var children = element.elements();
         var numChildren = children.length;
-        for ( var i = 0; i < numChildren; i++) {
+        var found;
+        for (var i = 0; i < numChildren; i++) {
             var child = children[i];
             if (child.matchesBy(tagName, text)) {
-                foundElement = child;
-                return;
+                return child;
             }
-            if (child.hasChildren()) { // big optimization
-                findElement(child, tagName, text);
-                if (foundElement)
-                    return;
+            else if (child.hasChildren()) { // big optimization
+                found = findElement(child, tagName, text);
+                if (found)
+                    return found;
             }
         }
-    }
-    findElement(this, tagName, text)
-    return foundElement;
-}
+    };
+    return findElement(this, tagName, text);
+};
 
 var elements = new Array();
 var globalElementCounter = 0;
@@ -157,11 +156,11 @@ UIAElement.prototype.findElementsAndSetKeys = function(by) {
         elements[varName] = foundElements[i];
         if (i > 0)
             json += ',';
-        json += '{"ELEMENT":' + '"' + varName + '"' + '}';
+        json += ['{"ELEMENT":"',varName,'"}'].join('');
     }
     json += ']';
     return json;
-}
+};
 
 // @return var_namne
 UIAElement.prototype.findElementAndSetKey = function(by) {
@@ -169,10 +168,10 @@ UIAElement.prototype.findElementAndSetKey = function(by) {
     if (foundElement) {
         var varName = 'wde' + globalElementCounter++;
         elements[varName] = foundElement;
-        return varName;
+        return ['{"ELEMENT":"',varName,'"}'].join('');
     }
     return '';
-}
+};
 
 // getPageSource
 

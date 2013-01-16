@@ -2,6 +2,7 @@
 // https://github.com/hugs/appium/blob/master/appium/appium.py
 "use strict";
 var routing = require('./routing')
+  , UUID = require('uuid-js')
   , ios = require('./ios');
 
 var Appium = function(args) {
@@ -11,6 +12,9 @@ var Appium = function(args) {
   this.active = null;
   this.device = null;
   this.sessionId = null;
+  this.sessions = [];
+  this.counter = -1;
+  this.progress = -1;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -25,8 +29,19 @@ Appium.prototype.attachTo = function(rest, cb) {
 };
 
 Appium.prototype.start = function(cb) {
+  this.sessions[++this.counter] = { sessionId: '', callback: cb };
+  this.invoke();
+};
+
+Appium.prototype.invoke = function() {
+  var me = this;
+
+  if (this.progress >= this.counter) {
+    return;
+  }
+
   if (this.sessionId === null) {
-    this.sessionId = new Date().getTime();
+    this.sessionId = UUID.create().hex;
     console.log('Creating new appium session ' + this.sessionId);
 
     // in future all the blackberries go here.
@@ -37,7 +52,9 @@ Appium.prototype.start = function(cb) {
     this.device = this.devices[this.active];
 
     this.device.start(function(err, device) {
-      cb(err, device);
+      me.progress++;
+      me.sessions[me.progress].sessionId = me.sessionId;
+      me.sessions[me.progress].callback(err, device);
     });
   }
 };
@@ -58,6 +75,10 @@ Appium.prototype.stop = function(cb) {
     me.sessionId = null;
     me.devices = {};
     if (cb) {
+      if (me.active !== null) {
+        me.active = null;
+        me.invoke();
+      }
       cb(me.sessionId);
     }
   });

@@ -14,12 +14,12 @@
 //var appium = null;
 
 //describe('Tests with server', function() {
-  //this.timeout(5000);
+  //this.timeout(30000);
   //beforeEach(function(done) {
     //if (appium === null) {
       //appium = server({
-        ////app: 'sample-code/apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'
-        //app: 'sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app'
+        //app: 'sample-code/apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'
+        ////app: 'sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app'
         //, udid: null
         //, verbose: true
         //, remove: true
@@ -37,8 +37,8 @@
 
   //it('should work', function(done) {
     //driver.init(caps, function(err, sessionId) {
-      //appium.proxy('mainWindow.logElementTree()', function(err, json) {
-        //console.log(json);
+      //appium.proxy('$.backgroundApp(5);', function(result) {
+        //console.log(result);
         //driver.quit(done);
       //});
     //});
@@ -46,11 +46,11 @@
 
   //it('should work again!', function(done) {
     //driver.init(caps, function(err, sessionId) {
-      //appium.proxy('mainWindow.logElementTree()', function(err, json) {
+      //appium.proxy('target.logElementTree()', function(err, json) {
         //console.log(json);
         //driver.quit(done);
       //});
     //});
   //});
-//});
+});
 

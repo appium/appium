@@ -52,6 +52,7 @@ module.exports = function(grunt) {
       , port: 4723
       , address: '127.0.0.1'
       , remove: true }
+      , function() {}
       , done
     );
   });

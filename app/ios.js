@@ -215,6 +215,14 @@ IOS.prototype.postDismissAlert = function(cb) {
   });
 };
 
+IOS.prototype.implicitWait = function(timeoutSeconds, cb) {
+  var command = ["setImplicitWait('", timeoutSeconds ,"')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

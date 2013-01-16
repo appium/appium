@@ -7,7 +7,7 @@ var http = require('http')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 
-var main = function(args, doneCb) {
+var main = function(args, readyCb, doneCb) {
   if (typeof doneCb === "undefined") {
     doneCb = function() {};
   }
@@ -39,8 +39,10 @@ var main = function(args, doneCb) {
   server.listen(args.port, args.address, function() {
     var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
     console.log(logMessage.cyan);
+    readyCb();
   });
   server.on('close', doneCb);
+  return appiumServer;
 };
 
 if (require.main === module) {

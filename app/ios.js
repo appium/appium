@@ -223,8 +223,8 @@ IOS.prototype.getOrientation = function(cb) {
   });
 };
 
-IOS.prototype.setOrientation = function(desired_orientation, cb) {
-  var command = ["setScreenOrientation('", desired_orientation ,"')"].join('');
+IOS.prototype.setOrientation = function(orientation, cb) {
+  var command = ["setScreenOrientation('", orientation ,"')"].join('');
 
   this.proxy(command, function(json) {
     cb(null, json);

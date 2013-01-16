@@ -117,22 +117,23 @@ IOS.prototype.push = function(elem) {
   next();
 };
 
-IOS.prototype.findElements = function(selector, cb) {
-  var me = this;
-  var findElement = function(value, ctx, many, cb) {
-    var ext = many ? 's' : '';
+IOS.prototype.findElementOrElements = function(selector, many, cb) {
+  var ext = many ? 's' : ''
+  , ctx = 'wd_frame'; // Does this value ever need to change?
 
-    var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", value, "')"].join("");
+  var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");
 
-    me.proxy(command, function(json) {
-      json = many ? json : json[0];
-      cb(null, json);
-    });
-  };
-
-  findElement(selector, 'wd_frame', true, function(err, res) {
-    cb(null, res);
+  this.proxy(command, function(json) {
+    cb(null, json);
   });
+};
+
+IOS.prototype.findElement = function(strategy, selector, cb) {
+  this.findElementOrElements(selector, false, cb);
+};
+
+IOS.prototype.findElements = function(strategy, selector, cb) {
+  this.findElementOrElements(selector, true, cb);
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {

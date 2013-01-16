@@ -4,6 +4,7 @@ var http = require('http')
   , rest = express()
   , path = require('path')
   , server = http.createServer(rest)
+  , logger = require('./logger').get('appium')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 
@@ -38,7 +39,7 @@ var main = function(args, readyCb, doneCb) {
   // Start the web server that receives all the commands
   server.listen(args.port, args.address, function() {
     var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
-    console.log(logMessage.cyan);
+    logger.info(logMessage.cyan);
     if (readyCb) {
       readyCb();
     }

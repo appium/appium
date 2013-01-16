@@ -133,4 +133,22 @@ describe('load calc app', function() {
     });
   });
 
+  // TODO: Needs fixing - THIS TEST DOES NOT WORK
+  // I'm not sure how we can reliably test UIAutomation setTimeout
+  // see: http://stackoverflow.com/questions/8852977/how-does-uiautomation-determine-whether-a-uiaelement-isvisible/9051340#9051340
+  // it('should not wait more than 100 ms', function(done){
+  //   driver.init(caps, function(err, sessionId){
+  //     var waitStart = +new Date();
+  //     driver.setImplicitWaitTimeout(100, function(err, value) {
+  //       // execute search element command that should timeout
+  //       driver.elementsByTagName('textField', function(err, elems) {
+  //         assert.ok(+new Date() - waitStart <= 2000);
+  //         driver.quit(function() {
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   });
+  // });
+
 });

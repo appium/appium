@@ -211,3 +211,17 @@ exports.postDismissAlert = function(req, res) {
     });
   });
 };
+
+exports.implicitWait = function(req, res) {
+  var sessionid = req.params.sessionid
+    , timeoutMiliseconds = req.body.ms
+    , status = 0;
+
+  req.device.implicitWait(timeoutMiliseconds / 1000, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};

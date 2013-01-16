@@ -39,7 +39,9 @@ var main = function(args, readyCb, doneCb) {
   server.listen(args.port, args.address, function() {
     var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
     console.log(logMessage.cyan);
-    readyCb();
+    if (readyCb) {
+      readyCb();
+    }
   });
   server.on('close', doneCb);
   return appiumServer;

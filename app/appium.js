@@ -2,6 +2,7 @@
 // https://github.com/hugs/appium/blob/master/appium/appium.py
 "use strict";
 var routing = require('./routing')
+  , logger = require('../logger').get('appium')
   , UUID = require('uuid-js')
   , ios = require('./ios');
 
@@ -42,7 +43,7 @@ Appium.prototype.invoke = function() {
 
   if (this.sessionId === null) {
     this.sessionId = UUID.create().hex;
-    console.log('Creating new appium session ' + this.sessionId);
+    logger.info('Creating new appium session ' + this.sessionId);
 
     // in future all the blackberries go here.
     this.active = 'iOS';
@@ -70,7 +71,7 @@ Appium.prototype.stop = function(cb) {
 
   var me = this;
 
-  console.log('Shutting down appium session...');
+  logger.info('Shutting down appium session...');
   this.device.stop(function() {
     me.sessionId = null;
     me.devices = {};

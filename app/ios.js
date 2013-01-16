@@ -97,7 +97,7 @@ IOS.prototype.push = function(elem) {
 
     me.instruments.sendCommand(target[0], function(result) {
       if (typeof target[1] === 'function') {
-        if (result === 'undefined') {
+        if (typeof result === 'undefined') {
           target[1]();
         } else {
           try {

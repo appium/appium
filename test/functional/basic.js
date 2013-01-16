@@ -153,4 +153,22 @@ describe('load calc app', function() {
   //   });
   // });
 
+
+  // TOFIX: THIS TEST ALWAYS RETURNS 'undefined' orientation
+  // LOOKS like UIATargetClass.setDeviceOrientation is not working properly with simulator?
+  // var testOrientation = function(specOrientation) {
+  //   it('should get and set the screen orientation - ' + specOrientation, function(done) {
+  //     driver.init(caps, function(err) {
+  //       driver.setOrientation(specOrientation, function(err, orientation) {
+  //         assert.equal(orientation, specOrientation);
+  //         driver.getOrientation(function(err, orientation) {
+  //           assert.equal(orientation, specOrientation);
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   });
+  // };
+  // _.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
+
 });

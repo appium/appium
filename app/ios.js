@@ -223,6 +223,22 @@ IOS.prototype.implicitWait = function(timeoutSeconds, cb) {
   });
 };
 
+IOS.prototype.getOrientation = function(cb) {
+  var command = "getScreenOrientation()";
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
+IOS.prototype.setOrientation = function(desired_orientation, cb) {
+  var command = ["setScreenOrientation('", desired_orientation ,"')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

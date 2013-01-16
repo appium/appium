@@ -29,6 +29,8 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
   rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
   rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);
+  rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
+  rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
@@ -81,8 +83,6 @@ module.exports = function(appium) {
 // rest.get('/wd/hub/session/:sessionId/element/:id/location_in_view     --> Determine an element's location on the screen once it has been scrolled into view.
 // rest.get('/wd/hub/session/:sessionId/element/:id/size     --> Determine an element's size in pixels.
 // rest.get('/wd/hub/session/:sessionId/element/:id/css/:propertyName     --> Query the value of an element's computed CSS property.
-// rest.get('/wd/hub/session/:sessionId/orientation     --> Get the current browser orientation.
-// rest.post('/wd/hub/session/:sessionId/orientation     --> Set the browser orientation.
 // rest.get('/wd/hub/session/:sessionId/alert_text     --> Gets the text of the currently displayed JavaScript? alert(), confirm(), or prompt() dialog.
 // rest.post('/wd/hub/session/:sessionId/alert_text     --> Sends keystrokes to a JavaScript? prompt() dialog.
 // rest.post('/wd/hub/session/:sessionId/accept_alert     --> Accepts the currently displayed alert dialog.

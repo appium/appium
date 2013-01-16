@@ -28,12 +28,12 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
   rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
   rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
+  rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
 // rest.post('/wd/hub/session/:sessionId/timeouts     --> Configure the amount of time that a particular type of operation can execute for before they are aborted and a |Timeout| error is returned to the client.
 // rest.post('/wd/hub/session/:sessionId/timeouts/async_script     --> Set the amount of time, in milliseconds, that asynchronous scripts executed by /session/:sessionId/execute_async are permitted to run before they are aborted and a |Timeout| error is returned to the client.
-// rest.post('/wd/hub/session/:sessionId/timeouts/implicit_wait     --> Set the amount of time the driver should wait when searching for elements.
 // rest.get('/wd/hub/session/:sessionId/window_handle     --> Retrieve the current window handle.
 // rest.get('/wd/hub/session/:sessionId/window_handles     --> Retrieve the list of all window handles available to the session.
 // rest.get('/wd/hub/session/:sessionId/url     --> Retrieve the URL of the current page.

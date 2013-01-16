@@ -3,6 +3,7 @@
 
 var spawn = require('child_process').spawn
   , colors = require('colors')
+  , logger = require('../logger').get('instruments')
   , fs = require('fs')
   , _ = require('underscore')
   , net = require('net');
@@ -62,10 +63,10 @@ Instruments.prototype.startSocketServer = function(sock) {
       // when data comes in, route it according to the "event" property
       data = JSON.parse(data);
       if (!_.has(data, 'event')) {
-        console.log("Error: socket data came in witout event, it was:");
-        console.log(JSON.stringify(data));
+        logger.error("Socket data came in witout event, it was:");
+        logger.error(JSON.stringify(data));
       } else if (!_.has(this.eventRouter, data.event)) {
-        console.log("Error: socket is asking for event '" + data.event +
+        logger.error("Socket is asking for event '" + data.event +
                     "' which doesn't exist");
       } else {
         this.debug("Socket data being routed for '" + data.event + "' event");
@@ -116,9 +117,9 @@ Instruments.prototype.spawnInstruments = function() {
 Instruments.prototype.commandHandler = function(data, c) {
   var hasResult = typeof data.result !== "undefined";
   if (hasResult && !this.curCommand) {
-    console.log("Got a result when we weren't expecting one! Ignoring it");
+    logger.info("Got a result when we weren't expecting one! Ignoring it");
   } else if (!hasResult && this.curCommand) {
-    console.log("Instruments didn't send a result even though we were expecting one");
+    logger.info("Instruments didn't send a result even though we were expecting one");
     hasResult = true;
     data.result = false;
   }
@@ -191,7 +192,7 @@ Instruments.prototype.outputStreamHandler = function(output) {
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  console.log(("[INST STDERR] " + output).yellow);
+  logger.error(("[INST STDERR] " + output).yellow);
 };
 
 Instruments.prototype.lookForShutdownInfo = function(output) {
@@ -213,16 +214,16 @@ Instruments.prototype.defaultResultHandler = function(output) {
   // if we have multiple log lines, indent non-first ones
   if (output !== "") {
     output = output.replace(/\n/m, "\n       ");
-    console.log(("[INST] " + output).blue);
+    logger.info(("[INST] " + output).blue);
   }
 };
 
 Instruments.prototype.defaultReadyHandler = function() {
-  console.log("Instruments is ready and waiting!");
+  logger.info("Instruments is ready and waiting!");
 };
 
 Instruments.prototype.defaultExitHandler = function(code, traceDir) {
-  console.log("Instruments exited with code " + code + " and trace dir " + traceDir);
+  logger.info("Instruments exited with code " + code + " and trace dir " + traceDir);
 };
 
 
@@ -236,7 +237,7 @@ Instruments.prototype.setDebug = function(debug) {
 };
 
 Instruments.prototype.debug = function(msg) {
-  console.log(("[INSTSERVER] " + msg).grey);
+  logger.info(("[INSTSERVER] " + msg).grey);
 };
 
 

@@ -2,6 +2,7 @@
 var path = require('path')
   , rimraf = require('rimraf')
   , fs = require('fs')
+  , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments');
 
@@ -32,7 +33,7 @@ IOS.prototype.start = function(cb) {
   var me = this;
 
   var onLaunch = function() {
-    console.log('Instruments launched. Starting poll loop for new commands.');
+    logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
     cb(null, me);
   };
@@ -78,7 +79,7 @@ IOS.prototype.stop = function(cb) {
 IOS.prototype.proxy = function(command, cb) {
   // was thinking we should use a queue for commands instead of writing to a file
   this.push([command, cb]);
-  console.log('Pushed command to appium work queue: ' + command);
+  logger.info('Pushed command to appium work queue: ' + command);
 };
 
 IOS.prototype.push = function(elem) {

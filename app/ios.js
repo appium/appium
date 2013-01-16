@@ -167,6 +167,14 @@ IOS.prototype.keys = function(elementId, keys, cb) {
   });
 };
 
+IOS.prototype.implicitWait = function(seconds, cb) {
+  var command = ["setImplicitWait('", seconds, "')"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   var command = ["elements['", elementId, "'].isDisplayed()"].join('');
 
@@ -206,6 +214,7 @@ IOS.prototype.postDismissAlert = function(cb) {
     cb(null, json);
   });
 };
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

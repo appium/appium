@@ -209,3 +209,14 @@ exports.postDismissAlert = function(req, res) {
     });
   });
 };
+
+exports.implicitWait = function(req, res) {
+  var seconds = req.body.ms / 1000;
+
+  req.device.implicitWait(seconds, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+      , status: (err === null)? 0 : 13
+    });
+  });
+};

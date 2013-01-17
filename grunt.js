@@ -52,7 +52,7 @@ module.exports = function(grunt) {
     if (typeof appName === "undefined") {
       appName = "TestApp";
     }
-    startAppium(appName, function() {}, this.async());
+    startAppium(appName, true, function() {}, this.async());
   });
   grunt.registerTask('mobileSafari', "Start the Appium server with MobileSafari", function(version) {
     if (typeof version === "undefined") {

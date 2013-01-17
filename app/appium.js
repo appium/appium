@@ -8,6 +8,9 @@ var routing = require('./routing')
 
 var Appium = function(args) {
   this.args = args;
+  if (!this.args.verbose) {
+    logger.transports.console.level = 'warn';
+  }
   this.rest = null;
   this.devices = {};
   this.active = null;

@@ -33,7 +33,8 @@ module.exports = function(grunt) {
     }
     , mochaTestConfig: {
       options: {
-        timeout: 60000
+        timeout: 60000,
+        reporter: 'spec'
       }
     }
   });

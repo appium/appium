@@ -161,6 +161,14 @@ IOS.prototype.getText = function(elementId, cb) {
   });
 };
 
+IOS.prototype.getLocation = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].getElementLocation()"].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 IOS.prototype.keys = function(elementId, keys, cb) {
   var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
 

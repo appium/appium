@@ -7,3 +7,8 @@ function delay(secs)
     while(curDate-date < (secs * 1000.0));
 }
 
+if (typeof module === "undefined") {
+  module = {};
+}
+
+module.exports = delay;

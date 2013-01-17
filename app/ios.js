@@ -5,8 +5,8 @@ var path = require('path')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments')
+  , delay = require("./uiauto/lib/delay.js")
   , uuid = require('uuid-js');
-
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.rest = rest;
@@ -247,13 +247,31 @@ IOS.prototype.getScreenshot = function(cb) {
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
   this.proxy(command, function(json) {
-    fs.readFile(shotPath, function read(err, data) {
-      if (err) {
-          throw err;
+    var delayTimes = 0;
+    var onErr = function() {
+      delayTimes++;
+      delay(0.2);
+      if (delayTimes <= 10) {
+        read(onErr);
+      } else {
+        read();
       }
-      json = new Buffer(data).toString('base64');
-      cb(null, json);
-    });
+    };
+    var read = function(onErr) {
+      fs.readFile(shotPath, function read(err, data) {
+        if (err) {
+          if (onErr) {
+            onErr();
+          } else {
+            cb(err, null);
+          }
+        } else {
+          var b64data = new Buffer(data).toString('base64');
+          cb(null, b64data);
+        }
+      });
+    };
+    read(onErr);
   });
 };
 

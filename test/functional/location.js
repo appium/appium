@@ -15,10 +15,10 @@ describe('check location', function() {
     driver.init(caps, function(err, sessionId) {
       driver.elementByTagName('button', function(err, element) {
         assert.ok(element.value);
-        element.location(function(err, location) {
+        element.getLocation(function(err, location) {
+          driver.quit(function() {
           assert.equal(location.x, 94);
           assert.equal(location.y, 122);
-          driver.quit(function() {
             done();
           });
         });

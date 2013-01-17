@@ -1,6 +1,6 @@
 // This is basically a port of webdriver-test.py
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
-/*global describe:true, it:true */
+/*global describe:true, it:true, before:true */
 "use strict";
 
 var wd = require('wd')
@@ -48,9 +48,13 @@ describe('load calc app', function() {
         driver.elementsByTagName('staticText', function(err, elems) {
           elems[0].text(function(err, text) {
             var sum = values[0] + values[1];
-            assert.equal(parseInt(text, 10), sum);
             driver.quit(function() {
-              done();
+              try {
+                assert.equal(parseInt(text, 10), sum);
+                done();
+              } catch (e) {
+                done(e);
+              }
             });
           });
         });
@@ -60,11 +64,13 @@ describe('load calc app', function() {
 
   var driver = wd.remote('127.0.0.1', 4723);
   // using findElementsAndSetKeys
+
   it('should fill two fields with numbers', function(done) {
     driver.init(caps, function(err, sessionId) {
       populate("elem", driver, _.bind(computeAndCheck, this, done));
     });
   });
+
   // using sendKeysToActiveElement
   it('should fill two fields with numbers - sendKeys', function(done) {
     driver.init(caps, function(err, sessionId) {
@@ -76,9 +82,13 @@ describe('load calc app', function() {
     driver.init(caps, function(err, sessionId){
       driver.elementsByTagName('textField', function(err, elems) {
         elems[0].displayed(function(err, value){
-          assert.equal(value, true);
           driver.quit(function() {
-            done();
+            try {
+              assert.equal(value, true);
+              done();
+            } catch (e) {
+              done(e);
+            }
           });
         });
       });

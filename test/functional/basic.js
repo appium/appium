@@ -113,7 +113,7 @@ describe('load calc app', function() {
     });
   });
 
-  return it('should interact with alert', function(done){
+  it('should interact with alert', function(done){
     driver.init(caps, function(err, sessionId){
       driver.elementsByTagName('button', function(err, buttons) {
         buttons[1].click(function() {
@@ -170,5 +170,16 @@ describe('load calc app', function() {
   //   });
   // };
   // _.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
+
+  return it('should get an app screenshot', function(done){
+    driver.init(caps, function(err, sessionId){
+      driver.takeScreenshot(function(err, screenshot){
+        assert.notEqual(screenshot, undefined);
+        assert.notEqual(screenshot, null);
+        assert.ok(screenshot);
+        done();
+      });
+    });
+  });
 
 });

@@ -169,6 +169,19 @@ exports.keys = function(req, res) {
   });
 };
 
+exports.frame = function(req, res) {
+  var sessionid = req.params.sessionid
+    , frame = req.body.id
+    , status = 0;
+
+  req.device.frame(frame, function(err, json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+    });
+  });
+};
+
 exports.elementDisplayed = function(req, res) {
   var sessionid = req.params.sessionid
     , elementId = req.params.elementId

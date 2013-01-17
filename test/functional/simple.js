@@ -39,9 +39,13 @@ describe('load calc app', function() {
             driver.elementsByTagName('staticText', function(err, elems) {
               elems[0].text(function(err, text) {
                 var sum = values[0] + values[1];
-                assert.equal(parseInt(text, 10), sum);
                 driver.quit(function() {
-                  done();
+                  try {
+                    assert.equal(parseInt(text, 10), sum);
+                    done();
+                  } catch (e) {
+                    done(e);
+                  }
                 });
               });
             });

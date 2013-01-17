@@ -184,10 +184,14 @@ describe('load calc app', function() {
   return it('should get an app screenshot', function(done){
     driver.init(caps, function(err, sessionId){
       driver.takeScreenshot(function(err, screenshot){
-        assert.notEqual(screenshot, undefined);
-        assert.notEqual(screenshot, null);
-        assert.ok(screenshot);
-        done();
+        try {
+          assert.notEqual(screenshot, undefined);
+          assert.notEqual(screenshot, null);
+          assert.ok(screenshot);
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     });
   });

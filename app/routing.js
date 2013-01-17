@@ -22,6 +22,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/value', controller.setValue);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/click', controller.doClick);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/text', controller.getText);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location', controller.getLocation);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/displayed', controller.elementDisplayed);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
@@ -79,7 +80,6 @@ module.exports = function(appium) {
 // rest.get('/wd/hub/session/:sessionId/element/:id/attribute/:name     --> Get the value of an element's attribute.
 // rest.get('/wd/hub/session/:sessionId/element/:id/equals/:other     --> Test if two element IDs refer to the same DOM element.
 // rest.get('/wd/hub/session/:sessionId/element/:id/displayed     --> Determine if an element is currently displayed.
-// rest.get('/wd/hub/session/:sessionId/element/:id/location     --> Determine an element's location on the page.
 // rest.get('/wd/hub/session/:sessionId/element/:id/location_in_view     --> Determine an element's location on the screen once it has been scrolled into view.
 // rest.get('/wd/hub/session/:sessionId/element/:id/size     --> Determine an element's size in pixels.
 // rest.get('/wd/hub/session/:sessionId/element/:id/css/:propertyName     --> Query the value of an element's computed CSS property.

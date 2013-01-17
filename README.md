@@ -10,6 +10,16 @@ There are two big benefits to testing with Appium:
 1.  Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile your app or modify in any way to be able to test automate it.
 2.  With Appium, you are able to write your test in your choice of programming language, using the Selenium WebDriver API and language-specific client libraries. If you only used UIAutomation, you would be required to write tests in JavaScript, and only run the tests through the Instruments application. With Appium, you can test your native iOS app with any language, and with your preferred dev tools.
 
+Prerequisite
+------------
+Install Node Packaged Modules [npm](https://npmjs.org/)  
+Install [grunt](http://gruntjs.com/)  
+Other npm packages that will likely need to be installed (express winston rimraf colors underscore argparse grunt-mocha-test mocha wd request)
+
+To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied python script (at your own risk)  
+
+    > sudo python authorize.py
+
 Quick Start
 -----------
 Download UICatalog:

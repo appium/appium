@@ -3,10 +3,14 @@
 var _ = require("underscore")
   , Module = require("module")
   , server = require('./server.js')
+  , fs = require('fs')
+  , path = require('path')
   , Mocha = require("mocha");
 
 module.exports.startAppium = function(appName, readyCb, doneCb) {
-  var app = "sample-code/apps/"+appName+"/build/Release-iphonesimulator/"+appName+".app";
+  var app = (fs.existsSync(appName)) ? appName:
+    path.resolve(__dirname,
+      "./sample-code/apps/"+appName+"/build/Release-iphonesimulator/"+appName+".app");
   return server.run({
     app: app
     , udid: null

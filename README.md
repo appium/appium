@@ -12,9 +12,14 @@ There are two big benefits to testing with Appium:
 
 Prerequisite
 ------------
-Install Node Packaged Modules [npm](https://npmjs.org/)  
-Install [grunt](http://gruntjs.com/)  
-Other npm packages that will likely need to be installed (express winston rimraf colors underscore argparse grunt-mocha-test mocha wd request)
+Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).
+Change into your local repo clone and install packages using following command:
+
+    > sudo npm install -g mocha
+    > sudo npm install -g grunt
+    > npm install
+    
+First two commands will make test and build tools available (sudo may not be necessary if you installed node.js through homebrew). The third command will install all app dependencies.
 
 To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied python script (at your own risk)  
 
@@ -49,7 +54,7 @@ Run all tests:
 
 Before commiting code please run grunt to run test and check your changes against code quality standards:
 
-    $ grunt
+    > grunt
     Running "lint:all" (lint) task
     Lint free.
 

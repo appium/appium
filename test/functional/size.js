@@ -9,16 +9,19 @@ var wd = require('wd')
       , version: '6.0'
     };
 
-describe('check location', function() {
+describe('check size', function() {
   var driver = wd.remote('127.0.0.1', 4723);
-  return it('should return the right x/y coordinates', function(done) {
+  return it('should return the right width and height', function(done) {
     driver.init(caps, function(err, sessionId) {
+      assert.deepEqual(err, null, err);
       driver.elementByTagName('button', function(err, element) {
+        assert.deepEqual(err, null, err);
         assert.ok(element.value);
-        element.getLocation(function(err, location) {
+        element.getSize(function(err, size) {
+          assert.deepEqual(err, null, err);
           driver.quit(function() {
-          assert.equal(location.x, 94);
-          assert.equal(location.y, 122);
+            assert.equal(size.width, 113);
+            assert.equal(size.height, 37);
             done();
           });
         });

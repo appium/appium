@@ -141,6 +141,19 @@ exports.getLocation = function(req, res) {
   });
 };
 
+exports.getSize = function(req, res) {
+  var elementId = req.params.elementId
+    , status = 0;
+
+  req.device.getSize(elementId, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result
+    });
+  });
+};
+
 exports.keys = function(req, res) {
   var sessionid = req.params.sessionid
     , elementId = req.params.elementId

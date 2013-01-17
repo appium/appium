@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "mocha": "~1.8.1",
+    "should": "~1.2.1",
     "grunt": "~0.3.17",
     "wd": "git://github.com/admc/wd.git",
     "assert": "~0.4.9",

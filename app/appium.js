@@ -48,7 +48,7 @@ Appium.prototype.invoke = function() {
     // in future all the blackberries go here.
     this.active = 'iOS';
     if (typeof this.devices[this.active] === 'undefined') {
-      this.devices[this.active] = ios(this.rest, this.args.app, this.args.UDID, this.args.verbose, this.args.remove);
+      this.devices[this.active] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove);
     }
     this.device = this.devices[this.active];
 

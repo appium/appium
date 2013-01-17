@@ -113,7 +113,7 @@ describe('load calc app', function() {
     });
   });
 
-  return it('should interact with alert', function(done){
+  it('should interact with alert', function(done){
     driver.init(caps, function(err, sessionId){
       driver.elementsByTagName('button', function(err, buttons) {
         buttons[1].click(function() {
@@ -131,6 +131,53 @@ describe('load calc app', function() {
             });
           });
         });
+      });
+    });
+  });
+
+  // TODO: Needs fixing - THIS TEST DOES NOT WORK
+  // I'm not sure how we can reliably test UIAutomation setTimeout
+  // see: http://stackoverflow.com/questions/8852977/how-does-uiautomation-determine-whether-a-uiaelement-isvisible/9051340#9051340
+  // it('should not wait more than 100 ms', function(done){
+  //   driver.init(caps, function(err, sessionId){
+  //     var waitStart = +new Date();
+  //     driver.setImplicitWaitTimeout(100, function(err, value) {
+  //       // execute search element command that should timeout
+  //       driver.elementsByTagName('textField', function(err, elems) {
+  //         assert.ok(+new Date() - waitStart <= 2000);
+  //         driver.quit(function() {
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   });
+  // });
+
+
+  // TOFIX: THIS TEST ALWAYS RETURNS 'undefined' orientation
+  // LOOKS like UIATargetClass.setDeviceOrientation is not working properly with simulator?
+  // var testOrientation = function(specOrientation) {
+  //   it('should get and set the screen orientation - ' + specOrientation, function(done) {
+  //     driver.init(caps, function(err) {
+  //       driver.setOrientation(specOrientation, function(err, orientation) {
+  //         assert.equal(orientation, specOrientation);
+  //         driver.getOrientation(function(err, orientation) {
+  //           assert.equal(orientation, specOrientation);
+  //           done();
+  //         });
+  //       });
+  //     });
+  //   });
+  // };
+  // _.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
+
+  return it('should get an app screenshot', function(done){
+    driver.init(caps, function(err, sessionId){
+      driver.takeScreenshot(function(err, screenshot){
+        assert.notEqual(screenshot, undefined);
+        assert.notEqual(screenshot, null);
+        assert.ok(screenshot);
+        done();
       });
     });
   });

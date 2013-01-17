@@ -1,30 +1,19 @@
-/*global describe:true, it:true */
+/*global it:true */
 "use strict";
 
-var wd = require('wd')
-  , assert = require('assert')
-  , caps = {
-      browserName: 'iOS'
-      , platform: 'Mac'
-      , version: '6.0'
-    };
+var describeWd = require('../helpers/driverblock.js').describe
+  , assert = require('assert');
 
-describe('check size', function() {
-  var driver = wd.remote('127.0.0.1', 4723);
+describeWd('check size', function(h) {
   return it('should return the right width and height', function(done) {
-    driver.init(caps, function(err, sessionId) {
+    h.driver.elementByTagName('button', function(err, element) {
       assert.deepEqual(err, null, err);
-      driver.elementByTagName('button', function(err, element) {
+      assert.ok(element.value);
+      element.getSize(function(err, size) {
         assert.deepEqual(err, null, err);
-        assert.ok(element.value);
-        element.getSize(function(err, size) {
-          assert.deepEqual(err, null, err);
-          driver.quit(function() {
-            assert.equal(size.width, 113);
-            assert.equal(size.height, 37);
-            done();
-          });
-        });
+        assert.equal(size.width, 113);
+        assert.equal(size.height, 37);
+        done();
       });
     });
   });

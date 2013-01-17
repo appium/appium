@@ -31,6 +31,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);
   rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
   rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
+  rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
@@ -45,7 +46,6 @@ module.exports = function(appium) {
 // rest.post('/wd/hub/session/:sessionId/refresh     --> Refresh the current page.
 // rest.post('/wd/hub/session/:sessionId/execute     --> Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
 // rest.post('/wd/hub/session/:sessionId/execute_async     --> Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
-// rest.get('/wd/hub/session/:sessionId/screenshot     --> Take a screenshot of the current page.
 // rest.get('/wd/hub/session/:sessionId/ime/available_engines     --> List all available engines on the machine.
 // rest.get('/wd/hub/session/:sessionId/ime/active_engine     --> Get the name of the active IME engine.
 // rest.get('/wd/hub/session/:sessionId/ime/activated     --> Indicates whether IME input is active at the moment (not if it's available.

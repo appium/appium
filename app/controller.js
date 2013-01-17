@@ -247,3 +247,16 @@ exports.getOrientation = function(req, res) {
     });
   });
 };
+
+exports.getScreenshot = function(req, res) {
+  var sessionid = req.params.sessionid
+    , status = 0;
+
+  req.device.getScreenshot(function(err, screenshot) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: screenshot
+    });
+  });
+};

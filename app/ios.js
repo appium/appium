@@ -4,7 +4,8 @@ var path = require('path')
   , fs = require('fs')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
-  , instruments = require('../instruments/instruments');
+  , instruments = require('../instruments/instruments')
+  , uuid = require('uuid-js');
 
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir) {
@@ -236,6 +237,22 @@ IOS.prototype.setOrientation = function(orientation, cb) {
 
   this.proxy(command, function(json) {
     cb(null, json);
+  });
+};
+
+IOS.prototype.getScreenshot = function(cb) {
+  var guid = uuid.create();
+  var command = ["takeScreenshot('screenshot", guid ,"')"].join('');
+
+  var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
+  this.proxy(command, function(json) {
+    fs.readFile(shotPath, function read(err, data) {
+      if (err) {
+          throw err;
+      }
+      json = new Buffer(data).toString('base64');
+      cb(null, json);
+    });
   });
 };
 

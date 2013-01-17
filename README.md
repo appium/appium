@@ -17,6 +17,7 @@ Install [grunt](http://gruntjs.com/)
 Other npm packages that will likely need to be installed (express winston rimraf colors underscore argparse grunt-mocha-test mocha wd request)
 
 To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied python script (at your own risk)  
+
     > sudo python authorize.py
 
 Quick Start

@@ -17,6 +17,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?', controller.getSession);
   rest.delete('/wd/hub/session/:sessionId?', controller.deleteSession);
   rest.get('/wd/hub/sessions', controller.getSessions);
+  rest.post('/wd/hub/session/:sessionId?/element', controller.findElement);
   rest.post('/wd/hub/session/:sessionId?/elements', controller.findElements);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/value', controller.setValue);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/click', controller.doClick);
@@ -63,7 +64,6 @@ module.exports = function(appium) {
 // rest.delete('/wd/hub/session/:sessionId/cookie/:name     --> Delete the cookie with the given name.
 // rest.get('/wd/hub/session/:sessionId/source     --> Get the current page source.
 // rest.get('/wd/hub/session/:sessionId/title     --> Get the current page title.
-// rest.post('/wd/hub/session/:sessionId/element     --> Search for an element on the page, starting from the document root.
 // rest.post('/wd/hub/session/:sessionId/element/active     --> Get the element on the page that currently has focus.
 // rest.get('/wd/hub/session/:sessionId/element/:id     --> Describe the identified element.
 // rest.post('/wd/hub/session/:sessionId/element/:id/element     --> Search for an element on the page, starting from the identified element.

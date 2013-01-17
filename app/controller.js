@@ -61,9 +61,22 @@ exports.deleteSession = function(req, res) {
 
 exports.findElements = function(req, res) {
   var strategy = req.body.using
-    , value = req.body.value;
+    , selector = req.body.value;
 
-  req.device.findElements(value, function(err, result) {
+  req.device.findElements(strategy, selector, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+      , status: 0
+      , value: result
+    });
+  });
+};
+
+exports.findElement = function(req, res) {
+  var strategy = req.body.using
+    , selector = req.body.value;
+
+  req.device.findElement(strategy, selector, function(err, result) {
     res.send({
       sessionId: req.appium.sessionId
       , status: 0

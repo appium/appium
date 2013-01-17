@@ -36,6 +36,11 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
   rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
   rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
+////////////////////////////////////////////////////////////////////
+//  I am doing these! Don't take them!  -Joe
+//  rest.get('/wd/hub/session/:sessionId?/local_storage     --> Get all keys of the storage.
+//  rest.post('/wd/hub/session/:sessionId?/local_storage     --> Set the storage item for the given key.
+////////////////////////////////////////////////////////////////////
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
@@ -44,8 +49,6 @@ module.exports = function(appium) {
 //  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements     --> Search for multiple elements on the page, starting from the identified element.
 //  rest.post('/wd/hub/session/:sessionId?/execute     --> Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
 //  rest.post('/wd/hub/session/:sessionId?/touch/flick     --> Flick on the touch screen using finger motion events.
-//  rest.get('/wd/hub/session/:sessionId?/local_storage     --> Get all keys of the storage.
-//  rest.post('/wd/hub/session/:sessionId?/local_storage     --> Set the storage item for the given key.
 //  rest.delete('/wd/hub/session/:sessionId?/local_storage     --> Clear the storage.
 //  rest.get('/wd/hub/session/:sessionId?/local_storage/key/:key     --> Get the storage item for the given key.
 //  rest.delete('/wd/hub/session/:sessionId?/local_storage/key/:key     --> Remove the storage item for the given key.

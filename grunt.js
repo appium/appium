@@ -40,11 +40,11 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.registerTask('test', "Run all tests", function() {
-    runTestsWithServer(grunt, 'TestApp', '*', this.async());
+  grunt.registerTask('test', "Run all tests", function(log) {
+    runTestsWithServer(grunt, 'TestApp', '*', log === "log", this.async());
   });
-  grunt.registerTask('functional', "Run functional tests", function() {
-    runTestsWithServer(grunt, 'TestApp', 'functional', this.async());
+  grunt.registerTask('functional', "Run functional tests", function(log) {
+    runTestsWithServer(grunt, 'TestApp', 'functional', log === "log", this.async());
   });
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('default', 'lint test');

@@ -181,17 +181,19 @@ describe('load calc app', function() {
   // };
   // _.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
 
-  return it('should get an app screenshot', function(done){
+  return it.only('should get an app screenshot', function(done){
     driver.init(caps, function(err, sessionId){
       driver.takeScreenshot(function(err, screenshot){
-        try {
-          assert.notEqual(screenshot, undefined);
-          assert.notEqual(screenshot, null);
-          assert.ok(screenshot);
-          done();
-        } catch (e) {
-          done(e);
-        }
+        driver.quit(function() {
+          try {
+            assert.notEqual(screenshot, undefined);
+            assert.notEqual(screenshot, null);
+            assert.ok(screenshot);
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
       });
     });
   });

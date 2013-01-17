@@ -14,8 +14,8 @@ describe('get source', function() {
   return it('should return the page source', function(done) {
     driver.init(caps, function(err, sessionId) {
       driver.source(function(err, source){
-        assert.ok(~source.indexOf('UIAButton: "ComputeSumButton" NAME:"ComputeSumButton"'));
         driver.quit(function() {
+          assert.ok(~source.indexOf('UIAButton: "ComputeSumButton" NAME:"ComputeSumButton"'));
           done();
         });
       });

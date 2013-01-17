@@ -26,6 +26,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location', controller.getLocation);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/size', controller.getSize);
+  rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
   rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
   rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
@@ -54,7 +55,6 @@ module.exports = function(appium) {
 // rest.get('/wd/hub/session/:sessionId?/ime/activated     --> Indicates whether IME input is active at the moment (not if it's available.
 // rest.post('/wd/hub/session/:sessionId?/ime/deactivate     --> De-activates the currently-active IME engine.
 // rest.post('/wd/hub/session/:sessionId?/ime/activate     --> Make an engines that is available (appears on the listreturned by getAvailableEngines) active.
-// rest.post('/wd/hub/session/:sessionId?/frame     --> Change focus to another frame on the page.
 // rest.post('/wd/hub/session/:sessionId?/window     --> Change focus to another window.
 // rest.delete('/wd/hub/session/:sessionId?/window     --> Close the current window.
 // rest.post('/wd/hub/session/:sessionId?/window/:windowHandle/size     --> Change the size of the specified window.

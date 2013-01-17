@@ -1,4 +1,4 @@
-/*global beforeEach:true, afterEach:true */
+/*global beforeEach:true, afterEach:true, describe:true */
 "use strict";
 
 var wd = require('wd')
@@ -10,7 +10,7 @@ var wd = require('wd')
       , version: '6.0'
     };
 
-module.exports = function(tests, host, port, caps) {
+var driverBlock = function(tests, host, port, caps) {
   host = typeof host === "undefined" ? defaultHost : host;
   port = typeof port === "undefined" ? defaultPort : port;
   caps = typeof caps === "undefined" ? defaultCaps : caps;
@@ -30,3 +30,12 @@ module.exports = function(tests, host, port, caps) {
 
   tests(driverHolder);
 };
+
+var describeWithDriver = function(desc, tests, host, port, caps) {
+  describe(desc, function() {
+    driverBlock(tests, host, port, caps);
+  });
+};
+
+module.exports.block = driverBlock;
+module.exports.describe = describeWithDriver;

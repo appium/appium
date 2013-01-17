@@ -1,26 +1,24 @@
-/*global describe:true, it:true */
+/*global it:true */
 "use strict";
 
-var driverBlock = require("../helpers/driverblock.js")
+var describeWd = require("../helpers/driverblock.js").describe
   , assert = require('assert');
 
-driverBlock(function(h) {
-  describe('findElement', function() {
-    return it('should find a single element on the app', function(done) {
-      h.driver.elementByTagName('button', function(err, element) {
-        assert.ok(element.value);
-        done();
-      });
+describeWd('findElement', function(h) {
+  return it('should find a single element on the app', function(done) {
+    h.driver.elementByTagName('button', function(err, element) {
+      assert.ok(element.value);
+      done();
     });
   });
+});
 
-  return describe('findElements', function() {
-    return it('findElements should find both elements on the app', function(done) {
-      h.driver.elementsByTagName('button', function(err, elements) {
-        assert.equal(elements.length, 2);
-        assert.ok(elements[0].value);
-        done();
-      });
+describeWd('findElements', function(h) {
+  return it('findElements should find both elements on the app', function(done) {
+    h.driver.elementsByTagName('button', function(err, elements) {
+      assert.equal(elements.length, 2);
+      assert.ok(elements[0].value);
+      done();
     });
   });
 });

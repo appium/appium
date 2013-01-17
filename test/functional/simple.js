@@ -1,12 +1,12 @@
 // This is basically a port of webdriver-test.py
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
-/*global describe:true, it:true */
+/*global it:true */
 "use strict";
 
 var assert = require("assert")
-  , driverBlock = require("../helpers/driverblock.js");
+  , describeWd = require("../helpers/driverblock.js").describe;
 
-describe('load calc app', function() {
+describeWd('load calc app', function(h) {
   var values = [];
   var populate = function(driver, cb) {
     driver.elementsByTagName('textField', function(err, elems) {
@@ -25,18 +25,16 @@ describe('load calc app', function() {
     });
   };
 
-  driverBlock(function(h) {
-    return it('should fill two fields with numbers', function(done) {
-      var driver = h.driver;
-      populate(driver, function(elems) {
-        driver.elementsByTagName('button', function(err, buttons) {
-          buttons[0].click(function() {
-            driver.elementsByTagName('staticText', function(err, elems) {
-              elems[0].text(function(err, text) {
-                var sum = values[0] + values[1];
-                assert.equal(parseInt(text, 10), sum);
-                done();
-              });
+  return it('should fill two fields with numbers', function(done) {
+    var driver = h.driver;
+    populate(driver, function(elems) {
+      driver.elementsByTagName('button', function(err, buttons) {
+        buttons[0].click(function() {
+          driver.elementsByTagName('staticText', function(err, elems) {
+            elems[0].text(function(err, text) {
+              var sum = values[0] + values[1];
+              assert.equal(parseInt(text, 10), sum);
+              done();
             });
           });
         });

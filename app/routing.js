@@ -65,7 +65,6 @@ module.exports = function(appium) {
 // rest.post('/wd/hub/session/:sessionId/cookie     --> Set a cookie.
 // rest.delete('/wd/hub/session/:sessionId/cookie     --> Delete all cookies visible to the current page.
 // rest.delete('/wd/hub/session/:sessionId/cookie/:name     --> Delete the cookie with the given name.
-// rest.get('/wd/hub/session/:sessionId/source     --> Get the current page source.
 // rest.get('/wd/hub/session/:sessionId/title     --> Get the current page title.
 // rest.post('/wd/hub/session/:sessionId/element/active     --> Get the element on the page that currently has focus.
 // rest.get('/wd/hub/session/:sessionId/element/:id     --> Describe the identified element.

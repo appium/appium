@@ -185,6 +185,15 @@ IOS.prototype.keys = function(elementId, keys, cb) {
   });
 };
 
+IOS.prototype.frame = function(frame, cb) {
+  frame = frame? frame : 'mainWindow';
+  var command = ["wd_frame = ", frame].join('');
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  });
+};
+
 IOS.prototype.implicitWait = function(seconds, cb) {
   var command = ["setImplicitWait('", seconds, "')"].join('');
 

@@ -63,10 +63,6 @@ Appium.prototype.invoke = function() {
   }
 };
 
-Appium.prototype.proxy = function(cmd, cb) {
-  this.device.proxy(cmd, cb);
-};
-
 Appium.prototype.stop = function(cb) {
   if (this.sessionId === null) {
     return;

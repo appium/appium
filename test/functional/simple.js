@@ -3,13 +3,8 @@
 /*global describe:true, it:true */
 "use strict";
 
-var wd = require('wd')
-  , assert = require("assert")
-  , caps = {
-      browserName: 'iOS'
-      , platform: 'Mac'
-      , version: '6.0'
-    };
+var assert = require("assert")
+  , driverBlock = require("../helpers/driverblock.js");
 
 describe('load calc app', function() {
   var values = [];
@@ -30,23 +25,17 @@ describe('load calc app', function() {
     });
   };
 
-  var driver = wd.remote('127.0.0.1', 4723);
-  return it('should fill two fields with numbers', function(done) {
-    driver.init(caps, function(err, sessionId) {
+  driverBlock(function(h) {
+    return it('should fill two fields with numbers', function(done) {
+      var driver = h.driver;
       populate(driver, function(elems) {
         driver.elementsByTagName('button', function(err, buttons) {
           buttons[0].click(function() {
             driver.elementsByTagName('staticText', function(err, elems) {
               elems[0].text(function(err, text) {
                 var sum = values[0] + values[1];
-                driver.quit(function() {
-                  try {
-                    assert.equal(parseInt(text, 10), sum);
-                    done();
-                  } catch (e) {
-                    done(e);
-                  }
-                });
+                assert.equal(parseInt(text, 10), sum);
+                done();
               });
             });
           });
@@ -55,3 +44,4 @@ describe('load calc app', function() {
     });
   });
 });
+

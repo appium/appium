@@ -1,17 +1,12 @@
 // This is basically a port of webdriver-test.py
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
-/*global describe:true, it:true */
+/*global it:true */
 "use strict";
 
-var wd = require('wd')
-  , assert = require("assert")
-  , caps = {
-      browserName: 'iOS'
-      , platform: 'Mac'
-      , version: '6.0'
-    };
+var assert = require("assert")
+  , describeWd = require("../helpers/driverblock.js").describe;
 
-describe('load calc app', function() {
+describeWd('load calc app', function(h) {
   var values = [];
   var populate = function(driver, cb) {
     driver.elementsByTagName('textField', function(err, elems) {
@@ -30,24 +25,16 @@ describe('load calc app', function() {
     });
   };
 
-  var driver = wd.remote('127.0.0.1', 4723);
   return it('should fill two fields with numbers', function(done) {
-    driver.init(caps, function(err, sessionId) {
-      populate(driver, function(elems) {
-        driver.elementsByTagName('button', function(err, buttons) {
-          buttons[0].click(function() {
-            driver.elementsByTagName('staticText', function(err, elems) {
-              elems[0].text(function(err, text) {
-                var sum = values[0] + values[1];
-                driver.quit(function() {
-                  try {
-                    assert.equal(parseInt(text, 10), sum);
-                    done();
-                  } catch (e) {
-                    done(e);
-                  }
-                });
-              });
+    var driver = h.driver;
+    populate(driver, function(elems) {
+      driver.elementsByTagName('button', function(err, buttons) {
+        buttons[0].click(function() {
+          driver.elementsByTagName('staticText', function(err, elems) {
+            elems[0].text(function(err, text) {
+              var sum = values[0] + values[1];
+              assert.equal(parseInt(text, 10), sum);
+              done();
             });
           });
         });
@@ -55,3 +42,4 @@ describe('load calc app', function() {
     });
   });
 });
+

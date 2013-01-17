@@ -6,7 +6,8 @@ var spawn = require('child_process').spawn
   , logger = require('../logger').get('instruments')
   , fs = require('fs')
   , _ = require('underscore')
-  , net = require('net');
+  , net = require('net')
+  , uuid = require('uuid-js');
 
 var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.app = app;
@@ -25,6 +26,7 @@ var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.proc = null;
   this.debugMode = false;
   this.onReceiveCommand = null;
+  this.guid = uuid.create();
   this.eventRouter = {
     'cmd': this.commandHandler
   };
@@ -84,30 +86,38 @@ Instruments.prototype.startSocketServer = function(sock) {
 
 Instruments.prototype.launch = function() {
   var self = this;
-  this.proc = this.spawnInstruments();
-  this.proc.stdout.on('data', function(data) {
-    self.outputStreamHandler(data);
-  });
-  this.proc.stderr.on('data', function(data) {
-    self.errorStreamHandler(data);
-  });
+  // prepare temp dir
+  var tmpDir = '/tmp/' + this.guid;
+  fs.mkdir(tmpDir, function(e) {
+    if(!e || (e && e.code === 'EEXIST')) {
+        self.proc = self.spawnInstruments(tmpDir);
+        self.proc.stdout.on('data', function(data) {
+          self.outputStreamHandler(data);
+        });
+        self.proc.stderr.on('data', function(data) {
+          self.errorStreamHandler(data);
+        });
 
-  this.proc.on('exit', function(code) {
-    self.debug("Instruments exited with code " + code);
-    self.exitCode = code;
-    self.hasExited = true;
-    self.doExit();
+        self.proc.on('exit', function(code) {
+          self.debug("Instruments exited with code " + code);
+          self.exitCode = code;
+          self.hasExited = true;
+          self.doExit();
+        });
+    }else{
+      throw e;
+    }
   });
 };
 
-Instruments.prototype.spawnInstruments = function() {
+Instruments.prototype.spawnInstruments = function(tmpDir) {
   var args = ["-t", this.template];
   if (this.udid) {
     args = args.concat(["-w", this.udid]);
   }
   args = args.concat([this.app]);
   args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
-  args = args.concat(["-e", "UIARESULTSPATH", '/tmp']);
+  args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
   return spawn("/usr/bin/instruments", args);
 };
 

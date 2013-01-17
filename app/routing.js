@@ -30,6 +30,9 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
   rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
   rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);
+  rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
+  rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
+  rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
@@ -44,7 +47,6 @@ module.exports = function(appium) {
 // rest.post('/wd/hub/session/:sessionId/refresh     --> Refresh the current page.
 // rest.post('/wd/hub/session/:sessionId/execute     --> Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
 // rest.post('/wd/hub/session/:sessionId/execute_async     --> Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
-// rest.get('/wd/hub/session/:sessionId/screenshot     --> Take a screenshot of the current page.
 // rest.get('/wd/hub/session/:sessionId/ime/available_engines     --> List all available engines on the machine.
 // rest.get('/wd/hub/session/:sessionId/ime/active_engine     --> Get the name of the active IME engine.
 // rest.get('/wd/hub/session/:sessionId/ime/activated     --> Indicates whether IME input is active at the moment (not if it's available.
@@ -81,8 +83,6 @@ module.exports = function(appium) {
 // rest.get('/wd/hub/session/:sessionId/element/:id/location_in_view     --> Determine an element's location on the screen once it has been scrolled into view.
 // rest.get('/wd/hub/session/:sessionId/element/:id/size     --> Determine an element's size in pixels.
 // rest.get('/wd/hub/session/:sessionId/element/:id/css/:propertyName     --> Query the value of an element's computed CSS property.
-// rest.get('/wd/hub/session/:sessionId/orientation     --> Get the current browser orientation.
-// rest.post('/wd/hub/session/:sessionId/orientation     --> Set the browser orientation.
 // rest.get('/wd/hub/session/:sessionId/alert_text     --> Gets the text of the currently displayed JavaScript? alert(), confirm(), or prompt() dialog.
 // rest.post('/wd/hub/session/:sessionId/alert_text     --> Sends keystrokes to a JavaScript? prompt() dialog.
 // rest.post('/wd/hub/session/:sessionId/accept_alert     --> Accepts the currently displayed alert dialog.

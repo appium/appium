@@ -181,7 +181,7 @@ describe('load calc app', function() {
   // };
   // _.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
 
-  return it.only('should get an app screenshot', function(done){
+  return it('should get an app screenshot', function(done){
     driver.init(caps, function(err, sessionId){
       driver.takeScreenshot(function(err, screenshot){
         driver.quit(function() {

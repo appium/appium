@@ -13,7 +13,7 @@ There are two big benefits to testing with Appium:
 Prerequisite
 ------------
 Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).
-Change into your local repo clone and install packages using following command:
+Change into your local repo clone and install packages using following commands:
 
     > sudo npm install -g mocha
     > sudo npm install -g grunt

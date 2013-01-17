@@ -22,9 +22,12 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   );
 };
 
-module.exports.runTestsWithServer = function(grunt, appName, testType, cb) {
+module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, cb) {
+  if (typeof verbose === "undefined") {
+      verbose = false;
+  }
   var exitCode = null;
-  server = module.exports.startAppium(appName, false, function() {
+  server = module.exports.startAppium(appName, verbose, function() {
     module.exports.runMochaTests(grunt, testType, function(code) {
       server.close();
       exitCode = code;

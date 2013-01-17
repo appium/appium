@@ -52,7 +52,7 @@ IOS.prototype.start = function(cb) {
 
   if (this.instruments === null) {
     this.instruments = instruments(
-      path.resolve(__dirname, '../' + this.app)
+      this.app
       , this.udid
       , path.resolve(__dirname, 'uiauto/bootstrap.js')
       , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')

@@ -6,14 +6,14 @@ var _ = require("underscore")
   , path = require('path')
   , spawn = require('child_process').spawn;
 
-module.exports.startAppium = function(appName, readyCb, doneCb) {
+module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   var app = (fs.existsSync(appName)) ? appName:
     path.resolve(__dirname,
       "./sample-code/apps/"+appName+"/build/Release-iphonesimulator/"+appName+".app");
   return server.run({
     app: app
     , udid: null
-    , verbose: true
+    , verbose: verbose
     , port: 4723
     , address: '127.0.0.1'
     , remove: true }
@@ -24,7 +24,7 @@ module.exports.startAppium = function(appName, readyCb, doneCb) {
 
 module.exports.runTestsWithServer = function(grunt, appName, testType, cb) {
   var exitCode = null;
-  server = module.exports.startAppium(appName, function() {
+  server = module.exports.startAppium(appName, false, function() {
     module.exports.runMochaTests(grunt, testType, function(code) {
       server.close();
       exitCode = code;

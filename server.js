@@ -27,7 +27,9 @@ var main = function(args, readyCb, doneCb) {
 
     rest.use(express.favicon());
     rest.use(express.static(path.join(__dirname, '/app/static')));
-    rest.use(express.logger('dev'));
+    if (args.verbose) {
+      rest.use(express.logger('dev'));
+    }
     rest.use(parserWrap);
     rest.use(express.methodOverride());
     rest.use(rest.router);

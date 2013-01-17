@@ -2,17 +2,17 @@
 "use strict";
 
 var describeWd = require('../helpers/driverblock.js').describe
-  , assert = require('assert');
+  , should = require('should');
 
 describeWd('check size', function(h) {
   return it('should return the right width and height', function(done) {
     h.driver.elementByTagName('button', function(err, element) {
-      assert.deepEqual(err, null, err);
-      assert.ok(element.value);
+      should.not.exist(err);
+      should.exist(element.value);
       element.getSize(function(err, size) {
-        assert.deepEqual(err, null, err);
-        assert.equal(size.width, 113);
-        assert.equal(size.height, 37);
+        should.not.exist(err);
+        size.width.should.eql(113);
+        size.height.should.eql(37);
         done();
       });
     });

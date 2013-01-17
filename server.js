@@ -41,11 +41,11 @@ var main = function(args, readyCb, doneCb) {
     var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
     logger.info(logMessage.cyan);
     if (readyCb) {
-      readyCb();
+      readyCb(appiumServer);
     }
   });
   server.on('close', doneCb);
-  return appiumServer;
+  return server;
 };
 
 if (require.main === module) {

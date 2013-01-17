@@ -1,13 +1,17 @@
 "use strict";
-var server = require('./server.js')
-  , build = require('./build.js')
+var build = require('./build.js')
   , path = require('path')
   , rimraf = require('rimraf')
   , http = require('http')
   , exec = require('child_process').exec
+  , gruntHelpers = require('./grunt-helpers.js')
+  , startAppium = gruntHelpers.startAppium
+  , runTestsWithServer = gruntHelpers.runTestsWithServer
   , fs = require('fs');
 
 module.exports = function(grunt) {
+
+
   grunt.initConfig({
     lint: {
       all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js']
@@ -35,26 +39,19 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.registerTask('test', 'buildApp:TestApp mochaTest:*');
-  grunt.registerTask('functional', 'buildApp mochaTest:functional');
+  grunt.registerTask('test', "Run all tests", function() {
+    runTestsWithServer(grunt, 'TestApp', '*', this.async());
+  });
+  grunt.registerTask('functional', "Run functional tests", function() {
+    runTestsWithServer(grunt, 'TestApp', 'functional', this.async());
+  });
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('default', 'lint test');
   grunt.registerTask('appium', "Start the Appium server", function(appName) {
     if (typeof appName === "undefined") {
       appName = "TestApp";
     }
-    var done = this.async();
-    var app = "sample-code/apps/"+appName+"/build/Release-iphonesimulator/"+appName+".app";
-    server.run({
-      app: app
-      , udid: null
-      , verbose: true
-      , port: 4723
-      , address: '127.0.0.1'
-      , remove: true }
-      , function() {}
-      , done
-    );
+    startAppium(appName, function() {}, this.async());
   });
   grunt.registerTask('downloadApp', "Download UICatalog", function() {
     var done = this.async();

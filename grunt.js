@@ -28,8 +28,16 @@ module.exports = function(grunt) {
       }
     }
     , mochaTest: {
-      functional: ['test/functional/*.js']
-      , unit: ['app/test/unit/*.js']
+      unit: ['app/test/unit/*.js']
+    }
+    , mochaTestWithServer: {
+      TestApp: {
+        functional: ['test/functional/*.js']
+        , unit: ['app/test/unit/*.js']
+      }
+      , UICatalog: {
+        uicatalog: ['test/uicatalog/findElement.js']
+      }
     }
     , mochaTestConfig: {
       options: {
@@ -40,12 +48,13 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.registerTask('test', "Run all tests", function(log) {
-    runTestsWithServer(grunt, 'TestApp', '*', log === "log", this.async());
-  });
   grunt.registerTask('functional', "Run functional tests", function(log) {
     runTestsWithServer(grunt, 'TestApp', 'functional', log === "log", this.async());
   });
+  grunt.registerTask('uicatalog', "Run UICatalog tests", function(log) {
+    runTestsWithServer(grunt, 'UICatalog', 'uicatalog', log === "log", this.async());
+  });
+  grunt.registerTask('test', 'buildApp:TestApp buildApp:UICatalog unit functional uicatalog');
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('default', 'lint test');
   grunt.registerTask('appium', "Start the Appium server", function(appName) {

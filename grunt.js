@@ -6,6 +6,7 @@ var build = require('./build.js')
   , exec = require('child_process').exec
   , gruntHelpers = require('./grunt-helpers.js')
   , startAppium = gruntHelpers.startAppium
+  , authorize = gruntHelpers.authorize
   , runTestsWithServer = gruntHelpers.runTestsWithServer
   , fs = require('fs');
 
@@ -106,5 +107,8 @@ module.exports = function(grunt) {
         done(true);
       }
     });
+  });
+  grunt.registerTask('authorize', "Authorize developer", function() {
+    authorize(grunt, this.async());
   });
 };

@@ -324,6 +324,6 @@ exports.flick = function(req, res) {
       res.send({
         sessionId: req.appium.sessionId
           , status: status
-      }); 
-    }); 
+      });
+    });
 };

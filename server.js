@@ -1,14 +1,14 @@
 "use strict";
 var http = require('http')
   , express = require('express')
-  , rest = express()
   , path = require('path')
-  , server = http.createServer(rest)
   , logger = require('./logger').get('appium')
   , appium = require('./app/appium')
   , parser = require('./app/parser');
 
 var main = function(args, readyCb, doneCb) {
+  var rest = express()
+    , server = http.createServer(rest);
   if (typeof doneCb === "undefined") {
     doneCb = function() {};
   }

@@ -118,9 +118,13 @@ IOS.prototype.push = function(elem) {
   next();
 };
 
-IOS.prototype.findElementOrElements = function(selector, many, cb) {
-  var ext = many ? 's' : ''
-  , ctx = 'wd_frame'; // Does this value ever need to change?
+IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
+  var ext = many ? 's' : '';
+  if (typeof ctx === "undefined" || !ctx) {
+    ctx = 'wd_frame';
+  } else {
+    ctx = 'elements["' + ctx + '"]';
+  }
 
   var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");
 
@@ -130,11 +134,19 @@ IOS.prototype.findElementOrElements = function(selector, many, cb) {
 };
 
 IOS.prototype.findElement = function(strategy, selector, cb) {
-  this.findElementOrElements(selector, false, cb);
+  this.findElementOrElements(selector, null, false, cb);
 };
 
 IOS.prototype.findElements = function(strategy, selector, cb) {
-  this.findElementOrElements(selector, true, cb);
+  this.findElementOrElements(selector, null, true, cb);
+};
+
+IOS.prototype.findElementFromElement = function(element, strategy, selector, cb) {
+  this.findElementOrElements(selector, element, false, cb);
+};
+
+IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
+  this.findElementOrElements(selector, element, true, cb);
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {

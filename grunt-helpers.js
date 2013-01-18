@@ -4,6 +4,10 @@ var _ = require("underscore")
   , server = require('./server.js')
   , fs = require('fs')
   , path = require('path')
+  , temp = require('temp')
+  , difflib = require('difflib')
+  , prompt = require('prompt')
+  , exec = require('child_process').exec
   , spawn = require('child_process').spawn;
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
@@ -76,4 +80,65 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
     cb(code);
   });
 
+};
+
+module.exports.authorize = function(grunt, cb) {
+  // somewhat messily ported from lukeis's authorize.py
+  var authFile = '/etc/authorization';
+  exec('DevToolsSecurity --enable', function(err, stdout, stderr) {
+    if (err) throw err;
+    fs.readFile(authFile, 'utf8', function(err, data) {
+      if (err) throw err;
+      var origData = data;
+      var re = /<key>system.privilege.taskport<\/key>\s*\n\s*<dict>\n\s*<key>allow-root<\/key>\n\s*(<[^>]+>)/;
+      var match = re.exec(data);
+      if (!match) {
+        grunt.fatal("Could not find the system.privilege.taskport key in /etc/authorization");
+      } else {
+        if (!(/<false\/>/.exec(match[0]))) {
+          grunt.fatal("/etc/authorization has already been modified to support appium");
+        } else {
+          var newText = match[0].replace(match[1], '<true/>');
+          var newContent = data.replace(match[0], newText);
+          temp.open('authorization.backup.', function (err, info) {
+            fs.write(info.fd, origData);
+            fs.close(info.fd, function(err) {
+              if (err) throw err;
+              grunt.log.writeln("Backed up to " + info.path);
+              var diff = difflib.contextDiff(origData.split("\n"), newContent.split("\n"), {fromfile: "before", tofile: "after"});
+              grunt.log.writeln("Check this diff to make sure the change looks cool:");
+              grunt.log.writeln(diff.join("\n"));
+              prompt.start();
+              var promptProps = {
+                properties: {
+                  proceed: {
+                    pattern: /^(y|n)/
+                    , description: "Make changes? [y/n] "
+                  }
+                }
+              };
+              prompt.get(promptProps, function(err, result) {
+                if (result.proceed == "y") {
+                  fs.writeFile(authFile, newContent, function(err) {
+                    if (err) {
+                      if (err.code === "EACCES") {
+                        grunt.fatal("You need to run this as sudo!");
+                      } else {
+                        throw err;
+                      }
+                    }
+                    grunt.log.writeln("Wrote new /etc/authorization");
+                    cb();
+                  });
+                } else {
+                  grunt.log.writeln("No changes were made");
+                  cb();
+                }
+              });
+            });
+          });
+        }
+      }
+    });
+  });
 };

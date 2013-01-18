@@ -44,6 +44,9 @@
     "assert": "~0.4.9",
     "grunt-mocha-test": "0.0.1",
     "request": "~2.12.0",
-    "winston": "~0.6.2"
+    "winston": "~0.6.2",
+    "temp": "~0.5.0",
+    "difflib": "~0.2.4",
+    "prompt": "~0.2.9"
   }
 }

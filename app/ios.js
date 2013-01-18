@@ -300,6 +300,20 @@ IOS.prototype.getScreenshot = function(cb) {
   });
 };
 
+IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
+  var command = ""; 
+  if (swipe) {
+    command = ["touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
+  }
+  else {
+    command = ["touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
+  }
+
+  this.proxy(command, function(json) {
+    cb(null, json);
+  }); 
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {
   return new IOS(rest, app, udid, verbose, removeTraceDir);
 };

@@ -36,6 +36,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
   rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
   rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
+  rest.post('/wd/hub/session/:sessionId/touch/flick', controller.flick);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg

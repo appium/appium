@@ -27,9 +27,9 @@ module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, 
       verbose = false;
   }
   var exitCode = null;
-  server = module.exports.startAppium(appName, verbose, function() {
-    module.exports.runMochaTests(grunt, testType, function(code) {
-      server.close();
+  var appServer = module.exports.startAppium(appName, verbose, function() {
+    module.exports.runMochaTests(grunt, appName, testType, function(code) {
+      appServer.close();
       exitCode = code;
     });
   }, function() {
@@ -38,7 +38,7 @@ module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, 
   });
 };
 
-module.exports.runMochaTests = function(grunt, testType, cb) {
+module.exports.runMochaTests = function(grunt, appName, testType, cb) {
 
   // load the options if they are specified
   var options = grunt.config(['mochaTestConfig', testType, 'options']);
@@ -52,8 +52,8 @@ module.exports.runMochaTests = function(grunt, testType, cb) {
     options.reporter = "tap";
   }
   var args = ['-t', options.timeout, '-R', options.reporter, '--colors'];
-  var fileConfig = grunt.config(['mochaTest']);
-  _.each(fileConfig, function(testFiles, testKey) {
+  var fileConfig = grunt.config(['mochaTestWithServer']);
+  _.each(fileConfig[appName], function(testFiles, testKey) {
     if (testType == "*" || testType == testKey) {
       _.each(testFiles, function(file) {
         _.each(grunt.file.expandFiles(file), function(file) {

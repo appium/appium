@@ -21,9 +21,9 @@ Change into your local repo clone and install packages using following commands:
 
 First two commands will make test and build tools available (sudo may not be necessary if you installed node.js through homebrew). The third command will install all app dependencies.
 
-To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied python script (at your own risk)
+To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied grunt task (at your own risk)
 
-    > sudo python authorize.py
+    > sudo grunt authorize
 
 Quick Start
 -----------
@@ -36,20 +36,19 @@ Build an app:
     > grunt buildApp:UICatalog
     > grunt buildApp:TestApp
 
-Start it:
-
-    > grunt appium:TestApp &
-
-Run functional tests (make sure Appium server is not running as this command
-runs it for the duration of the test):
+Run functional tests against TestApp:
 
     > grunt functional
 
-Run unit tests:
+Run unit tests against TestApp:
 
     > grunt unit
 
-Run all tests:
+Run tests against UICatalog:
+
+    > grunt uicatalog
+
+Run all tests against TestApp and UICatalog:
 
     > grunt test
 
@@ -60,6 +59,18 @@ Before commiting code please run grunt to run test and check your changes agains
     Lint free.
 
     Done, without errors.
+
+More things
+-----------
+If you want to run the appium server and have it listen indefinitely, you can
+do one of the following:
+
+    > grunt appium:TestApp
+    > grunt appium:UICatalog
+
+Then you can, e.g., run individual testfiles using Mocha directly:
+
+    > mocha -t 60000 -R spec test/functional/simple.js
 
 Using with a [Bitbeambot](http://bitbeam.org)
 -----------

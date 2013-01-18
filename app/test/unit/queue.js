@@ -57,7 +57,7 @@ describe('Appium', function() {
         inst.devices[inst.active].stop = stop;
         inst.device = inst.devices[inst.active];
         cb();
-      }
+      };
 
   describe('#start', function() {
     return it('should queue up subsequent calls and execute them sequentially', function(done) {
@@ -84,7 +84,7 @@ describe('Appium', function() {
             loop(++num);
           });
         });
-      }
+      };
 
       loop(0);
     });

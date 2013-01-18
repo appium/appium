@@ -122,6 +122,8 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   if (typeof ctx === "undefined" || !ctx) {
     ctx = 'wd_frame';
+  } else {
+    ctx = 'elements["' + ctx + '"]';
   }
 
   var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");

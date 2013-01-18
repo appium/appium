@@ -312,3 +312,18 @@ exports.getScreenshot = function(req, res) {
     });
   });
 };
+
+exports.flick = function(req, res) {
+  var sessionid = req.params.sessionid
+    , swipe = req.params.swipe
+    , xSpeed = req.params.xSpeed
+    , ySpeed = req.params.ySpeed
+    , status = 0;
+
+    req.device.flick(xSpeed, ySpeed, swipe, function(err, result) {
+      res.send({
+        sessionId: req.appium.sessionId
+          , status: status
+      }); 
+    }); 
+};

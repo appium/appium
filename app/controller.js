@@ -86,8 +86,7 @@ exports.findElement = function(req, res) {
 };
 
 exports.setValue = function(req, res) {
-  var sessionId = req.params.sessionid
-    , elementId = req.params.elementId
+  var elementId = req.params.elementId
     , value = req.body.value.join('')
     , status = 0;
 
@@ -101,8 +100,7 @@ exports.setValue = function(req, res) {
 };
 
 exports.doClick = function(req, res) {
-  var sessionid = req.params.sessionid
-    , elementId = req.params.elementId
+  var elementId = req.params.elementId
     , status = 0;
 
   req.device.click(elementId, function(err, json) {
@@ -115,8 +113,7 @@ exports.doClick = function(req, res) {
 };
 
 exports.getText = function(req, res) {
-  var sessionid = req.params.sessionid
-    , elementId = req.params.elementId
+  var elementId = req.params.elementId
     , status = 0;
 
   req.device.getText(elementId, function(err, result) {
@@ -155,8 +152,7 @@ exports.getSize = function(req, res) {
 };
 
 exports.keys = function(req, res) {
-  var sessionid = req.params.sessionid
-    , elementId = req.params.elementId
+  var elementId = req.params.elementId
     , keys = req.body.value.join('')
     , status = 0;
 
@@ -170,8 +166,7 @@ exports.keys = function(req, res) {
 };
 
 exports.frame = function(req, res) {
-  var sessionid = req.params.sessionid
-    , frame = req.body.id
+  var frame = req.body.id
     , status = 0;
 
   req.device.frame(frame, function(err, json) {
@@ -183,8 +178,7 @@ exports.frame = function(req, res) {
 };
 
 exports.elementDisplayed = function(req, res) {
-  var sessionid = req.params.sessionid
-    , elementId = req.params.elementId
+  var elementId = req.params.elementId
     , status = 0;
 
   req.device.elementDisplayed(elementId, function(err, result) {
@@ -197,8 +191,7 @@ exports.elementDisplayed = function(req, res) {
 };
 
 exports.elementEnabled = function(req, res) {
-  var sessionid = req.params.sessionid
-    , elementId = req.params.elementId
+  var elementId = req.params.elementId
     , status = 0;
 
   req.device.elementEnabled(elementId, function(err, result) {
@@ -211,8 +204,7 @@ exports.elementEnabled = function(req, res) {
 };
 
 exports.getPageSource = function(req, res) {
-  var sessionid = req.params.sessionid
-    , status = 0;
+  var status = 0;
 
   req.device.getPageSource(function(err, result) {
     res.send({
@@ -224,8 +216,7 @@ exports.getPageSource = function(req, res) {
 };
 
 exports.getAlertText = function(req, res) {
-  var sessionid = req.params.sessionid
-    , status = 0;
+  var status = 0;
 
   req.device.getAlertText(function(err, result) {
     res.send({
@@ -237,8 +228,7 @@ exports.getAlertText = function(req, res) {
 };
 
 exports.postAcceptAlert = function(req, res) {
-  var sessionid = req.params.sessionid
-    , status = 0;
+  var status = 0;
 
   req.device.postAcceptAlert(function(err, result) {
     res.send({
@@ -250,8 +240,7 @@ exports.postAcceptAlert = function(req, res) {
 };
 
 exports.postDismissAlert = function(req, res) {
-  var sessionid = req.params.sessionid
-    , status = 0;
+  var status = 0;
 
   req.device.postDismissAlert(function(err, result) {
     res.send({
@@ -274,8 +263,7 @@ exports.implicitWait = function(req, res) {
 };
 
 exports.setOrientation = function(req, res) {
-  var sessionid = req.params.sessionid
-    , orientation = req.body.orientation
+  var orientation = req.body.orientation
     , status = 0;
 
   req.device.setOrientation(orientation, function(err, orientation) {
@@ -288,8 +276,7 @@ exports.setOrientation = function(req, res) {
 };
 
 exports.getOrientation = function(req, res) {
-  var sessionid = req.params.sessionid
-    , status = 0;
+  var status = 0;
 
   req.device.getOrientation(function(err, orientation) {
     res.send({
@@ -301,8 +288,7 @@ exports.getOrientation = function(req, res) {
 };
 
 exports.getScreenshot = function(req, res) {
-  var sessionid = req.params.sessionid
-    , status = 0;
+  var status = 0;
 
   req.device.getScreenshot(function(err, screenshot) {
     res.send({
@@ -312,3 +298,6 @@ exports.getScreenshot = function(req, res) {
     });
   });
 };
+
+
+

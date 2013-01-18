@@ -85,6 +85,34 @@ exports.findElement = function(req, res) {
   });
 };
 
+exports.findElementFromElement = function(req, res) {
+  var element = req.params.elementId
+    , strategy = req.body.using
+    , selector = req.body.value;
+
+  req.device.findElementFromElement(element, strategy, selector, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+      , status: 0
+      , value: result
+    });
+  });
+};
+
+exports.findElementsFromElement = function(req, res) {
+  var element = req.params.elementId
+    , strategy = req.body.using
+    , selector = req.body.value;
+
+  req.device.findElementsFromElement(element, strategy, selector, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+      , status: 0
+      , value: result
+    });
+  });
+};
+
 exports.setValue = function(req, res) {
   var sessionId = req.params.sessionid
     , elementId = req.params.elementId

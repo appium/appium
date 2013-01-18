@@ -64,8 +64,6 @@ IOS.prototype.start = function(cb) {
 
 };
 
-
-
 IOS.prototype.stop = function(cb) {
   var me = this;
   if (cb) {

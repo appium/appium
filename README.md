@@ -18,10 +18,10 @@ Change into your local repo clone and install packages using following commands:
     > sudo npm install -g mocha
     > sudo npm install -g grunt
     > npm install
-    
+
 First two commands will make test and build tools available (sudo may not be necessary if you installed node.js through homebrew). The third command will install all app dependencies.
 
-To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied python script (at your own risk)  
+To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied python script (at your own risk)
 
     > sudo python authorize.py
 
@@ -36,11 +36,12 @@ Build an app:
     > grunt buildApp:UICatalog
     > grunt buildApp:TestApp
 
-Start it (can be brought back to foreground with 'fg' command):
+Start it:
 
     > grunt appium:TestApp &
 
-Run functional tests (make sure Appium server is running as per command line above):
+Run functional tests (make sure Appium server is not running as this command
+runs it for the duration of the test):
 
     > grunt functional
 

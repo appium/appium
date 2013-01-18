@@ -36,6 +36,8 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
   rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
   rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
+  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/element', controller.findElementFromElement);
+  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements', controller.findElementsFromElement);
   rest.post('/wd/hub/session/:sessionId/touch/flick', controller.flick);
 };
 

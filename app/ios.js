@@ -301,7 +301,7 @@ IOS.prototype.getScreenshot = function(cb) {
 };
 
 IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
-  var command = ""; 
+  var command = "";
   if (swipe) {
     command = ["touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
@@ -311,7 +311,7 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
 
   this.proxy(command, function(json) {
     cb(null, json);
-  }); 
+  });
 };
 
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {

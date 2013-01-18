@@ -342,10 +342,9 @@ exports.getScreenshot = function(req, res) {
 };
 
 exports.flick = function(req, res) {
-  var sessionid = req.params.sessionid
-    , swipe = req.params.swipe
-    , xSpeed = req.params.xSpeed
-    , ySpeed = req.params.ySpeed
+  var swipe = req.body.swipe
+    , xSpeed = req.body.xspeed
+    , ySpeed = req.body.yspeed
     , status = 0;
 
     req.device.flick(xSpeed, ySpeed, swipe, function(err, result) {

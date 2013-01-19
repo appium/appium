@@ -83,7 +83,7 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
 };
 
 module.exports.authorize = function(grunt, cb) {
-  // somewhat messily ported from lukeis's authorize.py
+  // somewhat messily ported from penguinho's authorize.py
   var authFile = '/etc/authorization';
   exec('DevToolsSecurity --enable', function(err, stdout, stderr) {
     if (err) throw err;

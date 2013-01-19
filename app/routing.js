@@ -43,10 +43,7 @@ module.exports = function(appium) {
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
 // High priority to reach parity with PyAppium:
-//  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/element     --> Search for an element on the page, starting from the identified element.
-//  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements     --> Search for multiple elements on the page, starting from the identified element.
 //  rest.post('/wd/hub/session/:sessionId?/execute     --> Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame.
-//  rest.post('/wd/hub/session/:sessionId?/touch/flick     --> Flick on the touch screen using finger motion events.
 //  rest.get('/wd/hub/session/:sessionId?/local_storage     --> Get all keys of the storage.
 //  rest.post('/wd/hub/session/:sessionId?/local_storage     --> Set the storage item for the given key.
 //  rest.delete('/wd/hub/session/:sessionId?/local_storage     --> Clear the storage.

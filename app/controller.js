@@ -298,6 +298,3 @@ exports.getScreenshot = function(req, res) {
     });
   });
 };
-
-
-

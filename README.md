@@ -60,7 +60,7 @@ Before commiting code please run grunt to run test and check your changes agains
 
     Done, without errors.
 
-More things
+More things, low-level things
 -----------
 If you want to run the appium server and have it listen indefinitely, you can
 do one of the following:
@@ -72,8 +72,27 @@ Then you can, e.g., run individual testfiles using Mocha directly:
 
     > mocha -t 60000 -R spec test/functional/simple.js
 
+Do you like getting close to the metal? Or are you trying to run this from
+a script with a custom app? Start appium without grunt from the
+command line (see parser.js for more CLI arguments):
+
+    > node server.js --app /absolute/path/to/app -V 1
+
+In this case, the app has to be compiled for the iphone simulator, e.g., by
+doing this in the Xcode project:
+
+    > xcodebuild -sdk iphonesimulator6.0
+
+This will create a directory called build/Release-iphonesimulator in your Xcode
+project, and this dir will contain the .app package you need to send to the
+server.
+
+You can also run against an app on an actual device by plugging the device in
+and passing the udid argument to server.js in the command above.
+
 Using with a [Bitbeambot](http://bitbeam.org)
 -----------
+AWAITING THE FUTURE
 
 Contributing
 ------------

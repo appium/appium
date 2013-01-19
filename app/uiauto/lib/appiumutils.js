@@ -20,6 +20,7 @@
  */
 
 #import "mechanic.js"
+// TODO: rewrite this entire file using helper methods from mechanic?
 
 // Obtaining Device Property Information like Name, OS ver, Model etc
 

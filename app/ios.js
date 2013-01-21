@@ -96,13 +96,13 @@ IOS.prototype.push = function(elem) {
     me.instruments.sendCommand(target[0], function(result) {
       if (typeof target[1] === 'function') {
         if (typeof result === 'undefined') {
-          target[1]();
+          target[1](null, null);
         } else {
           try {
             var jsonresult = JSON.parse(result);
-            target[1](jsonresult);
-          } catch (e) {
-            target[1](result);
+            target[1](null, jsonresult);
+          } catch (error) {
+            target[1](error, result);
           }
         }
       }
@@ -126,7 +126,7 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
 
   var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -150,7 +150,7 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 IOS.prototype.setValue = function(elementId, value, cb) {
   var command = ["elements['", elementId, "'].setValue('", value, "')"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -158,7 +158,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
 IOS.prototype.click = function(elementId, cb) {
   var command = ["elements['", elementId, "'].tap()"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -166,7 +166,7 @@ IOS.prototype.click = function(elementId, cb) {
 IOS.prototype.getText = function(elementId, cb) {
   var command = ["elements['", elementId, "'].getText()"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -174,7 +174,7 @@ IOS.prototype.getText = function(elementId, cb) {
 IOS.prototype.getLocation = function(elementId, cb) {
   var command = ["elements['", elementId, "'].getElementLocation()"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -182,7 +182,7 @@ IOS.prototype.getLocation = function(elementId, cb) {
 IOS.prototype.getSize = function(elementId, cb) {
   var command = ["elements['", elementId, "'].getElementSize()"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -190,7 +190,7 @@ IOS.prototype.getSize = function(elementId, cb) {
 IOS.prototype.keys = function(elementId, keys, cb) {
   var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -199,7 +199,7 @@ IOS.prototype.frame = function(frame, cb) {
   frame = frame? frame : 'mainWindow';
   var command = ["wd_frame = ", frame].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -207,7 +207,7 @@ IOS.prototype.frame = function(frame, cb) {
 IOS.prototype.implicitWait = function(seconds, cb) {
   var command = ["setImplicitWait('", seconds, "')"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -215,7 +215,7 @@ IOS.prototype.implicitWait = function(seconds, cb) {
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   var command = ["elements['", elementId, "'].isDisplayed()"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -223,31 +223,31 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
 IOS.prototype.elementEnabled = function(elementId, cb) {
   var command = ["elements['", elementId, "'].isEnabled()"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
 
 IOS.prototype.getPageSource = function(cb) {
-  this.proxy("wd_frame.getPageSource()", function(json) {
+  this.proxy("wd_frame.getPageSource()", function(err, json) {
     cb(null, json);
   });
 };
 
 IOS.prototype.getAlertText = function(cb) {
-  this.proxy("target.frontMostApp().alert().name()", function(json) {
+  this.proxy("target.frontMostApp().alert().name()", function(err, json) {
     cb(null, json);
   });
 };
 
 IOS.prototype.postAcceptAlert = function(cb) {
-  this.proxy("target.frontMostApp().alert().defaultButton().tap()", function(json) {
+  this.proxy("target.frontMostApp().alert().defaultButton().tap()", function(err, json) {
     cb(null, json);
   });
 };
 
 IOS.prototype.postDismissAlert = function(cb) {
-  this.proxy("target.frontMostApp().alert().cancelButton().tap()", function(json) {
+  this.proxy("target.frontMostApp().alert().cancelButton().tap()", function(err, json) {
     cb(null, json);
   });
 };
@@ -255,7 +255,7 @@ IOS.prototype.postDismissAlert = function(cb) {
 IOS.prototype.implicitWait = function(timeoutSeconds, cb) {
   var command = ["setImplicitWait('", timeoutSeconds ,"')"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -263,7 +263,7 @@ IOS.prototype.implicitWait = function(timeoutSeconds, cb) {
 IOS.prototype.getOrientation = function(cb) {
   var command = "getScreenOrientation()";
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -271,7 +271,7 @@ IOS.prototype.getOrientation = function(cb) {
 IOS.prototype.setOrientation = function(orientation, cb) {
   var command = ["setScreenOrientation('", orientation ,"')"].join('');
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };
@@ -281,7 +281,7 @@ IOS.prototype.getScreenshot = function(cb) {
   var command = ["takeScreenshot('screenshot", guid ,"')"].join('');
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     var delayTimes = 0;
     var onErr = function() {
       delayTimes++;
@@ -319,7 +319,7 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
     command = ["touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
 
-  this.proxy(command, function(json) {
+  this.proxy(command, function(err, json) {
     cb(null, json);
   });
 };

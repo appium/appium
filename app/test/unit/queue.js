@@ -22,7 +22,7 @@ describe('IOS', function() {
     return it('should execute one command at a time keeping the seq right', function(done) {
       var intercept = []
         , iterations = 100
-        , check = function(result) {
+        , check = function(err, result) {
           intercept.push(result);
           if (intercept.length >= iterations) {
             for (var x=0; x < iterations; x++) {

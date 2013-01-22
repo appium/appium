@@ -1,6 +1,10 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
 "use strict";
+var status = require('./status');
+
+var respond = function(cb) {
+};
 
 exports.getStatus = function(req, res) {
   // Build a JSON object to return to the client
@@ -29,33 +33,24 @@ exports.createSession = function(req, res) {
 };
 
 exports.getSession = function(req, res) {
-  var sessionId = req.params.sessionId;
-  var appResponse = {
-    sessionId: sessionId
-    , status: 0
-    , value: req.device.capabilities
-  };
-
-  res.send(appResponse);
+  status.create(req.appium.sessionId, status.codes.Success, req.device.capabilities, function(s) {
+    res.send(s);
+  });
 };
 
 exports.getSessions = function(req, res) {
-  res.send([{
-    id: req.appium.sessionId
-    , capabilities: req.device.capabilities
-  }]);
+  status.create(req.appium.sessionId, status.codes.Success, req.device.capabilities, function(s) {
+    res.send(s);
+  });
 };
 
 exports.deleteSession = function(req, res) {
   var sessionId = req.params.sessionId;
   req.appium.stop(function(err, instance) {
-    var appResponse = {
-      sessionId: sessionId
-      , status: 0
-      , value: {}
-    };
+    status.create(sessionId, status.codes.Success, {}, function(s) {
+      res.send(s);
+    });
 
-    res.send(appResponse);
   });
 };
 
@@ -64,10 +59,8 @@ exports.findElements = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElements(strategy, selector, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-      , status: 0
-      , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
@@ -77,10 +70,8 @@ exports.findElement = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElement(strategy, selector, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-      , status: 0
-      , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
@@ -91,10 +82,8 @@ exports.findElementFromElement = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElementFromElement(element, strategy, selector, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-      , status: 0
-      , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
@@ -105,176 +94,132 @@ exports.findElementsFromElement = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElementsFromElement(element, strategy, selector, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-      , status: 0
-      , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.setValue = function(req, res) {
   var elementId = req.params.elementId
-    , value = req.body.value.join('')
-    , status = 0;
+    , value = req.body.value.join('');
 
   req.device.setValue(elementId, value, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: ''
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.doClick = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
   req.device.click(elementId, function(err, json) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: ''
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getText = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
   req.device.getText(elementId, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result.toString()
+    status.create(req.appium.sessionId, status.codes.Success, result.toString(), function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getLocation = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
   req.device.getLocation(elementId, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getSize = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
   req.device.getSize(elementId, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.keys = function(req, res) {
   var elementId = req.params.elementId
-    , keys = req.body.value.join('')
-    , status = 0;
+    , keys = req.body.value.join('');
 
   req.device.keys(elementId, keys, function(err, json) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: ''
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.frame = function(req, res) {
-  var frame = req.body.id
-    , status = 0;
+  var frame = req.body.id;
 
   req.device.frame(frame, function(err, json) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.elementDisplayed = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
   req.device.elementDisplayed(elementId, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.elementEnabled = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
   req.device.elementEnabled(elementId, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getPageSource = function(req, res) {
-  var status = 0;
-
   req.device.getPageSource(function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getAlertText = function(req, res) {
-  var status = 0;
-
   req.device.getAlertText(function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.postAcceptAlert = function(req, res) {
-  var status = 0;
-
   req.device.postAcceptAlert(function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.postDismissAlert = function(req, res) {
-  var status = 0;
-
   req.device.postDismissAlert(function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };
@@ -283,9 +228,9 @@ exports.implicitWait = function(req, res) {
   var seconds = req.body.ms / 1000;
 
   req.device.implicitWait(seconds, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-      , status: (err === null)? 0 : 13
+    var code = (err === null) ? status.codes.Success : status.codes.UnknownError;
+    status.create(req.appium.sessionId, code, '', function(s) {
+      res.send(s);
     });
   });
 };
@@ -295,34 +240,24 @@ exports.setOrientation = function(req, res) {
     , status = 0;
 
   req.device.setOrientation(orientation, function(err, orientation) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: orientation
+    status.create(req.appium.sessionId, status.codes.Success, orientation, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getOrientation = function(req, res) {
-  var status = 0;
-
   req.device.getOrientation(function(err, orientation) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: orientation
+    status.create(req.appium.sessionId, status.codes.Success, orientation, function(s) {
+      res.send(s);
     });
   });
 };
 
 exports.getScreenshot = function(req, res) {
-  var status = 0;
-
   req.device.getScreenshot(function(err, screenshot) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: screenshot
+    status.create(req.appium.sessionId, status.codes.Success, screenshot, function(s) {
+      res.send(s);
     });
   });
 };
@@ -330,13 +265,11 @@ exports.getScreenshot = function(req, res) {
 exports.flick = function(req, res) {
   var swipe = req.body.swipe
     , xSpeed = req.body.xspeed
-    , ySpeed = req.body.yspeed
-    , status = 0;
+    , ySpeed = req.body.yspeed;
 
-    req.device.flick(xSpeed, ySpeed, swipe, function(err, result) {
-      res.send({
-        sessionId: req.appium.sessionId
-          , status: status
-      });
+  req.device.flick(xSpeed, ySpeed, swipe, function(err, result) {
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
     });
+  });
 };

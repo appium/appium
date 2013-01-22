@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "description": "Selenium for Apps.",
+  "description": "Automation for Apps.",
   "tags": [
     "automation",
     "javascript"
@@ -31,7 +31,8 @@
     "argparse": "~0.1.10",
     "path": "~0.4.9",
     "rimraf": "~2.1.1",
-    "uuid-js": "~0.7.4"
+    "uuid-js": "~0.7.4",
+    "winston": "~0.6.2"
   },
   "scripts": {
     "test": "grunt lint unit"

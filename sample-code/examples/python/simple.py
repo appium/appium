@@ -1,4 +1,6 @@
-# port of simple functional test to python
+"""Be sure to use the latest selenium version
+as there might be some problems with JSON serialization
+"""
 import unittest
 from random import randint
 from selenium import webdriver

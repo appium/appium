@@ -33,22 +33,24 @@ exports.createSession = function(req, res) {
 };
 
 exports.getSession = function(req, res) {
-  var s = status.create(req.appium.sessionId, status.codes.Success).val(req.device.capabilities);
-
-  res.send(s);
+  status.create(req.appium.sessionId, status.codes.Success, req.device.capabilities, function(s) {
+    res.send(s);
+  });
 };
 
 exports.getSessions = function(req, res) {
-  var s = status.create(req.appium.sessionId, status.codes.Success).val(req.device.capabilities);
-  res.send([s]);
+  status.create(req.appium.sessionId, status.codes.Success, req.device.capabilities, function(s) {
+    res.send(s);
+  });
 };
 
 exports.deleteSession = function(req, res) {
   var sessionId = req.params.sessionId;
   req.appium.stop(function(err, instance) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val({});
+    status.create(sessionId, status.codes.Success, {}, function(s) {
+      res.send(s);
+    });
 
-    res.send(s);
   });
 };
 
@@ -57,9 +59,9 @@ exports.findElements = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElements(strategy, selector, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -68,9 +70,9 @@ exports.findElement = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElement(strategy, selector, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -80,9 +82,9 @@ exports.findElementFromElement = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElementFromElement(element, strategy, selector, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -92,9 +94,9 @@ exports.findElementsFromElement = function(req, res) {
     , selector = req.body.value;
 
   req.device.findElementsFromElement(element, strategy, selector, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -103,9 +105,9 @@ exports.setValue = function(req, res) {
     , value = req.body.value.join('');
 
   req.device.setValue(elementId, value, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val('');
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -113,9 +115,9 @@ exports.doClick = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.click(elementId, function(err, json) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val('');
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -123,9 +125,9 @@ exports.getText = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.getText(elementId, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result.toString());
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result.toString(), function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -133,9 +135,9 @@ exports.getLocation = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.getLocation(elementId, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -143,9 +145,9 @@ exports.getSize = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.getSize(elementId, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -154,9 +156,9 @@ exports.keys = function(req, res) {
     , keys = req.body.value.join('');
 
   req.device.keys(elementId, keys, function(err, json) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -164,9 +166,9 @@ exports.frame = function(req, res) {
   var frame = req.body.id;
 
   req.device.frame(frame, function(err, json) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val('');
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -174,9 +176,9 @@ exports.elementDisplayed = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.elementDisplayed(elementId, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -184,41 +186,41 @@ exports.elementEnabled = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.elementEnabled(elementId, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
 exports.getPageSource = function(req, res) {
   req.device.getPageSource(function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
 exports.getAlertText = function(req, res) {
   req.device.getAlertText(function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
 exports.postAcceptAlert = function(req, res) {
   req.device.postAcceptAlert(function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
 exports.postDismissAlert = function(req, res) {
   req.device.postDismissAlert(function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(result);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -227,9 +229,9 @@ exports.implicitWait = function(req, res) {
 
   req.device.implicitWait(seconds, function(err, result) {
     var code = (err === null) ? status.codes.Success : status.codes.UnknownError;
-    var s = status.create(req.appium.sessionId, code).val('');
-
-    res.send(s);
+    status.create(req.appium.sessionId, code, '', function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -238,25 +240,25 @@ exports.setOrientation = function(req, res) {
     , status = 0;
 
   req.device.setOrientation(orientation, function(err, orientation) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(orientation);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, orientation, function(s) {
+      res.send(s);
+    });
   });
 };
 
 exports.getOrientation = function(req, res) {
   req.device.getOrientation(function(err, orientation) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(orientation);
-
-    res.send(orientation);
+    status.create(req.appium.sessionId, status.codes.Success, orientation, function(s) {
+      res.send(s);
+    });
   });
 };
 
 exports.getScreenshot = function(req, res) {
   req.device.getScreenshot(function(err, screenshot) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val(screenshot);
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, screenshot, function(s) {
+      res.send(s);
+    });
   });
 };
 
@@ -266,8 +268,8 @@ exports.flick = function(req, res) {
     , ySpeed = req.body.yspeed;
 
   req.device.flick(xSpeed, ySpeed, swipe, function(err, result) {
-    var s = status.create(req.appium.sessionId, status.codes.Success).val('');
-
-    res.send(s);
+    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+      res.send(s);
+    });
   });
 };

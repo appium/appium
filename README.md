@@ -10,6 +10,14 @@ There are two big benefits to testing with Appium:
 1.  Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile your app or modify in any way to be able to test automate it.
 2.  With Appium, you are able to write your test in your choice of programming language, using the Selenium WebDriver API and language-specific client libraries. If you only used UIAutomation, you would be required to write tests in JavaScript, and only run the tests through the Instruments application. With Appium, you can test your native iOS app with any language, and with your preferred dev tools.
 
+Ninja-speed Setup
+------------
+Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).
+
+    > sudo npm install appium -g
+    > appium --app /path/to/your/ios/app &
+    > node your-appium-test.js
+
 Prerequisite
 ------------
 Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).

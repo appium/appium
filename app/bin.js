@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+"use strict";
 
 var net = require('net')
   , repl = require('repl')
   , underscore = require('underscore')
   , colors = require('colors')
   , appium  = require('../server')
-  , parser = require('./parser');
+  , parser = require('./parser')
   ;
 
 var startRepl = function() {
@@ -17,7 +18,9 @@ var startRepl = function() {
     console.log(" - set args.app then run appium.run(args);\n".grey);
     return 'Thanks for asking';
   };
-  help()
+
+  help();
+
   var r = repl.start('(appium): ');
   r.context.appium = appium;
   r.context.parser = parser();
@@ -29,18 +32,16 @@ var startRepl = function() {
     , address: '127.0.0.1'
     , port: 4723
     , remove: true
-  }
+  };
 
+  var connections = 0;
   var server = net.createServer(function (socket) {
     connections += 1;
     socket.setTimeout(5*60*1000, function() {
       socket.destroy();
     });
     repl.start("(appium): ", socket);
-  }).listen(process.platform === "win32" ?
-      "\\\\.\\pipe\\node-repl-sock-"
-       + process.pid : "/tmp/node-repl-sock-"
-       + process.pid);
+  }).listen(process.platform === "win32" ? "\\\\.\\pipe\\node-repl-sock-" + process.pid : "/tmp/node-repl-sock-" + process.pid);
 
   r.on('exit', function () {
     server.close();
@@ -55,5 +56,5 @@ else {
   var args = parser().parseArgs();
   args.verbose = 1;
   console.log("Pre-flight check ...".grey);
-  appium.run(args, function() { console.log('Rock and roll.'.grey) });
+  appium.run(args, function() { console.log('Rock and roll.'.grey); });
 }

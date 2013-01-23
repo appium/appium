@@ -55,10 +55,10 @@ Appium.prototype.invoke = function() {
     }
     this.device = this.devices[this.active];
 
-    this.device.start(function(err, device) {
+    this.device.start(function(err) {
       me.progress++;
       me.sessions[me.progress].sessionId = me.sessionId;
-      me.sessions[me.progress].callback(err, device);
+      me.sessions[me.progress].callback(err);
     });
   }
 };
@@ -68,7 +68,8 @@ Appium.prototype.stop = function(cb) {
     return;
   }
 
-  var me = this;
+  var dyingSession = this.sessionId
+  , me = this;
 
   logger.info('Shutting down appium session...');
   this.device.stop(function(code) {
@@ -81,7 +82,7 @@ Appium.prototype.stop = function(cb) {
         me.active = null;
         me.invoke();
       }
-      cb(me.sessionId);
+      cb(null, {status: 0, value: null, sessionId: dyingSession});
     }
   });
 };

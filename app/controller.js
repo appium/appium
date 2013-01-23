@@ -33,14 +33,16 @@ exports.createSession = function(req, res) {
 };
 
 exports.getSession = function(req, res) {
-  status.create(req.appium.sessionId, status.codes.Success, req.device.capabilities, function(s) {
+  status.create(req.appium.sessionId, status.codes.Success, null, function(s) {
+    s.capabilities = req.device.capabilities;
     res.send(s);
   });
 };
 
 exports.getSessions = function(req, res) {
-  status.create(req.appium.sessionId, status.codes.Success, req.device.capabilities, function(s) {
-    res.send(s);
+  status.create(req.appium.sessionId, status.codes.Success, null, function(s) {
+    s.capabilities = req.device.capabilities;
+    res.send([s]);
   });
 };
 

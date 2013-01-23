@@ -68,7 +68,7 @@ Appium.prototype.stop = function(cb) {
     return;
   }
 
-  var dying_session = this.sessionId
+  var dyingSession = this.sessionId
   , me = this;
 
   logger.info('Shutting down appium session...');
@@ -82,7 +82,7 @@ Appium.prototype.stop = function(cb) {
         me.active = null;
         me.invoke();
       }
-      cb(null, {status: 0, value: null, sessionId: dying_session});
+      cb(null, {status: 0, value: null, sessionId: dyingSession});
     }
   });
 };

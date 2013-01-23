@@ -14,7 +14,7 @@ describeWd('check getSessions', function(h) {
         , method: "GET"
         , json: true
       }, function(err, response, body) {
-        assert.equal(h.sessionId, body[0].id);
+        assert.equal(h.sessionId, body[0].sessionId);
         done();
     });
   });

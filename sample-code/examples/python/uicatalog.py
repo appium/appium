@@ -96,7 +96,6 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_text_field_edit(self):
         # go to the text fields section
         self._open_menu_position(2)
-        # print "1SOURCE is ", self.driver.page_source
         text_field = self.driver.find_elements_by_tag_name("textField")[0]
         # get default/empty text
         default_val = text_field.get_attribute("value")
@@ -118,7 +117,6 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_alert_interaction(self):
         # go to the alerts section
         self._open_menu_position(10)
-        # print "1SOURCE is ", self.driver.page_source
         elements = self.driver.find_elements_by_tag_name("staticText")
 
         # # TOFIX: Looks like alert object is not proper state
@@ -153,7 +151,6 @@ class TestSequenceFunctions(unittest.TestCase):
     #     self.assertEqual(row.location['x'], newRow.location['x'])
     #     self.assertEqual(row.location['y'], newRow.location['y'])
 
-
     def test_sessions(self):
         data = json.loads(urllib2.urlopen("http://localhost:4723/wd/hub/sessions").read())
         self.assertEqual(self.driver.session_id, data[0]['id'])
@@ -177,7 +174,6 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertIn("TextFields", source_textfields)
 
         self.assertNotEqual(source_main, source_textfields)
-
 
     def tearDown(self):
         self.driver.quit()

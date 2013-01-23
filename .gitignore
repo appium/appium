@@ -8,3 +8,5 @@ sample-code/apps/UICatalog*
 sample-code/examples/php/composer.lock
 sample-code/examples/php/composer.phar
 sample-code/examples/php/vendor
+*.iml
+.idea/

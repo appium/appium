@@ -6,7 +6,18 @@ var path = require('path')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments')
   , delay = require("./uiauto/lib/delay.js")
-  , uuid = require('uuid-js');
+  , uuid = require('uuid-js')
+  , status = require("./uiauto/lib/status");
+
+var UnknownError = function(message) {
+   this.message = message? message : "Invalid response from device";
+   this.name = "UnknownError";
+};
+
+var ProtocolError = function(message) {
+   this.message = message;
+   this.name = "ProtocolError";
+};
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.rest = rest;
@@ -36,7 +47,7 @@ IOS.prototype.start = function(cb) {
   var onLaunch = function() {
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
-    cb(null, me);
+    cb(null);
   };
 
   var onExit = function(code, traceDir) {
@@ -90,19 +101,29 @@ IOS.prototype.push = function(elem) {
       return;
     }
 
-    var target = me.queue.shift();
+    var target = me.queue.shift()
+    , command = target[0]
+    , cb = target[1];
+
     me.progress++;
 
-    me.instruments.sendCommand(target[0], function(result) {
-      if (typeof target[1] === 'function') {
-        if (typeof result === 'undefined') {
-          target[1](null, null);
+    me.instruments.sendCommand(command, function(response) {
+      if (typeof cb === 'function') {
+        if (typeof response === 'undefined') {
+          cb(null, null);
         } else {
-          try {
-            var jsonresult = JSON.parse(result);
-            target[1](null, jsonresult);
-          } catch (error) {
-            target[1](error, result);
+          if (typeof(response) !== "object") {
+            cb(new UnknownError(), response);
+          } else if (!('status' in response)) {
+            cb(new ProtocolError('Status missing in response from device'), response);
+          } else {
+            var status = parseInt(response.status, 10);
+            if (isNaN(status)) {
+              cb(new ProtocolError('Invalid status in response from device'), response);
+            } else {
+              response.status = status;
+              cb(null, response);
+            }
           }
         }
       }
@@ -251,19 +272,19 @@ IOS.prototype.getPageSource = function(cb) {
 };
 
 IOS.prototype.getAlertText = function(cb) {
-  this.proxy("target.frontMostApp().alert().name()", function(err, json) {
+  this.proxy("getAlertText()", function(err, json) {
     cb(err, json);
   });
 };
 
 IOS.prototype.postAcceptAlert = function(cb) {
-  this.proxy("target.frontMostApp().alert().defaultButton().tap()", function(err, json) {
+  this.proxy("acceptAlert()", function(err, json) {
     cb(err, json);
   });
 };
 
 IOS.prototype.postDismissAlert = function(cb) {
-  this.proxy("target.frontMostApp().alert().cancelButton().tap()", function(err, json) {
+  this.proxy("dismissAlert()", function(err, json) {
     cb(err, json);
   });
 };
@@ -297,7 +318,7 @@ IOS.prototype.getScreenshot = function(cb) {
   var command = ["takeScreenshot('screenshot", guid ,"')"].join('');
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
-  this.proxy(command, function(err, json) {
+  this.proxy(command, function(err, response) {
     var delayTimes = 0;
     var onErr = function() {
       delayTimes++;
@@ -314,11 +335,14 @@ IOS.prototype.getScreenshot = function(cb) {
           if (onErr) {
             onErr();
           } else {
+            response.value = '';
+            response.status = status.codes.UnknownError.code;
             cb(err, null);
           }
         } else {
           var b64data = new Buffer(data).toString('base64');
-          cb(null, b64data);
+          response.value = b64data;
+          cb(null, response);
         }
       });
     };
@@ -338,6 +362,12 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   this.proxy(command, function(err, json) {
     cb(err, json);
   });
+};
+
+IOS.prototype.url = function(cb) {
+  // in the future, detect whether we have a UIWebView that we can use to
+  // make sense of this command. For now, and otherwise, it's a no-op
+  cb(null, null);
 };
 
 IOS.prototype.active = function(cb) {

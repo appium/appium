@@ -5,19 +5,34 @@ var describeWd = require("../helpers/driverblock.js").describe
   , should = require('should');
 
 describeWd('findElement', function(h) {
-  return it('should find a single element on the app', function(done) {
+  it('should find a single element on the app', function(done) {
     h.driver.elementByTagName('button', function(err, element) {
       should.exist(element.value);
+      done();
+    });
+  });
+  return it('should not find any elements on the app and throw error', function(done) {
+    h.driver.elementByTagName('buttonNotThere', function(err, element) {
+      should.not.exist(element);
+      err.status.should.eql(7);
+      err['jsonwire-error'].summary.should.eql('NoSuchElement');
       done();
     });
   });
 });
 
 describeWd('findElements', function(h) {
-  return it('should find both elements on the app', function(done) {
+  it('should find both elements on the app', function(done) {
     h.driver.elementsByTagName('button', function(err, elements) {
       elements.length.should.equal(2);
       should.exist(elements[0].value);
+      done();
+    });
+  });
+  return it('should not find any elements on the app but fail gracefully', function(done) {
+    h.driver.elementsByTagName('buttonNotThere', function(err, elements) {
+      should.not.exist(err);
+      elements.length.should.equal(0);
       done();
     });
   });

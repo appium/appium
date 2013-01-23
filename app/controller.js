@@ -1,28 +1,36 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
 "use strict";
-var status = require('./status');
+var status = require('./uiauto/lib/status');
 
-var respond = function(cb) {
-};
+function getResponseHandler(req, res, validateResponse) {
+  var responseHandler = function(err, response) {
+    response.sessionId = req.appium.sessionId || response.sessionId || null;
+    if (err !== null) {
+      response.status = status.codes.UnknownError.code;
+    } else {
+      if (typeof(validateResponse) === 'function') {
+        // If a validate method was provided, use it to update the response
+        response = validateResponse(response);
+      }
+    }
+    res.send(response);
+  };
+  return responseHandler;
+}
 
 exports.getStatus = function(req, res) {
-  // Build a JSON object to return to the client
-  var status = {
-    sessionId: req.appium.sessionId || null
-    , status: 0
-    , value: {
-        build: {
-          version: 'Appium 1.0'
-        }
-      }
-  };
-  res.send(status);
+  // Return a static JSON object to the client
+  getResponseHandler(req, res)(null, {
+    status: status.codes.Success.code,
+    value: {
+      build: {version: 'Appium 1.0'}
+    }});
 };
 
 exports.createSession = function(req, res) {
   // we can talk to the device client from here
-  req.appium.start(function(err, instance) {
+  req.appium.start(function(err) {
     if (err) {
       // of course we need to deal with err according to the WDJP spec.
       throw err;
@@ -33,49 +41,33 @@ exports.createSession = function(req, res) {
 };
 
 exports.getSession = function(req, res) {
-  status.create(req.appium.sessionId, status.codes.Success, null, function(s) {
-    s.capabilities = req.device.capabilities;
-    res.send(s);
+  // Return a static JSON object to the client
+  getResponseHandler(req, res)(null, {
+    status: status.codes.Success.code,
+    value: req.device.capabilities
   });
 };
 
 exports.getSessions = function(req, res) {
-  status.create(req.appium.sessionId, status.codes.Success, null, function(s) {
-    s.capabilities = req.device.capabilities;
-    res.send([s]);
-  });
+  res.send([{id: req.appium.sessionId , capabilities: req.device.capabilities}]);
 };
 
 exports.deleteSession = function(req, res) {
-  var sessionId = req.params.sessionId;
-  req.appium.stop(function(err, instance) {
-    status.create(sessionId, status.codes.Success, {}, function(s) {
-      res.send(s);
-    });
-
-  });
+  req.appium.stop(getResponseHandler(req, res));
 };
 
 exports.findElements = function(req, res) {
   var strategy = req.body.using
     , selector = req.body.value;
 
-  req.device.findElements(strategy, selector, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
 };
 
 exports.findElement = function(req, res) {
   var strategy = req.body.using
     , selector = req.body.value;
 
-  req.device.findElement(strategy, selector, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.findElement(strategy, selector, getResponseHandler(req, res));
 };
 
 exports.findElementFromElement = function(req, res) {
@@ -83,11 +75,7 @@ exports.findElementFromElement = function(req, res) {
     , strategy = req.body.using
     , selector = req.body.value;
 
-  req.device.findElementFromElement(element, strategy, selector, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.findElementFromElement(element, strategy, selector, getResponseHandler(req, res));
 };
 
 exports.findElementsFromElement = function(req, res) {
@@ -95,200 +83,112 @@ exports.findElementsFromElement = function(req, res) {
     , strategy = req.body.using
     , selector = req.body.value;
 
-  req.device.findElementsFromElement(element, strategy, selector, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.findElementsFromElement(element, strategy, selector, getResponseHandler(req, res));
 };
 
 exports.setValue = function(req, res) {
   var elementId = req.params.elementId
     , value = req.body.value.join('');
 
-  req.device.setValue(elementId, value, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-      res.send(s);
-    });
-  });
+  req.device.setValue(elementId, value, getResponseHandler(req, res));
 };
 
 exports.doClick = function(req, res) {
   var elementId = req.params.elementId;
 
-  req.device.click(elementId, function(err, json) {
-    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-      res.send(s);
-    });
-  });
+  req.device.click(elementId, getResponseHandler(req, res));
 };
 
 exports.clear = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
-  req.device.clear(elementId, function(err, json) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: ''
-    });
-  });
+  req.device.clear(elementId, getResponseHandler(req, res));
 };
 
 exports.getText = function(req, res) {
   var elementId = req.params.elementId;
 
-  req.device.getText(elementId, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result.toString(), function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getText(elementId, getResponseHandler(req, res));
 };
 
 exports.getAttribute = function(req, res) {
   var elementId = req.params.elementId
-    , attributeName = req.params.name
-    , status = 0;
+    , attributeName = req.params.name;
 
-  req.device.getAttribute(elementId, attributeName, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result.toString()
-    });
-  });
+  req.device.getAttribute(elementId, attributeName, getResponseHandler(req, res));
 };
 
 exports.getLocation = function(req, res) {
   var elementId = req.params.elementId;
 
-  req.device.getLocation(elementId, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getLocation(elementId, getResponseHandler(req, res));
 };
 
 exports.getSize = function(req, res) {
   var elementId = req.params.elementId;
 
-  req.device.getSize(elementId, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getSize(elementId, getResponseHandler(req, res));
 };
 
 exports.keys = function(req, res) {
   var elementId = req.params.elementId
     , keys = req.body.value.join('');
 
-  req.device.keys(elementId, keys, function(err, json) {
-    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-      res.send(s);
-    });
-  });
+  req.device.keys(elementId, keys, getResponseHandler(req, res));
 };
 
 exports.frame = function(req, res) {
   var frame = req.body.id;
 
-  req.device.frame(frame, function(err, json) {
-    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-      res.send(s);
-    });
-  });
+  req.device.frame(frame, getResponseHandler(req, res));
 };
 
 exports.elementDisplayed = function(req, res) {
   var elementId = req.params.elementId;
 
-  req.device.elementDisplayed(elementId, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.elementDisplayed(elementId, getResponseHandler(req, res));
 };
 
 exports.elementEnabled = function(req, res) {
   var elementId = req.params.elementId;
 
-  req.device.elementEnabled(elementId, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.elementEnabled(elementId, getResponseHandler(req, res));
 };
 
 exports.getPageSource = function(req, res) {
-  req.device.getPageSource(function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getPageSource(getResponseHandler(req, res));
 };
 
 exports.getAlertText = function(req, res) {
-  req.device.getAlertText(function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getAlertText(getResponseHandler(req, res));
 };
 
 exports.postAcceptAlert = function(req, res) {
-  req.device.postAcceptAlert(function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.postAcceptAlert(getResponseHandler(req, res));
 };
 
 exports.postDismissAlert = function(req, res) {
-  req.device.postDismissAlert(function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.postDismissAlert(getResponseHandler(req, res));
 };
 
 exports.implicitWait = function(req, res) {
   var seconds = req.body.ms / 1000;
 
-  req.device.implicitWait(seconds, function(err, result) {
-    var code = (err === null) ? status.codes.Success : status.codes.UnknownError;
-    status.create(req.appium.sessionId, code, '', function(s) {
-      res.send(s);
-    });
-  });
+  req.device.implicitWait(seconds, getResponseHandler(req, res));
 };
 
 exports.setOrientation = function(req, res) {
-  var orientation = req.body.orientation
-    , status = 0;
+  var orientation = req.body.orientation;
 
-  req.device.setOrientation(orientation, function(err, orientation) {
-    status.create(req.appium.sessionId, status.codes.Success, orientation, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.setOrientation(orientation, getResponseHandler(req, res));
 };
 
 exports.getOrientation = function(req, res) {
-  req.device.getOrientation(function(err, orientation) {
-    status.create(req.appium.sessionId, status.codes.Success, orientation, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getOrientation(getResponseHandler(req, res));
 };
 
 exports.getScreenshot = function(req, res) {
-  req.device.getScreenshot(function(err, screenshot) {
-    status.create(req.appium.sessionId, status.codes.Success, screenshot, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.getScreenshot(getResponseHandler(req, res));
 };
 
 exports.flick = function(req, res) {
@@ -296,25 +196,13 @@ exports.flick = function(req, res) {
     , xSpeed = req.body.xspeed
     , ySpeed = req.body.yspeed;
 
-  req.device.flick(xSpeed, ySpeed, swipe, function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-      res.send(s);
-    });
-  });
+  req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
 };
 
 exports.postUrl = function(req, res) {
-  // in the future, detect whether we have a UIWebView that we can use to
-  // make sense of this command. For now, and otherwise, it's a no-op
-  status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-    res.send(s);
-  });
+  req.device.url(getResponseHandler(req, res));
 };
 
 exports.active = function(req, res) {
-  req.device.active(function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.active(getResponseHandler(req, res));
 };

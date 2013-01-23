@@ -200,16 +200,25 @@ UIAElement.prototype.getActiveElement = function() {
     // try elements in the array first
     for (var key in elements) {
         if (elements[key].hasKeyboardFocus()) {
-            return ['{"ELEMENT":"',key,'"}'].join('');
+            return {
+              status: codes.Success.code,
+              value: {ELEMENT: key}
+            };
         }
     }
     checkAll(this);
     if (foundElement) {
         var varName = 'wde' + globalElementCounter++;
         elements[varName] = foundElement;
-        return ['{"ELEMENT":"',varName,'"}'].join('');
+        return {
+          status: codes.Success.code,
+          value: {ELEMENT: varName}
+        };
     }
-    return foundElement;
+    return {
+      status: codes.NoSuchElement.code,
+      value: null,
+    };
 };
 
 // getPageSource

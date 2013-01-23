@@ -49,7 +49,7 @@ exports.getSession = function(req, res) {
 };
 
 exports.getSessions = function(req, res) {
-  res.send([{ id: req.appium.sessionId , capabilities: req.device.capabilities}]);
+  res.send([{id: req.appium.sessionId , capabilities: req.device.capabilities}]);
 };
 
 exports.deleteSession = function(req, res) {
@@ -100,16 +100,9 @@ exports.doClick = function(req, res) {
 };
 
 exports.clear = function(req, res) {
-  var elementId = req.params.elementId
-    , status = 0;
+  var elementId = req.params.elementId;
 
-  req.device.clear(elementId, function(err, json) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: ''
-    });
-  });
+  req.device.clear(elementId, getResponseHandler(req, res));
 };
 
 exports.getText = function(req, res) {
@@ -120,16 +113,9 @@ exports.getText = function(req, res) {
 
 exports.getAttribute = function(req, res) {
   var elementId = req.params.elementId
-    , attributeName = req.params.name
-    , status = 0;
+    , attributeName = req.params.name;
 
-  req.device.getAttribute(elementId, attributeName, function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-        , status: status
-        , value: result.toString()
-    });
-  });
+  req.device.getAttribute(elementId, attributeName, getResponseHandler(req, res));
 };
 
 exports.getLocation = function(req, res) {
@@ -214,17 +200,9 @@ exports.flick = function(req, res) {
 };
 
 exports.postUrl = function(req, res) {
-  // in the future, detect whether we have a UIWebView that we can use to
-  // make sense of this command. For now, and otherwise, it's a no-op
-  status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
-    res.send(s);
-  });
+  req.device.url(getResponseHandler(req, res));
 };
 
 exports.active = function(req, res) {
-  req.device.active(function(err, result) {
-    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
-      res.send(s);
-    });
-  });
+  req.device.active(getResponseHandler(req, res));
 };

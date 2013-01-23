@@ -1,5 +1,8 @@
 """Be sure to use the latest selenium version
 as there might be some problems with JSON serialization
+
+Before running the test make sure you started appium server
+with TestApp app: grunt appium:TestApp
 """
 import unittest
 from random import randint

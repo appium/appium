@@ -114,16 +114,17 @@ IOS.prototype.push = function(elem) {
         } else {
           if (typeof(response) !== "object") {
             cb(new UnknownError(), response);
-          }
-          if (!('status' in response)) {
+          } else if (!('status' in response)) {
             cb(new ProtocolError('Status missing in response from device'), response);
+          } else {
+            var status = parseInt(response.status, 10);
+            if (isNaN(status)) {
+              cb(new ProtocolError('Invalid status in response from device'), response);
+            } else {
+              response.status = status;
+              cb(null, response);
+            }
           }
-          var status = parseInt(response.status, 10);
-          if (isNaN(status)) {
-            cb(new ProtocolError('Invalid status in response from device'), response);
-          }
-          response.status = status;
-          cb(null, response);
         }
       }
 

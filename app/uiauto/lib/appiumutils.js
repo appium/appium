@@ -33,7 +33,6 @@
     return deviceMap;
  }
 
-
 // Misc utils
 
 /* Deactivating the app for specified duration in Seconds.
@@ -183,7 +182,7 @@ UIAElement.prototype.getActiveElement = function() {
             var numChildren = children.length;
             for ( var i = 0; i < numChildren; i++) {
                 var child = children[i];
-                if(child.hasKeyboardFocus()){
+                if(child.hasKeyboardFocus()) {
                     foundElement = child;
                     break;
                 }
@@ -191,6 +190,12 @@ UIAElement.prototype.getActiveElement = function() {
                     checkAll(child);
             }
     };
+    // try elements in the array first
+    for (var key in elements) {
+        if (elements[key].hasKeyboardFocus()) {
+            return ['{"ELEMENT":"',key,'"}'].join('');
+        }
+    }
     checkAll(this);
     if (foundElement) {
         var varName = 'wde' + globalElementCounter++;
@@ -318,6 +323,8 @@ UIAElement.prototype.getText = function() {
         text = this.value();
         if (!text)
             text = this.name();
+        if (!text)
+            text = "";
     } else {
         // name takes preference for others
         // i.e. <h1>title</h1> becomes: name="title", value="1"

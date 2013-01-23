@@ -313,10 +313,8 @@ exports.postUrl = function(req, res) {
 
 exports.active = function(req, res) {
   req.device.active(function(err, result) {
-    res.send({
-      sessionId: req.appium.sessionId
-      , status: 0
-      , value: result
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
     });
   });
 };

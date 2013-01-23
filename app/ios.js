@@ -364,6 +364,12 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   });
 };
 
+IOS.prototype.url = function(cb) {
+  // in the future, detect whether we have a UIWebView that we can use to
+  // make sense of this command. For now, and otherwise, it's a no-op
+  cb(null, null);
+};
+
 IOS.prototype.active = function(cb) {
   this.proxy("wd_frame.getActiveElement()", function(err, json) {
     cb(null, json);

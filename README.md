@@ -24,6 +24,10 @@ Install [node.js](http://nodejs.org/) which come with its package manager [npm](
     > sudo npm install appium -g
     > appium --app /path/to/your/ios/app &
     > node your-appium-test.js
+    
+See [the appium example tests.](https://github.com/appium/appium/tree/master/sample-code/examples)
+
+- - -
 
 Prerequisite
 ------------

@@ -19,17 +19,17 @@ Requirements
 
 Ninja-speed Setup
 ------------
-Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).
+Install [node.js](http://nodejs.org/) which comes with its package manager [npm](https://npmjs.org/).
 
     > sudo npm install appium -g
     > appium --app /path/to/your/ios/app &
     > node your-appium-test.js
-    
+
 See [the appium example tests.](https://github.com/appium/appium/tree/master/sample-code/examples)
 
 - - -
 
-Prerequisite
+Prerequisites
 ------------
 Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).
 Change into your local repo clone and install packages using following commands:

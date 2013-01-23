@@ -19,12 +19,18 @@ var main = function(args, readyCb, doneCb) {
     var bodyParser = express.bodyParser()
       , parserWrap = function(req, res, next) {
           // wd.js sends us http POSTs with empty body which will make bodyParser fail.
-          if (parseInt(req.get('content-length'), 10) <= 0) {
-            return next();
+          var cLen = req.get('content-length');
+          if (typeof cLen === "undefined" || parseInt(cLen, 10) <= 0) {
+            req.headers['content-length'] = 0;
+            next();
+          } else {
+            bodyParser(req, res, next);
           }
-          bodyParser(req, res, next);
         };
 
+    rest.use(function(req, res, next) {
+      next();
+    });
     rest.use(express.favicon());
     rest.use(express.static(path.join(__dirname, '/app/static')));
     if (args.verbose) {

@@ -275,3 +275,11 @@ exports.flick = function(req, res) {
     });
   });
 };
+
+exports.postUrl = function(req, res) {
+  // in the future, detect whether we have a UIWebView that we can use to
+  // make sense of this command. For now, and otherwise, it's a no-op
+  status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
+    res.send(s);
+  });
+};

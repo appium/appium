@@ -23,6 +23,27 @@ describeWd('findElements', function(h) {
   });
 });
 
+describeWd('findElements', function(h) {
+  return it('should not find any elements on the app but fail gracefully', function(done) {
+    h.driver.elementsByTagName('buttonNotThere', function(err, elements) {
+      should.not.exist(err);
+      elements.length.should.equal(0);
+      done();
+    });
+  });
+});
+
+describeWd('findElement', function(h) {
+  return it('should not find any elements on the app and throw error', function(done) {
+    h.driver.elementByTagName('buttonNotThere', function(err, element) {
+      should.not.exist(element);
+      err.status.should.eql(7);
+      err['jsonwire-error'].summary.should.eql('NoSuchElement');
+      done();
+    });
+  });
+});
+
 //describeWd('findElementFromElement', function(h) {
   //it('should find an element within itself', function(done) {
     //h.driver.elementByTagName('button', function(err, element) {

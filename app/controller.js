@@ -193,8 +193,8 @@ exports.getScreenshot = function(req, res) {
 
 exports.flick = function(req, res) {
   var swipe = req.body.swipe
-    , xSpeed = req.body.xspeed
-    , ySpeed = req.body.yspeed;
+    , xSpeed = req.body.xSpeed
+    , ySpeed = req.body.ySpeed;
 
   req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
 };

@@ -123,12 +123,39 @@ exports.doClick = function(req, res) {
   });
 };
 
+exports.clear = function(req, res) {
+  var elementId = req.params.elementId
+    , status = 0;
+
+  req.device.clear(elementId, function(err, json) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: ''
+    });
+  });
+};
+
 exports.getText = function(req, res) {
   var elementId = req.params.elementId;
 
   req.device.getText(elementId, function(err, result) {
     status.create(req.appium.sessionId, status.codes.Success, result.toString(), function(s) {
       res.send(s);
+    });
+  });
+};
+
+exports.getAttribute = function(req, res) {
+  var elementId = req.params.elementId
+    , attributeName = req.params.name
+    , status = 0;
+
+  req.device.getAttribute(elementId, attributeName, function(err, result) {
+    res.send({
+      sessionId: req.appium.sessionId
+        , status: status
+        , value: result.toString()
     });
   });
 };
@@ -281,5 +308,13 @@ exports.postUrl = function(req, res) {
   // make sense of this command. For now, and otherwise, it's a no-op
   status.create(req.appium.sessionId, status.codes.Success, '', function(s) {
     res.send(s);
+  });
+};
+
+exports.active = function(req, res) {
+  req.device.active(function(err, result) {
+    status.create(req.appium.sessionId, status.codes.Success, result, function(s) {
+      res.send(s);
+    });
   });
 };

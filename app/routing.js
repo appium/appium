@@ -39,6 +39,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/element', controller.findElementFromElement);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements', controller.findElementsFromElement);
   rest.post('/wd/hub/session/:sessionId/touch/flick', controller.flick);
+  rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
@@ -59,7 +60,6 @@ module.exports = function(appium) {
 //  rest.get('/wd/hub/session/:sessionId?/window_handle     --> Retrieve the current window handle.
 //  rest.get('/wd/hub/session/:sessionId?/window_handles     --> Retrieve the list of all window handles available to the session.
 //  rest.get('/wd/hub/session/:sessionId?/url     --> Retrieve the URL of the current page.
-//  rest.post('/wd/hub/session/:sessionId?/url     --> Navigate to a new URL.
 //  rest.post('/wd/hub/session/:sessionId?/forward     --> Navigate forwards in the browser history, if possible.
 //  rest.post('/wd/hub/session/:sessionId?/back     --> Navigate backwards in the browser history, if possible.
 //  rest.post('/wd/hub/session/:sessionId?/refresh     --> Refresh the current page.

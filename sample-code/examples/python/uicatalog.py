@@ -11,6 +11,7 @@ import random
 import string
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.touch_actions import TouchActions
 from selenium.webdriver.common.keys import Keys
 import urllib2
 import json
@@ -54,7 +55,7 @@ class TestSequenceFunctions(unittest.TestCase):
         nav_bar = self.driver.find_element_by_tag_name("navigationBar")
         self.assertTrue(nav_bar)
 
-    # TODO: Needs to be implmented
+    # TODO: Needs to be implmented, switching into UIWebView and playing with it
     # def test_frames(self):
     #     pass
 
@@ -137,19 +138,18 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(alert.text, "UIAlertView")
         alert.accept()
 
-    # # TODO: Can't call flick from Python Selenium, and moveto doesn't seem to be 
-    # # the right action...
-    # def test_scroll(self):
-    #     # scroll menu
-    #     # get initial third row location
-    #     row = self.driver.find_elements_by_tag_name("tableCell")[2]
-    #     # perform swipe gesture
-    #     swipe = ActionChains(self.driver).drag_and_drop_by_offset(row, 0, -50)
-    #     swipe.perform()
-    #     # get new row coordinates
-    #     newRow = self.driver.find_elements_by_tag_name("tableCell")[2]
-    #     self.assertEqual(row.location['x'], newRow.location['x'])
-    #     self.assertEqual(row.location['y'], newRow.location['y'])
+    def test_scroll(self):
+        # scroll menu
+        # get initial third row location
+        row = self.driver.find_elements_by_tag_name("tableCell")[2]
+        location1 = row.location
+        # perform swipe gesture
+        swipe = TouchActions(self.driver).flick(0, -20)
+        swipe.perform()
+        # get new row coordinates
+        location2 = row.location
+        self.assertEqual(location1['x'], location2['x'])
+        self.assertNotEqual(location1['y'], location2['y'])
 
     def test_sessions(self):
         data = json.loads(urllib2.urlopen("http://localhost:4723/wd/hub/sessions").read())

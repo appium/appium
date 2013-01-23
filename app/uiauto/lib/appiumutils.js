@@ -174,6 +174,32 @@ UIAElement.prototype.findElementAndSetKey = function(by) {
     return '';
 };
 
+// getActiveElement
+
+UIAElement.prototype.getActiveElement = function() {
+    var foundElement = null;
+    var checkAll = function(element) {
+        var children = element.elements();
+            var numChildren = children.length;
+            for ( var i = 0; i < numChildren; i++) {
+                var child = children[i];
+                if(child.hasKeyboardFocus()){
+                    foundElement = child;
+                    break;
+                }
+                if (child.hasChildren()) // big optimization
+                    checkAll(child);
+            }
+    };
+    checkAll(this);
+    if (foundElement) {
+        var varName = 'wde' + globalElementCounter++;
+        elements[varName] = foundElement;
+        return ['{"ELEMENT":"',varName,'"}'].join('');
+    }
+    return foundElement;
+};
+
 // getPageSource
 
 function tabSpacing(depth) {

@@ -2,6 +2,7 @@
 #import "lib/instruments_client.js"
 #import "lib/delay.js"
 #import "lib/appiumutils.js"
+#import "lib/status.js"
 
 // automation globals
 var target = UIATarget.localTarget();
@@ -25,10 +26,15 @@ while(noErrors) {
     console.log("Got new command from instruments: " + cmd);
     var result = eval(cmd);
     if (typeof result === "undefined") {
-      result = false;
+      result = {value: false};
       console.log("Command executed without response");
-    } else {
-      console.log("Result of command is: " + result);
+    }
+    if (typeof result.status === "undefined") {
+      console.log("Result is not protocol compliant, wrapping");
+      result = {
+        status: codes.Success.code,
+        value: result
+      };
     }
     cmd = sendResultAndGetNext(result);
   } else {

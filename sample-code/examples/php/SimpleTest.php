@@ -1,4 +1,10 @@
 <?php
+// To run this test, install Sausage (see http://github.com/jlipps/sausage-bun
+// to get the curl one-liner to run in this directory), then run:
+//     vendor/bin/phpunit SimpleTest.php
+// NOTE: this test is currently broken, waiting on this fix:
+// https://github.com/giorgiosironi/phpunit-selenium/pull/18
+
 require_once "vendor/autoload.php";
 
 class SimpleTest extends Sauce\Sausage\WebDriverTestCase
@@ -17,14 +23,14 @@ class SimpleTest extends Sauce\Sausage\WebDriverTestCase
         )
     );
 
-    public function setUp()
+    public function elemsByTag($tag)
     {
-        parent::setUp();
+        return $this->elements($this->using('tag name')->value($tag));
     }
 
     protected function populate()
     {
-        $elems = $this->byTagName('textField');
+        $elems = $this->elemsByTag('textField');
         foreach ($elems as $elem) {
             $randNum = rand(0, 10);
             $elem->value($randNum);
@@ -35,9 +41,10 @@ class SimpleTest extends Sauce\Sausage\WebDriverTestCase
     public function testUiComputation()
     {
         $this->populate();
-        $buttons = $this->byTagName('button');
+        $buttons = $this->elemsByTag('button');
         $buttons[0]->click();
-        $texts = $this->byTagName('staticText');
-        $this->assertEqual(int($texts[0]->text), array_sum($this->numValues));
+        $texts = $this->elemsByTag('staticText');
+        $this->assertEquals(array_sum($this->numValues), (int)($texts[0]->text()));
+        sleep(10);
     }
 }

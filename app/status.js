@@ -81,6 +81,10 @@ module.exports.create = function(session, key, value, cb) {
     , value: value
   };
 
+  if (value === null) {
+    delete(ret.value);
+  }
+
   cb(ret);
 };
 

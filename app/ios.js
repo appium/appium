@@ -163,11 +163,27 @@ IOS.prototype.click = function(elementId, cb) {
   });
 };
 
+IOS.prototype.clear = function(elementId, cb) {
+  var command = ["elements['", elementId, "'].setValue('')"].join('');
+
+  this.proxy(command, function(err, json) {
+    cb(null, json);
+  });
+};
+
 IOS.prototype.getText = function(elementId, cb) {
   var command = ["elements['", elementId, "'].getText()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
+  });
+};
+
+IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
+  var command = ["elements['", elementId, "'].", attributeName, "()"].join('');
+
+  this.proxy(command, function(err, json) {
+    cb(null, json);
   });
 };
 
@@ -321,6 +337,12 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
 
   this.proxy(command, function(err, json) {
     cb(err, json);
+  });
+};
+
+IOS.prototype.active = function(cb) {
+  this.proxy("wd_frame.getActiveElement()", function(err, json) {
+    cb(null, json);
   });
 };
 

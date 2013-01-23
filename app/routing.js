@@ -26,6 +26,8 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location', controller.getLocation);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/size', controller.getSize);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/attribute/:name', controller.getAttribute);
+  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear', controller.clear);
   rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
   rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
@@ -40,6 +42,8 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements', controller.findElementsFromElement);
   rest.post('/wd/hub/session/:sessionId/touch/flick', controller.flick);
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
+  rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
+
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
@@ -80,13 +84,10 @@ module.exports = function(appium) {
 //  rest.delete('/wd/hub/session/:sessionId?/cookie     --> Delete all cookies visible to the current page.
 //  rest.delete('/wd/hub/session/:sessionId?/cookie/:name     --> Delete the cookie with the given name.
 //  rest.get('/wd/hub/session/:sessionId?/title     --> Get the current page title.
-//  rest.post('/wd/hub/session/:sessionId?/element/active     --> Get the element on the page that currently has focus.
 //  rest.get('/wd/hub/session/:sessionId?/element/:elementId?     --> Describe the identified element.
 //  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/submit     --> Submit a FORM element.
 //  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/name     --> Query for an element's tag name.
-//  rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear     --> Clear a TEXTAREA or text INPUT element's value.
 //  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/selected     --> Determine if an OPTION element, or an INPUT element of type checkbox or radiobutton is currently selected.
-//  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/attribute/:name     --> Get the value of an element's attribute.
 //  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:other     --> Test if two element IDs refer to the same DOM element.
 //  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location_in_view     --> Determine an element's location on the screen once it has been scrolled into view.
 //  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/css/:propertyName     --> Query the value of an element's computed CSS property.

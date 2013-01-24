@@ -22,13 +22,20 @@ exports.getStatus = function(req, res) {
 
 exports.createSession = function(req, res) {
   // we can talk to the device client from here
-  req.appium.start(function(err, instance) {
+  var desired = req.body.desiredCapabilities;
+  req.appium.start(req.body.desiredCapabilities, function(err, instance) {
     if (err) {
       // of course we need to deal with err according to the WDJP spec.
       throw err;
     }
 
-    res.redirect("/wd/hub/session/" + req.appium.sessionId);
+    if (desired && desired.newCommandTimeout) {
+      instance.setCommandTimeout(desired.newCommandTimeout, function() {
+        res.redirect("/wd/hub/session/" + req.appium.sessionId);
+      });
+    } else {
+      res.redirect("/wd/hub/session/" + req.appium.sessionId);
+    }
   });
 };
 

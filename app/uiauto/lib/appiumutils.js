@@ -38,7 +38,7 @@
 /* Deactivating the app for specified duration in Seconds.
 Useful to test multi-taskig (moving app to background) */
 function deactivateApp(timeInSeconds){
- UIATarget.localTarget().deactivateAppForDuration(timeInSeconds);
+  $.backgroundApp(timeInSeconds);
 }
 
 UIAElementNil.prototype.type = function() {

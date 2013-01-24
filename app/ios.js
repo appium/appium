@@ -30,8 +30,11 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   };
 };
 
-IOS.prototype.start = function(cb) {
+IOS.prototype.start = function(cb, onDie) {
   var me = this;
+  if (typeof onDie === "function") {
+    this.onStop = onDie;
+  }
 
   var onLaunch = function() {
     logger.info('Instruments launched. Starting poll loop for new commands.');
@@ -46,7 +49,7 @@ IOS.prototype.start = function(cb) {
         me.onStop(code);
       });
     } else {
-      me.onStop(code, traceDir);
+      me.onStop(code);
     }
   };
 
@@ -73,6 +76,11 @@ IOS.prototype.stop = function(cb) {
   this.instruments.shutdown();
   me.queue = [];
   me.progress = 0;
+};
+
+IOS.prototype.setCommandTimeout = function(secs, cb) {
+  var cmd = "waitForDataTimeout = " + parseInt(secs, 10);
+  this.proxy(cmd, cb);
 };
 
 IOS.prototype.proxy = function(command, cb) {

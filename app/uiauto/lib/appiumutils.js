@@ -518,6 +518,26 @@ touchSwipeFromSpeed = function(xSpeed, ySpeed) {
     };
 }
 
+// does a flick from a center of a specified element (use case: sliders)
+UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
+  var options = {
+        startOffset : {
+            x : 0.5,
+            y : 0.5
+        },
+        endOffset : {
+            x : 0.5 + xoffset,
+            y : 0.5 + yoffset
+        }
+    };
+
+  this.flickInsideWithOptions(options);
+  return {
+    status: codes.Success.code,
+    value: null
+  };
+}
+
 // alerts
 
 getAlertText = function() {

@@ -30,6 +30,7 @@ module.exports = function(grunt) {
     }
     , mochaTest: {
       unit: ['app/test/unit/*.js']
+      , appiumutils: ['test/appiumutils/*.js']
     }
     , mochaTestWithServer: {
       TestApp: {
@@ -55,8 +56,9 @@ module.exports = function(grunt) {
   grunt.registerTask('uicatalog', "Run UICatalog tests", function(log) {
     runTestsWithServer(grunt, 'UICatalog', 'uicatalog', log === "log", this.async());
   });
-  grunt.registerTask('test', 'lint buildApp:TestApp buildApp:UICatalog unit functional uicatalog');
+  grunt.registerTask('test', 'lint buildApp:TestApp buildApp:UICatalog unit appiumutils functional uicatalog');
   grunt.registerTask('unit', 'mochaTest:unit');
+  grunt.registerTask('appiumutils', 'mochaTest:appiumutils');
   grunt.registerTask('default', 'lint test');
   grunt.registerTask('appium', "Start the Appium server", function(appName) {
     if (typeof appName === "undefined") {

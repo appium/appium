@@ -19,20 +19,12 @@
  *	under the License.
  */
 
-#import "mechanic.js"
-#import "status.js"
+#import "../lib/mechanic.js"
+#import "../lib/status.js"
+#import "utility.js"
 // TODO: rewrite this entire file using helper methods from mechanic?
 
-// Obtaining Device Property Information like Name, OS ver, Model etc
 
-function getDeviceDetail() {
-    var deviceMap = new Object();
-    deviceMap['deviceName'] = UIATarget.localTarget().name();
-    deviceMap['deviceModel'] = UIATarget.localTarget().model();
-    deviceMap['systemName'] = UIATarget.localTarget().systemName();
-    deviceMap['systemVersion'] = UIATarget.localTarget().systemVersion();
-    return deviceMap;
- }
 
 // Misc utils
 
@@ -540,14 +532,14 @@ UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
 
 // alerts
 
-getAlertText = function() {
+var getAlertText = function() {
   return {
     status: codes.Success.code,
     value: target.frontMostApp().alert().name()
   };
 }
 
-acceptAlert = function() {
+var acceptAlert = function() {
   target.frontMostApp().alert().defaultButton().tap()
   return {
     status: codes.Success.code,
@@ -555,7 +547,7 @@ acceptAlert = function() {
   };
 }
 
-dismissAlert = function() {
+var dismissAlert = function() {
   target.frontMostApp().alert().cancelButton().tap()
   return {
     status: codes.Success.code,

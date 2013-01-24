@@ -1,8 +1,6 @@
 #import "lib/console.js"
 #import "lib/instruments_client.js"
-#import "lib/delay.js"
-#import "lib/appiumutils.js"
-#import "lib/status.js"
+#import "appium/base.js"
 
 // automation globals
 var target = UIATarget.localTarget();

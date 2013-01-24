@@ -22,17 +22,11 @@
 #import "../lib/mechanic.js"
 #import "../lib/status.js"
 #import "utility.js"
+#import "app.js"
+#import "binding.js"
 // TODO: rewrite this entire file using helper methods from mechanic?
 
 
-
-// Misc utils
-
-/* Deactivating the app for specified duration in Seconds.
-Useful to test multi-taskig (moving app to background) */
-function deactivateApp(timeInSeconds){
-  $.backgroundApp(timeInSeconds);
-}
 
 UIAElementNil.prototype.type = function() {
     return "UIAElementNil";
@@ -282,14 +276,6 @@ UIAElement.prototype.getPageSource = function() {
 }
 
 // screenshot
-
-function takeScreenshot(file) {
-    var screenshot = UIATarget.localTarget().captureScreenWithName(file);
-    return {
-      status: codes.Success.code,
-      value: screenshot
-    };
-}
 
 // screen orientation
 

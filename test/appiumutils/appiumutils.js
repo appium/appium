@@ -58,4 +58,11 @@ describe("appiumutils", function() {
     });
   });
 
+  it('should background the app', function(done) {
+    device.proxy("au.backgroundApp(2)", function(err) {
+      should.not.exist(err);
+      done();
+    });
+  });
+
 });

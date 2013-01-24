@@ -212,9 +212,23 @@ exports.getScreenshot = function(req, res) {
 exports.flick = function(req, res) {
   var swipe = req.body.swipe
     , xSpeed = req.body.xSpeed
-    , ySpeed = req.body.ySpeed;
+    , ySpeed = req.body.ySpeed
+    , element = req.body.element;
 
-  req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
+  if (element) {
+    exports.flickElement(req, res);
+  } else {
+    req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
+  }
+};
+
+exports.flickElement = function(req, res) {
+  var element = req.body.element
+    , xoffset = req.body.xoffset
+    , yoffset = req.body.yoffset
+    , speed = req.body.speed;
+
+  req.device.flickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
 };
 
 exports.postUrl = function(req, res) {

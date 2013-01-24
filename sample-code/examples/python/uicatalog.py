@@ -151,6 +151,17 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(location1['x'], location2['x'])
         self.assertNotEqual(location1['y'], location2['y'])
 
+    def test_slider(self):
+        # go to controls
+        self._open_menu_position(1)
+        # get the slider
+        slider = self.driver.find_element_by_tag_name("slider")
+        self.assertEqual(slider.get_attribute("value"), "50%")
+        drag = TouchActions(self.driver)
+        drag.flick_element(slider, -0.5, 0, 0)
+        drag.perform()
+        self.assertEqual(slider.get_attribute("value"), "0%")
+
     def test_sessions(self):
         data = json.loads(urllib2.urlopen("http://localhost:4723/wd/hub/sessions").read())
         self.assertEqual(self.driver.session_id, data[0]['id'])

@@ -372,6 +372,14 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   });
 };
 
+IOS.prototype.flickElement = function(elementId, xoffset, yoffset, speed, cb) {
+  var command = ["elements['", elementId, "'].touchFlick(", xoffset, ",", yoffset, ",", speed, ")"].join('');
+
+  this.proxy(command, function(err, json) {
+    cb(err, json);
+  });
+};
+
 IOS.prototype.url = function(cb) {
   // in the future, detect whether we have a UIWebView that we can use to
   // make sense of this command. For now, and otherwise, it's a no-op

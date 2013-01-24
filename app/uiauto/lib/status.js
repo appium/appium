@@ -100,4 +100,7 @@ var codes = {
     summary: 'Target provided for a move action is out of bounds.'
   }
 };
-module.exports.codes = codes;
+
+if (typeof module !== "undefined") {
+  module.exports.codes = codes;
+}

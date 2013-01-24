@@ -20,11 +20,12 @@
  */
 
 #import "mechanic.js"
+#import "status.js"
 // TODO: rewrite this entire file using helper methods from mechanic?
 
 // Obtaining Device Property Information like Name, OS ver, Model etc
 
- function getDeviceDetail() {
+function getDeviceDetail() {
     var deviceMap = new Object();
     deviceMap['deviceName'] = UIATarget.localTarget().name();
     deviceMap['deviceModel'] = UIATarget.localTarget().model();
@@ -149,17 +150,17 @@ var globalElementCounter = 0;
 
 // @return [{'ELEMENT': var_name}, ...]
 UIAElement.prototype.findElementsAndSetKeys = function(by) {
-    var json = '[';
+    var value = [];
     var foundElements = this.findElements(by);
     for ( var i = 0; i < foundElements.length; i++) {
         var varName = 'wde' + globalElementCounter++;
         elements[varName] = foundElements[i];
-        if (i > 0)
-            json += ',';
-        json += ['{"ELEMENT":"',varName,'"}'].join('');
+        value.push({'ELEMENT': varName});
     }
-    json += ']';
-    return json;
+    return {
+      status: codes.Success.code,
+      value: value
+    };
 };
 
 // @return var_namne
@@ -168,9 +169,15 @@ UIAElement.prototype.findElementAndSetKey = function(by) {
     if (foundElement) {
         var varName = 'wde' + globalElementCounter++;
         elements[varName] = foundElement;
-        return ['{"ELEMENT":"',varName,'"}'].join('');
+        return {
+          status: codes.Success.code,
+          value: {'ELEMENT': varName}
+        };
     }
-    return '';
+    return {
+      status: codes.NoSuchElement.code,
+      value: null
+    };
 };
 
 // getActiveElement
@@ -193,16 +200,25 @@ UIAElement.prototype.getActiveElement = function() {
     // try elements in the array first
     for (var key in elements) {
         if (elements[key].hasKeyboardFocus()) {
-            return ['{"ELEMENT":"',key,'"}'].join('');
+            return {
+              status: codes.Success.code,
+              value: {ELEMENT: key}
+            };
         }
     }
     checkAll(this);
     if (foundElement) {
         var varName = 'wde' + globalElementCounter++;
         elements[varName] = foundElement;
-        return ['{"ELEMENT":"',varName,'"}'].join('');
+        return {
+          status: codes.Success.code,
+          value: {ELEMENT: varName}
+        };
     }
-    return foundElement;
+    return {
+      status: codes.NoSuchElement.code,
+      value: null,
+    };
 };
 
 // getPageSource
@@ -267,37 +283,54 @@ UIAElement.prototype.getPageSource = function() {
     } finally {
         target.popTimeout();
     }
-    return source;
+    return {
+      status: codes.Success.code,
+      value: source
+    };
 }
 
 // screenshot
 
 function takeScreenshot(file) {
     var screenshot = UIATarget.localTarget().captureScreenWithName(file);
-    return screenshot;
+    return {
+      status: codes.Success.code,
+      value: screenshot
+    };
 }
 
 // screen orientation
 
 function getScreenOrientation() {
-    var orientation = UIATarget.localTarget().deviceOrientation();
+    var orientation = UIATarget.localTarget().deviceOrientation()
+    , value = null
     switch (orientation) {
     case UIA_DEVICE_ORIENTATION_UNKNOWN:
-        return "UNKNOWN";
+        value = "UNKNOWN";
     case UIA_DEVICE_ORIENTATION_PORTRAIT:
-        return "PORTRAIT";
+        value = "PORTRAIT";
     case UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:
-        return "PORTRAIT";
+        value = "PORTRAIT";
     case UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:
-        return "LANDSCAPE";
+        value = "LANDSCAPE";
     case UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:
-        return "LANDSCAPE";
+        value = "LANDSCAPE";
     case UIA_DEVICE_ORIENTATION_FACEUP:
-        return "UNKNOWN";
+        value = "UNKNOWN";
     case UIA_DEVICE_ORIENTATION_FACEDOWN:
-        return "UNKNOWN";
+        value = "UNKNOWN";
     }
-    throw new Error("unsupported orientation: " + orientation);
+    if (value !== null) {
+      return {
+        status: codes.Success.code,
+        value: value
+      };
+    } else {
+      return {
+        status: codes.UnknownError.code,
+        value: 'Unsupported Orientation: ' + orientation
+      };
+    }
 }
 
 function setScreenOrientation(orientation) {
@@ -307,7 +340,10 @@ function setScreenOrientation(orientation) {
     else if (orientation === "PORTRAIT")
         target.setDeviceOrientation(UIA_DEVICE_ORIENTATION_PORTRAIT);
     else
-        throw new Error("unsupported orientation: " + orientation);
+        return {
+          status: codes.UnknownError.code,
+          value: 'Unsupported orientation: ' + orientation
+        };
     return getScreenOrientation();
 }
 
@@ -332,7 +368,10 @@ UIAElement.prototype.getText = function() {
         if (!text)
             text = this.value();
     }
-    return text;
+    return {
+      status: codes.Success.code,
+      value: text
+    };
 }
 
 // timeouts
@@ -345,11 +384,15 @@ function setImplicitWait(seconds) {
 
 sendKeysToActiveElement = function(keys) {
     if (hasSpecialKeys(keys)) {
-        sendKeysToActiveElementSpecial(keys);
+        return sendKeysToActiveElementSpecial(keys);
     } else {
         var keyboard = UIATarget.localTarget().frontMostApp().keyboard();
         keyboard.typeString(keys);
     }
+    return {
+      status: codes.Success.code,
+      value: null
+    };
 }
 
 hasSpecialKeys = function(keys) {
@@ -365,6 +408,10 @@ sendKeysToActiveElementSpecial = function(keys) {
     var numChars = keys.length;
     for ( var i = 0; i < numChars; i++)
         typeKey(keyboard, keys.charAt(i));
+    return {
+      status: codes.Success.code,
+      value: null
+    };
 }
 
 // handles some of the special keys in org.openqa.selenium.Keys
@@ -389,17 +436,24 @@ typeKey = function(keyboard, k) {
 // location/size/...
 
 UIAElement.prototype.getElementLocation = function() {
-    var origin = this.rect().origin;
-    return '{"x":' + origin.x + ',"y":' + origin.y + '}';
+    return {
+      status: codes.Success.code,
+      value: this.rect().origin
+    };
 }
 
 UIAElement.prototype.getElementSize = function() {
-    var size = this.rect().size;
-    return '{"width":' + size.width + ',"height":' + size.height + '}';
+    return {
+      status: codes.Success.code,
+      value: this.rect().size
+    };
 }
 
 UIAElement.prototype.isDisplayed = function() {
-    return this.isVisible() == 1;
+  return {
+    status: codes.Success.code,
+    value: this.isVisible() == 1
+  };
 }
 
 // touch
@@ -427,6 +481,10 @@ touchFlickFromSpeed = function(xSpeed, ySpeed) {
 
     var mainWindow = UIATarget.localTarget().frontMostApp().mainWindow();
     mainWindow.flickInsideWithOptions(options);
+    return {
+      status: codes.Success.code,
+      value: null
+    };
 }
 
 // similar to flick but does a longer movement in the direction of the swipe
@@ -454,4 +512,33 @@ touchSwipeFromSpeed = function(xSpeed, ySpeed) {
 
     var mainWindow = UIATarget.localTarget().frontMostApp().mainWindow();
     mainWindow.dragInsideWithOptions(options);
+    return {
+      status: codes.Success.code,
+      value: null
+    };
+}
+
+// alerts
+
+getAlertText = function() {
+  return {
+    status: codes.Success.code,
+    value: target.frontMostApp().alert().name()
+  };
+}
+
+acceptAlert = function() {
+  target.frontMostApp().alert().defaultButton().tap()
+  return {
+    status: codes.Success.code,
+    value: null
+  };
+}
+
+dismissAlert = function() {
+  target.frontMostApp().alert().cancelButton().tap()
+  return {
+    status: codes.Success.code,
+    value: null
+  };
 }

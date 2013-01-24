@@ -58,15 +58,16 @@ Appium.prototype.invoke = function() {
     }
     this.device = this.devices[this.active];
 
-    this.device.start(function(err, device) {
+    this.device.start(function(err) {
       me.progress++;
       me.sessions[me.progress].sessionId = me.sessionId;
-      me.sessions[me.progress].callback(err, device);
+      me.sessions[me.progress].callback(err, me.device);
     }, _.bind(me.onDeviceDie, me));
   }
 };
 
 Appium.prototype.onDeviceDie = function(code, cb) {
+  var dyingSession = this.sessionId;
   this.sessionId = null;
   if (code !== null) {
     this.devices = {};
@@ -77,7 +78,7 @@ Appium.prototype.onDeviceDie = function(code, cb) {
       this.active = null;
       this.invoke();
     }
-    cb(this.sessionId);
+    cb(null, {status: 0, value: null, sessionId: dyingSession});
   }
 };
 

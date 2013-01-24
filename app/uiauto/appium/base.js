@@ -207,73 +207,60 @@ UIAElement.prototype.getActiveElement = function() {
     };
 };
 
-// getPageSource
-
-function tabSpacing(depth) {
-    switch (depth) {
-    case 0:
-        return "";
-    case 1:
-        return "  ";
-    case 2:
-        return "    ";
-    case 3:
-        return "      ";
-    case 4:
-        return "        ";
-    case 5:
-        return "          ";
-    }
-    var space = "";
-    for ( var i = 0; i < depth; i++)
-        space += "  ";
-    return space;
-}
-
 UIAElement.prototype.getPageSource = function() {
-    var source = "";
-    var appendPageSource = function(element, depth) {
-        var children = element.elements();
-        var numChildren = children.length;
-        for ( var i = 0; i < numChildren; i++) {
-            var child = children[i];
-            appendElementSource(child, depth);
-            if (child.hasChildren()) // big optimization
-                appendPageSource(child, depth + 1);
-        }
+  var output = "";
+  var buildOutput = function(tree, depth) {
+    var children = tree.children;
+    var spaces = "";
+    for (var i = 0; i < depth; i++) {
+      spaces += "    ";
     }
-    var appendElementSource = function(element, depth) {
-        source += tabSpacing(depth) + element.type() + ':'
-        var label = element.label();
-        var name = element.name();
-        var value = element.value();
-        if (label)
-            source += ' "' + label + '"';
-        if (name)
-            source += ' NAME:"' + name + '"';
-        if (value)
-            source += ' VALUE:"' + value + '"';
-        var r = element.rect();
-        source += ' {{' + Math.round(r.origin.x) + ',' + Math.round(r.origin.y)
-                + '},{' + Math.round(r.size.width) + ','
-                + Math.round(r.size.height) + '}}';
-        // show element state
-        source += ' [enabled=' + element.isEnabled() + ',valid='
-                + element.isValid() + ',visible=' + element.isVisible() + ']';
-        source += '\n'
+    elStr = "<" + tree.type + " (" + tree.label + ")>";
+    elStr += JSON.stringify({name: tree.name, enabled: tree.enabled, valid: tree.valid, visible: tree.visible, rect: tree.rect});
+    output += spaces + elStr + "\n";
+    for (var i = 0; i < children.length; i++) {
+      buildOutput(children[i], depth + 1);
     }
-    var target = UIATarget.localTarget();
-    try {
-        target.pushTimeout(0);
-        appendPageSource(this, 0)
-    } finally {
-        target.popTimeout();
-    }
-    return {
-      status: codes.Success.code,
-      value: source
-    };
+  };
+  try {
+    target.pushTimeout(0);
+    buildOutput(this.getTree(), 0)
+  } finally {
+    target.popTimeout();
+  }
+  return {
+    status: codes.Success.code,
+    value: output
+  };
 }
+
+UIAElement.prototype.getTree = function() {
+  var target = UIATarget.localTarget();
+  target.pushTimeout(0);
+  var getTree = function(element) {
+    var subtree = {
+      name: element.name()
+      , type: element.type()
+      , label: element.label()
+      , value: element.value()
+      , rect: element.rect()
+      , enabled: element.isEnabled()
+      , valid: element.isValid()
+      , visible: element.isVisible()
+      , children: []
+    };
+    var children = element.elements();
+    var numChildren = children.length;
+    for ( var i = 0; i < numChildren; i++) {
+      var child = children[i];
+      subtree.children.push(getTree(child));
+    }
+    return subtree;
+  };
+  var tree = getTree(this);
+  target.popTimeout();
+  return tree
+};
 
 
 
@@ -302,12 +289,6 @@ UIAElement.prototype.getText = function() {
       status: codes.Success.code,
       value: text
     };
-}
-
-// timeouts
-
-function setImplicitWait(seconds) {
-    UIATarget.localTarget().setTimeout(seconds);
 }
 
 // Keyboard

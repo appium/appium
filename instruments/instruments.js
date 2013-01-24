@@ -195,7 +195,7 @@ Instruments.prototype.outputStreamHandler = function(output) {
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  logger.error(("[INST STDERR] " + output).yellow);
+  logger.info(("[INST STDERR] " + output).yellow);
 };
 
 Instruments.prototype.lookForShutdownInfo = function(output) {

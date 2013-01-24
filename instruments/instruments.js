@@ -19,9 +19,7 @@ var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.resultHandler = this.defaultResultHandler;
   this.readyHandler = this.defaultReadyHandler;
   this.exitHandler = this.defaultExitHandler;
-  this.hasExited = false;
   this.hasConnected = false;
-  this.hasShutdown = false;
   this.traceDir = null;
   this.proc = null;
   this.debugMode = false;
@@ -89,7 +87,7 @@ Instruments.prototype.launch = function() {
   // prepare temp dir
   var tmpDir = '/tmp/' + this.guid;
   fs.mkdir(tmpDir, function(e) {
-    if(!e || (e && e.code === 'EEXIST')) {
+    if (!e || (e && e.code === 'EEXIST')) {
         self.proc = self.spawnInstruments(tmpDir);
         self.proc.stdout.on('data', function(data) {
           self.outputStreamHandler(data);
@@ -101,10 +99,9 @@ Instruments.prototype.launch = function() {
         self.proc.on('exit', function(code) {
           self.debug("Instruments exited with code " + code);
           self.exitCode = code;
-          self.hasExited = true;
-          self.doExit();
+          self.exitHandler(self.exitCode, self.traceDir);
         });
-    }else{
+    } else {
       throw e;
     }
   });
@@ -172,14 +169,10 @@ Instruments.prototype.sendCommand = function(cmd, cb) {
 
 Instruments.prototype.shutdown = function() {
   this.proc.kill();
-  this.hasShutdown = true;
-  this.doExit();
 };
 
 Instruments.prototype.doExit = function() {
-  if (this.hasShutdown && this.hasExited) {
-    this.exitHandler(this.exitCode, this.traceDir);
-  }
+  console.log("Calling exit handler");
 };
 
 
@@ -202,7 +195,7 @@ Instruments.prototype.outputStreamHandler = function(output) {
 };
 
 Instruments.prototype.errorStreamHandler = function(output) {
-  logger.error(("[INST STDERR] " + output).yellow);
+  logger.info(("[INST STDERR] " + output).yellow);
 };
 
 Instruments.prototype.lookForShutdownInfo = function(output) {

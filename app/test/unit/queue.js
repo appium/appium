@@ -76,7 +76,7 @@ describe('Appium', function() {
           return;
 
         mock(function() {
-          inst.start(function(err, device) {
+          inst.start({}, function(err, device) {
             var n = num;
             setTimeout(function() {
               inst.stop(function(sessionId) { doneYet(n); });

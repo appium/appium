@@ -4,6 +4,7 @@
 var routing = require('./routing')
   , logger = require('../logger').get('appium')
   , UUID = require('uuid-js')
+  , _ = require('underscore')
   , ios = require('./ios');
 
 var Appium = function(args) {
@@ -16,6 +17,7 @@ var Appium = function(args) {
   this.active = null;
   this.device = null;
   this.sessionId = null;
+  this.desiredCapabilities = {};
   this.sessions = [];
   this.counter = -1;
   this.progress = -1;
@@ -32,7 +34,8 @@ Appium.prototype.attachTo = function(rest, cb) {
   }
 };
 
-Appium.prototype.start = function(cb) {
+Appium.prototype.start = function(desiredCaps, cb) {
+  this.desiredCapabilities = desiredCaps;
   this.sessions[++this.counter] = { sessionId: '', callback: cb };
   this.invoke();
 };
@@ -59,7 +62,22 @@ Appium.prototype.invoke = function() {
       me.progress++;
       me.sessions[me.progress].sessionId = me.sessionId;
       me.sessions[me.progress].callback(err, device);
-    });
+    }, _.bind(me.onDeviceDie, me));
+  }
+};
+
+Appium.prototype.onDeviceDie = function(code, cb) {
+  this.sessionId = null;
+  if (code !== null) {
+    this.devices = {};
+    this.device = null;
+  }
+  if (cb) {
+    if (this.active !== null) {
+      this.active = null;
+      this.invoke();
+    }
+    cb(this.sessionId);
   }
 };
 
@@ -72,22 +90,8 @@ Appium.prototype.stop = function(cb) {
 
   logger.info('Shutting down appium session...');
   this.device.stop(function(code) {
-    me.sessionId = null;
-    if (code !== null) {
-      me.devices = {};
-    }
-    if (cb) {
-      if (me.active !== null) {
-        me.active = null;
-        me.invoke();
-      }
-      cb(me.sessionId);
-    }
+    me.onDeviceDie(code, cb);
   });
-};
-
-Appium.prototype.device = function() {
-  return this.devices[this.active];
 };
 
 module.exports = function(args) {

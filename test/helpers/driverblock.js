@@ -2,18 +2,21 @@
 "use strict";
 
 var wd = require('wd')
+  , _ = require("underscore")
   , defaultHost = '127.0.0.1'
   , defaultPort = 4723
   , defaultCaps = {
       browserName: 'iOS'
       , platform: 'Mac'
       , version: '6.0'
+      , newCommandTimeout: 60
     };
 
-var driverBlock = function(tests, host, port, caps) {
-  host = typeof host === "undefined" ? defaultHost : host;
-  port = typeof port === "undefined" ? defaultPort : port;
-  caps = typeof caps === "undefined" ? defaultCaps : caps;
+var driverBlock = function(tests, host, port, caps, extraCaps) {
+  host = typeof host === "undefined" ? _.clone(defaultHost) : host;
+  port = typeof port === "undefined" ? _.clone(defaultPort) : port;
+  caps = typeof caps === "undefined" ? _.clone(defaultCaps) : caps;
+  caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
   var driverHolder = {driver: null, sessionId: null};
 
   beforeEach(function(done) {
@@ -25,15 +28,20 @@ var driverBlock = function(tests, host, port, caps) {
   });
 
   afterEach(function(done) {
-    driverHolder.driver.quit(done);
+    driverHolder.driver.quit(function(err) {
+      if (err && err.status && err.status.code != 6) {
+        throw err;
+      }
+      done();
+    });
   });
 
   tests(driverHolder);
 };
 
-var describeWithDriver = function(desc, tests, host, port, caps) {
+var describeWithDriver = function(desc, tests, host, port, caps, extraCaps) {
   describe(desc, function() {
-    driverBlock(tests, host, port, caps);
+    driverBlock(tests, host, port, caps, extraCaps);
   });
 };
 

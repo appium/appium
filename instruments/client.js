@@ -10,7 +10,7 @@ var connect = function(args) {
       data.result = JSON.parse(args.result);
     }
     data = JSON.stringify(data);
-    client.write(data);
+    client.end(data, "utf8");
   });
   client.on('data', function(data) {
     data = JSON.parse(data);

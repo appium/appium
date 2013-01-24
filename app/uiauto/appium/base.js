@@ -215,8 +215,8 @@ UIAElement.prototype.getPageSource = function() {
     for (var i = 0; i < depth; i++) {
       spaces += "    ";
     }
-    elStr = "<" + tree.type + " (" + tree.label + ")>";
-    elStr += JSON.stringify({name: tree.name, enabled: tree.enabled, valid: tree.valid, visible: tree.visible, rect: tree.rect});
+    elStr = "<" + tree.type + ">";
+    elStr += JSON.stringify({label: tree.label, name: tree.name, enabled: tree.enabled, valid: tree.valid, visible: tree.visible, rect: {x: tree.rect.origin.x, y: tree.rect.origin.y, w: tree.rect.size.width, h: tree.rect.size.height}});
     output += spaces + elStr + "\n";
     for (var i = 0; i < children.length; i++) {
       buildOutput(children[i], depth + 1);

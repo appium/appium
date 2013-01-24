@@ -1,23 +1,17 @@
 "use strict";
-var controller = require('./controller')
-    , NoSuchDriver = require('./status.js').codes.NoSuchDriver;
+var controller = require('./controller');
 
 module.exports = function(appium) {
   var rest = appium.rest
     , inject = function(req, res, next) {
         req.appium = appium;
         req.device = appium.device;
-        var match = new RegExp("hub/session/([^/]+)").exec(req.params[0]);
-        var sessId = match ? match[1] : null;
-        if (sessId && (!req.device || appium.sessionId != sessId)) {
-          res.send({sessionId: sessId, status: NoSuchDriver, value: ''});
-        } else {
-          next();
-        }
+        next();
       };
 
   // Make appium available to all REST http requests.
   rest.all('/wd/*', inject);
+  rest.all('/wd/hub/session/*', controller.sessionBeforeFilter);
 
   rest.get('/wd/hub/status', controller.getStatus);
   rest.post('/wd/hub/session', controller.createSession);

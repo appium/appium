@@ -15,13 +15,12 @@ target.setTimeout(1);
 
 // let server know we're alive and get first command
 var cmd = getFirstCommand();
-var noErrors = true;
 
 UIATarget.onAlert = function(){
   return true;
 };
 
-while(noErrors) {
+while(true) {
   if (cmd) {
     console.log("Got new command from instruments: " + cmd);
     var result = eval(cmd);
@@ -38,7 +37,6 @@ while(noErrors) {
     }
     cmd = sendResultAndGetNext(result);
   } else {
-    console.log("Error getting next command, shutting down :-(");
-    noErrors = false;
+    throw new Error("Error getting next command, shutting down :-(");
   }
 }

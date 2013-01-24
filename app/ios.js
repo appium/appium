@@ -250,7 +250,7 @@ IOS.prototype.frame = function(frame, cb) {
 };
 
 IOS.prototype.implicitWait = function(seconds, cb) {
-  var command = ["setImplicitWait('", seconds, "')"].join('');
+  var command = ["au.timeout('", seconds, "')"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -293,14 +293,6 @@ IOS.prototype.postAcceptAlert = function(cb) {
 
 IOS.prototype.postDismissAlert = function(cb) {
   this.proxy("dismissAlert()", function(err, json) {
-    cb(err, json);
-  });
-};
-
-IOS.prototype.implicitWait = function(timeoutSeconds, cb) {
-  var command = ["setImplicitWait('", timeoutSeconds ,"')"].join('');
-
-  this.proxy(command, function(err, json) {
     cb(err, json);
   });
 };

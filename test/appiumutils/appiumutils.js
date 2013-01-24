@@ -50,6 +50,7 @@ describe("appiumutils", function() {
   it('should get device details', function(done) {
     device.proxy("au.getDeviceDetail()", function(err, res) {
       should.not.exist(err);
+      res.status.should.equal(0);
       should.exist(res.value.deviceName);
       should.exist(res.value.deviceModel);
       should.exist(res.value.systemName);
@@ -57,5 +58,31 @@ describe("appiumutils", function() {
       done();
     });
   });
+
+  it('should background the app', function(done) {
+    device.proxy("au.backgroundApp(2)", function(err, res) {
+      should.not.exist(err);
+      res.status.should.equal(0);
+      done();
+    });
+  });
+
+  it('should get orientation', function(done) {
+    device.proxy("au.getScreenOrientation()", function(err, res) {
+      should.not.exist(err);
+      res.status.should.equal(0);
+      res.value.should.equal("PORTRAIT");
+      done();
+    });
+  });
+
+  // this seems to be broken!
+  //it('should set orientation', function(done) {
+    //device.proxy("au.setScreenOrientation('LANDSCAPE')", function(err, res) {
+      //should.not.exist(err);
+      //res.status.should.equal(0);
+      //done();
+    //});
+  //});
 
 });

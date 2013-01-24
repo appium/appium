@@ -37,7 +37,7 @@ module.exports = function(grunt) {
         , unit: ['app/test/unit/*.js']
       }
       , UICatalog: {
-        uicatalog: ['test/uicatalog/findElement.js']
+        uicatalog: ['test/uicatalog/*.js']
       }
     }
     , mochaTestConfig: {

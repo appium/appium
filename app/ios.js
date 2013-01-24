@@ -323,7 +323,7 @@ IOS.prototype.setOrientation = function(orientation, cb) {
 
 IOS.prototype.getScreenshot = function(cb) {
   var guid = uuid.create();
-  var command = ["takeScreenshot('screenshot", guid ,"')"].join('');
+  var command = ["au.capture('screenshot", guid ,"')"].join('');
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
   this.proxy(command, function(err, response) {

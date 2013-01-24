@@ -7,7 +7,8 @@ var spawn = require('child_process').spawn
   , fs = require('fs')
   , _ = require('underscore')
   , net = require('net')
-  , uuid = require('uuid-js');
+  , uuid = require('uuid-js')
+  , codes = require('../app/uiauto/lib/status.js').codes;
 
 var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.app = app;
@@ -25,6 +26,7 @@ var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.debugMode = false;
   this.onReceiveCommand = null;
   this.guid = uuid.create();
+  this.bufferedData = "";
   this.eventRouter = {
     'cmd': this.commandHandler
   };
@@ -51,7 +53,7 @@ Instruments.prototype.startSocketServer = function(sock) {
     fs.unlinkSync(sock);
   } catch (Exception) {}
 
-  var server = net.createServer(_.bind(function(conn) {
+  var server = net.createServer({allowHalfOpen: true}, _.bind(function(conn) {
     if (!this.hasConnected) {
       this.hasConnected = true;
       this.debug("Instruments is ready to receive commands");
@@ -61,7 +63,26 @@ Instruments.prototype.startSocketServer = function(sock) {
 
     conn.on('data', _.bind(function(data) {
       // when data comes in, route it according to the "event" property
-      data = JSON.parse(data);
+      this.debug("Socket data received (" + data.length + " bytes)");
+      this.bufferedData += data;
+    }, this));
+
+    conn.on('end', _.bind(function() {
+      var data = this.bufferedData;
+      this.bufferedData = "";
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        logger.error("Couldn't parse JSON data from socket, maybe buffer issue?");
+        logger.error(data);
+        data = {
+          event: 'cmd'
+          , result: {
+            status: codes.UnknownError
+            , value: "Error parsing socket data from instruments"
+          }
+        };
+      }
       if (!_.has(data, 'event')) {
         logger.error("Socket data came in witout event, it was:");
         logger.error(JSON.stringify(data));

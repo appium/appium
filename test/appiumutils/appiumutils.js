@@ -34,7 +34,11 @@ describe("appiumutils", function() {
   beforeEach(function(done) {
     appium.start({}, function() {
       device = appium.device;
-      done();
+      device.proxy('au.timeout(0)', function(err, res) {
+        should.not.exist(err);
+        res.status.should.equal(0);
+        done();
+      });
     });
   });
 
@@ -84,5 +88,30 @@ describe("appiumutils", function() {
       //done();
     //});
   //});
+
+  it('should set implicit wait', function(done) {
+    device.proxy("au.timeout(5)", function(err, res) {
+      should.not.exist(err);
+      res.status.should.equal(0);
+      done();
+    });
+  });
+
+  it.only('should have elements', function(done) {
+    device.proxy("wd_frame.getTree()", function (err, res) {
+      should.not.exist(err);
+      should.ok(res.value);
+      done();
+    });
+  });
+
+  it('should have page source', function(done) {
+    device.proxy("wd_frame.getPageSource()", function(err, res) {
+      should.not.exist(err);
+      res.status.should.equal(0);
+      console.log(res.value);
+      done();
+    });
+  });
 
 });

@@ -19,6 +19,17 @@ function getResponseHandler(req, res, validateResponse) {
   return responseHandler;
 }
 
+exports.sessionBeforeFilter = function(req, res, next) {
+  var match = new RegExp("([^/]+)").exec(req.params[0]);
+  var sessId = match ? match[1] : null;
+  // if we don't actually have a valid session, respond with an error
+  if (sessId && (!req.device || req.appium.sessionId != sessId)) {
+    res.send({sessionId: sessId, status: status.codes.NoSuchDriver, value: ''});
+  } else {
+    next();
+  }
+};
+
 exports.getStatus = function(req, res) {
   // Return a static JSON object to the client
   getResponseHandler(req, res)(null, {

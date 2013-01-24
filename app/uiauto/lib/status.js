@@ -100,3 +100,4 @@ var codes = {
     summary: 'Target provided for a move action is out of bounds.'
   }
 };
+module.exports.codes = codes;

@@ -25,6 +25,7 @@ var Appium = function(args) {
   this.counter = -1;
   this.progress = -1;
   this.tempFiles = [];
+  this.origApp = null;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -39,6 +40,7 @@ Appium.prototype.attachTo = function(rest, cb) {
 };
 
 Appium.prototype.start = function(desiredCaps, cb) {
+  this.origApp = this.args.app;
   this.configure(desiredCaps, _.bind(function(err) {
     this.desiredCapabilities = desiredCaps;
     if (err) {
@@ -140,6 +142,9 @@ Appium.prototype.invoke = function() {
 Appium.prototype.onDeviceDie = function(code, cb) {
   var dyingSession = this.sessionId;
   this.sessionId = null;
+  // reset app to whatever it was before this session so we don't accidentally
+  // reuse a bad app
+  this.args.app = this.origApp;
   if (code !== null) {
     this.devices = {};
     this.device = null;

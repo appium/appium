@@ -7,7 +7,8 @@
  * this test
  */
 
-//var describeWd = require('../helpers/driverblock.js').describe
+//var describeWd
+//= require('../../helpers/driverblock.js').describeForApp('TestApp')
   //, assert = require('assert');
 
  //describeWd('check implicit wait', function(h) {

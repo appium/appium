@@ -41,7 +41,7 @@ describe('IOS', function() {
 
 describe('Appium', function() {
   var intercept = []
-    , inst = appium({});
+    , inst = appium({app: "/path/to/fake.app"});
 
   var start = function(cb) {
         cb(null, {});

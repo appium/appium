@@ -1,7 +1,7 @@
 /*global it:true */
 "use strict";
 
-var describeWd = require('../helpers/driverblock.js').describe
+var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
   , should = require('should');
 
 describeWd('check size', function(h) {

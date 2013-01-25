@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     lint: {
-      all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js', 'test/functional/*.js', 'test/unit/*.js', 'test/uicatalog/*.js', 'test/helpers/*.js', 'test/appiumutils/*.js']
+      all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js', 'test/functional/*.js', 'test/unit/*.js', 'test/functional/appium/*.js', 'test/functional/appiumutils/*.js', 'test/functional/testapp/*.js', 'test/functional/uicatalog/*.js', 'test/helpers/*.js']
     }
     , jshint: {
       all: {
@@ -30,15 +30,15 @@ module.exports = function(grunt) {
     }
     , mochaTest: {
       unit: ['app/test/unit/*.js']
-      , appiumutils: ['test/appiumutils/*.js']
+      , appiumutils: ['test/functional/appiumutils/*.js']
     }
     , mochaTestWithServer: {
       TestApp: {
-        functional: ['test/functional/*.js']
-        , unit: ['app/test/unit/*.js']
+        functional: ['test/functional/testapp/*.js']
+        , server: ['test/functional/appium/*.js']
       }
       , UICatalog: {
-        uicatalog: ['test/uicatalog/*.js']
+        functional: ['test/functional/uicatalog/*.js']
       }
     }
     , mochaTestConfig: {
@@ -51,12 +51,12 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.registerTask('functional', "Run functional tests", function(log) {
-    runTestsWithServer(grunt, 'TestApp', 'functional', log === "log", this.async());
+    runTestsWithServer(grunt, null, 'functional', log === "log", this.async());
   });
-  grunt.registerTask('uicatalog', "Run UICatalog tests", function(log) {
-    runTestsWithServer(grunt, 'UICatalog', 'uicatalog', log === "log", this.async());
+  grunt.registerTask('servertest', "Run functional server tests", function(log) {
+    runTestsWithServer(grunt, 'TestApp', 'server', log === "log", this.async());
   });
-  grunt.registerTask('test', 'lint buildApp:TestApp buildApp:UICatalog unit appiumutils functional uicatalog');
+  grunt.registerTask('test', 'lint buildApp:TestApp buildApp:UICatalog unit appiumutils functional servertest');
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('appiumutils', 'mochaTest:appiumutils');
   grunt.registerTask('default', 'lint test');

@@ -3,6 +3,9 @@
 "use strict";
 var routing = require('./routing')
   , logger = require('../logger').get('appium')
+  , helpers = require('./helpers')
+  , downloadFile = helpers.downloadFile
+  , unzipApp = helpers.unzipApp
   , UUID = require('uuid-js')
   , _ = require('underscore')
   , ios = require('./ios');
@@ -21,6 +24,8 @@ var Appium = function(args) {
   this.sessions = [];
   this.counter = -1;
   this.progress = -1;
+  this.tempFiles = [];
+  this.origApp = null;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -35,9 +40,77 @@ Appium.prototype.attachTo = function(rest, cb) {
 };
 
 Appium.prototype.start = function(desiredCaps, cb) {
-  this.desiredCapabilities = desiredCaps;
-  this.sessions[++this.counter] = { sessionId: '', callback: cb };
-  this.invoke();
+  this.origApp = this.args.app;
+  this.configure(desiredCaps, _.bind(function(err) {
+    this.desiredCapabilities = desiredCaps;
+    if (err) {
+      cb(err, null);
+    } else {
+      this.sessions[++this.counter] = { sessionId: '', callback: cb };
+      this.invoke();
+    }
+  }, this));
+};
+
+Appium.prototype.configure = function(desiredCaps, cb) {
+  if (typeof desiredCaps.app !== "undefined") {
+    if (desiredCaps.app[0] === "/") {
+      this.args.app = desiredCaps.app;
+      logger.info("Using local app from desiredCaps: " + desiredCaps.app);
+      cb(null);
+    } else if (desiredCaps.app.substring(0, 4) === "http") {
+      var appUrl = desiredCaps.app;
+      if (appUrl.substring(appUrl.length - 4) === ".zip") {
+        try {
+          this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
+            if (zipErr) {
+              cb(zipErr);
+            } else {
+              this.args.app = appPath;
+              logger.info("Using extracted app: " + this.args.app);
+              cb(null);
+            }
+          }, this));
+          logger.info("Using downloadable app from desiredCaps: " + appUrl);
+        } catch (e) {
+          var err = e.toString();
+          logger.error("Failed downloading app from appUrl " + appUrl);
+          cb(err);
+        }
+      } else {
+        cb("App URL (" + appUrl + ") didn't seem to end in .zip");
+      }
+    } else if (!this.args.app) {
+      cb("Bad app passed in through desiredCaps: " + desiredCaps.app +
+         ". Apps need to be absolute local path or URL to zip file");
+    } else {
+      logger.warn("Got bad app through desiredCaps: " + desiredCaps.app);
+      logger.warn("Sticking with default app: " + this.args.app);
+      this.desiredCapabilities.app = this.args.app;
+      cb(null);
+    }
+  } else if (!this.args.app) {
+    cb("No app set; either start appium with --app or pass in an 'app' " +
+       "value in desired capabilities");
+  } else {
+    logger.info("Using app from command line: " + this.args.app);
+    cb(null);
+  }
+};
+
+Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
+  var me = this;
+  downloadFile(appUrl, function(zipPath) {
+    me.tempFiles.push(zipPath);
+    unzipApp(zipPath, function(err, appPath) {
+      if (err) {
+        cb(err, null);
+      } else {
+        me.tempFiles.push(appPath);
+        cb(null, appPath);
+      }
+    });
+  });
 };
 
 Appium.prototype.invoke = function() {
@@ -69,6 +142,9 @@ Appium.prototype.invoke = function() {
 Appium.prototype.onDeviceDie = function(code, cb) {
   var dyingSession = this.sessionId;
   this.sessionId = null;
+  // reset app to whatever it was before this session so we don't accidentally
+  // reuse a bad app
+  this.args.app = this.origApp;
   if (code !== null) {
     this.devices = {};
     this.device = null;

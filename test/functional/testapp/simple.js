@@ -4,7 +4,7 @@
 "use strict";
 
 var assert = require("assert")
-  , describeWd = require("../helpers/driverblock.js").describe;
+  , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp');
 
 describeWd('load calc app', function(h) {
   var values = [];

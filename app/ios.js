@@ -43,17 +43,24 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir) {
 
 IOS.prototype.start = function(cb, onDie) {
   var me = this;
+  var didLaunch = false;
   if (typeof onDie === "function") {
     this.onStop = onDie;
   }
 
   var onLaunch = function() {
+    didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
     cb(null);
   };
 
   var onExit = function(code, traceDir) {
+    if (!didLaunch) {
+      logger.error("Instruments did not launch successfully, failing session");
+      cb("Instruments did not launch successfully--please check your app " +
+          "paths or bundle IDs and try again");
+    }
     this.instruments = null;
     if (me.removeTraceDir && traceDir) {
       rimraf(traceDir, function() {

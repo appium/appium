@@ -11,9 +11,14 @@ var _ = require("underscore")
   , spawn = require('child_process').spawn;
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
-  var app = (fs.existsSync(appName)) ? appName:
-    path.resolve(__dirname,
-      "./sample-code/apps/"+appName+"/build/Release-iphonesimulator/"+appName+".app");
+  var app;
+  if (appName) {
+    app = (fs.existsSync(appName)) ? appName:
+      path.resolve(__dirname,
+        "./sample-code/apps/"+appName+"/build/Release-iphonesimulator/"+appName+".app");
+  } else {
+    app = null;
+  }
   return server.run({
     app: app
     , udid: null
@@ -57,12 +62,16 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
   }
   var args = ['-t', options.timeout, '-R', options.reporter, '--colors'];
   var fileConfig = grunt.config(['mochaTestWithServer']);
-  _.each(fileConfig[appName], function(testFiles, testKey) {
-    if (testType == "*" || testType == testKey) {
-      _.each(testFiles, function(file) {
-        _.each(grunt.file.expandFiles(file), function(file) {
-          args.push(file);
-        });
+  _.each(fileConfig, function(config, configApp) {
+    if (!appName || appName === configApp) {
+      _.each(config, function(testFiles, testKey) {
+        if (testType == "*" || testType == testKey) {
+          _.each(testFiles, function(file) {
+            _.each(grunt.file.expandFiles(file), function(file) {
+              args.push(file);
+            });
+          });
+        }
       });
     }
   });

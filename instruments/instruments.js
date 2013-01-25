@@ -53,10 +53,19 @@ Instruments.prototype.startSocketServer = function(sock) {
     fs.unlinkSync(sock);
   } catch (Exception) {}
 
+  var onSocketNeverConnect = function() {
+    logger.error("Instruments socket client never checked in; timing out".red);
+    this.proc.kill('SIGTERM');
+    this.exitHandler(1);
+  };
+
+  var socketConnectTimeout = setTimeout(_.bind(onSocketNeverConnect, this), 30000);
+
   var server = net.createServer({allowHalfOpen: true}, _.bind(function(conn) {
     if (!this.hasConnected) {
       this.hasConnected = true;
       this.debug("Instruments is ready to receive commands");
+      clearTimeout(socketConnectTimeout);
       this.readyHandler(this);
     }
     conn.setEncoding('utf8'); // get strings from sockets rather than buffers
@@ -109,19 +118,19 @@ Instruments.prototype.launch = function() {
   var tmpDir = '/tmp/' + this.guid;
   fs.mkdir(tmpDir, function(e) {
     if (!e || (e && e.code === 'EEXIST')) {
-        self.proc = self.spawnInstruments(tmpDir);
-        self.proc.stdout.on('data', function(data) {
-          self.outputStreamHandler(data);
-        });
-        self.proc.stderr.on('data', function(data) {
-          self.errorStreamHandler(data);
-        });
+      self.proc = self.spawnInstruments(tmpDir);
+      self.proc.stdout.on('data', function(data) {
+        self.outputStreamHandler(data);
+      });
+      self.proc.stderr.on('data', function(data) {
+        self.errorStreamHandler(data);
+      });
 
-        self.proc.on('exit', function(code) {
-          self.debug("Instruments exited with code " + code);
-          self.exitCode = code;
-          self.exitHandler(self.exitCode, self.traceDir);
-        });
+      self.proc.on('exit', function(code) {
+        self.debug("Instruments exited with code " + code);
+        self.exitCode = code;
+        self.exitHandler(self.exitCode, self.traceDir);
+      });
     } else {
       throw e;
     }

@@ -3,6 +3,8 @@
 
 var wd = require('wd')
   , _ = require("underscore")
+  , path = require("path")
+  , should = require("should")
   , defaultHost = '127.0.0.1'
   , defaultPort = 4723
   , defaultCaps = {
@@ -22,6 +24,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   beforeEach(function(done) {
     driverHolder.driver = wd.remote(host, port);
     driverHolder.driver.init(caps, function(err, sessionId) {
+      should.not.exist(err);
       driverHolder.sessionId = sessionId;
       done();
     });
@@ -45,5 +48,23 @@ var describeWithDriver = function(desc, tests, host, port, caps, extraCaps) {
   });
 };
 
+var describeForApp = function(app) {
+  var appPath;
+  if (/\//.exec(app)) {
+    appPath = app;
+  } else {
+    appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
+  }
+
+  return function(desc, tests, host, port, caps, extraCaps) {
+    if (typeof extraCaps === "undefined") {
+      extraCaps = {};
+    }
+    extraCaps = _.extend(extraCaps, {app: appPath});
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps);
+  };
+};
+
 module.exports.block = driverBlock;
 module.exports.describe = describeWithDriver;
+module.exports.describeForApp = describeForApp;

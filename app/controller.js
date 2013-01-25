@@ -44,8 +44,7 @@ exports.createSession = function(req, res) {
   var desired = req.body.desiredCapabilities;
   req.appium.start(req.body.desiredCapabilities, function(err, instance) {
     if (err) {
-      // of course we need to deal with err according to the WDJP spec.
-      throw err;
+      return res.send({status: status.codes.NoSuchDriver, value: err});
     }
 
     if (desired && desired.newCommandTimeout) {

@@ -24,10 +24,13 @@ var main = function(args, readyCb, doneCb) {
             req.headers['content-length'] = 0;
             next();
           } else {
+            // hack because python client library sux
+            if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+              req.headers['content-type'] = 'application/json';
+            }
             bodyParser(req, res, next);
           }
         };
-
     rest.use(function(req, res, next) {
       next();
     });

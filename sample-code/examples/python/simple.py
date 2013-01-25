@@ -19,13 +19,13 @@ class TestSequenceFunctions(unittest.TestCase):
                            'TestApp.app')
         app = os.path.abspath(app)
         self.driver = webdriver.Remote(
-          command_executor='http://127.0.0.1:4723/wd/hub',
-          desired_capabilities={
-            'browserName': 'iOS',
-            'platform': 'Mac',
-            'version': '6.0',
-            'app': app
-          })
+            command_executor='http://127.0.0.1:4723/wd/hub',
+            desired_capabilities={
+                'browserName': 'iOS',
+                'platform': 'Mac',
+                'version': '6.0',
+                'app': app
+            })
         self._values = []
 
     def _populate(self):

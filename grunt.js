@@ -71,7 +71,7 @@ module.exports = function(grunt) {
       version = "6.0";
     }
     var app = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator" + version + ".sdk/Applications/MobileSafari.app";
-    startAppium(app, function() {}, this.async());
+    startAppium(app, true, function() {}, this.async());
   });
   grunt.registerTask('downloadApp', "Download UICatalog", function() {
     var done = this.async();

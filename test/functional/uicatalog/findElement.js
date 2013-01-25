@@ -1,7 +1,7 @@
 /*global it:true */
 "use strict";
 
-var describeWd = require("../helpers/driverblock.js").describe
+var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
   , should = require('should');
 
 describeWd('findElementFromElement', function(h) {

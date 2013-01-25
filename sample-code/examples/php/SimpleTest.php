@@ -6,6 +6,11 @@
 // https://github.com/giorgiosironi/phpunit-selenium/pull/18
 
 require_once "vendor/autoload.php";
+define("APP_PATH", realpath(dirname(__FILE__).'/../../apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'));
+if (!APP_PATH) {
+    die("App did not exist!");
+}
+
 
 class SimpleTest extends Sauce\Sausage\WebDriverTestCase
 {
@@ -18,7 +23,8 @@ class SimpleTest extends Sauce\Sausage\WebDriverTestCase
             'browserName' => 'iOS',
             'desiredCapabilities' => array(
                 'version' => '6.0',
-                'platform' => 'Mac'
+                'platform' => 'Mac',
+                'app' => APP_PATH
             )
         )
     );
@@ -45,6 +51,5 @@ class SimpleTest extends Sauce\Sausage\WebDriverTestCase
         $buttons[0]->click();
         $texts = $this->elemsByTag('staticText');
         $this->assertEquals(array_sum($this->numValues), (int)($texts[0]->text()));
-        sleep(10);
     }
 }

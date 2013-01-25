@@ -53,7 +53,10 @@ Appium.prototype.start = function(desiredCaps, cb) {
 };
 
 Appium.prototype.configure = function(desiredCaps, cb) {
-  if (typeof desiredCaps.app !== "undefined") {
+  var hasAppInCaps = (typeof desiredCaps !== "undefined" &&
+                      typeof desiredCaps.app !== "undefined" &&
+                      desiredCaps.app);
+  if (hasAppInCaps) {
     if (desiredCaps.app[0] === "/") {
       this.args.app = desiredCaps.app;
       logger.info("Using local app from desiredCaps: " + desiredCaps.app);

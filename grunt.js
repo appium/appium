@@ -62,7 +62,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', 'lint test');
   grunt.registerTask('appium', "Start the Appium server", function(appName) {
     if (typeof appName === "undefined") {
-      appName = "TestApp";
+      appName = null;
     }
     startAppium(appName, true, function() {}, this.async());
   });

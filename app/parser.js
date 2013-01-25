@@ -10,7 +10,7 @@ module.exports = function() {
   });
 
   parser.addArgument([ '--app' ]
-    , { required: true, help: 'path to simulators .app file or the bundle_id of the desired target on device'
+    , { required: false, help: 'path to simulators .app file or the bundle_id of the desired target on device'
   });
 
   parser.addArgument([ '-V', '--verbose' ], { required: false, help: 'verbose mode' });

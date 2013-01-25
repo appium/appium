@@ -60,4 +60,22 @@ $.extend(au, {
         };
       }
     }
+
+  , getElementByName: function(selector) {
+      var cmd = ['#', selector].join('');
+      $.timeout(0);
+      var elems = $(cmd);
+
+      if (elems.length > 0) {
+        return {
+          status: codes.Success.code,
+          value: {'ELEMENT': elems.first().name() }
+        };
+      } else {
+        return {
+          status: codes.NoSuchElement.code,
+          value: codes.NoSuchElement.summary
+        };
+      }
+    }
 });

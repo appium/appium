@@ -48,19 +48,21 @@ var describeWithDriver = function(desc, tests, host, port, caps, extraCaps) {
   });
 };
 
-var describeForApp = function(app, isBundle) {
+var describeForApp = function(app) {
   var appPath;
-  if (typeof isBundle === "undefined") {
-    isBundle = false;
-  }
-  if (/\//.exec(app) || isBundle) {
+  if (/\//.exec(app)) {
     appPath = app;
   } else {
     appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
   }
 
-  defaultCaps = _.extend(defaultCaps, {app: appPath});
-  return describeWithDriver;
+  return function(desc, tests, host, port, caps, extraCaps) {
+    if (typeof extraCaps === "undefined") {
+      extraCaps = {};
+    }
+    extraCaps = _.extend(extraCaps, {app: appPath});
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps);
+  };
 };
 
 module.exports.block = driverBlock;

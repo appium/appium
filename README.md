@@ -22,7 +22,7 @@ Ninja-speed Setup
 Install [node.js](http://nodejs.org/) which comes with its package manager [npm](https://npmjs.org/).
 
     > sudo npm install appium -g
-    > appium --app /path/to/your/ios/app &
+    > appium &
     > node your-appium-test.js
 
 See [the appium example tests.](https://github.com/appium/appium/tree/master/sample-code/examples)
@@ -55,19 +55,15 @@ Build an app:
     > grunt buildApp:UICatalog
     > grunt buildApp:TestApp
 
-Run functional tests against TestApp:
+Run all functional tests:
 
     > grunt functional
 
-Run unit tests against TestApp:
+Run unit tests:
 
     > grunt unit
 
-Run tests against UICatalog:
-
-    > grunt uicatalog
-
-Run all tests against TestApp and UICatalog:
+Run all tests:
 
     > grunt test
 
@@ -82,19 +78,22 @@ Before commiting code please run grunt to run test and check your changes agains
 More things, low-level things
 -----------
 If you want to run the appium server and have it listen indefinitely, you can
-do one of the following:
+do one of the following to start an appium server with or without an app
+pre-specified:
 
+    > grunt appium
     > grunt appium:TestApp
     > grunt appium:UICatalog
 
 Then you can, e.g., run individual testfiles using Mocha directly:
 
-    > mocha -t 60000 -R spec test/functional/simple.js
+    > mocha -t 60000 -R spec test/functional/testapp/simple.js
 
 Do you like getting close to the metal? Or are you trying to run this from
 a script with a custom app? Start appium without grunt from the
 command line (see parser.js for more CLI arguments):
 
+    > node server.js -V 1
     > node server.js --app /absolute/path/to/app -V 1
 
 In this case, the app has to be compiled for the iphone simulator, e.g., by

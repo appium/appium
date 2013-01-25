@@ -168,7 +168,12 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
 };
 
 IOS.prototype.findElement = function(strategy, selector, cb) {
-  this.findElementOrElements(selector, null, false, cb);
+  if (strategy === "name") {
+    var command = ['au.getElementByName("', selector, '")'].join('');
+    this.proxy(command, cb);
+  } else {
+    this.findElementOrElements(selector, null, false, cb);
+  }
 };
 
 IOS.prototype.findElements = function(strategy, selector, cb) {

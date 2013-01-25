@@ -2,9 +2,9 @@
 "use strict";
 
 var should = require("should")
-  , describeWd = require("../helpers/driverblock.js").describe
+  , describeWd = require("../../helpers/driverblock.js").describe
   , appUrl = 'http://jonathan-lipps.s3.amazonaws.com/etc/UICatalog.app.zip'
-  , describeUrl = require('../helpers/driverblock.js').describeForApp(appUrl);
+  , describeUrl = require('../../helpers/driverblock.js').describeForApp(appUrl);
 
 describeWd('appium', function(h) {
   it('should fail gracefully after timeout', function(done) {

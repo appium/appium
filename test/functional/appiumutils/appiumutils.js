@@ -2,7 +2,7 @@
 /*global afterEach:true */
 "use strict";
 
-var runServer = require("../../server.js").run
+var runServer = require("../../../server.js").run
   , should = require("should")
   , path = require("path");
 
@@ -15,7 +15,7 @@ describe("appiumutils", function() {
 
   before(function(done) {
     server = runServer({
-      app: path.resolve(__dirname, "../../sample-code/apps/UICatalog/build/Release-iphonesimulator/UICatalog.app")
+      app: path.resolve(__dirname, "../../../sample-code/apps/UICatalog/build/Release-iphonesimulator/UICatalog.app")
       , verbose: false
       , udid: null
       , port: 4723

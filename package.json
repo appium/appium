@@ -34,6 +34,7 @@
     "uuid-js": "~0.7.4",
     "temp": "~0.5.0",
     "winston": "~0.6.2",
+    "request": "~2.12.0",
     "unzip": "~0.1.1"
   },
   "scripts": {

@@ -1,31 +1,20 @@
 "use strict";
 
 var logger = require('../logger').get('appium')
-  , url = require('url')
   , fs = require('fs')
+  , request = require('request')
   , path = require('path')
   , exec = require('child_process').exec
-  , http = require('http')
   , temp = require('temp');
 
 exports.downloadFile = function(fileUrl, cb) {
   // We will be downloading the files to a directory, so make sure it's there
   // This step is not required if you have manually created the directory
   temp.open({prefix: 'appium-app', suffix: '.zip'}, function(err, info) {
-    var options = {
-      host: url.parse(fileUrl).host,
-      port: 80,
-      path: url.parse(fileUrl).pathname
-    };
     var file = fs.createWriteStream(info.path);
-    http.get(options, function(res) {
-      res.on('data', function(data) {
-        file.write(data);
-      }).on('end', function() {
-        file.end();
-        logger.info(fileUrl + ' downloaded to ' + info.path);
-        cb(info.path);
-      });
+    request(fileUrl).pipe(file).on('close', function() {
+      logger.info(fileUrl + ' downloaded to ' + info.path);
+      cb(info.path);
     });
   });
 };

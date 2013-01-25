@@ -163,7 +163,7 @@ Instruments.prototype.commandHandler = function(data, c) {
 
   if (hasResult) {
     if (data.result) {
-      this.debug("Got result from instruments: " + data.result);
+      this.debug("Got result from instruments: " + JSON.stringify(data.result));
     } else {
       this.debug("Got null result from instruments");
     }

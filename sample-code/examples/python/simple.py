@@ -5,6 +5,7 @@ Before running the test make sure you started appium server
 with TestApp app: grunt appium:TestApp
 """
 import unittest
+import os
 from random import randint
 from selenium import webdriver
 
@@ -13,12 +14,17 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         # set up appium
+        app = os.path.join(os.path.dirname(__file__),
+                           '../../apps/TestApp/build/Release-iphonesimulator',
+                           'TestApp.app')
+        app = os.path.abspath(app)
         self.driver = webdriver.Remote(
           command_executor='http://127.0.0.1:4723/wd/hub',
           desired_capabilities={
             'browserName': 'iOS',
             'platform': 'Mac',
-            'version': '6.0'
+            'version': '6.0',
+            'app': app
           })
         self._values = []
 

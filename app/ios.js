@@ -382,7 +382,7 @@ IOS.prototype.flickElement = function(elementId, xoffset, yoffset, speed, cb) {
 IOS.prototype.url = function(cb) {
   // in the future, detect whether we have a UIWebView that we can use to
   // make sense of this command. For now, and otherwise, it's a no-op
-  cb(null, null);
+  cb(null, {status: status.codes.Success.code, value: ''});
 };
 
 IOS.prototype.active = function(cb) {

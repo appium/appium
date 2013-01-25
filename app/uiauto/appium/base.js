@@ -173,14 +173,15 @@ UIAElement.prototype.getActiveElement = function() {
     var checkAll = function(element) {
         var children = element.elements();
             var numChildren = children.length;
-            for ( var i = 0; i < numChildren; i++) {
+            for (var i = 0; i < numChildren; i++) {
                 var child = children[i];
                 if(child.hasKeyboardFocus()) {
                     foundElement = child;
                     break;
                 }
-                if (child.hasChildren()) // big optimization
+                if (child.hasChildren()) { // big optimization
                     checkAll(child);
+                }
             }
     };
     // try elements in the array first

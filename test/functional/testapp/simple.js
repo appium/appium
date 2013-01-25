@@ -6,7 +6,7 @@
 var assert = require("assert")
   , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp');
 
-describeWd('load calc app', function(h) {
+describeWd('calc app', function(h) {
   var values = [];
   var populate = function(driver, cb) {
     driver.elementsByTagName('textField', function(err, elems) {

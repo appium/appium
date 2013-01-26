@@ -77,7 +77,6 @@ $.extend(au, {
         $.timeout(0);
         var elems = $(selector, _ctx);
         $.timeout(1);
-        console.log('Elems: ' + elems.length);
 
         var cache = this.cache;
         elems.each(function(e, el) {

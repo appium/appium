@@ -156,7 +156,7 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   if (typeof ctx === "undefined" || !ctx) {
     ctx = 'null';
-  } 
+  }
 
   var command = ["au.getElement", ext, "ByType('", selector, "', ", ctx,")"].join('');
 

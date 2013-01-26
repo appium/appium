@@ -155,16 +155,13 @@ IOS.prototype.push = function(elem) {
 IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   if (typeof ctx === "undefined" || !ctx) {
-    ctx = 'wd_frame';
-  } else {
-    ctx = 'elements["' + ctx + '"]';
-  }
+    ctx = 'null';
+  } 
 
-  var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");
+  //var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");
+  var command = ["au.getElement", ext, "ByType('", selector, "', ", ctx,")"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.findElement = function(strategy, selector, cb) {

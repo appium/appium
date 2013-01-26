@@ -7,7 +7,8 @@ if (typeof au === "undefined") {
 }
 
 $.extend(au, {
-    getScreenOrientation: function () {
+    cache: []
+    , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
       switch (orientation) {
@@ -61,15 +62,36 @@ $.extend(au, {
       }
     }
 
-  , getElementByName: function(selector) {
-      var cmd = ['#', selector].join('');
-      $.timeout(0);
-      var elems = $(cmd);
+  , lookup: function(selector, name, ctx) {
+      if (typeof name !== 'undefined' && typeof this.cache[name] !== 'undefined') {
+        return this.cache[name];
+      } else if (typeof selector === 'string') {
+        $.timeout(0);
+
+        var _ctx = typeof ctx === 'undefined' ? target.frontMostApp() : ctx;
+        var elems = $(selector, _ctx);
+
+        for(var i=0; i < elems.length; i++) {
+          var el = elems[i];
+          this.cache[el.name()] = el;
+        }
+
+        return elems;
+      } else {
+        return [];
+      }
+    }
+
+  , getElementByName: function(name) {
+      var selector = ['#', name].join('');
+      var elems = this.lookup(selector, name);
 
       if (elems.length > 0) {
+        var el = elems.first();
+
         return {
           status: codes.Success.code,
-          value: {'ELEMENT': elems.first().name() }
+          value: {'ELEMENT': el.name() }
         };
       } else {
         return {
@@ -77,5 +99,10 @@ $.extend(au, {
           value: codes.NoSuchElement.summary
         };
       }
+    }
+
+  , getElementsByType: function(type) {
+      var selector = type;
+      var elems = this.lookup(selector);
     }
 });

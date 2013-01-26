@@ -160,7 +160,7 @@ describeWd('calc app', function(h) {
   };
 
   it('should lookup two fields by name and populate them with random numbers to finally sum them up', function(done) {
-    h.driver.elementByName('Total', function(err, label) {
+    h.driver.elementByName('SumLabel', function(err, label) {
       lookup(1, function() {
         lookup(2, function() {
           h.driver.elementByName('ComputeSumButton', function(err, computeBtn) {

@@ -247,7 +247,7 @@ Instruments.prototype.defaultResultHandler = function(output) {
   // if we have multiple log lines, indent non-first ones
   if (output !== "") {
     output = output.replace(/\n/m, "\n       ");
-    logger.info(("[INST] " + output).blue);
+    logger.info(("[INST] " + output).green);
   }
 };
 

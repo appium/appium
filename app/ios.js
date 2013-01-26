@@ -158,7 +158,6 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
     ctx = 'null';
   } 
 
-  //var command = [ctx, ".findElement", ext, "AndSetKey", ext, "('", selector, "')"].join("");
   var command = ["au.getElement", ext, "ByType('", selector, "', ", ctx,")"].join('');
 
   this.proxy(command, cb);
@@ -186,7 +185,7 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {
-  var command = ["elements['", elementId, "'].setValue('", value, "')"].join('');
+  var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -194,7 +193,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
 };
 
 IOS.prototype.click = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].tap()"].join('');
+  var command = ["au.getElement('", elementId, "').tap()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -202,7 +201,7 @@ IOS.prototype.click = function(elementId, cb) {
 };
 
 IOS.prototype.clear = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].setValue('')"].join('');
+  var command = ["au.getElement('", elementId, "').setValue('')"].join('');
 
   this.proxy(command, function(err, json) {
     cb(null, json);
@@ -210,7 +209,7 @@ IOS.prototype.clear = function(elementId, cb) {
 };
 
 IOS.prototype.getText = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].getText()"].join('');
+  var command = ["au.getElement('", elementId, "').getText()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -218,7 +217,7 @@ IOS.prototype.getText = function(elementId, cb) {
 };
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
-  var command = ["elements['", elementId, "'].", attributeName, "()"].join('');
+  var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(null, json);
@@ -226,7 +225,7 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 };
 
 IOS.prototype.getLocation = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].getElementLocation()"].join('');
+  var command = ["au.getElement('", elementId, "').getElementLocation()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -234,7 +233,7 @@ IOS.prototype.getLocation = function(elementId, cb) {
 };
 
 IOS.prototype.getSize = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].getElementSize()"].join('');
+  var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -267,7 +266,7 @@ IOS.prototype.implicitWait = function(seconds, cb) {
 };
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].isDisplayed()"].join('');
+  var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -275,7 +274,7 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
 };
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
-  var command = ["elements['", elementId, "'].isEnabled()"].join('');
+  var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);
@@ -374,7 +373,7 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
 };
 
 IOS.prototype.flickElement = function(elementId, xoffset, yoffset, speed, cb) {
-  var command = ["elements['", elementId, "'].touchFlick(", xoffset, ",", yoffset, ",", speed, ")"].join('');
+  var command = ["au.getElement('", elementId, "').touchFlick(", xoffset, ",", yoffset, ",", speed, ")"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);

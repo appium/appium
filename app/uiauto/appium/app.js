@@ -7,7 +7,7 @@ if (typeof au === "undefined") {
 }
 
 $.extend(au, {
-    cache: []
+    cache: new Array
     , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
@@ -64,11 +64,9 @@ $.extend(au, {
 
   , lookup: function(selector, name, ctx) {
       if (typeof name !== 'undefined' && typeof this.cache[name] !== 'undefined') {
-        return this.cache[name];
+        return [ this.cache[name] ];
       } else if (typeof selector === 'string') {
-        $.timeout(0);
-
-        var _ctx = target.frontMostApp();
+        var _ctx = target.frontMostApp().mainWindow();
       
         if (typeof ctx === 'string') {
           _ctx = this.lookup(ctx);
@@ -76,17 +74,25 @@ $.extend(au, {
           _ctx = ctx;
         }
 
+        $.timeout(0);
         var elems = $(selector, _ctx);
+        $.timeout(1);
+        console.log('Elems: ' + elems.length);
 
-        for(var i=0; i < elems.length; i++) {
-          var el = elems[i];
-          this.cache[el.name()] = el;
-        }
+        var cache = this.cache;
+        elems.each(function(e, el) {
+          cache[el.name()] = el;
+        });
 
         return elems;
       } else {
-        return [];
+        return null;
       }
+    }
+
+  , getElement: function(name) {
+      var results = this.lookup(null, name);
+      return results[0];
     }
 
   , getElementByName: function(name) {
@@ -111,13 +117,25 @@ $.extend(au, {
   , getElementsByType: function(type, ctx) {
       var selector = type;
 
+      // be backwards compatible, mechanic.js
+      switch (type) {
+        case 'tableView':
+        case 'textField':
+          selector = type.toLowerCase();
+          break;
+        case 'staticText':
+          selector = 'text';
+          break;
+        case 'tableCell':
+          selector = 'cell';
+      }
+
       var elems = this.lookup(selector, ctx);
       var results = [];
 
-      for(var i=0; i < elems.length; i++) {
-        var el = elems[i];
+      elems.each(function(e, el) {
         results.push({ 'ELEMENT': el.name() });
-      }
+      });
 
       return {
         status: codes.Success.code,

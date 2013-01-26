@@ -134,38 +134,6 @@ UIAElement.prototype.findElement = function(by) {
 var elements = new Array();
 var globalElementCounter = 0;
 
-// @return [{'ELEMENT': var_name}, ...]
-UIAElement.prototype.findElementsAndSetKeys = function(by) {
-    var value = [];
-    var foundElements = this.findElements(by);
-    for ( var i = 0; i < foundElements.length; i++) {
-        var varName = 'wde' + globalElementCounter++;
-        elements[varName] = foundElements[i];
-        value.push({'ELEMENT': varName});
-    }
-    return {
-      status: codes.Success.code,
-      value: value
-    };
-};
-
-// @return var_namne
-UIAElement.prototype.findElementAndSetKey = function(by) {
-    var foundElement = this.findElement(by);
-    if (foundElement) {
-        var varName = 'wde' + globalElementCounter++;
-        elements[varName] = foundElement;
-        return {
-          status: codes.Success.code,
-          value: {'ELEMENT': varName}
-        };
-    }
-    return {
-      status: codes.NoSuchElement.code,
-      value: null
-    };
-};
-
 // getActiveElement
 
 UIAElement.prototype.getActiveElement = function() {

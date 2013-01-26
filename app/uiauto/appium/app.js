@@ -68,7 +68,14 @@ $.extend(au, {
       } else if (typeof selector === 'string') {
         $.timeout(0);
 
-        var _ctx = typeof ctx === 'undefined' ? target.frontMostApp() : ctx;
+        var _ctx = target.frontMostApp();
+      
+        if (typeof ctx === 'string') {
+          _ctx = this.lookup(ctx);
+        } else if (typeof ctx === 'object') {
+          _ctx = ctx;
+        }
+
         var elems = $(selector, _ctx);
 
         for(var i=0; i < elems.length; i++) {
@@ -101,8 +108,36 @@ $.extend(au, {
       }
     }
 
-  , getElementsByType: function(type) {
+  , getElementsByType: function(type, ctx) {
       var selector = type;
-      var elems = this.lookup(selector);
+
+      var elems = this.lookup(selector, ctx);
+      var results = [];
+
+      for(var i=0; i < elems.length; i++) {
+        var el = elems[i];
+        results.push({ 'ELEMENT': el.name() });
+      }
+
+      return {
+        status: codes.Success.code,
+        value: results
+      };
+    }
+
+  , getElementByType: function(type, ctx) {
+      var results = this.getElementsByType(type, ctx);
+
+      if (results.value.length < 1) {
+        return {
+          status: codes.NoSuchElement.code,
+          value: null
+        };
+      } else {
+        return {
+          status: codes.Success.code,
+          value: results.value[0]
+        };
+      } 
     }
 });

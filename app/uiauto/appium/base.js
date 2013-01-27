@@ -135,48 +135,6 @@ UIAElement.prototype.findElement = function(by) {
 var elements = new Array();
 var globalElementCounter = 0;
 
-// getActiveElement
-
-UIAElement.prototype.getActiveElement = function() {
-    var foundElement = null;
-    var checkAll = function(element) {
-        var children = element.elements();
-            var numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
-                if(child.hasKeyboardFocus()) {
-                    foundElement = child;
-                    break;
-                }
-                if (child.hasChildren()) { // big optimization
-                    checkAll(child);
-                }
-            }
-    };
-    // try elements in the array first
-    for (var key in elements) {
-        if (elements[key].hasKeyboardFocus()) {
-            return {
-              status: codes.Success.code,
-              value: {ELEMENT: key}
-            };
-        }
-    }
-    checkAll(this);
-    if (foundElement) {
-        var varName = 'wde' + globalElementCounter++;
-        elements[varName] = foundElement;
-        return {
-          status: codes.Success.code,
-          value: {ELEMENT: varName}
-        };
-    }
-    return {
-      status: codes.NoSuchElement.code,
-      value: null,
-    };
-};
-
 UIAElement.prototype.getPageSource = function() {
   var output = "";
   var buildOutput = function(tree, depth) {

@@ -1,4 +1,4 @@
-/*global au:true $:true codes:true */
+/*global au:true $:true codes:true UIATarget:true UIA_DEVICE_ORIENTATION_UNKNOWN: true UIA_DEVICE_ORIENTATION_FACEUP:true UIA_DEVICE_ORIENTATION_FACEDOWN:true UIA_DEVICE_ORIENTATION_PORTRAIT:true UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_PORTRAIT:true */
 "use strict";
 var au;
 
@@ -7,7 +7,9 @@ if (typeof au === "undefined") {
 }
 
 $.extend(au, {
-    getScreenOrientation: function () {
+    cache: []
+    , mainWindow: $(UIATarget.localTarget().frontMostApp().mainWindow())
+    , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
       switch (orientation) {
@@ -59,5 +61,104 @@ $.extend(au, {
           , value: "Orientation change did not take effect"
         };
       }
+    }
+
+  , lookup: function(selector, name, ctx) {
+      if (typeof name !== 'undefined' && typeof this.cache[name] !== 'undefined') {
+        return [ this.cache[name] ];
+      } else if (typeof selector === 'string') {
+        var _ctx = this.mainWindow;
+      
+        if (typeof ctx === 'string') {
+          _ctx = this.lookup(ctx);
+        } else if (typeof ctx === 'object') {
+          _ctx = ctx;
+        }
+
+        $.timeout(0);
+        var elems = $(selector, _ctx);
+        $.timeout(1);
+
+        var cache = this.cache;
+        elems.each(function(e, el) {
+          cache[el.name()] = el;
+        });
+
+        return elems;
+      } else {
+        return null;
+      }
+    }
+
+  , getElement: function(name) {
+      var results = this.lookup(null, name);
+      return results[0];
+    }
+
+  , getElementByName: function(name) {
+      var selector = ['#', name].join('');
+      var elems = this.lookup(selector, name);
+
+      if (elems.length > 0) {
+        var el = elems.first();
+
+        return {
+          status: codes.Success.code,
+          value: {'ELEMENT': el.name() }
+        };
+      } else {
+        return {
+          status: codes.NoSuchElement.code,
+          value: codes.NoSuchElement.summary
+        };
+      }
+    }
+
+  , getElementsByType: function(type, ctx) {
+      var selector = type;
+
+      // be backwards compatible, mechanic.js
+      switch (type) {
+        case 'tableView':
+        case 'textField':
+          selector = type.toLowerCase();
+          break;
+        case 'staticText':
+          selector = 'text';
+          break;
+        case 'tableCell':
+          selector = 'cell';
+      }
+
+      var elems = this.lookup(selector, ctx);
+      var results = [];
+
+      elems.each(function(e, el) {
+        results.push({ 'ELEMENT': el.name() });
+      });
+
+      return {
+        status: codes.Success.code,
+        value: results
+      };
+    }
+
+  , getElementByType: function(type, ctx) {
+      var results = this.getElementsByType(type, ctx);
+
+      if (results.value.length < 1) {
+        return {
+          status: codes.NoSuchElement.code,
+          value: null
+        };
+      } else {
+        return {
+          status: codes.Success.code,
+          value: results.value[0]
+        };
+      }
+    }
+  , getActiveElement: function() {
+      return this.mainWindow.getActiveElement();
     }
 });

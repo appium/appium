@@ -8,6 +8,7 @@ if (typeof au === "undefined") {
 
 $.extend(au, {
     cache: new Array
+    , mainWindow: $(UIATarget.localTarget().frontMostApp().mainWindow())
     , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
@@ -66,7 +67,7 @@ $.extend(au, {
       if (typeof name !== 'undefined' && typeof this.cache[name] !== 'undefined') {
         return [ this.cache[name] ];
       } else if (typeof selector === 'string') {
-        var _ctx = target.frontMostApp().mainWindow();
+        var _ctx = this.mainWindow;
       
         if (typeof ctx === 'string') {
           _ctx = this.lookup(ctx);
@@ -156,5 +157,8 @@ $.extend(au, {
           value: results.value[0]
         };
       } 
+    }
+  , getActiveElement: function() {
+      return this.mainWindow.getActiveElement();
     }
 });

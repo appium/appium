@@ -22,6 +22,7 @@
 #import "../lib/mechanic.js"
 #import "../lib/status.js"
 #import "utility.js"
+#import "element.js"
 #import "app.js"
 #import "binding.js"
 // TODO: rewrite this entire file using helper methods from mechanic?

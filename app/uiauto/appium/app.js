@@ -1,4 +1,4 @@
-/*global au:true $:true codes:true */
+/*global au:true $:true codes:true UIATarget:true UIA_DEVICE_ORIENTATION_UNKNOWN: true UIA_DEVICE_ORIENTATION_FACEUP:true UIA_DEVICE_ORIENTATION_FACEDOWN:true UIA_DEVICE_ORIENTATION_PORTRAIT:true UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_PORTRAIT:true */
 "use strict";
 var au;
 
@@ -7,7 +7,7 @@ if (typeof au === "undefined") {
 }
 
 $.extend(au, {
-    cache: new Array
+    cache: []
     , mainWindow: $(UIATarget.localTarget().frontMostApp().mainWindow())
     , getScreenOrientation: function () {
       var orientation = $.orientation()
@@ -156,7 +156,7 @@ $.extend(au, {
           status: codes.Success.code,
           value: results.value[0]
         };
-      } 
+      }
     }
   , getActiveElement: function() {
       return this.mainWindow.getActiveElement();

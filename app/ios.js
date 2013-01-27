@@ -209,7 +209,7 @@ IOS.prototype.clear = function(elementId, cb) {
 };
 
 IOS.prototype.getText = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').getText()"].join('');
+  var command = ["au.getElement('", elementId, "').value()"].join('');
 
   this.proxy(command, function(err, json) {
     cb(err, json);

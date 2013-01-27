@@ -387,7 +387,7 @@ IOS.prototype.url = function(cb) {
 };
 
 IOS.prototype.active = function(cb) {
-  this.proxy("wd_frame.getActiveElement()", function(err, json) {
+  this.proxy("au.getActiveElement()", function(err, json) {
     cb(null, json);
   });
 };

@@ -62,7 +62,7 @@ describeWd('appium', function(h) {
       done();
     });
   });
-  it.only('should not fail when bad method used', function(done) {
+  it('should not fail when bad method used', function(done) {
     request.get('http://localhost:4723/wd/hub/session/'+h.sessionId+'/element', function(err, res, body) {
       should.not.exist(err);
       res.statusCode.should.equal(200);

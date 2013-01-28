@@ -8,7 +8,7 @@ if (typeof au === "undefined") {
 
 $.extend(au, {
     cache: []
-    , mainWindow: $(UIATarget.localTarget().frontMostApp().mainWindow())
+    , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
     , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
@@ -70,8 +70,9 @@ $.extend(au, {
         var _ctx = this.mainWindow;
       
         if (typeof ctx === 'string') {
-          _ctx = this.lookup(ctx);
-        } else if (typeof ctx === 'object') {
+          var ctxRes = this.lookup('#' + ctx);
+          _ctx = ctxRes[0];
+        } else if (typeof ctx !== 'undefined') {
           _ctx = ctx;
         }
 
@@ -81,6 +82,7 @@ $.extend(au, {
 
         var cache = this.cache;
         elems.each(function(e, el) {
+          //console.log('Stashing element in cache: ' + el.name());
           cache[el.name()] = el;
         });
 
@@ -117,7 +119,7 @@ $.extend(au, {
   , getElementsByType: function(type, ctx) {
       var selector = type;
 
-      // be backwards compatible, mechanic.js
+      // some legacy: be backwards compatible, mechanic.js
       switch (type) {
         case 'tableView':
         case 'textField':
@@ -130,7 +132,14 @@ $.extend(au, {
           selector = 'cell';
       }
 
-      var elems = this.lookup(selector, ctx);
+      var elems = [];
+
+      if (typeof ctx !== 'undefined') {
+        elems = this.lookup(selector, null, ctx);
+      } else {
+        elems = this.lookup(selector, null);
+      }
+
       var results = [];
 
       elems.each(function(e, el) {
@@ -144,7 +153,13 @@ $.extend(au, {
     }
 
   , getElementByType: function(type, ctx) {
-      var results = this.getElementsByType(type, ctx);
+      var results = [];
+
+      if (typeof ctx !== 'undefined') {
+        results = this.getElementsByType(type, ctx);
+      } else {
+        results = this.getElementsByType(type);
+      }
 
       if (results.value.length < 1) {
         return {
@@ -159,6 +174,6 @@ $.extend(au, {
       }
     }
   , getActiveElement: function() {
-      return this.mainWindow.getActiveElement();
+      return $(this.mainWindow).getActiveElement();
     }
 });

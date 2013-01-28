@@ -5,7 +5,9 @@ var status = require('./uiauto/lib/status');
 
 function getResponseHandler(req, res, validateResponse) {
   var responseHandler = function(err, response) {
-    response.sessionId = req.appium.sessionId || response.sessionId || null;
+    if (req.appium || response.sessionId) {
+      response.sessionId = req.appium.sessionId || response.sessionId || null;
+    }
     if (err !== null) {
       response.status = status.codes.UnknownError.code;
     } else {
@@ -236,4 +238,11 @@ exports.postUrl = function(req, res) {
 
 exports.active = function(req, res) {
   req.device.active(getResponseHandler(req, res));
+};
+
+exports.unknownCommand = function(req, res) {
+  getResponseHandler(req, res)(null, {
+    status: status.codes.UnknownCommand
+    , value: ''
+  });
 };

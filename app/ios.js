@@ -5,7 +5,7 @@ var path = require('path')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments')
-  , delay = require("./uiauto/lib/delay.js")
+  , delay = require("./helpers.js").delay
   , uuid = require('uuid-js')
   , status = require("./uiauto/lib/status");
 

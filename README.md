@@ -50,7 +50,7 @@ Download UICatalog:
 
     > grunt downloadApp
 
-Build an app:
+Build an app (if functional test are failing please re-build apps):
 
     > grunt buildApp:UICatalog
     > grunt buildApp:TestApp

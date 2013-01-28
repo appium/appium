@@ -146,3 +146,34 @@ describeWd('calc app', function(h) {
   });
 
 }); // end describe
+
+describeWd('calc app', function(h) {
+  var sum = 0
+    , lookup = function(num, cb) {
+      h.driver.elementByName('TextField' + num, function(err, element) {
+        var num = Math.round(Math.random()*10000);
+        sum += num;
+        element.sendKeys(num, function() {
+          cb();
+        });
+      });
+  };
+
+  it('should lookup two fields by name and populate them with random numbers to finally sum them up', function(done) {
+    h.driver.elementByName('SumLabel', function(err, label) {
+      lookup(1, function() {
+        lookup(2, function() {
+          h.driver.elementByName('ComputeSumButton', function(err, computeBtn) {
+            computeBtn.click(function() {
+              label.text(function(err, txt) {
+                var actual = parseInt(txt, 10);
+                assert.equal(sum, actual);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});

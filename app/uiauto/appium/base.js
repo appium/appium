@@ -22,6 +22,7 @@
 #import "../lib/mechanic.js"
 #import "../lib/status.js"
 #import "utility.js"
+#import "element.js"
 #import "app.js"
 #import "binding.js"
 // TODO: rewrite this entire file using helper methods from mechanic?
@@ -133,80 +134,6 @@ UIAElement.prototype.findElement = function(by) {
 
 var elements = new Array();
 var globalElementCounter = 0;
-
-// @return [{'ELEMENT': var_name}, ...]
-UIAElement.prototype.findElementsAndSetKeys = function(by) {
-    var value = [];
-    var foundElements = this.findElements(by);
-    for ( var i = 0; i < foundElements.length; i++) {
-        var varName = 'wde' + globalElementCounter++;
-        elements[varName] = foundElements[i];
-        value.push({'ELEMENT': varName});
-    }
-    return {
-      status: codes.Success.code,
-      value: value
-    };
-};
-
-// @return var_namne
-UIAElement.prototype.findElementAndSetKey = function(by) {
-    var foundElement = this.findElement(by);
-    if (foundElement) {
-        var varName = 'wde' + globalElementCounter++;
-        elements[varName] = foundElement;
-        return {
-          status: codes.Success.code,
-          value: {'ELEMENT': varName}
-        };
-    }
-    return {
-      status: codes.NoSuchElement.code,
-      value: null
-    };
-};
-
-// getActiveElement
-
-UIAElement.prototype.getActiveElement = function() {
-    var foundElement = null;
-    var checkAll = function(element) {
-        var children = element.elements();
-            var numChildren = children.length;
-            for (var i = 0; i < numChildren; i++) {
-                var child = children[i];
-                if(child.hasKeyboardFocus()) {
-                    foundElement = child;
-                    break;
-                }
-                if (child.hasChildren()) { // big optimization
-                    checkAll(child);
-                }
-            }
-    };
-    // try elements in the array first
-    for (var key in elements) {
-        if (elements[key].hasKeyboardFocus()) {
-            return {
-              status: codes.Success.code,
-              value: {ELEMENT: key}
-            };
-        }
-    }
-    checkAll(this);
-    if (foundElement) {
-        var varName = 'wde' + globalElementCounter++;
-        elements[varName] = foundElement;
-        return {
-          status: codes.Success.code,
-          value: {ELEMENT: varName}
-        };
-    }
-    return {
-      status: codes.NoSuchElement.code,
-      value: null,
-    };
-};
 
 UIAElement.prototype.getPageSource = function() {
   var output = "";

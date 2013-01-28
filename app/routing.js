@@ -45,6 +45,8 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
   rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
 
+  // keep this at the very end!
+  rest.all('/*', controller.unknownCommand);
 };
 
 // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg

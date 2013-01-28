@@ -8,9 +8,9 @@ describeWd('findElementFromElement', function(h) {
   it('should find an element within itself', function(done) {
     h.driver.elementByTagName('tableView', function(err, element) {
       should.exist(element.value);
-      element.elementByTagName('tableCell', function(err, label) {
-        should.exist(label.value);
-        label.text(function(err, text) {
+      element.elementByTagName('text', function(err, staticText) {
+        should.exist(staticText.value);
+        staticText.text(function(err, text) {
           text.should.equal("Buttons, Various uses of UIButton");
           done();
         });
@@ -31,16 +31,16 @@ describeWd('findElementFromElement', function(h) {
 
 describeWd('findElementsFromElement', function(h) {
   it('should find some elements within itself', function(done) {
-    h.driver.elementByTagName('tableView', function(err, element) {
+    h.driver.elementByTagName('tableCell', function(err, element) {
       should.exist(element.value);
-      element.elementsByTagName('tableCell', function(err, els) {
-        els.length.should.equal(12);
+      element.elementsByTagName('text', function(err, els) {
+        els.length.should.equal(1);
         done();
       });
     });
   });
   it('should not find elements not within itself', function(done) {
-    h.driver.elementByTagName('tableView', function(err, element) {
+    h.driver.elementByTagName('tableCell', function(err, element) {
       should.exist(element.value);
       element.elementsByTagName('navigationBar', function(err, els) {
         els.length.should.equal(0);

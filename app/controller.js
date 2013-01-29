@@ -26,7 +26,7 @@ exports.sessionBeforeFilter = function(req, res, next) {
   var sessId = match ? match[1] : null;
   // if we don't actually have a valid session, respond with an error
   if (sessId && (!req.device || req.appium.sessionId != sessId)) {
-    res.send({sessionId: sessId, status: status.codes.NoSuchDriver, value: ''});
+    res.send(404, {sessionId: null, status: status.codes.NoSuchDriver.code, value: ''});
   } else {
     next();
   }
@@ -245,4 +245,8 @@ exports.active = function(req, res) {
 exports.unknownCommand = function(req, res) {
   res.set('Content-Type', 'text/plain');
   res.send(404, "That URL did not map to a valid JSONWP resource");
+};
+
+exports.notYetImplemented = function(req, res) {
+  res.send(501, "Not Implemented");
 };

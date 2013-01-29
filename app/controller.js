@@ -1,28 +1,74 @@
 // Appium webserver controller methods
 // https://github.com/hugs/appium/blob/master/appium/server.py
 "use strict";
-var status = require('./uiauto/lib/status');
+var status = require('./uiauto/lib/status')
+  , _ = require('underscore');
 
-function getResponseHandler(req, res, validateResponse) {
+function getResponseHandler(req, res) {
   var responseHandler = function(err, response) {
     if (typeof response === "undefined" || response === null) {
       response = {};
     }
-    if (req.appium || response.sessionId) {
-      response.sessionId = req.appium.sessionId || response.sessionId || null;
-    }
     if (err !== null) {
-      res.send(500, {message: "A server error occurred: " + err});
-    } else {
-      if (typeof(validateResponse) === 'function') {
-        // If a validate method was provided, use it to update the response
-        response = validateResponse(response);
+      var value = response.value;
+      if (typeof value === "undefined") {
+        value = '';
       }
-      res.send(response);
+      respondError(req, res, err.message, value);
+    } else {
+      if (response.status === 0) {
+        respondSuccess(req, res, response.value);
+      } else {
+        respondError(req, res, response.status, response.value);
+      }
     }
   };
   return responseHandler;
 }
+
+var getSessionId = function(req, response) {
+  var sessionId = response.sessionId;
+  if (typeof sessionId === "undefined") {
+    if (req.appium) {
+      sessionId = req.appium.sessionId || null;
+    } else {
+      sessionId = null;
+    }
+  }
+  if (typeof sessionId !== "string" && sessionId !== null) {
+    sessionId = null;
+  }
+  return sessionId;
+};
+
+var respondError = function(req, res, statusObj, value) {
+  var code = 1, message = "An unknown error occurred";
+  if (typeof statusObj === "string") {
+    message = statusObj;
+  } else if (typeof statusObj === "number") {
+    code = statusObj;
+    message = status.getSummaryByCode(code);
+  } else if (typeof statusObj.code !== "undefined") {
+    code = statusObj.code;
+    message = statusObj.summary;
+  } else if (typeof statusObj.message !== "undefined") {
+    message = statusObj.message;
+  }
+
+  var newValue = _.extend({message: message}, value);
+  var response = {status: code, value: newValue};
+  response.sessionId = getSessionId(req, response);
+  res.send(500, response);
+};
+
+var respondSuccess = function(req, res, value) {
+  var response = {status: status.codes.Success.code, value: value};
+  response.sessionId = getSessionId(req, response);
+  if (typeof response.value === "undefined") {
+    response.value = '';
+  }
+  res.send(response);
+};
 
 exports.sessionBeforeFilter = function(req, res, next) {
   var match = new RegExp("([^/]+)").exec(req.params[0]);
@@ -37,11 +83,9 @@ exports.sessionBeforeFilter = function(req, res, next) {
 
 exports.getStatus = function(req, res) {
   // Return a static JSON object to the client
-  getResponseHandler(req, res)(null, {
-    status: status.codes.Success.code,
-    value: {
-      build: {version: 'Appium 1.0'}
-    }});
+  respondSuccess(req, res, {
+    build: {version: 'Appium 1.0'}
+  });
 };
 
 exports.createSession = function(req, res) {
@@ -49,31 +93,29 @@ exports.createSession = function(req, res) {
   var desired = req.body.desiredCapabilities;
   req.appium.start(req.body.desiredCapabilities, function(err, instance) {
     if (err) {
-      return res.send({status: status.codes.NoSuchDriver, value: err});
-    }
-
-    if (desired && desired.newCommandTimeout) {
-      instance.setCommandTimeout(desired.newCommandTimeout, function() {
+      respondError(req, res, status.codes.NoSuchDriver);
+    } else {
+      if (desired && desired.newCommandTimeout) {
+        instance.setCommandTimeout(desired.newCommandTimeout, function() {
+          res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
+          res.send(303);
+        });
+      } else {
         res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
         res.send(303);
-      });
-    } else {
-      res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
-      res.send(303);
+      }
     }
   });
 };
 
 exports.getSession = function(req, res) {
   // Return a static JSON object to the client
-  getResponseHandler(req, res)(null, {
-    status: status.codes.Success.code,
-    value: req.device.capabilities
-  });
+  respondSuccess(req, res, req.device.capabilities);
 };
 
 exports.getSessions = function(req, res) {
-  res.send([{id: req.appium.sessionId , capabilities: req.device.capabilities}]);
+  respondSuccess(req, res,
+      [{id: req.appium.sessionId , capabilities: req.device.capabilities}]);
 };
 
 exports.deleteSession = function(req, res) {

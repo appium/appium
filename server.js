@@ -4,6 +4,7 @@ var http = require('http')
   , path = require('path')
   , logger = require('./logger').get('appium')
   , appium = require('./app/appium')
+  , bodyParser = require('./middleware').parserWrap
   , parser = require('./app/parser');
 
 var main = function(args, readyCb, doneCb) {
@@ -16,38 +17,23 @@ var main = function(args, readyCb, doneCb) {
   args.device = 'iOS';
 
   rest.configure(function() {
-    var bodyParser = express.bodyParser()
-      , parserWrap = function(req, res, next) {
-          // wd.js sends us http POSTs with empty body which will make bodyParser fail.
-          var cLen = req.get('content-length');
-          if (typeof cLen === "undefined" || parseInt(cLen, 10) <= 0) {
-            req.headers['content-length'] = 0;
-            next();
-          } else {
-            // hack because python client library sux
-            if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
-              req.headers['content-type'] = 'application/json';
-            }
-            bodyParser(req, res, next);
-          }
-        };
-    rest.use(function(req, res, next) {
-      next();
-    });
     rest.use(express.favicon());
     rest.use(express.static(path.join(__dirname, '/app/static')));
     if (args.verbose) {
       rest.use(express.logger('dev'));
     }
-    rest.use(parserWrap);
+    rest.use(bodyParser);
     rest.use(express.methodOverride());
     rest.use(rest.router);
   });
+
   // Instantiate the appium instance
   var appiumServer = appium(args);
+
   // Hook up REST http interface
   appiumServer.attachTo(rest);
-  // Start the web server that receives all the commands
+
+  // Start the server either now or after pre-launching device
   var next = function(appiumServer) {
     server.listen(args.port, args.address, function() {
       var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
@@ -63,6 +49,7 @@ var main = function(args, readyCb, doneCb) {
   } else {
     next(appiumServer);
   }
+
   server.on('close', doneCb);
   return server;
 };

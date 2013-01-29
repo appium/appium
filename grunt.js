@@ -30,12 +30,12 @@ module.exports = function(grunt) {
     }
     , mochaTest: {
       unit: ['app/test/unit/*.js']
-      , appiumutils: ['test/functional/appiumutils/*.js']
+      , appiumutils: ['test/functional/appium/appiumutils.js']
     }
     , mochaTestWithServer: {
       TestApp: {
         functional: ['test/functional/testapp/*.js']
-        , server: ['test/functional/appium/*.js']
+        , server: ['test/functional/appium/appium.js']
       }
       , UICatalog: {
         functional: ['test/functional/uicatalog/*.js']

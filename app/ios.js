@@ -65,8 +65,9 @@ IOS.prototype.start = function(cb, onDie) {
     } else if (typeof me.cbForCurrentCmd === "function") {
       // we were in the middle of waiting for a command when it died
       // so let's actually respond with something
-      me.cbForCurrentCmd("Instruments died while responding to command, " +
-                         "please check appium logs", null);
+      var error = new UnknownError("Instruments died while responding to " +
+                                   "command, please check appium logs");
+      me.cbForCurrentCmd(error, null);
       code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
@@ -121,6 +122,26 @@ IOS.prototype.proxy = function(command, cb) {
   logger.info('Pushed command to appium work queue: ' + command);
 };
 
+IOS.prototype.respond = function(response, cb) {
+  if (typeof response === 'undefined') {
+    cb(null, '');
+  } else {
+    if (typeof(response) !== "object") {
+      cb(new UnknownError(), response);
+    } else if (!('status' in response)) {
+      cb(new ProtocolError('Status missing in response from device'), response);
+    } else {
+      var status = parseInt(response.status, 10);
+      if (isNaN(status)) {
+        cb(new ProtocolError('Invalid status in response from device'), response);
+      } else {
+        response.status = status;
+        cb(null, response);
+      }
+    }
+  }
+};
+
 IOS.prototype.push = function(elem) {
   this.queue.push(elem);
   var me = this;
@@ -141,23 +162,7 @@ IOS.prototype.push = function(elem) {
     me.instruments.sendCommand(command, function(response) {
       me.cbForCurrentCmd = null;
       if (typeof cb === 'function') {
-        if (typeof response === 'undefined') {
-          cb(null, null);
-        } else {
-          if (typeof(response) !== "object") {
-            cb(new UnknownError(), response);
-          } else if (!('status' in response)) {
-            cb(new ProtocolError('Status missing in response from device'), response);
-          } else {
-            var status = parseInt(response.status, 10);
-            if (isNaN(status)) {
-              cb(new ProtocolError('Invalid status in response from device'), response);
-            } else {
-              response.status = status;
-              cb(null, response);
-            }
-          }
-        }
+        me.respond(response, cb);
       }
 
       // maybe there's moar work to do
@@ -206,138 +211,102 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 IOS.prototype.setValue = function(elementId, value, cb) {
   var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.click = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').tap()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.clear = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').setValue('')"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(null, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.getText = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').value()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
   var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(null, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.getLocation = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').getElementLocation()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.getSize = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
   var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.frame = function(frame, cb) {
   frame = frame? frame : 'mainWindow';
   var command = ["wd_frame = ", frame].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.implicitWait = function(seconds, cb) {
   var command = ["au.timeout('", seconds, "')"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.getPageSource = function(cb) {
-  this.proxy("wd_frame.getPageSource()", function(err, json) {
-    cb(err, json);
-  });
+  this.proxy("wd_frame.getPageSource()", cb);
 };
 
 IOS.prototype.getAlertText = function(cb) {
-  this.proxy("getAlertText()", function(err, json) {
-    cb(err, json);
-  });
+  this.proxy("getAlertText()", cb);
 };
 
 IOS.prototype.postAcceptAlert = function(cb) {
-  this.proxy("acceptAlert()", function(err, json) {
-    cb(err, json);
-  });
+  this.proxy("acceptAlert()", cb);
 };
 
 IOS.prototype.postDismissAlert = function(cb) {
-  this.proxy("dismissAlert()", function(err, json) {
-    cb(err, json);
-  });
+  this.proxy("dismissAlert()", cb);
 };
 
 IOS.prototype.getOrientation = function(cb) {
   var command = "getScreenOrientation()";
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.setOrientation = function(orientation, cb) {
   var command = ["setScreenOrientation('", orientation ,"')"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.getScreenshot = function(cb) {
@@ -346,34 +315,37 @@ IOS.prototype.getScreenshot = function(cb) {
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
   this.proxy(command, function(err, response) {
-    var delayTimes = 0;
-    var onErr = function() {
-      delayTimes++;
-      delay(0.2);
-      if (delayTimes <= 10) {
-        read(onErr);
-      } else {
-        read();
-      }
-    };
-    var read = function(onErr) {
-      fs.readFile(shotPath, function read(err, data) {
-        if (err) {
-          if (onErr) {
-            onErr();
-          } else {
-            response.value = '';
-            response.status = status.codes.UnknownError.code;
-            cb(err, null);
-          }
+    if (err) {
+      cb(err, response);
+    } else {
+      var delayTimes = 0;
+      var onErr = function() {
+        delayTimes++;
+        delay(0.2);
+        if (delayTimes <= 10) {
+          read(onErr);
         } else {
-          var b64data = new Buffer(data).toString('base64');
-          response.value = b64data;
-          cb(null, response);
+          read();
         }
-      });
-    };
-    read(onErr);
+      };
+      var read = function(onErr) {
+        fs.readFile(shotPath, function read(err, data) {
+          if (err) {
+            if (onErr) {
+              onErr();
+            } else {
+              response.value = '';
+              response.status = status.codes.UnknownError.code;
+            }
+          } else {
+            var b64data = new Buffer(data).toString('base64');
+            response.value = b64data;
+          }
+          cb(err, response);
+        });
+      };
+      read(onErr);
+    }
   });
 };
 
@@ -386,17 +358,13 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
     command = ["touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.flickElement = function(elementId, xoffset, yoffset, speed, cb) {
   var command = ["au.getElement('", elementId, "').touchFlick(", xoffset, ",", yoffset, ",", speed, ")"].join('');
 
-  this.proxy(command, function(err, json) {
-    cb(err, json);
-  });
+  this.proxy(command, cb);
 };
 
 IOS.prototype.url = function(cb) {
@@ -406,9 +374,7 @@ IOS.prototype.url = function(cb) {
 };
 
 IOS.prototype.active = function(cb) {
-  this.proxy("au.getActiveElement()", function(err, json) {
-    cb(null, json);
-  });
+  this.proxy("au.getActiveElement()", cb);
 };
 
 module.exports = function(rest, app, udid, verbose, removeTraceDir) {

@@ -46,6 +46,9 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
   rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
 
+  // this is for testing purposes only
+  rest.post('/wd/hub/produce_error', controller.produceError);
+
   // keep this at the very end!
   rest.all('/*', controller.unknownCommand);
   //console.log(rest.routes.get);

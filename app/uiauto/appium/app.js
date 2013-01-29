@@ -8,6 +8,7 @@ if (typeof au === "undefined") {
 
 $.extend(au, {
     cache: []
+    , identifier: 0
     , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
     , getScreenOrientation: function () {
       var orientation = $.orientation()
@@ -140,10 +141,20 @@ $.extend(au, {
         elems = this.lookup(selector, null);
       }
 
-      var results = [];
+      var results = []
+        , identifier = function(el) {
+            // _ indicates those are internally generated
+            var stub = '_wde';
+            if (el.name() !== null) {
+              return el.name();
+            } else {
+              return stub + au.identifier++;
+            }
+          };
 
       elems.each(function(e, el) {
-        results.push({ 'ELEMENT': el.name() });
+        var elid = identifier(el);
+        results.push({ 'ELEMENT': elid });
       });
 
       return {

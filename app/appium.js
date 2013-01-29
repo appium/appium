@@ -3,6 +3,7 @@
 "use strict";
 var routing = require('./routing')
   , logger = require('../logger').get('appium')
+  , setLogFile = require('../logger').setLogFile
   , helpers = require('./helpers')
   , downloadFile = helpers.downloadFile
   , unzipApp = helpers.unzipApp
@@ -14,6 +15,9 @@ var Appium = function(args) {
   this.args = args;
   if (!this.args.verbose) {
     logger.transports.console.level = 'warn';
+  }
+  if (this.args.log) {
+    setLogFile(logger, this.args.log);
   }
   this.rest = null;
   this.devices = {};

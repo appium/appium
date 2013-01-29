@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     lint: {
-      all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js', 'test/functional/*.js', 'test/unit/*.js', 'test/functional/appium/*.js', 'test/functional/appiumutils/*.js', 'test/functional/testapp/*.js', 'test/functional/uicatalog/*.js', 'test/helpers/*.js']
+      all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js', 'test/functional/*.js', 'test/unit/*.js', 'test/functional/appium/*.js', 'test/functional/testapp/*.js', 'test/functional/uicatalog/*.js', 'test/helpers/*.js']
     }
     , jshint: {
       all: {
@@ -30,12 +30,13 @@ module.exports = function(grunt) {
     }
     , mochaTest: {
       unit: ['app/test/unit/*.js']
-      , appiumutils: ['test/functional/appiumutils/*.js']
+      , appiumutils: ['test/functional/appium/appiumutils.js']
     }
     , mochaTestWithServer: {
       TestApp: {
         functional: ['test/functional/testapp/*.js']
-        , server: ['test/functional/appium/*.js']
+        , server: ['test/functional/appium/appium.js'
+                   , 'test/functional/appium/jsonwp.js']
       }
       , UICatalog: {
         functional: ['test/functional/uicatalog/*.js']

@@ -39,6 +39,21 @@ Appium.prototype.attachTo = function(rest, cb) {
   }
 };
 
+Appium.prototype.preLaunch = function(cb) {
+  logger.info("Pre-launching app");
+  if (!this.args.app) {
+    logger.error("Cannot pre-launch app if it isn't passed in via --app");
+    process.exit();
+  } else {
+    var me = this;
+    this.start({}, function(err, device) {
+      me.stop(function(err, res) {
+        cb(me);
+      });
+    });
+  }
+};
+
 Appium.prototype.start = function(desiredCaps, cb) {
   this.origApp = this.args.app;
   this.configure(desiredCaps, _.bind(function(err) {

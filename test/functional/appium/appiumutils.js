@@ -113,4 +113,12 @@ describe("appiumutils", function() {
     });
   });
 
+  it.only('should respond nicely to js errors', function(done) {
+    device.proxy("blargimarg", function(err, res) {
+      should.exist(err);
+      should.ok(~res);
+      done();
+    });
+  });
+
 });

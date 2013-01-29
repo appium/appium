@@ -163,7 +163,8 @@ Appium.prototype.onDeviceDie = function(code, cb) {
 
 Appium.prototype.stop = function(cb) {
   if (this.sessionId === null) {
-    return;
+    logger.info("Trying to stop appium but there's no session, doing nothing");
+    cb();
   }
 
   var me = this;

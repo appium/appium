@@ -72,14 +72,14 @@ describe('JSONWP request', function() {
     });
   });
   describeWithSession('that generates a server error', function() {
-    it('should respond with a 500', function(done) {
+    it.only('should respond with a 500', function(done) {
       var url = serverUrl + '/wd/hub/produce_error';
       request.post(url, function(err, res, body) {
         should.not.exist(err);
         res.statusCode.should.equal(500);
         should.ok(body);
         body = JSON.parse(body);
-        should.ok(body.message);
+        should.ok(body.value.message);
         done();
       });
     });

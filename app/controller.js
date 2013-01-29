@@ -12,7 +12,7 @@ function getResponseHandler(req, res) {
     if (err !== null) {
       var value = response.value;
       if (typeof value === "undefined") {
-        value = {};
+        value = '';
       }
       respondError(req, res, err.message, value);
     } else {
@@ -42,17 +42,19 @@ var getSessionId = function(req, response) {
 };
 
 var respondError = function(req, res, statusObj, value) {
-  var code, message;
+  var code = 1, message = "An unknown error occurred";
   if (typeof statusObj === "string") {
-    code = 1;
     message = statusObj;
   } else if (typeof statusObj === "number") {
     code = statusObj;
     message = status.getSummaryByCode(code);
-  } else {
+  } else if (typeof statusObj.code !== "undefined") {
     code = statusObj.code;
     message = statusObj.summary;
+  } else if (typeof statusObj.message !== "undefined") {
+    message = statusObj.message;
   }
+
   var newValue = _.extend({message: message}, value);
   var response = {status: code, value: newValue};
   response.sessionId = getSessionId(req, response);

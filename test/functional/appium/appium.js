@@ -52,22 +52,3 @@ describeWd('appium', function(h) {
     });
   });
 });
-
-describeWd('appium', function(h) {
-  it('should not fail when bad paths requested', function(done) {
-    request('http://localhost:4723/a/bad/path', function(error, response, body) {
-      should.not.exist(error);
-      response.statusCode.should.equal(200);
-      JSON.parse(body).status.code.should.equal(9);
-      done();
-    });
-  });
-  it('should not fail when bad method used', function(done) {
-    request.get('http://localhost:4723/wd/hub/session/'+h.sessionId+'/element', function(err, res, body) {
-      should.not.exist(err);
-      res.statusCode.should.equal(200);
-      JSON.parse(body).status.code.should.equal(9);
-      done();
-    });
-  });
-});

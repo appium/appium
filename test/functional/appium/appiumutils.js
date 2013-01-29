@@ -109,7 +109,6 @@ describe("appiumutils", function() {
     device.proxy("wd_frame.getPageSource()", function(err, res) {
       should.not.exist(err);
       res.status.should.equal(0);
-      console.log(res.value);
       done();
     });
   });

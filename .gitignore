@@ -10,3 +10,4 @@ sample-code/examples/php/composer.phar
 sample-code/examples/php/vendor
 *.iml
 .idea/
+appium.log*

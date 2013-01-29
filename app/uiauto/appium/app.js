@@ -8,6 +8,7 @@ if (typeof au === "undefined") {
 
 $.extend(au, {
     cache: []
+    , identifier: 0
     , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
     , getScreenOrientation: function () {
       var orientation = $.orientation()
@@ -68,7 +69,7 @@ $.extend(au, {
         return [ this.cache[name] ];
       } else if (typeof selector === 'string') {
         var _ctx = this.mainWindow;
-      
+
         if (typeof ctx === 'string') {
           var ctxRes = this.lookup('#' + ctx);
           _ctx = ctxRes[0];
@@ -83,7 +84,9 @@ $.extend(au, {
         var cache = this.cache;
         elems.each(function(e, el) {
           //console.log('Stashing element in cache: ' + el.name());
-          cache[el.name()] = el;
+          if (el.name() !== null) {
+            cache[el.name()] = el;
+          }
         });
 
         return elems;
@@ -132,7 +135,8 @@ $.extend(au, {
           selector = 'cell';
       }
 
-      var elems = [];
+      var elems = []
+        , cache = this.cache;
 
       if (typeof ctx !== 'undefined') {
         elems = this.lookup(selector, null, ctx);
@@ -140,10 +144,22 @@ $.extend(au, {
         elems = this.lookup(selector, null);
       }
 
-      var results = [];
+      var results = []
+        , identifier = function(el) {
+            // _ indicates those are internally generated
+            var stub = '_wde';
+            if (el.name() !== null) {
+              return el.name();
+            } else {
+              var id = stub + au.identifier++;
+              cache[id] = el;
+              return id;
+            }
+          };
 
       elems.each(function(e, el) {
-        results.push({ 'ELEMENT': el.name() });
+        var elid = identifier(el);
+        results.push({ 'ELEMENT': elid });
       });
 
       return {

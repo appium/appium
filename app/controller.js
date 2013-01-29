@@ -51,10 +51,12 @@ exports.createSession = function(req, res) {
 
     if (desired && desired.newCommandTimeout) {
       instance.setCommandTimeout(desired.newCommandTimeout, function() {
-        res.send(303, "/wd/hub/session/" + req.appium.sessionId);
+        res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
+        res.send(303);
       });
     } else {
-      res.send(303, "/wd/hub/session/" + req.appium.sessionId);
+      res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
+      res.send(303);
     }
   });
 };

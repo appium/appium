@@ -26,11 +26,14 @@ var main = function(args, readyCb, doneCb) {
     rest.use(express.methodOverride());
     rest.use(rest.router);
   });
+
   // Instantiate the appium instance
   var appiumServer = appium(args);
+
   // Hook up REST http interface
   appiumServer.attachTo(rest);
-  // Start the web server that receives all the commands
+
+  // Start the server either now or after pre-launching device
   var next = function(appiumServer) {
     server.listen(args.port, args.address, function() {
       var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
@@ -46,6 +49,7 @@ var main = function(args, readyCb, doneCb) {
   } else {
     next(appiumServer);
   }
+
   server.on('close', doneCb);
   return server;
 };

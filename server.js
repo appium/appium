@@ -48,13 +48,21 @@ var main = function(args, readyCb, doneCb) {
   // Hook up REST http interface
   appiumServer.attachTo(rest);
   // Start the web server that receives all the commands
-  server.listen(args.port, args.address, function() {
-    var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
-    logger.info(logMessage.cyan);
+  var next = function(appiumServer) {
+    server.listen(args.port, args.address, function() {
+      var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
+      logger.info(logMessage.cyan);
+    });
     if (readyCb) {
       readyCb(appiumServer);
     }
-  });
+  };
+  if (args.launch) {
+    logger.info("Starting Appium in pre-launch mode".cyan);
+    appiumServer.preLaunch(next);
+  } else {
+    next(appiumServer);
+  }
   server.on('close', doneCb);
   return server;
 };

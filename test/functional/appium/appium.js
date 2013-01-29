@@ -35,6 +35,7 @@ describeUrl('appium', function(h) {
       element.elementByTagName('tableCell', function(err, label) {
         should.exist(label.value);
         label.text(function(err, text) {
+          should.not.exist(err);
           text.should.equal("Buttons, Various uses of UIButton");
           done();
         });

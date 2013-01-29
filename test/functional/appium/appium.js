@@ -32,13 +32,10 @@ describeUrl('appium', function(h) {
   it('should load a zipped app via url', function(done) {
     h.driver.elementByTagName('tableView', function(err, element) {
       should.exist(element.value);
-      element.elementByTagName('tableCell', function(err, label) {
-        should.exist(label.value);
-        label.text(function(err, text) {
-          should.not.exist(err);
-          text.should.equal("Buttons, Various uses of UIButton");
-          done();
-        });
+      element.elementByTagName('tableCell', function(err, el2) {
+        should.exist(el2.value);
+        el2.value.should.equal("Buttons, Various uses of UIButton");
+        done();
       });
     });
   });

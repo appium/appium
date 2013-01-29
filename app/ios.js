@@ -37,7 +37,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir) {
       , platform: 'MAC'
       , javascriptEnabled: true
       , databaseEnabled: false
-      , takesScreenshot: false
+      , takesScreenshot: true
   };
 };
 

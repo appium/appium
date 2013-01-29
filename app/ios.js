@@ -65,8 +65,9 @@ IOS.prototype.start = function(cb, onDie) {
     } else if (typeof me.cbForCurrentCmd === "function") {
       // we were in the middle of waiting for a command when it died
       // so let's actually respond with something
-      me.cbForCurrentCmd("Instruments died while responding to command, " +
-                         "please check appium logs", null);
+      var error = new UnknownError("Instruments died while responding to " +
+                                   "command, please check appium logs");
+      me.cbForCurrentCmd(error, null);
       code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;

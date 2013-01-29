@@ -35,7 +35,8 @@ module.exports = function(grunt) {
     , mochaTestWithServer: {
       TestApp: {
         functional: ['test/functional/testapp/*.js']
-        , server: ['test/functional/appium/appium.js']
+        , server: ['test/functional/appium/appium.js'
+                   , 'test/functional/appium/jsonwp.js']
       }
       , UICatalog: {
         functional: ['test/functional/uicatalog/*.js']

@@ -243,8 +243,6 @@ exports.active = function(req, res) {
 };
 
 exports.unknownCommand = function(req, res) {
-  getResponseHandler(req, res)(null, {
-    status: status.codes.UnknownCommand
-    , value: ''
-  });
+  res.set('Content-Type', 'text/plain');
+  res.send(404, "That URL did not map to a valid JSONWP resource");
 };

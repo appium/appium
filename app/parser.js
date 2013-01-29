@@ -32,5 +32,9 @@ module.exports = function() {
     , { defaultValue: true, required: false, help: 'remove Instruments trace directories'
   });
 
+  parser.addArgument([ '-l', '--launch' ]
+    , { defaultValue: false, required: false, help: 'pre-launch the ios-sim'
+  });
+
   return parser;
 };

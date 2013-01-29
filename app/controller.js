@@ -253,3 +253,7 @@ exports.unknownCommand = function(req, res) {
 exports.notYetImplemented = function(req, res) {
   res.send(501, "Not Implemented");
 };
+
+exports.produceError = function(req, res) {
+  req.device.proxy("thisisnotvalidjs", getResponseHandler(req, res));
+};

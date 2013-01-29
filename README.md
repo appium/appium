@@ -7,7 +7,7 @@ Appium is a test automation tool for use with native and hybrid iOS applications
 
 There are two big benefits to testing with Appium:
 
-1.  Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile your app or modify in any way to be able to test automate it.
+1.  Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile or modify your app in any way to be able to test automate it.
 2.  With Appium and a Selenium WebDriver library, you can write your tests in any programming language.
 
 Requirements

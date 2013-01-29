@@ -29,6 +29,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir) {
   this.progress = 0;
   this.removeTraceDir = removeTraceDir;
   this.onStop = function(code, traceDir) {};
+  this.cbForCurrentCmd = null;
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -60,6 +61,13 @@ IOS.prototype.start = function(cb, onDie) {
       logger.error("Instruments did not launch successfully, failing session");
       cb("Instruments did not launch successfully--please check your app " +
           "paths or bundle IDs and try again");
+      code = 1; // this counts as an error even if instruments doesn't think so
+    } else if (typeof me.cbForCurrentCmd === "function") {
+      // we were in the middle of waiting for a command when it died
+      // so let's actually respond with something
+      me.cbForCurrentCmd("Instruments died while responding to command, " +
+                         "please check appium logs", null);
+      code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
     if (me.removeTraceDir && traceDir) {
@@ -86,14 +94,20 @@ IOS.prototype.start = function(cb, onDie) {
 };
 
 IOS.prototype.stop = function(cb) {
-  var me = this;
-  if (cb) {
-    this.onStop = cb;
-  }
+  if (this.instruments === null) {
+    logger.info("Trying to stop instruments but it already exited");
+    // we're already stopped
+    cb();
+  } else {
+    var me = this;
+    if (cb) {
+      this.onStop = cb;
+    }
 
-  this.instruments.shutdown();
-  me.queue = [];
-  me.progress = 0;
+    this.instruments.shutdown();
+    me.queue = [];
+    me.progress = 0;
+  }
 };
 
 IOS.prototype.setCommandTimeout = function(secs, cb) {
@@ -120,9 +134,12 @@ IOS.prototype.push = function(elem) {
     , command = target[0]
     , cb = target[1];
 
+    me.cbForCurrentCmd = cb;
+
     me.progress++;
 
     me.instruments.sendCommand(command, function(response) {
+      me.cbForCurrentCmd = null;
       if (typeof cb === 'function') {
         if (typeof response === 'undefined') {
           cb(null, null);

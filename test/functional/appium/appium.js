@@ -32,12 +32,10 @@ describeUrl('appium', function(h) {
   it('should load a zipped app via url', function(done) {
     h.driver.elementByTagName('tableView', function(err, element) {
       should.exist(element.value);
-      element.elementByTagName('tableCell', function(err, label) {
-        should.exist(label.value);
-        label.text(function(err, text) {
-          text.should.equal("Buttons, Various uses of UIButton");
-          done();
-        });
+      element.elementByTagName('tableCell', function(err, el2) {
+        should.exist(el2.value);
+        el2.value.should.equal("Buttons, Various uses of UIButton");
+        done();
       });
     });
   });
@@ -48,25 +46,6 @@ describeWd('appium', function(h) {
     h.driver.elementsByTagName('tableView', function(err, elements) {
       should.not.exist(err);
       elements = elements.should.be.empty;
-      done();
-    });
-  });
-});
-
-describeWd('appium', function(h) {
-  it('should not fail when bad paths requested', function(done) {
-    request('http://localhost:4723/a/bad/path', function(error, response, body) {
-      should.not.exist(error);
-      response.statusCode.should.equal(200);
-      JSON.parse(body).status.code.should.equal(9);
-      done();
-    });
-  });
-  it('should not fail when bad method used', function(done) {
-    request.get('http://localhost:4723/wd/hub/session/'+h.sessionId+'/element', function(err, res, body) {
-      should.not.exist(err);
-      res.statusCode.should.equal(200);
-      JSON.parse(body).status.code.should.equal(9);
       done();
     });
   });

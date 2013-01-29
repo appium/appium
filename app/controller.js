@@ -5,18 +5,21 @@ var status = require('./uiauto/lib/status');
 
 function getResponseHandler(req, res, validateResponse) {
   var responseHandler = function(err, response) {
+    if (typeof response === "undefined" || response === null) {
+      response = {};
+    }
     if (req.appium || response.sessionId) {
       response.sessionId = req.appium.sessionId || response.sessionId || null;
     }
     if (err !== null) {
-      response.status = status.codes.UnknownError.code;
+      res.send(500, {message: "A server error occurred: " + err});
     } else {
       if (typeof(validateResponse) === 'function') {
         // If a validate method was provided, use it to update the response
         response = validateResponse(response);
       }
+      res.send(response);
     }
-    res.send(response);
   };
   return responseHandler;
 }
@@ -26,7 +29,7 @@ exports.sessionBeforeFilter = function(req, res, next) {
   var sessId = match ? match[1] : null;
   // if we don't actually have a valid session, respond with an error
   if (sessId && (!req.device || req.appium.sessionId != sessId)) {
-    res.send({sessionId: sessId, status: status.codes.NoSuchDriver, value: ''});
+    res.send(404, {sessionId: null, status: status.codes.NoSuchDriver.code, value: ''});
   } else {
     next();
   }
@@ -243,8 +246,14 @@ exports.active = function(req, res) {
 };
 
 exports.unknownCommand = function(req, res) {
-  getResponseHandler(req, res)(null, {
-    status: status.codes.UnknownCommand
-    , value: ''
-  });
+  res.set('Content-Type', 'text/plain');
+  res.send(404, "That URL did not map to a valid JSONWP resource");
+};
+
+exports.notYetImplemented = function(req, res) {
+  res.send(501, "Not Implemented");
+};
+
+exports.produceError = function(req, res) {
+  req.device.proxy("thisisnotvalidjs", getResponseHandler(req, res));
 };

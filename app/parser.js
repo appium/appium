@@ -36,5 +36,9 @@ module.exports = function() {
     , { defaultValue: false, required: false, help: 'pre-launch the ios-sim'
   });
 
+  parser.addArgument([ '-g', '--log' ]
+    , { defaultValue: null, required: false, help: 'log to a file'
+  });
+
   return parser;
 };

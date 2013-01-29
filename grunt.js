@@ -7,6 +7,7 @@ var build = require('./build.js')
   , gruntHelpers = require('./grunt-helpers.js')
   , startAppium = gruntHelpers.startAppium
   , authorize = gruntHelpers.authorize
+  , tail = gruntHelpers.tail
   , runTestsWithServer = gruntHelpers.runTestsWithServer
   , fs = require('fs');
 
@@ -113,5 +114,8 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('authorize', "Authorize developer", function() {
     authorize(grunt, this.async());
+  });
+  grunt.registerTask('log', "Tail appium.log", function() {
+    tail(grunt, path.resolve(__dirname, "appium.log"), this.async());
   });
 };

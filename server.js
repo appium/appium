@@ -22,6 +22,16 @@ var main = function(args, readyCb, doneCb) {
     if (args.verbose) {
       rest.use(express.logger('dev'));
     }
+    if (args.log) {
+      var winstonStream = {
+        write: function(msg) {
+          msg = msg.replace(/$\s*$/m, "");
+          msg = msg.replace(/\[[^\]]+\] /, "");
+          logger.log('rest', msg);
+        }
+      };
+      rest.use(express.logger({stream: winstonStream}));
+    }
     rest.use(bodyParser);
     rest.use(express.methodOverride());
     rest.use(rest.router);

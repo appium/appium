@@ -61,11 +61,13 @@ IOS.prototype.start = function(cb, onDie) {
       logger.error("Instruments did not launch successfully, failing session");
       cb("Instruments did not launch successfully--please check your app " +
           "paths or bundle IDs and try again");
+      code = 1; // this counts as an error even if instruments doesn't think so
     } else if (typeof me.cbForCurrentCmd === "function") {
       // we were in the middle of waiting for a command when it died
       // so let's actually respond with something
       me.cbForCurrentCmd("Instruments died while responding to command, " +
                          "please check appium logs", null);
+      code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
     if (me.removeTraceDir && traceDir) {

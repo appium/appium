@@ -148,8 +148,10 @@ Appium.prototype.onDeviceDie = function(code, cb) {
   // reset app to whatever it was before this session so we don't accidentally
   // reuse a bad app
   this.args.app = this.origApp;
-  this.devices = {};
-  this.device = null;
+  if (code !== null) {
+    this.devices = {};
+    this.device = null;
+  }
   if (cb) {
     if (this.active !== null) {
       this.active = null;

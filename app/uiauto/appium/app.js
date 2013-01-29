@@ -69,7 +69,7 @@ $.extend(au, {
         return [ this.cache[name] ];
       } else if (typeof selector === 'string') {
         var _ctx = this.mainWindow;
-      
+
         if (typeof ctx === 'string') {
           var ctxRes = this.lookup('#' + ctx);
           _ctx = ctxRes[0];
@@ -84,7 +84,9 @@ $.extend(au, {
         var cache = this.cache;
         elems.each(function(e, el) {
           //console.log('Stashing element in cache: ' + el.name());
-          cache[el.name()] = el;
+          if (el.name() !== null) {
+            cache[el.name()] = el;
+          }
         });
 
         return elems;
@@ -133,7 +135,8 @@ $.extend(au, {
           selector = 'cell';
       }
 
-      var elems = [];
+      var elems = []
+        , cache = this.cache;
 
       if (typeof ctx !== 'undefined') {
         elems = this.lookup(selector, null, ctx);
@@ -148,7 +151,9 @@ $.extend(au, {
             if (el.name() !== null) {
               return el.name();
             } else {
-              return stub + au.identifier++;
+              var id = stub + au.identifier++;
+              cache[id] = el;
+              return id;
             }
           };
 

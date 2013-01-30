@@ -139,7 +139,7 @@ UIAElement.prototype.getPageSource = function() {
   target.pushTimeout(0);
   var output = this.getTree();
   target.popTimeout();
-  return output;
+  return JSON.stringify(output);
 }
 
 UIAElement.prototype.getTree = function() {

@@ -3,7 +3,8 @@
 var system = UIATarget.localTarget().host();
 // clientPath is relative to where you run the appium server from
 var clientPath = 'instruments/client.js';
-var waitForDataTimeout = 60;
+var defWaitForDataTimeout = 60;
+var waitForDataTimeout = defWaitForDataTimeout;
 
 var getNodeBinaryPath = function() {
   var res = system.performTaskWithPathArgumentsTimeout('/bin/bash', ['-c', 'which node'], 3);

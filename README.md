@@ -3,13 +3,13 @@ Appium
 
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 
-Appium is a test automation tool for native and hybrid iOS applications. Appium drives Apple's UIAutomation using Selenium's WebDriver JSON wire protocol. Appium is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
+Appium is a test automation tool for native and hybrid mobile apps. It supports iOS today, and Android support is in the works. Appium drives Apple's UIAutomation using Selenium's WebDriver JSON wire protocol. Appium is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto. 
 
 Testing with Appium has two big benefits:
 
-1.  You don't have to recompile your app or modify it in any way because Appium's automation functionality is based on Apple's UIAutomation library.
+1.  You don't have to recompile your app or modify it in any way because Appium's automation is based on Apple's UIAutomation library.
 
-2.  You can write each test in your favorite programming language using the Selenium WebDriver API and language-specific client libraries. If you used UIAutomation without Appium you could only write tests using JavaScript and you could only run tests through the Instruments application. With Appium you can use your favorite dev tools and you can test your iOS apps using any language.
+2.  You can write tests in your favorite programming language using the Selenium WebDriver API and language-specific client libraries. If you used UIAutomation without Appium you could only write tests using JavaScript and you could only run tests through the Instruments application. With Appium you can use your favorite dev tools and you can test your iOS apps using any language.
 
 Requirements
 ------------
@@ -40,9 +40,9 @@ From your local repo clone's command prompt, install these packages using the fo
     > sudo npm install -g grunt
     > npm install
 
-The first two commands install the test and build tools (sudo may not be necessary if you installed node.js via Homebrew). The third command installs all app dependencies.
+The first two commands install test and build tools (sudo may not be necessary if you installed node.js via Homebrew). The third command installs all app dependencies.
 
-To avoid a security dialog that may appear when launching your iOS apps, modify your `/etc/authorization` file by setting the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt;, or run the following supplied grunt command (at your own risk):
+To avoid a security dialog that may appear when launching your iOS apps, modify your `/etc/authorization` file by setting the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt;, or run the following grunt command (at your own risk):
 
     > sudo grunt authorize
 
@@ -91,7 +91,7 @@ Then you can run individual test files using Mocha, for example:
 
     > mocha -t 60000 -R spec test/functional/testapp/simple.js
 
-Do you like getting close to the metal? Or are you trying to run this from
+Do you like getting close to the metal? Or are you trying to run Appium from
 a script with a custom app? You can start Appium without grunt from the
 command line (see parser.js for more CLI arguments):
 
@@ -107,7 +107,7 @@ This creates a `build/Release-iphonesimulator` directory in your Xcode
 project that contains the `.app` package that you'll need to communicate with the Appium 
 server.
 
-You can also run against an app on an actual device by plugging the device in
+You can also run against an app on an actual device by plugging in the device 
 and passing the udid argument to server.js in the command above.
 
 Using with a [Bitbeambot](http://bitbeam.org)

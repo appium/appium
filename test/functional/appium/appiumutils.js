@@ -18,7 +18,7 @@ describe("appiumutils", function() {
       app: path.resolve(__dirname, "../../../sample-code/apps/UICatalog/build/Release-iphonesimulator/UICatalog.app")
       , verbose: false
       , udid: null
-      , launch: true
+      , launch: false
       , port: 4723
       , address: '127.0.0.1'
       , remove: true }

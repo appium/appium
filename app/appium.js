@@ -30,6 +30,7 @@ var Appium = function(args) {
   this.progress = -1;
   this.tempFiles = [];
   this.origApp = null;
+  this.preLaunched = false;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -51,7 +52,10 @@ Appium.prototype.preLaunch = function(cb) {
   } else {
     var me = this;
     this.start({}, function(err, device) {
-      me.stop(function(err, res) {
+      // since we're prelaunching, it might be a while before the first
+      // command comes in, so let's not have instruments quit on us
+      device.setCommandTimeout(600, function() {
+        me.preLaunched = true;
         cb(me);
       });
     });

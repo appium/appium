@@ -22,7 +22,7 @@ while(true) {
   if (cmd) {
     console.log("Got new command from instruments: " + cmd);
     var result = eval(cmd);
-    if (typeof result === "undefined") {
+    if (typeof result === "undefined" || result === null) {
       result = '';
       console.log("Command executed without response");
     }

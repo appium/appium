@@ -34,8 +34,13 @@ describeUrl('appium', function(h) {
       should.exist(element.value);
       element.elementByTagName('tableCell', function(err, el2) {
         should.exist(el2.value);
-        el2.value.should.equal("Buttons, Various uses of UIButton");
-        done();
+        el2.elementByTagName('staticText', function(err, el3) {
+          should.exist(el3.value);
+          el3.text(function(err, text) {
+            text.should.equal("Buttons, Various uses of UIButton");
+            done();
+          });
+        });
       });
     });
   });

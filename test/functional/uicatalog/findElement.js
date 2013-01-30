@@ -55,7 +55,8 @@ describeWd('findElementsByTageName', function(h) {
   it('should return all image elements with internally generated ids', function(done) {
     h.driver.elementsByTagName('image', function(err, elements) {
       for (var i=0; i < elements.length; i++) {
-        elements[i].value.should.include('_wde');
+        var num = parseInt(elements[i].value, 10);
+        should.exist(num);
       }
       done();
     });

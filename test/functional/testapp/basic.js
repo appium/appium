@@ -82,9 +82,10 @@ describeWd('calc app', function(h) {
 
   it('should return app source', function(done){
     h.driver.source(function(err, source) {
-      assert.equal(source.type, "UIAWindow");
-      assert.equal(source.children[0].label, "TextField1");
-      assert.equal(source.children[3].name, "SumLabel");
+      var obj = JSON.parse(source);
+      assert.equal(obj.type, "UIAWindow");
+      assert.equal(obj.children[0].label, "TextField1");
+      assert.equal(obj.children[3].name, "SumLabel");
       done();
     });
   });

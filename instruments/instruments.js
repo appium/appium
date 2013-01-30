@@ -2,8 +2,7 @@
 "use strict";
 
 var spawn = require('child_process').spawn
-  , colors = require('colors')
-  , logger = require('../logger').get('instruments')
+  , logger = require('../logger').get('appium')
   , fs = require('fs')
   , _ = require('underscore')
   , net = require('net')

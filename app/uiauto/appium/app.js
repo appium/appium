@@ -69,8 +69,7 @@ $.extend(au, {
         var _ctx = this.mainWindow;
 
         if (typeof ctx === 'string') {
-          var ctxRes = this.lookup('#' + ctx);
-          _ctx = ctxRes[0];
+          _ctx = this.cache[ctx];
         } else if (typeof ctx !== 'undefined') {
           _ctx = ctx;
         }

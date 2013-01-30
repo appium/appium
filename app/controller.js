@@ -206,6 +206,12 @@ exports.getSize = function(req, res) {
   req.device.getSize(elementId, getResponseHandler(req, res));
 };
 
+exports.getPageIndex = function(req, res) {
+  var elementId = req.params.elementId;
+
+  req.device.getPageIndex(elementId, getResponseHandler(req, res));
+};
+
 exports.keys = function(req, res) {
   var elementId = req.params.elementId
     , keys = req.body.value.join('');

@@ -89,23 +89,33 @@ exports.getStatus = function(req, res) {
 };
 
 exports.createSession = function(req, res) {
-  // we can talk to the device client from here
   var desired = req.body.desiredCapabilities;
-  req.appium.start(req.body.desiredCapabilities, function(err, instance) {
-    if (err) {
-      respondError(req, res, status.codes.NoSuchDriver);
+  var next = function(sessionId, device, preLaunched) {
+    var redirect = function() {
+      res.set('Location', "/wd/hub/session/" + sessionId);
+      res.send(303);
+    };
+    if (desired && desired.newCommandTimeout) {
+      device.setCommandTimeout(desired.newCommandTimeout, redirect);
+    } else if (preLaunched) {
+      // reset timeout to something more reasonable
+      device.resetCommandTimeout(redirect);
     } else {
-      if (desired && desired.newCommandTimeout) {
-        instance.setCommandTimeout(desired.newCommandTimeout, function() {
-          res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
-          res.send(303);
-        });
-      } else {
-        res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
-        res.send(303);
-      }
+      redirect();
     }
-  });
+  };
+  if (req.appium.preLaunched && req.appium.sessionId) {
+    req.appium.preLaunched = false;
+    next(req.appium.sessionId, req.appium.device, true);
+  } else {
+    req.appium.start(req.body.desiredCapabilities, function(err, instance) {
+      if (err) {
+        respondError(req, res, status.codes.NoSuchDriver);
+      } else {
+        next(req.appium.sessionId, instance);
+      }
+    });
+  }
 };
 
 exports.getSession = function(req, res) {

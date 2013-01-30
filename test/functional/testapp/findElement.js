@@ -42,7 +42,7 @@ describeWd('elementByName', function(h) {
   it('should find element by valid name', function(done) {
     h.driver.elementByName('ComputeSumButton', function(err, element) {
       should.exist(element.value);
-      element.value.should.equal('ComputeSumButton');
+      element.value.should.equal('0');
       done();
     });
   });

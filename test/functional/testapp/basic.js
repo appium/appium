@@ -81,10 +81,10 @@ describeWd('calc app', function(h) {
    //});
 
   it('should return app source', function(done){
-    h.driver.source(function(err, value) {
-      assert.notEqual(value.indexOf("UIATextField"), -1);
-      assert.notEqual(value.indexOf("UIAButton"), -1);
-      assert.notEqual(value.indexOf("UIAStaticText"), -1);
+    h.driver.source(function(err, source) {
+      assert.equal(source.type, "UIAWindow");
+      assert.equal(source.children[0].label, "TextField1");
+      assert.equal(source.children[3].name, "SumLabel");
       done();
     });
   });
@@ -138,7 +138,7 @@ describeWd('calc app', function(h) {
 
   return it('should get an app screenshot', function(done){
     h.driver.takeScreenshot(function(err, screenshot){
-      assert.notEqual(screenshot, undefined);
+      assert.notEqual(typeof screenshot, "undefined");
       assert.notEqual(screenshot, null);
       assert.ok(screenshot);
       done();

@@ -64,15 +64,12 @@ $.extend(au, {
       }
     }
 
-  , lookup: function(selector, name, ctx) {
-      if (typeof name !== 'undefined' && typeof this.cache[name] !== 'undefined') {
-        return [ this.cache[name] ];
-      } else if (typeof selector === 'string') {
+  , lookup: function(selector, ctx) {
+      if (typeof selector === 'string') {
         var _ctx = this.mainWindow;
 
         if (typeof ctx === 'string') {
-          var ctxRes = this.lookup('#' + ctx);
-          _ctx = ctxRes[0];
+          _ctx = this.cache[ctx];
         } else if (typeof ctx !== 'undefined') {
           _ctx = ctx;
         }
@@ -81,35 +78,37 @@ $.extend(au, {
         var elems = $(selector, _ctx);
         $.timeout(1);
 
-        var cache = this.cache;
-        elems.each(function(e, el) {
-          //console.log('Stashing element in cache: ' + el.name());
-          if (el.name() !== null) {
-            cache[el.name()] = el;
-          }
-        });
-
         return elems;
-      } else {
-        return null;
       }
+
+      return null;
     }
 
   , getElement: function(name) {
-      var results = this.lookup(null, name);
-      return results[0];
+      if (typeof this.cache[name] !== 'undefined') {
+        return this.cache[name];
+      }
+
+      return null;
+    }
+
+  , getId: function(el) {
+      var id = (this.identifier++).toString();
+      this.cache[id] = el;
+      return id;
     }
 
   , getElementByName: function(name) {
       var selector = ['#', name].join('');
-      var elems = this.lookup(selector, name);
+      var elems = this.lookup(selector);
 
       if (elems.length > 0) {
-        var el = elems.first();
+        var el = elems[0];
+        var elid = this.getId(el);
 
         return {
           status: codes.Success.code,
-          value: {'ELEMENT': el.name() }
+          value: {'ELEMENT': elid }
         };
       } else {
         return {
@@ -135,30 +134,19 @@ $.extend(au, {
           selector = 'cell';
       }
 
-      var elems = []
-        , cache = this.cache;
+      var elems = [];
 
       if (typeof ctx !== 'undefined') {
-        elems = this.lookup(selector, null, ctx);
+        elems = this.lookup(selector, ctx);
       } else {
-        elems = this.lookup(selector, null);
+        elems = this.lookup(selector);
       }
 
       var results = []
-        , identifier = function(el) {
-            // _ indicates those are internally generated
-            var stub = '_wde';
-            if (el.name() !== null) {
-              return el.name();
-            } else {
-              var id = stub + au.identifier++;
-              cache[id] = el;
-              return id;
-            }
-          };
+        , me = this;
 
       elems.each(function(e, el) {
-        var elid = identifier(el);
+        var elid = me.getId(el);
         results.push({ 'ELEMENT': elid });
       });
 

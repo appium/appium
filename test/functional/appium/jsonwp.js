@@ -72,7 +72,7 @@ describe('JSONWP request', function() {
     });
   });
   describeWithSession('that generates a server error', function() {
-    it.only('should respond with a 500', function(done) {
+    it('should respond with a 500', function(done) {
       var url = serverUrl + '/wd/hub/produce_error';
       request.post(url, function(err, res, body) {
         should.not.exist(err);

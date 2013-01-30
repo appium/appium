@@ -32,13 +32,16 @@ module.exports.get = function(name) {
 };
 
 module.exports.setLogFile = function(logger, filename) {
-  console.log("Setting log file for logger");
-  logger.add(winston.transports.File, {
-    filename: filename
-    , colorize: false
-    , level: 'debug'
-    , maxsize: 1000000
-    , maxFiles: 4
-    , json: false
-  });
+  try {
+    logger.add(winston.transports.File, {
+      filename: filename
+      , colorize: false
+      , level: 'debug'
+      , maxsize: 1000000
+      , maxFiles: 4
+      , json: false
+    });
+  } catch (e) {
+    logger.info("Tried to attach logging to file " + filename + " but an error occurred; maybe we're already logging to this file?");
+  }
 };

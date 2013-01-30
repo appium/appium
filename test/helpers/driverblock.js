@@ -42,8 +42,11 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   tests(driverHolder);
 };
 
-var describeWithDriver = function(desc, tests, host, port, caps, extraCaps) {
+var describeWithDriver = function(desc, tests, host, port, caps, extraCaps, timeout) {
   describe(desc, function() {
+    if (typeof timeout !== "undefined") {
+      this.timeout(timeout);
+    }
     driverBlock(tests, host, port, caps, extraCaps);
   });
 };
@@ -65,6 +68,28 @@ var describeForApp = function(app) {
   };
 };
 
+var describeForSauce = function(appUrl) {
+  return function(desc, tests, host, port, extraCaps) {
+    host = typeof host === "undefined" ? 'ondemand.saucelabs.com' : host;
+    port = typeof port === "undefined" ? 80 : port;
+    if (typeof process.env.SAUCE_USERNAME === "undefined" || typeof process.env.SAUCE_ACCESS_KEY === "undefined") {
+      throw new Error("Need to set SAUCE_USERNAME and SAUCE_ACCESS_KEY");
+    }
+    host = process.env.SAUCE_USERNAME + ':' + process.env.SAUCE_ACCESS_KEY +
+          '@' + host;
+    var caps = {
+      platform: "Mac 10.8"
+      , device: "iPhone Simulator"
+      , browserName: ""
+      , app: appUrl
+      , version: ""
+    };
+
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps, 500000);
+  };
+};
+
 module.exports.block = driverBlock;
 module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
+module.exports.describeForSauce = describeForSauce;

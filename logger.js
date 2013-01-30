@@ -32,7 +32,6 @@ module.exports.get = function(name) {
 };
 
 module.exports.setLogFile = function(logger, filename) {
-  console.log("Setting log file for logger");
   logger.add(winston.transports.File, {
     filename: filename
     , colorize: false

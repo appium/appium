@@ -136,30 +136,10 @@ var elements = new Array();
 var globalElementCounter = 0;
 
 UIAElement.prototype.getPageSource = function() {
-  var output = "";
-  var buildOutput = function(tree, depth) {
-    var children = tree.children;
-    var spaces = "";
-    for (var i = 0; i < depth; i++) {
-      spaces += "    ";
-    }
-    elStr = "<" + tree.type + ">";
-    elStr += JSON.stringify({label: tree.label, name: tree.name, enabled: tree.enabled, valid: tree.valid, visible: tree.visible, rect: {x: tree.rect.origin.x, y: tree.rect.origin.y, w: tree.rect.size.width, h: tree.rect.size.height}});
-    output += spaces + elStr + "\n";
-    for (var i = 0; i < children.length; i++) {
-      buildOutput(children[i], depth + 1);
-    }
-  };
-  try {
-    target.pushTimeout(0);
-    buildOutput(this.getTree(), 0)
-  } finally {
-    target.popTimeout();
-  }
-  return {
-    status: codes.Success.code,
-    value: output
-  };
+  target.pushTimeout(0);
+  var output = this.getTree();
+  target.popTimeout();
+  return output;
 }
 
 UIAElement.prototype.getTree = function() {
@@ -172,9 +152,9 @@ UIAElement.prototype.getTree = function() {
       , label: element.label()
       , value: element.value()
       , rect: element.rect()
-      , enabled: element.isEnabled()
-      , valid: element.isValid()
-      , visible: element.isVisible()
+      , enabled: element.isEnabled() ? true : false
+      , valid: element.isValid() ? true : false
+      , visible: element.isVisible() ? true : false
       , children: []
     };
     var children = element.elements();

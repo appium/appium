@@ -27,7 +27,7 @@ var main = function(args, readyCb, doneCb) {
         write: function(msg) {
           msg = msg.replace(/$\s*$/m, "");
           msg = msg.replace(/\[[^\]]+\] /, "");
-          logger.log('rest', msg);
+          logger.log('debug', msg);
         }
       };
       rest.use(express.logger({stream: winstonStream}));

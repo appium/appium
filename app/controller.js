@@ -17,7 +17,7 @@ function getResponseHandler(req, res) {
       respondError(req, res, err.message, value);
     } else {
       if (response.status === 0) {
-        respondSuccess(req, res, response.value);
+        respondSuccess(req, res, response.value, response.sessionId);
       } else {
         respondError(req, res, response.status, response.value);
       }
@@ -61,9 +61,9 @@ var respondError = function(req, res, statusObj, value) {
   res.send(500, response);
 };
 
-var respondSuccess = function(req, res, value) {
+var respondSuccess = function(req, res, value, sid) {
   var response = {status: status.codes.Success.code, value: value};
-  response.sessionId = getSessionId(req, response);
+  response.sessionId = getSessionId(req, response) || sid;
   if (typeof response.value === "undefined") {
     response.value = '';
   }

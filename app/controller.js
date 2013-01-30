@@ -89,23 +89,32 @@ exports.getStatus = function(req, res) {
 };
 
 exports.createSession = function(req, res) {
-  // we can talk to the device client from here
-  var desired = req.body.desiredCapabilities;
-  req.appium.start(req.body.desiredCapabilities, function(err, instance) {
-    if (err) {
-      respondError(req, res, status.codes.NoSuchDriver);
-    } else {
-      if (desired && desired.newCommandTimeout) {
-        instance.setCommandTimeout(desired.newCommandTimeout, function() {
+  if (req.appium.preLaunched && req.appium.sessionId) {
+    req.appium.preLaunched = false;
+    // reset timeout to something more reasonable
+    req.device.resetCommandTimeout(function() {
+      res.set('Location', '/wd/hub/session/' + req.appium.sessionId);
+      res.send(303);
+    });
+  } else {
+    // we can talk to the device client from here
+    var desired = req.body.desiredCapabilities;
+    req.appium.start(req.body.desiredCapabilities, function(err, instance) {
+      if (err) {
+        respondError(req, res, status.codes.NoSuchDriver);
+      } else {
+        if (desired && desired.newCommandTimeout) {
+          instance.setCommandTimeout(desired.newCommandTimeout, function() {
+            res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
+            res.send(303);
+          });
+        } else {
           res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
           res.send(303);
-        });
-      } else {
-        res.set('Location', "/wd/hub/session/" + req.appium.sessionId);
-        res.send(303);
+        }
       }
-    }
-  });
+    });
+  }
 };
 
 exports.getSession = function(req, res) {

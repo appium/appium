@@ -84,7 +84,9 @@ IOS.prototype.start = function(cb, onDie) {
   };
 
   if (this.instruments === null) {
-    timeWarp(50, 1000);
+    if (this.warp) {
+      timeWarp(50, 1000);
+    }
     this.instruments = instruments(
       this.app
       , this.udid
@@ -99,7 +101,9 @@ IOS.prototype.start = function(cb, onDie) {
 };
 
 IOS.prototype.stop = function(cb) {
-  stopTimeWarp();
+  if (this.warp) {
+    stopTimeWarp();
+  }
   if (this.instruments === null) {
     logger.info("Trying to stop instruments but it already exited");
     // we're already stopped
@@ -393,6 +397,6 @@ IOS.prototype.active = function(cb) {
   this.proxy("au.getActiveElement()", cb);
 };
 
-module.exports = function(rest, app, udid, verbose, removeTraceDir) {
-  return new IOS(rest, app, udid, verbose, removeTraceDir);
+module.exports = function(rest, app, udid, verbose, removeTraceDir, warp) {
+  return new IOS(rest, app, udid, verbose, removeTraceDir, warp);
 };

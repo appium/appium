@@ -292,7 +292,7 @@ exports.getScreenshot = function(req, res) {
 };
 
 exports.pickAFlickMethod = function(req, res) {
-  if (typeof req.body.xSpeed !== "undefined") {
+  if (typeof req.body.xSpeed !== "undefined" || typeof req.body.xspeed !== "undefined") {
     exports.flick(req, res);
   } else {
     exports.flickElement(req, res);
@@ -301,8 +301,8 @@ exports.pickAFlickMethod = function(req, res) {
 
 exports.flick = function(req, res) {
   var swipe = req.body.swipe
-    , xSpeed = req.body.xSpeed
-    , ySpeed = req.body.ySpeed
+    , xSpeed = req.body.xSpeed || req.body.xspeed
+    , ySpeed = req.body.ySpeed || req.body.yspeed
     , element = req.body.element;
 
   if(checkMissingParams(res, {xSpeed: xSpeed, ySpeed: ySpeed})) {

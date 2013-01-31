@@ -301,9 +301,16 @@ exports.pickAFlickMethod = function(req, res) {
 
 exports.flick = function(req, res) {
   var swipe = req.body.swipe
-    , xSpeed = req.body.xSpeed || req.body.xspeed
-    , ySpeed = req.body.ySpeed || req.body.yspeed
+    , xSpeed = req.body.xSpeed
+    , ySpeed = req.body.ySpeed
     , element = req.body.element;
+
+  if (typeof xSpeed === "undefined") {
+    xSpeed = req.body.xspeed;
+  }
+  if (typeof ySpeed === "undefined") {
+    ySpeed = req.body.yspeed;
+  }
 
   if(checkMissingParams(res, {xSpeed: xSpeed, ySpeed: ySpeed})) {
     if (element) {

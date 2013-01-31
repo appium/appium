@@ -260,6 +260,12 @@ IOS.prototype.getSize = function(elementId, cb) {
   this.proxy(command, cb);
 };
 
+IOS.prototype.getPageIndex = function(elementId, cb) {
+  var command = ["au.getElement('", elementId, "').pageIndex()"].join('');
+
+  this.proxy(command, cb);
+};
+
 IOS.prototype.keys = function(elementId, keys, cb) {
   var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
 

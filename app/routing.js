@@ -28,6 +28,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/enabled', controller.elementEnabled);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location', controller.getLocation);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/size', controller.getSize);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/pageIndex', controller.getPageIndex);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/attribute/:name', controller.getAttribute);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear', controller.clear);
   rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
@@ -42,7 +43,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/element', controller.findElementFromElement);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements', controller.findElementsFromElement);
-  rest.post('/wd/hub/session/:sessionId/touch/flick', controller.flick);
+  rest.post('/wd/hub/session/:sessionId/touch/flick', controller.pickAFlickMethod);
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
   rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
 

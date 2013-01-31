@@ -206,6 +206,12 @@ exports.getSize = function(req, res) {
   req.device.getSize(elementId, getResponseHandler(req, res));
 };
 
+exports.getPageIndex = function(req, res) {
+  var elementId = req.params.elementId;
+
+  req.device.getPageIndex(elementId, getResponseHandler(req, res));
+};
+
 exports.keys = function(req, res) {
   var elementId = req.params.elementId
     , keys = req.body.value.join('');
@@ -265,6 +271,14 @@ exports.getOrientation = function(req, res) {
 
 exports.getScreenshot = function(req, res) {
   req.device.getScreenshot(getResponseHandler(req, res));
+};
+
+exports.pickAFlickMethod = function(req, res) {
+  if (typeof req.body.xspeed !== "undefined") {
+    exports.flick(req, res);
+  } else {
+    exports.flickElement(req, res);
+  }
 };
 
 exports.flick = function(req, res) {

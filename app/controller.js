@@ -2,6 +2,7 @@
 // https://github.com/hugs/appium/blob/master/appium/server.py
 "use strict";
 var status = require('./uiauto/lib/status')
+  , logger = require('../logger.js').get('appium')
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -68,6 +69,23 @@ var respondSuccess = function(req, res, value, sid) {
     response.value = '';
   }
   res.send(response);
+};
+
+var checkMissingParams = function(res, params) {
+  var missingParamNames = [];
+  _.each(params, function(param, paramName) {
+    if (typeof param === "undefined") {
+      missingParamNames.push(paramName);
+    }
+  });
+  if (missingParamNames.length > 0) {
+    var missingList = JSON.stringify(missingParamNames);
+    logger.info("Missing params for request: " + missingList);
+    res.send(400, "Missing parameters: " + missingList);
+    return false;
+  } else {
+    return true;
+  }
 };
 
 exports.sessionBeforeFilter = function(req, res, next) {
@@ -274,7 +292,7 @@ exports.getScreenshot = function(req, res) {
 };
 
 exports.pickAFlickMethod = function(req, res) {
-  if (typeof req.body.xspeed !== "undefined") {
+  if (typeof req.body.xSpeed !== "undefined" || typeof req.body.xspeed !== "undefined") {
     exports.flick(req, res);
   } else {
     exports.flickElement(req, res);
@@ -283,14 +301,16 @@ exports.pickAFlickMethod = function(req, res) {
 
 exports.flick = function(req, res) {
   var swipe = req.body.swipe
-    , xSpeed = req.body.xspeed
-    , ySpeed = req.body.yspeed
+    , xSpeed = req.body.xSpeed || req.body.xspeed
+    , ySpeed = req.body.ySpeed || req.body.yspeed
     , element = req.body.element;
 
-  if (element) {
-    exports.flickElement(req, res);
-  } else {
-    req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
+  if(checkMissingParams(res, {xSpeed: xSpeed, ySpeed: ySpeed})) {
+    if (element) {
+      exports.flickElement(req, res);
+    } else {
+      req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
+    }
   }
 };
 
@@ -300,7 +320,9 @@ exports.flickElement = function(req, res) {
     , yoffset = req.body.yoffset
     , speed = req.body.speed;
 
-  req.device.flickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
+  if(checkMissingParams(res, {element: element, xoffset: xoffset, yoffset: yoffset})) {
+    req.device.flickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
+  }
 };
 
 exports.postUrl = function(req, res) {

@@ -5,7 +5,22 @@ var http = require('http')
   , logger = require('./logger').get('appium')
   , appium = require('./app/appium')
   , bodyParser = require('./middleware').parserWrap
+  , checkWarpDrive = require('./warp.js').checkWarpDrive
   , parser = require('./app/parser');
+
+var doWarpCheck = function(wantWarp, cb) {
+  if (wantWarp) {
+    checkWarpDrive(function(hasWarp) {
+      if (hasWarp) {
+        cb();
+      } else {
+        process.exit(1);
+      }
+    });
+  } else {
+    cb();
+  }
+};
 
 var main = function(args, readyCb, doneCb) {
   var rest = express()
@@ -13,6 +28,7 @@ var main = function(args, readyCb, doneCb) {
   if (typeof doneCb === "undefined") {
     doneCb = function() {};
   }
+
   // in case we'll support blackberry at some point
   args.device = 'iOS';
 
@@ -43,22 +59,24 @@ var main = function(args, readyCb, doneCb) {
   // Hook up REST http interface
   appiumServer.attachTo(rest);
 
-  // Start the server either now or after pre-launching device
-  var next = function(appiumServer) {
-    server.listen(args.port, args.address, function() {
-      var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
-      logger.info(logMessage.cyan);
-    });
-    if (readyCb) {
-      readyCb(appiumServer);
+  doWarpCheck(args.warp, function() {
+    // Start the server either now or after pre-launching device
+    var next = function(appiumServer) {
+      server.listen(args.port, args.address, function() {
+        var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
+        logger.info(logMessage.cyan);
+      });
+      if (readyCb) {
+        readyCb(appiumServer);
+      }
+    };
+    if (args.launch) {
+      logger.info("Starting Appium in pre-launch mode".cyan);
+      appiumServer.preLaunch(next);
+    } else {
+      next(appiumServer);
     }
-  };
-  if (args.launch) {
-    logger.info("Starting Appium in pre-launch mode".cyan);
-    appiumServer.preLaunch(next);
-  } else {
-    next(appiumServer);
-  }
+  });
 
   server.on('close', doneCb);
   return server;

@@ -7,6 +7,8 @@ var path = require('path')
   , instruments = require('../instruments/instruments')
   , delay = require("./helpers.js").delay
   , uuid = require('uuid-js')
+  , timeWarp = require('../warp.js').timeWarp
+  , stopTimeWarp = require('../warp.js').stopTimeWarp
   , status = require("./uiauto/lib/status");
 
 var UnknownError = function(message) {
@@ -19,11 +21,12 @@ var ProtocolError = function(message) {
    this.name = "ProtocolError";
 };
 
-var IOS = function(rest, app, udid, verbose, removeTraceDir) {
+var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.rest = rest;
   this.app = app;
   this.udid = udid;
   this.verbose = verbose;
+  this.warp = warp;
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
@@ -81,6 +84,7 @@ IOS.prototype.start = function(cb, onDie) {
   };
 
   if (this.instruments === null) {
+    timeWarp(50, 1000);
     this.instruments = instruments(
       this.app
       , this.udid
@@ -95,6 +99,7 @@ IOS.prototype.start = function(cb, onDie) {
 };
 
 IOS.prototype.stop = function(cb) {
+  stopTimeWarp();
   if (this.instruments === null) {
     logger.info("Trying to stop instruments but it already exited");
     // we're already stopped

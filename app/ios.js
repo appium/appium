@@ -5,7 +5,6 @@ var path = require('path')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments')
-  , delay = require("./helpers.js").delay
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
   , stopTimeWarp = require('../warp.js').stopTimeWarp
@@ -341,21 +340,23 @@ IOS.prototype.getScreenshot = function(cb) {
       var delayTimes = 0;
       var onErr = function() {
         delayTimes++;
-        delay(0.2);
-        if (delayTimes <= 10) {
-          read(onErr);
-        } else {
-          read();
-        }
+        var next = function() {
+          if (delayTimes <= 10) {
+            read(onErr);
+          } else {
+            read();
+          }
+        };
+        setTimeout(next, 300);
       };
       var read = function(onErr) {
         fs.readFile(shotPath, function read(err, data) {
           if (err) {
             if (onErr) {
-              onErr();
+              return onErr();
             } else {
-              response.value = '';
-              response.status = status.codes.UnknownError.code;
+              response = null;
+              err = new Error("Timed out waiting for screenshot file. " + err.toString());
             }
           } else {
             var b64data = new Buffer(data).toString('base64');

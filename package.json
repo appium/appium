@@ -17,7 +17,7 @@
   "engines": [
     "node"
   ],
-  "main": "./app/server.js",
+  "main": "./server.js",
   "bin": {
     "appium": "./app/bin.js"
   },

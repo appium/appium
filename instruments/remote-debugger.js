@@ -55,7 +55,7 @@ var RemoteDebugger = function(onDisconnect) {
 // ====================================
 
 RemoteDebugger.prototype.connect = function(cb) {
-  var me = this
+  var me = this;
   this.socket = new net.Socket({type: 'tcp6'});
   this.socket.on('close', function() {
     logger.info('Debugger socket disconnected');

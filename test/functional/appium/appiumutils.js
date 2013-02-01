@@ -122,5 +122,4 @@ describe("appiumutils", function() {
       done();
     });
   });
-
 });

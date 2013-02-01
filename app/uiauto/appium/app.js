@@ -67,7 +67,7 @@ $.extend(au, {
 
   , lookup: function(selector, ctx) {
       if (typeof selector === 'string') {
-        var _ctx = this.mainWindow;
+        var _ctx = this.web ? this.web : this.mainWindow;
 
         if (typeof ctx === 'string') {
           _ctx = this.cache[ctx];
@@ -189,6 +189,11 @@ $.extend(au, {
         return {
           status: codes.NoSuchElement.code
           , value: null
+        };
+      } else if (element.type() !== "UIAWebView") {
+        return {
+          status: codes.NoSuchElement.code
+          , value: "That element is not a web view!"
         };
       } else {
         this.web = element;

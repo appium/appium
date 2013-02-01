@@ -123,6 +123,15 @@ RemoteDebugger.prototype.execute = function(command, cb) {
   this.send(sendJSCommand, cb);
 };
 
+RemoteDebugger.prototype.callFunction = function(objId, fn, args, cb) {
+  assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
+  assert.ok(this.pageIdKey);
+  logger.info("Calling javascript function");
+  var callJSFunction = messages.callJSFunction(objId, fn, args, this.appIdKey,
+      this.connId, this.senderId, this.pageIdKey);
+  this.send(callJSFunction, cb);
+};
+
 // ====================================
 // HANDLERS
 // ====================================

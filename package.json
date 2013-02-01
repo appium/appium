@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   "engines": [
     "node"
   ],
-  "main": "./app/server.js",
+  "main": "./server.js",
   "bin": {
     "appium": "./app/bin.js"
   },

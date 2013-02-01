@@ -187,7 +187,7 @@ IOS.prototype.push = function(elem) {
   next();
 };
 
-IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
+IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   if (typeof ctx === "undefined" || !ctx) {
     ctx = '';
@@ -195,30 +195,30 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
     ctx = ", '" + ctx + "'";
   }
 
-  var command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
+  var command = "";
+  if (strategy === "name") {
+    command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
+  } else {
+    command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
+  }
 
   this.proxy(command, cb);
 };
 
 IOS.prototype.findElement = function(strategy, selector, cb) {
-  if (strategy === "name") {
-    var command = ['au.getElementByName("', selector, '")'].join('');
-    this.proxy(command, cb);
-  } else {
-    this.findElementOrElements(selector, null, false, cb);
-  }
+  this.findElementOrElements(strategy, selector, null, false, cb);
 };
 
 IOS.prototype.findElements = function(strategy, selector, cb) {
-  this.findElementOrElements(selector, null, true, cb);
+  this.findElementOrElements(strategy, selector, null, true, cb);
 };
 
 IOS.prototype.findElementFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(selector, element, false, cb);
+  this.findElementOrElements(strategy, selector, element, false, cb);
 };
 
 IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(selector, element, true, cb);
+  this.findElementOrElements(strategy, selector, element, true, cb);
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {
@@ -372,7 +372,7 @@ IOS.prototype.getScreenshot = function(cb) {
 
 IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   var command = "";
-  if (swipe) {
+  if (!swipe) {
     command = ["touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
   else {

@@ -123,4 +123,18 @@ describe("appiumutils", function() {
     });
   });
 
+  //it.only('should test uiwebview', function(done) {
+    //device.proxy("au.getElementByName('Web, Use of UIWebView')", function(err, res) {
+      //var elId = res.value.ELEMENT;
+      //device.proxy("au.cache["+elId+"].tap()", function(err, res) {
+        //device.proxy("au.getElementByType('webview')", function(err, res) {
+          //var wvId = res.value.ELEMENT;
+          //device.proxy("au.cache["+wvId+"].type()", function(err, res) {
+            //console.log(res.value);
+            //done();
+          //});
+        //});
+      //});
+    //});
+  //});
 });

@@ -3,46 +3,54 @@ Appium
 
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 
-Appium is a test automation tool for use with native and hybrid mobile applications. It supports iOS today, and Android support is in the works. Appium provides a WebDriver interface to drive Apple's Instruments application and the UIAutomation API. Appium is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
+Appium is a test automation tool for native and hybrid mobile apps. It supports iOS today and Android support is in the works. Appium drives Apple's UIAutomation library using Selenium's WebDriver JSON wire protocol. Appium is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto. 
 
-There are two big benefits to testing with Appium:
+Testing with Appium has two big benefits:
 
-1.  Appium uses Apple's UIAutomation library under the hood to perform the automation, which means you do not have to recompile or modify your app in any way to be able to test automate it.
-2.  With Appium and a Selenium WebDriver library, you can write your tests in any programming language.
+1.  You don't have to recompile your app or modify it in any way because Appium's automation is based on Apple's UIAutomation library.
+
+2.  You can write tests with your favorite dev tools using Java, JavaScript, PHP, Python, Ruby, C#, or Perl with the Selenium WebDriver API and language-specific client libraries. If you use the UIAutomation library without Appium you can only write tests using JavaScript and you can only run tests through the Instruments application.
 
 Requirements
 ------------
 
-    > Mac OSX 10.6 +
+    > Mac OS X 10.6 or higher
     > XCode
-    > Apple Developer Tools (iphone simulator, command line tools)
+    > Apple Developer Tools (iPhone simulator, command line tools)
 
-Ninja-speed Setup
+Ninja-Speed Setup for Expert Users
 ------------
-Install [node.js](http://nodejs.org/) which comes with its package manager [npm](https://npmjs.org/).
+Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
 
     > sudo npm install appium -g
     > appium &
     > node your-appium-test.js
 
-See [the appium example tests.](https://github.com/appium/appium/tree/master/sample-code/examples)
+See [the Appium example tests](https://github.com/appium/appium/tree/master/sample-code/examples).
 
 - - -
 
 Prerequisites
 ------------
-Install [node.js](http://nodejs.org/) which come with its package manager [npm](https://npmjs.org/).
-Change into your local repo clone and install packages using following commands:
+Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager). 
+
+From your local repo clone's command prompt, install these packages using the following commands:
 
     > sudo npm install -g mocha
     > sudo npm install -g grunt
     > npm install
 
-First two commands will make test and build tools available (sudo may not be necessary if you installed node.js through homebrew). The third command will install all app dependencies.
+The first two commands install test and build tools (sudo may not be necessary if you installed node.js via Homebrew). The third command installs all app dependencies.
 
-To avoid a security dialog that can appear when launching your iOS app, you need to modify your /etc/authorization file. You can do this by settings the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; to &lt;true/&gt; or by running the supplied grunt task (at your own risk)
+To avoid a security dialog that may appear when launching your iOS apps you'll have to modify your `/etc/authorization` file in one of two ways: 
+
+1.  Manually modify the element following &lt;allow-root&gt; under &lt;key&gt;system.privilege.taskport&lt;/key&gt; in your `/etc/authorization` file to &lt;true/&gt;.
+
+2.  Run the following grunt command which automatically modifies your `/etc/authorization` file for you:
 
     > sudo grunt authorize
+
+**Important Note:** Making this modification to your `/etc/authorization` file grants access privileges to all members belonging to your `_developer` group.
 
 Quick Start
 -----------
@@ -50,7 +58,7 @@ Download UICatalog:
 
     > grunt downloadApp
 
-Build an app (if functional test are failing please re-build apps):
+Build an app (if the functional tests fail, try running these grunt commands again):
 
     > grunt buildApp:UICatalog
     > grunt buildApp:TestApp
@@ -67,7 +75,7 @@ Run all tests:
 
     > grunt test
 
-Before commiting code please run grunt to run test and check your changes against code quality standards:
+Before committing code, please run grunt to execute some basic tests and check your changes against code quality standards:
 
     > grunt
     Running "lint:all" (lint) task
@@ -75,38 +83,34 @@ Before commiting code please run grunt to run test and check your changes agains
 
     Done, without errors.
 
-More things, low-level things
+More Stuff and Some Low-Level Tips
 -----------
-If you want to run the appium server and have it listen indefinitely, you can
-do one of the following to start an appium server with or without an app
-pre-specified:
+If you want to run the Appium server and have it listen indefinitely, you can
+execute one of the following commands to start an Appium server with or without a specified app:
 
-    > grunt appium
-    > grunt appium:TestApp
-    > grunt appium:UICatalog
+    > grunt appium           // launch Appium server without app
+    > grunt appium:TestApp   // launch Appium server with the TestApp
+    > grunt appium:UICatalog // launch Appium server with the UICatalog app
 
-Then you can, e.g., run individual testfiles using Mocha directly:
+Then you can run individual test files using Mocha, for example:
 
     > mocha -t 60000 -R spec test/functional/testapp/simple.js
 
-Do you like getting close to the metal? Or are you trying to run this from
-a script with a custom app? Start appium without grunt from the
-command line (see parser.js for more CLI arguments):
+Do you like getting close to the metal? Or are you trying to launch an Appium server from
+a script with a custom app? If so you can start Appium without grunt from the
+command line with an app or without an app. (See [parser.js](https://github.com/appium/appium/blob/master/app/parser.js) for more CLI arguments.)
 
-    > node server.js -V 1
-    > node server.js --app /absolute/path/to/app -V 1
+    > node server.js -V 1  // launch Appium server without app
+    > node server.js --app /absolute/path/to/app -V 1  // launch Appium server with app
 
-In this case, the app has to be compiled for the iphone simulator, e.g., by
-doing this in the Xcode project:
+In this case, the app has to be compiled for the iPhone simulator, for example by
+executing the following command in the Xcode project:
 
     > xcodebuild -sdk iphonesimulator6.0
 
-This will create a directory called build/Release-iphonesimulator in your Xcode
-project, and this dir will contain the .app package you need to send to the
+This creates a `build/Release-iphonesimulator` directory in your Xcode
+project that contains the `.app` package that you'll need to communicate with the Appium 
 server.
-
-You can also run against an app on an actual device by plugging the device in
-and passing the udid argument to server.js in the command above.
 
 Using with a [Bitbeambot](http://bitbeam.org)
 -----------

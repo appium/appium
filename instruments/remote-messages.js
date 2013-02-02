@@ -52,6 +52,12 @@ exports.sendJSCommand = function(js, appIdKey, connId, senderId, pageIdKey) {
       {expression: js, returnByValue: true}, appIdKey, connId, senderId, pageIdKey);
 };
 
+exports.callJSFunction = function(objId, fn, args, appIdKey, connId, senderId, pageIdKey) {
+  return exports.command("Runtime.callFunctionOn",
+      {objectId: objId, functionDeclaration: fn, arguments: args, returnByValue: true},
+      appIdKey, connId, senderId, pageIdKey);
+};
+
 exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey) {
   var plist = {
     __argument: {

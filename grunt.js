@@ -1,6 +1,5 @@
 "use strict";
-var build = require('./build.js')
-  , path = require('path')
+var path = require('path')
   , rimraf = require('rimraf')
   , http = require('http')
   , exec = require('child_process').exec
@@ -8,6 +7,7 @@ var build = require('./build.js')
   , startAppium = gruntHelpers.startAppium
   , authorize = gruntHelpers.authorize
   , tail = gruntHelpers.tail
+  , build = gruntHelpers.build
   , runTestsWithServer = gruntHelpers.runTestsWithServer
   , fs = require('fs');
 
@@ -100,7 +100,10 @@ module.exports = function(grunt) {
       });
     });
   });
-  grunt.registerTask('buildApp', "Build the test app", function(appDir) {
+  grunt.registerTask('buildApp', "Build the test app", function(appDir, sdk) {
+    if(typeof sdk === "undefined") {
+      sdk = "iphonesimulator6.1";
+    }
     var done = this.async();
     var appRoot = path.resolve(__dirname, 'sample-code/apps/', appDir);
     build(appRoot, function(err) {
@@ -110,7 +113,7 @@ module.exports = function(grunt) {
       } else {
         done(true);
       }
-    });
+    }, sdk);
   });
   grunt.registerTask('authorize', "Authorize developer", function() {
     authorize(grunt, this.async());

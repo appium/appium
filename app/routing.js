@@ -46,6 +46,9 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId/touch/flick', controller.pickAFlickMethod);
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
   rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
+  rest.get('/wd/hub/session/:sessionId?/window_handle', controller.getWindowHandle);
+  rest.get('/wd/hub/session/:sessionid?/window_handles', controller.getWindowHandles);
+  rest.post('/wd/hub/session/:sessionid?/window', controller.setWindow);
 
   // this is for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -69,8 +72,6 @@ var routenotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/window_handle', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/window_handles', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionid?/url', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionid?/forward', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionid?/back', controller.notYetImplemented);
@@ -80,7 +81,6 @@ var routenotYetImplemented = function(rest) {
   rest.get('/wd/hub/session/:sessionid?/ime/activated', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionid?/ime/deactivate', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionid?/ime/activate', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/window', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionid?/window', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionid?/window/:windowhandle/size', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionid?/window/:windowhandle/size', controller.notYetImplemented);

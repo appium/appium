@@ -240,7 +240,11 @@ exports.keys = function(req, res) {
 exports.frame = function(req, res) {
   var frame = req.body.id;
 
-  req.device.frame(frame, getResponseHandler(req, res));
+  if (frame === null) {
+    req.device.clearWebView(getResponseHandler(req, res));
+  } else {
+    req.device.frame(frame, getResponseHandler(req, res));
+  }
 };
 
 exports.elementDisplayed = function(req, res) {
@@ -338,6 +342,22 @@ exports.postUrl = function(req, res) {
 
 exports.active = function(req, res) {
   req.device.active(getResponseHandler(req, res));
+};
+
+exports.getWindowHandle = function(req, res) {
+  req.device.getWindowHandle(getResponseHandler(req, res));
+};
+
+exports.setWindow = function(req, res) {
+  var name = req.body.name;
+
+  if(checkMissingParams(res, {name: name})) {
+    req.device.setWindow(name, getResponseHandler(req, res));
+  }
+};
+
+exports.getWindowHandles = function(req, res) {
+  req.device.getWindowHandles(getResponseHandler(req, res));
 };
 
 exports.unknownCommand = function(req, res) {

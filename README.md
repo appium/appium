@@ -3,10 +3,11 @@ Appium
 
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 
-Appium is a test automation tool for native and hybrid mobile apps. It supports
-iOS today and Android support is in the works. Appium drives Apple's
-UIAutomation library using Selenium's WebDriver JSON wire protocol. Appium is
-based on [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
+Appium is an open source test automation tool for native and hybrid
+mobile apps. It supports iOS today and Android support is in the
+works. Appium drives Apple's UIAutomation library using Selenium's
+WebDriver JSON wire protocol. Appium is based on 
+[Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
 Testing with Appium has two big benefits:
 

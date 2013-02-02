@@ -2,12 +2,14 @@
 var path = require('path')
   , rimraf = require('rimraf')
   , fs = require('fs')
+  , _ = require('underscore')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
   , stopTimeWarp = require('../warp.js').stopTimeWarp
+  , rd = require('../instruments/remote-debugger')
   , status = require("./uiauto/lib/status");
 
 var UnknownError = function(message) {
@@ -33,6 +35,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.removeTraceDir = removeTraceDir;
   this.onStop = function(code, traceDir) {};
   this.cbForCurrentCmd = null;
+  this.remote = null;
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -102,6 +105,42 @@ IOS.prototype.start = function(cb, onDie) {
     );
   }
 
+};
+
+IOS.prototype.listWebFrames = function(cb, exitCb) {
+  var me = this;
+  if (this.remote) {
+    logger.error("Can't enter a web frame when we're already in one!");
+    throw new Error("Tried to enter a web frame when we were in one");
+  }
+  if (!this.bundleId) {
+    logger.error("Can't enter web frame without a bundle ID");
+    throw new Error("Tried to enter web frame without a bundle ID");
+  }
+  this.remote = rd.init(exitCb);
+  this.remote.connect(function(appDict) {
+    if(!_.has(appDict, me.bundleId)) {
+      logger.error("Remote debugger did not list " + me.bundleId + " among " +
+                   "its available apps");
+      throw new Error("Could not find app in remote debugger");
+    } else {
+      me.remote.selectApp(me.bundleId, cb);
+    }
+  }, function() {
+    logger.error("Remote debugger crashed before we shut it down!");
+    me.stopRemote();
+    exitCb();
+  });
+};
+
+IOS.prototype.stopRemote = function() {
+  if (!this.remote) {
+    logger.error("We don't appear to be in a web frame");
+    throw new Error("Tried to leave a web frame but weren't in one");
+  } else {
+    this.remote.disconnect();
+    this.remote = null;
+  }
 };
 
 IOS.prototype.stop = function(cb) {

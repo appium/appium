@@ -71,6 +71,10 @@ RemoteDebugger.prototype.connect = function(cb) {
   });
 };
 
+RemoteDebugger.prototype.disconnect = function() {
+  this.socket.close();
+};
+
 RemoteDebugger.prototype.setConnectionKey = function(cb) {
   assert.ok(this.connId);
   var setConnKey = messages.setConnectionKey(this.connId);

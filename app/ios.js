@@ -24,6 +24,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.rest = rest;
   this.app = app;
   this.udid = udid;
+  this.bundleId = null; // what we get from app on startup
   this.verbose = verbose;
   this.warp = warp;
   this.instruments = null;
@@ -55,7 +56,11 @@ IOS.prototype.start = function(cb, onDie) {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
-    cb(null);
+    me.proxy('au.bundleId()', function(err, bId) {
+      logger.info('Bundle ID for open app is ' + bId.value);
+      me.bundleId = bId.value;
+      cb(null);
+    });
   };
 
   var onExit = function(code, traceDir) {

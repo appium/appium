@@ -15,7 +15,7 @@ describeWd('window handles', function(h) {
   it('getting handles should do nothing when no webview open', function(done) {
     h.driver.windowHandles(function(err, handles) {
       should.not.exist(err);
-      handles.should.be.empty;
+      handles.length.should.equal(0);
       done();
     });
   });
@@ -26,7 +26,7 @@ describeWd('window handles', function(h) {
         should.not.exist(err);
         h.driver.windowHandles(function(err, handles) {
           should.not.exist(err);
-          handles.should.not.be.empty;
+          handles.length.should.be.above(0);
           done();
         });
       });
@@ -39,7 +39,7 @@ describeWd('window handles', function(h) {
         should.not.exist(err);
         h.driver.windowHandles(function(err, handles) {
           should.not.exist(err);
-          handles.should.not.be.empty;
+          handles.length.should.be.above(0);
           h.driver.window(handles[0], function(err) {
             should.not.exist(err);
             done();
@@ -55,7 +55,7 @@ describeWd('window handles', function(h) {
         should.not.exist(err);
         h.driver.windowHandles(function(err, handles) {
           should.not.exist(err);
-          handles.should.not.be.empty;
+          handles.length.should.be.above(0);
           h.driver.window(handles[0], function(err) {
             should.not.exist(err);
             h.driver.frame(null, function(err) {

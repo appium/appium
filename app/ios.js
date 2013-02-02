@@ -36,6 +36,8 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.onStop = function(code, traceDir) {};
   this.cbForCurrentCmd = null;
   this.remote = null;
+  this.curWindowHandle = null;
+  this.windowHandleCache = [];
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -122,7 +124,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     if(!_.has(appDict, me.bundleId)) {
       logger.error("Remote debugger did not list " + me.bundleId + " among " +
                    "its available apps");
-      throw new Error("Could not find app in remote debugger");
+      cb([]);
     } else {
       me.remote.selectApp(me.bundleId, cb);
     }
@@ -139,6 +141,7 @@ IOS.prototype.stopRemote = function() {
     throw new Error("Tried to leave a web frame but weren't in one");
   } else {
     this.remote.disconnect();
+    this.curWindowHandle = null;
     this.remote = null;
   }
 };
@@ -440,6 +443,60 @@ IOS.prototype.url = function(cb) {
 
 IOS.prototype.active = function(cb) {
   this.proxy("au.getActiveElement()", cb);
+};
+
+IOS.prototype.getWindowHandle = function(cb) {
+  var err = null, response = null;
+  if (this.curWindowHandle) {
+    response = {
+      status: status.codes.Success.code
+      , value: this.curWindowHandle
+    };
+  } else {
+    response = {
+      status: status.codes.NoSuchWindow.code
+      , value: null
+    };
+  }
+  cb(err, response);
+};
+
+IOS.prototype.getWindowHandles = function(cb) {
+  var me = this;
+  this.listWebFrames(function(pageArray) {
+    me.windowHandleCache = [];
+    _.each(pageArray, function(page) {
+      me.windowHandleCache.push(page.id.toString());
+    });
+    cb(null, {
+      status: status.codes.Success.code
+      , value: me.windowHandleCache
+    });
+  });
+};
+
+IOS.prototype.setWindow = function(name, cb) {
+  var me = this;
+  if (_.contains(this.windowHandleCache, name)) {
+    var pageIdKey = parseInt(name, 10);
+    me.remote.selectPage(pageIdKey, function() {
+      me.curWindowHandle = pageIdKey;
+      cb(null, {
+        status: status.codes.Success.code
+        , value: ''
+      });
+    });
+  } else {
+    cb(status.codes.NoSuchWindow.code, null);
+  }
+};
+
+IOS.prototype.clearWebView = function(cb) {
+  this.curWindowHandle = null;
+  cb(null, {
+    status: status.codes.Success.code
+    , value: ''
+  });
 };
 
 module.exports = function(rest, app, udid, verbose, removeTraceDir, warp) {

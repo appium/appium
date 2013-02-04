@@ -19,7 +19,8 @@
   ],
   "main": "./server.js",
   "bin": {
-    "appium": "./app/bin.js"
+    "appium": "./app/bin.js",
+    "instruments_client": "./instruments/client_bin.js"
   },
   "directories": {
     "lib": "./app"

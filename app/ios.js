@@ -522,6 +522,26 @@ IOS.prototype.execute = function(script, args, cb) {
   }
 };
 
+IOS.prototype.title = function(cb) {
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.remote.execute('document.title', function (err, res) {
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.JavaScriptError.code
+          , value: res
+        });
+      } else {
+        cb(null, {
+          status: status.codes.Success.code
+          , value: res.result.value
+        });
+      }
+    });
+  }
+};
+
 module.exports = function(rest, app, udid, verbose, removeTraceDir, warp) {
   return new IOS(rest, app, udid, verbose, removeTraceDir, warp);
 };

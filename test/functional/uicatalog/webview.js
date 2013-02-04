@@ -68,3 +68,39 @@ describeWd('window handles', function(h) {
     });
   });
 });
+
+describeWd('window title', function(h) {
+  it.only('should return a valid title on web view', function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.title(function(err, title) {
+        should.not.exist(err);
+        title.should.eql("Apple");
+        h.driver.frame(null, function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            err.status.should.eql(13);
+            should.not.exist(title);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
+
+var loadWebView = function(driver, cb) {
+  driver.elementByName('Web, Use of UIWebView', function(err, el) {
+    should.not.exist(err);
+    el.click(function(err) {
+      should.not.exist(err);
+      driver.windowHandles(function(err, handles) {
+        should.not.exist(err);
+        handles.length.should.be.above(0);
+        driver.window(handles[0], function(err) {
+          should.not.exist(err);
+          cb();
+        });
+      });
+    });
+  });
+};

@@ -1,28 +1,24 @@
 <?php
 // To run this test, install Sausage (see http://github.com/jlipps/sausage-bun
 // to get the curl one-liner to run in this directory), then run:
-//     vendor/bin/phpunit SimpleTest.php
+//     vendor/bin/phpunit SauceTest.php
 
 require_once "vendor/autoload.php";
-define("APP_PATH", realpath(dirname(__FILE__).'/../../apps/TestApp/build/Release-iphonesimulator/TestApp.app'));
-if (!APP_PATH) {
-    die("App did not exist!");
-}
+define("APP_URL", "https://raw.github.com/appium/appium/master/assets/TestApp.app.zip");
 
-
-class SimpleTest extends Sauce\Sausage\WebDriverTestCase
+class SauceTest extends Sauce\Sausage\WebDriverTestCase
 {
     protected $numValues = array();
 
     public static $browsers = array(
         array(
-            'local' => true,
-            'port' => 4723,
-            'browserName' => 'iOS',
+            'browserName' => '',
+            'seleniumServerRequestsTimeout' => 240,
             'desiredCapabilities' => array(
-                'version' => '6.0',
-                'platform' => 'Mac',
-                'app' => APP_PATH
+                'platform' => 'Mac 10.8',
+                'device' => 'iPhone Simulator',
+                'app' => APP_URL,
+                'version' => '',
             )
         )
     );

@@ -152,6 +152,7 @@ UIAElement.prototype.getTree = function() {
       , label: element.label()
       , value: element.value()
       , rect: element.rect()
+      , dom: typeof element.dom === "function" ? element.dom() : null
       , enabled: element.isEnabled() ? true : false
       , valid: element.isValid() ? true : false
       , visible: element.isVisible() ? true : false

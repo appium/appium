@@ -55,6 +55,6 @@ if (process.argv[2] === "shell") {
 else {
   var args = parser().parseArgs();
   args.verbose = 1;
-  console.log("Pre-flight check ...".grey);
-  appium.run(args, function() { console.log('Rock and roll.'.grey); });
+  //console.log("Pre-flight check ...".grey);
+  appium.run(args, function() { /* console.log('Rock and roll.'.grey); */ });
 }

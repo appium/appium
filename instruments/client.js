@@ -20,16 +20,18 @@ var connect = function(args) {
   });
 };
 
+var parser = new ap({
+  version: '0.0.1',
+});
+parser.addArgument(['-r', '--result'], {defaultValue: null, required: false});
+parser.addArgument(['-s', '--socket'], {defaultValue: '/tmp/instruments_sock', required: false});
+
 if (module === require.main) {
-  var parser = new ap({
-    version: '0.0.1',
-  });
-  parser.addArgument(['-r', '--result'], {defaultValue: null, required: false});
-  parser.addArgument(['-s', '--socket'], {defaultValue: '/tmp/instruments_sock', required: false});
   var args = parser.parseArgs();
   connect(args);
 }
 
+module.exports.parser = parser;
 module.exports.connect = function(result, socket) {
   var args = {result: result, socket: socket};
   connect(args);

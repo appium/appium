@@ -11,11 +11,15 @@ function getResponseHandler(req, res) {
       response = {};
     }
     if (err !== null) {
-      var value = response.value;
-      if (typeof value === "undefined") {
-        value = '';
+      if (typeof err.name !== "undefined" && err.name == 'NotImplementedError') {
+        notImplementedInThisContext(req, res);
+      } else {
+        var value = response.value;
+        if (typeof value === "undefined") {
+          value = '';
+        }
+        respondError(req, res, err.message, value);
       }
-      respondError(req, res, err.message, value);
     } else {
       if (response.status === 0) {
         respondSuccess(req, res, response.value, response.sessionId);
@@ -240,7 +244,11 @@ exports.keys = function(req, res) {
 exports.frame = function(req, res) {
   var frame = req.body.id;
 
-  req.device.frame(frame, getResponseHandler(req, res));
+  if (frame === null) {
+    req.device.clearWebView(getResponseHandler(req, res));
+  } else {
+    req.device.frame(frame, getResponseHandler(req, res));
+  }
 };
 
 exports.elementDisplayed = function(req, res) {
@@ -332,12 +340,37 @@ exports.flickElement = function(req, res) {
   }
 };
 
+exports.execute = function(req, res) {
+  var script = req.body.script
+    , args = req.body.args;
+
+  if(checkMissingParams(res, {script: script, args: args})) {
+    req.device.execute(script, args, getResponseHandler(req, res));
+  }
+};
+
 exports.postUrl = function(req, res) {
   req.device.url(getResponseHandler(req, res));
 };
 
 exports.active = function(req, res) {
   req.device.active(getResponseHandler(req, res));
+};
+
+exports.getWindowHandle = function(req, res) {
+  req.device.getWindowHandle(getResponseHandler(req, res));
+};
+
+exports.setWindow = function(req, res) {
+  var name = req.body.name;
+
+  if(checkMissingParams(res, {name: name})) {
+    req.device.setWindow(name, getResponseHandler(req, res));
+  }
+};
+
+exports.getWindowHandles = function(req, res) {
+  req.device.getWindowHandles(getResponseHandler(req, res));
 };
 
 exports.unknownCommand = function(req, res) {
@@ -347,6 +380,11 @@ exports.unknownCommand = function(req, res) {
 
 exports.notYetImplemented = function(req, res) {
   res.send(501, "Not Implemented");
+};
+
+var notImplementedInThisContext = function(req, res) {
+  res.send(501, "Not implemented in this context, try switching into or out " +
+                "of a web view");
 };
 
 exports.produceError = function(req, res) {

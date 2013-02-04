@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0.0.2",
+  "version": "0.0.4",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -17,9 +17,10 @@
   "engines": [
     "node"
   ],
-  "main": "./app/server.js",
+  "main": "./server.js",
   "bin": {
-    "appium": "./app/bin.js"
+    "appium": "./app/bin.js",
+    "instruments_client": "./instruments/client_bin.js"
   },
   "directories": {
     "lib": "./app"
@@ -35,6 +36,10 @@
     "temp": "~0.5.0",
     "winston": "~0.6.2",
     "request": "~2.12.0",
+    "bplist-parser": "~0.0.4",
+    "bufferpack": "0.0.6",
+    "node-bplist-creator": "~0.0.1",
+    "node-uuid": "~1.4.0",
     "unzip": "~0.1.1"
   },
   "scripts": {

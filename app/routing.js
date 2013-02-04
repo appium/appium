@@ -49,6 +49,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/window_handle', controller.getWindowHandle);
   rest.get('/wd/hub/session/:sessionid?/window_handles', controller.getWindowHandles);
   rest.post('/wd/hub/session/:sessionid?/window', controller.setWindow);
+  rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
 
   // this is for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -61,7 +62,6 @@ module.exports = function(appium) {
 var routenotYetImplemented = function(rest) {
   // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
   // High priority to reach parity with PyAppium:
-  rest.post('/wd/hub/session/:sessionId?/execute', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);

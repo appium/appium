@@ -2,9 +2,10 @@
 /* DEPENDENCIES */
 
 var net = require('net')
-  , appLogger = require('../logger.js').get('appium')
+  , appLogger = require('../../../logger.js').get('appium')
   , _ = require('underscore')
   , messages = require('./remote-messages.js')
+  , atoms = require('./webdriver-atoms')
   , bplistCreate = require('node-bplist-creator')
   , bplistParse = require('bplist-parser')
   , bufferpack = require('bufferpack')
@@ -118,6 +119,12 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
   this.send(setSenderKey, cb);
 };
 
+RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
+  var atomSrc = atoms.get(atom);
+  args = _.map(args, JSON.stringify);
+  this.execute(['(',atomSrc,')(',args.join(','),')'].join(''), cb);
+};
+
 RemoteDebugger.prototype.execute = function(command, cb) {
   assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
   assert.ok(this.pageIdKey);
@@ -181,9 +188,10 @@ RemoteDebugger.prototype.setHandlers = function() {
     '_rpc_applicationSentData:': function(plist) {
       var dataKey = JSON.parse(plist.__argument.WIRMessageDataKey.toString('utf8'))
       , msgId = dataKey.id
-      , result = dataKey.result;
+      , result = dataKey.result
+      , error = dataKey.error || null;
       if (typeof me.dataCbs[msgId] === "function") {
-        me.dataCbs[msgId](result);
+        me.dataCbs[msgId](error, result);
       } else {
         logger.error("Debugger returned data for message " + msgId +
                      "but we weren't waiting for that message!");

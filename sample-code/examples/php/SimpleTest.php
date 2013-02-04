@@ -2,11 +2,9 @@
 // To run this test, install Sausage (see http://github.com/jlipps/sausage-bun
 // to get the curl one-liner to run in this directory), then run:
 //     vendor/bin/phpunit SimpleTest.php
-// NOTE: this test is currently broken, waiting on this fix:
-// https://github.com/giorgiosironi/phpunit-selenium/pull/18
 
 require_once "vendor/autoload.php";
-define("APP_PATH", realpath(dirname(__FILE__).'/../../apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'));
+define("APP_PATH", realpath(dirname(__FILE__).'/../../apps/TestApp/build/Release-iphonesimulator/TestApp.app'));
 if (!APP_PATH) {
     die("App did not exist!");
 }

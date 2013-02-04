@@ -2,13 +2,21 @@
 var path = require('path')
   , rimraf = require('rimraf')
   , fs = require('fs')
+  , _ = require('underscore')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
   , stopTimeWarp = require('../warp.js').stopTimeWarp
+  , rd = require('./hybrid/ios/remote-debugger')
   , status = require("./uiauto/lib/status");
+
+var NotImplementedError = function(message) {
+   this.message = message? message : "Not implemented in this context, try " +
+                                     "switching into or out of a web view";
+   this.name = "NotImplementedError";
+};
 
 var UnknownError = function(message) {
    this.message = message? message : "Invalid response from device";
@@ -24,14 +32,18 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.rest = rest;
   this.app = app;
   this.udid = udid;
+  this.bundleId = null; // what we get from app on startup
   this.verbose = verbose;
   this.warp = warp;
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
   this.removeTraceDir = removeTraceDir;
-  this.onStop = function(code, traceDir) {};
+  this.onStop = function() {};
   this.cbForCurrentCmd = null;
+  this.remote = null;
+  this.curWindowHandle = null;
+  this.windowHandleCache = [];
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -55,7 +67,11 @@ IOS.prototype.start = function(cb, onDie) {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
-    cb(null);
+    me.proxy('au.bundleId()', function(err, bId) {
+      logger.info('Bundle ID for open app is ' + bId.value);
+      me.bundleId = bId.value;
+      cb(null);
+    });
   };
 
   var onExit = function(code, traceDir) {
@@ -97,6 +113,43 @@ IOS.prototype.start = function(cb, onDie) {
     );
   }
 
+};
+
+IOS.prototype.listWebFrames = function(cb, exitCb) {
+  var me = this;
+  if (this.remote) {
+    logger.error("Can't enter a web frame when we're already in one!");
+    throw new Error("Tried to enter a web frame when we were in one");
+  }
+  if (!this.bundleId) {
+    logger.error("Can't enter web frame without a bundle ID");
+    throw new Error("Tried to enter web frame without a bundle ID");
+  }
+  this.remote = rd.init(exitCb);
+  this.remote.connect(function(appDict) {
+    if(!_.has(appDict, me.bundleId)) {
+      logger.error("Remote debugger did not list " + me.bundleId + " among " +
+                   "its available apps");
+      cb([]);
+    } else {
+      me.remote.selectApp(me.bundleId, cb);
+    }
+  }, function() {
+    logger.error("Remote debugger crashed before we shut it down!");
+    me.stopRemote();
+    exitCb();
+  });
+};
+
+IOS.prototype.stopRemote = function() {
+  if (!this.remote) {
+    logger.error("We don't appear to be in a web frame");
+    throw new Error("Tried to leave a web frame but weren't in one");
+  } else {
+    this.remote.disconnect();
+    this.curWindowHandle = null;
+    this.remote = null;
+  }
 };
 
 IOS.prototype.stop = function(cb) {
@@ -187,7 +240,7 @@ IOS.prototype.push = function(elem) {
   next();
 };
 
-IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
+IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   if (typeof ctx === "undefined" || !ctx) {
     ctx = '';
@@ -195,30 +248,30 @@ IOS.prototype.findElementOrElements = function(selector, ctx, many, cb) {
     ctx = ", '" + ctx + "'";
   }
 
-  var command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
+  var command = "";
+  if (strategy === "name") {
+    command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
+  } else {
+    command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
+  }
 
   this.proxy(command, cb);
 };
 
 IOS.prototype.findElement = function(strategy, selector, cb) {
-  if (strategy === "name") {
-    var command = ['au.getElementByName("', selector, '")'].join('');
-    this.proxy(command, cb);
-  } else {
-    this.findElementOrElements(selector, null, false, cb);
-  }
+  this.findElementOrElements(strategy, selector, null, false, cb);
 };
 
 IOS.prototype.findElements = function(strategy, selector, cb) {
-  this.findElementOrElements(selector, null, true, cb);
+  this.findElementOrElements(strategy, selector, null, true, cb);
 };
 
 IOS.prototype.findElementFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(selector, element, false, cb);
+  this.findElementOrElements(strategy, selector, element, false, cb);
 };
 
 IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(selector, element, true, cb);
+  this.findElementOrElements(strategy, selector, element, true, cb);
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {
@@ -372,7 +425,7 @@ IOS.prototype.getScreenshot = function(cb) {
 
 IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   var command = "";
-  if (swipe) {
+  if (!swipe) {
     command = ["touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
   else {
@@ -396,6 +449,77 @@ IOS.prototype.url = function(cb) {
 
 IOS.prototype.active = function(cb) {
   this.proxy("au.getActiveElement()", cb);
+};
+
+IOS.prototype.getWindowHandle = function(cb) {
+  var err = null, response = null;
+  if (this.curWindowHandle) {
+    response = {
+      status: status.codes.Success.code
+      , value: this.curWindowHandle
+    };
+  } else {
+    response = {
+      status: status.codes.NoSuchWindow.code
+      , value: null
+    };
+  }
+  cb(err, response);
+};
+
+IOS.prototype.getWindowHandles = function(cb) {
+  var me = this;
+  this.listWebFrames(function(pageArray) {
+    me.windowHandleCache = [];
+    _.each(pageArray, function(page) {
+      me.windowHandleCache.push(page.id.toString());
+    });
+    cb(null, {
+      status: status.codes.Success.code
+      , value: me.windowHandleCache
+    });
+  });
+};
+
+IOS.prototype.setWindow = function(name, cb) {
+  var me = this;
+  if (_.contains(this.windowHandleCache, name)) {
+    var pageIdKey = parseInt(name, 10);
+    me.remote.selectPage(pageIdKey, function() {
+      me.curWindowHandle = pageIdKey;
+      cb(null, {
+        status: status.codes.Success.code
+        , value: ''
+      });
+    });
+  } else {
+    cb(status.codes.NoSuchWindow.code, null);
+  }
+};
+
+IOS.prototype.clearWebView = function(cb) {
+  this.curWindowHandle = null;
+  cb(null, {
+    status: status.codes.Success.code
+    , value: ''
+  });
+};
+
+IOS.prototype.execute = function(script, args, cb) {
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.remote.executeAtom('execute_script', [script, args], function (err, res) {
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.JavaScriptError.code
+          , value: res
+        });
+      } else {
+        cb(null, res.result.value);
+      }
+    });
+  }
 };
 
 module.exports = function(rest, app, udid, verbose, removeTraceDir, warp) {

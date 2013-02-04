@@ -33,7 +33,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.queue = [];
   this.progress = 0;
   this.removeTraceDir = removeTraceDir;
-  this.onStop = function(code, traceDir) {};
+  this.onStop = function() {};
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
@@ -493,6 +493,17 @@ IOS.prototype.setWindow = function(name, cb) {
 
 IOS.prototype.clearWebView = function(cb) {
   this.curWindowHandle = null;
+  cb(null, {
+    status: status.codes.Success.code
+    , value: ''
+  });
+};
+
+IOS.prototype.execute = function(script, args, cb) {
+  if (this.curWindowHandle === null) {
+
+  }
+
   cb(null, {
     status: status.codes.Success.code
     , value: ''

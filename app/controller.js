@@ -11,11 +11,15 @@ function getResponseHandler(req, res) {
       response = {};
     }
     if (err !== null) {
-      var value = response.value;
-      if (typeof value === "undefined") {
-        value = '';
+      if (typeof err.name !== "undefined" && err.name == 'NotImplementedError') {
+        notImplementedInThisContext(req, res);
+      } else {
+        var value = response.value;
+        if (typeof value === "undefined") {
+          value = '';
+        }
+        respondError(req, res, err.message, value);
       }
-      respondError(req, res, err.message, value);
     } else {
       if (response.status === 0) {
         respondSuccess(req, res, response.value, response.sessionId);
@@ -376,6 +380,11 @@ exports.unknownCommand = function(req, res) {
 
 exports.notYetImplemented = function(req, res) {
   res.send(501, "Not Implemented");
+};
+
+var notImplementedInThisContext = function(req, res) {
+  res.send(501, "Not implemented in this context, try switching into or out " +
+                "of a web view");
 };
 
 exports.produceError = function(req, res) {

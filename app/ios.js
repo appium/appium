@@ -9,8 +9,14 @@ var path = require('path')
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
   , stopTimeWarp = require('../warp.js').stopTimeWarp
-  , rd = require('../instruments/remote-debugger')
+  , rd = require('./hybrid/ios/remote-debugger')
   , status = require("./uiauto/lib/status");
+
+var NotImplementedError = function(message) {
+   this.message = message? message : "Not implemented in this context, try " +
+                                     "switching into or out of a web view";
+   this.name = "NotImplementedError";
+};
 
 var UnknownError = function(message) {
    this.message = message? message : "Invalid response from device";
@@ -501,13 +507,19 @@ IOS.prototype.clearWebView = function(cb) {
 
 IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
-
+    cb(new NotImplementedError(), null);
+  } else {
+    this.remote.executeAtom('execute_script', [script, args], function (err, res) {
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.JavaScriptError.code
+          , value: res
+        });
+      } else {
+        cb(null, res.result.value);
+      }
+    });
   }
-
-  cb(null, {
-    status: status.codes.Success.code
-    , value: ''
-  });
 };
 
 module.exports = function(rest, app, udid, verbose, removeTraceDir, warp) {

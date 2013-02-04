@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -19,7 +19,8 @@
   ],
   "main": "./server.js",
   "bin": {
-    "appium": "./app/bin.js"
+    "appium": "./app/bin.js",
+    "instruments_client": "./instruments/client_bin.js"
   },
   "directories": {
     "lib": "./app"

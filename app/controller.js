@@ -336,6 +336,15 @@ exports.flickElement = function(req, res) {
   }
 };
 
+exports.execute = function(req, res) {
+  var script = req.body.script
+    , args = req.body.args;
+
+  if(checkMissingParams(res, {script: script, args: args})) {
+    req.device.execute(script, args, getResponseHandler(req, res));
+  }
+};
+
 exports.postUrl = function(req, res) {
   req.device.url(getResponseHandler(req, res));
 };

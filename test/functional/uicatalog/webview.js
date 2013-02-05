@@ -68,3 +68,76 @@ describeWd('window handles', function(h) {
     });
   });
 });
+
+describeWd('window title', function(h) {
+  it('should return a valid title on web view', function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.title(function(err, title) {
+        should.not.exist(err);
+        title.should.eql("Apple");
+        h.driver.frame(null, function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            err.status.should.eql(13);
+            should.not.exist(title);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
+
+describeWd('findElement/s', function(h) {
+  it('should find a web element in the web view', function(done) {
+    loadWebView(h.driver, function() {
+      setTimeout(function() {
+        h.driver.elementById('gn-store', function(err, element) {
+          should.not.exist(err);
+          should.exist(element);
+          element.value.should.eql('5000');
+          done();
+        });
+      }, 5000);
+    });
+  });
+  it('should find multiple web elements in the web view', function(done) {
+    loadWebView(h.driver, function() {
+      setTimeout(function() {
+        h.driver.elementsByTagName('a', function(err, elements) {
+          should.not.exist(err);
+          elements.length.should.be.above(0);
+          done();
+        });
+      }, 5000);
+    });
+  });
+  it('should fail gracefully to find multiple missing web elements in the web view', function(done) {
+    loadWebView(h.driver, function() {
+      setTimeout(function() {
+        h.driver.elementsByTagName('blar', function(err, elements) {
+          should.not.exist(err);
+          elements.length.should.eql(0);
+          done();
+        });
+      }, 5000);
+    });
+  });
+});
+
+var loadWebView = function(driver, cb) {
+  driver.elementByName('Web, Use of UIWebView', function(err, el) {
+    should.not.exist(err);
+    el.click(function(err) {
+      should.not.exist(err);
+      driver.windowHandles(function(err, handles) {
+        should.not.exist(err);
+        handles.length.should.be.above(0);
+        driver.window(handles[0], function(err) {
+          should.not.exist(err);
+          cb();
+        });
+      });
+    });
+  });
+};

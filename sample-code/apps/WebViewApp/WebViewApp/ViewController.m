@@ -20,6 +20,7 @@
     self.urlField.delegate = self;
 	// Do any additional setup after loading the view, typically from a nib.
     [self.mainWebView loadRequest:[NSURLRequest requestWithURL: [NSURL URLWithString: @"http://saucelabs.com/test/guinea-pig"]]];
+    self.urlField.text = @"http://saucelabs.com/test/guinea-pig";
 }
 
 - (void)didReceiveMemoryWarning

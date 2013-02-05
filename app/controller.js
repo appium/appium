@@ -3,6 +3,7 @@
 "use strict";
 var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
+  , _s = require("underscore.string")
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -197,6 +198,21 @@ exports.doClick = function(req, res) {
   req.device.click(elementId, getResponseHandler(req, res));
 };
 
+exports.mobileTap = function(req, res) {
+  //'tap': [exports.mobileTap, ['tapCount', 'touchCount', 'duration', 'x', 'y']]
+  var tapCount = req.body.tapCount
+    , touchCount = req.body.touchCount
+    , duration = req.body.duration
+    , x = req.body.x
+    , y = req.body.y;
+
+  if(checkMissingParams(res, {tapCount: tapCount, touchCount: touchCount,
+                              duration: duration, x: x, y: y})) {
+    req.device.complexTap(tapCount, touchCount, duration, x, y,
+        getResponseHandler(req, res));
+  }
+};
+
 exports.clear = function(req, res) {
   var elementId = req.params.elementId;
 
@@ -345,7 +361,33 @@ exports.execute = function(req, res) {
     , args = req.body.args;
 
   if(checkMissingParams(res, {script: script, args: args})) {
-    req.device.execute(script, args, getResponseHandler(req, res));
+    if (_s.startsWith(script, "mobile: ")) {
+      var realCmd = script.replace("mobile: ", "");
+      exports.executeMobileMethod(req, res, realCmd);
+    } else {
+      req.device.execute(script, args, getResponseHandler(req, res));
+    }
+  }
+};
+
+exports.executeMobileMethod = function(req, res, cmd) {
+  var args = req.body.args;
+
+  if (_.has(mobileCmdMap, cmd)) {
+    var controller = mobileCmdMap[cmd][0];
+    var paramList = mobileCmdMap[cmd][1];
+    if (paramList.length != args.length) {
+      res.send(400, "Parameters for mobile method did not match the " +
+                    "definition. Required params must be sent as script " +
+                    "args in this order: " + JSON.stringify(paramList));
+    } else {
+      _.each(paramList, function(param, i) {
+        req.body[param] = args[i];
+      });
+      controller(req, res);
+    }
+  } else {
+    exports.notYetImplemented(req, res);
   }
 };
 
@@ -402,6 +444,10 @@ var notImplementedInThisContext = function(req, res) {
     , value: "Not implemented in this context, try switching " +
              "into or out of a web view"
   });
+};
+
+var mobileCmdMap = {
+  'tap': [exports.mobileTap, ['tapCount', 'touchCount', 'duration', 'x', 'y']]
 };
 
 exports.produceError = function(req, res) {

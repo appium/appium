@@ -1,10 +1,12 @@
 "use strict";
-var ap = require('argparse').ArgumentParser;
+var ap = require('argparse').ArgumentParser
+  , pkgObj = require("../package")
+  ;
 
 // Setup all the command line argument parsing
 module.exports = function() {
   var parser = new ap({
-    version: '0.0.1',
+    version: pkgObj.version,
     addHelp: true,
     description: 'A webdriver-compatible server for use with native and hybrid iOS applications.'
   });

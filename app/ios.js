@@ -276,15 +276,24 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   };
 
   this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    var value;
-    if (many) {
-      value = _.map(res.value, parseElementResponse);
-    } else {
-      value = parseElementResponse(res.value);
+    var atomValue = res.value
+      , atomStatus = res.status;
+    if (atomStatus == status.codes.Success.code) {
+      if (many) {
+        if (typeof atomValue == "object") {
+          atomValue = _.map(atomValue, parseElementResponse);
+        }
+      } else {
+        if (atomValue === null) {
+          atomStatus = status.codes.NoSuchElement.code;
+        } else {
+          atomValue = parseElementResponse(atomValue);
+        }
+      }
     }
     cb(err, {
-      status: res.status
-      , value: value
+      status: atomStatus
+      , value: atomValue
     });
   });
 };
@@ -362,9 +371,21 @@ IOS.prototype.getText = function(elementId, cb) {
 };
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
-  var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
-
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    var atomsId;
+    try {
+      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
+    } catch(e) {
+      cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Error converting element ID for using in WD atoms: " + elementId
+      });
+    }
+    this.remote.executeAtom('get_attribute_value', [{'ELEMENT': atomsId}, attributeName], cb);
+  } else {
+    var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getLocation = function(elementId, cb) {

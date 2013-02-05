@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController <UITextFieldDelegate>
+@property (weak, nonatomic) IBOutlet UITextField *urlField;
+@property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
+- (IBAction)navBtnClicked:(id)sender;
+- (IBAction)urlEditBegin:(id)sender;
+- (BOOL)textFieldShouldReturn:(UITextField *)textField;
 
 @end

@@ -35,11 +35,18 @@ var clientPath = (function() {
     }
   }
 })();
+var isAppiumApp = (function() {
+  try {
+    return sysExec('echo $Appium_app') !== null;
+  } catch(e) {
+    return false;
+  }
+})();
 
 var sendResultAndGetNext = function(result) {
   var args = ['-s', '/tmp/instruments_sock'], res
     , binaryPath = globalPath;
-  if (globalPath === null) {
+  if (globalPath === null && !isAppiumApp) {
     binaryPath = nodePath;
     args.unshift(clientPath);
   }

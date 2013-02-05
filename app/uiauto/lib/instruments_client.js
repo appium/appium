@@ -7,7 +7,7 @@ var waitForDataTimeout = defWaitForDataTimeout;
 var sysExec = function(cmd) {
   var res = system.performTaskWithPathArgumentsTimeout('/bin/bash', ['-c', cmd], 3);
   if (res.exitCode !== 0) {
-    throw new Error("Failed trying to get path " + cmd);
+    throw new Error("Failed executing the command " + cmd + " (exit code " + res.exitCode + ")");
   } else {
     var path = res.stdout.trim();
     if (path.length) {

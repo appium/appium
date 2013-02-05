@@ -17,7 +17,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.urlField.delegate = self;
 	// Do any additional setup after loading the view, typically from a nib.
+    [self.mainWebView loadRequest:[NSURLRequest requestWithURL: [NSURL URLWithString: @"http://saucelabs.com/test/guinea-pig"]]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -26,4 +28,17 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)navBtnClicked:(id)sender {
+    [self.mainWebView loadRequest:[NSURLRequest requestWithURL: [NSURL URLWithString: self.urlField.text]]];
+}
+
+- (IBAction)urlEditBegin:(id)sender {
+    self.urlField.text = @"";
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    [self navBtnClicked:nil];
+    return YES;
+}
 @end

@@ -71,44 +71,47 @@ describeWd("execute", function(h) {
   done();});});});
 });
 
-// var prepareGuineaPigs = function(h, callback) {
-//   h.driver.elementsByTagName('tableCell', function(err, elems) {
-//     elems[7].click(function() {
-//       h.driver.elementByTagName('textField', function(err, elem) {
-//         elem.clear(function(err) {
-//           elem.sendKeys(["http://www.saucelabs.com/test/guinea-pig",'\\uE007'], function(err) {
+ var prepareGuineaPigs = function(h, callback) {
+   h.driver.elementsByTagName('tableCell', function(err, elems) {
+     elems[7].click(function() {
+       h.driver.elementByTagName('textField', function(err, elem) {
+         elem.clear(function(err) {
+           h.driver.keys("http://www.saucelabs.com/test/guinea-pig\\uE007", function(err) {
 
-//       h.driver.windowHandles(function(err, handles) {
-//         should.exist(handles);
-//         handles.length.should.equal(1);
-//         h.driver.window(handles[0], function() {
-//           // h.driver.get("http://www.saucelabs.com/test/guinea-pig", callback);
-//           });
-//         });
-//       });
-//         });
-//       });
-//     });
-//   });
-// };
+            var next = function() {
+              h.driver.windowHandles(function(err, handles) {
+                should.exist(handles);
+                handles.length.should.equal(1);
+                h.driver.window(handles[0], function() {
+                  callback();
+                });
+              });
+            };
+            setTimeout(next, 500);
+           });
+         });
+       });
+     });
+   });
+ };
 
-// describeWd("execute", function(h) {
-//   return it("should execute code inside the web view", function(done) {
-//   prepareGuineaPigs(h, function() {
+ describeWd("execute", function(h) {
+   return it.only("should execute code inside the web view", function(done) {
+   prepareGuineaPigs(h, function() {
 
-//   var mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes = function() {
-//     h.driver.execute('return document.body.innerHTML.indexOf("I am some page content") > 0', function(err, val) {
-//       dump2(err);dump2(val);
-//       console.log(val);
-//     should.not.exist(err);
-//     val.should.equal(true);
-//     h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
-//       dump2(err);dump2(val);
-//     should.not.exist(err);
-//     val.should.equal(false);
-//     done();
-//     });});
-//   };
-//   setTimeout(mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes, 8000);
-//   });});
-// });
+   var mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes = function() {
+     h.driver.execute('return document.body.innerHTML.indexOf("I am some page content") > 0', function(err, val) {
+       dump2(err);dump2(val);
+       console.log(val);
+     should.not.exist(err);
+     val.should.equal(true);
+     h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
+       dump2(err);dump2(val);
+     should.not.exist(err);
+     val.should.equal(false);
+     done();
+     });});
+   };
+   setTimeout(mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes, 5000);
+   });});
+ });

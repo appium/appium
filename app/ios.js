@@ -144,6 +144,8 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
       if(_.has(appDict, "com.apple.mobilesafari")) {
         logger.info("Using mobile safari instead");
         me.remote.selectApp("com.apple.mobilesafari", cb);
+      } else {
+        cb([]);
       }
     } else {
       me.remote.selectApp(me.bundleId, cb);

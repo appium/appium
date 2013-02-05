@@ -209,4 +209,7 @@ $.extend(au, {
         , value: null
       };
     }
+  , complexTap: function(opts) {
+    return this.mainWindow.tapWithOptions(opts);
+  }
 });

@@ -44,6 +44,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.remote = null;
   this.curWindowHandle = null;
   this.windowHandleCache = [];
+  this.webElementIds = [];
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -240,7 +241,7 @@ IOS.prototype.push = function(elem) {
   next();
 };
 
-IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb) {
+IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   if (typeof ctx === "undefined" || !ctx) {
     ctx = '';
@@ -256,6 +257,40 @@ IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb
   }
 
   this.proxy(command, cb);
+};
+
+IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
+  var ext = many ? 's' : '';
+
+  var device = this
+  , parseElementResponse = function(element) {
+    var objId = element.ELEMENT
+    , clientId = (5000 + device.webElementIds.length).toString();
+    device.webElementIds.push(objId);
+    return {ELEMENT: clientId};
+  };
+
+  this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
+    var value;
+    if (many) {
+      value = _.map(JSON.parse(res.result.value).value, parseElementResponse);
+    } else {
+      value = parseElementResponse(JSON.parse(res.result.value).value);
+    }
+
+    cb(err, {
+      status: status.codes.Success.code
+      , value:  value
+    });
+  });
+};
+
+IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb) {
+  if (this.curWindowHandle) {
+    this.findWebElementOrElements(strategy, selector, ctx, many, cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, ctx, many, cb);
+  }
 };
 
 IOS.prototype.findElement = function(strategy, selector, cb) {
@@ -517,6 +552,26 @@ IOS.prototype.execute = function(script, args, cb) {
         });
       } else {
         cb(null, res.result.value);
+      }
+    });
+  }
+};
+
+IOS.prototype.title = function(cb) {
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.remote.execute('document.title', function (err, res) {
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.JavaScriptError.code
+          , value: res
+        });
+      } else {
+        cb(null, {
+          status: status.codes.Success.code
+          , value: res.result.value
+        });
       }
     });
   }

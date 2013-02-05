@@ -60,6 +60,11 @@ exports.callJSFunction = function(objId, fn, args, appIdKey, connId, senderId, p
       appIdKey, connId, senderId, pageIdKey);
 };
 
+exports.setUrl = function(url, appIdKey, connId, senderId, pageIdKey) {
+  return exports.command("Page.navigate", {url: url}, appIdKey, connId,
+      senderId, pageIdKey);
+};
+
 exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey) {
   var plist = {
     __argument: {
@@ -82,6 +87,5 @@ exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey
     plist.__argument.WIRSocketDataKey.params = _.extend(
         plist.__argument.WIRSocketDataKey.params, params);
   }
-  console.log(plist.__argument.WIRSocketDataKey.params);
   return plist;
 };

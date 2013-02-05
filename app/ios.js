@@ -276,15 +276,24 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   };
 
   this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    var value;
-    if (many) {
-      value = _.map(res.value, parseElementResponse);
-    } else {
-      value = parseElementResponse(res.value);
+    var atomValue = res.value
+      , atomStatus = res.status;
+    if (atomStatus == status.codes.Success.code) {
+      if (many) {
+        if (typeof atomValue == "object") {
+          atomValue = _.map(atomValue, parseElementResponse);
+        }
+      } else {
+        if (atomValue === null) {
+          atomStatus = status.codes.NoSuchElement.code;
+        } else {
+          atomValue = parseElementResponse(atomValue);
+        }
+      }
     }
     cb(err, {
-      status: res.status
-      , value: value
+      status: atomStatus
+      , value: atomValue
     });
   });
 };

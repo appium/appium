@@ -143,13 +143,36 @@ describeWd('Url', function(h) {
 });
 
 describeWd('click', function(h) {
-  it('should work without issues on links', function(done) {
+  it.only('should work without issues on links', function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
+        should.not.exist(err);
+        setTimeout(function() {
+          h.driver.elementsByTagName('a', function(err, elements) {
+            should.not.exist(err);
+            elements[1].click(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am another page title - Sauce Labs");
+                done();
+              });
+            });
+          });
+        }, 3000);
+      });
+    });
+  });
+});
+
+describeWd('getAttribute', function(h) {
+  it('should return the right attribute', function(done) {
     loadWebView(h.driver, function() {
       setTimeout(function() {
         h.driver.elementById('gn-store', function(err, element) {
           should.not.exist(err);
-          element.click(function(err) {
+          element.text(function(err, text) {
             should.not.exist(err);
+            text.should.eql('Store');
             done();
           });
         });

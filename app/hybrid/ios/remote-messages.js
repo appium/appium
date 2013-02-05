@@ -82,6 +82,5 @@ exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey
     plist.__argument.WIRSocketDataKey.params = _.extend(
         plist.__argument.WIRSocketDataKey.params, params);
   }
-  console.log(plist.__argument.WIRSocketDataKey.params);
   return plist;
 };

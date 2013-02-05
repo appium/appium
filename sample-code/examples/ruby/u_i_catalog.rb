@@ -7,7 +7,9 @@ require 'rspec'
 require 'selenium-webdriver'
 require 'net/http'
 
+include Selenium::WebDriver::DriverExtensions::HasInputDevices
 include Selenium::WebDriver::DriverExtensions::HasTouchScreen
+
 
 APP_PATH = '../../apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'
 
@@ -37,6 +39,10 @@ describe "UI Catalog" do
     @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
     
    end
+
+  after(:all) do
+    @driver.quit
+  end
 
   describe "An Element" do
 
@@ -104,7 +110,7 @@ describe "UI Catalog" do
 
     # TODO: Text checking still seems... Not good.
     it "can have text checked" do
-      @switch.text.should eq "Tinted"
+      @switch.attribute("name").should eq "Image"
     end
 
     it "can have values checked" do
@@ -168,15 +174,10 @@ describe "UI Catalog" do
 
   describe "scrolling" do
 
-    after :all do
-      go_back
-    end
-  
-    # Not yet implemented
     it "can be done with co-ordinates" do
       row = @driver.find_elements(:tag_name, "tableCell")[2]
       initial_location = row.location
-      action = @driver.touch.scroll(0, -20)
+      action = @driver.touch.flick(0, 20)
 
       action.perform
       initial_location.should_not eq row.location
@@ -184,9 +185,9 @@ describe "UI Catalog" do
   end
 
   describe "sliders" do
-    
     before :all do
       @driver.find_elements(:tag_name, "tableCell")[1].click
+      @slider = @driver.find_element(:tag_name, "slider")
     end
 
     after :all do
@@ -194,11 +195,15 @@ describe "UI Catalog" do
     end
 
     it "can have their values read" do
-      slider = @driver.find_element(:tag_name, "slider")
-      slider.attribute("value").should eq "50%"
+      @slider.attribute("value").should eq "50%"
     end
 
-    it "can be changed"
+    it "can be changed" do
+      actions = @slider.touch.flick(@slider, -1.0, 0, :normal)
+      actions.perform
+      @slider.attribute("value").should eq "0%"
+    end
+
   end
 
   describe "sessions" do
@@ -212,13 +217,34 @@ describe "UI Catalog" do
     end
   end
 
-  describe "test_size" do
+  describe "sizes" do
     it "can be obtained from elements" do
       table_dimensions = @driver.find_element(:tag_name, "tableView").size
       row_dimensions = @driver.find_elements(:tag_name, "tableCell")[0].size
 
       table_dimensions["width"].should eq row_dimensions["width"]
       table_dimensions["height"].should_not eq row_dimensions["height"]
+    end
+  end
+
+  describe "page source" do
+    before :all do
+      @main_source = @driver.page_source
+      @driver.find_elements(:tag_name, "tableCell")[2].click
+      @text_source = @driver.page_source
+    end
+
+    after :all do
+      go_back
+    end
+
+    it "can be obtained" do
+      @main_source.should include "UIATableView"
+      @main_source.should include "TextFields"
+    end
+
+    it "changes when the page does" do
+      @text_source.should_not eq @main_source 
     end
   end
 end

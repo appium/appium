@@ -74,7 +74,7 @@ describeWd('window title', function(h) {
     loadWebView(h.driver, function() {
       h.driver.title(function(err, title) {
         should.not.exist(err);
-        title.should.eql("Apple");
+        title.should.eql("I am a page title - Sauce Labs");
         h.driver.frame(null, function(err) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
@@ -128,7 +128,7 @@ describeWd('findElement/s', function(h) {
 describeWd('Url', function(h) {
   it('should be settable', function(done) {
     loadWebView(h.driver, function() {
-      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err, res) {
+      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
         should.not.exist(err);
         var check = function() {
           h.driver.title(function(err, title) {

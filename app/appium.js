@@ -4,6 +4,7 @@
 var routing = require('./routing')
   , logger = require('../logger').get('appium')
   , setLogFile = require('../logger').setLogFile
+  , setWebhook = require('../logger').setWebhook
   , helpers = require('./helpers')
   , downloadFile = helpers.downloadFile
   , unzipApp = helpers.unzipApp
@@ -18,6 +19,19 @@ var Appium = function(args) {
   }
   if (this.args.log) {
     setLogFile(logger, this.args.log);
+  }
+  if (this.args.webhook) {
+    var host = this.args.webhook;
+    var port = 9003;
+    if (host.indexOf(':') > -1) {
+      try {
+        host = host.substring(0, host.indexOf(':'));
+        port = this.args.webhook.substring(this.args.webhook.indexOf(':')+1);
+        port = parseInt(port, 10);
+      } catch (e) {
+      }
+    }
+    setWebhook(logger, port, host);
   }
   this.rest = null;
   this.devices = {};

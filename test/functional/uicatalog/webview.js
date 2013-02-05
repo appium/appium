@@ -89,7 +89,7 @@ describeWd('window title', function(h) {
 });
 
 describeWd('findElement/s', function(h) {
-  it('should find a web element in the web view', function(done) {
+  it.only('should find a web element in the web view', function(done) {
     loadWebView(h.driver, function() {
       setTimeout(function() {
         h.driver.elementById('gn-store', function(err, element) {

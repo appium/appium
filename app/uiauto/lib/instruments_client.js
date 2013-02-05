@@ -46,7 +46,7 @@ var isAppiumApp = (function() {
 var sendResultAndGetNext = function(result) {
   var args = ['-s', '/tmp/instruments_sock'], res
     , binaryPath = globalPath;
-  if (globalPath === null && !isAppiumApp) {
+  if (globalPath === null || !isAppiumApp) {
     binaryPath = nodePath;
     args.unshift(clientPath);
   }

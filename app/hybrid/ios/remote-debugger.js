@@ -34,11 +34,13 @@ var logger = {
 
 
 var RemoteDebugger = function(onDisconnect) {
+  var me = this;
   this.socket = null;
   this.connId = uuid.v4();
   this.senderId = uuid.v4();
   this.appIdKey = null;
   this.pageIdKey = null;
+  this.pageLoading = false;
   this.curMsgId = 0;
   this.dataCbs = [];
   this.onAppDisconnect = onDisconnect || noop;
@@ -46,6 +48,18 @@ var RemoteDebugger = function(onDisconnect) {
     '_rpc_reportIdentifier:': noop
     , '_rpc_forwardGetListing:': noop
     , 'connect': noop
+    , 'pageLoad': function() {
+      logger.debug("Page loaded");
+      me.pageLoading = false;
+    }
+    , 'pageLoading': function() {
+      me.specialCbs.pageLoad = function() {
+        logger.debug("Page loaded");
+        me.pageLoading = false;
+      };
+      logger.debug("Page loading");
+      me.pageLoading = true;
+    }
   };
   this.setHandlers();
   this.received = new Buffer(0);
@@ -64,7 +78,6 @@ RemoteDebugger.prototype.connect = function(cb) {
     me.onAppDisconnect();
   });
   this.socket.on('data', _.bind(me.receive, this));
-
 
   this.socket.connect(27753, '::1', function () {
     logger.info("Debugger socket connected to " + me.socket.remoteAddress +
@@ -112,12 +125,25 @@ RemoteDebugger.prototype.selectApp = function(appIdKey, cb) {
 };
 
 RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
+  var remote = this;
   assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
   this.pageIdKey = pageIdKey;
   var setSenderKey = messages.setSenderKey(this.connId, this.appIdKey,
-      this.senderId, this.pageIdKey);
+                                           this.senderId, this.pageIdKey);
   logger.info("Selecting page and forwarding socket setup");
-  this.send(setSenderKey, cb);
+  var me = this;
+  this.send(setSenderKey, function() {
+    var enablePage = messages.enablePage(me.appIdKey, me.connId,
+                                         me.senderId, me.pageIdKey);
+    me.send(enablePage, function() {
+      remote.execute('(function(){return document.readyState;})()', function(err, res) {
+        if (err || res.result.value == 'loading') {
+          remote.specialCbs.pageLoading();
+        }
+        cb();
+      }, 0);
+    });
+  });
 };
 
 RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
@@ -130,18 +156,30 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
         , value: res
       });
     } else {
-      cb(null, JSON.parse(res.result.value));
+      if (typeof res.result.value === 'string') {
+        res.result.value = JSON.parse(res.result.value);
+      }
+      cb(null, res.result.value);
     }
   });
 };
 
-RemoteDebugger.prototype.execute = function(command, cb) {
-  assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
-  assert.ok(this.pageIdKey);
-  logger.info("Sending javascript command");
-  var sendJSCommand = messages.sendJSCommand(command, this.appIdKey,
-      this.connId, this.senderId, this.pageIdKey);
-  this.send(sendJSCommand, cb);
+RemoteDebugger.prototype.execute = function(command, cb, timeoutCountDown) {
+  timeoutCountDown = typeof timeoutCountDown == 'undefined' ? 60 : timeoutCountDown;
+  if (this.pageLoading && timeoutCountDown > 0) {
+    logger.info("Page is loading, waiting: " + timeoutCountDown);
+    var remote = this;
+    setTimeout(function() {
+      remote.execute(command, cb, timeoutCountDown - 1);
+    }, 500);
+  } else {
+    assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
+    assert.ok(this.pageIdKey);
+    logger.info("Sending javascript command");
+    var sendJSCommand = messages.sendJSCommand(command, this.appIdKey,
+        this.connId, this.senderId, this.pageIdKey);
+    this.send(sendJSCommand, cb);
+  }
 };
 
 RemoteDebugger.prototype.callFunction = function(objId, fn, args, cb) {
@@ -159,7 +197,33 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
   logger.info("Navigating to new URL: " + url);
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
       this.senderId, this.pageIdKey);
-  this.send(navToUrl, cb);
+  this.specialCbs.pageLoad = function () {
+    logger.debug("Page loaded");
+    this.pageLoading = false;
+    cb();
+  };
+  this.send(navToUrl, noop);
+};
+
+RemoteDebugger.prototype.waitForDom = function(cb) {
+  this.timeoutWaitingForDom = false;
+  var me = this;
+  var timeout = setTimeout(function() {
+    me.timeoutWaitingForDom = true;
+    logger.debug("Page loaded");
+    this.pageLoading = false;
+    cb();
+  }, 6000);
+  this.specialCbs.pageLoad = function() {
+    if (me.timeoutWaitingForDom) {
+      clearTimeout(timeout);
+      logger.debug("Page loaded");
+      this.pageLoading = false;
+      // Notice, this can be overwritten by the loading handler if the timing is
+      // not right
+      cb();
+    }
+  };
 };
 
 // ====================================
@@ -212,6 +276,10 @@ RemoteDebugger.prototype.setHandlers = function() {
       if (dataKey.method == "Profiler.resetProfiles") {
         logger.info("Device is telling us to reset profiles. Should probably " +
                     "do some kind of callback here");
+      } else if (dataKey.method == "Page.frameNavigated") {
+        me.handleSpecialMessage('pageLoading');
+      } else if (dataKey.method == "Page.loadEventFired") {
+        me.handleSpecialMessage('pageLoad');
       } else if (typeof me.dataCbs[msgId] === "function") {
         me.dataCbs[msgId](error, result);
       } else {

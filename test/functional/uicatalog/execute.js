@@ -63,7 +63,7 @@ describeWd("execute", function(h) {
 });
 
 describeWd("execute", function(h) {
-  return it("should return nothing when you don't explicitly return", function(done) {
+  it("should return nothing when you don't explicitly return", function(done) {
   selectWebView(h, function() {
   h.driver.execute("1+1", function(err, val) {
   should.not.exist(err);
@@ -71,47 +71,62 @@ describeWd("execute", function(h) {
   done();});});});
 });
 
- var prepareGuineaPigs = function(h, callback) {
-   h.driver.elementsByTagName('tableCell', function(err, elems) {
-     elems[7].click(function() {
-       h.driver.elementByTagName('textField', function(err, elem) {
-         elem.clear(function(err) {
-           h.driver.keys("http://www.saucelabs.com/test/guinea-pig\\uE007", function(err) {
-
-            var next = function() {
-              h.driver.windowHandles(function(err, handles) {
-                should.exist(handles);
-                handles.length.should.equal(1);
-                h.driver.window(handles[0], function() {
-                  callback();
-                });
+var loadWebView = function(driver, cb) {
+  driver.elementByName('Web, Use of UIWebView', function(err, el) {
+    should.not.exist(err);
+    el.click(function(err) {
+      should.not.exist(err);
+      driver.windowHandles(function(err, handles) {
+        should.not.exist(err);
+        handles.length.should.be.above(0);
+        driver.elementByTagName('textField', function(err, elem) {
+          elem.sendKeys("http://www.saucelabs.com/test/guinea-pig", function(err) {
+            should.not.exist(err);
+            driver.keys("\\uE007", function(err) {
+              should.not.exist(err);
+              driver.window(handles[0], function(err) {
+                should.not.exist(err);
+                spinTitle('I am a page title - Sauce Labs', driver, cb);
               });
-            };
-            setTimeout(next, 500);
-           });
-         });
-       });
-     });
-   });
- };
+            });
+          });
+        });
+      });
+    });
+  });
+};
 
- describeWd("execute", function(h) {
-   return it.only("should execute code inside the web view", function(done) {
-   prepareGuineaPigs(h, function() {
+var spinTitle = function (expTitle, driver, cb, timeout) {
+  timeout = typeof timeout == 'undefined' ? 60 : timeout;
+  timeout.should.be.above(0);
+  driver.title(function(err, pageTitle) {
+    should.not.exist(err);
+    if (pageTitle == expTitle) {
+      cb();
+    } else {
+      setTimeout(function () {
+        spinTitle(expTitle, driver, cb, timeout - 1);
+      }, 500);
+    }
+  });
+};
 
-   var mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes = function() {
-     h.driver.execute('return document.body.innerHTML.indexOf("I am some page content") > 0', function(err, val) {
-       dump2(err);dump2(val);
-       console.log(val);
-     should.not.exist(err);
-     val.should.equal(true);
-     h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
-       dump2(err);dump2(val);
-     should.not.exist(err);
-     val.should.equal(false);
-     done();
-     });});
-   };
-   setTimeout(mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes, 5000);
-   });});
- });
+describeWd("execute", function(h) {
+  return it("should execute code inside the web view", function(done) {
+  loadWebView(h.driver, function() {
+
+  var mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes = function() {
+    h.driver.execute('return document.body.innerHTML.indexOf("I am some page content") > 0', function(err, val) {
+    // dump2(err);dump2(val);
+    should.not.exist(err);
+    val.should.equal(true);
+    h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
+      // dump2(err);dump2(val);
+    should.not.exist(err);
+    val.should.equal(false);
+    done();
+    });});
+  };
+  setTimeout(mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes, 5000);
+  });});
+});

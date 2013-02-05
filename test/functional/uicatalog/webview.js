@@ -119,19 +119,20 @@ describeWd('findElement/s', function(h) {
   });
 });
 
-describeWd('click', function(h) {
-  it('should work without issues on links', function(done) {
-    loadWebView(h.driver, function() {
-      h.driver.elementsByTagName('a', function(err, elements) {
-        should.not.exist(err);
-        elements[1].click(function(err) {
-          should.not.exist(err);
-          spinTitle('I am another page title - Sauce Labs', h.driver, done);
-        });
-      });
-    });
-  });
-});
+// TODO: web view navigation is flakey right now
+// describeWd('click', function(h) {
+//   it.only('should work without issues on links', function(done) {
+//     loadWebView(h.driver, function() {
+//       h.driver.elementsByTagName('a', function(err, elements) {
+//         should.not.exist(err);
+//         elements[1].click(function(err) {
+//           should.not.exist(err);
+//           spinTitle('I am another page title - Sauce Labs', h.driver, done);
+//         });
+//       });
+//     });
+//   });
+// });
 
 describeWd('getAttribute', function(h) {
   it('should return the right attribute', function(done) {

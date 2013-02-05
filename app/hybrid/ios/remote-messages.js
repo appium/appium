@@ -1,5 +1,7 @@
 "use strict";
 
+var _ = require("underscore");
+
 // Connection
 
 exports.setConnectionKey = function(connId) {
@@ -58,16 +60,22 @@ exports.callJSFunction = function(objId, fn, args, appIdKey, connId, senderId, p
       appIdKey, connId, senderId, pageIdKey);
 };
 
+exports.setUrl = function(url, appIdKey, connId, senderId, pageIdKey) {
+  return exports.command("Page.navigate", {url: url}, appIdKey, connId,
+      senderId, pageIdKey);
+};
+
 exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey) {
   var plist = {
     __argument: {
       WIRApplicationIdentifierKey: appIdKey,
       WIRSocketDataKey: {
         method: method,
-        //objectGroup: "console",
-        //includeCommandLineAPI: true,
-        //doNotPauseOnExceptionsAndMuteConsole: true,
-        params: {}
+        params: {
+          objectGroup: "console",
+          includeCommandLineAPI: true,
+          doNotPauseOnExceptionsAndMuteConsole: true,
+        }
       },
       WIRConnectionIdentifierKey: connId,
       WIRSenderKey: senderId,
@@ -76,7 +84,8 @@ exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey
     __selector: '_rpc_forwardSocketData:'
   };
   if (params) {
-    plist.__argument.WIRSocketDataKey.params = params;
+    plist.__argument.WIRSocketDataKey.params = _.extend(
+        plist.__argument.WIRSocketDataKey.params, params);
   }
   return plist;
 };

@@ -50,6 +50,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionid?/window_handles', controller.getWindowHandles);
   rest.post('/wd/hub/session/:sessionid?/window', controller.setWindow);
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
+  rest.get('/wd/hub/session/:sessionid?/title', controller.title);
 
   // this is for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -91,7 +92,6 @@ var routenotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionid?/cookie', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionid?/cookie', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionid?/cookie/:name', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/title', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionid?/element/:elementid?', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionid?/element/:elementid?/submit', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionid?/element/:elementid?/name', controller.notYetImplemented);

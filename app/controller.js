@@ -32,7 +32,7 @@ function getResponseHandler(req, res) {
 }
 
 var getSessionId = function(req, response) {
-  var sessionId = response.sessionId;
+  var sessionId = (typeof response == 'undefined') ? undefined : response.sessionId;
   if (typeof sessionId === "undefined") {
     if (req.appium) {
       sessionId = req.appium.sessionId || null;
@@ -349,8 +349,16 @@ exports.execute = function(req, res) {
   }
 };
 
+exports.title = function(req, res) {
+  req.device.title(getResponseHandler(req, res));
+};
+
 exports.postUrl = function(req, res) {
-  req.device.url(getResponseHandler(req, res));
+  var url = req.body.url;
+
+  if(checkMissingParams(res, {url: url})) {
+    req.device.url(url, getResponseHandler(req, res));
+  }
 };
 
 exports.active = function(req, res) {
@@ -379,12 +387,21 @@ exports.unknownCommand = function(req, res) {
 };
 
 exports.notYetImplemented = function(req, res) {
-  res.send(501, "Not Implemented");
+  res.send(501, {
+    status: status.codes.UnknownError.code
+    , sessionId: getSessionId(req)
+    , value: "Not yet implemented. " +
+             "Please help us: http://appium.io/get-involved.html"
+  });
 };
 
 var notImplementedInThisContext = function(req, res) {
-  res.send(501, "Not implemented in this context, try switching into or out " +
-                "of a web view");
+  res.send(501, {
+    status: status.codes.UnknownError.code
+    , sessionId: getSessionId(req)
+    , value: "Not implemented in this context, try switching " +
+             "into or out of a web view"
+  });
 };
 
 exports.produceError = function(req, res) {

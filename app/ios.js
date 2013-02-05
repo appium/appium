@@ -28,6 +28,16 @@ var ProtocolError = function(message) {
    this.name = "ProtocolError";
 };
 
+var remoteHasErr = function(err, res) {
+  if (err) {
+    return {
+      status: status.codes.JavaScriptError.code
+      , value: res
+    };
+  }
+  return false;
+};
+
 var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.rest = rest;
   this.app = app;
@@ -131,7 +141,10 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     if(!_.has(appDict, me.bundleId)) {
       logger.error("Remote debugger did not list " + me.bundleId + " among " +
                    "its available apps");
-      cb([]);
+      if(_.has(appDict, "com.apple.mobilesafari")) {
+        logger.info("Using mobile safari instead");
+        me.remote.selectApp("com.apple.mobilesafari", cb);
+      }
     } else {
       me.remote.selectApp(me.bundleId, cb);
     }
@@ -271,17 +284,20 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   };
 
   this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    var value;
-    if (many) {
-      value = _.map(JSON.parse(res.result.value).value, parseElementResponse);
+    var value, errObj;
+    if ((errObj = remoteHasErr(err, res))) {
+      cb("Remote debugger error", errObj);
     } else {
-      value = parseElementResponse(JSON.parse(res.result.value).value);
+      if (many) {
+        value = _.map(JSON.parse(res.result.value).value, parseElementResponse);
+      } else {
+        value = parseElementResponse(JSON.parse(res.result.value).value);
+      }
+      cb(err, {
+        status: status.codes.Success.code
+        , value:  value
+      });
     }
-
-    cb(err, {
-      status: status.codes.Success.code
-      , value:  value
-    });
   });
 };
 
@@ -317,7 +333,6 @@ IOS.prototype.setValue = function(elementId, value, cb) {
 
 IOS.prototype.click = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').tap()"].join('');
-
   this.proxy(command, cb);
 };
 
@@ -533,25 +548,30 @@ IOS.prototype.setWindow = function(name, cb) {
 };
 
 IOS.prototype.clearWebView = function(cb) {
-  this.curWindowHandle = null;
-  cb(null, {
-    status: status.codes.Success.code
-    , value: ''
-  });
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.curWindowHandle = null;
+    cb(null, {
+      status: status.codes.Success.code
+      , value: ''
+    });
+  }
 };
 
 IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
+    var errObj;
     this.remote.executeAtom('execute_script', [script, args], function (err, res) {
-      if (err) {
-        cb("Remote debugger error", {
-          status: status.codes.JavaScriptError.code
-          , value: res
-        });
+      if ((errObj = remoteHasErr(err, res))) {
+        cb("Remote debugger error", errObj);
       } else {
-        cb(null, res.result.value);
+        cb(null, {
+          status: status.codes.Success.code
+          , value: res.result.value
+        });
       }
     });
   }
@@ -562,11 +582,9 @@ IOS.prototype.title = function(cb) {
     cb(new NotImplementedError(), null);
   } else {
     this.remote.execute('document.title', function (err, res) {
-      if (err) {
-        cb("Remote debugger error", {
-          status: status.codes.JavaScriptError.code
-          , value: res
-        });
+      var errObj;
+      if ((errObj = remoteHasErr(err, res))) {
+        cb("Remote debugger error", errObj);
       } else {
         cb(null, {
           status: status.codes.Success.code

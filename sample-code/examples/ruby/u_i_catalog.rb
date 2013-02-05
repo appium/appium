@@ -211,4 +211,14 @@ describe "UI Catalog" do
       session_id.should eq (data["value"][0]["id"])
     end
   end
+
+  describe "test_size" do
+    it "can be obtained from elements" do
+      table_dimensions = @driver.find_element(:tag_name, "tableView").size
+      row_dimensions = @driver.find_elements(:tag_name, "tableCell")[0].size
+
+      table_dimensions["width"].should eq row_dimensions["width"]
+      table_dimensions["height"].should_not eq row_dimensions["height"]
+    end
+  end
 end

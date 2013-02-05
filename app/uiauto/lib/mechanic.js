@@ -54,7 +54,8 @@ var mechanic = (function() {
         'UIATextView' : ['textview'],
         'UIAToolbar' : ['toolbar'],
         'UIAWebView' : ['webview'],
-        'UIAWindow' : ['window']
+        'UIAWindow' : ['window'],
+        'UIANavigationBar': ['navigationBar']
     };
 
     // Build a RegExp for picking out type selectors.

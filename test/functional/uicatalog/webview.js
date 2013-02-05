@@ -142,6 +142,39 @@ describeWd('Url', function(h) {
   });
 });
 
+describeWd('click', function(h) {
+  it('should work without issues on links', function(done) {
+    loadWebView(h.driver, function() {
+      setTimeout(function() {
+        h.driver.elementById('gn-store', function(err, element) {
+          should.not.exist(err);
+          element.click(function(err) {
+            should.not.exist(err);
+            done();
+          });
+        });
+      }, 5000);
+    });
+  });
+});
+
+describeWd('getText', function(h) {
+  it('should return the right text', function(done) {
+    loadWebView(h.driver, function() {
+      setTimeout(function() {
+        h.driver.elementById('gn-store', function(err, element) {
+          should.not.exist(err);
+          element.text(function(err, text) {
+            should.not.exist(err);
+            text.should.eql('Store');
+            done();
+          });
+        });
+      }, 5000);
+    });
+  });
+});
+
 var loadWebView = function(driver, cb) {
   driver.elementByName('Web, Use of UIWebView', function(err, el) {
     should.not.exist(err);

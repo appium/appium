@@ -28,16 +28,6 @@ var ProtocolError = function(message) {
    this.name = "ProtocolError";
 };
 
-var remoteHasErr = function(err, res) {
-  if (err) {
-    return {
-      status: status.codes.JavaScriptError.code
-      , value: res
-    };
-  }
-  return false;
-};
-
 var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   this.rest = rest;
   this.app = app;
@@ -286,20 +276,16 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   };
 
   this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    var value, errObj;
-    if ((errObj = remoteHasErr(err, res))) {
-      cb("Remote debugger error", errObj);
+    var value;
+    if (many) {
+      value = _.map(res.value, parseElementResponse);
     } else {
-      if (many) {
-        value = _.map(JSON.parse(res.result.value).value, parseElementResponse);
-      } else {
-        value = parseElementResponse(JSON.parse(res.result.value).value);
-      }
-      cb(err, {
-        status: status.codes.Success.code
-        , value:  value
-      });
+      value = parseElementResponse(res.value);
     }
+    cb(err, {
+      status: res.status
+      , value: value
+    });
   });
 };
 
@@ -334,8 +320,21 @@ IOS.prototype.setValue = function(elementId, value, cb) {
 };
 
 IOS.prototype.click = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').tap()"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    var atomsId;
+    try {
+      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
+    } catch(e) {
+      cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Error converting element ID for using in WD atoms: " + elementId
+      });
+    }
+    this.remote.executeAtom('click', [{'ELEMENT': atomsId}], cb);
+  } else {
+    var command = ["au.getElement('", elementId, "').tap()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.clear = function(elementId, cb) {
@@ -345,9 +344,21 @@ IOS.prototype.clear = function(elementId, cb) {
 };
 
 IOS.prototype.getText = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').value()"].join('');
-
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    var atomsId;
+    try {
+      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
+    } catch(e) {
+      cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Error converting element ID for using in WD atoms: " + elementId
+      });
+    }
+    this.remote.executeAtom('get_text', [{'ELEMENT': atomsId}], cb);
+  } else {
+    var command = ["au.getElement('", elementId, "').value()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
@@ -574,17 +585,7 @@ IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    var errObj;
-    this.remote.executeAtom('execute_script', [script, args], function (err, res) {
-      if ((errObj = remoteHasErr(err, res))) {
-        cb("Remote debugger error", errObj);
-      } else {
-        cb(null, {
-          status: status.codes.Success.code
-          , value: res.result.value
-        });
-      }
-    });
+    this.remote.executeAtom('execute_script', [script, args], cb);
   }
 };
 
@@ -593,9 +594,11 @@ IOS.prototype.title = function(cb) {
     cb(new NotImplementedError(), null);
   } else {
     this.remote.execute('document.title', function (err, res) {
-      var errObj;
-      if ((errObj = remoteHasErr(err, res))) {
-        cb("Remote debugger error", errObj);
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.JavaScriptError.code
+          , value: res
+        });
       } else {
         cb(null, {
           status: status.codes.Success.code

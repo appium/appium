@@ -40,6 +40,10 @@ module.exports = function() {
     , { defaultValue: null, required: false, help: 'log to a file'
   });
 
+  parser.addArgument([ '-G', '--webhook' ]
+    , { defaultValue: null, required: false, help: 'log to a webhook'
+  });
+
   parser.addArgument([ '-w', '--warp' ]
     , { defaultValue: false, required: false, help: 'use time warp to speed up test execution (WARNING, this modifies system clock, could be bad news bears!)'
   });

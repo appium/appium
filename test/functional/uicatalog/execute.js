@@ -5,70 +5,87 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatal
   , logger = require('../../../logger').get('appium')
   , should = require("should");
 
-var dump2 = function(s) {
+var log = function(s) {
   logger.info("/*****************************************************\\");
   logger.info(s);
   logger.info("\\*****************************************************/");
 };
 
-var dump2Source = function(h, done) {
+var logSource = function(h, done) {
   h.driver.source(function(err, source) {
-  dump2(JSON.stringify(JSON.parse(source), undefined, 2));
-  done();
-});};
+    log(JSON.stringify(JSON.parse(source), undefined, 2));
+    done();
+  });
+};
+
 describeWd('execute', function(h) {
   it('should require a web view to be selected', function(done) {
     h.driver.execute("1 + 1", function(err, value) {
-    should.exist(err);
-    should.not.exist(value);
-    done();
-  });});
+      should.exist(err);
+      should.not.exist(value);
+      done();
+    });
+  });
 });
 
 var selectWebView = function(h, callback) {
   h.driver.elementsByTagName('tableCell', function(err, elems) {
-  elems[7].click(function() {
-  h.driver.windowHandles(function(err, handles) {
-  should.exist(handles);
-  handles.length.should.equal(1);
-  h.driver.window(handles[0], callback);
-  });});});
+    elems[7].click(function() {
+    h.driver.windowHandles(function(err, handles) {
+      should.exist(handles);
+      handles.length.should.equal(1);
+      h.driver.window(handles[0], callback);
+      });
+    });
+  });
 };
 
 describeWd("execute", function(h) {
   return it("should bubble up javascript errors", function(done) {
-  selectWebView(h, function() {
-  h.driver.execute("'nan'--", function(err, val) {
-  err.message.should.equal("Error response status: 13.");
-  should.not.exist(val);
-  done();});});});
+    selectWebView(h, function() {
+      h.driver.execute("'nan'--", function(err, val) {
+        err.message.should.equal("Error response status: 13.");
+        should.not.exist(val);
+        done();
+      });
+    });
+  });
 });
 
 describeWd("execute", function(h) {
   return it("should eval javascript", function(done) {
-  selectWebView(h, function() {
-  h.driver.execute("return 1", function(err, val) {
-  should.not.exist(err);
-  val.should.equal(1);
-  done();});});});
+    selectWebView(h, function() {
+      h.driver.execute("return 1", function(err, val) {
+        should.not.exist(err);
+        val.should.equal(1);
+        done();
+      });
+    });
+  });
 });
 
 describeWd("execute", function(h) {
   return it("should not be returning hardcoded results", function(done) {
-  selectWebView(h, function() {
-  h.driver.execute("return 1+1", function(err, val) {
-  should.not.exist(err);
-  val.should.equal(2);
-  done();});});});
+    selectWebView(h, function() {
+      h.driver.execute("return 1+1", function(err, val) {
+        should.not.exist(err);
+        val.should.equal(2);
+        done();
+      });
+    });
+  });
 });
 
 describeWd("execute", function(h) {
   it("should return nothing when you don't explicitly return", function(done) {
-  selectWebView(h, function() {
-  h.driver.execute("1+1", function(err, val) {
-  should.not.exist(err);
-  should.not.exist(val);
-  done();});});});
+    selectWebView(h, function() {
+      h.driver.execute("1+1", function(err, val) {
+        should.not.exist(err);
+        should.not.exist(val);
+        done();
+      });
+    });
+  });
 });
 
 var loadWebView = function(driver, cb) {
@@ -115,18 +132,19 @@ describeWd("execute", function(h) {
   return it("should execute code inside the web view", function(done) {
   loadWebView(h.driver, function() {
 
-  var mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes = function() {
+  var next = function() {
     h.driver.execute('return document.body.innerHTML.indexOf("I am some page content") > 0', function(err, val) {
-    // dump2(err);dump2(val);
-    should.not.exist(err);
-    val.should.equal(true);
-    h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
-      // dump2(err);dump2(val);
-    should.not.exist(err);
-    val.should.equal(false);
-    done();
-    });});
+      // log(err);log(val);
+      should.not.exist(err);
+      val.should.equal(true);
+      h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
+          // log(err);log(val);
+        should.not.exist(err);
+        val.should.equal(false);
+        done();
+      });
+    });
   };
-  setTimeout(mynewfunctionorwhateveryouwannailiketocallthesethingsnextsometimes, 5000);
+  setTimeout(next, 5000);
   });});
 });

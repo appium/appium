@@ -6,7 +6,7 @@ Appium
 Appium is an open source test automation tool for native and hybrid
 mobile apps. It supports iOS today and Android support is in the
 works. Appium drives Apple's UIAutomation library using Selenium's
-WebDriver JSON wire protocol. Appium is based on 
+WebDriver JSON wire protocol. Appium is based on
 [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
 Testing with Appium has two big benefits:
@@ -26,22 +26,30 @@ Requirements
     > Mac OS X 10.6 or higher
     > XCode
     > Apple Developer Tools (iPhone simulator, command line tools)
+    > Node and npm (http://www.nodejs.org)
 
-Ninja-Speed Setup for Expert Users
+User Quick Start
 ------------
-Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
+Get something working with a quickness.
 
+    > mkdir appium-test && cd appium-test
     > sudo npm install appium -g
+    > curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
     > appium &
-    > node your-appium-test.js
+    > node simplest.js
 
-See [the Appium example tests](https://github.com/appium/appium/tree/master/sample-code/examples).
+Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby)
+
+We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods), Check it out.
+
 
 - - -
 
-Prerequisites
+Developing on Appium
 ------------
 Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
+
+Fork the Appium repo ( [https://github.com/appium/appium](https://github.com/appium/appium) ), then clone your fork.
 
 From your local repo clone's command prompt, install these packages using the
 following commands:
@@ -69,7 +77,7 @@ have to modify your `/etc/authorization` file in one of two ways:
 **Important Note:** Making this modification to your `/etc/authorization` file
 grants access privileges to all members belonging to your `_developer` group.
 
-Quick Start
+Running Tests
 -----------
 Download UICatalog:
 

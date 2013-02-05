@@ -156,7 +156,10 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
         , value: res
       });
     } else {
-      cb(null, JSON.parse(res.result.value));
+      if (typeof res.result.value === 'string') {
+        res.result.value = JSON.parse(res.result.value);
+      }
+      cb(null, res.result.value);
     }
   });
 };

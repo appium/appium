@@ -199,7 +199,10 @@ RemoteDebugger.prototype.setHandlers = function() {
       , msgId = dataKey.id
       , result = dataKey.result
       , error = dataKey.error || null;
-      if (typeof me.dataCbs[msgId] === "function") {
+      if (dataKey.method == "Profiler.resetProfiles") {
+        logger.info("Device is telling us to reset profiles. Should probably " +
+                    "do some kind of callback here");
+      } else if (typeof me.dataCbs[msgId] === "function") {
         me.dataCbs[msgId](error, result);
       } else {
         logger.error("Debugger returned data for message " + msgId +

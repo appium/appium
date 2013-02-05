@@ -1,31 +1,47 @@
 "use strict";
 
 var system = UIATarget.localTarget().host();
-// clientPath is relative to where you run the appium server from
-var clientPath = 'instruments/client.js';
 var defWaitForDataTimeout = 60;
 var waitForDataTimeout = defWaitForDataTimeout;
 
-var getBinaryPath = function(cmd) {
-  var res = system.performTaskWithPathArgumentsTimeout('/bin/bash', ['-c', 'which ' + cmd], 3);
+var sysExec = function(cmd) {
+  var res = system.performTaskWithPathArgumentsTimeout('/bin/bash', ['-c', cmd], 3);
   if (res.exitCode !== 0) {
-    throw new Error("Failed trying to get binary path " + cmd);
+    throw new Error("Failed trying to get path " + cmd);
   } else {
     var path = res.stdout.trim();
     if (path.length) {
       return path;
     } else {
-      throw new Error("Could not find a binary for " + cmd + ", please make sure you have one available!");
+      throw new Error("Executing " + cmd + " failed!");
     }
   }
 };
+
+// clientPath is relative to where you run the appium server from
+var clientPath = (function() {
+  var client = 'instruments/client.js';
+  var module = 'node_modules/appium/';
+  
+  try {
+    sysExec('ls ' + client);
+    return client;
+  } catch(e) {
+    try {
+      sysExec('ls ' + module + client);
+      return module + client;
+    } catch(e) {
+      throw new Error("Unable to locate instruments client.");
+    }
+  }
+})();
 
 var sendResultAndGetNext = function(result) {
   var args = ['-s', '/tmp/instruments_sock'], res
     , binaryPath = globalPath;
   if (globalPath === null) {
     binaryPath = nodePath;
-    args.unshift(clientPath); 
+    args.unshift(clientPath);
   }
   if (typeof result !== "undefined") {
     args = args.concat(['-r', JSON.stringify(result)]);
@@ -50,6 +66,6 @@ var getFirstCommand = function() {
 
 var globalPath = null;
 try {
-  globalPath = getBinaryPath('instruments_client');
+  globalPath = sysExec('which instruments_client');
 } catch (e) { }
-var nodePath = getBinaryPath('node');
+var nodePath = sysExec('which node');

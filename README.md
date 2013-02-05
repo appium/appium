@@ -158,6 +158,12 @@ Contributing
 ------------
 Fork the project, make a change, and send a pull request!
 
+Project Credits & Inspiration
+------------
+The open source community has made this project possible, please add missing projects to the list.
+
+[All the OSS code important to Appium](https://github.com/appium/appium/wiki/Credits)
+
 Mailing List
 -----------
 [Discussion Group](https://groups.google.com/d/forum/appium-discuss)

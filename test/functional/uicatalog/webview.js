@@ -143,7 +143,7 @@ describeWd('Url', function(h) {
 });
 
 describeWd('click', function(h) {
-  it.only('should work without issues on links', function(done) {
+  it('should work without issues on links', function(done) {
     loadWebView(h.driver, function() {
       h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
         should.not.exist(err);
@@ -165,15 +165,19 @@ describeWd('click', function(h) {
 });
 
 describeWd('getAttribute', function(h) {
-  it('should return the right attribute', function(done) {
+  it.only('should return the right attribute', function(done) {
     loadWebView(h.driver, function() {
       setTimeout(function() {
         h.driver.elementById('gn-store', function(err, element) {
           should.not.exist(err);
-          element.text(function(err, text) {
+          element.getAttribute("id", function(err, attrValue) {
             should.not.exist(err);
-            text.should.eql('Store');
-            done();
+            attrValue.should.eql('gn-store');
+            element.getAttribute("blar", function(err, attrValue) {
+              should.not.exist(err);
+              should.not.exist(attrValue);
+              done();
+            });
           });
         });
       }, 5000);

@@ -6,6 +6,7 @@ var net = require('net')
   , _ = require('underscore')
   , messages = require('./remote-messages.js')
   , atoms = require('./webdriver-atoms')
+  , status = require("../../uiauto/lib/status")
   , bplistCreate = require('node-bplist-creator')
   , bplistParse = require('bplist-parser')
   , bufferpack = require('bufferpack')
@@ -122,7 +123,16 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
 RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
   var atomSrc = atoms.get(atom);
   args = _.map(args, JSON.stringify);
-  this.execute(['(',atomSrc,')(',args.join(','),')'].join(''), cb);
+  this.execute(['(',atomSrc,')(',args.join(','),')'].join(''), function(err, res) {
+    if (err) {
+      cb(err, {
+        status: status.codes.UnknownError.code
+        , value: res
+      });
+    } else {
+      cb(null, JSON.parse(res.result.value));
+    }
+  });
 };
 
 RemoteDebugger.prototype.execute = function(command, cb) {
@@ -199,7 +209,10 @@ RemoteDebugger.prototype.setHandlers = function() {
       , msgId = dataKey.id
       , result = dataKey.result
       , error = dataKey.error || null;
-      if (typeof me.dataCbs[msgId] === "function") {
+      if (dataKey.method == "Profiler.resetProfiles") {
+        logger.info("Device is telling us to reset profiles. Should probably " +
+                    "do some kind of callback here");
+      } else if (typeof me.dataCbs[msgId] === "function") {
         me.dataCbs[msgId](error, result);
       } else {
         logger.error("Debugger returned data for message " + msgId +

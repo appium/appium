@@ -1,11 +1,27 @@
 package com.saucelabs.appium;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.touch.TouchActions;
+import org.openqa.selenium.remote.Augmenter;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -19,13 +35,30 @@ public class UICatalogTest {
 
     private WebElement row;
 
-    private void openMenuPosition(int index) {
+    @Before
+    public void setUp() throws Exception {
+        // set up appium
+        File app = new File(
+                "../../apps/TestApp/build/Release-iphonesimulator",
+                "UICatalog.app");
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS");
+        capabilities.setCapability(CapabilityType.VERSION, "6.0");
+        capabilities.setCapability(CapabilityType.PLATFORM, "Mac");
+        capabilities.setCapability("app", app.getAbsolutePath());
+        driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+    }
 
-        //populate text         fields with         two random         number
+    @After
+    public void tearDown() throws Exception {
+        driver.quit();
+    }
+
+    private void openMenuPosition(int index) {
+        //populate text fields with two random number
         WebElement table = driver.findElement(By.tagName("tableView"));
         row = table.findElements(By.tagName("tableCell")).get(index);
         row.click();
-
     }
 
     @Test
@@ -58,11 +91,13 @@ public class UICatalogTest {
     @Test
     public void testScreenshot() {
         //make screenshot and get is as base64
-        screenshot = driver.get_screenshot_as_base64()
-        self.assertTrue(screenshot)
+        WebDriver augmentedDriver = new Augmenter().augment(driver);
+        String screenshot = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.BASE64);
+
+        assertNotNull(screenshot);
         //make screenshot and save it to the local filesystem
-                success = self.driver.get_screenshot_as_file("foo.png")
-        self.assertTrue(success)
+        File file = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.FILE);
+        assertNotNull(file);
     }
 
     @Test
@@ -96,13 +131,13 @@ public class UICatalogTest {
         //get default/empty text
         String default_val = text_field.getAttribute("value");
         //write some random text to element
-        String rnd_string = str_generator();
+        String rnd_string = RandomStringUtils.randomAlphanumeric(6);
         text_field.sendKeys(rnd_string);
         assertEquals(text_field.getAttribute("value"), rnd_string);
         //send some random keys
-        String rnd_string2 = str_generator()
-        swipe = ActionChains(self.driver).send_keys(rnd_string2)
-        swipe.perform()
+        String rnd_string2 = RandomStringUtils.randomAlphanumeric(6);
+        Actions swipe = new Actions(driver).sendKeys(rnd_string2);
+        swipe.perform();
         //check if text is there
         assertEquals(text_field.getAttribute("value"), rnd_string2);
         //clear
@@ -117,11 +152,10 @@ public class UICatalogTest {
         openMenuPosition(10);
         List<WebElement> elements = driver.findElements(By.tagName("staticText"));
 
-
         //trigger modal alert with cancel & ok buttons
         WebElement triggerOkCancel = elements.get(14);
         triggerOkCancel.click();
-        WebElement alert = driver.switchTo();
+        Alert alert = driver.switchTo().alert();
         //check if title of alert is correct
         assertEquals(alert.getText(), "UIAlertView");
         alert.accept();
@@ -134,8 +168,8 @@ public class UICatalogTest {
         row = driver.findElements(By.tagName("tableCell")).get(2);
         Point location1 = row.getLocation();
         //perform swipe gesture
-        swipe = TouchActions(self.driver).flick(0, -20);
-        swipe.perform()
+        TouchActions swipe = new TouchActions(driver).flick(0, -20);
+        swipe.perform();
         //get new row coordinates
         Point location2 = row.getLocation();
         assertEquals(location1.getX(), location2.getX());
@@ -149,24 +183,30 @@ public class UICatalogTest {
         //get the slider
         WebElement slider = driver.findElement(By.tagName("slider"));
         assertEquals(slider.getAttribute("value"), "50%");
-        drag = TouchActions(self.driver)
-        drag.flick_element(slider, -0.5, 0, 0)
-        drag.perform()
+        TouchActions drag = new TouchActions(driver).flick(slider, new Integer(-1), 0, 0);
+        drag.perform();
         assertEquals(slider.getAttribute("value"), "0%");
     }
 
     @Test
-    public void testSessions() {
-        data = json.loads(urllib2.urlopen("http://localhost:4723/wd/hub/sessions").read())
-        self.assertEqual(self.driver.session_id, data[0]['id'])
+    public void testSessions() throws Exception {
+
+        HttpGet request = new HttpGet("http://localhost:4723/wd/hub/sessions");
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpResponse response = httpClient.execute(request);
+        HttpEntity entity = response.getEntity();
+        JSONObject jsonObject = (JSONObject) new JSONParser().parse(EntityUtils.toString(entity));
+
+        String sessionId = ((RemoteWebDriver) driver).getSessionId().toString();
+        assertEquals(sessionId, jsonObject.get("id"));
     }
 
     @Test
     public void testSize() {
-        table = driver.find_element_by_tag_name("tableView").size
-        row = driver.find_elements_by_tag_name("tableCell")[0].size
-        assertEquals(table['width'], row['width'])
-        assertNotSame(table['height'], row['height'])
+        Dimension table = driver.findElement(By.tagName("tableView")).getSize();
+        Dimension cell = driver.findElements(By.tagName("tableCell")).get(0).getSize();
+        assertEquals(table.getWidth(), cell.getWidth());
+        assertNotSame(table.getHeight(), cell.getHeight());
     }
 
     @Test
@@ -174,13 +214,13 @@ public class UICatalogTest {
         //get main view soruce
         String source_main = driver.getPageSource();
         assertTrue(source_main.contains("UIATableView"));
-        assertTrue(source_main.contains("TextFields, Uses of UITextField");
+        assertTrue(source_main.contains("TextFields, Uses of UITextField"));
 
         //got to text fields section
         openMenuPosition(2);
         String source_textfields = driver.getPageSource();
         assertTrue(source_textfields.contains("UIAStaticText"));
-                assertTrue(source_textfields.contains("TextFields");
+        assertTrue(source_textfields.contains("TextFields"));
 
         assertNotSame(source_main, source_textfields);
     }

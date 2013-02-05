@@ -65,6 +65,11 @@ exports.setUrl = function(url, appIdKey, connId, senderId, pageIdKey) {
       senderId, pageIdKey);
 };
 
+exports.enablePage = function(appIdKey, connId, senderId, pageIdKey) {
+  return exports.command("Page.enable", {}, appIdKey, connId, senderId,
+                         pageIdKey);
+};
+
 exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey) {
   var plist = {
     __argument: {

@@ -91,52 +91,29 @@ describeWd('window title', function(h) {
 describeWd('findElement/s', function(h) {
   it('should find a web element in the web view', function(done) {
     loadWebView(h.driver, function() {
-      setTimeout(function() {
-        h.driver.elementById('gn-store', function(err, element) {
-          should.not.exist(err);
-          should.exist(element);
-          element.value.should.eql('5000');
-          done();
-        });
-      }, 5000);
+      h.driver.elementById('i_am_an_id', function(err, element) {
+        should.not.exist(err);
+        should.exist(element);
+        element.value.should.eql('5000');
+        done();
+      });
     });
   });
   it('should find multiple web elements in the web view', function(done) {
     loadWebView(h.driver, function() {
-      setTimeout(function() {
-        h.driver.elementsByTagName('a', function(err, elements) {
-          should.not.exist(err);
-          elements.length.should.be.above(0);
-          done();
-        });
-      }, 5000);
+      h.driver.elementsByTagName('a', function(err, elements) {
+        should.not.exist(err);
+        elements.length.should.be.above(0);
+        done();
+      });
     });
   });
   it('should fail gracefully to find multiple missing web elements in the web view', function(done) {
     loadWebView(h.driver, function() {
-      setTimeout(function() {
-        h.driver.elementsByTagName('blar', function(err, elements) {
-          should.not.exist(err);
-          elements.length.should.eql(0);
-          done();
-        });
-      }, 5000);
-    });
-  });
-});
-
-describeWd('Url', function(h) {
-  it('should be settable', function(done) {
-    loadWebView(h.driver, function() {
-      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
+      h.driver.elementsByTagName('blar', function(err, elements) {
         should.not.exist(err);
-        var check = function() {
-          h.driver.title(function(err, title) {
-            title.should.eql("I am a page title - Sauce Labs");
-            done();
-          });
-        };
-        setTimeout(check, 3000);
+        elements.length.should.eql(0);
+        done();
       });
     });
   });
@@ -145,42 +122,32 @@ describeWd('Url', function(h) {
 describeWd('click', function(h) {
   it('should work without issues on links', function(done) {
     loadWebView(h.driver, function() {
-      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
+      h.driver.elementsByTagName('a', function(err, elements) {
         should.not.exist(err);
-        setTimeout(function() {
-          h.driver.elementsByTagName('a', function(err, elements) {
-            should.not.exist(err);
-            elements[1].click(function(err) {
-              should.not.exist(err);
-              h.driver.title(function(err, title) {
-                title.should.eql("I am another page title - Sauce Labs");
-                done();
-              });
-            });
-          });
-        }, 3000);
+        elements[1].click(function(err) {
+          should.not.exist(err);
+          spinTitle('I am another page title - Sauce Labs', h.driver, done);
+        });
       });
     });
   });
 });
 
 describeWd('getAttribute', function(h) {
-  it.only('should return the right attribute', function(done) {
+  it('should return the right attribute', function(done) {
     loadWebView(h.driver, function() {
-      setTimeout(function() {
-        h.driver.elementById('gn-store', function(err, element) {
+      h.driver.elementById('i_am_an_id', function(err, element) {
+        should.not.exist(err);
+        element.getAttribute("id", function(err, attrValue) {
           should.not.exist(err);
-          element.getAttribute("id", function(err, attrValue) {
+          attrValue.should.eql('i_am_an_id');
+          element.getAttribute("blar", function(err, attrValue) {
             should.not.exist(err);
-            attrValue.should.eql('gn-store');
-            element.getAttribute("blar", function(err, attrValue) {
-              should.not.exist(err);
-              should.not.exist(attrValue);
-              done();
-            });
+            should.not.exist(attrValue);
+            done();
           });
         });
-      }, 5000);
+      });
     });
   });
 });
@@ -188,16 +155,14 @@ describeWd('getAttribute', function(h) {
 describeWd('getText', function(h) {
   it('should return the right text', function(done) {
     loadWebView(h.driver, function() {
-      setTimeout(function() {
-        h.driver.elementById('gn-store', function(err, element) {
+      h.driver.elementById('i_am_an_id', function(err, element) {
+        should.not.exist(err);
+        element.text(function(err, text) {
           should.not.exist(err);
-          element.text(function(err, text) {
-            should.not.exist(err);
-            text.should.eql('Store');
-            done();
-          });
+          text.should.eql('I am a div');
+          done();
         });
-      }, 5000);
+      });
     });
   });
 });
@@ -210,11 +175,34 @@ var loadWebView = function(driver, cb) {
       driver.windowHandles(function(err, handles) {
         should.not.exist(err);
         handles.length.should.be.above(0);
-        driver.window(handles[0], function(err) {
-          should.not.exist(err);
-          cb();
+        driver.elementByTagName('textField', function(err, elem) {
+          elem.sendKeys("http://www.saucelabs.com/test/guinea-pig", function(err) {
+            should.not.exist(err);
+            driver.keys("\\uE007", function(err) {
+              should.not.exist(err);
+              driver.window(handles[0], function(err) {
+                should.not.exist(err);
+                spinTitle('I am a page title - Sauce Labs', driver, cb);
+              });
+            });
+          });
         });
       });
     });
+  });
+};
+
+var spinTitle = function (expTitle, driver, cb, timeout) {
+  timeout = typeof timeout == 'undefined' ? 60 : timeout;
+  timeout.should.be.above(0);
+  driver.title(function(err, pageTitle) {
+    should.not.exist(err);
+    if (pageTitle == expTitle) {
+      cb();
+    } else {
+      setTimeout(function () {
+        spinTitle(expTitle, driver, cb, timeout - 1);
+      }, 500);
+    }
   });
 };

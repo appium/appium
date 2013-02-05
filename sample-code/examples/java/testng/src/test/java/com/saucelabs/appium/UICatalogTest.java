@@ -62,7 +62,7 @@ public class UICatalogTest {
     }
 
     @Test
-    public void findElement() throws Exception {
+    public void testFindElement() throws Exception {
         //first view in UICatalog is a table
         WebElement table = driver.findElement(By.tagName("tableView"));
         assertNotNull(table);
@@ -70,11 +70,17 @@ public class UICatalogTest {
         List<WebElement> rows = table.findElements(By.tagName("tableCell"));
         assertEquals(12, rows.size());
         //is first one about buttons
-        assertEquals(rows.get(0).getText(), "Buttons, Various uses of UIButton");
+        assertEquals(rows.get(0).getAttribute("name"), "Buttons, Various uses of UIButton");
         //navigationBar is not inside table
-        WebElement nav_bar = table.findElement(By.tagName("navigationBar"));
+        WebElement nav_bar = null;
+        try {
+            nav_bar = table.findElement(By.tagName("navigationBar"));
+        } catch (NoSuchElementException e) {
+            //expected
+        }
         assertNull(nav_bar);
         //there is nav bar inside the app
+        driver.getPageSource();
         nav_bar = driver.findElement(By.tagName("navigationBar"));
         assertNotNull(nav_bar);
     }
@@ -103,7 +109,7 @@ public class UICatalogTest {
     @Test
     public void testAttributes() {
         //go to the toolbar section
-        openMenuPosition(9);
+        openMenuPosition(8);
 
         WebElement segmented_control = driver.findElement(By.tagName("segmentedControl"));
         //segmented_control is enabled by default
@@ -139,7 +145,7 @@ public class UICatalogTest {
         Actions swipe = new Actions(driver).sendKeys(rnd_string2);
         swipe.perform();
         //check if text is there
-        assertEquals(text_field.getAttribute("value"), rnd_string2);
+        assertEquals(text_field.getAttribute("value"), rnd_string + rnd_string2);
         //clear
         text_field.clear();
         //check if is empty/has default text
@@ -198,7 +204,7 @@ public class UICatalogTest {
         JSONObject jsonObject = (JSONObject) new JSONParser().parse(EntityUtils.toString(entity));
 
         String sessionId = ((RemoteWebDriver) driver).getSessionId().toString();
-        assertEquals(sessionId, jsonObject.get("id"));
+        assertEquals(sessionId, jsonObject.get("sessionId"));
     }
 
     @Test

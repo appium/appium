@@ -22,7 +22,7 @@ var sysExec = function(cmd) {
 var clientPath = (function() {
   var client = 'instruments/client.js';
   var module = 'node_modules/appium/';
-  
+
   try {
     sysExec('ls ' + client);
     return client;
@@ -31,7 +31,6 @@ var clientPath = (function() {
       sysExec('ls ' + module + client);
       return module + client;
     } catch(e) {
-      throw new Error("Unable to locate instruments client.");
     }
   }
 })();
@@ -46,7 +45,10 @@ var isAppiumApp = (function() {
 var sendResultAndGetNext = function(result) {
   var args = ['-s', '/tmp/instruments_sock'], res
     , binaryPath = globalPath;
-  if (globalPath === null || !isAppiumApp) {
+  if (isAppiumApp) {
+    globalPath = null;
+  }
+  if (globalPath === null) {
     binaryPath = nodePath;
     args.unshift(clientPath);
   }

@@ -245,12 +245,13 @@ isSpecialKey = function(k) {
 }
 
 typeKey = function(keyboard, k) {
-    if (k === '\uE003') // DELETE
-        keyboard.keys()["Delete"].tap();
-    else if (k === '\uE006' || k === '\uE007') // RETURN ENTER
-        keyboard.buttons()["Go"].tap();
-    else
-        keyboard.typeString(String(k)); // regular key
+    if (k === '\uE003') { // DELETE
+      keyboard.keys()["Delete"].tap();
+    } else if (k === '\uE006' || k === '\uE007') {// RETURN ENTER
+      keyboard.buttons()["Go"].tap();
+    } else {
+      keyboard.typeString(String(k)); // regular key
+    }
 }
 
 // location/size/...

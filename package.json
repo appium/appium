@@ -40,6 +40,7 @@
     "bufferpack": "0.0.6",
     "node-bplist-creator": "~0.0.1",
     "node-uuid": "~1.4.0",
+    "underscore.string": "~2.3.1",
     "unzip": "~0.1.1"
   },
   "scripts": {

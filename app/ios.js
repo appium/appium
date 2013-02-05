@@ -346,6 +346,20 @@ IOS.prototype.click = function(elementId, cb) {
   }
 };
 
+IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, cb) {
+  var options = {
+    tapCount: tapCount
+    , touchCount: touchCount
+    , duration: duration
+    , tapOffset: {
+      x: x
+      , y: y
+    }
+  };
+  var command = ["au.complexTap(", JSON.stringify(options), ")"].join('');
+  this.proxy(command, cb);
+};
+
 IOS.prototype.clear = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').setValue('')"].join('');
 

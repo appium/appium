@@ -74,7 +74,7 @@ describeWd('window title', function(h) {
     loadWebView(h.driver, function() {
       h.driver.title(function(err, title) {
         should.not.exist(err);
-        title.should.eql("Apple");
+        title.should.eql("I am a page title - Sauce Labs");
         h.driver.frame(null, function(err) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
@@ -128,7 +128,7 @@ describeWd('findElement/s', function(h) {
 describeWd('Url', function(h) {
   it('should be settable', function(done) {
     loadWebView(h.driver, function() {
-      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err, res) {
+      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
         should.not.exist(err);
         var check = function() {
           h.driver.title(function(err, title) {
@@ -145,12 +145,39 @@ describeWd('Url', function(h) {
 describeWd('click', function(h) {
   it('should work without issues on links', function(done) {
     loadWebView(h.driver, function() {
+      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err) {
+        should.not.exist(err);
+        setTimeout(function() {
+          h.driver.elementsByTagName('a', function(err, elements) {
+            should.not.exist(err);
+            elements[1].click(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am another page title - Sauce Labs");
+                done();
+              });
+            });
+          });
+        }, 3000);
+      });
+    });
+  });
+});
+
+describeWd('getAttribute', function(h) {
+  it.only('should return the right attribute', function(done) {
+    loadWebView(h.driver, function() {
       setTimeout(function() {
         h.driver.elementById('gn-store', function(err, element) {
           should.not.exist(err);
-          element.click(function(err) {
+          element.getAttribute("id", function(err, attrValue) {
             should.not.exist(err);
-            done();
+            attrValue.should.eql('gn-store');
+            element.getAttribute("blar", function(err, attrValue) {
+              should.not.exist(err);
+              should.not.exist(attrValue);
+              done();
+            });
           });
         });
       }, 5000);

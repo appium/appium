@@ -4,6 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.saucelabs</groupId>
     <artifactId>sauce_appium_junit</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <name>sauce_appium_junit</name>
 
     <dependencies>
@@ -17,6 +18,18 @@
             <groupId>com.saucelabs</groupId>
             <artifactId>sauce_junit</artifactId>
             <version>LATEST</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>LATEST</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

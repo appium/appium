@@ -75,4 +75,9 @@ var globalPath = null;
 try {
   globalPath = sysExec('which instruments_client');
 } catch (e) { }
-var nodePath = sysExec('which node');
+var nodePath = "/usr/local/bin/node";
+try {
+  nodePath = sysExec('which node');
+} catch (e) {
+  nodePath = "/usr/local/bin/node";
+}

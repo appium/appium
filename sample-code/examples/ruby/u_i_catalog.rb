@@ -5,6 +5,7 @@
 
 require 'rspec'
 require 'selenium-webdriver'
+require 'net/http'
 
 include Selenium::WebDriver::DriverExtensions::HasTouchScreen
 
@@ -142,9 +143,6 @@ describe "UI Catalog" do
       @text_field.clear
       @text_field.attribute("value").should eq "<enter text>"
     end
-
-
-
   end
 
   describe "alerts" do
@@ -191,12 +189,26 @@ describe "UI Catalog" do
       @driver.find_elements(:tag_name, "tableCell")[1].click
     end
 
+    after :all do
+      go_back
+    end
+
     it "can have their values read" do
       slider = @driver.find_element(:tag_name, "slider")
       slider.attribute("value").should eq "50%"
     end
+
+    it "can be changed"
   end
 
+  describe "sessions" do
+    it "can be obtained from the simulator or driver" do
+      data = JSON.parse(Net::HTTP.get(URI "#{server_url}/sessions"))
+      data.should_not be_nil
 
+      session_id = @driver.instance_variable_get("@bridge").instance_variable_get("@session_id")
 
+      session_id.should eq (data["value"][0]["id"])
+    end
+  end
 end

@@ -42,6 +42,9 @@ Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-cod
 
 We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods), Check it out.
 
+You can also automate web views in hybrid apps! See the [hybrid app
+guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
+
 
 - - -
 

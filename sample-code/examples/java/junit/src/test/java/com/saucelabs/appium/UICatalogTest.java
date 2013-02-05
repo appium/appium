@@ -38,9 +38,9 @@ public class UICatalogTest {
     @Before
     public void setUp() throws Exception {
         // set up appium
-        File app = new File(
-                "../../apps/TestApp/build/Release-iphonesimulator",
-                "UICatalog.app");
+        File classpathRoot = new File(System.getProperty("user.dir"));
+        File appDir = new File(classpathRoot, "../../../apps/UICatalog/build/Release-iphonesimulator");
+        File app = new File(appDir,"UICatalog.app");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS");
         capabilities.setCapability(CapabilityType.VERSION, "6.0");

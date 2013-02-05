@@ -41,7 +41,7 @@ public class SauceTest {
         capabilities.setCapability(CapabilityType.PLATFORM, "Mac");
         capabilities.setCapability("app", "https://raw.github.com/appium/appium/master/assets/TestApp.app.zip");
 
-        driver = new RemoteWebDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub"), sauceUserName, sauceAccessKey),
+        driver = new RemoteWebDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub", sauceUserName, sauceAccessKey)),
                 capabilities);
         values = new ArrayList<String>();
     }

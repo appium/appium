@@ -33,9 +33,9 @@ public class SimpleTest {
     @Before
     public void setUp() throws Exception {
         // set up appium
-        File app = new File(
-                "../../apps/TestApp/build/Release-iphonesimulator",
-                "TestApp.app");
+        File classpathRoot = new File(System.getProperty("user.dir"));
+        File appDir = new File(classpathRoot, "../../../apps/TestApp/build/Release-iphonesimulator");
+        File app = new File(appDir, "TestApp.app");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS");
         capabilities.setCapability(CapabilityType.VERSION, "6.0");

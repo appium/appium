@@ -34,7 +34,9 @@ browser
         should.not.exist(err);
         el.text(function(err, text) {
           text.should.eql("I am a div");
-          browser.quit();
+          browser.frame(null, function() {
+            browser.quit();
+          });
         });
       });
     });

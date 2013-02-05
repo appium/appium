@@ -25,7 +25,7 @@ public class SimpleTest {
 
     private WebDriver driver;
 
-    private List<String> values;
+    private List<Integer> values;
 
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
@@ -42,7 +42,7 @@ public class SimpleTest {
         capabilities.setCapability(CapabilityType.PLATFORM, "Mac");
         capabilities.setCapability("app", app.getAbsolutePath());
         driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
-        values = new ArrayList<String>();
+        values = new ArrayList<Integer>();
     }
 
     @After
@@ -56,8 +56,8 @@ public class SimpleTest {
         List<WebElement> elems = driver.findElements(By.tagName("textField"));
         Random random = new Random();
         for (WebElement elem : elems) {
-            String rndNum = String.valueOf(random.nextInt(MAXIMUM - MINIMUM + 1) + MINIMUM);
-            elem.sendKeys(rndNum);
+            int rndNum = random.nextInt(MAXIMUM - MINIMUM + 1) + MINIMUM;
+            elem.sendKeys(String.valueOf(rndNum));
             values.add(rndNum);
         }
     }
@@ -72,7 +72,7 @@ public class SimpleTest {
         button.click();
         // is sum equal ?
         WebElement texts = driver.findElement(By.tagName("staticText"));
-        assertEquals(texts.getText(), values.get(0) + values.get(1));
+        assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
     }
 
 

@@ -25,7 +25,7 @@ public class SauceTest {
 
     private WebDriver driver;
 
-    private List<String> values;
+    private List<Integer> values;
 
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
@@ -43,7 +43,7 @@ public class SauceTest {
 
         driver = new RemoteWebDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub", sauceUserName, sauceAccessKey)),
                 capabilities);
-        values = new ArrayList<String>();
+        values = new ArrayList<Integer>();
     }
 
     @After
@@ -56,10 +56,9 @@ public class SauceTest {
         //populate text fields with two random number
         List<WebElement> elems = driver.findElements(By.tagName("textField"));
         Random random = new Random();
-
         for (WebElement elem : elems) {
-            String rndNum = String.valueOf(random.nextInt(MAXIMUM - MINIMUM + 1) + MINIMUM);
-            elem.sendKeys(rndNum);
+            int rndNum = random.nextInt(MAXIMUM - MINIMUM + 1) + MINIMUM;
+            elem.sendKeys(String.valueOf(rndNum));
             values.add(rndNum);
         }
     }
@@ -74,6 +73,6 @@ public class SauceTest {
         button.click();
         // is sum equal ?
         WebElement texts = driver.findElement(By.tagName("staticText"));
-        assertEquals(texts.getText(), values.get(0) + values.get(1));
+        assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
     }
 }

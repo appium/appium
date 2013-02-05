@@ -162,7 +162,7 @@ Project Credits & Inspiration
 ------------
 The open source community has made this project possible, please add missing projects to the list.
 
-[All the OSS code important to Appium](https://github.com/appium/appium/wiki/Credits)
+[All the OSS code contributing to Appium](https://github.com/appium/appium/wiki/Credits)
 
 Mailing List
 -----------

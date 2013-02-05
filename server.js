@@ -38,7 +38,7 @@ var main = function(args, readyCb, doneCb) {
     if (args.verbose) {
       rest.use(express.logger('dev'));
     }
-    if (args.log) {
+    if (args.log || args.webhook) {
       var winstonStream = {
         write: function(msg) {
           msg = msg.replace(/$\s*$/m, "");

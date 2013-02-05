@@ -125,6 +125,23 @@ describeWd('findElement/s', function(h) {
   });
 });
 
+describeWd('Url', function(h) {
+  it('should be settable', function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.get('http://www.saucelabs.com/test/guinea-pig', function(err, res) {
+        should.not.exist(err);
+        var check = function() {
+          h.driver.title(function(err, title) {
+            title.should.eql("I am a page title - Sauce Labs");
+            done();
+          });
+        };
+        setTimeout(check, 3000);
+      });
+    });
+  });
+});
+
 var loadWebView = function(driver, cb) {
   driver.elementByName('Web, Use of UIWebView', function(err, el) {
     should.not.exist(err);

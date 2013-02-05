@@ -371,9 +371,21 @@ IOS.prototype.getText = function(elementId, cb) {
 };
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
-  var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
-
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    var atomsId;
+    try {
+      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
+    } catch(e) {
+      cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Error converting element ID for using in WD atoms: " + elementId
+      });
+    }
+    this.remote.executeAtom('get_attribute_value', [{'ELEMENT': atomsId}, attributeName], cb);
+  } else {
+    var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getLocation = function(elementId, cb) {

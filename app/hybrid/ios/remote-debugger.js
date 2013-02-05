@@ -143,6 +143,15 @@ RemoteDebugger.prototype.callFunction = function(objId, fn, args, cb) {
   this.send(callJSFunction, cb);
 };
 
+RemoteDebugger.prototype.navToUrl = function(url, cb) {
+  assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
+  assert.ok(this.pageIdKey);
+  logger.info("Navigating to new URL: " + url);
+  var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
+      this.senderId, this.pageIdKey);
+  this.send(navToUrl, cb);
+};
+
 // ====================================
 // HANDLERS
 // ====================================

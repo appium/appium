@@ -354,7 +354,11 @@ exports.title = function(req, res) {
 };
 
 exports.postUrl = function(req, res) {
-  req.device.url(getResponseHandler(req, res));
+  var url = req.body.url;
+
+  if(checkMissingParams(res, {url: url})) {
+    req.device.url(url, getResponseHandler(req, res));
+  }
 };
 
 exports.active = function(req, res) {

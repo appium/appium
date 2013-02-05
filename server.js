@@ -66,6 +66,9 @@ var main = function(args, readyCb, doneCb) {
         var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
         logger.info(logMessage.cyan);
       });
+      server.on('error', function(err) {
+        logger.error("Couldn't start Appium REST http interface listener. Requested port is already in use. Please make sure there's no other instance of Appium running already.");
+      });
       if (readyCb) {
         readyCb(appiumServer);
       }

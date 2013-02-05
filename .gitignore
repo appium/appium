@@ -3,6 +3,7 @@ node_modules
 *.trace
 xcuserdata
 sample-code/apps/TestApp/build
+sample-code/apps/WebViewApp/build
 *.sublime-*
 sample-code/apps/UICatalog*
 sample-code/examples/php/composer.lock

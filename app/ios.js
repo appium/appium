@@ -198,6 +198,11 @@ IOS.prototype.resetCommandTimeout = function(cb) {
   this.proxy(cmd, cb);
 };
 
+IOS.prototype.getCommandTimeout = function(cb) {
+  var cmd = "waitForDataTimeout";
+  this.proxy(cmd, cb);
+};
+
 IOS.prototype.proxy = function(command, cb) {
   // was thinking we should use a queue for commands instead of writing to a file
   this.push([command, cb]);

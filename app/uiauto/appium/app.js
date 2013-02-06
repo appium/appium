@@ -7,12 +7,15 @@ if (typeof au === "undefined") {
 }
 
 $.extend(au, {
-    cache: []
-    , identifier: 0
-    , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
-    , mainApp: UIATarget.localTarget().frontMostApp()
-    , keyboard: UIATarget.localTarget().frontMostApp().keyboard()
-    , getScreenOrientation: function () {
+  cache: []
+  , identifier: 0
+  , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
+  , mainApp: UIATarget.localTarget().frontMostApp()
+  , keyboard: UIATarget.localTarget().frontMostApp().keyboard()
+
+  // Screen orientation functions
+
+  , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
       switch (orientation) {
@@ -65,6 +68,8 @@ $.extend(au, {
         };
       }
     }
+
+  // Element lookup functions
 
   , lookup: function(selector, ctx) {
       if (typeof selector === 'string') {
@@ -182,14 +187,79 @@ $.extend(au, {
         };
       }
     }
+
   , getActiveElement: function() {
       return $(this.mainWindow).getActiveElement();
     }
+
+  // Gesture functions
+
   , complexTap: function(opts) {
       return this.mainApp.tapWithOptions(opts);
     }
 
+ // Gesture emulation functions (i.e., making Selenium work)
+
+    // does a flick in the middle of the screen of size 1/4 of screen
+    // using the direction corresponding to xSpeed/ySpeed
+  , touchFlickFromSpeed: function(xSpeed, ySpeed) {
+      // get x, y of vector that provides the direction given by xSpeed/ySpeed and
+      // has length .25
+      var mult = Math.sqrt((0.25 * 0.25) / (xSpeed * xSpeed + ySpeed * ySpeed));
+      var x = mult * xSpeed;
+      var y = mult * ySpeed;
+
+      // translate to flick in the middle of the screen
+      var options = {
+        startOffset : {
+          x : 0.5 - 0.5 * x,
+          y : 0.5 - 0.5 * y
+        },
+        endOffset : {
+          x : 0.5 + 0.5 * x,
+          y : 0.5 + 0.5 * y
+        }
+      };
+
+      this.mainWindow.flickInsideWithOptions(options);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+    // similar to flick but does a longer movement in the direction of the swipe
+    // does a swipe in the middle of the screen of size 1/2 of screen
+    // using the direction corresponding to xSpeed/ySpeed
+  , touchSwipeFromSpeed: function(xSpeed, ySpeed) {
+      // get x, y of vector that provides the direction given by xSpeed/ySpeed and
+      // has length .50
+      var mult = Math.sqrt((0.5 * 0.5) / (xSpeed * xSpeed + ySpeed * ySpeed));
+      var x = mult * xSpeed;
+      var y = mult * ySpeed;
+
+      // translate to swipe in the middle of the screen
+      var options = {
+        startOffset : {
+          x : 0.5 - 0.25 * x,
+          y : 0.5 - 0.25 * y
+        },
+        endOffset : {
+          x : 0.5 + 0.75 * x,
+          y : 0.5 + 0.75 * y
+        },
+        duration : 0.2
+      };
+
+      this.mainWindow.dragInsideWithOptions(options);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
   // Keyboard functions
+
   , sendKeysToActiveElement: function(keys) {
       if (this.hasSpecialKeys(keys)) {
         return this.sendKeysToActiveElementSpecial(keys);
@@ -239,4 +309,28 @@ $.extend(au, {
     }
   }
 
+  // Alert-related functions
+
+  , getAlertText: function() {
+      return {
+        status: codes.Success.code,
+        value: this.mainApp.alert().name()
+      };
+    }
+
+  , acceptAlert: function() {
+      this.mainApp.alert().defaultButton().tap();
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , dismissAlert: function() {
+      this.mainApp.alert().cancelButton().tap();
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
 });

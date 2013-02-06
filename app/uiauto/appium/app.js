@@ -11,6 +11,7 @@ $.extend(au, {
     , web: null
     , identifier: 0
     , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
+    , mainApp: UIATarget.localTarget().frontMostApp()
     , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
@@ -210,6 +211,6 @@ $.extend(au, {
       };
     }
   , complexTap: function(opts) {
-    return this.mainWindow.tapWithOptions(opts);
+    return this.mainApp.tapWithOptions(opts);
   }
 });

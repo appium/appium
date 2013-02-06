@@ -194,7 +194,6 @@ exports.setValue = function(req, res) {
 
 exports.doClick = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.click(elementId, getResponseHandler(req, res));
 };
 
@@ -215,7 +214,6 @@ exports.mobileTap = function(req, res) {
 
 exports.clear = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.clear(elementId, getResponseHandler(req, res));
 };
 
@@ -240,13 +238,11 @@ exports.getLocation = function(req, res) {
 
 exports.getSize = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.getSize(elementId, getResponseHandler(req, res));
 };
 
 exports.getPageIndex = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.getPageIndex(elementId, getResponseHandler(req, res));
 };
 
@@ -269,7 +265,6 @@ exports.frame = function(req, res) {
 
 exports.elementDisplayed = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.elementDisplayed(elementId, getResponseHandler(req, res));
 };
 
@@ -297,13 +292,11 @@ exports.postDismissAlert = function(req, res) {
 
 exports.implicitWait = function(req, res) {
   var seconds = req.body.ms / 1000;
-
   req.device.implicitWait(seconds, getResponseHandler(req, res));
 };
 
 exports.setOrientation = function(req, res) {
   var orientation = req.body.orientation;
-
   req.device.setOrientation(orientation, getResponseHandler(req, res));
 };
 
@@ -423,6 +416,19 @@ exports.getWindowHandles = function(req, res) {
   req.device.getWindowHandles(getResponseHandler(req, res));
 };
 
+exports.setCommandTimeout = function(req, res) {
+  var timeout = req.body.timeout;
+
+  if(checkMissingParams(res, {timeout: timeout})) {
+    timeout = parseInt(timeout, 10);
+    req.device.setCommandTimeout(timeout, getResponseHandler(req, res));
+  }
+};
+
+exports.getCommandTimeout = function(req, res) {
+  req.device.getCommandTimeout(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   res.set('Content-Type', 'text/plain');
   res.send(404, "That URL did not map to a valid JSONWP resource");
@@ -448,6 +454,8 @@ var notImplementedInThisContext = function(req, res) {
 
 var mobileCmdMap = {
   'tap': [exports.mobileTap, ['tapCount', 'touchCount', 'duration', 'x', 'y']]
+  , 'setCommandTimeout': [exports.setCommandTimeout, ['timeout']]
+  , 'getCommandTimeout': [exports.getCommandTimeout, []]
 };
 
 exports.produceError = function(req, res) {

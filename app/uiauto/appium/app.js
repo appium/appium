@@ -196,7 +196,16 @@ $.extend(au, {
   // Gesture functions
 
   , complexTap: function(opts) {
-      return this.mainApp.tapWithOptions(opts);
+      var touchOpts = {
+        tapCount: parseInt(opts.tapCount, 10)
+        , duration: parseFloat(opts.duration)
+        , touchCount: parseInt(opts.touchCount, 10)
+      };
+      var pointOpts = {
+        x: parseFloat(opts.x)
+        , y: parseFloat(opts.y)
+      };
+      return this.target.tapWithOptions(pointOpts, touchOpts);
     }
 
  // Gesture emulation functions (i.e., making Selenium work)

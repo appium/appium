@@ -12,7 +12,7 @@ var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp
 
 describeWd('command timeout', function(h) {
   it('should be settable and gettable', function(done) {
-    h.driver.execute("mobile: setCommandTimeout", [37], function(err) {
+    h.driver.execute("mobile: setCommandTimeout", [{timeout: 37}], function(err) {
       should.not.exist(err);
       h.driver.execute("mobile: getCommandTimeout", function(err, res) {
         should.not.exist(err);

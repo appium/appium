@@ -160,3 +160,17 @@ UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
     value: null
   };
 };
+
+UIAElement.prototype.complexTap = function(opts) {
+  opts = {
+    tapCount: parseInt(opts.tapCount, 10)
+    , duration: parseFloat(opts.duration)
+    , touchCount: parseInt(opts.touchCount, 10)
+    , tapOffset: {
+      x: parseFloat(opts.x)
+      , y: parseFloat(opts.y)
+    }
+  };
+  return this.tapWithOptions(opts);
+};
+

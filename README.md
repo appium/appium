@@ -34,7 +34,7 @@ Get something working with a quickness.
 
     > mkdir appium-test && cd appium-test
     > sudo npm install appium -g
-    > sudo npm install wd
+    > npm install wd
     > curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
     > appium &
     > node simplest.js

@@ -334,7 +334,6 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 
 IOS.prototype.setValue = function(elementId, value, cb) {
   var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
-
   this.proxy(command, cb);
 };
 
@@ -371,7 +370,6 @@ IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, cb) {
 
 IOS.prototype.clear = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').setValue('')"].join('');
-
   this.proxy(command, cb);
 };
 
@@ -411,50 +409,42 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 
 IOS.prototype.getLocation = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').getElementLocation()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.getSize = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.getPageIndex = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').pageIndex()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
   var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.frame = function(frame, cb) {
   frame = frame? frame : 'mainWindow';
   var command = ["wd_frame = ", frame].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.implicitWait = function(seconds, cb) {
   var command = ["au.timeout('", seconds, "')"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
-
   this.proxy(command, cb);
 };
 

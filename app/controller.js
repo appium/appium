@@ -198,18 +198,24 @@ exports.doClick = function(req, res) {
 };
 
 exports.mobileTap = function(req, res) {
-  //'tap': [exports.mobileTap, ['tapCount', 'touchCount', 'duration', 'x', 'y']]
+  var onElement = typeof req.body.elementId !== "undefined";
+  req.body = _.defaults(req.body, {
+    tapCount: 1
+    , touchCount: 1
+    , duration: 0.1
+    , x: onElement ? 0.5 : 0
+    , y: onElement ? 0.5 : 0
+    , elementId: null
+  });
   var tapCount = req.body.tapCount
     , touchCount = req.body.touchCount
     , duration = req.body.duration
+    , elementId = req.body.elementId
     , x = req.body.x
     , y = req.body.y;
 
-  if(checkMissingParams(res, {tapCount: tapCount, touchCount: touchCount,
-                              duration: duration, x: x, y: y})) {
-    req.device.complexTap(tapCount, touchCount, duration, x, y,
-        getResponseHandler(req, res));
-  }
+  req.device.complexTap(tapCount, touchCount, duration, x, y, elementId,
+      getResponseHandler(req, res));
 };
 
 exports.clear = function(req, res) {

@@ -428,7 +428,7 @@ IOS.prototype.getPageIndex = function(elementId, cb) {
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
-  var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
+  var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
 
   this.proxy(command, cb);
 };
@@ -463,26 +463,23 @@ IOS.prototype.getPageSource = function(cb) {
 };
 
 IOS.prototype.getAlertText = function(cb) {
-  this.proxy("getAlertText()", cb);
+  this.proxy("au.getAlertText()", cb);
 };
 
 IOS.prototype.postAcceptAlert = function(cb) {
-  this.proxy("acceptAlert()", cb);
+  this.proxy("au.acceptAlert()", cb);
 };
 
 IOS.prototype.postDismissAlert = function(cb) {
-  this.proxy("dismissAlert()", cb);
+  this.proxy("au.dismissAlert()", cb);
 };
 
 IOS.prototype.getOrientation = function(cb) {
-  var command = "getScreenOrientation()";
-
-  this.proxy(command, cb);
+  this.proxy("au.getScreenOrientation()", cb);
 };
 
 IOS.prototype.setOrientation = function(orientation, cb) {
-  var command = ["setScreenOrientation('", orientation ,"')"].join('');
-
+  var command = ["au.setScreenOrientation('", orientation ,"')"].join('');
   this.proxy(command, cb);
 };
 
@@ -531,10 +528,10 @@ IOS.prototype.getScreenshot = function(cb) {
 IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   var command = "";
   if (!swipe) {
-    command = ["touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
+    command = ["au.touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
   else {
-    command = ["touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
+    command = ["au.touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
 
   this.proxy(command, cb);

@@ -1,3 +1,4 @@
+/*global UIATarget:true */
 "use strict";
 
 var system = UIATarget.localTarget().host();

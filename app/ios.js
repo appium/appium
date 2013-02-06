@@ -359,17 +359,21 @@ IOS.prototype.click = function(elementId, cb) {
   }
 };
 
-IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, cb) {
-  var options = {
-    tapCount: tapCount
-    , touchCount: touchCount
-    , duration: duration
-    , tapOffset: {
-      x: x
-      , y: y
-    }
-  };
-  var command = ["au.complexTap(", JSON.stringify(options), ")"].join('');
+IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
+  var command
+    , options = {
+        tapCount: tapCount
+        , touchCount: touchCount
+        , duration: duration
+        , x: x
+        , y: y
+      };
+  var JSONOpts = JSON.stringify(options);
+  if (elementId !== null) {
+    command = ["au.getElement('", elementId, "').complexTap(", JSONOpts, ')'].join('');
+  } else {
+    command = ["au.complexTap(", JSONOpts, ")"].join('');
+  }
   this.proxy(command, cb);
 };
 

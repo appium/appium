@@ -147,6 +147,16 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
   });
 };
 
+IOS.prototype.getAtomsElement = function(wdId) {
+  var atomsId;
+  try {
+    atomsId = this.webElementIds[parseInt(wdId, 10) - 5000];
+  } catch(e) {
+    return null;
+  }
+  return {'ELEMENT': atomsId};
+};
+
 IOS.prototype.stopRemote = function() {
   if (!this.remote) {
     logger.error("We don't appear to be in a web frame");
@@ -330,16 +340,15 @@ IOS.prototype.setValue = function(elementId, value, cb) {
 
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsId;
-    try {
-      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
-    } catch(e) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
       cb(null, {
         status: status.codes.UnknownError.code
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
+    } else {
+      this.remote.executeAtom('click', [atomsElement], cb);
     }
-    this.remote.executeAtom('click', [{'ELEMENT': atomsId}], cb);
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');
     this.proxy(command, cb);
@@ -368,16 +377,15 @@ IOS.prototype.clear = function(elementId, cb) {
 
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsId;
-    try {
-      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
-    } catch(e) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
       cb(null, {
         status: status.codes.UnknownError.code
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
+    } else {
+      this.remote.executeAtom('get_text', [atomsElement], cb);
     }
-    this.remote.executeAtom('get_text', [{'ELEMENT': atomsId}], cb);
   } else {
     var command = ["au.getElement('", elementId, "').value()"].join('');
     this.proxy(command, cb);
@@ -386,16 +394,15 @@ IOS.prototype.getText = function(elementId, cb) {
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
   if (this.curWindowHandle) {
-    var atomsId;
-    try {
-      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
-    } catch(e) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
       cb(null, {
         status: status.codes.UnknownError.code
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
+    } else {
+      this.remote.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
     }
-    this.remote.executeAtom('get_attribute_value', [{'ELEMENT': atomsId}, attributeName], cb);
   } else {
     var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
     this.proxy(command, cb);

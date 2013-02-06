@@ -11,6 +11,7 @@ $.extend(au, {
     , identifier: 0
     , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
     , mainApp: UIATarget.localTarget().frontMostApp()
+    , keyboard: UIATarget.localTarget().frontMostApp().keyboard()
     , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
@@ -185,6 +186,57 @@ $.extend(au, {
       return $(this.mainWindow).getActiveElement();
     }
   , complexTap: function(opts) {
-    return this.mainApp.tapWithOptions(opts);
+      return this.mainApp.tapWithOptions(opts);
+    }
+
+  // Keyboard functions
+  , sendKeysToActiveElement: function(keys) {
+      if (this.hasSpecialKeys(keys)) {
+        return this.sendKeysToActiveElementSpecial(keys);
+      } else {
+        this.keyboard.typeString(keys);
+      }
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , hasSpecialKeys: function(keys) {
+      var numChars = keys.length;
+      for (var i = 0; i < numChars; i++)
+        if (this.isSpecialKey(keys.charAt(i)))
+          return true;
+      return false;
+    }
+
+  , sendKeysToActiveElementSpecial: function(keys) {
+      var numChars = keys.length;
+      for (var i = 0; i < numChars; i++)
+        this.typeKey(keys.charAt(i));
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+    // handles some of the special keys in org.openqa.selenium.Keys
+  , isSpecialKey: function(k) {
+      if (k === '\uE003') // DELETE
+        return true;
+      else if (k === '\uE006' || k === '\uE007') // RETURN ENTER
+        return true;
+      return false;
+    }
+
+ , typeKey: function(k) {
+    if (k === '\uE003') { // DELETE
+      this.keyboard.keys().Delete.tap();
+    } else if (k === '\uE006' || k === '\uE007') {// RETURN ENTER
+      this.keyboard.buttons().Go.tap();
+    } else {
+      this.keyboard.typeString(String(k)); // regular key
+    }
   }
+
 });

@@ -421,7 +421,7 @@ IOS.prototype.getPageIndex = function(elementId, cb) {
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
-  var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
+  var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
 
   this.proxy(command, cb);
 };

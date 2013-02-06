@@ -5,6 +5,7 @@ UIAElementNil.prototype.type = function() {
     return "UIAElementNil";
 };
 
+// this is mechanic notation for extending UIAElement
 $.extend($.fn, {
     type: function() {
       var type = this.toString();

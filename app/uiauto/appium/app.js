@@ -8,7 +8,6 @@ if (typeof au === "undefined") {
 
 $.extend(au, {
     cache: []
-    , web: null
     , identifier: 0
     , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
     , mainApp: UIATarget.localTarget().frontMostApp()
@@ -184,31 +183,6 @@ $.extend(au, {
     }
   , getActiveElement: function() {
       return $(this.mainWindow).getActiveElement();
-    }
-  , enterWebFrame: function(element) {
-      if (typeof element === "string") {
-        element = this.cache[element];
-      }
-      if (typeof element === "undefined" || !element) {
-        return {
-          status: codes.NoSuchElement.code
-          , value: null
-        };
-      } else if (element.type() !== "UIAWebView") {
-        return {
-          status: codes.NoSuchElement.code
-          , value: "That element is not a web view!"
-        };
-      } else {
-        this.web = element;
-      }
-    }
-  , leaveWebFrame: function() {
-      this.web = null;
-      return {
-        status: codes.Success.code
-        , value: null
-      };
     }
   , complexTap: function(opts) {
     return this.mainApp.tapWithOptions(opts);

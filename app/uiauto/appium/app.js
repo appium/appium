@@ -12,7 +12,7 @@ $.extend(au, {
   , target: UIATarget.localTarget()
   , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
   , mainApp: UIATarget.localTarget().frontMostApp()
-  , keyboard: UIATarget.localTarget().frontMostApp().keyboard()
+  , keyboard: function() { return UIATarget.localTarget().frontMostApp().keyboard(); }
 
   // Screen orientation functions
 
@@ -265,7 +265,7 @@ $.extend(au, {
       if (this.hasSpecialKeys(keys)) {
         return this.sendKeysToActiveElementSpecial(keys);
       } else {
-        this.keyboard.typeString(keys);
+        this.keyboard().typeString(keys);
       }
       return {
         status: codes.Success.code,
@@ -302,11 +302,11 @@ $.extend(au, {
 
  , typeKey: function(k) {
     if (k === '\uE003') { // DELETE
-      this.keyboard.keys().Delete.tap();
+      this.keyboard().keys().Delete.tap();
     } else if (k === '\uE006' || k === '\uE007') {// RETURN ENTER
-      this.keyboard.buttons().Go.tap();
+      this.keyboard().buttons().Go.tap();
     } else {
-      this.keyboard.typeString(String(k)); // regular key
+      this.keyboard().typeString(String(k)); // regular key
     }
   }
 

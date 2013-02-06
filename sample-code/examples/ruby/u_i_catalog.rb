@@ -1,3 +1,5 @@
+# THIS TEST
+# ---------
 # This test demonstrates the many, many things you can do with Appium.
 #
 # It relies on the setup in simple_test.rb, which is also a good starting 

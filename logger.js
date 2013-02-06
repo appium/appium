@@ -33,7 +33,7 @@ module.exports.get = function(name) {
 
 module.exports.setWebhook = function(logger, port, host) {
   var _host = '127.0.0.1' || host;
-  var _port = 9003 || port;
+  var _port = port || 9003;
   try {
     logger.add(winston.transports.Webhook, { 'host': _host, 'port': _port, 'path': '/' });
   } catch (e) {

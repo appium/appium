@@ -1,19 +1,27 @@
+# GETTING STARTED
+# -----------------
 # This documentation is intended to show you how to get started with a
 # simple Selenium-Webdriver test.  This test is written with RSpec but the
 # webdriver commands (everything called after @driver) will work with any
 # testing framework.
 #
+# INSTALLING RVM
+# --------------
 # We're assuming you've got rvm installed, but if not, from a terminal
 # run the following line (removing the ""'s):
 #
 # "\curl -L https://get.rvm.io | bash -s stable --ruby"
 #
+# INSTALLING GEMS
+# ---------------
 # Then, change to the example directory:
 #   "cd appium-location/sample-code/examples/ruby"
 #
 # and install the required gems with bundler by doing:
 #   "bundle install"
 #
+# RUNNING THE TESTS
+# -----------------
 # To actually run the tests, make sure appium is running in another terminal 
 # window, then from the same window you used for the above commands, type
 #   "rspec simple_test.rb"
@@ -44,23 +52,22 @@ end
 
 describe "Computation" do
   before(:each) do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
-    
+    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)    
    end
 
-    it "should add two numbers" do
-      values = [rand(10), rand(10)]
-      expected_sum = values.reduce(&:+)
-      elements = @driver.find_elements(:tag_name, 'textField')
+  it "should add two numbers" do
+    values = [rand(10), rand(10)]
+    expected_sum = values.reduce(&:+)
+    elements = @driver.find_elements(:tag_name, 'textField')
 
-      elements.each_with_index do |element, index|
-        element.send_keys values[index]
-      end
-
-      button = @driver.find_element(:tag_name, 'button')
-      button.click
-     
-      actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
-      actual_sum.should eq(expected_sum.to_s)
+    elements.each_with_index do |element, index|
+      element.send_keys values[index]
     end
+
+    button = @driver.find_element(:tag_name, 'button')
+    button.click
+     
+    actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
+    actual_sum.should eq(expected_sum.to_s)
   end
+end

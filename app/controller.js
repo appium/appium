@@ -364,21 +364,21 @@ exports.execute = function(req, res) {
 };
 
 exports.executeMobileMethod = function(req, res, cmd) {
-  var args = req.body.args;
+  var args = req.body.args
+    , params = {};
+
+  if (args.length) {
+    if (args.length !== 1) {
+      res.send(400, "Mobile methods only take one parameter, which is a " +
+                    "hash of named parameters to send to the method");
+    } else {
+      params = args[0];
+    }
+  }
 
   if (_.has(mobileCmdMap, cmd)) {
-    var controller = mobileCmdMap[cmd][0];
-    var paramList = mobileCmdMap[cmd][1];
-    if (paramList.length != args.length) {
-      res.send(400, "Parameters for mobile method did not match the " +
-                    "definition. Required params must be sent as script " +
-                    "args in this order: " + JSON.stringify(paramList));
-    } else {
-      _.each(paramList, function(param, i) {
-        req.body[param] = args[i];
-      });
-      controller(req, res);
-    }
+    req.body = params;
+    mobileCmdMap[cmd](req, res);
   } else {
     exports.notYetImplemented(req, res);
   }
@@ -453,9 +453,9 @@ var notImplementedInThisContext = function(req, res) {
 };
 
 var mobileCmdMap = {
-  'tap': [exports.mobileTap, ['tapCount', 'touchCount', 'duration', 'x', 'y']]
-  , 'setCommandTimeout': [exports.setCommandTimeout, ['timeout']]
-  , 'getCommandTimeout': [exports.getCommandTimeout, []]
+  'tap': exports.mobileTap
+  , 'setCommandTimeout': exports.setCommandTimeout
+  , 'getCommandTimeout': exports.getCommandTimeout
 };
 
 exports.produceError = function(req, res) {

@@ -9,6 +9,7 @@ if (typeof au === "undefined") {
 $.extend(au, {
   cache: []
   , identifier: 0
+  , target: UIATarget.localTarget()
   , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
   , mainApp: UIATarget.localTarget().frontMostApp()
   , keyboard: UIATarget.localTarget().frontMostApp().keyboard()
@@ -81,9 +82,9 @@ $.extend(au, {
           _ctx = ctx;
         }
 
-        $.timeout(0);
+        this.target.pushTimeout(0);
         var elems = $(selector, _ctx);
-        $.timeout(1);
+        this.target.popTimeout();
 
         return elems;
       }

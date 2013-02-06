@@ -100,7 +100,7 @@ describe("appiumutils", function() {
   });
 
   it.only('should have elements', function(done) {
-    device.proxy("$(wd_frame).getTree()", function (err, res) {
+    device.proxy("wd_frame.getTree()", function (err, res) {
       should.not.exist(err);
       should.ok(res.value);
       done();

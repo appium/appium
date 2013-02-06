@@ -7,9 +7,21 @@
  * this test
  */
 
-//var describeWd
-//= require('../../helpers/driverblock.js').describeForApp('TestApp')
-  //, assert = require('assert');
+var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
+  , should = require('should');
+
+describeWd('command timeout', function(h) {
+  it('should be settable and gettable', function(done) {
+    h.driver.execute("mobile: setCommandTimeout", [37], function(err) {
+      should.not.exist(err);
+      h.driver.execute("mobile: getCommandTimeout", function(err, res) {
+        should.not.exist(err);
+        res.should.eql(37);
+        done();
+      });
+    });
+  });
+});
 
  //describeWd('check implicit wait', function(h) {
    //return it('should set the implicit wait for finding elements', function(done) {

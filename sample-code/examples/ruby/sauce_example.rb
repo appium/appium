@@ -3,9 +3,11 @@
 #
 # Before this test will work, you may need to do:
 # 
-# gem install rspec webdriver
+# gem install rspec selenium-webdriver
 #
-# 
+# Run with:
+#
+# rspec sauce_example.rb
 
 require 'rspec'
 require 'selenium-webdriver'

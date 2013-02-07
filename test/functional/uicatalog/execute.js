@@ -28,13 +28,38 @@ describeWd('execute', function(h) {
   });
 });
 
+var spinForHandles = function(driver, done) {
+  var times = 0;
+  var inner = function() {
+    driver.windowHandles(function(err, handles) {
+      var finished = false;
+      try {
+        should.exist(handles);
+        handles.length.should.equal(1);
+        finished = true;
+      } catch (e) {
+        if (times < 10) {
+          setTimeout(inner, 1000);
+        } else {
+          finished = true;
+        }
+      }
+      if (finished) {
+        done(err, handles);
+      }
+      times++;
+    });
+  };
+  inner();
+};
+
 var selectWebView = function(h, callback) {
-  h.driver.elementsByTagName('tableCell', function(err, elems) {
-    elems[7].click(function() {
-    h.driver.windowHandles(function(err, handles) {
-      should.exist(handles);
-      handles.length.should.equal(1);
-      h.driver.window(handles[0], callback);
+  h.driver.elementByName('Web, Use of UIWebView', function(err, elem) {
+    should.not.exist(err);
+    elem.click(function() {
+      spinForHandles(h.driver, function(err, handles) {
+        should.not.exist(err);
+        h.driver.window(handles[0], callback);
       });
     });
   });

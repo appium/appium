@@ -2,7 +2,7 @@
 
 var wd = require("wd")
   , should = require("should")
-  , appURL = "https://raw.github.com/appium/appium/master/assets/WebViewApp.app.zip";
+  , appURL = "http://appium.s3.amazonaws.com/WebViewApp.app.zip";
 
 // Instantiate a new browser sessoin
 var browser = wd.remote("localhost", 4723);

@@ -7,7 +7,7 @@
 "use strict";
 
 var should = require("should")
-  , appUrl = 'https://raw.github.com/appium/appium/master/assets/TestApp.app.zip'
+  , appUrl = 'http://appium.s3.amazonaws.com/TestApp.app.zip'
   , dbPath = "../../../test/helpers/driverblock.js"
   , describeSauce = require(dbPath).describeForSauce(appUrl);
 

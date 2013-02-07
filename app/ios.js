@@ -458,7 +458,24 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
 };
 
 IOS.prototype.getPageSource = function(cb) {
-  this.proxy("wd_frame.getPageSource()", cb);
+  if (this.curWindowHandle) {
+    this.remote.execute('document.getElementsByTagName("html")[0].outerHTML',
+                        function (err, res) {
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.UnknownError.code
+          , value: res
+        });
+      } else {
+        cb(null, {
+          status: status.codes.Success.code
+          , value: res.result.value
+        });
+      }
+    });
+  } else {
+    this.proxy("wd_frame.getPageSource()", cb);
+  }
 };
 
 IOS.prototype.getAlertText = function(cb) {

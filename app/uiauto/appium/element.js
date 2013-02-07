@@ -161,6 +161,41 @@ UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
   };
 };
 
+UIAElement.prototype.flick = function(startX, startY, endX, endY, touchCount) {
+  var size = this.rect().size;
+  if (startX === null) {
+    startX = 0.5;
+  }
+  if (startY === null) {
+    startY = 0.5;
+  }
+  if (Math.abs(startX) > 1 || Math.abs(startY) > 1) {
+    startX = startX / size.width;
+    startY = startY / size.height;
+  }
+  if (Math.abs(endX) > 1 || Math.abs(endY) > 1) {
+    endX = endX / size.width;
+    endY = endY / size.height;
+  }
+  var options = {
+    startOffset: {
+      x: parseFloat(startX)
+      , y: parseFloat(startY)
+    }
+    , endOffset: {
+      x: parseFloat(endX)
+      , y: parseFloat(endY)
+    }
+    , touchCount: touchCount
+  };
+
+  this.flickInsideWithOptions(options);
+  return {
+    status: codes.Success.code,
+    value: null
+  };
+};
+
 UIAElement.prototype.complexTap = function(opts) {
   opts = {
     tapCount: parseInt(opts.tapCount, 10)

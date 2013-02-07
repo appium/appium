@@ -524,7 +524,7 @@ IOS.prototype.getScreenshot = function(cb) {
   });
 };
 
-IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
+IOS.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {
   var command = "";
   if (swipe) {
     command = ["au.touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
@@ -536,9 +536,21 @@ IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   this.proxy(command, cb);
 };
 
-IOS.prototype.flickElement = function(elementId, xoffset, yoffset, speed, cb) {
+IOS.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb) {
   var command = ["au.getElement('", elementId, "').touchFlick(", xoffset, ",", yoffset, ",", speed, ")"].join('');
 
+  this.proxy(command, cb);
+};
+
+IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
+  var command;
+  if (elId) {
+    command = ["au.getElement('", elId, "').flick(", startX, ',', startY, ',',
+      endX, ',', endY, ',', touchCount, ")"].join('');
+  } else {
+    command = ["au.flickApp(", startX, ',', startY, ',', endX, ',', endY,
+      ")"].join('');
+  }
   this.proxy(command, cb);
 };
 

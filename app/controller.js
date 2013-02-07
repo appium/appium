@@ -218,6 +218,27 @@ exports.mobileTap = function(req, res) {
       getResponseHandler(req, res));
 };
 
+exports.mobileFlick = function(req, res) {
+  var onElement = typeof req.body.elementId !== "undefined";
+  req.body = _.defaults(req.body, {
+    touchCount: 1
+    , startX: onElement ? 0.5 : 'null'
+    , startY: onElement ? 0.5 : 'null'
+    , elementId: null
+  });
+  var touchCount = req.body.touchCount
+    , elementId = req.body.elementId
+    , startX = req.body.startX
+    , startY = req.body.startY
+    , endX = req.body.endX
+    , endY = req.body.endY;
+
+  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+    req.device.flick(startX, startY, endX, endY, touchCount, elementId,
+        getResponseHandler(req, res));
+  }
+};
+
 exports.clear = function(req, res) {
   var elementId = req.params.elementId;
   req.device.clear(elementId, getResponseHandler(req, res));
@@ -339,7 +360,7 @@ exports.flick = function(req, res) {
     if (element) {
       exports.flickElement(req, res);
     } else {
-      req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
+      req.device.fakeFlick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
     }
   }
 };
@@ -351,7 +372,7 @@ exports.flickElement = function(req, res) {
     , speed = req.body.speed;
 
   if(checkMissingParams(res, {element: element, xoffset: xoffset, yoffset: yoffset})) {
-    req.device.flickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
+    req.device.fakeFlickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
   }
 };
 
@@ -460,6 +481,7 @@ var notImplementedInThisContext = function(req, res) {
 
 var mobileCmdMap = {
   'tap': exports.mobileTap
+  , 'flick': exports.mobileFlick
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout
 };

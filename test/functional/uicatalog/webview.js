@@ -169,7 +169,7 @@ describeWd('getText', function(h) {
 });
 
 describeWd('getSource', function(h) {
-  it.only('should return the full page source', function(done) {
+  it('should return the full page source', function(done) {
     loadWebView(h.driver, function() {
       h.driver.source(function(err, source) {
         should.not.exist(err);
@@ -178,6 +178,20 @@ describeWd('getSource', function(h) {
         source.should.include('i appear 3 times');
         source.should.include('</html>');
         done();
+      });
+    });
+  });
+});
+
+describeWd('getSize', function(h) {
+  it('should return the right size', function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.elementById('i_am_an_id', function(err, element) {
+        element.getSize(function(err, size) {
+          size.width.should.eql(964);
+          size.height.should.eql(30);
+          done();
+        });
       });
     });
   });

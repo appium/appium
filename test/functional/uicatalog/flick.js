@@ -9,7 +9,38 @@ describeWd('flick gesture', function(h) {
   return it('element should have new y coordinate', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
-        h.driver.flick(0, -30, function(err) {
+        h.driver.flick(0, -100, false, function(err) {
+          should.not.exist(err);
+          element.getLocation(function(err, location2) {
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
+
+describeWd('swipe gesture', function(h) {
+  it('element should have new y coordinate', function(done) {
+    h.driver.elementByTagName('tableCell', function(err, element) {
+      element.getLocation(function(err, location) {
+        h.driver.flick(0, -100, true, function(err) {
+          should.not.exist(err);
+          element.getLocation(function(err, location2) {
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
+            done();
+          });
+        });
+      });
+    });
+  });
+  it('should also work with percentage units', function(done) {
+    h.driver.elementByTagName('tableCell', function(err, element) {
+      element.getLocation(function(err, location) {
+        h.driver.flick(0, -0.5, true, function(err) {
           should.not.exist(err);
           element.getLocation(function(err, location2) {
             assert.equal(location.x, location.x);

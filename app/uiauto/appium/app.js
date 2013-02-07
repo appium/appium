@@ -210,22 +210,36 @@ $.extend(au, {
 
  // Gesture emulation functions (i.e., making Selenium work)
 
-  , getFlickOpts: function(norm, xSpeed, ySpeed) {
+  , getFlickOpts: function(xSpeed, ySpeed) {
       var size = this.target.rect().size;
-      var mult = Math.sqrt((norm * norm) / (xSpeed * xSpeed + ySpeed * ySpeed));
-      var x = mult * xSpeed * size.width;
-      var y = mult * ySpeed * size.height;
+      var dX, dY;
+      // if we're dealing with numbers between 0 and 1, say it's %
+      if (Math.abs(xSpeed) < 1 && Math.abs(ySpeed) < 1) {
+        dX = xSpeed * size.width;
+        dY = ySpeed * size.height;
+      } else {
+        // otherwise, pixels!
+        dX = xSpeed;
+        dY = ySpeed;
+      }
+      // normalize to screen size
+      if (Math.abs(dX) > size.width) {
+        dX *= Math.abs(size.width / dX);
+      }
+      if (Math.abs(dY) > size.height) {
+        dY *= Math.abs(size.height / dY);
+      }
       var midX = size.width / 2;
       var midY = size.height / 2;
 
       // translate to flick in the middle of the screen
       var from = {
-        x: midX - (x / 2),
-        y: midY - (y / 2)
+        x: midX - (dX / 2),
+        y: midY - (dY / 2)
       };
       var to = {
-        x: midX + (x / 2),
-        y: midY + (y / 2)
+        x: midX + (dX / 2),
+        y: midY + (dY / 2)
       };
       return [from, to];
     }
@@ -234,7 +248,7 @@ $.extend(au, {
   , touchFlickFromSpeed: function(xSpeed, ySpeed) {
       // get x, y of vector that provides the direction given by xSpeed/ySpeed and
       // has length .25
-      var opts = this.getFlickOpts(0.25, xSpeed, ySpeed);
+      var opts = this.getFlickOpts(xSpeed, ySpeed);
       this.target.flickFromTo(opts[0], opts[1]);
       return {
         status: codes.Success.code,
@@ -248,8 +262,8 @@ $.extend(au, {
   , touchSwipeFromSpeed: function(xSpeed, ySpeed) {
       // get x, y of vector that provides the direction given by xSpeed/ySpeed and
       // has length .50
-      var opts = this.getFlickOpts(0.5, xSpeed, ySpeed);
-      this.target.dragFromToForDuration(opts[0], opts[1], 0.5);
+      var opts = this.getFlickOpts(xSpeed, ySpeed);
+      this.target.dragFromToForDuration(opts[0], opts[1], 1);
       return {
         status: codes.Success.code,
         value: null

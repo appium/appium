@@ -526,7 +526,7 @@ IOS.prototype.getScreenshot = function(cb) {
 
 IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
   var command = "";
-  if (!swipe) {
+  if (swipe) {
     command = ["au.touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
   else {

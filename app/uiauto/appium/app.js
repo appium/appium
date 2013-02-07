@@ -210,28 +210,32 @@ $.extend(au, {
 
  // Gesture emulation functions (i.e., making Selenium work)
 
+  , getFlickOpts: function(norm, xSpeed, ySpeed) {
+      var size = this.target.rect().size;
+      var mult = Math.sqrt((norm * norm) / (xSpeed * xSpeed + ySpeed * ySpeed));
+      var x = mult * xSpeed * size.width;
+      var y = mult * ySpeed * size.height;
+      var midX = size.width / 2;
+      var midY = size.height / 2;
+
+      // translate to flick in the middle of the screen
+      var from = {
+        x: midX - (x / 2),
+        y: midY - (y / 2)
+      };
+      var to = {
+        x: midX + (x / 2),
+        y: midY + (y / 2)
+      };
+      return [from, to];
+    }
     // does a flick in the middle of the screen of size 1/4 of screen
     // using the direction corresponding to xSpeed/ySpeed
   , touchFlickFromSpeed: function(xSpeed, ySpeed) {
       // get x, y of vector that provides the direction given by xSpeed/ySpeed and
       // has length .25
-      var mult = Math.sqrt((0.25 * 0.25) / (xSpeed * xSpeed + ySpeed * ySpeed));
-      var x = mult * xSpeed;
-      var y = mult * ySpeed;
-
-      // translate to flick in the middle of the screen
-      var options = {
-        startOffset : {
-          x : 0.5 - 0.5 * x,
-          y : 0.5 - 0.5 * y
-        },
-        endOffset : {
-          x : 0.5 + 0.5 * x,
-          y : 0.5 + 0.5 * y
-        }
-      };
-
-      this.mainWindow.flickInsideWithOptions(options);
+      var opts = this.getFlickOpts(0.25, xSpeed, ySpeed);
+      this.target.flickFromTo(opts[0], opts[1]);
       return {
         status: codes.Success.code,
         value: null
@@ -244,24 +248,8 @@ $.extend(au, {
   , touchSwipeFromSpeed: function(xSpeed, ySpeed) {
       // get x, y of vector that provides the direction given by xSpeed/ySpeed and
       // has length .50
-      var mult = Math.sqrt((0.5 * 0.5) / (xSpeed * xSpeed + ySpeed * ySpeed));
-      var x = mult * xSpeed;
-      var y = mult * ySpeed;
-
-      // translate to swipe in the middle of the screen
-      var options = {
-        startOffset : {
-          x : 0.5 - 0.25 * x,
-          y : 0.5 - 0.25 * y
-        },
-        endOffset : {
-          x : 0.5 + 0.75 * x,
-          y : 0.5 + 0.75 * y
-        },
-        duration : 0.2
-      };
-
-      this.mainWindow.dragInsideWithOptions(options);
+      var opts = this.getFlickOpts(0.5, xSpeed, ySpeed);
+      this.target.dragFromToForDuration(opts[0], opts[1], 0.5);
       return {
         status: codes.Success.code,
         value: null

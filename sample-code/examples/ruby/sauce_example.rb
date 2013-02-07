@@ -5,7 +5,9 @@
 # 
 # gem install rspec selenium-webdriver
 #
-# 
+# Run with:
+#
+# rspec sauce_example.rb
 
 require 'rspec'
 require 'selenium-webdriver'

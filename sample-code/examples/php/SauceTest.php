@@ -4,7 +4,7 @@
 //     vendor/bin/phpunit SauceTest.php
 
 require_once "vendor/autoload.php";
-define("APP_URL", "https://raw.github.com/appium/appium/master/assets/TestApp.app.zip");
+define("APP_URL", "http://appium.s3.amazonaws.com/TestApp.app.zip");
 
 class SauceTest extends Sauce\Sausage\WebDriverTestCase
 {

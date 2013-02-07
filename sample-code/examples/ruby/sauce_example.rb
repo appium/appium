@@ -10,7 +10,7 @@
 require 'rspec'
 require 'selenium-webdriver'
 
-APP_PATH = 'https://raw.github.com/appium/appium/master/assets/TestApp.app.zip'
+APP_PATH = 'http://appium.s3.amazonaws.com/TestApp.app.zip'
 SAUCE_USERNAME = ENV['SAUCE_USERNAME']
 SAUCE_ACCESS_KEY = ENV['SAUCE_ACCESS_KEY']
 

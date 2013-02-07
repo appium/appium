@@ -4,7 +4,7 @@
 var should = require("should")
   , request = require('request')
   , describeWd = require("../../helpers/driverblock.js").describe
-  , appUrl = 'https://raw.github.com/appium/appium/master/assets/UICatalog.app.zip'
+  , appUrl = 'http://appium.s3.amazonaws.com/UICatalog.app.zip'
   , describeUrl = require('../../helpers/driverblock.js').describeForApp(appUrl);
 
 describeWd('appium', function(h) {

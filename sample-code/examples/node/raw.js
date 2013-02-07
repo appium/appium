@@ -2,7 +2,7 @@ var wd = require("wd")
   , assert = require("assert")
   , username = process.env.SAUCE_USERNAME // Omit for a local test run
   , accessKey = process.env.SAUCE_ACCESS_KEY // Omit for a local test run
-  , appURL = "https://raw.github.com/appium/appium/master/assets/TestApp.app.zip";
+  , appURL = "http://appium.s3.amazonaws.com/TestApp.app.zip";
 
 // Instantiate a new browser sessoin
 var browser = wd.remote(

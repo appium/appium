@@ -40,7 +40,9 @@ describeSauce('calc app', function(h) {
             elems[0].text(function(err, text) {
               var sum = values[0] + values[1];
               sum.should.equal(parseInt(text, 10));
-              done();
+              driver.quit(function() {
+                done();
+              });
             });
           });
         });

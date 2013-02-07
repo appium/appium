@@ -168,6 +168,21 @@ describeWd('getText', function(h) {
   });
 });
 
+describeWd('getSource', function(h) {
+  it.only('should return the full page source', function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.source(function(err, source) {
+        should.not.exist(err);
+        source.should.include('<html>');
+        source.should.include('I am a page title');
+        source.should.include('i appear 3 times');
+        source.should.include('</html>');
+        done();
+      });
+    });
+  });
+});
+
 var loadWebView = function(driver, cb) {
   driver.elementByName('Web, Use of UIWebView', function(err, el) {
     should.not.exist(err);

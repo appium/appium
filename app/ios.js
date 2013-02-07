@@ -422,8 +422,20 @@ IOS.prototype.getLocation = function(elementId, cb) {
 };
 
 IOS.prototype.getSize = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
+      cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Error converting element ID for using in WD atoms: " + elementId
+      });
+    } else {
+      this.remote.executeAtom('get_size', [atomsElement], cb);
+    }
+  } else {
+    var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getPageIndex = function(elementId, cb) {

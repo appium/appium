@@ -270,6 +270,38 @@ $.extend(au, {
       };
     }
 
+  , flickApp: function(startX, startY, endX, endY) {
+      var size = this.target.rect().size;
+      if (startX === null) {
+        startX = size.width / 2;
+      }
+      if (startY === null) {
+        startY = size.height / 2;
+      }
+      if (Math.abs(startX) < 1 && Math.abs(startY) < 1) {
+        startX = startX * size.width;
+        startY = startY * size.height;
+      }
+      if (Math.abs(endX) < 1 && Math.abs(endY) < 1) {
+        endX = endX * size.width;
+        endY = endY * size.height;
+      }
+      var from = {
+        x: parseFloat(startX)
+        , y: parseFloat(startY)
+      };
+      var to = {
+        x: parseFloat(endX)
+        , y: parseFloat(endY)
+      };
+
+      this.target.flickFromTo(from, to);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
   // Keyboard functions
 
   , sendKeysToActiveElement: function(keys) {

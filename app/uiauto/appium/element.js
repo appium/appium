@@ -145,12 +145,12 @@ UIAElement.prototype.isDisplayed = function() {
 UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
   var options = {
     startOffset : {
-      x : 0.5,
-      y : 0.5
+      x: 0.5,
+      y: 0.5
     },
     endOffset : {
-      x : 0.5 + xoffset,
-      y : 0.5 + yoffset
+      x: 0.5 + xoffset,
+      y: 0.5 + yoffset
     }
   };
 

@@ -33,8 +33,11 @@ end
 describe "Computation" do
   before(:each) do
     @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
-    
    end
+
+  after(:each) do
+    @driver.quit
+  end
 
     it "should add two numbers" do
       values = [rand(10), rand(10)]

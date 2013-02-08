@@ -198,13 +198,12 @@ exports.doClick = function(req, res) {
 };
 
 exports.mobileTap = function(req, res) {
-  var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
     tapCount: 1
     , touchCount: 1
     , duration: 0.1
-    , x: onElement ? 0.5 : 0
-    , y: onElement ? 0.5 : 0
+    , x: 0.5
+    , y: 0.5
     , element: null
   });
   var tapCount = req.body.tapCount

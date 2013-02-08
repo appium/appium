@@ -213,14 +213,12 @@ UIAElement.prototype.swipe = function(startX, startY, endX, endY, duration, touc
 };
 
 UIAElement.prototype.complexTap = function(opts) {
+  var coords = this.getRelCoords(opts.x, opts.y, 0, 0);
   opts = {
     tapCount: parseInt(opts.tapCount, 10)
     , duration: parseFloat(opts.duration)
     , touchCount: parseInt(opts.touchCount, 10)
-    , tapOffset: {
-      x: parseFloat(opts.x)
-      , y: parseFloat(opts.y)
-    }
+    , tapOffset: coords.startOffset
   };
   return this.tapWithOptions(opts);
 };

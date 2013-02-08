@@ -270,7 +270,7 @@ $.extend(au, {
       };
     }
 
-  , flickApp: function(startX, startY, endX, endY) {
+  , getAbsCoords: function(startX, startY, endX, endY) {
       var size = this.target.rect().size;
       if (startX === null) {
         startX = size.width / 2;
@@ -294,8 +294,24 @@ $.extend(au, {
         x: parseFloat(endX)
         , y: parseFloat(endY)
       };
+      return [from, to];
+  }
 
-      this.target.flickFromTo(from, to);
+  , flickApp: function(startX, startY, endX, endY) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+
+      this.target.flickFromTo(coords[0], coords[1]);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , swipe: function(startX, startY, endX, endY, duration) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+      duration = parseFloat(duration);
+
+      this.target.dragFromToForDuration(coords[0], coords[1], duration);
       return {
         status: codes.Success.code,
         value: null

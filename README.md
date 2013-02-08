@@ -97,6 +97,15 @@ Run all functional tests:
 
     > grunt functional
 
+Note: we use [wd](http://github.com/admc/wd) as the Selenium client in our
+functional tests. Because of the work we are doing to extend the WebDriver
+protocol, we use the development version of wd. If you've installed wd in some
+other way, you might need to do this in the Appium project directory to get the
+tests to run successfully:
+
+    > rm -rf node_modules/wd
+    > npm install .
+
 Run unit tests:
 
     > grunt unit

@@ -161,7 +161,7 @@ UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
   };
 };
 
-UIAElement.prototype.flick = function(startX, startY, endX, endY, touchCount) {
+UIAElement.prototype.getRelCoords = function(startX, startY, endX, endY) {
   var size = this.rect().size;
   if (startX === null) {
     startX = 0.5;
@@ -177,7 +177,7 @@ UIAElement.prototype.flick = function(startX, startY, endX, endY, touchCount) {
     endX = endX / size.width;
     endY = endY / size.height;
   }
-  var options = {
+  return {
     startOffset: {
       x: parseFloat(startX)
       , y: parseFloat(startY)
@@ -186,10 +186,26 @@ UIAElement.prototype.flick = function(startX, startY, endX, endY, touchCount) {
       x: parseFloat(endX)
       , y: parseFloat(endY)
     }
-    , touchCount: touchCount
   };
+};
+
+UIAElement.prototype.flick = function(startX, startY, endX, endY, touchCount) {
+  var options = this.getRelCoords(startX, startY, endX, endY);
+  options.touchCount = touchCount;
 
   this.flickInsideWithOptions(options);
+  return {
+    status: codes.Success.code,
+    value: null
+  };
+};
+
+UIAElement.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount) {
+  var options = this.getRelCoords(startX, startY, endX, endY);
+  options.touchCount = parseInt(touchCount, 10);
+  options.duration = parseFloat(duration);
+
+  this.dragInsideWithOptions(options);
   return {
     status: codes.Success.code,
     value: null

@@ -542,6 +542,18 @@ IOS.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb
   this.proxy(command, cb);
 };
 
+IOS.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount, elId, cb) {
+  var command;
+  if (elId) {
+    command = ["au.getElement('", elId, "').swipe(", startX, ',', startY, ',',
+      endX, ',', endY, ',', duration, ',', touchCount, ")"].join('');
+  } else {
+    command = ["au.swipe(", startX, ',', startY, ',', endX, ',', endY, ',',
+      duration, ")"].join('');
+  }
+  this.proxy(command, cb);
+};
+
 IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
   var command;
   if (elId) {
@@ -553,7 +565,6 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   }
   this.proxy(command, cb);
 };
-
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
     this.remote.navToUrl(url, function() {

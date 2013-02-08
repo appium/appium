@@ -43,7 +43,10 @@ def capabilities
 end
 
 def absolute_app_path
-    File.join(File.dirname(__FILE__), APP_PATH)
+    file = File.join(File.dirname(__FILE__), APP_PATH)
+    raise "App doesn't exist #{file}" unless File.exist? file
+    raise "App must be a directory #{file}" unless File.directory? file
+    file
 end
 
 def server_url

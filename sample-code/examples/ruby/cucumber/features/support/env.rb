@@ -37,3 +37,7 @@ end
 def selenium
   @driver ||= Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
 end
+
+at_exit do
+  @driver.quit
+end

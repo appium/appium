@@ -51,11 +51,11 @@ def server_url
 end
 
 describe "Computation" do
-  before(:each) do
+  before :all do
     @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)    
    end
 
-  after(:each) do
+  after :all do
     @driver.quit
   end
 

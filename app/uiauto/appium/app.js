@@ -195,17 +195,68 @@ $.extend(au, {
 
   // Gesture functions
 
+  , getAbsCoords: function(startX, startY, endX, endY) {
+      if (typeof endX === "undefined") {
+        endX = 0;
+      }
+      if (typeof endY === "undefined") {
+        endY = 0;
+      }
+      var size = this.target.rect().size;
+      if (startX === null) {
+        startX = size.width / 2;
+      }
+      if (startY === null) {
+        startY = size.height / 2;
+      }
+      if (Math.abs(startX) < 1 && Math.abs(startY) < 1) {
+        startX = startX * size.width;
+        startY = startY * size.height;
+      }
+      if (Math.abs(endX) < 1 && Math.abs(endY) < 1) {
+        endX = endX * size.width;
+        endY = endY * size.height;
+      }
+      var from = {
+        x: parseFloat(startX)
+        , y: parseFloat(startY)
+      };
+      var to = {
+        x: parseFloat(endX)
+        , y: parseFloat(endY)
+      };
+      return [from, to];
+  }
+
+  , flickApp: function(startX, startY, endX, endY) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+
+      this.target.flickFromTo(coords[0], coords[1]);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , swipe: function(startX, startY, endX, endY, duration) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+      duration = parseFloat(duration);
+
+      this.target.dragFromToForDuration(coords[0], coords[1], duration);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
   , complexTap: function(opts) {
+      var coords = this.getAbsCoords(opts.x, opts.y);
       var touchOpts = {
         tapCount: parseInt(opts.tapCount, 10)
         , duration: parseFloat(opts.duration)
         , touchCount: parseInt(opts.touchCount, 10)
       };
-      var pointOpts = {
-        x: parseFloat(opts.x)
-        , y: parseFloat(opts.y)
-      };
-      return this.target.tapWithOptions(pointOpts, touchOpts);
+      return this.target.tapWithOptions(coords[0], touchOpts);
     }
 
  // Gesture emulation functions (i.e., making Selenium work)
@@ -264,54 +315,6 @@ $.extend(au, {
       // has length .50
       var opts = this.getFlickOpts(xSpeed, ySpeed);
       this.target.dragFromToForDuration(opts[0], opts[1], 1);
-      return {
-        status: codes.Success.code,
-        value: null
-      };
-    }
-
-  , getAbsCoords: function(startX, startY, endX, endY) {
-      var size = this.target.rect().size;
-      if (startX === null) {
-        startX = size.width / 2;
-      }
-      if (startY === null) {
-        startY = size.height / 2;
-      }
-      if (Math.abs(startX) < 1 && Math.abs(startY) < 1) {
-        startX = startX * size.width;
-        startY = startY * size.height;
-      }
-      if (Math.abs(endX) < 1 && Math.abs(endY) < 1) {
-        endX = endX * size.width;
-        endY = endY * size.height;
-      }
-      var from = {
-        x: parseFloat(startX)
-        , y: parseFloat(startY)
-      };
-      var to = {
-        x: parseFloat(endX)
-        , y: parseFloat(endY)
-      };
-      return [from, to];
-  }
-
-  , flickApp: function(startX, startY, endX, endY) {
-      var coords = this.getAbsCoords(startX, startY, endX, endY);
-
-      this.target.flickFromTo(coords[0], coords[1]);
-      return {
-        status: codes.Success.code,
-        value: null
-      };
-    }
-
-  , swipe: function(startX, startY, endX, endY, duration) {
-      var coords = this.getAbsCoords(startX, startY, endX, endY);
-      duration = parseFloat(duration);
-
-      this.target.dragFromToForDuration(coords[0], coords[1], duration);
       return {
         status: codes.Success.code,
         value: null

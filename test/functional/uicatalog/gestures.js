@@ -229,6 +229,26 @@ describeWd('complex tap', function(h) {
       });
     });
   });
+  it('should work in relative units', function(done) {
+    var tapOpts = {
+      tapCount: 1 // how many taps
+      , duration: 2.3 // how long
+      , touchCount: 3 // how many fingers
+      , x: 0.5 // 50% from left of screen
+      , y: 0.55 // 55% from top of screen
+    };
+    h.driver.execute("mobile: tap", [tapOpts], function(err) {
+      should.not.exist(err);
+      h.driver.elementByTagName("textview", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+          done();
+        });
+      });
+    });
+  });
   it('should work with default options', function(done) {
     h.driver.execute("mobile: tap", function(err) {
       should.not.exist(err);
@@ -239,13 +259,37 @@ describeWd('complex tap', function(h) {
       });
     });
   });
-  it('should work on an element', function(done) {
+});
+describeWd('complex tap on element', function(h) {
+  it('should work in relative units', function(done) {
     h.driver.elementsByTagName('tableCell', function(err, els) {
       should.not.exist(err);
       var el = els[4];
       var tapOpts = {
         x: 0.5 // in relative width from left
         , y: 0.5 // in relative height from top
+        , element: el.value
+      };
+      h.driver.execute("mobile: tap", [tapOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByTagName("textview", function(err, el) {
+          should.not.exist(err);
+          el.text(function(err, text) {
+            should.not.exist(err);
+            _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+            done();
+          });
+        });
+      });
+    });
+  });
+  it('should work in pixels', function(done) {
+    h.driver.elementsByTagName('tableCell', function(err, els) {
+      should.not.exist(err);
+      var el = els[4];
+      var tapOpts = {
+        x: 150 // in pixels from left
+        , y: 30 // in pixels from top
         , element: el.value
       };
       h.driver.execute("mobile: tap", [tapOpts], function(err) {

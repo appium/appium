@@ -239,6 +239,29 @@ exports.mobileFlick = function(req, res) {
   }
 };
 
+exports.mobileSwipe = function(req, res) {
+  var onElement = typeof req.body.elementId !== "undefined";
+  req.body = _.defaults(req.body, {
+    touchCount: 1
+    , startX: onElement ? 0.5 : 'null'
+    , startY: onElement ? 0.5 : 'null'
+    , duration: 0.8
+    , elementId: null
+  });
+  var touchCount = req.body.touchCount
+    , elementId = req.body.elementId
+    , duration = req.body.duration
+    , startX = req.body.startX
+    , startY = req.body.startY
+    , endX = req.body.endX
+    , endY = req.body.endY;
+
+  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+    req.device.swipe(startX, startY, endX, endY, duration, touchCount,
+        elementId, getResponseHandler(req, res));
+  }
+};
+
 exports.clear = function(req, res) {
   var elementId = req.params.elementId;
   req.device.clear(elementId, getResponseHandler(req, res));
@@ -482,6 +505,7 @@ var notImplementedInThisContext = function(req, res) {
 var mobileCmdMap = {
   'tap': exports.mobileTap
   , 'flick': exports.mobileFlick
+  , 'swipe': exports.mobileSwipe
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout
 };

@@ -53,7 +53,7 @@ describeWd('flick gesture', function(h) {
 });
 
 describeWd('swipe gesture', function(h) {
-  it('element should have new y coordinate', function(done) {
+  it('should work with wd function in pixels', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
         h.driver.flick(0, -100, true, function(err) {
@@ -67,10 +67,40 @@ describeWd('swipe gesture', function(h) {
       });
     });
   });
-  it('should also work with percentage units', function(done) {
+  it('should work with wd function in percentage units', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
         h.driver.flick(0, -0.5, true, function(err) {
+          should.not.exist(err);
+          element.getLocation(function(err, location2) {
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
+            done();
+          });
+        });
+      });
+    });
+  });
+  it('should work with mobile function in pixels', function(done) {
+    h.driver.elementByTagName('tableCell', function(err, element) {
+      element.getLocation(function(err, location) {
+        var opts = {startX: 50, startY: 400, endX: 50, endY: 0, duration: 2};
+        h.driver.execute("mobile: swipe", [opts], function(err) {
+          should.not.exist(err);
+          element.getLocation(function(err, location2) {
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
+            done();
+          });
+        });
+      });
+    });
+  });
+  it('should work with mobile function in percent', function(done) {
+    h.driver.elementByTagName('tableCell', function(err, element) {
+      element.getLocation(function(err, location) {
+        var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.1, duration: 2};
+        h.driver.execute("mobile: swipe", [opts], function(err) {
           should.not.exist(err);
           element.getLocation(function(err, location2) {
             assert.equal(location.x, location.x);
@@ -130,6 +160,45 @@ describeWd("flick element", function(h) {
               element.getAttribute("value", function(err, valueAfter) {
                 assert.equal(valueBefore, "50%");
                 assert.equal(valueAfter, "0%");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});
+describeWd("swipe element", function(h) {
+  it("slider value should change", function(done) {
+    h.driver.elementsByTagName("tableCell", function(err, elements) {
+      elements[1].click(function(){
+        h.driver.elementByTagName("slider", function(err, element) {
+          element.getAttribute("value", function(err, valueBefore) {
+            var opts = {startX: 0.5, startY: 0.5, endX: 0.25, endY: 0.5,
+              duration: 0.3, elementId: element.value};
+            h.driver.execute("mobile: swipe", [opts], function() {
+              element.getAttribute("value", function(err, valueAfter) {
+                assert.equal(valueBefore, "50%");
+                assert.equal(valueAfter, "20%");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+  it("slider value should change by pixels", function(done) {
+    h.driver.elementsByTagName("tableCell", function(err, elements) {
+      elements[1].click(function(){
+        h.driver.elementByTagName("slider", function(err, element) {
+          element.getAttribute("value", function(err, valueBefore) {
+            var opts = {endX: 15, endY: 10, duration: 0.3, elementId: element.value};
+            h.driver.execute("mobile: swipe", [opts], function() {
+              element.getAttribute("value", function(err, valueAfter) {
+                assert.equal(valueBefore, "50%");
+                assert.equal(valueAfter, "5%");
                 done();
               });
             });

@@ -11,7 +11,7 @@ module.exports = function(appium) {
 
   // Make appium available to all REST http requests.
   rest.all('/wd/*', inject);
-  routenotYetImplemented(rest);
+  routeNotYetImplemented(rest);
   rest.all('/wd/hub/session/*', controller.sessionBeforeFilter);
 
   rest.get('/wd/hub/status', controller.getStatus);
@@ -47,20 +47,26 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
   rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
   rest.get('/wd/hub/session/:sessionId?/window_handle', controller.getWindowHandle);
-  rest.get('/wd/hub/session/:sessionid?/window_handles', controller.getWindowHandles);
-  rest.post('/wd/hub/session/:sessionid?/window', controller.setWindow);
+  rest.get('/wd/hub/session/:sessionId?/window_handles', controller.getWindowHandles);
+  rest.post('/wd/hub/session/:sessionId?/window', controller.setWindow);
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
-  rest.get('/wd/hub/session/:sessionid?/title', controller.title);
+  rest.get('/wd/hub/session/:sessionId?/title', controller.title);
 
   // this is for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
+
+  // appium-specific extensions to JSONWP
+  // these aren't part of JSONWP but we want them or something like them to be
+  rest.post('/wd/hub/session/:sessionId/touch/tap', controller.mobileTap);
+  rest.post('/wd/hub/session/:sessionId/touch/flick_precise', controller.mobileFlick);
+  rest.post('/wd/hub/session/:sessionId/touch/swipe', controller.mobileSwipe);
 
   // keep this at the very end!
   rest.all('/*', controller.unknownCommand);
   //console.log(rest.routes.get);
 };
 
-var routenotYetImplemented = function(rest) {
+var routeNotYetImplemented = function(rest) {
   // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
   // High priority to reach parity with PyAppium:
   rest.get('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);
@@ -73,55 +79,55 @@ var routenotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/url', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/forward', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/back', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/refresh', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/ime/available_engines', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/ime/active_engine', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/ime/activated', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/ime/deactivate', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/ime/activate', controller.notYetImplemented);
-  rest.delete('/wd/hub/session/:sessionid?/window', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/window/:windowhandle/size', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/window/:windowhandle/size', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/window/:windowhandle/position', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/window/:windowhandle/position', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/window/:windowhandle/maximize', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/cookie', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/cookie', controller.notYetImplemented);
-  rest.delete('/wd/hub/session/:sessionid?/cookie', controller.notYetImplemented);
-  rest.delete('/wd/hub/session/:sessionid?/cookie/:name', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/element/:elementid?', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/element/:elementid?/submit', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/element/:elementid?/name', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/element/:elementid?/selected', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/element/:elementid?/equals/:other', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/element/:elementid?/location_in_view', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/element/:elementid?/css/:propertyname', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/moveto', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/click', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/buttondown', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/buttonup', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/doubleclick', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/click', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/down', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/up', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/move', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/scroll', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/scroll', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/doubleclick', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/touch/longclick', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/location', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/location', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/session_storage', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/session_storage', controller.notYetImplemented);
-  rest.delete('/wd/hub/session/:sessionid?/session_storage', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/session_storage/key/:key', controller.notYetImplemented);
-  rest.delete('/wd/hub/session/:sessionid?/session_storage/key/:key', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/session_storage/size', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionid?/log', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/log/types', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionid?/application_cache/status', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/url', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/forward', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/back', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/refresh', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/ime/available_engines', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/ime/active_engine', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/ime/activated', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/ime/deactivate', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/ime/activate', controller.notYetImplemented);
+  rest.delete('/wd/hub/session/:sessionId?/window', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/size', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/size', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/maximize', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
+  rest.delete('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
+  rest.delete('/wd/hub/session/:sessionId?/cookie/:name', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementid?', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/element/:elementid?/submit', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementid?/name', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementid?/selected', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementid?/equals/:other', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementid?/location_in_view', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementid?/css/:propertyname', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/moveto', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/click', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/buttonup', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/doubleclick', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/click', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/down', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/up', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/move', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/scroll', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/scroll', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/doubleclick', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/longclick', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/location', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/location', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);
+  rest.delete('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/session_storage/key/:key', controller.notYetImplemented);
+  rest.delete('/wd/hub/session/:sessionId?/session_storage/key/:key', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/session_storage/size', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/log', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/log/types', controller.notYetImplemented);
+  rest.get('/wd/hub/session/:sessionId?/application_cache/status', controller.notYetImplemented);
 };
 

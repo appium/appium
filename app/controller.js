@@ -198,58 +198,57 @@ exports.doClick = function(req, res) {
 };
 
 exports.mobileTap = function(req, res) {
-  var onElement = typeof req.body.elementId !== "undefined";
   req.body = _.defaults(req.body, {
     tapCount: 1
     , touchCount: 1
     , duration: 0.1
-    , x: onElement ? 0.5 : 0
-    , y: onElement ? 0.5 : 0
-    , elementId: null
+    , x: 0.5
+    , y: 0.5
+    , element: null
   });
   var tapCount = req.body.tapCount
     , touchCount = req.body.touchCount
     , duration = req.body.duration
-    , elementId = req.body.elementId
+    , element = req.body.element
     , x = req.body.x
     , y = req.body.y;
 
-  req.device.complexTap(tapCount, touchCount, duration, x, y, elementId,
+  req.device.complexTap(tapCount, touchCount, duration, x, y, element,
       getResponseHandler(req, res));
 };
 
 exports.mobileFlick = function(req, res) {
-  var onElement = typeof req.body.elementId !== "undefined";
+  var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
     touchCount: 1
     , startX: onElement ? 0.5 : 'null'
     , startY: onElement ? 0.5 : 'null'
-    , elementId: null
+    , element: null
   });
   var touchCount = req.body.touchCount
-    , elementId = req.body.elementId
+    , element = req.body.element
     , startX = req.body.startX
     , startY = req.body.startY
     , endX = req.body.endX
     , endY = req.body.endY;
 
   if(checkMissingParams(res, {endX: endX, endY: endY})) {
-    req.device.flick(startX, startY, endX, endY, touchCount, elementId,
+    req.device.flick(startX, startY, endX, endY, touchCount, element,
         getResponseHandler(req, res));
   }
 };
 
 exports.mobileSwipe = function(req, res) {
-  var onElement = typeof req.body.elementId !== "undefined";
+  var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
     touchCount: 1
     , startX: onElement ? 0.5 : 'null'
     , startY: onElement ? 0.5 : 'null'
     , duration: 0.8
-    , elementId: null
+    , element: null
   });
   var touchCount = req.body.touchCount
-    , elementId = req.body.elementId
+    , element = req.body.element
     , duration = req.body.duration
     , startX = req.body.startX
     , startY = req.body.startY
@@ -258,7 +257,7 @@ exports.mobileSwipe = function(req, res) {
 
   if(checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.swipe(startX, startY, endX, endY, duration, touchCount,
-        elementId, getResponseHandler(req, res));
+        element, getResponseHandler(req, res));
   }
 };
 

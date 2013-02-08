@@ -136,7 +136,7 @@ describeWd("flick element", function(h) {
       elements[1].click(function(){
         h.driver.elementByTagName("slider", function(err, element) {
           element.getAttribute("value", function(err, valueBefore) {
-            var opts = {elementId: element.value, endX: -50, endY: 0};
+            var opts = {element: element.value, endX: -50, endY: 0};
             h.driver.execute("mobile: flick", [opts], function() {
               element.getAttribute("value", function(err, valueAfter) {
                 assert.equal(valueBefore, "50%");
@@ -154,7 +154,7 @@ describeWd("flick element", function(h) {
       elements[1].click(function(){
         h.driver.elementByTagName("slider", function(err, element) {
           element.getAttribute("value", function(err, valueBefore) {
-            var opts = {elementId: element.value, startX: 0.5, startY: 0.0,
+            var opts = {element: element.value, startX: 0.5, startY: 0.0,
               endX: 0.0, endY: 0.0};
             h.driver.execute("mobile: flick", [opts], function() {
               element.getAttribute("value", function(err, valueAfter) {
@@ -176,7 +176,7 @@ describeWd("swipe element", function(h) {
         h.driver.elementByTagName("slider", function(err, element) {
           element.getAttribute("value", function(err, valueBefore) {
             var opts = {startX: 0.5, startY: 0.5, endX: 0.25, endY: 0.5,
-              duration: 0.3, elementId: element.value};
+              duration: 0.3, element: element.value};
             h.driver.execute("mobile: swipe", [opts], function() {
               element.getAttribute("value", function(err, valueAfter) {
                 assert.equal(valueBefore, "50%");
@@ -194,7 +194,7 @@ describeWd("swipe element", function(h) {
       elements[1].click(function(){
         h.driver.elementByTagName("slider", function(err, element) {
           element.getAttribute("value", function(err, valueBefore) {
-            var opts = {endX: 15, endY: 10, duration: 0.3, elementId: element.value};
+            var opts = {endX: 15, endY: 10, duration: 0.3, element: element.value};
             h.driver.execute("mobile: swipe", [opts], function() {
               element.getAttribute("value", function(err, valueAfter) {
                 assert.equal(valueBefore, "50%");
@@ -229,6 +229,26 @@ describeWd('complex tap', function(h) {
       });
     });
   });
+  it('should work in relative units', function(done) {
+    var tapOpts = {
+      tapCount: 1 // how many taps
+      , duration: 2.3 // how long
+      , touchCount: 3 // how many fingers
+      , x: 0.5 // 50% from left of screen
+      , y: 0.55 // 55% from top of screen
+    };
+    h.driver.execute("mobile: tap", [tapOpts], function(err) {
+      should.not.exist(err);
+      h.driver.elementByTagName("textview", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+          done();
+        });
+      });
+    });
+  });
   it('should work with default options', function(done) {
     h.driver.execute("mobile: tap", function(err) {
       should.not.exist(err);
@@ -239,14 +259,38 @@ describeWd('complex tap', function(h) {
       });
     });
   });
-  it('should work on an element', function(done) {
+});
+describeWd('complex tap on element', function(h) {
+  it('should work in relative units', function(done) {
     h.driver.elementsByTagName('tableCell', function(err, els) {
       should.not.exist(err);
       var el = els[4];
       var tapOpts = {
         x: 0.5 // in relative width from left
         , y: 0.5 // in relative height from top
-        , elementId: el.value
+        , element: el.value
+      };
+      h.driver.execute("mobile: tap", [tapOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByTagName("textview", function(err, el) {
+          should.not.exist(err);
+          el.text(function(err, text) {
+            should.not.exist(err);
+            _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+            done();
+          });
+        });
+      });
+    });
+  });
+  it('should work in pixels', function(done) {
+    h.driver.elementsByTagName('tableCell', function(err, els) {
+      should.not.exist(err);
+      var el = els[4];
+      var tapOpts = {
+        x: 150 // in pixels from left
+        , y: 30 // in pixels from top
+        , element: el.value
       };
       h.driver.execute("mobile: tap", [tapOpts], function(err) {
         should.not.exist(err);

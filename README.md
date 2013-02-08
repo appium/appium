@@ -41,7 +41,12 @@ Get something working with a quickness.
 
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
-We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods), Check it out.
+We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
+
+We also have several extensions to the JSON Wire Protocol for [automating
+mobile
+gestures](https://github.com/appium/appium/wiki/Automating-mobile-gestures)
+like tap, flick, and swipe.
 
 You can also automate web views in hybrid apps! See the [hybrid app
 guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)

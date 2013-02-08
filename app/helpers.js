@@ -20,6 +20,17 @@ exports.downloadFile = function(fileUrl, cb) {
   });
 };
 
+exports.copyLocalZip = function(localZipPath, cb) {
+  temp.open({prefix: 'appium-app', suffix: '.zip'}, function(err, info) {
+    var infile = fs.createReadStream(localZipPath);
+    var outfile = fs.createWriteStream(info.path);
+    infile.pipe(outfile).on('close', function() {
+      logger.info(localZipPath + ' copied to ' + info.path);
+      cb(info.path);
+    });
+  });
+};
+
 exports.unzipFile = function(zipPath, cb) {
   logger.info("Unzipping " + zipPath);
   var execOpts = {cwd: path.dirname(zipPath)};

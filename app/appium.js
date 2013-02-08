@@ -8,6 +8,7 @@ var routing = require('./routing')
   , helpers = require('./helpers')
   , downloadFile = helpers.downloadFile
   , unzipApp = helpers.unzipApp
+  , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
   , ios = require('./ios');
@@ -95,9 +96,33 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                       desiredCaps.app);
   if (hasAppInCaps) {
     if (desiredCaps.app[0] === "/") {
-      this.args.app = desiredCaps.app;
-      logger.info("Using local app from desiredCaps: " + desiredCaps.app);
-      cb(null);
+      var appPath = desiredCaps.app
+        , ext = appPath.substring(appPath.length - 4);
+      if (ext === ".app") {
+        this.args.app = desiredCaps.app;
+        logger.info("Using local app from desiredCaps: " + appPath);
+        cb(null);
+      } else if (ext === ".zip") {
+        logger.info("Using local zip from desiredCaps: " + appPath);
+        try {
+          this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
+            if (zipErr) {
+              cb(zipErr);
+            } else {
+              this.args.app = newAppPath;
+              logger.info("Using locally extracted app: " + this.args.app);
+              cb(null);
+            }
+          }, this));
+        } catch(e) {
+          var err = e.toString();
+          logger.error("Failed copying and unzipping local app: " + appPath);
+          cb(err);
+        }
+      } else {
+        logger.error("Using local app, but didn't end in .zip or .app");
+        cb("Your app didn't end in .app or .zip!");
+      }
     } else if (desiredCaps.app.substring(0, 4) === "http") {
       var appUrl = desiredCaps.app;
       if (appUrl.substring(appUrl.length - 4) === ".zip") {
@@ -141,15 +166,27 @@ Appium.prototype.configure = function(desiredCaps, cb) {
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
   var me = this;
   downloadFile(appUrl, function(zipPath) {
-    me.tempFiles.push(zipPath);
-    unzipApp(zipPath, function(err, appPath) {
-      if (err) {
-        cb(err, null);
-      } else {
-        me.tempFiles.push(appPath);
-        cb(null, appPath);
-      }
-    });
+    me.unzipApp(zipPath, cb);
+  });
+};
+
+Appium.prototype.unzipLocalApp = function(localZipPath, cb) {
+  var me = this;
+  copyLocalZip(localZipPath, function(zipPath) {
+    me.unzipApp(zipPath, cb);
+  });
+};
+
+Appium.prototype.unzipApp = function(zipPath, cb) {
+  this.tempFiles.push(zipPath);
+  var me = this;
+  unzipApp(zipPath, function(err, appPath) {
+    if (err) {
+      cb(err, null);
+    } else {
+      me.tempFiles.push(appPath);
+      cb(null, appPath);
+    }
   });
 };
 

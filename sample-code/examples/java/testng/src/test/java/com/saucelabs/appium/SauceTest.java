@@ -1,14 +1,15 @@
 package com.saucelabs.appium;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import java.net.URL;
 import java.text.MessageFormat;
@@ -30,7 +31,7 @@ public class SauceTest {
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         // set up appium
         String sauceUserName = System.getenv("SAUCE_USER_NAME");
@@ -46,7 +47,7 @@ public class SauceTest {
         values = new ArrayList<Integer>();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws Exception {
         driver.quit();
     }
@@ -56,6 +57,7 @@ public class SauceTest {
         //populate text fields with two random number
         List<WebElement> elems = driver.findElements(By.tagName("textField"));
         Random random = new Random();
+
         for (WebElement elem : elems) {
             int rndNum = random.nextInt(MAXIMUM - MINIMUM + 1) + MINIMUM;
             elem.sendKeys(String.valueOf(rndNum));

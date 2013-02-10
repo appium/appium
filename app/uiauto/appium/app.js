@@ -7,11 +7,16 @@ if (typeof au === "undefined") {
 }
 
 $.extend(au, {
-    cache: []
-    , web: null
-    , identifier: 0
-    , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
-    , getScreenOrientation: function () {
+  cache: []
+  , identifier: 0
+  , target: UIATarget.localTarget()
+  , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
+  , mainApp: UIATarget.localTarget().frontMostApp()
+  , keyboard: function() { return UIATarget.localTarget().frontMostApp().keyboard(); }
+
+  // Screen orientation functions
+
+  , getScreenOrientation: function () {
       var orientation = $.orientation()
         , value = null;
       switch (orientation) {
@@ -65,6 +70,8 @@ $.extend(au, {
       }
     }
 
+  // Element lookup functions
+
   , lookup: function(selector, ctx) {
       if (typeof selector === 'string') {
         var _ctx = this.web ? this.web : this.mainWindow;
@@ -75,9 +82,9 @@ $.extend(au, {
           _ctx = ctx;
         }
 
-        $.timeout(0);
+        this.target.pushTimeout(0);
         var elems = $(selector, _ctx);
-        $.timeout(1);
+        this.target.popTimeout();
 
         return elems;
       }
@@ -181,32 +188,212 @@ $.extend(au, {
         };
       }
     }
+
   , getActiveElement: function() {
       return $(this.mainWindow).getActiveElement();
     }
-  , enterWebFrame: function(element) {
-      if (typeof element === "string") {
-        element = this.cache[element];
+
+  // Gesture functions
+
+  , getAbsCoords: function(startX, startY, endX, endY) {
+      if (typeof endX === "undefined") {
+        endX = 0;
       }
-      if (typeof element === "undefined" || !element) {
-        return {
-          status: codes.NoSuchElement.code
-          , value: null
-        };
-      } else if (element.type() !== "UIAWebView") {
-        return {
-          status: codes.NoSuchElement.code
-          , value: "That element is not a web view!"
-        };
-      } else {
-        this.web = element;
+      if (typeof endY === "undefined") {
+        endY = 0;
       }
-    }
-  , leaveWebFrame: function() {
-      this.web = null;
+      var size = this.target.rect().size;
+      if (startX === null) {
+        startX = size.width / 2;
+      }
+      if (startY === null) {
+        startY = size.height / 2;
+      }
+      if (Math.abs(startX) < 1 && Math.abs(startY) < 1) {
+        startX = startX * size.width;
+        startY = startY * size.height;
+      }
+      if (Math.abs(endX) < 1 && Math.abs(endY) < 1) {
+        endX = endX * size.width;
+        endY = endY * size.height;
+      }
+      var from = {
+        x: parseFloat(startX)
+        , y: parseFloat(startY)
+      };
+      var to = {
+        x: parseFloat(endX)
+        , y: parseFloat(endY)
+      };
+      return [from, to];
+  }
+
+  , flickApp: function(startX, startY, endX, endY) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+
+      this.target.flickFromTo(coords[0], coords[1]);
       return {
-        status: codes.Success.code
-        , value: null
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , swipe: function(startX, startY, endX, endY, duration) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+      duration = parseFloat(duration);
+
+      this.target.dragFromToForDuration(coords[0], coords[1], duration);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , complexTap: function(opts) {
+      var coords = this.getAbsCoords(opts.x, opts.y);
+      var touchOpts = {
+        tapCount: parseInt(opts.tapCount, 10)
+        , duration: parseFloat(opts.duration)
+        , touchCount: parseInt(opts.touchCount, 10)
+      };
+      return this.target.tapWithOptions(coords[0], touchOpts);
+    }
+
+ // Gesture emulation functions (i.e., making Selenium work)
+
+  , getFlickOpts: function(xSpeed, ySpeed) {
+      var size = this.target.rect().size;
+      var dX, dY;
+      // if we're dealing with numbers between 0 and 1, say it's %
+      if (Math.abs(xSpeed) < 1 && Math.abs(ySpeed) < 1) {
+        dX = xSpeed * size.width;
+        dY = ySpeed * size.height;
+      } else {
+        // otherwise, pixels!
+        dX = xSpeed;
+        dY = ySpeed;
+      }
+      // normalize to screen size
+      if (Math.abs(dX) > size.width) {
+        dX *= Math.abs(size.width / dX);
+      }
+      if (Math.abs(dY) > size.height) {
+        dY *= Math.abs(size.height / dY);
+      }
+      var midX = size.width / 2;
+      var midY = size.height / 2;
+
+      // translate to flick in the middle of the screen
+      var from = {
+        x: midX - (dX / 2),
+        y: midY - (dY / 2)
+      };
+      var to = {
+        x: midX + (dX / 2),
+        y: midY + (dY / 2)
+      };
+      return [from, to];
+    }
+    // does a flick in the middle of the screen of size 1/4 of screen
+    // using the direction corresponding to xSpeed/ySpeed
+  , touchFlickFromSpeed: function(xSpeed, ySpeed) {
+      // get x, y of vector that provides the direction given by xSpeed/ySpeed and
+      // has length .25
+      var opts = this.getFlickOpts(xSpeed, ySpeed);
+      this.target.flickFromTo(opts[0], opts[1]);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+    // similar to flick but does a longer movement in the direction of the swipe
+    // does a swipe in the middle of the screen of size 1/2 of screen
+    // using the direction corresponding to xSpeed/ySpeed
+  , touchSwipeFromSpeed: function(xSpeed, ySpeed) {
+      // get x, y of vector that provides the direction given by xSpeed/ySpeed and
+      // has length .50
+      var opts = this.getFlickOpts(xSpeed, ySpeed);
+      this.target.dragFromToForDuration(opts[0], opts[1], 1);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  // Keyboard functions
+
+  , sendKeysToActiveElement: function(keys) {
+      if (this.hasSpecialKeys(keys)) {
+        return this.sendKeysToActiveElementSpecial(keys);
+      } else {
+        this.keyboard().typeString(keys);
+      }
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , hasSpecialKeys: function(keys) {
+      var numChars = keys.length;
+      for (var i = 0; i < numChars; i++)
+        if (this.isSpecialKey(keys.charAt(i)))
+          return true;
+      return false;
+    }
+
+  , sendKeysToActiveElementSpecial: function(keys) {
+      var numChars = keys.length;
+      for (var i = 0; i < numChars; i++)
+        this.typeKey(keys.charAt(i));
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+    // handles some of the special keys in org.openqa.selenium.Keys
+  , isSpecialKey: function(k) {
+      if (k === '\uE003') // DELETE
+        return true;
+      else if (k === '\uE006' || k === '\uE007') // RETURN ENTER
+        return true;
+      return false;
+    }
+
+ , typeKey: function(k) {
+    if (k === '\uE003') { // DELETE
+      this.keyboard().keys().Delete.tap();
+    } else if (k === '\uE006' || k === '\uE007') {// RETURN ENTER
+      this.keyboard().buttons().Go.tap();
+    } else {
+      this.keyboard().typeString(String(k)); // regular key
+    }
+  }
+
+  // Alert-related functions
+
+  , getAlertText: function() {
+      return {
+        status: codes.Success.code,
+        value: this.mainApp.alert().name()
+      };
+    }
+
+  , acceptAlert: function() {
+      this.mainApp.alert().defaultButton().tap();
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , dismissAlert: function() {
+      this.mainApp.alert().cancelButton().tap();
+      return {
+        status: codes.Success.code,
+        value: null
       };
     }
 });

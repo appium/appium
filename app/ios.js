@@ -147,6 +147,16 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
   });
 };
 
+IOS.prototype.getAtomsElement = function(wdId) {
+  var atomsId;
+  try {
+    atomsId = this.webElementIds[parseInt(wdId, 10) - 5000];
+  } catch(e) {
+    return null;
+  }
+  return {'ELEMENT': atomsId};
+};
+
 IOS.prototype.stopRemote = function() {
   if (!this.remote) {
     logger.error("We don't appear to be in a web frame");
@@ -185,6 +195,11 @@ IOS.prototype.setCommandTimeout = function(secs, cb) {
 
 IOS.prototype.resetCommandTimeout = function(cb) {
   var cmd = "waitForDataTimeout = defWaitForDataTimeout";
+  this.proxy(cmd, cb);
+};
+
+IOS.prototype.getCommandTimeout = function(cb) {
+  var cmd = "waitForDataTimeout";
   this.proxy(cmd, cb);
 };
 
@@ -324,46 +339,60 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 
 IOS.prototype.setValue = function(elementId, value, cb) {
   var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsId;
-    try {
-      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
-    } catch(e) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
       cb(null, {
         status: status.codes.UnknownError.code
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
+    } else {
+      this.remote.executeAtom('click', [atomsElement], cb);
     }
-    this.remote.executeAtom('click', [{'ELEMENT': atomsId}], cb);
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');
     this.proxy(command, cb);
   }
 };
 
+IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
+  var command
+    , options = {
+        tapCount: tapCount
+        , touchCount: touchCount
+        , duration: duration
+        , x: x
+        , y: y
+      };
+  var JSONOpts = JSON.stringify(options);
+  if (elementId !== null) {
+    command = ["au.getElement('", elementId, "').complexTap(", JSONOpts, ')'].join('');
+  } else {
+    command = ["au.complexTap(", JSONOpts, ")"].join('');
+  }
+  this.proxy(command, cb);
+};
+
 IOS.prototype.clear = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').setValue('')"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsId;
-    try {
-      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
-    } catch(e) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
       cb(null, {
         status: status.codes.UnknownError.code
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
+    } else {
+      this.remote.executeAtom('get_text', [atomsElement], cb);
     }
-    this.remote.executeAtom('get_text', [{'ELEMENT': atomsId}], cb);
   } else {
     var command = ["au.getElement('", elementId, "').value()"].join('');
     this.proxy(command, cb);
@@ -372,16 +401,15 @@ IOS.prototype.getText = function(elementId, cb) {
 
 IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
   if (this.curWindowHandle) {
-    var atomsId;
-    try {
-      atomsId = this.webElementIds[parseInt(elementId, 10) - 5000];
-    } catch(e) {
+    var atomsElement = this.getAtomsElement(elementId);
+    if (atomsElement === null) {
       cb(null, {
         status: status.codes.UnknownError.code
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
+    } else {
+      this.remote.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
     }
-    this.remote.executeAtom('get_attribute_value', [{'ELEMENT': atomsId}, attributeName], cb);
   } else {
     var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
     this.proxy(command, cb);
@@ -390,50 +418,42 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 
 IOS.prototype.getLocation = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').getElementLocation()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.getSize = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.getPageIndex = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').pageIndex()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
-  var command = ["sendKeysToActiveElement('", keys ,"')"].join('');
-
+  var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
   this.proxy(command, cb);
 };
 
 IOS.prototype.frame = function(frame, cb) {
   frame = frame? frame : 'mainWindow';
   var command = ["wd_frame = ", frame].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.implicitWait = function(seconds, cb) {
   var command = ["au.timeout('", seconds, "')"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
-
   this.proxy(command, cb);
 };
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
-
   this.proxy(command, cb);
 };
 
@@ -442,26 +462,23 @@ IOS.prototype.getPageSource = function(cb) {
 };
 
 IOS.prototype.getAlertText = function(cb) {
-  this.proxy("getAlertText()", cb);
+  this.proxy("au.getAlertText()", cb);
 };
 
 IOS.prototype.postAcceptAlert = function(cb) {
-  this.proxy("acceptAlert()", cb);
+  this.proxy("au.acceptAlert()", cb);
 };
 
 IOS.prototype.postDismissAlert = function(cb) {
-  this.proxy("dismissAlert()", cb);
+  this.proxy("au.dismissAlert()", cb);
 };
 
 IOS.prototype.getOrientation = function(cb) {
-  var command = "getScreenOrientation()";
-
-  this.proxy(command, cb);
+  this.proxy("au.getScreenOrientation()", cb);
 };
 
 IOS.prototype.setOrientation = function(orientation, cb) {
-  var command = ["setScreenOrientation('", orientation ,"')"].join('');
-
+  var command = ["au.setScreenOrientation('", orientation ,"')"].join('');
   this.proxy(command, cb);
 };
 
@@ -507,24 +524,47 @@ IOS.prototype.getScreenshot = function(cb) {
   });
 };
 
-IOS.prototype.flick = function(xSpeed, ySpeed, swipe, cb) {
+IOS.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {
   var command = "";
-  if (!swipe) {
-    command = ["touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
+  if (swipe) {
+    command = ["au.touchSwipeFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
   else {
-    command = ["touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
+    command = ["au.touchFlickFromSpeed(", xSpeed, ",", ySpeed,")"].join('');
   }
 
   this.proxy(command, cb);
 };
 
-IOS.prototype.flickElement = function(elementId, xoffset, yoffset, speed, cb) {
+IOS.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb) {
   var command = ["au.getElement('", elementId, "').touchFlick(", xoffset, ",", yoffset, ",", speed, ")"].join('');
 
   this.proxy(command, cb);
 };
 
+IOS.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount, elId, cb) {
+  var command;
+  if (elId) {
+    command = ["au.getElement('", elId, "').swipe(", startX, ',', startY, ',',
+      endX, ',', endY, ',', duration, ',', touchCount, ")"].join('');
+  } else {
+    command = ["au.swipe(", startX, ',', startY, ',', endX, ',', endY, ',',
+      duration, ")"].join('');
+  }
+  this.proxy(command, cb);
+};
+
+IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
+  var command;
+  if (elId) {
+    command = ["au.getElement('", elId, "').flick(", startX, ',', startY, ',',
+      endX, ',', endY, ',', touchCount, ")"].join('');
+  } else {
+    command = ["au.flickApp(", startX, ',', startY, ',', endX, ',', endY,
+      ")"].join('');
+  }
+  this.proxy(command, cb);
+};
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
     this.remote.navToUrl(url, function() {

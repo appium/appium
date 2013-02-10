@@ -1,8 +1,32 @@
-# RSpec is delightful, but the gist should be the same for test::unit
+# GETTING STARTED
+# -----------------
+# This documentation is intended to show you how to get started with a
+# simple Selenium-Webdriver test.  This test is written with RSpec but the
+# webdriver commands (everything called after @driver) will work with any
+# testing framework.
 #
-# Before this test will work, you may need to do:
-# 
-# gem install rspec webdriver
+# INSTALLING RVM
+# --------------
+# We're assuming you've got rvm installed, but if not, from a terminal
+# run the following line (removing the ""'s):
+#
+# "\curl -L https://get.rvm.io | bash -s stable --ruby"
+#
+# INSTALLING GEMS
+# ---------------
+# Then, change to the example directory:
+#   "cd appium-location/sample-code/examples/ruby"
+#
+# and install the required gems with bundler by doing:
+#   "bundle install"
+#
+# RUNNING THE TESTS
+# -----------------
+# To actually run the tests, make sure appium is running in another terminal 
+# window, then from the same window you used for the above commands, type
+#   "rspec simple_test.rb"
+#
+# It will take a while, but once it's done you should get nothing but a line telling you "1 example, 0 failures".
 
 require 'rspec'
 require 'selenium-webdriver'
@@ -19,7 +43,10 @@ def capabilities
 end
 
 def absolute_app_path
-    File.join(File.dirname(__FILE__), APP_PATH)
+    file = File.join(File.dirname(__FILE__), APP_PATH)
+    raise "App doesn't exist #{file}" unless File.exist? file
+    raise "App must be a directory #{file}" unless File.directory? file
+    file
 end
 
 def server_url
@@ -27,23 +54,27 @@ def server_url
 end
 
 describe "Computation" do
-  before(:each) do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
-    
+  before :all do
+    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)    
    end
 
-    it "should add two numbers" do
-      values = [rand(10), rand(10)]
-      expected_sum = values.reduce(&:+)
-      elements = @driver.find_elements(:name, 'textField')
-
-      elements.each_with_index do |element, index|
-        element.send_keys values[index]
-      end
-
-      button = @driver.find_elements(:name, 'button')[0]
-      button.click
-     
-      @driver.find_elements(:name, 'staticText')[0].should eq expected_sum
-    end
+  after :all do
+    @driver.quit
   end
+
+  it "should add two numbers" do
+    values = [rand(10), rand(10)]
+    expected_sum = values.reduce(&:+)
+    elements = @driver.find_elements(:tag_name, 'textField')
+
+    elements.each_with_index do |element, index|
+      element.send_keys values[index]
+    end
+
+    button = @driver.find_element(:tag_name, 'button')
+    button.click
+     
+    actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
+    actual_sum.should eq(expected_sum.to_s)
+  end
+end

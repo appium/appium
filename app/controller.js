@@ -3,6 +3,7 @@
 "use strict";
 var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
+  , _s = require("underscore.string")
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -193,13 +194,75 @@ exports.setValue = function(req, res) {
 
 exports.doClick = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.click(elementId, getResponseHandler(req, res));
+};
+
+exports.mobileTap = function(req, res) {
+  req.body = _.defaults(req.body, {
+    tapCount: 1
+    , touchCount: 1
+    , duration: 0.1
+    , x: 0.5
+    , y: 0.5
+    , element: null
+  });
+  var tapCount = req.body.tapCount
+    , touchCount = req.body.touchCount
+    , duration = req.body.duration
+    , element = req.body.element
+    , x = req.body.x
+    , y = req.body.y;
+
+  req.device.complexTap(tapCount, touchCount, duration, x, y, element,
+      getResponseHandler(req, res));
+};
+
+exports.mobileFlick = function(req, res) {
+  var onElement = typeof req.body.element !== "undefined";
+  req.body = _.defaults(req.body, {
+    touchCount: 1
+    , startX: onElement ? 0.5 : 'null'
+    , startY: onElement ? 0.5 : 'null'
+    , element: null
+  });
+  var touchCount = req.body.touchCount
+    , element = req.body.element
+    , startX = req.body.startX
+    , startY = req.body.startY
+    , endX = req.body.endX
+    , endY = req.body.endY;
+
+  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+    req.device.flick(startX, startY, endX, endY, touchCount, element,
+        getResponseHandler(req, res));
+  }
+};
+
+exports.mobileSwipe = function(req, res) {
+  var onElement = typeof req.body.element !== "undefined";
+  req.body = _.defaults(req.body, {
+    touchCount: 1
+    , startX: onElement ? 0.5 : 'null'
+    , startY: onElement ? 0.5 : 'null'
+    , duration: 0.8
+    , element: null
+  });
+  var touchCount = req.body.touchCount
+    , element = req.body.element
+    , duration = req.body.duration
+    , startX = req.body.startX
+    , startY = req.body.startY
+    , endX = req.body.endX
+    , endY = req.body.endY;
+
+  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+    req.device.swipe(startX, startY, endX, endY, duration, touchCount,
+        element, getResponseHandler(req, res));
+  }
 };
 
 exports.clear = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.clear(elementId, getResponseHandler(req, res));
 };
 
@@ -224,13 +287,11 @@ exports.getLocation = function(req, res) {
 
 exports.getSize = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.getSize(elementId, getResponseHandler(req, res));
 };
 
 exports.getPageIndex = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.getPageIndex(elementId, getResponseHandler(req, res));
 };
 
@@ -253,7 +314,6 @@ exports.frame = function(req, res) {
 
 exports.elementDisplayed = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.elementDisplayed(elementId, getResponseHandler(req, res));
 };
 
@@ -281,13 +341,11 @@ exports.postDismissAlert = function(req, res) {
 
 exports.implicitWait = function(req, res) {
   var seconds = req.body.ms / 1000;
-
   req.device.implicitWait(seconds, getResponseHandler(req, res));
 };
 
 exports.setOrientation = function(req, res) {
   var orientation = req.body.orientation;
-
   req.device.setOrientation(orientation, getResponseHandler(req, res));
 };
 
@@ -324,7 +382,7 @@ exports.flick = function(req, res) {
     if (element) {
       exports.flickElement(req, res);
     } else {
-      req.device.flick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
+      req.device.fakeFlick(xSpeed, ySpeed, swipe, getResponseHandler(req, res));
     }
   }
 };
@@ -336,7 +394,7 @@ exports.flickElement = function(req, res) {
     , speed = req.body.speed;
 
   if(checkMissingParams(res, {element: element, xoffset: xoffset, yoffset: yoffset})) {
-    req.device.flickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
+    req.device.fakeFlickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
   }
 };
 
@@ -345,7 +403,33 @@ exports.execute = function(req, res) {
     , args = req.body.args;
 
   if(checkMissingParams(res, {script: script, args: args})) {
-    req.device.execute(script, args, getResponseHandler(req, res));
+    if (_s.startsWith(script, "mobile: ")) {
+      var realCmd = script.replace("mobile: ", "");
+      exports.executeMobileMethod(req, res, realCmd);
+    } else {
+      req.device.execute(script, args, getResponseHandler(req, res));
+    }
+  }
+};
+
+exports.executeMobileMethod = function(req, res, cmd) {
+  var args = req.body.args
+    , params = {};
+
+  if (args.length) {
+    if (args.length !== 1) {
+      res.send(400, "Mobile methods only take one parameter, which is a " +
+                    "hash of named parameters to send to the method");
+    } else {
+      params = args[0];
+    }
+  }
+
+  if (_.has(mobileCmdMap, cmd)) {
+    req.body = params;
+    mobileCmdMap[cmd](req, res);
+  } else {
+    exports.notYetImplemented(req, res);
   }
 };
 
@@ -381,6 +465,19 @@ exports.getWindowHandles = function(req, res) {
   req.device.getWindowHandles(getResponseHandler(req, res));
 };
 
+exports.setCommandTimeout = function(req, res) {
+  var timeout = req.body.timeout;
+
+  if(checkMissingParams(res, {timeout: timeout})) {
+    timeout = parseInt(timeout, 10);
+    req.device.setCommandTimeout(timeout, getResponseHandler(req, res));
+  }
+};
+
+exports.getCommandTimeout = function(req, res) {
+  req.device.getCommandTimeout(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   res.set('Content-Type', 'text/plain');
   res.send(404, "That URL did not map to a valid JSONWP resource");
@@ -402,6 +499,14 @@ var notImplementedInThisContext = function(req, res) {
     , value: "Not implemented in this context, try switching " +
              "into or out of a web view"
   });
+};
+
+var mobileCmdMap = {
+  'tap': exports.mobileTap
+  , 'flick': exports.mobileFlick
+  , 'swipe': exports.mobileSwipe
+  , 'setCommandTimeout': exports.setCommandTimeout
+  , 'getCommandTimeout': exports.getCommandTimeout
 };
 
 exports.produceError = function(req, res) {

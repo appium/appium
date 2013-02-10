@@ -2,7 +2,7 @@ var wd = require("wd")
   , assert = require("assert")
   , username = "<username>" // Omit for local test run
   , accessKey = "<accessKey>" // Omit for local test run
-  , appURL = "https://raw.github.com/appium/appium/master/assets/TestApp.app.zip";
+  , appURL = "http://appium.s3.amazonaws.com/TestApp.app.zip";
 
 var browser = wd.promiseRemote(
   "ondemand.saucelabs.com" // Omit for local test run

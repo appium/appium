@@ -7,7 +7,7 @@
 "use strict";
 
 var should = require("should")
-  , appUrl = 'https://raw.github.com/appium/appium/master/assets/TestApp.app.zip'
+  , appUrl = 'http://appium.s3.amazonaws.com/TestApp.app.zip'
   , dbPath = "../../../test/helpers/driverblock.js"
   , describeSauce = require(dbPath).describeForSauce(appUrl);
 
@@ -40,7 +40,9 @@ describeSauce('calc app', function(h) {
             elems[0].text(function(err, text) {
               var sum = values[0] + values[1];
               sum.should.equal(parseInt(text, 10));
-              done();
+              driver.quit(function() {
+                done();
+              });
             });
           });
         });

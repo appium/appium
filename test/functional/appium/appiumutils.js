@@ -107,14 +107,6 @@ describe("appiumutils", function() {
     });
   });
 
-  it('should have page source', function(done) {
-    device.proxy("wd_frame.getPageSource()", function(err, res) {
-      should.not.exist(err);
-      res.status.should.equal(0);
-      done();
-    });
-  });
-
   it('should respond nicely to js errors', function(done) {
     device.proxy("blargimarg", function(err, res) {
       should.exist(err);

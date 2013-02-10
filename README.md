@@ -34,13 +34,22 @@ Get something working with a quickness.
 
     > mkdir appium-test && cd appium-test
     > sudo npm install appium -g
+    > npm install wd
     > curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
     > appium &
     > node simplest.js
 
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
-We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods), Check it out.
+We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
+
+We also have several extensions to the JSON Wire Protocol for [automating
+mobile
+gestures](https://github.com/appium/appium/wiki/Automating-mobile-gestures)
+like tap, flick, and swipe.
+
+You can also automate web views in hybrid apps! See the [hybrid app
+guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
 
 
 - - -
@@ -92,6 +101,15 @@ again):
 Run all functional tests:
 
     > grunt functional
+
+Note: we use [wd](http://github.com/admc/wd) as the Selenium client in our
+functional tests. Because of the work we are doing to extend the WebDriver
+protocol, we use the development version of wd. If you've installed wd in some
+other way, you might need to do this in the Appium project directory to get the
+tests to run successfully:
+
+    > rm -rf node_modules/wd
+    > npm install .
 
 Run unit tests:
 

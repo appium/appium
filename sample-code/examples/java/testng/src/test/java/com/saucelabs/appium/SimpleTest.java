@@ -1,17 +1,17 @@
 package com.saucelabs.appium;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import java.io.File;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Ross Rowe
  */
-public class SauceTest {
+public class SimpleTest {
 
     private WebDriver driver;
 
@@ -30,23 +30,22 @@ public class SauceTest {
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
 
-    @Before
+    @BeforeMethod
     public void setUp() throws Exception {
         // set up appium
-        String sauceUserName = System.getenv("SAUCE_USER_NAME");
-        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
+        File classpathRoot = new File(System.getProperty("user.dir"));
+        File appDir = new File(classpathRoot, "../../../apps/TestApp/build/Release-iphonesimulator");
+        File app = new File(appDir, "TestApp.app");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS 6.0");
-        capabilities.setCapability("device", "iPhone Simulator");
-        capabilities.setCapability(CapabilityType.PLATFORM, "Mac 10.8");
-        capabilities.setCapability("app", "http://appium.s3.amazonaws.com/TestApp.app.zip");
-
-        driver = new RemoteWebDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub", sauceUserName, sauceAccessKey)),
-                capabilities);
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS");
+        capabilities.setCapability(CapabilityType.VERSION, "6.0");
+        capabilities.setCapability(CapabilityType.PLATFORM, "Mac");
+        capabilities.setCapability("app", app.getAbsolutePath());
+        driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
         values = new ArrayList<Integer>();
     }
 
-    @After
+    @AfterMethod
     public void tearDown() throws Exception {
         driver.quit();
     }
@@ -75,4 +74,6 @@ public class SauceTest {
         WebElement texts = driver.findElement(By.tagName("staticText"));
         assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
     }
+
+
 }

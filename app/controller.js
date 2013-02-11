@@ -429,6 +429,7 @@ exports.executeMobileMethod = function(req, res, cmd) {
     req.body = params;
     mobileCmdMap[cmd](req, res);
   } else {
+    logger.info("Tried to execute non-existent mobile command '"+cmd+"'");
     exports.notYetImplemented(req, res);
   }
 };

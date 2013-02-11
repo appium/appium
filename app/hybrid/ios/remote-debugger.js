@@ -34,7 +34,6 @@ var logger = {
 
 
 var RemoteDebugger = function(onDisconnect) {
-  var me = this;
   this.socket = null;
   this.connId = uuid.v4();
   this.senderId = uuid.v4();
@@ -48,19 +47,8 @@ var RemoteDebugger = function(onDisconnect) {
     '_rpc_reportIdentifier:': noop
     , '_rpc_forwardGetListing:': noop
     , 'connect': noop
-    , 'pageLoad': function() {
-      logger.debug("Page loaded");
-      me.pageLoading = false;
-    }
-    , 'pageLoading': function() {
-      me.specialCbs.pageLoad = function() {
-        logger.debug("Page loaded");
-        me.pageLoading = false;
-      };
-      logger.debug("Page loading");
-      me.pageLoading = true;
-    }
   };
+  this.pageLoadedCbs = [];
   this.setHandlers();
   this.received = new Buffer(0);
   this.readPos = 0;
@@ -125,20 +113,19 @@ RemoteDebugger.prototype.selectApp = function(appIdKey, cb) {
 };
 
 RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
-  var remote = this;
+  var me = this;
   assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
   this.pageIdKey = pageIdKey;
   var setSenderKey = messages.setSenderKey(this.connId, this.appIdKey,
                                            this.senderId, this.pageIdKey);
   logger.info("Selecting page and forwarding socket setup");
-  var me = this;
   this.send(setSenderKey, function() {
     var enablePage = messages.enablePage(me.appIdKey, me.connId,
                                          me.senderId, me.pageIdKey);
     me.send(enablePage, function() {
-      remote.execute('(function(){return document.readyState;})()', function(err, res) {
+      me.execute('(function(){return document.readyState;})()', function(err, res) {
         if (err || res.result.value == 'loading') {
-          remote.specialCbs.pageLoading();
+          me.pageUnload();
         }
         cb();
       }, 0);
@@ -164,14 +151,12 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
   });
 };
 
-RemoteDebugger.prototype.execute = function(command, cb, timeoutCountDown) {
-  timeoutCountDown = typeof timeoutCountDown == 'undefined' ? 60 : timeoutCountDown;
-  if (this.pageLoading && timeoutCountDown > 0) {
-    logger.info("Page is loading, waiting: " + timeoutCountDown);
-    var remote = this;
-    setTimeout(function() {
-      remote.execute(command, cb, timeoutCountDown - 1);
-    }, 500);
+RemoteDebugger.prototype.execute = function(command, cb) {
+  var me = this;
+  if (this.pageLoading) {
+    this.waitForDom(function() {
+      me.execute(command, cb);
+    });
   } else {
     assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
     assert.ok(this.pageIdKey);
@@ -197,33 +182,30 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
   logger.info("Navigating to new URL: " + url);
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
       this.senderId, this.pageIdKey);
-  this.specialCbs.pageLoad = function () {
-    logger.debug("Page loaded");
-    this.pageLoading = false;
-    cb();
-  };
+  this.waitForDom(cb);
   this.send(navToUrl, noop);
 };
 
-RemoteDebugger.prototype.waitForDom = function(cb) {
-  this.timeoutWaitingForDom = false;
-  var me = this;
-  var timeout = setTimeout(function() {
-    me.timeoutWaitingForDom = true;
-    logger.debug("Page loaded");
-    this.pageLoading = false;
+RemoteDebugger.prototype.pageLoad = function() {
+  clearTimeout(this.loadingTimeout);
+  var cbs = this.pageLoadedCbs;
+  this.pageLoadedCbs = [];
+  logger.debug("Page loaded");
+  this.pageLoading = false;
+  _.each(cbs, function(cb) {
     cb();
-  }, 6000);
-  this.specialCbs.pageLoad = function() {
-    if (me.timeoutWaitingForDom) {
-      clearTimeout(timeout);
-      logger.debug("Page loaded");
-      this.pageLoading = false;
-      // Notice, this can be overwritten by the loading handler if the timing is
-      // not right
-      cb();
-    }
-  };
+  });
+};
+
+RemoteDebugger.prototype.pageUnload = function() {
+      logger.debug("Page loading");
+      this.pageLoading = true;
+      this.waitForDom(noop);
+};
+
+RemoteDebugger.prototype.waitForDom = function(cb) {
+  this.pageLoadedCbs.push(cb);
+  this.loadingTimeout = setTimeout(this.pageLoad, 60000);
 };
 
 // ====================================
@@ -277,9 +259,9 @@ RemoteDebugger.prototype.setHandlers = function() {
         logger.info("Device is telling us to reset profiles. Should probably " +
                     "do some kind of callback here");
       } else if (dataKey.method == "Page.frameNavigated") {
-        me.handleSpecialMessage('pageLoading');
+        me.pageUnload();
       } else if (dataKey.method == "Page.loadEventFired") {
-        me.handleSpecialMessage('pageLoad');
+        me.pageLoad();
       } else if (typeof me.dataCbs[msgId] === "function") {
         me.dataCbs[msgId](error, result);
       } else {

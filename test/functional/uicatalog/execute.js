@@ -19,10 +19,10 @@ var logSource = function(h, done) {
 };
 
 describeWd('execute', function(h) {
-  it('should require a web view to be selected', function(done) {
-    h.driver.execute("1 + 1", function(err, value) {
-      should.exist(err);
-      should.not.exist(value);
+  it('should do UIAutomation commands if not in web frame', function(done) {
+    h.driver.execute("UIATarget.localTarget().frontMostApp().bundleID()", function(err, value) {
+      should.not.exist(err);
+      value.should.equal("com.yourcompany.UICatalog");
       done();
     });
   });

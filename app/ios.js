@@ -644,7 +644,7 @@ IOS.prototype.clearWebView = function(cb) {
 
 IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
-    cb(new NotImplementedError(), null);
+    this.proxy(script, cb);
   } else {
     this.remote.executeAtom('execute_script', [script, args], cb);
   }

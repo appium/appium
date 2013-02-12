@@ -394,7 +394,7 @@ IOS.prototype.getText = function(elementId, cb) {
       this.remote.executeAtom('get_text', [atomsElement], cb);
     }
   } else {
-    var command = ["au.getElement('", elementId, "').value()"].join('');
+    var command = ["au.getElement('", elementId, "').text()"].join('');
     this.proxy(command, cb);
   }
 };

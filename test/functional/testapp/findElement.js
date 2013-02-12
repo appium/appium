@@ -11,7 +11,7 @@ describeWd('elementByTagName', function(h) {
       done();
     });
   });
-  return it('should not find any invalid elements on the app and throw error', function(done) {
+  it('should not find any invalid elements on the app and throw error', function(done) {
     h.driver.elementByTagName('buttonNotThere', function(err, element) {
       should.not.exist(element);
       err.status.should.eql(7);
@@ -19,9 +19,33 @@ describeWd('elementByTagName', function(h) {
       done();
     });
   });
+  it('should find alerts when they exist', function(done) {
+    h.driver.elementsByTagName('button', function(err, els) {
+      should.not.exist(err);
+      els[1].click(function() {
+        h.driver.elementByTagName('alert', function(err, el) {
+          should.not.exist(err);
+          el.elementsByTagName('button', function(err, buttons) {
+            should.not.exist(err);
+            buttons.length.should.equal(2);
+            done();
+          });
+        });
+      });
+    });
+  });
+  it('should not find alerts when they dont exist', function(done) {
+    h.driver.elementByTagName('alert', function(err, el) {
+      should.exist(err);
+      should.not.exist(el);
+      err.status.should.eql(7);
+      err['jsonwire-error'].summary.should.eql('NoSuchElement');
+      done();
+    });
+  });
 });
 
-describeWd('elementByTagName', function(h) {
+describeWd('elementsByTagName', function(h) {
   it('should find both elements on the app', function(done) {
     h.driver.elementsByTagName('button', function(err, elements) {
       elements.length.should.equal(2);

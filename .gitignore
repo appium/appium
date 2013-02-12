@@ -6,6 +6,7 @@ sample-code/apps/TestApp/build
 sample-code/apps/WebViewApp/build
 *.sublime-*
 sample-code/apps/UICatalog*
+sample-code/examples/dotnet/SimpleTest/*.userprefs
 sample-code/examples/php/composer.lock
 sample-code/examples/php/composer.phar
 sample-code/examples/php/vendor

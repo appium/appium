@@ -109,8 +109,8 @@ describe("appiumutils", function() {
 
   it('should respond nicely to js errors', function(done) {
     device.proxy("blargimarg", function(err, res) {
-      should.exist(err);
-      should.ok(~res);
+      should.not.exist(err);
+      res.status.should.equal(17);
       done();
     });
   });

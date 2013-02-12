@@ -61,28 +61,38 @@ describe "Computation" do
     @driver.quit
   end
 
-  it "should add two numbers" do
-    values = [rand(10), rand(10)]
-    expected_sum = values.reduce(&:+)
-    elements = @driver.find_elements(:tag_name, 'textField')
+  #it "should add two numbers" do
+    #values = [rand(10), rand(10)]
+    #expected_sum = values.reduce(&:+)
+    #elements = @driver.find_elements(:tag_name, 'textField')
 
-    elements.each_with_index do |element, index|
-      element.send_keys values[index]
-    end
+    #elements.each_with_index do |element, index|
+      #element.send_keys values[index]
+    #end
 
-    button = @driver.find_element(:tag_name, 'button')
-    button.click
+    #button = @driver.find_element(:tag_name, 'button')
+    #button.click
      
-    actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
-    actual_sum.should eq(expected_sum.to_s)
-  end
+    #actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
+    #actual_sum.should eq(expected_sum.to_s)
+  #end
 
-  it "should handle alerts" do
+  #it "should handle alerts" do
+    #els = @driver.find_elements(:tag_name, 'button')
+    #els[1].click
+    #a = @driver.switch_to.alert
+    #a.text.should eq("Cool title")
+    #a.accept
+  #end
+
+  it "should find alerts" do
     els = @driver.find_elements(:tag_name, 'button')
     els[1].click
-    a = @driver.switch_to.alert
-    a.text.should eq("Cool title")
-    a.accept
+    alert = @driver.find_element(:tag_name, 'alert')
+    buttons = alert.find_elements(:tag_name, 'button')
+    buttons[0].click
+    alerts = @driver.find_elements(:tag_name, 'alert')
+    alerts.should be_empty
   end
 
 end

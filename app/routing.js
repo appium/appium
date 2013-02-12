@@ -57,8 +57,9 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
   rest.get('/wd/hub/session/:sessionId?/title', controller.title);
 
-  // this is for testing purposes only
+  // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
+  rest.post('/wd/hub/crash', controller.crash);
 
   // appium-specific extensions to JSONWP
   // these aren't part of JSONWP but we want them or something like them to be

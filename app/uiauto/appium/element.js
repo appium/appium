@@ -64,6 +64,15 @@ UIAElement.prototype.hasChildren = function() {
            type === "UIASwitch" || type === "UIAElementNil");
 };
 
+UIAElement.prototype.text = function() {
+  var type = this.type();
+  if (type === "UIAButton") {
+    return this.label();
+  } else {
+    return this.value();
+  }
+};
+
 UIAElement.prototype.matchesTagName = function(tagName) {
   var type = this.type();
   // i.e. "UIALink" matches "link:

@@ -74,7 +74,8 @@ $.extend(au, {
 
   , lookup: function(selector, ctx) {
       if (typeof selector === 'string') {
-        var _ctx = this.web ? this.web : this.mainWindow;
+        var _ctx = this.mainWindow
+          , elems = [];
 
         if (typeof ctx === 'string') {
           _ctx = this.cache[ctx];
@@ -83,7 +84,14 @@ $.extend(au, {
         }
 
         this.target.pushTimeout(0);
-        var elems = $(selector, _ctx);
+        if (selector === 'alert') {
+          var alert = this.mainApp.alert();
+          if (alert) {
+            elems = $(alert);
+          }
+        } else {
+          elems = $(selector, _ctx);
+        }
         this.target.popTimeout();
 
         return elems;

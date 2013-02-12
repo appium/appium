@@ -338,7 +338,7 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {
-  var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
+  var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
   this.proxy(command, cb);
 };
 

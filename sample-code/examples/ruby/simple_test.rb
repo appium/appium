@@ -96,4 +96,10 @@ describe "Computation" do
     alerts.should be_empty
   end
 
+  it "should get window size" do
+    size = @driver.manage.window.size
+    size.width.should eq(320)
+    size.height.should eq(480)
+  end
+
 end

@@ -21,7 +21,14 @@ UIATarget.onAlert = function(){
 while(true) {
   if (cmd) {
     console.log("Got new command from instruments: " + cmd);
-    var result = eval(cmd);
+    try {
+      var result = eval(cmd);
+    } catch(e) {
+      result = {
+        status: codes.JavaScriptError.code
+        , value: e.message
+      };
+    }
     if (typeof result === "undefined" || result === null) {
       result = '';
       console.log("Command executed without response");

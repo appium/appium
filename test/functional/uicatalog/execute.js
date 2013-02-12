@@ -26,6 +26,13 @@ describeWd('execute', function(h) {
       done();
     });
   });
+  it('should not fail if UIAutomation command blows up', function(done) {
+    h.driver.execute("UIATarget.foobarblah()", function(err) {
+      should.exist(err);
+      err.status.should.equal(17);
+      done();
+    });
+  });
 });
 
 var spinForHandles = function(driver, done) {

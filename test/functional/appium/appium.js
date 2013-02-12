@@ -31,7 +31,7 @@ describeWd('appium', function(h) {
 }, undefined, undefined, undefined, {newCommandTimeout: 60});
 
 describeZip('appium', function(h) {
-  it.only('should load a zipped app via path', function(done) {
+  it('should load a zipped app via path', function(done) {
     h.driver.elementByTagName('tableView', function(err, element) {
       should.exist(element.value);
       element.elementByTagName('tableCell', function(err, el2) {

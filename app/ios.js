@@ -445,6 +445,21 @@ IOS.prototype.getSize = function(elementId, cb) {
   }
 };
 
+IOS.prototype.getWindowSize = function(windowHandle, cb) {
+  if (this.curWindowHandle) {
+    cb(new NotImplementedError(), null);
+  } else {
+    if(windowHandle !== "current") {
+      cb(null, {
+        status: status.codes.NoSuchWindow.code
+        , value: "Can only get the status of the current window"
+      });
+    } else {
+      this.proxy("au.getWindowSize()", cb);
+    }
+  }
+};
+
 IOS.prototype.getPageIndex = function(elementId, cb) {
   var command = ["au.getElement('", elementId, "').pageIndex()"].join('');
   this.proxy(command, cb);

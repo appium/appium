@@ -14,7 +14,7 @@ $.extend(au, {
   , mainApp: UIATarget.localTarget().frontMostApp()
   , keyboard: function() { return UIATarget.localTarget().frontMostApp().keyboard(); }
 
-  // Screen orientation functions
+  // Screen-related functions
 
   , getScreenOrientation: function () {
       var orientation = $.orientation()
@@ -68,6 +68,14 @@ $.extend(au, {
           , value: "Orientation change did not take effect"
         };
       }
+    }
+
+  , getWindowSize: function() {
+      var size = this.target.rect().size;
+      return {
+        status: codes.Success.code
+        , value: size
+      };
     }
 
   // Element lookup functions

@@ -70,15 +70,21 @@ var mechanic = (function() {
     })();
 
     // Add functions to UIAElement to make object graph searching easier.
-    UIAElement.prototype.getElementByName = function(name) {
-        var foundEl = null;
+    UIAElement.prototype.getElementsByName = function(name) {
+        var foundEls = [];
         $.each(this.elements().toArray(), function(idx, el) {
-            if (el.name() === name) foundEl = el;
-            else foundEl = el.getElementByName(name);
-            if (foundEl) return false;
+            if (el.name() === name) foundEls.push(el);
+            else foundEls = foundEls.concat(el.getElementsByName(name));
         });
 
-        return foundEl;
+        return foundEls;
+    };
+    UIAElement.prototype.getElementByName = function(name) {
+        var foundEls = this.getElementsByName(name);
+
+        if (foundEls.length > 0) { return foundEls[0]; }
+    
+        return null;
     };
     UIAElement.prototype.getElementsByType = function(type) {
         return $.map(this.elements().toArray(), function(el) {
@@ -129,8 +135,7 @@ var mechanic = (function() {
     $.qsa = $$ = function(element, selector) {
         var found;
         if (idSelectorRE.test(selector)) {
-            found = element.getElementByName(selector.substr(1));
-            return found ? [found] : emptyArray;
+            return element.getElementsByName(selector.substr(1));
         } else if (typeSelectorRE.test(selector)) {
             found = element.getElementsByType(selector);
             return found ? found : emptyArray;

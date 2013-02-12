@@ -1,15 +1,12 @@
 "use strict";
 var path = require('path')
-  , rimraf = require('rimraf')
-  , http = require('http')
-  , exec = require('child_process').exec
   , gruntHelpers = require('./grunt-helpers.js')
   , startAppium = gruntHelpers.startAppium
   , authorize = gruntHelpers.authorize
+  , downloadUICatalog = gruntHelpers.downloadUICatalog
   , tail = gruntHelpers.tail
-  , build = gruntHelpers.build
-  , runTestsWithServer = gruntHelpers.runTestsWithServer
-  , fs = require('fs');
+  , buildApp = gruntHelpers.buildApp
+  , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
 
@@ -76,44 +73,10 @@ module.exports = function(grunt) {
     startAppium(app, true, function() {}, this.async());
   });
   grunt.registerTask('downloadApp', "Download UICatalog", function() {
-    var done = this.async();
-    var appBasePath = path.resolve(__dirname, 'sample-code/apps');
-    var appPath = path.resolve(appBasePath, 'UICatalog');
-    var zipPath = path.resolve(appBasePath, 'UICatalog.zip');
-    var UICatUrl = "http://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip";
-    // clear out anything that's there
-    try {
-      fs.unlinkSync(zipPath);
-    } catch(e) {}
-    rimraf(appPath, function() {
-      var file = fs.createWriteStream(zipPath);
-      console.log("Downloading UI catalog into " + zipPath);
-      http.get(UICatUrl, function(response) {
-        response.pipe(file);
-        response.on('end', function() {
-          console.log("Download complete");
-          exec("unzip UICatalog.zip", {cwd: appBasePath}, function() {
-            console.log("Unzipped into " + appPath);
-            done();
-          });
-        });
-      });
-    });
+    downloadUICatalog(this.async());
   });
   grunt.registerTask('buildApp', "Build the test app", function(appDir, sdk) {
-    if(typeof sdk === "undefined") {
-      sdk = "iphonesimulator6.1";
-    }
-    var done = this.async();
-    var appRoot = path.resolve(__dirname, 'sample-code/apps/', appDir);
-    build(appRoot, function(err) {
-      if (err) {
-        console.log(err);
-        done(false);
-      } else {
-        done(true);
-      }
-    }, sdk);
+    buildApp(appDir, this.async(), sdk);
   });
   grunt.registerTask('authorize', "Authorize developer", function() {
     authorize(grunt, this.async());

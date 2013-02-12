@@ -411,8 +411,15 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
       this.remote.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
     }
   } else {
-    var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
-    this.proxy(command, cb);
+    if (_.contains(['label', 'name', 'value'], attributeName)) {
+      var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
+      this.proxy(command, cb);
+    } else {
+      cb(null, {
+        status: status.codes.UnknownCommand.code
+        , value: "UIAElements don't have the attribute '" + attributeName + "'"
+      });
+    }
   }
 };
 

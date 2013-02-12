@@ -16,7 +16,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def setUp(self):
         # set up appium
-        app = "http://appium.s3.amazonaws.com/TestApp.app.zip" 
+        app = "http://appium.s3.amazonaws.com/TestApp6.0.app.zip"
         self.driver = webdriver.Remote(
             command_executor='http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY),
             desired_capabilities={

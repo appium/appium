@@ -252,10 +252,13 @@ describeWd('complex tap', function(h) {
   it('should work with default options', function(done) {
     h.driver.execute("mobile: tap", function(err) {
       should.not.exist(err);
-      h.driver.elementByTagName("textview", function(err) {
-        should.exist(err);
-        err.status.should.equal(7);
-        done();
+      h.driver.elementByTagName("textview", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+          done();
+        });
       });
     });
   });

@@ -249,7 +249,7 @@ describeWd('complex tap', function(h) {
       });
     });
   });
-  it.only('should work with default options', function(done) {
+  it('should work with default options', function(done) {
     h.driver.execute("mobile: tap", function(err) {
       should.not.exist(err);
       h.driver.elementByTagName("textview", function(err, el) {

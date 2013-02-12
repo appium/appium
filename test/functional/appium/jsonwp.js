@@ -4,13 +4,17 @@
 var should = require("should")
   , serverUrl = 'http://localhost:4723'
   , serverHub = serverUrl + '/wd/hub/session'
+  , path = require('path')
+  , appPath = "../../../sample-code/apps/TestApp/build/Release-iphonesimulator/TestApp.app"
   , request = require('request');
 
 var describeWithSession = function(desc, tests) {
   describe(desc, function() {
     var sessObj = {sessionId: null};
     beforeEach(function(done) {
-      var caps = {desiredCapabilities: {}};
+      var caps = {desiredCapabilities: {
+        app: path.resolve(__dirname, appPath)
+      }};
       request.post({url: serverHub, json: caps}, function(err, res) {
         should.not.exist(err);
         res.statusCode.should.equal(303);
@@ -56,7 +60,7 @@ describe('JSONWP request', function() {
       request.post(url, function(err, res, body) {
         should.not.exist(err);
         res.statusCode.should.equal(501);
-        body.should.equal("Not Implemented");
+        JSON.parse(body).status.should.equal(13);
         done();
       });
     });
@@ -79,7 +83,20 @@ describe('JSONWP request', function() {
         res.statusCode.should.equal(500);
         should.ok(body);
         body = JSON.parse(body);
-        should.ok(body.value.message);
+        should.ok(body.value);
+        done();
+      });
+    });
+  });
+  describeWithSession('that generates a server crash', function() {
+    it('should respond with a 500', function(done) {
+      var url = serverUrl + '/wd/hub/crash';
+      request.post(url, function(err, res, body) {
+        should.not.exist(err);
+        res.statusCode.should.equal(500);
+        should.ok(body);
+        body = JSON.parse(body);
+        should.ok(body.value);
         done();
       });
     });

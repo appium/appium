@@ -6,6 +6,7 @@ var http = require('http')
   , appium = require('./app/appium')
   , bodyParser = require('./middleware').parserWrap
   , checkWarpDrive = require('./warp.js').checkWarpDrive
+  , status = require('./app/uiauto/lib/status')
   , parser = require('./app/parser');
 
 var doWarpCheck = function(wantWarp, cb) {
@@ -51,6 +52,14 @@ var main = function(args, readyCb, doneCb) {
     rest.use(bodyParser);
     rest.use(express.methodOverride());
     rest.use(rest.router);
+    // catch all error handler
+    rest.use(function(e, req, res, next) {
+      res.send(500, {
+        status: status.codes.UnknownError.code
+        , value: "ERROR running Appium command: " + e.message
+      });
+      next(e);
+    });
   });
 
   // Instantiate the appium instance

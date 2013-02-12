@@ -49,6 +49,7 @@ var getSessionId = function(req, response) {
 
 var respondError = function(req, res, statusObj, value) {
   var code = 1, message = "An unknown error occurred";
+  var newValue = value;
   if (typeof statusObj === "string") {
     message = statusObj;
   } else if (typeof statusObj === "number") {
@@ -61,9 +62,12 @@ var respondError = function(req, res, statusObj, value) {
     message = statusObj.message;
   }
 
-  var newValue = _.extend({message: message}, value);
+  if (typeof newValue === "object") {
+    newValue = _.extend({message: message}, value);
+  }
   var response = {status: code, value: newValue};
   response.sessionId = getSessionId(req, response);
+  logger.info("Responding to client with error: " + JSON.stringify(response));
   res.send(500, response);
 };
 
@@ -73,6 +77,7 @@ var respondSuccess = function(req, res, value, sid) {
   if (typeof response.value === "undefined") {
     response.value = '';
   }
+  logger.info("Responding to client with success: " + JSON.stringify(response));
   res.send(response);
 };
 
@@ -429,6 +434,7 @@ exports.executeMobileMethod = function(req, res, cmd) {
     req.body = params;
     mobileCmdMap[cmd](req, res);
   } else {
+    logger.info("Tried to execute non-existent mobile command '"+cmd+"'");
     exports.notYetImplemented(req, res);
   }
 };
@@ -479,11 +485,13 @@ exports.getCommandTimeout = function(req, res) {
 };
 
 exports.unknownCommand = function(req, res) {
+  logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
   res.send(404, "That URL did not map to a valid JSONWP resource");
 };
 
 exports.notYetImplemented = function(req, res) {
+  logger.info("Responding to client that a method is not implemented");
   res.send(501, {
     status: status.codes.UnknownError.code
     , sessionId: getSessionId(req)
@@ -493,6 +501,8 @@ exports.notYetImplemented = function(req, res) {
 };
 
 var notImplementedInThisContext = function(req, res) {
+  logger.info("Responding to client that a method is not implemented " +
+              "in this context");
   res.send(501, {
     status: status.codes.UnknownError.code
     , sessionId: getSessionId(req)

@@ -9,6 +9,7 @@ sample-code/apps/UICatalog*
 sample-code/examples/php/composer.lock
 sample-code/examples/php/composer.phar
 sample-code/examples/php/vendor
+sample-code/examples/ruby/Gemfile.lock
 *.iml
 .idea/
 appium.log*

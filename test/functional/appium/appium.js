@@ -4,8 +4,8 @@
 var should = require("should")
   , path = require('path')
   , describeWd = require("../../helpers/driverblock.js").describe
-  , appUrl = 'http://appium.s3.amazonaws.com/UICatalog.app.zip'
-  , appZip = path.resolve(__dirname, "../../../assets/UICatalog.app.zip")
+  , appUrl = 'http://appium.s3.amazonaws.com/UICatalog6.0.app.zip'
+  , appZip = path.resolve(__dirname, "../../../assets/UICatalog6.0.app.zip")
   , describeZip = require('../../helpers/driverblock.js').describeForApp(appZip)
   , describeUrl = require('../../helpers/driverblock.js').describeForApp(appUrl);
 

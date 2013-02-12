@@ -53,6 +53,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/window_handle', controller.getWindowHandle);
   rest.get('/wd/hub/session/:sessionId?/window_handles', controller.getWindowHandles);
   rest.post('/wd/hub/session/:sessionId?/window', controller.setWindow);
+  rest.get('/wd/hub/session/:sessionId?/window/:windowhandle?/size', controller.getWindowSize);
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
   rest.get('/wd/hub/session/:sessionId?/title', controller.title);
 
@@ -94,7 +95,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/ime/activate', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/window', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/size', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/size', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/maximize', controller.notYetImplemented);

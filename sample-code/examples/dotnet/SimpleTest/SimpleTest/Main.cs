@@ -69,7 +69,8 @@ namespace SimpleTest
 			string appPath = null;
 			foreach(string path in appFinder.StandardOutput.ReadToEnd().Split(new char[] {'\n','\r'}))
 			{
-				if (!path.Trim().EndsWith(".dSYM") && path.Contains("simulator"))
+				if (!path.Trim().EndsWith(".dSYM") && path.Contains("" +
+					"imulator"))
 				{
 					appPath = path.Trim();
 					break;

@@ -76,4 +76,13 @@ describe "Computation" do
     actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
     actual_sum.should eq(expected_sum.to_s)
   end
+
+  it "should handle alerts" do
+    els = @driver.find_elements(:tag_name, 'button')
+    els[1].click
+    a = @driver.switch_to.alert
+    a.text.should eq("Cool title")
+    a.accept
+  end
+
 end

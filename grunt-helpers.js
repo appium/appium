@@ -2,13 +2,15 @@
 
 var _ = require("underscore")
   , server = require('./server.js')
-  , fs = require('fs')
+  , rimraf = require('rimraf')
+  , http = require('http')
   , path = require('path')
   , temp = require('temp')
   , difflib = require('difflib')
   , prompt = require('prompt')
   , exec = require('child_process').exec
-  , spawn = require('child_process').spawn;
+  , spawn = require('child_process').spawn
+  , fs = require('fs');
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   var app;
@@ -186,5 +188,45 @@ module.exports.build = function(appRoot, cb, sdk) {
       console.log("Failed building app");
       cb(output);
     }
+  });
+};
+
+module.exports.buildApp = function(appDir, cb, sdk) {
+  if(typeof sdk === "undefined") {
+    sdk = "iphonesimulator6.1";
+  }
+  var appRoot = path.resolve(__dirname, 'sample-code/apps/', appDir);
+  module.exports.build(appRoot, function(err) {
+    if (err) {
+      console.log(err);
+      cb(false);
+    } else {
+      cb(true);
+    }
+  }, sdk);
+};
+
+module.exports.downloadUICatalog = function(cb) {
+  var appBasePath = path.resolve(__dirname, 'sample-code/apps');
+  var appPath = path.resolve(appBasePath, 'UICatalog');
+  var zipPath = path.resolve(appBasePath, 'UICatalog.zip');
+  var UICatUrl = "http://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip";
+  // clear out anything that's there
+  try {
+    fs.unlinkSync(zipPath);
+  } catch(e) {}
+  rimraf(appPath, function() {
+    var file = fs.createWriteStream(zipPath);
+    console.log("Downloading UI catalog into " + zipPath);
+    http.get(UICatUrl, function(response) {
+      response.pipe(file);
+      response.on('end', function() {
+        console.log("Download complete");
+        exec("unzip UICatalog.zip", {cwd: appBasePath}, function() {
+          console.log("Unzipped into " + appPath);
+          cb();
+        });
+      });
+    });
   });
 };

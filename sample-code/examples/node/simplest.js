@@ -1,6 +1,6 @@
 var wd = require("wd")
   , assert = require("assert")
-  , appURL = "http://appium.s3.amazonaws.com/TestApp.app.zip";
+  , appURL = "http://appium.s3.amazonaws.com/TestApp6.0.app.zip";
 
 // Instantiate a new browser session
 var browser = wd.remote("localhost", 4723);

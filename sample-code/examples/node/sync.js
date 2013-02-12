@@ -2,7 +2,7 @@ var wdSync = require("wd-sync")
   , assert = require("assert")
   , username = "<username>" //omit for local
   , accessKey = "<accessKey>" // Omit for local
-  , appURL = "http://appium.s3.amazonaws.com/TestApp.app.zip";
+  , appURL = "http://appium.s3.amazonaws.com/TestApp6.0.app.zip";
 
 // Instantiate a remote wd instance
 var client = wdSync.remote(

@@ -33,6 +33,12 @@ describeWd('execute', function(h) {
       done();
     });
   });
+  it('should not fail with quotes', function(done) {
+    h.driver.execute('console.log(\'hi\\\'s\');', function(err) {
+      should.not.exist(err);
+      done();
+    });
+  });
 });
 
 var spinForHandles = function(driver, done) {

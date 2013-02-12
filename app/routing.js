@@ -1,11 +1,15 @@
 "use strict";
-var controller = require('./controller');
+var controller = require('./controller')
+  , logger = require('../logger').get('appium');
 
 module.exports = function(appium) {
   var rest = appium.rest
     , inject = function(req, res, next) {
         req.appium = appium;
         req.device = appium.device;
+        if (typeof req.body === "object") {
+          logger.debug("Appium request received with params: " + JSON.stringify(req.body));
+        }
         next();
       };
 

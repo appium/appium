@@ -43,6 +43,14 @@ describeWd('elementByTagName', function(h) {
       done();
     });
   });
+  it('should get an error when strategy doesnt exist', function(done) {
+    h.driver.elementByCss('button', function(err, el) {
+      should.exist(err);
+      should.not.exist(el);
+      err.status.should.eql(13);
+      done();
+    });
+  });
 });
 
 describeWd('elementsByTagName', function(h) {

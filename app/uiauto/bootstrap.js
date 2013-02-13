@@ -33,7 +33,7 @@ while(true) {
       result = '';
       console.log("Command executed without response");
     }
-    if (typeof result.status === "undefined") {
+    if (typeof result.status === "undefined" || typeof result.status === "object") {
       console.log("Result is not protocol compliant, wrapping");
       result = {
         status: codes.Success.code,

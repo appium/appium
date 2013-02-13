@@ -118,9 +118,11 @@ IOS.prototype.start = function(cb, onDie) {
       rimraf(traceDir, function() {
         logger.info("Deleted tracedir we heard about from instruments (" + traceDir + ")");
         me.onStop(code);
+        me.onStop=null;
       });
     } else {
       me.onStop(code);
+      me.onStop=null;
     }
   };
 

@@ -266,7 +266,9 @@ RemoteDebugger.prototype.setHandlers = function() {
         me.dataCbs[msgId](error, result);
       } else {
         logger.error("Debugger returned data for message " + msgId +
-                     "but we weren't waiting for that message!");
+                     " but we weren't waiting for that message! " +
+                     " result: " + result +
+                     " error: " + error);
       }
     },
     '_rpc_applicationDisconnected:': this.onAppDisconnect

@@ -145,6 +145,28 @@ $.extend(au, {
       }
     }
 
+  , _returnElems: function(elems) {
+      var results = []
+        , me = this;
+
+      elems.each(function(e, el) {
+        var elid = me.getId(el);
+        results.push({ 'ELEMENT': elid });
+      });
+
+      return {
+        status: codes.Success.code,
+        value: results
+      };
+  }
+
+  , getElementsByName: function(name) {
+      var selector = ['#', name].join('');
+      var elems = this.lookup(selector);
+
+      return this._returnElems(elems);
+    }
+
   , getElementsByType: function(type, ctx) {
       var selector = type;
 
@@ -169,18 +191,7 @@ $.extend(au, {
         elems = this.lookup(selector);
       }
 
-      var results = []
-        , me = this;
-
-      elems.each(function(e, el) {
-        var elid = me.getId(el);
-        results.push({ 'ELEMENT': elid });
-      });
-
-      return {
-        status: codes.Success.code,
-        value: results
-      };
+      return this._returnElems(elems);
     }
 
   , getElementByType: function(type, ctx) {

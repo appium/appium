@@ -265,10 +265,14 @@ RemoteDebugger.prototype.setHandlers = function() {
       } else if (typeof me.dataCbs[msgId] === "function") {
         me.dataCbs[msgId](error, result);
       } else {
-        logger.error("Debugger returned data for message " + msgId +
-                     " but we weren't waiting for that message! " +
-                     " result: " + result +
-                     " error: " + error);
+        if (!msgId && !result && !error) {
+          logger.info("Got a blank data response from debugger");
+        } else {
+          logger.error("Debugger returned data for message " + msgId +
+                      " but we weren't waiting for that message! " +
+                      " result: " + result +
+                      " error: " + error);
+        }
       }
     },
     '_rpc_applicationDisconnected:': this.onAppDisconnect

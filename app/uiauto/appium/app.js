@@ -382,7 +382,7 @@ $.extend(au, {
     if (k === '\uE003') { // DELETE
       this.keyboard().keys().Delete.tap();
     } else if (k === '\uE006' || k === '\uE007') {// RETURN ENTER
-      this.keyboard().buttons().Go.tap();
+      this.keyboard().typeString("\n");
     } else {
       this.keyboard().typeString(String(k)); // regular key
     }

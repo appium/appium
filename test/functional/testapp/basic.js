@@ -137,6 +137,15 @@ describeWd('calc app', function(h) {
    //};
    //_.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
 
+  it('should be able to get text of a button', function(done) {
+    h.driver.elementsByTagName('button', function(err, els) {
+      els[0].text(function(err, text) {
+        text.should.eql("ComputeSumButton");
+        done();
+      });
+    });
+  });
+
   return it('should get an app screenshot', function(done){
     h.driver.takeScreenshot(function(err, screenshot){
       assert.notEqual(typeof screenshot, "undefined");

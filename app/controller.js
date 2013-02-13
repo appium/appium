@@ -138,6 +138,7 @@ exports.createSession = function(req, res) {
   } else {
     req.appium.start(req.body.desiredCapabilities, function(err, instance) {
       if (err) {
+        logger.error("Failed to start an Appium session, err was: " + err);
         respondError(req, res, status.codes.NoSuchDriver);
       } else {
         next(req.appium.sessionId, instance);
@@ -293,6 +294,11 @@ exports.getLocation = function(req, res) {
 exports.getSize = function(req, res) {
   var elementId = req.params.elementId;
   req.device.getSize(elementId, getResponseHandler(req, res));
+};
+
+exports.getWindowSize = function(req, res) {
+  var windowHandle = req.params.windowhandle;
+  req.device.getWindowSize(windowHandle, getResponseHandler(req, res));
 };
 
 exports.getPageIndex = function(req, res) {
@@ -521,4 +527,8 @@ var mobileCmdMap = {
 
 exports.produceError = function(req, res) {
   req.device.proxy("thisisnotvalidjs", getResponseHandler(req, res));
+};
+
+exports.crash = function() {
+  throw new Error("We just tried to crash Appium!");
 };

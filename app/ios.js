@@ -5,6 +5,7 @@ var path = require('path')
   , _ = require('underscore')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
+  , glob = require('glob')
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
@@ -57,6 +58,28 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
   };
 };
 
+IOS.prototype.cleanup = function(cb) {
+  logger.info("Cleaning up instruments files");
+  if (this.removeTraceDir) {
+    glob("*.trace", {}, function(err, files) {
+      if (err) {
+        logger.error("Could not glob for tracedirs: " + err.message);
+      } else {
+        _.each(files, function(file) {
+          file = path.resolve(process.cwd(), file);
+          rimraf(file, function() {
+            logger.info("Cleaned up " + file);
+          });
+        });
+      }
+    });
+  }
+  rimraf(sock, function() {
+    logger.info("Cleaned up instruments socket " + sock);
+    cb();
+  });
+};
+
 IOS.prototype.start = function(cb, onDie) {
   var me = this;
   var didLaunch = false;
@@ -92,6 +115,7 @@ IOS.prototype.start = function(cb, onDie) {
     this.instruments = null;
     if (me.removeTraceDir && traceDir) {
       rimraf(traceDir, function() {
+        logger.info("Deleted tracedir we heard about from instruments (" + traceDir + ")");
         me.onStop(code);
       });
     } else {
@@ -100,18 +124,20 @@ IOS.prototype.start = function(cb, onDie) {
   };
 
   if (this.instruments === null) {
-    if (this.warp) {
-      timeWarp(50, 1000);
-    }
-    this.instruments = instruments(
-      this.app
-      , this.udid
-      , path.resolve(__dirname, 'uiauto/bootstrap.js')
-      , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
-      , sock
-      , onLaunch
-      , onExit
-    );
+    this.cleanup(_.bind(function() {
+      if (this.warp) {
+        timeWarp(50, 1000);
+      }
+      this.instruments = instruments(
+        this.app
+        , this.udid
+        , path.resolve(__dirname, 'uiauto/bootstrap.js')
+        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
+        , sock
+        , onLaunch
+        , onExit
+      );
+    }, this));
   }
 
 };
@@ -394,7 +420,7 @@ IOS.prototype.getText = function(elementId, cb) {
       this.remote.executeAtom('get_text', [atomsElement], cb);
     }
   } else {
-    var command = ["au.getElement('", elementId, "').value()"].join('');
+    var command = ["au.getElement('", elementId, "').text()"].join('');
     this.proxy(command, cb);
   }
 };
@@ -442,6 +468,21 @@ IOS.prototype.getSize = function(elementId, cb) {
   } else {
     var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
     this.proxy(command, cb);
+  }
+};
+
+IOS.prototype.getWindowSize = function(windowHandle, cb) {
+  if (this.curWindowHandle) {
+    cb(new NotImplementedError(), null);
+  } else {
+    if(windowHandle !== "current") {
+      cb(null, {
+        status: status.codes.NoSuchWindow.code
+        , value: "Can only get the status of the current window"
+      });
+    } else {
+      this.proxy("au.getWindowSize()", cb);
+    }
   }
 };
 

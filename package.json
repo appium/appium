@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0.0.11",
+  "version": "0.0.12",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
     "node-bplist-creator": "~0.0.1",
     "node-uuid": "~1.4.0",
     "underscore.string": "~2.3.1",
+    "glob": "~3.1.20",
     "unzip": "~0.1.1"
   },
   "scripts": {

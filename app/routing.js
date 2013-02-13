@@ -53,11 +53,13 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/window_handle', controller.getWindowHandle);
   rest.get('/wd/hub/session/:sessionId?/window_handles', controller.getWindowHandles);
   rest.post('/wd/hub/session/:sessionId?/window', controller.setWindow);
+  rest.get('/wd/hub/session/:sessionId?/window/:windowhandle?/size', controller.getWindowSize);
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
   rest.get('/wd/hub/session/:sessionId?/title', controller.title);
 
-  // this is for testing purposes only
+  // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
+  rest.post('/wd/hub/crash', controller.crash);
 
   // appium-specific extensions to JSONWP
   // these aren't part of JSONWP but we want them or something like them to be
@@ -94,7 +96,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/ime/activate', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/window', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/size', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/size', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/maximize', controller.notYetImplemented);

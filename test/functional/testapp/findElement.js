@@ -82,7 +82,7 @@ describeWd('elementByName', function(h) {
 });
 
 describeWd('elementsByName', function(h) {
-  it.only('should find multiple elements by valid name', function(done) {
+  it('should find multiple elements by valid name', function(done) {
     h.driver.elementsByName('AppElem', function(err, elements) {
       should.exist(elements);
       elements.length.should.equal(3);

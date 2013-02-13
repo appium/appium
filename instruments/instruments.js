@@ -80,6 +80,16 @@ Instruments.prototype.startSocketServer = function(sock) {
       this.bufferedData = "";
       try {
         data = JSON.parse(data);
+        
+        // Handle {"event":"cmd","result":{"0":{},"1":{}}}
+        if (typeof data.result !== "undefined" &&
+            typeof data.result.status === "undefined" &&
+            typeof data.result.value === "undefined") {
+              var result = data.result;
+              data.result = {};
+              data.result.status = 0;
+              data.result.value = result;
+        }
       } catch (e) {
         logger.error("Couldn't parse JSON data from socket, maybe buffer issue?");
         logger.error(data);

@@ -208,7 +208,7 @@ var loadWebView = function(driver, cb) {
         driver.elementByTagName('textField', function(err, elem) {
           elem.sendKeys("http://www.saucelabs.com/test/guinea-pig", function(err) {
             should.not.exist(err);
-            driver.keys("\\uE007", function(err) {
+            driver.keys("\uE007", function(err) {
               should.not.exist(err);
               driver.window(handles[0], function(err) {
                 should.not.exist(err);

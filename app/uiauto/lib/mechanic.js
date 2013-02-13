@@ -79,13 +79,6 @@ var mechanic = (function() {
 
         return foundEls;
     };
-    UIAElement.prototype.getElementByName = function(name) {
-        var foundEls = this.getElementsByName(name);
-
-        if (foundEls.length > 0) { return foundEls[0]; }
-    
-        return null;
-    };
     UIAElement.prototype.getElementsByType = function(type) {
         return $.map(this.elements().toArray(), function(el) {
             var matches = el.getElementsByType(type);

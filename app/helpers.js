@@ -142,3 +142,19 @@ exports.timeWarp = function(period, warp) {
 exports.stopTimeWarp = function() {
   inTimeWarp = false;
 };
+
+exports.escapeSpecialChars = function(str) {
+  if (typeof str !== "string") {
+    return str;
+  }
+  return str
+        .replace(/[\\]/g, '\\\\')
+        .replace(/[\/]/g, '\\/')
+        .replace(/[\b]/g, '\\b')
+        .replace(/[\f]/g, '\\f')
+        .replace(/[\n]/g, '\\n')
+        .replace(/[\r]/g, '\\r')
+        .replace(/[\t]/g, '\\t')
+        .replace(/[\"]/g, '\\"')
+        .replace(/\\'/g, "\\'");
+};

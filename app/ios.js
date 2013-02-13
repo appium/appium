@@ -10,6 +10,7 @@ var path = require('path')
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
   , stopTimeWarp = require('../warp.js').stopTimeWarp
+  , escapeSpecialChars = require('./helpers.js').escapeSpecialChars
   , rd = require('./hybrid/ios/remote-debugger')
   , status = require("./uiauto/lib/status");
 
@@ -364,6 +365,7 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {
+  value = escapeSpecialChars(value);
   var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
   this.proxy(command, cb);
 };
@@ -492,6 +494,7 @@ IOS.prototype.getPageIndex = function(elementId, cb) {
 };
 
 IOS.prototype.keys = function(elementId, keys, cb) {
+  keys = escapeSpecialChars(keys);
   var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
   this.proxy(command, cb);
 };

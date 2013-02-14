@@ -125,9 +125,14 @@ $.extend(au, {
       return id;
     }
 
-  , getElementByName: function(name) {
-      var selector = ['#', name].join('');
-      var elems = this.lookup(selector);
+  , getElementByName: function(name, ctx) {
+      var selector = ['#', name].join('')
+        , elems;
+      if (typeof ctx !== 'undefined') {
+        elems = this.lookup(selector, ctx);
+      } else {
+        elems = this.lookup(selector);
+      }
 
       if (elems.length > 0) {
         var el = elems[0];
@@ -160,9 +165,14 @@ $.extend(au, {
       };
   }
 
-  , getElementsByName: function(name) {
-      var selector = ['#', name].join('');
-      var elems = this.lookup(selector);
+  , getElementsByName: function(name, ctx) {
+      var selector = ['#', name].join('')
+        , elems;
+      if (typeof ctx !== 'undefined') {
+        elems = this.lookup(selector, ctx);
+      } else {
+        elems = this.lookup(selector);
+      }
 
       return this._returnElems(elems);
     }
@@ -398,6 +408,18 @@ $.extend(au, {
       this.keyboard().typeString(String(k)); // regular key
     }
   }
+
+  , hideKeyboard: function(keyName) {
+      try {
+        this.keyboard().buttons()[keyName].tap();
+      } catch (e) {
+        return {
+          status: codes.NoSuchElement.code
+          , value: "Could not find the 'Hide keyboard' button, " +
+                   "you're on your own for closing it!"
+        };
+      }
+    }
 
   // Alert-related functions
 

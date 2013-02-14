@@ -226,10 +226,10 @@ Appium.prototype.onDeviceDie = function(code, cb) {
     logger.info('tossing device and devices');
     this.devices = [];
     this.device = null;
-    logger.info(this.progress+" sessions active ="+this.sessions.length);
-    this.sessions[this.progress]={};
+    logger.info(this.progress + " sessions active =" + this.sessions.length);
+    this.sessions[this.progress] = {};
   } else {
-    logger.info('not tossing device and devices because code='+code);
+    logger.info('not tossing device and devices because code=' + code);
   }
   if (cb) {
     if (this.active !== null) {

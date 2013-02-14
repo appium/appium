@@ -76,12 +76,12 @@ Instruments.prototype.startSocketServer = function(sock) {
       this.bufferedData += data;
     }, this));
 
-    this.currentSocket=conn;
+    this.currentSocket = conn;
     this.debug("Socket Connected");
 
     conn.on('close', _.bind(function() {
         this.debug("Socket Completely closed");
-        this.currentSocket=null;
+        this.currentSocket = null;
     }, this));
 
     conn.on('end', _.bind(function() {
@@ -140,16 +140,16 @@ Instruments.prototype.launch = function() {
         self.exitCode = code;
         self.exitHandler(self.exitCode, self.traceDir);
         self.proc.stdin.end();
-        self.proc=null;
-        self.exitHandler=self.defaultExitHandler;
+        self.proc = null;
+        self.exitHandler = self.defaultExitHandler;
         self.resultHandler = self.defaultResultHandler;
-        self.onReceiveCommand=null;
+        self.onReceiveCommand = null;
         if (self.currentSocket) {
-			self.debug("Socket closed forcibly due to exit");
-			self.currentSocket.end();
-//			self.currentSocket=null;
-			self.currentSocket.destroy();	// close this
-		}
+			    self.debug("Socket closed forcibly due to exit");
+			    self.currentSocket.end();
+          // self.currentSocket = null; // TODO: Why is this commented?
+			    self.currentSocket.destroy();	// close this
+		    }
       });
     } else {
       throw e;

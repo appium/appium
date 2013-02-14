@@ -60,7 +60,6 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
 };
 
 IOS.prototype.cleanup = function(cb) {
-  logger.info("Cleaning up instruments files");
   if (this.removeTraceDir) {
     glob("*.trace", {}, function(err, files) {
       if (err) {

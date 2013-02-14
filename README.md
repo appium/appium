@@ -184,6 +184,8 @@ Contributing
 ------------
 Fork the project, make a change, and send a pull request!
 
+Oh and please have a look at our [Style Guide](https://github.com/appium/appium/wiki/Style-guide-for-contributors) before getting to work.
+
 Project Credits & Inspiration
 ------------
 The open source community has made this project possible, please add missing projects to the list.

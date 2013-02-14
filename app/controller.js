@@ -267,6 +267,12 @@ exports.mobileSwipe = function(req, res) {
   }
 };
 
+exports.hideKeyboard = function(req, res) {
+  var keyName = req.body.keyName;
+
+  req.device.hideKeyboard(keyName, getResponseHandler(req, res));
+};
+
 exports.clear = function(req, res) {
   var elementId = req.params.elementId;
   req.device.clear(elementId, getResponseHandler(req, res));
@@ -521,6 +527,7 @@ var mobileCmdMap = {
   'tap': exports.mobileTap
   , 'flick': exports.mobileFlick
   , 'swipe': exports.mobileSwipe
+  , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout
 };

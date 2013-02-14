@@ -502,7 +502,7 @@ exports.setValueImmediate = function(req, res) {
 	if (checkMissingParams( res, {element:element,value:value})) {
 		req.device.setValueImmediate( element, value, getResponseHandler(req,res));
 	}
-}
+};
 
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");

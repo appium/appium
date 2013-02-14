@@ -25,7 +25,7 @@ describeWd('calc app', function(h) {
           elem.sendKeys(val, function() {
             next(num);
           });
-        } else if (type == "elem-setvalue") {
+        } else if (type === "elem-setvalue") {
           driver.execute("mobile: setValue", [{element: elem.value, value: val}], function(err) {
             next(num);
           });

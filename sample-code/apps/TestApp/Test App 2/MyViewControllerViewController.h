@@ -21,7 +21,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MyViewControllerViewController : UIViewController
+@interface MyViewControllerViewController : UIViewController <UITextFieldDelegate>
 @property (retain, nonatomic) IBOutlet UITextField *firstArg;
 @property (retain, nonatomic) IBOutlet UITextField *secondArg;
 @property (retain, nonatomic) IBOutlet UILabel *answerLabel;
@@ -29,5 +29,6 @@
 
 - (IBAction)computeAction:(id)sender;
 - (IBAction)showAlert:(id)sender;
+- (BOOL)textFieldShouldReturn:(UITextField *)textField;
 
 @end

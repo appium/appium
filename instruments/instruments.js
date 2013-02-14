@@ -66,6 +66,7 @@ Instruments.prototype.startSocketServer = function(sock) {
       this.debug("Instruments is ready to receive commands");
       clearTimeout(socketConnectTimeout);
       this.readyHandler(this);
+      this.readyHandler = this.defaultReadyHandler;
     }
     conn.setEncoding('utf8'); // get strings from sockets rather than buffers
 
@@ -75,7 +76,16 @@ Instruments.prototype.startSocketServer = function(sock) {
       this.bufferedData += data;
     }, this));
 
+    this.currentSocket = conn;
+    this.debug("Socket Connected");
+
+    conn.on('close', _.bind(function() {
+        this.debug("Socket Completely closed");
+        this.currentSocket = null;
+    }, this));
+
     conn.on('end', _.bind(function() {
+      this.debug("Socket closed by other side");
       var data = this.bufferedData;
       this.bufferedData = "";
       try {
@@ -129,6 +139,17 @@ Instruments.prototype.launch = function() {
         self.debug("Instruments exited with code " + code);
         self.exitCode = code;
         self.exitHandler(self.exitCode, self.traceDir);
+        self.proc.stdin.end();
+        self.proc = null;
+        self.exitHandler = self.defaultExitHandler;
+        self.resultHandler = self.defaultResultHandler;
+        self.onReceiveCommand = null;
+        if (self.currentSocket) {
+			    self.debug("Socket closed forcibly due to exit");
+			    self.currentSocket.end();
+          // self.currentSocket = null; // TODO: Why is this commented?
+			    self.currentSocket.destroy();	// close this
+		    }
       });
     } else {
       throw e;
@@ -175,6 +196,8 @@ Instruments.prototype.commandHandler = function(data, c) {
     this.onReceiveCommand = null;
     this.debug("Sending command to instruments: " + this.curCommand.cmd);
     c.write(JSON.stringify({nextCommand: this.curCommand.cmd}));
+    c.end();
+    this.debug("Closing our half of the connection");
   }, this));
 };
 

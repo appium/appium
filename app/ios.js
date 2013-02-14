@@ -117,9 +117,11 @@ IOS.prototype.start = function(cb, onDie) {
       rimraf(traceDir, function() {
         logger.info("Deleted tracedir we heard about from instruments (" + traceDir + ")");
         me.onStop(code);
+        me.onStop = null;
       });
     } else {
       me.onStop(code);
+      me.onStop = null;
     }
   };
 
@@ -371,9 +373,14 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
   this.findElementOrElements(strategy, selector, element, true, cb);
 };
 
-IOS.prototype.setValue = function(elementId, value, cb) {
+IOS.prototype.setValueImmediate = function(elementId, value, cb) {
   value = escapeSpecialChars(value);
   var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
+  this.proxy(command, cb);
+};
+
+IOS.prototype.setValue = function(elementId, value, cb) {
+  var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
   this.proxy(command, cb);
 };
 

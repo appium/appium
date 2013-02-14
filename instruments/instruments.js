@@ -29,6 +29,7 @@ var Instruments = function(app, udid, bootstrap, template, sock, cb, exitCb) {
   this.eventRouter = {
     'cmd': this.commandHandler
   };
+  this.socketServer = null;
   if (typeof sock === "undefined") {
     sock = '/tmp/instruments_sock';
   }

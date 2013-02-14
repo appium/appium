@@ -191,6 +191,10 @@ $.extend(au, {
           break;
         case 'tableCell':
           selector = 'cell';
+          break;
+        case 'secureTextField':
+          selector = 'secure';
+          break;
       }
 
       var elems = [];

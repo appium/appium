@@ -43,6 +43,14 @@ describeWd('elementByTagName', function(h) {
       done();
     });
   });
+  it('should get an error when strategy doesnt exist', function(done) {
+    h.driver.elementByCss('button', function(err, el) {
+      should.exist(err);
+      should.not.exist(el);
+      err.status.should.eql(13);
+      done();
+    });
+  });
 });
 
 describeWd('elementsByTagName', function(h) {
@@ -82,7 +90,7 @@ describeWd('elementByName', function(h) {
 });
 
 describeWd('elementsByName', function(h) {
-  it.only('should find multiple elements by valid name', function(done) {
+  it('should find multiple elements by valid name', function(done) {
     h.driver.elementsByName('AppElem', function(err, elements) {
       should.exist(elements);
       elements.length.should.equal(3);

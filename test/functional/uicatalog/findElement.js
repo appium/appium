@@ -51,7 +51,7 @@ describeWd('findElementsFromElement', function(h) {
 });
 
 
-describeWd('findElementsByTageName', function(h) {
+describeWd('findElementsByTagName', function(h) {
   it('should return all image elements with internally generated ids', function(done) {
     h.driver.elementsByTagName('image', function(err, elements) {
       for (var i=0; i < elements.length; i++) {

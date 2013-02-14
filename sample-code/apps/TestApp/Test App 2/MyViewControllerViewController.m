@@ -48,6 +48,10 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    firstArg.returnKeyType = UIReturnKeyDone;
+    secondArg.returnKeyType = UIReturnKeyDone;
+    firstArg.delegate = self;
+    secondArg.delegate = self;
 }
 
 - (void)viewDidUnload
@@ -58,6 +62,11 @@
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

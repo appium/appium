@@ -291,21 +291,29 @@ IOS.prototype.push = function(elem) {
 };
 
 IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
-  var ext = many ? 's' : '';
-  if (typeof ctx === "undefined" || !ctx) {
-    ctx = '';
-  } else if (typeof ctx === "string") {
-    ctx = ", '" + ctx + "'";
-  }
+  if (_.contains(["name", "tag name"], strategy)) {
+    var ext = many ? 's' : '';
+    if (typeof ctx === "undefined" || !ctx) {
+      ctx = '';
+    } else if (typeof ctx === "string") {
+      ctx = ", '" + ctx + "'";
+    }
 
-  var command = "";
-  if (strategy === "name") {
-    command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
+    var command = "";
+    if (strategy === "name") {
+      command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
+    } else {
+      command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
+    }
+
+    this.proxy(command, cb);
   } else {
-    command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
+    cb(null, {
+      status: status.codes.UnknownError.code
+      , value: "Sorry, we don't support the '" + strategy + "' locator " +
+               "strategy yet"
+    });
   }
-
-  this.proxy(command, cb);
 };
 
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
@@ -647,6 +655,14 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   }
   this.proxy(command, cb);
 };
+
+IOS.prototype.hideKeyboard = function(keyName, cb) {
+  if (typeof keyName !== "string") {
+    keyName = "Hide keyboard";
+  }
+  this.proxy("au.hideKeyboard('"+keyName+"')", cb);
+};
+
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
     this.remote.navToUrl(url, function() {

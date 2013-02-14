@@ -60,7 +60,7 @@ Instruments.prototype.startSocketServer = function(sock) {
 
   var socketConnectTimeout = setTimeout(_.bind(onSocketNeverConnect, this), 300000);
 
-  var server = net.createServer({allowHalfOpen: true}, _.bind(function(conn) {
+  this.socketServer = net.createServer({allowHalfOpen: true}, _.bind(function(conn) {
     if (!this.hasConnected) {
       this.hasConnected = true;
       this.debug("Instruments is ready to receive commands");
@@ -114,8 +114,12 @@ Instruments.prototype.startSocketServer = function(sock) {
     }, this));
 
   }, this));
-
-  server.listen(sock, _.bind(function() {
+ 
+  this.socketServer.on('close', _.bind(function() {
+    this.debug("Instruments socket server closed");
+  }, this));
+  
+  this.socketServer.listen(sock, _.bind(function() {
     this.debug("Instruments socket server started at " + sock);
     this.launch();
   }, this));
@@ -145,10 +149,11 @@ Instruments.prototype.launch = function() {
         self.resultHandler = self.defaultResultHandler;
         self.onReceiveCommand = null;
         if (self.currentSocket) {
-			    self.debug("Socket closed forcibly due to exit");
-			    self.currentSocket.end();
-			    self.currentSocket.destroy();	// close this
-		    }
+          self.debug("Socket closed forcibly due to exit");
+          self.currentSocket.end();
+          self.currentSocket.destroy();	// close this
+          self.socketServer.close();
+        }
       });
     } else {
       throw e;

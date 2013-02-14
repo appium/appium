@@ -653,6 +653,14 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   }
   this.proxy(command, cb);
 };
+
+IOS.prototype.hideKeyboard = function(keyName, cb) {
+  if (typeof keyName !== "string") {
+    keyName = "Hide keyboard";
+  }
+  this.proxy("au.hideKeyboard('"+keyName+"')", cb);
+};
+
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
     this.remote.navToUrl(url, function() {

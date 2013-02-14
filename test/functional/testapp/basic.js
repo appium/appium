@@ -25,6 +25,10 @@ describeWd('calc app', function(h) {
           elem.sendKeys(val, function() {
             next(num);
           });
+        } else if (type === "elem-setvalue") {
+          driver.execute("mobile: setValue", [{element: elem.value, value: val}], function(err) {
+            next(num);
+          });
         } else if (type == "driver") {
           elem.click(function() {
             driver.keys(val, function(){
@@ -58,6 +62,10 @@ describeWd('calc app', function(h) {
   // using sendKeysToActiveElement
   it('should fill two fields with numbers - sendKeys', function(done) {
     populate("driver", h.driver, _.bind(computeAndCheck, this, h.driver, done));
+  });
+
+  it('should fill two fields with numbers - setValue', function(done) {
+    populate("elem-setvalue", h.driver, _.bind(computeAndCheck, this, h.driver, done));
   });
 
   it('should confirm that button is displayed', function(done){

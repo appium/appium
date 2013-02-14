@@ -496,6 +496,14 @@ exports.getCommandTimeout = function(req, res) {
   req.device.getCommandTimeout(getResponseHandler(req, res));
 };
 
+exports.setValueImmediate = function(req, res) {
+  var element = req.body.element
+    , value = req.body.value;
+	if (checkMissingParams(res, {element: element, value: value})) {
+		req.device.setValueImmediate(element, value, getResponseHandler(req,res));
+	}
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
@@ -530,6 +538,7 @@ var mobileCmdMap = {
   , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout
+  , 'setValue' : exports.setValueImmediate
 };
 
 exports.produceError = function(req, res) {

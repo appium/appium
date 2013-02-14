@@ -51,6 +51,19 @@ $.extend($.fn, {
 
 });
 
+UIAElement.prototype.setValueByType = function(newValue) {
+	var type = this.type();
+	
+	if (type === "UIATextField") {
+		// do the full-on clear,keyboard typing operation
+		this.setValue("");
+		this.tap();
+		au.sendKeysToActiveElement(newValue);
+	} else {
+		this.setValue(newValue);
+	}
+};
+
 UIAElement.prototype.type = function() {
   var type = this.toString();
   return type.substring(8, type.length - 1);

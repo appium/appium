@@ -185,7 +185,7 @@ module.exports.build = function(appRoot, cb, sdk) {
     if (code === 0) {
       cb(null);
     } else {
-      console.log("Failed building app");
+      console.log("Failed building app, maybe it doesn't exist?");
       cb(output);
     }
   });
@@ -197,7 +197,7 @@ module.exports.buildApp = function(appDir, cb, sdk) {
   }
   var appRoot = path.resolve(__dirname, 'sample-code/apps/', appDir);
   module.exports.build(appRoot, function(err) {
-    if (err) {
+    if (err !== null) {
       console.log(err);
       cb(false);
     } else {

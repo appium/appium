@@ -86,6 +86,14 @@ have to modify your `/etc/authorization` file in one of two ways:
 **Important Note:** Making this modification to your `/etc/authorization` file
 grants access privileges to all members belonging to your `_developer` group.
 
+Making sure you're up to date
+-----------
+Since we use dev versions of some packages, it often becomes necessary to
+install new NPM packages or update various things. There's a handy shell script
+to do all this:
+
+    > ./reset.sh
+
 Running Tests
 -----------
 Download UICatalog:

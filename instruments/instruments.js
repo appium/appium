@@ -147,7 +147,6 @@ Instruments.prototype.launch = function() {
         if (self.currentSocket) {
 			    self.debug("Socket closed forcibly due to exit");
 			    self.currentSocket.end();
-          // self.currentSocket = null; // TODO: Why is this commented?
 			    self.currentSocket.destroy();	// close this
 		    }
       });

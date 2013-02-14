@@ -374,6 +374,12 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
   this.findElementOrElements(strategy, selector, element, true, cb);
 };
 
+IOS.prototype.setValueImmediate = function(elementId, value, cb) {
+  value = escapeSpecialChars(value);
+  var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
+  this.proxy(command, cb);
+};
+
 IOS.prototype.setValue = function(elementId, value, cb) {
   value = escapeSpecialChars(value);
   var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');

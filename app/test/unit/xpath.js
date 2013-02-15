@@ -10,13 +10,17 @@ var should = require('should')
 
 describe("XPath lookups", function() {
   var oks = {
-    "//button": {absolute: true, path: ['button']}
-    , "/button": {absolute: false, path: ['button']}
-    , "button": {absolute: false, path: ['button']}
-    , "//button/text/webview": {
-        absolute: true, path: ['button', 'text', 'webview']}
-    , "text/webview/button": {
-        absolute: false, path: ['text', 'webview', 'button']}
+    "//button": {path: [{node: 'button', search: 'desc'}]}
+    , "/button": {path: [{node: 'button', search: 'child'}]}
+    , "button": {path: [{node: 'button', search: 'all'}]}
+    , "//button/text/webview": {path: [
+        {node: 'button', search: 'desc'}
+        , {node: 'text', search: 'child'}
+        , {node: 'webview', search: 'child'}]}
+    , "text/webview//button": {path: [
+        {node: 'text', search: 'all'}
+        , {node: 'webview', search: 'child'}
+        , {node: 'button', search: 'desc'}]}
     , "//button[@name='hi there']": {
         attr: 'name', constraint: 'hi there', substr: false}
     , "//button[@other_attr='hi there']": {
@@ -38,10 +42,10 @@ describe("XPath lookups", function() {
     , "//button123"
     , "//button[@name$='hi']"
     , "//tag_name"
-    , "//button//lol"
     , "//button[something(@name, 'hi')]"
     , "//button[noat='wut']"
     , "//button/label[@name='hi']/moar"
+    , "//@attr"
   ];
   describe("Valid XPaths", function() {
     _.each(oks, function(test, xpath) {

@@ -247,6 +247,9 @@ $.extend(au, {
           , value: null
         };
       } else {
+        if (parsedXpath.absolute) {
+          _ctx = this.mainWindow; // overwrite context if we want '//'
+        }
         return this._returnElems(elems);
       }
     }

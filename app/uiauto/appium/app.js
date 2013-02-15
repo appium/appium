@@ -156,7 +156,7 @@ $.extend(au, {
 
       elems.each(function(e, el) {
         var elid = me.getId(el);
-        results.push({ 'ELEMENT': elid });
+        results.push({ELEMENT: elid});
       });
 
       return {
@@ -240,16 +240,32 @@ $.extend(au, {
         _ctx = ctx;
       }
 
-      var parsedXpath = this.parseXpath(xpath);
-      if (parsedXpath === false) {
+      var xpObj = this.parseXpath(xpath);
+      if (xpObj === false) {
         return {
           status: codes.XPathLookupError.code
           , value: null
         };
       } else {
-        if (parsedXpath.absolute) {
-          _ctx = this.mainWindow; // overwrite context if we want '//'
+        this.target.pushTimeout(0);
+        elems = $(_ctx);
+        for (var i = 0; i < xpObj.path.length; i++) {
+          var path = xpObj.path[i];
+          if (path.search === "child") {
+            elems = elems.children(path.node);
+          } else if (path.search === "desc") {
+            elems = elems.find(path.node);
+          }
+          if (i === xpObj.path.length - 1 && xpObj.attr) {
+            // last run, need to apply attr filters if there are any
+            if (xpObj.substr) {
+              elems = elems.valueInKey(xpObj.attr, xpObj.constraint);
+            } else {
+              elems = elems.valueForKey(xpObj.attr, xpObj.constraint);
+            }
+          }
         }
+        this.target.popTimeout();
         return this._returnElems(elems);
       }
     }

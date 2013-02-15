@@ -62,3 +62,45 @@ describeWd('findElementsByTagName', function(h) {
     });
   });
 });
+
+var setupXpath = function(d, cb) {
+  d.elementsByTagName('tableCell', function(err, els) {
+    els[0].click(cb);
+  });
+};
+
+describeWd('findElement(s)ByXpath', function(h) {
+  it('should return a single element', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("//button", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          text.should.equal("Back");
+          done();
+        });
+      });
+    });
+  });
+  it('should return multiple elements', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementsByXPath("//button", function(err, els) {
+        should.not.exist(err);
+        els.length.should.be.above(5);
+        done();
+      });
+    });
+  });
+  it.only('should filter by name', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("button[@name='Rounded']", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          text.should.equal("Rounded");
+          done();
+        });
+      });
+    });
+  });
+});

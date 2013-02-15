@@ -43,19 +43,23 @@ describe("XPath lookups", function() {
     , "//button[noat='wut']"
     , "//button/label[@name='hi']/moar"
   ];
-  _.each(oks, function(test, xpath) {
-    it(xpath + " should work", function() {
-      var parsed = au.parseXpath(xpath);
-      parsed.should.not.equal(false);
-      _.each(test, function(val, key) {
-        parsed[key].should.eql(test[key]);
+  describe("Valid XPaths", function() {
+    _.each(oks, function(test, xpath) {
+      it(xpath + " should work", function() {
+        var parsed = au.parseXpath(xpath);
+        parsed.should.not.equal(false);
+        _.each(test, function(val, key) {
+          parsed[key].should.eql(test[key]);
+        });
       });
     });
   });
-  _.each(notOks, function(xpath) {
-    it(xpath + " should not work", function() {
-      var parsed = au.parseXpath(xpath);
-      parsed.should.equal(false);
+  describe("Invalid Xpaths", function() {
+    _.each(notOks, function(xpath) {
+      it(xpath + " should not work", function() {
+        var parsed = au.parseXpath(xpath);
+        parsed.should.equal(false);
+      });
     });
   });
 });

@@ -240,7 +240,7 @@ $.extend(au, {
         _ctx = ctx;
       }
 
-      var parsedXpath = this.validateXpath(xpath);
+      var parsedXpath = this.parseXpath(xpath);
       if (parsedXpath === false) {
         return {
           status: codes.XPathLookupError.code
@@ -248,26 +248,6 @@ $.extend(au, {
         };
       } else {
         return this._returnElems(elems);
-      }
-    }
-
-  , validateXpath: function(xpath) {
-      var root = "^((//[a-zA-Z]+)|([a-zA-Z]+))"; // e.g. "//button" or "button"
-      var ext = "((/[a-zA-Z]+)*)"; // e.g. "/text" or "/cell/button/text"
-      var attrEq = "(@[a-zA-Z0-9]+=\"[^\"]+\")";
-      var attrContains = "(contains\\(@[a-zA-Z0-9]+, ?\"[^\"]+\"\\))";
-      var attr = "(\\[(" + attrEq + "|" + attrContains + ")\\])?$";
-      var xpathRe = new RegExp(root + ext + attr);
-      var match = xpathRe.exec(xpath);
-      if (match) {
-        var matchedRoot = match[2] || match[3];
-        var matchedExt = match[4];
-        var matchedAttrEq = match[8];
-        var matchedContains = match[9];
-        console.log([matchedRoot, matchedExt, matchedAttrEq, matchedContains]);
-
-      } else {
-        //return false;
       }
     }
 

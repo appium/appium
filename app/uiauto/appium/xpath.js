@@ -5,10 +5,42 @@ if (typeof au === "undefined") {
   au = {};
 }
 
+au.getXpathSearchMethod = function(pathSeg, root) {
+  if (typeof root === "undefined") {
+    root = false;
+  }
+  if (root && pathSeg[0] !== "/") {
+    return "all";
+  }
+  if (pathSeg.substr(0, 2) === "//") {
+    return "desc";
+  }
+  return "child";
+};
+
+au.getXpathExtPath = function(matchedExt) {
+  var path = [];
+  if (matchedExt) {
+    // first split on '//'
+    matchedExt = matchedExt.replace(/\//g, "|/");
+    matchedExt = matchedExt.replace(/\|\/\|\//g, "|//");
+    var splits = matchedExt.split("|");
+    for (var i = 0; i < splits.length; i++) {
+      if (splits[i] !== "") {
+        path.push({
+          node: splits[i].replace(/\/+/, '')
+          , search: this.getXpathSearchMethod(splits[i])
+        });
+      }
+    }
+  }
+  return path;
+};
+
 au.parseXpath = function(xpath) {
   // e.g. "//button" or "button" or "/button"
-  var root = "^((//[a-zA-Z]+)|(/?[a-zA-Z]+))";
-  var ext = "((/[a-zA-Z]+)*)"; // e.g. "/text" or "/cell/button/text"
+  var root = "^(/?/?[a-zA-Z]+)";
+  var ext = "((//?[a-zA-Z]+)*)"; // e.g. "/text" or "/cell//button/text"
   var attrEq = "(@[a-zA-Z0-9_]+=[^\\]]+)"; // e.g. [@name="foo"]
   // e.g. [contains(@name, "foo")]
   var attrContains = "(contains\\(@[a-zA-Z0-9_]+, ?[^\\]]+\\))";
@@ -16,29 +48,20 @@ au.parseXpath = function(xpath) {
   var xpathRe = new RegExp(root + ext + attr); // all together now
   var match = xpathRe.exec(xpath);
   if (match) {
-    var matchedRoot = match[2] || match[3]
-      , matchedExt = match[4]
-      , matchedAttrEq = match[8]
-      , matchedContains = match[9]
+    var matchedRoot = match[1]
+      , matchedExt = match[2]
+      , matchedAttrEq = match[6]
+      , matchedContains = match[7]
       , attrName = null
       , attrConstraint = null
       , substrMatch = false
-      , elemStrs = [matchedRoot]
-      , parts = null
-      , i = 0;
-    if (matchedExt) {
-      var extStrs = [];
-      var splits = matchedExt.split("/");
-      for (i = 0; i < splits.length; i++) {
-        if (splits[i] !== "") {
-          extStrs.push(splits[i]);
-        }
-      }
-      elemStrs = elemStrs.concat(extStrs);
-    }
-    for (i = 0; i < elemStrs.length; i++) {
-      elemStrs[i] = elemStrs[i].replace(/\/+/, '');
-    }
+      , path = []
+      , parts = null;
+    path.push({
+      node: matchedRoot.replace(/\/+/, '')
+      , search: this.getXpathSearchMethod(matchedRoot, true)
+    });
+    path = path.concat(au.getXpathExtPath(matchedExt));
     if (matchedAttrEq || matchedContains) {
       if (matchedAttrEq) {
         parts = matchedAttrEq.split("=");
@@ -57,8 +80,7 @@ au.parseXpath = function(xpath) {
       }
     }
     return {
-      absolute: typeof match[2] !== "undefined" ? true : false
-      , path: elemStrs
+      path: path
       , attr: attrName
       , constraint: attrConstraint
       , substr: substrMatch

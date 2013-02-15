@@ -91,7 +91,7 @@ describeWd('findElement(s)ByXpath', function(h) {
       });
     });
   });
-  it.only('should filter by name', function(done) {
+  it('should filter by name', function(done) {
     setupXpath(h.driver, function() {
       h.driver.elementByXPath("button[@name='Rounded']", function(err, el) {
         should.not.exist(err);
@@ -101,6 +101,22 @@ describeWd('findElement(s)ByXpath', function(h) {
           done();
         });
       });
+    });
+  });
+  it.only('should search an extended path', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.source(function(err, s) {
+        console.log(s);
+        done();
+      });
+      //h.driver.elementByXPath("button[@name='Rounded']", function(err, el) {
+        //should.not.exist(err);
+        //el.text(function(err, text) {
+          //should.not.exist(err);
+          //text.should.equal("Rounded");
+          //done();
+        //});
+      //});
     });
   });
 });

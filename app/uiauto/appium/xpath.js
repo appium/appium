@@ -10,7 +10,7 @@ au.getXpathSearchMethod = function(pathSeg, root) {
     root = false;
   }
   if (root && pathSeg[0] !== "/") {
-    return "all";
+    return "desc";
   }
   if (pathSeg.substr(0, 2) === "//") {
     return "desc";

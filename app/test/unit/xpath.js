@@ -12,13 +12,13 @@ describe("XPath lookups", function() {
   var oks = {
     "//button": {path: [{node: 'button', search: 'desc'}]}
     , "/button": {path: [{node: 'button', search: 'child'}]}
-    , "button": {path: [{node: 'button', search: 'all'}]}
+    , "button": {path: [{node: 'button', search: 'desc'}]}
     , "//button/text/webview": {path: [
         {node: 'button', search: 'desc'}
         , {node: 'text', search: 'child'}
         , {node: 'webview', search: 'child'}]}
     , "text/webview//button": {path: [
-        {node: 'text', search: 'all'}
+        {node: 'text', search: 'desc'}
         , {node: 'webview', search: 'child'}
         , {node: 'button', search: 'desc'}]}
     , "//button[@name='hi there']": {

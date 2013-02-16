@@ -296,6 +296,19 @@ var mechanic = (function() {
         children: function(selector) {
             return filtered(this.map(function(){ return slice.call(this.elements()) }), selector);
         },
+        childrenByType: function(type) {
+          var result = this.map(function() {
+            var children = this.elements();
+            var filtered = [];
+            for (var i = 0; i < children.length; i++) {
+              if (children[i].isType(type)) {
+                filtered.push(children[i]);
+              }
+            }
+            return filtered;
+          });
+          return $(result);
+        },
         siblings: function(selector) {
             return filtered(this.map(function(i, el) {
                 return slice.call(el.parent().elements()).filter(function(child){ return child!==el });

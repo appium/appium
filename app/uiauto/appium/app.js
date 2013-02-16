@@ -177,14 +177,12 @@ $.extend(au, {
       return this._returnElems(elems);
     }
 
-  , getElementsByType: function(type, ctx) {
-      var selector = type;
-
+  , convertSelector: function(selector) {
       // some legacy: be backwards compatible, mechanic.js
-      switch (type) {
+      switch (selector) {
         case 'tableView':
         case 'textField':
-          selector = type.toLowerCase();
+          selector = selector.toLowerCase();
           break;
         case 'staticText':
           selector = 'text';
@@ -196,6 +194,11 @@ $.extend(au, {
           selector = 'secure';
           break;
       }
+      return selector;
+    }
+
+  , getElementsByType: function(type, ctx) {
+      var selector = this.convertSelector(type);
 
       var elems = [];
 
@@ -251,8 +254,9 @@ $.extend(au, {
         elems = $(_ctx);
         for (var i = 0; i < xpObj.path.length; i++) {
           var path = xpObj.path[i];
+          path.node = this.convertSelector(path.node);
           if (path.search === "child") {
-            elems = elems.children(path.node);
+            elems = elems.childrenByType(path.node);
           } else if (path.search === "desc") {
             elems = elems.find(path.node);
           }

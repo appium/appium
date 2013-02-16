@@ -290,7 +290,7 @@ IOS.prototype.push = function(elem) {
 };
 
 IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
-  if (_.contains(["name", "tag name"], strategy)) {
+  if (_.contains(["name", "tag name", "xpath"], strategy)) {
     var ext = many ? 's' : '';
     if (typeof ctx === "undefined" || !ctx) {
       ctx = '';
@@ -301,6 +301,9 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     var command = "";
     if (strategy === "name") {
       command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
+    } else if (strategy === "xpath") {
+      selector = escapeSpecialChars(selector, "'");
+      command = ["au.getElement", ext, "ByXpath('", selector, "'", ctx, ")"].join('');
     } else {
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
     }

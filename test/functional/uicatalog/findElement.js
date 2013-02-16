@@ -2,6 +2,7 @@
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
+  , _ = require("underscore")
   , should = require('should');
 
 describeWd('findElementFromElement', function(h) {
@@ -59,6 +60,98 @@ describeWd('findElementsByTagName', function(h) {
         should.exist(num);
       }
       done();
+    });
+  });
+});
+
+var setupXpath = function(d, cb) {
+  d.elementsByTagName('tableCell', function(err, els) {
+    els[0].click(cb);
+  });
+};
+
+describeWd('findElement(s)ByXpath', function(h) {
+  it('should return a single element', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("//button", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          text.should.equal("Back");
+          done();
+        });
+      });
+    });
+  });
+  it('should return multiple elements', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementsByXPath("//button", function(err, els) {
+        should.not.exist(err);
+        els.length.should.be.above(5);
+        done();
+      });
+    });
+  });
+  it('should filter by name', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("button[@name='Rounded']", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          text.should.equal("Rounded");
+          done();
+        });
+      });
+    });
+  });
+  it('should know how to restrict root-level elements', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("/button", function(err, el) {
+        should.exist(err);
+        err.status.should.equal(7);
+        done();
+      });
+    });
+  });
+  it('should search an extended path by child', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementsByXPath("navigationBar/text", function(err, els) {
+        should.not.exist(err);
+        els[0].text(function(err, text) {
+          text.should.equal('Buttons');
+          done();
+        });
+      });
+    });
+  });
+  it('should search an extended path by descendant', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementsByXPath("cell//button", function(err, els) {
+        should.not.exist(err);
+        var texts = [];
+        _.each(els, function(el) {
+          el.text(function(err, text) {
+            texts.push(text);
+            if (texts.length === els.length) {
+              var hasNavButton = _.contains(texts, "Button");
+              hasNavButton.should.equal(false);
+              _.contains(texts, "Gray").should.equal(true);
+              done();
+            }
+          });
+        });
+      });
+    });
+  });
+  it('should filter by partial text', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("cell//button[contains(@name, 'Gr')]", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          text.should.equal("Gray");
+          done();
+        });
+      });
     });
   });
 });

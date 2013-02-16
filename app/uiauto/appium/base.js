@@ -25,5 +25,6 @@
 #import "../lib/status.js"
 #import "utility.js"
 #import "element.js"
+#import "xpath.js"
 #import "app.js"
 #import "binding.js"

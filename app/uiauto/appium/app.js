@@ -156,7 +156,7 @@ $.extend(au, {
 
       elems.each(function(e, el) {
         var elid = me.getId(el);
-        results.push({ 'ELEMENT': elid });
+        results.push({ELEMENT: elid});
       });
 
       return {
@@ -177,14 +177,12 @@ $.extend(au, {
       return this._returnElems(elems);
     }
 
-  , getElementsByType: function(type, ctx) {
-      var selector = type;
-
+  , convertSelector: function(selector) {
       // some legacy: be backwards compatible, mechanic.js
-      switch (type) {
+      switch (selector) {
         case 'tableView':
         case 'textField':
-          selector = type.toLowerCase();
+          selector = selector.toLowerCase();
           break;
         case 'staticText':
           selector = 'text';
@@ -196,6 +194,11 @@ $.extend(au, {
           selector = 'secure';
           break;
       }
+      return selector;
+    }
+
+  , getElementsByType: function(type, ctx) {
+      var selector = this.convertSelector(type);
 
       var elems = [];
 
@@ -215,6 +218,69 @@ $.extend(au, {
         results = this.getElementsByType(type, ctx);
       } else {
         results = this.getElementsByType(type);
+      }
+
+      if (results.value.length < 1) {
+        return {
+          status: codes.NoSuchElement.code,
+          value: null
+        };
+      } else {
+        return {
+          status: codes.Success.code,
+          value: results.value[0]
+        };
+      }
+    }
+
+  , getElementsByXpath: function(xpath, ctx) {
+      var _ctx = this.mainWindow
+        , elems = [];
+
+      if (typeof ctx === 'string') {
+        _ctx = this.cache[ctx];
+      } else if (typeof ctx !== 'undefined') {
+        _ctx = ctx;
+      }
+
+      var xpObj = this.parseXpath(xpath);
+      if (xpObj === false) {
+        return {
+          status: codes.XPathLookupError.code
+          , value: null
+        };
+      } else {
+        this.target.pushTimeout(0);
+        elems = $(_ctx);
+        for (var i = 0; i < xpObj.path.length; i++) {
+          var path = xpObj.path[i];
+          path.node = this.convertSelector(path.node);
+          if (path.search === "child") {
+            elems = elems.childrenByType(path.node);
+          } else if (path.search === "desc") {
+            elems = elems.find(path.node);
+          }
+          if (i === xpObj.path.length - 1 && xpObj.attr) {
+            // last run, need to apply attr filters if there are any
+            if (xpObj.substr) {
+              elems = elems.valueInKey(xpObj.attr, xpObj.constraint);
+            } else {
+              elems = elems.valueForKey(xpObj.attr, xpObj.constraint);
+            }
+          }
+        }
+        this.target.popTimeout();
+        return this._returnElems(elems);
+      }
+    }
+
+  , getElementByXpath: function(xpath, ctx) {
+      var results = [];
+
+      if (typeof ctx !== 'undefined') {
+        results = this.getElementsByXpath(xpath, ctx);
+      } else {
+        results = this.getElementsByXpath(xpath);
       }
 
       if (results.value.length < 1) {

@@ -143,11 +143,14 @@ exports.stopTimeWarp = function() {
   inTimeWarp = false;
 };
 
-exports.escapeSpecialChars = function(str) {
+exports.escapeSpecialChars = function(str, quoteEscape) {
   if (typeof str !== "string") {
     return str;
   }
-  return str
+  if (typeof quoteEscape === "undefined") {
+    quoteEscape = false;
+  }
+  str = str
         .replace(/[\\]/g, '\\\\')
         .replace(/[\/]/g, '\\/')
         .replace(/[\b]/g, '\\b')
@@ -157,4 +160,9 @@ exports.escapeSpecialChars = function(str) {
         .replace(/[\t]/g, '\\t')
         .replace(/[\"]/g, '\\"')
         .replace(/\\'/g, "\\'");
+  if (quoteEscape) {
+    var re = new RegExp(quoteEscape, "g");
+    str = str.replace(re, "\\" + quoteEscape);
+  }
+  return str;
 };

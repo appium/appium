@@ -264,7 +264,12 @@ var mechanic = (function() {
         valueInKey: function(key, val) {
           var result = this.map(function(idx, el) {
             if (key in el) {
-              if (el[key]().indexOf(val) !== -1) {
+              var elKey = el[key]();
+              if (elKey === null) {
+                return null;
+              }
+
+              if (elKey.indexOf(val) !== -1) {
                 return el;
               }
             }

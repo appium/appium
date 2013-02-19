@@ -283,7 +283,7 @@ $.extend(au, {
         results = this.getElementsByXpath(xpath);
       }
 
-      if (results.value.length < 1) {
+      if (results.value === null || results.value.length < 1) {
         return {
           status: codes.NoSuchElement.code,
           value: null

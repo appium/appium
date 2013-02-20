@@ -11,7 +11,7 @@ function getResponseHandler(req, res) {
     if (typeof response === "undefined" || response === null) {
       response = {};
     }
-    if (err !== null) {
+    if (err !== null && typeof err !== "undefined") {
       if (typeof err.name !== "undefined" && err.name == 'NotImplementedError') {
         notImplementedInThisContext(req, res);
       } else {
@@ -52,6 +52,8 @@ var respondError = function(req, res, statusObj, value) {
   var newValue = value;
   if (typeof statusObj === "string") {
     message = statusObj;
+  } else if (typeof statusObj === "undefined") {
+    message = "undefined status object";
   } else if (typeof statusObj === "number") {
     code = statusObj;
     message = status.getSummaryByCode(code);

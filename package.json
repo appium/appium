@@ -51,6 +51,7 @@
     "mocha": "~1.8.1",
     "should": "~1.2.1",
     "grunt": "~0.4.0",
+    "grunt-cli": "~0.1.6",
     "wd": "git://github.com/admc/wd.git",
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",

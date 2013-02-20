@@ -64,7 +64,7 @@ From your local repo clone's command prompt, install these packages using the
 following commands:
 
     > sudo npm install -g mocha
-    > sudo npm install -g grunt
+    > sudo npm install -g grunt-cli
     > npm install
 
 The first two commands install test and build tools (sudo may not be necessary

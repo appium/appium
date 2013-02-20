@@ -45,18 +45,19 @@
     "unzip": "~0.1.1"
   },
   "scripts": {
-    "test": "grunt lint unit"
+    "test": "grunt test"
   },
   "devDependencies": {
     "mocha": "~1.8.1",
     "should": "~1.2.1",
-    "grunt": "~0.3.17",
+    "grunt": "~0.4.0",
     "wd": "git://github.com/admc/wd.git",
     "assert": "~0.4.9",
-    "grunt-mocha-test": "0.0.1",
+    "grunt-mocha-test": "~0.2.0",
     "request": "~2.12.0",
     "winston": "~0.6.2",
     "difflib": "~0.2.4",
-    "prompt": "~0.2.9"
+    "prompt": "~0.2.9",
+    "grunt-contrib-jshint": "~0.1.1"
   }
 }

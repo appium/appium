@@ -6,6 +6,7 @@ npm install .
 echo "Rebuilding test apps"
 grunt buildApp:TestApp
 grunt buildApp:UICatalog
+grunt buildApp:WebViewApp
 echo "Cleaning temp files"
 rm -rf /tmp/instruments_sock
 rm -rf *.trace

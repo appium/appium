@@ -72,7 +72,7 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
       _.each(config, function(testFiles, testKey) {
         if (testType == "*" || testType == testKey) {
           _.each(testFiles, function(file) {
-            _.each(grunt.file.expandFiles(file), function(file) {
+            _.each(grunt.file.expand(file), function(file) {
               args.push(file);
             });
           });
@@ -204,6 +204,20 @@ module.exports.buildApp = function(appDir, cb, sdk) {
       cb(true);
     }
   }, sdk);
+};
+
+module.exports.signApp = function(appName, certName, cb) {
+  var appPath = path.resolve(__dirname, 'sample-code/apps/', appName,
+      'build/Release-iphonesimulator');
+  exec("codesign -f -s \"" + certName + "\" -v " + appName + ".app", {cwd: appPath}, function(err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    if (err) {
+      cb(false);
+    } else {
+      cb(true);
+    }
+  });
 };
 
 module.exports.downloadUICatalog = function(cb) {

@@ -206,6 +206,20 @@ module.exports.buildApp = function(appDir, cb, sdk) {
   }, sdk);
 };
 
+module.exports.signApp = function(appName, certName, cb) {
+  var appPath = path.resolve(__dirname, 'sample-code/apps/', appName,
+      'build/Release-iphonesimulator');
+  exec("codesign -f -s \"" + certName + "\" -v " + appName + ".app", {cwd: appPath}, function(err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    if (err) {
+      cb(false);
+    } else {
+      cb(true);
+    }
+  });
+};
+
 module.exports.downloadUICatalog = function(cb) {
   var appBasePath = path.resolve(__dirname, 'sample-code/apps');
   var appPath = path.resolve(appBasePath, 'UICatalog');

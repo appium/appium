@@ -115,11 +115,11 @@ Instruments.prototype.startSocketServer = function(sock) {
     }, this));
 
   }, this));
- 
+
   this.socketServer.on('close', _.bind(function() {
     this.debug("Instruments socket server closed");
   }, this));
-  
+
   this.socketServer.listen(sock, _.bind(function() {
     this.debug("Instruments socket server started at " + sock);
     this.launch();
@@ -166,6 +166,7 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   var args = ["-t", this.template];
   if (this.udid) {
     args = args.concat(["-w", this.udid]);
+    logger.info("Attempting to run app on real device with UDID " + this.udid);
   }
   args = args.concat([this.app]);
   args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);

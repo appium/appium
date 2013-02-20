@@ -3,8 +3,6 @@
 "use strict";
 var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
-  , glob = require('glob')
-  , rimraf = require('rimraf')
   , _s = require("underscore.string")
   , _ = require('underscore');
 
@@ -167,34 +165,7 @@ exports.getSessions = function(req, res) {
 };
 
 exports.reset = function(req, res) {
-  logger.info("Reset. Closing App.");
-  var oldId = req.appium.sessionId;
-
-  req.device.proxy('au.bundleId()', function(err, bId) {
-    var bundleId = bId.value;
-    var user = process.env.USER;
-    logger.info("Deleting plist for bundle: " + bundleId);
-    logger.info("User is: " + user);
-
-    req.appium.stop(function(){
-      glob("/Users/" + user + "/Library/Application Support/iPhone Simulator/**/" +
-           bundleId + ".plist", {}, function(err, files) {
-             if (err) {
-               logger.error("Could not remove plist: " + err.message);
-             } else {
-               _.each(files, function(file) {
-                 rimraf(file, function() {
-                   logger.info("Deleted " + file);
-                 });
-               });
-             }
-           });
-
-      logger.info("Starting app.");
-      exports.createSession(req, res);
-      req.appium.sessionId = oldId;
-    });
-  });
+  req.appium.reset(getResponseHandler(req, res));
 };
 
 exports.deleteSession = function(req, res) {

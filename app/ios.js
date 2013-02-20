@@ -144,6 +144,35 @@ IOS.prototype.start = function(cb, onDie) {
 
 };
 
+IOS.prototype.cleanupAppState = function(cb) {
+  var user = process.env.USER
+    , me = this;
+  logger.info("Deleting plist for bundle: " + this.bundleId);
+  logger.info("User is: " + user);
+  glob("/Users/" + user + "/Library/Application Support/iPhone Simulator/**/" +
+       me.bundleId + ".plist", {}, function(err, files) {
+    if (err) {
+      logger.error("Could not remove plist: " + err.message);
+      cb(err);
+    } else {
+      var filesExamined = 0;
+      var maybeNext = function() {
+        if (filesExamined === files.length) {
+          cb();
+        }
+      };
+      _.each(files, function(file) {
+        rimraf(file, function() {
+          logger.info("Deleted " + file);
+          filesExamined++;
+          maybeNext();
+        });
+      });
+      maybeNext();
+    }
+  });
+};
+
 IOS.prototype.listWebFrames = function(cb, exitCb) {
   var me = this;
   if (this.remote) {

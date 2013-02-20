@@ -58,6 +58,7 @@ module.exports = function(grunt) {
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('appiumutils', 'mochaTest:appiumutils');
   grunt.registerTask('default', ['test']);
+  grunt.registerTask('travis', ['jshint', 'unit']);
   grunt.registerTask('appium', "Start the Appium server", function(appName) {
     if (typeof appName === "undefined") {
       appName = null;

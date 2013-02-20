@@ -45,7 +45,7 @@
     "unzip": "~0.1.1"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt travis"
   },
   "devDependencies": {
     "mocha": "~1.8.1",

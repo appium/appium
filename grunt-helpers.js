@@ -72,7 +72,7 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
       _.each(config, function(testFiles, testKey) {
         if (testType == "*" || testType == testKey) {
           _.each(testFiles, function(file) {
-            _.each(grunt.file.expandFiles(file), function(file) {
+            _.each(grunt.file.expand(file), function(file) {
               args.push(file);
             });
           });

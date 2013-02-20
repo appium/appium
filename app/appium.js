@@ -11,7 +11,8 @@ var routing = require('./routing')
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
-  , ios = require('./ios');
+  , ios = require('./ios')
+  , status = require("./uiauto/lib/status");
 
 var Appium = function(args) {
   this.args = args;
@@ -223,20 +224,21 @@ Appium.prototype.onDeviceDie = function(code, cb) {
   // reuse a bad app
   this.args.app = this.origApp;
   if (code !== null) {
-    logger.info('tossing device and devices');
+    logger.info('Clearing out appium devices');
     this.devices = [];
     this.device = null;
-    logger.info(this.progress + " sessions active =" + this.sessions.length);
+    //logger.info(this.progress + " sessions active =" + this.sessions.length);
     this.sessions[this.progress] = {};
   } else {
-    logger.info('not tossing device and devices because code=' + code);
+    logger.info('Not clearing out appium devices');
   }
   if (cb) {
     if (this.active !== null) {
       this.active = null;
       this.invoke();
     }
-    cb(null, {status: 0, value: null, sessionId: dyingSession});
+    cb(null, {status: status.codes.Success.code, value: null,
+              sessionId: dyingSession});
   }
 };
 
@@ -253,6 +255,27 @@ Appium.prototype.stop = function(cb) {
     me.onDeviceDie(code, cb);
   });
 };
+
+
+Appium.prototype.reset = function(cb) {
+  logger.info("Resetting app mid-session");
+  var me = this
+    , oldId = this.sessionId;
+
+  this.device.stop(function(code) {
+    me.device.cleanupAppState(function() {
+      me.onDeviceDie(code, function() {
+        logger.info("Restarting app");
+        me.start(me.desiredCapabilities, function() {
+          me.sessionId = oldId;
+          cb(null, {status: status.codes.Success.code, value: null});
+        });
+      });
+    });
+  });
+};
+
+
 
 module.exports = function(args) {
   return new Appium(args);

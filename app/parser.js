@@ -34,6 +34,10 @@ module.exports = function() {
     , { defaultValue: true, required: false, help: 'remove Instruments trace directories'
   });
 
+  parser.addArgument([ '-s', '--reset' ]
+    , { defaultValue: true, required: false, help: 'reset app plist/state after each session'
+  });
+
   parser.addArgument([ '-l', '--launch' ]
     , { defaultValue: false, required: false, help: 'pre-launch the ios-sim'
   });

@@ -11,7 +11,8 @@ var routing = require('./routing')
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
-  , ios = require('./ios');
+  , ios = require('./ios')
+  , status = require("./uiauto/lib/status");
 
 var Appium = function(args) {
   this.args = args;
@@ -204,7 +205,7 @@ Appium.prototype.invoke = function() {
     // in future all the blackberries go here.
     this.active = 'iOS';
     if (typeof this.devices[this.active] === 'undefined') {
-      this.devices[this.active] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove, this.args.warp);
+      this.devices[this.active] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove, this.args.warp, this.args.reset);
     }
     this.device = this.devices[this.active];
 
@@ -223,20 +224,21 @@ Appium.prototype.onDeviceDie = function(code, cb) {
   // reuse a bad app
   this.args.app = this.origApp;
   if (code !== null) {
-    logger.info('tossing device and devices');
+    logger.info('Clearing out appium devices');
     this.devices = [];
     this.device = null;
-    logger.info(this.progress + " sessions active =" + this.sessions.length);
+    //logger.info(this.progress + " sessions active =" + this.sessions.length);
     this.sessions[this.progress] = {};
   } else {
-    logger.info('not tossing device and devices because code=' + code);
+    logger.info('Not clearing out appium devices');
   }
   if (cb) {
     if (this.active !== null) {
       this.active = null;
       this.invoke();
     }
-    cb(null, {status: 0, value: null, sessionId: dyingSession});
+    cb(null, {status: status.codes.Success.code, value: null,
+              sessionId: dyingSession});
   }
 };
 
@@ -253,6 +255,23 @@ Appium.prototype.stop = function(cb) {
     me.onDeviceDie(code, cb);
   });
 };
+
+
+Appium.prototype.reset = function(cb) {
+  logger.info("Resetting app mid-session");
+  var me = this
+    , oldId = this.sessionId;
+
+  this.stop(function() {
+    logger.info("Restarting app");
+    me.start(me.desiredCapabilities, function() {
+      me.sessionId = oldId;
+      cb(null, {status: status.codes.Success.code, value: null});
+    });
+  });
+};
+
+
 
 module.exports = function(args) {
   return new Appium(args);

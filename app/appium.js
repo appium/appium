@@ -205,7 +205,7 @@ Appium.prototype.invoke = function() {
     // in future all the blackberries go here.
     this.active = 'iOS';
     if (typeof this.devices[this.active] === 'undefined') {
-      this.devices[this.active] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove, this.args.warp);
+      this.devices[this.active] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove, this.args.warp, this.args.reset);
     }
     this.device = this.devices[this.active];
 
@@ -262,15 +262,11 @@ Appium.prototype.reset = function(cb) {
   var me = this
     , oldId = this.sessionId;
 
-  this.device.stop(function(code) {
-    me.device.cleanupAppState(function() {
-      me.onDeviceDie(code, function() {
-        logger.info("Restarting app");
-        me.start(me.desiredCapabilities, function() {
-          me.sessionId = oldId;
-          cb(null, {status: status.codes.Success.code, value: null});
-        });
-      });
+  this.stop(function() {
+    logger.info("Restarting app");
+    me.start(me.desiredCapabilities, function() {
+      me.sessionId = oldId;
+      cb(null, {status: status.codes.Success.code, value: null});
     });
   });
 };

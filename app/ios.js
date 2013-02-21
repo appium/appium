@@ -30,13 +30,14 @@ var ProtocolError = function(message) {
    this.name = "ProtocolError";
 };
 
-var IOS = function(rest, app, udid, verbose, removeTraceDir, warp) {
+var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
   this.rest = rest;
   this.app = app;
   this.udid = udid;
   this.bundleId = null; // what we get from app on startup
   this.verbose = verbose;
   this.warp = warp;
+  this.reset = reset;
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
@@ -113,15 +114,27 @@ IOS.prototype.start = function(cb, onDie) {
       code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
+    var nexts = 0;
+    var next = function() {
+      nexts++;
+      if (nexts === 2) {
+        me.onStop(code);
+        me.onStop = null;
+      }
+    };
     if (me.removeTraceDir && traceDir) {
       rimraf(traceDir, function() {
         logger.info("Deleted tracedir we heard about from instruments (" + traceDir + ")");
-        me.onStop(code);
-        me.onStop = null;
+        next();
       });
     } else {
-      me.onStop(code);
-      me.onStop = null;
+      next();
+    }
+
+    if (me.reset) {
+      me.cleanupAppState(next);
+    } else {
+      next();
     }
   };
 
@@ -142,6 +155,38 @@ IOS.prototype.start = function(cb, onDie) {
     }, this));
   }
 
+};
+
+IOS.prototype.cleanupAppState = function(cb) {
+  var user = process.env.USER
+    , me = this;
+  logger.info("Deleting plists for bundle: " + this.bundleId);
+  glob("/Users/" + user + "/Library/Application Support/iPhone Simulator/**/" +
+       me.bundleId + ".plist", {}, function(err, files) {
+    if (err) {
+      logger.error("Could not remove plist: " + err.message);
+      cb(err);
+    } else {
+      var filesExamined = 0;
+      var maybeNext = function() {
+        if (filesExamined === files.length) {
+          cb();
+        }
+      };
+      if (files.length) {
+        _.each(files, function(file) {
+          rimraf(file, function() {
+            logger.info("Deleted " + file);
+            filesExamined++;
+            maybeNext();
+          });
+        });
+      } else {
+        logger.info("No plist files found to remove");
+        cb();
+      }
+    }
+  });
 };
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
@@ -775,6 +820,6 @@ IOS.prototype.title = function(cb) {
   }
 };
 
-module.exports = function(rest, app, udid, verbose, removeTraceDir, warp) {
-  return new IOS(rest, app, udid, verbose, removeTraceDir, warp);
+module.exports = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
+  return new IOS(rest, app, udid, verbose, removeTraceDir, warp, reset);
 };

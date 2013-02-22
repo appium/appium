@@ -368,8 +368,8 @@ exports.postDismissAlert = function(req, res) {
 };
 
 exports.implicitWait = function(req, res) {
-  var seconds = req.body.ms / 1000;
-  req.device.implicitWait(seconds, getResponseHandler(req, res));
+  var ms = req.body.ms;
+  req.device.implicitWait(ms, getResponseHandler(req, res));
 };
 
 exports.setOrientation = function(req, res) {

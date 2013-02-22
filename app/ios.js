@@ -48,6 +48,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
   this.curWindowHandle = null;
   this.windowHandleCache = [];
   this.webElementIds = [];
+  this.implicitWaitMs = 0;
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -261,6 +262,28 @@ IOS.prototype.stop = function(cb) {
   }
 };
 
+IOS.prototype.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
+  if (typeof intervalMs === "undefined") {
+    intervalMs = 500;
+  }
+  var begunAt = Date.now();
+  var endAt = begunAt + waitMs;
+  var me = this;
+  var spin = function() {
+    condFn(function(condMet) {
+      var args = Array.prototype.slice.call(arguments);
+      if (condMet) {
+        cb.apply(me, args.slice(1));
+      } else if (Date.now() < endAt) {
+        setTimeout(spin, intervalMs);
+      } else {
+        cb.apply(me, args.slice(1));
+      }
+    });
+  };
+  spin();
+};
+
 IOS.prototype.setCommandTimeout = function(secs, cb) {
   var cmd = "waitForDataTimeout = " + parseInt(secs, 10);
   this.proxy(cmd, cb);
@@ -335,7 +358,8 @@ IOS.prototype.push = function(elem) {
 };
 
 IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
-  if (_.contains(["name", "tag name", "xpath"], strategy)) {
+  var me = this;
+  var doFind = function(findCb) {
     var ext = many ? 's' : '';
     if (typeof ctx === "undefined" || !ctx) {
       ctx = '';
@@ -353,7 +377,18 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
     }
 
-    this.proxy(command, cb);
+    me.proxy(command, function(err, res) {
+      if (!many && res.status === 0) {
+        findCb(true, err, res);
+      } else if (many && res.value.length > 0) {
+        findCb(true, err, res);
+      } else {
+        findCb(false, err, res);
+      }
+    });
+  };
+  if (_.contains(["name", "tag name", "xpath"], strategy)) {
+    this.waitForCondition(this.implicitWaitMs, doFind, cb);
   } else {
     cb(null, {
       status: status.codes.UnknownError.code
@@ -567,9 +602,15 @@ IOS.prototype.frame = function(frame, cb) {
   this.proxy(command, cb);
 };
 
-IOS.prototype.implicitWait = function(seconds, cb) {
-  var command = ["au.timeout('", seconds, "')"].join('');
-  this.proxy(command, cb);
+IOS.prototype.implicitWait = function(ms, cb) {
+  //var command = ["au.timeout('", seconds, "')"].join('');
+  //this.proxy(command, cb);
+  this.implicitWaitMs = parseInt(ms, 10);
+  logger.info("Set iOS implicit wait to " + ms + "ms");
+  cb(null, {
+    status: status.codes.Success.code
+    , value: null
+  });
 };
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {

@@ -23,18 +23,31 @@ describeWd('command timeout', function(h) {
   });
 });
 
- //describeWd('check implicit wait', function(h) {
-   //return it('should set the implicit wait for finding elements', function(done) {
-     //h.driver.setImplicitWaitTimeout(10 * 1000, function(err) {
-       //var before = new Date().getTime() / 1000;
-       //console.log(before);
-       //h.driver.elementsByTagName('notgonnabethere', function(err, missing) {
-         //var after = new Date().getTime() / 1000;
-         //console.log(after);
-         //assert.ok(after - before < 12);
-         //assert.ok(after - before > 10);
-         //done();
-       //});
-     //});
-   //});
- //});
+ describeWd('check implicit wait', function(h) {
+   it('should set the implicit wait for finding elements', function(done) {
+     h.driver.setImplicitWaitTimeout(10 * 1000, function(err) {
+       should.not.exist(err);
+       var before = new Date().getTime() / 1000;
+       h.driver.elementsByTagName('notgonnabethere', function(err, missing) {
+         var after = new Date().getTime() / 1000;
+         should.ok(after - before < 12);
+         should.ok(after - before > 10);
+         missing.length.should.equal(0);
+         done();
+       });
+     });
+   });
+   it('should set the implicit wait for finding element', function(done) {
+     h.driver.setImplicitWaitTimeout(10 * 1000, function(err) {
+       should.not.exist(err);
+       var before = new Date().getTime() / 1000;
+       h.driver.elementByTagName('notgonnabethere', function(err) {
+         var after = new Date().getTime() / 1000;
+         should.ok(after - before < 12);
+         should.ok(after - before > 10);
+         should.exist(err);
+         done();
+       });
+     });
+   });
+ });

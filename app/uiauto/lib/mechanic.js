@@ -268,6 +268,9 @@ var mechanic = (function() {
               if (elKey === null) {
                 return null;
               }
+              // make this a case insensitive search
+              elKey = elKey.toString().toLowerCase();
+              val = val.toString().toLowerCase();
 
               if (elKey.indexOf(val) !== -1) {
                 return el;

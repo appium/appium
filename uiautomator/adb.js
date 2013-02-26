@@ -115,11 +115,25 @@ ADB.prototype.checkForSocketReady = function(output) {
     }, this));
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {
-      this.debug("Received data from bootstrap");
+      this.debug("Received command result from bootstrap");
       data = JSON.parse(data);
-      this.debug(data);
+      if (this.cmdCb) {
+        this.cmdCb(data);
+        this.cmdCb = null;
+      } else {
+        this.debug("Got data when we weren't expecting it, ignoring:");
+        this.debug(data);
+      }
     }, this));
   }
+};
+
+ADB.prototype.sendCommand = function(cb) {
+  var cmd = {cmd: "shutdown"};
+  var cmdJson = JSON.stringify(cmd) + "\n";
+  this.cmdCb = cb;
+  this.debug("Sending command to android: " + cmdJson);
+  this.socketClient.write(cmdJson);
 };
 
 ADB.prototype.outputStreamHandler = function(output) {
@@ -208,6 +222,37 @@ ADB.prototype.pushAppium = function(cb) {
   var binPath = path.resolve(__dirname, "bootstrap", "bin", "AppiumBootstrap.jar");
   var remotePath = "/data/local/tmp";
   var cmd = this.adb + " push " + binPath + " " + remotePath;
+  exec(cmd, _.bind(function(err) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      cb(null);
+    }
+  }, this));
+};
+
+ADB.prototype.startApp = function(appPackage, appActivity, cb) {
+  this.requireDeviceId();
+  this.debug("Starting app " + appPackage + "/" + appActivity);
+  var cmd = this.adbCmd + " shell am start -n " + appPackage + "/" +
+            appPackage + "." + appActivity;
+  console.log(cmd);
+  exec(cmd, _.bind(function(err, stdout) {
+    if(err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      logger.info(stdout);
+      cb(null);
+    }
+  }, this));
+};
+
+ADB.prototype.installApp = function(apkPath, cb) {
+  this.requireDeviceId();
+  this.debug("Installing app " + apkPath);
+  var cmd = this.adbCmd + " install -r " + apkPath;
   exec(cmd, _.bind(function(err) {
     if (err) {
       logger.error(err);

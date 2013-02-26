@@ -14,3 +14,4 @@ sample-code/examples/ruby/Gemfile.lock
 *.iml
 .idea/
 appium*.log*
+uiautomator/bootstrap/bin/io*

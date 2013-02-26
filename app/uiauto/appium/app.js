@@ -55,17 +55,17 @@ $.extend(au, {
           value: 'Unsupported orientation: ' + orientation
         };
       }
-      var newOrientation = au.getScreenOrientation();
+      var newOrientation = au.getScreenOrientation().value;
       if (newOrientation == orientation) {
         return {
           status: codes.Success.code
           , value: newOrientation
         };
       } else {
-        console.log("returning error");
         return {
           status: codes.UnknownError.code
-          , value: "Orientation change did not take effect"
+          , value: "Orientation change did not take effect: expected " +
+                   orientation + " but got " + newOrientation
         };
       }
     }

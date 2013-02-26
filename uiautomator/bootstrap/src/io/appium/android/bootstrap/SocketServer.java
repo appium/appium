@@ -40,7 +40,7 @@ class SocketServer {
     }
 
     public void listenForever() throws SocketServerException {
-        Logger.info("Listening forever, in a JUnit test, like, wut?...");
+        Logger.info("Appium Socket Server Ready");
         while (true) {
             try {
                 client = server.accept();

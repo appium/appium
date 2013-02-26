@@ -76,7 +76,6 @@ ADB.prototype.forwardPort = function(cb) {
       logger.error(err);
       cb(err);
     } else {
-      this.debug("\tdone");
       this.portForwarded = true;
       cb(null);
     }
@@ -125,11 +124,35 @@ ADB.prototype.checkForSocketReady = function(output) {
 
 ADB.prototype.outputStreamHandler = function(output) {
   this.checkForSocketReady(output);
-  logger.info(("[ADB STDOUT] " + output).green);
+  this.handleBootstrapOutput(output);
+};
+
+ADB.prototype.handleBootstrapOutput = function(output) {
+  // for now, assume all intentional logging takes place on one line
+  // and that we don't get half-lines from the stream.
+  // probably bad assumptions
+  output = output.toString().trim();
+  var lines = output.split("\n");
+  var re = /^\[APPIUM-UIAUTO\] (.+)\[\/APPIUM-UIAUTO\]$/;
+  var match;
+  _.each(lines, function(line) {
+    line = line.trim();
+    if (line !== '') {
+      match = re.exec(line);
+      if (match) {
+        logger.info("[ANDROID] " + match[1]);
+      } else {
+        logger.info(("[ADB STDOUT] " + line).grey);
+      }
+    }
+  });
 };
 
 ADB.prototype.errorStreamHandler = function(output) {
-  logger.info(("[ADB STDERR] " + output).yellow);
+  var lines = output.split("\n");
+  _.each(lines, function(line) {
+    logger.info(("[ADB STDERR] " + line).yellow);
+  });
 };
 
 ADB.prototype.debug = function(msg) {
@@ -190,7 +213,6 @@ ADB.prototype.pushAppium = function(cb) {
       logger.error(err);
       cb(err);
     } else {
-      this.debug("\tdone");
       cb(null);
     }
   }, this));

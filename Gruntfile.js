@@ -7,6 +7,8 @@ var path = require('path')
   , tail = gruntHelpers.tail
   , buildApp = gruntHelpers.buildApp
   , signApp = gruntHelpers.signApp
+  , setupAndroidBootstrap = gruntHelpers.setupAndroidBootstrap
+  , buildAndroidBootstrap = gruntHelpers.buildAndroidBootstrap
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -89,5 +91,17 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('log', "Tail appium.log", function() {
     tail(grunt, path.resolve(__dirname, "appium.log"), this.async());
+  });
+  grunt.registerTask('configAndroidBootstrap', function() {
+    var cb = this.async();
+    setupAndroidBootstrap(grunt, function(exitCode) {
+      cb(exitCode === 0);
+    });
+  });
+  grunt.registerTask('buildAndroidBootstrap', function() {
+    var cb = this.async();
+    buildAndroidBootstrap(grunt, function(exitCode) {
+      cb(exitCode === 0);
+    });
   });
 };

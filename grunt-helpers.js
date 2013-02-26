@@ -245,3 +245,54 @@ module.exports.downloadUICatalog = function(cb) {
     });
   });
 };
+
+module.exports.setupAndroidBootstrap = function(grunt, cb) {
+  if (!process.env.ANDROID_HOME) {
+    grunt.fatal("Could not find Android SDK, make sure to export ANDROID_HOME");
+  }
+  var cmd = path.resolve(process.env.ANDROID_HOME, "tools", "android");
+  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
+              "android-17", "-p", "."];
+
+  var proc = spawn(cmd, args, {cwd: projPath});
+  proc.stdout.setEncoding('utf8');
+  proc.stderr.setEncoding('utf8');
+  proc.stdout.on('data', function(data) {
+    grunt.log.write(data);
+  });
+  proc.stderr.on('data', function(data) {
+    grunt.log.write(data);
+  });
+  proc.on('exit', function(code) {
+    cb(code);
+  });
+};
+
+module.exports.buildAndroidBootstrap = function(grunt, cb) {
+  exec('which ant', function(err, stdout) {
+    if (err) {
+      grunt.fatal(err);
+    } else {
+      if (stdout) {
+        var ant = stdout.trim();
+        grunt.log.write("Using ant found at " + ant);
+        var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+        var proc = spawn(ant, ["build"], {cwd: projPath});
+        proc.stdout.setEncoding('utf8');
+        proc.stderr.setEncoding('utf8');
+        proc.stdout.on('data', function(data) {
+          grunt.log.write(data);
+        });
+        proc.stderr.on('data', function(data) {
+          grunt.log.write(data);
+        });
+        proc.on('exit', function(code) {
+          cb(code);
+        });
+      } else {
+        grunt.fatal("Could not find ant installed; please make sure it's on PATH");
+      }
+    }
+  });
+};

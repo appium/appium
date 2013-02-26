@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     jshint: {
-      all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js', 'test/functional/*.js', 'test/unit/*.js', 'test/functional/appium/*.js', 'test/functional/testapp/*.js', 'test/functional/uicatalog/*.js', 'test/helpers/*.js', 'app/uiauto/appium/app.js', 'app/uiauto/appium/binding.js', 'app/uiauto/element.js', 'app/uiauto/appium/utility.js', 'app/uiauto/lib/instruments_client.js', 'app/uiauto/lib/status.js']
+      all: ['*.js', 'app/*.js', 'app/test/unit/*.js', 'instruments/*.js', 'test/functional/*.js', 'test/unit/*.js', 'test/functional/appium/*.js', 'test/functional/testapp/*.js', 'test/functional/uicatalog/*.js', 'test/functional/webview/*.js', 'test/helpers/*.js', 'app/uiauto/appium/app.js', 'app/uiauto/appium/binding.js', 'app/uiauto/element.js', 'app/uiauto/appium/utility.js', 'app/uiauto/lib/instruments_client.js', 'app/uiauto/lib/status.js']
       , options: {
         laxcomma: true
         , es5: true
@@ -35,6 +35,9 @@ module.exports = function(grunt) {
       }
       , UICatalog: {
         functional: ['test/functional/uicatalog/*.js']
+      }
+      , WebViewApp: {
+        functional: ['test/functional/webview/*.js']
       }
     }
     , mochaTestConfig: {

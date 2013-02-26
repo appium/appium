@@ -1,7 +1,7 @@
 /*global it:true */
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
+var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
   , should = require('should');
 
 describeWd('window handles', function(h) {
@@ -12,57 +12,32 @@ describeWd('window handles', function(h) {
       done();
     });
   });
-  it('getting handles should do nothing when no webview open', function(done) {
+  it('getting list should work after webview open', function(done) {
     h.driver.windowHandles(function(err, handles) {
       should.not.exist(err);
-      handles.length.should.equal(0);
+      handles.length.should.be.above(0);
       done();
     });
   });
-  it('getting list should work after webview open', function(done) {
-    h.driver.elementByName('Web, Use of UIWebView', function(err, el) {
-      should.not.exist(err);
-      el.click(function(err) {
-        should.not.exist(err);
-        h.driver.windowHandles(function(err, handles) {
-          should.not.exist(err);
-          handles.length.should.be.above(0);
-          done();
-        });
-      });
-    });
-  });
   it('setting window should work', function(done) {
-    h.driver.elementByName('Web, Use of UIWebView', function(err, el) {
+    h.driver.windowHandles(function(err, handles) {
       should.not.exist(err);
-      el.click(function(err) {
+      handles.length.should.be.above(0);
+      h.driver.window(handles[0], function(err) {
         should.not.exist(err);
-        h.driver.windowHandles(function(err, handles) {
-          should.not.exist(err);
-          handles.length.should.be.above(0);
-          h.driver.window(handles[0], function(err) {
-            should.not.exist(err);
-            done();
-          });
-        });
+        done();
       });
     });
   });
   it('clearing window should work', function(done) {
-    h.driver.elementByName('Web, Use of UIWebView', function(err, el) {
+    h.driver.windowHandles(function(err, handles) {
       should.not.exist(err);
-      el.click(function(err) {
+      handles.length.should.be.above(0);
+      h.driver.window(handles[0], function(err) {
         should.not.exist(err);
-        h.driver.windowHandles(function(err, handles) {
+        h.driver.frame(null, function(err) {
           should.not.exist(err);
-          handles.length.should.be.above(0);
-          h.driver.window(handles[0], function(err) {
-            should.not.exist(err);
-            h.driver.frame(null, function(err) {
-              should.not.exist(err);
-              done();
-            });
-          });
+          done();
         });
       });
     });
@@ -188,8 +163,8 @@ describeWd('getSize', function(h) {
     loadWebView(h.driver, function() {
       h.driver.elementById('i_am_an_id', function(err, element) {
         element.getSize(function(err, size) {
-          size.width.should.eql(964);
-          size.height.should.eql(30);
+          size.width.should.eql(304);
+          size.height.should.eql(20);
           done();
         });
       });
@@ -198,26 +173,12 @@ describeWd('getSize', function(h) {
 });
 
 var loadWebView = function(driver, cb) {
-  driver.elementByName('Web, Use of UIWebView', function(err, el) {
+  driver.windowHandles(function(err, handles) {
     should.not.exist(err);
-    el.click(function(err) {
+    handles.length.should.be.above(0);
+    driver.window(handles[0], function(err) {
       should.not.exist(err);
-      driver.windowHandles(function(err, handles) {
-        should.not.exist(err);
-        handles.length.should.be.above(0);
-        driver.elementByTagName('textField', function(err, elem) {
-          elem.sendKeys("http://www.saucelabs.com/test/guinea-pig", function(err) {
-            should.not.exist(err);
-            driver.keys("\uE007", function(err) {
-              should.not.exist(err);
-              driver.window(handles[0], function(err) {
-                should.not.exist(err);
-                spinTitle('I am a page title - Sauce Labs', driver, cb);
-              });
-            });
-          });
-        });
-      });
+      spinTitle('I am a page title - Sauce Labs', driver, cb);
     });
   });
 };

@@ -11,6 +11,15 @@ makeAdb(adbOpts, function(err, adb) {
     if (devices.length) {
       adb.waitForDevice(function(err) {
         adb.pushAppium(function(err) {
+          adb.forwardPort(function(err) {
+            var onReady = function() {
+              console.log("Ready for new commands");
+            };
+            var onExit = function() {
+              console.log("Process exited");
+            };
+            adb.runBootstrap(onReady, onExit);
+          });
         });
       });
     } else {

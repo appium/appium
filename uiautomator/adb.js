@@ -3,8 +3,11 @@
 var spawn = require('child_process').spawn
   , exec = require('child_process').exec
   , path = require('path')
+  , net = require('net')
   , logger = require('../logger').get('appium')
   , _ = require('underscore');
+
+var noop = function() {};
 
 var ADB = function(opts, cb) {
   if (!opts) {
@@ -14,17 +17,23 @@ var ADB = function(opts, cb) {
     opts.sdkRoot = process.env.ANDROID_HOME || '';
   }
   this.sdkRoot = opts.sdkRoot;
+  this.port = opts.port || 4724;
   this.avdName = opts.avdName;
   this.adb = "adb";
+  this.adbCmd = this.adb;
   this.curDeviceId = null;
+  this.socketClient = null;
+  this.proc = null;
+  this.onSocketReady = noop;
+  this.portForwarded = false;
   if (this.sdkRoot) {
     this.adb = path.resolve(this.sdkRoot, "platform-tools", "adb");
-    logger.info("Using adb from " + this.adb);
+    this.debug("Using adb from " + this.adb);
     cb(null, this);
   } else {
     exec("which adb", _.bind(function(err, stdout) {
       if (stdout) {
-        logger.info("Using adb from " + stdout);
+        this.debug("Using adb from " + stdout);
         this.adb = stdout;
         cb(null, this);
       } else {
@@ -35,7 +44,7 @@ var ADB = function(opts, cb) {
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {
-  logger.info("Getting connected devices...");
+  this.debug("Getting connected devices...");
   exec(this.adb + " devices", _.bind(function(err, stdout) {
     if (err) {
       logger.error(err);
@@ -48,16 +57,83 @@ ADB.prototype.getConnectedDevices = function(cb) {
           devices.push(device.split("\t"));
         }
       });
-      logger.info("\t" + devices.length + " device(s) connected");
+      this.debug("\t" + devices.length + " device(s) connected");
       if (devices.length) {
-        this.curDeviceId = devices[0][0];
+        this.setDeviceId(devices[0][0]);
       }
       cb(null, devices);
     }
   }, this));
 };
 
-ADB.prototype.forwardPort = function(systemPort, devicePort) {
+ADB.prototype.forwardPort = function(cb) {
+  this.requireDeviceId();
+  var devicePort = 4724;
+  this.debug("Forwarding system:" + this.port + " to device:" + devicePort);
+  var arg = "tcp:" + this.port + " tcp:" + devicePort;
+  exec(this.adbCmd + " forward " + arg, _.bind(function(err) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      this.debug("\tdone");
+      this.portForwarded = true;
+      cb(null);
+    }
+  }, this));
+};
+
+ADB.prototype.runBootstrap = function(readyCb, exitCb) {
+  this.requireDeviceId();
+  var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
+      "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
+  this.proc = spawn(this.adb, args);
+  this.onSocketReady = readyCb;
+  this.proc.stdout.on('data', _.bind(function(data) {
+    this.outputStreamHandler(data);
+  }, this));
+  this.proc.stderr.on('data', _.bind(function(data) {
+    this.errorStreamHandler(data);
+  }, this));
+  this.proc.on('exit', _.bind(function(code) {
+    exitCb(code);
+    if (this.socketClient) {
+      this.socketClient.end();
+      this.socketClient.destroy();
+    }
+  }, this));
+
+
+};
+
+ADB.prototype.checkForSocketReady = function(output) {
+  if (/Appium Socket Server Ready/.exec(output)) {
+    this.requirePortForwarded();
+    this.debug("Connecting to server on device...");
+    this.socketClient = net.connect(this.port, _.bind(function() {
+      this.debug("Connected!");
+      this.onSocketReady();
+    }, this));
+    this.socketClient.setEncoding('utf8');
+    this.socketClient.on('data', _.bind(function(data) {
+      this.debug("Received data from bootstrap");
+      data = JSON.parse(data);
+      this.debug(data);
+    }, this));
+  }
+};
+
+ADB.prototype.outputStreamHandler = function(output) {
+  this.checkForSocketReady(output);
+  logger.info(("[ADB STDOUT] " + output).green);
+};
+
+ADB.prototype.errorStreamHandler = function(output) {
+  logger.info(("[ADB STDERR] " + output).yellow);
+};
+
+ADB.prototype.debug = function(msg) {
+  logger.info("[ADB] " + msg);
 };
 
 ADB.prototype.isDeviceConnected = function(cb) {
@@ -72,6 +148,7 @@ ADB.prototype.isDeviceConnected = function(cb) {
 
 ADB.prototype.setDeviceId = function(deviceId) {
   this.curDeviceId = deviceId;
+  this.adbCmd = this.adb + " -s " + deviceId;
 };
 
 ADB.prototype.requireDeviceId = function() {
@@ -81,33 +158,42 @@ ADB.prototype.requireDeviceId = function() {
   }
 };
 
+ADB.prototype.requirePortForwarded = function() {
+  if (!this.portForwarded) {
+    throw new Error("This method requires the port be forwarded on the " +
+                    "device. Make sure to call forwardPort()!");
+  }
+};
+
 ADB.prototype.waitForDevice = function(cb) {
   this.requireDeviceId();
-  logger.info("Waiting for device " + this.curDeviceId + " to be ready");
-  exec(this.adb + " -s " + this.curDeviceId + " wait-for-device", function(err) {
+  this.debug("Waiting for device " + this.curDeviceId + " to be ready");
+  var cmd = this.adb + " -s " + this.curDeviceId + " wait-for-device";
+  exec(cmd, _.bind(function(err) {
     if (err) {
       logger.error(err);
       cb(err);
     } else {
-      logger.info("\tready!");
+      this.debug("\tready!");
       cb(null);
     }
-  });
+  }, this));
 };
 
 ADB.prototype.pushAppium = function(cb) {
-  logger.info("Pushing appium bootstrap to device...");
+  this.debug("Pushing appium bootstrap to device...");
   var binPath = path.resolve(__dirname, "bootstrap", "bin", "AppiumBootstrap.jar");
   var remotePath = "/data/local/tmp";
-  exec(this.adb + " push " + binPath + " " + remotePath, function(err) {
+  var cmd = this.adb + " push " + binPath + " " + remotePath;
+  exec(cmd, _.bind(function(err) {
     if (err) {
       logger.error(err);
       cb(err);
     } else {
-      logger.info("\tdone");
+      this.debug("\tdone");
       cb(null);
     }
-  });
+  }, this));
 };
 
 module.exports = function(opts, cb) {

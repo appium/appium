@@ -14,7 +14,7 @@ public class Bootstrap extends UiAutomatorTestCase {
 	public void testRunServer() {
 	    SocketServer server;
 	    try {
-	        server = new SocketServer(4723);
+	        server = new SocketServer(4724);
 	        server.listenForever();
 	    } catch (SocketServerException e) {
 	        Logger.error(e.getError());

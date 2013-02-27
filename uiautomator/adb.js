@@ -19,6 +19,9 @@ var ADB = function(opts, cb) {
   this.sdkRoot = opts.sdkRoot;
   this.port = opts.port || 4724;
   this.avdName = opts.avdName;
+  this.appPackage = opts.appPackage;
+  this.appActivity = opts.appActivity;
+  this.apkPath = opts.apkPath;
   this.adb = "adb";
   this.adbCmd = this.adb;
   this.curDeviceId = null;
@@ -128,12 +131,25 @@ ADB.prototype.checkForSocketReady = function(output) {
   }
 };
 
-ADB.prototype.sendCommand = function(cb) {
-  var cmd = {cmd: "shutdown"};
+ADB.prototype.sendAutomatorCommand = function(action, params, cb) {
+  var extra = {action: action, params: params};
+  this.sendCommand('action', extra, cb);
+};
+
+ADB.prototype.sendCommand = function(type, extra, cb) {
+  if (typeof extra === "undefined" || extra === null) {
+    extra = {};
+  }
+  var cmd = {cmd: type};
+  cmd = _.extend(cmd, extra);
   var cmdJson = JSON.stringify(cmd) + "\n";
   this.cmdCb = cb;
   this.debug("Sending command to android: " + cmdJson);
   this.socketClient.write(cmdJson);
+};
+
+ADB.prototype.sendShutdownCommand = function(cb) {
+  this.sendCommand('shutdown', null, cb);
 };
 
 ADB.prototype.outputStreamHandler = function(output) {
@@ -202,6 +218,19 @@ ADB.prototype.requirePortForwarded = function() {
   }
 };
 
+ADB.prototype.requireApp = function() {
+  if (!this.appPackage || !this.appActivity) {
+    throw new Error("This method requires that appPackage and appActivity " +
+                    "be sent in with options");
+  }
+};
+
+ADB.prototype.requireApk = function() {
+  if (!this.apkPath) {
+    throw new Error("This method requires that apkPath be sent in as option");
+  }
+};
+
 ADB.prototype.waitForDevice = function(cb) {
   this.requireDeviceId();
   this.debug("Waiting for device " + this.curDeviceId + " to be ready");
@@ -232,27 +261,48 @@ ADB.prototype.pushAppium = function(cb) {
   }, this));
 };
 
-ADB.prototype.startApp = function(appPackage, appActivity, cb) {
+ADB.prototype.startApp = function(cb) {
   this.requireDeviceId();
-  this.debug("Starting app " + appPackage + "/" + appActivity);
-  var cmd = this.adbCmd + " shell am start -n " + appPackage + "/" +
-            appPackage + "." + appActivity;
-  console.log(cmd);
-  exec(cmd, _.bind(function(err, stdout) {
+  this.requireApp();
+  this.debug("Starting app " + this.appPackage + "/" + this.appActivity);
+  var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
+            this.appPackage + "." + this.appActivity;
+  exec(cmd, _.bind(function(err) {
     if(err) {
       logger.error(err);
       cb(err);
     } else {
-      logger.info(stdout);
       cb(null);
     }
   }, this));
 };
 
-ADB.prototype.installApp = function(apkPath, cb) {
+ADB.prototype.uninstallApp = function(cb) {
   this.requireDeviceId();
-  this.debug("Installing app " + apkPath);
-  var cmd = this.adbCmd + " install -r " + apkPath;
+  this.requireApp();
+  this.debug("Uninstalling app " + this.appPackage);
+  var cmd = this.adbCmd + " uninstall " + this.appPackage;
+  exec(cmd, _.bind(function(err, stdout) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      stdout = stdout.trim();
+      if (stdout === "Success") {
+        this.debug("App was uninstalled");
+      } else {
+        this.debug("App was not uninstalled, maybe it wasn't on device?");
+      }
+      cb(null);
+    }
+  }, this));
+};
+
+ADB.prototype.installApp = function(cb) {
+  this.requireDeviceId();
+  this.requireApk();
+  this.debug("Installing app " + this.apkPath);
+  var cmd = this.adbCmd + " install -r " + this.apkPath;
   exec(cmd, _.bind(function(err) {
     if (err) {
       logger.error(err);
@@ -261,6 +311,15 @@ ADB.prototype.installApp = function(apkPath, cb) {
       cb(null);
     }
   }, this));
+};
+
+ADB.prototype.goToHome = function(cb) {
+  this.requireDeviceId();
+  this.debug("Pressing the HOME button");
+  var cmd = this.adbCmd + " shell input keyevent 3";
+  exec(cmd, function() {
+    cb();
+  });
 };
 
 module.exports = function(opts, cb) {

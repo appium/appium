@@ -1,5 +1,10 @@
 "use strict";
 
+var errors = require('./errors')
+  , deviceCommon = require('./device')
+  , NotImplementedError = errors.NotImplementedError
+  , UnknownError = errors.UnknownError;
+
 var Android = function(opts) {
   this.rest = opts.rest;
   this.apkPath = opts.apkPath;
@@ -10,6 +15,7 @@ var Android = function(opts) {
   this.progress = 0;
   this.onStop = function() {};
   this.implicitWaitMs = 0;
+  this.adb = null;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'Android'
@@ -27,11 +33,8 @@ Android.prototype.start = function(cb, onDie) {
 Android.prototype.stop = function(cb) {
 };
 
-Android.prototype.proxy = function(command, cb) {
-};
-
-Android.prototype.respond = function(response, cb) {
-};
+Android.prototype.proxy = deviceCommon.proxy;
+Android.prototype.respond = deviceCommon.respond;
 
 Android.prototype.setCommandTimeout = function(secs, cb) {
 };

@@ -21,7 +21,7 @@ var NotImplementedError = function(message) {
 };
 
 var UnknownError = function(message) {
-   this.message = message? message : "Invalid response from device";
+   this.message = message ? message : "Invalid response from device";
    this.name = "UnknownError";
 };
 

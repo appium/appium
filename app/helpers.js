@@ -77,10 +77,11 @@ exports.testZipArchive = function(zipPath, cb) {
   });
 };
 
-exports.unzipApp = function(zipPath, cb) {
+exports.unzipApp = function(zipPath, appExt, cb) {
   exports.unzipFile(zipPath, function(err, output) {
     if (!err) {
-      var match = /inflating: ([^\/]+\.app)\//.exec(output);
+      var reg = new RegExp("inflating: (.+" + appExt + ")/?");
+      var match = reg.exec(output);
       if (match) {
         var appPath = path.resolve(path.dirname(zipPath), match[1]);
         cb(null, appPath);

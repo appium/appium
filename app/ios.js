@@ -371,8 +371,7 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     if (strategy === "name") {
       command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
     } else if (strategy === "xpath") {
-      selector = escapeSpecialChars(selector, "'");
-      command = ["au.getElement", ext, "ByXpath('", selector, "'", ctx, ")"].join('');
+      command = ["au.getElement", ext, "ByXpath('", escapeSpecialChars(selector, "'"), "'", ctx, ")"].join('');
     } else {
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
     }

@@ -20,6 +20,16 @@ class AndroidCommandResult {
         }
     }
     
+    public AndroidCommandResult(WDStatus status, Object val) {
+        json = new JSONObject();
+        try {
+            json.put("status", status.code());
+            json.put("value", val);
+        } catch (JSONException e) {
+            Logger.error("Couldn't create android command result!");
+        }
+    }
+    
     public AndroidCommandResult(WDStatus status, String val) {
         try {
             json = new JSONObject();

@@ -5,6 +5,7 @@ var spawn = require('child_process').spawn
   , path = require('path')
   , net = require('net')
   , logger = require('../logger').get('appium')
+  , status = require('../app/uiauto/lib/status')
   , _ = require('underscore');
 
 var noop = function() {};
@@ -119,19 +120,32 @@ ADB.prototype.checkForSocketReady = function(output) {
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {
       this.debug("Received command result from bootstrap");
-      data = JSON.parse(data);
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        this.debug("Could not parse JSON from data: " + data);
+        data = {
+          status: status.codes.UnknownError.code
+          , value: "Got a bad response from Android server"
+        };
+      }
       if (this.cmdCb) {
-        this.cmdCb(data);
+        var next = this.cmdCb;
         this.cmdCb = null;
+        next(data);
       } else {
         this.debug("Got data when we weren't expecting it, ignoring:");
-        this.debug(data);
+        this.debug(JSON.stringify(data));
       }
     }, this));
   }
 };
 
 ADB.prototype.sendAutomatorCommand = function(action, params, cb) {
+  if (typeof params === "function") {
+    cb = params;
+    params = {};
+  }
   var extra = {action: action, params: params};
   this.sendCommand('action', extra, cb);
 };
@@ -144,7 +158,7 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
   cmd = _.extend(cmd, extra);
   var cmdJson = JSON.stringify(cmd) + "\n";
   this.cmdCb = cb;
-  this.debug("Sending command to android: " + cmdJson);
+  this.debug("Sending command to android: " + cmdJson.trim());
   this.socketClient.write(cmdJson);
 };
 

@@ -77,6 +77,8 @@ class SocketServer {
                 Logger.info("Got command of type " + cmd.commandType().toString());
                 res = runCommand(cmd);
                 Logger.info("Returning result: " + res);
+            } catch (CommandTypeException e) {
+                res = (new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage())).toString();
             } catch (JSONException e) {
                 res = (new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, "Error running and parsing command")).toString();
             }
@@ -87,7 +89,7 @@ class SocketServer {
         }
     }
     
-    private AndroidCommand getCommand(String data) throws JSONException {
+    private AndroidCommand getCommand(String data) throws JSONException, CommandTypeException {
         return new AndroidCommand(data);
     }
     
@@ -96,8 +98,11 @@ class SocketServer {
         if (cmd.commandType() == AndroidCommandType.SHUTDOWN) {
             keepListening = false;
             res = new AndroidCommandResult(WDStatus.SUCCESS, "OK, shutting down");
+        } else if (cmd.commandType() == AndroidCommandType.ACTION) {
+            res = new AndroidCommandExecutor(cmd).execute();
         } else {
-            res = new AndroidCommandResult(WDStatus.SUCCESS);
+            // this code should never be executed, here for future-proofing
+            res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, "Unknown command type, could not execute!");
         }
         return res.toString();
     }

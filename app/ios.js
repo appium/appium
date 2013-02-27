@@ -12,23 +12,11 @@ var path = require('path')
   , stopTimeWarp = require('../warp.js').stopTimeWarp
   , escapeSpecialChars = require('./helpers.js').escapeSpecialChars
   , rd = require('./hybrid/ios/remote-debugger')
-  , status = require("./uiauto/lib/status");
-
-var NotImplementedError = function(message) {
-   this.message = message? message : "Not implemented in this context, try " +
-                                     "switching into or out of a web view";
-   this.name = "NotImplementedError";
-};
-
-var UnknownError = function(message) {
-   this.message = message ? message : "Invalid response from device";
-   this.name = "UnknownError";
-};
-
-var ProtocolError = function(message) {
-   this.message = message;
-   this.name = "ProtocolError";
-};
+  , errors = require('./errors')
+  , deviceCommon = require('./device')
+  , status = require("./uiauto/lib/status")
+  , NotImplementedError = errors.NotImplementedError
+  , UnknownError = errors.UnknownError;
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
   this.rest = rest;
@@ -299,31 +287,8 @@ IOS.prototype.getCommandTimeout = function(cb) {
   this.proxy(cmd, cb);
 };
 
-IOS.prototype.proxy = function(command, cb) {
-  // was thinking we should use a queue for commands instead of writing to a file
-  this.push([command, cb]);
-  logger.info('Pushed command to appium work queue: ' + command);
-};
-
-IOS.prototype.respond = function(response, cb) {
-  if (typeof response === 'undefined') {
-    cb(null, '');
-  } else {
-    if (typeof(response) !== "object") {
-      cb(new UnknownError(), response);
-    } else if (!('status' in response)) {
-      cb(new ProtocolError('Status missing in response from device'), response);
-    } else {
-      var status = parseInt(response.status, 10);
-      if (isNaN(status)) {
-        cb(new ProtocolError('Invalid status in response from device'), response);
-      } else {
-        response.status = status;
-        cb(null, response);
-      }
-    }
-  }
-};
+IOS.prototype.proxy = deviceCommon.proxy;
+IOS.prototype.respond = deviceCommon.respond;
 
 IOS.prototype.push = function(elem) {
   this.queue.push(elem);

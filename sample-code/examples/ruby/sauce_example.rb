@@ -27,7 +27,7 @@ describe "Computation" do
   after(:each) do
     # Get the success by checking for assertion exceptions,
     # and log them against the job, which is exposed by the session_id
-    job_id = @driver.instance_variable_get(:@bridge).instance_variable_get(:@session_id)
+    job_id = @driver.send(:bridge).session_id
     update_job_success(job_id, example.exception.nil?)
     @driver.quit
   end

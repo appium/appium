@@ -246,15 +246,11 @@ module.exports.downloadUICatalog = function(cb) {
   });
 };
 
-module.exports.setupAndroidBootstrap = function(grunt, cb) {
+var setupAndroidProj = function(grunt, projPath, args, cb) {
   if (!process.env.ANDROID_HOME) {
     grunt.fatal("Could not find Android SDK, make sure to export ANDROID_HOME");
   }
   var cmd = path.resolve(process.env.ANDROID_HOME, "tools", "android");
-  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
-  var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
-              "android-17", "-p", "."];
-
   var proc = spawn(cmd, args, {cwd: projPath});
   proc.stdout.setEncoding('utf8');
   proc.stderr.setEncoding('utf8');
@@ -269,7 +265,20 @@ module.exports.setupAndroidBootstrap = function(grunt, cb) {
   });
 };
 
-module.exports.buildAndroidBootstrap = function(grunt, cb) {
+module.exports.setupAndroidBootstrap = function(grunt, cb) {
+  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
+              "android-17", "-p", "."];
+  setupAndroidProj(grunt, projPath, args, cb);
+};
+
+module.exports.setupAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
+  var args = ["update", "project", "--subprojects", "-t", "android-17", "-p", "."];
+  setupAndroidProj(grunt, appPath, args, cb);
+};
+
+var buildAndroidProj = function(grunt, projPath, target, cb) {
   exec('which ant', function(err, stdout) {
     if (err) {
       grunt.fatal(err);
@@ -277,8 +286,7 @@ module.exports.buildAndroidBootstrap = function(grunt, cb) {
       if (stdout) {
         var ant = stdout.trim();
         grunt.log.write("Using ant found at " + ant);
-        var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
-        var proc = spawn(ant, ["build"], {cwd: projPath});
+        var proc = spawn(ant, [target], {cwd: projPath});
         proc.stdout.setEncoding('utf8');
         proc.stderr.setEncoding('utf8');
         proc.stdout.on('data', function(data) {
@@ -295,4 +303,14 @@ module.exports.buildAndroidBootstrap = function(grunt, cb) {
       }
     }
   });
+};
+
+module.exports.buildAndroidBootstrap = function(grunt, cb) {
+  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  buildAndroidProj(grunt, projPath, "build", cb);
+};
+
+module.exports.buildAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
+  buildAndroidProj(grunt, appPath, "debug", cb);
 };

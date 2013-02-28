@@ -8,7 +8,9 @@ var path = require('path')
   , buildApp = gruntHelpers.buildApp
   , signApp = gruntHelpers.signApp
   , setupAndroidBootstrap = gruntHelpers.setupAndroidBootstrap
+  , setupAndroidApp = gruntHelpers.setupAndroidApp
   , buildAndroidBootstrap = gruntHelpers.buildAndroidBootstrap
+  , buildAndroidApp = gruntHelpers.buildAndroidApp
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -101,6 +103,18 @@ module.exports = function(grunt) {
   grunt.registerTask('buildAndroidBootstrap', function() {
     var cb = this.async();
     buildAndroidBootstrap(grunt, function(exitCode) {
+      cb(exitCode === 0);
+    });
+  });
+  grunt.registerTask('configAndroidApp', function(appName) {
+    var cb = this.async();
+    setupAndroidApp(grunt, appName, function(exitCode) {
+      cb(exitCode === 0);
+    });
+  });
+  grunt.registerTask('buildAndroidApp', function(appName) {
+    var cb = this.async();
+    buildAndroidApp(grunt, appName, function(exitCode) {
       cb(exitCode === 0);
     });
   });

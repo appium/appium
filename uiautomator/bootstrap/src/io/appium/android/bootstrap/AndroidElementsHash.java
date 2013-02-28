@@ -11,23 +11,24 @@ class ElementNotInHashException extends Exception {
 
 class AndroidElementsHash {
     
-    private Hashtable<String, UiObject> elements;
+    private Hashtable<String, AndroidElement> elements;
     private Integer counter;
     private static AndroidElementsHash instance;
     
     public AndroidElementsHash() {
         counter = 0;
-        elements = new Hashtable<String, UiObject>();
+        elements = new Hashtable<String, AndroidElement>();
     }
     
     public String addElement(UiObject element) {
         String key = (counter++).toString();
-        elements.put(key, element);
+        AndroidElement el = new AndroidElement(element);
+        elements.put(key, el);
         return key;
     }
     
-    public UiObject getElement(String key) throws ElementNotInHashException {
-        UiObject el = elements.get(key);
+    public AndroidElement getElement(String key) throws ElementNotInHashException {
+        AndroidElement el = elements.get(key);
         if (el == null) {
             throw new ElementNotInHashException("Could not find element with key " + key);
         } else {

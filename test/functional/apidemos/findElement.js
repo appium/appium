@@ -14,7 +14,11 @@ describeWd('app', function(h) {
     h.driver.elementByTagName("text", function(err, el) {
       should.not.exist(err);
       should.exist(el);
-      done();
+      el.text(function(err, text) {
+        should.not.exist(err);
+        text.should.eql("API Demos");
+        done();
+      });
     });
   });
 });

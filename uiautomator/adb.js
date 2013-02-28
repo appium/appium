@@ -77,10 +77,10 @@ ADB.prototype.start = function(onReady, onExit) {
                     if (err) {
                       onReady(err);
                     } else if (this.appPackage) {
-                      this.uninstallApp(_.bind(function(err) {
-                        if (err) {
-                          onReady(err);
-                        } else {
+                      //this.uninstallApp(_.bind(function(err) {
+                        //if (err) {
+                          //onReady(err);
+                        //} else {
                           this.installApp(_.bind(function(err) {
                             if (err) {
                               onReady(err);
@@ -93,8 +93,8 @@ ADB.prototype.start = function(onReady, onExit) {
                                 }
                               }, this));
                             }
-                          }, this));
-                        }
+                          //}, this));
+                        //}
                       }, this));
                     } else {
                       doRun();

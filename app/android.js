@@ -61,9 +61,11 @@ Android.prototype.start = function(cb, onDie) {
       this.cbForCurrentCmd(error, null);
       code = code || 1;
     }
-    this.adb = null;
-    this.onStop(code);
-    this.onStop = null;
+    this.adb.uninstallApp(_.bind(function() {
+      this.adb = null;
+      this.onStop(code);
+      this.onStop = null;
+    }, this));
   }, this);
 
   if (this.adb === null) {

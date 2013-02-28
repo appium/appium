@@ -124,7 +124,7 @@ ADB.prototype.getConnectedDevices = function(cb) {
           devices.push(device.split("\t"));
         }
       });
-      this.debug("\t" + devices.length + " device(s) connected");
+      this.debug(devices.length + " device(s) connected");
       if (devices.length) {
         this.setDeviceId(devices[0][0]);
       }
@@ -315,15 +315,35 @@ ADB.prototype.requireApk = function() {
 
 ADB.prototype.waitForDevice = function(cb) {
   this.requireDeviceId();
-  this.debug("Waiting for device " + this.curDeviceId + " to be ready");
-  var cmd = this.adb + " -s " + this.curDeviceId + " wait-for-device";
+  this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
+             "and to respond to shell commands");
+  var cmd = this.adbCmd + " wait-for-device";
+
+  var timeoutSecs = 5;
+  var timedOut = false;
+  setTimeout(function() {
+    timedOut = true;
+    cb("Device did not become ready in " + timeoutSecs + " secs; are " +
+       "you sure it's powered on?");
+  }, timeoutSecs * 1000);
+
   exec(cmd, _.bind(function(err) {
-    if (err) {
-      logger.error(err);
-      cb(err);
-    } else {
-      this.debug("\tready!");
-      cb(null);
+    if (!timedOut) {
+      if (err) {
+        logger.error(err);
+        cb(err);
+      } else {
+        exec(this.adbCmd + " shell ls", _.bind(function(err) {
+          if (!timedOut) {
+            if (err) {
+              logger.error(err);
+              cb(err);
+            } else {
+              cb(null);
+            }
+          }
+        }, this));
+      }
     }
   }, this));
 };

@@ -259,6 +259,9 @@ Appium.prototype.invoke = function() {
       me.progress++;
       me.sessions[me.progress].sessionId = me.sessionId;
       me.sessions[me.progress].callback(err, me.device);
+      if (err) {
+        me.onDeviceDie(1);
+      }
     }, _.bind(me.onDeviceDie, me));
   }
 };

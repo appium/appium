@@ -3,6 +3,7 @@
 var spawn = require('child_process').spawn
   , exec = require('child_process').exec
   , path = require('path')
+  , fs = require('fs')
   , net = require('net')
   , logger = require('../logger').get('appium')
   , status = require('../app/uiauto/lib/status')
@@ -320,21 +321,25 @@ ADB.prototype.waitForDevice = function(cb) {
   var cmd = this.adbCmd + " wait-for-device";
 
   var timeoutSecs = 5;
-  var timedOut = false;
+  var movedOn = false;
   setTimeout(function() {
-    timedOut = true;
-    cb("Device did not become ready in " + timeoutSecs + " secs; are " +
-       "you sure it's powered on?");
+    if (!movedOn) {
+      movedOn = true;
+      cb("Device did not become ready in " + timeoutSecs + " secs; are " +
+         "you sure it's powered on?");
+    }
   }, timeoutSecs * 1000);
 
   exec(cmd, _.bind(function(err) {
-    if (!timedOut) {
+    if (!movedOn) {
       if (err) {
         logger.error(err);
+        movedOn = true;
         cb(err);
       } else {
-        exec(this.adbCmd + " shell ls", _.bind(function(err) {
-          if (!timedOut) {
+        exec(this.adbCmd + " shell echo 'ready'", _.bind(function(err) {
+          if (!movedOn) {
+            movedOn = true;
             if (err) {
               logger.error(err);
               cb(err);
@@ -351,14 +356,21 @@ ADB.prototype.waitForDevice = function(cb) {
 ADB.prototype.pushAppium = function(cb) {
   this.debug("Pushing appium bootstrap to device...");
   var binPath = path.resolve(__dirname, "bootstrap", "bin", "AppiumBootstrap.jar");
-  var remotePath = "/data/local/tmp";
-  var cmd = this.adb + " push " + binPath + " " + remotePath;
-  exec(cmd, _.bind(function(err) {
+  fs.stat(binPath, _.bind(function(err) {
     if (err) {
-      logger.error(err);
-      cb(err);
+      cb("Could not find AppiumBootstrap.jar; please run " +
+         "'grunt buildAppiumBootstrap'");
     } else {
-      cb(null);
+      var remotePath = "/data/local/tmp";
+      var cmd = this.adb + " push " + binPath + " " + remotePath;
+      exec(cmd, _.bind(function(err) {
+        if (err) {
+          logger.error(err);
+          cb(err);
+        } else {
+          cb(null);
+        }
+      }, this));
     }
   }, this));
 };

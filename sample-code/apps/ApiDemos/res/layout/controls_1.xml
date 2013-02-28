@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+       <LinearLayout
+           android:orientation="horizontal"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+        <Button android:id="@+id/button"
+            android:text="@string/controls_1_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button android:id="@+id/button_disabled"
+            android:text="@string/controls_1_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText android:id="@+id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText android:id="@+id/edit2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+      </LinearLayout>
+
+        <CheckBox android:id="@+id/check1"
+            android:paddingBottom="24sp"
+	        android:paddingTop="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/controls_1_checkbox_1" />
+
+        <CheckBox android:id="@+id/check2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/controls_1_checkbox_2" />
+    
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+    
+            <RadioButton android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/controls_1_radiobutton_1" />
+    
+            <RadioButton android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/controls_1_radiobutton_2" />
+    
+        </RadioGroup>
+    
+        <CheckBox android:id="@+id/star"
+            style="?android:attr/starStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/controls_1_star" />
+                            
+        <ToggleButton android:id="@+id/toggle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+   
+        <ToggleButton android:id="@+id/toggle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+             
+        <Spinner android:id="@+id/spinner1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawSelectorOnTop="true"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:text="@string/textColorPrimary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:focusable="true"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:text="@string/textColorSecondary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorSecondary"
+            android:focusable="true"
+        />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:text="@string/textColorTertiary"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorTertiary"
+            android:focusable="true"
+        />
+
+        <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:text="@string/listSeparatorTextViewStyle"
+            android:layout_marginTop="5dip"
+        />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="400dip"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="(And all inside of a ScrollView!)"
+        />
+        
+    </LinearLayout>
+
+</ScrollView>

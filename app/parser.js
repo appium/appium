@@ -54,5 +54,13 @@ module.exports = function() {
     , { defaultValue: false, required: false, help: 'use time warp to speed up test execution (WARNING, this modifies system clock, could be bad news bears!)'
   });
 
+  parser.addArgument(['--app-pkg']
+    , { dest: 'androidPackage', defaultValue: null, required: false, help: "android package name"
+  });
+
+  parser.addArgument(['--app-activity']
+    , { dest: 'androidActivity', defaultValue: 'MainActivity', required: false, help: "android app activity to launch" }
+  );
+
   return parser;
 };

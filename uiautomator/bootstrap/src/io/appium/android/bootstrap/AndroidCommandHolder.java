@@ -102,9 +102,6 @@ class AndroidCommandHolder {
             counter++;
             if (lastFoundObj != null && lastFoundObj.exists()) {
                 elIds.add(elHash.addElement(lastFoundObj));
-                try {
-                    Logger.info(lastFoundObj.getText());
-                } catch (UiObjectNotFoundException e) { }
             } else {
                 keepSearching = false;
             }

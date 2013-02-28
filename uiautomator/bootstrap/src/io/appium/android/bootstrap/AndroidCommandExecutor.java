@@ -2,6 +2,9 @@ package io.appium.android.bootstrap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
+
+import com.android.uiautomator.core.UiObjectNotFoundException;
 
 import java.util.Hashtable;
 
@@ -45,6 +48,30 @@ class AndroidCommandExecutor {
             } else if (action.equals("getDeviceSize")) {
                 JSONObject res = AndroidCommandHolder.getDeviceSize();
                 return getSuccessResult(res);
+            } else if (action.equals("find")) {
+                String strategy = (String) params.get("strategy");
+                String selector = (String) params.get("selector");
+                Boolean multiple = (Boolean) params.get("multiple");
+                String contextId = (String) params.get("context");
+                if (multiple) {
+                    String[] elIds = AndroidCommandHolder.findElements(strategy, selector, contextId);
+                    JSONArray res = new JSONArray();
+                    for (String elId : elIds) {
+                        JSONObject idObj = new JSONObject();
+                        idObj.put("ELEMENT",  elId);
+                        res.put(idObj);
+                    }
+                    return getSuccessResult(res);
+                } else {
+                    try {
+                        String elId = AndroidCommandHolder.findElement(strategy, selector, contextId);
+                        JSONObject res = new JSONObject();
+                        res.put("ELEMENT", elId);
+                        return getSuccessResult(res);
+                    } catch (UiObjectNotFoundException e) {
+                        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
+                    }
+                }
             } else {
                 return getErrorResult("Unknown command: " + action);
             }

@@ -9,16 +9,13 @@ var path = require('path')
       "android", appPkg, appAct)
   , should = require('should');
 
-describeWd('app', function(h) {
-  it('should click', function(done) {
-    h.driver.execute("mobile: tap", [{x: 100, y: 300}], function(err) {
+describeWd('basic', function(h) {
+  it('should get device size', function(done) {
+    h.driver.getWindowSize(function(err, size) {
       should.not.exist(err);
-      h.driver.elementByTagName("text", function(err, el) {
-        should.not.exist(err);
-        should.exist(el);
-        console.log(el.value);
-        done();
-      });
+      size.width.should.be.above(0);
+      size.height.should.be.above(0);
+      done();
     });
   });
 });

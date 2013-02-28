@@ -3,6 +3,12 @@ package io.appium.android.bootstrap;
 import java.util.Hashtable;
 import com.android.uiautomator.core.UiObject;
 
+class ElementNotInHashException extends Exception {
+    public ElementNotInHashException(String message) {
+        super(message);
+    }
+}
+
 class AndroidElementsHash {
     
     private Hashtable<String, UiObject> elements;
@@ -20,8 +26,13 @@ class AndroidElementsHash {
         return key;
     }
     
-    public UiObject getElement(String key) {
-        return elements.get(key);
+    public UiObject getElement(String key) throws ElementNotInHashException {
+        UiObject el = elements.get(key);
+        if (el == null) {
+            throw new ElementNotInHashException("Could not find element with key " + key);
+        } else {
+            return el;
+        }
     }
     
     public static AndroidElementsHash getInstance() {

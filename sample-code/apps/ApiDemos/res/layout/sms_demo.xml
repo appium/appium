@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2010 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- Demonstrates sending and receiving SMS messages.
+     See corresponding Java code SmsMessagingDemo.java
+-->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dip">
+        <TextView
+            android:textColor="#ff0000"
+            android:textStyle="bold"
+            android:text="@string/sms_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <CheckBox
+            android:id="@+id/sms_enable_receiver"
+            android:text="@string/sms_enable_receiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TableLayout
+            android:padding="6dip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+            <TableRow android:layout_width="match_parent">
+                <TextView android:text="@string/sms_recipient_label" />
+                <EditText android:id="@+id/sms_recipient" />
+            </TableRow>
+            <TableRow>
+                <TextView android:text="@string/sms_content_label" />
+                <EditText android:id="@+id/sms_content" />
+            </TableRow>
+            <TableRow>
+                <Button
+                    android:id="@+id/sms_send_message"
+                    android:text="@string/sms_send_message"
+                    android:layout_column="1" />
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:id="@+id/sms_status"
+                    android:layout_column="1" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</ScrollView>

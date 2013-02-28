@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- Demonstrates an activity with a dialog theme.
+     See corresponding Java code com.android.sdk.app.DialogActivity.java. -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="4dp" android:gravity="center_horizontal">
+    
+    <!-- Message to show to use. -->
+    <TextView android:id="@+id/text"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dialog_activity_text"/>
+        
+    <!-- Container in which we are going to add and remove views, to demonstrate
+         how the layout adjusts based on size. -->
+    <LinearLayout android:id="@+id/inner_content"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="4dp" android:paddingBottom="4dp">
+    </LinearLayout>
+    
+    <!-- Alert dialog style buttons along the bottom. -->
+    <LinearLayout style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:measureWithLargestChild="true">
+        <Button style="?android:attr/buttonBarButtonStyle" android:id="@+id/add"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_activity_add" />
+        <Button style="?android:attr/buttonBarButtonStyle" android:id="@+id/remove"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/dialog_activity_remove" />
+    </LinearLayout>
+</LinearLayout>

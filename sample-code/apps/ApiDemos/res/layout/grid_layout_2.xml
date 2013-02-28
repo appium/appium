@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2011 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:useDefaultMargins="true"
+    android:alignmentMode="alignBounds"
+    android:columnOrderPreserved="false"
+    android:columnCount="4"
+    >
+    <TextView
+        android:text="Email setup"
+        android:textSize="32dip"
+        android:layout_columnSpan="4"
+        android:layout_gravity="center_horizontal"
+    />
+    <TextView
+        android:text="You can configure email in a few simple steps:"
+        android:textSize="16dip"
+        android:layout_columnSpan="4"
+        android:layout_gravity="left"
+    />
+    <TextView
+        android:text="Email address:"
+        android:layout_gravity="right"
+    />
+    <EditText
+        android:ems="10"
+    />
+    <TextView
+        android:text="Password:"
+        android:layout_column="0"
+        android:layout_gravity="right"
+    />
+    <EditText
+        android:ems="8"
+    />
+    <Button
+        android:text="Manual setup"
+        android:layout_row="5"
+        android:layout_column="3"
+    />
+    <Button
+        android:text="Next"
+        android:layout_column="3"
+        android:layout_gravity="fill_horizontal"
+    />
+</GridLayout>

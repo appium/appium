@@ -21,5 +21,27 @@ describeWd('app', function(h) {
       });
     });
   });
+  it('should find multiple elements by tag name', function(done) {
+    h.driver.elementsByTagName("text", function(err, els) {
+      should.not.exist(err);
+      els.length.should.equal(11);
+      done();
+    });
+  });
+  it('should not find an element that doesnt exist', function(done) {
+    h.driver.elementByTagName("blargimarg", function(err, el) {
+      should.exist(err);
+      should.not.exist(el);
+      err.status.should.equal(7);
+      done();
+    });
+  });
+  it('should not find multiple elements that doesnt exist', function(done) {
+    h.driver.elementsByTagName("blargimarg", function(err, els) {
+      should.not.exist(err);
+      els.length.should.equal(0);
+      done();
+    });
+  });
 });
 

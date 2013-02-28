@@ -55,6 +55,8 @@ class AndroidCommandExecutor {
                         JSONObject res = AndroidCommandHolder.findElement(strategy, selector, contextId);
                         return getSuccessResult(res);
                     } catch (UiObjectNotFoundException e) {
+                        return new AndroidCommandResult(WDStatus.STALE_ELEMENT_REFERENCE);
+                    } catch (ElementNotFoundException e) {
                         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
                     }
                 }

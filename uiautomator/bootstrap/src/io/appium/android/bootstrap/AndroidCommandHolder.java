@@ -36,8 +36,8 @@ class AndroidCommandHolder {
         UiDevice d = UiDevice.getInstance();
         JSONObject res = new JSONObject();
         try {
-            res.put("x", d.getDisplayHeight());
-            res.put("y", d.getDisplayWidth());
+            res.put("width", d.getDisplayHeight());
+            res.put("height", d.getDisplayWidth());
         } catch (JSONException e) {
             throw new AndroidCommandException("Error serializing height/width data into JSON");
         }

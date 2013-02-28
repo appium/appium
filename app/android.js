@@ -217,7 +217,7 @@ Android.prototype.getSize = function(elementId, cb) {
 };
 
 Android.prototype.getWindowSize = function(windowHandle, cb) {
-    cb(new NotImplementedError(), null);
+  this.proxy(["getDeviceSize"], cb);
 };
 
 Android.prototype.getPageIndex = function(elementId, cb) {

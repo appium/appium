@@ -51,7 +51,7 @@ var describeWithDriver = function(desc, tests, host, port, caps, extraCaps, time
   });
 };
 
-var describeForApp = function(app, device) {
+var describeForApp = function(app, device, appPackage, appActivity) {
   if (typeof device === "undefined") {
     device = "ios";
   }
@@ -75,7 +75,15 @@ var describeForApp = function(app, device) {
     if (typeof extraCaps === "undefined") {
       extraCaps = {};
     }
-    extraCaps = _.extend(extraCaps, {app: appPath, browserName: browserName});
+    var newExtraCaps = {
+      app: appPath,
+      browserName: browserName
+    };
+    if (typeof appPackage !== "undefined") {
+      newExtraCaps['app-package'] = appPackage;
+      newExtraCaps['app-activity'] = appActivity;
+    }
+    extraCaps = _.extend(extraCaps, newExtraCaps);
     return describeWithDriver(desc, tests, host, port, caps, extraCaps);
   };
 };

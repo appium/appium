@@ -75,15 +75,63 @@ Android.prototype.start = function(cb, onDie) {
 };
 
 Android.prototype.stop = function(cb) {
+  if (this.adb === null) {
+    logger.info("Trying to stop adb but it already exited");
+    cb();
+  } else {
+    if (cb) {
+      this.onStop = cb;
+    }
+    this.adb.sendShutdownCommand(_.bind(function() {
+      logger.info("Sent shutdown command, waiting for ADB to stop...");
+    }, this));
+    this.queue = [];
+    this.progress = 0;
+  }
 };
 
 Android.prototype.proxy = deviceCommon.proxy;
 Android.prototype.respond = deviceCommon.respond;
 
+Android.prototype.push = function(elem) {
+  this.queue.push(elem);
+
+  var next = _.bind(function() {
+    if (this.queue.length <= 0 || this.progress > 0) {
+      return;
+    }
+
+    var target = this.queue.shift()
+      , action = target[0][0]
+      , params = typeof target[0][1] === "undefined" ? {} : target[0][1]
+      , cb = target[1];
+
+    this.cbForCurrentCmd = cb;
+
+    this.progress++;
+
+    this.adb.sendAutomatorCommand(action, params, _.bind(function(response) {
+      this.cbForCurrentCmd = null;
+      if (typeof cb === 'function') {
+        this.respond(response, cb);
+      }
+
+      // maybe there's moar work to do
+      this.progress--;
+      next();
+    }, this));
+  }, this);
+
+  next();
+};
+
 Android.prototype.setCommandTimeout = function(secs, cb) {
+  // do nothing here for now
+  cb();
 };
 
 Android.prototype.resetCommandTimeout = function(cb) {
+  cb();
 };
 
 Android.prototype.getCommandTimeout = function(cb) {
@@ -111,6 +159,7 @@ Android.prototype.click = function(elementId, cb) {
 };
 
 Android.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
+  this.proxy(["click", {x: x, y: y}], cb);
 };
 
 Android.prototype.clear = function(elementId, cb) {

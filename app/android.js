@@ -1,15 +1,19 @@
 "use strict";
 
 var errors = require('./errors')
+  , adb = require('../uiautomator/adb')
+  , _ = require('underscore')
+  , logger = require('../logger').get('appium')
   , deviceCommon = require('./device')
   , NotImplementedError = errors.NotImplementedError
   , UnknownError = errors.UnknownError;
 
 var Android = function(opts) {
   this.rest = opts.rest;
-  this.apkPath = opts.apkPath;
-  this.appPackage = opts.appPackage;
-  this.appActivity = opts.appActivity;
+  this.opts = opts;
+  //this.apkPath = opts.apkPath;
+  //this.appPackage = opts.appPackage;
+  //this.appActivity = opts.appActivity;
   this.verbose = opts.verbose;
   this.queue = [];
   this.progress = 0;
@@ -28,6 +32,46 @@ var Android = function(opts) {
 };
 
 Android.prototype.start = function(cb, onDie) {
+  if (typeof onDie === "function") {
+    this.onStop = onDie;
+  }
+  var didLaunch = false;
+
+  var onLaunch = _.bind(function(err) {
+    if (err) {
+      logger.error("ADB failed to launch!");
+      this.adb = null;
+      this.onStop = null;
+      cb(err);
+    } else {
+      logger.info("ADB launched! Ready for commands");
+      didLaunch = true;
+      cb(null);
+    }
+  }, this);
+
+  var onExit = _.bind(function(code) {
+    if (!didLaunch) {
+      logger.error("ADB quit before it successfully launched");
+      cb("ADB quit unexpectedly before successfully launching");
+      code = code || 1;
+    } else if (typeof this.cbForCurrentCmd === "function") {
+      var error = new UnknownError("ADB died while responding to command, " +
+                                   "please check appium logs!");
+      this.cbForCurrentCmd(error, null);
+      code = code || 1;
+    }
+    this.adb = null;
+    this.onStop(code);
+    this.onStop = null;
+  }, this);
+
+  if (this.adb === null) {
+    this.adb = adb(this.opts);
+    this.adb.start(onLaunch, onExit);
+  } else {
+    logger.error("Tried to start ADB when we already have one running!");
+  }
 };
 
 Android.prototype.stop = function(cb) {

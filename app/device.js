@@ -35,3 +35,25 @@ exports.proxy = function(command, cb) {
   }
   logger.info('Pushed command to appium work queue: ' + command);
 };
+
+exports.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
+  if (typeof intervalMs === "undefined") {
+    intervalMs = 500;
+  }
+  var begunAt = Date.now();
+  var endAt = begunAt + waitMs;
+  var me = this;
+  var spin = function() {
+    condFn(function(condMet) {
+      var args = Array.prototype.slice.call(arguments);
+      if (condMet) {
+        cb.apply(me, args.slice(1));
+      } else if (Date.now() < endAt) {
+        setTimeout(spin, intervalMs);
+      } else {
+        cb.apply(me, args.slice(1));
+      }
+    });
+  };
+  spin();
+};

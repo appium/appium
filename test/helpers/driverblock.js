@@ -26,7 +26,10 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
     driverHolder.driver.init(caps, function(err, sessionId) {
       should.not.exist(err);
       driverHolder.sessionId = sessionId;
-      done();
+      driverHolder.driver.setImplicitWaitTimeout(5000, function(err) {
+        should.not.exist(err);
+        done();
+      });
     });
   });
 

@@ -75,20 +75,36 @@ class AndroidCommandHolder {
         }
     }
     
-    public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException {
+    public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException, UiObjectNotFoundException {
         ArrayList<String> elIds = new ArrayList<String>();
         JSONArray res = new JSONArray();
         UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, true);
         UiObject lastFoundObj;
         boolean keepSearching = true;
+        AndroidElement baseEl = null;
         AndroidElementsHash elHash = AndroidElementsHash.getInstance();
+        
+        if (!contextId.isEmpty()) {
+            try {
+                baseEl = elHash.getElement(contextId);
+            } catch (ElementNotInHashException e) {
+                throw new AndroidCommandException(e.getMessage());
+            }
+        }
         
         int counter = 0;
         while (keepSearching) {
-            lastFoundObj = new UiObject(sel.instance(counter));
+            if (baseEl == null) {
+                lastFoundObj = new UiObject(sel.instance(counter));
+            } else {
+                lastFoundObj = baseEl.getChild(sel.instance(counter));
+            }
             counter++;
             if (lastFoundObj != null && lastFoundObj.exists()) {
                 elIds.add(elHash.addElement(lastFoundObj));
+                try {
+                    Logger.info(lastFoundObj.getText());
+                } catch (UiObjectNotFoundException e) { }
             } else {
                 keepSearching = false;
             }
@@ -110,6 +126,7 @@ class AndroidCommandHolder {
         UiSelector s = new UiSelector();
         if (strategy.equals("tag name")) {
             String androidClass = AndroidElementClassMap.match(selector);
+            Logger.info("Using class selector " + androidClass + " for find");
             s = s.className(androidClass);
         } else {
             throw new InvalidStrategyException(strategy + " is not a supported selector strategy");

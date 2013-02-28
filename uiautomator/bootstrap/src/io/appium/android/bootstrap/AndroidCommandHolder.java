@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import com.android.uiautomator.core.UiDevice;
@@ -43,7 +44,7 @@ class AndroidCommandHolder {
         return res;
     }
     
-    public static JSONObject findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException, AndroidCommandException {
+    public static JSONObject findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException, AndroidCommandException, ElementNotFoundException {
         JSONObject res = new JSONObject();
         String elId;
         UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, false);
@@ -60,18 +61,39 @@ class AndroidCommandHolder {
             }
             el = baseEl.getChild(sel);
         }
-        elId = elHash.addElement(el);
-        try {
-            res.put("ELEMENT", elId);
-        } catch (JSONException e) {
-            throw new AndroidCommandException("Error serializing element ID into JSON");
+        
+        if (el.exists()) {
+            elId = elHash.addElement(el);
+            try {
+                res.put("ELEMENT", elId);
+            } catch (JSONException e) {
+                throw new AndroidCommandException("Error serializing element ID into JSON");
+            }
+            return res;
+        } else {
+            throw new ElementNotFoundException(strategy, selector);
         }
-        return res;
     }
     
     public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException {
-        String[] elIds = {};
+        ArrayList<String> elIds = new ArrayList<String>();
         JSONArray res = new JSONArray();
+        UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, true);
+        UiObject lastFoundObj;
+        boolean keepSearching = true;
+        AndroidElementsHash elHash = AndroidElementsHash.getInstance();
+        
+        int counter = 0;
+        while (keepSearching) {
+            lastFoundObj = new UiObject(sel.instance(counter));
+            counter++;
+            if (lastFoundObj != null && lastFoundObj.exists()) {
+                elIds.add(elHash.addElement(lastFoundObj));
+            } else {
+                keepSearching = false;
+            }
+        }
+        
         for (String elId : elIds) {
             JSONObject idObj = new JSONObject();
             try {

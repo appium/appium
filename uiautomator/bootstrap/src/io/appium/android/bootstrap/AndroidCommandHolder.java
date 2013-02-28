@@ -13,9 +13,6 @@ import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiSelector;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 
-import io.appium.android.bootstrap.AndroidElementClassMap;
-import io.appium.android.bootstrap.AndroidElementsHash;
-
 class AndroidCommandException extends Exception {
     public AndroidCommandException(String msg) {
         super(msg);
@@ -51,7 +48,7 @@ class AndroidCommandHolder {
         String elId;
         UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, false);
         UiObject el;
-        UiObject baseEl;
+        AndroidElement baseEl;
         AndroidElementsHash elHash = AndroidElementsHash.getInstance();
         if (contextId.isEmpty()) {
             el = new UiObject(sel);
@@ -101,12 +98,6 @@ class AndroidCommandHolder {
         }
         
         return s;
-    }
-    
-    public static String findElementByClass(String className) throws UiObjectNotFoundException {
-        AndroidElementsHash els = AndroidElementsHash.getInstance();
-        UiObject el = new UiObject((new UiSelector()).className(className).instance(0));
-        return els.addElement(el);
     }
 
 }

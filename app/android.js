@@ -170,6 +170,7 @@ Android.prototype.setValue = function(elementId, value, cb) {
 };
 
 Android.prototype.click = function(elementId, cb) {
+  this.proxy(["element:click", {elementId: elementId}], cb);
 };
 
 Android.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
@@ -180,6 +181,7 @@ Android.prototype.clear = function(elementId, cb) {
 };
 
 Android.prototype.getText = function(elementId, cb) {
+  this.proxy(["element:getText", {elementId: elementId}], cb);
 };
 
 Android.prototype.getAttribute = function(elementId, attributeName, cb) {

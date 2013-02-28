@@ -13,12 +13,6 @@ import java.util.Hashtable;
 //import java.beans.IntrospectionException;
 //import java.beans.PropertyDescriptor;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidCommandHolder;
-import io.appium.android.bootstrap.AndroidCommandException;
-import io.appium.android.bootstrap.WDStatus;
-
 class AndroidCommandExecutor {
     
     AndroidCommand command;
@@ -63,6 +57,26 @@ class AndroidCommandExecutor {
                     } catch (UiObjectNotFoundException e) {
                         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
                     }
+                }
+            } else if (action.startsWith("element:")) {
+                action = action.substring(8);
+                String elId = (String)params.get("elementId");
+                AndroidElement el;
+                try {
+                    el = AndroidElementsHash.getInstance().getElement(elId);
+                } catch (ElementNotInHashException e) {
+                    throw new AndroidCommandException(e.getMessage());
+                }
+                try {
+                    if (action.equals("click")) {
+                        return getSuccessResult(el.click());
+                    } else if (action.equals("getText")) {
+                        return getSuccessResult(el.getText());
+                    } else {
+                        return getErrorResult("Unknown command: element:" + action);
+                    }
+                } catch (UiObjectNotFoundException e) {
+                    return new AndroidCommandResult(WDStatus.STALE_ELEMENT_REFERENCE);
                 }
             } else {
                 return getErrorResult("Unknown command: " + action);

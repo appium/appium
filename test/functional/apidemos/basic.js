@@ -13,7 +13,12 @@ describeWd('app', function(h) {
   it('should click', function(done) {
     h.driver.execute("mobile: tap", [{x: 100, y: 300}], function(err) {
       should.not.exist(err);
-      done();
+      h.driver.elementByTagName("text", function(err, el) {
+        should.not.exist(err);
+        should.exist(el);
+        console.log(el.value);
+        done();
+      });
     });
   });
 });

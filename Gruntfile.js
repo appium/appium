@@ -107,7 +107,7 @@ module.exports = function(grunt) {
     });
   });
   grunt.registerTask('configAndroidApp', function(appName) {
-    var cb = this.async();
+  var cb = this.async();
     setupAndroidApp(grunt, appName, function(exitCode) {
       cb(exitCode === 0);
     });

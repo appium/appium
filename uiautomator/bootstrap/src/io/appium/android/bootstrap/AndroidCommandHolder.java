@@ -1,8 +1,11 @@
 package io.appium.android.bootstrap;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import com.android.uiautomator.core.UiDevice;
@@ -15,6 +18,12 @@ import io.appium.android.bootstrap.AndroidElementsHash;
 
 class AndroidCommandException extends Exception {
     public AndroidCommandException(String msg) {
+        super(msg);
+    }
+}
+
+class InvalidStrategyException extends AndroidCommandException {
+    public InvalidStrategyException(String msg) {
         super(msg);
     }
 }
@@ -37,14 +46,61 @@ class AndroidCommandHolder {
         return res;
     }
     
-    public static String findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException {
+    public static JSONObject findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException, AndroidCommandException {
+        JSONObject res = new JSONObject();
         String elId;
-        return elId;
+        UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, false);
+        UiObject el;
+        UiObject baseEl;
+        AndroidElementsHash elHash = AndroidElementsHash.getInstance();
+        if (contextId.isEmpty()) {
+            el = new UiObject(sel);
+        } else {
+            try {
+                baseEl = elHash.getElement(contextId);
+            } catch (ElementNotInHashException e) {
+                throw new AndroidCommandException(e.getMessage());
+            }
+            el = baseEl.getChild(sel);
+        }
+        elId = elHash.addElement(el);
+        try {
+            res.put("ELEMENT", elId);
+        } catch (JSONException e) {
+            throw new AndroidCommandException("Error serializing element ID into JSON");
+        }
+        return res;
     }
     
-    public static String[] findElements(String strategy, String selector, String contextId) {
+    public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException {
         String[] elIds = {};
-        return elIds;
+        JSONArray res = new JSONArray();
+        for (String elId : elIds) {
+            JSONObject idObj = new JSONObject();
+            try {
+                idObj.put("ELEMENT", elId);
+            } catch (JSONException e) {
+                throw new AndroidCommandException("Error serializing element ID into JSON");
+            }
+            res.put(idObj);
+        }
+        return res;
+    }
+    
+    private static UiSelector selectorForFind(String strategy, String selector, Boolean many) throws InvalidStrategyException {
+        UiSelector s = new UiSelector();
+        if (strategy.equals("tag name")) {
+            String androidClass = AndroidElementClassMap.match(selector);
+            s = s.className(androidClass);
+        } else {
+            throw new InvalidStrategyException(strategy + " is not a supported selector strategy");
+        }
+        
+        if (!many) {
+            s = s.instance(0);
+        }
+        
+        return s;
     }
     
     public static String findElementByClass(String className) throws UiObjectNotFoundException {

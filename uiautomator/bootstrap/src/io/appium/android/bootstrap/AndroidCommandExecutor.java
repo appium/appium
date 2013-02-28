@@ -38,7 +38,8 @@ class AndroidCommandExecutor {
             return getErrorResult("Could not decode action/params of command, please check format!");
         }
         
-        // TODO: get all this information using introspection, rather than if-elsing everywhere
+        // TODO: get all this information using introspection, rather than if-elsing everywhere?
+        // Or maybe we like getting params out before passing to AndroidCommandHolder
         try {
             if (action.equals("click")) {
                 int x = (Integer) params.get("x");
@@ -54,19 +55,10 @@ class AndroidCommandExecutor {
                 Boolean multiple = (Boolean) params.get("multiple");
                 String contextId = (String) params.get("context");
                 if (multiple) {
-                    String[] elIds = AndroidCommandHolder.findElements(strategy, selector, contextId);
-                    JSONArray res = new JSONArray();
-                    for (String elId : elIds) {
-                        JSONObject idObj = new JSONObject();
-                        idObj.put("ELEMENT",  elId);
-                        res.put(idObj);
-                    }
-                    return getSuccessResult(res);
+                    return getSuccessResult(AndroidCommandHolder.findElements(strategy, selector, contextId));
                 } else {
                     try {
-                        String elId = AndroidCommandHolder.findElement(strategy, selector, contextId);
-                        JSONObject res = new JSONObject();
-                        res.put("ELEMENT", elId);
+                        JSONObject res = AndroidCommandHolder.findElement(strategy, selector, contextId);
                         return getSuccessResult(res);
                     } catch (UiObjectNotFoundException e) {
                         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);

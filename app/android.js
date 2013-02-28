@@ -138,9 +138,21 @@ Android.prototype.getCommandTimeout = function(cb) {
 };
 
 Android.prototype.findElement = function(strategy, selector, cb) {
+  this.findElementOrElements(strategy, selector, false, cb);
 };
 
 Android.prototype.findElements = function(strategy, selector, cb) {
+  this.findElementOrElements(strategy, selector, true, cb);
+};
+
+Android.prototype.findElementOrElements = function(strategy, selector, many, cb) {
+  var params = {
+    strategy: strategy
+    , selector: selector
+    , context: ""
+    , multiple: many
+  };
+  this.proxy(["find", params], cb);
 };
 
 Android.prototype.findElementFromElement = function(element, strategy, selector, cb) {

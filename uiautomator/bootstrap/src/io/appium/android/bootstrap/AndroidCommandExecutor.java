@@ -48,17 +48,19 @@ class AndroidCommandExecutor {
                 String selector = (String) params.get("selector");
                 Boolean multiple = (Boolean) params.get("multiple");
                 String contextId = (String) params.get("context");
-                if (multiple) {
-                    return getSuccessResult(AndroidCommandHolder.findElements(strategy, selector, contextId));
-                } else {
-                    try {
-                        JSONObject res = AndroidCommandHolder.findElement(strategy, selector, contextId);
-                        return getSuccessResult(res);
-                    } catch (UiObjectNotFoundException e) {
-                        return new AndroidCommandResult(WDStatus.STALE_ELEMENT_REFERENCE);
-                    } catch (ElementNotFoundException e) {
-                        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
+                try {
+                    if (multiple) {
+                        return getSuccessResult(AndroidCommandHolder.findElements(strategy, selector, contextId));
+                    } else {
+                        try {
+                            JSONObject res = AndroidCommandHolder.findElement(strategy, selector, contextId);
+                            return getSuccessResult(res);
+                        } catch (ElementNotFoundException e) {
+                            return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
+                        }
                     }
+                } catch (UiObjectNotFoundException e) {
+                    return new AndroidCommandResult(WDStatus.STALE_ELEMENT_REFERENCE);
                 }
             } else if (action.startsWith("element:")) {
                 action = action.substring(8);

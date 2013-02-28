@@ -5,6 +5,7 @@ var errors = require('./errors')
   , _ = require('underscore')
   , logger = require('../logger').get('appium')
   , deviceCommon = require('./device')
+  , status = require("./uiauto/lib/status")
   , NotImplementedError = errors.NotImplementedError
   , UnknownError = errors.UnknownError;
 
@@ -127,6 +128,8 @@ Android.prototype.push = function(elem) {
   next();
 };
 
+Android.prototype.waitForCondition = deviceCommon.waitForCondition;
+
 Android.prototype.setCommandTimeout = function(secs, cb) {
   // do nothing here for now
   cb();
@@ -140,27 +143,40 @@ Android.prototype.getCommandTimeout = function(cb) {
 };
 
 Android.prototype.findElement = function(strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, false, cb);
+  this.findElementOrElements(strategy, selector, false, "", cb);
 };
 
 Android.prototype.findElements = function(strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, true, cb);
+  this.findElementOrElements(strategy, selector, true, "", cb);
 };
 
-Android.prototype.findElementOrElements = function(strategy, selector, many, cb) {
+Android.prototype.findElementOrElements = function(strategy, selector, many, context, cb) {
   var params = {
     strategy: strategy
     , selector: selector
-    , context: ""
+    , context: context
     , multiple: many
   };
-  this.proxy(["find", params], cb);
+  var doFind = _.bind(function(findCb) {
+    this.proxy(["find", params], function(err, res) {
+      if (!many && res.status === 0) {
+        findCb(true, err, res);
+      } else if (many && res.value.length > 0) {
+        findCb(true, err, res);
+      } else {
+        findCb(false, err, res);
+      }
+    });
+  }, this);
+  this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
 Android.prototype.findElementFromElement = function(element, strategy, selector, cb) {
+  this.findElementOrElements(strategy, selector, false, element, cb);
 };
 
 Android.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
+  this.findElementOrElements(strategy, selector, true, element, cb);
 };
 
 Android.prototype.setValueImmediate = function(elementId, value, cb) {
@@ -206,6 +222,12 @@ Android.prototype.frame = function(frame, cb) {
 };
 
 Android.prototype.implicitWait = function(ms, cb) {
+  this.implicitWaitMs = parseInt(ms, 10);
+  logger.info("Set Android implicit wait to " + ms + "ms");
+  cb(null, {
+    status: status.codes.Success.code
+    , value: null
+  });
 };
 
 Android.prototype.elementDisplayed = function(elementId, cb) {

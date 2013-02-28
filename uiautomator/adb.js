@@ -181,7 +181,7 @@ ADB.prototype.checkForSocketReady = function(output) {
     this.debug("Connecting to server on device...");
     this.socketClient = net.connect(this.port, _.bind(function() {
       this.debug("Connected!");
-      this.onSocketReady();
+      this.onSocketReady(null);
     }, this));
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {

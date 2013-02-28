@@ -133,7 +133,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
     if (desiredCaps.app[0] === "/") {
       var appPath = desiredCaps.app
         , ext = appPath.substring(appPath.length - 4);
-      if (ext === ".app") {
+      if (ext === this.getAppExt()) {
         this.args.app = desiredCaps.app;
         logger.info("Using local app from desiredCaps: " + appPath);
         cb(null);

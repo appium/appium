@@ -18,6 +18,7 @@ uiautomator/bootstrap/bin/io*
 uiautomator/bootstrap/bin/classes*
 uiautomator/bootstrap/local.properties
 uiautomator/bootstrap/project.properties
+uiautomator/bootstrap/.classpath
 sample-code/apps/ApiDemos/ant.properties
 sample-code/apps/ApiDemos/bin
 sample-code/apps/ApiDemos/build.xml

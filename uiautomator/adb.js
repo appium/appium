@@ -10,7 +10,7 @@ var spawn = require('child_process').spawn
 
 var noop = function() {};
 
-var ADB = function(opts, cb) {
+var ADB = function(opts) {
   if (!opts) {
     opts = {};
   }
@@ -30,6 +30,10 @@ var ADB = function(opts, cb) {
   this.proc = null;
   this.onSocketReady = noop;
   this.portForwarded = false;
+  this.debugMode = true;
+};
+
+ADB.prototype.checkAdbPresent = function(cb) {
   if (this.sdkRoot) {
     this.adb = path.resolve(this.sdkRoot, "platform-tools", "adb");
     this.debug("Using adb from " + this.adb);
@@ -45,6 +49,65 @@ var ADB = function(opts, cb) {
       }
     }, this));
   }
+};
+
+ADB.prototype.start = function(onReady, onExit) {
+  var doRun = _.bind(function() {
+    this.runBootstrap(onReady, onExit);
+  }, this);
+
+  // WHEEE!!!!
+  this.checkAdbPresent(_.bind(function(err) {
+    if (err) {
+      onReady(err);
+    } else {
+      this.getConnectedDevices(_.bind(function(err, devices) {
+        if (devices.length === 0 || err) {
+          onReady("Could not find a connected Android device.");
+        } else {
+          this.waitForDevice(_.bind(function(err) {
+            if (err) {
+              onReady(err);
+            } else {
+              this.pushAppium(_.bind(function(err) {
+                if (err) {
+                  onReady(err);
+                } else {
+                  this.forwardPort(_.bind(function(err) {
+                    if (err) {
+                      onReady(err);
+                    } else if (this.appPackage) {
+                      this.uninstallApp(_.bind(function(err) {
+                        if (err) {
+                          onReady(err);
+                        } else {
+                          this.installApp(_.bind(function(err) {
+                            if (err) {
+                              onReady(err);
+                            } else {
+                              this.startApp(_.bind(function(err) {
+                                if (err) {
+                                  onReady(err);
+                                } else {
+                                  doRun();
+                                }
+                              }, this));
+                            }
+                          }, this));
+                        }
+                      }, this));
+                    } else {
+                      doRun();
+                    }
+                  }, this));
+                }
+              }, this));
+            }
+          }, this));
+        }
+      }, this));
+    }
+  }, this));
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {
@@ -92,18 +155,21 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
   this.proc = spawn(this.adb, args);
   this.onSocketReady = readyCb;
+
   this.proc.stdout.on('data', _.bind(function(data) {
     this.outputStreamHandler(data);
   }, this));
+
   this.proc.stderr.on('data', _.bind(function(data) {
     this.errorStreamHandler(data);
   }, this));
+
   this.proc.on('exit', _.bind(function(code) {
-    exitCb(code);
     if (this.socketClient) {
       this.socketClient.end();
       this.socketClient.destroy();
     }
+    exitCb(code);
   }, this));
 
 
@@ -200,7 +266,9 @@ ADB.prototype.errorStreamHandler = function(output) {
 };
 
 ADB.prototype.debug = function(msg) {
-  logger.info("[ADB] " + msg);
+  if (this.debugMode) {
+    logger.info("[ADB] " + msg);
+  }
 };
 
 ADB.prototype.isDeviceConnected = function(cb) {
@@ -336,6 +404,6 @@ ADB.prototype.goToHome = function(cb) {
   });
 };
 
-module.exports = function(opts, cb) {
-  return new ADB(opts, cb);
+module.exports = function(opts) {
+  return new ADB(opts);
 };

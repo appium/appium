@@ -8,7 +8,7 @@ Here's how Android testing works:
 
     ```
     grunt configAndroidBootstrap
-    grunt build
+    grunt buildAndroidBootstrap
     ```
 
 * Configure and build the example app:

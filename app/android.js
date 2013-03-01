@@ -123,6 +123,7 @@ Android.prototype.respond = deviceCommon.respond;
 
 Android.prototype.push = function(elem) {
 
+  this.resetTimeout();
   this.queue.push(elem);
 
   var next = _.bind(function() {

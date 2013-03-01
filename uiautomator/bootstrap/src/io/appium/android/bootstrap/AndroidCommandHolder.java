@@ -144,6 +144,8 @@ class AndroidCommandHolder {
         JSONObject pathObj;
         String nodeType;
         String searchType;
+        Logger.info("Building xpath selector");
+        String selOut = "s";
         for (int i = 0; i < path.length(); i++) {
             try {
                 pathObj = path.getJSONObject(i);
@@ -155,22 +157,32 @@ class AndroidCommandHolder {
             nodeType = AndroidElementClassMap.match(nodeType);
             if (searchType.equals("child")) {
                 s = s.childSelector(s);
+                selOut += ".childSelector(s)";
+            } else {
+                s = s.className(nodeType);
+                selOut += ".className(" + nodeType + ")";
             }
-            s = s.className(nodeType);
         }
         if (attr.equals("desc")) {
+            selOut += ".description";
             if (substr) {
+                selOut += "Contains";
                 s = s.descriptionContains(constraint);
             } else {
                 s = s.description(constraint);
             }
+            selOut += "(" + constraint + ")";
         } else if (attr.equals("text")) {
+            selOut += ".text";
             if (substr) {
+                selOut += "Containts";
                 s = s.textContains(constraint);
             } else {
                 s = s.text(constraint);
             }
+            selOut += "(" + constraint + ")";
         }
+        Logger.info(selOut);
         return s;
     }
     

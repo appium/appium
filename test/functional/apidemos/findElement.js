@@ -24,7 +24,7 @@ describeWd('find element(s)', function(h) {
   it('should find multiple elements by tag name', function(done) {
     h.driver.elementsByTagName("text", function(err, els) {
       should.not.exist(err);
-      els.length.should.equal(12);
+      els.length.should.equal(11);
       done();
     });
   });
@@ -69,7 +69,7 @@ describeWd('find element(s) from element', function(h) {
     getFirstEl(function(el) {
       el.elementsByTagName("text", function(err, els) {
         should.not.exist(err);
-        els.length.should.equal(11);
+        els.length.should.equal(10);
         done();
       });
     });

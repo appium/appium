@@ -45,20 +45,25 @@ class AndroidCommandHolder {
     }
     
     public static JSONObject findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException, AndroidCommandException, ElementNotFoundException {
+        UiSelector sel = selectorForFind(strategy, selector, false);
+        return findElementWithSelector(sel, contextId);
+    }
+    
+    public static JSONObject findElementByXpath(JSONArray path, String attr, String constraint, boolean substr, String contextId) throws UiObjectNotFoundException, AndroidCommandException, ElementNotFoundException {
+        UiSelector sel = selectorForXpath(path, attr, constraint, substr);
+        return findElementWithSelector(sel, contextId);
+    }
+    
+    private static JSONObject findElementWithSelector(UiSelector sel, String contextId) throws UiObjectNotFoundException, AndroidCommandException, ElementNotFoundException {
         JSONObject res = new JSONObject();
         String elId;
-        UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, false);
         UiObject el;
-        AndroidElement baseEl;
         AndroidElementsHash elHash = AndroidElementsHash.getInstance();
-        if (contextId.isEmpty()) {
+        AndroidElement baseEl = contextElement(contextId);
+        
+        if (baseEl == null) {
             el = new UiObject(sel);
         } else {
-            try {
-                baseEl = elHash.getElement(contextId);
-            } catch (ElementNotInHashException e) {
-                throw new AndroidCommandException(e.getMessage());
-            }
             el = baseEl.getChild(sel);
         }
         
@@ -71,26 +76,27 @@ class AndroidCommandHolder {
             }
             return res;
         } else {
-            throw new ElementNotFoundException(strategy, selector);
+            throw new ElementNotFoundException();
         }
     }
     
     public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException, UiObjectNotFoundException {
+        UiSelector sel = selectorForFind(strategy, selector, true);
+        return findElementsWithSelector(sel, contextId);
+    }
+    
+    public static JSONArray findElementsByXpath(JSONArray path, String attr, String constraint, boolean substr, String contextId) throws AndroidCommandException, UiObjectNotFoundException {
+        UiSelector sel = selectorForXpath(path, attr, constraint, substr);
+        return findElementsWithSelector(sel, contextId);
+    }
+    
+    private static JSONArray findElementsWithSelector(UiSelector sel, String contextId) throws AndroidCommandException, UiObjectNotFoundException {
         ArrayList<String> elIds = new ArrayList<String>();
         JSONArray res = new JSONArray();
-        UiSelector sel = AndroidCommandHolder.selectorForFind(strategy, selector, true);
         UiObject lastFoundObj;
         boolean keepSearching = true;
-        AndroidElement baseEl = null;
         AndroidElementsHash elHash = AndroidElementsHash.getInstance();
-        
-        if (!contextId.isEmpty()) {
-            try {
-                baseEl = elHash.getElement(contextId);
-            } catch (ElementNotInHashException e) {
-                throw new AndroidCommandException(e.getMessage());
-            }
-        }
+        AndroidElement baseEl = contextElement(contextId);
         
         int counter = 0;
         while (keepSearching) {
@@ -117,6 +123,55 @@ class AndroidCommandHolder {
             res.put(idObj);
         }
         return res;
+    }
+    
+    private static AndroidElement contextElement(String contextId) throws AndroidCommandException {
+        AndroidElement baseEl = null;
+        AndroidElementsHash elHash = AndroidElementsHash.getInstance();
+        
+        if (!contextId.isEmpty()) {
+            try {
+                baseEl = elHash.getElement(contextId);
+            } catch (ElementNotInHashException e) {
+                throw new AndroidCommandException(e.getMessage());
+            }
+        }
+        return baseEl;
+    }
+    
+    private static UiSelector selectorForXpath(JSONArray path, String attr, String constraint, boolean substr) throws AndroidCommandException {
+        UiSelector s = new UiSelector();
+        JSONObject pathObj;
+        String nodeType;
+        String searchType;
+        for (int i = 0; i < path.length(); i++) {
+            try {
+                pathObj = path.getJSONObject(i);
+                nodeType = pathObj.getString("node");
+                searchType = pathObj.getString("search");
+            } catch (JSONException e) {
+                throw new AndroidCommandException("Error parsing xpath path obj from JSON");
+            }
+            nodeType = AndroidElementClassMap.match(nodeType);
+            if (searchType.equals("child")) {
+                s = s.childSelector(s);
+            }
+            s = s.className(nodeType);
+        }
+        if (attr.equals("desc")) {
+            if (substr) {
+                s = s.descriptionContains(constraint);
+            } else {
+                s = s.description(constraint);
+            }
+        } else if (attr.equals("text")) {
+            if (substr) {
+                s = s.textContains(constraint);
+            } else {
+                s = s.text(constraint);
+            }
+        }
+        return s;
     }
     
     private static UiSelector selectorForFind(String strategy, String selector, Boolean many) throws InvalidStrategyException {

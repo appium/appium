@@ -95,3 +95,17 @@ describeWd('find element(s) from element', function(h) {
   });
 });
 
+describeWd('xpath', function(h) {
+  it('should find element by type', function(done) {
+    h.driver.elementByXPath('//text', function(err, el) {
+      should.not.exist(err);
+      el.text(function(err, text) {
+        should.not.exist(err);
+        text.should.eql("API Demos");
+        done();
+      });
+    });
+  });
+});
+
+

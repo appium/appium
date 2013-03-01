@@ -5,8 +5,8 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
 
 class ElementNotFoundException extends Exception {
-    public ElementNotFoundException(String strategy, String selector) {
-        super("Could not find an element using strategy '" + strategy + "' and selector '" + selector + "'");
+    public ElementNotFoundException() {
+        super("Could not find an element using supplied strategy");
     }
 }
 class AndroidElement {

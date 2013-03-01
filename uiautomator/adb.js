@@ -390,14 +390,16 @@ ADB.prototype.startApp = function(cb) {
   this.debug("Starting app " + this.appPackage + "/" + this.appActivity);
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             this.appPackage + "." + this.appActivity;
-  exec(cmd, _.bind(function(err) {
-    if(err) {
-      logger.error(err);
-      cb(err);
-    } else {
-      cb(null);
-    }
-  }, this));
+  this.unlockScreen(function() {
+    exec(cmd, _.bind(function(err) {
+      if(err) {
+        logger.error(err);
+        cb(err);
+      } else {
+        cb(null);
+      }
+    }, this));
+  });
 };
 
 ADB.prototype.uninstallApp = function(cb) {
@@ -444,6 +446,16 @@ ADB.prototype.goToHome = function(cb) {
     cb();
   });
 };
+
+ADB.prototype.unlockScreen = function(cb) {
+  this.requireDeviceId();
+  this.debug("Attempting to unlock screen");
+  var cmd = this.adbCmd + " shell input keyevent 82";
+  exec(cmd, function() {
+    cb();
+  });
+};
+
 
 module.exports = function(opts) {
   return new ADB(opts);

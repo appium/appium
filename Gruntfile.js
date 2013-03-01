@@ -11,6 +11,7 @@ var path = require('path')
   , setupAndroidApp = gruntHelpers.setupAndroidApp
   , buildAndroidBootstrap = gruntHelpers.buildAndroidBootstrap
   , buildAndroidApp = gruntHelpers.buildAndroidApp
+  , installAndroidApp = gruntHelpers.installAndroidApp
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -117,5 +118,8 @@ module.exports = function(grunt) {
     buildAndroidApp(grunt, appName, function(exitCode) {
       cb(exitCode === 0);
     });
+  });
+  grunt.registerTask('installAndroidApp', function(appName) {
+    installAndroidApp(grunt, appName, this.async());
   });
 };

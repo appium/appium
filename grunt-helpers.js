@@ -314,3 +314,16 @@ module.exports.buildAndroidApp = function(grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
   buildAndroidProj(grunt, appPath, "debug", cb);
 };
+
+module.exports.installAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName,
+      "bin/" + appName + "-debug.apk");
+  exec("adb install -r " + appPath, function(err, stdout) {
+    if (err) {
+      grunt.fatal(err);
+    } else {
+      grunt.log.write(stdout);
+      cb();
+    }
+  });
+};

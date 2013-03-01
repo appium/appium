@@ -7,6 +7,7 @@ var errors = require('./errors')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
   , NotImplementedError = errors.NotImplementedError
+  , parseXpath = require('./uiauto/appium/xpath').parseXpath
   , UnknownError = errors.UnknownError;
 
 var Android = function(opts) {
@@ -210,6 +211,22 @@ Android.prototype.findElementOrElements = function(strategy, selector, many, con
     , context: context
     , multiple: many
   };
+  var xpathError = false;
+  if (strategy === "xpath") {
+    var xpathParams = parseXpath(selector);
+    if (!xpathParams) {
+      xpathError = true;
+    } else {
+      // massage for the javas
+      if (xpathParams.attr === null) {
+        xpathParams.attr = "";
+      }
+      if (xpathParams.constraint === null) {
+        xpathParams.constraint = "";
+      }
+      params = _.extend(params, xpathParams);
+    }
+  }
   var doFind = _.bind(function(findCb) {
     this.proxy(["find", params], function(err, res) {
       if (!many && res.status === 0) {
@@ -221,7 +238,14 @@ Android.prototype.findElementOrElements = function(strategy, selector, many, con
       }
     });
   }, this);
-  this.waitForCondition(this.implicitWaitMs, doFind, cb);
+  if (!xpathError) {
+    this.waitForCondition(this.implicitWaitMs, doFind, cb);
+  } else {
+    cb(null, {
+      status: status.codes.XPathLookupError.code
+      , value: "Could not parse xpath data from " + selector
+    });
+  }
 };
 
 Android.prototype.findElementFromElement = function(element, strategy, selector, cb) {

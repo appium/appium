@@ -48,13 +48,31 @@ class AndroidCommandExecutor {
                 String selector = (String) params.get("selector");
                 Boolean multiple = (Boolean) params.get("multiple");
                 String contextId = (String) params.get("context");
+                JSONArray xpathPath = new JSONArray();
+                String xpathAttr = "";
+                String xpathConstraint = "";
+                boolean xpathSubstr = false;
+                boolean isXpath = strategy.equals("xpath");
+                if (isXpath) {
+                    xpathPath = (JSONArray) params.get("path");
+                    xpathAttr = (String) params.get("attr");
+                    xpathConstraint = (String) params.get("constraint");
+                    xpathSubstr = (Boolean) params.get("substr");
+                }
                 try {
                     if (multiple) {
-                        return getSuccessResult(AndroidCommandHolder.findElements(strategy, selector, contextId));
+                        if (isXpath) {
+                            return getSuccessResult(AndroidCommandHolder.findElementsByXpath(xpathPath, xpathAttr, xpathConstraint, xpathSubstr, contextId));
+                        } else {
+                            return getSuccessResult(AndroidCommandHolder.findElements(strategy, selector, contextId));
+                        }
                     } else {
                         try {
-                            JSONObject res = AndroidCommandHolder.findElement(strategy, selector, contextId);
-                            return getSuccessResult(res);
+                            if (isXpath) {
+                                return getSuccessResult(AndroidCommandHolder.findElementByXpath(xpathPath, xpathAttr, xpathConstraint, xpathSubstr, contextId));
+                            } else {
+                                return getSuccessResult(AndroidCommandHolder.findElement(strategy, selector, contextId));
+                            }
                         } catch (ElementNotFoundException e) {
                             return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
                         }

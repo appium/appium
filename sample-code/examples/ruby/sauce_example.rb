@@ -3,20 +3,20 @@
 #
 # Before this test will work, you may need to do:
 # 
-# gem install rspec selenium-webdriver
+# gem install rspec selenium-webdriver rest-client
 #
 # Run with:
 #
 # rspec sauce_example.rb
-
 require 'rspec'
 require 'selenium-webdriver'
-require 'net/http'
-require 'uri'
+require 'json'
+require 'rest_client'
 
 APP_PATH = 'http://appium.s3.amazonaws.com/TestApp6.0.app.zip'
 SAUCE_USERNAME = ENV['SAUCE_USERNAME']
 SAUCE_ACCESS_KEY = ENV['SAUCE_ACCESS_KEY']
+AUTH_DETAILS = "#{SAUCE_USERNAME}:#{SAUCE_ACCESS_KEY}"
 
 # This is the test itself
 describe "Computation" do
@@ -57,27 +57,15 @@ def capabilities
 end
 
 def server_url
-  "http://#{SAUCE_USERNAME}:#{SAUCE_ACCESS_KEY}@ondemand.saucelabs.com:80/wd/hub"
+  "http://#{AUTH_DETAILS}@ondemand.saucelabs.com:80/wd/hub"
+end
+
+def rest_jobs_url
+  "http://#{AUTH_DETAILS}@saucelabs.com/rest/v1/#{SAUCE_USERNAME}/jobs"
 end
 
 # Because WebDriver doesn't have the concept of test failure, use the Sauce
 # Labs REST API to record job success or failure
 def update_job_success(job_id, success)
-  sauce_api.request update_request(job_id, success)
+    RestClient.put "#{rest_jobs_url}/#{job_id}", {"passed" => success}.to_json, :content_type => :json
 end
-
-# Creates the RESTful job update indicating passing or failure
-def update_request(job_id, success)
-  request = Net::HTTP::Put.new("/rest/v1/#{SAUCE_USERNAME}/jobs/#{job_id}")
-  request.basic_auth(SAUCE_USERNAME, SAUCE_ACCESS_KEY)
-  request.content_type= "application/json"
-  request.body = "{\"passed\":#{success}}"
-  request
-end
-
-def sauce_api
-  sauce_api = Net::HTTP.new("saucelabs.com", 443)
-  sauce_api.use_ssl= true
-  sauce_api
-end
-

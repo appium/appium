@@ -106,6 +106,16 @@ describeWd('xpath', function(h) {
       });
     });
   });
+  it.only('should find element by text', function(done) {
+    h.driver.elementByXPath("//text[@text='Accessibility']", function(err, el) {
+      should.not.exist(err);
+      el.text(function(err, text) {
+        should.not.exist(err);
+        text.should.eql("Accessibility");
+        done();
+      });
+    });
+  });
 });
 
 

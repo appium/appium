@@ -169,6 +169,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
     if (this.socketClient) {
       this.socketClient.end();
       this.socketClient.destroy();
+      this.socketClient = null;
     }
     exitCb(code);
   }, this));
@@ -218,15 +219,23 @@ ADB.prototype.sendAutomatorCommand = function(action, params, cb) {
 };
 
 ADB.prototype.sendCommand = function(type, extra, cb) {
-  if (typeof extra === "undefined" || extra === null) {
-    extra = {};
+  if (this.socketClient) {
+    if (typeof extra === "undefined" || extra === null) {
+      extra = {};
+    }
+    var cmd = {cmd: type};
+    cmd = _.extend(cmd, extra);
+    var cmdJson = JSON.stringify(cmd) + "\n";
+    this.cmdCb = cb;
+    this.debug("Sending command to android: " + cmdJson.trim());
+    this.socketClient.write(cmdJson);
+  } else {
+    cb({
+      status: status.codes.UnknownError.code
+      , value: "Tried to send command to non-existent Android socket, " +
+               "maybe it's shutting down?"
+    });
   }
-  var cmd = {cmd: type};
-  cmd = _.extend(cmd, extra);
-  var cmdJson = JSON.stringify(cmd) + "\n";
-  this.cmdCb = cb;
-  this.debug("Sending command to android: " + cmdJson.trim());
-  this.socketClient.write(cmdJson);
 };
 
 ADB.prototype.sendShutdownCommand = function(cb) {
@@ -359,7 +368,7 @@ ADB.prototype.pushAppium = function(cb) {
   fs.stat(binPath, _.bind(function(err) {
     if (err) {
       cb("Could not find AppiumBootstrap.jar; please run " +
-         "'grunt buildAppiumBootstrap'");
+         "'grunt buildAndroidBootstrap'");
     } else {
       var remotePath = "/data/local/tmp";
       var cmd = this.adb + " push " + binPath + " " + remotePath;

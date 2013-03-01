@@ -548,8 +548,6 @@ IOS.prototype.frame = function(frame, cb) {
 };
 
 IOS.prototype.implicitWait = function(ms, cb) {
-  //var command = ["au.timeout('", seconds, "')"].join('');
-  //this.proxy(command, cb);
   this.implicitWaitMs = parseInt(ms, 10);
   logger.info("Set iOS implicit wait to " + ms + "ms");
   cb(null, {

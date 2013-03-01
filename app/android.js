@@ -20,6 +20,9 @@ var Android = function(opts) {
   this.progress = 0;
   this.onStop = function() {};
   this.implicitWaitMs = 0;
+  this.commandTimeoutMs = 60;
+  this.origCommandTimeoutMs = this.commandTimeoutMs;
+  this.commandTimeout = null;
   this.adb = null;
   this.capabilities = {
     platform: 'LINUX'
@@ -45,7 +48,9 @@ Android.prototype.start = function(cb, onDie) {
       this.onStop = null;
       cb(err);
     } else {
-      logger.info("ADB launched! Ready for commands");
+      logger.info("ADB launched! Ready for commands (will time out in " +
+                  (this.commandTimeoutMs / 1000) + "secs)");
+      this.resetTimeout();
       didLaunch = true;
       cb(null);
     }
@@ -77,7 +82,19 @@ Android.prototype.start = function(cb, onDie) {
   }
 };
 
+Android.prototype.timeoutWaitingForCommand = function() {
+  logger.info("Didn't get a new command in " + (this.commandTimeoutMs / 1000) +
+              " secs, shutting down...");
+  //this.adb.sendShutdownCommand(function() {
+    //logger.info("Sent shutdown command, waiting for ADB to stop...");
+  //});
+  this.stop();
+};
+
 Android.prototype.stop = function(cb) {
+  if (this.commandTimeout) {
+    clearTimeout(this.commandTimeout);
+  }
   if (this.adb === null) {
     logger.info("Trying to stop adb but it already exited");
     cb();
@@ -93,10 +110,19 @@ Android.prototype.stop = function(cb) {
   }
 };
 
+Android.prototype.resetTimeout = function() {
+  if (this.commandTimeout) {
+    clearTimeout(this.commandTimeout);
+  }
+  this.commandTimeout = setTimeout(_.bind(this.timeoutWaitingForCommand, this),
+      this.commandTimeoutMs);
+};
+
 Android.prototype.proxy = deviceCommon.proxy;
 Android.prototype.respond = deviceCommon.respond;
 
 Android.prototype.push = function(elem) {
+
   this.queue.push(elem);
 
   var next = _.bind(function() {
@@ -113,16 +139,27 @@ Android.prototype.push = function(elem) {
 
     this.progress++;
 
-    this.adb.sendAutomatorCommand(action, params, _.bind(function(response) {
-      this.cbForCurrentCmd = null;
-      if (typeof cb === 'function') {
-        this.respond(response, cb);
-      }
+    if (this.adb) {
+      this.adb.sendAutomatorCommand(action, params, _.bind(function(response) {
+        this.cbForCurrentCmd = null;
+        if (typeof cb === 'function') {
+          this.respond(response, cb);
+        }
 
-      // maybe there's moar work to do
+        // maybe there's moar work to do
+        this.progress--;
+        next();
+      }, this));
+    } else {
+      this.cbForCurrentCmd = null;
+      this.respond({
+        status: status.codes.UnknownError.code
+        , value: "Tried to send command to non-existent Android device, " +
+                 "maybe it shut down?"
+      }, cb);
       this.progress--;
       next();
-    }, this));
+    }
   }, this);
 
   next();
@@ -131,16 +168,30 @@ Android.prototype.push = function(elem) {
 Android.prototype.waitForCondition = deviceCommon.waitForCondition;
 
 Android.prototype.setCommandTimeout = function(secs, cb) {
-  // do nothing here for now
-  cb();
+  this.origCommandTimeoutMs = this.commandTimeoutMs;
+  this.commandTimeoutMs = secs * 1000;
+  this.resetTimeout();
+  cb(null, {
+    status: status.codes.Success.code
+    , value: ''
+  });
 };
 
 Android.prototype.resetCommandTimeout = function(cb) {
-  cb();
+  this.commandTimeoutMs = this.origCommandTimeoutMs;
+  this.resetTimeout();
+  cb(null, {
+    status: status.codes.Success.code
+    , value: ''
+  });
 };
 
 Android.prototype.getCommandTimeout = function(cb) {
-    cb(new NotImplementedError(), null);
+  this.resetTimeout();
+  cb(null, {
+    status: status.codes.Success.code
+    , value: this.commandTimeoutMs / 1000
+  });
 };
 
 Android.prototype.findElement = function(strategy, selector, cb) {

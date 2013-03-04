@@ -16,14 +16,17 @@
 
 package com.example.android.apis;
 
+import com.example.android.apis.R;
+
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -38,17 +41,17 @@ public class ApiDemos extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         Intent intent = getIntent();
         String path = intent.getStringExtra("com.example.android.apis.Path");
-
+        
         if (path == null) {
             path = "";
         }
 
-        setListAdapter(new SimpleAdapter(this, getData(path),
-                android.R.layout.simple_list_item_1, new String[] { "title" },
-                new int[] { android.R.id.text1 }));
+        setListAdapter(new SimpleAdapterWithDesc(this, getData(path),
+                android.R.layout.simple_list_item_1, new String[] { "title", "contentDescription" },
+                new int[] { android.R.id.text1, android.R.id.text2 }));
         getListView().setTextFilterEnabled(true);
     }
 
@@ -66,16 +69,16 @@ public class ApiDemos extends ListActivity {
 
         String[] prefixPath;
         String prefixWithSlash = prefix;
-
+        
         if (prefix.equals("")) {
             prefixPath = null;
         } else {
             prefixPath = prefix.split("/");
             prefixWithSlash = prefix + "/";
         }
-
+        
         int len = list.size();
-
+        
         Map<String, Boolean> entries = new HashMap<String, Boolean>();
 
         for (int i = 0; i < len; i++) {
@@ -84,9 +87,9 @@ public class ApiDemos extends ListActivity {
             String label = labelSeq != null
                     ? labelSeq.toString()
                     : info.activityInfo.name;
-
+            
             if (prefixWithSlash.length() == 0 || label.startsWith(prefixWithSlash)) {
-
+                
                 String[] labelPath = label.split("/");
 
                 String nextLabel = prefixPath == null ? labelPath[0] : labelPath[prefixPath.length];
@@ -105,7 +108,7 @@ public class ApiDemos extends ListActivity {
         }
 
         Collections.sort(myData, sDisplayNameComparator);
-
+        
         return myData;
     }
 
@@ -123,7 +126,7 @@ public class ApiDemos extends ListActivity {
         result.setClassName(pkg, componentName);
         return result;
     }
-
+    
     protected Intent browseIntent(String path) {
         Intent result = new Intent();
         result.setClass(this, ApiDemos.class);
@@ -133,6 +136,7 @@ public class ApiDemos extends ListActivity {
 
     protected void addItem(List<Map<String, Object>> data, String name, Intent intent) {
         Map<String, Object> temp = new HashMap<String, Object>();
+        System.out.println("Name is " + name);
         temp.put("title", name);
         temp.put("intent", intent);
         data.add(temp);

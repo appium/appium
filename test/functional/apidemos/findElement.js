@@ -10,6 +10,17 @@ var path = require('path')
   , should = require('should');
 
 describeWd('find element(s)', function(h) {
+  it.only('should find a single element by content-description', function(done) {
+    h.driver.elementByName("Animation", function(err, el) {
+      should.not.exist(err);
+      should.exist(el);
+      el.text(function(err, text) {
+        should.not.exist(err);
+        text.should.eql("Animation");
+        done();
+      });
+    });
+  });
   it('should find a single element by tag name', function(done) {
     h.driver.elementByTagName("text", function(err, el) {
       should.not.exist(err);

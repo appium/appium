@@ -193,6 +193,8 @@ class AndroidCommandHolder {
             String androidClass = AndroidElementClassMap.match(selector);
             Logger.info("Using class selector " + androidClass + " for find");
             s = s.className(androidClass);
+        } else if (strategy.equals("name")) {
+            s = s.description(selector);
         } else {
             throw new InvalidStrategyException(strategy + " is not a supported selector strategy");
         }

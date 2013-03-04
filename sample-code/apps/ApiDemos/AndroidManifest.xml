@@ -36,7 +36,7 @@
     <!-- For android.media.audiofx.Visualizer -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="16" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="17" />
 
     <!-- We will request access to the camera, saying we require a camera
          of some sort but not one with autofocus capability. -->

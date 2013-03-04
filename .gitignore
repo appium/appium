@@ -14,9 +14,7 @@ sample-code/examples/ruby/Gemfile.lock
 *.iml
 .idea/
 appium*.log*
-uiautomator/bootstrap/bin/io*
-uiautomator/bootstrap/bin/classes*
-uiautomator/bootstrap/bin/AppiumBootstrap.jar
+uiautomator/bootstrap/bin/*
 uiautomator/bootstrap/local.properties
 uiautomator/bootstrap/project.properties
 uiautomator/bootstrap/.classpath

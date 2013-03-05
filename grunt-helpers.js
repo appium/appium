@@ -344,7 +344,6 @@ module.exports.generateServerDocs = function(grunt, cb) {
     var exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];
     var argOpts = arg[1];
     md += "|`" + argNames.join("`, `") + "`";
-    md += "|" + (argOpts.required ? "yes" : "no");
     md += "|" + ((typeof argOpts.defaultValue === "undefined") ? "" : argOpts.defaultValue);
     md += "|" + argOpts.help;
     md += "|" + ((typeof argOpts.example === "undefined") ? "" : "`" + exampleArg + " " + argOpts.example + "`");

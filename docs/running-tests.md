@@ -12,8 +12,13 @@ This creates a `build/Release-iphonesimulator` directory in your Xcode project
 that contains the `.app` package that you'll need to communicate with the
 Appium server.
 
+If you want, you can zip up the .app directory into a .zip file! Appium will
+unpack it for you. Nice if you're not using Appium locally.
+
 <a name="prep-android"></a>Preparing your app for test (Android)
 ------
+Nothing in particular needs to be done to run your .apk using Appium. If you
+want to zip it up, you can.
 
 <a name="run-ios"></a>Running your test app with Appium (iOS)
 ------

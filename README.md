@@ -54,12 +54,13 @@ You can also automate web views in hybrid apps! See the [hybrid app
 guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
 
 We support Android and iOS platforms side-by-side:
-    * [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
-    * [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
-    * [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-    * [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-    * [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
-    * [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
+
+* [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
+* [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
+* [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+* [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+* [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
+* [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
 
 
 - - -

@@ -345,7 +345,7 @@ module.exports.generateServerDocs = function(grunt, cb) {
     md += "|" + (argOpts.required ? "yes" : "no");
     md += "|" + ((typeof argOpts.defaultValue === "undefined") ? "" : argOpts.defaultValue);
     md += "|" + argOpts.help;
-    md += "|`" + ((typeof argOpts.example === "undefined") ? "" : exampleArg + " " + argOpts.example) + "`";
+    md += "|" + ((typeof argOpts.example === "undefined") ? "" : "`" + exampleArg + " " + argOpts.example + "`");
     md += "|\n";
   });
   fs.writeFile(docFile, md, function(err) {

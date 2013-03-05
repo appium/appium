@@ -54,7 +54,17 @@ all set now!
 
 <a name="run-android"></a>Running your test app with Appium (Android)
 -----
-First make sure Appium is running:
+First, make sure you have one and only one Android emulator or device
+connected. If you run `adb devices`, for example, you should see one device
+connected. This is the device Appium will use for tests. Of course, to have
+a device connected, you'll need to have made an Android AVD (see [system
+setup](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
+for more information). If the Android SDK tools are on your path, you can
+simply run:
+
+    emulator -avd <MyAvdName>
+
+And wait for the android emulator to finish launching. Now, make sure Appium is running:
 
     node server.js -V
 

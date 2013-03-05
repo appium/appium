@@ -304,19 +304,20 @@ IOS.prototype.push = function(elem) {
 
 IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
   var me = this;
+  selector = escapeSpecialChars(selector, "'");
+  if (typeof ctx === "undefined" || !ctx) {
+    ctx = '';
+  } else if (typeof ctx === "string") {
+    ctx = escapeSpecialChars(ctx, "'");
+    ctx = ", '" + ctx + "'";
+  }
   var doFind = function(findCb) {
     var ext = many ? 's' : '';
-    if (typeof ctx === "undefined" || !ctx) {
-      ctx = '';
-    } else if (typeof ctx === "string") {
-      ctx = ", '" + ctx + "'";
-    }
 
     var command = "";
     if (strategy === "name") {
       command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
     } else if (strategy === "xpath") {
-      selector = escapeSpecialChars(selector, "'");
       command = ["au.getElement", ext, "ByXpath('", selector, "'", ctx, ")"].join('');
     } else {
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');

@@ -38,13 +38,13 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   );
 };
 
-module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, cb) {
+module.exports.runTestsWithServer = function(grunt, appName, testType, deviceType, verbose, cb) {
   if (typeof verbose === "undefined") {
       verbose = false;
   }
   var exitCode = null;
   var appServer = module.exports.startAppium(appName, verbose, function() {
-    module.exports.runMochaTests(grunt, appName, testType, function(code) {
+    module.exports.runMochaTests(grunt, appName, testType, deviceType, function(code) {
       appServer.close();
       exitCode = code;
     });
@@ -54,7 +54,7 @@ module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, 
   });
 };
 
-module.exports.runMochaTests = function(grunt, appName, testType, cb) {
+module.exports.runMochaTests = function(grunt, appName, testType, deviceType, cb) {
 
   // load the options if they are specified
   var options = grunt.config(['mochaTestConfig', testType, 'options']);
@@ -69,9 +69,14 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
   }
   var args = ['-t', options.timeout, '-R', options.reporter, '--colors'];
   var fileConfig = grunt.config(['mochaTestWithServer']);
-  _.each(fileConfig, function(config, configApp) {
-    if (!appName || appName === configApp) {
-      _.each(config, function(testFiles, testKey) {
+  var configAppDevice, nameOk, deviceOk, configAppTests;
+  _.each(fileConfig, function(config, configAppName) {
+    configAppDevice = config[0];
+    configAppTests = config[1];
+    nameOk = !appName || appName === configAppName;
+    deviceOk = !deviceType || deviceType === configAppDevice;
+    if (nameOk && deviceOk) {
+      _.each(configAppTests, function(testFiles, testKey) {
         if (testType == "*" || testType == testKey) {
           _.each(testFiles, function(file) {
             _.each(grunt.file.expand(file), function(file) {

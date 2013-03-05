@@ -362,7 +362,25 @@ Android.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed
 };
 
 Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount, elId, cb) {
-    cb(new NotImplementedError(), null);
+  if (startX === 'null') {
+    startX = 0.5;
+  }
+  if (startY === 'null') {
+    startY = 0.5;
+  }
+  var swipeOpts = {
+    startX: startX
+    , startY: startY
+    , endX: endX
+    , endY: endY
+    , steps: (duration * 1000) / 5
+  };
+  if (elId !== null) {
+    swipeOpts.elementId = elId;
+    this.proxy(["element:swipe", swipeOpts], cb);
+  } else {
+    this.proxy(["swipe", swipeOpts], cb);
+  }
 };
 
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {

@@ -28,8 +28,34 @@ class InvalidStrategyException extends AndroidCommandException {
 
 class AndroidCommandHolder {
     
-    public static boolean click(int x, int y) {
-        return UiDevice.getInstance().click(x, y);
+    public static boolean click(Double x, Double y) {
+        Double[] coords = {x, y};
+        ArrayList<Integer> posVals = absPosFromCoords(coords);
+        return UiDevice.getInstance().click(posVals.get(0), posVals.get(1));
+    }
+    
+    private static ArrayList<Integer> absPosFromCoords(Double[] coordVals) {
+        UiDevice d = UiDevice.getInstance();
+        Double screenX = new Double(d.getDisplayWidth());
+        Double screenY = new Double(d.getDisplayHeight());
+        ArrayList<Integer> retPos = new ArrayList<Integer>();
+        Integer curVal;
+        for (Double coord : coordVals) {
+            if (coord < 1) {
+                curVal = (int)(screenX * coord);
+            } else {
+                curVal = coord.intValue();
+            }
+            retPos.add(curVal);
+        }
+        return retPos;
+    }
+    
+    public static boolean swipe(Double startX, Double startY, Double endX, Double endY, Integer steps) {
+        UiDevice d = UiDevice.getInstance();
+        Double[] coords = {startX, startY, endX, endY};
+        ArrayList<Integer> posVals = absPosFromCoords(coords);
+        return d.swipe(posVals.get(0), posVals.get(1), posVals.get(2), posVals.get(3), steps);        
     }
     
     public static JSONObject getDeviceSize() throws AndroidCommandException {

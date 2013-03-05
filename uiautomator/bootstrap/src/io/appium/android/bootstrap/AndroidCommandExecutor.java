@@ -36,10 +36,17 @@ class AndroidCommandExecutor {
         // Or maybe we like getting params out before passing to AndroidCommandHolder
         try {
             if (action.equals("click")) {
-                int x = (Integer) params.get("x");
-                int y = (Integer) params.get("y");
+                Double x = Double.parseDouble(params.get("x").toString());
+                Double y = Double.parseDouble(params.get("y").toString());
                 boolean res = AndroidCommandHolder.click(x, y);
                 return getSuccessResult(res);
+            } else if (action.equals("swipe")) {
+                Double startX = Double.parseDouble(params.get("startX").toString());
+                Double startY = Double.parseDouble(params.get("startY").toString());
+                Double endX = Double.parseDouble(params.get("endX").toString());
+                Double endY = Double.parseDouble(params.get("endY").toString());
+                Integer steps = (Integer) params.get("steps");
+                return getSuccessResult(AndroidCommandHolder.swipe(startX, startY, endX, endY, steps));
             } else if (action.equals("getDeviceSize")) {
                 JSONObject res = AndroidCommandHolder.getDeviceSize();
                 return getSuccessResult(res);

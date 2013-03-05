@@ -77,8 +77,8 @@ Then script your WebDriver test, sending in the following desired capabilities:
     'platform': 'MAC',
     'version': '4.2',
     'app': myApp,
-    'appPackage': myAppPackage,
-    'appActivity': myAppActivity
+    'app-package': myAppPackage,
+    'app-activity': myAppActivity
 }
 ```
 

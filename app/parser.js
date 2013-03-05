@@ -6,6 +6,7 @@ var ap = require('argparse').ArgumentParser
 var args = [
   [['--app'] , {
     required: false
+    , defaultValue: null
     , help: 'IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file'
     , example: "/abs/path/to/my.app"
     , nargs: 1
@@ -13,12 +14,15 @@ var args = [
 
   [['-V', '--verbose'], {
     required: false
+    , defaultValue: false
+    , action: 'storeTrue'
     , help: 'Get verbose logging output'
     , nargs: 0
   }],
 
   [['-U', '--udid'] , {
     required: false
+    , defaultValue: null
     , example: "1adsf-sdfas-asdf-123sdf"
     , help: '(IOS-only) Unique device identifier of the connected physical device'
     , nargs: 0
@@ -41,14 +45,16 @@ var args = [
   }],
 
   [['-r', '--remove'] , {
-    defaultValue: true
+    defaultValue: false
+    , action: 'storeTrue'
     , required: false
     , help: '(IOS-only) Remove Instruments trace directories'
     , nargs: 0
   }],
 
   [['-s', '--reset'] , {
-    defaultValue: true
+    defaultValue: false
+    , action: 'storeTrue'
     , required: false
     , help: 'Reset app state after each session (IOS: delete plist; Android: ' +
             'install app before session and uninstall after session)'
@@ -57,6 +63,7 @@ var args = [
 
   [['-l', '--launch'] , {
     defaultValue: false
+    , action: 'storeTrue'
     , required: false
     , help: 'Pre-launch the application before allowing the first session ' +
             '(Requires --app and, for Android, --app-pkg and --app-activity)'
@@ -81,6 +88,7 @@ var args = [
 
   [['-w', '--warp'] , {
     defaultValue: false
+    , action: 'storeTrue'
     , required: false
     , help: '(IOS-only) IOS has a weird built-in unavoidable sleep. One way ' +
             'around this is to speed up the system clock. Use this time warp ' +
@@ -108,6 +116,17 @@ var args = [
             "to launch from your package (e.g., MainActivity)"
     , nargs: 1
   }],
+
+  [['--skip-install'], {
+    dest: 'skipAndroidInstall'
+    , defaultValue: false
+    , action: 'storeTrue'
+    , required: false
+    , help: "(Android-only) Don't install the app; assume it's already on the " +
+            'device with a recent version. Useful for test development ' +
+            'against an unchanging app.'
+    , nargs: 0
+  }]
 ];
 
 // Setup all the command line argument parsing

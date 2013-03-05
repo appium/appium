@@ -19,6 +19,8 @@ var ADB = function(opts) {
     opts.sdkRoot = process.env.ANDROID_HOME || '';
   }
   this.sdkRoot = opts.sdkRoot;
+  this.skipInstall = opts.skipInstall || false;
+  this.skipUninstall = !(opts.reset || false);
   this.port = opts.port || 4724;
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;
@@ -403,39 +405,57 @@ ADB.prototype.startApp = function(cb) {
 };
 
 ADB.prototype.uninstallApp = function(cb) {
-  this.requireDeviceId();
-  this.requireApp();
-  this.debug("Uninstalling app " + this.appPackage);
-  var cmd = this.adbCmd + " uninstall " + this.appPackage;
-  exec(cmd, _.bind(function(err, stdout) {
-    if (err) {
-      logger.error(err);
-      cb(err);
-    } else {
-      stdout = stdout.trim();
-      if (stdout === "Success") {
-        this.debug("App was uninstalled");
+  var next = _.bind(function() {
+    this.requireDeviceId();
+    this.requireApp();
+    this.debug("Uninstalling app " + this.appPackage);
+    var cmd = this.adbCmd + " uninstall " + this.appPackage;
+    exec(cmd, _.bind(function(err, stdout) {
+      if (err) {
+        logger.error(err);
+        cb(err);
       } else {
-        this.debug("App was not uninstalled, maybe it wasn't on device?");
+        stdout = stdout.trim();
+        if (stdout === "Success") {
+          this.debug("App was uninstalled");
+        } else {
+          this.debug("App was not uninstalled, maybe it wasn't on device?");
+        }
+        cb(null);
       }
-      cb(null);
-    }
-  }, this));
+    }, this));
+  }, this);
+
+  if (this.skipUninstall) {
+    this.debug("Not uninstalling app since server started with --reset");
+    cb();
+  } else {
+    next();
+  }
 };
 
 ADB.prototype.installApp = function(cb) {
-  this.requireDeviceId();
-  this.requireApk();
-  this.debug("Installing app " + this.apkPath);
-  var cmd = this.adbCmd + " install -r " + this.apkPath;
-  exec(cmd, _.bind(function(err) {
-    if (err) {
-      logger.error(err);
-      cb(err);
-    } else {
-      cb(null);
-    }
-  }, this));
+  var next = _.bind(function() {
+    this.requireDeviceId();
+    this.requireApk();
+    this.debug("Installing app " + this.apkPath);
+    var cmd = this.adbCmd + " install -r " + this.apkPath;
+    exec(cmd, _.bind(function(err) {
+      if (err) {
+        logger.error(err);
+        cb(err);
+      } else {
+        cb(null);
+      }
+    }, this));
+  }, this);
+
+  if (this.skipInstall) {
+    this.debug("Not installing app because server started with --skip-install");
+    cb();
+  } else {
+    next();
+  }
 };
 
 ADB.prototype.goToHome = function(cb) {

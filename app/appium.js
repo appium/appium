@@ -68,7 +68,13 @@ Appium.prototype.preLaunch = function(cb) {
     process.exit();
   } else {
     var me = this;
-    this.start({}, function(err, device) {
+    var caps = {};
+    if (this.args.androidPackage) {
+      caps.device = "Android";
+    } else {
+      caps.device = "iPhone Simulator";
+    }
+    this.start(caps, function(err, device) {
       // since we're prelaunching, it might be a while before the first
       // command comes in, so let's not have instruments quit on us
       device.setCommandTimeout(600, function() {
@@ -245,6 +251,8 @@ Appium.prototype.invoke = function() {
           , apkPath: this.args.app
           , verbose: this.args.verbose
           , appPackage: this.args.androidPackage
+          , reset: this.args.reset
+          , skipInstall: this.args.skipAndroidInstall
           , appActivity: this.args.androidActivity
         };
         this.devices[this.deviceType] = android(androidOpts);

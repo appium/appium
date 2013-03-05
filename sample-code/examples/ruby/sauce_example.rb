@@ -61,7 +61,7 @@ def server_url
 end
 
 def rest_jobs_url
-  "http://#{AUTH_DETAILS}@saucelabs.com/rest/v1/#{SAUCE_USERNAME}/jobs"
+  "https://#{AUTH_DETAILS}@saucelabs.com/rest/v1/#{SAUCE_USERNAME}/jobs"
 end
 
 # Because WebDriver doesn't have the concept of test failure, use the Sauce

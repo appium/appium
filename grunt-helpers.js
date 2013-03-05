@@ -334,9 +334,11 @@ module.exports.generateServerDocs = function(grunt, cb) {
   var docFile = path.resolve(__dirname, "docs/server-args.md");
   var md = "Appium server arguments\n==========\n\n";
   md += "Usage: `node server.js [flags]`\n\n";
-  md += "### Server flags\n\n";
-  md += "|Flag|Required?|Default|Description|Example|\n";
-  md += "|----|---------|-------|-----------|-------|\n";
+  md += "### Server flags\n";
+  md += "All flags are optional, but some are required in conjunction with " +
+        "certain others.\n\n";
+  md += "|Flag|Default|Description|Example|\n";
+  md += "|----|-------|-----------|-------|\n";
   _.each(p.rawArgs, function(arg) {
     var argNames = arg[0];
     var exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];

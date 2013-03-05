@@ -305,7 +305,7 @@ Android.prototype.getPageIndex = function(elementId, cb) {
 };
 
 Android.prototype.keys = function(elementId, keys, cb) {
-  this.proxy(["element:setText", {elementId: elementId, text: value}], cb);
+  this.proxy(["element:setText", {elementId: elementId, text: keys}], cb);
 };
 
 Android.prototype.frame = function(frame, cb) {

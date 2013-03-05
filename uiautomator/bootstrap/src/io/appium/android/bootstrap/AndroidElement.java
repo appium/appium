@@ -28,4 +28,8 @@ class AndroidElement {
     public String getText() throws UiObjectNotFoundException {
         return el.getText();
     }
+    
+    public boolean setText(String text) throws UiObjectNotFoundException {
+        return el.setText(text);
+    }
 }

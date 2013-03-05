@@ -10,6 +10,7 @@ var _ = require("underscore")
   , prompt = require('prompt')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
+  , parser = require('./app/parser')
   , fs = require('fs');
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
@@ -323,6 +324,36 @@ module.exports.installAndroidApp = function(grunt, appName, cb) {
       grunt.fatal(err);
     } else {
       grunt.log.write(stdout);
+      cb();
+    }
+  });
+};
+
+module.exports.generateServerDocs = function(grunt, cb) {
+  var p = parser();
+  var docFile = path.resolve(__dirname, "docs/server-args.md");
+  var md = "Appium server arguments\n==========\n\n";
+  md += "Usage: `node server.js [flags]`\n\n";
+  md += "### Server flags\n\n";
+  md += "|Flag|Required?|Default|Description|Example|";
+  md += "|----|---------|-------|-----------|-------|";
+  _.each(p.rawArgs, function(arg) {
+    var argNames = arg[0];
+    var exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];
+    var argOpts = arg[1];
+    md += "|`" + argNames.join("`, `") + "`";
+    md += "|" + (argOpts.required ? "yes" : "no");
+    md += "|" + ((typeof argOpts.defaultValue === "undefined") ? "" : argOpts.defaultValue);
+    md += "|" + argOpts.help;
+    md += "|`" + ((typeof argOpts.example === "undefined") ? "" : exampleArg + " " + argOpts.example) + "`";
+    md += "|\n";
+  });
+  fs.writeFile(docFile, md, function(err) {
+    if (err) {
+      console.log(err.stack);
+      grunt.fatal(err);
+    } else {
+      grunt.log.write("New docs written! Don't forget to commit and push");
       cb();
     }
   });

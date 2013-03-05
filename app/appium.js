@@ -69,11 +69,6 @@ Appium.prototype.preLaunch = function(cb) {
   } else {
     var me = this;
     var caps = {};
-    if (this.args.androidPackage) {
-      caps.device = "Android";
-    } else {
-      caps.device = "iPhone Simulator";
-    }
     this.start(caps, function(err, device) {
       // since we're prelaunching, it might be a while before the first
       // command comes in, so let's not have instruments quit on us
@@ -112,6 +107,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     } else {
       return "android";
     }
+  } else if (desiredCaps["app-package"] || this.args.androidPackage) {
+    return "android";
   }
   return "ios";
 };
@@ -290,13 +287,11 @@ Appium.prototype.onDeviceDie = function(code, cb) {
     logger.info('Not clearing out appium devices');
   }
   if (cb) {
-    if (this.deviceType !== null) {
-      this.deviceType = null;
-      this.invoke();
-    }
     cb(null, {status: status.codes.Success.code, value: null,
               sessionId: dyingSession});
   }
+  // call invoke again in case we have sessions queued
+  this.invoke();
 };
 
 Appium.prototype.stop = function(cb) {

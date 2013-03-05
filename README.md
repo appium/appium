@@ -54,10 +54,12 @@ You can also automate web views in hybrid apps! See the [hybrid app
 guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
 
 We support Android and iOS platforms side-by-side:
-    * [Set up your system for Appium iOS support](https://github.com/appium/appium/wiki/iOS-Setup)
-    * [Set up your system for Appium Android support](https://github.com/appium/appium/wiki/Android-Setup)
-    * [Running an iOS test](https://github.com/appium/appium/wiki/Running-Tests#ios)
-    * [Running an Android test](https://github.com/appium/appium/wiki/Running-Tests#android)
+    * [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
+    * [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
+    * [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+    * [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+    * [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
+    * [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
 
 
 - - -
@@ -82,7 +84,7 @@ dependencies.
 Developing on Appium (iOS)
 --------------
 
-(First, have a look at [setting up your system for Appium iOS support](https://github.com/appium/appium/wiki/iOS-Setup).)
+(First, have a look at [setting up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios).)
 
 To avoid a security dialog that may appear when launching your iOS apps you'll
 have to modify your `/etc/authorization` file in one of two ways:
@@ -112,7 +114,7 @@ Build the test apps (if the functional tests fail, try running these grunt comma
 Developing on Appium (Android)
 ----------------
 
-(First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/wiki/Android-Setup).)
+(First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android).)
 
 Configure the and build bootstrap .jar:
 
@@ -170,14 +172,9 @@ your changes against code quality standards:
 
     Done, without errors.
 
-More Stuff and Some Low-Level Tips
+Dig in deeper to Appium dev
 -----------
-By default, `grunt buildApp` builds apps using the iPhone 6.1 simulator SDK.
-You can overwrite the simulator by passing another SDK to grunt (to figure out
-which SDKs you have available, try `xcodebuild -showsdks`:
-
-    > grunt buildApp:UICatalog:iphonesimulator6.0
-
+### Advanced grunt
 If you want to run the Appium server and have it listen indefinitely, you can
 execute one of the following commands to start an Appium server with or without a specified app:
 
@@ -185,15 +182,22 @@ execute one of the following commands to start an Appium server with or without 
     > grunt appium:TestApp   // launch Appium server with the TestApp
     > grunt appium:UICatalog // launch Appium server with the UICatalog app
 
-Then you can run individual test files using Mocha, for example:
+Like the power of automating dev tasks? Check out the [Appium grunt
+tasks](https://github.com/appium/appium/blob/master/docs/grunt.md) available to
+help with building apps, installing apps, generating docs, etc...
+
+### Running individual tests
+
+If you have an Appium server listening, you can run individual test files using
+Mocha, for example:
 
     > mocha -t 60000 -R spec test/functional/testapp/simple.js
 
+### Advanced Appium server flags
+
 Do you like getting close to the metal? Or are you trying to launch an Appium
 server from a script with a custom app? If so you can start Appium without
-grunt from the command line with an app or without an app. (See
-[the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for
-all CLI arguments.)
+grunt from the command line with an app or without an app, among other things:
 
     > node server.js -V  // launch Appium server without app
     > node server.js --app /absolute/path/to/app -V  // launch Appium server with app
@@ -201,14 +205,10 @@ all CLI arguments.)
     > node server.js --log /my/appium.log // log to file instead of stdout
     > node server.js --warp // use unsupported system-crashing speedup tech
 
-In this case, the app has to be compiled for the iPhone simulator, for example
-by executing the following command in the Xcode project:
+(See
+[the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for
+all CLI arguments.)
 
-    > xcodebuild -sdk iphonesimulator6.0
-
-This creates a `build/Release-iphonesimulator` directory in your Xcode project
-that contains the `.app` package that you'll need to communicate with the
-Appium server.
 
 Using with a [Bitbeambot](http://bitbeam.org)
 -----------

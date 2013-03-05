@@ -22,6 +22,68 @@ want to zip it up, you can.
 
 <a name="run-ios"></a>Running your test app with Appium (iOS)
 ------
+The best way to see what to do currently is to look at the example tests:
+
+[Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
+
+Basically, first make sure Appium is running:
+
+    node server.js -V
+
+Then script your WebDriver test, sending in the following desired capabilities:
+
+```json
+{
+    'device': 'iPhone Simulator',
+    'browserName': '',
+    'platform': 'MAC',
+    'version': '6.1',
+    'app': myApp
+}
+```
+
+In this set of capabilities, `myApp` must be either:
+
+* A local absolute path to your simulator-compiled .app directory or .zip
+* A url of a zip file containg your .app package
+
+Using your WebDriver library of choice, set the remote session to use these
+capabilities and connect to the server running at port 4723 of localhost (or
+whatever host and port you specified when you started Appium). You should be
+all set now!
 
 <a name="run-android"></a>Running your test app with Appium (Android)
 -----
+First make sure Appium is running:
+
+    node server.js -V
+
+Then script your WebDriver test, sending in the following desired capabilities:
+
+```json
+{
+    'device': 'Android',
+    'browserName': '',
+    'platform': 'MAC',
+    'version': '4.2',
+    'app': myApp,
+    'appPackage': myAppPackage,
+    'appActivity': myAppActivity
+}
+```
+
+In this set of capabilities, `myApp` must be either:
+
+* A local absolute path to your .apk or a .zip of it
+* A url of a zip file containg your .apk
+
+`myAppPackage` must be the java package of your application, e.g.,
+`com.example.android.myApp`.
+
+`myAppActivity` must be the Android activity you want to launch for the test,
+e.g., `MainActivity`.
+
+Using your WebDriver library of choice, set the remote session to use these
+capabilities and connect to the server running at port 4723 of localhost (or
+whatever host and port you specified when you started Appium). You should be
+all set now!

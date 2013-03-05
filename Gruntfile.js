@@ -64,7 +64,7 @@ module.exports = function(grunt) {
   grunt.registerTask('servertest', "Run functional server tests", function(log) {
     runTestsWithServer(grunt, 'TestApp', 'server', log === "log", this.async());
   });
-  grunt.registerTask('test', ['jshint', 'buildApp:TestApp', 'buildApp:UICatalog', 'unit', 'appiumutils', 'functional', 'servertest']);
+  grunt.registerTask('test', ['jshint', 'buildApp:TestApp', 'buildApp:UICatalog', 'buildAndroidApp:ApiDemos', 'unit', 'appiumutils', 'functional', 'servertest']);
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('appiumutils', 'mochaTest:appiumutils');
   grunt.registerTask('default', ['test']);

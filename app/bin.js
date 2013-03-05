@@ -3,7 +3,6 @@
 
 var net = require('net')
   , repl = require('repl')
-  , underscore = require('underscore')
   , colors = require('colors')
   , appium  = require('../server')
   , parser = require('./parser')

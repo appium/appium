@@ -32,20 +32,20 @@ module.exports = function(grunt) {
       , appiumutils: ['test/functional/appium/appiumutils.js']
     }
     , mochaTestWithServer: {
-      TestApp: {
+      TestApp: ['ios', {
         functional: ['test/functional/testapp/*.js']
         , server: ['test/functional/appium/appium.js'
                    , 'test/functional/appium/jsonwp.js']
-      }
-      , UICatalog: {
+      }]
+      , UICatalog: ['ios', {
         functional: ['test/functional/uicatalog/*.js']
-      }
-      , WebViewApp: {
+      }]
+      , WebViewApp: ['ios', {
         functional: ['test/functional/webview/*.js']
-      }
-      , ApiDemos: {
+      }]
+      , ApiDemos: ['android', {
         functional: ['test/functional/apidemos/*.js']
-      }
+      }]
     }
     , mochaTestConfig: {
       options: {
@@ -59,10 +59,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.registerTask('lint', ['jshint']);
   grunt.registerTask('functional', "Run functional tests", function(log) {
-    runTestsWithServer(grunt, null, 'functional', log === "log", this.async());
+    runTestsWithServer(grunt, null, 'functional', null, log === "log", this.async());
   });
   grunt.registerTask('servertest', "Run functional server tests", function(log) {
-    runTestsWithServer(grunt, 'TestApp', 'server', log === "log", this.async());
+    runTestsWithServer(grunt, 'TestApp', 'server', null, log === "log", this.async());
+  });
+  grunt.registerTask('android', "Run functional android tests", function(log) {
+    runTestsWithServer(grunt, null, 'functional', 'android', log === "log", this.async());
+  });
+  grunt.registerTask('ios', "Run functional ios tests", function(log) {
+    runTestsWithServer(grunt, null, 'functional', 'ios', log === "log", this.async());
   });
   grunt.registerTask('test', ['jshint', 'buildApp:TestApp', 'buildApp:UICatalog', 'buildAndroidApp:ApiDemos', 'unit', 'appiumutils', 'functional', 'servertest']);
   grunt.registerTask('unit', 'mochaTest:unit');

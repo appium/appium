@@ -41,6 +41,8 @@ Get something working with a quickness.
 
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
+More Detailed Information
+-------------------
 We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
 We also have several extensions to the JSON Wire Protocol for [automating
@@ -50,6 +52,12 @@ like tap, flick, and swipe.
 
 You can also automate web views in hybrid apps! See the [hybrid app
 guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
+
+We support Android and iOS platforms side-by-side:
+    * [Set up your system for Appium iOS support](https://github.com/appium/appium/wiki/iOS-Setup)
+    * [Set up your system for Appium Android support](https://github.com/appium/appium/wiki/Android-Setup)
+    * [Running an iOS test](https://github.com/appium/appium/wiki/Running-Tests#ios)
+    * [Running an Android test](https://github.com/appium/appium/wiki/Running-Tests#android)
 
 
 - - -
@@ -71,6 +79,11 @@ The first two commands install test and build tools (sudo may not be necessary
 if you installed node.js via Homebrew). The third command installs all app
 dependencies.
 
+Developing on Appium (iOS)
+--------------
+
+(First, have a look at [setting up your system for Appium iOS support](https://github.com/appium/appium/wiki/iOS-Setup).)
+
 To avoid a security dialog that may appear when launching your iOS apps you'll
 have to modify your `/etc/authorization` file in one of two ways:
 
@@ -86,6 +99,37 @@ have to modify your `/etc/authorization` file in one of two ways:
 **Important Note:** Making this modification to your `/etc/authorization` file
 grants access privileges to all members belonging to your `_developer` group.
 
+Download the UICatalog test app:
+
+    > grunt downloadApp
+
+Build the test apps (if the functional tests fail, try running these grunt commands again):
+
+    > grunt buildApp:UICatalog
+    > grunt buildApp:TestApp
+    > grunt buildApp:WebViewApp
+
+Developing on Appium (Android)
+----------------
+
+(First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/wiki/Android-Setup).)
+
+Configure the and build bootstrap .jar:
+
+    > grunt configAndroidBootstrap
+    > grunt buildAndroidBootstrap
+
+Configure and build the test app:
+
+    > grunt configAndroidApp:ApiDemos
+    > grunt buildAndroidApp:ApiDemos
+
+Make sure you have one and only one Android emulator or device running, e.g.
+by running this command in another process (assuming the `emulator` command is
+on your path):
+
+    > emulator -avd <MyAvdName>
+
 Making sure you're up to date
 -----------
 Since we use dev versions of some packages, it often becomes necessary to
@@ -96,16 +140,6 @@ to do all this:
 
 Running Tests
 -----------
-Download UICatalog:
-
-    > grunt downloadApp
-
-Build an app (if the functional tests fail, try running these grunt commands
-again):
-
-    > grunt buildApp:UICatalog
-    > grunt buildApp:TestApp
-
 Run all functional tests:
 
     > grunt functional
@@ -194,4 +228,4 @@ The open source community has made this project possible, please add missing pro
 
 Mailing List
 -----------
-[Discussion Group](https://groups.google.com/d/forum/appium-discuss)
+Announcements and debates often take place on the [Discussion Group](https://groups.google.com/d/forum/appium-discuss), be sure to sign up!

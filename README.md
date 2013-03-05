@@ -195,11 +195,11 @@ grunt from the command line with an app or without an app. (See
 [parser.js](https://github.com/appium/appium/blob/master/app/parser.js) for
 more CLI arguments.)
 
-    > node server.js -V 1  // launch Appium server without app
-    > node server.js --app /absolute/path/to/app -V 1  // launch Appium server with app
-    > node server.js --launch 1 // pre-launch the app when appium loads
+    > node server.js -V  // launch Appium server without app
+    > node server.js --app /absolute/path/to/app -V  // launch Appium server with app
+    > node server.js --launch // pre-launch the app when appium loads
     > node server.js --log /my/appium.log // log to file instead of stdout
-    > node server.js --warp 1 // use unsupported system-crashing speedup tech
+    > node server.js --warp // use unsupported system-crashing speedup tech
 
 In this case, the app has to be compiled for the iPhone simulator, for example
 by executing the following command in the Xcode project:

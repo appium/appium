@@ -64,7 +64,14 @@ simply run:
 
     emulator -avd <MyAvdName>
 
-And wait for the android emulator to finish launching. Now, make sure Appium is running:
+And wait for the android emulator to finish launching. Sometimes, for various
+reasons, `adb` gets stuck. If it's not showing any connected devices or
+otherwise failing, you can restart it by running:
+
+    adb kill-server
+    adb devices
+
+Now, make sure Appium is running:
 
     node server.js -V
 

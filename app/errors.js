@@ -16,7 +16,7 @@ var ProtocolError = function(message) {
    this.name = "ProtocolError";
 };
 
-exports = {
+module.exports = {
   NotImplementedError: NotImplementedError
   , UnknownError: UnknownError
   , ProtocolError: ProtocolError

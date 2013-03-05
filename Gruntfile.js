@@ -43,6 +43,9 @@ module.exports = function(grunt) {
       , WebViewApp: {
         functional: ['test/functional/webview/*.js']
       }
+      , ApiDemos: {
+        functional: ['test/functional/apidemos/*.js']
+      }
     }
     , mochaTestConfig: {
       options: {

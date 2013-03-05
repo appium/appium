@@ -14,9 +14,9 @@ var errors = require('./errors')
 var Android = function(opts) {
   this.rest = opts.rest;
   this.opts = opts;
-  //this.apkPath = opts.apkPath;
-  //this.appPackage = opts.appPackage;
-  //this.appActivity = opts.appActivity;
+  this.apkPath = opts.apkPath;
+  this.appPackage = opts.appPackage;
+  this.appActivity = opts.appActivity;
   this.verbose = opts.verbose;
   this.queue = [];
   this.progress = 0;
@@ -104,8 +104,10 @@ Android.prototype.stop = function(cb) {
     if (cb) {
       this.onStop = cb;
     }
-    this.adb.sendShutdownCommand(_.bind(function() {
-      logger.info("Sent shutdown command, waiting for ADB to stop...");
+    this.adb.goToHome(_.bind(function() {
+      this.adb.sendShutdownCommand(_.bind(function() {
+        logger.info("Sent shutdown command, waiting for ADB to stop...");
+      }, this));
     }, this));
     this.queue = [];
     this.progress = 0;

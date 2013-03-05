@@ -172,6 +172,58 @@ describeWd('getSize', function(h) {
   });
 });
 
+describeWd("execute", function(h) {
+  it("should bubble up javascript errors", function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.execute("'nan'--", function(err, val) {
+        err.message.should.equal("Error response status: 13.");
+        should.not.exist(val);
+        done();
+      });
+    });
+  });
+  it("should eval javascript", function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.execute("return 1", function(err, val) {
+        should.not.exist(err);
+        val.should.equal(1);
+        done();
+      });
+    });
+  });
+  it("should not be returning hardcoded results", function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.execute("return 1+1", function(err, val) {
+        should.not.exist(err);
+        val.should.equal(2);
+        done();
+      });
+    });
+  });
+  it("should return nothing when you don't explicitly return", function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.execute("1+1", function(err, val) {
+        should.not.exist(err);
+        should.not.exist(val);
+        done();
+      });
+    });
+  });
+  it("should execute code inside the web view", function(done) {
+    loadWebView(h.driver, function() {
+      h.driver.execute('return document.body.innerHTML.indexOf("I am some page content") > 0', function(err, val) {
+        should.not.exist(err);
+        val.should.equal(true);
+        h.driver.execute('return document.body.innerHTML.indexOf("I am not some page content") > 0', function(err, val) {
+          should.not.exist(err);
+          val.should.equal(false);
+          done();
+        });
+      });
+    });
+  });
+});
+
 var loadWebView = function(driver, cb) {
   driver.windowHandles(function(err, handles) {
     should.not.exist(err);

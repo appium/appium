@@ -143,7 +143,8 @@ to do all this:
 
 Running Tests
 -----------
-Run all functional tests:
+Once, your system is set up and your code is up to date, you can run all the
+functional tests:
 
     > grunt functional
 

@@ -173,6 +173,7 @@ Android.prototype.push = function(elem) {
 Android.prototype.waitForCondition = deviceCommon.waitForCondition;
 
 Android.prototype.setCommandTimeout = function(secs, cb) {
+  logger.info("Setting command timeout for android to " + secs + " secs");
   this.origCommandTimeoutMs = this.commandTimeoutMs;
   this.commandTimeoutMs = secs * 1000;
   this.resetTimeout();

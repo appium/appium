@@ -78,15 +78,15 @@ Instruments.prototype.startSocketServer = function(sock) {
     }, this));
 
     this.currentSocket = conn;
-    this.debug("Socket Connected");
+    //this.debug("Socket Connected");
 
     conn.on('close', _.bind(function() {
-        this.debug("Socket Completely closed");
+        //this.debug("Socket Completely closed");
         this.currentSocket = null;
     }, this));
 
     conn.on('end', _.bind(function() {
-      this.debug("Socket closed by other side");
+      //this.debug("Socket closed by other side");
       var data = this.bufferedData;
       this.bufferedData = "";
       try {
@@ -203,7 +203,7 @@ Instruments.prototype.commandHandler = function(data, c) {
     this.debug("Sending command to instruments: " + this.curCommand.cmd);
     c.write(JSON.stringify({nextCommand: this.curCommand.cmd}));
     c.end();
-    this.debug("Closing our half of the connection");
+    //this.debug("Closing our half of the connection");
   }, this));
 };
 

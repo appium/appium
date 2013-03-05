@@ -163,7 +163,8 @@ describeWd('getSize', function(h) {
     loadWebView(h.driver, function() {
       h.driver.elementById('i_am_an_id', function(err, element) {
         element.getSize(function(err, size) {
-          size.width.should.eql(304);
+          // we might be in landscape or portrait mode
+          [304, 464].should.include(size.width);
           size.height.should.eql(20);
           done();
         });

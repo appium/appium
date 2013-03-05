@@ -44,16 +44,18 @@ var args = [
     , nargs: 1
   }],
 
-  [['-r', '--remove'] , {
+  [['-k', '--keep-artifacts'] , {
     defaultValue: false
+    , dest: 'keepArtifacts'
     , action: 'storeTrue'
     , required: false
-    , help: '(IOS-only) Remove Instruments trace directories'
+    , help: '(IOS-only) Keep Instruments trace directories'
     , nargs: 0
   }],
 
-  [['-s', '--reset'] , {
+  [['--no-reset'] , {
     defaultValue: false
+    , dest: 'noReset'
     , action: 'storeTrue'
     , required: false
     , help: 'Reset app state after each session (IOS: delete plist; Android: ' +
@@ -61,8 +63,9 @@ var args = [
     , nargs: 0
   }],
 
-  [['-l', '--launch'] , {
+  [['-l', '--pre-launch'] , {
     defaultValue: false
+    , dest: 'launch'
     , action: 'storeTrue'
     , required: false
     , help: 'Pre-launch the application before allowing the first session ' +

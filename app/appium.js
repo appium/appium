@@ -244,16 +244,16 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
       if (this.isIos()) {
-        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove, this.args.warp, this.args.reset);
+        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, !this.args.keepArtifacts, this.args.warp, !this.args.noReset);
       } else if (this.isAndroid()) {
         var androidOpts = {
           rest: this.rest
           , apkPath: this.args.app
           , verbose: this.args.verbose
           , appPackage: this.args.androidPackage
-          , reset: this.args.reset
-          , skipInstall: this.args.skipAndroidInstall
           , appActivity: this.args.androidActivity
+          , reset: !this.args.noReset
+          , skipInstall: this.args.skipAndroidInstall
         };
         this.devices[this.deviceType] = android(androidOpts);
       } else {

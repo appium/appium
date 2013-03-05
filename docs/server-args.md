@@ -5,7 +5,9 @@ Usage: `node server.js [flags]`
 
 ### Server flags
 
-|Flag|Required?|Default|Description|Example||----|---------|-------|-----------|-------||`--app`|no|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
+|Flag|Required?|Default|Description|Example|
+|----|---------|-------|-----------|-------|
+|`--app`|no|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`-V`, `--verbose`|no|null|Get verbose logging output|``|
 |`-U`, `--udid`|no|null|(IOS-only) Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|no|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|

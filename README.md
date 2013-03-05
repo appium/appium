@@ -192,8 +192,8 @@ Then you can run individual test files using Mocha, for example:
 Do you like getting close to the metal? Or are you trying to launch an Appium
 server from a script with a custom app? If so you can start Appium without
 grunt from the command line with an app or without an app. (See
-[parser.js](https://github.com/appium/appium/blob/master/app/parser.js) for
-more CLI arguments.)
+[the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for
+all CLI arguments.)
 
     > node server.js -V  // launch Appium server without app
     > node server.js --app /absolute/path/to/app -V  // launch Appium server with app

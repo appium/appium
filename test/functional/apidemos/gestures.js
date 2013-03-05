@@ -26,7 +26,7 @@ describeWd('gestures', function(h) {
       setTimeout(next, 3000);
     });
   });
-  it.only('should click via x/y pct', function(done) {
+  it('should click via x/y pct', function(done) {
     h.driver.execute("mobile: tap", [{x: 0.6, y: 0.8}], function(err) {
       should.not.exist(err);
       var next = function() {

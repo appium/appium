@@ -101,6 +101,9 @@ class AndroidCommandExecutor {
                         return getSuccessResult(el.click());
                     } else if (action.equals("getText")) {
                         return getSuccessResult(el.getText());
+                    } else if (action.equals("setText")) {
+                        String text = params.get("text").toString();
+                        return getSuccessResult(el.setText(text));
                     } else {
                         return getErrorResult("Unknown command: element:" + action);
                     }

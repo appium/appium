@@ -6,7 +6,8 @@ var errors = require('./errors')
   , logger = require('../logger').get('appium')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
-  , NotImplementedError = errors.NotImplementedError
+  //, NotImplementedError = errors.NotImplementedError
+  , NotYetImplementedError = errors.NotYetImplementedError
   , parseXpath = require('./uiauto/appium/xpath').parseXpath
   , UnknownError = errors.UnknownError;
 
@@ -257,11 +258,11 @@ Android.prototype.findElementsFromElement = function(element, strategy, selector
 };
 
 Android.prototype.setValueImmediate = function(elementId, value, cb) {
-    cb(new NotImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.setValue = function(elementId, value, cb) {
-    cb(new NotImplementedError(), null);
+  this.proxy(["element:setText", {elementId: elementId, text: value}], cb);
 };
 
 Android.prototype.click = function(elementId, cb) {
@@ -273,7 +274,7 @@ Android.prototype.complexTap = function(tapCount, touchCount, duration, x, y, el
 };
 
 Android.prototype.clear = function(elementId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getText = function(elementId, cb) {
@@ -281,15 +282,15 @@ Android.prototype.getText = function(elementId, cb) {
 };
 
 Android.prototype.getAttribute = function(elementId, attributeName, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getLocation = function(elementId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getSize = function(elementId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getWindowSize = function(windowHandle, cb) {
@@ -297,15 +298,15 @@ Android.prototype.getWindowSize = function(windowHandle, cb) {
 };
 
 Android.prototype.getPageIndex = function(elementId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.keys = function(elementId, keys, cb) {
-    cb(new NotImplementedError(), null);
+  this.proxy(["element:setText", {elementId: elementId, text: value}], cb);
 };
 
 Android.prototype.frame = function(frame, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.implicitWait = function(ms, cb) {
@@ -318,47 +319,47 @@ Android.prototype.implicitWait = function(ms, cb) {
 };
 
 Android.prototype.elementDisplayed = function(elementId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.elementEnabled = function(elementId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getPageSource = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getAlertText = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.postAcceptAlert = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.postDismissAlert = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getOrientation = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.setOrientation = function(orientation, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getScreenshot = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount, elId, cb) {
@@ -384,43 +385,43 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
 };
 
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.hideKeyboard = function(keyName, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.url = function(url, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.active = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getWindowHandle = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getWindowHandles = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.setWindow = function(name, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.clearWebView = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.execute = function(script, args, cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.title = function(cb) {
-    cb(new NotImplementedError(), null);
+    cb(new NotYetImplementedError(), null);
 };
 
 module.exports = function(opts) {

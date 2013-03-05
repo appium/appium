@@ -25,6 +25,7 @@ var Android = function(opts) {
   this.commandTimeoutMs = 60 * 1000;
   this.origCommandTimeoutMs = this.commandTimeoutMs;
   this.commandTimeout = null;
+  this.shuttingDown = false;
   this.adb = null;
   this.capabilities = {
     platform: 'LINUX'
@@ -71,6 +72,7 @@ Android.prototype.start = function(cb, onDie) {
     }
     this.adb.uninstallApp(_.bind(function() {
       this.adb = null;
+      this.shuttingDown = false;
       this.onStop(code);
       this.onStop = null;
     }, this));
@@ -99,11 +101,14 @@ Android.prototype.stop = function(cb) {
   }
   if (this.adb === null) {
     logger.info("Trying to stop adb but it already exited");
-    cb();
+    if (cb) {
+      cb();
+    }
   } else {
     if (cb) {
       this.onStop = cb;
     }
+    this.shuttingDown = true;
     this.adb.goToHome(_.bind(function() {
       this.adb.sendShutdownCommand(_.bind(function() {
         logger.info("Sent shutdown command, waiting for ADB to stop...");
@@ -144,7 +149,7 @@ Android.prototype.push = function(elem) {
 
     this.progress++;
 
-    if (this.adb) {
+    if (this.adb && !this.shuttingDown) {
       this.adb.sendAutomatorCommand(action, params, _.bind(function(response) {
         this.cbForCurrentCmd = null;
         if (typeof cb === 'function') {
@@ -157,10 +162,16 @@ Android.prototype.push = function(elem) {
       }, this));
     } else {
       this.cbForCurrentCmd = null;
+      var msg = "Tried to send command to non-existent Android device, " +
+                 "maybe it shut down?";
+      if (this.shuttingDown) {
+        msg = "We're in the middle of shutting down the Android device, " +
+              "so your request won't be executed. Sorry!";
+      }
+
       this.respond({
         status: status.codes.UnknownError.code
-        , value: "Tried to send command to non-existent Android device, " +
-                 "maybe it shut down?"
+        , value: msg
       }, cb);
       this.progress--;
       next();
@@ -233,12 +244,16 @@ Android.prototype.findElementOrElements = function(strategy, selector, many, con
   }
   var doFind = _.bind(function(findCb) {
     this.proxy(["find", params], function(err, res) {
-      if (!many && res.status === 0) {
-        findCb(true, err, res);
-      } else if (many && res.value.length > 0) {
-        findCb(true, err, res);
-      } else {
+      if (err) {
         findCb(false, err, res);
+      } else {
+        if (!many && res.status === 0) {
+          findCb(true, err, res);
+        } else if (many && res.value.length > 0) {
+          findCb(true, err, res);
+        } else {
+          findCb(false, err, res);
+        }
       }
     });
   }, this);

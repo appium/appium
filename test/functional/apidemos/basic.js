@@ -23,27 +23,13 @@ describeWd('basic', function(h) {
     h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
       should.not.exist(err);
       var next = function() {
-        h.driver.elementByTagName('text', function(err) {
+        h.driver.elementByName('Animation', function(err) {
           should.exist(err);
           err.status.should.equal(13);
           done();
         });
       };
       setTimeout(next, 4000);
-    });
-  });
-  it('should die with short command timeout differently too', function(done) {
-    var params = {timeout: 3};
-    h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
-      should.not.exist(err);
-      var next = function() {
-        h.driver.elementByTagName('text', function(err) {
-          should.exist(err);
-          err.status.should.equal(6);
-          done();
-        });
-      };
-      setTimeout(next, 8000);
     });
   });
 });

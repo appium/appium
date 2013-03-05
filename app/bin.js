@@ -31,7 +31,6 @@ var startRepl = function() {
     , udid: null
     , address: '127.0.0.1'
     , port: 4723
-    , remove: true
   };
 
   var connections = 0;

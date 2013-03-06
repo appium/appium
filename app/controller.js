@@ -12,8 +12,12 @@ function getResponseHandler(req, res) {
       response = {};
     }
     if (err !== null && typeof err !== "undefined") {
-      if (typeof err.name !== "undefined" && err.name == 'NotImplementedError') {
-        notImplementedInThisContext(req, res);
+      if (typeof err.name !== 'undefined') {
+        if (err.name == 'NotImplementedError') {
+          notImplementedInThisContext(req, res);
+        } else if (err.name == "NotYetImplementedError") {
+          exports.notYetImplemented(req, res);
+        }
       } else {
         var value = response.value;
         if (typeof value === "undefined") {

@@ -338,11 +338,13 @@ Android.prototype.implicitWait = function(ms, cb) {
 };
 
 Android.prototype.elementDisplayed = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  var p = {elementId: elementId, attribute: "displayed"};
+  this.proxy(["element:getAttribute", p], cb);
 };
 
 Android.prototype.elementEnabled = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  var p = {elementId: elementId, attribute: "enabled"};
+  this.proxy(["element:getAttribute", p], cb);
 };
 
 Android.prototype.getPageSource = function(cb) {

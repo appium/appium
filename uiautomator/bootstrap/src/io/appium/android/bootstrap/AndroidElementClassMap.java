@@ -10,7 +10,8 @@ class AndroidElementClassMap {
     public AndroidElementClassMap() {
         map = new HashMap<String, String>();
         map.put("text",  "TextView");
-        map.put("list", "ListView");        
+        map.put("list", "ListView");
+        map.put("textfield", "EditText");
     }
     
     public static String match(String selector) {

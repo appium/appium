@@ -3,7 +3,6 @@
 
 var net = require('net')
   , repl = require('repl')
-  , underscore = require('underscore')
   , colors = require('colors')
   , appium  = require('../server')
   , parser = require('./parser')
@@ -27,11 +26,10 @@ var startRepl = function() {
   r.context.help = help;
   r.context.args = {
     app: '/path/to/test/app'
-    , verbose: '1'
+    , verbose: true
     , udid: null
     , address: '127.0.0.1'
     , port: 4723
-    , remove: true
   };
 
   var connections = 0;
@@ -54,7 +52,7 @@ if (process.argv[2] === "shell") {
 }
 else {
   var args = parser().parseArgs();
-  args.verbose = 1;
+  args.verbose = true;
   //console.log("Pre-flight check ...".grey);
   appium.run(args, function() { /* console.log('Rock and roll.'.grey); */ });
 }

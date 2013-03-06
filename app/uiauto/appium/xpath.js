@@ -29,7 +29,7 @@ au.getXpathExtPath = function(matchedExt) {
       if (splits[i] !== "") {
         path.push({
           node: splits[i].replace(/\/+/, '')
-          , search: this.getXpathSearchMethod(splits[i])
+          , search: au.getXpathSearchMethod(splits[i])
         });
       }
     }
@@ -56,10 +56,11 @@ au.parseXpath = function(xpath) {
       , attrConstraint = null
       , substrMatch = false
       , path = []
+      , rootSearch = au.getXpathSearchMethod(matchedRoot, true)
       , parts = null;
     path.push({
       node: matchedRoot.replace(/\/+/, '')
-      , search: this.getXpathSearchMethod(matchedRoot, true)
+      , search: rootSearch
     });
     path = path.concat(au.getXpathExtPath(matchedExt));
     if (matchedAttrEq || matchedContains) {

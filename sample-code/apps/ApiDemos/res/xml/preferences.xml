@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- This is a primitive example showing the different types of preferences available. -->
+
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+            android:title="@string/inline_preferences">
+            
+        <CheckBoxPreference
+                android:key="checkbox_preference"
+                android:title="@string/title_checkbox_preference"
+                android:summary="@string/summary_checkbox_preference" />
+
+    </PreferenceCategory>
+                
+    <PreferenceCategory
+            android:title="@string/dialog_based_preferences">
+
+        <EditTextPreference
+                android:key="edittext_preference"
+                android:title="@string/title_edittext_preference"
+                android:summary="@string/summary_edittext_preference"
+                android:dialogTitle="@string/dialog_title_edittext_preference" />
+                
+        <ListPreference
+                android:key="list_preference"
+                android:title="@string/title_list_preference"
+                android:summary="@string/summary_list_preference"
+                android:entries="@array/entries_list_preference"
+                android:entryValues="@array/entryvalues_list_preference"
+                android:dialogTitle="@string/dialog_title_list_preference" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/launch_preferences">
+
+        <!-- This PreferenceScreen tag serves as a screen break (similar to page break
+             in word processing). Like for other preference types, we assign a key
+             here so it is able to save and restore its instance state. -->
+        <PreferenceScreen
+                android:key="screen_preference"
+                android:title="@string/title_screen_preference"
+                android:summary="@string/summary_screen_preference">
+            
+            <!-- You can place more preferences here that will be shown on the next screen. -->
+                     
+            <CheckBoxPreference
+                    android:key="next_screen_checkbox_preference"
+                    android:title="@string/title_next_screen_toggle_preference"
+                    android:summary="@string/summary_next_screen_toggle_preference" />
+                
+        </PreferenceScreen>
+
+        <PreferenceScreen
+                android:title="@string/title_intent_preference"
+                android:summary="@string/summary_intent_preference">
+
+            <intent android:action="android.intent.action.VIEW"
+                    android:data="http://www.android.com" />
+
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="@string/preference_attributes">
+    
+        <CheckBoxPreference
+                android:key="parent_checkbox_preference"
+                android:title="@string/title_parent_preference"
+                android:summary="@string/summary_parent_preference" />
+
+        <!-- The visual style of a child is defined by this styled theme attribute. -->
+        <CheckBoxPreference
+                android:key="child_checkbox_preference"
+                android:dependency="parent_checkbox_preference"
+                android:layout="?android:attr/preferenceLayoutChild"
+                android:title="@string/title_child_preference"
+                android:summary="@string/summary_child_preference" />
+            
+    </PreferenceCategory>
+    
+</PreferenceScreen>
+

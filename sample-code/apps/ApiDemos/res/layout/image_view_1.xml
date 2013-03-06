@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        
+        <!-- The following four examples use a large image -->
+        <!-- 1. Non-scaled view, for reference -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_large_normal"/>
+        <ImageView
+            android:src="@drawable/sample_1"
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+            
+        <!-- 2. Limit to at most 50x50 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_large_at_most"/>
+        <ImageView
+            android:src="@drawable/sample_1"
+            android:adjustViewBounds="true"
+            android:maxWidth="50dip"
+            android:maxHeight="50dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+       <!-- 3. Limit to at most 70x70, with 10 pixels of padding all around -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_large_at_most_padded"/>
+       <ImageView
+            android:src="@drawable/sample_1"
+            android:background="#66FFFFFF"
+            android:adjustViewBounds="true"
+            android:maxWidth="70dip"
+            android:maxHeight="70dip"
+            android:padding="10dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+            
+        <!-- 4. Limit to exactly 70x70, with 10 pixels of padding all around -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_large_exactly_padded"/>
+        <ImageView
+            android:src="@drawable/sample_1"
+            android:background="#66FFFFFF"
+            android:scaleType="centerInside"
+            android:padding="10dip"
+            android:layout_width="70dip"
+            android:layout_height="70dip" />
+
+        <!-- Repeating the previous four examples with small image -->
+        <!-- 1. Non-scaled view, for reference -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_small_normal"/>
+        <ImageView
+            android:src="@drawable/stat_happy"
+            android:background="#FFFFFFFF"
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+            
+        <!-- 2. Limit to at most 50x50 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_small_at_most"/>
+        <ImageView
+            android:src="@drawable/stat_happy"
+            android:background="#FFFFFFFF"
+            android:adjustViewBounds="true"
+            android:maxWidth="50dip"
+            android:maxHeight="50dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+       <!-- 3. Limit to at most 70x70, with 10 pixels of padding all around -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_small_at_most_padded"/>
+        <ImageView
+            android:src="@drawable/stat_happy"
+            android:background="#FFFFFFFF"
+            android:adjustViewBounds="true"
+            android:maxWidth="70dip"
+            android:maxHeight="70dip"
+            android:padding="10dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+            
+        <!-- 4. Limit to exactly 70x70, with 10 pixels of padding all around -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dip"
+            android:text="@string/image_view_small_exactly_padded"/>
+        <ImageView
+            android:src="@drawable/stat_happy"
+            android:background="#FFFFFFFF"
+            android:scaleType="centerInside"
+            android:padding="10dip"
+            android:layout_width="70dip"
+            android:layout_height="70dip" />
+
+ 
+    </LinearLayout>
+</ScrollView>

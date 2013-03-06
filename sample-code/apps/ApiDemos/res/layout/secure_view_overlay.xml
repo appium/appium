@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2010 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- An overlay that will appear on top of the secure view in an attempt to obscure
+     its true purpose and encourage the user to click on the secure button. -->
+<com.example.android.apis.view.SecureViewOverlay
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/secure_view_overlay_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/secure_view_overlay_description"/>
+
+    <Button
+        android:id="@+id/secure_view_overlay_button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#383"
+        android:text="@string/secure_view_overlay_button1"/>
+
+    <Button
+        android:id="@+id/secure_view_overlay_button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#383"
+        android:text="@string/secure_view_overlay_button2"/>
+
+    <Button
+        android:id="@+id/secure_view_overlay_button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#383"
+        android:text="@string/secure_view_overlay_button3"/>
+</com.example.android.apis.view.SecureViewOverlay>

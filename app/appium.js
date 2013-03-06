@@ -12,6 +12,7 @@ var routing = require('./routing')
   , UUID = require('uuid-js')
   , _ = require('underscore')
   , ios = require('./ios')
+  , android = require('./android')
   , status = require("./uiauto/lib/status");
 
 var Appium = function(args) {
@@ -37,7 +38,7 @@ var Appium = function(args) {
   }
   this.rest = null;
   this.devices = {};
-  this.active = null;
+  this.deviceType = null;
   this.device = null;
   this.sessionId = null;
   this.desiredCapabilities = {};
@@ -67,7 +68,8 @@ Appium.prototype.preLaunch = function(cb) {
     process.exit();
   } else {
     var me = this;
-    this.start({}, function(err, device) {
+    var caps = {};
+    this.start(caps, function(err, device) {
       // since we're prelaunching, it might be a while before the first
       // command comes in, so let's not have instruments quit on us
       device.setCommandTimeout(600, function() {
@@ -91,15 +93,50 @@ Appium.prototype.start = function(desiredCaps, cb) {
   }, this));
 };
 
+Appium.prototype.getDeviceType = function(desiredCaps) {
+  // yay for HACKS!!
+  if (desiredCaps.device) {
+    if (desiredCaps.device.indexOf('iPhone') !== -1) {
+      return "ios";
+    } else {
+      return "android";
+    }
+  } else if (desiredCaps.browserName) {
+    if (desiredCaps.browserName[0].toLowerCase() === "i") {
+      return "ios";
+    } else {
+      return "android";
+    }
+  } else if (desiredCaps["app-package"] || this.args.androidPackage) {
+    return "android";
+  }
+  return "ios";
+};
+
+Appium.prototype.isIos = function() {
+  return this.deviceType === "ios";
+};
+
+Appium.prototype.isAndroid = function() {
+  return this.deviceType === "android";
+};
+
+Appium.prototype.getAppExt = function() {
+  return this.isIos() ? ".app" : ".apk";
+};
+
 Appium.prototype.configure = function(desiredCaps, cb) {
   var hasAppInCaps = (typeof desiredCaps !== "undefined" &&
                       typeof desiredCaps.app !== "undefined" &&
                       desiredCaps.app);
+  this.deviceType = this.getDeviceType(desiredCaps);
+  this.args.androidPackage = desiredCaps["app-package"] || this.args.androidPackage;
+  this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;
   if (hasAppInCaps) {
     if (desiredCaps.app[0] === "/") {
       var appPath = desiredCaps.app
         , ext = appPath.substring(appPath.length - 4);
-      if (ext === ".app") {
+      if (ext === this.getAppExt()) {
         this.args.app = desiredCaps.app;
         logger.info("Using local app from desiredCaps: " + appPath);
         cb(null);
@@ -121,8 +158,8 @@ Appium.prototype.configure = function(desiredCaps, cb) {
           cb(err);
         }
       } else {
-        logger.error("Using local app, but didn't end in .zip or .app");
-        cb("Your app didn't end in .app or .zip!");
+        logger.error("Using local app, but didn't end in .zip or .app/.apk");
+        cb("Your app didn't end in .app/.apk or .zip!");
       }
     } else if (desiredCaps.app.substring(0, 4) === "http") {
       var appUrl = desiredCaps.app;
@@ -181,7 +218,7 @@ Appium.prototype.unzipLocalApp = function(localZipPath, cb) {
 Appium.prototype.unzipApp = function(zipPath, cb) {
   this.tempFiles.push(zipPath);
   var me = this;
-  unzipApp(zipPath, function(err, appPath) {
+  unzipApp(zipPath, me.getAppExt(), function(err, appPath) {
     if (err) {
       cb(err, null);
     } else {
@@ -202,17 +239,34 @@ Appium.prototype.invoke = function() {
     this.sessionId = UUID.create().hex;
     logger.info('Creating new appium session ' + this.sessionId);
 
-    // in future all the blackberries go here.
-    this.active = 'iOS';
-    if (typeof this.devices[this.active] === 'undefined') {
-      this.devices[this.active] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, this.args.remove, this.args.warp, this.args.reset);
+    if (typeof this.devices[this.deviceType] === 'undefined') {
+      if (this.isIos()) {
+        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, !this.args.keepArtifacts, this.args.warp, !this.args.noReset);
+      } else if (this.isAndroid()) {
+        var androidOpts = {
+          rest: this.rest
+          , apkPath: this.args.app
+          , verbose: this.args.verbose
+          , appPackage: this.args.androidPackage
+          , appActivity: this.args.androidActivity
+          , reset: !this.args.noReset
+          , skipInstall: this.args.skipAndroidInstall
+        };
+        this.devices[this.deviceType] = android(androidOpts);
+      } else {
+        throw new Error("Tried to start a device that doesn't exist: " +
+                        this.deviceType);
+      }
     }
-    this.device = this.devices[this.active];
+    this.device = this.devices[this.deviceType];
 
     this.device.start(function(err) {
       me.progress++;
       me.sessions[me.progress].sessionId = me.sessionId;
       me.sessions[me.progress].callback(err, me.device);
+      if (err) {
+        me.onDeviceDie(1);
+      }
     }, _.bind(me.onDeviceDie, me));
   }
 };
@@ -227,19 +281,17 @@ Appium.prototype.onDeviceDie = function(code, cb) {
     logger.info('Clearing out appium devices');
     this.devices = [];
     this.device = null;
-    //logger.info(this.progress + " sessions active =" + this.sessions.length);
+    //logger.info(this.progress + " sessions.deviceType =" + this.sessions.length);
     this.sessions[this.progress] = {};
   } else {
     logger.info('Not clearing out appium devices');
   }
   if (cb) {
-    if (this.active !== null) {
-      this.active = null;
-      this.invoke();
-    }
     cb(null, {status: status.codes.Success.code, value: null,
               sessionId: dyingSession});
   }
+  // call invoke again in case we have sessions queued
+  this.invoke();
 };
 
 Appium.prototype.stop = function(cb) {

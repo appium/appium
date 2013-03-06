@@ -12,23 +12,11 @@ var path = require('path')
   , stopTimeWarp = require('../warp.js').stopTimeWarp
   , escapeSpecialChars = require('./helpers.js').escapeSpecialChars
   , rd = require('./hybrid/ios/remote-debugger')
-  , status = require("./uiauto/lib/status");
-
-var NotImplementedError = function(message) {
-   this.message = message? message : "Not implemented in this context, try " +
-                                     "switching into or out of a web view";
-   this.name = "NotImplementedError";
-};
-
-var UnknownError = function(message) {
-   this.message = message? message : "Invalid response from device";
-   this.name = "UnknownError";
-};
-
-var ProtocolError = function(message) {
-   this.message = message;
-   this.name = "ProtocolError";
-};
+  , errors = require('./errors')
+  , deviceCommon = require('./device')
+  , status = require("./uiauto/lib/status")
+  , NotImplementedError = errors.NotImplementedError
+  , UnknownError = errors.UnknownError;
 
 var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
   this.rest = rest;
@@ -262,27 +250,7 @@ IOS.prototype.stop = function(cb) {
   }
 };
 
-IOS.prototype.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
-  if (typeof intervalMs === "undefined") {
-    intervalMs = 500;
-  }
-  var begunAt = Date.now();
-  var endAt = begunAt + waitMs;
-  var me = this;
-  var spin = function() {
-    condFn(function(condMet) {
-      var args = Array.prototype.slice.call(arguments);
-      if (condMet) {
-        cb.apply(me, args.slice(1));
-      } else if (Date.now() < endAt) {
-        setTimeout(spin, intervalMs);
-      } else {
-        cb.apply(me, args.slice(1));
-      }
-    });
-  };
-  spin();
-};
+IOS.prototype.waitForCondition = deviceCommon.waitForCondition;
 
 IOS.prototype.setCommandTimeout = function(secs, cb) {
   var cmd = "waitForDataTimeout = " + parseInt(secs, 10);
@@ -299,31 +267,8 @@ IOS.prototype.getCommandTimeout = function(cb) {
   this.proxy(cmd, cb);
 };
 
-IOS.prototype.proxy = function(command, cb) {
-  // was thinking we should use a queue for commands instead of writing to a file
-  this.push([command, cb]);
-  logger.info('Pushed command to appium work queue: ' + command);
-};
-
-IOS.prototype.respond = function(response, cb) {
-  if (typeof response === 'undefined') {
-    cb(null, '');
-  } else {
-    if (typeof(response) !== "object") {
-      cb(new UnknownError(), response);
-    } else if (!('status' in response)) {
-      cb(new ProtocolError('Status missing in response from device'), response);
-    } else {
-      var status = parseInt(response.status, 10);
-      if (isNaN(status)) {
-        cb(new ProtocolError('Invalid status in response from device'), response);
-      } else {
-        response.status = status;
-        cb(null, response);
-      }
-    }
-  }
-};
+IOS.prototype.proxy = deviceCommon.proxy;
+IOS.prototype.respond = deviceCommon.respond;
 
 IOS.prototype.push = function(elem) {
   this.queue.push(elem);
@@ -359,19 +304,21 @@ IOS.prototype.push = function(elem) {
 
 IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
   var me = this;
+  selector = escapeSpecialChars(selector, "'");
+  if (typeof ctx === "undefined" || !ctx) {
+    ctx = '';
+  } else if (typeof ctx === "string") {
+    ctx = escapeSpecialChars(ctx, "'");
+    ctx = ", '" + ctx + "'";
+  }
   var doFind = function(findCb) {
     var ext = many ? 's' : '';
-    if (typeof ctx === "undefined" || !ctx) {
-      ctx = '';
-    } else if (typeof ctx === "string") {
-      ctx = ", '" + ctx + "'";
-    }
 
     var command = "";
     if (strategy === "name") {
       command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
     } else if (strategy === "xpath") {
-      command = ["au.getElement", ext, "ByXpath('", escapeSpecialChars(selector, "'"), "'", ctx, ")"].join('');
+      command = ["au.getElement", ext, "ByXpath('", selector, "'", ctx, ")"].join('');
     } else {
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
     }
@@ -602,8 +549,6 @@ IOS.prototype.frame = function(frame, cb) {
 };
 
 IOS.prototype.implicitWait = function(ms, cb) {
-  //var command = ["au.timeout('", seconds, "')"].join('');
-  //this.proxy(command, cb);
   this.implicitWaitMs = parseInt(ms, 10);
   logger.info("Set iOS implicit wait to " + ms + "ms");
   cb(null, {

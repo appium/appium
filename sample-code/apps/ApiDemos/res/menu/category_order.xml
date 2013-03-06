@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- This group uses the default category. -->
+    <group android:id="@+id/most_used_items">
+    
+        <item android:id="@+id/last_most_item"
+            android:orderInCategory="10"
+            android:title="@string/last_most_often" />
+    
+        <item android:id="@+id/middle_most_item"
+            android:orderInCategory="7"
+            android:title="@string/middle_most_often" />
+    
+        <item android:id="@+id/first_most_item"
+            android:orderInCategory="4"
+            android:title="@string/first_most_often" />
+    
+    </group>
+    
+    <!-- This group uses the secondary category, which is used for less oftenly used items.
+         Notice these items will show up after the above items.
+         (Furthermore, notice how the orders in each category are independent from the other
+         category.) -->
+    <group android:id="@+id/least_used_items"
+        android:menuCategory="secondary">
+        
+        <item android:id="@+id/last_least_item"
+            android:orderInCategory="3"
+            android:title="@string/last_least_often" />
+    
+        <item android:id="@+id/middle_least_item"
+            android:orderInCategory="2"
+            android:title="@string/middle_least_often" />
+    
+        <item android:id="@+id/first_least_item"
+            android:orderInCategory="0"
+            android:title="@string/first_least_often" />
+    
+    </group>
+
+</menu>

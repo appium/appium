@@ -6,6 +6,8 @@
 
 var assert = require('assert')
   , appium = require('../../appium')
+  , path = require('path')
+  , UUID = require('uuid-js')
   , ios = require('../../ios');
 
 describe('IOS', function() {
@@ -41,7 +43,8 @@ describe('IOS', function() {
 
 describe('Appium', function() {
   var intercept = []
-    , inst = appium({app: "/path/to/fake.app"});
+    , logPath = path.resolve(__dirname, "../../../appium.log")
+    , inst = appium({app: "/path/to/fake.app", log: logPath});
 
   var start = function(cb) {
         cb(null, {});
@@ -51,11 +54,11 @@ describe('Appium', function() {
       }
     , mock = function(cb) {
         // mock
-        inst.active = 'iOS';
-        inst.devices[inst.active] = {};
-        inst.devices[inst.active].start = start;
-        inst.devices[inst.active].stop = stop;
-        inst.device = inst.devices[inst.active];
+        inst.deviceType = 'ios';
+        inst.devices[inst.deviceType] = {};
+        inst.devices[inst.deviceType].start = start;
+        inst.devices[inst.deviceType].stop = stop;
+        inst.device = inst.devices[inst.deviceType];
         cb();
       };
 
@@ -76,10 +79,10 @@ describe('Appium', function() {
           return;
 
         mock(function() {
-          inst.start({}, function(err, device) {
+          inst.start({}, function() {
             var n = num;
             setTimeout(function() {
-              inst.stop(function(sessionId) { doneYet(n); });
+              inst.stop(function() { doneYet(n); });
             }, Math.round(Math.random()*100));
             loop(++num);
           });

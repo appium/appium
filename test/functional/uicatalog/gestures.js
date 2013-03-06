@@ -309,3 +309,14 @@ describeWd('complex tap on element', function(h) {
     });
   });
 });
+// quarantine this since it's not actually breaking right now
+//describeWd('gestures', function(h) {
+  //it('should break on weird table cell behavior', function(done) {
+    //h.driver.elementByXPath('tableCell/text', function(err, el) {
+      //should.not.exist(err);
+      //el.click(function(err) {
+        //setTimeout(done, 3000);
+      //});
+    //});
+  //});
+//});

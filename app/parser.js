@@ -1,58 +1,150 @@
 "use strict";
 var ap = require('argparse').ArgumentParser
   , pkgObj = require("../package")
-  ;
+  , _ = require("underscore");
+
+var args = [
+  [['--app'] , {
+    required: false
+    , defaultValue: null
+    , help: 'IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file'
+    , example: "/abs/path/to/my.app"
+    , nargs: 1
+  }],
+
+  [['-V', '--verbose'], {
+    required: false
+    , defaultValue: false
+    , action: 'storeTrue'
+    , help: 'Get verbose logging output'
+    , nargs: 0
+  }],
+
+  [['-U', '--udid'] , {
+    required: false
+    , defaultValue: null
+    , example: "1adsf-sdfas-asdf-123sdf"
+    , help: '(IOS-only) Unique device identifier of the connected physical device'
+    , nargs: 0
+  }],
+
+  [['-a', '--address'] , {
+    defaultValue: '0.0.0.0'
+    , required: false
+    , example: "0.0.0.0"
+    , help: 'IP Address to listen on'
+    , nargs: 1
+  }],
+
+  [['-p', '--port'] , {
+    defaultValue: 4723
+    , required: false
+    , example: "4723"
+    , help: 'Port to listen on'
+    , nargs: 1
+  }],
+
+  [['-k', '--keep-artifacts'] , {
+    defaultValue: false
+    , dest: 'keepArtifacts'
+    , action: 'storeTrue'
+    , required: false
+    , help: '(IOS-only) Keep Instruments trace directories'
+    , nargs: 0
+  }],
+
+  [['--no-reset'] , {
+    defaultValue: false
+    , dest: 'noReset'
+    , action: 'storeTrue'
+    , required: false
+    , help: 'Reset app state after each session (IOS: delete plist; Android: ' +
+            'install app before session and uninstall after session)'
+    , nargs: 0
+  }],
+
+  [['-l', '--pre-launch'] , {
+    defaultValue: false
+    , dest: 'launch'
+    , action: 'storeTrue'
+    , required: false
+    , help: 'Pre-launch the application before allowing the first session ' +
+            '(Requires --app and, for Android, --app-pkg and --app-activity)'
+    , nargs: 0
+  }],
+
+  [['-g', '--log'] , {
+    defaultValue: null
+    , required: false
+    , example: "/path/to/appium.log"
+    , help: 'Log output to this file instead of stdout'
+    , nargs: 1
+  }],
+
+  [['-G', '--webhook'] , {
+    defaultValue: null
+    , required: false
+    , example: "localhost:9876"
+    , help: 'Also send log output to this HTTP listener'
+    , nargs: 1
+  }],
+
+  [['-w', '--warp'] , {
+    defaultValue: false
+    , action: 'storeTrue'
+    , required: false
+    , help: '(IOS-only) IOS has a weird built-in unavoidable sleep. One way ' +
+            'around this is to speed up the system clock. Use this time warp ' +
+            'hack to speed up test execution (WARNING, actually alters clock, ' +
+            'could be bad news bears!)'
+    , nargs: 0
+  }],
+
+  [['--app-pkg'], {
+    dest: 'androidPackage'
+    , defaultValue: null
+    , required: false
+    , example: "com.example.android.myApp"
+    , help: "(Android-only) Java package of the Android app you want to run " +
+            "(e.g., com.example.android.myApp)"
+    , nargs: 1
+  }],
+
+  [['--app-activity'], {
+    dest: 'androidActivity'
+    , defaultValue: 'MainActivity'
+    , required: false
+    , example: "MainActivity"
+    , help: "(Android-only) Activity name for the Android activity you want " +
+            "to launch from your package (e.g., MainActivity)"
+    , nargs: 1
+  }],
+
+  [['--skip-install'], {
+    dest: 'skipAndroidInstall'
+    , defaultValue: false
+    , action: 'storeTrue'
+    , required: false
+    , help: "(Android-only) Don't install the app; assume it's already on the " +
+            'device with a recent version. Useful for test development ' +
+            'against an unchanging app.'
+    , nargs: 0
+  }]
+];
 
 // Setup all the command line argument parsing
 module.exports = function() {
   var parser = new ap({
     version: pkgObj.version,
     addHelp: true,
-    description: 'A webdriver-compatible server for use with native and hybrid iOS applications.'
+    description: 'A webdriver-compatible server for use with native and hybrid iOS and Android applications.'
   });
 
-  parser.addArgument([ '--app' ]
-    , { required: false, help: 'path to simulators .app file or the bundle_id of the desired target on device'
+  _.each(args, function(arg) {
+    parser.addArgument(arg[0], arg[1]);
   });
 
-  parser.addArgument([ '-V', '--verbose' ], { required: false, help: 'verbose mode' });
-  parser.addArgument([ '-U', '--udid' ]
-    , { required: false, help: 'unique device identifier of the SUT'
-  });
-
-  parser.addArgument([ '-a', '--address' ]
-    , { defaultValue: '127.0.0.1'
-    , required: false
-    , help: 'ip address to listen on'
-  });
-
-  parser.addArgument([ '-p', '--port' ]
-    , { defaultValue: 4723, required: false, help: 'port to listen on'
-  });
-
-  parser.addArgument([ '-r', '--remove' ]
-    , { defaultValue: true, required: false, help: 'remove Instruments trace directories'
-  });
-
-  parser.addArgument([ '-s', '--reset' ]
-    , { defaultValue: true, required: false, help: 'reset app plist/state after each session'
-  });
-
-  parser.addArgument([ '-l', '--launch' ]
-    , { defaultValue: false, required: false, help: 'pre-launch the ios-sim'
-  });
-
-  parser.addArgument([ '-g', '--log' ]
-    , { defaultValue: null, required: false, help: 'log to a file'
-  });
-
-  parser.addArgument([ '-G', '--webhook' ]
-    , { defaultValue: null, required: false, help: 'log to a webhook'
-  });
-
-  parser.addArgument([ '-w', '--warp' ]
-    , { defaultValue: false, required: false, help: 'use time warp to speed up test execution (WARNING, this modifies system clock, could be bad news bears!)'
-  });
+  parser.rawArgs = args;
 
   return parser;
 };

@@ -39,8 +39,9 @@ var args = [
   [['-p', '--port'] , {
     defaultValue: 4723
     , required: false
+    , type: 'int'
     , example: "4723"
-    , help: 'Port to listen on'
+    , help: 'port to listen on'
     , nargs: 1
   }],
 

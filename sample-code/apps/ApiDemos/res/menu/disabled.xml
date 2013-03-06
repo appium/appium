@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/enabled_item"
+        android:title="Enabled"
+        android:icon="@drawable/stat_happy" />
+
+    <item android:id="@+id/disabled_item"
+        android:title="Disabled"
+        android:enabled="false"
+        android:icon="@drawable/stat_sad" />
+
+    <item android:id="@+id/enabled_item_2"
+        android:title="Enabled"
+        android:icon="@drawable/stat_happy" />
+
+    <item android:id="@+id/disabled_item_2"
+        android:title="Disabled"
+        android:enabled="false"
+        android:icon="@drawable/stat_sad" />
+
+    <item android:id="@+id/enabled_item_3"
+        android:title="Enabled"
+        android:icon="@drawable/stat_happy" />
+
+    <item android:id="@+id/disabled_item_3"
+        android:title="Disabled"
+        android:enabled="false"
+        android:icon="@drawable/stat_sad" />
+
+    <item android:id="@+id/enabled_item_4"
+        android:title="Enabled"
+        android:icon="@drawable/stat_happy" />
+
+    <item android:id="@+id/disabled_item_4"
+        android:title="Disabled"
+        android:enabled="false"
+        android:icon="@drawable/stat_sad" />
+
+</menu>

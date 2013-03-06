@@ -10,6 +10,7 @@ var _ = require("underscore")
   , prompt = require('prompt')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
+  , parser = require('./app/parser')
   , fs = require('fs');
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
@@ -27,23 +28,23 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
     , verbose: verbose
     , port: 4723
     , warp: false
-    , reset: true
+    , noReset: false
     , launch: app ? true : false
     , log: path.resolve(__dirname, "appium.log")
     , address: '127.0.0.1'
-    , remove: true }
+    , keepArtifacts: false }
     , readyCb
     , doneCb
   );
 };
 
-module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, cb) {
+module.exports.runTestsWithServer = function(grunt, appName, testType, deviceType, verbose, cb) {
   if (typeof verbose === "undefined") {
       verbose = false;
   }
   var exitCode = null;
   var appServer = module.exports.startAppium(appName, verbose, function() {
-    module.exports.runMochaTests(grunt, appName, testType, function(code) {
+    module.exports.runMochaTests(grunt, appName, testType, deviceType, function(code) {
       appServer.close();
       exitCode = code;
     });
@@ -53,7 +54,7 @@ module.exports.runTestsWithServer = function(grunt, appName, testType, verbose, 
   });
 };
 
-module.exports.runMochaTests = function(grunt, appName, testType, cb) {
+module.exports.runMochaTests = function(grunt, appName, testType, deviceType, cb) {
 
   // load the options if they are specified
   var options = grunt.config(['mochaTestConfig', testType, 'options']);
@@ -68,9 +69,14 @@ module.exports.runMochaTests = function(grunt, appName, testType, cb) {
   }
   var args = ['-t', options.timeout, '-R', options.reporter, '--colors'];
   var fileConfig = grunt.config(['mochaTestWithServer']);
-  _.each(fileConfig, function(config, configApp) {
-    if (!appName || appName === configApp) {
-      _.each(config, function(testFiles, testKey) {
+  var configAppDevice, nameOk, deviceOk, configAppTests;
+  _.each(fileConfig, function(config, configAppName) {
+    configAppDevice = config[0];
+    configAppTests = config[1];
+    nameOk = !appName || appName === configAppName;
+    deviceOk = !deviceType || deviceType === configAppDevice;
+    if (nameOk && deviceOk) {
+      _.each(configAppTests, function(testFiles, testKey) {
         if (testType == "*" || testType == testKey) {
           _.each(testFiles, function(file) {
             _.each(grunt.file.expand(file), function(file) {
@@ -243,5 +249,118 @@ module.exports.downloadUICatalog = function(cb) {
         });
       });
     });
+  });
+};
+
+var setupAndroidProj = function(grunt, projPath, args, cb) {
+  if (!process.env.ANDROID_HOME) {
+    grunt.fatal("Could not find Android SDK, make sure to export ANDROID_HOME");
+  }
+  var cmd = path.resolve(process.env.ANDROID_HOME, "tools", "android");
+  var proc = spawn(cmd, args, {cwd: projPath});
+  proc.stdout.setEncoding('utf8');
+  proc.stderr.setEncoding('utf8');
+  proc.stdout.on('data', function(data) {
+    grunt.log.write(data);
+  });
+  proc.stderr.on('data', function(data) {
+    grunt.log.write(data);
+  });
+  proc.on('exit', function(code) {
+    cb(code);
+  });
+};
+
+module.exports.setupAndroidBootstrap = function(grunt, cb) {
+  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
+              "android-17", "-p", "."];
+  setupAndroidProj(grunt, projPath, args, cb);
+};
+
+module.exports.setupAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
+  var args = ["update", "project", "--subprojects", "-t", "android-17", "-p", "."];
+  setupAndroidProj(grunt, appPath, args, cb);
+};
+
+var buildAndroidProj = function(grunt, projPath, target, cb) {
+  exec('which ant', function(err, stdout) {
+    if (err) {
+      grunt.fatal("Error finding ant binary, is it on your path?");
+    } else {
+      if (stdout) {
+        var ant = stdout.trim();
+        grunt.log.write("Using ant found at " + ant);
+        var proc = spawn(ant, [target], {cwd: projPath});
+        proc.stdout.setEncoding('utf8');
+        proc.stderr.setEncoding('utf8');
+        proc.stdout.on('data', function(data) {
+          grunt.log.write(data);
+        });
+        proc.stderr.on('data', function(data) {
+          grunt.log.write(data);
+        });
+        proc.on('exit', function(code) {
+          cb(code);
+        });
+      } else {
+        grunt.fatal("Could not find ant installed; please make sure it's on PATH");
+      }
+    }
+  });
+};
+
+module.exports.buildAndroidBootstrap = function(grunt, cb) {
+  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  buildAndroidProj(grunt, projPath, "build", cb);
+};
+
+module.exports.buildAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
+  buildAndroidProj(grunt, appPath, "debug", cb);
+};
+
+module.exports.installAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName,
+      "bin/" + appName + "-debug.apk");
+  exec("adb install -r " + appPath, function(err, stdout) {
+    if (err) {
+      grunt.fatal(err);
+    } else {
+      grunt.log.write(stdout);
+      cb();
+    }
+  });
+};
+
+module.exports.generateServerDocs = function(grunt, cb) {
+  var p = parser();
+  var docFile = path.resolve(__dirname, "docs/server-args.md");
+  var md = "Appium server arguments\n==========\n\n";
+  md += "Usage: `node server.js [flags]`\n\n";
+  md += "### Server flags\n";
+  md += "All flags are optional, but some are required in conjunction with " +
+        "certain others.\n\n";
+  md += "|Flag|Default|Description|Example|\n";
+  md += "|----|-------|-----------|-------|\n";
+  _.each(p.rawArgs, function(arg) {
+    var argNames = arg[0];
+    var exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];
+    var argOpts = arg[1];
+    md += "|`" + argNames.join("`, `") + "`";
+    md += "|" + ((typeof argOpts.defaultValue === "undefined") ? "" : argOpts.defaultValue);
+    md += "|" + argOpts.help;
+    md += "|" + ((typeof argOpts.example === "undefined") ? "" : "`" + exampleArg + " " + argOpts.example + "`");
+    md += "|\n";
+  });
+  fs.writeFile(docFile, md, function(err) {
+    if (err) {
+      console.log(err.stack);
+      grunt.fatal(err);
+    } else {
+      grunt.log.write("New docs written! Don't forget to commit and push");
+      cb();
+    }
   });
 };

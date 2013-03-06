@@ -146,8 +146,9 @@ exports.createSession = function(req, res) {
     req.appium.start(req.body.desiredCapabilities, function(err, instance) {
       if (err) {
         logger.error("Failed to start an Appium session, err was: " + err);
-        respondError(req, res, status.codes.NoSuchDriver);
+        respondError(req, res, status.codes.NoSuchDriver, err);
       } else {
+        logger.info("Appium session started with sessionId " + req.appium.sessionId);
         next(req.appium.sessionId, instance);
       }
     });

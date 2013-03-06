@@ -26,7 +26,10 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
     driverHolder.driver.init(caps, function(err, sessionId) {
       should.not.exist(err);
       driverHolder.sessionId = sessionId;
-      done();
+      driverHolder.driver.setImplicitWaitTimeout(5000, function(err) {
+        should.not.exist(err);
+        done();
+      });
     });
   });
 
@@ -51,19 +54,39 @@ var describeWithDriver = function(desc, tests, host, port, caps, extraCaps, time
   });
 };
 
-var describeForApp = function(app) {
-  var appPath;
+var describeForApp = function(app, device, appPackage, appActivity) {
+  if (typeof device === "undefined") {
+    device = "ios";
+  }
+  var browserName, appPath;
+  if (device === "ios") {
+    browserName = "iOS";
+  } else if (device === "android") {
+    browserName = "Android";
+  }
   if (/\//.exec(app)) {
     appPath = app;
   } else {
-    appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
+    if (device === "ios") {
+      appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
+    } else if (device === "android") {
+      appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/bin/" + app + "-debug.apk");
+    }
   }
 
   return function(desc, tests, host, port, caps, extraCaps) {
     if (typeof extraCaps === "undefined") {
       extraCaps = {};
     }
-    extraCaps = _.extend(extraCaps, {app: appPath});
+    var newExtraCaps = {
+      app: appPath,
+      browserName: browserName
+    };
+    if (typeof appPackage !== "undefined") {
+      newExtraCaps['app-package'] = appPackage;
+      newExtraCaps['app-activity'] = appActivity;
+    }
+    extraCaps = _.extend(extraCaps, newExtraCaps);
     return describeWithDriver(desc, tests, host, port, caps, extraCaps);
   };
 };

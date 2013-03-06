@@ -33,6 +33,7 @@ describeWd('findElementFromElement', function(h) {
 describeWd('findElementsFromElement', function(h) {
   it('should find some elements within itself', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
+      should.not.exist(err);
       should.exist(element.value);
       element.elementsByTagName('text', function(err, els) {
         els.length.should.equal(1);
@@ -42,6 +43,7 @@ describeWd('findElementsFromElement', function(h) {
   });
   it('should not find elements not within itself', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
+      should.not.exist(err);
       should.exist(element.value);
       element.elementsByTagName('navigationBar', function(err, els) {
         els.length.should.equal(0);

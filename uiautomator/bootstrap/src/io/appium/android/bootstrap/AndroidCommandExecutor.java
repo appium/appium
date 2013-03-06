@@ -104,6 +104,17 @@ class AndroidCommandExecutor {
                     } else if (action.equals("setText")) {
                         String text = params.get("text").toString();
                         return getSuccessResult(el.setText(text));
+                    } else if (action.equals("getAttribute")) {
+                        try {
+                            String attr = params.get("attribute").toString();
+                            if (attr.equals("name") || attr.equals("text")) {
+                                return getSuccessResult(el.getStringAttribute(attr));
+                            } else {
+                                return getSuccessResult(el.getBoolAttribute(attr));
+                            }
+                        } catch (NoAttributeFoundException e) {
+                            return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+                        }
                     } else {
                         return getErrorResult("Unknown command: element:" + action);
                     }

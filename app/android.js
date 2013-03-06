@@ -300,7 +300,8 @@ Android.prototype.getText = function(elementId, cb) {
 };
 
 Android.prototype.getAttribute = function(elementId, attributeName, cb) {
-    cb(new NotYetImplementedError(), null);
+  var p = {elementId: elementId, attribute: attributeName};
+  this.proxy(["element:getAttribute", p], cb);
 };
 
 Android.prototype.getLocation = function(elementId, cb) {

@@ -181,7 +181,11 @@ class AndroidCommandHolder {
             } catch (JSONException e) {
                 throw new AndroidCommandException("Error parsing xpath path obj from JSON");
             }
-            nodeType = AndroidElementClassMap.match(nodeType);
+            try {
+                nodeType = AndroidElementClassMap.match(nodeType);
+            } catch (UnallowedTagNameException e) {
+                throw new AndroidCommandException(e.getMessage());
+            }
             if (searchType.equals("child")) {
                 s = s.childSelector(s);
                 selOut += ".childSelector(s)";
@@ -213,10 +217,15 @@ class AndroidCommandHolder {
         return s;
     }
     
-    private static UiSelector selectorForFind(String strategy, String selector, Boolean many) throws InvalidStrategyException {
+    private static UiSelector selectorForFind(String strategy, String selector, Boolean many) throws InvalidStrategyException, AndroidCommandException {
         UiSelector s = new UiSelector();
         if (strategy.equals("tag name")) {
-            String androidClass = AndroidElementClassMap.match(selector);
+            String androidClass = "";
+            try {
+                androidClass = AndroidElementClassMap.match(selector);
+            } catch (UnallowedTagNameException e) {
+                throw new AndroidCommandException(e.getMessage());
+            }
             Logger.info("Using class selector " + androidClass + " for find");
             s = s.className(androidClass);
         } else if (strategy.equals("name")) {

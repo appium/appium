@@ -55,6 +55,12 @@ $.extend(au, {
           value: 'Unsupported orientation: ' + orientation
         };
       }
+      // Need to wait a moment for the animation to complete.
+      // This might be better done with a callback
+      var now = Date.now();
+      while (Date.now() - now < 500) {
+        var i = 0;
+      }
       var newOrientation = au.getScreenOrientation().value;
       if (newOrientation == orientation) {
         return {

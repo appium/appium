@@ -558,12 +558,12 @@ IOS.prototype.implicitWait = function(ms, cb) {
 };
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
+  var command = ["au.getElement('", elementId, "').isDisplayed() ? true : false"].join('');
   this.proxy(command, cb);
 };
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
+  var command = ["au.getElement('", elementId, "').isEnabled() ? true : false"].join('');
   this.proxy(command, cb);
 };
 

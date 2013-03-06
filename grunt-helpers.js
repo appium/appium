@@ -287,7 +287,7 @@ module.exports.setupAndroidApp = function(grunt, appName, cb) {
 var buildAndroidProj = function(grunt, projPath, target, cb) {
   exec('which ant', function(err, stdout) {
     if (err) {
-      grunt.fatal(err);
+      grunt.fatal("Error finding ant binary, is it on your path?");
     } else {
       if (stdout) {
         var ant = stdout.trim();

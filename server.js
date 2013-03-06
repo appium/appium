@@ -24,6 +24,7 @@ var doWarpCheck = function(wantWarp, cb) {
 };
 
 var main = function(args, readyCb, doneCb) {
+  args.port = parseInt(args.port, 10);
   var rest = express()
     , server = http.createServer(rest);
   if (typeof doneCb === "undefined") {

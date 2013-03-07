@@ -86,6 +86,7 @@ Appium.prototype.start = function(desiredCaps, cb) {
   this.configure(desiredCaps, _.bind(function(err) {
     this.desiredCapabilities = desiredCaps;
     if (err) {
+      logger.info("Got configuration error, not starting session");
       cb(err, null);
     } else {
       this.sessions[++this.counter] = { sessionId: '', callback: cb };
@@ -188,6 +189,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
       }
     } else if (this.isIos() && desiredCaps.app.toLowerCase() === "safari") {
       this.args.safari = true;
+      this.configureSafari(desiredCaps, cb);
     } else if (!this.args.app) {
       cb("Bad app passed in through desiredCaps: " + desiredCaps.app +
          ". Apps need to be absolute local path or URL to zip file");
@@ -199,28 +201,30 @@ Appium.prototype.configure = function(desiredCaps, cb) {
   } else if (!this.args.app) {
     cb("No app set; either start appium with --app or pass in an 'app' " +
        "value in desired capabilities");
-  }
-
-  if (this.args.safari === true) {
-    var safariVer = "6.0";
-    if (typeof desiredCaps.version !== "undefined") {
-      safariVer = desiredCaps.version;
-    }
-    logger.info("Trying to use mobile safari, version " + safariVer);
-    checkSafari(safariVer, _.bind(function(err, attemptedApp) {
-      if (err) {
-        logger.warn("Could not find mobile safari: " + err);
-        cb(err);
-      } else {
-        logger.info("Using mobile safari app at " + attemptedApp);
-        this.args.app = attemptedApp;
-        cb(null);
-      }
-    }, this));
+  } else if (this.args.safari === true) {
+    this.configureSafari(desiredCaps, cb);
   } else {
     logger.info("Using app from command line: " + this.args.app);
     cb(null);
   }
+};
+
+Appium.prototype.configureSafari = function(desiredCaps, cb) {
+  var safariVer = "6.0";
+  if (typeof desiredCaps.version !== "undefined") {
+    safariVer = desiredCaps.version;
+  }
+  logger.info("Trying to use mobile safari, version " + safariVer);
+  checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+    if (err) {
+      logger.warn("Could not find mobile safari: " + err);
+      cb(err);
+    } else {
+      logger.info("Using mobile safari app at " + attemptedApp);
+      this.args.app = attemptedApp;
+      cb(null);
+    }
+  }, this));
 };
 
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
@@ -254,6 +258,8 @@ Appium.prototype.invoke = function() {
   var me = this;
 
   if (this.progress >= this.counter) {
+    logger.info("Tried to invoke an appium session while one is already " +
+                "running; holding it for later");
     return;
   }
 

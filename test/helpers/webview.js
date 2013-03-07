@@ -102,20 +102,19 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
-  // TODO: web view navigation is flakey right now
-  // desc('click', function(h) {
-  //   it.only('should work without issues on links', function(done) {
-  //     loadWebView(h.driver, function() {
-  //       h.driver.elementsByTagName('a', function(err, elements) {
-  //         should.not.exist(err);
-  //         elements[1].click(function(err) {
-  //           should.not.exist(err);
-  //           spinTitle('I am another page title - Sauce Labs', h.driver, done);
-  //         });
-  //       });
-  //     });
-  //   });
-  // });
+   desc('click', function(h) {
+     it('should work without issues on links', function(done) {
+       loadWebView(h.driver, function() {
+         h.driver.elementByLinkText('i am a link', function(err, el) {
+           should.not.exist(err);
+           el.click(function(err) {
+             should.not.exist(err);
+             spinTitle('I am another page title - Sauce Labs', h.driver, done);
+           });
+         });
+       });
+     });
+   });
 
   desc('getAttribute', function(h) {
     it('should return the right attribute', function(done) {

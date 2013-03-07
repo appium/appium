@@ -12,7 +12,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-V`, `--verbose`|false|Get verbose logging output||
 |`-U`, `--udid`|null|(IOS-only) Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
-|`-p`, `--port`|4723|Port to listen on|`--port 4723`|
+|`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`--no-reset`|false|Reset app state after each session (IOS: delete plist; Android: install app before session and uninstall after session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
@@ -22,3 +22,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|
 |`--app-activity`|MainActivity|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
 |`--skip-install`|false|(Android-only) Don't install the app; assume it's already on the device with a recent version. Useful for test development against an unchanging app.||
+|`--safari`|false|(IOS-Only) Use the safari app||

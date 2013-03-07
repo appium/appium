@@ -8,6 +8,7 @@ var routing = require('./routing')
   , helpers = require('./helpers')
   , downloadFile = helpers.downloadFile
   , unzipApp = helpers.unzipApp
+  , checkSafari = helpers.checkSafari
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
@@ -85,6 +86,7 @@ Appium.prototype.start = function(desiredCaps, cb) {
   this.configure(desiredCaps, _.bind(function(err) {
     this.desiredCapabilities = desiredCaps;
     if (err) {
+      logger.info("Got configuration error, not starting session");
       cb(err, null);
     } else {
       this.sessions[++this.counter] = { sessionId: '', callback: cb };
@@ -103,6 +105,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     }
   } else if (desiredCaps.browserName) {
     if (desiredCaps.browserName[0].toLowerCase() === "i") {
+      return "ios";
+    } else if (desiredCaps.browserName.toLowerCase() === "safari") {
       return "ios";
     } else {
       return "android";
@@ -183,22 +187,44 @@ Appium.prototype.configure = function(desiredCaps, cb) {
       } else {
         cb("App URL (" + appUrl + ") didn't seem to end in .zip");
       }
+    } else if (this.isIos() && desiredCaps.app.toLowerCase() === "safari") {
+      this.args.safari = true;
+      this.configureSafari(desiredCaps, cb);
     } else if (!this.args.app) {
       cb("Bad app passed in through desiredCaps: " + desiredCaps.app +
          ". Apps need to be absolute local path or URL to zip file");
     } else {
       logger.warn("Got bad app through desiredCaps: " + desiredCaps.app);
       logger.warn("Sticking with default app: " + this.args.app);
-      this.desiredCapabilities.app = this.args.app;
       cb(null);
     }
   } else if (!this.args.app) {
     cb("No app set; either start appium with --app or pass in an 'app' " +
        "value in desired capabilities");
+  } else if (this.args.safari === true) {
+    this.configureSafari(desiredCaps, cb);
   } else {
     logger.info("Using app from command line: " + this.args.app);
     cb(null);
   }
+};
+
+Appium.prototype.configureSafari = function(desiredCaps, cb) {
+  var safariVer = "6.0";
+  if (typeof desiredCaps.version !== "undefined") {
+    safariVer = desiredCaps.version;
+  }
+  logger.info("Trying to use mobile safari, version " + safariVer);
+  checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+    if (err) {
+      logger.warn("Could not find mobile safari: " + err);
+      cb(err);
+    } else {
+      logger.info("Using mobile safari app at " + attemptedApp);
+      this.args.app = attemptedApp;
+      cb(null);
+    }
+  }, this));
 };
 
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
@@ -241,7 +267,7 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
       if (this.isIos()) {
-        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, !this.args.keepArtifacts, this.args.warp, !this.args.noReset);
+        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, !this.args.keepArtifacts, this.args.warp, !this.args.noReset, this.args.safari);
       } else if (this.isAndroid()) {
         var androidOpts = {
           rest: this.rest

@@ -171,6 +171,8 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat([this.app]);
   args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
+  this.debug("Spawning instruments with args:");
+  this.debug(args);
   return spawn("/usr/bin/instruments", args);
 };
 

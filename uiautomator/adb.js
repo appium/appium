@@ -389,9 +389,20 @@ ADB.prototype.pushAppium = function(cb) {
 ADB.prototype.startApp = function(cb) {
   this.requireDeviceId();
   this.requireApp();
-  this.debug("Starting app " + this.appPackage + "/" + this.appActivity);
+  var activityString = this.appActivity;
+  var hasNoPrefix = true;
+  var rootPrefixes = ['com', 'net', 'org', 'io'];
+  _.each(rootPrefixes, function(prefix) {
+    if (activityString.indexOf(prefix + ".") !== -1) {
+      hasNoPrefix = false;
+    }
+  });
+  if (hasNoPrefix) {
+    activityString = this.appPackage + "." + activityString;
+  }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
-            this.appPackage + "." + this.appActivity;
+            activityString;
+  this.debug("Starting app " + this.appPackage + "/" + activityString);
   this.unlockScreen(function() {
     exec(cmd, _.bind(function(err) {
       if(err) {

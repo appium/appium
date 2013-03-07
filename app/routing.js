@@ -7,8 +7,9 @@ module.exports = function(appium) {
     , inject = function(req, res, next) {
         req.appium = appium;
         req.device = appium.device;
+        logger.debug("Appium request initiated at " + req.url);
         if (typeof req.body === "object") {
-          logger.debug("Appium request received with params: " + JSON.stringify(req.body));
+          logger.debug("Request received with params: " + JSON.stringify(req.body));
         }
         next();
       };

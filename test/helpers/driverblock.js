@@ -8,7 +8,8 @@ var wd = require('wd')
   , defaultHost = '127.0.0.1'
   , defaultPort = 4723
   , defaultCaps = {
-      browserName: 'iOS'
+      browserName: ''
+      , device: 'iPhone Simulator'
       , platform: 'Mac'
       , version: '6.0'
       , newCommandTimeout: 60
@@ -52,6 +53,20 @@ var describeWithDriver = function(desc, tests, host, port, caps, extraCaps, time
     }
     driverBlock(tests, host, port, caps, extraCaps);
   });
+};
+
+var describeForSafari = function() {
+  return function(desc, tests, host, port, extraCaps) {
+    var caps = {
+      browserName: 'Safari'
+      , app: 'safari'
+      , device: 'iPhone Simulator'
+      , platform: 'Mac'
+      , version: '6.1'
+      , newCommandTimeout: 60
+    };
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps);
+  };
 };
 
 var describeForApp = function(app, device, appPackage, appActivity) {
@@ -116,3 +131,4 @@ module.exports.block = driverBlock;
 module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
 module.exports.describeForSauce = describeForSauce;
+module.exports.describeForSafari = describeForSafari;

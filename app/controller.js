@@ -515,9 +515,9 @@ exports.getCommandTimeout = function(req, res) {
 exports.setValueImmediate = function(req, res) {
   var element = req.body.element
     , value = req.body.value;
-	if (checkMissingParams(res, {element: element, value: value})) {
-		req.device.setValueImmediate(element, value, getResponseHandler(req,res));
-	}
+  if (checkMissingParams(res, {element: element, value: value})) {
+    req.device.setValueImmediate(element, value, getResponseHandler(req,res));
+  }
 };
 
 exports.unknownCommand = function(req, res) {

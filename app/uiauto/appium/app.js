@@ -240,7 +240,7 @@ $.extend(au, {
     }
 
   , getElementsByXpath: function(xpath, ctx) {
-      var _ctx = this.mainWindow
+      var _ctx = this.mainApp
         , elems = [];
 
       if (typeof ctx === 'string') {

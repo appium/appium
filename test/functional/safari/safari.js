@@ -9,7 +9,7 @@ describeWd('safari init', function(h) {
   it('getting current window should work initially', function(done) {
     h.driver.windowHandle(function(err, handleId) {
       should.not.exist(err);
-      handleId.should.equal('1');
+      handleId.should.eql(1);
       done();
     });
   });

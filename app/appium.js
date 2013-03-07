@@ -258,8 +258,6 @@ Appium.prototype.invoke = function() {
   var me = this;
 
   if (this.progress >= this.counter) {
-    logger.info("Tried to invoke an appium session while one is already " +
-                "running; holding it for later");
     return;
   }
 

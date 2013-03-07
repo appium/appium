@@ -171,8 +171,8 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.elementById('i_am_an_id', function(err, element) {
           element.getSize(function(err, size) {
-            // we might be in landscape or portrait mode
-            [304, 464].should.include(size.width);
+            // we might be in landscape or portrait mode, iphone / ipad
+            [304, 464, 964].should.include(size.width);
             size.height.should.eql(20);
             done();
           });

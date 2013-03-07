@@ -18,12 +18,13 @@ var path = require('path')
   , NotImplementedError = errors.NotImplementedError
   , UnknownError = errors.UnknownError;
 
-var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
+var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview) {
   this.rest = rest;
   this.app = app;
   this.udid = udid;
   this.bundleId = null; // what we get from app on startup
   this.verbose = verbose;
+  this.autoWebview = autoWebview;
   this.warp = warp;
   this.reset = reset;
   this.instruments = null;
@@ -47,6 +48,7 @@ var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
       , databaseEnabled: false
       , takesScreenshot: true
   };
+
 };
 
 IOS.prototype.cleanup = function(cb) {
@@ -81,10 +83,17 @@ IOS.prototype.start = function(cb, onDie) {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
+    var navToWebview = function() {
+      if (me.autoWebview) {
+        me.navToFirstAvailWebview(cb);
+      } else {
+        cb(null);
+      }
+    };
     me.proxy('au.bundleId()', function(err, bId) {
       logger.info('Bundle ID for open app is ' + bId.value);
       me.bundleId = bId.value;
-      cb(null);
+      navToWebview();
     });
   };
 
@@ -144,6 +153,26 @@ IOS.prototype.start = function(cb, onDie) {
     }, this));
   }
 
+};
+
+IOS.prototype.navToFirstAvailWebview = function(cb) {
+  logger.info("Navigating to first available webview");
+  this.getWindowHandles(_.bind(function(err, res) {
+    if (res.status !== 0) {
+      cb("Could not navigate to webview! Code: " + res.status);
+    } else if (res.value.length === 0) {
+      cb("Could not navigate to webview; there aren't any!");
+    } else {
+      logger.info("Picking webview " + res.value[0]);
+      this.setWindow(res.value[0], function(err) {
+        if (err) {
+          cb(err);
+        } else {
+          cb(null);
+        }
+      });
+    }
+  }, this));
 };
 
 IOS.prototype.cleanupAppState = function(cb) {
@@ -324,9 +353,9 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     }
 
     me.proxy(command, function(err, res) {
-      if (!many && res.status === 0) {
+      if (!err && !many && res.status === 0) {
         findCb(true, err, res);
-      } else if (many && res.value.length > 0) {
+      } else if (!err && many && res.value !== null && res.value.length > 0) {
         findCb(true, err, res);
       } else {
         findCb(false, err, res);
@@ -805,6 +834,6 @@ IOS.prototype.title = function(cb) {
   }
 };
 
-module.exports = function(rest, app, udid, verbose, removeTraceDir, warp, reset) {
-  return new IOS(rest, app, udid, verbose, removeTraceDir, warp, reset);
+module.exports = function(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview) {
+  return new IOS(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview);
 };

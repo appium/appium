@@ -130,6 +130,14 @@ var args = [
             'device with a recent version. Useful for test development ' +
             'against an unchanging app.'
     , nargs: 0
+  }],
+
+  [['--safari'], {
+    defaultValue: false
+    , action: 'storeTrue'
+    , required: false
+    , help: "(IOS-Only) Use the safari app"
+    , nargs: 0
   }]
 ];
 

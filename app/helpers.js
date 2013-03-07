@@ -96,13 +96,26 @@ exports.unzipApp = function(zipPath, appExt, cb) {
   });
 };
 
+exports.checkSafari = function(version, cb) {
+  var appPath = "/Applications/Xcode.app/Contents/Developer/Platforms" +
+                "/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator" +
+                version + ".sdk/Applications/MobileSafari.app";
+  fs.stat(appPath, function(err, s) {
+    if (err) {
+      cb(err, appPath);
+    } else if (!s.isDirectory()) {
+      cb("App package was not a directory", appPath);
+    } else {
+      cb(null, appPath);
+    }
+  });
+};
 
 exports.delay = function(secs) {
-    var date = new Date();
-    var curDate = null;
-
-    do { curDate = new Date(); }
-    while(curDate-date < (secs * 1000.0));
+  var date = new Date();
+  var curDate = null;
+  do { curDate = new Date(); }
+  while(curDate-date < (secs * 1000.0));
 };
 
 var pad0 = function(x) {

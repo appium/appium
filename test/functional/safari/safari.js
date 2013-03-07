@@ -13,6 +13,28 @@ describeWd('safari init', function(h) {
       done();
     });
   });
+  it('should be able to clear windows', function(done) {
+    h.driver.frame(null, function() {
+      h.driver.elementByTagName("window", function(err, win) {
+        win.elementsByXPath("//button[contains(@name, 'Close tab for')]", function(err, els) {
+          if (els.length) {
+            var closeTab = function(idx) {
+              els[idx].click(function() {
+                if (idx+1 === els.length) {
+                  done();
+                } else {
+                  closeTab(idx+1);
+                }
+              });
+            };
+            closeTab(0);
+          } else {
+            done();
+          }
+        });
+      });
+    });
+  });
 });
 
 webviewTests('safari');

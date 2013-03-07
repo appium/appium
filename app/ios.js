@@ -353,9 +353,9 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     }
 
     me.proxy(command, function(err, res) {
-      if (!many && res.status === 0) {
+      if (!err && !many && res.status === 0) {
         findCb(true, err, res);
-      } else if (many && res.value.length > 0) {
+      } else if (!err && many && res.value !== null && res.value.length > 0) {
         findCb(true, err, res);
       } else {
         findCb(false, err, res);

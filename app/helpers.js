@@ -96,17 +96,44 @@ exports.unzipApp = function(zipPath, appExt, cb) {
   });
 };
 
-exports.checkSafari = function(version, cb) {
-  var appPath = "/Applications/Xcode.app/Contents/Developer/Platforms" +
-                "/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator" +
-                version + ".sdk/Applications/MobileSafari.app";
-  fs.stat(appPath, function(err, s) {
+exports.checkBuiltInApp = function(appName, version, cb) {
+  exports.getBuiltInAppDir(version, function(err, appDir) {
     if (err) {
-      cb(err, appPath);
-    } else if (!s.isDirectory()) {
-      cb("App package was not a directory", appPath);
+      cb(err);
     } else {
-      cb(null, appPath);
+      var appPath = path.resolve(appDir, appName + ".app");
+      fs.stat(appPath, function(err, s) {
+        if (err) {
+          cb(err, appPath);
+        } else if (!s.isDirectory()) {
+          cb("App package was not a directory", appPath);
+        } else {
+          cb(null, appPath);
+        }
+      });
+    }
+  });
+};
+
+exports.checkSafari = function(version, cb) {
+  exports.checkBuiltInApp("MobileSafari", version, cb);
+};
+
+exports.checkPreferencesApp = function(version, cb) {
+  exports.checkBuiltInApp("Preferences", version, cb);
+};
+
+exports.getBuiltInAppDir = function(version, cb) {
+  var appDir = "/Applications/Xcode.app/Contents/Developer/Platforms" +
+               "/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator" +
+               version + ".sdk/Applications/";
+  fs.stat(appDir, function(err, s) {
+    if (err) {
+      cb(err);
+    } else if (!s.isDirectory()) {
+      cb("Could not load built in applications directory");
+    } else {
+      cb(null, appDir);
     }
   });
 };

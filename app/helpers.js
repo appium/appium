@@ -96,12 +96,12 @@ exports.unzipApp = function(zipPath, appExt, cb) {
   });
 };
 
-exports.checkSafari = function(version, cb) {
+exports.checkBuiltInApp = function(appName, version, cb) {
   exports.getBuiltInAppDir(version, function(err, appDir) {
     if (err) {
       cb(err);
     } else {
-      var appPath = path.resolve(appDir, "MobileSafari.app");
+      var appPath = path.resolve(appDir, appName + ".app");
       fs.stat(appPath, function(err, s) {
         if (err) {
           cb(err, appPath);
@@ -113,6 +113,14 @@ exports.checkSafari = function(version, cb) {
       });
     }
   });
+};
+
+exports.checkSafari = function(version, cb) {
+  exports.checkBuiltInApp("MobileSafari", version, cb);
+};
+
+exports.checkPreferencesApp = function(version, cb) {
+  exports.checkBuiltInApp("Preferences", version, cb);
 };
 
 exports.getBuiltInAppDir = function(version, cb) {

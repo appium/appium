@@ -18,7 +18,9 @@ describe('preferences app', function() {
     describeWd('settings', function(h) {
       // example of a script that turns of auto-complete
       // if you run it on a server with --no-reset, it will keep this state
-      // for subsequent app runs
+      // for subsequent app runs. Note that for this to work you'll need to
+      // have modified the plist of your preferences.app to run iphone
+      // instead of ipad by default (this test is for iphone)
       it('should turn off autocomplete', function(done) {
         h.driver.elementsByTagName('tableCell', function(err, els) {
           els[1].click(function(err) {

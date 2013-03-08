@@ -18,19 +18,19 @@ var path = require('path')
   , NotImplementedError = errors.NotImplementedError
   , UnknownError = errors.UnknownError;
 
-var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview) {
-  this.rest = rest;
-  this.app = app;
-  this.udid = udid;
+var IOS = function(args) {
+  this.rest = args.rest;
+  this.app = args.app;
+  this.udid = args.udid;
+  this.verbose = args.verbose;
+  this.autoWebview = args.autoWebview;
+  this.warp = args.warp;
+  this.reset = args.reset;
+  this.removeTraceDir = args.removeTraceDir;
   this.bundleId = null; // what we get from app on startup
-  this.verbose = verbose;
-  this.autoWebview = autoWebview;
-  this.warp = warp;
-  this.reset = reset;
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
-  this.removeTraceDir = removeTraceDir;
   this.onStop = function() {};
   this.cbForCurrentCmd = null;
   this.remote = null;
@@ -852,6 +852,6 @@ IOS.prototype.title = function(cb) {
   }
 };
 
-module.exports = function(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview) {
-  return new IOS(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview);
+module.exports = function(args) {
+  return new IOS(args);
 };

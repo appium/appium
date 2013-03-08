@@ -31,11 +31,11 @@ describe('preferences app', function() {
                     if (checked === 1) {
                       // was checked, click it off
                       switchEl.click(function(err) {
-                        setTimeout(done, 5000);
+                        done();
                       });
                     } else {
                       // was unchecked, do nothing
-                      setTimeout(done, 5000);
+                      done();
                     }
                   });
                 });

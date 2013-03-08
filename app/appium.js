@@ -102,7 +102,9 @@ Appium.prototype.start = function(desiredCaps, cb) {
 Appium.prototype.getDeviceType = function(desiredCaps) {
   // yay for HACKS!!
   if (desiredCaps.device) {
-    if (desiredCaps.device.indexOf('iPhone') !== -1) {
+    if (desiredCaps.device.toLowerCase().indexOf('iphone') !== -1) {
+      return "ios";
+    } else if (desiredCaps.device.toLowerCase().indexOf('ipad') !== -1) {
       return "ios";
     } else {
       return "android";
@@ -271,6 +273,11 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
       if (this.isIos()) {
+        var device = this.desiredCapabilities.device;
+        var iosDeviceType = "iphone";
+        if (typeof device === "string" && device.toLowerCase().indexOf('ipad') !== -1) {
+          iosDeviceType = "ipad";
+        }
         var iosOpts = {
           rest: this.rest
           , app: this.args.app
@@ -280,6 +287,7 @@ Appium.prototype.invoke = function() {
           , warp: this.args.warp
           , reset: !this.args.noReset
           , autoWebView: this.args.safari
+          , deviceType: iosDeviceType
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {

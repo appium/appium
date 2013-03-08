@@ -271,7 +271,17 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
       if (this.isIos()) {
-        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, !this.args.keepArtifacts, this.args.warp, !this.args.noReset, this.args.safari);
+        var iosOpts = {
+          rest: this.rest
+          , app: this.args.app
+          , udid: this.args.udid
+          , verbose: this.args.verbose
+          , removeTraceDir: !this.args.keepArtifacts
+          , warp: this.args.warp
+          , reset: !this.args.noReset
+          , autoWebView: this.args.safari
+        };
+        this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {
         var androidOpts = {
           rest: this.rest

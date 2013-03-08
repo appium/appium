@@ -4,21 +4,23 @@ Appium
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 
 Appium is an open source test automation tool for native and hybrid
-mobile apps. It supports iOS today and Android support is in the
-works. Appium drives Apple's UIAutomation library using Selenium's
-WebDriver JSON wire protocol. Appium is based on
+mobile apps. It supports both iOS and Android. Appium drives Apple's
+UIAutomation library and Android's UiAutomator using Selenium's
+WebDriver JSON wire protocol. Appium is based on 
 [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
 Testing with Appium has two big benefits:
 
-1.  You don't have to recompile your app or modify it in any way because
-    Appium's automation is based on Apple's UIAutomation library.
+1.  You don't have to recompile your app or modify it in any way, due
+    to use of standard automation APIs on all platforms.
 
-2.  You can write tests with your favorite dev tools using Java, JavaScript,
-    PHP, Python, Ruby, C#, or Perl with the Selenium WebDriver API and
-    language-specific client libraries. If you use the UIAutomation library
-    without Appium you can only write tests using JavaScript and you can only
-    run tests through the Instruments application.
+2.  You can write tests with your favorite dev tools using Java,
+    JavaScript, PHP, Python, Ruby, C#, or Perl with the Selenium
+    WebDriver API and language-specific client libraries. You can use
+    any testing framework. If you use the UIAutomation library without
+    Appium you can only write tests using JavaScript and you can only
+    run tests through the Instruments application. Similarly, with
+    UiAutomator you can only write tests in Java.
 
 Requirements
 ------------
@@ -26,6 +28,7 @@ Requirements
     > Mac OS X 10.6 or higher
     > XCode
     > Apple Developer Tools (iPhone simulator, command line tools)
+    > Android SDK API >= 17
     > Node and npm (http://www.nodejs.org)
 
 User Quick Start
@@ -43,7 +46,7 @@ Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-cod
 
 More Detailed Information
 -------------------
-We support a sub-set of the [Selenium JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
+We support a sub-set of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
 We also have several extensions to the JSON Wire Protocol for [automating
 mobile

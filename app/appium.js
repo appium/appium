@@ -64,19 +64,23 @@ Appium.prototype.attachTo = function(rest, cb) {
 
 Appium.prototype.preLaunch = function(cb) {
   logger.info("Pre-launching app");
-  if (!this.args.app) {
-    logger.error("Cannot pre-launch app if it isn't passed in via --app");
+  if (!this.args.app && !this.args.safari) {
+    logger.error("Cannot pre-launch app if it isn't passed in via --app or --safari");
     process.exit();
   } else {
     var me = this;
     var caps = {};
     this.start(caps, function(err, device) {
-      // since we're prelaunching, it might be a while before the first
-      // command comes in, so let's not have instruments quit on us
-      device.setCommandTimeout(600, function() {
-        me.preLaunched = true;
-        cb(me);
-      });
+      if (err) {
+        cb(err, null);
+      } else {
+        // since we're prelaunching, it might be a while before the first
+        // command comes in, so let's not have instruments quit on us
+        device.setCommandTimeout(600, function() {
+          me.preLaunched = true;
+          cb(null, me);
+        });
+      }
     });
   }
 };
@@ -198,11 +202,11 @@ Appium.prototype.configure = function(desiredCaps, cb) {
       logger.warn("Sticking with default app: " + this.args.app);
       cb(null);
     }
+  } else if (this.args.safari === true) {
+    this.configureSafari(desiredCaps, cb);
   } else if (!this.args.app) {
     cb("No app set; either start appium with --app or pass in an 'app' " +
        "value in desired capabilities");
-  } else if (this.args.safari === true) {
-    this.configureSafari(desiredCaps, cb);
   } else {
     logger.info("Using app from command line: " + this.args.app);
     cb(null);

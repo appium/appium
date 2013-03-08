@@ -85,7 +85,13 @@ var main = function(args, readyCb, doneCb) {
     };
     if (args.launch) {
       logger.info("Starting Appium in pre-launch mode".cyan);
-      appiumServer.preLaunch(next);
+      appiumServer.preLaunch(function(err, appiumServer) {
+        if (err) {
+          logger.error("Could not pre-launch appium: " + err);
+        } else {
+          next(appiumServer);
+        }
+      });
     } else {
       next(appiumServer);
     }

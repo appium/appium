@@ -440,8 +440,13 @@ IOS.prototype.setValueImmediate = function(elementId, value, cb) {
 IOS.prototype.setValue = function(elementId, value, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      value = escapeSpecialChars(value, "'");
-      this.remote.executeAtom('type', [atomsElement, value], cb);
+      this.remote.executeAtom('click', [atomsElement], _.bind(function(err, res) {
+        if (err) {
+          cb(err, res);
+        } else {
+          this.remote.executeAtom('type', [atomsElement, value], cb);
+        }
+      }, this));
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');

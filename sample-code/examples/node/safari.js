@@ -37,12 +37,15 @@ browser
           comments.sendKeys("This is an awesome comment", function() {
             browser.elementById('submit', function(err, submit) {
               submit.click(function() {
-                browser.elementById('your_comments', function(err, res) {
-                  res.text(function(err, text) {
-                    text.should.include("This is an awesome comment");
-                    browser.quit();
+                var next = function() {
+                  browser.elementById('your_comments', function(err, res) {
+                    res.text(function(err, text) {
+                      text.should.include("This is an awesome comment");
+                      browser.quit();
+                    });
                   });
-                });
+                };
+                setTimeout(next, 1000);
               });
             });
           });

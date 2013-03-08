@@ -165,6 +165,24 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('sendKeys', function(h) {
+    it('should send keystrokes', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('comments', function(err, element) {
+          should.not.exist(err);
+          element.sendKeys("hello world", function(err) {
+            should.not.exist(err);
+            element.getAttribute('value', function(err, text) {
+              should.not.exist(err);
+              text.should.equal("hello world");
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc('getSize', function(h) {
     it('should return the right size', function(done) {
       loadWebView(h.driver, function() {

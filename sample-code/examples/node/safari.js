@@ -32,8 +32,23 @@ browser
       should.not.exist(err);
       el.text(function(err, text) {
         text.should.eql("I am a div");
-        browser.frame(null, function() {
-          browser.quit();
+        browser.elementById('comments', function(err, comments) {
+          should.not.exist(err);
+          comments.sendKeys("This is an awesome comment", function() {
+            browser.elementById('submit', function(err, submit) {
+              submit.click(function() {
+                var next = function() {
+                  browser.elementById('your_comments', function(err, res) {
+                    res.text(function(err, text) {
+                      text.should.include("This is an awesome comment");
+                      browser.quit();
+                    });
+                  });
+                };
+                setTimeout(next, 1000);
+              });
+            });
+          });
         });
       });
     });

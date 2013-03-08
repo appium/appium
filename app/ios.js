@@ -438,21 +438,39 @@ IOS.prototype.setValueImmediate = function(elementId, value, cb) {
 };
 
 IOS.prototype.setValue = function(elementId, value, cb) {
-  var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('click', [atomsElement], _.bind(function(err, res) {
+        if (err) {
+          cb(err, res);
+        } else {
+          this.remote.executeAtom('type', [atomsElement, value], cb);
+        }
+      }, this));
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
+    this.proxy(command, cb);
+  }
+};
+
+IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
+  var atomsElement = this.getAtomsElement(elementId);
+  if (atomsElement === null) {
+    failCb(null, {
+      status: status.codes.UnknownError.code
+      , value: "Error converting element ID for using in WD atoms: " + elementId
+    });
+  } else {
+    cb(atomsElement);
+  }
 };
 
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsElement = this.getAtomsElement(elementId);
-    if (atomsElement === null) {
-      cb(null, {
-        status: status.codes.UnknownError.code
-        , value: "Error converting element ID for using in WD atoms: " + elementId
-      });
-    } else {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
       this.remote.executeAtom('click', [atomsElement], cb);
-    }
+    }, this));
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');
     this.proxy(command, cb);

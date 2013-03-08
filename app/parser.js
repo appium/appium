@@ -9,7 +9,6 @@ var args = [
     , defaultValue: null
     , help: 'IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file'
     , example: "/abs/path/to/my.app"
-    , nargs: 1
   }],
 
   [['-V', '--verbose'], {
@@ -33,7 +32,6 @@ var args = [
     , required: false
     , example: "0.0.0.0"
     , help: 'IP Address to listen on'
-    , nargs: 1
   }],
 
   [['-p', '--port'] , {
@@ -42,7 +40,6 @@ var args = [
     , type: 'int'
     , example: "4723"
     , help: 'port to listen on'
-    , nargs: 1
   }],
 
   [['-k', '--keep-artifacts'] , {
@@ -79,7 +76,6 @@ var args = [
     , required: false
     , example: "/path/to/appium.log"
     , help: 'Log output to this file instead of stdout'
-    , nargs: 1
   }],
 
   [['-G', '--webhook'] , {
@@ -87,7 +83,6 @@ var args = [
     , required: false
     , example: "localhost:9876"
     , help: 'Also send log output to this HTTP listener'
-    , nargs: 1
   }],
 
   [['-w', '--warp'] , {
@@ -108,7 +103,6 @@ var args = [
     , example: "com.example.android.myApp"
     , help: "(Android-only) Java package of the Android app you want to run " +
             "(e.g., com.example.android.myApp)"
-    , nargs: 1
   }],
 
   [['--app-activity'], {
@@ -118,7 +112,6 @@ var args = [
     , example: "MainActivity"
     , help: "(Android-only) Activity name for the Android activity you want " +
             "to launch from your package (e.g., MainActivity)"
-    , nargs: 1
   }],
 
   [['--skip-install'], {

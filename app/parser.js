@@ -50,6 +50,16 @@ var args = [
     , nargs: 0
   }],
 
+  [['--fast-reset'] , {
+    defaultValue: false
+    , dest: 'fastReset'
+    , action: 'storeTrue'
+    , required: false
+    , help: 'Reset app state on mobile: reset (IOS: NOP; Android: ' +
+            'clear app data)'
+    , nargs: 0
+  }],
+
   [['--no-reset'] , {
     defaultValue: false
     , dest: 'noReset'

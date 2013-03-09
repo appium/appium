@@ -6,6 +6,8 @@ var path = require('path')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , glob = require('glob')
+  , bplistCreate = require('node-bplist-creator')
+  , bplistParse = require('bplist-parser')
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
   , timeWarp = require('../warp.js').timeWarp
@@ -18,19 +20,20 @@ var path = require('path')
   , NotImplementedError = errors.NotImplementedError
   , UnknownError = errors.UnknownError;
 
-var IOS = function(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview) {
-  this.rest = rest;
-  this.app = app;
-  this.udid = udid;
+var IOS = function(args) {
+  this.rest = args.rest;
+  this.app = args.app;
+  this.udid = args.udid;
+  this.verbose = args.verbose;
+  this.autoWebview = args.autoWebview;
+  this.warp = args.warp;
+  this.reset = args.reset;
+  this.removeTraceDir = args.removeTraceDir;
+  this.deviceType = args.deviceType;
   this.bundleId = null; // what we get from app on startup
-  this.verbose = verbose;
-  this.autoWebview = autoWebview;
-  this.warp = warp;
-  this.reset = reset;
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
-  this.removeTraceDir = removeTraceDir;
   this.onStop = function() {};
   this.cbForCurrentCmd = null;
   this.remote = null;
@@ -141,19 +144,58 @@ IOS.prototype.start = function(cb, onDie) {
       if (this.warp) {
         timeWarp(50, 1000);
       }
-      this.instruments = instruments(
-        this.app
-        , this.udid
-        , path.resolve(__dirname, 'uiauto/bootstrap.js')
-        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
-        , sock
-        , onLaunch
-        , onExit
-      );
+      this.setDeviceType(_.bind(function(err) {
+        if (err) {
+          cb(err);
+        } else {
+          this.instruments = instruments(
+            this.app
+            , this.udid
+            , path.resolve(__dirname, 'uiauto/bootstrap.js')
+            , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
+            , sock
+            , onLaunch
+            , onExit
+          );
+        }
+      }, this));
     }, this));
   }
 
 };
+
+IOS.prototype.setDeviceType = function(cb) {
+  var deviceTypeCode = 1
+    , plist = path.resolve(this.app, "Info.plist");
+
+  if (typeof this.deviceType === "undefined") {
+    this.deviceType = "iphone";
+  }
+  logger.info("Forcing use of " + this.deviceType);
+  if (this.deviceType === "ipad") {
+    deviceTypeCode = 2;
+  }
+  bplistParse.parseFile(plist, function(err, obj) {
+    if (err) {
+      logger.error("Could not parse plist file at " + plist);
+      cb(err);
+    } else {
+      logger.info("Parsed app Info.plist");
+      obj[0].UIDeviceFamily = [deviceTypeCode];
+      var newPlist = bplistCreate(obj);
+      fs.writeFile(plist, newPlist, function(err) {
+        if (err) {
+          logger.error("Could not save new binary Info.plist");
+          cb(err);
+        } else {
+          logger.info("Wrote new app Info.plist with device type");
+          cb(null);
+        }
+      });
+    }
+  });
+};
+
 
 IOS.prototype.navToFirstAvailWebview = function(cb) {
   logger.info("Navigating to first available webview");
@@ -852,6 +894,6 @@ IOS.prototype.title = function(cb) {
   }
 };
 
-module.exports = function(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview) {
-  return new IOS(rest, app, udid, verbose, removeTraceDir, warp, reset, autoWebview);
+module.exports = function(args) {
+  return new IOS(args);
 };

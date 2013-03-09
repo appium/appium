@@ -131,6 +131,24 @@ var args = [
     , required: false
     , help: "(IOS-Only) Use the safari app"
     , nargs: 0
+  }],
+
+  [['--force-iphone'], {
+    defaultValue: false
+    , dest: 'forceIphone'
+    , action: 'storeTrue'
+    , required: false
+    , help: "(IOS-only) Use the iPhone Simulator no matter what the app wants"
+    , nargs: 0
+  }],
+
+  [['--force-ipad'], {
+    defaultValue: false
+    , dest: 'forceIpad'
+    , action: 'storeTrue'
+    , required: false
+    , help: "(IOS-only) Use the iPad Simulator no matter what the app wants"
+    , nargs: 0
   }]
 ];
 

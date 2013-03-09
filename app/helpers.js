@@ -2,6 +2,7 @@
 
 var logger = require('../logger').get('appium')
   , fs = require('fs')
+  , ncp = require('ncp').ncp
   , request = require('request')
   , path = require('path')
   , exec = require('child_process').exec
@@ -97,6 +98,7 @@ exports.unzipApp = function(zipPath, appExt, cb) {
 };
 
 exports.checkBuiltInApp = function(appName, version, cb) {
+  logger.info("Looking for built in app " + appName);
   exports.getBuiltInAppDir(version, function(err, appDir) {
     if (err) {
       cb(err);
@@ -108,7 +110,8 @@ exports.checkBuiltInApp = function(appName, version, cb) {
         } else if (!s.isDirectory()) {
           cb("App package was not a directory", appPath);
         } else {
-          cb(null, appPath);
+          logger.info("Got app, trying to copy to tmp dir");
+          exports.copyBuiltInApp(appPath, appName, cb);
         }
       });
     }
@@ -134,6 +137,18 @@ exports.getBuiltInAppDir = function(version, cb) {
       cb("Could not load built in applications directory");
     } else {
       cb(null, appDir);
+    }
+  });
+};
+
+exports.copyBuiltInApp = function(appPath, appName, cb) {
+  var newAppDir = path.resolve('/tmp/Appium-' + appName + '.app');
+  ncp(appPath, newAppDir, function(err) {
+    if (err) {
+      cb(err);
+    } else {
+      logger.info("Copied " + appName + " to " + newAppDir);
+      cb(null, newAppDir);
     }
   });
 };

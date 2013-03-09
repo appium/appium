@@ -16,9 +16,9 @@ var wd = require('wd')
     };
 
 var driverBlock = function(tests, host, port, caps, extraCaps) {
-  host = typeof host === "undefined" ? _.clone(defaultHost) : host;
-  port = typeof port === "undefined" ? _.clone(defaultPort) : port;
-  caps = typeof caps === "undefined" ? _.clone(defaultCaps) : caps;
+  host = (typeof host === "undefined" || host === null) ? _.clone(defaultHost) : host;
+  port = (typeof port === "undefined" || port === null) ? _.clone(defaultPort) : port;
+  caps = (typeof caps === "undefined" || caps === null) ? _.clone(defaultCaps) : caps;
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
   var driverHolder = {driver: null, sessionId: null};
 

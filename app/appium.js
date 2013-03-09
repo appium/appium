@@ -123,6 +123,20 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
   return "ios";
 };
 
+Appium.prototype.getIosDeviceType = function(desiredCaps) {
+  if (this.args.forceIphone) {
+    return "iphone";
+  } else if (this.args.forceIpad) {
+    return "ipad";
+  } else {
+    var device = desiredCaps.device;
+    if (typeof device !== "undefined" && device.toLowerCase().indexOf("ipad") !== -1) {
+      return "ipad";
+    }
+  }
+  return "iphone";
+};
+
 Appium.prototype.isIos = function() {
   return this.deviceType === "ios";
 };
@@ -140,6 +154,9 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                       typeof desiredCaps.app !== "undefined" &&
                       desiredCaps.app);
   this.deviceType = this.getDeviceType(desiredCaps);
+  if (this.isIos()) {
+    this.iosDeviceType = this.getIosDeviceType(desiredCaps);
+  }
   this.args.androidPackage = desiredCaps["app-package"] || this.args.androidPackage;
   this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;
   if (hasAppInCaps) {
@@ -273,11 +290,6 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
       if (this.isIos()) {
-        var device = this.desiredCapabilities.device;
-        var iosDeviceType = "iphone";
-        if (typeof device === "string" && device.toLowerCase().indexOf('ipad') !== -1) {
-          iosDeviceType = "ipad";
-        }
         var iosOpts = {
           rest: this.rest
           , app: this.args.app
@@ -287,7 +299,7 @@ Appium.prototype.invoke = function() {
           , warp: this.args.warp
           , reset: !this.args.noReset
           , autoWebview: this.args.safari
-          , deviceType: iosDeviceType
+          , deviceType: this.iosDeviceType
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {

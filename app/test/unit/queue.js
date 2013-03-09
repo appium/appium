@@ -12,7 +12,7 @@ var assert = require('assert')
 
 describe('IOS', function() {
   // we'd like to test ios.proxy; mock instruments
-  var inst = ios(null, null, null);
+  var inst = ios({});
       inst.instruments = {};
       inst.instruments.sendCommand = function(cmd, cb) {
         // let's pretend we've got some latency here.

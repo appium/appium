@@ -1,4 +1,4 @@
-/*global it:true, before:true, describe: true */
+/*global it:true, before:true, describe:true, beforeEach:true */
 "use strict";
 
 var checkPreferencesApp = require("../../../app/helpers").checkPreferencesApp

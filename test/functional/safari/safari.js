@@ -13,28 +13,30 @@ describeWd('safari init', function(h) {
       done();
     });
   });
-  it('should be able to clear windows', function(done) {
+});
+
+// todo: write window manipulation test for iphone version
+
+describeWd('safari ipad', function(h) {
+  it('should be able to close tabs', function(done) {
     h.driver.frame(null, function() {
       h.driver.elementByTagName("window", function(err, win) {
         win.elementsByXPath("//button[contains(@name, 'Close tab for')]", function(err, els) {
-          if (els.length) {
-            var closeTab = function(idx) {
-              els[idx].click(function() {
-                if (idx+1 === els.length) {
-                  done();
-                } else {
-                  closeTab(idx+1);
-                }
-              });
-            };
-            closeTab(0);
-          } else {
-            done();
-          }
+          els.length.should.be.above(0);
+          var closeTab = function(idx) {
+            els[idx].click(function() {
+              if (idx+1 === els.length) {
+                done();
+              } else {
+                closeTab(idx+1);
+              }
+            });
+          };
+          closeTab(0);
         });
       });
     });
   });
-});
+}, null, null, {device: 'iPad Simulator'});
 
 webviewTests('safari');

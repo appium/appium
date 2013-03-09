@@ -102,7 +102,9 @@ Appium.prototype.start = function(desiredCaps, cb) {
 Appium.prototype.getDeviceType = function(desiredCaps) {
   // yay for HACKS!!
   if (desiredCaps.device) {
-    if (desiredCaps.device.indexOf('iPhone') !== -1) {
+    if (desiredCaps.device.toLowerCase().indexOf('iphone') !== -1) {
+      return "ios";
+    } else if (desiredCaps.device.toLowerCase().indexOf('ipad') !== -1) {
       return "ios";
     } else {
       return "android";
@@ -119,6 +121,20 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     return "android";
   }
   return "ios";
+};
+
+Appium.prototype.getIosDeviceType = function(desiredCaps) {
+  if (this.args.forceIphone) {
+    return "iphone";
+  } else if (this.args.forceIpad) {
+    return "ipad";
+  } else {
+    var device = desiredCaps.device;
+    if (typeof device !== "undefined" && device.toLowerCase().indexOf("ipad") !== -1) {
+      return "ipad";
+    }
+  }
+  return "iphone";
 };
 
 Appium.prototype.isIos = function() {
@@ -138,6 +154,9 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                       typeof desiredCaps.app !== "undefined" &&
                       desiredCaps.app);
   this.deviceType = this.getDeviceType(desiredCaps);
+  if (this.isIos()) {
+    this.iosDeviceType = this.getIosDeviceType(desiredCaps);
+  }
   this.args.androidPackage = desiredCaps["app-package"] || this.args.androidPackage;
   this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;
   if (hasAppInCaps) {
@@ -271,7 +290,18 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
       if (this.isIos()) {
-        this.devices[this.deviceType] = ios(this.rest, this.args.app, this.args.udid, this.args.verbose, !this.args.keepArtifacts, this.args.warp, !this.args.noReset, this.args.safari);
+        var iosOpts = {
+          rest: this.rest
+          , app: this.args.app
+          , udid: this.args.udid
+          , verbose: this.args.verbose
+          , removeTraceDir: !this.args.keepArtifacts
+          , warp: this.args.warp
+          , reset: !this.args.noReset
+          , autoWebview: this.args.safari
+          , deviceType: this.iosDeviceType
+        };
+        this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {
         var androidOpts = {
           rest: this.rest

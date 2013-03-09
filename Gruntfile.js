@@ -87,13 +87,6 @@ module.exports = function(grunt) {
     }
     startAppium(appName, true, function() {}, this.async());
   });
-  grunt.registerTask('mobileSafari', "Start the Appium server with MobileSafari", function(version) {
-    if (typeof version === "undefined") {
-      version = "6.0";
-    }
-    var app = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator" + version + ".sdk/Applications/MobileSafari.app";
-    startAppium(app, true, function() {}, this.async());
-  });
   grunt.registerTask('downloadApp', "Download UICatalog", function() {
     downloadUICatalog(this.async());
   });

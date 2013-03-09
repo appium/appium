@@ -14,7 +14,6 @@ kinds of appium dev tasks. Here's what you can do:
 |grunt android|Run the functional test suite for android|
 |grunt ios|Run the functional test suite for ios|
 |grunt unit|Run the unit tests|
-|grunt mobileSafari|Start an Appium server with mobile Safari loaded|
 |grunt buildApp:&lt;AppName&gt;:&lt;SDK&gt;|Build an iOS app for the iPhone Simulator.  Expects there to be a .app at `sample-code/apps/<AppName>/build/Release-iphonesimulator/<AppName>.app`. Default SDK is 'iphonesimulator6.0'|
 |grunt signApp:&lt;certName&gt;|Signs the test app with an absolute path to an iOS dev certificate|
 |grunt authorize|Authorize your simulator to run without prompting|

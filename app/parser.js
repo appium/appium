@@ -24,7 +24,6 @@ var args = [
     , defaultValue: null
     , example: "1adsf-sdfas-asdf-123sdf"
     , help: '(IOS-only) Unique device identifier of the connected physical device'
-    , nargs: 0
   }],
 
   [['-a', '--address'] , {

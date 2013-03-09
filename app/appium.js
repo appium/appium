@@ -286,7 +286,7 @@ Appium.prototype.invoke = function() {
           , removeTraceDir: !this.args.keepArtifacts
           , warp: this.args.warp
           , reset: !this.args.noReset
-          , autoWebView: this.args.safari
+          , autoWebview: this.args.safari
           , deviceType: iosDeviceType
         };
         this.devices[this.deviceType] = ios(iosOpts);

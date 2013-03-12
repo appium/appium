@@ -318,7 +318,7 @@ Instruments.prototype.debug = function(msg) {
 
 /* NODE EXPORTS */
 
-module.exports = function(server, app, udid, bootstrap, template, sock, cb, exitCb) {
-  return new Instruments(server, app, udid, bootstrap, template, sock, cb, exitCb);
+module.exports = function(server, app, udid, bootstrap, template, sock, withoutDelay, cb, exitCb) {
+  return new Instruments(server, app, udid, bootstrap, template, sock, withoutDelay, cb, exitCb);
 };
 

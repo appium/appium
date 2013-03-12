@@ -55,8 +55,7 @@ var args = [
     , dest: 'fastReset'
     , action: 'storeTrue'
     , required: false
-    , help: 'Reset app state on mobile: reset (IOS: NOP; Android: ' +
-            'clear app data)'
+    , help: '(Android-only) Reset app state using clean.apk'
     , nargs: 0
   }],
 

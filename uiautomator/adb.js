@@ -106,69 +106,77 @@ ADB.prototype.buildFastReset = function(cb) {
         }
         logger.debug("Created manifest");
         var androidHome = process.env.ANDROID_HOME;
-        // Compile manifest into manifest.xml.apk
-        var compile_manifest = ['aapt package -M "', manifest,
-                                '" -I "', androidHome, '/platforms/android-17/android.jar" -F "',
-                                manifest, '.apk" -f'].join('');
-        logger.debug(compile_manifest);
-        exec(compile_manifest, {}, function(err, stdout, stderr) {
-          logger.debug(stdout);
-          logger.debug(stderr);
+
+        exec('which aapt', function(err, stdout) {
           if (err) {
-            cb(false);
+            throw new Error("Error finding aapt binary, is it on your path?");
           }
 
-          logger.debug('unzip: ' + manifest + '.apk');
-          logger.debug('replace: ' + targetAPK);
 
-          // unzip manifest.xml.apk
-          unzipFile(manifest + '.apk', function(err, stderr){
-            var execOpts = {cwd: path.dirname(targetAPK)};
-            // -j = keep only the file, not the dirs
-            // -m = move manifest into target apk.
-            var cleanAPK = path.resolve(__dirname, '../app/android/Clean.apk');
-            var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
-            logger.debug(replaceCmd);
-            exec(replaceCmd, execOpts, function(err, stderr, stdout) {
-              if (!err) {
-                logger.debug("Replace manifest successful");
-                // resign target apk and clean.apk
-                var signPath = path.resolve(__dirname, '../app/android/sign.jar');
-                var resign = 'java -jar "' + signPath + '" "' + targetAPK + '" "' + cleanAPK + '" --override';
-                logger.debug("Resigning: " + resign);
-                exec(resign, execOpts, function(err, stderr, stdout) {
-                  if (!err) {
-                    logger.debug("Resign clean and target apk successful. Installing clean apk.");
-                    var installCleanAPK = 'adb install -r "' + cleanAPK + '"';
-                    logger.debug(installCleanAPK);
-                    exec(installCleanAPK, function(err, stdout) {
-                      if (err) {
-                        logger.debug(err);
-                        cb(-1);
-                      } else {
-                        logger.debug(stdout);
-                        logger.debug("Build fast reset complete.");
-                        cb(0);
-                      }
-                    });
-                  } else {
-                    logger.error("Resign threw error " + err);
-                    logger.error("Stderr: " + stderr);
-                    logger.error("Stdout: " + stdout);
-                    cb("APK could not be signed, check appium logs.", null);
-                  }
-                });
-              } else {
-                logger.error("Replace manifest threw error " + err);
-                logger.error("Stderr: " + stderr);
-                logger.error("Stdout: " + stdout);
-                cb("APK could not be updated, check appium logs.", null);
-              }
-            }); // replace manifest
-          }); // unzip
-        }); // exec
-      }); // write file
-    }); // readfile
+          // Compile manifest into manifest.xml.apk
+          var compile_manifest = ['aapt package -M "', manifest,
+                                  '" -I "', androidHome, '/platforms/android-17/android.jar" -F "',
+                                  manifest, '.apk" -f'].join('');
+          logger.debug(compile_manifest);
+          exec(compile_manifest, {}, function(err, stdout, stderr) {
+            logger.debug(stdout);
+            logger.debug(stderr);
+            if (err) {
+              cb(false);
+            }
+
+            logger.debug('unzip: ' + manifest + '.apk');
+            logger.debug('replace: ' + targetAPK);
+
+            // unzip manifest.xml.apk
+            unzipFile(manifest + '.apk', function(err, stderr){
+              var execOpts = {cwd: path.dirname(targetAPK)};
+              // -j = keep only the file, not the dirs
+              // -m = move manifest into target apk.
+              var cleanAPK = path.resolve(__dirname, '../app/android/Clean.apk');
+              var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
+              logger.debug(replaceCmd);
+              exec(replaceCmd, execOpts, function(err, stderr, stdout) {
+                if (!err) {
+                  logger.debug("Replace manifest successful");
+                  // resign target apk and clean.apk
+                  var signPath = path.resolve(__dirname, '../app/android/sign.jar');
+                  var resign = 'java -jar "' + signPath + '" "' + targetAPK + '" "' + cleanAPK + '" --override';
+                  logger.debug("Resigning: " + resign);
+                  exec(resign, execOpts, function(err, stderr, stdout) {
+                    if (!err) {
+                      logger.debug("Resign clean and target apk successful. Installing clean apk.");
+                      var installCleanAPK = 'adb install -r "' + cleanAPK + '"';
+                      logger.debug(installCleanAPK);
+                      exec(installCleanAPK, function(err, stdout) {
+                        if (err) {
+                          logger.debug(err);
+                          cb(-1);
+                        } else {
+                          logger.debug(stdout);
+                          logger.debug("Build fast reset complete.");
+                          cb(0);
+                        }
+                      });
+                    } else {
+                      logger.error("Resign threw error " + err);
+                      logger.error("Stderr: " + stderr);
+                      logger.error("Stdout: " + stdout);
+                      cb("APK could not be signed, check appium logs.", null);
+                    }
+                  });
+                } else {
+                  logger.error("Replace manifest threw error " + err);
+                  logger.error("Stderr: " + stderr);
+                  logger.error("Stdout: " + stdout);
+                  cb("APK could not be updated, check appium logs.", null);
+                }
+              });
+            });
+          });
+        });
+      });
+    });
   }, this));
 };
 

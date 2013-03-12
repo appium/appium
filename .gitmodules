@@ -1,3 +1,3 @@
 [submodule "submodules/instruments-without-delay"]
 	path = submodules/instruments-without-delay
-	url = git://github.com/sah/instruments-without-delay.git
+	url = git://github.com/facebook/instruments-without-delay.git

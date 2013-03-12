@@ -9,6 +9,7 @@ var errors = require('./errors')
   //, NotImplementedError = errors.NotImplementedError
   , NotYetImplementedError = errors.NotYetImplementedError
   , parseXpath = require('./uiauto/appium/xpath').parseXpath
+  , exec = require('child_process').exec
   , UnknownError = errors.UnknownError;
 
 var Android = function(opts) {
@@ -36,6 +37,29 @@ var Android = function(opts) {
     , javascriptEnabled: true
     , databaseEnabled: false
   };
+};
+
+// Clear data, close app, then start app.
+Android.prototype.fastReset = function(cb) {
+  // list instruments with: adb shell pm list instrumentation
+  // targetPackage + '.clean' / clean.apk.Clear
+  var me = this;
+  var clearCmd = 'adb shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
+  logger.debug("Clear command: " + clearCmd);
+  exec(clearCmd, {}, function(err, stdout, stderr) {
+    if (err) {
+      logger.warn(stderr);
+      cb(err);
+    } else {
+      me.adb.startApp(function(err) {
+        if (err) {
+          cb(err);
+        } else {
+          cb(null);
+        }
+      });
+    }
+  });
 };
 
 Android.prototype.start = function(cb, onDie) {

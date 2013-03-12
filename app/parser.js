@@ -50,6 +50,15 @@ var args = [
     , nargs: 0
   }],
 
+  [['--fast-reset'] , {
+    defaultValue: false
+    , dest: 'fastReset'
+    , action: 'storeTrue'
+    , required: false
+    , help: '(Android-only) Reset app state using clean.apk'
+    , nargs: 0
+  }],
+
   [['--no-reset'] , {
     defaultValue: false
     , dest: 'noReset'

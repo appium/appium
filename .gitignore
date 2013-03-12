@@ -30,4 +30,5 @@ sample-code/apps/ApiDemos/tests/build.xml
 sample-code/apps/ApiDemos/tests/local.properties
 sample-code/apps/ApiDemos/tests/proguard-project.txt
 sample-code/apps/ApiDemos/tests/project.properties
-
+app/android/AndroidManifest.xml.apk
+app/android/AndroidManifest.xml

@@ -187,38 +187,37 @@ ADB.prototype.start = function(onReady, onExit) {
   logger.debug("Using fast reset? " + this.fastReset);
 
   var me = this;
-  // onReady runs process.exit(1); when err is set.
   async.series(
         [
           function(cb) {
             me.checkAdbPresent(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.getConnectedDevices(function(err, devices) {
               if (devices.length === 0 || err) {
-                onReady("Could not find a connected Android device.");
+                return onReady("Could not find a connected Android device.");
               }
               cb(null);
             });
           },
           function(cb) {
             me.waitForDevice(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.pushAppium(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.forwardPort(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               cb(null);
             });
           },
@@ -226,19 +225,19 @@ ADB.prototype.start = function(onReady, onExit) {
             if (!me.appPackage) onReady("appPackage must be set.");
 
             me.buildFastReset(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.installApp(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.startApp(function(err) {
-              if (err) onReady(err);
+              if (err) return onReady(err);
               doRun(function(){ cb(null); });
             });
           }

@@ -47,9 +47,8 @@ Android.prototype.fastReset = function(cb) {
   var clearCmd = 'adb shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
   logger.debug("Clear command: " + clearCmd);
   exec(clearCmd, {}, function(err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
     if (err) {
+      logger.warn(stderr);
       cb(err);
     } else {
       me.adb.startApp(function(err) {

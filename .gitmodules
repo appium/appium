@@ -1,0 +1,3 @@
+[submodule "submodules/instruments-without-delay"]
+	path = submodules/instruments-without-delay
+	url = git://github.com/sah/instruments-without-delay.git

@@ -95,6 +95,18 @@ var args = [
     , nargs: 0
   }],
 
+  [['--without-delay'] , {
+    defaultValue: false
+    , dest: 'withoutDelay'
+    , action: 'storeTrue'
+    , required: false
+    , help: '(IOS-only) IOS has a weird built-in unavoidable delay. One way ' +
+            'around this is to run instruments with a library loaded to ' +
+            'patch it so that it skips the delay. Use this flag to speed up ' +
+            ' test execution.'
+    , nargs: 0
+  }],
+
   [['--app-pkg'], {
     dest: 'androidPackage'
     , defaultValue: null

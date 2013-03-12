@@ -179,8 +179,7 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat([this.app]);
   args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
-  var env = {};
-  for (var e in process.env) env[e] = process.env[e];
+  var env = _.clone(process.env);
   if (this.withoutDelay) {
     env.DYLD_INSERT_LIBRARIES = "./submodules/instruments-without-delay/build/InstrumentsShim.dylib";
     env.LIB_PATH = "./submodules/instruments-without-delay/build";

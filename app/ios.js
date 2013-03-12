@@ -27,6 +27,7 @@ var IOS = function(args) {
   this.verbose = args.verbose;
   this.autoWebview = args.autoWebview;
   this.warp = args.warp;
+  this.withoutDelay = args.withoutDelay;
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
   this.deviceType = args.deviceType;
@@ -154,6 +155,7 @@ IOS.prototype.start = function(cb, onDie) {
             , path.resolve(__dirname, 'uiauto/bootstrap.js')
             , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
             , sock
+            , this.withoutDelay
             , onLaunch
             , onExit
           );

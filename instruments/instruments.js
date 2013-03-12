@@ -8,6 +8,7 @@ var spawn = require('child_process').spawn
   , _ = require('underscore')
   , net = require('net')
   , uuid = require('uuid-js')
+  , path = require('path')
   , codes = require('../app/uiauto/lib/status.js').codes;
 
 var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, cb, exitCb) {
@@ -181,8 +182,8 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
   var env = _.clone(process.env);
   if (this.withoutDelay) {
-    env.DYLD_INSERT_LIBRARIES = "./submodules/instruments-without-delay/build/InstrumentsShim.dylib";
-    env.LIB_PATH = "./submodules/instruments-without-delay/build";
+    env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, "../submodules/instruments-without-delay/build/InstrumentsShim.dylib");
+    env.LIB_PATH = path.resolve(__dirname, "../submodules/instruments-without-delay/build");
   }
   return spawn(this.instrumentsPath, args, {env: env});
 };

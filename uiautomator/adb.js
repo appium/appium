@@ -192,9 +192,7 @@ ADB.prototype.start = function(onReady, onExit) {
         [
           function(cb) {
             me.checkAdbPresent(function(err) {
-              if (err) {
-                onReady(err);
-              }
+              if (err) onReady(err);
               cb(null);
             });
           },
@@ -208,54 +206,40 @@ ADB.prototype.start = function(onReady, onExit) {
           },
           function(cb) {
             me.waitForDevice(function(err) {
-              if (err) {
-                onReady(err);
-              }
+              if (err) onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.pushAppium(function(err) {
-              if (err) {
-                onReady(err);
-              }
+              if (err) onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.forwardPort(function(err) {
-              if (err) {
-                onReady(err);
-              }
+              if (err) onReady(err);
               cb(null);
             });
           },
           function(cb) {
-            if (!me.appPackage) {
-              onReady("appPackage must be set.");
-            }
+            if (!me.appPackage) onReady("appPackage must be set.");
 
             me.buildFastReset(function(err) {
-              if (err) {
-                onReady(err);
-              }
+              if (err) onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.installApp(function(err) {
-              if (err) {
-                onReady(err);
-              }
+              if (err) onReady(err);
               cb(null);
             });
           },
           function(cb) {
             me.startApp(function(err) {
-              if (err) {
-                onReady(err);
-              }
-              doRun(function(){cb(null);});
+              if (err) onReady(err);
+              doRun(function(){ cb(null); });
             });
           }
         ]);

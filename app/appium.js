@@ -49,6 +49,11 @@ var Appium = function(args) {
   this.tempFiles = [];
   this.origApp = null;
   this.preLaunched = false;
+  this.fastReset = false;
+
+  if (this.args.fastReset) {
+    this.fastReset = true;
+  }
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -311,6 +316,7 @@ Appium.prototype.invoke = function() {
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
           , reset: !this.args.noReset
+          , fastReset: this.args.fastReset
           , skipInstall: this.args.skipAndroidInstall
         };
         this.devices[this.deviceType] = android(androidOpts);
@@ -372,19 +378,28 @@ Appium.prototype.stop = function(cb) {
 
 Appium.prototype.reset = function(cb) {
   logger.info("Resetting app mid-session");
-  var me = this
+  if (!this.fastReset) {
+    var me = this
     , oldId = this.sessionId;
 
-  this.stop(function() {
-    logger.info("Restarting app");
-    me.start(me.desiredCapabilities, function() {
-      me.sessionId = oldId;
-      cb(null, {status: status.codes.Success.code, value: null});
+    this.stop(function() {
+      logger.info("Restarting app");
+      me.start(me.desiredCapabilities, function() {
+        me.sessionId = oldId;
+        cb(null, {status: status.codes.Success.code, value: null});
+      });
     });
-  });
+  } else { // fast reset
+    logger.info("Fast reset");
+    this.device.fastReset(function(err){
+      if (err) {
+        cb(null, {status: status.codes.UnknownError.code, value: null});
+      } else {
+        cb(null, {status: status.codes.Success.code, value: null});
+      }
+    });
+  }
 };
-
-
 
 module.exports = function(args) {
   return new Appium(args);

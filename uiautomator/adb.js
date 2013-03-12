@@ -222,7 +222,7 @@ ADB.prototype.start = function(onReady, onExit) {
             });
           },
           function(cb) {
-            if (!me.appPackage) onReady("appPackage must be set.");
+            if (!me.appPackage) return onReady("appPackage must be set.");
 
             me.buildFastReset(function(err) {
               if (err) return onReady(err);

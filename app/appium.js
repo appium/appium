@@ -390,7 +390,7 @@ Appium.prototype.reset = function(cb) {
       });
     });
   } else { // fast reset
-    logger.info(" ------- Fast reset");
+    logger.info("Fast reset");
     this.device.fastReset(function(err){
       if (err) {
         cb(null, {status: status.codes.UnknownError.code, value: null});

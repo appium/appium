@@ -119,9 +119,8 @@ ADB.prototype.buildFastReset = function(cb) {
                                   manifest, '.apk" -f'].join('');
           logger.debug(compile_manifest);
           exec(compile_manifest, {}, function(err, stdout, stderr) {
-            logger.debug(stdout);
-            logger.debug(stderr);
             if (err) {
+              logger.debug(stderr);
               cb(false);
             }
 
@@ -153,7 +152,6 @@ ADB.prototype.buildFastReset = function(cb) {
                           logger.debug(err);
                           cb(-1);
                         } else {
-                          logger.debug(stdout);
                           logger.debug("Build fast reset complete.");
                           cb(0);
                         }

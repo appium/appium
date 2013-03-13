@@ -224,6 +224,33 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('elementEnabled', function(h) {
+    it('should return true when the element is enabled', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByLinkText('i am a link', function(err, el) {
+          should.not.exist(err);
+          el.isEnabled(function(err, enabled) {
+            enabled.should.equal(true);
+            done();
+          });
+        });
+      });
+    });
+    it('should return false when the element is not enabled', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('fbemail', function(err,el) {
+          should.not.exist(err);
+          h.driver.execute("$('#fbemail').attr('disabled', 'disabled');", function(err, val) {
+            el.isEnabled(function(err, enabled) {
+              enabled.should.equal(false);
+              done()
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc("execute", function(h) {
     it("should bubble up javascript errors", function(done) {
       loadWebView(h.driver, function() {

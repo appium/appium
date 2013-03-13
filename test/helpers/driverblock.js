@@ -88,6 +88,7 @@ var describeForApp = function(app, device, appPackage, appActivity) {
       appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/bin/" + app + "-debug.apk");
     }
   }
+  var realDevice = device == "ios" ? "iPhone Simulator" : "Android";
 
   return function(desc, tests, host, port, caps, extraCaps) {
     if (typeof extraCaps === "undefined") {
@@ -95,7 +96,8 @@ var describeForApp = function(app, device, appPackage, appActivity) {
     }
     var newExtraCaps = {
       app: appPath,
-      browserName: browserName
+      browserName: browserName,
+      device: realDevice
     };
     if (typeof appPackage !== "undefined") {
       newExtraCaps['app-package'] = appPackage;

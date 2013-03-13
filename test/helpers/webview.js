@@ -198,6 +198,32 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+
+  desc('elementDisplayed', function(h) {
+    it('should return true when the element is displayed', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByLinkText('i am a link', function(err, el) {
+          should.not.exist(err);
+          el.isDisplayed(function(err, displayed) {
+            displayed.should.equal(true);
+            done();
+          });
+        });
+      });
+    });
+    it('should return false when the element is not displayed', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('invisible div', function(err,el) {
+          should.not.exist(err);
+          el.isDisplayed(function(err, displayed) {
+            displayed.should.equal(false);
+            done()
+          });
+        });
+      });
+    });
+  });
+
   desc("execute", function(h) {
     it("should bubble up javascript errors", function(done) {
       loadWebView(h.driver, function() {

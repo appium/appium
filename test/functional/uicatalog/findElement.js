@@ -3,6 +3,7 @@
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
   , _ = require("underscore")
+  , spinWait = require("../../helpers/spin.js").spinWait
   , should = require('should');
 
 describeWd('findElementFromElement', function(h) {
@@ -117,12 +118,21 @@ describeWd('findElement(s)ByXpath', function(h) {
   });
   it('should search an extended path by child', function(done) {
     setupXpath(h.driver, function() {
-      h.driver.elementsByXPath("navigationBar/text", function(err, els) {
-        should.not.exist(err);
-        els[0].text(function(err, text) {
-          text.should.equal('Buttons');
-          done();
+      var spinFn = function(spinCb) {
+        h.driver.elementsByXPath("navigationBar/text", function(err, els) {
+          should.not.exist(err);
+          els[0].text(function(err, text) {
+            try {
+              text.should.equal('Buttons');
+              spinCb();
+            } catch (e) {
+              spinCb(e);
+            }
+          });
         });
+      };
+      spinWait(spinFn, function() {
+        done();
       });
     });
   });

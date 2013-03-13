@@ -660,8 +660,14 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
 };
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').isEnabled() ? true : false"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('is_enabled', [atomsElement], cb);
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId, "').isEnabled() ? true : false"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getPageSource = function(cb) {

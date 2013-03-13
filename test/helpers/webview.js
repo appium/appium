@@ -217,7 +217,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           el.isDisplayed(function(err, displayed) {
             displayed.should.equal(false);
-            done()
+            done();
           });
         });
       });
@@ -243,7 +243,7 @@ module.exports.buildTests = function(webviewType) {
           h.driver.execute("$('#fbemail').attr('disabled', 'disabled');", function(err, val) {
             el.isEnabled(function(err, enabled) {
               enabled.should.equal(false);
-              done()
+              done();
             });
           });
         });

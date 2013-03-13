@@ -29,6 +29,7 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
     , port: 4723
     , warp: false
     , withoutDelay: false
+    , fastReset: true
     , noReset: false
     , launch: app ? true : false
     , log: path.resolve(__dirname, "appium.log")

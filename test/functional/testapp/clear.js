@@ -31,13 +31,15 @@ describeWd('keyboard', function(h) {
       elem.sendKeys("1", function(err) {
         should.not.exist(err);
         h.driver.elementByTagName('slider', function(err, slider) {
-          slider.displayed(function(err, isDisplayed) {
-            isDisplayed.should.equal(false);
+          slider.click(function(err) {
+            should.exist(err);
             h.driver.execute("mobile: hideKeyboard", [{keyName: "Done"}], function(err) {
               should.not.exist(err);
-              slider.displayed(function(err, isDisplayed) {
-                isDisplayed.should.equal(true);
-                done();
+              h.driver.elementByTagName('slider', function(err, slider) {
+                slider.click(function(err) {
+                  should.not.exist(err);
+                  done();
+                });
               });
             });
           });

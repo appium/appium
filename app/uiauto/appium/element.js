@@ -53,13 +53,15 @@ $.extend($.fn, {
 
 UIAElement.prototype.setValueByType = function(newValue) {
 	var type = this.type();
-	
+
 	if (type === "UIATextField") {
 		// do the full-on clear,keyboard typing operation
 		this.setValue("");
 		this.tap();
 		au.sendKeysToActiveElement(newValue);
-	} else {
+	} else if (type === "UIAPickerWheel") {
+    this.selectValue(newValue);
+  } else {
 		this.setValue(newValue);
 	}
 };

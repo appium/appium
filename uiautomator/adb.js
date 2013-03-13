@@ -62,7 +62,7 @@ ADB.prototype.buildFastReset = function(cb) {
 
     // NOP if fast reset is not true.
     if (!this.fastReset) {
-      cb(true);
+      cb(null);
       return;
     }
 
@@ -85,13 +85,13 @@ ADB.prototype.buildFastReset = function(cb) {
 
       if (!matchPkg) {
         logger.debug("Could not find package= in manifest");
-        cb(false);
+        cb("could not find package= in manifest");
         return;
       }
 
       if (!matchTarget) {
         logger.debug("Could not find targetPackage= in manifest");
-        cb(false);
+        cb("could not find targetPackage= in manifest");
         return;
       }
 
@@ -103,14 +103,14 @@ ADB.prototype.buildFastReset = function(cb) {
 
       fs.writeFile(manifest, newContent, function(err) {
         if (err) {
-          throw err;
+          cb(err);
         }
         logger.debug("Created manifest");
         var androidHome = process.env.ANDROID_HOME;
 
         exec('which aapt', function(err, stdout) {
           if (err) {
-            throw new Error("Error finding aapt binary, is it on your path?");
+            cb(new Error("Error finding aapt binary, is it on your path?"));
           }
 
 
@@ -122,7 +122,7 @@ ADB.prototype.buildFastReset = function(cb) {
           exec(compile_manifest, {}, function(err, stdout, stderr) {
             if (err) {
               logger.debug(stderr);
-              cb(false);
+              cb("error compiling manifest");
             }
 
             logger.debug('unzip: ' + manifest + '.apk');
@@ -151,10 +151,10 @@ ADB.prototype.buildFastReset = function(cb) {
                       exec(installCleanAPK, function(err, stdout) {
                         if (err) {
                           logger.debug(err);
-                          cb(-1);
+                          cb(err);
                         } else {
                           logger.debug("Build fast reset complete.");
-                          cb(0);
+                          cb(null);
                         }
                       });
                     } else {

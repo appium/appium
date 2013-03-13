@@ -15,7 +15,7 @@ describe("appiumutils", function() {
 
   before(function(done) {
     server = runServer({
-      app: path.resolve(__dirname, "../../../sample-code/apps/UICatalog/build/Release-iphonesimulator/UICatalog.app")
+      app: path.resolve(__dirname, "../../../sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app")
       , verbose: false
       , udid: null
       , launch: false
@@ -72,24 +72,6 @@ describe("appiumutils", function() {
       done();
     });
   });
-
-  it('should get orientation', function(done) {
-    device.proxy("au.getScreenOrientation()", function(err, res) {
-      should.not.exist(err);
-      res.status.should.equal(0);
-      res.value.should.equal("PORTRAIT");
-      done();
-    });
-  });
-
-  // this seems to be broken!
-  //it('should set orientation', function(done) {
-    //device.proxy("au.setScreenOrientation('LANDSCAPE')", function(err, res) {
-      //should.not.exist(err);
-      //res.status.should.equal(0);
-      //done();
-    //});
-  //});
 
   it('should set implicit wait', function(done) {
     device.proxy("au.timeout(5)", function(err, res) {

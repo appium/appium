@@ -573,7 +573,7 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
       this.remote.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
     }
   } else {
-    if (_.contains(['label', 'name', 'value'], attributeName)) {
+    if (_.contains(['label', 'name', 'value', 'values'], attributeName)) {
       var command = ["au.getElement('", elementId, "').", attributeName, "()"].join('');
       this.proxy(command, cb);
     } else {

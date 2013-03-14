@@ -193,12 +193,16 @@ UIAElement.prototype.getRelCoords = function(startX, startY, endX, endY) {
   if (startY === null) {
     startY = 0.5;
   }
-  if (Math.abs(startX) > 1 || Math.abs(startY) > 1) {
+  if (Math.abs(startX) > 1) {
     startX = startX / size.width;
+  }
+  if (Math.abs(startY) > 1) {
     startY = startY / size.height;
   }
-  if (Math.abs(endX) > 1 || Math.abs(endY) > 1) {
+  if (Math.abs(endX) > 1) {
     endX = endX / size.width;
+  }
+  if (Math.abs(endY) > 1) {
     endY = endY / size.height;
   }
   return {

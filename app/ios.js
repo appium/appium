@@ -52,7 +52,7 @@ var IOS = function(args) {
       , databaseEnabled: false
       , takesScreenshot: true
   };
-
+  this.supportedStrategies = ["name", "tag name", "xpath"];
 };
 
 IOS.prototype.cleanup = function(cb) {
@@ -409,7 +409,7 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
       }
     });
   };
-  if (_.contains(["name", "tag name", "xpath"], strategy)) {
+  if (_.contains(this.supportedStrategies, strategy)) {
     this.waitForCondition(this.implicitWaitMs, doFind, cb);
   } else {
     cb(null, {
@@ -476,6 +476,51 @@ IOS.prototype.findElementFromElement = function(element, strategy, selector, cb)
 
 IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
   this.findElementOrElements(strategy, selector, element, true, cb);
+};
+
+IOS.prototype.findAndAct = function(strategy, selector, index, action, actionParams, cb) {
+  var me = this
+    , stratMap = {'name': 'Name', 'xpath': 'Xpath', 'tag name': 'Type'}
+    // if you change these, also change in
+    // app/uiauto/appium/app.js:elemForAction
+    , supportedActions = ["tap", "isEnabled", "isValid", "isVisible",
+                          "value", "name", "label", "setValue"]
+    , many = index > 0;
+  var doAction = function(findCb) {
+    var cmd = ["au.elemForAction(au.getElement", (many ? 's': ''), "By",
+        stratMap[strategy], "('", selector, "'), ", index].join('');
+    cmd += ")." + action + "(";
+    var strParams = [];
+    _.each(actionParams, function(param) {
+      param = escapeSpecialChars(param, "'");
+      strParams.push("'" + param + "'");
+    });
+    cmd += strParams.join(', ');
+    cmd += ")";
+    me.proxy(cmd, function(err, res) {
+      if (!err && res.value !== null) {
+        findCb(true, err, res);
+      } else {
+        findCb(false, err, res);
+      }
+    });
+  };
+  if (_.contains(supportedActions, action)) {
+    if (_.contains(this.supportedStrategies, strategy)) {
+      this.waitForCondition(this.implicitWaitMs, doAction, cb);
+    } else {
+      cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Sorry, we don't support the '" + strategy + "' locator " +
+                "strategy yet"
+      });
+    }
+  } else {
+    cb(null, {
+      status: status.codes.UnknownError.code
+      , value: "Sorry, '" + action + "' is not a recognized action"
+    });
+  }
 };
 
 IOS.prototype.setValueImmediate = function(elementId, value, cb) {

@@ -516,7 +516,32 @@ exports.setValueImmediate = function(req, res) {
   var element = req.body.element
     , value = req.body.value;
   if (checkMissingParams(res, {element: element, value: value})) {
-    req.device.setValueImmediate(element, value, getResponseHandler(req,res));
+    req.device.setValueImmediate(element, value, getResponseHandler(req, res));
+  }
+};
+
+exports.findAndAct = function(req, res) {
+  var params = {
+    strategy: req.body.strategy
+    , selector: req.body.selector
+    , index: req.body.index
+    , action: req.body.action
+    , actionParams: req.body.params
+  };
+
+  if (typeof params.action === "undefined") {
+    params.action = "tap";
+  }
+  if (typeof params.index === "undefined") {
+    params.index = 0;
+  }
+  params.index = parseInt(params.index, 10);
+  if (typeof params.actionParams === "undefined") {
+    params.actionParams = [];
+  }
+  if (checkMissingParams(res, params)) {
+    req.device.findAndAct(params.strategy, params.selector, params.index,
+        params.action, params.actionParams, getResponseHandler(req, res));
   }
 };
 
@@ -554,6 +579,7 @@ var mobileCmdMap = {
   , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout
+  , 'findAndAct': exports.findAndAct
   , 'setValue' : exports.setValueImmediate
   , 'reset' : exports.reset
 };

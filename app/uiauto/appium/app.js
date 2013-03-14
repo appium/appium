@@ -171,6 +171,34 @@ $.extend(au, {
       };
   }
 
+  , elemForAction: function(elem, idx) {
+      // mock out action functions to respond with the error
+      var errRet = function() { return elem; };
+      var noElemMock = {};
+      var actions = ["tap", "isEnabled", "isValid", "isVisible", "value",
+                     "name", "label", "setValue"];
+      for (var i = 0; i < actions.length; i++) {
+        noElemMock[actions[i]] = errRet;
+      }
+      if (elem.status === codes.Success.code) {
+        if (typeof elem.value.ELEMENT === "undefined") {
+          // we have an array of elements
+          if (typeof elem.value[idx] === "undefined") {
+            return {
+              status: codes.NoSuchElement.code
+              , value: null
+            };
+          } else {
+            return au.getElement(elem.value[idx].ELEMENT);
+          }
+        } else {
+          return au.getElement(elem.value.ELEMENT);
+        }
+      } else {
+        return noElemMock;
+      }
+  }
+
   , getElementsByName: function(name, ctx) {
       var selector = ['#', name].join('')
         , elems;

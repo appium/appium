@@ -52,18 +52,18 @@ $.extend($.fn, {
 });
 
 UIAElement.prototype.setValueByType = function(newValue) {
-	var type = this.type();
+  var type = this.type();
 
-	if (type === "UIATextField" || type === "UIASecureTextField") {
-		// do the full-on clear,keyboard typing operation
-		this.setValue("");
-		this.tap();
-		au.sendKeysToActiveElement(newValue);
-	} else if (type === "UIAPickerWheel") {
+  if (type === "UIATextField" || type === "UIASecureTextField") {
+    // do the full-on clear,keyboard typing operation
+    this.setValue("");
+    this.tap();
+    au.sendKeysToActiveElement(newValue);
+  } else if (type === "UIAPickerWheel") {
     this.selectValue(newValue);
   } else {
-		this.setValue(newValue);
-	}
+    this.setValue(newValue);
+  }
 };
 
 UIAElement.prototype.type = function() {

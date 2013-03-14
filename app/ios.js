@@ -884,6 +884,18 @@ IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
+    for (var i=0; i < args.length; i++) {
+      if (typeof args[i].ELEMENT !== "undefined") {
+        var atomsElement = this.getAtomsElement(args[i].ELEMENT);
+        if (atomsElement === undefined || null) {
+          cb(null, {
+            status: status.codes.UnknownError.code
+            , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
+          });
+        }
+        args[i] = atomsElement;
+      }
+    }
     this.remote.executeAtom('execute_script', [script, args], cb);
   }
 };

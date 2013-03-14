@@ -61,6 +61,7 @@
     "winston": "~0.6.2",
     "difflib": "~0.2.4",
     "prompt": "~0.2.9",
+    "ncp": "~0.4.2",
     "grunt-contrib-jshint": "~0.1.1"
   }
 }

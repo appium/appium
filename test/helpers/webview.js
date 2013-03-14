@@ -312,7 +312,7 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it.only('should catch stale or undefined element as arg', function(done) {
+    it('should catch stale or undefined element as arg', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('useragent', function(err, el) {
           should.not.exist(err);

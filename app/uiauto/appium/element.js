@@ -54,7 +54,7 @@ $.extend($.fn, {
 UIAElement.prototype.setValueByType = function(newValue) {
 	var type = this.type();
 
-	if (type === "UIATextField") {
+	if (type === "UIATextField" || type === "UIASecureTextField") {
 		// do the full-on clear,keyboard typing operation
 		this.setValue("");
 		this.tap();

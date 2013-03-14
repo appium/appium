@@ -305,18 +305,18 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.elementById('useragent', function(err, el) {
           should.not.exist(err);
-          h.driver.execute('return arguments[0].scrollIntoView(true);', [{'ELEMENT': '5000'}], function(err) {
+          h.driver.execute('return arguments[0].scrollIntoView(true);', [{'ELEMENT': el.value}], function(err) {
             should.not.exist(err);
             done();
           });
         });
       });
     });
-    it('should catch stale or undefined element as arg', function(done) {
+    it.only('should catch stale or undefined element as arg', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('useragent', function(err, el) {
           should.not.exist(err);
-          h.driver.execute('return arguments[0].scrollIntoView(true);', [{'ELEMENT': '5002'}], function(err) {
+          h.driver.execute('return arguments[0].scrollIntoView(true);', [{'ELEMENT': (el.value + 1)}], function(err) {
             should.exist(err);
             done();
           });

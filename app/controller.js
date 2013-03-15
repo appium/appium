@@ -131,7 +131,7 @@ exports.createSession = function(req, res) {
 
   var next = function(reqOrigin, sessionId, device, preLaunched) {
     var redirect = function() {
-      res.set('Location', "http://"+reqOrgin+"/wd/hub/session/" + sessionId);
+      res.set('Location', "http://"+reqOrigin+"/wd/hub/session/" + sessionId);
       res.send(303);
     };
     if (desired && desired.newCommandTimeout) {

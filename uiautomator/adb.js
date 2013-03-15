@@ -8,7 +8,9 @@ var spawn = require('child_process').spawn
   , logger = require('../logger').get('appium')
   , status = require('../app/uiauto/lib/status')
   , unzipFile = require('../app/helpers').unzipFile
+  , testZipArchive = require('../app/helpers').testZipArchive
   , async = require('async')
+  , ncp = require('ncp')
   , _ = require('underscore');
 
 var noop = function() {};
@@ -37,6 +39,7 @@ var ADB = function(opts) {
   this.portForwarded = false;
   this.debugMode = true;
   this.fastReset = opts.fastReset;
+  this.cleanAPK = '/tmp/' + this.appPackage + '.clean.apk';
 };
 
 ADB.prototype.checkAdbPresent = function(cb) {
@@ -57,126 +60,164 @@ ADB.prototype.checkAdbPresent = function(cb) {
   }
 };
 
+// Fast reset
 ADB.prototype.buildFastReset = function(cb) {
-  this.uninstallApp(_.bind(function() {
+  // Create manifest
+  var me = this;
+  var targetAPK = me.apkPath;
+  var targetPackage = me.appPackage;
+  // gsub AndroidManifest.xml using targetPackage
+  var manifestPath = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src');
 
-    // NOP if fast reset is not true.
-    if (!this.fastReset) {
-      cb(null);
-      return;
-    }
+  var utf8 = 'utf8';
+  var data = fs.readFileSync(manifestPath, utf8);
+  var manifest = manifestPath.substr(0, manifestPath.length - '.src'.length);
 
-    var targetAPK = this.apkPath;
-    var targetPackage = this.appPackage;
-    // gsub AndroidManifest.xml using targetPackage
-    var manifestPath = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src');
-    var utf8 = 'utf8';
+  var rePkg = /package="([^"]+)"/;
+  var reTarget = /targetPackage="([^"]+)"/;
+  var matchPkg = rePkg.exec(data);
+  var matchTarget = reTarget.exec(data);
 
-    var content = fs.readFileSync(manifestPath, utf8);
-    var manifest = manifestPath.substr(0, manifestPath.length - '.src'.length);
-    fs.writeFileSync(manifest, content, utf8);
+  if (!matchPkg) {
+    logger.debug("Could not find package= in manifest");
+    return cb("could not find package= in manifest");
+  }
 
-    fs.readFile(manifest, utf8, function(err, data) {
-      if (err) throw err;
-      var rePkg = /package="([^"]+)"/;
-      var reTarget = /targetPackage="([^"]+)"/;
-      var matchPkg = rePkg.exec(data);
-      var matchTarget = reTarget.exec(data);
+  if (!matchTarget) {
+    logger.debug("Could not find targetPackage= in manifest");
+    return cb("could not find targetPackage= in manifest");
+  }
 
-      if (!matchPkg) {
-        logger.debug("Could not find package= in manifest");
-        cb("could not find package= in manifest");
-        return;
-      }
+  var newPkg = matchPkg[0].replace(matchPkg[1], targetPackage + '.clean');
+  var newTarget = matchTarget[0].replace(matchTarget[1], targetPackage);
 
-      if (!matchTarget) {
-        logger.debug("Could not find targetPackage= in manifest");
-        cb("could not find targetPackage= in manifest");
-        return;
-      }
+  var newContent = data.replace(matchPkg[0], newPkg);
+  newContent = newContent.replace(matchTarget[0], newTarget);
 
-      var newPkg = matchPkg[0].replace(matchPkg[1], targetPackage + '.clean');
-      var newTarget = matchTarget[0].replace(matchTarget[1], targetPackage);
+  fs.writeFileSync(manifest, newContent, utf8);
+  logger.debug("Created manifest");
 
-      var newContent = data.replace(matchPkg[0], newPkg);
-      newContent = newContent.replace(matchTarget[0], newTarget);
+  async.series(
+        [
+          function(cb) {
+            me.compileManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
+          },
+          function(cb) {
+            me.insertManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
+          },
+        ],
+        // Invoke top level function cb
+        function(){ cb(null) });
+};
 
-      fs.writeFile(manifest, newContent, function(err) {
-        if (err) {
-          cb(err);
-        }
-        logger.debug("Created manifest");
-        var androidHome = process.env.ANDROID_HOME;
-
-        exec('which aapt', function(err, stdout) {
-          if (err) {
-            cb(new Error("Error finding aapt binary, is it on your path?"));
-          }
-
-
-          // Compile manifest into manifest.xml.apk
-          var compile_manifest = ['aapt package -M "', manifest,
-                                  '" -I "', androidHome, '/platforms/android-17/android.jar" -F "',
-                                  manifest, '.apk" -f'].join('');
-          logger.debug(compile_manifest);
-          exec(compile_manifest, {}, function(err, stdout, stderr) {
-            if (err) {
-              logger.debug(stderr);
-              cb("error compiling manifest");
-            }
-
-            logger.debug('unzip: ' + manifest + '.apk');
-            logger.debug('replace: ' + targetAPK);
-
-            // unzip manifest.xml.apk
-            unzipFile(manifest + '.apk', function(err, stderr){
-              var execOpts = {cwd: path.dirname(targetAPK)};
-              // -j = keep only the file, not the dirs
-              // -m = move manifest into target apk.
-              var cleanAPK = path.resolve(__dirname, '../app/android/Clean.apk');
-              var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
-              logger.debug(replaceCmd);
-              exec(replaceCmd, execOpts, function(err, stderr, stdout) {
-                if (!err) {
-                  logger.debug("Replace manifest successful");
-                  // resign target apk and clean.apk
-                  var signPath = path.resolve(__dirname, '../app/android/sign.jar');
-                  var resign = 'java -jar "' + signPath + '" "' + targetAPK + '" "' + cleanAPK + '" --override';
-                  logger.debug("Resigning: " + resign);
-                  exec(resign, execOpts, function(err, stderr, stdout) {
-                    if (!err) {
-                      logger.debug("Resign clean and target apk successful. Installing clean apk.");
-                      var installCleanAPK = 'adb install -r "' + cleanAPK + '"';
-                      logger.debug(installCleanAPK);
-                      exec(installCleanAPK, function(err, stdout) {
-                        if (err) {
-                          logger.debug(err);
-                          cb(err);
-                        } else {
-                          logger.debug("Build fast reset complete.");
-                          cb(null);
-                        }
-                      });
-                    } else {
-                      logger.error("Resign threw error " + err);
-                      logger.error("Stderr: " + stderr);
-                      logger.error("Stdout: " + stdout);
-                      cb("APK could not be signed, check appium logs.", null);
-                    }
-                  });
-                } else {
-                  logger.error("Replace manifest threw error " + err);
-                  logger.error("Stderr: " + stderr);
-                  logger.error("Stdout: " + stdout);
-                  cb("APK could not be updated, check appium logs.", null);
-                }
-              });
+ADB.prototype.compileManifest = function(cb, manifest) {
+  async.series(
+        [
+          function(cb) {
+            exec('which aapt', function(err, stdout) {
+              if (!stdout) {
+                return cb(new Error("Error finding aapt binary, is it on your path?"));
+              }
+              cb(null);
             });
-          });
-        });
-      });
-    });
-  }, this));
+          },
+          function(cb) {
+            var androidHome = process.env.ANDROID_HOME;
+
+            // Compile manifest into manifest.xml.apk
+            var compile_manifest = ['aapt package -M "', manifest,
+                                    '" -I "', androidHome, '/platforms/android-17/android.jar" -F "',
+                                    manifest, '.apk" -f'].join('');
+            logger.debug(compile_manifest);
+            exec(compile_manifest, {}, function(err, stdout, stderr) {
+              if (err) {
+                logger.debug(stderr);
+                return cb("error compiling manifest");
+              }
+              logger.debug("Compiled manifest");
+              cb(null);
+            });
+          },
+        ],
+        // Invoke top level function cb
+        function(){ cb(null) });
+};
+
+ADB.prototype.insertManifest = function(cb, manifest) {
+  var me = this;
+  var targetAPK = me.apkPath;
+  var cleanAPK = me.cleanAPK;
+  var utf8 = 'utf8';
+  async.series(
+        [
+          // Extract compiled manifest from manifest.xml.apk
+          function(cb) {
+            unzipFile(manifest + '.apk', function(err, stderr) {
+              if (err) {
+                logger.debug(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
+          },
+          // Insert compiled manfiest into /tmp/appPackage.clean.apk
+          function(cb) {
+            var cleanAPKSource = path.resolve(__dirname, '../app/android/Clean.apk');
+            logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
+
+            // Write clean apk to /tmp
+            ncp(cleanAPKSource, cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+          },
+          function(cb) {
+            logger.debug("Testing tmp clean apk.");
+            testZipArchive(cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+          },
+          function(cb) {
+            // -j = keep only the file, not the dirs
+            // -m = move manifest into target apk.
+            var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
+            logger.debug(replaceCmd);
+            exec(replaceCmd, {}, function(err, stderr, stdout) {
+              if (err) {
+                return cb(err);
+              }
+
+              logger.debug("Inserted manifest.");
+              cb(null);
+            });
+          },
+          // Resign clean apk and target apk
+          function(cb) {
+            me.sign(function(err) { if (err) return cb(err); cb(null) }, targetAPK + '" "' + cleanAPK);
+          }
+        ],
+        // Invoke top level function cb
+        function(){ cb(null) });
+};
+
+ADB.prototype.sign = function(cb, apks) {
+  var signPath = path.resolve(__dirname, '../app/android/sign.jar');
+  var resign = 'java -jar "' + signPath + '" "' + apks + '" --override';
+  logger.debug("Resigning: " + resign);
+  exec(resign, {}, function(err, stderr, stdout) {
+    if (err) return cb(err);
+    cb(null);
+  });
+};
+
+ADB.prototype.checkFastReset = function(cb) {
+  // NOP if fast reset is not true.
+  if (!this.fastReset) {
+    return cb(null);
+  }
+
+  // Only build & resign clean.apk if it doesn't exist.
+  if (!fs.existsSync(this.cleanAPK)) {
+    this.buildFastReset(function(err){ if (err) return cb(err); cb(null); });
+  } else {
+    // Resign app apk as it may have changed.
+    this.sign(function(err) { if (err) return cb(err); cb(null); }, this.apkPath);
+  }
 };
 
 ADB.prototype.start = function(onReady, onExit) {
@@ -190,10 +231,7 @@ ADB.prototype.start = function(onReady, onExit) {
   async.series(
         [
           function(cb) {
-            me.checkAdbPresent(function(err) {
-              if (err) return onReady(err);
-              cb(null);
-            });
+            me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
             me.getConnectedDevices(function(err, devices) {
@@ -204,36 +242,20 @@ ADB.prototype.start = function(onReady, onExit) {
             });
           },
           function(cb) {
-            me.waitForDevice(function(err) {
-              if (err) return onReady(err);
-              cb(null);
-            });
+            me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
-            me.pushAppium(function(err) {
-              if (err) return onReady(err);
-              cb(null);
-            });
+            me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
-            me.forwardPort(function(err) {
-              if (err) return onReady(err);
-              cb(null);
-            });
+            me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
             if (!me.appPackage) return onReady("appPackage must be set.");
-
-            me.buildFastReset(function(err) {
-              if (err) return onReady(err);
-              cb(null);
-            });
+            me.checkFastReset(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
-            me.installApp(function(err) {
-              if (err) return onReady(err);
-              cb(null);
-            });
+            me.installApp(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
             me.startApp(function(err) {
@@ -546,37 +568,59 @@ ADB.prototype.startApp = function(cb) {
   });
 };
 
-ADB.prototype.uninstallApp = function(cb) {
-  var next = _.bind(function() {
-    this.requireDeviceId();
-    this.requireApp();
-    this.debug("Uninstalling app " + this.appPackage);
-    var cmd = this.adbCmd + " uninstall " + this.appPackage;
-
-    if (this.fastReset) {
-      var cleanAPK = this.appPackage + ".clean";
-      cmd += " " + cleanAPK;
-      this.debug("Uninstalling app " + cleanAPK);
-    }
-
-    exec(cmd, _.bind(function(err, stdout) {
-      if (err) {
-        logger.error(err);
-        cb(err);
+ADB.prototype.uninstallApk = function(pkg, cb) {
+  var cmd = this.adbCmd + " uninstall " + pkg;
+  exec(cmd, function(err, stdout) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      stdout = stdout.trim();
+      if (stdout === "Success") {
+        logger.debug("App was uninstalled");
       } else {
-        stdout = stdout.trim();
-        if (stdout === "Success") {
-          this.debug("App was uninstalled");
-        } else {
-          this.debug("App was not uninstalled, maybe it wasn't on device?");
-        }
+        logger.debug("App was not uninstalled, maybe it wasn't on device?");
+      }
+      cb(null);
+    }
+  });
+};
+
+ADB.prototype.installApk = function(apk, cb) {
+  var cmd = this.adbCmd + " install -r " + apk;
+  this.debug(cmd);
+  exec(cmd,function(err, stdout) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      // Useful for debugging.
+      logger.debug(stdout);
+      cb(null);
+    }
+  });
+};
+
+ADB.prototype.uninstallApp = function(cb) {
+  var me = this;
+  var next = function() {
+    me.requireDeviceId();
+    me.requireApp();
+    me.debug("Uninstalling app " + me.appPackage);
+    var cmd = me.adbCmd + " uninstall " + me.appPackage;
+
+    me.uninstallApk(me.appPackage, function(err) {
+      if (me.fastReset) {
+        me.uninstallApk(me.appPackage + 'clean', function(err) {if (err) return cb(err); cb(null)});
+      } else {
+        if (err) return cb(err);
         cb(null);
       }
-    }, this));
-  }, this);
+    });
+  };
 
-  if (this.skipUninstall) {
-    this.debug("Not uninstalling app since server started with --reset");
+  if (me.skipUninstall) {
+    me.debug("Not uninstalling app since server started with --reset");
     cb();
   } else {
     next();
@@ -584,20 +628,42 @@ ADB.prototype.uninstallApp = function(cb) {
 };
 
 ADB.prototype.installApp = function(cb) {
-  var next = _.bind(function() {
-    this.requireDeviceId();
-    this.requireApk();
-    this.debug("Installing app " + this.apkPath);
-    var cmd = this.adbCmd + " install -r " + this.apkPath;
-    exec(cmd, _.bind(function(err) {
-      if (err) {
-        logger.error(err);
-        cb(err);
-      } else {
-        cb(null);
-      }
-    }, this));
-  }, this);
+  var me = this;
+  var next = function() {
+    me.requireDeviceId();
+    me.requireApk();
+    var installApp = false;
+    var installClean = false;
+    async.series(
+          [
+            function(cb) {
+              var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
+              exec(listPkgCmd, function(err, stdout) {
+                var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+                installApp = ! apkInstalledRgx.test(stdout);
+                var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+                installClean = ! cleanInstalledRgx.test(stdout);
+                me.debug("Packages found:");
+                me.debug(stdout);
+                cb(null);
+              });
+            },
+            function(cb) {
+              if (installApp) {
+                me.debug("Installing app apk");
+                me.installApk(me.apkPath, function(err) { if (err) return cb(err); return cb(null); });
+              } else { cb(null); }
+            },
+            function(cb) {
+              if (installClean) {
+                me.debug("Installing clean apk");
+                me.installApk(me.cleanAPK, function(err) { if (err) return cb(err); return cb(null); });
+              } else { cb(null); }
+            }
+          ],
+          // Top level callback.
+          function() { cb(null); });
+  };
 
   if (this.skipInstall) {
     this.debug("Not installing app because server started with --skip-install");

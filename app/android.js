@@ -10,6 +10,9 @@ var errors = require('./errors')
   , NotYetImplementedError = errors.NotYetImplementedError
   , parseXpath = require('./uiauto/appium/xpath').parseXpath
   , exec = require('child_process').exec
+  , fs = require('fs')
+  , async = require('async')
+  , path = require('path')
   , UnknownError = errors.UnknownError;
 
 var Android = function(opts) {
@@ -372,7 +375,48 @@ Android.prototype.elementEnabled = function(elementId, cb) {
 };
 
 Android.prototype.getPageSource = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  var me = this;
+  var xmlFile = '/tmp/dump.xml';
+  var jsonFile = xmlFile + '.json';
+  var json = '';
+  async.series(
+        [
+          function(cb) {
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /cache/dump.xml;';
+            cmd += me.adb.adbCmd + ' pull /cache/dump.xml ' + xmlFile;
+            logger.debug('getPageSource command: ' + cmd);
+            exec(cmd, {}, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
+          },
+          function(cb) {
+            var jar = path.resolve(__dirname, '../app/android/dump2json.jar');
+            var cmd = 'java -jar "' + jar + '" ' + xmlFile;
+            logger.debug('json command: ' + cmd);
+            exec(cmd, {}, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
+          },
+          function(cb) {
+            json = fs.readFileSync(jsonFile, 'utf8');
+            cb(null);
+          }
+        ],
+        // Top level cb
+        function(){
+          cb(null, {
+               status: status.codes.Success.code
+               , value: json
+             });
+        });
 };
 
 Android.prototype.getAlertText = function(cb) {

@@ -129,9 +129,9 @@ exports.createSession = function(req, res) {
 
   var desired = req.body.desiredCapabilities;
 
-  var next = function(sessionId, device, preLaunched) {
+  var next = function(reqHost, sessionId, device, preLaunched) {
     var redirect = function() {
-      res.set('Location', "/wd/hub/session/" + sessionId);
+      res.set('Location', "http://"+reqHost+"/wd/hub/session/" + sessionId);
       res.send(303);
     };
     if (desired && desired.newCommandTimeout) {
@@ -145,7 +145,7 @@ exports.createSession = function(req, res) {
   };
   if (req.appium.preLaunched && req.appium.sessionId) {
     req.appium.preLaunched = false;
-    next(req.appium.sessionId, req.appium.device, true);
+    next(req.headers.host, req.appium.sessionId, req.appium.device, true);
   } else {
     req.appium.start(req.body.desiredCapabilities, function(err, instance) {
       if (err) {
@@ -153,7 +153,7 @@ exports.createSession = function(req, res) {
         respondError(req, res, status.codes.NoSuchDriver, err);
       } else {
         logger.info("Appium session started with sessionId " + req.appium.sessionId);
-        next(req.appium.sessionId, instance);
+        next(req.headers.host, req.appium.sessionId, instance);
       }
     });
   }

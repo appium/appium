@@ -205,7 +205,7 @@ ADB.prototype.sign = function(cb, apks) {
   });
 };
 
-ADB.prototype.checkfastReset = function(cb) {
+ADB.prototype.checkFastReset = function(cb) {
   // NOP if fast reset is not true.
   if (!this.fastReset) {
     return cb(null);
@@ -252,7 +252,7 @@ ADB.prototype.start = function(onReady, onExit) {
           },
           function(cb) {
             if (!me.appPackage) return onReady("appPackage must be set.");
-            me.checkfastReset(function(err) { if (err) return onReady(err); cb(null); });
+            me.checkFastReset(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
             me.installApp(function(err) { if (err) return onReady(err); cb(null); });

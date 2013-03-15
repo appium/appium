@@ -640,9 +640,9 @@ ADB.prototype.installApp = function(cb) {
               var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
               exec(listPkgCmd, function(err, stdout) {
                 var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-                installApp = ! !!stdout.match(apkInstalledRgx);
+                installApp = ! apkInstalledRgx.test(stdout);
                 var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-                installClean = ! !!stdout.match(cleanInstalledRgx);
+                installClean = ! cleanInstalledRgx.test(stdout);
                 me.debug("Packages found:");
                 me.debug(stdout);
                 cb(null);

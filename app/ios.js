@@ -866,6 +866,26 @@ IOS.prototype.url = function(url, cb) {
   }
 };
 
+IOS.prototype.getUrl = function(cb) {
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.remote.execute('window.location.href', function (err, res) {
+      if (err) {
+        cb("Remote debugger error", {
+          status: status.codes.JavaScriptError.code
+          , value: res
+        });
+      } else {
+        cb(null, {
+          status: status.codes.Success.code
+          , value: res.result.value
+        });
+      }
+    });
+  }
+};
+
 IOS.prototype.active = function(cb) {
   this.proxy("au.getActiveElement()", cb);
 };

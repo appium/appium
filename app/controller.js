@@ -479,6 +479,10 @@ exports.postUrl = function(req, res) {
   }
 };
 
+exports.getUrl = function(req, res) {
+  req.device.getUrl(getResponseHandler(req, res));
+};
+
 exports.active = function(req, res) {
   req.device.active(getResponseHandler(req, res));
 };

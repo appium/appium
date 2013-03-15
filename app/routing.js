@@ -50,6 +50,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements', controller.findElementsFromElement);
   rest.post('/wd/hub/session/:sessionId/touch/flick', controller.pickAFlickMethod);
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
+  rest.get('/wd/hub/session/:sessionId?/url', controller.getUrl);
   rest.post('/wd/hub/session/:sessionId?/element/active', controller.active);
   rest.get('/wd/hub/session/:sessionId?/window_handle', controller.getWindowHandle);
   rest.get('/wd/hub/session/:sessionId?/window_handles', controller.getWindowHandles);
@@ -86,7 +87,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/url', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/forward', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/back', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/refresh', controller.notYetImplemented);

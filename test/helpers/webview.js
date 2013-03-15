@@ -165,6 +165,18 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('getUrl', function(h) {
+    it('should get current url', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.url(function(err, url) {
+          should.not.exist(err);
+          url.should.equal("http://saucelabs.com/test/guinea-pig");
+          done();
+        });
+      });
+    });
+  });
+
   desc('sendKeys', function(h) {
     it('should send keystrokes', function(done) {
       loadWebView(h.driver, function() {

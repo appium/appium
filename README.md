@@ -64,7 +64,7 @@ We support Android and iOS platforms side-by-side:
 * [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
 * [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
 * [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
-
+* [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
 
 - - -
 

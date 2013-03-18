@@ -1,3 +1,6 @@
 [submodule "submodules/instruments-without-delay"]
 	path = submodules/instruments-without-delay
 	url = git://github.com/facebook/instruments-without-delay.git
+[submodule "submodules/appium.io"]
+	path = submodules/appium.io
+	url = https://github.com/appium/appium.github.com.git

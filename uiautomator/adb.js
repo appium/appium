@@ -124,9 +124,21 @@ ADB.prototype.compileManifest = function(cb, manifest) {
           function(cb) {
             var androidHome = process.env.ANDROID_HOME;
 
+            var platforms = androidHome + '/platforms/';
+            var platform = 'android-17';
+
+            // android-17 may be called android-4.2
+            if (!fs.existsSync(platforms + platform)) {
+              platform = 'android-4.2';
+
+              if (!fs.existsSync(platforms + platform)) {
+                return cb("Platform doesn't exist " + platform);
+              }
+            }
+
             // Compile manifest into manifest.xml.apk
             var compile_manifest = ['aapt package -M "', manifest,
-                                    '" -I "', androidHome, '/platforms/android-17/android.jar" -F "',
+                                    '" -I "', platforms + platform + '/android.jar" -F "',
                                     manifest, '.apk" -f'].join('');
             logger.debug(compile_manifest);
             exec(compile_manifest, {}, function(err, stdout, stderr) {
@@ -653,7 +665,9 @@ ADB.prototype.uninstallApp = function(cb) {
 
     me.uninstallApk(me.appPackage, function(err) {
       if (me.fastReset) {
-        me.uninstallApk(me.appPackage + 'clean', function(err) {if (err) return cb(err); cb(null)});
+        var cleanPkg = me.appPackage + '.clean';
+        me.debug("Uninstalling app " + cleanPkg);
+        me.uninstallApk(cleanPkg, function(err) {if (err) return cb(err); cb(null)});
       } else {
         if (err) return cb(err);
         cb(null);

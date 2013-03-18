@@ -246,11 +246,23 @@ ADB.prototype.start = function(onReady, onExit) {
             me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
           },
           function(cb) {
-            me.getConnectedDevices(function(err, devices) {
-              if (devices.length === 0 || err) {
-                return onReady("Could not find a connected Android device.");
+            var getDevices = function(innerCb) {
+              me.getConnectedDevices(function(err, devices) {
+                if (devices.length === 0 || err) {
+                  innerCb("Could not find a connected Android device.");
+                }
+                innerCb(null);
+              });
+            };
+            getDevices(function(err) {
+              if (err) {
+                logger.info("restarting...");
+                me.restartAdb(function() {
+                  getDevices(cb);
+                });
+              } else {
+                cb(null);
               }
-              cb(null);
             });
           },
           function(cb) {
@@ -285,11 +297,10 @@ ADB.prototype.getConnectedDevices = function(cb) {
       logger.error(err);
       cb(err);
     } else {
-      var output = stdout.replace("List of devices attached", "").trim();
       var devices = [];
-      _.each(output.split("\n"), function(device) {
-        if (device) {
-          devices.push(device.split("\t"));
+      _.each(stdout.split("\n"), function(line) {
+        if (line.trim() !== "" && line.indexOf("List of devices") === -1 && line.indexOf("* daemon") === -1) {
+          devices.push(line.split("\t"));
         }
       });
       this.debug(devices.length + " device(s) connected");
@@ -492,40 +503,67 @@ ADB.prototype.requireApk = function() {
 
 ADB.prototype.waitForDevice = function(cb) {
   this.requireDeviceId();
-  this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
-             "and to respond to shell commands");
-  var cmd = this.adbCmd + " wait-for-device";
+  var doWait = _.bind(function(innerCb) {
+    this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
+               "and to respond to shell commands");
+    var movedOn = false
+      , cmd = this.adbCmd + " wait-for-device"
+      , timeoutSecs = 5;
 
-  var timeoutSecs = 5;
-  var movedOn = false;
-  setTimeout(function() {
-    if (!movedOn) {
-      movedOn = true;
-      cb("Device did not become ready in " + timeoutSecs + " secs; are " +
-         "you sure it's powered on?");
-    }
-  }, timeoutSecs * 1000);
-
-  exec(cmd, _.bind(function(err) {
-    if (!movedOn) {
-      if (err) {
-        logger.error(err);
+    setTimeout(_.bind(function() {
+      if (!movedOn) {
         movedOn = true;
-        cb(err);
-      } else {
-        exec(this.adbCmd + " shell echo 'ready'", _.bind(function(err) {
-          if (!movedOn) {
-            movedOn = true;
-            if (err) {
-              logger.error(err);
-              cb(err);
-            } else {
-              cb(null);
-            }
-          }
-        }, this));
+        innerCb("Device did not become ready in " + timeoutSecs + " secs; " +
+                "are you sure it's powered on?");
       }
+    }, this), timeoutSecs * 1000);
+
+    exec(cmd, _.bind(function(err) {
+      if (!movedOn) {
+        if (err) {
+          logger.error("Error running wait-for-device");
+          movedOn = true;
+          innerCb(err);
+        } else {
+          exec(this.adbCmd + " shell echo 'ready'", _.bind(function(err) {
+            if (!movedOn) {
+              movedOn = true;
+              if (err) {
+                logger.error("Error running shell echo: " + err);
+                innerCb(err);
+              } else {
+                innerCb(null);
+              }
+            }
+          }, this));
+        }
+      }
+    }, this));
+  }, this);
+
+  doWait(_.bind(function(err) {
+    if (err) {
+      this.restartAdb(_.bind(function() {
+        this.getConnectedDevices(function() {
+          doWait(cb);
+        });
+      }, this));
+    } else {
+      cb(null);
     }
+  }, this));
+};
+
+ADB.prototype.restartAdb = function(cb) {
+  logger.info("Killing ADB server so it will come back online");
+  var cmd = this.adb + " kill-server";
+  console.log(cmd);
+  exec(cmd, _.bind(function(err) {
+    if (err) {
+      logger.error("Error killing ADB server, going to see if it's online " +
+                   "anyway");
+    }
+    cb();
   }, this));
 };
 

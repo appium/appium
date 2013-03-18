@@ -44,25 +44,7 @@ var Android = function(opts) {
 
 // Clear data, close app, then start app.
 Android.prototype.fastReset = function(cb) {
-  // list instruments with: adb shell pm list instrumentation
-  // targetPackage + '.clean' / clean.apk.Clear
-  var me = this;
-  var clearCmd = me.adb.adbCmd + ' shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
-  logger.debug("Clear command: " + clearCmd);
-  exec(clearCmd, {}, function(err, stdout, stderr) {
-    if (err) {
-      logger.warn(stderr);
-      cb(err);
-    } else {
-      me.adb.startApp(function(err) {
-        if (err) {
-          cb(err);
-        } else {
-          cb(null);
-        }
-      });
-    }
-  });
+  this.adb.runFastReset(function(err) { if (err) return cb(err); return cb(null); });
 };
 
 Android.prototype.start = function(cb, onDie) {

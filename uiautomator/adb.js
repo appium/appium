@@ -721,6 +721,28 @@ ADB.prototype.uninstallApp = function(cb) {
   }
 };
 
+ADB.prototype.runFastReset = function(cb) {
+  // list instruments with: adb shell pm list instrumentation
+  // targetPackage + '.clean' / clean.apk.Clear
+  var me = this;
+  var clearCmd = me.adbCmd + ' shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
+  logger.debug("Clear command: " + clearCmd);
+  exec(clearCmd, {}, function(err, stdout, stderr) {
+    if (err) {
+      logger.warn(stderr);
+      cb(err);
+    } else {
+      me.startApp(function(err) {
+        if (err) {
+          cb(err);
+        } else {
+          cb(null);
+        }
+      });
+    }
+  });
+};
+
 ADB.prototype.installApp = function(cb) {
   var me = this;
   var next = function() {
@@ -747,6 +769,12 @@ ADB.prototype.installApp = function(cb) {
                 me.debug("Installing app apk");
                 me.installApk(me.apkPath, function(err) { if (err) return cb(err); return cb(null); });
               } else { cb(null); }
+            },
+            function(cb) {
+              // App is already installed so reset it.
+              if (!installApp) {
+                me.runFastReset(function(err) { if (err) return cb(err); return cb(null); });
+              }
             },
             function(cb) {
               if (installClean) {

@@ -556,16 +556,58 @@ ADB.prototype.startApp = function(cb) {
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app " + this.appPackage + "/" + activityString);
-  this.unlockScreen(function() {
+  this.unlockScreen(_.bind(function() {
     exec(cmd, _.bind(function(err) {
       if(err) {
         logger.error(err);
         cb(err);
       } else {
-        cb(null);
+        this.waitForActivity(cb);
       }
     }, this));
-  });
+  }, this));
+};
+
+ADB.prototype.waitForActivity = function(cb) {
+  this.requireApp();
+  logger.info("Waiting for app's activity to become focused");
+  var cmd = this.adbCmd + " shell dumpsys window windows"
+    , waitMs = 20000
+    , intMs = 750
+    , endAt = Date.now() + waitMs
+    , match = null
+    , foundActivity = false
+    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.([^\}]+)\}/);
+
+  var getFocusedApp = _.bind(function() {
+    exec(cmd, _.bind(function(err, stdout) {
+      if (err) {
+        logger.error(err);
+        cb(err);
+      } else {
+        foundActivity = false;
+        _.each(stdout.split("\n"), _.bind(function(line) {
+          match = searchRe.exec(line);
+          if (match) {
+            if (match[1] === this.appPackage && match[2] === this.appActivity) {
+              foundActivity = true;
+            }
+          }
+        }, this));
+        if (foundActivity) {
+          cb(null);
+        } else if (Date.now() < endAt) {
+          setTimeout(getFocusedApp, intMs);
+        } else {
+          logger.error("App never showed up as active");
+          cb(new Error("App never showed up as active"));
+        }
+      }
+    }, this));
+  }, this);
+
+  getFocusedApp();
+
 };
 
 ADB.prototype.uninstallApk = function(pkg, cb) {

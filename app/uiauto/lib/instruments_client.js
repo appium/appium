@@ -59,7 +59,7 @@ var sendResultAndGetNext = function(result) {
   try {
     res = system.performTaskWithPathArgumentsTimeout(binaryPath, args, waitForDataTimeout);
   } catch(e) {
-    console.log("Socket timed out waiting for a new command, why wasn't there one?");
+    console.log(e.name + " error getting command: " + e.message);
     return null;
   }
 

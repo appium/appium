@@ -44,7 +44,7 @@
     "glob": "~3.1.20",
     "unzip": "~0.1.1",
     "ncp": "~0.4.0",
-	"async": "~0.2.6"
+    "async": "~0.2.6"
   },
   "scripts": {
     "test": "grunt travis",
@@ -63,6 +63,7 @@
     "difflib": "~0.2.4",
     "prompt": "~0.2.9",
     "ncp": "~0.4.2",
-    "grunt-contrib-jshint": "~0.1.1"
+    "grunt-contrib-jshint": "~0.1.1",
+    "markdown": "~0.4.0"
   }
 }

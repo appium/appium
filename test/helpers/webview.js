@@ -263,6 +263,28 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc("active element", function(h) {
+    it("should return the active element", function(done) {
+      loadWebView(h.driver, function() {
+        var testText = "hi there";
+        h.driver.elementById('i_am_a_textbox', function(err, el1) {
+          should.not.exist(err);
+          el1.sendKeys(testText, function(err) {
+            should.not.exist(err);
+            h.driver.active(function(err, active) {
+              should.not.exist(err);
+              active.getValue(function(err, text) {
+                should.not.exist(err);
+                text.should.eql(testText);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc("execute", function(h) {
     it("should bubble up javascript errors", function(done) {
       loadWebView(h.driver, function() {

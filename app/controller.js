@@ -329,10 +329,9 @@ exports.getPageIndex = function(req, res) {
 };
 
 exports.keys = function(req, res) {
-  var elementId = req.params.elementId
-    , keys = req.body.value.join('');
+  var keys = req.body.value.join('');
 
-  req.device.keys(elementId, keys, getResponseHandler(req, res));
+  req.device.keys(keys, getResponseHandler(req, res));
 };
 
 exports.frame = function(req, res) {

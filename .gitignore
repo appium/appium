@@ -1,4 +1,5 @@
 .DS_Store
+npm*.log
 node_modules
 *.trace
 xcuserdata

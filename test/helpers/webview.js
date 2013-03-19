@@ -4,7 +4,8 @@
 var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
   , guinea = 'http://saucelabs.com/test/guinea-pig'
-  , should = require('should');
+  , should = require('should')
+  , spinWait = require('./spin.js').spinWait;
 
 var spinTitle = function (expTitle, driver, cb, timeout) {
   timeout = typeof timeout == 'undefined' ? 60 : timeout;
@@ -228,6 +229,38 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+
+  desc('submit', function(h) {
+    it('should submit a form', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('comments', function(err, element) {
+          element.sendKeys('This is a comment', function(err) {
+            should.not.exist(err);
+            h.driver.submit(element, function(err) {
+              should.not.exist(err);
+              var spinFn = function(spinCb) {
+                h.driver.elementById('your_comments', function(err, element) {
+                  should.not.exist(err);
+                  element.text(function(err, text) {
+                    should.not.exist(err);
+                    try {
+                      text.should.eql('Your comments: This is a comment');
+                      spinCb();
+                    } catch (e) {
+                      spinCb(e);
+                    }
+                  });
+                });
+              };
+              spinWait(spinFn, function() {
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 
   desc('elementDisplayed', function(h) {
     it('should return true when the element is displayed', function(done) {

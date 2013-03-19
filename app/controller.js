@@ -470,6 +470,11 @@ exports.title = function(req, res) {
   req.device.title(getResponseHandler(req, res));
 };
 
+exports.submit = function(req, res) {
+  var elementId = req.params.elementId;
+  req.device.submit(elementId, getResponseHandler(req, res));
+};
+
 exports.postUrl = function(req, res) {
   var url = req.body.url;
 

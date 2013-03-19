@@ -576,6 +576,16 @@ IOS.prototype.click = function(elementId, cb) {
   }
 };
 
+IOS.prototype.submit = function(elementId, cb) {
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('submit', [atomsElement], cb);
+    }, this));
+  } else {
+    cb(new NotImplementedError(), null);
+  }
+};
+
 IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
   var command
     , options = {

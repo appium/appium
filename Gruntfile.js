@@ -13,6 +13,7 @@ var path = require('path')
   , buildAndroidApp = gruntHelpers.buildAndroidApp
   , installAndroidApp = gruntHelpers.installAndroidApp
   , generateServerDocs = gruntHelpers.generateServerDocs
+  , generateAppiumIo = gruntHelpers.generateAppiumIo
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -131,5 +132,8 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('docs', function() {
     generateServerDocs(grunt, this.async());
+  });
+  grunt.registerTask('generateAppiumIo', function() {
+    generateAppiumIo(grunt, this.async());
   });
 };

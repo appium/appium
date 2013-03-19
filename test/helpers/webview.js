@@ -178,16 +178,34 @@ module.exports.buildTests = function(webviewType) {
   });
 
   desc('sendKeys', function(h) {
-    it('should send keystrokes', function(done) {
+    it('should send keystrokes to specific element', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('comments', function(err, element) {
           should.not.exist(err);
           element.sendKeys("hello world", function(err) {
             should.not.exist(err);
-            element.getAttribute('value', function(err, text) {
+            element.getValue(function(err, text) {
               should.not.exist(err);
               text.should.equal("hello world");
               done();
+            });
+          });
+        });
+      });
+    });
+    it('should send keystrokes to active element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('comments', function(err, element) {
+          should.not.exist(err);
+          element.click(function(err) {
+            should.not.exist(err);
+            h.driver.keys("hello world", function(err) {
+              should.not.exist(err);
+              element.getValue(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("hello world");
+                done();
+              });
             });
           });
         });
@@ -256,6 +274,28 @@ module.exports.buildTests = function(webviewType) {
             el.isEnabled(function(err, enabled) {
               enabled.should.equal(false);
               done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  desc("active element", function(h) {
+    it("should return the active element", function(done) {
+      loadWebView(h.driver, function() {
+        var testText = "hi there";
+        h.driver.elementById('i_am_a_textbox', function(err, el1) {
+          should.not.exist(err);
+          el1.sendKeys(testText, function(err) {
+            should.not.exist(err);
+            h.driver.active(function(err, active) {
+              should.not.exist(err);
+              active.getValue(function(err, text) {
+                should.not.exist(err);
+                text.should.eql(testText);
+                done();
+              });
             });
           });
         });

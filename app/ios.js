@@ -423,34 +423,41 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
 
-  var device = this
-  , parseElementResponse = function(element) {
+  var me = this;
+
+  this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
+    me.cacheAndReturnWebEl(err, res, many, cb);
+  });
+};
+
+IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
+  var atomValue = res.value
+    , atomStatus = res.status
+    , me = this;
+
+  var parseElementResponse = function(element) {
     var objId = element.ELEMENT
-    , clientId = (5000 + device.webElementIds.length).toString();
-    device.webElementIds.push(objId);
+    , clientId = (5000 + me.webElementIds.length).toString();
+    me.webElementIds.push(objId);
     return {ELEMENT: clientId};
   };
 
-  this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    var atomValue = res.value
-      , atomStatus = res.status;
-    if (atomStatus == status.codes.Success.code) {
-      if (many) {
-        if (typeof atomValue == "object") {
-          atomValue = _.map(atomValue, parseElementResponse);
-        }
+  if (atomStatus == status.codes.Success.code) {
+    if (many) {
+      if (typeof atomValue == "object") {
+        atomValue = _.map(atomValue, parseElementResponse);
+      }
+    } else {
+      if (atomValue === null) {
+        atomStatus = status.codes.NoSuchElement.code;
       } else {
-        if (atomValue === null) {
-          atomStatus = status.codes.NoSuchElement.code;
-        } else {
-          atomValue = parseElementResponse(atomValue);
-        }
+        atomValue = parseElementResponse(atomValue);
       }
     }
-    cb(err, {
-      status: atomStatus
-      , value: atomValue
-    });
+  }
+  cb(err, {
+    status: atomStatus
+    , value: atomValue
   });
 };
 
@@ -671,20 +678,37 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
 };
 
 IOS.prototype.getPageIndex = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').pageIndex()"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    cb(new NotImplementedError(), null);
+  } else {
+    var command = ["au.getElement('", elementId, "').pageIndex()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
-IOS.prototype.keys = function(elementId, keys, cb) {
+IOS.prototype.keys = function(keys, cb) {
   keys = escapeSpecialChars(keys);
-  var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    this.active(_.bind(function(err, res) {
+      if (err || typeof res.value.ELEMENT === "undefined") {
+        return cb(err, res);
+      }
+      this.setValue(res.value.ELEMENT, keys, cb);
+    }, this));
+  } else {
+    var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.frame = function(frame, cb) {
-  frame = frame? frame : 'mainWindow';
-  var command = ["wd_frame = ", frame].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    cb(new NotImplementedError(), null);
+  } else {
+    frame = frame? frame : 'mainWindow';
+    var command = ["wd_frame = ", frame].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.implicitWait = function(ms, cb) {
@@ -887,7 +911,14 @@ IOS.prototype.getUrl = function(cb) {
 };
 
 IOS.prototype.active = function(cb) {
-  this.proxy("au.getActiveElement()", cb);
+  if (this.curWindowHandle) {
+    var me = this;
+    this.remote.executeAtom('active_element', [], function(err, res) {
+      me.cacheAndReturnWebEl(err, res, false, cb);
+    });
+  } else {
+    this.proxy("au.getActiveElement()", cb);
+  }
 };
 
 IOS.prototype.getWindowHandle = function(cb) {

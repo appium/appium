@@ -17,5 +17,5 @@ describeWd('orientation', function(h) {
        });
      });
    };
-   _.each(["PORTRAIT", "LANDSCAPE"], testOrientation);
+   _.each(["LANDSCAPE", "PORTRAIT"], testOrientation);
 });

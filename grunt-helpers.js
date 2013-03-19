@@ -392,7 +392,7 @@ module.exports.generateAppiumIo = function(grunt, cb) {
         grunt.log.write("Pushing changes to appium.io...");
         var cmd = 'git commit -am "updating getting-started via grunt" && ' +
                   'git push origin master';
-        exec(cmd, function(err) {
+        exec(cmd, {cwd: submod}, function(err) {
           if (err) {
             grunt.fatal(err);
           } else {

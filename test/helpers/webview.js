@@ -214,6 +214,31 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('clear', function(h) {
+    it('should clear text', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('comments', function(err, element) {
+          should.not.exist(err);
+          element.sendKeys("hello world", function(err) {
+            should.not.exist(err);
+            element.getValue(function(err, text) {
+              should.not.exist(err);
+              text.should.equal("hello world");
+              element.clear(function(err) {
+                should.not.exist(err);
+                element.getValue(function(err, text) {
+                  should.not.exist(err);
+                  text.should.equal("");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc('getSize', function(h) {
     it('should return the right size', function(done) {
       loadWebView(h.driver, function() {

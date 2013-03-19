@@ -605,8 +605,14 @@ IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elemen
 };
 
 IOS.prototype.clear = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').setValue('')"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('clear', [atomsElement], cb);
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId, "').setValue('')"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getText = function(elementId, cb) {

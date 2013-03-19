@@ -758,6 +758,16 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
   }
 };
 
+IOS.prototype.elementSelected = function(elementId, cb) {
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('is_selected', [atomsElement], cb);
+    }, this));
+  } else {
+    cb(new NotImplementedError(), null);
+  }
+};
+
 IOS.prototype.getPageSource = function(cb) {
   if (this.curWindowHandle) {
     this.remote.execute('document.getElementsByTagName("html")[0].outerHTML',

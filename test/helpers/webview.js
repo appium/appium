@@ -261,6 +261,21 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('css properties', function(h) {
+    it('should be able to get css properties', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('fbemail', function(err, el) {
+          should.not.exist(err);
+          el.getComputedCss('background-color', function(err, bg) {
+            should.not.exist(err);
+            bg.should.equal("rgba(255, 255, 255, 1)");
+            done();
+          });
+        });
+      });
+    });
+  });
+
   desc('getSize', function(h) {
     it('should return the right size', function(done) {
       loadWebView(h.driver, function() {

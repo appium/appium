@@ -307,6 +307,13 @@ exports.getAttribute = function(req, res) {
   req.device.getAttribute(elementId, attributeName, getResponseHandler(req, res));
 };
 
+exports.getCssProperty = function(req, res) {
+  var elementId = req.params.elementId
+    , propertyName = req.params.propertyName;
+
+  req.device.getCssProperty(elementId, propertyName, getResponseHandler(req, res));
+};
+
 exports.getLocation = function(req, res) {
   var elementId = req.params.elementId;
 

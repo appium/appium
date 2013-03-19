@@ -214,6 +214,53 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('clear', function(h) {
+    it('should clear text', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('comments', function(err, element) {
+          should.not.exist(err);
+          element.sendKeys("hello world", function(err) {
+            should.not.exist(err);
+            element.getValue(function(err, text) {
+              should.not.exist(err);
+              text.should.equal("hello world");
+              element.clear(function(err) {
+                should.not.exist(err);
+                element.getValue(function(err, text) {
+                  should.not.exist(err);
+                  text.should.equal("");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  desc('selected', function(h) {
+    it('should say whether an input is selected', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('unchecked_checkbox', function(err, checkbox) {
+          should.not.exist(err);
+          checkbox.selected(function(err, selected) {
+            should.not.exist(err);
+            selected.should.equal(false);
+            checkbox.click(function(err) {
+              should.not.exist(err);
+              checkbox.selected(function(err, selected) {
+                should.not.exist(err);
+                selected.should.equal(true);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc('getSize', function(h) {
     it('should return the right size', function(done) {
       loadWebView(h.driver, function() {

@@ -6,7 +6,7 @@ Appium
 Appium is an open source test automation tool for native and hybrid
 mobile apps. It supports both iOS and Android. Appium drives Apple's
 UIAutomation library and Android's UiAutomator using Selenium's
-WebDriver JSON wire protocol. Appium is based on 
+WebDriver JSON wire protocol. Appium is based on
 [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
 Testing with Appium has two big benefits:
@@ -29,7 +29,7 @@ Requirements
     > XCode
     > Apple Developer Tools (iPhone simulator, command line tools)
     > Android SDK API >= 17
-    > Node and npm (http://www.nodejs.org)
+    > Node and npm (http://www.nodejs.org) (Node must be >= v0.8)
 
 User Quick Start
 ------------

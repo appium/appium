@@ -36,6 +36,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/size', controller.getSize);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/pageIndex', controller.getPageIndex);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/attribute/:name', controller.getAttribute);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/css/:propertyName', controller.getCssProperty);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear', controller.clear);
   rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
@@ -110,7 +111,6 @@ var routeNotYetImplemented = function(rest) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/name', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:other', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location_in_view', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/css/:propertyname', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/moveto', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/click', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);

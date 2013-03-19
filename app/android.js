@@ -304,6 +304,10 @@ Android.prototype.clear = function(elementId, cb) {
     cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.submit = function(elementId, cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.getText = function(elementId, cb) {
   this.proxy(["element:getText", {elementId: elementId}], cb);
 };
@@ -354,6 +358,10 @@ Android.prototype.elementDisplayed = function(elementId, cb) {
 Android.prototype.elementEnabled = function(elementId, cb) {
   var p = {elementId: elementId, attribute: "enabled"};
   this.proxy(["element:getAttribute", p], cb);
+};
+
+Android.prototype.elementSelected = function(elementId, cb) {
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getPageSource = function(cb) {

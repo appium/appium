@@ -355,6 +355,11 @@ exports.elementEnabled = function(req, res) {
   req.device.elementEnabled(elementId, getResponseHandler(req, res));
 };
 
+exports.elementSelected = function(req, res) {
+  var elementId = req.params.elementId;
+  req.device.elementSelected(elementId, getResponseHandler(req, res));
+};
+
 exports.getPageSource = function(req, res) {
   req.device.getPageSource(getResponseHandler(req, res));
 };

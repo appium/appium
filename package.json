@@ -47,8 +47,7 @@
     "async": "~0.2.6"
   },
   "scripts": {
-    "test": "grunt travis",
-    "publish": "grunt updateAppiumIo"
+    "test": "grunt travis"
   },
   "devDependencies": {
     "mocha": "~1.8.1",

@@ -77,7 +77,7 @@ module.exports = function(grunt) {
   grunt.registerTask('ios', "Run functional ios tests", function(log) {
     runTestsWithServer(grunt, null, 'functional', 'ios', log === "log", this.async());
   });
-  grunt.registerTask('test', ['jshint', 'buildApp:TestApp', 'buildApp:UICatalog', 'buildAndroidApp:ApiDemos', 'unit', 'appiumutils', 'functional', 'servertest']);
+  grunt.registerTask('test', ['jshint', 'unit', 'appiumutils', 'functional', 'servertest']);
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('appiumutils', 'mochaTest:appiumutils');
   grunt.registerTask('default', ['test']);

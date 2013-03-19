@@ -471,7 +471,7 @@ exports.title = function(req, res) {
 };
 
 exports.submit = function(req, res) {
-  var elementId = req.params.elementId; 
+  var elementId = req.params.elementId;
   req.device.submit(elementId, getResponseHandler(req, res));
 };
 

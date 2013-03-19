@@ -768,6 +768,17 @@ IOS.prototype.elementSelected = function(elementId, cb) {
   }
 };
 
+IOS.prototype.getCssProperty = function(elementId, propertyName, cb) {
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('get_value_of_css_property', [atomsElement,
+        propertyName], cb);
+    }, this));
+  } else {
+    cb(new NotImplementedError(), null);
+  }
+};
+
 IOS.prototype.getPageSource = function(cb) {
   if (this.curWindowHandle) {
     this.remote.execute('document.getElementsByTagName("html")[0].outerHTML',

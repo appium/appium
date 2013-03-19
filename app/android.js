@@ -361,7 +361,11 @@ Android.prototype.elementEnabled = function(elementId, cb) {
 };
 
 Android.prototype.elementSelected = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.getCssProperty = function(elementId, propertyName, cb) {
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getPageSource = function(cb) {

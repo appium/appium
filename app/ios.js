@@ -689,7 +689,12 @@ IOS.prototype.getPageIndex = function(elementId, cb) {
 IOS.prototype.keys = function(keys, cb) {
   keys = escapeSpecialChars(keys);
   if (this.curWindowHandle) {
-    cb(new NotImplementedError(), null);
+    this.active(_.bind(function(err, res) {
+      if (err || typeof res.value.ELEMENT === "undefined") {
+        return cb(err, res);
+      }
+      this.setValue(res.value.ELEMENT, keys, cb);
+    }, this));
   } else {
     var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
     this.proxy(command, cb);

@@ -62,6 +62,8 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
   rest.get('/wd/hub/session/:sessionId?/title', controller.title);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/submit', controller.submit);
+  rest.post('/wd/hub/session/:sessionId?/moveto', controller.moveTo);
+  rest.post('/wd/hub/session/:sessionId?/click', controller.clickCurrent);
 
   // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -111,8 +113,6 @@ var routeNotYetImplemented = function(rest) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:other', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location_in_view', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/moveto', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/click', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttonup', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/doubleclick', controller.notYetImplemented);

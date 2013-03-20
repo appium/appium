@@ -341,6 +341,26 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('moveTo and click', function(h) {
+    it('should be able to click on arbitrary x-y elements', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByLinkText('i am a link', function(err, link) {
+          should.not.exist(err);
+          h.driver.moveTo(link, 5, 15, function(err) {
+            should.not.exist(err);
+            h.driver.click(function(err) {
+              should.not.exist(err);
+              spinTitle("I am another page title - Sauce Labs", h.driver, function(err) {
+                should.not.exist(err);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc('submit', function(h) {
     it('should submit a form', function(done) {
       loadWebView(h.driver, function() {

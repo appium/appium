@@ -511,7 +511,11 @@ Android.prototype.title = function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 
-Android.prototype.moveTo = function(cb) {
+Android.prototype.moveTo = function(element, xoffset, yoffset, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.clickCurrent = function(button, cb) {
   cb(new NotYetImplementedError(), null);
 };
 

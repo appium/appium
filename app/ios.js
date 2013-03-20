@@ -578,7 +578,7 @@ IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('click', [atomsElement], cb);
+      this.remote.executeAtom('tap', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');

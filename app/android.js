@@ -301,11 +301,15 @@ Android.prototype.complexTap = function(tapCount, touchCount, duration, x, y, el
 };
 
 Android.prototype.clear = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.submit = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.getName = function(elementId, cb) {
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getText = function(elementId, cb) {
@@ -318,11 +322,11 @@ Android.prototype.getAttribute = function(elementId, attributeName, cb) {
 };
 
 Android.prototype.getLocation = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getSize = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getWindowSize = function(windowHandle, cb) {

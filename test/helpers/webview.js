@@ -291,6 +291,55 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('implicit wait', function(h) {
+    it('should set the implicit wait for finding web elements', function(done) {
+      h.driver.setImplicitWaitTimeout(7 * 1000, function(err) {
+        should.not.exist(err);
+        var before = new Date().getTime() / 1000;
+        h.driver.elementByTagName('notgonnabethere', function(err) {
+          should.exist(err);
+          var after = new Date().getTime() / 1000;
+          should.ok((after - before) < 9);
+          should.ok((after - before) > 7);
+          done();
+        });
+      });
+    });
+  });
+
+  desc('location', function(h) {
+    it('should get location of an element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('fbemail', function(err, el) {
+          should.not.exist(err);
+          el.getLocation(function(err, loc) {
+            should.not.exist(err);
+            loc.x.should.equal(10);
+            loc.y.should.equal(450);
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  desc('getName', function(h) {
+    it('should return tag name of an element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('fbemail', function(err, el) {
+          el.getTagName(function(err, name) {
+            name.should.equal("input");
+            h.driver.elementByCss("a", function(err, link) {
+              link.getTagName(function(err, name) {
+                name.should.equal("a");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 
   desc('submit', function(h) {
     it('should submit a form', function(done) {

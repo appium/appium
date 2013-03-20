@@ -291,6 +291,21 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('implicit wait', function(h) {
+    it('should set the implicit wait for finding web elements', function(done) {
+      h.driver.setImplicitWaitTimeout(7 * 1000, function(err) {
+        should.not.exist(err);
+        var before = new Date().getTime() / 1000;
+        h.driver.elementByTagName('notgonnabethere', function(err) {
+          should.exist(err);
+          var after = new Date().getTime() / 1000;
+          should.ok((after - before) < 9);
+          should.ok((after - before) > 7);
+          done();
+        });
+      });
+    });
+ });
 
   desc('submit', function(h) {
     it('should submit a form', function(done) {

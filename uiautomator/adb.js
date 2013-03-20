@@ -767,14 +767,20 @@ ADB.prototype.installApp = function(cb) {
             function(cb) {
               if (installApp) {
                 me.debug("Installing app apk");
-                me.installApk(me.apkPath, function(err) { if (err) return cb(err); return cb(null); });
+                me.installApk(me.apkPath, function(err) {
+                  if (err) return cb(err);
+                  return cb(null);
+                });
               } else { cb(null); }
             },
             function(cb) {
               // App is already installed so reset it.
               if (!installApp) {
-                me.runFastReset(function(err) { if (err) return cb(err); return cb(null); });
-              }
+                me.runFastReset(function(err) {
+                  if (err) return cb(err);
+                  return cb(null);
+                });
+              } else { cb(null); }
             },
             function(cb) {
               if (installClean) {

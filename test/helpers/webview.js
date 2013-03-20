@@ -305,7 +305,23 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
- });
+  });
+
+  desc('location', function(h) {
+    it('should get location of an element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('fbemail', function(err, el) {
+          should.not.exist(err);
+          el.getLocation(function(err, loc) {
+            should.not.exist(err);
+            loc.x.should.equal(10);
+            loc.y.should.equal(450);
+            done();
+          });
+        });
+      });
+    });
+  });
 
   desc('submit', function(h) {
     it('should submit a form', function(done) {

@@ -336,6 +336,15 @@ module.exports.buildTests = function(webviewType) {
               });
             });
           });
+  desc('getWindowSize', function(h) {
+    it('should return the right size', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.getWindowSize(function(err, size) {
+          should.not.exist(err);
+          // iphone and ipad
+          [356, 928].should.include(size.height);
+          [320, 768].should.include(size.width);
+          done();
         });
       });
     });

@@ -798,7 +798,19 @@ IOS.prototype.getSize = function(elementId, cb) {
 
 IOS.prototype.getWindowSize = function(windowHandle, cb) {
   if (this.curWindowHandle) {
-    cb(new NotImplementedError(), null);
+    if(windowHandle !== "current") {
+      cb(null, {
+        status: status.codes.NoSuchWindow.code
+        , value: "Currently only getting current window size is supported."
+      });
+    } else {
+      this.remote.executeAtom('get_window_size', [], function(err, res) {
+        cb(null, {
+          status: status.codes.Success.code
+          , value: res
+        });
+      });
+    }
   } else {
     if(windowHandle !== "current") {
       cb(null, {

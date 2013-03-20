@@ -129,7 +129,19 @@ describeWd('calc app', function(h) {
      //});
    //});
 
-
+  it('should get tag names of elements', function(done) {
+    h.driver.elementByTagName('button', function(err, el) {
+      el.getTagName(function(err, name) {
+        name.should.equal("UIAButton");
+        h.driver.elementByTagName('text', function(err, el) {
+          el.getTagName(function(err, name) {
+            name.should.equal("UIAStaticText");
+            done();
+          });
+        });
+      });
+    });
+  });
 
   it('should be able to get text of a button', function(done) {
     h.driver.elementsByTagName('button', function(err, els) {

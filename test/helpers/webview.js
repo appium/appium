@@ -283,7 +283,7 @@ module.exports.buildTests = function(webviewType) {
           element.getSize(function(err, size) {
             // we might be in landscape or portrait mode, iphone / ipad
             [304, 464, 964].should.include(size.width);
-            size.height.should.eql(20);
+            [20, 30].should.include(size.height);
             done();
           });
         });

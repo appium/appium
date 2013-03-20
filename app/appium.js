@@ -378,7 +378,7 @@ Appium.prototype.stop = function(cb) {
 
 Appium.prototype.reset = function(cb) {
   logger.info("Resetting app mid-session");
-  if (!this.fastReset) {
+  if (this.isIos() || !this.fastReset) {
     var me = this
     , oldId = this.sessionId;
 
@@ -390,7 +390,7 @@ Appium.prototype.reset = function(cb) {
       });
     });
   } else { // fast reset
-    logger.info("Fast reset");
+    logger.info("Android fast reset");
     this.device.fastReset(function(err){
       if (err) {
         cb(null, {status: status.codes.UnknownError.code, value: null});

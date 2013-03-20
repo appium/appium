@@ -336,6 +336,11 @@ module.exports.buildTests = function(webviewType) {
               });
             });
           });
+        });
+      });
+    });
+  });
+
   desc('getWindowSize', function(h) {
     it('should return the right size', function(done) {
       loadWebView(h.driver, function() {

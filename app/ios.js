@@ -42,6 +42,8 @@ var IOS = function(args) {
   this.windowHandleCache = [];
   this.webElementIds = [];
   this.implicitWaitMs = 0;
+  this.curCoords = null;
+  this.curWebCoords = null;
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -116,7 +118,10 @@ IOS.prototype.start = function(cb, onDie) {
       code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
-    this.curWindowHandle = null;
+    this.curCoords = null;
+    try {
+      this.stopRemote();
+    } catch(e) {}
     var nexts = 0;
     var next = function() {
       nexts++;
@@ -303,6 +308,7 @@ IOS.prototype.stopRemote = function() {
   } else {
     this.remote.disconnect();
     this.curWindowHandle = null;
+    this.curWebCoords = null;
     this.remote = null;
   }
 };
@@ -578,12 +584,101 @@ IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('click', [atomsElement], cb);
+      this.remote.executeAtom('tap', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');
     this.proxy(command, cb);
   }
+};
+
+IOS.prototype.clickCurrent = function(button, cb) {
+  //console.log("clicking current loc");
+  var noMoveToErr = {
+    status: status.codes.UnknownError.code
+    , value: "Cannot call click() before calling moveTo() to set coords"
+  };
+
+  if (this.curWindowHandle) {
+    if (this.curWebCoords === null) {
+      return cb(null, noMoveToErr);
+    }
+    this.clickWebCoords(cb);
+  } else {
+    if (this.curCoords === null) {
+      return cb(null, noMoveToErr);
+    }
+    this.clickCoords(this.curCoords, cb);
+  }
+};
+
+IOS.prototype.clickCoords = function(coords, cb) {
+  //console.log("native-tapping coords");
+  var opts = coords;
+  opts.tapCount = 1;
+  opts.duration = 0.3;
+  opts.touchCount = 1;
+  var command =["au.complexTap(" + JSON.stringify(opts) + ")"].join('');
+  this.proxy(command, cb);
+};
+
+IOS.prototype.clickWebCoords = function(cb) {
+  var coords = this.curWebCoords
+    , me = this
+    , webviewIndex = this.curWindowHandle - 1
+    , wvCmd = "au.getElementsByType('webview')";
+
+  //console.log(coords);
+  // absolutize web coords
+  this.proxy(wvCmd, function(err, res) {
+    if (err) return cb(err, res);
+    //console.log(res);
+    if (typeof res.value[webviewIndex] === "undefined") {
+      return cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Could not find webview at index " + webviewIndex
+      });
+    }
+    var realDims, wvDims, wvPos;
+    var step1 = function() {
+      //console.log("getting webview real dims");
+      var wvId = res.value[webviewIndex].ELEMENT;
+      var locCmd = "au.getElement('" + wvId + "').rect()";
+      me.proxy(locCmd, function(err, res) {
+        if (err) return cb(err, res);
+        var rect = res.value;
+        //console.log(rect);
+        wvPos = {x: rect.origin.x, y: rect.origin.y};
+        realDims = {w: rect.size.width, h: rect.size.height};
+        next();
+      });
+    };
+    var step2 = function() {
+      //console.log("getting browser dims");
+      var cmd = "(function() { return {w: document.width, h: document.height}; })()";
+      me.remote.execute(cmd, function(err, res) {
+        //console.log(res.result.value);
+        wvDims = {w: res.result.value.w, h: res.result.value.h};
+        next();
+      });
+    };
+    var next = function() {
+      if (wvDims && realDims && wvPos) {
+        var xRatio = realDims.w / wvDims.w;
+        var yRatio = realDims.h / wvDims.h;
+        var serviceBarHeight = 20;
+        coords = {
+          x: wvPos.x + (xRatio * coords.x)
+          , y: wvPos.y + (yRatio * coords.y) - serviceBarHeight
+        };
+        //console.log("converted dims: ");
+        //console.log(coords);
+        me.clickCoords(coords, cb);
+      }
+    };
+    step1();
+    step2();
+  });
 };
 
 IOS.prototype.submit = function(elementId, cb) {
@@ -1078,6 +1173,31 @@ IOS.prototype.title = function(cb) {
       }
     });
   }
+};
+
+IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
+  this.getLocation(element, _.bind(function(err, res) {
+    if (err) return cb(err, res);
+    var coords = {
+      x: res.value.x + xoffset
+      , y: res.value.y + yoffset
+    };
+    //console.log("moving mouse to coords:");
+    //console.log(coords);
+    if (this.curWindowHandle) {
+      this.curWebCoords = coords;
+      this.useAtomsElement(element, cb, _.bind(function(atomsElement) {
+        var relCoords = {x: xoffset, y: yoffset};
+        this.remote.executeAtom('move_mouse', [atomsElement, relCoords], cb);
+      }, this));
+    } else {
+      this.curCoords = coords;
+      cb(null, {
+        status: status.codes.Success.code
+        , value: null
+      });
+    }
+  }, this));
 };
 
 module.exports = function(args) {

@@ -472,43 +472,51 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
 };
 
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.hideKeyboard = function(keyName, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.url = function(url, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.active = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getWindowHandle = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.getWindowHandles = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.setWindow = function(name, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.clearWebView = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.execute = function(script, args, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.title = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.moveTo = function(element, xoffset, yoffset, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.clickCurrent = function(button, cb) {
+  cb(new NotYetImplementedError(), null);
 };
 
 module.exports = function(opts) {

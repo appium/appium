@@ -666,8 +666,15 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 };
 
 IOS.prototype.getLocation = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').getElementLocation()"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('get_top_left_coordinates', [atomsElement], cb);
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId,
+      "').getElementLocation()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getSize = function(elementId, cb) {

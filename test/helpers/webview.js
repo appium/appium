@@ -342,8 +342,8 @@ module.exports.buildTests = function(webviewType) {
         h.driver.getWindowSize(function(err, size) {
           should.not.exist(err);
           // iphone and ipad
-          [356, 928].should.include(size.height);
-          [320, 768].should.include(size.width);
+          [356, 928, 788].should.include(size.height);
+          [320, 768, 414].should.include(size.width);
           done();
         });
       });

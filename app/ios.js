@@ -116,6 +116,7 @@ IOS.prototype.start = function(cb, onDie) {
       code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
+    this.curWindowHandle = null;
     var nexts = 0;
     var next = function() {
       nexts++;
@@ -626,17 +627,23 @@ IOS.prototype.clear = function(elementId, cb) {
 
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsElement = this.getAtomsElement(elementId);
-    if (atomsElement === null) {
-      cb(null, {
-        status: status.codes.UnknownError.code
-        , value: "Error converting element ID for using in WD atoms: " + elementId
-      });
-    } else {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
       this.remote.executeAtom('get_text', [atomsElement], cb);
-    }
+    }, this));
   } else {
     var command = ["au.getElement('", elementId, "').text()"].join('');
+    this.proxy(command, cb);
+  }
+};
+
+IOS.prototype.getName = function(elementId, cb) {
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      var script = "return arguments[0].tagName.toLowerCase()";
+      this.remote.executeAtom('execute_script', [script, [atomsElement]], cb);
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId, "').type()"].join('');
     this.proxy(command, cb);
   }
 };

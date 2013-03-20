@@ -323,6 +323,24 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('getName', function(h) {
+    it('should return tag name of an element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('fbemail', function(err, el) {
+          el.getTagName(function(err, name) {
+            name.should.equal("input");
+            h.driver.elementByCss("a", function(err, link) {
+              link.getTagName(function(err, name) {
+                name.should.equal("a");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc('submit', function(h) {
     it('should submit a form', function(done) {
       loadWebView(h.driver, function() {

@@ -300,6 +300,12 @@ exports.getText = function(req, res) {
   req.device.getText(elementId, getResponseHandler(req, res));
 };
 
+exports.getName = function(req, res) {
+  var elementId = req.params.elementId;
+
+  req.device.getName(elementId, getResponseHandler(req, res));
+};
+
 exports.getAttribute = function(req, res) {
   var elementId = req.params.elementId
     , attributeName = req.params.name;

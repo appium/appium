@@ -1080,6 +1080,12 @@ IOS.prototype.title = function(cb) {
   }
 };
 
+IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
+  if (this.curWindowHandle) {
+  } else {
+  }
+};
+
 module.exports = function(args) {
   return new IOS(args);
 };

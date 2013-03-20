@@ -407,6 +407,13 @@ exports.getScreenshot = function(req, res) {
   req.device.getScreenshot(getResponseHandler(req, res));
 };
 
+exports.moveTo = function(req, res) {
+  var xoffset = req.body.xoffset
+    , yoffset = req.body.yoffset
+    , element = req.body.element;
+  req.device.moveTo(element, xoffset, yoffset, getResponseHandler(req, res));
+};
+
 exports.pickAFlickMethod = function(req, res) {
   if (typeof req.body.xSpeed !== "undefined" || typeof req.body.xspeed !== "undefined") {
     exports.flick(req, res);

@@ -400,13 +400,7 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     }
 
     me.proxy(command, function(err, res) {
-      if (!err && !many && res.status === 0) {
-        findCb(true, err, res);
-      } else if (!err && many && res.value !== null && res.value.length > 0) {
-        findCb(true, err, res);
-      } else {
-        findCb(false, err, res);
-      }
+      me.handleFindCb(err, res, many, findCb);
     });
   };
   if (_.contains(this.supportedStrategies, strategy)) {
@@ -420,14 +414,29 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
   }
 };
 
+IOS.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (!err && !many && res.status === 0) {
+    findCb(true, err, res);
+  } else if (!err && many && res.value !== null && res.value.length > 0) {
+    findCb(true, err, res);
+  } else {
+    findCb(false, err, res);
+  }
+};
+
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
 
   var me = this;
+  var doFind = function(findCb) {
+    me.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
+      me.cacheAndReturnWebEl(err, res, many, function(err, res) {
+        me.handleFindCb(err, res, many, findCb);
+      });
+    });
+  };
 
-  this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    me.cacheAndReturnWebEl(err, res, many, cb);
-  });
+  this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
 IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {

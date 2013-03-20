@@ -116,6 +116,7 @@ IOS.prototype.start = function(cb, onDie) {
       code = 1; // this counts as an error even if instruments doesn't think so
     }
     this.instruments = null;
+    this.curWindowHandle = null;
     var nexts = 0;
     var next = function() {
       nexts++;
@@ -400,13 +401,7 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     }
 
     me.proxy(command, function(err, res) {
-      if (!err && !many && res.status === 0) {
-        findCb(true, err, res);
-      } else if (!err && many && res.value !== null && res.value.length > 0) {
-        findCb(true, err, res);
-      } else {
-        findCb(false, err, res);
-      }
+      me.handleFindCb(err, res, many, findCb);
     });
   };
   if (_.contains(this.supportedStrategies, strategy)) {
@@ -420,14 +415,29 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
   }
 };
 
+IOS.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (!err && !many && res.status === 0) {
+    findCb(true, err, res);
+  } else if (!err && many && res.value !== null && res.value.length > 0) {
+    findCb(true, err, res);
+  } else {
+    findCb(false, err, res);
+  }
+};
+
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
 
   var me = this;
+  var doFind = function(findCb) {
+    me.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
+      me.cacheAndReturnWebEl(err, res, many, function(err, res) {
+        me.handleFindCb(err, res, many, findCb);
+      });
+    });
+  };
 
-  this.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
-    me.cacheAndReturnWebEl(err, res, many, cb);
-  });
+  this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
 IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
@@ -617,17 +627,23 @@ IOS.prototype.clear = function(elementId, cb) {
 
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
-    var atomsElement = this.getAtomsElement(elementId);
-    if (atomsElement === null) {
-      cb(null, {
-        status: status.codes.UnknownError.code
-        , value: "Error converting element ID for using in WD atoms: " + elementId
-      });
-    } else {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
       this.remote.executeAtom('get_text', [atomsElement], cb);
-    }
+    }, this));
   } else {
     var command = ["au.getElement('", elementId, "').text()"].join('');
+    this.proxy(command, cb);
+  }
+};
+
+IOS.prototype.getName = function(elementId, cb) {
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      var script = "return arguments[0].tagName.toLowerCase()";
+      this.remote.executeAtom('execute_script', [script, [atomsElement]], cb);
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId, "').type()"].join('');
     this.proxy(command, cb);
   }
 };
@@ -657,8 +673,15 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 };
 
 IOS.prototype.getLocation = function(elementId, cb) {
-  var command = ["au.getElement('", elementId, "').getElementLocation()"].join('');
-  this.proxy(command, cb);
+  if (this.curWindowHandle) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.remote.executeAtom('get_top_left_coordinates', [atomsElement], cb);
+    }, this));
+  } else {
+    var command = ["au.getElement('", elementId,
+      "').getElementLocation()"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.getSize = function(elementId, cb) {

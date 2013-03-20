@@ -414,6 +414,11 @@ exports.moveTo = function(req, res) {
   req.device.moveTo(element, xoffset, yoffset, getResponseHandler(req, res));
 };
 
+exports.clickCurrent = function(req, res) {
+  var button = req.body.button || 0;
+  req.device.clickCurrent(button, getResponseHandler(req, res));
+};
+
 exports.pickAFlickMethod = function(req, res) {
   if (typeof req.body.xSpeed !== "undefined" || typeof req.body.xspeed !== "undefined") {
     exports.flick(req, res);

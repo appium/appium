@@ -2,7 +2,11 @@
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForSafari()
-  , webviewTests = require("../../helpers/webview.js").buildTests
+  , wvHelpers = require("../../helpers/webview.js")
+  , webviewTests = wvHelpers.buildTests
+  , loadWebView = wvHelpers.loadWebView
+  , spinTitle = wvHelpers.spinTitle
+  , _ = require('underscore')
   , should = require('should');
 
 describeWd('safari init', function(h) {
@@ -38,5 +42,22 @@ describeWd('safari ipad', function(h) {
     });
   });
 }, null, null, {device: 'iPad Simulator'});
+
+_.each(["iPhone", "iPad"], function(sim) {
+  describeWd('windows and frames', function(h) {
+    it("should automate a new window if one opens (" + sim + ")", function(done) {
+      loadWebView("safari", h.driver, function() {
+        h.driver.elementById('googlelink', function(err, link) {
+          link.click(function() {
+            spinTitle("Google", h.driver, function(err) {
+              should.not.exist(err);
+              done();
+            });
+          });
+        });
+      }, "http://localhost:4723/guinea-pig");
+    });
+  }, null, null, {device: sim + " Simulator"});
+});
 
 webviewTests('safari');

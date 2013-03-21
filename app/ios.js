@@ -1171,7 +1171,10 @@ IOS.prototype.setWindow = function(name, cb) {
     next();
     //}
   } else {
-    cb(status.codes.NoSuchWindow.code, null);
+    cb(null, {
+      status: status.codes.NoSuchWindow.code
+      , value: null
+    });
   }
 };
 

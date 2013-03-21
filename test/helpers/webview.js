@@ -35,7 +35,17 @@ module.exports.loadWebView = function(webviewType, driver, cb) {
       handles.length.should.be.above(0);
       driver.window(handles[0], function(err) {
         should.not.exist(err);
-        module.exports.spinTitle(title, driver, cb);
+        driver.url(function(err, url) {
+          should.not.exist(err);
+          if (url != guinea) {
+            driver.get(guinea, function(err) {
+              should.not.exist(err);
+              module.exports.spinTitle(title, driver, cb);
+            });
+          } else {
+            module.exports.spinTitle(title, driver, cb);
+          }
+        });
       });
     });
   }
@@ -322,7 +332,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            loc.y.should.equal(480);
+            [480, 387].should.include(loc.y);
             done();
           });
         });
@@ -353,8 +363,8 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.getWindowSize(function(err, size) {
           should.not.exist(err);
-          // iphone and ipad
-          [356, 928, 788].should.include(size.height);
+          // iphone and ipad, webview.app and mobile safari
+          [356, 928, 788, 752].should.include(size.height);
           [320, 768, 414].should.include(size.width);
           done();
         });

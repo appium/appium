@@ -341,6 +341,20 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('getWindowSize', function(h) {
+    it('should return the right size', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.getWindowSize(function(err, size) {
+          should.not.exist(err);
+          // iphone and ipad
+          [356, 928, 788].should.include(size.height);
+          [320, 768, 414].should.include(size.width);
+          done();
+        });
+      });
+    });
+  });
+
   desc('moveTo and click', function(h) {
     it('should be able to click on arbitrary x-y elements', function(done) {
       loadWebView(h.driver, function() {

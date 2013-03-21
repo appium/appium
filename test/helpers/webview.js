@@ -3,7 +3,7 @@
 
 var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
-  , guinea = 'http://saucelabs.com/test/guinea-pig'
+  , guinea = 'http://localhost:4723/test/guinea-pig'
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
 
@@ -22,13 +22,10 @@ module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
   });
 };
 
-module.exports.loadWebView = function(webviewType, driver, cb, guineaOverride) {
-  var title = 'I am a page title - Sauce Labs';
-  if (typeof guineaOverride === "undefined") {
-    guineaOverride = guinea;
-  }
+module.exports.loadWebView = function(webviewType, driver, cb) {
+  var title = 'I am a page title';
   if (webviewType === "safari") {
-    driver.get(guineaOverride, function(err) {
+    driver.get(guinea, function(err) {
       should.not.exist(err);
       module.exports.spinTitle(title, driver, cb);
     });
@@ -56,8 +53,8 @@ module.exports.buildTests = function(webviewType) {
     desc = driverBlock.describeForApp(webviewType);
   }
 
-  var loadWebView = function(driver, cb, guineaOverride) {
-    return module.exports.loadWebView(webviewType, driver, cb, guineaOverride);
+  var loadWebView = function(driver, cb) {
+    return module.exports.loadWebView(webviewType, driver, cb);
   };
 
   var spinTitle = module.exports.spinTitle;
@@ -68,7 +65,7 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.title(function(err, title) {
           should.not.exist(err);
-          title.should.eql("I am a page title - Sauce Labs");
+          title.should.eql("I am a page title");
           h.driver.frame(null, function(err) {
             should.not.exist(err);
             h.driver.title(function(err, title) {
@@ -120,7 +117,7 @@ module.exports.buildTests = function(webviewType) {
            should.not.exist(err);
            el.click(function(err) {
              should.not.exist(err);
-             spinTitle('I am another page title - Sauce Labs', h.driver, done);
+             spinTitle('I am another page title', h.driver, done);
            });
          });
        });
@@ -181,7 +178,7 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.url(function(err, url) {
           should.not.exist(err);
-          url.should.equal("http://saucelabs.com/test/guinea-pig");
+          url.should.equal(guinea);
           done();
         });
       });
@@ -325,7 +322,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            loc.y.should.equal(450);
+            loc.y.should.equal(480);
             done();
           });
         });
@@ -374,7 +371,7 @@ module.exports.buildTests = function(webviewType) {
             should.not.exist(err);
             h.driver.click(function(err) {
               should.not.exist(err);
-              spinTitle("I am another page title - Sauce Labs", h.driver, function(err) {
+              spinTitle("I am another page title", h.driver, function(err) {
                 should.not.exist(err);
                 done();
               });
@@ -397,8 +394,8 @@ module.exports.buildTests = function(webviewType) {
                 h.driver.elementById('your_comments', function(err, element) {
                   should.not.exist(err);
                   element.text(function(err, text) {
-                    should.not.exist(err);
                     try {
+                      should.not.exist(err);
                       text.should.eql('Your comments: This is a comment');
                       spinCb();
                     } catch (e) {

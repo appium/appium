@@ -63,6 +63,7 @@
     "prompt": "~0.2.9",
     "ncp": "~0.4.2",
     "grunt-contrib-jshint": "~0.1.1",
-    "markdown": "~0.4.0"
+    "markdown": "~0.4.0",
+    "swig": "~0.13.5"
   }
 }

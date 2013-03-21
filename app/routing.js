@@ -68,7 +68,7 @@ module.exports = function(appium) {
   // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
   rest.post('/wd/hub/crash', controller.crash);
-  rest.get('/guinea-pig', controller.guineaPig);
+  rest.all('/test/guinea-pig', controller.guineaPig);
 
   // appium-specific extensions to JSONWP
   // these aren't part of JSONWP but we want them or something like them to be

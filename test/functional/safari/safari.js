@@ -1,7 +1,7 @@
 /*global it:true */
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForSafari()
+var desc = require("../../helpers/driverblock.js").describeForSafari()
   , wvHelpers = require("../../helpers/webview.js")
   , webviewTests = wvHelpers.buildTests
   , loadWebView = wvHelpers.loadWebView
@@ -9,19 +9,10 @@ var describeWd = require("../../helpers/driverblock.js").describeForSafari()
   , _ = require('underscore')
   , should = require('should');
 
-describeWd('safari init', function(h) {
-  it('getting current window should work initially', function(done) {
-    h.driver.windowHandle(function(err, handleId) {
-      should.not.exist(err);
-      handleId.should.eql(1);
-      done();
-    });
-  });
-});
 
 // todo: write window manipulation test for iphone version
 
-describeWd('safari ipad', function(h) {
+desc('safari ipad', function(h) {
   it('should be able to close tabs', function(done) {
     h.driver.frame(null, function() {
       h.driver.elementByTagName("window", function(err, win) {
@@ -43,9 +34,23 @@ describeWd('safari ipad', function(h) {
   });
 }, null, null, {device: 'iPad Simulator'});
 
-_.each(["iPhone", "iPad"], function(sim) {
-  describeWd('windows and frames', function(h) {
-    it("should automate a new window if one opens (" + sim + ")", function(done) {
+//var devices = ["iPhone", "iPad"];
+var devices = ["iPad", "iPhone"];
+_.each(devices, function(sim) {
+
+
+  desc('safari init (' + sim + ')', function(h) {
+    it('getting current window should work initially', function(done) {
+      h.driver.windowHandle(function(err, handleId) {
+        should.not.exist(err);
+        handleId.should.eql(1);
+        done();
+      });
+    });
+  }, null, null, {device: sim + " Simulator"});
+
+  desc('windows and frames (' + sim + ')', function(h) {
+    it("should automate a new window if one opens", function(done) {
       loadWebView("safari", h.driver, function() {
         h.driver.elementById('blanklink', function(err, link) {
           link.click(function() {
@@ -54,6 +59,16 @@ _.each(["iPhone", "iPad"], function(sim) {
               done();
             });
           });
+        });
+      });
+    });
+
+    it("should throw nosuchwindow if there's not one", function(done) {
+      loadWebView("safari", h.driver, function() {
+        h.driver.window('noexistman', function(err) {
+          should.exist(err);
+          err.status.should.eql(23);
+          done();
         });
       });
     });

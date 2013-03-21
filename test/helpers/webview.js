@@ -7,7 +7,7 @@ var driverBlock = require("./driverblock.js")
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
 
-var spinTitle = function (expTitle, driver, cb, timeout) {
+module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
   timeout = typeof timeout == 'undefined' ? 60 : timeout;
   timeout.should.be.above(0);
   driver.title(function(err, pageTitle) {
@@ -16,11 +16,34 @@ var spinTitle = function (expTitle, driver, cb, timeout) {
       cb();
     } else {
       setTimeout(function () {
-        spinTitle(expTitle, driver, cb, timeout - 1);
+        module.exports.spinTitle(expTitle, driver, cb, timeout - 1);
       }, 500);
     }
   });
 };
+
+module.exports.loadWebView = function(webviewType, driver, cb, guineaOverride) {
+  var title = 'I am a page title - Sauce Labs';
+  if (typeof guineaOverride === "undefined") {
+    guineaOverride = guinea;
+  }
+  if (webviewType === "safari") {
+    driver.get(guineaOverride, function(err) {
+      should.not.exist(err);
+      module.exports.spinTitle(title, driver, cb);
+    });
+  } else {
+    driver.windowHandles(function(err, handles) {
+      should.not.exist(err);
+      handles.length.should.be.above(0);
+      driver.window(handles[0], function(err) {
+        should.not.exist(err);
+        module.exports.spinTitle(title, driver, cb);
+      });
+    });
+  }
+};
+
 
 module.exports.buildTests = function(webviewType) {
   if (typeof webviewType === "undefined") {
@@ -33,24 +56,11 @@ module.exports.buildTests = function(webviewType) {
     desc = driverBlock.describeForApp(webviewType);
   }
 
-  var loadWebView = function(driver, cb) {
-    var title = 'I am a page title - Sauce Labs';
-    if (webviewType === "safari") {
-      driver.get(guinea, function(err) {
-        should.not.exist(err);
-        spinTitle(title, driver, cb);
-      });
-    } else {
-      driver.windowHandles(function(err, handles) {
-        should.not.exist(err);
-        handles.length.should.be.above(0);
-        driver.window(handles[0], function(err) {
-          should.not.exist(err);
-          spinTitle(title, driver, cb);
-        });
-      });
-    }
+  var loadWebView = function(driver, cb, guineaOverride) {
+    return module.exports.loadWebView(webviewType, driver, cb, guineaOverride);
   };
+
+  var spinTitle = module.exports.spinTitle;
 
 
   desc('window title', function(h) {

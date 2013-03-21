@@ -4,6 +4,8 @@
 var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
   , _s = require("underscore.string")
+  , fs = require('fs')
+  , path = require('path')
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -628,4 +630,13 @@ exports.produceError = function(req, res) {
 
 exports.crash = function() {
   throw new Error("We just tried to crash Appium!");
+};
+
+exports.guineaPig = function(req, res) {
+  var file = path.resolve(__dirname, "test/guinea-pig.html");
+  fs.readFile(file, function(err, data) {
+    if (err) return res.send(500);
+    res.set('Content-Type', 'text/html');
+    res.send(data);
+  });
 };

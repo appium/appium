@@ -43,6 +43,7 @@ var RemoteDebugger = function(onDisconnect) {
   this.curMsgId = 0;
   this.dataCbs = [];
   this.onAppDisconnect = onDisconnect || noop;
+  this.pageChangeCb = noop;
   this.specialCbs = {
     '_rpc_reportIdentifier:': noop
     , '_rpc_forwardGetListing:': noop
@@ -58,8 +59,9 @@ var RemoteDebugger = function(onDisconnect) {
 // API
 // ====================================
 
-RemoteDebugger.prototype.connect = function(cb) {
+RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
   var me = this;
+  this.pageChangeCb = pageChangeCb;
   this.socket = new net.Socket({type: 'tcp6'});
   this.socket.on('close', function() {
     logger.info('Debugger socket disconnected');
@@ -99,17 +101,21 @@ RemoteDebugger.prototype.selectApp = function(appIdKey, cb) {
   this.appIdKey = appIdKey;
   var connectToApp = messages.connectToApp(this.connId, this.appIdKey);
   logger.info("Selecting app");
-  this.send(connectToApp, function(pageDict) {
-    var newPageArray = [];
-    _.each(pageDict, function(dict) {
-      newPageArray.push({
-        id: dict.WIRPageIdentifierKey
-        , title: dict.WIRTitleKey
-        , url: dict.WIRURLKey
-      });
+  this.send(connectToApp, _.bind(function(pageDict) {
+    cb(this.pageArrayFromDict(pageDict));
+  }, this));
+};
+
+RemoteDebugger.prototype.pageArrayFromDict = function(pageDict) {
+  var newPageArray = [];
+  _.each(pageDict, function(dict) {
+    newPageArray.push({
+      id: dict.WIRPageIdentifierKey
+      , title: dict.WIRTitleKey
+      , url: dict.WIRURLKey
     });
-    cb(newPageArray);
   });
+  return newPageArray;
 };
 
 RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
@@ -127,10 +133,15 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
         if (err || res.result.value == 'loading') {
           me.pageUnload();
         }
+        me.specialCbs['_rpc_forwardGetListing:'] = _.bind(me.onPageChange, me);
         cb();
       }, 0);
     });
   });
+};
+
+RemoteDebugger.prototype.onPageChange = function(pageDict) {
+  this.pageChangeCb(this.pageArrayFromDict(pageDict));
 };
 
 RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
@@ -198,9 +209,9 @@ RemoteDebugger.prototype.pageLoad = function() {
 };
 
 RemoteDebugger.prototype.pageUnload = function() {
-      logger.debug("Page loading");
-      this.pageLoading = true;
-      this.waitForDom(noop);
+  logger.debug("Page loading");
+  this.pageLoading = true;
+  this.waitForDom(noop);
 };
 
 RemoteDebugger.prototype.waitForDom = function(cb) {
@@ -229,7 +240,9 @@ RemoteDebugger.prototype.handleMessage = function(plist) {
 RemoteDebugger.prototype.handleSpecialMessage = function(specialCb) {
   var fn = this.specialCbs[specialCb];
   if (fn) {
-    this.specialCbs[specialCb] = null;
+    if (specialCb != "_rpc_forwardGetListing:") {
+      this.specialCbs[specialCb] = null;
+    }
     fn.apply(this, _.rest(arguments));
   }
 };

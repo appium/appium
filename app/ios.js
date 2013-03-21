@@ -259,10 +259,6 @@ IOS.prototype.cleanupAppState = function(cb) {
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
   var me = this;
-  if (this.remote) {
-    logger.error("Can't enter a web frame when we're already in one!");
-    throw new Error("Tried to enter a web frame when we were in one");
-  }
   if (!this.bundleId) {
     logger.error("Can't enter web frame without a bundle ID");
     throw new Error("Tried to enter web frame without a bundle ID");
@@ -281,11 +277,36 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     } else {
       me.remote.selectApp(me.bundleId, cb);
     }
-  }, function() {
-    logger.error("Remote debugger crashed before we shut it down!");
-    me.stopRemote();
-    exitCb();
+  }, _.bind(me.onPageChange, me));
+};
+
+IOS.prototype.onPageChange = function(pageArray) {
+  logger.info("Remote debugger notified us of a new page listing");
+  var newIds = []
+    , me = this;
+  _.each(pageArray, function(page) {
+    newIds.push(page.id.toString());
   });
+  var newPages = [];
+  _.each(newIds, function(id) {
+    if (!_.contains(me.windowHandleCache, id)) {
+      newPages.push(id);
+    }
+  });
+  if (this.curWindowHandle === null) {
+    logger.info("We don't appear to have window set yet, ignoring");
+  } else if (newPages.length) {
+    logger.info("We have new pages, going to select page " + newPages[0]);
+    this.remote.selectPage(newPages[0], function() {
+      me.curWindowHandle = newPages[0];
+    });
+  } else if (!_.contains(me.windowHandleCache, me.curWindowHandle.toString())) {
+    logger.error("New page listing from remote debugger doesn't contain " +
+                 "current window, not sure how to proceed");
+  } else {
+    logger.info("New page listing is same as old, doing nothing");
+  }
+  this.windowHandleCache = newIds;
 };
 
 IOS.prototype.getAtomsElement = function(wdId) {
@@ -507,8 +528,11 @@ IOS.prototype.findAndAct = function(strategy, selector, index, action, actionPar
     // if you change these, also change in
     // app/uiauto/appium/app.js:elemForAction
     , supportedActions = ["tap", "isEnabled", "isValid", "isVisible",
-                          "value", "name", "label", "setValue"]
+                          "value", "name", "label", "setValue", "click",
+                          "selectPage"]
     , many = index > 0;
+
+  if (action === "click") { action = "tap"; }
   var doAction = function(findCb) {
     var cmd = ["au.elemForAction(au.getElement", (many ? 's': ''), "By",
         stratMap[strategy], "('", selector, "'), ", index].join('');
@@ -593,7 +617,6 @@ IOS.prototype.click = function(elementId, cb) {
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {
-  //console.log("clicking current loc");
   var noMoveToErr = {
     status: status.codes.UnknownError.code
     , value: "Cannot call click() before calling moveTo() to set coords"
@@ -613,7 +636,6 @@ IOS.prototype.clickCurrent = function(button, cb) {
 };
 
 IOS.prototype.clickCoords = function(coords, cb) {
-  //console.log("native-tapping coords");
   var opts = coords;
   opts.tapCount = 1;
   opts.duration = 0.3;
@@ -1122,16 +1144,60 @@ IOS.prototype.setWindow = function(name, cb) {
   var me = this;
   if (_.contains(this.windowHandleCache, name)) {
     var pageIdKey = parseInt(name, 10);
-    me.remote.selectPage(pageIdKey, function() {
-      me.curWindowHandle = pageIdKey;
-      cb(null, {
-        status: status.codes.Success.code
-        , value: ''
+    var next = function() {
+      me.remote.selectPage(pageIdKey, function() {
+        me.curWindowHandle = pageIdKey;
+        cb(null, {
+          status: status.codes.Success.code
+          , value: ''
+        });
       });
-    });
+    };
+    //if (me.autoWebview) {
+      //me.setSafariWindow(pageIdKey - 1, function(err, res) {
+        //if (err) {
+          //cb(err);
+        //} else if (res.status !== status.codes.Success.code) {
+          //cb(res.status);
+        //} else {
+          //next();
+        //}
+      //});
+    //} else {
+    next();
+    //}
   } else {
     cb(status.codes.NoSuchWindow.code, null);
   }
+};
+
+IOS.prototype.setSafariWindow = function(windowId, cb) {
+  var me = this;
+  var success = function(err, res, cb) {
+    if (err || res.status !== status.codes.Success.code) {
+      cb(err, res);
+      return false;
+    }
+    return true;
+  };
+
+  me.findAndAct('name', 'Pages', 0, 'value', [], function(err, res) {
+    if (success(err, res, cb)) {
+      if (res.value === "") {
+        cb(err, res);
+      } else {
+        me.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
+          if (success(err, res, cb)) {
+            me.findAndAct('tag name', 'pageIndicator', 0, 'selectPage', [windowId], function(err, res) {
+              if (success(err, res, cb)) {
+                me.findAndAct('name', 'Done', 0, 'tap', [], cb);
+              }
+            });
+          }
+        });
+      }
+    }
+  });
 };
 
 IOS.prototype.clearWebView = function(cb) {

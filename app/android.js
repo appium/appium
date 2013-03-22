@@ -352,6 +352,15 @@ Android.prototype.getWindowSize = function(windowHandle, cb) {
   this.proxy(["getDeviceSize"], cb);
 };
 
+Android.prototype.back = function(cb) {
+  this.adb.back(function() {
+    cb(null, {
+      status: status.codes.Success.code
+      , value: null
+    });
+  });
+};
+
 Android.prototype.getPageIndex = function(elementId, cb) {
     cb(new NotYetImplementedError(), null);
 };

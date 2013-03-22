@@ -5,6 +5,7 @@ var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
   , _s = require("underscore.string")
   , fs = require('fs')
+  , swig = require('swig')
   , path = require('path')
   , _ = require('underscore');
 
@@ -639,10 +640,18 @@ exports.crash = function() {
 };
 
 exports.guineaPig = function(req, res) {
-  var file = path.resolve(__dirname, "test/guinea-pig.html");
-  fs.readFile(file, function(err, data) {
-    if (err) return res.send(500);
-    res.set('Content-Type', 'text/html');
-    res.send(data);
-  });
+  var params = {
+    serverTime: parseInt(new Date().getTime() / 1000, 10)
+    , userAgent: req.headers['user-agent']
+    , comment: "None"
+  };
+  if (req.method === "POST") {
+    params.comment = req.body.comments || params.comment;
+  }
+  res.set('Content-Type', 'text/html');
+  res.send(exports.getTemplate('guinea-pig').render(params));
+};
+
+exports.getTemplate = function(templateName) {
+  return swig.compileFile(path.resolve(__dirname, "templates/" + templateName + ".html"));
 };

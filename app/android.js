@@ -518,6 +518,10 @@ Android.prototype.setWindow = function(name, cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.closeWindow = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.clearWebView = function(cb) {
   cb(new NotYetImplementedError(), null);
 };

@@ -72,6 +72,32 @@ _.each(devices, function(sim) {
         });
       });
     });
+
+    it("should be able to close windows", function(done) {
+      loadWebView("safari", h.driver, function() {
+        h.driver.elementById('blanklink', function(err, link) {
+          link.click(function() {
+            spinTitle("I am another page title", h.driver, function(err) {
+              should.not.exist(err);
+              h.driver.windowHandles(function(err, handles) {
+                var handles1 = handles.length;
+                h.driver.close(function(err) {
+                  should.not.exist(err);
+                  h.driver.windowHandles(function(err, handles) {
+                    var handles2 = handles.length;
+                    handles1.should.be.above(handles2);
+                    spinTitle("I am a page title", h.driver, function(err) {
+                      should.not.exist(err);
+                      done();
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   }, null, null, {device: sim + " Simulator"});
 });
 

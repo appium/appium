@@ -39,6 +39,7 @@ var IOS = function(args) {
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
+  this.selectingNewPage = false;
   this.windowHandleCache = [];
   this.webElementIds = [];
   this.implicitWaitMs = 0;
@@ -263,29 +264,41 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     logger.error("Can't enter web frame without a bundle ID");
     throw new Error("Tried to enter web frame without a bundle ID");
   }
-  this.remote = rd.init(exitCb);
-  this.remote.connect(function(appDict) {
-    if(!_.has(appDict, me.bundleId)) {
-      logger.error("Remote debugger did not list " + me.bundleId + " among " +
-                   "its available apps");
-      if(_.has(appDict, "com.apple.mobilesafari")) {
-        logger.info("Using mobile safari instead");
-        me.remote.selectApp("com.apple.mobilesafari", cb);
+  if (this.remote !== null && this.bundleId !== null) {
+    this.remote.selectApp(this.bundleId, cb);
+  } else {
+    this.remote = rd.init(exitCb);
+    this.remote.connect(function(appDict) {
+      if(!_.has(appDict, me.bundleId)) {
+        logger.error("Remote debugger did not list " + me.bundleId + " among " +
+                     "its available apps");
+        if(_.has(appDict, "com.apple.mobilesafari")) {
+          logger.info("Using mobile safari instead");
+          me.remote.selectApp("com.apple.mobilesafari", cb);
+        } else {
+          cb([]);
+        }
       } else {
-        cb([]);
+        me.remote.selectApp(me.bundleId, cb);
       }
-    } else {
-      me.remote.selectApp(me.bundleId, cb);
-    }
-  }, _.bind(me.onPageChange, me));
+    }, _.bind(me.onPageChange, me));
+  }
 };
 
 IOS.prototype.onPageChange = function(pageArray) {
   logger.info("Remote debugger notified us of a new page listing");
+  if (this.selectingNewPage) {
+    logger.info("We're in the middle of selecting a page, ignoring");
+    return;
+  }
   var newIds = []
+    , keyId = null
     , me = this;
   _.each(pageArray, function(page) {
     newIds.push(page.id.toString());
+    if (page.isKey) {
+      keyId = page.id.toString();
+    }
   });
   var newPages = [];
   _.each(newIds, function(id) {
@@ -293,18 +306,34 @@ IOS.prototype.onPageChange = function(pageArray) {
       newPages.push(id);
     }
   });
+  var newPage = null;
   if (this.curWindowHandle === null) {
     logger.info("We don't appear to have window set yet, ignoring");
   } else if (newPages.length) {
     logger.info("We have new pages, going to select page " + newPages[0]);
-    this.remote.selectPage(newPages[0], function() {
-      me.curWindowHandle = newPages[0];
-    });
-  } else if (!_.contains(me.windowHandleCache, me.curWindowHandle.toString())) {
-    logger.error("New page listing from remote debugger doesn't contain " +
-                 "current window, not sure how to proceed");
+    newPage = newPages[0];
+  } else if (!_.contains(newIds, me.curWindowHandle.toString())) {
+    logger.info("New page listing from remote debugger doesn't contain " +
+                 "current window, let's assume it's closed");
+    if (keyId !== null) {
+      logger.info("Debugger already selected page " + keyId + ", " +
+                  "confirming that choice.");
+    } else {
+      logger.error("Don't have our current window anymore, and there " +
+                   "aren't any more to load! Doing nothing...");
+    }
+    me.curWindowHandle = keyId;
+    me.remote.pageIdKey = parseInt(keyId, 10);
   } else {
     logger.info("New page listing is same as old, doing nothing");
+  }
+
+  if (newPage !== null) {
+    this.selectingNewPage = true;
+    this.remote.selectPage(newPage, function() {
+      me.selectingNewPage = false;
+      me.curWindowHandle = newPage;
+    });
   }
   this.windowHandleCache = newIds;
 };
@@ -379,6 +408,13 @@ IOS.prototype.push = function(elem) {
   var me = this;
 
   var next = function() {
+    if (me.selectingNewPage && me.curWindowHandle) {
+      logger.info("We're in the middle of selecting a new page, " +
+                  "waiting to run next command until done");
+      setTimeout(next, 500);
+      return;
+    }
+
     if (me.queue.length <= 0 || me.progress > 0) {
       return;
     }
@@ -529,7 +565,7 @@ IOS.prototype.findAndAct = function(strategy, selector, index, action, actionPar
     // app/uiauto/appium/app.js:elemForAction
     , supportedActions = ["tap", "isEnabled", "isValid", "isVisible",
                           "value", "name", "label", "setValue", "click",
-                          "selectPage"]
+                          "selectPage", "rect"]
     , many = index > 0;
 
   if (action === "click") { action = "tap"; }
@@ -545,10 +581,15 @@ IOS.prototype.findAndAct = function(strategy, selector, index, action, actionPar
     cmd += strParams.join(', ');
     cmd += ")";
     me.proxy(cmd, function(err, res) {
-      if (!err && res.value !== null) {
-        findCb(true, err, res);
-      } else {
+      if (err || res.status === status.codes.NoSuchElement.code) {
         findCb(false, err, res);
+      } else if (many && res.value === []) {
+        findCb(false, err, {
+          status: status.codes.NoSuchElement.code
+          , value: "Could not find element in findAndAct"
+        });
+      } else {
+        findCb(true, err, res);
       }
     });
   };
@@ -1178,31 +1219,73 @@ IOS.prototype.setWindow = function(name, cb) {
   }
 };
 
+IOS.prototype.closeWindow = function(cb) {
+  if (this.curWindowHandle) {
+    this.closeSafariWindow(cb);
+  } else {
+    cb(new NotImplementedError(), null);
+  }
+};
+
 IOS.prototype.setSafariWindow = function(windowId, cb) {
   var me = this;
-  var success = function(err, res, cb) {
-    if (err || res.status !== status.codes.Success.code) {
-      cb(err, res);
-      return false;
-    }
-    return true;
-  };
 
   me.findAndAct('name', 'Pages', 0, 'value', [], function(err, res) {
-    if (success(err, res, cb)) {
+    if (me.checkSuccess(err, res, cb)) {
       if (res.value === "") {
         cb(err, res);
       } else {
         me.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
-          if (success(err, res, cb)) {
+          if (me.checkSuccess(err, res, cb)) {
             me.findAndAct('tag name', 'pageIndicator', 0, 'selectPage', [windowId], function(err, res) {
-              if (success(err, res, cb)) {
+              if (me.checkSuccess(err, res, cb)) {
                 me.findAndAct('name', 'Done', 0, 'tap', [], cb);
               }
             });
           }
         });
       }
+    }
+  });
+};
+
+IOS.prototype.checkSuccess = function(err, res, cb) {
+  if (err || res.status !== status.codes.Success.code) {
+    cb(err, res);
+    return false;
+  }
+  return true;
+};
+
+IOS.prototype.closeSafariWindow = function(cb) {
+  var me = this;
+  me.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
+    if (me.checkSuccess(err, res, cb)) {
+      me.findAndAct('name', 'Close page', 0, 'click', [], function(err, res) {
+        if (me.checkSuccess(err, res, cb)) {
+          var oldImplicitWait = me.implicitWaitMs;
+          me.implicitWaitMs = 0;
+          me.findUIElementOrElements('name', 'Done', null, false, function(err, res) {
+            me.implicitWaitMs = oldImplicitWait;
+            if (res.status === status.codes.Success.code) {
+              var command = ["au.getElement('", res.value.ELEMENT,
+                "').tap()"].join('');
+              // don't care if it fails
+              me.proxy(command, function() {
+                cb(null, {
+                  status: status.codes.Success.code
+                  , value: null
+                });
+              });
+            } else {
+              cb(null, {
+                status: status.codes.Success.code
+                , value: null
+              });
+            }
+          });
+        }
+      });
     }
   });
 };

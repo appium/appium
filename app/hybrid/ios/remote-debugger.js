@@ -103,6 +103,7 @@ RemoteDebugger.prototype.selectApp = function(appIdKey, cb) {
   logger.info("Selecting app");
   this.send(connectToApp, _.bind(function(pageDict) {
     cb(this.pageArrayFromDict(pageDict));
+    this.specialCbs['_rpc_forwardGetListing:'] = _.bind(this.onPageChange, this);
   }, this));
 };
 
@@ -113,6 +114,7 @@ RemoteDebugger.prototype.pageArrayFromDict = function(pageDict) {
       id: dict.WIRPageIdentifierKey
       , title: dict.WIRTitleKey
       , url: dict.WIRURLKey
+      , isKey: typeof dict.WIRConnectionIdentifierKey !== "undefined"
     });
   });
   return newPageArray;
@@ -133,9 +135,8 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
         if (err || res.result.value == 'loading') {
           me.pageUnload();
         }
-        me.specialCbs['_rpc_forwardGetListing:'] = _.bind(me.onPageChange, me);
         cb();
-      }, 0);
+      });
     });
   });
 };
@@ -242,6 +243,7 @@ RemoteDebugger.prototype.handleSpecialMessage = function(specialCb) {
   if (fn) {
     if (specialCb != "_rpc_forwardGetListing:") {
       this.specialCbs[specialCb] = null;
+    } else {
     }
     fn.apply(this, _.rest(arguments));
   }

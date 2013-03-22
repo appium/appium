@@ -349,6 +349,10 @@ exports.keyevent = function(req, res) {
   req.device.keyevent(keycode, getResponseHandler(req, res));
 };
 
+exports.back = function(req, res) {
+  req.device.back(getResponseHandler(req, res));
+};
+
 exports.keys = function(req, res) {
   var keys = req.body.value.join('');
 

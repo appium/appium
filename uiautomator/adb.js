@@ -801,6 +801,15 @@ ADB.prototype.installApp = function(cb) {
   }
 };
 
+ADB.prototype.back = function(cb) {
+  this.requireDeviceId();
+  this.debug("Pressing the BACK button");
+  var cmd = this.adbCmd + " shell input keyevent 4";
+  exec(cmd, function() {
+    cb();
+  });
+};
+
 ADB.prototype.goToHome = function(cb) {
   this.requireDeviceId();
   this.debug("Pressing the HOME button");

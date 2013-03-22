@@ -713,6 +713,10 @@ IOS.prototype.submit = function(elementId, cb) {
   }
 };
 
+IOS.prototype.keyevent = function(keycode, cb) {
+  cb(new NotImplementedError(), null);
+};
+
 IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
   var command
     , options = {

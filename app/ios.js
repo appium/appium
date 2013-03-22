@@ -45,6 +45,7 @@ var IOS = function(args) {
   this.implicitWaitMs = 0;
   this.curCoords = null;
   this.curWebCoords = null;
+  this.onPageChangeCb = null;
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -333,7 +334,14 @@ IOS.prototype.onPageChange = function(pageArray) {
     this.remote.selectPage(newPage, function() {
       me.selectingNewPage = false;
       me.curWindowHandle = newPage;
+      if (me.onPageChangeCb !== null) {
+        me.onPageChangeCb();
+        me.onPageChangeCb = null;
+      }
     });
+  } else if (this.onPageChangeCb !== null) {
+    this.onPageChangeCb();
+    this.onPageChangeCb = null;
   }
   this.windowHandleCache = newIds;
 };
@@ -1220,8 +1228,19 @@ IOS.prototype.setWindow = function(name, cb) {
 };
 
 IOS.prototype.closeWindow = function(cb) {
+  var me = this;
   if (this.curWindowHandle) {
-    this.closeSafariWindow(cb);
+    var closeFn = _.bind(this.closeIPhoneWindow, this);
+    if (this.deviceType === "ipad") {
+      closeFn = _.bind(this.closeIPadWindow, this);
+    }
+    closeFn(function(err, res) {
+      // wait for page change callback to happen before we return
+      // control to the client
+      me.onPageChangeCb = function() {
+        cb(err, res);
+      };
+    });
   } else {
     cb(new NotImplementedError(), null);
   }
@@ -1257,7 +1276,13 @@ IOS.prototype.checkSuccess = function(err, res, cb) {
   return true;
 };
 
-IOS.prototype.closeSafariWindow = function(cb) {
+IOS.prototype.closeIPadWindow = function(cb) {
+  var me = this;
+  me.findAndAct('xpath', '//button[contains(@name, "Close tab for")]',
+      0, 'tap', [], cb);
+};
+
+IOS.prototype.closeIPhoneWindow = function(cb) {
   var me = this;
   me.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
     if (me.checkSuccess(err, res, cb)) {

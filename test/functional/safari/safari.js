@@ -10,32 +10,8 @@ var desc = require("../../helpers/driverblock.js").describeForSafari()
   , should = require('should');
 
 
-// todo: write window manipulation test for iphone version
-
-desc('safari ipad', function(h) {
-  it('should be able to close tabs', function(done) {
-    h.driver.frame(null, function() {
-      h.driver.elementByTagName("window", function(err, win) {
-        win.elementsByXPath("//button[contains(@name, 'Close tab for')]", function(err, els) {
-          els.length.should.be.above(0);
-          var closeTab = function(idx) {
-            els[idx].click(function() {
-              if (idx+1 === els.length) {
-                done();
-              } else {
-                closeTab(idx+1);
-              }
-            });
-          };
-          closeTab(0);
-        });
-      });
-    });
-  });
-}, null, null, {device: 'iPad Simulator'});
-
-//var devices = ["iPhone", "iPad"];
-var devices = ["iPad", "iPhone"];
+var devices = ["iPhone", "iPad"];
+//var devices = ["iPad", "iPhone"];
 _.each(devices, function(sim) {
 
 

@@ -47,15 +47,15 @@ _.each(["iPhone", "iPad"], function(sim) {
   describeWd('windows and frames', function(h) {
     it("should automate a new window if one opens (" + sim + ")", function(done) {
       loadWebView("safari", h.driver, function() {
-        h.driver.elementById('googlelink', function(err, link) {
+        h.driver.elementById('blanklink', function(err, link) {
           link.click(function() {
-            spinTitle("Google", h.driver, function(err) {
+            spinTitle("I am another page title", h.driver, function(err) {
               should.not.exist(err);
               done();
             });
           });
         });
-      }, "http://localhost:4723/guinea-pig");
+      });
     });
   }, null, null, {device: sim + " Simulator"});
 });

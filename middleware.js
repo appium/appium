@@ -1,6 +1,7 @@
 "use strict";
 
 var express = require('express')
+  , _s = require('underscore.string')
   , bodyParser = express.bodyParser();
 
 module.exports.parserWrap = function(req, res, next) {
@@ -10,9 +11,12 @@ module.exports.parserWrap = function(req, res, next) {
     req.headers['content-length'] = 0;
     next();
   } else {
-    // hack because python client library sux
-    if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
-      req.headers['content-type'] = 'application/json';
+    // allow guineapig
+    if (!_s.startsWith(req.path, "/test")) {
+      // hack because python client library sux
+      if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+        req.headers['content-type'] = 'application/json';
+      }
     }
     bodyParser(req, res, next);
   }

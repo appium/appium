@@ -480,7 +480,7 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
     , startY: startY
     , endX: endX
     , endY: endY
-    , steps: (duration * 1000) / 5
+    , steps: Math.round((duration * 1000) / 5)
   };
   if (elId !== null) {
     swipeOpts.elementId = elId;

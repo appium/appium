@@ -343,6 +343,11 @@ exports.getPageIndex = function(req, res) {
   req.device.getPageIndex(elementId, getResponseHandler(req, res));
 };
 
+exports.keyevent = function(req, res) {
+  var keycode = req.body.keycode;
+  req.device.keyevent(keycode, getResponseHandler(req, res));
+};
+
 exports.keys = function(req, res) {
   var keys = req.body.value.join('');
 
@@ -622,6 +627,7 @@ var mobileCmdMap = {
   , 'findAndAct': exports.findAndAct
   , 'setValue' : exports.setValueImmediate
   , 'reset' : exports.reset
+  , 'keyevent' : exports.keyevent
 };
 
 exports.produceError = function(req, res) {

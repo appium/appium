@@ -47,6 +47,25 @@ Android.prototype.fastReset = function(cb) {
   this.adb.runFastReset(function(err) { if (err) return cb(err); return cb(null); });
 };
 
+Android.prototype.keyevent = function(keycode, cb) {
+  // keycode must be an int.
+  var cmd = 'adb shell input keyevent ' + parseInt(keycode, 10);
+  logger.info(cmd);
+  exec(cmd, {}, function(err, stdout, stderr) {
+    if (err) {
+      logger.warn(stderr);
+      return cb(null, {
+                  status: status.codes.UnknownError.code
+                  , value: null
+                });
+    }
+    cb(null, {
+         status: status.codes.Success.code
+         , value: null
+       });
+  });
+};
+
 Android.prototype.start = function(cb, onDie) {
   if (typeof onDie === "function") {
     this.onStop = onDie;

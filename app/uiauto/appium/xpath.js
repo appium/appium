@@ -39,7 +39,7 @@ au.getXpathExtPath = function(matchedExt) {
 
 au.parseXpath = function(xpath) {
   // e.g. "//button" or "button" or "/button"
-  var root = "^(/?/?[a-zA-Z]+)";
+  var root = "^(/?/?(?:[a-zA-Z]+|\\*))";
   var ext = "((//?[a-zA-Z]+)*)"; // e.g. "/text" or "/cell//button/text"
   var attrEq = "(@[a-zA-Z0-9_]+=[^\\]]+)"; // e.g. [@name="foo"]
   // e.g. [contains(@name, "foo")]

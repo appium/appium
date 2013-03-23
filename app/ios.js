@@ -900,6 +900,10 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
   }
 };
 
+IOS.prototype.back = function(cb) {
+  cb(new NotImplementedError(), null);
+};
+
 IOS.prototype.getPageIndex = function(elementId, cb) {
   if (this.curWindowHandle) {
     cb(new NotImplementedError(), null);

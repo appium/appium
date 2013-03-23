@@ -24,7 +24,9 @@ var ADB = function(opts) {
   }
   this.sdkRoot = opts.sdkRoot;
   this.skipInstall = opts.skipInstall || false;
-  this.skipUninstall = !(opts.reset || false);
+  // Don't uninstall if using fast reset.
+  // Uninstall if reset is set and fast reset isn't.
+  this.skipUninstall = opts.fastReset || !(opts.reset || false);
   this.port = opts.port || 4724;
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;

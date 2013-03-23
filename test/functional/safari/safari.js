@@ -1,7 +1,7 @@
 /*global it:true */
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForSafari()
+var desc = require("../../helpers/driverblock.js").describeForSafari()
   , wvHelpers = require("../../helpers/webview.js")
   , webviewTests = wvHelpers.buildTests
   , loadWebView = wvHelpers.loadWebView
@@ -9,49 +9,54 @@ var describeWd = require("../../helpers/driverblock.js").describeForSafari()
   , _ = require('underscore')
   , should = require('should');
 
-describeWd('safari init', function(h) {
-  it('getting current window should work initially', function(done) {
-    h.driver.windowHandle(function(err, handleId) {
-      should.not.exist(err);
-      handleId.should.eql(1);
-      done();
+
+var devices = ["iPhone", "iPad"];
+//var devices = ["iPad", "iPhone"];
+_.each(devices, function(sim) {
+
+  desc('windows and frames (' + sim + ')', function(h) {
+
+    it('getting current window should work initially', function(done) {
+      h.driver.windowHandle(function(err, handleId) {
+        should.not.exist(err);
+        parseInt(handleId, 10).should.be.above(0);
+        done();
+      });
     });
-  });
-});
 
-// todo: write window manipulation test for iphone version
-
-describeWd('safari ipad', function(h) {
-  it('should be able to close tabs', function(done) {
-    h.driver.frame(null, function() {
-      h.driver.elementByTagName("window", function(err, win) {
-        win.elementsByXPath("//button[contains(@name, 'Close tab for')]", function(err, els) {
-          els.length.should.be.above(0);
-          var closeTab = function(idx) {
-            els[idx].click(function() {
-              if (idx+1 === els.length) {
-                done();
-              } else {
-                closeTab(idx+1);
-              }
-            });
-          };
-          closeTab(0);
+    it("should throw nosuchwindow if there's not one", function(done) {
+      loadWebView("safari", h.driver, function() {
+        h.driver.window('noexistman', function(err) {
+          should.exist(err);
+          err.status.should.eql(23);
+          done();
         });
       });
     });
-  });
-}, null, null, {device: 'iPad Simulator'});
 
-_.each(["iPhone", "iPad"], function(sim) {
-  describeWd('windows and frames', function(h) {
-    it("should automate a new window if one opens (" + sim + ")", function(done) {
+    it("should be able to open and close windows", function(done) {
       loadWebView("safari", h.driver, function() {
         h.driver.elementById('blanklink', function(err, link) {
           link.click(function() {
             spinTitle("I am another page title", h.driver, function(err) {
               should.not.exist(err);
-              done();
+              h.driver.windowHandles(function(err, handles) {
+                var handles1 = handles.length;
+                h.driver.close(function(err) {
+                  // wait for safari to write window status
+                  setTimeout(function() {
+                    should.not.exist(err);
+                    h.driver.windowHandles(function(err, handles) {
+                      var handles2 = handles.length;
+                      handles1.should.be.above(handles2);
+                      spinTitle("I am a page title", h.driver, function(err) {
+                        should.not.exist(err);
+                        done();
+                      });
+                    });
+                  }, 3000);
+                });
+              });
             });
           });
         });

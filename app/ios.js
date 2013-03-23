@@ -119,11 +119,13 @@ IOS.prototype.start = function(cb, onDie) {
       me.cbForCurrentCmd(error, null);
       code = 1; // this counts as an error even if instruments doesn't think so
     }
-    this.instruments = null;
-    this.curCoords = null;
+    me.instruments = null;
+    me.curCoords = null;
     try {
-      this.stopRemote();
-    } catch(e) {}
+      me.stopRemote();
+    } catch(e) {
+      logger.info("Error stopping remote: " + e.name + ": " + e.message);
+    }
     var nexts = 0;
     var next = function() {
       nexts++;
@@ -312,7 +314,7 @@ IOS.prototype.onPageChange = function(pageArray) {
     logger.info("We don't appear to have window set yet, ignoring");
   } else if (newPages.length) {
     logger.info("We have new pages, going to select page " + newPages[0]);
-    newPage = newPages[0];
+    newPage = parseInt(newPages[0], 10);
   } else if (!_.contains(newIds, me.curWindowHandle.toString())) {
     logger.info("New page listing from remote debugger doesn't contain " +
                  "current window, let's assume it's closed");
@@ -1237,9 +1239,9 @@ IOS.prototype.closeWindow = function(cb) {
     closeFn(function(err, res) {
       // wait for page change callback to happen before we return
       // control to the client
-      me.onPageChangeCb = function() {
+      //me.onPageChangeCb = function() {
         cb(err, res);
-      };
+      //};
     });
   } else {
     cb(new NotImplementedError(), null);

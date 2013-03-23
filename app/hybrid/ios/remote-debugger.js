@@ -41,7 +41,7 @@ var RemoteDebugger = function(onDisconnect) {
   this.pageIdKey = null;
   this.pageLoading = false;
   this.curMsgId = 0;
-  this.dataCbs = [];
+  this.dataCbs = {};
   this.onAppDisconnect = onDisconnect || noop;
   this.pageChangeCb = noop;
   this.specialCbs = {
@@ -77,7 +77,8 @@ RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
 };
 
 RemoteDebugger.prototype.disconnect = function() {
-  this.socket.close();
+  logger.info("Disconnecting from remote debugger");
+  this.socket.destroy();
 };
 
 RemoteDebugger.prototype.setConnectionKey = function(cb) {
@@ -270,6 +271,9 @@ RemoteDebugger.prototype.setHandlers = function() {
       , msgId = dataKey.id
       , result = dataKey.result
       , error = dataKey.error || null;
+      if (msgId !== null && typeof msgId !== "undefined") {
+        msgId = msgId.toString();
+      }
       if (dataKey.method == "Profiler.resetProfiles") {
         logger.info("Device is telling us to reset profiles. Should probably " +
                     "do some kind of callback here");
@@ -279,13 +283,17 @@ RemoteDebugger.prototype.setHandlers = function() {
         me.pageLoad();
       } else if (typeof me.dataCbs[msgId] === "function") {
         me.dataCbs[msgId](error, result);
+        me.dataCbs[msgId] = null;
+      } else if (me.dataCbs[msgId] === null) {
+        logger.error("Debugger returned data for message " + msgId +
+                     "but we already ran that callback! WTF??");
       } else {
         if (!msgId && !result && !error) {
           logger.info("Got a blank data response from debugger");
         } else {
           logger.error("Debugger returned data for message " + msgId +
                       " but we weren't waiting for that message! " +
-                      " result: " + result +
+                      " result: " + JSON.stringify(result) +
                       " error: " + error);
         }
       }
@@ -311,8 +319,14 @@ RemoteDebugger.prototype.send = function (data, cb, cb2) {
       this.specialCbs.connect = cb2;
     }
   } else if( data.__argument && data.__argument.WIRSocketDataKey ) {
+    //console.log("MsgId was " + this.curMsgId);
     this.curMsgId += 1;
-    this.dataCbs[this.curMsgId] = cb;
+    //console.log("Giving message new id of " + this.curMsgId);
+    this.dataCbs[this.curMsgId.toString()] = cb;
+    //_.each(this.dataCbs, function(cb, msgId) {
+      //console.log(msgId + ": " + cb);
+    //});
+    //console.log(JSON.stringify(this.dataCbs));
     data.__argument.WIRSocketDataKey.id = this.curMsgId;
     data.__argument.WIRSocketDataKey = new
       Buffer(JSON.stringify(data.__argument.WIRSocketDataKey));

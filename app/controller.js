@@ -541,6 +541,10 @@ exports.setWindow = function(req, res) {
   }
 };
 
+exports.closeWindow = function(req, res) {
+  req.device.closeWindow(getResponseHandler(req, res));
+};
+
 exports.getWindowHandles = function(req, res) {
   req.device.getWindowHandles(getResponseHandler(req, res));
 };

@@ -173,6 +173,26 @@ class AndroidCommandHolder {
         String substrStr = substr ? "true" : "false";
         Logger.info("Building xpath selector from attr " + attr + " and constraint " + constraint + " and substr " + substrStr);
         String selOut = "s";
+
+        // $driver.find_element :xpath, %(//*[contains(@text, 'agree')])
+        // info: [ANDROID] [info] Building xpath selector from attr text and
+        // constraint agree and substr true
+        // info: [ANDROID] [info] s.className('*').textContains('agree')
+        try {
+          nodeType = path.getJSONObject(0).getString("node");
+        } catch (JSONException e) {
+          throw new AndroidCommandException(
+              "Error parsing xpath path obj from JSON");
+        }
+
+        if (attr.toLowerCase().contentEquals("text") && !constraint.isEmpty()
+            && substr == true && nodeType.contentEquals("*") == true) {
+          selOut += ".textContains('" + constraint + "')";
+          s = s.textContains(constraint);
+          Logger.info(selOut);
+          return s;
+        }
+
         for (int i = 0; i < path.length(); i++) {
             try {
                 pathObj = path.getJSONObject(i);

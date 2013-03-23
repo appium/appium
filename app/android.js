@@ -48,21 +48,11 @@ Android.prototype.fastReset = function(cb) {
 };
 
 Android.prototype.keyevent = function(keycode, cb) {
-  // keycode must be an int.
-  var cmd = 'adb shell input keyevent ' + parseInt(keycode, 10);
-  logger.info(cmd);
-  exec(cmd, {}, function(err, stdout, stderr) {
-    if (err) {
-      logger.warn(stderr);
-      return cb(null, {
-                  status: status.codes.UnknownError.code
-                  , value: null
-                });
-    }
+  this.adb.keyevent(keycode, function() {
     cb(null, {
-         status: status.codes.Success.code
-         , value: null
-       });
+      status: status.codes.Success.code
+      , value: null
+    });
   });
 };
 

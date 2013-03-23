@@ -819,6 +819,17 @@ ADB.prototype.goToHome = function(cb) {
   });
 };
 
+ADB.prototype.keyevent = function(keycode, cb) {
+  this.requireDeviceId();
+  var code = parseInt(keycode, 10);
+  // keycode must be an int.
+  var cmd = this.adbCmd + ' shell input keyevent ' + code;
+  this.debug("Sending keyevent " + code);
+  exec(cmd, function() {
+    cb();
+  });
+};
+
 ADB.prototype.unlockScreen = function(cb) {
   this.requireDeviceId();
   this.debug("Attempting to unlock screen");

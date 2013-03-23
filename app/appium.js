@@ -317,7 +317,6 @@ Appium.prototype.invoke = function() {
           , appActivity: this.args.androidActivity
           , reset: !this.args.noReset
           , fastReset: this.args.fastReset
-          , skipInstall: this.args.skipAndroidInstall
         };
         this.devices[this.deviceType] = android(androidOpts);
       } else {

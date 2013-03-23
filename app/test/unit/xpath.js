@@ -37,6 +37,10 @@ describe("XPath lookups", function() {
         attr: 'label', constraint: 'hi', substr: true}
     , "//button[contains(@label, what's up dog)]": {
         attr: 'label', constraint: "what's up dog", substr: true}
+    , "//*[contains(@text, 'agree')]": {
+      attr: 'text', constraint: 'agree', substr: true}
+    , "//*[@text='agree']": {
+      attr: 'text', constraint: 'agree', substr: false}
   };
   var notOks = [
     , "//button123"

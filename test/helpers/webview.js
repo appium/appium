@@ -631,6 +631,29 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should set text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('prompt1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertKeys("yes I do!", function(err) {
+              should.not.exist(err);
+              h.driver.acceptAlert(function(err) {
+                should.not.exist(err);
+                h.driver.elementById('promptVal', function(err, el) {
+                  should.not.exist(err);
+                  el.getValue(function(err, val) {
+                    should.not.exist(err);
+                    val.should.eql("yes I do!");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   });
 };
 

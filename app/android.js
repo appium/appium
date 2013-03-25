@@ -439,6 +439,10 @@ Android.prototype.getAlertText = function(cb) {
     cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.setAlertText = function(text, cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.postAcceptAlert = function(cb) {
     cb(new NotYetImplementedError(), null);
 };

@@ -631,7 +631,7 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it('should set text of alert', function(done) {
+    it('should set text of prompt', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('prompt1', function(err, link) {
           link.click(function(err) {
@@ -649,6 +649,20 @@ module.exports.buildTests = function(webviewType) {
                   });
                 });
               });
+            });
+          });
+        });
+      });
+    });
+    it('should fail to set text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertKeys("yes I do!", function(err) {
+              should.exist(err);
+              err.status.should.equal(11);
+              done();
             });
           });
         });

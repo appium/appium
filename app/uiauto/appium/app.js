@@ -548,7 +548,7 @@ $.extend(au, {
   , setAlertText: function(text) {
       var alert = this.mainApp.alert();
       var boxRes = this.getElementByType('textfield', alert);
-      if (typeof boxRes.value.ELEMENT !== "undefined") {
+      if (boxRes.status === codes.Success.code) {
         var el = this.getElement(boxRes.value.ELEMENT);
         el.setValueByType(text);
         return {
@@ -556,7 +556,10 @@ $.extend(au, {
           value: true
         };
       }
-      return boxRes;
+      return {
+        status: codes.ElementNotVisible.code,
+        value: "Tried to set text of an alert that wasn't a prompt"
+      };
     }
 
   , acceptAlert: function() {

@@ -124,11 +124,18 @@ class AndroidCommandHolder {
         AndroidElementsHash elHash = AndroidElementsHash.getInstance();
         AndroidElement baseEl = contextElement(contextId);
         
+        boolean useIndex = sel.toString().contains("CLASS_REGEX=");
+        UiSelector tmp = null;
         int counter = 0;
         while (keepSearching) {
             if (baseEl == null) {
-                Logger.info("keep searching A " + counter);
-                lastFoundObj = new UiObject(sel.index(counter));
+                Logger.info("keep searching A " + counter + " useIndex? " + useIndex);
+                if (useIndex) {
+                  tmp = sel.index(counter);
+                } else {
+                  tmp = sel.instance(counter);
+                }
+                lastFoundObj = new UiObject(tmp);
             } else {
                 Logger.info("keep searching B " + counter);
                 lastFoundObj = baseEl.getChild(sel.instance(counter));

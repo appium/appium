@@ -628,6 +628,7 @@ ADB.prototype.waitForActivity = function(cb) {
     , endAt = Date.now() + waitMs
     , match = null
     , foundActivity = false
+    , found = null
     , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.([^\}]+)\}/);
 
   var getFocusedApp = _.bind(function() {
@@ -640,6 +641,7 @@ ADB.prototype.waitForActivity = function(cb) {
         _.each(stdout.split("\n"), _.bind(function(line) {
           match = searchRe.exec(line);
           if (match) {
+            found = match;
             if (match[1] === this.appPackage && match[2] === this.appActivity) {
               foundActivity = true;
             }
@@ -650,8 +652,10 @@ ADB.prototype.waitForActivity = function(cb) {
         } else if (Date.now() < endAt) {
           setTimeout(getFocusedApp, intMs);
         } else {
-          logger.error("App never showed up as active");
-          cb(new Error("App never showed up as active"));
+          var found = found && found.length > 2 ? found[2] : "null";
+          var msg = "App never showed up as active. appActivity: " + found + " != " + this.appActivity;
+          logger.error(msg);
+          cb(new Error(msg));
         }
       }
     }, this));

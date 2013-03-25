@@ -601,6 +601,20 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should get text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertText(function(err, text) {
+              should.not.exist(err);
+              text.should.eql("I am an alert");
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 };
 

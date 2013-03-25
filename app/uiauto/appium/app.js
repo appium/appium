@@ -532,9 +532,16 @@ $.extend(au, {
   // Alert-related functions
 
   , getAlertText: function() {
+      var alert = this.mainApp.alert();
+      var textRes = this.getElementsByType('text', alert);
+      var text = alert.name();
+      if (text.indexOf('http') != -1 && textRes.value.length > 1) {
+        var textId = textRes.value[textRes.value.length-1].ELEMENT;
+        text = this.getElement(textId).name();
+      }
       return {
         status: codes.Success.code,
-        value: this.mainApp.alert().name()
+        value: text
       };
     }
 

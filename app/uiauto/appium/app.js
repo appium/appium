@@ -546,6 +546,13 @@ $.extend(au, {
       };
     }
 
+  , alertIsPresent: function() {
+      return {
+        status: codes.Success.code,
+        value: this.mainApp.alert() !== null
+      };
+    }
+
   , dismissAlert: function() {
       this.mainApp.alert().cancelButton().tap();
       return {

@@ -4,7 +4,6 @@
 var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
   , _s = require("underscore.string")
-  , fs = require('fs')
   , swig = require('swig')
   , path = require('path')
   , _ = require('underscore');
@@ -14,7 +13,11 @@ function getResponseHandler(req, res) {
     if (typeof response === "undefined" || response === null) {
       response = {};
     }
-    if (err !== null && typeof err !== "undefined") {
+    if (err !== null && typeof err.status !== 'undefined' && typeof err.value !== 'undefined') {
+      throw new Error("Looks like you passed in a response object as the " +
+                      "first param to getResponseHandler. Err is always the " +
+                      "first param! Fix your codes!");
+    } else if (err !== null && typeof err !== "undefined") {
       if (typeof err.name !== 'undefined') {
         if (err.name == 'NotImplementedError') {
           notImplementedInThisContext(req, res);

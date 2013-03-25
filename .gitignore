@@ -1,3 +1,4 @@
+.irb-history
 *.swp
 .DS_Store
 npm*.log

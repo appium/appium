@@ -33,7 +33,7 @@ class AndroidElementClassMap {
             String mappedSel = inst.map.get(selector);
             if (mappedSel != null) {
                 return "android.widget." + mappedSel;
-            } else if (selector.contains("android.")) {
+            } else if (selector.contains(".")) {
                 return selector;
             } else {
                 selector = selector.substring(0, 1).toUpperCase() + selector.substring(1);

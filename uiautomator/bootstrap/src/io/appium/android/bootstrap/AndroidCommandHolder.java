@@ -195,6 +195,18 @@ class AndroidCommandHolder {
           return s;
         }
 
+        // //*[contains(@tag, "button")]
+        if (attr.toLowerCase().contentEquals("tag") && !constraint.isEmpty()
+            && substr == true && nodeType.contentEquals("*") == true) {
+          // (?i) = case insensitive match. Esape everything that isn't an alpha num.
+          // use .* to match on contains.
+          constraint = "(?i)^.*" + constraint.replaceAll("([^\\p{Alnum}])", "\\\\$1") + ".*$";
+          selOut += ".classNameMatches('" + constraint + "')";
+          s = s.classNameMatches(constraint);
+          Logger.info(selOut);
+          return s;
+        }
+
         for (int i = 0; i < path.length(); i++) {
             try {
                 pathObj = path.getJSONObject(i);

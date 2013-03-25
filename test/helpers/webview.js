@@ -118,6 +118,18 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should find element from another element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByClassName('border', function(err, element) {
+          should.not.exist(err);
+          element.elementByXPath('./form', function(err, innerElement) {
+            should.not.exist(err);
+            should.exist(innerElement);
+            done();
+          });
+        });
+      });
+    });
   });
 
    desc('click', function(h) {

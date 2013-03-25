@@ -631,6 +631,23 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should not get text of alert that closed', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.acceptAlert(function(err) {
+              should.not.exist(err);
+              h.driver.alertText(function(err) {
+                should.exist(err);
+                err.status.should.equal(27);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
     it('should set text of prompt', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('prompt1', function(err, link) {

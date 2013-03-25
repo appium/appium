@@ -533,6 +533,13 @@ $.extend(au, {
 
   , getAlertText: function() {
       var alert = this.mainApp.alert();
+      if (alert.isNil()) {
+        return {
+          status: codes.NoAlertOpenError.code,
+          value: null
+        };
+      }
+
       var textRes = this.getElementsByType('text', alert);
       var text = alert.name();
       if (text.indexOf('http') != -1 && textRes.value.length > 1) {
@@ -564,6 +571,7 @@ $.extend(au, {
 
   , acceptAlert: function() {
       this.mainApp.alert().defaultButton().tap();
+      this.waitForAlertToClose();
       return {
         status: codes.Success.code,
         value: null
@@ -573,19 +581,33 @@ $.extend(au, {
   , alertIsPresent: function() {
       return {
         status: codes.Success.code,
-        value: this.mainApp.alert() !== null
+        value: !this.mainApp.alert().isNil()
       };
     }
 
   , dismissAlert: function() {
       if (!this.mainApp.alert().cancelButton().isNil()) {
         this.mainApp.alert().cancelButton().tap();
+        this.waitForAlertToClose();
         return {
           status: codes.Success.code,
           value: null
         };
       } else {
         return this.acceptAlert();
+      }
+    }
+
+  , waitForAlertToClose: function() {
+      var isClosed = false;
+      while (!isClosed) {
+        if (this.mainApp.alert().isNil()) {
+          isClosed = true;
+        } else {
+          console.log("Waiting for alert to close...");
+          console.log(this.mainApp.alert());
+          this.delay(0.3);
+        }
       }
     }
 });

@@ -23,7 +23,6 @@ var ADB = function(opts) {
     opts.sdkRoot = process.env.ANDROID_HOME || '';
   }
   this.sdkRoot = opts.sdkRoot;
-  this.skipInstall = opts.skipInstall || false;
   // Don't uninstall if using fast reset.
   // Uninstall if reset is set and fast reset isn't.
   this.skipUninstall = opts.fastReset || !(opts.reset || false);
@@ -795,12 +794,7 @@ ADB.prototype.installApp = function(cb) {
           function() { cb(null); });
   };
 
-  if (this.skipInstall) {
-    this.debug("Not installing app because server started with --skip-install");
-    cb();
-  } else {
-    next();
-  }
+  next();
 };
 
 ADB.prototype.back = function(cb) {

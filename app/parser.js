@@ -134,17 +134,6 @@ var args = [
             "to launch from your package (e.g., MainActivity)"
   }],
 
-  [['--skip-install'], {
-    dest: 'skipAndroidInstall'
-    , defaultValue: false
-    , action: 'storeTrue'
-    , required: false
-    , help: "(Android-only) Don't install the app; assume it's already on the " +
-            'device with a recent version. Useful for test development ' +
-            'against an unchanging app.'
-    , nargs: 0
-  }],
-
   [['--safari'], {
     defaultValue: false
     , action: 'storeTrue'

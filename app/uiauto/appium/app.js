@@ -545,6 +545,20 @@ $.extend(au, {
       };
     }
 
+  , setAlertText: function(text) {
+      var alert = this.mainApp.alert();
+      var boxRes = this.getElementByType('textfield', alert);
+      if (typeof boxRes.value.ELEMENT !== "undefined") {
+        var el = this.getElement(boxRes.value.ELEMENT);
+        el.setValueByType(text);
+        return {
+          status: codes.Success.code,
+          value: true
+        };
+      }
+      return boxRes;
+    }
+
   , acceptAlert: function() {
       this.mainApp.alert().defaultButton().tap();
       return {

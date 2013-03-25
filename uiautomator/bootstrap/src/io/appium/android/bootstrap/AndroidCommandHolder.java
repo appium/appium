@@ -127,8 +127,10 @@ class AndroidCommandHolder {
         int counter = 0;
         while (keepSearching) {
             if (baseEl == null) {
-                lastFoundObj = new UiObject(sel.instance(counter));
+                Logger.info("keep searching A " + counter);
+                lastFoundObj = new UiObject(sel.index(counter));
             } else {
+                Logger.info("keep searching B " + counter);
                 lastFoundObj = baseEl.getChild(sel.instance(counter));
             }
             counter++;
@@ -246,8 +248,15 @@ class AndroidCommandHolder {
             } catch (UnallowedTagNameException e) {
                 throw new AndroidCommandException(e.getMessage());
             }
+
+            if (androidClass.contentEquals("android.widget.Button")) {
+              androidClass += "|android.widget.ImageButton";
+              androidClass = androidClass.replaceAll("([^\\p{Alnum}|])", "\\\\$1");
+              s = s.classNameMatches("^" + androidClass + "$");
+            } else {
+              s = s.className(androidClass);
+            }
             Logger.info("Using class selector " + androidClass + " for find");
-            s = s.className(androidClass);
         } else if (strategy.equals("name")) {
             s = s.description(selector);
         } else {

@@ -332,7 +332,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            [480, 387].should.include(loc.y);
+            [510, 417].should.include(loc.y);
             done();
           });
         });
@@ -566,6 +566,25 @@ module.exports.buildTests = function(webviewType) {
           h.driver.execute('return arguments[0].scrollIntoView(true);', [{'ELEMENT': (el.value + 1)}], function(err) {
             should.exist(err);
             done();
+          });
+        });
+      });
+    });
+  });
+
+  desc('alerts', function(h) {
+    it('should allow accepting of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.acceptAlert(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am a page title");
+                done();
+              });
+            });
           });
         });
       });

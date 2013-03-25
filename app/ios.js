@@ -108,10 +108,12 @@ IOS.prototype.start = function(cb, onDie) {
   var onExit = function(code, traceDir) {
     if (!didLaunch) {
       logger.error("Instruments did not launch successfully, failing session");
-      cb("Instruments did not launch successfully--please check your app " +
+      return cb("Instruments did not launch successfully--please check your app " +
           "paths or bundle IDs and try again");
-      code = 1; // this counts as an error even if instruments doesn't think so
-    } else if (typeof me.cbForCurrentCmd === "function") {
+      //code = 1; // this counts as an error even if instruments doesn't think so
+    }
+
+    if (typeof me.cbForCurrentCmd === "function") {
       // we were in the middle of waiting for a command when it died
       // so let's actually respond with something
       var error = new UnknownError("Instruments died while responding to " +
@@ -630,11 +632,11 @@ IOS.prototype.setValueImmediate = function(elementId, value, cb) {
 IOS.prototype.setValue = function(elementId, value, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('click', [atomsElement], _.bind(function(err, res) {
+      this.executeAtom('click', [atomsElement], _.bind(function(err, res) {
         if (err) {
           cb(err, res);
         } else {
-          this.remote.executeAtom('type', [atomsElement, value], cb);
+          this.executeAtom('type', [atomsElement, value], cb);
         }
       }, this));
     }, this));
@@ -659,12 +661,41 @@ IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('tap', [atomsElement], cb);
+      this.executeAtom('tap', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');
     this.proxy(command, cb);
   }
+};
+
+IOS.prototype.executeAtom = function(atom, args, cb) {
+  var returned = false;
+  var lookForAlert = _.bind(function() {
+    if (!returned) {
+      logger.info("atom '" + atom + " did not return yet, checking to see if " +
+                  "we are blocked by an alert");
+      this.proxy("au.alertIsPresent()", function(err, res) {
+        if (res.value === true) {
+          logger.info("Found an alert, returning control to client");
+          returned = true;
+          cb(null, {
+            status: status.codes.Success.code
+            , value: ''
+          });
+        } else {
+          setTimeout(lookForAlert, 500);
+        }
+      });
+    }
+  }, this);
+  this.remote.executeAtom(atom, args, function(err, res) {
+    if (!returned) {
+      returned = true;
+      cb(err, res);
+    }
+  });
+  setTimeout(lookForAlert, 800);
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {
@@ -757,7 +788,7 @@ IOS.prototype.clickWebCoords = function(cb) {
 IOS.prototype.submit = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('submit', [atomsElement], cb);
+      this.executeAtom('submit', [atomsElement], cb);
     }, this));
   } else {
     cb(new NotImplementedError(), null);
@@ -789,7 +820,7 @@ IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elemen
 IOS.prototype.clear = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('clear', [atomsElement], cb);
+      this.executeAtom('clear', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').setValue('')"].join('');
@@ -800,7 +831,7 @@ IOS.prototype.clear = function(elementId, cb) {
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('get_text', [atomsElement], cb);
+      this.executeAtom('get_text', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').text()"].join('');
@@ -812,7 +843,7 @@ IOS.prototype.getName = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
       var script = "return arguments[0].tagName.toLowerCase()";
-      this.remote.executeAtom('execute_script', [script, [atomsElement]], cb);
+      this.executeAtom('execute_script', [script, [atomsElement]], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').type()"].join('');
@@ -829,7 +860,7 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
     } else {
-      this.remote.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
+      this.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
     }
   } else {
     if (_.contains(['label', 'name', 'value', 'values'], attributeName)) {
@@ -847,7 +878,7 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 IOS.prototype.getLocation = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('get_top_left_coordinates', [atomsElement], cb);
+      this.executeAtom('get_top_left_coordinates', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId,
@@ -865,7 +896,7 @@ IOS.prototype.getSize = function(elementId, cb) {
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
     } else {
-      this.remote.executeAtom('get_size', [atomsElement], cb);
+      this.executeAtom('get_size', [atomsElement], cb);
     }
   } else {
     var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
@@ -881,7 +912,7 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
         , value: "Currently only getting current window size is supported."
       });
     } else {
-      this.remote.executeAtom('get_window_size', [], function(err, res) {
+      this.executeAtom('get_window_size', [], function(err, res) {
         cb(null, {
           status: status.codes.Success.code
           , value: res
@@ -950,7 +981,7 @@ IOS.prototype.implicitWait = function(ms, cb) {
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('is_displayed', [atomsElement], cb);
+      this.executeAtom('is_displayed', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').isDisplayed() ? true : false"].join('');
@@ -961,7 +992,7 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
 IOS.prototype.elementEnabled = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('is_enabled', [atomsElement], cb);
+      this.executeAtom('is_enabled', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').isEnabled() ? true : false"].join('');
@@ -972,7 +1003,7 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
 IOS.prototype.elementSelected = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('is_selected', [atomsElement], cb);
+      this.executeAtom('is_selected', [atomsElement], cb);
     }, this));
   } else {
     cb(new NotImplementedError(), null);
@@ -982,7 +1013,7 @@ IOS.prototype.elementSelected = function(elementId, cb) {
 IOS.prototype.getCssProperty = function(elementId, propertyName, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('get_value_of_css_property', [atomsElement,
+      this.executeAtom('get_value_of_css_property', [atomsElement,
         propertyName], cb);
     }, this));
   } else {
@@ -1161,7 +1192,7 @@ IOS.prototype.getUrl = function(cb) {
 IOS.prototype.active = function(cb) {
   if (this.curWindowHandle) {
     var me = this;
-    this.remote.executeAtom('active_element', [], function(err, res) {
+    this.executeAtom('active_element', [], function(err, res) {
       me.cacheAndReturnWebEl(err, res, false, cb);
     });
   } else {
@@ -1350,7 +1381,7 @@ IOS.prototype.execute = function(script, args, cb) {
         args[i] = atomsElement;
       }
     }
-    this.remote.executeAtom('execute_script', [script, args], cb);
+    this.executeAtom('execute_script', [script, args], cb);
   }
 };
 
@@ -1387,7 +1418,7 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
       this.curWebCoords = coords;
       this.useAtomsElement(element, cb, _.bind(function(atomsElement) {
         var relCoords = {x: xoffset, y: yoffset};
-        this.remote.executeAtom('move_mouse', [atomsElement, relCoords], cb);
+        this.executeAtom('move_mouse', [atomsElement, relCoords], cb);
       }, this));
     } else {
       this.curCoords = coords;

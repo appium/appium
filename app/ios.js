@@ -502,16 +502,15 @@ IOS.prototype.handleFindCb = function(err, res, many, findCb) {
 
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
-
+  var atomsElement = this.getAtomsElement(ctx);
   var me = this;
   var doFind = function(findCb) {
-    me.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
+    me.remote.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
       me.cacheAndReturnWebEl(err, res, many, function(err, res) {
         me.handleFindCb(err, res, many, findCb);
       });
     });
   };
-
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 

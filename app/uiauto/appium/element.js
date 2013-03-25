@@ -5,6 +5,8 @@ UIAElementNil.prototype.type = function() {
     return "UIAElementNil";
 };
 
+UIAElementNil.prototype.isNil = function() { return true; };
+
 // this is mechanic notation for extending $(UIAElement)
 $.extend($.fn, {
   getActiveElement: function() {
@@ -50,6 +52,8 @@ $.extend($.fn, {
     }
 
 });
+
+UIAElement.prototype.isNil = function() { return false; };
 
 UIAElement.prototype.setValueByType = function(newValue) {
   var type = this.type();

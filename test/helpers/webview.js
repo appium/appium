@@ -585,12 +585,28 @@ module.exports.buildTests = function(webviewType) {
   });
 
   desc('alerts', function(h) {
-    it('should allow accepting of alert', function(done) {
+    it('should accept alert', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('alert1', function(err, link) {
           link.click(function(err) {
             should.not.exist(err);
             h.driver.acceptAlert(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am a page title");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should dismiss', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.dismissAlert(function(err) {
               should.not.exist(err);
               h.driver.title(function(err, title) {
                 title.should.eql("I am a page title");

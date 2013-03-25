@@ -561,10 +561,14 @@ $.extend(au, {
     }
 
   , dismissAlert: function() {
-      this.mainApp.alert().cancelButton().tap();
-      return {
-        status: codes.Success.code,
-        value: null
-      };
+      if (!this.mainApp.alert().cancelButton().isNil()) {
+        this.mainApp.alert().cancelButton().tap();
+        return {
+          status: codes.Success.code,
+          value: null
+        };
+      } else {
+        return this.acceptAlert();
+      }
     }
 });

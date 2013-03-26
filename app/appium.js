@@ -164,16 +164,17 @@ Appium.prototype.configure = function(desiredCaps, cb) {
   }
   this.args.androidPackage = desiredCaps["app-package"] || this.args.androidPackage;
   this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;
-  if (hasAppInCaps) {
-    if (desiredCaps.app[0] === "/") {
-      var appPath = desiredCaps.app
-        , ext = appPath.substring(appPath.length - 4);
+  if (hasAppInCaps || this.args.app) {
+    var appPath = (hasAppInCaps ? desiredCaps.app : this.args.app)
+      , origin = (hasAppInCaps ? "desiredCaps" : "command line")
+      , ext = appPath.substring(appPath.length - 4);
+    if (appPath[0] === "/") {
       if (ext === this.getAppExt()) {
-        this.args.app = desiredCaps.app;
-        logger.info("Using local app from desiredCaps: " + appPath);
+        this.args.app = appPath;
+        logger.info("Using local app from " + origin + ": " + appPath);
         cb(null);
       } else if (ext === ".zip") {
-        logger.info("Using local zip from desiredCaps: " + appPath);
+        logger.info("Using local zip from " + origin + ": " + appPath);
         try {
           this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
             if (zipErr) {
@@ -193,8 +194,8 @@ Appium.prototype.configure = function(desiredCaps, cb) {
         logger.error("Using local app, but didn't end in .zip or .app/.apk");
         cb("Your app didn't end in .app/.apk or .zip!");
       }
-    } else if (desiredCaps.app.substring(0, 4) === "http") {
-      var appUrl = desiredCaps.app;
+    } else if (appPath.substring(0, 4) === "http") {
+      var appUrl = appPath;
       if (appUrl.substring(appUrl.length - 4) === ".zip") {
         try {
           this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
@@ -206,7 +207,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
               cb(null);
             }
           }, this));
-          logger.info("Using downloadable app from desiredCaps: " + appUrl);
+          logger.info("Using downloadable app from " + origin + ": " + appUrl);
         } catch (e) {
           var err = e.toString();
           logger.error("Failed downloading app from appUrl " + appUrl);
@@ -215,30 +216,23 @@ Appium.prototype.configure = function(desiredCaps, cb) {
       } else {
         cb("App URL (" + appUrl + ") didn't seem to end in .zip");
       }
-    } else if (this.isIos() && desiredCaps.app.toLowerCase() === "safari") {
+    } else if (this.isIos() && appPath.toLowerCase() === "safari") {
       this.args.safari = true;
       this.configureSafari(desiredCaps, cb);
-    } else if (!this.args.app) {
-      cb("Bad app passed in through desiredCaps: " + desiredCaps.app +
-         ". Apps need to be absolute local path or URL to zip file");
     } else {
-      logger.warn("Got bad app through desiredCaps: " + desiredCaps.app);
-      logger.warn("Sticking with default app: " + this.args.app);
-      cb(null);
+      cb("Bad app passed in through " + origin + ": " + appPath +
+         ". Apps need to be absolute local path or URL to zip file");
     }
   } else if (this.args.safari === true) {
     this.configureSafari(desiredCaps, cb);
-  } else if (!this.args.app) {
+  } else {
     cb("No app set; either start appium with --app or pass in an 'app' " +
        "value in desired capabilities");
-  } else {
-    logger.info("Using app from command line: " + this.args.app);
-    cb(null);
   }
 };
 
 Appium.prototype.configureSafari = function(desiredCaps, cb) {
-  var safariVer = "6.0";
+  var safariVer = "6.1";
   if (typeof desiredCaps.version !== "undefined") {
     safariVer = desiredCaps.version;
   }

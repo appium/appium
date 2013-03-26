@@ -365,11 +365,11 @@ exports.keys = function(req, res) {
 exports.frame = function(req, res) {
   var frame = req.body.id;
 
-  if (frame === null) {
-    req.device.clearWebView(getResponseHandler(req, res));
-  } else {
-    req.device.frame(frame, getResponseHandler(req, res));
-  }
+  req.device.frame(frame, getResponseHandler(req, res));
+};
+
+exports.leaveWebView = function(req, res) {
+  req.device.leaveWebView(getResponseHandler(req, res));
 };
 
 exports.elementDisplayed = function(req, res) {
@@ -645,6 +645,7 @@ var mobileCmdMap = {
   , 'setValue' : exports.setValueImmediate
   , 'reset' : exports.reset
   , 'keyevent' : exports.keyevent
+  , 'leaveWebView': exports.leaveWebView
 };
 
 exports.produceError = function(req, res) {

@@ -146,16 +146,49 @@ RemoteDebugger.prototype.onPageChange = function(pageDict) {
   this.pageChangeCb(this.pageArrayFromDict(pageDict));
 };
 
-RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
-  var atomSrc = atoms.get(atom);
+RemoteDebugger.prototype.wrapScriptForFrame = function(script, frame) {
+    var elFromCache = atoms.get('get_element_from_cache')
+      , wrapper = "";
+    logger.info("Wrapping script for frame " + frame);
+    frame = JSON.stringify(frame);
+    wrapper += "(function(window) { var document = window.document; ";
+    wrapper += "return (" + script + ");";
+    wrapper += "})((" + elFromCache + ")(" + frame + "))";
+    return wrapper;
+};
+
+RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
+  var atomSrc, script = "";
+  if (atom === "title") {
+    atomSrc = "function(){return JSON.stringify({status: 0, value: document.title});}";
+  } else {
+    atomSrc = atoms.get(atom);
+  }
   args = _.map(args, JSON.stringify);
-  this.execute(['(',atomSrc,')(',args.join(','),')'].join(''), function(err, res) {
+  if (frames.length > 0) {
+    script = atomSrc;
+    for (var i = 0; i < frames.length; i++) {
+      script = this.wrapScriptForFrame(script, frames[i]);
+    }
+    script += "(" + args.join(',') + ")";
+  } else {
+    logger.info("Executing atom in default context");
+    script += "(" + atomSrc + ")(" + args.join(',') + ")";
+  }
+  this.execute(script, function(err, res) {
     if (err) {
       cb(err, {
         status: status.codes.UnknownError.code
         , value: res
       });
     } else {
+      if (typeof res.result.value === "undefined") {
+        return cb(null, {
+          status: status.codes.UnknownError.code
+          , value: "Did not get OK result from execute(). Result was: " +
+                   JSON.stringify(res.result)
+        });
+      }
       if (typeof res.result.value === 'string') {
         res.result.value = JSON.parse(res.result.value);
       }

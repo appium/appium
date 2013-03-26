@@ -39,6 +39,7 @@ var IOS = function(args) {
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
+  this.curWebFrames = [];
   this.selectingNewPage = false;
   this.windowHandleCache = [];
   this.webElementIds = [];
@@ -231,6 +232,20 @@ IOS.prototype.navToFirstAvailWebview = function(cb) {
   }, this));
 };
 
+IOS.prototype.closeAlertBeforeTest = function(cb) {
+  this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
+    if (typeof res.value !== "undefined" && res.value === true) {
+      logger.info("Alert present before starting test, let's banish it");
+      this.proxy("au.dismissAlert()", function() {
+        logger.info("Alert banished!");
+        cb(true);
+      });
+    } else {
+      cb(false);
+    }
+  }, this));
+};
+
 IOS.prototype.cleanupAppState = function(cb) {
   var user = process.env.USER
     , me = this;
@@ -264,13 +279,19 @@ IOS.prototype.cleanupAppState = function(cb) {
 };
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
-  var me = this;
+  var me = this
+    , isDone = false;
   if (!this.bundleId) {
     logger.error("Can't enter web frame without a bundle ID");
     throw new Error("Tried to enter web frame without a bundle ID");
   }
+  var onDone = function(res) {
+    isDone = true;
+    cb(res);
+  };
+
   if (this.remote !== null && this.bundleId !== null) {
-    this.remote.selectApp(this.bundleId, cb);
+    this.remote.selectApp(this.bundleId, onDone);
   } else {
     this.remote = rd.init(exitCb);
     this.remote.connect(function(appDict) {
@@ -279,14 +300,24 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
                      "its available apps");
         if(_.has(appDict, "com.apple.mobilesafari")) {
           logger.info("Using mobile safari instead");
-          me.remote.selectApp("com.apple.mobilesafari", cb);
+          me.remote.selectApp("com.apple.mobilesafari", onDone);
         } else {
-          cb([]);
+          onDone([]);
         }
       } else {
-        me.remote.selectApp(me.bundleId, cb);
+        me.remote.selectApp(me.bundleId, onDone);
       }
     }, _.bind(me.onPageChange, me));
+    var loopClose = function() {
+      if (!isDone) {
+        me.closeAlertBeforeTest(function(didDismiss) {
+          if (!didDismiss) {
+            setTimeout(loopClose, 1000);
+          }
+        });
+      }
+    };
+    setTimeout(loopClose, 4000);
   }
 };
 
@@ -370,6 +401,7 @@ IOS.prototype.stopRemote = function() {
   } else {
     this.remote.disconnect();
     this.curWindowHandle = null;
+    this.curWebFrames = [];
     this.curWebCoords = null;
     this.remote = null;
   }
@@ -505,7 +537,7 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   var atomsElement = this.getAtomsElement(ctx);
   var me = this;
   var doFind = function(findCb) {
-    me.remote.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
+    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
       me.cacheAndReturnWebEl(err, res, many, function(err, res) {
         me.handleFindCb(err, res, many, findCb);
       });
@@ -515,6 +547,13 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
 };
 
 IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
+  if (typeof res === "undefined") {
+    return cb(err, {
+      status: status.codes.UnknownError.code
+      , value: "Res was undefined!"
+    });
+  }
+
   var atomValue = res.value
     , atomStatus = res.status
     , me = this;
@@ -688,7 +727,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       });
     }
   }, this);
-  this.remote.executeAtom(atom, args, function(err, res) {
+  this.remote.executeAtom(atom, args, this.curWebFrames, function(err, res) {
     if (!returned) {
       returned = true;
       cb(err, res);
@@ -960,7 +999,46 @@ IOS.prototype.keys = function(keys, cb) {
 
 IOS.prototype.frame = function(frame, cb) {
   if (this.curWindowHandle) {
-    cb(new NotImplementedError(), null);
+    var atom;
+    if (frame === null) {
+      this.curWebFrames = [];
+      logger.info("Leaving web frame and going back to default content");
+      cb(null, {
+        status: status.codes.Success.code
+        , value: ''
+      });
+    } else {
+      if (typeof frame.ELEMENT !== "undefined") {
+        this.useAtomsElement(frame.ELEMENT, cb, _.bind(function(atomsElement) {
+          this.executeAtom('get_frame_window', [atomsElement], _.bind(function(err, res) {
+            if (this.checkSuccess(err, res, cb)) {
+              logger.info("Entering new web frame: " + res.value.WINDOW);
+              this.curWebFrames.unshift(res.value.WINDOW);
+              cb(err, res);
+            }
+          }, this));
+        }, this));
+      } else {
+        atom = "frame_by_id_or_name";
+        if (typeof frame === "number") {
+          atom = "frame_by_index";
+        }
+        this.executeAtom(atom, [frame], _.bind(function(err, res) {
+          if (this.checkSuccess(err, res, cb)) {
+            if (res.value === null || typeof res.value.WINDOW === "undefined") {
+              cb(null, {
+                status: status.codes.NoSuchFrame.code
+                , value: ''
+              });
+            } else {
+              logger.info("Entering new web frame: " + res.value.WINDOW);
+              this.curWebFrames.unshift(res.value.WINDOW);
+              cb(err, res);
+            }
+          }
+        }, this));
+      }
+    }
   } else {
     frame = frame? frame : 'mainWindow';
     var command = ["wd_frame = ", frame].join('');
@@ -1160,6 +1238,8 @@ IOS.prototype.hideKeyboard = function(keyName, cb) {
 
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
+    // make sure to clear out any leftover web frames
+    this.curWebFrames = [];
     this.remote.navToUrl(url, function() {
       cb(null, {
         status: status.codes.Success.code
@@ -1310,7 +1390,14 @@ IOS.prototype.setSafariWindow = function(windowId, cb) {
 };
 
 IOS.prototype.checkSuccess = function(err, res, cb) {
-  if (err || res.status !== status.codes.Success.code) {
+  if (typeof res === "undefined") {
+    cb(err, {
+      status: status.codes.UnknownError.code
+      , value: "Did not get valid response from execution. Expected res to " +
+               "be an object and was " + JSON.stringify(res)
+    });
+    return false;
+  } else if (err || res.status !== status.codes.Success.code) {
     cb(err, res);
     return false;
   }
@@ -1356,9 +1443,12 @@ IOS.prototype.closeIPhoneWindow = function(cb) {
   });
 };
 
-IOS.prototype.clearWebView = function(cb) {
+IOS.prototype.leaveWebView = function(cb) {
   if (this.curWindowHandle === null) {
-    cb(new NotImplementedError(), null);
+    cb(null, {
+      status: status.codes.NoSuchFrame.code
+      , value: "We are not in a webview, so can't leave one!"
+    });
   } else {
     this.curWindowHandle = null;
     cb(null, {
@@ -1393,19 +1483,7 @@ IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    this.remote.execute('document.title', function (err, res) {
-      if (err) {
-        cb("Remote debugger error", {
-          status: status.codes.JavaScriptError.code
-          , value: res
-        });
-      } else {
-        cb(null, {
-          status: status.codes.Success.code
-          , value: res.result.value
-        });
-      }
-    });
+    this.executeAtom('title', [], cb);
   }
 };
 

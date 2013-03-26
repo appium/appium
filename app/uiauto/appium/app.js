@@ -570,8 +570,9 @@ $.extend(au, {
     }
 
   , acceptAlert: function() {
-      this.mainApp.alert().defaultButton().tap();
-      this.waitForAlertToClose();
+      var alert = this.mainApp.alert();
+      alert.defaultButton().tap();
+      this.waitForAlertToClose(alert);
       return {
         status: codes.Success.code,
         value: null
@@ -587,8 +588,9 @@ $.extend(au, {
 
   , dismissAlert: function() {
       if (!this.mainApp.alert().cancelButton().isNil()) {
-        this.mainApp.alert().cancelButton().tap();
-        this.waitForAlertToClose();
+        var alert = this.mainApp.alert();
+        alert.cancelButton().tap();
+        this.waitForAlertToClose(alert);
         return {
           status: codes.Success.code,
           value: null
@@ -598,14 +600,19 @@ $.extend(au, {
       }
     }
 
-  , waitForAlertToClose: function() {
-      var isClosed = false;
+  , waitForAlertToClose: function(alert) {
+      var isClosed = false
+        , i = 0;
       while (!isClosed) {
-        if (this.mainApp.alert().isNil()) {
+        i++;
+        if (alert.isNil()) {
+          isClosed = true;
+        } else if (i > 10) {
+          // assume another alert popped up
+          console.log("Waited for a while and alert didn't close, moving on");
           isClosed = true;
         } else {
           console.log("Waiting for alert to close...");
-          console.log(this.mainApp.alert());
           this.delay(0.3);
         }
       }

@@ -627,7 +627,7 @@ ADB.prototype.waitForActivity = function(cb) {
     , endAt = Date.now() + waitMs
     , match = null
     , foundActivity = false
-    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.([^\}]+)\}/);
+    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/);
 
   var getFocusedApp = _.bind(function() {
     exec(cmd, _.bind(function(err, stdout) {

@@ -751,6 +751,32 @@ module.exports.buildTests = function(webviewType) {
         });
       }, testEndpoint + 'frameset.html', "Frameset guinea pig");
     });
+    it('should switch back to default content', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                h.driver.frame(null, function(err) {
+                  should.not.exist(err);
+                  h.driver.title(function(err, title) {
+                    should.not.exist(err);
+                    title.should.equal("Frameset guinea pig");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
   });
 };
 

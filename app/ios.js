@@ -964,9 +964,12 @@ IOS.prototype.frame = function(frame, cb) {
   if (this.curWindowHandle) {
     var atom;
     if (frame === null) {
-      atom = "default_content";
       this.curWebFrame = null;
-      this.executeAtom(atom, [], cb);
+      logger.info("Leaving web frame and going back to default content");
+      cb(null, {
+        status: status.codes.Success.code
+        , value: ''
+      });
     } else {
       atom = "frame_by_id_or_name";
       if (typeof frame === "number") {
@@ -980,6 +983,7 @@ IOS.prototype.frame = function(frame, cb) {
               , value: ''
             });
           } else {
+            logger.info("Entering new web frame: " + res.value.WINDOW);
             this.curWebFrame = res.value.WINDOW;
             cb(err, res);
           }

@@ -30,6 +30,7 @@ var ADB = function(opts) {
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
+  this.appWaitActivity = opts.appWaitActivity;
   this.apkPath = opts.apkPath;
   this.adb = "adb";
   this.adbCmd = this.adb;
@@ -629,7 +630,8 @@ ADB.prototype.waitForActivity = function(cb) {
     , match = null
     , foundActivity = false
     , found = null
-    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.([^\}]+)\}/);
+    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.([^\}]+)\}/)
+    , targetActivity = this.appWaitActivity || this.appActivity;
 
   var getFocusedApp = _.bind(function() {
     exec(cmd, _.bind(function(err, stdout) {
@@ -642,7 +644,7 @@ ADB.prototype.waitForActivity = function(cb) {
           match = searchRe.exec(line);
           if (match) {
             found = match;
-            if (match[1] === this.appPackage && match[2] === this.appActivity) {
+            if (match[1] === this.appPackage && match[2] === targetActivity) {
               foundActivity = true;
             }
           }

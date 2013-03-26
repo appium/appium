@@ -234,8 +234,8 @@ IOS.prototype.navToFirstAvailWebview = function(cb) {
 
 IOS.prototype.closeAlertBeforeTest = function(cb) {
   this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
-    logger.info("Alert present before starting test, let's banish it");
     if (typeof res.value !== "undefined" && res.value === true) {
+      logger.info("Alert present before starting test, let's banish it");
       this.proxy("au.dismissAlert()", function() {
         logger.info("Alert banished!");
         cb(true);
@@ -312,12 +312,12 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
       if (!isDone) {
         me.closeAlertBeforeTest(function(didDismiss) {
           if (!didDismiss) {
-            setTimeout(loopClose, 200);
+            setTimeout(loopClose, 1000);
           }
         });
       }
     };
-    loopClose();
+    setTimeout(loopClose, 4000);
   }
 };
 

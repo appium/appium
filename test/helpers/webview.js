@@ -751,7 +751,7 @@ module.exports.buildTests = function(webviewType) {
         });
       }, testEndpoint + 'frameset.html', "Frameset guinea pig");
     });
-    it('should switch back to default content', function(done) {
+    it('should switch back to default content from frame', function(done) {
       loadWebView(h.driver, function() {
         h.driver.frame("first", function(err) {
           should.not.exist(err);
@@ -776,6 +776,90 @@ module.exports.buildTests = function(webviewType) {
           });
         });
       }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+
+    it('should switch to iframe by name', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("iframe1", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should switch to iframe by index', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame(1, function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 2");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 2");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch to iframe by id', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("id-iframe3", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 3");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 3");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should switch back to default content from iframe', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("iframe1", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                h.driver.frame(null, function(err) {
+                  should.not.exist(err);
+                  h.driver.title(function(err, title) {
+                    should.not.exist(err);
+                    title.should.equal("Iframe guinea pig");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
     });
   });
 };

@@ -630,7 +630,7 @@ ADB.prototype.waitForActivity = function(cb) {
     , match = null
     , foundActivity = false
     , found = null
-    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.([^\}]+)\}/)
+    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/)
     , targetActivity = this.appWaitActivity || this.appActivity;
 
   var getFocusedApp = _.bind(function() {

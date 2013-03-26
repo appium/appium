@@ -36,11 +36,18 @@ describeWd('window handles', function(h) {
       handles.length.should.be.above(0);
       h.driver.window(handles[0], function(err) {
         should.not.exist(err);
-        h.driver.frame(null, function(err) {
+        h.driver.execute("mobile: leaveWebView", function(err) {
           should.not.exist(err);
           done();
         });
       });
+    });
+  });
+  it('clearing window should not work if not in webview', function(done) {
+    h.driver.execute("mobile: leaveWebView", function(err) {
+      should.exist(err);
+      err.status.should.equal(8);
+      done();
     });
   });
 });

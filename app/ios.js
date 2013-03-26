@@ -43,6 +43,7 @@ var IOS = function(args) {
   this.windowHandleCache = [];
   this.webElementIds = [];
   this.implicitWaitMs = 0;
+  this.asyncWaitMs = 0;
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
@@ -1160,6 +1161,15 @@ IOS.prototype.frame = function(frame, cb) {
 IOS.prototype.implicitWait = function(ms, cb) {
   this.implicitWaitMs = parseInt(ms, 10);
   logger.info("Set iOS implicit wait to " + ms + "ms");
+  cb(null, {
+    status: status.codes.Success.code
+    , value: null
+  });
+};
+
+IOS.prototype.asyncScriptTimeout = function(ms, cb) {
+  this.asyncTimeout = parseInt(ms, 10);
+  logger.info("Set iOS async script timeout to " + ms + "ms");
   cb(null, {
     status: status.codes.Success.code
     , value: null

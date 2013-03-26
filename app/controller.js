@@ -446,6 +446,11 @@ exports.implicitWait = function(req, res) {
   req.device.implicitWait(ms, getResponseHandler(req, res));
 };
 
+exports.asyncScriptTimeout = function(req, res) {
+  var ms = req.body.ms;
+  req.device.asyncScriptTimeout(ms, getResponseHandler(req, res));
+};
+
 exports.setOrientation = function(req, res) {
   var orientation = req.body.orientation;
   req.device.setOrientation(orientation, getResponseHandler(req, res));

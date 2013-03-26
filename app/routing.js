@@ -48,6 +48,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
   rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
   rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);
+  rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.asyncScriptTimeout);
   rest.get('/wd/hub/session/:sessionId/orientation', controller.getOrientation);
   rest.post('/wd/hub/session/:sessionId/orientation', controller.setOrientation);
   rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
@@ -99,7 +100,6 @@ var routeNotYetImplemented = function(rest) {
   // The rest of the API:
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/available_engines', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/active_engine', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/activated', controller.notYetImplemented);

@@ -234,7 +234,7 @@ IOS.prototype.navToFirstAvailWebview = function(cb) {
 
 IOS.prototype.closeAlertBeforeTest = function(cb) {
   this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
-    if (typeof res.value !== "undefined" && res.value === true) {
+    if (!err && res !== null && typeof res.value !== "undefined" && res.value === true) {
       logger.info("Alert present before starting test, let's banish it");
       this.proxy("au.dismissAlert()", function() {
         logger.info("Alert banished!");
@@ -308,8 +308,10 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
         me.remote.selectApp(me.bundleId, onDone);
       }
     }, _.bind(me.onPageChange, me));
+    var loopCloseRuns = 0;
     var loopClose = function() {
-      if (!isDone) {
+      loopCloseRuns++;
+      if (!isDone && loopCloseRuns < 10) {
         me.closeAlertBeforeTest(function(didDismiss) {
           if (!didDismiss) {
             setTimeout(loopClose, 1000);

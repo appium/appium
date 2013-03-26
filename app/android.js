@@ -21,6 +21,7 @@ var Android = function(opts) {
   this.apkPath = opts.apkPath;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
+  this.appWaitActivity = opts.appWaitActivity;
   this.verbose = opts.verbose;
   this.queue = [];
   this.progress = 0;

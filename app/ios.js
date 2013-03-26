@@ -1512,6 +1512,16 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
   }, this));
 };
 
+IOS.prototype.equalsWebElement = function(element, other, cb) {
+  var ctxElem = this.getAtomsElement(element);
+  var otherElem = this.getAtomsElement(other);
+  
+  cb(null, {
+    status: status.codes.Success.code
+    , value: ctxElem.ELEMENT === otherElem.ELEMENT
+  });
+};
+
 module.exports = function(args) {
   return new IOS(args);
 };

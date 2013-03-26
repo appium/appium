@@ -585,7 +585,7 @@ module.exports.buildTests = function(webviewType) {
   });
 
   desc('alerts', function(h) {
-    it('should allow accepting of alert', function(done) {
+    it('should accept alert', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('alert1', function(err, link) {
           link.click(function(err) {
@@ -596,6 +596,90 @@ module.exports.buildTests = function(webviewType) {
                 title.should.eql("I am a page title");
                 done();
               });
+            });
+          });
+        });
+      });
+    });
+    it('should dismiss', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.dismissAlert(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am a page title");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should get text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertText(function(err, text) {
+              should.not.exist(err);
+              text.should.eql("I am an alert");
+              done();
+            });
+          });
+        });
+      });
+    });
+    it('should not get text of alert that closed', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.acceptAlert(function(err) {
+              should.not.exist(err);
+              h.driver.alertText(function(err) {
+                should.exist(err);
+                err.status.should.equal(27);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should set text of prompt', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('prompt1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertKeys("yes I do!", function(err) {
+              should.not.exist(err);
+              h.driver.acceptAlert(function(err) {
+                should.not.exist(err);
+                h.driver.elementById('promptVal', function(err, el) {
+                  should.not.exist(err);
+                  el.getValue(function(err, val) {
+                    should.not.exist(err);
+                    val.should.eql("yes I do!");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should fail to set text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertKeys("yes I do!", function(err) {
+              should.exist(err);
+              err.status.should.equal(11);
+              done();
             });
           });
         });

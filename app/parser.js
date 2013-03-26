@@ -134,6 +134,15 @@ var args = [
             "to launch from your package (e.g., MainActivity)"
   }],
 
+  [['--app-wait-activity'], {
+    dest: 'androidWaitActivity'
+    , defaultValue: false
+    , required: false
+    , example: "SplashActivity"
+    , help: "(Android-only) Activity name for the Android activity you want " +
+            "to wait for (e.g., SplashActivity)"
+  }],
+
   [['--safari'], {
     defaultValue: false
     , action: 'storeTrue'

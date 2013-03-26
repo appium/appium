@@ -23,6 +23,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--without-delay`|false|(IOS-only) IOS has a weird built-in unavoidable delay. One way around this is to run instruments with a library loaded to patch it so that it skips the delay. Use this flag to speed up  test execution.||
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|
 |`--app-activity`|MainActivity|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
+|`--app-wait-activity`|false|(Android-only) Activity name for the Android activity you want to wait for (e.g., SplashActivity)|`--app-wait-activity SplashActivity`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||

@@ -3,7 +3,8 @@
 
 var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
-  , guinea = 'http://localhost:4723/test/guinea-pig'
+  , testEndpoint = 'http://localhost:4723/test/'
+  , guinea = testEndpoint + 'guinea-pig'
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
 
@@ -22,10 +23,13 @@ module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
   });
 };
 
-module.exports.loadWebView = function(webviewType, driver, cb) {
+module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad) {
+  if (typeof urlToLoad === "undefined") {
+    urlToLoad = guinea;
+  }
   var title = 'I am a page title';
   if (webviewType === "safari") {
-    driver.get(guinea, function(err) {
+    driver.get(urlToLoad, function(err) {
       should.not.exist(err);
       module.exports.spinTitle(title, driver, cb);
     });
@@ -37,8 +41,8 @@ module.exports.loadWebView = function(webviewType, driver, cb) {
         should.not.exist(err);
         driver.url(function(err, url) {
           should.not.exist(err);
-          if (url != guinea) {
-            driver.get(guinea, function(err) {
+          if (url != urlToLoad) {
+            driver.get(urlToLoad, function(err) {
               should.not.exist(err);
               module.exports.spinTitle(title, driver, cb);
             });
@@ -684,6 +688,14 @@ module.exports.buildTests = function(webviewType) {
           });
         });
       });
+    });
+  });
+
+  desc('frames and iframes', function(h) {
+    it('should switch to frame by name', function(done) {
+      loadWebView(h.driver, function() {
+        done();
+      }, testEndpoint + 'frameset.html');
     });
   });
 };

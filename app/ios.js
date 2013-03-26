@@ -505,7 +505,7 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   var atomsElement = this.getAtomsElement(ctx);
   var me = this;
   var doFind = function(findCb) {
-    me.remote.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
+    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
       me.cacheAndReturnWebEl(err, res, many, function(err, res) {
         me.handleFindCb(err, res, many, findCb);
       });
@@ -688,7 +688,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       });
     }
   }, this);
-  this.remote.executeAtom(atom, args, function(err, res) {
+  this.remote.executeAtom(atom, args, 'window', function(err, res) {
     if (!returned) {
       returned = true;
       cb(err, res);

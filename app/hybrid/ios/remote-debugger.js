@@ -146,10 +146,14 @@ RemoteDebugger.prototype.onPageChange = function(pageDict) {
   this.pageChangeCb(this.pageArrayFromDict(pageDict));
 };
 
-RemoteDebugger.prototype.executeAtom = function(atom, args, cb) {
+RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
   var atomSrc = atoms.get(atom);
   args = _.map(args, JSON.stringify);
-  this.execute(['(',atomSrc,')(',args.join(','),')'].join(''), function(err, res) {
+  var script = "(function(window) { ";
+  script += "return (" + atomSrc + ");";
+  script += "})(" + frame + ")";
+  script += "(" + args.join(',') + ")";
+  this.execute(script, function(err, res) {
     if (err) {
       cb(err, {
         status: status.codes.UnknownError.code

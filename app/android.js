@@ -363,6 +363,10 @@ Android.prototype.frame = function(frame, cb) {
     cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.leaveWebView = function(cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.implicitWait = function(ms, cb) {
   this.implicitWaitMs = parseInt(ms, 10);
   logger.info("Set Android implicit wait to " + ms + "ms");

@@ -34,7 +34,7 @@ browser
         should.not.exist(err);
         el.text(function(err, text) {
           text.should.eql("I am a div");
-          browser.frame(null, function() {
+          browser.execute("mobile: leaveWebView", function() {
             browser.quit();
           });
         });

@@ -232,7 +232,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
 };
 
 Appium.prototype.configureSafari = function(desiredCaps, cb) {
-  var safariVer = "6.0";
+  var safariVer = "6.1";
   if (typeof desiredCaps.version !== "undefined") {
     safariVer = desiredCaps.version;
   }

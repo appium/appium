@@ -396,6 +396,11 @@ exports.getAlertText = function(req, res) {
   req.device.getAlertText(getResponseHandler(req, res));
 };
 
+exports.setAlertText = function(req, res) {
+  var text = req.body.text;
+  req.device.setAlertText(text, getResponseHandler(req, res));
+};
+
 exports.postAcceptAlert = function(req, res) {
   req.device.postAcceptAlert(getResponseHandler(req, res));
 };

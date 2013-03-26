@@ -532,14 +532,47 @@ $.extend(au, {
   // Alert-related functions
 
   , getAlertText: function() {
+      var alert = this.mainApp.alert();
+      if (alert.isNil()) {
+        return {
+          status: codes.NoAlertOpenError.code,
+          value: null
+        };
+      }
+
+      var textRes = this.getElementsByType('text', alert);
+      var text = alert.name();
+      if (text.indexOf('http') != -1 && textRes.value.length > 1) {
+        var textId = textRes.value[textRes.value.length-1].ELEMENT;
+        text = this.getElement(textId).name();
+      }
       return {
         status: codes.Success.code,
-        value: this.mainApp.alert().name()
+        value: text
+      };
+    }
+
+  , setAlertText: function(text) {
+      var alert = this.mainApp.alert();
+      var boxRes = this.getElementByType('textfield', alert);
+      if (boxRes.status === codes.Success.code) {
+        var el = this.getElement(boxRes.value.ELEMENT);
+        el.setValueByType(text);
+        return {
+          status: codes.Success.code,
+          value: true
+        };
+      }
+      return {
+        status: codes.ElementNotVisible.code,
+        value: "Tried to set text of an alert that wasn't a prompt"
       };
     }
 
   , acceptAlert: function() {
-      this.mainApp.alert().defaultButton().tap();
+      var alert = this.mainApp.alert();
+      alert.defaultButton().tap();
+      this.waitForAlertToClose(alert);
       return {
         status: codes.Success.code,
         value: null
@@ -549,15 +582,39 @@ $.extend(au, {
   , alertIsPresent: function() {
       return {
         status: codes.Success.code,
-        value: this.mainApp.alert() !== null
+        value: !this.mainApp.alert().isNil()
       };
     }
 
   , dismissAlert: function() {
-      this.mainApp.alert().cancelButton().tap();
-      return {
-        status: codes.Success.code,
-        value: null
-      };
+      if (!this.mainApp.alert().cancelButton().isNil()) {
+        var alert = this.mainApp.alert();
+        alert.cancelButton().tap();
+        this.waitForAlertToClose(alert);
+        return {
+          status: codes.Success.code,
+          value: null
+        };
+      } else {
+        return this.acceptAlert();
+      }
+    }
+
+  , waitForAlertToClose: function(alert) {
+      var isClosed = false
+        , i = 0;
+      while (!isClosed) {
+        i++;
+        if (alert.isNil()) {
+          isClosed = true;
+        } else if (i > 10) {
+          // assume another alert popped up
+          console.log("Waited for a while and alert didn't close, moving on");
+          isClosed = true;
+        } else {
+          console.log("Waiting for alert to close...");
+          this.delay(0.3);
+        }
+      }
     }
 });

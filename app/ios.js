@@ -1356,9 +1356,12 @@ IOS.prototype.closeIPhoneWindow = function(cb) {
   });
 };
 
-IOS.prototype.clearWebView = function(cb) {
+IOS.prototype.leaveWebView = function(cb) {
   if (this.curWindowHandle === null) {
-    cb(new NotImplementedError(), null);
+    cb(null, {
+      status: status.codes.NoSuchFrame.code
+      , value: "We are not in a webview, so can't leave one!"
+    });
   } else {
     this.curWindowHandle = null;
     cb(null, {

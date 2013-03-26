@@ -80,7 +80,7 @@ module.exports.buildTests = function(webviewType) {
         h.driver.title(function(err, title) {
           should.not.exist(err);
           title.should.eql("I am a page title");
-          h.driver.frame(null, function(err) {
+          h.driver.execute("mobile: leaveWebView", function(err) {
             should.not.exist(err);
             h.driver.title(function(err, title) {
               err.status.should.eql(13);

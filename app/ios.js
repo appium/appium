@@ -311,7 +311,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     var loopCloseRuns = 0;
     var loopClose = function() {
       loopCloseRuns++;
-      if (!isDone && loopCloseRuns < 10) {
+      if (!isDone && loopCloseRuns < 3) {
         me.closeAlertBeforeTest(function(didDismiss) {
           if (!didDismiss) {
             setTimeout(loopClose, 1000);

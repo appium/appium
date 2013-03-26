@@ -43,6 +43,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
   rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
   rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
+  rest.post('/wd/hub/session/:sessionId?/alert_text', controller.setAlertText);
   rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
   rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
   rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);

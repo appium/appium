@@ -1045,6 +1045,11 @@ IOS.prototype.getAlertText = function(cb) {
   this.proxy("au.getAlertText()", cb);
 };
 
+IOS.prototype.setAlertText = function(text, cb) {
+  text = escapeSpecialChars(text, "'");
+  this.proxy("au.setAlertText('" + text + "')", cb);
+};
+
 IOS.prototype.postAcceptAlert = function(cb) {
   this.proxy("au.acceptAlert()", cb);
 };

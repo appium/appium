@@ -869,6 +869,25 @@ module.exports.buildTests = function(webviewType) {
         });
       }, testEndpoint + 'iframes.html', "Iframe guinea pig");
     });
+    it('should switch to child frames', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("third", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 3");
+            h.driver.frame("childframe", function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                should.not.exist(err);
+                title.should.equal("I am another page title");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
     it('should switch back to default content from iframe', function(done) {
       loadWebView(h.driver, function() {
         h.driver.frame("iframe1", function(err) {

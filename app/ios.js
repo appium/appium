@@ -39,7 +39,7 @@ var IOS = function(args) {
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
-  this.curWebFrame = null;
+  this.curWebFrames = [];
   this.selectingNewPage = false;
   this.windowHandleCache = [];
   this.webElementIds = [];
@@ -371,7 +371,7 @@ IOS.prototype.stopRemote = function() {
   } else {
     this.remote.disconnect();
     this.curWindowHandle = null;
-    this.curWebFrame = null;
+    this.curWebFrames = [];
     this.curWebCoords = null;
     this.remote = null;
   }
@@ -697,7 +697,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       });
     }
   }, this);
-  this.remote.executeAtom(atom, args, this.curWebFrame, function(err, res) {
+  this.remote.executeAtom(atom, args, this.curWebFrames, function(err, res) {
     if (!returned) {
       returned = true;
       cb(err, res);
@@ -971,7 +971,7 @@ IOS.prototype.frame = function(frame, cb) {
   if (this.curWindowHandle) {
     var atom;
     if (frame === null) {
-      this.curWebFrame = null;
+      this.curWebFrames = [];
       logger.info("Leaving web frame and going back to default content");
       cb(null, {
         status: status.codes.Success.code
@@ -983,7 +983,7 @@ IOS.prototype.frame = function(frame, cb) {
           this.executeAtom('get_frame_window', [atomsElement], _.bind(function(err, res) {
             if (this.checkSuccess(err, res, cb)) {
               logger.info("Entering new web frame: " + res.value.WINDOW);
-              this.curWebFrame = res.value.WINDOW;
+              this.curWebFrames.unshift(res.value.WINDOW);
               cb(err, res);
             }
           }, this));
@@ -1002,7 +1002,7 @@ IOS.prototype.frame = function(frame, cb) {
               });
             } else {
               logger.info("Entering new web frame: " + res.value.WINDOW);
-              this.curWebFrame = res.value.WINDOW;
+              this.curWebFrames.unshift(res.value.WINDOW);
               cb(err, res);
             }
           }
@@ -1209,7 +1209,7 @@ IOS.prototype.hideKeyboard = function(keyName, cb) {
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
     // make sure to clear out any leftover web frames
-    this.curWebFrame = null;
+    this.curWebFrames = [];
     this.remote.navToUrl(url, function() {
       cb(null, {
         status: status.codes.Success.code

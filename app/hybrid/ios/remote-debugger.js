@@ -149,7 +149,7 @@ RemoteDebugger.prototype.onPageChange = function(pageDict) {
 RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
   var atomSrc = atoms.get(atom);
   args = _.map(args, JSON.stringify);
-  var script = "(function(window) { ";
+  var script = "(function(window) { var document = window.document; ";
   script += "return (" + atomSrc + ");";
   script += "})(" + frame + ")";
   script += "(" + args.join(',') + ")";

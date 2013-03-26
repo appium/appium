@@ -517,6 +517,13 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
 };
 
 IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
+  if (typeof res === "undefined") {
+    return cb(err, {
+      status: status.codes.UnknownError.code
+      , value: "Res was undefined!"
+    });
+  }
+
   var atomValue = res.value
     , atomStatus = res.status
     , me = this;
@@ -1189,6 +1196,8 @@ IOS.prototype.hideKeyboard = function(keyName, cb) {
 
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
+    // make sure to clear out any leftover web frames
+    this.curWebFrame = null;
     this.remote.navToUrl(url, function() {
       cb(null, {
         status: status.codes.Success.code
@@ -1339,7 +1348,14 @@ IOS.prototype.setSafariWindow = function(windowId, cb) {
 };
 
 IOS.prototype.checkSuccess = function(err, res, cb) {
-  if (err || res.status !== status.codes.Success.code) {
+  if (typeof res === "undefined") {
+    cb(err, {
+      status: status.codes.UnknownError.code
+      , value: "Did not get valid response from execution. Expected res to " +
+               "be an object and was " + JSON.stringify(res)
+    });
+    return false;
+  } else if (err || res.status !== status.codes.Success.code) {
     cb(err, res);
     return false;
   }

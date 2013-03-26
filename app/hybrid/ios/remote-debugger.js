@@ -156,12 +156,14 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
   args = _.map(args, JSON.stringify);
   if (frame !== null) {
     var elFromCache = atoms.get('get_element_from_cache');
+    logger.info("Executing atom in context of frame " + frame);
     frame = JSON.stringify(frame);
     script += "(function(window) { var document = window.document; ";
     script += "return (" + atomSrc + ");";
     script += "})((" + elFromCache + ")(" + frame + "))";
     script += "(" + args.join(',') + ")";
   } else {
+    logger.info("Executing atom in default context");
     script += "(" + atomSrc + ")(" + args.join(',') + ")";
   }
   this.execute(script, function(err, res) {
@@ -171,6 +173,13 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
         , value: res
       });
     } else {
+      if (typeof res.result.value === "undefined") {
+        return cb(null, {
+          status: status.codes.UnknownError.code
+          , value: "Did not get OK result from execute(). Result was: " +
+                   JSON.stringify(res.result)
+        });
+      }
       if (typeof res.result.value === 'string') {
         res.result.value = JSON.parse(res.result.value);
       }

@@ -978,24 +978,36 @@ IOS.prototype.frame = function(frame, cb) {
         , value: ''
       });
     } else {
-      atom = "frame_by_id_or_name";
-      if (typeof frame === "number") {
-        atom = "frame_by_index";
-      }
-      this.executeAtom(atom, [frame], _.bind(function(err, res) {
-        if (this.checkSuccess(err, res, cb)) {
-          if (res.value === null || typeof res.value.WINDOW === "undefined") {
-            cb(null, {
-              status: status.codes.NoSuchFrame.code
-              , value: ''
-            });
-          } else {
-            logger.info("Entering new web frame: " + res.value.WINDOW);
-            this.curWebFrame = res.value.WINDOW;
-            cb(err, res);
-          }
+      if (typeof frame.ELEMENT !== "undefined") {
+        this.useAtomsElement(frame.ELEMENT, cb, _.bind(function(atomsElement) {
+          this.executeAtom('get_frame_window', [atomsElement], _.bind(function(err, res) {
+            if (this.checkSuccess(err, res, cb)) {
+              logger.info("Entering new web frame: " + res.value.WINDOW);
+              this.curWebFrame = res.value.WINDOW;
+              cb(err, res);
+            }
+          }, this));
+        }, this));
+      } else {
+        atom = "frame_by_id_or_name";
+        if (typeof frame === "number") {
+          atom = "frame_by_index";
         }
-      }, this));
+        this.executeAtom(atom, [frame], _.bind(function(err, res) {
+          if (this.checkSuccess(err, res, cb)) {
+            if (res.value === null || typeof res.value.WINDOW === "undefined") {
+              cb(null, {
+                status: status.codes.NoSuchFrame.code
+                , value: ''
+              });
+            } else {
+              logger.info("Entering new web frame: " + res.value.WINDOW);
+              this.curWebFrame = res.value.WINDOW;
+              cb(err, res);
+            }
+          }
+        }, this));
+      }
     }
   } else {
     frame = frame? frame : 'mainWindow';

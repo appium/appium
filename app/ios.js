@@ -39,6 +39,7 @@ var IOS = function(args) {
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
+  this.curWebFrame = null;
   this.selectingNewPage = false;
   this.windowHandleCache = [];
   this.webElementIds = [];
@@ -370,6 +371,7 @@ IOS.prototype.stopRemote = function() {
   } else {
     this.remote.disconnect();
     this.curWindowHandle = null;
+    this.curWebFrame = null;
     this.curWebCoords = null;
     this.remote = null;
   }
@@ -688,7 +690,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       });
     }
   }, this);
-  this.remote.executeAtom(atom, args, 'window', function(err, res) {
+  this.remote.executeAtom(atom, args, this.curWebFrame, function(err, res) {
     if (!returned) {
       returned = true;
       cb(err, res);
@@ -960,7 +962,30 @@ IOS.prototype.keys = function(keys, cb) {
 
 IOS.prototype.frame = function(frame, cb) {
   if (this.curWindowHandle) {
-    cb(new NotImplementedError(), null);
+    var atom;
+    if (frame === null) {
+      atom = "default_content";
+      this.curWebFrame = null;
+      this.executeAtom(atom, [], cb);
+    } else {
+      atom = "frame_by_id_or_name";
+      if (typeof frame === "number") {
+        atom = "frame_by_index";
+      }
+      this.executeAtom(atom, [frame], _.bind(function(err, res) {
+        if (this.checkSuccess(err, res, cb)) {
+          if (res.value === null || typeof res.value.WINDOW === "undefined") {
+            cb(null, {
+              status: status.codes.NoSuchFrame.code
+              , value: ''
+            });
+          } else {
+            this.curWebFrame = res.value.WINDOW;
+            cb(err, res);
+          }
+        }
+      }, this));
+    }
   } else {
     frame = frame? frame : 'mainWindow';
     var command = ["wd_frame = ", frame].join('');
@@ -1396,19 +1421,7 @@ IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    this.remote.execute('document.title', function (err, res) {
-      if (err) {
-        cb("Remote debugger error", {
-          status: status.codes.JavaScriptError.code
-          , value: res
-        });
-      } else {
-        cb(null, {
-          status: status.codes.Success.code
-          , value: res.result.value
-        });
-      }
-    });
+    this.executeAtom('title', [], cb);
   }
 };
 

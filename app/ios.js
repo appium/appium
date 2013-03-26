@@ -232,6 +232,20 @@ IOS.prototype.navToFirstAvailWebview = function(cb) {
   }, this));
 };
 
+IOS.prototype.closeAlertBeforeTest = function(cb) {
+  this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
+    logger.info("Alert present before starting test, let's banish it");
+    if (typeof res.value !== "undefined" && res.value === true) {
+      this.proxy("au.dismissAlert()", function() {
+        logger.info("Alert banished!");
+        cb(true);
+      });
+    } else {
+      cb(false);
+    }
+  }, this));
+};
+
 IOS.prototype.cleanupAppState = function(cb) {
   var user = process.env.USER
     , me = this;
@@ -265,13 +279,19 @@ IOS.prototype.cleanupAppState = function(cb) {
 };
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
-  var me = this;
+  var me = this
+    , isDone = false;
   if (!this.bundleId) {
     logger.error("Can't enter web frame without a bundle ID");
     throw new Error("Tried to enter web frame without a bundle ID");
   }
+  var onDone = function(res) {
+    isDone = true;
+    cb(res);
+  };
+
   if (this.remote !== null && this.bundleId !== null) {
-    this.remote.selectApp(this.bundleId, cb);
+    this.remote.selectApp(this.bundleId, onDone);
   } else {
     this.remote = rd.init(exitCb);
     this.remote.connect(function(appDict) {
@@ -280,14 +300,24 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
                      "its available apps");
         if(_.has(appDict, "com.apple.mobilesafari")) {
           logger.info("Using mobile safari instead");
-          me.remote.selectApp("com.apple.mobilesafari", cb);
+          me.remote.selectApp("com.apple.mobilesafari", onDone);
         } else {
-          cb([]);
+          onDone([]);
         }
       } else {
-        me.remote.selectApp(me.bundleId, cb);
+        me.remote.selectApp(me.bundleId, onDone);
       }
     }, _.bind(me.onPageChange, me));
+    var loopClose = function() {
+      if (!isDone) {
+        me.closeAlertBeforeTest(function(didDismiss) {
+          if (!didDismiss) {
+            setTimeout(loopClose, 200);
+          }
+        });
+      }
+    };
+    loopClose();
   }
 };
 

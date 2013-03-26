@@ -147,12 +147,23 @@ RemoteDebugger.prototype.onPageChange = function(pageDict) {
 };
 
 RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
-  var atomSrc = atoms.get(atom);
+  var atomSrc, script = "";
+  if (atom === "title") {
+    atomSrc = "function(){return JSON.stringify({status: 0, value: document.title});}";
+  } else {
+    atomSrc = atoms.get(atom);
+  }
   args = _.map(args, JSON.stringify);
-  var script = "(function(window) { var document = window.document; ";
-  script += "return (" + atomSrc + ");";
-  script += "})(" + frame + ")";
-  script += "(" + args.join(',') + ")";
+  if (frame !== null) {
+    var elFromCache = atoms.get('get_element_from_cache');
+    frame = JSON.stringify(frame);
+    script += "(function(window) { var document = window.document; ";
+    script += "return (" + atomSrc + ");";
+    script += "})((" + elFromCache + ")(" + frame + "))";
+    script += "(" + args.join(',') + ")";
+  } else {
+    script += "(" + atomSrc + ")(" + args.join(',') + ")";
+  }
   this.execute(script, function(err, res) {
     if (err) {
       cb(err, {

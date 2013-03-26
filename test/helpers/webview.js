@@ -23,15 +23,17 @@ module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
   });
 };
 
-module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad) {
+module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad, titleToSpin) {
   if (typeof urlToLoad === "undefined") {
     urlToLoad = guinea;
   }
-  var title = 'I am a page title';
+  if (typeof titleToSpin === "undefined") {
+    titleToSpin = 'I am a page title';
+  }
   if (webviewType === "safari") {
     driver.get(urlToLoad, function(err) {
       should.not.exist(err);
-      module.exports.spinTitle(title, driver, cb);
+      module.exports.spinTitle(titleToSpin, driver, cb);
     });
   } else {
     driver.windowHandles(function(err, handles) {
@@ -44,10 +46,10 @@ module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad) {
           if (url != urlToLoad) {
             driver.get(urlToLoad, function(err) {
               should.not.exist(err);
-              module.exports.spinTitle(title, driver, cb);
+              module.exports.spinTitle(titleToSpin, driver, cb);
             });
           } else {
-            module.exports.spinTitle(title, driver, cb);
+            module.exports.spinTitle(titleToSpin, driver, cb);
           }
         });
       });
@@ -67,8 +69,8 @@ module.exports.buildTests = function(webviewType) {
     desc = driverBlock.describeForApp(webviewType);
   }
 
-  var loadWebView = function(driver, cb) {
-    return module.exports.loadWebView(webviewType, driver, cb);
+  var loadWebView = function(driver, cb, urlToLoad, titleToSpin) {
+    return module.exports.loadWebView(webviewType, driver, cb, urlToLoad, titleToSpin);
   };
 
   var spinTitle = module.exports.spinTitle;
@@ -694,8 +696,60 @@ module.exports.buildTests = function(webviewType) {
   desc('frames and iframes', function(h) {
     it('should switch to frame by name', function(done) {
       loadWebView(h.driver, function() {
-        done();
-      }, testEndpoint + 'frameset.html');
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch to frame by index', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame(1, function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 2");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 2");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch to frame by id', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("frame3", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 3");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 3");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
     });
   });
 };

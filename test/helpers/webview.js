@@ -835,6 +835,40 @@ module.exports.buildTests = function(webviewType) {
         });
       }, testEndpoint + 'iframes.html', "Iframe guinea pig");
     });
+    it('should switch to iframe by element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('id-iframe3', function(err, frame) {
+          should.not.exist(err);
+          h.driver.frame(frame, function(err) {
+            should.not.exist(err);
+            h.driver.title(function(err, title) {
+              should.not.exist(err);
+              title.should.equal("Sub frame 3");
+              h.driver.elementByTagName("h1", function(err, h1) {
+                should.not.exist(err);
+                h1.text(function(err, text) {
+                  should.not.exist(err);
+                  text.should.equal("Sub frame 3");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should not switch to iframe by element of wrong type', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByTagName('h1', function(err, h1) {
+          should.not.exist(err);
+          h.driver.frame(h1, function(err) {
+            should.exist(err);
+            err.status.should.equal(8);
+            done();
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
     it('should switch back to default content from iframe', function(done) {
       loadWebView(h.driver, function() {
         h.driver.frame("iframe1", function(err) {

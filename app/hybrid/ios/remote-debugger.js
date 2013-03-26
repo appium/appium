@@ -146,7 +146,18 @@ RemoteDebugger.prototype.onPageChange = function(pageDict) {
   this.pageChangeCb(this.pageArrayFromDict(pageDict));
 };
 
-RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
+RemoteDebugger.prototype.wrapScriptForFrame = function(script, frame) {
+    var elFromCache = atoms.get('get_element_from_cache')
+      , wrapper = "";
+    logger.info("Wrapping script for frame " + frame);
+    frame = JSON.stringify(frame);
+    wrapper += "(function(window) { var document = window.document; ";
+    wrapper += "return (" + script + ");";
+    wrapper += "})((" + elFromCache + ")(" + frame + "))";
+    return wrapper;
+};
+
+RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
   var atomSrc, script = "";
   if (atom === "title") {
     atomSrc = "function(){return JSON.stringify({status: 0, value: document.title});}";
@@ -154,13 +165,11 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frame, cb) {
     atomSrc = atoms.get(atom);
   }
   args = _.map(args, JSON.stringify);
-  if (frame !== null) {
-    var elFromCache = atoms.get('get_element_from_cache');
-    logger.info("Executing atom in context of frame " + frame);
-    frame = JSON.stringify(frame);
-    script += "(function(window) { var document = window.document; ";
-    script += "return (" + atomSrc + ");";
-    script += "})((" + elFromCache + ")(" + frame + "))";
+  if (frames.length > 0) {
+    script = atomSrc;
+    for (var i = 0; i < frames.length; i++) {
+      script = this.wrapScriptForFrame(script, frames[i]);
+    }
     script += "(" + args.join(',') + ")";
   } else {
     logger.info("Executing atom in default context");

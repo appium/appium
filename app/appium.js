@@ -166,6 +166,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
   this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;
   this.args.androidWaitActivity = desiredCaps["app-wait-activity"] || this.args.androidActivity;
   this.args.androidDeviceReadyTimeout = desiredCaps["device-ready-timeout"] || this.args.androidDeviceReadyTimeout;
+  this.args.androidInactivityTimeout = desiredCaps["app-inactivity-timeout"] || this.args.androidInactivityTimeout;
   if (hasAppInCaps || this.args.app) {
     var appPath = (hasAppInCaps ? desiredCaps.app : this.args.app)
       , origin = (hasAppInCaps ? "desiredCaps" : "command line")
@@ -331,6 +332,7 @@ Appium.prototype.invoke = function() {
           , appActivity: this.args.androidActivity
           , appWaitActivity: this.args.androidWaitActivity
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
+          , appInactivityTimeout: this.args.androidInactivityTimeout
           , reset: !this.args.noReset
           , fastReset: this.args.fastReset
         };

@@ -25,6 +25,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--app-activity`|MainActivity|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
 |`--app-wait-activity`|false|(Android-only) Activity name for the Android activity you want to wait for (e.g., SplashActivity)|`--app-wait-activity SplashActivity`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
+|`--app-inactivity-timeout`|60|(Android-only) The number of seconds of inactivity before the session is shutdown.  Defaults to 60 seconds.|`--app-inactivity-timeout 60`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||

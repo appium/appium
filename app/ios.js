@@ -1512,6 +1512,26 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
   }, this));
 };
 
+IOS.prototype.equalsWebElement = function(element, other, cb) {
+  var ctxElem = this.getAtomsElement(element);
+  var otherElem = this.getAtomsElement(other);
+  var retStatus = status.codes.Success.code
+    , retValue = false;
+
+  // We assume it's referrencing the same element if it's equal
+  if (ctxElem.ELEMENT === otherElem.ELEMENT) {
+    retValue = true;
+  } else {
+    // ...otherwise let the browser tell us.
+    this.executeAtom('element_equals_element', [ctxElem.ELEMENT, otherElem.ELEMENT], cb);
+  }
+  
+  cb(null, {
+    status: retStatus
+    , value: retValue
+  });
+};
+
 module.exports = function(args) {
   return new IOS(args);
 };

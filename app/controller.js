@@ -183,6 +183,13 @@ exports.deleteSession = function(req, res) {
   req.appium.stop(getResponseHandler(req, res));
 };
 
+exports.equalsElement = function(req, res) {
+  var element = req.params.elementId
+    , other = req.params.otherId;
+
+  req.device.equalsWebElement(element, other, getResponseHandler(req, res));
+};
+
 exports.findElements = function(req, res) {
   var strategy = req.body.using
     , selector = req.body.value;

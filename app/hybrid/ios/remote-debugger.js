@@ -157,10 +157,33 @@ RemoteDebugger.prototype.wrapScriptForFrame = function(script, frame) {
     return wrapper;
 };
 
+RemoteDebugger.prototype.wrapElementEqualsElementAtom = function(args) {
+    var elFromCache = atoms.get('get_element_from_cache');
+    var wrapper = "function() {";
+        wrapper += "var elFromCache = (function(id){ "
+        wrapper += "try {";
+        wrapper += "(" + elFromCache + ")(id); "
+        wrapper += "} catch(e) {";
+        wrapper += "return null;"
+        wrapper += "}"
+        wrapper += "});";
+        wrapper += "return (function(a, b) {";
+        wrapper += "if (a === null || b === null) { return JSON.stringify({status: 10, value: null});}"
+        wrapper += "return JSON.stringify({status: 0, value: a === b});"
+        wrapper += "})("
+        wrapper += "elFromCache(\"" + args[0] + "\"),";
+        wrapper += "elFromCache(\"" + args[1] + "\")";
+        wrapper += ");}";
+
+    return wrapper;
+};
+
 RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
   var atomSrc, script = "";
   if (atom === "title") {
     atomSrc = "function(){return JSON.stringify({status: 0, value: document.title});}";
+  } else if (atom === "element_equals_element") {
+    var atomSrc = this.wrapElementEqualsElementAtom(args);
   } else {
     atomSrc = atoms.get(atom);
   }

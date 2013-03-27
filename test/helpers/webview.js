@@ -933,5 +933,31 @@ module.exports.buildTests = function(webviewType) {
       }, testEndpoint + 'iframes.html', "Iframe guinea pig");
     });
   });
+
+  desc('navigation', function(h) {
+    it('should be able to go back and forward', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByLinkText('i am a link', function(err, el) {
+          el.click();
+          h.driver.elementById('only_on_page_2', function(err) {
+            should.not.exist(err);
+            h.driver.back(function(err) {
+              should.not.exist(err);
+              h.driver.elementById('i_am_a_textbox', function(err) {
+                should.not.exist(err);
+                h.driver.forward(function(err) {
+                  should.not.exist(err);
+                  h.driver.elementById('only_on_page_2', function(err) {
+                    should.not.exist(err);
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 };
 

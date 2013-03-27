@@ -352,8 +352,12 @@ Android.prototype.back = function(cb) {
   });
 };
 
+Android.prototype.forward = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.getPageIndex = function(elementId, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.keys = function(elementId, keys, cb) {
@@ -361,11 +365,11 @@ Android.prototype.keys = function(elementId, keys, cb) {
 };
 
 Android.prototype.frame = function(frame, cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.leaveWebView = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.implicitWait = function(ms, cb) {

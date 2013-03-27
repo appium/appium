@@ -186,6 +186,24 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc('equals', function(h) {
+    it('should check if two elements are referring to the same remote obj', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('i_am_an_id', function(err, element) {
+          should.not.exist(err);
+          h.driver.elementByTagName('div', function(err, other) {
+            should.not.exist(err);
+            element.equals(other, function(err, val) {
+              should.not.exist(err);
+              val.should.equal(true);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
   desc('getSource', function(h) {
     it('should return the full page source', function(done) {
       loadWebView(h.driver, function() {

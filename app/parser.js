@@ -143,6 +143,14 @@ var args = [
             "to wait for (e.g., SplashActivity)"
   }],
 
+ [['--device-ready-timeout'], {
+    dest: 'androidDeviceReadyTimeout'
+    , defaultValue: '5'
+    , required: false
+    , example: "5"
+    , help: "(Android-only) Timeout in seconds while waiting for device to become ready"
+  }],
+
   [['--safari'], {
     defaultValue: false
     , action: 'storeTrue'

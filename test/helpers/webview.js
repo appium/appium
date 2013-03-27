@@ -187,7 +187,7 @@ module.exports.buildTests = function(webviewType) {
   });
 
   desc('equals', function(h) {
-    it.only('should check if two elements are referring to the same remote obj', function(done) {
+    it('should check if two elements are referring to the same remote obj', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('i_am_an_id', function(err, element) {
           should.not.exist(err);

@@ -69,6 +69,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/click', controller.clickCurrent);
   rest.post('/wd/hub/session/:sessionId?/back', controller.back);
   rest.post('/wd/hub/session/:sessionId?/forward', controller.forward);
+  rest.post('/wd/hub/session/:sessionId?/refresh', controller.refresh);
 
   // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -99,7 +100,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/refresh', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/available_engines', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/active_engine', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/activated', controller.notYetImplemented);

@@ -194,7 +194,9 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
   if (atom === "title") {
     atomSrc = "function(){return JSON.stringify({status: 0, value: document.title});}";
   } else if (atom === "element_equals_element") {
-    var atomSrc = this.wrapElementEqualsElementAtom(args);
+    atomSrc = this.wrapElementEqualsElementAtom(args);
+  } else if (atom === "refresh") {
+    atomSrc = "function(){return JSON.stringify({status: 0, value: window.location.reload()});}";
   } else {
     atomSrc = atoms.get(atom);
   }

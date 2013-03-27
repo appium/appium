@@ -34,6 +34,7 @@ var Android = function(opts) {
   this.shuttingDown = false;
   this.adb = null;
   this.swipeStepsPerSec = 200;
+  this.asyncWaitMs = 0;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'Android'
@@ -405,6 +406,10 @@ Android.prototype.implicitWait = function(ms, cb) {
     status: status.codes.Success.code
     , value: null
   });
+};
+
+Android.prototype.asyncTimeoutMs = function(ms, cb) {
+    cb(new NotYetImplementError(), null);
 };
 
 Android.prototype.elementDisplayed = function(elementId, cb) {

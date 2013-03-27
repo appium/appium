@@ -42,6 +42,7 @@ var RemoteDebugger = function(onDisconnect) {
   this.pageLoading = false;
   this.curMsgId = 0;
   this.dataCbs = {};
+  this.willNavigateWithoutReload = false;
   this.onAppDisconnect = onDisconnect || noop;
   this.pageChangeCb = noop;
   this.specialCbs = {
@@ -121,23 +122,33 @@ RemoteDebugger.prototype.pageArrayFromDict = function(pageDict) {
   return newPageArray;
 };
 
-RemoteDebugger.prototype.selectPage = function(pageIdKey, cb) {
+RemoteDebugger.prototype.selectPage = function(pageIdKey, cb, skipReadyCheck) {
   var me = this;
+  if (typeof skipReadyCheck === "undefined") {
+    skipReadyCheck = false;
+  }
   assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
   this.pageIdKey = pageIdKey;
   var setSenderKey = messages.setSenderKey(this.connId, this.appIdKey,
                                            this.senderId, this.pageIdKey);
-  logger.info("Selecting page and forwarding socket setup");
+  logger.info("Selecting page " + pageIdKey + " and forwarding socket setup");
   this.send(setSenderKey, function() {
+    logger.info("Set sender key");
     var enablePage = messages.enablePage(me.appIdKey, me.connId,
                                          me.senderId, me.pageIdKey);
     me.send(enablePage, function() {
-      me.execute('(function(){return document.readyState;})()', function(err, res) {
-        if (err || res.result.value == 'loading') {
-          me.pageUnload();
-        }
+      logger.info("Enabled activity on page");
+      if (skipReadyCheck) {
         cb();
-      });
+      } else {
+        me.execute('(function(){return document.readyState;})()', function(err, res) {
+          logger.info("Checked document readystate");
+          if (err || res.result.value == 'loading') {
+            me.pageUnload();
+          }
+          cb();
+        });
+      }
     });
   });
 };
@@ -223,6 +234,7 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
 RemoteDebugger.prototype.execute = function(command, cb) {
   var me = this;
   if (this.pageLoading) {
+    logger.info("Trying to execute but page is not loaded. Waiting for dom");
     this.waitForDom(function() {
       me.execute(command, cb);
     });
@@ -333,8 +345,15 @@ RemoteDebugger.prototype.setHandlers = function() {
       if (dataKey.method == "Profiler.resetProfiles") {
         logger.info("Device is telling us to reset profiles. Should probably " +
                     "do some kind of callback here");
+        //me.onPageChange();
       } else if (dataKey.method == "Page.frameNavigated") {
-        me.pageUnload();
+        if (!me.willNavigateWithoutReload) {
+          me.pageUnload();
+        } else {
+          logger.info("Frame navigated but we were warned about it, not " +
+                      "considering page state unloaded");
+          me.willNavigateWithoutReload = false;
+        }
       } else if (dataKey.method == "Page.loadEventFired") {
         me.pageLoad();
       } else if (typeof me.dataCbs[msgId] === "function") {
@@ -455,7 +474,18 @@ RemoteDebugger.prototype.receive = function(data) {
       plist = plist[0];
     }
 
-    logger.debug(util.inspect(plist, false, null));
+    var plistCopy = plist;
+    if (typeof plistCopy.WIRMessageDataKey !== "undefined") {
+      plistCopy.WIRMessageDataKey = plistCopy.WIRMessageDataKey.toString("utf8");
+    }
+    if (typeof plistCopy.WIRDestinationKey !== "undefined") {
+      plistCopy.WIRDestinationKey = plistCopy.WIRDestinationKey.toString("utf8");
+    }
+    if (typeof plistCopy.WIRSocketDataKey !== "undefined") {
+      plistCopy.WIRSocketDataKey = plistCopy.WIRSocketDataKey.toString("utf8");
+    }
+
+    logger.debug(util.inspect(plistCopy, false, null));
 
     // Jump forward the length of the plist
     this.readPos += msgLength;

@@ -363,6 +363,10 @@ exports.back = function(req, res) {
   req.device.back(getResponseHandler(req, res));
 };
 
+exports.forward = function(req, res) {
+  req.device.forward(getResponseHandler(req, res));
+};
+
 exports.keys = function(req, res) {
   var keys = req.body.value.join('');
 

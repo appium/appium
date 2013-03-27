@@ -711,9 +711,10 @@ IOS.prototype.click = function(elementId, cb) {
 
 IOS.prototype.executeAtom = function(atom, args, cb) {
   var returned = false;
+  var looks = 0;
   var lookForAlert = _.bind(function() {
-    if (!returned) {
-      logger.info("atom '" + atom + " did not return yet, checking to see if " +
+    if (!returned && looks < 11) {
+      logger.info("atom '" + atom + "' did not return yet, checking to see if " +
                   "we are blocked by an alert");
       this.proxy("au.alertIsPresent()", function(err, res) {
         if (res.value === true) {
@@ -727,6 +728,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
           setTimeout(lookForAlert, 500);
         }
       });
+      looks++;
     }
   }, this);
   this.remote.executeAtom(atom, args, this.curWebFrames, function(err, res) {
@@ -971,8 +973,31 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
   }
 };
 
+IOS.prototype.mobileSafariNav = function(navBtnName, cb) {
+  this.findUIElementOrElements('xpath', '//toolbar/button[@name="' + navBtnName + '"]',
+      null, false, _.bind(function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
+      var cmd = "au.getElement(" + res.value.ELEMENT + ").tap()";
+      this.remote.willNavigateWithoutReload = true;
+      this.proxy(cmd, cb);
+    }
+  }, this));
+};
+
 IOS.prototype.back = function(cb) {
-  cb(new NotImplementedError(), null);
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.mobileSafariNav("Back", cb);
+  }
+};
+
+IOS.prototype.forward = function(cb) {
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.mobileSafariNav("Forward", cb);
+  }
 };
 
 IOS.prototype.getPageIndex = function(elementId, cb) {

@@ -195,7 +195,7 @@ module.exports.buildTests = function(webviewType) {
             should.not.exist(err);
             element.equals(other, function(err, val) {
               should.not.exist(err);
-              val.should.equal.true;
+              val.should.equal(true);
               done();
             });
           });

@@ -959,5 +959,16 @@ module.exports.buildTests = function(webviewType) {
       });
     });
   });
+
+  desc('refresh', function(h) {
+    it('should be able to refresh', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.refresh(function(err) {
+          should.not.exist(err);
+          done();
+        });
+      });
+    });
+  });
 };
 

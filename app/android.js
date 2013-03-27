@@ -356,6 +356,10 @@ Android.prototype.forward = function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.refresh = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.getPageIndex = function(elementId, cb) {
   cb(new NotYetImplementedError(), null);
 };

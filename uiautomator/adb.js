@@ -688,7 +688,7 @@ ADB.prototype.uninstallApk = function(pkg, cb) {
 };
 
 ADB.prototype.installApk = function(apk, cb) {
-  var cmd = this.adbCmd + " install -r " + apk;
+  var cmd = this.adbCmd + ' install -r "' + apk + '"';
   this.debug(cmd);
   exec(cmd,function(err, stdout) {
     if (err) {
@@ -783,18 +783,18 @@ ADB.prototype.installApp = function(cb) {
               } else { cb(null); }
             },
             function(cb) {
+              if (installClean) {
+                me.debug("Installing clean apk");
+                me.installApk(me.cleanAPK, function(err) { if (err) return cb(err); return cb(null); });
+              } else { cb(null); }
+            },
+            function(cb) {
               // App is already installed so reset it.
               if (!installApp) {
                 me.runFastReset(function(err) {
                   if (err) return cb(err);
                   return cb(null);
                 });
-              } else { cb(null); }
-            },
-            function(cb) {
-              if (installClean) {
-                me.debug("Installing clean apk");
-                me.installApk(me.cleanAPK, function(err) { if (err) return cb(err); return cb(null); });
               } else { cb(null); }
             }
           ],

@@ -233,19 +233,37 @@ Appium.prototype.configure = function(desiredCaps, cb) {
 };
 
 Appium.prototype.configureSafari = function(desiredCaps, cb) {
-  var safariVer = "6.1";
+  var safariVer = "6.0";
+  var usingDefaultVer = true;
   if (typeof desiredCaps.version !== "undefined") {
     safariVer = desiredCaps.version;
+    usingDefaultVer = false;
   }
   logger.info("Trying to use mobile safari, version " + safariVer);
+  var checkSuccess = _.bind(function(attemptedApp) {
+    logger.info("Using mobile safari app at " + attemptedApp);
+    this.args.app = attemptedApp;
+    cb(null);
+  }, this);
   checkSafari(safariVer, _.bind(function(err, attemptedApp) {
     if (err) {
       logger.warn("Could not find mobile safari: " + err);
-      cb(err);
+      if (usingDefaultVer) {
+        safariVer = "6.1";
+        logger.info("Retrying with safari ver " + safariVer);
+        checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+          if (err) {
+            logger.warn("Could not find this one either: " + err);
+            cb(err);
+          } else {
+            checkSuccess(attemptedApp);
+          }
+        }, this));
+      } else {
+        cb(err);
+      }
     } else {
-      logger.info("Using mobile safari app at " + attemptedApp);
-      this.args.app = attemptedApp;
-      cb(null);
+      checkSuccess(attemptedApp);
     }
   }, this));
 };

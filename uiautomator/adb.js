@@ -31,6 +31,7 @@ var ADB = function(opts) {
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
   this.appWaitActivity = opts.appWaitActivity;
+  this.appDeviceReadyTimeout = opts.appDeviceReadyTimeout;
   this.apkPath = opts.apkPath;
   this.adb = "adb";
   this.adbCmd = this.adb;
@@ -507,10 +508,11 @@ ADB.prototype.waitForDevice = function(cb) {
   this.requireDeviceId();
   var doWait = _.bind(function(innerCb) {
     this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
-               "and to respond to shell commands");
+               "and to respond to shell commands (timeout = " +
+               this.appDeviceReadyTimeout + ")");
     var movedOn = false
       , cmd = this.adbCmd + " wait-for-device"
-      , timeoutSecs = 5;
+      , timeoutSecs = parseInt(this.appDeviceReadyTimeout, 10);
 
     setTimeout(_.bind(function() {
       if (!movedOn) {

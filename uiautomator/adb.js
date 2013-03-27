@@ -512,7 +512,7 @@ ADB.prototype.waitForDevice = function(cb) {
                this.appDeviceReadyTimeout + ")");
     var movedOn = false
       , cmd = this.adbCmd + " wait-for-device"
-      , timeoutSecs = parseInt(this.appDeviceReadyTimeout);
+      , timeoutSecs = parseInt(this.appDeviceReadyTimeout, 10);
 
     setTimeout(_.bind(function() {
       if (!movedOn) {

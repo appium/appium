@@ -15,7 +15,7 @@ Testing with Appium has two big benefits:
     to use of standard automation APIs on all platforms.
 
 2.  You can write tests with your favorite dev tools using Java,
-    JavaScript, PHP, Python, Ruby, C#, or Perl with the Selenium
+    Objective-C, JavaScript, PHP, Python, Ruby, C#, or Perl with the Selenium
     WebDriver API and language-specific client libraries. You can use
     any testing framework. If you use the UIAutomation library without
     Appium you can only write tests using JavaScript and you can only

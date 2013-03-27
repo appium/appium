@@ -76,6 +76,8 @@ var respondError = function(req, res, statusObj, value) {
 
   if (typeof newValue === "object") {
     newValue = _.extend({message: message}, value);
+  } else {
+    newValue = {message: message, origValue: value};
   }
   var response = {status: code, value: newValue};
   response.sessionId = getSessionId(req, response);
@@ -633,8 +635,10 @@ exports.notYetImplemented = function(req, res) {
   res.send(501, {
     status: status.codes.UnknownError.code
     , sessionId: getSessionId(req)
-    , value: "Not yet implemented. " +
-             "Please help us: http://appium.io/get-involved.html"
+    , value: {
+      message: "Not yet implemented. " +
+               "Please help us: http://appium.io/get-involved.html"
+    }
   });
 };
 
@@ -644,8 +648,10 @@ var notImplementedInThisContext = function(req, res) {
   res.send(501, {
     status: status.codes.UnknownError.code
     , sessionId: getSessionId(req)
-    , value: "Not implemented in this context, try switching " +
-             "into or out of a web view"
+    , value: {
+      message: "Not implemented in this context, try switching " +
+               "into or out of a web view"
+    }
   });
 };
 

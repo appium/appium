@@ -1000,6 +1000,14 @@ IOS.prototype.forward = function(cb) {
   }
 };
 
+IOS.prototype.refresh = function(cb) {
+  if (this.curWindowHandle === null) {
+    cb(new NotImplementedError(), null);
+  } else {
+    this.executeAtom('refresh', [], cb);
+  }
+};
+
 IOS.prototype.getPageIndex = function(elementId, cb) {
   if (this.curWindowHandle) {
     cb(new NotImplementedError(), null);
@@ -1552,7 +1560,7 @@ IOS.prototype.equalsWebElement = function(element, other, cb) {
     // ...otherwise let the browser tell us.
     this.executeAtom('element_equals_element', [ctxElem.ELEMENT, otherElem.ELEMENT], cb);
   }
-  
+
   cb(null, {
     status: retStatus
     , value: retValue

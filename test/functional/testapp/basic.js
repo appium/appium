@@ -5,6 +5,7 @@
 
 var assert = require("assert")
   , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
+  , should = require('should')
   , _ = require("underscore");
 
 describeWd('calc app', function(h) {
@@ -190,6 +191,14 @@ describeWd('calc app', function(h) {
           });
         });
       });
+    });
+  });
+
+  it('should receive correct error', function(done) {
+    h.driver.execute("mobile: doesn't exist", function(err) {
+      should.exist(err);
+      err.cause.value.message.should.equal("Not yet implemented. Please help us: http://appium.io/get-involved.html");
+      done();
     });
   });
 });

@@ -39,6 +39,7 @@ var IOS = function(args) {
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
+  this.curWebFrames = [];
   this.selectingNewPage = false;
   this.windowHandleCache = [];
   this.webElementIds = [];
@@ -108,10 +109,12 @@ IOS.prototype.start = function(cb, onDie) {
   var onExit = function(code, traceDir) {
     if (!didLaunch) {
       logger.error("Instruments did not launch successfully, failing session");
-      cb("Instruments did not launch successfully--please check your app " +
+      return cb("Instruments did not launch successfully--please check your app " +
           "paths or bundle IDs and try again");
-      code = 1; // this counts as an error even if instruments doesn't think so
-    } else if (typeof me.cbForCurrentCmd === "function") {
+      //code = 1; // this counts as an error even if instruments doesn't think so
+    }
+
+    if (typeof me.cbForCurrentCmd === "function") {
       // we were in the middle of waiting for a command when it died
       // so let's actually respond with something
       var error = new UnknownError("Instruments died while responding to " +
@@ -229,6 +232,20 @@ IOS.prototype.navToFirstAvailWebview = function(cb) {
   }, this));
 };
 
+IOS.prototype.closeAlertBeforeTest = function(cb) {
+  this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
+    if (typeof res.value !== "undefined" && res.value === true) {
+      logger.info("Alert present before starting test, let's banish it");
+      this.proxy("au.dismissAlert()", function() {
+        logger.info("Alert banished!");
+        cb(true);
+      });
+    } else {
+      cb(false);
+    }
+  }, this));
+};
+
 IOS.prototype.cleanupAppState = function(cb) {
   var user = process.env.USER
     , me = this;
@@ -262,13 +279,19 @@ IOS.prototype.cleanupAppState = function(cb) {
 };
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
-  var me = this;
+  var me = this
+    , isDone = false;
   if (!this.bundleId) {
     logger.error("Can't enter web frame without a bundle ID");
     throw new Error("Tried to enter web frame without a bundle ID");
   }
+  var onDone = function(res) {
+    isDone = true;
+    cb(res);
+  };
+
   if (this.remote !== null && this.bundleId !== null) {
-    this.remote.selectApp(this.bundleId, cb);
+    this.remote.selectApp(this.bundleId, onDone);
   } else {
     this.remote = rd.init(exitCb);
     this.remote.connect(function(appDict) {
@@ -277,14 +300,24 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
                      "its available apps");
         if(_.has(appDict, "com.apple.mobilesafari")) {
           logger.info("Using mobile safari instead");
-          me.remote.selectApp("com.apple.mobilesafari", cb);
+          me.remote.selectApp("com.apple.mobilesafari", onDone);
         } else {
-          cb([]);
+          onDone([]);
         }
       } else {
-        me.remote.selectApp(me.bundleId, cb);
+        me.remote.selectApp(me.bundleId, onDone);
       }
     }, _.bind(me.onPageChange, me));
+    var loopClose = function() {
+      if (!isDone) {
+        me.closeAlertBeforeTest(function(didDismiss) {
+          if (!didDismiss) {
+            setTimeout(loopClose, 1000);
+          }
+        });
+      }
+    };
+    setTimeout(loopClose, 4000);
   }
 };
 
@@ -368,6 +401,7 @@ IOS.prototype.stopRemote = function() {
   } else {
     this.remote.disconnect();
     this.curWindowHandle = null;
+    this.curWebFrames = [];
     this.curWebCoords = null;
     this.remote = null;
   }
@@ -500,20 +534,26 @@ IOS.prototype.handleFindCb = function(err, res, many, findCb) {
 
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
-
+  var atomsElement = this.getAtomsElement(ctx);
   var me = this;
   var doFind = function(findCb) {
-    me.remote.executeAtom('find_element' + ext, [strategy, selector], function(err, res) {
+    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
       me.cacheAndReturnWebEl(err, res, many, function(err, res) {
         me.handleFindCb(err, res, many, findCb);
       });
     });
   };
-
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
 IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
+  if (typeof res === "undefined") {
+    return cb(err, {
+      status: status.codes.UnknownError.code
+      , value: "Res was undefined!"
+    });
+  }
+
   var atomValue = res.value
     , atomStatus = res.status
     , me = this;
@@ -630,11 +670,11 @@ IOS.prototype.setValueImmediate = function(elementId, value, cb) {
 IOS.prototype.setValue = function(elementId, value, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('click', [atomsElement], _.bind(function(err, res) {
+      this.executeAtom('click', [atomsElement], _.bind(function(err, res) {
         if (err) {
           cb(err, res);
         } else {
-          this.remote.executeAtom('type', [atomsElement, value], cb);
+          this.executeAtom('type', [atomsElement, value], cb);
         }
       }, this));
     }, this));
@@ -659,12 +699,41 @@ IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('tap', [atomsElement], cb);
+      this.executeAtom('tap', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').tap()"].join('');
     this.proxy(command, cb);
   }
+};
+
+IOS.prototype.executeAtom = function(atom, args, cb) {
+  var returned = false;
+  var lookForAlert = _.bind(function() {
+    if (!returned) {
+      logger.info("atom '" + atom + " did not return yet, checking to see if " +
+                  "we are blocked by an alert");
+      this.proxy("au.alertIsPresent()", function(err, res) {
+        if (res.value === true) {
+          logger.info("Found an alert, returning control to client");
+          returned = true;
+          cb(null, {
+            status: status.codes.Success.code
+            , value: ''
+          });
+        } else {
+          setTimeout(lookForAlert, 500);
+        }
+      });
+    }
+  }, this);
+  this.remote.executeAtom(atom, args, this.curWebFrames, function(err, res) {
+    if (!returned) {
+      returned = true;
+      cb(err, res);
+    }
+  });
+  setTimeout(lookForAlert, 800);
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {
@@ -757,7 +826,7 @@ IOS.prototype.clickWebCoords = function(cb) {
 IOS.prototype.submit = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('submit', [atomsElement], cb);
+      this.executeAtom('submit', [atomsElement], cb);
     }, this));
   } else {
     cb(new NotImplementedError(), null);
@@ -789,7 +858,7 @@ IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elemen
 IOS.prototype.clear = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('clear', [atomsElement], cb);
+      this.executeAtom('clear', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').setValue('')"].join('');
@@ -800,7 +869,7 @@ IOS.prototype.clear = function(elementId, cb) {
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('get_text', [atomsElement], cb);
+      this.executeAtom('get_text', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').text()"].join('');
@@ -812,7 +881,7 @@ IOS.prototype.getName = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
       var script = "return arguments[0].tagName.toLowerCase()";
-      this.remote.executeAtom('execute_script', [script, [atomsElement]], cb);
+      this.executeAtom('execute_script', [script, [atomsElement]], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').type()"].join('');
@@ -829,7 +898,7 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
     } else {
-      this.remote.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
+      this.executeAtom('get_attribute_value', [atomsElement, attributeName], cb);
     }
   } else {
     if (_.contains(['label', 'name', 'value', 'values'], attributeName)) {
@@ -847,7 +916,7 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 IOS.prototype.getLocation = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('get_top_left_coordinates', [atomsElement], cb);
+      this.executeAtom('get_top_left_coordinates', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId,
@@ -865,7 +934,7 @@ IOS.prototype.getSize = function(elementId, cb) {
         , value: "Error converting element ID for using in WD atoms: " + elementId
       });
     } else {
-      this.remote.executeAtom('get_size', [atomsElement], cb);
+      this.executeAtom('get_size', [atomsElement], cb);
     }
   } else {
     var command = ["au.getElement('", elementId, "').getElementSize()"].join('');
@@ -881,7 +950,7 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
         , value: "Currently only getting current window size is supported."
       });
     } else {
-      this.remote.executeAtom('get_window_size', [], function(err, res) {
+      this.executeAtom('get_window_size', [], function(err, res) {
         cb(null, {
           status: status.codes.Success.code
           , value: res
@@ -898,6 +967,10 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
       this.proxy("au.getWindowSize()", cb);
     }
   }
+};
+
+IOS.prototype.back = function(cb) {
+  cb(new NotImplementedError(), null);
 };
 
 IOS.prototype.getPageIndex = function(elementId, cb) {
@@ -926,7 +999,46 @@ IOS.prototype.keys = function(keys, cb) {
 
 IOS.prototype.frame = function(frame, cb) {
   if (this.curWindowHandle) {
-    cb(new NotImplementedError(), null);
+    var atom;
+    if (frame === null) {
+      this.curWebFrames = [];
+      logger.info("Leaving web frame and going back to default content");
+      cb(null, {
+        status: status.codes.Success.code
+        , value: ''
+      });
+    } else {
+      if (typeof frame.ELEMENT !== "undefined") {
+        this.useAtomsElement(frame.ELEMENT, cb, _.bind(function(atomsElement) {
+          this.executeAtom('get_frame_window', [atomsElement], _.bind(function(err, res) {
+            if (this.checkSuccess(err, res, cb)) {
+              logger.info("Entering new web frame: " + res.value.WINDOW);
+              this.curWebFrames.unshift(res.value.WINDOW);
+              cb(err, res);
+            }
+          }, this));
+        }, this));
+      } else {
+        atom = "frame_by_id_or_name";
+        if (typeof frame === "number") {
+          atom = "frame_by_index";
+        }
+        this.executeAtom(atom, [frame], _.bind(function(err, res) {
+          if (this.checkSuccess(err, res, cb)) {
+            if (res.value === null || typeof res.value.WINDOW === "undefined") {
+              cb(null, {
+                status: status.codes.NoSuchFrame.code
+                , value: ''
+              });
+            } else {
+              logger.info("Entering new web frame: " + res.value.WINDOW);
+              this.curWebFrames.unshift(res.value.WINDOW);
+              cb(err, res);
+            }
+          }
+        }, this));
+      }
+    }
   } else {
     frame = frame? frame : 'mainWindow';
     var command = ["wd_frame = ", frame].join('');
@@ -946,7 +1058,7 @@ IOS.prototype.implicitWait = function(ms, cb) {
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('is_displayed', [atomsElement], cb);
+      this.executeAtom('is_displayed', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').isDisplayed() ? true : false"].join('');
@@ -957,7 +1069,7 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
 IOS.prototype.elementEnabled = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('is_enabled', [atomsElement], cb);
+      this.executeAtom('is_enabled', [atomsElement], cb);
     }, this));
   } else {
     var command = ["au.getElement('", elementId, "').isEnabled() ? true : false"].join('');
@@ -968,7 +1080,7 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
 IOS.prototype.elementSelected = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('is_selected', [atomsElement], cb);
+      this.executeAtom('is_selected', [atomsElement], cb);
     }, this));
   } else {
     cb(new NotImplementedError(), null);
@@ -978,7 +1090,7 @@ IOS.prototype.elementSelected = function(elementId, cb) {
 IOS.prototype.getCssProperty = function(elementId, propertyName, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.remote.executeAtom('get_value_of_css_property', [atomsElement,
+      this.executeAtom('get_value_of_css_property', [atomsElement,
         propertyName], cb);
     }, this));
   } else {
@@ -1009,6 +1121,11 @@ IOS.prototype.getPageSource = function(cb) {
 
 IOS.prototype.getAlertText = function(cb) {
   this.proxy("au.getAlertText()", cb);
+};
+
+IOS.prototype.setAlertText = function(text, cb) {
+  text = escapeSpecialChars(text, "'");
+  this.proxy("au.setAlertText('" + text + "')", cb);
 };
 
 IOS.prototype.postAcceptAlert = function(cb) {
@@ -1121,6 +1238,8 @@ IOS.prototype.hideKeyboard = function(keyName, cb) {
 
 IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
+    // make sure to clear out any leftover web frames
+    this.curWebFrames = [];
     this.remote.navToUrl(url, function() {
       cb(null, {
         status: status.codes.Success.code
@@ -1157,7 +1276,7 @@ IOS.prototype.getUrl = function(cb) {
 IOS.prototype.active = function(cb) {
   if (this.curWindowHandle) {
     var me = this;
-    this.remote.executeAtom('active_element', [], function(err, res) {
+    this.executeAtom('active_element', [], function(err, res) {
       me.cacheAndReturnWebEl(err, res, false, cb);
     });
   } else {
@@ -1271,7 +1390,14 @@ IOS.prototype.setSafariWindow = function(windowId, cb) {
 };
 
 IOS.prototype.checkSuccess = function(err, res, cb) {
-  if (err || res.status !== status.codes.Success.code) {
+  if (typeof res === "undefined") {
+    cb(err, {
+      status: status.codes.UnknownError.code
+      , value: "Did not get valid response from execution. Expected res to " +
+               "be an object and was " + JSON.stringify(res)
+    });
+    return false;
+  } else if (err || res.status !== status.codes.Success.code) {
     cb(err, res);
     return false;
   }
@@ -1317,9 +1443,12 @@ IOS.prototype.closeIPhoneWindow = function(cb) {
   });
 };
 
-IOS.prototype.clearWebView = function(cb) {
+IOS.prototype.leaveWebView = function(cb) {
   if (this.curWindowHandle === null) {
-    cb(new NotImplementedError(), null);
+    cb(null, {
+      status: status.codes.NoSuchFrame.code
+      , value: "We are not in a webview, so can't leave one!"
+    });
   } else {
     this.curWindowHandle = null;
     cb(null, {
@@ -1346,7 +1475,7 @@ IOS.prototype.execute = function(script, args, cb) {
         args[i] = atomsElement;
       }
     }
-    this.remote.executeAtom('execute_script', [script, args], cb);
+    this.executeAtom('execute_script', [script, args], cb);
   }
 };
 
@@ -1354,19 +1483,7 @@ IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    this.remote.execute('document.title', function (err, res) {
-      if (err) {
-        cb("Remote debugger error", {
-          status: status.codes.JavaScriptError.code
-          , value: res
-        });
-      } else {
-        cb(null, {
-          status: status.codes.Success.code
-          , value: res.result.value
-        });
-      }
-    });
+    this.executeAtom('title', [], cb);
   }
 };
 
@@ -1383,7 +1500,7 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
       this.curWebCoords = coords;
       this.useAtomsElement(element, cb, _.bind(function(atomsElement) {
         var relCoords = {x: xoffset, y: yoffset};
-        this.remote.executeAtom('move_mouse', [atomsElement, relCoords], cb);
+        this.executeAtom('move_mouse', [atomsElement, relCoords], cb);
       }, this));
     } else {
       this.curCoords = coords;
@@ -1393,6 +1510,26 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
       });
     }
   }, this));
+};
+
+IOS.prototype.equalsWebElement = function(element, other, cb) {
+  var ctxElem = this.getAtomsElement(element);
+  var otherElem = this.getAtomsElement(other);
+  var retStatus = status.codes.Success.code
+    , retValue = false;
+
+  // We assume it's referrencing the same element if it's equal
+  if (ctxElem.ELEMENT === otherElem.ELEMENT) {
+    retValue = true;
+  } else {
+    // ...otherwise let the browser tell us.
+    this.executeAtom('element_equals_element', [ctxElem.ELEMENT, otherElem.ELEMENT], cb);
+  }
+  
+  cb(null, {
+    status: retStatus
+    , value: retValue
+  });
 };
 
 module.exports = function(args) {

@@ -134,15 +134,13 @@ var args = [
             "to launch from your package (e.g., MainActivity)"
   }],
 
-  [['--skip-install'], {
-    dest: 'skipAndroidInstall'
+  [['--app-wait-activity'], {
+    dest: 'androidWaitActivity'
     , defaultValue: false
-    , action: 'storeTrue'
     , required: false
-    , help: "(Android-only) Don't install the app; assume it's already on the " +
-            'device with a recent version. Useful for test development ' +
-            'against an unchanging app.'
-    , nargs: 0
+    , example: "SplashActivity"
+    , help: "(Android-only) Activity name for the Android activity you want " +
+            "to wait for (e.g., SplashActivity)"
   }],
 
   [['--safari'], {

@@ -3,7 +3,8 @@
 
 var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
-  , guinea = 'http://localhost:4723/test/guinea-pig'
+  , testEndpoint = 'http://localhost:4723/test/'
+  , guinea = testEndpoint + 'guinea-pig'
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
 
@@ -22,12 +23,17 @@ module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
   });
 };
 
-module.exports.loadWebView = function(webviewType, driver, cb) {
-  var title = 'I am a page title';
+module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad, titleToSpin) {
+  if (typeof urlToLoad === "undefined") {
+    urlToLoad = guinea;
+  }
+  if (typeof titleToSpin === "undefined") {
+    titleToSpin = 'I am a page title';
+  }
   if (webviewType === "safari") {
-    driver.get(guinea, function(err) {
+    driver.get(urlToLoad, function(err) {
       should.not.exist(err);
-      module.exports.spinTitle(title, driver, cb);
+      module.exports.spinTitle(titleToSpin, driver, cb);
     });
   } else {
     driver.windowHandles(function(err, handles) {
@@ -37,13 +43,13 @@ module.exports.loadWebView = function(webviewType, driver, cb) {
         should.not.exist(err);
         driver.url(function(err, url) {
           should.not.exist(err);
-          if (url != guinea) {
-            driver.get(guinea, function(err) {
+          if (url != urlToLoad) {
+            driver.get(urlToLoad, function(err) {
               should.not.exist(err);
-              module.exports.spinTitle(title, driver, cb);
+              module.exports.spinTitle(titleToSpin, driver, cb);
             });
           } else {
-            module.exports.spinTitle(title, driver, cb);
+            module.exports.spinTitle(titleToSpin, driver, cb);
           }
         });
       });
@@ -63,8 +69,8 @@ module.exports.buildTests = function(webviewType) {
     desc = driverBlock.describeForApp(webviewType);
   }
 
-  var loadWebView = function(driver, cb) {
-    return module.exports.loadWebView(webviewType, driver, cb);
+  var loadWebView = function(driver, cb, urlToLoad, titleToSpin) {
+    return module.exports.loadWebView(webviewType, driver, cb, urlToLoad, titleToSpin);
   };
 
   var spinTitle = module.exports.spinTitle;
@@ -76,7 +82,7 @@ module.exports.buildTests = function(webviewType) {
         h.driver.title(function(err, title) {
           should.not.exist(err);
           title.should.eql("I am a page title");
-          h.driver.frame(null, function(err) {
+          h.driver.execute("mobile: leaveWebView", function(err) {
             should.not.exist(err);
             h.driver.title(function(err, title) {
               err.status.should.eql(13);
@@ -115,6 +121,18 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           elements.length.should.eql(0);
           done();
+        });
+      });
+    });
+    it('should find element from another element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByClassName('border', function(err, element) {
+          should.not.exist(err);
+          element.elementByXPath('./form', function(err, innerElement) {
+            should.not.exist(err);
+            should.exist(innerElement);
+            done();
+          });
         });
       });
     });
@@ -162,6 +180,24 @@ module.exports.buildTests = function(webviewType) {
             should.not.exist(err);
             text.should.eql('I am a div');
             done();
+          });
+        });
+      });
+    });
+  });
+
+  desc('equals', function(h) {
+    it('should check if two elements are referring to the same remote obj', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('i_am_an_id', function(err, element) {
+          should.not.exist(err);
+          h.driver.elementByTagName('div', function(err, other) {
+            should.not.exist(err);
+            element.equals(other, function(err, val) {
+              should.not.exist(err);
+              val.should.equal(true);
+              done();
+            });
           });
         });
       });
@@ -332,7 +368,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            [480, 387].should.include(loc.y);
+            [510, 417].should.include(loc.y);
             done();
           });
         });
@@ -569,6 +605,332 @@ module.exports.buildTests = function(webviewType) {
           });
         });
       });
+    });
+  });
+
+  desc('alerts', function(h) {
+    it('should accept alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.acceptAlert(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am a page title");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should dismiss', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.dismissAlert(function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                title.should.eql("I am a page title");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should get text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertText(function(err, text) {
+              should.not.exist(err);
+              text.should.eql("I am an alert");
+              done();
+            });
+          });
+        });
+      });
+    });
+    it('should not get text of alert that closed', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.acceptAlert(function(err) {
+              should.not.exist(err);
+              h.driver.alertText(function(err) {
+                should.exist(err);
+                err.status.should.equal(27);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should set text of prompt', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('prompt1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertKeys("yes I do!", function(err) {
+              should.not.exist(err);
+              h.driver.acceptAlert(function(err) {
+                should.not.exist(err);
+                h.driver.elementById('promptVal', function(err, el) {
+                  should.not.exist(err);
+                  el.getValue(function(err, val) {
+                    should.not.exist(err);
+                    val.should.eql("yes I do!");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should fail to set text of alert', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('alert1', function(err, link) {
+          link.click(function(err) {
+            should.not.exist(err);
+            h.driver.alertKeys("yes I do!", function(err) {
+              should.exist(err);
+              err.status.should.equal(11);
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+
+  desc('frames and iframes', function(h) {
+    it('should switch to frame by name', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch to frame by index', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame(1, function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 2");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 2");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch to frame by id', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("frame3", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 3");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 3");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch back to default content from frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                h.driver.frame(null, function(err) {
+                  should.not.exist(err);
+                  h.driver.title(function(err, title) {
+                    should.not.exist(err);
+                    title.should.equal("Frameset guinea pig");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+
+    it('should switch to iframe by name', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("iframe1", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should switch to iframe by index', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame(1, function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 2");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 2");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch to iframe by id', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("id-iframe3", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 3");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 3");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should switch to iframe by element', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementById('id-iframe3', function(err, frame) {
+          should.not.exist(err);
+          h.driver.frame(frame, function(err) {
+            should.not.exist(err);
+            h.driver.title(function(err, title) {
+              should.not.exist(err);
+              title.should.equal("Sub frame 3");
+              h.driver.elementByTagName("h1", function(err, h1) {
+                should.not.exist(err);
+                h1.text(function(err, text) {
+                  should.not.exist(err);
+                  text.should.equal("Sub frame 3");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should not switch to iframe by element of wrong type', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementByTagName('h1', function(err, h1) {
+          should.not.exist(err);
+          h.driver.frame(h1, function(err) {
+            should.exist(err);
+            err.status.should.equal(8);
+            done();
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should switch to child frames', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("third", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 3");
+            h.driver.frame("childframe", function(err) {
+              should.not.exist(err);
+              h.driver.title(function(err, title) {
+                should.not.exist(err);
+                title.should.equal("I am another page title");
+                done();
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+    it('should switch back to default content from iframe', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("iframe1", function(err) {
+          should.not.exist(err);
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.equal("Sub frame 1");
+            h.driver.elementByTagName("h1", function(err, h1) {
+              should.not.exist(err);
+              h1.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("Sub frame 1");
+                h.driver.frame(null, function(err) {
+                  should.not.exist(err);
+                  h.driver.title(function(err, title) {
+                    should.not.exist(err);
+                    title.should.equal("Iframe guinea pig");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
     });
   });
 };

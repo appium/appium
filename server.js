@@ -87,6 +87,7 @@ var main = function(args, readyCb, doneCb) {
       appiumServer.preLaunch(function(err, appiumServer) {
         if (err) {
           logger.error("Could not pre-launch appium: " + err);
+          process.exit(1);
         } else {
           next(appiumServer);
         }

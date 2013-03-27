@@ -6,7 +6,6 @@
 var target = UIATarget.localTarget();
 var mainWindow = target.frontMostApp().mainWindow();
 var wd_frame = mainWindow;
-var endpoint = 'http://localhost:4723/instruments/';
 
 // safe default
 target.setTimeout(1);

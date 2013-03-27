@@ -16,4 +16,11 @@ $.extend(au, {
       , systemVersion: UIATarget.localTarget().systemVersion()
     };
   }
+  , delay: function(ms) {
+    var now = new Date();
+    var desiredTime = now + ms;
+    while (now < desiredTime) {
+      now = new Date(); // update the current time
+    }
+  }
 });

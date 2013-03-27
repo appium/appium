@@ -4,7 +4,6 @@
 var status = require('./uiauto/lib/status')
   , logger = require('../logger.js').get('appium')
   , _s = require("underscore.string")
-  , fs = require('fs')
   , swig = require('swig')
   , path = require('path')
   , _ = require('underscore');
@@ -14,7 +13,11 @@ function getResponseHandler(req, res) {
     if (typeof response === "undefined" || response === null) {
       response = {};
     }
-    if (err !== null && typeof err !== "undefined") {
+    if (err !== null && typeof err.status !== 'undefined' && typeof err.value !== 'undefined') {
+      throw new Error("Looks like you passed in a response object as the " +
+                      "first param to getResponseHandler. Err is always the " +
+                      "first param! Fix your codes!");
+    } else if (err !== null && typeof err !== "undefined") {
       if (typeof err.name !== 'undefined') {
         if (err.name == 'NotImplementedError') {
           notImplementedInThisContext(req, res);
@@ -178,6 +181,13 @@ exports.reset = function(req, res) {
 
 exports.deleteSession = function(req, res) {
   req.appium.stop(getResponseHandler(req, res));
+};
+
+exports.equalsElement = function(req, res) {
+  var element = req.params.elementId
+    , other = req.params.otherId;
+
+  req.device.equalsWebElement(element, other, getResponseHandler(req, res));
 };
 
 exports.findElements = function(req, res) {
@@ -349,6 +359,10 @@ exports.keyevent = function(req, res) {
   req.device.keyevent(keycode, getResponseHandler(req, res));
 };
 
+exports.back = function(req, res) {
+  req.device.back(getResponseHandler(req, res));
+};
+
 exports.keys = function(req, res) {
   var keys = req.body.value.join('');
 
@@ -358,11 +372,11 @@ exports.keys = function(req, res) {
 exports.frame = function(req, res) {
   var frame = req.body.id;
 
-  if (frame === null) {
-    req.device.clearWebView(getResponseHandler(req, res));
-  } else {
-    req.device.frame(frame, getResponseHandler(req, res));
-  }
+  req.device.frame(frame, getResponseHandler(req, res));
+};
+
+exports.leaveWebView = function(req, res) {
+  req.device.leaveWebView(getResponseHandler(req, res));
 };
 
 exports.elementDisplayed = function(req, res) {
@@ -387,6 +401,11 @@ exports.getPageSource = function(req, res) {
 
 exports.getAlertText = function(req, res) {
   req.device.getAlertText(getResponseHandler(req, res));
+};
+
+exports.setAlertText = function(req, res) {
+  var text = req.body.text;
+  req.device.setAlertText(text, getResponseHandler(req, res));
 };
 
 exports.postAcceptAlert = function(req, res) {
@@ -633,6 +652,7 @@ var mobileCmdMap = {
   , 'setValue' : exports.setValueImmediate
   , 'reset' : exports.reset
   , 'keyevent' : exports.keyevent
+  , 'leaveWebView': exports.leaveWebView
 };
 
 exports.produceError = function(req, res) {

@@ -23,12 +23,14 @@ var ADB = function(opts) {
     opts.sdkRoot = process.env.ANDROID_HOME || '';
   }
   this.sdkRoot = opts.sdkRoot;
-  this.skipInstall = opts.skipInstall || false;
-  this.skipUninstall = !(opts.reset || false);
+  // Don't uninstall if using fast reset.
+  // Uninstall if reset is set and fast reset isn't.
+  this.skipUninstall = opts.fastReset || !(opts.reset || false);
   this.port = opts.port || 4724;
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
+  this.appWaitActivity = opts.appWaitActivity;
   this.apkPath = opts.apkPath;
   this.adb = "adb";
   this.adbCmd = this.adb;
@@ -627,7 +629,9 @@ ADB.prototype.waitForActivity = function(cb) {
     , endAt = Date.now() + waitMs
     , match = null
     , foundActivity = false
-    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/);
+    , found = null
+    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/)
+    , targetActivity = this.appWaitActivity || this.appActivity;
 
   var getFocusedApp = _.bind(function() {
     exec(cmd, _.bind(function(err, stdout) {
@@ -639,7 +643,8 @@ ADB.prototype.waitForActivity = function(cb) {
         _.each(stdout.split("\n"), _.bind(function(line) {
           match = searchRe.exec(line);
           if (match) {
-            if (match[1] === this.appPackage && match[2] === this.appActivity) {
+            found = match;
+            if (match[1] === this.appPackage && match[2] === targetActivity) {
               foundActivity = true;
             }
           }
@@ -649,8 +654,10 @@ ADB.prototype.waitForActivity = function(cb) {
         } else if (Date.now() < endAt) {
           setTimeout(getFocusedApp, intMs);
         } else {
-          logger.error("App never showed up as active");
-          cb(new Error("App never showed up as active"));
+          var found = found && found.length > 2 ? found[2] : "null";
+          var msg = "App never showed up as active. appActivity: " + found + " != " + this.appActivity;
+          logger.error(msg);
+          cb(new Error(msg));
         }
       }
     }, this));
@@ -793,18 +800,33 @@ ADB.prototype.installApp = function(cb) {
           function() { cb(null); });
   };
 
-  if (this.skipInstall) {
-    this.debug("Not installing app because server started with --skip-install");
+  next();
+};
+
+ADB.prototype.back = function(cb) {
+  this.requireDeviceId();
+  this.debug("Pressing the BACK button");
+  var cmd = this.adbCmd + " shell input keyevent 4";
+  exec(cmd, function() {
     cb();
-  } else {
-    next();
-  }
+  });
 };
 
 ADB.prototype.goToHome = function(cb) {
   this.requireDeviceId();
   this.debug("Pressing the HOME button");
   var cmd = this.adbCmd + " shell input keyevent 3";
+  exec(cmd, function() {
+    cb();
+  });
+};
+
+ADB.prototype.keyevent = function(keycode, cb) {
+  this.requireDeviceId();
+  var code = parseInt(keycode, 10);
+  // keycode must be an int.
+  var cmd = this.adbCmd + ' shell input keyevent ' + code;
+  this.debug("Sending keyevent " + code);
   exec(cmd, function() {
     cb();
   });

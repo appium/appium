@@ -124,11 +124,20 @@ class AndroidCommandHolder {
         AndroidElementsHash elHash = AndroidElementsHash.getInstance();
         AndroidElement baseEl = contextElement(contextId);
         
+        boolean useIndex = sel.toString().contains("CLASS_REGEX=");
+        UiSelector tmp = null;
         int counter = 0;
         while (keepSearching) {
             if (baseEl == null) {
-                lastFoundObj = new UiObject(sel.instance(counter));
+                Logger.info("keep searching A " + counter + " useIndex? " + useIndex);
+                if (useIndex) {
+                  tmp = sel.index(counter);
+                } else {
+                  tmp = sel.instance(counter);
+                }
+                lastFoundObj = new UiObject(tmp);
             } else {
+                Logger.info("keep searching B " + counter);
                 lastFoundObj = baseEl.getChild(sel.instance(counter));
             }
             counter++;
@@ -173,6 +182,38 @@ class AndroidCommandHolder {
         String substrStr = substr ? "true" : "false";
         Logger.info("Building xpath selector from attr " + attr + " and constraint " + constraint + " and substr " + substrStr);
         String selOut = "s";
+
+        // $driver.find_element :xpath, %(//*[contains(@text, 'agree')])
+        // info: [ANDROID] [info] Building xpath selector from attr text and
+        // constraint agree and substr true
+        // info: [ANDROID] [info] s.className('*').textContains('agree')
+        try {
+          nodeType = path.getJSONObject(0).getString("node");
+        } catch (JSONException e) {
+          throw new AndroidCommandException(
+              "Error parsing xpath path obj from JSON");
+        }
+
+        if (attr.toLowerCase().contentEquals("text") && !constraint.isEmpty()
+            && substr == true && nodeType.contentEquals("*") == true) {
+          selOut += ".textContains('" + constraint + "')";
+          s = s.textContains(constraint);
+          Logger.info(selOut);
+          return s;
+        }
+
+        // //*[contains(@tag, "button")]
+        if (attr.toLowerCase().contentEquals("tag") && !constraint.isEmpty()
+            && substr == true && nodeType.contentEquals("*") == true) {
+          // (?i) = case insensitive match. Esape everything that isn't an alpha num.
+          // use .* to match on contains.
+          constraint = "(?i)^.*" + constraint.replaceAll("([^\\p{Alnum}])", "\\\\$1") + ".*$";
+          selOut += ".classNameMatches('" + constraint + "')";
+          s = s.classNameMatches(constraint);
+          Logger.info(selOut);
+          return s;
+        }
+
         for (int i = 0; i < path.length(); i++) {
             try {
                 pathObj = path.getJSONObject(i);
@@ -226,8 +267,15 @@ class AndroidCommandHolder {
             } catch (UnallowedTagNameException e) {
                 throw new AndroidCommandException(e.getMessage());
             }
+
+            if (androidClass.contentEquals("android.widget.Button")) {
+              androidClass += "|android.widget.ImageButton";
+              androidClass = androidClass.replaceAll("([^\\p{Alnum}|])", "\\\\$1");
+              s = s.classNameMatches("^" + androidClass + "$");
+            } else {
+              s = s.className(androidClass);
+            }
             Logger.info("Using class selector " + androidClass + " for find");
-            s = s.className(androidClass);
         } else if (strategy.equals("name")) {
             s = s.description(selector);
         } else {

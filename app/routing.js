@@ -37,12 +37,14 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/pageIndex', controller.getPageIndex);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/attribute/:name', controller.getAttribute);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/css/:propertyName', controller.getCssProperty);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:otherId', controller.equalsElement);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/name', controller.getName);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear', controller.clear);
   rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
   rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
   rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
+  rest.post('/wd/hub/session/:sessionId?/alert_text', controller.setAlertText);
   rest.post('/wd/hub/session/:sessionId?/accept_alert', controller.postAcceptAlert);
   rest.post('/wd/hub/session/:sessionId?/dismiss_alert', controller.postDismissAlert);
   rest.post('/wd/hub/session/:sessionId?/timeouts/implicit_wait', controller.implicitWait);
@@ -65,6 +67,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/submit', controller.submit);
   rest.post('/wd/hub/session/:sessionId?/moveto', controller.moveTo);
   rest.post('/wd/hub/session/:sessionId?/click', controller.clickCurrent);
+  rest.post('/wd/hub/session/:sessionId?/back', controller.back);
 
   // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -96,7 +99,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/timeouts/async_script', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/forward', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/back', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/refresh', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/available_engines', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/active_engine', controller.notYetImplemented);
@@ -112,7 +114,6 @@ var routeNotYetImplemented = function(rest) {
   rest.delete('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/cookie/:name', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:other', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location_in_view', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttonup', controller.notYetImplemented);

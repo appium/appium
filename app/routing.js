@@ -37,6 +37,7 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/pageIndex', controller.getPageIndex);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/attribute/:name', controller.getAttribute);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/css/:propertyName', controller.getCssProperty);
+  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:otherId', controller.equalsElement);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/name', controller.getName);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear', controller.clear);
   rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
@@ -113,7 +114,6 @@ var routeNotYetImplemented = function(rest) {
   rest.delete('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/cookie/:name', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/element/:elementId?/equals/:other', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?/location_in_view', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttonup', controller.notYetImplemented);

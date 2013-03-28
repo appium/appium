@@ -234,6 +234,12 @@ exports.doClick = function(req, res) {
   req.device.click(elementId, getResponseHandler(req, res));
 };
 
+exports.fireEvent = function(req, res) {
+  var elementId = req.body.element
+    , evt = req.body.event;
+  req.device.fireEvent(evt, elementId, getResponseHandler(req, res));
+};
+
 exports.mobileTap = function(req, res) {
   req.body = _.defaults(req.body, {
     tapCount: 1
@@ -667,6 +673,7 @@ var mobileCmdMap = {
   , 'reset' : exports.reset
   , 'keyevent' : exports.keyevent
   , 'leaveWebView': exports.leaveWebView
+  , 'fireEvent': exports.fireEvent
 };
 
 exports.produceError = function(req, res) {

@@ -320,7 +320,7 @@ Appium.prototype.invoke = function() {
           , reset: !this.args.noReset
           , autoWebview: this.args.safari
           , deviceType: this.iosDeviceType
-          , startingOrientation: this.desiredCapabilities.orientation
+          , startingOrientation: this.desiredCapabilities.orientation || this.desiredCapabilities.rotatable
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {

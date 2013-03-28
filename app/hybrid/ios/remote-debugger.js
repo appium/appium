@@ -189,6 +189,27 @@ RemoteDebugger.prototype.wrapElementEqualsElementAtom = function(args) {
     return wrapper;
 };
 
+RemoteDebugger.prototype.wrapJsEventAtom = function(args) {
+  var elFromCache = atoms.get('get_element_from_cache');
+  var wrapper = "function() {";
+      wrapper += "var elFromCache = (function(id){ ";
+      wrapper += "try {";
+      wrapper += "return (" + elFromCache + ")(id); ";
+      wrapper += "} catch(e) {";
+      wrapper += "return null;";
+      wrapper += "}";
+      wrapper += "});";
+      wrapper += "return (function(el) {";
+      wrapper += "var evt = document.createEvent('HTMLEvents');";
+      wrapper += "evt.initEvent('" + args[0] + "', false, true);";
+      wrapper += "el.dispatchEvent(evt);";
+      wrapper += "return JSON.stringify({status: 0, value: true});";
+      wrapper += "})(";
+      wrapper += "elFromCache(" + JSON.stringify(args[1].ELEMENT) + ")";
+      wrapper += ");}";
+  return wrapper;
+};
+
 RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
   var atomSrc, script = "";
   if (atom === "title") {
@@ -197,6 +218,8 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
     atomSrc = this.wrapElementEqualsElementAtom(args);
   } else if (atom === "refresh") {
     atomSrc = "function(){return JSON.stringify({status: 0, value: window.location.reload()});}";
+  } else if (atom === "fireEvent") {
+    atomSrc = this.wrapJsEventAtom(args);
   } else {
     atomSrc = atoms.get(atom);
   }

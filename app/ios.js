@@ -44,6 +44,7 @@ var IOS = function(args) {
   this.webElementIds = [];
   this.implicitWaitMs = 0;
   this.asyncWaitMs = 0;
+  this.asyncResponseCb = null;
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
@@ -817,6 +818,45 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
   setTimeout(lookForAlert, 5000);
 };
 
+IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
+  var returned = false;
+  var lookForAlert = _.bind(function() {
+    if (!returned) {
+      logger.info("atom '" + atom + " did not return yet, checking to see if " +
+                  "we are blocked by an alert");
+      this.proxy("au.alertIsPresent()", function(err, res) {
+        if (res.value === true) {
+          logger.info("Found an alert, returning control to client");
+          returned = true;
+          cb(null, {
+            status: status.codes.Success.code
+            , value: ''
+          });
+        } else {
+          setTimeout(lookForAlert, 500);
+        }
+      });
+    }
+  }, this);
+  this.asyncResponseCb = cb;
+  this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, function(err, res) {
+    returned = true;
+    if (err) {
+      cb(res);
+    }
+  });
+  setTimeout(lookForAlert, 800);
+};
+
+IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
+  var asyncCb = this.asyncResponseCb;
+  console.log(asyncResponse);
+  if (asyncCb !== null) {
+    asyncCb(null, asyncResponse);
+  this.asyncResponseCb = null;
+  }
+};
+
 IOS.prototype.clickCurrent = function(button, cb) {
   var noMoveToErr = {
     status: status.codes.UnknownError.code
@@ -1559,6 +1599,27 @@ IOS.prototype.execute = function(script, args, cb) {
       }
     }
     this.executeAtom('execute_script', [script, args], cb);
+  }
+};
+
+IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
+  if (this.curWindowHandle === null) {
+    this.proxy(script, cb);
+  } else {
+    for (var i=0; i < args.length; i++) {
+      if (typeof args[i].ELEMENT !== "undefined") {
+        var atomsElement = this.getAtomsElement(args[i].ELEMENT);
+        if (atomsElement === null) {
+          cb(null, {
+            status: status.codes.UnknownError.code
+            , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
+          });
+        return;
+        }
+        args[i] = atomsElement;
+      }
+    }
+    this.executeAtomAsync('execute_async_script', [script, args, this.asyncWaitMs], responseUrl, cb);
   }
 };
 

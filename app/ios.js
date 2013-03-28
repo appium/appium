@@ -1168,7 +1168,7 @@ IOS.prototype.implicitWait = function(ms, cb) {
 };
 
 IOS.prototype.asyncScriptTimeout = function(ms, cb) {
-  this.asyncTimeout = parseInt(ms, 10);
+  this.asyncWaitMs = parseInt(ms, 10);
   logger.info("Set iOS async script timeout to " + ms + "ms");
   cb(null, {
     status: status.codes.Success.code

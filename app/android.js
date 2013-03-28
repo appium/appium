@@ -453,6 +453,34 @@ Android.prototype.getPageSource = function(cb) {
         });
 };
 
+Android.prototype.getPageSourceXML = function(cb) {
+  var me = this;
+  var xmlFile = '/tmp/dump.xml';
+  async.series(
+        [
+          function(cb) {
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /cache/dump.xml;';
+            cmd += me.adb.adbCmd + ' pull /cache/dump.xml ' + xmlFile;
+            logger.debug('getPageSourceXML command: ' + cmd);
+            exec(cmd, {}, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
+          }
+        ],
+        // Top level cb
+        function(){
+          var xml = fs.readFileSync(xmlFile, 'utf8');
+          cb(null, {
+               status: status.codes.Success.code
+               , value: xml
+             });
+        });
+};
+
 Android.prototype.getAlertText = function(cb) {
     cb(new NotYetImplementedError(), null);
 };

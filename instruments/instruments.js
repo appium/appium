@@ -181,10 +181,16 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
   var env = _.clone(process.env);
-  if (this.withoutDelay) {
+  if (this.withoutDelay && !this.udid) {
     env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, "../submodules/instruments-without-delay/build/InstrumentsShim.dylib");
     env.LIB_PATH = path.resolve(__dirname, "../submodules/instruments-without-delay/build");
   }
+  logger.info("Spawning instruments with command: " + this.instrumentsPath +
+              " " + args.join(" "));
+  logger.info("And extra without-delay env: " + JSON.stringify({
+    DYLD_INSERT_LIBRARIES: env.DYLD_INSERT_LIBRARIES
+    , LIB_PATH: env.LIB_PATH
+  }));
   return spawn(this.instrumentsPath, args, {env: env});
 };
 

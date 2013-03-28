@@ -740,7 +740,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
             , value: ''
           });
         } else {
-          setTimeout(lookForAlert, 500);
+          setTimeout(lookForAlert, 1000);
         }
       });
       looks++;
@@ -752,7 +752,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       cb(err, res);
     }
   });
-  setTimeout(lookForAlert, 800);
+  setTimeout(lookForAlert, 1000);
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {

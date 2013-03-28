@@ -28,3 +28,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
+|`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|

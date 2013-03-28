@@ -687,6 +687,11 @@ IOS.prototype.setValue = function(elementId, value, cb) {
 };
 
 IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
+  if (parseInt(elementId, 10) < 5000) {
+    logger.info("Element with id " + elementId + " passed in for use with " +
+                "atoms, but it's out of our internal scope. Adding 5000");
+    elementId = (parseInt(elementId, 10) + 5000).toString();
+  }
   var atomsElement = this.getAtomsElement(elementId);
   if (atomsElement === null) {
     failCb(null, {

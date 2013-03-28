@@ -861,35 +861,39 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
 
   if (asyncCb !== null) {
     var args = asyncResponse
-    if (typeof args.value.length === "undefined") {
-      if (typeof args.value.ELEMENT !== "undefined") {
-        var wdElement = parseElementResponse(args.value);
-        if (wdElement === null) {
-          cb(null, {
-            status: status.codes.UnknownError.code
-            , value: "Error converting element ID atom for using in WD: " + args.value.ELEMENT
-          });
-        }
-      }
-      args.value = wdElement;
-    } else {
-      var args = asyncResponse.value;
-      for (var i=0; i < args.length; i++) {
-        if (typeof args[i].ELEMENT !== "undefined") {
-          var wdElement = parseElementResponse(args[i]);
+    if (args.value !== null) {
+      if (typeof args.value.length === "undefined") {
+        if (typeof args.value.ELEMENT !== "undefined") {
+          var wdElement = parseElementResponse(args.value);
           if (wdElement === null) {
             cb(null, {
               status: status.codes.UnknownError.code
-              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+              , value: "Error converting element ID atom for using in WD: " + args.value.ELEMENT
             });
-          return;
           }
-          args[i] = wdElement;
+          args.value = wdElement;
+        }
+      } else {
+        var args = asyncResponse.value;
+        for (var i=0; i < args.length; i++) {
+          if (args[i] !== null) {
+            if (typeof args[i].ELEMENT !== "undefined") {
+              var wdElement = parseElementResponse(args[i]);
+              if (wdElement === null) {
+                cb(null, {
+                  status: status.codes.UnknownError.code
+                  , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+                });
+              return;
+              }
+              args[i] = wdElement;
+            }
+          }
         }
       }
     }
     asyncCb(null, asyncResponse);
-  this.asyncResponseCb = null;
+    this.asyncResponseCb = null;
   }
 };
 

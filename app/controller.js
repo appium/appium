@@ -531,6 +531,16 @@ exports.execute = function(req, res) {
   }
 };
 
+exports.executeAsync = function(req, res) {
+  var script = req.body.script
+    , args = req.body.args
+    , responseUrl = ('http://' + req.appium.args.address + ':' + req.appium.args.port + '/wd/hub/session/' + req.appium.sessionId + '/receive_async_response');
+
+  if(checkMissingParams(res, {script: script, args: args})) {
+    req.device.executeAsync(script, args, responseUrl, getResponseHandler(req, res));
+    }
+};
+
 exports.executeMobileMethod = function(req, res, cmd) {
   var args = req.body.args
     , params = {};
@@ -609,6 +619,11 @@ exports.setCommandTimeout = function(req, res) {
 
 exports.getCommandTimeout = function(req, res) {
   req.device.getCommandTimeout(getResponseHandler(req, res));
+};
+
+exports.receiveAsyncResponse = function(req, res) {
+  var asyncResponse = req.body;
+  req.device.receiveAsyncResponse(asyncResponse, getResponseHandler(req, res));
 };
 
 exports.setValueImmediate = function(req, res) {

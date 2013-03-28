@@ -64,6 +64,7 @@ module.exports = function(appium) {
   rest.delete('/wd/hub/session/:sessionId?/window', controller.closeWindow);
   rest.get('/wd/hub/session/:sessionId?/window/:windowhandle?/size', controller.getWindowSize);
   rest.post('/wd/hub/session/:sessionId?/execute', controller.execute);
+  rest.post('/wd/hub/session/:sessionId?/execute_async', controller.executeAsync);
   rest.get('/wd/hub/session/:sessionId?/title', controller.title);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/submit', controller.submit);
   rest.post('/wd/hub/session/:sessionId?/moveto', controller.moveTo);
@@ -71,6 +72,9 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/back', controller.back);
   rest.post('/wd/hub/session/:sessionId?/forward', controller.forward);
   rest.post('/wd/hub/session/:sessionId?/refresh', controller.refresh);
+
+  // allow appium to receive async response
+  rest.post('/wd/hub/session/:sessionId?/receive_async_response', controller.receiveAsyncResponse);
 
   // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
@@ -99,7 +103,6 @@ var routeNotYetImplemented = function(rest) {
   rest.get('/wd/hub/session/:sessionId?/local_storage/size', controller.notYetImplemented);
   // The rest of the API:
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/execute_async', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/available_engines', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/active_engine', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/activated', controller.notYetImplemented);

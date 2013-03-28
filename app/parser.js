@@ -175,6 +175,14 @@ var args = [
     , required: false
     , help: "(IOS-only) Use the iPad Simulator no matter what the app wants"
     , nargs: 0
+  }],
+
+  [['--orientation'], {
+    defaultValue: null
+    , required: false
+    , example: "LANDSCAPE"
+    , help: "(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests " +
+            "to this orientation"
   }]
 ];
 

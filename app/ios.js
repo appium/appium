@@ -180,35 +180,41 @@ IOS.prototype.start = function(cb, onDie) {
 };
 
 IOS.prototype.setDeviceType = function(cb) {
-  var deviceTypeCode = 1
-    , plist = path.resolve(this.app, "Info.plist");
+  if (this.udid) {
+    logger.info("Not setting device type since we're connected to a device");
+    cb(null);
+  } else {
+    var deviceTypeCode = 1
+      , plist = path.resolve(this.app, "Info.plist");
 
-  if (typeof this.deviceType === "undefined") {
-    this.deviceType = "iphone";
-  }
-  logger.info("Forcing use of " + this.deviceType);
-  if (this.deviceType === "ipad") {
-    deviceTypeCode = 2;
-  }
-  bplistParse.parseFile(plist, function(err, obj) {
-    if (err) {
-      logger.error("Could not parse plist file at " + plist);
-      cb(err);
-    } else {
-      logger.info("Parsed app Info.plist");
-      obj[0].UIDeviceFamily = [deviceTypeCode];
-      var newPlist = bplistCreate(obj);
-      fs.writeFile(plist, newPlist, function(err) {
-        if (err) {
-          logger.error("Could not save new binary Info.plist");
-          cb(err);
-        } else {
-          logger.info("Wrote new app Info.plist with device type");
-          cb(null);
-        }
-      });
+    if (typeof this.deviceType === "undefined") {
+      this.deviceType = "iphone";
     }
-  });
+
+    logger.info("Forcing use of " + this.deviceType);
+    if (this.deviceType === "ipad") {
+      deviceTypeCode = 2;
+    }
+    bplistParse.parseFile(plist, function(err, obj) {
+      if (err) {
+        logger.error("Could not parse plist file at " + plist);
+        cb(err);
+      } else {
+        logger.info("Parsed app Info.plist");
+        obj[0].UIDeviceFamily = [deviceTypeCode];
+        var newPlist = bplistCreate(obj);
+        fs.writeFile(plist, newPlist, function(err) {
+          if (err) {
+            logger.error("Could not save new binary Info.plist");
+            cb(err);
+          } else {
+            logger.info("Wrote new app Info.plist with device type");
+            cb(null);
+          }
+        });
+      }
+    });
+  }
 };
 
 

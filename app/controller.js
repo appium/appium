@@ -281,6 +281,18 @@ exports.mobileFlick = function(req, res) {
   }
 };
 
+exports.mobileSource = function(req, res) {
+  var type = req.body.type;
+
+  if(checkMissingParams(res, {type: type})) {
+    if (type.toLowerCase() === "xml") {
+      req.device.getPageSourceXML(getResponseHandler(req, res));
+    } else {
+      req.device.getPageSource(getResponseHandler(req, res));
+    }
+  }
+};
+
 exports.mobileSwipe = function(req, res) {
   var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
@@ -674,6 +686,7 @@ var mobileCmdMap = {
   , 'keyevent' : exports.keyevent
   , 'leaveWebView': exports.leaveWebView
   , 'fireEvent': exports.fireEvent
+  , 'source': exports.mobileSource
 };
 
 exports.produceError = function(req, res) {

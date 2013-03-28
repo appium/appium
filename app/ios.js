@@ -368,8 +368,9 @@ IOS.prototype.onPageChange = function(pageArray) {
     }
   });
   var newPages = [];
+  var cachedHandles = _.pluck(this.windowHandleCache, 'id');
   _.each(newIds, function(id) {
-    if (!_.contains(me.windowHandleCache, id)) {
+    if (!_.contains(cachedHandles, parseInt(id, 10))) {
       newPages.push(id);
     }
   });
@@ -409,7 +410,7 @@ IOS.prototype.onPageChange = function(pageArray) {
     this.onPageChangeCb();
     this.onPageChangeCb = null;
   }
-  this.windowHandleCache = newIds;
+  this.windowHandleCache = pageArray;
 };
 
 IOS.prototype.getAtomsElement = function(wdId) {
@@ -1405,20 +1406,17 @@ IOS.prototype.getWindowHandle = function(cb) {
 IOS.prototype.getWindowHandles = function(cb) {
   var me = this;
   this.listWebFrames(function(pageArray) {
-    me.windowHandleCache = [];
-    _.each(pageArray, function(page) {
-      me.windowHandleCache.push(page.id.toString());
-    });
+    me.windowHandleCache = pageArray;
     cb(null, {
       status: status.codes.Success.code
-      , value: me.windowHandleCache
+      , value: _.pluck(me.windowHandleCache, 'id')
     });
   });
 };
 
 IOS.prototype.setWindow = function(name, cb) {
   var me = this;
-  if (_.contains(this.windowHandleCache, name)) {
+  if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
     var pageIdKey = parseInt(name, 10);
     var next = function() {
       me.processingRemoteCmd = true;

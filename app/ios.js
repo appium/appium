@@ -31,6 +31,7 @@ var IOS = function(args) {
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
   this.deviceType = args.deviceType;
+  this.startingOrientation = args.startingOrientation;
   this.bundleId = null; // what we get from app on startup
   this.instruments = null;
   this.queue = [];
@@ -99,10 +100,27 @@ IOS.prototype.start = function(cb, onDie) {
         cb(null);
       }
     };
+    var setOrientation = function(oCb) {
+      if (typeof me.startingOrientation === "string" && _.contains(["LANDSCAPE", "PORTRAIT"], me.startingOrientation.toUpperCase())) {
+        logger.info("Setting initial orientation to " + me.startingOrientation);
+        var command = ["au.setScreenOrientation('",
+          me.startingOrientation.toUpperCase(),"')"].join('');
+        me.proxy(command, function(err, res) {
+          if (err || res.status !== status.codes.Success.code) {
+            logger.warn("Setting initial orientation did not work!");
+          }
+          oCb(null);
+        });
+      } else {
+        oCb(null);
+      }
+    };
     me.proxy('au.bundleId()', function(err, bId) {
       logger.info('Bundle ID for open app is ' + bId.value);
       me.bundleId = bId.value;
-      navToWebview();
+      setOrientation(function() {
+        navToWebview();
+      });
     });
   };
 

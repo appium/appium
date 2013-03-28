@@ -1169,6 +1169,8 @@ IOS.prototype.getPageSource = function(cb) {
   }
 };
 
+IOS.prototype.getPageSourceXML = IOS.prototype.getPageSource;
+
 IOS.prototype.getAlertText = function(cb) {
   this.proxy("au.getAlertText()", cb);
 };

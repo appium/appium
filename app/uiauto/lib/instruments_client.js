@@ -4,6 +4,7 @@
 var system = UIATarget.localTarget().host();
 var defWaitForDataTimeout = 60;
 var waitForDataTimeout = defWaitForDataTimeout;
+var curAppiumCmdId = -1;
 
 var sysExec = function(cmd) {
   var res = system.performTaskWithPathArgumentsTimeout('/bin/bash', ['-c', cmd], 3);
@@ -44,6 +45,7 @@ var isAppiumApp = (function() {
 })();
 
 var sendResultAndGetNext = function(result) {
+  curAppiumCmdId++;
   var args = ['-s', '/tmp/instruments_sock'], res
     , binaryPath = globalPath;
   if (isAppiumApp) {
@@ -59,7 +61,7 @@ var sendResultAndGetNext = function(result) {
   try {
     res = system.performTaskWithPathArgumentsTimeout(binaryPath, args, waitForDataTimeout);
   } catch(e) {
-    console.log(e.name + " error getting command: " + e.message);
+    console.log(e.name + " error getting command " + curAppiumCmdId + ": " + e.message);
     return null;
   }
 

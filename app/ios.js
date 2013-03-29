@@ -143,10 +143,12 @@ IOS.prototype.start = function(cb, onDie) {
     }
     me.instruments = null;
     me.curCoords = null;
-    try {
-      me.stopRemote();
-    } catch(e) {
-      logger.info("Error stopping remote: " + e.name + ": " + e.message);
+    if (me.remote !== null) {
+      try {
+        me.stopRemote();
+      } catch(e) {
+        logger.info("Error stopping remote: " + e.name + ": " + e.message);
+      }
     }
     var nexts = 0;
     var next = function() {

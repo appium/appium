@@ -31,7 +31,7 @@ describeWd('findAndAct', function(h) {
     h.driver.execute("mobile: findAndAct", [opts], function(err) {
       should.exist(err);
       err.status.should.equal(13);
-      err.cause.value.should.include("tag namex");
+      err.cause.value.origValue.should.include("tag namex");
       done();
     });
   });

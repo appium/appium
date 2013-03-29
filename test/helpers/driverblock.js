@@ -46,17 +46,23 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   tests(driverHolder);
 };
 
-var describeWithDriver = function(desc, tests, host, port, caps, extraCaps, timeout) {
-  describe(desc, function() {
+var describeWithDriver = function(desc, tests, host, port, caps, extraCaps, timeout, onlyify) {
+  var descFn;
+  if (onlyify) {
+    descFn = describe.only;
+  } else {
+    descFn = describe;
+  }
+  descFn(desc, function() {
     if (typeof timeout !== "undefined") {
       this.timeout(timeout);
     }
-    driverBlock(tests, host, port, caps, extraCaps);
+    driverBlock(tests, host, port, caps, extraCaps, onlyify);
   });
 };
 
 var describeForSafari = function() {
-  return function(desc, tests, host, port, extraCaps) {
+  var fn = function(desc, tests, host, port, extraCaps, onlyify) {
     var caps = {
       browserName: 'Safari'
       , app: 'safari'
@@ -65,8 +71,16 @@ var describeForSafari = function() {
       , version: '6.1'
       , newCommandTimeout: 60
     };
-    return describeWithDriver(desc, tests, host, port, caps, extraCaps);
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };
+  fn.only = function() {
+    var a = arguments;
+    return fn(a[0], a[1], a[2], a[3], a[4], true);
+  };
+  return fn;
+};
+describeForSafari.only = function() {
+  return describeForSafari(true);
 };
 
 var describeForApp = function(app, device, appPackage, appActivity) {

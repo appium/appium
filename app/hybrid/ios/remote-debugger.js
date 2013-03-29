@@ -231,7 +231,7 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
     }
     script += "(" + args.join(',') + ")";
   } else {
-    logger.info("Executing atom in default context");
+    logger.info("Executing '" + atom + "' atom in default context");
     script += "(" + atomSrc + ")(" + args.join(',') + ")";
   }
   this.execute(script, function(err, res) {
@@ -434,8 +434,10 @@ RemoteDebugger.prototype.send = function (data, cb, cb2) {
     immediateCb = true;
   }
 
-  logger.debug("Sending message to remote debugger:");
-  logger.debug(util.inspect(data, false, null));
+  logger.debug("Sending " + data.__selector + " message to remote debugger");
+  if (data.__selector !== "_rpc_forwardSocketData:") {
+    logger.debug(util.inspect(data, false, null));
+  }
 
   try {
     plist = bplistCreate(data);
@@ -510,7 +512,11 @@ RemoteDebugger.prototype.receive = function(data) {
       plistCopy.WIRSocketDataKey = plistCopy.WIRSocketDataKey.toString("utf8");
     }
 
-    logger.debug(util.inspect(plistCopy, false, null));
+    if (plistCopy.__selector === "_rpc_applicationSentData:") {
+      logger.debug("<applicationSentData response>");
+    } else {
+      logger.debug(util.inspect(plistCopy, false, null));
+    }
 
     // Jump forward the length of the plist
     this.readPos += msgLength;

@@ -408,8 +408,12 @@ Android.prototype.implicitWait = function(ms, cb) {
   });
 };
 
-Android.prototype.asyncTimeoutMs = function(ms, cb) {
-    cb(new NotYetImplementError(), null);
+Android.prototype.asyncScriptTimeout = function(ms, cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.executeAsync = function(script, args, responseUrl, cb) {
+    cb(new NotYetImplementedError(), null);
 };
 
 Android.prototype.elementDisplayed = function(elementId, cb) {

@@ -2,7 +2,7 @@
 "use strict";
 
 var system = UIATarget.localTarget().host();
-var defWaitForDataTimeout = 60;
+var defWaitForDataTimeout = 3600;
 var waitForDataTimeout = defWaitForDataTimeout;
 var curAppiumCmdId = -1;
 

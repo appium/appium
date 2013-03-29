@@ -18,8 +18,8 @@ UIATarget.onAlert = function(){
 };
 
 while(true) {
-  if (cmd) {
-    console.log("Got new command from instruments: " + cmd);
+  if (cmd !== null) {
+    console.log("Got new command " + curAppiumCmdId + " from instruments: " + cmd);
     try {
       var result = eval(cmd);
     } catch(e) {

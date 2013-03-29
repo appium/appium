@@ -12,7 +12,7 @@ var wd = require('wd')
       , device: 'iPhone Simulator'
       , platform: 'Mac'
       , version: '6.0'
-      , newCommandTimeout: 60
+      //, newCommandTimeout: 60
     };
 
 var driverBlock = function(tests, host, port, caps, extraCaps) {

@@ -42,6 +42,7 @@ var IOS = function(args) {
   this.curWindowHandle = null;
   this.curWebFrames = [];
   this.selectingNewPage = false;
+  this.processingRemoteCmd = false;
   this.windowHandleCache = [];
   this.webElementIds = [];
   this.implicitWaitMs = 0;
@@ -310,10 +311,12 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     throw new Error("Tried to enter web frame without a bundle ID");
   }
   var onDone = function(res) {
+    me.processingRemoteCmd = false;
     isDone = true;
     cb(res);
   };
 
+  this.processingRemoteCmd = true;
   if (this.remote !== null && this.bundleId !== null) {
     this.remote.selectApp(this.bundleId, onDone);
   } else {
@@ -481,6 +484,11 @@ IOS.prototype.push = function(elem) {
     if (me.selectingNewPage && me.curWindowHandle) {
       logger.info("We're in the middle of selecting a new page, " +
                   "waiting to run next command until done");
+      setTimeout(next, 500);
+      return;
+    } else if (me.curWindowHandle && me.processingRemoteCmd) {
+      logger.info("We're in the middle of processing a remote debugger " +
+                  "command, waiting to run next command until done");
       setTimeout(next, 500);
       return;
     }
@@ -770,12 +778,14 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       looks++;
     }
   }, this);
-  this.remote.executeAtom(atom, args, this.curWebFrames, function(err, res) {
+  this.processingRemoteCmd = true;
+  this.remote.executeAtom(atom, args, this.curWebFrames, _.bind(function(err, res) {
+    this.processingRemoteCmd = false;
     if (!returned) {
       returned = true;
       cb(err, res);
     }
-  });
+  }, this));
   setTimeout(lookForAlert, 1000);
 };
 
@@ -1174,8 +1184,9 @@ IOS.prototype.getCssProperty = function(elementId, propertyName, cb) {
 
 IOS.prototype.getPageSource = function(cb) {
   if (this.curWindowHandle) {
-    this.remote.execute('document.getElementsByTagName("html")[0].outerHTML',
-                        function (err, res) {
+    this.processingRemoteCmd = true;
+    var cmd = 'document.getElementsByTagName("html")[0].outerHTML';
+    this.remote.execute(cmd, _.bind(function (err, res) {
       if (err) {
         cb("Remote debugger error", {
           status: status.codes.UnknownError.code
@@ -1187,7 +1198,8 @@ IOS.prototype.getPageSource = function(cb) {
           , value: res.result.value
         });
       }
-    });
+      this.processingRemoteCmd = false;
+    }, this));
   } else {
     this.proxy("wd_frame.getPageSource()", cb);
   }
@@ -1316,12 +1328,14 @@ IOS.prototype.url = function(url, cb) {
   if (this.curWindowHandle) {
     // make sure to clear out any leftover web frames
     this.curWebFrames = [];
-    this.remote.navToUrl(url, function() {
+    this.processingRemoteCmd = true;
+    this.remote.navToUrl(url, _.bind(function() {
       cb(null, {
         status: status.codes.Success.code
         , value: ''
       });
-    });
+      this.processingRemoteCmd = false;
+    }, this));
   } else {
     // in the future, detect whether we have a UIWebView that we can use to
     // make sense of this command. For now, and otherwise, it's a no-op
@@ -1333,7 +1347,8 @@ IOS.prototype.getUrl = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    this.remote.execute('window.location.href', function (err, res) {
+    this.processingRemoteCmd = true;
+    this.remote.execute('window.location.href', _.bind(function (err, res) {
       if (err) {
         cb("Remote debugger error", {
           status: status.codes.JavaScriptError.code
@@ -1345,7 +1360,8 @@ IOS.prototype.getUrl = function(cb) {
           , value: res.result.value
         });
       }
-    });
+      this.processingRemoteCmd = false;
+    }, this));
   }
 };
 
@@ -1395,12 +1411,14 @@ IOS.prototype.setWindow = function(name, cb) {
   if (_.contains(this.windowHandleCache, name)) {
     var pageIdKey = parseInt(name, 10);
     var next = function() {
+      me.processingRemoteCmd = true;
       me.remote.selectPage(pageIdKey, function() {
         me.curWindowHandle = pageIdKey;
         cb(null, {
           status: status.codes.Success.code
           , value: ''
         });
+        me.processingRemoteCmd = false;
       });
     };
     //if (me.autoWebview) {

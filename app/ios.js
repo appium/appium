@@ -308,7 +308,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     , isDone = false;
   if (!this.bundleId) {
     logger.error("Can't enter web frame without a bundle ID");
-    throw new Error("Tried to enter web frame without a bundle ID");
+    return cb(new Error("Tried to enter web frame without a bundle ID"));
   }
   var onDone = function(res) {
     me.processingRemoteCmd = false;

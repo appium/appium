@@ -765,7 +765,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
   var returned = false;
   var looks = 0;
   var lookForAlert = _.bind(function() {
-    if (!returned && looks < 11) {
+    if (!returned && looks < 11 && !this.selectingNewPage) {
       logger.info("atom '" + atom + "' did not return yet, checking to see if " +
                   "we are blocked by an alert");
       // temporarily act like we're not processing a remote command
@@ -796,7 +796,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       cb(err, res);
     }
   }, this));
-  setTimeout(lookForAlert, 1000);
+  setTimeout(lookForAlert, 5000);
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {

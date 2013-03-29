@@ -69,7 +69,6 @@ var describeForSafari = function() {
       , device: 'iPhone Simulator'
       , platform: 'Mac'
       , version: '6.1'
-      , newCommandTimeout: 180
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };

@@ -47,7 +47,7 @@ module.exports.setLogFile = function(logger, filename) {
       filename: filename
       , colorize: false
       , level: 'debug'
-      , maxsize: 1000000
+      , maxsize: 10000000
       , maxFiles: 1
       , json: false
     });

@@ -20,6 +20,12 @@ import java.util.Random;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * Simple test which demonstrates how to run an <a href="https://github.com/appium/appium">Appium</a>
+  * using <a href="http://saucelabs.com">Sauce Labs</a>.
+  * <p/>
+  * The test relies on SAUCE_USER_NAME and SAUCE_ACCESS_KEY environment variables being set which reference
+  * the Sauce username/access key.
+ *
  * @author Ross Rowe
  */
 public class SauceTest {
@@ -31,6 +37,12 @@ public class SauceTest {
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
 
+    /**
+     * Sets up appium.  You will need to either explictly set the sauce username/access key variables, or set
+     * SAUCE_USER_NAME or SAUCE_USER_NAME environment variables to reference your Sauce account details.
+     *
+     * @throws Exception
+     */
     @BeforeMethod
     public void setUp() throws Exception {
         // set up appium

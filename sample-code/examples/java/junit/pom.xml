@@ -6,18 +6,12 @@
     <artifactId>sauce_appium_junit</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>sauce_appium_junit</name>
-
+    <description>Sample Appium tests using JUnit</description>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.saucelabs</groupId>
-            <artifactId>sauce_junit</artifactId>
-            <version>LATEST</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -45,6 +39,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

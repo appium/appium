@@ -75,16 +75,12 @@ Appium.prototype.preLaunch = function(cb) {
   } else {
     var me = this;
     var caps = {};
-    this.start(caps, function(err, device) {
+    this.start(caps, function(err) {
       if (err) {
         cb(err, null);
       } else {
-        // since we're prelaunching, it might be a while before the first
-        // command comes in, so let's not have instruments quit on us
-        device.setCommandTimeout(600, function() {
-          me.preLaunched = true;
-          cb(null, me);
-        });
+        me.preLaunched = true;
+        cb(null, me);
       }
     });
   }

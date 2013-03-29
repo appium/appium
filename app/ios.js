@@ -393,6 +393,30 @@ IOS.prototype.onPageChange = function(pageArray) {
     me.curWindowHandle = keyId;
     me.remote.pageIdKey = parseInt(keyId, 10);
   } else {
+    var dirty = function() {
+      var item = function(arr) {
+        return _.filter(arr, function(obj) {
+          return obj.id == me.curWindowHandle;
+        })[0];
+      };
+
+      var win = item(pageArray);
+      var ret = false;
+      _.each(item(me.windowHandleCache), function(el, idx, l) {
+        if (l[idx] !== win[idx]) {
+          ret = true;
+        }
+      });
+
+      return ret;
+    };
+
+    // If a window gets navigated to an anchor it doesn't always fire a page callback event
+    // Let's check if we wound up in such a situation.
+    if (dirty()) {
+      me.remote.pageLoad();
+    }
+
     logger.info("New page listing is same as old, doing nothing");
   }
 

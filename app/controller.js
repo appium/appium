@@ -137,16 +137,13 @@ exports.createSession = function(req, res) {
 
   var desired = req.body.desiredCapabilities;
 
-  var next = function(reqHost, sessionId, device, preLaunched) {
+  var next = function(reqHost, sessionId, device) {
     var redirect = function() {
       res.set('Location', "http://"+reqHost+"/wd/hub/session/" + sessionId);
       res.send(303);
     };
     if (desired && desired.newCommandTimeout) {
       device.setCommandTimeout(desired.newCommandTimeout, redirect);
-    } else if (preLaunched) {
-      // reset timeout to something more reasonable
-      device.resetCommandTimeout(redirect);
     } else {
       redirect();
     }

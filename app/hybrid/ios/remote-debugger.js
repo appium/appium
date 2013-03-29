@@ -258,10 +258,9 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
 
 RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, responseUrl, cb) {
   var atomSrc, script = ""
-    , me = this
     , asyncCallBack = "";
 
-  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "', true);"
+  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "');"
   asyncCallBack += "xmlHttp.setRequestHeader('Content-type','application/json'); xmlHttp.send(res); }"
 
   atomSrc = atoms.get(atom);

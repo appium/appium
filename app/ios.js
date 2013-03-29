@@ -504,7 +504,7 @@ IOS.prototype.push = function(elem) {
     me.cbForCurrentCmd = cb;
 
     me.progress++;
-
+    logger.debug("Sending command to instruments: " + command);
     me.instruments.sendCommand(command, function(response) {
       me.cbForCurrentCmd = null;
       if (typeof cb === 'function') {
@@ -763,6 +763,9 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
     if (!returned && looks < 11) {
       logger.info("atom '" + atom + "' did not return yet, checking to see if " +
                   "we are blocked by an alert");
+      // temporarily act like we're not processing a remote command
+      // so we can proxy the alert detection functionality
+      this.processingRemoteCmd = false;
       this.proxy("au.alertIsPresent()", function(err, res) {
         if (res.value === true) {
           logger.info("Found an alert, returning control to client");
@@ -772,6 +775,8 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
             , value: ''
           });
         } else {
+          // say we're processing remote cmd again
+          this.processingRemoteCmd = true;
           setTimeout(lookForAlert, 1000);
         }
       });

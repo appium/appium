@@ -45,6 +45,7 @@ var IOS = function(args) {
   this.implicitWaitMs = 0;
   this.asyncWaitMs = 0;
   this.asyncResponseCb = null;
+  this.asyncReturned = null;
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
@@ -819,9 +820,10 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
 };
 
 IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
-  var returned = false;
+  this.asyncReturned = false;
+  // TODO: refactor lookForAlert out of this and executeAtom.
   var lookForAlert = _.bind(function() {
-    if (!returned) {
+    if (!this.asyncReturned) {
       logger.info("atom '" + atom + " did not return yet, checking to see if " +
                   "we are blocked by an alert");
       this.proxy("au.alertIsPresent()", function(err, res) {
@@ -833,25 +835,26 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
             , value: ''
           });
         } else {
-          setTimeout(lookForAlert, 500);
+          setTimeout(lookForAlert, 1000);
         }
       });
     }
   }, this);
   this.asyncResponseCb = cb;
   this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, function(err, res) {
-    returned = true;
-    if (err) {
-      cb(res);
+    if (!this.asyncReturned) {
+      this.asyncReturned = true;
+      cb(err, res);
     }
   });
-  setTimeout(lookForAlert, 800);
+  setTimeout(lookForAlert, 1000);
 };
 
 IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
   var asyncCb = this.asyncResponseCb
     , me = this;
-
+  //mark asyncReturned as true to stop looking for alerts; the js is done.
+  this.asyncReturned = true
   var parseElementResponse = function(element) {
     var objId = element.ELEMENT
     , clientId = (5000 + me.webElementIds.length).toString();
@@ -859,6 +862,7 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
     return {ELEMENT: clientId};
   };
 
+  //TODO: This should be in it's own function; we should be using that for executeAtom too.
   if (asyncCb !== null) {
     var args = asyncResponse
     if (args.value !== null) {

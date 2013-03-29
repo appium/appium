@@ -368,8 +368,9 @@ IOS.prototype.onPageChange = function(pageArray) {
     }
   });
   var newPages = [];
+  var cachedHandles = _.pluck(this.windowHandleCache, 'id');
   _.each(newIds, function(id) {
-    if (!_.contains(me.windowHandleCache, id)) {
+    if (!_.contains(cachedHandles, parseInt(id, 10))) {
       newPages.push(id);
     }
   });
@@ -392,6 +393,30 @@ IOS.prototype.onPageChange = function(pageArray) {
     me.curWindowHandle = keyId;
     me.remote.pageIdKey = parseInt(keyId, 10);
   } else {
+    var dirty = function() {
+      var item = function(arr) {
+        return _.filter(arr, function(obj) {
+          return obj.id == me.curWindowHandle;
+        })[0];
+      };
+
+      var win = item(pageArray);
+      var ret = false;
+      _.each(item(me.windowHandleCache), function(el, idx, l) {
+        if (l[idx] !== win[idx]) {
+          ret = true;
+        }
+      });
+
+      return ret;
+    };
+
+    // If a window gets navigated to an anchor it doesn't always fire a page callback event
+    // Let's check if we wound up in such a situation.
+    if (dirty()) {
+      me.remote.pageLoad();
+    }
+
     logger.info("New page listing is same as old, doing nothing");
   }
 
@@ -409,7 +434,7 @@ IOS.prototype.onPageChange = function(pageArray) {
     this.onPageChangeCb();
     this.onPageChangeCb = null;
   }
-  this.windowHandleCache = newIds;
+  this.windowHandleCache = pageArray;
 };
 
 IOS.prototype.getAtomsElement = function(wdId) {
@@ -1405,20 +1430,17 @@ IOS.prototype.getWindowHandle = function(cb) {
 IOS.prototype.getWindowHandles = function(cb) {
   var me = this;
   this.listWebFrames(function(pageArray) {
-    me.windowHandleCache = [];
-    _.each(pageArray, function(page) {
-      me.windowHandleCache.push(page.id.toString());
-    });
+    me.windowHandleCache = pageArray;
     cb(null, {
       status: status.codes.Success.code
-      , value: me.windowHandleCache
+      , value: _.pluck(me.windowHandleCache, 'id')
     });
   });
 };
 
 IOS.prototype.setWindow = function(name, cb) {
   var me = this;
-  if (_.contains(this.windowHandleCache, name)) {
+  if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
     var pageIdKey = parseInt(name, 10);
     var next = function() {
       me.processingRemoteCmd = true;

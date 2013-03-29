@@ -440,6 +440,9 @@ IOS.prototype.stop = function(cb) {
   if (this.warp) {
     stopTimeWarp();
   }
+  if (this.remote) {
+    this.stopRemote();
+  }
   if (this.instruments === null) {
     logger.info("Trying to stop instruments but it already exited");
     // we're already stopped

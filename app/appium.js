@@ -92,8 +92,8 @@ Appium.prototype.preLaunch = function(cb) {
 
 Appium.prototype.start = function(desiredCaps, cb) {
   this.origApp = this.args.app;
+  this.desiredCapabilities = desiredCaps;
   this.configure(desiredCaps, _.bind(function(err) {
-    this.desiredCapabilities = desiredCaps;
     if (err) {
       logger.info("Got configuration error, not starting session");
       cb(err, null);
@@ -219,7 +219,6 @@ Appium.prototype.configure = function(desiredCaps, cb) {
         cb("App URL (" + appUrl + ") didn't seem to end in .zip");
       }
     } else if (this.isIos() && appPath.toLowerCase() === "safari") {
-      this.args.safari = true;
       this.configureSafari(desiredCaps, cb);
     } else {
       cb("Bad app passed in through " + origin + ": " + appPath +
@@ -234,6 +233,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
 };
 
 Appium.prototype.configureSafari = function(desiredCaps, cb) {
+  this.desiredCapabilities.safari = true;
   var safariVer = "6.0";
   var usingDefaultVer = true;
   if (typeof desiredCaps.version !== "undefined") {
@@ -318,7 +318,7 @@ Appium.prototype.invoke = function() {
           , warp: this.args.warp
           , withoutDelay: this.args.withoutDelay
           , reset: !this.args.noReset
-          , autoWebview: this.args.safari
+          , autoWebview: this.desiredCapabilities.safari
           , deviceType: this.iosDeviceType
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
         };

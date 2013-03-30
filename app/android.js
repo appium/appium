@@ -42,6 +42,7 @@ var Android = function(opts) {
     , javascriptEnabled: true
     , databaseEnabled: false
   };
+  this.lastCmd = null;
 };
 
 // Clear data, close app, then start app.
@@ -99,7 +100,8 @@ Android.prototype.start = function(cb, onDie) {
   }, this);
 
   if (this.adb === null) {
-    this.adb = adb(this.opts);
+    // Pass Android opts and Android ref to adb.
+    this.adb = adb(this.opts, this);
     this.adb.start(onLaunch, onExit);
   } else {
     logger.error("Tried to start ADB when we already have one running!");
@@ -150,14 +152,26 @@ Android.prototype.resetTimeout = function() {
 Android.prototype.proxy = deviceCommon.proxy;
 Android.prototype.respond = deviceCommon.respond;
 
-Android.prototype.push = function(elem) {
-
+Android.prototype.push = function(elem, resendLast) {
   this.resetTimeout();
-  this.queue.push(elem);
+
+  if (resendLast) {
+    // We're resending the last command because the bootstrap jar disconnected.
+    this.queue.push(this.lastCmd);
+  } else {
+    this.queue.push(elem);
+    // Store the last command in case the bootstrap jar disconnects.
+    this.lastCmd = elem;
+  }
 
   var next = _.bind(function() {
-    if (this.queue.length <= 0 || this.progress > 0) {
+    if (this.queue.length <= 0) {
       return;
+    }
+
+    // Always send the command.
+    if (this.progress > 0) {
+      this.progress = 0;
     }
 
     var target = this.queue.shift()
@@ -269,7 +283,7 @@ Android.prototype.findElementOrElements = function(strategy, selector, many, con
       } else {
         if (!many && res.status === 0) {
           findCb(true, err, res);
-        } else if (many && res.value.length > 0) {
+        } else if (many && typeof res.value !== 'undefined' && res.value.length > 0) {
           findCb(true, err, res);
         } else {
           findCb(false, err, res);

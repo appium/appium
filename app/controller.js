@@ -623,7 +623,7 @@ exports.getCommandTimeout = function(req, res) {
 
 exports.receiveAsyncResponse = function(req, res) {
   var asyncResponse = req.body;
-  req.device.receiveAsyncResponse(asyncResponse, getResponseHandler(req, res));
+  req.device.receiveAsyncResponse(asyncResponse);
 };
 
 exports.setValueImmediate = function(req, res) {

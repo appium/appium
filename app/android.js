@@ -68,7 +68,8 @@ Android.prototype.start = function(cb, onDie) {
   var onLaunch = _.bind(function(err) {
     if (err) {
       logger.error("Relaunching adb....");
-      this.adb.waitForDevice(function(){ didLaunch = true; cb(null); });
+      var me = this;
+      this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
     } else {
       logger.info("ADB launched! Ready for commands (will time out in " +
                   (this.commandTimeoutMs / 1000) + "secs)");

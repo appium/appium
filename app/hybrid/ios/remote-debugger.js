@@ -260,7 +260,7 @@ RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, respons
   var atomSrc, script = ""
     , asyncCallBack = "";
 
-  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "');"
+  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "', true);"
   asyncCallBack += "xmlHttp.setRequestHeader('Content-type','application/json'); xmlHttp.send(res); }"
 
   atomSrc = atoms.get(atom);
@@ -280,11 +280,6 @@ RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, respons
     if (err) {
       cb(err, {
         status: status.codes.UnknownError.code
-        , value: res
-      });
-    } else {
-      cb(null, {
-        status: status.codes.Success.code
         , value: res
       });
     }

@@ -827,15 +827,18 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
       logger.info("atom '" + atom + " did not return yet, checking to see if " +
                   "we are blocked by an alert");
       this.proxy("au.alertIsPresent()", function(err, res) {
-        if (res.value === true) {
-          logger.info("Found an alert, returning control to client");
-          returned = true;
-          cb(null, {
-            status: status.codes.Success.code
-            , value: ''
-          });
-        } else {
-          setTimeout(lookForAlert, 1000);
+        if (res !== null) {
+          if (res.value === true) {
+            logger.info("Found an alert, returning control to client");
+            returned = true;
+            cb(null, {
+              status: status.codes.Success.code
+              , value: ''
+            });
+          } else {
+            console.log('queueing lookForAlert');
+            setTimeout(lookForAlert, 1000);
+          }
         }
       });
     }

@@ -608,6 +608,40 @@ module.exports.buildTests = function(webviewType) {
     });
   });
 
+  desc("executeAsync", function(h) {
+    it("should bubble up javascript errors", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.executeAsync("'nan'--", function(err, val) {
+          err.message.should.equal("Error response status: 13.");
+          should.not.exist(val);
+          done();
+        });
+      });
+    });
+    it("should execute async javascript", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.setAsyncScriptTimeout('10000', function(err, res) {
+          h.driver.executeAsync("arguments[arguments.length - 1](123);", function(err, val) {
+            should.not.exist(err);
+            val.should.equal(123);
+            done();
+          });
+        });
+      });
+    });
+    it("should timeout when callback isn't invoked", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.setAsyncScriptTimeout('10000', function(err, res) {
+          h.driver.executeAsync("return 1 + 2", function(err, res) {
+            should.exist(err);
+            err.status.should.equal(28);
+            done()
+          });
+        });
+      });
+    });
+  });
+
   desc('alerts', function(h) {
     it('should accept alert', function(done) {
       loadWebView(h.driver, function() {

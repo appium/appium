@@ -25,7 +25,7 @@ describeWd('basic', function(h) {
       var next = function() {
         h.driver.elementByName('Animation', function(err) {
           should.exist(err);
-          err.status.should.equal(13);
+          [13, 6].should.include(err.status);
           done();
         });
       };

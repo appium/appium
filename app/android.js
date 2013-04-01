@@ -159,8 +159,6 @@ Android.prototype.push = function(elem, resendLast) {
     this.queue.push(this.lastCmd);
   } else {
     this.queue.push(elem);
-    // Store the last command in case the bootstrap jar disconnects.
-    this.lastCmd = elem;
   }
 
   var next = _.bind(function() {
@@ -177,6 +175,11 @@ Android.prototype.push = function(elem, resendLast) {
       , action = target[0][0]
       , params = typeof target[0][1] === "undefined" ? {} : target[0][1]
       , cb = target[1];
+
+    if (!resendLast) {
+      // Store the last command in case the bootstrap jar disconnects.
+      this.lastCmd = target;
+    }
 
     this.cbForCurrentCmd = cb;
 

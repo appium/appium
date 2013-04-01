@@ -795,45 +795,18 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
   setTimeout(_.bind(this.lookForAlert, this, cb), 5000);
 };
 
-IOS.prototype.lookForAlert = function(cb) {
-  if (!this.returned && this.looks < 11 && !this.selectingNewPage) {
-    logger.info("atom did not return yet, checking to see if " +
-                "we are blocked by an alert");
-    // temporarily act like we're not processing a remote command
-    // so we can proxy the alert detection functionality
-    this.processingRemoteCmd = false;
-    var me = this;
-    this.proxy("au.alertIsPresent()", function(err, res) {
-      if (res !== null) {
-        if (res.value === true) {
-          logger.info("Found an alert, returning control to client");
-          me.returned = true;
-          cb(null, {
-            status: status.codes.Success.code
-            , value: ''
-          });
-        } else {
-          // say we're processing remote cmd again
-          me.processingRemoteCmd = true;
-          setTimeout(_.bind(me.lookForAlert, me), 1000);
-        }
-      }
-      me.looks++;
-    });
-  }
-};
-
 IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
   this.returned = false;
   this.looks = 0;
-  // TODO: refactor lookForAlert out of this and executeAtom.
+  this.processingRemoteCmd = true;
   this.asyncResponseCb = cb;
-  this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, function(err, res) {
+  this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, _.bind(function(err, res) {
+    this.processingRemoteCmd = false;
     if (!this.returned) {
       this.returned = true;
       cb(err, res);
     }
-  });
+  }, this));
   setTimeout(_.bind(this.lookForAlert, this, cb), 5000);
 };
 
@@ -885,6 +858,36 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
     }
     asyncCb(null, asyncResponse);
     this.asyncResponseCb = null;
+  }
+};
+
+IOS.prototype.lookForAlert = function(cb) {
+  if (this.instruments !== null) {
+    if (!this.returned && this.looks < 11 && !this.selectingNewPage) {
+      logger.info("atom did not return yet, checking to see if " +
+                  "we are blocked by an alert");
+      // temporarily act like we're not processing a remote command
+      // so we can proxy the alert detection functionality
+      this.processingRemoteCmd = false;
+      var me = this;
+      this.proxy("au.alertIsPresent()", function(err, res) {
+        if (res !== null) {
+          if (res.value === true) {
+            logger.info("Found an alert, returning control to client");
+            me.returned = true;
+            cb(null, {
+              status: status.codes.Success.code
+              , value: ''
+            });
+          } else {
+            // say we're processing remote cmd again
+            me.processingRemoteCmd = true;
+            setTimeout(_.bind(me.lookForAlert, me), 1000);
+          }
+        }
+        me.looks++;
+      });
+    }
   }
 };
 
@@ -1616,19 +1619,7 @@ IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    for (var i=0; i < args.length; i++) {
-      if (typeof args[i].ELEMENT !== "undefined") {
-        var atomsElement = this.getAtomsElement(args[i].ELEMENT);
-        if (atomsElement === null) {
-          cb(null, {
-            status: status.codes.UnknownError.code
-            , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
-          });
-        return;
-        }
-        args[i] = atomsElement;
-      }
-    }
+    this.convertElementForAtoms(args, cb);
     this.executeAtom('execute_script', [script, args], cb);
   }
 };
@@ -1637,22 +1628,26 @@ IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    for (var i=0; i < args.length; i++) {
-      if (typeof args[i].ELEMENT !== "undefined") {
-        var atomsElement = this.getAtomsElement(args[i].ELEMENT);
-        if (atomsElement === null) {
-          cb(null, {
-            status: status.codes.UnknownError.code
-            , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
-          });
-        return;
-        }
-        args[i] = atomsElement;
-      }
-    }
+    this.convertElementForAtoms(args, cb);
     this.executeAtomAsync('execute_async_script', [script, args, this.asyncWaitMs], responseUrl, cb);
   }
 };
+
+IOS.prototype.convertElementForAtoms = function(args, cb) {
+  for (var i=0; i < args.length; i++) {
+    if (typeof args[i].ELEMENT !== "undefined") {
+      var atomsElement = this.getAtomsElement(args[i].ELEMENT);
+      if (atomsElement === null) {
+        cb(null, {
+          status: status.codes.UnknownError.code
+          , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
+        });
+      return;
+      }
+      args[i] = atomsElement;
+    }
+  }
+};  
 
 IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {

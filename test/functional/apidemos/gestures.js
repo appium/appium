@@ -82,4 +82,42 @@ describeWd('gestures', function(h) {
       });
     });
   });
+  it('should flick screen by pixels', function(done) {
+    h.driver.elementByName("Views", function(err) {
+      // shouldn't be visible
+      should.exist(err);
+      var swipeOpts = {
+        startX: 100
+        , startY: 500
+        , endX: 100
+        , endY: 100
+      };
+      h.driver.execute("mobile: flick", [swipeOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByName("Views", function(err, el) {
+          should.not.exist(err);
+          should.exist(el.value);
+          done();
+        });
+      });
+    });
+  });
+  it('should flick screen by pct', function(done) {
+    h.driver.elementByName("Views", function(err) {
+      // shouldn't be visible
+      should.exist(err);
+      var swipeOpts = {
+        endX: 0.5
+        , endY: 0.05
+      };
+      h.driver.execute("mobile: flick", [swipeOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByName("Views", function(err, el) {
+          should.not.exist(err);
+          should.exist(el.value);
+          done();
+        });
+      });
+    });
+  });
 });

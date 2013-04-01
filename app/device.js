@@ -29,7 +29,7 @@ exports.respond = function(response, cb) {
 
 exports.proxy = function(command, cb) {
   // was thinking we should use a queue for commands instead of writing to a file
-  logger.info('Pushing command to appium work queue: ' + command);
+  logger.info('Pushing command to appium work queue: ' + JSON.stringify(command));
   this.push([command, cb]);
   if (typeof command === "object") {
     command = JSON.stringify(command);

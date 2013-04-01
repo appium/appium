@@ -33,6 +33,7 @@ var Android = function(opts) {
   this.commandTimeout = null;
   this.shuttingDown = false;
   this.adb = null;
+  this.swipeStepsPerSec = 200;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'Android'
@@ -526,7 +527,7 @@ Android.prototype.getScreenshot = function(cb) {
 };
 
 Android.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {
-    cb(new NotYetImplementedError(), null);
+  this.proxy(["flick", {xSpeed: xSpeed, ySpeed: ySpeed}], cb);
 };
 
 Android.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb) {
@@ -545,7 +546,7 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
     , startY: startY
     , endX: endX
     , endY: endY
-    , steps: Math.round((duration * 1000) / 5)
+    , steps: Math.round((duration * 1000) / this.swipeStepsPerSec)
   };
   if (elId !== null) {
     swipeOpts.elementId = elId;
@@ -556,7 +557,25 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
 };
 
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
-  cb(new NotYetImplementedError(), null);
+  if (startX === 'null') {
+    startX = 0.5;
+  }
+  if (startY === 'null') {
+    startY = 0.5;
+  }
+  var swipeOpts = {
+    startX: startX
+    , startY: startY
+    , endX: endX
+    , endY: endY
+    , steps: 3
+  };
+  if (elId !== null) {
+    swipeOpts.elementId = elId;
+    this.proxy(["element:swipe", swipeOpts], cb);
+  } else {
+    this.proxy(["swipe", swipeOpts], cb);
+  }
 };
 
 Android.prototype.hideKeyboard = function(keyName, cb) {

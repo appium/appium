@@ -244,7 +244,8 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
   }, this);
   checkSafari(safariVer, _.bind(function(err, attemptedApp) {
     if (err) {
-      logger.warn("Could not find mobile safari: " + err);
+      logger.warn("Could not find mobile safari with version '" + safariVer +
+                  "': " + err);
       if (usingDefaultVer) {
         safariVer = "6.1";
         logger.info("Retrying with safari ver " + safariVer);

@@ -102,15 +102,11 @@ describeWd('gestures', function(h) {
       });
     });
   });
-  it('should flick screen by pct', function(done) {
+  it('should flick screen by speed', function(done) {
     h.driver.elementByName("Views", function(err) {
       // shouldn't be visible
       should.exist(err);
-      var swipeOpts = {
-        endX: 0.5
-        , endY: 0.05
-      };
-      h.driver.execute("mobile: flick", [swipeOpts], function(err) {
+      h.driver.flick(0, -500, function(err) {
         should.not.exist(err);
         h.driver.elementByName("Views", function(err, el) {
           should.not.exist(err);

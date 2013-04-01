@@ -52,6 +52,15 @@ class AndroidCommandExecutor {
                 } else {
                     return getErrorResult("Swipe did not complete successfully");
                 }
+            } else if (action.equals("flick")) {
+                Integer xSpeed = (Integer) params.get("xSpeed");
+                Integer ySpeed = (Integer) params.get("ySpeed");
+                Boolean res = AndroidCommandHolder.flick(xSpeed, ySpeed);
+                if (res) {
+                    return getSuccessResult(res);
+                } else {
+                    return getErrorResult("Flick did not complete successfully");
+                }
             } else if (action.equals("getDeviceSize")) {
                 JSONObject res = AndroidCommandHolder.getDeviceSize();
                 return getSuccessResult(res);

@@ -792,31 +792,34 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
       cb(err, res);
     }
   }, this));
-  setTimeout(this.lookForAlert, 5000);
+  setTimeout(_.bind(this.lookForAlert, this, cb), 5000);
 };
 
-IOS.prototype.lookForAlert = function() {
+IOS.prototype.lookForAlert = function(cb) {
   if (!this.returned && this.looks < 11 && !this.selectingNewPage) {
-    logger.info("atom '" + atom + "' did not return yet, checking to see if " +
+    logger.info("atom did not return yet, checking to see if " +
                 "we are blocked by an alert");
     // temporarily act like we're not processing a remote command
     // so we can proxy the alert detection functionality
     this.processingRemoteCmd = false;
-    this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
-      if (res.value === true) {
-        logger.info("Found an alert, returning control to client");
-        this.returned = true;
-        cb(null, {
-          status: status.codes.Success.code
-          , value: ''
-        });
-      } else {
-        // say we're processing remote cmd again
-        this.processingRemoteCmd = true;
-        setTimeout(lookForAlert, 1000);
+    var me = this;
+    this.proxy("au.alertIsPresent()", function(err, res) {
+      if (res !== null) {
+        if (res.value === true) {
+          logger.info("Found an alert, returning control to client");
+          me.returned = true;
+          cb(null, {
+            status: status.codes.Success.code
+            , value: ''
+          });
+        } else {
+          // say we're processing remote cmd again
+          me.processingRemoteCmd = true;
+          setTimeout(_.bind(me.lookForAlert, me), 1000);
+        }
       }
-    }, this));
-    this.looks++;
+      me.looks++;
+    });
   }
 };
 
@@ -831,7 +834,7 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
       cb(err, res);
     }
   });
-  setTimeout(this.lookForAlert, 5000);
+  setTimeout(_.bind(this.lookForAlert, this, cb), 5000);
 };
 
 IOS.prototype.receiveAsyncResponse = function(asyncResponse) {

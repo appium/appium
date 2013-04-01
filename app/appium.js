@@ -341,6 +341,12 @@ Appium.prototype.invoke = function() {
 
     this.device.start(function(err) {
       me.progress++;
+      // Ensure we don't use an undefined session.
+      if (typeof me.sessions[me.progress] === 'undefined') {
+        me.progress--;
+        return;
+      }
+
       me.sessions[me.progress].sessionId = me.sessionId;
       me.sessions[me.progress].callback(err, me.device);
       if (err) {

@@ -143,7 +143,7 @@ describeWd('unallowed tag names', function(h) {
   it('should not find secure fields', function(done) {
     h.driver.elementsByTagName('secure', function(err) {
       should.exist(err);
-      err.cause.value.should.include("not supported in Android");
+      err.cause.value.origValue.should.include("not supported in Android");
       done();
     });
   });

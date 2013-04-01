@@ -46,7 +46,21 @@ class AndroidCommandExecutor {
                 Double endX = Double.parseDouble(params.get("endX").toString());
                 Double endY = Double.parseDouble(params.get("endY").toString());
                 Integer steps = (Integer) params.get("steps");
-                return getSuccessResult(AndroidCommandHolder.swipe(startX, startY, endX, endY, steps));
+                Boolean res = AndroidCommandHolder.swipe(startX, startY, endX, endY, steps);
+                if (res) {
+                    return getSuccessResult(res);
+                } else {
+                    return getErrorResult("Swipe did not complete successfully");
+                }
+            } else if (action.equals("flick")) {
+                Integer xSpeed = (Integer) params.get("xSpeed");
+                Integer ySpeed = (Integer) params.get("ySpeed");
+                Boolean res = AndroidCommandHolder.flick(xSpeed, ySpeed);
+                if (res) {
+                    return getSuccessResult(res);
+                } else {
+                    return getErrorResult("Flick did not complete successfully");
+                }
             } else if (action.equals("getDeviceSize")) {
                 JSONObject res = AndroidCommandHolder.getDeviceSize();
                 return getSuccessResult(res);

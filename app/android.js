@@ -511,7 +511,7 @@ Android.prototype.getScreenshot = function(cb) {
 };
 
 Android.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {
-    cb(new NotYetImplementedError(), null);
+  this.proxy(["flick", {xSpeed: xSpeed, ySpeed: ySpeed}], cb);
 };
 
 Android.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb) {

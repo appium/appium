@@ -29,20 +29,19 @@ class InvalidStrategyException extends AndroidCommandException {
 class AndroidCommandHolder {
     
     public static boolean click(Double x, Double y) {
-        Double[] coords = {x, y};
-        ArrayList<Integer> posVals = absPosFromCoords(coords);
-        return UiDevice.getInstance().click(posVals.get(0), posVals.get(1));
+        Double[] xCoords = {x};
+        Double[] yCoords = {y};
+        ArrayList<Integer> posXVals = absXPosFromCoords(xCoords);
+        ArrayList<Integer> posYVals = absYPosFromCoords(yCoords);
+        return UiDevice.getInstance().click(posXVals.get(0), posYVals.get(1));
     }
     
-    private static ArrayList<Integer> absPosFromCoords(Double[] coordVals) {
-        UiDevice d = UiDevice.getInstance();
-        Double screenX = new Double(d.getDisplayWidth());
-        Double screenY = new Double(d.getDisplayHeight());
+    private static ArrayList<Integer> absPosFromCoords(Double[] coordVals, Double screenDim) {
         ArrayList<Integer> retPos = new ArrayList<Integer>();
         Integer curVal;
         for (Double coord : coordVals) {
             if (coord < 1) {
-                curVal = (int)(screenX * coord);
+                curVal = (int)(screenDim * coord);
             } else {
                 curVal = coord.intValue();
             }
@@ -51,11 +50,48 @@ class AndroidCommandHolder {
         return retPos;
     }
     
+    private static ArrayList<Integer> absXPosFromCoords(Double[] coordVals) {
+        UiDevice d = UiDevice.getInstance();
+        Double screenX = new Double(d.getDisplayWidth());
+        return absPosFromCoords(coordVals, screenX);
+    }
+    
+    private static ArrayList<Integer> absYPosFromCoords(Double[] coordVals) {
+        UiDevice d = UiDevice.getInstance();
+        Double screenY = new Double(d.getDisplayHeight());
+        return absPosFromCoords(coordVals, screenY);
+    }
+    
     public static boolean swipe(Double startX, Double startY, Double endX, Double endY, Integer steps) {
         UiDevice d = UiDevice.getInstance();
-        Double[] coords = {startX, startY, endX, endY};
-        ArrayList<Integer> posVals = absPosFromCoords(coords);
-        return d.swipe(posVals.get(0), posVals.get(1), posVals.get(2), posVals.get(3), steps);        
+        Double[] xCoords = {startX, endX};
+        Double[] yCoords = {startY, endY};
+        ArrayList<Integer> posXVals = absXPosFromCoords(xCoords);
+        ArrayList<Integer> posYVals = absYPosFromCoords(yCoords);
+        return d.swipe(posXVals.get(0), posYVals.get(0), posXVals.get(1), posYVals.get(1), steps);        
+    }
+    
+    public static boolean flick(Integer xSpeed, Integer ySpeed) {
+        UiDevice d = UiDevice.getInstance();
+        Integer screenX = d.getDisplayWidth();
+        Integer screenY = d.getDisplayHeight();
+        Integer startX = screenX / 2;
+        Integer startY = screenY / 2;
+        Double speedRatio = (double) xSpeed / ySpeed;
+        Integer xOff;
+        Integer yOff;
+        if (speedRatio < 1) {
+            yOff = screenY / 4;
+            xOff = (int)((double) screenX / 4 * speedRatio);
+        } else {
+            xOff = screenX / 4;
+            yOff = (int)((double) screenY / 4 / speedRatio);
+        }
+        Integer endX = startX + (Integer.signum(xSpeed) * xOff);
+        Integer endY = startY + (Integer.signum(ySpeed) * yOff);
+        Double speed = Math.max(1250, Math.sqrt((xSpeed*xSpeed)+(ySpeed*ySpeed)));
+        Integer steps = (1250 / speed.intValue()) + 1;
+        return d.swipe(startX, startY, endX, endY, steps);
     }
     
     public static JSONObject getDeviceSize() throws AndroidCommandException {

@@ -45,7 +45,7 @@ var IOS = function(args) {
   this.implicitWaitMs = 0;
   this.asyncWaitMs = 0;
   this.asyncResponseCb = null;
-  this.asyncReturned = null;
+  this.returned = null;
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
@@ -781,83 +781,64 @@ IOS.prototype.fireEvent = function(evt, elementId, cb) {
 };
 
 IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
-  var returned = false
-    , looks = 0
-    , frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  var lookForAlert = _.bind(function() {
-    if (!returned && looks < 11 && !this.selectingNewPage) {
-      logger.info("atom '" + atom + "' did not return yet, checking to see if " +
-                  "we are blocked by an alert");
-      // temporarily act like we're not processing a remote command
-      // so we can proxy the alert detection functionality
-      this.processingRemoteCmd = false;
-      this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
-        if (res.value === true) {
-          logger.info("Found an alert, returning control to client");
-          returned = true;
-          cb(null, {
-            status: status.codes.Success.code
-            , value: ''
-          });
-        } else {
-          // say we're processing remote cmd again
-          this.processingRemoteCmd = true;
-          setTimeout(lookForAlert, 1000);
-        }
-      }, this));
-      looks++;
-    }
-  }, this);
+  var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
+  this.returned = false;
+  this.looks = 0;
   this.processingRemoteCmd = true;
   this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
     this.processingRemoteCmd = false;
-    if (!returned) {
-      returned = true;
+    if (!this.returned) {
+      this.returned = true;
       cb(err, res);
     }
   }, this));
-  setTimeout(lookForAlert, 5000);
+  setTimeout(this.lookForAlert, 5000);
+};
+
+IOS.prototype.lookForAlert = function() {
+  if (!this.returned && this.looks < 11 && !this.selectingNewPage) {
+    logger.info("atom '" + atom + "' did not return yet, checking to see if " +
+                "we are blocked by an alert");
+    // temporarily act like we're not processing a remote command
+    // so we can proxy the alert detection functionality
+    this.processingRemoteCmd = false;
+    this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
+      if (res.value === true) {
+        logger.info("Found an alert, returning control to client");
+        this.returned = true;
+        cb(null, {
+          status: status.codes.Success.code
+          , value: ''
+        });
+      } else {
+        // say we're processing remote cmd again
+        this.processingRemoteCmd = true;
+        setTimeout(lookForAlert, 1000);
+      }
+    }, this));
+    this.looks++;
+  }
 };
 
 IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
-  this.asyncReturned = false;
+  this.returned = false;
+  this.looks = 0;
   // TODO: refactor lookForAlert out of this and executeAtom.
-  var lookForAlert = _.bind(function() {
-    if (!this.asyncReturned) {
-      logger.info("atom '" + atom + " did not return yet, checking to see if " +
-                  "we are blocked by an alert");
-      this.proxy("au.alertIsPresent()", function(err, res) {
-        if (res !== null) {
-          if (res.value === true) {
-            logger.info("Found an alert, returning control to client");
-            returned = true;
-            cb(null, {
-              status: status.codes.Success.code
-              , value: ''
-            });
-          } else {
-            console.log('queueing lookForAlert');
-            setTimeout(lookForAlert, 1000);
-          }
-        }
-      });
-    }
-  }, this);
   this.asyncResponseCb = cb;
   this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, function(err, res) {
-    if (!this.asyncReturned) {
-      this.asyncReturned = true;
+    if (!this.returned) {
+      this.returned = true;
       cb(err, res);
     }
   });
-  setTimeout(lookForAlert, 1000);
+  setTimeout(this.lookForAlert, 5000);
 };
 
 IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
   var asyncCb = this.asyncResponseCb
     , me = this;
-  //mark asyncReturned as true to stop looking for alerts; the js is done.
-  this.asyncReturned = true
+  //mark returned as true to stop looking for alerts; the js is done.
+  this.returned = true
   var parseElementResponse = function(element) {
     var objId = element.ELEMENT
     , clientId = (5000 + me.webElementIds.length).toString();

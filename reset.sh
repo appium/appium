@@ -4,7 +4,7 @@ rm -rf node_modules/wd
 echo "Installing WD and new NPM modules"
 npm install .
 echo "Updating/initializing submodules"
-git submodule update --init
+git submodule update --init submodules/instruments-without-delay
 echo "Building instruments-without-delay"
 pushd submodules/instruments-without-delay
 ./build.sh

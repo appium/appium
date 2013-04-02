@@ -27,7 +27,7 @@ Requirements
 
     > Mac OS X 10.6 or higher
     > XCode
-    > Apple Developer Tools (iPhone simulator, command line tools)
+    > Apple Developer Tools (iPhone simulator SDK, command line tools)
     > Android SDK API >= 17
     > Node and npm (http://www.nodejs.org) (Node must be >= v0.8)
 
@@ -79,11 +79,12 @@ following commands:
 
     > sudo npm install -g mocha
     > sudo npm install -g grunt-cli
-    > npm install
+    > ./reset.sh
 
 The first two commands install test and build tools (sudo may not be necessary
 if you installed node.js via Homebrew). The third command installs all app
-dependencies.
+dependencies, builds supporting binaries and test apps. `reset.sh` is also the
+recommended command to run after pulling changes from master.
 
 Developing on Appium (iOS)
 --------------
@@ -208,7 +209,8 @@ grunt from the command line with an app or without an app, among other things:
     > node server.js --app /absolute/path/to/app -V  // launch Appium server with app
     > node server.js --launch // pre-launch the app when appium loads
     > node server.js --log /my/appium.log // log to file instead of stdout
-    > node server.js --warp // use unsupported system-crashing speedup tech
+    > node server.js --without-delay // (iOS) use faster instruments-without-delay
+    > node server.js --fast-reset // (Android) faster resetting between tests
 
 (See
 [the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for

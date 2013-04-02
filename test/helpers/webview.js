@@ -718,7 +718,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 1");
+            title.should.equal("Frameset guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -737,7 +737,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 2");
+            title.should.equal("Frameset guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -756,7 +756,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 3");
+            title.should.equal("Frameset guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -775,7 +775,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 1");
+            title.should.equal("Frameset guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -783,9 +783,8 @@ module.exports.buildTests = function(webviewType) {
                 text.should.equal("Sub frame 1");
                 h.driver.frame(null, function(err) {
                   should.not.exist(err);
-                  h.driver.title(function(err, title) {
+                  h.driver.elementByTagName('frameset', function(err) {
                     should.not.exist(err);
-                    title.should.equal("Frameset guinea pig");
                     done();
                   });
                 });
@@ -802,7 +801,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 1");
+            title.should.equal("Iframe guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -821,7 +820,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 2");
+            title.should.equal("Iframe guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -832,7 +831,7 @@ module.exports.buildTests = function(webviewType) {
             });
           });
         });
-      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
     });
     it('should switch to iframe by id', function(done) {
       loadWebView(h.driver, function() {
@@ -840,7 +839,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 3");
+            title.should.equal("Iframe guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -861,7 +860,7 @@ module.exports.buildTests = function(webviewType) {
             should.not.exist(err);
             h.driver.title(function(err, title) {
               should.not.exist(err);
-              title.should.equal("Sub frame 3");
+              title.should.equal("Iframe guinea pig");
               h.driver.elementByTagName("h1", function(err, h1) {
                 should.not.exist(err);
                 h1.text(function(err, text) {
@@ -893,12 +892,11 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 3");
+            title.should.equal("Frameset guinea pig");
             h.driver.frame("childframe", function(err) {
               should.not.exist(err);
-              h.driver.title(function(err, title) {
+              h.driver.elementById("only_on_page_2", function(err) {
                 should.not.exist(err);
-                title.should.equal("I am another page title");
                 done();
               });
             });
@@ -912,7 +910,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.title(function(err, title) {
             should.not.exist(err);
-            title.should.equal("Sub frame 1");
+            title.should.equal("Iframe guinea pig");
             h.driver.elementByTagName("h1", function(err, h1) {
               should.not.exist(err);
               h1.text(function(err, text) {
@@ -920,9 +918,9 @@ module.exports.buildTests = function(webviewType) {
                 text.should.equal("Sub frame 1");
                 h.driver.frame(null, function(err) {
                   should.not.exist(err);
-                  h.driver.title(function(err, title) {
+                  h.driver.elementsByTagName('iframe', function(err, els) {
                     should.not.exist(err);
-                    title.should.equal("Iframe guinea pig");
+                    els.length.should.equal(3);
                     done();
                   });
                 });

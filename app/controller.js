@@ -446,6 +446,11 @@ exports.implicitWait = function(req, res) {
   req.device.implicitWait(ms, getResponseHandler(req, res));
 };
 
+exports.asyncScriptTimeout = function(req, res) {
+  var ms = req.body.ms;
+  req.device.asyncScriptTimeout(ms, getResponseHandler(req, res));
+};
+
 exports.setOrientation = function(req, res) {
   var orientation = req.body.orientation;
   req.device.setOrientation(orientation, getResponseHandler(req, res));
@@ -526,6 +531,19 @@ exports.execute = function(req, res) {
   }
 };
 
+exports.executeAsync = function(req, res) {
+  var script = req.body.script
+    , args = req.body.args
+    , responseUrl = '';
+
+    responseUrl += 'http://' + req.appium.args.address + ':' + req.appium.args.port;
+    responseUrl += '/wd/hub/session/' + req.appium.sessionId + '/receive_async_response';
+
+  if(checkMissingParams(res, {script: script, args: args})) {
+    req.device.executeAsync(script, args, responseUrl, getResponseHandler(req, res));
+    }
+};
+
 exports.executeMobileMethod = function(req, res, cmd) {
   var args = req.body.args
     , params = {};
@@ -604,6 +622,11 @@ exports.setCommandTimeout = function(req, res) {
 
 exports.getCommandTimeout = function(req, res) {
   req.device.getCommandTimeout(getResponseHandler(req, res));
+};
+
+exports.receiveAsyncResponse = function(req, res) {
+  var asyncResponse = req.body;
+  req.device.receiveAsyncResponse(asyncResponse);
 };
 
 exports.setValueImmediate = function(req, res) {

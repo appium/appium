@@ -7,6 +7,10 @@ import org.json.JSONObject;
 
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.AndroidElement;
+import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.WDStatus;
+import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 
 import android.graphics.Rect;
 
@@ -18,23 +22,20 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
  */
 public class GetSize extends CommandHandler {
 	
-	public GetSize(AndroidCommand cmd) {
-		super(cmd);
-	}
-    
-	public AndroidCommandResult execute() {
+	public AndroidCommandResult execute(AndroidCommand command) throws JSONException {
 
-		if (this.command.isElementCommand()) {
+		if (command.isElementCommand()) {
 			// Only makes sense on an element
 	        JSONObject res = new JSONObject();
 			try {
-				Rect rect = this.el.getBounds();
+				AndroidElement el = command.getElement();
+				Rect rect = el.getBounds();
                 res.put("width", rect.width());
                 res.put("height", rect.height());
 			} catch (UiObjectNotFoundException e) {
-	            return getErrorResult("Unable to get bounds: " + e.getMessage());
-			} catch (JSONException e) {
-            	getErrorResult("Error serializing height/width data into JSON");
+	            return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+			} catch (ElementNotInHashException e) {
+	            return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
 			}
             return getSuccessResult(res);
 		} else {

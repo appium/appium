@@ -2,8 +2,14 @@
  * 
  */
 package io.appium.android.bootstrap.handler;
+import org.json.JSONException;
+
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.AndroidElement;
+import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.WDStatus;
+import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
 
@@ -13,17 +19,16 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
  */
 public class GetText extends CommandHandler {
 	
-	public GetText(AndroidCommand cmd) {
-		super(cmd);
-	}
-    
-	public AndroidCommandResult execute() {
-		if (this.command.isElementCommand()) {
+	public AndroidCommandResult execute(AndroidCommand command) throws JSONException {
+		if (command.isElementCommand()) {
 			// Only makes sense on an element
 			try {
-				return getSuccessResult(this.el.getText());
+				AndroidElement el = command.getElement();
+				return getSuccessResult(el.getText());
 			} catch (UiObjectNotFoundException e) {
-	            return getErrorResult("Unable to get text: " + e.getMessage());
+				return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+			} catch (ElementNotInHashException e) {
+				return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
 			}
 		} else {
             return getErrorResult("Unable to get text without an element.");

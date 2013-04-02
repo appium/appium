@@ -4,6 +4,7 @@
 package io.appium.android.bootstrap.handler;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.CommandHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,12 +17,8 @@ import com.android.uiautomator.core.UiDevice;
  */
 public class GetDeviceSize extends CommandHandler {
 	
-	public GetDeviceSize(AndroidCommand cmd) {
-		super(cmd);
-	}
-    
-	public AndroidCommandResult execute() {
-		if (!this.command.isElementCommand()) {
+	public AndroidCommandResult execute(AndroidCommand command) {
+		if (!command.isElementCommand()) {
 			// only makes sense on a device
             UiDevice d = UiDevice.getInstance();
             JSONObject res = new JSONObject();

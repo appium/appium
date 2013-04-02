@@ -534,7 +534,10 @@ exports.execute = function(req, res) {
 exports.executeAsync = function(req, res) {
   var script = req.body.script
     , args = req.body.args
-    , responseUrl = ('http://' + req.appium.args.address + ':' + req.appium.args.port + '/wd/hub/session/' + req.appium.sessionId + '/receive_async_response');
+    , responseUrl = '';
+
+    responseUrl += 'http://' + req.appium.args.address + ':' + req.appium.args.port;
+    responseUrl += '/wd/hub/session/' + req.appium.sessionId + '/receive_async_response';
 
   if(checkMissingParams(res, {script: script, args: args})) {
     req.device.executeAsync(script, args, responseUrl, getResponseHandler(req, res));

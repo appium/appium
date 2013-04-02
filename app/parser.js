@@ -93,17 +93,6 @@ var args = [
     , help: 'Also send log output to this HTTP listener'
   }],
 
-  [['-w', '--warp'] , {
-    defaultValue: false
-    , action: 'storeTrue'
-    , required: false
-    , help: '(IOS-only) IOS has a weird built-in unavoidable sleep. One way ' +
-            'around this is to speed up the system clock. Use this time warp ' +
-            'hack to speed up test execution (WARNING, actually alters clock, ' +
-            'could be bad news bears!)'
-    , nargs: 0
-  }],
-
   [['--without-delay'] , {
     defaultValue: false
     , dest: 'withoutDelay'

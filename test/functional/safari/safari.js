@@ -10,8 +10,8 @@ var desc = require("../../helpers/driverblock.js").describeForSafari()
   , should = require('should');
 
 
-var devices = ["iPhone", "iPad"];
-//var devices = ["iPad", "iPhone"];
+//var devices = ["iPhone", "iPad"];
+var devices = ["iPad", "iPhone"];
 _.each(devices, function(sim) {
 
   desc('windows and frames (' + sim + ')', function(h) {

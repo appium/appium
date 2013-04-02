@@ -9,6 +9,7 @@ var routing = require('./routing')
   , downloadFile = helpers.downloadFile
   , unzipApp = helpers.unzipApp
   , checkSafari = helpers.checkSafari
+  , cleanSafari = helpers.cleanSafari
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
@@ -240,8 +241,20 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
   var checkSuccess = _.bind(function(attemptedApp) {
     logger.info("Using mobile safari app at " + attemptedApp);
     this.args.app = attemptedApp;
-    cb(null);
+    cleanSafariNext();
   }, this);
+  var cleanSafariNext = function() {
+    logger.info("Cleaning mobile safari data files");
+    cleanSafari(safariVer, function(err) {
+      if (err) {
+        logger.error(err.message);
+        cb(err);
+      } else {
+        cb(null);
+      }
+    });
+  };
+
   checkSafari(safariVer, _.bind(function(err, attemptedApp) {
     if (err) {
       logger.warn("Could not find mobile safari with version '" + safariVer +

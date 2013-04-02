@@ -785,6 +785,9 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
     this.parseExecuteResponse(asyncResponse, asyncCb);
     asyncCb(null, asyncResponse);
     this.asyncResponseCb = null;
+  } else {
+    logger.warn("Received async response when we weren't expecting one! " +
+                    "Response was: " + JSON.stringify(asyncResponse));
   }
 };
 

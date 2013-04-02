@@ -10,8 +10,6 @@ var path = require('path')
   , bplistParse = require('bplist-parser')
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
-  , timeWarp = require('../warp.js').timeWarp
-  , stopTimeWarp = require('../warp.js').stopTimeWarp
   , escapeSpecialChars = require('./helpers.js').escapeSpecialChars
   , rd = require('./hybrid/ios/remote-debugger')
   , errors = require('./errors')
@@ -26,7 +24,6 @@ var IOS = function(args) {
   this.udid = args.udid;
   this.verbose = args.verbose;
   this.autoWebview = args.autoWebview;
-  this.warp = args.warp;
   this.withoutDelay = args.withoutDelay;
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
@@ -176,9 +173,6 @@ IOS.prototype.start = function(cb, onDie) {
 
   if (this.instruments === null) {
     this.cleanup(_.bind(function() {
-      if (this.warp) {
-        timeWarp(50, 1000);
-      }
       this.setDeviceType(_.bind(function(err) {
         if (err) {
           cb(err);
@@ -464,9 +458,6 @@ IOS.prototype.stopRemote = function() {
 };
 
 IOS.prototype.stop = function(cb) {
-  if (this.warp) {
-    stopTimeWarp();
-  }
   if (this.remote) {
     this.stopRemote();
   }

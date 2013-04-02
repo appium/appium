@@ -6,7 +6,6 @@ var logger = require('../logger').get('appium')
   , request = require('request')
   , path = require('path')
   , exec = require('child_process').exec
-  , inTimeWarp = false
   , temp = require('temp');
 
 exports.downloadFile = function(fileUrl, cb) {
@@ -165,38 +164,6 @@ var pad0 = function(x) {
     x = '0' + x;
   }
   return x;
-};
-
-exports.timeWarp = function(period, warp) {
-  logger.info("Starting time warp");
-  period = typeof period === "undefined" ? 100 : period;
-  warp = typeof warp === "undefined" ? 1000 : warp;
-  var numHops = 0;
-  var makeJump = function() {
-    if (inTimeWarp) {
-      var curMs = Date.now();
-      var newDate = new Date(curMs + warp);
-      var dateStr = [pad0(newDate.getHours()),
-                     pad0(newDate.getMinutes()),
-                     '.', pad0(newDate.getSeconds())]
-                    .join('');
-      exec('sudo /bin/date ' + dateStr, function(err, stdout, stderr) {
-        numHops++;
-        setTimeout(makeJump, period);
-      });
-    } else {
-      var realTime = period * numHops / 1000;
-      var fakeTime = (warp * numHops / 1000) + realTime;
-      var info = "Moved forward " + fakeTime + " secs in " + realTime + " actual seconds";
-      logger.info("Stopping time warp: " + info);
-    }
-  };
-  inTimeWarp = true;
-  makeJump();
-};
-
-exports.stopTimeWarp = function() {
-  inTimeWarp = false;
 };
 
 exports.escapeSpecialChars = function(str, quoteEscape) {

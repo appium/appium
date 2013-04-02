@@ -29,7 +29,6 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
     , udid: null
     , verbose: verbose
     , port: 4723
-    , warp: false
     , withoutDelay: true
     , fastReset: true
     , noReset: false

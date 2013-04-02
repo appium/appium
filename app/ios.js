@@ -777,9 +777,10 @@ IOS.prototype.fireEvent = function(evt, elementId, cb) {
   }
 };
 
-IOS.prototype.executeAtom = function(atom, args, cb) {
-  var returned = false;
-  var looks = 0;
+IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
+  var returned = false
+    , looks = 0
+    , frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   var lookForAlert = _.bind(function() {
     if (!returned && looks < 11 && !this.selectingNewPage) {
       logger.info("atom '" + atom + "' did not return yet, checking to see if " +
@@ -805,7 +806,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
     }
   }, this);
   this.processingRemoteCmd = true;
-  this.remote.executeAtom(atom, args, this.curWebFrames, _.bind(function(err, res) {
+  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
     this.processingRemoteCmd = false;
     if (!returned) {
       returned = true;
@@ -1466,19 +1467,13 @@ IOS.prototype.setWindow = function(name, cb) {
 };
 
 IOS.prototype.closeWindow = function(cb) {
-  var me = this;
   if (this.curWindowHandle) {
-    var closeFn = _.bind(this.closeIPhoneWindow, this);
-    if (this.deviceType === "ipad") {
-      closeFn = _.bind(this.closeIPadWindow, this);
-    }
-    closeFn(function(err, res) {
-      // wait for page change callback to happen before we return
-      // control to the client
-      //me.onPageChangeCb = function() {
+    var script = "return window.setTimeout(function() { window.close(); }, 1000);";
+    this.executeAtom('execute_script', [script, []], function(err, res) {
+      setTimeout(function() {
         cb(err, res);
-      //};
-    });
+      }, 500);
+    }, true);
   } else {
     cb(new NotImplementedError(), null);
   }
@@ -1521,45 +1516,6 @@ IOS.prototype.checkSuccess = function(err, res, cb) {
   return true;
 };
 
-IOS.prototype.closeIPadWindow = function(cb) {
-  var me = this;
-  me.findAndAct('xpath', '//button[contains(@name, "Close tab for")]',
-      0, 'tap', [], cb);
-};
-
-IOS.prototype.closeIPhoneWindow = function(cb) {
-  var me = this;
-  me.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
-    if (me.checkSuccess(err, res, cb)) {
-      me.findAndAct('name', 'Close page', 0, 'click', [], function(err, res) {
-        if (me.checkSuccess(err, res, cb)) {
-          var oldImplicitWait = me.implicitWaitMs;
-          me.implicitWaitMs = 0;
-          me.findUIElementOrElements('name', 'Done', null, false, function(err, res) {
-            me.implicitWaitMs = oldImplicitWait;
-            if (res.status === status.codes.Success.code) {
-              var command = ["au.getElement('", res.value.ELEMENT,
-                "').tap()"].join('');
-              // don't care if it fails
-              me.proxy(command, function() {
-                cb(null, {
-                  status: status.codes.Success.code
-                  , value: null
-                });
-              });
-            } else {
-              cb(null, {
-                status: status.codes.Success.code
-                , value: null
-              });
-            }
-          });
-        }
-      });
-    }
-  });
-};
-
 IOS.prototype.leaveWebView = function(cb) {
   if (this.curWindowHandle === null) {
     cb(null, {
@@ -1600,7 +1556,7 @@ IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    this.executeAtom('title', [], cb);
+    this.executeAtom('title', [], cb, true);
   }
 };
 

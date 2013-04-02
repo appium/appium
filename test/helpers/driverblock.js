@@ -92,7 +92,7 @@ var describeForApp = function(app, device, appPackage, appActivity) {
   } else if (device === "android") {
     browserName = "Android";
   }
-  if (/\//.exec(app)) {
+  if (/\//.exec(app) || /\./.exec(app)) {
     appPath = app;
   } else {
     if (device === "ios") {

@@ -606,6 +606,71 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should be able to return multiple elements from javascript', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.execute('return document.getElementsByTagName("a");', function(err, res) {
+          should.not.exist(err);
+          res[0].ELEMENT.should.equal('5000');
+          done();
+        });
+      });
+    });
+    it('should execute javascript in frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.execute("return document.getElementsByTagName('h1')[0].innerHTML;", function(err, res) {
+            res.should.equal("Sub frame 1");
+            done();
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+  });
+
+  desc("executeAsync", function(h) {
+    it("should bubble up javascript errors", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.executeAsync("'nan'--", function(err, val) {
+          err.status.should.equal(13);
+          should.not.exist(val);
+          done();
+        });
+      });
+    });
+    it("should execute async javascript", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.setAsyncScriptTimeout('10000', function(err, res) {
+          h.driver.executeAsync("arguments[arguments.length - 1](123);", function(err, val) {
+            should.not.exist(err);
+            val.should.equal(123);
+            done();
+          });
+        });
+      });
+    });
+    it("should timeout when callback isn't invoked", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.setAsyncScriptTimeout('2000', function(err, res) {
+          h.driver.executeAsync("return 1 + 2", function(err, res) {
+            should.exist(err);
+            err.status.should.equal(28);
+            done();
+          });
+        });
+      });
+    });
+    it('should execute async javascript in frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.executeAsync("arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);", function(err, res) {
+            res.should.equal("Sub frame 1");
+            done();
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
   });
 
   desc('alerts', function(h) {

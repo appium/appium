@@ -18,9 +18,24 @@ var main = function(args, readyCb, doneCb) {
   // in case we'll support blackberry at some point
   args.device = 'iOS';
 
+  var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS,DELETE');
+    res.header('Access-Control-Allow-Headers', 'origin, content-type, accept');
+
+    // need to respond 200 to OPTIONS
+
+    if ('OPTIONS' == req.method) {
+      res.send(200);
+    } else {
+      next();
+    }
+  };
+
   rest.configure(function() {
     rest.use(express.favicon());
     rest.use(express.static(path.join(__dirname, '/app/static')));
+    rest.use(allowCrossDomain);
     if (args.verbose) {
       rest.use(express.logger('dev'));
     }

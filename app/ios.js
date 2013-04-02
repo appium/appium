@@ -45,7 +45,7 @@ var IOS = function(args) {
   this.implicitWaitMs = 0;
   this.asyncWaitMs = 0;
   this.asyncResponseCb = null;
-  this.returned = null;
+  this.returnedFromExecuteAtom = null;
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
@@ -745,13 +745,13 @@ IOS.prototype.fireEvent = function(evt, elementId, cb) {
 
 IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
   var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  this.returned = false;
+  this.returnedFromExecuteAtom = false;
   this.looks = 0;
   this.processingRemoteCmd = true;
   this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
     this.processingRemoteCmd = false;
-    if (!this.returned) {
-      this.returned = true;
+    if (!this.returnedFromExecuteAtom) {
+      this.returnedFromExecuteAtom = true;
       res = this.parseExecuteResponse(res);
       cb(err, res);
     }
@@ -760,14 +760,14 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
 };
 
 IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
-  this.returned = false;
+  this.returnedFromExecuteAtom = false;
   this.looks = 0;
   this.processingRemoteCmd = true;
   this.asyncResponseCb = cb;
   this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, _.bind(function(err, res) {
     this.processingRemoteCmd = false;
-    if (!this.returned) {
-      this.returned = true;
+    if (!this.returnedFromExecuteAtom) {
+      this.returnedFromExecuteAtom = true;
       res = this.parseExecuteResponse(res);
       cb(err, res);
     }
@@ -779,7 +779,7 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
   var asyncCb = this.asyncResponseCb
     , me = this;
   //mark returned as true to stop looking for alerts; the js is done.
-  this.returned = true;
+  this.returnedFromExecuteAtom = true;
 
   if (asyncCb !== null) {
     this.parseExecuteResponse(asyncResponse, asyncCb);
@@ -836,7 +836,7 @@ IOS.prototype.parseExecuteResponse = function(response, cb) {
 
 IOS.prototype.lookForAlert = function(cb) {
   if (this.instruments !== null) {
-    if (!this.returned && this.looks < 11 && !this.selectingNewPage) {
+    if (!this.returnedFromExecuteAtom && this.looks < 11 && !this.selectingNewPage) {
       logger.info("atom did not return yet, checking to see if " +
                   "we are blocked by an alert");
       // temporarily act like we're not processing a remote command
@@ -847,7 +847,7 @@ IOS.prototype.lookForAlert = function(cb) {
         if (res !== null) {
           if (res.value === true) {
             logger.info("Found an alert, returning control to client");
-            me.returned = true;
+            me.returnedFromExecuteAtom = true;
             cb(null, {
               status: status.codes.Success.code
               , value: ''

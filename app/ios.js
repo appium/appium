@@ -1473,7 +1473,7 @@ IOS.prototype.closeWindow = function(cb) {
       setTimeout(function() {
         cb(err, res);
       }, 500);
-    });
+    }, true);
   } else {
     cb(new NotImplementedError(), null);
   }
@@ -1556,7 +1556,7 @@ IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);
   } else {
-    this.executeAtom('title', [], cb);
+    this.executeAtom('title', [], cb, true);
   }
 };
 

@@ -217,6 +217,11 @@ Appium.prototype.configure = function(desiredCaps, cb) {
       }
     } else if (this.isIos() && appPath.toLowerCase() === "safari") {
       this.configureSafari(desiredCaps, cb);
+    } else if (this.isIos() && /([a-zA-Z0-9]+\.[a-zA-Z0-9]+)+/.exec(appPath)) {
+      // we have a bundle ID
+      this.args.bundleId = appPath;
+      this.args.app = null;
+      cb(null);
     } else {
       cb("Bad app passed in through " + origin + ": " + appPath +
          ". Apps need to be absolute local path or URL to zip file");
@@ -322,6 +327,7 @@ Appium.prototype.invoke = function() {
         var iosOpts = {
           rest: this.rest
           , app: this.args.app
+          , bundleId: this.args.bundleId
           , udid: this.args.udid
           , verbose: this.args.verbose
           , removeTraceDir: !this.args.keepArtifacts

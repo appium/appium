@@ -21,6 +21,7 @@ var path = require('path')
 var IOS = function(args) {
   this.rest = args.rest;
   this.app = args.app;
+  this.bundleId = args.bundleId || null;
   this.udid = args.udid;
   this.verbose = args.verbose;
   this.autoWebview = args.autoWebview;
@@ -29,7 +30,6 @@ var IOS = function(args) {
   this.removeTraceDir = args.removeTraceDir;
   this.deviceType = args.deviceType;
   this.startingOrientation = args.startingOrientation;
-  this.bundleId = null; // what we get from app on startup
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
@@ -81,6 +81,11 @@ IOS.prototype.cleanup = function(cb) {
 };
 
 IOS.prototype.start = function(cb, onDie) {
+  if (this.app && this.bundleId) {
+    cb(new Error("You tried to launch instruments with both an app " +
+                 "specification and a bundle ID. Choose one or the other!"));
+    return;
+  }
   var me = this;
   var didLaunch = false;
   if (typeof onDie === "function") {
@@ -113,13 +118,20 @@ IOS.prototype.start = function(cb, onDie) {
         oCb(null);
       }
     };
-    me.proxy('au.bundleId()', function(err, bId) {
-      logger.info('Bundle ID for open app is ' + bId.value);
-      me.bundleId = bId.value;
+    var next = function() {
       setOrientation(function() {
         navToWebview();
       });
-    });
+    };
+    if (me.bundleId !== null) {
+      next();
+    } else {
+      me.proxy('au.bundleId()', function(err, bId) {
+        logger.info('Bundle ID for open app is ' + bId.value);
+        me.bundleId = bId.value;
+        next();
+      });
+    }
   };
 
   var onExit = function(code, traceDir) {
@@ -178,7 +190,7 @@ IOS.prototype.start = function(cb, onDie) {
           cb(err);
         } else {
           this.instruments = instruments(
-            this.app
+            this.app || this.bundleId
             , this.udid
             , path.resolve(__dirname, 'uiauto/bootstrap.js')
             , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
@@ -197,6 +209,10 @@ IOS.prototype.start = function(cb, onDie) {
 IOS.prototype.setDeviceType = function(cb) {
   if (this.udid) {
     logger.info("Not setting device type since we're connected to a device");
+    cb(null);
+  } else if (this.bundleId) {
+    logger.info("Not setting device type since we're using bundle ID and " +
+                "assuming app is already installed");
     cb(null);
   } else {
     var deviceTypeCode = 1

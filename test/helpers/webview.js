@@ -621,7 +621,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.execute("return document.title;", function(err, res) {
             res.should.equal("Sub frame 1");
-            done()
+            done();
           });
         });
       }, testEndpoint + 'frameset.html', "Frameset guinea pig");
@@ -666,7 +666,7 @@ module.exports.buildTests = function(webviewType) {
           should.not.exist(err);
           h.driver.executeAsync("arguments[arguments.length - 1](document.title);", function(err, res) {
             res.should.equal("Sub frame 1");
-            done()
+            done();
           });
         });
       }, testEndpoint + 'frameset.html', "Frameset guinea pig");

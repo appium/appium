@@ -581,6 +581,9 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
 };
 
 IOS.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (res.value === null) {
+    res.status = status.codes.NoSuchElement.code;
+  }
   if (!err && !many && res.status === 0) {
     findCb(true, err, res);
   } else if (!err && many && res.value !== null && res.value.length > 0) {
@@ -596,50 +599,10 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   var me = this;
   var doFind = function(findCb) {
     me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
-      me.cacheAndReturnWebEl(err, res, many, function(err, res) {
-        me.handleFindCb(err, res, many, findCb);
-      });
+      me.handleFindCb(err, res, many, findCb);
     });
   };
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
-};
-
-IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
-  if (typeof res === "undefined") {
-    return cb(err, {
-      status: status.codes.UnknownError.code
-      , value: "Res was undefined!"
-    });
-  }
-
-  var atomValue = res.value
-    , atomStatus = res.status
-    , me = this;
-
-  var parseElementResponse = function(element) {
-    var objId = element.ELEMENT
-    , clientId = (5000 + me.webElementIds.length).toString();
-    me.webElementIds.push(objId);
-    return {ELEMENT: clientId};
-  };
-
-  if (atomStatus == status.codes.Success.code) {
-    if (many) {
-      if (typeof atomValue == "object") {
-        atomValue = _.map(atomValue, parseElementResponse);
-      }
-    } else {
-      if (atomValue === null) {
-        atomStatus = status.codes.NoSuchElement.code;
-      } else {
-        atomValue = parseElementResponse(atomValue);
-      }
-    }
-  }
-  cb(err, {
-    status: atomStatus
-    , value: atomValue
-  });
 };
 
 IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb) {
@@ -804,6 +767,7 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
     this.processingRemoteCmd = false;
     if (!this.returned) {
       this.returned = true;
+      res = this.parseExecuteResponse(res);
       cb(err, res);
     }
   }, this));
@@ -814,51 +778,59 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
   var asyncCb = this.asyncResponseCb
     , me = this;
   //mark returned as true to stop looking for alerts; the js is done.
-  this.returned = true
-  var parseElementResponse = function(element) {
-    var objId = element.ELEMENT
-    , clientId = (5000 + me.webElementIds.length).toString();
-    me.webElementIds.push(objId);
-    return {ELEMENT: clientId};
-  };
+  this.returned = true;
 
-  //TODO: This should be in it's own function; we should be using that for executeAtom too.
   if (asyncCb !== null) {
-    var args = asyncResponse
-    if (args.value !== null) {
-      if (typeof args.value.length === "undefined") {
-        if (typeof args.value.ELEMENT !== "undefined") {
-          var wdElement = parseElementResponse(args.value);
-          if (wdElement === null) {
-            cb(null, {
-              status: status.codes.UnknownError.code
-              , value: "Error converting element ID atom for using in WD: " + args.value.ELEMENT
-            });
-          }
-          args.value = wdElement;
-        }
-      } else {
-        var args = asyncResponse.value;
-        for (var i=0; i < args.length; i++) {
-          if (args[i] !== null) {
-            if (typeof args[i].ELEMENT !== "undefined") {
-              var wdElement = parseElementResponse(args[i]);
-              if (wdElement === null) {
-                cb(null, {
-                  status: status.codes.UnknownError.code
-                  , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
-                });
-              return;
-              }
-              args[i] = wdElement;
-            }
-          }
-        }
-      }
-    }
+    this.parseExecuteResponse(asyncResponse, asyncCb);
     asyncCb(null, asyncResponse);
     this.asyncResponseCb = null;
   }
+};
+
+IOS.prototype.parseElementResponse = function(element) {
+  var objId = element.ELEMENT
+  , clientId = (5000 + this.webElementIds.length).toString();
+  this.webElementIds.push(objId);
+  return {ELEMENT: clientId};
+};
+
+IOS.prototype.parseExecuteResponse = function(response, cb) {
+  if ((response.value !== null) && (typeof response.value !== "undefined")) {
+    var wdElement = null;
+    if (!_.isArray(response.value)) {
+      if (typeof response.value.ELEMENT !== "undefined") {
+        wdElement = response.value.ELEMENT;
+        wdElement = this.parseElementResponse(response.value);
+        if (wdElement === null) {
+          cb(null, {
+            status: status.codes.UnknownError.code
+            , value: "Error converting element ID atom for using in WD: " + response.value.ELEMENT
+          });
+        }
+        response.value = wdElement;
+      }
+    } else {
+      var args = response.value;
+      for (var i=0; i < args.length; i++) {
+        wdElement = args[i];
+        if (args[i] !== null) {
+          if (typeof args[i].ELEMENT !== "undefined") {
+            wdElement = this.parseElementResponse(args[i]);
+            if (wdElement === null) {
+              cb(null, {
+                status: status.codes.UnknownError.code
+                , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+              });
+              return;
+            }
+          args[i] = wdElement;
+          }
+        }
+      }
+      response.value = args;
+    }
+  }
+  return response;
 };
 
 IOS.prototype.lookForAlert = function(cb) {
@@ -1480,7 +1452,7 @@ IOS.prototype.active = function(cb) {
   if (this.curWindowHandle) {
     var me = this;
     this.executeAtom('active_element', [], function(err, res) {
-      me.cacheAndReturnWebEl(err, res, false, cb);
+      cb(err, res);
     });
   } else {
     this.proxy("au.getActiveElement()", cb);
@@ -1647,7 +1619,7 @@ IOS.prototype.convertElementForAtoms = function(args, cb) {
       args[i] = atomsElement;
     }
   }
-};  
+};
 
 IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {

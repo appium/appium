@@ -632,7 +632,7 @@ module.exports.buildTests = function(webviewType) {
     it("should bubble up javascript errors", function(done) {
       loadWebView(h.driver, function() {
         h.driver.executeAsync("'nan'--", function(err, val) {
-          err.message.should.equal("Error response status: 13.");
+          err.status.should.equal(13);
           should.not.exist(val);
           done();
         });
@@ -651,7 +651,7 @@ module.exports.buildTests = function(webviewType) {
     });
     it("should timeout when callback isn't invoked", function(done) {
       loadWebView(h.driver, function() {
-        h.driver.setAsyncScriptTimeout('10000', function(err, res) {
+        h.driver.setAsyncScriptTimeout('2000', function(err, res) {
           h.driver.executeAsync("return 1 + 2", function(err, res) {
             should.exist(err);
             err.status.should.equal(28);

@@ -4,7 +4,9 @@ var logger = require('../logger').get('appium')
   , fs = require('fs')
   , ncp = require('ncp').ncp
   , request = require('request')
+  , _ = require('underscore')
   , path = require('path')
+  , rimraf = require('rimraf')
   , exec = require('child_process').exec
   , temp = require('temp');
 
@@ -148,6 +150,65 @@ exports.copyBuiltInApp = function(appPath, appName, cb) {
     } else {
       logger.info("Copied " + appName + " to " + newAppDir);
       cb(null, newAppDir);
+    }
+  });
+};
+
+exports.cleanSafari = function(safariVer, cb) {
+  var baseSupportDir = "Library/Application Support/iPhone Simulator/" +
+                       safariVer + "/Library/";
+  exports.getUser(function(err, user) {
+    if (err) {
+      cb(err);
+    } else {
+      baseSupportDir = path.resolve("/Users", user, baseSupportDir);
+      fs.stat(baseSupportDir, function(err) {
+        if (err) {
+          logger.info(err.message);
+          cb(new Error("Could not find support directory for mobile safari, does " +
+                       "it exist at " + baseSupportDir + "?"));
+        } else {
+          var toDeletes = [
+            'Caches/Snapshots/com.apple.mobilesafari'
+            , 'Caches/com.apple.mobilesafari/Cache.db*'
+            , 'Caches/com.apple.WebAppCache/*.db'
+            , 'Safari/*.plist'
+            , 'WebKit/LocalStorage/*.*'
+            , 'Library/WebKit/GeolocationSites.plist'
+            , 'Cookies/*.binarycookies'
+          ];
+          var deletes = 0;
+          var errToRet = null;
+          var finish = function(err) {
+            deletes++;
+            if (err) {
+              errToRet = err;
+            }
+            if (deletes === toDeletes.length) {
+              cb(errToRet);
+            }
+          };
+          _.each(toDeletes, function(del) {
+            var toDelete = path.resolve(baseSupportDir, del);
+            toDelete = toDelete.replace(/ /g, "\\ ");
+            logger.info("Deleting " + toDelete);
+            var cmd = "rm -rf " + toDelete;
+            exec(cmd, function(err) {
+              finish(err);
+            });
+          });
+        }
+      });
+    }
+  });
+};
+
+exports.getUser = function(cb) {
+  exec("whoami", function(err, stdout) {
+    if (err) {
+      cb(err);
+    } else {
+      cb(null, stdout.trim());
     }
   });
 };

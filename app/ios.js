@@ -817,18 +817,16 @@ IOS.prototype.parseExecuteResponse = function(response, cb) {
       var args = response.value;
       for (var i=0; i < args.length; i++) {
         wdElement = args[i];
-        if (args[i] !== null) {
-          if (typeof args[i].ELEMENT !== "undefined") {
-            wdElement = this.parseElementResponse(args[i]);
-            if (wdElement === null) {
-              cb(null, {
-                status: status.codes.UnknownError.code
-                , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
-              });
-              return;
-            }
-          args[i] = wdElement;
+        if ((args[i] !== null) && (typeof args[i].ELEMENT !== "undefined")) {
+          wdElement = this.parseElementResponse(args[i]);
+          if (wdElement === null) {
+            cb(null, {
+              status: status.codes.UnknownError.code
+              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+            });
+            return;
           }
+        args[i] = wdElement;
         }
       }
       response.value = args;

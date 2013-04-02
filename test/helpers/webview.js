@@ -606,6 +606,15 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should be able to return multiple elements from javascript', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.execute('return document.getElementsByTagName("a")', function(err, res) {
+          should.not.exist(err);
+          res[0].ELEMENT.should.equal('5000');
+          done();
+        });
+      });
+    });
   });
 
   desc("executeAsync", function(h) {
@@ -635,7 +644,7 @@ module.exports.buildTests = function(webviewType) {
           h.driver.executeAsync("return 1 + 2", function(err, res) {
             should.exist(err);
             err.status.should.equal(28);
-            done()
+            done();
           });
         });
       });

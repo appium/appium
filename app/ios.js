@@ -857,10 +857,10 @@ IOS.prototype.lookForAlert = function(cb, looks) {
           } else {
             // say we're processing remote cmd again
             me.processingRemoteCmd = true;
+            looks ++;
             setTimeout(_.bind(me.lookForAlert, me, [cb, looks]), 1000);
           }
         }
-        looks++;
       });
     }
   }
@@ -1634,7 +1634,7 @@ IOS.prototype.convertElementForAtoms = function(args, cb) {
       args[i] = atomsElement;
     }
   }
-  cb(false, args);
+  cb(null, args);
 };
 
 IOS.prototype.title = function(cb) {

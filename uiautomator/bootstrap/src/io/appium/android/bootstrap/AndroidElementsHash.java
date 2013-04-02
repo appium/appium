@@ -1,15 +1,12 @@
 package io.appium.android.bootstrap;
 
+import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+
 import java.util.Hashtable;
+
 import com.android.uiautomator.core.UiObject;
 
-class ElementNotInHashException extends Exception {
-    public ElementNotInHashException(String message) {
-        super(message);
-    }
-}
-
-class AndroidElementsHash {
+public class AndroidElementsHash {
     
     private Hashtable<String, AndroidElement> elements;
     private Integer counter;
@@ -28,7 +25,13 @@ class AndroidElementsHash {
     }
     
     public AndroidElement getElement(String key) throws ElementNotInHashException {
-        AndroidElement el = elements.get(key);
+    	AndroidElement el = null;
+    	try {
+	        el = elements.get(key);
+		} catch (java.lang.NullPointerException e) {
+            throw new ElementNotInHashException("Could not find element with key " + key);
+		}
+
         if (el == null) {
             throw new ElementNotInHashException("Could not find element with key " + key);
         } else {

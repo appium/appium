@@ -619,7 +619,7 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.frame("first", function(err) {
           should.not.exist(err);
-          h.driver.execute("return document.title;", function(err, res) {
+          h.driver.execute("return document.getElementsByTagName('h1')[0].innerHTML;", function(err, res) {
             res.should.equal("Sub frame 1");
             done();
           });
@@ -660,11 +660,11 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it.only('should execute async javascript in frame', function(done) {
+    it('should execute async javascript in frame', function(done) {
       loadWebView(h.driver, function() {
         h.driver.frame("first", function(err) {
           should.not.exist(err);
-          h.driver.executeAsync("arguments[arguments.length - 1](document.title);", function(err, res) {
+          h.driver.executeAsync("arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);", function(err, res) {
             res.should.equal("Sub frame 1");
             done();
           });

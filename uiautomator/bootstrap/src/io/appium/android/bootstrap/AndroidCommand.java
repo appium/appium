@@ -11,7 +11,7 @@ import io.appium.android.bootstrap.AndroidCommandType;
 import io.appium.android.bootstrap.CommandTypeException;
 
 
-class AndroidCommand {
+public class AndroidCommand {
     
     JSONObject json;
     AndroidCommandType cmdType;
@@ -36,9 +36,22 @@ class AndroidCommand {
     }
     
     public String action() throws JSONException {
+    	if (this.isElementCommand()) {
+    		return json.getString("action").substring(8);
+    	}
         return json.getString("action");
     }
     
+    public boolean isElementCommand() {
+    	if (this.cmdType == AndroidCommandType.ACTION) {
+    		try {
+				return json.getString("action").startsWith("element:");
+			} catch (JSONException e) {
+				return false;
+			}
+    	}
+    	return false;
+    }
     public Hashtable<String, Object> params() throws JSONException {
         JSONObject paramsObj = json.getJSONObject("params");
         Hashtable<String, Object> newParams = new Hashtable<String, Object>();

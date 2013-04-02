@@ -746,7 +746,6 @@ IOS.prototype.fireEvent = function(evt, elementId, cb) {
 IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
   var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   this.returnedFromExecuteAtom = false;
-  this.looks = 0;
   this.processingRemoteCmd = true;
   this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
     this.processingRemoteCmd = false;
@@ -761,7 +760,6 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
 
 IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
   this.returnedFromExecuteAtom = false;
-  this.looks = 0;
   this.processingRemoteCmd = true;
   this.asyncResponseCb = cb;
   this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, _.bind(function(err, res) {
@@ -835,9 +833,12 @@ IOS.prototype.parseExecuteResponse = function(response, cb) {
   return response;
 };
 
-IOS.prototype.lookForAlert = function(cb) {
+IOS.prototype.lookForAlert = function(cb, looks) {
+  if (typeof looks === 'undefined') {
+    looks = 0;
+  }
   if (this.instruments !== null) {
-    if (!this.returnedFromExecuteAtom && this.looks < 11 && !this.selectingNewPage) {
+    if (!this.returnedFromExecuteAtom && looks < 11 && !this.selectingNewPage) {
       logger.info("atom did not return yet, checking to see if " +
                   "we are blocked by an alert");
       // temporarily act like we're not processing a remote command
@@ -856,10 +857,11 @@ IOS.prototype.lookForAlert = function(cb) {
           } else {
             // say we're processing remote cmd again
             me.processingRemoteCmd = true;
-            setTimeout(_.bind(me.lookForAlert, me), 1000);
+            console.log('calling setTimeout again');
+            setTimeout(_.bind(me.lookForAlert, me, [cb, looks]), 1000);
           }
         }
-        me.looks++;
+        looks++;
       });
     }
   }

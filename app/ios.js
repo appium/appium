@@ -43,6 +43,9 @@ var IOS = function(args) {
   this.windowHandleCache = [];
   this.webElementIds = [];
   this.implicitWaitMs = 0;
+  this.asyncWaitMs = 0;
+  this.asyncResponseCb = null;
+  this.returnedFromExecuteAtom = null;
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
@@ -594,6 +597,9 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
 };
 
 IOS.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (res.value === null) {
+    res.status = status.codes.NoSuchElement.code;
+  }
   if (!err && !many && res.status === 0) {
     findCb(true, err, res);
   } else if (!err && many && res.value !== null && res.value.length > 0) {
@@ -609,50 +615,10 @@ IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many,
   var me = this;
   var doFind = function(findCb) {
     me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
-      me.cacheAndReturnWebEl(err, res, many, function(err, res) {
-        me.handleFindCb(err, res, many, findCb);
-      });
+      me.handleFindCb(err, res, many, findCb);
     });
   };
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
-};
-
-IOS.prototype.cacheAndReturnWebEl = function(err, res, many, cb) {
-  if (typeof res === "undefined") {
-    return cb(err, {
-      status: status.codes.UnknownError.code
-      , value: "Res was undefined!"
-    });
-  }
-
-  var atomValue = res.value
-    , atomStatus = res.status
-    , me = this;
-
-  var parseElementResponse = function(element) {
-    var objId = element.ELEMENT
-    , clientId = (5000 + me.webElementIds.length).toString();
-    me.webElementIds.push(objId);
-    return {ELEMENT: clientId};
-  };
-
-  if (atomStatus == status.codes.Success.code) {
-    if (many) {
-      if (typeof atomValue == "object") {
-        atomValue = _.map(atomValue, parseElementResponse);
-      }
-    } else {
-      if (atomValue === null) {
-        atomStatus = status.codes.NoSuchElement.code;
-      } else {
-        atomValue = parseElementResponse(atomValue);
-      }
-    }
-  }
-  cb(err, {
-    status: atomStatus
-    , value: atomValue
-  });
 };
 
 IOS.prototype.findElementOrElements = function(strategy, selector, ctx, many, cb) {
@@ -794,42 +760,126 @@ IOS.prototype.fireEvent = function(evt, elementId, cb) {
 };
 
 IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
-  var returned = false
-    , looks = 0
-    , frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
-  var lookForAlert = _.bind(function() {
-    if (!returned && looks < 11 && !this.selectingNewPage) {
-      logger.info("atom '" + atom + "' did not return yet, checking to see if " +
+  var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
+  this.returnedFromExecuteAtom = false;
+  this.processingRemoteCmd = true;
+  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
+    this.processingRemoteCmd = false;
+    if (!this.returnedFromExecuteAtom) {
+      this.returnedFromExecuteAtom = true;
+      res = this.parseExecuteResponse(res);
+      cb(err, res);
+    }
+  }, this));
+  setTimeout(_.bind(this.lookForAlert, this, cb), 5000);
+};
+
+IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
+  this.returnedFromExecuteAtom = false;
+  this.processingRemoteCmd = true;
+  this.asyncResponseCb = cb;
+  this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, _.bind(function(err, res) {
+    this.processingRemoteCmd = false;
+    if (!this.returnedFromExecuteAtom) {
+      this.returnedFromExecuteAtom = true;
+      res = this.parseExecuteResponse(res);
+      cb(err, res);
+    }
+  }, this));
+  setTimeout(_.bind(this.lookForAlert, this, cb), 5000);
+};
+
+IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
+  var asyncCb = this.asyncResponseCb
+    , me = this;
+  //mark returned as true to stop looking for alerts; the js is done.
+  this.returnedFromExecuteAtom = true;
+
+  if (asyncCb !== null) {
+    this.parseExecuteResponse(asyncResponse, asyncCb);
+    asyncCb(null, asyncResponse);
+    this.asyncResponseCb = null;
+  } else {
+    logger.warn("Received async response when we weren't expecting one! " +
+                    "Response was: " + JSON.stringify(asyncResponse));
+  }
+};
+
+IOS.prototype.parseElementResponse = function(element) {
+  var objId = element.ELEMENT
+  , clientId = (5000 + this.webElementIds.length).toString();
+  this.webElementIds.push(objId);
+  return {ELEMENT: clientId};
+};
+
+IOS.prototype.parseExecuteResponse = function(response, cb) {
+  if ((response.value !== null) && (typeof response.value !== "undefined")) {
+    var wdElement = null;
+    if (!_.isArray(response.value)) {
+      if (typeof response.value.ELEMENT !== "undefined") {
+        wdElement = response.value.ELEMENT;
+        wdElement = this.parseElementResponse(response.value);
+        if (wdElement === null) {
+          cb(null, {
+            status: status.codes.UnknownError.code
+            , value: "Error converting element ID atom for using in WD: " + response.value.ELEMENT
+          });
+        }
+        response.value = wdElement;
+      }
+    } else {
+      var args = response.value;
+      for (var i=0; i < args.length; i++) {
+        wdElement = args[i];
+        if ((args[i] !== null) && (typeof args[i].ELEMENT !== "undefined")) {
+          wdElement = this.parseElementResponse(args[i]);
+          if (wdElement === null) {
+            cb(null, {
+              status: status.codes.UnknownError.code
+              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+            });
+            return;
+          }
+        args[i] = wdElement;
+        }
+      }
+      response.value = args;
+    }
+  }
+  return response;
+};
+
+IOS.prototype.lookForAlert = function(cb, looks) {
+  if (typeof looks === 'undefined') {
+    looks = 0;
+  }
+  if (this.instruments !== null) {
+    if (!this.returnedFromExecuteAtom && looks < 11 && !this.selectingNewPage) {
+      logger.info("atom did not return yet, checking to see if " +
                   "we are blocked by an alert");
       // temporarily act like we're not processing a remote command
       // so we can proxy the alert detection functionality
       this.processingRemoteCmd = false;
-      this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
-        if (res.value === true) {
-          logger.info("Found an alert, returning control to client");
-          returned = true;
-          cb(null, {
-            status: status.codes.Success.code
-            , value: ''
-          });
-        } else {
-          // say we're processing remote cmd again
-          this.processingRemoteCmd = true;
-          setTimeout(lookForAlert, 1000);
+      var me = this;
+      this.proxy("au.alertIsPresent()", function(err, res) {
+        if (res !== null) {
+          if (res.value === true) {
+            logger.info("Found an alert, returning control to client");
+            me.returnedFromExecuteAtom = true;
+            cb(null, {
+              status: status.codes.Success.code
+              , value: ''
+            });
+          } else {
+            // say we're processing remote cmd again
+            me.processingRemoteCmd = true;
+            looks ++;
+            setTimeout(_.bind(me.lookForAlert, me, [cb, looks]), 1000);
+          }
         }
-      }, this));
-      looks++;
+      });
     }
-  }, this);
-  this.processingRemoteCmd = true;
-  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
-    this.processingRemoteCmd = false;
-    if (!returned) {
-      returned = true;
-      cb(err, res);
-    }
-  }, this));
-  setTimeout(lookForAlert, 5000);
+  }
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {
@@ -1182,6 +1232,15 @@ IOS.prototype.implicitWait = function(ms, cb) {
   });
 };
 
+IOS.prototype.asyncScriptTimeout = function(ms, cb) {
+  this.asyncWaitMs = parseInt(ms, 10);
+  logger.info("Set iOS async script timeout to " + ms + "ms");
+  cb(null, {
+    status: status.codes.Success.code
+    , value: null
+  });
+};
+
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
@@ -1412,7 +1471,7 @@ IOS.prototype.active = function(cb) {
   if (this.curWindowHandle) {
     var me = this;
     this.executeAtom('active_element', [], function(err, res) {
-      me.cacheAndReturnWebEl(err, res, false, cb);
+      cb(err, res);
     });
   } else {
     this.proxy("au.getActiveElement()", cb);
@@ -1551,21 +1610,47 @@ IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    for (var i=0; i < args.length; i++) {
-      if (typeof args[i].ELEMENT !== "undefined") {
-        var atomsElement = this.getAtomsElement(args[i].ELEMENT);
-        if (atomsElement === null) {
-          cb(null, {
-            status: status.codes.UnknownError.code
-            , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
-          });
-        return;
-        }
-        args[i] = atomsElement;
+    var me = this;
+    this.convertElementForAtoms(args, function(err, res) {
+      if (err) {
+        cb(null, res);
+      } else {
+        me.executeAtom('execute_script', [script, res], cb);
       }
-    }
-    this.executeAtom('execute_script', [script, args], cb);
+    });
   }
+};
+
+IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
+  if (this.curWindowHandle === null) {
+    this.proxy(script, cb);
+  } else {
+    var me = this;
+    this.convertElementForAtoms(args, function(err, res) {
+      if (err) {
+        cb(null, res);
+      } else {
+        me.executeAtomAsync('execute_async_script', [script, args, me.asyncWaitMs], responseUrl, cb);
+      }
+    });
+  }
+};
+
+IOS.prototype.convertElementForAtoms = function(args, cb) {
+  for (var i=0; i < args.length; i++) {
+    if (typeof args[i].ELEMENT !== "undefined") {
+      var atomsElement = this.getAtomsElement(args[i].ELEMENT);
+      if (atomsElement === null) {
+        cb(true, {
+          status: status.codes.UnknownError.code
+          , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
+        });
+      return;
+      }
+      args[i] = atomsElement;
+    }
+  }
+  cb(null, args);
 };
 
 IOS.prototype.title = function(cb) {

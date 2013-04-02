@@ -256,6 +256,35 @@ RemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
   });
 };
 
+RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, responseUrl, cb) {
+  var atomSrc, script = ""
+    , asyncCallBack = "";
+
+  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "', true);"
+  asyncCallBack += "xmlHttp.setRequestHeader('Content-type','application/json'); xmlHttp.send(res); }"
+
+  atomSrc = atoms.get(atom);
+  args = _.map(args, JSON.stringify);
+  if (frames.length > 0) {
+    script = atomSrc;
+    for (var i = 0; i < frames.length; i++) {
+      script = this.wrapScriptForFrame(script, frames[i]);
+    }
+    script += "(" + args.join(',') + ", " + asyncCallBack + ", true )";
+  } else {
+    logger.info("Executing atom in default context");
+    script += "(" + atomSrc + ")(" + args.join(',') + ", " + asyncCallBack + ", true )";
+  }
+  this.execute(script, function(err, res) {
+    if (err) {
+      cb(err, {
+        status: status.codes.UnknownError.code
+        , value: res
+      });
+    }
+  });
+};
+
 RemoteDebugger.prototype.execute = function(command, cb) {
   var me = this;
   if (this.pageLoading) {

@@ -787,7 +787,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
       // temporarily act like we're not processing a remote command
       // so we can proxy the alert detection functionality
       this.processingRemoteCmd = false;
-      this.proxy("au.alertIsPresent()", function(err, res) {
+      this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
         if (res.value === true) {
           logger.info("Found an alert, returning control to client");
           returned = true;
@@ -800,7 +800,7 @@ IOS.prototype.executeAtom = function(atom, args, cb) {
           this.processingRemoteCmd = true;
           setTimeout(lookForAlert, 1000);
         }
-      });
+      }, this));
       looks++;
     }
   }, this);

@@ -752,6 +752,7 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
     this.processingRemoteCmd = false;
     if (!this.returned) {
       this.returned = true;
+      res = this.parseExecuteResponse(res);
       cb(err, res);
     }
   }, this));

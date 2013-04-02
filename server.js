@@ -5,23 +5,8 @@ var http = require('http')
   , logger = require('./logger').get('appium')
   , appium = require('./app/appium')
   , bodyParser = require('./middleware').parserWrap
-  , checkWarpDrive = require('./warp.js').checkWarpDrive
   , status = require('./app/uiauto/lib/status')
   , parser = require('./app/parser');
-
-var doWarpCheck = function(wantWarp, cb) {
-  if (wantWarp) {
-    checkWarpDrive(function(hasWarp) {
-      if (hasWarp) {
-        cb();
-      } else {
-        process.exit(1);
-      }
-    });
-  } else {
-    cb();
-  }
-};
 
 var main = function(args, readyCb, doneCb) {
   var rest = express()
@@ -68,34 +53,33 @@ var main = function(args, readyCb, doneCb) {
   // Hook up REST http interface
   appiumServer.attachTo(rest);
 
-  doWarpCheck(args.warp, function() {
-    // Start the server either now or after pre-launching device
-    var next = function(appiumServer) {
-      server.listen(args.port, args.address, function() {
-        var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
-        logger.info(logMessage.cyan);
-      });
-      server.on('error', function(err) {
-        logger.error("Couldn't start Appium REST http interface listener. Requested port is already in use. Please make sure there's no other instance of Appium running already.");
-      });
-      if (readyCb) {
-        readyCb(appiumServer);
-      }
-    };
-    if (args.launch) {
-      logger.info("Starting Appium in pre-launch mode".cyan);
-      appiumServer.preLaunch(function(err, appiumServer) {
-        if (err) {
-          logger.error("Could not pre-launch appium: " + err);
-          process.exit(1);
-        } else {
-          next(appiumServer);
-        }
-      });
-    } else {
-      next(appiumServer);
+  // Start the server either now or after pre-launching device
+  var next = function(appiumServer) {
+    server.listen(args.port, args.address, function() {
+      var logMessage = "Appium REST http interface listener started on "+args.address+":"+args.port;
+      logger.info(logMessage.cyan);
+    });
+    server.on('error', function(err) {
+      logger.error("Couldn't start Appium REST http interface listener. Requested port is already in use. Please make sure there's no other instance of Appium running already.");
+    });
+    if (readyCb) {
+      readyCb(appiumServer);
     }
-  });
+  };
+
+  if (args.launch) {
+    logger.info("Starting Appium in pre-launch mode".cyan);
+    appiumServer.preLaunch(function(err, appiumServer) {
+      if (err) {
+        logger.error("Could not pre-launch appium: " + err);
+        process.exit(1);
+      } else {
+        next(appiumServer);
+      }
+    });
+  } else {
+    next(appiumServer);
+  }
 
   server.on('close', doneCb);
   return server;

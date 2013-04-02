@@ -368,7 +368,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            [510, 417].should.include(loc.y);
+            [512, 510, 417, 387].should.include(loc.y);
             done();
           });
         });
@@ -935,6 +935,16 @@ module.exports.buildTests = function(webviewType) {
   });
 
   desc('navigation', function(h) {
+    it('should properly navigate to anchor', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.url(function(err, curl) {
+          h.driver.get(curl + '#anchor', function(err) {
+            should.not.exist(err);
+            done();
+          });
+        });
+      });
+    });
     it('should be able to go back and forward', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementByLinkText('i am a link', function(err, el) {

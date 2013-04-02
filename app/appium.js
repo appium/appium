@@ -9,6 +9,7 @@ var routing = require('./routing')
   , downloadFile = helpers.downloadFile
   , unzipApp = helpers.unzipApp
   , checkSafari = helpers.checkSafari
+  , cleanSafari = helpers.cleanSafari
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
@@ -75,16 +76,12 @@ Appium.prototype.preLaunch = function(cb) {
   } else {
     var me = this;
     var caps = {};
-    this.start(caps, function(err, device) {
+    this.start(caps, function(err) {
       if (err) {
         cb(err, null);
       } else {
-        // since we're prelaunching, it might be a while before the first
-        // command comes in, so let's not have instruments quit on us
-        device.setCommandTimeout(600, function() {
-          me.preLaunched = true;
-          cb(null, me);
-        });
+        me.preLaunched = true;
+        cb(null, me);
       }
     });
   }
@@ -92,8 +89,8 @@ Appium.prototype.preLaunch = function(cb) {
 
 Appium.prototype.start = function(desiredCaps, cb) {
   this.origApp = this.args.app;
+  this.desiredCapabilities = desiredCaps;
   this.configure(desiredCaps, _.bind(function(err) {
-    this.desiredCapabilities = desiredCaps;
     if (err) {
       logger.info("Got configuration error, not starting session");
       cb(err, null);
@@ -219,7 +216,6 @@ Appium.prototype.configure = function(desiredCaps, cb) {
         cb("App URL (" + appUrl + ") didn't seem to end in .zip");
       }
     } else if (this.isIos() && appPath.toLowerCase() === "safari") {
-      this.args.safari = true;
       this.configureSafari(desiredCaps, cb);
     } else {
       cb("Bad app passed in through " + origin + ": " + appPath +
@@ -234,6 +230,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
 };
 
 Appium.prototype.configureSafari = function(desiredCaps, cb) {
+  this.desiredCapabilities.safari = true;
   var safariVer = "6.0";
   var usingDefaultVer = true;
   if (typeof desiredCaps.version !== "undefined") {
@@ -244,11 +241,24 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
   var checkSuccess = _.bind(function(attemptedApp) {
     logger.info("Using mobile safari app at " + attemptedApp);
     this.args.app = attemptedApp;
-    cb(null);
+    cleanSafariNext();
   }, this);
+  var cleanSafariNext = function() {
+    logger.info("Cleaning mobile safari data files");
+    cleanSafari(safariVer, function(err) {
+      if (err) {
+        logger.error(err.message);
+        cb(err);
+      } else {
+        cb(null);
+      }
+    });
+  };
+
   checkSafari(safariVer, _.bind(function(err, attemptedApp) {
     if (err) {
-      logger.warn("Could not find mobile safari: " + err);
+      logger.warn("Could not find mobile safari with version '" + safariVer +
+                  "': " + err);
       if (usingDefaultVer) {
         safariVer = "6.1";
         logger.info("Retrying with safari ver " + safariVer);
@@ -315,10 +325,9 @@ Appium.prototype.invoke = function() {
           , udid: this.args.udid
           , verbose: this.args.verbose
           , removeTraceDir: !this.args.keepArtifacts
-          , warp: this.args.warp
           , withoutDelay: this.args.withoutDelay
           , reset: !this.args.noReset
-          , autoWebview: this.args.safari
+          , autoWebview: this.desiredCapabilities.safari
           , deviceType: this.iosDeviceType
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
         };
@@ -345,6 +354,12 @@ Appium.prototype.invoke = function() {
 
     this.device.start(function(err) {
       me.progress++;
+      // Ensure we don't use an undefined session.
+      if (typeof me.sessions[me.progress] === 'undefined') {
+        me.progress--;
+        return;
+      }
+
       me.sessions[me.progress].sessionId = me.sessionId;
       me.sessions[me.progress].callback(err, me.device);
       if (err) {

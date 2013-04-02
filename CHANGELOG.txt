@@ -1,9 +1,48 @@
-VERSION 0.1.3
+CHANGES IN VERSION 0.2.0 (from 0.1.3)
 -------------
-Bugfixes:
-  -
+[GENERAL]
+- updates to reset.sh
+- host our own guinea pig html page for webview tests
+- updated java examples and docs
 
-New features:
-  -
+[IOS]
+- webview: isActive()
+- webview: submit()
+- webview: clear()
+- webview: selected()
+- webview: implicit waits
+- webview: location()
+- webview: getName()
+- webview: moveTo() and generalized click()
+- webview: getWindowSize()
+- webview: close()
+- webview: don't allow alerts to cause webview requests to hang forever
+- webview: find element(s) from element
+- webview: get alert text
+- webview: set prompt value
+- allow pre-launching local zips/apps/safari from cli
+- webview: allow execution in arbitrary frames
+- "mobile: leaveWebView" special command instead of frame(null)
+- webview: equalsElement()
+- webview: back() and forward()
+- webview: refresh()
+- "mobile: fireEvent" for webview
+- enable setting of device orientation through desired caps
+- fix to not allow native commands to execute if webview command in progress
+- bugfix in ios.js that left multiple remote debugger objs hanging around
+- bumped command timeout since webview commands don't reset it
+
+[ANDROID]
+- fix in swipe where steps weren't converted to integers
+- "mobile: keyevent" for hitting arbitrary keys
+- native back()
+- xpath search by "*"
+- skip uninstall if --fast-reset set
+- better error handling if activity is not found
+- match other kinds of button than android.widget.Button with "button"
+- allow matching custom class name (partial class name matching)
+- relaunch on failure (or on screen cap)
+- begun work to get bootstrap in maven
+- flick() as an alias of sorts for swipe()
 
 -- changes not tracked before v0.1.3 --

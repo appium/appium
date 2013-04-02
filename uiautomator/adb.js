@@ -15,7 +15,7 @@ var spawn = require('child_process').spawn
 
 var noop = function() {};
 
-var ADB = function(opts) {
+var ADB = function(opts, android) {
   if (!opts) {
     opts = {};
   }
@@ -43,6 +43,12 @@ var ADB = function(opts) {
   this.debugMode = true;
   this.fastReset = opts.fastReset;
   this.cleanAPK = '/tmp/' + this.appPackage + '.clean.apk';
+  // This is set to true when the bootstrap jar crashes.
+  this.restartBootstrap = false;
+  // The android ref is used to resend the command that
+  // detected the crash.
+  this.android = android;
+  this.cmdCb = null;
 };
 
 ADB.prototype.checkAdbPresent = function(cb) {
@@ -346,12 +352,26 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
     this.errorStreamHandler(data);
   }, this));
 
+  var me = this;
   this.proc.on('exit', _.bind(function(code) {
     if (this.socketClient) {
       this.socketClient.end();
       this.socketClient.destroy();
       this.socketClient = null;
     }
+
+    if (this.restartBootstrap === true) {
+      // The bootstrap jar has crashed so it must be restarted.
+      this.restartBootstrap = false;
+      me.runBootstrap(function(){
+        readyCb(function(){
+          // Resend last command because the client is still waiting for the
+          // response.
+          me.android.push(null, true);
+        }); }, exitCb);
+      return;
+    }
+
     exitCb(code);
   }, this));
 
@@ -436,6 +456,7 @@ ADB.prototype.handleBootstrapOutput = function(output) {
   var lines = output.split("\n");
   var re = /^\[APPIUM-UIAUTO\] (.+)\[\/APPIUM-UIAUTO\]$/;
   var match;
+  var me = this;
   _.each(lines, function(line) {
     line = line.trim();
     if (line !== '') {
@@ -443,6 +464,11 @@ ADB.prototype.handleBootstrapOutput = function(output) {
       if (match) {
         logger.info("[ANDROID] " + match[1]);
       } else {
+        // The dump command will always disconnect UiAutomation.
+        // Detect the crash then restart UiAutomation.
+        if (line.indexOf("UiAutomationService not connected") !== -1) {
+          me.restartBootstrap = true;
+        }
         logger.info(("[ADB STDOUT] " + line).grey);
       }
     }
@@ -844,6 +870,6 @@ ADB.prototype.unlockScreen = function(cb) {
 };
 
 
-module.exports = function(opts) {
-  return new ADB(opts);
+module.exports = function(opts, android) {
+  return new ADB(opts, android);
 };

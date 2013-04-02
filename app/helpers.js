@@ -4,9 +4,10 @@ var logger = require('../logger').get('appium')
   , fs = require('fs')
   , ncp = require('ncp').ncp
   , request = require('request')
+  , _ = require('underscore')
   , path = require('path')
+  , rimraf = require('rimraf')
   , exec = require('child_process').exec
-  , inTimeWarp = false
   , temp = require('temp');
 
 exports.downloadFile = function(fileUrl, cb) {
@@ -153,6 +154,65 @@ exports.copyBuiltInApp = function(appPath, appName, cb) {
   });
 };
 
+exports.cleanSafari = function(safariVer, cb) {
+  var baseSupportDir = "Library/Application Support/iPhone Simulator/" +
+                       safariVer + "/Library/";
+  exports.getUser(function(err, user) {
+    if (err) {
+      cb(err);
+    } else {
+      baseSupportDir = path.resolve("/Users", user, baseSupportDir);
+      fs.stat(baseSupportDir, function(err) {
+        if (err) {
+          logger.info(err.message);
+          cb(new Error("Could not find support directory for mobile safari, does " +
+                       "it exist at " + baseSupportDir + "?"));
+        } else {
+          var toDeletes = [
+            'Caches/Snapshots/com.apple.mobilesafari'
+            , 'Caches/com.apple.mobilesafari/Cache.db*'
+            , 'Caches/com.apple.WebAppCache/*.db'
+            , 'Safari/*.plist'
+            , 'WebKit/LocalStorage/*.*'
+            , 'Library/WebKit/GeolocationSites.plist'
+            , 'Cookies/*.binarycookies'
+          ];
+          var deletes = 0;
+          var errToRet = null;
+          var finish = function(err) {
+            deletes++;
+            if (err) {
+              errToRet = err;
+            }
+            if (deletes === toDeletes.length) {
+              cb(errToRet);
+            }
+          };
+          _.each(toDeletes, function(del) {
+            var toDelete = path.resolve(baseSupportDir, del);
+            toDelete = toDelete.replace(/ /g, "\\ ");
+            logger.info("Deleting " + toDelete);
+            var cmd = "rm -rf " + toDelete;
+            exec(cmd, function(err) {
+              finish(err);
+            });
+          });
+        }
+      });
+    }
+  });
+};
+
+exports.getUser = function(cb) {
+  exec("whoami", function(err, stdout) {
+    if (err) {
+      cb(err);
+    } else {
+      cb(null, stdout.trim());
+    }
+  });
+};
+
 exports.delay = function(secs) {
   var date = new Date();
   var curDate = null;
@@ -165,38 +225,6 @@ var pad0 = function(x) {
     x = '0' + x;
   }
   return x;
-};
-
-exports.timeWarp = function(period, warp) {
-  logger.info("Starting time warp");
-  period = typeof period === "undefined" ? 100 : period;
-  warp = typeof warp === "undefined" ? 1000 : warp;
-  var numHops = 0;
-  var makeJump = function() {
-    if (inTimeWarp) {
-      var curMs = Date.now();
-      var newDate = new Date(curMs + warp);
-      var dateStr = [pad0(newDate.getHours()),
-                     pad0(newDate.getMinutes()),
-                     '.', pad0(newDate.getSeconds())]
-                    .join('');
-      exec('sudo /bin/date ' + dateStr, function(err, stdout, stderr) {
-        numHops++;
-        setTimeout(makeJump, period);
-      });
-    } else {
-      var realTime = period * numHops / 1000;
-      var fakeTime = (warp * numHops / 1000) + realTime;
-      var info = "Moved forward " + fakeTime + " secs in " + realTime + " actual seconds";
-      logger.info("Stopping time warp: " + info);
-    }
-  };
-  inTimeWarp = true;
-  makeJump();
-};
-
-exports.stopTimeWarp = function() {
-  inTimeWarp = false;
 };
 
 exports.escapeSpecialChars = function(str, quoteEscape) {

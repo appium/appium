@@ -201,13 +201,14 @@ Instruments.prototype.commandHandler = function(data, c) {
   var hasResult = typeof data.result !== "undefined";
   if (hasResult && !this.curCommand) {
     logger.info("Got a result when we weren't expecting one! Ignoring it");
+    logger.info("Result was: " + JSON.stringify(data.result));
   } else if (!hasResult && this.curCommand) {
     logger.info("Instruments didn't send a result even though we were expecting one");
     hasResult = true;
     data.result = false;
   }
 
-  if (hasResult) {
+  if (hasResult && this.curCommand) {
     if (data.result) {
       this.debug("Got result from instruments: " + JSON.stringify(data.result));
     } else {

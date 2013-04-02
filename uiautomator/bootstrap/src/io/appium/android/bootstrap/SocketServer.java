@@ -10,6 +10,7 @@ import org.json.JSONException;
 
 import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.AndroidCommand;
+import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 
 class SocketServerException extends Exception {
 
@@ -99,7 +100,11 @@ class SocketServer {
             keepListening = false;
             res = new AndroidCommandResult(WDStatus.SUCCESS, "OK, shutting down");
         } else if (cmd.commandType() == AndroidCommandType.ACTION) {
-            res = new AndroidCommandExecutor(cmd).execute();
+            try {
+				res = new AndroidCommandExecutor(cmd).execute();
+			} catch (AndroidCommandException e) {
+	            res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+			}
         } else {
             // this code should never be executed, here for future-proofing
             res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, "Unknown command type, could not execute!");

@@ -1,22 +1,13 @@
 package io.appium.android.bootstrap;
 
+import android.graphics.Rect;
+
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
+import io.appium.android.bootstrap.exceptions.*;
 
-class ElementNotFoundException extends Exception {
-    public ElementNotFoundException() {
-        super("Could not find an element using supplied strategy");
-    }
-}
-
-class NoAttributeFoundException extends Exception {
-    public NoAttributeFoundException(String attr) {
-        super("This element does not have the '" + attr + "' attribute");
-    }
-}
-
-class AndroidElement {
+public class AndroidElement {
     
     private UiObject el;
     
@@ -30,6 +21,10 @@ class AndroidElement {
     
     public boolean click() throws UiObjectNotFoundException {
         return el.click();
+    }
+    
+    public Rect getBounds() throws UiObjectNotFoundException {
+        return el.getBounds();
     }
     
     public String getText() throws UiObjectNotFoundException {

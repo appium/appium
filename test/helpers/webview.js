@@ -368,7 +368,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            [512, 510, 417].should.include(loc.y);
+            [512, 510, 417, 387].should.include(loc.y);
             done();
           });
         });

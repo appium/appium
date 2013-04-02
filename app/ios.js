@@ -1593,8 +1593,14 @@ IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    this.convertElementForAtoms(args, cb);
-    this.executeAtom('execute_script', [script, args], cb);
+    var me = this;
+    this.convertElementForAtoms(args, function(err, res) {
+      if (err) {
+        cb(null, res);
+      } else {
+        me.executeAtom('execute_script', [script, res], cb);
+      }
+    });
   }
 };
 
@@ -1602,8 +1608,14 @@ IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    this.convertElementForAtoms(args, cb);
-    this.executeAtomAsync('execute_async_script', [script, args, this.asyncWaitMs], responseUrl, cb);
+    var me = this;
+    this.convertElementForAtoms(args, function(err, res) {
+      if (err) {
+        cb(null, res);
+      } else {
+        me.executeAtomAsync('execute_async_script', [script, args, me.asyncWaitMs], responseUrl, cb);
+      }
+    });
   }
 };
 
@@ -1612,7 +1624,7 @@ IOS.prototype.convertElementForAtoms = function(args, cb) {
     if (typeof args[i].ELEMENT !== "undefined") {
       var atomsElement = this.getAtomsElement(args[i].ELEMENT);
       if (atomsElement === null) {
-        cb(null, {
+        cb(true, {
           status: status.codes.UnknownError.code
           , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
         });
@@ -1621,6 +1633,7 @@ IOS.prototype.convertElementForAtoms = function(args, cb) {
       args[i] = atomsElement;
     }
   }
+  cb(false, args);
 };
 
 IOS.prototype.title = function(cb) {

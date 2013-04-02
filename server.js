@@ -30,7 +30,7 @@ var main = function(args, readyCb, doneCb) {
     } else {
       next();
     }
-  }
+  };
 
   rest.configure(function() {
     rest.use(express.favicon());

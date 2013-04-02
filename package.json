@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -43,7 +43,8 @@
     "underscore.string": "~2.3.1",
     "glob": "~3.1.20",
     "unzip": "~0.1.1",
-    "ncp": "~0.4.0",
+    "ncp": "~0.4.2",
+    "swig": "~0.13.5",
     "async": "~0.2.6"
   },
   "scripts": {
@@ -57,13 +58,9 @@
     "wd": "git://github.com/admc/wd.git",
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",
-    "request": "~2.12.0",
-    "winston": "~0.6.2",
     "difflib": "~0.2.4",
     "prompt": "~0.2.9",
-    "ncp": "~0.4.2",
     "grunt-contrib-jshint": "~0.1.1",
-    "markdown": "~0.4.0",
-    "swig": "~0.13.5"
+    "markdown": "~0.4.0"
   }
 }

@@ -1,6 +1,6 @@
 package io.appium.android.bootstrap;
 
-class Logger {
+public class Logger {
     
     private static String prefix = "[APPIUM-UIAUTO]";
     private static String suffix = "[/APPIUM-UIAUTO]";

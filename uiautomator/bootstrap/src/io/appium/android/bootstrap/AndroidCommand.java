@@ -9,6 +9,7 @@ import java.util.Iterator;
 //import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.AndroidCommandType;
 import io.appium.android.bootstrap.CommandTypeException;
+import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 
 
 public class AndroidCommand {
@@ -52,6 +53,16 @@ public class AndroidCommand {
     	}
     	return false;
     }
+    
+	public AndroidElement getElement() throws ElementNotInHashException, JSONException {
+		AndroidElement el = null;
+        String elId = null;
+        
+		elId = (String) params().get("elementId");
+		el = AndroidElementsHash.getInstance().getElement(elId);
+        return el;
+	}
+ 
     public Hashtable<String, Object> params() throws JSONException {
         JSONObject paramsObj = json.getJSONObject("params");
         Hashtable<String, Object> newParams = new Hashtable<String, Object>();

@@ -33,9 +33,11 @@ class SocketServer {
     BufferedReader in;
     PrintWriter out;
     boolean keepListening;
+	private AndroidCommandExecutor executor;
 
     public SocketServer(int port) throws SocketServerException {
         keepListening = true;
+        executor = new AndroidCommandExecutor();
         try {
             server = new ServerSocket(port);
             Logger.info("Socket opened on port " + port);
@@ -101,7 +103,7 @@ class SocketServer {
             res = new AndroidCommandResult(WDStatus.SUCCESS, "OK, shutting down");
         } else if (cmd.commandType() == AndroidCommandType.ACTION) {
             try {
-				res = new AndroidCommandExecutor(cmd).execute();
+				res = executor.execute(cmd);
 			} catch (AndroidCommandException e) {
 	            res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
 			}

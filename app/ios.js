@@ -857,7 +857,6 @@ IOS.prototype.lookForAlert = function(cb, looks) {
           } else {
             // say we're processing remote cmd again
             me.processingRemoteCmd = true;
-            console.log('calling setTimeout again');
             setTimeout(_.bind(me.lookForAlert, me, [cb, looks]), 1000);
           }
         }

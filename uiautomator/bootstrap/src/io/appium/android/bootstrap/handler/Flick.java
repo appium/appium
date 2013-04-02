@@ -2,8 +2,13 @@
  * 
  */
 package io.appium.android.bootstrap.handler;
+import java.util.Hashtable;
+
+import org.json.JSONException;
+
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.CommandHandler;
 
 import com.android.uiautomator.core.UiDevice;
 
@@ -13,12 +18,9 @@ import com.android.uiautomator.core.UiDevice;
  */
 public class Flick extends CommandHandler {
 	
-	public Flick(AndroidCommand cmd) {
-		super(cmd);
-	}
-
-	public AndroidCommandResult execute() {
-		if (!this.command.isElementCommand()) {
+	public AndroidCommandResult execute(AndroidCommand command) throws JSONException {
+		if (!command.isElementCommand()) {
+			Hashtable<String, Object> params = command.params();
 	        Integer xSpeed = (Integer) params.get("xSpeed");
 	        Integer ySpeed = (Integer) params.get("ySpeed");
 	        

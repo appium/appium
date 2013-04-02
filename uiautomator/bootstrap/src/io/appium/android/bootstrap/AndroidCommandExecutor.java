@@ -10,45 +10,41 @@ import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
 
+import java.util.HashMap;
+
 import org.json.JSONException;
 
 class AndroidCommandExecutor {
     
-    AndroidCommand command;
+    private static HashMap<String, CommandHandler> map = new HashMap<String, CommandHandler>(); 
     
-    public AndroidCommandExecutor(AndroidCommand cmd) {
-        command = cmd;
+    static {
+    	map.put("swipe", new Swipe());
+    	map.put("flick", new Flick());
+    	map.put("click", new Click());
+    	map.put("getText", new GetText());
+    	map.put("setText", new SetText());
+    	map.put("getAttribute", new GetAttribute());
+    	map.put("getDeviceSize", new GetDeviceSize());
+    	map.put("find", new Find());
     }
     
-    public AndroidCommandResult execute() throws AndroidCommandException {
+    public AndroidCommandResult execute(AndroidCommand command) throws AndroidCommandException {
         
     	try {
 	        Logger.debug("Got command action: " + command.action());
 	        
-			if (command.action() == "swipe") { 
-				return new Swipe(this.command).execute(); 
-			} else if (command.action().contentEquals("flick")) {
-				return new Flick(this.command).execute(); 
-			} else if (command.action().contentEquals("click")) {
-				return new Click(this.command).execute(); 
-			} else if (command.action().contentEquals("getText")) {
-				return new GetText(this.command).execute(); 
-			} else if (command.action().contentEquals("setText")) {
-				return new SetText(this.command).execute(); 
-			} else if (command.action().contentEquals("getAttribute")) {
-				return new GetAttribute(this.command).execute(); 
-			} else if (command.action().contentEquals("getDeviceSize")) {
-				return new GetDeviceSize(this.command).execute(); 
-			} else if (command.action().contentEquals("find")) {
-				return new Find(this.command).execute(); 
+	        if (map.containsKey(command.action())) {
+	        	map.get(command.action()).execute(command);
 			} else {
-		        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, 
+		        return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, 
 		        		"Unknown command: " + command.action());
 			}
 		} catch (JSONException e) {
             Logger.error("Could not decode action/params of command");
-            return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR,
+            return new AndroidCommandResult(WDStatus.JSON_DECODE_ERROR,
             		"Could not decode action/params of command, please check format!");
 		}
+		return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR);
     }
 }

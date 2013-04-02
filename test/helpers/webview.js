@@ -608,12 +608,23 @@ module.exports.buildTests = function(webviewType) {
     });
     it('should be able to return multiple elements from javascript', function(done) {
       loadWebView(h.driver, function() {
-        h.driver.execute('return document.getElementsByTagName("a")', function(err, res) {
+        h.driver.execute('return document.getElementsByTagName("a");', function(err, res) {
           should.not.exist(err);
           res[0].ELEMENT.should.equal('5000');
           done();
         });
       });
+    });
+    it('should execute javascript in frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.execute("return document.title;", function(err, res) {
+            res.should.equal("Sub frame 1");
+            done()
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
     });
   });
 
@@ -648,6 +659,17 @@ module.exports.buildTests = function(webviewType) {
           });
         });
       });
+    });
+    it.only('should execute async javascript in frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.executeAsync("arguments[arguments.length - 1](document.title);", function(err, res) {
+            res.should.equal("Sub frame 1");
+            done()
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
     });
   });
 

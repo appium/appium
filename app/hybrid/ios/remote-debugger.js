@@ -270,7 +270,7 @@ RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, respons
     for (var i = 0; i < frames.length; i++) {
       script = this.wrapScriptForFrame(script, frames[i]);
     }
-    script += "(" + args.join(',') + ")";
+    script += "(" + args.join(',') + ", " + asyncCallBack + ", true )";
   } else {
     logger.info("Executing atom in default context");
     script += "(" + atomSrc + ")(" + args.join(',') + ", " + asyncCallBack + ", true )";

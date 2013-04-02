@@ -6,7 +6,7 @@ import org.json.JSONException;
 import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.WDStatus;
 
-public class AndroidCommandResult {
+class AndroidCommandResult {
     
     JSONObject json;
     

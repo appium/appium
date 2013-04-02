@@ -1,23 +1,76 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
-import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
-
-import java.util.ArrayList;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObject;
-import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 
-public class AndroidCommandSelector {
+class AndroidCommandException extends Exception {
+    public AndroidCommandException(String msg) {
+        super(msg);
+    }
+}
+
+class InvalidStrategyException extends AndroidCommandException {
+    public InvalidStrategyException(String msg) {
+        super(msg);
+    }
+}
+
+class AndroidCommandHolder {
     
-    public static JSONObject findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException, AndroidCommandException, ElementNotFoundException, InvalidStrategyException {
+    public static boolean click(Double x, Double y) {
+        Double[] coords = {x, y};
+        ArrayList<Integer> posVals = absPosFromCoords(coords);
+        return UiDevice.getInstance().click(posVals.get(0), posVals.get(1));
+    }
+    
+    private static ArrayList<Integer> absPosFromCoords(Double[] coordVals) {
+        UiDevice d = UiDevice.getInstance();
+        Double screenX = new Double(d.getDisplayWidth());
+        Double screenY = new Double(d.getDisplayHeight());
+        ArrayList<Integer> retPos = new ArrayList<Integer>();
+        Integer curVal;
+        for (Double coord : coordVals) {
+            if (coord < 1) {
+                curVal = (int)(screenX * coord);
+            } else {
+                curVal = coord.intValue();
+            }
+            retPos.add(curVal);
+        }
+        return retPos;
+    }
+    
+    public static boolean swipe(Double startX, Double startY, Double endX, Double endY, Integer steps) {
+        UiDevice d = UiDevice.getInstance();
+        Double[] coords = {startX, startY, endX, endY};
+        ArrayList<Integer> posVals = absPosFromCoords(coords);
+        return d.swipe(posVals.get(0), posVals.get(1), posVals.get(2), posVals.get(3), steps);        
+    }
+    
+    public static JSONObject getDeviceSize() throws AndroidCommandException {
+        UiDevice d = UiDevice.getInstance();
+        JSONObject res = new JSONObject();
+        try {
+            res.put("width", d.getDisplayHeight());
+            res.put("height", d.getDisplayWidth());
+        } catch (JSONException e) {
+            throw new AndroidCommandException("Error serializing height/width data into JSON");
+        }
+        return res;
+    }
+    
+    public static JSONObject findElement(String strategy, String selector, String contextId) throws UiObjectNotFoundException, AndroidCommandException, ElementNotFoundException {
         UiSelector sel = selectorForFind(strategy, selector, false);
         return findElementWithSelector(sel, contextId);
     }
@@ -53,7 +106,7 @@ public class AndroidCommandSelector {
         }
     }
     
-    public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException, UiObjectNotFoundException, InvalidStrategyException {
+    public static JSONArray findElements(String strategy, String selector, String contextId) throws AndroidCommandException, UiObjectNotFoundException {
         UiSelector sel = selectorForFind(strategy, selector, true);
         return findElementsWithSelector(sel, contextId);
     }

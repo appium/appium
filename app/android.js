@@ -168,6 +168,11 @@ Android.prototype.push = function(elem, resendLast) {
       return;
     }
 
+    if (this.queue[0] === null) {
+      this.queue.shift();
+      return;
+    }
+
     // Always send the command.
     if (this.progress > 0) {
       this.progress = 0;

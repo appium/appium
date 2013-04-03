@@ -683,7 +683,7 @@ ADB.prototype.waitForActivity = function(cb) {
           setTimeout(getFocusedApp, intMs);
         } else {
           var found = found && found.length > 2 ? found[2] : "null";
-          var msg = "App never showed up as active. appActivity: " + found + " != " + this.appActivity;
+          var msg = "App never showed up as active. appActivity: " + found + " != " + targetActivity;
           logger.error(msg);
           cb(new Error(msg));
         }

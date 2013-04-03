@@ -382,6 +382,7 @@ Appium.prototype.onDeviceDie = function(code, cb) {
   // reset app to whatever it was before this session so we don't accidentally
   // reuse a bad app
   this.args.app = this.origApp;
+  this.args.bundleId = null;
   if (code !== null) {
     logger.info('Clearing out appium devices');
     this.devices = [];

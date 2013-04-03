@@ -662,6 +662,10 @@ exports.findAndAct = function(req, res) {
   }
 };
 
+exports.getCookies = function(req, res) {
+  req.device.getCookies(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');

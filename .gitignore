@@ -38,3 +38,4 @@ app/android/AndroidManifest.xml.apk
 app/android/AndroidManifest.xml
 .*~
 *~
+uiautomator/bootstrap/target/

@@ -5,6 +5,7 @@ var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
   , testEndpoint = 'http://localhost:4723/test/'
   , guinea = testEndpoint + 'guinea-pig'
+  , _ = require('underscore')
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
 
@@ -1049,11 +1050,31 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.allCookies(function(err, cookies) {
           should.not.exist(err);
+          cookies.length.should.equal(2);
           cookies[0].name.should.equal("guineacookie1");
           cookies[0].value.should.equal("i am a cookie value");
           cookies[1].name.should.equal("guineacookie2");
           cookies[1].value.should.equal("cookié2");
           done();
+        });
+      });
+    });
+    it.only('should be able to set a cookie for a page', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              _.pluck(cookies, 'name').should.include(newCookie.name);
+              _.pluck(cookies, 'value').should.include(newCookie.value);
+              done();
+            });
+          });
         });
       });
     });

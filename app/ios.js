@@ -10,7 +10,9 @@ var path = require('path')
   , bplistParse = require('bplist-parser')
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
-  , escapeSpecialChars = require('./helpers.js').escapeSpecialChars
+  , helpers = require('./helpers.js')
+  , escapeSpecialChars = helpers.escapeSpecialChars
+  , parseWebCookies = helpers.parseWebCookies
   , rd = require('./hybrid/ios/remote-debugger')
   , errors = require('./errors')
   , deviceCommon = require('./device')
@@ -1695,15 +1697,113 @@ IOS.prototype.equalsWebElement = function(element, other, cb) {
   // We assume it's referrencing the same element if it's equal
   if (ctxElem.ELEMENT === otherElem.ELEMENT) {
     retValue = true;
+    cb(null, {
+      status: retStatus
+      , value: retValue
+    });
   } else {
     // ...otherwise let the browser tell us.
     this.executeAtom('element_equals_element', [ctxElem.ELEMENT, otherElem.ELEMENT], cb);
   }
+};
 
-  cb(null, {
-    status: retStatus
-    , value: retValue
-  });
+IOS.prototype.getCookies = function(cb) {
+  if (!this.curWindowHandle) {
+    return cb(new NotImplementedError(), null);
+  }
+  var script = "return document.cookie";
+  this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
+      var cookies;
+      try {
+        cookies = parseWebCookies(res.value);
+      } catch(e) {
+        return cb(null, {
+          status: status.codes.UnknownError.code
+          , value: "Error parsing cookies from result, which was " + res.value
+        });
+      }
+      cb(null, {
+        status: status.codes.Success.code
+        , value: cookies
+      });
+    }
+  }, this), true);
+
+};
+
+IOS.prototype.setCookie = function(cookie, cb) {
+  var expiry = null;
+  if (!this.curWindowHandle) {
+    return cb(new NotImplementedError(), null);
+  }
+  var webCookie = encodeURIComponent(cookie.name) + "=" +
+                  encodeURIComponent(cookie.value);
+  if (cookie.value !== "" && typeof cookie.expiry === "number") {
+    expiry = (new Date(cookie.expiry * 1000)).toGMTString();
+  } else if (cookie.value === "") {
+    expiry = (new Date(0)).toGMTString();
+  }
+  if (expiry) {
+    webCookie += "; expires=" + expiry;
+  }
+  var script = "document.cookie = " + JSON.stringify(webCookie);
+  this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
+      cb(null, {
+        status: status.codes.Success.code
+        , value: true
+      });
+    }
+  }, this), true);
+};
+
+IOS.prototype.deleteCookie = function(cookieName, cb) {
+  if (!this.curWindowHandle) {
+    return cb(new NotImplementedError(), null);
+  }
+  var cookie = {name: cookieName, value: ""};
+  this.setCookie(cookie, cb);
+};
+
+IOS.prototype.deleteCookies = function(cb) {
+  if (!this.curWindowHandle) {
+    return cb(new NotImplementedError(), null);
+  }
+  this.getCookies(_.bind(function(err, res) {
+    if (this.checkSuccess(err, res)) {
+      var numCookies = res.value.length;
+      var cookies = res.value;
+      if (numCookies) {
+        var returned = false;
+        var deleteNextCookie = _.bind(function(cookieIndex) {
+          if (!returned) {
+            var cookie = cookies[cookieIndex];
+            this.deleteCookie(cookie.name, function(err, res) {
+              if (err || res.status !== status.codes.Success.code) {
+                returned = true;
+                cb(err, res);
+              } else if (cookieIndex < cookies.length - 1) {
+                deleteNextCookie(cookieIndex + 1);
+              } else {
+                returned = true;
+                cb(null, {
+                  status: status.codes.Success.code
+                  , value: true
+                });
+              }
+            });
+          }
+        }, this);
+        deleteNextCookie(0);
+      } else {
+        cb(null, {
+          status: status.codes.Success.code
+          , value: false
+        });
+      }
+    }
+  }, this));
 };
 
 module.exports = function(args) {

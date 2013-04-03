@@ -1059,6 +1059,15 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should be able to get cookies for a page with none', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          cookies.length.should.equal(0);
+          done();
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
     it('should be able to set a cookie for a page', function(done) {
       loadWebView(h.driver, function() {
         h.driver.allCookies(function(err, cookies) {

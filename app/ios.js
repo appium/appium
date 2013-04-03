@@ -1706,6 +1706,9 @@ IOS.prototype.equalsWebElement = function(element, other, cb) {
   });
 };
 
+IOS.prototype.getCookies = function(cb) {
+};
+
 module.exports = function(args) {
   return new IOS(args);
 };

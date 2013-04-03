@@ -23,6 +23,7 @@ var ADB = function(opts, android) {
     opts.sdkRoot = process.env.ANDROID_HOME || '';
   }
   this.sdkRoot = opts.sdkRoot;
+  this.udid = opts.udid;
   // Don't uninstall if using fast reset.
   // Uninstall if reset is set and fast reset isn't.
   this.skipUninstall = opts.fastReset || !(opts.reset || false);
@@ -314,7 +315,7 @@ ADB.prototype.getConnectedDevices = function(cb) {
       });
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
-        this.setDeviceId(devices[0][0]);
+        this.setDeviceId(this.udid || devices[0][0]);
       }
       cb(null, devices);
     }
@@ -606,7 +607,7 @@ ADB.prototype.pushAppium = function(cb) {
          "'grunt buildAndroidBootstrap'");
     } else {
       var remotePath = "/data/local/tmp";
-      var cmd = this.adb + " push " + binPath + " " + remotePath;
+      var cmd = this.adbCmd + " push " + binPath + " " + remotePath;
       exec(cmd, _.bind(function(err) {
         if (err) {
           logger.error(err);

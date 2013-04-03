@@ -250,3 +250,17 @@ exports.escapeSpecialChars = function(str, quoteEscape) {
   }
   return str;
 };
+
+exports.parseWebCookies = function(cookieStr) {
+  var cookies = [];
+  var splits = cookieStr.split(";");
+  _.each(splits, function(split) {
+    split = split.trim();
+    split = split.split("=");
+    cookies.push({
+      name: decodeURIComponent(split[0])
+      , value: decodeURIComponent(split[1])
+    });
+  });
+  return cookies;
+};

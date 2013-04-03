@@ -1043,5 +1043,20 @@ module.exports.buildTests = function(webviewType) {
       });
     });
   });
+
+  desc('cookies', function(h) {
+    it('should be able to get cookies for a page', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          cookies[0].name.should.equal("guineacookie1");
+          cookies[0].value.should.equal("i am a cookie value");
+          cookies[1].name.should.equal("guineacookie2");
+          cookies[1].value.should.equal("cookié2");
+          done();
+        });
+      });
+    });
+  });
 };
 

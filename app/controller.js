@@ -731,6 +731,8 @@ exports.guineaPig = function(req, res) {
     params.comment = req.body.comments || params.comment;
   }
   res.set('Content-Type', 'text/html');
+  res.cookie('guineacookie1', 'i am a cookie value', {path: '/'});
+  res.cookie('guineacookie2', 'cookié2', {path: '/'});
   res.send(exports.getTemplate('guinea-pig').render(params));
 };
 

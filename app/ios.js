@@ -10,7 +10,9 @@ var path = require('path')
   , bplistParse = require('bplist-parser')
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
-  , escapeSpecialChars = require('./helpers.js').escapeSpecialChars
+  , helpers = require('./helpers.js')
+  , escapeSpecialChars = helpers.escapeSpecialChars
+  , parseWebCookies = helpers.parseWebCookies
   , rd = require('./hybrid/ios/remote-debugger')
   , errors = require('./errors')
   , deviceCommon = require('./device')
@@ -1709,6 +1711,24 @@ IOS.prototype.getCookies = function(cb) {
   if (!this.curWindowHandle) {
     return cb(new NotImplementedError(), null);
   }
+  var script = "return document.cookie";
+  this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
+      var cookies;
+      try {
+        cookies = parseWebCookies(res.value);
+      } catch(e) {
+        return cb(null, {
+          status: status.codes.UnknownError.code
+          , value: "Error parsing cookies from result, which was " + res.value
+        });
+      }
+      cb(null, {
+        status: status.codes.Success.code
+        , value: cookies
+      });
+    }
+  }, this), true);
 
 };
 

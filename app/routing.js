@@ -73,6 +73,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/forward', controller.forward);
   rest.post('/wd/hub/session/:sessionId?/refresh', controller.refresh);
   rest.get('/wd/hub/session/:sessionId?/cookie', controller.getCookies);
+  rest.post('/wd/hub/session/:sessionId?/cookie', controller.setCookie);
 
   // allow appium to receive async response
   rest.post('/wd/hub/session/:sessionId?/receive_async_response', controller.receiveAsyncResponse);
@@ -113,7 +114,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/window/:windowhandle/position', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/window/:windowhandle/maximize', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/cookie', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/cookie/:name', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/element/:elementId?', controller.notYetImplemented);

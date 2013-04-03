@@ -666,6 +666,17 @@ exports.getCookies = function(req, res) {
   req.device.getCookies(getResponseHandler(req, res));
 };
 
+exports.setCookie = function(req, res) {
+  var cookie = req.body.cookie;
+  if (checkMissingParams(res, {cookie: cookie})) {
+    if (typeof cookie.name !== "string" || typeof cookie.value !== "string") {
+      return respondError(req, res, status.codes.UnknownError,
+          "setCookie requires cookie of form {name: 'xxx', value: 'yyy'}");
+    }
+    req.device.setCookie(cookie, getResponseHandler(req, res));
+  }
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');

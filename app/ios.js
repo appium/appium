@@ -1732,6 +1732,23 @@ IOS.prototype.getCookies = function(cb) {
 
 };
 
+IOS.prototype.setCookie = function(cookie, cb) {
+  if (!this.curWindowHandle) {
+    return cb(new NotImplementedError(), null);
+  }
+  var webCookie = encodeURIComponent(cookie.name) + "=" +
+                  encodeURIComponent(cookie.value);
+  var script = "document.cookie = '" + webCookie + "'";
+  this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
+      cb(null, {
+        status: status.codes.Success.code
+        , value: true
+      });
+    }
+  }, this), true);
+};
+
 module.exports = function(args) {
   return new IOS(args);
 };

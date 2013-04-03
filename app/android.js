@@ -653,6 +653,10 @@ Android.prototype.getCookies = function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.setCookie = function(cookie, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };

@@ -1081,6 +1081,31 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should be able to set a cookie with expiry', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          var now = parseInt(Date.now() / 1000, 10);
+          newCookie.expiry = now - 1000; // set cookie in past
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              // should not include cookie we just added because of expiry
+              _.pluck(cookies, 'name').should.not.include(newCookie.name);
+              _.pluck(cookies, 'value').should.not.include(newCookie.value);
+              // should not clobber old cookies
+              _.pluck(cookies, 'name').should.include("guineacookie1");
+              _.pluck(cookies, 'value').should.include("i am a cookie value");
+              done();
+            });
+          });
+        });
+      });
+    });
   });
 };
 

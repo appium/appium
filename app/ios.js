@@ -1738,6 +1738,10 @@ IOS.prototype.setCookie = function(cookie, cb) {
   }
   var webCookie = encodeURIComponent(cookie.name) + "=" +
                   encodeURIComponent(cookie.value);
+  if (typeof cookie.expiry === "number") {
+    var expiry = (new Date(cookie.expiry * 1000)).toGMTString();
+    webCookie += "; expires=" + expiry;
+  }
   var script = "document.cookie = " + JSON.stringify(webCookie);
   console.log(script);
   this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {

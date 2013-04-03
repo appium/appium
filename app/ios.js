@@ -1738,7 +1738,8 @@ IOS.prototype.setCookie = function(cookie, cb) {
   }
   var webCookie = encodeURIComponent(cookie.name) + "=" +
                   encodeURIComponent(cookie.value);
-  var script = "document.cookie = '" + webCookie + "'";
+  var script = "document.cookie = " + JSON.stringify(webCookie);
+  console.log(script);
   this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
     if (this.checkSuccess(err, res, cb)) {
       cb(null, {

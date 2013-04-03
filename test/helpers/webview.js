@@ -1059,7 +1059,7 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it.only('should be able to set a cookie for a page', function(done) {
+    it('should be able to set a cookie for a page', function(done) {
       loadWebView(h.driver, function() {
         h.driver.allCookies(function(err, cookies) {
           should.not.exist(err);
@@ -1072,6 +1072,9 @@ module.exports.buildTests = function(webviewType) {
               should.not.exist(err);
               _.pluck(cookies, 'name').should.include(newCookie.name);
               _.pluck(cookies, 'value').should.include(newCookie.value);
+              // should not clobber old cookies
+              _.pluck(cookies, 'name').should.include("guineacookie1");
+              _.pluck(cookies, 'value').should.include("i am a cookie value");
               done();
             });
           });

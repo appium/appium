@@ -1,3 +1,4 @@
-language: node_js
-node_js:
-  - 0.8
+language: objective_c
+install: npm install
+script:
+  - grunt travis

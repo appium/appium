@@ -343,6 +343,7 @@ Appium.prototype.invoke = function() {
           rest: this.rest
           , apkPath: this.args.app
           , verbose: this.args.verbose
+          , udid: this.args.udid
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
           , appWaitActivity: this.args.androidWaitActivity

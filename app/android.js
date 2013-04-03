@@ -19,6 +19,7 @@ var Android = function(opts) {
   this.rest = opts.rest;
   this.opts = opts;
   this.apkPath = opts.apkPath;
+  this.udid = opts.udid;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
   this.appWaitActivity = opts.appWaitActivity;

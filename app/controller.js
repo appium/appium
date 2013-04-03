@@ -733,6 +733,8 @@ exports.guineaPig = function(req, res) {
   res.set('Content-Type', 'text/html');
   res.cookie('guineacookie1', 'i am a cookie value', {path: '/'});
   res.cookie('guineacookie2', 'cookié2', {path: '/'});
+  res.cookie('guineacookie3', 'cant access this', {
+    domain: '.blargimarg.com', path: '/'});
   res.send(exports.getTemplate('guinea-pig').render(params));
 };
 

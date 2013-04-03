@@ -178,6 +178,7 @@ class AndroidCommandHolder {
             }
             counter++;
             if (lastFoundObj != null && lastFoundObj.exists()) {
+                Logger.info("Found obj.");
                 elIds.add(elHash.addElement(lastFoundObj));
             } else {
                 keepSearching = false;
@@ -313,7 +314,7 @@ class AndroidCommandHolder {
             }
             Logger.info("Using class selector " + androidClass + " for find");
         } else if (strategy.equals("name")) {
-            s = s.description(selector);
+            s = s.descriptionMatches("(?i).*" + selector.replaceAll("([^\\p{Alnum}])", "\\\\$1") + ".*");
         } else {
             throw new InvalidStrategyException(strategy + " is not a supported selector strategy");
         }

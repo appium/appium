@@ -69,9 +69,17 @@ Android.prototype.start = function(cb, onDie) {
 
   var onLaunch = _.bind(function(err) {
     if (err) {
-      logger.error("Relaunching adb....");
-      var me = this;
-      this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
+      // This message is from adb.js. Must update when adb.js changes.
+      if (err.message === null || typeof err.message === 'undefined' || err.message.indexOf('App never showed up') === -1) {
+        logger.error("Relaunching adb....");
+        var me = this;
+        this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
+      } else {
+        // error is already printed by ADB.prototype.waitForActivity
+        this.adb = null;
+        this.onStop = null;
+        cb(err);
+      }
     } else {
       logger.info("ADB launched! Ready for commands (will time out in " +
                   (this.commandTimeoutMs / 1000) + "secs)");

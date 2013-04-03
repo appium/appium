@@ -662,6 +662,30 @@ exports.findAndAct = function(req, res) {
   }
 };
 
+exports.getCookies = function(req, res) {
+  req.device.getCookies(getResponseHandler(req, res));
+};
+
+exports.setCookie = function(req, res) {
+  var cookie = req.body.cookie;
+  if (checkMissingParams(res, {cookie: cookie})) {
+    if (typeof cookie.name !== "string" || typeof cookie.value !== "string") {
+      return respondError(req, res, status.codes.UnknownError,
+          "setCookie requires cookie of form {name: 'xxx', value: 'yyy'}");
+    }
+    req.device.setCookie(cookie, getResponseHandler(req, res));
+  }
+};
+
+exports.deleteCookie = function(req, res) {
+  var cookie = req.params.name;
+  req.device.deleteCookie(cookie, getResponseHandler(req, res));
+};
+
+exports.deleteCookies = function(req, res) {
+  req.device.deleteCookies(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
@@ -727,6 +751,10 @@ exports.guineaPig = function(req, res) {
     params.comment = req.body.comments || params.comment;
   }
   res.set('Content-Type', 'text/html');
+  res.cookie('guineacookie1', 'i am a cookie value', {path: '/'});
+  res.cookie('guineacookie2', 'cookié2', {path: '/'});
+  res.cookie('guineacookie3', 'cant access this', {
+    domain: '.blargimarg.com', path: '/'});
   res.send(exports.getTemplate('guinea-pig').render(params));
 };
 

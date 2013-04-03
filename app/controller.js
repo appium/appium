@@ -677,6 +677,15 @@ exports.setCookie = function(req, res) {
   }
 };
 
+exports.deleteCookie = function(req, res) {
+  var cookie = req.params.name;
+  req.device.deleteCookie(cookie, getResponseHandler(req, res));
+};
+
+exports.deleteCookies = function(req, res) {
+  req.device.deleteCookies(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');

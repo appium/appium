@@ -1106,6 +1106,60 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should be able to delete one cookie', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              _.pluck(cookies, 'name').should.include("newcookie");
+              _.pluck(cookies, 'value').should.include("i'm new here");
+              h.driver.deleteCookie('newcookie', function(err) {
+                should.not.exist(err);
+                h.driver.allCookies(function(err, cookies) {
+                  should.not.exist(err);
+                  _.pluck(cookies, 'name').should.not.include("newcookie");
+                  _.pluck(cookies, 'value').should.not.include("i'm new here");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should be able to delete all cookie', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              _.pluck(cookies, 'name').should.include("newcookie");
+              _.pluck(cookies, 'value').should.include("i'm new here");
+              h.driver.deleteAllCookies(function(err) {
+                should.not.exist(err);
+                h.driver.allCookies(function(err, cookies) {
+                  should.not.exist(err);
+                  _.pluck(cookies, 'name').should.not.include("newcookie");
+                  _.pluck(cookies, 'value').should.not.include("i'm new here");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
   });
 };
 

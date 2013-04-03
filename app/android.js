@@ -657,6 +657,14 @@ Android.prototype.setCookie = function(cookie, cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.deleteCookie = function(cookie, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.deleteCookies = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };

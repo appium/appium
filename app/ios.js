@@ -1695,18 +1695,21 @@ IOS.prototype.equalsWebElement = function(element, other, cb) {
   // We assume it's referrencing the same element if it's equal
   if (ctxElem.ELEMENT === otherElem.ELEMENT) {
     retValue = true;
+    cb(null, {
+      status: retStatus
+      , value: retValue
+    });
   } else {
     // ...otherwise let the browser tell us.
     this.executeAtom('element_equals_element', [ctxElem.ELEMENT, otherElem.ELEMENT], cb);
   }
-
-  cb(null, {
-    status: retStatus
-    , value: retValue
-  });
 };
 
 IOS.prototype.getCookies = function(cb) {
+  if (!this.curWindowHandle) {
+    return cb(new NotImplementedError(), null);
+  }
+
 };
 
 module.exports = function(args) {

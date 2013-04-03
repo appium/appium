@@ -1,3 +1,3 @@
-language: node_js
+language: objective-c
 node_js:
-  - 0.8
+  - "0.8"

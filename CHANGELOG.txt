@@ -1,5 +1,36 @@
+-------------------------------------
+CHANGES IN VERSION 0.2.2 (from 0.2.1)
+-------------------------------------
+[IOS]
+- safari: use js close() instead of clicking buttons to close windows
+- webview: make title() always return title for default context
+- webview: async javascript execute
+- webview: fix when webelements are returned to client
+- allow launching app via bundle id and not just app path
+- webview: get/set/delete cookie(s)
+- correctly rotate screenshot images if taken in landscape mode
+
+[ANDROID]
+- add eclipse formatting file for bootstrap
+- stop when activity fails to show up
+- make content-desc search case-insensitive and partial
+- allow launching emulator according to device id
+- only sign app for clean apk once
+
+-------------------------------------
+CHANGES IN VERSION 0.2.1 (from 0.2.0)
+-------------------------------------
+[GENERAL]
+- fix bug in npm dependencies (make swig a real dependency)
+
+[IOS]
+- fixed scoping bug in alert handling
+- get rid of --warp flag, instruments-without-delay is better
+- safari: clear cookies/history/windows in between test runs
+
+-------------------------------------
 CHANGES IN VERSION 0.2.0 (from 0.1.3)
--------------
+-------------------------------------
 [GENERAL]
 - updates to reset.sh
 - host our own guinea pig html page for webview tests

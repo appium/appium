@@ -1,51 +1,65 @@
 package io.appium.android.bootstrap;
 
-import java.util.HashMap;
+import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
-class UnallowedTagNameException extends Exception {
-    public UnallowedTagNameException(String tag) {
-        super("Tag name '" + tag + "' is not supported in Android");
-    }
-}
+/**
+ * Helper class to match up tag names and UI element class names.
+ * 
+ */
+public class AndroidElementClassMap {
 
-class AndroidElementClassMap {
-    
-    private HashMap<String, String> map;
-    private ArrayList<String> unallowed;
-    private static AndroidElementClassMap instance;
-    
-    public AndroidElementClassMap() {
-        map = new HashMap<String, String>();
-        unallowed = new ArrayList<String>();
-        map.put("text",  "TextView");
-        map.put("list", "ListView");
-        map.put("textfield", "EditText");        
-        
-        unallowed.add("secure");
+  private final HashMap<String, String> map;
+  private final ArrayList<String>       unallowed;
+  private static AndroidElementClassMap instance;
+
+  /**
+   * Generator
+   * 
+   * @return
+   */
+  private static AndroidElementClassMap getInstance() {
+    if (AndroidElementClassMap.instance == null) {
+      AndroidElementClassMap.instance = new AndroidElementClassMap();
     }
-    
-    public static String match(String selector) throws UnallowedTagNameException {
-        AndroidElementClassMap inst = AndroidElementClassMap.getInstance();
-        if (inst.unallowed.contains(selector)) {
-            throw new UnallowedTagNameException(selector);
-        } else {
-            String mappedSel = inst.map.get(selector);
-            if (mappedSel != null) {
-                return "android.widget." + mappedSel;
-            } else if (selector.contains(".")) {
-                return selector;
-            } else {
-                selector = selector.substring(0, 1).toUpperCase() + selector.substring(1);
-                return "android.widget." + selector;
-            }
-        }
+    return AndroidElementClassMap.instance;
+  }
+
+  /**
+   * Find a matching UI element class name based on the tag name.
+   * 
+   * @param selector_text
+   * @return String
+   * @throws AndroidCommandException
+   */
+  public static String match(String selector_text)
+      throws AndroidCommandException {
+    final AndroidElementClassMap inst = AndroidElementClassMap.getInstance();
+    if (inst.unallowed.contains(selector_text)) {
+      throw new AndroidCommandException(selector_text);
+    } else {
+      final String mappedSel = inst.map.get(selector_text);
+      if (mappedSel != null) {
+        return "android.widget." + mappedSel;
+      } else if (selector_text.contains(".")) {
+        return selector_text;
+      } else {
+        selector_text = selector_text.substring(0, 1).toUpperCase()
+            + selector_text.substring(1);
+        return "android.widget." + selector_text;
+      }
     }
-    
-    private static AndroidElementClassMap getInstance() {
-        if (AndroidElementClassMap.instance == null) {
-            AndroidElementClassMap.instance = new AndroidElementClassMap();
-        }
-        return AndroidElementClassMap.instance;
-    }
+  }
+
+  public AndroidElementClassMap() {
+    map = new HashMap<String, String>();
+    unallowed = new ArrayList<String>();
+    map.put("text", "TextView");
+    map.put("list", "ListView");
+    map.put("textfield", "EditText");
+
+    unallowed.add("secure");
+  }
 }

@@ -266,3 +266,15 @@ exports.parseWebCookies = function(cookieStr) {
   });
   return cookies;
 };
+
+exports.rotateImage = function(imgPath, deg, cb) {
+  logger.info("Rotating image " + imgPath + " " + deg + " degrees");
+  var scriptPath = path.resolve(__dirname, "uiauto/Rotate.applescript");
+  var cmd = "osascript " + scriptPath + " " + JSON.stringify(imgPath) +
+            " " + deg;
+  exec(cmd, function(err, stdout) {
+    if (err) return cb(err);
+    console.log(stdout);
+    cb(null);
+  });
+};

@@ -5,6 +5,7 @@ var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
   , testEndpoint = 'http://localhost:4723/test/'
   , guinea = testEndpoint + 'guinea-pig'
+  , _ = require('underscore')
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
 
@@ -400,7 +401,7 @@ module.exports.buildTests = function(webviewType) {
         h.driver.getWindowSize(function(err, size) {
           should.not.exist(err);
           // iphone and ipad, webview.app and mobile safari
-          [356, 928, 788, 752].should.include(size.height);
+          [356, 928, 788, 752, 797].should.include(size.height);
           [320, 768, 414].should.include(size.width);
           done();
         });
@@ -605,6 +606,71 @@ module.exports.buildTests = function(webviewType) {
           });
         });
       });
+    });
+    it('should be able to return multiple elements from javascript', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.execute('return document.getElementsByTagName("a");', function(err, res) {
+          should.not.exist(err);
+          res[0].ELEMENT.should.equal('5000');
+          done();
+        });
+      });
+    });
+    it('should execute javascript in frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.execute("return document.getElementsByTagName('h1')[0].innerHTML;", function(err, res) {
+            res.should.equal("Sub frame 1");
+            done();
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
+    });
+  });
+
+  desc("executeAsync", function(h) {
+    it("should bubble up javascript errors", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.executeAsync("'nan'--", function(err, val) {
+          err.status.should.equal(13);
+          should.not.exist(val);
+          done();
+        });
+      });
+    });
+    it("should execute async javascript", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.setAsyncScriptTimeout('10000', function(err, res) {
+          h.driver.executeAsync("arguments[arguments.length - 1](123);", function(err, val) {
+            should.not.exist(err);
+            val.should.equal(123);
+            done();
+          });
+        });
+      });
+    });
+    it("should timeout when callback isn't invoked", function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.setAsyncScriptTimeout('2000', function(err, res) {
+          h.driver.executeAsync("return 1 + 2", function(err, res) {
+            should.exist(err);
+            err.status.should.equal(28);
+            done();
+          });
+        });
+      });
+    });
+    it('should execute async javascript in frame', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.frame("first", function(err) {
+          should.not.exist(err);
+          h.driver.executeAsync("arguments[arguments.length - 1](document.getElementsByTagName('h1')[0].innerHTML);", function(err, res) {
+            res.should.equal("Sub frame 1");
+            done();
+          });
+        });
+      }, testEndpoint + 'frameset.html', "Frameset guinea pig");
     });
   });
 
@@ -943,29 +1009,6 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it('should be able to go back and forward', function(done) {
-      loadWebView(h.driver, function() {
-        h.driver.elementByLinkText('i am a link', function(err, el) {
-          el.click();
-          h.driver.elementById('only_on_page_2', function(err) {
-            should.not.exist(err);
-            h.driver.back(function(err) {
-              should.not.exist(err);
-              h.driver.elementById('i_am_a_textbox', function(err) {
-                should.not.exist(err);
-                h.driver.forward(function(err) {
-                  should.not.exist(err);
-                  h.driver.elementById('only_on_page_2', function(err) {
-                    should.not.exist(err);
-                    done();
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
   });
 
   desc('refresh', function(h) {
@@ -974,6 +1017,132 @@ module.exports.buildTests = function(webviewType) {
         h.driver.refresh(function(err) {
           should.not.exist(err);
           done();
+        });
+      });
+    });
+  });
+
+  desc('cookies', function(h) {
+    it('should be able to get cookies for a page', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          cookies.length.should.equal(2);
+          cookies[0].name.should.equal("guineacookie1");
+          cookies[0].value.should.equal("i am a cookie value");
+          cookies[1].name.should.equal("guineacookie2");
+          cookies[1].value.should.equal("cookié2");
+          done();
+        });
+      });
+    });
+    it('should be able to get cookies for a page with none', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          cookies.length.should.equal(0);
+          done();
+        });
+      }, testEndpoint + 'iframes.html', "Iframe guinea pig");
+    });
+    it('should be able to set a cookie for a page', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              _.pluck(cookies, 'name').should.include(newCookie.name);
+              _.pluck(cookies, 'value').should.include(newCookie.value);
+              // should not clobber old cookies
+              _.pluck(cookies, 'name').should.include("guineacookie1");
+              _.pluck(cookies, 'value').should.include("i am a cookie value");
+              done();
+            });
+          });
+        });
+      });
+    });
+    it('should be able to set a cookie with expiry', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          var now = parseInt(Date.now() / 1000, 10);
+          newCookie.expiry = now - 1000; // set cookie in past
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              // should not include cookie we just added because of expiry
+              _.pluck(cookies, 'name').should.not.include(newCookie.name);
+              _.pluck(cookies, 'value').should.not.include(newCookie.value);
+              // should not clobber old cookies
+              _.pluck(cookies, 'name').should.include("guineacookie1");
+              _.pluck(cookies, 'value').should.include("i am a cookie value");
+              done();
+            });
+          });
+        });
+      });
+    });
+    it('should be able to delete one cookie', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              _.pluck(cookies, 'name').should.include("newcookie");
+              _.pluck(cookies, 'value').should.include("i'm new here");
+              h.driver.deleteCookie('newcookie', function(err) {
+                should.not.exist(err);
+                h.driver.allCookies(function(err, cookies) {
+                  should.not.exist(err);
+                  _.pluck(cookies, 'name').should.not.include("newcookie");
+                  _.pluck(cookies, 'value').should.not.include("i'm new here");
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+    it('should be able to delete all cookie', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.allCookies(function(err, cookies) {
+          should.not.exist(err);
+          var newCookie = {name: "newcookie", value: "i'm new here"};
+          _.pluck(cookies, 'name').should.not.include(newCookie.name);
+          _.pluck(cookies, 'value').should.not.include(newCookie.value);
+          h.driver.setCookie(newCookie, function(err) {
+            should.not.exist(err);
+            h.driver.allCookies(function(err, cookies) {
+              should.not.exist(err);
+              _.pluck(cookies, 'name').should.include("newcookie");
+              _.pluck(cookies, 'value').should.include("i'm new here");
+              h.driver.deleteAllCookies(function(err) {
+                should.not.exist(err);
+                h.driver.allCookies(function(err, cookies) {
+                  should.not.exist(err);
+                  _.pluck(cookies, 'name').should.not.include("newcookie");
+                  _.pluck(cookies, 'value').should.not.include("i'm new here");
+                  done();
+                });
+              });
+            });
+          });
         });
       });
     });

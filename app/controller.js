@@ -91,7 +91,14 @@ var respondSuccess = function(req, res, value, sid) {
   if (typeof response.value === "undefined") {
     response.value = '';
   }
-  logger.info("Responding to client with success: " + JSON.stringify(response));
+  var printResponse = _.clone(response);
+  var maxLen = 1000;
+  if (printResponse.value !== null &&
+      typeof printResponse.value.length !== "undefined" &&
+      printResponse.value.length > maxLen) {
+    printResponse.value = printResponse.value.slice(0, maxLen) + "...";
+  }
+  logger.info("Responding to client with success: " + JSON.stringify(printResponse));
   res.send(response);
 };
 
@@ -446,6 +453,11 @@ exports.implicitWait = function(req, res) {
   req.device.implicitWait(ms, getResponseHandler(req, res));
 };
 
+exports.asyncScriptTimeout = function(req, res) {
+  var ms = req.body.ms;
+  req.device.asyncScriptTimeout(ms, getResponseHandler(req, res));
+};
+
 exports.setOrientation = function(req, res) {
   var orientation = req.body.orientation;
   req.device.setOrientation(orientation, getResponseHandler(req, res));
@@ -524,6 +536,19 @@ exports.execute = function(req, res) {
       req.device.execute(script, args, getResponseHandler(req, res));
     }
   }
+};
+
+exports.executeAsync = function(req, res) {
+  var script = req.body.script
+    , args = req.body.args
+    , responseUrl = '';
+
+    responseUrl += 'http://' + req.appium.args.address + ':' + req.appium.args.port;
+    responseUrl += '/wd/hub/session/' + req.appium.sessionId + '/receive_async_response';
+
+  if(checkMissingParams(res, {script: script, args: args})) {
+    req.device.executeAsync(script, args, responseUrl, getResponseHandler(req, res));
+    }
 };
 
 exports.executeMobileMethod = function(req, res, cmd) {
@@ -606,6 +631,11 @@ exports.getCommandTimeout = function(req, res) {
   req.device.getCommandTimeout(getResponseHandler(req, res));
 };
 
+exports.receiveAsyncResponse = function(req, res) {
+  var asyncResponse = req.body;
+  req.device.receiveAsyncResponse(asyncResponse);
+};
+
 exports.setValueImmediate = function(req, res) {
   var element = req.body.element
     , value = req.body.value;
@@ -637,6 +667,30 @@ exports.findAndAct = function(req, res) {
     req.device.findAndAct(params.strategy, params.selector, params.index,
         params.action, params.actionParams, getResponseHandler(req, res));
   }
+};
+
+exports.getCookies = function(req, res) {
+  req.device.getCookies(getResponseHandler(req, res));
+};
+
+exports.setCookie = function(req, res) {
+  var cookie = req.body.cookie;
+  if (checkMissingParams(res, {cookie: cookie})) {
+    if (typeof cookie.name !== "string" || typeof cookie.value !== "string") {
+      return respondError(req, res, status.codes.UnknownError,
+          "setCookie requires cookie of form {name: 'xxx', value: 'yyy'}");
+    }
+    req.device.setCookie(cookie, getResponseHandler(req, res));
+  }
+};
+
+exports.deleteCookie = function(req, res) {
+  var cookie = req.params.name;
+  req.device.deleteCookie(cookie, getResponseHandler(req, res));
+};
+
+exports.deleteCookies = function(req, res) {
+  req.device.deleteCookies(getResponseHandler(req, res));
 };
 
 exports.unknownCommand = function(req, res) {
@@ -704,6 +758,10 @@ exports.guineaPig = function(req, res) {
     params.comment = req.body.comments || params.comment;
   }
   res.set('Content-Type', 'text/html');
+  res.cookie('guineacookie1', 'i am a cookie value', {path: '/'});
+  res.cookie('guineacookie2', 'cookié2', {path: '/'});
+  res.cookie('guineacookie3', 'cant access this', {
+    domain: '.blargimarg.com', path: '/'});
   res.send(exports.getTemplate('guinea-pig').render(params));
 };
 

@@ -10,7 +10,7 @@ All flags are optional, but some are required in conjunction with certain others
 |----|-------|-----------|-------|
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`-V`, `--verbose`|false|Get verbose logging output||
-|`-U`, `--udid`|null|(IOS-only) Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
+|`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||

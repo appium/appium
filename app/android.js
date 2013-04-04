@@ -19,6 +19,7 @@ var Android = function(opts) {
   this.rest = opts.rest;
   this.opts = opts;
   this.apkPath = opts.apkPath;
+  this.udid = opts.udid;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
   this.appWaitActivity = opts.appWaitActivity;
@@ -34,6 +35,7 @@ var Android = function(opts) {
   this.shuttingDown = false;
   this.adb = null;
   this.swipeStepsPerSec = 200;
+  this.asyncWaitMs = 0;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'Android'
@@ -68,9 +70,17 @@ Android.prototype.start = function(cb, onDie) {
 
   var onLaunch = _.bind(function(err) {
     if (err) {
-      logger.error("Relaunching adb....");
-      var me = this;
-      this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
+      // This message is from adb.js. Must update when adb.js changes.
+      if (err.message === null || typeof err.message === 'undefined' || err.message.indexOf('App never showed up') === -1) {
+        logger.error("Relaunching adb....");
+        var me = this;
+        this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
+      } else {
+        // error is already printed by ADB.prototype.waitForActivity
+        this.adb = null;
+        this.onStop = null;
+        cb(err);
+      }
     } else {
       logger.info("ADB launched! Ready for commands (will time out in " +
                   (this.commandTimeoutMs / 1000) + "secs)");
@@ -164,6 +174,11 @@ Android.prototype.push = function(elem, resendLast) {
 
   var next = _.bind(function() {
     if (this.queue.length <= 0) {
+      return;
+    }
+
+    if (this.queue[0] === null) {
+      this.queue.shift();
       return;
     }
 
@@ -407,6 +422,14 @@ Android.prototype.implicitWait = function(ms, cb) {
   });
 };
 
+Android.prototype.asyncScriptTimeout = function(ms, cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.executeAsync = function(script, args, responseUrl, cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.elementDisplayed = function(elementId, cb) {
   var p = {elementId: elementId, attribute: "displayed"};
   this.proxy(["element:getAttribute", p], cb);
@@ -623,6 +646,22 @@ Android.prototype.moveTo = function(element, xoffset, yoffset, cb) {
 };
 
 Android.prototype.clickCurrent = function(button, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.getCookies = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.setCookie = function(cookie, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.deleteCookie = function(cookie, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.deleteCookies = function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 

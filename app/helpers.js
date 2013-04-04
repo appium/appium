@@ -250,3 +250,31 @@ exports.escapeSpecialChars = function(str, quoteEscape) {
   }
   return str;
 };
+
+exports.parseWebCookies = function(cookieStr) {
+  var cookies = [];
+  var splits = cookieStr.trim().split(";");
+  _.each(splits, function(split) {
+    split = split.trim();
+    if (split !== "") {
+      split = split.split("=");
+      cookies.push({
+        name: decodeURIComponent(split[0])
+        , value: decodeURIComponent(split[1])
+      });
+    }
+  });
+  return cookies;
+};
+
+exports.rotateImage = function(imgPath, deg, cb) {
+  logger.info("Rotating image " + imgPath + " " + deg + " degrees");
+  var scriptPath = path.resolve(__dirname, "uiauto/Rotate.applescript");
+  var cmd = "osascript " + scriptPath + " " + JSON.stringify(imgPath) +
+            " " + deg;
+  exec(cmd, function(err, stdout) {
+    if (err) return cb(err);
+    console.log(stdout);
+    cb(null);
+  });
+};

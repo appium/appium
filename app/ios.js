@@ -13,6 +13,7 @@ var path = require('path')
   , helpers = require('./helpers.js')
   , escapeSpecialChars = helpers.escapeSpecialChars
   , parseWebCookies = helpers.parseWebCookies
+  , rotateImage = helpers.rotateImage
   , rd = require('./hybrid/ios/remote-debugger')
   , errors = require('./errors')
   , deviceCommon = require('./device')
@@ -31,7 +32,8 @@ var IOS = function(args) {
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
   this.deviceType = args.deviceType;
-  this.startingOrientation = args.startingOrientation;
+  this.startingOrientation = args.startingOrientation || "PORTRAIT";
+  this.curOrientation = this.startingOrientation;
   this.instruments = null;
   this.queue = [];
   this.progress = 0;
@@ -116,6 +118,8 @@ IOS.prototype.start = function(cb, onDie) {
         me.proxy(command, function(err, res) {
           if (err || res.status !== status.codes.Success.code) {
             logger.warn("Setting initial orientation did not work!");
+          } else {
+            me.curOrientation = me.startingOrientation;
           }
           oCb(null);
         });
@@ -1334,11 +1338,17 @@ IOS.prototype.getOrientation = function(cb) {
 
 IOS.prototype.setOrientation = function(orientation, cb) {
   var command = ["au.setScreenOrientation('", orientation ,"')"].join('');
-  this.proxy(command, cb);
+  this.proxy(command, _.bind(function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
+      this.curOrientation = orientation;
+      cb(err, res);
+    }
+  }, this));
 };
 
 IOS.prototype.getScreenshot = function(cb) {
   var guid = uuid.create();
+  var me = this;
   var command = ["au.capture('screenshot", guid ,"')"].join('');
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
@@ -1359,20 +1369,37 @@ IOS.prototype.getScreenshot = function(cb) {
         setTimeout(next, 300);
       };
       var read = function(onErr) {
-        fs.readFile(shotPath, function read(err, data) {
-          if (err) {
-            if (onErr) {
-              return onErr();
+        var doRead = function() {
+          fs.readFile(shotPath, function read(err, data) {
+            if (err) {
+              if (onErr) {
+                return onErr();
+              } else {
+                response = null;
+                err = new Error("Timed out waiting for screenshot file. " + err.toString());
+              }
             } else {
-              response = null;
-              err = new Error("Timed out waiting for screenshot file. " + err.toString());
+              var b64data = new Buffer(data).toString('base64');
+              response.value = b64data;
             }
-          } else {
-            var b64data = new Buffer(data).toString('base64');
-            response.value = b64data;
-          }
-          cb(err, response);
-        });
+            cb(err, response);
+          });
+        };
+        if (me.curOrientation === "LANDSCAPE") {
+          // need to rotate 90 deg CC
+          logger.info("Rotating landscape screenshot");
+          rotateImage(shotPath, -90, function(err) {
+            if (err && onErr) {
+              return onErr();
+            } else if (err) {
+              cb(new Error("Could not rotate screenshot appropriately"), null);
+            } else {
+              doRead();
+            }
+          });
+        } else {
+          doRead();
+        }
       };
       read(onErr);
     }

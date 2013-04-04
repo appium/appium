@@ -91,7 +91,14 @@ var respondSuccess = function(req, res, value, sid) {
   if (typeof response.value === "undefined") {
     response.value = '';
   }
-  logger.info("Responding to client with success: " + JSON.stringify(response));
+  var printResponse = _.clone(response);
+  var maxLen = 1000;
+  if (printResponse.value !== null &&
+      typeof printResponse.value.length !== "undefined" &&
+      printResponse.value.length > maxLen) {
+    printResponse.value = printResponse.value.slice(0, maxLen) + "...";
+  }
+  logger.info("Responding to client with success: " + JSON.stringify(printResponse));
   res.send(response);
 };
 

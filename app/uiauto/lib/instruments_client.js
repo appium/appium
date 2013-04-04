@@ -80,9 +80,18 @@ var globalPath = null;
 try {
   globalPath = sysExec('which instruments_client');
 } catch (e) { }
-var nodePath = "/usr/local/bin/node";
+var nodePath = null;
 try {
   nodePath = sysExec('which node');
 } catch (e) {
-  nodePath = "/usr/local/bin/node";
+  try {
+    nodePath = sysExec("ls /usr/local/bin/node");
+  } catch (e) {
+    try {
+      nodePath = sysExec("ls /opt/local/bin/node");
+    } catch (e) {
+      throw new Error("Could not find node using `which node`, at /usr/local/" +
+                      "bin/node, or at /opt/local/bin/node. Where is it?");
+    }
+  }
 }

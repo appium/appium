@@ -89,9 +89,8 @@ IOS.prototype.cleanup = function(cb) {
 
 IOS.prototype.start = function(cb, onDie) {
   if (this.app && this.bundleId) {
-    cb(new Error("You tried to launch instruments with both an app " +
-                 "specification and a bundle ID. Choose one or the other!"));
-    return;
+    logger.warn("You tried to launch instruments with both an app " +
+                "specification and a bundle ID. Sticking with the app");
   }
   var me = this;
   var didLaunch = false;
@@ -161,6 +160,8 @@ IOS.prototype.start = function(cb, onDie) {
     }
     me.instruments = null;
     me.curCoords = null;
+    me.curOrientation = null;
+    me.bundleId = null;
     if (me.remote !== null) {
       try {
         me.stopRemote();

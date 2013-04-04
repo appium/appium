@@ -153,15 +153,6 @@ describeWd('calc app', function(h) {
     });
   });
 
-  return it('should get an app screenshot', function(done){
-    h.driver.takeScreenshot(function(err, screenshot){
-      assert.notEqual(typeof screenshot, "undefined");
-      assert.notEqual(screenshot, null);
-      assert.ok(screenshot);
-      done();
-    });
-  });
-
 }); // end describe
 
 describeWd('calc app', function(h) {

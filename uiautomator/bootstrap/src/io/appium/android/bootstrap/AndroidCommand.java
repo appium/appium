@@ -9,8 +9,6 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-// import io.appium.android.bootstrap.Logger;
-
 /**
  * This proxy embodies the command that the handlers execute.
  * 

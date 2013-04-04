@@ -1,6 +1,3 @@
-/**
- * 
- */
 package io.appium.android.bootstrap.handler;
 
 import io.appium.android.bootstrap.AndroidCommand;

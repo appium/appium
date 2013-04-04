@@ -71,7 +71,7 @@ ADB.prototype.checkAdbPresent = function(cb) {
 };
 
 // Fast reset
-ADB.prototype.buildFastReset = function(cb) {
+ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   // Create manifest
   var me = this;
   var targetAPK = me.apkPath;
@@ -113,7 +113,7 @@ ADB.prototype.buildFastReset = function(cb) {
             me.compileManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
           },
           function(cb) {
-            me.insertManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
+            me.insertManifest(manifest, skipAppSign, function(err) { if (err) return cb(err); cb(null); });
           },
         ],
         // Invoke top level function cb
@@ -165,7 +165,7 @@ ADB.prototype.compileManifest = function(cb, manifest) {
         function(){ cb(null) });
 };
 
-ADB.prototype.insertManifest = function(cb, manifest) {
+ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
   var me = this;
   var targetAPK = me.apkPath;
   var cleanAPK = me.cleanAPK;
@@ -210,20 +210,41 @@ ADB.prototype.insertManifest = function(cb, manifest) {
           },
           // Resign clean apk and target apk
           function(cb) {
-            me.sign(function(err) { if (err) return cb(err); cb(null) }, targetAPK + '" "' + cleanAPK);
+            var apks = [ cleanAPK ];
+            if (!skipAppSign) {
+              logger.debug("Skip app sign.");
+              apks.push(targetAPK);
+            }
+            me.sign(function(err) { if (err) return cb(err); cb(null) }, apks);
           }
         ],
         // Invoke top level function cb
         function(){ cb(null) });
 };
 
+// apks is an array of strings.
 ADB.prototype.sign = function(cb, apks) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
-  var resign = 'java -jar "' + signPath + '" "' + apks + '" --override';
+  var resign = 'java -jar "' + signPath + '" ' + apks.join('" "') + ' --override';
   logger.debug("Resigning: " + resign);
   exec(resign, {}, function(err, stderr, stdout) {
     if (err) return cb(err);
     cb(null);
+  });
+};
+
+// returns true when already signed, false otherwise.
+ADB.prototype.checkAppCert = function(cb) {
+  var verifyPath = path.resolve(__dirname, '../app/android/verify.jar');
+  var resign = 'java -jar "' + verifyPath + '" "' + this.apkPath + '"';
+  logger.debug("Checking app cert: " + resign);
+  exec(resign, {}, function(err, stderr, stdout) {
+    if (err) {
+      logger.debug("App not signed with debug cert.");
+      return cb(false);
+    }
+    logger.debug("App already signed.");
+    cb(true);
   });
 };
 
@@ -233,13 +254,20 @@ ADB.prototype.checkFastReset = function(cb) {
     return cb(null);
   }
 
-  // Only build & resign clean.apk if it doesn't exist.
-  if (!fs.existsSync(this.cleanAPK)) {
-    this.buildFastReset(function(err){ if (err) return cb(err); cb(null); });
-  } else {
-    // Resign app apk as it may have changed.
-    this.sign(function(err) { if (err) return cb(err); cb(null); }, this.apkPath);
-  }
+  var me = this;
+  this.checkAppCert(function(isSigned){
+    // Only build & resign clean.apk if it doesn't exist.
+    if (!fs.existsSync(me.cleanAPK)) {
+      me.buildFastReset(isSigned, function(err){ if (err) return cb(err); cb(null); });
+    } else {
+      if (!isSigned) { // don't sign the app if it already has the debug cert
+        // Resign app apk as it may have changed.
+        me.sign(function(err) { if (err) return cb(err); cb(null); }, [me.apkPath]);
+      } else {
+        cb(null);
+      }
+    }
+  });
 };
 
 ADB.prototype.start = function(onReady, onExit) {

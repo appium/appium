@@ -4,3 +4,6 @@
 [submodule "submodules/appium.io"]
 	path = submodules/appium.io
 	url = https://github.com/appium/appium.github.com.git
+[submodule "submodules/ApiDemos"]
+	path = submodules/ApiDemos
+	url = https://github.com/appium/android-apidemos.git

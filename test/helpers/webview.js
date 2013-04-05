@@ -170,6 +170,19 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
+    it('should return implicit attributes', function(done) {
+      loadWebView(h.driver, function() {
+        h.driver.elementsByTagName('option', function(err, els) {
+          should.not.exist(err);
+          els.length.should.equal(3);
+          els[2].getAttribute('index', function(err, attrVal) {
+            should.not.exist(err);
+            attrVal.should.equal('2');
+            done();
+          });
+        });
+      });
+    });
   });
 
   desc('getText', function(h) {

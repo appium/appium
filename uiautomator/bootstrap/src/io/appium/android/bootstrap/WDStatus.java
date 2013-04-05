@@ -31,7 +31,8 @@ public enum WDStatus {
   IME_ENGINE_ACTIVATION_FAILED (31, "An IME engine could not be started."), 
   INVALID_SELECTOR (32, "Argument was an invalid selector (e.g. XPath/CSS)."), 
   SESSION_NOT_CREATED_EXCEPTION (33, "A new session could not be created."),
-  MOVE_TARGET_OUT_OF_BOUNDS (34, "Target provided for a move action is out of bounds.");  // @formatter:on
+  MOVE_TARGET_OUT_OF_BOUNDS (34, "Target provided for a move action is out of bounds."),
+  JSON_DECODER_ERROR (35, "Could not decode action/params of command, please check format!");
   // formatter:on
   private final int    statusCode;
   private final String statusMessage;

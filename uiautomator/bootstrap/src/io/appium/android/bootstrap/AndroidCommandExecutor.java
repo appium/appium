@@ -55,7 +55,7 @@ class AndroidCommandExecutor {
       }
     } catch (final JSONException e) {
       Logger.error("Could not decode action/params of command");
-      return new AndroidCommandResult(WDStatus.JSON_DECODE_ERROR,
+      return new AndroidCommandResult(WDStatus.JSON_DECODER_ERROR,
           "Could not decode action/params of command, please check format!");
     }
   }

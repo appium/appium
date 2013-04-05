@@ -22,6 +22,7 @@ uiautomator/bootstrap/bin/*
 uiautomator/bootstrap/local.properties
 uiautomator/bootstrap/project.properties
 uiautomator/bootstrap/.classpath
+sample-code/apps/ApiDemos
 app/android/AndroidManifest.xml.apk
 app/android/AndroidManifest.xml
 .*~

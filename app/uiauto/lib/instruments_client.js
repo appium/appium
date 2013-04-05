@@ -84,14 +84,34 @@ var nodePath = null;
 try {
   nodePath = sysExec('which node');
 } catch (e) {
+  var appScript = [
+      'try'
+    , '  set appiumIsRunning to false'
+    , '  tell application "System Events"'
+    , '    set appiumIsRunning to name of every process contains "Appium"'
+    , '  end tell'
+    , '  if appiumIsRunning then'
+    , '    tell application "Appium" to return node path'
+    , '  end if'
+    , 'end try'
+    , 'return "NULL"'
+  ].join("\n");
+  var appNodeWorked = false;
   try {
-    nodePath = sysExec("ls /usr/local/bin/node");
-  } catch (e) {
+    nodePath = sysExec("osascript -e '" + appScript + "'");
+    appNodeWorked = nodePath !== "NULL";
+  } catch(e) {}
+  if (!appNodeWorked) {
     try {
-      nodePath = sysExec("ls /opt/local/bin/node");
+      nodePath = sysExec("ls /usr/local/bin/node");
     } catch (e) {
-      throw new Error("Could not find node using `which node`, at /usr/local/" +
-                      "bin/node, or at /opt/local/bin/node. Where is it?");
+      try {
+        nodePath = sysExec("ls /opt/local/bin/node");
+      } catch (e) {
+        throw new Error("Could not find node using `which node`, at /usr/" +
+                        "local/bin/node, at /opt/local/bin/node, or by " +
+                        "querying Appium.app. Where is it?");
+      }
     }
   }
 }

@@ -3,12 +3,16 @@ echo "Clearing dev version of WD"
 rm -rf node_modules/wd
 echo "Installing WD and new NPM modules"
 npm install .
-echo "Updating/initializing submodules"
+echo "Downloading/updating instruments-without-delay"
 git submodule update --init submodules/instruments-without-delay
 echo "Building instruments-without-delay"
 pushd submodules/instruments-without-delay
 ./build.sh
 popd
+echo "Downloading/updating AndroidApiDemos"
+git submodule update --init submodules/ApiDemos
+rm -rf sample-code/apps/ApiDemos
+ln -s $(pwd)/submodules/ApiDemos $(pwd)/sample-code/apps/ApiDemos
 echo "Building Android bootstrap"
 grunt configAndroidBootstrap
 grunt buildAndroidBootstrap

@@ -40,7 +40,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self._values = []
 
     def _open_menu_position(self, index):
-        # populate text fields with two random number
+        # Opens up the menu at position [index] : starts at 0.
         table = self.driver.find_element_by_tag_name("tableView")
         self._row = table.find_elements_by_tag_name("tableCell")[index]
         self._row.click()
@@ -53,17 +53,33 @@ class TestSequenceFunctions(unittest.TestCase):
         rows = table.find_elements_by_tag_name("tableCell")
         self.assertEqual(12, len(rows))
         # is first one about buttons
-        self.assertEqual(rows[0].text, "Buttons, Various uses of UIButton")
-        # navigationBar is not inside table
-        nav_bar = table.find_element_by_tag_name("navigationBar")
-        self.assertFalse(nav_bar)
+        self.assertEqual(rows[0].get_attribute("name"), "Buttons, Various uses of UIButton")
         # there is nav bar inside the app
         nav_bar = self.driver.find_element_by_tag_name("navigationBar")
         self.assertTrue(nav_bar)
-
-    # TODO: Needs to be implmented, switching into UIWebView and playing with it
-    # def test_frames(self):
-    #     pass
+        
+    def test_frames(self):
+        table = self.driver.find_element_by_tag_name("tableView")
+        self._open_menu_position(7)
+        scroll = self.driver.find_element_by_tag_name("scrollview")
+        webview = scroll.find_element_by_tag_name("webview")
+        #find the URL field
+        textfield = self.driver.find_element_by_name("URL entry")
+        self.assertEqual(textfield.get_attribute("value"), "http://www.apple.com")
+        
+        textfield.find_element_by_tag_name("button").click()
+        # send www.google.com and press the Go button (\n)
+        textfield.send_keys("http://www.google.com\\n")
+        # get the window handles (webview)
+        handle = self.driver.window_handles[0]
+        self.driver.switch_to_window(handle)
+        # Find the google logo
+        logo = self.driver.find_element_by_id("hplogo")
+        self.assertTrue(logo)
+        self.driver.execute_script("mobile: leaveWebView")
+        # Verify we are out of the webview
+        scroll_after = self.driver.find_element_by_tag_name("scrollview")
+        self.assertTrue(scroll_after)
 
     def test_location(self):
         # get third row location
@@ -81,25 +97,27 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_attributes(self):
         # go to the toolbar section
-        self._open_menu_position(9)
+        self._open_menu_position(8)
 
-        segmented_control = self.driver.find_element_by_tag_name("segmentedControl")
+        segmented_control = self.driver.find_element_by_tag_name("segemented")
         # segmented_control is enabled by default
         self.assertTrue(segmented_control.is_enabled())
         self.assertTrue(segmented_control.is_displayed())
         # row is from previous view, should not be visible
-        self.assertFalse(self._row.is_displayed())
-
-        tinted_switch = self.driver.find_elements_by_tag_name("switch")[1]
-        self.assertEqual(tinted_switch.text, "Tinted")
-        # check if it is in "off" position
-        self.assertEqual(int(tinted_switch.get_attribute("value")), 0)
-        tinted_switch.click()
-        # check if it is in "on" position
-        self.assertEqual(int(tinted_switch.get_attribute("value")), 1)
-        # segmented_control should now be disabled
-        self.assertFalse(segmented_control.is_enabled())
-
+        self.assertTrue(self._row.is_displayed())
+        
+        #verify the text is what we expect
+        tinted_text = self.driver.find_elements_by_tag_name("text")[4]
+        self.assertEqual(tinted_text.text, "UISegmentControlStyleBar: (tinted)")
+        tinted_control = self.driver.find_elements_by_tag_name("segemented")[4]
+        tinted_buttons = tinted_control.find_elements_by_tag_name("button")
+        #verify the control has three buttons
+        self.assertEqual(3, len(tinted_buttons))
+        #verify the buttons have the right properties
+        self.assertEquals(tinted_buttons[0].get_attribute("value"), '')
+        self.assertEquals(tinted_buttons[1].get_attribute("value"), '1')
+        self.assertEquals(tinted_buttons[2].get_attribute("value"), '')
+        
     def test_text_field_edit(self):
         # go to the text fields section
         self._open_menu_position(2)
@@ -124,7 +142,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_alert_interaction(self):
         # go to the alerts section
         self._open_menu_position(10)
-        elements = self.driver.find_elements_by_tag_name("staticText")
+        elements = self.driver.find_elements_by_name("Show Simple")
 
         # # TOFIX: Looks like alert object is not proper state
         # triggerOk = elements[2]
@@ -137,7 +155,7 @@ class TestSequenceFunctions(unittest.TestCase):
         # alert.dismiss()
 
         # trigger modal alert with cancel & ok buttons
-        triggerOkCancel = elements[14]
+        triggerOkCancel = elements[1]
         triggerOkCancel.click()
         alert = self.driver.switch_to_alert()
         # check if title of alert is correct
@@ -170,7 +188,7 @@ class TestSequenceFunctions(unittest.TestCase):
 
     def test_sessions(self):
         data = json.loads(urllib2.urlopen("http://localhost:4723/wd/hub/sessions").read())
-        self.assertEqual(self.driver.session_id, data[0]['id'])
+        self.assertEqual(self.driver.session_id, data['sessionId'])
 
     def test_size(self):
         table = self.driver.find_element_by_tag_name("tableView").size
@@ -196,5 +214,5 @@ class TestSequenceFunctions(unittest.TestCase):
         self.driver.quit()
 
 
-if __name__ == '__main__':
-    unittest.main()
+suite = unittest.TestLoader().loadTestsFromTestCase(TestSequenceFunctions)
+unittest.TextTestRunner(verbosity=2).run(suite)

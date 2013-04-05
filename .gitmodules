@@ -6,4 +6,4 @@
 	url = https://github.com/appium/appium.github.com.git
 [submodule "submodules/ApiDemos"]
 	path = submodules/ApiDemos
-	url = git@github.com:appium/android-apidemos.git
+	url = https://github.com/appium/android-apidemos.git

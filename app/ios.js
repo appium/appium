@@ -1668,7 +1668,7 @@ IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
 
 IOS.prototype.convertElementForAtoms = function(args, cb) {
   for (var i=0; i < args.length; i++) {
-    if (typeof args[i].ELEMENT !== "undefined") {
+    if (args[i] !== null && typeof args[i].ELEMENT !== "undefined") {
       var atomsElement = this.getAtomsElement(args[i].ELEMENT);
       if (atomsElement === null) {
         cb(true, {

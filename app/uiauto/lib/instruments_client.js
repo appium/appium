@@ -85,13 +85,15 @@ try {
   nodePath = sysExec('which node');
 } catch (e) {
   var appScript = [
-      'set appiumIsRunning to false'
-    , 'tell application "System Events"'
-    , '  set appiumIsRunning to name of every process contains "Appium"'
-    , 'end tell'
-    , 'if appiumIsRunning then'
-    , '  tell application "Appium" to return node path'
-    , 'end if'
+      'try'
+    , '  set appiumIsRunning to false'
+    , '  tell application "System Events"'
+    , '    set appiumIsRunning to name of every process contains "Appium"'
+    , '  end tell'
+    , '  if appiumIsRunning then'
+    , '    tell application "Appium" to return node path'
+    , '  end if'
+    , 'end try'
     , 'return "NULL"'
   ].join("\n");
   var appNodeWorked = false;

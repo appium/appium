@@ -3,6 +3,8 @@
 
 var wd = require('wd')
   , _ = require("underscore")
+  , sauce = require("saucelabs")
+  , sauceRest = null
   , path = require("path")
   , should = require("should")
   , defaultHost = '127.0.0.1'
@@ -14,6 +16,13 @@ var wd = require('wd')
       , version: '6.0'
       //, newCommandTimeout: 60
     };
+
+if (process.env.SAUCE_ACCESS_KEY && process.env.SAUCE_USERNAME) {
+  sauceRest = new sauce({
+    username: process.env.SAUCE_USERNAME
+    , password: process.env.SAUCE_ACCESS_KEY
+  });
+}
 
 var driverBlock = function(tests, host, port, caps, extraCaps) {
   host = (typeof host === "undefined" || host === null) ? _.clone(defaultHost) : host;
@@ -39,7 +48,15 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
       if (err && err.status && err.status.code != 6) {
         throw err;
       }
-      done();
+      if (host.indexOf("saucelabs") !== -1 && sauceRest !== null) {
+        sauceRest.updateJob(driverHolder.sessionId, {
+          passed: true
+        }, function() {
+          done();
+        });
+      } else {
+        done();
+      }
     });
   });
 

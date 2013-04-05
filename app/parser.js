@@ -140,6 +140,15 @@ var args = [
     , help: "(Android-only) Timeout in seconds while waiting for device to become ready"
   }],
 
+  [['--app-inactivity-timeout'], {
+    dest: 'androidInactivityTimeout'
+    , defaultValue: '60'
+    , required: false
+    , example: "60"
+    , help: "(Android-only) The number of seconds of inactivity before the session " +
+            "is shutdown.  Defaults to 60 seconds."
+  }],
+
   [['--safari'], {
     defaultValue: false
     , action: 'storeTrue'

@@ -161,7 +161,6 @@ IOS.prototype.start = function(cb, onDie) {
     me.instruments = null;
     me.curCoords = null;
     me.curOrientation = null;
-    me.bundleId = null;
     if (me.remote !== null) {
       try {
         me.stopRemote();
@@ -171,6 +170,7 @@ IOS.prototype.start = function(cb, onDie) {
     }
     var nexts = 0;
     var next = function() {
+      me.bundleId = null;
       nexts++;
       if (nexts === 2) {
         me.onStop(code);
@@ -298,7 +298,7 @@ IOS.prototype.cleanupAppState = function(cb) {
     , me = this;
   logger.info("Deleting plists for bundle: " + this.bundleId);
   glob("/Users/" + user + "/Library/Application Support/iPhone Simulator/**/" +
-       me.bundleId + ".plist", {}, function(err, files) {
+       me.bundleId + "*.plist", {}, function(err, files) {
     if (err) {
       logger.error("Could not remove plist: " + err.message);
       cb(err);

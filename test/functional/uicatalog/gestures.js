@@ -53,10 +53,10 @@ describeWd('flick gesture', function(h) {
 });
 
 describeWd('swipe gesture', function(h) {
-  it('should work with wd function in pixels', function(done) {
+  it.only('should work with wd function in pixels', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
-        h.driver.flick(0, -100, true, function(err) {
+        h.driver.flick(0, -40, true, function(err) {
           should.not.exist(err);
           element.getLocation(function(err, location2) {
             assert.equal(location.x, location.x);

@@ -28,3 +28,4 @@ app/android/AndroidManifest.xml
 .*~
 *~
 uiautomator/bootstrap/target/
+org.eclipse.ltk.core.refactoring.prefs

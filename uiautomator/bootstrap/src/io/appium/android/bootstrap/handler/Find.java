@@ -6,6 +6,7 @@ import io.appium.android.bootstrap.AndroidElement;
 import io.appium.android.bootstrap.AndroidElementClassMap;
 import io.appium.android.bootstrap.AndroidElementsHash;
 import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.Dynamic;
 import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.WDStatus;
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
@@ -36,6 +37,7 @@ import com.android.uiautomator.core.UiSelector;
  */
 public class Find extends CommandHandler {
   AndroidElementsHash elements = AndroidElementsHash.getInstance();
+  Dynamic             dynamic  = new Dynamic();
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
@@ -55,8 +57,28 @@ public class Find extends CommandHandler {
     // only makes sense on a device
     final Strategy strategy = Strategy.fromString((String) params
         .get("strategy"));
-    final String text = (String) params.get("selector");
     final String contextId = (String) params.get("context");
+
+    if (strategy == Strategy.DYNAMIC) {
+      Logger.debug("Finding dynamic.");
+      final JSONArray selectors = (JSONArray) params.get("selector");
+      final JSONArray results = new JSONArray();
+      try {
+        for (int selIndex = 0; selIndex < selectors.length(); selIndex++) {
+          final UiSelector sel = dynamic.get((JSONArray) selectors.get(selIndex));
+          final JSONArray tmp = fetchElements(sel, contextId);
+
+          for (int tmpIndex = 0; tmpIndex < tmp.length(); tmpIndex++) {
+            results.put(tmp.get(tmpIndex));
+          }
+        }
+        return getSuccessResult(results);
+      } catch (final Exception e) {
+        return getErrorResult(e.getMessage());
+      }
+    }
+
+    final String text = (String) params.get("selector");
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId);

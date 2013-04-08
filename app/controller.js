@@ -102,10 +102,13 @@ var respondSuccess = function(req, res, value, sid) {
   res.send(response);
 };
 
-var checkMissingParams = function(res, params) {
+var checkMissingParams = function(res, params, strict) {
+  if (typeof strict === "undefined") {
+    strict = false;
+  }
   var missingParamNames = [];
   _.each(params, function(param, paramName) {
-    if (typeof param === "undefined") {
+    if (typeof param === "undefined" || (strict && !param)) {
       missingParamNames.push(paramName);
     }
   });
@@ -207,14 +210,18 @@ exports.findElements = function(req, res) {
   var strategy = req.body.using
     , selector = req.body.value;
 
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+  if (checkMissingParams(res, {strategy: strategy, selector: selector}, true)) {
+    req.device.findElements(strategy, selector, getResponseHandler(req, res));
+  }
 };
 
 exports.findElement = function(req, res) {
   var strategy = req.body.using
     , selector = req.body.value;
 
-  req.device.findElement(strategy, selector, getResponseHandler(req, res));
+  if (checkMissingParams(res, {strategy: strategy, selector: selector}, true)) {
+    req.device.findElement(strategy, selector, getResponseHandler(req, res));
+  }
 };
 
 exports.findElementFromElement = function(req, res) {

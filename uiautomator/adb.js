@@ -40,6 +40,8 @@ var ADB = function(opts, android) {
   this.socketClient = null;
   this.proc = null;
   this.onSocketReady = noop;
+  this.onExit = noop;
+  this.alreadyExited = false;
   this.portForwarded = false;
   this.debugMode = true;
   this.fastReset = opts.fastReset;
@@ -271,6 +273,7 @@ ADB.prototype.checkFastReset = function(cb) {
 };
 
 ADB.prototype.start = function(onReady, onExit) {
+  this.onExit = onExit;
   var doRun = _.bind(function() {
     this.runBootstrap(onReady, onExit);
   }, this);
@@ -402,7 +405,10 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       return;
     }
 
-    exitCb(code);
+    if (!this.alreadyExited) {
+      this.alreadyExited = true;
+      exitCb(code);
+    }
   }, this));
 
 
@@ -470,6 +476,13 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
 };
 
 ADB.prototype.sendShutdownCommand = function(cb) {
+  setTimeout(_.bind(function() {
+    if (!this.alreadyExited) {
+      logger.warn("Android did not shut down fast enough, calling it gone");
+      this.alreadyExited = true;
+      this.onExit(1);
+    }
+  }, this), 7000);
   this.sendCommand('shutdown', null, cb);
 };
 

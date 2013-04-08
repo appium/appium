@@ -19,7 +19,7 @@ var describeWithSession = function(desc, tests) {
         should.not.exist(err);
         res.statusCode.should.equal(303);
         should.ok(res.headers.location);
-        request.get(serverUrl + res.headers.location, function(err, res, body) {
+        request.get(res.headers.location, function(err, res, body) {
           should.not.exist(err);
           res.statusCode.should.equal(200);
           body = JSON.parse(body);
@@ -50,6 +50,15 @@ describe('JSONWP request', function() {
         res.headers['content-type'].should.equal('text/plain');
         res.statusCode.should.equal(404);
         should.ok(body);
+        done();
+      });
+    });
+  });
+  describe('to get list of sessions', function() {
+    it('should return empty list if no session active', function(done) {
+      request.get(serverHub + 's', function(err, res, body) {
+        should.not.exist(err);
+        JSON.parse(body).value.should.eql([]);
         done();
       });
     });

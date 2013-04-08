@@ -554,7 +554,7 @@ Android.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {
 };
 
 Android.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb) {
-    cb(new NotYetImplementedError(), null);
+  this.proxy(["element:flick", {xoffset: xoffset, yoffset: yoffset, speed: speed, elementId: elementId}], cb);
 };
 
 Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount, elId, cb) {

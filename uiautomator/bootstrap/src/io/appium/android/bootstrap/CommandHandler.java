@@ -41,7 +41,7 @@ public abstract class CommandHandler {
     return retPos;
   }
 
-  protected static Point GetAbsPos(final Point point)
+  protected static Point GetDeviceAbsPos(final Point point)
       throws InvalidCoordinatesException {
     final UiDevice d = UiDevice.getInstance();
     final Point retPos = new Point(point); // copy inputed point

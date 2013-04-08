@@ -1,5 +1,8 @@
 package io.appium.android.bootstrap;
 
+import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
+import io.appium.android.bootstrap.utils.Point;
+
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -33,6 +36,36 @@ public abstract class CommandHandler {
     } else {
       retPos.add(coordVals[0].intValue());
       retPos.add(coordVals[1].intValue());
+    }
+
+    return retPos;
+  }
+
+  protected static Point GetAbsPos(final Point point)
+      throws InvalidCoordinatesException {
+    final UiDevice d = UiDevice.getInstance();
+    final Point retPos = new Point(point); // copy inputed point
+
+    final Double width = new Double(d.getDisplayWidth());
+    if (point.x < 1) {
+      retPos.x = width * point.x;
+    }
+
+    if (retPos.x > width || retPos.x < 0) {
+      throw new InvalidCoordinatesException("X coordinate ("
+          + retPos.x.toString() + " is outside of screen width: "
+          + width.toString());
+    }
+
+    final Double height = new Double(d.getDisplayHeight());
+    if (point.y < 1) {
+      retPos.y = height * point.y;
+    }
+
+    if (retPos.y > height || retPos.y < 0) {
+      throw new InvalidCoordinatesException("Y coordinate ("
+          + retPos.y.toString() + " is outside of screen height: "
+          + height.toString());
     }
 
     return retPos;

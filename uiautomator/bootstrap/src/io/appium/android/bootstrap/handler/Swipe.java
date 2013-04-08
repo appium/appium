@@ -2,14 +2,19 @@ package io.appium.android.bootstrap.handler;
 
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.AndroidElement;
 import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.Logger;
+import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
+import io.appium.android.bootstrap.utils.Point;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.json.JSONException;
 
 import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 
 /**
  * This handler is used to swipe.
@@ -33,26 +38,40 @@ public class Swipe extends CommandHandler {
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
     final Hashtable<String, Object> params = command.params();
-    final Double startX = Double.parseDouble(params.get("startX").toString());
-    final Double startY = Double.parseDouble(params.get("startY").toString());
-    final Double endX = Double.parseDouble(params.get("endX").toString());
-    final Double endY = Double.parseDouble(params.get("endY").toString());
+    final Point start = new Point(params.get("startX"), params.get("startY"));
+    final Point end = new Point(params.get("endX"), params.get("endY"));
     final Integer steps = (Integer) params.get("steps");
+    final UiDevice device = UiDevice.getInstance();
+
+    Point absStartPos = new Point();
+    Point absEndPos = new Point();
 
     if (command.isElementCommand()) {
-      // Can this command run on the element it's self?
-      // swipe on an element is handled by 4 different commands:
-      // swipeDown, swipeLeft, swipeRight, and swipeUp
-      // We have to figure out which to call and position it correctly...
+      try {
+        final AndroidElement el = command.getElement();
+        absStartPos = el.getAbsolutePosition(start);
+        absEndPos = el.getAbsolutePosition(end, false);
+      } catch (final ElementNotInHashException e) {
+        return getErrorResult(e.getMessage());
+      } catch (final UiObjectNotFoundException e) {
+        return getErrorResult(e.getMessage());
+      } catch (final InvalidCoordinatesException e) {
+        return getErrorResult(e.getMessage());
+      }
     } else {
-      final UiDevice device = UiDevice.getInstance();
-      final Double[] coords = { startX, startY, endX, endY };
-      final ArrayList<Integer> posVals = absPosFromCoords(coords);
-      final boolean rv = device.swipe(posVals.get(0), posVals.get(1),
-          posVals.get(2), posVals.get(3), steps);
-      return getSuccessResult(rv);
+      try {
+        absStartPos = GetAbsPos(start);
+        absEndPos = GetAbsPos(end);
+      } catch (final InvalidCoordinatesException e) {
+        return getErrorResult(e.getMessage());
+      }
     }
 
-    return getErrorResult("Error in swiping...");
+    Logger.info("Swiping from " + absStartPos.toString() + " to "
+        + absEndPos.toString() + " with steps: " + steps.toString());
+    final boolean rv = device.swipe(absStartPos.x.intValue(),
+        absStartPos.y.intValue(), absEndPos.x.intValue(),
+        absEndPos.y.intValue(), steps);
+    return getSuccessResult(rv);
   }
 }

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTest", "SimpleTest\SimpleTest.csproj", "{3C18D9A2-C814-408E-932F-00577CB8491B}"
 EndProject
 Global
@@ -13,6 +13,9 @@ Global
 		{3C18D9A2-C814-408E-932F-00577CB8491B}.Debug|x86.Build.0 = Debug|x86
 		{3C18D9A2-C814-408E-932F-00577CB8491B}.Release|x86.ActiveCfg = Release|x86
 		{3C18D9A2-C814-408E-932F-00577CB8491B}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = SimpleTest\SimpleTest.csproj

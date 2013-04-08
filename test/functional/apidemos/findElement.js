@@ -54,6 +54,16 @@ describeWd('find element(s)', function(h) {
       done();
     });
   });
+  it('should fail on empty locator', function(done) {
+    h.driver.elementsByTagName("", function(err) {
+      should.exist(err);
+      err.data.should.include("selector");
+      h.driver.elementsByTagName("text", function(err) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
 });
 
 describeWd('find element(s) from element', function(h) {

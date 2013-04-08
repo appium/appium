@@ -54,6 +54,7 @@ public class AndroidElement {
       InvalidCoordinatesException {
     final Rect rect = el.getBounds();
     final Point pos = new Point();
+    Logger.debug("Element bounds: " + rect.toShortString());
 
     if (point.x == 0) {
       pos.x = rect.width() * 0.5 + rect.left;

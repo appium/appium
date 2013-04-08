@@ -177,8 +177,15 @@ exports.getSession = function(req, res) {
 };
 
 exports.getSessions = function(req, res) {
-  respondSuccess(req, res,
-      [{id: req.appium.sessionId , capabilities: req.device.capabilities}]);
+  var sessions = [];
+  if (req.appium.sessionId !== null) {
+    sessions.push({
+      id: req.appium.sessionId
+      , capabilities: req.device.capabilities
+    });
+  }
+
+  respondSuccess(req, res, sessions);
 };
 
 exports.reset = function(req, res) {

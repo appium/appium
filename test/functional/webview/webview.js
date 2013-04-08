@@ -3,6 +3,7 @@
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
   , webviewTests = require("../../helpers/webview.js").buildTests
+  , _ = require('underscore')
   , should = require('should');
 
 describeWd('window handles', function(h) {
@@ -17,6 +18,15 @@ describeWd('window handles', function(h) {
     h.driver.windowHandles(function(err, handles) {
       should.not.exist(err);
       handles.length.should.be.above(0);
+      done();
+    });
+  });
+  it('window handles should be strings', function(done) {
+    h.driver.windowHandles(function(err, handles) {
+      handles.length.should.be.above(0);
+      _.each(handles, function(handle) {
+        (typeof handle).should.equal("string");
+      });
       done();
     });
   });

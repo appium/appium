@@ -454,7 +454,7 @@ IOS.prototype.onPageChange = function(pageArray) {
     this.onPageChangeCb();
     this.onPageChangeCb = null;
   }
-  this.windowHandleCache = pageArray;
+  this.windowHandleCache = _.map(pageArray, this.massagePage);
 };
 
 IOS.prototype.getAtomsElement = function(wdId) {
@@ -1524,10 +1524,15 @@ IOS.prototype.getWindowHandle = function(cb) {
   cb(err, response);
 };
 
+IOS.prototype.massagePage = function(page) {
+  page.id = page.id.toString();
+  return page;
+};
+
 IOS.prototype.getWindowHandles = function(cb) {
   var me = this;
   this.listWebFrames(function(pageArray) {
-    me.windowHandleCache = pageArray;
+    me.windowHandleCache = _.map(pageArray, me.massagePage);
     cb(null, {
       status: status.codes.Success.code
       , value: _.pluck(me.windowHandleCache, 'id')

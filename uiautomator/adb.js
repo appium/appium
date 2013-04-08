@@ -279,53 +279,54 @@ ADB.prototype.start = function(onReady, onExit) {
 
   var me = this;
   async.series(
-        [
-          function(cb) {
-            me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            var getDevices = function(innerCb) {
-              me.getConnectedDevices(function(err, devices) {
-                if (devices.length === 0 || err) {
-                  innerCb("Could not find a connected Android device.");
-                }
-                innerCb(null);
-              });
-            };
-            getDevices(function(err) {
-              if (err) {
-                logger.info("restarting...");
-                me.restartAdb(function() {
-                  getDevices(cb);
-                });
-              } else {
-                cb(null);
-              }
+    [
+      function(cb) {
+        me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        var getDevices = function(innerCb) {
+          me.getConnectedDevices(function(err, devices) {
+            if (devices.length === 0 || err) {
+              innerCb("Could not find a connected Android device.");
+            }
+            innerCb(null);
+          });
+        };
+        getDevices(function(err) {
+          if (err) {
+            logger.info("restarting...");
+            me.restartAdb(function() {
+              getDevices(cb);
             });
-          },
-          function(cb) {
-            me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            if (!me.appPackage) return onReady("appPackage must be set.");
-            me.checkFastReset(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.installApp(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.startApp(function(err) {
-              if (err) return onReady(err);
-              doRun(function(){ cb(null); });
-            });
+          } else {
+            cb(null);
           }
-        ]);
+        });
+      },
+      function(cb) {
+        me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        if (!me.appPackage) return onReady("appPackage must be set.");
+        me.checkFastReset(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.installApp(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.startApp(function(err) {
+          if (err) return onReady(err);
+          doRun(function(){ cb(null); });
+        });
+      }
+    ]
+  );
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {

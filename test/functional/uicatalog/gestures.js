@@ -53,7 +53,7 @@ describeWd('flick gesture', function(h) {
 });
 
 describeWd('swipe gesture', function(h) {
-  it.only('should work with wd function in pixels', function(done) {
+  it('should work with wd function in pixels', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
         h.driver.flick(0, -40, true, function(err) {
@@ -70,7 +70,7 @@ describeWd('swipe gesture', function(h) {
   it('should work with wd function in percentage units', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
-        h.driver.flick(0, -0.5, true, function(err) {
+        h.driver.flick(0, -0.15, true, function(err) {
           should.not.exist(err);
           element.getLocation(function(err, location2) {
             assert.equal(location.x, location.x);
@@ -84,7 +84,7 @@ describeWd('swipe gesture', function(h) {
   it('should work with mobile function in pixels', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
-        var opts = {startX: 50, startY: 400, endX: 50, endY: 0, duration: 2};
+        var opts = {startX: 50, startY: 400, endX: 50, endY: 300, duration: 2};
         h.driver.execute("mobile: swipe", [opts], function(err) {
           should.not.exist(err);
           element.getLocation(function(err, location2) {
@@ -99,7 +99,7 @@ describeWd('swipe gesture', function(h) {
   it('should work with mobile function in percent', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
-        var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.1, duration: 2};
+        var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.7, duration: 2};
         h.driver.execute("mobile: swipe", [opts], function(err) {
           should.not.exist(err);
           element.getLocation(function(err, location2) {

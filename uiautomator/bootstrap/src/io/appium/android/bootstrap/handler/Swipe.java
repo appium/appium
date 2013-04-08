@@ -60,8 +60,8 @@ public class Swipe extends CommandHandler {
       }
     } else {
       try {
-        absStartPos = GetAbsPos(start);
-        absEndPos = GetAbsPos(end);
+        absStartPos = GetDeviceAbsPos(start);
+        absEndPos = GetDeviceAbsPos(end);
       } catch (final InvalidCoordinatesException e) {
         return getErrorResult(e.getMessage());
       }

@@ -171,55 +171,55 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
   var cleanAPK = me.cleanAPK;
   var utf8 = 'utf8';
   async.series(
-        [
-          // Extract compiled manifest from manifest.xml.apk
-          function(cb) {
-            unzipFile(manifest + '.apk', function(err, stderr) {
-              if (err) {
-                logger.debug(stderr);
-                return cb(err);
-              }
-              cb(null);
-            });
-          },
-          // Insert compiled manfiest into /tmp/appPackage.clean.apk
-          function(cb) {
-            var cleanAPKSource = path.resolve(__dirname, '../app/android/Clean.apk');
-            logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
-
-            // Write clean apk to /tmp
-            ncp(cleanAPKSource, cleanAPK, function(err) { if (err) return cb(err); cb(null) });
-          },
-          function(cb) {
-            logger.debug("Testing tmp clean apk.");
-            testZipArchive(cleanAPK, function(err) { if (err) return cb(err); cb(null) });
-          },
-          function(cb) {
-            // -j = keep only the file, not the dirs
-            // -m = move manifest into target apk.
-            var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
-            logger.debug(replaceCmd);
-            exec(replaceCmd, {}, function(err, stderr, stdout) {
-              if (err) {
-                return cb(err);
-              }
-
-              logger.debug("Inserted manifest.");
-              cb(null);
-            });
-          },
-          // Resign clean apk and target apk
-          function(cb) {
-            var apks = [ cleanAPK ];
-            if (!skipAppSign) {
-              logger.debug("Skip app sign.");
-              apks.push(targetAPK);
-            }
-            me.sign(function(err) { if (err) return cb(err); cb(null) }, apks);
+    [
+      // Extract compiled manifest from manifest.xml.apk
+      function(cb) {
+        unzipFile(manifest + '.apk', function(err, stderr) {
+          if (err) {
+            logger.debug(stderr);
+            return cb(err);
           }
-        ],
-        // Invoke top level function cb
-        function(){ cb(null) });
+          cb(null);
+        });
+      },
+      // Insert compiled manfiest into /tmp/appPackage.clean.apk
+      function(cb) {
+        var cleanAPKSource = path.resolve(__dirname, '../app/android/Clean.apk');
+        logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
+
+        // Write clean apk to /tmp
+        ncp(cleanAPKSource, cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+      },
+      function(cb) {
+        logger.debug("Testing tmp clean apk.");
+        testZipArchive(cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+      },
+      function(cb) {
+        // -j = keep only the file, not the dirs
+        // -m = move manifest into target apk.
+        var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
+        logger.debug(replaceCmd);
+        exec(replaceCmd, {}, function(err, stderr, stdout) {
+          if (err) {
+            return cb(err);
+          }
+
+          logger.debug("Inserted manifest.");
+          cb(null);
+        });
+      },
+      // Resign clean apk and target apk
+      function(cb) {
+        var apks = [ cleanAPK ];
+        if (!skipAppSign) {
+          logger.debug("Skip app sign.");
+          apks.push(targetAPK);
+        }
+        me.sign(function(err) { if (err) return cb(err); cb(null) }, apks);
+      }
+    ],
+    // Invoke top level function cb
+    function(){ cb(null) });
 };
 
 // apks is an array of strings.

@@ -32,4 +32,16 @@ describeWd('basic', function(h) {
       setTimeout(next, 4000);
     });
   });
+  it('should not fail even when bad locator strats sent in', function(done) {
+    h.driver.elementByLinkText("foobar", function(err) {
+      should.exist(err);
+      err.status.should.equal(13);
+      err.cause.value.origValue.should.eql("link text is not a supported selector strategy");
+      h.driver.elementByName("Animation", function(err, el) {
+        should.not.exist(err);
+        should.exist(el);
+        done();
+      });
+    });
+  });
 });

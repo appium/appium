@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -32,31 +32,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Castle.Core">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\Ionic.Zip.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Selenium.WebDriverBackedSelenium">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\Selenium.WebDriverBackedSelenium.dll</HintPath>
-    </Reference>
-    <Reference Include="ThoughtWorks.Selenium.Core">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\ThoughtWorks.Selenium.Core.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="WebDriver">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\WebDriver.dll</HintPath>
-    </Reference>
-    <Reference Include="WebDriver.Support">
-      <HintPath>..\..\..\..\..\..\test\trunk\main\ExternalLibraries\Selenium\WebDriver.Support.dll</HintPath>
+      <HintPath>..\packages\Selenium.WebDriver.2.31.2\lib\net40\WebDriver.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

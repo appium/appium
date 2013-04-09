@@ -61,7 +61,7 @@ public class Find extends CommandHandler {
         + " with the contextId: " + contextId);
 
     final Boolean multiple = (Boolean) params.get("multiple");
-    final boolean isXpath = strategy.equals("xpath");
+    final boolean isXpath = strategy.equalsIgnoreCase("xpath");
 
     if (isXpath) {
       final JSONArray xpathPath = (JSONArray) params.get("path");

@@ -165,14 +165,13 @@ ADB.prototype.compileManifest = function(cb, manifest) {
           },
         ],
         // Invoke top level function cb
-        function(){ cb(null) });
+        function(){ cb(null); });
 };
 
 ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
   var me = this;
   var targetAPK = me.apkPath;
   var cleanAPK = me.cleanAPK;
-  var utf8 = 'utf8';
   async.series(
     [
       // Extract compiled manifest from manifest.xml.apk
@@ -191,22 +190,27 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
         logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
 
         // Write clean apk to /tmp
-        ncp(cleanAPKSource, cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+        ncp(cleanAPKSource, cleanAPK, function(err) {
+          if (err) return cb(err);
+          cb(null);
+        });
       },
       function(cb) {
         logger.debug("Testing tmp clean apk.");
-        testZipArchive(cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+        testZipArchive(cleanAPK, function(err) {
+          if (err) return cb(err);
+          cb(null);
+        });
       },
       function(cb) {
         // -j = keep only the file, not the dirs
         // -m = move manifest into target apk.
         var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
         logger.debug(replaceCmd);
-        exec(replaceCmd, {}, function(err, stderr, stdout) {
+        exec(replaceCmd, {}, function(err) {
           if (err) {
             return cb(err);
           }
-
           logger.debug("Inserted manifest.");
           cb(null);
         });
@@ -218,11 +222,14 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
           logger.debug("Skip app sign.");
           apks.push(targetAPK);
         }
-        me.sign(function(err) { if (err) return cb(err); cb(null) }, apks);
+        me.sign(function(err) {
+          if (err) return cb(err);
+          cb(null);
+        }, apks);
       }
     ],
     // Invoke top level function cb
-    function(){ cb(null) });
+    function(){ cb(null); });
 };
 
 // apks is an array of strings.
@@ -247,7 +254,7 @@ ADB.prototype.checkAppCert = function(cb) {
   var verifyPath = path.resolve(__dirname, '../app/android/verify.jar');
   var resign = 'java -jar "' + verifyPath + '" "' + this.apkPath + '"';
   logger.debug("Checking app cert: " + resign);
-  exec(resign, {}, function(err, stderr, stdout) {
+  exec(resign, {}, function(err) {
     if (err) {
       logger.debug("App not signed with debug cert.");
       return cb(false);
@@ -786,13 +793,15 @@ ADB.prototype.uninstallApp = function(cb) {
     me.requireDeviceId();
     me.requireApp();
     me.debug("Uninstalling app " + me.appPackage);
-    var cmd = me.adbCmd + " uninstall " + me.appPackage;
 
     me.uninstallApk(me.appPackage, function(err) {
       if (me.fastReset) {
         var cleanPkg = me.appPackage + '.clean';
         me.debug("Uninstalling app " + cleanPkg);
-        me.uninstallApk(cleanPkg, function(err) {if (err) return cb(err); cb(null)});
+        me.uninstallApk(cleanPkg, function(err) {
+          if (err) return cb(err);
+          cb(null);
+        });
       } else {
         if (err) return cb(err);
         cb(null);

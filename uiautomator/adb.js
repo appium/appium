@@ -40,6 +40,8 @@ var ADB = function(opts, android) {
   this.socketClient = null;
   this.proc = null;
   this.onSocketReady = noop;
+  this.onExit = noop;
+  this.alreadyExited = false;
   this.portForwarded = false;
   this.debugMode = true;
   this.fastReset = opts.fastReset;
@@ -108,16 +110,17 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   logger.debug("Created manifest");
 
   async.series(
-        [
-          function(cb) {
-            me.compileManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
-          },
-          function(cb) {
-            me.insertManifest(manifest, skipAppSign, function(err) { if (err) return cb(err); cb(null); });
-          },
-        ],
-        // Invoke top level function cb
-        function(){ cb(null) });
+    [
+      function(cb) {
+        me.compileManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
+      },
+      function(cb) {
+        me.insertManifest(manifest, skipAppSign, function(err) { if (err) return cb(err); cb(null); });
+      },
+    ],
+    // Invoke top level function cb
+    function(){ cb(null); }
+  );
 };
 
 ADB.prototype.compileManifest = function(cb, manifest) {
@@ -171,55 +174,55 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
   var cleanAPK = me.cleanAPK;
   var utf8 = 'utf8';
   async.series(
-        [
-          // Extract compiled manifest from manifest.xml.apk
-          function(cb) {
-            unzipFile(manifest + '.apk', function(err, stderr) {
-              if (err) {
-                logger.debug(stderr);
-                return cb(err);
-              }
-              cb(null);
-            });
-          },
-          // Insert compiled manfiest into /tmp/appPackage.clean.apk
-          function(cb) {
-            var cleanAPKSource = path.resolve(__dirname, '../app/android/Clean.apk');
-            logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
-
-            // Write clean apk to /tmp
-            ncp(cleanAPKSource, cleanAPK, function(err) { if (err) return cb(err); cb(null) });
-          },
-          function(cb) {
-            logger.debug("Testing tmp clean apk.");
-            testZipArchive(cleanAPK, function(err) { if (err) return cb(err); cb(null) });
-          },
-          function(cb) {
-            // -j = keep only the file, not the dirs
-            // -m = move manifest into target apk.
-            var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
-            logger.debug(replaceCmd);
-            exec(replaceCmd, {}, function(err, stderr, stdout) {
-              if (err) {
-                return cb(err);
-              }
-
-              logger.debug("Inserted manifest.");
-              cb(null);
-            });
-          },
-          // Resign clean apk and target apk
-          function(cb) {
-            var apks = [ cleanAPK ];
-            if (!skipAppSign) {
-              logger.debug("Skip app sign.");
-              apks.push(targetAPK);
-            }
-            me.sign(function(err) { if (err) return cb(err); cb(null) }, apks);
+    [
+      // Extract compiled manifest from manifest.xml.apk
+      function(cb) {
+        unzipFile(manifest + '.apk', function(err, stderr) {
+          if (err) {
+            logger.debug(stderr);
+            return cb(err);
           }
-        ],
-        // Invoke top level function cb
-        function(){ cb(null) });
+          cb(null);
+        });
+      },
+      // Insert compiled manfiest into /tmp/appPackage.clean.apk
+      function(cb) {
+        var cleanAPKSource = path.resolve(__dirname, '../app/android/Clean.apk');
+        logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
+
+        // Write clean apk to /tmp
+        ncp(cleanAPKSource, cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+      },
+      function(cb) {
+        logger.debug("Testing tmp clean apk.");
+        testZipArchive(cleanAPK, function(err) { if (err) return cb(err); cb(null) });
+      },
+      function(cb) {
+        // -j = keep only the file, not the dirs
+        // -m = move manifest into target apk.
+        var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
+        logger.debug(replaceCmd);
+        exec(replaceCmd, {}, function(err, stderr, stdout) {
+          if (err) {
+            return cb(err);
+          }
+
+          logger.debug("Inserted manifest.");
+          cb(null);
+        });
+      },
+      // Resign clean apk and target apk
+      function(cb) {
+        var apks = [ cleanAPK ];
+        if (!skipAppSign) {
+          logger.debug("Skip app sign.");
+          apks.push(targetAPK);
+        }
+        me.sign(function(err) { if (err) return cb(err); cb(null) }, apks);
+      }
+    ],
+    // Invoke top level function cb
+    function(){ cb(null) });
 };
 
 // apks is an array of strings.
@@ -227,8 +230,14 @@ ADB.prototype.sign = function(cb, apks) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
   var resign = 'java -jar "' + signPath + '" ' + apks.join('" "') + ' --override';
   logger.debug("Resigning: " + resign);
-  exec(resign, {}, function(err, stderr, stdout) {
-    if (err) return cb(err);
+  exec(resign, {}, function(err, stdout, stderr) {
+    if (stderr.indexOf("Input is not an existing file") !== -1) {
+      return cb(new Error("Could not sign one or more apks. Are you sure " +
+                          "the file paths are correct: " +
+                          JSON.stringify(apks)));
+    } else if (err) {
+      return cb(err);
+    }
     cb(null);
   });
 };
@@ -271,6 +280,7 @@ ADB.prototype.checkFastReset = function(cb) {
 };
 
 ADB.prototype.start = function(onReady, onExit) {
+  this.onExit = onExit;
   var doRun = _.bind(function() {
     this.runBootstrap(onReady, onExit);
   }, this);
@@ -279,53 +289,56 @@ ADB.prototype.start = function(onReady, onExit) {
 
   var me = this;
   async.series(
-        [
-          function(cb) {
-            me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            var getDevices = function(innerCb) {
-              me.getConnectedDevices(function(err, devices) {
-                if (devices.length === 0 || err) {
-                  innerCb("Could not find a connected Android device.");
-                }
-                innerCb(null);
-              });
-            };
-            getDevices(function(err) {
-              if (err) {
-                logger.info("restarting...");
-                me.restartAdb(function() {
-                  getDevices(cb);
-                });
-              } else {
-                cb(null);
-              }
+    [
+      function(cb) {
+        me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        var getDevices = function(innerCb) {
+          me.getConnectedDevices(function(err, devices) {
+            if (devices.length === 0 || err) {
+              innerCb("Could not find a connected Android device.");
+            }
+            innerCb(null);
+          });
+        };
+        getDevices(function(err) {
+          if (err) {
+            logger.info("restarting...");
+            me.restartAdb(function() {
+              getDevices(cb);
             });
-          },
-          function(cb) {
-            me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            if (!me.appPackage) return onReady("appPackage must be set.");
-            me.checkFastReset(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.installApp(function(err) { if (err) return onReady(err); cb(null); });
-          },
-          function(cb) {
-            me.startApp(function(err) {
-              if (err) return onReady(err);
-              doRun(function(){ cb(null); });
-            });
+          } else {
+            cb(null);
           }
-        ]);
+        });
+      },
+      function(cb) {
+        me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        if (!me.appPackage) return onReady("appPackage must be set.");
+        me.checkFastReset(function(err) {
+          if (err) return onReady(err); cb(null);
+        });
+      },
+      function(cb) {
+        me.installApp(function(err) { if (err) return onReady(err); cb(null); });
+      },
+      function(cb) {
+        me.startApp(function(err) {
+          if (err) return onReady(err);
+          doRun(function(){ cb(null); });
+        });
+      }
+    ]
+  );
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {
@@ -401,7 +414,10 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       return;
     }
 
-    exitCb(code);
+    if (!this.alreadyExited) {
+      this.alreadyExited = true;
+      exitCb(code);
+    }
   }, this));
 
 
@@ -469,6 +485,13 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
 };
 
 ADB.prototype.sendShutdownCommand = function(cb) {
+  setTimeout(_.bind(function() {
+    if (!this.alreadyExited) {
+      logger.warn("Android did not shut down fast enough, calling it gone");
+      this.alreadyExited = true;
+      this.onExit(1);
+    }
+  }, this), 7000);
   this.sendCommand('shutdown', null, cb);
 };
 

@@ -13,7 +13,7 @@ function getResponseHandler(req, res) {
     if (typeof response === "undefined" || response === null) {
       response = {};
     }
-    if (err !== null && typeof err.status !== 'undefined' && typeof err.value !== 'undefined') {
+    if (err !== null && typeof err !== "undefined" && typeof err.status !== 'undefined' && typeof err.value !== 'undefined') {
       throw new Error("Looks like you passed in a response object as the " +
                       "first param to getResponseHandler. Err is always the " +
                       "first param! Fix your codes!");
@@ -75,6 +75,11 @@ var respondError = function(req, res, statusObj, value) {
   }
 
   if (typeof newValue === "object") {
+    if (_.has(value, "message")) {
+      // make sure this doesn't get obliterated
+      value.origValue = value.message;
+      message += " (Original error: " + value.message + ")";
+    }
     newValue = _.extend({message: message}, value);
   } else {
     newValue = {message: message, origValue: value};

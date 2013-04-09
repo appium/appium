@@ -69,9 +69,22 @@ Android.prototype.start = function(cb, onDie) {
   var didLaunch = false;
 
   var onLaunch = _.bind(function(err) {
+    var skipRelaunchOn = [
+      'App never showed up'
+      , 'Could not sign one or more apks'
+    ];
+    var checkShouldSkipRelaunch = function(msg) {
+      var skip = false;
+      _.each(skipRelaunchOn, function(skipMsg) {
+        skip = skip || msg.indexOf(skipMsg) !== -1;
+      });
+      return skip;
+    };
     if (err) {
       // This message is from adb.js. Must update when adb.js changes.
-      if (err.message === null || typeof err.message === 'undefined' || err.message.indexOf('App never showed up') === -1) {
+      if (err.message === null ||
+          typeof err.message === 'undefined' ||
+          !checkShouldSkipRelaunch(err.message.toString())) {
         logger.error("Relaunching adb....");
         var me = this;
         this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });

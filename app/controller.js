@@ -75,7 +75,7 @@ var respondError = function(req, res, statusObj, value) {
   }
 
   if (typeof newValue === "object") {
-    if (_.has(value, "message")) {
+    if (newValue !== null && _.has(value, "message")) {
       // make sure this doesn't get obliterated
       value.origValue = value.message;
       message += " (Original error: " + value.message + ")";

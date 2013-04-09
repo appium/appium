@@ -3,10 +3,13 @@
 
 var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
+  , badAppPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debugz.apk")
   , appPkg = "com.example.android.apis"
   , appAct = "ApiDemos"
-  , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
-      "android", appPkg, appAct)
+  , driverBlock = require("../../helpers/driverblock.js")
+  , describeWd = driverBlock.describeForApp(appPath, "android", appPkg, appAct)
+  , describeBad = driverBlock.describeForApp(badAppPath, "android", appPkg,
+      appAct)
   , should = require('should');
 
 describeWd('basic', function(h) {
@@ -45,3 +48,12 @@ describeWd('basic', function(h) {
     });
   });
 });
+
+describeBad('bad app path', function(h) {
+  it('should throw an error', function(done) {
+    should.exist(h.connError);
+    var err = JSON.parse(h.connError.data);
+    err.value.origValue.should.include("Could not sign one or more apks");
+    done();
+  });
+}, null, null, null, {expectConnError: true});

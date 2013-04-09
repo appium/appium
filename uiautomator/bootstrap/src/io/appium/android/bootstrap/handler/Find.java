@@ -62,17 +62,24 @@ public class Find extends CommandHandler {
     if (strategy == Strategy.DYNAMIC) {
       Logger.debug("Finding dynamic.");
       final JSONArray selectors = (JSONArray) params.get("selector");
-      final JSONArray results = new JSONArray();
+      // Return the first element of the first selector that matches.
+      JSONObject result = new JSONObject();
+      Logger.debug(selectors.toString());
       try {
         for (int selIndex = 0; selIndex < selectors.length(); selIndex++) {
-          final UiSelector sel = dynamic.get((JSONArray) selectors.get(selIndex));
-          final JSONArray tmp = fetchElements(sel, contextId);
-
-          for (int tmpIndex = 0; tmpIndex < tmp.length(); tmpIndex++) {
-            results.put(tmp.get(tmpIndex));
+          final UiSelector sel = dynamic.get((JSONArray) selectors
+              .get(selIndex));
+          Logger.debug(sel.toString());
+          try {
+            // fetch will throw on not found.
+            result = fetchElement(sel, contextId);
+            return getSuccessResult(result);
+          } catch (final ElementNotFoundException enf) {
+            Logger.debug("Not found.");
           }
         }
-        return getSuccessResult(results);
+        return getSuccessResult(new AndroidCommandResult(
+            WDStatus.NO_SUCH_ELEMENT, "No element found."));
       } catch (final Exception e) {
         return getErrorResult(e.getMessage());
       }

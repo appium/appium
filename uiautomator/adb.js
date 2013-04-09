@@ -219,8 +219,10 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
       function(cb) {
         var apks = [ cleanAPK ];
         if (!skipAppSign) {
-          logger.debug("Skip app sign.");
+          logger.debug("Signing app and clean apk.");
           apks.push(targetAPK);
+        } else {
+          logger.debug("Skip app sign. Sign clean apk.");
         }
         me.sign(function(err) {
           if (err) return cb(err);

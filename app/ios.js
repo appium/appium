@@ -390,7 +390,7 @@ IOS.prototype.onPageChange = function(pageArray) {
   var newPages = [];
   var cachedHandles = _.pluck(this.windowHandleCache, 'id');
   _.each(newIds, function(id) {
-    if (!_.contains(cachedHandles, parseInt(id, 10))) {
+    if (!_.contains(cachedHandles, id)) {
       newPages.push(id);
     }
   });
@@ -399,7 +399,7 @@ IOS.prototype.onPageChange = function(pageArray) {
     logger.info("We don't appear to have window set yet, ignoring");
   } else if (newPages.length) {
     logger.info("We have new pages, going to select page " + newPages[0]);
-    newPage = parseInt(newPages[0], 10);
+    newPage = newPages[0];
   } else if (!_.contains(newIds, me.curWindowHandle.toString())) {
     logger.info("New page listing from remote debugger doesn't contain " +
                  "current window, let's assume it's closed");
@@ -442,7 +442,7 @@ IOS.prototype.onPageChange = function(pageArray) {
 
   if (newPage !== null) {
     this.selectingNewPage = true;
-    this.remote.selectPage(newPage, function() {
+    this.remote.selectPage(parseInt(newPage, 10), function() {
       me.selectingNewPage = false;
       me.curWindowHandle = newPage;
       if (me.onPageChangeCb !== null) {
@@ -1547,7 +1547,7 @@ IOS.prototype.setWindow = function(name, cb) {
     var next = function() {
       me.processingRemoteCmd = true;
       me.remote.selectPage(pageIdKey, function() {
-        me.curWindowHandle = pageIdKey;
+        me.curWindowHandle = pageIdKey.toString();
         cb(null, {
           status: status.codes.Success.code
           , value: ''

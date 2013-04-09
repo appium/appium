@@ -14,7 +14,6 @@ describeWd('mobile find', function(h) {
     h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
       should.not.exist(err);
       should.exist(el);
-      console.log(typeof el);
       el.text(function(err, text) {
         should.not.exist(err);
         text.should.eql("Animation");

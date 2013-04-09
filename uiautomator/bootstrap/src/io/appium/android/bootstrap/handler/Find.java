@@ -12,6 +12,7 @@ import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
 import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
+import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class Find extends CommandHandler {
         + " with the contextId: " + contextId);
 
     final Boolean multiple = (Boolean) params.get("multiple");
-    final boolean isXpath = strategy.equals("xpath");
+    final boolean isXpath = strategy.equalsIgnoreCase("xpath");
 
     if (isXpath) {
       final JSONArray xpathPath = (JSONArray) params.get("path");
@@ -83,6 +84,8 @@ public class Find extends CommandHandler {
         return getErrorResult(e.getMessage());
       } catch (final ElementNotFoundException e) {
         return getErrorResult(e.getMessage());
+      } catch (final UnallowedTagNameException e) {
+        return getErrorResult(e.getMessage());
       } catch (final ElementNotInHashException e) {
         return getErrorResult(e.getMessage());
       } catch (final UiObjectNotFoundException e) {
@@ -101,6 +104,8 @@ public class Find extends CommandHandler {
       } catch (final ElementNotFoundException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
+      } catch (final UnallowedTagNameException e) {
+        return getErrorResult(e.getMessage());
       } catch (final AndroidCommandException e) {
         return getErrorResult(e.getMessage());
       } catch (final ElementNotInHashException e) {
@@ -173,7 +178,7 @@ public class Find extends CommandHandler {
    */
   private UiSelector getSelector(final Strategy strategy, final String text,
       final Boolean many) throws InvalidStrategyException,
-      AndroidCommandException {
+      AndroidCommandException, UnallowedTagNameException {
     UiSelector sel = new UiSelector();
 
     switch (strategy) {
@@ -225,7 +230,7 @@ public class Find extends CommandHandler {
    */
   private UiSelector getSelectorForXpath(final JSONArray path,
       final String attr, String constraint, final boolean substr)
-      throws AndroidCommandException {
+      throws AndroidCommandException, UnallowedTagNameException {
     UiSelector s = new UiSelector();
     JSONObject pathObj;
     String nodeType;

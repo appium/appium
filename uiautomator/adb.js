@@ -229,8 +229,14 @@ ADB.prototype.sign = function(cb, apks) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
   var resign = 'java -jar "' + signPath + '" ' + apks.join('" "') + ' --override';
   logger.debug("Resigning: " + resign);
-  exec(resign, {}, function(err, stderr, stdout) {
-    if (err) return cb(err);
+  exec(resign, {}, function(err, stdout, stderr) {
+    if (stderr.indexOf("Input is not an existing file") !== -1) {
+      return cb(new Error("Could not sign one or more apks. Are you sure " +
+                          "the file paths are correct: " +
+                          JSON.stringify(apks)));
+    } else if (err) {
+      return cb(err);
+    }
     cb(null);
   });
 };

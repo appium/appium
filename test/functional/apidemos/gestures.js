@@ -108,7 +108,7 @@ describeWd('gestures', function(h) {
     h.driver.elementByName("Views", function(err) {
       // shouldn't be visible
       should.exist(err);
-      h.driver.flick(0, -500, function(err) {
+      h.driver.flick(0, -100, function(err) {
         should.not.exist(err);
         h.driver.elementByName("Views", function(err, el) {
           should.not.exist(err);

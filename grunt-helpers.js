@@ -35,6 +35,7 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
     , launch: app ? true : false
     , log: path.resolve(__dirname, "appium.log")
     , address: '127.0.0.1'
+    , androidDeviceReadyTimeout: 5
     , keepArtifacts: false }
     , readyCb
     , doneCb

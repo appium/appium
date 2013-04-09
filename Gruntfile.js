@@ -34,24 +34,24 @@ module.exports = function(grunt) {
     }
     , mochaTestWithServer: {
       TestApp: ['ios', {
-        functional: ['test/functional/testapp/*.js']
+        functional: ['test/functional/testapp']
         , server: ['test/functional/appium/appium.js'
                    , 'test/functional/appium/jsonwp.js']
       }]
       , UICatalog: ['ios', {
-        functional: ['test/functional/uicatalog/*.js']
+        functional: ['test/functional/uicatalog']
       }]
       , WebViewApp: ['ios', {
-        functional: ['test/functional/webview/*.js']
+        functional: ['test/functional/webview']
       }]
       , ApiDemos: ['android', {
-        functional: ['test/functional/apidemos/*.js']
+        functional: ['test/functional/apidemos']
       }]
       , Safari: ['ios', {
-        functional: ['test/functional/safari/*.js']
+        functional: ['test/functional/safari']
       }]
       , Preferences: ['ios', {
-        functional: ['test/functional/prefs/*.js']
+        functional: ['test/functional/prefs']
       }]
     }
     , mochaTestConfig: {

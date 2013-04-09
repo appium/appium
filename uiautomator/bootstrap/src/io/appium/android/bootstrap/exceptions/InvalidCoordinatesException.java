@@ -7,6 +7,7 @@ package io.appium.android.bootstrap.exceptions;
  * @param msg
  *          A descriptive message describing the error.
  */
+@SuppressWarnings("serial")
 public class InvalidCoordinatesException extends Exception {
   public InvalidCoordinatesException(final String msg) {
     super(msg);

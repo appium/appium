@@ -9,6 +9,7 @@ import io.appium.android.bootstrap.AndroidCommand;
  * @param msg
  *          A descriptive message describing the error.
  */
+@SuppressWarnings("serial")
 public class AndroidCommandException extends Exception {
 
   public AndroidCommandException(final String msg) {

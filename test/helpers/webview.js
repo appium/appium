@@ -382,7 +382,7 @@ module.exports.buildTests = function(webviewType) {
           el.getLocation(function(err, loc) {
             should.not.exist(err);
             loc.x.should.equal(10);
-            [512, 510, 417, 387].should.include(loc.y);
+            [515, 512, 510, 417, 387].should.include(loc.y);
             done();
           });
         });
@@ -634,6 +634,7 @@ module.exports.buildTests = function(webviewType) {
         h.driver.frame("first", function(err) {
           should.not.exist(err);
           h.driver.execute("return document.getElementsByTagName('h1')[0].innerHTML;", function(err, res) {
+            should.not.exist(err);
             res.should.equal("Sub frame 1");
             done();
           });

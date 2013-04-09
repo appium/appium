@@ -6,6 +6,7 @@ package io.appium.android.bootstrap.exceptions;
  * @author <a href="https://github.com/xuru">xuru</a>
  */
 
+@SuppressWarnings("serial")
 public class ElementNotFoundException extends Exception {
   public ElementNotFoundException() {
     super("Could not find an element using supplied strategy");

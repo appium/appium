@@ -316,6 +316,13 @@ exports.mobileSource = function(req, res) {
   }
 };
 
+exports.find = function(req, res) {
+  var strategy = "dynamic"
+    , selector = req.body;
+
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+};
+
 exports.mobileSwipe = function(req, res) {
   var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
@@ -757,6 +764,7 @@ var mobileCmdMap = {
   , 'leaveWebView': exports.leaveWebView
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
+  , 'find': exports.find
 };
 
 exports.produceError = function(req, res) {

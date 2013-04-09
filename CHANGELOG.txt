@@ -1,4 +1,33 @@
 -------------------------------------
+CHANGES IN VERSION 0.2.3 (from 0.2.2)
+-------------------------------------
+[GENERAL]
+- removed bloated appium.io submodule, replaced with no-binary one
+- Fix plist resetting regression (#342)
+- Fix to ensure GET /sessions doesn't return false information
+
+[IOS]
+- Allow instruments to find node binaries in MacPorts default location
+- Allow instruments to find node binaries from Appium.app
+- Rotate screenshots to match orientation of device
+- Fix python examples
+- Webview: add tests for implicit attributes
+- Made sure window handles are always strings
+- Reduced flakiness of swipe tests
+- Added a Sauce Connect example
+- C# example updates
+- Fixed a few minor regressions
+
+[ANDROID]
+- Large refactoring of bootstrap code
+- Moved ApiDemos code into a submodule which is included and built for tests
+- Fix install command
+- Support for element-based swiping
+- Use selenium touch actions for flick()
+- Some error message improvements
+- Make sure we lint adb.js
+
+-------------------------------------
 CHANGES IN VERSION 0.2.2 (from 0.2.1)
 -------------------------------------
 [IOS]

@@ -30,7 +30,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   caps = (typeof caps === "undefined" || caps === null) ? _.clone(defaultCaps) : caps;
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
   var driverHolder = {driver: null, sessionId: null};
-  var expectConnError = extraCaps.expectConnError;
+  var expectConnError = extraCaps && extraCaps.expectConnError;
 
   beforeEach(function(done) {
     driverHolder.driver = wd.remote(host, port);

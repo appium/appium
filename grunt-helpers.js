@@ -72,6 +72,7 @@ module.exports.runMochaTests = function(grunt, appName, testType, deviceType, cb
     options.reporter = "tap";
   }
   var args = ['-t', options.timeout, '-R', options.reporter, '--colors'];
+  var mochaFiles = [];
   var fileConfig = grunt.config(['mochaTestWithServer']);
   var configAppDevice, nameOk, deviceOk, configAppTests;
   _.each(fileConfig, function(config, configAppName) {
@@ -84,7 +85,7 @@ module.exports.runMochaTests = function(grunt, appName, testType, deviceType, cb
         if (testType == "*" || testType == testKey) {
           _.each(testFiles, function(file) {
             _.each(grunt.file.expand(file), function(file) {
-              args.push(file);
+              mochaFiles.push(file);
             });
           });
         }
@@ -92,19 +93,28 @@ module.exports.runMochaTests = function(grunt, appName, testType, deviceType, cb
     }
   });
 
-  var mochaProc = spawn('mocha', args, {cwd: __dirname});
-  mochaProc.stdout.setEncoding('utf8');
-  mochaProc.stderr.setEncoding('utf8');
-  mochaProc.stdout.on('data', function(data) {
-    grunt.log.write(data);
-  });
-  mochaProc.stderr.on('data', function(data) {
-    grunt.log.write(data);
-  });
-  mochaProc.on('exit', function(code) {
-    cb(code);
-  });
-
+  var exitCodes = [];
+  var runMochaProc = function() {
+    var file = mochaFiles.shift();
+    if (typeof file !== "undefined") {
+      var mochaProc = spawn('mocha', args.concat(file), {cwd: __dirname});
+      mochaProc.stdout.setEncoding('utf8');
+      mochaProc.stderr.setEncoding('utf8');
+      mochaProc.stdout.on('data', function(data) {
+        grunt.log.write(data);
+      });
+      mochaProc.stderr.on('data', function(data) {
+        grunt.log.write(data);
+      });
+      mochaProc.on('exit', function(code) {
+        exitCodes.push(code);
+        runMochaProc();
+      });
+    } else {
+      cb(_.max(exitCodes) || null);
+    }
+  };
+  runMochaProc();
 };
 
 module.exports.tail = function(grunt, filename, cb) {

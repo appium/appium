@@ -27,6 +27,8 @@ describeWd('gestures', function(h) {
     });
   });
   it('should click via x/y pct', function(done) {
+    // this test depends on having a certain size screen, obviously
+    // I use a nexus something or other phone style thingo
     h.driver.execute("mobile: tap", [{x: 0.6, y: 0.8}], function(err) {
       should.not.exist(err);
       var next = function() {
@@ -34,7 +36,7 @@ describeWd('gestures', function(h) {
           should.not.exist(err);
           els[1].text(function(err, text) {
             should.not.exist(err);
-            text.should.equal("Assets");
+            text.should.equal("Morse Code");
             done();
           });
         });
@@ -106,7 +108,7 @@ describeWd('gestures', function(h) {
     h.driver.elementByName("Views", function(err) {
       // shouldn't be visible
       should.exist(err);
-      h.driver.flick(0, -500, function(err) {
+      h.driver.flick(0, -100, function(err) {
         should.not.exist(err);
         h.driver.elementByName("Views", function(err, el) {
           should.not.exist(err);

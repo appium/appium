@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap;
 
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,10 +36,10 @@ public class AndroidElementClassMap {
    * @throws AndroidCommandException
    */
   public static String match(String selector_text)
-      throws AndroidCommandException {
+      throws AndroidCommandException, UnallowedTagNameException {
     final AndroidElementClassMap inst = AndroidElementClassMap.getInstance();
     if (inst.unallowed.contains(selector_text)) {
-      throw new AndroidCommandException(selector_text);
+      throw new UnallowedTagNameException(selector_text);
     } else {
       final String mappedSel = inst.map.get(selector_text);
       if (mappedSel != null) {

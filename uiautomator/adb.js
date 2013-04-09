@@ -235,7 +235,7 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
 // apks is an array of strings.
 ADB.prototype.sign = function(cb, apks) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
-  var resign = 'java -jar "' + signPath + '" ' + apks.join('" "') + ' --override';
+  var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning: " + resign);
   exec(resign, {}, function(err, stdout, stderr) {
     if (stderr.indexOf("Input is not an existing file") !== -1) {

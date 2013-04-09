@@ -324,7 +324,9 @@ ADB.prototype.start = function(onReady, onExit) {
       },
       function(cb) {
         if (!me.appPackage) return onReady("appPackage must be set.");
-        me.checkFastReset(function(err) { if (err) return onReady(err); cb(null); });
+        me.checkFastReset(function(err) {
+          if (err) return onReady(err); cb(null);
+        });
       },
       function(cb) {
         me.installApp(function(err) { if (err) return onReady(err); cb(null); });

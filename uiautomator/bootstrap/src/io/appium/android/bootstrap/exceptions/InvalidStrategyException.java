@@ -10,6 +10,7 @@ import io.appium.android.bootstrap.selector.Strategy;
  *          A descriptive message describing the error.
  * @see {@link Strategy}
  */
+@SuppressWarnings("serial")
 public class InvalidStrategyException extends Exception {
   public InvalidStrategyException(final String msg) {
     super(msg);

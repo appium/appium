@@ -9,6 +9,7 @@ package io.appium.android.bootstrap.exceptions;
  *          A descriptive message describing the error.
  * @see {@link AndroidElementHash}
  */
+@SuppressWarnings("serial")
 public class ElementNotInHashException extends Exception {
   public ElementNotInHashException(final String message) {
     super(message);

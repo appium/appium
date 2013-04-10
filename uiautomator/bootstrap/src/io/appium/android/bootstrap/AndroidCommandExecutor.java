@@ -7,6 +7,7 @@ import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetText;
+import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
 
@@ -24,6 +25,7 @@ class AndroidCommandExecutor {
   private static HashMap<String, CommandHandler> map = new HashMap<String, CommandHandler>();
 
   static {
+    map.put("orientation", new Orientation());
     map.put("swipe", new Swipe());
     map.put("flick", new Flick());
     map.put("click", new Click());

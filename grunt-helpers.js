@@ -336,15 +336,24 @@ module.exports.buildAndroidApp = function(grunt, appName, cb) {
 };
 
 module.exports.installAndroidApp = function(grunt, appName, cb) {
+  var pkgMap = {'ApiDemos': 'com.example.android.apis'};
+  if (!_.has(pkgMap, appName)) {
+    var msg = "We don't know about appName " + appName + ", please edit " +
+              "grunt-helpers.js:installAndroidApp() to add it and its " +
+              "package identifier";
+    grunt.fatal(new Error(msg));
+  }
+
   var appPath = path.resolve(__dirname, "sample-code/apps/" + appName,
       "bin/" + appName + "-debug.apk");
-  exec("adb install -r " + appPath, function(err, stdout) {
-    if (err) {
-      grunt.fatal(err);
-    } else {
+  exec("adb uninstall " + pkgMap[appName], function(err, stdout) {
+    if (err) return grunt.fatal(err);
+    grunt.log.write(stdout);
+    exec("adb install -r " + appPath, function(err, stdout) {
+      if (err) return grunt.fatal(err);
       grunt.log.write(stdout);
       cb();
-    }
+    });
   });
 };
 

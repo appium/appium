@@ -59,7 +59,9 @@ Instruments.prototype.startSocketServer = function(sock) {
 
   var onSocketNeverConnect = function() {
     logger.error("Instruments socket client never checked in; timing out".red);
-    this.proc.kill('SIGTERM');
+    if (this.proc !== null) {
+      this.proc.kill('SIGTERM');
+    }
     this.exitHandler(1);
   };
 

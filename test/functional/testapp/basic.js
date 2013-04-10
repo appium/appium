@@ -116,6 +116,24 @@ describeWd('calc app', function(h) {
     });
   });
 
+
+  it('should find alert like other elements', function(done){
+    var driver = h.driver;
+    driver.elementsByTagName('button', function(err, buttons) {
+      buttons[1].click(function() {
+        driver.elementByTagName('alert', function(err, alert) {
+          alert.elementByTagName('text', function(err, el) {
+            el.text(function(err, text) {
+              // maybe we could get alert body text too?
+              assert.equal(text, "Cool title");
+              driver.dismissAlert(done);
+            });
+          });
+        });
+      });
+    });
+  });
+
   // TODO: Needs fixing - THIS TEST DOES NOT WORK
   // I'm not sure how we can reliably test UIAutomation setTimeout
   // see: http://stackoverflow.com/questions/8852977/how-does-uiautomation-determine-whether-a-uiaelement-isvisible/9051340#9051340

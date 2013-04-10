@@ -219,8 +219,10 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
       function(cb) {
         var apks = [ cleanAPK ];
         if (!skipAppSign) {
-          logger.debug("Skip app sign.");
+          logger.debug("Signing app and clean apk.");
           apks.push(targetAPK);
+        } else {
+          logger.debug("Skip app sign. Sign clean apk.");
         }
         me.sign(function(err) {
           if (err) return cb(err);
@@ -235,7 +237,7 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
 // apks is an array of strings.
 ADB.prototype.sign = function(cb, apks) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
-  var resign = 'java -jar "' + signPath + '" ' + apks.join('" "') + ' --override';
+  var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning: " + resign);
   exec(resign, {}, function(err, stdout, stderr) {
     if (stderr.indexOf("Input is not an existing file") !== -1) {
@@ -250,9 +252,9 @@ ADB.prototype.sign = function(cb, apks) {
 };
 
 // returns true when already signed, false otherwise.
-ADB.prototype.checkAppCert = function(cb) {
+ADB.prototype.checkApkCert = function(apk, cb) {
   var verifyPath = path.resolve(__dirname, '../app/android/verify.jar');
-  var resign = 'java -jar "' + verifyPath + '" "' + this.apkPath + '"';
+  var resign = 'java -jar "' + verifyPath + '" "' + apk + '"';
   logger.debug("Checking app cert: " + resign);
   exec(resign, {}, function(err) {
     if (err) {
@@ -271,18 +273,21 @@ ADB.prototype.checkFastReset = function(cb) {
   }
 
   var me = this;
-  this.checkAppCert(function(isSigned){
-    // Only build & resign clean.apk if it doesn't exist.
-    if (!fs.existsSync(me.cleanAPK)) {
-      me.buildFastReset(isSigned, function(err){ if (err) return cb(err); cb(null); });
-    } else {
-      if (!isSigned) { // don't sign the app if it already has the debug cert
-        // Resign app apk as it may have changed.
-        me.sign(function(err) { if (err) return cb(err); cb(null); }, [me.apkPath]);
+  me.checkApkCert(me.cleanAPK, function(cleanSigned){
+    me.checkApkCert(me.apkPath, function(appSigned){
+      // Only build & resign clean.apk if it doesn't exist or isn't signed.
+      if (!fs.existsSync(me.cleanAPK) || !cleanSigned) {
+        me.buildFastReset(appSigned, function(err){ if (err) return cb(err); cb(null); });
       } else {
-        cb(null);
+        if (!appSigned) {
+          // Resign app apk because it's not signed.
+          me.sign(function(err) { if (err) return cb(err); cb(null); }, [me.apkPath]);
+        } else {
+          // App and clean are already existing and signed.
+          cb(null);
+        }
       }
-    }
+    });
   });
 };
 

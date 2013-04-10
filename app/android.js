@@ -680,6 +680,21 @@ Android.prototype.deleteCookies = function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.getCurrentActivity = function(cb) {
+  this.adb.getFocusedPackageAndActivity(function(err, curPackage, activity) {
+    if (err) {
+      return cb(null, {
+        status: status.codes.UnknownError.code
+        , value: err.message
+      });
+    }
+    cb(null, {
+      status: status.codes.Success.code
+      , value: activity
+    });
+  });
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };

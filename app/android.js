@@ -80,6 +80,7 @@ Android.prototype.start = function(cb, onDie) {
       });
       return skip;
     };
+
     if (err) {
       // This message is from adb.js. Must update when adb.js changes.
       if (err.message === null ||
@@ -114,6 +115,7 @@ Android.prototype.start = function(cb, onDie) {
       this.cbForCurrentCmd(error, null);
       code = code || 1;
     }
+
     this.adb.uninstallApp(_.bind(function() {
       this.adb = null;
       this.shuttingDown = false;
@@ -551,11 +553,11 @@ Android.prototype.postDismissAlert = function(cb) {
 };
 
 Android.prototype.getOrientation = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  this.proxy(["orientation", {}], cb);
 };
 
 Android.prototype.setOrientation = function(orientation, cb) {
-    cb(new NotYetImplementedError(), null);
+  this.proxy(["orientation", {orientation: orientation}], cb);
 };
 
 Android.prototype.getScreenshot = function(cb) {

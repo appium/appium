@@ -71,6 +71,7 @@ We support Android and iOS platforms side-by-side:
 Developing on Appium
 ------------
 Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
+The recommended way to install node is `brew install node` Node [installed by brew](http://mxcl.github.io/homebrew/) will not require sudo for npm commands.
 
 Fork the Appium repo ( [https://github.com/appium/appium](https://github.com/appium/appium) ), then clone your fork.
 

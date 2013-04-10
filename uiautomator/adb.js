@@ -717,14 +717,13 @@ ADB.prototype.startApp = function(cb) {
   }, this));
 };
 
-ADB.prototype.waitForActivity = function(cb) {
-  this.requireApp();
-  logger.info("Waiting for app's activity to become focused");
+ADB.prototype.getFocusedApp = function(skipWait, cb) {
   var cmd = this.adbCmd + " shell dumpsys window windows"
     , waitMs = 20000
     , intMs = 750
     , endAt = Date.now() + waitMs
     , match = null
+    , matchActivity = null
     , foundActivity = false
     , found = null
     , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/)
@@ -740,6 +739,12 @@ ADB.prototype.waitForActivity = function(cb) {
         _.each(stdout.split("\n"), _.bind(function(line) {
           match = searchRe.exec(line);
           if (match) {
+            logger.info("Matched", match);
+            if (skipWait) {
+              matchActivity = match[2];
+              foundActivity = true;
+            }
+
             found = match;
             if (match[1] === this.appPackage && match[2] === targetActivity) {
               foundActivity = true;
@@ -747,7 +752,7 @@ ADB.prototype.waitForActivity = function(cb) {
           }
         }, this));
         if (foundActivity) {
-          cb(null);
+          if (skipWait) { cb(null, matchActivity); } else { cb(null); }
         } else if (Date.now() < endAt) {
           setTimeout(getFocusedApp, intMs);
         } else {
@@ -761,7 +766,12 @@ ADB.prototype.waitForActivity = function(cb) {
   }, this);
 
   getFocusedApp();
+};
 
+ADB.prototype.waitForActivity = function(cb) {
+  this.requireApp();
+  logger.info("Waiting for app's activity to become focused");
+  this.getFocusedApp(false, function(err) { cb(err); });
 };
 
 ADB.prototype.uninstallApk = function(pkg, cb) {

@@ -1475,6 +1475,10 @@ IOS.prototype.url = function(url, cb) {
   }
 };
 
+IOS.prototype.currentActivity = function(cb) {
+  cb(new NotImplementedError(), null);
+};
+
 IOS.prototype.getUrl = function(cb) {
   if (this.curWindowHandle === null) {
     cb(new NotImplementedError(), null);

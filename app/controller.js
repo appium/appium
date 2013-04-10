@@ -316,6 +316,10 @@ exports.mobileSource = function(req, res) {
   }
 };
 
+exports.currentActivity = function(req, res) {
+  req.device.currentActivity(getResponseHandler(req, res));
+};
+
 exports.find = function(req, res) {
   var strategy = "dynamic"
     , selector = req.body;
@@ -765,6 +769,7 @@ var mobileCmdMap = {
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
   , 'find': exports.find
+  , 'currentActivity': exports.currentActivity
 };
 
 exports.produceError = function(req, res) {

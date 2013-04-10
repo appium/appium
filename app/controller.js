@@ -719,6 +719,10 @@ exports.deleteCookies = function(req, res) {
   req.device.deleteCookies(getResponseHandler(req, res));
 };
 
+exports.getCurrentActivity = function(req, res) {
+  req.device.getCurrentActivity(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
@@ -765,6 +769,7 @@ var mobileCmdMap = {
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
   , 'find': exports.find
+  , 'currentActivity': exports.getCurrentActivity
 };
 
 exports.produceError = function(req, res) {

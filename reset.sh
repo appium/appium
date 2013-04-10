@@ -1,8 +1,16 @@
 echo "Resetting / Initializing Appium"
 echo "Clearing dev version of WD"
 rm -rf node_modules/wd
+if [ $? -gt 0 ]; then
+    echo "rm failed. Trying again with sudo."
+    sudo rm -rf node_modules/wd
+fi
 echo "Installing WD and new NPM modules"
 npm install .
+if [ $? -gt 0 ]; then
+    echo "Install failed. Trying again with sudo."
+    sudo npm install .
+fi
 echo "Downloading/updating instruments-without-delay"
 git submodule update --init submodules/instruments-without-delay
 echo "Building instruments-without-delay"

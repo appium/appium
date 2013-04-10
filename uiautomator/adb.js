@@ -115,57 +115,61 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
         me.compileManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
       },
       function(cb) {
-        me.insertManifest(manifest, skipAppSign, function(err) { if (err) return cb(err); cb(null); });
+        me.insertManifest(manifest, skipAppSign, function(err) {
+          if (err) return cb(err);
+          cb(null);
+        });
       },
     ],
     // Invoke top level function cb
-    function(){ cb(null); }
+    function(err) { cb(err); }
   );
 };
 
 ADB.prototype.compileManifest = function(cb, manifest) {
   async.series(
-        [
-          function(cb) {
-            exec('which aapt', function(err, stdout) {
-              if (!stdout) {
-                return cb(new Error("Error finding aapt binary, is it on your path?"));
-              }
-              cb(null);
-            });
-          },
-          function(cb) {
-            var androidHome = process.env.ANDROID_HOME;
+    [
+      function(cb) {
+        exec('which aapt', function(err, stdout) {
+          if (!stdout) {
+            return cb(new Error("Error finding aapt binary, is it on your path?"));
+          }
+          cb(null);
+        });
+      },
+      function(cb) {
+        var androidHome = process.env.ANDROID_HOME;
 
-            var platforms = androidHome + '/platforms/';
-            var platform = 'android-17';
+        var platforms = androidHome + '/platforms/';
+        var platform = 'android-17';
 
-            // android-17 may be called android-4.2
-            if (!fs.existsSync(platforms + platform)) {
-              platform = 'android-4.2';
+        // android-17 may be called android-4.2
+        if (!fs.existsSync(platforms + platform)) {
+          platform = 'android-4.2';
 
-              if (!fs.existsSync(platforms + platform)) {
-                return cb("Platform doesn't exist " + platform);
-              }
-            }
+          if (!fs.existsSync(platforms + platform)) {
+            return cb("Platform doesn't exist " + platform);
+          }
+        }
 
-            // Compile manifest into manifest.xml.apk
-            var compile_manifest = ['aapt package -M "', manifest,
-                                    '" -I "', platforms + platform + '/android.jar" -F "',
-                                    manifest, '.apk" -f'].join('');
-            logger.debug(compile_manifest);
-            exec(compile_manifest, {}, function(err, stdout, stderr) {
-              if (err) {
-                logger.debug(stderr);
-                return cb("error compiling manifest");
-              }
-              logger.debug("Compiled manifest");
-              cb(null);
-            });
-          },
-        ],
-        // Invoke top level function cb
-        function(){ cb(null); });
+        // Compile manifest into manifest.xml.apk
+        var compile_manifest = ['aapt package -M "', manifest,
+                                '" -I "', platforms + platform + '/android.jar" -F "',
+                                manifest, '.apk" -f'].join('');
+        logger.debug(compile_manifest);
+        exec(compile_manifest, {}, function(err, stdout, stderr) {
+          if (err) {
+            logger.debug(stderr);
+            return cb("error compiling manifest");
+          }
+          logger.debug("Compiled manifest");
+          cb(null);
+        });
+      },
+    ],
+    // Invoke top level function cb
+    function(err) { cb(err); }
+  );
 };
 
 ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
@@ -231,7 +235,8 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
       }
     ],
     // Invoke top level function cb
-    function(){ cb(null); });
+    function(err) { cb(err); }
+  );
 };
 
 // apks is an array of strings.
@@ -241,6 +246,7 @@ ADB.prototype.sign = function(cb, apks) {
   logger.debug("Resigning: " + resign);
   exec(resign, {}, function(err, stdout, stderr) {
     if (stderr.indexOf("Input is not an existing file") !== -1) {
+      logger.warn("Could not resign apk(s), got non-existing file error");
       return cb(new Error("Could not sign one or more apks. Are you sure " +
                           "the file paths are correct: " +
                           JSON.stringify(apks)));
@@ -651,7 +657,6 @@ ADB.prototype.waitForDevice = function(cb) {
 ADB.prototype.restartAdb = function(cb) {
   logger.info("Killing ADB server so it will come back online");
   var cmd = this.adb + " kill-server";
-  console.log(cmd);
   exec(cmd, _.bind(function(err) {
     if (err) {
       logger.error("Error killing ADB server, going to see if it's online " +
@@ -852,46 +857,47 @@ ADB.prototype.installApp = function(cb) {
     var installApp = false;
     var installClean = false;
     async.series(
-          [
-            function(cb) {
-              var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
-              exec(listPkgCmd, function(err, stdout) {
-                var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-                installApp = ! apkInstalledRgx.test(stdout);
-                var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-                installClean = ! cleanInstalledRgx.test(stdout);
-                me.debug("Packages found:");
-                me.debug(stdout);
-                cb(null);
-              });
-            },
-            function(cb) {
-              if (installApp) {
-                me.debug("Installing app apk");
-                me.installApk(me.apkPath, function(err) {
-                  if (err) return cb(err);
-                  return cb(null);
-                });
-              } else { cb(null); }
-            },
-            function(cb) {
-              if (installClean) {
-                me.debug("Installing clean apk");
-                me.installApk(me.cleanAPK, function(err) { if (err) return cb(err); return cb(null); });
-              } else { cb(null); }
-            },
-            function(cb) {
-              // App is already installed so reset it.
-              if (!installApp) {
-                me.runFastReset(function(err) {
-                  if (err) return cb(err);
-                  return cb(null);
-                });
-              } else { cb(null); }
-            }
-          ],
-          // Top level callback.
-          function() { cb(null); });
+      [
+        function(cb) {
+          var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
+          exec(listPkgCmd, function(err, stdout) {
+            var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+            installApp = ! apkInstalledRgx.test(stdout);
+            var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+            installClean = ! cleanInstalledRgx.test(stdout);
+            me.debug("Packages found:");
+            me.debug(stdout);
+            cb(null);
+          });
+        },
+        function(cb) {
+          if (installApp) {
+            me.debug("Installing app apk");
+            me.installApk(me.apkPath, function(err) {
+              if (err) return cb(err);
+              return cb(null);
+            });
+          } else { cb(null); }
+        },
+        function(cb) {
+          if (installClean) {
+            me.debug("Installing clean apk");
+            me.installApk(me.cleanAPK, function(err) { if (err) return cb(err); return cb(null); });
+          } else { cb(null); }
+        },
+        function(cb) {
+          // App is already installed so reset it.
+          if (!installApp) {
+            me.runFastReset(function(err) {
+              if (err) return cb(err);
+              return cb(null);
+            });
+          } else { cb(null); }
+        }
+      ],
+      // Top level callback.
+      function(err) { cb(err); }
+    );
   };
 
   next();

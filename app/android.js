@@ -536,6 +536,20 @@ Android.prototype.getPageSourceXML = function(cb) {
         });
 };
 
+Android.prototype.currentActivity = function(cb) {
+  this.adb.getFocusedApp(true, function(err, result) {
+    var code = status.codes.Success.code;
+    if (err) {
+      code = status.codes.UnknownError.code;
+    }
+
+    cb(null, {
+      status: code
+      , value: result
+    });
+  });
+};
+
 Android.prototype.getAlertText = function(cb) {
     cb(new NotYetImplementedError(), null);
 };

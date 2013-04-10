@@ -19,6 +19,7 @@ var path = require('path')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
   , NotImplementedError = errors.NotImplementedError
+  , NotYetImplementedError = errors.NotYetImplementedError
   , UnknownError = errors.UnknownError;
 
 var IOS = function(args) {
@@ -1837,6 +1838,10 @@ IOS.prototype.deleteCookies = function(cb) {
       }
     }
   }, this));
+};
+
+IOS.prototype.getCurrentActivity= function(cb) {
+  cb(new NotYetImplementedError(), null);
 };
 
 module.exports = function(args) {

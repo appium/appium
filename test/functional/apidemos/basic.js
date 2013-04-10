@@ -47,6 +47,13 @@ describeWd('basic', function(h) {
       });
     });
   });
+  it('should be able to get current activity', function(done) {
+    h.driver.execute("mobile: currentActivity", function(err, activity) {
+      should.not.exist(err);
+      activity.should.equal("ApiDemos");
+      done();
+    });
+  });
 });
 
 describeBad('bad app path', function(h) {

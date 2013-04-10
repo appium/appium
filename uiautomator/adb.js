@@ -838,13 +838,7 @@ ADB.prototype.runFastReset = function(cb) {
       logger.warn(stderr);
       cb(err);
     } else {
-      me.startApp(function(err) {
-        if (err) {
-          cb(err);
-        } else {
-          cb(null);
-        }
-      });
+      cb(null);
     }
   });
 };

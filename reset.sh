@@ -9,6 +9,8 @@ echo "Building instruments-without-delay"
 pushd submodules/instruments-without-delay
 ./build.sh
 popd
+echo "Appending the ANDROID_HOME path variable location"
+export ANDROID_HOME="/usr/local/adt/sdk":$ANDROID_HOME
 echo "Downloading/updating AndroidApiDemos"
 git submodule update --init submodules/ApiDemos
 rm -rf sample-code/apps/ApiDemos

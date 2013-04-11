@@ -22,7 +22,9 @@ var Selendroid = function(opts) {
   this.isProxy = true;
 };
 
-Selendroid.prototype.getProxiedSession = function(cb) {
+Selendroid.prototype.start = function(cb) {
+  console.log("starting selendroid");
+  cb(null);
 };
 
 module.exports = function(opts) {

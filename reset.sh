@@ -7,20 +7,29 @@
 set -e
 should_reset_android=0
 should_reset_ios=0
+should_reset_selendroid=0
+appium_home=$(pwd)
+selendroid_ver="0.3"
 
 while test $# != 0
 do
-    echo $1
     case "$1" in
         "--android") should_reset_android=1;;
         "--ios") should_reset_ios=1;;
+        "--selendroid") should_reset_selendroid=1;;
     esac
     shift
 done
 
-if [[ $should_reset_android -eq 0 ]] && [[ $should_reset_ios -eq 0 ]]; then
+if [[ $should_reset_android -eq 0 ]] && [[ $should_reset_ios -eq 0 ]] && [[ $should_reset_selendroid -eq 0 ]]; then
     should_reset_android=1
     should_reset_ios=1
+    should_reset_selendroid=1
+fi
+
+# if selendroid is selected, we need all the android stuff too
+if [ $should_reset_selendroid -eq 1 ]; then
+    should_reset_android=1
 fi
 
 reset_general() {
@@ -68,13 +77,27 @@ reset_android() {
     echo "Downloading/updating AndroidApiDemos"
     git submodule update --init submodules/ApiDemos
     rm -rf sample-code/apps/ApiDemos
-    ln -s $(pwd)/submodules/ApiDemos $(pwd)/sample-code/apps/ApiDemos
+    ln -s $appium_home/submodules/ApiDemos $appium_home/sample-code/apps/ApiDemos
     echo "Building Android bootstrap"
     grunt configAndroidBootstrap
     grunt buildAndroidBootstrap
     echo "Configuring and rebuilding Android test apps"
     grunt configAndroidApp:ApiDemos
     grunt buildAndroidApp:ApiDemos
+}
+
+reset_selendroid() {
+    echo "---- RESETTING SELENDROID ----"
+    echo "Downloading/updating selendroid"
+    git submodule update --init submodules/selendroid
+    rm -rf selendroid
+    ln -s $appium_home/submodules/selendroid $appium_home/selendroid
+    echo "Building selendroid server for ApiDemos"
+    pushd selendroid/selendroid-server
+    mvn install -Dandroid.renameInstrumentationTargetPackage=com.example.android.apis
+    echo "Copying ApiDemos selendroid server to a good home"
+    cp target/selendroid-server-$selendroid_ver.apk $appium_home/selendroid/selendroid-apidemos.apk
+    popd
 }
 
 cleanup() {
@@ -91,5 +114,8 @@ if [ $should_reset_ios -eq 1 ]; then
 fi
 if [ $should_reset_android -eq 1 ]; then
     reset_android
+fi
+if [ $should_reset_selendroid -eq 1 ]; then
+    reset_selendroid
 fi
 cleanup

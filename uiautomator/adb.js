@@ -84,47 +84,66 @@ ADB.prototype.checkAdbPresent = function(cb) {
   }, this));
 };
 
-// Fast reset
-ADB.prototype.buildFastReset = function(skipAppSign, cb) {
-  // Create manifest
-  var me = this;
-  var targetAPK = me.apkPath;
-  var targetPackage = me.appPackage;
-  // gsub AndroidManifest.xml using targetPackage
-  var manifestPath = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src');
-
-  var utf8 = 'utf8';
-  var data = fs.readFileSync(manifestPath, utf8);
-  var manifest = manifestPath.substr(0, manifestPath.length - '.src'.length);
-
+ADB.prototype.retargetManifest = function(newPkg, newTarget, inFile, outFile, cb) {
+  var data = fs.readFileSync(inFile, "utf8");
   var rePkg = /package="([^"]+)"/;
   var reTarget = /targetPackage="([^"]+)"/;
   var matchPkg = rePkg.exec(data);
   var matchTarget = reTarget.exec(data);
 
-  if (!matchPkg) {
+  if (newPkg && !matchPkg) {
     logger.debug("Could not find package= in manifest");
     return cb("could not find package= in manifest");
   }
 
-  if (!matchTarget) {
+  if (newTarget && !matchTarget) {
     logger.debug("Could not find targetPackage= in manifest");
     return cb("could not find targetPackage= in manifest");
   }
 
-  var newPkg = matchPkg[0].replace(matchPkg[1], targetPackage + '.clean');
-  var newTarget = matchTarget[0].replace(matchTarget[1], targetPackage);
+  if (newPkg) {
+    var newPkgData = matchPkg[0].replace(matchPkg[1], newPkg);
+    data = data.replace(matchPkg[0], newPkgData);
+  }
 
-  var newContent = data.replace(matchPkg[0], newPkg);
-  newContent = newContent.replace(matchTarget[0], newTarget);
+  if (newTarget) {
+    var newTargetData = matchTarget[0].replace(matchTarget[1], newTarget);
+    data = data.replace(matchTarget[0], newTargetData);
+  }
 
-  fs.writeFileSync(manifest, newContent, utf8);
+  fs.writeFileSync(outFile, data, "utf8");
   logger.debug("Created manifest");
+  cb(null);
+};
+
+// Fast reset
+ADB.prototype.buildFastReset = function(skipAppSign, cb) {
+  // Create manifest
+  var me = this;
+  var targetAPK = me.apkPath;
+  var cleanAPKSrc = path.resolve(__dirname, '../app/android/Clean.apk');
+  var newPackage = me.appPackage + '.clean';
+  var inFile = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src');
+  var outFile = inFile.substr(0, inFile.length - '.src'.length);
+
+  var resignApks = function(cb) {
+    // Resign clean apk and target apk
+    var apks = [ me.cleanAPK ];
+    if (!skipAppSign) {
+      logger.debug("Signing app and clean apk.");
+      apks.push(targetAPK);
+    } else {
+      logger.debug("Skip app sign. Sign clean apk.");
+    }
+    me.sign(apks, cb);
+  };
 
   async.series([
+    function(cb) { me.retargetManifest(newPackage, me.appPackage, inFile, outFile, cb); },
     function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
-    function(cb) { me.compileManifest(manifest, cb); },
-    function(cb) { me.insertManifest(manifest, skipAppSign, cb); },
+    function(cb) { me.compileManifest(outFile, cb); },
+    function(cb) { me.insertManifest(outFile, cleanAPKSrc, me.cleanAPK, cb); },
+    function(cb) { resignApks(cb); }
   ], cb);
 };
 
@@ -157,11 +176,7 @@ ADB.prototype.compileManifest = function(manifest, cb) {
   });
 };
 
-ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
-  var me = this
-    , targetAPK = me.apkPath
-    , cleanAPK = me.cleanAPK;
-
+ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
   var extractManifest = function(cb) {
     // Extract compiled manifest from manifest.xml.apk
     unzipFile(manifest + '.apk', function(err, stderr) {
@@ -173,24 +188,21 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
     });
   };
 
-  var insertManifestIntoClean = function(cb) {
-    // Insert compiled manfiest into /tmp/appPackage.clean.apk
-    var cleanAPKSource = path.resolve(__dirname, '../app/android/Clean.apk');
-    logger.debug("Writing tmp apk. " + cleanAPKSource + ' to ' + cleanAPK);
-
-    // Write clean apk to /tmp
-    ncp(cleanAPKSource, cleanAPK, cb);
+  var createTmpApk = function(cb) {
+    logger.debug("Writing tmp apk. " + srcApk + ' to ' + dstApk);
+    ncp(srcApk, dstApk, cb);
   };
 
-  var testCleanApk = function(cb) {
-    logger.debug("Testing tmp clean apk.");
-    testZipArchive(cleanAPK, cb);
+  var testDstApk = function(cb) {
+    logger.debug("Testing new tmp apk.");
+    testZipArchive(dstApk, cb);
   };
 
   var moveManifest = function(cb) {
+    // Insert compiled manfiest into /tmp/appPackage.clean.apk
     // -j = keep only the file, not the dirs
     // -m = move manifest into target apk.
-    var replaceCmd = 'zip -j -m "' + cleanAPK + '" "' + manifest + '"';
+    var replaceCmd = 'zip -j -m "' + dstApk + '" "' + manifest + '"';
     logger.debug(replaceCmd);
     exec(replaceCmd, {}, function(err) {
       if (err) {
@@ -201,24 +213,11 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
     });
   };
 
-  var resignApks = function(cb) {
-    // Resign clean apk and target apk
-    var apks = [ cleanAPK ];
-    if (!skipAppSign) {
-      logger.debug("Signing app and clean apk.");
-      apks.push(targetAPK);
-    } else {
-      logger.debug("Skip app sign. Sign clean apk.");
-    }
-    me.sign(apks, cb);
-  };
-
   async.series([
     function(cb) { extractManifest(cb); },
-    function(cb) { insertManifestIntoClean(cb); },
-    function(cb) { testCleanApk(cb); },
-    function(cb) { moveManifest(cb); },
-    function(cb) { resignApks(cb); }
+    function(cb) { createTmpApk(cb); },
+    function(cb) { testDstApk(cb); },
+    function(cb) { moveManifest(cb); }
   ], cb);
 };
 
@@ -352,6 +351,10 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
+    // uninstall for now to make sure everything's kosher
+    function(cb) { me.uninstallApk('org.openqa.selendroid', cb); },
+    function(cb) { me.uninstallApk(me.appPackage, cb); },
+    function(cb) { me.insertSelendroidManifest(cb); },
     function(cb) { me.checkSelendroidCerts(serverPath, cb); },
     function(cb) { me.installApk(serverPath, cb); },
     function(cb) { me.installApp(cb); },

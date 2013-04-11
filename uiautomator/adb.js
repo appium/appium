@@ -55,22 +55,31 @@ var ADB = function(opts, android) {
   this.cmdCb = null;
 };
 
-ADB.prototype.checkAdbPresent = function(cb) {
+ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
+  var binaryLoc = null;
   if (this.sdkRoot) {
-    this.adb = path.resolve(this.sdkRoot, "platform-tools", "adb");
-    this.debug("Using adb from " + this.adb);
-    cb(null, this);
+    binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binary);
+    this.debug("Using " + binary + " from " + binaryLoc);
+    cb(null, binaryLoc);
   } else {
-    exec("which adb", _.bind(function(err, stdout) {
+    exec("which " + binary, _.bind(function(err, stdout) {
       if (stdout) {
-        this.debug("Using adb from " + stdout);
-        this.adb = stdout;
-        cb(null, this);
+        this.debug("Using " + binary + " from " + stdout);
+        cb(null, stdout);
       } else {
-        cb("Could not find adb; do you have android SDK installed?", null);
+        cb(new Error("Could not find " + binary + "; do you have android " +
+                     "SDK installed?"),
+           null);
       }
     }, this));
   }
+};
+
+ADB.prototype.checkAdbPresent = function(cb) {
+  this.checkSdkBinaryPresent("adb", _.bind(function(err, binaryLoc) {
+    if (err) return cb(err);
+    this.adb = binaryLoc;
+  }, this));
 };
 
 // Fast reset
@@ -111,55 +120,39 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   logger.debug("Created manifest");
 
   async.series([
+    function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
     function(cb) { me.compileManifest(cb, manifest); },
     function(cb) { me.insertManifest(manifest, skipAppSign, cb); },
   ], cb);
 };
 
 ADB.prototype.compileManifest = function(cb, manifest) {
-  async.series(
-    [
-      function(cb) {
-        exec('which aapt', function(err, stdout) {
-          if (!stdout) {
-            return cb(new Error("Error finding aapt binary, is it on your path?"));
-          }
-          cb(null);
-        });
-      },
-      function(cb) {
-        var androidHome = process.env.ANDROID_HOME;
+  var androidHome = process.env.ANDROID_HOME
+    , platforms = androidHome + '/platforms/'
+    , platform = 'android-17';
 
-        var platforms = androidHome + '/platforms/';
-        var platform = 'android-17';
+  // android-17 may be called android-4.2
+  if (!fs.existsSync(platforms + platform)) {
+    platform = 'android-4.2';
 
-        // android-17 may be called android-4.2
-        if (!fs.existsSync(platforms + platform)) {
-          platform = 'android-4.2';
+    if (!fs.existsSync(platforms + platform)) {
+      return cb(new Error("Platform doesn't exist " + platform));
+    }
+  }
 
-          if (!fs.existsSync(platforms + platform)) {
-            return cb("Platform doesn't exist " + platform);
-          }
-        }
-
-        // Compile manifest into manifest.xml.apk
-        var compileManifest = ['aapt package -M "', manifest,
-                                '" -I "', platforms + platform + '/android.jar" -F "',
-                                manifest, '.apk" -f'].join('');
-        logger.debug(compileManifest);
-        exec(compileManifest, {}, function(err, stdout, stderr) {
-          if (err) {
-            logger.debug(stderr);
-            return cb("error compiling manifest");
-          }
-          logger.debug("Compiled manifest");
-          cb(null);
-        });
-      },
-    ],
-    // Invoke top level function cb
-    function(err) { cb(err); }
-  );
+  // Compile manifest into manifest.xml.apk
+  var compileManifest = ['aapt package -M "', manifest,
+                          '" -I "', platforms + platform + '/android.jar" -F "',
+                          manifest, '.apk" -f'].join('');
+  logger.debug(compileManifest);
+  exec(compileManifest, {}, function(err, stdout, stderr) {
+    if (err) {
+      logger.debug(stderr);
+      return cb("error compiling manifest");
+    }
+    logger.debug("Compiled manifest");
+    cb(null);
+  });
 };
 
 ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {

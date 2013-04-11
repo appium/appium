@@ -153,11 +153,11 @@ ADB.prototype.compileManifest = function(cb, manifest) {
         }
 
         // Compile manifest into manifest.xml.apk
-        var compile_manifest = ['aapt package -M "', manifest,
+        var compileManifest = ['aapt package -M "', manifest,
                                 '" -I "', platforms + platform + '/android.jar" -F "',
                                 manifest, '.apk" -f'].join('');
-        logger.debug(compile_manifest);
-        exec(compile_manifest, {}, function(err, stdout, stderr) {
+        logger.debug(compileManifest);
+        exec(compileManifest, {}, function(err, stdout, stderr) {
           if (err) {
             logger.debug(stderr);
             return cb("error compiling manifest");

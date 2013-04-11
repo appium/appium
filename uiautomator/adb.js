@@ -325,10 +325,10 @@ ADB.prototype.getDeviceWithRetry = function(cb) {
 ADB.prototype.prepareDevice = function(onReady) {
   var me = this;
   async.series([
-    me.checkAdbPresent
-    , me.getDeviceWithRetry
-    , me.waitForDevice
-    , me.forwardPort
+    function(cb) { me.checkAdbPresent(cb); },
+    function(cb) { me.getDeviceWithRetry(cb);},
+    function(cb) { me.waitForDevice(cb); },
+    function(cb) { me.forwardPort(cb); }
   ], onReady);
 };
 
@@ -343,11 +343,11 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   logger.debug("Using fast reset? " + this.fastReset);
 
   async.series([
-    me.prepareDevice
-    , me.pushAppium
-    , me.checkFastReset
-    , me.installApp
-    , me.startApp
+    function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.pushAppium(cb); },
+    function(cb) { me.checkFastReset(cb); },
+    function(cb) { me.installApp(cb); },
+    function(cb) { me.startApp(cb); }
   ], doRun);
 };
 
@@ -884,10 +884,10 @@ ADB.prototype.installApp = function(cb) {
   };
 
   async.series([
-    determineInstallAndCleanStatus,
-    doInstall,
-    doClean,
-    doFastReset
+    function(cb) { determineInstallAndCleanStatus(cb); },
+    function(cb) { doInstall(cb); },
+    function(cb) { doClean(cb); },
+    function(cb) { doFastReset(cb); }
   ], cb);
 };
 

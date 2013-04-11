@@ -79,6 +79,7 @@ ADB.prototype.checkAdbPresent = function(cb) {
   this.checkSdkBinaryPresent("adb", _.bind(function(err, binaryLoc) {
     if (err) return cb(err);
     this.adb = binaryLoc;
+    cb(null);
   }, this));
 };
 

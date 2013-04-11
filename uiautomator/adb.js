@@ -297,7 +297,7 @@ ADB.prototype.checkFastReset = function(cb) {
   });
 };
 
-ADB.prototype.start = function(onReady, onExit) {
+ADB.prototype.startAppium = function(onReady, onExit) {
   this.onExit = onExit;
   var doRun = _.bind(function() {
     this.runBootstrap(onReady, onExit);

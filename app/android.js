@@ -127,7 +127,7 @@ Android.prototype.start = function(cb, onDie) {
   if (this.adb === null) {
     // Pass Android opts and Android ref to adb.
     this.adb = adb(this.opts, this);
-    this.adb.start(onLaunch, onExit);
+    this.adb.startAppium(onLaunch, onExit);
   } else {
     logger.error("Tried to start ADB when we already have one running!");
   }

@@ -297,14 +297,7 @@ ADB.prototype.checkFastReset = function(cb) {
   });
 };
 
-ADB.prototype.startAppium = function(onReady, onExit) {
-  this.onExit = onExit;
-  var doRun = _.bind(function() {
-    this.runBootstrap(onReady, onExit);
-  }, this);
-
-  logger.debug("Using fast reset? " + this.fastReset);
-
+ADB.prototype.prepareDevice = function(onReady) {
   var me = this;
   async.series(
     [
@@ -324,7 +317,10 @@ ADB.prototype.startAppium = function(onReady, onExit) {
           if (err) {
             logger.info("restarting...");
             me.restartAdb(function() {
-              getDevices(cb);
+              getDevices(function(err) {
+                if (err) return onReady(err);
+                cb(null);
+              });
             });
           } else {
             cb(null);
@@ -335,10 +331,28 @@ ADB.prototype.startAppium = function(onReady, onExit) {
         me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
       },
       function(cb) {
-        me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
+        me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
+      }
+    ], onReady
+  );
+};
+
+ADB.prototype.startAppium = function(onReady, onExit) {
+  this.onExit = onExit;
+  var doRun = _.bind(function() {
+    this.runBootstrap(onReady, onExit);
+  }, this);
+
+  logger.debug("Using fast reset? " + this.fastReset);
+
+  var me = this;
+  async.series(
+    [
+      function(cb) {
+        me.prepareDevice(function(err) { if (err) return onReady(err); cb(null); });
       },
       function(cb) {
-        me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
+        me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
       },
       function(cb) {
         if (!me.appPackage) return onReady("appPackage must be set.");

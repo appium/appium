@@ -14,12 +14,10 @@ var errors = require('./errors')
   , UnknownError = errors.UnknownError;
 
 var Selendroid = function(opts) {
-  this.apkPath = opts.apkPath;
-  this.udid = opts.udid;
+  this.opts = opts;
+  this.serverApk = null;
   this.appPackage = opts.appPackage;
-  this.appActivity = opts.appActivity;
   this.desiredCaps = opts.desiredCaps;
-  this.verbose = opts.verbose;
   this.onStop = function() {};
   this.adb = null;
   this.isProxy = true;
@@ -29,17 +27,26 @@ var Selendroid = function(opts) {
 
 Selendroid.prototype.start = function(cb) {
   logger.info("Starting selendroid server");
+  var opts = _.clone(this.opts);
+  opts.port = this.proxyPort;
+  opts.devicePort = 8080;
+  opts.fastReset = false;
+  opts.cleanApp = false;
+  this.adb = new adb(opts);
   this.ensureServerExists(_.bind(function(err) {
     if (err) return cb(err);
     // modify desired caps
     var desiredCaps = _.clone(this.desiredCaps);
-    //this.bypass('/wd/hub/session', 'POST', desiredCaps, function(err, res, body) {
-      //console.log(err);
-      //console.log(res);
-      //console.log(body);
-      //cb(null);
-    //});
-    cb(null);
+    this.adb.startSelendroid(this.serverApk, _.bind(function(err) {
+      if (err) return cb(err);
+      //this.bypass('/wd/hub/session', 'POST', desiredCaps, function(err, res, body) {
+        //console.log(err);
+        //console.log(res);
+        //console.log(body);
+        //cb(null);
+      //});
+      cb(null);
+    }, this));
   }, this));
 };
 
@@ -54,6 +61,7 @@ Selendroid.prototype.ensureServerExists = function(cb) {
       return this.buildServer(cb);
     }
     logger.info("Selendroid server already exists, not rebuilding");
+    this.serverApk = filePath;
     cb(null);
   }, this));
 };
@@ -62,10 +70,10 @@ Selendroid.prototype.buildServer = function(cb) {
   logger.info("Building selendroid server for package " + this.appPackage);
   var buildDir = path.resolve(__dirname, "../selendroid/selendroid-server");
   var src = buildDir + "/target/selendroid-server-0.3.apk";
-  var dest = buildDir + "/target/selendroid- " + this.appPackage + '.apk';
+  var dest = buildDir + "/target/selendroid-" + this.appPackage + '.apk';
   var cmd = "mvn install -Dandroid.renameInstrumentationTargetPackage=" +
             this.appPackage;
-  exec(cmd, {cwd: buildDir}, function(err, stdout, stderr) {
+  exec(cmd, {cwd: buildDir}, _.bind(function(err, stdout, stderr) {
     if (err) {
       logger.error("Unable to build selendroid server");
       console.log(stdout);
@@ -73,15 +81,16 @@ Selendroid.prototype.buildServer = function(cb) {
       return cb(err);
     }
     logger.info("Copying selendroid server to correct destination");
-    copyFile(src, dest, function(err) {
+    copyFile(src, dest, _.bind(function(err) {
       if (err) {
         logger.error("Error copying selendroid to destination");
         return cb(err);
       }
       logger.info("Selendroid server copied successfully");
+      this.serverApk = dest;
       cb(null);
-    });
-  });
+    }, this));
+  }, this));
 };
 
 Selendroid.prototype.bypass = function(endpoint, method, data, cb) {

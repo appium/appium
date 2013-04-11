@@ -339,28 +339,20 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   var me = this;
   async.series(
     [
+      function(cb) { me.prepareDevice(cb); },
+      function(cb) { me.pushAppium(cb); },
       function(cb) {
-        me.prepareDevice(function(err) { if (err) return onReady(err); cb(null); });
+        if (!me.appPackage) return cb(new Error("appPackage must be set."));
+        me.checkFastReset(cb);
       },
-      function(cb) {
-        me.pushAppium(function(err) { if (err) return onReady(err); cb(null); });
-      },
-      function(cb) {
-        if (!me.appPackage) return onReady("appPackage must be set.");
-        me.checkFastReset(function(err) {
-          if (err) return onReady(err); cb(null);
-        });
-      },
-      function(cb) {
-        me.installApp(function(err) { if (err) return onReady(err); cb(null); });
-      },
+      function(cb) { me.installApp(cb); },
       function(cb) {
         me.startApp(function(err) {
-          if (err) return onReady(err);
+          if (err) return cb(err);
           doRun(function(){ cb(null); });
         });
       }
-    ]
+    ], onReady
   );
 };
 

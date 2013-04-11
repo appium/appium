@@ -72,6 +72,7 @@ Android.prototype.start = function(cb, onDie) {
     var skipRelaunchOn = [
       'App never showed up'
       , 'Could not sign one or more apks'
+      , 'Could not find a connected Android device'
     ];
     var checkShouldSkipRelaunch = function(msg) {
       var skip = false;

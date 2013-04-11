@@ -15,6 +15,7 @@ var routing = require('./routing')
   , _ = require('underscore')
   , ios = require('./ios')
   , android = require('./android')
+  , selendroid = require('./selendroid')
   , status = require("./uiauto/lib/status");
 
 var Appium = function(args) {
@@ -108,6 +109,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
       return "ios";
     } else if (desiredCaps.device.toLowerCase().indexOf('ipad') !== -1) {
       return "ios";
+    } else if (desiredCaps.device.toLowerCase().indexOf('selendroid') !== -1) {
+      return "selendroid";
     } else {
       return "android";
     }
@@ -116,6 +119,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
       return "ios";
     } else if (desiredCaps.browserName.toLowerCase() === "safari") {
       return "ios";
+    } else if (desiredCaps.browserName.toLowerCase().indexOf('selendroid') !== -1) {
+      return "selendroid";
     } else {
       return "android";
     }
@@ -145,6 +150,10 @@ Appium.prototype.isIos = function() {
 
 Appium.prototype.isAndroid = function() {
   return this.deviceType === "android";
+};
+
+Appium.prototype.isSelendroid = function() {
+  return this.deviceType === "selendroid";
 };
 
 Appium.prototype.getAppExt = function() {
@@ -352,6 +361,15 @@ Appium.prototype.invoke = function() {
           , fastReset: this.args.fastReset
         };
         this.devices[this.deviceType] = android(androidOpts);
+      } else if (this.isSelendroid()) {
+        var selendroidOpts = {
+          apkPath: this.args.app
+          , verbose: this.args.verbose
+          , udid: this.args.udid
+          , appPackage: this.args.androidPackage
+          , appActivity: this.args.androidActivity
+        };
+        this.devices[this.deviceType] = selendroid(selendroidOpts);
       } else {
         throw new Error("Tried to start a device that doesn't exist: " +
                         this.deviceType);

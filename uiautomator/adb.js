@@ -123,12 +123,12 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
 
   async.series([
     function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
-    function(cb) { me.compileManifest(cb, manifest); },
+    function(cb) { me.compileManifest(manifest, cb); },
     function(cb) { me.insertManifest(manifest, skipAppSign, cb); },
   ], cb);
 };
 
-ADB.prototype.compileManifest = function(cb, manifest) {
+ADB.prototype.compileManifest = function(manifest, cb) {
   var androidHome = process.env.ANDROID_HOME
     , platforms = androidHome + '/platforms/'
     , platform = 'android-17';
@@ -342,6 +342,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
                 cmd);
     exec(cmd, function(err, stdout) {
       if (stdout.indexOf("Exception") !== -1) {
+        logger.error(stdout);
         var msg = stdout.split("\n")[0] || "Unknown exception starting selendroid";
         return cb(new Error(msg));
       }

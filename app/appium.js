@@ -364,6 +364,7 @@ Appium.prototype.invoke = function() {
       } else if (this.isSelendroid()) {
         var selendroidOpts = {
           apkPath: this.args.app
+          , desiredCaps: this.desiredCapabilities
           , verbose: this.args.verbose
           , udid: this.args.udid
           , appPackage: this.args.androidPackage

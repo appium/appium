@@ -325,10 +325,10 @@ ADB.prototype.getDeviceWithRetry = function(cb) {
 ADB.prototype.prepareDevice = function(onReady) {
   var me = this;
   async.series([
-    function(cb) { me.checkAdbPresent(cb); },
-    function(cb) { me.getDeviceWithRetry(cb);},
-    function(cb) { me.waitForDevice(cb); },
-    function(cb) { me.forwardPort(cb); }
+    me.checkAdbPresent
+    , me.getDeviceWithRetry
+    , me.waitForDevice
+    , me.forwardPort
   ], onReady);
 };
 
@@ -343,11 +343,11 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   logger.debug("Using fast reset? " + this.fastReset);
 
   async.series([
-    function(cb) { me.prepareDevice(cb); },
-    function(cb) { me.pushAppium(cb); },
-    function(cb) { me.checkFastReset(cb); },
-    function(cb) { me.installApp(cb); },
-    function(cb) { me.startApp(cb); }
+    me.prepareDevice
+    , me.pushAppium
+    , me.checkFastReset
+    , me.installApp
+    , me.startApp
   ], doRun);
 };
 
@@ -843,57 +843,52 @@ ADB.prototype.runFastReset = function(cb) {
 };
 
 ADB.prototype.installApp = function(cb) {
-  var me = this;
-  var next = function() {
-    me.requireDeviceId();
-    me.requireApk();
-    var installApp = false;
-    var installClean = false;
-    async.series(
-      [
-        function(cb) {
-          var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
-          exec(listPkgCmd, function(err, stdout) {
-            var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-            installApp = ! apkInstalledRgx.test(stdout);
-            var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-            installClean = ! cleanInstalledRgx.test(stdout);
-            me.debug("Packages found:");
-            me.debug(stdout);
-            cb(null);
-          });
-        },
-        function(cb) {
-          if (installApp) {
-            me.debug("Installing app apk");
-            me.installApk(me.apkPath, function(err) {
-              if (err) return cb(err);
-              return cb(null);
-            });
-          } else { cb(null); }
-        },
-        function(cb) {
-          if (installClean) {
-            me.debug("Installing clean apk");
-            me.installApk(me.cleanAPK, function(err) { if (err) return cb(err); return cb(null); });
-          } else { cb(null); }
-        },
-        function(cb) {
-          // App is already installed so reset it.
-          if (!installApp) {
-            me.runFastReset(function(err) {
-              if (err) return cb(err);
-              return cb(null);
-            });
-          } else { cb(null); }
-        }
-      ],
-      // Top level callback.
-      function(err) { cb(err); }
-    );
+  var me = this
+    , installApp = false
+    , installClean = false;
+  me.requireDeviceId();
+  me.requireApk();
+
+  var determineInstallAndCleanStatus = function(cb) {
+    var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
+    exec(listPkgCmd, function(err, stdout) {
+      var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+      installApp = ! apkInstalledRgx.test(stdout);
+      var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+      installClean = ! cleanInstalledRgx.test(stdout);
+      me.debug("Packages found:");
+      me.debug(stdout);
+      cb(null);
+    });
   };
 
-  next();
+  var doInstall = function(cb) {
+    if (installApp) {
+      me.debug("Installing app apk");
+      me.installApk(me.apkPath, cb);
+    } else { cb(null); }
+  };
+
+  var doClean = function(cb) {
+    if (installClean) {
+      me.debug("Installing clean apk");
+      me.installApk(me.cleanAPK, cb);
+    } else { cb(null); }
+  };
+
+  var doFastReset = function(cb) {
+    // App is already installed so reset it.
+    if (!installApp) {
+      me.runFastReset(cb);
+    } else { cb(null); }
+  };
+
+  async.series([
+    determineInstallAndCleanStatus,
+    doInstall,
+    doClean,
+    doFastReset
+  ], cb);
 };
 
 ADB.prototype.back = function(cb) {

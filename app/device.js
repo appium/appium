@@ -1,6 +1,7 @@
 "use strict";
 
 var errors = require('./errors')
+  , request = require('request')
   , logger = require('../logger').get('appium');
 
 var UnknownError = errors.UnknownError
@@ -56,4 +57,24 @@ exports.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
     });
   };
   spin();
+};
+
+exports.bypass = function(url, method, body, contentType, cb) {
+  if (typeof cb === "undefined" && typeof contentType === "function") {
+    cb = contentType;
+    contentType = null;
+  }
+  if (typeof contentType === "undefined" || contentType === null) {
+    contentType = "application/json";
+  }
+  if (!(/^https?:\/\//.exec(url))) {
+    url = 'http://' + url;
+  }
+  var opts = {
+    url: url
+    , method: method
+    , headers: {'Content-Type': contentType}
+    , body: body
+  };
+  request(opts, cb);
 };

@@ -8,6 +8,7 @@ var logger = require('../logger').get('appium')
   , path = require('path')
   , rimraf = require('rimraf')
   , exec = require('child_process').exec
+  , util = require('util')
   , temp = require('temp');
 
 exports.downloadFile = function(fileUrl, cb) {
@@ -276,5 +277,19 @@ exports.rotateImage = function(imgPath, deg, cb) {
     if (err) return cb(err);
     console.log(stdout);
     cb(null);
+  });
+};
+
+exports.copyFile = function (src, dst, cb) {
+  var is
+    , os;
+
+  fs.stat(src, function (err) {
+    if (err) {
+      return cb(err);
+    }
+    is = fs.createReadStream(src);
+    os = fs.createWriteStream(dst);
+    util.pump(is, os, cb);
   });
 };

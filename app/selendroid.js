@@ -30,8 +30,8 @@ Selendroid.prototype.start = function(cb) {
   var opts = _.clone(this.opts);
   opts.port = this.proxyPort;
   opts.devicePort = 8080;
-  opts.fastReset = false;
-  opts.cleanApp = false;
+  //opts.fastReset = false;
+  //opts.cleanApp = false;
   this.adb = new adb(opts);
   this.ensureServerExists(_.bind(function(err) {
     if (err) return cb(err);

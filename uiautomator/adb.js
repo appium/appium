@@ -210,7 +210,7 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
     } else {
       logger.debug("Skip app sign. Sign clean apk.");
     }
-    me.sign(cb, apks);
+    me.sign(apks, cb);
   };
 
   async.series([
@@ -223,7 +223,7 @@ ADB.prototype.insertManifest = function(manifest, skipAppSign, cb) {
 };
 
 // apks is an array of strings.
-ADB.prototype.sign = function(cb, apks) {
+ADB.prototype.sign = function(apks, cb) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
   var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning: " + resign);
@@ -233,10 +233,8 @@ ADB.prototype.sign = function(cb, apks) {
       return cb(new Error("Could not sign one or more apks. Are you sure " +
                           "the file paths are correct: " +
                           JSON.stringify(apks)));
-    } else if (err) {
-      return cb(err);
     }
-    cb(null);
+    cb(err);
   });
 };
 
@@ -272,7 +270,7 @@ ADB.prototype.checkFastReset = function(cb) {
       } else {
         if (!appSigned) {
           // Resign app apk because it's not signed.
-          me.sign(function(err) { if (err) return cb(err); cb(null); }, [me.apkPath]);
+          me.sign([me.apkPath], cb);
         } else {
           // App and clean are already existing and signed.
           cb(null);
@@ -310,9 +308,7 @@ ADB.prototype.prepareDevice = function(onReady) {
     function(cb) { me.checkAdbPresent(cb); },
     function(cb) { me.getDeviceWithRetry(cb);},
     function(cb) { me.waitForDevice(cb); },
-    function(cb) { me.checkFastReset(cb); },
-    function(cb) { me.installApp(cb); },
-    function(cb) { me.forwardPort(cb); }
+    function(cb) { me.checkFastReset(cb); }
   ], onReady);
 };
 
@@ -328,6 +324,8 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.installApp(cb); },
+    function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushAppium(cb); },
     function(cb) { me.startApp(cb); }
   ], doRun);
@@ -353,9 +351,41 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.checkSelendroidCerts(serverPath, cb); },
     function(cb) { me.installApk(serverPath, cb); },
+    function(cb) { me.installApp(cb); },
+    function(cb) { me.forwardPort(cb); },
     function(cb) { runSelendroid(cb); }
   ], onReady);
+};
+
+ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
+  var me = this
+    , alreadyReturned = false
+    , checks = 0;
+
+  var onDoneSigning = function() {
+    checks++;
+    if (checks === 2 && !alreadyReturned) {
+      cb();
+    }
+  };
+
+  // these run in parallel
+  var apks = [serverPath, this.apkPath];
+  _.each(apks, function(apk) {
+    logger.info("Checking signed status of " + apk);
+    me.checkApkCert(apk, function(isSigned) {
+      if (isSigned) return onDoneSigning();
+      me.sign([apk], function(err) {
+        if (err && !alreadyReturned) {
+          alreadyReturned = true;
+          return cb(err);
+        }
+        onDoneSigning();
+      });
+    });
+  });
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {

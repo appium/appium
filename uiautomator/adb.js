@@ -299,33 +299,31 @@ ADB.prototype.checkFastReset = function(cb) {
 
 ADB.prototype.prepareDevice = function(onReady) {
   var me = this;
-  async.series(
-    [
-      function(cb) { me.checkAdbPresent(cb); },
-      function(cb) {
-        var getDevices = function(innerCb) {
-          me.getConnectedDevices(function(err, devices) {
-            if (devices.length === 0 || err) {
-              return innerCb(new Error("Could not find a connected Android device."));
-            }
-            innerCb(null);
-          });
-        };
-        getDevices(function(err) {
-          if (err) {
-            logger.info("Restarting adb...");
-            me.restartAdb(function() {
-              getDevices(cb);
-            });
-          } else {
-            cb(null);
+  async.series([
+    function(cb) { me.checkAdbPresent(cb); },
+    function(cb) {
+      var getDevices = function(innerCb) {
+        me.getConnectedDevices(function(err, devices) {
+          if (devices.length === 0 || err) {
+            return innerCb(new Error("Could not find a connected Android device."));
           }
+          innerCb(null);
         });
-      },
-      function(cb) { me.waitForDevice(cb); },
-      function(cb) { me.forwardPort(cb); }
-    ], onReady
-  );
+      };
+      getDevices(function(err) {
+        if (err) {
+          logger.info("Restarting adb...");
+          me.restartAdb(function() {
+            getDevices(cb);
+          });
+        } else {
+          cb(null);
+        }
+      });
+    },
+    function(cb) { me.waitForDevice(cb); },
+    function(cb) { me.forwardPort(cb); }
+  ], onReady);
 };
 
 ADB.prototype.startAppium = function(onReady, onExit) {
@@ -337,23 +335,21 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   logger.debug("Using fast reset? " + this.fastReset);
 
   var me = this;
-  async.series(
-    [
-      function(cb) { me.prepareDevice(cb); },
-      function(cb) { me.pushAppium(cb); },
-      function(cb) {
-        if (!me.appPackage) return cb(new Error("appPackage must be set."));
-        me.checkFastReset(cb);
-      },
-      function(cb) { me.installApp(cb); },
-      function(cb) {
-        me.startApp(function(err) {
-          if (err) return cb(err);
-          doRun(function(){ cb(null); });
-        });
-      }
-    ], onReady
-  );
+  async.series( [
+    function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.pushAppium(cb); },
+    function(cb) {
+      if (!me.appPackage) return cb(new Error("appPackage must be set."));
+      me.checkFastReset(cb);
+    },
+    function(cb) { me.installApp(cb); },
+    function(cb) {
+      me.startApp(function(err) {
+        if (err) return cb(err);
+        doRun(function(){ cb(null); });
+      });
+    }
+  ], onReady);
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {

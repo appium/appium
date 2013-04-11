@@ -110,21 +110,10 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   fs.writeFileSync(manifest, newContent, utf8);
   logger.debug("Created manifest");
 
-  async.series(
-    [
-      function(cb) {
-        me.compileManifest(function(err) { if (err) return cb(err); cb(null); }, manifest);
-      },
-      function(cb) {
-        me.insertManifest(manifest, skipAppSign, function(err) {
-          if (err) return cb(err);
-          cb(null);
-        });
-      },
-    ],
-    // Invoke top level function cb
-    function(err) { cb(err); }
-  );
+  async.series([
+    function(cb) { me.compileManifest(cb, manifest); },
+    function(cb) { me.insertManifest(manifest, skipAppSign, cb); },
+  ], cb);
 };
 
 ADB.prototype.compileManifest = function(cb, manifest) {

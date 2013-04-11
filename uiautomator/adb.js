@@ -301,38 +301,29 @@ ADB.prototype.prepareDevice = function(onReady) {
   var me = this;
   async.series(
     [
-      function(cb) {
-        me.checkAdbPresent(function(err) { if (err) return onReady(err); cb(null); });
-      },
+      function(cb) { me.checkAdbPresent(cb); },
       function(cb) {
         var getDevices = function(innerCb) {
           me.getConnectedDevices(function(err, devices) {
             if (devices.length === 0 || err) {
-              innerCb("Could not find a connected Android device.");
+              return innerCb(new Error("Could not find a connected Android device."));
             }
             innerCb(null);
           });
         };
         getDevices(function(err) {
           if (err) {
-            logger.info("restarting...");
+            logger.info("Restarting adb...");
             me.restartAdb(function() {
-              getDevices(function(err) {
-                if (err) return onReady(err);
-                cb(null);
-              });
+              getDevices(cb);
             });
           } else {
             cb(null);
           }
         });
       },
-      function(cb) {
-        me.waitForDevice(function(err) { if (err) return onReady(err); cb(null); });
-      },
-      function(cb) {
-        me.forwardPort(function(err) { if (err) return onReady(err); cb(null); });
-      }
+      function(cb) { me.waitForDevice(cb); },
+      function(cb) { me.forwardPort(cb); }
     ], onReady
   );
 };
@@ -671,13 +662,13 @@ ADB.prototype.waitForDevice = function(cb) {
 ADB.prototype.restartAdb = function(cb) {
   logger.info("Killing ADB server so it will come back online");
   var cmd = this.adb + " kill-server";
-  exec(cmd, _.bind(function(err) {
+  exec(cmd, function(err) {
     if (err) {
       logger.error("Error killing ADB server, going to see if it's online " +
                    "anyway");
     }
     cb();
-  }, this));
+  });
 };
 
 ADB.prototype.pushAppium = function(cb) {

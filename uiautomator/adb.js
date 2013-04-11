@@ -46,6 +46,7 @@ var ADB = function(opts, android) {
   this.portForwarded = false;
   this.debugMode = true;
   this.fastReset = opts.fastReset;
+  this.cleanApp = opts.cleanApp || this.fastReset;
   this.cleanAPK = '/tmp/' + this.appPackage + '.clean.apk';
   // This is set to true when the bootstrap jar crashes.
   this.restartBootstrap = false;
@@ -309,6 +310,8 @@ ADB.prototype.prepareDevice = function(onReady) {
     function(cb) { me.checkAdbPresent(cb); },
     function(cb) { me.getDeviceWithRetry(cb);},
     function(cb) { me.waitForDevice(cb); },
+    function(cb) { me.checkFastReset(cb); },
+    function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); }
   ], onReady);
 };
@@ -326,10 +329,33 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   async.series([
     function(cb) { me.prepareDevice(cb); },
     function(cb) { me.pushAppium(cb); },
-    function(cb) { me.checkFastReset(cb); },
-    function(cb) { me.installApp(cb); },
     function(cb) { me.startApp(cb); }
   ], doRun);
+};
+
+ADB.prototype.startSelendroid = function(serverPath, onReady) {
+  var me = this;
+
+  var runSelendroid = function(cb) {
+    var cmd = "adb shell am instrument -e main_activity '" + me.appPackage +
+              "." + me.appActivity + "' org.openqa.selendroid/" +
+              "org.openqa.selendroid.ServerInstrumentation";
+    logger.info("Starting instrumentation process for selendroid with cmd: " +
+                cmd);
+    exec(cmd, function(err, stdout) {
+      if (stdout.indexOf("Exception") !== -1) {
+        var msg = stdout.split("\n")[0] || "Unknown exception starting selendroid";
+        return cb(new Error(msg));
+      }
+      cb();
+    });
+  };
+
+  async.series([
+    function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.installApk(serverPath, cb); },
+    function(cb) { runSelendroid(cb); }
+  ], onReady);
 };
 
 ADB.prototype.getConnectedDevices = function(cb) {
@@ -851,7 +877,7 @@ ADB.prototype.installApp = function(cb) {
   };
 
   var doClean = function(cb) {
-    if (installClean) {
+    if (installClean && me.cleanApp) {
       me.debug("Installing clean apk");
       me.installApk(me.cleanAPK, cb);
     } else { cb(null); }
@@ -859,7 +885,7 @@ ADB.prototype.installApp = function(cb) {
 
   var doFastReset = function(cb) {
     // App is already installed so reset it.
-    if (!installApp) {
+    if (!installApp && me.fastReset) {
       me.runFastReset(cb);
     } else { cb(null); }
   };

@@ -27,7 +27,8 @@ var ADB = function(opts, android) {
   // Don't uninstall if using fast reset.
   // Uninstall if reset is set and fast reset isn't.
   this.skipUninstall = opts.fastReset || !(opts.reset || false);
-  this.port = opts.port || 4724;
+  this.systemPort = opts.port || 4724;
+  this.devicePort = opts.devicePort || 4724;
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
@@ -374,9 +375,9 @@ ADB.prototype.getConnectedDevices = function(cb) {
 
 ADB.prototype.forwardPort = function(cb) {
   this.requireDeviceId();
-  var devicePort = 4724;
-  this.debug("Forwarding system:" + this.port + " to device:" + devicePort);
-  var arg = "tcp:" + this.port + " tcp:" + devicePort;
+  this.debug("Forwarding system:" + this.systemPort + " to device:" +
+             this.devicePort);
+  var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
   exec(this.adbCmd + " forward " + arg, _.bind(function(err) {
     if (err) {
       logger.error(err);
@@ -436,7 +437,7 @@ ADB.prototype.checkForSocketReady = function(output) {
   if (/Appium Socket Server Ready/.exec(output)) {
     this.requirePortForwarded();
     this.debug("Connecting to server on device...");
-    this.socketClient = net.connect(this.port, _.bind(function() {
+    this.socketClient = net.connect(this.systemPort, _.bind(function() {
       this.debug("Connected!");
       this.onSocketReady(null);
     }, this));

@@ -30,17 +30,17 @@ Requirements
 
 General:
 
-    > Mac OS X 10.6 or higher (Linux OK for Android-only)
-    > Node and npm (brew install node) (Node must be >= v0.8)
+* Mac OS X 10.6 or higher (Linux OK for Android-only)
+* Node and npm (brew install node) (Node must be &gt;= v0.8)
 
 For iOS automation:
 
-    > XCode
-    > Apple Developer Tools (iPhone simulator SDK, command line tools)
+* XCode
+* Apple Developer Tools (iPhone simulator SDK, command line tools)
 
 For Android automation:
 
-    > Android SDK API >= 17
+* Android SDK API &gt;= 17
 
 User Quick Start
 ------------
@@ -49,14 +49,14 @@ Option 1: Use Appium.app:
 * Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium-release.dmg")
 * Run Appium.app then run a test using your favorite language / framework
 
-Option 2: Get Appium from NPM
+Option 2: Run Appium from the command line using Node:
 
-    > mkdir appium-test && cd appium-test
-    > npm install appium -g  # might have to do this with sudo
-    > npm install wd
-    > curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
-    > appium &
-    > node simplest.js
+    mkdir appium-test && cd appium-test
+    npm install appium -g  # might have to do this with sudo
+    npm install wd
+    curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
+    appium &
+    node simplest.js
 
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
@@ -96,9 +96,9 @@ From your local repo clone's command prompt, install these packages using the
 following commands (if you didn't install node using homebrew, you might have
 to run npm with sudo privs):
 
-    > npm install -g mocha
-    > npm install -g grunt-cli
-    > ./reset.sh
+    npm install -g mocha
+    npm install -g grunt-cli
+    ./reset.sh
 
 The first two commands install test and build tools (sudo may not be necessary
 if you installed node.js via Homebrew). The third command installs all app
@@ -120,11 +120,11 @@ have to modify your `/etc/authorization` file in one of two ways:
 2.  Run the following grunt command which automatically modifies your
     `/etc/authorization` file for you:
 
-    > sudo grunt authorize
+    sudo grunt authorize
 
 At this point, you can simply run:
 
-    > ./reset.sh --ios
+    ./reset.sh --ios
 
 Developing on Appium (Android)
 ----------------
@@ -133,17 +133,17 @@ Developing on Appium (Android)
 
 Now, you can simply run:
 
-    > ./reset.sh --android
+    ./reset.sh --android
 
 If you want to use Selendroid for older apps:
 
-    > ./reset.sh --selendroid
+    ./reset.sh --selendroid
 
 Make sure you have one and only one Android emulator or device running, e.g.
 by running this command in another process (assuming the `emulator` command is
 on your path):
 
-    > emulator -avd <MyAvdName>
+    emulator -avd <MyAvdName>
 
 Making sure you're up to date
 -----------
@@ -151,36 +151,35 @@ Since we use dev versions of some packages, it often becomes necessary to
 install new NPM packages or update various things. There's a handy shell script
 to do all this:
 
-    > ./reset.sh
+    ./reset.sh
 
 Or you can run reset for individual platforms only:
 
-    > ./reset.sh --ios
-    > ./reset.sh --android
-    > ./reset.sh --selendroid
+    ./reset.sh --ios
+    ./reset.sh --android
+    ./reset.sh --selendroid
 
 Running Tests
 -----------
 Once, your system is set up and your code is up to date, you can run various
 kinds of tests:
 
-    > grunt functional
-    > grunt android
-    > grunt ios
-    > grunt unit
+    grunt functional
+    grunt android
+    grunt ios
+    grunt unit
 
 Or you can run all tests:
 
-    > grunt test
+    grunt test
 
 Before committing code, please run grunt to execute some basic tests and check
 your changes against code quality standards:
 
-    > grunt
-    Running "lint:all" (lint) task
-    Lint free.
-
-    Done, without errors.
+    grunt
+    > Running "lint:all" (lint) task
+    > Lint free.
+    > Done, without errors.
 
 Dig in deeper to Appium dev
 -----------
@@ -188,9 +187,9 @@ Dig in deeper to Appium dev
 If you want to run the Appium server and have it listen indefinitely, you can
 execute one of the following commands to start an Appium server with or without a specified app:
 
-    > grunt appium           // launch Appium server without app
-    > grunt appium:TestApp   // launch Appium server with the TestApp
-    > grunt appium:UICatalog // launch Appium server with the UICatalog app
+    grunt appium           // launch Appium server without app
+    grunt appium:TestApp   // launch Appium server with the TestApp
+    grunt appium:UICatalog // launch Appium server with the UICatalog app
 
 Like the power of automating dev tasks? Check out the [Appium grunt
 tasks](https://github.com/appium/appium/blob/master/docs/grunt.md) available to
@@ -201,7 +200,7 @@ help with building apps, installing apps, generating docs, etc...
 If you have an Appium server listening, you can run individual test files using
 Mocha, for example:
 
-    > mocha -t 60000 -R spec test/functional/testapp/simple.js
+    mocha -t 60000 -R spec test/functional/testapp/simple.js
 
 ### Advanced Appium server flags
 
@@ -209,12 +208,12 @@ Do you like getting close to the metal? Or are you trying to launch an Appium
 server from a script with a custom app? If so you can start Appium without
 grunt from the command line with an app or without an app, among other things:
 
-    > node server.js -V  // launch Appium server without app
-    > node server.js --app /absolute/path/to/app -V  // launch Appium server with app
-    > node server.js --launch // pre-launch the app when appium loads
-    > node server.js --log /my/appium.log // log to file instead of stdout
-    > node server.js --without-delay // (iOS) use faster instruments-without-delay
-    > node server.js --fast-reset // (Android) faster resetting between tests
+    node server.js -V  // launch Appium server without app
+    node server.js --app /absolute/path/to/app -V  // launch Appium server with app
+    node server.js --launch // pre-launch the app when appium loads
+    node server.js --log /my/appium.log // log to file instead of stdout
+    node server.js --without-delay // (iOS) use faster instruments-without-delay
+    node server.js --fast-reset // (Android) faster resetting between tests
 
 (See
 [the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for

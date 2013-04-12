@@ -5,8 +5,7 @@ var net = require('net')
   , repl = require('repl')
   , colors = require('colors')
   , appium  = require('../server')
-  , parser = require('./parser')
-  ;
+  , parser = require('./parser');
 
 var startRepl = function() {
   var help = function() {
@@ -49,8 +48,7 @@ var startRepl = function() {
 
 if (process.argv[2] === "shell") {
   startRepl();
-}
-else {
+} else {
   var args = parser().parseArgs();
   args.verbose = true;
   //console.log("Pre-flight check ...".grey);

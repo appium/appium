@@ -2,6 +2,7 @@
 
 var errors = require('./errors')
   , request = require('request')
+  , _ = require('underscore')
   , logger = require('../logger').get('appium');
 
 var UnknownError = errors.UnknownError
@@ -59,7 +60,7 @@ exports.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
   spin();
 };
 
-exports.bypass = function(url, method, body, contentType, cb) {
+exports.request = function(url, method, body, contentType, cb) {
   if (typeof cb === "undefined" && typeof contentType === "function") {
     cb = contentType;
     contentType = null;
@@ -74,7 +75,13 @@ exports.bypass = function(url, method, body, contentType, cb) {
     url: url
     , method: method
     , headers: {'Content-Type': contentType}
-    , body: body
   };
+  if (_.contains(['put', 'post', 'patch'], method.toLowerCase())) {
+    if (typeof body !== "string") {
+      opts.json = body;
+    } else {
+      opts.body = body;
+    }
+  }
   request(opts, cb);
 };

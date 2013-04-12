@@ -19,6 +19,7 @@ var Selendroid = function(opts) {
   this.appPackage = opts.appPackage;
   this.desiredCaps = opts.desiredCaps;
   this.onStop = function() {};
+  this.selendroidSessionId = null;
   this.adb = null;
   this.isProxy = true;
   this.proxyHost = 'localhost';
@@ -39,6 +40,13 @@ Selendroid.prototype.start = function(cb) {
     function(res, cb) { me.waitForServer(cb); },
     function(cb) { me.createSession(cb); },
   ], cb);
+};
+
+Selendroid.prototype.stop = function(cb) {
+  logger.info("Stopping selendroid server");
+  this.deleteSession(function(err) {
+    cb(err ? 1 : 0);
+  });
 };
 
 Selendroid.prototype.ensureServerExists = function(cb) {
@@ -66,9 +74,9 @@ Selendroid.prototype.buildServer = function(cb) {
             this.appPackage;
   exec(cmd, {cwd: buildDir}, _.bind(function(err, stdout, stderr) {
     if (err) {
-      logger.error("Unable to build selendroid server");
-      console.log(stdout);
-      console.log(stderr);
+      logger.error("Unable to build selendroid server. Stdout was: ");
+      logger.error(stdout);
+      logger.error(stderr);
       return cb(err);
     }
     logger.info("Copying selendroid server to correct destination");
@@ -110,19 +118,28 @@ Selendroid.prototype.waitForServer = function(cb) {
 
 Selendroid.prototype.createSession = function(cb) {
   var data = {desiredCapabilities: this.desiredCaps};
-  this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
+  this.proxyTo('/wd/hub/session', 'POST', data, _.bind(function(err, res, body) {
     if (err) return cb(err);
 
     if (res.statusCode === 301 && body.sessionId) {
       logger.info("Successfully started selendroid session");
+      this.selendroidSessionId = body.sessionId;
       cb(null, body.sessionId);
     } else {
+      logger.error("Selendroid create session did not work. Status was " +
+                   res.statusCode + " and body was " + body);
       cb(new Error("Did not get session redirect from selendroid"));
-      console.log(res.headers);
-      console.log(res.statusCode);
-      console.log(body);
     }
-  });
+  }, this));
+};
+
+Selendroid.prototype.deleteSession = function(cb) {
+  var url = '/wd/hub/session/' + this.selendroidSessionId;
+  this.proxyTo(url, 'DELETE', null, _.bind(function(err, res) {
+    if (err) return cb(err);
+    if (res.statusCode !== 200) return cb(new Error("Status was not 200"));
+    cb();
+  }, this));
 };
 
 Selendroid.prototype.proxyTo = function(endpoint, method, data, cb) {

@@ -46,8 +46,8 @@ User Quick Start
 ------------
 Option 1: Use Appium.app:
 
-    * Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium-release.dmg")
-    * Run Appium.app then run a test using your favorite language / framework
+* Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium-release.dmg")
+* Run Appium.app then run a test using your favorite language / framework
 
 Option 2: Get Appium from NPM
 
@@ -74,13 +74,13 @@ guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
 
 We support Android and iOS platforms side-by-side:
 
-    * [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
-    * [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
-    * [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-    * [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-    * [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
-    * [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
-    * [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
+* [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
+* [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
+* [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+* [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+* [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
+* [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
+* [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
 
 - - -
 

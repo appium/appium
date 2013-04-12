@@ -357,9 +357,22 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 
   var checkModServerExists = function(cb) {
     fs.stat(me.selendroidServerPath, function(err) {
-      modServerExists = !!!err;
+      modServerExists = !err;
       cb();
     });
+  };
+
+  var conditionalUninstallSelendroid = function(cb) {
+    if (!modServerExists) {
+      // assume we're going to rebuild selendroid and therefore
+      // need to uninstall it if it's already on device
+      logger.info("Rebuilt selendroid apk does not exist, uninstalling " +
+                  "any instances of it on device to make way for new one");
+      me.uninstallApk('org.openqa.selendroid', cb);
+    } else {
+      logger.info("Rebuilt selendroid apk exists, doing nothing");
+      cb();
+    }
   };
 
   var conditionalInsertManifest = function(cb) {
@@ -374,15 +387,25 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
     }
   };
 
+  var conditionalInstallSelendroid = function(cb) {
+    me.checkAppInstallStatus('org.openqa.selendroid', function(e, installed) {
+      if (!installed) {
+        logger.info("Rebuilt selendroid is not installed, installing it");
+        me.installApk(me.selendroidServerPath, cb);
+      } else {
+        logger.info("Rebuilt selendroid is already installed");
+        cb();
+      }
+    });
+  };
+
   async.series([
     function(cb) { me.prepareDevice(cb); },
-    // uninstall for now to make sure everything's kosher
-    function(cb) { me.uninstallApk('org.openqa.selendroid', cb); },
-    function(cb) { me.uninstallApk(me.appPackage, cb); },
     function(cb) { checkModServerExists(cb); },
+    function(cb) { conditionalUninstallSelendroid(cb); },
     function(cb) { conditionalInsertManifest(cb); },
     function(cb) { me.checkSelendroidCerts(me.selendroidServerPath, cb); },
-    function(cb) { me.installApk(me.selendroidServerPath, cb); },
+    function(cb) { conditionalInstallSelendroid(cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushSelendroid(cb); },
@@ -926,6 +949,27 @@ ADB.prototype.runFastReset = function(cb) {
   });
 };
 
+ADB.prototype.checkAppInstallStatus = function(pkg, cb) {
+  var installed = false
+    , cleanInstalled = false;
+  this.requireDeviceId();
+
+  logger.debug("Getting install/clean status for " + pkg);
+  var listPkgCmd = this.adbCmd + " shell pm list packages -3 " + pkg;
+  console.log(listPkgCmd);
+  exec(listPkgCmd, function(err, stdout) {
+    //console.log("Packages found:");
+    //console.log(stdout);
+    var apkInstalledRgx = new RegExp('^package:' +
+        pkg.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+    installed = !!apkInstalledRgx.test(stdout);
+    var cleanInstalledRgx = new RegExp('^package:' +
+        (pkg + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
+    cleanInstalled = !!cleanInstalledRgx.test(stdout);
+    cb(null, installed, cleanInstalled);
+  });
+};
+
 ADB.prototype.installApp = function(cb) {
   var me = this
     , installApp = false
@@ -934,15 +978,10 @@ ADB.prototype.installApp = function(cb) {
   me.requireApk();
 
   var determineInstallAndCleanStatus = function(cb) {
-    var listPkgCmd = me.adbCmd + " shell pm list packages -3 " + me.appPackage;
-    exec(listPkgCmd, function(err, stdout) {
-      var apkInstalledRgx = new RegExp('^package:' + me.appPackage.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-      installApp = ! apkInstalledRgx.test(stdout);
-      var cleanInstalledRgx = new RegExp('^package:' + (me.appPackage + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-      installClean = ! cleanInstalledRgx.test(stdout);
-      me.debug("Packages found:");
-      me.debug(stdout);
-      cb(null);
+    me.checkAppInstallStatus(me.appPackage, function(err, installed, cleaned) {
+      installApp = !installed;
+      installClean = !cleaned;
+      cb();
     });
   };
 

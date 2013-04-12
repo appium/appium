@@ -6,6 +6,7 @@ var controller = require('./controller')
 
 var shouldProxy = function(req) {
   if (req.device === null) return false;
+  if (!req.device.isProxy) return false;
 
   var avoid = [
     ['POST', new RegExp('^/wd/hub/session$')]

@@ -64,6 +64,6 @@
     "prompt": "~0.2.9",
     "grunt-contrib-jshint": "~0.1.1",
     "saucelabs": "~0.0.7",
-    "markdown": "~0.4.0"
+    "namp": "~0.2.25"
   }
 }

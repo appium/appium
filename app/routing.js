@@ -8,14 +8,14 @@ var shouldProxy = function(req) {
   if (req.device === null) return false;
 
   var avoid = [
-    ['POST', '/wd/hub/session']
-    , ['DELETE', '/wd/hub/session/:sessionId?']
+    ['POST', new RegExp('^/wd/hub/session$')]
+    , ['DELETE', new RegExp('^/wd/hub/session/[^/]+$')]
   ];
   var method = req.route.method.toUpperCase();
-  var path = req.route.path;
+  var path = req.originalUrl;
   var shouldAvoid = false;
   _.each(avoid, function(pathToAvoid) {
-    if (method === pathToAvoid[0] && path === pathToAvoid[1]) {
+    if (method === pathToAvoid[0] && pathToAvoid[1].exec(path)) {
       shouldAvoid = true;
     }
   });

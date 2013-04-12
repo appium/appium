@@ -1,4 +1,22 @@
 -------------------------------------
+CHANGES IN VERSION 0.3.0 (from 0.2.3)
+-------------------------------------
+[GENERAL]
+- Running tests with grunt will now not crash on first test failure
+- Rewrote reset.sh to respect sudo and to run for individual platforms
+- Changed markdown rendering engine and logic for generating appium.io from
+  README.md
+
+[ANDROID]
+- Add "mobile: find" method for complex find combinations
+- Check that clean.apk is signed
+- Orientation support
+- Update verify.jar to work on java 6
+- Massive refactoring of adb.js
+- Added Selendroid proxy support (!)
+
+
+-------------------------------------
 CHANGES IN VERSION 0.2.3 (from 0.2.2)
 -------------------------------------
 [GENERAL]

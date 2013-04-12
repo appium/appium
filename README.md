@@ -3,11 +3,13 @@ Appium
 
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 
-Appium is an open source test automation tool for native and hybrid
-mobile apps. It supports both iOS and Android. Appium drives Apple's
-UIAutomation library and Android's UiAutomator using Selenium's
-WebDriver JSON wire protocol. Appium is based on
-[Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
+Appium is an open source, cross-platform test automation tool for native and
+hybrid mobile apps. It supports both iOS and Android. Appium drives Apple's
+UIAutomation library and Android's UiAutomator framework (for newer platforms)
+using Selenium's WebDriver JSON wire protocol. Appium is based on [Dan
+Cuellar's](http://github.com/penguinho) work on iOS Auto. Appium also comes
+bundled with [Selendroid](http://github.com/DominikDary/selendroid) for testing
+older Android platforms.
 
 Testing with Appium has two big benefits:
 
@@ -15,28 +17,42 @@ Testing with Appium has two big benefits:
     to use of standard automation APIs on all platforms.
 
 2.  You can write tests with your favorite dev tools using Java,
-    Objective-C, JavaScript, PHP, Python, Ruby, C#, or Perl with the Selenium
-    WebDriver API and language-specific client libraries. You can use
-    any testing framework. If you use the UIAutomation library without
-    Appium you can only write tests using JavaScript and you can only
-    run tests through the Instruments application. Similarly, with
-    UiAutomator you can only write tests in Java.
+    Objective-C, JavaScript, PHP, Python, Ruby, C#, Clojure, or Perl with the
+    Selenium WebDriver API and language-specific client libraries. You can use
+    any testing framework. If you use Apple's UIAutomation library without Appium
+    you can only write tests using JavaScript and you can only run tests
+    through the Instruments application. Similarly, with Google's UiAutomator
+    you can only write tests in Java. Appium opens up the possibility of true
+    cross-platform native mobile automation. Finally!
 
 Requirements
 ------------
 
-    > Mac OS X 10.6 or higher
+General:
+
+    > Mac OS X 10.6 or higher (Linux OK for Android-only)
+    > Node and npm (brew install node) (Node must be >= v0.8)
+
+For iOS automation:
+
     > XCode
     > Apple Developer Tools (iPhone simulator SDK, command line tools)
+
+For Android automation:
+
     > Android SDK API >= 17
-    > Node and npm (http://www.nodejs.org) (Node must be >= v0.8)
 
 User Quick Start
 ------------
-Get something working with a quickness.
+Option 1: Use Appium.app:
+
+    * Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium-release.dmg")
+    * Run Appium.app then run a test using your favorite language / framework
+
+Option 2: Get Appium from NPM
 
     > mkdir appium-test && cd appium-test
-    > sudo npm install appium -g
+    > npm install appium -g  # might have to do this with sudo
     > npm install wd
     > curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
     > appium &
@@ -58,28 +74,30 @@ guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
 
 We support Android and iOS platforms side-by-side:
 
-* [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
-* [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
-* [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-* [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-* [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
-* [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
-* [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
+    * [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios)
+    * [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android)
+    * [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+    * [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
+    * [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
+    * [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
+    * [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
 
 - - -
 
 Developing on Appium
 ------------
 Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
-The recommended way to install node is `brew install node` Node [installed by brew](http://mxcl.github.io/homebrew/) will not require sudo for npm commands.
+The recommended way to install node is `brew install node`. Node [installed by
+brew](http://mxcl.github.io/homebrew/) will not require sudo for npm commands.
 
 Fork the Appium repo ( [https://github.com/appium/appium](https://github.com/appium/appium) ), then clone your fork.
 
 From your local repo clone's command prompt, install these packages using the
-following commands:
+following commands (if you didn't install node using homebrew, you might have
+to run npm with sudo privs):
 
-    > sudo npm install -g mocha
-    > sudo npm install -g grunt-cli
+    > npm install -g mocha
+    > npm install -g grunt-cli
     > ./reset.sh
 
 The first two commands install test and build tools (sudo may not be necessary
@@ -104,33 +122,22 @@ have to modify your `/etc/authorization` file in one of two ways:
 
     > sudo grunt authorize
 
-**Important Note:** Making this modification to your `/etc/authorization` file
-grants access privileges to all members belonging to your `_developer` group.
+At this point, you can simply run:
 
-Download the UICatalog test app:
-
-    > grunt downloadApp
-
-Build the test apps (if the functional tests fail, try running these grunt commands again):
-
-    > grunt buildApp:UICatalog
-    > grunt buildApp:TestApp
-    > grunt buildApp:WebViewApp
+    > ./reset.sh --ios
 
 Developing on Appium (Android)
 ----------------
 
 (First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android).)
 
-Configure the and build bootstrap .jar:
+Now, you can simply run:
 
-    > grunt configAndroidBootstrap
-    > grunt buildAndroidBootstrap
+    > ./reset.sh --android
 
-Configure and build the test app:
+If you want to use Selendroid for older apps:
 
-    > grunt configAndroidApp:ApiDemos
-    > grunt buildAndroidApp:ApiDemos
+    > ./reset.sh --selendroid
 
 Make sure you have one and only one Android emulator or device running, e.g.
 by running this command in another process (assuming the `emulator` command is
@@ -146,27 +153,23 @@ to do all this:
 
     > ./reset.sh
 
+Or you can run reset for individual platforms only:
+
+    > ./reset.sh --ios
+    > ./reset.sh --android
+    > ./reset.sh --selendroid
+
 Running Tests
 -----------
-Once, your system is set up and your code is up to date, you can run all the
-functional tests:
+Once, your system is set up and your code is up to date, you can run various
+kinds of tests:
 
     > grunt functional
-
-Note: we use [wd](http://github.com/admc/wd) as the Selenium client in our
-functional tests. Because of the work we are doing to extend the WebDriver
-protocol, we use the development version of wd. If you've installed wd in some
-other way, you might need to do this in the Appium project directory to get the
-tests to run successfully:
-
-    > rm -rf node_modules/wd
-    > npm install .
-
-Run unit tests:
-
+    > grunt android
+    > grunt ios
     > grunt unit
 
-Run all tests:
+Or you can run all tests:
 
     > grunt test
 

@@ -412,6 +412,7 @@ module.exports.generateAppiumIo = function(grunt, cb) {
                   'git pull --rebase origin master && ' +
                   'git push origin master && ' +
                   'git checkout gh-pages && ' +
+                  'git pull origin gh-pages && ' +
                   'git merge master && ' +
                   'git push origin gh-pages && ' +
                   'git checkout master';

@@ -92,9 +92,9 @@ brew](http://mxcl.github.io/homebrew/) will not require sudo for npm commands.
 
 Fork the Appium repo ( [https://github.com/appium/appium](https://github.com/appium/appium) ), then clone your fork.
 
-From your local repo clone's command prompt, install these packages using the
+From your local repo's command prompt, install these packages using the
 following commands (if you didn't install node using homebrew, you might have
-to run npm with sudo privs):
+to run npm with sudo privileges):
 
     npm install -g mocha
     npm install -g grunt-cli
@@ -149,7 +149,7 @@ Making sure you're up to date
 -----------
 Since we use dev versions of some packages, it often becomes necessary to
 install new NPM packages or update various things. There's a handy shell script
-to do all this:
+to do all this for all platforms:
 
     ./reset.sh
 

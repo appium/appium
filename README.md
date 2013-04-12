@@ -46,7 +46,7 @@ User Quick Start
 ------------
 Option 1: Use Appium.app:
 
-* Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium-release.dmg")
+* Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium.dmg")
 * Run Appium.app then run a test using your favorite language / framework
 
 Option 2: Run Appium from the command line using Node:

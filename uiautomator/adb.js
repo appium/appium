@@ -541,7 +541,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
 };
 
 ADB.prototype.checkForSocketReady = function(output) {
-  if (/Appium Socket Server Ready/.exec(output)) {
+  if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
     this.debug("Connecting to server on device...");
     this.socketClient = net.connect(this.systemPort, _.bind(function() {
@@ -959,10 +959,10 @@ ADB.prototype.checkAppInstallStatus = function(pkg, cb) {
   exec(listPkgCmd, function(err, stdout) {
     var apkInstalledRgx = new RegExp('^package:' +
         pkg.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-    installed = !!apkInstalledRgx.test(stdout);
+    installed = apkInstalledRgx.test(stdout);
     var cleanInstalledRgx = new RegExp('^package:' +
         (pkg + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-    cleanInstalled = !!cleanInstalledRgx.test(stdout);
+    cleanInstalled = cleanInstalledRgx.test(stdout);
     cb(null, installed, cleanInstalled);
   });
 };

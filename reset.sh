@@ -92,12 +92,6 @@ reset_selendroid() {
     git submodule update --init submodules/selendroid
     rm -rf selendroid
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid
-    echo "Building selendroid server for ApiDemos"
-    pushd selendroid/selendroid-server
-    mvn install -Dandroid.renameInstrumentationTargetPackage=com.example.android.apis
-    echo "Copying ApiDemos selendroid server to a good home"
-    cp target/selendroid-server-$selendroid_ver.apk $appium_home/selendroid/selendroid-apidemos.apk
-    popd
 }
 
 cleanup() {

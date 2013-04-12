@@ -150,7 +150,7 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
 
 ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
   var me = this
-    , newServerPath = serverPath.replace(/\.apk$/, ".mod.apk")
+    , newServerPath = me.selendroidServerPath
     , srcManifest = path.resolve(__dirname, "../selendroid/selendroid-gem",
                                  "selendroid-prebuild/AndroidManifest.xml")
     , dstDir = '/tmp/' + this.appPackage
@@ -163,8 +163,7 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
     function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
     function(cb) { me.compileManifest(dstManifest, cb); },
     function(cb) { me.insertManifest(dstManifest, serverPath, newServerPath,
-      cb); },
-    function(cb) { me.selendroidServerPath = newServerPath; cb(); }
+      cb); }
   ], cb);
 };
 
@@ -352,15 +351,34 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
-  var me = this;
-  this.selendroidServerPath = serverPath;
+  var me = this
+    , modServerExists = false;
+  this.selendroidServerPath = serverPath.replace(/\.apk$/, ".mod.apk");
+
+  var checkModServerExists = function(cb) {
+    fs.stat(me.selendroidServerPath, function(err) {
+      modServerExists = !!!err;
+      cb();
+    });
+  };
+
+  var conditionalInsertManifest = function(cb) {
+    if (!modServerExists) {
+      logger.info("Rebuilt selendroid server does not exist");
+      me.insertSelendroidManifest(serverPath, cb);
+    } else {
+      logger.info("Rebuilt selendroid server already exists");
+      cb();
+    }
+  };
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
     // uninstall for now to make sure everything's kosher
     function(cb) { me.uninstallApk('org.openqa.selendroid', cb); },
     function(cb) { me.uninstallApk(me.appPackage, cb); },
-    function(cb) { me.insertSelendroidManifest(me.selendroidServerPath, cb); },
+    function(cb) { checkModServerExists(cb); },
+    function(cb) { conditionalInsertManifest(cb); },
     function(cb) { me.checkSelendroidCerts(me.selendroidServerPath, cb); },
     function(cb) { me.installApk(me.selendroidServerPath, cb); },
     function(cb) { me.installApp(cb); },

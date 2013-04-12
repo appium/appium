@@ -14,13 +14,13 @@ var path = require('path')
       // selendroid appears to have some issues with implicit waits
       // hence the timeouts
       setTimeout(function() {
-        h.driver.elementByName('Accessibility', function(err, el) {
+        h.driver.elementByName('App', function(err, el) {
           should.not.exist(err);
           should.exist(el);
           el.click(function(err) {
             should.not.exist(err);
             setTimeout(function() {
-              h.driver.elementByLinkText("Accessibility Node Provider", function(err, el) {
+              h.driver.elementByLinkText("Action Bar", function(err, el) {
                 should.not.exist(err);
                 should.exist(el);
                 done();

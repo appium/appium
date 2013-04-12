@@ -27,11 +27,6 @@ if [[ $should_reset_android -eq 0 ]] && [[ $should_reset_ios -eq 0 ]] && [[ $sho
     should_reset_selendroid=1
 fi
 
-# if selendroid is selected, we need all the android stuff too
-if [ $should_reset_selendroid -eq 1 ]; then
-    should_reset_android=1
-fi
-
 reset_general() {
     echo "---- RESETTING NPM ----"
     echo "Clearing dev version of wd.js"
@@ -72,12 +67,16 @@ reset_ios() {
     grunt buildApp:WebViewApp
 }
 
-reset_android() {
-    echo "---- RESETTING ANDROID ----"
+get_apidemos() {
     echo "Downloading/updating AndroidApiDemos"
     git submodule update --init submodules/ApiDemos
     rm -rf sample-code/apps/ApiDemos
     ln -s $appium_home/submodules/ApiDemos $appium_home/sample-code/apps/ApiDemos
+}
+
+reset_android() {
+    echo "---- RESETTING ANDROID ----"
+    get_apidemos
     echo "Building Android bootstrap"
     grunt configAndroidBootstrap
     grunt buildAndroidBootstrap
@@ -88,6 +87,7 @@ reset_android() {
 
 reset_selendroid() {
     echo "---- RESETTING SELENDROID ----"
+    get_apidemos
     echo "Downloading/updating selendroid"
     rm -rf submodules/selendroid/selendroid-server/target
     git submodule update --init submodules/selendroid

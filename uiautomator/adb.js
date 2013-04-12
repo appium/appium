@@ -956,10 +956,7 @@ ADB.prototype.checkAppInstallStatus = function(pkg, cb) {
 
   logger.debug("Getting install/clean status for " + pkg);
   var listPkgCmd = this.adbCmd + " shell pm list packages -3 " + pkg;
-  console.log(listPkgCmd);
   exec(listPkgCmd, function(err, stdout) {
-    //console.log("Packages found:");
-    //console.log(stdout);
     var apkInstalledRgx = new RegExp('^package:' +
         pkg.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
     installed = !!apkInstalledRgx.test(stdout);

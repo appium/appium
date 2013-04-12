@@ -111,7 +111,7 @@ module.exports.runMochaTests = function(grunt, appName, testType, deviceType, cb
         runMochaProc();
       });
     } else {
-      cb(_.max(exitCodes) || null);
+      cb(_.max(exitCodes));
     }
   };
   runMochaProc();

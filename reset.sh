@@ -89,6 +89,7 @@ reset_android() {
 reset_selendroid() {
     echo "---- RESETTING SELENDROID ----"
     echo "Downloading/updating selendroid"
+    rm -rf submodules/selendroid/selendroid-server/target
     git submodule update --init submodules/selendroid
     rm -rf selendroid
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid

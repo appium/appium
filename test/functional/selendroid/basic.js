@@ -11,18 +11,24 @@ var path = require('path')
 
   describeWd('basic', function(h) {
     it('should find and click an element', function(done) {
-      h.driver.elementByName('Accessibility', function(err, el) {
-        should.not.exist(err);
-        should.exist(el);
-        el.click(function(err) {
+      // selendroid appears to have some issues with implicit waits
+      // hence the timeouts
+      setTimeout(function() {
+        h.driver.elementByName('Accessibility', function(err, el) {
           should.not.exist(err);
-          h.driver.elementByLinkText("Accessibility Node Provider", function(err, el) {
+          should.exist(el);
+          el.click(function(err) {
             should.not.exist(err);
-            should.exist(el);
-            done();
+            setTimeout(function() {
+              h.driver.elementByLinkText("Accessibility Node Provider", function(err, el) {
+                should.not.exist(err);
+                should.exist(el);
+                done();
+              });
+            }, 1000);
           });
         });
-      });
+      }, 1000);
     });
   });
 

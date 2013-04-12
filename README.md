@@ -120,7 +120,7 @@ have to modify your `/etc/authorization` file in one of two ways:
 2.  Run the following grunt command which automatically modifies your
     `/etc/authorization` file for you:
 
-    sudo grunt authorize
+        sudo grunt authorize
 
 At this point, you can simply run:
 

@@ -8,7 +8,7 @@ var errors = require('./errors')
   , status = require("./uiauto/lib/status")
   , exec = require('child_process').exec
   , fs = require('fs')
-  , copyFile = require('./helpers').copyFile
+  , ncp = require('ncp')
   , async = require('async')
   , path = require('path')
   , UnknownError = errors.UnknownError;
@@ -80,7 +80,7 @@ Selendroid.prototype.buildServer = function(cb) {
       return cb(err);
     }
     logger.info("Copying selendroid server to correct destination");
-    copyFile(src, dest, _.bind(function(err) {
+    ncp(src, dest, _.bind(function(err) {
       if (err) {
         logger.error("Error copying selendroid to destination");
         return cb(err);

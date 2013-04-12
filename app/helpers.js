@@ -279,17 +279,3 @@ exports.rotateImage = function(imgPath, deg, cb) {
     cb(null);
   });
 };
-
-exports.copyFile = function (src, dst, cb) {
-  var is
-    , os;
-
-  fs.stat(src, function (err) {
-    if (err) {
-      return cb(err);
-    }
-    is = fs.createReadStream(src);
-    os = fs.createWriteStream(dst);
-    util.pump(is, os, cb);
-  });
-};

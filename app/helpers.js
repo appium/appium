@@ -8,6 +8,7 @@ var logger = require('../logger').get('appium')
   , path = require('path')
   , rimraf = require('rimraf')
   , exec = require('child_process').exec
+  , util = require('util')
   , temp = require('temp');
 
 exports.downloadFile = function(fileUrl, cb) {

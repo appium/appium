@@ -72,6 +72,7 @@ Android.prototype.start = function(cb, onDie) {
     var skipRelaunchOn = [
       'App never showed up'
       , 'Could not sign one or more apks'
+      , 'Could not find a connected Android device'
     ];
     var checkShouldSkipRelaunch = function(msg) {
       var skip = false;
@@ -127,7 +128,7 @@ Android.prototype.start = function(cb, onDie) {
   if (this.adb === null) {
     // Pass Android opts and Android ref to adb.
     this.adb = adb(this.opts, this);
-    this.adb.start(onLaunch, onExit);
+    this.adb.startAppium(onLaunch, onExit);
   } else {
     logger.error("Tried to start ADB when we already have one running!");
   }

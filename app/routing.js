@@ -1,18 +1,55 @@
 "use strict";
 var controller = require('./controller')
+  , request = require('./device').request
+  , _ = require('underscore')
   , logger = require('../logger').get('appium');
 
+var shouldProxy = function(req) {
+  if (req.device === null) return false;
+
+  var avoid = [
+    ['POST', new RegExp('^/wd/hub/session$')]
+    , ['DELETE', new RegExp('^/wd/hub/session/[^/]+$')]
+  ];
+  var method = req.route.method.toUpperCase();
+  var path = req.originalUrl;
+  var shouldAvoid = false;
+  _.each(avoid, function(pathToAvoid) {
+    if (method === pathToAvoid[0] && pathToAvoid[1].exec(path)) {
+      shouldAvoid = true;
+    }
+  });
+  return !shouldAvoid;
+};
+
+
 module.exports = function(appium) {
-  var rest = appium.rest
-    , inject = function(req, res, next) {
-        req.appium = appium;
-        req.device = appium.device;
-        logger.debug("Appium request initiated at " + req.url);
-        if (typeof req.body === "object") {
-          logger.debug("Request received with params: " + JSON.stringify(req.body));
-        }
-        next();
-      };
+  var rest = appium.rest;
+  var inject = function(req, res, next) {
+    req.appium = appium;
+    req.device = appium.device;
+    logger.debug("Appium request initiated at " + req.url);
+    if (typeof req.body === "object") {
+      logger.debug("Request received with params: " + JSON.stringify(req.body));
+    }
+    if (shouldProxy(req)) {
+      logger.debug("Proxying command to " + req.device.proxyHost + ":" +
+                   req.device.proxyPort);
+      var url = 'http://' + req.device.proxyHost + ':' + req.device.proxyPort +
+                req.originalUrl;
+      request(url, req.route.method.toUpperCase(), req.body,
+              req.headers['content-type'], function(err, response, body) {
+        if (err) return next(err);
+        logger.debug("Proxied response received with status " +
+                     response.statusCode + ": " +
+                     JSON.stringify(body).slice(0, 1000));
+        res.headers = response.headers;
+        res.send(response.statusCode, body);
+      });
+    } else {
+      next();
+    }
+  };
 
   // Make appium available to all REST http requests.
   rest.all('/wd/*', inject);

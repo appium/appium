@@ -3,7 +3,7 @@
 var errors = require('./errors')
   , adb = require('../uiautomator/adb')
   , _ = require('underscore')
-  , bypass = require('./device').bypass
+  , request = require('./device').request
   , logger = require('../logger').get('appium')
   , status = require("./uiauto/lib/status")
   , exec = require('child_process').exec
@@ -39,13 +39,25 @@ Selendroid.prototype.start = function(cb) {
     var desiredCaps = _.clone(this.desiredCaps);
     this.adb.startSelendroid(this.serverApk, _.bind(function(err) {
       if (err) return cb(err);
-      //this.bypass('/wd/hub/session', 'POST', desiredCaps, function(err, res, body) {
-        //console.log(err);
-        //console.log(res);
-        //console.log(body);
-        //cb(null);
-      //});
-      cb(null);
+      logger.info("Selendroid is launching, waiting for server");
+      this.waitForServer(_.bind(function(err) {
+        if (err) return cb(err);
+        logger.info("Selendroid server is alive! Proxying to it");
+        var data = {desiredCapabilities: desiredCaps};
+        this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
+          if (err) return cb(err);
+
+          if (res.statusCode === 301 && body.sessionId) {
+            logger.info("Successfully started selendroid session");
+            cb(null, body.sessionId);
+          } else {
+            cb(new Error("Did not get session redirect from selendroid"));
+            console.log(res.headers);
+            console.log(res.statusCode);
+            console.log(body);
+          }
+        });
+      }, this));
     }, this));
   }, this));
 };
@@ -93,12 +105,35 @@ Selendroid.prototype.buildServer = function(cb) {
   }, this));
 };
 
-Selendroid.prototype.bypass = function(endpoint, method, data, cb) {
+Selendroid.prototype.waitForServer = function(cb) {
+  var waitMs = 20000
+    , intMs = 800
+    , start = Date.now();
+
+  var pingServer = _.bind(function() {
+    this.proxyTo('/wd/hub/status', 'GET', null, function(err, res, body) {
+      if (body === null || typeof body === "undefined" || !body.trim()) {
+        if (Date.now() - start < waitMs) {
+          setTimeout(pingServer, intMs);
+        } else {
+          cb(new Error("Waited " + (waitMs / 1000) + " secs for " +
+                       "selendroid server and it never showed up"));
+        }
+      } else {
+        cb(null);
+      }
+    });
+  }, this);
+
+  pingServer();
+};
+
+Selendroid.prototype.proxyTo = function(endpoint, method, data, cb) {
   if (endpoint[0] !== '/') {
     endpoint = '/' + endpoint;
   }
   var url = 'http://' + this.proxyHost + ':' + this.proxyPort + endpoint;
-  bypass(url, method, data ? data : null, cb);
+  request(url, method, data ? data : null, cb);
 };
 
 module.exports = function(opts) {

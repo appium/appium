@@ -11,6 +11,7 @@ var spawn = require('child_process').spawn
   , testZipArchive = require('../app/helpers').testZipArchive
   , async = require('async')
   , ncp = require('ncp')
+  , mkdirp = require('mkdirp')
   , _ = require('underscore');
 
 var noop = function() {};
@@ -144,6 +145,26 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
     function(cb) { me.compileManifest(outFile, cb); },
     function(cb) { me.insertManifest(outFile, cleanAPKSrc, me.cleanAPK, cb); },
     function(cb) { resignApks(cb); }
+  ], cb);
+};
+
+ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
+  var me = this
+    , newServerPath = serverPath.replace(/\.apk$/, ".mod.apk")
+    , srcManifest = path.resolve(__dirname, "../selendroid/selendroid-gem",
+                                 "selendroid-prebuild/AndroidManifest.xml")
+    , dstDir = '/tmp/' + this.appPackage
+    , dstManifest = dstDir + '/AndroidManifest.xml';
+
+  async.series([
+    function(cb) { mkdirp(dstDir, cb); },
+    function(cb) { me.retargetManifest(null, me.appPackage, srcManifest,
+      dstManifest, cb); },
+    function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
+    function(cb) { me.compileManifest(dstManifest, cb); },
+    function(cb) { me.insertManifest(dstManifest, serverPath, newServerPath,
+      cb); },
+    function(cb) { me.selendroidServerPath = newServerPath; cb(); }
   ], cb);
 };
 
@@ -332,35 +353,36 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
   var me = this;
-
-  var runSelendroid = function(cb) {
-    var cmd = "adb shell am instrument -e main_activity '" + me.appPackage +
-              "." + me.appActivity + "' org.openqa.selendroid/" +
-              "org.openqa.selendroid.ServerInstrumentation";
-    logger.info("Starting instrumentation process for selendroid with cmd: " +
-                cmd);
-    exec(cmd, function(err, stdout) {
-      if (stdout.indexOf("Exception") !== -1) {
-        logger.error(stdout);
-        var msg = stdout.split("\n")[0] || "Unknown exception starting selendroid";
-        return cb(new Error(msg));
-      }
-      cb();
-    });
-  };
+  this.selendroidServerPath = serverPath;
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
     // uninstall for now to make sure everything's kosher
     function(cb) { me.uninstallApk('org.openqa.selendroid', cb); },
     function(cb) { me.uninstallApk(me.appPackage, cb); },
-    function(cb) { me.insertSelendroidManifest(cb); },
-    function(cb) { me.checkSelendroidCerts(serverPath, cb); },
-    function(cb) { me.installApk(serverPath, cb); },
+    function(cb) { me.insertSelendroidManifest(me.selendroidServerPath, cb); },
+    function(cb) { me.checkSelendroidCerts(me.selendroidServerPath, cb); },
+    function(cb) { me.installApk(me.selendroidServerPath, cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
-    function(cb) { runSelendroid(cb); }
+    function(cb) { me.pushSelendroid(cb); }
   ], onReady);
+};
+
+ADB.prototype.pushSelendroid = function(cb) {
+  var cmd = "adb shell am instrument -e main_activity '" + this.appPackage +
+            "." + this.appActivity + "' org.openqa.selendroid/" +
+            "org.openqa.selendroid.ServerInstrumentation";
+  logger.info("Starting instrumentation process for selendroid with cmd: " +
+              cmd);
+  exec(cmd, function(err, stdout) {
+    if (stdout.indexOf("Exception") !== -1) {
+      logger.error(stdout);
+      var msg = stdout.split("\n")[0] || "Unknown exception starting selendroid";
+      return cb(new Error(msg));
+    }
+    cb();
+  });
 };
 
 ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {

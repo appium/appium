@@ -379,12 +379,16 @@ Appium.prototype.invoke = function() {
     }
     this.device = this.devices[this.deviceType];
 
-    this.device.start(function(err) {
+    this.device.start(function(err, sessionIdOverride) {
       me.progress++;
       // Ensure we don't use an undefined session.
       if (typeof me.sessions[me.progress] === 'undefined') {
         me.progress--;
         return;
+      }
+      if (sessionIdOverride) {
+        me.sessionId = sessionIdOverride;
+        logger.info("Overriding session id with " + sessionIdOverride);
       }
 
       me.sessions[me.progress].sessionId = me.sessionId;

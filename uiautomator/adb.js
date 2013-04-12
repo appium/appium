@@ -364,10 +364,12 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 
   var conditionalInsertManifest = function(cb) {
     if (!modServerExists) {
-      logger.info("Rebuilt selendroid server does not exist");
+      logger.info("Rebuilt selendroid server does not exist, inserting " +
+                  "modified manifest");
       me.insertSelendroidManifest(serverPath, cb);
     } else {
-      logger.info("Rebuilt selendroid server already exists");
+      logger.info("Rebuilt selendroid server already exists, no need to " +
+                  "rebuild it with a new manifest");
       cb();
     }
   };
@@ -383,7 +385,8 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
     function(cb) { me.installApk(me.selendroidServerPath, cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
-    function(cb) { me.pushSelendroid(cb); }
+    function(cb) { me.pushSelendroid(cb); },
+    function(cb) { logger.info("Selendroid server is launching"); cb(); }
   ], onReady);
 };
 

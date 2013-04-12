@@ -27,39 +27,18 @@ var Selendroid = function(opts) {
 
 Selendroid.prototype.start = function(cb) {
   logger.info("Starting selendroid server");
-  var opts = _.clone(this.opts);
+  var opts = _.clone(this.opts)
+    , me = this;
   opts.port = this.proxyPort;
   opts.devicePort = 8080;
-  //opts.fastReset = false;
-  //opts.cleanApp = false;
   this.adb = new adb(opts);
-  this.ensureServerExists(_.bind(function(err) {
-    if (err) return cb(err);
-    // modify desired caps
-    var desiredCaps = _.clone(this.desiredCaps);
-    this.adb.startSelendroid(this.serverApk, _.bind(function(err) {
-      if (err) return cb(err);
-      logger.info("Selendroid is launching, waiting for server");
-      this.waitForServer(_.bind(function(err) {
-        if (err) return cb(err);
-        logger.info("Selendroid server is alive! Proxying to it");
-        var data = {desiredCapabilities: desiredCaps};
-        this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
-          if (err) return cb(err);
 
-          if (res.statusCode === 301 && body.sessionId) {
-            logger.info("Successfully started selendroid session");
-            cb(null, body.sessionId);
-          } else {
-            cb(new Error("Did not get session redirect from selendroid"));
-            console.log(res.headers);
-            console.log(res.statusCode);
-            console.log(body);
-          }
-        });
-      }, this));
-    }, this));
-  }, this));
+  async.waterfall([
+    function(cb) { me.ensureServerExists(cb); },
+    function(cb) { me.adb.startSelendroid(me.serverApk, cb); },
+    function(res, cb) { me.waitForServer(cb); },
+    function(cb) { me.createSession(cb); },
+  ], cb);
 };
 
 Selendroid.prototype.ensureServerExists = function(cb) {
@@ -120,12 +99,30 @@ Selendroid.prototype.waitForServer = function(cb) {
                        "selendroid server and it never showed up"));
         }
       } else {
+        logger.info("Selendroid server is alive!");
         cb(null);
       }
     });
   }, this);
 
   pingServer();
+};
+
+Selendroid.prototype.createSession = function(cb) {
+  var data = {desiredCapabilities: this.desiredCaps};
+  this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
+    if (err) return cb(err);
+
+    if (res.statusCode === 301 && body.sessionId) {
+      logger.info("Successfully started selendroid session");
+      cb(null, body.sessionId);
+    } else {
+      cb(new Error("Did not get session redirect from selendroid"));
+      console.log(res.headers);
+      console.log(res.statusCode);
+      console.log(body);
+    }
+  });
 };
 
 Selendroid.prototype.proxyTo = function(endpoint, method, data, cb) {

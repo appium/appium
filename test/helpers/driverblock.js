@@ -108,22 +108,24 @@ var describeForApp = function(app, device, appPackage, appActivity) {
   if (typeof device === "undefined") {
     device = "ios";
   }
-  var browserName, appPath;
+  var browserName, appPath, realDevice;
   if (device === "ios") {
+    realDevice = "iPhone Simulator";
     browserName = "iOS";
   } else if (device === "android") {
-    browserName = "Android";
+    browserName = realDevice = "Android";
+  } else if (device === "selendroid") {
+    browserName = realDevice = "Selendroid";
   }
   if (/\//.exec(app) || /\./.exec(app)) {
     appPath = app;
   } else {
     if (device === "ios") {
       appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
-    } else if (device === "android") {
+    } else if (device === "android" || device === "selendroid") {
       appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/bin/" + app + "-debug.apk");
     }
   }
-  var realDevice = device == "ios" ? "iPhone Simulator" : "Android";
 
   return function(desc, tests, host, port, caps, extraCaps) {
     if (typeof extraCaps === "undefined") {

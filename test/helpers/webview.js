@@ -624,7 +624,9 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.execute('return document.getElementsByTagName("a");', function(err, res) {
           should.not.exist(err);
-          res[0].ELEMENT.should.equal('5000');
+          should.exist(res[0]);
+          should.exist(res[0].value);
+          res[0].value.should.equal('5000');
           done();
         });
       });

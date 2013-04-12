@@ -47,6 +47,9 @@ module.exports = function(grunt) {
       , ApiDemos: ['android', {
         functional: ['test/functional/apidemos']
       }]
+      , Selendroid: ['selendroid', {
+        functional: ['test/functional/selendroid']
+      }]
       , Safari: ['ios', {
         functional: ['test/functional/safari']
       }]
@@ -73,6 +76,9 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('android', "Run functional android tests", function(log) {
     runTestsWithServer(grunt, null, 'functional', 'android', log === "log", this.async());
+  });
+  grunt.registerTask('selendroid', "Run functional selendroid tests", function(log) {
+    runTestsWithServer(grunt, null, 'functional', 'selendroid', log === "log", this.async());
   });
   grunt.registerTask('ios', "Run functional ios tests", function(log) {
     runTestsWithServer(grunt, null, 'functional', 'ios', log === "log", this.async());

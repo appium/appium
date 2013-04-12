@@ -60,7 +60,7 @@ Option 2: Run Appium from the command line using Node:
 
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
-More Detailed Information
+Write Tests for Appium
 -------------------
 We support a sub-set of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
@@ -84,7 +84,7 @@ We support Android and iOS platforms side-by-side:
 
 - - -
 
-Developing on Appium
+Hacking with Appium
 ------------
 Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
 The recommended way to install node is `brew install node`. Node [installed by
@@ -105,7 +105,7 @@ if you installed node.js via Homebrew). The third command installs all app
 dependencies, builds supporting binaries and test apps. `reset.sh` is also the
 recommended command to run after pulling changes from master.
 
-Developing on Appium (iOS)
+Hacking with Appium (iOS)
 --------------
 
 (First, have a look at [setting up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios).)
@@ -126,7 +126,7 @@ At this point, you can simply run:
 
     ./reset.sh --ios
 
-Developing on Appium (Android)
+Hacking with Appium (Android)
 ----------------
 
 (First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android).)

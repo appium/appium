@@ -50,7 +50,11 @@ var Android = function(opts) {
 
 // Clear data, close app, then start app.
 Android.prototype.fastReset = function(cb) {
-  this.adb.runFastReset(function(err) { if (err) return cb(err); return cb(null); });
+  var me = this;
+  async.series([
+    function(cb) { me.adb.runFastReset(cb); },
+    function(cb) { me.adb.startApp(cb); },
+  ], cb);
 };
 
 Android.prototype.keyevent = function(keycode, cb) {

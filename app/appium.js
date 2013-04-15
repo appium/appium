@@ -443,11 +443,13 @@ Appium.prototype.reset = function(cb) {
   logger.info("Resetting app mid-session");
   if (this.isIos() || !this.fastReset) {
     var me = this
+    , oldImpWait = this.device.implicitWaitMs
     , oldId = this.sessionId;
 
     this.stop(function() {
       logger.info("Restarting app");
       me.start(me.desiredCapabilities, function() {
+        me.device.implicitWaitMs = oldImpWait;
         me.sessionId = oldId;
         cb(null, {status: status.codes.Success.code, value: null});
       });

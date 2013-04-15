@@ -135,7 +135,7 @@ Now, you can simply run:
 
     ./reset.sh --android
 
-If you want to use Selendroid for older apps:
+If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for older apps:
 
     ./reset.sh --selendroid
 

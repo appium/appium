@@ -10,13 +10,19 @@ var should = require('should')
 
 describe("XPath lookups", function() {
   var oks = {
-    "//button": {path: [{node: 'button', search: 'desc'}]}
+    "//button": {path: [{node: 'button', search: 'desc', index: null}]}
+    , "//button[1]": {path: [{node: 'button', search: 'desc', index: 1}]}
     , "/button": {path: [{node: 'button', search: 'child'}]}
+    , "/button[2]": {path: [{node: 'button', search: 'child', index: 2}]}
     , "button": {path: [{node: 'button', search: 'desc'}]}
     , "//button/text/webview": {path: [
         {node: 'button', search: 'desc'}
         , {node: 'text', search: 'child'}
         , {node: 'webview', search: 'child'}]}
+    , "//button[1]/text/webview[3]": {path: [
+        {node: 'button', search: 'desc', index: 1}
+        , {node: 'text', search: 'child', index: null}
+        , {node: 'webview', search: 'child', index: 3}]}
     , "text/webview//button": {path: [
         {node: 'text', search: 'desc'}
         , {node: 'webview', search: 'child'}
@@ -46,6 +52,10 @@ describe("XPath lookups", function() {
     , "//button123"
     , "//button[@name$='hi']"
     , "//tag_name"
+    , "//tag_name[0]"
+    , "//tag_name[]"
+    , "//tag_name]"
+    , "//tag_name["
     , "//button[something(@name, 'hi')]"
     , "//button[noat='wut']"
     , "//button/label[@name='hi']/moar"

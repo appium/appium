@@ -5,6 +5,15 @@ if (typeof au === "undefined") {
   au = {};
 }
 
+au.getNodeIndex = function(seg) {
+  var index = /\[(\d+)\]/;
+  var match = index.exec(seg);
+  if (match) {
+    return parseInt(match[1], 10);
+  }
+  return null;
+};
+
 au.getXpathSearchMethod = function(pathSeg, root) {
   if (typeof root === "undefined") {
     root = false;
@@ -28,8 +37,9 @@ au.getXpathExtPath = function(matchedExt) {
     for (var i = 0; i < splits.length; i++) {
       if (splits[i] !== "") {
         path.push({
-          node: splits[i].replace(/\/+/, '')
+          node: splits[i].replace(/\/+/, '').replace(/\[\d+\]/, '')
           , search: au.getXpathSearchMethod(splits[i])
+          , index: au.getNodeIndex(splits[i])
         });
       }
     }
@@ -39,8 +49,9 @@ au.getXpathExtPath = function(matchedExt) {
 
 au.parseXpath = function(xpath) {
   // e.g. "//button" or "button" or "/button"
-  var root = "^(/?/?(?:[a-zA-Z]+|\\*))";
-  var ext = "((//?[a-zA-Z]+)*)"; // e.g. "/text" or "/cell//button/text"
+  var index = "(\\[\\d+\\])?";
+  var root = "^(/?/?(?:[a-zA-Z]+|\\*)" + index + ")";
+  var ext = "((//?[a-zA-Z]+" + index + ")*)"; // e.g. "/text" or "/cell//button/text"
   var attrEq = "(@[a-zA-Z0-9_]+=[^\\]]+)"; // e.g. [@name="foo"]
   // e.g. [contains(@name, "foo")]
   var attrContains = "(contains\\(@[a-zA-Z0-9_]+, ?[^\\]]+\\))";
@@ -49,9 +60,9 @@ au.parseXpath = function(xpath) {
   var match = xpathRe.exec(xpath);
   if (match) {
     var matchedRoot = match[1]
-      , matchedExt = match[2]
-      , matchedAttrEq = match[6]
-      , matchedContains = match[7]
+      , matchedExt = match[3]
+      , matchedAttrEq = match[8]
+      , matchedContains = match[9]
       , attrName = null
       , attrConstraint = null
       , substrMatch = false
@@ -59,8 +70,9 @@ au.parseXpath = function(xpath) {
       , rootSearch = au.getXpathSearchMethod(matchedRoot, true)
       , parts = null;
     path.push({
-      node: matchedRoot.replace(/\/+/, '')
+      node: matchedRoot.replace(/\/+/, '').replace(/\[\d+\]/, '')
       , search: rootSearch
+      , index: au.getNodeIndex(matchedRoot)
     });
     path = path.concat(au.getXpathExtPath(matchedExt));
     if (matchedAttrEq || matchedContains) {
@@ -80,12 +92,20 @@ au.parseXpath = function(xpath) {
         attrConstraint = parts[1];
       }
     }
-    return {
+
+    // ensure we're using 1-indexing
+    for (var i = 0; i < path.length; i++) {
+      if (path[i].index !== null && path[i].index < 1) {
+        return false;
+      }
+    }
+    var ret = {
       path: path
       , attr: attrName
       , constraint: attrConstraint
       , substr: substrMatch
     };
+    return ret;
   } else {
     return false;
   }

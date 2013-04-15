@@ -131,9 +131,7 @@ describeWd('findElement(s)ByXpath', function(h) {
           });
         });
       };
-      spinWait(spinFn, function() {
-        done();
-      });
+      spinWait(spinFn, done);
     });
   });
   it('should search an extended path by descendant', function(done) {
@@ -153,6 +151,25 @@ describeWd('findElement(s)ByXpath', function(h) {
           });
         });
       });
+    });
+  });
+  it('should filter by indices', function(done) {
+    setupXpath(h.driver, function() {
+      var spinFn = function(cb) {
+        h.driver.elementByXPath("cell[2]//text[1]", function(err, el) {
+          should.not.exist(err);
+          el.text(function(err, text) {
+            should.not.exist(err);
+            try {
+              text.should.eql("ButtonsViewController.m:\r(UIButton *)grayButton");
+              cb();
+            } catch(e) {
+              cb(e);
+            }
+          });
+        });
+      };
+      spinWait(spinFn, done);
     });
   });
   it('should filter by partial text', function(done) {

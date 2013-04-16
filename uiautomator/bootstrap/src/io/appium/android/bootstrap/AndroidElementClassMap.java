@@ -59,6 +59,8 @@ public class AndroidElementClassMap {
     unallowed = new ArrayList<String>();
     map.put("text", "TextView");
     map.put("list", "ListView");
+    map.put("frame", "FrameLayout");
+    map.put("linear", "LinearLayout");
     map.put("textfield", "EditText");
 
     unallowed.add("secure");

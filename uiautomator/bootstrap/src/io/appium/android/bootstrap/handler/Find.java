@@ -39,6 +39,21 @@ public class Find extends CommandHandler {
   AndroidElementsHash elements = AndroidElementsHash.getInstance();
   Dynamic             dynamic  = new Dynamic();
 
+  private Object[] cascadeChildSels(final ArrayList<UiSelector> tail,
+      final ArrayList<String> tailOuts) {
+    if (tail.size() == 1) {
+      final Object[] retVal = { tail.get(0), tailOuts.get(0) };
+      return retVal;
+    } else {
+      final UiSelector head = tail.remove(0);
+      final String headOut = tailOuts.remove(0);
+      final Object[] res = cascadeChildSels(tail, tailOuts);
+      final Object[] retVal = { head.childSelector((UiSelector) res[0]),
+          headOut + ".childSelector(" + (String) res[1] + ")" };
+      return retVal;
+    }
+  }
+
   /*
    * @param command The {@link AndroidCommand} used for this handler.
    * 
@@ -261,9 +276,11 @@ public class Find extends CommandHandler {
       final String attr, String constraint, final boolean substr)
       throws AndroidCommandException, UnallowedTagNameException {
     UiSelector s = new UiSelector();
+    final ArrayList<UiSelector> subSels = new ArrayList<UiSelector>();
+    final ArrayList<String> subSelOuts = new ArrayList<String>();
     JSONObject pathObj;
     String nodeType;
-    String searchType;
+    Object nodeIndex;
     final String substrStr = substr ? "true" : "false";
     Logger.info("Building xpath selector from attr " + attr
         + " and constraint " + constraint + " and substr " + substrStr);
@@ -302,24 +319,34 @@ public class Find extends CommandHandler {
       return s;
     }
 
-    for (int i = 0; i < path.length(); i++) {
+    for (Integer i = 0; i < path.length(); i++) {
+      UiSelector subSel = new UiSelector();
+      String subSelOut = "s" + i.toString();
       try {
         pathObj = path.getJSONObject(i);
         nodeType = pathObj.getString("node");
-        searchType = pathObj.getString("search");
+        nodeIndex = pathObj.get("index");
       } catch (final JSONException e) {
         throw new AndroidCommandException(
             "Error parsing xpath path obj from JSON");
       }
       nodeType = AndroidElementClassMap.match(nodeType);
-      if (searchType.equals("child")) {
-        s = s.childSelector(s);
-        selOut += ".childSelector(s)";
-      } else {
-        s = s.className(nodeType);
-        selOut += ".className('" + nodeType + "')";
+      subSel = subSel.className(nodeType);
+      subSelOut += ".className('" + nodeType + "')";
+
+      try {
+        final Integer nodeIndexInt = (Integer) nodeIndex - 1;
+        subSel = subSel.instance(nodeIndexInt);
+        subSelOut += ".instance(" + nodeIndexInt.toString() + ")";
+      } catch (final ClassCastException e) {
+        // nodeIndex was null
       }
+      subSels.add(subSel);
+      subSelOuts.add(subSelOut);
     }
+    final Object[] cascadeResult = cascadeChildSels(subSels, subSelOuts);
+    s = (UiSelector) cascadeResult[0];
+    selOut = (String) cascadeResult[1];
     if (attr.equals("desc") || attr.equals("name")) {
       selOut += ".description";
       if (substr) {

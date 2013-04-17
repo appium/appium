@@ -306,7 +306,9 @@ $.extend(au, {
             elems = elems.find(path.node);
           }
           if (path.index !== null) {
-            elems = $(elems[path.index - 1]); // xpath is 1-indexed
+            // index of -1 means last()
+            var idx = path.index === -1 ? elems.length - 1 : path.index - 1;
+            elems = $(elems[idx]); // xpath is 1-indexed
           }
           if (i === xpObj.path.length - 1 && xpObj.attr) {
             // last run, need to apply attr filters if there are any

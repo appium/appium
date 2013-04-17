@@ -177,7 +177,7 @@ describeWd('xpath', function(h) {
       should.not.exist(err);
       el.text(function(err, text) {
         should.not.exist(err);
-        text.should.eql("Accessibility");
+        text.should.eql("Text");
         done();
       });
     });

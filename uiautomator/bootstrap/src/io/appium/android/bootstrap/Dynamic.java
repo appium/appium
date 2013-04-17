@@ -3,6 +3,8 @@ package io.appium.android.bootstrap;
 import io.appium.android.bootstrap.AndroidElement;
 import io.appium.android.bootstrap.Logger;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -83,6 +85,18 @@ public class Dynamic {
     }
 
     return value;
+  }
+
+  public static ArrayList<String> finalize(
+      final ArrayList<AndroidElement> elements, final int finalizer)
+      throws Exception {
+    final ArrayList<String> results = new ArrayList<String>();
+    for (final AndroidElement e : elements) {
+      final String result = finalize(e, finalizer);
+      Logger.debug("Adding: " + result);
+      results.add(result);
+    }
+    return results;
   }
 
   private UiSelector s = new UiSelector();

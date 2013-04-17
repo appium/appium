@@ -18,6 +18,7 @@ import io.appium.android.bootstrap.selector.Strategy;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,12 +78,17 @@ public class Find extends CommandHandler {
     if (strategy == Strategy.DYNAMIC) {
       Logger.debug("Finding dynamic.");
       final JSONArray selectors = (JSONArray) params.get("selector");
+      final boolean all = selectors.get(0).toString().toLowerCase()
+          .contentEquals("all");
+      Logger.debug("Returning all? " + all);
       // Return the first element of the first selector that matches.
       Logger.debug(selectors.toString());
       try {
         int finalizer = 0;
         JSONArray pair = null;
-        for (int selIndex = 0; selIndex < selectors.length(); selIndex++) {
+        final List<Object> results = new ArrayList<Object>();
+        // Start at 1 to skip over all.
+        for (int selIndex = all ? 1 : 0; selIndex < selectors.length(); selIndex++) {
           Logger.debug("Parsing selector " + selIndex);
           pair = (JSONArray) selectors.get(selIndex);
           Logger.debug("Pair is: " + pair);
@@ -101,13 +107,34 @@ public class Find extends CommandHandler {
           try {
             // fetch will throw on not found.
             if (finalizer != 0) {
-              final AndroidElement ele = elements.getElement(sel, contextId);
-              return getSuccessResult(Dynamic.finalize(ele, finalizer));
+              if (all) {
+                Logger.debug("Finding all with finalizer");
+                final ArrayList<AndroidElement> eles = elements.getElements(
+                    sel, contextId);
+                Logger.debug("Elements found: " + eles);
+                for (final String found : Dynamic.finalize(eles, finalizer)) {
+                  results.add(found);
+                }
+                continue;
+              } else {
+                final AndroidElement ele = elements.getElement(sel, contextId);
+                final String result = Dynamic.finalize(ele, finalizer);
+                return getSuccessResult(result);
+              }
             }
-            return getSuccessResult(fetchElement(sel, contextId));
+
+            if (all) {
+              results.add(fetchElements(sel, contextId));
+              continue;
+            } else {
+              return getSuccessResult(fetchElement(sel, contextId));
+            }
           } catch (final ElementNotFoundException enf) {
             Logger.debug("Not found.");
           }
+        }
+        if (all && results.size() > 0) {
+          return getSuccessResult(results);
         }
         return getSuccessResult(new AndroidCommandResult(
             WDStatus.NO_SUCH_ELEMENT, "No element found."));

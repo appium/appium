@@ -302,7 +302,8 @@ Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
 
 Appium.prototype.unzipLocalApp = function(localZipPath, cb) {
   var me = this;
-  copyLocalZip(localZipPath, function(zipPath) {
+  copyLocalZip(localZipPath, function(err, zipPath) {
+    if (err) return cb(err);
     me.unzipApp(zipPath, cb);
   });
 };

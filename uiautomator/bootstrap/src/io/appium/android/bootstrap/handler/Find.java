@@ -378,10 +378,14 @@ public class Find extends CommandHandler {
       subSelOut += ".className('" + nodeType + "')";
 
       try {
-        final Integer nodeIndexInt = (Integer) nodeIndex - 1;
+        Integer nodeIndexInt = (Integer) nodeIndex;
+        if (nodeIndexInt == -1) {
+          nodeIndexInt = elements.getElements(subSel, "").size();
+        }
+        nodeIndexInt -= 1;
         subSel = subSel.instance(nodeIndexInt);
         subSelOut += ".instance(" + nodeIndexInt.toString() + ")";
-      } catch (final ClassCastException e) {
+      } catch (final Exception e) {
         // nodeIndex was null
       }
       subSels.add(subSel);

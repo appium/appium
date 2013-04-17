@@ -6,10 +6,22 @@ if (typeof au === "undefined") {
 }
 
 au.getNodeIndex = function(seg) {
-  var index = /\[(\d+)\]/;
+  var index = /\[(\d+|last\(\))\]/;
   var match = index.exec(seg);
   if (match) {
-    return parseInt(match[1], 10);
+
+    if (match[1].indexOf("last") !== -1) {
+      return -1; // last() is internally an index of -1
+    }
+
+    // -1 is an invalid index when supplied by the user.
+    // set to 0 which is always invalid so parseXpath returns false
+    var idx = parseInt(match[1], 10);
+    if (idx < 1) {
+      idx = 0;
+    }
+
+    return idx;
   }
   return null;
 };
@@ -49,7 +61,7 @@ au.getXpathExtPath = function(matchedExt) {
 
 au.parseXpath = function(xpath) {
   // e.g. "//button" or "button" or "/button"
-  var index = "(\\[\\d+\\])?";
+  var index = "(\\[(?:\\d+|last\\(\\))\\])?";
   var root = "^(/?/?(?:[a-zA-Z]+|\\*)" + index + ")";
   var ext = "((//?[a-zA-Z]+" + index + ")*)"; // e.g. "/text" or "/cell//button/text"
   var attrEq = "(@[a-zA-Z0-9_]+=[^\\]]+)"; // e.g. [@name="foo"]
@@ -70,7 +82,7 @@ au.parseXpath = function(xpath) {
       , rootSearch = au.getXpathSearchMethod(matchedRoot, true)
       , parts = null;
     path.push({
-      node: matchedRoot.replace(/\/+/, '').replace(/\[\d+\]/, '')
+      node: matchedRoot.replace(/\/+/, '').replace(/\[\d+\]/, '').replace(/\[last\(\)\]/, '')
       , search: rootSearch
       , index: au.getNodeIndex(matchedRoot)
     });
@@ -95,7 +107,7 @@ au.parseXpath = function(xpath) {
 
     // ensure we're using 1-indexing
     for (var i = 0; i < path.length; i++) {
-      if (path[i].index !== null && path[i].index < 1) {
+      if (path[i].index !== null && path[i].index < 1 && path[i].index !== -1) {
         return false;
       }
     }

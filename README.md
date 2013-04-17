@@ -46,7 +46,7 @@ User Quick Start
 ------------
 Option 1: Use Appium.app:
 
-* Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium-release.dmg")
+* Download the [Appium.app dmg]("https://bitbucket.org/appium/appium.app/downloads/appium.dmg")
 * Run Appium.app then run a test using your favorite language / framework
 
 Option 2: Run Appium from the command line using Node:
@@ -60,7 +60,7 @@ Option 2: Run Appium from the command line using Node:
 
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
-More Detailed Information
+Write Tests for Appium
 -------------------
 We support a sub-set of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
@@ -84,7 +84,7 @@ We support Android and iOS platforms side-by-side:
 
 - - -
 
-Developing on Appium
+Hacking with Appium
 ------------
 Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
 The recommended way to install node is `brew install node`. Node [installed by
@@ -92,9 +92,9 @@ brew](http://mxcl.github.io/homebrew/) will not require sudo for npm commands.
 
 Fork the Appium repo ( [https://github.com/appium/appium](https://github.com/appium/appium) ), then clone your fork.
 
-From your local repo clone's command prompt, install these packages using the
+From your local repo's command prompt, install these packages using the
 following commands (if you didn't install node using homebrew, you might have
-to run npm with sudo privs):
+to run npm with sudo privileges):
 
     npm install -g mocha
     npm install -g grunt-cli
@@ -105,7 +105,7 @@ if you installed node.js via Homebrew). The third command installs all app
 dependencies, builds supporting binaries and test apps. `reset.sh` is also the
 recommended command to run after pulling changes from master.
 
-Developing on Appium (iOS)
+Hacking with Appium (iOS)
 --------------
 
 (First, have a look at [setting up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios).)
@@ -126,7 +126,7 @@ At this point, you can simply run:
 
     ./reset.sh --ios
 
-Developing on Appium (Android)
+Hacking with Appium (Android)
 ----------------
 
 (First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android).)
@@ -135,7 +135,7 @@ Now, you can simply run:
 
     ./reset.sh --android
 
-If you want to use Selendroid for older apps:
+If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for older apps:
 
     ./reset.sh --selendroid
 
@@ -149,7 +149,7 @@ Making sure you're up to date
 -----------
 Since we use dev versions of some packages, it often becomes necessary to
 install new NPM packages or update various things. There's a handy shell script
-to do all this:
+to do all this for all platforms:
 
     ./reset.sh
 

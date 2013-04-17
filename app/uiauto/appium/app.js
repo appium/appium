@@ -305,6 +305,9 @@ $.extend(au, {
           } else if (path.search === "desc") {
             elems = elems.find(path.node);
           }
+          if (path.index !== null) {
+            elems = $(elems[path.index - 1]); // xpath is 1-indexed
+          }
           if (i === xpObj.path.length - 1 && xpObj.attr) {
             // last run, need to apply attr filters if there are any
             if (xpObj.substr) {

@@ -1,5 +1,10 @@
 package io.appium.android.bootstrap;
 
+import io.appium.android.bootstrap.AndroidElement;
+import io.appium.android.bootstrap.Logger;
+
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -61,8 +66,40 @@ public class Dynamic {
   private static final int SELECTOR_DESCRIPTION_REGEX    = 27;
   /** packageNameMatches(String regex) */
   private static final int SELECTOR_PACKAGE_NAME_REGEX   = 28;
+  // start internal methods at 100
+  /**
+   * Gets name (content desc) with a fall back to text if name is empty.
+   * 
+   * getStringAttribute("name")
+   */
+  private static final int GET_NAME                      = 100;
 
-  private UiSelector       s                             = new UiSelector();
+  public static String finalize(final AndroidElement result, final int finalizer)
+      throws Exception {
+    // Invoke the int 100+ method on the resulting element.
+    String value = "";
+    switch (finalizer) {
+      case GET_NAME:
+        value = result.getStringAttribute("name");
+        break;
+    }
+
+    return value;
+  }
+
+  public static ArrayList<String> finalize(
+      final ArrayList<AndroidElement> elements, final int finalizer)
+      throws Exception {
+    final ArrayList<String> results = new ArrayList<String>();
+    for (final AndroidElement e : elements) {
+      final String result = finalize(e, finalizer);
+      Logger.debug("Adding: " + result);
+      results.add(result);
+    }
+    return results;
+  }
+
+  private UiSelector s = new UiSelector();
 
   public UiSelector get(final JSONArray array) throws JSONException {
     // Reset selector.
@@ -72,7 +109,14 @@ public class Dynamic {
     // [ [3, 'sign'] ]
     for (int a = 0; a < array.length(); a++) {
       final JSONArray pair = array.getJSONArray(a);
-      update(pair.getInt(0), pair.get(1));
+      final int int0 = pair.getInt(0);
+      if (int0 >= 100) {
+        // 100+ are finalizers only.
+        continue;
+      }
+      final Object param1 = pair.get(1);
+      Logger.debug("Updating " + int0 + ", " + param1);
+      update(int0, param1);
     }
 
     return s;

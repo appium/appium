@@ -11,6 +11,7 @@ var should = require('should')
 describe("XPath lookups", function() {
   var oks = {
     "//button": {path: [{node: 'button', search: 'desc', index: null}]}
+    , "//button[last()]": {path: [{node: 'button', search: 'desc', index: -1}]}
     , "//button[1]": {path: [{node: 'button', search: 'desc', index: 1}]}
     , "/button": {path: [{node: 'button', search: 'child', index: null}]}
     , "/button[2]": {path: [{node: 'button', search: 'child', index: 2}]}
@@ -52,6 +53,9 @@ describe("XPath lookups", function() {
   };
   var notOks = [
     , "//button123"
+    , "//button[-1]"
+    , "//button[last]"
+    , "//button[last(]"
     , "//button[@name$='hi']"
     , "//tag_name"
     , "//button[0]"

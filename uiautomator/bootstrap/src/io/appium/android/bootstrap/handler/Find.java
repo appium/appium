@@ -78,17 +78,33 @@ public class Find extends CommandHandler {
       Logger.debug("Finding dynamic.");
       final JSONArray selectors = (JSONArray) params.get("selector");
       // Return the first element of the first selector that matches.
-      JSONObject result = new JSONObject();
       Logger.debug(selectors.toString());
       try {
+        int finalizer = 0;
+        JSONArray pair = null;
         for (int selIndex = 0; selIndex < selectors.length(); selIndex++) {
-          final UiSelector sel = dynamic.get((JSONArray) selectors
-              .get(selIndex));
-          Logger.debug(sel.toString());
+          Logger.debug("Parsing selector " + selIndex);
+          pair = (JSONArray) selectors.get(selIndex);
+          Logger.debug("Pair is: " + pair);
+          UiSelector sel = null;
+          // 100+ int represents a method called on the element
+          // after the element has been found.
+          // [[4,"android.widget.EditText"],[100]] => 100
+          final int int0 = pair.getJSONArray(pair.length() - 1).getInt(0);
+          Logger.debug("int0: " + int0);
+          sel = dynamic.get(pair);
+          Logger.debug("Selector: " + sel.toString());
+          if (int0 >= 100) {
+            finalizer = int0;
+            Logger.debug("Finalizer " + Integer.toString(int0));
+          }
           try {
             // fetch will throw on not found.
-            result = fetchElement(sel, contextId);
-            return getSuccessResult(result);
+            if (finalizer != 0) {
+              final AndroidElement ele = elements.getElement(sel, contextId);
+              return getSuccessResult(Dynamic.finalize(ele, finalizer));
+            }
+            return getSuccessResult(fetchElement(sel, contextId));
           } catch (final ElementNotFoundException enf) {
             Logger.debug("Not found.");
           }

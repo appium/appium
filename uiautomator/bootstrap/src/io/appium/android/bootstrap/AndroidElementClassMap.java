@@ -60,6 +60,8 @@ public class AndroidElementClassMap {
     map.put("text", "TextView");
     map.put("list", "ListView");
     map.put("window", "FrameLayout");
+    map.put("grid", "GridView");
+    map.put("relative", "RelativeLayout");
     map.put("frame", "FrameLayout");
     map.put("linear", "LinearLayout");
     map.put("textfield", "EditText");

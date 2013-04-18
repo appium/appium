@@ -180,22 +180,45 @@ public class Find extends CommandHandler {
       }
     } else {
       try {
-        final UiSelector sel = getSelector(strategy, text, multiple);
-        if (multiple) {
-          return getSuccessResult(fetchElements(sel, contextId));
-        } else {
-          return getSuccessResult(fetchElement(sel, contextId));
+        Object result = null;
+        final JSONArray array = new JSONArray();
+        for (final UiSelector sel : getSelector(strategy, text, multiple)) {
+          // With multiple selectors, we expect that some elements may not
+          // exist.
+          try {
+            if (!multiple) {
+              result = fetchElement(sel, contextId);
+              // Return first element when multiple is false.
+              if (result != null) {
+                break;
+              }
+            } else {
+              final JSONArray results = fetchElements(sel, contextId);
+              for (int a = 0, len = results.length(); a < len; a++) {
+                array.put(results.get(a));
+              }
+            }
+          } catch (final ElementNotInHashException e) {
+          } catch (final ElementNotFoundException e) {
+          }
         }
+
+        if (multiple) {
+          result = array;
+        }
+
+        // If there are no results, then return an error.
+        if (result == null) {
+          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+              "No element found");
+        }
+
+        return getSuccessResult(result);
       } catch (final InvalidStrategyException e) {
         return getErrorResult(e.getMessage());
-      } catch (final ElementNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
       } catch (final UnallowedTagNameException e) {
         return getErrorResult(e.getMessage());
       } catch (final AndroidCommandException e) {
-        return getErrorResult(e.getMessage());
-      } catch (final ElementNotInHashException e) {
         return getErrorResult(e.getMessage());
       } catch (final UiObjectNotFoundException e) {
         return getErrorResult(e.getMessage());
@@ -263,25 +286,37 @@ public class Find extends CommandHandler {
    * @throws InvalidStrategyException
    * @throws AndroidCommandException
    */
-  private UiSelector getSelector(final Strategy strategy, final String text,
-      final Boolean many) throws InvalidStrategyException,
+  private List<UiSelector> getSelector(final Strategy strategy,
+      final String text, final Boolean many) throws InvalidStrategyException,
       AndroidCommandException, UnallowedTagNameException {
+    final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
 
     switch (strategy) {
       case CLASS_NAME:
       case TAG_NAME:
-        String androidClass = AndroidElementClassMap.match(text);
+        final String androidClass = AndroidElementClassMap.match(text);
+        sel = sel.className(androidClass);
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        selectors.add(sel);
+        // Find both Button and ImageButton when tag name is button
         if (androidClass.contentEquals("android.widget.Button")) {
-          androidClass += "|android.widget.ImageButton";
-          androidClass = androidClass.replaceAll("([^\\p{Alnum}|])", "\\\\$1");
-          sel = sel.classNameMatches("^" + androidClass + "$");
-        } else {
-          sel = sel.className(androidClass);
+          UiSelector sel2 = new UiSelector()
+              .className("android.widget.ImageButton");
+          if (!many) {
+            sel2 = sel2.instance(0);
+          }
+          selectors.add(sel2);
         }
         break;
       case NAME:
         sel = sel.description(text);
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        selectors.add(sel);
         break;
       case XPATH:
         break;
@@ -294,10 +329,7 @@ public class Find extends CommandHandler {
             + strategy.getStrategyName() + " is not valid.");
     }
 
-    if (!many) {
-      sel = sel.instance(0);
-    }
-    return sel;
+    return selectors;
   }
 
   /**
@@ -316,7 +348,7 @@ public class Find extends CommandHandler {
    * @throws AndroidCommandException
    */
   private UiSelector getSelectorForXpath(final JSONArray path,
-      final String attr, String constraint, final boolean substr)
+      final String attr, final String constraint, final boolean substr)
       throws AndroidCommandException, UnallowedTagNameException {
     UiSelector s = new UiSelector();
     final ArrayList<UiSelector> subSels = new ArrayList<UiSelector>();
@@ -348,16 +380,12 @@ public class Find extends CommandHandler {
       return s;
     }
 
-    // //*[contains(@tag, "button")]
+    // Returns all elements of one class.
+    // //*[contains(@tag, "android.widget.Button")]
     if (attr.toLowerCase().contentEquals("tag") && !constraint.isEmpty()
         && substr == true && nodeType.contentEquals("*") == true) {
-      // (?i) = case insensitive match. Esape everything that isn't an
-      // alpha num.
-      // use .* to match on contains.
-      constraint = "(?i)^.*"
-          + constraint.replaceAll("([^\\p{Alnum}])", "\\\\$1") + ".*$";
-      selOut += ".classNameMatches('" + constraint + "')";
-      s = s.classNameMatches(constraint);
+      selOut += ".className('" + constraint + "')";
+      s = s.className(constraint);
       Logger.info(selOut);
       return s;
     }

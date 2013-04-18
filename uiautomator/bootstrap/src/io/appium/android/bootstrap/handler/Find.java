@@ -316,6 +316,7 @@ public class Find extends CommandHandler {
         if (!many) {
           sel = sel.instance(0);
         }
+        selectors.add(sel);
         break;
       case XPATH:
         break;
@@ -347,7 +348,7 @@ public class Find extends CommandHandler {
    * @throws AndroidCommandException
    */
   private UiSelector getSelectorForXpath(final JSONArray path,
-      final String attr, String constraint, final boolean substr)
+      final String attr, final String constraint, final boolean substr)
       throws AndroidCommandException, UnallowedTagNameException {
     UiSelector s = new UiSelector();
     final ArrayList<UiSelector> subSels = new ArrayList<UiSelector>();
@@ -379,16 +380,12 @@ public class Find extends CommandHandler {
       return s;
     }
 
-    // //*[contains(@tag, "button")]
+    // Returns all elements of one class.
+    // //*[contains(@tag, "android.widget.Button")]
     if (attr.toLowerCase().contentEquals("tag") && !constraint.isEmpty()
         && substr == true && nodeType.contentEquals("*") == true) {
-      // (?i) = case insensitive match. Esape everything that isn't an
-      // alpha num.
-      // use .* to match on contains.
-      constraint = "(?i)^.*"
-          + constraint.replaceAll("([^\\p{Alnum}])", "\\\\$1") + ".*$";
-      selOut += ".classNameMatches('" + constraint + "')";
-      s = s.classNameMatches(constraint);
+      selOut += ".className('" + constraint + "')";
+      s = s.className(constraint);
       Logger.info(selOut);
       return s;
     }

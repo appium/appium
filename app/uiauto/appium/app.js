@@ -312,10 +312,13 @@ $.extend(au, {
           }
           if (i === xpObj.path.length - 1 && xpObj.attr) {
             var attrs = [xpObj.attr];
-            if (xpObj.attr === "text") {
+            if (xpObj.attr === "text" || xpObj.attr === "name") {
               // if we're searching by text, alias to label and value too
               attrs.push("label");
               attrs.push("value");
+            }
+            if (xpObj.attr === "name") {
+              attrs.push("text");
             }
             // last run, need to apply attr filters if there are any
             var filteredElems = [];

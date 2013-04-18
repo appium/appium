@@ -611,7 +611,7 @@ Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId,
     , startY: startY
     , endX: endX
     , endY: endY
-    , steps: 12
+    , steps: 20
   };
   if (elId !== null) {
     swipeOpts.elementId = elId;

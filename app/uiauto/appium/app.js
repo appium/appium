@@ -311,12 +311,22 @@ $.extend(au, {
             elems = $(elems[idx]); // xpath is 1-indexed
           }
           if (i === xpObj.path.length - 1 && xpObj.attr) {
-            // last run, need to apply attr filters if there are any
-            if (xpObj.substr) {
-              elems = elems.valueInKey(xpObj.attr, xpObj.constraint);
-            } else {
-              elems = elems.valueForKey(xpObj.attr, xpObj.constraint);
+            var attrs = [xpObj.attr];
+            if (xpObj.attr === "text") {
+              // if we're searching by text, alias to label and value too
+              attrs.push("label");
+              attrs.push("value");
             }
+            // last run, need to apply attr filters if there are any
+            var filteredElems = [];
+            for (var j = 0; j < attrs.length; j++) {
+              if (xpObj.substr) {
+                filteredElems = filteredElems.concat(elems.valueInKey(attrs[j], xpObj.constraint));
+              } else {
+                filteredElems = filteredElems.concat(elems.valueForKey(attrs[j], xpObj.constraint));
+              }
+            }
+            elems = $(filteredElems);
           }
         }
         this.target.popTimeout();

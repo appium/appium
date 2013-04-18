@@ -556,11 +556,12 @@ $.extend(au, {
 
   , hideKeyboard: function(keyName) {
       try {
-        this.keyboard().buttons()[keyName].tap();
+        var keys = this.keyboard().buttons();
+        keys[keyName].tap();
       } catch (e) {
         return {
           status: codes.NoSuchElement.code
-          , value: "Could not find the 'Hide keyboard' button, " +
+          , value: "Could not find the '" + keyName + "' button, " +
                    "you're on your own for closing it!"
         };
       }

@@ -74,6 +74,18 @@ var setupXpath = function(d, cb) {
 };
 
 describeWd('findElement(s)ByXpath', function(h) {
+  it('should return the last button', function(done) {
+    setupXpath(h.driver, function() {
+      h.driver.elementByXPath("//button[last()]", function(err, el) {
+        should.not.exist(err);
+        el.text(function(err, text) {
+          should.not.exist(err);
+          text.should.equal("Add contact");
+          done();
+        });
+      });
+    });
+  });
   it('should return a single element', function(done) {
     setupXpath(h.driver, function() {
       h.driver.elementByXPath("//button", function(err, el) {

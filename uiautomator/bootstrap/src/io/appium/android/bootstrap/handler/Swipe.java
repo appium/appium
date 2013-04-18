@@ -72,6 +72,9 @@ public class Swipe extends CommandHandler {
     final boolean rv = device.swipe(absStartPos.x.intValue(),
         absStartPos.y.intValue(), absEndPos.x.intValue(),
         absEndPos.y.intValue(), steps);
+    if (!rv) {
+      return getErrorResult("The swipe did not complete successfully");
+    }
     return getSuccessResult(rv);
   }
 }

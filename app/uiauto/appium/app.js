@@ -300,11 +300,19 @@ $.extend(au, {
         for (var i = 0; i < xpObj.path.length; i++) {
           var path = xpObj.path[i];
           path.node = this.convertSelector(path.node);
-          if (path.search === "child") {
-            elems = elems.childrenByType(path.node);
-          } else if (path.search === "desc") {
-            elems = elems.find(path.node);
+          var nodes = [path.node];
+          if (path.node === "textfield") {
+            nodes.push("secure");
           }
+          var nodeElems = [];
+          for (var j = 0; j < nodes.length; j++) {
+            if (path.search === "child") {
+              nodeElems = nodeElems.concat(elems.childrenByType(nodes[j]));
+            } else if (path.search === "desc") {
+              nodeElems = nodeElems.concat(elems.find(nodes[j]));
+            }
+          }
+          elems = $(nodeElems);
           if (path.index !== null) {
             // index of -1 means last()
             var idx = path.index === -1 ? elems.length - 1 : path.index - 1;
@@ -322,7 +330,7 @@ $.extend(au, {
             }
             // last run, need to apply attr filters if there are any
             var filteredElems = [];
-            for (var j = 0; j < attrs.length; j++) {
+            for (j = 0; j < attrs.length; j++) {
               if (xpObj.substr) {
                 filteredElems = filteredElems.concat(elems.valueInKey(attrs[j], xpObj.constraint));
               } else {

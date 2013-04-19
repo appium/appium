@@ -464,6 +464,9 @@ ADB.prototype.getConnectedDevices = function(cb) {
     if (err) {
       logger.error(err);
       cb(err);
+    } else if (stdout.toLowerCase().indexOf("error") !== -1) {
+      logger.error(stdout);
+      cb(new Error(stdout));
     } else {
       var devices = [];
       _.each(stdout.split("\n"), function(line) {

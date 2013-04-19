@@ -300,23 +300,44 @@ $.extend(au, {
         for (var i = 0; i < xpObj.path.length; i++) {
           var path = xpObj.path[i];
           path.node = this.convertSelector(path.node);
-          if (path.search === "child") {
-            elems = elems.childrenByType(path.node);
-          } else if (path.search === "desc") {
-            elems = elems.find(path.node);
+          var nodes = [path.node];
+          if (path.node === "textfield") {
+            nodes.push("secure");
           }
+          var nodeElems = [];
+          for (var j = 0; j < nodes.length; j++) {
+            if (path.search === "child") {
+              nodeElems = nodeElems.concat(elems.childrenByType(nodes[j]));
+            } else if (path.search === "desc") {
+              nodeElems = nodeElems.concat(elems.find(nodes[j]));
+            }
+          }
+          elems = $(nodeElems);
           if (path.index !== null) {
             // index of -1 means last()
             var idx = path.index === -1 ? elems.length - 1 : path.index - 1;
             elems = $(elems[idx]); // xpath is 1-indexed
           }
           if (i === xpObj.path.length - 1 && xpObj.attr) {
-            // last run, need to apply attr filters if there are any
-            if (xpObj.substr) {
-              elems = elems.valueInKey(xpObj.attr, xpObj.constraint);
-            } else {
-              elems = elems.valueForKey(xpObj.attr, xpObj.constraint);
+            var attrs = [xpObj.attr];
+            if (xpObj.attr === "text" || xpObj.attr === "name") {
+              // if we're searching by text, alias to label and value too
+              attrs.push("label");
+              attrs.push("value");
             }
+            if (xpObj.attr === "name") {
+              attrs.push("text");
+            }
+            // last run, need to apply attr filters if there are any
+            var filteredElems = [];
+            for (j = 0; j < attrs.length; j++) {
+              if (xpObj.substr) {
+                filteredElems = filteredElems.concat(elems.valueInKey(attrs[j], xpObj.constraint));
+              } else {
+                filteredElems = filteredElems.concat(elems.valueForKey(attrs[j], xpObj.constraint));
+              }
+            }
+            elems = $(filteredElems);
           }
         }
         this.target.popTimeout();
@@ -535,11 +556,12 @@ $.extend(au, {
 
   , hideKeyboard: function(keyName) {
       try {
-        this.keyboard().buttons()[keyName].tap();
+        var keys = this.keyboard().buttons();
+        keys[keyName].tap();
       } catch (e) {
         return {
           status: codes.NoSuchElement.code
-          , value: "Could not find the 'Hide keyboard' button, " +
+          , value: "Could not find the '" + keyName + "' button, " +
                    "you're on your own for closing it!"
         };
       }

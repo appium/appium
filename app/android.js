@@ -476,8 +476,8 @@ Android.prototype.getPageSource = function(cb) {
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /cache/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /cache/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
+            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
             logger.debug('getPageSource command: ' + cmd);
             exec(cmd, {}, function(err, stdout, stderr) {
               if (err) {
@@ -519,8 +519,8 @@ Android.prototype.getPageSourceXML = function(cb) {
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /cache/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /cache/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
+            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
             logger.debug('getPageSourceXML command: ' + cmd);
             exec(cmd, {}, function(err, stdout, stderr) {
               if (err) {

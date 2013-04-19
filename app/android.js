@@ -591,11 +591,16 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
     , endY: endY
     , steps: Math.round((duration * 1000) / this.swipeStepsPerSec)
   };
+  var swipeCb = function(err, res) {
+    setTimeout(function() {
+      cb(err, res);
+    }, duration * 1000);
+  };
   if (elId !== null) {
     swipeOpts.elementId = elId;
-    this.proxy(["element:swipe", swipeOpts], cb);
+    this.proxy(["element:swipe", swipeOpts], swipeCb);
   } else {
-    this.proxy(["swipe", swipeOpts], cb);
+    this.proxy(["swipe", swipeOpts], swipeCb);
   }
 };
 

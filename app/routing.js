@@ -41,9 +41,11 @@ module.exports = function(appium) {
       request(url, req.route.method.toUpperCase(), req.body,
               req.headers['content-type'], function(err, response, body) {
         if (err) return next(err);
+        var sbody = body ? JSON.stringify(body).slice(0, 1000) : body;
+
         logger.debug("Proxied response received with status " +
                      response.statusCode + ": " +
-                     JSON.stringify(body).slice(0, 1000));
+                     sbody);
         res.headers = response.headers;
         res.send(response.statusCode, body);
       });

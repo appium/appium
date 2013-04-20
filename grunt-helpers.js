@@ -298,14 +298,19 @@ module.exports.setupAndroidApp = function(grunt, appName, cb) {
 };
 
 var buildAndroidProj = function(grunt, projPath, target, cb) {
-  exec('which ant', function(err, stdout) {
+  var cmd_name = 'ant';
+  if (!fs.existsSync(projPath+'/build.xml') &&
+      fs.existsSync(projPath+'/pom.xml')) {
+      cmd_name = 'mvn';
+  }
+    exec('which '+cmd_name, function(err, stdout) {
     if (err) {
-      grunt.fatal("Error finding ant binary, is it on your path?");
+      grunt.fatal("Error finding "+cmd_name+" binary, is it on your path?");
     } else {
       if (stdout) {
-        var ant = stdout.trim();
-        grunt.log.write("Using ant found at " + ant);
-        var proc = spawn(ant, [target], {cwd: projPath});
+        var cmd = stdout.trim();
+        grunt.log.write("Using "+cmd_name+" found at " + cmd);
+        var proc = spawn(cmd, [target], {cwd: projPath});
         proc.stdout.setEncoding('utf8');
         proc.stderr.setEncoding('utf8');
         proc.stdout.on('data', function(data) {
@@ -318,7 +323,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
           cb(code);
         });
       } else {
-        grunt.fatal("Could not find ant installed; please make sure it's on PATH");
+        grunt.fatal("Could not find "+cmd_name+" installed; please make sure it's on PATH");
       }
     }
   });
@@ -332,6 +337,11 @@ module.exports.buildAndroidBootstrap = function(grunt, cb) {
 module.exports.buildAndroidApp = function(grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
   buildAndroidProj(grunt, appPath, "debug", cb);
+};
+
+module.exports.buildSelendroidAndroidApp = function(grunt, appName, cb) {
+  var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
+  buildAndroidProj(grunt, appPath, "package", cb);
 };
 
 module.exports.installAndroidApp = function(grunt, appName, cb) {

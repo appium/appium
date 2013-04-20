@@ -11,6 +11,7 @@ var path = require('path')
   , setupAndroidApp = gruntHelpers.setupAndroidApp
   , buildAndroidBootstrap = gruntHelpers.buildAndroidBootstrap
   , buildAndroidApp = gruntHelpers.buildAndroidApp
+  , buildSelendroidAndroidApp = gruntHelpers.buildSelendroidAndroidApp
   , installAndroidApp = gruntHelpers.installAndroidApp
   , generateServerDocs = gruntHelpers.generateServerDocs
   , generateAppiumIo = gruntHelpers.generateAppiumIo
@@ -130,6 +131,12 @@ module.exports = function(grunt) {
   grunt.registerTask('buildAndroidApp', function(appName) {
     var cb = this.async();
     buildAndroidApp(grunt, appName, function(exitCode) {
+      cb(exitCode === 0);
+    });
+  });
+  grunt.registerTask('buildSelendroidAndroidApp', function(appName) {
+    var cb = this.async();
+    buildSelendroidAndroidApp(grunt, appName, function(exitCode) {
       cb(exitCode === 0);
     });
   });

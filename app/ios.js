@@ -1435,7 +1435,12 @@ IOS.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount,
     command = ["au.swipe(", startX, ',', startY, ',', endX, ',', endY, ',',
       duration, ")"].join('');
   }
-  this.proxy(command, cb);
+  // wait for device to complete swipe
+  this.proxy(command, function(err, res) {
+    setTimeout(function() {
+      cb(err, res);
+    }, duration * 1000);
+  });
 };
 
 IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {

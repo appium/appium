@@ -284,11 +284,12 @@ exports.mobileTap = function(req, res) {
 };
 
 exports.mobileFlick = function(req, res) {
-  var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
     touchCount: 1
-    , startX: onElement ? 0.5 : 'null'
-    , startY: onElement ? 0.5 : 'null'
+    , startX: 0.5
+    , startY: 0.5
+    , endX: 0.5
+    , endY: 0.5
     , element: null
   });
   var touchCount = req.body.touchCount
@@ -324,11 +325,12 @@ exports.find = function(req, res) {
 };
 
 exports.mobileSwipe = function(req, res) {
-  var onElement = typeof req.body.element !== "undefined";
   req.body = _.defaults(req.body, {
     touchCount: 1
-    , startX: onElement ? 0.5 : 'null'
-    , startY: onElement ? 0.5 : 'null'
+    , startX: 0.5
+    , startY: 0.5
+    , endX: 0.5
+    , endY: 0.5
     , duration: 0.8
     , element: null
   });

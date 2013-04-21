@@ -476,8 +476,8 @@ Android.prototype.getPageSource = function(cb) {
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /cache/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /cache/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
+            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
             logger.debug('getPageSource command: ' + cmd);
             exec(cmd, {}, function(err, stdout, stderr) {
               if (err) {
@@ -519,8 +519,8 @@ Android.prototype.getPageSourceXML = function(cb) {
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /cache/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /cache/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
+            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
             logger.debug('getPageSourceXML command: ' + cmd);
             exec(cmd, {}, function(err, stdout, stderr) {
               if (err) {
@@ -591,11 +591,16 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
     , endY: endY
     , steps: Math.round((duration * 1000) / this.swipeStepsPerSec)
   };
+  var swipeCb = function(err, res) {
+    setTimeout(function() {
+      cb(err, res);
+    }, duration * 1000);
+  };
   if (elId !== null) {
     swipeOpts.elementId = elId;
-    this.proxy(["element:swipe", swipeOpts], cb);
+    this.proxy(["element:swipe", swipeOpts], swipeCb);
   } else {
-    this.proxy(["swipe", swipeOpts], cb);
+    this.proxy(["swipe", swipeOpts], swipeCb);
   }
 };
 
@@ -611,7 +616,7 @@ Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId,
     , startY: startY
     , endX: endX
     , endY: endY
-    , steps: 3
+    , steps: 20
   };
   if (elId !== null) {
     swipeOpts.elementId = elId;

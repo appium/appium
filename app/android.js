@@ -10,10 +10,12 @@ var errors = require('./errors')
   , NotYetImplementedError = errors.NotYetImplementedError
   , parseXpath = require('./uiauto/appium/xpath').parseXpath
   , exec = require('child_process').exec
+  , temp = require('temp')
   , fs = require('fs')
   , async = require('async')
   , path = require('path')
   , UnknownError = errors.UnknownError;
+
 
 var Android = function(opts) {
   this.rest = opts.rest;
@@ -566,7 +568,49 @@ Android.prototype.setOrientation = function(orientation, cb) {
 };
 
 Android.prototype.getScreenshot = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  var me = this;
+  var filename = path.basename(temp.path({prefix: "appium-", suffix: ".png"}));
+  var remotefile = "/sdcard/" + filename;
+  var localfile = "/tmp/" + filename;
+  var b64data;
+
+  async.series(
+        [
+          function(cb) {
+            me.adb.takeScreenshot("/sdcard/" + filename, function() {
+              cb(null);
+            });
+          },
+          function(cb) {
+            me.adb.getFile(remotefile, localfile, function(err, stdout) {
+              if (err) {
+                logger.debug("Got err copying " + remotefile + " to " + localfile);
+                logger.error(err);
+                cb(err);
+              } else {
+                logger.debug("Wrote file to " + localfile);
+                cb(null);
+              }
+            });
+          },
+          function(cb) {
+            fs.readFile(localfile, function read(err, data) {
+              if (err) {
+                cb(err);
+              } else {
+                b64data = new Buffer(data).toString('base64');
+                cb(null)
+              }
+            });
+          }
+        ],
+        // Top level cb
+        function(){
+          cb(null, {
+               status: status.codes.Success.code
+               , value: b64data
+             });
+        });
 };
 
 Android.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {

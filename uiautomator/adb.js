@@ -936,6 +936,51 @@ ADB.prototype.uninstallApp = function(cb) {
   }
 };
 
+ADB.prototype.takeScreenshot = function(filename, cb) {
+  var cmd = this.adbCmd + ' shell screencap -p "' + filename + '"';
+  this.debug(cmd);
+  exec(cmd,function(err, stdout) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      // Useful for debugging.
+      logger.debug(stdout);
+      cb(null);
+    }
+  });
+};
+
+ADB.prototype.getFile = function(remote, local, cb) {
+  var cmd = this.adbCmd + ' pull "' + remote + '" "' + local + '"';
+  this.debug("adb_cmd: " + cmd);
+  exec(cmd,function(err, stdout) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      // Useful for debugging.
+      logger.debug(stdout);
+      cb(null);
+    }
+  });
+};
+
+ADB.prototype.putFile = function(remote, local, cb) {
+  var cmd = this.adbCmd + ' push "' + remote + '" "' + local + '"';
+  this.debug(cmd);
+  exec(cmd,function(err, stdout) {
+    if (err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      // Useful for debugging.
+      logger.debug(stdout);
+      cb(null);
+    }
+  });
+};
+
 ADB.prototype.runFastReset = function(cb) {
   // list instruments with: adb shell pm list instrumentation
   // targetPackage + '.clean' / clean.apk.Clear

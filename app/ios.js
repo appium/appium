@@ -15,6 +15,7 @@ var path = require('path')
   , parseWebCookies = helpers.parseWebCookies
   , rotateImage = helpers.rotateImage
   , rd = require('./hybrid/ios/remote-debugger')
+  , wkrd = require('./hybrid/ios/webkit-remote-debugger')
   , errors = require('./errors')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
@@ -343,33 +344,44 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
   if (this.remote !== null && this.bundleId !== null) {
     this.remote.selectApp(this.bundleId, onDone);
   } else {
-    this.remote = rd.init(exitCb);
-    this.remote.connect(function(appDict) {
-      if(!_.has(appDict, me.bundleId)) {
-        logger.error("Remote debugger did not list " + me.bundleId + " among " +
-                     "its available apps");
-        if(_.has(appDict, "com.apple.mobilesafari")) {
-          logger.info("Using mobile safari instead");
-          me.remote.selectApp("com.apple.mobilesafari", onDone);
-        } else {
-          onDone([]);
-        }
+
+      if(this.udid!=null){
+          this.remote = wkrd.init(exitCb);
+          me.remote.pageArrayFromJson(function(pageArray){
+              me.curWindowHandle = pageArray[0].id;
+              me.remote.connect(me.curWindowHandle, function(){
+                  cb(pageArray);
+              });
+          });
       } else {
-        me.remote.selectApp(me.bundleId, onDone);
-      }
-    }, _.bind(me.onPageChange, me));
-    var loopCloseRuns = 0;
-    var loopClose = function() {
-      loopCloseRuns++;
-      if (!isDone && loopCloseRuns < 3) {
-        me.closeAlertBeforeTest(function(didDismiss) {
-          if (!didDismiss) {
-            setTimeout(loopClose, 1000);
+        this.remote = new rd.init(exitCb);
+        this.remote.connect(function(appDict) {
+          if(!_.has(appDict, me.bundleId)) {
+            logger.error("Remote debugger did not list " + me.bundleId + " among " +
+                         "its available apps");
+            if(_.has(appDict, "com.apple.mobilesafari")) {
+              logger.info("Using mobile safari instead");
+              me.remote.selectApp("com.apple.mobilesafari", onDone);
+            } else {
+              onDone([]);
+            }
+          } else {
+            me.remote.selectApp(me.bundleId, onDone);
           }
-        });
+        }, _.bind(me.onPageChange, me));
+        var loopCloseRuns = 0;
+        var loopClose = function() {
+          loopCloseRuns++;
+          if (!isDone && loopCloseRuns < 3) {
+            me.closeAlertBeforeTest(function(didDismiss) {
+              if (!didDismiss) {
+                setTimeout(loopClose, 1000);
+              }
+            });
+          }
+        };
+        setTimeout(loopClose, 4000);
       }
-    };
-    setTimeout(loopClose, 4000);
   }
 };
 
@@ -724,7 +736,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
       }, this));
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
+    var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
     this.proxy(command, cb);
   }
 };
@@ -1547,20 +1559,45 @@ IOS.prototype.getWindowHandles = function(cb) {
 };
 
 IOS.prototype.setWindow = function(name, cb) {
-  var me = this;
-  if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
-    var pageIdKey = parseInt(name, 10);
-    var next = function() {
-      me.processingRemoteCmd = true;
-      me.remote.selectPage(pageIdKey, function() {
-        me.curWindowHandle = pageIdKey.toString();
-        cb(null, {
-          status: status.codes.Success.code
-          , value: ''
-        });
-        me.processingRemoteCmd = false;
-      });
-    };
+    var me = this;
+    if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
+        var pageIdKey = parseInt(name, 10);
+        var next = function() {
+            me.processingRemoteCmd = true;
+
+            if(me.udid == null) {
+                me.remote.selectPage(pageIdKey, function() {
+                    me.curWindowHandle = pageIdKey.toString();
+                    cb(null, {
+                        status: status.codes.Success.code
+                        , value: ''
+                    });
+                    me.processingRemoteCmd = false;
+                });
+            }  else {
+                if (name == me.curWindowHandle){
+                    logger.info("Remote debugger is already connected to window [" + name + "]");
+                    cb(null, {
+                        status: status.codes.Success.code
+                        , value: name
+                    });
+                } else if (_.contains(_.pluck(me.windowHandleCache, 'id'), name)) {
+                    me.remote.disconnect();
+                    me.remote.connect(name, function(){
+                        cb(null, {
+                            status: status.codes.Success.code
+                            , value: name
+                        });
+                    });
+
+                } else {
+                    cb(null, {
+                        status: status.codes.NoSuchWindow.code
+                        , value: null
+                    });
+                }
+            }
+        };
     //if (me.autoWebview) {
       //me.setSafariWindow(pageIdKey - 1, function(err, res) {
         //if (err) {

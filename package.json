@@ -47,7 +47,8 @@
     "swig": "~0.13.5",
     "async": "~0.2.6",
     "mkdirp": "~0.3.5",
-    "binary-cookies": "~0.1.1"
+    "binary-cookies": "~0.1.1",
+    "ws": "4.25"
   },
   "scripts": {
     "test": "grunt travis"

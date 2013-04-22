@@ -85,48 +85,17 @@ ADB.prototype.checkAdbPresent = function(cb) {
   }, this));
 };
 
-ADB.prototype.retargetManifest = function(newPkg, newTarget, inFile, outFile, cb) {
-  var data = fs.readFileSync(inFile, "utf8");
-  var rePkg = /package="([^"]+)"/;
-  var reTarget = /targetPackage="([^"]+)"/;
-  var matchPkg = rePkg.exec(data);
-  var matchTarget = reTarget.exec(data);
-
-  if (newPkg && !matchPkg) {
-    logger.debug("Could not find package= in manifest");
-    return cb("could not find package= in manifest");
-  }
-
-  if (newTarget && !matchTarget) {
-    logger.debug("Could not find targetPackage= in manifest");
-    return cb("could not find targetPackage= in manifest");
-  }
-
-  if (newPkg) {
-    var newPkgData = matchPkg[0].replace(matchPkg[1], newPkg);
-    data = data.replace(matchPkg[0], newPkgData);
-  }
-
-  if (newTarget) {
-    var newTargetData = matchTarget[0].replace(matchTarget[1], newTarget);
-    data = data.replace(matchTarget[0], newTargetData);
-  }
-
-  fs.writeFileSync(outFile, data, "utf8");
-  logger.debug("Created manifest");
-  cb(null);
-};
-
 // Fast reset
 ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   // Create manifest
-  var me = this;
-  var targetAPK = me.apkPath;
-  var cleanAPKSrc = path.resolve(__dirname, '../app/android/Clean.apk');
-  var newPackage = me.appPackage + '.clean';
-  var inFile = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src');
-  var outFile = inFile.substr(0, inFile.length - '.src'.length);
+  var me = this
+    , targetAPK = me.apkPath
+    , cleanAPKSrc = path.resolve(__dirname, '../app/android/Clean.apk')
+    , newPackage = me.appPackage + '.clean'
+    , srcManifest = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src')
+    , dstManifest = srcManifest.substr(0, srcManifest.length - '.src'.length);
 
+  fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   var resignApks = function(cb) {
     // Resign clean apk and target apk
     var apks = [ me.cleanAPK ];
@@ -140,10 +109,9 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   };
 
   async.series([
-    function(cb) { me.retargetManifest(newPackage, me.appPackage, inFile, outFile, cb); },
     function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
-    function(cb) { me.compileManifest(outFile, cb); },
-    function(cb) { me.insertManifest(outFile, cleanAPKSrc, me.cleanAPK, cb); },
+    function(cb) { me.compileManifest(dstManifest, newPackage, me.appPackage, cb); },
+    function(cb) { me.insertManifest(dstManifest, cleanAPKSrc, me.cleanAPK, cb); },
     function(cb) { resignApks(cb); }
   ], cb);
 };
@@ -151,23 +119,23 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
 ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
   var me = this
     , newServerPath = me.selendroidServerPath
+    , newPackage = me.appPackage + '.selendroid'
     , srcManifest = path.resolve(__dirname, "../selendroid/selendroid-gem",
                                  "selendroid-prebuild/AndroidManifest.xml")
     , dstDir = '/tmp/' + this.appPackage
     , dstManifest = dstDir + '/AndroidManifest.xml';
 
+  fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   async.series([
     function(cb) { mkdirp(dstDir, cb); },
-    function(cb) { me.retargetManifest(null, me.appPackage, srcManifest,
-      dstManifest, cb); },
     function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
-    function(cb) { me.compileManifest(dstManifest, cb); },
-    function(cb) { me.insertManifest(dstManifest, serverPath, newServerPath,
+    function(cb) { me.compileManifest(dstManifest, newPackage, me.appPackage, cb); },
+    function(cb) { me.insertManifest(srcManifest, serverPath, newServerPath,
       cb); }
   ], cb);
 };
 
-ADB.prototype.compileManifest = function(manifest, cb) {
+ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackage, cb) {
   var androidHome = process.env.ANDROID_HOME
     , platforms = androidHome + '/platforms/'
     , platform = 'android-17';
@@ -182,9 +150,11 @@ ADB.prototype.compileManifest = function(manifest, cb) {
   }
 
   // Compile manifest into manifest.xml.apk
-  var compileManifest = ['aapt package -M "', manifest,
-                          '" -I "', platforms + platform + '/android.jar" -F "',
-                          manifest, '.apk" -f'].join('');
+  var compileManifest = ['aapt package -M "', manifest + '"',
+                         ' --rename-manifest-package "',  manifestPackage + '"',
+                         ' --rename-instrumentation-target-package "', targetPackage + '"',
+                         ' -I "', platforms + platform + '/android.jar" -F "',
+                         manifest, '.apk" -f'].join('');
   logger.debug(compileManifest);
   exec(compileManifest, {}, function(err, stdout, stderr) {
     if (err) {

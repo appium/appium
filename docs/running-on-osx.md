@@ -1,5 +1,7 @@
-Preparing your system to run Appium tests
+Running Appium on Mac OS X 
 =======
+
+Appium on OS X supports iOS and Android testing.
 
 <a name="ios"></a>System setup (iOS)
 --------

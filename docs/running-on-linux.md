@@ -1,4 +1,5 @@
-This guide will cover getting started using Appium on Linux.
+Running Appium on Linux
+=======================
 
 # Limitations
 

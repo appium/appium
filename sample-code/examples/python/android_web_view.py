@@ -9,7 +9,7 @@ class TestAndroidWebView(unittest.TestCase):
     def setUp(self):
         app = os.path.abspath(
             glob.glob(os.path.join(os.path.dirname(__file__), 
-                                   '../../apps/WebViewDemo/target')+'/*.apk')[0])
+                                   '../../apps/WebViewDemo/target') + '/*.apk')[0])
         desired_caps = {
             'device': 'selendroid',
             'app': app,

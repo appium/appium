@@ -299,17 +299,17 @@ module.exports.setupAndroidApp = function(grunt, appName, cb) {
 
 var buildAndroidProj = function(grunt, projPath, target, cb) {
   var cmd_name = 'ant';
-  if (!fs.existsSync(projPath+'/build.xml') &&
-      fs.existsSync(projPath+'/pom.xml')) {
+  if (!fs.existsSync(projPath + '/build.xml') &&
+      fs.existsSync(projPath + '/pom.xml')) {
       cmd_name = 'mvn';
   }
-    exec('which '+cmd_name, function(err, stdout) {
+    exec('which ' + cmd_name, function(err, stdout) {
     if (err) {
-      grunt.fatal("Error finding "+cmd_name+" binary, is it on your path?");
+      grunt.fatal("Error finding " + cmd_name + " binary, is it on your path?");
     } else {
       if (stdout) {
         var cmd = stdout.trim();
-        grunt.log.write("Using "+cmd_name+" found at " + cmd);
+        grunt.log.write("Using " + cmd_name + " found at " + cmd);
         var proc = spawn(cmd, [target], {cwd: projPath});
         proc.stdout.setEncoding('utf8');
         proc.stderr.setEncoding('utf8');
@@ -323,7 +323,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
           cb(code);
         });
       } else {
-        grunt.fatal("Could not find "+cmd_name+" installed; please make sure it's on PATH");
+        grunt.fatal("Could not find " + cmd_name + " installed; please make sure it's on PATH");
       }
     }
   });

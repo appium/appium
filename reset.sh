@@ -93,6 +93,8 @@ reset_selendroid() {
     git submodule update --init submodules/selendroid
     rm -rf selendroid
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid
+    ln -s $appium_home/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+    grunt buildSelendroidAndroidApp:WebViewDemo
 }
 
 cleanup() {

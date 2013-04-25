@@ -35,6 +35,8 @@ var Firefox = function(opts) {
   this.hasConnected = false;
   this.fromActor = null;
   this.socket = null;
+  this.receiveStream = null;
+  this.expectedRcvBytes = null;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'FirefoxOS'
@@ -101,9 +103,30 @@ Firefox.prototype.start = function(cb, onDie) {
 };
 
 Firefox.prototype.receive = function(data) {
-  console.log("data received");
-  data = data.toString().split(":").slice(1).join(":");
-  data = JSON.parse(data);
+  var parts, bytes, jsonData;
+  if (this.receiveStream) {
+    this.receiveStream += data.toString();
+    logger.info(data.length + " b more data received, adding to stream (" + this.receiveStream.length + " b)");
+    try {
+      data = JSON.parse(this.receiveStream);
+      this.receiveStream = null;
+    } catch (e) {
+      logger.info("Stream still not complete, waiting");
+      return;
+    }
+  } else {
+    parts = data.toString().split(":");
+    bytes = parseInt(parts[0], 10);
+    logger.info("Data received, looking for " + bytes + " bytes");
+    jsonData = parts.slice(1).join(":");
+    try {
+      data = JSON.parse(jsonData);
+    } catch (e) {
+      logger.info("Data did not parse, waiting for more");
+      this.receiveStream = jsonData;
+      return;
+    }
+  }
   console.log(data);
   if (!this.hasConnected) {
     this.hasConnected = true;
@@ -162,9 +185,9 @@ Firefox.prototype.executeNextCommand = function() {
   this.socket.write(cmdStr);
 };
 
-Firefox.prototype.initCommandMap = function() {
+Firefox.prototype.cmdMap = function() {
   var elFn = function(elId) { return {element: elId }; };
-  this.cmdMap = {
+  return {
     implicitWait: ['setSearchTimeout']
     , getUrl: ['getUrl']
     , findElement: ['findElement', function(strategy, selector) {
@@ -184,8 +207,17 @@ Firefox.prototype.initCommandMap = function() {
         };
       }]
     , getText: ['getElementText', elFn]
+    , getPageSource: ['getPageSource']
+    , execute: ['executeScript', function(script, params) {
+        return {
+          value: script
+          , args: params
+        };}]
   };
-  _.each(this.cmdMap, _.bind(function(cmdInfo, controller) {
+};
+
+Firefox.prototype.initCommandMap = function() {
+  _.each(this.cmdMap(), _.bind(function(cmdInfo, controller) {
     this[controller] = _.bind(function() {
       var args = Array.prototype.slice.call(arguments, 0);
       var cb;

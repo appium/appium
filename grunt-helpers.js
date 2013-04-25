@@ -334,6 +334,11 @@ module.exports.buildAndroidBootstrap = function(grunt, cb) {
   buildAndroidProj(grunt, projPath, "build", cb);
 };
 
+module.exports.buildAndroidScreenShooter = function(grunt, cb) {
+  var projPath = path.resolve(__dirname, "uiautomator", "screenshooter");
+  buildAndroidProj(grunt, projPath, "build", cb);
+};
+
 module.exports.buildAndroidApp = function(grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
   buildAndroidProj(grunt, appPath, "debug", cb);

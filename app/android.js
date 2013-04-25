@@ -11,6 +11,8 @@ var errors = require('./errors')
   , parseXpath = require('./uiauto/appium/xpath').parseXpath
   , exec = require('child_process').exec
   , fs = require('fs')
+  , os = require('os')
+  , temp = require('temp')
   , async = require('async')
   , path = require('path')
   , UnknownError = errors.UnknownError;
@@ -566,7 +568,64 @@ Android.prototype.setOrientation = function(orientation, cb) {
 };
 
 Android.prototype.getScreenshot = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  var me = this;
+  var localfile = "/tmp/" + path.basename(temp.path({prefix: 'appium', suffix: '.png'}));
+  var b64data = "";
+  var jar = path.resolve(__dirname, '../app/android/ScreenShooter.jar');
+  var jarpath = path.resolve(process.env.ANDROID_HOME, "tools/lib");
+  var classpath = "";
+
+  async.series([
+    function(cb) {
+      exec('uname -m', function (error, stdout, stderr) {
+        if (error) {
+          cb(error);
+        } else {
+          classpath = jarpath + "/ddmlib.jar:" + jarpath + "/" + stdout.trim() + "/swt.jar:" + jar;
+          cb(null);
+        }
+      });
+    },
+    function(cb) {
+      var javaCmd = 'java -classpath "' + classpath + '" io.appium.android.screenshooter.ScreenShooter ';
+
+      var cmd = javaCmd + me.adb.curDeviceId + " '" + localfile + "'";
+      logger.debug("screenshot cmd: " + cmd);
+      exec(cmd, {}, function(err, stdout, stderr) {
+        if (err) {
+          logger.warn(stderr);
+          return cb(err);
+        }
+        cb(null);
+      });
+    },
+    function(cb) {
+      fs.readFile(localfile, function read(err, data) {
+        if (err) {
+          cb(err);
+        } else {
+          b64data = new Buffer(data).toString('base64');
+          cb(null);
+        }
+      });
+    },
+    function(cb) {
+      fs.unlink(localfile, function(err) {
+        if (err) {
+          cb(err);
+        } else {
+          cb(null);
+        }
+      });
+    }
+  ],
+  // Top level cb
+  function(){
+    cb(null, {
+      status: status.codes.Success.code
+      , value: b64data
+    });
+  });
 };
 
 Android.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {

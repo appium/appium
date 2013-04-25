@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="ScreenShooter" default="jar" basedir=".">
+
+	<property file="ant.properties" />
+
+	<property environment="env" />
+	<condition property="sdk.dir" value="${env.ANDROID_HOME}">
+		<isset property="env.ANDROID_HOME" />
+	</condition>
+	
+	<loadproperties srcFile="project.properties" />
+
+	<!-- quick check on sdk.dir -->
+	<fail
+		message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
+		unless="sdk.dir" />
+
+	<property name="android.lib" value="${sdk.dir}/platforms/${target}/android.jar" />
+	<property name="uiautomator.lib"
+		value="${sdk.dir}/platforms/${target}/uiautomator.jar" />
+	<property name="ddmlib.lib" value="${sdk.dir}/tools/lib/ddmlib.jar" />
+	<property name="swt.lib" value="${sdk.dir}/tools/lib/${os.arch}/swt.jar" />
+
+    <target name="-pre-compile" >
+		<path id="project.target.class.path">
+			<fileset dir="lib" includes="*.jar" />
+			<pathelement path="${android.lib}" />
+			<pathelement path="${uiautomator.lib}" />
+			<pathelement path="${ddmlib.lib}" />
+			<pathelement path="${swt.lib}" />
+		</path>
+    </target>
+			
+	<import file="${sdk.dir}/tools/ant/uibuild.xml" />
+	
+	<target name="-jar" depends="compile, -post-compile">
+		<echo>Creating ${ant.project.name}.jar</echo>
+		<jar destfile="${out.file}" basedir="${out.classes.absolute.dir}" includes="**/*.class">
+			<zipgroupfileset file="${swt.lib}" />
+			<zipgroupfileset file="${ddmlib.lib}" />
+			<manifest>
+				<attribute name="Main-Class"
+					value="io.appium.android.screenshooter.ScreenShooter" />
+			</manifest>
+		</jar>
+	</target>
+</project>

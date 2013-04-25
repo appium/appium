@@ -80,6 +80,7 @@ reset_android() {
     echo "Building Android bootstrap"
     grunt configAndroidBootstrap
     grunt buildAndroidBootstrap
+    grunt buildAndroidScreenShooter
     echo "Configuring and rebuilding Android test apps"
     grunt configAndroidApp:ApiDemos
     grunt buildAndroidApp:ApiDemos

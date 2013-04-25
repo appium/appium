@@ -10,6 +10,7 @@ var path = require('path')
   , setupAndroidBootstrap = gruntHelpers.setupAndroidBootstrap
   , setupAndroidApp = gruntHelpers.setupAndroidApp
   , buildAndroidBootstrap = gruntHelpers.buildAndroidBootstrap
+  , buildAndroidScreenShooter = gruntHelpers.buildAndroidScreenShooter
   , buildAndroidApp = gruntHelpers.buildAndroidApp
   , buildSelendroidAndroidApp = gruntHelpers.buildSelendroidAndroidApp
   , installAndroidApp = gruntHelpers.installAndroidApp
@@ -119,6 +120,12 @@ module.exports = function(grunt) {
   grunt.registerTask('buildAndroidBootstrap', function() {
     var cb = this.async();
     buildAndroidBootstrap(grunt, function(exitCode) {
+      cb(exitCode === 0);
+    });
+  });
+  grunt.registerTask('buildAndroidScreenShooter', function() {
+    var cb = this.async();
+    buildAndroidScreenShooter(grunt, function(exitCode) {
       cb(exitCode === 0);
     });
   });

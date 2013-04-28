@@ -192,8 +192,13 @@ module.exports.build = function(appRoot, cb, sdk) {
   if (typeof sdk == "undefined") {
     sdk = 'iphonesimulator6.0';
   }
+  var args = ['-sdk', sdk, 'clean'];
+  console.log("Cleaning build...")
+  var xcode = spawn('xcodebuild', args, {
+    cwd: appRoot
+  });
   console.log("Building app...");
-  var args = ['-sdk', sdk];
+  args = ['-sdk', sdk];
   var xcode = spawn('xcodebuild', args, {
     cwd: appRoot
   });

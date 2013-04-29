@@ -360,9 +360,17 @@ $.extend(au, {
           value: null
         };
       } else {
+        var result = results.value[0];
+        for (var a = 0, len = results.value.length; a < len; a++) {
+          var elId = results.value[a].ELEMENT;
+          var elVis = this.getElement(elId).isVisible();
+          if (elVis === 1) {
+            result = results.value[a];
+          }
+        }
         return {
           status: codes.Success.code,
-          value: results.value[0]
+          value: result
         };
       }
     }

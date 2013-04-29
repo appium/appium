@@ -125,12 +125,13 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
     , dstDir = '/tmp/' + this.appPackage
     , dstManifest = dstDir + '/AndroidManifest.xml';
 
+  fs.mkdirSync(dstDir);
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   async.series([
     function(cb) { mkdirp(dstDir, cb); },
     function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
     function(cb) { me.compileManifest(dstManifest, newPackage, me.appPackage, cb); },
-    function(cb) { me.insertManifest(srcManifest, serverPath, newServerPath,
+    function(cb) { me.insertManifest(dstManifest, serverPath, newServerPath,
       cb); }
   ], cb);
 };
@@ -385,8 +386,8 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 
 ADB.prototype.pushSelendroid = function(cb) {
   var cmd = "adb shell am instrument -e main_activity '" + this.appPackage +
-            "." + this.appActivity + "' org.openqa.selendroid/" +
-            "org.openqa.selendroid.ServerInstrumentation";
+            "." + this.appActivity + "' " + this.appPackage +
+            ".selendroid/org.openqa.selendroid.ServerInstrumentation";
   logger.info("Starting instrumentation process for selendroid with cmd: " +
               cmd);
   exec(cmd, function(err, stdout) {

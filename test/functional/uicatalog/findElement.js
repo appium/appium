@@ -13,7 +13,7 @@ describeWd('findElementNameContains', function(h) {
       should.exist(el);
       el.getAttribute('name', function(err, name) {
         should.not.exist(err);
-        name.should.equal("Buttons, Various uses of UIButton");;
+        name.should.equal("Buttons, Various uses of UIButton");
         done();
       });
     });

@@ -353,6 +353,10 @@ Android.prototype.setValueImmediate = function(elementId, value, cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.findElementNameContains = function(name, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.setValue = function(elementId, value, cb) {
   this.proxy(["element:setText", {elementId: elementId, text: value}], cb);
 };

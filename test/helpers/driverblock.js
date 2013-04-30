@@ -116,6 +116,8 @@ var describeForApp = function(app, device, appPackage, appActivity) {
     browserName = realDevice = "Android";
   } else if (device === "selendroid") {
     browserName = realDevice = "Selendroid";
+  } else if (device === "firefox" || device === "firefoxos") {
+    browserName = realDevice = "Firefox";
   }
   if (/\//.exec(app) || /\./.exec(app)) {
     appPath = app;
@@ -124,6 +126,8 @@ var describeForApp = function(app, device, appPackage, appActivity) {
       appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
     } else if (device === "android" || device === "selendroid") {
       appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/bin/" + app + "-debug.apk");
+    } else {
+      appPath = app;
     }
   }
 

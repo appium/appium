@@ -5,6 +5,7 @@ CHANGES IN VERSION 0.3.1 (from 0.3.0)
 - support for xpath indexes
 - support for xpath last()
 - docs specific to linux
+- fix name of npm binary-plist dependency
 
 [IOS]
 - update instruments-without-delay (fix #432)
@@ -24,6 +25,7 @@ CHANGES IN VERSION 0.3.1 (from 0.3.0)
 - fix page source on real device
 - use aapt rename to handle manifest stuff
 - screenshot support
+- support for the clear() method
 
 [SELENDROID]
 - fix proxy behavior

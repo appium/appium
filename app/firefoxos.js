@@ -68,6 +68,15 @@ Firefox.prototype.start = function(cb, onDie) {
 
 };
 
+Firefox.prototype.stop = function(cb) {
+  logger.info("Stopping firefoxOs connection");
+  this.proxy({type: 'deleteSession'}, _.bind(function(err) {
+    if (err) return cb(err);
+    this.socket.destroy();
+    cb(0);
+  }, this));
+};
+
 Firefox.prototype.getMarionetteId = function(cb) {
   logger.info("Getting marionette id");
   this.proxy({type: 'getMarionetteID'}, _.bind(function(err, res) {
@@ -129,7 +138,7 @@ Firefox.prototype.receive = function(data) {
       return;
     }
   }
-  logger.debug(data);
+  logger.debug(JSON.stringify(data));
   if (!this.hasConnected) {
     this.hasConnected = true;
     this.fromActor = data.from;

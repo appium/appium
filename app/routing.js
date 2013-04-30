@@ -47,6 +47,7 @@ module.exports = function(appium) {
                      response.statusCode + ": " +
                      sbody);
         res.headers = response.headers;
+        res.set('Content-Type', response.headers['content-type']);
         res.send(response.statusCode, body);
       });
     } else {

@@ -6,15 +6,9 @@ var errors = require('./errors')
   , net = require('net')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
-  , getAtomSrc = require('./hybrid/firefoxos/firefoxos-atoms').get;
-  //, NotImplementedError = errors.NotImplementedError
-  //, NotYetImplementedError = errors.NotYetImplementedError
-  //, parseXpath = require('./uiauto/appium/xpath').parseXpath
-  //, exec = require('child_process').exec
-  //, fs = require('fs')
-  //, async = require('async')
-  //, path = require('path')
-  //, UnknownError = errors.UnknownError;
+  , getAtomSrc = require('./hybrid/firefoxos/firefoxos-atoms').get
+  , async = require('async')
+  , NotYetImplementedError = errors.NotYetImplementedError;
 
 var Firefox = function(opts) {
   this.rest = opts.rest;
@@ -60,46 +54,54 @@ Firefox.prototype.start = function(cb, onDie) {
 
   this.socket.connect(this.port, 'localhost', function () { });
 
+
   this.onConnect = function() {
     logger.info("Firefox OS socket connected");
-    var cmd = {
-      type: 'getMarionetteID'
-    };
-    me.proxy(cmd, function(err, res) {
-      if (err) return cb(err);
-      me.fromActor = res.id;
-      var cmd = {
-        type: 'newSession'
-      };
-      me.proxy(cmd, function(err, res) {
-        if (err) return cb(err);
-        me.sessionId = res.value;
-        var atomSrc = getAtomSrc('gaia_apps');
-        var wrappedScript = atomSrc +
-          ";GaiaApps.launchWithName('" + me.app +"');";
-        var cmd = {
-          type: 'executeAsyncScript'
-          , args: []
-          , newSandbox: true
-          , specialPowers: false
-          , value: wrappedScript
-        };
-        me.proxy(cmd, function(err, res) {
-          if (err) return cb(err);
-          var frameId = res.value.frame.ELEMENT;
-          var cmd = {
-            type: 'switchToFrame'
-            , element: frameId
-          };
-          me.proxy(cmd, function(err) {
-            if (err) return cb(err);
-            cb(null, me.sessionId);
-          });
-        });
-      });
-    });
+    var mainCb = cb;
+    async.waterfall([
+      function(cb) { me.getMarionetteId(cb); },
+      function(cb) { me.createSession(cb); },
+      function(cb) { me.launchAppByName(cb); },
+      function(frameId, cb) { me.frame(frameId, cb); }
+    ], function() { mainCb(null, me.sessionId); });
   };
 
+};
+
+Firefox.prototype.getMarionetteId = function(cb) {
+  logger.info("Getting marionette id");
+  this.proxy({type: 'getMarionetteID'}, _.bind(function(err, res) {
+    if (err) return cb(err);
+    this.fromActor = res.id;
+    cb(null);
+  }, this));
+};
+
+Firefox.prototype.createSession = function(cb) {
+  logger.info("Creating firefox os session");
+  this.proxy({type: 'newSession'}, _.bind(function(err, res) {
+    if (err) return cb(err);
+    this.sessionId = res.value;
+    cb(null);
+  }, this));
+};
+
+Firefox.prototype.launchAppByName = function(cb) {
+  logger.info("Launching our app by its name");
+  var atomSrc = getAtomSrc('gaia_apps');
+  var wrappedScript = atomSrc +
+    ";GaiaApps.launchWithName('" + this.app +"');";
+  var cmd = {
+    type: 'executeAsyncScript'
+    , args: []
+    , newSandbox: true
+    , specialPowers: false
+    , value: wrappedScript
+  };
+  this.proxy(cmd, function(err, res) {
+    if (err) return cb(err);
+    cb(null, res.value.frame.ELEMENT);
+  });
 };
 
 Firefox.prototype.receive = function(data) {
@@ -127,7 +129,7 @@ Firefox.prototype.receive = function(data) {
       return;
     }
   }
-  console.log(data);
+  logger.debug(data);
   if (!this.hasConnected) {
     this.hasConnected = true;
     this.fromActor = data.from;
@@ -213,6 +215,9 @@ Firefox.prototype.cmdMap = function() {
           value: script
           , args: params
         };}]
+    , frame: ['switchToFrame', function(frame) {
+        return { element: frame };
+      }]
   };
 };
 
@@ -245,6 +250,7 @@ Firefox.prototype.initCommandMap = function() {
 
 Firefox.prototype.stop = function(cb) {
   logger.info("Stopping firefoxOs connection");
+  // TODO: call driver.quit, seems like this leaves firefoxos session alive
   this.socket.destroy();
   cb(0);
 };

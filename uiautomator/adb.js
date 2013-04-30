@@ -180,6 +180,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
     // Extract compiled manifest from manifest.xml.apk
     unzipFile(manifest + '.apk', function(err, stderr) {
       if (err) {
+        logger.info("Error unzipping manifest apk, here's stderr:");
         logger.debug(stderr);
         return cb(err);
       }
@@ -205,6 +206,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
     logger.debug("Moving manifest with: " + replaceCmd);
     exec(replaceCmd, {}, function(err) {
       if (err) {
+        logger.info("Got error moving manifest: " + err);
         return cb(err);
       }
       logger.debug("Inserted manifest.");

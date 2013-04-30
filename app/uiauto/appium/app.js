@@ -6,6 +6,53 @@ if (typeof au === "undefined") {
   au = {};
 }
 
+UIAElement.prototype.getNameContains = function(targetName) {
+  var target = UIATarget.localTarget();
+  target.pushTimeout(0);
+  var search = "name contains[c] '" + targetName + "' || label contains[c] '" + targetName + "'";
+  var result = {};
+  result.type = function() { return 'UIAElementNil'; };
+  result.isVisible = function() { return -1; };
+
+  var searchElements = function(element) {
+    var children = element.elements();
+    var results = children.withPredicate(search);
+
+    for (var resIdx = 0, resLen = results.length; resIdx < resLen; resIdx++) {
+      var tmp = results[resIdx];
+      if (tmp.type() !== 'UIAElementNil') {
+        result = tmp;
+        if (tmp.isVisible() === 1) {
+          return tmp;
+        }
+      }
+    }
+
+    for ( var a = 0, len = children.length; a < len; a++) {
+      searchElements(children[a]);
+      if (result.type() !== 'UIAElementNil' && result.isVisible() === 1) {
+        return result;
+      }
+    }
+
+    return result;
+  };
+  var element = searchElements(this);
+  target.popTimeout();
+
+  if (element.type() === 'UIAElementNil') {
+    return {
+      status: 7,
+      value: {'message': 'An element could not be located on the page using the given search parameters.'}
+    };
+  }
+
+  return {
+    status: 0,
+    value: {ELEMENT: au.getId(element)}
+  };
+};
+
 $.extend(au, {
   cache: []
   , identifier: 0

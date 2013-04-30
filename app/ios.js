@@ -617,6 +617,19 @@ IOS.prototype.handleFindCb = function(err, res, many, findCb) {
   }
 };
 
+IOS.prototype.findElementNameContains = function(name, cb) {
+  var doFind = _.bind(function(findCb) {
+    this.proxy(['au.mainApp.getNameContains("', name, '")'].join(''), function(err, res) {
+      if (err || res.status !== 0) {
+        findCb(false, err, res);
+      } else {
+        findCb(true, err, res);
+      }
+    });
+  }, this);
+  this.waitForCondition(this.implicitWaitMs, doFind, cb);
+};
+
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   var atomsElement = this.getAtomsElement(ctx);

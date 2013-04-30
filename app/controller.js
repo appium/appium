@@ -725,6 +725,15 @@ exports.getCurrentActivity = function(req, res) {
   req.device.getCurrentActivity(getResponseHandler(req, res));
 };
 
+// mobile :findElementNameContains, name: 'sign in'
+exports.findElementNameContains = function(req, res) {
+  var name = req.body.name;
+
+  if(checkMissingParams(res, {name: name})) {
+    req.device.findElementNameContains(name, getResponseHandler(req, res));
+  }
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
@@ -772,6 +781,7 @@ var mobileCmdMap = {
   , 'source': exports.mobileSource
   , 'find': exports.find
   , 'currentActivity': exports.getCurrentActivity
+  , 'findElementNameContains': exports.findElementNameContains
 };
 
 exports.produceError = function(req, res) {

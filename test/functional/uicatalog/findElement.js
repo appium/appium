@@ -6,6 +6,20 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatal
   , spinWait = require("../../helpers/spin.js").spinWait
   , should = require('should');
 
+describeWd('findElementNameContains', function(h) {
+  it('should find a single element by name', function(done) {
+    h.driver.execute("mobile: findElementNameContains", [{name: 'uses of UIButton'}], function(err, el) {
+      should.not.exist(err);
+      should.exist(el);
+      el.getAttribute('name', function(err, name) {
+        should.not.exist(err);
+        name.should.equal("Buttons, Various uses of UIButton");;
+        done();
+      });
+    });
+  });
+});
+
 describeWd('findElementFromElement', function(h) {
   it('should find an element within itself', function(done) {
     h.driver.elementByTagName('tableView', function(err, element) {

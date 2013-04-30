@@ -192,27 +192,30 @@ module.exports.build = function(appRoot, cb, sdk) {
   if (typeof sdk == "undefined") {
     sdk = 'iphonesimulator6.0';
   }
-  var args = ['-sdk', sdk, 'clean'];
+  var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
   console.log("Cleaning build...");
-  var xcode = spawn('xcodebuild', args, {
-    cwd: appRoot
-  });
-  console.log("Building app...");
-  args = ['-sdk', sdk];
-  xcode = spawn('xcodebuild', args, {
-    cwd: appRoot
-  });
-  var output = '';
-  var collect = function(data) { output += data; };
-  xcode.stdout.on('data', collect);
-  xcode.stderr.on('data', collect);
-  xcode.on('exit', function(code) {
-    if (code === 0) {
-      cb(null);
-    } else {
-      console.log("Failed building app, maybe it doesn't exist?");
-      cb(output);
+  var xcode = exec(cmd, {cwd: appRoot}, function(err, stdout, stderr) {
+    if (err) {
+      console.log("Failed cleaning app, maybe it doesn't exist?");
+      return cb(stdout + "\n" + stderr);
     }
+    console.log("Building app...");
+    var args = ['-sdk', sdk];
+    xcode = spawn('xcodebuild', args, {
+      cwd: appRoot
+    });
+    var output = '';
+    var collect = function(data) { output += data; };
+    xcode.stdout.on('data', collect);
+    xcode.stderr.on('data', collect);
+    xcode.on('exit', function(code) {
+      if (code === 0) {
+        cb(null);
+      } else {
+        console.log("Failed building app, maybe it doesn't exist?");
+        cb(output);
+      }
+    });
   });
 };
 

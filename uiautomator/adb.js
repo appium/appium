@@ -88,6 +88,20 @@ ADB.prototype.checkAdbPresent = function(cb) {
   }, this));
 };
 
+ADB.prototype.checkAppPresent = function(cb) {
+  logger.info("Checking whether app is actually present");
+  fs.stat(this.apkPath, function(err) {
+    if (err) {
+      logger.error("Could not find app apk at " + this.apkPath);
+      cb(new Error("Error locating the app apk, supposedly it's at " +
+                   this.apkPath + " but we can't stat it. Filesystem error " +
+                   "is " + err));
+    } else {
+      cb(null);
+    }
+  });
+};
+
 // Fast reset
 ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   logger.info("Building fast reset");
@@ -310,6 +324,7 @@ ADB.prototype.prepareDevice = function(onReady) {
   logger.info("Preparing device for session");
   var me = this;
   async.series([
+    function(cb) { me.checkAppPresent(cb); },
     function(cb) { me.checkAdbPresent(cb); },
     function(cb) { me.getDeviceWithRetry(cb);},
     function(cb) { me.waitForDevice(cb); },

@@ -171,17 +171,17 @@ RemoteDebugger.prototype.wrapScriptForFrame = function(script, frame) {
 RemoteDebugger.prototype.wrapElementEqualsElementAtom = function(args) {
     var elFromCache = atoms.get('get_element_from_cache');
     var wrapper = "function() {";
-        wrapper += "var elFromCache = (function(id){ "
+        wrapper += "var elFromCache = (function(id){ ";
         wrapper += "try {";
-        wrapper += "(" + elFromCache + ")(id); "
+        wrapper += "(" + elFromCache + ")(id); ";
         wrapper += "} catch(e) {";
-        wrapper += "return null;"
-        wrapper += "}"
+        wrapper += "return null;";
+        wrapper += "}";
         wrapper += "});";
         wrapper += "return (function(a, b) {";
-        wrapper += "if (a === null || b === null) { return JSON.stringify({status: 10, value: null});}"
-        wrapper += "return JSON.stringify({status: 0, value: a === b});"
-        wrapper += "})("
+        wrapper += "if (a === null || b === null) { return JSON.stringify({status: 10, value: null});}";
+        wrapper += "return JSON.stringify({status: 0, value: a === b});";
+        wrapper += "})(";
         wrapper += "elFromCache(\"" + args[0] + "\"),";
         wrapper += "elFromCache(\"" + args[1] + "\")";
         wrapper += ");}";
@@ -260,8 +260,8 @@ RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, respons
   var atomSrc, script = ""
     , asyncCallBack = "";
 
-  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "', true);"
-  asyncCallBack += "xmlHttp.setRequestHeader('Content-type','application/json'); xmlHttp.send(res); }"
+  asyncCallBack += "function(res) { xmlHttp = new XMLHttpRequest(); xmlHttp.open('POST', '" + responseUrl + "', true);";
+  asyncCallBack += "xmlHttp.setRequestHeader('Content-type','application/json'); xmlHttp.send(res); }";
 
   atomSrc = atoms.get(atom);
   args = _.map(args, JSON.stringify);

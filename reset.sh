@@ -92,8 +92,9 @@ reset_selendroid() {
     rm -rf submodules/selendroid/selendroid-server/target
     git submodule update --init submodules/selendroid
     rm -rf selendroid
+    rm -rf $appium_home/sample-code/apps/WebViewDemo
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid
-    ln -s $appium_home/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+    ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
     grunt buildSelendroidAndroidApp:WebViewDemo
 }
 

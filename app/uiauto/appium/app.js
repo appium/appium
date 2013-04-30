@@ -13,10 +13,25 @@ $.extend(au, {
   , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
   , mainApp: UIATarget.localTarget().frontMostApp()
   , keyboard: function() { return UIATarget.localTarget().frontMostApp().keyboard(); }
+  , tapById: function(elementId, cb) {
+      var element = this.getElement(elementId);
+      if (element) {
+        element.tap();
+        return {
+          status: codes.Success.code,
+          value: null
+        };
+      } else {
+        return {
+          status: codes.UnknownError.code,
+          value: 'elementId ' + elementId + ' is null and can\'t be tapped.'
+        };
+      }
+    }
 
   // Screen-related functions
 
-  , getScreenOrientation: function () {
+  , getScreenOrientation: function() {
       var orientation = $.orientation()
         , value = null;
       switch (orientation) {

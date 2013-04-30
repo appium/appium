@@ -55,6 +55,7 @@ var ADB = function(opts, android) {
   // detected the crash.
   this.android = android;
   this.cmdCb = null;
+  this.binaries = {};
 };
 
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
@@ -62,6 +63,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
   if (this.sdkRoot) {
     binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binary);
     this.debug("Using " + binary + " from " + binaryLoc);
+    this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
   } else {
     exec("which " + binary, _.bind(function(err, stdout) {
@@ -151,7 +153,7 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
   }
 
   // Compile manifest into manifest.xml.apk
-  var compileManifest = ['aapt package -M "', manifest + '"',
+  var compileManifest = [this.binaries.aapt + ' package -M "', manifest + '"',
                          ' --rename-manifest-package "',  manifestPackage + '"',
                          ' --rename-instrumentation-target-package "', targetPackage + '"',
                          ' -I "', platforms + platform + '/android.jar" -F "',

@@ -28,4 +28,33 @@ describeWd('text boxes', function(h) {
       });
     });
   });
+  it('should be able to clear editText', function(done) {
+    h.driver.elementByTagName('editText', function(err, el) {
+      should.not.exist(err);
+      // get the text
+      el.text(function(err, text) {
+        should.not.exist(err);
+        text.should.equal("");
+        // set the text
+        el.sendKeys(testText, function(err) {
+          should.not.exist(err);
+          // make sure the text is actuall in the edittext
+          el.text(function(err, text) {
+            should.not.exist(err);
+            text.should.equal(testText);
+            // now clear it
+            el.clear(function(err) {
+              should.not.exist(err);
+              // make sure that it's empty
+              el.text(function(err, text) {
+                should.not.exist(err);
+                text.should.equal("");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });

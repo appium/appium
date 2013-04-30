@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap;
 
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
@@ -25,6 +26,7 @@ class AndroidCommandExecutor {
   private static HashMap<String, CommandHandler> map = new HashMap<String, CommandHandler>();
 
   static {
+    map.put("clear", new Clear());
     map.put("orientation", new Orientation());
     map.put("swipe", new Swipe());
     map.put("flick", new Flick());

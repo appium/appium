@@ -1,4 +1,37 @@
 -------------------------------------
+CHANGES IN VERSION 0.3.1 (from 0.3.0)
+-------------------------------------
+[GENERAL]
+- support for xpath indexes
+- support for xpath last()
+- docs specific to linux
+
+[IOS]
+- update instruments-without-delay (fix #432)
+- fix #437 (implicit wait didn't work after ios reset)
+- when searching for @text, fall back to @label and @value
+- allow @name to refer to @text, @label, and @value
+- have "textfield" searches return "secure" fields as well
+- add "collection" tag name
+- make sure to do a clean build before building sample apps
+
+[ANDROID]
+- fix xpath wildcard issue
+- fix tag name selector
+- alias "window" tag name to "frame"
+- tweak flick timing
+- have swipe/flick return errors if we know they didn't execute
+- fix page source on real device
+- use aapt rename to handle manifest stuff
+- screenshot support
+
+[SELENDROID]
+- fix proxy behavior
+- added example/test for selendroid webview
+- add WebViewDemo app with tasks for building it
+
+
+-------------------------------------
 CHANGES IN VERSION 0.3.0 (from 0.2.3)
 -------------------------------------
 [GENERAL]

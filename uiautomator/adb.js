@@ -90,7 +90,7 @@ ADB.prototype.checkAdbPresent = function(cb) {
 
 ADB.prototype.checkAppPresent = function(cb) {
   logger.info("Checking whether app is actually present");
-  fs.stat(this.apkPath, function(err) {
+  fs.stat(this.apkPath, _.bind(function(err) {
     if (err) {
       logger.error("Could not find app apk at " + this.apkPath);
       cb(new Error("Error locating the app apk, supposedly it's at " +
@@ -99,7 +99,7 @@ ADB.prototype.checkAppPresent = function(cb) {
     } else {
       cb(null);
     }
-  });
+  }, this));
 };
 
 // Fast reset

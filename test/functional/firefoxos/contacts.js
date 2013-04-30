@@ -6,6 +6,8 @@ var describeWd = require('../../helpers/driverblock.js').describeForApp('Contact
 
 describeWd('firefoxos', function(h) {
   return it('should load app', function(done) {
+    var firstName = "Name";
+    var lastName = Date.now().toString();
     h.driver.url(function(err, url) {
       should.not.exist(err);
       url.should.eql("app://communications.gaiamobile.org/contacts/index.html");
@@ -15,20 +17,22 @@ describeWd('firefoxos', function(h) {
           should.not.exist(err);
           h.driver.elementById('givenName', function(err, name1) {
             should.not.exist(err);
-            name1.sendKeys('Jonathan');
+            name1.sendKeys(firstName);
             h.driver.elementById('familyName', function(err, name2) {
               should.not.exist(err);
-              name2.sendKeys('Lipps');
+              name2.sendKeys(lastName);
               h.driver.elementById('save-button', function(err, save) {
                 should.not.exist(err);
                 save.click(function(err) {
                   should.not.exist(err);
                   h.driver.elementByTagName('body', function(err, body) {
-                    body.text(function(err, text) {
-                      should.not.exist(err);
-                      text.should.include("Jonathan Lipps");
-                      done();
-                    });
+                    setTimeout(function() {
+                      body.text(function(err, text) {
+                        should.not.exist(err);
+                        text.should.include(firstName + " " + lastName);
+                        done();
+                      });
+                    }, 1000);
                   });
                 });
               });

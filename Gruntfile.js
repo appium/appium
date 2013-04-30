@@ -57,6 +57,9 @@ module.exports = function(grunt) {
       , Preferences: ['ios', {
         functional: ['test/functional/prefs']
       }]
+      , Contacts: ['firefoxos', {
+        functional: ['test/functional/firefoxos']
+      }]
     }
     , mochaTestConfig: {
       options: {
@@ -83,6 +86,9 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('ios', "Run functional ios tests", function(log) {
     runTestsWithServer(grunt, null, 'functional', 'ios', log === "log", this.async());
+  });
+  grunt.registerTask('firefoxos', "Run functional firefoxos tests", function(log) {
+    runTestsWithServer(grunt, null, 'functional', 'firefoxos', log === "log", this.async());
   });
   grunt.registerTask('test', ['jshint', 'unit', 'appiumutils', 'functional', 'servertest']);
   grunt.registerTask('unit', 'mochaTest:unit');

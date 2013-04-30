@@ -13,7 +13,7 @@ $.extend(au, {
   , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
   , mainApp: UIATarget.localTarget().frontMostApp()
   , keyboard: function() { return UIATarget.localTarget().frontMostApp().keyboard(); }
-  , tapById: function(elementId, cb) {
+  , tapById: function(elementId) {
       var element = this.getElement(elementId);
       if (element) {
         element.tap();

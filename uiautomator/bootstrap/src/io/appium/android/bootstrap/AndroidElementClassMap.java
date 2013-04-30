@@ -65,6 +65,7 @@ public class AndroidElementClassMap {
     map.put("frame", "FrameLayout");
     map.put("linear", "LinearLayout");
     map.put("textfield", "EditText");
+    map.put("scroll", "ScrollView");
 
     unallowed.add("secure");
   }

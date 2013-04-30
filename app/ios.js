@@ -752,7 +752,7 @@ IOS.prototype.click = function(elementId, cb) {
       this.executeAtom('tap', [atomsElement], cb);
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').tap()"].join('');
+    var command = ["au.tapById('", elementId, "')"].join('');
     this.proxy(command, cb);
   }
 };

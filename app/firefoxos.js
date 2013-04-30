@@ -215,14 +215,79 @@ Firefox.prototype.cmdMap = function() {
           value: script
           , args: params
         };}]
-    , frame: ['switchToFrame', function(frame) {
-        return { element: frame };
-      }]
+    , frame: ['switchToFrame', elFn]
   };
 };
 
+Firefox.prototype.notImplementedCmds = function() {
+  return [
+    'equalsWebElement'
+    , 'findElements'
+    , 'findElementFromElement'
+    , 'findElementsFromElement'
+    , 'fireEvent'
+    , 'complexTap'
+    , 'flick'
+    , 'getPageSourceXML'
+    , 'swipe'
+    , 'hideKeyboard'
+    , 'clear'
+    , 'getName'
+    , 'getAttribute'
+    , 'getCssProperty'
+    , 'getLocation'
+    , 'getSize'
+    , 'getWindowSize'
+    , 'getPageIndex'
+    , 'keyevent'
+    , 'back'
+    , 'forward'
+    , 'refresh'
+    , 'keys'
+    , 'leaveWebView'
+    , 'elementDisplayed'
+    , 'elementEnabled'
+    , 'elementSelected'
+    , 'getAlertText'
+    , 'setAlertText'
+    , 'postAcceptAlert'
+    , 'postDismissAlert'
+    , 'asyncScriptTimeout'
+    , 'setOrientation'
+    , 'getOrientation'
+    , 'moveTo'
+    , 'clickCurrent'
+    , 'fakeFlickElement'
+    , 'executeAsync'
+    , 'title'
+    , 'submit'
+    , 'url'
+    , 'active'
+    , 'getWindowHandle'
+    , 'setWindow'
+    , 'closeWindow'
+    , 'getWindowHandles'
+    , 'getCommandTimeout'
+    , 'receiveAsyncResponse'
+    , 'setValueImmediate'
+    , 'findAndAct'
+    , 'getCookies'
+    , 'setCookie'
+    , 'deleteCookie'
+    , 'deleteCookies'
+    , 'getCurrentActivity'
+  ];
+};
+
 Firefox.prototype.initCommandMap = function() {
+  var nyiCmds = this.notImplementedCmds();
+  // create controller functions dynamically for implemented commands
   _.each(this.cmdMap(), _.bind(function(cmdInfo, controller) {
+    if (_.contains(nyiCmds, controller)) {
+      throw new Error("Controller " + controller + " is listed in both " +
+                      "implemented and not-yet-implemented lists. Fix this " +
+                      "before moving on!");
+    }
     this[controller] = _.bind(function() {
       var args = Array.prototype.slice.call(arguments, 0);
       var cb;
@@ -246,13 +311,14 @@ Firefox.prototype.initCommandMap = function() {
       this.proxy(cmd, cb);
     }, this);
   }, this));
-};
-
-Firefox.prototype.stop = function(cb) {
-  logger.info("Stopping firefoxOs connection");
-  // TODO: call driver.quit, seems like this leaves firefoxos session alive
-  this.socket.destroy();
-  cb(0);
+  // throw not yet implemented for any command in nyi list
+  _.each(nyiCmds, _.bind(function(controller) {
+    this[controller] = _.bind(function() {
+      var args = Array.prototype.slice.call(arguments, 0);
+      var cb = args[args.length - 1];
+      cb(new NotYetImplementedError(), null);
+    }, this);
+  }, this));
 };
 
 module.exports = function(opts) {

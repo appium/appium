@@ -59,6 +59,7 @@ var ADB = function(opts, android) {
 };
 
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
+  logger.info("Checking whether " + binary + " is present");
   var binaryLoc = null;
   if (this.sdkRoot) {
     binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binary);
@@ -89,6 +90,7 @@ ADB.prototype.checkAdbPresent = function(cb) {
 
 // Fast reset
 ADB.prototype.buildFastReset = function(skipAppSign, cb) {
+  logger.info("Building fast reset");
   // Create manifest
   var me = this
     , targetAPK = me.apkPath
@@ -119,6 +121,7 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
 };
 
 ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
+  logger.info("Inserting selendroid manifest");
   var me = this
     , newServerPath = me.selendroidServerPath
     , newPackage = me.appPackage + '.selendroid'
@@ -139,6 +142,7 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
 };
 
 ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackage, cb) {
+  logger.info("Compiling manifest " + manifest);
   var androidHome = process.env.ANDROID_HOME
     , platforms = androidHome + '/platforms/'
     , platform = 'android-17';
@@ -170,7 +174,9 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
 };
 
 ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
+  logger.info("Inserting manifest, src: " + srcApk + ", dst: " + dstApk);
   var extractManifest = function(cb) {
+    logger.debug("Extracting manifest");
     // Extract compiled manifest from manifest.xml.apk
     unzipFile(manifest + '.apk', function(err, stderr) {
       if (err) {
@@ -196,7 +202,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
     // -j = keep only the file, not the dirs
     // -m = move manifest into target apk.
     var replaceCmd = 'zip -j -m "' + dstApk + '" "' + manifest + '"';
-    logger.debug(replaceCmd);
+    logger.debug("Moving manifest with: " + replaceCmd);
     exec(replaceCmd, {}, function(err) {
       if (err) {
         return cb(err);
@@ -218,7 +224,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
 ADB.prototype.sign = function(apks, cb) {
   var signPath = path.resolve(__dirname, '../app/android/sign.jar');
   var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
-  logger.debug("Resigning: " + resign);
+  logger.debug("Resigning apks with: " + resign);
   exec(resign, {}, function(err, stdout, stderr) {
     if (stderr.indexOf("Input is not an existing file") !== -1) {
       logger.warn("Could not resign apk(s), got non-existing file error");
@@ -234,7 +240,7 @@ ADB.prototype.sign = function(apks, cb) {
 ADB.prototype.checkApkCert = function(apk, cb) {
   var verifyPath = path.resolve(__dirname, '../app/android/verify.jar');
   var resign = 'java -jar "' + verifyPath + '" "' + apk + '"';
-  logger.debug("Checking app cert: " + resign);
+  logger.debug("Checking app cert for " + apk + ": " + resign);
   exec(resign, {}, function(err) {
     if (err) {
       logger.debug("App not signed with debug cert.");
@@ -246,8 +252,10 @@ ADB.prototype.checkApkCert = function(apk, cb) {
 };
 
 ADB.prototype.checkFastReset = function(cb) {
+  logger.info("Checking whether we need to run fast reset");
   // NOP if fast reset is not true.
   if (!this.fastReset) {
+    logger.info("User doesn't want fast reset, doing nothing");
     return cb(null);
   }
 
@@ -273,6 +281,7 @@ ADB.prototype.checkFastReset = function(cb) {
 };
 
 ADB.prototype.getDeviceWithRetry = function(cb) {
+  logger.info("Trying to find a connected android device");
   var me = this;
   var getDevices = function(innerCb) {
     me.getConnectedDevices(function(err, devices) {
@@ -289,12 +298,14 @@ ADB.prototype.getDeviceWithRetry = function(cb) {
         getDevices(cb);
       });
     } else {
+      logger.info("Found device, no need to retry");
       cb(null);
     }
   });
 };
 
 ADB.prototype.prepareDevice = function(onReady) {
+  logger.info("Preparing device for session");
   var me = this;
   async.series([
     function(cb) { me.checkAdbPresent(cb); },
@@ -305,6 +316,7 @@ ADB.prototype.prepareDevice = function(onReady) {
 };
 
 ADB.prototype.startAppium = function(onReady, onExit) {
+  logger.info("Starting android appium");
   var me = this
     , doRun = function(err) {
         if (err) return onReady(err);
@@ -324,6 +336,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
+  logger.info("Starting selendroid");
   var me = this
     , modServerExists = false;
   this.selendroidServerPath = serverPath.replace(/\.apk$/, ".mod.apk");
@@ -449,6 +462,7 @@ ADB.prototype.getConnectedDevices = function(cb) {
       });
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
+        this.debug("Setting device id to " + (this.udid || devices[0][0]));
         this.setDeviceId(this.udid || devices[0][0]);
       }
       cb(null, devices);
@@ -473,6 +487,7 @@ ADB.prototype.forwardPort = function(cb) {
 };
 
 ADB.prototype.runBootstrap = function(readyCb, exitCb) {
+  logger.info("Running bootstrap");
   this.requireDeviceId();
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
       "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
@@ -517,6 +532,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
 };
 
 ADB.prototype.checkForSocketReady = function(output) {
+  logger.info("Checking for appium socket server to be ready");
   if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
     this.debug("Connecting to server on device...");
@@ -764,6 +780,7 @@ ADB.prototype.pushAppium = function(cb) {
 };
 
 ADB.prototype.startApp = function(cb) {
+  logger.info("Starting app");
   this.requireDeviceId();
   this.requireApp();
   var activityString = this.appActivity;
@@ -793,6 +810,7 @@ ADB.prototype.startApp = function(cb) {
 };
 
 ADB.prototype.getFocusedPackageAndActivity = function(cb) {
+  logger.info("Getting focused package and activity");
   this.requireDeviceId();
   var cmd = this.adbCmd + " shell dumpsys window windows"
     , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/);
@@ -847,6 +865,7 @@ ADB.prototype.waitForActivity = function(cb) {
 };
 
 ADB.prototype.uninstallApk = function(pkg, cb) {
+  logger.info("Uninstalling " + pkg);
   var cmd = this.adbCmd + " uninstall " + pkg;
   exec(cmd, function(err, stdout) {
     if (err) {
@@ -866,7 +885,7 @@ ADB.prototype.uninstallApk = function(pkg, cb) {
 
 ADB.prototype.installApk = function(apk, cb) {
   var cmd = this.adbCmd + ' install -r "' + apk + '"';
-  this.debug(cmd);
+  logger.info("Installing " + apk);
   exec(cmd,function(err, stdout) {
     if (err) {
       logger.error(err);
@@ -914,7 +933,7 @@ ADB.prototype.runFastReset = function(cb) {
   // targetPackage + '.clean' / clean.apk.Clear
   var me = this;
   var clearCmd = me.adbCmd + ' shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
-  logger.debug("Clear command: " + clearCmd);
+  logger.debug("Running fast reset clean: " + clearCmd);
   exec(clearCmd, {}, function(err, stdout, stderr) {
     if (err) {
       logger.warn(stderr);
@@ -951,6 +970,7 @@ ADB.prototype.installApp = function(cb) {
   me.requireApk();
 
   var determineInstallAndCleanStatus = function(cb) {
+    logger.info("Determining app install/clean status");
     me.checkAppInstallStatus(me.appPackage, function(err, installed, cleaned) {
       installApp = !installed;
       installClean = !cleaned;

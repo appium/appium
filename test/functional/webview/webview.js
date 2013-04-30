@@ -2,7 +2,6 @@
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
-  , webviewTests = require("../../helpers/webview.js").buildTests
   , _ = require('underscore')
   , should = require('should');
 
@@ -61,5 +60,3 @@ describeWd('window handles', function(h) {
     });
   });
 });
-
-webviewTests('WebViewApp');

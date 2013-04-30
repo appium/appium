@@ -370,7 +370,7 @@ Android.prototype.complexTap = function(tapCount, touchCount, duration, x, y, el
 };
 
 Android.prototype.clear = function(elementId, cb) {
-  cb(new NotYetImplementedError(), null);
+  this.proxy(["element:clear", {elementId: elementId}], cb);
 };
 
 Android.prototype.submit = function(elementId, cb) {

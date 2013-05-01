@@ -60,7 +60,7 @@ describeBad('bad app path', function(h) {
   it('should throw an error', function(done) {
     should.exist(h.connError);
     var err = JSON.parse(h.connError.data);
-    err.value.origValue.should.include("Could not sign one or more apks");
+    err.value.origValue.should.include("Error locating the app apk");
     done();
   });
 }, null, null, null, {expectConnError: true});

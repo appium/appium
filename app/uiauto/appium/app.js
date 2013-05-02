@@ -63,7 +63,15 @@ $.extend(au, {
   , tapById: function(elementId) {
       var element = this.getElement(elementId);
       if (element) {
-        element.tap();
+        try {
+          // element may still be null.
+          element.tap();
+        } catch(e) {
+          return {
+            status: codes.UnknownError.code,
+            value: 'elementId ' + elementId + ' is null and can\'t be tapped.'
+          };
+        }
         return {
           status: codes.Success.code,
           value: null

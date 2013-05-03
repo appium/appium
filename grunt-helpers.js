@@ -293,7 +293,7 @@ var setupAndroidProj = function(grunt, projPath, args, cb) {
 };
 
 module.exports.setupAndroidBootstrap = function(grunt, cb) {
-  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  var projPath = path.resolve(__dirname, "android", "bootstrap");
   var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
               "android-17", "-p", "."];
   setupAndroidProj(grunt, projPath, args, cb);
@@ -338,7 +338,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
 };
 
 module.exports.buildAndroidBootstrap = function(grunt, cb) {
-  var projPath = path.resolve(__dirname, "uiautomator", "bootstrap");
+  var projPath = path.resolve(__dirname, "android", "bootstrap");
   buildAndroidProj(grunt, projPath, "build", cb);
 };
 

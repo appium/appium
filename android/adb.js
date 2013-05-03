@@ -463,11 +463,11 @@ ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
 };
 
 ADB.prototype.prepareEmulator = function(cb) {
-  if (this.avdName != null) {
+  if (this.avdName !== null) {
     logger.info("Launching Emulator with AVD " + this.avdName);
     exec("/usr/bin/killall -m emulator*", _.bind(function(err, stdout) {
       if (err) {
-        logger.info("Could not kill emulator. It was probably not running. : " + err.message)
+        logger.info("Could not kill emulator. It was probably not running. : " + err.message);
       }
       this.checkSdkBinaryPresent("emulator",_.bind(function(err, emulatorBinaryPath) {
         if (err) {

@@ -68,7 +68,7 @@ Selendroid.prototype.ensureServerExists = function(cb) {
 Selendroid.prototype.buildServer = function(cb) {
   logger.info("Building selendroid server for package " + this.appPackage);
   var buildDir = path.resolve(__dirname, "../selendroid/selendroid-server");
-  var src = buildDir + "/target/selendroid-server-0.3.apk";
+  var src = buildDir + "/target/selendroid-server-0.4-SNAPSHOT.apk";
   var dest = buildDir + "/target/selendroid-" + this.appPackage + '.apk';
   var cmd = "mvn install -Dandroid.renameInstrumentationTargetPackage=" +
             this.appPackage;

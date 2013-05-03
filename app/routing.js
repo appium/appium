@@ -2,6 +2,7 @@
 var controller = require('./controller')
   , request = require('./device').request
   , _ = require('underscore')
+  , _s = require("underscore.string")
   , logger = require('../logger').get('appium');
 
 var shouldProxy = function(req) {
@@ -15,6 +16,14 @@ var shouldProxy = function(req) {
   var method = req.route.method.toUpperCase();
   var path = req.originalUrl;
   var shouldAvoid = false;
+
+  // check for POST /execute mobile:
+  if (method === 'POST' &&
+      new RegExp('^/wd/hub/session/.+/execute$').test(path) &&
+      _s.startsWith(req.body.script, "mobile: ")) {
+    shouldAvoid = true;
+  }
+
   _.each(avoid, function(pathToAvoid) {
     if (method === pathToAvoid[0] && pathToAvoid[1].exec(path)) {
       shouldAvoid = true;

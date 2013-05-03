@@ -65,3 +65,9 @@ If you're having trouble getting Appium working and the error messages Appium pr
   found. This results in an error that looks like `(null) cannot be tapped`.
   Sometimes the only solution is to put the finding-and-acting code in a retry
   block. See also `mobile: findAndAct` on the [finding elements doc page](https://github.com/appium/appium/blob/master/docs/finding-elements.md)
+
+# Specific Errors
+
+|Action|Error|Resolution|
+------------------
+|Running reset.sh|xcodebuild: error: SDK "iphonesimulator6.1" cannot be located|Install the iPhone 6.1 SDK _or_ build the test apps with a separate SDK, e.g., `grunt buildApp:UICatalog:iphonesimulator5.1`|

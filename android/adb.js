@@ -144,7 +144,13 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
     , dstDir = '/tmp/' + this.appPackage
     , dstManifest = dstDir + '/AndroidManifest.xml';
 
-  fs.mkdirSync(dstDir);
+  try {
+    fs.mkdirSync(dstDir);
+  } catch (e) {
+    if (e.message.indexOf("EEXIST") === -1) {
+      throw e;
+    }
+  }
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   async.series([
     function(cb) { mkdirp(dstDir, cb); },
@@ -356,7 +362,8 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
   logger.info("Starting selendroid");
   var me = this
-    , modServerExists = false;
+    , modServerExists = false
+    , modApk = this.appPackage + '.selendroid';
   this.selendroidServerPath = serverPath.replace(/\.apk$/, ".mod.apk");
 
   var checkModServerExists = function(cb) {
@@ -372,7 +379,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
       // need to uninstall it if it's already on device
       logger.info("Rebuilt selendroid apk does not exist, uninstalling " +
                   "any instances of it on device to make way for new one");
-      me.uninstallApk('org.openqa.selendroid', cb);
+      me.uninstallApk(modApk, cb);
     } else {
       logger.info("Rebuilt selendroid apk exists, doing nothing");
       cb();
@@ -392,7 +399,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
   };
 
   var conditionalInstallSelendroid = function(cb) {
-    me.checkAppInstallStatus('org.openqa.selendroid', function(e, installed) {
+    me.checkAppInstallStatus(modApk, function(e, installed) {
       if (!installed) {
         logger.info("Rebuilt selendroid is not installed, installing it");
         me.installApk(me.selendroidServerPath, cb);

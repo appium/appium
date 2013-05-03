@@ -326,6 +326,7 @@ ADB.prototype.prepareDevice = function(onReady) {
   async.series([
     function(cb) { me.checkAppPresent(cb); },
     function(cb) { me.checkAdbPresent(cb); },
+    function(cb) { me.prepareEmulator(cb); },
     function(cb) { me.getDeviceWithRetry(cb);},
     function(cb) { me.waitForDevice(cb); },
     function(cb) { me.checkFastReset(cb); }
@@ -461,6 +462,43 @@ ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
   });
 };
 
+ADB.prototype.prepareEmulator = function(cb) {
+  if (this.avdName !== null) {
+    logger.info("Launching Emulator with AVD " + this.avdName);
+    exec("/usr/bin/killall -m emulator*", _.bind(function(err, stdout) {
+      if (err) {
+        logger.info("Could not kill emulator. It was probably not running. : " + err.message);
+      }
+      this.checkSdkBinaryPresent("emulator",_.bind(function(err, emulatorBinaryPath) {
+        if (err) {
+          return cb(err);
+        }
+        if (this.avdName[0] != "@") {
+          this.avdName = "@" + this.avdName;
+        }
+        var emulatorProc = spawn("emulator", [this.avdName]);
+        var timeoutMs = 120000;
+        var now = Date.now();
+        var checkEmulatorAlive = _.bind(function() {
+          this.restartAdb(_.bind(function() {
+            this.getConnectedDevices(_.bind(function(err, devices) {
+              if (!err && devices.length) {
+                cb(null, true);
+              } else if (Date.now() < (now + timeoutMs)) {
+                setTimeout(checkEmulatorAlive, 2000);
+              } else {
+                cb(new Error("Emulator didn't come up in " + timeoutMs + "ms"));
+              }
+            }, this));
+          }, this));
+        }, this);
+        checkEmulatorAlive();
+      }, this));
+    }, this));
+  }
+};
+
+
 ADB.prototype.getConnectedDevices = function(cb) {
   this.debug("Getting connected devices...");
   exec(this.adb + " devices", _.bind(function(err, stdout) {
@@ -473,7 +511,7 @@ ADB.prototype.getConnectedDevices = function(cb) {
     } else {
       var devices = [];
       _.each(stdout.split("\n"), function(line) {
-        if (line.trim() !== "" && line.indexOf("List of devices") === -1 && line.indexOf("* daemon") === -1) {
+        if (line.trim() !== "" && line.indexOf("List of devices") === -1 && line.indexOf("* daemon") === -1 && line.indexOf("offline") == -1) {
           devices.push(line.split("\t"));
         }
       });

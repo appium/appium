@@ -47,6 +47,7 @@
     "swig": "~0.13.5",
     "async": "~0.2.6",
     "mkdirp": "~0.3.5",
+    "xml2js": "~0.2.6",
     "binary-cookies": "~0.1.1"
   },
   "scripts": {

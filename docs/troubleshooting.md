@@ -3,18 +3,18 @@ Troubleshooting Appium
 Here's what to do if you're experiencing problems, before you submit a ticket
 to github or write to the appium-discuss mailing list.
 
-# General
+## General
 
 * Make sure you've followed the getting started steps in the [README](https://github.com/appium/appium/blob/master/README.md)
 * Make sure your system is set up appropriately (i.e., XCode is updated, Android SDK is installed and `ANDROID_HOME` is set: [setup instructions](https://github.com/appium/appium/blob/master/docs/running-on-osx.md))
 * Make sure the paths to your applications are correct
 
-# If you're running Appium.app
+## If you're running Appium.app
 
 * Update the app and restart. If you get a message saying the app can't be updated,
   re-download it from [appium.io](http://appium.io).
 
-# If you're running Appium from source
+## If you're running Appium from source
 
 * `git pull` to make sure you're running the latest code
 * Run the appropriate flavor of `reset.sh` based on what you're trying to automate:
@@ -24,13 +24,13 @@ to github or write to the appium-discuss mailing list.
     ./reset.sh --android     # android-only
     ./reset.sh --selendroid  # selendroid-only
 
-# Android
+## Android
 
 * Make sure the Android emulator is up and running.
 * It's sometimes useful to run `adb kill-server && adb devices`. This can reset the connection to the Android device.
 * Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android) for more information).
 
-# IOS
+## IOS
 
 * Make sure Instruments.app is not open
 * If you're running the simulator, make sure your actual device is not plugged in
@@ -39,12 +39,12 @@ to github or write to the appium-discuss mailing list.
 * If you've ever run Appium with sudo, you might need to `sudo rm /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use of Instruments. Usually a box will pop up that you enter your password into. If you're running Appium from source, you can simply run `sudo grunt authorize` from the main repo to avoid getting this popup.
 
-# FirefoxOS
+## FirefoxOS
 
 * Make sure the Boot-to-Gecko simulator is up and running.
 * Make sure the simulator screen is alive and unlocked (might require restarting B2G).
 
-# Let the community know
+## Let the community know
 
 Once you've tried the above steps and your issue still isn't resolved, here's what you can do:
 
@@ -56,7 +56,7 @@ If you're having trouble getting Appium working and the error messages Appium pr
 * The client-side and server-side errors you're getting (i.e., "In Python this is the exception I get in my test script, and here's a link to a paste of the Appium server output)
 * Per above, it's very important to include a paste of the Appium server output when it's run in verbose mode so that we can diagnose what's going on.
 
-# Known Issues
+## Known Issues
 
 * If you've installed Node from the Node website, it requires that you use sudo
   for `npm`. This is not ideal. Try to get node with `brew install node` instead!
@@ -66,7 +66,7 @@ If you're having trouble getting Appium working and the error messages Appium pr
   Sometimes the only solution is to put the finding-and-acting code in a retry
   block. See also `mobile: findAndAct` on the [finding elements doc page](https://github.com/appium/appium/blob/master/docs/finding-elements.md)
 
-# Specific Errors
+## Specific Errors
 
 |Action|Error|Resolution|
 |------|-----|----------|

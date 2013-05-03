@@ -29,22 +29,13 @@ fi
 
 reset_general() {
     echo "---- RESETTING NPM ----"
-    echo "Clearing dev version of wd.js"
-    set +e  # we expect next command might fail without sudo privs
-    rm -rf node_modules/wd
-    rm_status=$?
-    set -e  # turn error checking back on so we can exit if sudo branch doesn't work
-    if [ $rm_status -gt 0 ]; then
-        echo "rm failed. Trying again with sudo."
-        sudo rm -rf node_modules/wd
-    fi
-    echo "Installing wd.js from master and new or updated NPM modules"
+    echo "Installing new or updated NPM modules"
     set +e
     npm install .
     install_status=$?
     set -e
     if [ $install_status -gt 0 ]; then
-        echo "install failed. Trying again with sudo."
+        echo "install failed. Trying again with sudo. Only do this if it's not a network error."
         sudo npm install .
     fi
 }

@@ -367,6 +367,7 @@ Appium.prototype.invoke = function() {
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
           , appWaitActivity: this.args.androidWaitActivity
+          , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
           , fastReset: this.args.fastReset
@@ -380,6 +381,7 @@ Appium.prototype.invoke = function() {
           , udid: this.args.udid
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
+          , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
         };
         this.devices[this.deviceType] = selendroid(selendroidOpts);

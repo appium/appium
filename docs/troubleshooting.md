@@ -69,5 +69,5 @@ If you're having trouble getting Appium working and the error messages Appium pr
 # Specific Errors
 
 |Action|Error|Resolution|
-------------------
+|------|-----|----------|
 |Running reset.sh|xcodebuild: error: SDK "iphonesimulator6.1" cannot be located|Install the iPhone 6.1 SDK _or_ build the test apps with a separate SDK, e.g., `grunt buildApp:UICatalog:iphonesimulator5.1`|

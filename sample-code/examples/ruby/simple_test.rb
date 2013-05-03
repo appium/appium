@@ -22,7 +22,7 @@
 #
 # RUNNING THE TESTS
 # -----------------
-# To actually run the tests, make sure appium is running in another terminal 
+# To actually run the tests, make sure appium is running in another terminal
 # window, then from the same window you used for the above commands, type
 #   "rspec simple_test.rb"
 #
@@ -30,17 +30,10 @@
 
 require 'rspec'
 require 'selenium-webdriver'
+require 'timeout'
 
 APP_PATH = '../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
 
-def capabilities
-  {
-      'browserName' => 'iOS',
-      'platform' => 'Mac',
-      'version' => '6.0',
-      'app' => absolute_app_path
-  }
-end
 
 def absolute_app_path
     file = File.join(File.dirname(__FILE__), APP_PATH)
@@ -48,13 +41,41 @@ def absolute_app_path
     file
 end
 
-def server_url
-  "http://127.0.0.1:4723/wd/hub"
+
+def keep_trying(timeout)
+  e = nil
+  begin
+    Timeout.timeout(timeout) do
+      while true
+        begin
+          yield
+        rescue => e
+          retry
+        end
+        break
+      end
+    end
+  rescue Timeout::Error
+    if e.nil?
+      raise
+    end
+    raise e
+  end
 end
+
+
+capabilities = {
+  'browserName' => 'iOS',
+  'platform' => 'Mac',
+  'version' => '6.0',
+  'app' => absolute_app_path
+}
+
+server_url = "http://127.0.0.1:4723/wd/hub"
 
 describe "Computation" do
   before :all do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)    
+    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
    end
 
   after :all do
@@ -72,7 +93,7 @@ describe "Computation" do
 
     button = @driver.find_element(:tag_name, 'button')
     button.click
-     
+
     actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
     actual_sum.should eq(expected_sum.to_s)
   end
@@ -92,8 +113,10 @@ describe "Computation" do
     buttons = alert.find_elements(:tag_name, 'button')
     buttons[0].text.should eq("Cancel")
     buttons[0].click
-    alerts = @driver.find_elements(:tag_name, 'alert')
-    alerts.should be_empty
+    keep_trying 30 do
+      alerts = @driver.find_elements(:tag_name, 'alert')
+      alerts.should be_empty
+    end
   end
 
   it "should get window size" do

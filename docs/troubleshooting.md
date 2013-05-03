@@ -9,20 +9,6 @@ to github or write to the appium-discuss mailing list.
 * Make sure your system is set up appropriately (i.e., XCode is updated, Android SDK is installed and `ANDROID_HOME` is set: [setup instructions](https://github.com/appium/appium/blob/master/docs/running-on-osx.md))
 * Make sure the paths to your applications are correct
 
-# Android
-
-* Make sure the Android emulator is up and running.
-* It's sometimes useful to run `adb kill-server && adb devices`. This can reset the connection to the Android device.
-* Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android) for more information).
-
-# IOS
-
-* Make sure Instruments.app is not open
-* If you're running the simulator, make sure your actual device is not plugged in
-* Make sure the accessibility helper is turned off in your Settings app 
-* Make sure the app is compiled for the version of the simulator that's being run
-* If you've ever run Appium with sudo, you might need to `sudo rm /tmp/instruments_sock` and try again as not-sudo.
-
 # If you're running Appium.app
 
 * Update the app and restart. If you get a message saying the app can't be updated,
@@ -38,13 +24,33 @@ to github or write to the appium-discuss mailing list.
     ./reset.sh --android     # android-only
     ./reset.sh --selendroid  # selendroid-only
 
+# Android
+
+* Make sure the Android emulator is up and running.
+* It's sometimes useful to run `adb kill-server && adb devices`. This can reset the connection to the Android device.
+* Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android) for more information).
+
+# IOS
+
+* Make sure Instruments.app is not open
+* If you're running the simulator, make sure your actual device is not plugged in
+* Make sure the accessibility helper is turned off in your Settings app 
+* Make sure the app is compiled for the version of the simulator that's being run
+* If you've ever run Appium with sudo, you might need to `sudo rm /tmp/instruments_sock` and try again as not-sudo.
+* If this is the first time you've run Appium, make sure to authorize the use of Instruments. Usually a box will pop up that you enter your password into. If you're running Appium from source, you can simply run `sudo grunt authorize` from the main repo to avoid getting this popup.
+
+# FirefoxOS
+
+* Make sure the Boot-to-Gecko simulator is up and running.
+* Make sure the simulator screen is alive and unlocked (might require restarting B2G).
+
 # Let the community know
 
 Once you've tried the above steps and your issue still isn't resolved, here's what you can do:
 
 If you've found what you believe is a bug, go straight to the [issue tracker](https://github.com/appium/appium/issues) and submit an issue describing the bug and a repro case.
 
-If you're having trouble getting Appium working and the error messages Appium provides are not clear, join the [mailing list](https://groups.google.com/forum/?fromgroups=#!forum/appium-discuss) and send a message. Please include the following:
+If you're having trouble getting Appium working and the error messages Appium provides are not clear, join the [mailing list](https://groups.google.com/d/forum/appium-discuss) and send a message. Please include the following:
 
 * How you're running Appium (Appium.app, npm, source)
 * The client-side and server-side errors you're getting (i.e., "In Python this is the exception I get in my test script, and here's a link to a paste of the Appium server output)

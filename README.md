@@ -75,11 +75,11 @@ We support a sub-set of the [Selenium WebDriver JSON Wire Protocol](https://gith
 You find elements by using a sub-set of WebDriver's element-finding strategies. See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information.
 
 We also have several extensions to the JSON Wire Protocol for [automating
-mobile gestures](https://github.com/appium/appium/wiki/Automating-mobile-gestures)
+mobile gestures](https://github.com/appium/appium/blob/master/docs/gestures.md)
 like tap, flick, and swipe.
 
 You can also automate web views in hybrid apps! See the [hybrid app
-guide](https://github.com/appium/appium/wiki/Testing-Hybrid-Apps)
+guide](https://github.com/appium/appium/blob/master/docs/hybrid.md)
 
 We support Android and iOS platforms side-by-side:
 
@@ -241,13 +241,13 @@ Contributing
 ------------
 Fork the project, make a change, and send a pull request!
 
-Oh and please have a look at our [Style Guide](https://github.com/appium/appium/wiki/Style-guide-for-contributors) before getting to work.
+Oh and please have a look at our [Style Guide](https://github.com/appium/appium/blob/master/docs/style-guide.md) before getting to work.
 
 Project Credits & Inspiration
 ------------
 The open source community has made this project possible, please add missing projects to the list.
 
-[All the OSS code contributing to Appium](https://github.com/appium/appium/wiki/Credits)
+[All the OSS code contributing to Appium](https://github.com/appium/appium/blob/master/docs/credits.md)
 
 Mailing List
 -----------

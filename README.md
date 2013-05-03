@@ -4,12 +4,13 @@ Appium
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 
 Appium is an open source, cross-platform test automation tool for native and
-hybrid mobile apps. It supports both iOS and Android. Appium drives Apple's
-UIAutomation library and Android's UiAutomator framework (for newer platforms)
-using Selenium's WebDriver JSON wire protocol. Appium is based on [Dan
-Cuellar's](http://github.com/penguinho) work on iOS Auto. Appium also comes
-bundled with [Selendroid](http://github.com/DominikDary/selendroid) for testing
-older Android platforms.
+hybrid mobile apps. It supports iOS, Android, and FirefoxOS platforms. Appium
+drives Apple's UIAutomation library and Android's UiAutomator framework (for
+newer platforms) using Selenium's WebDriver JSON wire protocol. Appium's iOS
+support is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS
+Auto. Appium also comes bundled with
+[Selendroid](http://github.com/DominikDary/selendroid) for testing older
+Android platforms.
 
 Testing with Appium has two big benefits:
 
@@ -58,15 +59,23 @@ Option 2: Run Appium from the command line using Node:
     appium &
     node simplest.js
 
+See the next section for links on how to make sure your system is set up to run Appium tests.
+
 Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
 
-Write Tests for Appium
+Troubleshooting
+---------------
+
+We put together a [troubleshooting guide](https://github.com/appium/appium/blob/master/docs/troubleshooting.md). Please have a look here first if you run into any problems. It contains instructions for checking a lot of common errors and how to get in touch with the community if you're stumped.
+
+Write Tests for Your Apps with Appium
 -------------------
 We support a sub-set of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
+You find elements by using a sub-set of WebDriver's element-finding strategies. See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information.
+
 We also have several extensions to the JSON Wire Protocol for [automating
-mobile
-gestures](https://github.com/appium/appium/wiki/Automating-mobile-gestures)
+mobile gestures](https://github.com/appium/appium/wiki/Automating-mobile-gestures)
 like tap, flick, and swipe.
 
 You can also automate web views in hybrid apps! See the [hybrid app
@@ -82,6 +91,8 @@ We support Android and iOS platforms side-by-side:
 * [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
 * [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
 * [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
+
+For the full list of Appium doc pages, visit [this directory](https://github.com/appium/appium/blob/master/docs/).
 
 - - -
 
@@ -165,9 +176,10 @@ Running Tests
 Once, your system is set up and your code is up to date, you can run various
 kinds of tests:
 
-    grunt functional
     grunt android
     grunt ios
+    grunt selendroid
+    grunt firefoxos
     grunt unit
 
 Or you can run all tests:

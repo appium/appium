@@ -1,7 +1,7 @@
 "use strict";
 
 var errors = require('./errors')
-  , adb = require('../uiautomator/adb')
+  , adb = require('../android/adb')
   , _ = require('underscore')
   , logger = require('../logger').get('appium')
   , deviceCommon = require('./device')

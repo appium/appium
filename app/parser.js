@@ -132,6 +132,13 @@ var args = [
             "to wait for (e.g., SplashActivity)"
   }],
 
+  [['--avd'] , {
+        defaultValue: null
+        , required: false
+        , example: "@default"
+        , help: 'name of the avd to launch'
+  }],
+
  [['--device-ready-timeout'], {
     dest: 'androidDeviceReadyTimeout'
     , defaultValue: '5'

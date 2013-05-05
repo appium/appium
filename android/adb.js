@@ -63,6 +63,14 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
   var binaryLoc = null;
   if (this.sdkRoot) {
     binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binary);
+    if (!fs.existsSync(binaryLoc)) {
+      binaryLoc = path.resolve(this.sdkRoot, "tools", binary);
+      if (!fs.existsSync(binaryLoc)) {
+        cb(new Error("Could not find " + binary + " in tools or platform-tools; " +
+                     "do you have android SDK installed?"),
+          null);
+      }
+    }
     this.debug("Using " + binary + " from " + binaryLoc);
     this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
@@ -483,7 +491,7 @@ ADB.prototype.prepareEmulator = function(cb) {
         if (this.avdName[0] != "@") {
           this.avdName = "@" + this.avdName;
         }
-        var emulatorProc = spawn("emulator", [this.avdName]);
+        var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
         var timeoutMs = 120000;
         var now = Date.now();
         var checkEmulatorAlive = _.bind(function() {

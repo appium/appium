@@ -7,6 +7,7 @@ import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
+import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.SetText;
@@ -33,6 +34,7 @@ class AndroidCommandExecutor {
     map.put("click", new Click());
     map.put("getText", new GetText());
     map.put("setText", new SetText());
+    map.put("getName", new GetName());
     map.put("getAttribute", new GetAttribute());
     map.put("getDeviceSize", new GetDeviceSize());
     map.put("find", new Find());

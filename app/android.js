@@ -384,7 +384,7 @@ Android.prototype.submit = function(elementId, cb) {
 };
 
 Android.prototype.getName = function(elementId, cb) {
-  cb(new NotYetImplementedError(), null);
+  this.proxy(["element:getName", {elementId: elementId}], cb);
 };
 
 Android.prototype.getText = function(elementId, cb) {

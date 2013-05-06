@@ -15,6 +15,7 @@ var path = require('path')
   , installAndroidApp = gruntHelpers.installAndroidApp
   , generateServerDocs = gruntHelpers.generateServerDocs
   , generateAppiumIo = gruntHelpers.generateAppiumIo
+  , setDeviceConfigVer = gruntHelpers.setDeviceConfigVer
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -154,5 +155,8 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('generateAppiumIo', function() {
     generateAppiumIo(grunt, this.async());
+  });
+  grunt.registerTask('setConfigVer', function(device) {
+    setDeviceConfigVer(grunt, device, this.async());
   });
 };

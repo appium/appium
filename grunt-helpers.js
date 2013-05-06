@@ -12,6 +12,7 @@ var _ = require("underscore")
   , spawn = require('child_process').spawn
   , parser = require('./app/parser')
   , namp = require('namp')
+  , appiumVer = require('./package.json').version
   , fs = require('fs');
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
@@ -124,6 +125,29 @@ module.exports.tail = function(grunt, filename, cb) {
   });
   proc.on('exit', function(code) {
     cb(code);
+  });
+};
+
+module.exports.setDeviceConfigVer = function(grunt, device, cb) {
+  var configPath = path.resolve(__dirname, '.appiumconfig');
+  fs.readFile(configPath, function(err, data) {
+    var writeVer = function(config) {
+      if (typeof config[device] === "undefined") {
+        config[device] = {};
+      }
+      config[device].version = appiumVer;
+      grunt.log.write("\n");
+      grunt.log.write(JSON.stringify(config));
+      fs.writeFile(configPath, JSON.stringify(config), cb);
+    };
+    if (err) {
+      grunt.log.write("Config file doesn't exist, creating it");
+      var config = {};
+      writeVer(config);
+    } else {
+      grunt.log.write("Config file exists, updating it");
+      writeVer(JSON.parse(data.toString('utf8')));
+    }
   });
 };
 

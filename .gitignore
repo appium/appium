@@ -31,3 +31,4 @@ app/android/AndroidManifest.xml
 android/bootstrap/target/
 org.eclipse.ltk.core.refactoring.prefs
 /selendroid
+.appiumconfig

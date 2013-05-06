@@ -88,7 +88,7 @@ reset_selendroid() {
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid
     ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
     pushd $appium_home/submodules/selendroid
-    mvn -Dmaven.test.skip=true install
+    mvn -DskipTests=true clean install
     popd
     grunt setConfigVer:selendroid
 }

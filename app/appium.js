@@ -392,6 +392,8 @@ Appium.prototype.invoke = function() {
           , appActivity: this.args.androidActivity
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
+          , reset: !this.args.noReset
+          , fastReset: this.args.fastReset
         };
         this.devices[this.deviceType] = selendroid(selendroidOpts);
       } else if (this.isFirefoxOS()) {

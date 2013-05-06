@@ -68,7 +68,8 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
       if (!fs.existsSync(binaryLoc)) {
         cb(new Error("Could not find " + binary + " in tools or platform-tools; " +
                      "do you have android SDK installed?"),
-          null);
+           null);
+        return;
       }
     }
     this.debug("Using " + binary + " from " + binaryLoc);
@@ -510,6 +511,8 @@ ADB.prototype.prepareEmulator = function(cb) {
         checkEmulatorAlive();
       }, this));
     }, this));
+  } else {
+    cb(null);
   }
 };
 

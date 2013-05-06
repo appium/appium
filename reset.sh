@@ -87,10 +87,9 @@ reset_selendroid() {
     rm -rf $appium_home/sample-code/apps/WebViewDemo
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid
     ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
-    pushd $appium_home/submodules/selendroid/selendroid-server
-    mvn install
+    pushd $appium_home/submodules/selendroid
+    mvn -DskipTests=true clean install
     popd
-    grunt buildSelendroidAndroidApp:WebViewDemo
     grunt setConfigVer:selendroid
 }
 

@@ -59,7 +59,7 @@ module.exports = function(appium) {
           }
         }
 
-        var sbody = body ? JSON.stringify(body).slice(0, 1000) : body;
+        var sbody = body ? JSON.stringify(body).slice(0, 10000) : body;
 
         logger.debug("Proxied response received with status " +
                      response.statusCode + ": " +

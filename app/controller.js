@@ -350,6 +350,10 @@ exports.mobileSwipe = function(req, res) {
   }
 };
 
+exports.mobileShake = function(req, res) {
+    req.device.shake(getResponseHandler(req, res));
+};
+
 exports.hideKeyboard = function(req, res) {
   var keyName = req.body.keyName;
 
@@ -771,6 +775,7 @@ var mobileCmdMap = {
   'tap': exports.mobileTap
   , 'flick': exports.mobileFlick
   , 'swipe': exports.mobileSwipe
+  , 'shake': exports.mobileShake
   , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout

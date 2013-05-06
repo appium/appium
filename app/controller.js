@@ -90,6 +90,8 @@ var respondError = function(req, res, statusObj, value) {
   res.send(500, response);
 };
 
+exports.respondError = respondError;
+
 var respondSuccess = function(req, res, value, sid) {
   var response = {status: status.codes.Success.code, value: value};
   response.sessionId = getSessionId(req, response) || sid;

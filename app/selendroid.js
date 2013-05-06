@@ -144,6 +144,7 @@ Selendroid.prototype.waitForServer = function(cb) {
 };
 
 Selendroid.prototype.createSession = function(cb) {
+  logger.info("Creating Selendroid session");
   var data = {desiredCapabilities: this.desiredCaps};
   this.proxyTo('/wd/hub/session', 'POST', data, _.bind(function(err, res, body) {
     if (err) return cb(err);

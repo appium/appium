@@ -75,6 +75,7 @@ exports.request = function(url, method, body, contentType, cb) {
     url: url
     , method: method
     , headers: {'Content-Type': contentType}
+    , timeout: 10000
   };
   if (_.contains(['put', 'post', 'patch'], method.toLowerCase())) {
     if (typeof body !== "string") {
@@ -83,5 +84,6 @@ exports.request = function(url, method, body, contentType, cb) {
       opts.body = body;
     }
   }
+  logger.info("Making http request with opts: " + JSON.stringify(opts));
   request(opts, cb);
 };

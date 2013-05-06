@@ -9,7 +9,6 @@ should_reset_android=0
 should_reset_ios=0
 should_reset_selendroid=0
 appium_home=$(pwd)
-selendroid_ver="0.3"
 
 while test $# != 0
 do
@@ -56,6 +55,7 @@ reset_ios() {
     grunt buildApp:TestApp
     grunt buildApp:UICatalog
     grunt buildApp:WebViewApp
+    grunt setConfigVer:ios
 }
 
 get_apidemos() {
@@ -74,6 +74,7 @@ reset_android() {
     echo "Configuring and rebuilding Android test apps"
     grunt configAndroidApp:ApiDemos
     grunt buildAndroidApp:ApiDemos
+    grunt setConfigVer:android
 }
 
 reset_selendroid() {
@@ -90,6 +91,7 @@ reset_selendroid() {
     mvn install
     popd
     grunt buildSelendroidAndroidApp:WebViewDemo
+    grunt setConfigVer:selendroid
 }
 
 cleanup() {

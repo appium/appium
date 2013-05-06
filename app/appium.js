@@ -70,6 +70,10 @@ Appium.prototype.attachTo = function(rest, cb) {
   }
 };
 
+Appium.prototype.registerConfig = function(configObj) {
+  this.serverConfig = configObj;
+};
+
 Appium.prototype.preLaunch = function(cb) {
   logger.info("Pre-launching app");
   if (!this.args.app && !this.args.safari) {
@@ -174,6 +178,11 @@ Appium.prototype.configure = function(desiredCaps, cb) {
   this.deviceType = this.getDeviceType(desiredCaps);
   if (this.isIos()) {
     this.iosDeviceType = this.getIosDeviceType(desiredCaps);
+  }
+  if (!_.has(this.serverConfig, this.deviceType)) {
+    logger.error("Trying to run a session for device " + this.deviceType + " " +
+                 "but that device hasn't been configured. Run config");
+    return cb(new Error("Device " + this.deviceType + " not configured yet"));
   }
   this.args.androidPackage = desiredCaps["app-package"] || this.args.androidPackage;
   this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;

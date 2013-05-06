@@ -46,6 +46,8 @@ describe('Appium', function() {
     , logPath = path.resolve(__dirname, "../../../appium.log")
     , inst = appium({app: "/path/to/fake.app", log: logPath});
 
+  inst.registerConfig({ios: true});
+
   var start = function(cb) {
         cb(null, {});
       }

@@ -309,6 +309,16 @@ describeWd('complex tap on element', function(h) {
     });
   });
 });
+
+describeWd('mobile shake', function(h) {
+  it('should not error', function(done) {
+    h.driver.execute('mobile: shake', function(err) {
+      should.not.exist(err);
+      done();
+    });
+  });
+});
+
 // quarantine this since it's not actually breaking right now
 //describeWd('gestures', function(h) {
   //it('should break on weird table cell behavior', function(done) {

@@ -90,6 +90,8 @@ var respondError = function(req, res, statusObj, value) {
   res.send(500, response);
 };
 
+exports.respondError = respondError;
+
 var respondSuccess = function(req, res, value, sid) {
   var response = {status: status.codes.Success.code, value: value};
   response.sessionId = getSessionId(req, response) || sid;
@@ -319,9 +321,14 @@ exports.mobileSource = function(req, res) {
 
 exports.find = function(req, res) {
   var strategy = "dynamic"
-    , selector = req.body;
+    , selector = req.body
+    , all = selector && selector[0] && selector[0].toLowerCase() === "all";
 
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+  if (all) {
+    req.device.findElements(strategy, selector, getResponseHandler(req, res));
+  } else {
+    req.device.findElement(strategy, selector, getResponseHandler(req, res));
+  }
 };
 
 exports.mobileSwipe = function(req, res) {
@@ -346,6 +353,10 @@ exports.mobileSwipe = function(req, res) {
     req.device.swipe(startX, startY, endX, endY, duration, touchCount,
         element, getResponseHandler(req, res));
   }
+};
+
+exports.mobileShake = function(req, res) {
+    req.device.shake(getResponseHandler(req, res));
 };
 
 exports.hideKeyboard = function(req, res) {
@@ -769,6 +780,7 @@ var mobileCmdMap = {
   'tap': exports.mobileTap
   , 'flick': exports.mobileFlick
   , 'swipe': exports.mobileSwipe
+  , 'shake': exports.mobileShake
   , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout

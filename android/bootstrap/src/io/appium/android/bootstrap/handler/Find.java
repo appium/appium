@@ -136,10 +136,16 @@ public class Find extends CommandHandler {
         if (all && results.size() > 0) {
           return getSuccessResult(results);
         }
-        return getSuccessResult(new AndroidCommandResult(
-            WDStatus.NO_SUCH_ELEMENT, "No element found."));
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            "No such element.");
       } catch (final Exception e) {
-        return getErrorResult(e.getMessage());
+        final String errorMessage = e.getMessage();
+        if (errorMessage
+            .contains("UiAutomationService not connected. Did you call #register()?")) {
+          // Crash on not connected so Appium restarts the bootstrap jar.
+          throw new RuntimeException(e);
+        }
+        return getErrorResult(errorMessage);
       }
     }
 

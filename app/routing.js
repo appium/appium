@@ -1,5 +1,6 @@
 "use strict";
 var controller = require('./controller')
+  , respondError = require('./controller').respondError
   , request = require('./device').request
   , _ = require('underscore')
   , _s = require("underscore.string")
@@ -50,7 +51,15 @@ module.exports = function(appium) {
       request(url, req.route.method.toUpperCase(), req.body,
               req.headers['content-type'], function(err, response, body) {
         if (err) return next(err);
-        var sbody = body ? JSON.stringify(body).slice(0, 1000) : body;
+        if (body.value) {
+          var resStatusCode = body.status;
+          if (resStatusCode !== 0) {
+            var resErrorMessage = body.value.message;
+            return respondError(req, res, resStatusCode, resErrorMessage);
+          }
+        }
+
+        var sbody = body ? JSON.stringify(body).slice(0, 10000) : body;
 
         logger.debug("Proxied response received with status " +
                      response.statusCode + ": " +

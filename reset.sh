@@ -39,6 +39,7 @@ reset_general() {
         echo "install failed. Trying again with sudo. Only do this if it's not a network error."
         sudo npm install .
     fi
+    mkdir -p build
 }
 
 reset_ios() {
@@ -49,6 +50,10 @@ reset_ios() {
     pushd submodules/instruments-without-delay
     ./build.sh
     popd
+    echo "Moving instruments-without-delay into build/iwd"
+    rm -rf build/iwd
+    mkdir build/iwd
+    cp -R submodules/instruments-without-delay/build/* build/iwd
     if [ $include_dev -eq 1 ]; then
         if [ ! -d "./sample-code/apps/UICatalog" ]; then
             echo "Downloading UICatalog app"
@@ -72,6 +77,7 @@ get_apidemos() {
 reset_android() {
     echo "---- RESETTING ANDROID ----"
     echo "Building Android bootstrap"
+    rm -rf build/android_bootstrap
     grunt configAndroidBootstrap
     grunt buildAndroidBootstrap
     if [ $include_dev -eq 1 ]; then
@@ -89,10 +95,7 @@ reset_selendroid() {
     rm -rf submodules/selendroid/selendroid-server/target
     git submodule update --init submodules/selendroid
     rm -rf selendroid
-    ln -s $appium_home/submodules/selendroid $appium_home/selendroid
-    pushd $appium_home/submodules/selendroid
-    mvn -DskipTests=true clean install
-    popd
+    grunt buildSelendroidServer
     if [ $include_dev -eq 1 ]; then
         get_apidemos
         rm -rf $appium_home/sample-code/apps/WebViewDemo

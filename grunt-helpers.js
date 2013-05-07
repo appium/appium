@@ -6,12 +6,15 @@ var _ = require("underscore")
   , http = require('http')
   , path = require('path')
   , temp = require('temp')
+  , mkdirp = require('mkdirp')
+  , ncp = require('ncp')
   , difflib = require('difflib')
   , prompt = require('prompt')
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , parser = require('./app/parser')
   , namp = require('namp')
+  , parseXmlString = require('xml2js').parseString
   , appiumVer = require('./package.json').version
   , fs = require('fs');
 
@@ -363,7 +366,116 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
 
 module.exports.buildAndroidBootstrap = function(grunt, cb) {
   var projPath = path.resolve(__dirname, "android", "bootstrap");
-  buildAndroidProj(grunt, projPath, "build", cb);
+  var binSrc = path.resolve(projPath, "bin", "AppiumBootstrap.jar");
+  var binDestDir = path.resolve(__dirname, "build", "android_bootstrap");
+  var binDest = path.resolve(binDestDir, "AppiumBootstrap.jar");
+  buildAndroidProj(grunt, projPath, "build", function(err) {
+    if (err) {
+      console.log("Could not build android bootstrap");
+      return cb(err);
+    }
+    mkdirp(binDestDir, function(err) {
+      if (err) {
+        console.log("Could not mkdirp " + binDestDir);
+        return cb(err);
+      }
+      rimraf(binDest, function(err) {
+        if (err) {
+          console.log("Could not delete old " + binDest);
+          return cb(err);
+        }
+        ncp(binSrc, binDest, function(err) {
+          if (err) {
+            console.log("Could not copy " + binSrc + " to " + binDest);
+            return cb(err);
+          }
+          cb();
+        });
+      });
+    });
+  });
+};
+
+module.exports.buildSelendroidServer = function(cb) {
+  console.log("Building selendroid server");
+  getSelendroidVersion(function(err, version) {
+    if (err) return cb(err);
+    var buildDir = path.resolve(__dirname, "submodules/selendroid/selendroid-server");
+    var target = buildDir + "/target/selendroid-server-" + version + ".apk";
+    var destDir = path.resolve(__dirname, "build/selendroid");
+    var destBin = path.resolve(destDir, "selendroid.apk");
+    var srcManifest = path.resolve(__dirname, "submodules", "selendroid",
+      "selendroid-gem", "selendroid-prebuild", "AndroidManifest.xml");
+    var dstManifeset = path.resolve(destDir, "AndroidManifest.xml");
+    var cmd = "mvn install";
+    exec(cmd, {cwd: buildDir}, function(err, stdout, stderr) {
+      if (err) {
+        console.error("Unable to build selendroid server. Stdout was: ");
+        console.error(stdout);
+        console.error(stderr);
+        return cb(err);
+      }
+      console.log("Making sure target exists");
+      fs.stat(target, function(err) {
+        if (err) {
+          console.error("Selendroid doesn't exist! Not sure what to do.");
+          return cb(err);
+        }
+        console.log("Selendroid server built successfully, copying to build/selendroid");
+        rimraf(destDir, function(err) {
+          if (err) {
+            console.error("Could not remove " + destDir);
+            return cb(err);
+          }
+          mkdirp(destDir, function(err) {
+            if (err) {
+              console.error("Could not create " + destDir);
+              return cb(err);
+            }
+            ncp(target, destBin, function(err) {
+              if (err) {
+                console.error("Could not copy " + target + " to " + destBin);
+                return cb(err);
+              }
+              console.log("Copying selendroid manifest as well");
+              ncp(srcManifest, dstManifeset, function(err) {
+                if (err) {
+                  console.error("Could not copy manifest");
+                  return cb(err);
+                }
+                cb(null);
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+};
+
+var getSelendroidVersion = function(cb) {
+  console.log("Getting Selendroid version");
+  var pomXml = path.resolve(__dirname, "submodules", "selendroid",
+      "selendroid-server", "pom.xml");
+  fs.readFile(pomXml, function(err, xmlData) {
+    if (err) {
+      console.error("Could not find selendroid's pom.xml at");
+      return cb(err);
+    }
+    parseXmlString(xmlData.toString('utf8'), function(err, res) {
+      if (err) {
+        console.error("Error parsing selendroid's pom.xml");
+        return cb(err);
+      }
+      var version = res.project.parent[0].version[0];
+      if (typeof version === "string") {
+        console.log("Selendroid version is " + version);
+        cb(null, version);
+      } else {
+        cb(new Error("Version " + version + " was not valid"));
+      }
+    });
+  });
 };
 
 module.exports.buildAndroidApp = function(grunt, appName, cb) {

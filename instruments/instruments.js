@@ -184,8 +184,8 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
   var env = _.clone(process.env);
   if (this.withoutDelay && !this.udid) {
-    env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, "../submodules/instruments-without-delay/build/InstrumentsShim.dylib");
-    env.LIB_PATH = path.resolve(__dirname, "../submodules/instruments-without-delay/build");
+    env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, "../build/iwd/InstrumentsShim.dylib");
+    env.LIB_PATH = path.resolve(__dirname, "../build/iwd");
   }
   logger.info("Spawning instruments with command: " + this.instrumentsPath +
               " " + args.join(" "));

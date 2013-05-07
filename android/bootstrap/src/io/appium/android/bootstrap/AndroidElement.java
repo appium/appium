@@ -131,6 +131,10 @@ public class AndroidElement {
     return el.getChild(sel);
   }
 
+  public String getContentDesc() throws UiObjectNotFoundException {
+    return el.getContentDescription();
+  }
+
   public String getId() {
     return id;
   }

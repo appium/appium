@@ -1468,6 +1468,10 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   this.proxy(command, cb);
 };
 
+IOS.prototype.shake = function(cb) {
+  this.proxy("au.shake()", cb);
+};
+
 IOS.prototype.hideKeyboard = function(keyName, cb) {
   if (typeof keyName !== "string") {
     keyName = "Hide keyboard";

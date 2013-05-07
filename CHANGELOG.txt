@@ -1,4 +1,39 @@
 -------------------------------------
+CHANGES IN VERSION 0.4.0 (from 0.3.1)
+-------------------------------------
+[GENERAL]
+- more python examples including for android
+- node android code example
+- migrated wiki to appium/docs
+- added troubleshooting docs
+- added auto-tagging of repo on npm publish
+- add a config check to make sure reset.sh was run for a specific device
+  before allowing appium to try to start a session with that device
+
+[IOS]
+- various efforts to fix/workaround the (null).tap() issue in UIAutomation
+- added shake()
+
+[ANDROID]
+- partial match on content-desc
+- find aapt in SDK or path
+- better logging all around
+- ensure app apk exists and fail if not
+- added content-desc to all ApiDemos elements
+- added --avd flag for launching emulator if not running
+- added getName()
+- fix mobile: find
+
+[SELENDROID]
+- updated selendroid to 0.4
+- don't re-build selendroid for each app, just re-insert manifest and build
+  selendroid in reset.sh instead
+
+[FIREFOXOS]
+- Initial Firefox OS support landed!
+
+
+-------------------------------------
 CHANGES IN VERSION 0.3.1 (from 0.3.0)
 -------------------------------------
 [GENERAL]

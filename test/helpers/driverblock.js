@@ -149,22 +149,28 @@ var describeForApp = function(app, device, appPackage, appActivity) {
   };
 };
 
-var describeForSauce = function(appUrl) {
-  return function(desc, tests, host, port, extraCaps) {
-    host = typeof host === "undefined" ? 'ondemand.saucelabs.com' : host;
-    port = typeof port === "undefined" ? 80 : port;
+var describeForSauce = function(appUrl, device) {
+  return function(desc, tests, extraCaps, host, port) {
+    device = device || 'iPhone Simulator';
+    host = host || 'ondemand.saucelabs.com';
+    port = port || 80;
     if (typeof process.env.SAUCE_USERNAME === "undefined" || typeof process.env.SAUCE_ACCESS_KEY === "undefined") {
       throw new Error("Need to set SAUCE_USERNAME and SAUCE_ACCESS_KEY");
     }
     host = process.env.SAUCE_USERNAME + ':' + process.env.SAUCE_ACCESS_KEY +
           '@' + host;
     var caps = {
-      platform: "Mac 10.8"
-      , device: "iPhone Simulator"
+      device: device
       , browserName: ""
       , app: appUrl
       , version: ""
     };
+    if (device.toLowerCase().indexOf('android') !== -1) {
+      caps.platform = "LINUX";
+      caps.version = "4.2";
+    } else {
+      caps.platform = "Mac 10.8";
+    }
 
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, 500000);
   };

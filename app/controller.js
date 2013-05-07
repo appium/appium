@@ -321,9 +321,14 @@ exports.mobileSource = function(req, res) {
 
 exports.find = function(req, res) {
   var strategy = "dynamic"
-    , selector = req.body;
+    , selector = req.body
+    , all = selector && selector[0] && selector[0].toLowerCase() === "all";
 
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+  if (all) {
+    req.device.findElements(strategy, selector, getResponseHandler(req, res));
+  } else {
+    req.device.findElement(strategy, selector, getResponseHandler(req, res));
+  }
 };
 
 exports.mobileSwipe = function(req, res) {

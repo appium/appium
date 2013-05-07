@@ -32,3 +32,4 @@ android/bootstrap/target/
 org.eclipse.ltk.core.refactoring.prefs
 /selendroid
 .appiumconfig
+build/

@@ -8,6 +8,7 @@ set -e
 should_reset_android=0
 should_reset_ios=0
 should_reset_selendroid=0
+include_dev=0
 appium_home=$(pwd)
 
 while test $# != 0
@@ -16,6 +17,7 @@ do
         "--android") should_reset_android=1;;
         "--ios") should_reset_ios=1;;
         "--selendroid") should_reset_selendroid=1;;
+        "--dev") include_dev=1;;
     esac
     shift
 done
@@ -47,15 +49,17 @@ reset_ios() {
     pushd submodules/instruments-without-delay
     ./build.sh
     popd
-    if [ ! -d "./sample-code/apps/UICatalog" ]; then
-        echo "Downloading UICatalog app"
-        grunt downloadApp
+    if [ $include_dev -eq 1 ]; then
+        if [ ! -d "./sample-code/apps/UICatalog" ]; then
+            echo "Downloading UICatalog app"
+            grunt downloadApp
+        fi
+        echo "Rebuilding iOS test apps"
+        grunt buildApp:TestApp
+        grunt buildApp:UICatalog
+        grunt buildApp:WebViewApp
+        grunt setConfigVer:ios
     fi
-    echo "Rebuilding iOS test apps"
-    grunt buildApp:TestApp
-    grunt buildApp:UICatalog
-    grunt buildApp:WebViewApp
-    grunt setConfigVer:ios
 }
 
 get_apidemos() {
@@ -67,29 +71,33 @@ get_apidemos() {
 
 reset_android() {
     echo "---- RESETTING ANDROID ----"
-    get_apidemos
     echo "Building Android bootstrap"
     grunt configAndroidBootstrap
     grunt buildAndroidBootstrap
-    echo "Configuring and rebuilding Android test apps"
-    grunt configAndroidApp:ApiDemos
-    grunt buildAndroidApp:ApiDemos
-    grunt setConfigVer:android
+    if [ $include_dev -eq 1 ]; then
+        echo "Configuring and rebuilding Android test apps"
+        get_apidemos
+        grunt configAndroidApp:ApiDemos
+        grunt buildAndroidApp:ApiDemos
+        grunt setConfigVer:android
+    fi
 }
 
 reset_selendroid() {
     echo "---- RESETTING SELENDROID ----"
-    get_apidemos
     echo "Downloading/updating selendroid"
     rm -rf submodules/selendroid/selendroid-server/target
     git submodule update --init submodules/selendroid
     rm -rf selendroid
-    rm -rf $appium_home/sample-code/apps/WebViewDemo
     ln -s $appium_home/submodules/selendroid $appium_home/selendroid
-    ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
     pushd $appium_home/submodules/selendroid
     mvn -DskipTests=true clean install
     popd
+    if [ $include_dev -eq 1 ]; then
+        get_apidemos
+        rm -rf $appium_home/sample-code/apps/WebViewDemo
+        ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+    fi
     grunt setConfigVer:selendroid
 }
 
@@ -101,6 +109,9 @@ cleanup() {
 }
 
 echo "Resetting / Initializing Appium"
+if [ $include_dev -eq 1 ]; then
+    echo "(Dev mode is on, will download/build test apps)"
+fi
 reset_general
 if [ $should_reset_ios -eq 1 ]; then
     reset_ios

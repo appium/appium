@@ -50,6 +50,15 @@ Selendroid.prototype.stop = function(cb) {
   });
 };
 
+// Clear data, close app, then start app.
+Selendroid.prototype.fastReset = function(cb) {
+  var me = this;
+  async.series([
+    function(cb) { me.adb.runFastReset(cb); },
+    function(cb) { me.adb.startApp(cb); },
+  ], cb);
+};
+
 Selendroid.prototype.ensureServerExists = function(cb) {
   logger.info("Checking whether selendroid is built yet");
   this.getSelendroidVersion(_.bind(function(err, version) {

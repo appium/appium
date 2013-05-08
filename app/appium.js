@@ -21,7 +21,7 @@ var routing = require('./routing')
 
 var Appium = function(args) {
   this.args = args;
-  if (!this.args.verbose) {
+  if (this.args.quiet) {
     logger.transports.console.level = 'warn';
   }
   if (this.args.log) {
@@ -358,7 +358,7 @@ Appium.prototype.invoke = function() {
           , app: this.args.app
           , bundleId: this.args.bundleId
           , udid: this.args.udid
-          , verbose: this.args.verbose
+          , verbose: !this.args.quiet
           , removeTraceDir: !this.args.keepArtifacts
           , withoutDelay: !this.args.nativeInstrumentsLib
           , reset: !this.args.noReset
@@ -371,7 +371,7 @@ Appium.prototype.invoke = function() {
         var androidOpts = {
           rest: this.rest
           , apkPath: this.args.app
-          , verbose: this.args.verbose
+          , verbose: !this.args.quiet
           , udid: this.args.udid
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
@@ -386,7 +386,7 @@ Appium.prototype.invoke = function() {
         var selendroidOpts = {
           apkPath: this.args.app
           , desiredCaps: this.desiredCapabilities
-          , verbose: this.args.verbose
+          , verbose: !this.args.quiet
           , udid: this.args.udid
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
@@ -400,7 +400,7 @@ Appium.prototype.invoke = function() {
         var firefoxOpts = {
           app: this.args.app
           , desiredCaps: this.desiredCapabilities
-          , verbose: this.args.verbose
+          , verbose: !this.args.quiet
         };
         this.devices[this.deviceType] = firefoxOs(firefoxOpts);
       } else {

@@ -13,9 +13,17 @@ var args = [
 
   [['-V', '--verbose'], {
     required: false
+    , defaultValue: true
+    , action: 'storeTrue'
+    , help: '(DEPRECATED, see --quiet) Get verbose logging output'
+    , nargs: 0
+  }],
+
+  [['-q', '--quiet'], {
+    required: false
     , defaultValue: false
     , action: 'storeTrue'
-    , help: 'Get verbose logging output'
+    , help: "Don't use verbose logging output"
     , nargs: 0
   }],
 

@@ -23,7 +23,8 @@
     "instruments_client": "./instruments/client_bin.js"
   },
   "directories": {
-    "lib": "./app"
+    "lib": "./app",
+    "doc": "./docs"
   },
   "dependencies": {
     "underscore": "~1.4.3",

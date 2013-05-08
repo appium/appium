@@ -2,57 +2,6 @@
 
 var _ = require("underscore");
 
-// Connection
-
-
-//TODO: where ever these methods are called make sure they are handled using webkit
-/*
-exports.setConnectionKey = function(connId) {
-  return {
-    __argument: {
-      WIRConnectionIdentifierKey: connId
-    },
-    __selector : '_rpc_reportIdentifier:'
-  };
-};
-
-exports.connectToApp = function(connId, appIdKey) {
-  return {
-    __argument: {
-      WIRConnectionIdentifierKey: connId,
-      WIRApplicationIdentifierKey: appIdKey
-    },
-    __selector : '_rpc_forwardGetListing:'
-  };
-};
-
-exports.setSenderKey = function(connId, appIdKey, senderId, pageIdKey) {
-  return {
-    __argument: {
-      WIRApplicationIdentifierKey: appIdKey,
-      WIRConnectionIdentifierKey: connId,
-      WIRSenderKey: senderId,
-      WIRPageIdentifierKey: pageIdKey
-    },
-    __selector: '_rpc_forwardSocketSetup:'
-  };
-};
-
-// Action
-
-exports.indicateWebView = function(connId, appIdKey, pageIdKey, enabled) {
-    return {
-      __argument: {
-        WIRApplicationIdentifierKey: appIdKey,
-        WIRIndicateEnabledKey: typeof enabled === "undefined" ? true : enabled,
-        WIRConnectionIdentifierKey: connId,
-        WIRPageIdentifierKey: pageIdKey
-      },
-      __selector: '_rpc_forwardIndicateWebView:'
-    };
-};
-*/
-
 //TODO: remove un-necessary fields (e.g. appIdKey, connId, senderId)
 exports.sendJSCommand = function(js, appIdKey, connId, senderId, pageIdKey) {
   return exports.command("Runtime.evaluate",
@@ -76,38 +25,9 @@ exports.enablePage = function(appIdKey, connId, senderId, pageIdKey) {
 };
 
 
-/*
-exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey) {
-  var plist = {
-    __argument: {
-      WIRApplicationIdentifierKey: appIdKey,
-      WIRSocketDataKey: {
-        method: method,
-        params: {
-          objectGroup: "console",
-          includeCommandLineAPI: true,
-          doNotPauseOnExceptionsAndMuteConsole: true,
-        }
-      },
-      WIRConnectionIdentifierKey: connId,
-      WIRSenderKey: senderId,
-      WIRPageIdentifierKey: pageIdKey
-    },
-    __selector: '_rpc_forwardSocketData:'
-  };
-  if (params) {
-    plist.__argument.WIRSocketDataKey.params = _.extend(
-        plist.__argument.WIRSocketDataKey.params, params);
-  }
-  return plist;
-};
-*/
-
 //generate a json request using the webkit protocol
 exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey) {
     var jsonRequest = {
-        //TODO: this should be request id (auto-generate?)
-        id: parseInt(pageIdKey),
         method: method,
         params: {
             objectGroup: "console",

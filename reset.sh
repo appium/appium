@@ -5,28 +5,28 @@
 #   you will be in a state where you can run tests and use appium
 #
 set -e
-should_reset_android=0
-should_reset_ios=0
-should_reset_selendroid=0
+should_reset_android=false
+should_reset_ios=false
+should_reset_selendroid=false
 include_dev=false
 appium_home=$(pwd)
-grunt="$(npm bin)/grunt"
+grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 
 while test $# != 0
 do
     case "$1" in
-        "--android") should_reset_android=1;;
-        "--ios") should_reset_ios=1;;
-        "--selendroid") should_reset_selendroid=1;;
+        "--android") should_reset_android=true;;
+        "--ios") should_reset_ios=true;;
+        "--selendroid") should_reset_selendroid=true;;
         "--dev") include_dev=true;;
     esac
     shift
 done
 
-if [[ $should_reset_android -eq 0 ]] && [[ $should_reset_ios -eq 0 ]] && [[ $should_reset_selendroid -eq 0 ]]; then
-    should_reset_android=1
-    should_reset_ios=1
-    should_reset_selendroid=1
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid ; then
+    should_reset_android=true
+    should_reset_ios=true
+    should_reset_selendroid=true
 fi
 
 reset_general() {
@@ -34,8 +34,10 @@ reset_general() {
     echo "Installing new or updated NPM modules"
     set +e
     if $include_dev ; then
+        # install everything including devDependencies
         npm install .
     else
+        # don't install devDependencies
         npm install --production .
     fi
     install_status=$?
@@ -121,13 +123,13 @@ if $include_dev ; then
     echo "(Dev mode is on, will download/build test apps)"
 fi
 reset_general
-if [ $should_reset_ios -eq 1 ]; then
+if $should_reset_ios ; then
     reset_ios
 fi
-if [ $should_reset_android -eq 1 ]; then
+if $should_reset_android ; then
     reset_android
 fi
-if [ $should_reset_selendroid -eq 1 ]; then
+if $should_reset_selendroid ; then
     reset_selendroid
 fi
 cleanup

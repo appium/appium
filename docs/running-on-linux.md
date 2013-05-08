@@ -21,6 +21,6 @@ Now that you're setup to run Appium, run `./reset.sh --android` from your Appium
 
 To run tests on Linux, you will need to have the Android Emulator booted and running an AVD with API Level 17 or greater. Then run Appium on the command line using node.js:
 
-    node server.js
+    node server.js --verbose
 
 See the [server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for all the command line arguments.

@@ -23,7 +23,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|
 |`--app-activity`|MainActivity|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
 |`--app-wait-activity`|false|(Android-only) Activity name for the Android activity you want to wait for (e.g., SplashActivity)|`--app-wait-activity SplashActivity`|
-|`--avd`|false|(Android-only) AVD name for the Android Emulator AVD you want to launch|`--avd @default`|
+|`--avd`|null|name of the avd to launch|`--avd @default`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||

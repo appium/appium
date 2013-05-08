@@ -110,7 +110,7 @@ to run npm with sudo privileges):
 
     npm install -g mocha
     npm install -g grunt-cli
-    ./reset.sh
+    ./reset.sh --dev
 
 The first two commands install test and build tools (sudo may not be necessary
 if you installed node.js via Homebrew). The third command installs all app
@@ -136,7 +136,7 @@ have to modify your `/etc/authorization` file in one of two ways:
 
 At this point, you can simply run:
 
-    ./reset.sh --ios
+    ./reset.sh --ios --dev
 
 Hacking with Appium (Android)
 ----------------
@@ -145,11 +145,11 @@ Hacking with Appium (Android)
 
 Now, you can simply run:
 
-    ./reset.sh --android
+    ./reset.sh --android --dev
 
 If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for older apps:
 
-    ./reset.sh --selendroid
+    ./reset.sh --selendroid --dev
 
 Make sure you have one and only one Android emulator or device running, e.g.
 by running this command in another process (assuming the `emulator` command is
@@ -161,15 +161,16 @@ Making sure you're up to date
 -----------
 Since we use dev versions of some packages, it often becomes necessary to
 install new NPM packages or update various things. There's a handy shell script
-to do all this for all platforms:
+to do all this for all platforms (the `--dev` flag gets dev npm dependencies
+and test applications used in the Appium test suite):
 
-    ./reset.sh
+    ./reset.sh --dev
 
 Or you can run reset for individual platforms only:
 
-    ./reset.sh --ios
-    ./reset.sh --android
-    ./reset.sh --selendroid
+    ./reset.sh --ios --dev
+    ./reset.sh --android --dev
+    ./reset.sh --selendroid --dev
 
 Running Tests
 -----------

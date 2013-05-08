@@ -1,4 +1,20 @@
 -------------------------------------
+CHANGES IN VERSION 0.4.1 (from 0.4.0)
+-------------------------------------
+[GENERAL]
+- added --dev flag to reset.sh to optionally include test apps / dev deps
+- added --verbose flag to reset.sh to optionally spew info (was default)
+- reset.sh now puts all binaries in /build so it can be packaged and reused by
+  npm et al
+
+[IOS]
+- added more Java examples
+
+[SELENDROID]
+- updated selendroid to 56581e27b45c3a4483d89701fc893ac37b172e46
+
+
+-------------------------------------
 CHANGES IN VERSION 0.4.0 (from 0.3.1)
 -------------------------------------
 [GENERAL]

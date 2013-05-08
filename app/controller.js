@@ -322,7 +322,7 @@ exports.mobileSource = function(req, res) {
 exports.find = function(req, res) {
   var strategy = "dynamic"
     , selector = req.body
-    , all = selector && selector[0] && selector[0].toLowerCase() === "all";
+    , all = selector && selector[0] && typeof selector[0] === "string" && selector[0].toLowerCase() === "all";
 
   if (all) {
     req.device.findElements(strategy, selector, getResponseHandler(req, res));

@@ -1,11 +1,16 @@
 import os
 from selenium import webdriver
 
+# Returns abs path relative to this file and not cwd
+PATH = lambda p: os.path.abspath(
+    os.path.join(os.path.dirname(__file__), p)
+)
+
 desired_caps = {}
 desired_caps['device'] = 'Android'
 desired_caps['browserName'] = ''
 desired_caps['version'] = '4.2'
-desired_caps['app'] = os.path.abspath('../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk')
+desired_caps['app'] = PATH('../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk')
 desired_caps['app-package'] = 'com.example.android.apis'
 desired_caps['app-activity'] = 'ApiDemos'
 

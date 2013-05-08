@@ -105,14 +105,25 @@ var args = [
   }],
 
   [['--without-delay'] , {
-    defaultValue: false
+    defaultValue: true
     , dest: 'withoutDelay'
     , action: 'storeTrue'
     , required: false
-    , help: '(IOS-only) IOS has a weird built-in unavoidable delay. One way ' +
-            'around this is to run instruments with a library loaded to ' +
-            'patch it so that it skips the delay. Use this flag to speed up ' +
-            ' test execution.'
+    , help: '(IOS-only, DEPRECATED) IOS has a weird built-in unavoidable ' +
+            'delay. One way around this is to run instruments with a library ' +
+            'loaded to patch it so that it skips the delay. Use this flag to ' +
+            'speed up test execution.'
+    , nargs: 0
+  }],
+
+  [['--native-instruments-lib'] , {
+    defaultValue: false
+    , dest: 'nativeInstrumentsLib'
+    , action: 'storeTrue'
+    , required: false
+    , help: '(IOS-only) IOS has a weird built-in unavoidable ' +
+            'delay. We patch this in appium. If you do not want it patched, ' +
+            'pass in this flag.'
     , nargs: 0
   }],
 

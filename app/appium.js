@@ -360,7 +360,7 @@ Appium.prototype.invoke = function() {
           , udid: this.args.udid
           , verbose: this.args.verbose
           , removeTraceDir: !this.args.keepArtifacts
-          , withoutDelay: this.args.withoutDelay
+          , withoutDelay: !this.args.nativeInstrumentsLib
           , reset: !this.args.noReset
           , autoWebview: this.desiredCapabilities.safari
           , deviceType: this.iosDeviceType

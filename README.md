@@ -53,7 +53,7 @@ Option 1: Use Appium.app:
 Option 2: Run Appium from the command line using Node:
 
     mkdir appium-test && cd appium-test
-    npm install appium -g  # might have to do this with sudo
+    npm install -g appium  # might have to do this with sudo
     npm install wd
     curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
     appium &

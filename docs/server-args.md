@@ -14,7 +14,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
-|`--fast-reset`|false|(Android-only) Reset app state using clean.apk||
+|`--fast-reset`|true|(Android-only, DEPRECATED, see --full-reset) Reset app state using clean.apk||
+|`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||
 |`--no-reset`|false|Reset app state after each session (IOS: delete plist; Android: install app before session and uninstall after session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|

@@ -51,11 +51,22 @@ var args = [
   }],
 
   [['--fast-reset'] , {
-    defaultValue: false
+    defaultValue: true
     , dest: 'fastReset'
     , action: 'storeTrue'
     , required: false
-    , help: '(Android-only) Reset app state using clean.apk'
+    , help: '(Android-only, DEPRECATED, see --full-reset) Reset app state ' +
+            'using clean.apk'
+    , nargs: 0
+  }],
+
+  [['--full-reset'] , {
+    defaultValue: false
+    , dest: 'fullReset'
+    , action: 'storeTrue'
+    , required: false
+    , help: '(Android-only) Reset app state by uninstalling app instead of ' +
+            'using clean.apk'
     , nargs: 0
   }],
 

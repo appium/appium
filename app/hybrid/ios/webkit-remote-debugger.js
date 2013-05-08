@@ -45,6 +45,7 @@ var WebKitRemoteDebugger = function(onDisconnect) {
   this.pageLoading = false;
   this.curMsgId = 0;
   this.dataCbs = {};
+  this.dataMethods = {};
   this.willNavigateWithoutReload = false;
   this.onAppDisconnect = onDisconnect || noop;
   this.pageChangeCb = noop;
@@ -265,11 +266,11 @@ WebKitRemoteDebugger.prototype.wrapJsEventAtom = function(args) {
 WebKitRemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
   var atomSrc, script = "";
   if (atom === "title") {
-    atomSrc = "document.title";
+    atomSrc = "function(){return JSON.stringify({status: 0, value: document.title});}";
   } else if (atom === "element_equals_element") {
     atomSrc = this.wrapElementEqualsElementAtom(args);
   } else if (atom === "refresh") {
-    atomSrc = "window.location.reload()";
+    atomSrc = "function(){return JSON.stringify({status: 0, value: window.location.reload()});}";
   } else if (atom === "fireEvent") {
     atomSrc = this.wrapJsEventAtom(args);
   } else {
@@ -284,9 +285,8 @@ WebKitRemoteDebugger.prototype.executeAtom = function(atom, args, frames, cb) {
     script += "(" + args.join(',') + ")";
   } else {
     logger.info("Executing '" + atom + "' atom in default context");
-    //TODO: confirm how to wrap javascript with arguments.
-    //script += "(" + atomSrc + ")(" + args.join(',') + ")";
-      script += atomSrc;
+    script += "(" + atomSrc + ")(" + args.join(',') + ")";
+
   }
   this.execute(script, function(err, res) {
     if (err) {
@@ -394,14 +394,19 @@ WebKitRemoteDebugger.prototype.waitForDom = function(cb) {
 // HANDLERS
 // ====================================
 
-WebKitRemoteDebugger.prototype.handleMessage = function(plist) {
-  var handlerFor = plist.__selector;
+WebKitRemoteDebugger.prototype.handleMessage = function(data, method) {
+ if(method!=null)    {
+     var handlerFor = method;
+ } else {
+     var handlerFor = data.method;
+ }
+
   if (!handlerFor) {
-    logger.debug("Got an invalid plist");
+    logger.debug("Got an invalid method");
     return;
   }
   if (_.has(this.handlers, handlerFor)) {
-    this.handlers[handlerFor](plist);
+    this.handlers[handlerFor](data);
   } else {
     logger.info("Debugger got a message for '" + handlerFor + "' and have no " +
                 "handler, doing nothing.");
@@ -422,6 +427,14 @@ WebKitRemoteDebugger.prototype.handleSpecialMessage = function(specialCb) {
 WebKitRemoteDebugger.prototype.setHandlers = function() {
   var me = this;
   this.handlers = {
+      'Runtime.evaluate': function (data) {
+           var msgId = data.id
+              , result = data.result
+              , error = data.error || null;
+
+          me.dataCbs[msgId](error, result);
+          me.dataCbs[msgId] = null;
+      },
     '_rpc_reportSetup:': function (plist) {
       me.handleSpecialMessage('_rpc_reportIdentifier:',
           plist.__argument.WIRSimulatorNameKey,
@@ -482,162 +495,30 @@ WebKitRemoteDebugger.prototype.setHandlers = function() {
 // SOCKET I/O
 // ====================================
 
-/*
-WebKitRemoteDebugger.prototype.send = function (data, cb, cb2) {
-  var immediateCb = false
-    , plist;
-
-  cb = cb || noop;
-  cb2 = cb2 || noop;
-
-  if (_.has(this.specialCbs, data.__selector)) {
-    this.specialCbs[data.__selector] = cb;
-    if (data.__selector == '_rpc_reportIdentifier:') {
-      this.specialCbs.connect = cb2;
-    }
-  } else if( data.__argument && data.__argument.WIRSocketDataKey ) {
-    //console.log("MsgId was " + this.curMsgId);
-    this.curMsgId += 1;
-    //console.log("Giving message new id of " + this.curMsgId);
-    this.dataCbs[this.curMsgId.toString()] = cb;
-    //_.each(this.dataCbs, function(cb, msgId) {
-      //console.log(msgId + ": " + cb);
-    //});
-    //console.log(JSON.stringify(this.dataCbs));
-    data.__argument.WIRSocketDataKey.id = this.curMsgId;
-    data.__argument.WIRSocketDataKey = new
-      Buffer(JSON.stringify(data.__argument.WIRSocketDataKey));
-  } else {
-    immediateCb = true;
-  }
-
-  logger.debug("Sending " + data.__selector + " message to remote debugger");
-  if (data.__selector !== "_rpc_forwardSocketData:") {
-    logger.debug(util.inspect(data, false, null));
-  }
-
-  try {
-    plist = bplistCreate(data);
-  } catch(e) {
-    logger.error("Could not create binary plist from data");
-    return logger.info(e);
-  }
-
-  this.socket.write(bufferpack.pack('L', [plist.length]));
-  this.socket.write(plist, immediateCb ? cb : noop);
-};
-
-WebKitRemoteDebugger.prototype.receive = function(data) {
-  var dataLeftOver, oldReadPos, prefix, msgLength, body, plist, chunk, leftOver;
-  logger.debug('Receiving data from remote debugger');
-
-  // Append this new data to the existing Buffer
-  this.received = Buffer.concat([this.received, data]);
-  dataLeftOver = true;
-
-  // Parse multiple messages in the same packet
-  while(dataLeftOver) {
-
-    // Store a reference to where we were
-    oldReadPos = this.readPos;
-
-    // Read the prefix (plist length) to see how far to read next
-    // It's always 4 bytes long
-    prefix = this.received.slice(this.readPos, this.readPos + 4);
-
-    try {
-      msgLength = bufferpack.unpack('L', prefix)[0];
-    } catch(e) {
-      logger.error("Butter could not unpack");
-      return logger.info(e);
-    }
-
-    // Jump forward 4 bytes
-    this.readPos += 4;
-
-    // Is there enough data here?
-    // If not, jump back to our original position and gtfo
-    if( this.received.length < msgLength + this.readPos ) {
-      this.readPos = oldReadPos;
-      break;
-    }
-
-    // Extract the main body of the message (where the plist should be)
-    body = this.received.slice(this.readPos, msgLength + this.readPos);
-
-    // Extract the plist
-    try {
-      plist = bplistParse.parseBuffer(body);
-    } catch (e) {
-      logger.error("Error parsing binary plist");
-      logger.info(e);
-    }
-
-    // bplistParse.parseBuffer returns an array
-    if( plist.length === 1 ) {
-      plist = plist[0];
-    }
-
-    var plistCopy = plist;
-    if (typeof plistCopy.WIRMessageDataKey !== "undefined") {
-      plistCopy.WIRMessageDataKey = plistCopy.WIRMessageDataKey.toString("utf8");
-    }
-    if (typeof plistCopy.WIRDestinationKey !== "undefined") {
-      plistCopy.WIRDestinationKey = plistCopy.WIRDestinationKey.toString("utf8");
-    }
-    if (typeof plistCopy.WIRSocketDataKey !== "undefined") {
-      plistCopy.WIRSocketDataKey = plistCopy.WIRSocketDataKey.toString("utf8");
-    }
-
-    if (plistCopy.__selector === "_rpc_applicationSentData:") {
-      logger.debug("<applicationSentData response>");
-    } else {
-      logger.debug(util.inspect(plistCopy, false, null));
-    }
-
-    // Jump forward the length of the plist
-    this.readPos += msgLength;
-
-    // Calculate how much buffer is left
-    leftOver = this.received.length - this.readPos;
-
-    // Is there some left over?
-    if (leftOver !== 0) {
-      // Copy what's left over into a new buffer, and save it for next time
-      chunk = new Buffer(leftOver);
-      this.received.copy(chunk, 0, this.readPos);
-      this.received = chunk;
-    } else {
-      // Otherwise, empty the buffer and get out of the loop
-      this.received = new Buffer(0);
-      dataLeftOver = false;
-    }
-
-    // Reset the read position
-    this.readPos = 0;
-
-    // Now do something with the plist
-    if (plist) {
-      this.handleMessage(plist);
-    }
-
-  }
-};
-
-*/
-
 WebKitRemoteDebugger.prototype.send = function (data, cb) {
+    var me = this;
+    //increase the current id
+    this.curMsgId += 1;
+    //set the id in the message
+    data.id = this.curMsgId;
 
+    //store the call back and the data sent
+    this.dataCbs[this.curMsgId.toString()] = cb;
+    this.dataMethods[this.curMsgId.toString()] = data.method;
+
+    //send the data
     logger.info('Remote debugger data sent [' + JSON.stringify(data) + ']');
     data = JSON.stringify(data);
+    this.socket.send(data);
 
-    this.socket.send(data, function(error) {
-        logger.info(error);
+    this.socket.on('error', function(exception) {
+        console.log('recv %s', exception);
     });
 
     this.socket.on('message', function(data) {
         console.log('recv %s', data);
-        cb(data);
+        me.receive(data);
+
     });
 
 
@@ -645,7 +526,17 @@ WebKitRemoteDebugger.prototype.send = function (data, cb) {
 
 
 WebKitRemoteDebugger.prototype.receive = function(data){
-    logger.debug('Receiving data from remote ws debugger [' + data + ']');
+
+    var method = null;
+    data = JSON.parse(data);
+
+    //check if there was an id
+    if(data.id) {
+        method = this.dataMethods[data.id];
+    }
+
+    //{"result":{"result":{"type":"string","value":"{\"status\":0,\"value\":{\"ELEMENT\":\":wdc:1367936670858\"}}"},"wasThrown":false},"id":2}
+    this.handleMessage(data, method);
 };
 
 exports.init = function(onDisconnect) {

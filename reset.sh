@@ -63,8 +63,8 @@ reset_ios() {
         grunt buildApp:TestApp
         grunt buildApp:UICatalog
         grunt buildApp:WebViewApp
-        grunt setConfigVer:ios
     fi
+    grunt setConfigVer:ios
 }
 
 get_apidemos() {
@@ -85,8 +85,8 @@ reset_android() {
         get_apidemos
         grunt configAndroidApp:ApiDemos
         grunt buildAndroidApp:ApiDemos
-        grunt setConfigVer:android
     fi
+    grunt setConfigVer:android
 }
 
 reset_selendroid() {

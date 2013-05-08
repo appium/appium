@@ -11,6 +11,7 @@ should_reset_selendroid=false
 include_dev=false
 appium_home=$(pwd)
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
+verbose=false
 
 while test $# != 0
 do
@@ -19,6 +20,8 @@ do
         "--ios") should_reset_ios=true;;
         "--selendroid") should_reset_selendroid=true;;
         "--dev") include_dev=true;;
+        "-v") verbose=true;;
+        "--verbose") verbose=true;;
     esac
     shift
 done
@@ -29,98 +32,113 @@ if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid 
     should_reset_selendroid=true
 fi
 
+run_cmd() {
+    if $verbose ; then
+        "$@"
+    else
+        "$@" >/dev/null 2>&1
+    fi
+}
+
 reset_general() {
-    echo "---- RESETTING NPM ----"
-    echo "Installing new or updated NPM modules"
+    echo "RESETTING NPM"
     set +e
     if $include_dev ; then
-        # install everything including devDependencies
-        npm install .
+        echo "* Installing new or updated NPM modules (including devDeps)"
+        run_cmd npm install .
     else
-        # don't install devDependencies
-        npm install --production .
+        echo "* Installing new or updated NPM modules"
+        run_cmd npm install --production .
     fi
     install_status=$?
     set -e
     if [ $install_status -gt 0 ]; then
         echo "install failed. Trying again with sudo. Only do this if it's not a network error."
-        sudo npm install .
+        run_cmd sudo npm install .
     fi
-    mkdir -p build
+    run_cmd mkdir -p build
 }
 
 reset_ios() {
-    echo "---- RESETTING IOS ----"
-    echo "Downloading/updating instruments-without-delay"
-    git submodule update --init submodules/instruments-without-delay
-    echo "Building instruments-without-delay"
-    pushd submodules/instruments-without-delay
-    ./build.sh
-    popd
-    echo "Moving instruments-without-delay into build/iwd"
-    rm -rf build/iwd
-    mkdir build/iwd
-    cp -R submodules/instruments-without-delay/build/* build/iwd
+    echo "RESETTING IOS"
+    echo "* Cloning/updating instruments-without-delay"
+    run_cmd git submodule update --init submodules/instruments-without-delay
+    echo "* Building instruments-without-delay"
+    run_cmd pushd submodules/instruments-without-delay
+    run_cmd ./build.sh
+    run_cmd popd
+    echo "* Moving instruments-without-delay into build/iwd"
+    run_cmd rm -rf build/iwd
+    run_cmd mkdir build/iwd
+    run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
     if $include_dev ; then
         if [ ! -d "./sample-code/apps/UICatalog" ]; then
-            echo "Downloading UICatalog app"
-            $grunt downloadApp
+            echo "* Downloading UICatalog app"
+            run_cmd $grunt downloadApp
         fi
-        echo "Rebuilding iOS test apps"
-        $grunt buildApp:TestApp
-        $grunt buildApp:UICatalog
-        $grunt buildApp:WebViewApp
+        echo "* Cleaning/rebuilding iOS test app: TestApp"
+        run_cmd $grunt buildApp:TestApp
+        echo "* Cleaning/rebuilding iOS test app: UICatalog"
+        run_cmd $grunt buildApp:UICatalog
+        echo "* Cleaning/rebuilding iOS test app: WebViewApp"
+        run_cmd $grunt buildApp:WebViewApp
     fi
-    $grunt setConfigVer:ios
+    echo "* Setting iOS config to Appium's version"
+    run_cmd $grunt setConfigVer:ios
 }
 
 get_apidemos() {
-    echo "Downloading/updating AndroidApiDemos"
-    git submodule update --init submodules/ApiDemos
-    rm -rf sample-code/apps/ApiDemos
-    ln -s $appium_home/submodules/ApiDemos $appium_home/sample-code/apps/ApiDemos
+    echo "* Cloning/updating Android test app: ApiDemos"
+    run_cmd git submodule update --init submodules/ApiDemos
+    run_cmd rm -rf sample-code/apps/ApiDemos
+    run_cmd ln -s $appium_home/submodules/ApiDemos $appium_home/sample-code/apps/ApiDemos
 }
 
 reset_android() {
-    echo "---- RESETTING ANDROID ----"
-    echo "Building Android bootstrap"
-    rm -rf build/android_bootstrap
-    $grunt configAndroidBootstrap
-    $grunt buildAndroidBootstrap
+    echo "RESETTING ANDROID"
+    echo "* Configuring Android bootstrap"
+    run_cmd rm -rf build/android_bootstrap
+    run_cmd $grunt configAndroidBootstrap
+    echo "* Building Android bootstrap"
+    run_cmd $grunt buildAndroidBootstrap
     if $include_dev ; then
-        echo "Configuring and rebuilding Android test apps"
-        get_apidemos
-        $grunt configAndroidApp:ApiDemos
-        $grunt buildAndroidApp:ApiDemos
+        run_cmd get_apidemos
+        echo "* Configuring and cleaning/building Android test app: ApiDemos"
+        run_cmd $grunt configAndroidApp:ApiDemos
+        run_cmd $grunt buildAndroidApp:ApiDemos
     fi
-    $grunt setConfigVer:android
+    echo "* Setting Android config to Appium's version"
+    run_cmd $grunt setConfigVer:android
 }
 
 reset_selendroid() {
-    echo "---- RESETTING SELENDROID ----"
-    echo "Downloading/updating selendroid"
-    rm -rf submodules/selendroid/selendroid-server/target
-    git submodule update --init submodules/selendroid
-    rm -rf selendroid
-    $grunt buildSelendroidServer
+    echo "RESETTING SELENDROID"
+    echo "* Cloning/updating selendroid"
+    run_cmd rm -rf submodules/selendroid/selendroid-server/target
+    run_cmd git submodule update --init submodules/selendroid
+    run_cmd rm -rf selendroid
+    echo "* Building selendroid server and supporting libraries"
+    run_cmd $grunt buildSelendroidServer
     if $include_dev ; then
         get_apidemos
-        rm -rf $appium_home/sample-code/apps/WebViewDemo
-        ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+        echo "* Linking selendroid test app: WebViewDemo"
+        run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
+        run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
     fi
-    $grunt setConfigVer:selendroid
+    echo "* Setting Selendroid config to Appium's version"
+    run_cmd $grunt setConfigVer:selendroid
 }
 
 cleanup() {
-    echo "---- CLEANING UP ----"
-    echo "Cleaning temp files"
-    rm -rf /tmp/instruments_sock
-    rm -rf *.trace
+    echo "CLEANING UP"
+    echo "* Cleaning any temp files"
+    run_cmd rm -rf /tmp/instruments_sock
+    run_cmd rm -rf *.trace
 }
 
-echo "Resetting / Initializing Appium"
+echo "---- Resetting / Initializing Appium ----"
 if $include_dev ; then
-    echo "(Dev mode is on, will download/build test apps)"
+    echo "* Dev mode is on, will download/build test apps"
 fi
 reset_general
 if $should_reset_ios ; then

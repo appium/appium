@@ -73,7 +73,7 @@ otherwise failing, you can restart it by running:
 
 Now, make sure Appium is running:
 
-    node server.js -V
+    node server.js
 
 Then script your WebDriver test, sending in the following desired capabilities:
 

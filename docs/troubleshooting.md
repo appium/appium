@@ -23,6 +23,7 @@ to github or write to the appium-discuss mailing list.
     ./reset.sh --ios         # ios-only
     ./reset.sh --android     # android-only
     ./reset.sh --selendroid  # selendroid-only
+* You might also want to run `reset.sh` with the `--dev` flag if you want the test apps downloaded and built as well.
 
 ## Android
 

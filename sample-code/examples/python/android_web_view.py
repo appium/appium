@@ -4,21 +4,24 @@ import unittest
 from time import sleep
 from selenium import webdriver
 
+
 class TestAndroidWebView(unittest.TestCase):
 
     def setUp(self):
         app = os.path.abspath(
-            glob.glob(os.path.join(os.path.dirname(__file__), 
-                                   '../../apps/WebViewDemo/target') + '/*.apk')[0])
+            glob.glob(os.path.join(
+                os.path.dirname(__file__), '../../apps/WebViewDemo/target')
+                      + '/*.apk')[0])
         desired_caps = {
             'device': 'selendroid',
             'app': app,
-            'browserName':"native-android-driver",
+            'browserName': "native-android-driver",
             'app-package': 'org.openqa.selendroid.testapp',
             'app-activity': 'HomeScreenActivity'
         }
-        
-        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
+
+        self.driver = webdriver.Remote('http://localhost:4723/wd/hub',
+                                       desired_caps)
 
     def test(self):
         button = self.driver.find_element_by_name('buttonStartWebviewCD')

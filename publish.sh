@@ -1,6 +1,6 @@
 #!/bin/bash
-set -e
-git remote | grep "upstream"
+set +e
+git remote | grep "upstream" >/dev/null
 if [ $? -gt 0 ]; then
     echo "You need to have an 'upstream' remote to pull from / push tags to"
     exit 1
@@ -15,6 +15,7 @@ if [ $? -eq 0 ]; then
     echo "Your branch isn't in sync with master"
     exit 1
 fi
+set -e
 git pull upstream master
 ./reset.sh
 npm publish

@@ -148,8 +148,7 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
   var me = this
     , newServerPath = me.selendroidServerPath
     , newPackage = me.appPackage + '.selendroid'
-    , srcManifest = path.resolve(__dirname, "../selendroid/selendroid-gem",
-                                 "selendroid-prebuild/AndroidManifest.xml")
+    , srcManifest = path.resolve(__dirname, "../build/selendroid/AndroidManifest.xml")
     , dstDir = '/tmp/' + this.appPackage
     , dstManifest = dstDir + '/AndroidManifest.xml';
 
@@ -832,7 +831,7 @@ ADB.prototype.restartAdb = function(cb) {
 
 ADB.prototype.pushAppium = function(cb) {
   this.debug("Pushing appium bootstrap to device...");
-  var binPath = path.resolve(__dirname, "bootstrap", "bin", "AppiumBootstrap.jar");
+  var binPath = path.resolve(__dirname, "..", "build", "android_bootstrap", "AppiumBootstrap.jar");
   fs.stat(binPath, _.bind(function(err) {
     if (err) {
       cb("Could not find AppiumBootstrap.jar; please run " +

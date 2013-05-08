@@ -6,12 +6,9 @@ var errors = require('./errors')
   , request = require('./device').request
   , logger = require('../logger').get('appium')
   , status = require("./uiauto/lib/status")
-  , exec = require('child_process').exec
   , fs = require('fs')
-  , ncp = require('ncp')
   , async = require('async')
   , path = require('path')
-  , parseXmlString = require('xml2js').parseString
   , UnknownError = errors.UnknownError;
 
 var Selendroid = function(opts) {
@@ -61,70 +58,17 @@ Selendroid.prototype.fastReset = function(cb) {
 
 Selendroid.prototype.ensureServerExists = function(cb) {
   logger.info("Checking whether selendroid is built yet");
-  this.getSelendroidVersion(_.bind(function(err, version) {
-    if (err) return cb(err);
-    var fileName = 'selendroid-server-' + version + '.apk';
-    var filePath = path.resolve(__dirname, "../selendroid/selendroid-server",
-                                "target", fileName);
-    fs.stat(filePath, _.bind(function(err) {
-      if (err) {
-        logger.info("Selendroid needs to be built");
-        return this.buildServer(cb, version);
-      }
-      logger.info("Selendroid server already exists, not rebuilding");
-      this.serverApk = filePath;
-      cb(null);
-    }, this));
-  }, this));
-};
-
-Selendroid.prototype.getSelendroidVersion = function(cb) {
-  logger.info("Getting Selendroid version");
-  var pomXml = path.resolve(__dirname, "..", "selendroid", "selendroid-server",
-      "pom.xml");
-  fs.readFile(pomXml, function(err, xmlData) {
+  var selBin = path.resolve(__dirname, "..", "build", "selendroid",
+      "selendroid.apk");
+  fs.stat(selBin, _.bind(function(err) {
     if (err) {
-      logger.error("Could not find selendroid's pom.xml at");
+      logger.info("Selendroid needs to be built; please run ./reset.sh " +
+                  "--selendroid");
       return cb(err);
     }
-    parseXmlString(xmlData.toString('utf8'), function(err, res) {
-      if (err) {
-        logger.error("Error parsing selendroid's pom.xml");
-        return cb(err);
-      }
-      var version = res.project.parent[0].version[0];
-      if (typeof version === "string") {
-        logger.info("Selendroid version is " + version);
-        cb(null, version);
-      } else {
-        cb(new Error("Version " + version + " was not valid"));
-      }
-    });
-  });
-};
-
-Selendroid.prototype.buildServer = function(cb, version) {
-  logger.info("Building selendroid server");
-  var buildDir = path.resolve(__dirname, "../selendroid/selendroid-server");
-  var target = buildDir + "/target/selendroid-server-" + version + ".apk";
-  var cmd = "mvn install";
-  exec(cmd, {cwd: buildDir}, _.bind(function(err, stdout, stderr) {
-    if (err) {
-      logger.error("Unable to build selendroid server. Stdout was: ");
-      logger.error(stdout);
-      logger.error(stderr);
-      return cb(err);
-    }
-    logger.info("Making sure target exists");
-    fs.stat(target, _.bind(function(err) {
-      if (err) {
-        logger.error("Selendroid doesn't exist! Not sure what to do.");
-        return cb(err);
-      }
-      logger.info("Selendroid server built successfully");
-      this.serverApk = target;
-      cb(null);
-    }, this));
+    logger.info("Selendroid server exists!");
+    this.serverApk = selBin;
+    cb(null);
   }, this));
 };
 

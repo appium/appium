@@ -379,7 +379,7 @@ Appium.prototype.invoke = function() {
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
-          , fastReset: this.args.fastReset
+          , fastReset: !this.args.fullReset
         };
         this.devices[this.deviceType] = android(androidOpts);
       } else if (this.isSelendroid()) {

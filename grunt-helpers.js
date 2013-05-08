@@ -30,10 +30,10 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   return server.run({
     app: app
     , udid: null
-    , verbose: verbose
+    , quiet: !verbose
     , port: 4723
-    , withoutDelay: true
-    , fastReset: true
+    , nativeInstrumentsLib: false
+    , fullReset: false
     , noReset: false
     , launch: app ? true : false
     , log: path.resolve(__dirname, "appium.log")

@@ -29,6 +29,8 @@
     "underscore": "~1.4.3",
     "colors": "~0.6.0-1",
     "express": "~3.0.6",
+    "grunt": "~0.4.0",
+    "grunt-cli": "~0.1.6",
     "argparse": "~0.1.10",
     "path": "~0.4.9",
     "rimraf": "~2.1.1",
@@ -48,7 +50,10 @@
     "async": "~0.2.6",
     "mkdirp": "~0.3.5",
     "xml2js": "~0.2.6",
-    "binary-cookies": "~0.1.1"
+    "difflib": "~0.2.4",
+    "prompt": "~0.2.9",
+    "binary-cookies": "~0.1.1",
+    "namp": "~0.2.25"
   },
   "scripts": {
     "test": "grunt travis"
@@ -56,16 +61,11 @@
   "devDependencies": {
     "mocha": "~1.8.1",
     "should": "~1.2.1",
-    "grunt": "~0.4.0",
-    "grunt-cli": "~0.1.6",
     "underscore-cli": "~0.2.17",
     "wd": "~0.0.32",
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",
-    "difflib": "~0.2.4",
-    "prompt": "~0.2.9",
     "grunt-contrib-jshint": "~0.1.1",
-    "saucelabs": "~0.0.7",
-    "namp": "~0.2.25"
+    "saucelabs": "~0.0.7"
   }
 }

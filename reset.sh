@@ -8,8 +8,9 @@ set -e
 should_reset_android=0
 should_reset_ios=0
 should_reset_selendroid=0
-include_dev=0
+include_dev=false
 appium_home=$(pwd)
+grunt="$(npm bin)/grunt"
 
 while test $# != 0
 do
@@ -17,7 +18,7 @@ do
         "--android") should_reset_android=1;;
         "--ios") should_reset_ios=1;;
         "--selendroid") should_reset_selendroid=1;;
-        "--dev") include_dev=1;;
+        "--dev") include_dev=true;;
     esac
     shift
 done
@@ -32,7 +33,11 @@ reset_general() {
     echo "---- RESETTING NPM ----"
     echo "Installing new or updated NPM modules"
     set +e
-    npm install .
+    if $include_dev ; then
+        npm install .
+    else
+        npm install --production .
+    fi
     install_status=$?
     set -e
     if [ $install_status -gt 0 ]; then
@@ -54,17 +59,17 @@ reset_ios() {
     rm -rf build/iwd
     mkdir build/iwd
     cp -R submodules/instruments-without-delay/build/* build/iwd
-    if [ $include_dev -eq 1 ]; then
+    if $include_dev ; then
         if [ ! -d "./sample-code/apps/UICatalog" ]; then
             echo "Downloading UICatalog app"
-            grunt downloadApp
+            $grunt downloadApp
         fi
         echo "Rebuilding iOS test apps"
-        grunt buildApp:TestApp
-        grunt buildApp:UICatalog
-        grunt buildApp:WebViewApp
+        $grunt buildApp:TestApp
+        $grunt buildApp:UICatalog
+        $grunt buildApp:WebViewApp
     fi
-    grunt setConfigVer:ios
+    $grunt setConfigVer:ios
 }
 
 get_apidemos() {
@@ -78,15 +83,15 @@ reset_android() {
     echo "---- RESETTING ANDROID ----"
     echo "Building Android bootstrap"
     rm -rf build/android_bootstrap
-    grunt configAndroidBootstrap
-    grunt buildAndroidBootstrap
-    if [ $include_dev -eq 1 ]; then
+    $grunt configAndroidBootstrap
+    $grunt buildAndroidBootstrap
+    if $include_dev ; then
         echo "Configuring and rebuilding Android test apps"
         get_apidemos
-        grunt configAndroidApp:ApiDemos
-        grunt buildAndroidApp:ApiDemos
+        $grunt configAndroidApp:ApiDemos
+        $grunt buildAndroidApp:ApiDemos
     fi
-    grunt setConfigVer:android
+    $grunt setConfigVer:android
 }
 
 reset_selendroid() {
@@ -95,13 +100,13 @@ reset_selendroid() {
     rm -rf submodules/selendroid/selendroid-server/target
     git submodule update --init submodules/selendroid
     rm -rf selendroid
-    grunt buildSelendroidServer
-    if [ $include_dev -eq 1 ]; then
+    $grunt buildSelendroidServer
+    if $include_dev ; then
         get_apidemos
         rm -rf $appium_home/sample-code/apps/WebViewDemo
         ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
     fi
-    grunt setConfigVer:selendroid
+    $grunt setConfigVer:selendroid
 }
 
 cleanup() {
@@ -112,7 +117,7 @@ cleanup() {
 }
 
 echo "Resetting / Initializing Appium"
-if [ $include_dev -eq 1 ]; then
+if $include_dev ; then
     echo "(Dev mode is on, will download/build test apps)"
 fi
 reset_general

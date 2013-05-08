@@ -87,6 +87,18 @@ WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
         logger.info('Debugger web socket disconnected');
         me.socket.close();
     });
+
+    this.socket.on('error', function(exception) {
+        console.log('recv %s', exception);
+    });
+
+    this.socket.on('message', function(data) {
+        console.log('recv %s', data);
+        me.receive(data);
+
+    });
+
+
 };
 
 //retrieve the page array
@@ -510,17 +522,6 @@ WebKitRemoteDebugger.prototype.send = function (data, cb) {
     logger.info('Remote debugger data sent [' + JSON.stringify(data) + ']');
     data = JSON.stringify(data);
     this.socket.send(data);
-
-    this.socket.on('error', function(exception) {
-        console.log('recv %s', exception);
-    });
-
-    this.socket.on('message', function(data) {
-        console.log('recv %s', data);
-        me.receive(data);
-
-    });
-
 
 };
 

@@ -51,6 +51,7 @@ var RemoteDebugger = function(onDisconnect) {
     , 'connect': noop
   };
   this.pageLoadedCbs = [];
+  this.frameNavigatedCbs = [];
   this.setHandlers();
   this.received = new Buffer(0);
   this.readPos = 0;
@@ -141,16 +142,28 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb, skipReadyCheck) {
       if (skipReadyCheck) {
         cb();
       } else {
-        me.execute('(function(){return document.readyState;})()', function(err, res) {
-          logger.info("Checked document readystate");
-          if (err || res.result.value == 'loading') {
-            me.pageUnload();
+        me.checkPageIsReady(function(err, isReady) {
+          if (!isReady) {
+            return me.pageUnload(cb);
           }
           cb();
         });
       }
     });
   });
+};
+
+RemoteDebugger.prototype.checkPageIsReady = function(cb) {
+  logger.debug("Checking document readyState");
+  this.execute('(function(){return document.readyState;})()', function(err, res) {
+    if (err) {
+      logger.debug("readyState returned error, calling it not ready");
+      return cb(null, false);
+    } else {
+      logger.debug("readyState was " + res.result.value);
+      return cb(null, res.result.value === "complete");
+    }
+  }, true);
 };
 
 RemoteDebugger.prototype.onPageChange = function(pageDict) {
@@ -285,9 +298,9 @@ RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, respons
   });
 };
 
-RemoteDebugger.prototype.execute = function(command, cb) {
+RemoteDebugger.prototype.execute = function(command, cb, override) {
   var me = this;
-  if (this.pageLoading) {
+  if (this.pageLoading && !override) {
     logger.info("Trying to execute but page is not loaded. Waiting for dom");
     this.waitForDom(function() {
       me.execute(command, cb);
@@ -315,32 +328,73 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
   assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
   assert.ok(this.pageIdKey);
   logger.info("Navigating to new URL: " + url);
+  var me = this;
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
       this.senderId, this.pageIdKey);
-  this.waitForDom(cb);
   this.send(navToUrl, noop);
+  this.waitForFrameNavigated(function() {
+    me.checkPageIsReady(function(err, isReady) {
+      if (isReady) return cb();
+      me.waitForDom(cb);
+    });
+  });
 };
 
 RemoteDebugger.prototype.pageLoad = function() {
   clearTimeout(this.loadingTimeout);
-  var cbs = this.pageLoadedCbs;
-  this.pageLoadedCbs = [];
-  logger.debug("Page loaded");
-  this.pageLoading = false;
+  var me = this
+    , cbs = this.pageLoadedCbs
+    , waitMs = 10000
+    , intMs = 500
+    , start = Date.now();
+  logger.debug("Page loaded, verifying through readyState");
+  var verify = function() {
+    me.checkPageIsReady(function(err, isReady) {
+      if (isReady || (start + waitMs) < Date.now()) {
+        logger.debug("Page is ready, calling onload cbs");
+        me.pageLoadedCbs = [];
+        me.pageLoading = false;
+        _.each(cbs, function(cb) {
+          cb();
+        });
+      } else {
+        logger.debug("Page was not ready, retrying");
+        setTimeout(verify, intMs);
+      }
+    });
+  };
+  verify();
+};
+
+RemoteDebugger.prototype.frameNavigated = function() {
+  logger.info("Frame navigated, calling cbs");
+  clearTimeout(this.navigatingTimeout);
+  var cbs = this.frameNavigatedCbs;
+  this.frameNavigatedCbs = [];
   _.each(cbs, function(cb) {
     cb();
   });
 };
 
-RemoteDebugger.prototype.pageUnload = function() {
+RemoteDebugger.prototype.pageUnload = function(cb) {
+  if (typeof cb === "undefined") cb = null;
   logger.debug("Page loading");
   this.pageLoading = true;
-  this.waitForDom(noop);
+  this.waitForDom(cb);
 };
 
 RemoteDebugger.prototype.waitForDom = function(cb) {
-  this.pageLoadedCbs.push(cb);
-  this.loadingTimeout = setTimeout(this.pageLoad, 60000);
+  logger.debug("Waiting for dom...");
+  if (typeof cb === "function") {
+    this.pageLoadedCbs.push(cb);
+  }
+  this.loadingTimeout = setTimeout(_.bind(this.pageLoad, this), 60000);
+};
+
+RemoteDebugger.prototype.waitForFrameNavigated = function(cb) {
+  logger.debug("Waiting for frame navigated...");
+  this.frameNavigatedCbs.push(cb);
+  this.navigatingTimeout = setTimeout(_.bind(this.frameNavigated, this), 500);
 };
 
 // ====================================
@@ -401,8 +455,9 @@ RemoteDebugger.prototype.setHandlers = function() {
                     "do some kind of callback here");
         //me.onPageChange();
       } else if (dataKey.method == "Page.frameNavigated") {
-        if (!me.willNavigateWithoutReload) {
-          me.pageUnload();
+        if (!me.willNavigateWithoutReload && !me.pageLoading) {
+          logger.info("Frame navigated, unloading page");
+          me.frameNavigated();
         } else {
           logger.info("Frame navigated but we were warned about it, not " +
                       "considering page state unloaded");
@@ -448,14 +503,8 @@ RemoteDebugger.prototype.send = function (data, cb, cb2) {
       this.specialCbs.connect = cb2;
     }
   } else if( data.__argument && data.__argument.WIRSocketDataKey ) {
-    //console.log("MsgId was " + this.curMsgId);
     this.curMsgId += 1;
-    //console.log("Giving message new id of " + this.curMsgId);
     this.dataCbs[this.curMsgId.toString()] = cb;
-    //_.each(this.dataCbs, function(cb, msgId) {
-      //console.log(msgId + ": " + cb);
-    //});
-    //console.log(JSON.stringify(this.dataCbs));
     data.__argument.WIRSocketDataKey.id = this.curMsgId;
     data.__argument.WIRSocketDataKey = new
       Buffer(JSON.stringify(data.__argument.WIRSocketDataKey));

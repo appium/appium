@@ -215,10 +215,10 @@ IOS.prototype.start = function(cb, onDie) {
     };
 
     async.series([
-      function (cb) { me.cleanup(cb) },
-      function (cb) { me.setDeviceType(cb) },
-      function (cb) { me.installToRealDevice(cb) },
-      function (cb) { createInstruments(cb) }
+      function (cb) { me.cleanup(cb); },
+      function (cb) { me.setDeviceType(cb); },
+      function (cb) { me.installToRealDevice(cb); },
+      function (cb) { createInstruments(cb); }
     ], cb);
   }
 };
@@ -232,23 +232,23 @@ IOS.prototype.installToRealDevice = function (cb) {
         me = this;
 
     async.waterfall([
-      function (cb) { d.isInstalled(me.bundleId, cb) },
+      function (cb) { d.isInstalled(me.bundleId, cb); },
       function (installed, cb) {
 	if (installed) {
-	  logger.info("Bundle found on device, removing before reinstalling.");
-	  d.remove(me.bundleId, cb);
-	} else {
-	  logger.debug("Nothing found on device, going ahead and installing.");
-	  cb();
-	}
+          logger.info("Bundle found on device, removing before reinstalling.");
+          d.remove(me.bundleId, cb);
+        } else {
+          logger.debug("Nothing found on device, going ahead and installing.");
+          cb();
+        }
       },
-      function (cb) { d.installAndWait(me.ipa, me.bundleId, cb) }
+      function (cb) { d.installAndWait(me.ipa, me.bundleId, cb); }
     ], cb);
   } else {
     logger.debug("No device id or app, not installing to real device.");
     cb();
   }
-}
+};
 
 IOS.prototype.setDeviceType = function(cb) {
   if (this.udid) {
@@ -354,18 +354,18 @@ IOS.prototype.cleanupAppState = function(cb) {
       } else {
         logger.info("No plist files found to remove");
 	if (me.realDevice) {
-	  me.realDevice.remove(me.bundleId, function (err) {
-	    if (err) {
-	      logger.error("Could not remove " + me.bundleId + " from device");
-	      cb(err);
-	    } else {
-	      logger.info("Removed " + me.bundleId);
-	      cb();
-	    }
-	  });
-	} else {
-	  cb();
-	}
+          me.realDevice.remove(me.bundleId, function (err) {
+            if (err) {
+              logger.error("Could not remove " + me.bundleId + " from device");
+              cb(err);
+            } else {
+              logger.info("Removed " + me.bundleId);
+              cb();
+            }
+          });
+        } else {
+          cb();
+        }
       }
     }
   });

@@ -33,8 +33,6 @@ import com.android.uiautomator.core.UiSelector;
  * Based on which {@link Strategy}, {@link UiSelector}, and optionally the
  * contextId, the element Id or Ids are returned to the user.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class Find extends CommandHandler {
   AndroidElementsHash elements = AndroidElementsHash.getInstance();

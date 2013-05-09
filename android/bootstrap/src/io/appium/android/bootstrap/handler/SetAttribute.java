@@ -18,8 +18,6 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 /**
  * This handler is used to set attributes on elements that support it.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class SetAttribute extends CommandHandler {
 

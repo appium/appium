@@ -17,8 +17,6 @@ import com.android.uiautomator.core.UiDevice;
 /**
  * This handler is used to get or set the orientation of the device.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class Orientation extends CommandHandler {
 

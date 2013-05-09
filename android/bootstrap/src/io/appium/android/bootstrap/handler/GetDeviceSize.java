@@ -12,8 +12,6 @@ import com.android.uiautomator.core.UiDevice;
 /**
  * This handler is used to get the size of the screen.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class GetDeviceSize extends CommandHandler {
 

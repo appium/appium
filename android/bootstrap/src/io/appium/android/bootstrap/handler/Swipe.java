@@ -19,8 +19,6 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 /**
  * This handler is used to swipe.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class Swipe extends CommandHandler {
 

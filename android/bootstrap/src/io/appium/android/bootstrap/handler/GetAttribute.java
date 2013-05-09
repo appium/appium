@@ -17,8 +17,6 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 /**
  * This handler is used to get an attribute of an element.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class GetAttribute extends CommandHandler {
 

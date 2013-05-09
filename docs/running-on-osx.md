@@ -28,3 +28,6 @@ Appium on OS X supports iOS and Android testing.
   UIAutomator. Just choose the latest Android OS). You can create an AVD by
   using the android SDK tools. Remember the name you give the AVD, so that you
   can launch an emulator with it and run tests against it.
+* There exists a hardware accelerated emulator for android, it has it's own
+  limitations. For more information you can check out this
+  [page](https://github.com/appium/appium/blob/master/docs/android-hax-emulator.md).

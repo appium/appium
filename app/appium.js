@@ -76,10 +76,10 @@ Appium.prototype.registerConfig = function(configObj) {
 
 Appium.prototype.preLaunch = function(cb) {
   logger.info("Pre-launching app");
-  if (!this.args.app && !this.args.safari) {
-    logger.error("Cannot pre-launch app if it isn't passed in via --app or --safari");
-    process.exit();
-  } else {
+  //if (!this.args.app && !this.args.safari) {
+    //logger.error("Cannot pre-launch app if it isn't passed in via --app or --safari");
+    //process.exit();
+  //} else {
     var me = this;
     var caps = {};
     this.start(caps, function(err) {
@@ -90,7 +90,7 @@ Appium.prototype.preLaunch = function(cb) {
         cb(null, me);
       }
     });
-  }
+  //}
 };
 
 Appium.prototype.start = function(desiredCaps, cb) {
@@ -133,6 +133,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     }
   } else if (desiredCaps["app-package"] || this.args.androidPackage) {
     return "android";
+  } else if (desiredCaps["app-activity"] || this.args.androidActivity) {
+    return "android";
   }
   return "ios";
 };
@@ -172,9 +174,9 @@ Appium.prototype.getAppExt = function() {
 };
 
 Appium.prototype.setAndroidArgs = function(desiredCaps) {
-  var setArgFromCaps = function(arg, cap) {
+  var setArgFromCaps = _.bind(function(arg, cap) {
     this.args[arg] = desiredCaps[cap] || this.args[arg];
-  };
+  }, this);
   setArgFromCaps("androidPackage", "app-package");
   setArgFromCaps("androidActivity", "app-activity");
   setArgFromCaps("androidWaitActivity", "app-wait-activity");
@@ -195,10 +197,19 @@ Appium.prototype.configure = function(desiredCaps, cb) {
     return cb(new Error("Device " + this.deviceType + " not configured yet"));
   }
   if (this.isAndroid()) {
-    this.setAndroidArgs();
+    this.setAndroidArgs(desiredCaps);
   }
   if (hasAppInCaps || this.args.app) {
-    this.configureApp(desiredCaps, cb);
+    this.configureApp(desiredCaps, hasAppInCaps, cb);
+  } else if (this.isAndroid() && this.args.androidPackage) {
+    // we're launching a pre-installed app by package
+    if (!this.args.androidActivity) {
+      return cb(new Error("app-activity is not set! It needs to be to start app"));
+    }
+    this.args.app = null;
+    logger.info("Didn't get app but did get Android package, will attempt to " +
+                "launch it on the device");
+    cb(null);
   } else if (this.args.safari === true) {
     this.configureSafari(desiredCaps, cb);
   } else {
@@ -220,8 +231,18 @@ Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
     this.configureSafari(desiredCaps, cb);
   } else if (this.isIos() && isPackageOrBundle) {
     // we have a bundle ID
+    logger.info("App is an iOS bundle, will attempt to run as pre-existing");
     this.args.bundleId = appPath;
     this.args.app = null;
+    cb(null);
+  } else if (this.isAndroid() && isPackageOrBundle) {
+    // we have a package instead of app
+    this.args.androidPackage = appPath;
+    this.args.app = null;
+    if (!this.args.androidActivity) {
+      return cb(new Error("app-activity is not set! It needs to be to start app"));
+    }
+    logger.info("App is an Android package, will attempt to run on device");
     cb(null);
   } else if (this.isFirefoxOS()) {
     this.args.app = desiredCaps.app;

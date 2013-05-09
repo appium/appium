@@ -98,17 +98,23 @@ ADB.prototype.checkAdbPresent = function(cb) {
 };
 
 ADB.prototype.checkAppPresent = function(cb) {
-  logger.info("Checking whether app is actually present");
-  fs.stat(this.apkPath, _.bind(function(err) {
-    if (err) {
-      logger.error("Could not find app apk at " + this.apkPath);
-      cb(new Error("Error locating the app apk, supposedly it's at " +
-                   this.apkPath + " but we can't stat it. Filesystem error " +
-                   "is " + err));
-    } else {
-      cb(null);
-    }
-  }, this));
+  if (this.apkPath === null) {
+    logger.info("Not checking whether app is present since we are assuming " +
+                "it's already on the device");
+    cb(null);
+  } else {
+    logger.info("Checking whether app is actually present");
+    fs.stat(this.apkPath, _.bind(function(err) {
+      if (err) {
+        logger.error("Could not find app apk at " + this.apkPath);
+        cb(new Error("Error locating the app apk, supposedly it's at " +
+                    this.apkPath + " but we can't stat it. Filesystem error " +
+                    "is " + err));
+      } else {
+        cb(null);
+      }
+    }, this));
+  }
 };
 
 // Fast reset
@@ -286,6 +292,12 @@ ADB.prototype.checkFastReset = function(cb) {
   // NOP if fast reset is not true.
   if (!this.fastReset) {
     logger.info("User doesn't want fast reset, doing nothing");
+    return cb(null);
+  }
+
+  if (this.apkPath === null) {
+    logger.info("Can't run fast reset on an app that's already on the device " +
+                "so doing nothing");
     return cb(null);
   }
 
@@ -868,8 +880,8 @@ ADB.prototype.startApp = function(cb) {
   }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
-  this.debug("Starting app " + this.appPackage + "/" + activityString);
   this.unlockScreen(_.bind(function() {
+    this.debug("Starting app " + this.appPackage + "/" + activityString);
     exec(cmd, _.bind(function(err) {
       if(err) {
         logger.error(err);
@@ -1039,6 +1051,13 @@ ADB.prototype.installApp = function(cb) {
     , installApp = false
     , installClean = false;
   me.requireDeviceId();
+
+  if (this.apkPath === null) {
+    logger.info("Not installing app since we launched with a package instead " +
+                "of an app path");
+    return cb(null);
+  }
+
   me.requireApk();
 
   var determineInstallAndCleanStatus = function(cb) {

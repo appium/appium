@@ -215,8 +215,9 @@ Appium.prototype.configure = function(desiredCaps, cb) {
           cb(err);
         }
       } else {
-        logger.error("Using local app, but didn't end in .zip or .app/.apk");
-        cb("Your app didn't end in .app/.apk or .zip!");
+        var dExt = this.getAppExt();
+        logger.error("Using local app, but didn't end in .zip or " + dExt);
+        cb("Your app didn't end in .zip or " + dExt);
       }
     } else if (appPath.substring(0, 4) === "http") {
       var appUrl = appPath;

@@ -20,6 +20,10 @@ var errors = require('./errors')
   , isWindows = helpers.isWindows();
 
 var Android = function(opts) {
+  this.initialize(opts);
+};
+
+Android.prototype.initialize = function(opts) {
   this.rest = opts.rest;
   this.webSocket = opts.webSocket;
   this.opts = opts;
@@ -42,6 +46,8 @@ var Android = function(opts) {
   this.adb = null;
   this.swipeStepsPerSec = 200;
   this.asyncWaitMs = 0;
+  this.remote = null;
+  this.curWindowHandle = null;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'Android'
@@ -53,7 +59,11 @@ var Android = function(opts) {
   };
 };
 
-// Clear data, wait for app close, then start app.
+Android.prototype.inWebView = function() {
+  return this.curWindowHandle !== null;
+};
+
+// Clear data, close app, then start app.
 Android.prototype.fastReset = function(cb) {
   var me = this;
   async.series([
@@ -286,14 +296,20 @@ Android.prototype.getCommandTimeout = function(cb) {
 };
 
 Android.prototype.findElement = function(strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, false, "", cb);
+  if (this.inWebView()) {
+  } else {
+    this.findUIElementOrElements(strategy, selector, false, "", cb);
+  }
 };
 
 Android.prototype.findElements = function(strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, true, "", cb);
+  if (this.inWebView()) {
+  } else {
+    this.findUIElementOrElements(strategy, selector, true, "", cb);
+  }
 };
 
-Android.prototype.findElementOrElements = function(strategy, selector, many, context, cb) {
+Android.prototype.findUIElementOrElements = function(strategy, selector, many, context, cb) {
   var params = {
     strategy: strategy
     , selector: selector
@@ -875,3 +891,5 @@ Android.prototype.unpackApp = function(req, cb) {
 module.exports = function(opts) {
   return new Android(opts);
 };
+
+module.exports.Android = Android;

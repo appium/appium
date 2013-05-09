@@ -76,21 +76,15 @@ Appium.prototype.registerConfig = function(configObj) {
 
 Appium.prototype.preLaunch = function(cb) {
   logger.info("Pre-launching app");
-  //if (!this.args.app && !this.args.safari) {
-    //logger.error("Cannot pre-launch app if it isn't passed in via --app or --safari");
-    //process.exit();
-  //} else {
-    var me = this;
-    var caps = {};
-    this.start(caps, function(err) {
-      if (err) {
-        cb(err, null);
-      } else {
-        me.preLaunched = true;
-        cb(null, me);
-      }
-    });
-  //}
+  var caps = {};
+  this.start(caps, _.bind(function(err) {
+    if (err) {
+      cb(err, null);
+    } else {
+      this.preLaunched = true;
+      cb(null, this);
+    }
+  }, this));
 };
 
 Appium.prototype.start = function(desiredCaps, cb) {

@@ -18,6 +18,7 @@ var path = require('path')
   , errors = require('./errors')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
+  , IDevice = require('node-idevice')
   , NotImplementedError = errors.NotImplementedError
   , NotYetImplementedError = errors.NotYetImplementedError
   , UnknownError = errors.UnknownError;
@@ -25,6 +26,7 @@ var path = require('path')
 var IOS = function(args) {
   this.rest = args.rest;
   this.app = args.app;
+  this.ipa = args.ipa;
   this.bundleId = args.bundleId || null;
   this.udid = args.udid;
   this.verbose = args.verbose;
@@ -220,7 +222,13 @@ IOS.prototype.start = function(cb, onDie) {
 IOS.prototype.setDeviceType = function(cb) {
   if (this.udid) {
     logger.info("Not setting device type since we're connected to a device");
-    cb(null);
+    if (this.ipa) {
+	logger.info("Installing ipa found at " + this.ipa);
+	var device = new IDevice(this.udid);
+	device.install(this.ipa, cb(null));
+    } else {
+	cb(null);
+    }
   } else if (this.bundleId) {
     logger.info("Not setting device type since we're using bundle ID and " +
                 "assuming app is already installed");

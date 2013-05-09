@@ -3,8 +3,6 @@ package io.appium.android.bootstrap.selector;
 /**
  * An emumeration of possible strategies.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public enum Strategy {
   CLASS_NAME(0, "class name"), CSS_SELECTOR(1, "css selector"), ID(2, "id"), NAME(

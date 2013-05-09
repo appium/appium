@@ -3,7 +3,6 @@ package io.appium.android.bootstrap.exceptions;
 /**
  * An exception thrown when the element can not be found.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
  */
 
 @SuppressWarnings("serial")

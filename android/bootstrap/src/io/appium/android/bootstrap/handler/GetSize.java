@@ -17,8 +17,6 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 /**
  * This handler is used to get the size of elements that support it.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class GetSize extends CommandHandler {
 

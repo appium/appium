@@ -16,8 +16,6 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
  * 
  * Based on the element Id, clear that element.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public class Clear extends CommandHandler {
 

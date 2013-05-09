@@ -3,8 +3,6 @@ package io.appium.android.bootstrap;
 /**
  * An enumeration that mirrors {@link android.view.Surface}.
  * 
- * @author <a href="https://github.com/xuru">xuru</a>
- * 
  */
 public enum OrientationEnum {
   ROTATION_0(0), ROTATION_90(1), ROTATION_180(2), ROTATION_270(3);

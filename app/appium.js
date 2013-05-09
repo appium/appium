@@ -171,6 +171,16 @@ Appium.prototype.getAppExt = function() {
   return this.isIos() ? ".app" : ".apk";
 };
 
+Appium.prototype.setAndroidArgs = function(desiredCaps) {
+  var setArgFromCaps = function(arg, cap) {
+    this.args[arg] = desiredCaps[cap] || this.args[arg];
+  };
+  setArgFromCaps("androidPackage", "app-package");
+  setArgFromCaps("androidActivity", "app-activity");
+  setArgFromCaps("androidWaitActivity", "app-wait-activity");
+  setArgFromCaps("androidDeviceReadyTimeout", "device-ready-timeout");
+};
+
 Appium.prototype.configure = function(desiredCaps, cb) {
   var hasAppInCaps = (typeof desiredCaps !== "undefined" &&
                       typeof desiredCaps.app !== "undefined" &&
@@ -184,82 +194,86 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                  "but that device hasn't been configured. Run config");
     return cb(new Error("Device " + this.deviceType + " not configured yet"));
   }
-  this.args.androidPackage = desiredCaps["app-package"] || this.args.androidPackage;
-  this.args.androidActivity = desiredCaps["app-activity"] || this.args.androidActivity;
-  this.args.androidWaitActivity = desiredCaps["app-wait-activity"] || this.args.androidActivity;
-  this.args.androidDeviceReadyTimeout = desiredCaps["device-ready-timeout"] || this.args.androidDeviceReadyTimeout;
+  if (this.isAndroid()) {
+    this.setAndroidArgs();
+  }
   if (hasAppInCaps || this.args.app) {
-    var appPath = (hasAppInCaps ? desiredCaps.app : this.args.app)
-      , origin = (hasAppInCaps ? "desiredCaps" : "command line")
-      , ext = appPath.substring(appPath.length - 4);
-    if (appPath[0] === "/") {
-      if (ext === this.getAppExt()) {
-        this.args.app = appPath;
-        logger.info("Using local app from " + origin + ": " + appPath);
-        cb(null);
-      } else if (ext === ".zip") {
-        logger.info("Using local zip from " + origin + ": " + appPath);
-        try {
-          this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
-            if (zipErr) {
-              cb(zipErr);
-            } else {
-              this.args.app = newAppPath;
-              logger.info("Using locally extracted app: " + this.args.app);
-              cb(null);
-            }
-          }, this));
-        } catch(e) {
-          var err = e.toString();
-          logger.error("Failed copying and unzipping local app: " + appPath);
-          cb(err);
-        }
-      } else {
-        var dExt = this.getAppExt();
-        logger.error("Using local app, but didn't end in .zip or " + dExt);
-        cb("Your app didn't end in .zip or " + dExt);
-      }
-    } else if (appPath.substring(0, 4) === "http") {
-      var appUrl = appPath;
-      if (appUrl.substring(appUrl.length - 4) === ".zip") {
-        try {
-          this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
-            if (zipErr) {
-              cb(zipErr);
-            } else {
-              this.args.app = appPath;
-              logger.info("Using extracted app: " + this.args.app);
-              cb(null);
-            }
-          }, this));
-          logger.info("Using downloadable app from " + origin + ": " + appUrl);
-        } catch (e) {
-          var err = e.toString();
-          logger.error("Failed downloading app from appUrl " + appUrl);
-          cb(err);
-        }
-      } else {
-        cb("App URL (" + appUrl + ") didn't seem to end in .zip");
-      }
-    } else if (this.isIos() && appPath.toLowerCase() === "safari") {
-      this.configureSafari(desiredCaps, cb);
-    } else if (this.isIos() && /([a-zA-Z0-9]+\.[a-zA-Z0-9]+)+/.exec(appPath)) {
-      // we have a bundle ID
-      this.args.bundleId = appPath;
-      this.args.app = null;
-      cb(null);
-    } else if (this.isFirefoxOS()) {
-      this.args.app = desiredCaps.app;
-      cb(null);
-    } else {
-      cb("Bad app passed in through " + origin + ": " + appPath +
-         ". Apps need to be absolute local path or URL to zip file");
-    }
+    this.configureApp(desiredCaps, cb);
   } else if (this.args.safari === true) {
     this.configureSafari(desiredCaps, cb);
   } else {
     cb("No app set; either start appium with --app or pass in an 'app' " +
        "value in desired capabilities");
+  }
+};
+
+Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
+  var appPath = (hasAppInCaps ? desiredCaps.app : this.args.app)
+    , isPackageOrBundle = /([a-zA-Z0-9]+\.[a-zA-Z0-9]+)+/.exec(appPath)
+    , origin = (hasAppInCaps ? "desiredCaps" : "command line");
+
+  if (appPath[0] === "/") {
+    this.configureLocalApp(appPath, origin, cb);
+  } else if (appPath.substring(0, 4) === "http") {
+    this.configureDownloadedApp(appPath, origin, cb);
+  } else if (this.isIos() && appPath.toLowerCase() === "safari") {
+    this.configureSafari(desiredCaps, cb);
+  } else if (this.isIos() && isPackageOrBundle) {
+    // we have a bundle ID
+    this.args.bundleId = appPath;
+    this.args.app = null;
+    cb(null);
+  } else if (this.isFirefoxOS()) {
+    this.args.app = desiredCaps.app;
+    cb(null);
+  } else {
+    cb("Bad app passed in through " + origin + ": " + appPath +
+        ". Apps need to be absolute local path or URL to zip file");
+  }
+};
+
+Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
+  var ext = appPath.substring(appPath.length - 4);
+  if (ext === this.getAppExt()) {
+    this.args.app = appPath;
+    logger.info("Using local app from " + origin + ": " + appPath);
+    cb(null);
+  } else if (ext === ".zip") {
+    logger.info("Using local zip from " + origin + ": " + appPath);
+    this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
+      if (zipErr) return cb(zipErr);
+      this.args.app = newAppPath;
+      logger.info("Using locally extracted app: " + this.args.app);
+      cb(null);
+    }, this));
+  } else {
+    var dExt = this.getAppExt();
+    logger.error("Using local app, but didn't end in .zip or " + dExt);
+    cb("Your app didn't end in .zip or " + dExt);
+  }
+};
+
+Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
+  var appUrl = appPath;
+  if (appUrl.substring(appUrl.length - 4) === ".zip") {
+    try {
+      this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
+        if (zipErr) {
+          cb(zipErr);
+        } else {
+          this.args.app = appPath;
+          logger.info("Using extracted app: " + this.args.app);
+          cb(null);
+        }
+      }, this));
+      logger.info("Using downloadable app from " + origin + ": " + appUrl);
+    } catch (e) {
+      var err = e.toString();
+      logger.error("Failed downloading app from appUrl " + appUrl);
+      cb(err);
+    }
+  } else {
+    cb("App URL (" + appUrl + ") didn't seem to end in .zip");
   }
 };
 
@@ -322,10 +336,15 @@ Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
 
 Appium.prototype.unzipLocalApp = function(localZipPath, cb) {
   var me = this;
-  copyLocalZip(localZipPath, function(err, zipPath) {
-    if (err) return cb(err);
-    me.unzipApp(zipPath, cb);
-  });
+  try {
+    copyLocalZip(localZipPath, function(err, zipPath) {
+      if (err) return cb(err);
+      me.unzipApp(zipPath, cb);
+    });
+  } catch (e) {
+    logger.error("Failed copying and unzipping local app: " + localZipPath);
+    cb(e);
+  }
 };
 
 Appium.prototype.unzipApp = function(zipPath, cb) {

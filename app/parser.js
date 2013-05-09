@@ -146,7 +146,7 @@ var args = [
 
   [['--app-activity'], {
     dest: 'androidActivity'
-    , defaultValue: 'MainActivity'
+    , defaultValue: null
     , required: false
     , example: "MainActivity"
     , help: "(Android-only) Activity name for the Android activity you want " +

@@ -16,6 +16,7 @@ var routing = require('./routing')
   , ios = require('./ios')
   , android = require('./android')
   , selendroid = require('./selendroid')
+  , chrome = require('./chrome_android')
   , firefoxOs = require('./firefoxos')
   , status = require("./uiauto/lib/status")
   , helpers = require('./helpers')
@@ -126,11 +127,19 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     } else {
       return "android";
     }
+  } else if (desiredCaps.app) {
+    if (desiredCaps.app.toLowerCase() === "safari") {
+      return "ios";
+    } else if (desiredCaps.app.toLowerCase() === "chrome") {
+      return "android";
+    }
   } else if (desiredCaps.browserName) {
     if (desiredCaps.browserName[0].toLowerCase() === "i") {
       return "ios";
     } else if (desiredCaps.browserName.toLowerCase() === "safari") {
       return "ios";
+    } else if (desiredCaps.browserName.toLowerCase() === "chrome") {
+      return "android";
     } else if (desiredCaps.browserName.toLowerCase().indexOf('selendroid') !== -1) {
       return "selendroid";
     } else {
@@ -168,6 +177,11 @@ Appium.prototype.isIos = function() {
 
 Appium.prototype.isAndroid = function() {
   return this.deviceType === "android";
+};
+
+Appium.prototype.isChrome = function() {
+  return this.args.app === "chrome" ||
+         this.args.androidPackage === "com.android.chrome";
 };
 
 Appium.prototype.isSelendroid = function() {
@@ -255,6 +269,10 @@ Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
       return cb(new Error("app-activity is not set! It needs to be to start app"));
     }
     logger.info("App is an Android package, will attempt to run on device");
+    cb(null);
+  } else if (appPath.toLowerCase() === "chrome") {
+    logger.info("Looks like we want chrome on android, setting pkg/activity");
+    this.configureChromeAndroid();
     cb(null);
   } else if (this.isFirefoxOS()) {
     this.args.app = desiredCaps.app;
@@ -360,6 +378,14 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
   }, this));
 };
 
+Appium.prototype.configureChromeAndroid = function() {
+  this.deviceType = "android";
+  this.desiredCapabilities.chrome = true;
+  this.args.androidPackage = "com.android.chrome";
+  this.args.androidActivity = "com.google.android.apps.chrome.Main";
+  this.args.app = null;
+};
+
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
   var me = this;
   downloadFile(appUrl, function(zipPath) {
@@ -463,7 +489,11 @@ Appium.prototype.invoke = function() {
           , keyAlias: this.args.keyAlias
           , keyPassword: this.args.keyPassword
         };
-        this.devices[this.deviceType] = android(androidOpts);
+        if (this.isChrome()) {
+          this.devices[this.deviceType] = chrome(androidOpts);
+        } else {
+          this.devices[this.deviceType] = android(androidOpts);
+        }
       } else if (this.isSelendroid()) {
         var selendroidOpts = {
           apkPath: this.args.app

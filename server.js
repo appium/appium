@@ -53,7 +53,7 @@ var main = function(args, readyCb, doneCb) {
     rest.use(express.favicon());
     rest.use(express.static(path.join(__dirname, '/app/static')));
     rest.use(allowCrossDomain);
-    if (args.verbose) {
+    if (!args.quiet) {
       rest.use(express.logger('dev'));
     }
     if (args.log || args.webhook) {

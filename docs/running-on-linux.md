@@ -24,3 +24,8 @@ To run tests on Linux, you will need to have the Android Emulator booted and run
     node server.js
 
 See the [server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for all the command line arguments.
+
+# Notes
+* There exists a hardware accelerated emulator for android, it has it's own
+  limitations. For more information you can check out this
+  [page](https://github.com/appium/appium/blob/master/docs/android-hax-emulator.md).

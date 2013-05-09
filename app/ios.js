@@ -199,14 +199,13 @@ IOS.prototype.start = function(cb, onDie) {
   };
 
   if (this.instruments === null) {
-    var mydirname = __dirname;
     var createInstruments = function(cb) {
       logger.debug("Creating instruments");
       me.instruments = instruments(
         me.app || me.bundleId
         , me.udid
-        , path.resolve(mydirname, 'uiauto/bootstrap.js')
-        , path.resolve(mydirname, 'uiauto/Automation.tracetemplate')
+        , path.resolve(__dirname, 'uiauto/bootstrap.js')
+        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
         , sock
         , me.withoutDelay
         , onLaunch

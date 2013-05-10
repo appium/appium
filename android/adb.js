@@ -597,12 +597,13 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
     if (this.restartBootstrap === true) {
       // The bootstrap jar has crashed so it must be restarted.
       this.restartBootstrap = false;
-      me.runBootstrap(function(){
-        readyCb(function(){
+      me.runBootstrap(function() {
+        readyCb(null, function() {
           // Resend last command because the client is still waiting for the
           // response.
           me.android.push(null, true);
-        }); }, exitCb);
+        });
+      }, exitCb);
       return;
     }
 

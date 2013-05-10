@@ -123,7 +123,7 @@ WebKitRemoteDebugger.prototype.pageArrayFromJson = function(cb){
         cb(newPageArray);
     });
 
-}
+};
 
 
 //TODO: move to utility class
@@ -179,10 +179,12 @@ WebKitRemoteDebugger.prototype.navToUrl = function(url, cb) {
 // ====================================
 
 WebKitRemoteDebugger.prototype.handleMessage = function(data, method) {
- if(method!=null)    {
-     var handlerFor = method;
+    var handlerFor = null;
+
+ if(method !== null)    {
+     handlerFor = method;
  } else {
-     var handlerFor = data.method;
+     handlerFor = data.method;
  }
 
   if (!handlerFor) {

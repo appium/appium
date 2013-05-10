@@ -18,6 +18,8 @@ var path = require('path')
   , errors = require('./errors')
   , deviceCommon = require('./device')
   , status = require("./uiauto/lib/status")
+  , IDevice = require('node-idevice')
+  , async = require('async')
   , NotImplementedError = errors.NotImplementedError
   , NotYetImplementedError = errors.NotYetImplementedError
   , UnknownError = errors.UnknownError;
@@ -25,6 +27,7 @@ var path = require('path')
 var IOS = function(args) {
   this.rest = args.rest;
   this.app = args.app;
+  this.ipa = args.ipa;
   this.bundleId = args.bundleId || null;
   this.udid = args.udid;
   this.verbose = args.verbose;
@@ -82,6 +85,7 @@ IOS.prototype.cleanup = function(cb) {
       }
     });
   }
+
   rimraf(sock, function() {
     logger.info("Cleaned up instruments socket " + sock);
     cb();
@@ -195,32 +199,60 @@ IOS.prototype.start = function(cb, onDie) {
   };
 
   if (this.instruments === null) {
-    this.cleanup(_.bind(function() {
-      this.setDeviceType(_.bind(function(err) {
-        if (err) {
-          cb(err);
-        } else {
-          this.instruments = instruments(
-            this.app || this.bundleId
-            , this.udid
-            , path.resolve(__dirname, 'uiauto/bootstrap.js')
-            , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
-            , sock
-            , this.withoutDelay
-            , onLaunch
-            , onExit
-          );
-        }
-      }, this));
-    }, this));
-  }
+    var createInstruments = function(cb) {
+      logger.debug("Creating instruments");
+      me.instruments = instruments(
+        me.app || me.bundleId
+        , me.udid
+        , path.resolve(__dirname, 'uiauto/bootstrap.js')
+        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
+        , sock
+        , me.withoutDelay
+        , onLaunch
+        , onExit
+      );
+    };
 
+    async.series([
+      function (cb) { me.cleanup(cb); },
+      function (cb) { me.setDeviceType(cb); },
+      function (cb) { me.installToRealDevice(cb); },
+      function (cb) { createInstruments(cb); }
+    ], cb);
+  }
+};
+
+IOS.prototype.installToRealDevice = function (cb) {
+  if (this.udid && this.ipa && this.bundleId) {
+    logger.info("Installing ipa found at " + this.ipa);
+    this.realDevice = new IDevice(this.udid);
+
+    var d = this.realDevice
+        , me = this;
+
+    async.waterfall([
+      function (cb) { d.isInstalled(me.bundleId, cb); },
+      function (installed, cb) {
+	if (installed) {
+          logger.info("Bundle found on device, removing before reinstalling.");
+          d.remove(me.bundleId, cb);
+        } else {
+          logger.debug("Nothing found on device, going ahead and installing.");
+          cb();
+        }
+      },
+      function (cb) { d.installAndWait(me.ipa, me.bundleId, cb); }
+    ], cb);
+  } else {
+    logger.debug("No device id or app, not installing to real device.");
+    cb();
+  }
 };
 
 IOS.prototype.setDeviceType = function(cb) {
   if (this.udid) {
     logger.info("Not setting device type since we're connected to a device");
-    cb(null);
+    cb();
   } else if (this.bundleId) {
     logger.info("Not setting device type since we're using bundle ID and " +
                 "assuming app is already installed");
@@ -320,7 +352,19 @@ IOS.prototype.cleanupAppState = function(cb) {
         });
       } else {
         logger.info("No plist files found to remove");
-        cb();
+	if (me.realDevice) {
+          me.realDevice.remove(me.bundleId, function (err) {
+            if (err) {
+              logger.error("Could not remove " + me.bundleId + " from device");
+              cb(err);
+            } else {
+              logger.info("Removed " + me.bundleId);
+              cb();
+            }
+          });
+        } else {
+          cb();
+        }
       }
     }
   });

@@ -24,17 +24,17 @@ exports.enablePage = function(appIdKey, connId, senderId, pageIdKey) {
 
 //generate a json request using the webkit protocol
 exports.command = function(method, params) {
-    var jsonRequest = {
-        method: method,
-        params: {
-            objectGroup: "console",
-            includeCommandLineAPI: true,
-            doNotPauseOnExceptionsAndMuteConsole: true
-        }
-    };
-    if (params) {
-        //if there any parameters add them
-        jsonRequest.params = _.extend(jsonRequest.params, params);
+  var jsonRequest = {
+    method: method,
+    params: {
+      objectGroup: "console",
+      includeCommandLineAPI: true,
+      doNotPauseOnExceptionsAndMuteConsole: true
     }
-    return jsonRequest;
+  };
+  if (params) {
+    //if there any parameters add them
+    jsonRequest.params = _.extend(jsonRequest.params, params);
+  }
+  return jsonRequest;
 };

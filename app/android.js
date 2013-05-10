@@ -76,25 +76,23 @@ Android.prototype.start = function(cb, onDie) {
   var didLaunch = false;
 
   var onLaunch = _.bind(function(err) {
-    var skipRelaunchOn = [
-      'App never showed up'
-      , 'Could not sign one or more apks'
-      , 'Error locating the app apk'
-      , 'Could not find a connected Android device'
+    var relaunchOn = [
+      'Could not find a connected Android device'
+      , 'Device did not become ready'
     ];
-    var checkShouldSkipRelaunch = function(msg) {
-      var skip = false;
-      _.each(skipRelaunchOn, function(skipMsg) {
-        skip = skip || msg.indexOf(skipMsg) !== -1;
+    var checkShouldRelaunch = function(msg) {
+      var relaunch = false;
+      _.each(relaunchOn, function(relaunchMsg) {
+        relaunch = relaunch || msg.indexOf(relaunchMsg) !== -1;
       });
-      return skip;
+      return relaunch;
     };
 
     if (err) {
       // This message is from adb.js. Must update when adb.js changes.
       if (err.message === null ||
           typeof err.message === 'undefined' ||
-          !checkShouldSkipRelaunch(err.message.toString())) {
+          checkShouldRelaunch(err.message.toString())) {
         logger.error(err);
         logger.error("Above error isn't fatal, maybe relaunching adb will help....");
         var me = this;

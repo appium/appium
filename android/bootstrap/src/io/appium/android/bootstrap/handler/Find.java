@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 
 /**
@@ -76,9 +77,17 @@ public class Find extends CommandHandler {
     if (strategy == Strategy.DYNAMIC) {
       Logger.debug("Finding dynamic.");
       final JSONArray selectors = (JSONArray) params.get("selector");
-      final boolean all = selectors.get(0).toString().toLowerCase()
-          .contentEquals("all");
+      final String option = selectors.get(0).toString().toLowerCase();
+      final boolean all = option.contentEquals("all");
       Logger.debug("Returning all? " + all);
+      UiScrollable scrollable = null;
+      final boolean scroll = option.contentEquals("scroll");
+      if (scroll) {
+        scrollable = new UiScrollable(new UiSelector().className(
+            android.widget.ListView.class).scrollable(true))
+            .setAsVerticalList();
+      }
+      Logger.debug("Scrolling? " + scroll);
       // Return the first element of the first selector that matches.
       Logger.debug(selectors.toString());
       try {
@@ -86,7 +95,8 @@ public class Find extends CommandHandler {
         JSONArray pair = null;
         final List<Object> results = new ArrayList<Object>();
         // Start at 1 to skip over all.
-        for (int selIndex = all ? 1 : 0; selIndex < selectors.length(); selIndex++) {
+        for (int selIndex = all || scroll ? 1 : 0; selIndex < selectors
+            .length(); selIndex++) {
           Logger.debug("Parsing selector " + selIndex);
           pair = (JSONArray) selectors.get(selIndex);
           Logger.debug("Pair is: " + pair);
@@ -124,6 +134,14 @@ public class Find extends CommandHandler {
             if (all) {
               results.add(fetchElements(sel, contextId));
               continue;
+            } else if (scroll) {
+              Logger.debug("Scrolling into view...");
+              final boolean result = scrollable.scrollIntoView(sel);
+              if (!result) {
+                continue; // try scrolling next selector
+              }
+              // return the element we've scrolled to
+              return getSuccessResult(fetchElement(sel, contextId));
             } else {
               return getSuccessResult(fetchElement(sel, contextId));
             }

@@ -38,3 +38,31 @@ Here are the steps required to talk to a web view in your Appium test:
 
 * For the full context, see [this node example](https://github.com/appium/appium/blob/master/sample-code/examples/node/hybrid.js)
 * *we're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
+
+## Wd.java Code example
+
+```java
+  //setup the web driver and launch the webview app.
+  DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+  desiredCapabilities.setCapability("device", "iPhone Simulator");
+  desiredCapabilities.setCapability("app", "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip");  
+  URL url = new URL("http://127.0.0.1:4723/wd/hub");
+  RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
+  
+  //switch to the latest web view
+  for(String winHandle : remoteWebDriver.getWindowHandles()){
+    remoteWebDriver.switchTo().window(winHandle);
+  }
+  
+  //Interact with the elements on the guinea-pig page using id.
+  WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
+  Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
+  remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
+  
+  //leave the webview to go back to native app.
+  remoteWebDriver.executeScript("mobile: leaveWebView");      
+  
+  //close the app.
+  remoteWebDriver.quit();
+```
+

@@ -393,9 +393,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
           this.remote = wkrd.init(exitCb);
           me.remote.pageArrayFromJson(function(pageArray){
               me.curWindowHandle = pageArray[0].id;
-              me.remote.connect(me.curWindowHandle, function(){
-                  cb(pageArray);
-              });
+              me.remote.connect(me.curWindowHandle);
           });
       } else {
         this.remote = new rd.init(exitCb);
@@ -793,7 +791,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
       }, this));
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
+    var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
     this.proxy(command, cb);
   }
 };

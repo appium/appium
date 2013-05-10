@@ -157,6 +157,23 @@ WebKitRemoteDebugger.prototype.execute = function(command, cb) {
   }
 };
 
+
+WebKitRemoteDebugger.prototype.navToUrl = function(url, cb) {
+    logger.info("Navigating to new URL: " + url);
+    var me = this;
+    var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
+        this.senderId, this.pageIdKey);
+    this.send(navToUrl, noop);
+
+    //TODO: There seems to be an issue which is slowing the navigation down.
+    this.waitForFrameNavigated(function() {
+        me.checkPageIsReady(function(err, isReady) {
+            if (isReady) return cb();
+            me.waitForDom(cb);
+        });
+    });
+};
+
 // ====================================
 // HANDLERS
 // ====================================

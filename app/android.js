@@ -95,7 +95,8 @@ Android.prototype.start = function(cb, onDie) {
       if (err.message === null ||
           typeof err.message === 'undefined' ||
           !checkShouldSkipRelaunch(err.message.toString())) {
-        logger.error("Relaunching adb....");
+        logger.error(err);
+        logger.error("Above error isn't fatal, maybe relaunching adb will help....");
         var me = this;
         this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
       } else {

@@ -389,7 +389,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     this.remote.selectApp(this.bundleId, onDone);
   } else {
 
-      if(this.udid!=null){
+      if(this.udid !== null){
           this.remote = wkrd.init(exitCb);
           me.remote.pageArrayFromJson(function(pageArray){
               me.curWindowHandle = pageArray[0].id;
@@ -1626,7 +1626,7 @@ IOS.prototype.setWindow = function(name, cb) {
         var next = function() {
             me.processingRemoteCmd = true;
 
-            if(me.udid == null) {
+            if(me.udid === null) {
                 me.remote.selectPage(pageIdKey, function() {
                     me.curWindowHandle = pageIdKey.toString();
                     cb(null, {

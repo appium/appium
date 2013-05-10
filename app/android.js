@@ -75,7 +75,10 @@ Android.prototype.start = function(cb, onDie) {
   }
   var didLaunch = false;
 
-  var onLaunch = _.bind(function(err) {
+  var onLaunch = _.bind(function(err, launchCb) {
+    if (typeof launchCb === "undefined") {
+      launchCb = cb;
+    }
     var relaunchOn = [
       'Could not find a connected Android device'
       , 'Device did not become ready'
@@ -96,19 +99,19 @@ Android.prototype.start = function(cb, onDie) {
         logger.error(err);
         logger.error("Above error isn't fatal, maybe relaunching adb will help....");
         var me = this;
-        this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); cb(null); });
+        this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); launchCb(null); });
       } else {
         // error is already printed by ADB.prototype.waitForActivity
         this.adb = null;
         this.onStop = null;
-        cb(err);
+        launchCb(err);
       }
     } else {
       logger.info("ADB launched! Ready for commands (will time out in " +
                   (this.commandTimeoutMs / 1000) + "secs)");
       this.resetTimeout();
       didLaunch = true;
-      cb(null);
+      launchCb(null);
     }
   }, this);
 

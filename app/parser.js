@@ -11,6 +11,13 @@ var args = [
     , example: "/abs/path/to/my.app"
   }],
 
+  [['--ipa'] , {
+    required: false
+    , defaultValue: null
+    , help: '(IOS-only) abs path to compiled .ipa file'
+    , example: "/abs/path/to/my.ipa"
+  }],
+
   [['-V', '--verbose'], {
     required: false
     , defaultValue: true

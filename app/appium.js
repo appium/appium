@@ -391,6 +391,7 @@ Appium.prototype.invoke = function() {
         var iosOpts = {
           rest: this.rest
           , app: this.args.app
+          , ipa: this.args.ipa
           , bundleId: this.args.bundleId
           , udid: this.args.udid
           , verbose: !this.args.quiet

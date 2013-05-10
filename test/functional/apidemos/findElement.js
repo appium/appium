@@ -10,6 +10,17 @@ var path = require('path')
   , should = require('should');
 
 describeWd('mobile find', function(h) {
+  it('should scroll to an element by text or content desc', function(done) {
+    h.driver.execute("mobile: find", [["scroll",[[3, "views"]],[[7, "views"]]]], function(err, el) {
+      should.not.exist(err);
+      should.exist(el);
+      el.text(function(err, text) {
+        should.not.exist(err);
+        text.should.eql("Views");
+        done();
+      });
+    });
+  });
   it('should find a single element by content-description', function(done) {
     h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
       should.not.exist(err);

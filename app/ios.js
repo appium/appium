@@ -227,8 +227,8 @@ IOS.prototype.installToRealDevice = function (cb) {
     logger.info("Installing ipa found at " + this.ipa);
     this.realDevice = new IDevice(this.udid);
 
-    var d = this.realDevice,
-        me = this;
+    var d = this.realDevice
+        , me = this;
 
     async.waterfall([
       function (cb) { d.isInstalled(me.bundleId, cb); },

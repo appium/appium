@@ -183,10 +183,6 @@ WebKitRemoteDebugger.prototype.setHandlers = function() {
       logger.info("Device is telling us to reset profiles. Should probably " +
             "do some kind of callback here");
       //me.onPageChange();
-    },
-    'Page.navigate' : function(data) {
-      me.pageLoad();
-      logger.info("Page.Navigate");
     }
   };
 };

@@ -349,7 +349,10 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
           this.remote = wkrd.init(exitCb);
           me.remote.pageArrayFromJson(function(pageArray){
               me.curWindowHandle = pageArray[0].id;
-              me.remote.connect(me.curWindowHandle);
+              me.remote.connect(me.curWindowHandle, function(){
+                cb(pageArray);
+              });
+
           });
       } else {
         this.remote = new rd.init(exitCb);

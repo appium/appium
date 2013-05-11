@@ -4,7 +4,6 @@
 var net = require('net')
   , appLogger = require('../../../logger.js').get('appium')
   , _ = require('underscore')
-  , messages = require('./webkit-remote-messages.js')
   , atoms = require('./webdriver-atoms')
   , status = require("../../uiauto/lib/status")
   , uuid = require('node-uuid')
@@ -32,7 +31,7 @@ var logger = {
 // CONFIG
 // ====================================
 
-var WebKitRemoteDebugger = function(onDisconnect) {
+var WebKitRemoteDebugger = function(debuggerType, onDisconnect) {
   this.socket = null;
   this.connId = uuid.v4();
   this.senderId = uuid.v4();
@@ -56,6 +55,7 @@ var WebKitRemoteDebugger = function(onDisconnect) {
   this.readPos = 0;
   this.host = 'localhost';
   this.port = 27753;
+  this.debuggerType = debuggerType;
 };
 
 //extend the remote debugger
@@ -125,39 +125,6 @@ WebKitRemoteDebugger.prototype.getJSONFromUrl = function(host, port, path, callb
   });
 };
 
-WebKitRemoteDebugger.prototype.execute = function(command, cb) {
-  var me = this;
-  if (this.pageLoading) {
-    logger.info("Trying to execute but page is not loaded. Waiting for dom");
-    this.waitForDom(function() {
-      me.execute(command, cb);
-    });
-  } else {
-    //assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
-    //assert.ok(this.pageIdKey);
-    var sendJSCommand = messages.sendJSCommand(command, this.appIdKey,
-      this.connId, this.senderId, this.pageIdKey);
-    this.send(sendJSCommand, cb);
-  }
-};
-
-WebKitRemoteDebugger.prototype.navToUrl = function(url, cb) {
-  //assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
-  //assert.ok(this.pageIdKey);
-  logger.info("Navigating to new URL: " + url);
-  var me = this;
-  var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
-    this.senderId, this.pageIdKey);
-  this.send(navToUrl, noop);
- //TODO: There seems to be an issue which is slowing the navigation down.
-  this.waitForFrameNavigated(function() {
-    me.checkPageIsReady(function(err, isReady) {
-      if (isReady) return cb();
-        me.waitForDom(cb);
-    });
-  });
-};
-
 // ====================================
 // HANDLERS
 // ====================================
@@ -195,6 +162,10 @@ WebKitRemoteDebugger.prototype.setHandlers = function() {
       logger.info("Device is telling us to reset profiles. Should probably " +
             "do some kind of callback here");
       //me.onPageChange();
+    },
+    'Page.navigate' : function(data) {
+      me.pageLoad();
+      logger.info("Page.Navigate");
     }
   };
 };
@@ -229,5 +200,5 @@ WebKitRemoteDebugger.prototype.receive = function(data){
 };
 
 exports.init = function(onDisconnect) {
-  return new WebKitRemoteDebugger(onDisconnect);
+  return new WebKitRemoteDebugger(1, onDisconnect);
 };

@@ -67,6 +67,7 @@ WebKitRemoteDebugger.prototype = RemoteDebugger.init();
 
 WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
   var me = this;
+  this.frameNavigatedCbs = [];
   this.pageChangeCb = pageChangeCb;
   var url = 'ws://' + this.host + ':' + this.port + '/devtools/page/' + pageId;
   this.pageIdKey = pageId;

@@ -11,12 +11,13 @@ var _ = require("underscore")
   , difflib = require('difflib')
   , prompt = require('prompt')
   , exec = require('child_process').exec
-  , spawn = require('child_process').spawn
+  , spawn = require('win-spawn')
   , parser = require('./app/parser')
   , namp = require('namp')
   , parseXmlString = require('xml2js').parseString
   , appiumVer = require('./package.json').version
-  , fs = require('fs');
+  , fs = require('fs')
+  , os = require('os').type();
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   var app;
@@ -333,18 +334,22 @@ module.exports.setupAndroidApp = function(grunt, appName, cb) {
 };
 
 var buildAndroidProj = function(grunt, projPath, target, cb) {
-  var cmd_name = 'ant';
-  if (!fs.existsSync(projPath + '/build.xml') &&
-      fs.existsSync(projPath + '/pom.xml')) {
-      cmd_name = 'mvn';
+  var cmdName = 'ant';
+  if (!fs.existsSync(path.resolve(projPath, 'build.xml')) &&
+      fs.existsSync(path.resolve(projPath, 'pom.xml'))) {
+      cmdName = 'mvn';
   }
-    exec('which ' + cmd_name, function(err, stdout) {
+  var whichCmd = 'which ';
+    if (os === 'Windows_NT') {
+        whichCmd = 'where ';
+    }
+    exec(whichCmd + cmdName, function(err, stdout) {
     if (err) {
-      grunt.fatal("Error finding " + cmd_name + " binary, is it on your path?");
+      grunt.fatal("Error finding " + cmdName + " binary, is it on your path?");
     } else {
       if (stdout) {
-        var cmd = stdout.trim();
-        grunt.log.write("Using " + cmd_name + " found at " + cmd);
+        var cmd = stdout.split('\r\n')[0].trim();
+        grunt.log.write("Using " + cmdName + " found at " + cmd);
         var proc = spawn(cmd, [target], {cwd: projPath});
         proc.stdout.setEncoding('utf8');
         proc.stderr.setEncoding('utf8');
@@ -358,7 +363,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
           cb(code);
         });
       } else {
-        grunt.fatal("Could not find " + cmd_name + " installed; please make sure it's on PATH");
+        grunt.fatal("Could not find " + cmdName + " installed; please make sure it's on PATH");
       }
     }
   });

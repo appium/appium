@@ -310,6 +310,28 @@ describeWd('complex tap on element', function(h) {
   });
 });
 
+describeWd('scroll to element', function(h) {
+  it('should bring the element into view', function(done) {
+    h.driver.elementsByTagName('tableCell', function(err, els) {
+      should.not.exist(err);
+      var element = els[10];
+      var scrollOpts = {
+        element: element.value
+      };
+      element.getLocation(function(err, location) {
+        h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+          should.not.exist(err);
+          element.getLocation(function(err, location2) {
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
+
 describeWd('mobile shake', function(h) {
   it('should not error', function(done) {
     h.driver.execute('mobile: shake', function(err) {

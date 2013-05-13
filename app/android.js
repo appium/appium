@@ -693,6 +693,14 @@ Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId,
   }
 };
 
+Android.prototype.scrollTo = function(elementId, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.shake = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.hideKeyboard = function(keyName, cb) {
   cb(new NotYetImplementedError(), null);
 };

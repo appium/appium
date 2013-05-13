@@ -17,6 +17,8 @@ While the Selenium WebDriver spec has support for certain kinds of mobile intera
   * how long the swipe/drag takes in seconds
   * where to start the swipe on screen or element
   * where to end the swipe on screen or element
+* **scroll to** (element)
+* **shake**
 
 ## JSON Wire Protocol server extensions
 Here are the endpoints with which we have implemented these additions to the spec.
@@ -65,6 +67,8 @@ In the case of these new mobile methods, `script` must be one of:
   * `mobile: tap`
   * `mobile: flick`
   * `mobile: swipe`
+  * `mobile: scrollTo`
+  * `mobile: shake`
 (The `mobile:` prefix allows us to route these requests to the appropriate endpoint).
 
 And `args` will be an array with one element: a Javascript object defining the parameters for the corresponding function. So, let's say I want to call `tap` on a certain screen position. I can do so by calling `driver.execute` with these JSON parameters:

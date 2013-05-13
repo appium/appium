@@ -355,6 +355,11 @@ exports.mobileSwipe = function(req, res) {
   }
 };
 
+exports.mobileScrollTo = function(req, res) {
+  var elementId = req.body.element;
+  req.device.scrollTo(elementId, getResponseHandler(req, res));
+};
+
 exports.mobileShake = function(req, res) {
     req.device.shake(getResponseHandler(req, res));
 };
@@ -780,6 +785,7 @@ var mobileCmdMap = {
   'tap': exports.mobileTap
   , 'flick': exports.mobileFlick
   , 'swipe': exports.mobileSwipe
+  , 'scrollTo': exports.mobileScrollTo
   , 'shake': exports.mobileShake
   , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout

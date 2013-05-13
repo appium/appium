@@ -55,7 +55,8 @@
     "prompt": "~0.2.9",
     "binary-cookies": "~0.1.1",
     "namp": "~0.2.25",
-    "node-idevice": "~0.1.2"
+    "node-idevice": "~0.1.2",
+    "win-spawn" : "~1.1.1"
   },
   "scripts": {
     "test": "grunt travis"

@@ -56,7 +56,8 @@
     "binary-cookies": "~0.1.1",
     "namp": "~0.2.25",
     "node-idevice": "~0.1.2",
-    "win-spawn" : "~1.1.1"
+    "win-spawn" : "~1.1.1",
+    "adm-zip" : "~0.4.3"
   },
   "scripts": {
     "test": "grunt travis"

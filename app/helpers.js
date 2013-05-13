@@ -9,7 +9,9 @@ var logger = require('../logger').get('appium')
   , rimraf = require('rimraf')
   , exec = require('child_process').exec
   , util = require('util')
-  , temp = require('temp');
+  , temp = require('temp')
+  , os = require('os').type()
+  , AdmZip = require('adm-zip');
 
 exports.downloadFile = function(fileUrl, cb) {
   // We will be downloading the files to a directory, so make sure it's there
@@ -40,20 +42,27 @@ exports.copyLocalZip = function(localZipPath, cb) {
 
 exports.unzipFile = function(zipPath, cb) {
   logger.info("Unzipping " + zipPath);
-  var execOpts = {cwd: path.dirname(zipPath)};
   exports.testZipArchive(zipPath, function(err, valid) {
     if (valid) {
-      exec('unzip -o ' + zipPath, execOpts, function(err, stderr, stdout) {
-        if (!err) {
-          logger.info("Unzip successful");
-          cb(null, stderr);
-        } else {
-          logger.error("Unzip threw error " + err);
-          logger.error("Stderr: " + stderr);
-          logger.error("Stdout: " + stdout);
-          cb("Archive could not be unzipped, check appium logs.", null);
-        }
-      });
+      if (exports.isWindows()) {
+        var zip = new AdmZip(zipPath);
+        zip.extractAllTo(path.dirname(zipPath), true);
+        logger.info("Unzip successful");
+        cb(null,null);
+      } else {
+        var execOpts = {cwd: path.dirname(zipPath)};
+        exec('unzip -o ' + zipPath, execOpts, function(err, stderr, stdout) {
+          if (!err) {
+            logger.info("Unzip successful");
+            cb(null, stderr);
+          } else {
+            logger.error("Unzip threw error " + err);
+            logger.error("Stderr: " + stderr);
+            logger.error("Stdout: " + stdout);
+            cb("Archive could not be unzipped, check appium logs.", null);
+          }
+        });
+      }
     } else {
       cb(err, null);
     }
@@ -62,26 +71,35 @@ exports.unzipFile = function(zipPath, cb) {
 
 exports.testZipArchive = function(zipPath, cb) {
   logger.info("Testing zip archive: " + zipPath);
-  var execOpts = {cwd: path.dirname(zipPath)};
-  exec("unzip -t " + zipPath, execOpts, function(err, stderr, stdout) {
-    if (!err) {
-      if(/No errors detected/.exec(stderr)) {
-        logger.info("Zip archive tested clean");
-        cb(null, true);
+  if (exports.isWindows()) {
+    if (fs.existsSync(zipPath)) {
+      logger.info("Zip archive tested clean");
+      cb(null, true);
+    } else {
+      cb("Zip archive was not found.", false);
+    }
+  } else {
+    var execOpts = {cwd: path.dirname(zipPath)};
+    exec("unzip -t " + zipPath, execOpts, function(err, stderr, stdout) {
+      if (!err) {
+        if(/No errors detected/.exec(stderr)) {
+          logger.info("Zip archive tested clean");
+          cb(null, true);
+        } else {
+          logger.error("Zip file " + zipPath + " was not valid");
+          logger.error("Stderr: " + stderr);
+          logger.error("Stdout: " + stdout);
+          cb("Zip archive did not test successfully, check appium server logs " +
+             "for output", false);
+        }
       } else {
-        logger.error("Zip file " + zipPath + " was not valid");
+        logger.error("Test zip archive threw error " + err);
         logger.error("Stderr: " + stderr);
         logger.error("Stdout: " + stdout);
-        cb("Zip archive did not test successfully, check appium server logs " +
-           "for output", false);
+        cb("Error testing zip archive, are you sure this is a zip file?", null);
       }
-    } else {
-      logger.error("Test zip archive threw error " + err);
-      logger.error("Stderr: " + stderr);
-      logger.error("Stdout: " + stdout);
-      cb("Error testing zip archive, are you sure this is a zip file?", null);
-    }
-  });
+    });
+  }
 };
 
 exports.unzipApp = function(zipPath, appExt, cb) {
@@ -148,7 +166,7 @@ exports.getBuiltInAppDir = function(version, cb) {
 };
 
 exports.copyBuiltInApp = function(appPath, appName, cb) {
-  var newAppDir = path.resolve('/tmp/Appium-' + appName + '.app');
+  var newAppDir = path.resolve(exports.getTempPath() + 'Appium-' + appName + '.app');
   ncp(appPath, newAppDir, function(err) {
     if (err) {
       cb(err);
@@ -290,4 +308,12 @@ exports.rotateImage = function(imgPath, deg, cb) {
     console.log(stdout);
     cb(null);
   });
+};
+
+exports.isWindows = function() {
+  return os === 'Windows_NT';
+};
+
+exports.getTempPath = function () {
+  return exports.isWindows() ? "C:\\Windows\\Temp" : "/tmp";
 };

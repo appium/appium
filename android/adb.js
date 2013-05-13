@@ -1,6 +1,6 @@
 "use strict";
 
-var spawn = require('child_process').spawn
+var spawn = require('win-spawn')
   , exec = require('child_process').exec
   , path = require('path')
   , fs = require('fs')

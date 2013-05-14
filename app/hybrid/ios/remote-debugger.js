@@ -65,7 +65,7 @@ var RemoteDebugger = function(debuggerType, onDisconnect) {
 RemoteDebugger.prototype.debuggerTypeEnum = {
   "webkit":1,
   "webinspector":2
-}
+};
 
 RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
   var me = this;

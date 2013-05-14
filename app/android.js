@@ -47,6 +47,7 @@ Android.prototype.initialize = function(opts) {
   this.swipeStepsPerSec = 200;
   this.asyncWaitMs = 0;
   this.remote = null;
+  this.webElementIds = [];
   this.curWindowHandle = null;
   this.capabilities = {
     platform: 'LINUX'
@@ -127,6 +128,7 @@ Android.prototype.start = function(cb, onDie) {
                   (this.commandTimeoutMs / 1000) + "secs)");
       this.resetTimeout();
       didLaunch = true;
+      console.log(launchCb);
       launchCb(null);
     }
   }, this);
@@ -154,10 +156,14 @@ Android.prototype.start = function(cb, onDie) {
   if (this.adb === null) {
     // Pass Android opts and Android ref to adb.
     this.adb = adb(this.opts, this);
-    this.adb.startAppium(onLaunch, onExit);
+    this.startAppium(onLaunch, onExit);
   } else {
     logger.error("Tried to start ADB when we already have one running!");
   }
+};
+
+Android.prototype.startAppium = function(onLaunch, onExit) {
+  this.adb.startAppium(onLaunch, onExit);
 };
 
 Android.prototype.timeoutWaitingForCommand = function() {
@@ -184,13 +190,17 @@ Android.prototype.stop = function(cb) {
     }
     this.shuttingDown = true;
     this.adb.goToHome(_.bind(function() {
-      this.adb.sendShutdownCommand(_.bind(function() {
-        logger.info("Sent shutdown command, waiting for ADB to stop...");
-      }, this));
+      this.shutdown();
     }, this));
     this.queue = [];
     this.progress = 0;
   }
+};
+
+Android.prototype.shutdown = function() {
+  this.adb.sendShutdownCommand(_.bind(function() {
+    logger.info("Sent shutdown command, waiting for ADB to stop...");
+  }, this));
 };
 
 Android.prototype.resetTimeout = function() {
@@ -283,6 +293,7 @@ Android.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
 
 Android.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
 Android.prototype.parseElementResponse = deviceCommon.parseElementResponse;
+Android.prototype.useAtomsElement = deviceCommon.useAtomsElement;
 
 Android.prototype.setCommandTimeout = function(secs, cb) {
   logger.info("Setting command timeout for android to " + secs + " secs");
@@ -328,7 +339,7 @@ Android.prototype.findElements = function(strategy, selector, cb) {
   }
 };
 
-Android.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
+Android.prototype.findWebElementOrElements = function(strategy, selector, many, ctx, cb) {
   var ext = many ? 's' : '';
   var atomsElement = this.getAtomsElement(ctx);
   var me = this;
@@ -339,6 +350,8 @@ Android.prototype.findWebElementOrElements = function(strategy, selector, ctx, m
   };
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
+
+Android.prototype.getAtomsElement = deviceCommon.getAtomsElement;
 
 Android.prototype.findUIElementOrElements = function(strategy, selector, many, context, cb) {
   var params = {
@@ -382,7 +395,7 @@ Android.prototype.handleFindCb = function(err, res, many, findCb) {
   if (err) {
     findCb(false, err, res);
   } else {
-    if (!many && res.status === 0) {
+    if (!many && res.status === 0 && res.value !== null) {
       findCb(true, err, res);
     } else if (many && typeof res.value !== 'undefined' && res.value.length > 0) {
       findCb(true, err, res);
@@ -413,7 +426,13 @@ Android.prototype.setValue = function(elementId, value, cb) {
 };
 
 Android.prototype.click = function(elementId, cb) {
-  this.proxy(["element:click", {elementId: elementId}], cb);
+  if (this.inWebView()) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.executeAtom('tap', [atomsElement], cb);
+    }, this));
+  } else {
+    this.proxy(["element:click", {elementId: elementId}], cb);
+  }
 };
 
 Android.prototype.touchLongClick = function(elementId, cb) {
@@ -843,8 +862,18 @@ Android.prototype.clearWebView = function(cb) {
 };
 
 Android.prototype.execute = function(script, args, cb) {
-  cb(new NotYetImplementedError(), null);
+  if (this.inWebView()) {
+    var me = this;
+    this.convertElementForAtoms(args, function(err, res) {
+      if (err) return cb(null, res);
+      me.executeAtom('execute_script', [script, res], cb);
+    });
+  } else {
+    cb(new NotYetImplementedError(), null);
+  }
 };
+
+Android.prototype.convertElementForAtoms = deviceCommon.convertElementForAtoms;
 
 Android.prototype.title = function(cb) {
   cb(new NotYetImplementedError(), null);

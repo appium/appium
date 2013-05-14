@@ -171,7 +171,55 @@ exports.parseExecuteResponse = function(response, cb) {
 
 exports.parseElementResponse = function(element) {
   var objId = element.ELEMENT
-  , clientId = (5000 + this.webElementIds.length).toString();
+    , clientId = (5000 + this.webElementIds.length).toString();
   this.webElementIds.push(objId);
   return {ELEMENT: clientId};
 };
+
+exports.getAtomsElement = function(wdId) {
+  var atomsId;
+  try {
+    atomsId = this.webElementIds[parseInt(wdId, 10) - 5000];
+  } catch(e) {
+    return null;
+  }
+  if (typeof atomsId === "undefined") {
+    return null;
+  }
+  return {'ELEMENT': atomsId};
+};
+
+exports.useAtomsElement = function(elementId, failCb, cb) {
+  if (parseInt(elementId, 10) < 5000) {
+    logger.info("Element with id " + elementId + " passed in for use with " +
+                "atoms, but it's out of our internal scope. Adding 5000");
+    elementId = (parseInt(elementId, 10) + 5000).toString();
+  }
+  var atomsElement = this.getAtomsElement(elementId);
+  if (atomsElement === null) {
+    failCb(null, {
+      status: status.codes.UnknownError.code
+      , value: "Error converting element ID for using in WD atoms: " + elementId
+    });
+  } else {
+    cb(atomsElement);
+  }
+};
+
+exports.convertElementForAtoms = function(args, cb) {
+  for (var i=0; i < args.length; i++) {
+    if (args[i] !== null && typeof args[i].ELEMENT !== "undefined") {
+      var atomsElement = this.getAtomsElement(args[i].ELEMENT);
+      if (atomsElement === null) {
+        cb(true, {
+          status: status.codes.UnknownError.code
+          , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
+        });
+      return;
+      }
+      args[i] = atomsElement;
+    }
+  }
+  cb(null, args);
+};
+

@@ -603,6 +603,21 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   });
 };
 
+ADB.prototype.startChrome = function(onReady) {
+  logger.info("Starting Chrome");
+  var me = this;
+  logger.debug("Using fast reset? " + this.fastReset);
+
+  async.series([
+    function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.installApp(cb); },
+    function(cb) { me.startApp(cb); }
+  ], function(err) {
+    if (err) return onReady(err);
+    onReady(null);
+  });
+};
+
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
   logger.info("Starting selendroid");
   var me = this

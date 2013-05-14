@@ -246,8 +246,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
   };
 
   var moveManifest = function(cb) {
-    if (isWindows)
-    {
+    if (isWindows) {
       try
       {
         var existingAPKzip = new AdmZip(dstApk);

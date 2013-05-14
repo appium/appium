@@ -12,7 +12,9 @@ var spawn = require('win-spawn')
   , async = require('async')
   , ncp = require('ncp')
   , mkdirp = require('mkdirp')
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , helpers = require('../app/helpers')
+  , isWindows = helpers.isWindows();
 
 var noop = function() {};
 
@@ -48,7 +50,7 @@ var ADB = function(opts, android) {
   this.debugMode = true;
   this.fastReset = opts.fastReset;
   this.cleanApp = opts.cleanApp || this.fastReset;
-  this.cleanAPK = '/tmp/' + this.appPackage + '.clean.apk';
+  this.cleanAPK = path.resolve(helpers.getTempPath(), this.appPackage + '.clean.apk');
   // This is set to true when the bootstrap jar crashes.
   this.restartBootstrap = false;
   // The android ref is used to resend the command that
@@ -61,10 +63,20 @@ var ADB = function(opts, android) {
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
   logger.info("Checking whether " + binary + " is present");
   var binaryLoc = null;
+  var binaryName = binary;
+  if (isWindows) {
+    if (binaryName === "android") {
+      binaryName += ".bat";
+    } else {
+      if (binaryName.indexOf(".exe", binaryName.length - 4) == -1) {
+        binaryName += ".exe";
+      }
+    }
+  }
   if (this.sdkRoot) {
-    binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binary);
+    binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binaryName);
     if (!fs.existsSync(binaryLoc)) {
-      binaryLoc = path.resolve(this.sdkRoot, "tools", binary);
+      binaryLoc = path.resolve(this.sdkRoot, "tools", binaryName);
       if (!fs.existsSync(binaryLoc)) {
         cb(new Error("Could not find " + binary + " in tools or platform-tools; " +
                      "do you have android SDK installed?"),
@@ -178,14 +190,14 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
 ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackage, cb) {
   logger.info("Compiling manifest " + manifest);
   var androidHome = process.env.ANDROID_HOME
-    , platforms = androidHome + '/platforms/'
+    , platforms = path.resolve(androidHome , 'platforms')
     , platform = 'android-17';
 
   // android-17 may be called android-4.2
-  if (!fs.existsSync(platforms + platform)) {
+  if (!fs.existsSync(path.resolve(platforms, platform))) {
     platform = 'android-4.2';
 
-    if (!fs.existsSync(platforms + platform)) {
+    if (!fs.existsSync(path.resolve(platforms, platform))) {
       return cb(new Error("Platform doesn't exist " + platform));
     }
   }
@@ -194,7 +206,7 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
   var compileManifest = [this.binaries.aapt + ' package -M "', manifest + '"',
                          ' --rename-manifest-package "',  manifestPackage + '"',
                          ' --rename-instrumentation-target-package "', targetPackage + '"',
-                         ' -I "', platforms + platform + '/android.jar" -F "',
+                         ' -I "', path.resolve(platforms, platform, 'android.jar') +'" -F "',
                          manifest, '.apk" -f'].join('');
   logger.debug(compileManifest);
   exec(compileManifest, {}, function(err, stdout, stderr) {

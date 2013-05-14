@@ -160,48 +160,51 @@ exports.copyBuiltInApp = function(appPath, appName, cb) {
 };
 
 exports.cleanSafari = function(safariVer, cb) {
-  var baseSupportDir = "Library/Application Support/iPhone Simulator/" +
+  var baseDir = "Library/Application Support/iPhone Simulator/" +
                        safariVer + "/Library/";
   exports.getUser(function(err, user) {
     if (err) {
       cb(err);
     } else {
-      baseSupportDir = path.resolve("/Users", user, baseSupportDir);
+      var baseSupportDir = path.resolve("/Users", user, baseDir);
       fs.stat(baseSupportDir, function(err) {
         if (err) {
           logger.info(err.message);
-          cb(new Error("Could not find support directory for mobile safari, does " +
-                       "it exist at " + baseSupportDir + "?"));
-        } else {
-          var toDeletes = [
-            'Caches/Snapshots/com.apple.mobilesafari'
-            , 'Caches/com.apple.mobilesafari/Cache.db*'
-            , 'Caches/com.apple.WebAppCache/*.db'
-            , 'Safari/*.plist'
-            , 'WebKit/LocalStorage/*.*'
-            , 'Library/WebKit/GeolocationSites.plist'
-            , 'Cookies/*.binarycookies'
-          ];
-          var deletes = 0;
-          var errToRet = null;
-          var finish = function(err) {
-            deletes++;
-            if (err) {
-              errToRet = err;
-            }
-            if (deletes === toDeletes.length) {
-              cb(errToRet);
-            }
-          };
-          _.each(toDeletes, function(del) {
-            var toDelete = path.resolve(baseSupportDir, del);
-            toDelete = toDelete.replace(/ /g, "\\ ");
-            logger.info("Deleting " + toDelete);
-            var cmd = "rm -rf " + toDelete;
-            exec(cmd, function(err) {
-              finish(err);
+          var p = process.env.HOME + '/' + baseDir;
+          if(!fs.existsSync(p)) {
+            cb(new Error("Could not find support directory for mobile safari, does " +
+                         "it exist at " + baseDir + " or " + p + "?"));
+          } else {
+            var toDeletes = [
+              'Caches/Snapshots/com.apple.mobilesafari'
+              , 'Caches/com.apple.mobilesafari/Cache.db*'
+              , 'Caches/com.apple.WebAppCache/*.db'
+              , 'Safari/*.plist'
+              , 'WebKit/LocalStorage/*.*'
+              , 'Library/WebKit/GeolocationSites.plist'
+              , 'Cookies/*.binarycookies'
+            ];
+            var deletes = 0;
+            var errToRet = null;
+            var finish = function(err) {
+              deletes++;
+              if (err) {
+                errToRet = err;
+              }
+              if (deletes === toDeletes.length) {
+                cb(errToRet);
+              }
+            };
+            _.each(toDeletes, function(del) {
+              var toDelete = path.resolve(baseSupportDir, del);
+              toDelete = toDelete.replace(/ /g, "\\ ");
+              logger.info("Deleting " + toDelete);
+              var cmd = "rm -rf " + toDelete;
+              exec(cmd, function(err) {
+                finish(err);
+              });
             });
-          });
+          }
         }
       });
     }

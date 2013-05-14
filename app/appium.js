@@ -17,7 +17,9 @@ var routing = require('./routing')
   , android = require('./android')
   , selendroid = require('./selendroid')
   , firefoxOs = require('./firefoxos')
-  , status = require("./uiauto/lib/status");
+  , status = require("./uiauto/lib/status")
+  , helpers = require('./helpers')
+  , isWindows = helpers.isWindows();
 
 var Appium = function(args) {
   this.args = args;
@@ -217,7 +219,7 @@ Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
     , isPackageOrBundle = /([a-zA-Z0-9]+\.[a-zA-Z0-9]+)+/.exec(appPath)
     , origin = (hasAppInCaps ? "desiredCaps" : "command line");
 
-  if (appPath[0] === "/") {
+  if (appPath[0] === "/" || (isWindows && appPath!== null && appPath.length > 2 && appPath[1] === ":" && appPath[2] === "\\") ) {
     this.configureLocalApp(appPath, origin, cb);
   } else if (appPath.substring(0, 4) === "http") {
     this.configureDownloadedApp(appPath, origin, cb);

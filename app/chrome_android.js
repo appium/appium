@@ -4,7 +4,7 @@ var Android = require('./android').Android
   , _ = require('underscore')
   , logger = require('../logger').get('appium')
   , deviceCommon = require('./device')
-  , rdp = require('./hybrid/rdp.js');
+  , rdp = require('./hybrid/rdp.js')
   , status = require("./uiauto/lib/status");
 
 var ChromeAndroid = function(opts) {

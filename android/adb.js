@@ -14,6 +14,7 @@ var spawn = require('win-spawn')
   , mkdirp = require('mkdirp')
   , _ = require('underscore')
   , helpers = require('../app/helpers')
+  , AdmZip = require('adm-zip')
   , isWindows = helpers.isWindows();
 
 var noop = function() {};
@@ -245,19 +246,38 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
   };
 
   var moveManifest = function(cb) {
-    // Insert compiled manfiest into /tmp/appPackage.clean.apk
-    // -j = keep only the file, not the dirs
-    // -m = move manifest into target apk.
-    var replaceCmd = 'zip -j -m "' + dstApk + '" "' + manifest + '"';
-    logger.debug("Moving manifest with: " + replaceCmd);
-    exec(replaceCmd, {}, function(err) {
-      if (err) {
+    if (isWindows) {
+      try
+      {
+        var existingAPKzip = new AdmZip(dstApk);
+        var newAPKzip = new AdmZip();
+        existingAPKzip.getEntries().forEach(function(entry) {
+          var entryName = entry.entryName;
+          newAPKzip.addZipEntryComment(entry, entryName);
+        });
+        newAPKzip.addLocalFile(manifest);
+        newAPKzip.writeZip(dstApk);
+        logger.debug("Inserted manifest.");
+        cb(null);
+      } catch(err) {
         logger.info("Got error moving manifest: " + err);
-        return cb(err);
+        cb(err);
       }
-      logger.debug("Inserted manifest.");
-      cb(null);
-    });
+    } else {
+      // Insert compiled manfiest into /tmp/appPackage.clean.apk
+      // -j = keep only the file, not the dirs
+      // -m = move manifest into target apk.
+      var replaceCmd = 'zip -j -m "' + dstApk + '" "' + manifest + '"';
+      logger.debug("Moving manifest with: " + replaceCmd);
+      exec(replaceCmd, {}, function(err) {
+        if (err) {
+          logger.info("Got error moving manifest: " + err);
+          return cb(err);
+        }
+        logger.debug("Inserted manifest.");
+        cb(null);
+      });
+    }
   };
 
   async.series([

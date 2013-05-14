@@ -388,7 +388,6 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
   if (this.remote !== null && this.bundleId !== null) {
     this.remote.selectApp(this.bundleId, onDone);
   } else {
-
       if(this.udid !== null){
           this.remote = wkrd.init(exitCb);
           me.remote.pageArrayFromJson(function(pageArray){
@@ -1744,6 +1743,10 @@ IOS.prototype.leaveWebView = function(cb) {
     });
   } else {
     this.curWindowHandle = null;
+    //TODO: this condition should be changed to check if the webkit protocol is being used.
+    if(this.udid){
+        this.stopRemote();
+    }
     cb(null, {
       status: status.codes.Success.code
       , value: ''

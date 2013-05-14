@@ -90,8 +90,11 @@ WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
 };
 
 WebKitRemoteDebugger.prototype.disconnect = function() {
+  var me = this;
   logger.info("Disconnecting from remote debugger");
-  this.socket.close();
+  this.socket.close(1000, function(){
+      me.socket = null;
+  });
 };
 
 WebKitRemoteDebugger.prototype.pageArrayFromJson = function(cb){
@@ -187,7 +190,11 @@ WebKitRemoteDebugger.prototype.send = function (data, cb) {
   //send the data
   logger.info('Remote debugger data sent [' + JSON.stringify(data) + ']');
   data = JSON.stringify(data);
-  this.socket.send(data);
+  this.socket.send(data, function(error) {
+      if(error !== null && typeof error !== "undefined"){
+        logger.info(error);
+      }
+  });
 };
 
 WebKitRemoteDebugger.prototype.receive = function(data){

@@ -125,29 +125,12 @@ $.extend(au, {
           value: 'Unsupported orientation: ' + orientation
         };
       }
-      // Need to wait a moment for the animation to complete.
-      // This might be better done with a callback
-      var now = Date.now();
-      while (Date.now() - now < 500) {
-        var i = 0;
-      }
       var newOrientation = au.getScreenOrientation().value;
       if (newOrientation == orientation) {
-        var size = this.target.rect().size;
-        if ((newOrientation === "PORTRAIT" && size.width > size.height) ||
-            (newOrientation === "LANDSCAPE" && size.height > size.width)) {
-          return {
-            status: codes.UnknownError.code
-            , value: "Orientation took effect but window size did not change " +
-                     "to match. We expected " + JSON.stringify(size) + "to " +
-                     "match " + newOrientation
-          };
-        } else {
-          return {
-            status: codes.Success.code
-            , value: newOrientation
-          };
-        }
+        return {
+          status: codes.Success.code
+          , value: newOrientation
+        };
       } else {
         return {
           status: codes.UnknownError.code

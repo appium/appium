@@ -76,7 +76,7 @@ exports.command = function(method, params, appIdKey, connId, senderId, pageIdKey
   } else {
     return exports.commandWebInspector(method, params, appIdKey, connId, senderId, pageIdKey);
   }
-}
+};
 
 exports.commandWebInspector = function(method, params, appIdKey, connId, senderId, pageIdKey) {
   var plist = {

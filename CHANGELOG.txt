@@ -1,4 +1,10 @@
 -------------------------------------
+CHANGES IN VERSION 0.5.2 (from 0.5.1)
+-------------------------------------
+[IOS]
+- fixed regression in mobile safari pre-launch
+
+-------------------------------------
 CHANGES IN VERSION 0.5.1 (from 0.5.0)
 -------------------------------------
 [GENERAL]

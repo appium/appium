@@ -164,6 +164,7 @@ exports.cleanSafari = function(safariVer, cb) {
                        safariVer + "/Library/";
   exports.getUser(function(err, user) {
     if (err) {
+      logger.error(err);
       cb(err);
     } else {
       var baseSupportDir = path.resolve("/Users", user, baseDir);
@@ -172,50 +173,54 @@ exports.cleanSafari = function(safariVer, cb) {
           logger.info(err.message);
           var p = process.env.HOME + '/' + baseDir;
           if(!fs.existsSync(p)) {
-            cb(new Error("Could not find support directory for mobile safari, does " +
+            return cb(new Error("Could not find support directory for mobile safari, does " +
                          "it exist at " + baseDir + " or " + p + "?"));
           } else {
-            var toDeletes = [
-              'Caches/Snapshots/com.apple.mobilesafari'
-              , 'Caches/com.apple.mobilesafari/Cache.db*'
-              , 'Caches/com.apple.WebAppCache/*.db'
-              , 'Safari/*.plist'
-              , 'WebKit/LocalStorage/*.*'
-              , 'Library/WebKit/GeolocationSites.plist'
-              , 'Cookies/*.binarycookies'
-            ];
-            var deletes = 0;
-            var errToRet = null;
-            var finish = function(err) {
-              deletes++;
-              if (err) {
-                errToRet = err;
-              }
-              if (deletes === toDeletes.length) {
-                cb(errToRet);
-              }
-            };
-            _.each(toDeletes, function(del) {
-              var toDelete = path.resolve(baseSupportDir, del);
-              toDelete = toDelete.replace(/ /g, "\\ ");
-              logger.info("Deleting " + toDelete);
-              var cmd = "rm -rf " + toDelete;
-              exec(cmd, function(err) {
-                finish(err);
-              });
-            });
+            baseSupportDir = p;
           }
         }
+        var toDeletes = [
+          'Caches/Snapshots/com.apple.mobilesafari'
+          , 'Caches/com.apple.mobilesafari/Cache.db*'
+          , 'Caches/com.apple.WebAppCache/*.db'
+          , 'Safari/*.plist'
+          , 'WebKit/LocalStorage/*.*'
+          , 'Library/WebKit/GeolocationSites.plist'
+          , 'Cookies/*.binarycookies'
+        ];
+        var deletes = 0;
+        var errToRet = null;
+        var finish = function(err) {
+          deletes++;
+          if (err) {
+            errToRet = err;
+          }
+          if (deletes === toDeletes.length) {
+            cb(errToRet);
+          }
+        };
+        _.each(toDeletes, function(del) {
+          var toDelete = path.resolve(baseSupportDir, del);
+          toDelete = toDelete.replace(/ /g, "\\ ");
+          logger.info("Deleting " + toDelete);
+          var cmd = "rm -rf " + toDelete;
+          exec(cmd, function(err) {
+            finish(err);
+          });
+        });
       });
     }
   });
 };
 
 exports.getUser = function(cb) {
+  logger.info("Determining current user");
   exec("whoami", function(err, stdout) {
     if (err) {
+      logger.error(err);
       cb(err);
     } else {
+      logger.info("User is " + stdout.trim());
       cb(null, stdout.trim());
     }
   });

@@ -10,6 +10,7 @@ should_reset_ios=false
 should_reset_selendroid=false
 include_dev=false
 appium_home=$(pwd)
+reset_successful=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
 
@@ -136,18 +137,35 @@ cleanup() {
     run_cmd rm -rf *.trace
 }
 
-echo "---- Resetting / Initializing Appium ----"
-if $include_dev ; then
-    echo "* Dev mode is on, will download/build test apps"
-fi
-reset_general
-if $should_reset_ios ; then
-    reset_ios
-fi
-if $should_reset_android ; then
-    reset_android
-fi
-if $should_reset_selendroid ; then
-    reset_selendroid
-fi
-cleanup
+main() {
+    echo "---- Resetting / Initializing Appium ----"
+    if $include_dev ; then
+        echo "* Dev mode is on, will download/build test apps"
+    fi
+    reset_general
+    if $should_reset_ios ; then
+        reset_ios
+    fi
+    if $should_reset_android ; then
+        reset_android
+    fi
+    if $should_reset_selendroid ; then
+        reset_selendroid
+    fi
+    cleanup
+    reset_successful=true
+}
+
+on_exit() {
+    if $reset_successful ; then
+        echo "---- reset.sh completed successfully ----"
+    else
+        echo "---- FAILURE: reset.sh exited with status $? ----"
+        if ! $verbose ; then
+            echo "---- Retry with --verbose to see errors ----"
+        fi
+    fi
+}
+
+trap on_exit EXIT
+main

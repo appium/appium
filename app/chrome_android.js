@@ -120,6 +120,7 @@ ChromeAndroid.prototype.deleteSession = function(cb) {
 };
 
 ChromeAndroid.prototype.stop = function(cb) {
+  this.proc.kill();
   async.series([
     this.adb.getConnectedDevices.bind(this.adb),
     this.adb.stopApp.bind(this.adb)

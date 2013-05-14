@@ -17,7 +17,8 @@ var _ = require("underscore")
   , parseXmlString = require('xml2js').parseString
   , appiumVer = require('./package.json').version
   , fs = require('fs')
-  , os = require('os').type();
+  , helpers = require('./app/helpers')
+  , isWindows = helpers.isWindows();
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   var app;
@@ -340,7 +341,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
       cmdName = 'mvn';
   }
   var whichCmd = 'which ';
-    if (os === 'Windows_NT') {
+    if (isWindows) {
         whichCmd = 'where ';
     }
     exec(whichCmd + cmdName, function(err, stdout) {

@@ -33,7 +33,10 @@ var logger = {
 // ====================================
 
 var WebKitRemoteDebugger = function(onDisconnect) {
+  this.host = 'localhost';
+  this.port = 9222;
   this.init(onDisconnect);
+  this.dataMethods = {};
 };
 
 //extend the remote debugger
@@ -191,7 +194,7 @@ WebKitRemoteDebugger.prototype.send = function (data, cb) {
   this.dataCbs[this.curMsgId.toString()] = cb;
   this.dataMethods[this.curMsgId.toString()] = data.method;
   //send the data
-  logger.info('Remote debugger data sent [' + JSON.stringify(data) + ']');
+  logger.info('Remote debugger data sent [' + JSON.stringify(data).slice(0, 3000) + ']');
   data = JSON.stringify(data);
   this.socket.send(data);
 };

@@ -181,3 +181,4 @@ module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
 module.exports.describeForSauce = describeForSauce;
 module.exports.describeForSafari = describeForSafari;
+module.exports.describeForChrome = describeForChrome;

@@ -3,8 +3,9 @@
 var errors = require('./errors')
   , request = require('request')
   , _ = require('underscore')
-  , logger = require('../logger').get('appium')
-  , exec = require('child_process').exec;
+  , exec = require('child_process').exec
+  , status = require("./uiauto/lib/status")
+  , logger = require('../logger').get('appium');
 
 var UnknownError = errors.UnknownError
   , ProtocolError = errors.ProtocolError;
@@ -129,4 +130,48 @@ exports.unpackApp = function(req, packageExtension, cb) {
   } else {
     cb(null);
   }
+};
+
+exports.parseExecuteResponse = function(response, cb) {
+  if ((response.value !== null) && (typeof response.value !== "undefined")) {
+    var wdElement = null;
+    if (!_.isArray(response.value)) {
+      if (typeof response.value.ELEMENT !== "undefined") {
+        wdElement = response.value.ELEMENT;
+        wdElement = this.parseElementResponse(response.value);
+        if (wdElement === null) {
+          cb(null, {
+            status: status.codes.UnknownError.code
+            , value: "Error converting element ID atom for using in WD: " + response.value.ELEMENT
+          });
+        }
+        response.value = wdElement;
+      }
+    } else {
+      var args = response.value;
+      for (var i=0; i < args.length; i++) {
+        wdElement = args[i];
+        if ((args[i] !== null) && (typeof args[i].ELEMENT !== "undefined")) {
+          wdElement = this.parseElementResponse(args[i]);
+          if (wdElement === null) {
+            cb(null, {
+              status: status.codes.UnknownError.code
+              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+            });
+            return;
+          }
+        args[i] = wdElement;
+        }
+      }
+      response.value = args;
+    }
+  }
+  return response;
+};
+
+exports.parseElementResponse = function(element) {
+  var objId = element.ELEMENT
+  , clientId = (5000 + this.webElementIds.length).toString();
+  this.webElementIds.push(objId);
+  return {ELEMENT: clientId};
 };

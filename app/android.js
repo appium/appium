@@ -267,6 +267,23 @@ Android.prototype.push = function(elem) {
 
 Android.prototype.waitForCondition = deviceCommon.waitForCondition;
 
+Android.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
+  var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
+  this.returnedFromExecuteAtom = false;
+  this.processingRemoteCmd = true;
+  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
+    this.processingRemoteCmd = false;
+    if (!this.returnedFromExecuteAtom) {
+      this.returnedFromExecuteAtom = true;
+      res = this.parseExecuteResponse(res);
+      cb(err, res);
+    }
+  }, this));
+};
+
+Android.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
+Android.prototype.parseElementResponse = deviceCommon.parseElementResponse;
+
 Android.prototype.setCommandTimeout = function(secs, cb) {
   logger.info("Setting command timeout for android to " + secs + " secs");
   this.origCommandTimeoutMs = this.commandTimeoutMs;
@@ -297,6 +314,7 @@ Android.prototype.getCommandTimeout = function(cb) {
 
 Android.prototype.findElement = function(strategy, selector, cb) {
   if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, false, "", cb);
   } else {
     this.findUIElementOrElements(strategy, selector, false, "", cb);
   }
@@ -304,9 +322,22 @@ Android.prototype.findElement = function(strategy, selector, cb) {
 
 Android.prototype.findElements = function(strategy, selector, cb) {
   if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, true, "", cb);
   } else {
     this.findUIElementOrElements(strategy, selector, true, "", cb);
   }
+};
+
+Android.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
+  var ext = many ? 's' : '';
+  var atomsElement = this.getAtomsElement(ctx);
+  var me = this;
+  var doFind = function(findCb) {
+    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
+      me.handleFindCb(err, res, many, findCb);
+    });
+  };
+  this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
 Android.prototype.findUIElementOrElements = function(strategy, selector, many, context, cb) {
@@ -333,19 +364,9 @@ Android.prototype.findUIElementOrElements = function(strategy, selector, many, c
     }
   }
   var doFind = _.bind(function(findCb) {
-    this.proxy(["find", params], function(err, res) {
-      if (err) {
-        findCb(false, err, res);
-      } else {
-        if (!many && res.status === 0) {
-          findCb(true, err, res);
-        } else if (many && typeof res.value !== 'undefined' && res.value.length > 0) {
-          findCb(true, err, res);
-        } else {
-          findCb(false, err, res);
-        }
-      }
-    });
+    this.proxy(["find", params], _.bind(function(err, res) {
+      this.handleFindCb(err, res, many, findCb);
+    }, this));
   }, this);
   if (!xpathError) {
     this.waitForCondition(this.implicitWaitMs, doFind, cb);
@@ -354,6 +375,20 @@ Android.prototype.findUIElementOrElements = function(strategy, selector, many, c
       status: status.codes.XPathLookupError.code
       , value: "Could not parse xpath data from " + selector
     });
+  }
+};
+
+Android.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (err) {
+    findCb(false, err, res);
+  } else {
+    if (!many && res.status === 0) {
+      findCb(true, err, res);
+    } else if (many && typeof res.value !== 'undefined' && res.value.length > 0) {
+      findCb(true, err, res);
+    } else {
+      findCb(false, err, res);
+    }
   }
 };
 

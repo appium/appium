@@ -24,7 +24,7 @@ class TestAndroidWebView(unittest.TestCase):
                                        desired_caps)
 
     def test(self):
-        button = self.driver.find_element_by_name('buttonStartWebviewCD')
+        button = self.driver.find_element_by_id('buttonStartWebview')
         button.click()
 
         self.driver.switch_to_window('WEBVIEW')

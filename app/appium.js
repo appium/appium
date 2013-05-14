@@ -190,7 +190,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                  "but that device hasn't been configured. Run config");
     return cb(new Error("Device " + this.deviceType + " not configured yet"));
   }
-  if (this.isAndroid()) {
+  if (this.isAndroid() || this.isSelendroid()) {
     this.setAndroidArgs(desiredCaps);
   }
   if (hasAppInCaps || this.args.app) {

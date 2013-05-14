@@ -1,4 +1,28 @@
 -------------------------------------
+CHANGES IN VERSION 0.5.1 (from 0.5.0)
+-------------------------------------
+[GENERAL]
+- updates to python examples
+- refactored configuration code
+- initial work making Appium's node code windows-compatible
+- more lenient treatment of relationship between $HOME and system username
+
+[IOS]
+- fixing webview not waiting for page loading on url nav issue
+- added node-idevice which streamlines installing .ipas on real devices
+- implement scrollTo
+- fixed bug in xpath code which returned last element first
+
+[ANDROID]
+- add some docs for installing HAXM
+- add scroll_into_view for mobile: find
+- completed android element class map
+
+[SELENDROID]
+- http timeout tweaks
+
+
+------------------------------------
 CHANGES IN VERSION 0.5.0 (from 0.4.1)
 -------------------------------------
 [GENERAL]

@@ -9,6 +9,7 @@ All flags are optional, but some are required in conjunction with certain others
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
+|`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
 |`-V`, `--verbose`|true|(DEPRECATED, see --quiet) Get verbose logging output||
 |`-q`, `--quiet`|false|Don't use verbose logging output||
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|

@@ -391,11 +391,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
       if(this.udid !== null){
           this.remote = wkrd.init(exitCb);
           me.remote.pageArrayFromJson(function(pageArray){
-              me.curWindowHandle = pageArray[0].id;
-              me.remote.connect(me.curWindowHandle, function(){
-                cb(pageArray);
-              });
-
+            cb(pageArray);
           });
       } else {
         this.remote = new rd.init(exitCb);
@@ -1649,6 +1645,7 @@ IOS.prototype.setWindow = function(name, cb) {
                     });
                 } else if (_.contains(_.pluck(me.windowHandleCache, 'id'), name)) {
                     me.remote.disconnect();
+                    me.curWindowHandle = name;
                     me.remote.connect(name, function(){
                         cb(null, {
                             status: status.codes.Success.code

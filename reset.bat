@@ -13,12 +13,12 @@ echo.
 echo =====Resetting Android=====
 echo.
 echo grunt configAndroidBootstrap
-call grunt configAndroidBootstrap
+call node_modules\.bin\grunt configAndroidBootstrap
 echo.
 echo gruntbuildAndroidBootstrap
-call grunt buildAndroidBootstrap
+call node_modules\.bin\grunt buildAndroidBootstrap
 echo.
 echo grunt setConfigVer:android
-call grunt setConfigVer:android
+call node_modules\.bin\grunt setConfigVer:android
 echo.
 echo =====Reset Complete=====

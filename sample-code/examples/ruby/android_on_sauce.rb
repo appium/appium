@@ -33,7 +33,23 @@ end
 def url_with_credentials
   un = ENV["SAUCE_USERNAME"]
   pw = ENV["SAUCE_ACCESS_KEY"]
-  "http://#{un}:#{pw}@ondemand.saucelabs.com:80/wd/hub"
+  
+  unless un && pw
+    STDERR.puts <<-EOF
+      Your SAUCE_USERNAME or SAUCE_ACCESS_KEY environment variables 
+      are empty or missing.
+      
+      You need to set these values to your Sauce Labs username and access
+      key, respectively.
+
+      If you don't have a Sauce Labs account, you can get one for free at
+      http://www.saucelabs.com/signup
+    EOF
+
+    exit
+  end
+
+  return "http://#{un}:#{pw}@ondemand.saucelabs.com:80/wd/hub"
 end
 
 describe "Notepad" do
@@ -46,7 +62,7 @@ describe "Notepad" do
   end
 
   after :all do
-    @driver.quit
+    @driver.quit if @driver
   end
 
   it "can create and save new notes" do

@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
@@ -337,6 +338,13 @@ public class Find extends CommandHandler {
         sel = sel.description(text);
         if (!many) {
           sel = sel.instance(0);
+        }
+        if (!new UiObject(sel).exists()) {
+          // now try and find it using the text attribute
+          sel = new UiSelector().text(text);
+          if (!many) {
+            sel = sel.instance(0);
+          }
         }
         selectors.add(sel);
         break;

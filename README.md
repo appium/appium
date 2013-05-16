@@ -120,7 +120,7 @@ recommended command to run after pulling changes from master.
 Hacking with Appium (iOS)
 --------------
 
-(First, have a look at [setting up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/system-setup.md#ios).)
+(First, have a look at [setting up your system for Appium iOS support](docs/running-on-osx.md#ios).)
 
 To avoid a security dialog that may appear when launching your iOS apps you'll
 have to modify your `/etc/authorization` file in one of two ways:
@@ -141,7 +141,7 @@ At this point, you can simply run:
 Hacking with Appium (Android)
 ----------------
 
-(First, have a look at [setting up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/system-setup.md#android).)
+(First, have a look at setting up your system for Appium Android support ([linux](docs/running-on-linux.md), [osx](docs/running-on-osx.md#android) or [windows](docs/running-on-windows.md)).)
 
 Now, you can simply run:
 

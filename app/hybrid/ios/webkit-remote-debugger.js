@@ -93,7 +93,7 @@ WebKitRemoteDebugger.prototype.disconnect = function() {
   var me = this;
   if(this.isConnected()){
     me.socket.close(1001);
-  };
+  }
 };
 
 WebKitRemoteDebugger.prototype.isConnected = function() {

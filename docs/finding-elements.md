@@ -28,11 +28,17 @@ WD.js:
 ```js
 driver.elementsByTagName('button', function(err, buttons) {
   // tap all the buttons
-  buttons.each(function(button) {
-    button.tap(function(err) {
+  var tapNextButton = function() {
+    var button = buttons.shift();
+    if (typeof button !== "undefined") {
+      button.click(function(err) {
+        tapNextButton();
+      })
+    } else {
       driver.quit();
-    });
-  });
+    }
+  }
+  tapNextButton();
 });
 ```
 

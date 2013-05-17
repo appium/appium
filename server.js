@@ -130,7 +130,7 @@ var main = function(args, readyCb, doneCb) {
       var logMessage = "Appium REST http interface listener started on " +
                        args.address + ":" + args.port;
       logger.info(logMessage.cyan);
-      if(args.nodeconfig != null){
+      if (args.nodeconfig !== null) {
         gridRegister.registerNode(args.nodeconfig);
       }
     });

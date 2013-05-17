@@ -6,10 +6,70 @@ if (typeof au === "undefined") {
   au = {};
 }
 
-UIAElement.prototype.getNameContains = function(targetName) {
+UIAElement.prototype.getFirstWithPredicateWeighted = function(predicate) {
   var target = UIATarget.localTarget();
   target.pushTimeout(0);
-  var search = "name contains[c] '" + targetName + "' || label contains[c] '" + targetName + "'";
+  var search = predicate;
+  var result = {};
+  result.type = function() { return 'UIAElementNil'; };
+  result.isVisible = function() { return -1; };
+
+  function isNil(a) {
+    return a.length === 0 || (a.length === 1 && a[0].type() === 'UIAElementNil');
+  }
+
+  var searchElements = function(element) {
+    var results = element.secureTextFields().withPredicate(search);
+    var children = element.elements();
+    if ( isNil(results) ) {
+      results = element.textFields().withPredicate(search);
+      if ( isNil(results) ) {
+        results = element.buttons().withPredicate(search);
+        if ( isNil(results) ) {
+          results = children.withPredicate(search);
+        }
+      }
+    }
+
+    for (var resIdx = 0, resLen = results.length; resIdx < resLen; resIdx++) {
+      var tmp = results[resIdx];
+      if (tmp.type() !== 'UIAElementNil') {
+        result = tmp;
+        if (tmp.isVisible() === 1) {
+          return tmp;
+        }
+      }
+    }
+
+    for ( var a = 0, len = children.length; a < len; a++) {
+      searchElements(children[a]);
+      if (result.type() !== 'UIAElementNil' && result.isVisible() === 1) {
+        return result;
+      }
+    }
+
+    return result;
+  };
+  var element = searchElements(this);
+  target.popTimeout();
+
+  if (element.type() === 'UIAElementNil') {
+    return {
+      status: 7,
+      value: {'message': 'An element could not be located on the page using the given search parameters.'}
+    };
+  }
+
+  return {
+    status: 0,
+    value: {ELEMENT: au.getId(element)}
+  };
+};
+
+UIAElement.prototype.getFirstWithPredicate = function(predicate) {
+  var target = UIATarget.localTarget();
+  target.pushTimeout(0);
+  var search = predicate;
   var result = {};
   result.type = function() { return 'UIAElementNil'; };
   result.isVisible = function() { return -1; };
@@ -51,6 +111,43 @@ UIAElement.prototype.getNameContains = function(targetName) {
     status: 0,
     value: {ELEMENT: au.getId(element)}
   };
+};
+
+UIAElement.prototype.getAllWithPredicate = function(predicate) {
+  var target = UIATarget.localTarget();
+  target.pushTimeout(0);
+  var search = predicate;
+  var elements = [];
+
+  var searchElements = function(element) {
+    var children = element.elements();
+    var results = children.withPredicate(search);
+
+    for ( var a = 0, len = results.length; a < len; a++) {
+      elements.push({ELEMENT: au.getId(results[a])});
+    }
+
+    for ( a = 0, len = children.length; a < len; a++) {
+      searchElements(children[a]);
+    }
+
+    if ( elements.length === 0 ) {
+      elements = [];
+    }
+
+    return elements;
+  };
+  searchElements(this);
+  target.popTimeout();
+
+  return {
+    status: 0,
+    value: elements
+  };
+};
+
+UIAElement.prototype.getNameContains = function(targetName) {
+  return this.getFirstWithPredicate("name contains[c] '" + targetName + "' || label contains[c] '" + targetName + "'");
 };
 
 $.extend(au, {

@@ -33,7 +33,11 @@ var logger = {
 // ====================================
 
 
-var RemoteDebugger = function(debuggerType, onDisconnect) {
+var RemoteDebugger = function(onDisconnect) {
+  this.init(2, onDisconnect);
+};
+
+RemoteDebugger.prototype.init = function(debuggerType, onDisconnect) {
   this.socket = null;
   this.connId = uuid.v4();
   this.senderId = uuid.v4();
@@ -142,7 +146,7 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb, skipReadyCheck) {
   this.send(setSenderKey, function() {
     logger.info("Set sender key");
     var enablePage = messages.enablePage(me.appIdKey, me.connId,
-                                         me.senderId, me.pageIdKey, this.debuggerType);
+                                         me.senderId, me.pageIdKey, me.debuggerType);
     me.send(enablePage, function() {
       logger.info("Enabled activity on page");
       if (skipReadyCheck) {
@@ -636,5 +640,7 @@ RemoteDebugger.prototype.receive = function(data) {
 };
 
 exports.init = function(onDisconnect) {
-  return new RemoteDebugger(2, onDisconnect);
+  return new RemoteDebugger(onDisconnect);
 };
+
+exports.RemoteDebugger = RemoteDebugger;

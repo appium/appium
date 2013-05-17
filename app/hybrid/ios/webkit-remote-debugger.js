@@ -11,7 +11,7 @@ var net = require('net')
   , noop = function () {}
   , assert = require('assert')
   , util = require('util')
-  , RemoteDebugger = require('./remote-debugger.js')
+  , RemoteDebugger = require('./remote-debugger.js').RemoteDebugger
   , http = require('http')
   , WebSocket = require('ws');
 
@@ -31,35 +31,15 @@ var logger = {
 // CONFIG
 // ====================================
 
-var WebKitRemoteDebugger = function(debuggerType, onDisconnect) {
-  this.socket = null;
-  this.connId = uuid.v4();
-  this.senderId = uuid.v4();
-  this.appIdKey = null;
-  this.pageIdKey = null;
-  this.pageLoading = false;
-  this.curMsgId = 0;
-  this.dataCbs = {};
+var WebKitRemoteDebugger = function(onDisconnect) {
   this.dataMethods = {};
-  this.willNavigateWithoutReload = false;
-  this.onAppDisconnect = onDisconnect || noop;
-  this.pageChangeCb = noop;
-  this.specialCbs = {
-    '_rpc_reportIdentifier:': noop
-    , '_rpc_forwardGetListing:': noop
-    , 'connect': noop
-  };
-  this.pageLoadedCbs = [];
-  this.setHandlers();
-  this.received = new Buffer(0);
-  this.readPos = 0;
   this.host = 'localhost';
   this.port = 27753;
-  this.debuggerType = debuggerType;
+  this.init(1, onDisconnect);
 };
 
 //extend the remote debugger
-WebKitRemoteDebugger.prototype = RemoteDebugger.init();
+_.extend(WebKitRemoteDebugger.prototype, RemoteDebugger.prototype);
 
 // ====================================
 // API
@@ -207,5 +187,5 @@ WebKitRemoteDebugger.prototype.receive = function(data){
 };
 
 exports.init = function(onDisconnect) {
-  return new WebKitRemoteDebugger(1, onDisconnect);
+  return new WebKitRemoteDebugger(onDisconnect);
 };

@@ -8,7 +8,6 @@ exports.registerNode = function (configFile) {
     if (err) {
     logger.error("Unable to load node configuration file to register with grid");
     cb("Unable to load node configuration file to register with grid");
-    code = code || 1;
     }
     // Check presence of data before posting  it to the selenium grid
     if (data) {
@@ -16,7 +15,6 @@ exports.registerNode = function (configFile) {
     } else {
       logger.error("No data found in the node configuration  file to send to the grid");
       cb("No data found in the node configuration  file to send to the grid");
-      code = code || 1;
     }
   });
 };
@@ -31,7 +29,7 @@ function postRequest(data) {
   };
   // the post options
   var options_post = {
-    url       : 'https://'+jsonObject.configuration.hubHost+':'+jsonObject.configuration.hubPort+'/grid/register'
+    url       : 'http://'+jsonObject.configuration.hubHost+':'+jsonObject.configuration.hubPort+'/grid/register'
     , method  : 'POST'
     , body    : data
     , headers : post_headers

@@ -487,7 +487,7 @@ $.extend(au, {
                 filteredElems = filteredElems.concat(elems.valueForKey(attrs[j], xpObj.constraint));
               }
             }
-            elems = $(filteredElems);
+            elems = $(filteredElems).dedup();
           }
         }
         this.target.popTimeout();

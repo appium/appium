@@ -243,6 +243,15 @@ var mechanic = (function() {
             else result = this.map(function(){ return $$(this, selector) });
             return $(result);
         },
+        dedup: function() {
+          var result = this.reduce(function(accum,cur) {
+              if (accum.indexOf(cur) === -1) {
+                accum.push(cur);
+              }
+              return accum;
+            }, []);
+          return $(result);
+        },
         predicate: function(predicate) {
              this.map(function(idx, el) {
                 if (typeof predicate == 'string') {

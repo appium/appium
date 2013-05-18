@@ -6,6 +6,7 @@ var status = require('./uiauto/lib/status')
   , _s = require("underscore.string")
   , swig = require('swig')
   , path = require('path')
+  , version = require('../package.json').version
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -143,7 +144,7 @@ exports.sessionBeforeFilter = function(req, res, next) {
 exports.getStatus = function(req, res) {
   // Return a static JSON object to the client
   respondSuccess(req, res, {
-    build: {version: 'Appium 1.0'}
+    build: {version: version}
   });
 };
 

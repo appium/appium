@@ -10,7 +10,8 @@ var http = require('http')
   , appiumVer = require('./package.json').version
   , async = require('async')
   , _ = require("underscore")
-  , parser = require('./app/parser');
+  , parser = require('./app/parser')
+  , gridRegister = require('./grid_register');
 
 var allowCrossDomain = function(req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -129,6 +130,9 @@ var main = function(args, readyCb, doneCb) {
       var logMessage = "Appium REST http interface listener started on " +
                        args.address + ":" + args.port;
       logger.info(logMessage.cyan);
+      if (args.nodeconfig !== null) {
+        gridRegister.registerNode(args.nodeconfig);
+      }
     });
     server.on('error', function(err) {
       logger.error("Couldn't start Appium REST http interface listener. Requested port is already in use. Please make sure there's no other instance of Appium running already.");

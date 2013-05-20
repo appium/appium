@@ -216,6 +216,12 @@ var args = [
     , example: "LANDSCAPE"
     , help: "(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests " +
             "to this orientation"
+  }],
+  [['--nodeconfig'] , {
+    required: false
+    , defaultValue: null
+    , help: 'Configuration JSON file to register appium with selenium grid'
+    , example: "/abs/path/to/nodeconfig.json"
   }]
 ];
 

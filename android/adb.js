@@ -75,15 +75,18 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     }
   }
   if (this.sdkRoot) {
-    binaryLoc = path.resolve(this.sdkRoot, "platform-tools", binaryName);
-    if (!fs.existsSync(binaryLoc)) {
-      binaryLoc = path.resolve(this.sdkRoot, "tools", binaryName);
-      if (!fs.existsSync(binaryLoc)) {
-        cb(new Error("Could not find " + binary + " in tools or platform-tools; " +
-                     "do you have android SDK installed?"),
-           null);
-        return;
-      }
+    var binaryLocs = [ path.resolve(this.sdkRoot, "platform-tools", binaryName)
+        , path.resolve(this.sdkRoot, "tools", binaryName)
+        , path.resolve(this.sdkRoot, "build-tools", "17.0.0", binaryName) ];
+    _.each(binaryLocs, function(loc) {
+      if (fs.existsSync(loc)) binaryLoc = loc;
+    });
+
+    if (binaryLoc === null) {
+      cb(new Error("Could not find " + binary + " in tools, platform-tools, or build-tools; " +
+                   "do you have android SDK installed?"),
+         null);
+      return;
     }
     this.debug("Using " + binary + " from " + binaryLoc);
     this.binaries[binary] = binaryLoc;
@@ -359,7 +362,7 @@ ADB.prototype.getDeviceWithRetry = function(cb) {
   var me = this;
   var getDevices = function(innerCb) {
     me.getConnectedDevices(function(err, devices) {
-      if (devices.length === 0 || err) {
+      if (typeof devices === "undefined" || devices.length === 0 || err) {
         return innerCb(new Error("Could not find a connected Android device."));
       }
       innerCb(null);

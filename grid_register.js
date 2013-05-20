@@ -4,17 +4,16 @@ var request = require('request')
   , logger = require('./logger').get('appium');
 
 exports.registerNode = function (configFile) {
-  fs.readFile(configFile, 'utf-8', function (err, data, cb) {
+  fs.readFile(configFile, 'utf-8', function (err, data) {
     if (err) {
-    logger.error("Unable to load node configuration file to register with grid");
-    cb("Unable to load node configuration file to register with grid");
+      logger.error("Unable to load node configuration file to register with grid");
+      return;
     }
     // Check presence of data before posting  it to the selenium grid
     if (data) {
       postRequest(data);
     } else {
       logger.error("No data found in the node configuration  file to send to the grid");
-      cb("No data found in the node configuration  file to send to the grid");
     }
   });
 };
@@ -29,7 +28,7 @@ function postRequest(data) {
   };
   // the post options
   var options_post = {
-    url       : 'http://'+jsonObject.configuration.hubHost+':'+jsonObject.configuration.hubPort+'/grid/register'
+    url       : 'http://' + jsonObject.configuration.hubHost + ':' + jsonObject.configuration.hubPort + '/grid/register'
     , method  : 'POST'
     , body    : data
     , headers : post_headers

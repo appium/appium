@@ -552,7 +552,7 @@ Android.prototype.getPageSourceXML = function(cb) {
 };
 
 Android.prototype.waitForPageLoad = function(cb) {
-    cb(new NotYetImplementedError(), null);
+  this.proxy(["waitForIdle", {}], cb);
 };
 
 Android.prototype.getAlertText = function(cb) {

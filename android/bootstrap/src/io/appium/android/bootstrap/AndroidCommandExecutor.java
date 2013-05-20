@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap;
 
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.Find;
@@ -27,6 +28,7 @@ class AndroidCommandExecutor {
   private static HashMap<String, CommandHandler> map = new HashMap<String, CommandHandler>();
 
   static {
+    map.put("waitForIdle", new WaitForIdle());
     map.put("clear", new Clear());
     map.put("orientation", new Orientation());
     map.put("swipe", new Swipe());

@@ -157,6 +157,34 @@ $.extend(au, {
   , mainWindow: UIATarget.localTarget().frontMostApp().mainWindow()
   , mainApp: UIATarget.localTarget().frontMostApp()
   , keyboard: function() { return UIATarget.localTarget().frontMostApp().keyboard(); }
+  , back: function() {
+    var bar = mainWindow.navigationBar();
+    var button = null;
+    var buttons = bar.buttons();
+    if ( buttons.length === 1 ) {
+      button = buttons[0];
+    } else {
+      button = buttons.Back;
+      if (button.type() === 'UIAElementNil') button = buttons[0];
+    }
+    try {
+      button.tap();
+    } catch (e) {
+      try {
+        // Press "Cancel" on Apptentive
+        UIATarget.localTarget().frontMostApp().windows()[0].toolbar().buttons()[0].tap();
+      } catch (e) {
+        return {
+          status: codes.UnknownError.code,
+          value: "Back button is null and can't be tapped."
+        };
+      }
+    }
+    return {
+      status: codes.Success.code,
+      value: null
+    };
+  }
   , tapById: function(elementId) {
       var element = this.getElement(elementId);
       if (element) {

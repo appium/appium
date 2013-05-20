@@ -476,6 +476,10 @@ exports.getPageSource = function(req, res) {
   req.device.getPageSource(getResponseHandler(req, res));
 };
 
+exports.waitForPageLoad = function(req, res) {
+  req.device.waitForPageLoad(getResponseHandler(req, res));
+};
+
 exports.getAlertText = function(req, res) {
   req.device.getAlertText(getResponseHandler(req, res));
 };
@@ -799,6 +803,7 @@ var mobileCmdMap = {
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
   , 'find': exports.find
+  , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity
   , 'findElementNameContains': exports.findElementNameContains
 };

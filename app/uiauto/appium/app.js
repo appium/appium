@@ -1,4 +1,4 @@
-/*global au:true UIAElement:true $:true codes:true UIATarget:true UIA_DEVICE_ORIENTATION_UNKNOWN: true UIA_DEVICE_ORIENTATION_FACEUP:true UIA_DEVICE_ORIENTATION_FACEDOWN:true UIA_DEVICE_ORIENTATION_PORTRAIT:true UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_PORTRAIT:true */
+/*global mainWindow:true au:true UIAElement:true $:true codes:true UIATarget:true UIA_DEVICE_ORIENTATION_UNKNOWN: true UIA_DEVICE_ORIENTATION_FACEUP:true UIA_DEVICE_ORIENTATION_FACEDOWN:true UIA_DEVICE_ORIENTATION_PORTRAIT:true UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_PORTRAIT:true */
 "use strict";
 var au;
 
@@ -726,8 +726,48 @@ $.extend(au, {
       }
     }
 
-  // Alert-related functions
+  , waitForPageLoad: function(preDelay) {
+    if (!preDelay) {
+      this.delay(0);
+    } else {
+      this.delay(preDelay);
+    }
 
+    this.target.pushTimeout(0);
+    var done = false;
+    var counter = 0;
+    while ((!done) && (counter < 20)) {
+
+      var activityIndicators = mainWindow.activityIndicators();
+      var pageIndicators = mainWindow.pageIndicators();
+      var progressIndicators = mainWindow.progressIndicators();
+
+      var indicators = activityIndicators.toArray().concat(
+          pageIndicators.toArray(), progressIndicators.toArray());
+
+      for (var i = 0; i < indicators.length; i++)
+        if (indicators[i].type() !== "UIAElementNil") {
+          this.delay(0.5);
+          console.log("[" + counter + "] waiting on indicator: " + indicators[i]);
+
+          if (indicators[i].isVisible() === 0 && indicators[i].isValid() === true) {
+            done = true;
+          }
+
+          counter++;
+        } else {
+          done = true;
+        }
+      }
+      this.delay(1.5);
+      this.target.popTimeout();
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  // Alert-related functions
   , getAlertText: function() {
       var alert = this.mainApp.alert();
       if (alert.isNil()) {

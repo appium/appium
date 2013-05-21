@@ -1621,46 +1621,44 @@ IOS.prototype.getWindowHandles = function(cb) {
 };
 
 IOS.prototype.setWindow = function(name, cb) {
-    var me = this;
-    if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
-        var pageIdKey = parseInt(name, 10);
-        var next = function() {
-            me.processingRemoteCmd = true;
-
-            if(me.udid === null) {
-                me.remote.selectPage(pageIdKey, function() {
-                    me.curWindowHandle = pageIdKey.toString();
-                    cb(null, {
-                        status: status.codes.Success.code
-                        , value: ''
-                    });
-                    me.processingRemoteCmd = false;
-                });
-            }  else {
-                if (name == me.curWindowHandle){
-                    logger.info("Remote debugger is already connected to window [" + name + "]");
-                    cb(null, {
-                        status: status.codes.Success.code
-                        , value: name
-                    });
-                } else if (_.contains(_.pluck(me.windowHandleCache, 'id'), name)) {
-                    me.remote.disconnect();
-                    me.curWindowHandle = name;
-                    me.remote.connect(name, function(){
-                        cb(null, {
-                            status: status.codes.Success.code
-                            , value: name
-                        });
-                    });
-
-                } else {
-                    cb(null, {
-                        status: status.codes.NoSuchWindow.code
-                        , value: null
-                    });
-                }
-            }
-        };
+  var me = this;
+  if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
+    var pageIdKey = parseInt(name, 10);
+    var next = function() {
+      me.processingRemoteCmd = true;
+      if(me.udid === null) {
+        me.remote.selectPage(pageIdKey, function() {
+          me.curWindowHandle = pageIdKey.toString();
+          cb(null, {
+            status: status.codes.Success.code
+            , value: ''
+          });
+          me.processingRemoteCmd = false;
+        });
+      } else {
+        if (name == me.curWindowHandle){
+          logger.info("Remote debugger is already connected to window [" + name + "]");
+          cb(null, {
+            status: status.codes.Success.code
+            , value: name
+          });
+        } else if (_.contains(_.pluck(me.windowHandleCache, 'id'), name)) {
+          me.remote.disconnect();
+          me.curWindowHandle = name;
+          me.remote.connect(name, function(){
+            cb(null, {
+              status: status.codes.Success.code
+            , value: name
+            });
+          });
+        } else {
+          cb(null, {
+            status: status.codes.NoSuchWindow.code
+            , value: null
+          });
+        }
+      }
+    };
     //if (me.autoWebview) {
       //me.setSafariWindow(pageIdKey - 1, function(err, res) {
         //if (err) {

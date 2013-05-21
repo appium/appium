@@ -222,6 +222,22 @@ var args = [
     , defaultValue: null
     , help: 'Configuration JSON file to register appium with selenium grid'
     , example: "/abs/path/to/nodeconfig.json"
+  }],
+    [['-ra', '--robot-address'] , {
+    defaultValue: '0.0.0.0'
+    , dest: 'robotAddress'
+    , required: false
+    , example: "0.0.0.0"
+    , help: 'IP Address of robot'
+  }],
+
+  [['-rp', '--robot-port'] , {
+    defaultValue: -1
+    , dest: 'robotPort'
+    , required: false
+    , type: 'int'
+    , example: "4242"
+    , help: 'port for robot'
   }]
 ];
 

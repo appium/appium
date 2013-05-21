@@ -20,6 +20,7 @@ var path = require('path')
   , status = require("./uiauto/lib/status")
   , IDevice = require('node-idevice')
   , async = require('async')
+  , request = require('request')
   , NotImplementedError = errors.NotImplementedError
   , NotYetImplementedError = errors.NotYetImplementedError
   , UnknownError = errors.UnknownError;
@@ -57,6 +58,8 @@ var IOS = function(args) {
   this.curCoords = null;
   this.curWebCoords = null;
   this.onPageChangeCb = null;
+  this.useRobot = args.robotPort > 0;
+  this.robotUrl = this.useRobot ? "http://" + args.robotAddress + ":" + args.robotPort + "" : null;
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -809,8 +812,21 @@ IOS.prototype.click = function(elementId, cb) {
       this.executeAtom('tap', [atomsElement], cb);
     }, this));
   } else {
-    var command = ["au.tapById('", elementId, "')"].join('');
-    this.proxy(command, cb);
+  if (this.useRobot) {
+    var locCmd = "au.getElement('" + elementId + "').rect()";
+    this.proxy(locCmd, _.bind(function(err, res) {
+      if (err) return cb(err, res);
+      var rect = res.value;
+      var pos = {x: rect.origin.x, y: rect.origin.y};
+      var size = {w: rect.size.width, h: rect.size.height};
+      var tapPoint = { x: pos.x + (size.w/2), y: pos.y + (size.h/2) };
+      var tapUrl = this.robotUrl + "/tap/x/" + tapPoint.x + "/y/" + tapPoint.y;
+      request.get(tapUrl, {}, cb);
+    }, this));
+  } else {
+      var command = ["au.tapById('", elementId, "')"].join('');
+      this.proxy(command, cb);
+    }
   }
 };
 
@@ -967,12 +983,17 @@ IOS.prototype.clickCurrent = function(button, cb) {
 };
 
 IOS.prototype.clickCoords = function(coords, cb) {
-  var opts = coords;
-  opts.tapCount = 1;
-  opts.duration = 0.3;
-  opts.touchCount = 1;
-  var command =["au.complexTap(" + JSON.stringify(opts) + ")"].join('');
-  this.proxy(command, cb);
+  if (this.useRobot) {
+      var tapUrl = this.robotUrl + "/tap/x/" + coords.x + "/y/" + coords.y;
+      request.get(tapUrl, {}, cb);
+  } else {
+    var opts = coords;
+    opts.tapCount = 1;
+    opts.duration = 0.3;
+    opts.touchCount = 1;
+    var command =["au.complexTap(" + JSON.stringify(opts) + ")"].join('');
+    this.proxy(command, cb);
+  }
 };
 
 IOS.prototype.clickWebCoords = function(cb) {

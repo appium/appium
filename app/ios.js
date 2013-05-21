@@ -1193,7 +1193,8 @@ IOS.prototype.mobileSafariNav = function(navBtnName, cb) {
 
 IOS.prototype.back = function(cb) {
   if (this.curWindowHandle === null) {
-    cb(new NotImplementedError(), null);
+    var command = "au.back();";
+    this.proxy(command, cb);
   } else {
     this.mobileSafariNav("Back", cb);
   }

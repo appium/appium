@@ -403,6 +403,8 @@ Appium.prototype.invoke = function() {
           , autoWebview: this.desiredCapabilities.safari
           , deviceType: this.iosDeviceType
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
+          , robotPort: this.args.robotPort
+          , robotAddress: this.args.robotAddress
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {

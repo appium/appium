@@ -166,7 +166,7 @@ exports.getBuiltInAppDir = function(version, cb) {
 };
 
 exports.copyBuiltInApp = function(appPath, appName, cb) {
-  var newAppDir = path.resolve(exports.getTempPath() + 'Appium-' + appName + '.app');
+  var newAppDir = path.resolve(exports.getTempPath(), 'Appium-' + appName + '.app');
   ncp(appPath, newAppDir, function(err) {
     if (err) {
       cb(err);

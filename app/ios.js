@@ -1685,19 +1685,7 @@ IOS.prototype.setWindow = function(name, cb) {
         }
       }
     };
-    //if (me.autoWebview) {
-      //me.setSafariWindow(pageIdKey - 1, function(err, res) {
-        //if (err) {
-          //cb(err);
-        //} else if (res.status !== status.codes.Success.code) {
-          //cb(res.status);
-        //} else {
-          //next();
-        //}
-      //});
-    //} else {
     next();
-    //}
   } else {
     cb(null, {
       status: status.codes.NoSuchWindow.code

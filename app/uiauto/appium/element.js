@@ -59,7 +59,7 @@ UIAElement.prototype.setValueByType = function(newValue) {
   var type = this.type();
 
   if (type === "UIATextField" || type === "UIASecureTextField" ||
-      type === "UIATextView") {
+      type === "UIATextView" || type === "UIASearchBar") {
     // do the full-on clear,keyboard typing operation
     this.setValue("");
     if (!this.hasKeyboardFocus()) {

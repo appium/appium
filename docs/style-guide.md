@@ -99,4 +99,24 @@ Style notes
         //foo++;
         }
         ```
+*   Subclassing by extending prototypes
+        ```js
+        var _ = require('underscore');
+
+        var SuperClass = function() {
+          this.init();
+        };
+
+        SuperClass.prototype.init = function() {
+          // initialize
+        };
+
+        // Create a subclass
+        
+        var SubClass = function() {
+          this.init();
+        };
+
+        _.extend(SubClass.prototype, SuperClass.prototype);
+        ```
 *   More to come....

@@ -34,6 +34,10 @@ var logger = {
 
 
 var RemoteDebugger = function(onDisconnect) {
+  this.init(2, onDisconnect);
+};
+
+RemoteDebugger.prototype.init = function(debuggerType, onDisconnect) {
   this.socket = null;
   this.connId = uuid.v4();
   this.senderId = uuid.v4();
@@ -55,11 +59,17 @@ var RemoteDebugger = function(onDisconnect) {
   this.setHandlers();
   this.received = new Buffer(0);
   this.readPos = 0;
+  this.debuggerType = debuggerType;
 };
 
 // ====================================
 // API
 // ====================================
+
+RemoteDebugger.prototype.debuggerTypeEnum = {
+  "webkit":1,
+  "webinspector":2
+};
 
 RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
   var me = this;
@@ -136,7 +146,7 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb, skipReadyCheck) {
   this.send(setSenderKey, function() {
     logger.info("Set sender key");
     var enablePage = messages.enablePage(me.appIdKey, me.connId,
-                                         me.senderId, me.pageIdKey);
+                                         me.senderId, me.pageIdKey, me.debuggerType);
     me.send(enablePage, function() {
       logger.info("Enabled activity on page");
       if (skipReadyCheck) {
@@ -306,11 +316,13 @@ RemoteDebugger.prototype.execute = function(command, cb, override) {
       me.execute(command, cb);
     });
   } else {
-    assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
-    assert.ok(this.pageIdKey);
+    if(this.debuggerType === this.debuggerTypeEnum.webinspector){
+      assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
+      assert.ok(this.pageIdKey);
+    }
     logger.info("Sending javascript command");
     var sendJSCommand = messages.sendJSCommand(command, this.appIdKey,
-        this.connId, this.senderId, this.pageIdKey);
+        this.connId, this.senderId, this.pageIdKey, this.debuggerType);
     this.send(sendJSCommand, cb);
   }
 };
@@ -320,17 +332,19 @@ RemoteDebugger.prototype.callFunction = function(objId, fn, args, cb) {
   assert.ok(this.pageIdKey);
   logger.info("Calling javascript function");
   var callJSFunction = messages.callJSFunction(objId, fn, args, this.appIdKey,
-      this.connId, this.senderId, this.pageIdKey);
+      this.connId, this.senderId, this.pageIdKey, this.debuggerType);
   this.send(callJSFunction, cb);
 };
 
 RemoteDebugger.prototype.navToUrl = function(url, cb) {
-  assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
-  assert.ok(this.pageIdKey);
+  if(this.debuggerType === this.debuggerTypeEnum.webinspector){
+    assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
+    assert.ok(this.pageIdKey);
+  }
   logger.info("Navigating to new URL: " + url);
   var me = this;
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
-      this.senderId, this.pageIdKey);
+      this.senderId, this.pageIdKey, this.debuggerType);
   this.send(navToUrl, noop);
   this.waitForFrameNavigated(function() {
     me.checkPageIsReady(function(err, isReady) {
@@ -628,3 +642,5 @@ RemoteDebugger.prototype.receive = function(data) {
 exports.init = function(onDisconnect) {
   return new RemoteDebugger(onDisconnect);
 };
+
+exports.RemoteDebugger = RemoteDebugger;

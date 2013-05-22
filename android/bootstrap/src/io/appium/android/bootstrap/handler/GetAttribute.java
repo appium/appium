@@ -54,6 +54,9 @@ public class GetAttribute extends CommandHandler {
       } catch (final ElementNotInHashException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
+      } catch (final NullPointerException e) { // el is null
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       }
     } else {
       return getErrorResult("Unable to get attribute without an element.");

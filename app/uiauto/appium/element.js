@@ -62,7 +62,7 @@ UIAElement.prototype.setValueByType = function(newValue) {
       type === "UIATextView" || type === "UIASearchBar") {
     // do the full-on clear,keyboard typing operation
     this.setValue("");
-    if (!this.hasKeyboardFocus()) {
+    if (this.hasKeyboardFocus() === 0) {
     	this.tap();
     }
     au.sendKeysToActiveElement(newValue);

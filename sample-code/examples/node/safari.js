@@ -21,7 +21,6 @@ browser
   .init({
     device: 'iPhone Simulator'
     , name: "Appium Hybrid App: with WD"
-    , platform:'Mac 10.8'
     , app: "safari"
     , version: '6.1'
     , browserName: ''

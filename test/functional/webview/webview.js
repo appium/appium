@@ -20,6 +20,17 @@ describeWd('window handles', function(h) {
       done();
     });
   });
+  it('getting list twice should not crash appium', function(done) {
+    h.driver.windowHandles(function(err, handles) {
+      should.not.exist(err);
+      handles.length.should.be.above(0);
+      h.driver.windowHandles(function(err, handles) {
+        should.not.exist(err);
+        handles.length.should.be.above(0);
+        done();
+      });
+    });
+  });
   it('window handles should be strings', function(done) {
     h.driver.windowHandles(function(err, handles) {
       handles.length.should.be.above(0);

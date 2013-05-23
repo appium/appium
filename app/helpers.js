@@ -317,3 +317,11 @@ exports.isWindows = function() {
 exports.getTempPath = function () {
   return exports.isWindows() ? "C:\\Windows\\Temp" : "/tmp";
 };
+
+exports.getGitRev = function(cb) {
+  var cwd = path.resolve(__dirname, "..");
+  exec("git rev-parse HEAD", {cwd: cwd}, function(err, stdout) {
+    if (err) return cb(err);
+    cb(null, stdout.trim());
+  });
+};

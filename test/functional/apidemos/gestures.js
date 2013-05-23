@@ -36,7 +36,7 @@ describeWd('gestures', function(h) {
           should.not.exist(err);
           els[1].text(function(err, text) {
             should.not.exist(err);
-            text.should.equal("Morse Code");
+            ["ForegroundDispatch", "Morse Code"].should.include(text);
             done();
           });
         });

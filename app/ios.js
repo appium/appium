@@ -392,10 +392,10 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
     this.remote.selectApp(this.bundleId, onDone);
   } else {
       if(this.udid !== null){
-          this.remote = wkrd.init(exitCb);
-          me.remote.pageArrayFromJson(function(pageArray){
-            cb(pageArray);
-          });
+        this.remote = wkrd.init(exitCb);
+        me.remote.pageArrayFromJson(function(pageArray){
+          cb(pageArray);
+        });
       } else {
         this.remote = new rd.init(exitCb);
         this.remote.connect(function(appDict) {

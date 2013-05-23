@@ -105,12 +105,12 @@ describeWd('gestures', function(h) {
     });
   });
   it('should flick screen by speed', function(done) {
-    h.driver.elementByName("Views", function(err) {
+    h.driver.elementByName("Peer Activities", function(err) {
       // shouldn't be visible
       should.exist(err);
       h.driver.flick(0, -100, function(err) {
         should.not.exist(err);
-        h.driver.elementByName("Views", function(err, el) {
+        h.driver.elementByName("Peer Activities", function(err, el) {
           should.not.exist(err);
           should.exist(el.value);
           done();

@@ -11,6 +11,7 @@ should_reset_selendroid=false
 include_dev=false
 appium_home=$(pwd)
 reset_successful=false
+apidemos_reset=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
 
@@ -95,6 +96,28 @@ get_apidemos() {
     run_cmd ln -s $appium_home/submodules/ApiDemos $appium_home/sample-code/apps/ApiDemos
 }
 
+uninstall_android_app() {
+    echo "* Attempting to uninstall android app $1"
+    if (which adb >/dev/null); then
+        if (adb devices | grep "\tdevice" >/dev/null); then
+            run_cmd adb uninstall $1
+        else
+            echo "* No devices found, skipping"
+        fi
+    else
+        echo "* ADB not found, skipping"
+    fi
+}
+
+reset_apidemos() {
+    run_cmd get_apidemos
+    echo "* Configuring and cleaning/building Android test app: ApiDemos"
+    run_cmd $grunt configAndroidApp:ApiDemos
+    run_cmd $grunt buildAndroidApp:ApiDemos
+    uninstall_android_app com.example.android.apis
+    apidemos_reset=true
+}
+
 reset_android() {
     echo "RESETTING ANDROID"
     echo "* Configuring Android bootstrap"
@@ -103,10 +126,7 @@ reset_android() {
     echo "* Building Android bootstrap"
     run_cmd $grunt buildAndroidBootstrap
     if $include_dev ; then
-        run_cmd get_apidemos
-        echo "* Configuring and cleaning/building Android test app: ApiDemos"
-        run_cmd $grunt configAndroidApp:ApiDemos
-        run_cmd $grunt buildAndroidApp:ApiDemos
+        reset_apidemos
     fi
     echo "* Setting Android config to Appium's version"
     run_cmd $grunt setConfigVer:android
@@ -121,10 +141,15 @@ reset_selendroid() {
     echo "* Building selendroid server and supporting libraries"
     run_cmd $grunt buildSelendroidServer
     if $include_dev ; then
-        get_apidemos
+        if ! $apidemos_reset; then
+            reset_apidemos
+            uninstall_android_app com.example.android.apis.selendroid
+        fi
         echo "* Linking selendroid test app: WebViewDemo"
         run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
         run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+        uninstall_android_app org.openqa.selendroid.testapp
+        uninstall_android_app org.openqa.selendroid.testapp.selendroid
     fi
     echo "* Setting Selendroid config to Appium's version"
     run_cmd $grunt setConfigVer:selendroid

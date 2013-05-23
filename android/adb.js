@@ -15,6 +15,7 @@ var spawn = require('win-spawn')
   , _ = require('underscore')
   , helpers = require('../app/helpers')
   , AdmZip = require('adm-zip')
+  , getTempPath = helpers.getTempPath
   , isWindows = helpers.isWindows();
 
 var noop = function() {};
@@ -172,7 +173,7 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
     , newServerPath = me.selendroidServerPath
     , newPackage = me.appPackage + '.selendroid'
     , srcManifest = path.resolve(__dirname, "../build/selendroid/AndroidManifest.xml")
-    , dstDir = '/tmp/' + this.appPackage
+    , dstDir = path.resolve(getTempPath(), this.appPackage)
     , dstManifest = dstDir + '/AndroidManifest.xml';
 
   try {
@@ -251,8 +252,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
 
   var moveManifest = function(cb) {
     if (isWindows) {
-      try
-      {
+      try {
         var existingAPKzip = new AdmZip(dstApk);
         var newAPKzip = new AdmZip();
         existingAPKzip.getEntries().forEach(function(entry) {
@@ -268,7 +268,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
         cb(err);
       }
     } else {
-      // Insert compiled manfiest into /tmp/appPackage.clean.apk
+      // Insert compiled manifest into /tmp/appPackage.clean.apk
       // -j = keep only the file, not the dirs
       // -m = move manifest into target apk.
       var replaceCmd = 'zip -j -m "' + dstApk + '" "' + manifest + '"';
@@ -419,8 +419,9 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
   logger.info("Starting selendroid");
   var me = this
     , modServerExists = false
-    , modApk = this.appPackage + '.selendroid';
-  this.selendroidServerPath = serverPath.replace(/\.apk$/, ".mod.apk");
+    , modAppPkg = this.appPackage + '.selendroid';
+  this.selendroidServerPath = path.resolve(getTempPath(),
+      'selendroid.' + this.appPackage + '.apk');
 
   var checkModServerExists = function(cb) {
     fs.stat(me.selendroidServerPath, function(err) {
@@ -435,7 +436,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
       // need to uninstall it if it's already on device
       logger.info("Rebuilt selendroid apk does not exist, uninstalling " +
                   "any instances of it on device to make way for new one");
-      me.uninstallApk(modApk, cb);
+      me.uninstallApk(modAppPkg, cb);
     } else {
       logger.info("Rebuilt selendroid apk exists, doing nothing");
       cb();
@@ -455,7 +456,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
   };
 
   var conditionalInstallSelendroid = function(cb) {
-    me.checkAppInstallStatus(modApk, function(e, installed) {
+    me.checkAppInstallStatus(modAppPkg, function(e, installed) {
       if (!installed) {
         logger.info("Rebuilt selendroid is not installed, installing it");
         me.installApk(me.selendroidServerPath, cb);

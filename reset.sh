@@ -134,6 +134,8 @@ reset_android() {
 
 reset_selendroid() {
     echo "RESETTING SELENDROID"
+    echo "* Clearing out any old modified server apks"
+    run_cmd rm -rf /tmp/selendroid*.apk
     echo "* Cloning/updating selendroid"
     run_cmd rm -rf submodules/selendroid/selendroid-server/target
     run_cmd git submodule update --init submodules/selendroid

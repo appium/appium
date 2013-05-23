@@ -792,7 +792,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
       }, this));
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
+    var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
     this.proxy(command, cb);
   }
 };

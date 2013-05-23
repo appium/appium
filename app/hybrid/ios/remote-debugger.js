@@ -60,6 +60,7 @@ RemoteDebugger.prototype.init = function(debuggerType, onDisconnect) {
   this.received = new Buffer(0);
   this.readPos = 0;
   this.debuggerType = debuggerType;
+  this.socketGone = false;
 };
 
 // ====================================
@@ -77,6 +78,7 @@ RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
   this.socket = new net.Socket({type: 'tcp6'});
   this.socket.on('close', function() {
     logger.info('Debugger socket disconnected');
+    this.socketGone = true;
     me.onAppDisconnect();
   });
   this.socket.on('data', _.bind(me.receive, this));
@@ -90,6 +92,7 @@ RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
 
 RemoteDebugger.prototype.disconnect = function() {
   logger.info("Disconnecting from remote debugger");
+  this.socketGone = true;
   this.socket.destroy();
 };
 
@@ -538,8 +541,12 @@ RemoteDebugger.prototype.send = function (data, cb, cb2) {
     return logger.info(e);
   }
 
-  this.socket.write(bufferpack.pack('L', [plist.length]));
-  this.socket.write(plist, immediateCb ? cb : noop);
+  if (!this.socketGone) {
+    this.socket.write(bufferpack.pack('L', [plist.length]));
+    this.socket.write(plist, immediateCb ? cb : noop);
+  } else {
+    logger.error("Attempted to write data to socket after it was closed!");
+  }
 };
 
 RemoteDebugger.prototype.receive = function(data) {

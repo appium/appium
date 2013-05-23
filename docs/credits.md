@@ -11,3 +11,4 @@ Credits
 * [node-webkit](https://github.com/rogerwang/node-webkit)
 * [Remote Debug](https://github.com/leftlogic/remote-debug)
 * [Selenium Project](http://code.google.com/p/selenium/)
+* [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy)

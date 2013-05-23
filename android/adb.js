@@ -77,7 +77,8 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
   if (this.sdkRoot) {
     var binaryLocs = [ path.resolve(this.sdkRoot, "platform-tools", binaryName)
         , path.resolve(this.sdkRoot, "tools", binaryName)
-        , path.resolve(this.sdkRoot, "build-tools", "17.0.0", binaryName) ];
+        , path.resolve(this.sdkRoot, "build-tools", "17.0.0", binaryName)
+        , path.resolve(this.sdkRoot, "build-tools", "android-4.2.2", binaryName)];
     _.each(binaryLocs, function(loc) {
       if (fs.existsSync(loc)) binaryLoc = loc;
     });

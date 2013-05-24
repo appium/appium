@@ -84,9 +84,20 @@ public class Find extends CommandHandler {
       UiScrollable scrollable = null;
       final boolean scroll = option.contentEquals("scroll");
       if (scroll) {
-        scrollable = new UiScrollable(new UiSelector().className(
-            android.widget.ListView.class).scrollable(true))
-            .setAsVerticalList();
+        UiSelector scrollableListView = new UiSelector().className(
+            android.widget.ListView.class).scrollable(true);
+        if (!new UiObject(scrollableListView).exists()) {
+          // Select anything that's scrollable if there's no list view.
+          scrollableListView = new UiSelector().scrollable(true);
+        }
+
+        // Nothing scrollable exists.
+        if (!new UiObject(scrollableListView).exists()) {
+          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+              "No such element.");
+        }
+
+        scrollable = new UiScrollable(scrollableListView).setAsVerticalList();
       }
       Logger.debug("Scrolling? " + scroll);
       // Return the first element of the first selector that matches.

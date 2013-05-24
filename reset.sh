@@ -59,6 +59,8 @@ reset_general() {
         run_cmd sudo npm install .
     fi
     run_cmd mkdir -p build
+    echo "* Setting git revision data"
+    run_cmd $grunt setGitRev
 }
 
 reset_ios() {

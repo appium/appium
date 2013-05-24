@@ -7,6 +7,7 @@ var status = require('./uiauto/lib/status')
   , swig = require('swig')
   , path = require('path')
   , version = require('../package.json').version
+  , getGitRev = require('./helpers.js').getGitRev
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -143,9 +144,12 @@ exports.sessionBeforeFilter = function(req, res, next) {
 
 exports.getStatus = function(req, res) {
   // Return a static JSON object to the client
-  respondSuccess(req, res, {
-    build: {version: version}
-  });
+  var gitSha = req.appium.serverConfig['git-sha'];
+  var data = {build: {version: version}};
+  if (typeof gitSha !== "undefined") {
+    data.build.revision = gitSha;
+  }
+  respondSuccess(req, res, data);
 };
 
 exports.createSession = function(req, res) {

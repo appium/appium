@@ -137,13 +137,15 @@ module.exports.tail = function(grunt, filename, cb) {
 };
 
 module.exports.setDeviceConfigVer = function(grunt, device, cb) {
+  var value = {version: appiumVer};
+  exports.writeConfigKey(grunt, device, value, cb);
+};
+
+module.exports.writeConfigKey = function(grunt, key, value, cb) {
   var configPath = path.resolve(__dirname, '.appiumconfig');
   fs.readFile(configPath, function(err, data) {
-    var writeVer = function(config) {
-      if (typeof config[device] === "undefined") {
-        config[device] = {};
-      }
-      config[device].version = appiumVer;
+    var writeConfig = function(config) {
+      config[key] = value;
       grunt.log.write("\n");
       grunt.log.write(JSON.stringify(config));
       fs.writeFile(configPath, JSON.stringify(config), cb);
@@ -151,12 +153,16 @@ module.exports.setDeviceConfigVer = function(grunt, device, cb) {
     if (err) {
       grunt.log.write("Config file doesn't exist, creating it");
       var config = {};
-      writeVer(config);
+      writeConfig(config);
     } else {
       grunt.log.write("Config file exists, updating it");
-      writeVer(JSON.parse(data.toString('utf8')));
+      writeConfig(JSON.parse(data.toString('utf8')));
     }
   });
+};
+
+module.exports.setGitRev = function(grunt, rev, cb) {
+  exports.writeConfigKey(grunt, "git-sha", rev, cb);
 };
 
 module.exports.authorize = function(grunt, cb) {

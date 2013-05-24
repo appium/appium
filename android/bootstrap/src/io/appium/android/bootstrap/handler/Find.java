@@ -105,7 +105,7 @@ public class Find extends CommandHandler {
       try {
         int finalizer = 0;
         JSONArray pair = null;
-        final List<Object> results = new ArrayList<Object>();
+        final JSONArray results = new JSONArray();
         // Start at 1 to skip over all.
         for (int selIndex = all || scroll ? 1 : 0; selIndex < selectors
             .length(); selIndex++) {
@@ -133,7 +133,7 @@ public class Find extends CommandHandler {
                     sel, contextId);
                 Logger.debug("Elements found: " + eles);
                 for (final String found : Dynamic.finalize(eles, finalizer)) {
-                  results.add(found);
+                  results.put(found);
                 }
                 continue;
               } else {
@@ -144,7 +144,11 @@ public class Find extends CommandHandler {
             }
 
             if (all) {
-              results.add(fetchElements(sel, contextId));
+              final ArrayList<AndroidElement> els = elements.getElements(sel,
+                  contextId);
+              for (final AndroidElement el : els) {
+                results.put(new JSONObject().put("ELEMENT", el.getId()));
+              }
               continue;
             } else if (scroll) {
               Logger.debug("Scrolling into view...");
@@ -161,7 +165,7 @@ public class Find extends CommandHandler {
             Logger.debug("Not found.");
           }
         }
-        if (all && results.size() > 0) {
+        if (all && results.length() > 0) {
           return getSuccessResult(results);
         }
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,

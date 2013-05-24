@@ -411,6 +411,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushAppium(cb); },
+    function(cb) { me.unlockScreen(cb); },
     function(cb) { me.startApp(cb); }
   ], doRun);
 };
@@ -476,6 +477,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
     function(cb) { conditionalInstallSelendroid(cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
+    function(cb) { me.unlockScreen(cb); },
     function(cb) { me.pushSelendroid(cb); },
     function(cb) { logger.info("Selendroid server is launching"); cb(); }
   ], onReady);
@@ -918,16 +920,14 @@ ADB.prototype.startApp = function(cb) {
   }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
-  this.unlockScreen(_.bind(function() {
-    this.debug("Starting app " + this.appPackage + "/" + activityString);
-    exec(cmd, _.bind(function(err) {
-      if(err) {
-        logger.error(err);
-        cb(err);
-      } else {
-        this.waitForActivity(cb);
-      }
-    }, this));
+  this.debug("Starting app " + this.appPackage + "/" + activityString);
+  exec(cmd, _.bind(function(err) {
+    if(err) {
+      logger.error(err);
+      cb(err);
+    } else {
+      this.waitForActivity(cb);
+    }
   }, this));
 };
 

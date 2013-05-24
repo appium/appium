@@ -1,4 +1,38 @@
 -------------------------------------
+CHANGES IN VERSION 0.6.0 (from 0.5.2)
+-------------------------------------
+[GENERAL]
+- initial Windows appium support (Android-only)
+- reset.sh no longer fails silently if it errors
+- added reset.bat for windows
+- get status now returns actual appium version
+- make sure reset.sh uninstalls android test apps if emulator is running
+- include the git revision in the status object and in the logs at startup
+- misc bugfixes
+
+[IOS]
+- ability to talk to mobile Safari on a real device over USB
+- added native back() method
+- sendKeys now only taps on field if it doesn't already have focus
+
+[ANDROID]
+- find by name checks to see if it found the element
+- find by xpath no longer returns duplicate elements
+- add support for ADT 22
+- add "mobile: waitForPageLoad" that waits for indicators to clear
+- fix scrollTo
+
+[SELENDROID]
+- build selendroid modded servers in /tmp for npm
+- fixed issue with running tests for multiple apps sequentially
+
+[ROBOT]
+- initial support for robot automation (robot intercepts tap etc)
+
+[APPIUM.EXE]
+- not strictly part of appium, but the Windows GUI has arrived in beta!
+
+-------------------------------------
 CHANGES IN VERSION 0.5.2 (from 0.5.1)
 -------------------------------------
 [IOS]

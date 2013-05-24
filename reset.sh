@@ -12,6 +12,7 @@ include_dev=false
 appium_home=$(pwd)
 reset_successful=false
 apidemos_reset=false
+hardcore=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
 
@@ -24,6 +25,7 @@ do
         "--dev") include_dev=true;;
         "-v") verbose=true;;
         "--verbose") verbose=true;;
+        "--hardcore") hardcore=true;;
     esac
     shift
 done
@@ -76,6 +78,10 @@ reset_ios() {
     run_cmd mkdir build/iwd
     run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
     if $include_dev ; then
+        if $hardcore ; then
+            echo "* Clearing out old UICatalog download"
+            run_cmd rm -rf ./sample-code/apps/UICatalog*
+        fi
         if [ ! -d "./sample-code/apps/UICatalog" ]; then
             echo "* Downloading UICatalog app"
             run_cmd $grunt downloadApp
@@ -170,6 +176,9 @@ main() {
     echo "---- Resetting / Initializing Appium ----"
     if $include_dev ; then
         echo "* Dev mode is on, will download/build test apps"
+    fi
+    if $hardcore ; then
+        echo "* Hardcore mode is on, will do extra crazy stuff"
     fi
     reset_general
     if $should_reset_ios ; then

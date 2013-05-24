@@ -8,6 +8,7 @@ var http = require('http')
   , bodyParser = require('./middleware').parserWrap
   , status = require('./app/uiauto/lib/status')
   , appiumVer = require('./package.json').version
+  , appiumRev = null
   , async = require('async')
   , _ = require("underscore")
   , parser = require('./app/parser')
@@ -89,8 +90,10 @@ var main = function(args, readyCb, doneCb) {
       }
       var versionMismatches = {};
       _.each(rawConfig, function(deviceConfig, key) {
-        if (deviceConfig.version !== appiumVer) {
+        if (deviceConfig.version !== appiumVer && key !== "git-sha") {
           versionMismatches[key] = deviceConfig.version;
+        } else if (key === "git-sha") {
+          appiumRev = rawConfig['git-sha'];
         }
       });
       if (_.keys(versionMismatches).length) {
@@ -127,6 +130,11 @@ var main = function(args, readyCb, doneCb) {
   var startListening = function(cb) {
     var alreadyReturned = false;
     server.listen(args.port, args.address, function() {
+      var welcome = "Welcome to Appium v" + appiumVer;
+      if (appiumRev) {
+        welcome += " (REV " + appiumRev + ")";
+      }
+      logger.info(welcome.cyan);
       var logMessage = "Appium REST http interface listener started on " +
                        args.address + ":" + args.port;
       logger.info(logMessage.cyan);

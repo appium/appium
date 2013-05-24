@@ -931,6 +931,20 @@ ADB.prototype.startApp = function(cb) {
   }, this));
 };
 
+ADB.prototype.stopApp = function(cb) {
+  logger.info("Killing app");
+  this.requireDeviceId();
+  this.requireApp();
+  var cmd = this.adbCmd + " shell am force-stop " + this.appPackage;
+  exec(cmd, function(err) {
+    if (err) {
+      logger.error(err);
+      return cb(err);
+    }
+    cb();
+  });
+};
+
 ADB.prototype.getFocusedPackageAndActivity = function(cb) {
   logger.info("Getting focused package and activity");
   this.requireDeviceId();

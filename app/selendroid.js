@@ -119,7 +119,7 @@ Selendroid.prototype.deleteSession = function(cb) {
   this.proxyTo(url, 'DELETE', null, _.bind(function(err, res) {
     if (err) return cb(err);
     if (res.statusCode !== 200) return cb(new Error("Status was not 200"));
-    cb();
+    this.adb.stopApp(cb);
   }, this));
 };
 

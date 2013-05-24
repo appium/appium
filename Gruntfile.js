@@ -17,6 +17,8 @@ var path = require('path')
   , generateServerDocs = gruntHelpers.generateServerDocs
   , generateAppiumIo = gruntHelpers.generateAppiumIo
   , setDeviceConfigVer = gruntHelpers.setDeviceConfigVer
+  , setGitRev = gruntHelpers.setGitRev
+  , getGitRev = require('./app/helpers').getGitRev
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -159,5 +161,16 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('setConfigVer', function(device) {
     setDeviceConfigVer(grunt, device, this.async());
+  });
+  grunt.registerTask('setGitRev', function(rev) {
+    var done = this.async();
+    if (typeof rev === "undefined") {
+      getGitRev(function(err, rev) {
+        if (err) throw err;
+        setGitRev(grunt, rev, done);
+      });
+    } else {
+      setGitRev(grunt, rev, done);
+    }
   });
 };

@@ -528,38 +528,101 @@ ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
   });
 };
 
+ADB.prototype.getEmulatorPort = function(cb) {
+  this.getConnectedDevices(function(err, devices) {
+    if (err || devices.length < 1) {
+      cb(null);
+    } else {
+      var portFound = false;
+      devices.forEach(function(device) {
+        if (!portFound) {
+          var portPattern = /emulator-(\d+)/;
+          if (portPattern.test(device)) {
+            portFound = true;
+            cb(parseInt(portPattern.exec(device)[1], 10));
+          }
+        }
+      }, cb);
+      if (!portFound) {
+        cb(null);
+      }
+    }
+  });
+};
+
+ADB.prototype.getRunningAVDName = function(cb) {
+  try {
+    this.getEmulatorPort(function(emulatorPort) {
+      if (emulatorPort !== null) {
+        var conn = net.createConnection(emulatorPort, 'localhost');
+        conn.on('connect', function() {
+          try {
+            conn.write('avd name\n');
+            conn.write('quit\n');
+          } catch(err) {
+            logger.info("Could not get AVD name. Maybe the emulator isn't really running? " + err.description);
+            cb(undefined);
+          }
+        }, cb);
+        conn.on('data', function (data) {
+          var content = data.toString();
+          var avdNamePattern = /OK((.|\n|\r\n)*)(.*)(.|\n|\r\n)OK/;
+          if (avdNamePattern.test(content)) {
+            cb(avdNamePattern.exec(content)[1].trim());
+          } else {
+            cb(null);
+          }
+        }, cb);
+      } else {
+        cb(null);
+      }
+    }, cb);
+  } catch(err) {
+    logger.info("Could not get emulator port: " + err.description);
+    cb(null);
+  }
+};
+
 ADB.prototype.prepareEmulator = function(cb) {
   if (this.avdName !== null) {
-    logger.info("Launching Emulator with AVD " + this.avdName);
-    exec("/usr/bin/killall -m emulator*", _.bind(function(err, stdout) {
-      if (err) {
-        logger.info("Could not kill emulator. It was probably not running. : " + err.message);
-      }
-      this.checkSdkBinaryPresent("emulator",_.bind(function(err, emulatorBinaryPath) {
-        if (err) {
-          return cb(err);
-        }
-        if (this.avdName[0] != "@") {
-          this.avdName = "@" + this.avdName;
-        }
-        var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
-        var timeoutMs = 120000;
-        var now = Date.now();
-        var checkEmulatorAlive = _.bind(function() {
-          this.restartAdb(_.bind(function() {
-            this.getConnectedDevices(_.bind(function(err, devices) {
-              if (!err && devices.length) {
-                cb(null, true);
-              } else if (Date.now() < (now + timeoutMs)) {
-                setTimeout(checkEmulatorAlive, 2000);
-              } else {
-                cb(new Error("Emulator didn't come up in " + timeoutMs + "ms"));
-              }
-            }, this));
+    this.getRunningAVDName(_.bind(function(runningAVDName) {
+      if (this.avdName.replace('@','') === runningAVDName) {
+        logger.info("Did not launch AVD because it was already running.");
+        cb(null);
+      } else {
+        logger.info("Launching Emulator with AVD " + this.avdName);
+        var killallCmd = isWindows ? "TASKKILL /IM emulator.exe" : "/usr/bin/killall -m emulator*";
+        exec(killallCmd, _.bind(function(err, stdout) {
+          if (err) {
+            logger.info("Could not kill emulator. It was probably not running. : " + err.message);
+          }
+          this.checkSdkBinaryPresent("emulator",_.bind(function(err, emulatorBinaryPath) {
+            if (err) {
+              return cb(err);
+            }
+            if (this.avdName[0] !== "@") {
+              this.avdName = "@" + this.avdName;
+            }
+            var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
+            var timeoutMs = 120000;
+            var now = Date.now();
+            var checkEmulatorAlive = _.bind(function() {
+              this.restartAdb(_.bind(function() {
+                this.getConnectedDevices(_.bind(function(err, devices) {
+                  if (!err && devices.length) {
+                    cb(null, true);
+                  } else if (Date.now() < (now + timeoutMs)) {
+                    setTimeout(checkEmulatorAlive, 2000);
+                  } else {
+                    cb(new Error("Emulator didn't come up in " + timeoutMs + "ms"));
+                  }
+                }, this));
+              }, this));
+            }, this);
+            checkEmulatorAlive();
           }, this));
-        }, this);
-        checkEmulatorAlive();
-      }, this));
+        }, this));
+      }
     }, this));
   } else {
     cb(null);

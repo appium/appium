@@ -12,6 +12,37 @@ Here are the steps required to talk to a web view in your Appium test:
 1.  (This puts your Appium session into a mode where all commands are interpreted as being intended for automating the web view, rather than the native portion of the app. For example, if you run getElementByTagName, it will operate on the DOM of the web view, rather than return UIAElements. Of course, certain WebDriver methods only make sense in one context or another, so in the wrong context you will receive an error message).
 1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `"mobile: leaveWebView"` with execute_script to leave the web frame.
 
+## Execution against a real iOS device
+To interrogate and interact with a web view appium establishes a connection using a remote debugger. When executing the examples below against a simulator this connection can be established directly as the simulator and the appium server are on the same machine. When executing against a real device appium is unable to access the web view directly. Therefore the connection has to be established through the USB lead. To establish this connection we use the [ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy).
+
+To install the latest tagged version of the ios-webkit-debug-proxy using brew, run the following commands in the terminal:
+``` bash
+# The first command is only required if you don't have brew installed.
+> ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+> brew update
+> brew install ios-webkit-debug-proxy
+```
+
+You can also install the latest proxy by cloning it from git and installing it yourself:
+``` bash
+# Please be aware that this will install the proxy with the latest code (and not a tagged version).
+> git clone https://github.com/google/ios-webkit-debug-proxy.git
+> cd ios-webkit-debug-proxy
+> ./autogen.sh
+> ./configure
+> make
+> sudo make install
+```
+
+Once installed you can start the proxy with the following command:
+``` bash
+# Change the udid to be the udid of the attached device and make sure to set the port to 27753 
+# as that is the port the remote-debugger uses.
+> ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
+``` 
+
+<b>NOTE</b>: There is currently an outstanding issue with the proxy when handling large request (e.g. like the webdriver commands which require the webdriver js libraries to be sent along). This is currently being investigated and should hopefully be resolved soon. Request like getting the page title and refreshing the page are not affected by this issue.
+
 ## Wd.js Code example
 
 ```js

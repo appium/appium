@@ -23,9 +23,11 @@ To install the latest tagged version of the ios-webkit-debug-proxy using brew, r
 > brew install ios-webkit-debug-proxy
 ```
 
-You can also install the proxy by cloning it from git and running the following commands in the terminal:
+You can also install the latest proxy by cloning it from git and installing it yourself:
 ``` bash
-# Make sure navigate to the ios-webkit-debug-proxy folder first.
+# Please be aware that this will install the proxy with the latest code (and not a tagged version).
+> git clone https://github.com/google/ios-webkit-debug-proxy.git
+> cd ios-webkit-debug-proxy
 > ./autogen.sh
 > ./configure
 > make
@@ -34,7 +36,8 @@ You can also install the proxy by cloning it from git and running the following 
 
 Once installed you can start the proxy with the following command:
 ``` bash
-# Changed the udid to be the udid of the attached device and set the port to 27753 as that is what the debugger uses.
+# Change the udid to be the udid of the attached device and make sure to set the port to 27753 
+# as that is the port the remote-debugger uses.
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ``` 
 

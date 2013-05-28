@@ -24,16 +24,14 @@ Once you start the appium server and it registers with the grid, you will see yo
           "version":"<version_of_iOS_e.g._6.1>",
           "maxInstances": 1,
           "platform":"MAC"
-
         }
-
       ],
   "configuration":
   {
   	"cleanUpCycle":2000,
-  	 "timeout":30000,
+  	"timeout":30000,
     "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
-     "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
+    "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
     "maxSession": 1,
     "port": <appium_port>,
     "host": "<host_name_appium_server_or_ip-address_appium_server>",

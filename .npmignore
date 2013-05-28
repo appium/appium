@@ -5,7 +5,7 @@ sample-code/
 test/
 android/bootstrap/bin/
 android/bootstrap/target/
-app/android/AndroidManifest*
+app/android/AndroidManifest.xml.apk
 _vimrc_local.vim
 *.swp
 *.swo

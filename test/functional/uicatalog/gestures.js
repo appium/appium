@@ -4,7 +4,9 @@
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
   , should = require('should')
   , _s = require('underscore.string')
-  , assert = require('assert');
+  , assert = require('assert')
+  , spinWait = require('../../helpers/spin.js').spinWait
+  , textBlock = "Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.\n\nThis text view can also use attributed strings.";
 
 describeWd('flick gesture', function(h) {
   it('should work via webdriver method', function(done) {
@@ -56,14 +58,20 @@ describeWd('swipe gesture', function(h) {
   it('should work with wd function in pixels', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
-        h.driver.flick(0, -40, true, function(err) {
-          should.not.exist(err);
-          element.getLocation(function(err, location2) {
-            assert.equal(location.x, location.x);
-            assert.notEqual(location.y, location2.y);
-            done();
+        var spinFn = function(spinCb) {
+          h.driver.flick(0, -70, true, function(err) {
+            should.not.exist(err);
+            element.getLocation(function(err, location2) {
+              var isErr = (location.x != location2.x) ||
+                          (location.y === location2.y);
+              if (isErr) {
+                return spinCb(new Error("Swipe did not happen OK"));
+              }
+              spinCb();
+            });
           });
-        });
+        };
+        spinWait(spinFn, done, 5000);
       });
     });
   });
@@ -223,7 +231,7 @@ describeWd('complex tap', function(h) {
         should.not.exist(err);
         el.text(function(err, text) {
           should.not.exist(err);
-          _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+          _s.trim(text).should.eql();
           done();
         });
       });
@@ -243,7 +251,7 @@ describeWd('complex tap', function(h) {
         should.not.exist(err);
         el.text(function(err, text) {
           should.not.exist(err);
-          _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+          _s.trim(text).should.eql(textBlock);
           done();
         });
       });
@@ -256,7 +264,7 @@ describeWd('complex tap', function(h) {
         should.not.exist(err);
         el.text(function(err, text) {
           should.not.exist(err);
-          _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+          _s.trim(text).should.eql(textBlock);
           done();
         });
       });
@@ -279,7 +287,7 @@ describeWd('complex tap on element', function(h) {
           should.not.exist(err);
           el.text(function(err, text) {
             should.not.exist(err);
-            _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+            _s.trim(text).should.eql(textBlock);
             done();
           });
         });
@@ -301,7 +309,7 @@ describeWd('complex tap on element', function(h) {
           should.not.exist(err);
           el.text(function(err, text) {
             should.not.exist(err);
-            _s.trim(text).should.eql("Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.");
+            _s.trim(text).should.eql(textBlock);
             done();
           });
         });

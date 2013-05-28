@@ -29,6 +29,7 @@ var ADB = function(opts, android) {
   }
   this.sdkRoot = opts.sdkRoot;
   this.udid = opts.udid;
+  this.webSocket = opts.webSocket;
   // Don't uninstall if using fast reset.
   // Uninstall if reset is set and fast reset isn't.
   this.skipUninstall = opts.fastReset || !(opts.reset || false);
@@ -719,7 +720,6 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
 };
 
 ADB.prototype.checkForSocketReady = function(output) {
-  logger.info("Checking for appium socket server to be ready");
   if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
     this.debug("Connecting to server on device...");
@@ -811,6 +811,12 @@ ADB.prototype.handleBootstrapOutput = function(output) {
       match = re.exec(line);
       if (match) {
         logger.info("[ANDROID] " + match[1]);
+
+        var alertRe = /Emitting system alert message/;
+        if (alertRe.test(line)) {
+          logger.info("Emiting alert message...");
+          me.webSocket.sockets.emit('alert', {message: line});
+        }
       } else {
         // The dump command will always disconnect UiAutomation.
         // Detect the crash then restart UiAutomation.

@@ -1,8 +1,6 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.exceptions.CommandTypeException;
-import io.appium.android.bootstrap.exceptions.SocketServerException;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +9,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.json.JSONException;
+import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.exceptions.CommandTypeException;
+import io.appium.android.bootstrap.exceptions.SocketServerException;
+import io.appium.android.bootstrap.utils.TheWatchers;
 
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
@@ -26,6 +27,7 @@ class SocketServer {
   PrintWriter                          out;
   boolean                              keepListening;
   private final AndroidCommandExecutor executor;
+  private final TheWatchers watchers = TheWatchers.getInstance();
 
   /**
    * Constructor
@@ -108,7 +110,11 @@ class SocketServer {
       in = new BufferedReader(new InputStreamReader(client.getInputStream()));
       out = new PrintWriter(client.getOutputStream(), true);
       while (keepListening) {
-        handleClientData();
+        if (in.ready()) {
+          handleClientData();
+        }
+        Thread.sleep(100);
+        watchers.check();
       }
       in.close();
       out.close();
@@ -116,6 +122,8 @@ class SocketServer {
       Logger.info("Closed client connection");
     } catch (final IOException e) {
       throw new SocketServerException("Error when client was trying to connect");
+    } catch (InterruptedException e) {
+      throw new SocketServerException("The socket server was interupted");
     }
   }
 
@@ -123,8 +131,8 @@ class SocketServer {
    * When {@link #handleClientData()} has valid data, this method delegates the
    * command.
    * 
-   * @param cmd
-   * @return
+   * @param cmd AndroidCommand
+   * @return Result
    */
   private String runCommand(final AndroidCommand cmd) {
     AndroidCommandResult res;

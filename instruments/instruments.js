@@ -11,12 +11,13 @@ var spawn = require('child_process').spawn
   , path = require('path')
   , codes = require('../app/uiauto/lib/status.js').codes;
 
-var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, cb, exitCb) {
+var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb) {
   this.app = app;
   this.udid = udid;
   this.bootstrap = bootstrap;
   this.template = template;
   this.withoutDelay = withoutDelay;
+  this.webSocket = webSocket;
   this.commandQueue = [];
   this.curCommand = null;
   this.resultHandler = this.defaultResultHandler;
@@ -277,6 +278,12 @@ Instruments.prototype.outputStreamHandler = function(output) {
 
 Instruments.prototype.errorStreamHandler = function(output) {
   logger.info(("[INST STDERR] " + output).yellow);
+  var re = /Call to onAlert returned 'YES'/;
+  var match = re.exec(output);
+  if (match) {
+    logger.info("Emiting alert message...");
+    this.webSocket.sockets.emit('alert', {message: output});
+  }
 };
 
 Instruments.prototype.lookForShutdownInfo = function(output) {
@@ -327,7 +334,7 @@ Instruments.prototype.debug = function(msg) {
 
 /* NODE EXPORTS */
 
-module.exports = function(server, app, udid, bootstrap, template, sock, withoutDelay, cb, exitCb) {
-  return new Instruments(server, app, udid, bootstrap, template, sock, withoutDelay, cb, exitCb);
+module.exports = function(server, app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb) {
+  return new Instruments(server, app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb);
 };
 

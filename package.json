@@ -58,7 +58,8 @@
     "node-idevice": "~0.1.2",
     "win-spawn" : "~1.1.1",
     "adm-zip" : "~0.4.3",
-    "ws": "0.4.25"
+    "ws": "0.4.25",
+    "socket.io" : "~0.9.14"
   },
   "scripts": {
     "test": "grunt travis"
@@ -71,6 +72,9 @@
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",
     "grunt-contrib-jshint": "~0.1.1",
-    "saucelabs": "~0.0.7"
+    "saucelabs": "~0.0.7",
+    "socket.io-client": "~0.9.11",
+    "socks": "~0.0.1",
+    "telnetclient": "~0.0.1"
   }
 }

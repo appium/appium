@@ -19,6 +19,7 @@ var errors = require('./errors')
 
 var Android = function(opts) {
   this.rest = opts.rest;
+  this.webSocket = opts.webSocket;
   this.opts = opts;
   this.apkPath = opts.apkPath;
   this.udid = opts.udid;

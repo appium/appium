@@ -12,6 +12,7 @@ var http = require('http')
   , async = require('async')
   , _ = require("underscore")
   , parser = require('./app/parser')
+  , io = require('socket.io')
   , gridRegister = require('./grid_register');
 
 var allowCrossDomain = function(req, res, next) {
@@ -49,7 +50,8 @@ var main = function(args, readyCb, doneCb) {
     doneCb = function() {};
   }
   var rest = express()
-    , server = http.createServer(rest);
+    , server = http.createServer(rest)
+    , alerts = io.listen(server, {'flash policy port': -1});
 
   rest.configure(function() {
     rest.use(express.favicon());
@@ -72,6 +74,24 @@ var main = function(args, readyCb, doneCb) {
 
   // Hook up REST http interface
   appiumServer.attachTo(rest);
+
+  alerts.configure(function() {
+    alerts.set('log level', 1);
+    alerts.set("polling duration", 10);
+    alerts.set("transports", ['websocket', 'flashsocket']);
+  });
+
+  alerts.sockets.on("connection", function (socket) {
+    socket.set('log level', 1);
+    logger.info("Client connected: " + (socket.id).toString());
+
+    socket.on('disconnect', function(data) {
+      logger.info("Client disconnected: " + data);
+    });
+  });
+
+  // add web socket so we can emit events
+  appiumServer.attachSocket(alerts);
 
   var checkSetup = function(cb) {
     var configFile = path.resolve(__dirname, ".appiumconfig");

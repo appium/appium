@@ -1555,6 +1555,32 @@ IOS.prototype.shake = function(cb) {
   this.proxy("au.shake()", cb);
 };
 
+IOS.prototype.setLocation = function(latitude, longitude, altitude, horizontalAccuracy, verticalAccuracy, course, speed, cb) {
+  var coordinates = {'latitude' : latitude, 'longitude' : longitude};
+  var hasOptions = altitude !== null || horizontalAccuracy !== null || verticalAccuracy !== null || course !== null || speed !== null;
+  if (hasOptions) {
+    var options = {};
+    if (altitude !== null) {
+      options.altitude = altitude;
+    }
+    if (horizontalAccuracy !== null) {
+      options.horizontalAccuracy = horizontalAccuracy;
+    }
+    if (verticalAccuracy !== null) {
+      options.verticalAccuracy = verticalAccuracy;
+    }
+    if (course !== null) {
+      options.course = course;
+    }
+    if (speed !== null) {
+      options.speed = speed;
+    }
+    this.proxy("target.setLocationWithOptions("+ JSON.stringify(coordinates) + "," + JSON.stringify(options) +")", cb);
+  } else {
+    this.proxy("target.setLocation(" + JSON.stringify(coordinates) + ")", cb);
+  }
+};
+
 IOS.prototype.hideKeyboard = function(keyName, cb) {
   if (typeof keyName !== "string") {
     keyName = "Hide keyboard";

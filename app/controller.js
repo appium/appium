@@ -369,6 +369,30 @@ exports.mobileShake = function(req, res) {
     req.device.shake(getResponseHandler(req, res));
 };
 
+exports.mobileSetLocation = function(req, res) {
+  req.body = _.defaults(req.body, {
+    latitude: null
+    , longitude: null
+    , altitude: null
+    , horizontalAccuracy: null
+    , verticalAccuracy: null
+    , course: null
+    , speed: null
+  });
+  var latitude = req.body.latitude
+    , longitude = req.body.longitude
+    , altitude = req.body.altitude
+    , horizontalAccuracy = req.body.horizontalAccuracy
+    , verticalAccuracy = req.body.verticalAccuracy
+    , course = req.body.course
+    , speed = req.body.speed;
+
+  if(checkMissingParams(res, {latitude: latitude, longitude: longitude})) {
+    req.device.setLocation(latitude, longitude, altitude, horizontalAccuracy,
+      verticalAccuracy, course, speed, getResponseHandler(req, res));
+  }
+};
+
 exports.hideKeyboard = function(req, res) {
   var keyName = req.body.keyName;
 
@@ -514,6 +538,13 @@ exports.asyncScriptTimeout = function(req, res) {
 exports.setOrientation = function(req, res) {
   var orientation = req.body.orientation;
   req.device.setOrientation(orientation, getResponseHandler(req, res));
+};
+
+exports.setLocation = function(req, res) {
+  var latitude = req.body.latitude
+    , longitude = req.body.longitude
+    , altitude = req.body.altitude;
+  req.device.setLocation(latitude, longitude, altitude, null, null, null, null, getResponseHandler(req, res));
 };
 
 exports.getOrientation = function(req, res) {
@@ -796,6 +827,7 @@ var mobileCmdMap = {
   , 'swipe': exports.mobileSwipe
   , 'scrollTo': exports.mobileScrollTo
   , 'shake': exports.mobileShake
+  , 'setLocation' : exports.mobileSetLocation
   , 'hideKeyboard': exports.hideKeyboard
   , 'setCommandTimeout': exports.setCommandTimeout
   , 'getCommandTimeout': exports.getCommandTimeout

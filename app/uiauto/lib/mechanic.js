@@ -396,7 +396,7 @@ var $ = $ || mechanic;  // expose $ shortcut
         label: function() { return (this.length > 0) ? this[0].label() : null; },
         value: function() { return (this.length > 0) ? this[0].value() : null; },
         isFocused: function() { return (this.length > 0) ? this[0].hasKeyboardFocus() : false; },
-        isVisible: function() { return (this.length > 0) ? this[0].isVisible() : false; },
+        isVisible: function() { return (this.length > 0) ? this[0].isVisible() === 1 : false; },
         isValid: function(certain) {
             if (this.length > 0) return false;
             else if (certain) return this[0].checkIsValid();

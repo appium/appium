@@ -8,7 +8,7 @@ describeWd('execute', function(h) {
   it('should do UIAutomation commands if not in web frame', function(done) {
     h.driver.execute("UIATarget.localTarget().frontMostApp().bundleID()", function(err, value) {
       should.not.exist(err);
-      value.should.equal("com.yourcompany.UICatalog");
+      value.should.equal("com.example.apple-samplecode.UICatalog");
       done();
     });
   });

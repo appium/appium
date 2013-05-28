@@ -43,6 +43,7 @@ var Appium = function(args) {
     setWebhook(logger, port, host);
   }
   this.rest = null;
+  this.webSocket = null;
   this.devices = {};
   this.deviceType = null;
   this.device = null;
@@ -66,6 +67,14 @@ Appium.prototype.attachTo = function(rest, cb) {
 
   // Import the routing rules
   routing(this);
+
+  if (cb) {
+    cb();
+  }
+};
+
+Appium.prototype.attachSocket = function(webSocket, cb) {
+  this.webSocket = webSocket;
 
   if (cb) {
     cb();
@@ -392,6 +401,7 @@ Appium.prototype.invoke = function() {
       if (this.isIos()) {
         var iosOpts = {
           rest: this.rest
+          , webSocket: this.webSocket
           , app: this.args.app
           , ipa: this.args.ipa
           , bundleId: this.args.bundleId
@@ -410,6 +420,7 @@ Appium.prototype.invoke = function() {
       } else if (this.isAndroid()) {
         var androidOpts = {
           rest: this.rest
+          , webSocket: this.webSocket
           , apkPath: this.args.app
           , verbose: !this.args.quiet
           , udid: this.args.udid

@@ -28,6 +28,7 @@ var path = require('path')
 
 var IOS = function(args) {
   this.rest = args.rest;
+  this.webSocket = args.webSocket;
   this.app = args.app;
   this.ipa = args.ipa;
   this.bundleId = args.bundleId || null;
@@ -212,6 +213,7 @@ IOS.prototype.start = function(cb, onDie) {
         , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
         , sock
         , me.withoutDelay
+        , me.webSocket
         , onLaunch
         , onExit
       );

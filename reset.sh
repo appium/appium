@@ -133,6 +133,8 @@ reset_android() {
     run_cmd $grunt configAndroidBootstrap
     echo "* Building Android bootstrap"
     run_cmd $grunt buildAndroidBootstrap
+    echo "* Copying manifest src"
+    run_cmd cp ./app/android/AndroidManifest.xml.src ./build/android_bootstrap
     if $include_dev ; then
         reset_apidemos
     fi

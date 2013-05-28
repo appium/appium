@@ -705,6 +705,10 @@ Android.prototype.shake = function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.setLocation = function(latitude, longitude, altitude, horizontalAccuracy, verticalAccuracy, course, speed, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.hideKeyboard = function(keyName, cb) {
   cb(new NotYetImplementedError(), null);
 };

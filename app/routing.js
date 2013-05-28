@@ -101,6 +101,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/clear', controller.clear);
   rest.post('/wd/hub/session/:sessionId?/frame', controller.frame);
   rest.post('/wd/hub/session/:sessionId?/keys', controller.keys);
+  rest.post('/wd/hub/session/:sessionId?/location', controller.setLocation);
   rest.get('/wd/hub/session/:sessionId?/source', controller.getPageSource);
   rest.get('/wd/hub/session/:sessionId?/alert_text', controller.getAlertText);
   rest.post('/wd/hub/session/:sessionId?/alert_text', controller.setAlertText);
@@ -188,7 +189,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/touch/doubleclick', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/longclick', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/location', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/location', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);

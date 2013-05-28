@@ -119,4 +119,10 @@ Style notes
 
         _.extend(SubClass.prototype, SuperClass.prototype);
         ```
+*   Callbacks are always last in function definitions
+    ```js
+    var foo = function(arg1, arg2, cb) {
+      ...
+    };
+    ```
 *   More to come....

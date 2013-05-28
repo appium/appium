@@ -1,14 +1,17 @@
 Selenium Grid
 ======================
 
-You are able to register you appium server with a local grid by using the "--nodeconfig" server parameter.
+You are able to register you appium server with a local grid by using the <b>"--nodeconfig"</b> server parameter.
 
 ```bash
 > node server.js -V --nodeconfig /path/to/nodeconfig.json
-
 ```
 
-In the json node config file you have to define the "browserName", "version" and "platform" and based on these parameters the grid will re-direct your test to the right device.
+In the node config file you have to define the <b>"browserName"</b>, <b>"version"</b> and <b>"platform"</b> and based on these parameters the grid will re-direct your test to the right device. You will also need to configure you <b>host</b> details and the <b>selenium grid</b> details. For a full list of all parameters and descriptions look <a href="http://code.google.com/p/selenium/source/browse/java/server/src/org/openqa/grid/common/defaults/GridParameters.properties">here</a>.
+
+Once you start the appium server and it registers with the grid, you will see your device on the grid console page:
+
+<b>"http://grid-ip-adress:grid-port/grid/console"</b>
 
 ## Grid Node Configuration Example json file
 

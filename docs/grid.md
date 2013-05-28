@@ -11,7 +11,7 @@ In the node config file you have to define the <b>"browserName"</b>, <b>"version
 
 Once you start the appium server and it registers with the grid, you will see your device on the grid console page:
 
-<b>"http://grid-ip-adress:grid-port/grid/console"</b>
+"http://<b>\<grid-ip-adress\></b>:<b>\<grid-port\></b>/grid/console"
 
 ## Grid Node Configuration Example json file
 
@@ -20,8 +20,8 @@ Once you start the appium server and it registers with the grid, you will see yo
   "capabilities":
       [
         {
-          "browserName": "<e.g. iPhone5, iPad4>",
-          "version":"<version of iOS e.g. 6.1>",
+          "browserName": "<e.g._iPhone5_or_iPad4>",
+          "version":"<version_of_iOS_e.g._6.1>",
           "maxInstances": 1,
           "platform":"MAC"
 
@@ -33,14 +33,14 @@ Once you start the appium server and it registers with the grid, you will see yo
   	"cleanUpCycle":2000,
   	 "timeout":30000,
     "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
-     "url":"http://<host name appium server/ip-address appium server>:<appium port>/wd/hub",
+     "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
     "maxSession": 1,
-    "port": <appium port>,
-    "host": "<host name appium server/ip-address appium server>",
+    "port": <appium_port>,
+    "host": "<host_name_appium_server_or_ip-address_appium_server>",
     "register": true,
     "registerCycle": 5000,
-    "hubPort": <grid port >,
-    "hubHost": "<Grid host name/grid ip-address>"
+    "hubPort": <grid_port>,
+    "hubHost": "<Grid_host_name_or_grid_ip-address>"
   }
 }
 ```

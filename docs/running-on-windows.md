@@ -18,6 +18,10 @@ Install the Java JDK and set JAVA_HOME to your JDK folder.
 Now that you're setup to run Appium, run `npm install .` from your Appium checkout to install all the dependencies.
 Then run:
 
+    reset.bat
+
+-or-
+
     grunt configAndroidBootstrap
     grunt buildAndroidBootstrap
     grunt setConfigVer:android

@@ -51,11 +51,12 @@ var Android = function(opts) {
   this.lastCmd = null;
 };
 
-// Clear data, close app, then start app.
+// Clear data, wait for app close, then start app.
 Android.prototype.fastReset = function(cb) {
   var me = this;
   async.series([
     function(cb) { me.adb.runFastReset(cb); },
+    function(cb) { me.adb.waitForNotActivity(cb); },
     function(cb) { me.adb.startApp(cb); },
   ], cb);
 };

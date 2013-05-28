@@ -130,7 +130,7 @@ UIAElement.prototype.getTree = function() {
       , dom: typeof element.dom === "function" ? element.dom() : null
       , enabled: element.isEnabled() ? true : false
       , valid: element.isValid() ? true : false
-      , visible: element.isVisible() ? true : false
+      , visible: element.isVisible() === 1 ? true : false
       , children: []
     };
     var children = element.elements();
@@ -168,7 +168,7 @@ UIAElement.prototype.getElementSize = function() {
 UIAElement.prototype.isDisplayed = function() {
   return {
     status: codes.Success.code,
-    value: this.isVisible() == 1
+    value: this.isVisible() === 1
   };
 };
 

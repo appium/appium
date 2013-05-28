@@ -1035,6 +1035,34 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
   }, this));
 };
 
+ADB.prototype.waitForNotActivity = function(cb) {
+  this.requireApp();
+  logger.info("Waiting for app's activity to not be focused");
+  var waitMs = 20000
+    , intMs = 750
+    , endAt = Date.now() + waitMs
+    , targetActivity = this.appWaitActivity || this.appActivity;
+
+  var getFocusedApp = _.bind(function() {
+    this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
+          foundActivity) {
+      if (foundPackage !== this.appPackage && foundActivity !== targetActivity) {
+        cb(null);
+      } else if (Date.now() < endAt) {
+        if (err) logger.info(err);
+        setTimeout(getFocusedApp, intMs);
+      } else {
+        var msg = "App never closed. appActivity: " +
+                  foundActivity + " != " + targetActivity;
+        logger.error(msg);
+        cb(new Error(msg));
+      }
+
+    }, this));
+  }, this);
+  getFocusedApp();
+};
+
 ADB.prototype.waitForActivity = function(cb) {
   this.requireApp();
   logger.info("Waiting for app's activity to become focused");

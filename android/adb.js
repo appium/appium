@@ -144,7 +144,7 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
     , targetAPK = me.apkPath
     , cleanAPKSrc = path.resolve(__dirname, '../app/android/Clean.apk')
     , newPackage = me.appPackage + '.clean'
-    , srcManifest = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src')
+    , srcManifest = path.resolve(__dirname, '../build/android_bootstrap/AndroidManifest.xml.src')
     , dstManifest = srcManifest.substr(0, srcManifest.length - '.src'.length);
 
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");

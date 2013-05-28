@@ -370,22 +370,13 @@ exports.mobileShake = function(req, res) {
 };
 
 exports.mobileSetLocation = function(req, res) {
-  req.body = _.defaults(req.body, {
-    latitude: null
-    , longitude: null
-    , altitude: null
-    , horizontalAccuracy: null
-    , verticalAccuracy: null
-    , course: null
-    , speed: null
-  });
-  var latitude = req.body.latitude
-    , longitude = req.body.longitude
-    , altitude = req.body.altitude
-    , horizontalAccuracy = req.body.horizontalAccuracy
-    , verticalAccuracy = req.body.verticalAccuracy
-    , course = req.body.course
-    , speed = req.body.speed;
+  var latitude = req.body.latitude || null
+    , longitude = req.body.longitude || null
+    , altitude = req.body.altitude || null
+    , horizontalAccuracy = req.body.horizontalAccuracy || null
+    , verticalAccuracy = req.body.verticalAccuracy || null
+    , course = req.body.course || null
+    , speed = req.body.speed || null;
 
   if(checkMissingParams(res, {latitude: latitude, longitude: longitude})) {
     req.device.setLocation(latitude, longitude, altitude, horizontalAccuracy,

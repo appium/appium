@@ -16,6 +16,7 @@ var spawn = require('win-spawn')
   , helpers = require('../app/helpers')
   , AdmZip = require('adm-zip')
   , getTempPath = helpers.getTempPath
+  , waitForCondition = require('../app/device').waitForCondition
   , isWindows = helpers.isWindows();
 
 var noop = function() {};
@@ -743,8 +744,19 @@ ADB.prototype.checkForSocketReady = function(output) {
     this.debug("Connecting to server on device...");
     this.socketClient = net.connect(this.systemPort, _.bind(function() {
       this.debug("Connected!");
-      this.onSocketReady(null);
-      this.pushStrings(function(){});
+      var me = this;
+      var doPush = function(cb) {
+        me.pushStrings(function(result) {
+          if (result.value === 'Loaded.' &&
+              result.status === 0) {
+            cb(true, null, result);
+          } else {
+            cb(false, null, result);
+          }
+        });
+      };
+
+      waitForCondition(30 * 1000, doPush, function(){ me.onSocketReady(null); });
     }, this));
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {

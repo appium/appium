@@ -16,6 +16,8 @@ import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -37,8 +39,9 @@ import com.android.uiautomator.core.UiSelector;
  * 
  */
 public class Find extends CommandHandler {
-  AndroidElementsHash elements = AndroidElementsHash.getInstance();
-  Dynamic             dynamic  = new Dynamic();
+  AndroidElementsHash      elements   = AndroidElementsHash.getInstance();
+  Dynamic                  dynamic    = new Dynamic();
+  public static JSONObject apkStrings = null;
 
   private Object[] cascadeChildSels(final ArrayList<UiSelector> tail,
       final ArrayList<String> tailOuts) {
@@ -324,8 +327,8 @@ public class Find extends CommandHandler {
    * @throws InvalidStrategyException
    * @throws AndroidCommandException
    */
-  private List<UiSelector> getSelector(final Strategy strategy,
-      final String text, final Boolean many) throws InvalidStrategyException,
+  private List<UiSelector> getSelector(final Strategy strategy, String text,
+      final Boolean many) throws InvalidStrategyException,
       AndroidCommandException, UnallowedTagNameException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
@@ -349,6 +352,19 @@ public class Find extends CommandHandler {
           selectors.add(sel2);
         }
         break;
+      case ID:
+        try {
+          text = apkStrings.getString(text);
+          Logger.debug("Searching for text: " + text);
+        } catch (final Exception e) { // JSONException and NullPointerException
+
+          final StringWriter string = new StringWriter();
+          e.printStackTrace(new PrintWriter(string));
+
+          throw new InvalidStrategyException("Unable to search by ID for "
+              + text + ".\n" + string.toString());
+        }
+        // now fall through and do a name search
       case NAME:
         sel = sel.description(text);
         if (!many) {
@@ -367,7 +383,6 @@ public class Find extends CommandHandler {
         break;
       case LINK_TEXT:
       case PARTIAL_LINK_TEXT:
-      case ID:
       case CSS_SELECTOR:
       default:
         throw new InvalidStrategyException("Strategy "

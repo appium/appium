@@ -396,6 +396,24 @@ ADB.prototype.prepareDevice = function(onReady) {
   ], onReady);
 };
 
+ADB.prototype.pushStrings = function(cb) {
+  var me = this;
+  var stringsFromApkJarPath = path.resolve(__dirname, '../app/android/strings_from_apk.jar');
+  var outputPath = path.resolve(getTempPath(), me.appPackage);
+  var makeStrings = ['java -jar ', stringsFromApkJarPath,
+                         ' ', me.apkPath, ' ', outputPath].join('');
+  logger.debug(makeStrings);
+  exec(makeStrings, {}, function(err, stdout, stderr) {
+    if (err) {
+      logger.debug(stderr);
+      return cb("error making strings");
+    }
+    var jsonFile = path.resolve(outputPath, 'strings.json');
+    var data = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+    me.sendCommand('load', data, cb);
+  });
+};
+
 ADB.prototype.startAppium = function(onReady, onExit) {
   logger.info("Starting android appium");
   var me = this
@@ -726,6 +744,7 @@ ADB.prototype.checkForSocketReady = function(output) {
     this.socketClient = net.connect(this.systemPort, _.bind(function() {
       this.debug("Connected!");
       this.onSocketReady(null);
+      this.pushStrings(function(){});
     }, this));
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {

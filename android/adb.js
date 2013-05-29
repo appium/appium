@@ -750,13 +750,18 @@ ADB.prototype.checkForSocketReady = function(output) {
           if (result.value === 'Loaded.' &&
               result.status === 0) {
             cb(true, null, result);
+          } else if (result.status === 13) {
+            // Unable to search by ID for
+            // java.lang.NullPointerExceptio
+            // status: 13
+            cb(true, result.value, result);
           } else {
             cb(false, null, result);
           }
         });
       };
 
-      waitForCondition(30 * 1000, doPush, function(){ me.onSocketReady(null); });
+      waitForCondition(30 * 1000, doPush, function(){ me.onSocketReady(null); }, 9 * 1000);
     }, this));
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {

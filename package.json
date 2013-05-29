@@ -74,7 +74,6 @@
     "grunt-contrib-jshint": "~0.1.1",
     "saucelabs": "~0.0.7",
     "socket.io-client": "~0.9.11",
-    "socks": "~0.0.1",
-    "telnetclient": "~0.0.1"
+    "socks": "~0.0.1"
   }
 }

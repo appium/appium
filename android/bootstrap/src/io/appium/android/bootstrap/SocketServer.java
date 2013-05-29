@@ -1,6 +1,10 @@
 package io.appium.android.bootstrap;
 
-import org.json.JSONException;
+import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.exceptions.CommandTypeException;
+import io.appium.android.bootstrap.exceptions.SocketServerException;
+import io.appium.android.bootstrap.handler.Find;
+import io.appium.android.bootstrap.utils.TheWatchers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,10 +13,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.exceptions.CommandTypeException;
-import io.appium.android.bootstrap.exceptions.SocketServerException;
-import io.appium.android.bootstrap.utils.TheWatchers;
+import org.json.JSONException;
 
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
@@ -27,7 +28,7 @@ class SocketServer {
   PrintWriter                          out;
   boolean                              keepListening;
   private final AndroidCommandExecutor executor;
-  private final TheWatchers watchers = TheWatchers.getInstance();
+  private final TheWatchers            watchers = TheWatchers.getInstance();
 
   /**
    * Constructor
@@ -122,7 +123,7 @@ class SocketServer {
       Logger.info("Closed client connection");
     } catch (final IOException e) {
       throw new SocketServerException("Error when client was trying to connect");
-    } catch (InterruptedException e) {
+    } catch (final InterruptedException e) {
       throw new SocketServerException("The socket server was interupted");
     }
   }
@@ -131,7 +132,8 @@ class SocketServer {
    * When {@link #handleClientData()} has valid data, this method delegates the
    * command.
    * 
-   * @param cmd AndroidCommand
+   * @param cmd
+   *          AndroidCommand
    * @return Result
    */
   private String runCommand(final AndroidCommand cmd) {
@@ -139,6 +141,9 @@ class SocketServer {
     if (cmd.commandType() == AndroidCommandType.SHUTDOWN) {
       keepListening = false;
       res = new AndroidCommandResult(WDStatus.SUCCESS, "OK, shutting down");
+    } else if (cmd.commandType() == AndroidCommandType.LOAD) {
+      Find.apkStrings = cmd.json;
+      res = new AndroidCommandResult(WDStatus.SUCCESS, "Loaded.");
     } else if (cmd.commandType() == AndroidCommandType.ACTION) {
       try {
         res = executor.execute(cmd);

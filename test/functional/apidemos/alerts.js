@@ -8,53 +8,55 @@ var path = require('path')
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
   , should = require('should')
-  , telnet = require('telnetclient')
+  , net = require('net')
   , io = require('socket.io-client');
 
 
 describeWd('alert dialog detection', function(h) {
-  // setup websocket client...
-  var options ={
-    transports: ['websocket'],
-    'force new connection': true
-  };
-  var client = io.connect('http://127.0.0.1:4723', options);
 
   // set up telnet...
   var runCommands = function(cmds, cb) {
-    var client = new telnet.Client('127.0.0.1', 5554, {}, function(socket) {
-    })
-    .on('data',function(d,e) {})
-    .on('end',function() {})
-    for (var i=0; i<cmds.length; i++) {
-      client.socket.write(cmds[i] + "\n");
-    };
-    client.socket.end();
-    cb();
-  };
-
-  var triggerLowPower = function(cb) {
-    runCommands(['power ac off', 'power capacity 9'], function() {
-      cb();
-    });
-  };
-
-  var restorePower = function(cb) {
-    runCommands(['power ac on', 'power capacity 50'], function() {
-      cb();
-    });
+    try {
+      var conn = net.createConnection(5554, 'localhost')
+      conn.on('connect', function() {
+        try {
+          for (var i = 0; i < cmds.length; i++) {
+            conn.write(cmds[i] + "\n");
+          };
+          conn.write('quit\n');
+          cb(true);
+        } catch(err) {
+          console.log("Could not run commands: " + err.description);
+          cb(undefined);
+        };
+      }, cb);
+    } catch(err) {
+      console.log("Couldn't run commands: " + err.description);
+    }
   };
 
   it('should detect low power...', function(done) {
-    client.on('alert', function() {
-      console.log("Recieved alert message");
-      restorePower(function() {
-        console.log("Restored power");
+    // setup websocket client...
+    var options ={
+      transports: ['websocket'],
+      'force new connection': true
+    };
+    try {
+      var client = io.connect('http://127.0.0.1:4723', options);
+      client.on('connect', function() {
+        runCommands(['power ac off', 'power capacity 9'], function(success) {
+          success.should.be.true;
+        });
       });
+      client.on('alert', function() {
+        runCommands(['power ac on', 'power capacity 50'], function(success) {
+          success.should.be.true;
+          done();
+        });
+      });
+    } catch(err) {
+      console.log("Unknown exception: " + err.description);
       done();
-    });
-    triggerLowPower(function() {
-      console.log("Triggered low power");
-    });
+    }
   });
 });

@@ -5,7 +5,6 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatal
   , should = require('should')
   , _s = require('underscore.string')
   , assert = require('assert')
-  , telnet = require('telnetclient')
   , io = require('socket.io-client');
 
 describeWd('alert dialog detection', function(h) {

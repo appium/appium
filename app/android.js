@@ -15,7 +15,6 @@ var errors = require('./errors')
   , temp = require('temp')
   , async = require('async')
   , path = require('path')
-  , getTempPath = require('./helpers').getTempPath
   , UnknownError = errors.UnknownError;
 
 var Android = function(opts) {
@@ -51,7 +50,6 @@ var Android = function(opts) {
     , databaseEnabled: false
   };
   this.lastCmd = null;
-  this.apkStrings = null;
 };
 
 // Clear data, wait for app close, then start app.
@@ -301,7 +299,7 @@ Android.prototype.findElements = function(strategy, selector, cb) {
   this.findElementOrElements(strategy, selector, true, "", cb);
 };
 
-Android.prototype.findElementOrElementsMain = function(strategy, selector, many, context, cb) {
+Android.prototype.findElementOrElements = function(strategy, selector, many, context, cb) {
   var params = {
     strategy: strategy
     , selector: selector
@@ -346,55 +344,6 @@ Android.prototype.findElementOrElementsMain = function(strategy, selector, many,
       status: status.codes.XPathLookupError.code
       , value: "Could not parse xpath data from " + selector
     });
-  }
-};
-
-Android.prototype.findElementOrElements = function(strategy, selector, many, context, cb) {
-  if (strategy === "id") {
-    var me = this;
-    var ensureStringsExist = function(innerCb) {
-      if (me.apkStrings === null) {
-        var stringsFromApkJarPath = path.resolve(__dirname, '../app/android/strings_from_apk.jar');
-        var outputPath = path.resolve(getTempPath(), me.appPackage);
-        var makeStrings = ['java -jar ', stringsFromApkJarPath,
-                               ' ', me.adb.apkPath, ' ', outputPath].join('');
-        logger.debug(makeStrings);
-        exec(makeStrings, {}, function(err, stdout, stderr) {
-          if (err) {
-            logger.debug(stderr);
-            return innerCb("error making strings");
-          }
-          logger.debug("Made strings");
-          var jsonFile = path.resolve(outputPath, 'strings.json');
-          me.apkStrings = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
-          innerCb(null);
-        });
-      } else {
-        innerCb(null);
-      }
-    };
-
-    var findElementById = function(innerCb) {
-        var oldSelector = selector;
-        selector = me.apkStrings[selector];
-        if (typeof selector === "undefined") {
-          return innerCb(null,{
-                      status: status.codes.UnknownError.code
-                      , value: "ID " + oldSelector + " doesn't exist in res/values/strings.xml"
-         });
-        }
-
-        // Perform a name search using the string value for the given id.
-        strategy = "name";
-        innerCb(null);
-    };
-    var topCb = cb;
-    return async.series([
-      function(cb) { ensureStringsExist(cb); },
-      function(cb) { findElementById(cb); }
-    ], function(cb) { me.findElementOrElementsMain(strategy, selector, many, context, topCb); });
-  } else {
-    this.findElementOrElementsMain(strategy, selector, many, context, cb);
   }
 };
 

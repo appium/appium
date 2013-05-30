@@ -66,6 +66,17 @@ describeWd('get attribute', function(h) {
       });
     });
   });
+  it('should be able to get element location', function(done) {
+    h.driver.elementByName('Animation', function(err, el) {
+      should.not.exist(err);
+      el.getLocation(function(err, loc) {
+        should.not.exist(err);
+        [0].should.include(loc.x);
+        [183].should.include(loc.y);
+        done();
+      });
+    });
+  });
   // TODO: tests for checkable, checked, clickable, focusable, focused,
   // longClickable, scrollable, selected
 });

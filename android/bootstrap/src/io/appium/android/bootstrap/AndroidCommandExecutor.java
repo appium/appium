@@ -1,18 +1,19 @@
 package io.appium.android.bootstrap;
 
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
+import io.appium.android.bootstrap.handler.GetLocation;
 import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
+import io.appium.android.bootstrap.handler.WaitForIdle;
 
 import java.util.HashMap;
 
@@ -40,6 +41,7 @@ class AndroidCommandExecutor {
     map.put("getAttribute", new GetAttribute());
     map.put("getDeviceSize", new GetDeviceSize());
     map.put("find", new Find());
+    map.put("getLocation", new GetLocation());
   }
 
   /**

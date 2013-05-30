@@ -401,7 +401,7 @@ Android.prototype.getAttribute = function(elementId, attributeName, cb) {
 };
 
 Android.prototype.getLocation = function(elementId, cb) {
-  cb(new NotYetImplementedError(), null);
+  this.proxy(["element:getLocation", {elementId: elementId}], cb);
 };
 
 Android.prototype.getSize = function(elementId, cb) {

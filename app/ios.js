@@ -777,7 +777,7 @@ IOS.prototype.findAndAct = function(strategy, selector, index, action, actionPar
 };
 
 IOS.prototype.setValueImmediate = function(elementId, value, cb) {
-  value = escapeSpecialChars(value);
+  value = escapeSpecialChars(value, "'");
   var command = ["au.getElement('", elementId, "').setValue('", value, "')"].join('');
   this.proxy(command, cb);
 };
@@ -794,6 +794,9 @@ IOS.prototype.setValue = function(elementId, value, cb) {
       }, this));
     }, this));
   } else {
+    value = escapeSpecialChars(value, "'");
+    // de-escape \n so it can be used specially
+    value = value.replace(/\\\\n/g, "\\n");
     var command = ["au.getElement('", elementId, "').setValueByType('", value, "')"].join('');
     this.proxy(command, cb);
   }
@@ -1257,7 +1260,7 @@ IOS.prototype.getPageIndex = function(elementId, cb) {
 };
 
 IOS.prototype.keys = function(keys, cb) {
-  keys = escapeSpecialChars(keys);
+  keys = escapeSpecialChars(keys, "'");
   if (this.curWindowHandle) {
     this.active(_.bind(function(err, res) {
       if (err || typeof res.value.ELEMENT === "undefined") {

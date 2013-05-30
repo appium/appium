@@ -419,9 +419,11 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   logger.info("Starting android appium");
   var me = this
     , doRun = function(err) {
-        if (err) return onReady(err);
-        me.runBootstrap(onReady, onExit);
-      };
+      if (err) return onReady(err);
+      me.runBootstrap(function(){
+        me.pushStrings(function(result) { onReady(); });
+      }, onExit);
+    };
   this.onExit = onExit;
 
   logger.debug("Using fast reset? " + this.fastReset);
@@ -744,24 +746,7 @@ ADB.prototype.checkForSocketReady = function(output) {
     this.debug("Connecting to server on device...");
     this.socketClient = net.connect(this.systemPort, _.bind(function() {
       this.debug("Connected!");
-      var me = this;
-      var doPush = function(cb) {
-        me.pushStrings(function(result) {
-          if (result.value === 'Loaded.' &&
-              result.status === 0) {
-            cb(true, null, result);
-          } else if (result.status === 13) {
-            // Unable to search by ID for
-            // java.lang.NullPointerExceptio
-            // status: 13
-            cb(true, result.value, result);
-          } else {
-            cb(false, null, result);
-          }
-        });
-      };
-
-      waitForCondition(30 * 1000, doPush, function(){ me.onSocketReady(null); }, 9 * 1000);
+      this.onSocketReady(null);
     }, this));
     this.socketClient.setEncoding('utf8');
     this.socketClient.on('data', _.bind(function(data) {

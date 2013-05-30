@@ -134,7 +134,7 @@ public class AndroidElementClassMap {
     map.put("viewpager", "ViewPager");
     map.put("viewstub", "ViewStub");
     map.put("viewswitcher", "ViewSwitcher");
-    map.put("web", "WebView");
+    map.put("web", "android.webkit.WebView");
     map.put("window", "FrameLayout");
     map.put("zoom", "ZoomButton");
     map.put("zoomcontrols", "ZoomControls");

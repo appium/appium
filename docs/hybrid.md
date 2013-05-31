@@ -41,7 +41,11 @@ Once installed you can start the proxy with the following command:
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ``` 
 
-<b>NOTE</b>: There is currently an outstanding issue with the proxy when handling large request (e.g. like the webdriver commands which require the webdriver js libraries to be sent along). This is currently being investigated and should hopefully be resolved soon. Request like getting the page title and refreshing the page are not affected by this issue.
+<b>NOTE:</b> the proxy requires the <b>"web inspector"</b> to be turned on to allow a connection to be established.
+
+Turn it on by going to <b> settings > safari > advanced </b>. Please be aware that the web inspector was <b>added as part of iOS 6</b> and was not available previously.
+
+<b>NOTE</b>: Please use the manual installation process for now untill the latest version of the proxy has been tagged and added to brew.
 
 ## Wd.js Code example
 

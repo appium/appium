@@ -93,14 +93,21 @@ describeWd('swipe gesture', function(h) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
         var opts = {startX: 50, startY: 400, endX: 50, endY: 300, duration: 2};
-        h.driver.execute("mobile: swipe", [opts], function(err) {
-          should.not.exist(err);
-          element.getLocation(function(err, location2) {
-            assert.equal(location.x, location.x);
-            assert.notEqual(location.y, location2.y);
-            done();
+        var doSwipe = function(spinCb) {
+          h.driver.execute("mobile: swipe", [opts], function(err) {
+            should.not.exist(err);
+            element.getLocation(function(err, location2) {
+              try {
+                assert.equal(location.x, location.x);
+                assert.notEqual(location.y, location2.y);
+                spinCb();
+              } catch (e) {
+                spinCb(e);
+              }
+            });
           });
-        });
+        };
+        spinWait(doSwipe, done);
       });
     });
   });
@@ -108,14 +115,21 @@ describeWd('swipe gesture', function(h) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
         var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.7, duration: 2};
-        h.driver.execute("mobile: swipe", [opts], function(err) {
-          should.not.exist(err);
-          element.getLocation(function(err, location2) {
-            assert.equal(location.x, location.x);
-            assert.notEqual(location.y, location2.y);
-            done();
+        var doSwipe = function(spinCb) {
+          h.driver.execute("mobile: swipe", [opts], function(err) {
+            should.not.exist(err);
+            element.getLocation(function(err, location2) {
+              try {
+                assert.equal(location.x, location.x);
+                assert.notEqual(location.y, location2.y);
+                spinCb();
+              } catch (e) {
+                spinCb(e);
+              }
+            });
           });
-        });
+        };
+        spinWait(doSwipe, done);
       });
     });
   });
@@ -231,7 +245,7 @@ describeWd('complex tap', function(h) {
         should.not.exist(err);
         el.text(function(err, text) {
           should.not.exist(err);
-          _s.trim(text).should.eql();
+          _s.trim(text).should.eql(textBlock);
           done();
         });
       });

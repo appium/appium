@@ -29,3 +29,4 @@ See the [server documentation](https://github.com/appium/appium/blob/master/docs
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this
   [page](https://github.com/appium/appium/blob/master/docs/android-hax-emulator.md).
+* Make sure that `hw.battery=yes` in your AVD's `config.ini`.

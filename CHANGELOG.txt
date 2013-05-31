@@ -1,4 +1,28 @@
 -------------------------------------
+CHANGES IN VERSION 0.6.1 (from 0.6.0)
+-------------------------------------
+[GENERAL]
+- started work on mobile_methods.md doc
+- added hardcore mode to reset.sh that will refresh uicatalog inter alia
+- ios-webkit-debug-proxy docs 
+- appium now registers correctly with selenium grid
+- better bundle/package detection
+
+[IOS]
+- mobile: setLocation and POST /location for setting geolocation
+- updated tests to work with new uicatalog version
+- allow registering a websocket handler for alerts
+- escape sendKeys values so you can send '
+- fixed up tests a little bit
+
+[ANDROID]
+- fix fast reset race condition
+- fix lack of AndroidManifest.xml.src in npm
+- allow registering a websocket handler for alerts
+- added method for getting location of element
+- fixed package name for webviews
+
+-------------------------------------
 CHANGES IN VERSION 0.6.0 (from 0.5.2)
 -------------------------------------
 [GENERAL]

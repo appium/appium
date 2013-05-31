@@ -1,6 +1,10 @@
 package io.appium.android.bootstrap;
 
-import org.json.JSONException;
+import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.exceptions.CommandTypeException;
+import io.appium.android.bootstrap.exceptions.SocketServerException;
+import io.appium.android.bootstrap.handler.Find;
+import io.appium.android.bootstrap.utils.TheWatchers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,11 +12,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.exceptions.CommandTypeException;
-import io.appium.android.bootstrap.exceptions.SocketServerException;
-import io.appium.android.bootstrap.utils.TheWatchers;
+import org.json.JSONException;
 
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
@@ -28,6 +31,7 @@ class SocketServer {
   boolean                              keepListening;
   private final AndroidCommandExecutor executor;
   private final TheWatchers watchers = TheWatchers.getInstance();
+  private final Timer timer = new Timer("WatchTimer");
 
   /**
    * Constructor
@@ -45,6 +49,7 @@ class SocketServer {
       throw new SocketServerException(
           "Could not start socket server listening on " + port);
     }
+
   }
 
   /**
@@ -104,17 +109,21 @@ class SocketServer {
    */
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
+    final TimerTask updateWatchers = new TimerTask() {
+      @Override
+      public void run() {
+        watchers.check();
+      }
+    };
+    timer.scheduleAtFixedRate(updateWatchers, 100, 100);
+
     try {
       client = server.accept();
       Logger.info("Client connected");
       in = new BufferedReader(new InputStreamReader(client.getInputStream()));
       out = new PrintWriter(client.getOutputStream(), true);
       while (keepListening) {
-        if (in.ready()) {
-          handleClientData();
-        }
-        Thread.sleep(100);
-        watchers.check();
+        handleClientData();
       }
       in.close();
       out.close();
@@ -122,8 +131,6 @@ class SocketServer {
       Logger.info("Closed client connection");
     } catch (final IOException e) {
       throw new SocketServerException("Error when client was trying to connect");
-    } catch (InterruptedException e) {
-      throw new SocketServerException("The socket server was interupted");
     }
   }
 
@@ -131,7 +138,8 @@ class SocketServer {
    * When {@link #handleClientData()} has valid data, this method delegates the
    * command.
    * 
-   * @param cmd AndroidCommand
+   * @param cmd
+   *          AndroidCommand
    * @return Result
    */
   private String runCommand(final AndroidCommand cmd) {
@@ -139,6 +147,9 @@ class SocketServer {
     if (cmd.commandType() == AndroidCommandType.SHUTDOWN) {
       keepListening = false;
       res = new AndroidCommandResult(WDStatus.SUCCESS, "OK, shutting down");
+    } else if (cmd.commandType() == AndroidCommandType.LOAD) {
+      Find.apkStrings = cmd.json;
+      res = new AndroidCommandResult(WDStatus.SUCCESS, "Loaded.");
     } else if (cmd.commandType() == AndroidCommandType.ACTION) {
       try {
         res = executor.execute(cmd);

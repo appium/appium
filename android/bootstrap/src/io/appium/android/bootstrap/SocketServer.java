@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONException;
 
@@ -28,7 +30,8 @@ class SocketServer {
   PrintWriter                          out;
   boolean                              keepListening;
   private final AndroidCommandExecutor executor;
-  private final TheWatchers            watchers = TheWatchers.getInstance();
+  private final TheWatchers watchers = TheWatchers.getInstance();
+  private final Timer timer = new Timer("WatchTimer");
 
   /**
    * Constructor
@@ -46,6 +49,7 @@ class SocketServer {
       throw new SocketServerException(
           "Could not start socket server listening on " + port);
     }
+
   }
 
   /**
@@ -105,17 +109,21 @@ class SocketServer {
    */
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
+    final TimerTask updateWatchers = new TimerTask() {
+      @Override
+      public void run() {
+        watchers.check();
+      }
+    };
+    timer.scheduleAtFixedRate(updateWatchers, 100, 100);
+
     try {
       client = server.accept();
       Logger.info("Client connected");
       in = new BufferedReader(new InputStreamReader(client.getInputStream()));
       out = new PrintWriter(client.getOutputStream(), true);
       while (keepListening) {
-        if (in.ready()) {
-          handleClientData();
-        }
-        Thread.sleep(100);
-        watchers.check();
+        handleClientData();
       }
       in.close();
       out.close();
@@ -123,8 +131,6 @@ class SocketServer {
       Logger.info("Closed client connection");
     } catch (final IOException e) {
       throw new SocketServerException("Error when client was trying to connect");
-    } catch (final InterruptedException e) {
-      throw new SocketServerException("The socket server was interupted");
     }
   }
 

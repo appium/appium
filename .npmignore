@@ -1,6 +1,7 @@
 assets/
 submodules/
 publish.sh
+reset.sh
 sample-code/
 test/
 android/bootstrap/bin/

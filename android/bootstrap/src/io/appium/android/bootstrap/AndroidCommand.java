@@ -110,8 +110,6 @@ public class AndroidCommand {
       cmdType = AndroidCommandType.SHUTDOWN;
     } else if (stringType.equals("action")) {
       cmdType = AndroidCommandType.ACTION;
-    } else if (stringType.equals("load")) {
-      cmdType = AndroidCommandType.LOAD;
     } else {
       throw new CommandTypeException("Got bad command type: " + stringType);
     }

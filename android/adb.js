@@ -16,7 +16,6 @@ var spawn = require('win-spawn')
   , helpers = require('../app/helpers')
   , AdmZip = require('adm-zip')
   , getTempPath = helpers.getTempPath
-  , waitForCondition = require('../app/device').waitForCondition
   , isWindows = helpers.isWindows();
 
 var noop = function() {};
@@ -410,8 +409,11 @@ ADB.prototype.pushStrings = function(cb) {
       return cb("error making strings");
     }
     var jsonFile = path.resolve(outputPath, 'strings.json');
-    var data = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
-    me.sendCommand('load', data, cb);
+    var remotePath = "/data/local/tmp";
+    var pushCmd = me.adbCmd + " push " + jsonFile + " " + remotePath;
+    exec(pushCmd, {}, function(err, stdout, stderr) {
+      cb(null);
+    });
   });
 };
 
@@ -428,6 +430,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.pushStrings(cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushAppium(cb); },
@@ -698,9 +701,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
       "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
   this.proc = spawn(this.adb, args);
-  this.onSocketReady = function() {
-    me.pushStrings(readyCb);
-  };
+  this.onSocketReady = readyCb;
 
   this.proc.stdout.on('data', _.bind(function(data) {
     this.outputStreamHandler(data);

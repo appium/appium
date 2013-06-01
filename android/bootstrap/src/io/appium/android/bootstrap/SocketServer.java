@@ -7,6 +7,9 @@ import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.utils.TheWatchers;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -16,6 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
@@ -30,8 +34,8 @@ class SocketServer {
   PrintWriter                          out;
   boolean                              keepListening;
   private final AndroidCommandExecutor executor;
-  private final TheWatchers watchers = TheWatchers.getInstance();
-  private final Timer timer = new Timer("WatchTimer");
+  private final TheWatchers            watchers = TheWatchers.getInstance();
+  private final Timer                  timer    = new Timer("WatchTimer");
 
   /**
    * Constructor
@@ -109,6 +113,7 @@ class SocketServer {
    */
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
+    loadStringsJson();
     final TimerTask updateWatchers = new TimerTask() {
       @Override
       public void run() {
@@ -134,6 +139,24 @@ class SocketServer {
     }
   }
 
+  public void loadStringsJson() {
+    Logger.info("Loading json...");
+    try {
+      final File jsonFile = new File("/data/local/tmp/strings.json");
+      final DataInputStream dataInput = new DataInputStream(
+          new FileInputStream(jsonFile));
+      final byte[] jsonBytes = new byte[(int) jsonFile.length()];
+      dataInput.readFully(jsonBytes);
+      // this closes FileInputStream
+      dataInput.close();
+      final String jsonString = new String(jsonBytes, "UTF-8");
+      Find.apkStrings = new JSONObject(jsonString);
+      Logger.info("json loading complete.");
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   /**
    * When {@link #handleClientData()} has valid data, this method delegates the
    * command.
@@ -147,9 +170,6 @@ class SocketServer {
     if (cmd.commandType() == AndroidCommandType.SHUTDOWN) {
       keepListening = false;
       res = new AndroidCommandResult(WDStatus.SUCCESS, "OK, shutting down");
-    } else if (cmd.commandType() == AndroidCommandType.LOAD) {
-      Find.apkStrings = cmd.json;
-      res = new AndroidCommandResult(WDStatus.SUCCESS, "Loaded.");
     } else if (cmd.commandType() == AndroidCommandType.ACTION) {
       try {
         res = executor.execute(cmd);

@@ -431,6 +431,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   async.series([
     function(cb) { me.prepareDevice(cb); },
     function(cb) { me.pushStrings(cb); },
+    function(cb) { me.uninstallApp(cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushAppium(cb); },

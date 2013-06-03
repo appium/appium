@@ -12,23 +12,23 @@ var path = require('path')
   , io = require('socket.io-client');
 
 
-describeWd('alert dialog detection', function(h) {
+describeWd('alert dialog detection', function() {
 
   // set up telnet...
   var runCommands = function(cmds, cb) {
     try {
-      var conn = net.createConnection(5554, 'localhost')
+      var conn = net.createConnection(5554, 'localhost');
       conn.on('connect', function() {
         try {
           for (var i = 0; i < cmds.length; i++) {
             conn.write(cmds[i] + "\n");
-          };
+          }
           conn.write('quit\n');
           cb(true);
         } catch(err) {
           console.log("Could not run commands: " + err.description);
           cb(undefined);
-        };
+        }
       }, cb);
     } catch(err) {
       console.log("Couldn't run commands: " + err.description);
@@ -45,12 +45,12 @@ describeWd('alert dialog detection', function(h) {
       var client = io.connect('http://127.0.0.1:4723', options);
       client.on('connect', function() {
         runCommands(['power ac off', 'power capacity 9'], function(success) {
-          success.should.be.true;
+          success.should.equal(true);
         });
       });
       client.on('alert', function() {
         runCommands(['power ac on', 'power capacity 50'], function(success) {
-          success.should.be.true;
+          success.should.equal(true);
           done();
         });
       });

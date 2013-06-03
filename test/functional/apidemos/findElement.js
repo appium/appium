@@ -100,6 +100,28 @@ describeWd('find element(s)', function(h) {
       });
     });
   });
+  it('should find a single element by id', function(done) {
+    h.driver.execute("mobile: find", [["scroll",[[3, "views"]],[[7, "views"]]]], function(err, el) {
+      should.not.exist(err);
+      el.click(function(err) {
+        should.not.exist(err);
+        h.driver.elementByXPath("//text[@text='Buttons']", function(err, but) {
+          should.not.exist(err);
+          but.click(function(err) {
+            should.not.exist(err);
+            h.driver.elementById("buttons_1_normal", function(err, el) {
+              should.not.exist(err);
+              el.text(function(err, text) {
+                should.not.exist(err);
+                text.should.eql("Normal");
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });
 
 describeWd('find element(s) from element', function(h) {

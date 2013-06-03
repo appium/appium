@@ -563,16 +563,11 @@ ADB.prototype.getEmulatorPort = function(cb) {
     if (err || devices.length < 1) {
       cb(new Error("No devices connected"));
     } else {
-      var portFound = false;
-      var calledBack = false;
-      devices.forEach(function(device) {
-        var port = me.getPortFromEmulatorString(device);
-        if (port && !calledBack) {
-          calledBack = true;
-          cb(null, port);
-        }
-      }, cb);
-      if (!portFound) {
+      // pick first device
+      var port = me.getPortFromEmulatorString(devices[0]);
+      if (port) {
+        cb(null, port);
+      } else {
         cb(new Error("Emulator port not found"));
       }
     }
@@ -589,31 +584,7 @@ ADB.prototype.getPortFromEmulatorString = function(emStr) {
 
 ADB.prototype.getRunningAVDName = function(cb) {
   logger.info("Getting running AVD name");
-  this.getEmulatorPort(function(err, emulatorPort) {
-    if (err) {
-      logger.info("Could not get emulator port: " + err.description);
-      return cb(err);
-    }
-    var conn = net.createConnection(emulatorPort, 'localhost');
-    conn.on('connect', function() {
-      try {
-        conn.write('avd name\n');
-        conn.write('quit\n');
-      } catch(err) {
-        logger.info("Could not get AVD name. Maybe the emulator isn't really running? " + err.description);
-        cb(err);
-      }
-    }, cb);
-    conn.on('data', function (data) {
-      var content = data.toString();
-      var avdNamePattern = /OK((.|\n|\r\n)*)(.*)(.|\n|\r\n)OK/;
-      if (avdNamePattern.test(content)) {
-        cb(null, avdNamePattern.exec(content)[1].trim());
-      } else {
-        cb(new Error("Could not parse AVD name from response"));
-      }
-    }, cb);
-  }, cb);
+  this.sendTelnetCommand("avd name", cb);
 };
 
 ADB.prototype.prepareEmulator = function(cb) {
@@ -682,7 +653,6 @@ ADB.prototype.getConnectedDevices = function(cb) {
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
         this.debug("Setting device id to " + (this.udid || devices[0][0]));
-        console.log(devices);
         this.emulatorPort = null;
         var emPort = this.getPortFromEmulatorString(devices[0][0]);
         this.setDeviceId(this.udid || devices[0][0]);
@@ -1345,6 +1315,48 @@ ADB.prototype.unlockScreen = function(cb) {
   var cmd = this.adbCmd + " shell input keyevent 82";
   exec(cmd, function() {
     cb();
+  });
+};
+
+ADB.prototype.sendTelnetCommand = function(command, cb) {
+  logger.info("Sending telnet command to device: " + command);
+  this.getEmulatorPort(function(err, port) {
+    if (err) return cb(err);
+    var conn = net.createConnection(port, 'localhost');
+    var connected = false;
+    var readyRegex = /^OK$/m;
+    var dataStream = "";
+    var res = null;
+    var onReady = function() {
+      logger.info("Socket connection to device ready");
+      conn.write(command + "\n");
+    };
+    conn.on('connect', function() {
+      logger.info("Socket connection to device created");
+    });
+    conn.on('data', function(data) {
+      data = data.toString('utf8');
+      if (!connected) {
+        if (readyRegex.test(data)) {
+          connected = true;
+          onReady();
+        }
+      } else {
+        dataStream += data;
+        if (readyRegex.test(data)) {
+          res = dataStream.replace(readyRegex, "").trim();
+          logger.info("Telnet command got response: " + res);
+          conn.write("quit\n");
+        }
+      }
+    });
+    conn.on('close', function() {
+      if (res === null) {
+        cb(new Error("Never got a response from command"));
+      } else {
+        cb(null, res);
+      }
+    });
   });
 };
 

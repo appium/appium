@@ -145,7 +145,7 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
     , cleanAPKSrc = path.resolve(__dirname, '../app/android/Clean.apk')
     , newPackage = me.appPackage + '.clean'
     , srcManifest = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src')
-    , dstManifest = srcManifest.substr(0, srcManifest.length - '.src'.length);
+    , dstManifest = path.resolve(getTempPath(), 'AndroidManifest.xml');
 
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   var resignApks = function(cb) {

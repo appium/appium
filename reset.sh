@@ -126,6 +126,19 @@ reset_apidemos() {
     apidemos_reset=true
 }
 
+reset_gps_demo() {
+    if $hardcore ; then
+        run_cmd rm -rf sample-code/apps/gps-demo/*
+    fi
+    if [ ! test -f sample-code/apps/gps-demo.zip ]; then
+        run_cmd pushd sample-code/apps
+        run_cmd curl http://www.impressive-artworx.de/tutorials/android/gps_tutorial_1.zip > gps-demo.zip
+        run_cmd unzip gps-demo.zip
+        run_cmd mv GPSTutorial1 gps-demo
+        run_cmd popd
+    fi
+}
+
 reset_android() {
     echo "RESETTING ANDROID"
     echo "* Configuring Android bootstrap"
@@ -135,6 +148,7 @@ reset_android() {
     run_cmd $grunt buildAndroidBootstrap
     if $include_dev ; then
         reset_apidemos
+        reset_gps_demo
     fi
     echo "* Setting Android config to Appium's version"
     run_cmd $grunt setConfigVer:android

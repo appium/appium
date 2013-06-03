@@ -396,19 +396,41 @@ ADB.prototype.prepareDevice = function(onReady) {
   ], onReady);
 };
 
+ADB.prototype.pushStrings = function(cb) {
+  var me = this;
+  var stringsFromApkJarPath = path.resolve(__dirname, '../app/android/strings_from_apk.jar');
+  var outputPath = path.resolve(getTempPath(), me.appPackage);
+  var makeStrings = ['java -jar ', stringsFromApkJarPath,
+                         ' ', me.apkPath, ' ', outputPath].join('');
+  logger.debug(makeStrings);
+  exec(makeStrings, {}, function(err, stdout, stderr) {
+    if (err) {
+      logger.debug(stderr);
+      return cb("error making strings");
+    }
+    var jsonFile = path.resolve(outputPath, 'strings.json');
+    var remotePath = "/data/local/tmp";
+    var pushCmd = me.adbCmd + " push " + jsonFile + " " + remotePath;
+    exec(pushCmd, {}, function(err, stdout, stderr) {
+      cb(null);
+    });
+  });
+};
+
 ADB.prototype.startAppium = function(onReady, onExit) {
   logger.info("Starting android appium");
   var me = this
     , doRun = function(err) {
-        if (err) return onReady(err);
-        me.runBootstrap(onReady, onExit);
-      };
+      if (err) return onReady(err);
+      me.runBootstrap(onReady, onExit);
+    };
   this.onExit = onExit;
 
   logger.debug("Using fast reset? " + this.fastReset);
 
   async.series([
     function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.pushStrings(cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushAppium(cb); },
@@ -701,11 +723,9 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       // The bootstrap jar has crashed so it must be restarted.
       this.restartBootstrap = false;
       me.runBootstrap(function() {
-        readyCb(null, function() {
-          // Resend last command because the client is still waiting for the
-          // response.
-          me.android.push(null, true);
-        });
+        // Resend last command because the client is still waiting for the
+        // response.
+        me.android.push(null, true);
       }, exitCb);
       return;
     }
@@ -761,7 +781,25 @@ ADB.prototype.sendAutomatorCommand = function(action, params, cb) {
 };
 
 ADB.prototype.sendCommand = function(type, extra, cb) {
-  if (this.socketClient) {
+  if (this.cmdCb !== null) {
+    logger.warn("Trying to run a command when one is already in progress. " +
+                "Will spin a bit and try again");
+    var me = this;
+    var start = Date.now();
+    var timeoutMs = 10000;
+    var intMs = 200;
+    var waitForCmdCbNull = function() {
+      if (me.cmdCb === null) {
+        me.sendCommand(type, extra, cb);
+      } else if ((Date.now() - start) < timeoutMs) {
+        setTimeout(waitForCmdCbNull, intMs);
+      } else {
+        cb(new Error("Never became able to push strings since a command " +
+                     "was in process"));
+      }
+    };
+    waitForCmdCbNull();
+  } else if (this.socketClient) {
     if (typeof extra === "undefined" || extra === null) {
       extra = {};
     }
@@ -769,7 +807,11 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
     cmd = _.extend(cmd, extra);
     var cmdJson = JSON.stringify(cmd) + "\n";
     this.cmdCb = cb;
-    this.debug("Sending command to android: " + cmdJson.trim());
+    var logCmd = cmdJson.trim();
+    if (logCmd.length > 1000) {
+      logCmd = logCmd.substr(0, 1000) + "...";
+    }
+    this.debug("Sending command to android: " + logCmd);
     this.socketClient.write(cmdJson);
   } else {
     cb({

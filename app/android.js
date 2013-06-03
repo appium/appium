@@ -78,7 +78,7 @@ Android.prototype.start = function(cb, onDie) {
   var didLaunch = false;
 
   var onLaunch = _.bind(function(err, launchCb) {
-    if (typeof launchCb === "undefined") {
+    if (typeof launchCb === "undefined" || launchCb === null) {
       launchCb = cb;
     }
     var relaunchOn = [

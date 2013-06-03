@@ -419,11 +419,7 @@ ADB.prototype.pushStrings = function(cb) {
 
 ADB.prototype.startAppium = function(onReady, onExit) {
   logger.info("Starting android appium");
-  var me = this
-    , doRun = function(err) {
-      if (err) return onReady(err);
-      me.runBootstrap(onReady, onExit);
-    };
+  var me = this;
   this.onExit = onExit;
 
   logger.debug("Using fast reset? " + this.fastReset);
@@ -435,9 +431,13 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { me.installApp(cb); },
     function(cb) { me.forwardPort(cb); },
     function(cb) { me.pushAppium(cb); },
+    function(cb) { me.runBootstrap(cb, onExit); },
+    function(cb) { me.wakeUp(cb); },
     function(cb) { me.unlockScreen(cb); },
     function(cb) { me.startApp(cb); }
-  ], doRun);
+  ], function(err) {
+    onReady(err);
+  });
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
@@ -1305,6 +1305,12 @@ ADB.prototype.goToHome = function(cb) {
   exec(cmd, function() {
     cb();
   });
+};
+
+ADB.prototype.wakeUp = function(cb) {
+  // requires an appium bootstrap connection loaded
+  this.debug("Waking up device if it's not alive");
+  this.android.proxy(["wake", {}], cb);
 };
 
 ADB.prototype.keyevent = function(keycode, cb) {

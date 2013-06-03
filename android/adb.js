@@ -50,6 +50,7 @@ var ADB = function(opts, android) {
   this.onExit = noop;
   this.alreadyExited = false;
   this.portForwarded = false;
+  this.emulatorPort = null;
   this.debugMode = true;
   this.fastReset = opts.fastReset;
   this.cleanApp = opts.cleanApp || this.fastReset;
@@ -553,64 +554,72 @@ ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
 };
 
 ADB.prototype.getEmulatorPort = function(cb) {
+  logger.info("Getting running emulator port");
+  var me = this;
+  if (this.emulatorPort !== null) {
+    return cb(null, this.emulatorPort);
+  }
   this.getConnectedDevices(function(err, devices) {
     if (err || devices.length < 1) {
-      cb(null);
+      cb(new Error("No devices connected"));
     } else {
       var portFound = false;
+      var calledBack = false;
       devices.forEach(function(device) {
-        if (!portFound) {
-          var portPattern = /emulator-(\d+)/;
-          if (portPattern.test(device)) {
-            portFound = true;
-            cb(parseInt(portPattern.exec(device)[1], 10));
-          }
+        var port = me.getPortFromEmulatorString(device);
+        if (port && !calledBack) {
+          calledBack = true;
+          cb(null, port);
         }
       }, cb);
       if (!portFound) {
-        cb(null);
+        cb(new Error("Emulator port not found"));
       }
     }
   });
 };
 
+ADB.prototype.getPortFromEmulatorString = function(emStr) {
+  var portPattern = /emulator-(\d+)/;
+  if (portPattern.test(emStr)) {
+    return parseInt(portPattern.exec(emStr)[1], 10);
+  }
+  return false;
+};
+
 ADB.prototype.getRunningAVDName = function(cb) {
-  try {
-    this.getEmulatorPort(function(emulatorPort) {
-      if (emulatorPort !== null) {
-        var conn = net.createConnection(emulatorPort, 'localhost');
-        conn.on('connect', function() {
-          try {
-            conn.write('avd name\n');
-            conn.write('quit\n');
-          } catch(err) {
-            logger.info("Could not get AVD name. Maybe the emulator isn't really running? " + err.description);
-            cb(undefined);
-          }
-        }, cb);
-        conn.on('data', function (data) {
-          var content = data.toString();
-          var avdNamePattern = /OK((.|\n|\r\n)*)(.*)(.|\n|\r\n)OK/;
-          if (avdNamePattern.test(content)) {
-            cb(avdNamePattern.exec(content)[1].trim());
-          } else {
-            cb(null);
-          }
-        }, cb);
-      } else {
-        cb(null);
+  logger.info("Getting running AVD name");
+  this.getEmulatorPort(function(err, emulatorPort) {
+    if (err) {
+      logger.info("Could not get emulator port: " + err.description);
+      return cb(err);
+    }
+    var conn = net.createConnection(emulatorPort, 'localhost');
+    conn.on('connect', function() {
+      try {
+        conn.write('avd name\n');
+        conn.write('quit\n');
+      } catch(err) {
+        logger.info("Could not get AVD name. Maybe the emulator isn't really running? " + err.description);
+        cb(err);
       }
     }, cb);
-  } catch(err) {
-    logger.info("Could not get emulator port: " + err.description);
-    cb(null);
-  }
+    conn.on('data', function (data) {
+      var content = data.toString();
+      var avdNamePattern = /OK((.|\n|\r\n)*)(.*)(.|\n|\r\n)OK/;
+      if (avdNamePattern.test(content)) {
+        cb(null, avdNamePattern.exec(content)[1].trim());
+      } else {
+        cb(new Error("Could not parse AVD name from response"));
+      }
+    }, cb);
+  }, cb);
 };
 
 ADB.prototype.prepareEmulator = function(cb) {
   if (this.avdName !== null) {
-    this.getRunningAVDName(_.bind(function(runningAVDName) {
-      if (this.avdName.replace('@','') === runningAVDName) {
+    this.getRunningAVDName(_.bind(function(err, runningAVDName) {
+      if (!err && this.avdName.replace('@','') === runningAVDName) {
         logger.info("Did not launch AVD because it was already running.");
         cb(null);
       } else {
@@ -649,7 +658,7 @@ ADB.prototype.prepareEmulator = function(cb) {
       }
     }, this));
   } else {
-    cb(null);
+    cb();
   }
 };
 
@@ -673,7 +682,13 @@ ADB.prototype.getConnectedDevices = function(cb) {
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
         this.debug("Setting device id to " + (this.udid || devices[0][0]));
+        console.log(devices);
+        this.emulatorPort = null;
+        var emPort = this.getPortFromEmulatorString(devices[0][0]);
         this.setDeviceId(this.udid || devices[0][0]);
+        if (emPort && !this.udid) {
+          this.emulatorPort = emPort;
+        }
       }
       cb(null, devices);
     }

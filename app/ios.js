@@ -662,6 +662,7 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
 };
 
 IOS.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (!res) res = {};
   if (res.value === null) {
     res.status = status.codes.NoSuchElement.code;
   }

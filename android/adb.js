@@ -927,7 +927,6 @@ ADB.prototype.requireApk = function() {
 };
 
 ADB.prototype.waitForDevice = function(cb) {
-  this.requireDeviceId();
   var doWait = _.bind(function(innerCb) {
     this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
                "and to respond to shell commands (timeout = " +

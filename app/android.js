@@ -101,7 +101,12 @@ Android.prototype.start = function(cb, onDie) {
         logger.error(err);
         logger.error("Above error isn't fatal, maybe relaunching adb will help....");
         var me = this;
-        this.adb.waitForDevice(function(){ didLaunch = true; me.push(null, true); launchCb(null); });
+        this.adb.waitForDevice(function(err) {
+          if (err) return launchCb(err);
+          didLaunch = true;
+          me.push(null, true);
+          launchCb();
+        });
       } else {
         // error is already printed by ADB.prototype.waitForActivity
         this.adb = null;

@@ -32,7 +32,9 @@ var ADB = function(opts, android) {
   this.webSocket = opts.webSocket;
   // Don't uninstall if using fast reset.
   // Uninstall if reset is set and fast reset isn't.
-  this.skipUninstall = opts.fastReset || !(opts.reset || false);
+  this.skipUninstall = opts.fastReset || !opts.reset || false;
+  this.fastReset = opts.fastReset;
+  this.cleanApp = opts.cleanApp || this.fastReset;
   this.systemPort = opts.port || 4724;
   this.devicePort = opts.devicePort || 4724;
   this.avdName = opts.avdName;
@@ -52,8 +54,6 @@ var ADB = function(opts, android) {
   this.portForwarded = false;
   this.emulatorPort = null;
   this.debugMode = true;
-  this.fastReset = opts.fastReset;
-  this.cleanApp = opts.cleanApp || this.fastReset;
   this.cleanAPK = path.resolve(helpers.getTempPath(), this.appPackage + '.clean.apk');
   // This is set to true when the bootstrap jar crashes.
   this.restartBootstrap = false;
@@ -1186,7 +1186,8 @@ ADB.prototype.uninstallApp = function(cb) {
   };
 
   if (me.skipUninstall) {
-    me.debug("Not uninstalling app since server started with --reset");
+    me.debug("Not uninstalling app since server started with --full-reset " +
+             "or --no-reset");
     cb();
   } else {
     next();

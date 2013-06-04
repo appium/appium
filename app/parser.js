@@ -99,8 +99,8 @@ var args = [
     , dest: 'noReset'
     , action: 'storeTrue'
     , required: false
-    , help: 'Reset app state after each session (IOS: delete plist; Android: ' +
-            'install app before session and uninstall after session)'
+    , help: "Don't reset app state between sessions (IOS: don't delete app " +
+            "plist files; Android: don't uninstall app before new session)"
     , nargs: 0
   }],
 

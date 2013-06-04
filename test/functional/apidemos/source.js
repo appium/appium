@@ -10,7 +10,7 @@ var path = require('path')
   , should = require('should');
 
 describeWd('get source', function(h) {
-  return it('should return the page source', function(done) {
+  it('should return the page source', function(done) {
     h.driver.source(function(err, source){
       var obj = JSON.parse(source);
       should.not.exist(err);
@@ -18,6 +18,22 @@ describeWd('get source', function(h) {
       obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
       obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.view.View");
       done();
+    });
+  });
+  it('should return the page source without crashing other commands', function(done) {
+    h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
+      should.not.exist(err);
+      h.driver.source(function(err, source){
+        var obj = JSON.parse(source);
+        should.not.exist(err);
+        should.ok(obj);
+        obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
+        obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.view.View");
+        h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
+          should.not.exist(err);
+          done();
+        });
+      });
     });
   });
 });

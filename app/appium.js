@@ -120,6 +120,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
       return "selendroid";
     } else if (desiredCaps.device.toLowerCase().indexOf('firefox') !== -1) {
       return "firefoxos";
+    } else if (desiredCaps.device === "mock_ios") {
+      return "mock_ios";
     } else {
       return "android";
     }
@@ -153,6 +155,10 @@ Appium.prototype.getIosDeviceType = function(desiredCaps) {
     }
   }
   return "iphone";
+};
+
+Appium.prototype.isMockIos = function() {
+  return this.deviceType === "mock_ios";
 };
 
 Appium.prototype.isIos = function() {
@@ -190,6 +196,9 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                       typeof desiredCaps.app !== "undefined" &&
                       desiredCaps.app);
   this.deviceType = this.getDeviceType(desiredCaps);
+  if (this.isMockIos()) {
+    return cb();
+  }
   if (this.isIos()) {
     this.iosDeviceType = this.getIosDeviceType(desiredCaps);
   }
@@ -409,7 +418,12 @@ Appium.prototype.invoke = function() {
     logger.info('Creating new appium session ' + this.sessionId);
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
-      if (this.isIos()) {
+      if (this.isMockIos()) {
+        var device = ios({rest: this.rest});
+        device.start = function(cb) { cb(); };
+        device.stop = function(cb) { cb(); };
+        this.devices[this.deviceType] = device;
+      } else if (this.isIos()) {
         var iosOpts = {
           rest: this.rest
           , webSocket: this.webSocket

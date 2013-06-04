@@ -50,6 +50,7 @@ var ADB = function(opts, android) {
   this.onExit = noop;
   this.alreadyExited = false;
   this.portForwarded = false;
+  this.emulatorPort = null;
   this.debugMode = true;
   this.fastReset = opts.fastReset;
   this.cleanApp = opts.cleanApp || this.fastReset;
@@ -553,64 +554,43 @@ ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
 };
 
 ADB.prototype.getEmulatorPort = function(cb) {
+  logger.info("Getting running emulator port");
+  var me = this;
+  if (this.emulatorPort !== null) {
+    return cb(null, this.emulatorPort);
+  }
   this.getConnectedDevices(function(err, devices) {
     if (err || devices.length < 1) {
-      cb(null);
+      cb(new Error("No devices connected"));
     } else {
-      var portFound = false;
-      devices.forEach(function(device) {
-        if (!portFound) {
-          var portPattern = /emulator-(\d+)/;
-          if (portPattern.test(device)) {
-            portFound = true;
-            cb(parseInt(portPattern.exec(device)[1], 10));
-          }
-        }
-      }, cb);
-      if (!portFound) {
-        cb(null);
+      // pick first device
+      var port = me.getPortFromEmulatorString(devices[0]);
+      if (port) {
+        cb(null, port);
+      } else {
+        cb(new Error("Emulator port not found"));
       }
     }
   });
 };
 
-ADB.prototype.getRunningAVDName = function(cb) {
-  try {
-    this.getEmulatorPort(function(emulatorPort) {
-      if (emulatorPort !== null) {
-        var conn = net.createConnection(emulatorPort, 'localhost');
-        conn.on('connect', function() {
-          try {
-            conn.write('avd name\n');
-            conn.write('quit\n');
-          } catch(err) {
-            logger.info("Could not get AVD name. Maybe the emulator isn't really running? " + err.description);
-            cb(undefined);
-          }
-        }, cb);
-        conn.on('data', function (data) {
-          var content = data.toString();
-          var avdNamePattern = /OK((.|\n|\r\n)*)(.*)(.|\n|\r\n)OK/;
-          if (avdNamePattern.test(content)) {
-            cb(avdNamePattern.exec(content)[1].trim());
-          } else {
-            cb(null);
-          }
-        }, cb);
-      } else {
-        cb(null);
-      }
-    }, cb);
-  } catch(err) {
-    logger.info("Could not get emulator port: " + err.description);
-    cb(null);
+ADB.prototype.getPortFromEmulatorString = function(emStr) {
+  var portPattern = /emulator-(\d+)/;
+  if (portPattern.test(emStr)) {
+    return parseInt(portPattern.exec(emStr)[1], 10);
   }
+  return false;
+};
+
+ADB.prototype.getRunningAVDName = function(cb) {
+  logger.info("Getting running AVD name");
+  this.sendTelnetCommand("avd name", cb);
 };
 
 ADB.prototype.prepareEmulator = function(cb) {
   if (this.avdName !== null) {
-    this.getRunningAVDName(_.bind(function(runningAVDName) {
-      if (this.avdName.replace('@','') === runningAVDName) {
+    this.getRunningAVDName(_.bind(function(err, runningAVDName) {
+      if (!err && this.avdName.replace('@','') === runningAVDName) {
         logger.info("Did not launch AVD because it was already running.");
         cb(null);
       } else {
@@ -649,7 +629,7 @@ ADB.prototype.prepareEmulator = function(cb) {
       }
     }, this));
   } else {
-    cb(null);
+    cb();
   }
 };
 
@@ -673,7 +653,12 @@ ADB.prototype.getConnectedDevices = function(cb) {
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
         this.debug("Setting device id to " + (this.udid || devices[0][0]));
+        this.emulatorPort = null;
+        var emPort = this.getPortFromEmulatorString(devices[0][0]);
         this.setDeviceId(this.udid || devices[0][0]);
+        if (emPort && !this.udid) {
+          this.emulatorPort = emPort;
+        }
       }
       cb(null, devices);
     }
@@ -1330,6 +1315,48 @@ ADB.prototype.unlockScreen = function(cb) {
   var cmd = this.adbCmd + " shell input keyevent 82";
   exec(cmd, function() {
     cb();
+  });
+};
+
+ADB.prototype.sendTelnetCommand = function(command, cb) {
+  logger.info("Sending telnet command to device: " + command);
+  this.getEmulatorPort(function(err, port) {
+    if (err) return cb(err);
+    var conn = net.createConnection(port, 'localhost');
+    var connected = false;
+    var readyRegex = /^OK$/m;
+    var dataStream = "";
+    var res = null;
+    var onReady = function() {
+      logger.info("Socket connection to device ready");
+      conn.write(command + "\n");
+    };
+    conn.on('connect', function() {
+      logger.info("Socket connection to device created");
+    });
+    conn.on('data', function(data) {
+      data = data.toString('utf8');
+      if (!connected) {
+        if (readyRegex.test(data)) {
+          connected = true;
+          onReady();
+        }
+      } else {
+        dataStream += data;
+        if (readyRegex.test(data)) {
+          res = dataStream.replace(readyRegex, "").trim();
+          logger.info("Telnet command got response: " + res);
+          conn.write("quit\n");
+        }
+      }
+    });
+    conn.on('close', function() {
+      if (res === null) {
+        cb(new Error("Never got a response from command"));
+      } else {
+        cb(null, res);
+      }
+    });
   });
 };
 

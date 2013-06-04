@@ -713,7 +713,19 @@ Android.prototype.shake = function(cb) {
 };
 
 Android.prototype.setLocation = function(latitude, longitude, altitude, horizontalAccuracy, verticalAccuracy, course, speed, cb) {
-  cb(new NotYetImplementedError(), null);
+  var cmd = "geo fix " + longitude + " " + latitude;
+  this.adb.sendTelnetCommand(cmd, function(err, res) {
+    if (err) {
+      return cb(null, {
+        status: status.codes.UnknownError.code
+        , value: "Could not set geolocation via telnet to device"
+      });
+    }
+    cb(null, {
+      status: status.codes.Success.code
+      , value: res
+    });
+  });
 };
 
 Android.prototype.hideKeyboard = function(keyName, cb) {

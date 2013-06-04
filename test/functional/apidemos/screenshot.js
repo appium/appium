@@ -14,6 +14,7 @@ describeWd('screenshot', function(h) {
     h.driver.takeScreenshot(function(err, screenshot) {
       should.not.exist(err);
       should.exist(screenshot);
+      screenshot.length.should.be.above(1000);
       done();
     });
   });
@@ -23,6 +24,7 @@ describeWd('screenshot', function(h) {
       h.driver.takeScreenshot(function(err, screenshot) {
         should.not.exist(err);
         should.exist(screenshot);
+        screenshot.length.should.be.above(1000);
         h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
           should.not.exist(err);
           done();

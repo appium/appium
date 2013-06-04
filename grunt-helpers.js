@@ -370,7 +370,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
           grunt.log.write(data);
         });
         proc.on('exit', function(code) {
-          cb(code);
+          cb(code ? new Error("Building project exited with " + code) : null);
         });
       } else {
         grunt.fatal("Could not find " + cmdName + " installed; please make sure it's on PATH");

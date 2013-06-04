@@ -49,7 +49,6 @@ var Android = function(opts) {
     , javascriptEnabled: true
     , databaseEnabled: false
   };
-  this.lastCmd = null;
 };
 
 // Clear data, wait for app close, then start app.
@@ -100,11 +99,9 @@ Android.prototype.start = function(cb, onDie) {
           checkShouldRelaunch(err.message.toString())) {
         logger.error(err);
         logger.error("Above error isn't fatal, maybe relaunching adb will help....");
-        var me = this;
         this.adb.waitForDevice(function(err) {
           if (err) return launchCb(err);
           didLaunch = true;
-          me.push(null, true);
           launchCb();
         });
       } else {
@@ -195,15 +192,10 @@ Android.prototype.resetTimeout = function() {
 Android.prototype.proxy = deviceCommon.proxy;
 Android.prototype.respond = deviceCommon.respond;
 
-Android.prototype.push = function(elem, resendLast) {
+Android.prototype.push = function(elem) {
   this.resetTimeout();
 
-  if (resendLast) {
-    // We're resending the last command because the bootstrap jar disconnected.
-    this.queue.push(this.lastCmd);
-  } else {
-    this.queue.push(elem);
-  }
+  this.queue.push(elem);
 
   var next = _.bind(function() {
     if (this.queue.length <= 0) {
@@ -224,11 +216,6 @@ Android.prototype.push = function(elem, resendLast) {
       , action = target[0][0]
       , params = typeof target[0][1] === "undefined" ? {} : target[0][1]
       , cb = target[1];
-
-    if (!resendLast) {
-      // Store the last command in case the bootstrap jar disconnects.
-      this.lastCmd = target;
-    }
 
     this.cbForCurrentCmd = cb;
 

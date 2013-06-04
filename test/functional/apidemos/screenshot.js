@@ -18,12 +18,12 @@ describeWd('screenshot', function(h) {
     });
   });
   it('should not cause other commands to fail', function(done) {
-    h.driver.elementByName("Animation", function(err, el) {
+    h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
       should.not.exist(err);
       h.driver.takeScreenshot(function(err, screenshot) {
         should.not.exist(err);
         should.exist(screenshot);
-        h.driver.elementByName("Animation", function(err, el) {
+        h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
           should.not.exist(err);
           done();
         });

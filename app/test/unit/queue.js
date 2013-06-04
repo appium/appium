@@ -95,3 +95,56 @@ describe('Appium', function() {
     });
   });
 });
+
+describe('Appium with clobber', function() {
+  var intercept = []
+    , logPath = path.resolve(__dirname, "../../../appium.log")
+    , inst = appium({app: "/path/to/fake.app", log: logPath, noSessionOverride: false });
+
+  inst.registerConfig({ios: true});
+
+  var start = function(cb) {
+        cb(null, {});
+      }
+    , stop = function(cb) {
+        cb(null);
+      }
+    , mock = function(cb) {
+        // mock
+        inst.deviceType = 'ios';
+        inst.devices[inst.deviceType] = {};
+        inst.devices[inst.deviceType].start = start;
+        inst.devices[inst.deviceType].stop = stop;
+        inst.device = inst.devices[inst.deviceType];
+        cb();
+      };
+
+  describe('#start', function() {
+    return it('should execute calls immediately', function(done) {
+      var doneYet = function(num) {
+        intercept.push(num);
+        if (intercept.length > 9) {
+          for (var i=0; i < intercept.length; i++) {
+            assert.equal(intercept[i], i);
+          }
+          done();
+        }
+      };
+
+      var loop = function(num) {
+        if (num > 9)
+          return;
+
+        mock(function() {
+          inst.start({}, function() {
+            var n = num;
+            inst.stop(function() { doneYet(n); });
+            loop(++num);
+          });
+        });
+      };
+
+      loop(0);
+    });
+  });
+});

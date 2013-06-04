@@ -16,6 +16,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
+|`--no-session-override`|false|Disables session override||
 |`--fast-reset`|true|(Android-only, DEPRECATED, see --full-reset) Reset app state using clean.apk||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||
 |`--no-reset`|false|Reset app state after each session (IOS: delete plist; Android: install app before session and uninstall after session)||

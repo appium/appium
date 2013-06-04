@@ -4,10 +4,9 @@
 /*global describe:true, it:true */
 "use strict";
 
-var assert = require('assert')
+var should = require('should')
   , appium = require('../../appium')
   , path = require('path')
-  , UUID = require('uuid-js')
   , ios = require('../../ios');
 
 describe('IOS', function() {
@@ -28,7 +27,7 @@ describe('IOS', function() {
           intercept.push(result);
           if (intercept.length >= iterations) {
             for (var x=0; x < iterations; x++) {
-              assert.equal(intercept[x][0], x);
+              intercept[x][0].should.equal(x);
             }
             done();
           }
@@ -44,25 +43,9 @@ describe('IOS', function() {
 describe('Appium', function() {
   var intercept = []
     , logPath = path.resolve(__dirname, "../../../appium.log")
-    , inst = appium({app: "/path/to/fake.app", log: logPath});
+    , inst = appium({log: logPath, noSessionOverride: true });
 
   inst.registerConfig({ios: true});
-
-  var start = function(cb) {
-        cb(null, {});
-      }
-    , stop = function(cb) {
-        cb(null);
-      }
-    , mock = function(cb) {
-        // mock
-        inst.deviceType = 'ios';
-        inst.devices[inst.deviceType] = {};
-        inst.devices[inst.deviceType].start = start;
-        inst.devices[inst.deviceType].stop = stop;
-        inst.device = inst.devices[inst.deviceType];
-        cb();
-      };
 
   describe('#start', function() {
     return it('should queue up subsequent calls and execute them sequentially', function(done) {
@@ -70,7 +53,7 @@ describe('Appium', function() {
         intercept.push(num);
         if (intercept.length > 9) {
           for (var i=0; i < intercept.length; i++) {
-            assert.equal(intercept[i], i);
+            intercept[i].should.equal(i);
           }
           done();
         }
@@ -80,14 +63,45 @@ describe('Appium', function() {
         if (num > 9)
           return;
 
-        mock(function() {
-          inst.start({}, function() {
-            var n = num;
-            setTimeout(function() {
-              inst.stop(function() { doneYet(n); });
-            }, Math.round(Math.random()*100));
-            loop(++num);
-          });
+        inst.start({app: "/path/to/fake.app", device: "mock_ios"}, function() {
+          var n = num;
+          setTimeout(function() {
+            inst.stop(function() { doneYet(n); });
+          }, Math.round(Math.random()*100));
+          loop(++num);
+        });
+      };
+
+      loop(0);
+    });
+  });
+});
+
+describe('Appium with clobber', function() {
+  var logPath = path.resolve(__dirname, "../../../appium.log")
+    , inst = appium({log: logPath, noSessionOverride: false });
+
+  inst.registerConfig({mock_ios: true});
+
+  describe('#start', function() {
+    return it('should clobber existing sessions', function(done) {
+      var numSessions = 9
+        , dc = {app: "/path/to/fake.app", device: "mock_ios"};
+      var loop = function(num) {
+        if (num > numSessions) return;
+        inst.start(dc, function() {
+          var curSessId = inst.sessionId;
+          var n = num;
+          setTimeout(function() {
+            var newSessId = inst.sessionId;
+            if (n === numSessions) {
+              curSessId.should.equal(newSessId);
+              done();
+            } else {
+              curSessId.should.not.equal(newSessId);
+            }
+          }, Math.round(Math.random()*100));
+          loop(++num);
         });
       };
 

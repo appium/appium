@@ -395,7 +395,7 @@ Appium.prototype.unzipApp = function(zipPath, cb) {
 Appium.prototype.clearPreviousSession = function() {
   var me = this;
   if (me.sessionOverride && me.device) {
-    me.device.stop(function(code) {
+    me.device.stop(function() {
       me.devices = [];
       me.device = null;
       me.sessions[me.progress] = {};

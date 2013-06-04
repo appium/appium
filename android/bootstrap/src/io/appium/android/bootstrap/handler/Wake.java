@@ -8,7 +8,7 @@ import android.os.RemoteException;
 import com.android.uiautomator.core.UiDevice;
 
 /**
- * This handler is used to get the size of the screen.
+ * This handler is used to power on the device if it's not currently awake.
  * 
  */
 public class Wake extends CommandHandler {
@@ -26,11 +26,9 @@ public class Wake extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command) {
     // only makes sense on a device
-    final UiDevice d = UiDevice.getInstance();
     try {
-      d.wakeUp();
-      final Boolean res = true;
-      return getSuccessResult(res);
+      UiDevice.getInstance().wakeUp();
+      return getSuccessResult(true);
     } catch (final RemoteException e) {
       return getErrorResult("Error waking up device");
     }

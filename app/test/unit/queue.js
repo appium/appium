@@ -44,7 +44,7 @@ describe('IOS', function() {
 describe('Appium', function() {
   var intercept = []
     , logPath = path.resolve(__dirname, "../../../appium.log")
-    , inst = appium({app: "/path/to/fake.app", log: logPath});
+    , inst = appium({app: "/path/to/fake.app", log: logPath, noSessionOverride: true });
 
   inst.registerConfig({ios: true});
 

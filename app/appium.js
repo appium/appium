@@ -55,11 +55,8 @@ var Appium = function(args) {
   this.tempFiles = [];
   this.origApp = null;
   this.preLaunched = false;
-  this.fastReset = false;
-
-  if (this.args.fastReset) {
-    this.fastReset = true;
-  }
+  this.fastReset = this.args.fastReset;
+  this.sessionOverride = !this.args.noSessionOverride;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -107,7 +104,7 @@ Appium.prototype.start = function(desiredCaps, cb) {
       cb(err, null);
     } else {
       this.sessions[++this.counter] = { sessionId: '', callback: cb };
-      this.invoke();
+      this.clearPreviousSession();
     }
   }, this));
 };
@@ -386,6 +383,20 @@ Appium.prototype.unzipApp = function(zipPath, cb) {
   });
 };
 
+Appium.prototype.clearPreviousSession = function() {
+  var me = this;
+  if (me.sessionOverride && me.device) {
+    me.device.stop(function(code) {
+      me.devices = [];
+      me.device = null;
+      me.sessions[me.progress] = {};
+      me.invoke();
+    });
+  } else {
+    me.invoke();
+  }
+};
+
 Appium.prototype.invoke = function() {
   var me = this;
 
@@ -393,7 +404,7 @@ Appium.prototype.invoke = function() {
     return;
   }
 
-  if (this.sessionId === null) {
+  if (this.sessionOverride || this.sessionId === null) {
     this.sessionId = UUID.create().hex;
     logger.info('Creating new appium session ' + this.sessionId);
 
@@ -503,7 +514,7 @@ Appium.prototype.onDeviceDie = function(code, cb) {
               sessionId: dyingSession});
   }
   // call invoke again in case we have sessions queued
-  this.invoke();
+  this.clearPreviousSession();
 };
 
 Appium.prototype.stop = function(cb) {

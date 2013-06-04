@@ -65,6 +65,15 @@ var args = [
     , nargs: 0
   }],
 
+  [['--no-session-override'] , {
+    defaultValue: false
+    , dest: 'noSessionOverride'
+    , action: 'storeTrue'
+    , required: false
+    , help: 'Disables session override'
+    , nargs: 0
+  }],
+
   [['--fast-reset'] , {
     defaultValue: true
     , dest: 'fastReset'

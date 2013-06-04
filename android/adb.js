@@ -62,6 +62,7 @@ var ADB = function(opts, android) {
   this.android = android;
   this.cmdCb = null;
   this.binaries = {};
+  this.resendLastCommand = function() {};
 };
 
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
@@ -699,6 +700,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
 
   var me = this;
   this.proc.on('exit', _.bind(function(code) {
+    this.cmdCb = null;
     if (this.socketClient) {
       this.socketClient.end();
       this.socketClient.destroy();
@@ -711,7 +713,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       me.runBootstrap(function() {
         // Resend last command because the client is still waiting for the
         // response.
-        me.android.push(null, true);
+        me.resendLastCommand();
       }, exitCb);
       return;
     }
@@ -786,6 +788,9 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
     };
     waitForCmdCbNull();
   } else if (this.socketClient) {
+    this.resendLastCommand = _.bind(function() {
+      this.sendCommand(type, extra, cb);
+    }, this);
     if (typeof extra === "undefined" || extra === null) {
       extra = {};
     }

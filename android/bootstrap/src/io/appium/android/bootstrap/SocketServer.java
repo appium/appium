@@ -117,7 +117,7 @@ class SocketServer {
     final TimerTask updateWatchers = new TimerTask() {
       @Override
       public void run() {
-        watchers.check();
+        try { watchers.check(); } catch (Exception e) {}
       }
     };
     timer.scheduleAtFixedRate(updateWatchers, 100, 100);

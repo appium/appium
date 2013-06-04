@@ -19,7 +19,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--no-session-override`|false|Disables session override||
 |`--fast-reset`|true|(Android-only, DEPRECATED, see --full-reset) Reset app state using clean.apk||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||
-|`--no-reset`|false|Reset app state after each session (IOS: delete plist; Android: install app before session and uninstall after session)||
+|`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|

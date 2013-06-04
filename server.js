@@ -45,7 +45,32 @@ var catchAllHandler = function(e, req, res, next) {
   next(e);
 };
 
+var checkArgs = function(args) {
+  var exclusives = [
+    ['noReset', 'fastReset', 'fullReset']
+    , ['quiet', 'verbose']
+    , ['ipa', 'app', 'safari']
+    , ['withoutDelay', 'nativeInstrumentsLib']
+    , ['forceIphone', 'forceIpad']
+  ];
+  _.each(exclusives, function(exSet) {
+    var numFoundInArgs = 0;
+    _.each(exSet, function(opt) {
+      if (_.has(args, opt) && args[opt]) {
+        numFoundInArgs++;
+      }
+    });
+    if (numFoundInArgs > 1) {
+      console.error(("You can't pass in more than one argument from the set " +
+        JSON.stringify(exSet) + ", since they are mutually exclusive").red);
+      process.exit(1);
+    }
+  });
+};
+
 var main = function(args, readyCb, doneCb) {
+  checkArgs(args);
+
   if (typeof doneCb === "undefined") {
     doneCb = function() {};
   }

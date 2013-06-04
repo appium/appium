@@ -55,11 +55,8 @@ var Appium = function(args) {
   this.tempFiles = [];
   this.origApp = null;
   this.preLaunched = false;
-  this.fastReset = false;
-
-  if (this.args.fastReset) {
-    this.fastReset = true;
-  }
+  this.fastReset = this.args.fastReset;
+  this.sessionOverride = !this.args.noSessionOverride;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -107,7 +104,7 @@ Appium.prototype.start = function(desiredCaps, cb) {
       cb(err, null);
     } else {
       this.sessions[++this.counter] = { sessionId: '', callback: cb };
-      this.invoke();
+      this.clearPreviousSession();
     }
   }, this));
 };
@@ -123,6 +120,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
       return "selendroid";
     } else if (desiredCaps.device.toLowerCase().indexOf('firefox') !== -1) {
       return "firefoxos";
+    } else if (desiredCaps.device === "mock_ios") {
+      return "mock_ios";
     } else {
       return "android";
     }
@@ -156,6 +155,10 @@ Appium.prototype.getIosDeviceType = function(desiredCaps) {
     }
   }
   return "iphone";
+};
+
+Appium.prototype.isMockIos = function() {
+  return this.deviceType === "mock_ios";
 };
 
 Appium.prototype.isIos = function() {
@@ -193,6 +196,9 @@ Appium.prototype.configure = function(desiredCaps, cb) {
                       typeof desiredCaps.app !== "undefined" &&
                       desiredCaps.app);
   this.deviceType = this.getDeviceType(desiredCaps);
+  if (this.isMockIos()) {
+    return cb();
+  }
   if (this.isIos()) {
     this.iosDeviceType = this.getIosDeviceType(desiredCaps);
   }
@@ -386,6 +392,20 @@ Appium.prototype.unzipApp = function(zipPath, cb) {
   });
 };
 
+Appium.prototype.clearPreviousSession = function() {
+  var me = this;
+  if (me.sessionOverride && me.device) {
+    me.device.stop(function() {
+      me.devices = [];
+      me.device = null;
+      me.sessions[me.progress] = {};
+      me.invoke();
+    });
+  } else {
+    me.invoke();
+  }
+};
+
 Appium.prototype.invoke = function() {
   var me = this;
 
@@ -393,12 +413,17 @@ Appium.prototype.invoke = function() {
     return;
   }
 
-  if (this.sessionId === null) {
+  if (this.sessionOverride || this.sessionId === null) {
     this.sessionId = UUID.create().hex;
     logger.info('Creating new appium session ' + this.sessionId);
 
     if (typeof this.devices[this.deviceType] === 'undefined') {
-      if (this.isIos()) {
+      if (this.isMockIos()) {
+        var device = ios({rest: this.rest});
+        device.start = function(cb) { cb(); };
+        device.stop = function(cb) { cb(); };
+        this.devices[this.deviceType] = device;
+      } else if (this.isIos()) {
         var iosOpts = {
           rest: this.rest
           , webSocket: this.webSocket
@@ -503,7 +528,7 @@ Appium.prototype.onDeviceDie = function(code, cb) {
               sessionId: dyingSession});
   }
   // call invoke again in case we have sessions queued
-  this.invoke();
+  this.clearPreviousSession();
 };
 
 Appium.prototype.stop = function(cb) {

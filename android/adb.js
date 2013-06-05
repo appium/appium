@@ -1084,7 +1084,13 @@ ADB.prototype.waitForNotActivity = function(cb) {
   var getFocusedApp = _.bind(function() {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {
-      if (foundPackage !== this.appPackage && foundActivity !== targetActivity) {
+      var notFoundAct = true;
+      _.each(targetActivity.split(','), function(act){
+        if (act.trim() === foundActivity) {
+          notFoundAct = false;
+        }
+      });
+      if (foundPackage !== this.appPackage && notFoundAct) {
         cb(null);
       } else if (Date.now() < endAt) {
         if (err) logger.info(err);
@@ -1112,7 +1118,13 @@ ADB.prototype.waitForActivity = function(cb) {
   var getFocusedApp = _.bind(function() {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {
-      if (foundPackage === this.appPackage && foundActivity === targetActivity) {
+      var foundAct = false;
+      _.each(targetActivity.split(','), function(act){
+        if (act.trim() === foundActivity) {
+          foundAct = true;
+        }
+      });
+      if (foundPackage === this.appPackage && foundAct) {
         cb(null);
       } else if (Date.now() < endAt) {
         if (err) logger.info(err);

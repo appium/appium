@@ -55,7 +55,7 @@ var Appium = function(args) {
   this.tempFiles = [];
   this.origApp = null;
   this.preLaunched = false;
-  this.fastReset = this.args.fastReset;
+  this.fastReset = !this.args.fullReset && !this.args.noReset;
   this.sessionOverride = !this.args.noSessionOverride;
 };
 
@@ -455,7 +455,7 @@ Appium.prototype.invoke = function() {
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
-          , fastReset: !this.args.fullReset && !this.args.noReset
+          , fastReset: this.fastReset
         };
         this.devices[this.deviceType] = android(androidOpts);
       } else if (this.isSelendroid()) {
@@ -469,7 +469,7 @@ Appium.prototype.invoke = function() {
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
-          , fastReset: !this.args.fullReset && !this.args.noReset
+          , fastReset: this.fastReset
         };
         this.devices[this.deviceType] = selendroid(selendroidOpts);
       } else if (this.isFirefoxOS()) {

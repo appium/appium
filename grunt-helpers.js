@@ -44,7 +44,9 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
     , nodeconfig: null
     , robotPort: -1
     , robotAddresss: '0.0.0.0'
-    , keepArtifacts: false }
+    , keepArtifacts: false
+    , ipa: null
+    , avd: null }
     , readyCb
     , doneCb
   );

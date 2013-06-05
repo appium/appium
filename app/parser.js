@@ -18,14 +18,6 @@ var args = [
     , example: "/abs/path/to/my.ipa"
   }],
 
-  [['-V', '--verbose'], {
-    required: false
-    , defaultValue: true
-    , action: 'storeTrue'
-    , help: '(DEPRECATED, see --quiet) Get verbose logging output'
-    , nargs: 0
-  }],
-
   [['-q', '--quiet'], {
     required: false
     , defaultValue: false
@@ -74,16 +66,6 @@ var args = [
     , nargs: 0
   }],
 
-  [['--fast-reset'] , {
-    defaultValue: true
-    , dest: 'fastReset'
-    , action: 'storeTrue'
-    , required: false
-    , help: '(Android-only, DEPRECATED, see --full-reset) Reset app state ' +
-            'using clean.apk'
-    , nargs: 0
-  }],
-
   [['--full-reset'] , {
     defaultValue: false
     , dest: 'fullReset'
@@ -128,19 +110,7 @@ var args = [
     , help: 'Also send log output to this HTTP listener'
   }],
 
-  [['--without-delay'] , {
-    defaultValue: true
-    , dest: 'withoutDelay'
-    , action: 'storeTrue'
-    , required: false
-    , help: '(IOS-only, DEPRECATED) IOS has a weird built-in unavoidable ' +
-            'delay. One way around this is to run instruments with a library ' +
-            'loaded to patch it so that it skips the delay. Use this flag to ' +
-            'speed up test execution.'
-    , nargs: 0
-  }],
-
-  [['--native-instruments-lib'] , {
+  [['--native-instruments-lib'], {
     defaultValue: false
     , dest: 'nativeInstrumentsLib'
     , action: 'storeTrue'
@@ -179,10 +149,10 @@ var args = [
   }],
 
   [['--avd'] , {
-        defaultValue: null
-        , required: false
-        , example: "@default"
-        , help: 'name of the avd to launch'
+    defaultValue: null
+    , required: false
+    , example: "@default"
+    , help: 'name of the avd to launch'
   }],
 
  [['--device-ready-timeout'], {

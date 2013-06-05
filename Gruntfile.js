@@ -121,10 +121,7 @@ module.exports = function(grunt) {
     tail(grunt, path.resolve(__dirname, "appium.log"), this.async());
   });
   grunt.registerTask('configAndroidBootstrap', function() {
-    var cb = this.async();
-    setupAndroidBootstrap(grunt, function(exitCode) {
-      cb(exitCode === 0);
-    });
+    setupAndroidBootstrap(grunt, this.async());
   });
   grunt.registerTask('buildAndroidBootstrap', function() {
     buildAndroidBootstrap(grunt, this.async());
@@ -133,22 +130,13 @@ module.exports = function(grunt) {
     buildSelendroidServer(this.async());
   });
   grunt.registerTask('configAndroidApp', function(appName) {
-  var cb = this.async();
-    setupAndroidApp(grunt, appName, function(exitCode) {
-      cb(exitCode === 0);
-    });
+    setupAndroidApp(grunt, appName, this.async());
   });
   grunt.registerTask('buildAndroidApp', function(appName) {
-    var cb = this.async();
-    buildAndroidApp(grunt, appName, function(exitCode) {
-      cb(exitCode === 0);
-    });
+    buildAndroidApp(grunt, appName, this.async());
   });
   grunt.registerTask('buildSelendroidAndroidApp', function(appName) {
-    var cb = this.async();
-    buildSelendroidAndroidApp(grunt, appName, function(exitCode) {
-      cb(exitCode === 0);
-    });
+    buildSelendroidAndroidApp(grunt, appName, this.async());
   });
   grunt.registerTask('installAndroidApp', function(appName) {
     installAndroidApp(grunt, appName, this.async());

@@ -44,7 +44,9 @@ module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
     , nodeconfig: null
     , robotPort: -1
     , robotAddresss: '0.0.0.0'
-    , keepArtifacts: false }
+    , keepArtifacts: false
+    , ipa: null
+    , avd: null }
     , readyCb
     , doneCb
   );
@@ -326,7 +328,7 @@ var setupAndroidProj = function(grunt, projPath, args, cb) {
     grunt.log.write(data);
   });
   proc.on('exit', function(code) {
-    cb(code);
+    cb(code === 0 ? null : new Error("Setup failed with code " + code));
   });
 };
 

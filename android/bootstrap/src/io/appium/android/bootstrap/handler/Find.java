@@ -385,8 +385,8 @@ public class Find extends CommandHandler {
       case PARTIAL_LINK_TEXT:
       case CSS_SELECTOR:
       default:
-        throw new InvalidStrategyException("Strategy "
-            + strategy.getStrategyName() + " is not valid.");
+        throw new InvalidStrategyException("Sorry, we don't support the '"
+            + strategy.getStrategyName() + "' locator strategy yet");
     }
 
     return selectors;

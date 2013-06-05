@@ -510,7 +510,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
-  var cmd = "adb -s " + this.curDeviceId + " shell am instrument -e main_activity '" + this.appPackage +
+  var cmd = this.adbCmd + " shell am instrument -e main_activity '" + this.appPackage +
             "." + this.appActivity + "' " + this.appPackage +
             ".selendroid/org.openqa.selendroid.ServerInstrumentation";
   logger.info("Starting instrumentation process for selendroid with cmd: " +

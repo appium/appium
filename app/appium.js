@@ -470,6 +470,7 @@ Appium.prototype.invoke = function() {
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
           , fastReset: !this.args.fullReset && !this.args.noReset
+          , selendroidPort: this.args.selendroidPort
         };
         this.devices[this.deviceType] = selendroid(selendroidOpts);
       } else if (this.isFirefoxOS()) {

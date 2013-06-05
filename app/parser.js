@@ -149,10 +149,10 @@ var args = [
   }],
 
   [['--avd'] , {
-        defaultValue: null
-        , required: false
-        , example: "@default"
-        , help: 'name of the avd to launch'
+    defaultValue: null
+    , required: false
+    , example: "@default"
+    , help: 'name of the avd to launch'
   }],
 
  [['--device-ready-timeout'], {

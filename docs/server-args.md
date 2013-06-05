@@ -10,20 +10,17 @@ All flags are optional, but some are required in conjunction with certain others
 |----|-------|-----------|-------|
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
-|`-V`, `--verbose`|true|(DEPRECATED, see --quiet) Get verbose logging output||
 |`-q`, `--quiet`|false|Don't use verbose logging output||
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`--no-session-override`|false|Disables session override||
-|`--fast-reset`|true|(Android-only, DEPRECATED, see --full-reset) Reset app state using clean.apk||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
-|`--without-delay`|true|(IOS-only, DEPRECATED) IOS has a weird built-in unavoidable delay. One way around this is to run instruments with a library loaded to patch it so that it skips the delay. Use this flag to speed up test execution.||
 |`--native-instruments-lib`|false|(IOS-only) IOS has a weird built-in unavoidable delay. We patch this in appium. If you do not want it patched, pass in this flag.||
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|
 |`--app-activity`|null|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|

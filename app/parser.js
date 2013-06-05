@@ -217,7 +217,17 @@ var args = [
     , type: 'int'
     , example: "4242"
     , help: 'port for robot'
+  }],
+
+  [['-sp', '--selendroid-port'] , {
+    defaultValue: -1
+    , dest: 'selendroidPort'
+    , required: false
+    , type: 'int'
+    , example: "8081"
+    , help: 'port for selendroid'
   }]
+
 ];
 
 // Setup all the command line argument parsing

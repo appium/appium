@@ -47,12 +47,11 @@ var catchAllHandler = function(e, req, res, next) {
 
 var checkArgs = function(args) {
   var exclusives = [
-    ['noReset', 'fastReset', 'fullReset']
-    , ['quiet', 'verbose']
+    ['noReset', 'fullReset']
     , ['ipa', 'app', 'safari']
-    , ['withoutDelay', 'nativeInstrumentsLib']
     , ['forceIphone', 'forceIpad']
   ];
+
   _.each(exclusives, function(exSet) {
     var numFoundInArgs = 0;
     _.each(exSet, function(opt) {

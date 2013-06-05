@@ -48,7 +48,6 @@ describeWd('orientation', function(h) {
         });
       };
       setTimeout(next, 3000);
-      done();
     });
   });
 });

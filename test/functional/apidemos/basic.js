@@ -39,7 +39,7 @@ describeWd('basic', function(h) {
     h.driver.elementByLinkText("foobar", function(err) {
       should.exist(err);
       err.status.should.equal(13);
-      err.cause.value.origValue.should.eql("Strategy link text is not valid.");
+      err.cause.value.origValue.should.eql("Sorry, we don't support the 'link text' locator strategy yet");
       h.driver.elementByName("Animation", function(err, el) {
         should.not.exist(err);
         should.exist(el);

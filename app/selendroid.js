@@ -21,15 +21,14 @@ var Selendroid = function(opts) {
   this.adb = null;
   this.isProxy = true;
   this.proxyHost = 'localhost';
-  this.proxyPort = 8080;
+  this.proxyPort = opts.port;
 };
 
 Selendroid.prototype.start = function(cb) {
   logger.info("Starting selendroid server");
   var opts = _.clone(this.opts)
     , me = this;
-  opts.port = this.proxyPort;
-  opts.devicePort = 8080;
+  opts.devicePort = 8080;  // selendroid listens on 8080 on the device
   this.adb = new adb(opts);
 
   async.waterfall([

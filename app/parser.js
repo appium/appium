@@ -217,6 +217,15 @@ var args = [
     , type: 'int'
     , example: "4242"
     , help: 'port for robot'
+  }],
+
+  [['--selendroid-port'], {
+    defaultValue: 8080
+    , dest: 'selendroidPort'
+    , required: false
+    , type: 'int'
+    , example: "8080"
+    , help: 'Local port used for communication with Selendroid'
   }]
 ];
 

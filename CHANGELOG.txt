@@ -1,4 +1,14 @@
 -------------------------------------
+CHANGES IN VERSION 0.7.1 (from 0.7.0)
+-------------------------------------
+[SELENDROID]
+- update to new version with new build instructions
+- make selendroid port configurable
+
+[WINDOWS]
+- fix use of exec and spawn so external commands work
+
+-------------------------------------
 CHANGES IN VERSION 0.7.0 (from 0.6.1)
 -------------------------------------
 [GENERAL]

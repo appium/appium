@@ -16,7 +16,7 @@ class TestAndroidWebView(unittest.TestCase):
             'device': 'selendroid',
             'app': app,
             'browserName': "native-android-driver",
-            'app-package': 'org.openqa.selendroid.testapp',
+            'app-package': 'io.selendroid.testapp',
             'app-activity': 'HomeScreenActivity'
         }
 

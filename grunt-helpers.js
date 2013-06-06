@@ -417,14 +417,15 @@ module.exports.buildSelendroidServer = function(cb) {
   console.log("Building selendroid server");
   getSelendroidVersion(function(err, version) {
     if (err) return cb(err);
-    var buildDir = path.resolve(__dirname, "submodules/selendroid/selendroid-server");
-    var target = buildDir + "/target/selendroid-server-" + version + ".apk";
-    var destDir = path.resolve(__dirname, "build/selendroid");
+    var buildDir = path.resolve(__dirname, "submodules", "selendroid");
+    var target = path.resolve(buildDir, "selendroid-server", "target",
+      "selendroid-server-" + version + ".apk");
+    var destDir = path.resolve(__dirname, "build", "selendroid");
     var destBin = path.resolve(destDir, "selendroid.apk");
     var srcManifest = path.resolve(__dirname, "submodules", "selendroid",
-      "selendroid-gem", "selendroid-prebuild", "AndroidManifest.xml");
-    var dstManifeset = path.resolve(destDir, "AndroidManifest.xml");
-    var cmd = "mvn install";
+      "selendroid-server", "AndroidManifest.xml");
+    var dstManifest = path.resolve(destDir, "AndroidManifest.xml");
+    var cmd = "mvn clean install";
     exec(cmd, {cwd: buildDir}, function(err, stdout, stderr) {
       if (err) {
         console.error("Unable to build selendroid server. Stdout was: ");
@@ -455,12 +456,29 @@ module.exports.buildSelendroidServer = function(cb) {
                 return cb(err);
               }
               console.log("Copying selendroid manifest as well");
-              ncp(srcManifest, dstManifeset, function(err) {
+              ncp(srcManifest, dstManifest, function(err) {
                 if (err) {
                   console.error("Could not copy manifest");
                   return cb(err);
                 }
-                cb(null);
+                console.log("Modifying manifest for no icons");
+                fs.readFile(dstManifest, function(err, data) {
+                  if (err) {
+                    console.error("Could not open new manifest");
+                    return cb(err);
+                  }
+                  data = data.toString('utf8');
+                  console.log(data);
+                  var iconRe = /application[\s\S]+android:icon="[^"]+"/;
+                  data = data.replace(iconRe, "application");
+                  fs.writeFile(dstManifest, data, function(err) {
+                    if (err) {
+                      console.error("Could not write modified manifest");
+                      return cb(err);
+                    }
+                    cb(null);
+                  });
+                });
               });
             });
           });

@@ -353,7 +353,7 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
     me.waitForFrameNavigated(function() {
       me.waitForDom(cb);
     });
-  }, 500);
+  }, 1000);
 };
 
 RemoteDebugger.prototype.pageLoad = function() {

@@ -94,6 +94,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
       return;
     }
     this.debug("Using " + binary + " from " + binaryLoc);
+    binaryLoc = '"' + binaryLoc.trim() + '"';
     this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
   } else {
@@ -402,8 +403,8 @@ ADB.prototype.pushStrings = function(cb) {
   var me = this;
   var stringsFromApkJarPath = path.resolve(__dirname, '../app/android/strings_from_apk.jar');
   var outputPath = path.resolve(getTempPath(), me.appPackage);
-  var makeStrings = ['java -jar ', stringsFromApkJarPath,
-                         ' ', me.apkPath, ' ', outputPath].join('');
+  var makeStrings = ['java -jar "', stringsFromApkJarPath,
+                     '" "', me.apkPath, '" "', outputPath, '"'].join('');
   logger.debug(makeStrings);
   exec(makeStrings, {}, function(err, stdout, stderr) {
     if (err) {
@@ -687,7 +688,8 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   this.requireDeviceId();
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
       "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
-  this.proc = spawn(this.adb, args);
+  logger.info(this.adb + " " + args.join(" "));
+  this.proc = spawn(this.adb.substr(1, this.adb.length - 2), args);
   this.onSocketReady = readyCb;
 
   this.proc.stdout.on('data', _.bind(function(data) {

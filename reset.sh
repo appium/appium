@@ -128,11 +128,14 @@ reset_apidemos() {
 
 reset_gps_demo() {
     if $hardcore ; then
-        run_cmd rm -rf sample-code/apps/gps-demo/*
+        echo "* Removing previous copies of the gps demo"
+        run_cmd rm -rf sample-code/apps/gps-demo
+        run_cmd rm -rf sample-code/apps/gps-demo.zip
     fi
-    if [ ! test -f sample-code/apps/gps-demo.zip ]; then
+    if [ ! -d sample-code/apps/gps-demo ]; then
+        echo "* Downloading gps demo"
         run_cmd pushd sample-code/apps
-        run_cmd curl http://www.impressive-artworx.de/tutorials/android/gps_tutorial_1.zip > gps-demo.zip
+        run_cmd curl http://www.impressive-artworx.de/tutorials/android/gps_tutorial_1.zip -o gps-demo.zip -s
         run_cmd unzip gps-demo.zip
         run_cmd mv GPSTutorial1 gps-demo
         run_cmd popd
@@ -172,6 +175,9 @@ reset_selendroid() {
         echo "* Linking selendroid test app: WebViewDemo"
         run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
         run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+        uninstall_android_app io.selendroid.testapp
+        uninstall_android_app io.selendroid.testapp.selendroid
+        # keep older versions of package around to clean up
         uninstall_android_app org.openqa.selendroid.testapp
         uninstall_android_app org.openqa.selendroid.testapp.selendroid
     fi

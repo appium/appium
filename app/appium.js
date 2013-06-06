@@ -57,6 +57,7 @@ var Appium = function(args) {
   this.preLaunched = false;
   this.fastReset = !this.args.fullReset && !this.args.noReset;
   this.sessionOverride = !this.args.noSessionOverride;
+  this.resetting = false;
 };
 
 Appium.prototype.attachTo = function(rest, cb) {
@@ -527,8 +528,11 @@ Appium.prototype.onDeviceDie = function(code, cb) {
     cb(null, {status: status.codes.Success.code, value: null,
               sessionId: dyingSession});
   }
-  // call invoke again in case we have sessions queued
-  this.clearPreviousSession();
+  // if we're not restarting internally, call invoke again, in case we have
+  // sessions queued
+  if (!this.resetting) {
+    this.clearPreviousSession();
+  }
 };
 
 Appium.prototype.stop = function(cb) {
@@ -553,9 +557,11 @@ Appium.prototype.reset = function(cb) {
     , oldImpWait = this.device.implicitWaitMs
     , oldId = this.sessionId;
 
+    this.resetting = true;
     this.stop(function() {
       logger.info("Restarting app");
       me.start(me.desiredCapabilities, function() {
+        me.resetting = false;
         me.device.implicitWaitMs = oldImpWait;
         me.sessionId = oldId;
         cb(null, {status: status.codes.Success.code, value: null});

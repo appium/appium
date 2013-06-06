@@ -689,7 +689,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
       "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
   logger.info(this.adb + " " + args.join(" "));
-  this.proc = spawn(this.adb, args);
+  this.proc = spawn(this.adb.substr(1, this.adb.length - 2), args);
   this.onSocketReady = readyCb;
 
   this.proc.stdout.on('data', _.bind(function(data) {

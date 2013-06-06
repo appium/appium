@@ -391,17 +391,17 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
 
   this.processingRemoteCmd = true;
   if (this.remote !== null && this.bundleId !== null) {
-    if( this.udid !== null) {
-      me.remote.pageArrayFromJson(function(pageArray){
+    if (this.udid !== null) {
+      me.remote.pageArrayFromJson(function(pageArray) {
         cb(pageArray);
       });
     } else {
       this.remote.selectApp(this.bundleId, onDone);
     }
   } else {
-      if(this.udid !== null){
+      if (this.udid !== null) {
         this.remote = wkrd.init(exitCb);
-        me.remote.pageArrayFromJson(function(pageArray){
+        me.remote.pageArrayFromJson(function(pageArray) {
           cb(pageArray);
         });
       } else {

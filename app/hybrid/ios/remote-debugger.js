@@ -349,7 +349,7 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
       this.senderId, this.pageIdKey, this.debuggerType);
   this.send(navToUrl, noop);
-  setTimeout(function(){
+  setTimeout(function() {
     me.waitForFrameNavigated(function() {
       me.waitForDom(cb);
     });

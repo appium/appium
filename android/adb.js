@@ -403,8 +403,8 @@ ADB.prototype.pushStrings = function(cb) {
   var me = this;
   var stringsFromApkJarPath = path.resolve(__dirname, '../app/android/strings_from_apk.jar');
   var outputPath = path.resolve(getTempPath(), me.appPackage);
-  var makeStrings = ['java -jar ', stringsFromApkJarPath,
-                         ' ', me.apkPath, ' ', outputPath].join('');
+  var makeStrings = ['java -jar "', stringsFromApkJarPath,
+                     '" "', me.apkPath, '" "', outputPath, '"'].join('');
   logger.debug(makeStrings);
   exec(makeStrings, {}, function(err, stdout, stderr) {
     if (err) {

@@ -94,6 +94,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
       return;
     }
     this.debug("Using " + binary + " from " + binaryLoc);
+    binaryLoc = '"' + binaryLoc.trim() + '"';
     this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
   } else {
@@ -687,6 +688,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   this.requireDeviceId();
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
       "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
+  logger.info(this.adb + " " + args.join(" "));
   this.proc = spawn(this.adb, args);
   this.onSocketReady = readyCb;
 

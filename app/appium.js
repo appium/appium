@@ -470,6 +470,7 @@ Appium.prototype.invoke = function() {
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
+          , port: this.args.selendroidPort
           , fastReset: this.fastReset
         };
         this.devices[this.deviceType] = selendroid(selendroidOpts);

@@ -1,4 +1,32 @@
 -------------------------------------
+CHANGES IN VERSION 0.7.0 (from 0.6.1)
+-------------------------------------
+[GENERAL]
+- allow new session requests to override current session; this can be disabled
+  with the --no-session-override flag
+- make sure reset.sh fails if android bootstrap can't build
+- make --no-reset do what it's supposed to do, and fix description in docs
+- check to make sure conflicting arguments aren't passed to the server before
+  launching
+- removed deprecated flags completely (hence the minor version bump)
+- bringing some error messages into line across platforms
+- fix some issues with grunt building functions
+
+[ANDROID]
+- add find element by ID (parses strings.xml)
+- remove a sleep in bootstrap server that caused delays
+- make sure app is uninstalled when not using fast reset
+- make sure AndroidManifest.xml.apk is writable (for npm installed appium)
+- make sure device wakes up / unlocks before running test
+- add set geo location support
+- clean up and fix issues relating to mid-session bootstrap.jar restart
+- app-wait-activity now takes comma-separated list of valid activities
+
+[IOS]
+- fix some tests
+- fix mobile: reset
+
+-------------------------------------
 CHANGES IN VERSION 0.6.1 (from 0.6.0)
 -------------------------------------
 [GENERAL]

@@ -21,7 +21,7 @@ var Selendroid = function(opts) {
   this.adb = null;
   this.isProxy = true;
   this.proxyHost = 'localhost';
-  this.proxyPort = 8080;
+  this.proxyPort = opts.selendroidPort === -1 ? 8080 : opts.selendroidPort;
 };
 
 Selendroid.prototype.start = function(cb) {

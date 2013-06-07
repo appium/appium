@@ -1354,7 +1354,7 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
       this.executeAtom('is_displayed', [atomsElement], cb);
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').isDisplayed() ? true : false"].join('');
+    var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
     this.proxy(command, cb);
   }
 };
@@ -1365,7 +1365,7 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
       this.executeAtom('is_enabled', [atomsElement], cb);
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').isEnabled() ? true : false"].join('');
+    var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
     this.proxy(command, cb);
   }
 };

@@ -165,6 +165,7 @@ reset_selendroid() {
     run_cmd rm -rf submodules/selendroid/selendroid-server/target
     run_cmd git submodule update --init submodules/selendroid
     run_cmd rm -rf selendroid
+    run_cmd [ -z "$JAVA_HOME" ] && echo "Warning: Make sure JAVA_HOME is set properly for Java builds."
     echo "* Building selendroid server and supporting libraries"
     run_cmd $grunt buildSelendroidServer
     if $include_dev ; then

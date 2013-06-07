@@ -349,19 +349,18 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
       this.senderId, this.pageIdKey, this.debuggerType);
   this.send(navToUrl, noop);
-  this.waitForFrameNavigated(function() {
-    me.checkPageIsReady(function(err, isReady) {
-      if (isReady) return cb();
+  setTimeout(function() {
+    me.waitForFrameNavigated(function() {
       me.waitForDom(cb);
     });
-  });
+  }, 1000);
 };
 
 RemoteDebugger.prototype.pageLoad = function() {
   clearTimeout(this.loadingTimeout);
   var me = this
     , cbs = this.pageLoadedCbs
-    , waitMs = 10000
+    , waitMs = 60000
     , intMs = 500
     , start = Date.now();
   logger.debug("Page loaded, verifying through readyState");
@@ -401,11 +400,12 @@ RemoteDebugger.prototype.pageUnload = function(cb) {
 };
 
 RemoteDebugger.prototype.waitForDom = function(cb) {
+  var me = this;
   logger.debug("Waiting for dom...");
   if (typeof cb === "function") {
     this.pageLoadedCbs.push(cb);
   }
-  this.loadingTimeout = setTimeout(_.bind(this.pageLoad, this), 60000);
+  me.pageLoad();
 };
 
 RemoteDebugger.prototype.waitForFrameNavigated = function(cb) {

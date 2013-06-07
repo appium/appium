@@ -413,7 +413,7 @@ ADB.prototype.pushStrings = function(cb) {
     }
     var jsonFile = path.resolve(outputPath, 'strings.json');
     var remotePath = "/data/local/tmp";
-    var pushCmd = me.adbCmd + " push " + jsonFile + " " + remotePath;
+    var pushCmd = me.adbCmd + ' push "' + jsonFile + '" ' + remotePath;
     exec(pushCmd, {}, function(err, stdout, stderr) {
       cb(null);
     });
@@ -511,7 +511,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
-  var cmd = "adb shell am instrument -e main_activity '" + this.appPackage +
+  var cmd = this.adbCmd + " shell am instrument -e main_activity '" + this.appPackage +
             "." + this.appActivity + "' " + this.appPackage +
             ".selendroid/io.selendroid.ServerInstrumentation";
   logger.info("Starting instrumentation process for selendroid with cmd: " +
@@ -993,7 +993,7 @@ ADB.prototype.pushAppium = function(cb) {
          "'grunt buildAndroidBootstrap'");
     } else {
       var remotePath = "/data/local/tmp";
-      var cmd = this.adbCmd + " push " + binPath + " " + remotePath;
+      var cmd = this.adbCmd + ' push "' + binPath + '" ' + remotePath;
       exec(cmd, _.bind(function(err) {
         if (err) {
           logger.error(err);

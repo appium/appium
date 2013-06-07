@@ -66,7 +66,7 @@ _.each(devices, function(sim) {
     it('should be able to go back and forward', function(done) {
       loadWebView("safari", h.driver, function() {
         h.driver.elementByLinkText('i am a link', function(err, el) {
-          el.click(function(){
+          el.click(function() {
             h.driver.elementById('only_on_page_2', function(err) {
               should.not.exist(err);
               h.driver.back(function(err) {

@@ -511,12 +511,13 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
-  var cmd = this.adbCmd + " shell am instrument -e main_activity '" + this.appPackage +
-            "." + this.appActivity + "' " + this.appPackage +
+  var cmd = this.adbCmd + " shell am instrument -e main_activity '" +
+            this.appPackage + "." + this.appActivity + "' " + this.appPackage +
             ".selendroid/io.selendroid.ServerInstrumentation";
   logger.info("Starting instrumentation process for selendroid with cmd: " +
               cmd);
   exec(cmd, function(err, stdout) {
+    if (err) return cb(err);
     if (stdout.indexOf("Exception") !== -1) {
       logger.error(stdout);
       var msg = stdout.split("\n")[0] || "Unknown exception starting selendroid";

@@ -874,7 +874,7 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
       cb(err, res);
     }
   }, this));
-  this.lookForAlert(cb, counter);
+  this.lookForAlert(cb, counter, 0, 5000);
 };
 
 IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
@@ -890,7 +890,7 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
       cb(err, res);
     }
   }, this));
-  this.lookForAlert(cb, counter);
+  this.lookForAlert(cb, counter, 0, 5000);
 };
 
 IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
@@ -953,7 +953,7 @@ IOS.prototype.parseExecuteResponse = function(response, cb) {
   return response;
 };
 
-IOS.prototype.lookForAlert = function(cb, counter, looks) {
+IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
   var me = this;
   setTimeout(function(){
     if (typeof looks === 'undefined') {
@@ -986,7 +986,7 @@ IOS.prototype.lookForAlert = function(cb, counter, looks) {
         });
       }
     }
-  }, 5000);
+  }, timeout);
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {

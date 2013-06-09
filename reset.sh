@@ -144,6 +144,7 @@ reset_gps_demo() {
 
 reset_android() {
     echo "RESETTING ANDROID"
+    require_java
     echo "* Configuring Android bootstrap"
     run_cmd rm -rf build/android_bootstrap
     run_cmd $grunt configAndroidBootstrap
@@ -157,15 +158,19 @@ reset_android() {
     run_cmd $grunt setConfigVer:android
 }
 
+require_java() {
+  [ ${JAVA_HOME:?"Warning: Make sure JAVA_HOME is set properly for Java builds."} ]
+}
+
 reset_selendroid() {
     echo "RESETTING SELENDROID"
+    require_java
     echo "* Clearing out any old modified server apks"
     run_cmd rm -rf /tmp/selendroid*.apk
     echo "* Cloning/updating selendroid"
     run_cmd rm -rf submodules/selendroid/selendroid-server/target
     run_cmd git submodule update --init submodules/selendroid
     run_cmd rm -rf selendroid
-    run_cmd [ -z "$JAVA_HOME" ] && echo "Warning: Make sure JAVA_HOME is set properly for Java builds."
     echo "* Building selendroid server and supporting libraries"
     run_cmd $grunt buildSelendroidServer
     if $include_dev ; then

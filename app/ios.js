@@ -979,7 +979,7 @@ IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
             } else {
               // say we're processing remote cmd again
               me.processingRemoteCmd = true;
-              looks ++;
+              looks++;
               setTimeout(me.lookForAlert(cb, counter, looks), 1000);
             }
           }

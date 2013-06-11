@@ -278,11 +278,13 @@ Instruments.prototype.outputStreamHandler = function(output) {
 
 Instruments.prototype.errorStreamHandler = function(output) {
   logger.info(("[INST STDERR] " + output).yellow);
-  var re = /Call to onAlert returned 'YES'/;
-  var match = re.exec(output);
-  if (match) {
-    logger.info("Emiting alert message...");
-    this.webSocket.sockets.emit('alert', {message: output});
+  if (this.webSocket) {
+    var re = /Call to onAlert returned 'YES'/;
+    var match = re.test(output);
+    if (match) {
+      logger.info("Emiting alert message...");
+      this.webSocket.sockets.emit('alert', {message: output});
+    }
   }
 };
 

@@ -1,3 +1,16 @@
+#### Cross platform mobile methods
+
+
+Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)
+```ruby
+mobile :reset
+```
+
+Ruby without the gem
+```ruby
+@driver.execute_script 'mobile: reset'
+```
+
 #### Android mobile methods
 
 [KeyEvent](http://developer.android.com/reference/android/view/KeyEvent.html) enables sending a keycode to Android.

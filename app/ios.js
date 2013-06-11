@@ -598,7 +598,8 @@ IOS.prototype.push = function(elem) {
                   "waiting to run next command until done");
       setTimeout(next, 500);
       return;
-    } else if (me.curWindowHandle && me.processingRemoteCmd) {
+    } else if (me.curWindowHandle && me.processingRemoteCmd &&
+               elem !== "au.alertIsPresent()") {
       logger.info("We're in the middle of processing a remote debugger " +
                   "command, waiting to run next command until done");
       setTimeout(next, 500);
@@ -965,7 +966,6 @@ IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
           "we are blocked by an alert");
         // temporarily act like we're not processing a remote command
         // so we can proxy the alert detection functionality
-        me.processingRemoteCmd = false;
         me.alertCounter++;
         me.proxy("au.alertIsPresent()", function(err, res) {
           if (res !== null) {
@@ -978,7 +978,6 @@ IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
               });
             } else {
               // say we're processing remote cmd again
-              me.processingRemoteCmd = true;
               looks++;
               setTimeout(me.lookForAlert(cb, counter, looks), 1000);
             }

@@ -1329,7 +1329,7 @@ IOS.prototype.frame = function(frame, cb) {
       }
     }
   } else {
-    frame = frame? frame : 'mainWindow';
+    frame = frame? frame : 'target.frontMostApp()';
     var command = ["wd_frame = ", frame].join('');
     this.proxy(command, cb);
   }

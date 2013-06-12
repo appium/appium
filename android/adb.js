@@ -145,9 +145,10 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   // Create manifest
   var me = this
     , targetAPK = me.apkPath
-    , cleanAPKSrc = path.resolve(__dirname, '../app/android/Clean.apk')
+    , cleanAPKSrc = path.resolve(__dirname, '..', 'app', 'android', 'Clean.apk')
     , newPackage = me.appPackage + '.clean'
-    , srcManifest = path.resolve(__dirname, '../app/android/AndroidManifest.xml.src')
+    , srcManifest = path.resolve(__dirname, '..', 'app', 'android',
+        'AndroidManifest.xml.src')
     , dstManifest = path.resolve(getTempPath(), 'AndroidManifest.xml');
 
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
@@ -176,9 +177,10 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
   var me = this
     , newServerPath = me.selendroidServerPath
     , newPackage = me.appPackage + '.selendroid'
-    , srcManifest = path.resolve(__dirname, "../build/selendroid/AndroidManifest.xml")
+    , srcManifest = path.resolve(__dirname, '..', 'build', 'selendroid',
+        'AndroidManifest.xml')
     , dstDir = path.resolve(getTempPath(), this.appPackage)
-    , dstManifest = dstDir + '/AndroidManifest.xml';
+    , dstManifest = path.resolve(dstDir, 'AndroidManifest.xml');
 
   try {
     fs.mkdirSync(dstDir);
@@ -298,7 +300,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
 
 // apks is an array of strings.
 ADB.prototype.sign = function(apks, cb) {
-  var signPath = path.resolve(__dirname, '../app/android/sign.jar');
+  var signPath = path.resolve(__dirname, '..', 'app', 'android', 'sign.jar');
   var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning apks with: " + resign);
   exec(resign, {}, function(err, stdout, stderr) {
@@ -314,7 +316,8 @@ ADB.prototype.sign = function(apks, cb) {
 
 // returns true when already signed, false otherwise.
 ADB.prototype.checkApkCert = function(apk, cb) {
-  var verifyPath = path.resolve(__dirname, '../app/android/verify.jar');
+  var verifyPath = path.resolve(__dirname, '..', 'app', 'android',
+      'verify.jar');
   var resign = 'java -jar "' + verifyPath + '" "' + apk + '"';
   logger.debug("Checking app cert for " + apk + ": " + resign);
   exec(resign, {}, function(err) {
@@ -401,7 +404,8 @@ ADB.prototype.prepareDevice = function(onReady) {
 
 ADB.prototype.pushStrings = function(cb) {
   var me = this;
-  var stringsFromApkJarPath = path.resolve(__dirname, '../app/android/strings_from_apk.jar');
+  var stringsFromApkJarPath = path.resolve(__dirname, '..', 'app', 'android',
+      'strings_from_apk.jar');
   var outputPath = path.resolve(getTempPath(), me.appPackage);
   var makeStrings = ['java -jar "', stringsFromApkJarPath,
                      '" "', me.apkPath, '" "', outputPath, '"'].join('');

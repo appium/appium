@@ -11,10 +11,14 @@ describeWd('get source', function(h) {
       var obj = JSON.parse(source);
       should.not.exist(err);
       should.ok(obj);
-      obj.children[2].name.should.equal("ComputeSumButton");
-      obj.children[3].rect.origin.x.should.equal(129);
-      should.ok(obj.children[4].visible);
+      obj.type.should.equal("UIAApplication");
+      obj.children[0].type.should.equal("UIAWindow");
+      obj.children[0].children[2].name.should.equal("ComputeSumButton");
+      obj.children[0].children[3].rect.origin.x.should.equal(129);
+      should.ok(obj.children[0].children[4].visible);
       done();
     });
   });
 });
+
+

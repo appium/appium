@@ -89,9 +89,9 @@ UIAElement.prototype.hasChildren = function() {
 UIAElement.prototype.text = function() {
   var type = this.type();
   if (type === "UIAButton") {
-    return this.label();
+    return this.hint();
   } else {
-    return this.value();
+    return this.hint();
   }
 };
 
@@ -132,6 +132,7 @@ UIAElement.prototype.getTree = function() {
       , valid: element.isValid() ? true : false
       , visible: element.isVisible() === 1 ? true : false
       , children: []
+      , hint: element.hint()
     };
     var children = element.elements();
     var numChildren = children.length;

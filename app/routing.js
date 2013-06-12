@@ -181,7 +181,7 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttonup', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/doubleclick', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/touch/click', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);
   rest.post('/wd/hub/session/:sessionId?/touch/down', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/up', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/move', controller.notYetImplemented);

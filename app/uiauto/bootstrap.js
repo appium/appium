@@ -5,7 +5,7 @@
 // automation globals
 var target = UIATarget.localTarget();
 var mainWindow = target.frontMostApp().mainWindow();
-var wd_frame = mainWindow;
+var wd_frame = target.frontMostApp();
 
 // safe default
 target.setTimeout(1);

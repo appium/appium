@@ -1,5 +1,8 @@
 #### Cross platform mobile methods
 
+##### Reset
+
+Mobile reset will reset the app's state.
 
 Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)
 ```ruby
@@ -12,6 +15,8 @@ Ruby without the gem
 ```
 
 #### Android mobile methods
+
+##### KeyEvent
 
 [KeyEvent](http://developer.android.com/reference/android/view/KeyEvent.html) enables sending a keycode to Android.
 

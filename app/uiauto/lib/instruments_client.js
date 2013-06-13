@@ -10,7 +10,7 @@ var user = null;
 var sysExec = function(cmd) {
   var params = [];
   if (user !== null) {
-    params = params.concat(['--rcfile', '/Users/' + user + '/.bashrc']);
+    params = params.concat(['--rcfile', '/Users/' + user + '/.bash_profile']);
   }
   params = params.concat(['-c', cmd]);
   var res = system.performTaskWithPathArgumentsTimeout("/bin/bash",

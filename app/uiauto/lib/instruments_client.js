@@ -6,11 +6,29 @@ var defWaitForDataTimeout = 3600;
 var waitForDataTimeout = defWaitForDataTimeout;
 var curAppiumCmdId = -1;
 var user = null;
+var settings = null;
+
+var fileExists = function(filename) {
+  var params = [];
+  params = params.concat(['-f', filename]);
+  var res = system.performTaskWithPathArgumentsTimeout("/bin/test", params, 3);
+  if (res.exitCode === 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
 var sysExec = function(cmd) {
   var params = [];
   if (user !== null) {
-    params = params.concat(['--rcfile', '/Users/' + user + '/.bash_profile']);
+    if (fileExists('/Users/' + user + '/.bash_profile')) {
+      params = params.concat(['--rcfile', '/Users/' + user + '/.bash_profile']);
+    } else {
+      if (fileExists('/Users/' + user + '/.bashrc')) {
+        params = params.concat(['--rcfile', '/Users/' + user + '/.bashrc']);
+      }
+    }
   }
   params = params.concat(['-c', cmd]);
   var res = system.performTaskWithPathArgumentsTimeout("/bin/bash",
@@ -38,6 +56,32 @@ user = function() {
   }
 }();
 
+settings = function() {
+  var data = {};
+  var settingsFile = "/Users/" + user + "/.instruments.conf";
+
+  if (fileExists(settingsFile)) {
+    var lines = sysExec("/bin/cat " + settingsFile).split('\n');
+    for (var index = 0; index < lines.length; index++) {
+      var line = lines[index];
+      if (line[0] === '#') continue;
+      if (line.indexOf('=') !== -1) {
+        var parts = line.split('=');
+        if (parts.length !== 2) {
+          throw new Error("Error reading " + settingsFile);
+        }
+        data[parts[0]] = parts[1];
+      }
+    }
+    if (data.length > 0) {
+      console.log("Read in settings: ");
+    }
+    for (var index = 0; index < data.length; index++) {
+      console.log("  " + key + ": " + data[key]);
+    }
+    return data;
+  }
+}();
 
 // get npm-installed instruments_client bin if necessary
 var globalPath = (function() {
@@ -73,6 +117,14 @@ var clientPath = (function() {
 // figure out where node is
 var nodePath = (function() {
   var path = null;
+  if (typeof settings !== "undefined") {
+    if ('NODE_BIN' in settings) {
+      console.log("Using settings override for NODE_BIN: " + settings.NODE_BIN);
+      return settings.NODE_BIN;
+    }
+  }
+
+  // not in the settings file, so let's try and find it...
   try {
     path = sysExec("echo $NODE_BIN");
     console.log("Found node using $NODE_BIN: " + path);
@@ -164,4 +216,3 @@ var sendResultAndGetNext = function(result) {
 var getFirstCommand = function() {
   return sendResultAndGetNext();
 };
-

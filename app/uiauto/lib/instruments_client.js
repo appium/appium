@@ -5,9 +5,14 @@ var system = UIATarget.localTarget().host();
 var defWaitForDataTimeout = 3600;
 var waitForDataTimeout = defWaitForDataTimeout;
 var curAppiumCmdId = -1;
+var shell = null;
 
-var sysExec = function(cmd) {
-  var res = system.performTaskWithPathArgumentsTimeout('/bin/bash', ['-c', cmd], 3);
+var sysExec = function(cmd, shellOverride) {
+  if (typeof shellOverride === "undefined") {
+    shellOverride = shell;
+  }
+  var res = system.performTaskWithPathArgumentsTimeout(shellOverride,
+      ['-c', cmd], 3);
   if (res.exitCode !== 0) {
     throw new Error("Failed executing the command " + cmd + " (exit code " + res.exitCode + ")");
   } else {
@@ -15,10 +20,21 @@ var sysExec = function(cmd) {
     if (output.length) {
       return output;
     } else {
-      throw new Error("Executing " + cmd + " failed!");
+      throw new Error("Executing " + cmd + " failed since there was no output");
     }
   }
 };
+
+shell = function() {
+  try {
+    var ret = sysExec("echo $SHELL", "/bin/sh");
+    console.log("Using shell: " + ret);
+    return ret;
+  } catch (e) {
+    console.log("Error getting user shell: " + e.message);
+    return "/bin/bash";
+  }
+}();
 
 // get npm-installed instruments_client bin if necessary
 var globalPath = (function() {
@@ -44,7 +60,7 @@ var clientPath = (function() {
     } catch(e) {
       if (globalPath === null) {
         console.log("WARNING: could not find instruments/client.js in its " +
-                    "usual place, and global instruments_client not aroudn " +
+                    "usual place, and global instruments_client not around " +
                     "either. This could cause problems");
       }
     }
@@ -55,36 +71,47 @@ var clientPath = (function() {
 var nodePath = (function() {
   var path = null;
   try {
-    path = sysExec('which node');
-  } catch (e) {
-    var appScript = [
-        'try'
-      , '  set appiumIsRunning to false'
-      , '  tell application "System Events"'
-      , '    set appiumIsRunning to name of every process contains "Appium"'
-      , '  end tell'
-      , '  if appiumIsRunning then'
-      , '    tell application "Appium" to return node path'
-      , '  end if'
-      , 'end try'
-      , 'return "NULL"'
-    ].join("\n");
-    var appNodeWorked = false;
+    path = sysExec("echo $NODE_BIN");
+    console.log("Found node using $NODE_BIN: " + path);
+  } catch(e) {
     try {
-      path = sysExec("osascript -e '" + appScript + "'");
-      appNodeWorked = path !== "NULL";
-    } catch(e) {}
-    if (!appNodeWorked) {
+      path = sysExec('which node');
+      console.log("Found node using `which node`: " + path);
+    } catch (e) {
+      var appScript = [
+          'try'
+        , '  set appiumIsRunning to false'
+        , '  tell application "System Events"'
+        , '    set appiumIsRunning to name of every process contains "Appium"'
+        , '  end tell'
+        , '  if appiumIsRunning then'
+        , '    tell application "Appium" to return node path'
+        , '  end if'
+        , 'end try'
+        , 'return "NULL"'
+      ].join("\n");
+      var appNodeWorked = false;
       try {
-        path = sysExec("ls /usr/local/bin/node");
-      } catch (e) {
+        path = sysExec("osascript -e '" + appScript + "'");
+        appNodeWorked = path !== "NULL";
+      } catch(e) {}
+      if (!appNodeWorked) {
         try {
-          path = sysExec("ls /opt/local/bin/node");
+          path = sysExec("ls /usr/local/bin/node");
+          console.log("Found node at " + path);
         } catch (e) {
-          throw new Error("Could not find node using `which node`, at /usr/" +
-                          "local/bin/node, at /opt/local/bin/node, or by " +
-                          "querying Appium.app. Where is it?");
+          try {
+            path = sysExec("ls /opt/local/bin/node");
+            console.log("Found node at " + path);
+          } catch (e) {
+            throw new Error("Could not find node using `which node`, at /usr/" +
+                            "local/bin/node, at /opt/local/bin/node, at " +
+                            "$NODE_BIN, or by querying Appium.app. Where is " +
+                            "it?");
+          }
         }
+      } else {
+        console.log("Found node in Appium.app");
       }
     }
   }

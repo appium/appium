@@ -5,14 +5,16 @@ var system = UIATarget.localTarget().host();
 var defWaitForDataTimeout = 3600;
 var waitForDataTimeout = defWaitForDataTimeout;
 var curAppiumCmdId = -1;
-var shell = null;
+var user = null;
 
-var sysExec = function(cmd, shellOverride) {
-  if (typeof shellOverride === "undefined") {
-    shellOverride = shell;
+var sysExec = function(cmd) {
+  var params = [];
+  if (user !== null) {
+    params = params.concat(['--rcfile', '/Users/' + user + '/.bashrc']);
   }
-  var res = system.performTaskWithPathArgumentsTimeout(shellOverride,
-      ['-c', cmd], 3);
+  params = params.concat(['-c', cmd]);
+  var res = system.performTaskWithPathArgumentsTimeout("/bin/bash",
+      params, 3);
   if (res.exitCode !== 0) {
     throw new Error("Failed executing the command " + cmd + " (exit code " + res.exitCode + ")");
   } else {
@@ -25,16 +27,17 @@ var sysExec = function(cmd, shellOverride) {
   }
 };
 
-shell = function() {
+user = function() {
   try {
-    var ret = sysExec("echo $SHELL", "/bin/sh");
-    console.log("Using shell: " + ret);
+    var ret = sysExec("whoami");
+    console.log("Instruments shell user: " + ret);
     return ret;
   } catch (e) {
-    console.log("Error getting user shell: " + e.message);
-    return "/bin/bash";
+    console.log("Error getting user: " + e.message);
+    return null;
   }
 }();
+
 
 // get npm-installed instruments_client bin if necessary
 var globalPath = (function() {

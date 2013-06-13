@@ -56,7 +56,7 @@ describeWd('elementByTagName', function(h) {
 describeWd('elementsByTagName', function(h) {
   it('should find both elements on the app', function(done) {
     h.driver.elementsByTagName('button', function(err, elements) {
-      elements.length.should.equal(2);
+      elements.length.should.equal(3);
       should.exist(elements[0].value);
       done();
     });

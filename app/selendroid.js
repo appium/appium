@@ -13,6 +13,7 @@ var errors = require('./errors')
 
 var Selendroid = function(opts) {
   this.opts = opts;
+  this.appWaitActivity = opts.appWaitActivity;
   this.serverApk = null;
   this.appPackage = opts.appPackage;
   this.desiredCaps = opts.desiredCaps;

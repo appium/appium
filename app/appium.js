@@ -467,6 +467,7 @@ Appium.prototype.invoke = function() {
           , udid: this.args.udid
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
+          , appWaitActivity: this.args.androidWaitActivity
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset

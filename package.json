@@ -20,7 +20,8 @@
   "main": "./server.js",
   "bin": {
     "appium": "./app/bin.js",
-    "instruments_client": "./instruments/client_bin.js"
+    "instruments_client": "./instruments/client_bin.js",
+    "authorize_ios": "./app/authorize.js"
   },
   "directories": {
     "lib": "./app",

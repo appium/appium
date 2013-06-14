@@ -78,16 +78,23 @@ describeWd('calc app', function(h) {
     });
   });
 
-  // TODO: add a disabled button to the app so we can test it!
-  // TODO: wd.js has no enabled method
-   //it('should confirm that button is enabled', function(done){
-     //h.driver.elementsByTagName('textField', function(err, elems) {
-       //elems[0].enabled(function(err, value){
-         //assert.equal(value, true);
-         //done();
-       //});
-     //});
-   //});
+  it('should confirm that the disabled button is disabled', function(done){
+    h.driver.elementByName('DisabledButton', function(err, elem) {
+      elem.enabled(function(err, value){
+        assert.equal(value, 0);
+        done();
+      });
+    });
+  });
+
+  it('should confirm that the compute sum button is enabled', function(done){
+    h.driver.elementByName('ComputeSumButton', function(err, elem) {
+      elem.enabled(function(err, value){
+        assert.equal(value, 1);
+        done();
+      });
+    });
+  });
 
   it('should return app source', function(done){
     h.driver.source(function(err, source) {

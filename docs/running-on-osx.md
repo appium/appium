@@ -10,6 +10,10 @@ Appium on OS X supports iOS and Android testing.
 * Make sure you have XCode and the iOS SDK(s) installed.
 * You might also want to install additional versions of the iOS SDKs if you
   want to test on older or multiple versions.
+* You need to authorize use of the iOS Simulator. If you are running Appium
+  from NPM, you'll do this by running `sudo authorize_ios` (`authorize_ios` is
+  a binary made available by the Appium npm package). If you're running Appium
+  from source, simply run `sudo grunt authorize` to do the same thing.
 
 <a name="android"></a>System setup (Android)
 --------
@@ -30,6 +34,6 @@ Appium on OS X supports iOS and Android testing.
   using the android SDK tools. Remember the name you give the AVD, so that you
   can launch an emulator with it and run tests against it.
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.
-* There exists a hardware accelerated emulator for android, it has it's own
+* There exists a hardware accelerated emulator for android, it has its own
   limitations. For more information you can check out this
   [page](https://github.com/appium/appium/blob/master/docs/android-hax-emulator.md).

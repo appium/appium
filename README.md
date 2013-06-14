@@ -54,6 +54,7 @@ Option 2: Run Appium from the command line using Node:
 
     mkdir appium-test && cd appium-test
     npm install -g appium  # might have to do this with sudo
+    sudo authorize_ios # enable developer use of iOS sim
     npm install wd
     curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
     appium &

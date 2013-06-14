@@ -76,8 +76,10 @@ settings = function() {
     if (data.length > 0) {
       console.log("Read in settings: ");
     }
-    for (var index = 0; index < data.length; index++) {
-      console.log("  " + key + ": " + data[key]);
+    for (var key in data) {
+      if (data.hasOwnProperty(key)) {
+        console.log("  " + key + ": " + data[key]);
+      }
     }
     return data;
   }

@@ -46,6 +46,15 @@ Selendroid.prototype.stop = function(cb) {
   });
 };
 
+Selendroid.prototype.keyevent = function(keycode, cb) {
+  this.adb.keyevent(keycode, function() {
+    cb(null, {
+      status: status.codes.Success.code
+      , value: null
+    });
+  });
+};
+
 // Clear data, close app, then start app.
 Selendroid.prototype.fastReset = function(cb) {
   var me = this;

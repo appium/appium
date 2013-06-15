@@ -1,4 +1,29 @@
 -------------------------------------
+CHANGES IN VERSION 0.7.2 (from 0.7.1)
+-------------------------------------
+[GENERAL]
+- make sure reset.sh checks for JAVA_HOME set for android/selendroid
+- add mobile: reset docs
+- alias POST /touch/click to POST /click
+
+[IOS]
+- fix discrepancy between isDisplayed() and isVisible() and isEnabled()
+- use new Automation.tracetemplate
+- fixes for checking alerts in webviews
+- page source now gets all windows, not just main window
+- allow custom node path by setting NODE_BIN in a settings file
+- add authorize_ios binary to npm install so npm users can authorize their ios
+  sim
+
+[ANDROID]
+- use path.resolve in a cross-platform way
+
+[SELENDROID]
+- fix use of adb from within selendroid
+- keyevent support
+- fix app-wait-activity
+
+-------------------------------------
 CHANGES IN VERSION 0.7.1 (from 0.7.0)
 -------------------------------------
 [SELENDROID]

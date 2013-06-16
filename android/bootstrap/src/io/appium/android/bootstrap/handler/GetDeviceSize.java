@@ -32,8 +32,8 @@ public class GetDeviceSize extends CommandHandler {
       final UiDevice d = UiDevice.getInstance();
       final JSONObject res = new JSONObject();
       try {
-        res.put("width", d.getDisplayHeight());
-        res.put("height", d.getDisplayWidth());
+        res.put("height", d.getDisplayHeight());
+        res.put("width", d.getDisplayWidth());
       } catch (final JSONException e) {
         getErrorResult("Error serializing height/width data into JSON");
       }

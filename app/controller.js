@@ -336,6 +336,12 @@ exports.find = function(req, res) {
   }
 };
 
+exports.searchId = function(req, res) {
+  var strategy = "search id"
+    , selector = req.body;
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+};
+
 exports.mobileSwipe = function(req, res) {
   req.body = _.defaults(req.body, {
     touchCount: 1
@@ -839,6 +845,7 @@ var mobileCmdMap = {
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
   , 'find': exports.find
+  , 'searchId': exports.searchId
   , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity
   , 'findElementNameContains': exports.findElementNameContains

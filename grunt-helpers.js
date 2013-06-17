@@ -234,7 +234,7 @@ module.exports.build = function(appRoot, cb, sdk) {
   }
   var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
   console.log("Cleaning build...");
-  var xcode = exec(cmd, {cwd: appRoot}, function(err, stdout, stderr) {
+  var xcode = exec(cmd, {cwd: appRoot, maxBuffer: 524288}, function(err, stdout, stderr) {
     if (err) {
       console.log("Failed cleaning app, maybe it doesn't exist?");
       return cb(stdout + "\n" + stderr);
@@ -277,7 +277,7 @@ module.exports.buildApp = function(appDir, cb, sdk) {
 module.exports.signApp = function(appName, certName, cb) {
   var appPath = path.resolve(__dirname, 'sample-code/apps/', appName,
       'build/Release-iphonesimulator');
-  exec("codesign -f -s \"" + certName + "\" -v " + appName + ".app", {cwd: appPath}, function(err, stdout, stderr) {
+  exec("codesign -f -s \"" + certName + "\" -v " + appName + ".app", {cwd: appPath, maxBuffer: 524288}, function(err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
     if (err) {
@@ -304,7 +304,7 @@ module.exports.downloadUICatalog = function(cb) {
       response.pipe(file);
       response.on('end', function() {
         console.log("Download complete");
-        exec("unzip UICatalog.zip", {cwd: appBasePath}, function() {
+        exec("unzip UICatalog.zip", {cwd: appBasePath, maxBuffer: 524288}, function() {
           console.log("Unzipped into " + appPath);
           cb();
         });
@@ -355,7 +355,7 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
     if (isWindows) {
         whichCmd = 'where ';
     }
-    exec(whichCmd + cmdName, function(err, stdout) {
+    exec(whichCmd + cmdName, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       grunt.fatal("Error finding " + cmdName + " binary, is it on your path?");
     } else {
@@ -426,7 +426,7 @@ module.exports.buildSelendroidServer = function(cb) {
       "selendroid-server", "AndroidManifest.xml");
     var dstManifest = path.resolve(destDir, "AndroidManifest.xml");
     var cmd = "mvn clean install";
-    exec(cmd, {cwd: buildDir}, function(err, stdout, stderr) {
+    exec(cmd, {cwd: buildDir, maxBuffer: 524288}, function(err, stdout, stderr) {
       if (err) {
         console.error("Unable to build selendroid server. Stdout was: ");
         console.error(stdout);
@@ -534,10 +534,10 @@ module.exports.installAndroidApp = function(grunt, appName, cb) {
 
   var appPath = path.resolve(__dirname, "sample-code/apps/" + appName,
       "bin/" + appName + "-debug.apk");
-  exec("adb uninstall " + pkgMap[appName], function(err, stdout) {
+  exec("adb uninstall " + pkgMap[appName], { maxBuffer: 524288 }, function(err, stdout) {
     if (err) return grunt.fatal(err);
     grunt.log.write(stdout);
-    exec("adb install -r " + appPath, function(err, stdout) {
+    exec("adb install -r " + appPath, { maxBuffer: 524288 }, function(err, stdout) {
       if (err) return grunt.fatal(err);
       grunt.log.write(stdout);
       cb();
@@ -605,7 +605,7 @@ module.exports.generateAppiumIo = function(grunt, cb) {
                   'git merge master && ' +
                   'git push origin gh-pages && ' +
                   'git checkout master';
-        exec(cmd, {cwd: submod}, function(err, stdout, stderr) {
+        exec(cmd, {cwd: submod, maxBuffer: 524288}, function(err, stdout, stderr) {
           if (err) {
             console.log(stdout);
             console.log(stderr);

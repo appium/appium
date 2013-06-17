@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -78,7 +79,25 @@ public class Find extends CommandHandler {
         .get("strategy"));
     final String contextId = (String) params.get("context");
 
-    if (strategy == Strategy.DYNAMIC) {
+    if (strategy == Strategy.SEARCH_ID) {
+      Logger.debug("Searching id.");
+      final String target = params.get("selector").toString().toLowerCase();
+      @SuppressWarnings("unchecked")
+      final Iterator<String> iterator = apkStrings.keys();
+      final JSONArray results = new JSONArray();
+      while (iterator.hasNext()) {
+        final String key = iterator.next();
+        final String value = apkStrings.getString(key);
+        if (value.toLowerCase().contains(target)) {
+          results.put(new JSONArray().put(key).put(value));
+        }
+      }
+      return getSuccessResult(results);
+    } else if (strategy == Strategy.RESOLVE_ID) {
+      Logger.debug("Resolving id.");
+      final String id = params.get("selector").toString();
+      return getSuccessResult(apkStrings.getString(id));
+    } else if (strategy == Strategy.DYNAMIC) {
       Logger.debug("Finding dynamic.");
       final JSONArray selectors = (JSONArray) params.get("selector");
       final String option = selectors.get(0).toString().toLowerCase();

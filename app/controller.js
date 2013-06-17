@@ -342,6 +342,12 @@ exports.searchId = function(req, res) {
   req.device.findElements(strategy, selector, getResponseHandler(req, res));
 };
 
+exports.resolveId = function(req, res) {
+  var strategy = "resolve id"
+    , selector = req.body;
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+};
+
 exports.mobileSwipe = function(req, res) {
   req.body = _.defaults(req.body, {
     touchCount: 1
@@ -846,6 +852,7 @@ var mobileCmdMap = {
   , 'source': exports.mobileSource
   , 'find': exports.find
   , 'searchId': exports.searchId
+  , 'resolveId': exports.resolveId
   , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity
   , 'findElementNameContains': exports.findElementNameContains

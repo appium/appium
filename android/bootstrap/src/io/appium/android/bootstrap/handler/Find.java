@@ -93,6 +93,10 @@ public class Find extends CommandHandler {
         }
       }
       return getSuccessResult(results);
+    } else if (strategy == Strategy.RESOLVE_ID) {
+      Logger.debug("Resolving id.");
+      final String id = params.get("selector").toString();
+      return getSuccessResult(apkStrings.getString(id));
     } else if (strategy == Strategy.DYNAMIC) {
       Logger.debug("Finding dynamic.");
       final JSONArray selectors = (JSONArray) params.get("selector");

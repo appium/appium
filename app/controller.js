@@ -342,6 +342,12 @@ exports.searchId = function(req, res) {
   req.device.findElements(strategy, selector, getResponseHandler(req, res));
 };
 
+exports.searchValue = function(req, res) {
+  var strategy = "search value"
+    , selector = req.body;
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+};
+
 exports.resolveId = function(req, res) {
   var strategy = "resolve id"
     , selector = req.body;
@@ -852,6 +858,7 @@ var mobileCmdMap = {
   , 'source': exports.mobileSource
   , 'find': exports.find
   , 'searchId': exports.searchId
+  , 'searchValue': exports.searchValue
   , 'resolveId': exports.resolveId
   , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity

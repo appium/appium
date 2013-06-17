@@ -93,6 +93,20 @@ public class Find extends CommandHandler {
         }
       }
       return getSuccessResult(results);
+    } else if (strategy == Strategy.SEARCH_VALUE) {
+      Logger.debug("Searching value.");
+      final String target = params.get("selector").toString().toLowerCase();
+      @SuppressWarnings("unchecked")
+      final Iterator<String> iterator = apkStrings.keys();
+      final JSONArray results = new JSONArray();
+      while (iterator.hasNext()) {
+        final String key = iterator.next();
+        final String value = apkStrings.getString(key);
+        if (key.toLowerCase().contains(target)) {
+          results.put(new JSONArray().put(key).put(value));
+        }
+      }
+      return getSuccessResult(results);
     } else if (strategy == Strategy.RESOLVE_ID) {
       Logger.debug("Resolving id.");
       final String id = params.get("selector").toString();

@@ -336,20 +336,20 @@ exports.find = function(req, res) {
   }
 };
 
-exports.searchId = function(req, res) {
-  var strategy = "search id"
-    , selector = req.body;
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
-};
-
-exports.searchValue = function(req, res) {
-  var strategy = "search value"
-    , selector = req.body;
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
-};
-
 exports.resolveId = function(req, res) {
   var strategy = "resolve id"
+    , selector = req.body;
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+};
+
+exports.xmlKeyContains = function(req, res) {
+  var strategy = "xmlKeyContains"
+    , selector = req.body;
+  req.device.findElements(strategy, selector, getResponseHandler(req, res));
+};
+
+exports.xmlValueContains = function(req, res) {
+  var strategy = "xmlValueContains"
     , selector = req.body;
   req.device.findElements(strategy, selector, getResponseHandler(req, res));
 };
@@ -857,8 +857,8 @@ var mobileCmdMap = {
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
   , 'find': exports.find
-  , 'searchId': exports.searchId
-  , 'searchValue': exports.searchValue
+  , 'xmlValueContains': exports.xmlValueContains
+  , 'xmlKeyContains': exports.xmlKeyContains
   , 'resolveId': exports.resolveId
   , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity

@@ -1023,12 +1023,19 @@ ADB.prototype.startApp = function(cb) {
       hasNoPrefix = false;
     }
   });
+
+  // Let's not break regular activities.
+  // https://github.com/appium/appium/issues/782
+  if (activityString[0] === ".") {
+    hasNoPrefix = false;
+  }
+
   if (hasNoPrefix) {
     activityString = this.appPackage + "." + activityString;
   }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
-  this.debug("Starting app " + this.appPackage + "/" + activityString);
+  this.debug("Starting app\n" + cmd);
   exec(cmd, _.bind(function(err) {
     if(err) {
       logger.error(err);
@@ -1057,7 +1064,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
   logger.info("Getting focused package and activity");
   this.requireDeviceId();
   var cmd = this.adbCmd + " shell dumpsys window windows"
-    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/\.?([^\}]+)\}/);
+    , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/(\.?[^\}]+)\}/);
 
   exec(cmd, _.bind(function(err, stdout) {
     if (err) {

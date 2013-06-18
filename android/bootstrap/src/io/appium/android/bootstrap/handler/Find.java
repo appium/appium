@@ -79,8 +79,8 @@ public class Find extends CommandHandler {
         .get("strategy"));
     final String contextId = (String) params.get("context");
 
-    if (strategy == Strategy.SEARCH_ID) {
-      Logger.debug("Searching id.");
+    if (strategy == Strategy.XML_VALUE) {
+      Logger.debug("Searching XML values (id values).");
       final String target = params.get("selector").toString().toLowerCase();
       @SuppressWarnings("unchecked")
       final Iterator<String> iterator = apkStrings.keys();
@@ -93,8 +93,8 @@ public class Find extends CommandHandler {
         }
       }
       return getSuccessResult(results);
-    } else if (strategy == Strategy.SEARCH_VALUE) {
-      Logger.debug("Searching value.");
+    } else if (strategy == Strategy.XML_KEY) {
+      Logger.debug("Searching XML keys (id names).");
       final String target = params.get("selector").toString().toLowerCase();
       @SuppressWarnings("unchecked")
       final Iterator<String> iterator = apkStrings.keys();

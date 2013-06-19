@@ -51,7 +51,7 @@ module.exports = function(appium) {
       request(url, req.route.method.toUpperCase(), req.body,
               req.headers['content-type'], function(err, response, body) {
         if (err) return next(err);
-        if (body.value) {
+        if (body && body.value) {
           var resStatusCode = body.status;
           if (resStatusCode !== 0) {
             var resErrorMessage = body.value.message;

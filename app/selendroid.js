@@ -108,6 +108,7 @@ Selendroid.prototype.waitForServer = function(cb) {
 Selendroid.prototype.createSession = function(cb) {
   logger.info("Creating Selendroid session");
   var data = {desiredCapabilities: this.desiredCaps};
+  var me = this;
   this.proxyTo('/wd/hub/session', 'POST', data, _.bind(function(err, res, body) {
     if (err) return cb(err);
 
@@ -115,6 +116,7 @@ Selendroid.prototype.createSession = function(cb) {
       logger.info("Successfully started selendroid session");
       this.selendroidSessionId = body.sessionId;
       cb(null, body.sessionId);
+      me.adb.startApp(function(){});
     } else {
       logger.error("Selendroid create session did not work. Status was " +
                    res.statusCode + " and body was " + body);

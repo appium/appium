@@ -98,7 +98,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
   } else {
-    exec("which " + binary, _.bind(function(err, stdout) {
+    exec("which " + binary, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
       if (stdout) {
         this.debug("Using " + binary + " from " + stdout);
         cb(null, stdout);
@@ -221,7 +221,7 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
                          ' -I "', path.resolve(platforms, platform, 'android.jar') +'" -F "',
                          manifest, '.apk" -f'].join('');
   logger.debug(compileManifest);
-  exec(compileManifest, {}, function(err, stdout, stderr) {
+  exec(compileManifest, { maxBuffer: 524288 }, function(err, stdout, stderr) {
     if (err) {
       logger.debug(stderr);
       return cb("error compiling manifest");
@@ -279,7 +279,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
       // -m = move manifest into target apk.
       var replaceCmd = 'zip -j -m "' + dstApk + '" "' + manifest + '"';
       logger.debug("Moving manifest with: " + replaceCmd);
-      exec(replaceCmd, {}, function(err) {
+      exec(replaceCmd, { maxBuffer: 524288 }, function(err) {
         if (err) {
           logger.info("Got error moving manifest: " + err);
           return cb(err);
@@ -303,7 +303,7 @@ ADB.prototype.sign = function(apks, cb) {
   var signPath = path.resolve(__dirname, '..', 'app', 'android', 'sign.jar');
   var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning apks with: " + resign);
-  exec(resign, {}, function(err, stdout, stderr) {
+  exec(resign, { maxBuffer: 524288 }, function(err, stdout, stderr) {
     if (stderr.indexOf("Input is not an existing file") !== -1) {
       logger.warn("Could not resign apk(s), got non-existing file error");
       return cb(new Error("Could not sign one or more apks. Are you sure " +
@@ -320,7 +320,7 @@ ADB.prototype.checkApkCert = function(apk, cb) {
       'verify.jar');
   var resign = 'java -jar "' + verifyPath + '" "' + apk + '"';
   logger.debug("Checking app cert for " + apk + ": " + resign);
-  exec(resign, {}, function(err) {
+  exec(resign, { maxBuffer: 524288 }, function(err) {
     if (err) {
       logger.debug("App not signed with debug cert.");
       return cb(false);
@@ -410,7 +410,7 @@ ADB.prototype.pushStrings = function(cb) {
   var makeStrings = ['java -jar "', stringsFromApkJarPath,
                      '" "', me.apkPath, '" "', outputPath, '"'].join('');
   logger.debug(makeStrings);
-  exec(makeStrings, {}, function(err, stdout, stderr) {
+  exec(makeStrings, { maxBuffer: 524288 }, function(err, stdout, stderr) {
     if (err) {
       logger.debug(stderr);
       return cb("error making strings");
@@ -418,7 +418,7 @@ ADB.prototype.pushStrings = function(cb) {
     var jsonFile = path.resolve(outputPath, 'strings.json');
     var remotePath = "/data/local/tmp";
     var pushCmd = me.adbCmd + ' push "' + jsonFile + '" ' + remotePath;
-    exec(pushCmd, {}, function(err, stdout, stderr) {
+    exec(pushCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
       cb(null);
     });
   });
@@ -521,7 +521,7 @@ ADB.prototype.pushSelendroid = function(cb) {
   cmd = cmd.replace(/\.+/g,'.'); // Fix pkg..activity error
   logger.info("Starting instrumentation process for selendroid with cmd: " +
               cmd);
-  exec(cmd, function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) return cb(err);
     if (stdout.indexOf("Exception") !== -1) {
       logger.error(stdout);
@@ -604,7 +604,7 @@ ADB.prototype.prepareEmulator = function(cb) {
       } else {
         logger.info("Launching Emulator with AVD " + this.avdName);
         var killallCmd = isWindows ? "TASKKILL /IM emulator.exe" : "/usr/bin/killall -m emulator*";
-        exec(killallCmd, _.bind(function(err, stdout) {
+        exec(killallCmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
           if (err) {
             logger.info("Could not kill emulator. It was probably not running. : " + err.message);
           }
@@ -644,7 +644,7 @@ ADB.prototype.prepareEmulator = function(cb) {
 
 ADB.prototype.getConnectedDevices = function(cb) {
   this.debug("Getting connected devices...");
-  exec(this.adb + " devices", _.bind(function(err, stdout) {
+  exec(this.adb + " devices", { maxBuffer: 524288 }, _.bind(function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -678,7 +678,7 @@ ADB.prototype.forwardPort = function(cb) {
   this.debug("Forwarding system:" + this.systemPort + " to device:" +
              this.devicePort);
   var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
-  exec(this.adbCmd + " forward " + arg, _.bind(function(err) {
+  exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, _.bind(function(err) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -942,7 +942,7 @@ ADB.prototype.waitForDevice = function(cb) {
       }
     }, this), timeoutSecs * 1000);
 
-    exec(cmd, _.bind(function(err) {
+    exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
       if (!movedOn) {
         if (err) {
           logger.error("Error running wait-for-device");
@@ -981,7 +981,7 @@ ADB.prototype.waitForDevice = function(cb) {
 ADB.prototype.restartAdb = function(cb) {
   logger.info("Killing ADB server so it will come back online");
   var cmd = this.adb + " kill-server";
-  exec(cmd, function(err) {
+  exec(cmd, { maxBuffer: 524288 }, function(err) {
     if (err) {
       logger.error("Error killing ADB server, going to see if it's online " +
                    "anyway");
@@ -1000,7 +1000,7 @@ ADB.prototype.pushAppium = function(cb) {
     } else {
       var remotePath = "/data/local/tmp";
       var cmd = this.adbCmd + ' push "' + binPath + '" ' + remotePath;
-      exec(cmd, _.bind(function(err) {
+      exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
         if (err) {
           logger.error(err);
           cb(err);
@@ -1037,7 +1037,7 @@ ADB.prototype.startApp = function(cb) {
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
-  exec(cmd, _.bind(function(err) {
+  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
     if(err) {
       logger.error(err);
       cb(err);
@@ -1052,7 +1052,7 @@ ADB.prototype.stopApp = function(cb) {
   this.requireDeviceId();
   this.requireApp();
   var cmd = this.adbCmd + " shell am force-stop " + this.appPackage;
-  exec(cmd, function(err) {
+  exec(cmd, { maxBuffer: 524288 }, function(err) {
     if (err) {
       logger.error(err);
       return cb(err);
@@ -1067,7 +1067,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
   var cmd = this.adbCmd + " shell dumpsys window windows"
     , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/(\.?[^\}]+)\}/);
 
-  exec(cmd, _.bind(function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -1159,7 +1159,7 @@ ADB.prototype.waitForActivity = function(cb) {
 ADB.prototype.uninstallApk = function(pkg, cb) {
   logger.info("Uninstalling " + pkg);
   var cmd = this.adbCmd + " uninstall " + pkg;
-  exec(cmd, function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -1178,7 +1178,7 @@ ADB.prototype.uninstallApk = function(pkg, cb) {
 ADB.prototype.installApk = function(apk, cb) {
   var cmd = this.adbCmd + ' install -r "' + apk + '"';
   logger.info("Installing " + apk);
-  exec(cmd,function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -1227,7 +1227,7 @@ ADB.prototype.runFastReset = function(cb) {
   var me = this;
   var clearCmd = me.adbCmd + ' shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
   logger.debug("Running fast reset clean: " + clearCmd);
-  exec(clearCmd, {}, function(err, stdout, stderr) {
+  exec(clearCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
     if (err) {
       logger.warn(stderr);
       cb(err);
@@ -1244,7 +1244,7 @@ ADB.prototype.checkAppInstallStatus = function(pkg, cb) {
 
   logger.debug("Getting install/clean status for " + pkg);
   var listPkgCmd = this.adbCmd + " shell pm list packages -3 " + pkg;
-  exec(listPkgCmd, function(err, stdout) {
+  exec(listPkgCmd, { maxBuffer: 524288 }, function(err, stdout) {
     var apkInstalledRgx = new RegExp('^package:' +
         pkg.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
     installed = apkInstalledRgx.test(stdout);
@@ -1311,7 +1311,7 @@ ADB.prototype.back = function(cb) {
   this.requireDeviceId();
   this.debug("Pressing the BACK button");
   var cmd = this.adbCmd + " shell input keyevent 4";
-  exec(cmd, function() {
+  exec(cmd, { maxBuffer: 524288 }, function() {
     cb();
   });
 };
@@ -1320,7 +1320,7 @@ ADB.prototype.goToHome = function(cb) {
   this.requireDeviceId();
   this.debug("Pressing the HOME button");
   var cmd = this.adbCmd + " shell input keyevent 3";
-  exec(cmd, function() {
+  exec(cmd, { maxBuffer: 524288 }, function() {
     cb();
   });
 };
@@ -1337,7 +1337,7 @@ ADB.prototype.keyevent = function(keycode, cb) {
   // keycode must be an int.
   var cmd = this.adbCmd + ' shell input keyevent ' + code;
   this.debug("Sending keyevent " + code);
-  exec(cmd, function() {
+  exec(cmd, { maxBuffer: 524288 }, function() {
     cb();
   });
 };
@@ -1346,7 +1346,7 @@ ADB.prototype.unlockScreen = function(cb) {
   this.requireDeviceId();
   this.debug("Attempting to unlock screen");
   var cmd = this.adbCmd + " shell input keyevent 82";
-  exec(cmd, function() {
+  exec(cmd, { maxBuffer: 524288 }, function() {
     cb();
   });
 };

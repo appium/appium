@@ -50,7 +50,7 @@ exports.unzipFile = function(zipPath, cb) {
         logger.info("Unzip successful");
         cb(null,null);
       } else {
-        var execOpts = {cwd: path.dirname(zipPath)};
+        var execOpts = {cwd: path.dirname(zipPath), maxBuffer: 524288};
         exec('unzip -o ' + zipPath, execOpts, function(err, stderr, stdout) {
           if (!err) {
             logger.info("Unzip successful");
@@ -233,7 +233,7 @@ exports.cleanSafari = function(safariVer, cb) {
 
 exports.getUser = function(cb) {
   logger.info("Determining current user");
-  exec("whoami", function(err, stdout) {
+  exec("whoami", { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -303,7 +303,7 @@ exports.rotateImage = function(imgPath, deg, cb) {
   var scriptPath = path.resolve(__dirname, "uiauto/Rotate.applescript");
   var cmd = "osascript " + scriptPath + " " + JSON.stringify(imgPath) +
             " " + deg;
-  exec(cmd, function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) return cb(err);
     console.log(stdout);
     cb(null);
@@ -320,7 +320,7 @@ exports.getTempPath = function () {
 
 exports.getGitRev = function(cb) {
   var cwd = path.resolve(__dirname, "..");
-  exec("git rev-parse HEAD", {cwd: cwd}, function(err, stdout) {
+  exec("git rev-parse HEAD", {cwd: cwd, maxBuffer: 524288}, function(err, stdout) {
     if (err) return cb(err);
     cb(null, stdout.trim());
   });

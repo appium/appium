@@ -483,7 +483,7 @@ Android.prototype.getPageSource = function(cb) {
             var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
             cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
             logger.debug('getPageSource command: ' + cmd);
-            exec(cmd, {}, function(err, stdout, stderr) {
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
                 logger.warn(stderr);
                 return cb(err);
@@ -495,7 +495,7 @@ Android.prototype.getPageSource = function(cb) {
             var jar = path.resolve(__dirname, '../app/android/dump2json.jar');
             var cmd = 'java -jar "' + jar + '" ' + xmlFile;
             logger.debug('json command: ' + cmd);
-            exec(cmd, {}, function(err, stdout, stderr) {
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
                 logger.warn(stderr);
                 return cb(err);
@@ -526,7 +526,7 @@ Android.prototype.getPageSourceXML = function(cb) {
             var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
             cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
             logger.debug('getPageSourceXML command: ' + cmd);
-            exec(cmd, {}, function(err, stdout, stderr) {
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
                 logger.warn(stderr);
                 return cb(err);
@@ -583,7 +583,7 @@ Android.prototype.getScreenshot = function(cb) {
 
   async.series([
     function(cb) {
-      exec('uname -m', function (error, stdout, stderr) {
+      exec('uname -m', { maxBuffer: 524288 }, function (error, stdout, stderr) {
         if (error) {
           cb(error);
         } else {
@@ -597,7 +597,7 @@ Android.prototype.getScreenshot = function(cb) {
 
       var cmd = javaCmd + me.adb.curDeviceId + " '" + localfile + "'";
       logger.debug("screenshot cmd: " + cmd);
-      exec(cmd, {}, function(err, stdout, stderr) {
+      exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         if (err) {
           logger.warn(stderr);
           return cb(err);

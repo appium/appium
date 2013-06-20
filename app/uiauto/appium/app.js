@@ -563,6 +563,11 @@ $.extend(au, {
       return this.target.lockForDuration(secs);
     }
 
+  , background: function(secs) {
+      var seconds = parseInt(secs, 10);
+      return this.target.deactivateAppForDuration(secs);
+    }
+
   // Gesture functions
 
   , getAbsCoords: function(startX, startY, endX, endY) {

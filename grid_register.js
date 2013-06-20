@@ -46,7 +46,7 @@ function postRequest(data) {
   };
 
   if(jsonObject.configuration.register !== true) {
-    logger.info("no registration sent ( " + AUTO_REGISTER + " = false )");
+    logger.info("no registration sent ( " + jsonObject.configuration.register + " = false )");
   } else {
     var registerCycleTime = jsonObject.configuration.registerCycle ;
     if  (registerCycleTime !== null && registerCycleTime > 0) {
@@ -56,7 +56,7 @@ function postRequest(data) {
       setInterval(function()  {
         if  (first !== true)  {
           isAlreadyRegistered (jsonObject,function(isRegistered)  {
-            if  (isRegistered !== null &&  isRegistered != true) {
+            if  (isRegistered !== null &&  isRegistered !== true) {
               // make the http POST to the grid for registration
               registerToGrid(options_post, jsonObject);
             }

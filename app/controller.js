@@ -8,6 +8,7 @@ var status = require('./uiauto/lib/status')
   , path = require('path')
   , version = require('../package.json').version
   , getGitRev = require('./helpers.js').getGitRev
+  , helpers = require('./helpers')
   , _ = require('underscore');
 
 function getResponseHandler(req, res) {
@@ -150,6 +151,126 @@ exports.getStatus = function(req, res) {
     data.build.revision = gitSha;
   }
   respondSuccess(req, res, data);
+};
+
+exports.installApp = function(req, res){
+  if(req.appium.args.udid !== null){
+    if(req.appium.args.udid.length === 40){
+      req.appium.deviceType = "ios";
+    }
+    unpackApp(req, function(unpackedAppPath){
+      if(unpackedAppPath === null){
+        req.appium.deviceType = null;
+        respondError(req, res, 'Only a (zipped) app files can be installed using this endpoint');
+      } else {
+        installAppOnDeviceThroughCmdLine(req.appium.deviceType, req.appium.args.udid, unpackedAppPath, function(code, message){
+          if(code === 0) {
+            respondSuccess(req, res, message);
+          } else {
+            respondError(req, res, message);
+          }
+          req.appium.deviceType = null;
+        });
+      }
+    });
+  } else {
+    respondSuccess(req, res, 'No udid was provided, therefore the app [' + req.body.appPath + '] was not installed');
+  }
+};
+
+var unpackApp = function(req, cb) {
+  var reqAppPath = req.body.appPath;
+  if (reqAppPath.substring(0, 4) === "http") {
+    req.appium.downloadAndUnzipApp(reqAppPath, function(err, appPath) {
+      cb(appPath);
+    });
+  } else if (reqAppPath.substring(reqAppPath.length - 4) === ".zip") {
+    req.appium.unzipLocalApp(reqAppPath, function(err, appPath) {
+      cb(appPath);
+    });
+  } else if (reqAppPath.substring(reqAppPath.length - 4) === ".app") {
+    cb(reqAppPath.toString());
+  } else {
+    cb(null);
+  }
+};
+
+var installAppOnDeviceThroughCmdLine = function(deviceType, udid, unzippedAppPath, cb) {
+  var installationCommand = null;
+  if (deviceType === "ios") {
+    installationCommand = './submodules/fruitstrap/fruitstrap install --id ' + udid + ' --bundle ' + unzippedAppPath;
+  } else {
+    installationCommand = 'ADB -s ' + udid + ' install ' + unzippedAppPath;
+  }
+  helpers.executeTerminalCommand(installationCommand, function(code) {
+    if(code === 0) {
+      cb(code, 'Successfully unzipped and installed [' + unzippedAppPath + '] to device with id [' + udid + ']');
+    } else {
+      cb(code, 'Unable to install [' + unzippedAppPath + '] to device with id [' + udid + '].');
+    }
+  });
+};
+
+exports.unInstallApp = function(req, res) {
+  if(req.appium.args.udid !== null) {
+    if(req.appium.args.udid.length === 40){
+      req.appium.deviceType = "ios";
+    }
+    removeAppFromDeviceThroughCmdLine(req.appium.deviceType, req.appium.args.udid, req.body.bundleId, function(code, message){
+      if(code === 0) {
+        respondSuccess(req, res, message);
+      } else {
+        respondError(req, res, message);
+      }
+    });
+  } else {
+    respondSuccess(req, res, 'No udid was provided, therefore the app [' + req.body.bundleId + '] was not removed');
+  }
+};
+
+var removeAppFromDeviceThroughCmdLine = function(deviceType, udid, bundleId, cb) {
+  var removeCommand = null;
+  if (deviceType === "ios") {
+    removeCommand = './submodules/fruitstrap/fruitstrap uninstall --id ' + udid + ' --bundle ' + bundleId;
+  } else {
+    removeCommand = 'ADB -s ' + udid + ' uninstall ' + bundleId;
+  }
+  helpers.executeTerminalCommand(removeCommand, function(code) {
+    if(code === 0) {
+      cb(code, 'Successfully un-installed [' + bundleId + '] from device with id [' + udid + ']');
+    } else {
+      cb(code, 'Unable to un-install [' + bundleId + '] from device with id [' + udid + '].');
+    }
+  });
+};
+
+exports.isAppInstalled = function(req, res) {
+  if(req.appium.args.udid !== null) {
+    if(req.appium.args.udid.length === 40){
+      req.appium.deviceType = "ios";
+    }
+    checkIfAppIsInstalledThroughCmdLine(req.appium.deviceType, req.appium.args.udid, req.body.bundleId, function(code, message){
+      if(code === 0) {
+        respondSuccess(req, res, true);
+      } else {
+        respondSuccess(req, res, false);
+      }
+    });
+  } else {
+    respondSuccess(req, res, 'No udid was provided, therefore no check was done for app [' + req.body.bundleId + ']');
+  }
+};
+
+var checkIfAppIsInstalledThroughCmdLine = function(deviceType, udid, bundleId, cb) {
+  var isInstalledCommand = null;
+  if (deviceType === "ios") {
+    isInstalledCommand = './submodules/fruitstrap/fruitstrap isInstalled --id ' + udid + ' --bundle ' + bundleId;
+  } else {
+    isInstalledCommand = 'ADB -s ' + udid + ' uninstall ' + bundleId; //adb shell pm path com.authorwjf.web_view
+  }
+  helpers.executeTerminalCommand(isInstalledCommand, function(code) {
+    cb(code);
+  });
 };
 
 exports.createSession = function(req, res) {

@@ -298,6 +298,23 @@ exports.parseWebCookies = function(cookieStr) {
   return cookies;
 };
 
+exports.executeTerminalCommand = function(command, cb) {
+  var terminal = require('child_process').spawn('bash');
+
+  terminal.stdout.on('data', function (data) {
+    logger.info('stdout: ' + data);
+  });
+
+  terminal.on('exit', function (code) {
+    logger.info('child process exited with code ' + code);
+    cb(code);
+  });
+
+  logger.info('Sending command to terminal to terminal [' +  command + ']');
+  terminal.stdin.write(command + '\n');
+  terminal.stdin.end();
+};
+
 exports.rotateImage = function(imgPath, deg, cb) {
   logger.info("Rotating image " + imgPath + " " + deg + " degrees");
   var scriptPath = path.resolve(__dirname, "uiauto/Rotate.applescript");

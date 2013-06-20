@@ -558,6 +558,11 @@ $.extend(au, {
       return $(this.mainWindow).getActiveElement();
     }
 
+  , lock: function(secs) {
+      var seconds = parseInt(secs, 10);
+      return this.target.lockForDuration(secs);
+    }
+
   // Gesture functions
 
   , getAbsCoords: function(startX, startY, endX, endY) {

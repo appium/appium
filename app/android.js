@@ -565,6 +565,10 @@ Android.prototype.postDismissAlert = function(cb) {
     cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.lock = function(secs, cb) {
+    cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.getOrientation = function(cb) {
   this.proxy(["orientation", {}], cb);
 };

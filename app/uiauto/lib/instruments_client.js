@@ -169,7 +169,7 @@ var nodePath = (function() {
                               "local/bin/node, at /opt/local/bin/node, at " +
                               "$NODE_BIN, or by querying Appium.app. Where is " +
                               "it?");
-            }                  
+            }
           }
         }
       } else {

@@ -45,18 +45,18 @@ function postRequest(data) {
     , headers : post_headers
   };
 
-  if(jsonObject.configuration.register !== true) {
+  if (jsonObject.configuration.register !== true) {
     logger.info("no registration sent ( " + jsonObject.configuration.register + " = false )");
   } else {
     var registerCycleTime = jsonObject.configuration.registerCycle ;
-    if  (registerCycleTime !== null && registerCycleTime > 0) {
+    if (registerCycleTime !== null && registerCycleTime > 0) {
       //initiate a new Thread
       var first = true;
       logger.info("starting auto register thread for grid. Will try to register every " + registerCycleTime + " ms.");
-      setInterval(function()  {
-        if  (first !== true)  {
-          isAlreadyRegistered (jsonObject,function(isRegistered)  {
-            if  (isRegistered !== null &&  isRegistered !== true) {
+      setInterval(function() {
+        if (first !== true) {
+          isAlreadyRegistered (jsonObject,function(isRegistered) {
+            if (isRegistered !== null &&  isRegistered !== true) {
               // make the http POST to the grid for registration
               registerToGrid(options_post, jsonObject);
             }
@@ -71,15 +71,15 @@ function postRequest(data) {
   }
 }
 
-function isAlreadyRegistered(jsonObject,cb){
+function isAlreadyRegistered(jsonObject,cb) {
   //check if node is already registered
   var id = "http://" + jsonObject.configuration.host + ":" + jsonObject.configuration.port;
-  request({
+  request ({
     uri       : 'http://' + jsonObject.configuration.hubHost + ':' + jsonObject.configuration.hubPort + '/grid/api/proxy'+ "?id=" + id
     , method  : "GET"
     , timeout : 10000
   }, function(error, response, body) {
-    if  (error!== null || response === undefined || response.statusCode !== 200) {
+    if (error!== null || response === undefined || response.statusCode !== 200) {
       logger.info("hub down or not responding.");
       return cb(null);
     }

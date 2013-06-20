@@ -151,6 +151,11 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId/touch/flick_precise', controller.mobileFlick);
   rest.post('/wd/hub/session/:sessionId/touch/swipe', controller.mobileSwipe);
 
+  // these are for installation/removal of iOS app.
+  rest.post('/wd/hub/app/install', controller.installApp);
+  rest.post('/wd/hub/app/uninstall', controller.unInstallApp);
+  rest.post('/wd/hub/app/installed', controller.isAppInstalled);
+
   // keep this at the very end!
   rest.all('/*', controller.unknownCommand);
   //console.log(rest.routes.get);

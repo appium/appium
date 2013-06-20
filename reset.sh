@@ -191,6 +191,13 @@ reset_selendroid() {
     run_cmd $grunt setConfigVer:selendroid
 }
 
+make_fruitstrap() {
+    echo "CONFIGURING FRUITSTRAP"
+    echo "* making fruitstrap"
+    run_cmd cd $appium_home/submodules/fruitstrap/
+    run_cmd make fruitstrap
+}
+
 cleanup() {
     echo "CLEANING UP"
     echo "* Cleaning any temp files"
@@ -216,6 +223,7 @@ main() {
     if $should_reset_selendroid ; then
         reset_selendroid
     fi
+    make_fruitstrap
     cleanup
     reset_successful=true
 }

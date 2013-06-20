@@ -1446,6 +1446,10 @@ IOS.prototype.lock = function(secs, cb) {
   this.proxy(["au.lock(", secs, ")"].join(''), cb);
 };
 
+IOS.prototype.background = function(secs, cb) {
+  this.proxy(["au.background(", secs, ")"].join(''), cb);
+};
+
 IOS.prototype.getOrientation = function(cb) {
   this.proxy("au.getScreenOrientation()", cb);
 };

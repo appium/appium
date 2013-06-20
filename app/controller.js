@@ -214,6 +214,13 @@ exports.lock = function(req, res) {
   }
 };
 
+exports.background = function(req, res) {
+  var seconds = req.body.seconds;
+  if (checkMissingParams(res, {seconds: seconds})) {
+    req.device.background(seconds, getResponseHandler(req, res));
+  }
+};
+
 exports.deleteSession = function(req, res) {
   req.appium.stop(getResponseHandler(req, res));
 };
@@ -860,6 +867,7 @@ var mobileCmdMap = {
   , 'setValue' : exports.setValueImmediate
   , 'reset' : exports.reset
   , 'lock' : exports.lock
+  , 'background' : exports.background
   , 'keyevent' : exports.keyevent
   , 'leaveWebView': exports.leaveWebView
   , 'fireEvent': exports.fireEvent

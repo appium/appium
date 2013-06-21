@@ -69,6 +69,7 @@ If you're having trouble getting Appium working and the error messages Appium pr
   found. This results in an error that looks like `(null) cannot be tapped`.
   Sometimes the only solution is to put the finding-and-acting code in a retry
   block. See also `mobile: findAndAct` on the [finding elements doc page](https://github.com/appium/appium/blob/master/docs/finding-elements.md)
+* Appium may have difficulties finding the `node` executable if you've installed Node and npm via MacPorts. You must make sure that the MacPorts bin folder (`/opt/local/bin` by default) is added to `PATH` somewhere in your `~/.profile`, `~/.bash_profile` or `~/.bashrc`.
 
 ## Specific Errors
 

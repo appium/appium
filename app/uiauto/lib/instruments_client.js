@@ -22,11 +22,15 @@ var fileExists = function(filename) {
 var sysExec = function(cmd) {
   var params = [];
   if (user !== null) {
-    if (fileExists('/Users/' + user + '/.bash_profile')) {
-      params = params.concat(['--rcfile', '/Users/' + user + '/.bash_profile']);
+    if (fileExists('/Users/' + user + '/.profile')) {
+      params = params.concat(['--rcfile', '/Users/' + user + '/.profile']);
     } else {
-      if (fileExists('/Users/' + user + '/.bashrc')) {
-        params = params.concat(['--rcfile', '/Users/' + user + '/.bashrc']);
+      if (fileExists('/Users/' + user + '/.bash_profile')) {
+        params = params.concat(['--rcfile', '/Users/' + user + '/.bash_profile']);
+      } else {
+        if (fileExists('/Users/' + user + '/.bashrc')) {
+          params = params.concat(['--rcfile', '/Users/' + user + '/.bashrc']);
+        }
       }
     }
   }

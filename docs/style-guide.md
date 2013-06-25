@@ -27,6 +27,7 @@ Style notes
 ------
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
+
     ```js
     var x = 1;
     ```
@@ -34,6 +35,7 @@ Style notes
     ```js
     var x=1;
     ```        
+    
 *   Spaces after commas and colons in lists, objects, function calls, etc...
         ```js
         var x = myFunc("lol", {foo: bar, baz: boo});

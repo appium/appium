@@ -27,16 +27,16 @@ Style notes
 ------
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
-*   
-        ```js
-        var x = 1;
-        ```
+
+    ```js
+    var x = 1;
+    ```
 
     not
     
-        ```js
-        var x=1;
-        ```
+    ```js
+    var x=1;
+    ```
         
 *   Spaces after commas and colons in lists, objects, function calls, etc...
         ```js

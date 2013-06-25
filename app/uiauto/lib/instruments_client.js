@@ -165,10 +165,15 @@ var nodePath = (function() {
             path = sysExec("ls /opt/local/bin/node");
             console.log("Found node at " + path);
           } catch (e) {
-            throw new Error("Could not find node using `which node`, at /usr/" +
-                            "local/bin/node, at /opt/local/bin/node, at " +
-                            "$NODE_BIN, or by querying Appium.app. Where is " +
-                            "it?");
+            try {
+              path = sysExec("ls /Applications/Appium.app/Contents/Resources/node/bin/node");
+              console.log("Found node at " + path);
+            } catch (e) {
+              throw new Error("Could not find node using `which node`, at /usr/" +
+                              "local/bin/node, at /opt/local/bin/node, at " +
+                              "$NODE_BIN, or by querying Appium.app. Where is " +
+                              "it?");
+            }
           }
         }
       } else {

@@ -16,6 +16,7 @@ var spawn = require('win-spawn')
   , helpers = require('../app/helpers')
   , AdmZip = require('adm-zip')
   , getTempPath = helpers.getTempPath
+  , rimraf = require('rimraf')
   , isWindows = helpers.isWindows();
 
 var noop = function() {};
@@ -378,7 +379,86 @@ ADB.prototype.sign = function(apks, cb) {
 
 // returns true when already signed, false otherwise.
 ADB.prototype.checkApkCert = function(apk, cb) {
-  if (this.useKeystore) return cb(false);
+  if (!fs.existsSync(apk)) {
+   logger.debug("APK doesn't exist. " + apk);
+   return cb(false);
+  }
+
+  if (this.useKeystore) {
+    var h = "a-fA-F0-9";
+    var md5Str = ['.*MD5.*((?:[', h, ']{2}:){15}[', h, ']{2})'].join('');
+    var md5 = new RegExp(md5Str, 'mi');
+    var keytool = path.resolve(process.env.JAVA_HOME, 'bin', 'keytool');
+    keytool = isWindows ? '"' + keytool + '.exe"' : '"' + keytool + '"';
+    var keystoreHash = null;
+    var me = this;
+
+    var checkKeystoreMD5 = function(innerCb) {
+    logger.debug("checkKeystoreMD5");
+      // get keystore md5
+      var keystore = [keytool, '-v', '-list', '-alias "' + me.keyAlias + '"',
+      '-keystore "' + me.keystorePath + '"', '-storepass "' + me.keystorePassword + '"'].join(' ');
+      logger.debug("Printing keystore md5: " + keystore);
+      exec(keystore, { maxBuffer: 524288 }, function(err, stdout) {
+         keystoreHash = md5.exec(stdout);
+         keystoreHash = keystoreHash ? keystoreHash[1] : null;
+         logger.debug(' Keystore MD5: ' + keystoreHash);
+         innerCb();
+      });
+    };
+
+    var match = false;
+    var checkApkMD5 = function(innerCb) {
+      logger.debug("checkApkMD5");
+      var entryHash = null;
+      var zip = new AdmZip(apk);
+      var rsa = /^META-INF\/.*\.[rR][sS][aA]$/;
+      var entries = zip.getEntries();
+      var next = function() {
+        var entry = entries.pop(); // meta-inf tends to be at the end
+        if (!entry) return innerCb(); // no more entries
+        entry = entry.entryName;
+        if (!rsa.test(entry)) return next();
+        logger.debug("Entry: " + entry);
+        var entryPath = path.join(getTempPath(), me.appPackage, 'cert');
+        logger.debug("entryPath: " + entryPath);
+        var entryFile = path.join(entryPath, entry);
+        logger.debug("entryFile: " + entryFile);
+        // ensure /tmp/pkg/cert/ doesn't exist or extract will fail.
+        rimraf.sync(entryPath);
+        // META-INF/CERT.RSA
+        zip.extractEntryTo(entry, entryPath, true); // overwrite = true
+        logger.debug("extracted!");
+        // check for match
+        var md5Entry = [keytool, '-v', '-printcert', '-file', entryFile].join(' ');
+        logger.debug("Printing apk md5: " + md5Entry);
+        exec(md5Entry, { maxBuffer: 524288 }, function(err, stdout) {
+         entryHash = md5.exec(stdout);
+         entryHash = entryHash ? entryHash[1] : null;
+         logger.debug('entryHash MD5: ' + entryHash);
+         logger.debug(' keystore MD5: ' + keystoreHash);
+         var matchesKeystore = entryHash && entryHash === keystoreHash;
+         logger.debug('Matches keystore? ' + matchesKeystore);
+         if (matchesKeystore) {
+           match = true;
+           return innerCb();
+         } else {
+           next();
+         }
+        });
+      };
+      next();
+    };
+
+    async.series([
+      function(cb) { checkKeystoreMD5(cb); },
+      function(cb) { checkApkMD5(cb); }
+    ], function() { logger.debug("checkApkCert match? " + match);
+     cb(match); });
+
+    // exit checkApkCert
+    return;
+  }
 
   var verifyPath = path.resolve(__dirname, '..', 'app', 'android',
       'verify.jar');
@@ -413,6 +493,7 @@ ADB.prototype.checkFastReset = function(cb) {
   var me = this;
   me.checkApkCert(me.cleanAPK, function(cleanSigned){
     me.checkApkCert(me.apkPath, function(appSigned){
+      logger.debug("App signed? " + appSigned + " " + me.apkPath);
       // Only build & resign clean.apk if it doesn't exist or isn't signed.
       if (!fs.existsSync(me.cleanAPK) || !cleanSigned) {
         me.buildFastReset(appSigned, function(err){ if (err) return cb(err); cb(null); });

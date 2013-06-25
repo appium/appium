@@ -206,8 +206,13 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
 
 ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackage, cb) {
   logger.info("Compiling manifest " + manifest);
-  var androidHome = process.env.ANDROID_HOME
-    , platforms = path.resolve(androidHome , 'platforms')
+  var androidHome = process.env.ANDROID_HOME;
+
+  if (typeof androidHome !== "string") {
+    return cb(new Error("ANDROID_HOME was not exported!"));
+  }
+
+  var platforms = path.resolve(androidHome , 'platforms')
     , platform = 'android-17';
 
   // android-17 may be called android-4.2
@@ -1079,7 +1084,7 @@ ADB.prototype.startApp = function(cb) {
   var hasNoPrefix = true;
   var rootPrefixes = ['com', 'net', 'org', 'io'];
   _.each(rootPrefixes, function(prefix) {
-    if (activityString.indexOf(prefix + ".") !== -1) {
+    if (activityString.indexOf(prefix + ".") === 0) {
       hasNoPrefix = false;
     }
   });
@@ -1091,7 +1096,7 @@ ADB.prototype.startApp = function(cb) {
   }
 
   if (hasNoPrefix) {
-    activityString = this.appPackage + "." + activityString;
+    activityString = "." + activityString;
   }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
@@ -1159,8 +1164,9 @@ ADB.prototype.waitForNotActivity = function(cb) {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {
       var notFoundAct = true;
-      _.each(targetActivity.split(','), function(act){
-        if (act.trim() === foundActivity) {
+      _.each(targetActivity.split(','), function(act) {
+        act = act.trim();
+        if (act === foundActivity || "." + act === foundActivity) {
           notFoundAct = false;
         }
       });
@@ -1193,8 +1199,9 @@ ADB.prototype.waitForActivity = function(cb) {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {
       var foundAct = false;
-      _.each(targetActivity.split(','), function(act){
-        if (act.trim() === foundActivity) {
+      _.each(targetActivity.split(','), function(act) {
+        act = act.trim();
+        if (act === foundActivity || "." + act === foundActivity) {
           foundAct = true;
         }
       });

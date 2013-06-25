@@ -37,94 +37,122 @@ Style notes
     ```        
     
 *   Spaces after commas and colons in lists, objects, function calls, etc...
-        ```js
-        var x = myFunc("lol", {foo: bar, baz: boo});
-        ```
-      not
-        ```js
-        var x = myFunc("lol",{foo:bar,baz:boo});
-        ```
+
+    ```js
+    var x = myFunc("lol", {foo: bar, baz: boo});
+    ```
+    not
+    ```js
+    var x = myFunc("lol",{foo:bar,baz:boo});
+    ```
+
 *   Always end statements with semicolons
 *   Comma-first
-        ```js
-        var x = {
-          foo: 'bar'
-          , baz: 'boo'
-          , wuz: 'foz'
-        };
-        ```
+
+    ```js
+    var x = {
+        foo: 'bar'
+        , baz: 'boo'
+        , wuz: 'foz'
+    };
+    ```
+
 *   Brackets for `function`, `if`, etc... go on same line, `else` gets sandwiched
-        ```js
-        if (foo === bar) {
-          // do something
-        } else {
-          // do something else
-        }
-        ```
+
+    ```js
+    if (foo === bar) {
+        // do something
+    } else {
+        // do something else
+    }
+    ```
+
 *   Space after `if`:
-        ```js
-        if (foo === bar) {
-        ```
-      not
-        ```js
-        if(foo === bar) {
-        ```
+
+    ```js
+    if (foo === bar) {
+    ```
+    not
+    ```js
+    if(foo === bar) {
+    ```
+
 *   Avoid bracketless `if` for one-liners:
-        ```js
-        if (foo === bar) {
-          foo++;
-        }
-        ```
-     not
-        ```js
-        if (foo === bar)
-          foo++;
-        ```
+
+    ```js
+    if (foo === bar) {
+        foo++;
+    }
+    ```
+    not
+    ```js
+    if (foo === bar)
+        foo++;
+    ```
+
 *   Use `===`, not `==`, and `!==`, not `!=` for no surprises
 *   Line length shouldn't be longer than 79 characters
 *   Break up long strings like this:
-        ```js
-        myFunc("This is a really long string that's longer " +
-               "than 79 characters so I broke it up, woo");
-        ```
+
+    ```js
+    myFunc("This is a really long string that's longer " +
+            "than 79 characters so I broke it up, woo");
+    ```
+
 *   Comments should line up with code
-        ```js
-        if (foo === 5) {
-          myFunc(foo);
-          // foo++;
-        }
-        ```
-      not
-        ```js
-        if (foo === 5) {
-          myFunc(foo);
-        //foo++;
-        }
-        ```
+
+    ```js
+    if (foo === 5) {
+        myFunc(foo);
+        // foo++;
+    }
+    ```
+    not
+    ```js
+    if (foo === 5) {
+        myFunc(foo);
+    //foo++;
+    }
+    ```
+
 *   Subclassing by extending prototypes
-        ```js
-        var _ = require('underscore');
 
-        var SuperClass = function() {
-          this.init();
-        };
+    ```js
+    var _ = require('underscore');
 
-        SuperClass.prototype.init = function() {
-          // initialize
-        };
+    var SuperClass = function() {
+        this.init();
+    };
 
-        // Create a subclass
-        
-        var SubClass = function() {
-          this.init();
-        };
+    SuperClass.prototype.init = function() {
+        // initialize
+    };
 
-        _.extend(SubClass.prototype, SuperClass.prototype);
-        ```
+    // Create a subclass
+    
+    var SubClass = function() {
+        this.init();
+    };
+
+    _.extend(SubClass.prototype, SuperClass.prototype);
+    ```
+
 *   Callbacks are always last in function definitions
+
     ```js
     var foo = function(arg1, arg2, cb) {
       ...
     };
     ```
+
+*   Define functions as variables
+
+    ```js
+    var myFunc = function(a, b, c) {};
+    ```
+    not
+    ```js
+    function myFunc(a, b, c) {}
+    ```
+
 *   More to come....

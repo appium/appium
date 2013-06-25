@@ -478,6 +478,11 @@ Appium.prototype.invoke = function() {
           , reset: !this.args.noReset
           , port: this.args.selendroidPort
           , fastReset: this.fastReset
+          , useKeystore: this.args.useKeystore
+          , keystorePath: this.args.keystorePath
+          , keystorePassword: this.args.keystorePassword
+          , keyAlias: this.args.keyAlias
+          , keyPassword: this.args.keyPassword
         };
         this.devices[this.deviceType] = selendroid(selendroidOpts);
       } else if (this.isFirefoxOS()) {

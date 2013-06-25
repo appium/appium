@@ -457,6 +457,11 @@ Appium.prototype.invoke = function() {
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
           , fastReset: this.fastReset
+          , useKeystore: this.args.useKeystore
+          , keystorePath: this.args.keystorePath
+          , keystorePassword: this.args.keystorePassword
+          , keyAlias: this.args.keyAlias
+          , keyPassword: this.args.keyPassword
         };
         this.devices[this.deviceType] = android(androidOpts);
       } else if (this.isSelendroid()) {

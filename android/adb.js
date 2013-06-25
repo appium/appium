@@ -43,6 +43,11 @@ var ADB = function(opts, android) {
   this.appWaitActivity = opts.appWaitActivity;
   this.appDeviceReadyTimeout = opts.appDeviceReadyTimeout;
   this.apkPath = opts.apkPath;
+  this.useKeystore = opts.useKeystore;
+  this.keystorePath = opts.keystorePath;
+  this.keystorePassword = opts.keystorePassword;
+  this.keyAlias = opts.keyAlias;
+  this.keyPassword = opts.keyPassword;
   this.adb = "adb";
   this.adbCmd = this.adb;
   this.curDeviceId = null;
@@ -299,7 +304,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
 };
 
 // apks is an array of strings.
-ADB.prototype.sign = function(apks, cb) {
+ADB.prototype.signDefault = function(apks, cb) {
   var signPath = path.resolve(__dirname, '..', 'app', 'android', 'sign.jar');
   var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning apks with: " + resign);
@@ -314,8 +319,62 @@ ADB.prototype.sign = function(apks, cb) {
   });
 };
 
+// apk is a single apk path
+ADB.prototype.signCustom = function(apk, cb) {
+  var me = this;
+  var jarsigner = path.resolve(process.env.JAVA_HOME, 'bin', 'jarsigner');
+  jarsigner = isWindows ? '"' + jarsigner + '.exe"' : '"' + jarsigner + '"';
+  var java = path.resolve(process.env.JAVA_HOME, 'bin', 'java');
+  java = isWindows ? '"' + java + '.exe"' : '"' + java + '"';
+  var unsign = '"' + path.resolve(__dirname, '..', 'app', 'android', 'unsign.jar') + '"';
+  unsign = [java, '-jar', unsign, '"' + apk + '"'].join(' ');
+  // "jarsigner" "blank.apk" -sigalg MD5withRSA -digestalg SHA1
+  // -keystore "./key.keystore" -storepass "android"
+  // -keypass "android" "androiddebugkey"
+  if (!fs.existsSync(me.keystorePath)) {
+    return cb(new Error("Keystore doesn't exist. " + me.keystorePath));
+  }
+
+  var sign = [jarsigner, '"' + apk + '"', '-sigalg MD5withRSA', '-digestalg SHA1',
+  '-keystore "' + me.keystorePath + '"', '-storepass "' + me.keystorePassword + '"',
+  '-keypass "' + me.keyPassword + '"', '"' + me.keyAlias + '"'].join(' ');
+  logger.debug("Unsigning apk with: " + unsign);
+  exec(unsign, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+    if (stderr) {
+      logger.warn(stderr);
+      return cb(new Error("Could not unsign apk. Are you sure " +
+                          "the file path is correct: " +
+                          JSON.stringify(apk)));
+    }
+    logger.debug("Signing apk with: " + sign);
+    exec(sign, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+      if (stderr) {
+        logger.warn(stderr);
+        return cb(new Error("Could not sign apk. Are you sure " +
+                            "the file path is correct: " +
+                            JSON.stringify(apk)));
+      }
+      cb(err);
+    });
+  });
+};
+
+// apks is an array of strings.
+ADB.prototype.sign = function(apks, cb) {
+  var me = this;
+  if (me.useKeystore) {
+    async.each(apks, me.signCustom.bind(me), function(err) {
+      cb(err);
+    });
+  } else {
+    me.signDefault(apks, cb);
+  }
+};
+
 // returns true when already signed, false otherwise.
 ADB.prototype.checkApkCert = function(apk, cb) {
+  if (this.useKeystore) return cb(false);
+
   var verifyPath = path.resolve(__dirname, '..', 'app', 'android',
       'verify.jar');
   var resign = 'java -jar "' + verifyPath + '" "' + apk + '"';

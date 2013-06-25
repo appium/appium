@@ -1,7 +1,8 @@
 "use strict";
 var ap = require('argparse').ArgumentParser
-  , pkgObj = require("../package")
-  , _ = require("underscore");
+  , pkgObj = require('../package')
+  , path = require('path')
+  , _ = require('underscore');
 
 var args = [
   [['--app'] , {
@@ -196,13 +197,15 @@ var args = [
     , help: "(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests " +
             "to this orientation"
   }],
+
   [['--nodeconfig'] , {
     required: false
     , defaultValue: null
     , help: 'Configuration JSON file to register appium with selenium grid'
     , example: "/abs/path/to/nodeconfig.json"
   }],
-    [['-ra', '--robot-address'] , {
+
+  [['-ra', '--robot-address'] , {
     defaultValue: '0.0.0.0'
     , dest: 'robotAddress'
     , required: false
@@ -226,7 +229,43 @@ var args = [
     , type: 'int'
     , example: "8080"
     , help: 'Local port used for communication with Selendroid'
-  }]
+  }],
+
+  [['--use-keystore'], {
+    defaultValue: false
+    , dest: 'useKeystore'
+    , action: 'storeTrue'
+    , required: false
+    , help: '(Android-only) When set the keystore will be used to sign apks.'
+  }],
+
+  [['--keystore-path'], {
+    defaultValue: path.resolve(process.env.HOME, '.android', 'debug.keystore')
+    , dest: 'keystorePath'
+    , required: false
+    , help: '(Android-only) Path to keystore'
+  }],
+
+  [['--keystore-password'], {
+    defaultValue: 'android'
+    , dest: 'keystorePassword'
+    , required: false
+    , help: '(Android-only) Password to keystore'
+  }],
+
+  [['--key-alias'], {
+    defaultValue: 'androiddebugkey'
+    , dest: 'keyAlias'
+    , required: false
+    , help: '(Android-only) Key alias'
+  }],
+
+  [['--key-password'], {
+    defaultValue: 'android'
+    , dest: 'keyPassword'
+    , required: false
+    , help: '(Android-only) Key password'
+  }],
 ];
 
 // Setup all the command line argument parsing

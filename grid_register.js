@@ -18,6 +18,17 @@ exports.registerNode = function (configFile) {
   });
 };
 
+function registerToGrid(options_post, jsonObject) {
+  var reqPost = request(options_post, function(error, response, body) {
+    if (error !== null || response.statusCode !== 200) {
+      logger.error("Request to register with grid was Unsuccessful...");
+    } else {
+      var logMessage = "Appium successfully registered with the grid on " + jsonObject.configuration.hubHost + ":" + jsonObject.configuration.hubPort;
+      logger.info(logMessage.cyan);
+    }
+  });
+}
+
 function postRequest(data) {
   //parse json to get hub host and port
   var jsonObject = JSON.parse(data);
@@ -33,15 +44,49 @@ function postRequest(data) {
     , body    : data
     , headers : post_headers
   };
-  // make the http POST to the grid for registration
-  var reqPost = request(options_post, function (error, response, body) {
-    if (error !== null || response.statusCode !== 200) {
-      logger.error("Request to register with grid was Unsuccessful...");
-    } else {
-      var logMessage = "Appium successfully registered with the grid on " + jsonObject.configuration.hubHost + ":" + jsonObject.configuration.hubPort;
-      logger.info(logMessage.cyan);
+
+  if (jsonObject.configuration.register !== true) {
+    logger.info("no registration sent ( " + jsonObject.configuration.register + " = false )");
+  } else {
+    var registerCycleTime = jsonObject.configuration.registerCycle;
+    if (registerCycleTime !== null && registerCycleTime > 0) {
+      //initiate a new Thread
+      var first = true;
+      logger.info("starting auto register thread for grid. Will try to register every " + registerCycleTime + " ms.");
+      setInterval(function() {
+        if (first !== true) {
+          isAlreadyRegistered(jsonObject, function(isRegistered) {
+            if (isRegistered !== null && isRegistered !== true) {
+              // make the http POST to the grid for registration
+              registerToGrid(options_post, jsonObject);
+            }
+          });
+        } else {
+          first = false;
+          registerToGrid(options_post, jsonObject);
+        }
+      }, registerCycleTime);
+
     }
+  }
+}
+
+function isAlreadyRegistered(jsonObject, cb) {
+  //check if node is already registered
+  var id = "http://" + jsonObject.configuration.host + ":" + jsonObject.configuration.port;
+  request ({
+    uri       : 'http://' + jsonObject.configuration.hubHost + ':' + jsonObject.configuration.hubPort + '/grid/api/proxy'+ "?id=" + id
+    , method  : "GET"
+    , timeout : 10000
+  }, function(error, response, body) {
+    if (error !== null || response === undefined || response.statusCode !== 200) {
+      logger.info("hub down or not responding.");
+      return cb(null);
+    }
+    var responseData = JSON.parse(response.body);
+    return cb(responseData.success);
   });
+
 }
 
 

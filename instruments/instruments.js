@@ -110,7 +110,7 @@ Instruments.prototype.startSocketServer = function(sock) {
         };
       }
       if (!_.has(data, 'event')) {
-        logger.error("Socket data came in witout event, it was:");
+        logger.error("Socket data came in without event, it was:");
         logger.error(JSON.stringify(data));
       } else if (!_.has(this.eventRouter, data.event)) {
         logger.error("Socket is asking for event '" + data.event +

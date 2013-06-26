@@ -55,7 +55,7 @@ function postRequest(data) {
       logger.info("starting auto register thread for grid. Will try to register every " + registerCycleTime + " ms.");
       setInterval(function() {
         if (first !== true) {
-          isAlreadyRegistered (jsonObject, function(isRegistered) {
+          isAlreadyRegistered(jsonObject, function(isRegistered) {
             if (isRegistered !== null && isRegistered !== true) {
               // make the http POST to the grid for registration
               registerToGrid(options_post, jsonObject);

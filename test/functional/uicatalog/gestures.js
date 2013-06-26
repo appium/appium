@@ -9,6 +9,7 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatal
   , textBlock = "Now is the time for all good developers to come to serve their country.\n\nNow is the time for all good developers to come to serve their country.\n\nThis text view can also use attributed strings.";
 
 describeWd('flick gesture', function(h) {
+
   it('should work via webdriver method', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
@@ -324,6 +325,45 @@ describeWd('complex tap on element', function(h) {
           el.text(function(err, text) {
             should.not.exist(err);
             _s.trim(text).should.eql(textBlock);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
+
+describeWd('scroll screen', function(h) {
+  it("should scroll the screen up a little (in pixels)", function(done) {
+    h.driver.elementsByTagName('tableCell', function(err, els) {         // find a table cell element down the page a bit
+      var element = els[4];
+      var scrollOpts = {
+        offsetX: 0                                                       // Scrolling vertically, not horizontally
+        , offsetY: 150
+      };
+      element.getLocation(function(err, location) {                      // Get the initial location x and y of the element
+        h.driver.execute("mobile: scroll", [scrollOpts], function(err) { // scroll the screen
+          element.getLocation(function(err, location2) {                 // get the new location of the cell, affirm that its y changed, but not its x
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
+            done();
+          });
+        });
+      });
+    });
+  });
+  it("should scroll the screen up a little (in relative units)", function(done) {
+    h.driver.elementsByTagName('tableCell', function(err, els) {
+      var element = els[4];
+      var scrollOpts = {
+        offsetX: 0.0
+        , offsetY: 0.4
+      };
+      element.getLocation(function(err, location) {
+        h.driver.execute("mobile: scroll", [scrollOpts], function(err) {
+          element.getLocation(function(err, location2) {
+            assert.equal(location.x, location.x);
+            assert.notEqual(location.y, location2.y);
             done();
           });
         });

@@ -1381,7 +1381,8 @@ IOS.prototype.elementSelected = function(elementId, cb) {
       this.executeAtom('is_selected', [atomsElement], cb);
     }, this));
   } else {
-    cb(new NotImplementedError(), null);
+    var command = ["au.getElement('", elementId, "').isSelected()"].join('');
+    this.proxy(command, cb);
   }
 };
 

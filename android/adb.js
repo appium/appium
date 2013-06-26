@@ -900,16 +900,16 @@ ADB.prototype.checkForSocketReady = function(output) {
       this.onSocketReady(null);
     }, this));
     this.socketClient.setEncoding('utf8');
+    var oldData = '';
     this.socketClient.on('data', _.bind(function(data) {
       this.debug("Received command result from bootstrap");
       try {
-        data = JSON.parse(data);
+        data = JSON.parse(oldData + data);
+        oldData = '';
       } catch (e) {
-        this.debug("Could not parse JSON from data: " + data);
-        data = {
-          status: status.codes.UnknownError.code
-          , value: "Got a bad response from Android server"
-        };
+        logger.info("Stream still not complete, waiting");
+        oldData += data;
+        return;
       }
       if (this.cmdCb) {
         var next = this.cmdCb;

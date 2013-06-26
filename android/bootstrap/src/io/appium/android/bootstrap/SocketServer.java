@@ -117,7 +117,10 @@ class SocketServer {
     final TimerTask updateWatchers = new TimerTask() {
       @Override
       public void run() {
-        try { watchers.check(); } catch (Exception e) {}
+        try {
+          watchers.check();
+        } catch (final Exception e) {
+        }
       }
     };
     timer.scheduleAtFixedRate(updateWatchers, 100, 100);
@@ -143,6 +146,11 @@ class SocketServer {
     Logger.info("Loading json...");
     try {
       final File jsonFile = new File("/data/local/tmp/strings.json");
+      // json will not exist for apks that are only on device
+      // because the node server can't extract the json from the apk.
+      if (!jsonFile.exists()) {
+        return;
+      }
       final DataInputStream dataInput = new DataInputStream(
           new FileInputStream(jsonFile));
       final byte[] jsonBytes = new byte[(int) jsonFile.length()];

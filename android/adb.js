@@ -549,24 +549,35 @@ ADB.prototype.prepareDevice = function(onReady) {
 
 ADB.prototype.pushStrings = function(cb) {
   var me = this;
-  var stringsFromApkJarPath = path.resolve(__dirname, '..', 'app', 'android',
-      'strings_from_apk.jar');
-  var outputPath = path.resolve(getTempPath(), me.appPackage);
-  var makeStrings = ['java -jar "', stringsFromApkJarPath,
-                     '" "', me.apkPath, '" "', outputPath, '"'].join('');
-  logger.debug(makeStrings);
-  exec(makeStrings, { maxBuffer: 524288 }, function(err, stdout, stderr) {
-    if (err) {
-      logger.debug(stderr);
-      return cb("error making strings");
-    }
-    var jsonFile = path.resolve(outputPath, 'strings.json');
-    var remotePath = "/data/local/tmp";
-    var pushCmd = me.adbCmd + ' push "' + jsonFile + '" ' + remotePath;
-    exec(pushCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
-      cb(null);
+  var remotePath = '/data/local/tmp';
+  var stringsJson = 'strings.json';
+  if (!fs.existsSync(me.apkPath)) {
+   // apk doesn't exist locally so remove old strings.json
+   var pushCmd = me.adbCmd + ' shell rm ' + remotePath + '/' + stringsJson;
+   logger.debug("Apk doesn't exist. Removing old strings.json " + pushCmd);
+   exec(pushCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+     cb(null);
+   });
+  } else {
+    var stringsFromApkJarPath = path.resolve(__dirname, '..', 'app', 'android',
+        'strings_from_apk.jar');
+    var outputPath = path.resolve(getTempPath(), me.appPackage);
+    var makeStrings = ['java -jar "', stringsFromApkJarPath,
+                       '" "', me.apkPath, '" "', outputPath, '"'].join('');
+    logger.debug(makeStrings);
+    exec(makeStrings, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+      if (err) {
+        logger.debug(stderr);
+        return cb("error making strings");
+      }
+      var jsonFile = path.resolve(outputPath, stringsJson);
+
+      var pushCmd = me.adbCmd + ' push "' + jsonFile + '" ' + remotePath;
+      exec(pushCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+        cb(null);
+      });
     });
-  });
+  }
 };
 
 ADB.prototype.startAppium = function(onReady, onExit) {

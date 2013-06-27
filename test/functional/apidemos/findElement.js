@@ -246,3 +246,12 @@ describeWd('unallowed tag names', function(h) {
     });
   });
 });
+
+describeWd('mobile xmlKeyContains', function(h) {
+  it('should not error on xmlKeyContains', function(done) {
+    h.driver.execute("mobile: xmlKeyContains", [''], function(err, el) {
+      should.not.exist(err);
+      done();
+    });
+  });
+});

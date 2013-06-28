@@ -240,7 +240,7 @@ module.exports.build = function(appRoot, cb, sdk) {
       return cb(stdout + "\n" + stderr);
     }
     console.log("Building app...");
-    var args = ['-sdk', sdk];
+    var args = ['-sdk', sdk, '-arch', 'i386'];
     xcode = spawn('xcodebuild', args, {
       cwd: appRoot
     });

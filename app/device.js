@@ -62,29 +62,36 @@ exports.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
   spin();
 };
 
-exports.request = function(url, method, body, contentType, cb) {
+exports.doRequest = function(url, method, body, contentType, cb) {
   if (typeof cb === "undefined" && typeof contentType === "function") {
     cb = contentType;
     contentType = null;
   }
   if (typeof contentType === "undefined" || contentType === null) {
-    contentType = "application/json";
+    contentType = "application/json;charset=UTF-8";
   }
   if (!(/^https?:\/\//.exec(url))) {
     url = 'http://' + url;
   }
+  var host = /^https?:\/\/([^\/]+)/.exec(url)[1];
   var opts = {
     url: url
     , method: method
-    , headers: {'Content-Type': contentType}
+    , jar: false
   };
+  opts.headers = {};
   if (_.contains(['put', 'post', 'patch'], method.toLowerCase())) {
-    if (typeof body !== "string") {
-      opts.json = body;
+    if (typeof body === "object") {
+      opts.body = JSON.stringify(body);
     } else {
       opts.body = body;
     }
+    opts.headers['Content-Length'] = opts.body.length;
   }
+  // explicitly set these headers with correct capitalization to work around
+  // an issue in node/requests
+  opts.headers['Content-Type'] = contentType;
+  opts.headers.Host = host;
   logger.info("Making http request with opts: " + JSON.stringify(opts));
   request(opts, cb);
 };
@@ -130,6 +137,14 @@ exports.unpackApp = function(req, packageExtension, cb) {
   } else {
     cb(null);
   }
+};
+
+exports.proxyTo = function(endpoint, method, data, cb) {
+  if (endpoint[0] !== '/') {
+    endpoint = '/' + endpoint;
+  }
+  var url = 'http://' + this.proxyHost + ':' + this.proxyPort + endpoint;
+  exports.doRequest(url, method, data ? data : '', cb);
 };
 
 exports.parseExecuteResponse = function(response, cb) {

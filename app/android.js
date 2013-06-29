@@ -45,7 +45,7 @@ var Android = function(opts) {
     , browserName: 'Android'
     , version: '4.1'
     , webStorageEnabled: false
-    , takesScreenshots: true
+    , takesScreenshot: true
     , javascriptEnabled: true
     , databaseEnabled: false
   };

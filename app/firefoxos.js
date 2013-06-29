@@ -36,7 +36,7 @@ var Firefox = function(opts) {
     , browserName: 'FirefoxOS'
     , version: '18.0'
     , webStorageEnabled: false
-    , takesScreenshots: true
+    , takesScreenshot: true
     , javascriptEnabled: true
     , databaseEnabled: false
   };

@@ -478,15 +478,25 @@ Android.prototype.getCssProperty = function(elementId, propertyName, cb) {
 
 Android.prototype.getPageSource = function(cb) {
   var me = this;
-  var xmlFile = '/tmp/dump.xml';
+  var xmlFile = temp.path({suffix: '.xml'});
   var jsonFile = xmlFile + '.json';
   var json = '';
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
             logger.debug('getPageSource command: ' + cmd);
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
+          },
+          function(cb) {
+            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            logger.debug('transferPageSource command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
                 logger.warn(stderr);
@@ -509,6 +519,8 @@ Android.prototype.getPageSource = function(cb) {
           },
           function(cb) {
             json = fs.readFileSync(jsonFile, 'utf8');
+            fs.unlinkSync(jsonFile);
+            fs.unlinkSync(xmlFile);
             cb(null);
           }
         ],
@@ -523,12 +535,11 @@ Android.prototype.getPageSource = function(cb) {
 
 Android.prototype.getPageSourceXML = function(cb) {
   var me = this;
-  var xmlFile = '/tmp/dump.xml';
+  var xmlFile = temp.path({suffix: '.xml'});
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
             logger.debug('getPageSourceXML command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -537,11 +548,24 @@ Android.prototype.getPageSourceXML = function(cb) {
               }
               cb(null);
             });
+          },
+          function(cb) {
+            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            logger.debug('transferPageSourceXML command: ' + cmd);
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
           }
+
         ],
         // Top level cb
         function(){
           var xml = fs.readFileSync(xmlFile, 'utf8');
+          fs.unlinkSync(xmlFile);
           cb(null, {
                status: status.codes.Success.code
                , value: xml

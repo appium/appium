@@ -495,7 +495,7 @@ Android.prototype.getPageSource = function(cb) {
             });
           },
           function(cb) {
-            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
             logger.debug('transferPageSource command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -507,7 +507,7 @@ Android.prototype.getPageSource = function(cb) {
           },
           function(cb) {
             var jar = path.resolve(__dirname, '../app/android/dump2json.jar');
-            var cmd = 'java -jar "' + jar + '" ' + xmlFile;
+            var cmd = 'java -jar "' + jar + '" "' + xmlFile + '"';
             logger.debug('json command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -550,7 +550,7 @@ Android.prototype.getPageSourceXML = function(cb) {
             });
           },
           function(cb) {
-            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
             logger.debug('transferPageSourceXML command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {

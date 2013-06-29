@@ -237,6 +237,7 @@ Firefox.prototype.notImplementedCmds = function() {
     , 'fireEvent'
     , 'complexTap'
     , 'flick'
+    , 'touchLongClick'
     , 'getPageSourceXML'
     , 'swipe'
     , 'hideKeyboard'

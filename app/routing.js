@@ -114,6 +114,8 @@ module.exports = function(appium) {
   rest.get('/wd/hub/session/:sessionId/screenshot', controller.getScreenshot);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/element', controller.findElementFromElement);
   rest.post('/wd/hub/session/:sessionId?/element/:elementId?/elements', controller.findElementsFromElement);
+  rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);
+  rest.post('/wd/hub/session/:sessionId?/touch/longclick', controller.touchLongClick);
   rest.post('/wd/hub/session/:sessionId/touch/flick', controller.pickAFlickMethod);
   rest.post('/wd/hub/session/:sessionId?/url', controller.postUrl);
   rest.get('/wd/hub/session/:sessionId?/url', controller.getUrl);
@@ -181,13 +183,11 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/buttondown', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/buttonup', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/doubleclick', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);
   rest.post('/wd/hub/session/:sessionId?/touch/down', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/up', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/move', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/scroll', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/doubleclick', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/touch/longclick', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/location', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);

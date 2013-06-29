@@ -363,6 +363,10 @@ Android.prototype.click = function(elementId, cb) {
   this.proxy(["element:click", {elementId: elementId}], cb);
 };
 
+Android.prototype.touchLongClick = function(elementId, cb) {
+  this.proxy(["element:touchLongClick", {elementId: elementId}], cb);
+};
+
 Android.prototype.fireEvent = function(evt, elementId, value, cb) {
   cb(new NotYetImplementedError(), null);
 };

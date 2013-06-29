@@ -35,6 +35,10 @@ public class AndroidElement {
     return el.click();
   }
 
+  public boolean longClick() throws UiObjectNotFoundException {
+    return el.longClick();
+  }
+
   public Point getAbsolutePosition(final Double X, final Double Y)
       throws UiObjectNotFoundException, InvalidCoordinatesException {
     final Point point = new Point(X, Y);
@@ -166,5 +170,4 @@ public class AndroidElement {
   public boolean setText(final String text) throws UiObjectNotFoundException {
     return el.setText(text);
   }
-
 }

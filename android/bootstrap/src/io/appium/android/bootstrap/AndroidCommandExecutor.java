@@ -13,6 +13,7 @@ import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
+import io.appium.android.bootstrap.handler.TouchLongClick;
 import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Wake;
 
@@ -36,6 +37,7 @@ class AndroidCommandExecutor {
     map.put("swipe", new Swipe());
     map.put("flick", new Flick());
     map.put("click", new Click());
+    map.put("touchLongClick", new TouchLongClick());
     map.put("getText", new GetText());
     map.put("setText", new SetText());
     map.put("getName", new GetName());
@@ -49,7 +51,7 @@ class AndroidCommandExecutor {
   /**
    * Gets the handler out of the map, and executes the command.
    * 
-   * @param command
+   * @param command The {@link AndroidCommand}
    * @return {@link AndroidCommandResult}
    * @throws AndroidCommandException
    */

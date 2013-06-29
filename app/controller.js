@@ -278,6 +278,13 @@ exports.doClick = function(req, res) {
   req.device.click(elementId, getResponseHandler(req, res));
 };
 
+exports.touchLongClick = function(req, res) {
+  var element = req.body.element;
+  if (checkMissingParams(res, {element: element}, true)) {
+    req.device.touchLongClick(element, getResponseHandler(req, res));
+  }
+};
+
 exports.fireEvent = function(req, res) {
   var elementId = req.body.element
     , evt = req.body.event;

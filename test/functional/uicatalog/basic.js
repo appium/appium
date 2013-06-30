@@ -37,32 +37,31 @@ describeWd('basic', function(h) {
     });
   });
   it('should confirm element is selected', function(done) {
-        h.driver.elementByXPath("text[contains(@text, 'Picker')]", function(err, el) {
-            el.click(function() {
-                h.driver.elementByXPath("button[contains(@text, 'UIPicker')]", function(err, el1) {
-                    should.not.exist(err);
-                    el1.selected(function(err, val) {
-                        should.not.exist(err);
-                        val.should.equal(true);
-                        done();
-                    });
-                });
-            });
+    h.driver.elementByXPath("text[contains(@text, 'Picker')]", function(err, el) {
+      el.click(function() {
+        h.driver.elementByXPath("button[contains(@text, 'UIPicker')]", function(err, el1) {
+          should.not.exist(err);
+          el1.selected(function(err, val) {
+            should.not.exist(err);
+            val.should.equal(true);
+            done();
+          });
         });
+      });
     });
-    it('should confirm element is not selected returns false', function(done) {
-        h.driver.elementByXPath("text[contains(@text, 'Picker')]", function(err, el) {
-            el.click(function() {
-                h.driver.elementByXPath("button[contains(@text, 'Custom')]", function(err, el1) {
-                    should.not.exist(err);
-                    el1.selected(function(err, val) {
-                        should.not.exist(err);
-                        val.should.equal(false);
-                        done();
-                    });
-                });
-            });
+  });
+  it('should confirm element is not selected returns false', function(done) {
+    h.driver.elementByXPath("text[contains(@text, 'Picker')]", function(err, el) {
+      el.click(function() {
+        h.driver.elementByXPath("button[contains(@text, 'Custom')]", function(err, el1) {
+          should.not.exist(err);
+          el1.selected(function(err, val) {
+            should.not.exist(err);
+            val.should.equal(false);
+            done();
+          });
         });
+      });
     });
-
+  });
 });

@@ -7,6 +7,7 @@ var Android = require('./android').Android
   , exec = require('child_process').exec
   , spawn = require('child_process').spawn
   , async = require('async')
+  , through = require('through')
   , adb = require('../android/adb');
 
 var ChromeAndroid = function(opts) {
@@ -51,22 +52,26 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
   this.proc = spawn(this.chromedriver, args);
   this.proc.stdout.setEncoding('utf8');
   this.proc.stderr.setEncoding('utf8');
+
   this.proc.on('error', function(err) {
     logger.error('Chromedriver process failed with error: ' + err.message);
     alreadyReturned = true;
     this.onDie();
   }.bind(this));
-  this.proc.stdout.on('data', function(data) {
+
+  this.proc.stdout.pipe(through(function(data) {
     logger.info('[CHROMEDRIVER] ' + data.trim());
-    if (data.indexOf("Started ChromeDriver") !== -1) {
+    if (!alreadyReturned && data.indexOf("Started ChromeDriver") !== -1) {
       this.chromedriverStarted = true;
       alreadyReturned = true;
       cb();
     }
-  }.bind(this));
-  this.proc.stderr.on('data', function(data) {
+  }));
+
+  this.proc.stderr.pipe(through(function(data) {
     logger.info('[CHROMEDRIVER STDERR] ' + data.trim());
-  });
+  }));
+
   this.proc.on('exit', function(code) {
     logger.info("Chromedriver exited with code " + code);
     alreadyReturned = true;
@@ -75,13 +80,14 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
     }
     this.onDie();
   }.bind(this));
+
   setTimeout(function() {
     if (!alreadyReturned) {
       logger.info("We didn't hear from chromedriver in a while; let's " +
                   "assume it started OK");
       cb();
     }
-  }.bind(this), 1000);
+  }.bind(this), 500);
 };
 
 ChromeAndroid.prototype.createSession = function(cb) {

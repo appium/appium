@@ -671,8 +671,13 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
+  var act = this.appActivity,
+      activityString = act[0] === '.' ? act : '.' + act;
+  if (act.indexOf(this.appPackage) === 0) {
+    activityString = act.substring(this.appPackage.length);
+  }
   var cmd = this.adbCmd + " shell am instrument -e main_activity '" +
-            this.appPackage + "." + this.appActivity + "' " + this.appPackage +
+            this.appPackage + activityString + "' " + this.appPackage +
             ".selendroid/io.selendroid.ServerInstrumentation";
   cmd = cmd.replace(/\.+/g,'.'); // Fix pkg..activity error
   logger.info("Starting instrumentation process for selendroid with cmd: " +
@@ -1172,23 +1177,10 @@ ADB.prototype.startApp = function(cb) {
   logger.info("Starting app");
   this.requireDeviceId();
   this.requireApp();
-  var activityString = this.appActivity;
-  var hasNoPrefix = true;
-  var rootPrefixes = ['com', 'net', 'org', 'io'];
-  _.each(rootPrefixes, function(prefix) {
-    if (activityString.indexOf(prefix + ".") === 0) {
-      hasNoPrefix = false;
-    }
-  });
-
-  // Let's not break regular activities.
-  // https://github.com/appium/appium/issues/782
-  if (activityString[0] === ".") {
-    hasNoPrefix = false;
-  }
-
-  if (hasNoPrefix) {
-    activityString = "." + activityString;
+  var act = this.appActivity,
+      activityString = act[0] === '.' ? act : '.' + act;
+  if (act.indexOf(this.appPackage) === 0) {
+    activityString = act;
   }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
@@ -1251,7 +1243,9 @@ ADB.prototype.waitForNotActivity = function(cb) {
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;
-
+  if (targetActivity.indexOf(this.appPackage) === 0) {
+    targetActivity = targetActivity.substring(this.appPackage.length);
+  }
   var getFocusedApp = _.bind(function() {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {
@@ -1286,7 +1280,9 @@ ADB.prototype.waitForActivity = function(cb) {
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;
-
+  if (targetActivity.indexOf(this.appPackage) === 0) {
+    targetActivity = targetActivity.substring(this.appPackage.length);
+  }
   var getFocusedApp = _.bind(function() {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {

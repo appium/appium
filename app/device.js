@@ -84,7 +84,7 @@ exports.doRequest = function(url, method, body, contentType, cb) {
     if (typeof body === "object") {
       opts.body = JSON.stringify(body);
     } else {
-      opts.body = body;
+      opts.body = body || "";
     }
     opts.headers['Content-Length'] = opts.body.length;
   }

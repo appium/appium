@@ -128,7 +128,6 @@ Android.prototype.start = function(cb, onDie) {
                   (this.commandTimeoutMs / 1000) + "secs)");
       this.resetTimeout();
       didLaunch = true;
-      console.log(launchCb);
       launchCb(null);
     }
   }, this);

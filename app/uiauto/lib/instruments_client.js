@@ -190,13 +190,15 @@ var isAppiumApp = (function() {
 var sendResultAndGetNext = function(result) {
   curAppiumCmdId++;
   var args = ['-s', '/tmp/instruments_sock'], res
-    , binaryPath = globalPath;
+    , binaryPath = nodePath;
   if (isAppiumApp) {
     globalPath = null;
   }
   if (globalPath === null) {
-    binaryPath = nodePath;
     args.unshift(clientPath);
+  }
+  else {
+    args.unshift(globalPath);
   }
   if (typeof result !== "undefined") {
     args = args.concat(['-r', JSON.stringify(result)]);

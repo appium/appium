@@ -61,11 +61,6 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
 
   this.proc.stdout.pipe(through(function(data) {
     logger.info('[CHROMEDRIVER] ' + data.trim());
-    if (!alreadyReturned && data.indexOf("Started ChromeDriver") !== -1) {
-      this.chromedriverStarted = true;
-      alreadyReturned = true;
-      cb();
-    }
   }));
 
   this.proc.stderr.pipe(through(function(data) {
@@ -81,10 +76,11 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
     this.onDie();
   }.bind(this));
 
+  // chromedriver detects that it's not on a TTY and doesn't give any output
+  // to let us know it's started, so we just assume it started if it didn't
+  // exit
   setTimeout(function() {
     if (!alreadyReturned) {
-      logger.info("We didn't hear from chromedriver in a while; let's " +
-                  "assume it started OK");
       cb();
     }
   }.bind(this), 500);

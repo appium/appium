@@ -830,6 +830,40 @@ Android.prototype.getCurrentActivity = function(cb) {
   });
 };
 
+Android.prototype.isAppInstalled = function(appPackage, cb) {
+  var isInstalledCommand = null;
+  if (this.udid) {
+    isInstalledCommand = 'adb -s ' + this.udid + ' shell pm path ' + appPackage;
+  } else if (this.avdName) {
+    isInstalledCommand = 'adb -e shell pm path ' + appPackage;
+  }
+  deviceCommon.isAppInstalled(isInstalledCommand, cb);
+};
+
+Android.prototype.removeApp = function(appPackage, cb) {
+  var removeCommand = null;
+  if (this.udid) {
+    removeCommand = 'ADB -s ' + this.udid + ' uninstall ' + appPackage;
+  } else if (this.avdName) {
+    removeCommand = 'ADB -e uninstall ' + appPackage;
+  }
+  deviceCommon.removeApp(removeCommand, this.udid, appPackage, cb);
+};
+
+Android.prototype.installApp = function(appPackage, cb) {
+  var installationCommand = null;
+  if (this.udid) {
+    installationCommand = 'ADB -s ' + this.udid + ' install ' + appPackage;
+  } else if (this.avdName) {
+    installationCommand = 'ADB -s ' + this.avdName + ' install ' + appPackage;
+  }
+  deviceCommon.installApp(installationCommand, this.udid, appPackage, cb);
+};
+
+Android.prototype.unpackApp = function(req, cb) {
+  deviceCommon.unpackApp(req, '.apk', cb);
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };

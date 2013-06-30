@@ -3,7 +3,8 @@
 var errors = require('./errors')
   , request = require('request')
   , _ = require('underscore')
-  , logger = require('../logger').get('appium');
+  , logger = require('../logger').get('appium')
+  , exec = require('child_process').exec;
 
 var UnknownError = errors.UnknownError
   , ProtocolError = errors.ProtocolError;
@@ -85,4 +86,47 @@ exports.request = function(url, method, body, contentType, cb) {
   }
   logger.info("Making http request with opts: " + JSON.stringify(opts));
   request(opts, cb);
+};
+
+exports.isAppInstalled = function(isInstalledCommand, cb) {
+  exec(isInstalledCommand, function(error, stdout) {
+    cb(error, stdout);
+  });
+};
+
+exports.removeApp = function(removeCommand, udid, bundleId, cb) {
+  exec(removeCommand, function(error) {
+    if (error !== null) {
+      cb(error, 'Unable to un-install [' + bundleId + '] from device with id [' + udid + ']. Error [' + error + ']');
+    } else {
+      cb(error, 'Successfully un-installed [' + bundleId + '] from device with id [' + udid + ']');
+    }
+  });
+};
+
+exports.installApp = function(installationCommand, udid, unzippedAppPath, cb) {
+  exec(installationCommand, function(error) {
+    if (error !== null) {
+      cb(error, 'Unable to install [' + unzippedAppPath + '] to device with id [' + udid + ']. Error [' + error + ']');
+    } else {
+      cb(error, 'Successfully unzipped and installed [' + unzippedAppPath + '] to device with id [' + udid + ']');
+    }
+  });
+};
+
+exports.unpackApp = function(req, packageExtension, cb) {
+  var reqAppPath = req.body.appPath;
+  if (reqAppPath.toLowerCase().substring(0, 4) === "http") {
+    req.appium.downloadAndUnzipApp(reqAppPath, function(err, appPath) {
+      cb(appPath);
+    });
+  } else if (reqAppPath.toLowerCase().substring(reqAppPath.length - 4) === ".zip") {
+    req.appium.unzipLocalApp(reqAppPath, function(err, appPath) {
+      cb(appPath);
+    });
+  } else if (reqAppPath.toLowerCase().substring(reqAppPath.length - 4) === packageExtension) {
+    cb(reqAppPath.toString());
+  } else {
+    cb(null);
+  }
 };

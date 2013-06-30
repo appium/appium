@@ -155,6 +155,6 @@ Style notes
     function myFunc(a, b, c) {}
     ```
     
-*   Function is not followed by a space. Use this `function() {` not `function () {`
+*   Function is not followed by a space. Use `function() {` not `function () {`
 
 *   More to come....

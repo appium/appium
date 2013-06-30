@@ -28,7 +28,6 @@ _.extend(ChromeAndroid.prototype, Android.prototype);
 ChromeAndroid.prototype.start = function(cb, onDie) {
   this.adb = new adb(this.opts);
   this.onDie = onDie;
-    // do stuff to launch chromedriver
   async.waterfall([
     this.ensureChromedriverExists.bind(this),
     this.startChromedriver.bind(this),

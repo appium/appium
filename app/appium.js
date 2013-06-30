@@ -499,24 +499,38 @@ Appium.prototype.invoke = function() {
     }
     this.device = this.devices[this.deviceType];
 
-    this.device.start(function(err, sessionIdOverride) {
+    if (typeof this.desiredCapabilities.launch === "undefined" || this.desiredCapabilities.launch !== false ) {
+      this.device.start(function(err, sessionIdOverride) {
+        me.progress++;
+        // Ensure we don't use an undefined session.
+        if (typeof me.sessions[me.progress] === 'undefined') {
+          me.progress--;
+          return;
+        }
+        if (sessionIdOverride) {
+          me.sessionId = sessionIdOverride;
+          logger.info("Overriding session id with " + sessionIdOverride);
+        }
+
+        me.sessions[me.progress].sessionId = me.sessionId;
+        me.sessions[me.progress].callback(err, me.device);
+        if (err) {
+          me.onDeviceDie(1);
+        }
+      }, _.bind(me.onDeviceDie, me));
+    } else {
+      //required if we dont want to launch the app, but we do want a session.
       me.progress++;
       // Ensure we don't use an undefined session.
       if (typeof me.sessions[me.progress] === 'undefined') {
         me.progress--;
         return;
       }
-      if (sessionIdOverride) {
-        me.sessionId = sessionIdOverride;
-        logger.info("Overriding session id with " + sessionIdOverride);
-      }
 
       me.sessions[me.progress].sessionId = me.sessionId;
-      me.sessions[me.progress].callback(err, me.device);
-      if (err) {
-        me.onDeviceDie(1);
-      }
-    }, _.bind(me.onDeviceDie, me));
+      me.sessions[me.progress].callback(null, me.device);
+    }
+
   }
 };
 

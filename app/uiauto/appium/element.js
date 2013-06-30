@@ -172,6 +172,13 @@ UIAElement.prototype.isDisplayed = function() {
   };
 };
 
+UIAElement.prototype.isSelected = function() {
+  return {
+    status: codes.Success.code,
+    value: this.value() === 1
+  };
+};
+
 // does a flick from a center of a specified element (use case: sliders)
 UIAElement.prototype.touchFlick = function(xoffset, yoffset) {
   var options = {

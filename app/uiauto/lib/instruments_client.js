@@ -196,8 +196,7 @@ var sendResultAndGetNext = function(result) {
   }
   if (globalPath === null) {
     args.unshift(clientPath);
-  }
-  else {
+  } else {
     args.unshift(globalPath);
   }
   if (typeof result !== "undefined") {

@@ -6,7 +6,7 @@ Credits
 * [Apple UIAutomation](http://developer.apple.com/library/ios/#documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
 * [GhostDriver](https://github.com/detro/ghostdriver)
 * [IOS Auto](https://github.com/penguinho/applecart)
-* [IOS Driver](https://github.com/freynaud/ios-driver)
+* [IOS Driver](https://github.com/ios-driver/ios-driver)
 * [Mechanic.js](https://github.com/jaykz52/mechanic)
 * [node-webkit](https://github.com/rogerwang/node-webkit)
 * [Remote Debug](https://github.com/leftlogic/remote-debug)

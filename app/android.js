@@ -15,7 +15,9 @@ var errors = require('./errors')
   , temp = require('temp')
   , async = require('async')
   , path = require('path')
-  , UnknownError = errors.UnknownError;
+  , UnknownError = errors.UnknownError
+  , helpers = require('./helpers')
+  , isWindows = helpers.isWindows();
 
 var Android = function(opts) {
   this.rest = opts.rest;
@@ -611,27 +613,32 @@ Android.prototype.setOrientation = function(orientation, cb) {
 
 Android.prototype.getScreenshot = function(cb) {
   var me = this;
-  var localfile = "/tmp/" + path.basename(temp.path({prefix: 'appium', suffix: '.png'}));
+  var localfile = temp.path({prefix: 'appium', suffix: '.png'});
   var b64data = "";
-  var jar = path.resolve(__dirname, '../app/android/ScreenShooter.jar');
-  var jarpath = path.resolve(process.env.ANDROID_HOME, "tools/lib");
+  var jar = path.resolve(__dirname, '..', 'app', 'android', 'ScreenShooter.jar');
+  var jarpath = path.resolve(process.env.ANDROID_HOME, "tools", "lib");
   var classpath = "";
 
   async.series([
     function(cb) {
-      exec('uname -m', { maxBuffer: 524288 }, function (error, stdout, stderr) {
-        if (error) {
-          cb(error);
-        } else {
-          classpath = jarpath + "/ddmlib.jar:" + jarpath + "/" + stdout.trim() + "/swt.jar:" + jar;
-          cb(null);
-        }
-      });
+      if (isWindows) {
+        classpath = path.resolve(jarpath, "ddmlib.jar") + ";" + path.resolve(jarpath, "x86", "swt.jar") + ";" + jar;
+        cb(null);
+      } else {
+        exec('uname -m', { maxBuffer: 524288 }, function (error, stdout, stderr) {
+          if (error) {
+            cb(error);
+          } else {
+            classpath = path.resolve(jarpath, "ddmlib.jar") + ":" + path.resolve(jarpath, stdout.trim(), "swt.jar") + ":" + jar;
+            cb(null);
+          }
+        });
+      }
     },
     function(cb) {
       var javaCmd = 'java -classpath "' + classpath + '" io.appium.android.screenshooter.ScreenShooter ';
 
-      var cmd = javaCmd + me.adb.curDeviceId + " '" + localfile + "'";
+      var cmd = javaCmd + me.adb.curDeviceId + ' "' + localfile + '"';
       logger.debug("screenshot cmd: " + cmd);
       exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         if (err) {

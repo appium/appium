@@ -613,6 +613,7 @@ Android.prototype.setOrientation = function(orientation, cb) {
 
 Android.prototype.getScreenshot = function(cb) {
   var me = this;
+  me.adb.requireDeviceId();
   var localfile = temp.path({prefix: 'appium', suffix: '.png'});
   var b64data = "";
   var jar = path.resolve(__dirname, '..', 'app', 'android', 'ScreenShooter.jar');

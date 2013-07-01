@@ -95,7 +95,9 @@ reset_ios() {
     fi
     echo "* Setting iOS config to Appium's version"
     run_cmd $grunt setConfigVer:ios
-    echo "* making fruitstrap"
+    echo "* Cloning/updating fruitstrap"
+    run_cmd git submodule update --init submodules/fruitstrap
+    echo "* Making fruitstrap"
     run_cmd cd $appium_home/submodules/fruitstrap/
     run_cmd make fruitstrap
     run_cmd cd $appium_home/

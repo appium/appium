@@ -598,9 +598,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { me.wakeUp(cb); },
     function(cb) { me.unlockScreen(cb); },
     function(cb) { me.startApp(cb); }
-  ], function(err) {
-    onReady(err);
-  });
+  ], onReady);
 };
 
 ADB.prototype.startChrome = function(onReady) {
@@ -612,10 +610,7 @@ ADB.prototype.startChrome = function(onReady) {
     function(cb) { me.prepareDevice(cb); },
     function(cb) { me.installApp(cb); },
     function(cb) { me.startApp(cb); }
-  ], function(err) {
-    if (err) return onReady(err);
-    onReady(null);
-  });
+  ], onReady);
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {

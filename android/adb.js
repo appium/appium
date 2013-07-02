@@ -79,7 +79,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     if (binaryName === "android") {
       binaryName += ".bat";
     } else {
-      if (binaryName.indexOf(".exe", binaryName.length - 4) == -1) {
+      if (binaryName.indexOf(".exe", binaryName.length - 4) === -1) {
         binaryName += ".exe";
       }
     }

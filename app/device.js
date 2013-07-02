@@ -3,8 +3,9 @@
 var errors = require('./errors')
   , request = require('request')
   , _ = require('underscore')
-  , logger = require('../logger').get('appium')
-  , exec = require('child_process').exec;
+  , exec = require('child_process').exec
+  , status = require("./uiauto/lib/status")
+  , logger = require('../logger').get('appium');
 
 var UnknownError = errors.UnknownError
   , ProtocolError = errors.ProtocolError;
@@ -61,29 +62,36 @@ exports.waitForCondition = function(waitMs, condFn, cb, intervalMs) {
   spin();
 };
 
-exports.request = function(url, method, body, contentType, cb) {
+exports.doRequest = function(url, method, body, contentType, cb) {
   if (typeof cb === "undefined" && typeof contentType === "function") {
     cb = contentType;
     contentType = null;
   }
   if (typeof contentType === "undefined" || contentType === null) {
-    contentType = "application/json";
+    contentType = "application/json;charset=UTF-8";
   }
   if (!(/^https?:\/\//.exec(url))) {
     url = 'http://' + url;
   }
+  var host = /^https?:\/\/([^\/]+)/.exec(url)[1];
   var opts = {
     url: url
     , method: method
-    , headers: {'Content-Type': contentType}
+    , jar: false
   };
+  opts.headers = {};
   if (_.contains(['put', 'post', 'patch'], method.toLowerCase())) {
-    if (typeof body !== "string") {
-      opts.json = body;
+    if (typeof body === "object") {
+      opts.body = JSON.stringify(body);
     } else {
-      opts.body = body;
+      opts.body = body || "";
     }
+    opts.headers['Content-Length'] = opts.body.length;
   }
+  // explicitly set these headers with correct capitalization to work around
+  // an issue in node/requests
+  opts.headers['Content-Type'] = contentType;
+  opts.headers.Host = host;
   logger.info("Making http request with opts: " + JSON.stringify(opts));
   request(opts, cb);
 };
@@ -130,3 +138,103 @@ exports.unpackApp = function(req, packageExtension, cb) {
     cb(null);
   }
 };
+
+exports.proxyTo = function(endpoint, method, data, cb) {
+  if (endpoint[0] !== '/') {
+    endpoint = '/' + endpoint;
+  }
+  var url = 'http://' + this.proxyHost + ':' + this.proxyPort + endpoint;
+  exports.doRequest(url, method, data ? data : '', cb);
+};
+
+exports.parseExecuteResponse = function(response, cb) {
+  if ((response.value !== null) && (typeof response.value !== "undefined")) {
+    var wdElement = null;
+    if (!_.isArray(response.value)) {
+      if (typeof response.value.ELEMENT !== "undefined") {
+        wdElement = response.value.ELEMENT;
+        wdElement = this.parseElementResponse(response.value);
+        if (wdElement === null) {
+          cb(null, {
+            status: status.codes.UnknownError.code
+            , value: "Error converting element ID atom for using in WD: " + response.value.ELEMENT
+          });
+        }
+        response.value = wdElement;
+      }
+    } else {
+      var args = response.value;
+      for (var i=0; i < args.length; i++) {
+        wdElement = args[i];
+        if ((args[i] !== null) && (typeof args[i].ELEMENT !== "undefined")) {
+          wdElement = this.parseElementResponse(args[i]);
+          if (wdElement === null) {
+            cb(null, {
+              status: status.codes.UnknownError.code
+              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
+            });
+            return;
+          }
+        args[i] = wdElement;
+        }
+      }
+      response.value = args;
+    }
+  }
+  return response;
+};
+
+exports.parseElementResponse = function(element) {
+  var objId = element.ELEMENT
+    , clientId = (5000 + this.webElementIds.length).toString();
+  this.webElementIds.push(objId);
+  return {ELEMENT: clientId};
+};
+
+exports.getAtomsElement = function(wdId) {
+  var atomsId;
+  try {
+    atomsId = this.webElementIds[parseInt(wdId, 10) - 5000];
+  } catch(e) {
+    return null;
+  }
+  if (typeof atomsId === "undefined") {
+    return null;
+  }
+  return {'ELEMENT': atomsId};
+};
+
+exports.useAtomsElement = function(elementId, failCb, cb) {
+  if (parseInt(elementId, 10) < 5000) {
+    logger.info("Element with id " + elementId + " passed in for use with " +
+                "atoms, but it's out of our internal scope. Adding 5000");
+    elementId = (parseInt(elementId, 10) + 5000).toString();
+  }
+  var atomsElement = this.getAtomsElement(elementId);
+  if (atomsElement === null) {
+    failCb(null, {
+      status: status.codes.UnknownError.code
+      , value: "Error converting element ID for using in WD atoms: " + elementId
+    });
+  } else {
+    cb(atomsElement);
+  }
+};
+
+exports.convertElementForAtoms = function(args, cb) {
+  for (var i=0; i < args.length; i++) {
+    if (args[i] !== null && typeof args[i].ELEMENT !== "undefined") {
+      var atomsElement = this.getAtomsElement(args[i].ELEMENT);
+      if (atomsElement === null) {
+        cb(true, {
+          status: status.codes.UnknownError.code
+          , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
+        });
+      return;
+      }
+      args[i] = atomsElement;
+    }
+  }
+  cb(null, args);
+};
+

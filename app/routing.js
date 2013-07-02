@@ -1,7 +1,7 @@
 "use strict";
 var controller = require('./controller')
   , respondError = require('./controller').respondError
-  , request = require('./device').request
+  , doRequest = require('./device').doRequest
   , _ = require('underscore')
   , _s = require("underscore.string")
   , logger = require('../logger').get('appium');
@@ -48,7 +48,7 @@ module.exports = function(appium) {
                    req.device.proxyPort);
       var url = 'http://' + req.device.proxyHost + ':' + req.device.proxyPort +
                 req.originalUrl;
-      request(url, req.route.method.toUpperCase(), req.body,
+      doRequest(url, req.route.method.toUpperCase(), req.body,
               req.headers['content-type'], function(err, response, body) {
         if (err) return next(err);
         if (body && body.value) {

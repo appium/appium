@@ -359,7 +359,7 @@ IOS.prototype.cleanupAppState = function(cb) {
         });
       } else {
         logger.info("No plist files found to remove");
-	if (me.realDevice) {
+        if (me.realDevice) {
           me.realDevice.remove(me.bundleId, function (err) {
             if (err) {
               logger.error("Could not remove " + me.bundleId + " from device");
@@ -522,18 +522,7 @@ IOS.prototype.onPageChange = function(pageArray) {
   this.windowHandleCache = _.map(pageArray, this.massagePage);
 };
 
-IOS.prototype.getAtomsElement = function(wdId) {
-  var atomsId;
-  try {
-    atomsId = this.webElementIds[parseInt(wdId, 10) - 5000];
-  } catch(e) {
-    return null;
-  }
-  if (typeof atomsId === "undefined") {
-    return null;
-  }
-  return {'ELEMENT': atomsId};
-};
+IOS.prototype.getAtomsElement = deviceCommon.getAtomsElement;
 
 IOS.prototype.stopRemote = function() {
   if (!this.remote) {
@@ -811,22 +800,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
   }
 };
 
-IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
-  if (parseInt(elementId, 10) < 5000) {
-    logger.info("Element with id " + elementId + " passed in for use with " +
-                "atoms, but it's out of our internal scope. Adding 5000");
-    elementId = (parseInt(elementId, 10) + 5000).toString();
-  }
-  var atomsElement = this.getAtomsElement(elementId);
-  if (atomsElement === null) {
-    failCb(null, {
-      status: status.codes.UnknownError.code
-      , value: "Error converting element ID for using in WD atoms: " + elementId
-    });
-  } else {
-    cb(atomsElement);
-  }
-};
+IOS.prototype.useAtomsElement = deviceCommon.useAtomsElement;
 
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
@@ -914,49 +888,8 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
   }
 };
 
-IOS.prototype.parseElementResponse = function(element) {
-  var objId = element.ELEMENT
-  , clientId = (5000 + this.webElementIds.length).toString();
-  this.webElementIds.push(objId);
-  return {ELEMENT: clientId};
-};
-
-IOS.prototype.parseExecuteResponse = function(response, cb) {
-  if ((response.value !== null) && (typeof response.value !== "undefined")) {
-    var wdElement = null;
-    if (!_.isArray(response.value)) {
-      if (typeof response.value.ELEMENT !== "undefined") {
-        wdElement = response.value.ELEMENT;
-        wdElement = this.parseElementResponse(response.value);
-        if (wdElement === null) {
-          cb(null, {
-            status: status.codes.UnknownError.code
-            , value: "Error converting element ID atom for using in WD: " + response.value.ELEMENT
-          });
-        }
-        response.value = wdElement;
-      }
-    } else {
-      var args = response.value;
-      for (var i=0; i < args.length; i++) {
-        wdElement = args[i];
-        if ((args[i] !== null) && (typeof args[i].ELEMENT !== "undefined")) {
-          wdElement = this.parseElementResponse(args[i]);
-          if (wdElement === null) {
-            cb(null, {
-              status: status.codes.UnknownError.code
-              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
-            });
-            return;
-          }
-        args[i] = wdElement;
-        }
-      }
-      response.value = args;
-    }
-  }
-  return response;
-};
+IOS.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
+IOS.prototype.parseElementResponse = deviceCommon.parseElementResponse;
 
 IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
   var me = this;
@@ -1850,22 +1783,7 @@ IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
   }
 };
 
-IOS.prototype.convertElementForAtoms = function(args, cb) {
-  for (var i=0; i < args.length; i++) {
-    if (args[i] !== null && typeof args[i].ELEMENT !== "undefined") {
-      var atomsElement = this.getAtomsElement(args[i].ELEMENT);
-      if (atomsElement === null) {
-        cb(true, {
-          status: status.codes.UnknownError.code
-          , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
-        });
-      return;
-      }
-      args[i] = atomsElement;
-    }
-  }
-  cb(null, args);
-};
+IOS.prototype.convertElementForAtoms = deviceCommon.convertElementForAtoms;
 
 IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {

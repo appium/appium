@@ -1509,7 +1509,8 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   this.proxy(command, cb);
 };
 
-IOS.prototype.scrollTo = function(elementId, cb) {
+IOS.prototype.scrollTo = function(elementId, text, cb) {
+    // we ignore text for iOS, as the element is the one being scrolled too
     var command = ["au.getElement('", elementId, "').scrollToVisible()"].join('');
     this.proxy(command, cb);
 };

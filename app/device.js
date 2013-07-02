@@ -93,7 +93,14 @@ exports.doRequest = function(url, method, body, contentType, cb) {
   opts.headers['Content-Type'] = contentType;
   opts.headers.Host = host;
   logger.info("Making http request with opts: " + JSON.stringify(opts));
-  request(opts, cb);
+  request(opts, function(err, res, body) {
+    if (typeof body !== "undfined") {
+      try {
+        body = JSON.parse(body);
+      } catch(e) {}
+    }
+    cb(err, res, body);
+  });
 };
 
 exports.isAppInstalled = function(isInstalledCommand, cb) {

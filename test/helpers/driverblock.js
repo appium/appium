@@ -8,7 +8,7 @@ var wd = require('wd')
   , path = require("path")
   , should = require("should")
   , defaultHost = '127.0.0.1'
-  , defaultPort = 4723
+  , defaultPort = process.env.APPIUM_PORT || 4723
   , defaultCaps = {
       browserName: ''
       , device: 'iPhone Simulator'

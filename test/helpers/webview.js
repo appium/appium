@@ -4,8 +4,9 @@
 var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
   , describeChrome = driverBlock.describeForChrome()
-  , testEndpoint = 'http://localhost:4723/test/'
-  , chromeEndpoint = 'http://10.0.2.2:4723/test/'
+  , appiumPort = process.env.APPIUM_PORT || 4723
+  , testEndpoint = 'http://localhost:' + appiumPort + '/test/'
+  , chromeEndpoint = 'http://10.0.2.2:' + appiumPort + '/test/'
   , guinea = testEndpoint + 'guinea-pig'
   , chromeGuinea = chromeEndpoint + 'guinea-pig'
   , _ = require('underscore')

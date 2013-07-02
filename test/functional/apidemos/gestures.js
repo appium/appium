@@ -119,3 +119,36 @@ describeWd('gestures', function(h) {
     });
   });
 });
+  
+describeWd('scroll to element', function(h) {
+  it('should bring the element into view', function(done) {
+    h.driver.elementsByTagName('textView', function(err, els) {
+      should.not.exist(err);
+      var el = els[els.length-1];
+      el.click(function(err) {
+        should.not.exist(err);
+        h.driver.elementByTagName('listView', function(err, el) {
+          should.not.exist(err);
+          var scrollOpts = {
+            element: el.value
+            , text: 'Switches'
+          };
+          var next = function() {
+            h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+              should.not.exist(err);
+              h.driver.elementByName('Switches', function(err, el) {
+                should.not.exist(err);
+                el.getAttribute('name', function(err, text) {
+                  should.not.exist(err);
+                  text.should.equal("Switches");
+                  done();
+                });
+              });
+            });
+          };
+          setTimeout(next, 3000);
+        });
+      });
+    });
+  });
+});

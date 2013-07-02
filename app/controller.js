@@ -471,8 +471,14 @@ exports.mobileSwipe = function(req, res) {
 };
 
 exports.mobileScrollTo = function(req, res) {
-  var elementId = req.body.element;
-  req.device.scrollTo(elementId, getResponseHandler(req, res));
+  req.body = _.defaults(req.body, {
+    element: null
+    , text: null
+  });
+  var element = req.body.element
+    , text = req.body.text;
+
+  req.device.scrollTo(element, text, getResponseHandler(req, res));
 };
 
 exports.mobileShake = function(req, res) {

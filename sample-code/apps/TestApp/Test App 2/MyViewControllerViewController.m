@@ -81,6 +81,12 @@
 	[computeSumButton release];
     [super dealloc];
 }
+- (IBAction)testGesture:(id)sender
+{
+    GestureTestViewController *test = [[GestureTestViewController alloc]  initWithNibName:@"GestureTestViewController" bundle:nil];
+    [self presentViewController:test animated:YES completion:NULL];
+}
+
 - (IBAction)computeAction:(id)sender {
 	int a = [[firstArg text] intValue];
 	int b = [[secondArg text] intValue];

@@ -27,6 +27,10 @@ public class AndroidElement {
     el = uiObj;
   }
 
+  public UiObject getUiObject() {
+    return this.el;
+  }
+
   public void clearText() throws UiObjectNotFoundException {
     el.clearTextField();
   }

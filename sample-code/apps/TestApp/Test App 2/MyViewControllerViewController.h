@@ -20,12 +20,14 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "GestureTestViewController.h"
 
 @interface MyViewControllerViewController : UIViewController <UITextFieldDelegate>
 @property (retain, nonatomic) IBOutlet UITextField *firstArg;
 @property (retain, nonatomic) IBOutlet UITextField *secondArg;
 @property (retain, nonatomic) IBOutlet UILabel *answerLabel;
 @property (retain, nonatomic) IBOutlet UIButton *computeSumButton;
+- (IBAction)testGesture:(id)sender;
 
 - (IBAction)computeAction:(id)sender;
 - (IBAction)showAlert:(id)sender;

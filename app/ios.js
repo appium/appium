@@ -38,6 +38,7 @@ var IOS = function(args) {
   this.withoutDelay = args.withoutDelay;
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
+  this.useLocationServices = args.useLocationServices;
   this.deviceType = args.deviceType;
   this.startingOrientation = args.startingOrientation || "PORTRAIT";
   this.curOrientation = this.startingOrientation;
@@ -113,6 +114,11 @@ IOS.prototype.start = function(cb, onDie) {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
+    var setLocationServicesPref = function(oCb) {
+      var cmd = "setBootstrapConfig: useLocationServices=" +
+                JSON.stringify(me.useLocationServices);
+      me.proxy(cmd, oCb);
+    };
     var navToWebview = function() {
       if (me.autoWebview) {
         me.navToFirstAvailWebview(cb);
@@ -139,7 +145,9 @@ IOS.prototype.start = function(cb, onDie) {
     };
     var next = function() {
       setOrientation(function() {
-        navToWebview();
+        setLocationServicesPref(function() {
+          navToWebview();
+        });
       });
     };
     if (me.bundleId !== null) {
@@ -359,7 +367,7 @@ IOS.prototype.cleanupAppState = function(cb) {
         });
       } else {
         logger.info("No plist files found to remove");
-	if (me.realDevice) {
+        if (me.realDevice) {
           me.realDevice.remove(me.bundleId, function (err) {
             if (err) {
               logger.error("Could not remove " + me.bundleId + " from device");
@@ -522,18 +530,7 @@ IOS.prototype.onPageChange = function(pageArray) {
   this.windowHandleCache = _.map(pageArray, this.massagePage);
 };
 
-IOS.prototype.getAtomsElement = function(wdId) {
-  var atomsId;
-  try {
-    atomsId = this.webElementIds[parseInt(wdId, 10) - 5000];
-  } catch(e) {
-    return null;
-  }
-  if (typeof atomsId === "undefined") {
-    return null;
-  }
-  return {'ELEMENT': atomsId};
-};
+IOS.prototype.getAtomsElement = deviceCommon.getAtomsElement;
 
 IOS.prototype.stopRemote = function() {
   if (!this.remote) {
@@ -593,19 +590,6 @@ IOS.prototype.push = function(elem) {
   var me = this;
 
   var next = function() {
-    if (me.selectingNewPage && me.curWindowHandle) {
-      logger.info("We're in the middle of selecting a new page, " +
-                  "waiting to run next command until done");
-      setTimeout(next, 500);
-      return;
-    } else if (me.curWindowHandle && me.processingRemoteCmd &&
-               elem !== "au.alertIsPresent()") {
-      logger.info("We're in the middle of processing a remote debugger " +
-                  "command, waiting to run next command until done");
-      setTimeout(next, 500);
-      return;
-    }
-
     if (me.queue.length <= 0 || me.progress > 0) {
       return;
     }
@@ -613,6 +597,31 @@ IOS.prototype.push = function(elem) {
     var target = me.queue.shift()
     , command = target[0]
     , cb = target[1];
+
+    if (me.selectingNewPage && me.curWindowHandle) {
+      logger.info("We're in the middle of selecting a new page, " +
+                  "waiting to run next command until done");
+      setTimeout(next, 500);
+      me.queue.unshift(target);
+      return;
+    } else if (me.curWindowHandle && me.processingRemoteCmd) {
+      var matches = ["au.alertIsPresent", "au.getAlertText", "au.acceptAlert",
+                     "au.dismissAlert", "au.setAlertText",
+                     "au.waitForAlertToClose"];
+      var matched = false;
+      _.each(matches, function(match) {
+        if (command.indexOf(match) === 0) {
+          matched = true;
+        }
+      });
+      if (!matched) {
+        logger.info("We're in the middle of processing a remote debugger " +
+                    "command, waiting to run next command until done");
+        setTimeout(next, 500);
+        me.queue.unshift(target);
+        return;
+      }
+    }
 
     me.cbForCurrentCmd = cb;
 
@@ -811,22 +820,7 @@ IOS.prototype.setValue = function(elementId, value, cb) {
   }
 };
 
-IOS.prototype.useAtomsElement = function(elementId, failCb, cb) {
-  if (parseInt(elementId, 10) < 5000) {
-    logger.info("Element with id " + elementId + " passed in for use with " +
-                "atoms, but it's out of our internal scope. Adding 5000");
-    elementId = (parseInt(elementId, 10) + 5000).toString();
-  }
-  var atomsElement = this.getAtomsElement(elementId);
-  if (atomsElement === null) {
-    failCb(null, {
-      status: status.codes.UnknownError.code
-      , value: "Error converting element ID for using in WD atoms: " + elementId
-    });
-  } else {
-    cb(atomsElement);
-  }
-};
+IOS.prototype.useAtomsElement = deviceCommon.useAtomsElement;
 
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
@@ -914,49 +908,8 @@ IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
   }
 };
 
-IOS.prototype.parseElementResponse = function(element) {
-  var objId = element.ELEMENT
-  , clientId = (5000 + this.webElementIds.length).toString();
-  this.webElementIds.push(objId);
-  return {ELEMENT: clientId};
-};
-
-IOS.prototype.parseExecuteResponse = function(response, cb) {
-  if ((response.value !== null) && (typeof response.value !== "undefined")) {
-    var wdElement = null;
-    if (!_.isArray(response.value)) {
-      if (typeof response.value.ELEMENT !== "undefined") {
-        wdElement = response.value.ELEMENT;
-        wdElement = this.parseElementResponse(response.value);
-        if (wdElement === null) {
-          cb(null, {
-            status: status.codes.UnknownError.code
-            , value: "Error converting element ID atom for using in WD: " + response.value.ELEMENT
-          });
-        }
-        response.value = wdElement;
-      }
-    } else {
-      var args = response.value;
-      for (var i=0; i < args.length; i++) {
-        wdElement = args[i];
-        if ((args[i] !== null) && (typeof args[i].ELEMENT !== "undefined")) {
-          wdElement = this.parseElementResponse(args[i]);
-          if (wdElement === null) {
-            cb(null, {
-              status: status.codes.UnknownError.code
-              , value: "Error converting element ID atom for using in WD: " + args[i].ELEMENT
-            });
-            return;
-          }
-        args[i] = wdElement;
-        }
-      }
-      response.value = args;
-    }
-  }
-  return response;
-};
+IOS.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
+IOS.prototype.parseElementResponse = deviceCommon.parseElementResponse;
 
 IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
   var me = this;
@@ -1374,7 +1327,7 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
       this.executeAtom('is_enabled', [atomsElement], cb);
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
+    var command = ["au.getElement('", elementId, "').isEnabled() === 1"].join('');
     this.proxy(command, cb);
   }
 };
@@ -1564,6 +1517,18 @@ IOS.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount,
   });
 };
 
+IOS.prototype.rotate = function(x, y, radius, rotation, duration, touchCount, elId, cb) {
+  var command;
+  var location = {'x' : x, 'y' : y};
+  var options = {'duration' : duration, 'radius' : radius, 'rotation' : rotation, 'touchCount' : touchCount};
+  if (elId) {
+    command = ["au.getElement('", elId, "').rotateWithOptions("+ JSON.stringify(location) + "," + JSON.stringify(options) + ")"];
+	this.proxy(command, cb);
+  } else {
+    this.proxy("target.rotateWithOptions("+ JSON.stringify(location) + "," + JSON.stringify(options) + ")", cb);
+  }
+};
+
 IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
   var command;
   if (elId) {
@@ -1576,7 +1541,8 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   this.proxy(command, cb);
 };
 
-IOS.prototype.scrollTo = function(elementId, cb) {
+IOS.prototype.scrollTo = function(elementId, text, cb) {
+    // we ignore text for iOS, as the element is the one being scrolled too
     var command = ["au.getElement('", elementId, "').scrollToVisible()"].join('');
     this.proxy(command, cb);
 };
@@ -1850,22 +1816,7 @@ IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
   }
 };
 
-IOS.prototype.convertElementForAtoms = function(args, cb) {
-  for (var i=0; i < args.length; i++) {
-    if (args[i] !== null && typeof args[i].ELEMENT !== "undefined") {
-      var atomsElement = this.getAtomsElement(args[i].ELEMENT);
-      if (atomsElement === null) {
-        cb(true, {
-          status: status.codes.UnknownError.code
-          , value: "Error converting element ID for using in WD atoms: " + args[i].ELEMENT
-        });
-      return;
-      }
-      args[i] = atomsElement;
-    }
-  }
-  cb(null, args);
-};
+IOS.prototype.convertElementForAtoms = deviceCommon.convertElementForAtoms;
 
 IOS.prototype.title = function(cb) {
   if (this.curWindowHandle === null) {
@@ -2023,17 +1974,17 @@ IOS.prototype.getCurrentActivity= function(cb) {
 };
 
 IOS.prototype.isAppInstalled = function(bundleId, cb) {
-  var isInstalledCommand = './submodules/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
+  var isInstalledCommand = 'build/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
   deviceCommon.isAppInstalled(isInstalledCommand, cb);
 };
 
 IOS.prototype.removeApp = function(bundleId, cb) {
-  var removeCommand = './submodules/fruitstrap/fruitstrap uninstall --id ' + this.udid + ' --bundle ' + bundleId;
+  var removeCommand = 'build/fruitstrap/fruitstrap uninstall --id ' + this.udid + ' --bundle ' + bundleId;
   deviceCommon.removeApp(removeCommand, this.udid, bundleId, cb);
 };
 
 IOS.prototype.installApp = function(unzippedAppPath, cb) {
-  var installationCommand = './submodules/fruitstrap/fruitstrap install --id ' + this.udid + ' --bundle ' + unzippedAppPath;
+  var installationCommand = 'build/fruitstrap/fruitstrap install --id ' + this.udid + ' --bundle ' + unzippedAppPath;
   deviceCommon.installApp(installationCommand, this.udid, unzippedAppPath, cb);
 };
 

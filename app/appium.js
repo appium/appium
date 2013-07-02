@@ -13,9 +13,11 @@ var routing = require('./routing')
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
+  , fs = require('fs')
   , ios = require('./ios')
   , android = require('./android')
   , selendroid = require('./selendroid')
+  , chrome = require('./chrome_android')
   , firefoxOs = require('./firefoxos')
   , status = require("./uiauto/lib/status")
   , helpers = require('./helpers')
@@ -126,11 +128,23 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     } else {
       return "android";
     }
+  } else if (desiredCaps.app) {
+    if (desiredCaps.app.toLowerCase() === "safari") {
+      return "ios";
+    } else if (desiredCaps.app.toLowerCase() === "chrome") {
+      return "android";
+    } else if (desiredCaps.app.toLowerCase() === "chromium") {
+      return "android";
+    }
   } else if (desiredCaps.browserName) {
     if (desiredCaps.browserName[0].toLowerCase() === "i") {
       return "ios";
     } else if (desiredCaps.browserName.toLowerCase() === "safari") {
       return "ios";
+    } else if (desiredCaps.browserName.toLowerCase() === "chrome") {
+      return "android";
+    } else if (desiredCaps.browserName.toLowerCase() === "chromium") {
+      return "android";
     } else if (desiredCaps.browserName.toLowerCase().indexOf('selendroid') !== -1) {
       return "selendroid";
     } else {
@@ -168,6 +182,13 @@ Appium.prototype.isIos = function() {
 
 Appium.prototype.isAndroid = function() {
   return this.deviceType === "android";
+};
+
+Appium.prototype.isChrome = function() {
+  return this.args.app === "chrome" ||
+         this.args.androidPackage === "com.android.chrome" ||
+         this.args.app === "chromium" ||
+         this.args.androidPackage === "org.chromium.chrome.testshell";
 };
 
 Appium.prototype.isSelendroid = function() {
@@ -256,6 +277,15 @@ Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
     }
     logger.info("App is an Android package, will attempt to run on device");
     cb(null);
+  } else if (_.contains(["chrome", "chromium"], appPath.toLowerCase())) {
+    logger.info("Looks like we want chrome on android");
+    if (appPath.toLowerCase() === "chromium") {
+      this.args.chromium = true;
+    } else {
+      this.args.chromium = false;
+    }
+    this.configureChromeAndroid();
+    cb(null);
   } else if (this.isFirefoxOS()) {
     this.args.app = desiredCaps.app;
     cb(null);
@@ -270,7 +300,12 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
   if (ext === this.getAppExt()) {
     this.args.app = appPath;
     logger.info("Using local app from " + origin + ": " + appPath);
-    cb(null);
+    fs.stat(appPath, function(err) {
+      if (err) {
+        return cb(new Error("Error locating the app: " + err.message));
+      }
+      cb();
+    });
   } else if (ext === ".zip") {
     logger.info("Using local zip from " + origin + ": " + appPath);
     this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
@@ -288,7 +323,18 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
 
 Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
   var appUrl = appPath;
-  if (appUrl.substring(appUrl.length - 4) === ".zip") {
+  if (appUrl.substring(appUrl.length - 4) === ".apk") {
+    try {
+      downloadFile(appUrl, function(appPath) {
+        this.tempFiles.push(appPath);
+        cb(null, appPath);
+      }.bind(this));
+    } catch (e) {
+      var err = e.toString();
+      logger.error("Failed downloading app from appUrl " + appUrl);
+      cb(err);
+    }
+  } else if (appUrl.substring(appUrl.length - 4) === ".zip") {
     try {
       this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
         if (zipErr) {
@@ -360,6 +406,13 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
   }, this));
 };
 
+Appium.prototype.configureChromeAndroid = function() {
+  this.deviceType = "android";
+  this.args.androidPackage = "com.android.chrome";
+  this.args.androidActivity = "com.google.android.apps.chrome.Main";
+  this.args.app = null;
+};
+
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
   var me = this;
   downloadFile(appUrl, function(zipPath) {
@@ -395,6 +448,7 @@ Appium.prototype.unzipApp = function(zipPath, cb) {
 
 Appium.prototype.clearPreviousSession = function() {
   var me = this;
+  logger.info("Clearing out any previous sessions");
   if (me.sessionOverride && me.device) {
     me.device.stop(function() {
       me.devices = [];
@@ -425,6 +479,10 @@ Appium.prototype.invoke = function() {
         device.stop = function(cb) { cb(); };
         this.devices[this.deviceType] = device;
       } else if (this.isIos()) {
+        var useLocationServices = this.desiredCapabilities.useLocationServices;
+        if (useLocationServices !== false) {
+          useLocationServices = true;
+        }
         var iosOpts = {
           rest: this.rest
           , webSocket: this.webSocket
@@ -441,6 +499,7 @@ Appium.prototype.invoke = function() {
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
           , robotPort: this.args.robotPort
           , robotAddress: this.args.robotAddress
+          , useLocationServices: useLocationServices
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {
@@ -463,7 +522,12 @@ Appium.prototype.invoke = function() {
           , keyAlias: this.args.keyAlias
           , keyPassword: this.args.keyPassword
         };
-        this.devices[this.deviceType] = android(androidOpts);
+        if (this.isChrome()) {
+          androidOpts.chromium = this.args.chromium;
+          this.devices[this.deviceType] = chrome(androidOpts);
+        } else {
+          this.devices[this.deviceType] = android(androidOpts);
+        }
       } else if (this.isSelendroid()) {
         var selendroidOpts = {
           apkPath: this.args.app

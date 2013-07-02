@@ -12,7 +12,7 @@ var should = require("should")
   , describeSauce = require(dbPath).describeForSauce(appUrl, 'Android')
   , extraCaps = {
       name: "Appium Test on Sauce"
-      , "app-activity": "NotesList"
+      , "app-activity": ".NotesList"
       , "app-package": "com.example.android.notepad"
     };
 

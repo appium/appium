@@ -79,7 +79,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     if (binaryName === "android") {
       binaryName += ".bat";
     } else {
-      if (binaryName.indexOf(".exe", binaryName.length - 4) == -1) {
+      if (binaryName.indexOf(".exe", binaryName.length - 4) === -1) {
         binaryName += ".exe";
       }
     }
@@ -598,9 +598,21 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { me.wakeUp(cb); },
     function(cb) { me.unlockScreen(cb); },
     function(cb) { me.startApp(cb); }
-  ], function(err) {
+  ], function(err, seriesInfo) {
     onReady(err);
   });
+};
+
+ADB.prototype.startChrome = function(onReady) {
+  logger.info("Starting Chrome");
+  var me = this;
+  logger.debug("Using fast reset? " + this.fastReset);
+
+  async.series([
+    function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.installApp(cb); },
+    function(cb) { me.startApp(cb); }
+  ], onReady);
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
@@ -671,10 +683,9 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
-  var act = this.appActivity,
-      activityString = act[0] === '.' ? act : '.' + act;
-  if (act.indexOf(this.appPackage) === 0) {
-    activityString = act.substring(this.appPackage.length);
+  var activityString = this.appActivity;
+  if (activityString.indexOf(this.appPackage) === 0) {
+    activityString = activityString.substring(this.appPackage.length);
   }
   var cmd = this.adbCmd + " shell am instrument -e main_activity '" +
             this.appPackage + activityString + "' " + this.appPackage +
@@ -1177,19 +1188,34 @@ ADB.prototype.startApp = function(cb) {
   logger.info("Starting app");
   this.requireDeviceId();
   this.requireApp();
-  var act = this.appActivity,
-      activityString = act[0] === '.' ? act : '.' + act;
-  if (act.indexOf(this.appPackage) === 0) {
-    activityString = act;
-  }
+  // If the activity string doesn't start with '.' then
+  // consider it fully qualified. If it does, then
+  // . will be expanded to appPackage automagically by Android.
+>>>>>>> 12897c4... # This is a combination of 28 commits.
+  var activityString = this.appActivity;
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
-  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
+  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
     if(err) {
       logger.error(err);
       cb(err);
     } else {
+      if (stdout.indexOf("Error: Activity class") !== -1 &&
+          stdout.indexOf("does not exist") !== -1) {
+        if (this.appActivity[0] !== ".") {
+          logger.info("We tried to start an activity that doesn't exist, " +
+                      "retrying with . prepended to activity");
+          this.appActivity = "." + this.appActivity;
+          return this.startApp(cb);
+        } else {
+          var msg = "Activity used to start app doesn't exist! Make sure " +
+                    "it exists";
+          logger.error(msg);
+          return cb(new Error(msg));
+        }
+      }
+
       this.waitForActivity(cb);
     }
   }, this));
@@ -1273,10 +1299,10 @@ ADB.prototype.waitForNotActivity = function(cb) {
   getFocusedApp();
 };
 
-ADB.prototype.waitForActivity = function(cb) {
+ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
   this.requireApp();
   logger.info("Waiting for app's activity to become focused");
-  var waitMs = 20000
+  var waitMs = waitMsOverride || 20000
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;

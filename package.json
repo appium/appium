@@ -5,7 +5,7 @@
     "automation",
     "javascript"
   ],
-  "version": "0.7.3",
+  "version": "0.8.2",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -60,7 +60,8 @@
     "win-spawn" : "~1.1.1",
     "adm-zip" : "~0.4.3",
     "ws": "0.4.25",
-    "socket.io" : "~0.9.14"
+    "socket.io" : "~0.9.14",
+    "through": "~2.3.4"
   },
   "scripts": {
     "test": "grunt travis"

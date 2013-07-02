@@ -8,7 +8,7 @@ var wd = require('wd')
   , path = require("path")
   , should = require("should")
   , defaultHost = '127.0.0.1'
-  , defaultPort = 4723
+  , defaultPort = process.env.APPIUM_PORT || 4723
   , defaultCaps = {
       browserName: ''
       , device: 'iPhone Simulator'
@@ -104,6 +104,24 @@ describeForSafari.only = function() {
   return describeForSafari(true);
 };
 
+var describeForChrome = function() {
+  var fn = function(desc, tests, host, port, extraCaps, onlyify) {
+    var caps = {
+      app: 'chromium'
+      , device: 'Android'
+    };
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
+  };
+  fn.only = function() {
+    var a = arguments;
+    return fn(a[0], a[1], a[2], a[3], a[4], true);
+  };
+  return fn;
+};
+describeForChrome.only = function() {
+  return describeForChrome(true);
+};
+
 var describeForApp = function(app, device, appPackage, appActivity) {
   if (typeof device === "undefined") {
     device = "ios";
@@ -181,3 +199,4 @@ module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
 module.exports.describeForSauce = describeForSauce;
 module.exports.describeForSafari = describeForSafari;
+module.exports.describeForChrome = describeForChrome;

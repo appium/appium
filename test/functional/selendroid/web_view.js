@@ -4,7 +4,7 @@
 var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.4.2.apk")
   , appPkg = "io.selendroid.testapp"
-  , appAct = "HomeScreenActivity"
+  , appAct = ".HomeScreenActivity"
   , driverBlock = require("../../helpers/driverblock.js")
   , describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct)
   , should = require('should');

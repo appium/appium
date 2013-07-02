@@ -4,7 +4,7 @@
 var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
   , appPkg = "com.example.android.apis"
-  , appAct = "ApiDemos"
+  , appAct = ".ApiDemos"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
   , should = require('should');
@@ -114,6 +114,28 @@ describeWd('gestures', function(h) {
           should.not.exist(err);
           should.exist(el.value);
           done();
+        });
+      });
+    });
+  });
+});
+
+describeWd('scroll to element', function(h) {
+  it('should bring the element into view', function(done) {
+    h.driver.elementByName("Views", function(err) {
+      should.exist(err);
+      h.driver.elementByTagName("listView", function(err, el) {
+        should.not.exist(err);
+        var scrollOpts = {
+          element: el.value
+          , text: 'Views'
+        };
+        h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+          should.not.exist(err);
+          h.driver.elementByName("Views", function(err) {
+            should.not.exist(err);
+            done();
+          });
         });
       });
     });

@@ -1,3 +1,211 @@
+
+CHANGES IN VERSION 0.8.2 (from 0.8.1)
+=====================================
+
+#### GENERAL
+- make sure build/ is deleted by reset.sh
+- re-publish without extraneous artifacts in build/
+
+
+CHANGES IN VERSION 0.8.1 (from 0.8.0)
+=====================================
+
+### GENERAL
+- update java examples to show correct use of JavascriptExecutor
+- fix parser bug that prevented launching on windows
+- fix missing parameter generating exceptions in testsuite
+- fix more stdout maxBuffer errors
+- fix android tests to use new activity style
+- return timeout in set timeout commands
+
+### IOS
+- fix mobile safari alert-handling issues
+- attempt to capture and resolve location services popup using desired cap
+
+### ANDROID
+- require shortcut activities to start with ".", allowing fully-qualified
+  activities with packages different from the main appPackage
+- if appium fails to launch activity with ".", it will retry
+- allow downloaded apps to end in .apk as well as .zip
+- fix xpath parser error not allowing widget packages to be used
+- add longClick command
+- added JUnit and TestNG examples
+- support ChromiumTestShell as well as Google Chrome for Chrome tests
+
+### SELENDROID
+- fall back to `am start` if Selendroid doesn't successfully launch the app
+
+
+-------------------------------------
+CHANGES IN VERSION 0.8.0 (from 0.7.3)
+-------------------------------------
+[GENERAL]
+- bump maxBuffer for various subprocesses
+- automatically re-register appium with grid if it disconnects
+- augment style guide
+- allow appium tests to read appium server port from $APPIUM_PORT
+
+[IOS]
+- add support for locking device for X seconds
+- add support for backgrounding app for X seconds
+- make finding node/instruments_client more robust for instruments context
+- mobile methods for installing/uninstalling apps to device
+- add shortcut for UIACollectionCell and UIATableCell
+- ensure isEnabled returns a boolean value
+
+[ANDROID]
+- add mobile: searchId method to search for string by ID
+- add mobile: resolveId method to resolve strings
+- fix activity detection to be more allowing of different strings
+- enable keystore for using different certs
+- fix issue when large messages are transferred from bootstrap
+- fix takesScreenshot capability
+- add long tap method
+- make screenshot work on windows
+- fix scrollTo support
+
+[CHROME]
+- add support for automating Chrome on Android!
+
+[SELENDROID]
+- update selendroid to 90aef5d
+
+-------------------------------------
+CHANGES IN VERSION 0.8.0 (from 0.7.3)
+-------------------------------------
+[GENERAL]
+- bump maxBuffer for various subprocesses
+- automatically re-register appium with grid if it disconnects
+- augment style guide
+- allow appium tests to read appium server port from $APPIUM_PORT
+
+[IOS]
+- add support for locking device for X seconds
+- add support for backgrounding app for X seconds
+- make finding node/instruments_client more robust for instruments context
+- mobile methods for installing/uninstalling apps to device
+- add shortcut for UIACollectionCell and UIATableCell
+- ensure isEnabled returns a boolean value
+
+[ANDROID]
+- add mobile: searchId method to search for string by ID
+- add mobile: resolveId method to resolve strings
+- fix activity detection to be more allowing of different strings
+- enable keystore for using different certs
+- fix issue when large messages are transferred from bootstrap
+- fix takesScreenshot capability
+- add long tap method
+- make screenshot work on windows
+- fix scrollTo support
+
+[CHROME]
+- add support for automating Chrome on Android!
+
+[SELENDROID]
+- update selendroid to 90aef5d
+
+-------------------------------------
+CHANGES IN VERSION 0.8.0 (from 0.7.3)
+-------------------------------------
+[GENERAL]
+- bump maxBuffer for various subprocesses
+- automatically re-register appium with grid if it disconnects
+- augment style guide
+- allow appium tests to read appium server port from $APPIUM_PORT
+
+[IOS]
+- add support for locking device for X seconds
+- add support for backgrounding app for X seconds
+- make finding node/instruments_client more robust for instruments context
+- mobile methods for installing/uninstalling apps to device
+- add shortcut for UIACollectionCell and UIATableCell
+- ensure isEnabled returns a boolean value
+
+[ANDROID]
+- add mobile: searchId method to search for string by ID
+- add mobile: resolveId method to resolve strings
+- fix activity detection to be more allowing of different strings
+- enable keystore for using different certs
+- fix issue when large messages are transferred from bootstrap
+- fix takesScreenshot capability
+- add long tap method
+- make screenshot work on windows
+- fix scrollTo support
+
+[CHROME]
+- add support for automating Chrome on Android!
+
+[SELENDROID]
+- update selendroid to 90aef5d
+
+-------------------------------------
+CHANGES IN VERSION 0.8.0 (from 0.7.3)
+-------------------------------------
+[GENERAL]
+- bump maxBuffer for various subprocesses
+- automatically re-register appium with grid if it disconnects
+- augment style guide
+- allow appium tests to read appium server port from $APPIUM_PORT
+
+[IOS]
+- add support for locking device for X seconds
+- add support for backgrounding app for X seconds
+- make finding node/instruments_client more robust for instruments context
+- mobile methods for installing/uninstalling apps to device
+- add shortcut for UIACollectionCell and UIATableCell
+- ensure isEnabled returns a boolean value
+
+[ANDROID]
+- add mobile: searchId method to search for string by ID
+- add mobile: resolveId method to resolve strings
+- fix activity detection to be more allowing of different strings
+- enable keystore for using different certs
+- fix issue when large messages are transferred from bootstrap
+- fix takesScreenshot capability
+- add long tap method
+- make screenshot work on windows
+- fix scrollTo support
+
+[CHROME]
+- add support for automating Chrome on Android!
+
+[SELENDROID]
+- update selendroid to 90aef5d
+
+-------------------------------------
+CHANGES IN VERSION 0.8.0 (from 0.7.3)
+-------------------------------------
+[GENERAL]
+- bump maxBuffer for various subprocesses
+- automatically re-register appium with grid if it disconnects
+- augment style guide
+- allow appium tests to read appium server port from $APPIUM_PORT
+
+[IOS]
+- add support for locking device for X seconds
+- add support for backgrounding app for X seconds
+- make finding node/instruments_client more robust for instruments context
+- mobile methods for installing/uninstalling apps to device
+- add shortcut for UIACollectionCell and UIATableCell
+- ensure isEnabled returns a boolean value
+
+[ANDROID]
+- add mobile: searchId method to search for string by ID
+- add mobile: resolveId method to resolve strings
+- fix activity detection to be more allowing of different strings
+- enable keystore for using different certs
+- fix issue when large messages are transferred from bootstrap
+- fix takesScreenshot capability
+- add long tap method
+- make screenshot work on windows
+- fix scrollTo support
+
+[CHROME]
+- add support for automating Chrome on Android!
+
+[SELENDROID]
+- update selendroid to 90aef5d
+
 -------------------------------------
 CHANGES IN VERSION 0.7.3 (from 0.7.2)
 -------------------------------------

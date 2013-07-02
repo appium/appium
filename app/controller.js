@@ -470,9 +470,39 @@ exports.mobileSwipe = function(req, res) {
   }
 };
 
+exports.mobileRotation = function(req, res) {
+  req.body = _.defaults(req.body, {
+    x: 0.5
+    , y: 0.5
+    , radius: 0.5
+    , rotation: 3.14159265359
+    , touchCount: 2
+    , duration: 1
+    , element: null
+  });
+  var element = req.body.element
+    , duration = req.body.duration
+    , x = req.body.x
+    , y = req.body.y
+    , radius = req.body.radius
+    , touchCount = req.body.touchCount
+    , rotation = req.body.rotation;
+
+  if(checkMissingParams(res, {x: x, y: y})) {
+    req.device.rotate(x, y, radius, rotation, duration, touchCount,
+        element, getResponseHandler(req, res));
+  }
+};
+
 exports.mobileScrollTo = function(req, res) {
-  var elementId = req.body.element;
-  req.device.scrollTo(elementId, getResponseHandler(req, res));
+  req.body = _.defaults(req.body, {
+    element: null
+    , text: null
+  });
+  var element = req.body.element
+    , text = req.body.text;
+
+  req.device.scrollTo(element, text, getResponseHandler(req, res));
 };
 
 exports.mobileShake = function(req, res) {
@@ -962,6 +992,9 @@ var mobileCmdMap = {
   , 'isAppInstalled': exports.isAppInstalled
   , 'launchApp': exports.launchApp
   , 'closeApp': exports.closeApp
+  , 'rotate': exports.mobileRotation
+  , 'longClick' : exports.touchLongClick
+  , 'touchLongClick': exports.touchLongClick
 };
 
 exports.produceError = function(req, res) {

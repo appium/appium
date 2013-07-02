@@ -5,12 +5,13 @@
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
   , assert = require("assert")
+  , appiumPort = process.env.APPIUM_PORT || 4723
   , request = require("request");
 
 describeWd('check getSessions', function(h) {
   return it('should return appear in the sessions returned', function(done) {
     request({
-        url: "http://localhost:4723/wd/hub/sessions"
+        url: "http://localhost:" + appiumPort + "/wd/hub/sessions"
         , method: "GET"
         , json: true
       }, function(err, response, body) {

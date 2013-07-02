@@ -3,8 +3,12 @@
 
 var driverBlock = require("./driverblock.js")
   , describeSafari = driverBlock.describeForSafari()
-  , testEndpoint = 'http://localhost:4723/test/'
+  , describeChrome = driverBlock.describeForChrome()
+  , appiumPort = process.env.APPIUM_PORT || 4723
+  , testEndpoint = 'http://localhost:' + appiumPort + '/test/'
+  , chromeEndpoint = 'http://10.0.2.2:' + appiumPort + '/test/'
   , guinea = testEndpoint + 'guinea-pig'
+  , chromeGuinea = chromeEndpoint + 'guinea-pig'
   , _ = require('underscore')
   , should = require('should')
   , spinWait = require('./spin.js').spinWait;
@@ -26,7 +30,11 @@ module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
 
 module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad, titleToSpin) {
   if (typeof urlToLoad === "undefined") {
-    urlToLoad = guinea;
+    if (webviewType === "chrome") {
+      urlToLoad = chromeGuinea;
+    } else {
+      urlToLoad = guinea;
+    }
   }
   if (typeof titleToSpin === "undefined") {
     titleToSpin = 'I am a page title';
@@ -66,6 +74,8 @@ module.exports.buildTests = function(webviewType) {
   var desc;
   if (webviewType === "safari") {
     desc = describeSafari;
+  } else if (webviewType === "chrome") {
+    desc = describeChrome;
   } else {
     desc = driverBlock.describeForApp(webviewType);
   }
@@ -83,6 +93,9 @@ module.exports.buildTests = function(webviewType) {
         h.driver.title(function(err, title) {
           should.not.exist(err);
           title.should.eql("I am a page title");
+          if (webviewType === "chrome") {
+            return done();
+          }
           h.driver.execute("mobile: leaveWebView", function(err) {
             should.not.exist(err);
             h.driver.title(function(err, title) {
@@ -238,7 +251,7 @@ module.exports.buildTests = function(webviewType) {
       loadWebView(h.driver, function() {
         h.driver.url(function(err, url) {
           should.not.exist(err);
-          url.should.equal(guinea);
+          [guinea, chromeGuinea].should.include(url);
           done();
         });
       });
@@ -707,7 +720,7 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it('should dismiss', function(done) {
+    it('should dismiss alert', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('alert1', function(err, link) {
           link.click(function(err) {

@@ -94,7 +94,7 @@ exports.doRequest = function(url, method, body, contentType, cb) {
   opts.headers.Host = host;
   logger.info("Making http request with opts: " + JSON.stringify(opts));
   request(opts, function(err, res, body) {
-    if (typeof body !== "undfined") {
+    if (typeof body !== "undefined") {
       try {
         body = JSON.parse(body);
       } catch(e) {}

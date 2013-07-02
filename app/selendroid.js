@@ -4,6 +4,7 @@ var errors = require('./errors')
   , adb = require('../android/adb')
   , _ = require('underscore')
   , request = require('./device').request
+  , proxyTo = require('./device').proxyTo
   , logger = require('../logger').get('appium')
   , status = require("./uiauto/lib/status")
   , fs = require('fs')
@@ -134,13 +135,7 @@ Selendroid.prototype.deleteSession = function(cb) {
   }, this));
 };
 
-Selendroid.prototype.proxyTo = function(endpoint, method, data, cb) {
-  if (endpoint[0] !== '/') {
-    endpoint = '/' + endpoint;
-  }
-  var url = 'http://' + this.proxyHost + ':' + this.proxyPort + endpoint;
-  request(url, method, data ? data : null, cb);
-};
+Selendroid.prototype.proxyTo = proxyTo;
 
 module.exports = function(opts) {
   return new Selendroid(opts);

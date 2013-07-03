@@ -98,9 +98,13 @@ reset_ios() {
     echo "* Cloning/updating fruitstrap"
     run_cmd git submodule update --init submodules/fruitstrap
     echo "* Making fruitstrap"
-    run_cmd cd $appium_home/submodules/fruitstrap/
+    run_cmd pushd $appium_home/submodules/fruitstrap/
     run_cmd make fruitstrap
-    run_cmd cd $appium_home/
+    run_cmd popd
+    echo "* Copying fruitstrap to build/"
+    run_cmd rm -rf build/fruitstrap
+    run_cmd mkdir -p build/fruitstrap
+    run_cmd cp submodules/fruitstrap/fruitstrap build/fruitstrap
 }
 
 get_apidemos() {

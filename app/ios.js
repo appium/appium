@@ -1941,17 +1941,17 @@ IOS.prototype.getCurrentActivity= function(cb) {
 };
 
 IOS.prototype.isAppInstalled = function(bundleId, cb) {
-  var isInstalledCommand = './submodules/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
+  var isInstalledCommand = 'build/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
   deviceCommon.isAppInstalled(isInstalledCommand, cb);
 };
 
 IOS.prototype.removeApp = function(bundleId, cb) {
-  var removeCommand = './submodules/fruitstrap/fruitstrap uninstall --id ' + this.udid + ' --bundle ' + bundleId;
+  var removeCommand = 'build/fruitstrap/fruitstrap uninstall --id ' + this.udid + ' --bundle ' + bundleId;
   deviceCommon.removeApp(removeCommand, this.udid, bundleId, cb);
 };
 
 IOS.prototype.installApp = function(unzippedAppPath, cb) {
-  var installationCommand = './submodules/fruitstrap/fruitstrap install --id ' + this.udid + ' --bundle ' + unzippedAppPath;
+  var installationCommand = 'build/fruitstrap/fruitstrap install --id ' + this.udid + ' --bundle ' + unzippedAppPath;
   deviceCommon.installApp(installationCommand, this.udid, unzippedAppPath, cb);
 };
 

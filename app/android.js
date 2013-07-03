@@ -405,11 +405,19 @@ Android.prototype.handleFindCb = function(err, res, many, findCb) {
 };
 
 Android.prototype.findElementFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, false, element, cb);
+  if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, false, element, cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, false, element, cb);
+  }
 };
 
 Android.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, true, element, cb);
+  if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, true, element, cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, true, element, cb);
+  }
 };
 
 Android.prototype.setValueImmediate = function(elementId, value, cb) {

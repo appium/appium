@@ -598,7 +598,9 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { me.wakeUp(cb); },
     function(cb) { me.unlockScreen(cb); },
     function(cb) { me.startApp(cb); }
-  ], onReady);
+  ], function(err, seriesInfo) {
+    onReady(err);
+  });
 };
 
 ADB.prototype.startChrome = function(onReady) {

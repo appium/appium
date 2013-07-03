@@ -1307,7 +1307,7 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
       this.executeAtom('is_enabled', [atomsElement], cb);
     }, this));
   } else {
-    var command = ["au.getElement('", elementId, "').isEnabled()"].join('');
+    var command = ["au.getElement('", elementId, "').isEnabled() === 1"].join('');
     this.proxy(command, cb);
   }
 };

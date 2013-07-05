@@ -240,7 +240,7 @@ var args = [
   }],
 
   [['--keystore-path'], {
-    defaultValue: path.resolve(process.env.HOME, '.android', 'debug.keystore')
+    defaultValue: path.resolve(process.env.HOME || process.env.USERPROFILE || '', '.android', 'debug.keystore')
     , dest: 'keystorePath'
     , required: false
     , help: '(Android-only) Path to keystore'

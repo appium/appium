@@ -1,0 +1,304 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		353EC6F214858B6F00BC279E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 353EC6F114858B6F00BC279E /* UIKit.framework */; };
+		353EC6F414858B6F00BC279E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 353EC6F314858B6F00BC279E /* Foundation.framework */; };
+		353EC6F614858B6F00BC279E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 353EC6F514858B6F00BC279E /* CoreGraphics.framework */; };
+		353EC6FC14858B6F00BC279E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 353EC6FA14858B6F00BC279E /* InfoPlist.strings */; };
+		353EC6FE14858B6F00BC279E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 353EC6FD14858B6F00BC279E /* main.m */; };
+		353EC70214858B6F00BC279E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 353EC70114858B6F00BC279E /* AppDelegate.m */; };
+		353EC70514858B6F00BC279E /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 353EC70314858B6F00BC279E /* MainStoryboard.storyboard */; };
+		353EC70814858B6F00BC279E /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 353EC70714858B6F00BC279E /* ViewController.m */; };
+		353EC71214858BE300BC279E /* chomp.wav in Resources */ = {isa = PBXBuildFile; fileRef = 353EC70E14858BE300BC279E /* chomp.wav */; };
+		353EC71314858BE300BC279E /* hehehe1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 353EC70F14858BE300BC279E /* hehehe1.wav */; };
+		353EC71414858BE300BC279E /* monkey_1.png in Resources */ = {isa = PBXBuildFile; fileRef = 353EC71014858BE300BC279E /* monkey_1.png */; };
+		353EC71B14859AD500BC279E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 353EC71A14859AD500BC279E /* AVFoundation.framework */; };
+		353EC71E14859F6700BC279E /* TickleGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 353EC71D14859F6600BC279E /* TickleGestureRecognizer.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		353EC6ED14858B6F00BC279E /* MonkeyPinch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MonkeyPinch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		353EC6F114858B6F00BC279E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		353EC6F314858B6F00BC279E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		353EC6F514858B6F00BC279E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		353EC6F914858B6F00BC279E /* MonkeyPinch-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MonkeyPinch-Info.plist"; sourceTree = "<group>"; };
+		353EC6FB14858B6F00BC279E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		353EC6FD14858B6F00BC279E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		353EC6FF14858B6F00BC279E /* MonkeyPinch-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MonkeyPinch-Prefix.pch"; sourceTree = "<group>"; };
+		353EC70014858B6F00BC279E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		353EC70114858B6F00BC279E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		353EC70414858B6F00BC279E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		353EC70614858B6F00BC279E /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		353EC70714858B6F00BC279E /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		353EC70E14858BE300BC279E /* chomp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = chomp.wav; sourceTree = "<group>"; };
+		353EC70F14858BE300BC279E /* hehehe1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hehehe1.wav; sourceTree = "<group>"; };
+		353EC71014858BE300BC279E /* monkey_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = monkey_1.png; sourceTree = "<group>"; };
+		353EC71A14859AD500BC279E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		353EC71C14859F6600BC279E /* TickleGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TickleGestureRecognizer.h; sourceTree = "<group>"; };
+		353EC71D14859F6600BC279E /* TickleGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TickleGestureRecognizer.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		353EC6EA14858B6F00BC279E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				353EC71B14859AD500BC279E /* AVFoundation.framework in Frameworks */,
+				353EC6F214858B6F00BC279E /* UIKit.framework in Frameworks */,
+				353EC6F414858B6F00BC279E /* Foundation.framework in Frameworks */,
+				353EC6F614858B6F00BC279E /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		353EC6E214858B6F00BC279E = {
+			isa = PBXGroup;
+			children = (
+				353EC71A14859AD500BC279E /* AVFoundation.framework */,
+				353EC6F714858B6F00BC279E /* MonkeyPinch */,
+				353EC6F014858B6F00BC279E /* Frameworks */,
+				353EC6EE14858B6F00BC279E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		353EC6EE14858B6F00BC279E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				353EC6ED14858B6F00BC279E /* MonkeyPinch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		353EC6F014858B6F00BC279E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				353EC6F114858B6F00BC279E /* UIKit.framework */,
+				353EC6F314858B6F00BC279E /* Foundation.framework */,
+				353EC6F514858B6F00BC279E /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		353EC6F714858B6F00BC279E /* MonkeyPinch */ = {
+			isa = PBXGroup;
+			children = (
+				353EC70E14858BE300BC279E /* chomp.wav */,
+				353EC70F14858BE300BC279E /* hehehe1.wav */,
+				353EC71014858BE300BC279E /* monkey_1.png */,
+				353EC70014858B6F00BC279E /* AppDelegate.h */,
+				353EC70114858B6F00BC279E /* AppDelegate.m */,
+				353EC70314858B6F00BC279E /* MainStoryboard.storyboard */,
+				353EC70614858B6F00BC279E /* ViewController.h */,
+				353EC70714858B6F00BC279E /* ViewController.m */,
+				353EC71C14859F6600BC279E /* TickleGestureRecognizer.h */,
+				353EC71D14859F6600BC279E /* TickleGestureRecognizer.m */,
+				353EC6F814858B6F00BC279E /* Supporting Files */,
+			);
+			path = MonkeyPinch;
+			sourceTree = "<group>";
+		};
+		353EC6F814858B6F00BC279E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				353EC6F914858B6F00BC279E /* MonkeyPinch-Info.plist */,
+				353EC6FA14858B6F00BC279E /* InfoPlist.strings */,
+				353EC6FD14858B6F00BC279E /* main.m */,
+				353EC6FF14858B6F00BC279E /* MonkeyPinch-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		353EC6EC14858B6F00BC279E /* MonkeyPinch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 353EC70B14858B6F00BC279E /* Build configuration list for PBXNativeTarget "MonkeyPinch" */;
+			buildPhases = (
+				353EC6E914858B6F00BC279E /* Sources */,
+				353EC6EA14858B6F00BC279E /* Frameworks */,
+				353EC6EB14858B6F00BC279E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MonkeyPinch;
+			productName = MonkeyPinch;
+			productReference = 353EC6ED14858B6F00BC279E /* MonkeyPinch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		353EC6E414858B6F00BC279E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 353EC6E714858B6F00BC279E /* Build configuration list for PBXProject "MonkeyPinch" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 353EC6E214858B6F00BC279E;
+			productRefGroup = 353EC6EE14858B6F00BC279E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				353EC6EC14858B6F00BC279E /* MonkeyPinch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		353EC6EB14858B6F00BC279E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				353EC6FC14858B6F00BC279E /* InfoPlist.strings in Resources */,
+				353EC70514858B6F00BC279E /* MainStoryboard.storyboard in Resources */,
+				353EC71214858BE300BC279E /* chomp.wav in Resources */,
+				353EC71314858BE300BC279E /* hehehe1.wav in Resources */,
+				353EC71414858BE300BC279E /* monkey_1.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		353EC6E914858B6F00BC279E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				353EC6FE14858B6F00BC279E /* main.m in Sources */,
+				353EC70214858B6F00BC279E /* AppDelegate.m in Sources */,
+				353EC70814858B6F00BC279E /* ViewController.m in Sources */,
+				353EC71E14859F6700BC279E /* TickleGestureRecognizer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		353EC6FA14858B6F00BC279E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				353EC6FB14858B6F00BC279E /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		353EC70314858B6F00BC279E /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				353EC70414858B6F00BC279E /* en */,
+			);
+			name = MainStoryboard.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		353EC70914858B6F00BC279E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		353EC70A14858B6F00BC279E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		353EC70C14858B6F00BC279E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MonkeyPinch/MonkeyPinch-Prefix.pch";
+				INFOPLIST_FILE = "MonkeyPinch/MonkeyPinch-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		353EC70D14858B6F00BC279E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MonkeyPinch/MonkeyPinch-Prefix.pch";
+				INFOPLIST_FILE = "MonkeyPinch/MonkeyPinch-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		353EC6E714858B6F00BC279E /* Build configuration list for PBXProject "MonkeyPinch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				353EC70914858B6F00BC279E /* Debug */,
+				353EC70A14858B6F00BC279E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		353EC70B14858B6F00BC279E /* Build configuration list for PBXNativeTarget "MonkeyPinch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				353EC70C14858B6F00BC279E /* Debug */,
+				353EC70D14858B6F00BC279E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 353EC6E414858B6F00BC279E /* Project object */;
+}

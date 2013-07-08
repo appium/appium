@@ -472,7 +472,7 @@ exports.mobileSwipe = function(req, res) {
 
 exports.mobileRotation = function(req, res) {
   req.body = _.defaults(req.body, {
-  	x: 0.5
+    x: 0.5
     , y: 0.5
     , radius: 0.5
     , rotation: 3.14159265359

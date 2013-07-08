@@ -1506,7 +1506,7 @@ IOS.prototype.rotate = function(x, y, radius, rotation, duration, touchCount, el
 	this.proxy(command, cb);
   } else {
     this.proxy("target.rotateWithOptions("+ JSON.stringify(location) + "," + JSON.stringify(options) + ")", cb);
-  } 
+  }
 };
 
 IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {

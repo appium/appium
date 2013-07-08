@@ -22,7 +22,8 @@ describe("appiumutils", function() {
       , log: path.resolve(__dirname, "../../../appium.log")
       , port: 4723
       , address: '127.0.0.1'
-      , remove: true }
+      , remove: true
+      , nodeconfig: null }
       , function(appiumServer) {
           appium = appiumServer;
           done();

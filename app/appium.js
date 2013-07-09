@@ -306,7 +306,18 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
 
 Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
   var appUrl = appPath;
-  if (appUrl.substring(appUrl.length - 4) === ".zip") {
+  if (appUrl.substring(appUrl.length - 4) === ".apk") {
+    try {
+      downloadFile(appUrl, function(appPath) {
+        this.tempFiles.push(appPath);
+        cb(null, appPath);
+      }.bind(this));
+    } catch (e) {
+      var err = e.toString();
+      logger.error("Failed downloading app from appUrl " + appUrl);
+      cb(err);
+    }
+  } else if (appUrl.substring(appUrl.length - 4) === ".zip") {
     try {
       this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
         if (zipErr) {

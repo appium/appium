@@ -4,7 +4,7 @@
 var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
   , appPkg = "com.example.android.apis"
-  , appAct = "ApiDemos"
+  , appAct = ".ApiDemos"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
   , should = require('should');

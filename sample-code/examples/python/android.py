@@ -16,7 +16,7 @@ desired_caps['app'] = PATH(
     '../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk'
 )
 desired_caps['app-package'] = 'com.example.android.apis'
-desired_caps['app-activity'] = 'ApiDemos'
+desired_caps['app-activity'] = '.ApiDemos'
 
 driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
 

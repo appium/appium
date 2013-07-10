@@ -1284,10 +1284,10 @@ ADB.prototype.waitForNotActivity = function(cb) {
   getFocusedApp();
 };
 
-ADB.prototype.waitForActivity = function(cb) {
+ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
   this.requireApp();
   logger.info("Waiting for app's activity to become focused");
-  var waitMs = 20000
+  var waitMs = waitMsOverride || 20000
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;

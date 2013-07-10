@@ -16,7 +16,7 @@ class TestAndroidWebView(unittest.TestCase):
             'device': 'selendroid',
             'app': app,
             'app-package': 'io.selendroid.testapp',
-            'app-activity': 'HomeScreenActivity'
+            'app-activity': '.HomeScreenActivity'
         }
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub',

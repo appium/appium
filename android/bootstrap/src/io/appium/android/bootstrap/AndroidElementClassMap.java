@@ -63,6 +63,7 @@ public class AndroidElementClassMap {
     map.put("absseek", "AbsSeekBar");
     map.put("absspinner", "AbsSpinner");
     map.put("absolute", "AbsoluteLayout");
+    map.put("adapterview", "AdapterView");
     map.put("adapterviewanimator", "AdapterViewAnimator");
     map.put("adapterviewflipper", "AdapterViewFlipper");
     map.put("analogclock", "AnalogClock");
@@ -122,7 +123,6 @@ public class AndroidElementClassMap {
     map.put("tabwidget", "TabWidget");
     map.put("table", "TableLayout");
     map.put("text", "TextView");
-    map.put("adapterview", "AdapterView");
     map.put("textclock", "TextClock");
     map.put("textswitcher", "TextSwitcher");
     map.put("texture", "TextureView");

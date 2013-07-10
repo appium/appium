@@ -968,6 +968,7 @@ var mobileCmdMap = {
   , 'isAppInstalled': exports.isAppInstalled
   , 'launchApp': exports.launchApp
   , 'closeApp': exports.closeApp
+  , 'longClick' : exports.touchLongClick
 };
 
 exports.produceError = function(req, res) {

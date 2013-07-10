@@ -15,7 +15,6 @@ class TestAndroidWebView(unittest.TestCase):
         desired_caps = {
             'device': 'selendroid',
             'app': app,
-            'browserName': "native-android-driver",
             'app-package': 'io.selendroid.testapp',
             'app-activity': 'HomeScreenActivity'
         }

@@ -35,4 +35,4 @@ org.eclipse.ltk.core.refactoring.prefs
 .appiumconfig
 build/
 .idea
-sample-code/examples/java/pinchAndRotationTest/target
+

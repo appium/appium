@@ -14,6 +14,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class AppTest {
 	@SuppressWarnings("serial")
 	public static void main(String[] args) {
+		
 		File classpathRoot = new File(System.getProperty("user.dir"));
         File appDir = new File(classpathRoot, "../../../apps/MonkeyPinch/build/Release-iphonesimulator");
         File app = new File(appDir, "MonkeyPinch.app");

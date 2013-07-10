@@ -42,7 +42,9 @@ public class AndroidElementClassMap {
       throw new UnallowedTagNameException(selector_text);
     } else {
       final String mappedSel = inst.map.get(selector_text);
-      if (mappedSel != null) {
+      if ("view".equals(selector_text)) {
+        return "android.view.View";
+      } else if (mappedSel != null) {
         return "android.widget." + mappedSel;
       } else if (selector_text.contains(".")) {
         return selector_text;
@@ -120,6 +122,7 @@ public class AndroidElementClassMap {
     map.put("tabwidget", "TabWidget");
     map.put("table", "TableLayout");
     map.put("text", "TextView");
+    map.put("adapterview", "AdapterView");
     map.put("textclock", "TextClock");
     map.put("textswitcher", "TextSwitcher");
     map.put("texture", "TextureView");

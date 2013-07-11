@@ -154,5 +154,7 @@ Style notes
     ```js
     function myFunc(a, b, c) {}
     ```
+    
+*   Function is not followed by a space. Use `function() {` not `function () {`
 
 *   More to come....

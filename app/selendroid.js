@@ -4,6 +4,7 @@ var errors = require('./errors')
   , adb = require('../android/adb')
   , _ = require('underscore')
   , request = require('./device').request
+  , proxyTo = require('./device').proxyTo
   , logger = require('../logger').get('appium')
   , status = require("./uiauto/lib/status")
   , fs = require('fs')
@@ -56,15 +57,6 @@ Selendroid.prototype.keyevent = function(keycode, cb) {
   });
 };
 
-// Clear data, close app, then start app.
-Selendroid.prototype.fastReset = function(cb) {
-  var me = this;
-  async.series([
-    function(cb) { me.adb.runFastReset(cb); },
-    function(cb) { me.adb.startApp(cb); },
-  ], cb);
-};
-
 Selendroid.prototype.ensureServerExists = function(cb) {
   logger.info("Checking whether selendroid is built yet");
   var selBin = path.resolve(__dirname, "..", "build", "selendroid",
@@ -108,21 +100,29 @@ Selendroid.prototype.waitForServer = function(cb) {
 Selendroid.prototype.createSession = function(cb) {
   logger.info("Creating Selendroid session");
   var data = {desiredCapabilities: this.desiredCaps};
-  var me = this;
-  this.proxyTo('/wd/hub/session', 'POST', data, _.bind(function(err, res, body) {
+  this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
     if (err) return cb(err);
 
     if (res.statusCode === 301 && body.sessionId) {
       logger.info("Successfully started selendroid session");
       this.selendroidSessionId = body.sessionId;
-      cb(null, body.sessionId);
-      me.adb.startApp(function(){});
+      this.adb.waitForActivity(function(err) {
+        if (err) {
+          logger.info("Selendroid hasn't started app yet, let's do it " +
+                      "manually with adb.startApp");
+          return this.adb.startApp(function(err) {
+            if (err) return cb(err);
+            return cb(null, body.sessionId);
+          }.bind(this));
+        }
+        return cb(null, body.sessionId);
+      }.bind(this), 1800);
     } else {
       logger.error("Selendroid create session did not work. Status was " +
                    res.statusCode + " and body was " + body);
       cb(new Error("Did not get session redirect from selendroid"));
     }
-  }, this));
+  }.bind(this));
 };
 
 Selendroid.prototype.deleteSession = function(cb) {
@@ -134,13 +134,7 @@ Selendroid.prototype.deleteSession = function(cb) {
   }, this));
 };
 
-Selendroid.prototype.proxyTo = function(endpoint, method, data, cb) {
-  if (endpoint[0] !== '/') {
-    endpoint = '/' + endpoint;
-  }
-  var url = 'http://' + this.proxyHost + ':' + this.proxyPort + endpoint;
-  request(url, method, data ? data : null, cb);
-};
+Selendroid.prototype.proxyTo = proxyTo;
 
 module.exports = function(opts) {
   return new Selendroid(opts);

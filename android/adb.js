@@ -79,7 +79,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     if (binaryName === "android") {
       binaryName += ".bat";
     } else {
-      if (binaryName.indexOf(".exe", binaryName.length - 4) == -1) {
+      if (binaryName.indexOf(".exe", binaryName.length - 4) === -1) {
         binaryName += ".exe";
       }
     }
@@ -598,9 +598,21 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { me.wakeUp(cb); },
     function(cb) { me.unlockScreen(cb); },
     function(cb) { me.startApp(cb); }
-  ], function(err) {
+  ], function(err, seriesInfo) {
     onReady(err);
   });
+};
+
+ADB.prototype.startChrome = function(onReady) {
+  logger.info("Starting Chrome");
+  var me = this;
+  logger.debug("Using fast reset? " + this.fastReset);
+
+  async.series([
+    function(cb) { me.prepareDevice(cb); },
+    function(cb) { me.installApp(cb); },
+    function(cb) { me.startApp(cb); }
+  ], onReady);
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
@@ -671,8 +683,13 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
+  var act = this.appActivity,
+      activityString = act[0] === '.' ? act : '.' + act;
+  if (act.indexOf(this.appPackage) === 0) {
+    activityString = act.substring(this.appPackage.length);
+  }
   var cmd = this.adbCmd + " shell am instrument -e main_activity '" +
-            this.appPackage + "." + this.appActivity + "' " + this.appPackage +
+            this.appPackage + activityString + "' " + this.appPackage +
             ".selendroid/io.selendroid.ServerInstrumentation";
   cmd = cmd.replace(/\.+/g,'.'); // Fix pkg..activity error
   logger.info("Starting instrumentation process for selendroid with cmd: " +
@@ -900,16 +917,16 @@ ADB.prototype.checkForSocketReady = function(output) {
       this.onSocketReady(null);
     }, this));
     this.socketClient.setEncoding('utf8');
+    var oldData = '';
     this.socketClient.on('data', _.bind(function(data) {
       this.debug("Received command result from bootstrap");
       try {
-        data = JSON.parse(data);
+        data = JSON.parse(oldData + data);
+        oldData = '';
       } catch (e) {
-        this.debug("Could not parse JSON from data: " + data);
-        data = {
-          status: status.codes.UnknownError.code
-          , value: "Got a bad response from Android server"
-        };
+        logger.info("Stream still not complete, waiting");
+        oldData += data;
+        return;
       }
       if (this.cmdCb) {
         var next = this.cmdCb;
@@ -1172,24 +1189,10 @@ ADB.prototype.startApp = function(cb) {
   logger.info("Starting app");
   this.requireDeviceId();
   this.requireApp();
+  // If the activity string doesn't start with '.' then
+  // consider it fully qualified. If it does, then
+  // . will be expanded to appPackage automagically by Android.
   var activityString = this.appActivity;
-  var hasNoPrefix = true;
-  var rootPrefixes = ['com', 'net', 'org', 'io'];
-  _.each(rootPrefixes, function(prefix) {
-    if (activityString.indexOf(prefix + ".") === 0) {
-      hasNoPrefix = false;
-    }
-  });
-
-  // Let's not break regular activities.
-  // https://github.com/appium/appium/issues/782
-  if (activityString[0] === ".") {
-    hasNoPrefix = false;
-  }
-
-  if (hasNoPrefix) {
-    activityString = "." + activityString;
-  }
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
@@ -1251,7 +1254,9 @@ ADB.prototype.waitForNotActivity = function(cb) {
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;
-
+  if (targetActivity.indexOf(this.appPackage) === 0) {
+    targetActivity = targetActivity.substring(this.appPackage.length);
+  }
   var getFocusedApp = _.bind(function() {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {
@@ -1279,14 +1284,16 @@ ADB.prototype.waitForNotActivity = function(cb) {
   getFocusedApp();
 };
 
-ADB.prototype.waitForActivity = function(cb) {
+ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
   this.requireApp();
   logger.info("Waiting for app's activity to become focused");
-  var waitMs = 20000
+  var waitMs = waitMsOverride || 20000
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;
-
+  if (targetActivity.indexOf(this.appPackage) === 0) {
+    targetActivity = targetActivity.substring(this.appPackage.length);
+  }
   var getFocusedApp = _.bind(function() {
     this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
           foundActivity) {

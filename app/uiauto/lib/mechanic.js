@@ -31,6 +31,7 @@ var mechanic = (function() {
         'UIAAlert' : ['alert'],
         'UIAButton' : ['button'],
         'UIACollectionView': ['collection'],
+        'UIACollectionCell': ['collectionCell'],
         'UIAElement' : ['\\*'], // TODO: sort of a hack
         'UIAImage' : ['image'],
         'UIALink' : ['link'],
@@ -49,7 +50,7 @@ var mechanic = (function() {
         'UIASwitch' : ['switch'],
         'UIATabBar' : ['tabbar'],
         'UIATableView' : ['tableview'],
-        'UIATableCell' : ['cell'],
+        'UIATableCell' : ['cell', 'tableCell'],
         'UIATableGroup' : ['group'],
         'UIATextField' : ['textfield'],
         'UIATextView' : ['textview'],

@@ -12,7 +12,7 @@ desired_caps['browserName'] = ''
 desired_caps['version'] = '4.2'
 desired_caps['app'] = PATH('../../../sample-code/apps/ContactManager/ContactManager.apk')
 desired_caps['app-package'] = 'com.example.android.contactmanager'
-desired_caps['app-activity'] = 'ContactManager'
+desired_caps['app-activity'] = '.ContactManager'
 
 driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
 

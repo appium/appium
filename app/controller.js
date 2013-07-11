@@ -152,6 +152,77 @@ exports.getStatus = function(req, res) {
   respondSuccess(req, res, data);
 };
 
+exports.installApp = function(req, res) {
+  if (req.appium.args.udid || req.appium.args.avdName) {
+    req.body = JSON.parse(req.body);
+    req.device.unpackApp(req, function(unpackedAppPath) {
+      if (unpackedAppPath === null) {
+        respondError(req, res, 'Only a (zipped) app/apk files can be installed using this endpoint');
+      } else {
+        req.device.installApp(unpackedAppPath, function(error, response) {
+          if (error !== null) {
+            respondError(req, res, response);
+          } else {
+            respondSuccess(req, res, response);
+          }
+        });
+      }
+    });
+  } else {
+    respondSuccess(req, res, 'No udid/avdName was provided, therefore the app [' + req.body.appPath + '] was not installed');
+  }
+};
+
+exports.removeApp = function(req, res) {
+  if (req.device.udid || req.device.avdName) {
+    req.body = JSON.parse(req.body);
+    req.device.removeApp(req.body.bundleId, function(error, response) {
+      if (error !== null) {
+        respondError(req, res, response);
+      } else {
+        respondSuccess(req, res, response);
+      }
+    });
+  } else {
+    respondSuccess(req, res, 'No udid/advName was provided, therefore the app [' + req.body.bundleId + '] was not removed');
+  }
+};
+
+exports.isAppInstalled = function(req, res) {
+  if (req.device.udid || req.device.avdName) {
+    req.body = JSON.parse(req.body);
+    req.device.isAppInstalled(req.body.bundleId, function(error, stdout) {
+      if (error !== null) {
+        respondSuccess(req, res, false);
+      } else {
+        if ((req.appium.args.udid && req.appium.args.udid.length === 40) || (typeof stdout[0] !== "undefined")) {
+          respondSuccess(req, res, true);
+        } else {
+          respondSuccess(req, res, false);
+        }
+      }
+    });
+  } else {
+    respondSuccess(req, res, 'No udid/avdName was provided, therefore no check was done for app [' + req.body.bundleId + ']');
+  }
+};
+
+exports.launchApp = function(req, res) {
+  req.device.start(function() {
+    respondSuccess(req, res, "Successfully launched the [" + req.appium.args.app + "] app.");
+  }, function() {
+    respondError(req, res, "Unable to launch the  [" + req.appium.args.app + "] app.");
+  });
+};
+
+exports.closeApp = function(req, res) {
+  req.device.stop(function() {
+    respondSuccess(req, res, "Successfully closed the [" + req.appium.args.app + "] app.");
+  }, function() {
+    respondError(req, res, "Something whent wront whilst closing the [" + req.appium.args.app + "] app.");
+  });
+};
+
 exports.createSession = function(req, res) {
   if (typeof req.body === 'string') {
     req.body = JSON.parse(req.body);
@@ -278,6 +349,13 @@ exports.doClick = function(req, res) {
   req.device.click(elementId, getResponseHandler(req, res));
 };
 
+exports.touchLongClick = function(req, res) {
+  var element = req.body.element;
+  if (checkMissingParams(res, {element: element}, true)) {
+    req.device.touchLongClick(element, getResponseHandler(req, res));
+  }
+};
+
 exports.fireEvent = function(req, res) {
   var elementId = req.body.element
     , evt = req.body.event;
@@ -393,8 +471,14 @@ exports.mobileSwipe = function(req, res) {
 };
 
 exports.mobileScrollTo = function(req, res) {
-  var elementId = req.body.element;
-  req.device.scrollTo(elementId, getResponseHandler(req, res));
+  req.body = _.defaults(req.body, {
+    element: null
+    , text: null
+  });
+  var element = req.body.element
+    , text = req.body.text;
+
+  req.device.scrollTo(element, text, getResponseHandler(req, res));
 };
 
 exports.mobileShake = function(req, res) {
@@ -879,6 +963,12 @@ var mobileCmdMap = {
   , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity
   , 'findElementNameContains': exports.findElementNameContains
+  , 'installApp': exports.installApp
+  , 'removeApp': exports.removeApp
+  , 'isAppInstalled': exports.isAppInstalled
+  , 'launchApp': exports.launchApp
+  , 'closeApp': exports.closeApp
+  , 'longClick' : exports.touchLongClick
 };
 
 exports.produceError = function(req, res) {

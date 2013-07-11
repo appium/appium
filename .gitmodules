@@ -10,3 +10,6 @@
 [submodule "submodules/selendroid"]
 	path = submodules/selendroid
 	url = https://github.com/DominikDary/selendroid.git
+[submodule "submodules/fruitstrap"]
+	path = submodules/fruitstrap
+	url = https://github.com/tborys/fruitstrap.git

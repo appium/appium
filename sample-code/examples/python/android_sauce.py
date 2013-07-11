@@ -7,7 +7,7 @@ desired_caps['browserName'] = ''
 desired_caps['version'] = '4.2'
 desired_caps['app'] = 'http://appium.s3.amazonaws.com/NotesList.apk'
 desired_caps['app-package'] = 'com.example.android.notepad'
-desired_caps['app-activity'] = 'NotesList'
+desired_caps['app-activity'] = '.NotesList'
 
 SAUCE_USERNAME = os.environ.get('SAUCE_USERNAME')
 SAUCE_ACCESS_KEY = os.environ.get('SAUCE_ACCESS_KEY')

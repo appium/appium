@@ -16,6 +16,7 @@ var routing = require('./routing')
   , ios = require('./ios')
   , android = require('./android')
   , selendroid = require('./selendroid')
+  , chrome = require('./chrome_android')
   , firefoxOs = require('./firefoxos')
   , status = require("./uiauto/lib/status")
   , helpers = require('./helpers')
@@ -126,11 +127,19 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     } else {
       return "android";
     }
+  } else if (desiredCaps.app) {
+    if (desiredCaps.app.toLowerCase() === "safari") {
+      return "ios";
+    } else if (desiredCaps.app.toLowerCase() === "chrome") {
+      return "android";
+    }
   } else if (desiredCaps.browserName) {
     if (desiredCaps.browserName[0].toLowerCase() === "i") {
       return "ios";
     } else if (desiredCaps.browserName.toLowerCase() === "safari") {
       return "ios";
+    } else if (desiredCaps.browserName.toLowerCase() === "chrome") {
+      return "android";
     } else if (desiredCaps.browserName.toLowerCase().indexOf('selendroid') !== -1) {
       return "selendroid";
     } else {
@@ -168,6 +177,11 @@ Appium.prototype.isIos = function() {
 
 Appium.prototype.isAndroid = function() {
   return this.deviceType === "android";
+};
+
+Appium.prototype.isChrome = function() {
+  return this.args.app === "chrome" ||
+         this.args.androidPackage === "com.android.chrome";
 };
 
 Appium.prototype.isSelendroid = function() {
@@ -256,6 +270,10 @@ Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
     }
     logger.info("App is an Android package, will attempt to run on device");
     cb(null);
+  } else if (appPath.toLowerCase() === "chrome") {
+    logger.info("Looks like we want chrome on android, setting pkg/activity");
+    this.configureChromeAndroid();
+    cb(null);
   } else if (this.isFirefoxOS()) {
     this.args.app = desiredCaps.app;
     cb(null);
@@ -288,7 +306,18 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
 
 Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
   var appUrl = appPath;
-  if (appUrl.substring(appUrl.length - 4) === ".zip") {
+  if (appUrl.substring(appUrl.length - 4) === ".apk") {
+    try {
+      downloadFile(appUrl, function(appPath) {
+        this.tempFiles.push(appPath);
+        cb(null, appPath);
+      }.bind(this));
+    } catch (e) {
+      var err = e.toString();
+      logger.error("Failed downloading app from appUrl " + appUrl);
+      cb(err);
+    }
+  } else if (appUrl.substring(appUrl.length - 4) === ".zip") {
     try {
       this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
         if (zipErr) {
@@ -358,6 +387,14 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
       checkSuccess(attemptedApp);
     }
   }, this));
+};
+
+Appium.prototype.configureChromeAndroid = function() {
+  this.deviceType = "android";
+  this.desiredCapabilities.chrome = true;
+  this.args.androidPackage = "com.android.chrome";
+  this.args.androidActivity = "com.google.android.apps.chrome.Main";
+  this.args.app = null;
 };
 
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
@@ -463,7 +500,11 @@ Appium.prototype.invoke = function() {
           , keyAlias: this.args.keyAlias
           , keyPassword: this.args.keyPassword
         };
-        this.devices[this.deviceType] = android(androidOpts);
+        if (this.isChrome()) {
+          this.devices[this.deviceType] = chrome(androidOpts);
+        } else {
+          this.devices[this.deviceType] = android(androidOpts);
+        }
       } else if (this.isSelendroid()) {
         var selendroidOpts = {
           apkPath: this.args.app
@@ -499,24 +540,38 @@ Appium.prototype.invoke = function() {
     }
     this.device = this.devices[this.deviceType];
 
-    this.device.start(function(err, sessionIdOverride) {
+    if (typeof this.desiredCapabilities.launch === "undefined" || this.desiredCapabilities.launch !== false ) {
+      this.device.start(function(err, sessionIdOverride) {
+        me.progress++;
+        // Ensure we don't use an undefined session.
+        if (typeof me.sessions[me.progress] === 'undefined') {
+          me.progress--;
+          return;
+        }
+        if (sessionIdOverride) {
+          me.sessionId = sessionIdOverride;
+          logger.info("Overriding session id with " + sessionIdOverride);
+        }
+
+        me.sessions[me.progress].sessionId = me.sessionId;
+        me.sessions[me.progress].callback(err, me.device);
+        if (err) {
+          me.onDeviceDie(1);
+        }
+      }, _.bind(me.onDeviceDie, me));
+    } else {
+      //required if we dont want to launch the app, but we do want a session.
       me.progress++;
       // Ensure we don't use an undefined session.
       if (typeof me.sessions[me.progress] === 'undefined') {
         me.progress--;
         return;
       }
-      if (sessionIdOverride) {
-        me.sessionId = sessionIdOverride;
-        logger.info("Overriding session id with " + sessionIdOverride);
-      }
 
       me.sessions[me.progress].sessionId = me.sessionId;
-      me.sessions[me.progress].callback(err, me.device);
-      if (err) {
-        me.onDeviceDie(1);
-      }
-    }, _.bind(me.onDeviceDie, me));
+      me.sessions[me.progress].callback(null, me.device);
+    }
+
   }
 };
 

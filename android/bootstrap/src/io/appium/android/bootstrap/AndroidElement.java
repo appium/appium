@@ -27,12 +27,20 @@ public class AndroidElement {
     el = uiObj;
   }
 
+  public UiObject getUiObject() {
+    return this.el;
+  }
+
   public void clearText() throws UiObjectNotFoundException {
     el.clearTextField();
   }
 
   public boolean click() throws UiObjectNotFoundException {
     return el.click();
+  }
+
+  public boolean longClick() throws UiObjectNotFoundException {
+    return el.longClick();
   }
 
   public Point getAbsolutePosition(final Double X, final Double Y)
@@ -166,5 +174,4 @@ public class AndroidElement {
   public boolean setText(final String text) throws UiObjectNotFoundException {
     return el.setText(text);
   }
-
 }

@@ -15,9 +15,15 @@ var errors = require('./errors')
   , temp = require('temp')
   , async = require('async')
   , path = require('path')
-  , UnknownError = errors.UnknownError;
+  , UnknownError = errors.UnknownError
+  , helpers = require('./helpers')
+  , isWindows = helpers.isWindows();
 
 var Android = function(opts) {
+  this.initialize(opts);
+};
+
+Android.prototype.initialize = function(opts) {
   this.rest = opts.rest;
   this.webSocket = opts.webSocket;
   this.opts = opts;
@@ -40,18 +46,25 @@ var Android = function(opts) {
   this.adb = null;
   this.swipeStepsPerSec = 200;
   this.asyncWaitMs = 0;
+  this.remote = null;
+  this.webElementIds = [];
+  this.curWindowHandle = null;
   this.capabilities = {
     platform: 'LINUX'
     , browserName: 'Android'
     , version: '4.1'
     , webStorageEnabled: false
-    , takesScreenshots: true
+    , takesScreenshot: true
     , javascriptEnabled: true
     , databaseEnabled: false
   };
 };
 
-// Clear data, wait for app close, then start app.
+Android.prototype.inWebView = function() {
+  return this.curWindowHandle !== null;
+};
+
+// Clear data, close app, then start app.
 Android.prototype.fastReset = function(cb) {
   var me = this;
   async.series([
@@ -142,10 +155,14 @@ Android.prototype.start = function(cb, onDie) {
   if (this.adb === null) {
     // Pass Android opts and Android ref to adb.
     this.adb = adb(this.opts, this);
-    this.adb.startAppium(onLaunch, onExit);
+    this.startAppium(onLaunch, onExit);
   } else {
     logger.error("Tried to start ADB when we already have one running!");
   }
+};
+
+Android.prototype.startAppium = function(onLaunch, onExit) {
+  this.adb.startAppium(onLaunch, onExit);
 };
 
 Android.prototype.timeoutWaitingForCommand = function() {
@@ -172,13 +189,17 @@ Android.prototype.stop = function(cb) {
     }
     this.shuttingDown = true;
     this.adb.goToHome(_.bind(function() {
-      this.adb.sendShutdownCommand(_.bind(function() {
-        logger.info("Sent shutdown command, waiting for ADB to stop...");
-      }, this));
+      this.shutdown();
     }, this));
     this.queue = [];
     this.progress = 0;
   }
+};
+
+Android.prototype.shutdown = function() {
+  this.adb.sendShutdownCommand(_.bind(function() {
+    logger.info("Sent shutdown command, waiting for ADB to stop...");
+  }, this));
 };
 
 Android.prototype.resetTimeout = function() {
@@ -255,6 +276,24 @@ Android.prototype.push = function(elem) {
 
 Android.prototype.waitForCondition = deviceCommon.waitForCondition;
 
+Android.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
+  var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
+  this.returnedFromExecuteAtom = false;
+  this.processingRemoteCmd = true;
+  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
+    this.processingRemoteCmd = false;
+    if (!this.returnedFromExecuteAtom) {
+      this.returnedFromExecuteAtom = true;
+      res = this.parseExecuteResponse(res);
+      cb(err, res);
+    }
+  }, this));
+};
+
+Android.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
+Android.prototype.parseElementResponse = deviceCommon.parseElementResponse;
+Android.prototype.useAtomsElement = deviceCommon.useAtomsElement;
+
 Android.prototype.setCommandTimeout = function(secs, cb) {
   logger.info("Setting command timeout for android to " + secs + " secs");
   this.origCommandTimeoutMs = this.commandTimeoutMs;
@@ -284,14 +323,36 @@ Android.prototype.getCommandTimeout = function(cb) {
 };
 
 Android.prototype.findElement = function(strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, false, "", cb);
+  if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, false, "", cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, false, "", cb);
+  }
 };
 
 Android.prototype.findElements = function(strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, true, "", cb);
+  if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, true, "", cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, true, "", cb);
+  }
 };
 
-Android.prototype.findElementOrElements = function(strategy, selector, many, context, cb) {
+Android.prototype.findWebElementOrElements = function(strategy, selector, many, ctx, cb) {
+  var ext = many ? 's' : '';
+  var atomsElement = this.getAtomsElement(ctx);
+  var me = this;
+  var doFind = function(findCb) {
+    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
+      me.handleFindCb(err, res, many, findCb);
+    });
+  };
+  this.waitForCondition(this.implicitWaitMs, doFind, cb);
+};
+
+Android.prototype.getAtomsElement = deviceCommon.getAtomsElement;
+
+Android.prototype.findUIElementOrElements = function(strategy, selector, many, context, cb) {
   var params = {
     strategy: strategy
     , selector: selector
@@ -315,19 +376,9 @@ Android.prototype.findElementOrElements = function(strategy, selector, many, con
     }
   }
   var doFind = _.bind(function(findCb) {
-    this.proxy(["find", params], function(err, res) {
-      if (err) {
-        findCb(false, err, res);
-      } else {
-        if (!many && res.status === 0) {
-          findCb(true, err, res);
-        } else if (many && typeof res.value !== 'undefined' && res.value.length > 0) {
-          findCb(true, err, res);
-        } else {
-          findCb(false, err, res);
-        }
-      }
-    });
+    this.proxy(["find", params], _.bind(function(err, res) {
+      this.handleFindCb(err, res, many, findCb);
+    }, this));
   }, this);
   if (!xpathError) {
     this.waitForCondition(this.implicitWaitMs, doFind, cb);
@@ -339,12 +390,34 @@ Android.prototype.findElementOrElements = function(strategy, selector, many, con
   }
 };
 
+Android.prototype.handleFindCb = function(err, res, many, findCb) {
+  if (err) {
+    findCb(false, err, res);
+  } else {
+    if (!many && res.status === 0 && res.value !== null) {
+      findCb(true, err, res);
+    } else if (many && typeof res.value !== 'undefined' && res.value.length > 0) {
+      findCb(true, err, res);
+    } else {
+      findCb(false, err, res);
+    }
+  }
+};
+
 Android.prototype.findElementFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, false, element, cb);
+  if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, false, element, cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, false, element, cb);
+  }
 };
 
 Android.prototype.findElementsFromElement = function(element, strategy, selector, cb) {
-  this.findElementOrElements(strategy, selector, true, element, cb);
+  if (this.inWebView()) {
+    this.findWebElementOrElements(strategy, selector, true, element, cb);
+  } else {
+    this.findUIElementOrElements(strategy, selector, true, element, cb);
+  }
 };
 
 Android.prototype.setValueImmediate = function(elementId, value, cb) {
@@ -360,7 +433,17 @@ Android.prototype.setValue = function(elementId, value, cb) {
 };
 
 Android.prototype.click = function(elementId, cb) {
-  this.proxy(["element:click", {elementId: elementId}], cb);
+  if (this.inWebView()) {
+    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+      this.executeAtom('tap', [atomsElement], cb);
+    }, this));
+  } else {
+    this.proxy(["element:click", {elementId: elementId}], cb);
+  }
+};
+
+Android.prototype.touchLongClick = function(elementId, cb) {
+  this.proxy(["element:touchLongClick", {elementId: elementId}], cb);
 };
 
 Android.prototype.fireEvent = function(evt, elementId, value, cb) {
@@ -474,14 +557,13 @@ Android.prototype.getCssProperty = function(elementId, propertyName, cb) {
 
 Android.prototype.getPageSource = function(cb) {
   var me = this;
-  var xmlFile = '/tmp/dump.xml';
+  var xmlFile = temp.path({suffix: '.xml'});
   var jsonFile = xmlFile + '.json';
   var json = '';
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
             logger.debug('getPageSource command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -492,8 +574,19 @@ Android.prototype.getPageSource = function(cb) {
             });
           },
           function(cb) {
+            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
+            logger.debug('transferPageSource command: ' + cmd);
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
+          },
+          function(cb) {
             var jar = path.resolve(__dirname, '../app/android/dump2json.jar');
-            var cmd = 'java -jar "' + jar + '" ' + xmlFile;
+            var cmd = 'java -jar "' + jar + '" "' + xmlFile + '"';
             logger.debug('json command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -505,6 +598,8 @@ Android.prototype.getPageSource = function(cb) {
           },
           function(cb) {
             json = fs.readFileSync(jsonFile, 'utf8');
+            fs.unlinkSync(jsonFile);
+            fs.unlinkSync(xmlFile);
             cb(null);
           }
         ],
@@ -519,12 +614,11 @@ Android.prototype.getPageSource = function(cb) {
 
 Android.prototype.getPageSourceXML = function(cb) {
   var me = this;
-  var xmlFile = '/tmp/dump.xml';
+  var xmlFile = temp.path({suffix: '.xml'});
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml;';
-            cmd += me.adb.adbCmd + ' pull /data/local/tmp/dump.xml ' + xmlFile;
+            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
             logger.debug('getPageSourceXML command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -533,11 +627,24 @@ Android.prototype.getPageSourceXML = function(cb) {
               }
               cb(null);
             });
+          },
+          function(cb) {
+            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
+            logger.debug('transferPageSourceXML command: ' + cmd);
+            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+              if (err) {
+                logger.warn(stderr);
+                return cb(err);
+              }
+              cb(null);
+            });
           }
+
         ],
         // Top level cb
         function(){
           var xml = fs.readFileSync(xmlFile, 'utf8');
+          fs.unlinkSync(xmlFile);
           cb(null, {
                status: status.codes.Success.code
                , value: xml
@@ -583,27 +690,33 @@ Android.prototype.setOrientation = function(orientation, cb) {
 
 Android.prototype.getScreenshot = function(cb) {
   var me = this;
-  var localfile = "/tmp/" + path.basename(temp.path({prefix: 'appium', suffix: '.png'}));
+  me.adb.requireDeviceId();
+  var localfile = temp.path({prefix: 'appium', suffix: '.png'});
   var b64data = "";
-  var jar = path.resolve(__dirname, '../app/android/ScreenShooter.jar');
-  var jarpath = path.resolve(process.env.ANDROID_HOME, "tools/lib");
+  var jar = path.resolve(__dirname, '..', 'app', 'android', 'ScreenShooter.jar');
+  var jarpath = path.resolve(process.env.ANDROID_HOME, "tools", "lib");
   var classpath = "";
 
   async.series([
     function(cb) {
-      exec('uname -m', { maxBuffer: 524288 }, function (error, stdout, stderr) {
-        if (error) {
-          cb(error);
-        } else {
-          classpath = jarpath + "/ddmlib.jar:" + jarpath + "/" + stdout.trim() + "/swt.jar:" + jar;
-          cb(null);
-        }
-      });
+      if (isWindows) {
+        classpath = path.resolve(jarpath, "ddmlib.jar") + ";" + path.resolve(jarpath, "x86", "swt.jar") + ";" + jar;
+        cb(null);
+      } else {
+        exec('uname -m', { maxBuffer: 524288 }, function (error, stdout, stderr) {
+          if (error) {
+            cb(error);
+          } else {
+            classpath = path.resolve(jarpath, "ddmlib.jar") + ":" + path.resolve(jarpath, stdout.trim(), "swt.jar") + ":" + jar;
+            cb(null);
+          }
+        });
+      }
     },
     function(cb) {
       var javaCmd = 'java -classpath "' + classpath + '" io.appium.android.screenshooter.ScreenShooter ';
 
-      var cmd = javaCmd + me.adb.curDeviceId + " '" + localfile + "'";
+      var cmd = javaCmd + me.adb.curDeviceId + ' "' + localfile + '"';
       logger.debug("screenshot cmd: " + cmd);
       exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         if (err) {
@@ -699,8 +812,15 @@ Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId,
   }
 };
 
-Android.prototype.scrollTo = function(elementId, cb) {
-  cb(new NotYetImplementedError(), null);
+Android.prototype.scrollTo = function(elementId, text, cb) {
+  // instead of the elementId as the element to be scrolled too,
+  // it's the scrollable view to swipe until the uiobject that has the
+  // text is found.
+  var opts = {
+    text: text
+    , elementId: elementId
+  };
+  this.proxy(["element:scrollTo", opts], cb);
 };
 
 Android.prototype.shake = function(cb) {
@@ -756,8 +876,18 @@ Android.prototype.clearWebView = function(cb) {
 };
 
 Android.prototype.execute = function(script, args, cb) {
-  cb(new NotYetImplementedError(), null);
+  if (this.inWebView()) {
+    var me = this;
+    this.convertElementForAtoms(args, function(err, res) {
+      if (err) return cb(null, res);
+      me.executeAtom('execute_script', [script, res], cb);
+    });
+  } else {
+    cb(new NotYetImplementedError(), null);
+  }
 };
+
+Android.prototype.convertElementForAtoms = deviceCommon.convertElementForAtoms;
 
 Android.prototype.title = function(cb) {
   cb(new NotYetImplementedError(), null);
@@ -802,6 +932,42 @@ Android.prototype.getCurrentActivity = function(cb) {
   });
 };
 
+Android.prototype.isAppInstalled = function(appPackage, cb) {
+  var isInstalledCommand = null;
+  if (this.udid) {
+    isInstalledCommand = 'adb -s ' + this.udid + ' shell pm path ' + appPackage;
+  } else if (this.avdName) {
+    isInstalledCommand = 'adb -e shell pm path ' + appPackage;
+  }
+  deviceCommon.isAppInstalled(isInstalledCommand, cb);
+};
+
+Android.prototype.removeApp = function(appPackage, cb) {
+  var removeCommand = null;
+  if (this.udid) {
+    removeCommand = 'adb -s ' + this.udid + ' uninstall ' + appPackage;
+  } else if (this.avdName) {
+    removeCommand = 'adb -e uninstall ' + appPackage;
+  }
+  deviceCommon.removeApp(removeCommand, this.udid, appPackage, cb);
+};
+
+Android.prototype.installApp = function(appPackage, cb) {
+  var installationCommand = null;
+  if (this.udid) {
+    installationCommand = 'adb -s ' + this.udid + ' install ' + appPackage;
+  } else if (this.avdName) {
+    installationCommand = 'adb -s ' + this.avdName + ' install ' + appPackage;
+  }
+  deviceCommon.installApp(installationCommand, this.udid, appPackage, cb);
+};
+
+Android.prototype.unpackApp = function(req, cb) {
+  deviceCommon.unpackApp(req, '.apk', cb);
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };
+
+module.exports.Android = Android;

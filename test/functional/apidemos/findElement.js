@@ -4,7 +4,7 @@
 var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
   , appPkg = "com.example.android.apis"
-  , appAct = "ApiDemos"
+  , appAct = ".ApiDemos"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
   , should = require('should');
@@ -242,6 +242,15 @@ describeWd('unallowed tag names', function(h) {
     h.driver.elementsByTagName('secure', function(err) {
       should.exist(err);
       err.cause.value.origValue.should.include("not supported in Android");
+      done();
+    });
+  });
+});
+
+describeWd('mobile xmlKeyContains', function(h) {
+  it('should not error on xmlKeyContains', function(done) {
+    h.driver.execute("mobile: xmlKeyContains", [''], function(err, el) {
+      should.not.exist(err);
       done();
     });
   });

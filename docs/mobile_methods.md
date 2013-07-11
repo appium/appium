@@ -25,7 +25,7 @@ Press the system menu button in Java.
 ```java
 HashMap<String, Integer> keycode = new HashMap<String, Integer>();
 keycode.put("keycode", 82);
-driver.executeScript("mobile: keyevent", keycode);
+((JavascriptExecutor)driver).executeScript("mobile: keyevent", keycode);
 ```
 
 Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)

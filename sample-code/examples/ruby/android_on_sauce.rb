@@ -26,7 +26,7 @@ def capabilities
     "version" => "4.2",
     "app" => "http://appium.s3.amazonaws.com/NotesList.apk",
     "app-package" => "com.example.android.notepad",
-    "app-activity" => "NotesList"
+    "app-activity" => ".NotesList"
   }
 end
 

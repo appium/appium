@@ -969,6 +969,8 @@ var mobileCmdMap = {
   , 'launchApp': exports.launchApp
   , 'closeApp': exports.closeApp
   , 'longClick' : exports.touchLongClick
+  , 'setOrientation' : exports.setOrientation
+  , 'getOrientation' : exports.getOrientation
 };
 
 exports.produceError = function(req, res) {

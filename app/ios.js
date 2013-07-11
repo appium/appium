@@ -581,11 +581,6 @@ IOS.prototype.push = function(elem) {
   this.queue.push(elem);
   var me = this;
 
-  //logger.info(("elem : " + elem).green);
-  if (typeof elem === "object") {
-    elem = elem[0];
-  }
-
   var next = function() {
     if (me.selectingNewPage && me.curWindowHandle) {
       logger.info("We're in the middle of selecting a new page, " +

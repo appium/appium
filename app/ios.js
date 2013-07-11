@@ -581,6 +581,11 @@ IOS.prototype.push = function(elem) {
   this.queue.push(elem);
   var me = this;
 
+  //logger.info(("elem : " + elem).green);
+  if (typeof elem === "object") {
+    elem = elem[0];
+  }
+
   var next = function() {
     if (me.selectingNewPage && me.curWindowHandle) {
       logger.info("We're in the middle of selecting a new page, " +
@@ -588,7 +593,9 @@ IOS.prototype.push = function(elem) {
       setTimeout(next, 500);
       return;
     } else if (me.curWindowHandle && me.processingRemoteCmd &&
-               elem !== "au.alertIsPresent()") {
+               elem !== "au.alertIsPresent()" && elem !== "au.getAlertText()" &&
+               elem !== "au.acceptAlert()" && elem !== "au.dismissAlert()" &&
+               elem !== "au.setAlertText()" && elem !== "au.waitForAlertToClose") {
       logger.info("We're in the middle of processing a remote debugger " +
                   "command, waiting to run next command until done");
       setTimeout(next, 500);

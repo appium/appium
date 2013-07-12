@@ -296,6 +296,28 @@ public class SimpleTest {
         Dimension text2 = driver.findElement(By.xpath("//textfield[2]")).getSize();
         assertEquals(text1.getWidth(), text2.getWidth());
         assertEquals(text1.getHeight(), text2.getHeight());
+    }@Test
+    @SuppressWarnings("serial")
+    public void testRotation() throws Exception {
+        WebElement button = driver.findElement(By.name("Test Gesture"));
+        button.click();
+        ((JavascriptExecutor) driver).executeScript("mobile: rotate", new HashMap<String, Double>() {{ put("x", (double)114); put("y", (double)198); put("radius", (double)3); put("touchCount", (double)2);  put("duration", 5.0);  put("rotation", 220.0); }});
+    }
+    
+    @Test
+    @SuppressWarnings("serial")
+    public void testPinchClose() throws Exception {
+        WebElement button = driver.findElement(By.name("Test Gesture"));
+        button.click();
+        ((JavascriptExecutor) driver).executeScript("mobile: pinchClose", new HashMap<String, Double>() {{ put("startX", (double)150); put("startY", (double)230); put("endX", (double)200); put("endY", (double)260);  put("duration", 2.0); }});
+    }
+    
+    @Test
+    @SuppressWarnings("serial")
+    public void testPinchOpen() throws Exception {
+        WebElement button = driver.findElement(By.name("Test Gesture"));
+        button.click();
+        ((JavascriptExecutor) driver).executeScript("mobile: pinchOpen", new HashMap<String, Double>() {{ put("startX", (double)114); put("startY", (double)198); put("endX", (double)257); put("endY", (double)256);  put("duration", 2.0); }});
     }
 
     public class SwipeableWebDriver extends RemoteWebDriver implements HasTouchScreen {

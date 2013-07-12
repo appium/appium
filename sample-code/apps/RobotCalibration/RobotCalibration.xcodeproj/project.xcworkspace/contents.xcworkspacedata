@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:MonkeyPinch.xcodeproj">
+      location = "self:RobotCalibration.xcodeproj">
    </FileRef>
 </Workspace>

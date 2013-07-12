@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		255BAFEC1790223300DE7158 /* GestureTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 255BAFEA1790223300DE7158 /* GestureTestViewController.m */; };
+		255BAFED1790223300DE7158 /* GestureTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 255BAFEB1790223300DE7158 /* GestureTestViewController.xib */; };
+		255BAFEF1790249F00DE7158 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 255BAFEE1790249F00DE7158 /* MapKit.framework */; };
 		3647AE1315CA0082006F70D6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3647AE1215CA0082006F70D6 /* UIKit.framework */; };
 		3647AE1515CA0082006F70D6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3647AE1415CA0082006F70D6 /* Foundation.framework */; };
 		3647AE1715CA0082006F70D6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3647AE1615CA0082006F70D6 /* CoreGraphics.framework */; };
@@ -19,6 +22,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		255BAFE91790223300DE7158 /* GestureTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureTestViewController.h; sourceTree = "<group>"; };
+		255BAFEA1790223300DE7158 /* GestureTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GestureTestViewController.m; sourceTree = "<group>"; };
+		255BAFEB1790223300DE7158 /* GestureTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GestureTestViewController.xib; sourceTree = "<group>"; };
+		255BAFEE1790249F00DE7158 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		3647AE0E15CA0082006F70D6 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3647AE1215CA0082006F70D6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3647AE1415CA0082006F70D6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -40,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				255BAFEF1790249F00DE7158 /* MapKit.framework in Frameworks */,
 				3647AE1315CA0082006F70D6 /* UIKit.framework in Frameworks */,
 				3647AE1515CA0082006F70D6 /* Foundation.framework in Frameworks */,
 				3647AE1715CA0082006F70D6 /* CoreGraphics.framework in Frameworks */,
@@ -52,6 +60,7 @@
 		3647AE0315CA0082006F70D6 = {
 			isa = PBXGroup;
 			children = (
+				255BAFEE1790249F00DE7158 /* MapKit.framework */,
 				36FEEFED1656DD6000100C04 /* Default-568h@2x.png */,
 				3647AE1815CA0082006F70D6 /* TestApp */,
 				3647AE1115CA0082006F70D6 /* Frameworks */,
@@ -86,6 +95,9 @@
 				3647AE2915CA00D5006F70D6 /* MyViewControllerViewController.h */,
 				3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */,
 				3647AE2B15CA00D5006F70D6 /* MyViewControllerViewController.xib */,
+				255BAFE91790223300DE7158 /* GestureTestViewController.h */,
+				255BAFEA1790223300DE7158 /* GestureTestViewController.m */,
+				255BAFEB1790223300DE7158 /* GestureTestViewController.xib */,
 			);
 			name = TestApp;
 			path = "Test App 2";
@@ -156,6 +168,7 @@
 				3647AE1D15CA0082006F70D6 /* InfoPlist.strings in Resources */,
 				3647AE2D15CA00D5006F70D6 /* MyViewControllerViewController.xib in Resources */,
 				36FEEFEE1656DD6000100C04 /* Default-568h@2x.png in Resources */,
+				255BAFED1790223300DE7158 /* GestureTestViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +182,7 @@
 				3647AE1F15CA0082006F70D6 /* main.m in Sources */,
 				3647AE2315CA0082006F70D6 /* TA2AppDelegate.m in Sources */,
 				3647AE2C15CA00D5006F70D6 /* MyViewControllerViewController.m in Sources */,
+				255BAFEC1790223300DE7158 /* GestureTestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

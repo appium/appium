@@ -301,7 +301,7 @@ Android.prototype.setCommandTimeout = function(secs, cb) {
   this.resetTimeout();
   cb(null, {
     status: status.codes.Success.code
-    , value: ''
+    , value: secs
   });
 };
 

@@ -106,7 +106,8 @@ ChromeAndroid.prototype.createSession = function(cb) {
       cb(null, this.chromeSessionId);
     } else {
       logger.error("Chromedriver create session did not work. Status was " +
-                   res.statusCode + " and body was " + body);
+                   res.statusCode + " and body was " +
+                   JSON.stringify(body));
       cb(new Error("Did not get session redirect from Chromedriver"));
     }
   }.bind(this));

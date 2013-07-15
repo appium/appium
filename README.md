@@ -32,7 +32,9 @@ Requirements
 
 General:
 
-* Mac OS X 10.7 or higher, 10.8 recommended (Linux OK for Android-only; support for Windows is in "beta")
+* OS X is required for iOS automation
+  * Mac OS X 10.7 or higher, 10.8.4 recommended
+* Android works on OS X and Linux. Support for Windows is in "beta"
 * Node and npm (brew install node) (Node must be &gt;= v0.8)
 
 For iOS automation:

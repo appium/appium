@@ -6,32 +6,38 @@
     <artifactId>sauce_appium_testng</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>sauce_appium_testng</name>
-    <description>Sample Appium tests using JUnit</description>
+    <description>Sample Appium tests using TestNG</description>
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.8</version>
-            <scope>test</scope>
+            <!--scope>test</scope-->
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>LATEST</version>
-            <scope>test</scope>
+            <!--scope>test</scope-->
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
-            <scope>test</scope>
+            <!--scope>test</scope-->
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-            <scope>test</scope>
+            <!--scope>test</scope-->
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
+
     </dependencies>
 
     <build>

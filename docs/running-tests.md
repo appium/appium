@@ -28,7 +28,7 @@ The best way to see what to do currently is to look at the example tests:
 
 Basically, first make sure Appium is running:
 
-    node server.js -V
+    node server.js -v
 
 Then script your WebDriver test, sending in the following desired capabilities:
 

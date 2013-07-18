@@ -463,6 +463,10 @@ Appium.prototype.invoke = function() {
         device.stop = function(cb) { cb(); };
         this.devices[this.deviceType] = device;
       } else if (this.isIos()) {
+        var useLocationServices = this.desiredCapabilities.useLocationServices;
+        if (useLocationServices !== false) {
+          useLocationServices = true;
+        }
         var iosOpts = {
           rest: this.rest
           , webSocket: this.webSocket
@@ -479,6 +483,7 @@ Appium.prototype.invoke = function() {
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
           , robotPort: this.args.robotPort
           , robotAddress: this.args.robotAddress
+          , useLocationServices: useLocationServices
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {

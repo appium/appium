@@ -133,6 +133,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
       return "ios";
     } else if (desiredCaps.app.toLowerCase() === "chrome") {
       return "android";
+    } else if (desiredCaps.app.toLowerCase() === "chromium") {
+      return "android";
     }
   } else if (desiredCaps.browserName) {
     if (desiredCaps.browserName[0].toLowerCase() === "i") {
@@ -140,6 +142,8 @@ Appium.prototype.getDeviceType = function(desiredCaps) {
     } else if (desiredCaps.browserName.toLowerCase() === "safari") {
       return "ios";
     } else if (desiredCaps.browserName.toLowerCase() === "chrome") {
+      return "android";
+    } else if (desiredCaps.browserName.toLowerCase() === "chromium") {
       return "android";
     } else if (desiredCaps.browserName.toLowerCase().indexOf('selendroid') !== -1) {
       return "selendroid";
@@ -182,7 +186,9 @@ Appium.prototype.isAndroid = function() {
 
 Appium.prototype.isChrome = function() {
   return this.args.app === "chrome" ||
-         this.args.androidPackage === "com.android.chrome";
+         this.args.androidPackage === "com.android.chrome" ||
+         this.args.app === "chromium" ||
+         this.args.androidPackage === "org.chromium.chrome.testshell";
 };
 
 Appium.prototype.isSelendroid = function() {
@@ -271,8 +277,13 @@ Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
     }
     logger.info("App is an Android package, will attempt to run on device");
     cb(null);
-  } else if (appPath.toLowerCase() === "chrome") {
-    logger.info("Looks like we want chrome on android, setting pkg/activity");
+  } else if (_.contains(["chrome", "chromium"], appPath.toLowerCase())) {
+    logger.info("Looks like we want chrome on android");
+    if (appPath.toLowerCase() === "chromium") {
+      this.args.chromium = true;
+    } else {
+      this.args.chromium = false;
+    }
     this.configureChromeAndroid();
     cb(null);
   } else if (this.isFirefoxOS()) {
@@ -392,7 +403,6 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
 
 Appium.prototype.configureChromeAndroid = function() {
   this.deviceType = "android";
-  this.desiredCapabilities.chrome = true;
   this.args.androidPackage = "com.android.chrome";
   this.args.androidActivity = "com.google.android.apps.chrome.Main";
   this.args.app = null;
@@ -507,6 +517,7 @@ Appium.prototype.invoke = function() {
           , keyPassword: this.args.keyPassword
         };
         if (this.isChrome()) {
+          androidOpts.chromium = this.args.chromium;
           this.devices[this.deviceType] = chrome(androidOpts);
         } else {
           this.devices[this.deviceType] = android(androidOpts);

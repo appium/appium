@@ -83,16 +83,20 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
     if (!alreadyReturned) {
       cb();
     }
-  }.bind(this), 500);
+  }.bind(this), 750);
 };
 
 ChromeAndroid.prototype.createSession = function(cb) {
   logger.info("Creating Chrome session");
+  var pkg = 'com.android.chrome';
+  if (this.opts.chromium) {
+    pkg = 'org.chromium.chrome.testshell';
+  }
   var data = {
     sessionId: null,
     desiredCapabilities: {
       chromeOptions: {
-        androidPackage: 'com.android.chrome'
+        androidPackage: pkg
       }
     }
   };

@@ -38,6 +38,7 @@ var IOS = function(args) {
   this.withoutDelay = args.withoutDelay;
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
+  this.useLocationServices = args.useLocationServices;
   this.deviceType = args.deviceType;
   this.startingOrientation = args.startingOrientation || "PORTRAIT";
   this.curOrientation = this.startingOrientation;
@@ -113,6 +114,11 @@ IOS.prototype.start = function(cb, onDie) {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
+    var setLocationServicesPref = function(oCb) {
+      var cmd = "setBootstrapConfig: useLocationServices=" +
+                JSON.stringify(me.useLocationServices);
+      me.proxy(cmd, oCb);
+    };
     var navToWebview = function() {
       if (me.autoWebview) {
         me.navToFirstAvailWebview(cb);
@@ -139,7 +145,9 @@ IOS.prototype.start = function(cb, onDie) {
     };
     var next = function() {
       setOrientation(function() {
-        navToWebview();
+        setLocationServicesPref(function() {
+          navToWebview();
+        });
       });
     };
     if (me.bundleId !== null) {

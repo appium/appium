@@ -13,6 +13,7 @@ var routing = require('./routing')
   , copyLocalZip = helpers.copyLocalZip
   , UUID = require('uuid-js')
   , _ = require('underscore')
+  , fs = require('fs')
   , ios = require('./ios')
   , android = require('./android')
   , selendroid = require('./selendroid')
@@ -288,7 +289,7 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
   if (ext === this.getAppExt()) {
     this.args.app = appPath;
     logger.info("Using local app from " + origin + ": " + appPath);
-    cb(null);
+    fs.stat(appPath, cb);
   } else if (ext === ".zip") {
     logger.info("Using local zip from " + origin + ": " + appPath);
     this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
@@ -462,6 +463,10 @@ Appium.prototype.invoke = function() {
         device.stop = function(cb) { cb(); };
         this.devices[this.deviceType] = device;
       } else if (this.isIos()) {
+        var useLocationServices = this.desiredCapabilities.useLocationServices;
+        if (useLocationServices !== false) {
+          useLocationServices = true;
+        }
         var iosOpts = {
           rest: this.rest
           , webSocket: this.webSocket
@@ -478,6 +483,7 @@ Appium.prototype.invoke = function() {
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
           , robotPort: this.args.robotPort
           , robotAddress: this.args.robotAddress
+          , useLocationServices: useLocationServices
         };
         this.devices[this.deviceType] = ios(iosOpts);
       } else if (this.isAndroid()) {

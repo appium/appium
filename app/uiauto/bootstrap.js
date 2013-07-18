@@ -12,21 +12,43 @@ target.setTimeout(1);
 
 // let server know we're alive and get first command
 var cmd = getFirstCommand();
+var bootstrapSettings = {};
 
-UIATarget.onAlert = function(){
+UIATarget.onAlert = function(alert) {
+  if (alert.name().indexOf("Use Your Current Location") !== -1) {
+    if (bootstrapSettings.useLocationServices) {
+      alert.buttons()["OK"].tap();
+    } else {
+      alert.buttons()[0].tap();
+    }
+  }
   return true;
 };
+var result;
+var configStr;
+var configParts;
+var bootstrapConfigPrefix = "setBootstrapConfig: ";
 
 while(true) {
   if (cmd) {
     console.log("Got new command " + curAppiumCmdId + " from instruments: " + cmd);
     try {
-      var result = eval(cmd);
+
+      if (cmd.indexOf(bootstrapConfigPrefix) === 0) {
+        configStr = cmd.slice(bootstrapConfigPrefix.length);
+        console.log("Got bootstrap config: " + configStr);
+        configParts = configStr.split("=");
+        bootstrapSettings[configParts[0]] = JSON.parse(configParts[1]);
+        console.log("Set bootstrap config key '" + configParts[0] + "' to " +
+                    configParts[1]);
+      } else {
+        result = eval(cmd);
+      }
     } catch(e) {
-      result = {
-        status: codes.JavaScriptError.code
-        , value: e.message
-      };
+        result = {
+          status: codes.JavaScriptError.code
+          , value: e.message
+        };
     }
     if (typeof result === "undefined" || result === null) {
       result = '';

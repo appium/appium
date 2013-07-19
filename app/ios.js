@@ -38,6 +38,7 @@ var IOS = function(args) {
   this.withoutDelay = args.withoutDelay;
   this.reset = args.reset;
   this.removeTraceDir = args.removeTraceDir;
+  this.useLocationServices = args.useLocationServices;
   this.deviceType = args.deviceType;
   this.startingOrientation = args.startingOrientation || "PORTRAIT";
   this.curOrientation = this.startingOrientation;
@@ -113,6 +114,11 @@ IOS.prototype.start = function(cb, onDie) {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
     me.instruments.setDebug(true);
+    var setLocationServicesPref = function(oCb) {
+      var cmd = "setBootstrapConfig: useLocationServices=" +
+                JSON.stringify(me.useLocationServices);
+      me.proxy(cmd, oCb);
+    };
     var navToWebview = function() {
       if (me.autoWebview) {
         me.navToFirstAvailWebview(cb);
@@ -139,7 +145,9 @@ IOS.prototype.start = function(cb, onDie) {
     };
     var next = function() {
       setOrientation(function() {
-        navToWebview();
+        setLocationServicesPref(function() {
+          navToWebview();
+        });
       });
     };
     if (me.bundleId !== null) {
@@ -588,7 +596,9 @@ IOS.prototype.push = function(elem) {
       setTimeout(next, 500);
       return;
     } else if (me.curWindowHandle && me.processingRemoteCmd &&
-               elem !== "au.alertIsPresent()") {
+               elem !== "au.alertIsPresent()" && elem !== "au.getAlertText()" &&
+               elem !== "au.acceptAlert()" && elem !== "au.dismissAlert()" &&
+               elem !== "au.setAlertText()" && elem !== "au.waitForAlertToClose") {
       logger.info("We're in the middle of processing a remote debugger " +
                   "command, waiting to run next command until done");
       setTimeout(next, 500);
@@ -1521,7 +1531,8 @@ IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb)
   this.proxy(command, cb);
 };
 
-IOS.prototype.scrollTo = function(elementId, cb) {
+IOS.prototype.scrollTo = function(elementId, text, cb) {
+    // we ignore text for iOS, as the element is the one being scrolled too
     var command = ["au.getElement('", elementId, "').scrollToVisible()"].join('');
     this.proxy(command, cb);
 };

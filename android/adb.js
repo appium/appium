@@ -1189,11 +1189,10 @@ ADB.prototype.startApp = function(cb) {
   logger.info("Starting app");
   this.requireDeviceId();
   this.requireApp();
-  var act = this.appActivity,
-      activityString = act[0] === '.' ? act : '.' + act;
-  if (act.indexOf(this.appPackage) === 0) {
-    activityString = act;
-  }
+  // If the activity string doesn't start with '.' then
+  // consider it fully qualified. If it does, then
+  // . will be expanded to appPackage automagically by Android.
+  var activityString = this.appActivity;
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
@@ -1285,10 +1284,10 @@ ADB.prototype.waitForNotActivity = function(cb) {
   getFocusedApp();
 };
 
-ADB.prototype.waitForActivity = function(cb) {
+ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
   this.requireApp();
   logger.info("Waiting for app's activity to become focused");
-  var waitMs = 20000
+  var waitMs = waitMsOverride || 20000
     , intMs = 750
     , endAt = Date.now() + waitMs
     , targetActivity = this.appWaitActivity || this.appActivity;

@@ -4,7 +4,7 @@
 var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
   , appPkg = "com.example.android.apis"
-  , appAct = "ApiDemos"
+  , appAct = ".ApiDemos"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
   , should = require('should');
@@ -114,6 +114,39 @@ describeWd('gestures', function(h) {
           should.not.exist(err);
           should.exist(el.value);
           done();
+        });
+      });
+    });
+  });
+});
+  
+describeWd('scroll to element', function(h) {
+  it('should bring the element into view', function(done) {
+    h.driver.elementsByTagName('textView', function(err, els) {
+      should.not.exist(err);
+      var el = els[els.length-1];
+      el.click(function(err) {
+        should.not.exist(err);
+        h.driver.elementByTagName('listView', function(err, el) {
+          should.not.exist(err);
+          var scrollOpts = {
+            element: el.value
+            , text: 'Switches'
+          };
+          var next = function() {
+            h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+              should.not.exist(err);
+              h.driver.elementByName('Switches', function(err, el) {
+                should.not.exist(err);
+                el.getAttribute('name', function(err, text) {
+                  should.not.exist(err);
+                  text.should.equal("Switches");
+                  done();
+                });
+              });
+            });
+          };
+          setTimeout(next, 3000);
         });
       });
     });

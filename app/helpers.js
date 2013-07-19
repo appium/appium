@@ -80,7 +80,7 @@ exports.testZipArchive = function(zipPath, cb) {
     }
   } else {
     var execOpts = {cwd: path.dirname(zipPath)};
-    exec("unzip -t " + zipPath, execOpts, function(err, stderr, stdout) {
+    exec("unzip -tq " + zipPath, execOpts, function(err, stderr, stdout) {
       if (!err) {
         if(/No errors detected/.exec(stderr)) {
           logger.info("Zip archive tested clean");
@@ -96,7 +96,7 @@ exports.testZipArchive = function(zipPath, cb) {
         logger.error("Test zip archive threw error " + err);
         logger.error("Stderr: " + stderr);
         logger.error("Stdout: " + stdout);
-        cb("Error testing zip archive, are you sure this is a zip file?", null);
+        cb("Error testing zip archive, are you sure this is a zip file? " + err, null);
       }
     });
   }

@@ -720,7 +720,7 @@ module.exports.buildTests = function(webviewType) {
         });
       });
     });
-    it('should dismiss', function(done) {
+    it('should dismiss alert', function(done) {
       loadWebView(h.driver, function() {
         h.driver.elementById('alert1', function(err, link) {
           link.click(function(err) {

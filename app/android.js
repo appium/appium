@@ -119,6 +119,7 @@ Android.prototype.start = function(cb, onDie) {
         });
       } else {
         // error is already printed by ADB.prototype.waitForActivity
+        this.shutdown();
         this.adb = null;
         this.onStop = null;
         launchCb(err);
@@ -144,12 +145,16 @@ Android.prototype.start = function(cb, onDie) {
       code = code || 1;
     }
 
-    this.adb.uninstallApp(_.bind(function() {
-      this.adb = null;
-      this.shuttingDown = false;
-      this.onStop(code);
-      this.onStop = null;
-    }, this));
+    if (this.adb) {
+      this.adb.uninstallApp(_.bind(function() {
+        this.adb = null;
+        this.shuttingDown = false;
+        this.onStop(code);
+        this.onStop = null;
+      }, this));
+    } else {
+      logger.info("We're in android's exit callback but adb is gone already");
+    }
   }, this);
 
   if (this.adb === null) {
@@ -168,9 +173,6 @@ Android.prototype.startAppium = function(onLaunch, onExit) {
 Android.prototype.timeoutWaitingForCommand = function() {
   logger.info("Didn't get a new command in " + (this.commandTimeoutMs / 1000) +
               " secs, shutting down...");
-  //this.adb.sendShutdownCommand(function() {
-    //logger.info("Sent shutdown command, waiting for ADB to stop...");
-  //});
   this.stop();
 };
 

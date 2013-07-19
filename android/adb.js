@@ -683,10 +683,9 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
 };
 
 ADB.prototype.pushSelendroid = function(cb) {
-  var act = this.appActivity,
-      activityString = act[0] === '.' ? act : '.' + act;
-  if (act.indexOf(this.appPackage) === 0) {
-    activityString = act.substring(this.appPackage.length);
+  var activityString = this.appActivity;
+  if (activityString.indexOf(this.appPackage) === 0) {
+    activityString = activityString.substring(this.appPackage.length);
   }
   var cmd = this.adbCmd + " shell am instrument -e main_activity '" +
             this.appPackage + activityString + "' " + this.appPackage +
@@ -1189,18 +1188,30 @@ ADB.prototype.startApp = function(cb) {
   logger.info("Starting app");
   this.requireDeviceId();
   this.requireApp();
-  // If the activity string doesn't start with '.' then
-  // consider it fully qualified. If it does, then
-  // . will be expanded to appPackage automagically by Android.
   var activityString = this.appActivity;
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
-  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
+  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
     if(err) {
       logger.error(err);
       cb(err);
     } else {
+      if (stdout.indexOf("Error: Activity class") !== -1 &&
+          stdout.indexOf("does not exist") !== -1) {
+        if (this.appActivity[0] !== ".") {
+          logger.info("We tried to start an activity that doesn't exist, " +
+                      "retrying with . prepended to activity");
+          this.appActivity = "." + this.appActivity;
+          return this.startApp(cb);
+        } else {
+          var msg = "Activity used to start app doesn't exist! Make sure " +
+                    "it exists";
+          logger.error(msg);
+          return cb(new Error(msg));
+        }
+      }
+
       this.waitForActivity(cb);
     }
   }, this));

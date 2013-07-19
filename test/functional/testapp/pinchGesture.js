@@ -19,7 +19,7 @@ describeWd('pinchOpen and pinchClose gesture', function(h) {
               driver.execute("mobile: pinchClose", [{startX: 114.0, startY: 198.0, endX: 257.0, endY: 256.0, duration: 5.0}], function(err) {
                 should.not.exist(err);
                 done();
-			  });
+              });
             });
           });
         });

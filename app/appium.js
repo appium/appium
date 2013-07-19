@@ -300,7 +300,12 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
   if (ext === this.getAppExt()) {
     this.args.app = appPath;
     logger.info("Using local app from " + origin + ": " + appPath);
-    fs.stat(appPath, cb);
+    fs.stat(appPath, function(err) {
+      if (err) {
+        return cb(new Error("Error locating the app: " + err.message));
+      }
+      cb();
+    });
   } else if (ext === ".zip") {
     logger.info("Using local zip from " + origin + ": " + appPath);
     this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {

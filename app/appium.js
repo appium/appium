@@ -448,6 +448,7 @@ Appium.prototype.unzipApp = function(zipPath, cb) {
 
 Appium.prototype.clearPreviousSession = function() {
   var me = this;
+  logger.info("Clearing out any previous sessions");
   if (me.sessionOverride && me.device) {
     me.device.stop(function() {
       me.devices = [];

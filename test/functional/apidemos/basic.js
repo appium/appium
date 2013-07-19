@@ -6,8 +6,14 @@ var path = require('path')
   , badAppPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debugz.apk")
   , appPkg = "com.example.android.apis"
   , appAct = ".ApiDemos"
+  , appAct2 = "ApiDemos"
+  , appAct3 = "com.example.android.apis.ApiDemos"
+  , appAct4 = ".Blargimarg"
   , driverBlock = require("../../helpers/driverblock.js")
   , describeWd = driverBlock.describeForApp(appPath, "android", appPkg, appAct)
+  , describeWd2 = driverBlock.describeForApp(appPath, "android", appPkg, appAct2)
+  , describeWd3 = driverBlock.describeForApp(appPath, "android", appPkg, appAct3)
+  , describeWd4 = driverBlock.describeForApp(appPath, "android", appPkg, appAct4)
   , describeBad = driverBlock.describeForApp(badAppPath, "android", appPkg,
       appAct)
   , should = require('should');
@@ -56,11 +62,32 @@ describeWd('basic', function(h) {
   });
 });
 
+describeWd2('activity style: no period', function(h) {
+  it('should should still find activity', function(done) {
+    done();
+  });
+}, null, null, null, {expectConnError: true});
+
+describeWd3('activity style: fully qualified', function(h) {
+  it('should still find activity', function(done) {
+    done();
+  });
+});
+
+describeWd4('activity style: non-existent', function(h) {
+  it('should throw an error', function(done) {
+    should.exist(h.connError);
+    var err = JSON.parse(h.connError.data);
+    err.value.origValue.should.include("Activity used to start app doesn't exist");
+    done();
+  });
+}, null, null, null, {expectConnError: true});
+
 describeBad('bad app path', function(h) {
   it('should throw an error', function(done) {
     should.exist(h.connError);
     var err = JSON.parse(h.connError.data);
-    err.value.origValue.should.include("Error locating the app apk");
+    err.value.origValue.should.include("Error locating the app");
     done();
   });
 }, null, null, null, {expectConnError: true});

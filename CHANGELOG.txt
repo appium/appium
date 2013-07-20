@@ -1,3 +1,11 @@
+CHANGES IN VERSION 0.8.2 (from 0.8.1)
+=====================================
+
+#### GENERAL
+- make sure build/ is deleted by reset.sh
+- re-publish without extraneous artifacts in build/
+
+
 CHANGES IN VERSION 0.8.1 (from 0.8.0)
 =====================================
 

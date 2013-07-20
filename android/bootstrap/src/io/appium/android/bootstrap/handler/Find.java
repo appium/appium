@@ -119,6 +119,7 @@ public class Find extends CommandHandler {
       Logger.debug("Returning all? " + all);
       UiScrollable scrollable = null;
       final boolean scroll = option.contentEquals("scroll");
+      boolean canScroll = true;
       if (scroll) {
         UiSelector scrollableListView = new UiSelector().className(
             android.widget.ListView.class).scrollable(true);
@@ -129,8 +130,8 @@ public class Find extends CommandHandler {
 
         // Nothing scrollable exists.
         if (!new UiObject(scrollableListView).exists()) {
-          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-              "No such element.");
+          // we're not going to scroll
+          canScroll = false;
         }
 
         scrollable = new UiScrollable(scrollableListView).setAsVerticalList();
@@ -186,7 +187,7 @@ public class Find extends CommandHandler {
                 results.put(new JSONObject().put("ELEMENT", el.getId()));
               }
               continue;
-            } else if (scroll) {
+            } else if (scroll && canScroll) {
               Logger.debug("Scrolling into view...");
               final boolean result = scrollable.scrollIntoView(sel);
               if (!result) {
@@ -208,8 +209,9 @@ public class Find extends CommandHandler {
             "No such element.");
       } catch (final Exception e) {
         final String errorMessage = e.getMessage();
-        if (errorMessage
-            .contains("UiAutomationService not connected. Did you call #register()?")) {
+        if (errorMessage != null
+            && errorMessage
+                .contains("UiAutomationService not connected. Did you call #register()?")) {
           // Crash on not connected so Appium restarts the bootstrap jar.
           throw new RuntimeException(e);
         }

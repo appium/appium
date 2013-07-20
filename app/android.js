@@ -550,7 +550,8 @@ Android.prototype.elementEnabled = function(elementId, cb) {
 };
 
 Android.prototype.elementSelected = function(elementId, cb) {
-  cb(new NotYetImplementedError(), null);
+ var p = {elementId: elementId, attribute: "selected"};
+ this.proxy(["element:getAttribute", p], cb);
 };
 
 Android.prototype.getCssProperty = function(elementId, propertyName, cb) {

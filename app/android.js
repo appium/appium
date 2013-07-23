@@ -793,6 +793,10 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
   }
 };
 
+Android.prototype.rotate = function(x, y, radius, rotation, duration, touchCount, elId, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
   if (startX === 'null') {
     startX = 0.5;

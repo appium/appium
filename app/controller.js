@@ -993,7 +993,8 @@ var mobileCmdMap = {
   , 'launchApp': exports.launchApp
   , 'closeApp': exports.closeApp
   , 'rotate': exports.mobileRotation
-  , 'longClick' : exports.touchLongClick
+  , 'touchLongClick': exports.touchLongClick
+  , 'longClick': exports.touchLongClick
 };
 
 exports.produceError = function(req, res) {

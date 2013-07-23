@@ -152,7 +152,6 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId/touch/tap', controller.mobileTap);
   rest.post('/wd/hub/session/:sessionId/touch/flick_precise', controller.mobileFlick);
   rest.post('/wd/hub/session/:sessionId/touch/swipe', controller.mobileSwipe);
-  rest.post('/wd/hub/session/:sessionId/touch/rotate', controller.mobileRotation);
 
   // keep this at the very end!
   rest.all('/*', controller.unknownCommand);

@@ -6,8 +6,6 @@ var path = require('path')
   , badAppPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debugz.apk")
   , appPkg = "com.example.android.apis"
   , appAct = ".ApiDemos"
-<<<<<<< HEAD
-<<<<<<< HEAD
   , appAct2 = "ApiDemos"
   , appAct3 = "com.example.android.apis.ApiDemos"
   , appAct4 = ".Blargimarg"

@@ -237,7 +237,7 @@ grunt from the command line with an app or without an app, among other things:
 all CLI arguments.)
 
 
-Using with a [Bitbeambot](http://bitbeam.org) and other robots
+Using with a [Tapster](https://github.com/hugs/tapsterbot) and other robots
 -----------
 
 Check out the [Appium Robots](https://github.com/appium/robots) project

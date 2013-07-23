@@ -362,6 +362,26 @@ exports.fireEvent = function(req, res) {
   req.device.fireEvent(evt, elementId, getResponseHandler(req, res));
 };
 
+exports.longPress = function(req, res) {
+    req.body = _.defaults(req.body, {
+        tapCount: 1
+        , touchCount: 1
+        , duration: 1.5
+        , x: 0.5
+        , y: 0.5
+        , element: null
+    });
+    var tapCount = req.body.tapCount
+        , touchCount = req.body.touchCount
+        , duration = req.body.duration
+        , element = req.body.element
+        , x = req.body.x
+        , y = req.body.y;
+
+    req.device.complexTap(tapCount, touchCount, duration, x, y, element,
+        getResponseHandler(req, res));
+};
+
 exports.mobileTap = function(req, res) {
   req.body = _.defaults(req.body, {
     tapCount: 1
@@ -468,6 +488,26 @@ exports.mobileSwipe = function(req, res) {
     req.device.swipe(startX, startY, endX, endY, duration, touchCount,
         element, getResponseHandler(req, res));
   }
+};
+
+exports.mobileScroll = function(req, res) {
+    req.body = _.defaults(req.body, {
+        touchCount: 1
+        , offsetX: 0.5
+        , offsetY: 0.5
+        , duration: 0.8
+        , element: null
+    });
+    var touchCount = req.body.touchCount
+        , element = req.body.element
+        , duration = req.body.duration
+        , startX = 0.5
+        , startY = 0.5
+        , endX = startX + req.body.offsetX
+        , endY = startY + req.body.offsetY;
+
+      req.device.swipe(startX, startY, endX, endY, duration, touchCount,
+          element, getResponseHandler(req, res));
 };
 
 exports.mobileScrollTo = function(req, res) {

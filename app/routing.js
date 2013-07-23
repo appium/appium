@@ -138,6 +138,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/cookie', controller.setCookie);
   rest.delete('/wd/hub/session/:sessionId?/cookie', controller.deleteCookies);
   rest.delete('/wd/hub/session/:sessionId?/cookie/:name', controller.deleteCookie);
+  rest.post('/wd/hub/session/:sessionId?/touch/longclick', controller.longPress);
 
   // allow appium to receive async response
   rest.post('/wd/hub/session/:sessionId?/receive_async_response', controller.receiveAsyncResponse);
@@ -152,6 +153,7 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId/touch/tap', controller.mobileTap);
   rest.post('/wd/hub/session/:sessionId/touch/flick_precise', controller.mobileFlick);
   rest.post('/wd/hub/session/:sessionId/touch/swipe', controller.mobileSwipe);
+  rest.post('/wd/hub/session/:sessionId?/touch/scroll', controller.mobileScroll);
 
   // keep this at the very end!
   rest.all('/*', controller.unknownCommand);
@@ -186,7 +188,6 @@ var routeNotYetImplemented = function(rest) {
   rest.post('/wd/hub/session/:sessionId?/touch/down', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/up', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/move', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/touch/scroll', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/touch/doubleclick', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/location', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/session_storage', controller.notYetImplemented);

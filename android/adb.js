@@ -1190,8 +1190,7 @@ ADB.prototype.startApp = function(cb) {
   this.requireApp();
   // If the activity string doesn't start with '.' then
   // consider it fully qualified. If it does, then
-  // . will be expanded to appPackage automagically by Android.
->>>>>>> 12897c4... # This is a combination of 28 commits.
+  // will be expanded to appPackage automatically by Android.
   var activityString = this.appActivity;
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;

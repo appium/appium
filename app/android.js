@@ -797,6 +797,14 @@ Android.prototype.rotate = function(x, y, radius, rotation, duration, touchCount
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.pinchClose = function(startX, startY, endX, endY, duration, elId, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+Android.prototype.pinchOpen = function(startX, startY, endX, endY, duration, elId, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
   if (startX === 'null') {
     startX = 0.5;

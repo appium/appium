@@ -1,0 +1,1011 @@
+﻿# This is a combination of 2 commits.
+Squashing 6
+
+# The first commit's message is:
+
+Squashing 2
+
+Squashing 1
+
+Changes in ios,controller and appium.js
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Deleted pinch,rotation.js
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+fix find element from element test
+
+update test to use correct appium port
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+Commit
+
+fix find element from element test
+
+update test to use correct appium port
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+iOS Rotation Gestures implementation
+
+Rotation Gesture is implemented for iOS apps.
+
+Fixes linting errors
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Added target folder in .gitignore
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+selendroid doesn't need to start app explicitly; instrumentation does that
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+iOS Rotation Gestures implementation
+
+Rotation Gesture is implemented for iOS apps.
+
+Fixes linting errors
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Added target folder in .gitignore
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+selendroid doesn't need to start app explicitly; instrumentation does that
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+Fixes linting error in pinchGesture.js
+
+Remove Duplicate Data
+
+Removed EndPoint
+
+Changes in ios,controller and appium.js
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Deleted pinch,rotation.js
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+Squashing
+
+Changes in controller and apidemos
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+fix find element from element test
+
+update test to use correct appium port
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+Commit
+
+fix find element from element test
+
+update test to use correct appium port
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+iOS Rotation Gestures implementation
+
+Rotation Gesture is implemented for iOS apps.
+
+Fixes linting errors
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Added target folder in .gitignore
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+selendroid doesn't need to start app explicitly; instrumentation does that
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+Squashing Changes
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Added Test Suite in Appium test/functional
+
+Changes Indentation in test suite
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Remove the target folder
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+Removed EndPoint
+
+make sure fruitstrap gets into build/ for npm releases (cc @snevesbarros)
+
+/session/:sessionId/element/:id/enabled should return a boolean value.
+
+Signed-off-by: Matt Isaacs <misaacs@gilt.com>
+
+iOS Rotation Gestures implementation
+
+Rotation Gesture is implemented for iOS apps.
+
+Fixes linting errors
+
+Changes in Rotation Method
+
+Fixes Linting Error
+
+Added app for testing Pinch and Rotation
+
+Test Case for Pinch And Rotation Gestures
+
+Test cases require selenium server standalone.jar file
+
+Remove External Jar file
+
+Add relative path for selenium.
+
+Added POM.XML file in test cases
+
+Added target folder in .gitignore
+
+Remove the target folder
+
+Extended the the TestApp to test the Gestures.
+
+Added test cases in the SimpleTest.java.
+
+Added the Test Suit for the Roation and Pinch Gesture
+
+Revert "Added the Test Suit for the Roation and Pinch Gesture"
+
+This reverts commit b9a2cd01d4c36e48c6b5439368d1f2b1529ebe63.
+
+Updated Exception handling in scrollto for android
+
+changelog and bump for publish 0.8.0
+
+Type casting the driver object with JavascriptExecutor
+
+Fix #857
+
+Fixed uncaught exception which was not allowing execution of  "mochaTest:appiumutils" (mochaTest) task. In server.js the gridRegister.registerNode(args.nodeconfig) was getting executed if args.nodeconfig is not null. In the appiumutils.js it was not set as null.
+
+Fix app starting logic
+
+Fix #862
+
+allow http apps to end in apk instead of zip
+
+Fixed an issue where 'stdout maxBuffer exceeded' throws when unzipping a lot of files.
+
+Fix the Android XPath strings issue.
+Now it could work with XPath: android.view.View and android.widget.AdapterView.
+
+Fix Android XPath issue.
+
+browserName not needed for Appium tests
+
+update selendroid tests to use new activity style
+
+selendroid doesn't need to start app explicitly; instrumentation does that
+
+move all android tests to use new activity style
+
+fall back to adb.startApp if selendroid's instrumentation doesn't launch it in 1.8s
+
+Squashing Changes
+
+update example code to use new style of android activity
+
+fix mobile safari alert issues (fix #850)
+
+Fix pull #859
+
+return set timeout in the response
+
+Update requirements
+
+make chrome startup error more visible
+
+TestNG and Junit tests for Android.These tests are similar to the one available in the sample-code/examples/python
+
+make sure app exists before trying to open it
+
+enable setting of location services preference via desired capability
+
+make chrome tests run against chromiumtestshell since it runs on x86 emulators
+
+Added Test Suite in Appium test/functional
+
+Changes Indentation in test suite
+
+Fixes linting error in pinchGesture.js
+
+Fixes linting error in pinchGesture.js
+
+# This is the 2nd commit message:
+
+Added Test Suite in Appium test/functional
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# HEAD detached from 959a22c
+# You are currently rebasing branch 'Appium-Rotation' on '959a22c'.
+#   (all conflicts fixed: run "git rebase --continue")
+#
+# Changes to be committed:
+#   (use "git reset HEAD^1 <file>..." to unstage)
+#
+#	new file:   5eonvxpu.vqi.txt
+#	modified:   CHANGELOG.txt
+#	modified:   android/adb.js
+#	modified:   app/controller.js
+#	modified:   app/routing.js
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch.xcodeproj/project.pbxproj
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/AppDelegate.h
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/AppDelegate.m
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/MonkeyPinch-Info.plist
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/MonkeyPinch-Prefix.pch
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/TickleGestureRecognizer.h
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/TickleGestureRecognizer.m
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/ViewController.h
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/ViewController.m
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/chomp.wav
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/en.lproj/InfoPlist.strings
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/en.lproj/MainStoryboard.storyboard
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/hehehe1.wav
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/main.m
+#	new file:   sample-code/apps/MonkeyPinch/MonkeyPinch/monkey_1.png
+#	new file:   sample-code/examples/java/pinchAndRotationTest/README.rtf
+#	new file:   sample-code/examples/java/pinchAndRotationTest/pom.xml
+#	new file:   sample-code/examples/java/pinchAndRotationTest/src/test/java/com/saucelabs/appium/pinchAndRotationTest/AppTest.java
+#	modified:   test/functional/apidemos/basic.js
+#	new file:   wbv0m5pz.4ot.txt
+#	new file:   xnfobytr.bao.txt
+#
+

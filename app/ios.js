@@ -248,7 +248,7 @@ IOS.prototype.installToRealDevice = function (cb) {
     async.waterfall([
       function (cb) { d.isInstalled(me.bundleId, cb); },
       function (installed, cb) {
-	if (installed) {
+      if (installed) {
           logger.info("Bundle found on device, removing before reinstalling.");
           d.remove(me.bundleId, cb);
         } else {
@@ -1515,6 +1515,19 @@ IOS.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount,
       cb(err, res);
     }, duration * 1000);
   });
+};
+
+IOS.prototype.rotate = function(x, y, radius, rotation, duration, touchCount, elId, cb) {
+  var command;
+  var location = {'x' : x, 'y' : y};
+  var options = {'duration' : duration, 'radius' : radius, 'rotation' : rotation, 'touchCount' : touchCount};
+  if (elId) {
+    command = "au.getElement('" + elId + "').rotateWithOptions(" + JSON.stringify(location) +
+              "," + JSON.stringify(options) + ")";
+    this.proxy(command, cb);
+  } else {
+    this.proxy("target.rotateWithOptions("+ JSON.stringify(location) + "," + JSON.stringify(options) + ")", cb);
+  }
 };
 
 IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {

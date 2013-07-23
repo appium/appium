@@ -1,3 +1,40 @@
+CHANGES IN VERSION 0.8.2 (from 0.8.1)
+=====================================
+
+#### GENERAL
+- make sure build/ is deleted by reset.sh
+- re-publish without extraneous artifacts in build/
+
+
+CHANGES IN VERSION 0.8.1 (from 0.8.0)
+=====================================
+
+### GENERAL
+- update java examples to show correct use of JavascriptExecutor
+- fix parser bug that prevented launching on windows
+- fix missing parameter generating exceptions in testsuite
+- fix more stdout maxBuffer errors
+- fix android tests to use new activity style
+- return timeout in set timeout commands
+
+### IOS
+- fix mobile safari alert-handling issues
+- attempt to capture and resolve location services popup using desired cap
+
+### ANDROID
+- require shortcut activities to start with ".", allowing fully-qualified
+  activities with packages different from the main appPackage
+- if appium fails to launch activity with ".", it will retry
+- allow downloaded apps to end in .apk as well as .zip
+- fix xpath parser error not allowing widget packages to be used
+- add longClick command
+- added JUnit and TestNG examples
+- support ChromiumTestShell as well as Google Chrome for Chrome tests
+
+### SELENDROID
+- fall back to `am start` if Selendroid doesn't successfully launch the app
+
+
 -------------------------------------
 CHANGES IN VERSION 0.8.0 (from 0.7.3)
 -------------------------------------

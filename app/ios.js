@@ -590,21 +590,6 @@ IOS.prototype.push = function(elem) {
   var me = this;
 
   var next = function() {
-    if (me.selectingNewPage && me.curWindowHandle) {
-      logger.info("We're in the middle of selecting a new page, " +
-                  "waiting to run next command until done");
-      setTimeout(next, 500);
-      return;
-    } else if (me.curWindowHandle && me.processingRemoteCmd &&
-               elem !== "au.alertIsPresent()" && elem !== "au.getAlertText()" &&
-               elem !== "au.acceptAlert()" && elem !== "au.dismissAlert()" &&
-               elem !== "au.setAlertText()" && elem !== "au.waitForAlertToClose") {
-      logger.info("We're in the middle of processing a remote debugger " +
-                  "command, waiting to run next command until done");
-      setTimeout(next, 500);
-      return;
-    }
-
     if (me.queue.length <= 0 || me.progress > 0) {
       return;
     }
@@ -612,6 +597,31 @@ IOS.prototype.push = function(elem) {
     var target = me.queue.shift()
     , command = target[0]
     , cb = target[1];
+
+    if (me.selectingNewPage && me.curWindowHandle) {
+      logger.info("We're in the middle of selecting a new page, " +
+                  "waiting to run next command until done");
+      setTimeout(next, 500);
+      me.queue.unshift(target);
+      return;
+    } else if (me.curWindowHandle && me.processingRemoteCmd) {
+      var matches = ["au.alertIsPresent", "au.getAlertText", "au.acceptAlert",
+                     "au.dismissAlert", "au.setAlertText",
+                     "au.waitForAlertToClose"];
+      var matched = false;
+      _.each(matches, function(match) {
+        if (command.indexOf(match) === 0) {
+          matched = true;
+        }
+      });
+      if (!matched) {
+        logger.info("We're in the middle of processing a remote debugger " +
+                    "command, waiting to run next command until done");
+        setTimeout(next, 500);
+        me.queue.unshift(target);
+        return;
+      }
+    }
 
     me.cbForCurrentCmd = cb;
 

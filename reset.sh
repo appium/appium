@@ -60,7 +60,8 @@ reset_general() {
         echo "install failed. Trying again with sudo. Only do this if it's not a network error."
         run_cmd sudo npm install .
     fi
-    run_cmd mkdir -p build
+    run_cmd rm -rf build
+    run_cmd mkdir build
     echo "* Setting git revision data"
     run_cmd $grunt setGitRev
 }

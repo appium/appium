@@ -190,7 +190,11 @@ var main = function(args, readyCb, doneCb) {
       }
     });
     server.on('error', function(err) {
-      logger.error("Couldn't start Appium REST http interface listener. Requested port is already in use. Please make sure there's no other instance of Appium running already.");
+      if (err.code === 'EADDRNOTAVAIL') {
+        logger.error("Couldn't start Appium REST http interface listener. Requested address is not available.");
+      } else {
+        logger.error("Couldn't start Appium REST http interface listener. Requested port is already in use. Please make sure there's no other instance of Appium running already.");
+      }
       if (!alreadyReturned) {
         alreadyReturned = true;
         cb(err);

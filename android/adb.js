@@ -104,7 +104,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
   } else {
-    exec("which " + binary, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+    exec("which " + binary, { maxBuffer: 524288 }, function(err, stdout) {
       if (stdout) {
         this.debug("Using " + binary + " from " + stdout);
         cb(null, stdout);
@@ -113,16 +113,16 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
                      "SDK installed?"),
            null);
       }
-    }, this));
+    }.bind(this));
   }
 };
 
 ADB.prototype.checkAdbPresent = function(cb) {
-  this.checkSdkBinaryPresent("adb", _.bind(function(err, binaryLoc) {
+  this.checkSdkBinaryPresent("adb", function(err, binaryLoc) {
     if (err) return cb(err);
     this.adb = binaryLoc.trim();
     cb(null);
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.checkAppPresent = function(cb) {
@@ -132,7 +132,7 @@ ADB.prototype.checkAppPresent = function(cb) {
     cb(null);
   } else {
     logger.info("Checking whether app is actually present");
-    fs.stat(this.apkPath, _.bind(function(err) {
+    fs.stat(this.apkPath, function(err) {
       if (err) {
         logger.error("Could not find app apk at " + this.apkPath);
         cb(new Error("Error locating the app apk, supposedly it's at " +
@@ -141,7 +141,7 @@ ADB.prototype.checkAppPresent = function(cb) {
       } else {
         cb(null);
       }
-    }, this));
+    }.bind(this));
   }
 };
 
@@ -769,18 +769,18 @@ ADB.prototype.getRunningAVDName = function(cb) {
 
 ADB.prototype.prepareEmulator = function(cb) {
   if (this.avdName !== null) {
-    this.getRunningAVDName(_.bind(function(err, runningAVDName) {
+    this.getRunningAVDName(function(err, runningAVDName) {
       if (!err && this.avdName.replace('@','') === runningAVDName) {
         logger.info("Did not launch AVD because it was already running.");
         cb(null);
       } else {
         logger.info("Launching Emulator with AVD " + this.avdName);
         var killallCmd = isWindows ? "TASKKILL /IM emulator.exe" : "/usr/bin/killall -m emulator*";
-        exec(killallCmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+        exec(killallCmd, { maxBuffer: 524288 }, function(err, stdout) {
           if (err) {
             logger.info("Could not kill emulator. It was probably not running. : " + err.message);
           }
-          this.checkSdkBinaryPresent("emulator",_.bind(function(err, emulatorBinaryPath) {
+          this.checkSdkBinaryPresent("emulator", function(err, emulatorBinaryPath) {
             if (err) {
               return cb(err);
             }
@@ -790,9 +790,9 @@ ADB.prototype.prepareEmulator = function(cb) {
             var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
             var timeoutMs = 120000;
             var now = Date.now();
-            var checkEmulatorAlive = _.bind(function() {
-              this.restartAdb(_.bind(function() {
-                this.getConnectedDevices(_.bind(function(err, devices) {
+            var checkEmulatorAlive = function() {
+              this.restartAdb(function() {
+                this.getConnectedDevices(function(err, devices) {
                   if (!err && devices.length) {
                     cb(null, true);
                   } else if (Date.now() < (now + timeoutMs)) {
@@ -800,14 +800,14 @@ ADB.prototype.prepareEmulator = function(cb) {
                   } else {
                     cb(new Error("Emulator didn't come up in " + timeoutMs + "ms"));
                   }
-                }, this));
-              }, this));
-            }, this);
+                }.bind(this));
+              }.bind(this));
+            }.bind(this);
             checkEmulatorAlive();
-          }, this));
-        }, this));
+          }.bind(this));
+        }.bind(this));
       }
-    }, this));
+    }.bind(this));
   } else {
     cb();
   }
@@ -816,7 +816,7 @@ ADB.prototype.prepareEmulator = function(cb) {
 
 ADB.prototype.getConnectedDevices = function(cb) {
   this.debug("Getting connected devices...");
-  exec(this.adb + " devices", { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+  exec(this.adb + " devices", { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -842,7 +842,7 @@ ADB.prototype.getConnectedDevices = function(cb) {
       }
       cb(null, devices);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.forwardPort = function(cb) {
@@ -850,7 +850,7 @@ ADB.prototype.forwardPort = function(cb) {
   this.debug("Forwarding system:" + this.systemPort + " to device:" +
              this.devicePort);
   var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
-  exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, _.bind(function(err) {
+  exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, function(err) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -858,7 +858,7 @@ ADB.prototype.forwardPort = function(cb) {
       this.portForwarded = true;
       cb(null);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.runBootstrap = function(readyCb, exitCb) {
@@ -870,16 +870,16 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   this.proc = spawn(this.adb.substr(1, this.adb.length - 2), args);
   this.onSocketReady = readyCb;
 
-  this.proc.stdout.on('data', _.bind(function(data) {
+  this.proc.stdout.on('data', function(data) {
     this.outputStreamHandler(data);
-  }, this));
+  }.bind(this));
 
-  this.proc.stderr.on('data', _.bind(function(data) {
+  this.proc.stderr.on('data', function(data) {
     this.errorStreamHandler(data);
-  }, this));
+  }.bind(this));
 
   var me = this;
-  this.proc.on('exit', _.bind(function(code) {
+  this.proc.on('exit', function(code) {
     this.cmdCb = null;
     if (this.socketClient) {
       this.socketClient.end();
@@ -902,7 +902,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       this.alreadyExited = true;
       exitCb(code);
     }
-  }, this));
+  }.bind(this));
 
 
 };
@@ -911,13 +911,13 @@ ADB.prototype.checkForSocketReady = function(output) {
   if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
     this.debug("Connecting to server on device...");
-    this.socketClient = net.connect(this.systemPort, _.bind(function() {
+    this.socketClient = net.connect(this.systemPort, function() {
       this.debug("Connected!");
       this.onSocketReady(null);
-    }, this));
+    }.bind(this));
     this.socketClient.setEncoding('utf8');
     var oldData = '';
-    this.socketClient.on('data', _.bind(function(data) {
+    this.socketClient.on('data', function(data) {
       this.debug("Received command result from bootstrap");
       try {
         data = JSON.parse(oldData + data);
@@ -935,7 +935,7 @@ ADB.prototype.checkForSocketReady = function(output) {
         this.debug("Got data when we weren't expecting it, ignoring:");
         this.debug(JSON.stringify(data));
       }
-    }, this));
+    }.bind(this));
   }
 };
 
@@ -968,9 +968,9 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
     };
     waitForCmdCbNull();
   } else if (this.socketClient) {
-    this.resendLastCommand = _.bind(function() {
+    this.resendLastCommand = function() {
       this.sendCommand(type, extra, cb);
-    }, this);
+    }.bind(this);
     if (typeof extra === "undefined" || extra === null) {
       extra = {};
     }
@@ -994,13 +994,13 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
 };
 
 ADB.prototype.sendShutdownCommand = function(cb) {
-  setTimeout(_.bind(function() {
+  setTimeout(function() {
     if (!this.alreadyExited) {
       logger.warn("Android did not shut down fast enough, calling it gone");
       this.alreadyExited = true;
       this.onExit(1);
     }
-  }, this), 7000);
+  }.bind(this), 7000);
   this.sendCommand('shutdown', null, cb);
 };
 
@@ -1098,7 +1098,7 @@ ADB.prototype.requireApk = function() {
 };
 
 ADB.prototype.waitForDevice = function(cb) {
-  var doWait = _.bind(function(innerCb) {
+  var doWait = function(innerCb) {
     this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
                "and to respond to shell commands (timeout = " +
                this.appDeviceReadyTimeout + ")");
@@ -1106,22 +1106,22 @@ ADB.prototype.waitForDevice = function(cb) {
       , cmd = this.adbCmd + " wait-for-device"
       , timeoutSecs = parseInt(this.appDeviceReadyTimeout, 10);
 
-    setTimeout(_.bind(function() {
+    setTimeout(function() {
       if (!movedOn) {
         movedOn = true;
         innerCb("Device did not become ready in " + timeoutSecs + " secs; " +
                 "are you sure it's powered on?");
       }
-    }, this), timeoutSecs * 1000);
+    }.bind(this), timeoutSecs * 1000);
 
-    exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
+    exec(cmd, { maxBuffer: 524288 }, function(err) {
       if (!movedOn) {
         if (err) {
           logger.error("Error running wait-for-device");
           movedOn = true;
           innerCb(err);
         } else {
-          exec(this.adbCmd + " shell echo 'ready'", _.bind(function(err) {
+          exec(this.adbCmd + " shell echo 'ready'", function(err) {
             if (!movedOn) {
               movedOn = true;
               if (err) {
@@ -1131,23 +1131,23 @@ ADB.prototype.waitForDevice = function(cb) {
                 innerCb(null);
               }
             }
-          }, this));
+          }.bind(this));
         }
       }
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
 
-  doWait(_.bind(function(err) {
+  doWait(function(err) {
     if (err) {
-      this.restartAdb(_.bind(function() {
+      this.restartAdb(function() {
         this.getConnectedDevices(function() {
           doWait(cb);
         });
-      }, this));
+      }.bind(this));
     } else {
       cb(null);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.restartAdb = function(cb) {
@@ -1165,23 +1165,23 @@ ADB.prototype.restartAdb = function(cb) {
 ADB.prototype.pushAppium = function(cb) {
   this.debug("Pushing appium bootstrap to device...");
   var binPath = path.resolve(__dirname, "..", "build", "android_bootstrap", "AppiumBootstrap.jar");
-  fs.stat(binPath, _.bind(function(err) {
+  fs.stat(binPath, function(err) {
     if (err) {
       cb("Could not find AppiumBootstrap.jar; please run " +
          "'grunt buildAndroidBootstrap'");
     } else {
       var remotePath = "/data/local/tmp";
       var cmd = this.adbCmd + ' push "' + binPath + '" ' + remotePath;
-      exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
+      exec(cmd, { maxBuffer: 524288 }, function(err) {
         if (err) {
           logger.error(err);
           cb(err);
         } else {
           cb(null);
         }
-      }, this));
+      }.bind(this));
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.startApp = function(cb) {
@@ -1192,7 +1192,7 @@ ADB.prototype.startApp = function(cb) {
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
-  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if(err) {
       logger.error(err);
       cb(err);
@@ -1214,7 +1214,7 @@ ADB.prototype.startApp = function(cb) {
 
       this.waitForActivity(cb);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.stopApp = function(cb) {
@@ -1237,7 +1237,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
   var cmd = this.adbCmd + " shell dumpsys window windows"
     , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/(\.?[^\}]+)\}/);
 
-  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -1255,7 +1255,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
         cb(new Error("Could not parse activity from dumpsys"));
       }
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.waitForNotActivity = function(cb) {
@@ -1268,8 +1268,8 @@ ADB.prototype.waitForNotActivity = function(cb) {
   if (targetActivity.indexOf(this.appPackage) === 0) {
     targetActivity = targetActivity.substring(this.appPackage.length);
   }
-  var getFocusedApp = _.bind(function() {
-    this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
+  var getFocusedApp = function() {
+    this.getFocusedPackageAndActivity(function(err, foundPackage,
           foundActivity) {
       var notFoundAct = true;
       _.each(targetActivity.split(','), function(act) {
@@ -1290,8 +1290,8 @@ ADB.prototype.waitForNotActivity = function(cb) {
         cb(new Error(msg));
       }
 
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
   getFocusedApp();
 };
 
@@ -1305,8 +1305,8 @@ ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
   if (targetActivity.indexOf(this.appPackage) === 0) {
     targetActivity = targetActivity.substring(this.appPackage.length);
   }
-  var getFocusedApp = _.bind(function() {
-    this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
+  var getFocusedApp = function() {
+    this.getFocusedPackageAndActivity(function(err, foundPackage,
           foundActivity) {
       var foundAct = false;
       _.each(targetActivity.split(','), function(act) {
@@ -1327,8 +1327,8 @@ ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
         cb(new Error(msg));
       }
 
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
   getFocusedApp();
 };
 

@@ -50,7 +50,7 @@ Firefox.prototype.start = function(cb, onDie) {
   this.socket.on('close', function() {
     onDie(0);
   });
-  this.socket.on('data', _.bind(this.receive, this));
+  this.socket.on('data', this.receive.bind(this));
 
   this.socket.connect(this.port, 'localhost', function () { });
 
@@ -70,29 +70,29 @@ Firefox.prototype.start = function(cb, onDie) {
 
 Firefox.prototype.stop = function(cb) {
   logger.info("Stopping firefoxOs connection");
-  this.proxy({type: 'deleteSession'}, _.bind(function(err) {
+  this.proxy({type: 'deleteSession'}, function(err) {
     if (err) return cb(err);
     this.socket.destroy();
     cb(0);
-  }, this));
+  }.bind(this));
 };
 
 Firefox.prototype.getMarionetteId = function(cb) {
   logger.info("Getting marionette id");
-  this.proxy({type: 'getMarionetteID'}, _.bind(function(err, res) {
+  this.proxy({type: 'getMarionetteID'}, function(err, res) {
     if (err) return cb(err);
     this.fromActor = res.id;
     cb(null);
-  }, this));
+  }.bind(this));
 };
 
 Firefox.prototype.createSession = function(cb) {
   logger.info("Creating firefox os session");
-  this.proxy({type: 'newSession'}, _.bind(function(err, res) {
+  this.proxy({type: 'newSession'}, function(err, res) {
     if (err) return cb(err);
     this.sessionId = res.value;
     cb(null);
-  }, this));
+  }.bind(this));
 };
 
 Firefox.prototype.launchAppByName = function(cb) {
@@ -292,13 +292,13 @@ Firefox.prototype.notImplementedCmds = function() {
 Firefox.prototype.initCommandMap = function() {
   var nyiCmds = this.notImplementedCmds();
   // create controller functions dynamically for implemented commands
-  _.each(this.cmdMap(), _.bind(function(cmdInfo, controller) {
+  _.each(this.cmdMap(), function(cmdInfo, controller) {
     if (_.contains(nyiCmds, controller)) {
       throw new Error("Controller " + controller + " is listed in both " +
                       "implemented and not-yet-implemented lists. Fix this " +
                       "before moving on!");
     }
-    this[controller] = _.bind(function() {
+    this[controller] = function() {
       var args = Array.prototype.slice.call(arguments, 0);
       var cb;
       var outerCb = args[args.length - 1];
@@ -319,16 +319,16 @@ Firefox.prototype.initCommandMap = function() {
         cmd = _.extend(cmd, {value: args[0]});
       }
       this.proxy(cmd, cb);
-    }, this);
-  }, this));
+    }.bind(this);
+  }.bind(this));
   // throw not yet implemented for any command in nyi list
-  _.each(nyiCmds, _.bind(function(controller) {
-    this[controller] = _.bind(function() {
+  _.each(nyiCmds, function(controller) {
+    this[controller] = function() {
       var args = Array.prototype.slice.call(arguments, 0);
       var cb = args[args.length - 1];
       cb(new NotYetImplementedError(), null);
-    }, this);
-  }, this));
+    }.bind(this);
+  }.bind(this));
 };
 
 module.exports = function(opts) {

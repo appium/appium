@@ -494,6 +494,50 @@ exports.mobileRotation = function(req, res) {
   }
 };
 
+exports.mobilePinchClose = function(req, res) {
+  req.body = _.defaults(req.body, {
+    startX: 0.5
+    , startY: 0.5
+    , endX: 0.5
+    , endY: 0.5
+    , duration: 0.8
+    , element: null
+  });
+  var element = req.body.element
+    , duration = req.body.duration
+    , startX = req.body.startX
+    , startY = req.body.startY
+    , endX = req.body.endX
+    , endY = req.body.endY;
+
+  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+    req.device.pinchClose(startX, startY, endX, endY, duration,
+        element, getResponseHandler(req, res));
+  }
+};
+
+exports.mobilePinchOpen = function(req, res) {
+  req.body = _.defaults(req.body, {
+    startX: 0.5
+    , startY: 0.5
+    , endX: 0.5
+    , endY: 0.5
+    , duration: 0.8
+    , element: null
+  });
+  var element = req.body.element
+    , duration = req.body.duration
+    , startX = req.body.startX
+    , startY = req.body.startY
+    , endX = req.body.endX
+    , endY = req.body.endY;
+
+  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+    req.device.pinchOpen(startX, startY, endX, endY, duration,
+        element, getResponseHandler(req, res));
+  }
+};
+
 exports.mobileScrollTo = function(req, res) {
   req.body = _.defaults(req.body, {
     element: null
@@ -993,6 +1037,8 @@ var mobileCmdMap = {
   , 'closeApp': exports.closeApp
   , 'rotate': exports.mobileRotation
   , 'longClick' : exports.touchLongClick
+  , 'pinchClose': exports.mobilePinchClose
+  , 'pinchOpen': exports.mobilePinchOpen
 };
 
 exports.produceError = function(req, res) {

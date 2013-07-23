@@ -81,7 +81,7 @@ RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
     this.socketGone = true;
     me.onAppDisconnect();
   });
-  this.socket.on('data', _.bind(me.receive, this));
+  this.socket.on('data', me.receive.bind(this));
 
   this.socket.connect(27753, '::1', function () {
     logger.info("Debugger socket connected to " + me.socket.remoteAddress +
@@ -117,10 +117,10 @@ RemoteDebugger.prototype.selectApp = function(appIdKey, cb) {
   this.appIdKey = appIdKey;
   var connectToApp = messages.connectToApp(this.connId, this.appIdKey);
   logger.info("Selecting app");
-  this.send(connectToApp, _.bind(function(pageDict) {
+  this.send(connectToApp, function(pageDict) {
     cb(this.pageArrayFromDict(pageDict));
-    this.specialCbs['_rpc_forwardGetListing:'] = _.bind(this.onPageChange, this);
-  }, this));
+    this.specialCbs['_rpc_forwardGetListing:'] = this.onPageChange.bind(this);
+  }.bind(this));
 };
 
 RemoteDebugger.prototype.pageArrayFromDict = function(pageDict) {
@@ -411,7 +411,7 @@ RemoteDebugger.prototype.waitForDom = function(cb) {
 RemoteDebugger.prototype.waitForFrameNavigated = function(cb) {
   logger.debug("Waiting for frame navigated...");
   this.frameNavigatedCbs.push(cb);
-  this.navigatingTimeout = setTimeout(_.bind(this.frameNavigated, this), 500);
+  this.navigatingTimeout = setTimeout(this.frameNavigated.bind(this), 500);
 };
 
 // ====================================

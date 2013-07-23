@@ -88,20 +88,20 @@ Appium.prototype.registerConfig = function(configObj) {
 Appium.prototype.preLaunch = function(cb) {
   logger.info("Pre-launching app");
   var caps = {};
-  this.start(caps, _.bind(function(err) {
+  this.start(caps, function(err) {
     if (err) {
       cb(err, null);
     } else {
       this.preLaunched = true;
       cb(null, this);
     }
-  }, this));
+  }.bind(this));
 };
 
 Appium.prototype.start = function(desiredCaps, cb) {
   this.origApp = this.args.app;
   this.desiredCapabilities = desiredCaps;
-  this.configure(desiredCaps, _.bind(function(err) {
+  this.configure(desiredCaps, function(err) {
     if (err) {
       logger.info("Got configuration error, not starting session");
       cb(err, null);
@@ -109,7 +109,7 @@ Appium.prototype.start = function(desiredCaps, cb) {
       this.sessions[++this.counter] = { sessionId: '', callback: cb };
       this.clearPreviousSession();
     }
-  }, this));
+  }.bind(this));
 };
 
 Appium.prototype.getDeviceType = function(desiredCaps) {
@@ -204,9 +204,9 @@ Appium.prototype.getAppExt = function() {
 };
 
 Appium.prototype.setAndroidArgs = function(desiredCaps) {
-  var setArgFromCaps = _.bind(function(arg, cap) {
+  var setArgFromCaps = function(arg, cap) {
     this.args[arg] = desiredCaps[cap] || this.args[arg];
-  }, this);
+  }.bind(this);
   setArgFromCaps("androidPackage", "app-package");
   setArgFromCaps("androidActivity", "app-activity");
   setArgFromCaps("androidWaitActivity", "app-wait-activity");
@@ -308,12 +308,12 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
     });
   } else if (ext === ".zip") {
     logger.info("Using local zip from " + origin + ": " + appPath);
-    this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
+    this.unzipLocalApp(appPath, function(zipErr, newAppPath) {
       if (zipErr) return cb(zipErr);
       this.args.app = newAppPath;
       logger.info("Using locally extracted app: " + this.args.app);
       cb(null);
-    }, this));
+    }.bind(this));
   } else {
     var dExt = this.getAppExt();
     logger.error("Using local app, but didn't end in .zip or " + dExt);
@@ -336,7 +336,7 @@ Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
     }
   } else if (appUrl.substring(appUrl.length - 4) === ".zip") {
     try {
-      this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
+      this.downloadAndUnzipApp(appUrl, function(zipErr, appPath) {
         if (zipErr) {
           cb(zipErr);
         } else {
@@ -344,7 +344,7 @@ Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
           logger.info("Using extracted app: " + this.args.app);
           cb(null);
         }
-      }, this));
+      }.bind(this));
       logger.info("Using downloadable app from " + origin + ": " + appUrl);
     } catch (e) {
       var err = e.toString();
@@ -365,11 +365,11 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
     usingDefaultVer = false;
   }
   logger.info("Trying to use mobile safari, version " + safariVer);
-  var checkSuccess = _.bind(function(attemptedApp) {
+  var checkSuccess = function(attemptedApp) {
     logger.info("Using mobile safari app at " + attemptedApp);
     this.args.app = attemptedApp;
     cleanSafariNext();
-  }, this);
+  }.bind(this);
   var cleanSafariNext = function() {
     logger.info("Cleaning mobile safari data files");
     cleanSafari(safariVer, function(err) {
@@ -382,28 +382,28 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
     });
   };
 
-  checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+  checkSafari(safariVer, function(err, attemptedApp) {
     if (err) {
       logger.warn("Could not find mobile safari with version '" + safariVer +
                   "': " + err);
       if (usingDefaultVer) {
         safariVer = "6.1";
         logger.info("Retrying with safari ver " + safariVer);
-        checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+        checkSafari(safariVer, function(err, attemptedApp) {
           if (err) {
             logger.warn("Could not find this one either: " + err);
             cb(err);
           } else {
             checkSuccess(attemptedApp);
           }
-        }, this));
+        }.bind(this));
       } else {
         cb(err);
       }
     } else {
       checkSuccess(attemptedApp);
     }
-  }, this));
+  }.bind(this));
 };
 
 Appium.prototype.configureChromeAndroid = function() {
@@ -581,7 +581,7 @@ Appium.prototype.invoke = function() {
         if (err) {
           me.onDeviceDie(1);
         }
-      }, _.bind(me.onDeviceDie, me));
+      }, me.onDeviceDie.bind(me));
     } else {
       //required if we dont want to launch the app, but we do want a session.
       me.progress++;

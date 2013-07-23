@@ -309,7 +309,7 @@ IOS.prototype.setDeviceType = function(cb) {
 
 IOS.prototype.navToFirstAvailWebview = function(cb) {
   logger.info("Navigating to first available webview");
-  this.getWindowHandles(_.bind(function(err, res) {
+  this.getWindowHandles(function(err, res) {
     if (res.status !== 0) {
       cb("Could not navigate to webview! Code: " + res.status);
     } else if (res.value.length === 0) {
@@ -324,11 +324,11 @@ IOS.prototype.navToFirstAvailWebview = function(cb) {
         }
       });
     }
-  }, this));
+  }.bind(this));
 };
 
 IOS.prototype.closeAlertBeforeTest = function(cb) {
-  this.proxy("au.alertIsPresent()", _.bind(function(err, res) {
+  this.proxy("au.alertIsPresent()", function(err, res) {
     if (!err && res !== null && typeof res.value !== "undefined" && res.value === true) {
       logger.info("Alert present before starting test, let's banish it");
       this.proxy("au.dismissAlert()", function() {
@@ -338,7 +338,7 @@ IOS.prototype.closeAlertBeforeTest = function(cb) {
     } else {
       cb(false);
     }
-  }, this));
+  }.bind(this));
 };
 
 IOS.prototype.cleanupAppState = function(cb) {
@@ -428,7 +428,7 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
           } else {
             me.remote.selectApp(me.bundleId, onDone);
           }
-        }, _.bind(me.onPageChange, me));
+        }, me.onPageChange.bind(me));
         var loopCloseRuns = 0;
         var loopClose = function() {
           loopCloseRuns++;
@@ -693,7 +693,7 @@ IOS.prototype.handleFindCb = function(err, res, many, findCb) {
 };
 
 IOS.prototype.findElementNameContains = function(name, cb) {
-  var doFind = _.bind(function(findCb) {
+  var doFind = function(findCb) {
     this.proxy(['au.mainApp.getNameContains("', name, '")'].join(''), function(err, res) {
       if (err || res.status !== 0) {
         findCb(false, err, res);
@@ -701,7 +701,7 @@ IOS.prototype.findElementNameContains = function(name, cb) {
         findCb(true, err, res);
       }
     });
-  }, this);
+  }.bind(this);
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
@@ -802,15 +802,15 @@ IOS.prototype.setValueImmediate = function(elementId, value, cb) {
 
 IOS.prototype.setValue = function(elementId, value, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
-      this.executeAtom('click', [atomsElement], _.bind(function(err, res) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
+      this.executeAtom('click', [atomsElement], function(err, res) {
         if (err) {
           cb(err, res);
         } else {
           this.executeAtom('type', [atomsElement, value], cb);
         }
-      }, this));
-    }, this));
+      }.bind(this));
+    }.bind(this));
   } else {
     value = escapeSpecialChars(value, "'");
     // de-escape \n so it can be used specially
@@ -824,13 +824,13 @@ IOS.prototype.useAtomsElement = deviceCommon.useAtomsElement;
 
 IOS.prototype.click = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('tap', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
   if (this.useRobot) {
     var locCmd = "au.getElement('" + elementId + "').rect()";
-    this.proxy(locCmd, _.bind(function(err, res) {
+    this.proxy(locCmd, function(err, res) {
       if (err) return cb(err, res);
       var rect = res.value;
       var pos = {x: rect.origin.x, y: rect.origin.y};
@@ -838,7 +838,7 @@ IOS.prototype.click = function(elementId, cb) {
       var tapPoint = { x: pos.x + (size.w/2), y: pos.y + (size.h/2) };
       var tapUrl = this.robotUrl + "/tap/x/" + tapPoint.x + "/y/" + tapPoint.y;
       request.get(tapUrl, {}, cb);
-    }, this));
+    }.bind(this));
   } else {
       var command = ["au.tapById('", elementId, "')"].join('');
       this.proxy(command, cb);
@@ -852,9 +852,9 @@ IOS.prototype.touchLongClick = function(elementId, cb) {
 
 IOS.prototype.fireEvent = function(evt, elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('fireEvent', [evt, atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     cb(new NotImplementedError(), null);
   }
@@ -865,14 +865,14 @@ IOS.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
   var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   this.returnedFromExecuteAtom[counter] = false;
   this.processingRemoteCmd = true;
-  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
+  this.remote.executeAtom(atom, args, frames, function(err, res) {
     this.processingRemoteCmd = false;
     if (!this.returnedFromExecuteAtom[counter]) {
       this.returnedFromExecuteAtom[counter] = true;
       res = this.parseExecuteResponse(res);
       cb(err, res);
     }
-  }, this));
+  }.bind(this));
   this.lookForAlert(cb, counter, 0, 5000);
 };
 
@@ -881,14 +881,14 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
   this.returnedFromExecuteAtom[counter] = false;
   this.processingRemoteCmd = true;
   this.asyncResponseCb = cb;
-  this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, _.bind(function(err, res) {
+  this.remote.executeAtomAsync(atom, args, this.curWebFrames, responseUrl, function(err, res) {
     this.processingRemoteCmd = false;
     if (!this.returnedFromExecuteAtom[counter]) {
       this.returnedFromExecuteAtom[counter] = true;
       res = this.parseExecuteResponse(res);
       cb(err, res);
     }
-  }, this));
+  }.bind(this));
   this.lookForAlert(cb, counter, 0, 5000);
 };
 
@@ -1039,9 +1039,9 @@ IOS.prototype.clickWebCoords = function(cb) {
 
 IOS.prototype.submit = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('submit', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     cb(new NotImplementedError(), null);
   }
@@ -1071,9 +1071,9 @@ IOS.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elemen
 
 IOS.prototype.clear = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('clear', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId, "').setValue('')"].join('');
     this.proxy(command, cb);
@@ -1082,9 +1082,9 @@ IOS.prototype.clear = function(elementId, cb) {
 
 IOS.prototype.getText = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('get_text', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId, "').text()"].join('');
     this.proxy(command, cb);
@@ -1093,10 +1093,10 @@ IOS.prototype.getText = function(elementId, cb) {
 
 IOS.prototype.getName = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       var script = "return arguments[0].tagName.toLowerCase()";
       this.executeAtom('execute_script', [script, [atomsElement]], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId, "').type()"].join('');
     this.proxy(command, cb);
@@ -1129,9 +1129,9 @@ IOS.prototype.getAttribute = function(elementId, attributeName, cb) {
 
 IOS.prototype.getLocation = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('get_top_left_coordinates', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId,
       "').getElementLocation()"].join('');
@@ -1185,13 +1185,13 @@ IOS.prototype.getWindowSize = function(windowHandle, cb) {
 
 IOS.prototype.mobileSafariNav = function(navBtnName, cb) {
   this.findUIElementOrElements('xpath', '//toolbar/button[@name="' + navBtnName + '"]',
-      null, false, _.bind(function(err, res) {
+      null, false, function(err, res) {
     if (this.checkSuccess(err, res, cb)) {
       var cmd = "au.getElement(" + res.value.ELEMENT + ").tap()";
       this.remote.willNavigateWithoutReload = true;
       this.proxy(cmd, cb);
     }
-  }, this));
+  }.bind(this));
 };
 
 IOS.prototype.back = function(cb) {
@@ -1231,12 +1231,12 @@ IOS.prototype.getPageIndex = function(elementId, cb) {
 IOS.prototype.keys = function(keys, cb) {
   keys = escapeSpecialChars(keys, "'");
   if (this.curWindowHandle) {
-    this.active(_.bind(function(err, res) {
+    this.active(function(err, res) {
       if (err || typeof res.value.ELEMENT === "undefined") {
         return cb(err, res);
       }
       this.setValue(res.value.ELEMENT, keys, cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.sendKeysToActiveElement('", keys ,"')"].join('');
     this.proxy(command, cb);
@@ -1255,21 +1255,21 @@ IOS.prototype.frame = function(frame, cb) {
       });
     } else {
       if (typeof frame.ELEMENT !== "undefined") {
-        this.useAtomsElement(frame.ELEMENT, cb, _.bind(function(atomsElement) {
-          this.executeAtom('get_frame_window', [atomsElement], _.bind(function(err, res) {
+        this.useAtomsElement(frame.ELEMENT, cb, function(atomsElement) {
+          this.executeAtom('get_frame_window', [atomsElement], function(err, res) {
             if (this.checkSuccess(err, res, cb)) {
               logger.info("Entering new web frame: " + res.value.WINDOW);
               this.curWebFrames.unshift(res.value.WINDOW);
               cb(err, res);
             }
-          }, this));
-        }, this));
+          }.bind(this));
+        }.bind(this));
       } else {
         atom = "frame_by_id_or_name";
         if (typeof frame === "number") {
           atom = "frame_by_index";
         }
-        this.executeAtom(atom, [frame], _.bind(function(err, res) {
+        this.executeAtom(atom, [frame], function(err, res) {
           if (this.checkSuccess(err, res, cb)) {
             if (res.value === null || typeof res.value.WINDOW === "undefined") {
               cb(null, {
@@ -1282,7 +1282,7 @@ IOS.prototype.frame = function(frame, cb) {
               cb(err, res);
             }
           }
-        }, this));
+        }.bind(this));
       }
     }
   } else {
@@ -1312,9 +1312,9 @@ IOS.prototype.asyncScriptTimeout = function(ms, cb) {
 
 IOS.prototype.elementDisplayed = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('is_displayed', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId, "').isDisplayed()"].join('');
     this.proxy(command, cb);
@@ -1323,9 +1323,9 @@ IOS.prototype.elementDisplayed = function(elementId, cb) {
 
 IOS.prototype.elementEnabled = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('is_enabled', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId, "').isEnabled() === 1"].join('');
     this.proxy(command, cb);
@@ -1334,9 +1334,9 @@ IOS.prototype.elementEnabled = function(elementId, cb) {
 
 IOS.prototype.elementSelected = function(elementId, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('is_selected', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     var command = ["au.getElement('", elementId, "').isSelected()"].join('');
     this.proxy(command, cb);
@@ -1345,10 +1345,10 @@ IOS.prototype.elementSelected = function(elementId, cb) {
 
 IOS.prototype.getCssProperty = function(elementId, propertyName, cb) {
   if (this.curWindowHandle) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('get_value_of_css_property', [atomsElement,
         propertyName], cb);
-    }, this));
+    }.bind(this));
   } else {
     cb(new NotImplementedError(), null);
   }
@@ -1358,7 +1358,7 @@ IOS.prototype.getPageSource = function(cb) {
   if (this.curWindowHandle) {
     this.processingRemoteCmd = true;
     var cmd = 'document.getElementsByTagName("html")[0].outerHTML';
-    this.remote.execute(cmd, _.bind(function (err, res) {
+    this.remote.execute(cmd, function (err, res) {
       if (err) {
         cb("Remote debugger error", {
           status: status.codes.UnknownError.code
@@ -1371,7 +1371,7 @@ IOS.prototype.getPageSource = function(cb) {
         });
       }
       this.processingRemoteCmd = false;
-    }, this));
+    }.bind(this));
   } else {
     this.proxy("wd_frame.getPageSource()", cb);
   }
@@ -1414,12 +1414,12 @@ IOS.prototype.getOrientation = function(cb) {
 
 IOS.prototype.setOrientation = function(orientation, cb) {
   var command = ["au.setScreenOrientation('", orientation ,"')"].join('');
-  this.proxy(command, _.bind(function(err, res) {
+  this.proxy(command, function(err, res) {
     if (this.checkSuccess(err, res, cb)) {
       this.curOrientation = orientation;
       cb(err, res);
     }
-  }, this));
+  }.bind(this));
 };
 
 IOS.prototype.getScreenshot = function(cb) {
@@ -1590,13 +1590,13 @@ IOS.prototype.url = function(url, cb) {
     // make sure to clear out any leftover web frames
     this.curWebFrames = [];
     this.processingRemoteCmd = true;
-    this.remote.navToUrl(url, _.bind(function() {
+    this.remote.navToUrl(url, function() {
       cb(null, {
         status: status.codes.Success.code
         , value: ''
       });
       this.processingRemoteCmd = false;
-    }, this));
+    }.bind(this));
   } else {
     // in the future, detect whether we have a UIWebView that we can use to
     // make sense of this command. For now, and otherwise, it's a no-op
@@ -1609,7 +1609,7 @@ IOS.prototype.getUrl = function(cb) {
     cb(new NotImplementedError(), null);
   } else {
     this.processingRemoteCmd = true;
-    this.remote.execute('window.location.href', _.bind(function (err, res) {
+    this.remote.execute('window.location.href', function (err, res) {
       if (err) {
         cb("Remote debugger error", {
           status: status.codes.JavaScriptError.code
@@ -1622,7 +1622,7 @@ IOS.prototype.getUrl = function(cb) {
         });
       }
       this.processingRemoteCmd = false;
-    }, this));
+    }.bind(this));
   }
 };
 
@@ -1828,7 +1828,7 @@ IOS.prototype.title = function(cb) {
 };
 
 IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
-  this.getLocation(element, _.bind(function(err, res) {
+  this.getLocation(element, function(err, res) {
     if (err) return cb(err, res);
     var coords = {
       x: res.value.x + xoffset
@@ -1838,10 +1838,10 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
     //console.log(coords);
     if (this.curWindowHandle) {
       this.curWebCoords = coords;
-      this.useAtomsElement(element, cb, _.bind(function(atomsElement) {
+      this.useAtomsElement(element, cb, function(atomsElement) {
         var relCoords = {x: xoffset, y: yoffset};
         this.executeAtom('move_mouse', [atomsElement, relCoords], cb);
-      }, this));
+      }.bind(this));
     } else {
       this.curCoords = coords;
       cb(null, {
@@ -1849,7 +1849,7 @@ IOS.prototype.moveTo = function(element, xoffset, yoffset, cb) {
         , value: null
       });
     }
-  }, this));
+  }.bind(this));
 };
 
 IOS.prototype.equalsWebElement = function(element, other, cb) {
@@ -1876,7 +1876,7 @@ IOS.prototype.getCookies = function(cb) {
     return cb(new NotImplementedError(), null);
   }
   var script = "return document.cookie";
-  this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
+  this.executeAtom('execute_script', [script, []], function(err, res) {
     if (this.checkSuccess(err, res, cb)) {
       var cookies;
       try {
@@ -1892,7 +1892,7 @@ IOS.prototype.getCookies = function(cb) {
         , value: cookies
       });
     }
-  }, this), true);
+  }.bind(this), true);
 
 };
 
@@ -1912,14 +1912,14 @@ IOS.prototype.setCookie = function(cookie, cb) {
     webCookie += "; expires=" + expiry;
   }
   var script = "document.cookie = " + JSON.stringify(webCookie);
-  this.executeAtom('execute_script', [script, []], _.bind(function(err, res) {
+  this.executeAtom('execute_script', [script, []], function(err, res) {
     if (this.checkSuccess(err, res, cb)) {
       cb(null, {
         status: status.codes.Success.code
         , value: true
       });
     }
-  }, this), true);
+  }.bind(this), true);
 };
 
 IOS.prototype.deleteCookie = function(cookieName, cb) {
@@ -1934,13 +1934,13 @@ IOS.prototype.deleteCookies = function(cb) {
   if (!this.curWindowHandle) {
     return cb(new NotImplementedError(), null);
   }
-  this.getCookies(_.bind(function(err, res) {
+  this.getCookies(function(err, res) {
     if (this.checkSuccess(err, res)) {
       var numCookies = res.value.length;
       var cookies = res.value;
       if (numCookies) {
         var returned = false;
-        var deleteNextCookie = _.bind(function(cookieIndex) {
+        var deleteNextCookie = function(cookieIndex) {
           if (!returned) {
             var cookie = cookies[cookieIndex];
             this.deleteCookie(cookie.name, function(err, res) {
@@ -1958,7 +1958,7 @@ IOS.prototype.deleteCookies = function(cb) {
               }
             });
           }
-        }, this);
+        }.bind(this);
         deleteNextCookie(0);
       } else {
         cb(null, {
@@ -1967,7 +1967,7 @@ IOS.prototype.deleteCookies = function(cb) {
         });
       }
     }
-  }, this));
+  }.bind(this));
 };
 
 IOS.prototype.getCurrentActivity= function(cb) {

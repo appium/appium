@@ -89,7 +89,7 @@ Android.prototype.start = function(cb, onDie) {
   }
   var didLaunch = false;
 
-  var onLaunch = _.bind(function(err, launchCb) {
+  var onLaunch = function(err, launchCb) {
     if (typeof launchCb === "undefined" || launchCb === null) {
       launchCb = cb;
     }
@@ -131,9 +131,9 @@ Android.prototype.start = function(cb, onDie) {
       didLaunch = true;
       launchCb(null);
     }
-  }, this);
+  }.bind(this);
 
-  var onExit = _.bind(function(code) {
+  var onExit = function(code) {
     if (!didLaunch) {
       logger.error("ADB quit before it successfully launched");
       cb("ADB quit unexpectedly before successfully launching");
@@ -146,16 +146,16 @@ Android.prototype.start = function(cb, onDie) {
     }
 
     if (this.adb) {
-      this.adb.uninstallApp(_.bind(function() {
+      this.adb.uninstallApp(function() {
         this.adb = null;
         this.shuttingDown = false;
         this.onStop(code);
         this.onStop = null;
-      }, this));
+      }.bind(this));
     } else {
       logger.info("We're in android's exit callback but adb is gone already");
     }
-  }, this);
+  }.bind(this);
 
   if (this.adb === null) {
     // Pass Android opts and Android ref to adb.
@@ -190,25 +190,25 @@ Android.prototype.stop = function(cb) {
       this.onStop = cb;
     }
     this.shuttingDown = true;
-    this.adb.goToHome(_.bind(function() {
+    this.adb.goToHome(function() {
       this.shutdown();
-    }, this));
+    }.bind(this));
     this.queue = [];
     this.progress = 0;
   }
 };
 
 Android.prototype.shutdown = function() {
-  this.adb.sendShutdownCommand(_.bind(function() {
+  this.adb.sendShutdownCommand(function() {
     logger.info("Sent shutdown command, waiting for ADB to stop...");
-  }, this));
+  }.bind(this));
 };
 
 Android.prototype.resetTimeout = function() {
   if (this.commandTimeout) {
     clearTimeout(this.commandTimeout);
   }
-  this.commandTimeout = setTimeout(_.bind(this.timeoutWaitingForCommand, this),
+  this.commandTimeout = setTimeout(this.timeoutWaitingForCommand.bind(this),
       this.commandTimeoutMs);
 };
 
@@ -220,7 +220,7 @@ Android.prototype.push = function(elem) {
 
   this.queue.push(elem);
 
-  var next = _.bind(function() {
+  var next = function() {
     if (this.queue.length <= 0) {
       return;
     }
@@ -245,7 +245,7 @@ Android.prototype.push = function(elem) {
     this.progress++;
 
     if (this.adb && !this.shuttingDown) {
-      this.adb.sendAutomatorCommand(action, params, _.bind(function(response) {
+      this.adb.sendAutomatorCommand(action, params, function(response) {
         this.cbForCurrentCmd = null;
         if (typeof cb === 'function') {
           this.respond(response, cb);
@@ -254,7 +254,7 @@ Android.prototype.push = function(elem) {
         // maybe there's moar work to do
         this.progress--;
         next();
-      }, this));
+      }.bind(this));
     } else {
       this.cbForCurrentCmd = null;
       var msg = "Tried to send command to non-existent Android device, " +
@@ -271,7 +271,7 @@ Android.prototype.push = function(elem) {
       this.progress--;
       next();
     }
-  }, this);
+  }.bind(this);
 
   next();
 };
@@ -282,14 +282,14 @@ Android.prototype.executeAtom = function(atom, args, cb, alwaysDefaultFrame) {
   var frames = alwaysDefaultFrame === true ? [] : this.curWebFrames;
   this.returnedFromExecuteAtom = false;
   this.processingRemoteCmd = true;
-  this.remote.executeAtom(atom, args, frames, _.bind(function(err, res) {
+  this.remote.executeAtom(atom, args, frames, function(err, res) {
     this.processingRemoteCmd = false;
     if (!this.returnedFromExecuteAtom) {
       this.returnedFromExecuteAtom = true;
       res = this.parseExecuteResponse(res);
       cb(err, res);
     }
-  }, this));
+  }.bind(this));
 };
 
 Android.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
@@ -377,11 +377,11 @@ Android.prototype.findUIElementOrElements = function(strategy, selector, many, c
       params = _.extend(params, xpathParams);
     }
   }
-  var doFind = _.bind(function(findCb) {
-    this.proxy(["find", params], _.bind(function(err, res) {
+  var doFind = function(findCb) {
+    this.proxy(["find", params], function(err, res) {
       this.handleFindCb(err, res, many, findCb);
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
   if (!xpathError) {
     this.waitForCondition(this.implicitWaitMs, doFind, cb);
   } else {
@@ -436,9 +436,9 @@ Android.prototype.setValue = function(elementId, value, cb) {
 
 Android.prototype.click = function(elementId, cb) {
   if (this.inWebView()) {
-    this.useAtomsElement(elementId, cb, _.bind(function(atomsElement) {
+    this.useAtomsElement(elementId, cb, function(atomsElement) {
       this.executeAtom('tap', [atomsElement], cb);
-    }, this));
+    }.bind(this));
   } else {
     this.proxy(["element:click", {elementId: elementId}], cb);
   }

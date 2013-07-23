@@ -253,7 +253,7 @@ Appium.prototype.configure = function(desiredCaps, cb) {
 
 Appium.prototype.configureApp = function(desiredCaps, hasAppInCaps, cb) {
   var appPath = (hasAppInCaps ? desiredCaps.app : this.args.app)
-    , isPackageOrBundle = /^([a-zA-Z0-9]+\.[a-zA-Z0-9]+)+$/.test(appPath)
+    , isPackageOrBundle = /^([a-zA-Z0-9\-]+\.[a-zA-Z0-9\-]+)+$/.test(appPath)
     , origin = (hasAppInCaps ? "desiredCaps" : "command line");
 
   if (appPath[0] === "/" || (isWindows && appPath!== null && appPath.length > 2 && appPath[1] === ":" && appPath[2] === "\\") ) {

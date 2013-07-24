@@ -75,12 +75,7 @@ Android.prototype.fastReset = function(cb) {
 };
 
 Android.prototype.keyevent = function(keycode, cb) {
-  this.adb.keyevent(keycode, function() {
-    cb(null, {
-      status: status.codes.Success.code
-      , value: null
-    });
-  });
+  this.proxy(["pressKeyCode", keycode], cb);
 };
 
 Android.prototype.start = function(cb, onDie) {

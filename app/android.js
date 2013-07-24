@@ -561,15 +561,8 @@ Android.prototype.getPageSource = function(cb) {
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
-            logger.debug('getPageSource command: ' + cmd);
-            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
-              if (err) {
-                logger.warn(stderr);
-                return cb(err);
-              }
-              cb(null);
-            });
+            // /data/local/tmp/dump.xml
+            me.proxy(["dumpWindowHierarchy"], cb);
           },
           function(cb) {
             var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';

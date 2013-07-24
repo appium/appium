@@ -13,6 +13,7 @@ import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.PressBack;
+import io.appium.android.bootstrap.handler.PressKeyCode;
 import io.appium.android.bootstrap.handler.ScrollTo;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
@@ -52,6 +53,7 @@ class AndroidCommandExecutor {
     map.put("wake", new Wake());
     map.put("pressBack", new PressBack());
     map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
+    map.put("pressKeyCode", new PressKeyCode());
   }
 
   /**

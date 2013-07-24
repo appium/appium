@@ -28,16 +28,15 @@ var Selendroid = function(opts) {
 
 Selendroid.prototype.start = function(cb) {
   logger.info("Starting selendroid server");
-  var opts = _.clone(this.opts)
-    , me = this;
+  var opts = _.clone(this.opts);
   opts.devicePort = 8080;  // selendroid listens on 8080 on the device
   this.adb = new adb(opts);
 
   async.waterfall([
-    function(cb) { me.ensureServerExists(cb); },
-    function(cb) { me.adb.startSelendroid(me.serverApk, cb); },
-    function(res, cb) { me.waitForServer(cb); },
-    function(cb) { me.createSession(cb); },
+    function(cb) { this.ensureServerExists(cb); }.bind(this),
+    function(cb) { this.adb.startSelendroid(this.serverApk, cb); }.bind(this),
+    function(res, cb) { this.waitForServer(cb); }.bind(this),
+    function(cb) { this.createSession(cb); }.bind(this),
   ], cb);
 };
 

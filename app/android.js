@@ -66,11 +66,10 @@ Android.prototype.inWebView = function() {
 
 // Clear data, close app, then start app.
 Android.prototype.fastReset = function(cb) {
-  var me = this;
   async.series([
-    function(cb) { me.adb.runFastReset(cb); },
-    function(cb) { me.adb.waitForNotActivity(cb); },
-    function(cb) { me.adb.startApp(cb); },
+    function(cb) { this.adb.runFastReset(cb); }.bind(this),
+    function(cb) { this.adb.waitForNotActivity(cb); }.bind(this),
+    function(cb) { this.adb.startApp(cb); }.bind(this),
   ], cb);
 };
 
@@ -343,12 +342,11 @@ Android.prototype.findElements = function(strategy, selector, cb) {
 Android.prototype.findWebElementOrElements = function(strategy, selector, many, ctx, cb) {
   var ext = many ? 's' : '';
   var atomsElement = this.getAtomsElement(ctx);
-  var me = this;
   var doFind = function(findCb) {
-    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
-      me.handleFindCb(err, res, many, findCb);
-    });
-  };
+    this.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
+      this.handleFindCb(err, res, many, findCb);
+    }.bind(this));
+  }.bind(this);
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
@@ -559,14 +557,13 @@ Android.prototype.getCssProperty = function(elementId, propertyName, cb) {
 };
 
 Android.prototype.getPageSource = function(cb) {
-  var me = this;
   var xmlFile = temp.path({suffix: '.xml'});
   var jsonFile = xmlFile + '.json';
   var json = '';
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
+            var cmd = this.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
             logger.debug('getPageSource command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -575,9 +572,9 @@ Android.prototype.getPageSource = function(cb) {
               }
               cb(null);
             });
-          },
+          }.bind(this),
           function(cb) {
-            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
+            var cmd = this.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
             logger.debug('transferPageSource command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -586,7 +583,7 @@ Android.prototype.getPageSource = function(cb) {
               }
               cb(null);
             });
-          },
+          }.bind(this),
           function(cb) {
             var jar = path.resolve(__dirname, '../app/android/dump2json.jar');
             var cmd = 'java -jar "' + jar + '" "' + xmlFile + '"';
@@ -616,12 +613,11 @@ Android.prototype.getPageSource = function(cb) {
 };
 
 Android.prototype.getPageSourceXML = function(cb) {
-  var me = this;
   var xmlFile = temp.path({suffix: '.xml'});
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
+            var cmd = this.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
             logger.debug('getPageSourceXML command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -630,9 +626,9 @@ Android.prototype.getPageSourceXML = function(cb) {
               }
               cb(null);
             });
-          },
+          }.bind(this),
           function(cb) {
-            var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
+            var cmd = this.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';
             logger.debug('transferPageSourceXML command: ' + cmd);
             exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
               if (err) {
@@ -641,7 +637,7 @@ Android.prototype.getPageSourceXML = function(cb) {
               }
               cb(null);
             });
-          }
+          }.bind(this)
 
         ],
         // Top level cb
@@ -692,8 +688,7 @@ Android.prototype.setOrientation = function(orientation, cb) {
 };
 
 Android.prototype.getScreenshot = function(cb) {
-  var me = this;
-  me.adb.requireDeviceId();
+  this.adb.requireDeviceId();
   var localfile = temp.path({prefix: 'appium', suffix: '.png'});
   var b64data = "";
   var jar = path.resolve(__dirname, '..', 'app', 'android', 'ScreenShooter.jar');
@@ -719,7 +714,7 @@ Android.prototype.getScreenshot = function(cb) {
     function(cb) {
       var javaCmd = 'java -classpath "' + classpath + '" io.appium.android.screenshooter.ScreenShooter ';
 
-      var cmd = javaCmd + me.adb.curDeviceId + ' "' + localfile + '"';
+      var cmd = javaCmd + this.adb.curDeviceId + ' "' + localfile + '"';
       logger.debug("screenshot cmd: " + cmd);
       exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         if (err) {
@@ -728,7 +723,7 @@ Android.prototype.getScreenshot = function(cb) {
         }
         cb(null);
       });
-    },
+    }.bind(this),
     function(cb) {
       fs.readFile(localfile, function read(err, data) {
         if (err) {
@@ -884,11 +879,10 @@ Android.prototype.clearWebView = function(cb) {
 
 Android.prototype.execute = function(script, args, cb) {
   if (this.inWebView()) {
-    var me = this;
     this.convertElementForAtoms(args, function(err, res) {
       if (err) return cb(null, res);
-      me.executeAtom('execute_script', [script, res], cb);
-    });
+      this.executeAtom('execute_script', [script, res], cb);
+    }.bind(this));
   } else {
     cb(new NotYetImplementedError(), null);
   }

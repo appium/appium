@@ -46,7 +46,6 @@ _.extend(WebKitRemoteDebugger.prototype, RemoteDebugger.prototype);
 // ====================================
 
 WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
-  var me = this;
   this.frameNavigatedCbs = [];
   this.pageChangeCb = pageChangeCb;
   var url = 'ws://' + this.host + ':' + this.port + '/devtools/page/' + pageId;
@@ -58,21 +57,20 @@ WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
   });
   this.socket.on('close', function() {
     logger.info("Disconnecting from remote debugger");
-    me.socket = null;
-  });
+    this.socket = null;
+  }.bind(this));
   this.socket.on('error', function(exception) {
     console.log('Debugger web socket error %s', exception);
   });
   this.socket.on('message', function(data) {
     console.log('Debugger web socket received data :  %s', data);
-    me.receive(data);
-  });
+    this.receive(data);
+  }.bind(this));
 };
 
 WebKitRemoteDebugger.prototype.disconnect = function() {
-  var me = this;
   if(this.isConnected()){
-    me.socket.close(1001);
+    this.socket.close(1001);
   }
 };
 
@@ -136,15 +134,14 @@ WebKitRemoteDebugger.prototype.handleMessage = function(data, method) {
 };
 
 WebKitRemoteDebugger.prototype.setHandlers = function() {
-  var me = this;
   this.handlers = {
     'Runtime.evaluate': function (data) {
       var msgId = data.id
       , result = data.result
       , error = data.error || null;
-      me.dataCbs[msgId](error, result);
-      me.dataCbs[msgId] = null;
-    } ,
+      this.dataCbs[msgId](error, result);
+      this.dataCbs[msgId] = null;
+    }.bind(this) ,
     'Profiler.resetProfiles' : function(data) {
       logger.info("Device is telling us to reset profiles. Should probably " +
             "do some kind of callback here");
@@ -158,7 +155,6 @@ WebKitRemoteDebugger.prototype.setHandlers = function() {
 // ====================================
 
 WebKitRemoteDebugger.prototype.send = function (data, cb) {
-  var me = this;
   //increase the current id
   this.curMsgId += 1;
   //set the id in the message

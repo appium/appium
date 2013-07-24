@@ -141,3 +141,23 @@ driver.execute_script(js_snippet, args)
 
 Note: driver.execute_script() is explained in [Automating Mobile Gestures: Alternative access method](https://github.com/appium/appium/wiki/Automating-mobile-gestures))
 
+Using The Appium Inspector To Locate Elements
+--------
+
+Appium provides you with a neat tool that allows you to find the the elements you're looking for without leaving the Appium app. With the Appium Inspector (the i symbol next to the start test button) you can find any element and it's name by either clicking the element on the preview page provided, or locating it in the UI navigator.
+
+### Overview
+
+The Appium inspector has a simple layout, complete with a UI navigator, a preview, and record and refresh buttons, and interaction tools.
+
+![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Overview.png)
+
+### Example
+
+After launching the Appium Inspector (you can do this by clicking the small "i" button in the top right of the app) you can locate any element in the preview. In this test, I'm looking for the id of the "show alert" button.
+
+![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Step1.png)
+
+To find the id of this button, I click the "show alert" button in the inspector preview. The Appium inspector then highlights the element in the UI navigator, showing me both the id and element type of the button I clicked.
+
+![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Step2.png)

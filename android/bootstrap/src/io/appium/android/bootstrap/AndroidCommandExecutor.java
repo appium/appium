@@ -3,6 +3,7 @@ package io.appium.android.bootstrap;
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
+import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
@@ -50,6 +51,7 @@ class AndroidCommandExecutor {
     map.put("getLocation", new GetLocation());
     map.put("wake", new Wake());
     map.put("pressBack", new PressBack());
+    map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
   }
 
   /**

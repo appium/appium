@@ -104,7 +104,6 @@ IOS.prototype.start = function(cb, onDie) {
     logger.warn("You tried to launch instruments with both an app " +
                 "specification and a bundle ID. Sticking with the app");
   }
-  var me = this;
   var didLaunch = false;
   if (typeof onDie === "function") {
     this.onStop = onDie;
@@ -113,36 +112,36 @@ IOS.prototype.start = function(cb, onDie) {
   var onLaunch = function() {
     didLaunch = true;
     logger.info('Instruments launched. Starting poll loop for new commands.');
-    me.instruments.setDebug(true);
+    this.instruments.setDebug(true);
     var setLocationServicesPref = function(oCb) {
       var cmd = "setBootstrapConfig: useLocationServices=" +
-                JSON.stringify(me.useLocationServices);
-      me.proxy(cmd, oCb);
-    };
+                JSON.stringify(this.useLocationServices);
+      this.proxy(cmd, oCb);
+    }.bind(this);
     var navToWebview = function() {
-      if (me.autoWebview) {
-        me.navToFirstAvailWebview(cb);
+      if (this.autoWebview) {
+        this.navToFirstAvailWebview(cb);
       } else {
         cb(null);
       }
-    };
+    }.bind(this);
     var setOrientation = function(oCb) {
-      if (typeof me.startingOrientation === "string" && _.contains(["LANDSCAPE", "PORTRAIT"], me.startingOrientation.toUpperCase())) {
-        logger.info("Setting initial orientation to " + me.startingOrientation);
+      if (typeof this.startingOrientation === "string" && _.contains(["LANDSCAPE", "PORTRAIT"], this.startingOrientation.toUpperCase())) {
+        logger.info("Setting initial orientation to " + this.startingOrientation);
         var command = ["au.setScreenOrientation('",
-          me.startingOrientation.toUpperCase(),"')"].join('');
-        me.proxy(command, function(err, res) {
+          this.startingOrientation.toUpperCase(),"')"].join('');
+        this.proxy(command, function(err, res) {
           if (err || res.status !== status.codes.Success.code) {
             logger.warn("Setting initial orientation did not work!");
           } else {
-            me.curOrientation = me.startingOrientation;
+            this.curOrientation = this.startingOrientation;
           }
           oCb(null);
-        });
+        }.bind(this));
       } else {
         oCb(null);
       }
-    };
+    }.bind(this);
     var next = function() {
       setOrientation(function() {
         setLocationServicesPref(function() {
@@ -150,16 +149,16 @@ IOS.prototype.start = function(cb, onDie) {
         });
       });
     };
-    if (me.bundleId !== null) {
+    if (this.bundleId !== null) {
       next();
     } else {
-      me.proxy('au.bundleId()', function(err, bId) {
+      this.proxy('au.bundleId()', function(err, bId) {
         logger.info('Bundle ID for open app is ' + bId.value);
-        me.bundleId = bId.value;
+        this.bundleId = bId.value;
         next();
       });
     }
-  };
+  }.bind(this);
 
   var onExit = function(code, traceDir) {
     if (!didLaunch) {
@@ -169,34 +168,34 @@ IOS.prototype.start = function(cb, onDie) {
       //code = 1; // this counts as an error even if instruments doesn't think so
     }
 
-    if (typeof me.cbForCurrentCmd === "function") {
+    if (typeof this.cbForCurrentCmd === "function") {
       // we were in the middle of waiting for a command when it died
       // so let's actually respond with something
       var error = new UnknownError("Instruments died while responding to " +
                                    "command, please check appium logs");
-      me.cbForCurrentCmd(error, null);
+      this.cbForCurrentCmd(error, null);
       code = 1; // this counts as an error even if instruments doesn't think so
     }
-    me.instruments = null;
-    me.curCoords = null;
-    me.curOrientation = null;
-    if (me.remote !== null) {
+    this.instruments = null;
+    this.curCoords = null;
+    this.curOrientation = null;
+    if (this.remote !== null) {
       try {
-        me.stopRemote();
+        this.stopRemote();
       } catch(e) {
         logger.info("Error stopping remote: " + e.name + ": " + e.message);
       }
     }
     var nexts = 0;
     var next = function() {
-      me.bundleId = null;
+      this.bundleId = null;
       nexts++;
       if (nexts === 2) {
-        me.onStop(code);
-        me.onStop = null;
+        this.onStop(code);
+        this.onStop = null;
       }
-    };
-    if (me.removeTraceDir && traceDir) {
+    }.bind(this);
+    if (this.removeTraceDir && traceDir) {
       rimraf(traceDir, function() {
         logger.info("Deleted tracedir we heard about from instruments (" + traceDir + ")");
         next();
@@ -205,34 +204,34 @@ IOS.prototype.start = function(cb, onDie) {
       next();
     }
 
-    if (me.reset) {
-      me.cleanupAppState(next);
+    if (this.reset) {
+      this.cleanupAppState(next);
     } else {
       next();
     }
-  };
+  }.bind(this);
 
   if (this.instruments === null) {
     var createInstruments = function(cb) {
       logger.debug("Creating instruments");
-      me.instruments = instruments(
-        me.app || me.bundleId
-        , me.udid
+      this.instruments = instruments(
+        this.app || this.bundleId
+        , this.udid
         , path.resolve(__dirname, 'uiauto/bootstrap.js')
         , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
         , sock
-        , me.withoutDelay
-        , me.webSocket
+        , this.withoutDelay
+        , this.webSocket
         , onLaunch
         , onExit
       );
-    };
+    }.bind(this);
 
     async.series([
-      function (cb) { me.cleanup(cb); },
-      function (cb) { me.setDeviceType(cb); },
-      function (cb) { me.installToRealDevice(cb); },
-      function (cb) { createInstruments(cb); }
+      function (cb) { this.cleanup(cb); }.bind(this),
+      function (cb) { this.setDeviceType(cb); }.bind(this),
+      function (cb) { this.installToRealDevice(cb); }.bind(this),
+      function (cb) { createInstruments(cb); }.bind(this)
     ], cb);
   }
 };
@@ -242,21 +241,20 @@ IOS.prototype.installToRealDevice = function (cb) {
     logger.info("Installing ipa found at " + this.ipa);
     this.realDevice = new IDevice(this.udid);
 
-    var d = this.realDevice
-        , me = this;
+    var d = this.realDevice;
 
     async.waterfall([
-      function (cb) { d.isInstalled(me.bundleId, cb); },
+      function (cb) { d.isInstalled(this.bundleId, cb); }.bind(this),
       function (installed, cb) {
       if (installed) {
           logger.info("Bundle found on device, removing before reinstalling.");
-          d.remove(me.bundleId, cb);
+          d.remove(this.bundleId, cb);
         } else {
           logger.debug("Nothing found on device, going ahead and installing.");
           cb();
         }
-      },
-      function (cb) { d.installAndWait(me.ipa, me.bundleId, cb); }
+      }.bind(this),
+      function (cb) { d.installAndWait(this.ipa, this.bundleId, cb); }
     ], cb);
   } else {
     logger.debug("No device id or app, not installing to real device.");
@@ -342,11 +340,10 @@ IOS.prototype.closeAlertBeforeTest = function(cb) {
 };
 
 IOS.prototype.cleanupAppState = function(cb) {
-  var user = process.env.USER
-    , me = this;
+  var user = process.env.USER;
   logger.info("Deleting plists for bundle: " + this.bundleId);
   glob("/Users/" + user + "/Library/Application Support/iPhone Simulator/**/" +
-       me.bundleId + "*.plist", {}, function(err, files) {
+       this.bundleId + "*.plist", {}, function(err, files) {
     if (err) {
       logger.error("Could not remove plist: " + err.message);
       cb(err);
@@ -367,13 +364,13 @@ IOS.prototype.cleanupAppState = function(cb) {
         });
       } else {
         logger.info("No plist files found to remove");
-        if (me.realDevice) {
-          me.realDevice.remove(me.bundleId, function (err) {
+        if (this.realDevice) {
+          this.realDevice.remove(this.bundleId, function (err) {
             if (err) {
-              logger.error("Could not remove " + me.bundleId + " from device");
+              logger.error("Could not remove " + this.bundleId + " from device");
               cb(err);
             } else {
-              logger.info("Removed " + me.bundleId);
+              logger.info("Removed " + this.bundleId);
               cb();
             }
           });
@@ -382,26 +379,25 @@ IOS.prototype.cleanupAppState = function(cb) {
         }
       }
     }
-  });
+  }.bind(this)).bind(this);
 };
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
-  var me = this
-    , isDone = false;
+  var isDone = false;
   if (!this.bundleId) {
     logger.error("Can't enter web frame without a bundle ID");
     return cb(new Error("Tried to enter web frame without a bundle ID"));
   }
   var onDone = function(res) {
-    me.processingRemoteCmd = false;
+    this.processingRemoteCmd = false;
     isDone = true;
     cb(res);
-  };
+  }.bind(this);
 
   this.processingRemoteCmd = true;
   if (this.remote !== null && this.bundleId !== null) {
     if (this.udid !== null) {
-      me.remote.pageArrayFromJson(function(pageArray) {
+      this.remote.pageArrayFromJson(function(pageArray) {
         cb(pageArray);
       });
     } else {
@@ -410,36 +406,36 @@ IOS.prototype.listWebFrames = function(cb, exitCb) {
   } else {
       if (this.udid !== null) {
         this.remote = wkrd.init(exitCb);
-        me.remote.pageArrayFromJson(function(pageArray) {
+        this.remote.pageArrayFromJson(function(pageArray) {
           cb(pageArray);
         });
       } else {
         this.remote = new rd.init(exitCb);
         this.remote.connect(function(appDict) {
-          if(!_.has(appDict, me.bundleId)) {
-            logger.error("Remote debugger did not list " + me.bundleId + " among " +
+          if(!_.has(appDict, this.bundleId)) {
+            logger.error("Remote debugger did not list " + this.bundleId + " among " +
                          "its available apps");
             if(_.has(appDict, "com.apple.mobilesafari")) {
               logger.info("Using mobile safari instead");
-              me.remote.selectApp("com.apple.mobilesafari", onDone);
+              this.remote.selectApp("com.apple.mobilesafari", onDone);
             } else {
               onDone([]);
             }
           } else {
-            me.remote.selectApp(me.bundleId, onDone);
+            this.remote.selectApp(this.bundleId, onDone);
           }
-        }, me.onPageChange.bind(me));
+        }.bind(this), this.onPageChange.bind(this));
         var loopCloseRuns = 0;
         var loopClose = function() {
           loopCloseRuns++;
           if (!isDone && loopCloseRuns < 3) {
-            me.closeAlertBeforeTest(function(didDismiss) {
+            this.closeAlertBeforeTest(function(didDismiss) {
               if (!didDismiss) {
                 setTimeout(loopClose, 1000);
               }
             });
           }
-        };
+        }.bind(this);
         setTimeout(loopClose, 4000);
       }
   }
@@ -452,8 +448,7 @@ IOS.prototype.onPageChange = function(pageArray) {
     return;
   }
   var newIds = []
-    , keyId = null
-    , me = this;
+    , keyId = null;
   _.each(pageArray, function(page) {
     newIds.push(page.id.toString());
     if (page.isKey) {
@@ -473,7 +468,7 @@ IOS.prototype.onPageChange = function(pageArray) {
   } else if (newPages.length) {
     logger.info("We have new pages, going to select page " + newPages[0]);
     newPage = newPages[0];
-  } else if (!_.contains(newIds, me.curWindowHandle.toString())) {
+  } else if (!_.contains(newIds, this.curWindowHandle.toString())) {
     logger.info("New page listing from remote debugger doesn't contain " +
                  "current window, let's assume it's closed");
     if (keyId !== null) {
@@ -483,31 +478,31 @@ IOS.prototype.onPageChange = function(pageArray) {
       logger.error("Don't have our current window anymore, and there " +
                    "aren't any more to load! Doing nothing...");
     }
-    me.curWindowHandle = keyId;
-    me.remote.pageIdKey = parseInt(keyId, 10);
+    this.curWindowHandle = keyId;
+    this.remote.pageIdKey = parseInt(keyId, 10);
   } else {
     var dirty = function() {
       var item = function(arr) {
         return _.filter(arr, function(obj) {
-          return obj.id == me.curWindowHandle;
-        })[0];
-      };
+          return obj.id == this.curWindowHandle;
+        }, this)[0];
+      }.bind(this);
 
       var win = item(pageArray);
       var ret = false;
-      _.each(item(me.windowHandleCache), function(el, idx, l) {
+      _.each(item(this.windowHandleCache), function(el, idx, l) {
         if (l[idx] !== win[idx]) {
           ret = true;
         }
       });
 
       return ret;
-    };
+    }.bind(this);
 
     // If a window gets navigated to an anchor it doesn't always fire a page callback event
     // Let's check if we wound up in such a situation.
     if (dirty()) {
-      me.remote.pageLoad();
+      this.remote.pageLoad();
     }
 
     logger.info("New page listing is same as old, doing nothing");
@@ -516,13 +511,13 @@ IOS.prototype.onPageChange = function(pageArray) {
   if (newPage !== null) {
     this.selectingNewPage = true;
     this.remote.selectPage(parseInt(newPage, 10), function() {
-      me.selectingNewPage = false;
-      me.curWindowHandle = newPage;
-      if (me.onPageChangeCb !== null) {
-        me.onPageChangeCb();
-        me.onPageChangeCb = null;
+      this.selectingNewPage = false;
+      this.curWindowHandle = newPage;
+      if (this.onPageChangeCb !== null) {
+        this.onPageChangeCb();
+        this.onPageChangeCb = null;
       }
-    });
+    }.bind(this));
   } else if (this.onPageChangeCb !== null) {
     this.onPageChangeCb();
     this.onPageChangeCb = null;
@@ -554,14 +549,13 @@ IOS.prototype.stop = function(cb) {
     // we're already stopped
     cb();
   } else {
-    var me = this;
     if (cb) {
       this.onStop = cb;
     }
 
     this.instruments.shutdown();
-    me.queue = [];
-    me.progress = 0;
+    this.queue = [];
+    this.progress = 0;
   }
 };
 
@@ -587,24 +581,23 @@ IOS.prototype.respond = deviceCommon.respond;
 
 IOS.prototype.push = function(elem) {
   this.queue.push(elem);
-  var me = this;
 
   var next = function() {
-    if (me.queue.length <= 0 || me.progress > 0) {
+    if (this.queue.length <= 0 || this.progress > 0) {
       return;
     }
 
-    var target = me.queue.shift()
+    var target = this.queue.shift()
     , command = target[0]
     , cb = target[1];
 
-    if (me.selectingNewPage && me.curWindowHandle) {
+    if (this.selectingNewPage && this.curWindowHandle) {
       logger.info("We're in the middle of selecting a new page, " +
                   "waiting to run next command until done");
       setTimeout(next, 500);
-      me.queue.unshift(target);
+      this.queue.unshift(target);
       return;
-    } else if (me.curWindowHandle && me.processingRemoteCmd) {
+    } else if (this.curWindowHandle && this.processingRemoteCmd) {
       var matches = ["au.alertIsPresent", "au.getAlertText", "au.acceptAlert",
                      "au.dismissAlert", "au.setAlertText",
                      "au.waitForAlertToClose"];
@@ -618,32 +611,31 @@ IOS.prototype.push = function(elem) {
         logger.info("We're in the middle of processing a remote debugger " +
                     "command, waiting to run next command until done");
         setTimeout(next, 500);
-        me.queue.unshift(target);
+        this.queue.unshift(target);
         return;
       }
     }
 
-    me.cbForCurrentCmd = cb;
+    this.cbForCurrentCmd = cb;
 
-    me.progress++;
+    this.progress++;
     logger.debug("Sending command to instruments: " + command);
-    me.instruments.sendCommand(command, function(response) {
-      me.cbForCurrentCmd = null;
+    this.instruments.sendCommand(command, function(response) {
+      this.cbForCurrentCmd = null;
       if (typeof cb === 'function') {
-        me.respond(response, cb);
+        this.respond(response, cb);
       }
 
       // maybe there's moar work to do
-      me.progress--;
+      this.progress--;
       next();
-    });
-  };
+    }.bind(this));
+  }.bind(this);
 
   next();
 };
 
 IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, cb) {
-  var me = this;
   selector = escapeSpecialChars(selector, "'");
   if (typeof ctx === "undefined" || !ctx) {
     ctx = '';
@@ -663,10 +655,10 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
     }
 
-    me.proxy(command, function(err, res) {
-      me.handleFindCb(err, res, many, findCb);
-    });
-  };
+    this.proxy(command, function(err, res) {
+      this.handleFindCb(err, res, many, findCb);
+    }.bind(this));
+  }.bind(this);
   if (_.contains(this.supportedStrategies, strategy)) {
     this.waitForCondition(this.implicitWaitMs, doFind, cb);
   } else {
@@ -708,12 +700,11 @@ IOS.prototype.findElementNameContains = function(name, cb) {
 IOS.prototype.findWebElementOrElements = function(strategy, selector, ctx, many, cb) {
   var ext = many ? 's' : '';
   var atomsElement = this.getAtomsElement(ctx);
-  var me = this;
   var doFind = function(findCb) {
-    me.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
-      me.handleFindCb(err, res, many, findCb);
-    });
-  };
+    this.executeAtom('find_element' + ext, [strategy, selector, atomsElement], function(err, res) {
+      this.handleFindCb(err, res, many, findCb);
+    }.bind(this));
+  }.bind(this);
   this.waitForCondition(this.implicitWaitMs, doFind, cb);
 };
 
@@ -742,8 +733,7 @@ IOS.prototype.findElementsFromElement = function(element, strategy, selector, cb
 };
 
 IOS.prototype.findAndAct = function(strategy, selector, index, action, actionParams, cb) {
-  var me = this
-    , stratMap = {'name': 'Name', 'xpath': 'Xpath', 'tag name': 'Type'}
+  var stratMap = {'name': 'Name', 'xpath': 'Xpath', 'tag name': 'Type'}
     // if you change these, also change in
     // app/uiauto/appium/app.js:elemForAction
     , supportedActions = ["tap", "isEnabled", "isValid", "isVisible",
@@ -763,7 +753,7 @@ IOS.prototype.findAndAct = function(strategy, selector, index, action, actionPar
     });
     cmd += strParams.join(', ');
     cmd += ")";
-    me.proxy(cmd, function(err, res) {
+    this.proxy(cmd, function(err, res) {
       if (err || res.status === status.codes.NoSuchElement.code) {
         findCb(false, err, res);
       } else if (many && res.value === []) {
@@ -775,7 +765,7 @@ IOS.prototype.findAndAct = function(strategy, selector, index, action, actionPar
         findCb(true, err, res);
       }
     });
-  };
+  }.bind(this);
   if (_.contains(supportedActions, action)) {
     if (_.contains(this.supportedStrategies, strategy)) {
       this.waitForCondition(this.implicitWaitMs, doAction, cb);
@@ -893,8 +883,7 @@ IOS.prototype.executeAtomAsync = function(atom, args, responseUrl, cb) {
 };
 
 IOS.prototype.receiveAsyncResponse = function(asyncResponse) {
-  var asyncCb = this.asyncResponseCb
-    , me = this;
+  var asyncCb = this.asyncResponseCb;
   //mark returned as true to stop looking for alerts; the js is done.
   this.returnedFromExecuteAtom = true;
 
@@ -912,23 +901,22 @@ IOS.prototype.parseExecuteResponse = deviceCommon.parseExecuteResponse;
 IOS.prototype.parseElementResponse = deviceCommon.parseElementResponse;
 
 IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
-  var me = this;
   setTimeout(function(){
     if (typeof looks === 'undefined') {
       looks = 0;
     }
-    if (me.instruments !== null) {
-      if (!me.returnedFromExecuteAtom[counter] && looks < 11 && !me.selectingNewPage) {
+    if (this.instruments !== null) {
+      if (!this.returnedFromExecuteAtom[counter] && looks < 11 && !this.selectingNewPage) {
         logger.info("atom did not return yet, checking to see if " +
           "we are blocked by an alert");
         // temporarily act like we're not processing a remote command
         // so we can proxy the alert detection functionality
-        me.alertCounter++;
-        me.proxy("au.alertIsPresent()", function(err, res) {
+        this.alertCounter++;
+        this.proxy("au.alertIsPresent()", function(err, res) {
           if (res !== null) {
             if (res.value === true) {
               logger.info("Found an alert, returning control to client");
-              me.returnedFromExecuteAtom[counter] = true;
+              this.returnedFromExecuteAtom[counter] = true;
               cb(null, {
                 status: status.codes.Success.code
                 , value: ''
@@ -936,10 +924,10 @@ IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
             } else {
               // say we're processing remote cmd again
               looks++;
-              setTimeout(me.lookForAlert(cb, counter, looks), 1000);
+              setTimeout(this.lookForAlert(cb, counter, looks), 1000);
             }
           }
-        });
+        }.bind(this));
       }
     }
   }, timeout);
@@ -980,7 +968,6 @@ IOS.prototype.clickCoords = function(coords, cb) {
 
 IOS.prototype.clickWebCoords = function(cb) {
   var coords = this.curWebCoords
-    , me = this
     , webviewIndex = this.curWindowHandle - 1
     , wvCmd = "au.getElementsByType('webview')";
 
@@ -1000,7 +987,7 @@ IOS.prototype.clickWebCoords = function(cb) {
       //console.log("getting webview real dims");
       var wvId = res.value[webviewIndex].ELEMENT;
       var locCmd = "au.getElement('" + wvId + "').rect()";
-      me.proxy(locCmd, function(err, res) {
+      this.proxy(locCmd, function(err, res) {
         if (err) return cb(err, res);
         var rect = res.value;
         //console.log(rect);
@@ -1008,16 +995,16 @@ IOS.prototype.clickWebCoords = function(cb) {
         realDims = {w: rect.size.width, h: rect.size.height};
         next();
       });
-    };
+    }.bind(this);
     var step2 = function() {
       //console.log("getting browser dims");
       var cmd = "(function() { return {w: document.width, h: document.height}; })()";
-      me.remote.execute(cmd, function(err, res) {
+      this.remote.execute(cmd, function(err, res) {
         //console.log(res.result.value);
         wvDims = {w: res.result.value.w, h: res.result.value.h};
         next();
       });
-    };
+    }.bind(this);
     var next = function() {
       if (wvDims && realDims && wvPos) {
         var xRatio = realDims.w / wvDims.w;
@@ -1029,9 +1016,9 @@ IOS.prototype.clickWebCoords = function(cb) {
         };
         //console.log("converted dims: ");
         //console.log(coords);
-        me.clickCoords(coords, cb);
+        this.clickCoords(coords, cb);
       }
-    };
+    }.bind(this);
     step1();
     step2();
   });
@@ -1424,7 +1411,6 @@ IOS.prototype.setOrientation = function(orientation, cb) {
 
 IOS.prototype.getScreenshot = function(cb) {
   var guid = uuid.create();
-  var me = this;
   var command = ["au.capture('screenshot", guid ,"')"].join('');
 
   var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
@@ -1461,7 +1447,7 @@ IOS.prototype.getScreenshot = function(cb) {
             cb(err, response);
           });
         };
-        if (me.curOrientation === "LANDSCAPE") {
+        if (this.curOrientation === "LANDSCAPE") {
           // need to rotate 90 deg CC
           logger.info("Rotating landscape screenshot");
           rotateImage(shotPath, -90, function(err) {
@@ -1476,7 +1462,7 @@ IOS.prototype.getScreenshot = function(cb) {
         } else {
           doRead();
         }
-      };
+      }.bind(this);
       read(onErr);
     }
   });
@@ -1628,7 +1614,6 @@ IOS.prototype.getUrl = function(cb) {
 
 IOS.prototype.active = function(cb) {
   if (this.curWindowHandle) {
-    var me = this;
     this.executeAtom('active_element', [], function(err, res) {
       cb(err, res);
     });
@@ -1659,42 +1644,40 @@ IOS.prototype.massagePage = function(page) {
 };
 
 IOS.prototype.getWindowHandles = function(cb) {
-  var me = this;
   this.listWebFrames(function(pageArray) {
-    me.windowHandleCache = _.map(pageArray, me.massagePage);
+    this.windowHandleCache = _.map(pageArray, this.massagePage);
     cb(null, {
       status: status.codes.Success.code
-      , value: _.pluck(me.windowHandleCache, 'id')
+      , value: _.pluck(this.windowHandleCache, 'id')
     });
-  });
+  }.bind(this));
 };
 
 IOS.prototype.setWindow = function(name, cb) {
-  var me = this;
   if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
     var pageIdKey = parseInt(name, 10);
     var next = function() {
-      me.processingRemoteCmd = true;
-      if(me.udid === null) {
-        me.remote.selectPage(pageIdKey, function() {
-          me.curWindowHandle = pageIdKey.toString();
+      this.processingRemoteCmd = true;
+      if(this.udid === null) {
+        this.remote.selectPage(pageIdKey, function() {
+          this.curWindowHandle = pageIdKey.toString();
           cb(null, {
             status: status.codes.Success.code
             , value: ''
           });
-          me.processingRemoteCmd = false;
-        });
+          this.processingRemoteCmd = false;
+        }.bind(this));
       } else {
-        if (name == me.curWindowHandle){
+        if (name == this.curWindowHandle){
           logger.info("Remote debugger is already connected to window [" + name + "]");
           cb(null, {
             status: status.codes.Success.code
             , value: name
           });
-        } else if (_.contains(_.pluck(me.windowHandleCache, 'id'), name)) {
-          me.remote.disconnect();
-          me.curWindowHandle = name;
-          me.remote.connect(name, function(){
+        } else if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
+          this.remote.disconnect();
+          this.curWindowHandle = name;
+          this.remote.connect(name, function(){
             cb(null, {
               status: status.codes.Success.code
             , value: name
@@ -1707,7 +1690,7 @@ IOS.prototype.setWindow = function(name, cb) {
           });
         }
       }
-    };
+    }.bind(this);
     next();
   } else {
     cb(null, {
@@ -1731,25 +1714,23 @@ IOS.prototype.closeWindow = function(cb) {
 };
 
 IOS.prototype.setSafariWindow = function(windowId, cb) {
-  var me = this;
-
-  me.findAndAct('name', 'Pages', 0, 'value', [], function(err, res) {
-    if (me.checkSuccess(err, res, cb)) {
+  this.findAndAct('name', 'Pages', 0, 'value', [], function(err, res) {
+    if (this.checkSuccess(err, res, cb)) {
       if (res.value === "") {
         cb(err, res);
       } else {
-        me.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
-          if (me.checkSuccess(err, res, cb)) {
-            me.findAndAct('tag name', 'pageIndicator', 0, 'selectPage', [windowId], function(err, res) {
-              if (me.checkSuccess(err, res, cb)) {
-                me.findAndAct('name', 'Done', 0, 'tap', [], cb);
+        this.findAndAct('name', 'Pages', 0, 'tap', [], function(err, res) {
+          if (this.checkSuccess(err, res, cb)) {
+            this.findAndAct('tag name', 'pageIndicator', 0, 'selectPage', [windowId], function(err, res) {
+              if (this.checkSuccess(err, res, cb)) {
+                this.findAndAct('name', 'Done', 0, 'tap', [], cb);
               }
-            });
+            }.bind(this));
           }
-        });
+        }.bind(this));
       }
     }
-  });
+  }.bind(this));
 };
 
 IOS.prototype.checkSuccess = function(err, res, cb) {
@@ -1791,14 +1772,13 @@ IOS.prototype.execute = function(script, args, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    var me = this;
     this.convertElementForAtoms(args, function(err, res) {
       if (err) {
         cb(null, res);
       } else {
-        me.executeAtom('execute_script', [script, res], cb);
+        this.executeAtom('execute_script', [script, res], cb);
       }
-    });
+    }.bind(this));
   }
 };
 
@@ -1806,14 +1786,13 @@ IOS.prototype.executeAsync = function(script, args, responseUrl, cb) {
   if (this.curWindowHandle === null) {
     this.proxy(script, cb);
   } else {
-    var me = this;
     this.convertElementForAtoms(args, function(err, res) {
       if (err) {
         cb(null, res);
       } else {
-        me.executeAtomAsync('execute_async_script', [script, args, me.asyncWaitMs], responseUrl, cb);
+        this.executeAtomAsync('execute_async_script', [script, args, this.asyncWaitMs], responseUrl, cb);
       }
-    });
+    }.bind(this));
   }
 };
 

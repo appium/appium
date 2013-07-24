@@ -45,7 +45,6 @@ var Firefox = function(opts) {
 };
 
 Firefox.prototype.start = function(cb, onDie) {
-  var me = this;
   this.socket = new net.Socket();
   this.socket.on('close', function() {
     onDie(0);
@@ -59,11 +58,11 @@ Firefox.prototype.start = function(cb, onDie) {
     logger.info("Firefox OS socket connected");
     var mainCb = cb;
     async.waterfall([
-      function(cb) { me.getMarionetteId(cb); },
-      function(cb) { me.createSession(cb); },
-      function(cb) { me.launchAppByName(cb); },
-      function(frameId, cb) { me.frame(frameId, cb); }
-    ], function() { mainCb(null, me.sessionId); });
+      function(cb) { this.getMarionetteId(cb); }.bind(this),
+      function(cb) { this.createSession(cb); }.bind(this),
+      function(cb) { this.launchAppByName(cb); }.bind(this),
+      function(frameId, cb) { this.frame(frameId, cb); }.bind(this)
+    ], function() { mainCb(null, this.sessionId); }.bind(this));
   };
 
 };

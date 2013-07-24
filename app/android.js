@@ -490,12 +490,7 @@ Android.prototype.getWindowSize = function(windowHandle, cb) {
 };
 
 Android.prototype.back = function(cb) {
-  this.adb.back(function() {
-    cb(null, {
-      status: status.codes.Success.code
-      , value: null
-    });
-  });
+  this.proxy(["pressBack"], cb);
 };
 
 Android.prototype.forward = function(cb) {

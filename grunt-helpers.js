@@ -19,7 +19,7 @@ var _ = require("underscore")
   , fs = require('fs')
   , helpers = require('./app/helpers')
   , isWindows = helpers.isWindows()
-  , MAX_BUFFER_SIZE = 1200;
+  , MAX_BUFFER_SIZE = 524288;
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
   var app;

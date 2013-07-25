@@ -34,6 +34,8 @@ var mechanic = (function() {
         'UIACollectionCell': ['collectionCell'],
         'UIAElement' : ['\\*'], // TODO: sort of a hack
         'UIAImage' : ['image'],
+        'UIAKey' : ['key'],
+        'UIAKeyboard' : ['keyboard'],
         'UIALink' : ['link'],
         'UIAPageIndicator' : ['pageIndicator'],
         'UIAPicker' : ['picker'],

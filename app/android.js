@@ -679,30 +679,13 @@ Android.prototype.getScreenshot = function(cb) {
   me.adb.requireDeviceId();
   var localfile = temp.path({prefix: 'appium', suffix: '.png'});
   var b64data = "";
-  var jar = path.resolve(__dirname, '..', 'app', 'android', 'ScreenShooter.jar');
-  var jarpath = path.resolve(process.env.ANDROID_HOME, "tools", "lib");
-  var classpath = "";
 
   async.series([
     function(cb) {
-      if (isWindows) {
-        classpath = path.resolve(jarpath, "ddmlib.jar") + ";" + path.resolve(jarpath, "x86", "swt.jar") + ";" + jar;
-        cb(null);
-      } else {
-        exec('uname -m', { maxBuffer: 524288 }, function (error, stdout, stderr) {
-          if (error) {
-            cb(error);
-          } else {
-            classpath = path.resolve(jarpath, "ddmlib.jar") + ":" + path.resolve(jarpath, stdout.trim(), "swt.jar") + ":" + jar;
-            cb(null);
-          }
-        });
-      }
+      me.proxy(["takeScreenshot"], cb);
     },
     function(cb) {
-      var javaCmd = 'java -classpath "' + classpath + '" io.appium.android.screenshooter.ScreenShooter ';
-
-      var cmd = javaCmd + me.adb.curDeviceId + ' "' + localfile + '"';
+      var cmd = me.adb.adbCmd + ' pull /data/local/tmp/screenshot.png "' + localfile + '"';
       logger.debug("screenshot cmd: " + cmd);
       exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         if (err) {

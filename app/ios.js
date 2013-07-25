@@ -1530,6 +1530,30 @@ IOS.prototype.rotate = function(x, y, radius, rotation, duration, touchCount, el
   }
 };
 
+IOS.prototype.pinchClose = function(startX, startY, endX, endY, duration, elId, cb) {
+  var command;
+  var fromPointObject = {'x' : startX, 'y' : startY};
+  var toPointObject = {'x' : endX, 'y' : endY};
+  if (elId) {
+    command = ["au.getElement('", elId, "').pinchCloseFromToForDuration("+ JSON.stringify(fromPointObject) + "," + JSON.stringify(toPointObject) + "," + duration +")"];
+    this.proxy(command, cb);
+  } else {
+    this.proxy("target.pinchCloseFromToForDuration("+ JSON.stringify(fromPointObject) + "," + JSON.stringify(toPointObject) + "," + duration +")", cb);
+  }
+};
+
+IOS.prototype.pinchOpen = function(startX, startY, endX, endY, duration, elId, cb) {
+  var command;
+  var fromPointObject = {'x' : startX, 'y' : startY};
+  var toPointObject = {'x' : endX, 'y' : endY};
+  if (elId) {
+    command = ["au.getElement('", elId, "').pinchOpenFromToForDuration("+ JSON.stringify(fromPointObject) + "," + JSON.stringify(toPointObject) + "," + duration +")"];
+    this.proxy(command, cb);
+  } else {
+    this.proxy("target.pinchOpenFromToForDuration("+ JSON.stringify(fromPointObject) + "," + JSON.stringify(toPointObject) + "," + duration +")", cb);
+  }
+};
+
 IOS.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {
   var command;
   if (elId) {

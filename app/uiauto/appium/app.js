@@ -628,6 +628,28 @@ $.extend(au, {
       };
     }
 
+  , pinchClose: function(startX, startY, endX, endY, duration) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+      duration = parseFloat(duration);
+
+      this.target.pinchCloseFromToForDuration(coords[0], coords[1], duration);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
+  , pinchOpen: function(startX, startY, endX, endY, duration) {
+      var coords = this.getAbsCoords(startX, startY, endX, endY);
+      duration = parseFloat(duration);
+
+      this.target.pinchOpenFromToForDuration(coords[0], coords[1], duration);
+      return {
+        status: codes.Success.code,
+        value: null
+      };
+    }
+
   , complexTap: function(opts) {
       var coords = this.getAbsCoords(opts.x, opts.y);
       var touchOpts = {

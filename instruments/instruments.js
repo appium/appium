@@ -66,9 +66,9 @@ Instruments.prototype.startSocketServer = function(sock) {
     this.exitHandler(1);
   };
 
-  var socketConnectTimeout = setTimeout(_.bind(onSocketNeverConnect, this), 300000);
+  var socketConnectTimeout = setTimeout(onSocketNeverConnect.bind(this), 300000);
 
-  this.socketServer = net.createServer({allowHalfOpen: true}, _.bind(function(conn) {
+  this.socketServer = net.createServer({allowHalfOpen: true}, function(conn) {
     if (!this.hasConnected) {
       this.hasConnected = true;
       this.debug("Instruments is ready to receive commands");
@@ -78,21 +78,21 @@ Instruments.prototype.startSocketServer = function(sock) {
     }
     conn.setEncoding('utf8'); // get strings from sockets rather than buffers
 
-    conn.on('data', _.bind(function(data) {
+    conn.on('data', function(data) {
       // when data comes in, route it according to the "event" property
       this.debug("Socket data received (" + data.length + " bytes)");
       this.bufferedData += data;
-    }, this));
+    }.bind(this));
 
     this.currentSocket = conn;
     //this.debug("Socket Connected");
 
-    conn.on('close', _.bind(function() {
+    conn.on('close', function() {
         //this.debug("Socket Completely closed");
         this.currentSocket = null;
-    }, this));
+    }.bind(this));
 
-    conn.on('end', _.bind(function() {
+    conn.on('end', function() {
       //this.debug("Socket closed by other side");
       var data = this.bufferedData;
       this.bufferedData = "";
@@ -117,25 +117,25 @@ Instruments.prototype.startSocketServer = function(sock) {
                     "' which doesn't exist");
       } else {
         this.debug("Socket data being routed for '" + data.event + "' event");
-        _.bind(this.eventRouter[data.event], this)(data, conn);
+        this.eventRouter[data.event].bind(this)(data, conn);
       }
-    }, this));
+    }.bind(this));
 
-  }, this));
+  }.bind(this));
 
-  this.socketServer.on('close', _.bind(function() {
+  this.socketServer.on('close', function() {
     this.debug("Instruments socket server closed");
-  }, this));
+  }.bind(this));
 
-  exec('xcrun -find instruments', _.bind(function (error, stdout) {
+  exec('xcrun -find instruments', function (error, stdout) {
     this.instrumentsPath = stdout.trim();
     logger.info("instruments is: " + this.instrumentsPath);
 
-    this.socketServer.listen(sock, _.bind(function() {
+    this.socketServer.listen(sock, function() {
       this.debug("Instruments socket server started at " + sock);
       this.launch();
-    }, this));
-  }, this));
+    }.bind(this));
+  }.bind(this));
 };
 
 Instruments.prototype.launch = function() {
@@ -221,14 +221,14 @@ Instruments.prototype.commandHandler = function(data, c) {
     this.curCommand = null;
   }
 
-  this.waitForCommand(_.bind(function() {
+  this.waitForCommand(function() {
     this.curCommand = this.commandQueue.shift();
     this.onReceiveCommand = null;
     this.debug("Sending command to instruments: " + this.curCommand.cmd);
     c.write(JSON.stringify({nextCommand: this.curCommand.cmd}));
     c.end();
     //this.debug("Closing our half of the connection");
-  }, this));
+  }.bind(this));
 };
 
 Instruments.prototype.waitForCommand = function(cb) {

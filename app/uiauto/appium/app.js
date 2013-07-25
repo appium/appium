@@ -346,13 +346,12 @@ $.extend(au, {
     }
 
   , _returnElems: function(elems) {
-      var results = []
-        , me = this;
+      var results = [];
 
       elems.each(function(e, el) {
-        var elid = me.getId(el);
+        var elid = this.getId(el);
         results.push({ELEMENT: elid});
-      });
+      }.bind(this));
 
       return {
         status: codes.Success.code,

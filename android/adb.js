@@ -104,7 +104,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     this.binaries[binary] = binaryLoc;
     cb(null, binaryLoc);
   } else {
-    exec("which " + binary, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+    exec("which " + binary, { maxBuffer: 524288 }, function(err, stdout) {
       if (stdout) {
         this.debug("Using " + binary + " from " + stdout);
         cb(null, stdout);
@@ -113,16 +113,16 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
                      "SDK installed?"),
            null);
       }
-    }, this));
+    }.bind(this));
   }
 };
 
 ADB.prototype.checkAdbPresent = function(cb) {
-  this.checkSdkBinaryPresent("adb", _.bind(function(err, binaryLoc) {
+  this.checkSdkBinaryPresent("adb", function(err, binaryLoc) {
     if (err) return cb(err);
     this.adb = binaryLoc.trim();
     cb(null);
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.checkAppPresent = function(cb) {
@@ -132,7 +132,7 @@ ADB.prototype.checkAppPresent = function(cb) {
     cb(null);
   } else {
     logger.info("Checking whether app is actually present");
-    fs.stat(this.apkPath, _.bind(function(err) {
+    fs.stat(this.apkPath, function(err) {
       if (err) {
         logger.error("Could not find app apk at " + this.apkPath);
         cb(new Error("Error locating the app apk, supposedly it's at " +
@@ -141,7 +141,7 @@ ADB.prototype.checkAppPresent = function(cb) {
       } else {
         cb(null);
       }
-    }, this));
+    }.bind(this));
   }
 };
 
@@ -149,10 +149,9 @@ ADB.prototype.checkAppPresent = function(cb) {
 ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   logger.info("Building fast reset");
   // Create manifest
-  var me = this
-    , targetAPK = me.apkPath
+  var targetAPK = this.apkPath
     , cleanAPKSrc = path.resolve(__dirname, '..', 'app', 'android', 'Clean.apk')
-    , newPackage = me.appPackage + '.clean'
+    , newPackage = this.appPackage + '.clean'
     , srcManifest = path.resolve(__dirname, '..', 'app', 'android',
         'AndroidManifest.xml.src')
     , dstManifest = path.resolve(getTempPath(), 'AndroidManifest.xml');
@@ -160,29 +159,28 @@ ADB.prototype.buildFastReset = function(skipAppSign, cb) {
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   var resignApks = function(cb) {
     // Resign clean apk and target apk
-    var apks = [ me.cleanAPK ];
+    var apks = [ this.cleanAPK ];
     if (!skipAppSign) {
       logger.debug("Signing app and clean apk.");
       apks.push(targetAPK);
     } else {
       logger.debug("Skip app sign. Sign clean apk.");
     }
-    me.sign(apks, cb);
-  };
+    this.sign(apks, cb);
+  }.bind(this);
 
   async.series([
-    function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
-    function(cb) { me.compileManifest(dstManifest, newPackage, me.appPackage, cb); },
-    function(cb) { me.insertManifest(dstManifest, cleanAPKSrc, me.cleanAPK, cb); },
-    function(cb) { resignApks(cb); }
+    function(cb) { this.checkSdkBinaryPresent("aapt", cb); }.bind(this),
+    function(cb) { this.compileManifest(dstManifest, newPackage, this.appPackage, cb); }.bind(this),
+    function(cb) { this.insertManifest(dstManifest, cleanAPKSrc, this.cleanAPK, cb); }.bind(this),
+    function(cb) { resignApks(cb); }.bind(this)
   ], cb);
 };
 
 ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
   logger.info("Inserting selendroid manifest");
-  var me = this
-    , newServerPath = me.selendroidServerPath
-    , newPackage = me.appPackage + '.selendroid'
+  var newServerPath = this.selendroidServerPath
+    , newPackage = this.appPackage + '.selendroid'
     , srcManifest = path.resolve(__dirname, '..', 'build', 'selendroid',
         'AndroidManifest.xml')
     , dstDir = path.resolve(getTempPath(), this.appPackage)
@@ -197,11 +195,11 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
   }
   fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
   async.series([
-    function(cb) { mkdirp(dstDir, cb); },
-    function(cb) { me.checkSdkBinaryPresent("aapt", cb); },
-    function(cb) { me.compileManifest(dstManifest, newPackage, me.appPackage, cb); },
-    function(cb) { me.insertManifest(dstManifest, serverPath, newServerPath,
-      cb); }
+    function(cb) { mkdirp(dstDir, cb); }.bind(this),
+    function(cb) { this.checkSdkBinaryPresent("aapt", cb); }.bind(this),
+    function(cb) { this.compileManifest(dstManifest, newPackage, this.appPackage, cb); }.bind(this),
+    function(cb) { this.insertManifest(dstManifest, serverPath, newServerPath,
+      cb); }.bind(this)
   ], cb);
 };
 
@@ -327,7 +325,6 @@ ADB.prototype.signDefault = function(apks, cb) {
 
 // apk is a single apk path
 ADB.prototype.signCustom = function(apk, cb) {
-  var me = this;
   var jarsigner = path.resolve(process.env.JAVA_HOME, 'bin', 'jarsigner');
   jarsigner = isWindows ? '"' + jarsigner + '.exe"' : '"' + jarsigner + '"';
   var java = path.resolve(process.env.JAVA_HOME, 'bin', 'java');
@@ -337,13 +334,13 @@ ADB.prototype.signCustom = function(apk, cb) {
   // "jarsigner" "blank.apk" -sigalg MD5withRSA -digestalg SHA1
   // -keystore "./key.keystore" -storepass "android"
   // -keypass "android" "androiddebugkey"
-  if (!fs.existsSync(me.keystorePath)) {
-    return cb(new Error("Keystore doesn't exist. " + me.keystorePath));
+  if (!fs.existsSync(this.keystorePath)) {
+    return cb(new Error("Keystore doesn't exist. " + this.keystorePath));
   }
 
   var sign = [jarsigner, '"' + apk + '"', '-sigalg MD5withRSA', '-digestalg SHA1',
-  '-keystore "' + me.keystorePath + '"', '-storepass "' + me.keystorePassword + '"',
-  '-keypass "' + me.keyPassword + '"', '"' + me.keyAlias + '"'].join(' ');
+  '-keystore "' + this.keystorePath + '"', '-storepass "' + this.keystorePassword + '"',
+  '-keypass "' + this.keyPassword + '"', '"' + this.keyAlias + '"'].join(' ');
   logger.debug("Unsigning apk with: " + unsign);
   exec(unsign, { maxBuffer: 524288 }, function(err, stdout, stderr) {
     if (stderr) {
@@ -367,13 +364,12 @@ ADB.prototype.signCustom = function(apk, cb) {
 
 // apks is an array of strings.
 ADB.prototype.sign = function(apks, cb) {
-  var me = this;
-  if (me.useKeystore) {
-    async.each(apks, me.signCustom.bind(me), function(err) {
+  if (this.useKeystore) {
+    async.each(apks, this.signCustom.bind(this), function(err) {
       cb(err);
     });
   } else {
-    me.signDefault(apks, cb);
+    this.signDefault(apks, cb);
   }
 };
 
@@ -391,13 +387,12 @@ ADB.prototype.checkApkCert = function(apk, cb) {
     var keytool = path.resolve(process.env.JAVA_HOME, 'bin', 'keytool');
     keytool = isWindows ? '"' + keytool + '.exe"' : '"' + keytool + '"';
     var keystoreHash = null;
-    var me = this;
 
     var checkKeystoreMD5 = function(innerCb) {
     logger.debug("checkKeystoreMD5");
       // get keystore md5
-      var keystore = [keytool, '-v', '-list', '-alias "' + me.keyAlias + '"',
-      '-keystore "' + me.keystorePath + '"', '-storepass "' + me.keystorePassword + '"'].join(' ');
+      var keystore = [keytool, '-v', '-list', '-alias "' + this.keyAlias + '"',
+      '-keystore "' + this.keystorePath + '"', '-storepass "' + this.keystorePassword + '"'].join(' ');
       logger.debug("Printing keystore md5: " + keystore);
       exec(keystore, { maxBuffer: 524288 }, function(err, stdout) {
          keystoreHash = md5.exec(stdout);
@@ -420,7 +415,7 @@ ADB.prototype.checkApkCert = function(apk, cb) {
         entry = entry.entryName;
         if (!rsa.test(entry)) return next();
         logger.debug("Entry: " + entry);
-        var entryPath = path.join(getTempPath(), me.appPackage, 'cert');
+        var entryPath = path.join(getTempPath(), this.appPackage, 'cert');
         logger.debug("entryPath: " + entryPath);
         var entryFile = path.join(entryPath, entry);
         logger.debug("entryFile: " + entryFile);
@@ -446,7 +441,7 @@ ADB.prototype.checkApkCert = function(apk, cb) {
            next();
          }
         });
-      };
+      }.bind(this);
       next();
     };
 
@@ -490,70 +485,66 @@ ADB.prototype.checkFastReset = function(cb) {
 
   if (!this.appPackage) return cb(new Error("appPackage must be set."));
 
-  var me = this;
-  me.checkApkCert(me.cleanAPK, function(cleanSigned){
-    me.checkApkCert(me.apkPath, function(appSigned){
-      logger.debug("App signed? " + appSigned + " " + me.apkPath);
+  this.checkApkCert(this.cleanAPK, function(cleanSigned){
+    this.checkApkCert(this.apkPath, function(appSigned){
+      logger.debug("App signed? " + appSigned + " " + this.apkPath);
       // Only build & resign clean.apk if it doesn't exist or isn't signed.
-      if (!fs.existsSync(me.cleanAPK) || !cleanSigned) {
-        me.buildFastReset(appSigned, function(err){ if (err) return cb(err); cb(null); });
+      if (!fs.existsSync(this.cleanAPK) || !cleanSigned) {
+        this.buildFastReset(appSigned, function(err){ if (err) return cb(err); cb(null); });
       } else {
         if (!appSigned) {
           // Resign app apk because it's not signed.
-          me.sign([me.apkPath], cb);
+          this.sign([this.apkPath], cb);
         } else {
           // App and clean are already existing and signed.
           cb(null);
         }
       }
-    });
-  });
+    }.bind(this));
+  }.bind(this));
 };
 
 ADB.prototype.getDeviceWithRetry = function(cb) {
   logger.info("Trying to find a connected android device");
-  var me = this;
   var getDevices = function(innerCb) {
-    me.getConnectedDevices(function(err, devices) {
+    this.getConnectedDevices(function(err, devices) {
       if (typeof devices === "undefined" || devices.length === 0 || err) {
         return innerCb(new Error("Could not find a connected Android device."));
       }
       innerCb(null);
     });
-  };
+  }.bind(this);
   getDevices(function(err) {
     if (err) {
       logger.info("Could not find devices, restarting adb server...");
-      me.restartAdb(function() {
+      this.restartAdb(function() {
         getDevices(cb);
       });
     } else {
       logger.info("Found device, no need to retry");
       cb(null);
     }
-  });
+  }.bind(this));
 };
 
 ADB.prototype.prepareDevice = function(onReady) {
   logger.info("Preparing device for session");
-  var me = this;
   async.series([
-    function(cb) { me.checkAppPresent(cb); },
-    function(cb) { me.checkAdbPresent(cb); },
-    function(cb) { me.prepareEmulator(cb); },
-    function(cb) { me.getDeviceWithRetry(cb);},
-    function(cb) { me.waitForDevice(cb); },
-    function(cb) { me.checkFastReset(cb); }
+    function(cb) { this.checkAppPresent(cb); }.bind(this),
+    function(cb) { this.checkAdbPresent(cb); }.bind(this),
+    function(cb) { this.prepareEmulator(cb); }.bind(this),
+    function(cb) { this.getDeviceWithRetry(cb);}.bind(this),
+    function(cb) { this.waitForDevice(cb); }.bind(this),
+    function(cb) { this.checkFastReset(cb); }.bind(this)
   ], onReady);
 };
 
 ADB.prototype.pushStrings = function(cb) {
-  var me = this;
   var remotePath = '/data/local/tmp';
   var stringsJson = 'strings.json';
-  if (!fs.existsSync(me.apkPath)) {
+  if (!fs.existsSync(this.apkPath)) {
    // apk doesn't exist locally so remove old strings.json
-   var pushCmd = me.adbCmd + ' shell rm ' + remotePath + '/' + stringsJson;
+   var pushCmd = this.adbCmd + ' shell rm ' + remotePath + '/' + stringsJson;
    logger.debug("Apk doesn't exist. Removing old strings.json " + pushCmd);
    exec(pushCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
      cb(null);
@@ -561,9 +552,9 @@ ADB.prototype.pushStrings = function(cb) {
   } else {
     var stringsFromApkJarPath = path.resolve(__dirname, '..', 'app', 'android',
         'strings_from_apk.jar');
-    var outputPath = path.resolve(getTempPath(), me.appPackage);
+    var outputPath = path.resolve(getTempPath(), this.appPackage);
     var makeStrings = ['java -jar "', stringsFromApkJarPath,
-                       '" "', me.apkPath, '" "', outputPath, '"'].join('');
+                       '" "', this.apkPath, '" "', outputPath, '"'].join('');
     logger.debug(makeStrings);
     exec(makeStrings, { maxBuffer: 524288 }, function(err, stdout, stderr) {
       if (err) {
@@ -572,32 +563,31 @@ ADB.prototype.pushStrings = function(cb) {
       }
       var jsonFile = path.resolve(outputPath, stringsJson);
 
-      var pushCmd = me.adbCmd + ' push "' + jsonFile + '" ' + remotePath;
+      var pushCmd = this.adbCmd + ' push "' + jsonFile + '" ' + remotePath;
       exec(pushCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         cb(null);
       });
-    });
+    }.bind(this));
   }
 };
 
 ADB.prototype.startAppium = function(onReady, onExit) {
   logger.info("Starting android appium");
-  var me = this;
   this.onExit = onExit;
 
   logger.debug("Using fast reset? " + this.fastReset);
 
   async.series([
-    function(cb) { me.prepareDevice(cb); },
-    function(cb) { me.pushStrings(cb); },
-    function(cb) { me.uninstallApp(cb); },
-    function(cb) { me.installApp(cb); },
-    function(cb) { me.forwardPort(cb); },
-    function(cb) { me.pushAppium(cb); },
-    function(cb) { me.runBootstrap(cb, onExit); },
-    function(cb) { me.wakeUp(cb); },
-    function(cb) { me.unlockScreen(cb); },
-    function(cb) { me.startApp(cb); }
+    function(cb) { this.prepareDevice(cb); }.bind(this),
+    function(cb) { this.pushStrings(cb); }.bind(this),
+    function(cb) { this.uninstallApp(cb); }.bind(this),
+    function(cb) { this.installApp(cb); }.bind(this),
+    function(cb) { this.forwardPort(cb); }.bind(this),
+    function(cb) { this.pushAppium(cb); }.bind(this),
+    function(cb) { this.runBootstrap(cb, onExit); }.bind(this),
+    function(cb) { this.wakeUp(cb); }.bind(this),
+    function(cb) { this.unlockScreen(cb); }.bind(this),
+    function(cb) { this.startApp(cb); }.bind(this)
   ], function(err, seriesInfo) {
     onReady(err);
   });
@@ -605,30 +595,28 @@ ADB.prototype.startAppium = function(onReady, onExit) {
 
 ADB.prototype.startChrome = function(onReady) {
   logger.info("Starting Chrome");
-  var me = this;
   logger.debug("Using fast reset? " + this.fastReset);
 
   async.series([
-    function(cb) { me.prepareDevice(cb); },
-    function(cb) { me.installApp(cb); },
-    function(cb) { me.startApp(cb); }
+    function(cb) { this.prepareDevice(cb); }.bind(this),
+    function(cb) { this.installApp(cb); }.bind(this),
+    function(cb) { this.startApp(cb); }.bind(this)
   ], onReady);
 };
 
 ADB.prototype.startSelendroid = function(serverPath, onReady) {
   logger.info("Starting selendroid");
-  var me = this
-    , modServerExists = false
+  var modServerExists = false
     , modAppPkg = this.appPackage + '.selendroid';
   this.selendroidServerPath = path.resolve(getTempPath(),
       'selendroid.' + this.appPackage + '.apk');
 
   var checkModServerExists = function(cb) {
-    fs.stat(me.selendroidServerPath, function(err) {
+    fs.stat(this.selendroidServerPath, function(err) {
       modServerExists = !err;
       cb();
     });
-  };
+  }.bind(this);
 
   var conditionalUninstallSelendroid = function(cb) {
     if (!modServerExists) {
@@ -636,48 +624,48 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
       // need to uninstall it if it's already on device
       logger.info("Rebuilt selendroid apk does not exist, uninstalling " +
                   "any instances of it on device to make way for new one");
-      me.uninstallApk(modAppPkg, cb);
+      this.uninstallApk(modAppPkg, cb);
     } else {
       logger.info("Rebuilt selendroid apk exists, doing nothing");
       cb();
     }
-  };
+  }.bind(this);
 
   var conditionalInsertManifest = function(cb) {
     if (!modServerExists) {
       logger.info("Rebuilt selendroid server does not exist, inserting " +
                   "modified manifest");
-      me.insertSelendroidManifest(serverPath, cb);
+      this.insertSelendroidManifest(serverPath, cb);
     } else {
       logger.info("Rebuilt selendroid server already exists, no need to " +
                   "rebuild it with a new manifest");
       cb();
     }
-  };
+  }.bind(this);
 
   var conditionalInstallSelendroid = function(cb) {
-    me.checkAppInstallStatus(modAppPkg, function(e, installed) {
+    this.checkAppInstallStatus(modAppPkg, function(e, installed) {
       if (!installed) {
         logger.info("Rebuilt selendroid is not installed, installing it");
-        me.installApk(me.selendroidServerPath, cb);
+        this.installApk(this.selendroidServerPath, cb);
       } else {
         logger.info("Rebuilt selendroid is already installed");
         cb();
       }
-    });
-  };
+    }.bind(this));
+  }.bind(this);
 
   async.series([
-    function(cb) { me.prepareDevice(cb); },
+    function(cb) { this.prepareDevice(cb); }.bind(this),
     function(cb) { checkModServerExists(cb); },
     function(cb) { conditionalUninstallSelendroid(cb); },
     function(cb) { conditionalInsertManifest(cb); },
-    function(cb) { me.checkSelendroidCerts(me.selendroidServerPath, cb); },
+    function(cb) { this.checkSelendroidCerts(this.selendroidServerPath, cb); }.bind(this),
     function(cb) { conditionalInstallSelendroid(cb); },
-    function(cb) { me.installApp(cb); },
-    function(cb) { me.forwardPort(cb); },
-    function(cb) { me.unlockScreen(cb); },
-    function(cb) { me.pushSelendroid(cb); },
+    function(cb) { this.installApp(cb); }.bind(this),
+    function(cb) { this.forwardPort(cb); }.bind(this),
+    function(cb) { this.unlockScreen(cb); }.bind(this),
+    function(cb) { this.pushSelendroid(cb); }.bind(this),
     function(cb) { logger.info("Selendroid server is launching"); cb(); }
   ], onReady);
 };
@@ -705,8 +693,7 @@ ADB.prototype.pushSelendroid = function(cb) {
 };
 
 ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
-  var me = this
-    , alreadyReturned = false
+  var alreadyReturned = false
     , checks = 0;
 
   var onDoneSigning = function() {
@@ -720,22 +707,21 @@ ADB.prototype.checkSelendroidCerts = function(serverPath, cb) {
   var apks = [serverPath, this.apkPath];
   _.each(apks, function(apk) {
     logger.info("Checking signed status of " + apk);
-    me.checkApkCert(apk, function(isSigned) {
+    this.checkApkCert(apk, function(isSigned) {
       if (isSigned) return onDoneSigning();
-      me.sign([apk], function(err) {
+      this.sign([apk], function(err) {
         if (err && !alreadyReturned) {
           alreadyReturned = true;
           return cb(err);
         }
         onDoneSigning();
       });
-    });
-  });
+    }.bind(this));
+  }, this);
 };
 
 ADB.prototype.getEmulatorPort = function(cb) {
   logger.info("Getting running emulator port");
-  var me = this;
   if (this.emulatorPort !== null) {
     return cb(null, this.emulatorPort);
   }
@@ -744,14 +730,14 @@ ADB.prototype.getEmulatorPort = function(cb) {
       cb(new Error("No devices connected"));
     } else {
       // pick first device
-      var port = me.getPortFromEmulatorString(devices[0]);
+      var port = this.getPortFromEmulatorString(devices[0]);
       if (port) {
         cb(null, port);
       } else {
         cb(new Error("Emulator port not found"));
       }
     }
-  });
+  }.bind(this));
 };
 
 ADB.prototype.getPortFromEmulatorString = function(emStr) {
@@ -769,18 +755,18 @@ ADB.prototype.getRunningAVDName = function(cb) {
 
 ADB.prototype.prepareEmulator = function(cb) {
   if (this.avdName !== null) {
-    this.getRunningAVDName(_.bind(function(err, runningAVDName) {
+    this.getRunningAVDName(function(err, runningAVDName) {
       if (!err && this.avdName.replace('@','') === runningAVDName) {
         logger.info("Did not launch AVD because it was already running.");
         cb(null);
       } else {
         logger.info("Launching Emulator with AVD " + this.avdName);
         var killallCmd = isWindows ? "TASKKILL /IM emulator.exe" : "/usr/bin/killall -m emulator*";
-        exec(killallCmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+        exec(killallCmd, { maxBuffer: 524288 }, function(err, stdout) {
           if (err) {
             logger.info("Could not kill emulator. It was probably not running. : " + err.message);
           }
-          this.checkSdkBinaryPresent("emulator",_.bind(function(err, emulatorBinaryPath) {
+          this.checkSdkBinaryPresent("emulator", function(err, emulatorBinaryPath) {
             if (err) {
               return cb(err);
             }
@@ -790,9 +776,9 @@ ADB.prototype.prepareEmulator = function(cb) {
             var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
             var timeoutMs = 120000;
             var now = Date.now();
-            var checkEmulatorAlive = _.bind(function() {
-              this.restartAdb(_.bind(function() {
-                this.getConnectedDevices(_.bind(function(err, devices) {
+            var checkEmulatorAlive = function() {
+              this.restartAdb(function() {
+                this.getConnectedDevices(function(err, devices) {
                   if (!err && devices.length) {
                     cb(null, true);
                   } else if (Date.now() < (now + timeoutMs)) {
@@ -800,14 +786,14 @@ ADB.prototype.prepareEmulator = function(cb) {
                   } else {
                     cb(new Error("Emulator didn't come up in " + timeoutMs + "ms"));
                   }
-                }, this));
-              }, this));
-            }, this);
+                }.bind(this));
+              }.bind(this));
+            }.bind(this);
             checkEmulatorAlive();
-          }, this));
-        }, this));
+          }.bind(this));
+        }.bind(this));
       }
-    }, this));
+    }.bind(this));
   } else {
     cb();
   }
@@ -816,7 +802,7 @@ ADB.prototype.prepareEmulator = function(cb) {
 
 ADB.prototype.getConnectedDevices = function(cb) {
   this.debug("Getting connected devices...");
-  exec(this.adb + " devices", { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+  exec(this.adb + " devices", { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -842,7 +828,7 @@ ADB.prototype.getConnectedDevices = function(cb) {
       }
       cb(null, devices);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.forwardPort = function(cb) {
@@ -850,7 +836,7 @@ ADB.prototype.forwardPort = function(cb) {
   this.debug("Forwarding system:" + this.systemPort + " to device:" +
              this.devicePort);
   var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
-  exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, _.bind(function(err) {
+  exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, function(err) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -858,7 +844,7 @@ ADB.prototype.forwardPort = function(cb) {
       this.portForwarded = true;
       cb(null);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.runBootstrap = function(readyCb, exitCb) {
@@ -870,16 +856,15 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   this.proc = spawn(this.adb.substr(1, this.adb.length - 2), args);
   this.onSocketReady = readyCb;
 
-  this.proc.stdout.on('data', _.bind(function(data) {
+  this.proc.stdout.on('data', function(data) {
     this.outputStreamHandler(data);
-  }, this));
+  }.bind(this));
 
-  this.proc.stderr.on('data', _.bind(function(data) {
+  this.proc.stderr.on('data', function(data) {
     this.errorStreamHandler(data);
-  }, this));
+  }.bind(this));
 
-  var me = this;
-  this.proc.on('exit', _.bind(function(code) {
+  this.proc.on('exit', function(code) {
     this.cmdCb = null;
     if (this.socketClient) {
       this.socketClient.end();
@@ -890,11 +875,11 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
     if (this.restartBootstrap === true) {
       // The bootstrap jar has crashed so it must be restarted.
       this.restartBootstrap = false;
-      me.runBootstrap(function() {
+      this.runBootstrap(function() {
         // Resend last command because the client is still waiting for the
         // response.
-        me.resendLastCommand();
-      }, exitCb);
+        this.resendLastCommand();
+      }.bind(this), exitCb);
       return;
     }
 
@@ -902,7 +887,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
       this.alreadyExited = true;
       exitCb(code);
     }
-  }, this));
+  }.bind(this));
 
 
 };
@@ -911,13 +896,13 @@ ADB.prototype.checkForSocketReady = function(output) {
   if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
     this.debug("Connecting to server on device...");
-    this.socketClient = net.connect(this.systemPort, _.bind(function() {
+    this.socketClient = net.connect(this.systemPort, function() {
       this.debug("Connected!");
       this.onSocketReady(null);
-    }, this));
+    }.bind(this));
     this.socketClient.setEncoding('utf8');
     var oldData = '';
-    this.socketClient.on('data', _.bind(function(data) {
+    this.socketClient.on('data', function(data) {
       this.debug("Received command result from bootstrap");
       try {
         data = JSON.parse(oldData + data);
@@ -935,7 +920,7 @@ ADB.prototype.checkForSocketReady = function(output) {
         this.debug("Got data when we weren't expecting it, ignoring:");
         this.debug(JSON.stringify(data));
       }
-    }, this));
+    }.bind(this));
   }
 };
 
@@ -952,25 +937,24 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
   if (this.cmdCb !== null) {
     logger.warn("Trying to run a command when one is already in progress. " +
                 "Will spin a bit and try again");
-    var me = this;
     var start = Date.now();
     var timeoutMs = 10000;
     var intMs = 200;
     var waitForCmdCbNull = function() {
-      if (me.cmdCb === null) {
-        me.sendCommand(type, extra, cb);
+      if (this.cmdCb === null) {
+        this.sendCommand(type, extra, cb);
       } else if ((Date.now() - start) < timeoutMs) {
         setTimeout(waitForCmdCbNull, intMs);
       } else {
         cb(new Error("Never became able to push strings since a command " +
                      "was in process"));
       }
-    };
+    }.bind(this);
     waitForCmdCbNull();
   } else if (this.socketClient) {
-    this.resendLastCommand = _.bind(function() {
+    this.resendLastCommand = function() {
       this.sendCommand(type, extra, cb);
-    }, this);
+    }.bind(this);
     if (typeof extra === "undefined" || extra === null) {
       extra = {};
     }
@@ -994,13 +978,13 @@ ADB.prototype.sendCommand = function(type, extra, cb) {
 };
 
 ADB.prototype.sendShutdownCommand = function(cb) {
-  setTimeout(_.bind(function() {
+  setTimeout(function() {
     if (!this.alreadyExited) {
       logger.warn("Android did not shut down fast enough, calling it gone");
       this.alreadyExited = true;
       this.onExit(1);
     }
-  }, this), 7000);
+  }.bind(this), 7000);
   this.sendCommand('shutdown', null, cb);
 };
 
@@ -1017,7 +1001,6 @@ ADB.prototype.handleBootstrapOutput = function(output) {
   var lines = output.split("\n");
   var re = /^\[APPIUM-UIAUTO\] (.+)\[\/APPIUM-UIAUTO\]$/;
   var match;
-  var me = this;
   _.each(lines, function(line) {
     line = line.trim();
     if (line !== '') {
@@ -1028,18 +1011,18 @@ ADB.prototype.handleBootstrapOutput = function(output) {
         var alertRe = /Emitting system alert message/;
         if (alertRe.test(line)) {
           logger.info("Emiting alert message...");
-          me.webSocket.sockets.emit('alert', {message: line});
+          this.webSocket.sockets.emit('alert', {message: line});
         }
       } else {
         // The dump command will always disconnect UiAutomation.
         // Detect the crash then restart UiAutomation.
         if (line.indexOf("UiAutomationService not connected") !== -1) {
-          me.restartBootstrap = true;
+          this.restartBootstrap = true;
         }
         logger.info(("[ADB STDOUT] " + line).grey);
       }
     }
-  });
+  }, this);
 };
 
 ADB.prototype.errorStreamHandler = function(output) {
@@ -1098,7 +1081,7 @@ ADB.prototype.requireApk = function() {
 };
 
 ADB.prototype.waitForDevice = function(cb) {
-  var doWait = _.bind(function(innerCb) {
+  var doWait = function(innerCb) {
     this.debug("Waiting for device " + this.curDeviceId + " to be ready " +
                "and to respond to shell commands (timeout = " +
                this.appDeviceReadyTimeout + ")");
@@ -1106,22 +1089,22 @@ ADB.prototype.waitForDevice = function(cb) {
       , cmd = this.adbCmd + " wait-for-device"
       , timeoutSecs = parseInt(this.appDeviceReadyTimeout, 10);
 
-    setTimeout(_.bind(function() {
+    setTimeout(function() {
       if (!movedOn) {
         movedOn = true;
         innerCb("Device did not become ready in " + timeoutSecs + " secs; " +
                 "are you sure it's powered on?");
       }
-    }, this), timeoutSecs * 1000);
+    }.bind(this), timeoutSecs * 1000);
 
-    exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
+    exec(cmd, { maxBuffer: 524288 }, function(err) {
       if (!movedOn) {
         if (err) {
           logger.error("Error running wait-for-device");
           movedOn = true;
           innerCb(err);
         } else {
-          exec(this.adbCmd + " shell echo 'ready'", _.bind(function(err) {
+          exec(this.adbCmd + " shell echo 'ready'", function(err) {
             if (!movedOn) {
               movedOn = true;
               if (err) {
@@ -1131,23 +1114,23 @@ ADB.prototype.waitForDevice = function(cb) {
                 innerCb(null);
               }
             }
-          }, this));
+          }.bind(this));
         }
       }
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
 
-  doWait(_.bind(function(err) {
+  doWait(function(err) {
     if (err) {
-      this.restartAdb(_.bind(function() {
+      this.restartAdb(function() {
         this.getConnectedDevices(function() {
           doWait(cb);
         });
-      }, this));
+      }.bind(this));
     } else {
       cb(null);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.restartAdb = function(cb) {
@@ -1165,23 +1148,23 @@ ADB.prototype.restartAdb = function(cb) {
 ADB.prototype.pushAppium = function(cb) {
   this.debug("Pushing appium bootstrap to device...");
   var binPath = path.resolve(__dirname, "..", "build", "android_bootstrap", "AppiumBootstrap.jar");
-  fs.stat(binPath, _.bind(function(err) {
+  fs.stat(binPath, function(err) {
     if (err) {
       cb("Could not find AppiumBootstrap.jar; please run " +
          "'grunt buildAndroidBootstrap'");
     } else {
       var remotePath = "/data/local/tmp";
       var cmd = this.adbCmd + ' push "' + binPath + '" ' + remotePath;
-      exec(cmd, { maxBuffer: 524288 }, _.bind(function(err) {
+      exec(cmd, { maxBuffer: 524288 }, function(err) {
         if (err) {
           logger.error(err);
           cb(err);
         } else {
           cb(null);
         }
-      }, this));
+      }.bind(this));
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.startApp = function(cb) {
@@ -1192,7 +1175,7 @@ ADB.prototype.startApp = function(cb) {
   var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
-  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if(err) {
       logger.error(err);
       cb(err);
@@ -1214,7 +1197,7 @@ ADB.prototype.startApp = function(cb) {
 
       this.waitForActivity(cb);
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.stopApp = function(cb) {
@@ -1237,7 +1220,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
   var cmd = this.adbCmd + " shell dumpsys window windows"
     , searchRe = new RegExp(/mFocusedApp.+ ([a-zA-Z0-9\.]+)\/(\.?[^\}]+)\}/);
 
-  exec(cmd, { maxBuffer: 524288 }, _.bind(function(err, stdout) {
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
     if (err) {
       logger.error(err);
       cb(err);
@@ -1255,7 +1238,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
         cb(new Error("Could not parse activity from dumpsys"));
       }
     }
-  }, this));
+  }.bind(this));
 };
 
 ADB.prototype.waitForNotActivity = function(cb) {
@@ -1268,8 +1251,8 @@ ADB.prototype.waitForNotActivity = function(cb) {
   if (targetActivity.indexOf(this.appPackage) === 0) {
     targetActivity = targetActivity.substring(this.appPackage.length);
   }
-  var getFocusedApp = _.bind(function() {
-    this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
+  var getFocusedApp = function() {
+    this.getFocusedPackageAndActivity(function(err, foundPackage,
           foundActivity) {
       var notFoundAct = true;
       _.each(targetActivity.split(','), function(act) {
@@ -1290,8 +1273,8 @@ ADB.prototype.waitForNotActivity = function(cb) {
         cb(new Error(msg));
       }
 
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
   getFocusedApp();
 };
 
@@ -1305,8 +1288,8 @@ ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
   if (targetActivity.indexOf(this.appPackage) === 0) {
     targetActivity = targetActivity.substring(this.appPackage.length);
   }
-  var getFocusedApp = _.bind(function() {
-    this.getFocusedPackageAndActivity(_.bind(function(err, foundPackage,
+  var getFocusedApp = function() {
+    this.getFocusedPackageAndActivity(function(err, foundPackage,
           foundActivity) {
       var foundAct = false;
       _.each(targetActivity.split(','), function(act) {
@@ -1327,8 +1310,8 @@ ADB.prototype.waitForActivity = function(cb, waitMsOverride) {
         cb(new Error(msg));
       }
 
-    }, this));
-  }, this);
+    }.bind(this));
+  }.bind(this);
   getFocusedApp();
 };
 
@@ -1367,17 +1350,16 @@ ADB.prototype.installApk = function(apk, cb) {
 };
 
 ADB.prototype.uninstallApp = function(cb) {
-  var me = this;
   var next = function() {
-    me.requireDeviceId();
-    me.requireApp();
-    me.debug("Uninstalling app " + me.appPackage);
+    this.requireDeviceId();
+    this.requireApp();
+    this.debug("Uninstalling app " + this.appPackage);
 
-    me.uninstallApk(me.appPackage, function(err) {
-      if (me.fastReset) {
-        var cleanPkg = me.appPackage + '.clean';
-        me.debug("Uninstalling app " + cleanPkg);
-        me.uninstallApk(cleanPkg, function(err) {
+    this.uninstallApk(this.appPackage, function(err) {
+      if (this.fastReset) {
+        var cleanPkg = this.appPackage + '.clean';
+        this.debug("Uninstalling app " + cleanPkg);
+        this.uninstallApk(cleanPkg, function(err) {
           if (err) return cb(err);
           cb(null);
         });
@@ -1385,11 +1367,11 @@ ADB.prototype.uninstallApp = function(cb) {
         if (err) return cb(err);
         cb(null);
       }
-    });
-  };
+    }.bind(this));
+  }.bind(this);
 
-  if (me.skipUninstall) {
-    me.debug("Not uninstalling app since server started with --full-reset " +
+  if (this.skipUninstall) {
+    this.debug("Not uninstalling app since server started with --full-reset " +
              "or --no-reset");
     cb();
   } else {
@@ -1400,8 +1382,7 @@ ADB.prototype.uninstallApp = function(cb) {
 ADB.prototype.runFastReset = function(cb) {
   // list instruments with: adb shell pm list instrumentation
   // targetPackage + '.clean' / clean.apk.Clear
-  var me = this;
-  var clearCmd = me.adbCmd + ' shell am instrument ' + me.appPackage + '.clean/clean.apk.Clean';
+  var clearCmd = this.adbCmd + ' shell am instrument ' + this.appPackage + '.clean/clean.apk.Clean';
   logger.debug("Running fast reset clean: " + clearCmd);
   exec(clearCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
     if (err) {
@@ -1432,10 +1413,9 @@ ADB.prototype.checkAppInstallStatus = function(pkg, cb) {
 };
 
 ADB.prototype.installApp = function(cb) {
-  var me = this
-    , installApp = false
+  var installApp = false
     , installClean = false;
-  me.requireDeviceId();
+  this.requireDeviceId();
 
   if (this.apkPath === null) {
     logger.info("Not installing app since we launched with a package instead " +
@@ -1443,37 +1423,37 @@ ADB.prototype.installApp = function(cb) {
     return cb(null);
   }
 
-  me.requireApk();
+  this.requireApk();
 
   var determineInstallAndCleanStatus = function(cb) {
     logger.info("Determining app install/clean status");
-    me.checkAppInstallStatus(me.appPackage, function(err, installed, cleaned) {
+    this.checkAppInstallStatus(this.appPackage, function(err, installed, cleaned) {
       installApp = !installed;
       installClean = !cleaned;
       cb();
     });
-  };
+  }.bind(this);
 
   var doInstall = function(cb) {
     if (installApp) {
-      me.debug("Installing app apk");
-      me.installApk(me.apkPath, cb);
+      this.debug("Installing app apk");
+      this.installApk(this.apkPath, cb);
     } else { cb(null); }
-  };
+  }.bind(this);
 
   var doClean = function(cb) {
-    if (installClean && me.cleanApp) {
-      me.debug("Installing clean apk");
-      me.installApk(me.cleanAPK, cb);
+    if (installClean && this.cleanApp) {
+      this.debug("Installing clean apk");
+      this.installApk(this.cleanAPK, cb);
     } else { cb(null); }
-  };
+  }.bind(this);
 
   var doFastReset = function(cb) {
     // App is already installed so reset it.
-    if (!installApp && me.fastReset) {
-      me.runFastReset(cb);
+    if (!installApp && this.fastReset) {
+      this.runFastReset(cb);
     } else { cb(null); }
-  };
+  }.bind(this);
 
   async.series([
     function(cb) { determineInstallAndCleanStatus(cb); },

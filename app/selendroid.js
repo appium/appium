@@ -28,16 +28,15 @@ var Selendroid = function(opts) {
 
 Selendroid.prototype.start = function(cb) {
   logger.info("Starting selendroid server");
-  var opts = _.clone(this.opts)
-    , me = this;
+  var opts = _.clone(this.opts);
   opts.devicePort = 8080;  // selendroid listens on 8080 on the device
   this.adb = new adb(opts);
 
   async.waterfall([
-    function(cb) { me.ensureServerExists(cb); },
-    function(cb) { me.adb.startSelendroid(me.serverApk, cb); },
-    function(res, cb) { me.waitForServer(cb); },
-    function(cb) { me.createSession(cb); },
+    function(cb) { this.ensureServerExists(cb); }.bind(this),
+    function(cb) { this.adb.startSelendroid(this.serverApk, cb); }.bind(this),
+    function(res, cb) { this.waitForServer(cb); }.bind(this),
+    function(cb) { this.createSession(cb); }.bind(this),
   ], cb);
 };
 
@@ -61,7 +60,7 @@ Selendroid.prototype.ensureServerExists = function(cb) {
   logger.info("Checking whether selendroid is built yet");
   var selBin = path.resolve(__dirname, "..", "build", "selendroid",
       "selendroid.apk");
-  fs.stat(selBin, _.bind(function(err) {
+  fs.stat(selBin, function(err) {
     if (err) {
       logger.info("Selendroid needs to be built; please run ./reset.sh " +
                   "--selendroid");
@@ -70,7 +69,7 @@ Selendroid.prototype.ensureServerExists = function(cb) {
     logger.info("Selendroid server exists!");
     this.serverApk = selBin;
     cb(null);
-  }, this));
+  }.bind(this));
 };
 
 Selendroid.prototype.waitForServer = function(cb) {
@@ -78,7 +77,7 @@ Selendroid.prototype.waitForServer = function(cb) {
     , intMs = 800
     , start = Date.now();
 
-  var pingServer = _.bind(function() {
+  var pingServer = function() {
     this.proxyTo('/wd/hub/status', 'GET', null, function(err, res, body) {
       if (body === null || typeof body === "undefined" || !body.trim()) {
         if (Date.now() - start < waitMs) {
@@ -92,7 +91,7 @@ Selendroid.prototype.waitForServer = function(cb) {
         cb(null);
       }
     });
-  }, this);
+  }.bind(this);
 
   pingServer();
 };
@@ -127,11 +126,11 @@ Selendroid.prototype.createSession = function(cb) {
 
 Selendroid.prototype.deleteSession = function(cb) {
   var url = '/wd/hub/session/' + this.selendroidSessionId;
-  this.proxyTo(url, 'DELETE', null, _.bind(function(err, res) {
+  this.proxyTo(url, 'DELETE', null, function(err, res) {
     if (err) return cb(err);
     if (res.statusCode !== 200) return cb(new Error("Status was not 200"));
     this.adb.stopApp(cb);
-  }, this));
+  }.bind(this));
 };
 
 Selendroid.prototype.proxyTo = proxyTo;

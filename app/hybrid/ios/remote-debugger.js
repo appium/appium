@@ -81,7 +81,7 @@ RemoteDebugger.prototype.connect = function(cb, pageChangeCb) {
     this.socketGone = true;
     me.onAppDisconnect();
   });
-  this.socket.on('data', _.bind(me.receive, this));
+  this.socket.on('data', me.receive.bind(this));
 
   this.socket.connect(27753, '::1', function () {
     logger.info("Debugger socket connected to " + me.socket.remoteAddress +
@@ -117,10 +117,10 @@ RemoteDebugger.prototype.selectApp = function(appIdKey, cb) {
   this.appIdKey = appIdKey;
   var connectToApp = messages.connectToApp(this.connId, this.appIdKey);
   logger.info("Selecting app");
-  this.send(connectToApp, _.bind(function(pageDict) {
+  this.send(connectToApp, function(pageDict) {
     cb(this.pageArrayFromDict(pageDict));
-    this.specialCbs['_rpc_forwardGetListing:'] = _.bind(this.onPageChange, this);
-  }, this));
+    this.specialCbs['_rpc_forwardGetListing:'] = this.onPageChange.bind(this);
+  }.bind(this));
 };
 
 RemoteDebugger.prototype.pageArrayFromDict = function(pageDict) {
@@ -137,7 +137,6 @@ RemoteDebugger.prototype.pageArrayFromDict = function(pageDict) {
 };
 
 RemoteDebugger.prototype.selectPage = function(pageIdKey, cb, skipReadyCheck) {
-  var me = this;
   if (typeof skipReadyCheck === "undefined") {
     skipReadyCheck = false;
   }
@@ -148,22 +147,22 @@ RemoteDebugger.prototype.selectPage = function(pageIdKey, cb, skipReadyCheck) {
   logger.info("Selecting page " + pageIdKey + " and forwarding socket setup");
   this.send(setSenderKey, function() {
     logger.info("Set sender key");
-    var enablePage = messages.enablePage(me.appIdKey, me.connId,
-                                         me.senderId, me.pageIdKey, me.debuggerType);
-    me.send(enablePage, function() {
+    var enablePage = messages.enablePage(this.appIdKey, this.connId,
+                                         this.senderId, this.pageIdKey, this.debuggerType);
+    this.send(enablePage, function() {
       logger.info("Enabled activity on page");
       if (skipReadyCheck) {
         cb();
       } else {
-        me.checkPageIsReady(function(err, isReady) {
+        this.checkPageIsReady(function(err, isReady) {
           if (!isReady) {
-            return me.pageUnload(cb);
+            return this.pageUnload(cb);
           }
           cb();
-        });
+        }.bind(this));
       }
-    });
-  });
+    }.bind(this));
+  }.bind(this));
 };
 
 RemoteDebugger.prototype.checkPageIsReady = function(cb) {
@@ -312,12 +311,11 @@ RemoteDebugger.prototype.executeAtomAsync = function(atom, args, frames, respons
 };
 
 RemoteDebugger.prototype.execute = function(command, cb, override) {
-  var me = this;
   if (this.pageLoading && !override) {
     logger.info("Trying to execute but page is not loaded. Waiting for dom");
     this.waitForDom(function() {
-      me.execute(command, cb);
-    });
+      this.execute(command, cb);
+    }.bind(this));
   } else {
     if(this.debuggerType === this.debuggerTypeEnum.webinspector){
       assert.ok(this.connId); assert.ok(this.appIdKey); assert.ok(this.senderId);
@@ -345,31 +343,29 @@ RemoteDebugger.prototype.navToUrl = function(url, cb) {
     assert.ok(this.pageIdKey);
   }
   logger.info("Navigating to new URL: " + url);
-  var me = this;
   var navToUrl = messages.setUrl(url, this.appIdKey, this.connId,
       this.senderId, this.pageIdKey, this.debuggerType);
   this.send(navToUrl, noop);
   setTimeout(function() {
-    me.waitForFrameNavigated(function() {
-      me.waitForDom(cb);
-    });
-  }, 1000);
+    this.waitForFrameNavigated(function() {
+      this.waitForDom(cb);
+    }.bind(this));
+  }.bind(this), 1000);
 };
 
 RemoteDebugger.prototype.pageLoad = function() {
   clearTimeout(this.loadingTimeout);
-  var me = this
-    , cbs = this.pageLoadedCbs
+  var cbs = this.pageLoadedCbs
     , waitMs = 60000
     , intMs = 500
     , start = Date.now();
   logger.debug("Page loaded, verifying through readyState");
   var verify = function() {
-    me.checkPageIsReady(function(err, isReady) {
+    this.checkPageIsReady(function(err, isReady) {
       if (isReady || (start + waitMs) < Date.now()) {
         logger.debug("Page is ready, calling onload cbs");
-        me.pageLoadedCbs = [];
-        me.pageLoading = false;
+        this.pageLoadedCbs = [];
+        this.pageLoading = false;
         _.each(cbs, function(cb) {
           cb();
         });
@@ -378,7 +374,7 @@ RemoteDebugger.prototype.pageLoad = function() {
         setTimeout(verify, intMs);
       }
     });
-  };
+  }.bind(this);
   verify();
 };
 
@@ -400,18 +396,17 @@ RemoteDebugger.prototype.pageUnload = function(cb) {
 };
 
 RemoteDebugger.prototype.waitForDom = function(cb) {
-  var me = this;
   logger.debug("Waiting for dom...");
   if (typeof cb === "function") {
     this.pageLoadedCbs.push(cb);
   }
-  me.pageLoad();
+  this.pageLoad();
 };
 
 RemoteDebugger.prototype.waitForFrameNavigated = function(cb) {
   logger.debug("Waiting for frame navigated...");
   this.frameNavigatedCbs.push(cb);
-  this.navigatingTimeout = setTimeout(_.bind(this.frameNavigated, this), 500);
+  this.navigatingTimeout = setTimeout(this.frameNavigated.bind(this), 500);
 };
 
 // ====================================
@@ -444,21 +439,20 @@ RemoteDebugger.prototype.handleSpecialMessage = function(specialCb) {
 };
 
 RemoteDebugger.prototype.setHandlers = function() {
-  var me = this;
   this.handlers = {
     '_rpc_reportSetup:': function (plist) {
-      me.handleSpecialMessage('_rpc_reportIdentifier:',
+      this.handleSpecialMessage('_rpc_reportIdentifier:',
           plist.__argument.WIRSimulatorNameKey,
           plist.__argument.WIRSimulatorBuildKey);
-    },
+    }.bind(this),
     '_rpc_reportConnectedApplicationList:': function (plist) {
-      me.handleSpecialMessage('connect',
+      this.handleSpecialMessage('connect',
           plist.__argument.WIRApplicationDictionaryKey);
-    },
+    }.bind(this),
     '_rpc_applicationSentListing:': function (plist) {
-      me.handleSpecialMessage('_rpc_forwardGetListing:',
+      this.handleSpecialMessage('_rpc_forwardGetListing:',
           plist.__argument.WIRListingKey);
-    },
+    }.bind(this),
     '_rpc_applicationSentData:': function(plist) {
       var dataKey = JSON.parse(plist.__argument.WIRMessageDataKey.toString('utf8'))
       , msgId = dataKey.id
@@ -472,20 +466,20 @@ RemoteDebugger.prototype.setHandlers = function() {
                     "do some kind of callback here");
         //me.onPageChange();
       } else if (dataKey.method == "Page.frameNavigated") {
-        if (!me.willNavigateWithoutReload && !me.pageLoading) {
+        if (!this.willNavigateWithoutReload && !this.pageLoading) {
           logger.info("Frame navigated, unloading page");
-          me.frameNavigated();
+          this.frameNavigated();
         } else {
           logger.info("Frame navigated but we were warned about it, not " +
                       "considering page state unloaded");
-          me.willNavigateWithoutReload = false;
+          this.willNavigateWithoutReload = false;
         }
       } else if (dataKey.method == "Page.loadEventFired") {
-        me.pageLoad();
-      } else if (typeof me.dataCbs[msgId] === "function") {
-        me.dataCbs[msgId](error, result);
-        me.dataCbs[msgId] = null;
-      } else if (me.dataCbs[msgId] === null) {
+        this.pageLoad();
+      } else if (typeof this.dataCbs[msgId] === "function") {
+        this.dataCbs[msgId](error, result);
+        this.dataCbs[msgId] = null;
+      } else if (this.dataCbs[msgId] === null) {
         logger.error("Debugger returned data for message " + msgId +
                      "but we already ran that callback! WTF??");
       } else {
@@ -498,7 +492,7 @@ RemoteDebugger.prototype.setHandlers = function() {
                       " error: " + error);
         }
       }
-    },
+    }.bind(this),
     '_rpc_applicationDisconnected:': this.onAppDisconnect
   };
 };

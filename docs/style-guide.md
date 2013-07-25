@@ -3,6 +3,12 @@ Style guide for contributors
 
 Thanks for your contribution to Appium! Here are the principles we use when writing javascript. Please conform to these so we can merge your pull request without going back and forth about style. The main principle is: *make your code look like the surrounding code*.
 
+Rebasing
+--------
+
+Commits in a pull request should consist of [logical changes](https://github.com/appium/appium/pull/920#issuecomment-21588553). If there are multiple authors, make sure each author has their own commit. It's not a good idea to modify author information.
+Merge commits should be rebased out of pull requests.
+
 Linting
 -------
 All code (except for code in `bootstrap.js` which uses proprietary Apple methods) must pass JSLint. To check your code, you can simply run `grunt lint` from the Appium repo dir. If you've created a new .js file, please make sure it is covered by the wildcards in `grunt.js` or that it is added specifically.

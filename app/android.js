@@ -75,12 +75,7 @@ Android.prototype.fastReset = function(cb) {
 };
 
 Android.prototype.keyevent = function(keycode, cb) {
-  this.adb.keyevent(keycode, function() {
-    cb(null, {
-      status: status.codes.Success.code
-      , value: null
-    });
-  });
+  this.proxy(["pressKeyCode", keycode], cb);
 };
 
 Android.prototype.start = function(cb, onDie) {
@@ -490,12 +485,7 @@ Android.prototype.getWindowSize = function(windowHandle, cb) {
 };
 
 Android.prototype.back = function(cb) {
-  this.adb.back(function() {
-    cb(null, {
-      status: status.codes.Success.code
-      , value: null
-    });
-  });
+  this.proxy(["pressBack"], cb);
 };
 
 Android.prototype.forward = function(cb) {
@@ -566,15 +556,8 @@ Android.prototype.getPageSource = function(cb) {
   async.series(
         [
           function(cb) {
-            var cmd = me.adb.adbCmd + ' shell uiautomator dump /data/local/tmp/dump.xml';
-            logger.debug('getPageSource command: ' + cmd);
-            exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
-              if (err) {
-                logger.warn(stderr);
-                return cb(err);
-              }
-              cb(null);
-            });
+            // /data/local/tmp/dump.xml
+            me.proxy(["dumpWindowHierarchy"], cb);
           },
           function(cb) {
             var cmd = me.adb.adbCmd + ' pull /data/local/tmp/dump.xml "' + xmlFile + '"';

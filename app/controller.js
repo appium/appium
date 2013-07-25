@@ -398,7 +398,7 @@ exports.mobileFlick = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.flick(startX, startY, endX, endY, touchCount, element,
         getResponseHandler(req, res));
   }
@@ -407,7 +407,7 @@ exports.mobileFlick = function(req, res) {
 exports.mobileSource = function(req, res) {
   var type = req.body.type;
 
-  if(checkMissingParams(res, {type: type})) {
+  if (checkMissingParams(res, {type: type})) {
     if (type.toLowerCase() === "xml") {
       req.device.getPageSourceXML(getResponseHandler(req, res));
     } else {
@@ -464,7 +464,7 @@ exports.mobileSwipe = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.swipe(startX, startY, endX, endY, duration, touchCount,
         element, getResponseHandler(req, res));
   }
@@ -488,7 +488,7 @@ exports.mobileRotation = function(req, res) {
     , touchCount = req.body.touchCount
     , rotation = req.body.rotation;
 
-  if(checkMissingParams(res, {x: x, y: y})) {
+  if (checkMissingParams(res, {x: x, y: y})) {
     req.device.rotate(x, y, radius, rotation, duration, touchCount,
         element, getResponseHandler(req, res));
   }
@@ -510,7 +510,7 @@ exports.mobilePinchClose = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.pinchClose(startX, startY, endX, endY, duration,
         element, getResponseHandler(req, res));
   }
@@ -532,7 +532,7 @@ exports.mobilePinchOpen = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if(checkMissingParams(res, {endX: endX, endY: endY})) {
+  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.pinchOpen(startX, startY, endX, endY, duration,
         element, getResponseHandler(req, res));
   }
@@ -571,7 +571,7 @@ exports.mobileSetLocation = function(req, res) {
     , course = req.body.course
     , speed = req.body.speed;
 
-  if(checkMissingParams(res, {latitude: latitude, longitude: longitude})) {
+  if (checkMissingParams(res, {latitude: latitude, longitude: longitude})) {
     req.device.setLocation(latitude, longitude, altitude, horizontalAccuracy,
       verticalAccuracy, course, speed, getResponseHandler(req, res));
   }
@@ -771,7 +771,7 @@ exports.flick = function(req, res) {
     ySpeed = req.body.yspeed;
   }
 
-  if(checkMissingParams(res, {xSpeed: xSpeed, ySpeed: ySpeed})) {
+  if (checkMissingParams(res, {xSpeed: xSpeed, ySpeed: ySpeed})) {
     if (element) {
       exports.flickElement(req, res);
     } else {
@@ -786,7 +786,7 @@ exports.flickElement = function(req, res) {
     , yoffset = req.body.yoffset
     , speed = req.body.speed;
 
-  if(checkMissingParams(res, {element: element, xoffset: xoffset, yoffset: yoffset})) {
+  if (checkMissingParams(res, {element: element, xoffset: xoffset, yoffset: yoffset})) {
     req.device.fakeFlickElement(element, xoffset, yoffset, speed, getResponseHandler(req, res));
   }
 };
@@ -795,7 +795,7 @@ exports.execute = function(req, res) {
   var script = req.body.script
     , args = req.body.args;
 
-  if(checkMissingParams(res, {script: script, args: args})) {
+  if (checkMissingParams(res, {script: script, args: args})) {
     if (_s.startsWith(script, "mobile: ")) {
       var realCmd = script.replace("mobile: ", "");
       exports.executeMobileMethod(req, res, realCmd);
@@ -813,8 +813,8 @@ exports.executeAsync = function(req, res) {
     responseUrl += 'http://' + req.appium.args.address + ':' + req.appium.args.port;
     responseUrl += '/wd/hub/session/' + req.appium.sessionId + '/receive_async_response';
 
-  if(checkMissingParams(res, {script: script, args: args})) {
-    req.device.executeAsync(script, args, responseUrl, getResponseHandler(req, res));
+    if (checkMissingParams(res, {script: script, args: args})) {
+      req.device.executeAsync(script, args, responseUrl, getResponseHandler(req, res));
     }
 };
 
@@ -852,7 +852,7 @@ exports.submit = function(req, res) {
 exports.postUrl = function(req, res) {
   var url = req.body.url;
 
-  if(checkMissingParams(res, {url: url})) {
+  if (checkMissingParams(res, {url: url})) {
     req.device.url(url, getResponseHandler(req, res));
   }
 };
@@ -872,7 +872,7 @@ exports.getWindowHandle = function(req, res) {
 exports.setWindow = function(req, res) {
   var name = req.body.name;
 
-  if(checkMissingParams(res, {name: name})) {
+  if (checkMissingParams(res, {name: name})) {
     req.device.setWindow(name, getResponseHandler(req, res));
   }
 };
@@ -888,7 +888,7 @@ exports.getWindowHandles = function(req, res) {
 exports.setCommandTimeout = function(req, res) {
   var timeout = req.body.timeout;
 
-  if(checkMissingParams(res, {timeout: timeout})) {
+  if (checkMissingParams(res, {timeout: timeout})) {
     timeout = parseInt(timeout, 10);
     req.device.setCommandTimeout(timeout, getResponseHandler(req, res));
   }
@@ -968,7 +968,7 @@ exports.getCurrentActivity = function(req, res) {
 exports.findElementNameContains = function(req, res) {
   var name = req.body.name;
 
-  if(checkMissingParams(res, {name: name})) {
+  if (checkMissingParams(res, {name: name})) {
     req.device.findElementNameContains(name, getResponseHandler(req, res));
   }
 };

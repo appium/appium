@@ -17,6 +17,7 @@ import io.appium.android.bootstrap.handler.PressKeyCode;
 import io.appium.android.bootstrap.handler.ScrollTo;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
+import io.appium.android.bootstrap.handler.TakeScreenshot;
 import io.appium.android.bootstrap.handler.TouchLongClick;
 import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Wake;
@@ -54,6 +55,7 @@ class AndroidCommandExecutor {
     map.put("pressBack", new PressBack());
     map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
     map.put("pressKeyCode", new PressKeyCode());
+    map.put("takeScreenshot", new TakeScreenshot());
   }
 
   /**

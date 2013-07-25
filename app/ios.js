@@ -1535,7 +1535,8 @@ IOS.prototype.pinchClose = function(startX, startY, endX, endY, duration, elId, 
   var fromPointObject = {'x' : startX, 'y' : startY};
   var toPointObject = {'x' : endX, 'y' : endY};
   if (elId) {
-    command = ["au.getElement('", elId, "').pinchCloseFromToForDuration("+ JSON.stringify(fromPointObject) + "," + JSON.stringify(toPointObject) + "," + duration +")"];
+    command = ["au.getElement('", elId, "').pinchCloseFromToForDuration(", JSON.stringify(fromPointObject),  ",",  JSON.stringify(toPointObject), ",",
+              duration, ")"].join('');
     this.proxy(command, cb);
   } else {
     this.proxy("target.pinchCloseFromToForDuration("+ JSON.stringify(fromPointObject) + "," + JSON.stringify(toPointObject) + "," + duration +")", cb);

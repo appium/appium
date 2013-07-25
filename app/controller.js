@@ -592,8 +592,7 @@ exports.getPageIndex = function(req, res) {
 };
 
 exports.keyevent = function(req, res) {
-  var keycode = req.body.keycode;
-  req.device.keyevent(keycode, getResponseHandler(req, res));
+  req.device.keyevent(req.body, getResponseHandler(req, res));
 };
 
 exports.back = function(req, res) {

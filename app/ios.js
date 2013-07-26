@@ -8,6 +8,7 @@ var path = require('path')
   , glob = require('glob')
   , bplistCreate = require('bplist-creator')
   , bplistParse = require('bplist-parser')
+  , xmlplist = require('plist')
   , instruments = require('../instruments/instruments')
   , uuid = require('uuid-js')
   , helpers = require('./helpers.js')
@@ -75,6 +76,16 @@ var IOS = function(args) {
       , takesScreenshot: true
   };
   this.supportedStrategies = ["name", "tag name", "xpath"];
+};
+
+// XML Plist library helper
+var XMLPlistFile = function(filename, callback) {
+    try {
+        var result = xmlplist.parseFileSync(filename);
+        return callback(null, result);
+    } catch (ex) {
+        return callback(ex);
+    }
 };
 
 IOS.prototype.cleanup = function(cb) {
@@ -284,24 +295,35 @@ IOS.prototype.setDeviceType = function(cb) {
     if (this.deviceType === "ipad") {
       deviceTypeCode = 2;
     }
+
     bplistParse.parseFile(plist, function(err, obj) {
+      var newPlist;
       if (err) {
-        logger.error("Could not parse plist file at " + plist);
-        cb(err);
+        XMLPlistFile(plist, function(err, obj) {
+          if (err) {
+            logger.error("Could not parse plist file at " + plist);
+            cb(err);
+            return;
+          } else {
+            logger.info("Parsed app Info.plist");
+            obj.UIDeviceFamily = [deviceTypeCode];
+            newPlist = xmlplist.build(obj);
+          }
+        });
       } else {
         logger.info("Parsed app Info.plist");
         obj[0].UIDeviceFamily = [deviceTypeCode];
         var newPlist = bplistCreate(obj);
-        fs.writeFile(plist, newPlist, function(err) {
-          if (err) {
-            logger.error("Could not save new binary Info.plist");
-            cb(err);
-          } else {
-            logger.info("Wrote new app Info.plist with device type");
-            cb(null);
-          }
-        });
       }
+      fs.writeFile(plist, newPlist, function(err) {
+        if (err) {
+          logger.error("Could not save new Info.plist");
+          cb(err);
+        } else {
+          logger.info("Wrote new app Info.plist with device type");
+          cb(null);
+        }
+      });
     });
   }
 };

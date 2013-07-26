@@ -41,6 +41,7 @@
     "winston": "~0.6.2",
     "request": "~2.12.0",
     "bplist-parser": "~0.0.4",
+    "plist": "~0.4.1",
     "bufferpack": "0.0.6",
     "bplist-creator": "~0.0.2",
     "node-uuid": "~1.4.0",

@@ -38,3 +38,22 @@ Ruby without the gem
 ```ruby
 @driver.execute_script 'mobile: keyevent', :keycode => 82
 ```
+
+#### Mobile find
+
+Java
+
+```java
+    JSONArray json = new JSONArray();
+    json.put("scroll");
+    json.put(new JSONArray().put(new JSONArray().put(3).put("Gallery")));
+    json.put(new JSONArray().put(new JSONArray().put(7).put("Gallery")));
+    // json is now: ["scroll",[[3,"Gallery"]],[[7,"Gallery"]]]
+    ((JavascriptExecutor) driver).executeScript("mobile: find", json);
+```
+
+Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)
+
+```ruby
+scroll_to 'Gallery'
+```

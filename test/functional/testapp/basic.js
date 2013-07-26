@@ -57,16 +57,16 @@ describeWd('calc app', function(h) {
   };
 
   it('should fill two fields with numbers', function(done) {
-    populate("elem", h.driver, _.bind(computeAndCheck, this, h.driver, done));
+    populate("elem", h.driver, computeAndCheck.bind(this, h.driver, done));
   });
 
   // using sendKeysToActiveElement
   it('should fill two fields with numbers - sendKeys', function(done) {
-    populate("driver", h.driver, _.bind(computeAndCheck, this, h.driver, done));
+    populate("driver", h.driver, computeAndCheck.bind(this, h.driver, done));
   });
 
   it('should fill two fields with numbers - setValue', function(done) {
-    populate("elem-setvalue", h.driver, _.bind(computeAndCheck, this, h.driver, done));
+    populate("elem-setvalue", h.driver, computeAndCheck.bind(this, h.driver, done));
   });
 
   it('should confirm that button is displayed', function(done){

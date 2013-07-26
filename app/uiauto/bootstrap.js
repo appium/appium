@@ -15,7 +15,8 @@ var cmd = getFirstCommand();
 var bootstrapSettings = {};
 
 UIATarget.onAlert = function(alert) {
-  if (alert.name().indexOf("Use Your Current Location") !== -1) {
+  var alertName = alert.name() || '';
+  if (alertName.indexOf("Use Your Current Location") !== -1) {
     if (bootstrapSettings.useLocationServices) {
       alert.buttons()["OK"].tap();
     } else {

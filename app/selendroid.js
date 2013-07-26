@@ -48,7 +48,8 @@ Selendroid.prototype.stop = function(cb) {
   });
 };
 
-Selendroid.prototype.keyevent = function(keycode, cb) {
+Selendroid.prototype.keyevent = function(body, cb) {
+  var keycode = body.keycode;
   this.adb.keyevent(keycode, function() {
     cb(null, {
       status: status.codes.Success.code

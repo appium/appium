@@ -219,6 +219,20 @@ If you have an Appium server listening, you can run individual test files using
 Mocha, for example:
 
     mocha -t 60000 -R spec test/functional/testapp/simple.js
+    
+You can also run all of appium's tests this way. In one window, node server.js In another window, sequentially (waiting for each to pass, making sure emulator is up, etc...):
+
+`alias mm="mocha -t 60000 -R spec"`
+
+```
+mm test/functional/apidemos
+mm test/functional/prefs
+mm test/functional/safari
+mm test/functional/selendroid
+mm test/functional/testapp
+mm test/functional/uicatalog
+mm test/functional/webview
+```
 
 ### Advanced Appium server flags
 

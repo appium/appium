@@ -32,6 +32,7 @@ var mechanic = (function() {
         'UIAButton' : ['button'],
         'UIACollectionView': ['collection'],
         'UIACollectionCell': ['collectionCell'],
+        'UIAEditingMenu': ['editingMenu'],
         'UIAElement' : ['\\*'], // TODO: sort of a hack
         'UIAImage' : ['image'],
         'UIAKey' : ['key'],

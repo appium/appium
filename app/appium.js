@@ -88,20 +88,20 @@ Appium.prototype.registerConfig = function(configObj) {
 Appium.prototype.preLaunch = function(cb) {
   logger.info("Pre-launching app");
   var caps = {};
-  this.start(caps, _.bind(function(err) {
+  this.start(caps, function(err) {
     if (err) {
       cb(err, null);
     } else {
       this.preLaunched = true;
       cb(null, this);
     }
-  }, this));
+  }.bind(this));
 };
 
 Appium.prototype.start = function(desiredCaps, cb) {
   this.origApp = this.args.app;
   this.desiredCapabilities = desiredCaps;
-  this.configure(desiredCaps, _.bind(function(err) {
+  this.configure(desiredCaps, function(err) {
     if (err) {
       logger.info("Got configuration error, not starting session");
       cb(err, null);
@@ -109,7 +109,7 @@ Appium.prototype.start = function(desiredCaps, cb) {
       this.sessions[++this.counter] = { sessionId: '', callback: cb };
       this.clearPreviousSession();
     }
-  }, this));
+  }.bind(this));
 };
 
 Appium.prototype.getDeviceType = function(desiredCaps) {
@@ -204,9 +204,9 @@ Appium.prototype.getAppExt = function() {
 };
 
 Appium.prototype.setAndroidArgs = function(desiredCaps) {
-  var setArgFromCaps = _.bind(function(arg, cap) {
+  var setArgFromCaps = function(arg, cap) {
     this.args[arg] = desiredCaps[cap] || this.args[arg];
-  }, this);
+  }.bind(this);
   setArgFromCaps("androidPackage", "app-package");
   setArgFromCaps("androidActivity", "app-activity");
   setArgFromCaps("androidWaitActivity", "app-wait-activity");
@@ -308,12 +308,12 @@ Appium.prototype.configureLocalApp = function(appPath, origin, cb) {
     });
   } else if (ext === ".zip") {
     logger.info("Using local zip from " + origin + ": " + appPath);
-    this.unzipLocalApp(appPath, _.bind(function(zipErr, newAppPath) {
+    this.unzipLocalApp(appPath, function(zipErr, newAppPath) {
       if (zipErr) return cb(zipErr);
       this.args.app = newAppPath;
       logger.info("Using locally extracted app: " + this.args.app);
       cb(null);
-    }, this));
+    }.bind(this));
   } else {
     var dExt = this.getAppExt();
     logger.error("Using local app, but didn't end in .zip or " + dExt);
@@ -336,7 +336,7 @@ Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
     }
   } else if (appUrl.substring(appUrl.length - 4) === ".zip") {
     try {
-      this.downloadAndUnzipApp(appUrl, _.bind(function(zipErr, appPath) {
+      this.downloadAndUnzipApp(appUrl, function(zipErr, appPath) {
         if (zipErr) {
           cb(zipErr);
         } else {
@@ -344,7 +344,7 @@ Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
           logger.info("Using extracted app: " + this.args.app);
           cb(null);
         }
-      }, this));
+      }.bind(this));
       logger.info("Using downloadable app from " + origin + ": " + appUrl);
     } catch (e) {
       var err = e.toString();
@@ -365,11 +365,11 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
     usingDefaultVer = false;
   }
   logger.info("Trying to use mobile safari, version " + safariVer);
-  var checkSuccess = _.bind(function(attemptedApp) {
+  var checkSuccess = function(attemptedApp) {
     logger.info("Using mobile safari app at " + attemptedApp);
     this.args.app = attemptedApp;
     cleanSafariNext();
-  }, this);
+  }.bind(this);
   var cleanSafariNext = function() {
     logger.info("Cleaning mobile safari data files");
     cleanSafari(safariVer, function(err) {
@@ -382,28 +382,28 @@ Appium.prototype.configureSafari = function(desiredCaps, cb) {
     });
   };
 
-  checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+  checkSafari(safariVer, function(err, attemptedApp) {
     if (err) {
       logger.warn("Could not find mobile safari with version '" + safariVer +
                   "': " + err);
       if (usingDefaultVer) {
         safariVer = "6.1";
         logger.info("Retrying with safari ver " + safariVer);
-        checkSafari(safariVer, _.bind(function(err, attemptedApp) {
+        checkSafari(safariVer, function(err, attemptedApp) {
           if (err) {
             logger.warn("Could not find this one either: " + err);
             cb(err);
           } else {
             checkSuccess(attemptedApp);
           }
-        }, this));
+        }.bind(this));
       } else {
         cb(err);
       }
     } else {
       checkSuccess(attemptedApp);
     }
-  }, this));
+  }.bind(this));
 };
 
 Appium.prototype.configureChromeAndroid = function() {
@@ -414,19 +414,17 @@ Appium.prototype.configureChromeAndroid = function() {
 };
 
 Appium.prototype.downloadAndUnzipApp = function(appUrl, cb) {
-  var me = this;
   downloadFile(appUrl, function(zipPath) {
-    me.unzipApp(zipPath, cb);
-  });
+    this.unzipApp(zipPath, cb);
+  }.bind(this));
 };
 
 Appium.prototype.unzipLocalApp = function(localZipPath, cb) {
-  var me = this;
   try {
     copyLocalZip(localZipPath, function(err, zipPath) {
       if (err) return cb(err);
-      me.unzipApp(zipPath, cb);
-    });
+      this.unzipApp(zipPath, cb);
+    }.bind(this));
   } catch (e) {
     logger.error("Failed copying and unzipping local app: " + localZipPath);
     cb(e);
@@ -435,35 +433,31 @@ Appium.prototype.unzipLocalApp = function(localZipPath, cb) {
 
 Appium.prototype.unzipApp = function(zipPath, cb) {
   this.tempFiles.push(zipPath);
-  var me = this;
-  unzipApp(zipPath, me.getAppExt(), function(err, appPath) {
+  unzipApp(zipPath, this.getAppExt(), function(err, appPath) {
     if (err) {
       cb(err, null);
     } else {
-      me.tempFiles.push(appPath);
+      this.tempFiles.push(appPath);
       cb(null, appPath);
     }
-  });
+  }.bind(this));
 };
 
 Appium.prototype.clearPreviousSession = function() {
-  var me = this;
   logger.info("Clearing out any previous sessions");
-  if (me.sessionOverride && me.device) {
-    me.device.stop(function() {
-      me.devices = [];
-      me.device = null;
-      me.sessions[me.progress] = {};
-      me.invoke();
-    });
+  if (this.sessionOverride && this.device) {
+    this.device.stop(function() {
+      this.devices = [];
+      this.device = null;
+      this.sessions[this.progress] = {};
+      this.invoke();
+    }.bind(this));
   } else {
-    me.invoke();
+    this.invoke();
   }
 };
 
 Appium.prototype.invoke = function() {
-  var me = this;
-
   if (this.progress >= this.counter) {
     return;
   }
@@ -565,34 +559,34 @@ Appium.prototype.invoke = function() {
 
     if (typeof this.desiredCapabilities.launch === "undefined" || this.desiredCapabilities.launch !== false ) {
       this.device.start(function(err, sessionIdOverride) {
-        me.progress++;
+        this.progress++;
         // Ensure we don't use an undefined session.
-        if (typeof me.sessions[me.progress] === 'undefined') {
-          me.progress--;
+        if (typeof this.sessions[this.progress] === 'undefined') {
+          this.progress--;
           return;
         }
         if (sessionIdOverride) {
-          me.sessionId = sessionIdOverride;
+          this.sessionId = sessionIdOverride;
           logger.info("Overriding session id with " + sessionIdOverride);
         }
 
-        me.sessions[me.progress].sessionId = me.sessionId;
-        me.sessions[me.progress].callback(err, me.device);
+        this.sessions[this.progress].sessionId = this.sessionId;
+        this.sessions[this.progress].callback(err, this.device);
         if (err) {
-          me.onDeviceDie(1);
+          this.onDeviceDie(1);
         }
-      }, _.bind(me.onDeviceDie, me));
+      }.bind(this), this.onDeviceDie.bind(this));
     } else {
       //required if we dont want to launch the app, but we do want a session.
-      me.progress++;
+      this.progress++;
       // Ensure we don't use an undefined session.
-      if (typeof me.sessions[me.progress] === 'undefined') {
-        me.progress--;
+      if (typeof this.sessions[this.progress] === 'undefined') {
+        this.progress--;
         return;
       }
 
-      me.sessions[me.progress].sessionId = me.sessionId;
-      me.sessions[me.progress].callback(null, me.device);
+      this.sessions[this.progress].sessionId = this.sessionId;
+      this.sessions[this.progress].callback(null, this.device);
     }
 
   }
@@ -631,32 +625,29 @@ Appium.prototype.stop = function(cb) {
     return cb();
   }
 
-  var me = this;
-
   logger.info('Shutting down appium session...');
   this.device.stop(function(code) {
-    me.onDeviceDie(code, cb);
-  });
+    this.onDeviceDie(code, cb);
+  }.bind(this));
 };
 
 
 Appium.prototype.reset = function(cb) {
   logger.info("Resetting app mid-session");
   if (this.isIos() || !this.fastReset) {
-    var me = this
-    , oldImpWait = this.device.implicitWaitMs
-    , oldId = this.sessionId;
+    var oldImpWait = this.device.implicitWaitMs
+      , oldId = this.sessionId;
 
     this.resetting = true;
     this.stop(function() {
       logger.info("Restarting app");
-      me.start(me.desiredCapabilities, function() {
-        me.resetting = false;
-        me.device.implicitWaitMs = oldImpWait;
-        me.sessionId = oldId;
+      this.start(this.desiredCapabilities, function() {
+        this.resetting = false;
+        this.device.implicitWaitMs = oldImpWait;
+        this.sessionId = oldId;
         cb(null, {status: status.codes.Success.code, value: null});
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   } else { // fast reset
     logger.info("Android fast reset");
     this.device.fastReset(function(err){

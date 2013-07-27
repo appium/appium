@@ -79,13 +79,13 @@ var IOS = function(args) {
 };
 
 // XML Plist library helper
-var XMLPlistFile = function(filename, callback) {
-    try {
-        var result = xmlplist.parseFileSync(filename);
-        return callback(null, result);
-    } catch (ex) {
-        return callback(ex);
-    }
+var xmlPlistFile = function(filename, callback) {
+  try {
+    var result = xmlplist.parseFileSync(filename);
+    return callback(null, result);
+  } catch (ex) {
+    return callback(ex);
+  }
 };
 
 IOS.prototype.cleanup = function(cb) {
@@ -299,7 +299,7 @@ IOS.prototype.setDeviceType = function(cb) {
     bplistParse.parseFile(plist, function(err, obj) {
       var newPlist;
       if (err) {
-        XMLPlistFile(plist, function(err, obj) {
+        xmlPlistFile(plist, function(err, obj) {
           if (err) {
             logger.error("Could not parse plist file at " + plist);
             cb(err);
@@ -313,7 +313,7 @@ IOS.prototype.setDeviceType = function(cb) {
       } else {
         logger.info("Parsed app Info.plist");
         obj[0].UIDeviceFamily = [deviceTypeCode];
-        var newPlist = bplistCreate(obj);
+        newPlist = bplistCreate(obj);
       }
       fs.writeFile(plist, newPlist, function(err) {
         if (err) {

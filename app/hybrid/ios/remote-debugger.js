@@ -373,7 +373,7 @@ RemoteDebugger.prototype.pageLoad = function() {
         logger.debug("Page was not ready, retrying");
         setTimeout(verify, intMs);
       }
-    });
+    }.bind(this));
   }.bind(this);
   verify();
 };

@@ -167,7 +167,7 @@ IOS.prototype.start = function(cb, onDie) {
         logger.info('Bundle ID for open app is ' + bId.value);
         this.bundleId = bId.value;
         next();
-      });
+      }.bind(this));
     }
   }.bind(this);
 

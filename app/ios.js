@@ -401,7 +401,7 @@ IOS.prototype.cleanupAppState = function(cb) {
         }
       }
     }
-  }.bind(this)).bind(this);
+  }.bind(this));
 };
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
@@ -1487,7 +1487,7 @@ IOS.prototype.getScreenshot = function(cb) {
       }.bind(this);
       read(onErr);
     }
-  });
+  }.bind(this));
 };
 
 IOS.prototype.fakeFlick = function(xSpeed, ySpeed, swipe, cb) {

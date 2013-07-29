@@ -98,6 +98,7 @@ In these examples, note that the element parameter is always optional.
 
 ### Tap
 * **WD.js:**
+
   ```js
   driver.elementsByTagName('tableCell', function(err, els) {
     var tapOpts = {
@@ -110,7 +111,9 @@ In these examples, note that the element parameter is always optional.
     });
   });
   ```
+
 * **Java:**
+
   ```java
   WebElement row = driver.findElements(By.tagName("tableCell")).get(4);
   JavascriptExecutor js = (JavascriptExecutor) driver;
@@ -120,20 +123,28 @@ In these examples, note that the element parameter is always optional.
   tapObject.put("element", ((RemoteWebElement) row).getId()); // the id of the element we want to tap
   js.executeScript("mobile: tap", tapObject);
   ```
+
 * **Python:**
+
   ```python
   driver.execute_script("mobile: tap",{"touchCount":"1","x":"0.9","y":"0.8","element":id(element)})
   ```
+
 * **Ruby:**
+
   ```ruby
   @driver.execute_script 'mobile: tap', :x => 150, :y => 30
   ```
+
 * **Ruby:**
+
   ```ruby
   b = @driver.find_element :name, 'Sign In'
   @driver.execute_script 'mobile: tap', :element => b.ref
   ```
+
 * **C#:**
+
   ```C#
   Dictionary<String, Double> coords = new Dictionary<string, double>();
   coords.Add("x", 12);
@@ -142,7 +153,9 @@ In these examples, note that the element parameter is always optional.
   ```
 
 ### Flick
+
 * **WD.js:**
+
   ```js
   // options for a 2-finger flick from the center of the screen to the top left
   var flickOpts = {
@@ -154,7 +167,9 @@ In these examples, note that the element parameter is always optional.
     // continue testing
   });
   ```
+
 * **Java:**
+
   ```java
   JavascriptExecutor js = (JavascriptExecutor) driver;
   HashMap<String, Double> flickObject = new HashMap<String, Double>();
@@ -165,7 +180,9 @@ In these examples, note that the element parameter is always optional.
   ```
 
 ### Swipe
+
 * **WD.js:**
+
   ```js
   // options for a slow swipe from the right edge of the screen to the left
   var swipeOpts = {
@@ -179,7 +196,9 @@ In these examples, note that the element parameter is always optional.
     // continue testing
   });
   ```
+
 * **Java:**
+
   ```java
   JavascriptExecutor js = (JavascriptExecutor) driver;
   HashMap<String, Double> swipeObject = new HashMap<String, Double>();
@@ -192,12 +211,14 @@ In these examples, note that the element parameter is always optional.
   ```
 
 ### Set orientation
+
 * **WD.js:**
   ```js
   driver.setOrientation("LANDSCAPE", function(err) {
     // continue testing
   });
   ```
+
 * **Python:**
   ```python
   driver.orientation = "LANDSCAPE"

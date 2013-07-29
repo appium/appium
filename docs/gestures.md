@@ -94,6 +94,7 @@ And `args` will be an array with one element: a Javascript object defining the p
 In this example, our new `tap` method will be called with the `x` and `y` params as described above.
 
 ## Code examples
+In these examples, note that the element parameter is always optional.
 
 ### Tap
 * **WD.js:**
@@ -121,7 +122,7 @@ In this example, our new `tap` method will be called with the `x` and `y` params
   ```
 * **Python:**
   ```python
-  driver.execute_script("mobile: tap",{"touchCount":"1","x":"0.9","y":"0.8","element":"element_id"})
+  driver.execute_script("mobile: tap",{"touchCount":"1","x":"0.9","y":"0.8","element":id(element)})
   ```
 * **Ruby:**
   ```ruby

@@ -952,7 +952,7 @@ IOS.prototype.lookForAlert = function(cb, counter, looks, timeout) {
         }.bind(this));
       }
     }
-  }, timeout);
+  }.bind(this), timeout);
 };
 
 IOS.prototype.clickCurrent = function(button, cb) {

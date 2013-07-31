@@ -9,4 +9,4 @@ To install the Android Maven dependencies in your local environment, run the fol
 
 You can then compile the bootstrap project by running
 
-    mvn package
+    mvn package -P 4.2

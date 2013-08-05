@@ -84,8 +84,12 @@ reset_ios() {
             run_cmd rm -rf ./sample-code/apps/UICatalog*
         fi
         if [ ! -d "./sample-code/apps/UICatalog" ]; then
-            echo "* Downloading UICatalog app"
-            run_cmd $grunt downloadApp
+            echo "* Downloading UICatalog app source"
+            run_cmd curl http://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip > ./sample-code/apps/UICatalog.zip
+            run_cmd pushd ./sample-code/apps
+            echo "* Unzipping UICatalog app source"
+            run_cmd unzip UICatalog.zip
+            run_cmd popd
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
         run_cmd $grunt buildApp:TestApp

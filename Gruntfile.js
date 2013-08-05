@@ -3,7 +3,6 @@ var path = require('path')
   , gruntHelpers = require('./grunt-helpers.js')
   , startAppium = gruntHelpers.startAppium
   , authorize = gruntHelpers.authorize
-  , downloadUICatalog = gruntHelpers.downloadUICatalog
   , tail = gruntHelpers.tail
   , buildApp = gruntHelpers.buildApp
   , signApp = gruntHelpers.signApp
@@ -104,9 +103,6 @@ module.exports = function(grunt) {
       appName = null;
     }
     startAppium(appName, true, function() {}, this.async());
-  });
-  grunt.registerTask('downloadApp', "Download UICatalog", function() {
-    downloadUICatalog(this.async());
   });
   grunt.registerTask('buildApp', "Build the test app", function(appDir, sdk) {
     buildApp(appDir, this.async(), sdk);

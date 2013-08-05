@@ -7,7 +7,6 @@ kinds of appium dev tasks. Here's what you can do:
 |Task|Description|
 |----|-----------|
 |grunt appium|Start an appium server|
-|grunt downloadApp|Download the UICatalog app from Apple|
 |grunt lint|Run JSLint|
 |grunt test|Run all the tests|
 |grunt functional|Run the entire functional test suite|

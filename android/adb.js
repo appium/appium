@@ -1150,8 +1150,8 @@ ADB.prototype.pushAppium = function(cb) {
   var binPath = path.resolve(__dirname, "..", "build", "android_bootstrap", "AppiumBootstrap.jar");
   fs.stat(binPath, function(err) {
     if (err) {
-      cb("Could not find AppiumBootstrap.jar; please run " +
-         "'grunt buildAndroidBootstrap'");
+      cb(new Error("Could not find AppiumBootstrap.jar; please run " +
+                   "'grunt buildAndroidBootstrap'"));
     } else {
       var remotePath = "/data/local/tmp";
       var cmd = this.adbCmd + ' push "' + binPath + '" ' + remotePath;

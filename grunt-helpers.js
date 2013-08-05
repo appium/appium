@@ -289,31 +289,6 @@ module.exports.signApp = function(appName, certName, cb) {
   });
 };
 
-module.exports.downloadUICatalog = function(cb) {
-  var appBasePath = path.resolve(__dirname, 'sample-code/apps');
-  var appPath = path.resolve(appBasePath, 'UICatalog');
-  var zipPath = path.resolve(appBasePath, 'UICatalog.zip');
-  var UICatUrl = "http://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip";
-  // clear out anything that's there
-  try {
-    fs.unlinkSync(zipPath);
-  } catch(e) {}
-  rimraf(appPath, function() {
-    var file = fs.createWriteStream(zipPath);
-    console.log("Downloading UI catalog into " + zipPath);
-    http.get(UICatUrl, function(response) {
-      response.pipe(file);
-      response.on('end', function() {
-        console.log("Download complete");
-        exec("unzip UICatalog.zip", {cwd: appBasePath, maxBuffer: MAX_BUFFER_SIZE}, function() {
-          console.log("Unzipped into " + appPath);
-          cb();
-        });
-      });
-    });
-  });
-};
-
 var setupAndroidProj = function(grunt, projPath, args, cb) {
   if (!process.env.ANDROID_HOME) {
     grunt.fatal("Could not find Android SDK, make sure to export ANDROID_HOME");

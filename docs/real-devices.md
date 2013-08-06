@@ -26,3 +26,11 @@ node server.js -U <UDID> --app <PATH_TO_APP>
 ```
 
 This will start Appium and have Appium use the device to test the app.
+
+Troubleshooting ideas
+---
+
+1. Make sure UDID is correct by checking it in xcode organizer or itunes. It is a long string (20+ chars)
+2. Make sure that you can run your tests against simulator
+3. Double check that you can invoke your automation from instruments. 
+3. Make sure instruments in closed already

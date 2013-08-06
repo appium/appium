@@ -1,3 +1,27 @@
+CHANGES IN VERSION 0.8.3 (from 0.8.2)
+=====================================
+
+#### GENERAL
+- update various documentation (gestures, inspector tutorial, README)
+- allow dashes in bundle/package IDs
+- fix bad address startup error message
+- use native function.bind() throughout instead of a mix of scoped objects
+  and underscore.bind()
+
+#### Android
+- use UiAutomator for back() instead of keyevent
+- use UiAutomator for keyCode instead of adb shell
+- use UiAutomator for screenshot instead of adb shell
+
+### IOS
+- add some more mechanic aliases (keyboard, key)
+- add pinch/zoom gestures
+- add Java example for automating mobile safari
+- automatically accept location services dialogs if we can access them
+- accept text-based Info.plist files in addition to binary ones
+- use reset.sh to download UICatalog rather than node/grunt
+
+
 CHANGES IN VERSION 0.8.2 (from 0.8.1)
 =====================================
 

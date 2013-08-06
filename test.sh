@@ -1,6 +1,14 @@
 #!/bin/sh
 set +e
-alias appium_mocha="mocha -t 60000 -R spec $*"
+mocha_args=""
+for arg in "$@"; do
+    if [[ "$arg" =~ " " ]]; then
+        mocha_args="$mocha_args \"$arg\""
+    else
+        mocha_args="$mocha_args $arg"
+    fi
+done
+alias appium_mocha="mocha -t 60000 -R spec $mocha_args"
 appium_mocha test/functional/apidemos
 appium_mocha test/functional/prefs
 appium_mocha test/functional/safari

@@ -107,7 +107,7 @@ describeForSafari.only = function() {
 var describeForChrome = function() {
   var fn = function(desc, tests, host, port, extraCaps, onlyify) {
     var caps = {
-      app: 'chromium'
+      app: 'chrome'
       , device: 'Android'
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);

@@ -993,11 +993,9 @@ IOS.prototype.clickWebCoords = function(cb) {
     , webviewIndex = this.curWindowHandle - 1
     , wvCmd = "au.getElementsByType('webview')";
 
-  //console.log(coords);
   // absolutize web coords
   this.proxy(wvCmd, function(err, res) {
     if (err) return cb(err, res);
-    //console.log(res);
     if (typeof res.value[webviewIndex] === "undefined") {
       return cb(null, {
         status: status.codes.UnknownError.code
@@ -1006,23 +1004,19 @@ IOS.prototype.clickWebCoords = function(cb) {
     }
     var realDims, wvDims, wvPos;
     var step1 = function() {
-      //console.log("getting webview real dims");
       var wvId = res.value[webviewIndex].ELEMENT;
       var locCmd = "au.getElement('" + wvId + "').rect()";
       this.proxy(locCmd, function(err, res) {
         if (err) return cb(err, res);
         var rect = res.value;
-        //console.log(rect);
         wvPos = {x: rect.origin.x, y: rect.origin.y};
         realDims = {w: rect.size.width, h: rect.size.height};
         next();
       });
     }.bind(this);
     var step2 = function() {
-      //console.log("getting browser dims");
       var cmd = "(function() { return {w: document.width, h: document.height}; })()";
       this.remote.execute(cmd, function(err, res) {
-        //console.log(res.result.value);
         wvDims = {w: res.result.value.w, h: res.result.value.h};
         next();
       });
@@ -1036,8 +1030,6 @@ IOS.prototype.clickWebCoords = function(cb) {
           x: wvPos.x + (xRatio * coords.x)
           , y: wvPos.y + (yRatio * coords.y) - serviceBarHeight
         };
-        //console.log("converted dims: ");
-        //console.log(coords);
         this.clickCoords(coords, cb);
       }
     }.bind(this);

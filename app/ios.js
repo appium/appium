@@ -1043,7 +1043,7 @@ IOS.prototype.clickWebCoords = function(cb) {
     }.bind(this);
     step1();
     step2();
-  });
+  }.bind(this));
 };
 
 IOS.prototype.submit = function(elementId, cb) {

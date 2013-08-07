@@ -200,6 +200,9 @@ var main = function(args, readyCb, doneCb) {
         cb(err);
       }
     });
+    server.on('connection', function(socket) {
+      socket.setTimeout(600 * 1000); // 10 minute timeout
+    });
     setTimeout(function() {
       if (!alreadyReturned) {
         alreadyReturned = true;

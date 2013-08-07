@@ -119,7 +119,11 @@ to run npm with sudo privileges):
 The first two commands install test and build tools (sudo may not be necessary
 if you installed node.js via Homebrew). The third command installs all app
 dependencies, builds supporting binaries and test apps. `reset.sh` is also the
-recommended command to run after pulling changes from master.
+recommended command to run after pulling changes from master. At this point,
+you're able to star the Appium server (see below for examples of various flags
+you can pass in):
+
+    node server.js
 
 Hacking with Appium (iOS)
 --------------
@@ -202,13 +206,6 @@ your changes against code quality standards:
 Dig in deeper to Appium dev
 -----------
 ### Advanced grunt
-If you want to run the Appium server and have it listen indefinitely, you can
-execute one of the following commands to start an Appium server with or without a specified app:
-
-    grunt appium           // launch Appium server without app
-    grunt appium:TestApp   // launch Appium server with the TestApp
-    grunt appium:UICatalog // launch Appium server with the UICatalog app
-
 Like the power of automating dev tasks? Check out the [Appium grunt
 tasks](https://github.com/appium/appium/blob/master/docs/grunt.md) available to
 help with building apps, installing apps, generating docs, etc...

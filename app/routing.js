@@ -141,7 +141,6 @@ module.exports = function(appium) {
 
   // allow appium to receive async response
   rest.post('/wd/hub/session/:sessionId?/receive_async_response', controller.receiveAsyncResponse);
-
   // these are for testing purposes only
   rest.post('/wd/hub/produce_error', controller.produceError);
   rest.post('/wd/hub/crash', controller.crash);
@@ -155,19 +154,15 @@ module.exports = function(appium) {
 
   // keep this at the very end!
   rest.all('/*', controller.unknownCommand);
-  //console.log(rest.routes.get);
 };
 
 var routeNotYetImplemented = function(rest) {
-  // TODO: http://cdn.memegenerator.net/instances/400x/33433130.jpg
-  // High priority to reach parity with PyAppium:
   rest.get('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);
   rest.post('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/local_storage', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/local_storage/key/:key', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/local_storage/key/:key', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/local_storage/size', controller.notYetImplemented);
-  // The rest of the API:
   rest.post('/wd/hub/session/:sessionId?/timeouts', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/available_engines', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/ime/active_engine', controller.notYetImplemented);

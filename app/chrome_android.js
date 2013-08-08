@@ -61,7 +61,12 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
 
   this.proc.stdout.pipe(through(function(data) {
     logger.info('[CHROMEDRIVER] ' + data.trim());
-  }));
+    if (!alreadyReturned && data.indexOf('Starting ChromeDriver') === 0) {
+      this.chromedriverStarted = true;
+      alreadyReturned = true;
+      return cb();
+    }
+  }.bind(this)));
 
   this.proc.stderr.pipe(through(function(data) {
     logger.info('[CHROMEDRIVER STDERR] ' + data.trim());
@@ -75,18 +80,9 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
     }
     this.onDie();
   }.bind(this));
-
-  // chromedriver detects that it's not on a TTY and doesn't give any output
-  // to let us know it's started, so we just assume it started if it didn't
-  // exit
-  setTimeout(function() {
-    if (!alreadyReturned) {
-      cb();
-    }
-  }.bind(this), 750);
 };
 
-ChromeAndroid.prototype.createSession = function(cb) {
+ChromeAndroid.prototype.createSession = function(cb, alreadyRestarted) {
   logger.info("Creating Chrome session");
   var pkg = 'com.android.chrome';
   if (this.opts.chromium) {
@@ -108,6 +104,21 @@ ChromeAndroid.prototype.createSession = function(cb) {
       var loc = res.headers.location;
       this.chromeSessionId = /\/([^\/]+)$/.exec(loc)[1];
       cb(null, this.chromeSessionId);
+    } else if (typeof body !== "undefined" &&
+               typeof body.value !== "undefined" &&
+               typeof body.value.message !== "undefined" &&
+               body.value.message.indexOf("Failed to run adb command") !== -1) {
+      logger.error("Chromedriver had trouble running adb");
+      if (!alreadyRestarted) {
+        logger.error("Restarting adb for chromedriver");
+        return this.adb.restartAdb(function() {
+          this.adb.getConnectedDevices(function() {
+            this.createSession(cb, true);
+          }.bind(this));
+        }.bind(this));
+      } else {
+        cb(new Error("Chromedriver wasn't able to use adb. Is the server up?"));
+      }
     } else {
       logger.error("Chromedriver create session did not work. Status was " +
                    res.statusCode + " and body was " +

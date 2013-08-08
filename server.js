@@ -48,7 +48,8 @@ var catchAllHandler = function(e, req, res, next) {
 var checkArgs = function(args) {
   var exclusives = [
     ['noReset', 'fullReset']
-    , ['ipa', 'app', 'safari']
+    , ['ipa', 'safari']
+    , ['app', 'safari']
     , ['forceIphone', 'forceIpad']
   ];
 

@@ -86,4 +86,10 @@ describeWd('web view', function(h) {
       });
     });
   });
+  it('should be able to handle selendroid special keys', function(done) {
+    h.driver.keys('\uE102', function(err) {
+      should.not.exist(err);
+      done();
+    });
+  });
 });

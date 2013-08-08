@@ -72,32 +72,21 @@ exports.doRequest = function(url, method, body, contentType, cb) {
   if (!(/^https?:\/\//.exec(url))) {
     url = 'http://' + url;
   }
-  var host = /^https?:\/\/([^\/]+)/.exec(url)[1];
   var opts = {
     url: url
     , method: method
-    , jar: false
   };
-  opts.headers = {};
   if (_.contains(['put', 'post', 'patch'], method.toLowerCase())) {
     if (typeof body === "object") {
-      opts.body = JSON.stringify(body);
+      opts.json = body;
     } else {
       opts.body = body || "";
     }
-    opts.headers['Content-Length'] = opts.body.length;
   }
   // explicitly set these headers with correct capitalization to work around
   // an issue in node/requests
-  opts.headers['Content-Type'] = contentType;
-  opts.headers.Host = host;
   logger.info("Making http request with opts: " + JSON.stringify(opts));
   request(opts, function(err, res, body) {
-    if (typeof body !== "undefined") {
-      try {
-        body = JSON.parse(body);
-      } catch(e) {}
-    }
     cb(err, res, body);
   });
 };

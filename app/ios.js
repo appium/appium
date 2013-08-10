@@ -1431,6 +1431,14 @@ IOS.prototype.setOrientation = function(orientation, cb) {
   }.bind(this));
 };
 
+IOS.prototype.getScreenshotFolder = function(cb) {
+  var screenshotPath = "/tmp/" + this.instruments.guid + "/Run 1/";
+  cb(null, {
+    status: status.codes.Success.code
+    , value: screenshotPath
+  });
+};
+
 IOS.prototype.getScreenshot = function(cb) {
   var guid = uuid.create();
   var command = ["au.capture('screenshot", guid ,"')"].join('');

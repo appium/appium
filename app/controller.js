@@ -973,6 +973,10 @@ exports.findElementNameContains = function(req, res) {
   }
 };
 
+exports.getScreenshotFolder = function(req, res) {
+  req.device.getScreenshotFolder(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
@@ -1039,6 +1043,7 @@ var mobileCmdMap = {
   , 'longClick' : exports.touchLongClick
   , 'pinchClose': exports.mobilePinchClose
   , 'pinchOpen': exports.mobilePinchOpen
+  , 'screenshotFolder': exports.getScreenshotFolder
 };
 
 exports.produceError = function(req, res) {

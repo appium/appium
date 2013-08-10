@@ -670,6 +670,14 @@ Android.prototype.setOrientation = function(orientation, cb) {
   this.proxy(["orientation", {orientation: orientation}], cb);
 };
 
+Android.prototype.getScreenshotFolder = function(cb) {
+  var screenshotPath = "/data/local/tmp/";
+  cb(null, {
+    status: status.codes.Success.code
+    , value: screenshotPath
+  });
+};
+
 Android.prototype.getScreenshot = function(cb) {
   this.adb.requireDeviceId();
   var localfile = temp.path({prefix: 'appium', suffix: '.png'});

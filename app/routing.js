@@ -1,80 +1,12 @@
 "use strict";
-var controller = require('./controller')
-  , respondError = require('./controller').respondError
-  , doRequest = require('./device').doRequest
-  , _ = require('underscore')
-  , _s = require("underscore.string")
-  , logger = require('../logger').get('appium');
 
-var shouldProxy = function(req) {
-  if (req.device === null) return false;
-  if (!req.device.isProxy) return false;
-
-  var avoid = [
-    ['POST', new RegExp('^/wd/hub/session$')]
-    , ['DELETE', new RegExp('^/wd/hub/session/[^/]+$')]
-  ];
-  var method = req.route.method.toUpperCase();
-  var path = req.originalUrl;
-  var shouldAvoid = false;
-
-  // check for POST /execute mobile:
-  if (method === 'POST' &&
-      new RegExp('^/wd/hub/session/.+/execute$').test(path) &&
-      _s.startsWith(req.body.script, "mobile: ")) {
-    shouldAvoid = true;
-  }
-
-  _.each(avoid, function(pathToAvoid) {
-    if (method === pathToAvoid[0] && pathToAvoid[1].exec(path)) {
-      shouldAvoid = true;
-    }
-  });
-  return !shouldAvoid;
-};
-
+var controller = require('./controller');
 
 module.exports = function(appium) {
   var rest = appium.rest;
-  var inject = function(req, res, next) {
-    req.appium = appium;
-    req.device = appium.device;
-    logger.debug("Appium request initiated at " + req.url);
-    if (typeof req.body === "object") {
-      logger.debug("Request received with params: " + JSON.stringify(req.body));
-    }
-    if (shouldProxy(req)) {
-      logger.debug("Proxying command to " + req.device.proxyHost + ":" +
-                   req.device.proxyPort);
-      var url = 'http://' + req.device.proxyHost + ':' + req.device.proxyPort +
-                req.originalUrl;
-      doRequest(url, req.route.method.toUpperCase(), req.body,
-              req.headers['content-type'], function(err, response, body) {
-        if (err) return next(err);
-        if (body && body.value) {
-          var resStatusCode = body.status;
-          if (resStatusCode !== 0) {
-            var resErrorMessage = body.value.message;
-            return respondError(req, res, resStatusCode, resErrorMessage);
-          }
-        }
-
-        var sbody = body ? JSON.stringify(body).slice(0, 10000) : body;
-
-        logger.debug("Proxied response received with status " +
-                     response.statusCode + ": " +
-                     sbody);
-        res.headers = response.headers;
-        res.set('Content-Type', response.headers['content-type']);
-        res.send(response.statusCode, body);
-      });
-    } else {
-      next();
-    }
-  };
-
+  var globalBeforeFilter = controller.getGlobalBeforeFilter(appium);
   // Make appium available to all REST http requests.
-  rest.all('/wd/*', inject);
+  rest.all('/wd/*', globalBeforeFilter);
   routeNotYetImplemented(rest);
   rest.all('/wd/hub/session/*', controller.sessionBeforeFilter);
 
@@ -138,6 +70,8 @@ module.exports = function(appium) {
   rest.post('/wd/hub/session/:sessionId?/cookie', controller.setCookie);
   rest.delete('/wd/hub/session/:sessionId?/cookie', controller.deleteCookies);
   rest.delete('/wd/hub/session/:sessionId?/cookie/:name', controller.deleteCookie);
+  rest.post('/wd/hub/session/:sessionId?/log', controller.getLog);
+  rest.get('/wd/hub/session/:sessionId?/log/types', controller.getLogTypes);
 
   // allow appium to receive async response
   rest.post('/wd/hub/session/:sessionId?/receive_async_response', controller.receiveAsyncResponse);
@@ -190,8 +124,6 @@ var routeNotYetImplemented = function(rest) {
   rest.get('/wd/hub/session/:sessionId?/session_storage/key/:key', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/session_storage/key/:key', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/session_storage/size', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/log', controller.getLog);
-  rest.get('/wd/hub/session/:sessionId?/log/types', controller.getLogTypes);
   rest.get('/wd/hub/session/:sessionId?/application_cache/status', controller.notYetImplemented);
 };
 

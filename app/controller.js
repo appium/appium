@@ -7,10 +7,10 @@ var status = require('./uiauto/lib/status')
   , swig = require('swig')
   , path = require('path')
   , version = require('../package.json').version
-  , getGitRev = require('./helpers.js').getGitRev
+  , proxy = require('./proxy')
   , _ = require('underscore');
 
-function getResponseHandler(req, res) {
+var getResponseHandler = function(req, res) {
   var responseHandler = function(err, response) {
     if (typeof response === "undefined" || response === null) {
       response = {};
@@ -42,7 +42,7 @@ function getResponseHandler(req, res) {
     }
   };
   return responseHandler;
-}
+};
 
 var getSessionId = function(req, response) {
   var sessionId = (typeof response == 'undefined') ? undefined : response.sessionId;
@@ -129,6 +129,22 @@ var checkMissingParams = function(res, params, strict) {
   } else {
     return true;
   }
+};
+
+exports.getGlobalBeforeFilter = function(appium) {
+  return function(req, res, next) {
+    req.appium = appium;
+    req.device = appium.device;
+    logger.debug("Appium request initiated at " + req.url);
+    if (typeof req.body === "object") {
+      logger.debug("Request received with params: " + JSON.stringify(req.body));
+    }
+    if (proxy.shouldProxy(req)) {
+      proxy.doProxy(req, res, next);
+    } else {
+      next();
+    }
+  };
 };
 
 exports.sessionBeforeFilter = function(req, res, next) {

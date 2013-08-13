@@ -233,3 +233,28 @@ exports.convertElementForAtoms = function(args, cb) {
   cb(null, args);
 };
 
+exports.getLog = function(logType, cb) {
+  // go ahead and respond with 'logcat' type no matter what they send in
+  if (logType !== 'logcat') {
+    logger.warn("Trying to get log type of " + logType + ", giving logcat " +
+                "instead");
+  }
+  var logs;
+  try {
+    logs = this.adb.getLogcatLogs();
+  } catch (e) {
+    return cb(e);
+  }
+  cb(null, {
+    status: status.codes.Success.code
+    , value: logs
+  });
+};
+
+exports.getLogTypes = function(cb) {
+  return cb(null, {
+    status: status.codes.Success.code
+    , value: ['logcat']
+  });
+};
+

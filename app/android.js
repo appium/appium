@@ -941,6 +941,31 @@ Android.prototype.unpackApp = function(req, cb) {
   deviceCommon.unpackApp(req, '.apk', cb);
 };
 
+Android.prototype.getLog = function(logType, cb) {
+  // go ahead and respond with 'logcat' type no matter what they send in
+  if (logType !== 'logcat') {
+    logger.warn("Trying to get log type of " + logType + ", giving logcat " +
+                "instead");
+  }
+  var logs;
+  try {
+    logs = this.adb.getLogcatLogs();
+  } catch (e) {
+    return cb(e);
+  }
+  cb(null, {
+    status: status.codes.Success.code
+    , value: logs
+  });
+};
+
+Android.prototype.getLogTypes = function(cb) {
+  return cb(null, {
+    status: status.codes.Success.code
+    , value: ['logcat']
+  });
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };

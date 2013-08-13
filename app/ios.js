@@ -1992,6 +1992,14 @@ IOS.prototype.getCurrentActivity= function(cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+IOS.prototype.getLogs = function(logType, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
+IOS.prototype.getLogTypes = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 IOS.prototype.isAppInstalled = function(bundleId, cb) {
   var isInstalledCommand = 'build/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
   deviceCommon.isAppInstalled(isInstalledCommand, cb);

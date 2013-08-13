@@ -60,6 +60,23 @@ describeWd('basic', function(h) {
       done();
     });
   });
+  it('should be able to get logcat log type', function(done) {
+    h.driver.logTypes(function(err, logTypes) {
+      should.not.exist(err);
+      logTypes.should.include('logcat');
+      done();
+    });
+  });
+  it('should be able to get logcat logs', function(done) {
+    h.driver.log('logcat', function(err, logs) {
+      should.not.exist(err);
+      logs.length.should.be.above(0);
+      logs[0].message.should.not.include("\n");
+      logs[0].level.should.equal("ALL");
+      should.exist(logs[0].timestamp);
+      done();
+    });
+  });
 });
 
 describeWd2('activity style: no period', function(h) {

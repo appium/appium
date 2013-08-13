@@ -190,8 +190,8 @@ var routeNotYetImplemented = function(rest) {
   rest.get('/wd/hub/session/:sessionId?/session_storage/key/:key', controller.notYetImplemented);
   rest.delete('/wd/hub/session/:sessionId?/session_storage/key/:key', controller.notYetImplemented);
   rest.get('/wd/hub/session/:sessionId?/session_storage/size', controller.notYetImplemented);
-  rest.post('/wd/hub/session/:sessionId?/log', controller.notYetImplemented);
-  rest.get('/wd/hub/session/:sessionId?/log/types', controller.notYetImplemented);
+  rest.post('/wd/hub/session/:sessionId?/log', controller.getLog);
+  rest.get('/wd/hub/session/:sessionId?/log/types', controller.getLogTypes);
   rest.get('/wd/hub/session/:sessionId?/application_cache/status', controller.notYetImplemented);
 };
 

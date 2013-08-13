@@ -11,10 +11,12 @@ module.exports.shouldProxy = function(req) {
   if (req.device === null) return false;
   if (!req.device.isProxy) return false;
 
+  var deviceAvoids = req.device.avoidProxy || [];
+
   var avoid = [
     ['POST', new RegExp('^/wd/hub/session$')]
     , ['DELETE', new RegExp('^/wd/hub/session/[^/]+$')]
-  ];
+  ].concat(deviceAvoids);
   var method = req.route.method.toUpperCase();
   var path = req.originalUrl;
   var shouldAvoid = false;

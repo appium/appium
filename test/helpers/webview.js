@@ -565,7 +565,7 @@ module.exports.buildTests = function(webviewType) {
     it("should bubble up javascript errors", function(done) {
       loadWebView(h.driver, function() {
         h.driver.execute("'nan'--", function(err, val) {
-          err.message.should.equal("Error response status: 13.");
+          err.message.should.include("Error response status: 13.");
           should.not.exist(val);
           done();
         });

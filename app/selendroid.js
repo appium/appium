@@ -3,8 +3,11 @@
 var errors = require('./errors')
   , adb = require('../android/adb')
   , _ = require('underscore')
-  , request = require('./device').request
-  , proxyTo = require('./device').proxyTo
+  , deviceCommon = require('./device')
+  , request = deviceCommon.request
+  , proxyTo = deviceCommon.proxyTo
+  , getLog = deviceCommon.getLog
+  , getLogTypes = deviceCommon.getLogTypes
   , logger = require('../logger').get('appium')
   , status = require("./uiauto/lib/status")
   , fs = require('fs')
@@ -24,6 +27,10 @@ var Selendroid = function(opts) {
   this.isProxy = true;
   this.proxyHost = 'localhost';
   this.proxyPort = opts.port;
+  this.avoidProxy = [
+    ['GET', new RegExp('^/wd/hub/session/[^/]+/log/types$')]
+    , ['POST', new RegExp('^/wd/hub/session/[^/]+/log')]
+  ];
 };
 
 Selendroid.prototype.start = function(cb) {
@@ -135,6 +142,8 @@ Selendroid.prototype.deleteSession = function(cb) {
 };
 
 Selendroid.prototype.proxyTo = proxyTo;
+Selendroid.prototype.getLog = getLog;
+Selendroid.prototype.getLogTypes = getLogTypes;
 
 module.exports = function(opts) {
   return new Selendroid(opts);

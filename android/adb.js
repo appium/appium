@@ -17,6 +17,7 @@ var spawn = require('win-spawn')
   , AdmZip = require('adm-zip')
   , getTempPath = helpers.getTempPath
   , rimraf = require('rimraf')
+  , Logcat = require('./logcat')
   , isWindows = helpers.isWindows();
 
 var noop = function() {};
@@ -60,6 +61,7 @@ var ADB = function(opts, android) {
   this.portForwarded = false;
   this.emulatorPort = null;
   this.debugMode = true;
+  this.logcat = null;
   this.cleanAPK = path.resolve(helpers.getTempPath(), this.appPackage + '.clean.apk');
   // This is set to true when the bootstrap jar crashes.
   this.restartBootstrap = false;
@@ -535,6 +537,7 @@ ADB.prototype.prepareDevice = function(onReady) {
     function(cb) { this.prepareEmulator(cb); }.bind(this),
     function(cb) { this.getDeviceWithRetry(cb);}.bind(this),
     function(cb) { this.waitForDevice(cb); }.bind(this),
+    function(cb) { this.startLogcat(cb); }.bind(this),
     function(cb) { this.checkFastReset(cb); }.bind(this)
   ], onReady);
 };
@@ -986,6 +989,7 @@ ADB.prototype.sendShutdownCommand = function(cb) {
     }
   }.bind(this), 7000);
   this.sendCommand('shutdown', null, cb);
+  this.logcat.stopCapture();
 };
 
 ADB.prototype.outputStreamHandler = function(output) {
@@ -1143,6 +1147,28 @@ ADB.prototype.restartAdb = function(cb) {
     }
     cb();
   });
+};
+
+ADB.prototype.startLogcat = function(cb) {
+  if (this.logcat !== null) {
+    cb(new Error("Trying to start logcat capture but it's already started!"));
+    return;
+  }
+  var adb = this.adb.replace(/"/g, '');
+  this.logcat = new Logcat({
+    adbCmd: adb
+    , debug: false
+    , debugTrace: false
+  });
+  this.logcat.startCapture(cb);
+};
+
+
+ADB.prototype.getLogcatLogs = function() {
+  if (this.logcat === null) {
+    throw new Error("Can't get logcat logs since logcat hasn't started");
+  }
+  return this.logcat.getLogs();
 };
 
 ADB.prototype.pushAppium = function(cb) {

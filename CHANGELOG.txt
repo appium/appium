@@ -1,3 +1,19 @@
+CHANGES IN VERSION 0.8.4 (from 0.8.3)
+=====================================
+
+#### GENERAL
+- some documentation updates
+- give appium server a big http timeout so it doesn't drop connections
+
+#### Android
+- make sure chromedriver tries to restart adb if it fails the first time
+- add logcat retrieval for android and selendroid
+
+#### IOS
+- allow use of --ipa and --app flags together
+- try out a fix in mechanic.js for the (null) tap issues
+
+
 CHANGES IN VERSION 0.8.3 (from 0.8.2)
 =====================================
 

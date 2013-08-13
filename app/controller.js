@@ -973,6 +973,18 @@ exports.findElementNameContains = function(req, res) {
   }
 };
 
+exports.getLog = function(req, res) {
+  var logType = req.body.type;
+
+  if (checkMissingParams(res, {logType: logType})) {
+    req.device.getLog(logType, getResponseHandler(req, res));
+  }
+};
+
+exports.getLogTypes = function(req, res) {
+  req.device.getLogTypes(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');

@@ -9,6 +9,8 @@ var spawn = require('child_process').spawn
   , net = require('net')
   , uuid = require('uuid-js')
   , path = require('path')
+  , rimraf = require('rimraf')
+  , mkdirp = require('mkdirp')
   , codes = require('../app/uiauto/lib/status.js').codes;
 
 var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb) {
@@ -141,7 +143,10 @@ Instruments.prototype.startSocketServer = function(sock) {
 Instruments.prototype.launch = function() {
   var self = this;
   // prepare temp dir
-  var tmpDir = '/tmp/' + this.guid;
+  var tmpDir = "/tmp/appium-instruments/";
+  rimraf.sync(tmpDir);
+  mkdirp.sync(tmpDir);
+
   fs.mkdir(tmpDir, function(e) {
     if (!e || (e && e.code === 'EEXIST')) {
       self.proc = self.spawnInstruments(tmpDir);

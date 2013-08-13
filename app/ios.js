@@ -23,6 +23,7 @@ var path = require('path')
   , IDevice = require('node-idevice')
   , async = require('async')
   , request = require('request')
+  , mkdirp = require('mkdirp')
   , NotImplementedError = errors.NotImplementedError
   , NotYetImplementedError = errors.NotYetImplementedError
   , UnknownError = errors.UnknownError;
@@ -1427,7 +1428,12 @@ IOS.prototype.getScreenshot = function(cb) {
   var guid = uuid.create();
   var command = ["au.capture('screenshot", guid ,"')"].join('');
 
-  var shotPath = ["/tmp/", this.instruments.guid, "/Run 1/screenshot", guid, ".png"].join("");
+  var screenshotFolder = "/tmp/appium-instruments/Run 1/";
+  if (!fs.existsSync(screenshotFolder)) {
+    mkdirp.sync(screenshotFolder);
+  }
+
+  var shotPath = [screenshotFolder, 'screenshot', guid, ".png"].join("");
   this.proxy(command, function(err, response) {
     if (err) {
       cb(err, response);

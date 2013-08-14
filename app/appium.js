@@ -608,14 +608,16 @@ Appium.prototype.onDeviceDie = function(code, cb) {
   } else {
     logger.info('Not clearing out appium devices');
   }
-  if (cb) {
-    cb(null, {status: status.codes.Success.code, value: null,
-              sessionId: dyingSession});
-  }
+
   // if we're not restarting internally, call invoke again, in case we have
   // sessions queued
   if (!this.resetting) {
     this.clearPreviousSession();
+  }
+
+  if (cb) {
+    cb(null, {status: status.codes.Success.code, value: null,
+      sessionId: dyingSession});
   }
 };
 

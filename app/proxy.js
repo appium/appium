@@ -3,7 +3,7 @@
 var _s = require('underscore.string')
   , logger = require('../logger.js').get('appium')
   , doRequest = require('./device').doRequest
-  , respondError = require('./controller').respondError
+  , respondError = require('./responses').respondError
   , _ = require('underscore');
 
 

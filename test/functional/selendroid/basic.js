@@ -48,5 +48,12 @@ describeWd('basic', function(h) {
       done();
     });
   });
+
+  it('should be able to proxy errors', function(done) {
+    h.driver.frame(null, function(err) {
+      should.exist(err);
+      done();
+    });
+  });
 });
 

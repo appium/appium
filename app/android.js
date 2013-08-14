@@ -911,8 +911,8 @@ Android.prototype.isAppInstalled = function(appPackage, cb) {
   var isInstalledCommand = null;
   if (this.udid) {
     isInstalledCommand = 'adb -s ' + this.udid + ' shell pm path ' + appPackage;
-  } else if (this.avdName) {
-    isInstalledCommand = 'adb -e shell pm path ' + appPackage;
+  } else {
+    isInstalledCommand = 'adb shell pm path ' + appPackage;
   }
   deviceCommon.isAppInstalled(isInstalledCommand, cb);
 };
@@ -921,8 +921,8 @@ Android.prototype.removeApp = function(appPackage, cb) {
   var removeCommand = null;
   if (this.udid) {
     removeCommand = 'adb -s ' + this.udid + ' uninstall ' + appPackage;
-  } else if (this.avdName) {
-    removeCommand = 'adb -e uninstall ' + appPackage;
+  } else {
+    removeCommand = 'adb uninstall ' + appPackage;
   }
   deviceCommon.removeApp(removeCommand, this.udid, appPackage, cb);
 };
@@ -931,8 +931,8 @@ Android.prototype.installApp = function(appPackage, cb) {
   var installationCommand = null;
   if (this.udid) {
     installationCommand = 'adb -s ' + this.udid + ' install ' + appPackage;
-  } else if (this.avdName) {
-    installationCommand = 'adb -s ' + this.avdName + ' install ' + appPackage;
+  } else {
+    installationCommand = 'adb install ' + appPackage;
   }
   deviceCommon.installApp(installationCommand, this.udid, appPackage, cb);
 };

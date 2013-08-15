@@ -42,6 +42,7 @@ In the Android SDK 22, the platform and build tools are split up into their own 
 * Make sure the app is compiled for the version of the simulator that's being run
 * If you've ever run Appium with sudo, you might need to `sudo rm /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use of Instruments. Usually a box will pop up that you enter your password into. If you're running Appium from source, you can simply run `sudo grunt authorize` from the main repo to avoid getting this popup. If you're running from npm, run `sudo authorize_ios` instead.
+* If you see `iOS Simulator failed to install the application.` and the paths are correct, try restarting the computer.
 
 ## FirefoxOS
 

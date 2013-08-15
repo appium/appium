@@ -1,3 +1,18 @@
+CHANGES IN VERSION 0.8.5 (from 0.8.4)
+=====================================
+
+#### GENERAL
+- reorder problematic async calls (issue #1000!)
+- misc refactoring
+
+#### Android
+- allow install/uninstall without device id
+- fix race condition in starting chromedriver
+
+#### Selendroid
+- update selendroid version
+
+
 CHANGES IN VERSION 0.8.4 (from 0.8.3)
 =====================================
 

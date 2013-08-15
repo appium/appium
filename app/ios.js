@@ -1381,8 +1381,8 @@ IOS.prototype.getPageSource = function(cb) {
 
 IOS.prototype.getPageSourceXML = IOS.prototype.getPageSource;
 
-IOS.prototype.waitForPageLoad = function(cb) {
-  this.proxy("au.waitForPageLoad()", cb);
+IOS.prototype.waitForPageLoad = function(timeout, cb) {
+  this.proxy("au.waitForPageLoad(" + timeout + ")", cb);
 };
 
 IOS.prototype.getAlertText = function(cb) {

@@ -634,8 +634,8 @@ Android.prototype.getPageSourceXML = function(cb) {
         });
 };
 
-Android.prototype.waitForPageLoad = function(cb) {
-  this.proxy(["waitForIdle", {}], cb);
+Android.prototype.waitForPageLoad = function(timeout, cb) {
+  this.proxy(["waitForIdle", {timeout: timeout}], cb);
 };
 
 Android.prototype.getAlertText = function(cb) {

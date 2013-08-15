@@ -2007,18 +2007,30 @@ IOS.prototype.getLogTypes = function(cb) {
 };
 
 IOS.prototype.isAppInstalled = function(bundleId, cb) {
-  var isInstalledCommand = 'build/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
-  deviceCommon.isAppInstalled(isInstalledCommand, cb);
+  if (this.udid) {
+      var isInstalledCommand = 'build/fruitstrap/fruitstrap isInstalled --id ' + this.udid + ' --bundle ' + bundleId;
+      deviceCommon.isAppInstalled(isInstalledCommand, cb);
+  } else {
+    cb(new Error("You can not call isInstalled for the iOS simulator!"));
+  }
 };
 
 IOS.prototype.removeApp = function(bundleId, cb) {
-  var removeCommand = 'build/fruitstrap/fruitstrap uninstall --id ' + this.udid + ' --bundle ' + bundleId;
-  deviceCommon.removeApp(removeCommand, this.udid, bundleId, cb);
+  if (this.udid) {
+    var removeCommand = 'build/fruitstrap/fruitstrap uninstall --id ' + this.udid + ' --bundle ' + bundleId;
+    deviceCommon.removeApp(removeCommand, this.udid, bundleId, cb);
+  } else {
+    cb(new Error("You can not call removeApp for the iOS simulator!"));
+  }
 };
 
 IOS.prototype.installApp = function(unzippedAppPath, cb) {
-  var installationCommand = 'build/fruitstrap/fruitstrap install --id ' + this.udid + ' --bundle ' + unzippedAppPath;
-  deviceCommon.installApp(installationCommand, this.udid, unzippedAppPath, cb);
+  if (this.udid) {
+    var installationCommand = 'build/fruitstrap/fruitstrap install --id ' + this.udid + ' --bundle ' + unzippedAppPath;
+    deviceCommon.installApp(installationCommand, this.udid, unzippedAppPath, cb);
+  } else {
+    cb(new Error("You can not call installApp for the iOS simulator!"));
+  }
 };
 
 IOS.prototype.unpackApp = function(req, cb) {

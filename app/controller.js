@@ -55,58 +55,46 @@ exports.getStatus = function(req, res) {
 };
 
 exports.installApp = function(req, res) {
-  if (req.appium.args.udid || req.appium.args.avdName) {
-    req.body = JSON.parse(req.body);
-    req.device.unpackApp(req, function(unpackedAppPath) {
-      if (unpackedAppPath === null) {
-        respondError(req, res, 'Only a (zipped) app/apk files can be installed using this endpoint');
-      } else {
-        req.device.installApp(unpackedAppPath, function(error, response) {
-          if (error !== null) {
-            respondError(req, res, response);
-          } else {
-            respondSuccess(req, res, response);
-          }
-        });
-      }
-    });
-  } else {
-    respondSuccess(req, res, 'No udid/avdName was provided, therefore the app [' + req.body.appPath + '] was not installed');
-  }
+  req.body = JSON.parse(req.body);
+  req.device.unpackApp(req, function(unpackedAppPath) {
+    if (unpackedAppPath === null) {
+      respondError(req, res, 'Only a (zipped) app/apk files can be installed using this endpoint');
+    } else {
+      req.device.installApp(unpackedAppPath, function(error, response) {
+        if (error !== null) {
+          respondError(req, res, response);
+        } else {
+          respondSuccess(req, res, response);
+        }
+      });
+    }
+  });
 };
 
 exports.removeApp = function(req, res) {
-  if (req.device.udid || req.device.avdName) {
-    req.body = JSON.parse(req.body);
-    req.device.removeApp(req.body.bundleId, function(error, response) {
-      if (error !== null) {
-        respondError(req, res, response);
-      } else {
-        respondSuccess(req, res, response);
-      }
-    });
-  } else {
-    respondSuccess(req, res, 'No udid/advName was provided, therefore the app [' + req.body.bundleId + '] was not removed');
-  }
+  req.body = JSON.parse(req.body);
+  req.device.removeApp(req.body.bundleId, function(error, response) {
+    if (error !== null) {
+      respondError(req, res, response);
+    } else {
+      respondSuccess(req, res, response);
+    }
+  });
 };
 
 exports.isAppInstalled = function(req, res) {
-  if (req.device.udid || req.device.avdName) {
-    req.body = JSON.parse(req.body);
-    req.device.isAppInstalled(req.body.bundleId, function(error, stdout) {
-      if (error !== null) {
-        respondSuccess(req, res, false);
+  req.body = JSON.parse(req.body);
+  req.device.isAppInstalled(req.body.bundleId, function(error, stdout) {
+    if (error !== null) {
+      respondSuccess(req, res, false);
+    } else {
+      if ((req.appium.args.udid && req.appium.args.udid.length === 40) || (typeof stdout[0] !== "undefined")) {
+        respondSuccess(req, res, true);
       } else {
-        if ((req.appium.args.udid && req.appium.args.udid.length === 40) || (typeof stdout[0] !== "undefined")) {
-          respondSuccess(req, res, true);
-        } else {
-          respondSuccess(req, res, false);
-        }
+        respondSuccess(req, res, false);
       }
-    });
-  } else {
-    respondSuccess(req, res, 'No udid/avdName was provided, therefore no check was done for app [' + req.body.bundleId + ']');
-  }
+    }
+  });
 };
 
 exports.launchApp = function(req, res) {

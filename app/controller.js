@@ -578,7 +578,10 @@ exports.getPageSource = function(req, res) {
 };
 
 exports.waitForPageLoad = function(req, res) {
-  req.device.waitForPageLoad(getResponseHandler(req, res));
+  req.body = _.defaults(req.body, { timeout: null });
+  var timeout = req.body.timeout;
+
+  req.device.waitForPageLoad(timeout, getResponseHandler(req, res));
 };
 
 exports.getAlertText = function(req, res) {

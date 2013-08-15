@@ -785,46 +785,76 @@ $.extend(au, {
       }
     }
 
-  , waitForPageLoad: function(preDelay) {
-    if (!preDelay) {
-      this.delay(0);
-    } else {
-      this.delay(preDelay);
+  , getWindowIndicators: function(window) {
+    var activityIndicators = mainWindow.activityIndicators();
+    var pageIndicators = mainWindow.pageIndicators();
+    var progressIndicators = mainWindow.progressIndicators();
+
+    var indicators = activityIndicators.toArray().concat(
+      pageIndicators.toArray(), progressIndicators.toArray());
+
+    // remove bad indicators
+    for (var i = indicators.length - 1; i >= 0; i--) {
+      if (indicators[i].type() === "UIAElementNil") {
+        indicators.splice(i,1);
+      }
+      if (indicators[i].isValid() === false) {
+        indicators.splice(i,1);
+      }
+    }
+    return indicators;
+  }
+
+  , waitForPageLoad: function(secs) {
+    var seconds = 30;
+    if (secs) {
+      seconds = parseInt(secs, 10);
     }
 
     this.target.pushTimeout(0);
+    this.delay(0.1);
+
+    var indicators = this.getWindowIndicators(this.mainWindow);
     var done = false;
     var counter = 0;
-    while ((!done) && (counter < 20)) {
 
-      var activityIndicators = mainWindow.activityIndicators();
-      var pageIndicators = mainWindow.pageIndicators();
-      var progressIndicators = mainWindow.progressIndicators();
+    while ((!done) && (counter < seconds)) {
+      var invisible = 0;
 
-      var indicators = activityIndicators.toArray().concat(
-          pageIndicators.toArray(), progressIndicators.toArray());
+      for (var i = 0; i < indicators.length; i++) {
+        console.log("[" + counter + "] waiting on " + indicators[i].type() + ": " +
+            " visible: " + indicators[i].isVisible() +
+            " parent: " + indicators[i].parent().type());
 
-      for (var i = 0; i < indicators.length; i++)
-        if (indicators[i].type() !== "UIAElementNil") {
-          this.delay(0.5);
-          console.log("[" + counter + "] waiting on indicator: " + indicators[i]);
-
-          if (indicators[i].isVisible() === 0 && indicators[i].isValid() === true) {
-            done = true;
-          }
-
-          counter++;
-        } else {
-          done = true;
+        if (indicators[i].isVisible() === 0 ||
+            indicators[i].parent().isVisible() === 0 ||
+            indicators[i].isVisible() === null) {
+          invisible++;
         }
       }
-      this.delay(1.5);
-      this.target.popTimeout();
+      
+      if (invisible == indicators.length) {
+        done = true;
+      }
+
+      counter++;
+      this.delay(1);
+    }
+
+    this.target.popTimeout();
+    if (!done) {
+      // indicators never went away...
+      console.log("WARNING: Waited for indicators to become non-visible but they never did, moving on");
       return {
-        status: codes.Success.code,
-        value: null
+        status: codes.UnknownError.code,
+        value: "Timed out waiting on activity indicator."
       };
     }
+    return {
+      status: codes.Success.code,
+      value: null
+    };
+  }
 
   // Alert-related functions
   , getAlertText: function() {

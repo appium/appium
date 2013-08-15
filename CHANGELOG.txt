@@ -11,6 +11,7 @@ CHANGES IN VERSION 0.8.5 (from 0.8.4)
 
 #### Selendroid
 - update selendroid version
+- fix issue preventing errors from proxying correctly
 
 
 CHANGES IN VERSION 0.8.4 (from 0.8.3)

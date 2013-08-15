@@ -22,6 +22,8 @@ var ChromeAndroid = function(opts) {
   this.chromedriver = "chromedriver";
   this.adb = null;
   this.onDie = function() {};
+  this.exitCb = null;
+  this.shuttingDown = false;
 };
 
 _.extend(ChromeAndroid.prototype, Android.prototype);
@@ -29,6 +31,7 @@ _.extend(ChromeAndroid.prototype, Android.prototype);
 ChromeAndroid.prototype.start = function(cb, onDie) {
   this.adb = new adb(this.opts);
   this.onDie = onDie;
+  this.onChromedriverStart = null;
   async.waterfall([
     this.ensureChromedriverExists.bind(this),
     this.startChromedriver.bind(this),
@@ -46,6 +49,7 @@ ChromeAndroid.prototype.ensureChromedriverExists = function(cb) {
 };
 
 ChromeAndroid.prototype.startChromedriver = function(cb) {
+  this.onChromedriverStart = cb;
   logger.info("Spawning chromedriver with: " + this.chromedriver);
   var alreadyReturned = false;
   var args = ["--url-base=wd/hub"];
@@ -56,6 +60,9 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
   this.proc.on('error', function(err) {
     logger.error('Chromedriver process failed with error: ' + err.message);
     alreadyReturned = true;
+    this.shuttingDown = true;
+    logger.error('Killing chromedriver');
+    this.proc.kill();
     this.onDie();
   }.bind(this));
 
@@ -72,17 +79,11 @@ ChromeAndroid.prototype.startChromedriver = function(cb) {
     logger.info('[CHROMEDRIVER STDERR] ' + data.trim());
   }));
 
-  this.proc.on('exit', function(code) {
-    logger.info("Chromedriver exited with code " + code);
-    alreadyReturned = true;
-    if (!this.chromedriverStarted) {
-      return cb(new Error("Chromedriver quit before it was available"));
-    }
-    this.onDie();
-  }.bind(this));
+  this.proc.on('exit', this.onClose.bind(this));
+  this.proc.on('close', this.onClose.bind(this));
 };
 
-ChromeAndroid.prototype.createSession = function(cb, alreadyRestarted) {
+ChromeAndroid.prototype.createSession = function(cb) {
   logger.info("Creating Chrome session");
   var pkg = 'com.android.chrome';
   if (this.opts.chromium) {
@@ -96,36 +97,55 @@ ChromeAndroid.prototype.createSession = function(cb, alreadyRestarted) {
       }
     }
   };
-  this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
-    if (err) return cb(err);
+  this.proxyNewSession(data, cb);
+};
 
-    if (res.statusCode === 303 && res.headers.location) {
-      logger.info("Successfully started chrome session");
-      var loc = res.headers.location;
-      this.chromeSessionId = /\/([^\/]+)$/.exec(loc)[1];
-      cb(null, this.chromeSessionId);
-    } else if (typeof body !== "undefined" &&
-               typeof body.value !== "undefined" &&
-               typeof body.value.message !== "undefined" &&
-               body.value.message.indexOf("Failed to run adb command") !== -1) {
-      logger.error("Chromedriver had trouble running adb");
-      if (!alreadyRestarted) {
-        logger.error("Restarting adb for chromedriver");
-        return this.adb.restartAdb(function() {
-          this.adb.getConnectedDevices(function() {
-            this.createSession(cb, true);
-          }.bind(this));
-        }.bind(this));
-      } else {
-        cb(new Error("Chromedriver wasn't able to use adb. Is the server up?"));
+ChromeAndroid.prototype.proxyNewSession = function(data, cb) {
+  var maxRetries = 5;
+  var curRetry = 0;
+  var retryInt = 500;
+  var doProxy = function(alreadyRestarted) {
+    this.proxyTo('/wd/hub/session', 'POST', data, function(err, res, body) {
+      if (err) {
+        if (/ECONNREFUSED/.test(err.message) && curRetry < maxRetries) {
+          logger.info("Could not connect yet; retrying");
+          curRetry++;
+          setTimeout(doProxy, retryInt);
+          return;
+        }
+        return cb(err);
       }
-    } else {
-      logger.error("Chromedriver create session did not work. Status was " +
-                   res.statusCode + " and body was " +
-                   JSON.stringify(body));
-      cb(new Error("Did not get session redirect from Chromedriver"));
-    }
-  }.bind(this));
+
+      if (res.statusCode === 303 && res.headers.location) {
+        logger.info("Successfully started chrome session");
+        var loc = res.headers.location;
+        this.chromeSessionId = /\/([^\/]+)$/.exec(loc)[1];
+        cb(null, this.chromeSessionId);
+      } else if (typeof body !== "undefined" &&
+                 typeof body.value !== "undefined" &&
+                 typeof body.value.message !== "undefined" &&
+                 body.value.message.indexOf("Failed to run adb command") !== -1) {
+        logger.error("Chromedriver had trouble running adb");
+        if (!alreadyRestarted) {
+          logger.error("Restarting adb for chromedriver");
+          return this.adb.restartAdb(function() {
+            this.adb.getConnectedDevices(function() {
+              doProxy(true);
+            }.bind(this));
+          }.bind(this));
+        } else {
+          cb(new Error("Chromedriver wasn't able to use adb. Is the server up?"));
+        }
+      } else {
+        logger.error("Chromedriver create session did not work. Status was " +
+                     res.statusCode + " and body was " +
+                     JSON.stringify(body));
+        cb(new Error("Did not get session redirect from Chromedriver"));
+      }
+    }.bind(this));
+  }.bind(this);
+
+  doProxy();
 };
 
 ChromeAndroid.prototype.deleteSession = function(cb) {
@@ -137,14 +157,33 @@ ChromeAndroid.prototype.deleteSession = function(cb) {
 };
 
 ChromeAndroid.prototype.stop = function(cb) {
+  logger.info('Killing chromedriver');
+  this.exitCb = cb;
   this.proc.kill();
-  async.series([
-    this.adb.getConnectedDevices.bind(this.adb),
-    this.adb.stopApp.bind(this.adb)
-  ], function(err) {
-    if (err) logger.error(err.message);
-    cb(0);
-  });
+};
+
+ChromeAndroid.prototype.onClose = function(code, signal) {
+  if (!this.shuttingDown) {
+    this.shuttingDown = true;
+    logger.info("Chromedriver exited with code " + code);
+    if (signal) {
+      logger.info("(killed by signal " + signal + ")");
+    }
+    if (!this.chromedriverStarted) {
+      return this.onChromedriverStart(
+          new Error("Chromedriver quit before it was available"));
+    }
+    async.series([
+      this.adb.getConnectedDevices.bind(this.adb),
+      this.adb.stopApp.bind(this.adb)
+    ], function(err) {
+      if (err) logger.error(err.message);
+      if (this.exitCb !== null) {
+        return this.exitCb();
+      }
+      this.onDie();
+    }.bind(this));
+  }
 };
 
 ChromeAndroid.prototype.proxyTo = proxyTo;

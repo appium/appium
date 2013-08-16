@@ -159,6 +159,12 @@ Instruments.prototype.launch = function() {
 
       self.proc.on('exit', function(code) {
         self.debug("Instruments exited with code " + code);
+        if (self.curCommand && self.curCommand.cb) {
+          self.curCommand.cb({
+            status: code,
+            value: "Instruments exited with code " + code
+          });
+        }
         self.exitCode = code;
         self.exitHandler(self.exitCode, self.traceDir);
         self.proc.stdin.end();

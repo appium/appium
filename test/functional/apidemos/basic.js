@@ -77,6 +77,18 @@ describeWd('basic', function(h) {
       done();
     });
   });
+  it('should be able to detect if app is installed', function(done) {
+    h.driver.execute('mobile: isAppInstalled', [{bundleId: 'foo'}], function(err, isInstalled) {
+      should.not.exist(err);
+      isInstalled.should.equal(false);
+      h.driver.execute('mobile: isAppInstalled', [{bundleId: 'com.example.android.apis'}],
+        function(err, isInstalled) {
+          should.not.exist(err);
+          isInstalled.should.equal(true);
+          done();
+      });
+    });
+  });
 });
 
 describeWd2('activity style: no period', function(h) {

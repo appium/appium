@@ -2,7 +2,7 @@
 "use strict";
 
 var path = require('path')
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.4.2.apk")
+  , appPath = path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.5.0.apk")
   , appPkg = "io.selendroid.testapp"
   , appAct = ".HomeScreenActivity"
   , driverBlock = require("../../helpers/driverblock.js")

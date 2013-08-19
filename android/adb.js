@@ -816,15 +816,16 @@ ADB.prototype.getConnectedDevices = function(cb) {
       var devices = [];
       _.each(stdout.split("\n"), function(line) {
         if (line.trim() !== "" && line.indexOf("List of devices") === -1 && line.indexOf("* daemon") === -1 && line.indexOf("offline") == -1) {
-          devices.push(line.split("\t"));
+          var lineInfo = line.split("\t");
+          devices.push({udid: lineInfo[0], state: lineInfo[1]}); // state is either "device" or "offline", afaict
         }
       });
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
-        this.debug("Setting device id to " + (this.udid || devices[0][0]));
+        this.debug("Setting device id to " + (this.udid || devices[0].udid));
         this.emulatorPort = null;
-        var emPort = this.getPortFromEmulatorString(devices[0][0]);
-        this.setDeviceId(this.udid || devices[0][0]);
+        var emPort = this.getPortFromEmulatorString(devices[0].udid);
+        this.setDeviceId(this.udid || devices[0].udid);
         if (emPort && !this.udid) {
           this.emulatorPort = emPort;
         }

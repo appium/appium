@@ -266,7 +266,7 @@ IOS.prototype.installToRealDevice = function (cb) {
           cb();
         }
       }.bind(this),
-      function (cb) { d.installAndWait(this.ipa, this.bundleId, cb); }
+      function (cb) { d.installAndWait(this.ipa, this.bundleId, cb); }.bind(this)
     ], cb);
   } else {
     logger.debug("No device id or app, not installing to real device.");
@@ -396,7 +396,7 @@ IOS.prototype.cleanupAppState = function(cb) {
               logger.info("Removed " + this.bundleId);
               cb();
             }
-          });
+          }.bind(this));
         } else {
           cb();
         }

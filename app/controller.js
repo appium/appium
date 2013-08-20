@@ -888,6 +888,14 @@ exports.unknownCommand = function(req, res) {
   res.send(404, "That URL did not map to a valid JSONWP resource");
 };
 
+exports.localScreenshot = function(req, res) {
+  var file = req.body.file;
+
+  if (checkMissingParams(res, {file: file})) {
+    req.device.localScreenshot(file, getResponseHandler(req, res));
+  }
+};
+
 exports.notYetImplemented = notYetImplemented;
 var mobileCmdMap = {
   'tap': exports.mobileTap
@@ -924,6 +932,7 @@ var mobileCmdMap = {
   , 'longClick' : exports.touchLongClick
   , 'pinchClose': exports.mobilePinchClose
   , 'pinchOpen': exports.mobilePinchOpen
+  , 'localScreenshot': exports.localScreenshot
 };
 
 exports.produceError = function(req, res) {

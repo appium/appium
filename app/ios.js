@@ -1424,6 +1424,32 @@ IOS.prototype.setOrientation = function(orientation, cb) {
   }.bind(this));
 };
 
+IOS.prototype.localScreenshot = function(desiredFile, cb) {
+  // Instruments automatically adds .png
+  var screenshotFolder = "/tmp/appium-instruments/Run 1/";
+  var filename = path.basename(desiredFile, path.extname(desiredFile));
+  var command = "au.capture('" + filename + "')";
+  var filePath = screenshotFolder + filename;
+
+  // Must delete the png if it exists or instruments will
+  // add a sequential integer to the file name.
+  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+  async.series([
+    function (cb) { this.proxy(command, cb); }.bind(this),
+    function (cb) {
+      // must exist or rename will fail.
+      var desiredFolder = path.dirname(desiredFile);
+      mkdirp.sync(desiredFolder);
+      fs.rename(filePath + ".png", desiredFile, cb);
+    }.bind(this),
+  ], function(){
+    cb(null, {
+       status: status.codes.Success.code
+     });
+  });
+};
+
 IOS.prototype.getScreenshot = function(cb) {
   var guid = uuid.create();
   var command = ["au.capture('screenshot", guid ,"')"].join('');

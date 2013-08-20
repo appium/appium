@@ -670,6 +670,30 @@ Android.prototype.setOrientation = function(orientation, cb) {
   this.proxy(["orientation", {orientation: orientation}], cb);
 };
 
+Android.prototype.localScreenshot = function(file, cb) {
+  this.adb.requireDeviceId();
+  async.series([
+    function(cb) {
+      this.proxy(["takeScreenshot"], cb);
+    }.bind(this),
+    function(cb) {
+      var cmd = this.adb.adbCmd + ' pull /data/local/tmp/screenshot.png "' + file + '"';
+      exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+        if (err) {
+          logger.warn(stderr);
+          return cb(err);
+        }
+        cb(null);
+      });
+    }.bind(this),
+  ],
+  function(){
+    cb(null, {
+      status: status.codes.Success.code
+    });
+  });
+};
+
 Android.prototype.getScreenshot = function(cb) {
   this.adb.requireDeviceId();
   var localfile = temp.path({prefix: 'appium', suffix: '.png'});

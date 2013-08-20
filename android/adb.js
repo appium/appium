@@ -23,6 +23,7 @@ var spawn = require('win-spawn')
 var noop = function() {};
 
 var ADB = function(opts, android) {
+  // console.log('INSIDE ADB: ', opts);
   if (!opts) {
     opts = {};
   }
@@ -837,14 +838,19 @@ ADB.prototype.getConnectedDevices = function(cb) {
 
 ADB.prototype.forwardPort = function(cb) {
   this.requireDeviceId();
-  this.debug("Forwarding system:" + this.systemPort + " to device:" +
+  this.debug("Forwarding system:" + this.devicePort + " to device:" +
              this.devicePort);
-  var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
+  var arg = "tcp:" + this.devicePort + " tcp:" + this.devicePort;
+  // this.debug("Forwarding system:" + this.systemPort + " to device:" +
+  //            this.devicePort);
+  // var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
   exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, function(err) {
     if (err) {
+      console.log('boom err')
       logger.error(err);
       cb(err);
     } else {
+      console.log('boom success')
       this.portForwarded = true;
       cb(null);
     }
@@ -855,7 +861,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   logger.info("Running bootstrap");
   this.requireDeviceId();
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
-      "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
+      "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap", "-e", "devicePort", this.devicePort];
   logger.info(this.adb + " " + args.join(" "));
   this.proc = spawn(this.adb.substr(1, this.adb.length - 2), args);
   this.onSocketReady = readyCb;

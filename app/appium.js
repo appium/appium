@@ -515,11 +515,13 @@ Appium.prototype.invoke = function() {
           , keystorePassword: this.args.keystorePassword
           , keyAlias: this.args.keyAlias
           , keyPassword: this.args.keyPassword
+          , devicePort: this.args.devicePort
         };
         if (this.isChrome()) {
           androidOpts.chromium = this.args.chromium;
           this.devices[this.deviceType] = chrome(androidOpts);
         } else {
+          // console.log('APPIUM ANDROID OPTS: ', androidOpts)
           this.devices[this.deviceType] = android(androidOpts);
         }
       } else if (this.isSelendroid()) {

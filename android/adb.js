@@ -23,7 +23,6 @@ var spawn = require('win-spawn')
 var noop = function() {};
 
 var ADB = function(opts, android) {
-  // console.log('INSIDE ADB: ', opts);
   if (!opts) {
     opts = {};
   }
@@ -38,8 +37,8 @@ var ADB = function(opts, android) {
   this.skipUninstall = opts.fastReset || !opts.reset || false;
   this.fastReset = opts.fastReset;
   this.cleanApp = opts.cleanApp || this.fastReset;
-  this.systemPort = opts.port || 4724;
-  this.devicePort = opts.devicePort || 4724;
+  this.systemPort = opts.systemPort || 4724;
+  this.internalDevicePort = opts.devicePort || 4724;
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
@@ -838,19 +837,14 @@ ADB.prototype.getConnectedDevices = function(cb) {
 
 ADB.prototype.forwardPort = function(cb) {
   this.requireDeviceId();
-  this.debug("Forwarding system:" + this.devicePort + " to device:" +
-             this.devicePort);
-  var arg = "tcp:" + this.devicePort + " tcp:" + this.devicePort;
-  // this.debug("Forwarding system:" + this.systemPort + " to device:" +
-  //            this.devicePort);
-  // var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
+  this.debug("Forwarding system:" + this.systemPort + " to device:" +
+             this.internalDevicePort);
+  var arg = "tcp:" + this.systemPort + " tcp:" + this.internalDevicePort;
   exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, function(err) {
     if (err) {
-      console.log('boom err')
       logger.error(err);
       cb(err);
     } else {
-      console.log('boom success')
       this.portForwarded = true;
       cb(null);
     }
@@ -861,7 +855,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
   logger.info("Running bootstrap");
   this.requireDeviceId();
   var args = ["-s", this.curDeviceId, "shell", "uiautomator", "runtest",
-      "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap", "-e", "devicePort", this.devicePort];
+      "AppiumBootstrap.jar", "-c", "io.appium.android.bootstrap.Bootstrap"];
   logger.info(this.adb + " " + args.join(" "));
   this.proc = spawn(this.adb.substr(1, this.adb.length - 2), args);
   this.onSocketReady = readyCb;
@@ -905,7 +899,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
 ADB.prototype.checkForSocketReady = function(output) {
   if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
-    this.debug("Connecting to server on device...");
+    this.debug("Connecting to server on device on port " + this.systemPort + "...");
     this.socketClient = net.connect(this.systemPort, function() {
       this.debug("Connected!");
       this.onSocketReady(null);

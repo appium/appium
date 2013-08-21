@@ -26,7 +26,7 @@ var Selendroid = function(opts) {
   this.adb = null;
   this.isProxy = true;
   this.proxyHost = 'localhost';
-  this.proxyPort = opts.port;
+  this.proxyPort = opts.systemPort;
   this.avoidProxy = [
     ['GET', new RegExp('^/wd/hub/session/[^/]+/log/types$')]
     , ['POST', new RegExp('^/wd/hub/session/[^/]+/log')]

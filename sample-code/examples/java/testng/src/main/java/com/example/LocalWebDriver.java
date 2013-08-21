@@ -47,7 +47,12 @@ public class LocalWebDriver  {
 	 */
 	public void installApp(){
 		if (desired.getCapability("app") != null){
-			this.installApp(desired.getCapability("app").toString());
+			try {
+				Object result = remoteWebDriver.executeScript("mobile: installApp");
+				logger.info(result.toString());
+			} catch (WebDriverException e) {
+				logger.error(e.getMessage());
+			}
 		} else {
 			logger.error("You have to supply the app parameter before calling the install app.");
 		}
@@ -61,7 +66,9 @@ public class LocalWebDriver  {
 	 */
 	public void installApp(String appPath){
 		try {
-			Object result = remoteWebDriver.executeScript("mobile: installApp","{\"appPath\":\"" + appPath + "\"}");
+			Map<String, String> args = new HashMap<String, String>();
+			args.put("appPath", appPath);
+			Object result = remoteWebDriver.executeScript("mobile: installApp", args);
 			logger.info(result.toString());
 		} catch (WebDriverException e) {
 			logger.error(e.getMessage());
@@ -100,7 +107,9 @@ public class LocalWebDriver  {
 	 */
 	public void unInstallApp(String bundleId){
 		try {
-			Object result = remoteWebDriver.executeScript("mobile: removeApp","{\"bundleId\":\"" + bundleId + "\"}");
+			Map<String, String> args = new HashMap<String, String>();
+			args.put("bundleId", bundleId);
+			Object result = remoteWebDriver.executeScript("mobile: removeApp", args);
 			logger.info(result.toString());
 		} catch (WebDriverException e) {
 			logger.error(e.getMessage());
@@ -117,7 +126,9 @@ public class LocalWebDriver  {
 	 */
 	public boolean isAppInstalled(String bundleId){
 		try {
-			Object result = remoteWebDriver.executeScript("mobile: isAppInstalled","{\"bundleId\":\"" + bundleId + "\"}");
+			Map<String, String> args = new HashMap<String, String>();
+			args.put("bundleId", bundleId);
+			Object result = remoteWebDriver.executeScript("mobile: isAppInstalled", args);
 			if (result.toString().toLowerCase().equals("true")) {
 				return true;
 			} else if (result.toString().toLowerCase().equals("false")) {

@@ -55,20 +55,27 @@ exports.getStatus = function(req, res) {
 };
 
 exports.installApp = function(req, res) {
-  if (checkMissingParams(res, {appPath: req.body.appPath}, true)) {
+  var install = function(appPath) {
+    req.device.installApp(appPath, function(error, response) {
+      if (error !== null) {
+        respondError(req, res, response);
+      } else {
+        respondSuccess(req, res, response);
+      }
+    });
+  };
+  if (typeof req.body.appPath !== "undefined") {
     req.device.unpackApp(req, function(unpackedAppPath) {
       if (unpackedAppPath === null) {
         respondError(req, res, 'Only a (zipped) app/apk files can be installed using this endpoint');
       } else {
-        req.device.installApp(unpackedAppPath, function(error, response) {
-          if (error !== null) {
-            respondError(req, res, response);
-          } else {
-            respondSuccess(req, res, response);
-          }
-        });
+        install(unpackedAppPath);
       }
     });
+  } else if (typeof req.appium.args.app !== "undefined") {
+      install(req.appium.args.app);
+  } else {
+    respondError(req, res, "No app defined (either through desired capabilities or as an argument)");
   }
 };
 

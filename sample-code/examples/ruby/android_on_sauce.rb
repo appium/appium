@@ -17,6 +17,7 @@
 # somewhere Sauce Labs' cloud can fetch it for your test.
 
 require "selenium-webdriver"
+require 'selenium/webdriver/remote/http/persistent'
 require "rspec"
 
 def capabilities
@@ -54,11 +55,17 @@ end
 
 describe "Notepad" do
   before :all do
+    http_client = ::Selenium::WebDriver::Remote::Http::Persistent.new
+    http_client.timeout = 300 # Allow for slow network or boot time
+    
     @driver ||= Selenium::WebDriver.for(
       :remote, 
       :desired_capabilities => capabilities,
-      :url => url_with_credentials
+      :url => url_with_credentials,
+      :http_client => http_client
     )
+    
+    http_client.timeout = 90
   end
 
   after :all do

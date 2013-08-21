@@ -49,6 +49,15 @@ var args = [
     , help: 'port to listen on'
   }],
 
+  [['-dp', '--device-port'] , {
+    defaultValue: 4724
+    , dest: 'devicePort'
+    , required: false
+    , type: 'int'
+    , example: "4724"
+    , help: 'port to connect to device on'
+  }],
+
   [['-k', '--keep-artifacts'] , {
     defaultValue: false
     , dest: 'keepArtifacts'

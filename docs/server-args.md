@@ -14,7 +14,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
-|`-dp`, `--device-port`|4724|port to connect to device on|`--device-port 4724`|
+|`-dp`, `--device-port`|4724|(Android-only) port to connect to device on|`--device-port 4724`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`--no-session-override`|false|Disables session override||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||

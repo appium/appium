@@ -37,8 +37,8 @@ var ADB = function(opts, android) {
   this.skipUninstall = opts.fastReset || !opts.reset || false;
   this.fastReset = opts.fastReset;
   this.cleanApp = opts.cleanApp || this.fastReset;
-  this.systemPort = opts.port || 4724;
-  this.devicePort = opts.devicePort || 4724;
+  this.systemPort = opts.systemPort || 4724;
+  this.internalDevicePort = opts.devicePort || 4724;
   this.avdName = opts.avdName;
   this.appPackage = opts.appPackage;
   this.appActivity = opts.appActivity;
@@ -816,15 +816,16 @@ ADB.prototype.getConnectedDevices = function(cb) {
       var devices = [];
       _.each(stdout.split("\n"), function(line) {
         if (line.trim() !== "" && line.indexOf("List of devices") === -1 && line.indexOf("* daemon") === -1 && line.indexOf("offline") == -1) {
-          devices.push(line.split("\t"));
+          var lineInfo = line.split("\t");
+          devices.push({udid: lineInfo[0], state: lineInfo[1]}); // state is either "device" or "offline", afaict
         }
       });
       this.debug(devices.length + " device(s) connected");
       if (devices.length) {
-        this.debug("Setting device id to " + (this.udid || devices[0][0]));
+        this.debug("Setting device id to " + (this.udid || devices[0].udid));
         this.emulatorPort = null;
-        var emPort = this.getPortFromEmulatorString(devices[0][0]);
-        this.setDeviceId(this.udid || devices[0][0]);
+        var emPort = this.getPortFromEmulatorString(devices[0].udid);
+        this.setDeviceId(this.udid || devices[0].udid);
         if (emPort && !this.udid) {
           this.emulatorPort = emPort;
         }
@@ -837,8 +838,8 @@ ADB.prototype.getConnectedDevices = function(cb) {
 ADB.prototype.forwardPort = function(cb) {
   this.requireDeviceId();
   this.debug("Forwarding system:" + this.systemPort + " to device:" +
-             this.devicePort);
-  var arg = "tcp:" + this.systemPort + " tcp:" + this.devicePort;
+             this.internalDevicePort);
+  var arg = "tcp:" + this.systemPort + " tcp:" + this.internalDevicePort;
   exec(this.adbCmd + " forward " + arg, { maxBuffer: 524288 }, function(err) {
     if (err) {
       logger.error(err);
@@ -898,7 +899,7 @@ ADB.prototype.runBootstrap = function(readyCb, exitCb) {
 ADB.prototype.checkForSocketReady = function(output) {
   if (/Appium Socket Server Ready/.test(output)) {
     this.requirePortForwarded();
-    this.debug("Connecting to server on device...");
+    this.debug("Connecting to server on device on port " + this.systemPort + "...");
     this.socketClient = net.connect(this.systemPort, function() {
       this.debug("Connected!");
       this.onSocketReady(null);

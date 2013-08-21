@@ -14,6 +14,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
+|`-dp`, `--device-port`|4724|port to connect to device on|`--device-port 4724`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`--no-session-override`|false|Disables session override||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||
@@ -36,7 +37,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
-|`--keystore-path`|/Users/jlipps/.android/debug.keystore|(Android-only) Path to keystore||
+|`--keystore-path`|/Users/rockbot/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||

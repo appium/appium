@@ -515,6 +515,7 @@ Appium.prototype.invoke = function() {
           , keystorePassword: this.args.keystorePassword
           , keyAlias: this.args.keyAlias
           , keyPassword: this.args.keyPassword
+          , systemPort: this.args.devicePort
         };
         if (this.isChrome()) {
           androidOpts.chromium = this.args.chromium;
@@ -534,7 +535,7 @@ Appium.prototype.invoke = function() {
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset
-          , port: this.args.selendroidPort
+          , systemPort: this.args.selendroidPort
           , fastReset: this.fastReset
           , useKeystore: this.args.useKeystore
           , keystorePath: this.args.keystorePath

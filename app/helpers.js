@@ -103,20 +103,27 @@ exports.testZipArchive = function(zipPath, cb) {
 };
 
 exports.unzipApp = function(zipPath, appExt, cb) {
-  exports.unzipFile(zipPath, function(err, output) {
-    if (!err) {
-      var reg = new RegExp("inflating: (.+" + appExt + ")/?");
-      var match = reg.exec(output);
-      if (match) {
-        var appPath = path.resolve(path.dirname(zipPath), match[1]);
-        cb(null, appPath);
-      } else {
-        cb("App zip unzipped OK, but we couldn't find a .app bundle in it. " +
-           "Make sure your archive contains the .app package and nothing else",
-           null);
-      }
+  exec("find " + path.dirname(zipPath) + " -type d -name '*" + appExt + "' | xargs rm -rf " + path.dirname(zipPath) +
+    "/Payload*", function(error, stdout, stderr){
+    if (!error) {
+      exports.unzipFile(zipPath, function(err, output) {
+        if (!err) {
+          var reg = new RegExp("inflating: (.+" + appExt + ")/?");
+          var match = reg.exec(output);
+          if (match) {
+            var appPath = path.resolve(path.dirname(zipPath), match[1]);
+            cb(null, appPath);
+          } else {
+            cb("App zip unzipped OK, but we couldn't find a .app bundle in it. " +
+              "Make sure your archive contains the .app package and nothing else",
+              null);
+          }
+        } else {
+          cb(err, null);
+        }
+      });
     } else {
-      cb(err, null);
+      cb(error, null);
     }
   });
 };

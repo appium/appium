@@ -55,7 +55,7 @@ var args = [
     , required: false
     , type: 'int'
     , example: "4724"
-    , help: 'port to connect to device on'
+    , help: '(Android-only) port to connect to device on'
   }],
 
   [['-k', '--keep-artifacts'] , {

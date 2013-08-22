@@ -30,7 +30,6 @@
 
 require 'rspec'
 require 'selenium-webdriver'
-require 'timeout'
 
 APP_PATH = '../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
 
@@ -40,29 +39,6 @@ def absolute_app_path
     raise "App doesn't exist #{file}" unless File.exist? file
     file
 end
-
-
-def keep_trying(timeout)
-  e = nil
-  begin
-    Timeout.timeout(timeout) do
-      while true
-        begin
-          yield
-        rescue => e
-          retry
-        end
-        break
-      end
-    end
-  rescue Timeout::Error
-    if e.nil?
-      raise
-    end
-    raise e
-  end
-end
-
 
 capabilities = {
   'browserName' => 'iOS',
@@ -76,6 +52,7 @@ server_url = "http://127.0.0.1:4723/wd/hub"
 describe "Computation" do
   before :all do
     @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
+    @driver.manage.timeouts.implicit_wait = 10 # seconds
    end
 
   after :all do
@@ -113,10 +90,11 @@ describe "Computation" do
     buttons = alert.find_elements(:tag_name, 'button')
     buttons[0].text.should eq("Cancel")
     buttons[0].click
-    keep_trying 30 do
+    wait = Selenium::WebDriver::Wait.new(:timeout => 30) # seconds
+    wait.until {
       alerts = @driver.find_elements(:tag_name, 'alert')
       alerts.should be_empty
-    end
+    }
   end
 
   it "should get window size" do

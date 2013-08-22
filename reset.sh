@@ -122,7 +122,7 @@ get_apidemos() {
 uninstall_android_app() {
     echo "* Attempting to uninstall android app $1"
     if (which adb >/dev/null); then
-        if (adb devices | grep "\tdevice" >/dev/null); then
+        if (adb devices | grep "device$" >/dev/null); then
             run_cmd adb uninstall $1
         else
             echo "* No devices found, skipping"

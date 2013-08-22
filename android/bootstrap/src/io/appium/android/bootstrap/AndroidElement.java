@@ -4,6 +4,7 @@ import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.exceptions.NoAttributeFoundException;
 import io.appium.android.bootstrap.utils.Point;
 import android.graphics.Rect;
+import android.os.Build;
 
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
@@ -27,10 +28,6 @@ public class AndroidElement {
     el = uiObj;
   }
 
-  public UiObject getUiObject() {
-    return this.el;
-  }
-
   public void clearText() throws UiObjectNotFoundException {
     el.clearTextField();
   }
@@ -39,8 +36,24 @@ public class AndroidElement {
     return el.click();
   }
 
-  public boolean longClick() throws UiObjectNotFoundException {
-    return el.longClick();
+  public boolean dragTo(final int destX, final int destY, final int steps)
+      throws UiObjectNotFoundException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return el.dragTo(destX, destY, steps);
+    } else {
+      Logger.error("Device does not support API >= 18!");
+      return false;
+    }
+  }
+
+  public boolean dragTo(final UiObject destObj, final int steps)
+      throws UiObjectNotFoundException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return el.dragTo(destObj, steps);
+    } else {
+      Logger.error("Device does not support API >= 18!");
+      return false;
+    }
   }
 
   public Point getAbsolutePosition(final Double X, final Double Y)
@@ -167,6 +180,14 @@ public class AndroidElement {
     return el.getText();
   }
 
+  public UiObject getUiObject() {
+    return el;
+  }
+
+  public boolean longClick() throws UiObjectNotFoundException {
+    return el.longClick();
+  }
+
   public void setId(final String id) {
     this.id = id;
   }
@@ -174,4 +195,5 @@ public class AndroidElement {
   public boolean setText(final String text) throws UiObjectNotFoundException {
     return el.setText(text);
   }
+
 }

@@ -118,6 +118,46 @@ describeWd('gestures', function(h) {
       });
     });
   });
+  it('should drag by pixels', function(done) {
+    var swipeOpts = {
+      startX: 100
+      , startY: 500
+      , endX: 100
+      , endY: 100
+      , duration: 1.2
+    };
+    h.driver.execute("mobile: swipe", [swipeOpts], function(err) {
+      should.not.exist(err);
+      h.driver.elementByXPath("//text[@value='Views']", function(err, el) {
+        should.not.exist(err);
+        el.click(function(err) {
+          h.driver.elementByXPath("//text[@value='Drag and Drop']", function(err, el) {
+            should.not.exist(err);
+            el.click(function(err) {
+              should.not.exist(err);
+              var dragOpts = {
+                startX: 120
+                , startY: 550
+                , endX: 350
+                , endY: 300
+              };
+              h.driver.execute("mobile: drag", [dragOpts], function(err) {
+                should.not.exist(err);
+                h.driver.elementsByTagName("text", function(err, els) {
+                  should.not.exist(err);
+                  els[els.length - 2].text(function(err, text) {
+                    should.not.exist(err);
+                    text.should.equal("Dropped!");
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });
 
 describeWd('scroll to element', function(h) {

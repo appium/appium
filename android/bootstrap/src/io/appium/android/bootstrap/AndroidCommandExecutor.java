@@ -4,6 +4,7 @@ import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
+import io.appium.android.bootstrap.handler.Drag;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
@@ -41,6 +42,7 @@ class AndroidCommandExecutor {
     map.put("orientation", new Orientation());
     map.put("swipe", new Swipe());
     map.put("flick", new Flick());
+    map.put("drag", new Drag());
     map.put("click", new Click());
     map.put("touchLongClick", new TouchLongClick());
     map.put("getText", new GetText());

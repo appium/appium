@@ -13,3 +13,6 @@
 [submodule "submodules/fruitstrap"]
 	path = submodules/fruitstrap
 	url = https://github.com/tborys/fruitstrap.git
+[submodule "submodules/io.appium.gappium.sampleapp"]
+	path = submodules/io.appium.gappium.sampleapp
+	url = git@github.com:appium/io.appium.gappium.sampleapp.git

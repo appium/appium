@@ -8,6 +8,7 @@ set -e
 should_reset_android=false
 should_reset_ios=false
 should_reset_selendroid=false
+should_reset_gappium=false
 include_dev=false
 appium_home=$(pwd)
 reset_successful=false
@@ -22,6 +23,7 @@ do
         "--android") should_reset_android=true;;
         "--ios") should_reset_ios=true;;
         "--selendroid") should_reset_selendroid=true;;
+        "--gappium") should_reset_gappium=true;;
         "--dev") include_dev=true;;
         "-v") verbose=true;;
         "--verbose") verbose=true;;
@@ -30,10 +32,11 @@ do
     shift
 done
 
-if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid ; then
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium ; then
     should_reset_android=true
     should_reset_ios=true
     should_reset_selendroid=true
+    should_reset_gappium=true
 fi
 
 run_cmd() {
@@ -206,6 +209,15 @@ reset_selendroid() {
     run_cmd $grunt setConfigVer:selendroid
 }
 
+reset_gappium() {
+    echo "RESETTING GAPPIUM"
+    run_cmd git submodule update --init submodules/io.appium.gappium.sampleapp
+    run_cmd pushd submodules/io.appium.gappium.sampleapp
+    run_cmd ./reset.sh -v
+    run_cmd popd
+    run_cmd ln -s $appium_home/submodules/io.appium.gappium.sampleapp $appium_home/sample-code/apps/io.appium.gappium.sampleapp
+}
+
 cleanup() {
     echo "CLEANING UP"
     echo "* Cleaning any temp files"
@@ -230,6 +242,9 @@ main() {
     fi
     if $should_reset_selendroid ; then
         reset_selendroid
+    fi
+    if $should_reset_gappium ; then
+        reset_gappium
     fi
     cleanup
     reset_successful=true

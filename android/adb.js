@@ -90,7 +90,9 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     var binaryLocs = [ path.resolve(this.sdkRoot, "platform-tools", binaryName)
         , path.resolve(this.sdkRoot, "tools", binaryName)
         , path.resolve(this.sdkRoot, "build-tools", "17.0.0", binaryName)
-        , path.resolve(this.sdkRoot, "build-tools", "android-4.2.2", binaryName)];
+        , path.resolve(this.sdkRoot, "build-tools", "android-4.2.2", binaryName)]
+        , path.resolve(this.sdkRoot, "build-tools", "18.0.1", binaryName)
+        , path.resolve(this.sdkRoot, "build-tools", "android-4.3", binaryName)];
     _.each(binaryLocs, function(loc) {
       if (fs.existsSync(loc)) binaryLoc = loc;
     });
@@ -214,11 +216,11 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
   }
 
   var platforms = path.resolve(androidHome , 'platforms')
-    , platform = 'android-17';
+    , platform = 'android-18';
 
-  // android-17 may be called android-4.2
+  // android-18 may be called android-4.3
   if (!fs.existsSync(path.resolve(platforms, platform))) {
-    platform = 'android-4.2';
+    platform = 'android-4.3';
 
     if (!fs.existsSync(path.resolve(platforms, platform))) {
       return cb(new Error("Platform doesn't exist " + platform));

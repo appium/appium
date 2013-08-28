@@ -44,7 +44,7 @@ For iOS automation:
 
 For Android automation:
 
-* Android SDK API &gt;= 17
+* Android SDK API &gt;= 17 (Additional features require 18)
 
 User Quick Start
 ------------

@@ -1532,6 +1532,10 @@ IOS.prototype.fakeFlickElement = function(elementId, xoffset, yoffset, speed, cb
   this.proxy(command, cb);
 };
 
+IOS.prototype.drag = function(startX, startY, endX, endY, steps, elementId, destElId, cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 IOS.prototype.swipe = function(startX, startY, endX, endY, duration, touchCount, elId, cb) {
   var command;
   if (elId) {

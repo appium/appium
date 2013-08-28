@@ -45,6 +45,24 @@ public class AndroidCommand {
   }
 
   /**
+   * Get the {@link AndroidElement destEl} this command is to operate on (must
+   * provide the "desElId" parameter).
+   * 
+   * @return {@link AndroidElement}
+   * @throws ElementNotInHashException
+   * @throws JSONException
+   */
+  public AndroidElement getDestElement() throws ElementNotInHashException,
+      JSONException {
+    AndroidElement destEl = null;
+    String destElId = null;
+
+    destElId = (String) params().get("destElId");
+    destEl = AndroidElementsHash.getInstance().getElement(destElId);
+    return destEl;
+  }
+
+  /**
    * Get the {@link AndroidElement element} this command is to operate on (must
    * provide the "elementId" parameter).
    * 

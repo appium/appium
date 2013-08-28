@@ -402,8 +402,9 @@ public class Find extends CommandHandler {
           try {
             text = apkStrings.getString(text);
             Logger.debug("Searching for text: " + text);
+            // text is from strings.xml and must fall through
+            // to a name search to select an element
           } catch (final Exception e) { // JSONException and NullPointerException
-
             final StringWriter string = new StringWriter();
             e.printStackTrace(new PrintWriter(string));
 
@@ -411,7 +412,6 @@ public class Find extends CommandHandler {
                 + text + ".\n" + string.toString());
           }
         }
-        // now fall through and do a name search
       case NAME:
         sel = sel.description(text);
         if (!many) {

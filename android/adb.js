@@ -209,29 +209,17 @@ ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
 
 ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackage, cb) {
   logger.info("Compiling manifest " + manifest);
-  var androidHome = process.env.ANDROID_HOME;
 
-  if (typeof androidHome !== "string") {
-    return cb(new Error("ANDROID_HOME was not exported!"));
-  }
-
-  var platforms = path.resolve(androidHome , 'platforms')
-    , platform = 'android-18';
-
-  // android-18 may be called android-4.3
-  if (!fs.existsSync(path.resolve(platforms, platform))) {
-    platform = 'android-4.3';
-
-    if (!fs.existsSync(path.resolve(platforms, platform))) {
-      return cb(new Error("Platform doesn't exist " + platform));
-    }
+  var platform = helpers.getAndroidPlatform();
+  if (!platform || !platform[1]) {
+    return cb(new Error("Required platform doesn't exist (API level >= 17)"));
   }
 
   // Compile manifest into manifest.xml.apk
   var compileManifest = [this.binaries.aapt + ' package -M "', manifest + '"',
                          ' --rename-manifest-package "',  manifestPackage + '"',
                          ' --rename-instrumentation-target-package "', targetPackage + '"',
-                         ' -I "', path.resolve(platforms, platform, 'android.jar') +'" -F "',
+                         ' -I "', path.resolve(platform[1], 'android.jar') +'" -F "',
                          manifest, '.apk" -f'].join('');
   logger.debug(compileManifest);
   exec(compileManifest, { maxBuffer: 524288 }, function(err, stdout, stderr) {

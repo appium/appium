@@ -311,13 +311,13 @@ var setupAndroidProj = function(grunt, projPath, args, cb) {
 module.exports.setupAndroidBootstrap = function(grunt, cb) {
   var projPath = path.resolve(__dirname, "android", "bootstrap");
   var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
-              "android-17", "-p", "."];
+              "android-18", "-p", "."];
   setupAndroidProj(grunt, projPath, args, cb);
 };
 
 module.exports.setupAndroidApp = function(grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code/apps/" + appName);
-  var args = ["update", "project", "--subprojects", "-t", "android-17", "-p", "."];
+  var args = ["update", "project", "--subprojects", "-t", "android-18", "-p", "."];
   setupAndroidProj(grunt, appPath, args, cb);
 };
 

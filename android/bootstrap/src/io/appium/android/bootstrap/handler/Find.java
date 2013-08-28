@@ -388,16 +388,26 @@ public class Find extends CommandHandler {
         }
         break;
       case ID:
-        try {
-          text = apkStrings.getString(text);
-          Logger.debug("Searching for text: " + text);
-        } catch (final Exception e) { // JSONException and NullPointerException
+        if (text.contains(":")) {
+          // Handle this as a resource id
+          sel = sel.resourceId(text);
+          if (!many)
+            sel = sel.instance(0);
+          selectors.add(sel);
+          // Don't fall through when using resource id
+          break;
+        } else {
+          try {
+            text = apkStrings.getString(text);
+            Logger.debug("Searching for text: " + text);
+          } catch (final Exception e) { // JSONException and NullPointerException
 
-          final StringWriter string = new StringWriter();
-          e.printStackTrace(new PrintWriter(string));
+            final StringWriter string = new StringWriter();
+            e.printStackTrace(new PrintWriter(string));
 
-          throw new InvalidStrategyException("Unable to search by ID for "
-              + text + ".\n" + string.toString());
+            throw new InvalidStrategyException("Unable to search by ID for "
+                + text + ".\n" + string.toString());
+          }
         }
         // now fall through and do a name search
       case NAME:

@@ -122,6 +122,20 @@ describeWd('find element(s)', function(h) {
       });
     });
   });
+  it('should find a single element by resource-id', function(done) {
+    h.driver.elementById('android:id/home', function(err, element) {
+      should.not.exist(err);
+      should.exist(element.value);
+      done();
+    });
+  });
+  it('should find multiple elements by resource-id', function(done) {
+    h.driver.elementsById('android:id/text1', function(err, els) {
+      should.not.exist(err);
+      els.length.should.equal(11);
+      done();
+    });
+  });
 });
 
 describeWd('find element(s) from element', function(h) {

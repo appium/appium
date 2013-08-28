@@ -812,6 +812,24 @@ Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId,
   }
 };
 
+Android.prototype.drag = function(startX, startY, endX, endY, steps, elementId, destElId, cb) {
+  var dragOpts = {
+    elementId: elementId
+    , destElId: destElId
+    , startX: startX
+    , startY: startY
+    , endX: endX
+    , endY: endY
+    , steps: steps
+  };
+
+  if (elementId !== null) {
+    this.proxy(["element:drag", dragOpts], cb);
+  } else {
+    this.proxy(["drag", dragOpts], cb);
+  }
+};
+
 Android.prototype.scrollTo = function(elementId, text, cb) {
   // instead of the elementId as the element to be scrolled too,
   // it's the scrollable view to swipe until the uiobject that has the

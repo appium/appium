@@ -90,7 +90,7 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     var binaryLocs = [ path.resolve(this.sdkRoot, "platform-tools", binaryName)
         , path.resolve(this.sdkRoot, "tools", binaryName)
         , path.resolve(this.sdkRoot, "build-tools", "17.0.0", binaryName)
-        , path.resolve(this.sdkRoot, "build-tools", "android-4.2.2", binaryName)]
+        , path.resolve(this.sdkRoot, "build-tools", "android-4.2.2", binaryName)
         , path.resolve(this.sdkRoot, "build-tools", "18.0.1", binaryName)
         , path.resolve(this.sdkRoot, "build-tools", "android-4.3", binaryName)];
     _.each(binaryLocs, function(loc) {

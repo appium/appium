@@ -214,24 +214,26 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
   if (typeof androidHome !== "string") {
     return cb(new Error("ANDROID_HOME was not exported!"));
   }
+  var binaryName = "android.jar";
+  var binaryLoc = null;
+  var binaryLocs = [
+        path.resolve(this.sdkRoot, "platforms", "android-17", binaryName)
+        , path.resolve(this.sdkRoot, "platforms", "android-4.2", binaryName)
+        , path.resolve(this.sdkRoot, "platforms", "android-4.3", binaryName)
+        , path.resolve(this.sdkRoot, "platforms", "android-18", binaryName) ];
+    _.each(binaryLocs, function(loc) {
+      if (fs.existsSync(loc)) binaryLoc = loc;
+    });
 
-  var platforms = path.resolve(androidHome , 'platforms')
-    , platform = 'android-18';
-
-  // android-18 may be called android-4.3
-  if (!fs.existsSync(path.resolve(platforms, platform))) {
-    platform = 'android-4.3';
-
-    if (!fs.existsSync(path.resolve(platforms, platform))) {
-      return cb(new Error("Platform doesn't exist " + platform));
-    }
+  if (binaryLoc === null) {
+    return cb(new Error("android.jar not found in " + this.sdkRoot));
   }
 
   // Compile manifest into manifest.xml.apk
   var compileManifest = [this.binaries.aapt + ' package -M "', manifest + '"',
                          ' --rename-manifest-package "',  manifestPackage + '"',
                          ' --rename-instrumentation-target-package "', targetPackage + '"',
-                         ' -I "', path.resolve(platforms, platform, 'android.jar') +'" -F "',
+                         ' -I "', binaryLoc +'" -F "',
                          manifest, '.apk" -f'].join('');
   logger.debug(compileManifest);
   exec(compileManifest, { maxBuffer: 524288 }, function(err, stdout, stderr) {

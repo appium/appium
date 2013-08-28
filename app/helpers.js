@@ -332,3 +332,22 @@ exports.getGitRev = function(cb) {
     cb(null, stdout.trim());
   });
 };
+
+exports.getAndroidPlatform = function(cb) {
+  var androidHome = process.env.ANDROID_HOME;
+  if (typeof androidHome !== "string") {
+    logger.error("ANDROID_HOME was not exported!");
+    return null;
+  }
+
+  var locs = ['android-4.2', 'android-17', 'android-4.3', 'android-18'];
+  var res = null;
+  _.each(locs, function(loc) {
+    var platforms = path.resolve(androidHome , 'platforms')
+    , platform = loc;
+    if (fs.existsSync(path.resolve(platforms, platform))) {
+      res = [platform, path.resolve(platforms, platform)];
+    }
+  });
+  return res;
+};

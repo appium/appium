@@ -32,6 +32,8 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 
+import android.os.Build;
+
 /**
  * This handler is used to find elements in the Android UI.
  * 
@@ -388,7 +390,7 @@ public class Find extends CommandHandler {
         }
         break;
       case ID:
-        if (text.contains(":")) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
           // Handle this as a resource id
           sel = sel.resourceId(text);
           if (!many)

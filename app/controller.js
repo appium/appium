@@ -540,7 +540,6 @@ exports.getCssProperty = function(req, res) {
 
 exports.getLocation = function(req, res) {
   var elementId = req.params.elementId;
-
   req.device.getLocation(elementId, getResponseHandler(req, res));
 };
 

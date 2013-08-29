@@ -1250,7 +1250,7 @@ ADB.prototype.getFocusedPackageAndActivity = function(cb) {
         }
       });
       if (foundMatch) {
-        cb(null, foundMatch[1], foundMatch[2]);
+        cb(null, foundMatch[1].trim(), foundMatch[2].trim());
       } else {
         cb(new Error("Could not parse activity from dumpsys"));
       }

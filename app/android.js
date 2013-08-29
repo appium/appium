@@ -475,7 +475,7 @@ Android.prototype.getLocation = function(elementId, cb) {
 };
 
 Android.prototype.getSize = function(elementId, cb) {
-  cb(new NotYetImplementedError(), null);
+  this.proxy(["element:getSize", {elementId: elementId}], cb);
 };
 
 Android.prototype.getWindowSize = function(windowHandle, cb) {

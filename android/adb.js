@@ -259,21 +259,20 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
 
   var moveManifest = function(cb) {
     if (isWindows) {
-      try {
-        var existingAPKzip = new AdmZip(dstApk);
-        var newAPKzip = new AdmZip();
-        existingAPKzip.getEntries().forEach(function(entry) {
-          var entryName = entry.entryName;
-          newAPKzip.addZipEntryComment(entry, entryName);
-        });
-        newAPKzip.addLocalFile(manifest);
-        newAPKzip.writeZip(dstApk);
+      var java = path.resolve(process.env.JAVA_HOME, 'bin', 'java');
+      java = isWindows ? '"' + java + '.exe"' : '"' + java + '"';
+      var moveManifestCmd = '"' + path.resolve(__dirname, '..', 'app', 'android', 'move_manifest.jar') + '"';
+      moveManifestCmd = [java, '-jar', moveManifestCmd, '"' + dstApk + '"', '"' + manifest + '"'].join(' ');
+
+      logger.debug("Moving manifest with: " + moveManifestCmd);
+      exec(moveManifestCmd, { maxBuffer: 524288 }, function(err) {
+        if (err) {
+          logger.info("Got error moving manifest: " + err);
+          return cb(err);
+        }
         logger.debug("Inserted manifest.");
         cb(null);
-      } catch(err) {
-        logger.info("Got error moving manifest: " + err);
-        cb(err);
-      }
+      });
     } else {
       // Insert compiled manifest into /tmp/appPackage.clean.apk
       // -j = keep only the file, not the dirs

@@ -21,6 +21,10 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Build;
+
+import com.android.uiautomator.core.UiDevice;
+
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
  * and then passes them on to the {@link AndroidCommandExecutor} class. It will
@@ -113,6 +117,9 @@ class SocketServer {
    */
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      UiDevice.getInstance().setCompressedLayoutHeirarchy(true);
+    }
     loadStringsJson();
     final TimerTask updateWatchers = new TimerTask() {
       @Override

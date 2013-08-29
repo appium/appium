@@ -7,7 +7,13 @@ package io.appium.android.bootstrap.exceptions;
 
 @SuppressWarnings("serial")
 public class ElementNotFoundException extends Exception {
+  final static String error = "Could not find an element using supplied strategy. ";
+
   public ElementNotFoundException() {
-    super("Could not find an element using supplied strategy");
+    super(error);
+  }
+
+  public ElementNotFoundException(final String extra) {
+    super(error + extra);
   }
 }

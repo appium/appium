@@ -611,7 +611,7 @@ exports.getPageSource = function(req, res) {
 };
 
 exports.waitForPageLoad = function(req, res) {
-  req.body = _.defaults(req.body, { timeout: null });
+  req.body = _.defaults(req.body, { timeout: 30 });
   var timeout = req.body.timeout;
 
   req.device.waitForPageLoad(timeout, getResponseHandler(req, res));

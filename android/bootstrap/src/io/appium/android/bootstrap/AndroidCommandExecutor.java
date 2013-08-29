@@ -10,6 +10,7 @@ import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetLocation;
+import io.appium.android.bootstrap.handler.GetSize;
 import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
@@ -53,6 +54,7 @@ class AndroidCommandExecutor {
     map.put("scrollTo", new ScrollTo());
     map.put("find", new Find());
     map.put("getLocation", new GetLocation());
+    map.put("getSize", new GetSize());
     map.put("wake", new Wake());
     map.put("pressBack", new PressBack());
     map.put("dumpWindowHierarchy", new DumpWindowHierarchy());

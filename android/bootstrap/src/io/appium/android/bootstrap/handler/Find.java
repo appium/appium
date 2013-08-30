@@ -16,8 +16,6 @@ import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -27,12 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Build;
+
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
-
-import android.os.Build;
 
 /**
  * This handler is used to find elements in the Android UI.
@@ -300,6 +298,8 @@ public class Find extends CommandHandler {
         return getErrorResult(e.getMessage());
       } catch (final UiObjectNotFoundException e) {
         return getErrorResult(e.getMessage());
+      } catch (final ElementNotFoundException e) {
+        return getErrorResult(e.getMessage());
       }
     }
   }
@@ -363,10 +363,12 @@ public class Find extends CommandHandler {
    * @return UiSelector
    * @throws InvalidStrategyException
    * @throws AndroidCommandException
+   * @throws ElementNotFoundException
    */
-  private List<UiSelector> getSelector(final Strategy strategy, String text,
-      final Boolean many) throws InvalidStrategyException,
-      AndroidCommandException, UnallowedTagNameException {
+  private List<UiSelector> getSelector(final Strategy strategy,
+      final String text, final boolean many) throws InvalidStrategyException,
+      AndroidCommandException, UnallowedTagNameException,
+      ElementNotFoundException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
 
@@ -393,37 +395,23 @@ public class Find extends CommandHandler {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
           // Handle this as a resource id
           sel = sel.resourceId(text);
-          if (!many)
-            sel = sel.instance(0);
-          selectors.add(sel);
-          // Don't fall through when using resource id
-          break;
-        } else {
-          try {
-            text = apkStrings.getString(text);
-            Logger.debug("Searching for text: " + text);
-            // text is from strings.xml and must fall through
-            // to a name search to select an element
-          } catch (final Exception e) { // JSONException and NullPointerException
-            final StringWriter string = new StringWriter();
-            e.printStackTrace(new PrintWriter(string));
-
-            throw new InvalidStrategyException("Unable to search by ID for "
-                + text + ".\n" + string.toString());
-          }
-        }
-      case NAME:
-        sel = sel.description(text);
-        if (!many) {
-          sel = sel.instance(0);
-        }
-        if (!new UiObject(sel).exists()) {
-          // now try and find it using the text attribute
-          sel = new UiSelector().text(text);
           if (!many) {
             sel = sel.instance(0);
           }
+
+          // Fall back to strings.xml id
+          if (!new UiObject(sel).exists()) {
+            sel = stringsXmlId(many, text);
+          }
+
+          selectors.add(sel);
+        } else {
+          sel = stringsXmlId(many, text);
+          selectors.add(sel);
         }
+        break;
+      case NAME:
+        sel = selectNameOrText(many, text);
         selectors.add(sel);
         break;
       case XPATH:
@@ -550,5 +538,38 @@ public class Find extends CommandHandler {
     }
     Logger.info(selOut);
     return s;
+  }
+
+  private UiSelector selectNameOrText(final boolean many, final String text) {
+    UiSelector sel = new UiSelector();
+    sel = sel.description(text);
+    if (!many) {
+      sel = sel.instance(0);
+    }
+    if (!new UiObject(sel).exists()) {
+      // now try and find it using the text attribute
+      sel = new UiSelector().text(text);
+      if (!many) {
+        sel = sel.instance(0);
+      }
+    }
+    return sel;
+  }
+
+  private UiSelector stringsXmlId(final boolean many, String text)
+      throws ElementNotFoundException {
+    UiSelector sel = null;
+    try {
+      final String xmlValue = apkStrings.getString(text);
+      sel = selectNameOrText(many, xmlValue);
+      // JSONException and NullPointerException
+    } catch (final Exception e) {
+      if (text == null) {
+        text = "";
+      }
+      throw new ElementNotFoundException("ID `" + text
+          + "` doesn't exist as text or content desc.");
+    }
+    return sel;
   }
 }

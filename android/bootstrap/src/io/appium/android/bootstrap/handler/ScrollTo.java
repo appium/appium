@@ -56,8 +56,8 @@ public class ScrollTo extends CommandHandler {
       view.waitForExists(5000);
 
       // make sure we can get to the item
-      UiObject listViewItem = view.getChildByText(new UiSelector()
-          .className(android.widget.TextView.class.getName()), ""+text+"");
+      UiObject listViewItem = view.getChildByInstance(new UiSelector()
+          .text(text), 0);
 
       // We need to make sure that the item exists (visible)
       if(!(result && listViewItem.exists())) {

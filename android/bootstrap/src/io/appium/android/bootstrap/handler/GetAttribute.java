@@ -43,7 +43,7 @@ public class GetAttribute extends CommandHandler {
         if (attr.equals("name") || attr.equals("text")) {
           return getSuccessResult(el.getStringAttribute(attr));
         } else {
-          return getSuccessResult(el.getBoolAttribute(attr));
+          return getSuccessResult(String.valueOf(el.getBoolAttribute(attr)));
         }
       } catch (final NoAttributeFoundException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,

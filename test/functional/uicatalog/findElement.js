@@ -6,6 +6,16 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatal
   , spinWait = require("../../helpers/spin.js").spinWait
   , should = require('should');
 
+describeWd('find by id', function(h) {
+  it('should find a single element by id', function(done) {
+    // ButtonsExplain: 'Various uses of UIButton'
+    h.driver.elementById('ButtonsExplain', function(err, els) {
+      should.not.exist(err);
+      done();
+    });
+  });
+});
+
 describeWd('findElementNameContains', function(h) {
   it('should find a single element by name', function(done) {
     h.driver.execute("mobile: findElementNameContains", [{name: 'uses of UIButton'}], function(err, el) {

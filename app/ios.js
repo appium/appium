@@ -76,7 +76,8 @@ var IOS = function(args) {
       , databaseEnabled: false
       , takesScreenshot: true
   };
-  this.supportedStrategies = ["name", "tag name", "xpath"];
+  this.supportedStrategies = ["name", "tag name", "xpath", "id"];
+  this.localizableStrings = {};
 };
 
 // XML Plist library helper
@@ -284,7 +285,8 @@ IOS.prototype.setDeviceType = function(cb) {
     cb(null);
   } else {
     var deviceTypeCode = 1
-      , plist = path.resolve(this.app, "Info.plist");
+      , plist = path.resolve(this.app, "Info.plist")
+      , strings = path.resolve(this.app, "Localizable.strings");
 
     if (typeof this.deviceType === "undefined") {
       this.deviceType = "iphone";
@@ -294,6 +296,25 @@ IOS.prototype.setDeviceType = function(cb) {
     if (this.deviceType === "ipad") {
       deviceTypeCode = 2;
     }
+
+    if (!fs.existsSync(strings)) strings = path.resolve(
+      this.app, "en.lproj", "Localizable.strings");
+
+    bplistParse.parseFile(strings, function(err, obj) {
+      if (err) {
+        xmlPlistFile(plist, function(err, obj) {
+          if (err) {
+            logger.error("Could not parse plist file at " + strings);
+          } else {
+            logger.info("Parsed app Localizable.strings");
+            this.localizableStrings = obj;
+          }
+        }.bind(this));
+      } else {
+        logger.info("Parsed app Localizable.strings");
+        this.localizableStrings = obj;
+      }
+    }.bind(this));
 
     bplistParse.parseFile(plist, function(err, obj) {
       var newPlist;
@@ -674,6 +695,16 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
       command = ["au.getElement", ext, "ByName('", selector, "'", ctx,")"].join('');
     } else if (strategy === "xpath") {
       command = ["au.getElement", ext, "ByXpath('", selector, "'", ctx, ")"].join('');
+    } else if (strategy === "id") {
+      var strings = this.localizableStrings;
+      if (strings && strings.length >= 1) selector = strings[0][selector];
+      // Prefer an exact match. Some apps, such as uicatalog, don't use exact
+      // matches so contains is required.
+      command = ["var exact = au.mainApp.getFirstWithPredicate(\"name == '", selector,
+                 "' || label == '", selector, "' || value == '", selector, "'\");"].join('');
+      command += ["exact && exact.status == 0 ? exact : au.mainApp.getFirstWith",
+                  "Predicate(\"name contains[c] '", selector, "' || label contains[c] '",
+                 selector, "' || value contains[c] '", selector, "'\");"].join('');
     } else {
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');
     }

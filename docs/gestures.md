@@ -127,7 +127,7 @@ In these examples, note that the element parameter is always optional.
 * **Python:**
 
   ```python
-  driver.execute_script("mobile: tap",{"touchCount":"1","x":"0.9","y":"0.8","element":id(element)})
+  driver.execute_script("mobile: tap", {"touchCount":"1", "x":"0.9", "y":"0.8", "element":element.id})
   ```
 
 * **Ruby:**

@@ -637,7 +637,7 @@ Appium.prototype.stop = function(cb) {
 
 Appium.prototype.reset = function(cb) {
   logger.info("Resetting app mid-session");
-  if (this.isIos() || !this.fastReset) {
+  if ((this.isIos() && !this.device.instruments.udid) || !this.fastReset) {
     var oldImpWait = this.device.implicitWaitMs
       , oldId = this.sessionId;
 
@@ -651,15 +651,19 @@ Appium.prototype.reset = function(cb) {
         cb(null, {status: status.codes.Success.code, value: null});
       }.bind(this));
     }.bind(this));
-  } else { // fast reset
-    logger.info("Android fast reset");
-    this.device.fastReset(function(err){
-      if (err) {
-        cb(null, {status: status.codes.UnknownError.code, value: null});
-      } else {
-        cb(null, {status: status.codes.Success.code, value: null});
-      }
-    });
+  } else { // Android fast reset
+    if (this.isIos()) { // physical iOS
+      cb(null, {status: status.codes.Success.code, value: null});
+    } else {
+      logger.info("Android fast reset");
+      this.device.fastReset(function(err){
+        if (err) {
+          cb(null, {status: status.codes.UnknownError.code, value: null});
+        } else {
+          cb(null, {status: status.codes.Success.code, value: null});
+        }
+      });
+    }
   }
 };
 

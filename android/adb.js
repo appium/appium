@@ -979,7 +979,9 @@ ADB.prototype.sendShutdownCommand = function(cb) {
     }
   }.bind(this), 7000);
   this.sendCommand('shutdown', null, cb);
-  this.logcat.stopCapture();
+  if (this.logcat !== null) {
+    this.logcat.stopCapture();
+  }
 };
 
 ADB.prototype.outputStreamHandler = function(output) {

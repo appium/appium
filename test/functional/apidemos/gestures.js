@@ -119,36 +119,52 @@ describeWd('gestures', function(h) {
     });
   });
   it('should drag by pixels', function(done) {
-    var swipeOpts = {
-      startX: 100
-      , startY: 500
-      , endX: 100
-      , endY: 100
-      , duration: 1.2
-    };
-    h.driver.execute("mobile: swipe", [swipeOpts], function(err) {
+    h.driver.elementByTagName("listView", function(err, el) {
       should.not.exist(err);
-      h.driver.elementByXPath("//text[@value='Views']", function(err, el) {
+      var scrollOpts = {
+        element: el.value
+        , text: 'Views'
+      };
+      h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
         should.not.exist(err);
-        el.click(function(err) {
-          h.driver.elementByXPath("//text[@value='Drag and Drop']", function(err, el) {
+        h.driver.elementByXPath("//text[@value='Views']", function(err, el) {
+          should.not.exist(err);
+          el.click(function(err) {
             should.not.exist(err);
-            el.click(function(err) {
+            scrollOpts.text = 'Drag and Drop';
+            h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
               should.not.exist(err);
-              var dragOpts = {
-                startX: 120
-                , startY: 550
-                , endX: 350
-                , endY: 300
-              };
-              h.driver.execute("mobile: drag", [dragOpts], function(err) {
+              h.driver.elementByXPath("//text[@value='Drag and Drop']", function(err, el) {
                 should.not.exist(err);
-                h.driver.elementsByTagName("text", function(err, els) {
+                el.click(function(err) {
                   should.not.exist(err);
-                  els[els.length - 2].text(function(err, text) {
+                  h.driver.elementById("com.example.android.apis:id/drag_dot_3", function(err, element) {
                     should.not.exist(err);
-                    text.should.equal("Dropped!");
-                    done();
+                    h.driver.elementById("com.example.android.apis:id/drag_dot_2", function(err, destEl) {
+                      should.not.exist(err);
+                      element.getLocation(function(err, elementLoc) {
+                        should.not.exist(err);
+                        destEl.getLocation(function(err, destElLoc) {
+                          should.not.exist(err);
+                          var dragOpts = {
+                            startX: elementLoc.x
+                            , startY: elementLoc.y
+                            , endX: destElLoc.x
+                            , endY: destElLoc.y
+                          };
+                          h.driver.execute("mobile: drag", [dragOpts], function(err) {
+                            should.not.exist(err);
+                            h.driver.elementById("com.example.android.apis:id/drag_result_text", function(err, el) {
+                              el.text(function(err, text) {
+                                should.not.exist(err);
+                                text.should.equal("Dropped!");
+                                done();
+                              });
+                            });
+                          });
+                        });
+                      });
+                    });
                   });
                 });
               });
@@ -158,9 +174,107 @@ describeWd('gestures', function(h) {
       });
     });
   });
-});
-
-describeWd('scroll to element', function(h) {
+  it('should drag element to point', function(done) {
+    h.driver.elementByTagName("listView", function(err, el) {
+      should.not.exist(err);
+      var scrollOpts = {
+        element: el.value
+        , text: 'Views'
+      };
+      h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByXPath("//text[@value='Views']", function(err, el) {
+          should.not.exist(err);
+          el.click(function(err) {
+            should.not.exist(err);
+            scrollOpts.text = 'Drag and Drop';
+            h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+              should.not.exist(err);
+              h.driver.elementByXPath("//text[@value='Drag and Drop']", function(err, el) {
+                should.not.exist(err);
+                el.click(function(err) {
+                  should.not.exist(err);
+                  h.driver.elementById("com.example.android.apis:id/drag_dot_3", function(err, element) {
+                    should.not.exist(err);
+                    h.driver.elementById("com.example.android.apis:id/drag_dot_2", function(err, destEl) {
+                      should.not.exist(err);
+                      destEl.getLocation(function(err, destElLoc) {
+                        should.not.exist(err);
+                        var dragOpts = {
+                          element: element.value
+                          , endX: destElLoc.x
+                          , endY: destElLoc.y
+                        };
+                        h.driver.execute("mobile: drag", [dragOpts], function(err) {
+                          should.not.exist(err);
+                          h.driver.elementById("com.example.android.apis:id/drag_result_text", function(err, el) {
+                            el.text(function(err, text) {
+                              should.not.exist(err);
+                              text.should.equal("Dropped!");
+                              done();
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+  it('should drag element to destEl', function(done) {
+    h.driver.elementByTagName("listView", function(err, el) {
+      should.not.exist(err);
+      var scrollOpts = {
+        element: el.value
+        , text: 'Views'
+      };
+      h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByXPath("//text[@value='Views']", function(err, el) {
+          should.not.exist(err);
+          el.click(function(err) {
+            should.not.exist(err);
+            scrollOpts.text = 'Drag and Drop';
+            h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+              should.not.exist(err);
+              h.driver.elementByXPath("//text[@value='Drag and Drop']", function(err, el) {
+                should.not.exist(err);
+                el.click(function(err) {
+                  should.not.exist(err);
+                  h.driver.elementById("com.example.android.apis:id/drag_dot_3", function(err, element) {
+                    should.not.exist(err);
+                    h.driver.elementById("com.example.android.apis:id/drag_dot_2", function(err, destEl) {
+                      should.not.exist(err);
+                      var dragOpts = {
+                        element: element.value
+                        , destEl: destEl.value
+                      };
+                      h.driver.execute("mobile: drag", [dragOpts], function(err) {
+                        should.not.exist(err);
+                        h.driver.elementById("com.example.android.apis:id/drag_result_text", function(err, el) {
+                          should.not.exist(err);
+                          el.text(function(err, text) {
+                            should.not.exist(err);
+                            text.should.equal("Dropped!");
+                            done();
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
   it('should bring the element into view', function(done) {
     h.driver.elementByName("Views", function(err) {
       should.exist(err);

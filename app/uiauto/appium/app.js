@@ -1,4 +1,5 @@
-/*global mainWindow:true au:true UIAElement:true $:true codes:true UIATarget:true UIA_DEVICE_ORIENTATION_UNKNOWN: true UIA_DEVICE_ORIENTATION_FACEUP:true UIA_DEVICE_ORIENTATION_FACEDOWN:true UIA_DEVICE_ORIENTATION_PORTRAIT:true UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:true UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true UIA_DEVICE_ORIENTATION_PORTRAIT:true */
+/*global mainWindow:true,au:true,UIAElement:true,$:true,codes:true,UIATarget:true,UIA_DEVICE_ORIENTATION_UNKNOWN:true,UIA_DEVICE_ORIENTATION_FACEUP:true,UIA_DEVICE_ORIENTATION_FACEDOWN:true,UIA_DEVICE_ORIENTATION_PORTRAIT:true,UIA_DEVICE_ORIENTATION_PORTRAIT_UPSIDEDOWN:true,UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true,UIA_DEVICE_ORIENTATION_LANDSCAPERIGHT:true,UIA_DEVICE_ORIENTATION_LANDSCAPELEFT:true,UIA_DEVICE_ORIENTATION_PORTRAIT:true,UIATarget:true*/
+
 "use strict";
 var au;
 
@@ -250,8 +251,17 @@ $.extend(au, {
           value: 'Unsupported orientation: ' + orientation
         };
       }
-      var newOrientation = au.getScreenOrientation().value;
-      if (newOrientation == orientation) {
+      var newOrientation;
+      var success = false;
+      var i = 0;
+      var system = UIATarget.localTarget().host();
+      while (!success && i < 20) {
+        newOrientation = au.getScreenOrientation().value;
+        success = newOrientation == orientation;
+        system.performTaskWithPathArgumentsTimeout("/bin/sleep", ['0.1'], 1);
+        i++;
+      }
+      if (success) {
         return {
           status: codes.Success.code
           , value: newOrientation
@@ -832,7 +842,7 @@ $.extend(au, {
           invisible++;
         }
       }
-      
+
       if (invisible == indicators.length) {
         done = true;
       }

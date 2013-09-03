@@ -28,7 +28,7 @@ Then run:
 
 # Running Appium
 
-To run tests on Windows, you will need to have the Android Emulator booted or and Android Device onnection and running an AVD with API Level 17 or greater. Then run Appium on the command line using node.js:
+To run tests on Windows, you will need to have the Android Emulator booted or an Android Device connected that is running an AVD with API Level 17 or greater. Then run Appium on the command line using node.js:
 
     node server.js
 

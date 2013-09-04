@@ -99,8 +99,8 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
     });
 
     if (binaryLoc === null) {
-      cb(new Error("Could not find " + binary + " in tools, platform-tools, or build-tools; " +
-                   "do you have android SDK installed?"),
+      cb(new Error("Could not find " + binary + " in tools, platform-tools, or build-tools under \"" + this.sdkRoot + "\"; " +
+                   "do you have android SDK installed into this location?"),
          null);
       return;
     }
@@ -114,8 +114,9 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
         this.debug("Using " + binary + " from " + stdout);
         cb(null, stdout);
       } else {
-        cb(new Error("Could not find " + binary + "; do you have android " +
-                     "SDK installed?"),
+        cb(new Error("Could not find " + binary + "; do you have the Android " +
+                     "SDK installed and the tools + platform-tools folders " + 
+		     "added to your PATH?"),
            null);
       }
     }.bind(this));

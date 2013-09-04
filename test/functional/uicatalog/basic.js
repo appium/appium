@@ -2,11 +2,10 @@
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , _ = require("underscore")
-  , spinWait = require("../../helpers/spin.js").spinWait
   , should = require('should');
 
 describeWd('basic', function(h) {
+
   it('should confirm element is not visible', function(done) {
     h.driver.elementsByTagName('tableCell', function(err, els) {
       els[0].click(function() {
@@ -36,6 +35,7 @@ describeWd('basic', function(h) {
       });
     });
   });
+
   it('should confirm element is selected', function(done) {
     h.driver.elementByXPath("text[contains(@text, 'Picker')]", function(err, el) {
       el.click(function() {
@@ -50,6 +50,7 @@ describeWd('basic', function(h) {
       });
     });
   });
+
   it('should confirm element is not selected returns false', function(done) {
     h.driver.elementByXPath("text[contains(@text, 'Picker')]", function(err, el) {
       el.click(function() {
@@ -64,4 +65,5 @@ describeWd('basic', function(h) {
       });
     });
   });
+
 });

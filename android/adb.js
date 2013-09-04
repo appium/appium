@@ -115,8 +115,8 @@ ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
         cb(null, stdout);
       } else {
         cb(new Error("Could not find " + binary + "; do you have the Android " +
-                     "SDK installed and the tools + platform-tools folders " + 
-		     "added to your PATH?"),
+                     "SDK installed and the tools + platform-tools folders " +
+                     "added to your PATH?"),
            null);
       }
     }.bind(this));

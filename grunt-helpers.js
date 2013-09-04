@@ -294,6 +294,9 @@ var setupAndroidProj = function(grunt, projPath, args, cb) {
     grunt.fatal("Could not find Android SDK, make sure to export ANDROID_HOME");
   }
   var cmd = path.resolve(process.env.ANDROID_HOME, "tools", "android");
+  if (!fs.existsSync(cmd)) {
+    grunt.fatal("The `android` command was not found at \"" + cmd + "\", are you sure ANDROID_HOME is set properly?");
+  }
   var proc = spawn(cmd, args, {cwd: projPath});
   proc.stdout.setEncoding('utf8');
   proc.stderr.setEncoding('utf8');
@@ -312,6 +315,7 @@ module.exports.setupAndroidBootstrap = function(grunt, cb) {
   var projPath = path.resolve(__dirname, "android", "bootstrap");
   var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
               "android-18", "-p", "."];
+  // TODO: possibly check output of `android list target` to make sure api level 18 is available?
   setupAndroidProj(grunt, projPath, args, cb);
 };
 

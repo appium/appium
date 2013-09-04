@@ -39,8 +39,8 @@ public class Click extends CommandHandler {
     if (command.isElementCommand()) {
       try {
         final AndroidElement el = command.getElement();
-        final boolean res = el.click();
-        return getSuccessResult(res);
+        el.click();
+        return getSuccessResult(true);
       } catch (final UiObjectNotFoundException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());

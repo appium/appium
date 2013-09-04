@@ -352,24 +352,6 @@ exports.find = function(req, res) {
   }
 };
 
-exports.resolveId = function(req, res) {
-  var strategy = "resolve id"
-    , selector = req.body;
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
-};
-
-exports.xmlKeyContains = function(req, res) {
-  var strategy = "xmlKeyContains"
-    , selector = req.body;
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
-};
-
-exports.xmlValueContains = function(req, res) {
-  var strategy = "xmlValueContains"
-    , selector = req.body;
-  req.device.findElements(strategy, selector, getResponseHandler(req, res));
-};
-
 exports.mobileSwipe = function(req, res) {
   req.body = _.defaults(req.body, {
     touchCount: 1
@@ -948,9 +930,6 @@ var mobileCmdMap = {
   , 'fireEvent': exports.fireEvent
   , 'source': exports.mobileSource
   , 'find': exports.find
-  , 'xmlValueContains': exports.xmlValueContains
-  , 'xmlKeyContains': exports.xmlKeyContains
-  , 'resolveId': exports.resolveId
   , 'waitForPageLoad': exports.waitForPageLoad
   , 'currentActivity': exports.getCurrentActivity
   , 'findElementNameContains': exports.findElementNameContains

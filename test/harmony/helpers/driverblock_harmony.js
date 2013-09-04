@@ -135,9 +135,9 @@ var describeForApp = function(app, device, appPackage, appActivity, appWaitActiv
     appPath = app;
   } else {
     if (device === "ios") {
-      appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
+      appPath = path.resolve(__dirname, "../../../sample-code/apps/" + app + "/build/Release-iphonesimulator/" + app + ".app");
     } else if (device === "android" || device === "selendroid") {
-      appPath = path.resolve(__dirname, "../../sample-code/apps/" + app + "/bin/" + app + "-debug.apk");
+      appPath = path.resolve(__dirname, "../../../sample-code/apps/" + app + "/bin/" + app + "-debug.apk");
     } else {
       appPath = app;
     }

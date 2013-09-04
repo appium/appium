@@ -1,6 +1,6 @@
 "use strict";
 
-var driverBlock = require('../../helpers/driverblock_harmony.js')
+var driverBlock = require('../helpers/driverblock_harmony.js')
   , describe = driverBlock.describeForApp('UICatalog')
   , it = driverBlock.it
   , should = require('should');

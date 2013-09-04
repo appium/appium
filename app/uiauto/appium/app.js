@@ -192,10 +192,14 @@ $.extend(au, {
           // element may still be null.
           element.tap();
         } catch(e) {
-          return {
-            status: codes.UnknownError.code,
-            value: 'elementId ' + elementId + ' is null and can\'t be tapped.'
-          };
+          try {
+            target.tap(element.rect());
+          } catch(e2) {
+            return {
+              status: codes.UnknownError.code,
+              value: 'elementId ' + elementId + ' is null and can\'t be tapped. ' + e + ', ' + e2
+            };
+          }
         }
         return {
           status: codes.Success.code,

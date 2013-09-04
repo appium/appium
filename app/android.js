@@ -446,6 +446,10 @@ Android.prototype.fireEvent = function(evt, elementId, value, cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+Android.prototype.getStrings = function(cb) {
+  this.proxy(["getStrings"], cb);
+};
+
 Android.prototype.complexTap = function(tapCount, touchCount, duration, x, y, elementId, cb) {
   this.proxy(["click", {x: x, y: y}], cb);
 };

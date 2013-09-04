@@ -894,6 +894,10 @@ exports.getLogTypes = function(req, res) {
   req.device.getLogTypes(getResponseHandler(req, res));
 };
 
+exports.getStrings = function(req, res) {
+  req.device.getStrings(getResponseHandler(req, res));
+};
+
 exports.unknownCommand = function(req, res) {
   logger.info("Responding to client that we did not find a valid resource");
   res.set('Content-Type', 'text/plain');
@@ -943,6 +947,7 @@ var mobileCmdMap = {
   , 'pinchClose': exports.mobilePinchClose
   , 'pinchOpen': exports.mobilePinchOpen
   , 'localScreenshot': exports.localScreenshot
+  , 'getStrings': exports.getStrings
 };
 
 exports.produceError = function(req, res) {

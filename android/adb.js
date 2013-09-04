@@ -29,6 +29,7 @@ var ADB = function(opts, android) {
   if (typeof opts.sdkRoot === "undefined") {
     opts.sdkRoot = process.env.ANDROID_HOME || '';
   }
+  this.compressXml = opts.compressXml;
   this.sdkRoot = opts.sdkRoot;
   this.udid = opts.udid;
   this.webSocket = opts.webSocket;
@@ -531,6 +532,14 @@ ADB.prototype.prepareDevice = function(onReady) {
   ], onReady);
 };
 
+ADB.prototype.requestXmlCompression = function(cb) {
+  if (this.compressXml) {
+    this.android.proxy(["enableCompressedLayoutHeirarchy"], cb);
+  } else {
+    cb(null);
+  }
+};
+
 ADB.prototype.pushStrings = function(cb) {
   var remotePath = '/data/local/tmp';
   var stringsJson = 'strings.json';
@@ -572,6 +581,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
   async.series([
     function(cb) { this.prepareDevice(cb); }.bind(this),
     function(cb) { this.pushStrings(cb); }.bind(this),
+    function(cb) { this.requestXmlCompression(cb); }.bind(this),
     function(cb) { this.uninstallApp(cb); }.bind(this),
     function(cb) { this.installApp(cb); }.bind(this),
     function(cb) { this.forwardPort(cb); }.bind(this),

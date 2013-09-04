@@ -895,7 +895,13 @@ IOS.prototype.touchLongClick = function(elementId, cb) {
 };
 
 IOS.prototype.getStrings = function(cb) {
-  cb(new NotYetImplementedError(), null);
+  var strings = this.localizableStrings;
+  if (strings && strings.length >= 1) strings = strings[0];
+
+  cb(null, {
+    status: status.codes.Success.code
+    , value: strings
+  });
 };
 
 IOS.prototype.fireEvent = function(evt, elementId, cb) {

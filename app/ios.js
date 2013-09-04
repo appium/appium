@@ -894,6 +894,10 @@ IOS.prototype.touchLongClick = function(elementId, cb) {
   cb(new NotYetImplementedError(), null);
 };
 
+IOS.prototype.getStrings = function(cb) {
+  cb(new NotYetImplementedError(), null);
+};
+
 IOS.prototype.fireEvent = function(evt, elementId, cb) {
   if (this.curWindowHandle) {
     this.useAtomsElement(elementId, cb, function(atomsElement) {

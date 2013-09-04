@@ -24,6 +24,7 @@ var Android = function(opts) {
 };
 
 Android.prototype.initialize = function(opts) {
+  this.compressXml = opts.compressXml;
   this.rest = opts.rest;
   this.webSocket = opts.webSocket;
   this.opts = opts;

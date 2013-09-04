@@ -3,15 +3,16 @@ package io.appium.android.bootstrap;
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
-import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
 import io.appium.android.bootstrap.handler.Drag;
+import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
+import io.appium.android.bootstrap.handler.EnableCompressedLayoutHeirarchy;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetLocation;
-import io.appium.android.bootstrap.handler.GetSize;
 import io.appium.android.bootstrap.handler.GetName;
+import io.appium.android.bootstrap.handler.GetSize;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.PressBack;
@@ -60,6 +61,8 @@ class AndroidCommandExecutor {
     map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
     map.put("pressKeyCode", new PressKeyCode());
     map.put("takeScreenshot", new TakeScreenshot());
+    map.put("enableCompressedLayoutHeirarchy",
+        new EnableCompressedLayoutHeirarchy());
   }
 
   /**

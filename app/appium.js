@@ -211,6 +211,7 @@ Appium.prototype.setAndroidArgs = function(desiredCaps) {
   setArgFromCaps("androidActivity", "app-activity");
   setArgFromCaps("androidWaitActivity", "app-wait-activity");
   setArgFromCaps("androidDeviceReadyTimeout", "device-ready-timeout");
+  setArgFromCaps("compressXml", "compressXml");
 };
 
 Appium.prototype.configure = function(desiredCaps, cb) {
@@ -506,6 +507,7 @@ Appium.prototype.invoke = function() {
           , appPackage: this.args.androidPackage
           , appActivity: this.args.androidActivity
           , appWaitActivity: this.args.androidWaitActivity
+          , compressXml: this.args.compressXml
           , avdName: this.args.avd
           , appDeviceReadyTimeout: this.args.androidDeviceReadyTimeout
           , reset: !this.args.noReset

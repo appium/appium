@@ -21,10 +21,6 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Build;
-
-import com.android.uiautomator.core.UiDevice;
-
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
  * and then passes them on to the {@link AndroidCommandExecutor} class. It will

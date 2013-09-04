@@ -13,6 +13,7 @@ import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetLocation;
 import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetSize;
+import io.appium.android.bootstrap.handler.GetStrings;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.PressBack;
@@ -63,6 +64,7 @@ class AndroidCommandExecutor {
     map.put("takeScreenshot", new TakeScreenshot());
     map.put("enableCompressedLayoutHeirarchy",
         new EnableCompressedLayoutHeirarchy());
+    map.put("getStrings", new GetStrings());
   }
 
   /**

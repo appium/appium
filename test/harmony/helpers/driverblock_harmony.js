@@ -3,7 +3,7 @@
 
 var wd = require('yiewd')
   , _ = require("underscore")
-  , monocle = require('monocle.js')
+  , monocle = require('monocle-js')
   , run = monocle.run
   , o_O = monocle.o_O
   , path = require("path")

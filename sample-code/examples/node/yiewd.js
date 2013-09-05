@@ -90,7 +90,6 @@ driver.run(function*() {
     yield (yield this.elementByName("Back")).click();
     console.log(yield this.source());
   } catch (e) {
-    //console.log(yield this.source());
     console.log(e);
   }
   yield this.sleep(3);

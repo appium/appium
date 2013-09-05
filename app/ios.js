@@ -1479,7 +1479,6 @@ IOS.prototype.localScreenshot = function(desiredFile, cb) {
   var filename = path.basename(desiredFile, path.extname(desiredFile));
   var command = "au.capture('" + filename + "')";
   var filePath = screenshotFolder + filename;
-  console.log("filePath is " + filePath);
 
   // Must delete the png if it exists or instruments will
   // add a sequential integer to the file name.

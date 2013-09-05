@@ -30,6 +30,7 @@ var path = require('path')
 
 var IOS = function(args) {
   this.rest = args.rest;
+  this.version = args.version;
   this.webSocket = args.webSocket;
   this.app = args.app;
   this.ipa = args.ipa;
@@ -110,6 +111,10 @@ IOS.prototype.cleanup = function(cb) {
     logger.info("Cleaned up instruments socket " + sock);
     cb();
   });
+};
+
+IOS.prototype.getNumericVersion = function() {
+  return parseFloat(this.version);
 };
 
 IOS.prototype.start = function(cb, onDie) {
@@ -225,13 +230,16 @@ IOS.prototype.start = function(cb, onDie) {
   }.bind(this);
 
   if (this.instruments === null) {
+    var traceTemplate = 'Automation' +
+                        (this.getNumericVersion() >= 7 ? "-7.0" : "") +
+                        '.tracetemplate';
     var createInstruments = function(cb) {
       logger.debug("Creating instruments");
       this.instruments = instruments(
         this.app || this.bundleId
         , this.udid
         , path.resolve(__dirname, 'uiauto/bootstrap.js')
-        , path.resolve(__dirname, 'uiauto/Automation.tracetemplate')
+        , path.resolve(__dirname, 'uiauto/' + traceTemplate)
         , sock
         , this.withoutDelay
         , this.webSocket

@@ -16,7 +16,7 @@ describeWd('get source', function(h) {
       should.not.exist(err);
       should.ok(obj);
       obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
-      obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.view.View");
+      obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.widget.FrameLayout");
       done();
     });
   });
@@ -28,7 +28,7 @@ describeWd('get source', function(h) {
         should.not.exist(err);
         should.ok(obj);
         obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
-        obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.view.View");
+        obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.widget.FrameLayout");
         h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
           should.not.exist(err);
           done();

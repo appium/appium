@@ -92,4 +92,11 @@ describeWd('web view', function(h) {
       done();
     });
   });
+  it('should get web source', function(done) {
+    h.driver.source(function(err, source) {
+      should.not.exist(err);
+      source.should.include("body");
+      done();
+    });
+  });
 });

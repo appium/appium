@@ -132,7 +132,7 @@ describeWd('find element(s)', function(h) {
   it('should find multiple elements by resource-id', function(done) {
     h.driver.elementsById('android:id/text1', function(err, els) {
       should.not.exist(err);
-      els.length.should.equal(11);
+      els.length.should.equal(10);
       done();
     });
   });
@@ -261,11 +261,3 @@ describeWd('unallowed tag names', function(h) {
   });
 });
 
-describeWd('mobile xmlKeyContains', function(h) {
-  it('should not error on xmlKeyContains', function(done) {
-    h.driver.execute("mobile: xmlKeyContains", [''], function(err, el) {
-      should.not.exist(err);
-      done();
-    });
-  });
-});

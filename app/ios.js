@@ -1479,6 +1479,7 @@ IOS.prototype.localScreenshot = function(desiredFile, cb) {
   var filename = path.basename(desiredFile, path.extname(desiredFile));
   var command = "au.capture('" + filename + "')";
   var filePath = screenshotFolder + filename;
+  console.log("filePath is " + filePath);
 
   // Must delete the png if it exists or instruments will
   // add a sequential integer to the file name.
@@ -1487,14 +1488,23 @@ IOS.prototype.localScreenshot = function(desiredFile, cb) {
   async.series([
     function (cb) { this.proxy(command, cb); }.bind(this),
     function (cb) {
+      var srcFile = filePath + ".png";
+      var waitForFile = function() {
+        if (fs.existsSync(srcFile)) {
+          var desiredFolder = path.dirname(desiredFile);
+          mkdirp.sync(desiredFolder);
+          fs.rename(filePath + ".png", desiredFile, cb);
+        } else {
+          setTimeout(waitForFile, 500);
+        }
+      };
+      waitForFile();
       // must exist or rename will fail.
-      var desiredFolder = path.dirname(desiredFile);
-      mkdirp.sync(desiredFolder);
-      fs.rename(filePath + ".png", desiredFile, cb);
-    }.bind(this),
+    },
   ], function(){
     cb(null, {
        status: status.codes.Success.code
+       , value: true
      });
   });
 };

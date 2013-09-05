@@ -490,6 +490,7 @@ Appium.prototype.invoke = function() {
           , withoutDelay: !this.args.nativeInstrumentsLib
           , reset: !this.args.noReset
           , autoWebview: this.desiredCapabilities.safari
+          , version: this.desiredCapabilities.version
           , deviceType: this.iosDeviceType
           , startingOrientation: this.desiredCapabilities.deviceOrientation || this.args.orientation
           , robotPort: this.args.robotPort

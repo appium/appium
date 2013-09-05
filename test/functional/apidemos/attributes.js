@@ -51,7 +51,7 @@ describeWd('get attribute', function(h) {
       should.not.exist(err);
       el.getAttribute('displayed', function(err, val) {
         should.not.exist(err);
-        val.should.equal(true);
+        val.should.equal('true');
         done();
       });
     });
@@ -94,32 +94,32 @@ describeWd('get attribute', function(h) {
 
 describeWd('get attribute selected', function(h) {
   it('should be able to get selected value of a tab', function(done) {
-  h.driver.execute("mobile: find", [["scroll",[[3, "views"]],[[7, "views"]]]], function(err, el) {
-    should.not.exist(err);
-    el.click(function(err) {
-    h.driver.execute("mobile: find", [["scroll",[[3, "tabs"]],[[7, "tabs"]]]], function(err, el) {
+    h.driver.execute("mobile: find", [["scroll",[[3, "views"]],[[7, "views"]]]], function(err, el) {
       should.not.exist(err);
       el.click(function(err) {
-      h.driver.execute("mobile: find", [["scroll",[[3, "content by id"]],[[7, "content by id"]]]], function(err, el) {
-        should.not.exist(err);
-        el.click(function(err) {
-        h.driver.elementsByTagName("text", function(err,els) {
+        h.driver.execute("mobile: find", [["scroll",[[3, "tabs"]],[[7, "tabs"]]]], function(err, el) {
           should.not.exist(err);
-          els[0].getAttribute('selected', function(err, selected) {
-          should.not.exist(err);
-          selected.should.equal(false); // the 1st text is not selected
-          els[1].getAttribute('selected', function(err, selected) {
-            should.not.exist(err);
-            selected.should.equal(true); // tab 1 is selected
-            done();
-          });
+          el.click(function(err) {
+            h.driver.execute("mobile: find", [["scroll",[[3, "content by id"]],[[7, "content by id"]]]], function(err, el) {
+              should.not.exist(err);
+              el.click(function(err) {
+                h.driver.elementsByTagName("text", function(err,els) {
+                  should.not.exist(err);
+                  els[0].getAttribute('selected', function(err, selected) {
+                    should.not.exist(err);
+                    selected.should.equal('false'); // the 1st text is not selected
+                    els[1].getAttribute('selected', function(err, selected) {
+                      should.not.exist(err);
+                      selected.should.equal('true'); // tab 1 is selected
+                      done();
+                    });
+                  });
+                });
+              });
+            });
           });
         });
-        });
-      });
       });
     });
-    });
-  });
   });
 });

@@ -534,7 +534,14 @@ Android.prototype.executeAsync = function(script, args, responseUrl, cb) {
 
 Android.prototype.elementDisplayed = function(elementId, cb) {
   var p = {elementId: elementId, attribute: "displayed"};
-  this.proxy(["element:getAttribute", p], cb);
+  this.proxy(["element:getAttribute", p], function(err, res) {
+    if (err) return cb(err);
+    var displayed = res.value === 'true';
+    cb(null, {
+      status: status.codes.Success.code
+      , value: displayed
+    });
+  });
 };
 
 Android.prototype.elementEnabled = function(elementId, cb) {

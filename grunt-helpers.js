@@ -293,7 +293,11 @@ var setupAndroidProj = function(grunt, projPath, args, cb) {
   if (!process.env.ANDROID_HOME) {
     grunt.fatal("Could not find Android SDK, make sure to export ANDROID_HOME");
   }
-  var cmd = path.resolve(process.env.ANDROID_HOME, "tools", "android");
+  var tool = "android";
+  if (isWindows) {
+    tool = "android.bat";
+  }
+  var cmd = path.resolve(process.env.ANDROID_HOME, "tools", tool);
   if (!fs.existsSync(cmd)) {
     grunt.fatal("The `android` command was not found at \"" + cmd + "\", are you sure ANDROID_HOME is set properly?");
   }

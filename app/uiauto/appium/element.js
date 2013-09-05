@@ -68,6 +68,10 @@ UIAElement.prototype.setValueByType = function(newValue) {
     au.sendKeysToActiveElement(newValue);
   } else if (type === "UIAPickerWheel") {
     this.selectValue(newValue);
+  } else if (type === "UIASlider") {
+    this.dragToValue(parseFloat(newValue));
+  } else if (type === "UIAPageIndicator") {
+    this.selectPage(parseInt(newValue, 10));
   } else {
     this.setValue(newValue);
   }

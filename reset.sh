@@ -210,12 +210,23 @@ reset_selendroid() {
 }
 
 reset_gappium() {
-    echo "RESETTING GAPPIUM"
-    run_cmd git submodule update --init submodules/io.appium.gappium.sampleapp
-    run_cmd pushd submodules/io.appium.gappium.sampleapp
-    run_cmd ./reset.sh -v
-    run_cmd popd
-    run_cmd ln -s $appium_home/submodules/io.appium.gappium.sampleapp $appium_home/sample-code/apps/io.appium.gappium.sampleapp
+    if $include_dev ; then
+        echo "RESETTING GAPPIUM"
+        if $hardcore ; then
+            echo "* Clearing out Gappium submodule"
+            run_cmd rm -rf $appium_home/submodules/io.appium.gappium.sampleapp
+        fi
+        echo "* Clearing out old links"
+        run_cmd rm -rf $appium_home/sample-code/apps/io.appium.gappium.sampleapp
+        echo "* Cloning/updating Gappium"
+        run_cmd git submodule update --init submodules/io.appium.gappium.sampleapp
+        run_cmd pushd submodules/io.appium.gappium.sampleapp
+        echo "* Building Gappium test app"
+        run_cmd ./reset.sh -v
+        run_cmd popd
+        echo "* Linking Gappium test app"
+        run_cmd ln -s $appium_home/submodules/io.appium.gappium.sampleapp $appium_home/sample-code/apps/io.appium.gappium.sampleapp
+    fi
 }
 
 cleanup() {

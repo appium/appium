@@ -10,6 +10,7 @@ sample-code/apps/WebViewApp/build
 sample-code/apps/gps-demo*
 *.sublime-*
 sample-code/apps/UICatalog*
+sample-code/apps/io.appium.gappium*
 sample-code/apps/WebViewDemo*
 sample-code/examples/dotnet/SimpleTest/*.userprefs
 sample-code/examples/php/composer.lock

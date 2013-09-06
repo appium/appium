@@ -6,6 +6,7 @@ var path = require('path')
   , logger = require('../logger').get('appium')
   , sock = '/tmp/instruments_sock'
   , glob = require('glob')
+  , exec = require('child_process').exec
   , bplistCreate = require('bplist-creator')
   , bplistParse = require('bplist-parser')
   , xmlplist = require('plist')
@@ -391,11 +392,26 @@ IOS.prototype.closeAlertBeforeTest = function(cb) {
   }.bind(this));
 };
 
-IOS.prototype.cleanupAppState = function(cb) {
+IOS.prototype.getAppPlistFiles = function(cb) {
   var user = process.env.USER;
+  var simDir = "/Users/" + user + "/Library/Application\\ " +
+               "Support/iPhone\\ Simulator";
+  var findCmd = 'find ' + simDir + ' -name "' + this.bundleId + '*.plist"';
+  exec(findCmd, function(err, stdout) {
+    if (err) return cb(err);
+    var files = [];
+    _.each(stdout.split("\n"), function(line) {
+      if (line.trim()) {
+        files.push(line.trim());
+      }
+    });
+    cb(null, files);
+  });
+};
+
+IOS.prototype.cleanupAppState = function(cb) {
   logger.info("Deleting plists for bundle: " + this.bundleId);
-  glob("/Users/" + user + "/Library/Application Support/iPhone Simulator/**/" +
-       this.bundleId + "*.plist", {}, function(err, files) {
+  this.getAppPlistFiles(function(err, files) {
     if (err) {
       logger.error("Could not remove plist: " + err.message);
       cb(err);

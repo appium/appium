@@ -497,22 +497,29 @@ ADB.prototype.checkFastReset = function(cb) {
   }.bind(this));
 };
 
-ADB.prototype.getDeviceWithRetry = function(cb) {
+ADB.prototype.getDeviceWithRetry = function(cb, count) {
   logger.info("Trying to find a connected android device");
+  var error = new Error("Could not find a connected Android device.");
   var getDevices = function(innerCb) {
     this.getConnectedDevices(function(err, devices) {
       if (typeof devices === "undefined" || devices.length === 0 || err) {
-        return innerCb(new Error("Could not find a connected Android device."));
+        return innerCb(error);
       }
       innerCb(null);
     });
   }.bind(this);
   getDevices(function(err) {
+    count = count || 1;
     if (err) {
-      logger.info("Could not find devices, restarting adb server...");
-      this.restartAdb(function() {
-        getDevices(cb);
-      });
+      if (count < 10) {
+        logger.info("Could not find devices, restarting adb server...");
+        this.restartAdb(function() {
+          this.getDeviceWithRetry(cb, count + 1);
+        }.bind(this));
+      } else {
+        logger.info("Looked for devices " + count + " times. Giving up");
+        cb(error);
+      }
     } else {
       logger.info("Found device, no need to retry");
       cb(null);

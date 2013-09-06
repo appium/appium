@@ -342,7 +342,7 @@ IOS.prototype.parseLocalizableStrings = function(cb) {
   var strings = path.resolve(this.app, "Localizable.strings");
 
   if (!fs.existsSync(strings)) {
-    strings = path.resolve( this.app, "en.lproj", "Localizable.strings");
+    strings = path.resolve(this.app, "en.lproj", "Localizable.strings");
   }
 
   bplistParse.parseFile(strings, function(err, obj) {

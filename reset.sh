@@ -88,7 +88,7 @@ reset_ios() {
         fi
         if [ ! -d "./sample-code/apps/UICatalog" ]; then
             echo "* Downloading UICatalog app source"
-            run_cmd curl -L https://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip > ./sample-code/apps/UICatalog.zip
+            run_cmd curl -L https://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip -o ./sample-code/apps/UICatalog.zip
             run_cmd pushd ./sample-code/apps
             echo "* Unzipping UICatalog app source"
             run_cmd unzip UICatalog.zip

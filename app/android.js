@@ -91,6 +91,7 @@ Android.prototype.start = function(cb, onDie) {
     var relaunchOn = [
       'Could not find a connected Android device'
       , 'Device did not become ready'
+      , 'protocol fault (no status)'
     ];
     var checkShouldRelaunch = function(msg) {
       var relaunch = false;

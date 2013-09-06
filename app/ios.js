@@ -700,10 +700,10 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
       if (strings && strings.length >= 1) selector = strings[0][selector];
       // Prefer an exact match. Some apps, such as uicatalog, don't use exact
       // matches so contains is required.
-      command = ["var exact = au.mainApp.getFirstWithPredicate(\"name == '", selector,
+      command = ["var exact = au.mainApp.getFirstWithPredicateWeighted(\"name == '", selector,
                  "' || label == '", selector, "' || value == '", selector, "'\");"].join('');
       command += ["exact && exact.status == 0 ? exact : au.mainApp.getFirstWith",
-                  "Predicate(\"name contains[c] '", selector, "' || label contains[c] '",
+                  "PredicateWeighted(\"name contains[c] '", selector, "' || label contains[c] '",
                  selector, "' || value contains[c] '", selector, "'\");"].join('');
     } else {
       command = ["au.getElement", ext, "ByType('", selector, "'", ctx,")"].join('');

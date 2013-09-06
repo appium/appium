@@ -1,3 +1,54 @@
+CHANGES IN VERSION 0.9.0 (from 0.8.5)
+=====================================
+
+#### General
+- update troubleshooting doc
+- fix app unzip issue
+- remove app/apk files from zip path before appium starts
+- fix location of UICatalog in reset.sh
+- fix reset.sh android device matching
+- update ruby examples
+- add chrome example in node
+- improve python example code
+- begin to migrate tests from wd to yiewd
+
+#### iOS
+- respond to the last command even if instruments crashes
+- don't attempt to reset real devices
+- update instruments-without-delay with ios7 support
+- add findById support (uses localization strings)
+- add mobile: getStrings
+- support setting value for sliders and switches with sendKeys()
+- add preliminary support for ios7 with a different tracetemplate
+- make mobile: localScreenshot more robust by fixing race condition
+- add phonegap example
+
+#### Android
+- don't require 'avd' to be set in order to install/uninstall to android
+- dynamic find can use classmap aliases
+- make it easy to run multiple android devices simultaneously
+- support for dragFrom / dragTo functions in API level 18
+- use resource-id for finding elements (findById)
+- make getSize available
+- make desired cap for compressedLayoutHierarchy
+- add new version of unsign.jar
+- fix stopCapture bug
+- remove some deprecated methods (xmlKeyContains, etc)
+- add mobile: getStrings
+- always return true for click() (uiautomator bug)
+- fix getAttribute to return strings instead of bool
+- fix tests for use with now-required 4.3 emulator
+- add phonegap example
+
+#### Selendroid
+- track selendroid dev branch instead of master
+- upgrade to selendroid 0.5.0
+
+#### Windows
+- update docs
+- some windows compat fixes
+
+
 CHANGES IN VERSION 0.8.5 (from 0.8.4)
 =====================================
 

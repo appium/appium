@@ -9,11 +9,12 @@ var wd = require('wd')
   , should = require("should")
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
+  , defaultIosVer = '6.1'
   , defaultCaps = {
       browserName: ''
       , device: 'iPhone Simulator'
       , platform: 'Mac'
-      , version: '6.0'
+      , version: defaultIosVer
       //, newCommandTimeout: 60
     };
 
@@ -90,7 +91,7 @@ var describeForSafari = function() {
       , app: 'safari'
       , device: 'iPhone Simulator'
       , platform: 'Mac'
-      , version: '6.1'
+      , version: defaultIosVer
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };

@@ -25,10 +25,12 @@ describeWd('elementByTagName', function(h) {
       els[1].click(function() {
         h.driver.elementByTagName('alert', function(err, el) {
           should.not.exist(err);
-          el.elementsByTagName('button', function(err, buttons) {
+          el.elementByName('OK', function(err) {
             should.not.exist(err);
-            buttons.length.should.equal(2);
-            done();
+            el.elementByName('Cancel', function(err) {
+              should.not.exist(err);
+              done();
+            });
           });
         });
       });

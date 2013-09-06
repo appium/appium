@@ -251,6 +251,7 @@ IOS.prototype.start = function(cb, onDie) {
 
     async.series([
       function (cb) { this.cleanup(cb); }.bind(this),
+      function (cb) { this.parseLocalizableStrings(cb); }.bind(this),
       function (cb) { this.setDeviceType(cb); }.bind(this),
       function (cb) { this.installToRealDevice(cb); }.bind(this),
       function (cb) { createInstruments(cb); }.bind(this)
@@ -294,8 +295,7 @@ IOS.prototype.setDeviceType = function(cb) {
     cb(null);
   } else {
     var deviceTypeCode = 1
-      , plist = path.resolve(this.app, "Info.plist")
-      , strings = path.resolve(this.app, "Localizable.strings");
+      , plist = path.resolve(this.app, "Info.plist");
 
     if (typeof this.deviceType === "undefined") {
       this.deviceType = "iphone";
@@ -305,25 +305,6 @@ IOS.prototype.setDeviceType = function(cb) {
     if (this.deviceType === "ipad") {
       deviceTypeCode = 2;
     }
-
-    if (!fs.existsSync(strings)) strings = path.resolve(
-      this.app, "en.lproj", "Localizable.strings");
-
-    bplistParse.parseFile(strings, function(err, obj) {
-      if (err) {
-        xmlPlistFile(plist, function(err, obj) {
-          if (err) {
-            logger.error("Could not parse plist file at " + strings);
-          } else {
-            logger.info("Parsed app Localizable.strings");
-            this.localizableStrings = obj;
-          }
-        }.bind(this));
-      } else {
-        logger.info("Parsed app Localizable.strings");
-        this.localizableStrings = obj;
-      }
-    }.bind(this));
 
     bplistParse.parseFile(plist, function(err, obj) {
       var newPlist;
@@ -355,6 +336,32 @@ IOS.prototype.setDeviceType = function(cb) {
       });
     });
   }
+};
+
+IOS.prototype.parseLocalizableStrings = function(cb) {
+  var strings = path.resolve(this.app, "Localizable.strings");
+
+  if (!fs.existsSync(strings)) {
+    strings = path.resolve( this.app, "en.lproj", "Localizable.strings");
+  }
+
+  bplistParse.parseFile(strings, function(err, obj) {
+    if (err) {
+      xmlPlistFile(strings, function(err, obj) {
+        if (err) {
+          logger.error("Could not parse plist file at " + strings);
+        } else {
+          logger.info("Parsed app Localizable.strings");
+          this.localizableStrings = obj;
+        }
+        cb();
+      }.bind(this));
+    } else {
+      logger.info("Parsed app Localizable.strings");
+      this.localizableStrings = obj;
+      cb();
+    }
+  }.bind(this));
 };
 
 

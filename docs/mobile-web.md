@@ -7,6 +7,8 @@ If you're interested in automating your web app in Mobile Safari on iOS or Chrom
 
 First of all, make sure developer mode is turned on in your Safari preferences so that the remote debugger port is open.
 
+If you are using the simulator or a real device, you MUST run Safari before attempting to use Appium.
+
 Then, use desired capabilities like these to run your test in mobile Safari:
 
 ```js

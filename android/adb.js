@@ -783,7 +783,7 @@ ADB.prototype.prepareEmulator = function(cb) {
             if (this.avdName[0] !== "@") {
               this.avdName = "@" + this.avdName;
             }
-            var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
+            var emulatorProc = spawn(emulatorBinaryPath.substr(1, emulatorBinaryPath.length - 2), [this.avdName]);
             var timeoutMs = 120000;
             var now = Date.now();
             var checkEmulatorAlive = function() {

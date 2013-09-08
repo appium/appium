@@ -339,29 +339,34 @@ IOS.prototype.setDeviceType = function(cb) {
 };
 
 IOS.prototype.parseLocalizableStrings = function(cb) {
-  var strings = path.resolve(this.app, "Localizable.strings");
+  if (this.app === null) {
+    logger.info("Localizable.strings is not currently supported when using real devices.");
+    cb();
+  } else {
+    var strings = path.resolve(this.app, "Localizable.strings");
 
-  if (!fs.existsSync(strings)) {
-    strings = path.resolve(this.app, "en.lproj", "Localizable.strings");
-  }
-
-  bplistParse.parseFile(strings, function(err, obj) {
-    if (err) {
-      xmlPlistFile(strings, function(err, obj) {
-        if (err) {
-          logger.error("Could not parse plist file at " + strings);
-        } else {
-          logger.info("Parsed app Localizable.strings");
-          this.localizableStrings = obj;
-        }
-        cb();
-      }.bind(this));
-    } else {
-      logger.info("Parsed app Localizable.strings");
-      this.localizableStrings = obj;
-      cb();
+    if (!fs.existsSync(strings)) {
+      strings = path.resolve(this.app, "en.lproj", "Localizable.strings");
     }
-  }.bind(this));
+
+    bplistParse.parseFile(strings, function(err, obj) {
+      if (err) {
+        xmlPlistFile(strings, function(err, obj) {
+          if (err) {
+            logger.error("Could not parse plist file at " + strings);
+          } else {
+            logger.info("Parsed app Localizable.strings");
+            this.localizableStrings = obj;
+          }
+          cb();
+        }.bind(this));
+      } else {
+        logger.info("Parsed app Localizable.strings");
+        this.localizableStrings = obj;
+        cb();
+      }
+    }.bind(this));
+  }
 };
 
 

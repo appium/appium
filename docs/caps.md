@@ -13,3 +13,4 @@ Appium server capabilities
 |`device`|kind of device to use|Android Emulator, iPhone Simulator, Selendroid, Android, iPhone, iPad, or FirefoxOS|
 |`device-ready-timeout`|(Android-only) Timeout in seconds while waiting for device to become ready|`5`|
 |`version`|Android API version, iOS Version, Chrome/Safari version| 6.1|
+|``compressXml``|(Android-only) [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\))| true|

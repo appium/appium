@@ -647,9 +647,14 @@ exports.getScreenshot = function(req, res) {
 };
 
 exports.moveTo = function(req, res) {
+ req.body = _.defaults(req.body, {
+    xoffset: 0.5
+    , yoffset: 0.5
+  });
   var xoffset = req.body.xoffset
     , yoffset = req.body.yoffset
     , element = req.body.element;
+
   req.device.moveTo(element, xoffset, yoffset, getResponseHandler(req, res));
 };
 

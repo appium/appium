@@ -723,6 +723,12 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     ctx = escapeSpecialChars(ctx, "'");
     ctx = ", '" + ctx + "'";
   }
+
+  if (strategy === "id") {
+    var strings = this.localizableStrings;
+    if (strings && strings.length >= 1) selector = strings[0][selector];
+  }
+
   var doFind = function(findCb) {
     var ext = many ? 's' : '';
 
@@ -732,10 +738,6 @@ IOS.prototype.findUIElementOrElements = function(strategy, selector, ctx, many, 
     } else if (strategy === "xpath") {
       command = ["au.getElement", ext, "ByXpath('", selector, "'", ctx, ")"].join('');
     } else if (strategy === "id") {
-      var strings = this.localizableStrings;
-      if (strings && strings.length >= 1) selector = strings[0][selector];
-      // Prefer an exact match. Some apps, such as uicatalog, don't use exact
-      // matches so contains is required.
       command = ["var exact = au.mainApp.getFirstWithPredicateWeighted(\"name == '", selector,
                  "' || label == '", selector, "' || value == '", selector, "'\");"].join('');
       command += ["exact && exact.status == 0 ? exact : au.mainApp.getFirstWith",

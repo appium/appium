@@ -245,7 +245,7 @@ exports.setValue = function(req, res) {
 };
 
 exports.doClick = function(req, res) {
-  var elementId = req.params.elementId;
+  var elementId = req.params.elementId || req.body.element;
   req.device.click(elementId, getResponseHandler(req, res));
 };
 

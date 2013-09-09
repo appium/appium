@@ -44,6 +44,27 @@ describeWd('gestures', function(h) {
       setTimeout(next, 3000);
     });
   });
+  it('should click via touch api', function(done) {
+    // this test depends on having a certain size screen, obviously
+    // I use a nexus something or other phone style thingo
+    h.driver.elementByName("Animation", function(err, el) {
+      should.not.exist(err);
+      el.tap(function(err) {
+        should.not.exist(err);
+        var next = function() {
+          h.driver.elementsByTagName("text", function(err, els) {
+            should.not.exist(err);
+            els[1].text(function(err, text) {
+              should.not.exist(err);
+              text.should.equal("Bouncing Balls");
+              done();
+            });
+          });
+        };
+        setTimeout(next, 1500);
+      });
+    });
+  });
   it('should swipe screen by pixels', function(done) {
     h.driver.elementByName("Views", function(err) {
       // shouldn't be visible

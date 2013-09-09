@@ -7,8 +7,15 @@ Appium server capabilities
 |`browserName`|name of browser to use|`chrome`, `safari`|
 |`device`|The kind of mobile device or emulator to use|`ios`, `selendroid`, `firefoxos`, `mock_ios`, `android` |
 |`version`|Android API version, iOS Version, Chrome/Safari version| 6.1|
-|`app-activity`|__ANDROID ONLY__ Activity name for the Android activity you want to launch from your package|`MainActivity`, `.Settings`|
-|`app-package`|__ANDROID ONLY__ Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
-|`app-wait-activity`|__ANDROID ONLY__ Activity name for the Android activity you want to wait for|`SplashActivity`|
-|`device-ready-timeout`|__ANDROID ONLY__ Timeout in seconds while waiting for device to become ready|`5`|
-|``compressXml``|__ANDROID ONLY__ [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\)| `true`|
+
+--
+
+#### Android Only
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`app-activity`| Activity name for the Android activity you want to launch from your package|`MainActivity`, `.Settings`|
+|`app-package`| Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
+|`app-wait-activity`| Activity name for the Android activity you want to wait for|`SplashActivity`|
+|`device-ready-timeout`| Timeout in seconds while waiting for device to become ready|`5`|
+|``compressXml``| [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\))| `true`|

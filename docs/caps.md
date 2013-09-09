@@ -1,16 +1,14 @@
 Appium server capabilities
 ==========
 
-### Capaibilities
-
-|Capability|Description|Example|
+|Capability|Description|Values|
 |----|-----------|-------|
-|`app`|IOS: abs path to simulator-compiled .app file or compiled .ipa file or the bundle_id of the desired target on device; Android: abs path to .apk file|`/abs/path/to/my.app`, `chrome` for chrome on Android, `safari` for Safari on iOS|
-|`app-activity`|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
-|`app-package`|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`com.example.android.myApp`|
-|`app-wait-activity`|(Android-only) Activity name for the Android activity you want to wait for (e.g., SplashActivity)|`SplashActivity`|
-|`browserName`|name of browser to use|chrome or safari|
-|`device`|kind of device to use|Android Emulator, iPhone Simulator, Selendroid, Android, iPhone, iPad, or FirefoxOS|
-|`device-ready-timeout`|(Android-only) Timeout in seconds while waiting for device to become ready|`5`|
+|`app`|The absolute local path _or_ remote http URL to an `.ipa` or `.apk` file, or a `.zip` containing one of these. Appium will attempt to install this app binary on the appropriate device first. Can also be one of `chrome` or `chromium` to launch Chrome or Chromium on Android, or `safari` to launch Mobile Safari on iOS. Note that this capability is not required for Android if you specify `app-package` and `app-activity` capabilities (see below).|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`, `chrome`, `chromium` on Android, `safari` on iOS|
+|`browserName`|name of browser to use|`chrome`, `safari`|
+|`device`|The kind of mobile device or emulator to use|`ios`, `selendroid`, `firefoxos`, `mock_ios`, `android` |
 |`version`|Android API version, iOS Version, Chrome/Safari version| 6.1|
-|``compressXml``|(Android-only) [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\))| true|
+|`app-activity`|__ANDROID ONLY__ Activity name for the Android activity you want to launch from your package|`MainActivity`, `.Settings`|
+|`app-package`|__ANDROID ONLY__ Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
+|`app-wait-activity`|__ANDROID ONLY__ Activity name for the Android activity you want to wait for|`SplashActivity`|
+|`device-ready-timeout`|__ANDROID ONLY__ Timeout in seconds while waiting for device to become ready|`5`|
+|``compressXml``|__ANDROID ONLY__ [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\)| `true`|

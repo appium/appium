@@ -174,23 +174,23 @@ var describeForApp = function(app, device, appPackage, appActivity, appWaitActiv
 var describeForSauce = function(appUrl, device) {
   return function(desc, tests, extraCaps, host, port) {
     device = device || 'iPhone Simulator';
-    host = host || 'ondemand.saucelabs.com';
-    port = port || 80;
     if (typeof process.env.SAUCE_USERNAME === "undefined" || typeof process.env.SAUCE_ACCESS_KEY === "undefined") {
       throw new Error("Need to set SAUCE_USERNAME and SAUCE_ACCESS_KEY");
     }
-    host = process.env.SAUCE_USERNAME + ':' + process.env.SAUCE_ACCESS_KEY +
-          '@' + host;
+    host = host || 'http://' + process.env.SAUCE_USERNAME + ':' +
+                   process.env.SAUCE_ACCESS_KEY + '@ondemand.saucelabs.com' +
+                   ':80/wd/hub';
+    port = undefined;
     var caps = {
       device: device
       , browserName: ""
       , app: appUrl
-      , version: ""
     };
-    if (device.toLowerCase().indexOf('android') !== -1) {
+    if (caps.device.toLowerCase().indexOf('android') !== -1) {
       caps.platform = "LINUX";
       caps.version = "4.2";
     } else {
+      caps.version = "6.0";
       caps.platform = "Mac 10.8";
     }
 

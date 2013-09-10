@@ -699,17 +699,19 @@ IOS.prototype.push = function(elem) {
     this.cbForCurrentCmd = cb;
 
     this.progress++;
-    logger.debug("Sending command to instruments: " + command);
-    this.instruments.sendCommand(command, function(response) {
-      this.cbForCurrentCmd = null;
-      if (typeof cb === 'function') {
-        this.respond(response, cb);
-      }
+    if (this.instruments) {
+      logger.debug("Sending command to instruments: " + command);
+      this.instruments.sendCommand(command, function(response) {
+        this.cbForCurrentCmd = null;
+        if (typeof cb === 'function') {
+          this.respond(response, cb);
+        }
 
-      // maybe there's moar work to do
-      this.progress--;
-      next();
-    }.bind(this));
+        // maybe there's moar work to do
+        this.progress--;
+        next();
+      }.bind(this));
+    }
   }.bind(this);
 
   next();

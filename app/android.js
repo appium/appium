@@ -747,9 +747,14 @@ Android.prototype.getScreenshot = function(cb) {
     }
   ],
   // Top level cb
-  function(){
+  function(err, res) {
+    var screenshotStatus = status.codes.Success.code;
+    try {
+      screenshotStatus = res[0].value === false ? status.codes.UnknownError.code : screenshotStatus;
+    } catch(e) {
+    }
     cb(null, {
-      status: status.codes.Success.code
+      status: screenshotStatus
       , value: b64data
     });
   });

@@ -50,9 +50,10 @@ public class Drag extends CommandHandler {
         if (params.get("elementId") != JSONObject.NULL) {
           el = command.getElement();
         }
-      } catch (final ElementNotInHashException e) {
+      } catch (final Exception e) {
         el = null;
       }
+
       try {
         if (params.get("destElId") != JSONObject.NULL) {
           destEl = command.getDestElement();

@@ -55,6 +55,8 @@ public class Swipe extends CommandHandler {
         return getErrorResult(e.getMessage());
       } catch (final InvalidCoordinatesException e) {
         return getErrorResult(e.getMessage());
+      } catch (final Exception e) { // handle NullPointerException
+        return getErrorResult("Unknown error");
       }
     } else {
       try {

@@ -47,6 +47,8 @@ public class Click extends CommandHandler {
       } catch (final ElementNotInHashException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
+      } catch (final Exception e) { // handle NullPointerException
+        return getErrorResult("Unknown error");
       }
     } else {
       final Hashtable<String, Object> params = command.params();

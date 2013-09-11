@@ -41,6 +41,8 @@ public class GetText extends CommandHandler {
       } catch (final ElementNotInHashException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
+      } catch (final Exception e) { // handle NullPointerException
+        return getErrorResult("Unknown error");
       }
     } else {
       return getErrorResult("Unable to get text without an element.");

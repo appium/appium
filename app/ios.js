@@ -1130,7 +1130,7 @@ IOS.prototype.submit = function(elementId, cb) {
   }
 };
 
-IOS.prototype.keyevent = function(keycode, cb) {
+IOS.prototype.keyevent = function(keycode, metastate, cb) {
   cb(new NotImplementedError(), null);
 };
 

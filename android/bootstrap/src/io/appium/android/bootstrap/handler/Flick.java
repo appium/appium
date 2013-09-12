@@ -5,7 +5,6 @@ import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.AndroidElement;
 import io.appium.android.bootstrap.CommandHandler;
 import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.utils.Point;
 
@@ -14,7 +13,6 @@ import java.util.Hashtable;
 import org.json.JSONException;
 
 import com.android.uiautomator.core.UiDevice;
-import com.android.uiautomator.core.UiObjectNotFoundException;
 
 /**
  * This handler is used to flick elements in the Android UI.
@@ -83,11 +81,7 @@ public class Flick extends CommandHandler {
         end.x = start.x + xoffset;
         end.y = start.y + yoffset;
 
-      } catch (final ElementNotInHashException e) {
-        return getErrorResult(e.getMessage());
-      } catch (final UiObjectNotFoundException e) {
-        return getErrorResult(e.getMessage());
-      } catch (final InvalidCoordinatesException e) {
+      } catch (final Exception e) {
         return getErrorResult(e.getMessage());
       }
     } else {

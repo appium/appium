@@ -45,7 +45,7 @@ Android.prototype.initialize = function(opts) {
   this.commandTimeout = null;
   this.shuttingDown = false;
   this.adb = null;
-  this.swipeStepsPerSec = 200;
+  this.swipeStepsPerSec = 28;
   this.asyncWaitMs = 0;
   this.remote = null;
   this.webElementIds = [];
@@ -775,18 +775,13 @@ Android.prototype.swipe = function(startX, startY, endX, endY, duration, touchCo
     , startY: startY
     , endX: endX
     , endY: endY
-    , steps: Math.round((duration * 1000) / this.swipeStepsPerSec)
-  };
-  var swipeCb = function(err, res) {
-    setTimeout(function() {
-      cb(err, res);
-    }, duration * 1000);
+    , steps: Math.round(duration * this.swipeStepsPerSec)
   };
   if (elId !== null) {
     swipeOpts.elementId = elId;
-    this.proxy(["element:swipe", swipeOpts], swipeCb);
+    this.proxy(["element:swipe", swipeOpts], cb);
   } else {
-    this.proxy(["swipe", swipeOpts], swipeCb);
+    this.proxy(["swipe", swipeOpts], cb);
   }
 };
 
@@ -814,7 +809,7 @@ Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId,
     , startY: startY
     , endX: endX
     , endY: endY
-    , steps: 20
+    , steps: Math.round(0.2 * this.swipeStepsPerSec)
   };
   if (elId !== null) {
     swipeOpts.elementId = elId;

@@ -72,6 +72,12 @@ var ADB = function(opts, android) {
   this.cmdCb = null;
   this.binaries = {};
   this.resendLastCommand = function() {};
+  if (opts.forceStopApp) {
+    this.forceStopApp = "-S ";
+  }
+  else {
+    this.forceStopApp = "";
+  }
 };
 
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
@@ -497,29 +503,22 @@ ADB.prototype.checkFastReset = function(cb) {
   }.bind(this));
 };
 
-ADB.prototype.getDeviceWithRetry = function(cb, count) {
+ADB.prototype.getDeviceWithRetry = function(cb) {
   logger.info("Trying to find a connected android device");
-  var error = new Error("Could not find a connected Android device.");
   var getDevices = function(innerCb) {
     this.getConnectedDevices(function(err, devices) {
       if (typeof devices === "undefined" || devices.length === 0 || err) {
-        return innerCb(error);
+        return innerCb(new Error("Could not find a connected Android device."));
       }
       innerCb(null);
     });
   }.bind(this);
   getDevices(function(err) {
-    count = count || 1;
     if (err) {
-      if (count < 10) {
-        logger.info("Could not find devices, restarting adb server...");
-        this.restartAdb(function() {
-          this.getDeviceWithRetry(cb, count + 1);
-        }.bind(this));
-      } else {
-        logger.info("Looked for devices " + count + " times. Giving up");
-        cb(error);
-      }
+      logger.info("Could not find devices, restarting adb server...");
+      this.restartAdb(function() {
+        getDevices(cb);
+      });
     } else {
       logger.info("Found device, no need to retry");
       cb(null);
@@ -783,7 +782,7 @@ ADB.prototype.prepareEmulator = function(cb) {
             if (this.avdName[0] !== "@") {
               this.avdName = "@" + this.avdName;
             }
-            var emulatorProc = spawn(emulatorBinaryPath.substr(1, emulatorBinaryPath.length - 2), [this.avdName]);
+            var emulatorProc = spawn(emulatorBinaryPath, [this.avdName]);
             var timeoutMs = 120000;
             var now = Date.now();
             var checkEmulatorAlive = function() {
@@ -1208,7 +1207,7 @@ ADB.prototype.startApp = function(cb) {
   this.requireDeviceId();
   this.requireApp();
   var activityString = this.appActivity;
-  var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
+  var cmd = this.adbCmd + " shell am start " + this.forceStopApp + "-n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
   exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {

@@ -60,6 +60,7 @@ var Appium = function(args) {
   this.fastReset = !this.args.fullReset && !this.args.noReset;
   this.sessionOverride = !this.args.noSessionOverride;
   this.resetting = false;
+  this.forceStopApp = this.args.forceStopApp;  
 };
 
 Appium.prototype.attachTo = function(rest, cb) {

@@ -541,7 +541,13 @@ exports.getPageIndex = function(req, res) {
 };
 
 exports.keyevent = function(req, res) {
-  req.device.keyevent(req.body, getResponseHandler(req, res));
+  req.body = _.defaults(req.body, {
+    keycode: null
+    , metastate: null
+  });
+  var keycode = req.body.keycode
+  , metastate = req.body.metastate;
+  req.device.keyevent(keycode, metastate, getResponseHandler(req, res));
 };
 
 exports.back = function(req, res) {

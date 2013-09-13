@@ -519,6 +519,7 @@ Appium.prototype.invoke = function() {
           , keyAlias: this.args.keyAlias
           , keyPassword: this.args.keyPassword
           , systemPort: this.args.devicePort
+		  , forceStopApp: this.args.forceStopApp
         };
         if (this.isChrome()) {
           androidOpts.chromium = this.args.chromium;

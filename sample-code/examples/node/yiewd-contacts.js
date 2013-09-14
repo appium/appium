@@ -1,9 +1,6 @@
-/*global it:true */
-
 "use strict";
 
-var wd = require("yiewd")
-  , o_O = require("monocle-js").o_O;
+var wd = require("yiewd");
 
 var desiredCaps = {
   device: 'Android'
@@ -11,12 +8,11 @@ var desiredCaps = {
   , "app-activity": "activities.PeopleActivity"
 };
 
-var driver = wd.remote('localhost', 4723);
 var bc = function(t) { return "//button[contains(@text, '" + t + "')]"; };
 var ec = function(t) { return "//editText[contains(@text, '" + t + "')]"; };
 var tc = function(t) { return "//text[contains(@text, '" + t + "')]"; };
 
-driver.run(function*() {
+wd.remote('localhost', 4723).run(function*() {
   try {
     yield this.init(desiredCaps);
     yield this.setImplicitWaitTimeout(5000);

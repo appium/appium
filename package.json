@@ -72,7 +72,7 @@
     "should": "~1.2.1",
     "underscore-cli": "~0.2.17",
     "wd": "~0.1.4",
-    "yiewd": "~0.0.13",
+    "yiewd": "~0.0.14",
     "monocle-js": "~0.1.4",
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",

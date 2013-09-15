@@ -50,6 +50,7 @@ var IOS = function(args) {
   this.queue = [];
   this.progress = 0;
   this.onStop = function() {};
+  this.stopping = false;
   this.cbForCurrentCmd = null;
   this.remote = null;
   this.curWindowHandle = null;
@@ -144,144 +145,175 @@ IOS.prototype.getNumericVersion = function() {
 
 IOS.prototype.start = function(cb, onDie) {
   if (this.app && this.bundleId) {
-    logger.warn("You tried to launch instruments with both an app " +
-                "specification and a bundle ID. Sticking with the app");
+    var err = new Error("You tried to launch instruments with both an app " +
+                        "specification and a bundle ID. Choose one or the " +
+                        "other");
+    logger.error(err.message);
+    return cb(err);
   }
-  var didLaunch = false;
+
+  if (this.instruments !== null) {
+    var msg = "Trying to start a session but instruments is still around";
+    logger.error(msg);
+    return cb(new Error(msg));
+  }
+
+  this.instrumentsDidLaunch = false;
   if (typeof onDie === "function") {
     this.onStop = onDie;
   }
 
   var onLaunch = function() {
-    didLaunch = true;
-    logger.info('Instruments launched. Starting poll loop for new commands.');
-    this.instruments.setDebug(true);
-    var setLocationServicesPref = function(oCb) {
-      var cmd = "setBootstrapConfig: useLocationServices=" +
-                JSON.stringify(this.useLocationServices);
-      this.proxy(cmd, oCb);
-    }.bind(this);
-    var navToWebview = function() {
-      if (this.autoWebview) {
-        this.navToFirstAvailWebview(cb);
-      } else {
-        cb(null);
-      }
-    }.bind(this);
-    var setOrientation = function(oCb) {
-      if (typeof this.startingOrientation === "string" && _.contains(["LANDSCAPE", "PORTRAIT"], this.startingOrientation.toUpperCase())) {
-        logger.info("Setting initial orientation to " + this.startingOrientation);
-        var command = ["au.setScreenOrientation('",
-          this.startingOrientation.toUpperCase(),"')"].join('');
-        this.proxy(command, function(err, res) {
-          if (err || res.status !== status.codes.Success.code) {
-            logger.warn("Setting initial orientation did not work!");
-          } else {
-            this.curOrientation = this.startingOrientation;
-          }
-          oCb(null);
-        }.bind(this));
-      } else {
-        oCb(null);
-      }
-    }.bind(this);
-    var next = function() {
-      setOrientation(function() {
-        setLocationServicesPref(function() {
-          navToWebview();
-        });
-      });
-    };
-    if (this.bundleId !== null) {
-      next();
-    } else {
-      this.proxy('au.bundleId()', function(err, bId) {
-        logger.info('Bundle ID for open app is ' + bId.value);
-        this.bundleId = bId.value;
-        next();
-      }.bind(this));
-    }
+    this.onInstrumentsLaunch(cb);
   }.bind(this);
 
   var onExit = function(code, traceDir) {
-    if (!didLaunch) {
-      logger.error("Instruments did not launch successfully, failing session");
-      return cb("Instruments did not launch successfully--please check your app " +
-          "paths or bundle IDs and try again");
-      //code = 1; // this counts as an error even if instruments doesn't think so
-    }
+    this.onInstrumentsExit(code, traceDir, cb);
+  }.bind(this);
 
-    if (typeof this.cbForCurrentCmd === "function") {
-      // we were in the middle of waiting for a command when it died
-      // so let's actually respond with something
-      var error = new UnknownError("Instruments died while responding to " +
-                                   "command, please check appium logs");
-      this.cbForCurrentCmd(error, null);
-      code = 1; // this counts as an error even if instruments doesn't think so
-    }
-    this.instruments = null;
-    this.curCoords = null;
-    this.curOrientation = null;
-    if (this.remote !== null) {
-      try {
-        this.stopRemote();
-      } catch(e) {
-        logger.info("Error stopping remote: " + e.name + ": " + e.message);
+
+  var traceTemplate = 'Automation' +
+                      (this.getNumericVersion() >= 7 ? "-7.0" : "") +
+                      '.tracetemplate';
+  var createInstruments = function() {
+    logger.debug("Creating instruments");
+    this.instruments = instruments(
+      this.app || this.bundleId
+      , this.udid
+      , path.resolve(__dirname, 'uiauto/bootstrap.js')
+      , path.resolve(__dirname, 'uiauto/' + traceTemplate)
+      , sock
+      , this.withoutDelay
+      , this.webSocket
+      , onLaunch
+      , onExit
+    );
+  }.bind(this);
+
+  // run through all the startup stuff
+  // createInstruments takes care of calling our launch callback,
+  // so we don't do that in the series here
+  async.series([
+    function (cb) { this.cleanup(cb); }.bind(this),
+    function (cb) { this.detectUdid(cb); }.bind(this),
+    function (cb) { this.parseLocalizableStrings(cb); }.bind(this),
+    function (cb) { this.setDeviceType(cb); }.bind(this),
+    function (cb) { this.installToRealDevice(cb); }.bind(this),
+    function (cb) { createInstruments(); cb(); }.bind(this)
+  ], function() {});
+};
+
+IOS.prototype.onInstrumentsLaunch = function(launchCb) {
+  this.instrumentsDidLaunch = true;
+  logger.info('Instruments launched. Starting poll loop for new commands.');
+  this.instruments.setDebug(true);
+
+  async.series([
+    this.setBundleId.bind(this),
+    this.setInitialOrientation.bind(this),
+    this.setLocationServicesPref.bind(this),
+    this.navToInitialWebview.bind(this)
+  ], function(err) {
+    if (err) return launchCb(err);
+    launchCb();
+  });
+
+};
+
+IOS.prototype.setBundleId = function(cb) {
+  if (this.bundleId !== null) {
+    cb();
+  } else {
+    this.proxy('au.bundleId()', function(err, bId) {
+      if (err) return cb(err);
+      logger.info('Bundle ID for open app is ' + bId.value);
+      this.bundleId = bId.value;
+      cb();
+    }.bind(this));
+  }
+};
+
+IOS.prototype.setInitialOrientation = function(cb) {
+  if (typeof this.startingOrientation === "string" && _.contains(["LANDSCAPE", "PORTRAIT"], this.startingOrientation.toUpperCase())) {
+    logger.info("Setting initial orientation to " + this.startingOrientation);
+    var command = ["au.setScreenOrientation('",
+      this.startingOrientation.toUpperCase(),"')"].join('');
+    this.proxy(command, function(err, res) {
+      if (err || res.status !== status.codes.Success.code) {
+        logger.warn("Setting initial orientation did not work!");
+      } else {
+        this.curOrientation = this.startingOrientation;
       }
-    }
-    var nexts = 0;
-    var next = function() {
-      this.bundleId = null;
-      nexts++;
-      if (nexts === 2) {
-        this.onStop(code);
-        this.onStop = null;
-      }
-    }.bind(this);
+      cb();
+    }.bind(this));
+  } else {
+    cb();
+  }
+};
+
+IOS.prototype.setLocationServicesPref = function(cb) {
+  var cmd = "setBootstrapConfig: useLocationServices=" +
+            JSON.stringify(this.useLocationServices);
+  this.proxy(cmd, cb);
+};
+
+IOS.prototype.navToInitialWebview = function(cb) {
+  if (this.autoWebview) {
+    this.navToFirstAvailWebview(cb);
+  } else {
+    cb();
+  }
+};
+
+IOS.prototype.onInstrumentsExit = function(code, traceDir, launchCb) {
+  if (!this.instrumentsDidLaunch) {
+    logger.error("Instruments did not launch successfully, failing session");
+    return launchCb(new Error("Instruments did not launch successfully--" +
+                              "please check your app paths or bundle IDs " +
+                              "and try again"));
+  }
+
+  if (typeof this.cbForCurrentCmd === "function") {
+    // we were in the middle of waiting for a command when it died
+    // so let's actually respond with something
+    var error = new UnknownError("Instruments died while responding to " +
+                                 "command, please check appium logs");
+    this.cbForCurrentCmd(error, null);
+    code = 1; // this counts as an error even if instruments doesn't think so
+  }
+  this.instruments = null;
+
+  var removeTraceDir = function(cb) {
     if (this.removeTraceDir && traceDir) {
-      rimraf(traceDir, function() {
-        logger.info("Deleted tracedir we heard about from instruments (" + traceDir + ")");
-        next();
+      rimraf(traceDir, function(err) {
+        if (err) return cb(err);
+        logger.info("Deleted tracedir we heard about from instruments (" +
+                    traceDir + ")");
+        cb();
       });
     } else {
-      next();
+      cb();
     }
-
-    if (this.reset) {
-      this.cleanupAppState(next);
-    } else {
-      next();
+    if (!this.stopping) {
+      this.onStop(code);
     }
   }.bind(this);
 
-  if (this.instruments === null) {
-    var traceTemplate = 'Automation' +
-                        (this.getNumericVersion() >= 7 ? "-7.0" : "") +
-                        '.tracetemplate';
-    var createInstruments = function(cb) {
-      logger.debug("Creating instruments");
-      this.instruments = instruments(
-        this.app || this.bundleId
-        , this.udid
-        , path.resolve(__dirname, 'uiauto/bootstrap.js')
-        , path.resolve(__dirname, 'uiauto/' + traceTemplate)
-        , sock
-        , this.withoutDelay
-        , this.webSocket
-        , onLaunch
-        , onExit
-      );
-    }.bind(this);
+  var cleanup = function(cb) {
+    if (this.stopping) {
+      this.postCleanup(function() {
+        this.bundleId = null;
+        this.onStop(code);
+        this.onStop = null;
+        cb();
+      }.bind(this));
+    } else {
+      cb();
+    }
+  }.bind(this);
 
-    async.series([
-      function (cb) { this.cleanup(cb); }.bind(this),
-      function (cb) { this.detectUdid(cb); }.bind(this),
-      function (cb) { this.parseLocalizableStrings(cb); }.bind(this),
-      function (cb) { this.setDeviceType(cb); }.bind(this),
-      function (cb) { this.installToRealDevice(cb); }.bind(this),
-      function (cb) { createInstruments(cb); }.bind(this)
-    ], cb);
-  }
+  async.series([removeTraceDir, cleanup], function() {});
+
 };
 
 IOS.prototype.detectUdid = function (cb) {
@@ -304,7 +336,6 @@ IOS.prototype.detectUdid = function (cb) {
     cb();
   }
 };
-
 
 IOS.prototype.installToRealDevice = function (cb) {
   if (this.udid && this.ipa && this.bundleId) {
@@ -667,19 +698,31 @@ IOS.prototype.stopRemote = function() {
   }
 };
 
-IOS.prototype.stop = function(cb) {
+IOS.prototype.postCleanup = function(cb) {
+  this.curCoords = null;
+  this.curOrientation = null;
   if (this.remote) {
     this.stopRemote();
   }
+
+  if (this.reset) {
+    this.cleanupAppState(cb);
+  } else {
+    cb();
+  }
+
+};
+
+IOS.prototype.stop = function(cb) {
   if (this.instruments === null) {
     logger.info("Trying to stop instruments but it already exited");
-    // we're already stopped
-    cb();
+    this.postCleanup(cb);
   } else {
     if (cb) {
       this.onStop = cb;
     }
 
+    this.stopping = true;
     this.instruments.shutdown();
     this.queue = [];
     this.progress = 0;

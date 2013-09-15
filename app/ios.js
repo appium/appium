@@ -251,6 +251,7 @@ IOS.prototype.start = function(cb, onDie) {
 
     async.series([
       function (cb) { this.cleanup(cb); }.bind(this),
+      function (cb) { this.detectUdid(cb); }.bind(this),
       function (cb) { this.parseLocalizableStrings(cb); }.bind(this),
       function (cb) { this.setDeviceType(cb); }.bind(this),
       function (cb) { this.installToRealDevice(cb); }.bind(this),
@@ -258,6 +259,28 @@ IOS.prototype.start = function(cb, onDie) {
     ], cb);
   }
 };
+
+IOS.prototype.detectUdid = function (cb) {
+  if (this.udid !== null && this.udid == "auto") {
+    logger.info("Auto-detecting iOS udid...");
+    var udidetectPath = path.resolve(__dirname, "../build/udidetect/udidetect");
+    var udiddetectProc = exec(udidetectPath, { maxBuffer: 524288, timeout: 3000 }, function(err, stdout) {
+      if (stdout && stdout.length > 2) {
+        this.udid = stdout.replace("\n","");
+        logger.info("Detected udid as " + this.udid);
+      } else {
+        logger.error("Could not detect udid.");
+      }
+      cb();
+    }.bind(this));
+    udiddetectProc.on('timeout', function () {
+      logger.error("Timed out trying to detect udid.");
+    });
+  } else {
+    cb();
+  }
+};
+
 
 IOS.prototype.installToRealDevice = function (cb) {
   if (this.udid && this.ipa && this.bundleId) {

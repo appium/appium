@@ -84,6 +84,16 @@ reset_ios() {
     run_cmd rm -rf build/iwd
     run_cmd mkdir build/iwd
     run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
+    echo "* Cloning/updating udidetect"
+    run_cmd git submodule update --init submodules/udidetect
+    echo "* Building udidetect"
+    run_cmd pushd submodules/udidetect
+    run_cmd make
+    run_cmd popd
+    echo "* Moving udidetect into build/udidetect"
+    run_cmd rm -rf build/udidetect
+    run_cmd mkdir build/udidetect
+    run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
     if $include_dev ; then
         if $hardcore ; then
             echo "* Clearing out old UICatalog download"

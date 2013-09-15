@@ -93,25 +93,49 @@ var xmlPlistFile = function(filename, callback) {
 };
 
 IOS.prototype.cleanup = function(cb) {
-  if (this.removeTraceDir) {
-    glob("*.trace", {}, function(err, files) {
-      if (err) {
-        logger.error("Could not glob for tracedirs: " + err.message);
-      } else {
-        _.each(files, function(file) {
-          file = path.resolve(process.cwd(), file);
-          rimraf(file, function() {
-            logger.info("Cleaned up " + file);
-          });
-        });
-      }
-    });
-  }
+  var removeTracedirs = function(innerCb) {
+    if (this.removeTraceDir) {
+      logger.info("Cleaning up any tracedirs");
+      glob("*.trace", {}, function(err, files) {
+        if (err) {
+          logger.error("Could not glob for tracedirs: " + err.message);
+          innerCb(err);
+        } else {
+          if (files.length > 0) {
+            var filesDone = 0;
+            var onDelete = function() {
+              filesDone++;
+              if (filesDone === files.length) {
+                innerCb();
+              }
+            };
+            _.each(files, function(file) {
+              file = path.resolve(process.cwd(), file);
+              rimraf(file, function() {
+                logger.info("Cleaned up " + file);
+                onDelete();
+              });
+            });
+          } else {
+            innerCb();
+          }
+        }
+      });
+    } else {
+      innerCb();
+    }
+  }.bind(this);
 
-  rimraf(sock, function() {
-    logger.info("Cleaned up instruments socket " + sock);
-    cb();
-  });
+  var removeSocket = function(innerCb) {
+    logger.info("Removing any remaining instruments sockets");
+    rimraf(sock, function(err) {
+      if (err) return innerCb(err);
+      logger.info("Cleaned up instruments socket " + sock);
+      innerCb();
+    });
+  }.bind(this);
+
+  async.series([removeSocket, removeTracedirs], cb);
 };
 
 IOS.prototype.getNumericVersion = function() {

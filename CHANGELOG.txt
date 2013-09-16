@@ -1,3 +1,31 @@
+CHANGES IN VERSION 0.9.1 (from 0.9.0)
+=====================================
+
+#### General
+- add desired caps doc
+- moveTo defaults to 0.5, 0.5
+- add some more node/yiewd examples
+- beefed up test.sh
+
+#### iOS
+- fix issue with finding ids
+- add --ios-sdk flag to reset.sh to choose between 6.1/7.0
+- various ios 7 compatibility fixes
+- significant refactor of ios session lifecycle code, fixing various issues
+- add automatic UDID detection
+- attempt to tap element's coordinates when typical method doesn't work
+- support more types of zip archives
+
+#### Android
+- restart adb up to 10 times instead of 2
+- fix --avd launching bug
+- fix swipe steps/duration logic (note: will affect test behavior)
+- support metastate for keyevent
+
+#### Phonegap
+- fix submodule issues
+
+
 CHANGES IN VERSION 0.9.0 (from 0.8.5)
 =====================================
 

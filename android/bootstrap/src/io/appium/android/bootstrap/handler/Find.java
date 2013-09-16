@@ -371,10 +371,14 @@ public class Find extends CommandHandler {
             sel = stringsXmlId(many, text);
           }
 
-          selectors.add(sel);
+          if (sel != null) {
+            selectors.add(sel);
+          }
         } else {
           sel = stringsXmlId(many, text);
-          selectors.add(sel);
+          if (sel != null) {
+            selectors.add(sel);
+          }
         }
         break;
       case NAME:
@@ -534,8 +538,11 @@ public class Find extends CommandHandler {
       if (text == null) {
         text = "";
       }
-      throw new ElementNotFoundException("ID `" + text
-          + "` doesn't exist as text or content desc.");
+      // find_elements returns an empty array, not an exception
+      if (!many) {
+        throw new ElementNotFoundException("ID `" + text
+            + "` doesn't exist as text or content desc.");
+      }
     }
     return sel;
   }

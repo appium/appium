@@ -56,7 +56,7 @@ describeWd('alert dialog detection', function(h) {
   });
 
   it('should detect Show Custom', function(done) {
-    var client = io.connect('http://127.0.0.1:4723', options);
+    var client = io.connect('http://127.0.0.1:' + appiumPort, options);
     h.driver.elementByXPath("//text[contains(@label,'Alerts')]", function(err, el) {
       should.not.exist(err);
       el.click(function(err) {

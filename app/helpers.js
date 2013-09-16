@@ -108,7 +108,7 @@ exports.unzipApp = function(zipPath, appExt, cb) {
     if (!error) {
       exports.unzipFile(zipPath, function(err, output) {
         if (!err) {
-          var reg = new RegExp("inflating: (.+" + appExt + ")/?");
+          var reg = new RegExp("(?:inflating|extracting): (.+" + appExt + ")/?");
           var match = reg.exec(output);
           if (match) {
             var appPath = path.resolve(path.dirname(zipPath), match[1]);

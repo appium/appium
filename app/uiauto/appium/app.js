@@ -188,15 +188,24 @@ $.extend(au, {
   }
   , tapById: function(elementId) {
       var element = this.getElement(elementId);
-      if (element) {
+      var errObj = {
+        status: codes.UnknownError.code,
+        value: 'elementId ' + elementId + ' could not be tapped'
+      };
+      if (element !== null) {
         try {
           // element may still be null.
           element.tap();
         } catch(e) {
-          return {
-            status: codes.UnknownError.code,
-            value: 'elementId ' + elementId + ' is null and can\'t be tapped.'
-          };
+          if (e.message.indexOf("(null)") !== -1) {
+            try {
+              this.target.tap(element.rect());
+            } catch(e2) {
+              return errObj;
+            }
+          } else {
+            return errObj;
+          }
         }
         return {
           status: codes.Success.code,

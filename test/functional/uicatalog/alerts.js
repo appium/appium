@@ -5,6 +5,7 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatal
   , should = require('should')
   , _s = require('underscore.string')
   , assert = require('assert')
+  , appiumPort = process.env.APPIUM_PORT || 4723
   , io = require('socket.io-client');
 
 describeWd('alert dialog detection', function(h) {
@@ -15,7 +16,7 @@ describeWd('alert dialog detection', function(h) {
   };
 
   it('should detect Show Simple', function(done) {
-    var client = io.connect('http://127.0.0.1:4723', options);
+    var client = io.connect('http://127.0.0.1:' + appiumPort, options);
     h.driver.elementByXPath("//text[contains(@label,'Alerts')]", function(err, el) {
       should.not.exist(err);
       el.click(function(err) {
@@ -35,7 +36,7 @@ describeWd('alert dialog detection', function(h) {
   });
 
   it('should detect Show OK-Cancel', function(done) {
-    var client = io.connect('http://127.0.0.1:4723', options);
+    var client = io.connect('http://127.0.0.1:' + appiumPort, options);
     h.driver.elementByXPath("//text[contains(@label,'Alerts')]", function(err, el) {
       should.not.exist(err);
       el.click(function(err) {

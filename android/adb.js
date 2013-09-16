@@ -1407,8 +1407,8 @@ ADB.prototype.uninstallApp = function(cb) {
   }.bind(this);
 
   if (this.skipUninstall) {
-    this.debug("Not uninstalling app since server started with --full-reset " +
-             "or --no-reset");
+    this.debug("Not uninstalling app since server not started with " +
+               "--full-reset");
     cb();
   } else {
     next();

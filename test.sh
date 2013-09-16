@@ -18,14 +18,14 @@ for arg in "$@"; do
     fi
 done
 alias appium_mocha="mocha -t 60000 -R spec $mocha_args"
-if [[ $ios_only || $all_tests ]]; then
+if $ios_only || $all_tests; then
     appium_mocha test/functional/prefs
     appium_mocha test/functional/safari
     appium_mocha test/functional/testapp
     appium_mocha test/functional/uicatalog
     appium_mocha test/functional/webview
 fi
-if [[ $android_only || $all_tests ]]; then
+if $android_only || $all_tests; then
     appium_mocha test/functional/apidemos
     appium_mocha test/functional/selendroid
 fi

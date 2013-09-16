@@ -38,9 +38,10 @@ public class PressKeyCode extends CommandHandler {
 
       if (params.get("metastate") != JSONObject.NULL) {
         metaState = (Integer) params.get("metastate");
+        UiDevice.getInstance().pressKeyCode(keyCode, metaState);
+      } else {
+        UiDevice.getInstance().pressKeyCode(keyCode);
       }
-
-      UiDevice.getInstance().pressKeyCode(keyCode, metaState);
 
       return getSuccessResult(true);
     } catch (final Exception e) {

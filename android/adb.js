@@ -18,7 +18,8 @@ var spawn = require('win-spawn')
   , getTempPath = helpers.getTempPath
   , rimraf = require('rimraf')
   , Logcat = require('./logcat')
-  , isWindows = helpers.isWindows();
+  , isWindows = helpers.isWindows()
+  , deviceState = require('./device_state');
 
 var noop = function() {};
 
@@ -594,6 +595,7 @@ ADB.prototype.startAppium = function(onReady, onExit) {
     function(cb) { this.installApp(cb); }.bind(this),
     function(cb) { this.forwardPort(cb); }.bind(this),
     function(cb) { this.pushAppium(cb); }.bind(this),
+    function(cb) { this.pushUnlock(cb); }.bind(this),
     function(cb) { this.runBootstrap(cb, onExit); }.bind(this),
     function(cb) { this.wakeUp(cb); }.bind(this),
     function(cb) { this.unlockScreen(cb); }.bind(this),
@@ -1203,6 +1205,29 @@ ADB.prototype.pushAppium = function(cb) {
   }.bind(this));
 };
 
+ADB.prototype.pushUnlock = function(cb) {
+  // TODO: calling `adb install` may not be necessary if its already there.
+  // can we check if app exists first? may speed this up.
+  this.debug("Pushing unlock helper app to device...");
+  var unlockPath = path.resolve(__dirname, "..", "submodules", "unlock_apk", "bin", "unlock_apk-debug.apk");
+  fs.stat(unlockPath, function(err) {
+    if (err) {
+      cb(new Error("Could not find unlock.apk; please run " +
+                   "'reset.sh --android' to build it."));
+    } else {
+      var cmd = this.adbCmd + ' install "' + unlockPath + '"';
+      exec(cmd, { maxBuffer: 524288 }, function(err) {
+        if (err) {
+          logger.error(err);
+          cb(err);
+        } else {
+          cb(null);
+        }
+      }.bind(this));
+    }
+  }.bind(this));
+};
+
 ADB.prototype.startApp = function(cb) {
   logger.info("Starting app");
   this.requireDeviceId();
@@ -1536,11 +1561,40 @@ ADB.prototype.keyevent = function(keycode, cb) {
 
 ADB.prototype.unlockScreen = function(cb) {
   this.requireDeviceId();
-  this.debug("Attempting to unlock screen");
-  var cmd = this.adbCmd + " shell input keyevent 82";
-  exec(cmd, { maxBuffer: 524288 }, function() {
-    cb();
-  });
+  deviceState.isScreenLocked(this.adbCmd, function(err, isLocked) {
+    if (err) {
+      cb(err);
+    } else {
+      if (isLocked) {
+        this.debug("Attempting to unlock screen by starting Unlock app...");
+        var cmd = this.adbCmd + " shell am start -n io.appium.unlock/.Unlock";
+        exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+          if (err) {
+            cb(err);
+          } else {
+            var intervalRepeat = 200;
+            var interval = function() {
+              deviceState.isScreenLocked(this.adbCmd, function(err, isLocked) {
+                if (err) {
+                  cb(err);
+                } else {
+                  if (isLocked) {
+                    setTimeout(interval, intervalRepeat);
+                  } else {
+                    cb();
+                  }
+                }
+              });
+            }.bind(this);
+            setTimeout(interval, intervalRepeat);
+          }
+        }.bind(this));
+      } else {
+        this.debug('Screen already unlocked, continuing.');
+        cb();
+      }
+    }
+  }.bind(this));
 };
 
 ADB.prototype.sendTelnetCommand = function(command, cb) {

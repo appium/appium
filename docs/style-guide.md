@@ -163,4 +163,12 @@ Style notes
     
 *   Function is not followed by a space. Use `function() {` not `function () {`
 
-*   More to come....
+*   Variable names should be camelCased:
+
+    ```js
+    var myVariable = 42;
+    ```
+    not
+    ```js
+    var my_variable = 42;
+    ```

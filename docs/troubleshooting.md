@@ -44,6 +44,13 @@ In the Android SDK 22, the platform and build tools are split up into their own 
 * If this is the first time you've run Appium, make sure to authorize the use of Instruments. Usually a box will pop up that you enter your password into. If you're running Appium from source, you can simply run `sudo grunt authorize` from the main repo to avoid getting this popup. If you're running from npm, run `sudo authorize_ios` instead.
 * If you see `iOS Simulator failed to install the application.` and the paths are correct, try restarting the computer.
 
+
+## Webview/Hybrid/Safari app support
+
+* Make Sure you enable the 'Web Inspector' on the real device.
+* Make Sure you enable the Safari - Advance Preferences- Developer menu for simulators.
+
+
 ## FirefoxOS
 
 * Make sure the Boot-to-Gecko simulator is up and running.

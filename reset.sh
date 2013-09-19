@@ -181,6 +181,11 @@ reset_android() {
     run_cmd $grunt configAndroidBootstrap
     echo "* Building Android bootstrap"
     run_cmd $grunt buildAndroidBootstrap
+    echo "* Building unlock.apk"
+    run_cmd git submodule update --init submodules/unlock_apk
+    run_cmd pushd submodules/unlock_apk
+    run_cmd ant clean && ant debug
+    run_cmd popd
     if $include_dev ; then
         reset_apidemos
         reset_gps_demo

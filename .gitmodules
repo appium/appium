@@ -19,3 +19,6 @@
 [submodule "submodules/udidetect"]
 	path = submodules/udidetect
 	url = https://github.com/vaskas/udidetect.git
+[submodule "submodules/unlock_apk"]
+	path = submodules/unlock_apk
+	url = https://github.com/appium/unlock_apk.git

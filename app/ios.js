@@ -431,7 +431,7 @@ IOS.prototype.parseLocalizableStrings = function(cb) {
       if (err) {
         xmlPlistFile(strings, function(err, obj) {
           if (err) {
-            logger.error("Could not parse plist file at " + strings);
+            logger.warn("Could not parse plist file at " + strings);
           } else {
             logger.info("Parsed app Localizable.strings");
             this.localizableStrings = obj;

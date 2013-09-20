@@ -123,7 +123,7 @@ Given(/^I switch to webview$/) do
 end
 
 Given(/^I switch out of webview$/) do
-  @driver.executeScript("mobile: leaveWebView;")    
+  @driver.execute_script("mobile: leaveWebView;")    
 end
 
 # Now you can use CSS to select an element inside your webview

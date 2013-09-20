@@ -68,7 +68,7 @@ Instruments.prototype.startSocketServer = function(sock) {
     this.exitHandler(1);
   };
 
-  var socketConnectTimeout = setTimeout(onSocketNeverConnect.bind(this), 20000);
+  var socketConnectTimeout = setTimeout(onSocketNeverConnect.bind(this), 90000);
 
   this.socketServer = net.createServer({allowHalfOpen: true}, function(conn) {
     if (!this.hasConnected) {

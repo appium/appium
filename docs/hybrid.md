@@ -97,3 +97,38 @@ Once installed you can start the proxy with the following command:
   remoteWebDriver.quit();
 ```
 
+## Wd.ruby Code example using cucumber
+
+```
+TEST_NAME = "Example Ruby Test"
+SERVER_URL = "http://127.0.0.1:4723/wd/hub" 
+APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
+capabilities =
+    {
+      'browserName' => 'iOS 6.0',
+      'platform' => 'Mac 10.8',
+      'device' => 'iPhone Simulator',
+      'app' => APP_PATH,
+      'name' => TEST_NAME
+    }
+@driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => SERVER_URL)
+
+## I switch to the last window because its always the webview in our case, in other cases you may need to specify a window number
+## View the appium logs while running @driver.window_handles to figure out which window is the one you want and find the associated number
+## Then switch to it using @driver.switch_to_window("6")
+
+Given(/^I switch to webview$/) do 
+	webview = @driver.window_handles.last
+	@driver.switch_to.window(webview)
+end
+
+Given(/^I switch out of webview$/) do
+  @driver.executeScript("mobile: leaveWebView;")    
+end
+
+# Now you can use CSS to select an element inside your webview
+
+And(/^I click a webview button $/) do
+  $driver.find_element(:css, ".green_button").click
+end
+```

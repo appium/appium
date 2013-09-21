@@ -41,6 +41,7 @@ var IOS = function(args) {
   this.autoWebview = args.autoWebview;
   this.withoutDelay = args.withoutDelay;
   this.reset = args.reset;
+  this.automationTraceTemplatePath = args.automationTraceTemplatePath;
   this.removeTraceDir = args.removeTraceDir;
   this.useLocationServices = args.useLocationServices;
   this.deviceType = args.deviceType;
@@ -171,17 +172,13 @@ IOS.prototype.start = function(cb, onDie) {
     this.onInstrumentsExit(code, traceDir, cb);
   }.bind(this);
 
-
-  var traceTemplate = 'Automation' +
-                      (this.getNumericVersion() >= 7 ? "-7.0" : "") +
-                      '.tracetemplate';
   var createInstruments = function() {
     logger.debug("Creating instruments");
     this.instruments = instruments(
       this.app || this.bundleId
       , this.udid
       , path.resolve(__dirname, 'uiauto/bootstrap.js')
-      , path.resolve(__dirname, 'uiauto/' + traceTemplate)
+      , this.automationTraceTemplatePath
       , sock
       , this.withoutDelay
       , this.webSocket
@@ -195,6 +192,7 @@ IOS.prototype.start = function(cb, onDie) {
   // so we don't do that in the series here
   async.series([
     function (cb) { this.cleanup(cb); }.bind(this),
+    function (cb) { this.detectTraceTemplate(cb); }.bind(this),
     function (cb) { this.detectUdid(cb); }.bind(this),
     function (cb) { this.parseLocalizableStrings(cb); }.bind(this),
     function (cb) { this.setDeviceType(cb); }.bind(this),
@@ -314,6 +312,31 @@ IOS.prototype.onInstrumentsExit = function(code, traceDir, launchCb) {
 
   async.series([removeTraceDir, cleanup], function() {});
 
+};
+
+IOS.prototype.detectTraceTemplate = function (cb) {
+  if (this.automationTraceTemplatePath === null) {
+    helpers.getXcodeFolder( function(res, xcodeFolderPath) {
+      if (xcodeFolderPath !== null) {
+        var xcodeTraceTemplatePath = path.resolve(xcodeFolderPath,
+          "../Applications/Instruments.app/Contents/PlugIns/AutomationInstrument.bundle/Contents/Resources/" +
+            "Automation.tracetemplate" );
+        if (fs.existsSync(xcodeTraceTemplatePath)) {
+          this.automationTraceTemplatePath = xcodeTraceTemplatePath;
+          cb();
+        } else {
+          logger.error("Could not find Automation.tracetemplate in " + xcodeTraceTemplatePath);
+          cb(new Error("Could not find Automation.tracetemplate in " + xcodeTraceTemplatePath));
+        }
+      } else {
+        logger.error("Could not find Automation.tracetemplate because XCode could not be found. " +
+          "Try setting the path with xcode-select.");
+        cb(new Error("Could not find Automation.tracetemplate because XCode could not be found."));
+      }
+    }.bind(this));
+  } else {
+    cb();
+  }
 };
 
 IOS.prototype.detectUdid = function (cb) {

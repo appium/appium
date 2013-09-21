@@ -351,3 +351,22 @@ exports.getAndroidPlatform = function(cb) {
   });
   return res;
 };
+
+exports.getXcodeFolder = function(cb) {
+  exec('xcode-select --print-path', { maxBuffer: 524288, timeout: 3000 }, function(err, stdout, stderr) {
+    if (!err) {
+      var xcodeFolderPath = stdout.replace("\n", "");
+      if (fs.existsSync(xcodeFolderPath)) {
+        cb("Found XCode", xcodeFolderPath);
+      } else {
+        logger.error(xcodeFolderPath + "does not exist.");
+        cb("xcode-select could not find xcode", null);
+      }
+    } else {
+      logger.error("xcode-select threw error " + err);
+      logger.error("Stderr: " + stderr);
+      logger.error("Stdout: " + stdout);
+      cb("xcode-select threw an error", null);
+    }
+  });
+};

@@ -32,6 +32,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
+|`--tracetemplate`|null|(IOS-only) path to the .tracetemplate file instruments will use|`--tracetemplate "/Users/me/Automation.tracetemplate"`|
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|

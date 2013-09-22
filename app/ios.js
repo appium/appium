@@ -40,6 +40,7 @@ var IOS = function(args) {
   this.verbose = args.verbose;
   this.autoWebview = args.autoWebview;
   this.withoutDelay = args.withoutDelay;
+  this.xcodeVersion = null;
   this.reset = args.reset;
   this.automationTraceTemplatePath = args.automationTraceTemplatePath;
   this.removeTraceDir = args.removeTraceDir;
@@ -181,6 +182,7 @@ IOS.prototype.start = function(cb, onDie) {
       , this.automationTraceTemplatePath
       , sock
       , this.withoutDelay
+      , this.xcodeVersion
       , this.webSocket
       , onLaunch
       , onExit
@@ -192,6 +194,7 @@ IOS.prototype.start = function(cb, onDie) {
   // so we don't do that in the series here
   async.series([
     function (cb) { this.cleanup(cb); }.bind(this),
+    function (cb) { this.setXcodeVersion(cb); }.bind(this),
     function (cb) { this.detectTraceTemplate(cb); }.bind(this),
     function (cb) { this.detectUdid(cb); }.bind(this),
     function (cb) { this.parseLocalizableStrings(cb); }.bind(this),
@@ -314,13 +317,23 @@ IOS.prototype.onInstrumentsExit = function(code, traceDir, launchCb) {
 
 };
 
-IOS.prototype.detectTraceTemplate = function (cb) {
+IOS.prototype.setXcodeVersion = function(cb) {
+  helpers.getXcodeVersion(function(err, versionNumber) {
+    if (err) {
+      logger.error("Could not determine Xcode version");
+    }
+    this.xcodeVersion = versionNumber;
+    cb();
+  }.bind(this));
+};
+
+IOS.prototype.detectTraceTemplate = function(cb) {
   if (this.automationTraceTemplatePath === null) {
-    helpers.getXcodeFolder( function(res, xcodeFolderPath) {
+    helpers.getXcodeFolder(function(res, xcodeFolderPath) {
       if (xcodeFolderPath !== null) {
         var xcodeTraceTemplatePath = path.resolve(xcodeFolderPath,
           "../Applications/Instruments.app/Contents/PlugIns/AutomationInstrument.bundle/Contents/Resources/" +
-            "Automation.tracetemplate" );
+          "Automation.tracetemplate");
         if (fs.existsSync(xcodeTraceTemplatePath)) {
           this.automationTraceTemplatePath = xcodeTraceTemplatePath;
           cb();

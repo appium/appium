@@ -317,20 +317,22 @@ IOS.prototype.onInstrumentsExit = function(code, traceDir, launchCb) {
 };
 
 IOS.prototype.detectUdid = function (cb) {
-  if (this.udid !== null && this.udid == "auto") {
+  if (this.udid !== null && this.udid === "auto") {
     logger.info("Auto-detecting iOS udid...");
     var udidetectPath = path.resolve(__dirname, "../build/udidetect/udidetect");
     var udiddetectProc = exec(udidetectPath, { maxBuffer: 524288, timeout: 3000 }, function(err, stdout) {
       if (stdout && stdout.length > 2) {
         this.udid = stdout.replace("\n","");
         logger.info("Detected udid as " + this.udid);
+        cb();
       } else {
         logger.error("Could not detect udid.");
+        cb(new Error("Could not detect udid."));
       }
-      cb();
     }.bind(this));
     udiddetectProc.on('timeout', function () {
       logger.error("Timed out trying to detect udid.");
+      cb(new Error("Timed out trying to detect udid."));
     });
   } else {
     cb();

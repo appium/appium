@@ -99,7 +99,7 @@ Once installed you can start the proxy with the following command:
 
 ## Wd.ruby Code example using cucumber
 
-```
+```ruby
 TEST_NAME = "Example Ruby Test"
 SERVER_URL = "http://127.0.0.1:4723/wd/hub" 
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
@@ -123,12 +123,12 @@ Given(/^I switch to webview$/) do
 end
 
 Given(/^I switch out of webview$/) do
-  @driver.executeScript("mobile: leaveWebView;")    
+  @driver.execute_script("mobile: leaveWebView")    
 end
 
 # Now you can use CSS to select an element inside your webview
 
 And(/^I click a webview button $/) do
-  $driver.find_element(:css, ".green_button").click
+  @driver.find_element(:css, ".green_button").click
 end
 ```

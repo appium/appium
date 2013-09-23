@@ -207,6 +207,14 @@ var args = [
             "to this orientation"
   }],
 
+  [['--tracetemplate'], {
+    defaultValue: null
+    , dest: 'automationTraceTemplatePath'
+    , required: false
+    , example: "/Users/me/Automation.tracetemplate"
+    , help: "(IOS-only) .tracetemplate file to use with Instruments"
+  }],
+
   [['--nodeconfig'] , {
     required: false
     , defaultValue: null

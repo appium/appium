@@ -486,6 +486,7 @@ Appium.prototype.invoke = function() {
           , bundleId: this.args.bundleId
           , udid: this.args.udid
           , verbose: !this.args.quiet
+          , automationTraceTemplatePath: this.args.automationTraceTemplatePath
           , removeTraceDir: !this.args.keepArtifacts
           , withoutDelay: !this.args.nativeInstrumentsLib
           , reset: !this.args.noReset

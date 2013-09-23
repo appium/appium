@@ -275,6 +275,15 @@ var args = [
     , required: false
     , help: '(Android-only) Key password'
   }],
+  
+  [['--force-stop-app'], {
+    defaultValue: false
+    , dest: 'forceStopApp'
+    , action: 'storeTrue'
+    , required: false
+    , help: "(Android-only) Force stop application before launching"
+    , nargs: 0
+  }],
 ];
 
 // Setup all the command line argument parsing

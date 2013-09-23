@@ -41,3 +41,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||
+|`--force-stop-app`|false|(Android-only) Force stop the application before launching||

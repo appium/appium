@@ -73,6 +73,12 @@ var ADB = function(opts, android) {
   this.cmdCb = null;
   this.binaries = {};
   this.resendLastCommand = function() {};
+  if (opts.forceStopApp) {
+    this.forceStopApp = "-S ";
+  }
+  else {
+    this.forceStopApp = "";
+  }
 };
 
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
@@ -1233,7 +1239,7 @@ ADB.prototype.startApp = function(cb) {
   this.requireDeviceId();
   this.requireApp();
   var activityString = this.appActivity;
-  var cmd = this.adbCmd + " shell am start -n " + this.appPackage + "/" +
+  var cmd = this.adbCmd + " shell am start " + this.forceStopApp + "-n " + this.appPackage + "/" +
             activityString;
   this.debug("Starting app\n" + cmd);
   exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {

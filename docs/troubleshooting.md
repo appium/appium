@@ -72,7 +72,7 @@ If you're having trouble getting Appium working and the error messages Appium pr
 
 * If you've installed Node from the Node website, it requires that you use sudo
   for `npm`. This is not ideal. Try to get node with `brew install node` instead!
-* Webview support doesn't work on real iOS devices ([discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ))
+* Webview support works on real iOS devices with a proxy, see [discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ).
 * Sometimes iOS UI elements become invalidated milliseconds after they are
   found. This results in an error that looks like `(null) cannot be tapped`.
   Sometimes the only solution is to put the finding-and-acting code in a retry

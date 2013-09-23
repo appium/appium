@@ -13,12 +13,13 @@ var spawn = require('child_process').spawn
   , mkdirp = require('mkdirp')
   , codes = require('../app/uiauto/lib/status.js').codes;
 
-var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb) {
+var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, xcodeVersion, webSocket, cb, exitCb) {
   this.app = app;
   this.udid = udid;
   this.bootstrap = bootstrap;
   this.template = template;
   this.withoutDelay = withoutDelay;
+  this.xcodeVersion = xcodeVersion;
   this.webSocket = webSocket;
   this.commandQueue = [];
   this.curCommand = null;
@@ -196,8 +197,14 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
   var env = _.clone(process.env);
   if (this.withoutDelay && !this.udid) {
-    env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, "../build/iwd/InstrumentsShim.dylib");
-    env.LIB_PATH = path.resolve(__dirname, "../build/iwd");
+    var isXcode4 = this.xcodeVersion !== null && this.xcodeVersion[0] === '4';
+    env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, isXcode4 ?
+      "../build/iwd4/InstrumentsShim.dylib" :
+      "../build/iwd/InstrumentsShim.dylib");
+
+    env.LIB_PATH = path.resolve(__dirname, isXcode4 ?
+      "../build/iwd4" :
+      "../build/iwd");
   }
   logger.info("Spawning instruments with command: " + this.instrumentsPath +
               " " + args.join(" "));

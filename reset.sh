@@ -84,6 +84,10 @@ reset_ios() {
     run_cmd rm -rf build/iwd
     run_cmd mkdir build/iwd
     run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
+    run_cmd pushd ./assets
+    echo "* Unzipping instruments without delay for XCode 4"
+    run_cmd unzip iwd4.zip -d ../build/
+    run_cmd popd
     echo "* Cloning/updating udidetect"
     run_cmd git submodule update --init submodules/udidetect
     echo "* Building udidetect"

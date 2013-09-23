@@ -8,6 +8,7 @@ var Android = require('./android').Android
   , spawn = require('child_process').spawn
   , async = require('async')
   , through = require('through')
+  , isWindows = require('./helpers').isWindows()
   , adb = require('../android/adb');
 
 var ChromeAndroid = function(opts) {
@@ -41,7 +42,8 @@ ChromeAndroid.prototype.start = function(cb, onDie) {
 
 ChromeAndroid.prototype.ensureChromedriverExists = function(cb) {
   logger.info("Ensuring Chromedriver exists");
-  exec('which chromedriver', function(err, stdout) {
+  var cmd = isWindows ? "where chromedriver.exe" : "which chromedriver";
+  exec(cmd, function(err, stdout) {
     if (err) return cb(new Error("Could not find chromedriver, is it on PATH?"));
     this.chromedriver = stdout.trim();
     cb();

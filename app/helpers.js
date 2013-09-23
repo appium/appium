@@ -351,3 +351,46 @@ exports.getAndroidPlatform = function(cb) {
   });
   return res;
 };
+
+exports.getXcodeFolder = function(cb) {
+  exec('xcode-select --print-path', { maxBuffer: 524288, timeout: 3000 }, function(err, stdout, stderr) {
+    if (!err) {
+      var xcodeFolderPath = stdout.replace("\n", "");
+      if (fs.existsSync(xcodeFolderPath)) {
+        cb(null, xcodeFolderPath);
+      } else {
+        logger.error(xcodeFolderPath + "does not exist.");
+        cb(new Error("xcode-select could not find xcode"), null);
+      }
+    } else {
+      logger.error("xcode-select threw error " + err);
+      logger.error("Stderr: " + stderr);
+      logger.error("Stdout: " + stdout);
+      cb(new Error("xcode-select threw an error"), null);
+    }
+  });
+};
+
+exports.getXcodeVersion = function(cb) {
+  exports.getXcodeFolder(function(err, xcodePath) {
+    if (err  !== null) {
+      cb(err, null);
+    } else {
+      var xcodebuildPath = path.resolve(xcodePath, "usr/bin/xcodebuild");
+      if (!fs.existsSync(xcodebuildPath)) {
+        cb(new Error("Could not get Xcode version: " + xcodebuildPath + " does not exist on disk."), null);
+      } else {
+        exec(xcodebuildPath + ' -version', { maxBuffer: 524288, timeout: 3000 }, function(err, stdout) {
+          var versionPattern = /\d\.\d\.*\d*/;
+          var match = versionPattern.exec(stdout);
+          if (match === null) {
+            cb(new Error("Could not parse Xcode version"), null);
+          } else {
+            var versionNumber = match[0];
+            cb(null, versionNumber);
+          }
+        });
+      }
+    }
+  });
+};

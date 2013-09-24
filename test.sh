@@ -42,7 +42,7 @@ appium_mocha="mocha -t 60000 -R spec $mocha_args"
 mkdir -p ./test/functional/_joined
 
 if $ios_only || $all_tests; then
-    ios_tesfile="./test/functional/_joined/ios.js"
+    ios_testfile="./test/functional/_joined/ios.js"
     ios_dirs=(prefs safari testapp uicatalog webview)
     join_testfiles $ios_testfile $ios_dirs
     $appium_mocha $ios_testfile

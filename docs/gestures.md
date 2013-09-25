@@ -123,6 +123,17 @@ In these examples, note that the element parameter is always optional.
   tapObject.put("element", ((RemoteWebElement) row).getId()); // the id of the element we want to tap
   js.executeScript("mobile: tap", tapObject);
   ```
+  
+  ```java
+  //In iOS app, if UI element visbile property is "false". 
+  //Following code will help for tap on it.
+  JavascriptExecutor jScript = (JavascriptExecutor) wd;
+  HashMap<String, Double> object = new HashMap<String, Double>();
+  object.put("x", (double) 14); 
+  object.put("y", (double) 84); 
+  object.put("duration", 0.1);
+  jScript.executeScript("mobile: tap", object);
+  ```
 
 * **Python:**
 

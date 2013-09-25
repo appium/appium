@@ -10,7 +10,6 @@ should_reset_ios=false
 should_reset_selendroid=false
 should_reset_gappium=false
 include_dev=false
-ios_sdk_ver="7.0"
 appium_home=$(pwd)
 reset_successful=false
 apidemos_reset=false
@@ -29,7 +28,6 @@ do
         "-v") verbose=true;;
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
-        "--ios-sdk") ios_sdk_ver="$2"; shift;;
     esac
     shift
 done
@@ -73,7 +71,6 @@ reset_general() {
 
 reset_ios() {
     echo "RESETTING IOS"
-    echo "* Using iOS SDK version $ios_sdk_ver"
     echo "* Cloning/updating instruments-without-delay"
     run_cmd git submodule update --init submodules/instruments-without-delay
     echo "* Building instruments-without-delay"
@@ -112,11 +109,11 @@ reset_ios() {
             run_cmd popd
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
-        run_cmd $grunt buildApp:TestApp:iphonesimulator$ios_sdk_ver
+        run_cmd $grunt buildApp:TestApp
         echo "* Cleaning/rebuilding iOS test app: UICatalog"
-        run_cmd $grunt buildApp:UICatalog:iphonesimulator$ios_sdk_ver
+        run_cmd $grunt buildApp:UICatalog
         echo "* Cleaning/rebuilding iOS test app: WebViewApp"
-        run_cmd $grunt buildApp:WebViewApp:iphonesimulator$ios_sdk_ver
+        run_cmd $grunt buildApp:WebViewApp
     fi
     echo "* Setting iOS config to Appium's version"
     run_cmd $grunt setConfigVer:ios

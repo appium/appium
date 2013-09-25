@@ -19,6 +19,7 @@ var _ = require("underscore")
   , fs = require('fs')
   , helpers = require('./app/helpers')
   , isWindows = helpers.isWindows()
+  , getXcodeVersion = helpers.getXcodeVersion
   , MAX_BUFFER_SIZE = 524288;
 
 module.exports.startAppium = function(appName, verbose, readyCb, doneCb) {
@@ -230,40 +231,47 @@ module.exports.authorize = function(grunt, cb) {
 };
 
 module.exports.build = function(appRoot, cb, sdk) {
-  if (typeof sdk == "undefined") {
-    sdk = 'iphonesimulator6.0';
-  }
-  var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
-  console.log("Cleaning build...");
-  var xcode = exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function(err, stdout, stderr) {
-    if (err) {
-      console.log("Failed cleaning app, maybe it doesn't exist?");
-      return cb(stdout + "\n" + stderr);
-    }
-    console.log("Building app...");
-    var args = ['-sdk', sdk, '-arch', 'i386'];
-    xcode = spawn('xcodebuild', args, {
-      cwd: appRoot
-    });
-    var output = '';
-    var collect = function(data) { output += data; };
-    xcode.stdout.on('data', collect);
-    xcode.stderr.on('data', collect);
-    xcode.on('exit', function(code) {
-      if (code === 0) {
-        cb(null);
-      } else {
-        console.log("Failed building app, maybe it doesn't exist?");
-        cb(output);
+  var next = function() {
+    var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
+    console.log('Using sdk: ' + sdk + '...');
+    console.log("Cleaning build...");
+    var xcode = exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function(err, stdout, stderr) {
+      if (err) {
+        console.log("Failed cleaning app, maybe it doesn't exist?");
+        return cb(stdout + "\n" + stderr);
       }
+      console.log("Building app...");
+      var args = ['-sdk', sdk, '-arch', 'i386'];
+      xcode = spawn('xcodebuild', args, {
+        cwd: appRoot
+      });
+      var output = '';
+      var collect = function(data) { output += data; };
+      xcode.stdout.on('data', collect);
+      xcode.stderr.on('data', collect);
+      xcode.on('exit', function(code) {
+        if (code === 0) {
+          cb(null);
+        } else {
+          console.log("Failed building app, maybe it doesn't exist?");
+          cb(output);
+        }
+      });
     });
-  });
+  };
+  if (typeof sdk === "undefined") {
+    getXcodeVersion(function(err, version) {
+      if (err) return cb(err);
+      var sdkVersion = version[0] === "5" ? "7.0" : "6.1";
+      sdk = 'iphonesimulator' + sdkVersion;
+      next();
+    });
+  } else {
+    next();
+  }
 };
 
 module.exports.buildApp = function(appDir, cb, sdk) {
-  if(typeof sdk === "undefined") {
-    sdk = "iphonesimulator7.0";
-  }
   var appRoot = path.resolve(__dirname, 'sample-code/apps/', appDir);
   module.exports.build(appRoot, function(err) {
     if (err !== null) {

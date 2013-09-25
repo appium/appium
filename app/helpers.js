@@ -137,11 +137,11 @@ exports.checkBuiltInApp = function(appName, version, cb) {
       var appPath = path.resolve(appDir, appName + ".app");
       fs.stat(appPath, function(err, s) {
         if (err) {
-          cb(err, appPath);
+          cb(err);
         } else if (!s.isDirectory()) {
           cb("App package was not a directory", appPath);
         } else {
-          logger.info("Got app, trying to copy to tmp dir");
+          logger.info("Got app, trying to copy " + appPath + " to tmp dir");
           exports.copyBuiltInApp(appPath, appName, cb);
         }
       });

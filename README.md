@@ -128,7 +128,7 @@ you can pass in):
 Hacking with Appium (iOS)
 --------------
 
-(First, have a look at [setting up your system for Appium iOS support](docs/running-on-osx.md#ios).)
+(First, have a look at [setting up your system for Appium iOS support](docs/running-on-osx.md#ios). Pay particular attention to the [section on running multiple versions of Xcode](docs/running-on-osx.md#ios_multiple), as Appium tests require this.)
 
 To avoid a security dialog that may appear when launching your iOS apps you'll
 have to modify your `/etc/authorization` file in one of two ways:

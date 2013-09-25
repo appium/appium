@@ -359,7 +359,7 @@ Appium.prototype.configureDownloadedApp = function(appPath, origin, cb) {
 
 Appium.prototype.configureSafari = function(desiredCaps, cb) {
   this.desiredCapabilities.safari = true;
-  var safariVer = "6.0";
+  var safariVer = "6.1";
   var usingDefaultVer = true;
   if (typeof desiredCaps.version !== "undefined") {
     safariVer = desiredCaps.version;

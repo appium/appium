@@ -262,7 +262,7 @@ module.exports.build = function(appRoot, cb, sdk) {
 
 module.exports.buildApp = function(appDir, cb, sdk) {
   if(typeof sdk === "undefined") {
-    sdk = "iphonesimulator6.1";
+    sdk = "iphonesimulator7.0";
   }
   var appRoot = path.resolve(__dirname, 'sample-code/apps/', appDir);
   module.exports.build(appRoot, function(err) {

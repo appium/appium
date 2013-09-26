@@ -1,7 +1,7 @@
-/*global it:true */
 "use strict";
 
 var driverBlock = require("./driverblock.js")
+  , it = driverBlock.it
   , describeSafari = driverBlock.describeForSafari()
   , describeChrome = driverBlock.describeForChrome()
   , appiumPort = process.env.APPIUM_PORT || 4723

@@ -1,7 +1,7 @@
-/*global it:true */
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
+  , it = require("../../helpers/driverblock.js").it
   , should = require('should')
   , _s = require('underscore.string')
   , assert = require('assert')

@@ -1,11 +1,12 @@
 var deviceState = require('../../../android/device_state')
-    , should = require('should')
-    , childProcess = require('child_process')
-    , ADB = require('../../../android/adb');
+  , should = require('should')
+  , childProcess = require('child_process')
+  , it = require("../../helpers/driverblock.js").it
+  , ADB = require('../../../android/adb');
 
 describe('Android Device State module', function() {
   beforeEach(function(done) {
-    // ensure a device or emu is connected 
+    // ensure a device or emu is connected
     childProcess.exec("adb devices", function(err, stdout, stderr) {
       should.not.exist(err);
       var device = /\n([A-Za-z0-9\-]+)\W+device\n/.exec(stdout);

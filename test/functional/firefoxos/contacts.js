@@ -1,7 +1,7 @@
-/*global it:true */
 "use strict";
 
 var describeWd = require('../../helpers/driverblock.js').describeForApp('Contacts', 'firefox')
+  , it = require("../../helpers/driverblock.js").it
   , should = require("should");
 
 describeWd('firefoxos', function(h) {

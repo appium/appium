@@ -1,4 +1,4 @@
-/*global beforeEach:true, afterEach:true, describe:true */
+/*global beforeEach:true, afterEach:true, describe:true, it:true */
 "use strict";
 
 var wd = require('wd')
@@ -10,6 +10,7 @@ var wd = require('wd')
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
   , defaultIosVer = '7.0'
+  , domain = require('domain')
   , defaultCaps = {
       browserName: ''
       , device: 'iPhone Simulator'
@@ -91,7 +92,7 @@ var describeForSafari = function() {
       , app: 'safari'
       , device: 'iPhone Simulator'
       , platform: 'Mac'
-      , version: defaultIosVer
+      , version: "6.1"
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };
@@ -196,6 +197,18 @@ var describeForSauce = function(appUrl, device) {
 
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, 500000);
   };
+};
+
+module.exports.it = function(behavior, test) {
+  it(behavior, function(done) {
+    var d = domain.create();
+    d.on('error', function(err) {
+      done(err);
+    });
+    d.run(function() {
+      test(done);
+    });
+  });
 };
 
 module.exports.block = driverBlock;

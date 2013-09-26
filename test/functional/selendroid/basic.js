@@ -1,4 +1,3 @@
-/*global it:true */
 "use strict";
 
 var path = require('path')
@@ -7,6 +6,7 @@ var path = require('path')
   , appAct = ".ApiDemos"
   , driverBlock = require("../../helpers/driverblock.js")
   , describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct)
+  , it = driverBlock.it
   , should = require('should');
 
 describeWd('basic', function(h) {

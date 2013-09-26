@@ -13,13 +13,15 @@ function join_testfiles {
     rm -rf $outfile
     shift
     indirs=$@
-    pre="(function() {"
-    post="})();"
     out=""
     touch $outfile
+    echo "\"use strict\";\n\n" >> $outfile
     for indir in $indirs; do
         for infile in ./test/functional/$indir/*.js; do
-            echo "Collating test/functional/$indir/$infile..."
+            basefile=$(basename $infile | sed s/\.js//g)
+            pre="describe('$indir/$basefile', function() {"
+            post="});"
+            echo "Collating $infile..."
             echo "$pre\n" >> $outfile
             cat $infile >> $outfile
             echo "\n$post\n" >> $outfile

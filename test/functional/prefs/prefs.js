@@ -1,48 +1,46 @@
-/*global it:true, before:true, describe:true, beforeEach:true */
+/*global describe:true */
 "use strict";
 
 var checkPreferencesApp = require("../../../app/helpers").checkPreferencesApp
   , should = require('should')
-  , describeWd;
+  , appPath = '/tmp/Appium-Preferences.app'
+  , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath)
+  , it = require("../../helpers/driverblock.js").it;
 
-describe('preferences app', function() {
-  beforeEach(function(done) {
-    checkPreferencesApp('6.1', function(err, appPath) {
+describe('settings app', function() {
+  it('should copy app correctly', function(done) {
+    checkPreferencesApp('6.1', function(err, actualAppPath) {
       should.not.exist(err);
-      describeWd = require("../../helpers/driverblock.js").describeForApp(appPath);
+      appPath.should.eql(actualAppPath);
       done();
     });
   });
+});
 
-  it('', function() {
-    describeWd('settings', function(h) {
-      // example of a script that turns off auto-complete
-      // if you run it on a server with --no-reset, it will keep this state
-      // for subsequent app runs.
-      it('should turn off autocomplete', function(done) {
-        var p = {strategy: "tag name", selector: "tableCell", index: 1};
+describeWd('settings app', function(h) {
+  it('should turn off autocomplete', function(done) {
+    var p = {strategy: "tag name", selector: "tableCell", index: 1};
+    h.driver.execute("mobile: findAndAct", [p], function(err) {
+      should.not.exist(err);
+      setTimeout(function() {
         h.driver.execute("mobile: findAndAct", [p], function(err) {
           should.not.exist(err);
-          setTimeout(function() {
-            h.driver.execute("mobile: findAndAct", [p], function(err) {
-              should.not.exist(err);
-              h.driver.elementByXPath('//switch[@name="Auto-Correction"]', function(err, switchEl) {
-                switchEl.getValue(function(err, checked) {
-                  if (checked === 1) {
-                    // was checked, click it off
-                    switchEl.click(function(err) {
-                      done();
-                    });
-                  } else {
-                    // was unchecked, do nothing
-                    done();
-                  }
+          h.driver.elementByXPath('//switch[@name="Auto-Correction"]', function(err, switchEl) {
+            switchEl.getValue(function(err, checked) {
+              if (checked === 1) {
+                // was checked, click it off
+                switchEl.click(function(err) {
+                  should.not.exist(err);
+                  done();
                 });
-              });
+              } else {
+                // was unchecked, do nothing
+                done();
+              }
             });
-          }, 1000);
+          });
         });
-      });
+      }, 1000);
     });
   });
 });

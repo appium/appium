@@ -1,4 +1,4 @@
-/*global it:true beforeEach:true */
+/*global beforeEach:true */
 "use strict";
 
 var path = require('path')
@@ -7,6 +7,7 @@ var path = require('path')
   , appAct = "HelloGappium"
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/ios/build/" + appAct + ".app")
   , driverBlock = require("../../helpers/driverblock.js")
+  , it = driverBlock.it
   , should = require('should');
 
 // export env APPIUM_CORDOVA="android" to run tests against android version

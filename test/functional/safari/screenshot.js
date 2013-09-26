@@ -1,7 +1,7 @@
-/*global it:true */
 "use strict";
 
 var desc = require("../../helpers/driverblock.js").describeForSafari()
+  , it = require("../../helpers/driverblock.js").it
   , _ = require("underscore")
   , fs = require('fs')
   , should = require('should');

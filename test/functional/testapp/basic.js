@@ -1,10 +1,10 @@
 // This is basically a port of webdriver-test.py
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
-/*global it:true */
 "use strict";
 
 var assert = require("assert")
   , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
+  , it = require("../../helpers/driverblock.js").it
   , should = require('should')
   , _ = require("underscore");
 

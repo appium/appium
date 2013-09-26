@@ -1,9 +1,9 @@
 // This is basically a port of webdriver-test.py
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
-/*global it:true */
 "use strict";
 
 var assert = require("assert")
+  , it = require("../../helpers/driverblock.js").it
   , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp');
 
 describeWd('calc app', function(h) {

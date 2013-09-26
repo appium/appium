@@ -1,8 +1,8 @@
-/*global it:true */
 "use strict";
 
 var assert = require("assert")
   , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
+  , it = require("../../helpers/driverblock.js").it
   , should = require("should");
 
 describeWd('rotation gesture', function(h) {

@@ -123,7 +123,17 @@ In these examples, note that the element parameter is always optional.
   tapObject.put("element", ((RemoteWebElement) row).getId()); // the id of the element we want to tap
   js.executeScript("mobile: tap", tapObject);
   ```
-
+  ```java
+  //In iOS app, if UI element visbile property is "false". 
+  //Using element location tap on it.
+  WebElement element = wd.findElement(By.xpath("//window[1]/scrollview[1]/image[1]"));
+  JavascriptExecutor js = (JavascriptExecutor) wd;
+  HashMap<String, Double> tapObject = new HashMap<String, Double>();
+  tapObject.put("x", (double) element.getLocation().getX()); 
+  tapObject.put("y", (double) element.getLocation().getY()); 
+  tapObject.put("duration", 0.1);
+  js.executeScript("mobile: tap", tapObject);
+  ```
 * **Python:**
 
   ```python

@@ -1,4 +1,3 @@
-/*global it:true */
 "use strict";
 
 var path = require('path')
@@ -16,6 +15,7 @@ var path = require('path')
   , describeWd4 = driverBlock.describeForApp(appPath, "android", appPkg, appAct4)
   , describeBad = driverBlock.describeForApp(badAppPath, "android", appPkg,
       appAct)
+  , it = driverBlock.it
   , should = require('should');
 
 describeWd('basic', function(h) {

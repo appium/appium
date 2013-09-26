@@ -1,7 +1,7 @@
-/*global it:true */
 "use strict";
 
 var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
+  , it = require("../../helpers/driverblock.js").it
   , assert = require('assert');
 
 describeWd('active', function(h) {

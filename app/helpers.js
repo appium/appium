@@ -158,17 +158,21 @@ exports.checkPreferencesApp = function(version, cb) {
 };
 
 exports.getBuiltInAppDir = function(version, cb) {
-  var appDir = "/Applications/Xcode.app/Contents/Developer/Platforms" +
-               "/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator" +
-               version + ".sdk/Applications/";
-  fs.stat(appDir, function(err, s) {
-    if (err) {
-      cb(err);
-    } else if (!s.isDirectory()) {
-      cb("Could not load built in applications directory");
-    } else {
-      cb(null, appDir);
-    }
+  exports.getXcodeFolder(function(err, xcodeDir) {
+    if (err) return cb(err);
+
+    var appDir = path.resolve(xcodeDir, "Platforms/iPhoneSimulator.platform/" +
+                              "Developer/SDKs/iPhoneSimulator" + version +
+                              ".sdk/Applications/");
+    fs.stat(appDir, function(err, s) {
+      if (err) {
+        cb(err);
+      } else if (!s.isDirectory()) {
+        cb("Could not load built in applications directory");
+      } else {
+        cb(null, appDir);
+      }
+    });
   });
 };
 

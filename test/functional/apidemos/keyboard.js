@@ -1,4 +1,3 @@
-/*global it:true */
 "use strict";
 
 var path = require('path')
@@ -7,6 +6,7 @@ var path = require('path')
   , appAct = "view.Controls1"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
+  , it = require("../../helpers/driverblock.js").it
   , should = require('should');
 
 describeWd('text boxes', function(h) {

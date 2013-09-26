@@ -195,8 +195,12 @@ var driverIt = function(desc, gen) {
   gen = o_O(gen);
   it(desc, function(done) {
     run(function*() {
-      yield gen();
-      done();
+      try {
+        yield gen();
+        done();
+      } catch (e) {
+        done(e);
+      }
     });
   });
 };

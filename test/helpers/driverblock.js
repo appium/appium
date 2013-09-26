@@ -1,4 +1,4 @@
-/*global beforeEach:true, afterEach:true, describe:true */
+/*global beforeEach:true, afterEach:true, describe:true, it:true */
 "use strict";
 
 var wd = require('wd')
@@ -10,6 +10,7 @@ var wd = require('wd')
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
   , defaultIosVer = '7.0'
+  , domain = require('domain')
   , defaultCaps = {
       browserName: ''
       , device: 'iPhone Simulator'
@@ -39,20 +40,19 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
       if (expectConnError && err) {
         driverHolder.connError = err;
         return done();
+      } else if (err) {
+        return done(err);
       }
-      should.not.exist(err);
+
       driverHolder.sessionId = sessionId;
-      driverHolder.driver.setImplicitWaitTimeout(5000, function(err) {
-        should.not.exist(err);
-        done();
-      });
+      driverHolder.driver.setImplicitWaitTimeout(5000, done);
     });
   });
 
   afterEach(function(done) {
     driverHolder.driver.quit(function(err) {
       if (err && err.status && err.status.code != 6) {
-        throw err;
+        done(err);
       }
       if (host.indexOf("saucelabs") !== -1 && sauceRest !== null) {
         sauceRest.updateJob(driverHolder.sessionId, {
@@ -91,7 +91,7 @@ var describeForSafari = function() {
       , app: 'safari'
       , device: 'iPhone Simulator'
       , platform: 'Mac'
-      , version: defaultIosVer
+      , version: "6.1"
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };
@@ -196,6 +196,18 @@ var describeForSauce = function(appUrl, device) {
 
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, 500000);
   };
+};
+
+module.exports.it = function(behavior, test) {
+  it(behavior, function(done) {
+    var d = domain.create();
+    d.on('error', function(err) {
+      done(err);
+    });
+    d.run(function() {
+      test(done);
+    });
+  });
 };
 
 module.exports.block = driverBlock;

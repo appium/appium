@@ -40,20 +40,19 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
       if (expectConnError && err) {
         driverHolder.connError = err;
         return done();
+      } else if (err) {
+        return done(err);
       }
-      should.not.exist(err);
+
       driverHolder.sessionId = sessionId;
-      driverHolder.driver.setImplicitWaitTimeout(5000, function(err) {
-        should.not.exist(err);
-        done();
-      });
+      driverHolder.driver.setImplicitWaitTimeout(5000, done);
     });
   });
 
   afterEach(function(done) {
     driverHolder.driver.quit(function(err) {
       if (err && err.status && err.status.code != 6) {
-        throw err;
+        done(err);
       }
       if (host.indexOf("saucelabs") !== -1 && sauceRest !== null) {
         sauceRest.updateJob(driverHolder.sessionId, {

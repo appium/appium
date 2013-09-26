@@ -9,6 +9,8 @@ xcode_path="$(xcode-select -print-path | sed s/\\/Contents\\/Developer//g)"
 did_switch_xcode=false
 
 function join_testfiles {
+    testtype=$1
+    shift
     outfile=$1
     rm -rf $outfile
     shift
@@ -19,7 +21,7 @@ function join_testfiles {
     for indir in $indirs; do
         for infile in ./test/functional/$indir/*.js; do
             basefile=$(basename $infile | sed s/\.js//g)
-            pre="describe('$indir/$basefile', function() {"
+            pre="describe('$testtype:$indir/$basefile', function() {"
             post="});"
             echo "Collating $infile..."
             echo "$pre\n" >> $outfile
@@ -55,7 +57,7 @@ if $ios_only || $all_tests; then
     echo "---------------------"
     ios_testfile="./test/functional/_joined/ios.js"
     ios_dirs="prefs safari testapp uicatalog webview"
-    join_testfiles $ios_testfile $ios_dirs
+    join_testfiles ios6.1 $ios_testfile $ios_dirs
     if test -d /Applications/Xcode-6.1.app; then
         echo "Found Xcode for iOS 6.1, switching to it"
         sudo xcode-select -switch /Applications/Xcode-6.1.app
@@ -71,7 +73,7 @@ if $ios7_only || $all_tests; then
     echo "---------------------"
     ios7_testfile="./test/functional/_joined/ios7.js"
     ios7_dirs="testapp uicatalog webview"
-    join_testfiles $ios7_testfile $ios7_dirs
+    join_testfiles ios7 $ios7_testfile $ios7_dirs
     if test -d /Applications/Xcode-7.0.app; then
         echo "Found Xcode for iOS 7.0, switching to it"
         sudo xcode-select -switch /Applications/Xcode-7.0.app
@@ -83,7 +85,7 @@ if $ios7_only || $all_tests; then
 fi
 
 if $did_switch_xcode; then
-    echo "Switching back to default Xcode"
+    echo "Switching back to default Xcode ($xcode_path)"
     sudo xcode-select -switch $xcode_path
 fi
 
@@ -92,6 +94,6 @@ if $android_only || $all_tests; then
     echo "---------------------"
     android_testfile="./test/functional/_joined/android.js"
     android_dirs="apidemos selendroid android"
-    join_testfiles $android_testfile $android_dirs
+    join_testfiles android $android_testfile $android_dirs
     $appium_mocha $android_testfile
 fi

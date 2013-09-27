@@ -17,7 +17,7 @@ if [ $? -eq 0 ]; then
 fi
 set -e
 git pull upstream master
-./reset.sh
+./reset.sh --hardcore
 npm publish
 version=$(cat package.json | underscore extract version | sed 's/\"//g')
 git tag -a "v$version" -m "tag appium@$version for npm publish"

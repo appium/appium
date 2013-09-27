@@ -12,6 +12,7 @@ should_reset_gappium=false
 include_dev=false
 appium_home=$(pwd)
 reset_successful=false
+has_reset_unlock_apk=false
 apidemos_reset=false
 hardcore=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
@@ -174,6 +175,21 @@ reset_gps_demo() {
     fi
 }
 
+reset_unlock_apk() {
+    if ! $has_reset_unlock_apk; then
+        run_cmd rm -rf build/unlock_apk
+        run_cmd mkdir -p build/unlock_apk
+        echo "* Building Unlock.apk"
+        unlock_base="submodules/unlock_apk"
+        run_cmd git submodule update --init $unlock_base
+        run_cmd pushd $unlock_base
+        run_cmd ant clean && run_cmd ant debug
+        run_cmd popd
+        run_cmd cp $unlock_base/bin/unlock_apk-debug.apk build/unlock_apk
+        has_reset_unlock_apk=true
+    fi
+}
+
 reset_android() {
     echo "RESETTING ANDROID"
     require_java
@@ -182,11 +198,7 @@ reset_android() {
     run_cmd $grunt configAndroidBootstrap
     echo "* Building Android bootstrap"
     run_cmd $grunt buildAndroidBootstrap
-    echo "* Building unlock.apk"
-    run_cmd git submodule update --init submodules/unlock_apk
-    run_cmd pushd submodules/unlock_apk
-    run_cmd ant clean && run_cmd ant debug
-    run_cmd popd
+    reset_unlock_apk
     if $include_dev ; then
         reset_apidemos
         reset_gps_demo
@@ -210,6 +222,7 @@ reset_selendroid() {
     run_cmd rm -rf selendroid
     echo "* Building selendroid server and supporting libraries"
     run_cmd $grunt buildSelendroidServer
+    reset_unlock_apk
     if $include_dev ; then
         if ! $apidemos_reset; then
             reset_apidemos

@@ -1,3 +1,17 @@
+CHANGES IN VERSION 0.10.1 (from 0.10.0)
+=====================================
+
+#### Android
+- add hybrid app docs
+- fix unlock.apk for android 2.3
+- get unlock.apk into build/ so prebuilt packages can use it
+
+#### Selendroid
+- make unlock.apk work with selendroid
+- change remote url for selendroid submodule
+- update selendroid to 0.6.0
+
+
 CHANGES IN VERSION 0.10.0 (from 0.9.1)
 =====================================
 

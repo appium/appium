@@ -1210,7 +1210,7 @@ ADB.prototype.pushUnlock = function(cb) {
   // TODO: calling `adb install` may not be necessary if its already there.
   // can we check if app exists first? may speed this up.
   this.debug("Pushing unlock helper app to device...");
-  var unlockPath = path.resolve(__dirname, "..", "submodules", "unlock_apk", "bin", "unlock_apk-debug.apk");
+  var unlockPath = path.resolve(__dirname, "..", "build", "unlock_apk", "unlock_apk-debug.apk");
   fs.stat(unlockPath, function(err) {
     if (err) {
       cb(new Error("Could not find unlock.apk; please run " +

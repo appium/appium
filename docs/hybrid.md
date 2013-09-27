@@ -3,6 +3,12 @@ Automating hybrid apps
 
 One of the core principles of Appium is that you shouldn't have to change your app to test it. In line with that methodology, it is possible to test hybrid web apps (e.g., the "UIWebView" elements in an iOS app) the same* way you can with Selenium for web apps. There is a bit of technical complexity required so that Appium knows whether you want to automate the native aspects of the app or the web views, but thankfully, we can stay within the WebDriver protocol for everything.
 
+*  [Hybrid iOS apps](#ios)
+*  [Hybrid Android apps](#android)
+
+<a name="ios"></a>Automating hybrid iOS apps
+--------------------------
+
 Here are the steps required to talk to a web view in your Appium test:
 
 1.  Navigate to a portion of your app where a web view is active
@@ -131,4 +137,59 @@ end
 And(/^I click a webview button $/) do
   @driver.find_element(:css, ".green_button").click
 end
+```
+
+<a name="android"></a>Automating hybrid Android apps
+--------------------------
+
+Appium uses Selendroid under the hood for webview support. So, first of all, you'll want to specify `"device": "selendroid"` as a desired capability. Then:
+
+1.  Navigate to a portion of your app where a web view is active
+1.  Call [POST session/:sessionId/window](http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window) with the string "WEBVIEW" as the window handle, e.g., `driver.window("WEBVIEW")`.
+1.  (This puts your Appium session into a mode where all commands are interpreted as being intended for automating the web view, rather than the native portion of the app. For example, if you run getElementByTagName, it will operate on the DOM of the web view, rather than return UIAElements. Of course, certain WebDriver methods only make sense in one context or another, so in the wrong context you will receive an error message).
+1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `window` again with the string "NATIVE", e.g., `driver.window("NATIVE")`.
+
+More instructions are available [on Selendroid's site](http://selendroid.io/hybrid.html)
+
+## Wd.js Code example
+
+```js
+// assuming we have an initialized `driver` object working on a hybrid app
+driver.window("WEBVIEW", function(err) { // choose the only available view
+  driver.elementsByCss('.some-class', function(err, els) { // get webpage elements by css
+    els.length.should.be.above(0); // there should be some!
+    els[0].text(function(elText) { // get text of the first element
+      elText.should.eql("My very own text"); // it should be extremely personal and awesome
+      driver.window("NATIVE", function(err) { // leave webview context
+        // do more native stuff here if we want
+        driver.quit(); // stop webdrivage
+      });
+    });
+  });
+});
+```
+
+## Wd.java Code example
+
+```java
+  //setup the web driver and launch the webview app.
+  DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+  desiredCapabilities.setCapability("device", "Selendroid");
+  desiredCapabilities.setCapability("app", "/path/to/some.apk");  
+  URL url = new URL("http://127.0.0.1:4723/wd/hub");
+  RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
+  
+  //switch to the web view
+  remoteWebDriver.switchTo().window("WEBVIEW");
+  
+  //Interact with the elements on the guinea-pig page using id.
+  WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
+  Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
+  remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
+  
+  //leave the webview to go back to native app.
+  remoteWebDriver.switchTo().window("NATIVE");
+  
+  //close the app.
+  remoteWebDriver.quit();
 ```

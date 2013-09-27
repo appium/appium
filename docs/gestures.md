@@ -17,6 +17,7 @@ While the Selenium WebDriver spec has support for certain kinds of mobile intera
   * how long the swipe/drag takes in seconds
   * where to start the swipe on screen or element
   * where to end the swipe on screen or element
+  * how to slide a slider from left to right and vice versa
 * **scroll to** (element)
 * **shake**
 * set the **orientation** with option:
@@ -219,6 +220,32 @@ In these examples, note that the element parameter is always optional.
   swipeObject.put("duration", 1.8);
   js.executeScript("mobile: swipe", swipeObject);
   ```
+  
+  ```java
+  //Slider code snippet
+  WebElement sliderBar = wd.findElement(By.xpath("//window[1]/slider[1]"));
+  //Slide from left to right 
+  JavascriptExecutor jScript = (JavascriptExecutor) wd;
+	HashMap<String, Double> sildeFromLeftToRight = new HashMap<String, Double>();
+	sildeFromLeftToRight.put("startX", 0.05);
+	sildeFromLeftToRight.put("startY", 0.5);
+	sildeFromLeftToRight.put("endX", 0.95);
+	sildeFromLeftToRight.put("endY", 0.5);
+	sildeFromLeftToRight.put("duration", 1.0);
+	sildeFromLeftToRight.put("element",new Double(((RemoteWebElement)sliderBar).getId()));
+	jScript.executeScript("mobile: swipe", sildeFromLeftToRight);
+	
+  //Slide from right to left
+  JavascriptExecutor jScript = (JavascriptExecutor) wd;
+	HashMap<String, Double> slideFromRightToLeft = new HashMap<String, Double>();
+	slideFromRightToLeft.put("startX", 0.95);
+	slideFromRightToLeft.put("startY", 0.5);
+	slideFromRightToLeft.put("endX",0.05);
+	slideFromRightToLeft.put("endY", 0.5);
+	slideFromRightToLeft.put("duration", 1.0);
+	slideFromRightToLeft.put("element",new Double(((RemoteWebElement)sliderBar).getId()));
+	jScript.executeScript("mobile: swipe", slideFromRightToLeft);
+	```
 
 ### Set orientation
 

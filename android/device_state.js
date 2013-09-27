@@ -17,6 +17,7 @@ module.exports = {
       } else {
         var screenLocked = /mShowingLockscreen=\w+/gi.exec(stdout);
         var samsungNoteUnlocked = /mScreenOnFully=\w+/gi.exec(stdout);
+        var gbScreenLocked = /mCurrentFocus.+Keyguard/gi.exec(stdout);
         if (screenLocked && screenLocked[0]) {
           if (screenLocked[0].split('=')[1] == 'false') {
             cb(null, false);
@@ -29,8 +30,10 @@ module.exports = {
           } else {
             cb(null, true);
           }
-        } else {
+        } else if (gbScreenLocked && gbScreenLocked[0]) {
           cb(null, true);
+        } else {
+          cb(null, false);
         }
       }
     });

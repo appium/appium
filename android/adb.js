@@ -676,6 +676,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
     function(cb) { conditionalInstallSelendroid(cb); },
     function(cb) { this.installApp(cb); }.bind(this),
     function(cb) { this.forwardPort(cb); }.bind(this),
+    function(cb) { this.pushUnlock(cb); }.bind(this),
     function(cb) { this.unlockScreen(cb); }.bind(this),
     function(cb) { this.pushSelendroid(cb); }.bind(this),
     function(cb) { logger.info("Selendroid server is launching"); cb(); }

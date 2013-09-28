@@ -18,6 +18,7 @@ While the Selenium WebDriver spec has support for certain kinds of mobile intera
   * where to start the swipe on screen or element
   * where to end the swipe on screen or element
 * **scroll to** (element)
+* **slider**
 * **shake**
 * set the **orientation** with option:
   * new orientation (landscape or portrait)
@@ -218,6 +219,14 @@ In these examples, note that the element parameter is always optional.
   swipeObject.put("endY", 0.5);
   swipeObject.put("duration", 1.8);
   js.executeScript("mobile: swipe", swipeObject);
+  ```
+  
+### Slider
+
+* **Java**
+  ```java
+  WebElement slider =  wd.findElement(By.xpath("//window[1]/slider[1]"));
+  slider.sendKeys(send value from "0.1" to "1.0" ie, "10%" to "100%");
   ```
 
 ### Set orientation

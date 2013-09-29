@@ -7,24 +7,18 @@ If you are running Appium on Windows, you cannot use the prebuilt '.app', which 
 
 # Setup
 
-To get started, you'll need to install node.js (v.0.8 or greater). Just download the installer from nodejs.org.
+To get started:
 
-Once you've got node.js installed, install the [Android SDK](http://developer.android.com/sdk/index.html). You will need to run the 'android' tool (included in the SDK) and make sure you have an API Level 17 or greater API installed. You will also need Ant to build the bootstrap jar that Appium uses for testing Android. Ant comes with the Android Windows SDK in the eclipse\plugins folder.
+1. Install [node.js](http://nodejs.org/download/) (v.0.8 or greater). Use the installer from nodejs.org.
+2. Install the [Android SDK](http://developer.android.com/sdk/index.html). You will need to run the 'android' tool (included in the SDK) and make sure you have an API Level 17 or greater API installed. Set `ANDROID_HOME` to be your Android SDK path and add the tools and platform-tools folders to your PATH variable.
+3. Install the Java JDK and set `JAVA_HOME` to your JDK folder.
+4. Install [Apache Ant](http://ant.apache.org/bindownload.cgi) or use the one that comes with the Android Windows SDK in the eclipse\plugins folder. Be sure to add the folder containing ant to your PATH variable.
+5. Install [Apache Maven](http://maven.apache.org/download.cgi) and set the M2HOME and M2 environment variables. Add the M2 environment variable to your PATH variable.
+6. Install [Git](http://git-scm.com/download/win) Be sure to install Git for windows to run in the regular command prompt.
 
-Set `ANDROID_HOME` to be your Android SDK path. If you unzipped the Android SDK to C:\android. You can do the by editting your PATH variable.
-
-Install the Java JDK and set JAVA_HOME to your JDK folder.
-
-Now that you're setup to run Appium, run `npm install .` from your Appium checkout to install all the dependencies.
-Then run:
+Now that you've downloaded everything, run:
 
     reset.bat
-
--or-
-
-    grunt configAndroidBootstrap
-    grunt buildAndroidBootstrap
-    grunt setConfigVer:android
 
 # Running Appium
 

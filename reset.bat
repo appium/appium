@@ -10,6 +10,7 @@ SET doSelendroid=0
 SET doAndroid=0
 SET doVerbose=0
 SET doForce=0
+SET pigsFly=0
 
 :: Read in command line switches
 FOR %%A IN (%*) DO IF "%%A" == "--dev" SET doDev=1
@@ -89,15 +90,57 @@ IF %doSelendroid% == 1 (
   ECHO Cloning/updating selendroid
   CALL :runCmd "RD -/S /Q submodules\selendroid\selendroid-server\target | VER > NUL"
   CALL :runCmd "git submodule update --init submodules\selendroid"
-  CALL :runCmd "RD /S /Q selendroid  | VER > NUL"
+  CALL :runCmd "RD /S /Q selendroid | VER > NUL"
   ECHO Building selendroid server and supporting libraries
   CALL :runCmd "node_modules\.bin\grunt buildSelendroidServer"
+  
+  :: Reset Selendroid Dev
+  IF %doDev% == 1 (
+    ECHO.
+    ECHO =====Resetting Selendroid - Dev=====
+    ECHO.
+    ECHO Linking selendroid test app: WebViewDemo
+    CALL :runCmd "RD /S /Q sample-code\apps\WebViewDemo | VER > NUL"
+    CALL :runCmd "MKDIR sample-code\apps\WebViewDemo"
+    CALL :runCmd "XCOPY submodules\selendroid\selendroid-test-app sample-code\apps\WebViewDemo /E /Q"
+    CALL :uninstallAndroidApp com.example.android.apis.selendroid
+    CALL :uninstallAndroidApp io.selendroid.testapp
+    CALL :uninstallAndroidApp io.selendroid.testapp.selendroid
+    CALL :uninstallAndroidApp org.openqa.selendroid.testapp
+    CALL :uninstallAndroidApp openqa.selendroid.testapp.selendroid
+    ECHO.
+    ECHO =====Reset Selendroid - Dev Complete=====
+  )  
+
   ECHO Setting Selendroid config to Appium's version
   CALL :runCmd "node_modules\.bin\grunt setConfigVer:selendroid"
   ECHO.
   ECHO =====Reset Selendroid Complete=====
 )
-ECHO.
+:: Reset Gappium
+IF %pigsFly% == 1 (
+  ECHO.
+  ECHO =====Resetting Gappium=====
+  ECHO.
+  ECHO Clearing out old links
+  CALL :runCmd "RD /S /Q sample-code\apps\io.appium.gappium.sampleapp | VER > NUL"
+  ECHO Cloning/updating Gappium
+  CALL :runCmd "git submodule update --init submodules\io.appium.gappium.sampleapp"
+  CALL :runCmd "PUSHD submodules\io.appium.gappium.sampleapp"
+  ECHO Building Gappium test app
+  CALL :runCmd "reset.bat"
+  CALL :runCmd "POPD"
+  ECHO Linking Gappium test app
+  CALL :runCmd "XCOPY submodules\io.appium.gappium.sampleapp sample-code\apps\io.appium.gappium.sampleapp /E /Q"
+  ECHO.
+  ECHO =====Reset Gappium=====
+)
+GOTO :EOF
+
+:: Function to uninstall an Android app
+:uninstallAndroidApp
+  ECHO Attempting to uninstall android app %~1
+  CALL :runCmd "adb uninstall %~1 | VER > NUL"
 GOTO :EOF
 
 :: Function to run commands
@@ -107,7 +150,7 @@ GOTO :EOF
   IF %ERRORLEVEL% NEQ 0 IF %doForce% == 0 (
     CD /D %curpath%
     ECHO.
-    ECHO Stopping because there was an error
+    ECHO Stopping because there was an error and --force was not used
     CALL :halt 1
   )
 GOTO :EOF

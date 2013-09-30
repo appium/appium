@@ -70,6 +70,8 @@ var IOS = function(args) {
   this.onPageChangeCb = null;
   this.useRobot = args.robotPort > 0;
   this.robotUrl = this.useRobot ? "http://" + args.robotAddress + ":" + args.robotPort + "" : null;
+  this.safariLauncherAppName = "/safarilauncher.app";
+  this.isSafariLauncherApp = (typeof args.app !== "undefined") && (args.app.toLowerCase().indexOf(this.safariLauncherAppName, args.app.length - this.safariLauncherAppName.length) !== -1);
   this.capabilities = {
       version: '6.0'
       , webStorageEnabled: false
@@ -177,6 +179,7 @@ IOS.prototype.start = function(cb, onDie) {
     this.instruments = instruments(
       this.app || this.bundleId
       , this.udid
+      , this.isSafariLauncherApp
       , path.resolve(__dirname, 'uiauto/bootstrap.js')
       , this.automationTraceTemplatePath
       , sock
@@ -572,7 +575,7 @@ IOS.prototype.cleanupAppState = function(cb) {
 
 IOS.prototype.listWebFrames = function(cb, exitCb) {
   var isDone = false;
-  if (!this.bundleId) {
+  if (!this.bundleId && !this.isSafariLauncherApp) {
     logger.error("Can't enter web frame without a bundle ID");
     return cb(new Error("Tried to enter web frame without a bundle ID"));
   }

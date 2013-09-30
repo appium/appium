@@ -633,9 +633,14 @@ Appium.prototype.stop = function(cb) {
   }
 
   logger.info('Shutting down appium session...');
-  this.device.stop(function(code) {
-    this.onDeviceDie(code, cb);
-  }.bind(this));
+  if (typeof this.device.isSafariLauncherApp !== "undefined" && this.device.isSafariLauncherApp === true) {
+    this.device.stopRemote();
+    this.onDeviceDie(0, cb);
+  } else {
+    this.device.stop(function(code) {
+      this.onDeviceDie(code, cb);
+    }.bind(this));
+  }
 };
 
 

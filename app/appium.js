@@ -630,6 +630,9 @@ Appium.prototype.stop = function(cb) {
   logger.info('Shutting down appium session...');
   if (typeof this.device.isSafariLauncherApp !== "undefined" && this.device.isSafariLauncherApp === true) {
     this.device.stopRemote();
+    if (this.device.udid === null){
+      this.device.instruments.shutdown();
+    }
     this.onDeviceDie(0, cb);
   } else {
     this.device.stop(function(code) {

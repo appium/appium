@@ -932,9 +932,16 @@ $.extend(au, {
     }
 
   , dismissAlert: function() {
-      if (!this.mainApp.alert().cancelButton().isNil()) {
-        var alert = this.mainApp.alert();
+      var alert = this.mainApp.alert();
+      if (!alert.cancelButton().isNil()) {
         alert.cancelButton().tap();
+        this.waitForAlertToClose(alert);
+        return {
+          status: codes.Success.code,
+          value: null
+        };
+      } else if (alert.buttons().length > 0) {
+        alert.buttons()[0].tap(); // first button is dismiss
         this.waitForAlertToClose(alert);
         return {
           status: codes.Success.code,

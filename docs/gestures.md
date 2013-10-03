@@ -20,6 +20,7 @@ While the Selenium WebDriver spec has support for certain kinds of mobile intera
 * **scroll to** (element)
 * **slider**
 * **shake**
+* **longTap** (element)
 * set the **orientation** with option:
   * new orientation (landscape or portrait)
 
@@ -244,4 +245,27 @@ In these examples, note that the element parameter is always optional.
 * **Python:**
   ```python
   driver.orientation = "LANDSCAPE"
+  ```
+
+### longTap
+ 
+ * **c#**
+ 
+  ```c#
+  // long tap an element
+  // 
+  Dictionary<string, object> parameters = new Dictionary<string, object>();
+  parameters.Add("using", _attributeType);
+  parameters.Add("value", _attribute);
+  Response response = rm.executescript(DriverCommand.FindElement, parameters);
+  Dictionary<string, object> elementDictionary = response.Value as Dictionary<string, object>;
+  string id = null;
+  if (elementDictionary != null)
+  {
+     id = (string)elementDictionary["ELEMENT"];
+  }
+  IJavaScriptExecutor js = (IJavaScriptExecutor)remoteDriver;
+  Dictionary<String, String> longTapObject = new Dictionary<String, String>();
+  longTapObject.Add("element", id);
+  js.ExecuteScript("mobile: longClick", longTapObject);
   ```

@@ -102,10 +102,10 @@ public class Orientation extends CommandHandler {
       switch (current) {
         case ROTATION_0:
           d.setOrientationRight();
-          desired = OrientationEnum.ROTATION_90;
+          desired = OrientationEnum.ROTATION_270;
           break;
         case ROTATION_180:
-          d.setOrientationRight();
+          d.setOrientationLeft();
           desired = OrientationEnum.ROTATION_270;
           break;
         default:
@@ -114,9 +114,6 @@ public class Orientation extends CommandHandler {
     } else {
       switch (current) {
         case ROTATION_90:
-          d.setOrientationRight();
-          desired = OrientationEnum.ROTATION_180;
-          break;
         case ROTATION_270:
           d.setOrientationNatural();
           desired = OrientationEnum.ROTATION_0;
@@ -125,6 +122,8 @@ public class Orientation extends CommandHandler {
           return getSuccessResult("Already in portrait mode.");
       }
     }
+    // Make sure to un-freeze the device rotation
+    d.unfreezeRotation();
     current = OrientationEnum.fromInteger(d.getDisplayRotation());
     if (current != desired) {
       return getErrorResult("Set the orientation, but app refused to rotate.");

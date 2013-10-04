@@ -27,8 +27,17 @@ public class TakeScreenshot extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command) {
     final File screenshot = new File("/data/local/tmp/screenshot.png");
-    screenshot.mkdirs();
-    final boolean result = UiDevice.getInstance().takeScreenshot(screenshot);
-    return getSuccessResult(result);
+
+    try {
+      screenshot.getParentFile().mkdirs();
+    } catch (final Exception e) {
+    }
+
+    if (screenshot.exists()) {
+      screenshot.delete();
+    }
+
+    UiDevice.getInstance().takeScreenshot(screenshot);
+    return getSuccessResult(screenshot.exists());
   }
 }

@@ -688,9 +688,19 @@ Android.prototype.localScreenshot = function(file, cb) {
     function(cb) {
       this.proxy(["takeScreenshot"], cb);
     }.bind(this),
-    function(cb) {
-      var cmd = this.adb.adbCmd + ' pull /data/local/tmp/screenshot.png "' + file + '"';
-      exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+     function(cb) {
+      var cmd = this.adb.adbCmd + ' shell /system/bin/screencap -p /sdcard/screenshot.png';
+      logger.debug("create screenshot cmd: " + cmd);
+      exec(cmd, { maxBuffer: 512 * 1024 }, function(err, stdout, stderr) {
+        if (err) {
+          logger.warn(stderr);
+          return cb(err);
+        }
+        cb(null);
+      });
+      cmd = this.adb.adbCmd + ' pull /sdcard/screenshot.png "' + localfile + '"';
+      logger.debug("pull screenshot cmd: " + cmd);
+      exec(cmd, { maxBuffer: 512 * 1024 }, function(err, stdout, stderr) {
         if (err) {
           logger.warn(stderr);
           return cb(err);
@@ -716,9 +726,18 @@ Android.prototype.getScreenshot = function(cb) {
       this.proxy(["takeScreenshot"], cb);
     }.bind(this),
     function(cb) {
-      var cmd = this.adb.adbCmd + ' pull /data/local/tmp/screenshot.png "' + localfile + '"';
-      logger.debug("screenshot cmd: " + cmd);
-      exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+      var cmd = this.adb.adbCmd + ' shell /system/bin/screencap -p /sdcard/screenshot.png';
+      logger.debug("create screenshot cmd: " + cmd);
+      exec(cmd, { maxBuffer: 512 * 1024 }, function(err, stdout, stderr) {
+        if (err) {
+          logger.warn(stderr);
+          return cb(err);
+        }
+        cb(null);
+      });
+      cmd = this.adb.adbCmd + ' pull /sdcard/screenshot.png "' + localfile + '"';
+      logger.debug("pull screenshot cmd: " + cmd);
+      exec(cmd, { maxBuffer: 512 * 1024 }, function(err, stdout, stderr) {
         if (err) {
           logger.warn(stderr);
           return cb(err);
@@ -749,10 +768,6 @@ Android.prototype.getScreenshot = function(cb) {
   // Top level cb
   function(err, res) {
     var screenshotStatus = status.codes.Success.code;
-    try {
-      screenshotStatus = res[0].value === false ? status.codes.UnknownError.code : screenshotStatus;
-    } catch(e) {
-    }
     cb(null, {
       status: screenshotStatus
       , value: b64data

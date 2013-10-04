@@ -384,7 +384,7 @@ exports.getXcodeVersion = function(cb) {
       if (!fs.existsSync(xcodebuildPath)) {
         cb(new Error("Could not get Xcode version: " + xcodebuildPath + " does not exist on disk."), null);
       } else {
-        exec(xcodebuildPath + ' -version', { maxBuffer: 524288, timeout: 3000 }, function(err, stdout) {
+        exec(JSON.stringify(xcodebuildPath) + ' -version', { maxBuffer: 524288, timeout: 3000 }, function(err, stdout) {
           var versionPattern = /\d\.\d\.*\d*/;
           var match = versionPattern.exec(stdout);
           if (match === null) {

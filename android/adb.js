@@ -676,6 +676,7 @@ ADB.prototype.startSelendroid = function(serverPath, onReady) {
     function(cb) { conditionalInstallSelendroid(cb); },
     function(cb) { this.installApp(cb); }.bind(this),
     function(cb) { this.forwardPort(cb); }.bind(this),
+    function(cb) { this.pushUnlock(cb); }.bind(this),
     function(cb) { this.unlockScreen(cb); }.bind(this),
     function(cb) { this.pushSelendroid(cb); }.bind(this),
     function(cb) { logger.info("Selendroid server is launching"); cb(); }
@@ -1209,7 +1210,7 @@ ADB.prototype.pushUnlock = function(cb) {
   // TODO: calling `adb install` may not be necessary if its already there.
   // can we check if app exists first? may speed this up.
   this.debug("Pushing unlock helper app to device...");
-  var unlockPath = path.resolve(__dirname, "..", "submodules", "unlock_apk", "bin", "unlock_apk-debug.apk");
+  var unlockPath = path.resolve(__dirname, "..", "build", "unlock_apk", "unlock_apk-debug.apk");
   fs.stat(unlockPath, function(err) {
     if (err) {
       cb(new Error("Could not find unlock.apk; please run " +

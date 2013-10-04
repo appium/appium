@@ -1,3 +1,39 @@
+CHANGES IN VERSION 0.10.1 (from 0.10.0)
+=====================================
+
+#### Android
+- add hybrid app docs
+- fix unlock.apk for android 2.3
+- get unlock.apk into build/ so prebuilt packages can use it
+
+#### Selendroid
+- make unlock.apk work with selendroid
+- change remote url for selendroid submodule
+- update selendroid to 0.6.0
+
+
+CHANGES IN VERSION 0.10.0 (from 0.9.1)
+=====================================
+
+#### General
+- update contributor style guide
+- add some troubleshooting tips to doc
+- update test.sh for a better testing flow
+
+#### iOS
+- autodetect tracetemplate rather than bundling with appium
+- choose version of instruments-without-delay based on xcode version
+- get rid of --ios-sdk flag in reset.sh since appium now autodetects
+
+#### Android
+- fix find elements by ID
+- update clean.apk
+- update touchevent for longpress
+- add unlock.apk which is a more robust device unlock solution
+- enable mobile chrome support on windows
+- better support for tapping invisible elements
+
+
 CHANGES IN VERSION 0.9.1 (from 0.9.0)
 =====================================
 

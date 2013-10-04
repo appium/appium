@@ -520,11 +520,11 @@ IOS.prototype.closeAlertBeforeTest = function(cb) {
   }.bind(this));
 };
 
-IOS.prototype.getAppPlistFiles = function(cb) {
+IOS.prototype.getSimulatorApplications = function(cb) {
   var user = process.env.USER;
   var simDir = "/Users/" + user + "/Library/Application\\ " +
                "Support/iPhone\\ Simulator";
-  var findCmd = 'find ' + simDir + ' -name "' + this.bundleId + '*.plist"';
+  var findCmd = 'find ' + simDir + ' -name "Applications"';
   exec(findCmd, function(err, stdout) {
     if (err) return cb(err);
     var files = [];
@@ -539,9 +539,9 @@ IOS.prototype.getAppPlistFiles = function(cb) {
 
 IOS.prototype.cleanupAppState = function(cb) {
   logger.info("Deleting plists for bundle: " + this.bundleId);
-  this.getAppPlistFiles(function(err, files) {
+  this.getSimulatorApplications(function(err, files) {
     if (err) {
-      logger.error("Could not remove plist: " + err.message);
+      logger.error("Could not remove: " + err.message);
       cb(err);
     } else {
       var filesExamined = 0;
@@ -744,11 +744,22 @@ IOS.prototype.postCleanup = function(cb) {
   }
 
   if (this.reset) {
-    this.cleanupAppState(cb);
+    // The simulator process must be ended before we delete applications.
+    async.series([
+      function(cb) { this.endSimulator(cb); }.bind(this),
+      function(cb) { this.cleanupAppState(cb); }.bind(this),
+    ], cb);
   } else {
     cb();
   }
 
+};
+
+IOS.prototype.endSimulator = function(cb) {
+  var cmd = 'killall -9 "iPhone Simulator"';
+  exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+    cb(err);
+  });
 };
 
 IOS.prototype.stop = function(cb) {

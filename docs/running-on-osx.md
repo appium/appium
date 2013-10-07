@@ -30,7 +30,7 @@ Appium.
 
 In addition, it's been discovered that testing against iOS 6.1 with Xcode
 5 causes increased slowness and instability, so it's recommended that for
-testing against iOs 6.1 and below we use Xcode 4.6.3, and for testing against
+testing against iOS 6.1 and below we use Xcode 4.6.3, and for testing against
 iOS 7.0 we use Xcode 5.We can do this by, say, having Xcode 5 at
 `/Applications/Xcode.app`, and Xcode 4.6 and `/Applications/Xcode-4.6.app`.
 Then we use the following command:

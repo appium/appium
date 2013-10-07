@@ -713,11 +713,21 @@ Android.prototype.getScreenshot = function(cb) {
 
   async.series([
     function(cb) {
-      this.proxy(["takeScreenshot"], cb);
+      var png = "/data/local/tmp/screenshot.png";
+      var cmd =  [this.adb.adbCmd, 'shell', '"/system/bin/rm', png + ';', '/system/bin/screencap -p', png, '"'].join(' ');
+      logger.debug("getScreenshot: " + cmd);
+      exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
+        if (err) {
+          logger.warn(stderr);
+          return cb(err);
+        }
+        cb(null);
+      });
     }.bind(this),
     function(cb) {
+      if (fs.existsSync(localfile)) fs.unlinkSync(localfile);
       var cmd = this.adb.adbCmd + ' pull /data/local/tmp/screenshot.png "' + localfile + '"';
-      logger.debug("screenshot cmd: " + cmd);
+      logger.debug("getScreenshot: " + cmd);
       exec(cmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
         if (err) {
           logger.warn(stderr);
@@ -748,13 +758,8 @@ Android.prototype.getScreenshot = function(cb) {
   ],
   // Top level cb
   function(err, res) {
-    var screenshotStatus = status.codes.Success.code;
-    try {
-      screenshotStatus = res[0].value === false ? status.codes.UnknownError.code : screenshotStatus;
-    } catch(e) {
-    }
     cb(null, {
-      status: screenshotStatus
+      status: status.codes.Success.code
       , value: b64data
     });
   });

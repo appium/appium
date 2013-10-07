@@ -298,10 +298,8 @@ exports.mobileFlick = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.flick(startX, startY, endX, endY, touchCount, element,
         getResponseHandler(req, res));
-  }
 };
 
 exports.mobileDrag = function(req, res) {
@@ -322,10 +320,8 @@ exports.mobileDrag = function(req, res) {
     , endY = req.body.endY
     , steps = req.body.steps;
 
-  if (checkMissingParams(res, {startX: startX, startY: startY, endX: endX, endY: endY})) {
     req.device.drag(startX, startY, endX, endY, steps, element, destEl,
         getResponseHandler(req, res));
-  }
 };
 
 exports.mobileSource = function(req, res) {
@@ -370,10 +366,8 @@ exports.mobileSwipe = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.swipe(startX, startY, endX, endY, duration, touchCount,
         element, getResponseHandler(req, res));
-  }
 };
 
 exports.mobileRotation = function(req, res) {
@@ -394,10 +388,8 @@ exports.mobileRotation = function(req, res) {
     , touchCount = req.body.touchCount
     , rotation = req.body.rotation;
 
-  if (checkMissingParams(res, {x: x, y: y})) {
     req.device.rotate(x, y, radius, rotation, duration, touchCount,
         element, getResponseHandler(req, res));
-  }
 };
 
 exports.mobilePinchClose = function(req, res) {
@@ -416,10 +408,8 @@ exports.mobilePinchClose = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.pinchClose(startX, startY, endX, endY, duration,
         element, getResponseHandler(req, res));
-  }
 };
 
 exports.mobilePinchOpen = function(req, res) {
@@ -438,10 +428,8 @@ exports.mobilePinchOpen = function(req, res) {
     , endX = req.body.endX
     , endY = req.body.endY;
 
-  if (checkMissingParams(res, {endX: endX, endY: endY})) {
     req.device.pinchOpen(startX, startY, endX, endY, duration,
         element, getResponseHandler(req, res));
-  }
 };
 
 exports.mobileScrollTo = function(req, res) {

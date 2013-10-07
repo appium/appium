@@ -556,8 +556,8 @@ $.extend(au, {
           value: null
         };
       } else {
-	var result = results.value[0];
-	for (var a = 0, len = results.value.length; a < len; a++) {
+  var result = results.value[0];
+  for (var a = 0, len = results.value.length; a < len; a++) {
           var elId = results.value[a].ELEMENT;
           var elVis = this.getElement(elId).isVisible();
           if (elVis === 1) {
@@ -916,7 +916,14 @@ $.extend(au, {
 
   , acceptAlert: function() {
       var alert = this.mainApp.alert();
-      alert.defaultButton().tap();
+      var acceptButton = alert.defaultButton();
+      var buttonCount = alert.buttons().length;
+      if (acceptButton.isNil() && buttonCount > 0) {
+        // last button is accept
+        acceptButton = alert.buttons()[buttonCount - 1];
+      }
+
+      acceptButton.tap();
       this.waitForAlertToClose(alert);
       return {
         status: codes.Success.code,

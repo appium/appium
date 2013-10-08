@@ -14,7 +14,8 @@ Appium on OS X supports iOS and Android testing.
 * You need to authorize use of the iOS Simulator. If you are running Appium
   from NPM, you'll do this by running `sudo authorize_ios` (`authorize_ios` is
   a binary made available by the Appium npm package). If you're running Appium
-  from source, simply run `sudo grunt authorize` to do the same thing.
+  from source, simply run `sudo grunt authorize` to do the same thing. If you
+  are running `Appium.app`, you can authorize iOS through the GUI.
 
 <a name="ios_multiple"></a>Testing against multiple iOS SDKs
 -----------

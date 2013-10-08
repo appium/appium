@@ -188,6 +188,26 @@ public class AndroidElement {
     return el.longClick();
   }
 
+  public boolean pinchIn(final int percent, final int steps)
+      throws UiObjectNotFoundException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return el.pinchIn(percent, steps);
+    } else {
+      Logger.error("Device does not support API >= 18!");
+      return false;
+    }
+  }
+
+  public boolean pinchOut(final int percent, final int steps)
+      throws UiObjectNotFoundException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return el.pinchOut(percent, steps);
+    } else {
+      Logger.error("Device does not support API >= 18!");
+      return false;
+    }
+  }
+
   public void setId(final String id) {
     this.id = id;
   }

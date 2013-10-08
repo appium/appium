@@ -16,6 +16,7 @@ import io.appium.android.bootstrap.handler.GetSize;
 import io.appium.android.bootstrap.handler.GetStrings;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.Orientation;
+import io.appium.android.bootstrap.handler.Pinch;
 import io.appium.android.bootstrap.handler.PressBack;
 import io.appium.android.bootstrap.handler.PressKeyCode;
 import io.appium.android.bootstrap.handler.ScrollTo;
@@ -46,6 +47,7 @@ class AndroidCommandExecutor {
     map.put("swipe", new Swipe());
     map.put("flick", new Flick());
     map.put("drag", new Drag());
+    map.put("pinch", new Pinch());
     map.put("click", new Click());
     map.put("touchLongClick", new TouchLongClick());
     map.put("getText", new GetText());

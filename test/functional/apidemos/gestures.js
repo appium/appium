@@ -315,4 +315,47 @@ describeWd('gestures', function(h) {
       });
     });
   });
+  it('should pinch out/in', function(done) {
+    h.driver.elementByTagName("listView", function(err, el) {
+      should.not.exist(err);
+      var scrollOpts = {
+        element: el.value
+        , text: 'Views'
+      };
+      h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+        should.not.exist(err);
+        h.driver.elementByXPath("//text[@value='Views']", function(err, el) {
+          should.not.exist(err);
+          el.click(function(err) {
+            should.not.exist(err);
+            scrollOpts.text = 'WebView';
+            h.driver.execute("mobile: scrollTo", [scrollOpts], function(err) {
+              should.not.exist(err);
+              h.driver.elementByXPath("//text[@value='WebView']", function(err, el) {
+                should.not.exist(err);
+                el.click(function(err) {
+                  should.not.exist(err);
+                  h.driver.elementById("com.example.android.apis:id/wv1", function(err, element) {
+                    should.not.exist(err);
+                    var pinchOpts = {
+                      element: element.value
+                      , percent: 200
+                      , steps: 100
+                    };
+                    h.driver.execute("mobile: pinchOpen", [pinchOpts], function(err) {
+                      should.not.exist(err);
+                      h.driver.execute("mobile: pinchClose", [pinchOpts], function(err) {
+                        should.not.exist(err);
+                        done();
+                      });
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });

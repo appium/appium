@@ -51,6 +51,10 @@ run_cmd() {
 reset_general() {
     echo "RESETTING NPM"
     set +e
+    if $hardcore ; then
+        echo "* Removing NPM modules"
+        run_cmd rm -rf node_modules
+    fi
     if $include_dev ; then
         echo "* Installing new or updated NPM modules (including devDeps)"
         run_cmd npm install .

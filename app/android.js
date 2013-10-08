@@ -799,12 +799,24 @@ Android.prototype.rotate = function(x, y, radius, rotation, duration, touchCount
   cb(new NotYetImplementedError(), null);
 };
 
-Android.prototype.pinchClose = function(startX, startY, endX, endY, duration, elId, cb) {
-  cb(new NotYetImplementedError(), null);
+Android.prototype.pinchClose = function(startX, startY, endX, endY, duration, percent, steps, elId, cb) {
+  var pinchOpts = {
+    direction: 'in'
+    , elementId: elId
+    , percent: percent
+    , steps: steps
+  };
+  this.proxy(["element:pinch", pinchOpts], cb);
 };
 
-Android.prototype.pinchOpen = function(startX, startY, endX, endY, duration, elId, cb) {
-  cb(new NotYetImplementedError(), null);
+Android.prototype.pinchOpen = function(startX, startY, endX, endY, duration, percent, steps, elId, cb) {
+  var pinchOpts = {
+    direction: 'out'
+    , elementId: elId
+    , percent: percent
+    , steps: steps
+  };
+  this.proxy(["element:pinch", pinchOpts], cb);
 };
 
 Android.prototype.flick = function(startX, startY, endX, endY, touchCount, elId, cb) {

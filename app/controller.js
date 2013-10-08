@@ -399,6 +399,8 @@ exports.mobilePinchClose = function(req, res) {
     , endX: 0.5
     , endY: 0.5
     , duration: 0.8
+    , percent: 200
+    , steps: 50
     , element: null
   });
   var element = req.body.element
@@ -406,10 +408,12 @@ exports.mobilePinchClose = function(req, res) {
     , startX = req.body.startX
     , startY = req.body.startY
     , endX = req.body.endX
-    , endY = req.body.endY;
+    , endY = req.body.endY
+    , percent = req.body.percent
+    , steps = req.body.steps;
 
     req.device.pinchClose(startX, startY, endX, endY, duration,
-        element, getResponseHandler(req, res));
+        percent, steps, element, getResponseHandler(req, res));
 };
 
 exports.mobilePinchOpen = function(req, res) {
@@ -419,6 +423,8 @@ exports.mobilePinchOpen = function(req, res) {
     , endX: 0.5
     , endY: 0.5
     , duration: 0.8
+    , percent: 200
+    , steps: 50
     , element: null
   });
   var element = req.body.element
@@ -426,10 +432,12 @@ exports.mobilePinchOpen = function(req, res) {
     , startX = req.body.startX
     , startY = req.body.startY
     , endX = req.body.endX
-    , endY = req.body.endY;
+    , endY = req.body.endY
+    , percent = req.body.percent
+    , steps = req.body.steps;
 
     req.device.pinchOpen(startX, startY, endX, endY, duration,
-        element, getResponseHandler(req, res));
+        percent, steps, element, getResponseHandler(req, res));
 };
 
 exports.mobileScrollTo = function(req, res) {

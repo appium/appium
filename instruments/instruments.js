@@ -196,6 +196,7 @@ Instruments.prototype.spawnInstruments = function(tmpDir) {
   args = args.concat(["-e", "UIASCRIPT", this.bootstrap]);
   args = args.concat(["-e", "UIARESULTSPATH", tmpDir]);
   var env = _.clone(process.env);
+  env.CA_DEBUG_TRANSACTIONS = 1;
   if (this.withoutDelay && !this.udid) {
     var isXcode4 = this.xcodeVersion !== null && this.xcodeVersion[0] === '4';
     env.DYLD_INSERT_LIBRARIES = path.resolve(__dirname, isXcode4 ?

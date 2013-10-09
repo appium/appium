@@ -10,6 +10,7 @@ import java.util.Hashtable;
 
 import org.json.JSONException;
 
+import android.os.Build;
 import android.os.RemoteException;
 
 import com.android.uiautomator.core.UiDevice;
@@ -121,6 +122,11 @@ public class Orientation extends CommandHandler {
         default:
           return getSuccessResult("Already in portrait mode.");
       }
+    }
+    // Make sure to un-freeze the device rotation
+    if (!"sdk".equals(Build.PRODUCT)) {
+      Logger.debug("We are running on a device. Unfreezing the the rotation");
+      d.unfreezeRotation();
     }
     current = OrientationEnum.fromInteger(d.getDisplayRotation());
     if (current != desired) {

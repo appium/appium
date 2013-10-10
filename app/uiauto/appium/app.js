@@ -973,6 +973,7 @@ $.extend(au, {
         } else {
           console.log("Waiting for alert to close...");
           this.delay(0.3);
+          alert = this.mainApp.alert();
         }
       }
     }

@@ -19,6 +19,7 @@ var spawn = require('win-spawn')
   , rimraf = require('rimraf')
   , Logcat = require('./logcat')
   , isWindows = helpers.isWindows()
+  , md5 = require('MD5')
   , deviceState = require('./device_state');
 
 var noop = function() {};
@@ -64,7 +65,6 @@ var ADB = function(opts, android) {
   this.emulatorPort = null;
   this.debugMode = true;
   this.logcat = null;
-  this.cleanAPK = path.resolve(helpers.getTempPath(), this.appPackage + '.clean.apk');
   // This is set to true when the bootstrap jar crashes.
   this.restartBootstrap = false;
   // The android ref is used to resend the command that
@@ -73,6 +73,7 @@ var ADB = function(opts, android) {
   this.cmdCb = null;
   this.binaries = {};
   this.resendLastCommand = function() {};
+  this.appMD5 = null;
 };
 
 ADB.prototype.checkSdkBinaryPresent = function(binary, cb) {
@@ -150,38 +151,6 @@ ADB.prototype.checkAppPresent = function(cb) {
       }
     }.bind(this));
   }
-};
-
-// Fast reset
-ADB.prototype.buildFastReset = function(skipAppSign, cb) {
-  logger.info("Building fast reset");
-  // Create manifest
-  var targetAPK = this.apkPath
-    , cleanAPKSrc = path.resolve(__dirname, '..', 'app', 'android', 'Clean.apk')
-    , newPackage = this.appPackage + '.clean'
-    , srcManifest = path.resolve(__dirname, '..', 'app', 'android',
-        'AndroidManifest.xml.src')
-    , dstManifest = path.resolve(getTempPath(), 'AndroidManifest.xml');
-
-  fs.writeFileSync(dstManifest, fs.readFileSync(srcManifest, "utf8"), "utf8");
-  var resignApks = function(cb) {
-    // Resign clean apk and target apk
-    var apks = [ this.cleanAPK ];
-    if (!skipAppSign) {
-      logger.debug("Signing app and clean apk.");
-      apks.push(targetAPK);
-    } else {
-      logger.debug("Skip app sign. Sign clean apk.");
-    }
-    this.sign(apks, cb);
-  }.bind(this);
-
-  async.series([
-    function(cb) { this.checkSdkBinaryPresent("aapt", cb); }.bind(this),
-    function(cb) { this.compileManifest(dstManifest, newPackage, this.appPackage, cb); }.bind(this),
-    function(cb) { this.insertManifest(dstManifest, cleanAPKSrc, this.cleanAPK, cb); }.bind(this),
-    function(cb) { resignApks(cb); }.bind(this)
-  ], cb);
 };
 
 ADB.prototype.insertSelendroidManifest = function(serverPath, cb) {
@@ -463,41 +432,6 @@ ADB.prototype.checkApkCert = function(apk, cb) {
   });
 };
 
-ADB.prototype.checkFastReset = function(cb) {
-  logger.info("Checking whether we need to run fast reset");
-  // NOP if fast reset is not true.
-  if (!this.fastReset) {
-    logger.info("User doesn't want fast reset, doing nothing");
-    return cb(null);
-  }
-
-  if (this.apkPath === null) {
-    logger.info("Can't run fast reset on an app that's already on the device " +
-                "so doing nothing");
-    return cb(null);
-  }
-
-  if (!this.appPackage) return cb(new Error("appPackage must be set."));
-
-  this.checkApkCert(this.cleanAPK, function(cleanSigned){
-    this.checkApkCert(this.apkPath, function(appSigned){
-      logger.debug("App signed? " + appSigned + " " + this.apkPath);
-      // Only build & resign clean.apk if it doesn't exist or isn't signed.
-      if (!fs.existsSync(this.cleanAPK) || !cleanSigned) {
-        this.buildFastReset(appSigned, function(err){ if (err) return cb(err); cb(null); });
-      } else {
-        if (!appSigned) {
-          // Resign app apk because it's not signed.
-          this.sign([this.apkPath], cb);
-        } else {
-          // App and clean are already existing and signed.
-          cb(null);
-        }
-      }
-    }.bind(this));
-  }.bind(this));
-};
-
 ADB.prototype.getDeviceWithRetry = function(cb, count) {
   logger.info("Trying to find a connected android device");
   var error = new Error("Could not find a connected Android device.");
@@ -536,8 +470,7 @@ ADB.prototype.prepareDevice = function(onReady) {
     function(cb) { this.prepareEmulator(cb); }.bind(this),
     function(cb) { this.getDeviceWithRetry(cb);}.bind(this),
     function(cb) { this.waitForDevice(cb); }.bind(this),
-    function(cb) { this.startLogcat(cb); }.bind(this),
-    function(cb) { this.checkFastReset(cb); }.bind(this)
+    function(cb) { this.startLogcat(cb); }.bind(this)
   ], onReady);
 };
 
@@ -1411,6 +1344,114 @@ ADB.prototype.installApk = function(apk, cb) {
   });
 };
 
+ADB.prototype.removeOldApks = function(cb) {
+  var listApks = function(cb) {
+    var cmd = this.adbCmd + ' shell "ls /data/local/tmp/*.apk"';
+    logger.info("listApks: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      if (err || stdout.indexOf("No such file") !== -1) {
+        return cb(null, []);
+      }
+
+      var apks = stdout.split("\n");
+      cb(null, apks);
+    });
+  }.bind(this);
+
+  var removeOtherApks = function(apks, cb) {
+    var matchingApkFound = false;
+    var removeString = "";
+    _.each(apks, function(path) {
+      path = path.trim();
+      if (path.indexOf(this.appMD5) === -1 && path !== '') {
+        removeString += ' rm \\"' + path + '\\";';
+        logger.info("removeOtherApks pushing: " + removeString);
+      } else {
+        matchingApkFound = true;
+      }
+    }.bind(this));
+
+    // Invoking adb shell with an empty string will open a shell console
+    // so return here if there's nothing to remove.
+    if (removeString === '') {
+      return cb(null, matchingApkFound);
+    }
+
+    var cmd = this.adbCmd + ' shell "' + removeString + '"';
+    logger.info("removeOtherApks: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      if (stdout) logger.info(stdout);
+      if (err) logger.info(err);
+      cb(null, matchingApkFound);
+    });
+  }.bind(this);
+
+  async.waterfall([
+    function(cb){ listApks(cb); },
+    function(apks, cb) { removeOtherApks(apks, cb); }
+  ], function(err, matchingApkFound) { cb(null, matchingApkFound); });
+};
+
+// This is only invoked after checking if the app is installed.
+// installAppApk will always install the apk.
+ADB.prototype.installAppApk = function(apk, cb) {
+  var getMD5 = function(cb) {
+    fs.readFile(apk, function(err, buffer) {
+      this.appMD5 = md5(buffer);
+      cb(null);
+    }.bind(this));
+  }.bind(this);
+
+  var adbMakeFolder = function(cb) {
+    var cmd = this.adbCmd + ' shell "mkdir /data/local/tmp/"';
+    logger.info("adbMakeFolder: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      cb(null);
+    });
+  }.bind(this);
+
+  var adbPush = function(cb) {
+    var cmd = this.adbCmd + ' push "' + apk + '" "/data/local/tmp/' + this.appMD5 + '.apk"';
+    logger.info("adbPush: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      if (err) {
+        logger.error(err);
+        cb(err);
+      } else {
+        logger.debug(stdout);
+        cb(null);
+      }
+    });
+  }.bind(this);
+
+  var adbInstall = function(cb) {
+    var cmd = this.adbCmd + ' shell "pm install -r /data/local/tmp/' + this.appMD5 + '.apk"';
+    logger.info("adbInstall: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      if (err) {
+        logger.error(err);
+        cb(err);
+      } else {
+        logger.debug(stdout);
+        cb(null);
+      }
+    });
+  }.bind(this);
+
+  async.waterfall([
+    function(cb) { adbMakeFolder(cb); },
+    function(cb) { getMD5(cb); },
+    function(cb) { this.removeOldApks(cb); }.bind(this),
+    // If the apk is already on device, then don't push it again.
+    function(matchingApkFound, cb) {
+      if (matchingApkFound) { cb(null); } else { adbPush(cb); }
+    },
+    function(cb) {
+      adbInstall(cb);
+    }
+  ], cb);
+};
+
 ADB.prototype.uninstallApp = function(cb) {
   var next = function() {
     this.requireDeviceId();
@@ -1442,41 +1483,53 @@ ADB.prototype.uninstallApp = function(cb) {
 };
 
 ADB.prototype.runFastReset = function(cb) {
-  // list instruments with: adb shell pm list instrumentation
-  // targetPackage + '.clean' / clean.apk.Clear
-  var clearCmd = this.adbCmd + ' shell am instrument ' + this.appPackage + '.clean/clean.apk.Clean';
-  logger.debug("Running fast reset clean: " + clearCmd);
-  exec(clearCmd, { maxBuffer: 524288 }, function(err, stdout, stderr) {
-    if (err) {
-      logger.warn(stderr);
-      cb(err);
-    } else {
+  var stopApp = function(cb) {
+    var cmd = this.adbCmd + ' shell am force-stop ' + this.appPackage;
+    logger.info("stopApp: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
       cb(null);
-    }
-  });
+    });
+  }.bind(this);
+
+  var uninstallApp = function(cb) {
+    var cmd = this.adbCmd + ' uninstall ' + this.appPackage;
+    logger.info("uninstallApp: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      cb(null);
+    });
+  }.bind(this);
+
+  var installApp = function(cb) {
+    var cmd = this.adbCmd + ' shell pm install /data/local/tmp/' + this.appMD5 + '.apk';
+    logger.info("installApp: " + cmd);
+    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
+      cb(null);
+    });
+  }.bind(this);
+
+  async.series([
+    function(cb) { stopApp(cb); },
+    function(cb) { uninstallApp(cb); },
+    function(cb) { installApp(cb); }
+  ], cb);
 };
 
 ADB.prototype.checkAppInstallStatus = function(pkg, cb) {
-  var installed = false
-    , cleanInstalled = false;
+  var installed = false;
   this.requireDeviceId();
 
-  logger.debug("Getting install/clean status for " + pkg);
+  logger.debug("Getting install status for " + pkg);
   var listPkgCmd = this.adbCmd + " shell pm list packages -3 " + pkg;
   exec(listPkgCmd, { maxBuffer: 524288 }, function(err, stdout) {
     var apkInstalledRgx = new RegExp('^package:' +
         pkg.replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
     installed = apkInstalledRgx.test(stdout);
-    var cleanInstalledRgx = new RegExp('^package:' +
-        (pkg + '.clean').replace(/([^a-zA-Z])/g, "\\$1") + '$', 'm');
-    cleanInstalled = cleanInstalledRgx.test(stdout);
-    cb(null, installed, cleanInstalled);
+    cb(null, installed);
   });
 };
 
 ADB.prototype.installApp = function(cb) {
-  var installApp = false
-    , installClean = false;
+  var installApp = false;
   this.requireDeviceId();
 
   if (this.apkPath === null) {
@@ -1487,11 +1540,15 @@ ADB.prototype.installApp = function(cb) {
 
   this.requireApk();
 
-  var determineInstallAndCleanStatus = function(cb) {
-    logger.info("Determining app install/clean status");
-    this.checkAppInstallStatus(this.appPackage, function(err, installed, cleaned) {
+  var determineInstallStatus = function(cb) {
+    if (this.appMD5 === null) {
+      installApp = true;
+      return cb();
+    }
+
+    logger.info("Determining app install");
+    this.checkAppInstallStatus(this.appPackage, function(err, installed) {
       installApp = !installed;
-      installClean = !cleaned;
       cb();
     });
   }.bind(this);
@@ -1499,29 +1556,13 @@ ADB.prototype.installApp = function(cb) {
   var doInstall = function(cb) {
     if (installApp) {
       this.debug("Installing app apk");
-      this.installApk(this.apkPath, cb);
-    } else { cb(null); }
-  }.bind(this);
-
-  var doClean = function(cb) {
-    if (installClean && this.cleanApp) {
-      this.debug("Installing clean apk");
-      this.installApk(this.cleanAPK, cb);
-    } else { cb(null); }
-  }.bind(this);
-
-  var doFastReset = function(cb) {
-    // App is already installed so reset it.
-    if (!installApp && this.fastReset) {
-      this.runFastReset(cb);
+      this.installAppApk(this.apkPath, cb);
     } else { cb(null); }
   }.bind(this);
 
   async.series([
-    function(cb) { determineInstallAndCleanStatus(cb); },
-    function(cb) { doInstall(cb); },
-    function(cb) { doClean(cb); },
-    function(cb) { doFastReset(cb); }
+    function(cb) { determineInstallStatus(cb); },
+    function(cb) { doInstall(cb); }
   ], cb);
 };
 

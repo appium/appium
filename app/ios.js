@@ -44,7 +44,6 @@ var IOS = function(args) {
   this.reset = args.reset;
   this.automationTraceTemplatePath = args.automationTraceTemplatePath;
   this.removeTraceDir = args.removeTraceDir;
-  this.useLocationServices = args.useLocationServices;
   this.deviceType = args.deviceType;
   this.startingOrientation = args.startingOrientation || "PORTRAIT";
   this.curOrientation = this.startingOrientation;
@@ -212,7 +211,6 @@ IOS.prototype.onInstrumentsLaunch = function(launchCb) {
   async.series([
     this.setBundleId.bind(this),
     this.setInitialOrientation.bind(this),
-    this.setLocationServicesPref.bind(this),
     this.navToInitialWebview.bind(this)
   ], function(err) {
     if (err) return launchCb(err);
@@ -250,12 +248,6 @@ IOS.prototype.setInitialOrientation = function(cb) {
   } else {
     cb();
   }
-};
-
-IOS.prototype.setLocationServicesPref = function(cb) {
-  var cmd = "setBootstrapConfig: useLocationServices=" +
-            JSON.stringify(this.useLocationServices);
-  this.proxy(cmd, cb);
 };
 
 IOS.prototype.navToInitialWebview = function(cb) {

@@ -188,7 +188,8 @@ module.exports.authorize = function(grunt, cb) {
         grunt.fatal("Could not find the system.privilege.taskport key in /etc/authorization");
       } else {
         if (!(/<false\/>/.exec(match[0]))) {
-          grunt.fatal("/etc/authorization has already been modified to support appium");
+          console.log("/etc/authorization has already been modified to support appium");
+          return cb();
         } else {
           var newText = match[0].replace(match[1], '<true/>');
           var newContent = data.replace(match[0], newText);

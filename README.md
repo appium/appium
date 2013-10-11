@@ -77,7 +77,7 @@ You can run an Appium server using node.js or using the application, see below.
 
 We support a subset of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
-First and foremost, specify mobile-targetted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
+First and foremost, specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
 
 You find elements by using a subset of [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)'s element-finding strategies.
 See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information.

@@ -43,16 +43,16 @@ If you want to run Appium via an `npm install`, hack with or contribute to Appiu
 * Mac OS X 10.7 or higher, 10.8.4 recommended
 * XCode &gt;= 4.6.3
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
-* [Ensure you read our documentation on setting yourself up for iOS testing!](https://github.com/appium/appium/docs/running-on-osx.md#ios)
+* [Ensure you read our documentation on setting yourself up for iOS testing!](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#ios)
 
 ### Android Requirements
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
 * Appium supports Android on OS X, Linux and has beta support for Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
-  * [linux](https://github.com/appium/appium/docs/running-on-linux.md) 
-  * [osx](https://github.com/appium/appium/docs/running-on-osx.md#android)
-  * [windows](https://github.com/appium/appium/docs/running-on-windows.md)
+  * [linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md) 
+  * [osx](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#android)
+  * [windows](https://github.com/appium/appium/blob/master/docs/running-on-windows.md)
 
 ### FirefoxOS Requirements
 
@@ -77,7 +77,7 @@ You can run an Appium server using node.js or using the application, see below.
 
 We support a subset of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
 
-First and foremost, specify mobile-targetted [desired capabilities](https://github.com/appium/appium/docs/caps.md) to run your test through Appium.
+First and foremost, specify mobile-targetted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
 
 You find elements by using a subset of [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)'s element-finding strategies.
 See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information.
@@ -110,7 +110,7 @@ Gecko-based platforms.
 
 ## Contributing
 
-Please take a look at our [contribution documentation](https://github.com/appium/appium/CONTRIBUTING.md).
+Please take a look at our [contribution documentation](https://github.com/appium/appium/blob/master/CONTRIBUTING.md).
 
 ## Project Credits & Inspiration
 

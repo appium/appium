@@ -108,7 +108,7 @@ Or you can run reset for individual platforms only:
 
 ## Running Tests
 
-First, check out our documentation on [running tests in general](https://github.com/appium/appium/docs/running-tests.md)
+First, check out our documentation on [running tests in general](https://github.com/appium/appium/blob/master/docs/running-tests.md)
 Make sure your system is set up properly for the platforms you desire to test on.
 
 Once your system is set up and your code is up to date, you can run unit tests with:

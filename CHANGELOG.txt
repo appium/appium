@@ -1,3 +1,30 @@
+CHANGES IN VERSION 0.10.2 (from 0.10.1)
+=====================================
+
+#### General
+- update docs
+- README rewrite
+
+#### iOS
+- allow spaces in xcode path
+- completely reset and restart simulator between sessions
+- turn CA_DEBUG_TRANSACTIONS on
+- enable `authorize_ios` on Mavericks
+- fix bug making handling alerts take longer than necessary
+
+#### Android
+- update clean.apk
+- refactored setOrientation
+- fix screenshot method
+- implement pinch in / out
+- upgrade unlock.apk
+- use pm uninstall/install in reset
+
+#### Windows
+- lots of reset.bat improvements
+- make some more paths windows friendly
+
+
 CHANGES IN VERSION 0.10.1 (from 0.10.0)
 =====================================
 

@@ -1,3 +1,13 @@
+CHANGES IN VERSION 0.10.3 (from 0.10.2)
+=======================================
+
+#### General
+- this is a bugfix release
+
+#### iOS
+- compile the i-w-d shim correctly for ios7
+
+
 CHANGES IN VERSION 0.10.2 (from 0.10.1)
 =====================================
 

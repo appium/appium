@@ -35,6 +35,7 @@ var WebKitRemoteDebugger = function(onDisconnect) {
   this.dataMethods = {};
   this.host = 'localhost';
   this.port = 27753;
+  this.socketDisconnectCb = null;
   this.init(1, onDisconnect);
 };
 
@@ -58,6 +59,10 @@ WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
   this.socket.on('close', function() {
     logger.info("Disconnecting from remote debugger");
     this.socket = null;
+    if(this.socketDisconnectCb){
+      this.socketDisconnectCb();
+      this.socketDisconnectCb = null;
+    }
   }.bind(this));
   this.socket.on('error', function(exception) {
     console.log('Debugger web socket error %s', exception);
@@ -68,9 +73,12 @@ WebKitRemoteDebugger.prototype.connect = function(pageId, cb, pageChangeCb) {
   }.bind(this));
 };
 
-WebKitRemoteDebugger.prototype.disconnect = function() {
+WebKitRemoteDebugger.prototype.disconnect = function(cb) {
   if(this.isConnected()){
     this.socket.close(1001);
+    this.socketDisconnectCb = cb;
+  } else {
+    cb();
   }
 };
 

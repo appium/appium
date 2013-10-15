@@ -1956,6 +1956,7 @@ IOS.prototype.getWindowHandles = function(cb) {
 };
 
 IOS.prototype.setWindow = function(name, cb) {
+  var me = this;
   if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
     var pageIdKey = parseInt(name, 10);
     var next = function() {
@@ -1977,12 +1978,13 @@ IOS.prototype.setWindow = function(name, cb) {
             , value: name
           });
         } else if (_.contains(_.pluck(this.windowHandleCache, 'id'), name)) {
-          this.remote.disconnect();
-          this.curWindowHandle = name;
-          this.remote.connect(name, function(){
-            cb(null, {
-              status: status.codes.Success.code
-            , value: name
+          this.remote.disconnect(function(){
+            me.curWindowHandle = name;
+            me.remote.connect(name, function(){
+              cb(null, {
+                status: status.codes.Success.code
+                , value: name
+              });
             });
           });
         } else {

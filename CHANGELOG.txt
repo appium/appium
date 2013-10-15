@@ -1,3 +1,14 @@
+CHANGES IN VERSION 0.10.4 (from 0.10.3)
+=======================================
+
+#### iOS
+- add callback for remote debugger socket disconnect to avoid race conditions
+
+#### Android
+- allow _ in package name
+- add timeout for orientation change
+
+
 CHANGES IN VERSION 0.10.3 (from 0.10.2)
 =======================================
 

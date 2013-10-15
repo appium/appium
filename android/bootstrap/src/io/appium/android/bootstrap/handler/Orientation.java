@@ -41,7 +41,7 @@ public class Orientation extends CommandHandler {
       final String orientation = (String) params.get("orientation");
       try {
         return handleRotation(orientation);
-      } catch (final RemoteException e) {
+      } catch (final Exception e) {
         return getErrorResult("Unable to rotate screen: " + e.getMessage());
       }
     } else {
@@ -87,9 +87,10 @@ public class Orientation extends CommandHandler {
    *          The rotation desired (LANDSCAPE or PORTRAIT)
    * @return {@link AndroidCommandResult}
    * @throws RemoteException
+   * @throws InterruptedException
    */
   private AndroidCommandResult handleRotation(final String orientation)
-      throws RemoteException {
+      throws RemoteException, InterruptedException {
     final UiDevice d = UiDevice.getInstance();
     OrientationEnum desired;
     OrientationEnum current = OrientationEnum.fromInteger(d
@@ -123,6 +124,16 @@ public class Orientation extends CommandHandler {
       }
     }
     current = OrientationEnum.fromInteger(d.getDisplayRotation());
+    // If the orientation has not changed,
+    // busy wait until the TIMEOUT has expired
+    final int TIMEOUT = 2000;
+    final long then = System.currentTimeMillis();
+    long now = then;
+    while (current != desired && now - then < TIMEOUT) {
+      Thread.sleep(100);
+      now = System.currentTimeMillis();
+      current = OrientationEnum.fromInteger(d.getDisplayRotation());
+    }
     if (current != desired) {
       return getErrorResult("Set the orientation, but app refused to rotate.");
     }

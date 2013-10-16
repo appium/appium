@@ -2,7 +2,7 @@
 "use strict";
 
 var rest = require('express')()
-  , appium = require('../../appium');
+  , appium = require('../../app/appium');
 
 describe('Appium', function() {
   var inst = appium({});

@@ -83,7 +83,7 @@
     "monocle-js": "~0.1.4",
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",
-    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-jshint": "~0.6.4",
     "saucelabs": "~0.0.7",
     "socket.io-client": "~0.9.11",
     "socks": "~0.0.1"

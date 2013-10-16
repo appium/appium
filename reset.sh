@@ -132,12 +132,14 @@ reset_ios() {
     run_cmd rm -rf build/fruitstrap
     run_cmd mkdir -p build/fruitstrap
     run_cmd cp submodules/fruitstrap/fruitstrap build/fruitstrap
+    echo "* Cloning/updating SafariLauncher"
+    run_cmd git submodule update --init submodules/SafariLauncher
     echo "* Building SafariLauncher"
     run_cmd $grunt buildSafariLauncherApp:iphoneos
     echo "* Copying SafariLauncher to build"
-    run_cmd zip -r submodules/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
+    run_cmd rm -rf build/SafariLauncher
     run_cmd mkdir -p build/SafariLauncher
-    run_cmd cp submodules/SafariLauncher/SafariLauncher.zip build/SafariLauncher/
+    run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
 
 }
 

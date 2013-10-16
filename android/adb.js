@@ -20,6 +20,7 @@ var spawn = require('win-spawn')
   , Logcat = require('./logcat')
   , isWindows = helpers.isWindows()
   , md5 = require('MD5')
+  , helperJarPath = path.resolve(__dirname, 'helpers')
   , deviceState = require('./device_state');
 
 var noop = function() {};
@@ -189,9 +190,11 @@ ADB.prototype.compileManifest = function(manifest, manifestPackage, targetPackag
 
   // Compile manifest into manifest.xml.apk
   var compileManifest = [this.binaries.aapt + ' package -M "', manifest + '"',
-                         ' --rename-manifest-package "',  manifestPackage + '"',
-                         ' --rename-instrumentation-target-package "', targetPackage + '"',
-                         ' -I "', path.resolve(platform[1], 'android.jar') +'" -F "',
+                         ' --rename-manifest-package "',
+                         manifestPackage + '"',
+                         ' --rename-instrumentation-target-package "',
+                         targetPackage + '"', ' -I "',
+                         path.resolve(platform[1], 'android.jar') +'" -F "',
                          manifest, '.apk" -f'].join('');
   logger.debug(compileManifest);
   exec(compileManifest, { maxBuffer: 524288 }, function(err, stdout, stderr) {
@@ -233,7 +236,8 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
     if (isWindows) {
       var java = path.resolve(process.env.JAVA_HOME, 'bin', 'java');
       java = isWindows ? '"' + java + '.exe"' : '"' + java + '"';
-      var moveManifestCmd = '"' + path.resolve(__dirname, '..', 'lib', 'android', 'move_manifest.jar') + '"';
+      var moveManifestCmd = '"' + path.resolve(helperJarPath,
+          'move_manifest.jar') + '"';
       moveManifestCmd = [java, '-jar', moveManifestCmd, '"' + dstApk + '"', '"' + manifest + '"'].join(' ');
 
       logger.debug("Moving manifest with: " + moveManifestCmd);
@@ -272,7 +276,7 @@ ADB.prototype.insertManifest = function(manifest, srcApk, dstApk, cb) {
 
 // apks is an array of strings.
 ADB.prototype.signDefault = function(apks, cb) {
-  var signPath = path.resolve(__dirname, '..', 'lib', 'android', 'sign.jar');
+  var signPath = path.resolve(helperJarPath, 'sign.jar');
   var resign = 'java -jar "' + signPath + '" "' + apks.join('" "') + '" --override';
   logger.debug("Resigning apks with: " + resign);
   exec(resign, { maxBuffer: 524288 }, function(err, stdout, stderr) {
@@ -292,7 +296,7 @@ ADB.prototype.signCustom = function(apk, cb) {
   jarsigner = isWindows ? '"' + jarsigner + '.exe"' : '"' + jarsigner + '"';
   var java = path.resolve(process.env.JAVA_HOME, 'bin', 'java');
   java = isWindows ? '"' + java + '.exe"' : '"' + java + '"';
-  var unsign = '"' + path.resolve(__dirname, '..', 'lib', 'android', 'unsign.jar') + '"';
+  var unsign = '"' + path.resolve(helperJarPath, 'unsign.jar') + '"';
   unsign = [java, '-jar', unsign, '"' + apk + '"'].join(' ');
   // "jarsigner" "blank.apk" -sigalg MD5withRSA -digestalg SHA1
   // -keystore "./key.keystore" -storepass "android"
@@ -418,8 +422,7 @@ ADB.prototype.checkApkCert = function(apk, cb) {
     return;
   }
 
-  var verifyPath = path.resolve(__dirname, '..', 'lib', 'android',
-      'verify.jar');
+  var verifyPath = path.resolve(helperJarPath, 'verify.jar');
   var resign = 'java -jar "' + verifyPath + '" "' + apk + '"';
   logger.debug("Checking app cert for " + apk + ": " + resign);
   exec(resign, { maxBuffer: 524288 }, function(err) {
@@ -493,7 +496,7 @@ ADB.prototype.pushStrings = function(cb) {
      cb(null);
    });
   } else {
-    var stringsFromApkJarPath = path.resolve(__dirname, '..', 'lib', 'android',
+    var stringsFromApkJarPath = path.resolve(helperJarPath,
         'strings_from_apk.jar');
     var outputPath = path.resolve(getTempPath(), this.appPackage);
     var makeStrings = ['java -jar "', stringsFromApkJarPath,

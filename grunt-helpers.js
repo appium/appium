@@ -247,7 +247,7 @@ module.exports.build = function(appRoot, cb, sdk) {
         return cb(stdout + "\n" + stderr);
       }
       console.log("Building app...");
-      var args = ['-sdk', sdk, '-arch', 'i386'];
+      var args = ['-sdk', sdk];
       xcode = spawn('xcodebuild', args, {
         cwd: appRoot
       });
@@ -302,6 +302,19 @@ module.exports.signApp = function(appName, certName, cb) {
     }
   });
 };
+
+module.exports.buildSafariLauncherApp = function(cb, sdk) {
+  var appRoot = path.resolve(__dirname, "submodules", "SafariLauncher");
+  module.exports.build(appRoot, function(err) {
+    if (err !== null) {
+      console.log(err);
+      cb(false);
+    } else {
+      cb(true);
+    }
+  }, sdk);
+};
+
 
 var setupAndroidProj = function(grunt, projPath, args, cb) {
   if (!process.env.ANDROID_HOME) {

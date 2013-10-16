@@ -13,9 +13,10 @@ var spawn = require('child_process').spawn
   , mkdirp = require('mkdirp')
   , codes = require('../app/uiauto/lib/status.js').codes;
 
-var Instruments = function(app, udid, bootstrap, template, sock, withoutDelay, xcodeVersion, webSocket, cb, exitCb) {
+var Instruments = function(app, udid, isSafariLauncherApp, bootstrap, template, sock, withoutDelay, xcodeVersion, webSocket, cb, exitCb) {
   this.app = app;
   this.udid = udid;
+  this.isSafariLauncherApp = isSafariLauncherApp;
   this.bootstrap = bootstrap;
   this.template = template;
   this.withoutDelay = withoutDelay;
@@ -69,7 +70,13 @@ Instruments.prototype.startSocketServer = function(sock) {
     this.exitHandler(1);
   };
 
-  var socketConnectTimeout = setTimeout(onSocketNeverConnect.bind(this), 90000);
+  // for safari launcher app we simply let the socket timeout and catch it.
+  var socketConnectTimeout = null;
+  if (this.isSafariLauncherApp) {
+    socketConnectTimeout = setTimeout(onSocketNeverConnect.bind(this), 8000);
+  } else {
+    socketConnectTimeout = setTimeout(onSocketNeverConnect.bind(this), 90000);
+  }
 
   this.socketServer = net.createServer({allowHalfOpen: true}, function(conn) {
     if (!this.hasConnected) {
@@ -160,6 +167,9 @@ Instruments.prototype.launch = function() {
 
       self.proc.on('exit', function(code) {
         self.debug("Instruments exited with code " + code);
+        if (self.isSafariLauncherApp){
+          self.readyHandler();
+        }
         if (self.curCommand && self.curCommand.cb) {
           self.curCommand.cb({
             status: code,
@@ -355,7 +365,7 @@ Instruments.prototype.debug = function(msg) {
 
 /* NODE EXPORTS */
 
-module.exports = function(server, app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb) {
-  return new Instruments(server, app, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb);
+module.exports = function(server, app, isSafariLauncherApp, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb) {
+  return new Instruments(server, app, isSafariLauncherApp, udid, bootstrap, template, sock, withoutDelay, webSocket, cb, exitCb);
 };
 

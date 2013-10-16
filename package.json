@@ -25,12 +25,12 @@
   ],
   "main": "./server.js",
   "bin": {
-    "appium": "./app/bin.js",
+    "appium": "./lib/bin.js",
     "instruments_client": "./instruments/client_bin.js",
-    "authorize_ios": "./app/authorize.js"
+    "authorize_ios": "./lib/authorize.js"
   },
   "directories": {
-    "lib": "./app",
+    "lib": "./lib",
     "doc": "./docs"
   },
   "dependencies": {

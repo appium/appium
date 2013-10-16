@@ -4,14 +4,14 @@ var http = require('http')
   , path = require('path')
   , fs = require('fs')
   , logger = require('./logger').get('appium')
-  , appium = require('./app/appium')
+  , appium = require('./lib/appium')
   , bodyParser = require('./middleware').parserWrap
-  , status = require('./app/uiauto/lib/status')
+  , status = require('./lib/uiauto/lib/status')
   , appiumVer = require('./package.json').version
   , appiumRev = null
   , async = require('async')
   , _ = require("underscore")
-  , parser = require('./app/parser')
+  , parser = require('./lib/parser')
   , io = require('socket.io')
   , gridRegister = require('./grid_register');
 

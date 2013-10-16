@@ -1,7 +1,7 @@
 /*global describe:true */
 "use strict";
 
-var checkPreferencesApp = require("../../../app/helpers").checkPreferencesApp
+var checkPreferencesApp = require("../../../lib/helpers").checkPreferencesApp
   , should = require('should')
   , appPath = '/tmp/Appium-Preferences.app'
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath)

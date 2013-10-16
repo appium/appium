@@ -18,7 +18,7 @@ var path = require('path')
   , generateAppiumIo = gruntHelpers.generateAppiumIo
   , setDeviceConfigVer = gruntHelpers.setDeviceConfigVer
   , setGitRev = gruntHelpers.setGitRev
-  , getGitRev = require('./app/helpers').getGitRev
+  , getGitRev = require('./lib/helpers').getGitRev
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
 
 module.exports = function(grunt) {
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         , trailing: true
         , node: true
         , strict: true
-        , ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './app/hybrid/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/harmony/**/*.js', './test/functional/_joined/*.js', './app/static/**/*.js', './app/hybrid/firefoxos/atoms/*.js', './app/uiauto/**/*.js']
+        , ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/hybrid/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/harmony/**/*.js', './test/functional/_joined/*.js', './app/static/**/*.js', './lib/hybrid/firefoxos/atoms/*.js', './lib/uiauto/**/*.js']
       }
     }
     , mochaTest: {

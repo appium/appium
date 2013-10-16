@@ -3,7 +3,7 @@
 
 var spawn = require('child_process').spawn
   , exec = require('child_process').exec
-  , logger = require('../logger').get('appium')
+  , logger = require('../lib/server/logger').get('appium')
   , fs = require('fs')
   , _ = require('underscore')
   , net = require('net')

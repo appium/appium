@@ -3,7 +3,7 @@
 var spawn = require('win-spawn')
   , through = require('through')
   , _ = require('underscore')
-  , logger = require('../logger').get('appium');
+  , logger = require('../lib/server/logger.js').get('appium');
 
 var Logcat = function(opts) {
   this.adbCmd = opts.adbCmd;

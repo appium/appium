@@ -1,7 +1,7 @@
 "use strict";
 
 var exec = require('child_process').exec
-  , logger = require('../logger').get('appium');
+  , logger = require('../lib/server/logger.js').get('appium');
 
 function log(msg) {
   logger.info("[ADB] " + msg);

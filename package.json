@@ -23,7 +23,7 @@
   "engines": [
     "node"
   ],
-  "main": "./server.js",
+  "main": "./lib/server/main.js",
   "bin": {
     "appium": "./lib/bin.js",
     "instruments_client": "./instruments/client_bin.js",

@@ -1,9 +1,8 @@
 "use strict";
 
 var _ = require("underscore")
-  , server = require('./server.js')
+  , server = require('./lib/server/main.js')
   , rimraf = require('rimraf')
-  , http = require('http')
   , path = require('path')
   , temp = require('temp')
   , mkdirp = require('mkdirp')
@@ -560,7 +559,7 @@ module.exports.generateServerDocs = function(grunt, cb) {
   var p = parser();
   var docFile = path.resolve(__dirname, "docs/server-args.md");
   var md = "Appium server arguments\n==========\n\n";
-  md += "Usage: `node server.js [flags]`\n\n";
+  md += "Usage: `node . [flags]`\n\n";
   md += "### Server flags\n";
   md += "All flags are optional, but some are required in conjunction with " +
         "certain others.\n\n";

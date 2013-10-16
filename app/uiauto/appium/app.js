@@ -887,9 +887,17 @@ $.extend(au, {
 
       var textRes = this.getElementsByType('text', alert);
       var text = alert.name();
-      if (text.indexOf('http') != -1 && textRes.value.length > 1) {
-        var textId = textRes.value[textRes.value.length-1].ELEMENT;
-        text = this.getElement(textId).name();
+      if (textRes.value.length > 1) {
+        if (text.indexOf('http') != -1) {
+          textId = textRes.value[textRes.value.length-1].ELEMENT;
+          text = this.getElement(textId).name();
+        }
+        else {
+          var textId = textRes.value[textRes.value.length-2].ELEMENT;
+          text = this.getElement(textId).name();
+          textId = textRes.value[textRes.value.length-1].ELEMENT;
+          text = text + ' ' + this.getElement(textId).name();
+        }
       }
       return {
         status: codes.Success.code,

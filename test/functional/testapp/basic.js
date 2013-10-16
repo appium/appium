@@ -114,8 +114,8 @@ describeWd('calc app', function(h) {
         driver.acceptAlert(function(){
           buttons[1].click(function() {
             driver.alertText(function(err, value){
-              // maybe we could get alert body text too?
-              assert.equal(value, "Cool title");
+              value.should.include("Cool title");
+              value.should.include("this alert is so cool.");
               driver.dismissAlert(done);
             });
           });

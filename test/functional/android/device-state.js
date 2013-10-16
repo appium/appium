@@ -1,7 +1,7 @@
 /*global describe:true, it:true, beforeEach:true */
 "use strict";
 
-var deviceState = require('../../../android/device_state')
+var deviceState = require('../../../android/device-state.js')
   , should = require('should')
   , childProcess = require('child_process')
   , it = require("../../helpers/driverblock.js").it

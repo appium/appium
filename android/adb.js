@@ -21,7 +21,7 @@ var spawn = require('win-spawn')
   , isWindows = helpers.isWindows()
   , md5 = require('MD5')
   , helperJarPath = path.resolve(__dirname, 'helpers')
-  , deviceState = require('./device_state');
+  , deviceState = require('./device-state');
 
 var noop = function() {};
 

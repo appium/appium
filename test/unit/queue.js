@@ -5,9 +5,9 @@
 "use strict";
 
 var should = require('should')
-  , appium = require('../../app/appium')
+  , appium = require('../../lib/appium')
   , path = require('path')
-  , ios = require('../../app/ios');
+  , ios = require('../../lib/ios');
 
 describe('IOS', function() {
   // we'd like to test ios.proxy; mock instruments

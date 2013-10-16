@@ -22,3 +22,6 @@
 [submodule "submodules/unlock_apk"]
 	path = submodules/unlock_apk
 	url = https://github.com/appium/unlock_apk.git
+[submodule "submodules/SafariLauncher"]
+	path = submodules/SafariLauncher
+	url = https://github.com/budhash/SafariLauncher.git

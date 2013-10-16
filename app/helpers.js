@@ -9,14 +9,15 @@ var logger = require('../logger').get('appium')
   , rimraf = require('rimraf')
   , exec = require('child_process').exec
   , util = require('util')
-  , temp = require('temp')
   , os = require('os').type()
+  , tempdir = require('./tempdir')
   , AdmZip = require('adm-zip');
+
 
 exports.downloadFile = function(fileUrl, cb) {
   // We will be downloading the files to a directory, so make sure it's there
   // This step is not required if you have manually created the directory
-  temp.open({prefix: 'appium-app', suffix: '.zip'}, function(err, info) {
+  tempdir.open({prefix: 'appium-app', suffix: '.zip'}, function(err, info) {
     var file = fs.createWriteStream(info.path);
     request(fileUrl).pipe(file).on('close', function() {
       logger.info(fileUrl + ' downloaded to ' + info.path);
@@ -29,7 +30,7 @@ exports.copyLocalZip = function(localZipPath, cb) {
   logger.info("Copying local zip to tmp dir");
   fs.stat(localZipPath, function(err) {
     if (err) return cb(err);
-    temp.open({prefix: 'appium-app', suffix: '.zip'}, function(err, info) {
+    tempdir.open({prefix: 'appium-app', suffix: '.zip'}, function(err, info) {
       var infile = fs.createReadStream(localZipPath);
       var outfile = fs.createWriteStream(info.path);
       infile.pipe(outfile).on('close', function() {

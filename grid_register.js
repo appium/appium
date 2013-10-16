@@ -1,7 +1,7 @@
 "use strict";
 var request = require('request')
   , fs = require('fs')
-  , logger = require('./logger').get('appium');
+  , logger = require('./lib/server/logger').get('appium');
 
 exports.registerNode = function (configFile) {
   fs.readFile(configFile, 'utf-8', function (err, data) {

@@ -21,10 +21,10 @@ You must install your iOS app using Xcode's Run button.
 Running your tests with Appium
 ---
 
-Once your device and app are configured, you can run tests on that device by passing the -U flag to server.js:
+Once your device and app are configured, you can run tests on that device by passing the -U flag to the server:
 
 ```
-node server.js -U <UDID> --app <bundle_id>
+node . -U <UDID> --app <bundle_id>
 ```
 
 This will start Appium and have Appium use the device to test the app.

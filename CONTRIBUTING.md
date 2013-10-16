@@ -20,7 +20,7 @@ The quick way to get started:
     $ cd appium
     $ ./reset.sh
     $ sudo grunt authorize # for ios only
-    $ node server.js
+    $ node .
 
 ## Hacking with Appium
 
@@ -38,14 +38,14 @@ dependencies and builds supporting binaries and test apps. `reset.sh` is also th
 recommended command to run after pulling changes from master. At this point,
 you're able to start the Appium server:
 
-    node server.js
+    node .
 
 There are some arguments you can pass into the Appium server from the command-line:
 
-    node server.js --app /absolute/path/to/app  // launch Appium server with app
-    node server.js --launch // pre-launch the app when appium loads
-    node server.js --log /my/appium.log // log to file instead of stdout
-    node server.js --quiet // don't log verbose output
+    node . --app /absolute/path/to/app  // launch Appium server with app
+    node . --launch // pre-launch the app when appium loads
+    node . --log /my/appium.log // log to file instead of stdout
+    node . --quiet // don't log verbose output
 
 See [the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md)
 for a full list of arguments.
@@ -70,7 +70,7 @@ At this point, run:
 
     ./reset.sh --ios --dev
 
-Now your Appium instance is ready to go. Run `node server.js` to kick up the Appium server.
+Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
 
 ### Hacking with Appium for Android
 
@@ -89,7 +89,7 @@ on your path):
 
     emulator -avd <MyAvdName>
 
-Now you are ready to run the Appium server via `node server.js`.
+Now you are ready to run the Appium server via `node .`.
 
 ### Making sure you're up to date
 
@@ -145,7 +145,7 @@ Or individual tests (e.g., a test with the word "alert" in the name):
     mocha -t 60000 -R spec --grep "alert" test/functional/apidemos
 
 You can also run all of appium's tests this way. In one window, `node
-server.js`, in another window, sequentially (waiting for each to pass, making
+.`, in another window, sequentially (waiting for each to pass, making
 sure emulator is up, etc...):
 
     alias mm="mocha -t 60000 -R spec"

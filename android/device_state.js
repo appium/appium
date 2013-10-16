@@ -11,7 +11,7 @@ module.exports = {
   isScreenLocked: function(adbCmd, cb) {
     var cmd = adbCmd + " shell dumpsys window";
     log("Checking if screen is unlocked via `dumpsys window`...");
-    exec(cmd, {maxBuffer: 524288}, function(err, stdout, stderr) {
+    exec(cmd, {maxBuffer: 524288}, function(err, stdout) {
       if (err) {
         cb(err);
       } else {

@@ -1459,17 +1459,8 @@ ADB.prototype.uninstallApp = function(cb) {
     this.debug("Uninstalling app " + this.appPackage);
 
     this.uninstallApk(this.appPackage, function(err) {
-      if (this.fastReset) {
-        var cleanPkg = this.appPackage + '.clean';
-        this.debug("Uninstalling app " + cleanPkg);
-        this.uninstallApk(cleanPkg, function(err) {
-          if (err) return cb(err);
-          cb(null);
-        });
-      } else {
-        if (err) return cb(err);
-        cb(null);
-      }
+      if (err) return cb(err);
+      cb(null);
     }.bind(this));
   }.bind(this);
 
@@ -1491,26 +1482,20 @@ ADB.prototype.runFastReset = function(cb) {
     });
   }.bind(this);
 
-  var uninstallApp = function(cb) {
-    var cmd = this.adbCmd + ' uninstall ' + this.appPackage;
-    logger.info("uninstallApp: " + cmd);
-    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
-      cb(null);
-    });
-  }.bind(this);
-
-  var installApp = function(cb) {
-    var cmd = this.adbCmd + ' shell pm install /data/local/tmp/' + this.appMD5 + '.apk';
-    logger.info("installApp: " + cmd);
-    exec(cmd, { maxBuffer: 524288 }, function(err, stdout) {
-      cb(null);
-    });
+  var cleanApp = function(cb) {
+    if (this.cleanApp) {
+      this.debug("Cleaning the app");
+      var clearCmd = this.adbCmd + " shell pm clear " + this.appPackage;
+      logger.info("Running clear command: " + clearCmd);
+      exec(clearCmd, { maxBuffer: 524288 }, function() {
+        cb(null);
+      });
+    }
   }.bind(this);
 
   async.series([
     function(cb) { stopApp(cb); },
-    function(cb) { uninstallApp(cb); },
-    function(cb) { installApp(cb); }
+    function(cb) { cleanApp(cb); }
   ], cb);
 };
 
@@ -1541,11 +1526,6 @@ ADB.prototype.installApp = function(cb) {
   this.requireApk();
 
   var determineInstallStatus = function(cb) {
-    if (this.appMD5 === null) {
-      installApp = true;
-      return cb();
-    }
-
     logger.info("Determining app install");
     this.checkAppInstallStatus(this.appPackage, function(err, installed) {
       installApp = !installed;
@@ -1560,9 +1540,17 @@ ADB.prototype.installApp = function(cb) {
     } else { cb(null); }
   }.bind(this);
 
+  var doFastReset = function(cb) {
+    // App is already installed so reset it.
+    if (!installApp && this.fastReset) {
+      this.runFastReset(cb);
+    } else { cb(null); }
+  }.bind(this);
+
   async.series([
     function(cb) { determineInstallStatus(cb); },
-    function(cb) { doInstall(cb); }
+    function(cb) { doInstall(cb); },
+    function(cb) { doFastReset(cb); }
   ], cb);
 };
 

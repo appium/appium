@@ -4,8 +4,8 @@
 var net = require('net')
   , repl = require('repl')
   , colors = require('colors')
-  , appium  = require('../server')
-  , parser = require('./server/parser.js');
+  , appium  = require('../lib/server/main.js')
+  , parser = require('../lib/server/parser.js');
 
 var startRepl = function() {
   var help = function() {

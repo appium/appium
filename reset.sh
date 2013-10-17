@@ -9,6 +9,7 @@ should_reset_android=false
 should_reset_ios=false
 should_reset_selendroid=false
 should_reset_gappium=false
+should_reset_firefoxos=false
 include_dev=false
 appium_home=$(pwd)
 reset_successful=false
@@ -24,6 +25,7 @@ do
         "--android") should_reset_android=true;;
         "--ios") should_reset_ios=true;;
         "--selendroid") should_reset_selendroid=true;;
+        "--firefoxos") should_reset_firefoxos=true;;
         "--gappium") should_reset_gappium=true;;
         "--dev") include_dev=true;;
         "-v") verbose=true;;
@@ -33,11 +35,12 @@ do
     shift
 done
 
-if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium ; then
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos; then
     should_reset_android=true
     should_reset_ios=true
     should_reset_selendroid=true
     should_reset_gappium=true
+    should_reset_firefoxos=true
 fi
 
 run_cmd() {
@@ -100,6 +103,9 @@ reset_ios() {
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
+    echo "* Linking status/xpath libs for uiauto"
+    run_cmd ln -sf $appium_home/lib/server/status.js $appium_home/lib/devices/ios/uiauto/lib/status.js
+    run_cmd ln -sf $appium_home/lib/xpath.js $appium_home/lib/devices/ios/uiauto/appium/xpath.js
     if $include_dev ; then
         if $hardcore ; then
             echo "* Clearing out old UICatalog download"
@@ -244,11 +250,11 @@ reset_selendroid() {
         echo "* Linking selendroid test app: WebViewDemo"
         run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
         run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
-        uninstall_android_app io.selendroid.testapp
         uninstall_android_app io.selendroid.testapp.selendroid
+        uninstall_android_app io.selendroid.testapp
         # keep older versions of package around to clean up
-        uninstall_android_app org.openqa.selendroid.testapp
         uninstall_android_app org.openqa.selendroid.testapp.selendroid
+        uninstall_android_app org.openqa.selendroid.testapp
     fi
     echo "* Setting Selendroid config to Appium's version"
     run_cmd $grunt setConfigVer:selendroid
@@ -272,6 +278,12 @@ reset_gappium() {
         echo "* Linking Gappium test app"
         run_cmd ln -s $appium_home/submodules/io.appium.gappium.sampleapp $appium_home/sample-code/apps/io.appium.gappium.sampleapp
     fi
+}
+
+reset_firefoxos() {
+    echo "RESETTING FIREFOXOS"
+    echo "* Setting Firefox OS config to Appium's version"
+    run_cmd $grunt setConfigVer:firefoxos
 }
 
 cleanup() {
@@ -298,6 +310,9 @@ main() {
     fi
     if $should_reset_selendroid ; then
         reset_selendroid
+    fi
+    if $should_reset_firefoxos ; then
+        reset_firefoxos
     fi
     if $should_reset_gappium ; then
         reset_gappium

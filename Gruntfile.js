@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         , trailing: true
         , node: true
         , strict: true
-        , ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/devices/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/harmony/**/*.js', './test/functional/_joined/*.js', './lib/server/static/**/*.js', './lib/hybrid/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
+        , ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/devices/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/harmony/**/*.js', './test/functional/_joined/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
       }
     }
     , mochaTest: {

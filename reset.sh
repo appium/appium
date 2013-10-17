@@ -9,6 +9,7 @@ should_reset_android=false
 should_reset_ios=false
 should_reset_selendroid=false
 should_reset_gappium=false
+should_reset_firefoxos=false
 include_dev=false
 appium_home=$(pwd)
 reset_successful=false
@@ -24,6 +25,7 @@ do
         "--android") should_reset_android=true;;
         "--ios") should_reset_ios=true;;
         "--selendroid") should_reset_selendroid=true;;
+        "--firefoxos") should_reset_firefoxos=true;;
         "--gappium") should_reset_gappium=true;;
         "--dev") include_dev=true;;
         "-v") verbose=true;;
@@ -33,11 +35,12 @@ do
     shift
 done
 
-if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium ; then
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos; then
     should_reset_android=true
     should_reset_ios=true
     should_reset_selendroid=true
     should_reset_gappium=true
+    should_reset_firefoxos=true
 fi
 
 run_cmd() {
@@ -277,6 +280,12 @@ reset_gappium() {
     fi
 }
 
+reset_firefoxos() {
+    echo "RESETTING FIREFOXOS"
+    echo "* Setting Firefox OS config to Appium's version"
+    run_cmd $grunt setConfigVer:firefoxos
+}
+
 cleanup() {
     echo "CLEANING UP"
     echo "* Cleaning any temp files"
@@ -301,6 +310,9 @@ main() {
     fi
     if $should_reset_selendroid ; then
         reset_selendroid
+    fi
+    if $should_reset_firefoxos ; then
+        reset_firefoxos
     fi
     if $should_reset_gappium ; then
         reset_gappium

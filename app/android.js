@@ -1015,6 +1015,10 @@ Android.prototype.unpackApp = function(req, cb) {
 Android.prototype.getLog = deviceCommon.getLog;
 Android.prototype.getLogTypes = deviceCommon.getLogTypes;
 
+Android.prototype.pressMenu = function(cb) {
+  this.proxy(["pressMenu"], cb);
+};
+
 module.exports = function(opts) {
   return new Android(opts);
 };

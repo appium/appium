@@ -27,7 +27,7 @@
   "bin": {
     "appium": "./lib/bin.js",
     "instruments_client": "./instruments/client_bin.js",
-    "authorize_ios": "./lib/authorize.js"
+    "authorize_ios": "./bin/authorize-ios.js"
   },
   "directories": {
     "lib": "./lib",

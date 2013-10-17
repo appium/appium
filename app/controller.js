@@ -919,6 +919,10 @@ exports.localScreenshot = function(req, res) {
   }
 };
 
+exports.pressMenu = function(req, res) {
+  req.device.pressMenu(getResponseHandler(req, res));
+};
+
 exports.notYetImplemented = notYetImplemented;
 var mobileCmdMap = {
   'tap': exports.mobileTap
@@ -955,6 +959,7 @@ var mobileCmdMap = {
   , 'pinchOpen': exports.mobilePinchOpen
   , 'localScreenshot': exports.localScreenshot
   , 'getStrings': exports.getStrings
+  , 'pressMenu' : exports.pressMenu
 };
 
 exports.produceError = function(req, res) {

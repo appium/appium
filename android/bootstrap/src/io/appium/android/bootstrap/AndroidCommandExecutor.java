@@ -26,6 +26,7 @@ import io.appium.android.bootstrap.handler.TakeScreenshot;
 import io.appium.android.bootstrap.handler.TouchLongClick;
 import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Wake;
+import io.appium.android.bootstrap.handler.PressMenu;
 
 import java.util.HashMap;
 
@@ -67,6 +68,7 @@ class AndroidCommandExecutor {
     map.put("enableCompressedLayoutHeirarchy",
         new EnableCompressedLayoutHeirarchy());
     map.put("getStrings", new GetStrings());
+    map.put("pressMenu", new PressMenu());
   }
 
   /**

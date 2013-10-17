@@ -117,13 +117,13 @@ Once your system is set up and your code is up to date, you can run unit tests w
 
 You can run functional tests for all supported platforms with:
 
-    ./test.sh
+    bin/test.sh
 
 Or you can run particular platform tests with `test.sh`:
 
-    ./test.sh --android
-    ./test.sh --ios
-    ./test.sh --ios7
+    bin/test.sh --android
+    bin/test.sh --ios
+    bin/test.sh --ios7
 
 Before committing code, please run `grunt` to execute some basic tests and check
 your changes against code quality standards:

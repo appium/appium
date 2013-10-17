@@ -1,14 +1,14 @@
 assets/
 submodules/
-publish.sh
+bin/publish.sh
 reset.sh
 reset.bat
-test.sh
+bin/test.sh
 sample-code/
 test/
 android/bootstrap/bin/
 android/bootstrap/target/
-app/android/AndroidManifest.xml.apk
+lib/android/AndroidManifest.xml.apk
 _vimrc_local.vim
 *.swp
 *.swo

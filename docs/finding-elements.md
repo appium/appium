@@ -11,7 +11,7 @@ Appium supports a subset of the WebDriver locator strategies:
 
 You can use the direct UIAutomation component type name for the tag name, or use the simplified mapping (used in some examples below) found here:
 
-https://github.com/appium/appium/blob/master/app/uiauto/lib/mechanic.js#L29
+https://github.com/appium/appium/blob/master/lib/uiauto/lib/mechanic.js#L29
 
 Issues
 ------

@@ -1,9 +1,9 @@
 assets/
 submodules/
-publish.sh
+bin/publish.sh
 reset.sh
 reset.bat
-test.sh
+bin/test.sh
 sample-code/
 test/
 android/bootstrap/bin/

@@ -28,7 +28,7 @@ The best way to see what to do currently is to look at the example tests:
 
 Basically, first make sure Appium is running:
 
-    node server.js -V
+    node . -V
 
 Then script your WebDriver test, sending in the following desired capabilities:
 
@@ -73,7 +73,7 @@ otherwise failing, you can restart it by running:
 
 Now, make sure Appium is running:
 
-    node server.js
+    node .
 
 Then script your WebDriver test, sending in the following desired capabilities:
 

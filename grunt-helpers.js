@@ -1,9 +1,8 @@
 "use strict";
 
 var _ = require("underscore")
-  , server = require('./server.js')
+  , server = require('./lib/server/main.js')
   , rimraf = require('rimraf')
-  , http = require('http')
   , path = require('path')
   , temp = require('temp')
   , mkdirp = require('mkdirp')
@@ -12,12 +11,12 @@ var _ = require("underscore")
   , prompt = require('prompt')
   , exec = require('child_process').exec
   , spawn = require('win-spawn')
-  , parser = require('./app/parser')
+  , parser = require('./lib/server/parser.js')
   , namp = require('namp')
   , parseXmlString = require('xml2js').parseString
   , appiumVer = require('./package.json').version
   , fs = require('fs')
-  , helpers = require('./app/helpers')
+  , helpers = require('./lib/helpers')
   , isWindows = helpers.isWindows()
   , getXcodeVersion = helpers.getXcodeVersion
   , MAX_BUFFER_SIZE = 524288;
@@ -560,7 +559,7 @@ module.exports.generateServerDocs = function(grunt, cb) {
   var p = parser();
   var docFile = path.resolve(__dirname, "docs/server-args.md");
   var md = "Appium server arguments\n==========\n\n";
-  md += "Usage: `node server.js [flags]`\n\n";
+  md += "Usage: `node . [flags]`\n\n";
   md += "### Server flags\n";
   md += "All flags are optional, but some are required in conjunction with " +
         "certain others.\n\n";

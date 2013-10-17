@@ -27,8 +27,8 @@ android/bootstrap/local.properties
 android/bootstrap/project.properties
 android/bootstrap/.classpath
 sample-code/apps/ApiDemos
-app/android/AndroidManifest.xml.apk
-app/android/AndroidManifest.xml
+lib/android/AndroidManifest.xml.apk
+lib/android/AndroidManifest.xml
 .*~
 *~
 android/bootstrap/target/

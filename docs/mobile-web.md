@@ -13,7 +13,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 
 ```js
 {
-  , app: 'safari'
+  app: 'safari'
   , device: 'iPhone Simulator'
   , version: '6.1'
 }

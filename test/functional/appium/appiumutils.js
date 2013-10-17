@@ -2,7 +2,7 @@
 /*global afterEach:true */
 "use strict";
 
-var runServer = require("../../../server.js").run
+var runServer = require("../../../lib/server/main.js").run
   , should = require("should")
   , path = require("path");
 

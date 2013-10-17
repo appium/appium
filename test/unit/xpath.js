@@ -6,7 +6,7 @@
 
 var should = require('should')
   , _ = require('underscore')
-  , au = require('../../lib/uiauto/appium/xpath.js');
+  , au = require('../../lib/xpath.js');
 
 describe("XPath lookups", function() {
   var oks = {

@@ -1,11 +1,11 @@
 /*global describe:true, it:true, beforeEach:true */
 "use strict";
 
-var deviceState = require('../../../android/device-state.js')
+var deviceState = require('../../../lib/devices/android/device-state.js')
   , should = require('should')
   , childProcess = require('child_process')
   , it = require("../../helpers/driverblock.js").it
-  , ADB = require('../../../android/adb');
+  , ADB = require('../../../lib/devices/android/adb');
 
 describe('Android Device State module', function() {
   beforeEach(function(done) {

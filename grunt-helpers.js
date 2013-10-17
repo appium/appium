@@ -342,7 +342,8 @@ var setupAndroidProj = function(grunt, projPath, args, cb) {
 };
 
 module.exports.setupAndroidBootstrap = function(grunt, cb) {
-  var projPath = path.resolve(__dirname, "android", "bootstrap");
+  var projPath = path.resolve(__dirname, "lib", "devices", "android",
+      "bootstrap");
   var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
               "android-18", "-p", "."];
   // TODO: possibly check output of `android list target` to make sure api level 18 is available?
@@ -392,7 +393,8 @@ var buildAndroidProj = function(grunt, projPath, target, cb) {
 };
 
 module.exports.buildAndroidBootstrap = function(grunt, cb) {
-  var projPath = path.resolve(__dirname, "android", "bootstrap");
+  var projPath = path.resolve(__dirname, "lib", "devices", "android",
+      "bootstrap");
   var binSrc = path.resolve(projPath, "bin", "AppiumBootstrap.jar");
   var binDestDir = path.resolve(__dirname, "build", "android_bootstrap");
   var binDest = path.resolve(binDestDir, "AppiumBootstrap.jar");

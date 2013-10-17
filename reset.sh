@@ -250,11 +250,11 @@ reset_selendroid() {
         echo "* Linking selendroid test app: WebViewDemo"
         run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
         run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
-        uninstall_android_app io.selendroid.testapp
         uninstall_android_app io.selendroid.testapp.selendroid
+        uninstall_android_app io.selendroid.testapp
         # keep older versions of package around to clean up
-        uninstall_android_app org.openqa.selendroid.testapp
         uninstall_android_app org.openqa.selendroid.testapp.selendroid
+        uninstall_android_app org.openqa.selendroid.testapp
     fi
     echo "* Setting Selendroid config to Appium's version"
     run_cmd $grunt setConfigVer:selendroid

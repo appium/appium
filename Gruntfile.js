@@ -71,7 +71,7 @@ module.exports = function(grunt) {
         reporter: 'spec'
       }
     }
-    , maxBuffer: 2000*1024,
+    , maxBuffer: 2000*1024
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');

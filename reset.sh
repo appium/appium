@@ -146,7 +146,8 @@ reset_ios() {
     run_cmd rm -rf build/SafariLauncher
     run_cmd mkdir -p build/SafariLauncher
     run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
-
+    echo "* Cloning/updating libimobiledevice-macosx"
+    run_cmd git submodule update --init submodules/libimobiledevice-macosx
 }
 
 get_apidemos() {

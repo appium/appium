@@ -152,6 +152,15 @@ public class AndroidElement {
     return el.getChild(sel);
   }
 
+  public String getClassName() throws UiObjectNotFoundException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      return el.getClassName();
+    } else {
+      Logger.error("Device does not support API >= 18!");
+      return "";
+    }
+  }
+
   public String getContentDesc() throws UiObjectNotFoundException {
     return el.getContentDescription();
   }
@@ -164,12 +173,14 @@ public class AndroidElement {
       throws UiObjectNotFoundException, NoAttributeFoundException {
     String res = "";
     if (attr.equals("name")) {
-      res = el.getContentDescription();
+      res = getContentDesc();
       if (res.equals("")) {
-        res = el.getText();
+        res = getText();
       }
     } else if (attr.equals("text")) {
-      res = el.getText();
+      res = getText();
+    } else if (attr.equals("className")) {
+      res = getClassName();
     } else {
       throw new NoAttributeFoundException(attr);
     }

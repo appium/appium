@@ -40,7 +40,8 @@ public class GetAttribute extends CommandHandler {
       try {
         final AndroidElement el = command.getElement();
         final String attr = params.get("attribute").toString();
-        if (attr.equals("name") || attr.equals("text")) {
+        if (attr.equals("name") || attr.equals("text")
+            || attr.equals("className")) {
           return getSuccessResult(el.getStringAttribute(attr));
         } else {
           return getSuccessResult(String.valueOf(el.getBoolAttribute(attr)));

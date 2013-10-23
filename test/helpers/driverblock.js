@@ -16,7 +16,6 @@ var wd = require('wd')
       , device: 'iPhone Simulator'
       , platform: 'Mac'
       , version: defaultIosVer
-      //, newCommandTimeout: 60
     };
 
 if (process.env.SAUCE_ACCESS_KEY && process.env.SAUCE_USERNAME) {
@@ -31,22 +30,48 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   port = (typeof port === "undefined" || port === null) ? _.clone(defaultPort) : port;
   caps = (typeof caps === "undefined" || caps === null) ? _.clone(defaultCaps) : caps;
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
+  caps.launchTimeout = 18000;
   var driverHolder = {driver: null, sessionId: null};
   var expectConnError = extraCaps && extraCaps.expectConnError;
 
   beforeEach(function(done) {
     driverHolder.driver = wd.remote(host, port);
-    driverHolder.driver.init(caps, function(err, sessionId) {
-      if (expectConnError && err) {
-        driverHolder.connError = err;
-        return done();
-      } else if (err) {
-        return done(err);
-      }
+    var timeoutMs = caps.launchTimeout + 5000;
+    var tries = 0;
 
-      driverHolder.sessionId = sessionId;
-      driverHolder.driver.setImplicitWaitTimeout(5000, done);
-    });
+    var getSessionWithRetry = function() {
+      var alreadyReturned = false;
+      var respond = function(err) {
+        if (!alreadyReturned) {
+          alreadyReturned = true;
+          if (err && tries < 3) {
+            tries++;
+            console.log("Could not get session, trying again");
+            setTimeout(getSessionWithRetry, 1000);
+          } else {
+            done(err);
+          }
+        }
+      };
+
+      setTimeout(function() {
+        respond(new Error("Timed out waiting for session"));
+      }, timeoutMs);
+
+      driverHolder.driver.init(caps, function(err, sessionId) {
+        if (expectConnError && err) {
+          driverHolder.connError = err;
+          return respond();
+        } else if (err) {
+          return respond(err);
+        }
+
+        driverHolder.sessionId = sessionId;
+        driverHolder.driver.setImplicitWaitTimeout(5000, respond);
+      });
+    };
+
+    getSessionWithRetry();
   });
 
   afterEach(function(done) {

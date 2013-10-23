@@ -147,18 +147,7 @@ reset_ios() {
     run_cmd mkdir -p build/SafariLauncher
     run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
     echo "* Cloning/updating libimobiledevice-macosx"
-    if [ -d "build/libimobiledevice-macosx" ]; then
-        run_cmd rm -r build/libimobiledevice-macosx
-    fi
-    run_cmd git clone https://github.com/benvium/libimobiledevice-macosx.git build/libimobiledevice-macosx
-    USER_HOME=$(eval echo ~${SUDO_USER})
-    echo "* Configuring environment variable for libimobiledevice-macosx (DYLD_LIBRARY_PATH and PATH)"
-    if [ ! -f "${USER_HOME}/.bashrc" ]  || ! grep -q "build/libimobiledevice-macosx" "${USER_HOME}/.bashrc"
-    then
-        echo "export DYLD_LIBRARY_PATH=${PWD}/build/libimobiledevice-macosx/:$DYLD_LIBRARY_PATH" >> ${USER_HOME}/.bashrc
-        echo "export PATH=${PATH}:${PWD}/build/libimobiledevice-macosx/" >> ${USER_HOME}/.bashrc
-        source ${USER_HOME}/.bashrc
-    fi
+    run_cmd git submodule update --init submodules/libimobiledevice-macosx
 }
 
 get_apidemos() {

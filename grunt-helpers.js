@@ -169,12 +169,12 @@ module.exports.setGitRev = function(grunt, rev, cb) {
 
 module.exports.authorize = function(grunt, cb) {
   // somewhat messily ported from penguinho's authorize.py
-  var authFile = '/etc/authorization';
+  var authFile = '/System/Library/Security/authorization.plist';
   try {
     fs.existsSync(authFile);
   } catch (e) {
-    // on Mavericks auth file is in a different place
-    authFile = '/System/Library/Security/authorization.plist';
+    // on Mountain Lion auth is in a different place
+    authFile = '/etc/authorization';
   }
   exec('DevToolsSecurity --enable', function(err, stdout, stderr) {
     if (err) throw err;

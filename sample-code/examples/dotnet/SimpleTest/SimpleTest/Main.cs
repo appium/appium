@@ -19,9 +19,9 @@ namespace SimpleTest
 			// set up the remote web driver
 			Console.WriteLine("Connecting to Appium server");
 			DesiredCapabilities capabilities = new DesiredCapabilities();
-			capabilities.SetCapability("browserName", "iOS");
-			capabilities.SetCapability("platform", "Mac");
-			capabilities.SetCapability("version", "6.0");
+			capabilities.SetCapability("browserName", "");
+			capabilities.SetCapability("platform", "MAC");
+			capabilities.SetCapability("version", "6.1");
 			capabilities.SetCapability("app", appPath);
 			RemoteWebDriver driver = new RemoteWebDriver(new Uri("http://127.0.0.1:4723/wd/hub"), capabilities);
 

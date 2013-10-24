@@ -16,8 +16,9 @@ APP_PATH = '../../../../../apps/TestApp/build/release-iphonesimulator/TestApp.ap
 # What we need as a capability --> iOS device, where our app is, ect.
 def capabilities
   {
-    'browserName' => 'iOS',
+    'browserName' => '',
     'platform' => 'Mac',
+    'device' => 'iPhone Simulator',
     'version' => '6.0',
     'app' => absolute_app_path
   }

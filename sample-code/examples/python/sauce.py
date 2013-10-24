@@ -26,9 +26,10 @@ class TestSequenceFunctions(unittest.TestCase):
         self.driver = webdriver.Remote(
             command_executor='http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY),
             desired_capabilities={
-                'browserName': 'iOS 6.0',
+                'browserName': '',
                 'platform': 'Mac 10.8',
                 'device': 'iPhone Simulator',
+                'version': '6.1',
                 'app': app
             })
         self._values = []
@@ -40,7 +41,7 @@ class TestSequenceFunctions(unittest.TestCase):
             rndNum = randint(0, 10)
             elem.send_keys(rndNum)
             self._values.append(rndNum)
- 
+
     def _set_test_status(self, jobid, passed=True):
         # Report the status of your test to Sauce
         body_content = json.dumps({"passed": passed})

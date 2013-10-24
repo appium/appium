@@ -24,7 +24,7 @@ browser
     , name: "Appium Hybrid App: with WD"
     , platform:'Mac 10.8'
     , app: appURL
-    , version: ''
+    , version: '6.0'
     , browserName: ''
   })
   .windowHandles(function(err, handles) {

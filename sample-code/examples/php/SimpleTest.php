@@ -18,8 +18,9 @@ class SimpleTest extends Sauce\Sausage\WebDriverTestCase
         array(
             'local' => true,
             'port' => 4723,
-            'browserName' => 'iOS',
+            'browserName' => '',
             'desiredCapabilities' => array(
+                'device' => 'iPhone Simulator',
                 'version' => '6.0',
                 'platform' => 'Mac',
                 'app' => APP_PATH

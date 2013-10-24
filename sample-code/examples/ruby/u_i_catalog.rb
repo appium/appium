@@ -17,8 +17,9 @@ APP_PATH = '../../apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'
 
 def capabilities
   {
-      'browserName' => 'iOS',
+      'browserName' => '',
       'platform' => 'Mac',
+      'device' => 'iPhone Simulator',
       'version' => '6.0',
       'app' => absolute_app_path
   }

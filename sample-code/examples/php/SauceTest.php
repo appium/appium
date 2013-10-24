@@ -18,7 +18,7 @@ class SauceTest extends Sauce\Sausage\WebDriverTestCase
                 'platform' => 'Mac 10.8',
                 'device' => 'iPhone Simulator',
                 'app' => APP_URL,
-                'version' => '',
+                'version' => '6.1',
             )
         )
     );

@@ -23,7 +23,7 @@ browser
     , platform: "Mac"
     , app: appURL
     , version: "6.0"
-    , browserName: "iOS"
+    , browserName: ""
     , newCommandTimeout: 60
   })
   .elementsByTagName("textField", function(err, els) {

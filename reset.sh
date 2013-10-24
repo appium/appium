@@ -58,6 +58,8 @@ reset_general() {
         echo "* Removing NPM modules"
         run_cmd rm -rf node_modules
     fi
+    echo "* Clearing out old .appiumconfig"
+    run_cmd rm -rf ./.appiumconfig
     if $include_dev ; then
         echo "* Installing new or updated NPM modules (including devDeps)"
         run_cmd npm install .

@@ -48,8 +48,9 @@ end
 
 def capabilities
   {
-      'browserName' => 'iOS 6.0',
+      'browserName' => '',
       'platform' => 'Mac 10.8',
+      'version' => '6.1',
       'device' => 'iPhone Simulator',
       'app' => APP_PATH,
       'name' => 'Ruby Example for Appium',

@@ -30,19 +30,6 @@ var scrollToElement = o_O(function*(element) {
   }
 });
 
-// Buttons, Various uses of UIButton
-// Controls, Various uses of UIControl
-// TextFields, Uses of UITextField
-// SearchBar, Use of UISearchBar
-// TextView, Use of UITextField
-// Pickers, Uses of UIDatePicker, UIPickerView
-// Images, Use of UIImageView
-// Web, Use of UIWebView
-// Segments, Various uses of UISegmentedControl
-// Toolbar, Uses of UIToolbar
-// Alerts, Various uses of UIAlertView, UIActionSheet
-// Transitions, Shows UIViewAnimationTransitions
-
 driver.run(function*() {
   try {
     yield this.init(desiredCaps);

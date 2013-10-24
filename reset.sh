@@ -10,6 +10,7 @@ should_reset_ios=false
 should_reset_selendroid=false
 should_reset_gappium=false
 should_reset_firefoxos=false
+should_reset_realsafari=false
 include_dev=false
 appium_home=$(pwd)
 reset_successful=false
@@ -24,6 +25,7 @@ do
     case "$1" in
         "--android") should_reset_android=true;;
         "--ios") should_reset_ios=true;;
+        "--real-safari") should_reset_realsafari=true;;
         "--selendroid") should_reset_selendroid=true;;
         "--firefoxos") should_reset_firefoxos=true;;
         "--gappium") should_reset_gappium=true;;
@@ -35,12 +37,16 @@ do
     shift
 done
 
-if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos; then
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos && ! $should_reset_realsafari; then
     should_reset_android=true
     should_reset_ios=true
     should_reset_selendroid=true
     should_reset_gappium=true
     should_reset_firefoxos=true
+fi
+
+if ! $should_reset_ios && $should_reset_realsafari; then
+    should_reset_ios=true
 fi
 
 run_cmd() {
@@ -143,11 +149,17 @@ reset_ios() {
     echo "* Cloning/updating SafariLauncher"
     run_cmd git submodule update --init submodules/SafariLauncher
     echo "* Building SafariLauncher"
-    run_cmd $grunt buildSafariLauncherApp:iphoneos
+    run_cmd $grunt buildSafariLauncherApp:iphonesimulator
     echo "* Copying SafariLauncher to build"
     run_cmd rm -rf build/SafariLauncher
     run_cmd mkdir -p build/SafariLauncher
-    run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
+    run_cmd zip -r build/SafariLauncher/SafariLauncherSim submodules/SafariLauncher/build/Release-iphonesimulator/SafariLauncher.app
+    if $should_reset_realsafari; then
+        echo "* Building SafariLauncher for real devices"
+        run_cmd $grunt buildSafariLauncherApp:iphoneos
+        echo "* Copying SafariLauncher for real devices to build"
+        run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
+    fi
 
 }
 

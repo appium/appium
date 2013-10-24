@@ -27,7 +27,7 @@ fi
 
 set -e
 git pull upstream master
-./reset.sh --hardcore
+./reset.sh --hardcore --real-safari
 npm publish
 version=$(cat package.json | underscore extract version | sed 's/\"//g')
 git tag -a "v$version" -m "tag appium@$version for npm publish"

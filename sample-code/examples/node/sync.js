@@ -18,7 +18,7 @@ var desired = {
   , name: "Appium: Sync WD"
   , platform:'Mac 10.8'
   , app: appURL
-  , version: ''
+  , version: '6.1'
   , browserName: ''
 };
 

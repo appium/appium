@@ -41,8 +41,9 @@ def absolute_app_path
 end
 
 capabilities = {
-  'browserName' => 'iOS',
+  'browserName' => '',
   'platform' => 'Mac',
+  'device' => 'iPhone Simulator',
   'version' => '6.0',
   'app' => absolute_app_path
 }

@@ -21,7 +21,8 @@ class TestSequenceFunctions(unittest.TestCase):
         self.driver = webdriver.Remote(
             command_executor='http://127.0.0.1:4723/wd/hub',
             desired_capabilities={
-                'browserName': 'iOS',
+                'browserName': '',
+                'device': 'iPhone Simulator',
                 'platform': 'Mac',
                 'version': '6.0',
                 'app': app

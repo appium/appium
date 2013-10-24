@@ -60,9 +60,10 @@ public class SimpleTest {
         File appDir = new File(System.getProperty("user.dir"), "../../../apps/TestApp/build/Release-iphonesimulator");
         File app = new File(appDir, "TestApp.app");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS");
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
         capabilities.setCapability(CapabilityType.VERSION, "6.0");
         capabilities.setCapability(CapabilityType.PLATFORM, "Mac");
+        capabilities.setCapability("device", "iPhone Simulator");
         capabilities.setCapability("app", app.getAbsolutePath());
         driver = new SwipeableWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
         values = new ArrayList<Integer>();
@@ -95,7 +96,7 @@ public class SimpleTest {
         WebElement texts = driver.findElement(By.tagName("staticText"));
         assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
     }
-    
+
     @Test
     public void testActive() throws Exception {
         WebElement text = driver.findElement(By.xpath("//textfield[1]"));

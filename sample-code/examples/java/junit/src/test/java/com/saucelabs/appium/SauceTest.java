@@ -47,7 +47,8 @@ public class SauceTest {
         String sauceUserName = System.getenv("SAUCE_USER_NAME");
         String sauceAccessKey = System.getenv("SAUCE_USER_NAME");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS 6.0");
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
+        capabilities.setCapability(CapabilityType.VERSION, "6.0");
         capabilities.setCapability("device", "iPhone Simulator");
         capabilities.setCapability(CapabilityType.PLATFORM, "Mac 10.8");
         capabilities.setCapability("app", "http://appium.s3.amazonaws.com/TestApp6.0.app.zip");

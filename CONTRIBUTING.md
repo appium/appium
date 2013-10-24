@@ -96,7 +96,8 @@ Now you are ready to run the Appium server via `node .`.
 Since Appium uses dev versions of some packages, it often becomes necessary to
 install new `npm` packages or update various things. There's a handy shell script
 to do all this for all platforms (the `--dev` flag gets dev npm dependencies
-and test applications used in the Appium test suite):
+and test applications used in the Appium test suite). You will also need to do
+this when Appium bumps its version up:
 
     ./reset.sh --dev
 

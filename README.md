@@ -110,7 +110,8 @@ Gecko-based platforms.
 
 ## Contributing
 
-Please take a look at our [contribution documentation](https://github.com/appium/appium/blob/master/CONTRIBUTING.md).
+Please take a look at our [contribution documentation](https://github.com/appium/appium/blob/master/CONTRIBUTING.md)
+for instructions on how to build, test and run Appium from source.
 
 ## Project Credits & Inspiration
 

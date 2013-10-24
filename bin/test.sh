@@ -5,10 +5,13 @@ ios_only=false
 ios7_only=false
 android_only=false
 all_tests=true
-xcode_path="$(xcode-select -print-path | sed s/\\/Contents\\/Developer//g)"
+xcode_path=""
+if command -v xcode-select 2>/dev/null; then
+    xcode_path="$(xcode-select -print-path | sed s/\\/Contents\\/Developer//g)"
+fi
 did_switch_xcode=false
 
-function join_testfiles {
+join_testfiles () {
     testtype=$1
     shift
     outfile=$1
@@ -32,16 +35,16 @@ function join_testfiles {
 }
 
 for arg in "$@"; do
-    if [[ "$arg" = "--ios" ]]; then
+    if [ "$arg" = "--ios" ]; then
         ios_only=true
         all_tests=false
-    elif [[ "$arg" = "--android" ]]; then
+    elif [ "$arg" = "--android" ]; then
         android_only=true
         all_tests=false
-    elif [[ "$arg" = "--ios7" ]]; then
+    elif [ "$arg" = "--ios7" ]; then
         ios7_only=true
         all_tests=false
-    elif [[ "$arg" =~ " " ]]; then
+    elif [ "$arg" =~ " " ]; then
         mocha_args="$mocha_args \"$arg\""
     else
         mocha_args="$mocha_args $arg"

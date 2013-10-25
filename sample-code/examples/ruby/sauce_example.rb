@@ -21,7 +21,7 @@ AUTH_DETAILS = "#{SAUCE_USERNAME}:#{SAUCE_ACCESS_KEY}"
 # This is the test itself
 describe "Computation" do
   before(:each) do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
+    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps, :url => server_url)
    end
 
   after(:each) do
@@ -46,7 +46,7 @@ describe "Computation" do
   end
 end
 
-def capabilities
+def desired_caps
   {
       'browserName' => '',
       'platform' => 'Mac 10.8',

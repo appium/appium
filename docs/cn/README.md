@@ -33,6 +33,8 @@ Appium最终开启了跨平台原生移动自动化的可能.
 你的环境需要配置好运行测试相关的特定移动平台,下面列出相关的依赖平台
 如果你想通过`npm install`来运行appium, 为Appium研究和贡献力量.你需要[node.js and npm](http://nodejs.org) 0.8 或者更高版本 (`brew install node`).
 
+你可以使用 `appium-doctor` 来验证 Appium 的所有依赖。运行 `appium-doctor`，然后提供 `--ios` 或者 `--android` 参数来验证两个平台的依赖是否配置正确。如果从源代码运行，你可以使用 `bin/appium-doctor.js` 或者 `node bin/appium-doctor.js`
+
 ### IOS依赖
 
 * Mac OS X 10.7 or higher, 10.8.4 recommended

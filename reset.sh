@@ -111,9 +111,11 @@ reset_ios() {
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
-    echo "* Linking status/xpath libs for uiauto"
-    run_cmd ln -sf $appium_home/lib/server/status.js $appium_home/lib/devices/ios/uiauto/lib/status.js
-    run_cmd ln -sf $appium_home/lib/xpath.js $appium_home/lib/devices/ios/uiauto/appium/xpath.js
+    echo "* Copying status/xpath libs for uiauto"
+    run_cmd rm -rf $appium_home/lib/devices/ios/uiauto/lib/status.js
+    run_cmd cp $appium_home/lib/server/status.js $appium_home/lib/devices/ios/uiauto/lib/status.js
+    run_cmd rm -rf $appium_home/lib/devices/ios/uiauto/appium/xpath.js
+    run_cmd cp $appium_home/lib/xpath.js $appium_home/lib/devices/ios/uiauto/appium/xpath.js
     if $include_dev ; then
         if $hardcore ; then
             echo "* Clearing out old UICatalog download"

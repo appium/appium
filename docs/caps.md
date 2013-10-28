@@ -8,6 +8,7 @@ Appium server capabilities
 |`device`|The kind of mobile device or emulator to use|`ios`, `selendroid`, `firefoxos`, `mock_ios`, `android` |
 |`version`|Android API version, iOS Version|(Android) 4.2/4.3 (iOS) 6.0/6.1/7.0|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
+|`launch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
 
 --
 

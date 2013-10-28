@@ -21,6 +21,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|
+|`--log-timestamp`|false|Show timestamps in console output||
+|`--log-no-colors`|false|Don't use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
 |`--native-instruments-lib`|false|(IOS-only) IOS has a weird built-in unavoidable delay. We patch this in appium. If you do not want it patched, pass in this flag.||
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|

@@ -92,7 +92,9 @@ IF %doSelendroid% == 1 (
   CALL :runCmd "git submodule update --init submodules\selendroid"
   CALL :runCmd "RD /S /Q selendroid | VER > NUL"
   ECHO Building selendroid server and supporting libraries
+  CALL :runCmd "set MAVEN_OPTS=-Xss1024k"
   CALL :runCmd "node_modules\.bin\grunt buildSelendroidServer"
+  CALL :runCmd "set MAVEN_OPTS="
   
   :: Reset Selendroid Dev
   IF %doDev% == 1 (

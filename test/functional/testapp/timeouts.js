@@ -21,6 +21,21 @@ describeWd('command timeout', function(h) {
       });
     });
   });
+
+  it('should die with short command timeout', function(done) {
+    var params = {timeout: 3};
+    h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
+      should.not.exist(err);
+      var next = function() {
+        h.driver.elementByName('dont exist dogg', function(err) {
+          should.exist(err);
+          [13, 6].should.include(err.status);
+          done();
+        });
+      };
+      setTimeout(next, 5500);
+    });
+  });
 });
 
  describeWd('check implicit wait', function(h) {

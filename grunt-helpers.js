@@ -170,9 +170,7 @@ module.exports.setGitRev = function(grunt, rev, cb) {
 module.exports.authorize = function(grunt, cb) {
   // somewhat messily ported from penguinho's authorize.py
   var authFile = '/System/Library/Security/authorization.plist';
-  try {
-    fs.existsSync(authFile);
-  } catch (e) {
+  if (!fs.existsSync(authFile)) {
     // on Mountain Lion auth is in a different place
     authFile = '/etc/authorization';
   }
@@ -184,10 +182,11 @@ module.exports.authorize = function(grunt, cb) {
       var re = /<key>system.privilege.taskport<\/key>\s*\n\s*<dict>\n\s*<key>allow-root<\/key>\n\s*(<[^>]+>)/;
       var match = re.exec(data);
       if (!match) {
-        grunt.fatal("Could not find the system.privilege.taskport key in /etc/authorization");
+        grunt.fatal("Could not find the system.privilege.taskport key in " +
+                    authFile);
       } else {
         if (!(/<false\/>/.exec(match[0]))) {
-          console.log("/etc/authorization has already been modified to support appium");
+          console.log(authFile + " has already been modified to support appium");
           return cb();
         } else {
           var newText = match[0].replace(match[1], '<true/>');
@@ -219,7 +218,7 @@ module.exports.authorize = function(grunt, cb) {
                         throw err;
                       }
                     }
-                    grunt.log.writeln("Wrote new /etc/authorization");
+                    grunt.log.writeln("Wrote new " + authFile);
                     cb();
                   });
                 } else {

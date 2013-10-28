@@ -16,8 +16,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-dp`, `--device-port`|4724|(Android-only) port to connect to device on|`--device-port 4724`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
-|`--no-session-override`|false|Disables session override||
-|`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of using clean.apk||
+|`--session-override`|false|Enables session override (clobbering)||
+|`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of clearing app data||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|

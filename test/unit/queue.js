@@ -43,17 +43,17 @@ describe('IOS', function() {
 describe('Appium', function() {
   var intercept = []
     , logPath = path.resolve(__dirname, "../../../appium.log")
-    , inst = appium({log: logPath, noSessionOverride: true });
+    , inst = appium({log: logPath});
 
   inst.registerConfig({ios: true});
 
   describe('#start', function() {
-    return it('should queue up subsequent calls and execute them sequentially', function(done) {
+    return it('should fail if a session is in progress', function(done) {
       var doneYet = function(num) {
         intercept.push(num);
         if (intercept.length > 9) {
           for (var i=0; i < intercept.length; i++) {
-            intercept[i].should.equal(i);
+            intercept[i].should.not.equal(i);
           }
           done();
         }
@@ -63,11 +63,16 @@ describe('Appium', function() {
         if (num > 9)
           return;
 
-        inst.start({app: "/path/to/fake.app", device: "mock_ios"}, function() {
+        inst.start({app: "/path/to/fake.app", device: "mock_ios"}, function(err) {
           var n = num;
-          setTimeout(function() {
-            inst.stop(function() { doneYet(n); });
-          }, Math.round(Math.random()*100));
+          if (n > 0) {
+            should.exist(err);
+            doneYet(n);
+          } else {
+            setTimeout(function() {
+              inst.stop(function() { doneYet(n); });
+            }, 500);
+          }
           loop(++num);
         });
       };
@@ -79,7 +84,7 @@ describe('Appium', function() {
 
 describe('Appium with clobber', function() {
   var logPath = path.resolve(__dirname, "../../../appium.log")
-    , inst = appium({log: logPath, noSessionOverride: false });
+    , inst = appium({log: logPath, sessionOverride: true });
 
   inst.registerConfig({mock_ios: true});
 

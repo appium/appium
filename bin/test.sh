@@ -51,7 +51,7 @@ for arg in "$@"; do
     fi
 done
 
-appium_mocha="mocha -t 60000 -R spec $mocha_args"
+appium_mocha="mocha -t 90000 -R spec $mocha_args"
 
 mkdir -p ./test/functional/_joined
 
@@ -68,7 +68,7 @@ if $ios_only || $all_tests; then
     else
         echo "Did not find /Applications/Xcode-6.1.app, using default"
     fi
-    $appium_mocha $ios_testfile
+    time $appium_mocha $ios_testfile
 fi
 
 if $ios7_only || $all_tests; then
@@ -84,7 +84,7 @@ if $ios7_only || $all_tests; then
     else
         echo "Did not find /Applications/Xcode-7.0.app, using default"
     fi
-    $appium_mocha $ios7_testfile
+    time $appium_mocha $ios7_testfile
 fi
 
 if $did_switch_xcode; then
@@ -98,5 +98,5 @@ if $android_only || $all_tests; then
     android_testfile="./test/functional/_joined/android.js"
     android_dirs="apidemos selendroid android"
     join_testfiles android $android_testfile $android_dirs
-    $appium_mocha $android_testfile
+    time $appium_mocha $android_testfile
 fi

@@ -1,3 +1,40 @@
+CHANGES IN VERSION 0.11.1 (from 0.11.0)
+=======================================
+
+#### General
+- fix launch timeout bug
+- update travis CI to use newer version of node
+- remove .appiumconfig before running reset.sh
+- update reset.sh to build safarilauncher for real devices only when
+  passing in the --real-safari flag
+- made test.sh sh-compatible
+- update all example code to use correct desired capabilities
+- don't set content-length header for http POSTS with no body
+- add more desired caps to docs
+- expand on android setup for mac osx in docs
+- remove multiple device handling code--appium just does one device at a time
+  per server
+- handle command timeouts centrally rather than per-device
+- add --log-timestamp and --log-no-colors options to server
+
+#### iOS
+- fix sim control authorization on mavericks
+- copy instead of symlink xpath/status into uiauto for non-breaking npm install
+- fix cookie methods error case in mobile safari
+- fail with an error message if user is on xcode 5.0.1 since it comes with
+  a broken instruments binary
+
+#### Android
+- don't uninstall app on fast reset
+- fix crash that occurred when no devices were connected
+- fix unlock logic and change order of regex search
+- correctly handle responses for element{Displayed|Enabled|Selected}
+- refactor adb/android/uiautomator startup/shutdown logic to make
+  callback-based
+- kill uiautomator if the startup cascade for android fails, so it doesn't
+  zombify
+
+
 CHANGES IN VERSION 0.11.0 (from 0.10.4)
 =======================================
 

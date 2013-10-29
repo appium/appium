@@ -4,6 +4,8 @@ CHANGES IN VERSION 0.11.2 (from 0.11.1)
 #### General
 - fix bug where running `appium` after installing via npm would error out
   because the logger was not initialized correctly
+- fix bug in reset.sh where setting --real-safari would cause android et al
+  not to build
 
 
 CHANGES IN VERSION 0.11.1 (from 0.11.0)

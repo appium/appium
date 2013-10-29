@@ -37,7 +37,7 @@ do
     shift
 done
 
-if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos && ! $should_reset_realsafari; then
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos ; then
     should_reset_android=true
     should_reset_ios=true
     should_reset_selendroid=true

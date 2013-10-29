@@ -37,6 +37,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   beforeEach(function(done) {
     driverHolder.driver = wd.remote(host, port);
     var timeoutMs = caps.launchTimeout + 5000;
+    var waitBetweenTries = 3000;
     var tries = 0;
 
     var getSessionWithRetry = function() {
@@ -47,7 +48,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
           if (err && tries < 3) {
             tries++;
             console.log("Could not get session, trying again");
-            setTimeout(getSessionWithRetry, 1000);
+            setTimeout(getSessionWithRetry, waitBetweenTries);
           } else {
             done(err);
           }

@@ -51,7 +51,7 @@ if %doAndroid% == 1 (
   ECHO.
   ECHO =====Resetting Unlock.apk=====
   ECHO.
-  CALL :runCmd "RD /S /Q build\unlock_apk"
+  CALL :runCmd "RD /S /Q build\unlock_apk | VER > NUL"
   CALL :runCmd "MKDIR build\unlock_apk"
   ECHO Building Unlock.apk
   CALL :runCmd "git submodule update --init submodules\unlock_apk"

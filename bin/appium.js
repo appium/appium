@@ -4,8 +4,13 @@
 var net = require('net')
   , repl = require('repl')
   , colors = require('colors')
-  , appium  = require('../lib/server/main.js')
+  , logFactory = require('../lib/server/logger.js')
   , parser = require('../lib/server/parser.js');
+
+var args = parser().parseArgs();
+logFactory.init(args);
+
+var appium  = require('../lib/server/main.js');
 
 var startRepl = function() {
   var help = function() {
@@ -48,6 +53,5 @@ var startRepl = function() {
 if (process.argv[2] === "shell") {
   startRepl();
 } else {
-  var args = parser().parseArgs();
   appium.run(args, function() { /* console.log('Rock and roll.'.grey); */ });
 }

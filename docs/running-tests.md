@@ -32,7 +32,7 @@ Basically, first make sure Appium is running:
 
 Then script your WebDriver test, sending in the following desired capabilities:
 
-```json
+```js
 {
     device: 'iPhone Simulator',
     browserName: '',
@@ -81,8 +81,8 @@ Then script your WebDriver test, sending in the following desired capabilities:
     browserName: '',
     version: '4.2',
     app: myApp,
-    app-package: myAppPackage,
-    app-activity: myAppActivity
+    'app-package': myAppPackage,
+    'app-activity': myAppActivity
 }
 ```
 
@@ -121,8 +121,8 @@ desired capabilities mentioned above, by replacing 'Android' with 'Selendroid':
     browserName: '',
     version: '2.3',
     app: myApp,
-    app-package: myAppPackage,
-    app-activity: myAppActivity
+    'app-package': myAppPackage,
+    'app-activity': myAppActivity
 }
 ```
 

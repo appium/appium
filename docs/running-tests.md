@@ -68,8 +68,7 @@ And wait for the android emulator to finish launching. Sometimes, for various
 reasons, `adb` gets stuck. If it's not showing any connected devices or
 otherwise failing, you can restart it by running:
 
-    adb kill-server
-    adb devices
+    adb kill-server && adb devices
 
 Now, make sure Appium is running:
 
@@ -81,7 +80,6 @@ Then script your WebDriver test, sending in the following desired capabilities:
 {
     'device': 'Android',
     'browserName': '',
-    'platform': 'MAC',
     'version': '4.2',
     'app': myApp,
     'app-package': myAppPackage,
@@ -104,3 +102,34 @@ Using your WebDriver library of choice, set the remote session to use these
 capabilities and connect to the server running at port 4723 of localhost (or
 whatever host and port you specified when you started Appium). You should be
 all set now!
+
+<a name="run-selendroid"></a>Running your test app with Appium (Android devices
+&lt; 4.2, and hybrid tests)
+-----
+Android devices before version 4.2 (API Level 17) do not have Google's
+[UiAutomator
+framework](developer.android.com/tools/help/uiautomator/index.html) installed.
+This is what Appium uses to perform the
+automation behaviors on the device. For earlier devices or tests of hybrid
+(webview-based) apps, Appium comes bundled with another automation backend
+called [Selendroid](http://selendroid.io/).
+
+To use Selendroid, all that is required is to slightly change the set of
+desired capabilities mentioned above, by replacing 'Android' with 'Selendroid':
+
+```json
+{
+    'device': 'Selendroid',
+    'browserName': '',
+    'version': '2.3',
+    'app': myApp,
+    'app-package': myAppPackage,
+    'app-activity': myAppActivity
+}
+```
+
+Now Appium will start up a Selendroid test session instead of the default test
+session. One of the downsides to using Selendroid is that its API differs
+sometimes significantly with Appium's. Therefore we recommend you thoroughly
+read [Selendroid's documentation](http://selendroid.io/native.html) before
+writing your scripts for older devices or hybrid apps.

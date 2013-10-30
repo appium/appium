@@ -50,7 +50,7 @@ If you want to run Appium via an `npm install`, hack with or contribute to Appiu
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
 * Appium supports Android on OS X, Linux and has beta support for Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
-  * [linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md) 
+  * [linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md)
   * [osx](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#android)
   * [windows](https://github.com/appium/appium/blob/master/docs/running-on-windows.md)
 
@@ -63,7 +63,7 @@ If you want to run Appium via an `npm install`, hack with or contribute to Appiu
 Kick up an Appium server, and then run a test written in your favourite [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible language!
 You can run an Appium server using node.js or using the application, see below.
 
-### Using Node.js 
+### Using Node.js
 
     $ npm install -g appium
     $ appium &
@@ -71,7 +71,7 @@ You can run an Appium server using node.js or using the application, see below.
 ### Using the App
 
 * [Download the Appium app](https://github.com/appium/appium/releases)
-* Run it! 
+* Run it!
 
 ## Writing Tests for Appium
 
@@ -89,7 +89,7 @@ like tap, flick, and swipe.
 You can also automate web views in hybrid apps! See the [hybrid app
 guide](https://github.com/appium/appium/blob/master/docs/hybrid.md)
 
-This repository contains [many examples of tests in a variety of different languages](https://github.com/appium/appium/tree/master/sample-code/examples/node)!
+This repository contains [many examples of tests in a variety of different languages](https://github.com/appium/appium/tree/master/sample-code/examples)!
 
 For the full list of Appium doc pages, visit [this directory](https://github.com/appium/appium/blob/master/docs/).
 
@@ -98,7 +98,7 @@ For the full list of Appium doc pages, visit [this directory](https://github.com
 Appium drives various native automation frameworks and provides an API based on
 Selenium's [WebDriver JSON wire protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol).
 
-Appium drives Apple's UIAutomation library for iOS support, which is based on 
+Appium drives Apple's UIAutomation library for iOS support, which is based on
 [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
 Android support uses the UiAutomator framework for newer platforms and
@@ -129,5 +129,5 @@ of common errors and how to get in touch with the community if you're stumped.
 
 ## Using Robots
 
-Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other robots is possible, 
+Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other robots is possible,
 check out the [Appium Robots](https://github.com/appium/robots) project!

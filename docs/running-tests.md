@@ -34,11 +34,10 @@ Then script your WebDriver test, sending in the following desired capabilities:
 
 ```json
 {
-    'device': 'iPhone Simulator',
-    'browserName': '',
-    'platform': 'MAC',
-    'version': '6.1',
-    'app': myApp
+    device: 'iPhone Simulator',
+    browserName: '',
+    version: '6.1',
+    app: myApp
 }
 ```
 
@@ -76,14 +75,14 @@ Now, make sure Appium is running:
 
 Then script your WebDriver test, sending in the following desired capabilities:
 
-```json
+```js
 {
-    'device': 'Android',
-    'browserName': '',
-    'version': '4.2',
-    'app': myApp,
-    'app-package': myAppPackage,
-    'app-activity': myAppActivity
+    device: 'Android',
+    browserName: '',
+    version: '4.2',
+    app: myApp,
+    app-package: myAppPackage,
+    app-activity: myAppActivity
 }
 ```
 
@@ -103,8 +102,7 @@ capabilities and connect to the server running at port 4723 of localhost (or
 whatever host and port you specified when you started Appium). You should be
 all set now!
 
-<a name="run-selendroid"></a>Running your test app with Appium (Android devices
-&lt; 4.2, and hybrid tests)
+<a name="run-selendroid"></a>Running your test app with Appium (Android devices &lt; 4.2, and hybrid tests)
 -----
 Android devices before version 4.2 (API Level 17) do not have Google's
 [UiAutomator
@@ -117,14 +115,14 @@ called [Selendroid](http://selendroid.io/).
 To use Selendroid, all that is required is to slightly change the set of
 desired capabilities mentioned above, by replacing 'Android' with 'Selendroid':
 
-```json
+```js
 {
-    'device': 'Selendroid',
-    'browserName': '',
-    'version': '2.3',
-    'app': myApp,
-    'app-package': myAppPackage,
-    'app-activity': myAppActivity
+    device: 'Selendroid',
+    browserName: '',
+    version: '2.3',
+    app: myApp,
+    app-package: myAppPackage,
+    app-activity: myAppActivity
 }
 ```
 

@@ -75,14 +75,12 @@ You can run an Appium server using node.js or using the application, see below.
 
 ## Writing Tests for Appium
 
-We support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol).
+The main guide for getting started writing and running tests is [the running tests](https://github.com/appium/appium/blob/master/docs/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices.
 
-First and foremost, specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
+Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
 
 You find elements by using a subset of WebDriver's element-finding strategies.
-See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information.
-
-We also have several extensions to the JSON Wire Protocol for [automating
+See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating
 mobile gestures](https://github.com/appium/appium/blob/master/docs/gestures.md)
 like tap, flick, and swipe.
 

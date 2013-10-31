@@ -234,7 +234,7 @@ module.exports.authorize = function(grunt, cb) {
   });
 };
 
-module.exports.build = function(appRoot, cb, sdk) {
+module.exports.build = function(appRoot, cb, sdk, xcconfig) {
   var next = function() {
     var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
     console.log('Using sdk: ' + sdk + '...');
@@ -246,6 +246,9 @@ module.exports.build = function(appRoot, cb, sdk) {
       }
       console.log("Building app...");
       var args = ['-sdk', sdk];
+      if (typeof xcconfig !== "undefined") {
+        args = args.concat(['-xcconfig', xcconfig]);
+      }
       xcode = spawn('xcodebuild', args, {
         cwd: appRoot
       });
@@ -301,7 +304,7 @@ module.exports.signApp = function(appName, certName, cb) {
   });
 };
 
-module.exports.buildSafariLauncherApp = function(cb, sdk) {
+module.exports.buildSafariLauncherApp = function(cb, sdk, xcconfig) {
   var appRoot = path.resolve(__dirname, "submodules", "SafariLauncher");
   module.exports.build(appRoot, function(err) {
     if (err !== null) {
@@ -310,7 +313,7 @@ module.exports.buildSafariLauncherApp = function(cb, sdk) {
     } else {
       cb(true);
     }
-  }, sdk);
+  }, sdk, xcconfig);
 };
 
 

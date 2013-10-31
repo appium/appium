@@ -167,69 +167,116 @@ module.exports.setGitRev = function(grunt, rev, cb) {
   exports.writeConfigKey(grunt, "git-sha", rev, cb);
 };
 
-module.exports.authorize = function(grunt, cb) {
-  // somewhat messily ported from penguinho's authorize.py
+var auth_enableDevTools = function(grunt, cb) {
+  grunt.log.writeln("Enabling DevToolsSecurity");
+  exec('DevToolsSecurity --enable', cb);
+};
+
+var auth_getTaskportSection = function(grunt, authFileData) {
+  var re = /<key>system.privilege.taskport<\/key>\s*\n\s*<dict>\n\s*<key>allow-root<\/key>\n\s*(<[^>]+>)/;
+  var match = re.exec(authFileData);
+  if (!match) {
+    throw new Error("Could not find the system.privilege.taskport key");
+  } else {
+    return match;
+  }
+};
+
+var auth_writeAuthBackup = function(grunt, origData, cb) {
+  temp.open('authorization.backup.', function (err, info) {
+    fs.write(info.fd, origData);
+    fs.close(info.fd, function(err) {
+      if (err) return cb(err);
+      grunt.log.writeln("Backed up to " + info.path);
+      cb();
+    });
+  });
+};
+
+var auth_confirmAuthDiff = function(grunt, diff, cb) {
+  grunt.log.writeln("Check this diff to make sure the change looks cool:");
+  grunt.log.writeln(diff.join("\n"));
+  prompt.start();
+  var promptProps = {
+    properties: {
+      proceed: {
+        pattern: /^(y|n)/
+        , description: "Make changes? [y/n] "
+      }
+    }
+  };
+  prompt.get(promptProps, function(err, result) {
+    if (err) return cb(err);
+    if (result.proceed == "y") {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  });
+};
+
+var auth_writeAuthFile = function(grunt, cb) {
   var authFile = '/System/Library/Security/authorization.plist';
   if (!fs.existsSync(authFile)) {
     // on Mountain Lion auth is in a different place
     authFile = '/etc/authorization';
   }
-  exec('DevToolsSecurity --enable', function(err, stdout, stderr) {
-    if (err) throw err;
-    fs.readFile(authFile, 'utf8', function(err, data) {
-      if (err) throw err;
-      var origData = data;
-      var re = /<key>system.privilege.taskport<\/key>\s*\n\s*<dict>\n\s*<key>allow-root<\/key>\n\s*(<[^>]+>)/;
-      var match = re.exec(data);
-      if (!match) {
-        grunt.fatal("Could not find the system.privilege.taskport key in " +
-                    authFile);
-      } else {
-        if (!(/<false\/>/.exec(match[0]))) {
-          console.log(authFile + " has already been modified to support appium");
-          return cb();
-        } else {
-          var newText = match[0].replace(match[1], '<true/>');
-          var newContent = data.replace(match[0], newText);
-          temp.open('authorization.backup.', function (err, info) {
-            fs.write(info.fd, origData);
-            fs.close(info.fd, function(err) {
-              if (err) throw err;
-              grunt.log.writeln("Backed up to " + info.path);
-              var diff = difflib.contextDiff(origData.split("\n"), newContent.split("\n"), {fromfile: "before", tofile: "after"});
-              grunt.log.writeln("Check this diff to make sure the change looks cool:");
-              grunt.log.writeln(diff.join("\n"));
-              prompt.start();
-              var promptProps = {
-                properties: {
-                  proceed: {
-                    pattern: /^(y|n)/
-                    , description: "Make changes? [y/n] "
-                  }
-                }
-              };
-              prompt.get(promptProps, function(err, result) {
-                if (result.proceed == "y") {
-                  fs.writeFile(authFile, newContent, function(err) {
-                    if (err) {
-                      if (err.code === "EACCES") {
-                        grunt.fatal("You need to run this as sudo!");
-                      } else {
-                        throw err;
-                      }
-                    }
-                    grunt.log.writeln("Wrote new " + authFile);
-                    cb();
-                  });
+  fs.readFile(authFile, 'utf8', function(err, data) {
+    if (err) return cb(err);
+    var taskportSection;
+    try {
+      taskportSection = auth_getTaskportSection(grunt, data);
+    } catch (e) {
+      return cb(e);
+    }
+    if (!(/<false\/>/.exec(taskportSection[0]))) {
+      console.log(authFile + " has already been modified to support appium");
+      return cb();
+    } else {
+      auth_writeAuthBackup(grunt, data, function(err) {
+        if (err) return cb(err);
+        var newText = taskportSection[0].replace(taskportSection[1], '<true/>');
+        var newContent = data.replace(taskportSection[0], newText);
+        var diff = difflib.contextDiff(data.split("\n"),
+                                       newContent.split("\n"),
+                                       {fromfile: "before", tofile: "after"});
+        auth_confirmAuthDiff(grunt, diff, function(err, confirmed) {
+          if (err) return cb(err);
+          if (confirmed) {
+            fs.writeFile(authFile, newContent, function(err) {
+              if (err) {
+                if (err.code === "EACCES") {
+                  return cb(new Error("You need to run this as sudo!"));
                 } else {
-                  grunt.log.writeln("No changes were made");
-                  cb();
+                  return cb(err);
                 }
-              });
+              }
+              grunt.log.writeln("Wrote new " + authFile);
+              cb();
             });
-          });
-        }
-      }
+          } else {
+            grunt.log.writeln("No changes were made");
+            cb();
+          }
+        });
+      });
+    }
+  });
+};
+
+var auth_updateSecurityDb = function(grunt, cb) {
+  grunt.log.writeln("Updating security db");
+  var cmd = "security authorizationdb write system.privilege.taskport." +
+            "allow-root allow";
+  exec(cmd, cb);
+};
+
+module.exports.authorize = function(grunt, cb) {
+  auth_enableDevTools(grunt, function(err) {
+    if (err) return cb(err);
+    auth_writeAuthFile(grunt, function(err) {
+      if (err) return cb(err);
+      auth_updateSecurityDb(grunt, cb);
     });
   });
 };

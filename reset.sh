@@ -28,8 +28,8 @@ do
         "--android") should_reset_android=true;;
         "--ios") should_reset_ios=true;;
         "--real-safari") should_reset_realsafari=true;;
-        "-code-sign") code_sign_identity=$2;;
-        "-profile") provisioning_profile=$2;;
+        "--code-sign") code_sign_identity=$2;;
+        "--profile") provisioning_profile=$2;;
         "--selendroid") should_reset_selendroid=true;;
         "--firefoxos") should_reset_firefoxos=true;;
         "--gappium") should_reset_gappium=true;;
@@ -38,7 +38,12 @@ do
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
     esac
-    shift
+    if [[ $2 != --* ]]; then
+      shift
+      shift
+    else
+      shift
+    fi
 done
 
 if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos ; then

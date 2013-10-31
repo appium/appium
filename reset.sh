@@ -38,7 +38,7 @@ do
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
     esac
-    if [[ $2 != --* ]]; then
+    if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
       shift
       shift
     else

@@ -36,11 +36,11 @@ iOS 7.0 we use Xcode 5.We can do this by, say, having Xcode 5 at
 `/Applications/Xcode.app`, and Xcode 4.6 and `/Applications/Xcode-4.6.app`.
 Then we use the following command:
 
-    sudo xcode-select -switch /Applications/Xcode-4.6.app
+    sudo xcode-select -switch /Applications/Xcode-4.6.app/Contents/Developer/
 
 To prepare for iOS 6.1 testing. We run it again with a different Xcode:
 
-    sudo xcode-select -switch /Applications/Xcode.app
+    sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer/
 
 To go back to iOS 7.0 testing.
 

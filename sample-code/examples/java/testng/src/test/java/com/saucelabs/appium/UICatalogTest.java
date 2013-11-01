@@ -11,6 +11,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.HasTouchScreen;
+import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.remote.*;
 import org.testng.annotations.AfterMethod;

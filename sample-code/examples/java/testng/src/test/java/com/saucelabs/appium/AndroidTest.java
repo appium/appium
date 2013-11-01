@@ -2,6 +2,8 @@ package com.saucelabs.appium;
 
 import junit.framework.Assert;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.HasTouchScreen;
+import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteTouchScreen;

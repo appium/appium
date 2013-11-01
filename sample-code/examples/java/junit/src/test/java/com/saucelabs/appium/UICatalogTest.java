@@ -15,6 +15,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.HasTouchScreen;
+import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.remote.*;
 

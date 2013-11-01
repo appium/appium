@@ -47,7 +47,8 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
           alreadyReturned = true;
           if (err && tries < 3) {
             tries++;
-            console.log("Could not get session, trying again");
+            console.log("Could not get session, trying again (" +
+                        err.message + ")");
             setTimeout(getSessionWithRetry, waitBetweenTries);
           } else {
             done(err);

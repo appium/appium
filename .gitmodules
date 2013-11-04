@@ -25,3 +25,6 @@
 [submodule "submodules/SafariLauncher"]
 	path = submodules/SafariLauncher
 	url = https://github.com/snevesbarros/SafariLauncher.git
+[submodule "submodules/libimobiledevice-macosx"]
+	path = submodules/libimobiledevice-macosx
+	url = https://github.com/benvium/libimobiledevice-macosx.git

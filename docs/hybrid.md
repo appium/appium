@@ -138,7 +138,51 @@ And(/^I click a webview button $/) do
   @driver.find_element(:css, ".green_button").click
 end
 ```
+### Troubleshooting Webview with Ruby:
+I created a quick function in my helper class to find web elements no matter what window its in (this is useful if your webview id changes or if you are using the same codebase to test android and ios)
+```ruby
+DEFAULT_WAIT = 60
+class Helper
+	def self.find_web_element(css)
+		handles = $driver.window_handles
+		$driver.manage.timeouts.implicit_wait = 5
+		handles.each do |window|
+			$driver.switch_to.window(window)
+			begin
+				el = $driver.find_element(:css,css)
+				if el
+					return el 
+				else
+					return false
+				end
+			rescue
+			end
+		end
+		$driver.execute_script("mobile: leaveWebView")
+		$driver.manage.timeouts.implicit_wait = DEFAULT_WAIT
+	end
 
+	def self.find_web_elements(css)
+		handles = $driver.window_handles
+		$driver.manage.timeouts.implicit_wait = 5
+		handles.each do |window|
+			$driver.switch_to.window(window)
+			begin
+				els = $driver.find_elements(:css,css)
+				return els if els.length > 0
+			rescue
+			end
+		end
+		$driver.execute_script("mobile: leaveWebView")
+		$driver.manage.timeouts.implicit_wait = DEFAULT_WAIT
+	end
+end
+```
+once this is included in your project you can use
+```ruby
+Helper.find_web_element("div#ad_banner")
+```
+If if does not work then the element does not exist. I am sure the code can be cleaned up but this is how I managed to solve my issues with hybrid app testing.
 <a name="android"></a>Automating hybrid Android apps
 --------------------------
 

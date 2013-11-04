@@ -179,7 +179,11 @@ reset_ios() {
         echo "* Copying SafariLauncher for real devices to build"
         run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
     fi
-
+    echo "* Cloning/updating libimobiledevice-macosx"
+    run_cmd git submodule update --init submodules/libimobiledevice-macosx
+    echo "* Copying libimobiledevice-macosx to build"
+    run_cmd rm -rf build/libimobiledevice-macosx
+    run_cmd cp -r submodules/libimobiledevice-macosx build/libimobiledevice-macosx
 }
 
 get_apidemos() {

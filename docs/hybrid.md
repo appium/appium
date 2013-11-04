@@ -103,7 +103,7 @@ Once installed you can start the proxy with the following command:
   remoteWebDriver.quit();
 ```
 
-## Wd.ruby Code example using cucumber
+## Wd.rb Code example using cucumber
 
 ```ruby
 TEST_NAME = "Example Ruby Test"
@@ -138,6 +138,9 @@ And(/^I click a webview button $/) do
   @driver.find_element(:css, ".green_button").click
 end
 ```
+#### Troubleshooting Webview with Ruby:
+I created a quick function in my helper class to find web elements no matter what window its in (this is useful if your webview id changes or if you are using the same codebase to test android and ios)
+https://gist.github.com/feelobot/7309729
 
 <a name="android"></a>Automating hybrid Android apps
 --------------------------

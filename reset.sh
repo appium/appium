@@ -160,7 +160,9 @@ reset_ios() {
     echo "* Cloning/updating SafariLauncher"
     run_cmd git submodule update --init submodules/SafariLauncher
     echo "* Building SafariLauncher"
-    run_cmd $grunt buildSafariLauncherApp:iphonesimulator
+    run_cmd rm -f submodules/Safarilauncher/target.xcconfig
+    echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> submodules/Safarilauncher/target.xcconfig
+    run_cmd $grunt buildSafariLauncherApp:iphonesimulator:"target.xcconfig"
     echo "* Copying SafariLauncher to build"
     run_cmd rm -rf build/SafariLauncher
     run_cmd mkdir -p build/SafariLauncher

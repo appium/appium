@@ -218,4 +218,23 @@ describeWd('calc app', function(h) {
       done();
     });
   });
+
+  it('should be able to get syslog log type', function(done) {
+    h.driver.logTypes(function(err, logTypes) {
+      should.not.exist(err);
+      logTypes.should.include('syslog');
+      logTypes.should.not.include('logcat');
+      done();
+    });
+  });
+  it('should be able to get syslog logs', function(done) {
+    h.driver.log('syslog', function(err, logs) {
+      should.not.exist(err);
+      logs.length.should.be.above(0);
+      logs[0].message.should.not.include("\n");
+      logs[0].level.should.equal("ALL");
+      should.exist(logs[0].timestamp);
+      done();
+    });
+  });
 });

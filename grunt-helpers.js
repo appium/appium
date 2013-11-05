@@ -169,26 +169,34 @@ module.exports.setGitRev = function(grunt, rev, cb) {
 
 var auth_enableDevTools = function(grunt, cb) {
   grunt.log.writeln("Enabling DevToolsSecurity");
-  exec('DevToolsSecurity --enable', cb);
+  exec('DevToolsSecurity --enable', function(err) {
+    if (err) grunt.fatal(err);
+    cb();
+  });
 };
 
 var auth_getTaskportSection = function(grunt, authFileData) {
+  grunt.log.writeln("Getting system.privilege.taskport section");
   var re = /<key>system.privilege.taskport<\/key>\s*\n\s*<dict>\n\s*<key>allow-root<\/key>\n\s*(<[^>]+>)/;
   var match = re.exec(authFileData);
   if (!match) {
-    throw new Error("Could not find the system.privilege.taskport key");
+    grunt.fatal("Could not find the system.privilege.taskport key");
   } else {
     return match;
   }
 };
 
 var auth_writeAuthBackup = function(grunt, origData, cb) {
+  grunt.log.writeln("Writing backup of authFile");
   temp.open('authorization.backup.', function (err, info) {
-    fs.write(info.fd, origData);
+    if (err) grunt.fatal(err);
     fs.close(info.fd, function(err) {
-      if (err) return cb(err);
-      grunt.log.writeln("Backed up to " + info.path);
-      cb();
+      if (err) grunt.fatal(err);
+      fs.writeFile(info.path, origData, function(err) {
+        if (err) grunt.fatal(err);
+        grunt.log.writeln("Backed up to " + info.path);
+        cb();
+      });
     });
   });
 };
@@ -206,7 +214,7 @@ var auth_confirmAuthDiff = function(grunt, diff, cb) {
     }
   };
   prompt.get(promptProps, function(err, result) {
-    if (err) return cb(err);
+    if (err) grunt.fatal(err);
     if (result.proceed == "y") {
       cb(null, true);
     } else {
@@ -216,39 +224,43 @@ var auth_confirmAuthDiff = function(grunt, diff, cb) {
 };
 
 var auth_writeAuthFile = function(grunt, cb) {
+  grunt.log.writeln("Getting authorization file");
   var authFile = '/System/Library/Security/authorization.plist';
   if (!fs.existsSync(authFile)) {
     // on Mountain Lion auth is in a different place
     authFile = '/etc/authorization';
   }
-  fs.readFile(authFile, 'utf8', function(err, data) {
-    if (err) return cb(err);
+  if (!fs.existsSync(authFile)) {
+    grunt.fatal("could not find authorization file");
+  }
+  fs.readFile(authFile, {encoding: 'utf8'}, function(err, data) {
+    if (err) grunt.fatal(err);
     var taskportSection;
     try {
       taskportSection = auth_getTaskportSection(grunt, data);
     } catch (e) {
-      return cb(e);
+      grunt.fatal(e);
     }
     if (!(/<false\/>/.exec(taskportSection[0]))) {
-      console.log(authFile + " has already been modified to support appium");
+      grunt.log.writeln(authFile + " has already been modified to support appium");
       return cb();
     } else {
       auth_writeAuthBackup(grunt, data, function(err) {
-        if (err) return cb(err);
+        if (err) grunt.fatal(err);
         var newText = taskportSection[0].replace(taskportSection[1], '<true/>');
         var newContent = data.replace(taskportSection[0], newText);
         var diff = difflib.contextDiff(data.split("\n"),
                                        newContent.split("\n"),
                                        {fromfile: "before", tofile: "after"});
         auth_confirmAuthDiff(grunt, diff, function(err, confirmed) {
-          if (err) return cb(err);
+          if (err) grunt.fatal(err);
           if (confirmed) {
             fs.writeFile(authFile, newContent, function(err) {
               if (err) {
                 if (err.code === "EACCES") {
-                  return cb(new Error("You need to run this as sudo!"));
+                  return grunt.fatal("You need to run this as sudo!");
                 } else {
-                  return cb(err);
+                  return grunt.fatal(err);
                 }
               }
               grunt.log.writeln("Wrote new " + authFile);
@@ -268,15 +280,22 @@ var auth_updateSecurityDb = function(grunt, cb) {
   grunt.log.writeln("Updating security db");
   var cmd = "security authorizationdb write system.privilege.taskport." +
             "allow-root allow";
-  exec(cmd, cb);
+  exec(cmd, function(err) {
+    if (err) grunt.fatal(err);
+    cb();
+  });
 };
 
 module.exports.authorize = function(grunt, cb) {
   auth_enableDevTools(grunt, function(err) {
-    if (err) return cb(err);
+    console.log('hi2');
+    if (err) grunt.fatal(err);
     auth_writeAuthFile(grunt, function(err) {
-      if (err) return cb(err);
-      auth_updateSecurityDb(grunt, cb);
+      if (err) grunt.fatal(err);
+      auth_updateSecurityDb(grunt, function(err) {
+        if (err) grunt.fatal(err);
+        cb();
+      });
     });
   });
 };

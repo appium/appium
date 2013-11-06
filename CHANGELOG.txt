@@ -1,3 +1,30 @@
+CHANGES IN VERSION 0.11.3 (from 0.11.2)
+=======================================
+
+#### General
+- remove wiki
+- various doc updates
+- reset command timeout for proxied devices (incl selendroid)
+- translate docs to Chinese
+- make desired capabilities returned by /session/:id non-hard-coded
+
+#### iOS
+- add support for sim and devices for safari launcher
+- major refactor of ios startup cascade
+- fix tracetemplate detection logic
+- add ability to select code-signing identity for safari launcher
+- use securitydb for authorization on 10.9
+- expose 'syslog' logs through selenium log interface
+
+#### Android
+- various control flow/subprocess fixes
+- don't uninstall app when --no-reset is used
+
+#### Selendroid
+- update selendroid version
+
+
+
 CHANGES IN VERSION 0.11.2 (from 0.11.1)
 =======================================
 

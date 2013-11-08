@@ -288,7 +288,6 @@ var auth_updateSecurityDb = function(grunt, cb) {
 
 module.exports.authorize = function(grunt, cb) {
   auth_enableDevTools(grunt, function(err) {
-    console.log('hi2');
     if (err) grunt.fatal(err);
     auth_writeAuthFile(grunt, function(err) {
       if (err) grunt.fatal(err);

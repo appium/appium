@@ -116,6 +116,9 @@ reset_ios() {
     run_cmd pushd submodules/udidetect
     run_cmd make
     run_cmd popd
+    echo "* Installing ios-sim-locale"
+    run_cmd rm -f build/ios-sim-locale
+    run_cmd cp assets/ios-sim-locale build/ios-sim-locale
     echo "* Moving udidetect into build/udidetect"
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect

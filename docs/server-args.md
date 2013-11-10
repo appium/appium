@@ -33,6 +33,9 @@ All flags are optional, but some are required in conjunction with certain others
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
+|`--calendar-format`|null|(IOS-simulator-only) set the ios simulator calendar format (gregorian|buddhist|japanese)|`--calendar-format gregorian`|
+|`--language`|null|(IOS-simulator-only) set the ios simulator language|`--language fr`|
+|`--locale`|null|(IOS-simulator-only) set the ios simulator locale|`--locale fr_CA`|
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|

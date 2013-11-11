@@ -43,6 +43,25 @@ describeWd('basic', function(h) {
       setTimeout(next, 4000);
     });
   });
+  it('should not die if commands come in', function(done) {
+    var params = {timeout: 3};
+    h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
+      should.not.exist(err);
+      var start = Date.now();
+      var find = function() {
+        h.driver.elementByName('Animation', function(err, el) {
+          should.not.exist(err);
+          should.exist(el);
+          if ((Date.now() - start) < 5000) {
+            setTimeout(find, 500);
+          } else {
+            done();
+          }
+        });
+      };
+      find();
+    });
+  });
   it('should not fail even when bad locator strats sent in', function(done) {
     h.driver.elementByLinkText("foobar", function(err) {
       should.exist(err);

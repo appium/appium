@@ -28,4 +28,7 @@ Appium server capabilities
 
 |Capability|Description|Values|
 |----|-----------|-------|
+|`calendarFormat`| Calendar format to set for the iOS Simulator|e.g. `gregorian`|
+|`language`| Language to set for the iOS Simulator|e.g. `fr`|
 |`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|
+|`locale`| Locale to set for the iOS Simulator|e.g. `fr_CA`|

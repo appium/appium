@@ -28,3 +28,6 @@
 [submodule "submodules/libimobiledevice-macosx"]
 	path = submodules/libimobiledevice-macosx
 	url = https://github.com/benvium/libimobiledevice-macosx.git
+[submodule "submodules/appium-for-mac"]
+	path = submodules/appium-for-mac
+	url = https://github.com/appium/appium-for-mac.git

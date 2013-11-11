@@ -70,7 +70,8 @@
     "socket.io" : "~0.9.16",
     "MD5" : "~1.1.0",
     "through": "~2.3.4",
-    "date-utils": "~1.2.14"
+    "date-utils": "~1.2.14",
+    "wd": "~0.1.5"
   },
   "scripts": {
     "test": "grunt travis"
@@ -79,9 +80,8 @@
     "mocha": "~1.13.0",
     "should": "~2.0.1",
     "underscore-cli": "~0.2.17",
-    "wd": "~0.1.5",
-    "yiewd": "~0.0.15",
     "monocle-js": "~0.1.4",
+    "yiewd": "~0.0.15",
     "assert": "~0.4.9",
     "grunt-mocha-test": "~0.2.0",
     "grunt-contrib-jshint": "~0.6.4",

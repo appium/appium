@@ -15,6 +15,8 @@ var path = require('path')
   , describeWd4 = driverBlock.describeForApp(appPath, "android", appPkg, appAct4)
   , describeBad = driverBlock.describeForApp(badAppPath, "android", appPkg,
       appAct)
+  , describeNoPkg = driverBlock.describeForApp(appPath, "android", null, appAct)
+  , describeNoAct = driverBlock.describeForApp(appPath, "android", appPkg, null)
   , it = driverBlock.it
   , should = require('should');
 
@@ -117,6 +119,24 @@ describeBad('bad app path', function(h) {
     should.exist(h.connError);
     var err = JSON.parse(h.connError.data);
     err.value.origValue.should.include("Error locating the app");
+    done();
+  });
+}, null, null, null, {expectConnError: true});
+
+describeNoAct('no activity sent in with caps', function(h) {
+  it('should throw an error', function(done) {
+    should.exist(h.connError);
+    var err = JSON.parse(h.connError.data);
+    err.value.origValue.should.include("app-activity");
+    done();
+  });
+}, null, null, null, {expectConnError: true});
+
+describeNoPkg('no package sent in with caps', function(h) {
+  it('should throw an error', function(done) {
+    should.exist(h.connError);
+    var err = JSON.parse(h.connError.data);
+    err.value.origValue.should.include("app-package");
     done();
   });
 }, null, null, null, {expectConnError: true});

@@ -110,6 +110,16 @@ reset_ios() {
     echo "* Unzipping instruments without delay for XCode 4"
     run_cmd unzip iwd4.zip -d ../build/
     run_cmd popd
+    echo "* Cloning/updating appium-for-mac"
+    run_cmd git submodule update --init submodules/appium-for-mac
+    echo "* Building appium-for-mac"
+    run_cmd pushd submodules/appium-for-mac
+    run_cmd xcodebuild
+    run_cmd popd
+    echo "* Moving appium-for-mac into build/appium-for-mac"
+    run_cmd rm -rf build/appium-for-mac
+    run_cmd mkdir build/appium-for-mac
+    run_cmd cp -R submodules/appium-for-mac/build/* build/appium-for-mac
     echo "* Cloning/updating udidetect"
     run_cmd git submodule update --init submodules/udidetect
     echo "* Building udidetect"

@@ -55,5 +55,34 @@ describeWd('basic', function(h) {
       done();
     });
   });
+
 });
+
+describeWd('command timeouts', function(h) {
+  it('should die with short timeout', function(done) {
+    setTimeout(function() {
+      h.driver.elementByName('Animation', function(err, el) {
+        should.exist(err);
+        should.not.exist(el);
+        [13, 6].should.include(err.status);
+        done();
+      });
+    }, 5000);
+  });
+  it('should not die if commands come in', function(done) {
+    var start = Date.now();
+    var find = function() {
+      h.driver.elementByName('Animation', function(err, el) {
+        should.not.exist(err);
+        should.exist(el);
+        if ((Date.now() - start) < 5000) {
+          setTimeout(find, 500);
+        } else {
+          done();
+        }
+      });
+    };
+    find();
+  });
+}, null, null, {newCommandTimeout: 3});
 

@@ -8,13 +8,26 @@ var connect = function(args) {
   var client = net.connect({path: args.socket}, function() {
     var data = {event: "cmd"};
     if (args.result) {
-      data.result = JSON.parse(args.result);
+      process.stderr.write("Sending result to server: " + args.result);
+      try {
+        data.result = JSON.parse(args.result);
+      } catch (e) {
+        process.stderr.write(e.message);
+        throw e;
+      }
     }
+    process.stderr.write("Sending response to server");
     data = JSON.stringify(data);
     client.end(data, "utf8");
   });
   client.on('data', function(data) {
-    data = JSON.parse(data);
+    try {
+      data = JSON.parse(data);
+    } catch (e) {
+      process.stderr.write(e.message);
+      throw e;
+    }
+    process.stderr.write("Received response from server: " + JSON.stringify(data));
     process.stdout.write(data.nextCommand);
     client.end();
     process.exit(0);

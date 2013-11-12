@@ -1,3 +1,27 @@
+CHANGES IN VERSION 0.11.4 (from 0.11.3)
+=======================================
+
+#### General
+- add ruby scrollTo example
+
+#### iOS
+- fix dismissAlert / acceptAlert on ios7
+- make instruments logging quiet by default (put verbose=true in
+  ~/.instruments.conf to re-enable)
+- fix safarilauncher shutdown issue
+- add tests for setting slider values
+- set ios sim language using desired caps
+- add more error handling in instruments_client
+
+#### Android
+- fix issue with adb path and quote truncation
+- fail with a nice message if app activity/package are not sent in
+
+#### Selendroid
+- fix keyevent
+- add command timeout tests
+
+
 CHANGES IN VERSION 0.11.3 (from 0.11.2)
 =======================================
 

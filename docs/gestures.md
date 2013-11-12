@@ -247,6 +247,13 @@ In these examples, note that the element parameter is always optional.
   driver.orientation = "LANDSCAPE"
   ```
 
+### Scroll To
+
+```ruby
+  b = @driver.find_element :name, 'Sign In'
+  @driver.execute_script 'mobile: scrollTo', :element => b.ref
+```
+
 ### longTap
  
  * **c#**

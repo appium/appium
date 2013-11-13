@@ -23,7 +23,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 
 To be able to run your tests against mobile Safari we use the [SafariLauncher App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once Safari has been launched the Remote Debugger automatically connects using the [ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
-<b>NOTE:</b> There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38) in the ios-webkit-debug-proxy which prevents it from running against iOS7
+<b>NOTE:</b> There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38) in the ios-webkit-debug-proxy. You have to trust the machine before you can run the ios-webkit-debug-proxy against your iOS device.
 
 #### Setup
 

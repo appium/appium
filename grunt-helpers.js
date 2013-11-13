@@ -278,8 +278,8 @@ var auth_writeAuthFile = function(grunt, cb) {
 
 var auth_updateSecurityDb = function(grunt, cb) {
   grunt.log.writeln("Updating security db");
-  var cmd = "security authorizationdb write system.privilege.taskport." +
-            "allow-root allow";
+  var cmd = "security authorizationdb write system.privilege.taskport " +
+            "is-developer";
   exec(cmd, function(err) {
     if (err) grunt.fatal(err);
     cb();

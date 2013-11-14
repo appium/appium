@@ -3,6 +3,8 @@
 var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
   , it = require("../../helpers/driverblock.js").it
   , _ = require('underscore')
+  , wvHelpers = require("../../helpers/webview.js")
+  , webviewTests = wvHelpers.buildTests
   , should = require('should');
 
 describeWd('window handles', function(h) {
@@ -71,3 +73,5 @@ describeWd('window handles', function(h) {
     });
   });
 });
+
+webviewTests();

@@ -132,10 +132,8 @@ reset_ios() {
     run_cmd $grunt buildApp:WebViewApp
     run_cmd rm -rf build/WebViewApp
     run_cmd mkdir build/WebViewApp
-    run_cmd unzip assets/WebViewApp6.1.app.zip -d build/WebViewApp/
-    run_cmd mv build/WebViewApp/WebViewApp.app build/WebViewApp/WebViewApp6.1.app
     run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
-        build/WebViewApp/WebViewApp7.0.app
+        build/WebViewApp/
     if $include_dev ; then
         if $hardcore ; then
             echo "* Clearing out old UICatalog download"

@@ -3,6 +3,7 @@
 var driverBlock = require("./driverblock.js")
   , it = driverBlock.it
   , describeSafari = driverBlock.describeForSafari()
+  , describeIWebView = driverBlock.describeForIWebView()
   , describeChrome = driverBlock.describeForChrome()
   , appiumPort = process.env.APPIUM_PORT || 4723
   , testEndpoint = 'http://localhost:' + appiumPort + '/test/'
@@ -39,7 +40,7 @@ module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad, titleT
   if (typeof titleToSpin === "undefined") {
     titleToSpin = 'I am a page title';
   }
-  if (webviewType === "safari") {
+  if (webviewType === "safari" || webviewType === "iwebview") {
     driver.get(urlToLoad, function(err) {
       should.not.exist(err);
       module.exports.spinTitle(titleToSpin, driver, cb);
@@ -74,6 +75,8 @@ module.exports.buildTests = function(webviewType) {
   var desc;
   if (webviewType === "safari") {
     desc = describeSafari;
+  } else if (webviewType === "iwebview") {
+    desc = describeIWebView;
   } else if (webviewType === "chrome") {
     desc = describeChrome;
   } else {

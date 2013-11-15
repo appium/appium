@@ -132,6 +132,24 @@ describeForSafari.only = function() {
   return describeForSafari(true);
 };
 
+var describeForIWebView = function() {
+  var fn = function(desc, tests, host, port, extraCaps, onlyify) {
+    var caps = {
+      browserName: ''
+      , app: 'iwebview'
+      , device: 'iPhone Simulator'
+      , platform: 'Mac'
+      , version: "7.0"
+    };
+    return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
+  };
+  fn.only = function() {
+    var a = arguments;
+    return fn(a[0], a[1], a[2], a[3], a[4], true);
+  };
+  return fn;
+};
+
 var describeForChrome = function() {
   var fn = function(desc, tests, host, port, extraCaps, onlyify) {
     var caps = {
@@ -242,4 +260,5 @@ module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
 module.exports.describeForSauce = describeForSauce;
 module.exports.describeForSafari = describeForSafari;
+module.exports.describeForIWebView = describeForIWebView;
 module.exports.describeForChrome = describeForChrome;

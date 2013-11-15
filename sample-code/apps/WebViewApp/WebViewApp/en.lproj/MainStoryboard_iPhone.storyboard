@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12C3012" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
+        <deployment defaultVersion="1792" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="5">
             <objects>
                 <viewController id="2" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ziN-bi-Hmk"/>
+                        <viewControllerLayoutGuide type="bottom" id="Yvd-56-AS5"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="3">
-                        <rect key="frame" x="0.0" y="20" width="320" height="548"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j6V-02-y3c" userLabel="mainWebView">
+                            <webView contentMode="scaleToFill" ambiguous="YES" misplaced="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j6V-02-y3c" userLabel="mainWebView">
+                                <rect key="frame" x="0.0" y="52" width="320" height="516"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </webView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter URL" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5jG-hg-xoz" userLabel="urlField">
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="231" id="Aen-cX-mAF"/>
-                                </constraints>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter URL" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5jG-hg-xoz" userLabel="urlField">
+                                <rect key="frame" x="6" y="19" width="268" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" returnKeyType="go"/>
                                 <connections>
                                     <action selector="urlEditBegin:" destination="2" eventType="editingDidBegin" id="dCi-yj-FXo"/>
                                 </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWy-27-3UL" userLabel="navBtn">
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWy-27-3UL" userLabel="navBtn">
+                                <rect key="frame" x="282" y="19" width="30" height="33"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="73" id="N3g-aE-wcD"/>
-                                    <constraint firstAttribute="height" constant="33" id="UG7-Q9-6Ue"/>
+                                    <constraint firstAttribute="width" constant="39" id="1cf-j3-mlo"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="vtn-Uz-5da"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                 <state key="normal" title="Go">
-                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
                                     <action selector="navBtnClicked:" destination="2" eventType="touchUpInside" id="Rsc-0w-ITd"/>
@@ -45,14 +45,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="MWy-27-3UL" firstAttribute="top" secondItem="3" secondAttribute="top" constant="11" id="42C-8c-xOt"/>
-                            <constraint firstItem="j6V-02-y3c" firstAttribute="leading" secondItem="3" secondAttribute="leading" type="default" id="7js-qB-Wt8"/>
-                            <constraint firstAttribute="trailing" secondItem="MWy-27-3UL" secondAttribute="trailing" constant="8" id="ErO-mR-RuT"/>
-                            <constraint firstItem="j6V-02-y3c" firstAttribute="top" secondItem="MWy-27-3UL" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="FcC-Qv-WLe"/>
-                            <constraint firstItem="j6V-02-y3c" firstAttribute="bottom" secondItem="3" secondAttribute="bottom" type="default" id="PFU-Uh-4VG"/>
-                            <constraint firstItem="MWy-27-3UL" firstAttribute="baseline" secondItem="5jG-hg-xoz" secondAttribute="baseline" type="default" id="WZw-Xi-Mgy"/>
-                            <constraint firstItem="5jG-hg-xoz" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="6" id="dPF-hw-OFR"/>
-                            <constraint firstItem="j6V-02-y3c" firstAttribute="trailing" secondItem="3" secondAttribute="trailing" type="default" id="z1L-RL-8dj"/>
+                            <constraint firstItem="5jG-hg-xoz" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="6" id="2Ks-XM-D2v"/>
+                            <constraint firstAttribute="trailing" secondItem="MWy-27-3UL" secondAttribute="trailing" constant="8" id="Bh9-6N-JJN"/>
+                            <constraint firstItem="MWy-27-3UL" firstAttribute="leading" secondItem="5jG-hg-xoz" secondAttribute="trailing" constant="8" id="G3O-zu-CNw"/>
+                            <constraint firstAttribute="bottom" secondItem="j6V-02-y3c" secondAttribute="bottom" id="S24-Vd-TWc"/>
+                            <constraint firstItem="j6V-02-y3c" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="YBh-Kb-lZg"/>
+                            <constraint firstAttribute="trailing" secondItem="j6V-02-y3c" secondAttribute="trailing" id="cd8-d2-3uT"/>
+                            <constraint firstItem="j6V-02-y3c" firstAttribute="top" secondItem="5jG-hg-xoz" secondAttribute="bottom" constant="3" id="yPl-Y8-0pO"/>
                         </constraints>
                     </view>
                     <connections>
@@ -64,20 +63,6 @@
             </objects>
         </scene>
     </scenes>
-    <classes>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="ViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="navBtnClicked:"/>
-                <relationship kind="action" name="urlEditBegin:"/>
-                <relationship kind="outlet" name="mainWebView" candidateClass="UIWebView"/>
-                <relationship kind="outlet" name="urlField" candidateClass="UITextField"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

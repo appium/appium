@@ -7,11 +7,11 @@
 var should = require('should')
   , appium = require('../../lib/appium.js')
   , path = require('path')
-  , ios = require('../../lib/devices/ios/ios.js');
+  , IOS = require('../../lib/devices/ios/ios.js');
 
 describe('IOS', function() {
   // we'd like to test ios.proxy; mock instruments
-  var inst = ios({});
+  var inst = new IOS({});
       inst.instruments = {};
       inst.instruments.sendCommand = function(cmd, cb) {
         // let's pretend we've got some latency here.

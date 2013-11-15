@@ -128,6 +128,14 @@ reset_ios() {
     run_cmd cp $appium_home/lib/server/status.js $appium_home/lib/devices/ios/uiauto/lib/status.js
     run_cmd rm -rf $appium_home/lib/devices/ios/uiauto/appium/xpath.js
     run_cmd cp $appium_home/lib/xpath.js $appium_home/lib/devices/ios/uiauto/appium/xpath.js
+    echo "* Cleaning/rebuilding WebViewApp"
+    run_cmd $grunt buildApp:WebViewApp
+    run_cmd rm -rf build/WebViewApp
+    run_cmd mkdir build/WebViewApp
+    run_cmd unzip assets/WebViewApp6.1.app.zip -d build/WebViewApp/
+    run_cmd mv build/WebViewApp/WebViewApp.app build/WebViewApp/WebViewApp6.1.app
+    run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
+        build/WebViewApp/WebViewApp7.0.app
     if $include_dev ; then
         if $hardcore ; then
             echo "* Clearing out old UICatalog download"
@@ -145,8 +153,6 @@ reset_ios() {
         run_cmd $grunt buildApp:TestApp
         echo "* Cleaning/rebuilding iOS test app: UICatalog"
         run_cmd $grunt buildApp:UICatalog
-        echo "* Cleaning/rebuilding iOS test app: WebViewApp"
-        run_cmd $grunt buildApp:WebViewApp
     fi
     echo "* Setting iOS config to Appium's version"
     run_cmd $grunt setConfigVer:ios

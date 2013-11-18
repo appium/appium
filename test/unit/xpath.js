@@ -14,6 +14,7 @@ describe("XPath lookups", function() {
     , "//button[last()]": {path: [{node: 'button', search: 'desc', index: -1}]}
     , "//button[1]": {path: [{node: 'button', search: 'desc', index: 1}]}
     , "/button": {path: [{node: 'button', search: 'child', index: null}]}
+    , "/but.ton": {path: [{node: 'but.ton', search: 'child', index: null}]}
     , "/button[2]": {path: [{node: 'button', search: 'child', index: 2}]}
     , "button": {path: [{node: 'button', search: 'desc', index: null}]}
     , "//button/text/webview": {path: [

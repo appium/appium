@@ -3,6 +3,7 @@
 var driverBlock = require("./driverblock.js")
   , it = driverBlock.it
   , describeSafari = driverBlock.describeForSafari()
+  , describeIWebView = driverBlock.describeForIWebView()
   , describeChrome = driverBlock.describeForChrome()
   , appiumPort = process.env.APPIUM_PORT || 4723
   , testEndpoint = 'http://localhost:' + appiumPort + '/test/'
@@ -39,7 +40,7 @@ module.exports.loadWebView = function(webviewType, driver, cb, urlToLoad, titleT
   if (typeof titleToSpin === "undefined") {
     titleToSpin = 'I am a page title';
   }
-  if (webviewType === "safari") {
+  if (webviewType === "safari" || webviewType === "iwebview") {
     driver.get(urlToLoad, function(err) {
       should.not.exist(err);
       module.exports.spinTitle(titleToSpin, driver, cb);
@@ -74,6 +75,8 @@ module.exports.buildTests = function(webviewType) {
   var desc;
   if (webviewType === "safari") {
     desc = describeSafari;
+  } else if (webviewType === "iwebview") {
+    desc = describeIWebView;
   } else if (webviewType === "chrome") {
     desc = describeChrome;
   } else {
@@ -427,8 +430,8 @@ module.exports.buildTests = function(webviewType) {
         h.driver.getWindowSize(function(err, size) {
           should.not.exist(err);
           // iphone and ipad, webview.app and mobile safari
-          [356, 928, 788, 752, 797].should.include(size.height);
-          [320, 768, 414].should.include(size.width);
+          size.height.should.be.above(350);
+          size.width.should.be.above(300);
           done();
         });
       });

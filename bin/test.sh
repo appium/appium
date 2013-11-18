@@ -75,7 +75,7 @@ if $ios7_only || $all_tests; then
     echo "RUNNING IOS 7.0 TESTS"
     echo "---------------------"
     ios7_testfile="./test/functional/_joined/ios7.js"
-    ios7_dirs="testapp uicatalog webview"
+    ios7_dirs="testapp uicatalog webview iwebview"
     join_testfiles ios7 $ios7_testfile $ios7_dirs
     if test -d /Applications/Xcode-7.0.app; then
         echo "Found Xcode for iOS 7.0, switching to it"

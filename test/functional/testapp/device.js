@@ -11,7 +11,10 @@ describeWd('device target actions', function(h) {
       should.not.exist(err);
       var after = new Date().getTime() / 1000;
       should.ok((after - before) <= 10);
-      done();
+      h.driver.elementByTagName('button', function(err) {
+        should.exist(err);
+        done();
+      });
     });
   });
 });

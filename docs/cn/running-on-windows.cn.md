@@ -61,4 +61,3 @@ appiun会启动2个端口，一个是4723，用于webdriver协议，一个是472
 
 
 如果有任何疑问，欢迎到testerhome.com来交流
-作者：seveniruby

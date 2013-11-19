@@ -228,13 +228,19 @@ describeWd('calc app', function(h) {
     });
   });
   it('should be able to get syslog logs', function(done) {
-    h.driver.log('syslog', function(err, logs) {
+    h.driver.setImplicitWaitTimeout(4000, function(err) {
       should.not.exist(err);
-      logs.length.should.be.above(0);
-      logs[0].message.should.not.include("\n");
-      logs[0].level.should.equal("ALL");
-      should.exist(logs[0].timestamp);
-      done();
+      h.driver.elementByName('SumLabelz', function(err) {
+        should.exist(err);
+        h.driver.log('syslog', function(err, logs) {
+          should.not.exist(err);
+          logs.length.should.be.above(0);
+          logs[0].message.should.not.include("\n");
+          logs[0].level.should.equal("ALL");
+          should.exist(logs[0].timestamp);
+          done();
+        });
+      });
     });
   });
 });

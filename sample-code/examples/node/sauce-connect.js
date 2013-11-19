@@ -64,4 +64,4 @@ describeSauce('calc app', function(h) {
       });
     });
   });
-}, {name: "Appium Test on Sauce"});
+});

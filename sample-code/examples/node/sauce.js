@@ -13,40 +13,40 @@ var should = require("should")
 
 describeSauce('calc app', function(h) {
   var values = [];
-  var populate = function(driver, cb) {
-    driver.elementsByTagName('textField', function(err, elems) {
-      should.not.exist(err);
-      var next = function(num) {
-        if (num >= elems.length) {
-          return cb(elems);
-        }
-        var val = Math.round(Math.random()*10);
-        values.push(val);
-        var elem = elems[num++];
-        elem.sendKeys(val, function() {
-          next(num);
-        });
-      };
-      next(0);
-    });
-  };
 
   return it('should fill two fields with numbers', function(done) {
     var driver = h.driver;
-    populate(driver, function() {
+
+    var populate = function(cb) {
+      driver.elementsByTagName('textField', function(err, elems) {
+        should.not.exist(err);
+        var next = function(num) {
+          if (num >= elems.length) {
+            return cb(elems);
+          }
+          var val = Math.round(Math.random()*10);
+          values.push(val);
+          var elem = elems[num++];
+          elem.sendKeys(val, function() {
+            next(num);
+          });
+        };
+        next(0);
+      });
+    };
+
+    populate(function() {
       driver.elementsByTagName('button', function(err, buttons) {
         buttons[0].click(function() {
           driver.elementsByTagName('staticText', function(err, elems) {
             elems[0].text(function(err, text) {
               var sum = values[0] + values[1];
               sum.should.equal(parseInt(text, 10));
-              driver.quit(function() {
-                done();
-              });
+              done();
             });
           });
         });
       });
     });
   });
-}, {name: "Appium Test on Sauce"});
+});

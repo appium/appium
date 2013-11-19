@@ -42,20 +42,22 @@ _.each(devices, function(sim) {
               should.not.exist(err);
               h.driver.windowHandles(function(err, handles) {
                 var handles1 = handles.length;
-                h.driver.close(function(err) {
-                  // wait for safari to write window status
-                  setTimeout(function() {
-                    should.not.exist(err);
-                    h.driver.windowHandles(function(err, handles) {
-                      var handles2 = handles.length;
-                      handles1.should.be.above(handles2);
-                      spinTitle("I am a page title", h.driver, function(err) {
-                        should.not.exist(err);
-                        done();
+                setTimeout(function() {
+                  h.driver.close(function(err) {
+                    // wait for safari to write window status
+                    setTimeout(function() {
+                      should.not.exist(err);
+                      h.driver.windowHandles(function(err, handles) {
+                        var handles2 = handles.length;
+                        handles1.should.be.above(handles2);
+                        spinTitle("I am a page title", h.driver, function(err) {
+                          should.not.exist(err);
+                          done();
+                        });
                       });
-                    });
-                  }, 3000);
-                });
+                    }, 3000);
+                  });
+                }, 2000);
               });
             });
           });

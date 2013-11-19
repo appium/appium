@@ -11,7 +11,7 @@ var path = require('path')
   , should = require('should');
 
 // export env APPIUM_CORDOVA="android" to run tests against android version
-if (typeof process.env.APPIUM_CORDOVA !== "typeof" && process.env.APPIUM_CORDOVA === "android") {
+if (typeof process.env.APPIUM_CORDOVA !== "undefined" && process.env.APPIUM_CORDOVA === "android") {
   appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/android/bin/" + appAct + "-debug.apk");
   describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct);
 } else {

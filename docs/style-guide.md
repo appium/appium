@@ -172,3 +172,13 @@ Style notes
     ```js
     var my_variable = 42;
     ```
+
+*    Check for undefined
+
+    ```js
+    typeof myVariable === "undefined"
+    ```
+    not
+    ```js
+    myVariable === undefined
+    ```

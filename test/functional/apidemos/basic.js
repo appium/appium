@@ -1,6 +1,9 @@
+/* global describe:true, before:true, after:true */
 "use strict";
 
 var path = require('path')
+  , ADB = require("../../../lib/devices/android/adb.js")
+  , spawn = require('child_process').spawn
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
   , badAppPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debugz.apk")
   , appPkg = "com.example.android.apis"
@@ -159,3 +162,32 @@ describeNoPkg('no package sent in with caps', function(h) {
     done();
   });
 }, null, null, null, {expectConnError: true});
+
+describe('pre-existing uiautomator session', function() {
+  before(function(done) {
+    var adb = new ADB();
+    var binPath = path.resolve(__dirname, "..", "..", "..", "build",
+        "android_bootstrap", "AppiumBootstrap.jar");
+    var uiArgs = ["shell", "uiautomator", "runtest", "AppiumBootstrap.jar", "-c",
+      "io.appium.android.bootstrap.Bootstrap"];
+    adb.push(binPath, "/data/local/tmp/", function(err) {
+      should.not.exist(err);
+      spawn("adb", uiArgs);
+      setTimeout(function() {
+        adb.getPIDsByName("uiautomator", function(err, pids) {
+          should.not.exist(err);
+          pids.length.should.equal(1);
+          done();
+        });
+      }, 500);
+    });
+  });
+  describeWd('launching new session', function(h) {
+    it('should kill pre-existing uiautomator process', function(done) {
+      h.driver.getWindowSize(function(err) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
+});

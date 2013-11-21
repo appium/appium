@@ -115,6 +115,18 @@ describeWd('basic', function(h) {
   });
 });
 
+describeWd('without fastClear', function(h) {
+  it('should still be able to reset', function(done) {
+    h.driver.execute('mobile: reset', function(err) {
+      should.not.exist(err);
+      h.driver.getWindowSize(function(err) {
+        should.not.exist(err);
+        done();
+      });
+    });
+  });
+}, null, null, null, {fastClear: false});
+
 describeWd2('activity style: no period', function(h) {
   it('should should still find activity', function(done) {
     done();

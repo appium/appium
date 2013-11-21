@@ -37,6 +37,14 @@ describeWd('flick gesture', function(h) {
       });
     });
   });
+  it('should not complete instantaneously', function(done) {
+    var start = Date.now();
+    h.driver.execute("mobile: flick", [{endX: 0, endY: 0}], function(err) {
+      should.not.exist(err);
+      (Date.now() - start).should.be.above(2500);
+      done();
+    });
+  });
   it('should work via mobile only method with percentage', function(done) {
     h.driver.elementByTagName('tableCell', function(err, element) {
       element.getLocation(function(err, location) {
@@ -131,6 +139,15 @@ describeWd('swipe gesture', function(h) {
         };
         spinWait(doSwipe, done);
       });
+    });
+  });
+  it('should not complete instantaneously', function(done) {
+    var start = Date.now();
+    var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.7, duration: 2};
+    h.driver.execute("mobile: swipe", [opts], function(err) {
+      should.not.exist(err);
+      (Date.now() - start).should.be.above(1999);
+      done();
     });
   });
 });

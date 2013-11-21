@@ -22,7 +22,7 @@ test/functional/_joined
 *.iml
 *.autosave
 .idea/
-appium*.log*
+*.log
 lib/devices/android/bootstrap/bin/*
 lib/devices/android/bootstrap/local.properties
 lib/devices/android/bootstrap/project.properties

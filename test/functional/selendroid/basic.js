@@ -56,6 +56,14 @@ describeWd('basic', function(h) {
     });
   });
 
+  it('should be able to set location', function(done) {
+    var locOpts = {latitude: "27.17", longitude: "78.04"};
+    h.driver.execute("mobile: setLocation", [locOpts], function(err) {
+      should.not.exist(err);
+      done();
+    });
+  });
+
 });
 
 describeWd('command timeouts', function(h) {
@@ -85,4 +93,3 @@ describeWd('command timeouts', function(h) {
     find();
   });
 }, null, null, {newCommandTimeout: 3});
-

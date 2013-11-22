@@ -8,9 +8,8 @@ var describeWd = require("../../helpers/driverblock.js").describeForApp('WebView
 describeWd('orientation', function(h) {
    var testOrientation = function(specOrientation) {
      it('should get and set - ' + specOrientation, function(done) {
-       h.driver.setOrientation(specOrientation, function(err, orientation) {
+       h.driver.setOrientation(specOrientation, function(err) {
          should.not.exist(err);
-         orientation.should.eql(specOrientation);
          h.driver.getOrientation(function(err, orientation) {
            should.not.exist(err);
            orientation.should.eql(specOrientation);

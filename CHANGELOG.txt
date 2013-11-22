@@ -1,3 +1,40 @@
+CHANGES IN VERSION 0.12.0 (from 0.11.4)
+=======================================
+
+#### General
+- make sure there's no color in console when --log-no-colors is used
+- add more chinese docs
+- allow periods in xpath node names
+- update style guide
+- bring all NPM dependencies up to date
+
+#### iOS
+- mobile web: doc updates
+- mobile web: make sure window.close() works on real devices
+- mobile web: connect to most recent webview instead of first
+- allow uiauto to get path to node binary from `node_bin` key in .appiumconfig
+- fix automatic UDID detection
+- improve webviewapp to be a safari replacement; can now be used for mobile
+  web automation using `app: iwebview`
+- use `deviceName` cap to select specific iOS device
+- mobile web: automatically accept popup window alerts
+- give informative error message if ideviceinstaller isn't present
+- add a wait after flick calls so client doesn't regain control before flick
+  has finished
+
+#### Android
+- make sure chrome tests don't require package/activity
+- make sure we force-stop apps before starting them
+- fix issue with checking for package/activity for chrome
+- make sure to kill any running uiautomator processes before test
+- add `fastClear` desired cap, default true. If false, uses reinstall
+  instead of `pm clear` to reset an app
+- anytime we call `dumpsys windows` when checking for screen lock, dump output
+  to $APPIUM_HOME/.dumpsys.log so we can learn more about error cases
+
+#### Selendroid
+
+
 CHANGES IN VERSION 0.11.4 (from 0.11.3)
 =======================================
 

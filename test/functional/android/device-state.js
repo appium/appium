@@ -4,7 +4,7 @@
 var should = require('should')
   , childProcess = require('child_process')
   , it = require("../../helpers/driverblock.js").it
-  , android = require('../../../lib/devices/android/android.js')
+  , Android = require('../../../lib/devices/android/android.js')
   , ADB = require('../../../lib/devices/android/adb');
 
 describe('Android Device State module', function() {
@@ -38,7 +38,7 @@ describe('Android Device State module', function() {
     });
     it('should return false is screen is unlocked', function(done) {
       // Push unlock.apk first
-      var androidObj = android({});
+      var androidObj = new Android({});
       androidObj.adb = deviceState;
       androidObj.pushUnlock(function(err) {
         should.not.exist(err);

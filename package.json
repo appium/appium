@@ -26,6 +26,7 @@
   "main": "./lib/server/main.js",
   "bin": {
     "appium": "./bin/appium.js",
+    "appium-doctor": "./bin/appium-doctor.js",
     "instruments_client": "./bin/instruments-client.js",
     "authorize_ios": "./bin/authorize-ios.js"
   },

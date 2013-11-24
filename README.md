@@ -38,6 +38,11 @@ want to run tests on. See below for particular platform requirements.
 If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
 [node.js and npm](http://nodejs.org) 0.8 or greater (`brew install node`).
 
+To verify that all of Appium's dependencies are met you can use `appium-doctor`.
+Run `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
+of the dependencies are set up correctly. If running from source, you mayve have to use
+`bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+
 ### iOS Requirements
 
 * Mac OS X 10.7 or higher, 10.8.4 recommended

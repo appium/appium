@@ -32,8 +32,6 @@ CHANGES IN VERSION 0.12.0 (from 0.11.4)
 - anytime we call `dumpsys windows` when checking for screen lock, dump output
   to $APPIUM_HOME/.dumpsys.log so we can learn more about error cases
 
-#### Selendroid
-
 
 CHANGES IN VERSION 0.11.4 (from 0.11.3)
 =======================================

@@ -47,17 +47,15 @@
 
 # 安装appium
 
-1. 安装node
+1. 安装nodejs
 
-2、使用npm安装appium，npm install appium
+2、使用npm安装appium，npm install -g appium
 
 # 运行appium
 启动appium，直接运行appium 即可。
 
-appiun会启动2个端口，一个是4723，用于webdriver协议，一个是4724，是用于和android交互使用的
-
 # 更新appium
-通过`npm install appium` 来更新appium即可
+通过`npm install -g appium` 来更新appium即可
 
 
 如果有任何疑问，欢迎到testerhome.com来交流

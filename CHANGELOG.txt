@@ -1,3 +1,403 @@
+CHANGES IN VERSION 0.17.6 (from 0.17.6)
+=======================================
+
+#### General
+- disallow use of Appium in sudo mode
+- ensure publishes happen with a version of Node which doesn't generate 
+  shasum errors in NPM
+
+
+CHANGES IN VERSION 0.17.5 (from 0.17.4)
+=======================================
+
+#### Selendroid
+- update Selendroid to 0.9.0
+
+
+CHANGES IN VERSION 0.17.4 (from 0.17.3)
+=======================================
+
+#### General
+- fix "mobile: reset"
+- use the new Context API (from [the spec
+  draft](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile))
+  for switching back and forth between webviews. The window handles strategy
+  will be deprecated in 1.0
+- update Wd.js to use a version with context support
+- sanitize desired caps so they are always a manageable type
+
+#### iOS
+- allow testing of iOS7.1 in Appium's testsuite/test.sh
+- don't error out of pref path finding too soon if there are multiple dirs
+
+#### Android
+- fix "mobile: push"
+- fix fastReset going undefined between sessions
+- add --avd-args server param to pass args to avd on boot
+- various fixes for starting avds, including allowing multiple emulators to be
+  running
+- fix getElement() to set isElement to false instead of throwing
+- fix touch actions by fixing leaking state across executions
+- remove fastClear and run `pm clear` on fastReset
+
+CHANGES IN VERSION 0.17.3 (from 0.17.2)
+=======================================
+
+#### General
+- add new desired capabilities handling to conform to the Selenium 3 spec. Use
+  of old desired capabilities will now be deprecated. See [the spec
+  draft](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) for more information
+
+#### Android
+- fix process detection
+- make sure temp dir exists before writing zipaligned apk to it
+
+CHANGES IN VERSION 0.17.2 (from 0.17.1)
+=======================================
+
+This is simply a release to make Appium downloadable on npm.
+
+CHANGES IN VERSION 0.17.1 (from 0.17.0)
+=======================================
+
+#### General
+- move toward CI: build appium and run reset.sh on Travis
+
+#### iOS
+- pass quiet flag to fruitstrap when in quiet mode
+- update appium-instruments (which fixes retry behavior)
+
+#### Android
+- fix uninstall detection
+
+
+CHANGES IN VERSION 0.17.0 (from 0.16.0)
+=======================================
+
+#### General
+- fix maxBuffer error in installApp command
+- rearchitect device extraction and configuration from args/caps, and add lots
+  of unit tests
+- show non-default server params in server log for easier debugging
+- add --command-timeout as a server arg
+- don't ever use sudo to install npm submodules
+- ensure appium's CWD is always the appium dir
+- clear out commandTimeout between sessions, so subsequent sessions don't count
+  the session launching time as command time
+- set npm submodules to track published branches
+- relax requirements for unpacking zipfiles and finding app names
+
+#### iOS
+- handle both binary and xml plists when changing ios settings plists
+- break out appium-instruments into its own npm package
+- fix bug where command line --force-iphone or --force-ipad wouldn't set
+  device. This should fix issues with Appium.app
+- add --keep-keychains server arg / keepKeychains desired cap in order to 
+  disallow deletion of Keychains dir
+- bring reset behavior back to what it was before location services / settings
+  updates, so that with the default reset, most directories are still cleared
+  out
+- use actual current ios sdk in reset.sh
+- create plist basedirs if they don't exist
+- add processArguments cap to pass args to AUT
+- make --merciful the default
+- require bundleId when using location services caps
+- update UICatalog test app for 7.1
+- fix duplicate textfield issue in iOS 7.1
+- use new instruments `- w` param in iOS 7.1 to set device type
+- add location and contact alert request buttons to TestApp
+
+#### iOS+Safari
+- update initial webview navigation logic to work on 7.1
+- if we start with a real webview, don't try to nav to webview through favs
+
+#### Android
+- added support for 'direction' in scrollTo
+- fix source command
+- add longClick by position and duration
+- fix reset.bat issues on Windows
+- updated Windows installation instructions
+- added --udid flag to reset.sh/bat, so it can uninstall from specific devices
+- added support for touch{Down|Up|Move}
+- add "mobile: push" and "mobile: pull" commands to send files to/from device
+- ensure apks are always run through zipalign
+- parse launch package and activity from apk, so that `app-package` and
+  `app-activity` caps are no longer required
+- use better version of `isAppInstalled`
+
+#### Chrome+Android
+- update bundled chromedriver to 2.9
+- add enablePerformanceLogging cap
+
+
+CHANGES IN VERSION 0.16.0 (from 0.15.0)
+=======================================
+
+#### General
+- auto-configure the host and port for nodes in an appium grid
+- fix usage of temp folders on windows/linux
+- allow better usage of reset.sh in windows git-bash
+- add linking of pre-commit hook in reset.sh so everyone runs it
+
+#### iOS
+- fix regression where special keys wouldn't be sent
+- add `mobile: scroll` with direction: up/down/left/right to scroll views
+- display correct error when app install/uninstall fails on real device
+- update TestApp to show location services enabled status
+- add `locationServicesAuthorized` cap
+- add `locationServicesEnabled` cap
+- add `safariIgnoreFraudWarning` cap
+- add `safariAllowPopups` cap
+- update uiauto js to retrieve references to app/windows dynamically every time
+
+#### iOS+Safari
+- wait longer for webviews to appear in ios7
+- return latest window with getWindowHandles()
+- move hardcoded atoms out of appium into its own npm module which builds them
+- add `nonSyntheticWebClick` cap to use atoms for click in ios7
+
+#### Android
+- fix installing unlock app on windows paths with spaces
+- add test coverage mechanism
+- don't fail the test if we can't find strings.xml in an apk
+- add hybrid support for webviews in 4.4+ apps
+- fix `mobile: launchApp`
+
+#### Chrome+Android
+- bundle chromedriver into appium itself, remove system dependency
+
+#### Selendroid
+- remove requirement to manually update selendroid test apk path in test code
+- update selendroid (with maven 3.1.1 requirement)
+
+
+CHANGES IN VERSION 0.15.0 (from 0.14.2)
+=======================================
+
+#### General
+- fix for issue where logger would log colors even when asked not to
+- stricter jshint rules enforceable from editor
+- reformat/restructure test suite
+- handle previously-unhandled errors when using spawn()
+- fix startup bug (status object being taken as session id)
+- clear sessionOverride instance var when cleaning up session
+- fix regression where appium git revision wasn't shown in server output
+- various testsuite tweaks/fixes
+
+#### iOS
+- don't wait 30s for instruments to terminate
+- use SIGKILL for instruments again
+- allow ios logs to be not found without crashing appium
+- allow automation of settings app via 'app: settings' cap
+- don't crash if IDevice init fails (when requesting real device)
+- don't try to remove app if it's not on the device
+- escape single quotes for id search
+- lint the uiauto js code
+- allow accented characters in send_keys()
+- delete the entire sim folder when using --full-reset (before & after)
+
+#### iOS+Safari
+- allow safari to pre-launch
+- don't tap apple button to get into webview on real device safari
+- don't use synthetic click on real device safari
+- fix undefined window handle bug
+- fix safariLauncher crashes
+
+#### Android
+- add new mobile methods: toggleData, toggleFlightMode, toggleWifi,
+  toggleLocationServices
+- convert uiautomator error stream to string
+- use a better method for finding build-tools and platform-tools dirs
+- implement new version of longClick
+- add `mobile: find` example
+- return element's classname by selenium `tag_name` method/property
+- add `app-wait-package` desired cap, to be used in concert with
+  `app-wait-activity`
+
+#### Chrome+Android
+- fix unlock errors
+- fix port-in-use bug which prevented automation of multiple chromes on
+  multiple emulators
+
+#### Selendroid
+- upgrade to 0.8.0
+
+
+CHANGES IN VERSION 0.14.2 (from 0.14.1)
+=======================================
+
+#### General
+- fix bug that prevented appium from starting in ios
+
+CHANGES IN VERSION 0.14.1 (from 0.14.0)
+=======================================
+
+#### General
+- fix bug that prevented appium from pre-launching without specified device
+
+#### iOS
+- when alert title is null, return text instead
+- add framework for setting iOS and app preferences via plists
+- add `enableLocationServices` desired cap for enabling/disabling location
+  services on the simulator
+
+#### Android
+- fix fast reset/clear logic to not fail when remote apk doesn't exist
+
+#### Selendroid
+- actually wait for app-wait-activity instead of app-activity
+
+
+CHANGES IN VERSION 0.14.0 (from 0.13.0)
+=======================================
+
+#### General
+- add ability to set launch timeout from command line
+- require 'device' cap and fail without it
+- bring back appium shell
+- add new node examples
+- add troubleshooting docs in Chinese
+- fix app download suffix issue
+- major refactor of test code
+
+#### iOS
+- delete cache data for all versions of sim
+- fix sporadic DOM corruption issue
+- make reset.sh more Xcode 4.6 friendly
+- add flag to show simulator logs in-line with appium logs
+- add cap for automatically accepting photo permission alerts
+- update appium doctor to read new auth db value
+- keep track of ios crash logs and make available through selenium interface
+- cleanup app state pre-test and post-test
+- fix installing/removing .app (instead of .ipa)
+- escalate to SIGKILL if instruments doesn't respond to SIGTERM
+- add cap for using native instruments lib
+- return accessibility hint as 'hint' attribute
+
+#### Android
+- fix AVD startup bug
+- better error handling in element finding code
+- update ApiDemos app with webview
+- support doing web testing against stock browser on 4.4
+- increase support of android 4.4 toolchain
+- fix multiple device issue
+- implement `mobile: background` for android/selendroid
+- fix custom keystore unzip call stack issue
+
+#### Chrome+Android
+- add ability to deal with a different kind of session redirect
+- kill chromedriver before starting it up again to clear out ports
+
+#### Selendroid
+- re-instate closeApp and removeApp
+- fix issue where selendroid would crash based on activity mangling,
+  resulting in a mysterious connection reset error
+- upgrade to 0.7.0
+- show selendroid logs in appium output
+
+
+CHANGES IN VERSION 0.13.0 (from 0.12.3)
+=======================================
+
+#### General
+- add sauce reporting to ruby example
+- normalize all ruby examples
+- don't allow linux platforms to run ios doctor checks
+- allow building of single platforms in reset.sh (don't delete other platforms)
+- fix bug with --show-config & npm
+- removed some unused tests
+- remove retry support from appium test harness
+- catch grid syntaxerror issue
+- make sure gappium tests actually get run
+
+#### iOS
+- update docs for setting up ios-webkit-debug-proxy
+- fix authorize_ios
+- make sure setLocale doesn't run on real devices
+- give webviews a bit of time to show up before we say they aren't there
+- fix the auth db doctor check to work for 10.7
+- when launching simulator without instruments, wait for sim logs
+- kill zombie sim daemon launchers
+- update mobile: reset
+- automatically retry launching instruments if it flakes out. The number of
+  retries can be set with `-r N` or `--backend-retries N`, where `N` is
+  the number of retries, including 0.
+- add support for automating real Safari (and other built-in apps) in iOS7
+- remove support for using iwebview as a Safari replacement
+- when running mobile safari tests, automatically detect ios version
+- update i-w-d for compatibility with xcode 5.1 / ios 7.1
+
+#### Android
+- remove dependency on grep for real devices
+- add 19.0.0 to possible build paths
+- add tests for apk downloading and fix apk downloading issue
+- check for API level >= 17 for uiautomator and fail sooner if not
+- fix issue where calculating md5 of app would use too much memory, for large
+  apps
+- fix bug with checking whether app already existed on device
+
+#### Selendroid
+- give useful error message if user tries to run a uiautomator-based
+  "mobile: " command in selendroid
+- update selendroid
+
+
+CHANGES IN VERSION 0.12.3 (from 0.12.2)
+=======================================
+
+#### General
+- reset command timeout during mobile: reset
+- fixes for strategy validation ('dynamic' and 'class name' are valid)
+- add --show-config flag to dump appium config and exit
+- add option to set newCommandTimeout to 0 or false to disable it entirely
+  rather than working around it by setting a high value
+- refactor server/main.js -- things were getting ugly
+- fix issue where ForceQuitUnresponsiveApps would try to run even on non-Mac
+  systems
+
+#### iOS
+- change default device for iOS 6 to "iPhone" (non-retina)
+- change Xcode 5.0.1 warning message to indicate an upgrade is possible now
+- add --default-device flag to allow instruments to launch the sim like it
+  used to
+- get rid of deprecated authorization strategy code
+- include ForceQuitUnresponsiveApps output in appium log
+- add --merciful (-m) flag to avoid running ForceQuitUnresponsiveApps. Show
+  Instruments a bit of mercy...or don't.
+
+#### Selendroid
+- upgrade Selendroid to 0.7.0
+
+
+CHANGES IN VERSION 0.12.2 (from 0.12.1b)
+=======================================
+
+- None (npm fix release)
+
+CHANGES IN VERSION 0.12.1b (from 0.12.1)
+=======================================
+
+- None (npm fix release)
+
+CHANGES IN VERSION 0.12.1 (from 0.12.0)
+=======================================
+
+#### General
+- add appium doctor for checking system config issues that prevent appium 
+  from working properly. Run with `node bin/appium-doctor.js`, or
+  `appium-doctor` if installed via NPM, or via the GUI in Appium.app
+- fail sooner if user passes in bad locator strategy
+- fix app extracting logic
+
+#### iOS
+- fix locale settings logic
+- fix 64-bit device string
+- fail with a nicer message if xcrun can't find instruments
+- allow iwebview tests to automate https sites
+- kill simulators before launching new ones
+- automatically force quit unresponsive instruments processes
+
+
 CHANGES IN VERSION 0.12.0 (from 0.11.4)
 =======================================
 

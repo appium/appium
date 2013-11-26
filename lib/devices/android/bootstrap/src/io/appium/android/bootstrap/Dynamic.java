@@ -139,10 +139,10 @@ public class Dynamic {
       case SELECTOR_CLASS:
         String androidClass = (String) param;
         try {
-            androidClass = AndroidElementClassMap.match((String) param);
+          androidClass = AndroidElementClassMap.match((String) param);
         } catch (final AndroidCommandException e) {
-            // Couldn't find it in the classmap.
-            // Let it fall through and error out.
+          // Couldn't find it in the classmap.
+          // Let it fall through and error out.
         } catch (final UnallowedTagNameException e) {
         }
 

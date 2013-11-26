@@ -62,5 +62,17 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>saucelabs-repository</id>
+            <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>

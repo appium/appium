@@ -24,6 +24,8 @@ to github or write to the appium-discuss mailing list.
     ./reset.sh --android     # android-only
     ./reset.sh --selendroid  # selendroid-only
 * You might also want to run `reset.sh` with the `--dev` flag if you want the test apps downloaded and built as well.
+* You can also use `appium-doctor` to automatically verify that all dependencies are met. If running from source, you
+may have to use `bin/appium-doctor.js` or `node bin/appium-doctor.js`.
 * If you get this error after upgrading to Android SDK 22: 
     `{ANDROID_HOME}/tools/ant/uibuild.xml:155: SDK does not have any Build Tools installed.`
 In the Android SDK 22, the platform and build tools are split up into their own items in the SDK manager.  Make sure you install the build-tools and platform-tools.
@@ -33,6 +35,7 @@ In the Android SDK 22, the platform and build tools are split up into their own 
 * Make sure the Android emulator is up and running.
 * It's sometimes useful to run `adb kill-server && adb devices`. This can reset the connection to the Android device.
 * Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android) for more information).
+* Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
 ## IOS
 
@@ -49,7 +52,7 @@ In the Android SDK 22, the platform and build tools are split up into their own 
 
 * Make Sure you enable the 'Web Inspector' on the real device.
 * Make Sure you enable the Safari - Advance Preferences- Developer menu for simulators.
-
+* If you getting this error: select_port() failed, when trying to open the proxy, see this [discussion](https://groups.google.com/forum/#!topic/appium-discuss/tw2GaSN8WX0)
 
 ## FirefoxOS
 

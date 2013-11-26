@@ -4,6 +4,7 @@
 
 [![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
+[![Dependency Status](https://gemnasium.com/appium/appium.png)](https://gemnasium.com/appium/appium)
 
 ## Supported Platforms
 
@@ -17,7 +18,7 @@
    to use of standard automation APIs on all platforms.
 2. You can write tests with your favorite dev tools using any [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible
    language such as Java, [Objective-C](https://github.com/appium/selenium-objective-c),
-   JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavours),
+   JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavors),
    PHP, Python, [Ruby](https://github.com/appium/ruby_lib), C#, Clojure, or Perl
    with the Selenium WebDriver API and language-specific client libraries.
 3. You can use any testing framework.
@@ -38,6 +39,11 @@ want to run tests on. See below for particular platform requirements.
 If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
 [node.js and npm](http://nodejs.org) 0.8 or greater (`brew install node`).
 
+To verify that all of Appium's dependencies are met you can use `appium-doctor`.
+Run `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
+of the dependencies are set up correctly. If running from source, you may have to use
+`bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+
 ### iOS Requirements
 
 * Mac OS X 10.7 or higher, 10.8.4 recommended
@@ -48,7 +54,7 @@ If you want to run Appium via an `npm install`, hack with or contribute to Appiu
 ### Android Requirements
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
-* Appium supports Android on OS X, Linux and has beta support for Windows. Make sure you follow the
+* Appium supports Android on OS X, Linux and Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
   * [linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md)
   * [osx](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#android)
@@ -60,7 +66,7 @@ If you want to run Appium via an `npm install`, hack with or contribute to Appiu
 
 ## Quick Start
 
-Kick up an Appium server, and then run a test written in your favourite [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible language!
+Kick up an Appium server, and then run a test written in your favorite [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible language!
 You can run an Appium server using node.js or using the application, see below.
 
 ### Using Node.js
@@ -129,3 +135,5 @@ of common errors and how to get in touch with the community if you're stumped.
 
 Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other robots is possible,
 check out the [Appium Robots](https://github.com/appium/robots) project!
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/appium/appium/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

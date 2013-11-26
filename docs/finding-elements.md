@@ -5,13 +5,18 @@ Appium supports a subset of the WebDriver locator strategies:
 
 * find by "tag name" (i.e., ui component type)
 * find by "name" (i.e., the text, label, or developer-generated ID a.k.a 'accessibilityIdentifier' of an element)
+  NOTE: the "name" locator strategy will be deprecated on mobile devices, and will not be a part of Appium v1.0
 * find by "xpath" (i.e., an abstract representation of a path to an element, with certain constraints)
+
+Appium additionally supports some of the [Mobile JSON Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) locator strategies
+
+* `-ios_uiautomation`: a string corresponding to a recursive element search using the UIAutomation library (iOS-only)
 
 ###Tag name mapping
 
 You can use the direct UIAutomation component type name for the tag name, or use the simplified mapping (used in some examples below) found here:
 
-https://github.com/appium/appium/blob/master/lib/uiauto/lib/mechanic.js#L29
+https://github.com/appium/appium/blob/master/lib/devices/ios/uiauto/lib/mechanic.js#L29
 
 Issues
 ------
@@ -115,6 +120,14 @@ Python:
 
 ```python
 driver.find_elements_by_tag_name('tableCell')[5].click()
+```
+
+### Using the -ios_uiautomation locator strategy
+
+WD.js:
+
+```js
+driver.element('-ios_uiautomation', '.elements()[1].cells()[2]').getAttribute('name');
 ```
 
 # FindAndAct<a name="findandact"></a>

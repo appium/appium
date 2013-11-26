@@ -74,7 +74,7 @@ public class UICatalogTest {
         List<WebElement> rows = table.findElements(By.tagName("tableCell"));
         assertEquals(12, rows.size());
         //is first one about buttons
-        assertEquals(rows.get(0).getAttribute("name"), "Buttons, Various uses of UIButton");
+        assertEquals("Buttons, Various uses of UIButton", rows.get(0).getAttribute("name"));
         //navigationBar is not inside table
         WebElement nav_bar = null;
         try {
@@ -94,8 +94,8 @@ public class UICatalogTest {
     public void test_location() {
         //get third row location
         row = driver.findElements(By.tagName("tableCell")).get(2);
-        assertEquals(row.getLocation().getX(), 0);
-        assertEquals(row.getLocation().getY(), 152);
+        assertEquals(0, row.getLocation().getX());
+        assertEquals(152, row.getLocation().getY());
     }
 
     @Test
@@ -125,12 +125,12 @@ public class UICatalogTest {
         assertFalse(row.isDisplayed());
 
         WebElement tinted_switch = driver.findElements(By.tagName("switch")).get(1);
-        assertEquals(tinted_switch.getText(), "Tinted");
+        assertEquals("Tinted", tinted_switch.getText());
         //check if it is in "off" position
-        assertEquals(Integer.valueOf(tinted_switch.getAttribute("value")), new Integer(0));
+        assertEquals(new Integer(0), Integer.valueOf(tinted_switch.getAttribute("value")));
         tinted_switch.click();
         //check if it is in "on" position
-        assertEquals(Integer.valueOf(tinted_switch.getAttribute("value")), new Integer(1));
+        assertEquals(new Integer(1), Integer.valueOf(tinted_switch.getAttribute("value")));
         //segmented_control should now be disabled
         assertFalse(segmented_control.isEnabled());
     }
@@ -145,17 +145,17 @@ public class UICatalogTest {
         //write some random text to element
         String rnd_string = RandomStringUtils.randomAlphanumeric(6);
         text_field.sendKeys(rnd_string);
-        assertEquals(text_field.getAttribute("value"), rnd_string);
+        assertEquals(rnd_string, text_field.getAttribute("value"));
         //send some random keys
         String rnd_string2 = RandomStringUtils.randomAlphanumeric(6);
         Actions swipe = new Actions(driver).sendKeys(rnd_string2);
         swipe.perform();
         //check if text is there
-        assertEquals(text_field.getAttribute("value"), rnd_string + rnd_string2);
+        assertEquals(rnd_string + rnd_string2, text_field.getAttribute("value"));
         //clear
         text_field.clear();
         //check if is empty/has default text
-        assertEquals(text_field.getAttribute("value"), default_val);
+        assertEquals(default_val, text_field.getAttribute("value"));
     }
 
     @Test
@@ -169,7 +169,7 @@ public class UICatalogTest {
         triggerOkCancel.click();
         Alert alert = driver.switchTo().alert();
         //check if title of alert is correct
-        assertEquals(alert.getText(), "UIAlertView");
+        assertEquals("UIAlertView", alert.getText());
         alert.accept();
     }
 
@@ -194,10 +194,10 @@ public class UICatalogTest {
         openMenuPosition(1);
         //get the slider
         WebElement slider = driver.findElement(By.tagName("slider"));
-        assertEquals(slider.getAttribute("value"), "50%");
+        assertEquals("50%", slider.getAttribute("value"));
         TouchActions drag = new TouchActions(driver).flick(slider, new Integer(-1), 0, 0);
         drag.perform();
-        assertEquals(slider.getAttribute("value"), "0%");
+        assertEquals("0%", slider.getAttribute("value"));
     }
 
     @Test
@@ -210,7 +210,7 @@ public class UICatalogTest {
         JSONObject jsonObject = (JSONObject) new JSONParser().parse(EntityUtils.toString(entity));
 
         String sessionId = ((RemoteWebDriver) driver).getSessionId().toString();
-        assertEquals(sessionId, jsonObject.get("sessionId"));
+        assertEquals(jsonObject.get("sessionId"), sessionId);
     }
 
     @Test

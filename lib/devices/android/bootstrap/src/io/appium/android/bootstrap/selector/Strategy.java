@@ -1,8 +1,10 @@
 package io.appium.android.bootstrap.selector;
 
+import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
+
 /**
  * An emumeration of possible strategies.
- * 
+ *
  */
 public enum Strategy {
   CLASS_NAME(0, "class name"), CSS_SELECTOR(1, "css selector"), ID(2, "id"), NAME(
@@ -10,7 +12,7 @@ public enum Strategy {
       "partial link text"), TAG_NAME(6, "tag name"), XPATH(7, "xpath"), DYNAMIC(
       8, "dynamic");
 
-  public static Strategy fromString(final String text) {
+  public static Strategy fromString(final String text) throws InvalidStrategyException {
     if (text != null) {
       for (final Strategy s : Strategy.values()) {
         if (text.equalsIgnoreCase(s.strategyName)) {
@@ -18,7 +20,8 @@ public enum Strategy {
         }
       }
     }
-    return null;
+    throw new InvalidStrategyException("Locator strategy '" + text +
+      "' is not supported on Android");
   }
 
   private final int    strategyCode;

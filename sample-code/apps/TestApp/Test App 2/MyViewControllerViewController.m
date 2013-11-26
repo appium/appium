@@ -20,6 +20,8 @@
  */
 
 #import "MyViewControllerViewController.h"
+#import <AddressBook/AddressBook.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface MyViewControllerViewController ()
 
@@ -30,17 +32,24 @@
 @synthesize answerLabel;
 @synthesize firstArg;
 @synthesize secondArg;
+@synthesize locationMgr;
+@synthesize locationStatus;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.locationMgr = [[CLLocationManager alloc] init];
+        self.locationMgr.desiredAccuracy = kCLLocationAccuracyBest;
+        self.locationMgr.delegate = self;
+        [self logLocationAuth];
     }
 	[firstArg setAccessibilityIdentifier:@"IntegerA"];
 	[secondArg setAccessibilityIdentifier:@"IntegerB"];
 	[computeSumButton setAccessibilityIdentifier:@"ComputeSumButton"];
 	[answerLabel setAccessibilityIdentifier:@"Answer"];
+    [locationStatus setAccessibilityIdentifier:@"locationStatus"];
     return self;
 }
 
@@ -52,6 +61,26 @@
     secondArg.returnKeyType = UIReturnKeyDone;
     firstArg.delegate = self;
     secondArg.delegate = self;
+    [NSTimer scheduledTimerWithTimeInterval:0.1
+                                     target:self
+                                   selector:@selector(logLocationAuthFromTimer:)
+                                   userInfo:nil
+                                    repeats:NO];
+}
+
+- (void)logLocationAuthFromTimer:(NSTimer *)timer
+{
+    [self logLocationAuth];
+}
+
+- (void)logLocationAuth
+{
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status == kCLAuthorizationStatusAuthorized) {
+        locationStatus.on = YES;
+    } else {
+        locationStatus.on = NO;
+    }
 }
 
 - (void)viewDidUnload
@@ -59,6 +88,7 @@
     [self setFirstArg:nil];
     [self setSecondArg:nil];
     [self setAnswerLabel:nil];
+    [self setLocationStatus:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -75,6 +105,8 @@
 }
 
 - (void)dealloc {
+    [self.locationMgr release];
+    self.locationMgr = nil;
     [firstArg release];
     [secondArg release];
     [answerLabel release];
@@ -105,4 +137,38 @@
     [alert show];
     [alert release];
 }
+
+- (void)requestContactsPermission {
+    ABAddressBookRef book = [MyViewControllerViewController addressBookForPermissionRequest];
+    [self popContactsPermissionDialogWithAddressBook:book];
+}
+
+- (void)popContactsPermissionDialogWithAddressBook:(ABAddressBookRef)book {
+    ABAddressBookRequestAccessWithCompletion(book, ^(bool granted, CFErrorRef error) {
+    });
+    CFRelease (book);
+}
+
++ (ABAddressBookRef)addressBookForPermissionRequest {
+    CFErrorRef error = NULL;
+    return ABAddressBookCreateWithOptions(NULL, &error);
+}
+
+- (IBAction)accessContactsAlert:(id)sender {
+    if ([MyViewControllerViewController addressBookAuthorizationStatus] == kABAuthorizationStatusNotDetermined) {
+        [self requestContactsPermission];
+    }
+}
+
+- (IBAction)accessLocationAlert:(id)sender {
+    CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+    
+    [locationManager startUpdatingLocation];
+    [locationManager stopUpdatingLocation];
+}
+
++ (ABAuthorizationStatus)addressBookAuthorizationStatus {
+    return ABAddressBookGetAuthorizationStatus();
+}
+
 @end

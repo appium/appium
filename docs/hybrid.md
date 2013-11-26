@@ -24,7 +24,7 @@ To interrogate and interact with a web view appium establishes a connection usin
 To install the latest tagged version of the ios-webkit-debug-proxy using brew, run the following commands in the terminal:
 ``` bash
 # The first command is only required if you don't have brew installed.
-> ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+> ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
 > brew update
 > brew install ios-webkit-debug-proxy
 ```
@@ -145,14 +145,14 @@ https://gist.github.com/feelobot/7309729
 <a name="android"></a>Automating hybrid Android apps
 --------------------------
 
-Appium uses Selendroid under the hood for webview support. So, first of all, you'll want to specify `"device": "selendroid"` as a desired capability. Then:
+Appium comes with built-in hybrid support via Chromedriver. Appium also uses Selendroid under the hood for webview support on devices older than 4.4. (In that case, you'll want to specify `"device": "selendroid"` as a desired capability). Then:
 
 1.  Navigate to a portion of your app where a web view is active
 1.  Call [POST session/:sessionId/window](http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window) with the string "WEBVIEW" as the window handle, e.g., `driver.window("WEBVIEW")`.
 1.  (This puts your Appium session into a mode where all commands are interpreted as being intended for automating the web view, rather than the native portion of the app. For example, if you run getElementByTagName, it will operate on the DOM of the web view, rather than return UIAElements. Of course, certain WebDriver methods only make sense in one context or another, so in the wrong context you will receive an error message).
-1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `window` again with the string "NATIVE", e.g., `driver.window("NATIVE")`.
+1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `window` again with the string "NATIVE_APP", e.g., `driver.window("NATIVE_APP")`.
 
-More instructions are available [on Selendroid's site](http://selendroid.io/hybrid.html)
+Note: We could have used the same strategy as above for leaving the webview (calling `mobile: leaveWebView`), however Selendroid uses the `WEBVIEW`/`NATIVE_APP` window setting strategy, which also works with regular Appium hybrid support, so we show that here for parity.
 
 ## Wd.js Code example
 
@@ -163,7 +163,7 @@ driver.window("WEBVIEW", function(err) { // choose the only available view
     els.length.should.be.above(0); // there should be some!
     els[0].text(function(elText) { // get text of the first element
       elText.should.eql("My very own text"); // it should be extremely personal and awesome
-      driver.window("NATIVE", function(err) { // leave webview context
+      driver.window("NATIVE_APP", function(err) { // leave webview context
         // do more native stuff here if we want
         driver.quit(); // stop webdrivage
       });
@@ -191,7 +191,7 @@ driver.window("WEBVIEW", function(err) { // choose the only available view
   remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
   
   //leave the webview to go back to native app.
-  remoteWebDriver.switchTo().window("NATIVE");
+  remoteWebDriver.switchTo().window("NATIVE_APP");
   
   //close the app.
   remoteWebDriver.quit();

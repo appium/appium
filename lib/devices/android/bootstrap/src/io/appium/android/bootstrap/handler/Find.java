@@ -33,12 +33,13 @@ import com.android.uiautomator.core.UiSelector;
 
 /**
  * This handler is used to find elements in the Android UI.
- * 
+ *
  * Based on which {@link Strategy}, {@link UiSelector}, and optionally the
  * contextId, the element Id or Ids are returned to the user.
- * 
+ *
  */
 public class Find extends CommandHandler {
+  // These variables are expected to persist across executions.
   AndroidElementsHash      elements   = AndroidElementsHash.getInstance();
   Dynamic                  dynamic    = new Dynamic();
   public static JSONObject apkStrings = null;
@@ -60,11 +61,11 @@ public class Find extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   * 
+   *
    * @return {@link AndroidCommandResult}
-   * 
+   *
    * @throws JSONException
-   * 
+   *
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */
@@ -74,8 +75,13 @@ public class Find extends CommandHandler {
     final Hashtable<String, Object> params = command.params();
 
     // only makes sense on a device
-    final Strategy strategy = Strategy.fromString((String) params
-        .get("strategy"));
+    final Strategy strategy;
+    try {
+       strategy = Strategy.fromString((String) params
+          .get("strategy"));
+    } catch (final InvalidStrategyException e) {
+        return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
+    }
     final String contextId = (String) params.get("context");
 
     if (strategy == Strategy.DYNAMIC) {
@@ -211,15 +217,18 @@ public class Find extends CommandHandler {
           return getSuccessResult(fetchElement(sel, contextId));
         }
       } catch (final AndroidCommandException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final ElementNotFoundException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       } catch (final UnallowedTagNameException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final ElementNotInHashException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       } catch (final UiObjectNotFoundException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       }
     } else {
       try {
@@ -260,13 +269,15 @@ public class Find extends CommandHandler {
       } catch (final InvalidStrategyException e) {
         return getErrorResult(e.getMessage());
       } catch (final UnallowedTagNameException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final AndroidCommandException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final UiObjectNotFoundException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       } catch (final ElementNotFoundException e) {
-        return getErrorResult(e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       }
     }
   }
@@ -274,12 +285,12 @@ public class Find extends CommandHandler {
   /**
    * Get the element from the {@link AndroidElementsHash} and return the element
    * id using JSON.
-   * 
+   *
    * @param sel
    *          A UiSelector that targets the element to fetch.
    * @param contextId
    *          The Id of the element used for the context.
-   * 
+   *
    * @return JSONObject
    * @throws JSONException
    * @throws ElementNotFoundException
@@ -295,12 +306,12 @@ public class Find extends CommandHandler {
   /**
    * Get an array of elements from the {@link AndroidElementsHash} and return
    * the element's ids using JSON.
-   * 
+   *
    * @param sel
    *          A UiSelector that targets the element to fetch.
    * @param contextId
    *          The Id of the element used for the context.
-   * 
+   *
    * @return JSONObject
    * @throws JSONException
    * @throws UiObjectNotFoundException
@@ -320,7 +331,7 @@ public class Find extends CommandHandler {
   /**
    * Create and return a UiSelector based on the strategy, text, and how many
    * you want returned.
-   * 
+   *
    * @param strategy
    *          The {@link Strategy} used to search for the element.
    * @param text
@@ -400,7 +411,7 @@ public class Find extends CommandHandler {
 
   /**
    * Create and return a UiSelector based on Xpath attributes.
-   * 
+   *
    * @param path
    *          The Xpath path.
    * @param attr
@@ -409,7 +420,7 @@ public class Find extends CommandHandler {
    *          Any constraint.
    * @param substr
    *          Any substr.
-   * 
+   *
    * @return UiSelector
    * @throws AndroidCommandException
    */

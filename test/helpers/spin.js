@@ -1,6 +1,8 @@
 "use strict";
 
-exports.spinWait = function(spinFn, cb, waitMs, intMs) {
+var Q = require("q");
+
+exports.spinWait = function (spinFn, waitMs, intMs) {
   if (typeof waitMs === "undefined") {
     waitMs = 10000;
   }
@@ -9,22 +11,20 @@ exports.spinWait = function(spinFn, cb, waitMs, intMs) {
   }
   var begunAt = Date.now();
   var endAt = begunAt + waitMs;
-  var spin = function() {
-    spinFn(function(err) {
-      if (err && Date.now() < endAt) {
-        setTimeout(spin, intMs);
-      } else if (err) {
-        throw err;
+  var spin = function () {
+    return spinFn().catch(function (err) {
+      if (Date.now() < endAt) {
+        return Q.delay(intMs).then(spin);
       } else {
-        cb.apply(null, Array.prototype.slice.call(arguments));
+        throw new Error("spinWait condition unfulfilled. Promise rejected with error:", err);
       }
     });
   };
-  spin();
+  return spin();
 };
 
-exports.spinTillResEquals = function() {};
+exports.spinTillResEquals = function () {};
 
-exports.spinTillNoError = function() {};
+exports.spinTillNoError = function () {};
 
-exports.spinTillError = function() {};
+exports.spinTillError = function () {};

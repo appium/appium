@@ -39,10 +39,10 @@ I am some page content
 </span>
 &#x00F1;&#x2603;
 <script type="text/javascript">
-    $(document).ready(function(){
-        $("#i_am_a_textbox").focus(function(){$(this).val("");})
-                            .blur(function(){$(this).val("i has no focus");});
-    });
+  $(document).ready(function(){
+    $("#i_am_a_textbox").focus(function(){$(this).val("");})
+      .blur(function(){$(this).val("i has no focus");});
+  });
 </script>
 
   <div class="border">
@@ -65,7 +65,10 @@ I am some page content
   <p>Server time: <span id="servertime">{{ serverTime }}</span></p>
   <p>Client time: <span id="clienttime"></span></p>
   <script type="text/javascript">
-      $("#clienttime").text(parseInt(new Date().getTime() / 1000))
+    var uuid;
+    try {uuid = window.location.toString().match(/\?(.*)$/)[1]; } catch (ign) {}
+    if (uuid) document.title = document.title + " - " + uuid;
+    $("#clienttime").text(parseInt(new Date().getTime() / 1000));
   </script>
 
   <p id="useragent">{{ userAgent }}</p>

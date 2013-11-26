@@ -9,11 +9,14 @@ sample-code/apps/TestApp/build
 sample-code/apps/WebViewApp/build
 sample-code/apps/WebViewApp/WebViewApp.xcodeproj/project.xcworkspace/xcshareddata
 sample-code/apps/gps-demo*
+sample-code/apps/*.apk
 *.sublime-*
 sample-code/apps/UICatalog*
 sample-code/apps/io.appium.gappium*
 sample-code/apps/WebViewDemo*
 sample-code/examples/dotnet/SimpleTest/*.userprefs
+sample-code/examples/java/junit/target/
+sample-code/examples/java/testng/target/
 sample-code/examples/php/composer.lock
 sample-code/examples/php/composer.phar
 sample-code/examples/php/vendor
@@ -33,8 +36,9 @@ sample-code/apps/ApiDemos
 *~
 org.eclipse.ltk.core.refactoring.prefs
 /selendroid
-.appiumconfig
+.appiumconfig*
 build/
 .idea
 lib/devices/ios/uiauto/lib/status.js
 lib/devices/ios/uiauto/appium/xpath.js
+*DerivedData

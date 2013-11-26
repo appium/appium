@@ -9,6 +9,7 @@ import io.appium.android.bootstrap.handler.EnableCompressedLayoutHeirarchy;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
+import io.appium.android.bootstrap.handler.GetDataDir;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetLocation;
 import io.appium.android.bootstrap.handler.GetName;
@@ -23,7 +24,10 @@ import io.appium.android.bootstrap.handler.ScrollTo;
 import io.appium.android.bootstrap.handler.SetText;
 import io.appium.android.bootstrap.handler.Swipe;
 import io.appium.android.bootstrap.handler.TakeScreenshot;
+import io.appium.android.bootstrap.handler.TouchDown;
 import io.appium.android.bootstrap.handler.TouchLongClick;
+import io.appium.android.bootstrap.handler.TouchMove;
+import io.appium.android.bootstrap.handler.TouchUp;
 import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Wake;
 
@@ -50,6 +54,9 @@ class AndroidCommandExecutor {
     map.put("pinch", new Pinch());
     map.put("click", new Click());
     map.put("touchLongClick", new TouchLongClick());
+    map.put("touchDown", new TouchDown());
+    map.put("touchUp", new TouchUp());
+    map.put("touchMove", new TouchMove());
     map.put("getText", new GetText());
     map.put("setText", new SetText());
     map.put("getName", new GetName());
@@ -67,6 +74,7 @@ class AndroidCommandExecutor {
     map.put("enableCompressedLayoutHeirarchy",
         new EnableCompressedLayoutHeirarchy());
     map.put("getStrings", new GetStrings());
+    map.put("getDataDir", new GetDataDir());
   }
 
   /**

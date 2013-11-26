@@ -3,17 +3,18 @@
 
 var net = require('net')
   , repl = require('repl')
-  , colors = require('colors')
   , logFactory = require('../lib/server/logger.js')
   , parser = require('../lib/server/parser.js');
+
+require('colors');
 
 var args = parser().parseArgs();
 logFactory.init(args);
 
 var appium  = require('../lib/server/main.js');
 
-var startRepl = function() {
-  var help = function() {
+var startRepl = function () {
+  var help = function () {
     console.log("\nWelcome to the Appium CLI".cyan);
     console.log(" - Access the appium object via the object: 'appium'".grey);
     console.log(" - appium.run is the function to start the server".grey);
@@ -30,15 +31,15 @@ var startRepl = function() {
   r.context.help = help;
   r.context.args = {
     app: '/path/to/test/app'
-    , udid: null
-    , address: '127.0.0.1'
-    , port: 4723
+  , udid: null
+  , address: '127.0.0.1'
+  , port: 4723
   };
 
   var connections = 0;
   var server = net.createServer(function (socket) {
     connections += 1;
-    socket.setTimeout(5*60*1000, function() {
+    socket.setTimeout(5 * 60 * 1000, function () {
       socket.destroy();
     });
     repl.start("(appium): ", socket);
@@ -50,8 +51,8 @@ var startRepl = function() {
   });
 };
 
-if (process.argv[2] === "shell") {
+if (process.argv[2] && process.argv[2].trim() === "--shell") {
   startRepl();
 } else {
-  appium.run(args, function() { /* console.log('Rock and roll.'.grey); */ });
+  appium.run(args, function () { /* console.log('Rock and roll.'.grey); */ });
 }

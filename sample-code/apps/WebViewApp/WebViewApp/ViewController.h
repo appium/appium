@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController <UITextFieldDelegate, UIWebViewDelegate>
+@interface ViewController : UIViewController <UITextFieldDelegate, UIWebViewDelegate, NSURLConnectionDataDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *urlField;
 @property (weak, nonatomic) IBOutlet UIWebView *mainWebView;
 @property UIActivityIndicatorView *pageLoadingIndicator;
@@ -19,3 +19,4 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView;
 - (void)webViewDidStartLoad:(UIWebView *)webView;
 @end
+

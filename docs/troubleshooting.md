@@ -24,6 +24,8 @@ to github or write to the appium-discuss mailing list.
     ./reset.sh --android     # android-only
     ./reset.sh --selendroid  # selendroid-only
 * You might also want to run `reset.sh` with the `--dev` flag if you want the test apps downloaded and built as well.
+* You can also use `appium-doctor` to automatically verify that all dependencies are met. If running from source, you
+may have to use `bin/appium-doctor.js` or `node bin/appium-doctor.js`.
 * If you get this error after upgrading to Android SDK 22: 
     `{ANDROID_HOME}/tools/ant/uibuild.xml:155: SDK does not have any Build Tools installed.`
 In the Android SDK 22, the platform and build tools are split up into their own items in the SDK manager.  Make sure you install the build-tools and platform-tools.

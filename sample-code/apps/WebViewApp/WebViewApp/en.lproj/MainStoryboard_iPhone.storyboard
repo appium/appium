@@ -21,10 +21,11 @@
                                 <rect key="frame" x="0.0" y="52" width="320" height="516"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </webView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter URL" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="5jG-hg-xoz" userLabel="urlField">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter URL" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5jG-hg-xoz" userLabel="urlField">
                                 <rect key="frame" x="6" y="19" width="268" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" returnKeyType="go"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" keyboardAppearance="light" returnKeyType="go"/>
                                 <connections>
                                     <action selector="urlEditBegin:" destination="2" eventType="editingDidBegin" id="dCi-yj-FXo"/>
                                 </connections>

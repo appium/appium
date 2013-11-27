@@ -1179,5 +1179,19 @@ module.exports.buildTests = function(webviewType) {
       });
     });
   });
+
+  if (webviewType === "iwebview") {
+    desc('https', function(h) {
+      it('should be able to test self-signed pages', function(done) {
+        loadWebView(h.driver, function() {
+          h.driver.title(function(err, title) {
+            should.not.exist(err);
+            title.should.include("Sauce Labs");
+            done();
+          });
+        }, 'https://selfsigned.buildslave.saucelabs.com', "Sauce Labs: Selenium Testing & More");
+      });
+    });
+  }
 };
 

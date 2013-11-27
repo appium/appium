@@ -16,7 +16,6 @@
     [super viewDidLoad];
     self.urlField.delegate = self;
     self.mainWebView.delegate = self;
-    self.urlField.text = @"http://";
     self.pageLoadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.pageLoadingIndicator.hidesWhenStopped = YES;
     self.urlField.rightView = self.pageLoadingIndicator;
@@ -42,7 +41,9 @@
 }
 
 - (IBAction)urlEditBegin:(id)sender {
-    self.urlField.text = @"http://";
+    if ([self.urlField.text isEqualToString:@""]) {
+        self.urlField.text = @"http://";
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -52,9 +53,9 @@
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
-    NSString *URLString = [[request URL] absoluteString];
-    NSLog(@"URL changed to %@", URLString);
-    self.urlField.text = URLString;
+    NSString *url = [[request URL] absoluteString];
+    NSLog(@"URL change request: %@", url);
+    self.urlField.text = url;
     return YES;
 }
 
@@ -66,6 +67,15 @@
 - (void)webViewDidStartLoad:(UIWebView *)webView {
     NSLog(@"Webview started loading");
     [self.pageLoadingIndicator startAnimating];
+}
+
+@end
+
+@implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
+
++ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host
+{
+    return YES;
 }
 
 @end

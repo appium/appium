@@ -65,7 +65,7 @@ if (require.main === module) {
         log.pass("All Checks were successful");
         log.stopBroadcast();
       } else {
-        common.exitDoctor();
+        log.exitDoctor();
       }
     });
   };

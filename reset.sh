@@ -96,6 +96,16 @@ reset_general() {
 
 reset_ios() {
     echo "RESETTING IOS"
+    echo "* Cloning/updating ForceQuitUnresponsiveApps"
+    run_cmd git submodule update --init submodules/ForceQuitUnresponsiveApps
+    echo "* Building ForceQuitUnresponsiveApps"
+    run_cmd pushd submodules/ForceQuitUnresponsiveApps
+    run_cmd ./build_force_quit.sh
+    run_cmd popd
+    echo "* Moving ForceQuitUnresponsiveApps into build/force_quit"
+    run_cmd rm -rf build/force_quit
+    run_cmd mkdir build/force_quit
+    run_cmd cp -R submodules/ForceQuitUnresponsiveApps/bin/* build/force_quit
     echo "* Cloning/updating instruments-without-delay"
     run_cmd git submodule update --init submodules/instruments-without-delay
     echo "* Building instruments-without-delay"

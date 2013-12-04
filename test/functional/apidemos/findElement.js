@@ -249,6 +249,15 @@ describeWd('xpath', function(h) {
       });
     });
   });
+  it('should get an error when strategy doesnt exist', function(done) {
+    h.driver.elementByCss('button', function(err, el) {
+      should.exist(err);
+      should.not.exist(el);
+      err.status.should.eql(9);
+      err.cause.value.message.should.equal("Invalid locator strategy: css selector");
+      done();
+    });
+  });
 });
 
 describeWd('unallowed tag names', function(h) {

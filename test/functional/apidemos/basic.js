@@ -65,18 +65,6 @@ describeWd('basic', function(h) {
       find();
     });
   });
-  it('should not fail even when bad locator strats sent in', function(done) {
-    h.driver.elementByLinkText("foobar", function(err) {
-      should.exist(err);
-      err.status.should.equal(13);
-      err.cause.value.origValue.should.eql("Sorry, we don't support the 'link text' locator strategy yet");
-      h.driver.elementByName("Animation", function(err, el) {
-        should.not.exist(err);
-        should.exist(el);
-        done();
-      });
-    });
-  });
   it('should be able to get current activity', function(done) {
     h.driver.execute("mobile: currentActivity", function(err, activity) {
       should.not.exist(err);

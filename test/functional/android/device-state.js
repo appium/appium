@@ -23,10 +23,10 @@ describe('Android Device State module', function() {
   describe('isScreenLocked method', function() {
     it('should return true if screen is locked', function(done) {
       // Press POWER btn to lock screen first
-      childProcess.exec('adb shell input keyevent 26', function(err) {
+      childProcess.exec('adb shell input keyevent 26 && sleep 1', function(err) {
         should.not.exist(err);
-
-        childProcess.exec('adb shell input keyevent 26', function(err) {
+        // press home to get to lock screen
+        childProcess.exec('adb shell input keyevent 3 && sleep 1', function(err) {
           should.not.exist(err);
           deviceState.isScreenLocked(function(err, isLocked) {
             should.not.exist(err);

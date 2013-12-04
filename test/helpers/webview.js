@@ -19,7 +19,7 @@ module.exports.spinTitle = function (expTitle, driver, cb, timeout) {
   timeout.should.be.above(0);
   driver.title(function(err, pageTitle) {
     should.not.exist(err);
-    if (pageTitle == expTitle) {
+    if (pageTitle.indexOf(expTitle) !== -1) {
       cb();
     } else {
       setTimeout(function () {
@@ -1184,12 +1184,8 @@ module.exports.buildTests = function(webviewType) {
     desc('https', function(h) {
       it('should be able to test self-signed pages', function(done) {
         loadWebView(h.driver, function() {
-          h.driver.title(function(err, title) {
-            should.not.exist(err);
-            title.should.include("Sauce Labs");
-            done();
-          });
-        }, 'https://selfsigned.buildslave.saucelabs.com', "Sauce Labs: Selenium Testing & More");
+          done();
+        }, 'https://selfsigned.buildslave.saucelabs.com', "Sauce Labs");
       });
     });
   }

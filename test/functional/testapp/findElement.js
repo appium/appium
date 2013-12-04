@@ -49,7 +49,8 @@ describeWd('elementByTagName', function(h) {
     h.driver.elementByCss('button', function(err, el) {
       should.exist(err);
       should.not.exist(el);
-      err.status.should.eql(13);
+      err.status.should.eql(9);
+      err.cause.value.message.should.equal("Invalid locator strategy: css selector");
       done();
     });
   });

@@ -1,3 +1,22 @@
+CHANGES IN VERSION 0.12.1 (from 0.12.0)
+=======================================
+
+#### General
+- add appium doctor for checking system config issues that prevent appium 
+  from working properly. Run with `node bin/appium-doctor.js`, or
+  `appium-doctor` if installed via NPM, or via the GUI in Appium.app
+- fail sooner if user passes in bad locator strategy
+- fix app extracting logic
+
+#### iOS
+- fix locale settings logic
+- fix 64-bit device string
+- fail with a nicer message if xcrun can't find instruments
+- allow iwebview tests to automate https sites
+- kill simulators before launching new ones
+- automatically force quit unresponsive instruments processes
+
+
 CHANGES IN VERSION 0.12.0 (from 0.11.4)
 =======================================
 

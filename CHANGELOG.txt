@@ -1,3 +1,13 @@
+CHANGES IN VERSION 0.12.2 (from 0.12.1b)
+=======================================
+
+- None (npm fix release)
+
+CHANGES IN VERSION 0.12.1b (from 0.12.1)
+=======================================
+
+- None (npm fix release)
+
 CHANGES IN VERSION 0.12.1 (from 0.12.0)
 =======================================
 

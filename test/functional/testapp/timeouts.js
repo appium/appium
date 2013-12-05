@@ -36,6 +36,23 @@ describeWd('command timeout', function(h) {
       setTimeout(next, 5500);
     });
   });
+
+  it('should die with short command timeout even after mobile reset', function(done) {
+    var params = {timeout: 3};
+    h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
+      should.not.exist(err);
+      h.driver.execute("mobile: reset", function(err) {
+        should.not.exist(err);
+        setTimeout(function() {
+          h.driver.elementByName('dont exist dogg', function(err) {
+            should.exist(err);
+            [13, 6].should.include(err.status);
+            done();
+          });
+        }, 6500);
+      });
+    });
+  });
 });
 
  describeWd('check implicit wait', function(h) {

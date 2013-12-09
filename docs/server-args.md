@@ -31,7 +31,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--avd`|null|name of the avd to launch|`--avd @default`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--safari`|false|(IOS-Only) Use the safari app||
-|`--device-name`|false|(IOS-only) Name of the device to set for the IOS Simulator|`--deviceName "iPhone Retina (3.5-inch)"`|
+|`--device-name`|null|(IOS-Simulator-only) name of the iOS device to use|`--device-name iPhone Retina (4-inch)`|
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
 |`--language`|null|(IOS-only) language for the iOS simulator|`--language en`|
@@ -48,3 +48,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||
+|`--show-config`|true|Show info about the appium server configuration and exit||

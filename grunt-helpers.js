@@ -167,6 +167,11 @@ module.exports.setGitRev = function(grunt, rev, cb) {
   exports.writeConfigKey(grunt, "git-sha", rev, cb);
 };
 
+module.exports.setBuildTime = function(grunt, cb) {
+  var time = new Date();
+  exports.writeConfigKey(grunt, "built", time.toISOString(), cb);
+};
+
 var auth_enableDevTools = function(grunt, cb) {
   grunt.log.writeln("Enabling DevToolsSecurity");
   exec('DevToolsSecurity --enable', function(err) {

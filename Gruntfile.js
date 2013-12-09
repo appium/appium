@@ -116,8 +116,8 @@ module.exports = function(grunt) {
   grunt.registerTask('signApp', "Sign the test app", function(certName) {
     signApp("TestApp", certName, this.async());
   });
-  grunt.registerTask('authorize', "Authorize developer", function() {
-    authorize(grunt, this.async());
+  grunt.registerTask('authorize', "Authorize developer", function(insecure) {
+    authorize(grunt, insecure, this.async());
   });
   grunt.registerTask('log', "Tail appium.log", function() {
     tail(grunt, path.resolve(__dirname, "appium.log"), this.async());

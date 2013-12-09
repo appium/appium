@@ -374,6 +374,7 @@ main() {
         reset_gappium
     fi
     cleanup
+    $grunt setBuildTime
     reset_successful=true
 }
 

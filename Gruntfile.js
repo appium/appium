@@ -17,6 +17,7 @@ var path = require('path')
   , generateServerDocs = gruntHelpers.generateServerDocs
   , generateAppiumIo = gruntHelpers.generateAppiumIo
   , setDeviceConfigVer = gruntHelpers.setDeviceConfigVer
+  , setBuildTime = gruntHelpers.setBuildTime
   , setGitRev = gruntHelpers.setGitRev
   , getGitRev = require('./lib/helpers').getGitRev
   , runTestsWithServer = gruntHelpers.runTestsWithServer;
@@ -150,6 +151,9 @@ module.exports = function(grunt) {
   });
   grunt.registerTask('setConfigVer', function(device) {
     setDeviceConfigVer(grunt, device, this.async());
+  });
+  grunt.registerTask('setBuildTime', function() {
+    setBuildTime(grunt, this.async());
   });
   grunt.registerTask('setGitRev', function(rev) {
     var done = this.async();

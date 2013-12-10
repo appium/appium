@@ -1,3 +1,30 @@
+CHANGES IN VERSION 0.12.3 (from 0.12.2)
+=======================================
+
+#### General
+- reset command timeout during mobile: reset
+- fixes for strategy validation ('dynamic' and 'class name' are valid)
+- add --show-config flag to dump appium config and exit
+- add option to set newCommandTimeout to 0 or false to disable it entirely
+  rather than working around it by setting a high value
+- refactor server/main.js -- things were getting ugly
+- fix issue where ForceQuitUnresponsiveApps would try to run even on non-Mac
+  systems
+
+#### iOS
+- change default device for iOS 6 to "iPhone" (non-retina)
+- change Xcode 5.0.1 warning message to indicate an upgrade is possible now
+- add --default-device flag to allow instruments to launch the sim like it
+  used to
+- get rid of deprecated authorization strategy code
+- include ForceQuitUnresponsiveApps output in appium log
+- add --merciful (-m) flag to avoid running ForceQuitUnresponsiveApps. Show
+  Instruments a bit of mercy...or don't.
+
+#### Selendroid
+- upgrade Selendroid to 0.7.0
+
+
 CHANGES IN VERSION 0.12.2 (from 0.12.1b)
 =======================================
 

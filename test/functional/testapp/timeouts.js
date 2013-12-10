@@ -53,9 +53,76 @@ describeWd('command timeout', function(h) {
       });
     });
   });
+
+  it('when set to 0 should disable itself', function(done) {
+    h.driver.execute("mobile: setCommandTimeout", [{timeout: 0}], function(err) {
+      should.not.exist(err);
+      setTimeout(function() {
+        h.driver.elementByTagName('button', function(err, el) {
+          should.not.exist(err);
+          should.exist(el);
+          done();
+        });
+      }, 3000);
+    });
+  });
+
+  it('when set to false should disable itself', function(done) {
+    h.driver.execute("mobile: setCommandTimeout", [{timeout: false}], function(err) {
+      should.not.exist(err);
+      setTimeout(function() {
+        h.driver.elementByTagName('button', function(err, el) {
+          should.not.exist(err);
+          should.exist(el);
+          done();
+        });
+      }, 3000);
+    });
+  });
+
 });
 
- describeWd('check implicit wait', function(h) {
+describeWd('command timeout via desired caps', function(h) {
+  it('should die with short command timeout', function(done) {
+    var next = function() {
+      h.driver.elementByName('dont exist dogg', function(err) {
+        should.exist(err);
+        [13, 6].should.include(err.status);
+        done();
+      });
+    };
+    setTimeout(next, 5500);
+  });
+}, null, null, {newCommandTimeout: 3});
+
+describeWd('command timeout disabled via desired caps', function(h) {
+  it('when set to 0 should disable itself', function(done) {
+    setTimeout(function() {
+      h.driver.elementByTagName('button', function(err, el) {
+        should.not.exist(err);
+        should.exist(el);
+        done();
+      });
+    }, 3000);
+  });
+}, null, null, {newCommandTimeout: 0});
+
+describeWd('command timeout disabled via desired caps', function(h) {
+  it('when set to false should disable itself', function(done) {
+    h.driver.execute("mobile: setCommandTimeout", [{timeout: false}], function(err) {
+      should.not.exist(err);
+      setTimeout(function() {
+        h.driver.elementByTagName('button', function(err, el) {
+          should.not.exist(err);
+          should.exist(el);
+          done();
+        });
+      }, 3000);
+    });
+  });
+}, null, null, {newCommandTimeout: false});
+
+describeWd('check implicit wait', function(h) {
   var impWaitSecs = 4;
   var impWaitCheck = function(cb) {
     var before = new Date().getTime() / 1000;

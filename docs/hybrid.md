@@ -24,7 +24,7 @@ To interrogate and interact with a web view appium establishes a connection usin
 To install the latest tagged version of the ios-webkit-debug-proxy using brew, run the following commands in the terminal:
 ``` bash
 # The first command is only required if you don't have brew installed.
-> ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+> ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
 > brew update
 > brew install ios-webkit-debug-proxy
 ```

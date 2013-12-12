@@ -16,7 +16,7 @@ var gruntMock = {
 };
 
 if (require.main === module) {
-  authorize(gruntMock, function(err) {
+  authorize(gruntMock, false, function(err) {
     if (err) throw err;
     console.log("Authorization successful");
   });

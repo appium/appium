@@ -19,6 +19,7 @@
 require "selenium-webdriver"
 require 'selenium/webdriver/remote/http/persistent'
 require "rspec"
+require "rest_client"
 
 def capabilities
   {
@@ -53,6 +54,12 @@ def url_with_credentials
   return "http://#{un}:#{pw}@ondemand.saucelabs.com:80/wd/hub"
 end
 
+# Because WebDriver doesn't have the concept of test failure, use the Sauce
+# Labs REST API to record job success or failure
+def update_job_success(job_id, success)
+    RestClient.put "#{rest_jobs_url}/#{job_id}", {"passed" => success}.to_json, :content_type => :json
+end
+
 describe "Notepad" do
   before :all do
     http_client = ::Selenium::WebDriver::Remote::Http::Persistent.new
@@ -66,6 +73,14 @@ describe "Notepad" do
     )
     
     http_client.timeout = 90
+  end
+
+  after(:each) do
+    # Get the success by checking for assertion exceptions,
+    # and log them against the job, which is exposed by the session_id
+    job_id = @driver.send(:bridge).session_id
+    update_job_success(job_id, example.exception.nil?)
+    @driver.quit
   end
 
   after :all do

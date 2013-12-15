@@ -5,7 +5,9 @@ var IOSChecker = require('../lib/doctor/ios.js').IOSChecker
   , DevChecker = require('../lib/doctor/dev.js').DevChecker
   , common = require("../lib/doctor/common.js")
   , eol = require('os').EOL
-  , async = require('async');
+  , async = require('async')
+  , isMac = process.platform === 'darwin'
+  , isWindows = process.platform === 'win32';
 
 var argv = process.argv
   , doAndroid = argv.indexOf('--android') > -1
@@ -20,7 +22,7 @@ if (broadcast) {
 }
 
 if (!doIOS && !doAndroid) {
-  doIOS = true;
+  doIOS = isMac;
   doAndroid = true;
 }
 
@@ -28,6 +30,10 @@ var log = new common.Log(port);
 
 var runiOSChecks = function(cb) {
   if (doIOS) {
+    if (!isMac) {
+      log.fail("iOS Checks cannot be run on Windows.");
+      log.exitDoctor();
+    }
     var iosChecker = new IOSChecker(log);
     log.comment("Running iOS Checks");
     iosChecker.runAllChecks(function(err) {
@@ -38,6 +44,8 @@ var runiOSChecks = function(cb) {
         log.exitDoctor();
       }
     });
+  } else {
+    cb();
   }
 };
 
@@ -53,6 +61,8 @@ var runAndroidChecks = function(cb) {
         log.exitDoctor();
       }
     });
+  } else {
+    cb();
   }
 };
 
@@ -68,6 +78,8 @@ var runDevChecks = function(cb) {
         log.exitDoctor();
       }
     });
+  } else {
+    cb();
   }
 };
 

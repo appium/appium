@@ -11,6 +11,8 @@ var path = require('path')
   , appAct2 = "ApiDemos"
   , appAct3 = "com.example.android.apis.ApiDemos"
   , appAct4 = ".Blargimarg"
+  , appUrl = 'http://appium.s3.amazonaws.com/ApiDemos-debug.apk'
+  , describeUrl = require('../../helpers/driverblock.js').describeForApp(appUrl, "android", appPkg, appAct)
   , driverBlock = require("../../helpers/driverblock.js")
   , describeWd = driverBlock.describeForApp(appPath, "android", appPkg, appAct)
   , describeWd2 = driverBlock.describeForApp(appPath, "android", appPkg, appAct2)
@@ -191,3 +193,14 @@ describe('pre-existing uiautomator session', function() {
     });
   });
 });
+
+describeUrl('appium android', function(h) {
+  it('should load a zipped app via url', function(done) {
+    h.driver.execute("mobile: currentActivity", function(err, activity) {
+      should.not.exist(err);
+      activity.should.include("ApiDemos");
+      done();
+    });
+  });
+});
+

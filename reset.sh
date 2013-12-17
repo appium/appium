@@ -14,6 +14,7 @@ should_reset_realsafari=false
 code_sign_identity='';
 provisioning_profile='';
 include_dev=false
+prod_deps=false
 appium_home=$(pwd)
 reset_successful=false
 has_reset_unlock_apk=false
@@ -34,6 +35,7 @@ do
         "--firefoxos") should_reset_firefoxos=true;;
         "--gappium") should_reset_gappium=true;;
         "--dev") include_dev=true;;
+        "--prod") prod_deps=true;;
         "-v") verbose=true;;
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
@@ -72,15 +74,15 @@ reset_general() {
     if $hardcore ; then
         echo "* Removing NPM modules"
         run_cmd rm -rf node_modules
+        echo "* Clearing out old .appiumconfig"
+        run_cmd rm -rf ./.appiumconfig
     fi
-    echo "* Clearing out old .appiumconfig"
-    run_cmd rm -rf ./.appiumconfig
-    if $include_dev ; then
-        echo "* Installing new or updated NPM modules (including devDeps)"
-        run_cmd npm install .
-    else
+    if $prod_deps ; then
         echo "* Installing new or updated NPM modules"
         run_cmd npm install --production .
+    else
+        echo "* Installing new or updated NPM modules (including devDeps)"
+        run_cmd npm install .
     fi
     install_status=$?
     set -e
@@ -88,8 +90,11 @@ reset_general() {
         echo "install failed. Trying again with sudo. Only do this if it's not a network error."
         run_cmd sudo npm install .
     fi
-    run_cmd rm -rf build
-    run_cmd mkdir build
+    if $hardcore ; then
+        echo "* Clearing out build dir"
+        run_cmd rm -rf build
+    fi
+    run_cmd mkdir -p build
     echo "* Setting git revision data"
     run_cmd $grunt setGitRev
 }
@@ -118,6 +123,7 @@ reset_ios() {
     run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
     run_cmd pushd ./assets
     echo "* Unzipping instruments without delay for XCode 4"
+    run_cmd rm -rf ../build/iwd4
     run_cmd unzip iwd4.zip -d ../build/
     run_cmd popd
     echo "* Cloning/updating udidetect"
@@ -357,6 +363,9 @@ main() {
     if $hardcore ; then
         echo "* Hardcore mode is on, will do extra crazy stuff"
     fi
+    if $prod_deps ; then
+        echo "* Prod mode is on, will only install prod deps"
+    fi
     reset_general
     if $should_reset_ios ; then
         reset_ios
@@ -374,7 +383,8 @@ main() {
         reset_gappium
     fi
     cleanup
-    $grunt setBuildTime
+    echo "* Setting build time and SHA info"
+    run_cmd $grunt setBuildTime
     reset_successful=true
 }
 

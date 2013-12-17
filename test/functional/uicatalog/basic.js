@@ -1,7 +1,12 @@
+/*global it:true */
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it
+  , path = require('path')
+  , appUrl = 'http://appium.s3.amazonaws.com/UICatalog6.0.app.zip'
+  , appZip = path.resolve(__dirname, "../../../assets/UICatalog6.0.app.zip")
+  , describeZip = require('../../helpers/driverblock.js').describeForApp(appZip)
+  , describeUrl = require('../../helpers/driverblock.js').describeForApp(appUrl)
   , should = require('should');
 
 describeWd('basic', function(h) {
@@ -66,4 +71,34 @@ describeWd('basic', function(h) {
     });
   });
 
+});
+
+describeZip('appium ios', function(h) {
+  it('should load a zipped app via path', function(done) {
+    h.driver.elementByTagName('tableView', function(err, element) {
+      should.not.exist(err);
+      should.exist(element.value);
+      done();
+    });
+  });
+});
+
+describeUrl('appium ios', function(h) {
+  it('should load a zipped app via url', function(done) {
+    h.driver.elementByTagName('tableView', function(err, element) {
+      should.not.exist(err);
+      should.exist(element.value);
+      done();
+    });
+  });
+});
+
+describeWd('appium ios', function(h) {
+  it('should go back to using app from before', function(done) {
+    h.driver.elementsByTagName('tableView', function(err, elements) {
+      should.not.exist(err);
+      elements.length.should.be.above(0);
+      done();
+    });
+  });
 });

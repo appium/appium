@@ -180,18 +180,12 @@ reset_ios() {
     run_cmd rm -rf build/fruitstrap
     run_cmd mkdir -p build/fruitstrap
     run_cmd cp submodules/fruitstrap/fruitstrap build/fruitstrap
-    echo "* Cloning/updating SafariLauncher"
-    run_cmd git submodule update --init submodules/SafariLauncher
-    echo "* Building SafariLauncher"
-    run_cmd rm -f submodules/Safarilauncher/target.xcconfig
-    echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> submodules/Safarilauncher/target.xcconfig
-    run_cmd $grunt buildSafariLauncherApp:iphonesimulator:"target.xcconfig"
-    echo "* Copying SafariLauncher to build"
-    run_cmd rm -rf build/SafariLauncher
-    run_cmd mkdir -p build/SafariLauncher
-    run_cmd zip -r build/SafariLauncher/SafariLauncherSim submodules/SafariLauncher/build/Release-iphonesimulator/SafariLauncher.app
     if $should_reset_realsafari; then
+        echo "* Cloning/updating SafariLauncher"
+        run_cmd git submodule update --init submodules/SafariLauncher
         echo "* Building SafariLauncher for real devices"
+        run_cmd rm -rf build/SafariLauncher
+        run_cmd mkdir -p build/SafariLauncher
         run_cmd rm -f submodules/Safarilauncher/target.xcconfig
         echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> submodules/Safarilauncher/target.xcconfig
         if [[ ! -z $code_sign_identity ]]; then

@@ -6,7 +6,6 @@ var wd = require('wd')
   , sauce = require("saucelabs")
   , sauceRest = null
   , path = require("path")
-  , should = require("should")
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
   , defaultIosVer = '7.0'
@@ -31,7 +30,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   port = (typeof port === "undefined" || port === null) ? _.clone(defaultPort) : port;
   caps = (typeof caps === "undefined" || caps === null) ? _.clone(defaultCaps) : caps;
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
-  caps.launchTimeout = 35000;
+  caps.launchTimeout = 30000;
   var driverHolder = {driver: null, sessionId: null};
   var expectConnError = extraCaps && extraCaps.expectConnError;
 
@@ -41,44 +40,18 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
     }
 
     driverHolder.driver = wd.remote(host, port);
-    var timeoutMs = caps.launchTimeout + 5000;
-    var waitBetweenTries = 3000;
-    var tries = 0;
+    driverHolder.driver.init(caps, function(err, sessionId) {
+      if (expectConnError && err) {
+        driverHolder.connError = err;
+        return done();
+      } else if (err) {
+        return done(err);
+      }
 
-    var getSessionWithRetry = function() {
-      var alreadyReturned = false;
-      var respond = function(err) {
-        if (!alreadyReturned) {
-          alreadyReturned = true;
-          if (err && tries < 3) {
-            tries++;
-            console.log("Could not get session, trying again (" +
-                        err.message + ")");
-            setTimeout(getSessionWithRetry, waitBetweenTries);
-          } else {
-            done(err);
-          }
-        }
-      };
+      driverHolder.sessionId = sessionId;
+      driverHolder.driver.setImplicitWaitTimeout(5000, done);
+    });
 
-      setTimeout(function() {
-        respond(new Error("Timed out waiting for session"));
-      }, timeoutMs);
-
-      driverHolder.driver.init(caps, function(err, sessionId) {
-        if (expectConnError && err) {
-          driverHolder.connError = err;
-          return respond();
-        } else if (err) {
-          return respond(err);
-        }
-
-        driverHolder.sessionId = sessionId;
-        driverHolder.driver.setImplicitWaitTimeout(5000, respond);
-      });
-    };
-
-    getSessionWithRetry();
   });
 
   afterEach(function(done) {

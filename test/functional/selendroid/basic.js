@@ -64,6 +64,15 @@ describeWd('basic', function(h) {
     });
   });
 
+  it('should error out nicely with incompatible commands', function(done) {
+    h.driver.execute("mobile: flick", [{}], function(err) {
+      should.exist(err);
+      err.status.should.equal(9);
+      err.cause.value.origValue.should.contain('mobile:');
+      done();
+    });
+  });
+
 });
 
 describeWd('command timeouts', function(h) {

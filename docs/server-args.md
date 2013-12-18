@@ -16,6 +16,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-dp`, `--device-port`|4724|(Android-only) port to connect to device on|`--device-port 4724`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
+|`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of clearing app data||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||

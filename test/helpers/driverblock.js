@@ -100,7 +100,7 @@ var describeForSafari = function() {
       , app: 'safari'
       , device: 'iPhone Simulator'
       , platform: 'Mac'
-      , version: "6.1"
+      , version: process.env.IOS_VERSION || "6.1"
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };

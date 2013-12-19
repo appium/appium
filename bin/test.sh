@@ -68,14 +68,14 @@ if $ios_only || $all_tests; then
     else
         echo "Did not find /Applications/Xcode-6.1.app, using default"
     fi
-    time $appium_mocha $ios_testfile
+    IOS_VERSION=6.1 time $appium_mocha $ios_testfile
 fi
 
 if $ios7_only || $all_tests; then
     echo "RUNNING IOS 7.0 TESTS"
     echo "---------------------"
     ios7_testfile="./test/functional/_joined/ios7.js"
-    ios7_dirs="testapp uicatalog webview iwebview"
+    ios7_dirs="testapp safari uicatalog webview iwebview"
     join_testfiles ios7 $ios7_testfile $ios7_dirs
     if test -d /Applications/Xcode-7.0.app; then
         echo "Found Xcode for iOS 7.0, switching to it"
@@ -84,7 +84,7 @@ if $ios7_only || $all_tests; then
     else
         echo "Did not find /Applications/Xcode-7.0.app, using default"
     fi
-    time $appium_mocha $ios7_testfile
+    IOS_VERSION=7.0 time $appium_mocha $ios7_testfile
 fi
 
 if $did_switch_xcode; then

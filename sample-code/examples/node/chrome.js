@@ -3,7 +3,7 @@
 var wd = require("wd")
   , should = require("should");
 
-// Instantiate a new browser sessoin
+// Instantiate a new browser session
 var browser = wd.remote("localhost", 4723);
 
 // See whats going on

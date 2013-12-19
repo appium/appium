@@ -101,6 +101,15 @@ reset_general() {
 
 reset_ios() {
     echo "RESETTING IOS"
+    set +e
+    sdk_ver=$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null)
+    sdk_status=$?
+    set -e
+    if [ $sdk_status -gt 0 ] || [[ "$sdk_ver" != "7."* ]]; then
+      echo "--------------------------------------------------"
+      echo "WARNING: you do not appear to have iOS7 SDK active"
+      echo "--------------------------------------------------"
+    fi
     echo "* Cloning/updating ForceQuitUnresponsiveApps"
     run_cmd git submodule update --init submodules/ForceQuitUnresponsiveApps
     echo "* Building ForceQuitUnresponsiveApps"

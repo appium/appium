@@ -4,15 +4,15 @@
 var path = require('path')
   , describeWd = null
   , appPkg = "io.appium.gappium.sampleapp"
-  , appAct = "HelloGappium"
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/ios/build/" + appAct + ".app")
+  , appAct = ".HelloGappium"
+  , appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/ios/build/HelloGappium.app")
   , driverBlock = require("../../helpers/driverblock.js")
   , it = driverBlock.it
   , should = require('should');
 
 // export env APPIUM_CORDOVA="android" to run tests against android version
 if (typeof process.env.APPIUM_CORDOVA !== "undefined" && process.env.APPIUM_CORDOVA === "android") {
-  appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/android/bin/" + appAct + "-debug.apk");
+  appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/android/bin/HelloGappium-debug.apk");
   describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct);
 } else {
   describeWd = driverBlock.describeForApp(appPath, "ios", appPkg, appAct);

@@ -8,13 +8,11 @@ var wd = require('wd')
   , path = require("path")
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
-  , defaultIosVer = '7.0'
   , domain = require('domain')
   , defaultCaps = {
       browserName: ''
       , device: 'iPhone Simulator'
       , platform: 'Mac'
-      , version: defaultIosVer
     };
 
 if (process.env.SAUCE_ACCESS_KEY && process.env.SAUCE_USERNAME) {
@@ -99,8 +97,6 @@ var describeForSafari = function() {
       browserName: 'Safari'
       , app: 'safari'
       , device: 'iPhone Simulator'
-      , platform: 'Mac'
-      , version: process.env.IOS_VERSION || "6.1"
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };
@@ -120,8 +116,6 @@ var describeForIWebView = function() {
       browserName: ''
       , app: 'iwebview'
       , device: 'iPhone Simulator'
-      , platform: 'Mac'
-      , version: "7.0"
     };
     return describeWithDriver(desc, tests, host, port, caps, extraCaps, undefined, onlyify);
   };

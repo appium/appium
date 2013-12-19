@@ -18,6 +18,7 @@ var _ = require("underscore")
   , fs = require('fs')
   , helpers = require('./lib/helpers')
   , isWindows = helpers.isWindows()
+  , getXcodeFolder = helpers.getXcodeFolder
   , getXcodeVersion = helpers.getXcodeVersion
   , MAX_BUFFER_SIZE = 524288;
 
@@ -191,12 +192,30 @@ var auth_updateSecurityDb = function(grunt, insecure, cb) {
   });
 };
 
-module.exports.authorize = function(grunt, insecure, cb) {
-  auth_enableDevTools(grunt, function(err) {
-    if (err) grunt.fatal(err);
-    auth_updateSecurityDb(grunt, insecure, function(err) {
+var auth_chmodApps = function(grunt, cb) {
+  grunt.log.writeln("Granting access to built-in simulator apps");
+  var user;
+  if (!process.env.HOME) {
+    grunt.fatal(new Error("Could not determine your $HOME"));
+  } else {
+    user = /\/([^\/]+)$/.exec(process.env.HOME)[1];
+  }
+  getXcodeFolder(function(err, xcodeDir) {
+    if (err) return cb(err);
+    var glob = path.resolve(xcodeDir, "Platforms/iPhoneSimulator.platform/" +
+                            "Developer/SDKs/iPhoneSimulator*.sdk/Applications");
+    var cmd = "chown -R " + user + ": " + glob;
+    exec(cmd, function(err) {
       if (err) grunt.fatal(err);
       cb();
+    });
+  });
+};
+
+module.exports.authorize = function(grunt, insecure, cb) {
+  auth_enableDevTools(grunt, function() {
+    auth_updateSecurityDb(grunt, insecure, function() {
+      auth_chmodApps(grunt, cb);
     });
   });
 };

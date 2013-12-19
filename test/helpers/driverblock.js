@@ -30,7 +30,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   port = (typeof port === "undefined" || port === null) ? _.clone(defaultPort) : port;
   caps = (typeof caps === "undefined" || caps === null) ? _.clone(defaultCaps) : caps;
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
-  caps.launchTimeout = 30000;
+  caps.launchTimeout = 15000;
   var driverHolder = {driver: null, sessionId: null};
   var expectConnError = extraCaps && extraCaps.expectConnError;
 

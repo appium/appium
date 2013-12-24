@@ -6,7 +6,8 @@ var assert = require("assert")
   , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
   , it = require("../../helpers/driverblock.js").it
   , should = require('should')
-  , _ = require("underscore");
+  , fs = require('fs')
+  , path = require('path');
 
 describeWd('calc app', function(h) {
 
@@ -219,14 +220,16 @@ describeWd('calc app', function(h) {
     });
   });
 
-  it('should be able to get syslog log type', function(done) {
+  it('should be able to get syslog and crashlog log types', function(done) {
     h.driver.logTypes(function(err, logTypes) {
       should.not.exist(err);
       logTypes.should.include('syslog');
+      logTypes.should.include('crashlog');
       logTypes.should.not.include('logcat');
       done();
     });
   });
+
   it('should be able to get syslog logs', function(done) {
     h.driver.setImplicitWaitTimeout(4000, function(err) {
       should.not.exist(err);
@@ -240,6 +243,26 @@ describeWd('calc app', function(h) {
           should.exist(logs[0].timestamp);
           done();
         });
+      });
+    });
+  });
+
+  it('should be able to get crashlog logs', function(done) {
+    var dir = path.resolve(process.env.HOME, "Library", "Logs", "DiagnosticReports");
+    var msg = 'boom';
+    h.driver.log('crashlog', function(err, logsBefore) {
+      should.not.exist(err);
+      logsBefore.length.should.eql(0);
+
+      fs.writeFileSync(dir + '/myApp_'+ Date.parse(new Date()) + '_rocksauce.crash', msg);
+      h.driver.log('crashlog', function(err, logsAfter) {
+        should.not.exist(err);
+        logsAfter.length.should.be.above(0);
+        logsAfter[0].message.should.not.include("\n");
+        logsAfter[0].message.should.equal(msg);
+        logsAfter[0].level.should.equal("ALL");
+        should.exist(logsAfter[0].timestamp);
+        done();
       });
     });
   });

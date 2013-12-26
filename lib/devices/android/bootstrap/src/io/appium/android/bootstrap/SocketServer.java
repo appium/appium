@@ -21,6 +21,8 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.uiautomator.common.UiWatchers;
+
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
  * and then passes them on to the {@link AndroidCommandExecutor} class. It will
@@ -114,6 +116,7 @@ class SocketServer {
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
     loadStringsJson();
+    dismissCrashAlerts();
     final TimerTask updateWatchers = new TimerTask() {
       @Override
       public void run() {
@@ -139,6 +142,15 @@ class SocketServer {
       Logger.info("Closed client connection");
     } catch (final IOException e) {
       throw new SocketServerException("Error when client was trying to connect");
+    }
+  }
+
+  public void dismissCrashAlerts() {
+    try {
+      new UiWatchers().registerAnrAndCrashWatchers();
+      Logger.info("Registered crash watchers.");
+    } catch(Exception e) {
+      Logger.info("Unable to register crash watchers.");
     }
   }
 

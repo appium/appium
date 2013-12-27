@@ -50,7 +50,7 @@ var startRepl = function() {
   });
 };
 
-if (process.argv[2] === "shell") {
+if (process.argv[2] && process.argv[2].trim() === "--shell") {
   startRepl();
 } else {
   appium.run(args, function() { /* console.log('Rock and roll.'.grey); */ });

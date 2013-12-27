@@ -1,3 +1,49 @@
+CHANGES IN VERSION 0.13.0 (from 0.12.3)
+=======================================
+
+#### General
+- add sauce reporting to ruby example
+- normalize all ruby examples
+- don't allow linux platforms to run ios doctor checks
+- allow building of single platforms in reset.sh (don't delete other platforms)
+- fix bug with --show-config & npm
+- removed some unused tests
+- remove retry support from appium test harness
+- catch grid syntaxerror issue
+- make sure gappium tests actually get run
+
+#### iOS
+- update docs for setting up ios-webkit-debug-proxy
+- fix authorize_ios
+- make sure setLocale doesn't run on real devices
+- give webviews a bit of time to show up before we say they aren't there
+- fix the auth db doctor check to work for 10.7
+- when launching simulator without instruments, wait for sim logs
+- kill zombie sim daemon launchers
+- update mobile: reset
+- automatically retry launching instruments if it flakes out. The number of
+  retries can be set with `-r N` or `--backend-retries N`, where `N` is
+  the number of retries, including 0.
+- add support for automating real Safari (and other built-in apps) in iOS7
+- remove support for using iwebview as a Safari replacement
+- when running mobile safari tests, automatically detect ios version
+- update i-w-d for compatibility with xcode 5.1 / ios 7.1
+
+#### Android
+- remove dependency on grep for real devices
+- add 19.0.0 to possible build paths
+- add tests for apk downloading and fix apk downloading issue
+- check for API level >= 17 for uiautomator and fail sooner if not
+- fix issue where calculating md5 of app would use too much memory, for large
+  apps
+- fix bug with checking whether app already existed on device
+
+#### Selendroid
+- give useful error message if user tries to run a uiautomator-based
+  "mobile: " command in selendroid
+- update selendroid
+
+
 CHANGES IN VERSION 0.12.3 (from 0.12.2)
 =======================================
 

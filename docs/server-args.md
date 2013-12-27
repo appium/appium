@@ -16,10 +16,12 @@ All flags are optional, but some are required in conjunction with certain others
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-dp`, `--device-port`|4724|(Android-only) port to connect to device on|`--device-port 4724`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
+|`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
 |`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of clearing app data||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
+|`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
 |`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|
 |`--log-timestamp`|false|Show timestamps in console output||
 |`--log-no-colors`|false|Don't use colors in console output||
@@ -33,7 +35,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--device-name`|null|(IOS-Simulator-only) name of the iOS device to use|`--device-name iPhone Retina (4-inch)`|
-|`--default-device`|false|(IOS-Simulator-only) use the default simulator that instruments launches on its own||
+|`--default-device`, `-dd`|false|(IOS-Simulator-only) use the default simulator that instruments launches on its own||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
 |`--language`|null|(IOS-only) language for the iOS simulator|`--language en`|

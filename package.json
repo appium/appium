@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "0.12.3",
+  "version": "0.13.0",
   "author": "appium-discuss@googlegroups.com",
   "repository": {
     "type": "git",
@@ -69,7 +69,7 @@
     "adm-zip" : "~0.4.3",
     "ws": "0.4.31",
     "socket.io" : "~0.9.16",
-    "MD5" : "~1.1.0",
+    "md5calculator" : "~0.0.3",
     "through": "~2.3.4",
     "date-utils": "~1.2.14",
     "bytes": "~0.2.1"

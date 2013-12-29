@@ -1,43 +1,53 @@
-"use strict";
+// WD.js driver
+var wd = require("wd");
 
-var wd = require("wd")
-  , should = require("should")
-  , appURL = "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip";
+// Test libraries
+require('colors');
+var chai = require("chai");
+var chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
+chai.should();
 
-// Instantiate a new browser sessoin
-var browser = wd.remote("localhost", 4723);
+// Enable chai assertion chaining
+chaiAsPromised.transferPromiseness = wd.transferPromiseness;
+
+// Appium server info
+var host = process.env.APPIUM_HOST || "localhost",
+    port = parseInt(process.env.APPIUM_PORT || 4723);
+
+// Browser/app config
+var appURL = "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip";
+var desired = {
+    device: 'iPhone Simulator',
+    name: "Appium Hybrid App: with WD",
+    platform:'Mac',
+    app: appURL,
+    // version: '6.0',
+    browserName: '',
+    newCommandTimeout: 60
+};
+
+// Instantiate a new browser session
+var browser = wd.promiseChainRemote(host , port);
 
 // See whats going on
 browser.on('status', function(info) {
-  console.log('\x1b[36m%s\x1b[0m', info);
+  console.log(info.cyan);
 });
-
 browser.on('command', function(meth, path, data) {
-  console.log(' > \x1b[33m%s\x1b[0m: %s', meth, path, data || '');
+  console.log(' > ' + meth.yellow, path.grey, data || '');
 });
 
 // Run the test
 browser
-  .chain()
-  .init({
-    device: 'iPhone Simulator'
-    , name: "Appium Hybrid App: with WD"
-    , platform:'Mac 10.8'
-    , app: appURL
-    , version: '6.0'
-    , browserName: ''
+  .init(desired)
+  .windowHandles().then(function(handles) {
+    handles.should.have.length.above(0);
+    return browser
+      .window(handles[0])
+      .elementById('i_am_an_id')
+        .text().should.become("I am a div");
   })
-  .windowHandles(function(err, handles) {
-    handles.length.should.be.above(0);
-    browser.window(handles[0], function() {
-      browser.elementById('i_am_an_id', function(err, el) {
-        should.not.exist(err);
-        el.text(function(err, text) {
-          text.should.eql("I am a div");
-          browser.execute("mobile: leaveWebView", function() {
-            browser.quit();
-          });
-        });
-      });
-    });
-  });
+  .execute("mobile: leaveWebView")
+  .fin(function() { return browser.quit(); })
+  .done();

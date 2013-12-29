@@ -91,6 +91,7 @@
     "socket.io-client": "~0.9.16",
     "socks": "~0.0.1",
     "chai-as-promised": "~4.1.0",
-    "chai": "~1.8.1"
+    "chai": "~1.8.1",
+    "node-static": "~0.7.2"
   }
 }

@@ -1,19 +1,31 @@
-"use strict";
 // run with: node --harmony yiewd.js
+
+// todo: this app is not in the repo anymore
 
 var wd = require("yiewd")
   , should = require("should")
   , o_O = require("monocle-js").o_O
-  , path = require("path")
-  , appPath = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
-                           "Release-iphonesimulator", "UICatalog.app");
+  , path = require("path");
 
-var desiredCaps = {
-  device: 'iPhone Simulator'
-  , app: appPath
+// Appium server info
+var host = process.env.APPIUM_HOST || "localhost",
+    port = parseInt(process.env.APPIUM_PORT || 4723);
+
+// Browser/app config
+var appURL = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
+                           "Release-iphonesimulator", "UICatalog.app");
+console.log(appURL);
+var desired={
+  device: 'iPhone Simulator', 
+  name: "Appium: with WD", 
+  platform: "Mac", 
+  app: appURL,
+  // version: "6.0",
+  browserName: "",
+  newCommandTimeout: 60
 };
 
-var driver = wd.remote('localhost', 4723);
+var driver = wd.remote(host, port);
 
 var scrollToElement = o_O(function*(element) {
   var y = (yield element.getLocation()).y;
@@ -32,7 +44,7 @@ var scrollToElement = o_O(function*(element) {
 
 driver.run(function*() {
   try {
-    yield this.init(desiredCaps);
+    yield this.init(desired);
     yield (yield this.elementByName("Buttons, Various uses of UIButton")).click();
     var btns = yield this.elementsByTagName("button");
     for (var i = 1; i < 4; i++) {

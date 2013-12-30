@@ -1,3 +1,7 @@
+"use strict";
+
+// todo: figure out how to install chrome
+
 // WD.js driver
 var wd = require("wd");
 
@@ -11,27 +15,16 @@ chai.should();
 // Enable chai assertion chaining
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-// Appium server info
-var host = process.env.APPIUM_HOST || "localhost",
-    port = parseInt(process.env.APPIUM_PORT || 4723);
-
 // Browser/app config
 var desired = {
     device: 'Android',
-    app: "chrome"
-
-
-    // device: 'iPhone Simulator',
-    // name: "Appium Hybrid App: with WD",
-    // platform:'Mac',
-    // app: appURL,
-    // // version: '6.0',
-    // browserName: '',
-    // newCommandTimeout: 60
+    //platform: "Mac",
+    //version: "4.3",
+    app: "chrome",
 };
 
 // Instantiate a new browser session
-var browser = wd.promiseChainRemote(host , port);
+var browser = wd.promiseChainRemote("localhost" , 4723);
 
 // See whats going on
 browser.on('status', function(info) {
@@ -53,7 +46,7 @@ browser
         .sendKeys("This is an awesome comment")
       .elementById('submit')
         .click()
-      .waitForElementById('your_comments', 
+      .waitForElementById('your_comments',
         wd.asserters.textInclude("This is an awesome comment"))
       .fin(function() { return browser.quit(); });
   })

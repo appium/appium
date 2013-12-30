@@ -14,7 +14,6 @@ var host = process.env.APPIUM_HOST || "localhost",
 // Browser/app config
 var appURL = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
                            "Release-iphonesimulator", "UICatalog.app");
-console.log(appURL);
 var desired={
   device: 'iPhone Simulator', 
   name: "Appium: with WD", 

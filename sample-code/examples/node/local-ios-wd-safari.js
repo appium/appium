@@ -1,14 +1,12 @@
-// WD.js driver
+"use strict";
+
 var wd = require("wd");
 
-// Test libraries
 require('colors');
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 chai.should();
-
-// Enable chai assertion chaining
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 // Appium server info
@@ -17,9 +15,9 @@ var host = process.env.APPIUM_HOST || "localhost",
 
 // Browser/app config
 var desired={
-  device: 'iPhone Simulator', 
-  name: "Appium: with WD", 
-  platform: "Mac", 
+  device: 'iPhone Simulator',
+  name: "Appium: with WD",
+  platform: "Mac",
   app: "safari",
   // version: "6.0",
   browserName: "",
@@ -40,14 +38,24 @@ browser.on('command', function(meth, path, data) {
 // Run the test
 browser
   .init(desired)
-  .get("http://saucelabs.com/test/guinea-pig")
-  .waitForElementById('i_am_an_id', 5000)
-    .text().should.become("I am a div")
-  .elementById('comments')
-    .sendKeys("This is an awesome comment")
-  .elementById('submit')
-    .click()
-  .waitForElementById('your_comments', 
-    wd.asserters.textInclude("This is an awesome comment"))
-  .fin(function() { return browser.quit(); })
+  .then(function() {
+    browser
+      .get("http://saucelabs.com/test/guinea-pig")
+      .waitForElementById('i_am_an_id', 5000)
+        .text().should.become("I am a div")
+      .elementById('comments')
+        .sendKeys("This is an awesome comment")
+      .elementById('submit')
+        .click()
+      .waitForElementById('your_comments',
+        wd.asserters.textInclude("This is an awesome comment"))
+      .fin(function() { return browser
+        .sleep(3000)
+        .quit();
+      });
+  })
+  .catch(function(err) {
+    console.log(err);
+    throw err;
+  })
   .done();

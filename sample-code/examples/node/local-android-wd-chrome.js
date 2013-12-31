@@ -1,25 +1,25 @@
 "use strict";
 
-// todo: figure out how to install chrome
+/*
+You need to install Chrome first on your emulator (last tested against v30).
+(Look for a apk and use 'adb install', or install from Google play. Try first
+with an ARM emulator.) 
+*/
 
-// WD.js driver
 var wd = require("wd");
 
-// Test libraries
 require('colors');
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 chai.should();
-
-// Enable chai assertion chaining
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 // Browser/app config
 var desired = {
     device: 'Android',
     //platform: "Mac",
-    //version: "4.3",
+    version: "4.3", // Android version last tested against
     app: "chrome",
 };
 
@@ -35,7 +35,7 @@ browser.on('command', function(meth, path, data) {
 });
 
 
-// Run the test
+// Run the tests
 browser
   .init(desired).then(function() {
     browser
@@ -48,7 +48,12 @@ browser
         .click()
       .waitForElementById('your_comments',
         wd.asserters.textInclude("This is an awesome comment"))
+      .text()
+        .should.eventually.include('awesome')
       .fin(function() { return browser.quit(); });
   })
-  .catch(function(err) {console.log(err);})
+  .catch(function(err) {
+    console.log(err);
+    throw err;
+  })
   .done();

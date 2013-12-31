@@ -1,16 +1,15 @@
-/*global it:true, describe:true, beforeEach:true, afterEach:true */
+/*global it:true, describe:true, before:true, after:true */
 
+"use strict";
 
 /* EXAMPLE APPIUM + SAUCE LABS INTEGRATION
    First: npm install mocha -g; npm install wd
    Usage: SAUCE_USERNAME=xxx SAUCE_ACCESS_KEY=yyy mocha -R spec sauce.js */
 
-// WD.js driver
 var wd = require("wd");
 var Q = wd.Q;
 var _ = require('underscore');
 
-// Test libraries
 require('colors');
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
@@ -36,7 +35,7 @@ var desired={
   version: '6.1',
   app: appUrl,
   device: 'iPhone Simulator',
-  name: "Appium: with WD Mocha", 
+  name: "Appium: with WD Mocha",
   'device-orientation': 'portrait',
   platform: "Mac"
 };
@@ -46,7 +45,7 @@ describe('notes app', function() {
   var browser = null;
   var values = [];
 
-  beforeEach(function(done) {
+  before(function(done) {
     browser =  wd.promiseChainRemote(host, port, username, accessKey);
     // See whats going on
     browser.on('status', function(info) {
@@ -61,7 +60,7 @@ describe('notes app', function() {
       .nodeify(done);
   });
 
-  afterEach(function(done) {
+  after(function(done) {
     browser
       .quit()
       .nodeify(done);
@@ -70,7 +69,7 @@ describe('notes app', function() {
   it('should fill two fields with numbers', function(done) {
     browser
       .elementsByTagName('textField').then(function(elems) {
-        seq = [];
+        var seq = [];
         _(elems).each(function(elem) {
           seq.push(function() {
             var val = Math.round(Math.random()*10);
@@ -85,7 +84,7 @@ describe('notes app', function() {
       .elementByTagName('staticText')
         .text().then(function(text) {
           var sum = values[0] + values[1];
-          sum.should.equal(parseInt(text, 10));            
+          sum.should.equal(parseInt(text, 10));
         })
       .nodeify(done);
   });

@@ -1,14 +1,12 @@
-// WD.js driver
+"use strict";
+
 var wd = require("wd");
 
-// Test libraries
 require('colors');
 var chai = require("chai");
 var chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 chai.should();
-
-// Enable chai assertion chaining
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 // Appium server info
@@ -41,13 +39,24 @@ browser.on('command', function(meth, path, data) {
 // Run the test
 browser
   .init(desired)
-  .windowHandles().then(function(handles) {
-    handles.should.have.length.above(0);
-    return browser
-      .window(handles[0])
-      .elementById('i_am_an_id')
-        .text().should.become("I am a div");
+  .then(function() {
+    browser
+      .windowHandles().then(function(handles) {
+        handles.should.have.length.above(0);
+        return browser
+          .window(handles[0])
+          .elementById('i_am_an_id')
+            .text().should.become("I am a div");
+      })
+      .execute("mobile: leaveWebView")
+      .fin(function() {
+        return browser
+          .sleep(3000)
+          .quit();
+      });
   })
-  .execute("mobile: leaveWebView")
-  .fin(function() { return browser.quit(); })
+  .catch(function(err) {
+    console.log(err);
+    throw err;
+  })
   .done();

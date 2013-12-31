@@ -1,5 +1,7 @@
 /*global it:true, describe:true, beforeEach:true, afterEach:true */
 
+"use strict";
+
 /* EXAMPLE APPIUM + SAUCE LABS INTEGRATION
    First: npm install mocha -g; npm install wd
    Usage: SAUCE_USERNAME=xxx SAUCE_ACCESS_KEY=yyy mocha -R spec sauce-android-mocha-wd-notepad.js */

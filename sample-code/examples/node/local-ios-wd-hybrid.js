@@ -1,5 +1,11 @@
 "use strict";
 
+/*
+  run:
+    node local-ios-wd-hybrid.js
+*/
+
+
 var wd = require("wd");
 
 require('colors');
@@ -9,24 +15,18 @@ chai.use(chaiAsPromised);
 chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-// Appium server info
-var host = process.env.APPIUM_HOST || "localhost",
-    port = parseInt(process.env.APPIUM_PORT || 4723);
-
-// Browser/app config
-var appURL = "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip";
 var desired = {
     device: 'iPhone Simulator',
     name: "Appium Hybrid App: with WD",
     platform:'Mac',
-    app: appURL,
+    app: "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip",
     // version: '6.0',
     browserName: '',
     newCommandTimeout: 60
 };
 
 // Instantiate a new browser session
-var browser = wd.promiseChainRemote(host , port);
+var browser = wd.promiseChainRemote("localhost" , 4723);
 
 // See whats going on
 browser.on('status', function(info) {

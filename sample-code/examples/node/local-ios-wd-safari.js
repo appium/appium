@@ -1,5 +1,10 @@
 "use strict";
 
+/*
+  run:
+    node local-ios-wd-safari.js
+*/
+
 var wd = require("wd");
 
 require('colors');
@@ -9,11 +14,6 @@ chai.use(chaiAsPromised);
 chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-// Appium server info
-var host = process.env.APPIUM_HOST || "localhost",
-    port = parseInt(process.env.APPIUM_PORT || 4723);
-
-// Browser/app config
 var desired={
   device: 'iPhone Simulator',
   name: "Appium: with WD",
@@ -24,8 +24,7 @@ var desired={
   newCommandTimeout: 60
 };
 
-// Instantiate a new browser session
-var browser = wd.promiseChainRemote(host , port);
+var browser = wd.promiseChainRemote("localhost" , 4723);
 
 // See whats going on
 browser.on('status', function(info) {

@@ -4,6 +4,9 @@
 You need to install Chrome first on your emulator (last tested against v30).
 (Look for a apk and use 'adb install', or install from Google play. Try first
 with an ARM emulator.) 
+
+Then run:
+  node local-android-wd-chrome.js
 */
 
 var wd = require("wd");
@@ -15,7 +18,6 @@ chai.use(chaiAsPromised);
 chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-// Browser/app config
 var desired = {
     device: 'Android',
     //platform: "Mac",

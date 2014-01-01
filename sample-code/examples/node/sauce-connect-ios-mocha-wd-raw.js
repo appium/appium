@@ -2,19 +2,24 @@
 
 "use strict";
 
-/* EXAMPLE APPIUM + SAUCE LABS INTEGRATION
-   First: npm install mocha -g; npm install wd
-   Usage: SAUCE_USERNAME=xxx SAUCE_ACCESS_KEY=yyy mocha -R spec sauce.js */
+/* 
+  1/ Set your sauce credentials (SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables)
+  2/ npm install mocha -g;
+  3/ Start Sauce Connect
+  4/ Run: 
+    mocha -R spec sauce-connect-ios-mocha-wd-raw.js 
+*/
 
 var wd = require("wd"),
     Q = wd.Q,
     _ = require('underscore');
 
 require('colors');
-var chai = require("chai");
-var chaiAsPromised = require("chai-as-promised");
+var chai = require("chai"),
+    chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 chai.should();
+chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var staticServer = require('node-static'),
     path = require("path"),
@@ -29,12 +34,8 @@ var server = http.createServer(function(req, res) {
   }).resume();
 }).listen(8080);
 
-// Enable chai assertion chaining
-chaiAsPromised.transferPromiseness = wd.transferPromiseness;
-
-// Appium server info
-var host = process.env.APPIUM_HOST || "localhost",
-    port = parseInt(process.env.APPIUM_PORT || 4445),
+var host = "localhost",
+    port = 4445,
     username = process.env.SAUCE_USERNAME,
     accessKey = process.env.SAUCE_ACCESS_KEY;
 

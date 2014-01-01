@@ -2,14 +2,12 @@
 "use strict";
 
 /*
-This is using the built-in contact app in Android 4.3
-
 First you need to install node > 0.11 to run this. 
 (You may use this https://github.com/visionmedia/n for easy install/switch 
 between node versions)
 
 Then run:
-node --harmony local-android-yiewd-contacts.js
+  node --harmony local-android-yiewd-contacts.js
 */
 
 var wd = require("yiewd"),
@@ -18,8 +16,8 @@ require('colors');
 
 var desired = {
   device: 'Android',
-  version: "4.3", // Android version last tested against
-  "app-package": "com.android.contacts",
+  version: "4.3", // 4.3 only
+  "app-package": "com.android.contacts", // built-in contact app
   "app-activity": "activities.PeopleActivity"
 };
 

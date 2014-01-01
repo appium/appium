@@ -1,20 +1,17 @@
 "use strict";
 
 /*
-This is using the built-in contact app in Android 4.3
+run:
+  node local-android-wd-contacts.js
 */
 
-var wd = require("wd"),
-    path = require("path");
+var wd = require("wd");
 require('colors');
 
-// Browser/app config
-var appURL = path.resolve(__dirname, '../../apps/ContactManager/ContactManager.apk');
-console.log(appURL);
 var desired = {
   device: 'Android',
-  version: "4.3", // Android version last tested against
-  "app-package": "com.android.contacts",
+  version: "4.3", // 4.3 only 
+  "app-package": "com.android.contacts", // built-in contact app
   "app-activity": "activities.PeopleActivity"
 };
 

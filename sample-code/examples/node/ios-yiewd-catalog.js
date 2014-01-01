@@ -2,16 +2,18 @@
 "use strict";
 
 /*
-This crashes on ios 7 emulator, but you can try it on sauce 6.1 by passing SAUCE_CONNECT=1
-
 First you need to install node > 0.11 to run this. 
 (You may use this https://github.com/visionmedia/n for easy install/switch 
 between node versions)
 
-Then run:
-node --harmony ios-yiewd-catalog.js
-*/
+LOCAL APPIUM (not working with ios 7, try on Sauce Labs instead):
+  node --harmony ios-yiewd-catalog.js
 
+APPIUM ON SAUCE LABS USING SAUCE CONNECT:
+  1/ Set your sauce credentials (SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables)
+  2/ Start Sauce Conect
+  3/ SAUCE_CONNECT=1 node --harmony ios-yiewd-catalog.js
+*/
 
 var wd = require("yiewd")
   , o_O = require("monocle-js").o_O
@@ -28,6 +30,8 @@ var staticServer = require('node-static'),
 var host, port, username, accessKey, desired, server;
 
 if(process.env.SAUCE_CONNECT){
+  // Sauce Labs + Sauce Connect config
+
   // create a local server to host our app
   server = http.createServer(function(req, res) {
     req.addListener('end', function() {
@@ -35,13 +39,11 @@ if(process.env.SAUCE_CONNECT){
     }).resume();
   }).listen(8080);
 
-  // Appium server info
   host = "localhost";
   port = 4445;
   username = process.env.SAUCE_USERNAME;
   accessKey = process.env.SAUCE_ACCESS_KEY;
 
-  // Browser/app config
   desired={
     device: 'iPhone Simulator',
     name: "Appium: with WD",
@@ -54,11 +56,10 @@ if(process.env.SAUCE_CONNECT){
   };
 } else {
   // local config
-  // Appium server info
+
   host = "localhost";
   port = 4723;
 
-  // Browser/app config
   var appPath = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
                              "Release-iphonesimulator", "UICatalog.app");
   desired={

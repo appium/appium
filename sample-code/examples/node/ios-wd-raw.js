@@ -1,7 +1,12 @@
 "use strict";
 
 /*
-pass SAUCE=1 to run on sauce
+LOCAL APPIUM:
+  node ios-wd-raw.js
+
+APPIUM ON SAUCE LABS:
+  1/ Set your sauce credentials (SAUCE_USERNAME and SAUCE_ACCESS_KEY environment variables)
+  2/ SAUCE=1 node ios-wd-raw.js 
 */
 
 var wd = require("wd");
@@ -16,6 +21,7 @@ chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 var host, port, username, accessKey, desired;
 
 if(process.env.SAUCE) {
+  // Sauce Labs config
   host = "ondemand.saucelabs.com";
   port = 80;
   username = process.env.SAUCE_USERNAME;
@@ -32,11 +38,10 @@ if(process.env.SAUCE) {
   };
 
 } else {
-  // local
+  // local config
   host = "localhost";
   port = 4723;
 
-  // Browser/app config
   desired={
     device: 'iPhone Simulator',
     name: "Appium: with WD",

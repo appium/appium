@@ -1,4 +1,3 @@
-/* global describe:true, before:true, after:true */
 "use strict";
 
 var path = require('path')
@@ -23,107 +22,98 @@ var path = require('path')
   , describeNoPkg = driverBlock.describeForApp(appPath, "android", null, appAct)
   , describeNoAct = driverBlock.describeForApp(appPath, "android", appPkg, null)
   , it = driverBlock.it
-  , should = require('should');
+  , chai = require('chai')
+  , should = chai.should();
 
 describeWd('basic', function(h) {
-  it('should get device size', function(done) {
-    h.driver.getWindowSize(function(err, size) {
-      should.not.exist(err);
-      size.width.should.be.above(0);
-      size.height.should.be.above(0);
-      done();
-    });
-  });
   it('should die with short command timeout', function(done) {
     var params = {timeout: 3};
-    h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
-      should.not.exist(err);
-      var next = function() {
-        h.driver.elementByName('Animation', function(err) {
-          should.exist(err);
-          [13, 6].should.include(err.status);
-          done();
-        });
-      };
-      setTimeout(next, 4000);
-    });
-  });
-  it('should not die if commands come in', function(done) {
-    var params = {timeout: 3};
-    h.driver.execute("mobile: setCommandTimeout", [params], function(err) {
-      should.not.exist(err);
-      var start = Date.now();
-      var find = function() {
-        h.driver.elementByName('Animation', function(err, el) {
-          should.not.exist(err);
-          should.exist(el);
-          if ((Date.now() - start) < 5000) {
-            setTimeout(find, 500);
-          } else {
-            done();
-          }
-        });
-      };
-      find();
-    });
-  });
-  it('should be able to get current activity', function(done) {
-    h.driver.execute("mobile: currentActivity", function(err, activity) {
-      should.not.exist(err);
-      activity.should.include("ApiDemos");
-      done();
-    });
-  });
-  it('should be able to get logcat log type', function(done) {
-    h.driver.logTypes(function(err, logTypes) {
-      should.not.exist(err);
-      logTypes.should.include('logcat');
-      done();
-    });
-  });
-  it('should be able to get logcat logs', function(done) {
-    h.driver.log('logcat', function(err, logs) {
-      should.not.exist(err);
-      logs.length.should.be.above(0);
-      logs[0].message.should.not.include("\n");
-      logs[0].level.should.equal("ALL");
-      should.exist(logs[0].timestamp);
-      done();
-    });
-  });
-  it('should be able to detect if app is installed', function(done) {
-    h.driver.execute('mobile: isAppInstalled', [{bundleId: 'foo'}], function(err, isInstalled) {
-      should.not.exist(err);
-      isInstalled.should.equal(false);
-      h.driver.execute('mobile: isAppInstalled', [{bundleId: 'com.example.android.apis'}],
-        function(err, isInstalled) {
-          should.not.exist(err);
-          isInstalled.should.equal(true);
-          done();
-      });
-    });
+    h.driver
+      .execute("mobile: setCommandTimeout", [params])
+      .sleep(4000)
+      .elementByName('Animation')
+        .should.be.rejectedWith(/status: (13|6)/)
+      .nodeify(done);
   });
 });
 
+describeWd('basic', function(h) {
+  it('should not die if commands come in', function(done) {
+    var start;
+    var find = function() {
+      if ((Date.now() - start) < 5000) {
+        return h.driver
+          .elementByName('Animation').should.eventually.exist
+          .then(find);
+      }
+    };
+    var params = {timeout: 7};
+    h.driver
+      .execute("mobile: setCommandTimeout", [params])
+      .then(function() { start = Date.now(); })
+      .then(find)
+      .sleep(10000)
+      .elementByName('Animation').should.be.rejected
+      .nodeify(done);
+  });
+});
+
+describeWd('basic', function(h) {
+  it('should get device size', function(done) {
+    h.driver.getWindowSize()
+      .then(function(size) {
+        size.width.should.be.above(0);
+        size.height.should.be.above(0);
+      }).nodeify(done);
+  });
+
+  it('should be able to get current activity', function(done) {
+    h.driver
+      .execute("mobile: currentActivity")
+        .should.eventually.include("ApiDemos")
+      .nodeify(done);
+  });
+  it('should be able to get logcat log type', function(done) {
+    h.driver
+      .logTypes()
+        .should.eventually.include('logcat')
+      .nodeify(done);
+  });
+  it('should be able to get logcat logs', function(done) {
+    h.driver.log('logcat').then(function(logs) {
+      logs.length.should.be.above(0);
+      logs[0].message.should.not.include("\n");
+      logs[0].level.should.equal("ALL");
+      logs[0].timestamp.should.exist;
+    }).nodeify(done);
+  });
+  it('should be able to detect if app is installed', function(done) {
+    h.driver
+      .execute('mobile: isAppInstalled', [{bundleId: 'foo'}])
+        .should.eventually.equal(false)
+      .execute('mobile: isAppInstalled', [{bundleId: 'com.example.android.apis'}])
+        .should.eventually.equal(true)
+      .nodeify(done);
+  });
+});
+
+// todo: not working in Nexus7
 describeWd('without fastClear', function(h) {
   it('should still be able to reset', function(done) {
-    h.driver.execute('mobile: reset', function(err) {
-      should.not.exist(err);
-      h.driver.getWindowSize(function(err) {
-        should.not.exist(err);
-        done();
-      });
-    });
+    h.driver
+      .execute('mobile: reset')
+      .getWindowSize()
+      .nodeify(done);
   });
 }, null, null, null, {fastClear: false});
 
-describeWd2('activity style: no period', function(h) {
-  it('should should still find activity', function(done) {
+describeWd2('activity style: no period', function() {
+  it('should still find activity', function(done) {
     done();
   });
 }, null, null, null, {expectConnError: true});
 
-describeWd3('activity style: fully qualified', function(h) {
+describeWd3('activity style: fully qualified', function() {
   it('should still find activity', function(done) {
     done();
   });
@@ -131,7 +121,7 @@ describeWd3('activity style: fully qualified', function(h) {
 
 describeWd4('activity style: non-existent', function(h) {
   it('should throw an error', function(done) {
-    should.exist(h.connError);
+    h.connError.should.exist;
     var err = JSON.parse(h.connError.data);
     err.value.origValue.should.include("Activity used to start app doesn't exist");
     done();
@@ -140,7 +130,7 @@ describeWd4('activity style: non-existent', function(h) {
 
 describeBad('bad app path', function(h) {
   it('should throw an error', function(done) {
-    should.exist(h.connError);
+    h.connError.should.exist;
     var err = JSON.parse(h.connError.data);
     err.value.origValue.should.include("Error locating the app");
     done();
@@ -149,7 +139,7 @@ describeBad('bad app path', function(h) {
 
 describeNoAct('no activity sent in with caps', function(h) {
   it('should throw an error', function(done) {
-    should.exist(h.connError);
+    h.connError.should.exist;
     var err = JSON.parse(h.connError.data);
     err.value.origValue.should.include("app-activity");
     done();
@@ -158,7 +148,7 @@ describeNoAct('no activity sent in with caps', function(h) {
 
 describeNoPkg('no package sent in with caps', function(h) {
   it('should throw an error', function(done) {
-    should.exist(h.connError);
+    h.connError.should.exist;
     var err = JSON.parse(h.connError.data);
     err.value.origValue.should.include("app-package");
     done();
@@ -181,26 +171,21 @@ describe('pre-existing uiautomator session', function() {
           pids.length.should.equal(1);
           done();
         });
-      }, 500);
+      }, 2000);
     });
   });
   describeWd('launching new session', function(h) {
     it('should kill pre-existing uiautomator process', function(done) {
-      h.driver.getWindowSize(function(err) {
-        should.not.exist(err);
-        done();
-      });
+      h.driver.getWindowSize().should.eventually.exist
+        .nodeify(done);
     });
   });
 });
 
 describeUrl('appium android', function(h) {
   it('should load a zipped app via url', function(done) {
-    h.driver.execute("mobile: currentActivity", function(err, activity) {
-      should.not.exist(err);
-      activity.should.include("ApiDemos");
-      done();
-    });
+    h.driver.execute("mobile: currentActivity")
+      .should.eventually.include("ApiDemos")
+      .nodeify(done);
   });
 });
-

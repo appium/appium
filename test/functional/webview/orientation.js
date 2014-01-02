@@ -2,20 +2,15 @@
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
   , it = require("../../helpers/driverblock.js").it
-  , _ = require('underscore')
-  , should = require('should');
+  , _ = require('underscore');
 
 describeWd('orientation', function(h) {
    var testOrientation = function(specOrientation) {
      it('should get and set - ' + specOrientation, function(done) {
-       h.driver.setOrientation(specOrientation, function(err) {
-         should.not.exist(err);
-         h.driver.getOrientation(function(err, orientation) {
-           should.not.exist(err);
-           orientation.should.eql(specOrientation);
-           done();
-         });
-       });
+       h.driver
+        .setOrientation(specOrientation)
+        .getOrientation().should.become(specOrientation)
+        .nodeify(done);
      });
    };
    _.each(["LANDSCAPE", "PORTRAIT"], testOrientation);

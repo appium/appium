@@ -1,31 +1,20 @@
 "use strict";
 
 var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it
-  , should = require('should');
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('element size', function(h) {
-  return it('should return the right width and height', function(done) {
-    h.driver.elementByTagName('button', function(err, element) {
-      should.not.exist(err);
-      should.exist(element.value);
-      element.getSize(function(err, size) {
-        should.not.exist(err);
-        size.width.should.eql(113);
-        size.height.should.eql(37);
-        done();
-      });
-    });
+  it('should return the right element size', function(done) {
+    h.driver.elementByTagName('button').getSize().then(function(size) {
+      size.width.should.eql(113);
+      size.height.should.eql(37);
+    }).nodeify(done);
   });
-});
 
-describeWd('window size', function(h) {
-  return it('should return the right width and height', function(done) {
-    h.driver.getWindowSize(function(err, size) {
-      should.not.exist(err);
+  it('should return the window size', function(done) {
+    h.driver.getWindowSize().then(function(size) {
       size.width.should.equal(320);
       size.height.should.equal(480);
-      done();
-    });
+    }).nodeify(done);
   });
 });

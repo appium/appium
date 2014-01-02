@@ -79,7 +79,6 @@
   },
   "devDependencies": {
     "mocha": "~1.14.0",
-    "should": "~2.1.0",
     "underscore-cli": "~0.2.17",
     "wd": "~0.2.8",
     "yiewd": "~0.2.0",
@@ -92,6 +91,7 @@
     "socks": "~0.0.1",
     "chai-as-promised": "~4.1.0",
     "chai": "~1.8.1",
-    "node-static": "~0.7.2"
+    "node-static": "~0.7.2",
+    "chai": "~1.8.1"
   }
 }

@@ -1,4 +1,3 @@
-/*global beforeEach:true, afterEach:true, describe:true, it:true */
 "use strict";
 
 var wd = require('yiewd')
@@ -7,7 +6,6 @@ var wd = require('yiewd')
   , run = monocle.run
   , o_O = monocle.o_O
   , path = require("path")
-  , should = require("should")
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
   , defaultCaps = {

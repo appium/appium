@@ -1,45 +1,22 @@
 "use strict";
 
+// todo: this was converted to promise chain api, but not tested.
 var describeWd = require('../../helpers/driverblock.js').describeForApp('Contacts', 'firefox')
-  , it = require("../../helpers/driverblock.js").it
-  , should = require("should");
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('firefoxos', function(h) {
   return it('should load app', function(done) {
     var firstName = "Name";
     var lastName = Date.now().toString();
-    h.driver.url(function(err, url) {
-      should.not.exist(err);
-      url.should.eql("app://communications.gaiamobile.org/contacts/index.html");
-      h.driver.elementById('add-contact-button', function(err, el) {
-        should.not.exist(err);
-        el.click(function(err) {
-          should.not.exist(err);
-          h.driver.elementById('givenName', function(err, name1) {
-            should.not.exist(err);
-            name1.sendKeys(firstName);
-            h.driver.elementById('familyName', function(err, name2) {
-              should.not.exist(err);
-              name2.sendKeys(lastName);
-              h.driver.elementById('save-button', function(err, save) {
-                should.not.exist(err);
-                save.click(function(err) {
-                  should.not.exist(err);
-                  h.driver.elementByTagName('body', function(err, body) {
-                    setTimeout(function() {
-                      body.text(function(err, text) {
-                        should.not.exist(err);
-                        text.should.include(firstName + " " + lastName);
-                        done();
-                      });
-                    }, 1000);
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
+    h.driver
+      .url().should.become("app://communications.gaiamobile.org/contacts/index.html")
+      .elementById('add-contact-button').click()
+      .elementById('givenName').sendKeys(firstName)
+      .elementById('familyName').sendKeys(lastName)
+      .elementById('save-button').click()
+      .sleep(1000)
+      .elementByTagName('body').text()
+        .should.eventually.include(firstName + " " + lastName)
+      .nodeify(done);
   });
 });

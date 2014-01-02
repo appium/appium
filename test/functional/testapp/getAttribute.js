@@ -1,16 +1,12 @@
 "use strict";
 
 var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it
-  , assert = require('assert');
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('getAttribute', function(h) {
-  return it('should get element attribute', function(done) {
-    h.driver.elementByTagName('button', function(err, elem) {
-      elem.getAttribute("name", function(err, value){
-        assert.equal(value, "ComputeSumButton");
-        done();
-      });
-    });
+  it('should get element attribute', function(done) {
+    h.driver
+      .elementByTagName('button').getAttribute("name").should.become("ComputeSumButton")
+      .nodeify(done);
   });
 });

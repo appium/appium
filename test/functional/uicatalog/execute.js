@@ -1,28 +1,23 @@
 "use strict";
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it
-  , should = require("should");
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('execute', function(h) {
   it('should do UIAutomation commands if not in web frame', function(done) {
-    h.driver.execute("UIATarget.localTarget().frontMostApp().bundleID()", function(err, value) {
-      should.not.exist(err);
-      value.should.equal("com.example.apple-samplecode.UICatalog");
-      done();
-    });
+    h.driver
+      .execute("UIATarget.localTarget().frontMostApp().bundleID()")
+        .should.eventually.include(".UICatalog")
+      .nodeify(done);
   });
   it('should not fail if UIAutomation command blows up', function(done) {
-    h.driver.execute("UIATarget.foobarblah()", function(err) {
-      should.exist(err);
-      err.status.should.equal(17);
-      done();
-    });
+    h.driver
+      .execute("UIATarget.foobarblah()")
+        .should.be.rejectedWith(/status: 17/)
+      .nodeify(done);
   });
   it('should not fail with quotes', function(done) {
-    h.driver.execute('console.log(\'hi\\\'s\');', function(err) {
-      should.not.exist(err);
-      done();
-    });
+    h.driver.execute('console.log(\'hi\\\'s\');')
+      .nodeify(done);
   });
 });

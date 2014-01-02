@@ -182,3 +182,38 @@ Style notes
     ```js
     myVariable === undefined
     ```
+
+##  Test Style:
+    
+Keep on the same line is it makes sense semantically and length is not an issue:  
+
+Examples:
+
+```js
+  h.driver.elementByTagName('el1').should.become("123")
+    .nodeify(done);
+  
+  h.driver
+    .elementsByTagName('el1').should.eventually.have.length(0)
+    .nodeify(done);
+```
+
+Alternatively use extra indents to improve readability:
+
+```js
+h.driver
+  .elementById('comments')
+    .clear()
+    .click()
+    .keys("hello world")
+    .getValue()
+    .should.become("hello world")
+  .elementById('comments')
+    .getValue().should.become("hello world")
+  .nodeify(done);
+
+h.driver
+  .execute("'nan'--")
+    .should.be.rejectedWith("status: 13")
+  .nodeify(done);        
+```

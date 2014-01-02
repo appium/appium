@@ -44,7 +44,7 @@ var timeout = process.env.TIMEOUT || 300000;
 
 // Browser/app config
 var appUrl = 'http://localhost:8080/TestApp6.0.app.zip';
-var desired={
+var desired = {
   browserName: '',
   version: '6.1',
   app: appUrl,

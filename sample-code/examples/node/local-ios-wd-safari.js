@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
-var desired={
+var desired = {
   device: 'iPhone Simulator',
   name: "Appium: with WD",
   platform: "Mac",

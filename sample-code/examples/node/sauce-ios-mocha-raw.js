@@ -28,7 +28,7 @@ var host = "ondemand.saucelabs.com",
 // Big timeout is needed
 var timeout = process.env.TIMEOUT || 300000;
 
-var desired={
+var desired = {
   browserName: '',
   version: '6.1',
   app: 'http://appium.s3.amazonaws.com/TestApp6.0.app.zip',

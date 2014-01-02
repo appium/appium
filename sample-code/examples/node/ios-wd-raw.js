@@ -20,14 +20,14 @@ chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var host, port, username, accessKey, desired;
 
-if(process.env.SAUCE) {
+if (process.env.SAUCE) {
   // Sauce Labs config
   host = "ondemand.saucelabs.com";
   port = 80;
   username = process.env.SAUCE_USERNAME;
   accessKey = process.env.SAUCE_ACCESS_KEY;
 
-  desired={
+  desired = {
     browserName: '',
     version: '6.1',
     app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
@@ -42,7 +42,7 @@ if(process.env.SAUCE) {
   host = "localhost";
   port = 4723;
 
-  desired={
+  desired = {
     device: 'iPhone Simulator',
     name: "Appium: with WD",
     platform: "Mac",

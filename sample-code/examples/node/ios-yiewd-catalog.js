@@ -29,7 +29,7 @@ var staticServer = require('node-static'),
 
 var host, port, username, accessKey, desired, server;
 
-if(process.env.SAUCE_CONNECT){
+if (process.env.SAUCE_CONNECT){
   // Sauce Labs + Sauce Connect config
 
   // create a local server to host our app
@@ -44,7 +44,7 @@ if(process.env.SAUCE_CONNECT){
   username = process.env.SAUCE_USERNAME;
   accessKey = process.env.SAUCE_ACCESS_KEY;
 
-  desired={
+  desired = {
     device: 'iPhone Simulator',
     name: "Appium: with WD",
     //platform: "Mac",
@@ -62,7 +62,7 @@ if(process.env.SAUCE_CONNECT){
 
   var appPath = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
                              "Release-iphonesimulator", "UICatalog.app");
-  desired={
+  desired = {
     device: 'iPhone Simulator',
     name: "Appium: with WD",
     platform: "Mac",
@@ -152,5 +152,5 @@ browser.run(function*() {
   }
   yield this.sleep(3);
   yield this.quit();
-  if(server) { server.close(); }
+  if (server) { server.close(); }
 });

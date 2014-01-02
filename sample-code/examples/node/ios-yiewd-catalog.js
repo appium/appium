@@ -152,5 +152,5 @@ browser.run(function*() {
   }
   yield this.sleep(3);
   yield this.quit();
-  if (server) { server.close(); }
+  if (server) server.close();
 });

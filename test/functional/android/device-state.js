@@ -14,6 +14,9 @@ describe('Android Device State module', function() {
     childProcess.exec("adb devices", function(err, stdout) {
       should.not.exist(err);
       var device = /\n([A-Za-z0-9\-]+)\W+device\n/.exec(stdout);
+      if (!device) {
+        throw new Error("Looks like device isn't ready for test");
+      }
       device = device[1];
       should.exist(device);
       done();

@@ -42,6 +42,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--language`|null|(IOS-only) language for the iOS simulator|`--language en`|
 |`--locale`|null|(IOS-only) locale for the iOS simulator|`--locale en_US`|
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
+|`--show-sim-log`|false|Show the iOS Simulator Log on the console||
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|

@@ -4,8 +4,10 @@ var path = require('path')
   , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
   , appPkg = "com.example.android.apis"
   , appAct = ".ApiDemos"
+  , appAct2 = "ApiDemos"
   , driverBlock = require("../../helpers/driverblock.js")
   , describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct)
+  , describeWd2 = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct2)
   , it = driverBlock.it
   , should = require('should');
 
@@ -102,3 +104,9 @@ describeWd('command timeouts', function(h) {
     find();
   });
 }, null, null, {newCommandTimeout: 3});
+
+describeWd2('app activities with no dot', function() {
+  it('should still launch app', function(done) {
+    done();
+  });
+});

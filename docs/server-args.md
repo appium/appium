@@ -8,6 +8,7 @@ All flags are optional, but some are required in conjunction with certain others
 
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
+|`--shell`|null|Enter REPL mode||
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
 |`-q`, `--quiet`|false|Don't use verbose logging output||
@@ -41,6 +42,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--language`|null|(IOS-only) language for the iOS simulator|`--language en`|
 |`--locale`|null|(IOS-only) locale for the iOS simulator|`--locale en_US`|
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
+|`--show-sim-log`|false|Show the iOS Simulator Log on the console||
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
@@ -48,7 +50,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
-|`--keystore-path`|/Users/jlipps/.android/debug.keystore|(Android-only) Path to keystore||
+|`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||

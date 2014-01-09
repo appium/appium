@@ -5,5 +5,7 @@
   "unused": true,
   "trailing": true,
   "node": true,
+  "eqeqeq": true,
+  "trailing": true,
   "es5": true
 }

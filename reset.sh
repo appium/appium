@@ -104,12 +104,14 @@ reset_ios() {
     set +e
     sdk_ver=$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null)
     sdk_status=$?
-    set -e
+    ios7_active=true
     if [ $sdk_status -gt 0 ] || [[ "$sdk_ver" != "7."* ]]; then
       echo "--------------------------------------------------"
       echo "WARNING: you do not appear to have iOS7 SDK active"
       echo "--------------------------------------------------"
+      ios7_active=false
     fi
+    set -e
     echo "* Cloning/updating ForceQuitUnresponsiveApps"
     run_cmd git submodule update --init submodules/ForceQuitUnresponsiveApps
     echo "* Building ForceQuitUnresponsiveApps"
@@ -122,14 +124,16 @@ reset_ios() {
     run_cmd cp -R submodules/ForceQuitUnresponsiveApps/bin/* build/force_quit
     echo "* Cloning/updating instruments-without-delay"
     run_cmd git submodule update --init submodules/instruments-without-delay
-    echo "* Building instruments-without-delay"
-    run_cmd pushd submodules/instruments-without-delay
-    run_cmd ./build.sh
-    run_cmd popd
-    echo "* Moving instruments-without-delay into build/iwd"
-    run_cmd rm -rf build/iwd
-    run_cmd mkdir build/iwd
-    run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
+    if $ios7_active ; then
+        echo "* Building instruments-without-delay"
+        run_cmd pushd submodules/instruments-without-delay
+        run_cmd ./build.sh
+        run_cmd popd
+        echo "* Moving instruments-without-delay into build/iwd"
+        run_cmd rm -rf build/iwd
+        run_cmd mkdir build/iwd
+        run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
+    fi
     run_cmd pushd ./assets
     echo "* Unzipping instruments without delay for XCode 4"
     run_cmd rm -rf ../build/iwd4
@@ -153,29 +157,33 @@ reset_ios() {
     run_cmd cp $appium_home/lib/server/status.js $appium_home/lib/devices/ios/uiauto/lib/status.js
     run_cmd rm -rf $appium_home/lib/devices/ios/uiauto/appium/xpath.js
     run_cmd cp $appium_home/lib/xpath.js $appium_home/lib/devices/ios/uiauto/appium/xpath.js
-    echo "* Cleaning/rebuilding WebViewApp"
-    run_cmd $grunt buildApp:WebViewApp
-    run_cmd rm -rf build/WebViewApp
-    run_cmd mkdir build/WebViewApp
-    run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
-        build/WebViewApp/
+    if $ios7_active ; then
+        echo "* Cleaning/rebuilding WebViewApp"
+        run_cmd $grunt buildApp:WebViewApp
+        run_cmd rm -rf build/WebViewApp
+        run_cmd mkdir build/WebViewApp
+        run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
+            build/WebViewApp/
+    fi
     if $include_dev ; then
-        if $hardcore ; then
-            echo "* Clearing out old UICatalog download"
-            run_cmd rm -rf ./sample-code/apps/UICatalog*
-        fi
-        if [ ! -d "./sample-code/apps/UICatalog" ]; then
-            echo "* Downloading UICatalog app source"
-            run_cmd curl -L https://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip -o ./sample-code/apps/UICatalog.zip
-            run_cmd pushd ./sample-code/apps
-            echo "* Unzipping UICatalog app source"
-            run_cmd unzip UICatalog.zip
-            run_cmd popd
+        if $ios7_active ; then
+            if $hardcore ; then
+                echo "* Clearing out old UICatalog download"
+                run_cmd rm -rf ./sample-code/apps/UICatalog*
+            fi
+            if [ ! -d "./sample-code/apps/UICatalog" ]; then
+                echo "* Downloading UICatalog app source"
+                run_cmd curl -L https://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip -o ./sample-code/apps/UICatalog.zip
+                run_cmd pushd ./sample-code/apps
+                echo "* Unzipping UICatalog app source"
+                run_cmd unzip UICatalog.zip
+                run_cmd popd
+            fi
+            echo "* Cleaning/rebuilding iOS test app: UICatalog"
+            run_cmd $grunt buildApp:UICatalog
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
         run_cmd $grunt buildApp:TestApp
-        echo "* Cleaning/rebuilding iOS test app: UICatalog"
-        run_cmd $grunt buildApp:UICatalog
     fi
     echo "* Setting iOS config to Appium's version"
     run_cmd $grunt setConfigVer:ios

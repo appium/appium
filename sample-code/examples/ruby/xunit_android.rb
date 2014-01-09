@@ -28,7 +28,7 @@ class SettingsTest < Test::Unit::TestCase
 		@driver=init
 	end
 	def test_settings
-		#flick the screen until find the Aboud phone item 
+		#flick the screen until find the Aboud phone item
 		while @driver.find_elements(:xpath, '//text[@text="About phone"]').count==0
 			begin
 				@driver.execute_script 'mobile: flick', :startY=>0.9, :endY=>0.1

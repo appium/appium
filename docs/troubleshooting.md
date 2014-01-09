@@ -35,6 +35,7 @@ In the Android SDK 22, the platform and build tools are split up into their own 
 * Make sure the Android emulator is up and running.
 * It's sometimes useful to run `adb kill-server && adb devices`. This can reset the connection to the Android device.
 * Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android) for more information).
+* Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
 ## IOS
 

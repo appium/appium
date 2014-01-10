@@ -33,4 +33,4 @@ Appium server capabilities
 |`language`| Language to set for the iOS Simulator|e.g. `fr`|
 |`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|
 |`locale`| Locale to set for the iOS Simulator|e.g. `fr_CA`|
-|`manualPermissionAlerts`| Handle iOS permissions alerts (e.g., for photos) on your own. Otherwise, Appium will automatically accept them for you|
+|`autoAcceptAlerts`| Accept iOS privacy access permission alerts (e.g., location, contacts, photos). Default is false.|

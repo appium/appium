@@ -423,9 +423,9 @@ module.exports.buildSelendroidServer = function(cb) {
     var destDir = path.resolve(__dirname, "build", "selendroid");
     var destBin = path.resolve(destDir, "selendroid.apk");
     var srcManifest = path.resolve(__dirname, "submodules", "selendroid",
-      "selendroid-server", "AndroidManifest.xml");
+        "selendroid-server", "AndroidManifest.xml");
     var dstManifest = path.resolve(destDir, "AndroidManifest.xml");
-    var cmd = "mvn clean install";
+    var cmd = "mvn clean package -DskipTests=true";
     exec(cmd, {cwd: buildDir, maxBuffer: MAX_BUFFER_SIZE}, function(err, stdout, stderr) {
       if (err) {
         console.error("Unable to build selendroid server. Stdout was: ");

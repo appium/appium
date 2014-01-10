@@ -59,7 +59,7 @@ if $ios_only || $all_tests; then
     echo "RUNNING IOS 6.1 TESTS"
     echo "---------------------"
     ios_testfile="./test/functional/_joined/ios.js"
-    ios_dirs="appium prefs safari testapp uicatalog webview appium gappium"
+    ios_dirs="appium prefs safari testapp uicatalog webview gappium"
     join_testfiles ios6.1 $ios_testfile $ios_dirs
     if test -d /Applications/Xcode-6.1.app; then
         echo "Found Xcode for iOS 6.1, switching to it"

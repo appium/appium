@@ -108,10 +108,9 @@ public class SauceTest implements SauceOnDemandSessionIdProvider {
         button.click();
         // is sum equal ?
         WebElement texts = driver.findElement(By.tagName("staticText"));
-        assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
+        assertEquals(String.valueOf(values.get(0) + values.get(1)), texts.getText());
     }
 
-    @Override
     public String getSessionId() {
         return sessionId;
     }

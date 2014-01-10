@@ -25,13 +25,30 @@ var path = require('path')
 module.exports = function(grunt) {
   grunt.initConfig({
     jshint: {
-      files: ['*.js', './**/*.js']
-      , options: {
+      options: {
         laxcomma: true
         , trailing: true
         , node: true
         , strict: true
-        , ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/devices/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/harmony/**/*.js', './test/functional/_joined/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
+      }, files: {
+        src: ['*.js', './**/*.js'],
+        options: {
+          ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/devices/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/**/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
+        }
+      }, test: {
+        src: ['test/**/*.js']
+      , options: {
+          ignores: ['./test/harmony/**/*.js', './test/functional/_joined/*.js']
+        , expr:true
+        , globals: {
+            'describe': true
+          , 'it': true
+          , 'before': true
+          , 'after': true
+          , 'beforeEach': true
+          , 'afterEach': true
+          }
+        }
       }
     }
     , mochaTest: {

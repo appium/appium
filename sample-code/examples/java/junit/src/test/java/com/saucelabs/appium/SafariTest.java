@@ -52,7 +52,7 @@ public class SafariTest {
         driver.get("http://saucelabs.com/test/guinea-pig");
         WebElement idElement = driver.findElement(By.id("i_am_an_id"));
         assertNotNull(idElement);
-        assertEquals(idElement.getText(), "I am a div");
+        assertEquals("I am a div", idElement.getText());
         WebElement commentElement = driver.findElement(By.id("comments"));
         assertNotNull(commentElement);
         commentElement.sendKeys("This is an awesome comment");

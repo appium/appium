@@ -75,6 +75,13 @@ describeWd('basic', function(h) {
     });
   });
 
+  it('should be able to uninstall the app', function(done) {
+    h.driver.execute("mobile: removeApp", [{bundleId: appPkg}], function(err) {
+      should.not.exist(err);
+      done();
+    });
+  });
+
 });
 
 describeWd('command timeouts', function(h) {

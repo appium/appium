@@ -5,7 +5,7 @@ Appium server capabilities
 |----|-----------|-------|
 |`app`|The absolute local path _or_ remote http URL to an `.ipa` or `.apk` file, or a `.zip` containing one of these. Appium will attempt to install this app binary on the appropriate device first. Can also be one of `chrome` or `chromium` to launch Chrome or Chromium on Android, or `safari` to launch Mobile Safari on iOS. Note that this capability is not required for Android if you specify `app-package` and `app-activity` capabilities (see below).|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`, `chrome`, `chromium` on Android, `safari` on iOS|
 |`browserName`|(for Selenium compatibility)|should always be `''`; this exists because some clients require it to be sent|
-|`device`|The kind of mobile device or emulator to use|`ios`, `selendroid`, `firefoxos`, `mock_ios`, `android` |
+|`device`|The kind of mobile device or emulator to use|`iphone`, `ipad`, `selendroid`, `firefoxos`, `android`, `mock_ios` |
 |`version`|Android API version, iOS Version|(Android) 4.2/4.3 (iOS) 6.0/6.1/7.0|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
 |`launch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|

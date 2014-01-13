@@ -7,6 +7,8 @@ information on how to run tests, keep reading!
 
 Make sure you read and follow the setup instructions in the README first.
 
+(_Important_: before submitting any patches, pull requests, or code, you must have signed our [Contributors License Agreement](https://docs.google.com/forms/d/1OFLsKmhNU64iwYx6O1OvWRU0u4pxibXbBgI57I59Yv4/viewform), using your real name and the e-mail address associated with your GitHub profile.)
+
 ## Using Appium
 
 An Appium setup involves the Appium server, which sends messages back and forth between

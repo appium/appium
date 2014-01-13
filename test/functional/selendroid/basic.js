@@ -5,10 +5,12 @@ var path = require('path')
   , appPkg = "com.example.android.apis"
   , appAct = ".ApiDemos"
   , appAct2 = "ApiDemos"
+  , appActFull = "com.example.android.apis.ApiDemos"
   , driverBlock = require("../../helpers/driverblock.js")
   , Q = driverBlock.Q
   , describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct)
   , describeWd2 = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct2)
+  , describeWdFull = driverBlock.describeForApp(appPath, "selendroid", appPkg, appActFull)
   , it = driverBlock.it;
 
 // if it doesn't work run: adb uninstall com.example.android.apis
@@ -97,7 +99,14 @@ describeWd('command timeouts', function(h) {
   });
 }, null, null, {newCommandTimeout: 7});
 
-describeWd2('app activities with no dot', function() {
+describeWd2('app activities with no dot', function(h) {
+  it('should not launch app', function(done) {
+    h.connError.should.exist;
+    done();
+  });
+}, null, null, {expectConnError: true});
+
+describeWdFull('fully qualified app activities', function() {
   it('should still launch app', function(done) {
     done();
   });

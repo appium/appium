@@ -28,7 +28,8 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
   caps.launchTimeout = parseInt(process.env.LAUNCH_TIMEOUT || 15000, 10);
   var driverHolder = {driver: null, sessionId: null};
-  var expectConnError = extraCaps && extraCaps.expectConnError;
+  var expectConnError = ((caps && caps.expectConnError) ||
+                         (extraCaps && extraCaps.expectConnError));
 
   var _before = beforeEach;
   var _after = afterEach;
@@ -43,7 +44,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
     }
 
     driverHolder.driver = wd.promiseChainRemote(host, port);
-    
+
     if (process.env.VERBOSE) {
       driverHolder.driver.on('status', function(info) {
         console.log(info);
@@ -52,7 +53,7 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
         console.log(' > ' + meth, path, data || '');
       });
     }
-    
+
     driverHolder.driver
       .init(caps)
       .then(
@@ -81,7 +82,11 @@ var driverBlock = function(tests, host, port, caps, extraCaps) {
     }
     driverHolder.driver
       .quit()
-      .catch(function() { console.warn("didn't quit cleanly."); })
+      .catch(function() {
+        if (!expectConnError) {
+          console.warn("didn't quit cleanly.");
+        }
+      })
       .then( function() {
         if (onSauce) return driverHolder.driver.sauceJobStatus(passed);
       })

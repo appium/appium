@@ -7,7 +7,6 @@ var path = require('path')
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
   , it = require("../../helpers/driverblock.js").it
-  , should = require('should')
   , net = require('net')
   , appiumPort = process.env.APPIUM_PORT || 4723
   , io = require('socket.io-client');

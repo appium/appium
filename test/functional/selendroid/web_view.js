@@ -8,98 +8,63 @@ var path = require('path')
   , driverBlock = require("../../helpers/driverblock.js")
   , it = driverBlock.it
   , describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct)
-  , should = require('should');
+  , exec = require('child_process').exec;
 
-
-describeWd('switch to web view', function(h) {
-    it('should go to web view', function(done) {
-      setTimeout(function() {
-        h.driver.elementById('buttonStartWebView', function(err, el) {
-          should.not.exist(err);
-          should.exist(el);
-          el.click(function(err) {
-            should.not.exist(err);
-            h.driver.window('WEBVIEW', function(err) {
-              should.not.exist(err);
-              done();
-            });
-          });
-        });
-      }, 1000);
-    });
-});
+// if it doesn't work run: adb uninstall io.selendroid.testapp
 
 describeWd('web view', function(h) {
   beforeEach(function(done) {
-    setTimeout(function() {
-      h.driver.elementById('buttonStartWebView', function(err, el) {
-        el.click(function(err) {
-          should.not.exist(err);
-          h.driver.window('WEBVIEW', function(err) {
-            should.not.exist(err);
-            done();
-          });
-        });
-      });
-    }, 1000);
+    h.driver
+      .waitForElementById('buttonStartWebView').click()
+      .window('WEBVIEW')
+      .nodeify(done);
   });
+
+  if (process.env.FAST_TESTS) {
+    afterEach(function(done) {
+      h.driver
+        .window('NATIVE_APP')
+        .elementByIdOrNull('goBack').then(function(el) {
+          if (el) return el.click().sleep(1000);
+        }).nodeify(done);
+    });
+  }
+  
+  it('should be web view', function(done) {
+    // todo: add some sort of check here
+    done();
+  });
+
   it('should find and click an element', function(done) {
-    h.driver.elementByCssSelector('input[type=submit]', function(err, el) {
-      should.not.exist(err);
-      should.exist(el);
-      el.click(function(err) {
-        should.not.exist(err);
-        setTimeout(function() {
-          h.driver.elementByTagName('h1', function(err, h1) {
-            should.not.exist(err);
-            should.exist(h1);
-            h1.text(function(err, value) {
-              should.not.exist(err);
-              should.exist(value);
-              value.should.equal("This is my way of saying hello");
-              done();
-            });
-          });
-        }, 1000);
-      });
-    });
+    h.driver
+      .elementByCssSelector('input[type=submit]').click()
+      .sleep(1000)
+      .elementByTagName('h1').text()
+        .should.become("This is my way of saying hello")
+      .nodeify(done);
   });
+
   it('should clear input', function(done) {
-    h.driver.elementById('name_input', function(err, inputField) {
-      should.not.exist(err);
-      inputField.clear(function(err) {
-        should.not.exist(err);
-        inputField.getValue(function(err, value) {
-          value.should.equal("");
-          done();
-        });
-      });
-    });
+    h.driver
+      .elementById('name_input').clear().getValue().should.become("")
+      .nodeify(done);
   });
+
   it('should find and enter key sequence in input', function(done) {
-    h.driver.elementById('name_input', function(err, inputField) {
-      should.not.exist(err);
-      inputField.clear(function(err) {
-        inputField.type("Mathieu", function(err) {
-          inputField.getValue(function(err, value) {
-            value.should.equal("Mathieu");
-            done();
-          });
-        });
-      });
-    });
+    h.driver
+      .elementById('name_input').clear()
+        .type("Mathieu").getValue().should.become("Mathieu")
+      .nodeify(done);
   });
+
   it('should be able to handle selendroid special keys', function(done) {
-    h.driver.keys('\uE102', function(err) {
-      should.not.exist(err);
-      done();
-    });
+    h.driver.keys('\uE102').nodeify(done);
   });
+
   it('should get web source', function(done) {
-    h.driver.source(function(err, source) {
-      should.not.exist(err);
-      source.should.include("body");
-      done();
-    });
+    h.driver
+      .source().should.eventually.include("body")
+      .nodeify(done);
   });
+
 });

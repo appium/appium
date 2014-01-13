@@ -1,10 +1,7 @@
-/*global beforeEach:true, afterEach:true, describe:true, it:true */
 "use strict";
 
 var wd = require('wd')
   , _ = require("underscore")
-  , sauce = require("saucelabs")
-  , sauceRest = null
   , path = require("path")
   , defaultHost = '127.0.0.1'
   , defaultPort = process.env.APPIUM_PORT || 4723
@@ -15,62 +12,82 @@ var wd = require('wd')
       , platform: 'Mac'
     };
 
-if (process.env.SAUCE_ACCESS_KEY && process.env.SAUCE_USERNAME) {
-  sauceRest = new sauce({
-    username: process.env.SAUCE_USERNAME
-    , password: process.env.SAUCE_ACCESS_KEY
-  });
-}
+var chai = require('chai')
+  , chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
+chai.should();
+chaiAsPromised.transferPromiseness = wd.transferPromiseness;
+require("colors");
 
 var driverBlock = function(tests, host, port, caps, extraCaps) {
   host = (typeof host === "undefined" || host === null) ? _.clone(defaultHost) : host;
-  var onSauce = host.indexOf("saucelabs") !== -1 && sauceRest;
+  var onSauce = host.indexOf("saucelabs") !== -1 && process.env.SAUCE_ACCESS_KEY &&
+    process.env.SAUCE_USERNAME;
   port = (typeof port === "undefined" || port === null) ? _.clone(defaultPort) : port;
   caps = (typeof caps === "undefined" || caps === null) ? _.clone(defaultCaps) : caps;
   caps = _.extend(caps, typeof extraCaps === "undefined" ? {} : extraCaps);
-  caps.launchTimeout = 15000;
+  caps.launchTimeout = parseInt(process.env.LAUNCH_TIMEOUT || 15000, 10);
   var driverHolder = {driver: null, sessionId: null};
   var expectConnError = extraCaps && extraCaps.expectConnError;
 
-  beforeEach(function(done) {
+  var _before = beforeEach;
+  var _after = afterEach;
+  if (process.env.FAST_TESTS) {
+    _before = before;
+    _after = after;
+  }
+
+  _before(function(done) {
     if (onSauce && this.currentTest) {
       caps.name = this.currentTest.parent.title + " " + this.currentTest.title;
     }
 
-    driverHolder.driver = wd.remote(host, port);
-    driverHolder.driver.init(caps, function(err, sessionId) {
-      if (expectConnError && err) {
-        driverHolder.connError = err;
-        return done();
-      } else if (err) {
-        return done(err);
-      }
-
-      driverHolder.sessionId = sessionId;
-      driverHolder.driver.setImplicitWaitTimeout(5000, done);
-    });
-
+    driverHolder.driver = wd.promiseChainRemote(host, port);
+    
+    if (process.env.VERBOSE) {
+      driverHolder.driver.on('status', function(info) {
+        console.log(info);
+      });
+      driverHolder.driver.on('command', function(meth, path, data) {
+        console.log(' > ' + meth, path, data || '');
+      });
+    }
+    
+    driverHolder.driver
+      .init(caps)
+      .then(
+        // ok
+        function(sessionId) {
+          driverHolder.sessionId = sessionId;
+          return driverHolder.driver.setImplicitWaitTimeout(5000);
+        },
+        // error
+        function(err) {
+          if (expectConnError && err) {
+            driverHolder.connError = err;
+            // ignore error
+          } else {
+            throw err;
+          }
+        }
+      )
+      .nodeify(done);
   });
 
-  afterEach(function(done) {
+  _after(function(done) {
     var passed = false;
     if (this.currentTest) {
       passed = this.currentTest.state = 'passed';
     }
-    driverHolder.driver.quit(function(err) {
-      if (err && err.status && err.status.code != 6) {
-        done(err);
-      }
-      if (onSauce) {
-        sauceRest.updateJob(driverHolder.sessionId, {
-          passed: passed
-        }, function() {
-          done();
-        });
-      } else {
-        done();
-      }
-    });
+    driverHolder.driver
+      .quit()
+      .catch(function() { console.warn("didn't quit cleanly."); })
+      .then( function() {
+        if (onSauce) return driverHolder.driver.sauceJobStatus(passed);
+      })
+      .catch(function() { console.warn("didn't manange to set sauce status."); })
+      .sleep(2000)
+      .nodeify(done);
   });
 
   tests(driverHolder);
@@ -231,6 +248,7 @@ module.exports.it = function(behavior, test) {
   });
 };
 
+
 module.exports.block = driverBlock;
 module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
@@ -238,3 +256,4 @@ module.exports.describeForSauce = describeForSauce;
 module.exports.describeForSafari = describeForSafari;
 module.exports.describeForIWebView = describeForIWebView;
 module.exports.describeForChrome = describeForChrome;
+module.exports.Q = wd.Q;

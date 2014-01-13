@@ -1,10 +1,10 @@
 // Run with mocha by installing dev deps: npm install --dev
 // more docs on writing tests with mocha can be found here:
 // http://visionmedia.github.com/mocha/
-/*global describe:true, it:true */
 "use strict";
 
-var should = require('should')
+var chai = require('chai')
+  , should = chai.should()
   , appium = require('../../lib/appium.js')
   , path = require('path')
   , IOS = require('../../lib/devices/ios/ios.js');

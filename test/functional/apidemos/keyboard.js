@@ -6,55 +6,28 @@ var path = require('path')
   , appAct = "view.Controls1"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
-  , it = require("../../helpers/driverblock.js").it
-  , should = require('should');
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('text boxes', function(h) {
-  var testText = "this is awesome!";
-  it('should be settable with sendkeys', function(done) {
-    h.driver.elementByTagName('editText', function(err, el) {
-      should.not.exist(err);
-      el.text(function(err, text) {
-        should.not.exist(err);
-        text.should.equal("");
-        el.sendKeys(testText, function(err) {
-          should.not.exist(err);
-          el.text(function(err, text) {
-            should.not.exist(err);
-            text.should.equal(testText);
-            done();
-          });
-        });
-      });
-    });
+
+  it('should be able to edit a text field', function(done) {
+    var testText = "this is awesome!";
+    var el = function() { return h.driver.elementByTagName('editText'); };
+    h.driver
+      .resolve(el()).clear().text().should.become("")
+      .then(el).sendKeys(testText).text().should.become(testText)
+      .nodeify(done);
   });
-  it('should be able to clear editText', function(done) {
-    h.driver.elementByTagName('editText', function(err, el) {
-      should.not.exist(err);
-      // get the text
-      el.text(function(err, text) {
-        should.not.exist(err);
-        text.should.equal("");
-        // set the text
-        el.sendKeys(testText, function(err) {
-          should.not.exist(err);
-          // make sure the text is actuall in the edittext
-          el.text(function(err, text) {
-            should.not.exist(err);
-            text.should.equal(testText);
-            // now clear it
-            el.clear(function(err) {
-              should.not.exist(err);
-              // make sure that it's empty
-              el.text(function(err, text) {
-                should.not.exist(err);
-                text.should.equal("");
-                done();
-              });
-            });
-          });
-        });
-      });
-    });
+
+  //todo: not working in nexus 7
+  it('should be able to edit and clear a text field', function(done) {
+    var testText = "this is awesome!";
+    var el = function() { return h.driver.elementByTagName('editText'); };
+    h.driver
+      .resolve(el()).clear().text().should.become("")
+      .then(el).sendKeys(testText).text().should.become(testText)
+      .then(el).clear().text().should.become("")
+      .nodeify(done);
   });
+
 });

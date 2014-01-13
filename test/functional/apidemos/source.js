@@ -6,34 +6,28 @@ var path = require('path')
   , appAct = ".ApiDemos"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
-  , it = require("../../helpers/driverblock.js").it
-  , should = require('should');
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('get source', function(h) {
   it('should return the page source', function(done) {
-    h.driver.source(function(err, source){
-      var obj = JSON.parse(source);
-      should.not.exist(err);
-      should.ok(obj);
-      obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
-      obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.widget.FrameLayout");
-      done();
-    });
-  });
-  it('should return the page source without crashing other commands', function(done) {
-    h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
-      should.not.exist(err);
-      h.driver.source(function(err, source){
+    h.driver
+      .elementByNameOrNull('Accessibility') // waiting for page to load
+      .source().then(function(source) {
         var obj = JSON.parse(source);
-        should.not.exist(err);
-        should.ok(obj);
+        obj.should.exist;
         obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
         obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.widget.FrameLayout");
-        h.driver.execute("mobile: find", [[[[7, "Animation"]]]], function(err, el) {
-          should.not.exist(err);
-          done();
-        });
-      });
-    });
+      }).nodeify(done);
+  });
+  it('should return the page source without crashing other commands', function(done) {
+    h.driver
+      .execute("mobile: find", [[[[3, "Animation"]]]])
+      .source().then(function(source) {
+        var obj = JSON.parse(source);
+        obj.should.exist;
+        obj.hierarchy.node['@class'].should.equal("android.widget.FrameLayout");
+        //obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.widget.FrameLayout");
+      }).execute("mobile: find", [[[[3, "Animation"]]]])
+      .nodeify(done);
   });
 });

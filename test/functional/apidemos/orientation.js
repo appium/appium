@@ -6,51 +6,39 @@ var path = require('path')
   , appAct = ".ApiDemos"
   , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
       "android", appPkg, appAct)
-  , it = require("../../helpers/driverblock.js").it
-  , should = require('should');
+  , it = require("../../helpers/driverblock.js").it;
 
 describeWd('orientation', function(h) {
-  it('should rotate screen to landscape', function(done) {
-    h.driver.setOrientation("LANDSCAPE", function(err) {
-      should.not.exist(err);
-      var next = function() {
-        h.driver.getOrientation(function(err, orientation) {
-          orientation.should.equal("LANDSCAPE");
-          done();
-        });
-      };
-      setTimeout(next, 3000);
+  if (process.env.FAST_TESTS) {
+    afterEach(function(done) {
+      h.driver.getOrientation().then(function(orientation) {
+        if (orientation !== "PORTRAIT") {
+          return h.driver.setOrientation("PORTRAIT");
+        }
+      }).nodeify(done);
     });
+  }
+  
+  it('should rotate screen to landscape', function(done) {
+    h.driver
+      .setOrientation("LANDSCAPE")
+      .sleep(3000)
+      .getOrientation().should.become("LANDSCAPE")
+      .nodeify(done);
   });
   it('should rotate screen to portrait', function(done) {
-    h.driver.setOrientation("LANDSCAPE", function(err) {
-      var next = function() {
-        h.driver.setOrientation("PORTRAIT", function(err) {
-          var next = function() {
-            h.driver.getOrientation(function(err, orientation) {
-              orientation.should.equal("PORTRAIT");
-              done();
-            });
-          };
-          setTimeout(next, 3000);
-        });
-      };
-      setTimeout(next, 3000);
-    });
+    h.driver
+      .setOrientation("LANDSCAPE")
+      .sleep(3000)
+      .setOrientation("PORTRAIT")
+      .getOrientation().should.become("PORTRAIT")
+      .nodeify(done);
   });
   it('Should not error when trying to rotate to portrait again', function(done) {
-    h.driver.setOrientation("PORTRAIT", function(err) {
-      should.not.exist(err);
-      var next = function() {
-        h.driver.getOrientation(function(err, orientation) {
-          should.not.exist(err);
-          orientation.should.equal("PORTRAIT");
-          done();
-        });
-      };
-      setTimeout(next, 3000);
-    });
+    h.driver
+      .setOrientation("PORTRAIT")
+      .sleep(3000)
+      .getOrientation().should.become("PORTRAIT")
+      .nodeify(done);
   });
 });
-
-

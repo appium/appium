@@ -45,13 +45,13 @@ public class AndroidTest {
     @Test
     public void apiDemo(){
         WebElement el = driver.findElement(By.name("Animation"));
-        assertEquals(el.getText(), "Animation");
+        assertEquals("Animation", el.getText());
         el = driver.findElement(By.tagName("text"));
-        assertEquals(el.getText(), "API Demos");
+        assertEquals("API Demos", el.getText());
         el = driver.findElement(By.name("App"));
         el.click();
         List<WebElement> els = driver.findElements(By.tagName("text"));
-        assertEquals(els.get(2).getText(), "Activity");
+        assertEquals("Activity", els.get(2).getText());
     }
 
     public class SwipeableWebDriver extends RemoteWebDriver implements HasTouchScreen {

@@ -1,222 +1,153 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it
+var driverblock = require("../../helpers/driverblock.js")
+  , Q = driverblock.Q
+  , describeWd = driverblock.describeForApp('UICatalog')
+  , it = driverblock.it
   , _ = require("underscore")
-  , spinWait = require("../../helpers/spin.js").spinWait
-  , should = require('should');
+  , spinWait = require("../../helpers/spin.js").spinWait;
 
-describeWd('find by id', function(h) {
+describeWd('find elements', function(h) {
+
   it('should find a single element by id', function(done) {
     // ButtonsExplain: 'Various uses of UIButton'
-    h.driver.elementById('ButtonsExplain', function(err, els) {
-      should.not.exist(err);
-      done();
-    });
+    h.driver
+      .elementById('ButtonsExplain')
+        .should.eventually.exist
+      .nodeify(done);
   });
-});
 
-describeWd('findElementNameContains', function(h) {
   it('should find a single element by name', function(done) {
-    h.driver.execute("mobile: findElementNameContains", [{name: 'uses of UIButton'}], function(err, el) {
-      should.not.exist(err);
-      should.exist(el);
-      el.getAttribute('name', function(err, name) {
-        should.not.exist(err);
-        name.should.equal("Buttons, Various uses of UIButton");
-        done();
-      });
-    });
+    h.driver
+      .execute("mobile: findElementNameContains", [{name: 'uses of UIButton'}])
+        .getAttribute('name').should.become("Buttons, Various uses of UIButton")
+      .nodeify(done);
   });
-});
 
-describeWd('findElementFromElement', function(h) {
-  it('should find an element within itself', function(done) {
-    h.driver.elementByTagName('tableView', function(err, element) {
-      should.exist(element.value);
-      element.elementByTagName('text', function(err, staticText) {
-        should.exist(staticText.value);
-        staticText.text(function(err, text) {
-          text.should.equal("Buttons, Various uses of UIButton");
-          done();
-        });
-      });
-    });
+  it('should find an element within its parent', function(done) {
+    h.driver
+      .elementByTagName('tableView').then(function(el) {
+        el.should.exist;
+        return el.elementByTagName('text').text()
+          .should.become("Buttons, Various uses of UIButton");
+      }).nodeify(done);
   });
+
   it('should not find an element not within itself', function(done) {
-    h.driver.elementByTagName('tableView', function(err, element) {
-      should.exist(element.value);
-      element.elementByTagName('navigationBar', function(err) {
-        should.exist(err);
-        done();
-      });
-    });
+    h.driver
+      .elementByTagName('tableView').then(function(el) {
+        el.should.exist;
+        return el.elementByTagName('navigationBar')
+          .should.be.rejectedWith(/status: 7/);
+      }).nodeify(done);
   });
-});
 
-
-describeWd('findElementsFromElement', function(h) {
   it('should find some elements within itself', function(done) {
-    h.driver.elementByTagName('tableCell', function(err, element) {
-      should.not.exist(err);
-      should.exist(element.value);
-      element.elementsByTagName('text', function(err, els) {
-        els.length.should.equal(1);
-        done();
-      });
-    });
+    h.driver
+      .elementByTagName('tableCell').then(function(el) {
+        el.should.exist;
+        return  el.elementsByTagName('text')
+          .should.eventually.have.length(1);
+      }).nodeify(done);
   });
+
   it('should not find elements not within itself', function(done) {
-    h.driver.elementByTagName('tableCell', function(err, element) {
-      should.not.exist(err);
-      should.exist(element.value);
-      element.elementsByTagName('navigationBar', function(err, els) {
-        els.length.should.equal(0);
-        done();
-      });
-    });
+    h.driver
+      .elementByTagName('tableCell').then(function(el) {
+        el.should.exist;
+        el.elementsByTagName('navigationBar')
+          .should.eventually.have.length(0);
+      }).nodeify(done);
   });
-});
 
-
-describeWd('findElementsByTagName', function(h) {
-  it('should return all image elements with internally generated ids', function(done) {
-    h.driver.elementsByTagName('image', function(err, elements) {
-      for (var i=0; i < elements.length; i++) {
-        var num = parseInt(elements[i].value, 10);
-        should.exist(num);
-      }
-      done();
-    });
-  });
-});
-
-var setupXpath = function(d, cb) {
-  d.elementsByTagName('tableCell', function(err, els) {
-    els[0].click(cb);
-  });
-};
-
-describeWd('findElement(s)ByXpath', function(h) {
-  it('should return the last button', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementByXPath("//button[last()]", function(err, el) {
-        should.not.exist(err);
-        el.text(function(err, text) {
-          should.not.exist(err);
-          text.should.equal("Add contact");
-          done();
+  describe('findElementsByTagName', function() {
+    it('should return all image elements with internally generated ids', function(done) {
+      h.driver.elementsByTagName('image').then(function(els) {
+        els.length.should.be.above(0);
+        _(els).each(function(el) {
+          el.should.exist;
         });
-      });
+      }).nodeify(done);
     });
   });
-  it('should return a single element', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementByXPath("//button", function(err, el) {
-        should.not.exist(err);
-        el.text(function(err, text) {
-          should.not.exist(err);
-          text.should.equal("Back");
-          done();
-        });
+
+  describe('findElement(s)ByXpath', function() {
+    var setupXpath = function(driver) {
+      return driver.elementByTagName('tableCell').click();
+    };
+
+    it('should return the last button', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementByXPath("//button[last()]").text()
+          .should.become("Add contact")
+        .nodeify(done);
       });
+    it('should return a single element', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementByXPath("//button").text()
+          .should.become("Back")
+        .nodeify(done);
     });
-  });
-  it('should return multiple elements', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementsByXPath("//button", function(err, els) {
-        should.not.exist(err);
-        els.length.should.be.above(5);
-        done();
-      });
+    it('should return multiple elements', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementsByXPath("//button")
+          .should.eventually.have.length.above(5)
+        .nodeify(done);
     });
-  });
-  it('should filter by name', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementByXPath("button[@name='Rounded']", function(err, el) {
-        should.not.exist(err);
-        el.text(function(err, text) {
-          should.not.exist(err);
-          text.should.equal("Rounded");
-          done();
-        });
-      });
+    it('should filter by name', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementByXPath("button[@name='Rounded']").text()
+          .should.become("Rounded")
+        .nodeify(done);
     });
-  });
-  it('should know how to restrict root-level elements', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementByXPath("/button", function(err) {
-        should.exist(err);
-        err.status.should.equal(7);
-        done();
-      });
+    it('should know how to restrict root-level elements', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementByXPath("/button")
+          .should.be.rejectedWith(/status: 7/)
+        .nodeify(done);
     });
-  });
-  it('should search an extended path by child', function(done) {
-    setupXpath(h.driver, function() {
-      var spinFn = function(spinCb) {
-        h.driver.elementsByXPath("navigationBar/text", function(err, els) {
-          should.not.exist(err);
-          els[0].text(function(err, text) {
-            try {
-              text.should.equal('Buttons');
-              spinCb();
-            } catch (e) {
-              spinCb(e);
-            }
+    it('should search an extended path by child', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .then(function() {
+          return spinWait(function() {
+            return h.driver.elementByXPath("navigationBar/text")
+              .text().should.become('Buttons');
           });
-        });
-      };
-      spinWait(spinFn, done);
+        }).nodeify(done);
     });
-  });
-  it('should search an extended path by descendant', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementsByXPath("cell//button", function(err, els) {
-        should.not.exist(err);
-        var texts = [];
-        _.each(els, function(el) {
-          el.text(function(err, text) {
-            texts.push(text);
-            if (texts.length === els.length) {
-              var hasNavButton = _.contains(texts, "Button");
-              hasNavButton.should.equal(false);
-              _.contains(texts, "Gray").should.equal(true);
-              done();
-            }
+    it('should search an extended path by descendant', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementsByXPath("cell//button").then(function(els) {
+          return Q.all( _(els).map(function(el) { return el.text(); }) );
+        }).then(function(texts) {
+          texts.should.not.include("Button");
+          texts.should.include("Gray");
+        }).nodeify(done);
+    });
+    it('should filter by indices', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .then(function() {
+          return spinWait(function() {
+            return h.driver
+              .elementByXPath("cell[2]//text[1]").text()
+                .should.become("ButtonsViewController.m:\r(UIButton *)grayButton");
           });
-        });
-      });
+        }).nodeify(done);
     });
-  });
-  it('should filter by indices', function(done) {
-    setupXpath(h.driver, function() {
-      var spinFn = function(cb) {
-        h.driver.elementByXPath("cell[2]//text[1]", function(err, el) {
-          should.not.exist(err);
-          el.text(function(err, text) {
-            should.not.exist(err);
-            try {
-              text.should.eql("ButtonsViewController.m:\r(UIButton *)grayButton");
-              cb();
-            } catch(e) {
-              cb(e);
-            }
-          });
-        });
-      };
-      spinWait(spinFn, done);
-    });
-  });
-  it('should filter by partial text', function(done) {
-    setupXpath(h.driver, function() {
-      h.driver.elementByXPath("cell//button[contains(@name, 'Gr')]", function(err, el) {
-        should.not.exist(err);
-        el.text(function(err, text) {
-          text.should.equal("Gray");
-          done();
-        });
-      });
+    it('should filter by partial text', function(done) {
+      h.driver
+        .resolve(setupXpath(h.driver))
+        .elementByXPath("cell//button[contains(@name, 'Gr')]").text()
+          .should.become("Gray")
+        .nodeify(done);
     });
   });
 });

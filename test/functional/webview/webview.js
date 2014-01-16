@@ -2,72 +2,51 @@
 
 var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
   , it = require("../../helpers/driverblock.js").it
-  , _ = require('underscore')
-  , should = require('should');
+  , _ = require('underscore');
 
 describeWd('window handles', function(h) {
   it('getting current window should do nothing when none set', function(done) {
-    h.driver.windowHandle(function(err) {
-      should.exist(err);
-      err.status.should.equal(23);
-      done();
-    });
+    h.driver.windowHandle().should.be.rejectedWith(/status: 23/)
+      .nodeify(done);
   });
   it('getting list should work after webview open', function(done) {
-    h.driver.windowHandles(function(err, handles) {
-      should.not.exist(err);
-      handles.length.should.be.above(0);
-      done();
-    });
+    h.driver.windowHandles().should.eventually.have.length.above(0)
+      .nodeify(done);
   });
   it('getting list twice should not crash appium', function(done) {
-    h.driver.windowHandles(function(err, handles) {
-      should.not.exist(err);
-      handles.length.should.be.above(0);
-      h.driver.windowHandles(function(err, handles) {
-        should.not.exist(err);
-        handles.length.should.be.above(0);
-        done();
-      });
-    });
+    h.driver
+      .windowHandles().should.eventually.have.length.above(0)
+      .windowHandles().should.eventually.have.length.above(0)
+      .nodeify(done);
   });
   it('window handles should be strings', function(done) {
-    h.driver.windowHandles(function(err, handles) {
+    h.driver.windowHandles().then(function(handles) {
       handles.length.should.be.above(0);
       _.each(handles, function(handle) {
         (typeof handle).should.equal("string");
       });
-      done();
-    });
+    }).nodeify(done);
   });
   it('setting window should work', function(done) {
-    h.driver.windowHandles(function(err, handles) {
-      should.not.exist(err);
+    h.driver.windowHandles().then(function(handles) {
       handles.length.should.be.above(0);
-      h.driver.window(handles[0], function(err) {
-        should.not.exist(err);
-        done();
-      });
-    });
+      return handles[0];
+    }).then(function(handle) {
+      return h.driver.window(handle);
+    }).nodeify(done);
   });
   it('clearing window should work', function(done) {
-    h.driver.windowHandles(function(err, handles) {
-      should.not.exist(err);
+    h.driver.windowHandles().then(function(handles) {
       handles.length.should.be.above(0);
-      h.driver.window(handles[0], function(err) {
-        should.not.exist(err);
-        h.driver.execute("mobile: leaveWebView", function(err) {
-          should.not.exist(err);
-          done();
-        });
-      });
-    });
+      return handles[0];
+    }).then(function(handle) {
+      return h.driver.window(handle);
+    }).execute("mobile: leaveWebView")
+    .nodeify(done);
   });
   it('clearing window should not work if not in webview', function(done) {
-    h.driver.execute("mobile: leaveWebView", function(err) {
-      should.exist(err);
-      err.status.should.equal(8);
-      done();
-    });
+    h.driver
+      .execute("mobile: leaveWebView").should.be.rejectedWith(/status: 8/)
+      .nodeify(done);
   });
 });

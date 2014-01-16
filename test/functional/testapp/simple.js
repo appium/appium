@@ -2,44 +2,33 @@
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
 "use strict";
 
-var assert = require("assert")
-  , it = require("../../helpers/driverblock.js").it
-  , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp');
+var driverblock = require("../../helpers/driverblock.js")
+  , Q = driverblock.Q
+  , it = driverblock.it
+  , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
+  , _ = require('underscore');
 
 describeWd('calc app', function(h) {
   var values = [];
-  var populate = function(driver, cb) {
-    driver.elementsByTagName('textField', function(err, elems) {
-      var next = function(num) {
-        if (num >= elems.length) {
-          return cb(elems);
-        }
+  var populate = function(driver) {
+    return driver.elementsByTagName('textField').then(function(elems) {
+      var sequence = _(elems).map(function(elem) {
         var val = Math.round(Math.random()*10);
         values.push(val);
-        var elem = elems[num++];
-        elem.sendKeys(val, function() {
-          next(num);
-        });
-      };
-      next(0);
+        return function() { return elem.sendKeys(val); };
+      });
+      return sequence.reduce(Q.when, new Q()); // running sequence
     });
   };
 
-  return it('should fill two fields with numbers', function(done) {
+  it('should fill two fields with numbers', function(done) {
     var driver = h.driver;
-    populate(driver, function(elems) {
-      driver.elementsByTagName('button', function(err, buttons) {
-        buttons[0].click(function() {
-          driver.elementsByTagName('staticText', function(err, elems) {
-            elems[0].text(function(err, text) {
-              var sum = values[0] + values[1];
-              assert.equal(parseInt(text, 10), sum);
-              done();
-            });
-          });
+    populate(driver).then(function() {
+      return driver
+        .elementByTagName('button').click()
+        .elementByTagName('staticText').text().then(function(text) {
+          parseInt(text, 10).should.equal(values[0] + values[1]);
         });
-      });
-    });
+    }).nodeify(done);
   });
 });
-

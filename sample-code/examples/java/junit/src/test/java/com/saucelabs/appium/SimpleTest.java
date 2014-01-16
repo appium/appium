@@ -94,7 +94,7 @@ public class SimpleTest {
         button.click();
         // is sum equal ?
         WebElement texts = driver.findElement(By.tagName("staticText"));
-        assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
+        assertEquals(String.valueOf(values.get(0) + values.get(1)), texts.getText());
     }
 
     @Test
@@ -112,20 +112,20 @@ public class SimpleTest {
 
         Alert alert = driver.switchTo().alert();
         //check if title of alert is correct
-        assertEquals(alert.getText(), "Cool title");
+        assertEquals("Cool title", alert.getText());
         alert.accept();
     }
 
     @Test
     public void testBasicTagName() throws Exception {
         WebElement text = driver.findElement(By.xpath("//textfield[1]"));
-        assertEquals(text.getTagName(), "UIATextField");
+        assertEquals("UIATextField", text.getTagName());
     }
 
     @Test
     public void testBasicButton() throws Exception {
         WebElement button = driver.findElement(By.xpath("//button[1]"));
-        assertEquals(button.getText(), "ComputeSumButton");
+        assertEquals("ComputeSumButton", button.getText());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class SimpleTest {
         text.sendKeys("12");
         text.clear();
 
-        assertEquals(text.getText(), "");
+        assertEquals("", text.getText());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class SimpleTest {
 
         // is sum equal ?
         WebElement sumLabel = driver.findElement(By.tagName("staticText"));
-        assertEquals(sumLabel.getText(), String.valueOf(number));
+        assertEquals(String.valueOf(number), sumLabel.getText());
     }
 
     @Test
@@ -175,7 +175,7 @@ public class SimpleTest {
 
         // is sum equal ?
         WebElement texts = driver.findElements(By.tagName("staticText")).get(0);
-        assertEquals(texts.getText(), String.valueOf(number));
+        assertEquals(String.valueOf(number), texts.getText());
     }
 
     @Test
@@ -191,7 +191,7 @@ public class SimpleTest {
         WebElement sumLabel = driver.findElement(By.name("SumLabel"));
         driver.findElement(By.name("ComputeSumButton")).click();
 
-        assertEquals(sumLabel.getText(), String.valueOf(number));
+        assertEquals(String.valueOf(number), sumLabel.getText());
     }
 
     @Test
@@ -207,7 +207,7 @@ public class SimpleTest {
         WebElement sumLabel = driver.findElements(By.name("SumLabel")).get(0);
         driver.findElements(By.name("ComputeSumButton")).get(0).click();
 
-        assertEquals(sumLabel.getText(), String.valueOf(number));
+        assertEquals(String.valueOf(number), sumLabel.getText());
     }
 
     @Test
@@ -223,7 +223,7 @@ public class SimpleTest {
         driver.findElement(By.xpath("//button[1]")).click();
 
         WebElement sumLabel = driver.findElement(By.xpath("//text[1]"));
-        assertEquals(sumLabel.getText(), String.valueOf(number));
+        assertEquals(String.valueOf(number), sumLabel.getText());
     }
 
     @Test
@@ -239,7 +239,7 @@ public class SimpleTest {
         driver.findElements(By.xpath("//button")).get(0).click();
 
         WebElement sumLabel = driver.findElements(By.xpath("//text")).get(0);
-        assertEquals(sumLabel.getText(), String.valueOf(number));
+        assertEquals(String.valueOf(number), sumLabel.getText());
     }
 
     @Test
@@ -251,19 +251,19 @@ public class SimpleTest {
         int number = random.nextInt(MAXIMUM - MINIMUM + 1) + MINIMUM;
         text.sendKeys(String.valueOf(number));
 
-        assertEquals(text.getAttribute("name"), "TextField1");
-        assertEquals(text.getAttribute("label"), "TextField1");
-        assertEquals(text.getAttribute("value"), String.valueOf(number));
+        assertEquals("TextField1", text.getAttribute("name"));
+        assertEquals("TextField1", text.getAttribute("label"));
+        assertEquals(String.valueOf(number), text.getAttribute("value"));
     }
 
     @Test
     public void testSlider() throws Exception {
         //get the slider
         WebElement slider = driver.findElement(By.xpath("//slider[1]"));
-        assertEquals(slider.getAttribute("value"), "50%");
+        assertEquals("50 %", slider.getAttribute("value"));
         TouchActions drag = new TouchActions(driver).flick(slider, new Integer(-1), 0, 0);
         drag.perform();
-        assertEquals(slider.getAttribute("value"), "0%");
+        assertEquals("0 %", slider.getAttribute("value"));
     }
 
     @Test
@@ -272,8 +272,8 @@ public class SimpleTest {
 
         Point location = button.getLocation();
 
-        assertEquals(location.getX(), 94);
-        assertEquals(location.getY(), 122);
+        assertEquals(94, location.getX());
+        assertEquals(122, location.getY());
     }
 
     @Test
@@ -285,7 +285,7 @@ public class SimpleTest {
         JSONObject jsonObject = (JSONObject) new JSONParser().parse(EntityUtils.toString(entity));
 
         String sessionId = ((RemoteWebDriver) driver).getSessionId().toString();
-        assertEquals(sessionId, jsonObject.get("sessionId"));
+        assertEquals(jsonObject.get("sessionId"), sessionId);
     }
 
     @Test

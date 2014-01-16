@@ -6,35 +6,24 @@ var path = require('path')
   , appAct = "GPSTest"
   , driverBlock = require("../../helpers/driverblock.js")
   , describeWd = driverBlock.describeForApp(appPath, "android", appPkg, appAct)
-  , it = driverBlock.it
-  , should = require('should');
+  , it = driverBlock.it;
 
 describeWd('geo location', function(h) {
   it('should set geo location', function(done) {
-
-    var getText = function(cb) {
-      h.driver.elementByXPath("//text[2]", function(err, el) {
-        should.not.exist(err);
-        el.text(cb);
-      });
-    };
+    var getText = function() { return h.driver.elementByXPath("//text[2]").text(); };
     var newLat = "27.17";
     var newLong = "78.04";
-    getText(function(err, text) {
-      if (err) throw err;
-      text.should.not.include("Latitude: " + newLat);
-      text.should.not.include("Longitude: " + newLong);
-      var locOpts = {latitude: newLat, longitude: newLong};
-      h.driver.execute("mobile: setLocation", [locOpts], function(err) {
-        should.not.exist(err);
-        getText(function(err, text) {
-          if (err) throw err;
-          text.should.include("Latitude: " + newLat.substr(0, 4));
-          text.should.include("Longitude: " + newLong.substr(0, 4));
-          done();
-        });
-      });
-    });
+    h.driver
+      .resolve(getText()).then(function(text) {
+        text.should.not.include("Latitude: " + newLat);
+        text.should.not.include("Longitude: " + newLong);
+      }).then(function() {
+        var locOpts = {latitude: newLat, longitude: newLong};
+        return h.driver.execute("mobile: setLocation", [locOpts]);
+      }).sleep(1000).then(getText).then(function(text) {
+        text.should.include("Latitude: " + newLat.substr(0, 4));
+        text.should.include("Longitude: " + newLong.substr(0, 4));
+      }).nodeify(done);
   });
 });
 

@@ -1,4 +1,3 @@
-/*global describe:true, it:true */
 "use strict";
 
 var rest = require('express')()

@@ -108,8 +108,9 @@ describeWd('calc app', function(h) {
       var obj = JSON.parse(source);
       obj.type.should.equal("UIAApplication");
       obj.children[0].type.should.equal("UIAWindow");
+	  console.log(obj.children[0]);
       obj.children[0].children[0].label.should.equal("TextField1");
-      obj.children[0].children[3].name.should.equal("0");
+      obj.children[0].children[3].name.should.equal("SumLabel");
     }).nodeify(done);
   });
 

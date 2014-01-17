@@ -13,8 +13,8 @@ describeWd('element size', function(h) {
 
   it('should return the window size', function(done) {
     h.driver.getWindowSize().then(function(size) {
-      size.width.should.equal(320);
-      size.height.should.equal(480);
+      size.width.should.be.above(319);
+      size.height.should.be.above(479);
     }).nodeify(done);
   });
 });

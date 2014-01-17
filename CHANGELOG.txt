@@ -1,3 +1,51 @@
+CHANGES IN VERSION 0.14.0 (from 0.13.0)
+=======================================
+
+#### General
+- add ability to set launch timeout from command line
+- require 'device' cap and fail without it
+- bring back appium shell
+- add new node examples
+- add troubleshooting docs in Chinese
+- fix app download suffix issue
+- major refactor of test code
+
+#### iOS
+- delete cache data for all versions of sim
+- fix sporadic DOM corruption issue
+- make reset.sh more Xcode 4.6 friendly
+- add flag to show simulator logs in-line with appium logs
+- add cap for automatically accepting photo permission alerts
+- update appium doctor to read new auth db value
+- keep track of ios crash logs and make available through selenium interface
+- cleanup app state pre-test and post-test
+- fix installing/removing .app (instead of .ipa)
+- escalate to SIGKILL if instruments doesn't respond to SIGTERM
+- add cap for using native instruments lib
+- return accessibility hint as 'hint' attribute
+
+#### Android
+- fix AVD startup bug
+- better error handling in element finding code
+- update ApiDemos app with webview
+- support doing web testing against stock browser on 4.4
+- increase support of android 4.4 toolchain
+- fix multiple device issue
+- implement `mobile: background` for android/selendroid
+- fix custom keystore unzip call stack issue
+
+#### Chrome+Android
+- add ability to deal with a different kind of session redirect
+- kill chromedriver before starting it up again to clear out ports
+
+#### Selendroid
+- re-instate closeApp and removeApp
+- fix issue where selendroid would crash based on activity mangling,
+  resulting in a mysterious connection reset error
+- upgrade to 0.7.0
+- show selendroid logs in appium output
+
+
 CHANGES IN VERSION 0.13.0 (from 0.12.3)
 =======================================
 

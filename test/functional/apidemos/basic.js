@@ -95,6 +95,18 @@ describeWd('basic', function(h) {
         .should.eventually.equal(true)
       .nodeify(done);
   });
+  it("should background the app", function(done) {
+    var before = new Date().getTime() / 1000;
+    h.driver
+      .execute("mobile: background", [{seconds: 3}])
+      .then(function() {
+        ((new Date().getTime() / 1000) - before).should.be.above(2);
+        ((new Date().getTime() / 1000) - before).should.be.below(5);
+      })
+      .execute("mobile: currentActivity")
+        .should.eventually.include("ApiDemos")
+      .nodeify(done);
+  });
 });
 
 // todo: not working in Nexus7

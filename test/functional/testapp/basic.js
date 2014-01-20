@@ -109,7 +109,7 @@ describeWd('calc app', function(h) {
       obj.type.should.equal("UIAApplication");
       obj.children[0].type.should.equal("UIAWindow");
       obj.children[0].children[0].label.should.equal("TextField1");
-      obj.children[0].children[3].name.should.equal("0");
+      obj.children[0].children[3].name.should.equal("SumLabel");
     }).nodeify(done);
   });
 

@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.14.2 (from 0.14.1)
+=======================================
+
+#### General
+- fix bug that prevented appium from starting in ios
+
 CHANGES IN VERSION 0.14.1 (from 0.14.0)
 =======================================
 

@@ -1,3 +1,22 @@
+CHANGES IN VERSION 0.14.1 (from 0.14.0)
+=======================================
+
+#### General
+- fix bug that prevented appium from pre-launching without specified device
+
+#### iOS
+- when alert title is null, return text instead
+- add framework for setting iOS and app preferences via plists
+- add `enableLocationServices` desired cap for enabling/disabling location
+  services on the simulator
+
+#### Android
+- fix fast reset/clear logic to not fail when remote apk doesn't exist
+
+#### Selendroid
+- actually wait for app-wait-activity instead of app-activity
+
+
 CHANGES IN VERSION 0.14.0 (from 0.13.0)
 =======================================
 

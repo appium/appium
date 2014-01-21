@@ -293,7 +293,7 @@ describeWd('gesture', function(h) {
         .execute("mobile: tap", [tapOpts])
         .elementByTagName("textview").text()
         .then(function(text) {
-          textBlock.should.include(text);
+          text.should.include(textBlock);
         })
         .nodeify(done);
     });
@@ -309,7 +309,7 @@ describeWd('gesture', function(h) {
         .execute("mobile: tap", [tapOpts])
         .elementByTagName("textview").text()
         .then(function(text) {
-          textBlock.should.include(text);
+          text.should.include(textBlock);
         })
         .nodeify(done);
     });
@@ -318,7 +318,7 @@ describeWd('gesture', function(h) {
         .execute("mobile: tap")
         .elementByTagName("textview").text()
         .then(function(text) {
-          textBlock.should.include(text);
+          text.should.include(textBlock);
         })
         .nodeify(done);
     });
@@ -347,7 +347,7 @@ describeWd('gesture', function(h) {
             .execute("mobile: tap", [tapOpts]);
         }).elementByTagName("textview").text()
         .then(function(text) {
-          textBlock.should.include(text);
+          text.should.include(textBlock);
         }).nodeify(done);
     });
     it('should work in pixels', function(done) {
@@ -363,7 +363,7 @@ describeWd('gesture', function(h) {
             .execute("mobile: tap", [tapOpts]);
         }).elementByTagName("textview").text()
         .then(function(text) {
-          textBlock.should.include(text);
+          text.should.include(textBlock);
         }).nodeify(done);
     });
   });
@@ -377,7 +377,7 @@ describeWd('gesture', function(h) {
           .nodeify(done);
       });
     }
-    
+
     it('should bring the element into view', function(done) {
       var el, scrollOpts, location1;
       h.driver.elementsByTagName('tableCell').then(function(els) {

@@ -1,0 +1,120 @@
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+        	<TextView
+        	    android:id="@+id/data_label"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_alignParentTop="true"
+        	    android:layout_centerHorizontal="true"
+        	    android:contentDescription="data_label"
+        	    android:gravity="center"
+        	    android:text="Data" />
+
+	    	<ToggleButton
+	    	    android:id="@+id/data_toggle"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_below="@id/data_label"
+	    	    android:layout_centerHorizontal="true"
+	    	    android:contentDescription="data_toggle"
+	    	     />
+
+    	</RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+        	<TextView
+        	    android:id="@+id/flight_label"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_alignParentTop="true"
+        	    android:layout_centerHorizontal="true"
+        	    android:contentDescription="flight_label"
+        	    android:gravity="center"
+        	    android:text="Flight mode" />
+
+	    	<ToggleButton
+	    	    android:id="@+id/flight_toggle"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_below="@id/flight_label"
+	    	    android:layout_centerHorizontal="true"
+	    	    android:contentDescription="flight_toggle"
+	    	     />
+
+    	</RelativeLayout>
+
+    	<RelativeLayout
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1" >
+
+        	<TextView
+        	    android:id="@+id/wifi_label"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_alignParentTop="true"
+        	    android:layout_centerHorizontal="true"
+        	    android:contentDescription="wifi_label"
+        	    android:gravity="center"
+        	    android:text="WiFi" />
+
+	    	<ToggleButton
+	    	    android:id="@+id/wifi_toggle"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_below="@id/wifi_label"
+	    	    android:layout_centerHorizontal="true"
+	    	    android:contentDescription="wifi_toggle"
+	    	     />
+
+    	</RelativeLayout>
+
+    	<RelativeLayout
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_weight="1" >
+
+        	<TextView
+        	    android:id="@+id/gps_label"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_alignParentTop="true"
+        	    android:layout_centerHorizontal="true"
+        	    android:contentDescription="gps_label"
+        	    android:gravity="center"
+        	    android:text="GPS" />
+
+	    	<ToggleButton
+	    	    android:id="@+id/gps_toggle"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+	    	    android:layout_below="@id/gps_label"
+	    	    android:layout_centerHorizontal="true"
+	    	    android:contentDescription="gps_toggle"
+	    	     />
+
+    	</RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -8,7 +8,10 @@ var path = require('path')
   , crazyPort = 4799;
 
 var waitForLaunch = function(app, extraArgs, cb) {
-  var args = [".", "-p", crazyPort, "-l", "-dd", "-m", "--app", app];
+  var args = [".", "-p", crazyPort, "-l", "-dd", "-m"];
+  if (app) {
+    args = args.concat(["--app", app]);
+  }
   args = args.concat(extraArgs);
   var proc = spawn('node', args, {cwd: path.resolve(__dirname, "..", "..", "..")});
   proc.stdout.setEncoding('utf8');
@@ -19,7 +22,7 @@ var waitForLaunch = function(app, extraArgs, cb) {
     calledBack = true;
     proc.kill();
     cb(new Error("Appium never started. Output was: " + output));
-  }, 30000);
+  }, 60000);
   proc.stdout.on('data', function(data) {
     output += data;
     if (!calledBack &&/Appium REST http interface listener started on/.test(data)) {
@@ -49,5 +52,13 @@ describe('Pre-launching apps', function() {
     var args = ["--app-pkg", "com.example.android.apis", "--app-activity",
       ".ApiDemos"];
     waitForLaunch(androidApp, args, done);
+  });
+
+  it('should work for safari', function(done) {
+    waitForLaunch('safari', [], done);
+  });
+
+  it('should work for safari via --safari', function(done) {
+    waitForLaunch(null, ['--safari'], done);
   });
 });

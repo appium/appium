@@ -1,0 +1,17 @@
+ant.properties
+bin
+build.xml
+gen
+local.properties
+proguard-project.txt
+project.properties
+tests/ant.properties
+tests/build.xml
+tests/local.properties
+tests/proguard-project.txt
+tests/project.properties
+out
+.settings/
+*.apk
+lint.xml
+.idea/*

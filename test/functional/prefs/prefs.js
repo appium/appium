@@ -33,3 +33,26 @@ describeWd('settings app', function(h) {
       }).nodeify(done);
   });
 });
+
+var checkLocServ = function(h, expected, cb) {
+  h.driver
+    .execute("mobile: findAndAct", [{strategy: "tag name", selector: "tableCell", index: 2}])
+    .sleep(1000)
+    .execute("mobile: findAndAct", [{strategy: "tag name", selector: "tableCell", index: 0}])
+    .elementByTagName('switch')
+    .getValue().then(function(checked) {
+      checked.should.eql(expected);
+    }).nodeify(cb);
+};
+
+describeWd('settings app with location services', function(h) {
+  it('should respond to positive locationServicesEnabled cap', function(done) {
+    checkLocServ(h, 1, done);
+  });
+}, null, null, {locationServicesEnabled: true});
+
+describeWd('settings app without location services', function(h) {
+  it('should respond to negative locationServicesEnabled cap', function(done) {
+    checkLocServ(h, 0, done);
+  });
+}, null, null, {locationServicesEnabled: false});

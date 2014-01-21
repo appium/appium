@@ -1,25 +1,30 @@
 /*global beforeEach:true */
 "use strict";
 
-var path = require('path')
-  , describeWd = null
-  , appPkg = "io.appium.gappium.sampleapp"
-  , appAct = ".HelloGappium"
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/ios/build/HelloGappium.app")
-  , driverBlock = require("../../helpers/driverblock.js")
-  , it = driverBlock.it;
+var env = require("../../helpers/env")
+  , setup = require("../common/setup-base")
+  , path = require('path');
 
-// export env APPIUM_CORDOVA="android" to run tests against android version
-if (typeof process.env.APPIUM_CORDOVA !== "undefined" && process.env.APPIUM_CORDOVA === "android") {
-  appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/android/bin/HelloGappium-debug.apk");
-  describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct);
+var desired;
+if (env.DEVICE === 'SELENDROID' || env.DEVICE === 'ANDROID') {
+  var appPath = path.resolve(__dirname, '../../../sample-code/apps/io.appium.gappium.sampleapp/platforms/' +
+    "android/bin/HelloGappium-debug.apk"),
+  desired = {
+    app: appPath,
+    'app-package': 'io.appium.gappium.sampleapp',
+    'app-activity': '.HelloGappium',
+  };
 } else {
-  describeWd = driverBlock.describeForApp(appPath, "ios", appPkg, appAct);
+  var appPath = path.resolve(__dirname, '../../../sample-code/apps/io.appium.gappium.sampleapp/platforms/' +
+    "ios/build/HelloGappium.app"),
+  desired = {
+    app: appPath
+  };
 }
 
-var activateWebView = function(h) {
+var activateWebView = function(browser) {
   // unify (ios vs selendroid) web view selection
-  return  h.driver.windowHandles().then(function(handles) {
+  return  browser.windowHandles().then(function(handles) {
     for (var handle in handles) {
       var hdl = handles[handle];
       if (hdl.indexOf('WEBVIEW') > -1) {
@@ -28,18 +33,21 @@ var activateWebView = function(h) {
     }
     return handles[0];
   }).then(function(handle) {
-    return h.driver.window(handle).catch(function() {});
+    return browser.window(handle).catch(function() {});
   });
 };
 
-describeWd('HelloGappium', function(h) {
+describe('HelloGappium', function() {
+  var browser;
+  setup(this, desired)
+    .then( function(_browser) { browser = _browser; } );
 
   beforeEach(function(done) {
-    activateWebView(h).nodeify(done);
+    activateWebView(browser).nodeify(done);
   });
 
   it('should open the app and navigate through the dialogs', function(done) {
-    h.driver
+    browser
       .sleep(3000) // timeout to visualize test execution
       .elementByCssSelector('.search-key')
         .sendKeys('j')

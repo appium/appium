@@ -1,17 +1,16 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , path = require('path')
-  , appUrl = 'http://appium.s3.amazonaws.com/UICatalog6.0.app.zip'
-  , appZip = path.resolve(__dirname, "../../../assets/UICatalog6.0.app.zip")
-  , describeZip = require('../../helpers/driverblock.js').describeForApp(appZip)
-  , describeUrl = require('../../helpers/driverblock.js').describeForApp(appUrl);
+var env = require('../../helpers/env')
+  , setup = require('./setup')
+  , path = require('path');
 
-describeWd('basic', function(h) {
+describe('basic', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
 
-  if (process.env.FAST_TESTS) {
+  if (env.FAST_TESTS) {
     beforeEach(function(done) {
-      h.driver
+      browser
         .elementByNameOrNull('Back')
         .then(function(el) { if (el) return el.click(); })
         .nodeify(done);
@@ -19,7 +18,7 @@ describeWd('basic', function(h) {
   }
   
   it('should confirm element is not visible', function(done) {
-    h.driver
+    browser
       .elementByTagName('tableCell').click()
       .elementByName("UIButtonTypeContactAdd").isDisplayed()
         .should.not.eventually.be.ok
@@ -27,7 +26,7 @@ describeWd('basic', function(h) {
   });
 
   it('should confirm element is visible', function(done) {
-    h.driver
+    browser
       .elementByTagName('tableCell').click()
       .elementByName("UIButtonTypeRoundedRect").isDisplayed()
         .should.eventually.be.ok
@@ -35,7 +34,7 @@ describeWd('basic', function(h) {
   });
 
   it('should confirm element is selected', function(done) {
-    h.driver
+    browser
       .elementByXPath("text[contains(@text, 'Picker')]").click()
       .elementByXPath("button[contains(@text, 'UIPicker')]").isSelected()
         .should.eventually.be.ok
@@ -43,7 +42,7 @@ describeWd('basic', function(h) {
   });
 
   it('should confirm element is not selected returns false', function(done) {
-    h.driver
+    browser
       .elementByXPath("text[contains(@text, 'Picker')]").click()
       .elementByXPath("button[contains(@text, 'Custom')]").isSelected()
         .should.not.eventually.be.ok
@@ -52,26 +51,39 @@ describeWd('basic', function(h) {
 
 });
 
-describeZip('appium ios', function(h) {
+describe('appium ios', function() {
+  var browser;
+  var appZip = path.resolve(__dirname, "../../../assets/UICatalog6.0.app.zip");
+  setup(this, {app: appZip})
+    .then( function(_browser) { browser = _browser; } );
+
   it('should load a zipped app via path', function(done) {
-    h.driver.elementByTagName('tableView')
+    browser.elementByTagName('tableView')
       .should.eventually.exist
     .nodeify(done);
   });
 });
 
-describeUrl('appium ios', function(h) {
+describe('appium ios', function() {
+  var browser;
+  var appUrl = 'http://appium.s3.amazonaws.com/UICatalog6.0.app.zip';
+  setup(this, {app: appUrl})
+    .then( function(_browser) { browser = _browser; } );
+
   it('should load a zipped app via url', function(done) {
-    h.driver
+    browser
       .elementByTagName('tableView')
         .should.eventually.exist
       .nodeify(done);
   });
 });
 
-describeWd('appium ios', function(h) {
+describe('appium ios', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should go back to using app from before', function(done) {
-    h.driver
+    browser
       .elementsByTagName('tableView')
         .should.eventually.have.length.above(0)
       .nodeify(done);

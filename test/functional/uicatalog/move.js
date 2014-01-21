@@ -1,11 +1,13 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('moveTo and click', function(h) {
+describe('moveTo and click', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should be able to click on arbitrary x-y elements', function(done) {
-    h.driver
+    browser
       .elementByTagName('tableCell').moveTo(10, 10).click()
       .elementByXPath("button[@name='Rounded']")
         .should.eventually.exist

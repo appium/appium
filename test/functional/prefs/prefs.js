@@ -1,12 +1,10 @@
-/*global describe:true */
 "use strict";
 
-var checkPreferencesApp = require("../../../lib/helpers").checkPreferencesApp
+var setup = require("../common/setup-base")
+  , checkPreferencesApp = require("../../../lib/helpers").checkPreferencesApp
   , chai = require('chai')
   , should = chai.should()
-  , appPath = '/tmp/Appium-Preferences.app'
-  , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath)
-  , it = require("../../helpers/driverblock.js").it;
+  , appPath = '/tmp/Appium-Preferences.app';
 
 describe('settings app', function() {
   it('should copy app correctly', function(done) {
@@ -18,11 +16,15 @@ describe('settings app', function() {
   });
 });
 
-describeWd('settings app', function(h) {
+describe('settings app', function() {
+  var browser;
+  setup(this, {app: appPath})
+    .then( function(_browser) { browser = _browser; } );
+
   it('should turn off autocomplete', function(done) {
     var p = {strategy: "tag name", selector: "tableCell", index: 1};
     var switchEl;
-    h.driver
+    browser
       .execute("mobile: findAndAct", [p])
       .sleep(1000)
       .execute("mobile: findAndAct", [p])
@@ -34,8 +36,8 @@ describeWd('settings app', function(h) {
   });
 });
 
-var checkLocServ = function(h, expected, cb) {
-  h.driver
+var checkLocServ = function(browser, expected, cb) {
+  browser
     .execute("mobile: findAndAct", [{strategy: "tag name", selector: "tableCell", index: 2}])
     .sleep(1000)
     .execute("mobile: findAndAct", [{strategy: "tag name", selector: "tableCell", index: 0}])
@@ -45,14 +47,22 @@ var checkLocServ = function(h, expected, cb) {
     }).nodeify(cb);
 };
 
-describeWd('settings app with location services', function(h) {
-  it('should respond to positive locationServicesEnabled cap', function(done) {
-    checkLocServ(h, 1, done);
-  });
-}, null, null, {locationServicesEnabled: true});
+describe('settings app with location services', function() {
+  var browser;
+  setup(this, {app: appPath, locationServicesEnabled: true})
+    .then( function(_browser) { browser = _browser; } );
 
-describeWd('settings app without location services', function(h) {
-  it('should respond to negative locationServicesEnabled cap', function(done) {
-    checkLocServ(h, 0, done);
+  it('should respond to positive locationServicesEnabled cap', function(done) {
+    checkLocServ(browser, 1, done);
   });
-}, null, null, {locationServicesEnabled: false});
+});
+
+describe('settings app without location services', function() {
+  var browser;
+  setup(this, {app: appPath, locationServicesEnabled: false})
+    .then( function(_browser) { browser = _browser; } );
+
+  it('should respond to negative locationServicesEnabled cap', function(done) {
+    checkLocServ(browser, 0, done);
+  });
+});

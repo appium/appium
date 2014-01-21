@@ -1,6 +1,6 @@
 "use strict";
 
-var wvHelpers = require("../../helpers/webview.js")
-  , webviewTests = wvHelpers.buildTests;
-
-webviewTests('iwebview');
+describe('iwebview', function() {
+  var app = 'iwebview';
+  require('../common/webview-base')(app);
+});

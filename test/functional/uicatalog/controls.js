@@ -1,13 +1,15 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var env = require('../../helpers/env')
+  , setup = require('./setup');
 
-describeWd('execute', function(h) {
+describe('execute', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
 
-  if (process.env.FAST_TESTS) {
+  if (env.FAST_TESTS) {
     beforeEach(function(done) {
-      h.driver
+      browser
         .elementByNameOrNull('Back')
         .then(function(el) { if (el) return el.click(); })
         .nodeify(done);
@@ -15,7 +17,7 @@ describeWd('execute', function(h) {
   }
   
   it('should be able to get and set a picker value', function(done) {
-    h.driver
+    browser
       .elementByXPath("//text[contains(@label,'Pickers')]").click()
       .elementsByTagName("picker").then(function(els) { return els[2]; })
       .elementByTagName('>', "pickerwheel").then(function(wheel) {
@@ -30,7 +32,7 @@ describeWd('execute', function(h) {
   });
 
   it('should be able to get and set a slider value', function(done) {
-    h.driver
+    browser
       .elementByXPath("//text[contains(@label,'Controls')]").click()
       .elementByTagName("slider").then(function(slider) {
         return slider

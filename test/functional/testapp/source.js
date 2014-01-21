@@ -1,11 +1,13 @@
 "use strict";
 
-var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('get source', function(h) {
+describe('get source', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   return it('should return the page source', function(done) {
-    h.driver.source().then(function(source) {
+    browser.source().then(function(source) {
       var obj = JSON.parse(source);
       obj.should.exist;
       obj.type.should.equal("UIAApplication");

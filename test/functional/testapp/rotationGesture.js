@@ -1,11 +1,13 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('rotation gesture', function(h) {
+describe('rotation gesture', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should rotate map after tapping Test Gesture', function(done) {
-    h.driver.elementsByTagName('button')
+    browser.elementsByTagName('button')
       .then(function(buttons) { return buttons[3].click(); })
       .elementsByTagName('Map')
       .execute("mobile: rotate", [{x: 114, y: 198, duration: 5, radius: 3,

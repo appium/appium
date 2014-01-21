@@ -1,16 +1,15 @@
 "use strict";
 
-var path = require('path')
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
-  , appPkg = "com.example.android.apis"
-  , appAct = ".ApiDemos"
-  , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
-      "android", appPkg, appAct)
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base")
+  , desired = require("./desired");
 
-describeWd('get source', function(h) {
+describe('get source', function() {
+  var browser;
+  setup(this, desired)
+   .then( function(_browser) { browser = _browser; } );
+
   it('should return the page source', function(done) {
-    h.driver
+    browser
       .elementByNameOrNull('Accessibility') // waiting for page to load
       .source().then(function(source) {
         var obj = JSON.parse(source);
@@ -20,7 +19,7 @@ describeWd('get source', function(h) {
       }).nodeify(done);
   });
   it('should return the page source without crashing other commands', function(done) {
-    h.driver
+    browser
       .execute("mobile: find", [[[[3, "Animation"]]]])
       .source().then(function(source) {
         var obj = JSON.parse(source);

@@ -1,5 +1,6 @@
 "use strict";
-var path = require('path')
+var env = require('../../helpers/env')
+  , path = require('path')
   , iosApp = path.resolve(__dirname, "..", "..", "..", "sample-code", "apps",
       "TestApp", "build", "Release-iphonesimulator", "TestApp.app")
   , androidApp = path.resolve(__dirname, "..", "..", "..", "sample-code",
@@ -44,6 +45,7 @@ var waitForLaunch = function(app, extraArgs, cb) {
 };
 
 describe('Pre-launching apps', function() {
+  this.timeout(env.MOCHA_TIMEOUT);
   it('should work for ios', function(done) {
     waitForLaunch(iosApp, [], done);
   });

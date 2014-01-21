@@ -6,52 +6,57 @@
  * this test
  */
 
-var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('command timeout', function(h) {
+describe('command timeout', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should be settable and gettable', function(done) {
-    h.driver
+    browser
       .execute("mobile: setCommandTimeout", [{timeout: 37}])
       .execute("mobile: getCommandTimeout").should.become(37)
       .nodeify(done);
   });
 });
 
-describeWd('command timeout', function(h) {
+describe('command timeout', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+ 
   it('should die with short command timeout', function(done) {
     var params = {timeout: 3};
-    h.driver
+    browser
       .execute("mobile: setCommandTimeout", [params])
       .sleep(5500)
       .elementByName('dont exist dogg')
-      .catch(function(err) {
-        [13, 6].should.include(err.status);
-        throw err;
-      }).should.be.rejected
+        .should.be.rejectedWith(/status: (13|6)/)
       .nodeify(done);
   });
 });
 
-describeWd('command timeout', function(h) {
+describe('command timeout', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should die with short command timeout even after mobile reset', function(done) {
     var params = {timeout: 3};
-    h.driver
+    browser
       .execute("mobile: setCommandTimeout", [params])
       .execute("mobile: reset")
       .sleep(6500)
       .elementByName('dont exist dogg')
-      .catch(function(err) {
-        [13, 6].should.include(err.status);
-        throw err;
-      }).should.be.rejected
+        .should.be.rejectedWith(/status: (13|6)/)
       .nodeify(done);
   });
 });
 
-describeWd('command timeout', function(h) {
+describe('command timeout', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('when set to 0 should disable itself', function(done) {
-    h.driver
+    browser
       .execute("mobile: setCommandTimeout", [{timeout: 0}])
       .sleep(3000)
       .elementByTagName('button').should.eventually.exist
@@ -59,9 +64,12 @@ describeWd('command timeout', function(h) {
   });
 });
 
-describeWd('command timeout', function(h) {
+describe('command timeout', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('when set to false should disable itself', function(done) {
-    h.driver
+    browser
       .execute("mobile: setCommandTimeout", [{timeout: false}])
       .sleep(3000)
       .elementByTagName('button').should.eventually.exist
@@ -69,31 +77,37 @@ describeWd('command timeout', function(h) {
   });
 });
 
-describeWd('command timeout via desired caps', function(h) {
+describe('command timeout via desired caps', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should die with short command timeout', function(done) {
-    h.driver
+    browser
       .sleep(5500)
       .elementByName('dont exist dogg')
-      .catch(function(err) {
-        [13, 6].should.include(err.status);
-        throw err;
-      }).should.be.rejected
+        .should.be.rejectedWith(/status: (13|6)/)
       .nodeify(done);
   });
 }, null, null, {newCommandTimeout: 3});
 
-describeWd('command timeout disabled via desired caps', function(h) {
+describe('command timeout disabled via desired caps', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('when set to 0 should disable itself', function(done) {
-    h.driver
+    browser
       .sleep(3000)
       .elementByTagName('button').should.eventually.exist
       .nodeify(done);
   });
 }, null, null, {newCommandTimeout: 0});
 
-describeWd('command timeout disabled via desired caps', function(h) {
+describe('command timeout disabled via desired caps', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('when set to false should disable itself', function(done) {
-    h.driver
+    browser
       .execute("mobile: setCommandTimeout", [{timeout: false}])
       .sleep(3000)
       .elementByTagName('button').should.eventually.exist
@@ -101,11 +115,14 @@ describeWd('command timeout disabled via desired caps', function(h) {
   });
 }, null, null, {newCommandTimeout: false});
 
-describeWd('check implicit wait', function(h) {
+describe('check implicit wait', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+  
   var impWaitSecs = 4;
   var impWaitCheck = function() {
     var before = new Date().getTime() / 1000;
-    return h.driver
+    return browser
       .elementsByTagName('notgonnabethere').then(function(missing) {
          var after = new Date().getTime() / 1000;
          (after - before).should.be.below(impWaitSecs + 2);
@@ -115,14 +132,14 @@ describeWd('check implicit wait', function(h) {
   };
 
    it('should set the implicit wait for finding elements', function(done) {
-     h.driver
+     browser
       .setImplicitWaitTimeout(impWaitSecs * 1000)
       .then(impWaitCheck)
       .nodeify(done);
    });
 
    it('should work even with a reset in the middle', function(done) {
-     h.driver
+     browser
       .setImplicitWaitTimeout(impWaitSecs * 1000)
       .then(impWaitCheck)
       .execute("mobile: reset")

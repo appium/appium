@@ -2,13 +2,15 @@
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
 "use strict";
 
-var driverblock = require("../../helpers/driverblock.js")
-  , Q = driverblock.Q
-  , it = driverblock.it
-  , describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
+var setup = require('./setup')
+  , wd = require('wd')
+  , Q = wd.Q
   , _ = require('underscore');
 
-describeWd('calc app', function(h) {
+describe('calc app', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   var values = [];
   var populate = function(driver) {
     return driver.elementsByTagName('textField').then(function(elems) {
@@ -22,7 +24,7 @@ describeWd('calc app', function(h) {
   };
 
   it('should fill two fields with numbers', function(done) {
-    var driver = h.driver;
+    var driver = browser;
     populate(driver).then(function() {
       return driver
         .elementByTagName('button').click()

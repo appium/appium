@@ -1,11 +1,13 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('window handles', function(h) {
+describe('window handles', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('getting handles should do nothing when no webview open', function(done) {
-    h.driver
+    browser
       .windowHandles().should.eventually.have.length(0)
       .nodeify(done);
   });

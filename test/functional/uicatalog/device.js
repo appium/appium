@@ -1,12 +1,14 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('device target actions', function(h) {
+describe('device target actions', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it("should lock the device for 4 of seconds (+/- 2 secs)", function(done) {
     var before = new Date().getTime() / 1000;
-    h.driver
+    browser
       .execute("mobile: lock", [{seconds: 4}])
       .then(function() {
         ((new Date().getTime() / 1000) - before).should.be.below(7);
@@ -14,7 +16,7 @@ describeWd('device target actions', function(h) {
   });
   it("should background the app for 4 of seconds (+/- 6 secs)", function(done) {
     var before = new Date().getTime() / 1000;
-    h.driver
+    browser
       .execute("mobile: background", [{seconds: 4}])
       .then(function() {
         ((new Date().getTime() / 1000) - before).should.be.below(11);

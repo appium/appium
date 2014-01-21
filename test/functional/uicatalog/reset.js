@@ -1,11 +1,13 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('app reset', function(h) {
+describe('app reset', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it("should be able to find elements after a soft reset", function(done) {
-    h.driver
+    browser
       .elementsByTagName('tableView')
         .should.eventually.have.length(1)
       .execute("mobile: reset")

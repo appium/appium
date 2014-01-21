@@ -1,11 +1,13 @@
 "use strict";
 
-var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require('./setup');
 
-describeWd('clear', function(h) {
+describe('clear', function() {
+  var browser;
+  setup(this).then( function(_browser) { browser = _browser; } );
+
   it('should clear the text field', function(done) {
-    h.driver
+    browser
       .elementByTagName('textField').sendKeys("some-value").text()
         .should.become("some-value")
       .elementByTagName('textField').clear().text().should.become('')
@@ -13,7 +15,7 @@ describeWd('clear', function(h) {
   });
 
   it('should hide keyboard', function(done) {
-    h.driver
+    browser
       .elementByTagName('textField').sendKeys("1")
       .elementByTagName('slider').click()
         .should.be.rejected

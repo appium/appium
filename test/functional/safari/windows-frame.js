@@ -1,50 +1,46 @@
 "use strict";
+var env = require('../../helpers/env')
+  , setup = require("../common/setup-base")
+  , loadWebView = require("../../helpers/webview-utils").loadWebView
+  , spinTitle = require("../../helpers/webview-utils").spinTitle;
 
-var desc = require("../../helpers/driverblock.js").describeForSafari()
-  , it = require("../../helpers/driverblock.js").it
-  , wvHelpers = require("../../helpers/webview.js")
-  , webviewTests = wvHelpers.buildTests
-  , loadWebView = wvHelpers.loadWebView
-  , spinTitle = wvHelpers.spinTitle
-  , _ = require('underscore');
+describe("safari - windows-frame -", function() {
 
-
-var devices = ["iPad", "iPhone"];
-_.each(devices, function(sim) {
-
-  desc('windows and frames (' + sim + ')', function(h) {
+  describe('windows and frames (' + env.DEVICE + ')', function() {
+    var driver;
+    setup(this, {app:'safari'}).then( function(d) { driver = d; } );
 
     it('getting current window should work initially', function(done) {
-      h.driver
+      driver
         .windowHandle().then(function(handleId) {
           parseInt(handleId, 10).should.be.above(0);
         }).nodeify(done);
     });
     describe('within webview', function() {
       beforeEach(function(done) {
-        loadWebView("safari",h.driver).nodeify(done);
+        loadWebView("safari", driver).nodeify(done);
       });
       it("should throw nosuchwindow if there's not one", function(done) {
-        h.driver
+        driver
           .window('noexistman')
             .should.be.rejectedWith(/status: 23/)
           .nodeify(done);
       });
       it("should be able to open and close windows", function(done) {
-        h.driver
+        driver
           .elementById('blanklink').click()
-          .then(function() { return spinTitle("I am another page title", h.driver); })
+          .then(function() { return spinTitle("I am another page title", driver); })
           .windowHandles()
           .then(function(handles) {
-            return h.driver
+            return driver
               .sleep(2000).close().sleep(3000)
               .windowHandles()
                 .should.eventually.be.below(handles.length);
-        }).then(function() { return spinTitle("I am a page title", h.driver); })
+        }).then(function() { return spinTitle("I am a page title", driver); })
         .nodeify(done);
       });
       it('should be able to go back and forward', function(done) {
-        h.driver
+        driver
           .elementByLinkText('i am a link')
             .click()
           .elementById('only_on_page_2')
@@ -55,7 +51,5 @@ _.each(devices, function(sim) {
           .nodeify(done);
       });
     });
-  }, null, null, {device: sim + " Simulator"});
+  });
 });
-
-webviewTests('safari');

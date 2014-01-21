@@ -65,7 +65,11 @@ I am some page content
   <p>Server time: <span id="servertime">{{ serverTime }}</span></p>
   <p>Client time: <span id="clienttime"></span></p>
   <script type="text/javascript">
-      $("#clienttime").text(parseInt(new Date().getTime() / 1000))
+    var uuid; 
+    try {uuid = window.location.toString().match(/\?(.*)$/)[1]; } catch(ign) {};    
+    if(uuid) document.title=document.title + " - " + uuid;
+    $("#clienttime").text(parseInt(new Date().getTime() / 1000));
+
   </script>
 
   <p id="useragent">{{ userAgent }}</p>

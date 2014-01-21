@@ -5,7 +5,7 @@ var chai = require('chai')
   , serverHub = serverUrl + '/wd/hub/session'
   , request = require('request');
 
-describe('JSONWP request', function() {
+describe("appium - jsonwp -", function() {
   describe('to a non-existent url', function() {
     it('should get 404 with text/plain body', function(done) {
       request.get(serverUrl + '/a/bad/path', function(err, res, body) {

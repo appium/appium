@@ -1,15 +1,18 @@
 "use strict";
 
-var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base"),
+    desired = require('./desired');
 
-describeWd('active', function(h) {
+describe('testapp - active -', function() {
+  var driver;
+  setup(this, desired).then( function(d) { driver = d; } );
+
   it('should return active element', function(done) {
-    h.driver
+    driver
       .elementsByTagName('textField').then(function(elems) {
         return elems[1];
       }).then(function(elem) {
-        return h.driver
+        return driver
           .active().equals(elem).should.be.ok;
       }).nodeify(done);
   });

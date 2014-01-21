@@ -1,14 +1,16 @@
 "use strict";
 
 // todo: this was converted to promise chain api, but not tested.
-var describeWd = require('../../helpers/driverblock.js').describeForApp('Contacts', 'firefox')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base");
 
-describeWd('firefoxos', function(h) {
-  return it('should load app', function(done) {
+describe("firefoxos - contacts -", function() {
+  var driver;
+  setup(this, {app: 'Contacts'}).then( function(d) { driver = d; } );
+ 
+  it('should load app', function(done) {
     var firstName = "Name";
     var lastName = Date.now().toString();
-    h.driver
+    driver
       .url().should.become("app://communications.gaiamobile.org/contacts/index.html")
       .elementById('add-contact-button').click()
       .elementById('givenName').sendKeys(firstName)

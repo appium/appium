@@ -1,11 +1,14 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base"),
+    desired = require('./desired');
 
-describeWd('check location', function(h) {
+describe('testapp - location -', function() {
+  var driver;
+  setup(this, desired).then( function(d) { driver = d; } );
+
   it('should return the right x/y coordinates', function(done) {
-    h.driver
+    driver
       .elementByTagName('button').getLocation().then(function(location) {
         location.x.should.equal(94);
         location.y.should.equal(122);
@@ -18,7 +21,7 @@ describeWd('check location', function(h) {
       latitude: -30
       , longitude: 30
     };
-    h.driver.execute('mobile: setLocation', [locationOpts])
+    driver.execute('mobile: setLocation', [locationOpts])
       .nodeify(done);
   });
 
@@ -28,7 +31,7 @@ describeWd('check location', function(h) {
       , longitude: 30
       , altitude: 1000
     };
-    h.driver.execute('mobile: setLocation', [locationOpts])
+    driver.execute('mobile: setLocation', [locationOpts])
       .nodeify(done);
   });
 
@@ -37,7 +40,7 @@ describeWd('check location', function(h) {
       latitude: -150
       , longitude: 30
     };
-    h.driver.execute('mobile: setLocation', [locationOpts])
+    driver.execute('mobile: setLocation', [locationOpts])
       .should.be.rejected
       .nodeify(done);
   });

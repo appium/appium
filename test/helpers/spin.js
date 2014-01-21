@@ -1,6 +1,6 @@
 "use strict";
 
-var Q =  require("./driverblock.js").Q;
+var Q = require("q");
 
 exports.spinWait = function(spinFn, waitMs, intMs) {
   if (typeof waitMs === "undefined") {

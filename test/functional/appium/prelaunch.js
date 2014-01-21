@@ -1,5 +1,6 @@
 "use strict";
-var path = require('path')
+var env = require('../../helpers/env')
+  , path = require('path')
   , iosApp = path.resolve(__dirname, "..", "..", "..", "sample-code", "apps",
       "TestApp", "build", "Release-iphonesimulator", "TestApp.app")
   , androidApp = path.resolve(__dirname, "..", "..", "..", "sample-code",
@@ -43,7 +44,8 @@ var waitForLaunch = function(app, extraArgs, cb) {
   });
 };
 
-describe('Pre-launching apps', function() {
+describe("appium - prelaunch -", function() {
+  this.timeout(env.MOCHA_TIMEOUT);
   it('should work for ios', function(done) {
     waitForLaunch(iosApp, [], done);
   });
@@ -56,7 +58,7 @@ describe('Pre-launching apps', function() {
     waitForLaunch(iosApp, ['--force-ipad'], done);
   });
 
-  it('should work for android', function(done) {
+  it('should work for android @skip-all-ios', function(done) {
     var args = ["--app-pkg", "com.example.android.apis", "--app-activity",
       ".ApiDemos"];
     waitForLaunch(androidApp, args, done);

@@ -1,25 +1,30 @@
 "use strict";
 
-var path = require('path')
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/gps-demo/bin/GPSTutorial1.apk")
-  , appPkg = "de.impressive.artworx.tutorials.gps"
-  , appAct = "GPSTest"
-  , driverBlock = require("../../helpers/driverblock.js")
-  , describeWd = driverBlock.describeForApp(appPath, "android", appPkg, appAct)
-  , it = driverBlock.it;
+var setup = require("../common/setup-base")
+  , desired = require("./desired")
+  , path = require('path');
 
-describeWd('geo location', function(h) {
+var desired = {
+  app: path.resolve(__dirname, '../../../sample-code/apps/gps-demo/bin/GPSTutorial1.apk'),
+  'app-package': 'de.impressive.artworx.tutorials.gps',
+  'app-activity': 'GPSTest'
+};
+
+describe("apidemo - location -", function() {
+  var driver;
+  setup(this, desired).then( function(d) { driver = d; } );
+
   it('should set geo location', function(done) {
-    var getText = function() { return h.driver.elementByXPath("//text[2]").text(); };
+    var getText = function() { return driver.elementByXPath("//text[2]").text(); };
     var newLat = "27.17";
     var newLong = "78.04";
-    h.driver
+    driver
       .resolve(getText()).then(function(text) {
         text.should.not.include("Latitude: " + newLat);
         text.should.not.include("Longitude: " + newLong);
       }).then(function() {
         var locOpts = {latitude: newLat, longitude: newLong};
-        return h.driver.execute("mobile: setLocation", [locOpts]);
+        return driver.execute("mobile: setLocation", [locOpts]);
       }).sleep(1000).then(getText).then(function(text) {
         text.should.include("Latitude: " + newLat.substr(0, 4));
         text.should.include("Longitude: " + newLong.substr(0, 4));

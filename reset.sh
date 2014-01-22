@@ -19,6 +19,7 @@ appium_home=$(pwd)
 reset_successful=false
 has_reset_unlock_apk=false
 apidemos_reset=false
+toggletest_reset=false
 hardcore=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
@@ -251,6 +252,14 @@ reset_apidemos() {
     apidemos_reset=true
 }
 
+reset_toggle_test() {
+    echo "* Configuring and cleaning/building Android test app: ToggleTest"
+    run_cmd $grunt configAndroidApp:ToggleTest
+    run_cmd $grunt buildAndroidApp:ToggleTest
+    uninstall_android_app com.example.toggletest
+    toggletest_reset=true
+}
+
 reset_gps_demo() {
     if $hardcore ; then
         echo "* Removing previous copies of the gps demo"
@@ -293,6 +302,7 @@ reset_android() {
     reset_unlock_apk
     if $include_dev ; then
         reset_apidemos
+        reset_toggle_test
         reset_gps_demo
     fi
     echo "* Setting Android config to Appium's version"
@@ -319,6 +329,10 @@ reset_selendroid() {
         if ! $apidemos_reset; then
             reset_apidemos
             uninstall_android_app com.example.android.apis.selendroid
+        fi
+        if ! $toggletest_reset; then
+            reset_toggle_test
+            uninstall_android_app com.example.toggletest.selendroid
         fi
         echo "* Linking selendroid test app: WebViewDemo"
         run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo

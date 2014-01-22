@@ -3,7 +3,7 @@
 var driverBlock = require("../../helpers/driverblock.js")
   , Q =  driverBlock.Q
   , path = require('path')
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/ToggleTest/bin/ToggleTest.apk")
+  , appPath = path.resolve(__dirname, "../../../sample-code/apps/ToggleTest/bin/ToggleTest-debug.apk")
   , appPkg = "com.example.toggletest"
   , appAct = ".MainActivity"
   , it = driverBlock.it;

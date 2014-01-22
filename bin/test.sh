@@ -96,7 +96,7 @@ if $android_only || $all_tests; then
     echo "RUNNING ANDROID TESTS"
     echo "---------------------"
     android_testfile="./test/functional/_joined/android.js"
-    android_dirs="apidemos selendroid android gappium"
+    android_dirs="apidemos selendroid android toggletest gappium"
     join_testfiles android $android_testfile $android_dirs
     APPIUM_CORDOVA="android" time $appium_mocha $android_testfile
 fi

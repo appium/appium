@@ -340,7 +340,7 @@ module.exports.setupAndroidBootstrap = function(grunt, cb) {
 
 module.exports.setupAndroidApp = function(grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code", "apps", appName);
-  var args = ["update", "project", "--subprojects", "-t", "android-18", "-p", "."];
+  var args = ["update", "project", "--subprojects", "-t", "android-18", "-p", ".", "-n", appName];
   setupAndroidProj(grunt, appPath, args, cb);
 };
 

@@ -48,6 +48,14 @@ describe('Pre-launching apps', function() {
     waitForLaunch(iosApp, [], done);
   });
 
+  it('should work with force iphone', function(done) {
+    waitForLaunch(iosApp, ['--force-iphone'], done);
+  });
+
+  it('should work with force ipad', function(done) {
+    waitForLaunch(iosApp, ['--force-ipad'], done);
+  });
+
   it('should work for android', function(done) {
     var args = ["--app-pkg", "com.example.android.apis", "--app-activity",
       ".ApiDemos"];

@@ -1,6 +1,7 @@
 "use strict";
 
 var setup = require("../../common/setup-base"),
+    _ = require("underscore"),
     desired = require('./desired');
 
 describe('testapp - location -', function () {
@@ -42,6 +43,42 @@ describe('testapp - location -', function () {
     };
     driver.execute('mobile: setLocation', [locationOpts])
       .should.be.rejected
+      .nodeify(done);
+  });
+});
+
+describe('testapp - location services -', function () {
+  var driver;
+  var newDesired = _.clone(desired);
+  _.extend(newDesired, {
+    locationServicesAuthorized: true,
+    bundleId: 'io.appium.TestApp'
+  });
+  setup(this, newDesired).then(function (d) { driver = d; });
+
+  it('should be able to be turned on', function (done) {
+    driver
+      .elementByName('locationStatus').getValue().then(function (checked) {
+        checked.should.equal(1);
+      })
+      .nodeify(done);
+  });
+});
+
+describe('testapp - location services -', function () {
+  var driver;
+  var newDesired = _.clone(desired);
+  _.extend(newDesired, {
+    locationServicesAuthorized: false,
+    bundleId: 'io.appium.TestApp'
+  });
+  setup(this, newDesired).then(function (d) { driver = d; });
+
+  it('should be able to be turned off', function (done) {
+    driver
+      .elementByName('locationStatus').getValue().then(function (checked) {
+        checked.should.equal(0);
+      })
       .nodeify(done);
   });
 });

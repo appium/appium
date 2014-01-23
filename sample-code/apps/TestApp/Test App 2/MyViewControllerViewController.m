@@ -47,6 +47,7 @@
 	[secondArg setAccessibilityIdentifier:@"IntegerB"];
 	[computeSumButton setAccessibilityIdentifier:@"ComputeSumButton"];
 	[answerLabel setAccessibilityIdentifier:@"Answer"];
+    [locationStatus setAccessibilityIdentifier:@"locationStatus"];
     return self;
 }
 
@@ -72,7 +73,6 @@
 
 - (void)logLocationAuth
 {
-    //[self.locationMgr startUpdatingLocation];
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     if (status == kCLAuthorizationStatusAuthorized) {
         locationStatus.on = YES;

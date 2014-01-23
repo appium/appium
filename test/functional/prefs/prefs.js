@@ -2,18 +2,23 @@
 
 var chai = require('chai')
   , describeWd = require("../../helpers/driverblock.js").describeForSettings
+  , env = {} // anticipate @sebv changes
   , it = require("../../helpers/driverblock.js").it;
+
+env.DEVICE = process.env.DEVICE || "IOS6"; // anticipate @sebv changes
 
 chai.should();
 
 describeWd('settings app', function(h) {
   it('should turn off autocomplete', function(done) {
-    var p = {strategy: "tag name", selector: "tableCell", index: 1};
+    var ios7 = env.DEVICE.indexOf("7") !== -1;
+    var clickGeneral = {strategy: "tag name", selector: "tableCell", index: ios7 ? 0 : 1};
+    var clickKeyboard = {strategy: "tag name", selector: "tableCell", index: ios7 ? 3 : 1};
     var switchEl;
     h.driver
-      .execute("mobile: findAndAct", [p])
+      .execute("mobile: findAndAct", [clickGeneral])
       .sleep(1000)
-      .execute("mobile: findAndAct", [p])
+      .execute("mobile: findAndAct", [clickKeyboard])
       .elementByXPath('//switch[@name="Auto-Correction"]')
       .then(function(el) { switchEl = el; return el; })
       .getValue().then(function(checked) {

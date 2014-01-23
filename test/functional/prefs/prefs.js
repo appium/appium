@@ -1,22 +1,10 @@
-/*global describe:true */
 "use strict";
 
-var checkPreferencesApp = require("../../../lib/helpers").checkPreferencesApp
-  , chai = require('chai')
-  , should = chai.should()
-  , appPath = '/tmp/Appium-Preferences.app'
-  , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath)
+var chai = require('chai')
+  , describeWd = require("../../helpers/driverblock.js").describeForSettings
   , it = require("../../helpers/driverblock.js").it;
 
-describe('settings app', function() {
-  it('should copy app correctly', function(done) {
-    checkPreferencesApp('6.1', function(err, actualAppPath) {
-      should.not.exist(err);
-      appPath.should.eql(actualAppPath);
-      done();
-    });
-  });
-});
+chai.should();
 
 describeWd('settings app', function(h) {
   it('should turn off autocomplete', function(done) {

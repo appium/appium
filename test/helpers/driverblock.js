@@ -132,6 +132,14 @@ describeForSafari.only = function() {
   return describeForSafari(true);
 };
 
+var describeForSettings = function(desc, tests, host, port, extraCaps) {
+  var caps = {
+    app: 'settings'
+    , device: 'iPhone Simulator'
+  };
+  return describeWithDriver(desc, tests, host, port, caps, extraCaps);
+};
+
 var describeForIWebView = function() {
   var fn = function(desc, tests, host, port, extraCaps, onlyify) {
     var caps = {
@@ -259,6 +267,7 @@ module.exports.describe = describeWithDriver;
 module.exports.describeForApp = describeForApp;
 module.exports.describeForSauce = describeForSauce;
 module.exports.describeForSafari = describeForSafari;
+module.exports.describeForSettings = describeForSettings;
 module.exports.describeForIWebView = describeForIWebView;
 module.exports.describeForChrome = describeForChrome;
 module.exports.Q = wd.Q;

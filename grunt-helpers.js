@@ -110,6 +110,9 @@ module.exports.runMochaTests = function (grunt, appName, testType, deviceType, c
     var file = mochaFiles.shift();
     if (typeof file !== "undefined") {
       var mochaProc = spawn('mocha', args.concat(file), {cwd: __dirname});
+      mochaProc.on("error", function (err) {
+        grunt.fatal("Unable to spawn mocha process: mocha not installed?");
+      });
       mochaProc.stdout.setEncoding('utf8');
       mochaProc.stderr.setEncoding('utf8');
       mochaProc.stdout.on('data', function (data) {
@@ -131,6 +134,9 @@ module.exports.runMochaTests = function (grunt, appName, testType, deviceType, c
 
 module.exports.tail = function (grunt, filename, cb) {
   var proc = spawn('tail', ['-f', filename]);
+  proc.on("error", function (err) {
+    grunt.fatal("Unable to spawn \"tail\": " + err.message);
+  });
   proc.stdout.setEncoding('utf8');
   proc.stdout.on('data', function (data) {
     grunt.log.write(data);
@@ -239,6 +245,9 @@ module.exports.build = function (appRoot, cb, sdk, xcconfig) {
       xcode = spawn('xcodebuild', args, {
         cwd: appRoot
       });
+      xcode.on("error", function (err) {
+        cb(new Error("Failed spawning xcodebuild: " + err.message));
+      });
       var output = '';
       var collect = function (data) { output += data; };
       xcode.stdout.on('data', collect);
@@ -317,6 +326,9 @@ var setupAndroidProj = function (grunt, projPath, args, cb) {
     grunt.fatal("The `android` command was not found at \"" + cmd + "\", are you sure ANDROID_HOME is set properly?");
   }
   var proc = spawn(cmd, args, {cwd: projPath});
+  proc.on("error", function (err) {
+    grunt.fatal("Unable to spawn android: " + err.message);
+  });
   proc.stdout.setEncoding('utf8');
   proc.stderr.setEncoding('utf8');
   proc.stdout.on('data', function (data) {
@@ -361,8 +373,11 @@ var buildAndroidProj = function (grunt, projPath, target, cb) {
     } else {
       if (stdout) {
         var cmd = stdout.split('\r\n')[0].trim();
-        grunt.log.write("Using " + cmdName + " found at " + cmd);
+        grunt.log.write("Using " + cmdName + " found at " + cmd + "\n");
         var proc = spawn(cmd, [target], {cwd: projPath});
+        proc.on("error", function (err) {
+          grunt.fatal("Unable to spawn \"" + cmdName + "\"");
+        });
         proc.stdout.setEncoding('utf8');
         proc.stderr.setEncoding('utf8');
         proc.stdout.on('data', function (data) {

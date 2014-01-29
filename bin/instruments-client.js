@@ -4,8 +4,8 @@
 var net = require('net')
   , ap = require('argparse').ArgumentParser;
 
-var connect = function(args) {
-  var client = net.connect({path: args.socket}, function() {
+var connect = function (args) {
+  var client = net.connect({path: args.socket}, function () {
     var data = {event: "cmd"};
     if (args.result) {
       process.stderr.write("Sending result to server: " + args.result);
@@ -20,7 +20,7 @@ var connect = function(args) {
     data = JSON.stringify(data);
     client.end(data, "utf8");
   });
-  client.on('data', function(data) {
+  client.on('data', function (data) {
     try {
       data = JSON.parse(data);
     } catch (e) {
@@ -46,7 +46,7 @@ if (module === require.main) {
 }
 
 module.exports.parser = parser;
-module.exports.connect = function(result, socket) {
+module.exports.connect = function (result, socket) {
   var args = {result: result, socket: socket};
   connect(args);
 };

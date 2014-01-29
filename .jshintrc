@@ -7,5 +7,7 @@
   "node": true,
   "eqeqeq": true,
   "trailing": true,
-  "es5": true
+  "es5": true,
+  "white": true,
+  "indent": 2    
 }

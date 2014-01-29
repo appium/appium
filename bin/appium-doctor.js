@@ -6,14 +6,14 @@ var IOSChecker = require('../lib/doctor/ios.js').IOSChecker
   , common = require("../lib/doctor/common.js")
   , eol = require('os').EOL
   , async = require('async')
-  , isMac = process.platform === 'darwin'
-  , isWindows = process.platform === 'win32';
+  , isMac = process.platform === 'darwin';
+  // , isWindows = process.platform === 'win32';
 
 var argv = process.argv
   , doAndroid = argv.indexOf('--android') > -1
   , doIOS = argv.indexOf('--ios') > -1
   , doDev = argv.indexOf('--dev') > -1
-  , verbose = argv.indexOf('--verbose') > -1
+  // , verbose = argv.indexOf('--verbose') > -1
   , broadcast = argv.indexOf('--port') > -1
   , port = null;
 
@@ -28,7 +28,7 @@ if (!doIOS && !doAndroid) {
 
 var log = new common.Log(port);
 
-var runiOSChecks = function(cb) {
+var runiOSChecks = function (cb) {
   if (doIOS) {
     if (!isMac) {
       log.fail("iOS Checks cannot be run on Windows.");
@@ -36,7 +36,7 @@ var runiOSChecks = function(cb) {
     }
     var iosChecker = new IOSChecker(log);
     log.comment("Running iOS Checks");
-    iosChecker.runAllChecks(function(err) {
+    iosChecker.runAllChecks(function (err) {
       if (!err) {
         log.pass("iOS Checks were successful." + eol);
         cb();
@@ -49,11 +49,11 @@ var runiOSChecks = function(cb) {
   }
 };
 
-var runAndroidChecks = function(cb) {
+var runAndroidChecks = function (cb) {
   if (doAndroid) {
     var androidChecker = new AndroidChecker(log);
     log.comment("Running Android Checks");
-    androidChecker.runAllChecks(function(err) {
+    androidChecker.runAllChecks(function (err) {
       if (!err) {
         log.pass("Android Checks were successful." + eol);
         cb();
@@ -66,11 +66,11 @@ var runAndroidChecks = function(cb) {
   }
 };
 
-var runDevChecks = function(cb) {
+var runDevChecks = function (cb) {
   if (doDev) {
     var devChecker = new DevChecker(log);
     log.comment("Running Dev Checks");
-    devChecker.runAllChecks(function(err) {
+    devChecker.runAllChecks(function (err) {
       if (!err) {
         log.pass("Dev Checks were successful." + eol);
         cb();
@@ -85,12 +85,12 @@ var runDevChecks = function(cb) {
 
 if (require.main === module) {
 
-  var mainMethod = function() {
+  var mainMethod = function () {
     async.series([
       runiOSChecks,
       runAndroidChecks,
       runDevChecks
-    ], function(err) {
+    ], function (err) {
       if (!err) {
         log.pass("All Checks were successful");
         log.stopBroadcast();

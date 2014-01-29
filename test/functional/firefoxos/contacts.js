@@ -3,11 +3,11 @@
 // todo: this was converted to promise chain api, but not tested.
 var setup = require("../common/setup-base");
 
-describe("firefoxos - contacts -", function() {
+describe("firefoxos - contacts -", function () {
   var driver;
-  setup(this, {app: 'Contacts'}).then( function(d) { driver = d; } );
+  setup(this, {app: 'Contacts'}).then(function (d) { driver = d; });
  
-  it('should load app', function(done) {
+  it('should load app', function (done) {
     var firstName = "Name";
     var lastName = Date.now().toString();
     driver

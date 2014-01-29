@@ -3,14 +3,14 @@
 var setup = require("../common/setup-base")
   , desired = require("./desired");
 
-describe("apidemos - source -", function() {
+describe("apidemos - source -", function () {
   var driver;
-  setup(this, desired).then( function(d) { driver = d; } );
+  setup(this, desired).then(function (d) { driver = d; });
 
-  it('should return the page source', function(done) {
+  it('should return the page source', function (done) {
     driver
       .elementByNameOrNull('Accessibility') // waiting for page to load
-      .source().then(function(source) {
+      .source().then(function (source) {
         source.should.exist;
         source.should.include('android.widget.FrameLayout');
         source.should.include('@class');
@@ -21,10 +21,10 @@ describe("apidemos - source -", function() {
         //obj.hierarchy.node.node.node[0].node['@class'].should.equal("android.widget.FrameLayout");
       }).nodeify(done);
   });
-  it('should return the page source without crashing other commands', function(done) {
+  it('should return the page source without crashing other commands', function (done) {
     driver
       .execute("mobile: find", [[[[3, "Animation"]]]])
-      .source().then(function(source) {
+      .source().then(function (source) {
         source.should.exist;
         source.should.include('android.widget.FrameLayout');
         source.should.include('@class');

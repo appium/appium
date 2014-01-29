@@ -7,29 +7,29 @@ var setup = require("../common/setup-base")
   , Q = require("q")
   , _ = require('underscore');
 
-describe('testapp - simple -', function() {
+describe('testapp - simple -', function () {
 
-  describe('using calc app', function() {
+  describe('using calc app', function () {
     var driver;
-    setup(this, desired).then( function(d) { driver = d; } );
+    setup(this, desired).then(function (d) { driver = d; });
 
     var values = [];
-    var populate = function(driver) {
-      return driver.elementsByTagName('textField').then(function(elems) {
-        var sequence = _(elems).map(function(elem) {
-          var val = Math.round(Math.random()*10);
+    var populate = function (driver) {
+      return driver.elementsByTagName('textField').then(function (elems) {
+        var sequence = _(elems).map(function (elem) {
+          var val = Math.round(Math.random() * 10);
           values.push(val);
-          return function() { return elem.sendKeys(val); };
+          return function () { return elem.sendKeys(val); };
         });
         return sequence.reduce(Q.when, new Q()); // running sequence
       });
     };
 
-    it('should fill two fields with numbers', function(done) {
-      populate(driver).then(function() {
+    it('should fill two fields with numbers', function (done) {
+      populate(driver).then(function () {
         return driver
           .elementByTagName('button').click()
-          .elementByTagName('staticText').text().then(function(text) {
+          .elementByTagName('staticText').text().then(function (text) {
             parseInt(text, 10).should.equal(values[0] + values[1]);
           });
       }).nodeify(done);

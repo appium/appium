@@ -1,7 +1,6 @@
 "use strict";
 
-var appUtils = require('../../helpers/app-utils'),
-    path = require('path');
+var appUtils = require('../../helpers/app-utils');
 
 module.exports = {
   app: appUtils.getAppPath('ApiDemos'),

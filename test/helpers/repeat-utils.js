@@ -1,9 +1,9 @@
 "use strict";
 
-var tryNTimes = function(n , fn) {
+var tryNTimes = function (n, fn) {
   if (n <= 0) return;
-    return fn().catch(function() {
-      return tryNTimes(n-1, fn);
+  return fn().catch(function () {
+    return tryNTimes(n - 1, fn);
   });
 };
 

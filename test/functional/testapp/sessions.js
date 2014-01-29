@@ -7,18 +7,18 @@ var env = require('../../helpers/env')
   , desired = require('./desired')
   , request = require("request");
 
-describe('testapp - sessions -', function() {
+describe('testapp - sessions -', function () {
   var driver;
-  setup(this, desired).then( function(d) { driver = d; } );
+  setup(this, desired).then(function (d) { driver = d; });
 
-  it('should return appear in the sessions returned', function(done) {
+  it('should return appear in the sessions returned', function (done) {
     request({
         url: "http://localhost:" + env.APPIUM_PORT + "/wd/hub/sessions"
-        , method: "GET"
-        , json: true
-      }, function(err, response, body) {
+      , method: "GET"
+      , json: true
+      }, function (err, response, body) {
         driver.sessionID.should.equal(body.value[0].id);
         done();
-    });
+      });
   });
 });

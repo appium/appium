@@ -10,22 +10,22 @@ var desired = {
   'app-activity': 'GPSTest'
 };
 
-describe("apidemo - location -", function() {
+describe("apidemo - location -", function () {
   var driver;
-  setup(this, desired).then( function(d) { driver = d; } );
+  setup(this, desired).then(function (d) { driver = d; });
 
-  it('should set geo location', function(done) {
-    var getText = function() { return driver.elementByXPath("//text[2]").text(); };
+  it('should set geo location', function (done) {
+    var getText = function () { return driver.elementByXPath("//text[2]").text(); };
     var newLat = "27.17";
     var newLong = "78.04";
     driver
-      .resolve(getText()).then(function(text) {
+      .resolve(getText()).then(function (text) {
         text.should.not.include("Latitude: " + newLat);
         text.should.not.include("Longitude: " + newLong);
-      }).then(function() {
+      }).then(function () {
         var locOpts = {latitude: newLat, longitude: newLong};
         return driver.execute("mobile: setLocation", [locOpts]);
-      }).sleep(1000).then(getText).then(function(text) {
+      }).sleep(1000).then(getText).then(function (text) {
         text.should.include("Latitude: " + newLat.substr(0, 4));
         text.should.include("Longitude: " + newLong.substr(0, 4));
       }).nodeify(done);

@@ -1,5 +1,5 @@
 "use strict";
 
-describe("chrome", function() {
+describe("chrome", function () {
   require('../common/webview-base')('chrome');
 });

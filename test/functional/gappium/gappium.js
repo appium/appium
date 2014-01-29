@@ -16,15 +16,15 @@ if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
   };
 } else {
   var appPath = path.resolve(__dirname, '../../../sample-code/apps/io.appium.gappium.sampleapp/platforms/' +
-    "ios/build" + (env.EMU? '/emulator' : '') + "/HelloGappium.app"),
+    "ios/build" + (env.EMU ? '/emulator' : '') + "/HelloGappium.app"),
   desired = {
     app: appPath
   };
 }
 
-var activateWebView = function(driver) {
+var activateWebView = function (driver) {
   // unify (ios vs selendroid) web view selection
-  return  driver.windowHandles().then(function(handles) {
+  return driver.windowHandles().then(function (handles) {
     for (var handle in handles) {
       var hdl = handles[handle];
       if (hdl.indexOf('WEBVIEW') > -1) {
@@ -32,32 +32,32 @@ var activateWebView = function(driver) {
       }
     }
     return handles[0];
-  }).then(function(handle) {
-    return driver.window(handle).catch(function() {});
+  }).then(function (handle) {
+    return driver.window(handle).catch(function () {});
   });
 };
 
-describe("gappium", function() {
+describe("gappium", function () {
 
-  describe('HelloGappium', function() {
+  describe('HelloGappium', function () {
     var driver;
-    setup(this, desired).then( function(d) { driver = d; } );
+    setup(this, desired).then(function (d) { driver = d; });
 
-    beforeEach(function(done) {
+    beforeEach(function (done) {
       activateWebView(driver).nodeify(done);
     });
 
-    it('should open the app and navigate through the dialogs', function(done) {
+    it('should open the app and navigate through the dialogs', function (done) {
       driver
         .sleep(3000) // timeout to visualize test execution
         .elementByCssSelector('.search-key')
           .sendKeys('j')
         .elementsByCssSelector('.topcoat-list a')
-        .then(function(employees) {
+        .then(function (employees) {
           employees.length.should.equal(5);
           return employees[3].click();
         }).elementsByCssSelector('.actions a')
-        .then(function(options) {
+        .then(function (options) {
           options.length.should.equal(6);
           options[3].click();
         }).sleep(2000)

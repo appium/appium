@@ -35,57 +35,57 @@ env.EMU = !env.REAL_DEVICE;
 env.DEVICE = (process.env.DEVICE || 'ios').toLowerCase();
 
 function iphoneOrIpadSimulator(device) {
-  return device.match(/ipad/i)? 'iPad Simulator' : 'iPhone Simulator';
+  return device.match(/ipad/i) ? 'iPad Simulator' : 'iPhone Simulator';
 }
 
-switch(env.DEVICE) {
+switch (env.DEVICE) {
   case 'ios':
   case 'ios6':
   case 'ios6_iphone':
   case 'ios6_ipad':
     env.CAPS = {
       browserName: ''
-      , device: iphoneOrIpadSimulator(env.DEVICE),
+    , device: iphoneOrIpadSimulator(env.DEVICE),
       app:  path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP +
         "/build/Release-iphonesimulator/" + process.env.APP + ".app")
     };
-  break;
+    break;
   case 'ios7':
   case 'ios7_iphone':
   case 'ios7_ipad':
     env.CAPS = {
       browserName: ''
-      , device: iphoneOrIpadSimulator(env.DEVICE),
+    , device: iphoneOrIpadSimulator(env.DEVICE),
       app:  path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP +
         "/build/Release-iphonesimulator/" + process.env.APP + ".app")
     };
-  break;
+    break;
   case 'android':
     env.CAPS = {
       device: 'Android'
     };
-  break;
+    break;
   case 'selendroid':
     env.CAPS = {
       browserName: 'Selendroid'
-      , device: 'Selendroid',
+    , device: 'Selendroid',
       app: path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/bin/" + process.env.APP + "-debug.apk")
     };
-  break;
+    break;
   case 'firefox':
     env.CAPS = {
       browserName: 'Firefox'
-      , device: 'Firefox',
+    , device: 'Firefox',
       app: process.env.APP
     };
-  break;
+    break;
   default:
     throw new Error('Unknown device!!!');
 }
 
-env.IOS =env.DEVICE.match(/ios/i);
-env.IOS7 =env.DEVICE.match(/ios7/i);
-env.ANDROID =env.DEVICE.match(/android/i);
+env.IOS = env.DEVICE.match(/ios/i);
+env.IOS7 = env.DEVICE.match(/ios7/i);
+env.ANDROID = env.DEVICE.match(/android/i);
 
 // caps overide for sauce
 if (env.SAUCE) {

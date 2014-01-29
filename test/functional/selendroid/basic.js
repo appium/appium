@@ -6,22 +6,22 @@ var setup = require("../common/setup-base")
   , Q = require("q")
   , _ = require('underscore');
 
-  var desired = {
-    app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk"),
-    'app-package': 'com.example.android.apis',
-    'app-activity': '.ApiDemos'
-  };
+var desired = {
+  app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk"),
+  'app-package': 'com.example.android.apis',
+  'app-activity': '.ApiDemos'
+};
 
   // , appAct2 = "ApiDemos"
   // , appActFull = "com.example.android.apis.ApiDemos"
 
-describe('selendroid - basic -', function() {
+describe('selendroid - basic -', function () {
 
-  describe('api', function() {
+  describe('api', function () {
     var driver;
-    setup(this, desired).then( function(d) { driver = d; } );
+    setup(this, desired).then(function (d) { driver = d; });
     // todo: issue with find
-    it('should find and click an element @skip-all-selendroid', function(done) {
+    it('should find and click an element @skip-all-selendroid', function (done) {
       // selendroid appears to have some issues with implicit waits
       // hence the timeouts
       driver
@@ -31,12 +31,12 @@ describe('selendroid - basic -', function() {
         .nodeify(done);
     });
 
-    it('should be able to get logcat log type', function(done) {
+    it('should be able to get logcat log type', function (done) {
       driver.logTypes().should.eventually.include('logcat')
         .nodeify(done);
     });
-    it('should be able to get logcat logs', function(done) {
-      driver.log('logcat').then(function(logs) {
+    it('should be able to get logcat logs', function (done) {
+      driver.log('logcat').then(function (logs) {
         logs.length.should.be.above(0);
         logs[0].message.should.not.include("\n");
         logs[0].level.should.equal("ALL");
@@ -44,50 +44,51 @@ describe('selendroid - basic -', function() {
       }).nodeify(done);
     });
 
-    it('should be able to proxy errors', function(done) {
+    it('should be able to proxy errors', function (done) {
       driver
         .frame(null).should.be.rejected
         .nodeify(done);
     });
 
-    it('should be able to set location', function(done) {
+    it('should be able to set location', function (done) {
       var locOpts = {latitude: "27.17", longitude: "78.04"};
       driver
         .execute("mobile: setLocation", [locOpts])
         .nodeify(done);
     });
 
-    it('should error out nicely with incompatible commands', function(done) {
+    it('should error out nicely with incompatible commands', function (done) {
       driver
         .execute("mobile: flick", [{}])
-        .catch(function(err) {
-          err.cause.value.origValue.should.contain('mobile:'); throw err;
+        .catch(function (err) {
+          err.cause.value.origValue.should.contain('mobile:');
+          throw err;
         }).should.be.rejectedWith(/status: 9/)
         .nodeify(done);
     });
 
   });
 
-  describe('uninstall app', function() {
+  describe('uninstall app', function () {
     var driver;
-    setup(this, desired).then( function(d) { driver = d; } );
+    setup(this, desired).then(function (d) { driver = d; });
 
-    it('should be able to uninstall the app', function(done) {
+    it('should be able to uninstall the app', function (done) {
       driver
         .execute("mobile: removeApp", [{bundleId: desired['app-package']}])
         .nodeify(done);
     });
   });
 
-  describe('background app', function() {
+  describe('background app', function () {
     var driver;
-    setup(this, desired).then( function(d) { driver = d; } );
+    setup(this, desired).then(function (d) { driver = d; });
 
-    it("should background the app", function(done) {
+    it("should background the app", function (done) {
       var before = new Date().getTime() / 1000;
       driver
         .execute("mobile: background", [{seconds: 3}])
-        .then(function() {
+        .then(function () {
           ((new Date().getTime() / 1000) - before).should.be.above(2);
           // this should not be tested
           // ((new Date().getTime() / 1000) - before).should.be.below(5);
@@ -98,12 +99,12 @@ describe('selendroid - basic -', function() {
     });
   });
 
-  describe('command timeouts', function() {
+  describe('command timeouts', function () {
     var driver;
-    setup(this, _.defaults({newCommandTimeout: 3} , desired))
-     .then( function(d) { driver = d; } );
+    setup(this, _.defaults({newCommandTimeout: 3}, desired))
+     .then(function (d) { driver = d; });
     
-    it('should die with short timeout', function(done) {
+    it('should die with short timeout', function (done) {
       driver
         .sleep(5000)
         .elementByName('Animation')
@@ -114,14 +115,14 @@ describe('selendroid - basic -', function() {
 
 
   // todo: issue with find
-  describe('command timeouts @skip-all-selendroid', function() {
+  describe('command timeouts @skip-all-selendroid', function () {
     var driver;
-    setup(this, _.defaults({newCommandTimeout: 7} , desired))
-     .then( function(d) { driver = d; } );
+    setup(this, _.defaults({newCommandTimeout: 7}, desired))
+     .then(function (d) { driver = d; });
 
-    it('should not die if commands come in', function(done) {
+    it('should not die if commands come in', function (done) {
       var start = Date.now();
-      var find = function() {
+      var find = function () {
         if ((Date.now() - start) < 5000) {
           return driver
             .elementByName('Animation').should.eventually.exist
@@ -129,7 +130,7 @@ describe('selendroid - basic -', function() {
             .then(find);
         } else return new Q();
       };
-      find().then(function() {
+      find().then(function () {
         return driver
           .sleep(10000)
           .elementByName('Animation').should.be.rejected;
@@ -137,12 +138,12 @@ describe('selendroid - basic -', function() {
     });
   });
 
-  describe('app activities with no dot', function() {
+  describe('app activities with no dot', function () {
     var session;
-    after(function() { session.tearDown(); });
+    after(function () { session.tearDown(); });
 
-    it('should not launch app', function(done) {
-      session = sessionUtils.initSession(_.defaults({'app-activity': 'ApiDemos'} , desired), {'no-retry': true});
+    it('should not launch app', function (done) {
+      session = sessionUtils.initSession(_.defaults({'app-activity': 'ApiDemos'}, desired), {'no-retry': true});
       session.setUp()
         .should.be.rejected
         .nodeify(done);
@@ -150,12 +151,12 @@ describe('selendroid - basic -', function() {
   });
 
 
-  describe('fully qualified app activities', function() {
+  describe('fully qualified app activities', function () {
     var session;
-    after(function() { session.tearDown(); });
+    after(function () { session.tearDown(); });
 
-    it('should still launch app', function(done) {
-      session = sessionUtils.initSession(_.defaults({'app-activity': 'com.example.android.apis.ApiDemos'} , desired));
+    it('should still launch app', function (done) {
+      session = sessionUtils.initSession(_.defaults({'app-activity': 'com.example.android.apis.ApiDemos'}, desired));
       session.setUp()
         .nodeify(done);
     });

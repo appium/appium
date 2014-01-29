@@ -3,12 +3,12 @@
 var setup = require("../common/setup-base"),
     desired = require('./desired');
 
-describe('testapp - source -', function() {
+describe('testapp - source -', function () {
   var driver;
-  setup(this, desired).then( function(d) { driver = d; } );
+  setup(this, desired).then(function (d) { driver = d; });
 
-  return it('should return the page source', function(done) {
-    driver.source().then(function(source) {
+  return it('should return the page source', function (done) {
+    driver.source().then(function (source) {
       var obj = JSON.parse(source);
       obj.should.exist;
       obj.type.should.equal("UIAApplication");

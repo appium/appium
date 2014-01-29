@@ -1,12 +1,12 @@
 "use strict";
 
-exports.okIfAlert = function(driver) {
+exports.okIfAlert = function (driver) {
   return driver
     .alertText()
-    .then(function(text) {
+    .then(function (text) {
       if (text) {
         return driver.acceptAlert();
       }
     })
-    .catch(function() {});
+    .catch(function () {});
 };

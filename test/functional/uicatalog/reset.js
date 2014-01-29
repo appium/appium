@@ -3,13 +3,13 @@
 var setup = require("../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - reset -', function() {
+describe('uicatalog - reset -', function () {
 
-  describe('app reset', function() {
+  describe('app reset', function () {
     var driver;
-    setup(this, desired).then( function(d) { driver = d; } );
+    setup(this, desired).then(function (d) { driver = d; });
 
-    it("should be able to find elements after a soft reset", function(done) {
+    it("should be able to find elements after a soft reset", function (done) {
       driver
         .elementsByTagName('tableView')
           .should.eventually.have.length(1)

@@ -1,12 +1,18 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base"),
+    desired = require('./desired');
 
-describeWd('window handles', function(h) {
-  it('getting handles should do nothing when no webview open', function(done) {
-    h.driver
-      .windowHandles().should.eventually.have.length(0)
-      .nodeify(done);
+describe('uicatalog - reset -', function () {
+
+  describe('window handles', function () {
+    var driver;
+    setup(this, desired).then(function (d) { driver = d; });
+
+    it('getting handles should do nothing when no webview open', function (done) {
+      driver
+        .windowHandles().should.eventually.have.length(0)
+        .nodeify(done);
+    });
   });
 });

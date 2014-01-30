@@ -1,8 +1,8 @@
 "use strict";
 
-var Q =  require("./driverblock.js").Q;
+var Q = require("q");
 
-exports.spinWait = function(spinFn, waitMs, intMs) {
+exports.spinWait = function (spinFn, waitMs, intMs) {
   if (typeof waitMs === "undefined") {
     waitMs = 10000;
   }
@@ -11,8 +11,8 @@ exports.spinWait = function(spinFn, waitMs, intMs) {
   }
   var begunAt = Date.now();
   var endAt = begunAt + waitMs;
-  var spin = function() {
-    return spinFn().catch( function() {
+  var spin = function () {
+    return spinFn().catch(function () {
       if (Date.now() < endAt) {
         return Q.delay(intMs).then(spin);
       } else {
@@ -23,8 +23,8 @@ exports.spinWait = function(spinFn, waitMs, intMs) {
   return spin();
 };
 
-exports.spinTillResEquals = function() {};
+exports.spinTillResEquals = function () {};
 
-exports.spinTillNoError = function() {};
+exports.spinTillNoError = function () {};
 
-exports.spinTillError = function() {};
+exports.spinTillError = function () {};

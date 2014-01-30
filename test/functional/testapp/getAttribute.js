@@ -1,11 +1,14 @@
 "use strict";
 
-var describeWd = require('../../helpers/driverblock.js').describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base"),
+    desired = require('./desired');
 
-describeWd('getAttribute', function(h) {
-  it('should get element attribute', function(done) {
-    h.driver
+describe('testapp - get attribute -', function () {
+  var driver;
+  setup(this, desired).then(function (d) { driver = d; });
+
+  it('should get element attribute', function (done) {
+    driver
       .elementByTagName('button').getAttribute("name").should.become("ComputeSumButton")
       .nodeify(done);
   });

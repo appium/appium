@@ -1,23 +1,26 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('UICatalog')
-  , it = require("../../helpers/driverblock.js").it;
+var setup = require("../common/setup-base"),
+    desired = require('./desired');
 
-describeWd('execute', function(h) {
-  it('should do UIAutomation commands if not in web frame', function(done) {
-    h.driver
+describe('uicatalog - execute -', function () {
+  var driver;
+  setup(this, desired).then(function (d) { driver = d; });
+
+  it('should do UIAutomation commands if not in web frame', function (done) {
+    driver
       .execute("UIATarget.localTarget().frontMostApp().bundleID()")
         .should.eventually.include(".UICatalog")
       .nodeify(done);
   });
-  it('should not fail if UIAutomation command blows up', function(done) {
-    h.driver
+  it('should not fail if UIAutomation command blows up', function (done) {
+    driver
       .execute("UIATarget.foobarblah()")
         .should.be.rejectedWith(/status: 17/)
       .nodeify(done);
   });
-  it('should not fail with quotes', function(done) {
-    h.driver.execute('console.log(\'hi\\\'s\');')
+  it('should not fail with quotes', function (done) {
+    driver.execute('console.log(\'hi\\\'s\');')
       .nodeify(done);
   });
 });

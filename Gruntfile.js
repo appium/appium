@@ -30,13 +30,13 @@ module.exports = function (grunt) {
       , trailing: true
       , node: true
       , strict: true
+      , white: true
+      , indent: 2
       },
       files: {
         src: ['*.js', './**/*.js'],
         options: {
           ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/devices/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/**/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
-        , white: true
-        , indent: 2
         }
       },
       test: {

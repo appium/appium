@@ -1,125 +1,164 @@
 "use strict";
 
-var path = require('path')
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
-  , appPkg = "com.example.android.apis"
-  , appAct = ".ApiDemos"
-  , appAct2 = "ApiDemos"
-  , appActFull = "com.example.android.apis.ApiDemos"
-  , driverBlock = require("../../helpers/driverblock.js")
-  , Q = driverBlock.Q
-  , describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct)
-  , describeWd2 = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct2)
-  , describeWdFull = driverBlock.describeForApp(appPath, "selendroid", appPkg, appActFull)
-  , it = driverBlock.it;
+var setup = require("../common/setup-base")
+  , sessionUtils = require('../../helpers/session-utils')
+  , path = require('path')
+  , Q = require("q")
+  , _ = require('underscore');
 
-// if it doesn't work run: adb uninstall com.example.android.apis
+var desired = {
+  app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk"),
+  'app-package': 'com.example.android.apis',
+  'app-activity': '.ApiDemos'
+};
 
-describeWd('basic', function(h) {
-  it('should find and click an element', function(done) {
-    // selendroid appears to have some issues with implicit waits
-    // hence the timeouts
-    h.driver
-      .sleep(1000)
-      .elementByName('App').click()
-      .sleep(1000)
-      .elementByLinkText("Action Bar").should.eventually.exist
-      .nodeify(done);
+  // , appAct2 = "ApiDemos"
+  // , appActFull = "com.example.android.apis.ApiDemos"
+
+describe('selendroid - basic -', function () {
+
+  describe('api', function () {
+    var driver;
+    setup(this, desired).then(function (d) { driver = d; });
+    // todo: issue with find
+    it('should find and click an element @skip-all-selendroid', function (done) {
+      // selendroid appears to have some issues with implicit waits
+      // hence the timeouts
+      driver
+        .waitForElementByName('App', 10000).click()
+        .sleep(1000)
+        .elementByLinkText("Action Bar").should.eventually.exist
+        .nodeify(done);
+    });
+
+    it('should be able to get logcat log type', function (done) {
+      driver.logTypes().should.eventually.include('logcat')
+        .nodeify(done);
+    });
+    it('should be able to get logcat logs', function (done) {
+      driver.log('logcat').then(function (logs) {
+        logs.length.should.be.above(0);
+        logs[0].message.should.not.include("\n");
+        logs[0].level.should.equal("ALL");
+        logs[0].timestamp.should.exist;
+      }).nodeify(done);
+    });
+
+    it('should be able to proxy errors', function (done) {
+      driver
+        .frame(null).should.be.rejected
+        .nodeify(done);
+    });
+
+    it('should be able to set location', function (done) {
+      var locOpts = {latitude: "27.17", longitude: "78.04"};
+      driver
+        .execute("mobile: setLocation", [locOpts])
+        .nodeify(done);
+    });
+
+    it('should error out nicely with incompatible commands', function (done) {
+      driver
+        .execute("mobile: flick", [{}])
+        .catch(function (err) {
+          err.cause.value.origValue.should.contain('mobile:');
+          throw err;
+        }).should.be.rejectedWith(/status: 9/)
+        .nodeify(done);
+    });
+
   });
 
-  it('should be able to get logcat log type', function(done) {
-    h.driver.logTypes().should.eventually.include('logcat')
-      .nodeify(done);
-  });
-  it('should be able to get logcat logs', function(done) {
-    h.driver.log('logcat').then(function(logs) {
-      logs.length.should.be.above(0);
-      logs[0].message.should.not.include("\n");
-      logs[0].level.should.equal("ALL");
-      logs[0].timestamp.should.exist;
-    }).nodeify(done);
+  describe('uninstall app', function () {
+    var driver;
+    setup(this, desired).then(function (d) { driver = d; });
+
+    it('should be able to uninstall the app', function (done) {
+      driver
+        .execute("mobile: removeApp", [{bundleId: desired['app-package']}])
+        .nodeify(done);
+    });
   });
 
-  it('should be able to proxy errors', function(done) {
-    h.driver
-      .frame(null).should.be.rejected
-      .nodeify(done);
+  describe('background app', function () {
+    var driver;
+    setup(this, desired).then(function (d) { driver = d; });
+
+    it("should background the app", function (done) {
+      var before = new Date().getTime() / 1000;
+      driver
+        .execute("mobile: background", [{seconds: 3}])
+        .then(function () {
+          ((new Date().getTime() / 1000) - before).should.be.above(2);
+          // this should not be tested
+          // ((new Date().getTime() / 1000) - before).should.be.below(5);
+        })
+        .execute("mobile: currentActivity")
+          .should.eventually.include("ApiDemos")
+        .nodeify(done);
+    });
   });
 
-  it('should be able to set location', function(done) {
-    var locOpts = {latitude: "27.17", longitude: "78.04"};
-    h.driver
-      .execute("mobile: setLocation", [locOpts])
-      .nodeify(done);
+  describe('command timeouts', function () {
+    var driver;
+    setup(this, _.defaults({newCommandTimeout: 3}, desired))
+     .then(function (d) { driver = d; });
+    
+    it('should die with short timeout', function (done) {
+      driver
+        .sleep(5000)
+        .elementByName('Animation')
+          .should.be.rejectedWith(/(status: (13|6))|(Not JSON response)/)
+        .nodeify(done);
+    });
   });
 
-  it('should error out nicely with incompatible commands', function(done) {
-    h.driver
-      .execute("mobile: flick", [{}])
-      .catch(function(err) {
-        err.cause.value.origValue.should.contain('mobile:'); throw err;
-      }).should.be.rejectedWith(/status: 9/)
-      .nodeify(done);
+
+  // todo: issue with find
+  describe('command timeouts @skip-all-selendroid', function () {
+    var driver;
+    setup(this, _.defaults({newCommandTimeout: 7}, desired))
+     .then(function (d) { driver = d; });
+
+    it('should not die if commands come in', function (done) {
+      var start = Date.now();
+      var find = function () {
+        if ((Date.now() - start) < 5000) {
+          return driver
+            .elementByName('Animation').should.eventually.exist
+            .sleep(500)
+            .then(find);
+        } else return new Q();
+      };
+      find().then(function () {
+        return driver
+          .sleep(10000)
+          .elementByName('Animation').should.be.rejected;
+      }).nodeify(done);
+    });
   });
 
-  it('should be able to uninstall the app', function(done) {
-    h.driver
-      .execute("mobile: removeApp", [{bundleId: appPkg}])
-      .nodeify(done);
+  describe('app activities with no dot', function () {
+    var session;
+    after(function () { session.tearDown(); });
+
+    it('should not launch app', function (done) {
+      session = sessionUtils.initSession(_.defaults({'app-activity': 'ApiDemos'}, desired), {'no-retry': true});
+      session.setUp()
+        .should.be.rejected
+        .nodeify(done);
+    });
   });
 
-  it("should background the app", function(done) {
-    var before = new Date().getTime() / 1000;
-    h.driver
-      .execute("mobile: background", [{seconds: 3}])
-      .then(function() {
-        ((new Date().getTime() / 1000) - before).should.be.above(2);
-        ((new Date().getTime() / 1000) - before).should.be.below(5);
-      })
-      .execute("mobile: currentActivity")
-        .should.eventually.include("ApiDemos")
-      .nodeify(done);
-  });
-});
 
-describeWd('command timeouts', function(h) {
-  it('should die with short timeout', function(done) {
-    h.driver
-      .sleep(5000)
-      .elementByName('Animation')
-        .should.be.rejectedWith(/(status: (13|6))|(Not JSON response)/)
-      .nodeify(done);
-  });
-}, null, null, {newCommandTimeout: 3});
+  describe('fully qualified app activities', function () {
+    var session;
+    after(function () { session.tearDown(); });
 
-describeWd('command timeouts', function(h) {
-  it('should not die if commands come in', function(done) {
-    var start = Date.now();
-    var find = function() {
-      if ((Date.now() - start) < 5000) {
-        return h.driver
-          .elementByName('Animation').should.eventually.exist
-          .sleep(500)
-          .then(find);
-      } else return new Q();
-    };
-    find().then(function() {
-      return h.driver
-        .sleep(10000)
-        .elementByName('Animation').should.be.rejected;
-    }).nodeify(done);
-  });
-}, null, null, {newCommandTimeout: 7});
-
-describeWd2('app activities with no dot', function(h) {
-  it('should not launch app', function(done) {
-    h.connError.should.exist;
-    done();
-  });
-}, null, null, {expectConnError: true});
-
-describeWdFull('fully qualified app activities', function() {
-  it('should still launch app', function(done) {
-    done();
+    it('should still launch app', function (done) {
+      session = sessionUtils.initSession(_.defaults({'app-activity': 'com.example.android.apis.ApiDemos'}, desired));
+      session.setUp()
+        .nodeify(done);
+    });
   });
 });

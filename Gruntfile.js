@@ -53,6 +53,12 @@ module.exports = function (grunt) {
           , 'afterEach': true
           }
         }
+      },
+      uiauto: {
+        src: ['./lib/devices/ios/uiauto/**/*.js']
+      , options: {
+          'jshintrc': true
+        }
       }
     }
   , mochaTest: {

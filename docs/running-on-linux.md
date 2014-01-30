@@ -13,7 +13,7 @@ Once you've got node.js installed, install the [Android SDK](http://developer.an
 
 Finally, set `$ANDROID_HOME` to be your Android SDK path. If you unzipped the Android SDK to /usr/local/adt/, for example, you should add this to your shell startup:
 
-    export ANDROID_HOME="/usr/local/adt/sdk
+    export ANDROID_HOME="/usr/local/adt/sdk"
 
 Now that you're setup to run Appium, run `./reset.sh --android` from your Appium checkout to install all the dependencies.
 

@@ -19,7 +19,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
-|`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of clearing app data||
+|`--full-reset`|false|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
@@ -42,9 +42,9 @@ All flags are optional, but some are required in conjunction with certain others
 |`--language`|null|(IOS-only) language for the iOS simulator|`--language en`|
 |`--locale`|null|(IOS-only) locale for the iOS simulator|`--locale en_US`|
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
-|`--show-sim-log`|false|Show the iOS Simulator Log on the console||
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
+|`--show-sim-log`|false|(IOS-only) if set, the iOS simulator log will be written to the console||
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|

@@ -19,7 +19,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
-|`--full-reset`|false|(Android-only) Reset app state by uninstalling app instead of clearing app data||
+|`--full-reset`|false|IOS: reset app state by removing the entire simulator directory; Android: reset app state by uninstalling app instead of clearing app data||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||

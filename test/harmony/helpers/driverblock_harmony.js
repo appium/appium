@@ -116,7 +116,7 @@ describeForChrome.only = function () {
   return describeForChrome(true);
 };
 
-var describeForApp = function (app, device, appPackage, appActivity, appWaitActivity) {
+var describeForApp = function (app, device, appPackage, appActivity, appWaitPackage, appWaitActivity) {
   if (typeof device === "undefined") {
     device = "ios";
   }
@@ -157,6 +157,11 @@ var describeForApp = function (app, device, appPackage, appActivity, appWaitActi
       newExtraCaps['app-activity'] = appActivity;
       if (typeof appWaitActivity !== "undefined") {
         newExtraCaps['app-wait-activity'] = appWaitActivity;
+        if (typeof appWaitPackage !== "undefined") {
+          newExtraCaps['app-wait-package'] = appWaitPackage;
+        } else {
+          newExtraCaps['app-wait-package'] = appPackage;
+        }
       }
     }
     extraCaps = _.extend(extraCaps, newExtraCaps);

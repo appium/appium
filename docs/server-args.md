@@ -19,7 +19,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
-|`--full-reset`|false|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data||
+|`--full-reset`|false|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data. On Android, this will also remove the app after the session is complete.||
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
@@ -49,7 +49,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
-|`--chromedriver-port`|9515|(Android-only) Local port used for running ChromeDriver|`--chromedriver-port 9515`|
+|`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
 |`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||

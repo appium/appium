@@ -9,7 +9,8 @@ var setup = require("../common/setup-base")
 var desired = {
   app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk"),
   'app-package': 'com.example.android.apis',
-  'app-activity': '.ApiDemos'
+  'app-activity': '.ApiDemos',
+  device: 'selendroid'
 };
 
   // , appAct2 = "ApiDemos"
@@ -103,7 +104,7 @@ describe('selendroid - basic -', function () {
     var driver;
     setup(this, _.defaults({newCommandTimeout: 3}, desired))
      .then(function (d) { driver = d; });
-    
+
     it('should die with short timeout', function (done) {
       driver
         .sleep(5000)

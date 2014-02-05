@@ -8,7 +8,8 @@ var env = require('../../helpers/env')
 var desired = {
   app: path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.8.0.apk"),
   'app-package': 'io.selendroid.testapp',
-  'app-activity': '.HomeScreenActivity'
+  'app-activity': '.HomeScreenActivity',
+  device: 'selendroid'
 };
 
 // if it doesn't work run: adb uninstall io.selendroid.testapp

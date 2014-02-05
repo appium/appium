@@ -6,7 +6,7 @@ var env = require('../../helpers/env')
   , path = require('path');
 
 var desired = {
-  app: path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.7.0.apk"),
+  app: path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.8.0.apk"),
   'app-package': 'io.selendroid.testapp',
   'app-activity': '.HomeScreenActivity'
 };
@@ -33,7 +33,7 @@ describe('selendroid - web_view -', function () {
         }).nodeify(done);
     });
   }
-  
+
   it('should be web view', function (done) {
     // todo: add some sort of check here
     done();

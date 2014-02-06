@@ -47,7 +47,7 @@ describe('selendroid - basic -', function () {
 
     it('should be able to proxy errors', function (done) {
       driver
-        .frame(null).should.be.rejected
+        .elementByCss("foobar").should.be.rejected
         .nodeify(done);
     });
 

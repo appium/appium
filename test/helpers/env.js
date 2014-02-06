@@ -98,6 +98,8 @@ if (env.SAUCE) {
   }
 }
 
+env.CAPS.launchTimeout = env.LAUNCH_TIMEOUT;
+
 // app path root
 
 // rest enf points

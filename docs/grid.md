@@ -23,18 +23,16 @@ Once you start the appium server and it registers with the grid, you will see yo
           "browserName": "<e.g._iPhone5_or_iPad4>",
           "version":"<version_of_iOS_e.g._6.1>",
           "maxInstances": 1,
-          "platform":"MAC"
+          "platform":"<platform_e.g._MAC_or_ANDROID>"
         }
       ],
   "configuration":
   {
-  	"cleanUpCycle":2000,
-  	"timeout":30000,
+    "cleanUpCycle":2000,
+    "timeout":30000,
     "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
     "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
     "maxSession": 1,
-    "port": <appium_port>,
-    "host": "<host_name_appium_server_or_ip-address_appium_server>",
     "register": true,
     "registerCycle": 5000,
     "hubPort": <grid_port>,
@@ -42,3 +40,5 @@ Once you start the appium server and it registers with the grid, you will see yo
   }
 }
 ```
+
+Valid platforms are listed <a href="http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/Platform.html">here</a>

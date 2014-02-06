@@ -324,6 +324,9 @@ reset_selendroid() {
     run_cmd rm -rf selendroid
     echo "* Building selendroid server and supporting libraries"
     run_cmd $grunt buildSelendroidServer
+    run_cmd pushd submodules/selendroid
+    run_cmd git reset --hard
+    run_cmd popd
     reset_unlock_apk
     if $include_dev ; then
         if ! $apidemos_reset; then

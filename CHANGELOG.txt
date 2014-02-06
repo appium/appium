@@ -28,7 +28,6 @@ CHANGES IN VERSION 0.15.0 (from 0.14.2)
 - don't tap apple button to get into webview on real device safari
 - don't use synthetic click on real device safari
 - fix undefined window handle bug
-- implement new version of longClick
 - fix safariLauncher crashes
 
 #### Android
@@ -36,6 +35,7 @@ CHANGES IN VERSION 0.15.0 (from 0.14.2)
   toggleLocationServices
 - convert uiautomator error stream to string
 - use a better method for finding build-tools and platform-tools dirs
+- implement new version of longClick
 - add `mobile: find` example
 - return element's classname by selenium `tag_name` method/property
 - add `app-wait-package` desired cap, to be used in concert with

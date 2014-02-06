@@ -1,15 +1,16 @@
 /*global beforeEach:true */
 "use strict";
 
+process.env.DEVICE = process.env.DEVICE || "selendroid";
 var env = require('../../helpers/env')
   , setup = require("../common/setup-base")
   , path = require('path');
 
 var desired = {
-  app: path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/selendroid-test-app-0.8.0.apk"),
+  app: path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/" +
+                    "selendroid-test-app-0.8.0.apk"),
   'app-package': 'io.selendroid.testapp',
-  'app-activity': '.HomeScreenActivity',
-  device: 'selendroid'
+  'app-activity': '.HomeScreenActivity'
 };
 
 // if it doesn't work run: adb uninstall io.selendroid.testapp

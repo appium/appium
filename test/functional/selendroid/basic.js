@@ -1,5 +1,6 @@
 "use strict";
 
+process.env.DEVICE = process.env.DEVICE || "selendroid";
 var setup = require("../common/setup-base")
   , sessionUtils = require('../../helpers/session-utils')
   , path = require('path')
@@ -9,8 +10,7 @@ var setup = require("../common/setup-base")
 var desired = {
   app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk"),
   'app-package': 'com.example.android.apis',
-  'app-activity': '.ApiDemos',
-  device: 'selendroid'
+  'app-activity': '.ApiDemos'
 };
 
   // , appAct2 = "ApiDemos"

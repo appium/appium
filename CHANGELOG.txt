@@ -1,3 +1,55 @@
+CHANGES IN VERSION 0.15.0 (from 0.14.2)
+=======================================
+
+#### General
+- fix for issue where logger would log colors even when asked not to
+- stricter jshint rules enforceable from editor
+- reformat/restructure test suite
+- handle previously-unhandled errors when using spawn()
+- fix startup bug (status object being taken as session id)
+- clear sessionOverride instance var when cleaning up session
+- fix regression where appium git revision wasn't shown in server output
+- various testsuite tweaks/fixes
+
+#### iOS
+- don't wait 30s for instruments to terminate
+- use SIGKILL for instruments again
+- allow ios logs to be not found without crashing appium
+- allow automation of settings app via 'app: settings' cap
+- don't crash if IDevice init fails (when requesting real device)
+- don't try to remove app if it's not on the device
+- escape single quotes for id search
+- lint the uiauto js code
+- allow accented characters in send_keys()
+- delete the entire sim folder when using --full-reset (before & after)
+
+#### iOS+Safari
+- allow safari to pre-launch
+- don't tap apple button to get into webview on real device safari
+- don't use synthetic click on real device safari
+- fix undefined window handle bug
+- implement new version of longClick
+- fix safariLauncher crashes
+
+#### Android
+- add new mobile methods: toggleData, toggleFlightMode, toggleWifi,
+  toggleLocationServices
+- convert uiautomator error stream to string
+- use a better method for finding build-tools and platform-tools dirs
+- add `mobile: find` example
+- return element's classname by selenium `tag_name` method/property
+- add `app-wait-package` desired cap, to be used in concert with
+  `app-wait-activity`
+
+#### Chrome+Android
+- fix unlock errors
+- fix port-in-use bug which prevented automation of multiple chromes on
+  multiple emulators
+
+#### Selendroid
+- upgrade to 0.8.0
+
+
 CHANGES IN VERSION 0.14.2 (from 0.14.1)
 =======================================
 

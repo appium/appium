@@ -7,16 +7,17 @@ var env = require("../../helpers/env")
 
 var desired;
 if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
-  var appPath = path.resolve(__dirname, '../../../sample-code/apps/io.appium.gappium.sampleapp/platforms/' +
-    "android/bin/HelloGappium-debug.apk"),
+  var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
+      'io.appium.gappium.sampleapp/platforms/android/bin/' +
+      'HelloGappium-debug.apk'),
   desired = {
     app: appPath,
     'app-package': 'io.appium.gappium.sampleapp',
     'app-activity': '.HelloGappium',
   };
 } else {
-  var appPath = path.resolve(__dirname, '../../../sample-code/apps/io.appium.gappium.sampleapp/platforms/' +
-    "ios/build" + (env.EMU ? '/emulator' : '') + "/HelloGappium.app"),
+  var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
+      'io.appium.gappium.sampleapp/platforms/ios/build/HelloGappium.app'),
   desired = {
     app: appPath
   };

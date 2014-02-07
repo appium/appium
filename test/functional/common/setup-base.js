@@ -1,8 +1,7 @@
 "use strict";
 var env = require('../../helpers/env')
-  , sessionUtils = require('../../helpers/session-utils')
+  , initSession = require('../../helpers/session').initSession
   , wd = require('wd')
-//  , domain = require('domain')
   , chai = require('chai')
   , chaiAsPromised = require('chai-as-promised');
 
@@ -14,7 +13,7 @@ require("colors");
 module.exports = function (context, desired, opts) {
   context.timeout(env.MOCHA_TIMEOUT);
 
-  var session = sessionUtils.initSession(desired, opts);
+  var session = initSession(desired, opts);
 
   if (env.FAST_TESTS) {
     before(function (done) { session.setUp().nodeify(done); });

@@ -5,6 +5,7 @@
 var wd = require('yiewd')
   , _ = require("underscore")
   , monocle = require('monocle-js')
+  , chai = require('chai')
   , run = monocle.run
   , o_O = monocle.o_O
   , path = require("path")
@@ -17,6 +18,7 @@ var wd = require('yiewd')
   , version: '6.0'
     //, newCommandTimeout: 60
   };
+chai.should();
 
 var driverBlock = function (tests, host, port, caps, extraCaps) {
   host = (typeof host === "undefined" || host === null) ? _.clone(defaultHost) : host;

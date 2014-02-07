@@ -4,8 +4,9 @@ var env = require('../../helpers/env')
   , setupBase = require("./setup-base")
   ,  Q = require("q")
   , _ = require('underscore')
-  , loadWebViewBase = require("../../helpers/webview-utils").loadWebView
-  , spinTitle = require("../../helpers/webview-utils").spinTitle
+  , webviewHelper = require("../../helpers/webview")
+  , loadWebViewBase = webviewHelper.loadWebView
+  , spinTitle = webviewHelper.spinTitle
   , spinWait = require('../../helpers/spin.js').spinWait;
 
 // possible apps: safari, chrome, iwebview, WebViewApp, custom app 

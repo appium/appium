@@ -23,7 +23,9 @@ It's easy to have your code linted as you type, which makes the whole process mu
   "unused": true,
   "trailing": true,
   "node": true,
-  "es5": true
+  "es5": true,
+  "white": true,
+  "indent": 2
 }
 ```
 
@@ -57,9 +59,9 @@ Style notes
 
     ```js
     var x = {
-        foo: 'bar'
-        , baz: 'boo'
-        , wuz: 'foz'
+      foo: 'bar'
+    , baz: 'boo'
+    , wuz: 'foz'
     };
     ```
 
@@ -67,33 +69,45 @@ Style notes
 
     ```js
     if (foo === bar) {
-        // do something
+      // do something
     } else {
-        // do something else
+      // do something else
     }
     ```
 
-*   Space after `if`:
+*   Space after `if`, `for`, and `function`:
 
     ```js
     if (foo === bar) {
     ```
+    ```js
+    for (var i = 0; i < 10; i ++) {
+    ```
+    ```js
+    var lol = function (foo) {
+    ```
     not
     ```js
     if(foo === bar) {
+    ```
+    ```js
+    for(var i = 0; i < 10; i ++) {
+    ```
+    ```js
+    var lol = function(foo) {
     ```
 
 *   Avoid bracketless `if` for one-liners:
 
     ```js
     if (foo === bar) {
-        foo++;
+      foo++;
     }
     ```
     not
     ```js
     if (foo === bar)
-        foo++;
+      foo++;
     ```
 
 *   Use `===`, not `==`, and `!==`, not `!=` for no surprises
@@ -109,14 +123,14 @@ Style notes
 
     ```js
     if (foo === 5) {
-        myFunc(foo);
-        // foo++;
+      myFunc(foo);
+      // foo++;
     }
     ```
     not
     ```js
     if (foo === 5) {
-        myFunc(foo);
+      myFunc(foo);
     //foo++;
     }
     ```
@@ -126,17 +140,17 @@ Style notes
     ```js
     var _ = require('underscore');
 
-    var SuperClass = function() {
-        this.init();
+    var SuperClass = function () {
+      this.init();
     };
 
-    SuperClass.prototype.init = function() {
-        // initialize
+    SuperClass.prototype.init = function () {
+      // initialize
     };
 
     // Create a subclass
     
-    var SubClass = function() {
+    var SubClass = function () {
         this.init();
     };
 
@@ -146,7 +160,7 @@ Style notes
 *   Callbacks are always last in function definitions
 
     ```js
-    var foo = function(arg1, arg2, cb) {
+    var foo = function (arg1, arg2, cb) {
       ...
     };
     ```
@@ -154,15 +168,13 @@ Style notes
 *   Define functions as variables
 
     ```js
-    var myFunc = function(a, b, c) {};
+    var myFunc = function (a, b, c) {};
     ```
     not
     ```js
-    function myFunc(a, b, c) {}
+    function myFunc (a, b, c) {}
     ```
     
-*   Function is not followed by a space. Use `function() {` not `function () {`
-
 *   Variable names should be camelCased:
 
     ```js
@@ -185,15 +197,15 @@ Style notes
 
 ##  Test Style:
     
-Keep on the same line is it makes sense semantically and length is not an issue:  
+Keep on the same line if it makes sense semantically and length is not an issue:
 
 Examples:
 
 ```js
-  h.driver.elementByTagName('el1').should.become("123")
+  driver.elementByTagName('el1').should.become("123")
     .nodeify(done);
   
-  h.driver
+  driver
     .elementsByTagName('el1').should.eventually.have.length(0)
     .nodeify(done);
 ```

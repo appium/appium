@@ -1,5 +1,6 @@
 "use strict";
-var path = require('path')
+var env = require('../../helpers/env')
+  , path = require('path')
   , iosApp = path.resolve(__dirname, "..", "..", "..", "sample-code", "apps",
       "TestApp", "build", "Release-iphonesimulator", "TestApp.app")
   , androidApp = path.resolve(__dirname, "..", "..", "..", "sample-code",
@@ -7,7 +8,7 @@ var path = require('path')
   , spawn = require('child_process').spawn
   , crazyPort = 4799;
 
-var waitForLaunch = function(app, extraArgs, cb) {
+var waitForLaunch = function (app, extraArgs, cb) {
   var args = [".", "-p", crazyPort, "-l", "-dd", "-m"];
   if (app) {
     args = args.concat(["--app", app]);
@@ -18,24 +19,24 @@ var waitForLaunch = function(app, extraArgs, cb) {
   proc.stderr.setEncoding('utf8');
   var calledBack = false;
   var output = '';
-  var tm = setTimeout(function() {
+  var tm = setTimeout(function () {
     calledBack = true;
     proc.kill();
     cb(new Error("Appium never started. Output was: " + output));
   }, 60000);
-  proc.stdout.on('data', function(data) {
+  proc.stdout.on('data', function (data) {
     output += data;
-    if (!calledBack &&/Appium REST http interface listener started on/.test(data)) {
+    if (!calledBack && /Appium REST http interface listener started on/.test(data)) {
       clearTimeout(tm);
       proc.kill();
       calledBack = true;
       cb();
     }
   });
-  proc.stderr.on('data', function(data) {
+  proc.stderr.on('data', function (data) {
     output += data;
   });
-  proc.on('exit', function() {
+  proc.on('exit', function () {
     if (!calledBack) {
       calledBack = true;
       cb(new Error("Appium never started. Output was: " + output));
@@ -43,30 +44,31 @@ var waitForLaunch = function(app, extraArgs, cb) {
   });
 };
 
-describe('Pre-launching apps', function() {
-  it('should work for ios', function(done) {
+describe("appium - prelaunch -", function () {
+  this.timeout(env.MOCHA_TIMEOUT);
+  it('should work for ios', function (done) {
     waitForLaunch(iosApp, [], done);
   });
 
-  it('should work with force iphone', function(done) {
+  it('should work with force iphone', function (done) {
     waitForLaunch(iosApp, ['--force-iphone'], done);
   });
 
-  it('should work with force ipad', function(done) {
+  it('should work with force ipad', function (done) {
     waitForLaunch(iosApp, ['--force-ipad'], done);
   });
 
-  it('should work for android', function(done) {
+  it('should work for android @skip-all-ios', function (done) {
     var args = ["--app-pkg", "com.example.android.apis", "--app-activity",
       ".ApiDemos"];
     waitForLaunch(androidApp, args, done);
   });
 
-  it('should work for safari', function(done) {
+  it('should work for safari', function (done) {
     waitForLaunch('safari', [], done);
   });
 
-  it('should work for safari via --safari', function(done) {
+  it('should work for safari via --safari', function (done) {
     waitForLaunch(null, ['--safari'], done);
   });
 });

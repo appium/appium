@@ -1,17 +1,20 @@
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('WebViewApp')
-  , it = require("../../helpers/driverblock.js").it
+var setup = require("../common/setup-base")
+  , desired = require('./desired')
   , _ = require('underscore');
 
-describeWd('orientation', function(h) {
-   var testOrientation = function(specOrientation) {
-     it('should get and set - ' + specOrientation, function(done) {
-       h.driver
+describe('webview - orientation -', function () {
+  var driver;
+  setup(this, desired).then(function (d) { driver = d; });
+
+  var testOrientation = function (specOrientation) {
+    it('should get and set - ' + specOrientation, function (done) {
+      driver
         .setOrientation(specOrientation)
         .getOrientation().should.become(specOrientation)
         .nodeify(done);
-     });
-   };
-   _.each(["LANDSCAPE", "PORTRAIT"], testOrientation);
+    });
+  };
+  _.each(["LANDSCAPE", "PORTRAIT"], testOrientation);
 });

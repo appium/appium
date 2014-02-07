@@ -1,25 +1,31 @@
 /*global beforeEach:true */
 "use strict";
 
-var path = require('path')
-  , describeWd = null
-  , appPkg = "io.appium.gappium.sampleapp"
-  , appAct = ".HelloGappium"
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/ios/build/HelloGappium.app")
-  , driverBlock = require("../../helpers/driverblock.js")
-  , it = driverBlock.it;
+var env = require("../../helpers/env")
+  , setup = require("../common/setup-base")
+  , path = require('path');
 
-// export env APPIUM_CORDOVA="android" to run tests against android version
-if (typeof process.env.APPIUM_CORDOVA !== "undefined" && process.env.APPIUM_CORDOVA === "android") {
-  appPath = path.resolve(__dirname, "../../../sample-code/apps/" + appPkg + "/platforms/android/bin/HelloGappium-debug.apk");
-  describeWd = driverBlock.describeForApp(appPath, "selendroid", appPkg, appAct);
+var desired;
+if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
+  var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
+      'io.appium.gappium.sampleapp/platforms/android/bin/' +
+      'HelloGappium-debug.apk'),
+  desired = {
+    app: appPath,
+    'app-package': 'io.appium.gappium.sampleapp',
+    'app-activity': '.HelloGappium',
+  };
 } else {
-  describeWd = driverBlock.describeForApp(appPath, "ios", appPkg, appAct);
+  var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
+      'io.appium.gappium.sampleapp/platforms/ios/build/HelloGappium.app'),
+  desired = {
+    app: appPath
+  };
 }
 
-var activateWebView = function(h) {
+var activateWebView = function (driver) {
   // unify (ios vs selendroid) web view selection
-  return  h.driver.windowHandles().then(function(handles) {
+  return driver.windowHandles().then(function (handles) {
     for (var handle in handles) {
       var hdl = handles[handle];
       if (hdl.indexOf('WEBVIEW') > -1) {
@@ -27,32 +33,37 @@ var activateWebView = function(h) {
       }
     }
     return handles[0];
-  }).then(function(handle) {
-    return h.driver.window(handle).catch(function() {});
+  }).then(function (handle) {
+    return driver.window(handle).catch(function () {});
   });
 };
 
-describeWd('HelloGappium', function(h) {
+describe("gappium", function () {
 
-  beforeEach(function(done) {
-    activateWebView(h).nodeify(done);
-  });
+  describe('HelloGappium', function () {
+    var driver;
+    setup(this, desired).then(function (d) { driver = d; });
 
-  it('should open the app and navigate through the dialogs', function(done) {
-    h.driver
-      .sleep(3000) // timeout to visualize test execution
-      .elementByCssSelector('.search-key')
-        .sendKeys('j')
-      .elementsByCssSelector('.topcoat-list a')
-      .then(function(employees) {
-        employees.length.should.equal(5);
-        return employees[3].click();
-      }).elementsByCssSelector('.actions a')
-      .then(function(options) {
-        options.length.should.equal(6);
-        options[3].click();
-      }).sleep(2000)
-      .nodeify(done); // timeout to visualize test execution
+    beforeEach(function (done) {
+      activateWebView(driver).nodeify(done);
+    });
 
+    it('should open the app and navigate through the dialogs', function (done) {
+      driver
+        .sleep(3000) // timeout to visualize test execution
+        .elementByCssSelector('.search-key')
+          .sendKeys('j')
+        .elementsByCssSelector('.topcoat-list a')
+        .then(function (employees) {
+          employees.length.should.equal(5);
+          return employees[3].click();
+        }).elementsByCssSelector('.actions a')
+        .then(function (options) {
+          options.length.should.equal(6);
+          options[3].click();
+        }).sleep(2000)
+        .nodeify(done); // timeout to visualize test execution
+
+    });
   });
 });

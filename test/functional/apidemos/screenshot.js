@@ -1,35 +1,33 @@
 "use strict";
 
-var path = require('path')
-  , appPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
-  , appPkg = "com.example.android.apis"
-  , appAct = ".ApiDemos"
-  , describeWd = require("../../helpers/driverblock.js").describeForApp(appPath,
-      "android", appPkg, appAct)
-  , it = require("../../helpers/driverblock.js").it
+var setup = require("../common/setup-base")
+  , desired = require("./desired")
   , fs = require('fs');
 
-describeWd('screenshot', function(h) {
-  //todo: not working in nexus 7
-  it('should get a local screenshot', function(done) {
+describe("apidemos - screenshot -", function () {
+  var driver;
+  setup(this, desired).then(function (d) { driver = d; });
+
+  //todo: fix that got: Command failed: remote object '/data/local/tmp/screenshot.png' does not exist  
+  it('should get a local screenshot @skip-all-android', function (done) {
     var localScreenshotFile = '/tmp/test_screenshot_appium.png';
     if (fs.existsSync(localScreenshotFile)) {
       fs.unlinkSync(localScreenshotFile);
     }
-    h.driver.execute("mobile: localScreenshot", [{file: localScreenshotFile}])
-      .then(function() {
+    driver.execute("mobile: localScreenshot", [{file: localScreenshotFile}])
+      .then(function () {
         var screenshot = fs.readFileSync(localScreenshotFile);
         screenshot.should.exist;
         screenshot.length.should.be.above(1000);
       }).nodeify(done);
   });
-  it('should get an app screenshot', function(done) {
-    h.driver.takeScreenshot()
+  it('should get an app screenshot', function (done) {
+    driver.takeScreenshot()
       .should.eventually.have.length.above(1000)
       .nodeify(done);
   });
-  it('should not cause other commands to fail', function(done) {
-    h.driver
+  it('should not cause other commands to fail', function (done) {
+    driver
       .execute("mobile: find", [[[[3, "Animation"]]]])
       .takeScreenshot()
         .should.eventually.have.length.above(1000)

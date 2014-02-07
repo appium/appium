@@ -1,7 +1,7 @@
 Selenium Grid
 ======================
 
-You are able to register you appium server with a local grid by using the <b>"--nodeconfig"</b> server parameter.
+You are able to register your appium server with a local grid by using the <b>"--nodeconfig"</b> server parameter.
 
 ```bash
 > node . -V --nodeconfig /path/to/nodeconfig.json

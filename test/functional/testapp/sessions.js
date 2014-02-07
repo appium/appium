@@ -2,20 +2,23 @@
 // https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
 "use strict";
 
-var describeWd = require("../../helpers/driverblock.js").describeForApp('TestApp')
-  , it = require("../../helpers/driverblock.js").it
-  , appiumPort = process.env.APPIUM_PORT || 4723
+var env = require('../../helpers/env')
+  , setup = require("../common/setup-base")
+  , desired = require('./desired')
   , request = require("request");
 
-describeWd('check getSessions', function(h) {
-  it('should return appear in the sessions returned', function(done) {
+describe('testapp - sessions -', function () {
+  var driver;
+  setup(this, desired).then(function (d) { driver = d; });
+
+  it('should return appear in the sessions returned', function (done) {
     request({
-        url: "http://localhost:" + appiumPort + "/wd/hub/sessions"
-        , method: "GET"
-        , json: true
-      }, function(err, response, body) {
-        h.driver.sessionID.should.equal(body.value[0].id);
+        url: "http://localhost:" + env.APPIUM_PORT + "/wd/hub/sessions"
+      , method: "GET"
+      , json: true
+      }, function (err, response, body) {
+        driver.sessionID.should.equal(body.value[0].id);
         done();
-    });
+      });
   });
 });

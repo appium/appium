@@ -45,14 +45,10 @@ mobile :keyevent, keycode: 82
 
 Java
 
-```java
-    JSONArray json = new JSONArray();
-    json.put("scroll");
-    json.put(new JSONArray().put(new JSONArray().put(3).put("Gallery")));
-    json.put(new JSONArray().put(new JSONArray().put(7).put("Gallery")));
-    // json is now: ["scroll",[[3,"Gallery"]],[[7,"Gallery"]]]
-    ((JavascriptExecutor) driver).executeScript("mobile: find", json);
-```
+
+Java
+
+[MobileFindJavaTest.java](./../sample-code/examples/java/junit/src/test/java/com/saucelabs/appium/MobileFindJavaTest.java)
 
 Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)
 

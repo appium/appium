@@ -1,6 +1,5 @@
 "use strict";
 
-var wvHelpers = require("../../helpers/webview.js")
-  , webviewTests = wvHelpers.buildTests;
-
-webviewTests('chrome');
+describe("chrome", function () {
+  require('../common/webview-base')('chrome');
+});

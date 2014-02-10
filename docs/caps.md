@@ -21,6 +21,7 @@ Appium server capabilities
 |`app-wait-activity`| Activity name for the Android activity you want to wait for|`SplashActivity`|
 |`device-ready-timeout`| Timeout in seconds while waiting for device to become ready|`5`|
 |`compressXml`| [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\))| `true`|
+|`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
 
 --
 

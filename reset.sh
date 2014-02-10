@@ -97,7 +97,7 @@ reset_general() {
     fi
     run_cmd mkdir -p build
     echo "* Setting git revision data"
-    run_cmd $grunt setGitRev
+    run_cmd "$grunt" setGitRev
 }
 
 reset_ios() {
@@ -246,16 +246,16 @@ uninstall_android_app() {
 reset_apidemos() {
     run_cmd get_apidemos
     echo "* Configuring and cleaning/building Android test app: ApiDemos"
-    run_cmd $grunt configAndroidApp:ApiDemos
-    run_cmd $grunt buildAndroidApp:ApiDemos
+    run_cmd "$grunt" configAndroidApp:ApiDemos
+    run_cmd "$grunt" buildAndroidApp:ApiDemos
     uninstall_android_app com.example.android.apis
     apidemos_reset=true
 }
 
 reset_toggle_test() {
     echo "* Configuring and cleaning/building Android test app: ToggleTest"
-    run_cmd $grunt configAndroidApp:ToggleTest
-    run_cmd $grunt buildAndroidApp:ToggleTest
+    run_cmd "$grunt" configAndroidApp:ToggleTest
+    run_cmd "$grunt" buildAndroidApp:ToggleTest
     uninstall_android_app com.example.toggletest
     toggletest_reset=true
 }
@@ -296,9 +296,9 @@ reset_android() {
     require_java
     echo "* Configuring Android bootstrap"
     run_cmd rm -rf build/android_bootstrap
-    run_cmd $grunt configAndroidBootstrap
+    run_cmd "$grunt" configAndroidBootstrap
     echo "* Building Android bootstrap"
-    run_cmd $grunt buildAndroidBootstrap
+    run_cmd "$grunt" buildAndroidBootstrap
     reset_unlock_apk
     if $include_dev ; then
         reset_apidemos
@@ -306,11 +306,11 @@ reset_android() {
         reset_gps_demo
     fi
     echo "* Setting Android config to Appium's version"
-    run_cmd $grunt setConfigVer:android
+    run_cmd "$grunt" setConfigVer:android
 }
 
 require_java() {
-  [ ${JAVA_HOME:?"Warning: Make sure JAVA_HOME is set properly for Java builds."} ]
+  [ '${JAVA_HOME:?"Warning: Make sure JAVA_HOME is set properly for Java builds."}' ]
 }
 
 reset_selendroid() {
@@ -323,7 +323,7 @@ reset_selendroid() {
     run_cmd git submodule update --init submodules/selendroid
     run_cmd rm -rf selendroid
     echo "* Building selendroid server and supporting libraries"
-    run_cmd $grunt buildSelendroidServer
+    run_cmd "$grunt" buildSelendroidServer
     run_cmd pushd submodules/selendroid
     run_cmd git reset --hard
     run_cmd popd
@@ -347,7 +347,7 @@ reset_selendroid() {
         uninstall_android_app org.openqa.selendroid.testapp
     fi
     echo "* Setting Selendroid config to Appium's version"
-    run_cmd $grunt setConfigVer:selendroid
+    run_cmd "$grunt" setConfigVer:selendroid
 }
 
 reset_gappium() {
@@ -373,7 +373,7 @@ reset_gappium() {
 reset_firefoxos() {
     echo "RESETTING FIREFOXOS"
     echo "* Setting Firefox OS config to Appium's version"
-    run_cmd $grunt setConfigVer:firefoxos
+    run_cmd "$grunt" setConfigVer:firefoxos
 }
 
 cleanup() {
@@ -412,7 +412,7 @@ main() {
     fi
     cleanup
     echo "* Setting build time and SHA info"
-    run_cmd $grunt setBuildTime
+    run_cmd "$grunt" setBuildTime
     reset_successful=true
 }
 

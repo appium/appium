@@ -123,8 +123,8 @@ reset_general() {
         run_cmd "$grunt" setGitRev
         if $include_dev ; then
             echo "* Linking git pre-commit hook"
-            run_cmd rm -rf $(pwd)/.git/hooks/pre-commit
-            run_cmd ln -s $(pwd)/test/pre-commit-hook.sh $(pwd)/.git/hooks/pre-commit
+            run_cmd rm -rf "$(pwd)"/.git/hooks/pre-commit
+            run_cmd ln -s "$(pwd)"/test/pre-commit-hook.sh "$(pwd)"/.git/hooks/pre-commit
         fi
     else
         echo "* Nothing to do, not a git repo"
@@ -209,7 +209,7 @@ reset_ios() {
     echo "* Cloning/updating fruitstrap"
     run_cmd git submodule update --init submodules/fruitstrap
     echo "* Making fruitstrap"
-    run_cmd pushd $appium_home/submodules/fruitstrap/
+    run_cmd pushd "$appium_home"/submodules/fruitstrap/
     run_cmd make fruitstrap
     run_cmd popd
     echo "* Copying fruitstrap to build"
@@ -245,7 +245,7 @@ get_apidemos() {
     echo "* Cloning/updating Android test app: ApiDemos"
     run_cmd git submodule update --init submodules/ApiDemos
     run_cmd rm -rf sample-code/apps/ApiDemos
-    run_cmd ln -s $appium_home/submodules/ApiDemos $appium_home/sample-code/apps/ApiDemos
+    run_cmd ln -s "$appium_home"/submodules/ApiDemos "$appium_home"/sample-code/apps/ApiDemos
 }
 
 uninstall_android_app() {
@@ -367,9 +367,9 @@ reset_selendroid() {
             uninstall_android_app com.example.toggletest.selendroid
         fi
         echo "* Linking selendroid test app"
-        run_cmd rm -rf $appium_home/sample-code/apps/selendroid-test-app.apk
-        test_apk=$(ls $appium_home/submodules/selendroid/selendroid-test-app/target/*.apk | head -1)
-        run_cmd ln -s $test_apk $appium_home/sample-code/apps/selendroid-test-app.apk
+        run_cmd rm -rf "$appium_home"/sample-code/apps/selendroid-test-app.apk
+        test_apk=$(ls "$appium_home"/submodules/selendroid/selendroid-test-app/target/*.apk | head -1)
+        run_cmd ln -s "$test_apk" "$appium_home"/sample-code/apps/selendroid-test-app.apk
         uninstall_android_app io.selendroid.testapp.selendroid
         uninstall_android_app io.selendroid.testapp
         # keep older versions of package around to clean up
@@ -385,10 +385,10 @@ reset_gappium() {
         echo "RESETTING GAPPIUM"
         if $hardcore ; then
             echo "* Clearing out Gappium submodule"
-            run_cmd rm -rf $appium_home/submodules/io.appium.gappium.sampleapp
+            run_cmd rm -rf "$appium_home"/submodules/io.appium.gappium.sampleapp
         fi
         echo "* Clearing out old links"
-        run_cmd rm -rf $appium_home/sample-code/apps/io.appium.gappium.sampleapp
+        run_cmd rm -rf "$appium_home"/sample-code/apps/io.appium.gappium.sampleapp
         echo "* Cloning/updating Gappium"
         run_cmd git submodule update --init submodules/io.appium.gappium.sampleapp
         run_cmd pushd submodules/io.appium.gappium.sampleapp
@@ -396,18 +396,18 @@ reset_gappium() {
         run_cmd ./reset.sh -v
         run_cmd popd
         echo "* Linking Gappium test app"
-        run_cmd ln -s $appium_home/submodules/io.appium.gappium.sampleapp $appium_home/sample-code/apps/io.appium.gappium.sampleapp
+        run_cmd ln -s "$appium_home"/submodules/io.appium.gappium.sampleapp "$appium_home"/sample-code/apps/io.appium.gappium.sampleapp
     fi
 }
 
 reset_chromedriver() {
     echo "RESETTING CHROMEDRIVER"
-    if [ -d $appium_home/build/chromedriver ]; then
+    if [ -d "$appium_home"/build/chromedriver ]; then
         echo "* Clearing old ChromeDriver(s)"
-        run_cmd rm -rf $appium_home/build/chromedriver/*
+        run_cmd rm -rf "$appium_home"/build/chromedriver/*
     else
-        run_cmd rm -rf $appium_home/build/chromedriver  # could have been an old binary
-        run_cmd mkdir $appium_home/build/chromedriver
+        run_cmd rm -rf "$appium_home"/build/chromedriver  # could have been an old binary
+        run_cmd mkdir "$appium_home"/build/chromedriver
     fi
     if [ "$chromedriver_version" == false ]; then
         echo "* Finding latest version"
@@ -419,18 +419,18 @@ reset_chromedriver() {
         if [ "$platform" == "Darwin" ]; then
             platform="mac"
             chromedriver_file="chromedriver_mac32.zip"
-            run_cmd mkdir $appium_home/build/chromedriver/mac
+            run_cmd mkdir "$appium_home"/build/chromedriver/mac
         else
             platform="linux"
             chromedriver_file="chromedriver_linux32.zip"
-            run_cmd mkdir $appium_home/build/chromedriver/linux
+            run_cmd mkdir "$appium_home"/build/chromedriver/linux
         fi
         install_chromedriver $platform $chromedriver_version $chromedriver_file
     else
         echo "* Building directory structure"
-        run_cmd mkdir $appium_home/build/chromedriver/mac
-        run_cmd mkdir $appium_home/build/chromedriver/linux
-        run_cmd mkdir $appium_home/build/chromedriver/windows
+        run_cmd mkdir "$appium_home"/build/chromedriver/mac
+        run_cmd mkdir "$appium_home"/build/chromedriver/linux
+        run_cmd mkdir "$appium_home"/build/chromedriver/windows
 
         install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
         install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip"
@@ -444,8 +444,8 @@ install_chromedriver() {
     file=$3
 
     echo "* Downloading ChromeDriver version $version for $platform"
-    run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o $appium_home/build/chromedriver/$platform/chromedriver.zip
-    run_cmd pushd $appium_home/build/chromedriver/$platform
+    run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o "$appium_home"/build/chromedriver/$platform/chromedriver.zip
+    run_cmd pushd "$appium_home"/build/chromedriver/$platform
 
     echo "* Unzipping ChromeDriver"
     run_cmd unzip chromedriver.zip

@@ -53,6 +53,8 @@ describe("prefs @skip-ios6 @skip-ios7", function () {
       .then(function () {
         if (setting === 'fraud') {
           return driver.elementByName("Fraud Warning");
+        } else if (setting === 'popups') {
+          return driver.elementByName("Block Pop-ups");
         } else {
           return new Error("Bad setting " + setting);
         }
@@ -97,8 +99,28 @@ describe("prefs @skip-ios6 @skip-ios7", function () {
     setup(this, _.defaults({safariIgnoreFraudWarning: false}, desired))
       .then(function (d) { driver = d; });
 
-    it('should respond to cap when true', function (done) {
+    it('should respond to cap when false', function (done) {
       checkSafariSetting(driver, 'fraud', 1, done);
+    });
+  });
+
+  describe('using safariAllowPopups', function () {
+    var driver;
+    setup(this, _.defaults({safariAllowPopups: true}, desired))
+      .then(function (d) { driver = d; });
+
+    it('should respond to cap when true', function (done) {
+      checkSafariSetting(driver, 'popups', 0, done);
+    });
+  });
+
+  describe('using safariAllowPopups', function () {
+    var driver;
+    setup(this, _.defaults({safariAllowPopups: false}, desired))
+      .then(function (d) { driver = d; });
+
+    it('should respond to cap when false', function (done) {
+      checkSafariSetting(driver, 'popups', 1, done);
     });
   });
 });

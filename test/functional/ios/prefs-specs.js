@@ -46,6 +46,22 @@ describe("prefs @skip-ios6 @skip-ios7", function () {
       }).nodeify(cb);
   };
 
+  var checkSafariSetting = function (driver, setting, expected, cb) {
+    driver
+      .elementsByTagName("tableCell")
+      .then(function (els) { return els[4].click(); })
+      .then(function () {
+        if (setting === 'fraud') {
+          return driver.elementByName("Fraud Warning");
+        } else {
+          return new Error("Bad setting " + setting);
+        }
+      })
+      .getValue().then(function (checked) {
+        (!!parseInt(checked, 10)).should.eql(!!expected);
+      }).nodeify(cb);
+  };
+
   describe('settings app with location services', function () {
     var driver;
     setup(this, _.defaults({locationServicesEnabled: true}, desired))
@@ -63,6 +79,26 @@ describe("prefs @skip-ios6 @skip-ios7", function () {
 
     it('should respond to negative locationServicesEnabled cap', function (done) {
       checkLocServ(driver, 0, done);
+    });
+  });
+
+  describe('using safariIgnoreFraudWarning', function () {
+    var driver;
+    setup(this, _.defaults({safariIgnoreFraudWarning: true}, desired))
+      .then(function (d) { driver = d; });
+
+    it('should respond to cap when true', function (done) {
+      checkSafariSetting(driver, 'fraud', 0, done);
+    });
+  });
+
+  describe('using safariIgnoreFraudWarning', function () {
+    var driver;
+    setup(this, _.defaults({safariIgnoreFraudWarning: false}, desired))
+      .then(function (d) { driver = d; });
+
+    it('should respond to cap when true', function (done) {
+      checkSafariSetting(driver, 'fraud', 1, done);
     });
   });
 });

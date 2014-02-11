@@ -23,6 +23,7 @@ toggletest_reset=false
 hardcore=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
+chromedriver_version=false
 
 while test $# != 0
 do
@@ -40,12 +41,14 @@ do
         "-v") verbose=true;;
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
+        "--chromedriver-version") chromedriver_version=$2;;
     esac
+
     if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
-      shift
-      shift
+        shift
+        shift
     else
-      shift
+        shift
     fi
 done
 
@@ -66,6 +69,14 @@ run_cmd() {
         "$@"
     else
         "$@" >/dev/null 2>&1
+    fi
+}
+
+run_cmd_output() {
+    if $verbose ; then
+        "$@"
+    else
+        "$@" 2> /dev/null
     fi
 }
 
@@ -307,6 +318,7 @@ reset_android() {
     fi
     echo "* Setting Android config to Appium's version"
     run_cmd "$grunt" setConfigVer:android
+    reset_chromedriver
 }
 
 require_java() {
@@ -368,6 +380,34 @@ reset_gappium() {
         echo "* Linking Gappium test app"
         run_cmd ln -s $appium_home/submodules/io.appium.gappium.sampleapp $appium_home/sample-code/apps/io.appium.gappium.sampleapp
     fi
+}
+
+reset_chromedriver() {
+    echo "RESETTING CHROMEDRIVER"
+    if [ -f $appium_home/build/chromedriver ]; then
+        echo "* Clearing old program"
+        run_cmd rm $appium_home/build/chromedriver
+    fi
+    if [ "$chromedriver_version" == false ]; then
+        echo "* Finding latest version"
+        chromedriver_version=$(run_cmd_output curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+    fi
+    echo "* Determining platform"
+    platform=$(run_cmd_output uname -s)
+    if [ "$platform" == "Darwin" ]; then
+        platform="Mac"
+        chromedriver_file="chromedriver_mac32.zip"
+    else
+        platform="Linux"
+        chromedriver_file="chromedriver_linux32.zip"
+    fi
+    echo "* Downloading ChromeDriver version $chromedriver_version for $platform"
+    run_cmd curl -L http://chromedriver.storage.googleapis.com/$chromedriver_version/$chromedriver_file -o ./build/chromedriver.zip
+    run_cmd pushd ./build
+    echo "* Unzipping ChromeDriver"
+    run_cmd unzip chromedriver.zip
+    run_cmd rm chromedriver.zip
+    run_cmd popd
 }
 
 reset_firefoxos() {

@@ -2,6 +2,7 @@
 
 var env = require("../../helpers/env")
   , setup = require("../common/setup-base")
+  , initSession = require('../../helpers/session').initSession
   , chai = require('chai')
   , _ = require('underscore');
 
@@ -12,7 +13,7 @@ var desired = {
 , device: 'iPhone Simulator'
 };
 
-describe("prefs @skip-ios6 @skip-ios7", function () {
+describe("prefs @skip-ios7", function () {
 
   describe('settings app', function () {
     var driver;
@@ -84,43 +85,45 @@ describe("prefs @skip-ios6 @skip-ios7", function () {
     });
   });
 
-  describe('using safariIgnoreFraudWarning', function () {
-    var driver;
-    setup(this, _.defaults({safariIgnoreFraudWarning: true}, desired))
-      .then(function (d) { driver = d; });
+  describe('safari prefs', function () {
+    describe('using safariIgnoreFraudWarning', function () {
+      var driver;
+      setup(this, _.defaults({safariIgnoreFraudWarning: true}, desired))
+        .then(function (d) { driver = d; });
 
-    it('should respond to cap when true', function (done) {
-      checkSafariSetting(driver, 'fraud', 0, done);
+      it('should respond to cap when true', function (done) {
+        checkSafariSetting(driver, 'fraud', 0, done);
+      });
     });
-  });
 
-  describe('using safariIgnoreFraudWarning', function () {
-    var driver;
-    setup(this, _.defaults({safariIgnoreFraudWarning: false}, desired))
-      .then(function (d) { driver = d; });
+    describe('using safariIgnoreFraudWarning', function () {
+      var driver;
+      setup(this, _.defaults({safariIgnoreFraudWarning: false}, desired))
+        .then(function (d) { driver = d; });
 
-    it('should respond to cap when false', function (done) {
-      checkSafariSetting(driver, 'fraud', 1, done);
+      it('should respond to cap when false', function (done) {
+        checkSafariSetting(driver, 'fraud', 1, done);
+      });
     });
-  });
 
-  describe('using safariAllowPopups', function () {
-    var driver;
-    setup(this, _.defaults({safariAllowPopups: true}, desired))
-      .then(function (d) { driver = d; });
+    describe('using safariAllowPopups', function () {
+      var driver;
+      setup(this, _.defaults({safariAllowPopups: true}, desired))
+        .then(function (d) { driver = d; });
 
-    it('should respond to cap when true', function (done) {
-      checkSafariSetting(driver, 'popups', 0, done);
+      it('should respond to cap when true', function (done) {
+        checkSafariSetting(driver, 'popups', 0, done);
+      });
     });
-  });
 
-  describe('using safariAllowPopups', function () {
-    var driver;
-    setup(this, _.defaults({safariAllowPopups: false}, desired))
-      .then(function (d) { driver = d; });
+    describe('using safariAllowPopups', function () {
+      var driver;
+      setup(this, _.defaults({safariAllowPopups: false}, desired))
+        .then(function (d) { driver = d; });
 
-    it('should respond to cap when false', function (done) {
-      checkSafariSetting(driver, 'popups', 1, done);
+      it('should respond to cap when false', function (done) {
+        checkSafariSetting(driver, 'popups', 1, done);
+      });
     });
   });
 });

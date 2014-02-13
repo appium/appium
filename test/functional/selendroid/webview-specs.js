@@ -7,8 +7,7 @@ var env = require('../../helpers/env')
   , path = require('path');
 
 var desired = {
-  app: path.resolve(__dirname, "../../../sample-code/apps/WebViewDemo/target/" +
-                    "selendroid-test-app-0.8.0.apk"),
+  app: path.resolve(__dirname, "../../../sample-code/apps/selendroid-test-app.apk"),
   'app-package': 'io.selendroid.testapp',
   'app-activity': '.HomeScreenActivity'
 };

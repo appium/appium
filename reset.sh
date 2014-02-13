@@ -349,9 +349,10 @@ reset_selendroid() {
             reset_toggle_test
             uninstall_android_app com.example.toggletest.selendroid
         fi
-        echo "* Linking selendroid test app: WebViewDemo"
-        run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
-        run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+        echo "* Linking selendroid test app"
+        run_cmd rm -rf $appium_home/sample-code/apps/selendroid-test-app.apk
+        test_apk=$(ls $appium_home/submodules/selendroid/selendroid-test-app/target/*.apk | head -1)
+        run_cmd ln -s $test_apk $appium_home/sample-code/apps/selendroid-test-app.apk
         uninstall_android_app io.selendroid.testapp.selendroid
         uninstall_android_app io.selendroid.testapp
         # keep older versions of package around to clean up

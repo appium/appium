@@ -9,6 +9,7 @@ sample-code/apps/TestApp/build
 sample-code/apps/WebViewApp/build
 sample-code/apps/WebViewApp/WebViewApp.xcodeproj/project.xcworkspace/xcshareddata
 sample-code/apps/gps-demo*
+sample-code/apps/*.apk
 *.sublime-*
 sample-code/apps/UICatalog*
 sample-code/apps/io.appium.gappium*

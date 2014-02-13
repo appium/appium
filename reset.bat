@@ -1,4 +1,5 @@
 @echo off
+SETLOCAL
 
 :: Go to directory containing batch file
 FOR /f %%i in ("%0") DO SET curpath=%%~dpi
@@ -13,11 +14,20 @@ SET doForce=0
 SET pigsFly=0
 
 :: Read in command line switches
-FOR %%A IN (%*) DO IF "%%A" == "--dev" SET doDev=1
-FOR %%A IN (%*) DO IF "%%A" == "--android" SET doAndroid=1
-FOR %%A IN (%*) DO IF "%%A" == "--selendroid" SET doSelendroid=1
-FOR %%A IN (%*) DO IF "%%A" == "--verbose" SET doVerbose=1
-FOR %%A IN (%*) DO IF "%%A" == "--force" SET doForce=1
+:loop
+IF "%~1" neq "" (
+  IF "%1" == "--dev" SET doDev=1
+  IF "%1" == "--android" SET doAndroid=1
+  IF "%1" == "--selendroid" SET doSelendroid=1
+  IF "%1" == "--verbose" SET doVerbose=1
+  IF "%1" == "--force" SET doForce=1
+  IF "%1" == "--chromedriver-version" IF "%2" neq "" (
+    SET "chromedriver_version=%2"
+    shift
+  )
+  shift
+  goto :loop
+)
 
 :: If nothing is flagged do only android
 IF %doDev% == 0 IF %doSelendroid% == 0 IF %doAndroid% == 0 SET doAndroid=1
@@ -47,7 +57,7 @@ if %doAndroid% == 1 (
   CALL :runCmd "node_modules\.bin\grunt setConfigVer:android"
   ECHO.
   ECHO =====Reset Android Complete=====
-  
+
   ECHO.
   ECHO =====Resetting Unlock.apk=====
   ECHO.
@@ -78,6 +88,24 @@ if %doAndroid% == 1 (
     ECHO.
     ECHO =====Reset API Demos Complete=====
   )
+
+  :: Reset ChromeDriver
+  echo =====Resetting ChromeDriver=====
+  echo Removing old files
+  IF EXIST .\build\chromedriver.zip CALL :runCmd "del .\build\chromedriver.zip"
+  IF EXIST .\build\chromedriver.exe CALL :runCmd "del .\build\chromedriver.exe"
+
+  IF NOT DEFINED chromedriver_version (
+    echo Finding latest version
+    for /f "delims=" %%a in ('curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE') do SET "chromedriver_version=%%a"
+  )
+
+  echo Downloading and installing version %chromedriver_version%
+  CALL :runCmd "curl -L http://chromedriver.storage.googleapis.com/%chromedriver_version%/chromedriver_win32.zip -o .\build\chromedriver.zip"
+  CALL :runCmd "PUSHD .\build"
+  CALL :runCmd "unzip chromedriver.zip"
+  CALL :runCmd "del chromedriver.zip"
+  CALL :runCmd "POPD"
 )
 
 :: Reset Selendroid
@@ -95,7 +123,7 @@ IF %doSelendroid% == 1 (
   CALL :runCmd "set MAVEN_OPTS=-Xss1024k"
   CALL :runCmd "node_modules\.bin\grunt buildSelendroidServer"
   CALL :runCmd "set MAVEN_OPTS="
-  
+
   :: Reset Selendroid Dev
   IF %doDev% == 1 (
     ECHO.
@@ -112,7 +140,7 @@ IF %doSelendroid% == 1 (
     CALL :uninstallAndroidApp openqa.selendroid.testapp.selendroid
     ECHO.
     ECHO =====Reset Selendroid - Dev Complete=====
-  )  
+  )
 
   ECHO Setting Selendroid config to Appium's version
   CALL :runCmd "node_modules\.bin\grunt setConfigVer:selendroid"
@@ -165,7 +193,7 @@ GOTO :EOF
 
 :__ErrorExit
 REM Creates a syntax error, stops immediately
-() 
+()
 GOTO :EOF
 
 :__SetErrorLevel

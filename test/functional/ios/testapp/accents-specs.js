@@ -1,19 +1,20 @@
 "use strict";
 
 var setup = require("../../common/setup-base"),
-    desired = require('./desired');
+    desired = require('./desired'),
+    unorm = require('unorm');
 
-// TODO: check why this doesn't work
 describe('testapp - accented characters @skip-ios-all', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   it('should send accented text', function (done) {
+    var testText = unorm.nfd("é Œ ù ḍ");
     driver
       .elementsByTagName('textField').at(1)
-        .sendKeys("é Œ ù ḍ")
+        .sendKeys(testText)
         .text()
-        .should.become("é Œ ù ḍ")
+        .should.become(testText)
       .nodeify(done);
   });
 

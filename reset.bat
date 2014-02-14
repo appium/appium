@@ -91,9 +91,15 @@ if %doAndroid% == 1 (
 
   :: Reset ChromeDriver
   echo =====Resetting ChromeDriver=====
+  SET "chromedriver_build_directory=.\build\chromedriver\windows"
+  echo Building directory structure
+  IF NOT EXIST .\build                      CALL :runCmd "mkdir %chromedriver_build_directory%"
+  IF NOT EXIST .\build\chromedriver         CALL :runCmd "mkdir %chromedriver_build_directory%"
+  IF NOT EXIST .\build\chromedriver\windows CALL :runCmd "mkdir %chromedriver_build_directory%"
+
   echo Removing old files
-  IF EXIST .\build\chromedriver.zip CALL :runCmd "del .\build\chromedriver.zip"
-  IF EXIST .\build\chromedriver.exe CALL :runCmd "del .\build\chromedriver.exe"
+  IF EXIST %chromedriver_build_directory%\chromedriver.zip CALL :runCmd "del %chromedriver_build_directory%\chromedriver.zip"
+  IF EXIST %chromedriver_build_directory%\chromedriver.exe CALL :runCmd "del %chromedriver_build_directory%\chromedriver.exe"
 
   IF NOT DEFINED chromedriver_version (
     echo Finding latest version
@@ -101,8 +107,8 @@ if %doAndroid% == 1 (
   )
 
   echo Downloading and installing version %chromedriver_version%
-  CALL :runCmd "curl -L http://chromedriver.storage.googleapis.com/%chromedriver_version%/chromedriver_win32.zip -o .\build\chromedriver.zip"
-  CALL :runCmd "PUSHD .\build"
+  CALL :runCmd "curl -L http://chromedriver.storage.googleapis.com/%chromedriver_version%/chromedriver_win32.zip -o %chromedriver_build_directory%\chromedriver.zip"
+  CALL :runCmd "PUSHD %chromedriver_build_directory%"
   CALL :runCmd "unzip chromedriver.zip"
   CALL :runCmd "del chromedriver.zip"
   CALL :runCmd "POPD"

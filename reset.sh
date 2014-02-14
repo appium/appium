@@ -24,6 +24,7 @@ hardcore=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
 chromedriver_version=false
+chromedriver_install_all=false
 
 while test $# != 0
 do
@@ -42,6 +43,7 @@ do
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
         "--chromedriver-version") chromedriver_version=$2;;
+        "--chromedriver-install-all") chromedriver_install_all=true;;
     esac
 
     if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
@@ -385,26 +387,50 @@ reset_gappium() {
 
 reset_chromedriver() {
     echo "RESETTING CHROMEDRIVER"
-    if [ -f $appium_home/build/chromedriver ]; then
-        echo "* Clearing old program"
-        run_cmd rm $appium_home/build/chromedriver
+    if [ -d $appium_home/build/chromedriver ]; then
+        echo "* Clearing old ChromeDriver(s)"
+        run_cmd rm -rf $appium_home/build/chromedriver/*
+    else
+        run_cmd mkdir $appium_home/build/chromedriver
     fi
     if [ "$chromedriver_version" == false ]; then
         echo "* Finding latest version"
         chromedriver_version=$(run_cmd_output curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
     fi
-    echo "* Determining platform"
-    platform=$(run_cmd_output uname -s)
-    if [ "$platform" == "Darwin" ]; then
-        platform="Mac"
-        chromedriver_file="chromedriver_mac32.zip"
+    if ! $chromedriver_install_all ; then
+        echo "* Determining platform"
+        platform=$(run_cmd_output uname -s)
+        if [ "$platform" == "Darwin" ]; then
+            platform="mac"
+            chromedriver_file="chromedriver_mac32.zip"
+            run_cmd mkdir $appium_home/build/chromedriver/mac
+        else
+            platform="linux"
+            chromedriver_file="chromedriver_linux32.zip"
+            run_cmd mkdir $appium_home/build/chromedriver/linux
+        fi
+        install_chromedriver $platform $chromedriver_version $chromedriver_file
     else
-        platform="Linux"
-        chromedriver_file="chromedriver_linux32.zip"
+        echo "* Building directory structure"
+        run_cmd mkdir $appium_home/build/chromedriver/mac
+        run_cmd mkdir $appium_home/build/chromedriver/linux
+        run_cmd mkdir $appium_home/build/chromedriver/windows
+
+        install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip"
+        install_chromedriver "windows" $chromedriver_version "chromedriver_win32.zip"
     fi
-    echo "* Downloading ChromeDriver version $chromedriver_version for $platform"
-    run_cmd curl -L http://chromedriver.storage.googleapis.com/$chromedriver_version/$chromedriver_file -o ./build/chromedriver.zip
-    run_cmd pushd ./build
+}
+
+install_chromedriver() {
+    platform=$1
+    version=$2
+    file=$3
+
+    echo "* Downloading ChromeDriver version $version for $platform"
+    run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o $appium_home/build/chromedriver/$platform/chromedriver.zip
+    run_cmd pushd $appium_home/build/chromedriver/$platform
+
     echo "* Unzipping ChromeDriver"
     run_cmd unzip chromedriver.zip
     run_cmd rm chromedriver.zip

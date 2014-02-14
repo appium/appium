@@ -391,6 +391,7 @@ reset_chromedriver() {
         echo "* Clearing old ChromeDriver(s)"
         run_cmd rm -rf $appium_home/build/chromedriver/*
     else
+        run_cmd rm -rf $appium_home/build/chromedriver  # could have been an old binary
         run_cmd mkdir $appium_home/build/chromedriver
     fi
     if [ "$chromedriver_version" == false ]; then

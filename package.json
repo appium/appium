@@ -72,7 +72,8 @@
     "md5calculator": "~0.0.3",
     "through": "~2.3.4",
     "date-utils": "~1.2.14",
-    "bytes": "~0.2.1"
+    "bytes": "~0.2.1",
+    "appium-atoms": "0.0.1"
   },
   "scripts": {
     "test": "grunt travis"

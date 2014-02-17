@@ -73,7 +73,7 @@
     "through": "~2.3.4",
     "date-utils": "~1.2.14",
     "bytes": "~0.2.1",
-    "appium-atoms": "0.0.1"
+    "appium-atoms": "0.0.2"
   },
   "scripts": {
     "test": "grunt travis"

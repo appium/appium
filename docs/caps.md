@@ -37,3 +37,4 @@ Appium server capabilities
 |`locationServicesEnabled`| Force location services to be either on or off|`true` or `false`|
 |`autoAcceptAlerts`| Accept iOS privacy access permission alerts (e.g., location, contacts, photos). Default is false.|
 |`nativeInstrumentsLib`| Use native intruments lib (ie disable instruments-without-delay).|
+|`nonSyntheticWebClick`| Enable/Disable non synthetic web clicks in Safari.|

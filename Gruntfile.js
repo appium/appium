@@ -36,7 +36,7 @@ module.exports = function (grunt) {
       files: {
         src: ['*.js', './**/*.js'],
         options: {
-          ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './lib/devices/ios/webdriver-atoms/*.js', './sample-code/**/*.js', './test/**/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
+          ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './sample-code/**/*.js', './test/**/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
         }
       },
       test: {

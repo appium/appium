@@ -242,7 +242,7 @@ cases.
 
   ```java
   JavascriptExecutor js = (JavascriptExecutor) driver;
-  HashMap<String, Double> scrollObject = new HashMap<String, Double>();
+  HashMap<String, String> scrollObject = new HashMap<String, String>();
   scrollObject.put("direction", "down");
   js.executeScript("mobile: scroll", scrollObject);
   ```

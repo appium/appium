@@ -1,5 +1,4 @@
 @echo off
-SETLOCAL
 
 :: Go to directory containing batch file
 FOR /f %%i in ("%0") DO SET curpath=%%~dpi
@@ -93,8 +92,8 @@ if %doAndroid% == 1 (
   echo =====Resetting ChromeDriver=====
   SET "chromedriver_build_directory=.\build\chromedriver\windows"
   echo Building directory structure
-  IF NOT EXIST .\build                      CALL :runCmd "mkdir %chromedriver_build_directory%"
-  IF NOT EXIST .\build\chromedriver         CALL :runCmd "mkdir %chromedriver_build_directory%"
+  IF NOT EXIST .\build                      CALL :runCmd "mkdir .\build"
+  IF NOT EXIST .\build\chromedriver         CALL :runCmd "mkdir .\build\chromedriver"
   IF NOT EXIST .\build\chromedriver\windows CALL :runCmd "mkdir %chromedriver_build_directory%"
 
   echo Removing old files

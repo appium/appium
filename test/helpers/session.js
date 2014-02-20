@@ -29,7 +29,7 @@ module.exports.initSession = function (desired, opts) {
       if (env.SAUCE) {
         caps.name = this.currentTest.parent.title + " " + this.currentTest.title;
       }
-      
+
       if (env.VERBOSE) console.log("caps -->", caps);
       if (env.VERBOSE) console.log("opts -->", opts);
       

@@ -8,7 +8,7 @@ var env = require("../../helpers/env")
 var desired;
 if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
   var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
-      'io.appium.gappium.sampleapp/platforms/android/bin/' +
+      'io.appium.gappium.sampleapp/platforms/android/ant-build/' +
       'HelloGappium-debug.apk'),
   desired = {
     app: appPath,
@@ -17,7 +17,8 @@ if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
   };
 } else {
   var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
-      'io.appium.gappium.sampleapp/platforms/ios/build/HelloGappium.app'),
+      'io.appium.gappium.sampleapp/platforms/ios/build' +
+      (env.EMU ? '/emulator' : '') + '/HelloGappium.app'),
   desired = {
     app: appPath
   };
@@ -38,7 +39,7 @@ var activateWebView = function (driver) {
   });
 };
 
-describe("gappium @skip-selendroid", function () {
+describe("gappium", function () {
 
   describe('HelloGappium', function () {
     var driver;

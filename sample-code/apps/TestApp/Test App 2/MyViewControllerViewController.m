@@ -30,17 +30,24 @@
 @synthesize answerLabel;
 @synthesize firstArg;
 @synthesize secondArg;
+@synthesize locationMgr;
+@synthesize locationStatus;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        self.locationMgr = [[CLLocationManager alloc] init];
+        self.locationMgr.desiredAccuracy = kCLLocationAccuracyBest;
+        self.locationMgr.delegate = self;
+        [self logLocationAuth];
     }
 	[firstArg setAccessibilityIdentifier:@"IntegerA"];
 	[secondArg setAccessibilityIdentifier:@"IntegerB"];
 	[computeSumButton setAccessibilityIdentifier:@"ComputeSumButton"];
 	[answerLabel setAccessibilityIdentifier:@"Answer"];
+    [locationStatus setAccessibilityIdentifier:@"locationStatus"];
     return self;
 }
 
@@ -52,6 +59,26 @@
     secondArg.returnKeyType = UIReturnKeyDone;
     firstArg.delegate = self;
     secondArg.delegate = self;
+    [NSTimer scheduledTimerWithTimeInterval:0.6
+                                     target:self
+                                   selector:@selector(logLocationAuthFromTimer:)
+                                   userInfo:nil
+                                    repeats:YES];
+}
+
+- (void)logLocationAuthFromTimer:(NSTimer *)timer
+{
+    [self logLocationAuth];
+}
+
+- (void)logLocationAuth
+{
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status == kCLAuthorizationStatusAuthorized) {
+        locationStatus.on = YES;
+    } else {
+        locationStatus.on = NO;
+    }
 }
 
 - (void)viewDidUnload
@@ -75,6 +102,8 @@
 }
 
 - (void)dealloc {
+    [self.locationMgr release];
+    self.locationMgr = nil;
     [firstArg release];
     [secondArg release];
     [answerLabel release];

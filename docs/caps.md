@@ -29,12 +29,13 @@ Appium server capabilities
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`calendarFormat`| Calendar format to set for the iOS Simulator|e.g. `gregorian`|
-|`deviceName`| name of the device to set for the iOS Simulator|e.g. `iPhone Retina (3.5-inch)`|
-|`language`| Language to set for the iOS Simulator|e.g. `fr`|
+|`calendarFormat`| (Sim-only) Calendar format to set for the iOS Simulator|e.g. `gregorian`|
+|`deviceName`| (Sim-only) name of the device to set for the iOS Simulator|e.g. `iPhone Retina (3.5-inch)`|
+|`language`| (Sim-only) Language to set for the iOS Simulator|e.g. `fr`|
 |`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|
-|`locale`| Locale to set for the iOS Simulator|e.g. `fr_CA`|
-|`locationServicesEnabled`| Force location services to be either on or off|`true` or `false`|
-|`autoAcceptAlerts`| Accept iOS privacy access permission alerts (e.g., location, contacts, photos). Default is false.|
+|`locale`| (Sim-only) Locale to set for the iOS Simulator|e.g. `fr_CA`|
+|`locationServicesEnabled`| (Sim-only) Force location services to be either on or off|`true` or `false`|
+|`locationServicesAuthorized`| (Sim-only) Set location services to be authorized or not authorized for app via plist, so that location services alert doesn't pop up|`true` or `false`|
+|`autoAcceptAlerts`| Accept iOS privacy access permission alerts (e.g., location, contacts, photos) automatically if they pop up. Default is false.|
 |`nativeInstrumentsLib`| Use native intruments lib (ie disable instruments-without-delay).|
-|`nonSyntheticWebClick`| Enable/Disable non synthetic web clicks in Safari.|
+|`nonSyntheticWebClick`| (Sim-only) Enable/Disable non synthetic web clicks in Safari.|

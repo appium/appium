@@ -22,7 +22,7 @@ if (env.SAUCE) {
   env.MOCHA_TIMEOUT = parseInt(process.env.MOCHA_TIMEOUT || 500000, 10);
 }
 
-env.LAUNCH_TIMEOUT = parseInt(process.env.LAUNCH_TIMEOUT || 15000, 10);
+env.LAUNCH_TIMEOUT = parseInt(process.env.LAUNCH_TIMEOUT || 20000, 10);
 env.VERBOSE = process.env.VERBOSE;
 env.ISOLATED_TESTS = process.env.ISOLATED_TESTS;
 env.FAST_TESTS = !env.ISOLATED_TESTS;

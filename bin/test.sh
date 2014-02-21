@@ -48,7 +48,7 @@ if $ios6_only || $ios_only || $all_tests; then
     else
         echo "Did not find /Applications/Xcode-6.1.app, using default"
     fi
-    DEVICE=ios6 time $appium_mocha -g  '@skip-ios6|@skip-ios-all' -i \ 
+    DEVICE=ios6 time $appium_mocha -g  '@skip-ios6|@skip-ios-all' -i \
         test/functional/common \
         test/functional/ios
 fi

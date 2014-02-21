@@ -20,7 +20,7 @@ var spinTitle = function (expTitle, browser, _timeout) {
 var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
   var uuid = uuidGenerator.v1();
   if (typeof urlToLoad === "undefined") {
-    if (app === "chrome") {
+    if (app === "chrome" || app === "chromium") {
       urlToLoad = env.CHROME_GUINEA_TEST_END_POINT + '?' + uuid;
     } else {
       urlToLoad = env.GUINEA_TEST_END_POINT + '?' + uuid;

@@ -1,7 +1,7 @@
 /*global beforeEach:true */
 "use strict";
 
-process.env.DEVICE = process.env.DEVICE || "selendroid";
+process.env.DEVICE = process.env.DEVICE || "android";
 var env = require('../../helpers/env')
   , setup = require("../common/setup-base")
   , path = require('path');
@@ -14,13 +14,14 @@ var desired = {
 
 // if it doesn't work run: adb uninstall io.selendroid.testapp
 
-describe('selendroid - web_view -', function () {
+describe('android - web_view -', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   beforeEach(function (done) {
     driver
-      .waitForElementById('buttonStartWebviewCD').click()
+      .waitForElementByName('buttonStartWebviewCD').click()
+      .windowHandles()
       .window('WEBVIEW')
       .nodeify(done);
   });
@@ -28,7 +29,8 @@ describe('selendroid - web_view -', function () {
   if (env.FAST_TESTS) {
     afterEach(function (done) {
       driver
-        .window('NATIVE_APP')
+        .windowHandles()
+        .window('NATIVE')
         .elementByIdOrNull('goBack').then(function (el) {
           if (el) return el.click().sleep(1000);
         }).nodeify(done);
@@ -73,3 +75,4 @@ describe('selendroid - web_view -', function () {
   });
 
 });
+

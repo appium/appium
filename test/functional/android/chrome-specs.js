@@ -1,5 +1,5 @@
 "use strict";
 
 describe("chrome", function () {
-  require('../common/webview-base')('chrome');
+  require('../common/webview-base')('chromium');
 });

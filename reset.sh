@@ -82,7 +82,7 @@ run_cmd_output() {
     fi
 }
 
-reset_general() {
+reset_npm() {
     echo "RESETTING NPM"
     set +e
     if $hardcore ; then
@@ -104,6 +104,10 @@ reset_general() {
         echo "install failed. Trying again with sudo. Only do this if it's not a network error."
         run_cmd sudo npm install .
     fi
+}
+
+reset_general() {
+    echo "RESETTING GENERAL"
     if $hardcore ; then
         echo "* Clearing out build dir"
         run_cmd rm -rf build
@@ -111,6 +115,11 @@ reset_general() {
     run_cmd mkdir -p build
     echo "* Setting git revision data"
     run_cmd "$grunt" setGitRev
+    if [ $include_dev ]; then
+        echo "* Linking git pre-commit hook"
+        run_cmd rm -rf $(pwd)/.git/hooks/pre-commit
+        run_cmd ln -s $(pwd)/test/pre-commit-hook.sh $(pwd)/.git/hooks/pre-commit
+    fi
 }
 
 reset_ios() {
@@ -462,6 +471,7 @@ main() {
     if $prod_deps ; then
         echo "* Prod mode is on, will only install prod deps"
     fi
+    reset_npm
     reset_general
     if $should_reset_ios ; then
         reset_ios

@@ -152,7 +152,7 @@ module.exports.setDeviceConfigVer = function (grunt, device, cb) {
 };
 
 module.exports.writeConfigKey = function (grunt, key, value, cb) {
-  var configPath = path.resolve(__dirname, ".appiumconfig");
+  var configPath = path.resolve(__dirname, ".appiumconfig.json");
   fs.readFile(configPath, function (err, data) {
     var writeConfig = function (config) {
       config[key] = value;

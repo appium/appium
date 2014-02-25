@@ -35,6 +35,7 @@ sample-code/apps/ApiDemos
 org.eclipse.ltk.core.refactoring.prefs
 /selendroid
 .appiumconfig
+.appiumconfig.json
 build/
 .idea
 lib/devices/ios/uiauto/lib/status.js

@@ -88,8 +88,9 @@ reset_npm() {
     if $hardcore ; then
         echo "* Removing NPM modules"
         run_cmd rm -rf node_modules
-        echo "* Clearing out old .appiumconfig"
-        run_cmd rm -rf ./.appiumconfig
+        echo "* Clearing out old .appiumconfig.json"
+        run_cmd rm -rf ./.appiumconfig      #remove legacy config file
+        run_cmd rm -rf ./.appiumconfig.json
     fi
     if $prod_deps ; then
         echo "* Installing new or updated NPM modules"

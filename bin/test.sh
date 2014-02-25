@@ -77,8 +77,6 @@ fi
 if $android_only || $all_tests; then
     echo "RUNNING ANDROID TESTS"
     echo "---------------------"
-    # android_dirs="apidemos android toggletest"
-    # selendroid_dirs=" gappium selendroid"
     DEVICE=android time $appium_mocha -g  '@skip-android-all' -i \
         test/functional/common \
         test/functional/android

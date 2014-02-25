@@ -9,21 +9,19 @@ var env = require('../../helpers/env')
   , spinTitle = webviewHelper.spinTitle
   , spinWait = require('../../helpers/spin.js').spinWait;
 
-// possible apps: safari, chrome, iwebview, WebViewApp, custom app 
+// possible apps: safari, chrome, iwebview, WebViewApp, custom app
 module.exports = function (app) {
   app = app || 'WebViewApp';
+  var isChrome = app === "chrome" || app === "chromium";
+  var testEndpoint = isChrome ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
 
   function _skip(reason, done) {
     console.warn("skipping: " + reason);
     done();
   }
 
-  function _testEndpoint(webviewType) {
-    return webviewType === "chrome" ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
-  }
-
   var setup =  function (context) { return setupBase(context, {app: app}); };
-  
+
   var loadWebView = function (driver, urlToLoad, titleToSpin) {
     return loadWebViewBase(app, driver, urlToLoad, titleToSpin);
   };
@@ -39,7 +37,7 @@ module.exports = function (app) {
       driver
         .title().should.eventually.include("I am a page title")
         .then(function () {
-          if (app === "chrome") {
+          if (isChrome) {
             return;
           }
           return driver
@@ -197,7 +195,7 @@ module.exports = function (app) {
     });
 
     it('should retrieve a window size', function (done) {
-      if (app === "chrome") return _skip(
+      if (isChrome) return _skip(
         "only supported on desktop android.", done);
       driver
         .getWindowSize()
@@ -306,7 +304,7 @@ module.exports = function (app) {
     it("should bubble up javascript errors", function (done) {
       driver
         .execute("'nan'--")
-          .should.be.rejectedWith("status: 13")
+          .should.be.rejectedWith(/status: (13|7)/)
         .nodeify(done);
     });
     it("should eval javascript", function (done) {
@@ -371,7 +369,7 @@ module.exports = function (app) {
       loadWebView(driver).nodeify(done);
     });
     it("should bubble up javascript errors", function (done) {
-      if (app === "chrome") return _skip(
+      if (isChrome) return _skip(
         "executeAsync not working on android.", done);
       driver
         .executeAsync("'nan'--")
@@ -379,7 +377,7 @@ module.exports = function (app) {
         .nodeify(done);
     });
     it("should execute async javascript", function (done) {
-      if (app === "chrome") return _skip(
+      if (isChrome) return _skip(
         "executeAsync not working on android.", done);
       driver
         .setAsyncScriptTimeout('10000')
@@ -388,7 +386,7 @@ module.exports = function (app) {
       .nodeify(done);
     });
     it("should timeout when callback isn't invoked", function (done) {
-      if (app === "chrome") return _skip(
+      if (isChrome) return _skip(
         "executeAsync not working on android.", done);
       driver
         .setAsyncScriptTimeout('2000')
@@ -443,7 +441,7 @@ module.exports = function (app) {
         .nodeify(done);
     });
     it('should fail to set text of alert', function (done) {
-      if (app === "chrome") return _skip(
+      if (isChrome) return _skip(
         "doesn't throw on android.", done);
       driver
         .elementById('alert1').click()
@@ -458,7 +456,7 @@ module.exports = function (app) {
     setup(this).then(function (d) { driver = d; });
 
     beforeEach(function (done) {
-      loadWebView(driver, _testEndpoint(app) + 'frameset.html',
+      loadWebView(driver, testEndpoint + 'frameset.html',
           "Frameset guinea pig").frame()
       .nodeify(done);
     });
@@ -520,7 +518,7 @@ module.exports = function (app) {
     setup(this).then(function (d) { driver = d; });
 
     beforeEach(function (done) {
-      loadWebView(driver, _testEndpoint(app) + 'iframes.html',
+      loadWebView(driver, testEndpoint + 'iframes.html',
           "Iframe guinea pig").frame()
       .nodeify(done);
     });
@@ -581,7 +579,7 @@ module.exports = function (app) {
 
     describe('within iframe webview', function () {
       it('should be able to get cookies for a page with none', function (done) {
-        loadWebView(driver, _testEndpoint(app) + 'iframes.html',
+        loadWebView(driver, testEndpoint + 'iframes.html',
             "Iframe guinea pig").then(function () {
           return driver.allCookies().should.eventually.have.length(0);
         }).nodeify(done);
@@ -589,7 +587,7 @@ module.exports = function (app) {
     });
     describe('within webview', function () {
       function _ignoreEncodingBug(value) {
-        if (app === 'chrome') {
+        if (isChrome) {
           console.warn('Going round android bug: whitespace in cookies.');
           return encodeURI(value);
         } else return value;

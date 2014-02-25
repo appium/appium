@@ -1,7 +1,6 @@
 "use strict";
 var setup = require("../../common/setup-base")
-  , desired = require('./desired')
-  , Q =  require("q");
+  , desired = require('./desired');
 
 describe('testapp - find element -', function () {
   var driver;
@@ -23,16 +22,18 @@ describe('testapp - find element -', function () {
       .nodeify(done);
   });
   it('should find alerts when they exist', function (done) {
+    var alert = null;
     driver
       .elementsByTagName('button').then(function (els) {
         return els[1].click();
       }).then(function () { return driver.elementByTagName('alert'); })
       .then(function (alertEl) {
-        return Q.all([
-          alertEl.elementByName('OK').should.eventually.exist,
-          alertEl.elementByName('Cancel').should.eventually.exist
-        ]);
-      }).dismissAlert()
+        alert = alertEl;
+        return alert.elementByName('OK').should.eventually.exist;
+      }).then(function () {
+        return alert.elementByName('Cancel').should.eventually.exist;
+      })
+      .dismissAlert()
       .nodeify(done);
   });
   it('should not find alerts when they dont exist', function (done) {

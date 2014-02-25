@@ -112,8 +112,7 @@ describe("apidemo - basic -", function () {
     });
   });
 
-  // TODO: fix that, that frequently hangs then crashes Appium
-  describe('without fastClear @skip-android-all', function () {
+  describe('without fastClear', function () {
     var driver;
     setup(this, _.defaults({fastClear: false}, desired))
      .then(function (d) { driver = d; });
@@ -144,7 +143,7 @@ describe("apidemo - basic -", function () {
       session.setUp().nodeify(done);
     });
   });
-  
+
   describe('error cases', function () {
     var opts = {'no-retry': true};
 
@@ -202,11 +201,10 @@ describe("apidemo - basic -", function () {
     });
   });
 
-  // TODO: fix that, same fastclear issue killing appium 
-  describe('pre-existing uiautomator session @skip-android-all', function () {
+  describe('pre-existing uiautomator session', function () {
     before(function (done) {
       var adb = new ADB();
-      var binPath = path.resolve(__dirname, "..", "..", "..", "build",
+      var binPath = path.resolve(__dirname, "..", "..", "..", "..", "build",
           "android_bootstrap", "AppiumBootstrap.jar");
       var uiArgs = ["shell", "uiautomator", "runtest", "AppiumBootstrap.jar", "-c",
         "io.appium.android.bootstrap.Bootstrap"];

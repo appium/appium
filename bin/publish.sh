@@ -14,7 +14,7 @@ if [ $? -gt 0 ]; then
     echo "You need to have an 'upstream' remote to pull from / push tags to"
     exit 1
 fi
-git status | grep "nothing to commit (working directory clean)" >/dev/null
+git status | grep -E "nothing to commit.+working directory clean)" >/dev/null
 if [ $? -gt 0 ]; then
     echo "Working directory isn't clean, commit/clean then publish"
     exit 1

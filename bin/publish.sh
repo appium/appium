@@ -27,7 +27,7 @@ fi
 
 set -e
 git pull upstream master
-./reset.sh --hardcore --real-safari --chromedriver-install-all --chromedriver-version 2.8
+./reset.sh --hardcore --real-safari --chromedriver-install-all --chromedriver-version 2.9
 npm publish
 version=$(cat package.json | underscore extract version | sed 's/\"//g')
 git tag -a "v$version" -m "tag appium@$version for npm publish"

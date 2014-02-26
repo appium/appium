@@ -12,7 +12,7 @@ describe('testapp - location -', function () {
     driver
       .elementByTagName('button').getLocation().then(function (location) {
         location.x.should.equal(94);
-        location.y.should.equal(122);
+        location.y.should.be.above(120);
       })
       .nodeify(done);
   });

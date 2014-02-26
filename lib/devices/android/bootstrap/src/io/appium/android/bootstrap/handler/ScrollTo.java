@@ -44,12 +44,22 @@ public class ScrollTo extends CommandHandler {
     try {
       Boolean result;
       final Hashtable<String, Object> params = command.params();
-      String text = params.get("text").toString();
+      final String text = params.get("text").toString();
+      final String direction = params.get("direction").toString();
 
-      AndroidElement el = command.getElement();
+      final AndroidElement el = command.getElement();
+
+      if (!el.getUiObject().isScrollable()) {
+        return getErrorResult("The provided view is not scrollable.");
+      }
 
       final UiScrollable view = new UiScrollable(el.getUiObject().getSelector());
 
+      if (direction.toLowerCase().contentEquals("horizontal")
+          || view.getClassName().contentEquals(
+              "android.widget.HorizontalScrollView")) {
+        view.setAsHorizontalList();
+      }
       view.scrollToBeginning(100);
       view.setMaxSearchSwipes(100);
       result = view.scrollTextIntoView(text);

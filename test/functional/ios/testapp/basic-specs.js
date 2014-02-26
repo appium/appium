@@ -223,12 +223,14 @@ describe('testapp - basic -', function () {
     it('should be able to get crashlog logs', function (done) {
       var dir = path.resolve(process.env.HOME, "Library", "Logs", "DiagnosticReports");
       var msg = 'boom';
+      var numBeforeLogs;
       driver
         .log('crashlog').then(function (logsBefore) {
-          logsBefore.length.should.eql(0);
+          numBeforeLogs = logsBefore.length;
           fs.writeFileSync(dir + '/myApp_' + Date.parse(new Date()) + '_rocksauce.crash', msg);
         }).log('crashlog').then(function (logsAfter) {
           logsAfter.length.should.be.above(0);
+          logsAfter.length.should.not.equal(numBeforeLogs);
           logsAfter[0].message.should.not.include("\n");
           logsAfter[0].message.should.equal(msg);
           logsAfter[0].level.should.equal("ALL");

@@ -50,7 +50,7 @@
 	
 	self.myAddVC = [[MyViewControllerViewController alloc] init];
 	self.myAddVC.view.frame = self.window.bounds;
-	[self.window addSubview:self.myAddVC.view];
+    [self.window setRootViewController:self.myAddVC];
 	
     return YES;
 }

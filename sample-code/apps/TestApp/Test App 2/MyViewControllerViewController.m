@@ -59,11 +59,11 @@
     secondArg.returnKeyType = UIReturnKeyDone;
     firstArg.delegate = self;
     secondArg.delegate = self;
-    [NSTimer scheduledTimerWithTimeInterval:0.6
+    [NSTimer scheduledTimerWithTimeInterval:0.1
                                      target:self
                                    selector:@selector(logLocationAuthFromTimer:)
                                    userInfo:nil
-                                    repeats:YES];
+                                    repeats:NO];
 }
 
 - (void)logLocationAuthFromTimer:(NSTimer *)timer
@@ -86,6 +86,7 @@
     [self setFirstArg:nil];
     [self setSecondArg:nil];
     [self setAnswerLabel:nil];
+    [self setLocationStatus:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;

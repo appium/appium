@@ -20,7 +20,12 @@ module.exports = function (app) {
     done();
   }
 
-  var setup =  function (context) { return setupBase(context, {app: app}); };
+  var setup =  function (context) {
+    return setupBase(context, {
+      nonSyntheticWebClick: false,
+      app: app
+    });
+  };
 
   var loadWebView = function (driver, urlToLoad, titleToSpin) {
     return loadWebViewBase(app, driver, urlToLoad, titleToSpin);

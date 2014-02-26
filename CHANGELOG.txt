@@ -1,3 +1,44 @@
+CHANGES IN VERSION 0.16.0 (from 0.15.0)
+=======================================
+
+#### General
+- auto-configure the host and port for nodes in an appium grid
+- fix usage of temp folders on windows/linux
+- allow better usage of reset.sh in windows git-bash
+- add linking of pre-commit hook in reset.sh so everyone runs it
+
+#### iOS
+- fix regression where special keys wouldn't be sent
+- add `mobile: scroll` with direction: up/down/left/right to scroll views
+- display correct error when app install/uninstall fails on real device
+- update TestApp to show location services enabled status
+- add `locationServicesAuthorized` cap
+- add `locationServicesEnabled` cap
+- add `safariIgnoreFraudWarning` cap
+- add `safariAllowPopups` cap
+- update uiauto js to retrieve references to app/windows dynamically every time
+
+#### iOS+Safari
+- wait longer for webviews to appear in ios7
+- return latest window with getWindowHandles()
+- move hardcoded atoms out of appium into its own npm module which builds them
+- add `nonSyntheticWebClick` cap to use atoms for click in ios7
+
+#### Android
+- fix installing unlock app on windows paths with spaces
+- add test coverage mechanism
+- don't fail the test if we can't find strings.xml in an apk
+- add hybrid support for webviews in 4.4+ apps
+- fix `mobile: launchApp`
+
+#### Chrome+Android
+- bundle chromedriver into appium itself, remove system dependency
+
+#### Selendroid
+- remove requirement to manually update selendroid test apk path in test code
+- update selendroid (with maven 3.1.1 requirement)
+
+
 CHANGES IN VERSION 0.15.0 (from 0.14.2)
 =======================================
 

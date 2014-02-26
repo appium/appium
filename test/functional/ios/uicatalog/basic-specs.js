@@ -14,12 +14,11 @@ describe('uicatalog - basic -', function () {
     if (env.FAST_TESTS) {
       beforeEach(function (done) {
         driver
-          .elementByNameOrNull('Back')
-          .then(function (el) { if (el) return el.click(); })
-          .nodeify(done);
+          .back()
+          .nodeify(function () { done(); });
       });
     }
-    
+
     it('should confirm element is not visible', function (done) {
       driver
         .elementByTagName('tableCell').click()

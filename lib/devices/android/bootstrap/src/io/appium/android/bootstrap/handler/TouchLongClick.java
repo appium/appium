@@ -10,6 +10,8 @@ import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.json.JSONException;
 
@@ -38,7 +40,7 @@ public class TouchLongClick extends CommandHandler {
    * UiAutomator has a broken longClick. getAutomatorBridge is private so we
    * access the bridge via reflection to use the touchDown / touchUp methods.
    */
-  private boolean correctLongClick(final int x, final int y) {
+  private boolean correctLongClick(final int x, final int y, final int duration) {
     try {
       /*
        * bridge.getClass() returns ShellUiAutomatorBridge on API 18/19 so use
@@ -61,7 +63,7 @@ public class TouchLongClick extends CommandHandler {
       touchUp.setAccessible(true);
 
       if ((Boolean) touchDown.invoke(controller, x, y)) {
-        SystemClock.sleep(2000);
+        SystemClock.sleep(duration);
         if ((Boolean) touchUp.invoke(controller, x, y)) {
           return true;
         }
@@ -85,25 +87,68 @@ public class TouchLongClick extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
-    if (!command.isElementCommand()) {
-      return getErrorResult("Unable to long click without an element.");
-    }
-
     try {
-      final AndroidElement el = command.getElement();
+      final Hashtable<String, Object> params = command.params();
+      AndroidElement el = null;
+      int clickX = -1;
+      int clickY = -1;
 
-      final Rect bounds = el.getVisibleBounds();
-      final int x = bounds.centerX();
-      final int y = bounds.centerY();
+      boolean isElement = false;
+      // isElementCommand doesn't check to see if we actually have an element
+      // so getElement is used instead.
+      try {
+        if (command.getElement() != null) {
+          isElement = true;
+        }
+      } catch (final Exception e) {
+      }
 
-      if (correctLongClick(x, y)) {
+      if (isElement) {
+        // extract x and y from the element.
+        el = command.getElement();
+
+        final Rect bounds = el.getVisibleBounds();
+        clickX = bounds.centerX();
+        clickY = bounds.centerY();
+      } else { // no element so extract x and y from params
+        final Object paramX = params.get("x");
+        final Object paramY = params.get("y");
+        double targetX = 0.5;
+        double targetY = 0.5;
+        if (paramX != null) {
+          targetX = Double.parseDouble(paramX.toString());
+        }
+
+        if (paramY != null) {
+          targetY = Double.parseDouble(paramY.toString());
+        }
+
+        final ArrayList<Integer> posVals = absPosFromCoords(new Double[] {
+            targetX, targetY });
+        clickX = posVals.get(0);
+        clickY = posVals.get(1);
+      }
+
+      final Object paramDuration = params.get("duration");
+      int duration = 2000; // two seconds
+      if (paramDuration != null) {
+        duration = Integer.parseInt(paramDuration.toString());
+      }
+
+      Logger.debug("longClick using element? " + isElement + " x: " + clickX
+          + ", y: " + clickY + ", duration: " + duration);
+      if (correctLongClick(clickX, clickY, duration)) {
         return getSuccessResult(true);
       }
 
-      Logger.debug("Falling back to broken longClick");
+      // if correctLongClick failed and we have an element
+      // then uiautomator's longClick is used as a fallback.
+      if (isElement) {
+        Logger.debug("Falling back to broken longClick");
 
-      final boolean res = el.longClick();
-      return getSuccessResult(res);
+        final boolean res = el.longClick();
+        return getSuccessResult(res);
+      }
     } catch (final UiObjectNotFoundException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final ElementNotInHashException e) {
@@ -111,5 +156,6 @@ public class TouchLongClick extends CommandHandler {
     } catch (final Exception e) {
       return getErrorResult(e.getMessage());
     }
+    return getErrorResult("Failed to long click");
   }
 }

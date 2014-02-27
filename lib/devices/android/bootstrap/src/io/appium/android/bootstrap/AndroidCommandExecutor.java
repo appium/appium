@@ -9,6 +9,7 @@ import io.appium.android.bootstrap.handler.EnableCompressedLayoutHeirarchy;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
+import io.appium.android.bootstrap.handler.GetDataDir;
 import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetLocation;
 import io.appium.android.bootstrap.handler.GetName;
@@ -67,6 +68,7 @@ class AndroidCommandExecutor {
     map.put("enableCompressedLayoutHeirarchy",
         new EnableCompressedLayoutHeirarchy());
     map.put("getStrings", new GetStrings());
+    map.put("getDataDir", new GetDataDir());
   }
 
   /**

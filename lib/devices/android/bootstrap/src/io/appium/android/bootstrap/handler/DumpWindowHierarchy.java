@@ -4,11 +4,17 @@ import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
 
+import java.io.File;
+
+import android.os.Environment;
+
 import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to dumpWindowHierarchy.
- * 
+ * https://android.googlesource.com/
+ * platform/frameworks/testing/+/master/uiautomator
+ * /library/core-src/com/android/uiautomator/core/UiDevice.java
  */
 public class DumpWindowHierarchy extends CommandHandler {
 
@@ -24,8 +30,17 @@ public class DumpWindowHierarchy extends CommandHandler {
    */
   @Override
   public AndroidCommandResult execute(final AndroidCommand command) {
-    // root is /data/local/tmp/
-    UiDevice.getInstance().dumpWindowHierarchy("dump.xml");
+
+    final String dumpXml = "dump.xml";
+    final File dump = new File(new File(Environment.getDataDirectory(),
+        "local/tmp"), dumpXml);
+    dump.mkdirs();
+
+    if (dump.exists()) {
+      dump.delete();
+    }
+
+    UiDevice.getInstance().dumpWindowHierarchy(dumpXml);
     return getSuccessResult(true);
   }
 }

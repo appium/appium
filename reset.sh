@@ -146,23 +146,6 @@ reset_ios() {
     run_cmd rm -rf build/force_quit
     run_cmd mkdir build/force_quit
     run_cmd cp -R submodules/ForceQuitUnresponsiveApps/bin/* build/force_quit
-    echo "* Cloning/updating instruments-without-delay"
-    run_cmd git submodule update --init submodules/instruments-without-delay
-    if $ios7_active ; then
-        echo "* Building instruments-without-delay"
-        run_cmd pushd submodules/instruments-without-delay
-        run_cmd ./build.sh
-        run_cmd popd
-        echo "* Moving instruments-without-delay into build/iwd"
-        run_cmd rm -rf build/iwd
-        run_cmd mkdir build/iwd
-        run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
-    fi
-    run_cmd pushd ./assets
-    echo "* Unzipping instruments without delay for XCode 4"
-    run_cmd rm -rf ../build/iwd4
-    run_cmd unzip iwd4.zip -d ../build/
-    run_cmd popd
     echo "* Cloning/updating udidetect"
     run_cmd git submodule update --init submodules/udidetect
     echo "* Building udidetect"

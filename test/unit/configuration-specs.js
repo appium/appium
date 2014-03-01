@@ -17,6 +17,9 @@ describe('Appium', function () {
     var appium = getAppium({});
     var happyTests = [
       [{ipa: '/path/to/my.ipa'}, {}, 'ios']
+    , [{forceIphone: true}, {}, 'ios']
+    , [{forceIpad: true}, {}, 'ios']
+    , [{safari: true, forceIpad: true}, {}, 'safari']
     , [{ipa: '/path/to/my.ipa', safari: true}, {}, 'ios']
     , [{safari: true}, {}, 'safari']
     , [{safari: true}, {app: '/path/to/my.apk'}, 'safari']

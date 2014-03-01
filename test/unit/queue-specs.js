@@ -67,7 +67,6 @@ describe('Appium', function () {
       var loop = function (num) {
         if (num > 9)
           return;
-
         appium.start({app: "/path/to/fake.app", device: "iPhone"}, function (err) {
           var n = num;
           if (n === 0) {
@@ -84,7 +83,6 @@ describe('Appium', function () {
           loop(++num);
         });
       };
-
       loop(0);
     });
   });

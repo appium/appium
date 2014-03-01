@@ -27,7 +27,6 @@
   "bin": {
     "appium": "./bin/appium.js",
     "appium-doctor": "./bin/appium-doctor.js",
-    "instruments_client": "./bin/instruments-client.js",
     "authorize_ios": "./bin/authorize-ios.js"
   },
   "directories": {
@@ -74,7 +73,8 @@
     "date-utils": "~1.2.14",
     "bytes": "~0.2.1",
     "appium-atoms": "0.0.2",
-    "appium-instruments": "0.0.3"
+    "appium-instruments": "0.0.3",
+    "appium-uiauto": "0.0.3"
   },
   "scripts": {
     "test": "grunt travis"

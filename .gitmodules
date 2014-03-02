@@ -31,3 +31,18 @@
 [submodule "submodules/ForceQuitUnresponsiveApps"]
 	path = submodules/ForceQuitUnresponsiveApps
 	url = https://github.com/appium/ForceQuitUnresponsiveApps.git
+[submodule "submodules/appium-atoms"]
+	path = submodules/appium-atoms
+	url = https://github.com/appium/appium-atoms.git
+[submodule "submodules/appium-instruments"]
+	path = submodules/appium-instruments
+	url = https://github.com/appium/appium-instruments.git
+[submodule "submodules/appium-uiauto"]
+	path = submodules/appium-uiauto
+	url = https://github.com/appium/appium-uiauto.git
+[submodule "submodules/appium-adb"]
+	path = submodules/appium-adb
+	url = https://github.com/appium/appium-adb.git
+[submodule "submodules/appium-uiautomator"]
+	path = submodules/appium-uiautomator
+	url = https://github.com/appium/appium-uiautomator.git

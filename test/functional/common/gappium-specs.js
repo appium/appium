@@ -39,7 +39,7 @@ var activateWebView = function (driver) {
   });
 };
 
-describe("gappium", function () {
+describe("gappium @skip-android-all", function () {
 
   describe('HelloGappium', function () {
     var driver;

@@ -7,9 +7,7 @@ var path = require('path')
   , buildApp = gruntHelpers.buildApp
   , buildSafariLauncherApp = gruntHelpers.buildSafariLauncherApp
   , signApp = gruntHelpers.signApp
-  , setupAndroidBootstrap = gruntHelpers.setupAndroidBootstrap
   , setupAndroidApp = gruntHelpers.setupAndroidApp
-  , buildAndroidBootstrap = gruntHelpers.buildAndroidBootstrap
   , buildSelendroidServer = gruntHelpers.buildSelendroidServer
   , buildAndroidApp = gruntHelpers.buildAndroidApp
   , buildSelendroidAndroidApp = gruntHelpers.buildSelendroidAndroidApp
@@ -142,12 +140,6 @@ module.exports = function (grunt) {
   });
   grunt.registerTask('log', "Tail appium.log", function () {
     tail(grunt, path.resolve(__dirname, "appium.log"), this.async());
-  });
-  grunt.registerTask('configAndroidBootstrap', function () {
-    setupAndroidBootstrap(grunt, this.async());
-  });
-  grunt.registerTask('buildAndroidBootstrap', function () {
-    buildAndroidBootstrap(grunt, this.async());
   });
   grunt.registerTask('buildSelendroidServer', function () {
     buildSelendroidServer(this.async());

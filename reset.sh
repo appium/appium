@@ -306,11 +306,6 @@ reset_unlock_apk() {
 reset_android() {
     echo "RESETTING ANDROID"
     require_java
-    echo "* Configuring Android bootstrap"
-    run_cmd rm -rf build/android_bootstrap
-    run_cmd "$grunt" configAndroidBootstrap
-    echo "* Building Android bootstrap"
-    run_cmd "$grunt" buildAndroidBootstrap
     reset_unlock_apk
     if $include_dev ; then
         reset_apidemos

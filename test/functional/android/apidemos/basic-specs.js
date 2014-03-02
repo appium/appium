@@ -112,7 +112,7 @@ describe("apidemo - basic -", function () {
     });
   });
 
-  describe('without fastClear', function () {
+  describe('without fastClear @skip-android-all', function () {
     var driver;
     setup(this, _.defaults({fastClear: false}, desired))
      .then(function (d) { driver = d; });
@@ -204,8 +204,7 @@ describe("apidemo - basic -", function () {
   describe('pre-existing uiautomator session', function () {
     before(function (done) {
       var adb = new ADB();
-      var binPath = path.resolve(__dirname, "..", "..", "..", "..", "build",
-          "android_bootstrap", "AppiumBootstrap.jar");
+      var binPath = require('appium-uiautomator').bootstrapJar;
       var uiArgs = ["shell", "uiautomator", "runtest", "AppiumBootstrap.jar", "-c",
         "io.appium.android.bootstrap.Bootstrap"];
       adb.push(binPath, "/data/local/tmp/", function (err) {
@@ -221,7 +220,7 @@ describe("apidemo - basic -", function () {
       });
     });
 
-    describe('launching new session', function () {
+    describe('launching new session @skip-android-all', function () {
       var driver;
       setup(this, _.defaults({fastClear: false}, desired))
        .then(function (d) { driver = d; });

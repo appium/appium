@@ -183,7 +183,12 @@ GOTO :EOF
 :: Function to uninstall an Android app
 :uninstallAndroidApp
   ECHO Attempting to uninstall android app %~1
-  CALL :runCmd "adb uninstall %~1 | VER > NUL"
+  FOR /F "delims=" %%i in ('adb devices ^| find /v /c ""') DO SET deviceCount=%%i
+  IF %deviceCount% GTR 2 (
+    CALL :runCmd "adb uninstall %~1 | VER > NUL"
+  ) ELSE (
+    ECHO No android devices detected, skipping uninstallation
+  )
 GOTO :EOF
 
 :: Function to run commands

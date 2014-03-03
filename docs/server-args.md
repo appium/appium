@@ -58,3 +58,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||
 |`--show-config`|false|Show info about the appium server configuration and exit||
+|`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when appium session is started/finished||

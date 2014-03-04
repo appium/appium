@@ -27,6 +27,7 @@ describe('Appium', function () {
     , [{}, {app: 'settings'}, 'ios']
     , [{}, {app: 'chrome'}, 'chrome']
     , [{}, {app: 'chromium'}, 'chrome']
+    , [{}, {app: 'chromium', device: 'android'}, 'chrome']
     , [{}, {app: 'browser'}, 'chrome']
     , [{}, {app: 'http://www.site.com/my.app.zip'}, 'ios']
     , [{}, {app: 'http://www.site.com/my.apk.zip'}, 'android']

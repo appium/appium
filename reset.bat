@@ -36,6 +36,8 @@ ECHO.
 ECHO =====Installing dependencies with npm=====
 ECHO.
 CALL :runCmd "npm install ."
+ECHO =====Finished installing dependencies with npm=====
+ECHO.
 
 :: Install Dev Dependencies
 if %doDev% == 1 (
@@ -43,6 +45,7 @@ if %doDev% == 1 (
   ECHO =====Installing development dependencies with npm=====
   ECHO.
   CALL :runCmd "npm install . --dev"
+  ECHO =====Finished installing development dependencies with npm=====
   ECHO.
 )
 
@@ -90,27 +93,31 @@ if %doAndroid% == 1 (
 
   :: Reset ChromeDriver
   echo =====Resetting ChromeDriver=====
+  setlocal enabledelayedexpansion
   SET "chromedriver_build_directory=.\build\chromedriver\windows"
   echo Building directory structure
   IF NOT EXIST .\build                      CALL :runCmd "mkdir .\build"
   IF NOT EXIST .\build\chromedriver         CALL :runCmd "mkdir .\build\chromedriver"
-  IF NOT EXIST .\build\chromedriver\windows CALL :runCmd "mkdir %chromedriver_build_directory%"
+  IF NOT EXIST .\build\chromedriver\windows CALL :runCmd "mkdir !chromedriver_build_directory!"
 
   echo Removing old files
-  IF EXIST %chromedriver_build_directory%\chromedriver.zip CALL :runCmd "del %chromedriver_build_directory%\chromedriver.zip"
-  IF EXIST %chromedriver_build_directory%\chromedriver.exe CALL :runCmd "del %chromedriver_build_directory%\chromedriver.exe"
+  IF EXIST !chromedriver_build_directory!\chromedriver.zip CALL :runCmd "del !chromedriver_build_directory!\chromedriver.zip"
+  IF EXIST !chromedriver_build_directory!\chromedriver.exe CALL :runCmd "del !chromedriver_build_directory!\chromedriver.exe"
 
   IF NOT DEFINED chromedriver_version (
     echo Finding latest version
     for /f "delims=" %%a in ('curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE') do SET "chromedriver_version=%%a"
   )
 
-  echo Downloading and installing version %chromedriver_version%
-  CALL :runCmd "curl -L http://chromedriver.storage.googleapis.com/%chromedriver_version%/chromedriver_win32.zip -o %chromedriver_build_directory%\chromedriver.zip"
-  CALL :runCmd "PUSHD %chromedriver_build_directory%"
-  CALL :runCmd "unzip chromedriver.zip"
+  echo !chromedriver_build_directory!
+  echo Downloading and installing version !chromedriver_version!
+  CALL :runCmd "curl -L http://chromedriver.storage.googleapis.com/!chromedriver_version!/chromedriver_win32.zip -o !chromedriver_build_directory!\chromedriver.zip"
+  CALL :runCmd "PUSHD !chromedriver_build_directory!"
+  CALL :runCmd "jar xf chromedriver.zip"
   CALL :runCmd "del chromedriver.zip"
   CALL :runCmd "POPD"
+  
+  echo =====Reset ChromeDriver Complete=====
 )
 
 :: Reset Selendroid
@@ -170,12 +177,18 @@ IF %pigsFly% == 1 (
   ECHO.
   ECHO =====Reset Gappium=====
 )
+ECHO Done, No Errors
 GOTO :EOF
 
 :: Function to uninstall an Android app
 :uninstallAndroidApp
   ECHO Attempting to uninstall android app %~1
-  CALL :runCmd "adb uninstall %~1 | VER > NUL"
+  FOR /F "delims=" %%i in ('adb devices ^| find /v /c ""') DO SET deviceCount=%%i
+  IF %deviceCount% GTR 2 (
+    CALL :runCmd "adb uninstall %~1 | VER > NUL"
+  ) ELSE (
+    ECHO No android devices detected, skipping uninstallation
+  )
 GOTO :EOF
 
 :: Function to run commands

@@ -13,8 +13,9 @@ To get started:
 2. Install the [Android SDK](http://developer.android.com/sdk/index.html). You will need to run the 'android' tool (included in the SDK) and make sure you have an API Level 17 or greater API installed. Set `ANDROID_HOME` to be your Android SDK path and add the tools and platform-tools folders to your PATH variable.
 3. Install the Java JDK and set `JAVA_HOME` to your JDK folder.
 4. Install [Apache Ant](http://ant.apache.org/bindownload.cgi) or use the one that comes with the Android Windows SDK in the eclipse\plugins folder. Be sure to add the folder containing ant to your PATH variable.
-5. Install [Apache Maven](http://maven.apache.org/download.cgi) and set the M2HOME and M2 environment variables. Add the M2 environment variable to your PATH variable.
+5. Install [Apache Maven](http://maven.apache.org/download.cgi) and set the M2HOME and M2 environment variables. Set M2HOME to the directory maven is installed in, and set M2 to %M2HOME\bin. Add the path you used for M2 to your PATH.
 6. Install [Git](http://git-scm.com/download/win) Be sure to install Git for windows to run in the regular command prompt.
+7. Instal [cURL](http://curl.haxx.se/download.html)
 
 Now that you've downloaded everything, run:
 

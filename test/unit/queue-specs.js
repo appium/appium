@@ -5,9 +5,14 @@
 
 var chai = require('chai')
   , should = chai.should()
-  , appium = require('../../lib/appium.js')
+  , getAppium = require('../../lib/appium.js')
   , path = require('path')
+  , mock = require('../helpers/mock.js')
   , IOS = require('../../lib/devices/ios/ios.js');
+
+mock.noop(IOS.prototype, 'start');
+mock.noop(IOS.prototype, 'stop');
+mock.noop(IOS.prototype, 'configureApp');
 
 describe('IOS', function () {
   // we'd like to test ios.proxy; mock instruments
@@ -43,9 +48,9 @@ describe('IOS', function () {
 describe('Appium', function () {
   var intercept = []
     , logPath = path.resolve(__dirname, "../../../appium.log")
-    , inst = appium({log: logPath});
+    , appium = getAppium({log: logPath});
 
-  inst.registerConfig({ios: true});
+  appium.registerConfig({'ios': true});
 
   describe('#start', function () {
     return it('should fail if a session is in progress', function (done) {
@@ -62,21 +67,22 @@ describe('Appium', function () {
       var loop = function (num) {
         if (num > 9)
           return;
-
-        inst.start({app: "/path/to/fake.app", device: "mock_ios"}, function (err) {
+        appium.start({app: "/path/to/fake.app", device: "iPhone"}, function (err) {
           var n = num;
+          if (n === 0) {
+            should.not.exist(err);
+          }
           if (n > 0) {
             should.exist(err);
             doneYet(n);
           } else {
             setTimeout(function () {
-              inst.stop(function () { doneYet(n); });
+              appium.stop(function () { doneYet(n); });
             }, 500);
           }
           loop(++num);
         });
       };
-
       loop(0);
     });
   });
@@ -84,21 +90,21 @@ describe('Appium', function () {
 
 describe('Appium with clobber', function () {
   var logPath = path.resolve(__dirname, "../../../appium.log")
-    , inst = appium({log: logPath, sessionOverride: true });
+    , appium = getAppium({log: logPath, sessionOverride: true });
 
-  inst.registerConfig({mock_ios: true});
+  appium.registerConfig({ios: true});
 
   describe('#start', function () {
     return it('should clobber existing sessions', function (done) {
       var numSessions = 9
-        , dc = {app: "/path/to/fake.app", device: "mock_ios"};
+        , dc = {app: "/path/to/fake.app", device: "iPhone"};
       var loop = function (num) {
         if (num > numSessions) return;
-        inst.start(dc, function () {
-          var curSessId = inst.sessionId;
+        appium.start(dc, function () {
+          var curSessId = appium.sessionId;
           var n = num;
           setTimeout(function () {
-            var newSessId = inst.sessionId;
+            var newSessId = appium.sessionId;
             if (n === numSessions) {
               curSessId.should.equal(newSessId);
               done();

@@ -279,6 +279,15 @@ cases.
   @driver.execute_script 'mobile: scrollTo', :element => b.ref
 ```
 
+```Java
+ JavascriptExecutor js = (JavascriptExecutor) driver;
+ WebElement element = wd.findElement(By.name("Log In"));;
+ HashMap<String, String> scrollToObject = new HashMap<String, String>();
+ scrollToObject.put("element",((RemoteWebElement) element).getId());
+ js.executeScript("mobile: scrollTo", scrollToObject);
+```
+
+
 ### longTap
  
  * **c#**

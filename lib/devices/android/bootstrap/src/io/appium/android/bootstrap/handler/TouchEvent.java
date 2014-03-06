@@ -136,4 +136,14 @@ public abstract class TouchEvent extends CommandHandler {
     method.setAccessible(true);
     return method;
   }
+
+  protected void printEventDebugLine(final String methodName,
+      final Integer... duration) {
+    String extra = "";
+    if (duration.length > 0) {
+      extra = ", duration: " + duration[0];
+    }
+    Logger.debug("Performing " + methodName + " using element? " + isElement
+        + " x: " + clickX + ", y: " + clickY + extra);
+  }
 }

@@ -15,14 +15,13 @@ public class TouchDown extends TouchEvent {
 
   @Override
   protected boolean executeTouchEvent() throws UiObjectNotFoundException {
-    Logger.debug("Performing touchDown using element? " + isElement + " x: "
-        + clickX + ", y: " + clickY);
+    printEventDebugLine("TouchDown");
     try {
       final Object controller = getController();
       final Method touchDown = getMethod("touchDown", controller);
       return (Boolean) touchDown.invoke(controller, clickX, clickY);
     } catch (final Exception e) {
-      Logger.debug("Problem invoking correct touchDown: " + e);
+      Logger.debug("Problem invoking touchDown: " + e);
       return false;
     }
   }

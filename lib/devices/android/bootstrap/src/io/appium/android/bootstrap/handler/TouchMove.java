@@ -15,14 +15,13 @@ public class TouchMove extends TouchEvent {
 
   @Override
   protected boolean executeTouchEvent() throws UiObjectNotFoundException {
-    Logger.debug("Performing touchMove using element? " + isElement + " x: "
-        + clickX + ", y: " + clickY);
+    printEventDebugLine("TouchMove");
     try {
       final Object controller = getController();
       final Method touchMove = getMethod("touchMove", controller);
       return (Boolean) touchMove.invoke(controller, clickX, clickY);
     } catch (final Exception e) {
-      Logger.debug("Problem invoking correct touchMove: " + e);
+      Logger.debug("Problem invoking touchMove: " + e);
       return false;
     }
   }

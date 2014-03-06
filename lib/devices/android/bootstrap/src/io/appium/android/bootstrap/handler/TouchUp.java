@@ -15,14 +15,13 @@ public class TouchUp extends TouchEvent {
 
   @Override
   protected boolean executeTouchEvent() throws UiObjectNotFoundException {
-    Logger.debug("Performing touchUp using element? " + isElement + " x: "
-        + clickX + ", y: " + clickY);
+    printEventDebugLine("TouchUp");
     try {
       final Object controller = getController();
       final Method touchUp = getMethod("touchUp", controller);
       return (Boolean) touchUp.invoke(controller, clickX, clickY);
     } catch (final Exception e) {
-      Logger.debug("Problem invoking correct touchUp: " + e);
+      Logger.debug("Problem invoking touchUp: " + e);
       return false;
     }
   }

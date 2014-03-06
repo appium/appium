@@ -50,8 +50,7 @@ public class TouchLongClick extends TouchEvent {
       duration = Integer.parseInt(paramDuration.toString());
     }
 
-    Logger.debug("Performing longClick using element? " + isElement + " x: "
-        + clickX + ", y: " + clickY + " with duration: " + duration);
+    printEventDebugLine("TouchLongClick", duration);
     if (correctLongClick(clickX, clickY, duration)) {
       return true;
     }

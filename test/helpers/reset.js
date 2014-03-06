@@ -1,6 +1,6 @@
 "use strict";
 
-var Q = require('Q'),
+var Q = require('q'),
     exec = Q.denodeify(require('child_process').exec);
 
 exports.androidReset = function (appPackage, appActivity) {

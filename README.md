@@ -17,7 +17,7 @@
    to use of standard automation APIs on all platforms.
 2. You can write tests with your favorite dev tools using any [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible
    language such as Java, [Objective-C](https://github.com/appium/selenium-objective-c),
-   JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavours),
+   JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavors),
    PHP, Python, [Ruby](https://github.com/appium/ruby_lib), C#, Clojure, or Perl
    with the Selenium WebDriver API and language-specific client libraries.
 3. You can use any testing framework.
@@ -65,7 +65,7 @@ of the dependencies are set up correctly. If running from source, you may have t
 
 ## Quick Start
 
-Kick up an Appium server, and then run a test written in your favourite [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible language!
+Kick up an Appium server, and then run a test written in your favorite [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible language!
 You can run an Appium server using node.js or using the application, see below.
 
 ### Using Node.js

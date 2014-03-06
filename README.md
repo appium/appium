@@ -53,7 +53,7 @@ of the dependencies are set up correctly. If running from source, you may have t
 ### Android Requirements
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
-* Appium supports Android on OS X, Linux and has beta support for Windows. Make sure you follow the
+* Appium supports Android on OS X, Linux and Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
   * [linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md)
   * [osx](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#android)

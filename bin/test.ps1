@@ -1,6 +1,6 @@
 param([string]$mochaArgs = "", [switch]$android, [switch]$selendroid)
 $all = !($android -or $selendroid)
-$appiumMocha="mocha --recursive -t 90000 -R spec $mochaArgs"
+$appiumMocha="mocha --recursive -t 90000 -R spec $mochaArgs "
 
 if ($android -or $all){
   "RUNNING ANDROID TESTS"

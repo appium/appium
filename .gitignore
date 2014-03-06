@@ -15,6 +15,8 @@ sample-code/apps/UICatalog*
 sample-code/apps/io.appium.gappium*
 sample-code/apps/WebViewDemo*
 sample-code/examples/dotnet/SimpleTest/*.userprefs
+sample-code/examples/java/junit/target/
+sample-code/examples/java/testng/target/
 sample-code/examples/php/composer.lock
 sample-code/examples/php/composer.phar
 sample-code/examples/php/vendor

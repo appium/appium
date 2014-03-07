@@ -11,6 +11,8 @@ SET doAndroid=0
 SET doVerbose=0
 SET doForce=0
 SET pigsFly=0
+SET chromedriver_version=
+SET udid=
 
 :: Read in command line switches
 :loop
@@ -22,7 +24,9 @@ IF "%~1" neq "" (
   IF "%1" == "--force" SET doForce=1
   IF "%1" == "--chromedriver-version" IF "%2" neq "" (
     SET "chromedriver_version=%2"
-    shift
+  )
+  IF "%1" == "--udid" IF "%2" neq "" (
+    SET "udid=%2"
   )
   shift
   goto :loop
@@ -183,12 +187,25 @@ GOTO :EOF
 :: Function to uninstall an Android app
 :uninstallAndroidApp
   ECHO Attempting to uninstall android app %~1
-  FOR /F "delims=" %%i in ('adb devices ^| find /v /c ""') DO SET deviceCount=%%i
-  IF %deviceCount% GTR 2 (
-    CALL :runCmd "adb uninstall %~1 | VER > NUL"
-  ) ELSE (
-    ECHO No android devices detected, skipping uninstallation
-  )
+  FOR /F "delims=" %%i in ('adb devices ^| FINDSTR /R "device$" ^| find /v /c ""') DO SET deviceCount=%%i
+  IF %deviceCount% GEQ 1 (
+    GOTO :deviceExists
+  ) ELSE ECHO No android devices detected, skipping uninstallation
+GOTO :EOF
+
+:deviceExists
+IF DEFINED udid (
+  GOTO :udidSpecified
+) ELSE IF %deviceCount% EQU 1 (
+  CALL :runCmd "adb uninstall %~1 | VER > NUL"
+) ELSE ECHO More than one device present, but no device serial provided, skipping uninstallation (use --udid)
+GOTO :EOF
+
+:udidSpecified
+FOR /F "delims=" %%i in ('adb devices ^| FINDSTR /R "^%udid%" ^| find /v /c ""') DO SET specifiedDeviceCount=%%i
+IF %specifiedDeviceCount% EQU 1 (
+  CALL :runCmd "adb -s %udid% uninstall %~1 | VER > NUL"
+) ELSE ECHO Device with serial %udid% not found, skipping installation
 GOTO :EOF
 
 :: Function to run commands

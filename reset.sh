@@ -44,6 +44,7 @@ do
         "--hardcore") hardcore=true;;
         "--chromedriver-version") chromedriver_version=$2;;
         "--chromedriver-install-all") chromedriver_install_all=true;;
+        "--udid") udid=$2;;
     esac
 
     if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
@@ -235,7 +236,17 @@ uninstall_android_app() {
     echo "* Attempting to uninstall android app $1"
     if (which adb >/dev/null); then
         if (adb devices | grep "device$" >/dev/null); then
-            run_cmd adb uninstall $1
+            if [[ ! -z $udid ]]; then
+                if (adb devices | grep "^$udid" >/dev/null); then
+                    run_cmd adb -s $udid uninstall $1
+                else
+                    echo "* Device with serial $udid not found, skipping"
+                fi
+            elif [[ $(adb devices | grep "device$" | wc -l) -eq 1 ]]; then
+                run_cmd adb uninstall $1
+            else
+                echo "* More than one device present, but no device serial provided, skipping (use --udid)"
+            fi
         else
             echo "* No devices found, skipping"
         fi

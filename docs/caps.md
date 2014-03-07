@@ -22,6 +22,7 @@ Appium server capabilities
 |`device-ready-timeout`| Timeout in seconds while waiting for device to become ready|`5`|
 |`compressXml`| [setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy%28boolean%29)| `true`|
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
+|`enablePerformanceLogging`| (Chrome and webview only) Enable Chromedriver's performance logging (default `false`)| `true`, `false`|
 
 --
 

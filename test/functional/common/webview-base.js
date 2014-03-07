@@ -22,9 +22,10 @@ module.exports = function (app) {
 
   var setup =  function (context) {
     return setupBase(context, {
-      nonSyntheticWebClick: true,
-      app: app,
-      safariIgnoreFraudWarning: true
+      nonSyntheticWebClick: true
+    , app: app
+    , safariIgnoreFraudWarning: true
+    , enablePerformanceLogging: true
     });
   };
 
@@ -282,6 +283,16 @@ module.exports = function (app) {
         .title()
         .should.eventually.contain("Google")
         .nodeify(done);
+    });
+    it('should be able to get performance logs', function (done) {
+      if (!isChrome) return _skip(
+        "Performance logs aren't available except in Chrome", done);
+      driver
+        .logTypes()
+          .should.eventually.include('performance')
+        .log('performance').then(function (logs) {
+          logs.length.should.be.above(0);
+        }).nodeify(done);
     });
   });
 

@@ -22,8 +22,9 @@ module.exports = function (app) {
 
   var setup =  function (context) {
     return setupBase(context, {
-      nonSyntheticWebClick: false,
-      app: app
+      nonSyntheticWebClick: true,
+      app: app,
+      safariIgnoreFraudWarning: true
     });
   };
 
@@ -272,6 +273,15 @@ module.exports = function (app) {
     it('should be able to refresh', function (done) {
       driver.refresh()
       .nodeify(done);
+    });
+    it('should not display a phishing warning with safariIgnoreFraudWarning', function (done) {
+      if (isChrome) return _skip(
+        "Chrome doesn't test safariIgnoreFraudWarning", done);
+      driver
+        .get("http://foo:bar@google.com")
+        .title()
+        .should.eventually.contain("Google")
+        .nodeify(done);
     });
   });
 

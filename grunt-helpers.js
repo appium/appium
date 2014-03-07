@@ -342,15 +342,6 @@ var setupAndroidProj = function (grunt, projPath, args, cb) {
   });
 };
 
-module.exports.setupAndroidBootstrap = function (grunt, cb) {
-  var projPath = path.resolve(__dirname, "lib", "devices", "android",
-      "bootstrap");
-  var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
-              "android-18", "-p", "."];
-  // TODO: possibly check output of `android list target` to make sure api level 18 is available?
-  setupAndroidProj(grunt, projPath, args, cb);
-};
-
 module.exports.setupAndroidApp = function (grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code", "apps", appName);
   var args = ["update", "project", "--subprojects", "-t", "android-18", "-p", ".", "-n", appName];
@@ -393,39 +384,6 @@ var buildAndroidProj = function (grunt, projPath, target, cb) {
         grunt.fatal("Could not find " + cmdName + " installed; please make sure it's on PATH");
       }
     }
-  });
-};
-
-module.exports.buildAndroidBootstrap = function (grunt, cb) {
-  var projPath = path.resolve(__dirname, "lib", "devices", "android",
-      "bootstrap");
-  var binSrc = path.resolve(projPath, "bin", "AppiumBootstrap.jar");
-  var binDestDir = path.resolve(__dirname, "build", "android_bootstrap");
-  var binDest = path.resolve(binDestDir, "AppiumBootstrap.jar");
-  buildAndroidProj(grunt, projPath, "build", function (err) {
-    if (err) {
-      console.log("Could not build android bootstrap");
-      return cb(err);
-    }
-    mkdirp(binDestDir, function (err) {
-      if (err) {
-        console.log("Could not mkdirp " + binDestDir);
-        return cb(err);
-      }
-      rimraf(binDest, function (err) {
-        if (err) {
-          console.log("Could not delete old " + binDest);
-          return cb(err);
-        }
-        ncp(binSrc, binDest, function (err) {
-          if (err) {
-            console.log("Could not copy " + binSrc + " to " + binDest);
-            return cb(err);
-          }
-          cb();
-        });
-      });
-    });
   });
 };
 

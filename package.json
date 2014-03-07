@@ -72,9 +72,11 @@
     "through": "~2.3.4",
     "date-utils": "~1.2.14",
     "bytes": "~0.2.1",
-    "appium-atoms": "~0.0.2",
-    "appium-instruments": "~0.0.3",
-    "appium-uiauto": "~0.0.3"
+    "appium-atoms": "0.0.4",
+    "appium-instruments": "0.1.2",
+    "appium-uiauto": "0.0.5",
+    "appium-uiautomator": "0.0.4",
+    "appium-adb": "0.0.5"
   },
   "scripts": {
     "test": "grunt travis"

@@ -13,6 +13,12 @@
   ],
   "version": "0.16.0",
   "author": "appium-discuss@googlegroups.com",
+  "licenses": [
+    {
+      "type": "apache-2.0",
+      "url": "https://raw.github.com/appium/appium/master/LICENSE"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"

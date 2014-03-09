@@ -5,6 +5,14 @@ var getAppium = require('../../lib/appium')
   , should = chai.should()
   , _ = require('underscore');
 
+var assertCapsGiveCorrectDevices = function (appium, args) {
+  var spec = 'should turn ' + JSON.stringify(args[0]) + ' args and ' +
+  JSON.stringify(args[1]) + ' caps into ' + args[2] + ' device';
+  it(spec, function () {
+    appium.getDeviceType(args[0], args[1]).should.equal(args[2]);
+  });
+};
+
 
 describe('Appium', function () {
   describe('#getDeviceType', function () {
@@ -74,7 +82,7 @@ describe('Appium', function () {
         [{}, {}]
       , [{}, {device: 'rando'}]
       , [{}, {app: '/path/to/my.exe'}]
-      , [{}, {browserName: 'Safari'}]
+      //, [{}, {browserName: 'Safari'}]  Not Sure if this is OK; none of the non-optional caps
       , [{ipa: '/path/to/my.exe'}, {}]
       ];
       _.each(unhappyTests, function (test) {
@@ -89,6 +97,43 @@ describe('Appium', function () {
           }
           should.exist(err);
           err.message.should.contain("Could not determine your device");
+        });
+      });
+    });
+
+    describe('mjsonwp spec capabilities', function () {
+      describe('deviceName', function () {
+
+        var deviceCapabilities = [
+            [{}, {platformName: 'iOS'}, 'ios'],
+          , [{}, {platformName: 'Android'}, 'android']
+          , [{}, {platformName: 'FirefoxOS'}, 'firefoxos']
+          ];
+        _.each(deviceCapabilities, function (test) {
+          assertCapsGiveCorrectDevices(appium, test);
+        });
+      });
+
+      describe('browserName', function () {
+        
+        var browserCapabilities = [
+            [{}, {platformName: 'ios', browserName: 'Safari'}, 'ios']
+          , [{}, {platformName: 'Android', browserName: 'Chrome'}, 'chrome']
+          , [{}, {platformName: 'Android', browserName: 'Chromium'}, 'chrome']
+          , [{}, {platformName: 'Android', browserName: 'browser'}, 'chrome']
+          ];
+        _.each(browserCapabilities, function (test) {
+          assertCapsGiveCorrectDevices(appium, test);
+        });
+      });
+
+      describe('automationName', function () {
+
+        var automationCapabilities  = [
+          [{}, {automationName: 'selendroid', platformName: 'Android'}, 'selendroid']
+        ];
+        _.each(automationCapabilities, function (test) {
+          assertCapsGiveCorrectDevices(appium, test);
         });
       });
     });

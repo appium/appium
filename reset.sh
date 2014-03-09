@@ -169,6 +169,12 @@ reset_ios() {
             build/WebViewApp/
     fi
     if $include_dev ; then
+        echo "* Cloning/npm linking appium-atoms"
+        run_cmd ./bin/npmlink.sh -l -m appium-atoms
+        echo "* Cloning/npm linking appium-instruments"
+        run_cmd ./bin/npmlink.sh -l -m appium-instruments
+        echo "* Cloning/npm linking appium-uiauto"
+        run_cmd ./bin/npmlink.sh -l -m appium-uiauto
         if $ios7_active ; then
             if $hardcore ; then
                 echo "* Clearing out old UICatalog download"

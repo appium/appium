@@ -12,8 +12,7 @@ describe('uicatalog - controls -', function () {
   if (env.FAST_TESTS) {
     afterEach(function (done) {
       driver
-        .elementByNameOrNull('Back')
-        .then(function (el) { if (el) return el.click(); })
+        .clickBack()
         .nodeify(done);
     });
   }

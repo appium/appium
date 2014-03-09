@@ -12,8 +12,7 @@ describe('uicatalog - find and act -', function () {
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
       driver
-        .elementByNameOrNull('Back')
-        .then(function (el) { if (el) return el.click(); })
+        .clickBack()
         .nodeify(done);
     });
   }

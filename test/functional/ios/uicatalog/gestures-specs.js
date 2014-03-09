@@ -173,8 +173,7 @@ describe('uicatalog - gestures -', function () {
           .elementByTagName("slider")
           .then(function (el) { if (el) return el.sendKeys(0.5); })
           .then(function (el) { if (el) return el.sendKeys(0.5); })
-          .elementByNameOrNull('Back')
-          .then(function (el) { if (el) return el.click(); })
+          .clickBack()
           .sleep(SLOW_DOWN_MS)
           .nodeify(done);
       });
@@ -242,8 +241,7 @@ describe('uicatalog - gestures -', function () {
         driver
           .elementByTagName("slider")
           .then(function (el) { if (el) return el.sendKeys(0.5); })
-          .elementByNameOrNull('Back')
-          .then(function (el) { if (el) return el.click(); })
+          .clickBack()
           .sleep(SLOW_DOWN_MS)
           .nodeify(done);
       });
@@ -294,8 +292,7 @@ describe('uicatalog - gestures -', function () {
     if (env.FAST_TESTS) {
       afterEach(function (done) {
         driver
-          .elementByNameOrNull('Back')
-          .then(function (el) { if (el) return el.click(); })
+          .clickBack()
           .sleep(SLOW_DOWN_MS)
           .nodeify(done);
       });
@@ -350,8 +347,7 @@ describe('uicatalog - gestures -', function () {
     if (env.FAST_TESTS) {
       afterEach(function (done) {
         driver
-          .elementByNameOrNull('Back')
-          .then(function (el) { if (el) return el.click(); })
+          .clickBack()
           .sleep(SLOW_DOWN_MS)
           .nodeify(done);
       });

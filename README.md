@@ -4,6 +4,7 @@
 
 [![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
+[![Dependency Status](https://gemnasium.com/appium/appium.png)](https://gemnasium.com/appium/appium)
 
 ## Supported Platforms
 

@@ -20,7 +20,7 @@ module.exports = function (context, desired, opts) {
     after(function (done) { session.tearDown().nodeify(done); });
   } else {
     beforeEach(function (done) { session.setUp().nodeify(done); });
-    beforeEach(function (done) { session.tearDown().nodeify(done); });
+    afterEach(function (done) { session.tearDown().nodeify(done); });
   }
 
   return session.promisedBrowser;

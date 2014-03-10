@@ -13,6 +13,22 @@ module.exports.initSession = function (desired, opts) {
 
   var browser;
 
+  wd.addPromiseChainMethod('clickBack', function () {
+    var backEl;
+    return this.elementByNameOrNull('Back')
+    .then(function (el) {
+      if (el) {
+        backEl = el;
+        return el.isDisplayed();
+      } else return false;
+    })
+    .then(function (isDisplayed) {
+      if (isDisplayed) {
+        return backEl.click();
+      }
+    });
+  });
+
   return {
     setUp: function () {
       browser = wd.promiseChainRemote(env.APPIUM_HOST, env.APPIUM_PORT, env.APPIUM_USERNAME, env.APPIUM_PASSWORD);

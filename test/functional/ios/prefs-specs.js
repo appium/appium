@@ -2,8 +2,6 @@
 
 var env = require("../../helpers/env")
   , setup = require("../common/setup-base")
-  , initSession = require('../../helpers/session').initSession
-  , settingsPlists = require('../../../lib/devices/ios/settings.js')
   , chai = require('chai')
   , _ = require('underscore');
 
@@ -140,6 +138,7 @@ describe('safari ios7 prefs @skip-ios6', function () {
     var settingsSets;
     var foundSettings;
     try {
+      var settingsPlists = require('../../../lib/devices/ios/settings.js');
       settingsSets = settingsPlists.getSettings('7', 'mobileSafari');
     } catch (e) {
       return cb(e);

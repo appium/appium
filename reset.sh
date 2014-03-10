@@ -162,7 +162,7 @@ reset_ios() {
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
     if $ios7_active ; then
         echo "* Cleaning/rebuilding WebViewApp"
-        run_cmd $grunt buildApp:WebViewApp
+        run_cmd $grunt buildApp:WebViewApp:iphonesimulator$sdk_ver
         run_cmd rm -rf build/WebViewApp
         run_cmd mkdir build/WebViewApp
         run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
@@ -189,10 +189,10 @@ reset_ios() {
                 run_cmd popd
             fi
             echo "* Cleaning/rebuilding iOS test app: UICatalog"
-            run_cmd $grunt buildApp:UICatalog
+            run_cmd $grunt buildApp:UICatalog:iphonesimulator:$sdk_ver
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
-        run_cmd $grunt buildApp:TestApp
+        run_cmd $grunt buildApp:TestApp:iphonesimulator:$sdk_ver
     fi
     echo "* Setting iOS config to Appium's version"
     run_cmd $grunt setConfigVer:ios

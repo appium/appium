@@ -58,33 +58,9 @@ describe('Appium', function () {
     // test is [args, caps, device]
     var appium = getAppium({});
     describe('pre mjsonwp capabilities', function () {
-      describe('positive cases', function () {
+      describe('device capabilities', function () {
         var happyTests = [
-          [{ipa: '/path/to/my.ipa'}, {}, 'ios']
-        , [{ipa: '/path/to/MY.IPA'}, {}, 'ios']
-        , [{forceIphone: true}, {}, 'ios']
-        , [{forceIpad: true}, {}, 'ios']
-        , [{ipa: '/path/to/my.ipa', safari: true}, {}, 'ios']
-        , [{safari: true}, {}, 'safari']
-        , [{safari: true}, {app: '/path/to/my.apk'}, 'safari']
-        , [{safari: false}, {app: 'safari'}, 'safari']
-        , [{}, {app: 'Safari'}, 'safari']
-        , [{}, {app: 'settings'}, 'ios']
-        , [{}, {app: 'Settings'}, 'ios']
-        , [{}, {app: 'chrome'}, 'chrome']
-        , [{}, {app: 'chromium'}, 'chrome']
-        , [{}, {app: 'chromium', device: 'android'}, 'chrome']
-        , [{}, {app: 'browser'}, 'chrome']
-        , [{}, {app: 'http://www.site.com/my.app.zip'}, 'ios']
-        , [{}, {app: 'http://www.site.com/MY.APP.ZIp'}, 'ios']
-        , [{}, {app: 'http://www.site.com/my.apk.zip'}, 'android']
-        , [{}, {app: 'http://www.site.com/my.apk'}, 'android']
-        , [{}, {app: 'HTTP://WWW.Site.COM/MY.APk'}, 'android']
-        , [{}, {app: '/path/to/my.app'}, 'ios']
-        , [{}, {app: '/path/to/my.apk'}, 'android']
-        , [{}, {app: '/path/to/my.apk'}, 'android']
-        , [{}, {app: '/path/to/my.apk.app'}, 'ios']
-        , [{}, {app: '/path/to/my.app.apk'}, 'android']
+          [{}, {app: 'chromium', device: 'android'}, 'chrome']
         , [{}, {app: '/path/to/my.app', device: 'Android'}, 'android']
         , [{app: '/path/to/my.app'}, {device: 'Android'}, 'android']
         , [{}, {device: 'iPhone Simulator'}, 'ios']
@@ -99,12 +75,7 @@ describe('Appium', function () {
         , [{}, {device: 'FirefoxOS'}, 'firefoxos']
         , [{}, {device: 'firefox'}, 'firefoxos']
         , [{}, {device: 'firefox', 'app-package': 'com.android.chrome'}, 'firefoxos']
-        , [{}, {'app-package': 'com.android.chrome'}, 'chrome']
-        , [{}, {'app-package': 'Com.Android.Chrome'}, 'chrome']
         , [{}, {device: 'iphone', 'app-package': 'lol'}, 'ios']
-        , [{}, {'app-package': 'lol'}, 'android']
-        , [{androidPackage: 'com.foo'}, {}, 'android']
-        , [{androidPackage: 'com.android.browser'}, {}, 'chrome']
         ];
         _.each(happyTests, function (test) {
           var spec = 'should turn ' + JSON.stringify(test[0]) + ' args and ' +
@@ -180,6 +151,64 @@ describe('Appium', function () {
         });
         assertNoDeprecationWarningForEach(appium, automationCapabilities);
       });
+    });
+
+    describe('non capability based cases', function () {
+      describe('argument cases', function () {
+        var argsCases  = [
+          [{ipa: '/path/to/my.ipa'}, {}, 'ios']
+        , [{ipa: '/path/to/MY.IPA'}, {}, 'ios']
+        , [{forceIphone: true}, {}, 'ios']
+        , [{forceIpad: true}, {}, 'ios']
+        , [{ipa: '/path/to/my.ipa', safari: true}, {}, 'ios']
+        , [{safari: true}, {}, 'safari']
+        , [{safari: true}, {app: '/path/to/my.apk'}, 'safari']
+        , [{safari: false}, {app: 'safari'}, 'safari']
+        ];
+        _.each(argsCases, function (test) {
+          assertCapsGiveCorrectDevices(appium, test);
+        });
+        assertNoDeprecationWarningForEach(appium, argsCases);
+      });
+
+      describe('app capabilities', function () {
+        var appCases = [
+          [{}, {app: 'Safari'}, 'safari']
+        , [{}, {app: 'settings'}, 'ios']
+        , [{}, {app: 'Settings'}, 'ios']
+        , [{}, {app: 'chrome'}, 'chrome']
+        , [{}, {app: 'chromium'}, 'chrome']
+        , [{}, {app: 'browser'}, 'chrome']
+        , [{}, {app: 'http://www.site.com/my.app.zip'}, 'ios']
+        , [{}, {app: 'http://www.site.com/MY.APP.ZIp'}, 'ios']
+        , [{}, {app: 'http://www.site.com/my.apk.zip'}, 'android']
+        , [{}, {app: 'http://www.site.com/my.apk'}, 'android']
+        , [{}, {app: 'HTTP://WWW.Site.COM/MY.APk'}, 'android']
+        , [{}, {app: '/path/to/my.app'}, 'ios']
+        , [{}, {app: '/path/to/my.apk'}, 'android']
+        , [{}, {app: '/path/to/my.apk'}, 'android']
+        , [{}, {app: '/path/to/my.apk.app'}, 'ios']
+        , [{}, {app: '/path/to/my.app.apk'}, 'android']
+        ];
+        _.each(appCases, function (test) {
+          assertCapsGiveCorrectDevices(appium, test);
+        });
+        assertNoDeprecationWarningForEach(appium, appCases);
+      });
+    });
+
+    describe('package arguments and capabilities', function () {
+      var packageCases = [
+        [{}, {'app-package': 'com.android.chrome'}, 'chrome']
+      , [{}, {'app-package': 'Com.Android.Chrome'}, 'chrome']
+      , [{}, {'app-package': 'lol'}, 'android']
+      , [{androidPackage: 'com.foo'}, {}, 'android']
+      , [{androidPackage: 'com.android.browser'}, {}, 'chrome']
+      ];
+      _.each(packageCases, function (test) {
+        assertCapsGiveCorrectDevices(appium, test);
+      });
+      assertNoDeprecationWarningForEach(appium, packageCases);
     });
   });
 });

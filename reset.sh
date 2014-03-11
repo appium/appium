@@ -85,7 +85,6 @@ run_cmd_output() {
 
 reset_npm() {
     echo "RESETTING NPM"
-    set +e
     if $hardcore ; then
         echo "* Removing NPM modules"
         run_cmd rm -rf node_modules
@@ -99,12 +98,6 @@ reset_npm() {
     else
         echo "* Installing new or updated NPM modules (including devDeps)"
         run_cmd npm install .
-    fi
-    install_status=$?
-    set -e
-    if [ $install_status -gt 0 ]; then
-        echo "install failed. Trying again with sudo. Only do this if it's not a network error."
-        run_cmd sudo npm install .
     fi
 }
 

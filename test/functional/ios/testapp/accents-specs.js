@@ -4,7 +4,7 @@ var setup = require("../../common/setup-base"),
     desired = require('./desired'),
     unorm = require('unorm');
 
-describe('testapp - accented characters @skip-ios-all', function () {
+describe('testapp - accented characters', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

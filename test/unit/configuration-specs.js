@@ -3,53 +3,13 @@
 var getAppium = require('../../lib/appium')
   , chai = require('chai')
   , should = chai.should()
-  , _ = require('underscore')
-  , loggerjs = require('../../lib/server/logger')
-  , logger = loggerjs.get('appium')
-  , sinon = require('sinon');
-
-var warning = "[DEPRECATED] The desired capabilites you're using " +
-              "are deprecated, and will be removed in Appium 1.0";
+  , _ = require('underscore');
 
 var assertCapsGiveCorrectDevices = function (appium, args) {
   var spec = 'should turn ' + JSON.stringify(args[0]) + ' args and ' +
   JSON.stringify(args[1]) + ' caps into ' + args[2] + ' device';
   it(spec, function () {
     appium.getDeviceType(args[0], args[1]).should.equal(args[2]);
-  });
-};
-
-var spyOnLogger = function () {
-  beforeEach(function () {
-    sinon.spy(logger, "warn");
-  });
-  afterEach(function () {
-    logger.warn.restore();
-  });
-};
-
-var assertDeprecationWarningForEach = function (appium, tests) {
-  spyOnLogger();
-  _.each(tests, function (test) {
-    var dep_spec =  "emits a deprecation warning when " +
-                    JSON.stringify(test[0]) + ' args and ' +
-                    JSON.stringify(test[1]) + ' caps are used';
-    it(dep_spec, function () {
-      appium.getDeviceType(test[0], test[1]);
-      logger.warn.args[0][0].should.equal(warning);
-    });
-  });
-};
-
-var assertNoDeprecationWarningForEach = function (appium, tests) {
-  spyOnLogger();
-  _.each(tests, function (test) {
-    var dep_spec =  "do not emit a deprecation warning when " +
-                    JSON.stringify(test[1]) + ' caps are used';
-    it(dep_spec, function () {
-      appium.getDeviceType(test[0], test[1]);
-      logger.warn.called.should.be.false;
-    });
   });
 };
 
@@ -84,7 +44,6 @@ describe('Appium', function () {
             appium.getDeviceType(test[0], test[1]).should.equal(test[2]);
           });
         });
-        assertDeprecationWarningForEach(appium, happyTests);
       });
 
       describe('negative cases', function () {
@@ -124,7 +83,6 @@ describe('Appium', function () {
         _.each(deviceCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
-        assertNoDeprecationWarningForEach(appium, deviceCapabilities);
       });
 
       describe('browserName', function () {
@@ -138,7 +96,6 @@ describe('Appium', function () {
         _.each(browserCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
-        assertNoDeprecationWarningForEach(appium, browserCapabilities);
       });
 
       describe('automationName', function () {
@@ -149,7 +106,6 @@ describe('Appium', function () {
         _.each(automationCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
-        assertNoDeprecationWarningForEach(appium, automationCapabilities);
       });
     });
 
@@ -168,7 +124,6 @@ describe('Appium', function () {
         _.each(argsCases, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
-        assertNoDeprecationWarningForEach(appium, argsCases);
       });
 
       describe('app capabilities', function () {
@@ -193,7 +148,6 @@ describe('Appium', function () {
         _.each(appCases, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
-        assertNoDeprecationWarningForEach(appium, appCases);
       });
     });
 
@@ -208,7 +162,6 @@ describe('Appium', function () {
       _.each(packageCases, function (test) {
         assertCapsGiveCorrectDevices(appium, test);
       });
-      assertNoDeprecationWarningForEach(appium, packageCases);
     });
   });
 });

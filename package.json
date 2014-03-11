@@ -86,7 +86,7 @@
     "test": "grunt travis"
   },
   "devDependencies": {
-    "mocha": "~1.14.0",
+    "mocha": "~1.17.1",
     "underscore-cli": "~0.2.17",
     "wd": "~0.2.8",
     "yiewd": "~0.2.0",

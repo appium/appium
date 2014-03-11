@@ -36,7 +36,7 @@ for arg in "$@"; do
     fi
 done
 
-appium_mocha="mocha --recursive -t 90000 -R spec $mocha_args"
+appium_mocha="./node_modules/.bin/mocha --recursive $mocha_args"
 
 if $ios6_only || $ios_only || $all_tests; then
     echo "RUNNING IOS 6.1 TESTS"

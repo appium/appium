@@ -44,11 +44,11 @@ var assertDeprecationWarningForEach = function (appium, tests) {
 var assertNoDeprecationWarningForEach = function (appium, tests) {
   spyOnLogger();
   _.each(tests, function (test) {
-    var dep_spec =  "does not emit a deprecation warning when " +
+    var dep_spec =  "do not emit a deprecation warning when " +
                     JSON.stringify(test[1]) + ' caps are used';
     it(dep_spec, function () {
       appium.getDeviceType(test[0], test[1]);
-      logger.warn.called.should.be_false;
+      logger.warn.called.should.be.false;
     });
   });
 };
@@ -153,7 +153,7 @@ describe('Appium', function () {
       });
     });
 
-    describe('non capability based cases', function () {
+    describe('non compliant capabilitites using', function () {
       describe('argument cases', function () {
         var argsCases  = [
           [{ipa: '/path/to/my.ipa'}, {}, 'ios']

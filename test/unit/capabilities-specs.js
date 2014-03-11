@@ -6,7 +6,7 @@ var Capabilities = require('../../lib/server/capabilities.js')
   , sinon = require('sinon')
   , chai = require('chai')
   , should = chai.should()
-  , _ = require('Underscore');
+  , _ = require('underscore');
 
 describe('capabilities', function () {
   describe('#new', function () {

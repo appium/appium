@@ -48,18 +48,18 @@ module.exports.initSession = function (desired, opts) {
 
       if (env.VERBOSE) console.log("caps -->", caps);
       if (env.VERBOSE) console.log("opts -->", opts);
-      
-      function init(remainingAttemps) {
-        if (env.VERBOSE) console.log("remainingAttemps -->", remainingAttemps);
+
+      function init(remainingAttempts) {
+        if (env.VERBOSE) console.log("remainingAttempts -->", remainingAttempts);
         return browser
           .init(caps)
           .catch(function (err) {
-            remainingAttemps --;
-            if (remainingAttemps === 0) {
+            remainingAttempts --;
+            if (remainingAttempts === 0) {
               throw err;
             } else {
               return browser.sleep(5000).then(function () {
-                return init(remainingAttemps);
+                return init(remainingAttempts);
               });
             }
           });

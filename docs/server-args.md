@@ -29,7 +29,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`--log-no-colors`|false|Don't use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
 |`--native-instruments-lib`|false|(IOS-only) IOS has a weird built-in unavoidable delay. We patch this in appium. If you do not want it patched, pass in this flag.||
-|`--merciful`, `-m`|false|Don't run the watcher process that will force-kill an unresponsive instruments||
+|`--merciful`, `-m`|true|[DEPRECATED] Don't run the watcher process that will force-kill an unresponsive instruments||
+|`--not-merciful`, `-nm`|false|Run the watcher process that will force-kill an unresponsive instruments||
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|
 |`--app-activity`|null|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
 |`--app-wait-package`|false|(Android-only) Package name for the Android activity you want to wait for (e.g., com.example.android.myApp)|`--app-wait-package com.example.android.myApp`|
@@ -54,7 +55,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
-|`--keystore-path`|/Users/jlipps/.android/debug.keystore|(Android-only) Path to keystore||
+|`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||

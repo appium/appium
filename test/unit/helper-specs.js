@@ -2,6 +2,8 @@
 
 var helpers = require('../../lib/helpers.js')
   , logger = require('../../lib/server/logger.js').get('appium')
+  , chai = require('chai')
+  , should = chai.should()
   , sinon = require('sinon');
 
 describe("Helpers", function () {
@@ -36,13 +38,19 @@ describe("Helpers", function () {
   });
   describe("#produceDeprecationWarning", function () {
     beforeEach(function () {
+      helpers.clearWarnings();
       sinon.spy(logger, 'warn');
     });
     afterEach(function () {
       logger.warn.restore();
     });
     it('sends a message to warn', function () {
-      helpers.produceDeprecationWarning('function', 'old', 'new');
+      helpers.emitDeprecationWarning('function', 'old', 'new');
+      logger.warn.called.should.equal(true);
+    });
+    it('is only called once per run', function () {
+      helpers.emitDeprecationWarning('function', 'old', 'new');
+      helpers.emitDeprecationWarning('function', 'old', 'new');
       logger.warn.called.should.equal(true);
     });
   });

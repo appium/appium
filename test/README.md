@@ -8,3 +8,5 @@ Here's a list of things that aren't tested in this suite:
 * node install in appium.app (for appium-instruments)
 * android with --udid (even if emulator)
 * {launch: false} caps
+* setting locale
+* --avd / avdName

@@ -32,11 +32,12 @@ Appium server capabilities
 |----|-----------|-------|
 |`calendarFormat`| (Sim-only) Calendar format to set for the iOS Simulator|e.g. `gregorian`|
 |`deviceName`| (Sim-only) name of the device to set for the iOS Simulator|e.g. `iPhone Retina (3.5-inch)`|
+|`bundleId`| Bundle ID of the app under test. Useful for starting an app on a real device or for using other caps which require the bundle ID during test startup|e.g. `io.appium.TestApp`|
 |`language`| (Sim-only) Language to set for the iOS Simulator|e.g. `fr`|
 |`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|
 |`locale`| (Sim-only) Locale to set for the iOS Simulator|e.g. `fr_CA`|
 |`locationServicesEnabled`| (Sim-only) Force location services to be either on or off. Default is to keep current sim setting.|`true` or `false`|
-|`locationServicesAuthorized`| (Sim-only) Set location services to be authorized or not authorized for app via plist, so that location services alert doesn't pop up. Default is to keep current sim setting.|`true` or `false`|
+|`locationServicesAuthorized`| (Sim-only) Set location services to be authorized or not authorized for app via plist, so that location services alert doesn't pop up. Default is to keep current sim setting. Note that if you use this setting you MUST also use the `bundleId` capability to send in your app's bundle ID.|`true` or `false`|
 |`autoAcceptAlerts`| Accept iOS privacy access permission alerts (e.g., location, contacts, photos) automatically if they pop up. Default is false.|`true` or `false`|
 |`nativeInstrumentsLib`| Use native intruments lib (ie disable instruments-without-delay).|`true` or `false`|
 |`nonSyntheticWebClick`| (Sim-only) Enable/Disable non synthetic web clicks in Safari.|`true` or `false`|

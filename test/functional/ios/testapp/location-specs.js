@@ -1,8 +1,10 @@
 "use strict";
 
-var setup = require("../../common/setup-base"),
-    _ = require("underscore"),
-    desired = require('./desired');
+var setup = require("../../common/setup-base")
+  , env = require('../../../helpers/env')
+  , initSession = require('../../../helpers/session').initSession
+  , _ = require("underscore")
+  , desired = require('./desired');
 
 describe('testapp - location -', function () {
   var driver;
@@ -61,6 +63,22 @@ describe('testapp - location services -', function () {
       .elementByName('locationStatus').getValue().then(function (checked) {
         checked.should.equal(1);
       })
+      .nodeify(done);
+  });
+});
+
+describe('testapp - location services -', function () {
+  var newDesired = _.clone(desired);
+  _.extend(newDesired, {
+    locationServicesAuthorized: true
+  });
+  this.timeout(env.MOCHA_TIMEOUT);
+  it('should not work without bundleId', function (done) {
+    initSession(newDesired, {'no-retry': true}).setUp()
+      .then(function (err) {
+        err.cause.value.message.should.contain("bundleId");
+        throw err;
+      }).should.eventually.be.rejectedWith(/unavailable/)
       .nodeify(done);
   });
 });

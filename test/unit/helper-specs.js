@@ -17,5 +17,19 @@ describe("Helpers", function () {
         warning.should.equal(expected);
       });
     });
+
+    describe("with a desired capability", function () {
+      it("emits the function message", function () {
+        var deprecated = "oldCap";
+        var replacement = "newCap";
+        var expected = "[DEPRECATED] The " + deprecated + " capability has " +
+                       "been deprecated and will be removed.  Please use " +
+                       "the " + replacement + " capability instead.";
+        var warning = helpers.generateDeprecationWarning('capability',
+                                                         deprecated,
+                                                         replacement);
+        warning.should.equal(expected);
+      });
+    });
   });
 });

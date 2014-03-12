@@ -1,6 +1,8 @@
 "use strict";
 
-var helpers = require('../../lib/helpers.js');
+var helpers = require('../../lib/helpers.js')
+  , logger = require('../../lib/server/logger.js').get('appium')
+  , sinon = require('sinon');
 
 describe("Helpers", function () {
   describe("#generateDeprecationWarning", function () {
@@ -19,7 +21,7 @@ describe("Helpers", function () {
     });
 
     describe("with a desired capability", function () {
-      it("emits the function message", function () {
+      it("emits the capability message", function () {
         var deprecated = "oldCap";
         var replacement = "newCap";
         var expected = "[DEPRECATED] The " + deprecated + " capability has " +
@@ -30,6 +32,18 @@ describe("Helpers", function () {
                                                          replacement);
         warning.should.equal(expected);
       });
+    });
+  });
+  describe("#produceDeprecationWarning", function () {
+    beforeEach(function () {
+      sinon.spy(logger, 'warn');
+    });
+    afterEach(function () {
+      logger.warn.restore();
+    });
+    it('sends a message to warn', function () {
+      helpers.produceDeprecationWarning('function', 'old', 'new');
+      logger.warn.called.should.equal(true);
     });
   });
 });

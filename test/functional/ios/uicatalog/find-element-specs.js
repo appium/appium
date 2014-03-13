@@ -24,11 +24,11 @@ describe('uicatalog - find element -', function () {
         .getAttribute('name').should.become("Buttons, Various uses of UIButton")
       .nodeify(done);
   });
-  it('should find an element within its parent @skip-ios7', function (done) {
+  it('should find an element within descendants', function (done) {
     driver
       .elementByTagName('tableView').then(function (el) {
         el.should.exist;
-        return el.elementByTagName('text').text()
+        return el.elementByTagName('text').getAttribute('name')
           .should.become("Buttons, Various uses of UIButton");
       }).nodeify(done);
   });
@@ -131,13 +131,12 @@ describe('uicatalog - find element -', function () {
           texts.should.include("Gray");
         }).nodeify(done);
     });
-    it('should filter by indices @skip-ios7', function (done) {
+    it('should filter by indices', function (done) {
       driver
         .resolve(setupXpath(driver))
         .then(function () {
           return spinWait(function () {
-            return driver
-              .elementByXPath("cell[2]//text[1]").text()
+            return driver.elementByXPath("cell[2]//text[1]").getAttribute('name')
                 .should.become("ButtonsViewController.m:\r(UIButton *)grayButton");
           });
         }).nodeify(done);

@@ -46,13 +46,13 @@ describe("Helpers", function () {
     });
     it('sends a message to warn', function () {
       helpers.addDeprecationWarning('function', 'old', 'new');
-      helpers.emitDeprecationWarnings();
+      helpers.logDeprecationWarnings();
       logger.warn.called.should.equal(true);
     });
     it('is only called once per run', function () {
       helpers.addDeprecationWarning('function', 'old', 'new');
       helpers.addDeprecationWarning('function', 'old', 'new');
-      helpers.emitDeprecationWarnings();
+      helpers.logDeprecationWarnings();
       logger.warn.called.should.equal(true);
     });
   });

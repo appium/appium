@@ -12,11 +12,11 @@ exports.spinWait = function (spinFn, waitMs, intMs) {
   var begunAt = Date.now();
   var endAt = begunAt + waitMs;
   var spin = function () {
-    return spinFn().catch(function () {
+    return spinFn().catch(function (err) {
       if (Date.now() < endAt) {
         return Q.delay(intMs).then(spin);
       } else {
-        throw new Error("spinWait condition unfulfilled.");
+        throw new Error("spinWait condition unfulfilled. Promise rejected with error:", err);
       }
     });
   };

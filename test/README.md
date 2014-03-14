@@ -10,3 +10,4 @@ Here's a list of things that aren't tested in this suite:
 * {launch: false} caps
 * setting locale
 * --avd / avdName
+* safari ipad

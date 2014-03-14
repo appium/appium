@@ -163,11 +163,11 @@ reset_ios() {
     fi
     if $include_dev ; then
         echo "* Cloning/npm linking appium-atoms"
-        run_cmd ./bin/npmlink.sh -l -m appium-atoms
+        run_cmd ./bin/npmlink.sh -l appium-atoms
         echo "* Cloning/npm linking appium-instruments"
-        run_cmd ./bin/npmlink.sh -l -m appium-instruments
+        run_cmd ./bin/npmlink.sh -l appium-instruments
         echo "* Cloning/npm linking appium-uiauto"
-        run_cmd ./bin/npmlink.sh -l -m appium-uiauto
+        run_cmd ./bin/npmlink.sh -l appium-uiauto
         if $ios7_active ; then
             if $hardcore ; then
                 echo "* Clearing out old UICatalog download"

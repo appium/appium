@@ -53,7 +53,13 @@ describe("Helpers", function () {
       helpers.addDeprecationWarning('function', 'old', 'new');
       helpers.addDeprecationWarning('function', 'old', 'new');
       helpers.logDeprecationWarnings();
-      logger.warn.called.should.equal(true);
+      logger.warn.calledOnce.should.equal(true);
+    });
+    it('logs each message', function () {
+      helpers.addDeprecationWarning('function', 'old', 'new');
+      helpers.addDeprecationWarning('function', 'YeOlde', 'Moderne');
+      helpers.logDeprecationWarnings();
+      logger.warn.calledTwice.should.equal(true);
     });
   });
 });

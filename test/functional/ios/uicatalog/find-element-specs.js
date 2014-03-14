@@ -71,6 +71,22 @@ describe('uicatalog - find element -', function () {
     });
   });
 
+  describe('findElementsByTagName textfield case', function () {
+    after(function () {
+      driver.clickBack();
+    });
+    it('should find only one textfield', function (done) {
+      driver
+        .elementsByTagName('cell').then(function (els) { return els[2]; })
+          .click()
+        .elementByName('Rounded')
+        .elementsByTagName('>', 'textfield')
+          .should.eventually.have.length(1)
+        .nodeify(done);
+    });
+  });
+
+
   describe('findElement(s)ByXpath', function () {
     var setupXpath = function (driver) {
       return driver.elementByTagName('tableCell').click();

@@ -21,6 +21,7 @@ describe('Appium', function () {
       , [{safari: true}, {}, 'safari']
       , [{safari: true}, {app: '/path/to/my.apk'}, 'safari']
       , [{safari: false}, {app: 'safari'}, 'safari']
+      , [{forceIpad: true}, {app: 'safari'}, 'safari']
       , [{}, {app: 'Safari'}, 'safari']
       , [{}, {app: 'settings'}, 'ios']
       , [{}, {app: 'Settings'}, 'ios']

@@ -45,21 +45,39 @@ describe("Helpers", function () {
       logger.warn.restore();
     });
     it('sends a message to warn', function () {
-      helpers.addDeprecationWarning('function', 'old', 'new');
-      helpers.logDeprecationWarnings();
+      helpers.logDeprecationWarning('function', 'old', 'new');
       logger.warn.called.should.equal(true);
     });
     it('is only called once per run', function () {
-      helpers.addDeprecationWarning('function', 'old', 'new');
-      helpers.addDeprecationWarning('function', 'old', 'new');
-      helpers.logDeprecationWarnings();
+      helpers.logDeprecationWarning('function', 'old', 'new');
+      helpers.logDeprecationWarning('function', 'old', 'new');
       logger.warn.calledOnce.should.equal(true);
     });
     it('logs each message', function () {
-      helpers.addDeprecationWarning('function', 'old', 'new');
-      helpers.addDeprecationWarning('function', 'YeOlde', 'Moderne');
-      helpers.logDeprecationWarnings();
+      helpers.logDeprecationWarning('function', 'old', 'new');
+      helpers.logDeprecationWarning('function', 'YeOlde', 'Moderne');
       logger.warn.calledTwice.should.equal(true);
+    });
+  });
+  describe("#logFinalDeprecationWarning", function () {
+    beforeEach(function () {
+      helpers.clearWarnings();
+      sinon.spy(logger, 'warn');
+    });
+    afterEach(function () {
+      logger.warn.restore();
+    });
+    var warning = "[DEPRECATED] You used 1 deprecated capabilities during" +
+                  " this session.  Please check the logs as they will be" +
+                  " removed in Appium 1.0";
+    it('logs a message when dep warnings happened', function () {
+      helpers.logDeprecationWarning('function', 'old', 'new');
+      helpers.logFinalDeprecationWarning();
+      logger.warn.args[1][0].should.equal(warning);
+    });
+    it('does nothing if no dep warnings happened', function () {
+      helpers.logFinalDeprecationWarning();
+      logger.warn.called.should.equal(false);
     });
   });
 });

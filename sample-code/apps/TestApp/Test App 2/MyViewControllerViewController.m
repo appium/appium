@@ -20,6 +20,8 @@
  */
 
 #import "MyViewControllerViewController.h"
+#import <AddressBook/AddressBook.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface MyViewControllerViewController ()
 
@@ -135,4 +137,38 @@
     [alert show];
     [alert release];
 }
+
+- (void)requestContactsPermission {
+    ABAddressBookRef book = [MyViewControllerViewController addressBookForPermissionRequest];
+    [self popContactsPermissionDialogWithAddressBook:book];
+}
+
+- (void)popContactsPermissionDialogWithAddressBook:(ABAddressBookRef)book {
+    ABAddressBookRequestAccessWithCompletion(book, ^(bool granted, CFErrorRef error) {
+    });
+    CFRelease (book);
+}
+
++ (ABAddressBookRef)addressBookForPermissionRequest {
+    CFErrorRef error = NULL;
+    return ABAddressBookCreateWithOptions(NULL, &error);
+}
+
+- (IBAction)accessContactsAlert:(id)sender {
+    if ([MyViewControllerViewController addressBookAuthorizationStatus] == kABAuthorizationStatusNotDetermined) {
+        [self requestContactsPermission];
+    }
+}
+
+- (IBAction)accessLocationAlert:(id)sender {
+    CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+    
+    [locationManager startUpdatingLocation];
+    [locationManager stopUpdatingLocation];
+}
+
++ (ABAuthorizationStatus)addressBookAuthorizationStatus {
+    return ABAddressBookGetAuthorizationStatus();
+}
+
 @end

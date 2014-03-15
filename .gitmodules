@@ -34,9 +34,12 @@
 [submodule "submodules/appium-atoms"]
 	path = submodules/appium-atoms
 	url = https://github.com/appium/appium-atoms.git
+	branch = published
 [submodule "submodules/appium-instruments"]
 	path = submodules/appium-instruments
 	url = https://github.com/appium/appium-instruments.git
+	branch = published
 [submodule "submodules/appium-uiauto"]
 	path = submodules/appium-uiauto
 	url = https://github.com/appium/appium-uiauto.git
+	branch = published

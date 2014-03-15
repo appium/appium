@@ -41,3 +41,4 @@ build/
 .idea
 lib/devices/ios/uiauto/lib/status.js
 lib/devices/ios/uiauto/appium/xpath.js
+*DerivedData

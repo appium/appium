@@ -1,3 +1,64 @@
+CHANGES IN VERSION 0.17.0 (from 0.16.0)
+=======================================
+
+#### General
+- fix maxBuffer error in installApp command
+- rearchitect device extraction and configuration from args/caps, and add lots
+  of unit tests
+- show non-default server params in server log for easier debugging
+- add --command-timeout as a server arg
+- don't ever use sudo to install npm submodules
+- ensure appium's CWD is always the appium dir
+- clear out commandTimeout between sessions, so subsequent sessions don't count
+  the session launching time as command time
+- set npm submodules to track published branches
+- relax requirements for unpacking zipfiles and finding app names
+
+#### iOS
+- handle both binary and xml plists when changing ios settings plists
+- break out appium-instruments into its own npm package
+- fix bug where command line --force-iphone or --force-ipad wouldn't set
+  device. This should fix issues with Appium.app
+- add --keep-keychains server arg / keepKeychains desired cap in order to 
+  disallow deletion of Keychains dir
+- bring reset behavior back to what it was before location services / settings
+  updates, so that with the default reset, most directories are still cleared
+  out
+- use actual current ios sdk in reset.sh
+- create plist basedirs if they don't exist
+- add processArguments cap to pass args to AUT
+- make --merciful the default
+- require bundleId when using location services caps
+- update UICatalog test app for 7.1
+- fix duplicate textfield issue in iOS 7.1
+- use new instruments `- w` param in iOS 7.1 to set device type
+- add location and contact alert request buttons to TestApp
+
+#### iOS+Safari
+- update initial webview navigation logic to work on 7.1
+- if we start with a real webview, don't try to nav to webview through favs
+
+#### Android
+- added support for 'direction' in scrollTo
+- fix source command
+- add longClick by position and duration
+- fix reset.bat issues on Windows
+- updated Windows installation instructions
+- added --udid flag to reset.sh/bat, so it can uninstall from specific devices
+- added support for touch{Down|Up|Move}
+- add "mobile: push" and "mobile: pull" commands to send files to/from device
+- ensure apks are always run through zipalign
+- parse launch package and activity from apk, so that `app-package` and
+  `app-activity` caps are no longer required
+- use better version of `isAppInstalled`
+
+#### Chrome+Android
+- update bundled chromedriver to 2.9
+- add enablePerformanceLogging cap
+
+#### Selendroid
+
+
 CHANGES IN VERSION 0.16.0 (from 0.15.0)
 =======================================
 

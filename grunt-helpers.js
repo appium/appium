@@ -20,7 +20,8 @@ var _ = require("underscore")
   , isWindows = helpers.isWindows()
   , getXcodeFolder = helpers.getXcodeFolder
   , getXcodeVersion = helpers.getXcodeVersion
-  , MAX_BUFFER_SIZE = 524288;
+  , MAX_BUFFER_SIZE = 524288
+  , SELENDROID_MAX_BUFFER_SIZE = 4 * MAX_BUFFER_SIZE;
 
 module.exports.startAppium = function (appName, verbose, readyCb, doneCb) {
   var app;
@@ -442,7 +443,7 @@ module.exports.buildSelendroidServer = function (cb) {
         "selendroid-server", "AndroidManifest.xml");
     var dstManifest = path.resolve(destDir, "AndroidManifest.xml");
     var cmd = "mvn clean package -DskipTests=true";
-    exec(cmd, {cwd: buildDir, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
+    exec(cmd, {cwd: buildDir, maxBuffer: SELENDROID_MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
       if (err) {
         console.error("Unable to build selendroid server. Stdout was: ");
         console.error(stdout);

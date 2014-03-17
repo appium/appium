@@ -8,9 +8,7 @@ var setup = require("../common/setup-base")
   , _ = require('underscore');
 
 var desired = {
-  app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk"),
-  'app-package': 'com.example.android.apis',
-  'app-activity': '.ApiDemos'
+  app: path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk")
 };
 
   // , appAct2 = "ApiDemos"
@@ -21,8 +19,7 @@ describe('selendroid - basic -', function () {
   describe('api', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
-    // todo: issue with find
-    it('should find and click an element @skip-selendroid-all', function (done) {
+    it('should find and click an element', function (done) {
       // selendroid appears to have some issues with implicit waits
       // hence the timeouts
       driver
@@ -76,7 +73,7 @@ describe('selendroid - basic -', function () {
 
     it('should be able to uninstall the app', function (done) {
       driver
-        .execute("mobile: removeApp", [{bundleId: desired['app-package']}])
+        .execute("mobile: removeApp", [{bundleId: "com.example.android.apis"}])
         .nodeify(done);
     });
   });
@@ -100,8 +97,7 @@ describe('selendroid - basic -', function () {
     });
   });
 
-  // TODO: way too flaky 
-  describe('command timeouts @skip-selendroid-all', function () {
+  describe('command timeouts', function () {
     var driver;
     setup(this, _.defaults({newCommandTimeout: 3}, desired))
      .then(function (d) { driver = d; });
@@ -115,8 +111,7 @@ describe('selendroid - basic -', function () {
     });
   });
 
-  // TODO: issue with find
-  describe('command timeouts @skip-selendroid-all', function () {
+  describe('command timeouts', function () {
     var driver;
     setup(this, _.defaults({newCommandTimeout: 7}, desired))
      .then(function (d) { driver = d; });

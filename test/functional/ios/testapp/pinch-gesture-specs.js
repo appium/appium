@@ -12,7 +12,7 @@ describe('testapp - pinch gesture -', function () {
 
     it('should pinchOpen and pinchClose map after tapping Test Gesture', function (done) {
       driver
-        .elementsByTagName('button').then(function (buttons) { return buttons[3].click(); })
+        .elementsByTagName('button').then(function (buttons) { return buttons[5].click(); })
         .sleep(1000).then(function () { okIfAlert(driver); })
         .elementByXPath('//window[1]/UIAMapView[1]')
         .execute("mobile: pinchOpen", [{startX: 114.0, startY: 198.0, endX: 257.0,

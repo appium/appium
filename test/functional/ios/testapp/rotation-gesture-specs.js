@@ -10,7 +10,7 @@ describe('testapp - rotation gesture -', function () {
 
   it('should rotate map after tapping Test Gesture', function (done) {
     driver.elementsByTagName('button')
-      .then(function (buttons) { return buttons[3].click(); })
+      .then(function (buttons) { return buttons[5].click(); })
       .sleep(1000).then(function () { okIfAlert(driver); })
       .elementsByTagName('Map')
       .execute("mobile: rotate", [{x: 114, y: 198, duration: 5, radius: 3,

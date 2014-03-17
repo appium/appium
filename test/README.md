@@ -11,4 +11,3 @@ Here's a list of things that aren't tested in this suite:
 * setting locale
 * --avd / avdName
 * safari ipad
-* auto-app/pkg detection on android

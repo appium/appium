@@ -56,7 +56,7 @@ describe('testapp - find element -', function () {
   it('should find all elements by tag name in the app', function (done) {
     driver
       .elementsByTagName('button').then(function (els) {
-        els.length.should.equal(4);
+        [4, 6].should.contain(els.length);
         els[0].value.should.exist;
       }).nodeify(done);
   });

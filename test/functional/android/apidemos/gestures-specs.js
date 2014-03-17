@@ -12,7 +12,7 @@ describe("apidemo - gestures -", function () {
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset(desired['app-package'], desired['app-activity'])
+      androidReset('com.example.android.apis', '.ApiDemos')
         .then(function () { return driver.sleep(3000); })
         .nodeify(done);
     });
@@ -26,7 +26,7 @@ describe("apidemo - gestures -", function () {
         .text().should.become("Action Bar")
       .nodeify(done);
   });
-  //todo: not working in nexus 7  
+  //todo: not working in nexus 7
   it('should click via x/y pct', function (done) {
     // this test depends on having a certain size screen, obviously
     // I use a nexus something or other phone style thingo

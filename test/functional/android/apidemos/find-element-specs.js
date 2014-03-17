@@ -12,10 +12,10 @@ describe("apidemo - find elements -", function () {
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset(desired['app-package'], desired['app-activity']).nodeify(done);
+      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
     });
   }
-  
+
   describe('mobile find', function () {
     it('should scroll to an element by text or content desc', function (done) {
       driver

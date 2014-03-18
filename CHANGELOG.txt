@@ -56,8 +56,6 @@ CHANGES IN VERSION 0.17.0 (from 0.16.0)
 - update bundled chromedriver to 2.9
 - add enablePerformanceLogging cap
 
-#### Selendroid
-
 
 CHANGES IN VERSION 0.16.0 (from 0.15.0)
 =======================================

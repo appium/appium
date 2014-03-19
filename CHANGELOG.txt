@@ -1,3 +1,17 @@
+CHANGES IN VERSION 0.17.1 (from 0.17.0)
+=======================================
+
+#### General
+- move toward CI: build appium and run reset.sh on Travis
+
+#### iOS
+- pass quiet flag to fruitstrap when in quiet mode
+- update appium-instruments (which fixes retry behavior)
+
+#### Android
+- fix uninstall detection
+
+
 CHANGES IN VERSION 0.17.0 (from 0.16.0)
 =======================================
 

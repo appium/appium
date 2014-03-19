@@ -1,3 +1,16 @@
-language: node_js
-node_js:
-  - 0.10
+language: objective-c
+osx_image: mavericks
+notifications:
+  email: false
+env:
+  matrix:
+    - CI_CONFIG=unit
+    - CI_CONFIG=build
+before_script:
+  - ./ci/install-node.sh
+  - ./ci/show-env.sh
+  - npm install -g jshint grunt-cli
+  - npm install
+  - ./ci/before_script_extra.sh
+script:  
+  - ./ci/script.sh

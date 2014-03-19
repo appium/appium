@@ -19,14 +19,14 @@ module.exports = function () {
     driver
       .waitForElementByName('buttonStartWebviewCD').click()
       .sleep(500)
-      .window('WEBVIEW')
+      .context('WEBVIEW')
       .nodeify(done);
   });
 
   if (env.FAST_TESTS) {
     afterEach(function (done) {
       driver
-        .window('NATIVE_APP')
+        .context('NATIVE_APP')
         .then(function () {
           if (env.DEVICE === "selendroid") {
             return driver.elementByIdOrNull('goBack');
@@ -43,6 +43,20 @@ module.exports = function () {
   it('should be web view', function (done) {
     // todo: add some sort of check here
     done();
+  });
+
+  it('should list all contexts', function (done) {
+    driver
+      .contexts().should.eventually.have.length.above(0)
+      .nodeify(done);
+  });
+
+  // skip until Selendroid implements context methods
+  it('should raise NoSuchContext error for non-existent context @skip-selendroid-all', function (done) {
+    driver
+      .context('WEBVIEW_42')
+      .should.be.rejectedWith('NoSuchContext')
+      .nodeify(done);
   });
 
   it('should find and click an element', function (done) {

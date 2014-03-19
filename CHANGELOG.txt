@@ -1,3 +1,15 @@
+CHANGES IN VERSION 0.17.3 (from 0.17.2)
+=======================================
+
+#### General
+- add new desired capabilities handling to conform to the Selenium 3 spec. Use
+  of old desired capabilities will now be deprecated. See [the spec
+  draft](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) for more information
+
+#### Android
+- fix process detection
+- make sure temp dir exists before writing zipaligned apk to it
+
 CHANGES IN VERSION 0.17.2 (from 0.17.1)
 =======================================
 

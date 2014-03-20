@@ -10,6 +10,18 @@ var Capabilities = require('../../lib/server/capabilities.js')
 
 describe('capabilities', function () {
   describe('#new', function () {
+    it('should convert object caps to strings', function () {
+      var c = new Capabilities({app: {some: 'object'}, platformVersion: 'hi'});
+      c.app.should.equal('{"some":"object"}');
+    });
+    it('should leave undefined, null, numbers alone', function () {
+      var c = new Capabilities({appPackage: null, bob: undefined, platformVersion: 7.0});
+      should.not.exist(c.appPackage);
+      (typeof c.appPackage).should.equal("object");
+      (typeof c.bob).should.equal("undefined");
+      c.platformVersion.should.equal(7.0);
+      (typeof c.platformVersion).should.equal("number");
+    });
     describe('with pre-mjsonwp capabilities', function () {
       var capabilityConversion = [
           ['device', 'platformName']

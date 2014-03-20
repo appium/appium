@@ -12,7 +12,7 @@ describe("apidemo - gestures -", function () {
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset('com.example.android.apis', '.ApiDemos')
+      driver.execute("mobile: reset")
         .then(function () { return driver.sleep(3000); })
         .nodeify(done);
     });

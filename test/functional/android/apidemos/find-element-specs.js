@@ -156,6 +156,19 @@ describe("apidemo - find elements -", function () {
     });
   });
 
+  describe('find elements using accessibility_id locator strategy @now', function () {
+    it('should find an element by name', function (done) {
+      driver.element('accessibility_id', 'Animation').then(function (el) {
+        el.should.exist;
+      }).nodeify(done);
+    });
+    it('should return an array of one element if the plural "elements" is used @now', function (done) {
+      driver.elements('accessibility_id', 'Animation').then(function (els) {
+        els.length.should.equal(1);
+      }).nodeify(done);
+    });
+  });
+
   describe('unallowed tag names', function () {
     it('should not find secure fields', function (done) {
       driver

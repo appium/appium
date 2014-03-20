@@ -72,8 +72,9 @@ describe('uicatalog - find element -', function () {
   });
 
   describe('findElementsByTagName textfield case', function () {
-    after(function () {
-      driver.clickBack();
+    after(function (done) {
+      driver.clickBack()
+      .nodeify(done);
     });
     it('should find only one textfield', function (done) {
       driver

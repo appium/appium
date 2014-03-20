@@ -52,6 +52,17 @@ describe("apidemo - find elements -", function () {
           .should.eventually.have.length.at.least(10)
         .nodeify(done);
     });
+    it('should find an element by class name', function (done) {
+      driver
+        .elementByClassName("android.widget.TextView").text().should.become("API Demos")
+        .nodeify(done);
+    });
+    it('should find an element by class name', function (done) {
+      driver
+        .elementsByClassName("android.widget.TextView")
+          .should.eventually.have.length.at.least(10)
+        .nodeify(done);
+    });
     it('should not find an element that doesnt exist', function (done) {
       driver
         .elementByTagName("blargimarg").should.be.rejectedWith(/status: 7/)

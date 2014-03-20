@@ -25,17 +25,16 @@ if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
 }
 
 var activateWebView = function (driver) {
-  // unify (ios vs selendroid) web view selection
-  return driver.windowHandles().then(function (handles) {
-    for (var handle in handles) {
-      var hdl = handles[handle];
-      if (hdl.indexOf('WEBVIEW') > -1) {
-        return hdl;
+  return driver.contexts().then(function (ctxs) {
+    for (var idx in ctxs) {
+      var ctx = ctxs[idx];
+      if (ctx.indexOf('WEBVIEW') != -1) {
+        return ctx;
       }
     }
-    return handles[0];
-  }).then(function (handle) {
-    return driver.window(handle).catch(function () {});
+    return 'WEBVIEW_1';
+  }).then(function (ctx) {
+    return driver.context(ctx).catch(function () {});
   });
 };
 

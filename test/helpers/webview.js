@@ -35,11 +35,11 @@ var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
       .then(function () { return spinTitle(titleToSpin, browser); });
   } else {
     return browser
-      .windowHandles()
-      .then(function (handles) {
-        handles.length.should.be.above(0);
+      .contexts()
+      .then(function (ctxs) {
+        ctxs.length.should.be.above(0);
         return browser
-          .window(handles[0])
+          .context(ctxs[1])
           .url();
       })
       .then(function (url) {

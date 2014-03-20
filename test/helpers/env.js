@@ -8,6 +8,7 @@ var env = {};
 env.APPIUM_HOST = process.env.APPIUM_HOST || '127.0.0.1';
 env.APPIUM_PORT = parseInt(process.env.APPIUM_PORT || 4723, 10);
 env.MOCHA_TIMEOUT = parseInt(process.env.MOCHA_TIMEOUT || 180000, 10);
+env.VERSION = process.env.VERSION;
 
 // sauce
 env.SAUCE = process.env.SAUCE;
@@ -55,8 +56,8 @@ switch (env.DEVICE) {
   case 'ios7_ipad':
     env.CAPS = {
       browserName: ''
-    , device: iphoneOrIpadSimulator(env.DEVICE),
-      app:  path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP +
+    , device: iphoneOrIpadSimulator(env.DEVICE)
+    , app:  path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP +
         "/build/Release-iphonesimulator/" + process.env.APP + ".app")
     };
     break;
@@ -99,6 +100,10 @@ if (env.SAUCE) {
 }
 
 env.CAPS.launchTimeout = env.LAUNCH_TIMEOUT;
+
+if (env.VERSION) {
+  env.CAPS.version = env.VERSION;
+}
 
 // app path root
 

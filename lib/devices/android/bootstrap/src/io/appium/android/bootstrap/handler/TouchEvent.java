@@ -66,6 +66,7 @@ public abstract class TouchEvent extends CommandHandler {
           isElement = true;
         }
       } catch (final Exception e) {
+        isElement = false;
       }
 
       if (isElement) {

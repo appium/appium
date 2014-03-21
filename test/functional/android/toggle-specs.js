@@ -46,8 +46,7 @@ var toggleTest = function (promisedBrowser, displayName, toggleElementName, togg
   };
 };
 
-// disabling because it is very flaky
-describe('toggles @skip-android-all', function () {
+describe('toggles', function () {
   var promisedBrowser = setup(this, desired);
 
   describe('toggle cellular data', toggleTest(promisedBrowser, "cellular data", "data_toggle", "toggleData"));

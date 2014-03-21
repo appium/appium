@@ -35,15 +35,15 @@ public abstract class TouchEvent extends CommandHandler {
     return fieldObject;
   }
 
-  protected AndroidElement            el        = null;
+  protected AndroidElement            el;
 
-  protected int                       clickX    = -1;
+  protected int                       clickX;
 
-  protected int                       clickY    = -1;
+  protected int                       clickY;
 
   protected Hashtable<String, Object> params;
 
-  protected boolean                   isElement = false;
+  protected boolean                   isElement;
 
   /**
    * 
@@ -56,6 +56,7 @@ public abstract class TouchEvent extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
+    initalize();
     try {
       params = command.params();
 
@@ -136,6 +137,18 @@ public abstract class TouchEvent extends CommandHandler {
         int.class);
     method.setAccessible(true);
     return method;
+  }
+
+  /**
+   * Variables persist across executions. initialize must be called at the start
+   * of execute.
+   **/
+  private void initalize() {
+    el = null;
+    clickX = -1;
+    clickY = -1;
+    params = null;
+    isElement = false;
   }
 
   protected void printEventDebugLine(final String methodName,

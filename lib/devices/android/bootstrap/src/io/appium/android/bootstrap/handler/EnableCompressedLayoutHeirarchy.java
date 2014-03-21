@@ -12,17 +12,17 @@ import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to EnableCompressedLayoutHeirarchy.
- *
+ * 
  */
 public class EnableCompressedLayoutHeirarchy extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   *
+   * 
    * @return {@link AndroidCommandResult}
-   *
+   * 
    * @throws JSONException
-   *
+   * 
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */

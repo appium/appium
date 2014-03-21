@@ -149,7 +149,7 @@ class SocketServer {
     try {
       new UiWatchers().registerAnrAndCrashWatchers();
       Logger.info("Registered crash watchers.");
-    } catch(Exception e) {
+    } catch (Exception e) {
       Logger.info("Unable to register crash watchers.");
     }
   }

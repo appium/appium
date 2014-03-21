@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.17.5 (from 0.17.4)
+=======================================
+
+#### Selendroid
+- update Selendroid to 0.9.0
+
+
 CHANGES IN VERSION 0.17.4 (from 0.17.3)
 =======================================
 

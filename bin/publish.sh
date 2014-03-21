@@ -9,6 +9,12 @@ else
     exit 1
 fi
 
+node --version | grep "v0.10" >/dev/null
+if [ $? -gt 0 ]; then
+    echo "You need to publish Appium using Node 0.10.x, not $(node --version)"
+    exit 1;
+fi
+
 git remote | grep "upstream" >/dev/null
 if [ $? -gt 0 ]; then
     echo "You need to have an 'upstream' remote to pull from / push tags to"

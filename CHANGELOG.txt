@@ -1,3 +1,29 @@
+CHANGES IN VERSION 0.17.4 (from 0.17.3)
+=======================================
+
+#### General
+- fix "mobile: reset"
+- use the new Context API (from [the spec
+  draft](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile))
+  for switching back and forth between webviews. The window handles strategy
+  will be deprecated in 1.0
+- update Wd.js to use a version with context support
+- sanitize desired caps so they are always a manageable type
+
+#### iOS
+- allow testing of iOS7.1 in Appium's testsuite/test.sh
+- don't error out of pref path finding too soon if there are multiple dirs
+
+#### Android
+- fix "mobile: push"
+- fix fastReset going undefined between sessions
+- add --avd-args server param to pass args to avd on boot
+- various fixes for starting avds, including allowing multiple emulators to be
+  running
+- fix getElement() to set isElement to false instead of throwing
+- fix touch actions by fixing leaking state across executions
+- remove fastClear and run `pm clear` on fastReset
+
 CHANGES IN VERSION 0.17.3 (from 0.17.2)
 =======================================
 

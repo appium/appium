@@ -1,7 +1,8 @@
 "use strict";
 
-var env = require("./env"),
-    uuidGenerator = require('node-uuid');
+var env = require("./env")
+  , _ = require('underscore')
+  , uuidGenerator = require('node-uuid');
 
 var spinTitle = function (expTitle, browser, _timeout) {
   var timeout = typeof _timeout === 'undefined' ? 90 : _timeout;
@@ -29,7 +30,7 @@ var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
   if (typeof titleToSpin === "undefined") {
     titleToSpin = uuid;
   }
-  if (app === "safari" || app === "iwebview") {
+  if (_.contains(["safari", "iwebview", "chrome", "chromium"], app)) {
     return browser
       .get(urlToLoad)
       .then(function () { return spinTitle(titleToSpin, browser); });

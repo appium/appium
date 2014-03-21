@@ -112,9 +112,9 @@ describe("apidemo - basic -", function () {
     });
   });
 
-  describe('without fastClear', function () {
+  describe('with fastReset', function () {
     var driver;
-    setup(this, _.defaults({fastClear: false}, desired))
+    setup(this, desired)
      .then(function (d) { driver = d; });
 
     it('should still be able to reset', function (done) {
@@ -223,7 +223,7 @@ describe("apidemo - basic -", function () {
 
     describe('launching new session', function () {
       var driver;
-      setup(this, _.defaults({fastClear: false}, desired))
+      setup(this, desired)
        .then(function (d) { driver = d; });
 
       it('should kill pre-existing uiautomator process', function (done) {

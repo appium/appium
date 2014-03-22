@@ -11,8 +11,14 @@
     "firefoxos",
     "testing"
   ],
-  "version": "0.14.2",
+  "version": "0.17.6",
   "author": "appium-discuss@googlegroups.com",
+  "licenses": [
+    {
+      "type": "apache-2.0",
+      "url": "https://raw.github.com/appium/appium/master/LICENSE"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"
@@ -27,7 +33,6 @@
   "bin": {
     "appium": "./bin/appium.js",
     "appium-doctor": "./bin/appium-doctor.js",
-    "instruments_client": "./bin/instruments-client.js",
     "authorize_ios": "./bin/authorize-ios.js"
   },
   "directories": {
@@ -67,20 +72,23 @@
     "node-idevice": "~0.1.2",
     "win-spawn": "~2.0.0",
     "adm-zip": "~0.4.3",
-    "ws": "0.4.31",
+    "ws": "~0.4.31",
     "socket.io": "~0.9.16",
     "md5calculator": "~0.0.3",
     "through": "~2.3.4",
     "date-utils": "~1.2.14",
-    "bytes": "~0.2.1"
+    "bytes": "~0.2.1",
+    "appium-atoms": "~0.0.5",
+    "appium-instruments": "~0.1.6",
+    "appium-uiauto": "~0.0.13"
   },
   "scripts": {
     "test": "grunt travis"
   },
   "devDependencies": {
-    "mocha": "~1.14.0",
+    "mocha": "~1.17.1",
     "underscore-cli": "~0.2.17",
-    "wd": "~0.2.8",
+    "wd": "~0.2.13",
     "yiewd": "~0.2.0",
     "monocle-js": "~0.4.0",
     "assert": "~0.4.9",
@@ -92,6 +100,8 @@
     "chai-as-promised": "~4.1.0",
     "chai": "~1.8.1",
     "node-static": "~0.7.2",
-    "chai": "~1.8.1"
+    "q": "~1.0.0",
+    "unorm": "~1.3.1",
+    "sinon": "~1.9.0"
   }
 }

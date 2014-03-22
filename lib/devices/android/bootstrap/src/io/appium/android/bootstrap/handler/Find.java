@@ -39,6 +39,7 @@ import com.android.uiautomator.core.UiSelector;
  *
  */
 public class Find extends CommandHandler {
+  // These variables are expected to persist across executions.
   AndroidElementsHash      elements   = AndroidElementsHash.getInstance();
   Dynamic                  dynamic    = new Dynamic();
   public static JSONObject apkStrings = null;
@@ -74,8 +75,13 @@ public class Find extends CommandHandler {
     final Hashtable<String, Object> params = command.params();
 
     // only makes sense on a device
-    final Strategy strategy = Strategy.fromString((String) params
-        .get("strategy"));
+    final Strategy strategy;
+    try {
+       strategy = Strategy.fromString((String) params
+          .get("strategy"));
+    } catch (final InvalidStrategyException e) {
+        return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
+    }
     final String contextId = (String) params.get("context");
 
     if (strategy == Strategy.DYNAMIC) {
@@ -213,13 +219,16 @@ public class Find extends CommandHandler {
       } catch (final AndroidCommandException e) {
         return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final ElementNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       } catch (final UnallowedTagNameException e) {
         return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final ElementNotInHashException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       } catch (final UiObjectNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       }
     } else {
       try {
@@ -264,9 +273,11 @@ public class Find extends CommandHandler {
       } catch (final AndroidCommandException e) {
         return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final UiObjectNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       } catch (final ElementNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
       }
     }
   }

@@ -79,6 +79,7 @@ In the case of these new mobile methods, `script` must be one of:
   * `mobile: flick`
   * `mobile: swipe`
   * `mobile: scrollTo`
+  * `mobile: scroll`
   * `mobile: shake`
 (The `mobile:` prefix allows us to route these requests to the appropriate endpoint).
 
@@ -193,6 +194,10 @@ In these examples, note that the element parameter is always optional.
 
 ### Swipe
 
+*Note*: Swiping is unfortunately broken in iOS7, because of a bug in Apple's
+frameworks. For iOS7, see `mobile: scroll` as a workaround that works for most
+cases.
+
 * **WD.js:**
 
   ```js
@@ -222,6 +227,26 @@ In these examples, note that the element parameter is always optional.
   js.executeScript("mobile: swipe", swipeObject);
   ```
   
+### Scroll
+
+* **WD.js:**
+
+  ```js
+  // scroll the view down
+  driver.execute("mobile: scroll", [{direction: 'down'}], function(err) {
+    // continue testing
+  });
+  ```
+
+* **Java:**
+
+  ```java
+  JavascriptExecutor js = (JavascriptExecutor) driver;
+  HashMap<String, String> scrollObject = new HashMap<String, String>();
+  scrollObject.put("direction", "down");
+  js.executeScript("mobile: scroll", scrollObject);
+  ```
+
 ### Slider
  
  * **Java**
@@ -253,6 +278,15 @@ In these examples, note that the element parameter is always optional.
   b = @driver.find_element :name, 'Sign In'
   @driver.execute_script 'mobile: scrollTo', :element => b.ref
 ```
+
+```Java
+ JavascriptExecutor js = (JavascriptExecutor) driver;
+ WebElement element = wd.findElement(By.name("Log In"));;
+ HashMap<String, String> scrollToObject = new HashMap<String, String>();
+ scrollToObject.put("element",((RemoteWebElement) element).getId());
+ js.executeScript("mobile: scrollTo", scrollToObject);
+```
+
 
 ### longTap
  

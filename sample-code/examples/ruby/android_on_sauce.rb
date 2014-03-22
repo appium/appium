@@ -70,7 +70,8 @@ def desired_caps
     "version" => "4.2",
     "app" => "http://appium.s3.amazonaws.com/NotesList.apk",
     "app-package" => "com.example.android.notepad",
-    "app-activity" => ".NotesList"
+    "app-activity" => ".NotesList",
+    "name" => "Ruby Appium Android example"
   }
 end
 

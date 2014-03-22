@@ -157,3 +157,5 @@ sure emulator is up, etc...):
     mm test/functional/testapp
     mm test/functional/uicatalog
     mm test/functional/webview
+
+NOTE: You will need an emulator/device with screen size of 4.0" (480x800). Some tests might fail on a different screen size.

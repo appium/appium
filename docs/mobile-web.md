@@ -49,7 +49,7 @@ $ cd appium
 $ ./reset.sh --ios --real-safari
 
 # Option 2: You define the code signing identity and allow xcode to select the profile identity code (if it can).
-$ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' 
+$ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>'
 
 # Option 3: You define both the code signing identity and profile identity code.
 $ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile '<retrieved profile identity code>'
@@ -61,11 +61,11 @@ $ node /lib/server/main.js -U <UDID>
 #### Running your test
 To configure you test to run against safari simpley set the <b>"app"</b> to be <b>"safari"</b>.
 
-##### Java Example 
+##### Java Example
 ```java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-desiredCapabilities.setCapability("app", "safari");  
+desiredCapabilities.setCapability("app", "safari");
 URL url = new URL("http://127.0.0.1:4723/wd/hub");
 RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
 
@@ -84,7 +84,7 @@ remoteWebDriver.quit();
 Pre-requisites:
 
 *  Make sure Chrome (an app with the package `com.android.chrome`) is installed on your device or emulator. Getting Chrome for the x86 version of the emulator is not currently possible without building Chromium, so you may want to run an ARM emulator and then copy a Chrome APK from a real device to get Chrome on an emulator.
-*  Make sure [ChromeDriver](https://code.google.com/p/chromedriver/downloads/list), version &gt;= 2.0 is on your system and that the `chromedriver` binary is on your `$PATH`.
+*  If downloaded from [NPM](https://www.npmjs.org/package/appium), or running from the [.app](https://github.com/appium/appium-dot-app), nothing needs to be done. If running from source, the `reset` script will download ChromeDriver and put it in `build`. A particular version can be specified by passing the `--chromedriver-version` option (e.g., `./reset.sh --android --chromedriver-version 2.8`), otherwise the most recent one will be retrieved.
 
 Then, use desired capabilities like these to run your test in Chrome:
 

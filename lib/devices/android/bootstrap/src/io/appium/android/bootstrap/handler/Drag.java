@@ -140,6 +140,8 @@ public class Drag extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
+    // DragArguments is created on each execute which prevents leaking state
+    // across executions.
     final DragArguments dragArgs = new DragArguments(command);
 
     if (command.isElementCommand()) {

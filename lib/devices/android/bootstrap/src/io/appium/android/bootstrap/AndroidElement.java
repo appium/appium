@@ -195,6 +195,10 @@ public class AndroidElement {
     return el;
   }
 
+  public Rect getVisibleBounds() throws UiObjectNotFoundException {
+    return el.getVisibleBounds();
+  }
+
   public boolean longClick() throws UiObjectNotFoundException {
     return el.longClick();
   }

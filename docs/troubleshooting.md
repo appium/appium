@@ -52,7 +52,7 @@ In the Android SDK 22, the platform and build tools are split up into their own 
 
 * Make Sure you enable the 'Web Inspector' on the real device.
 * Make Sure you enable the Safari - Advance Preferences- Developer menu for simulators.
-
+* If you getting this error: select_port() failed, when trying to open the proxy, see this [discussion](https://groups.google.com/forum/#!topic/appium-discuss/tw2GaSN8WX0)
 
 ## FirefoxOS
 

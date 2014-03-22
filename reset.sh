@@ -23,6 +23,8 @@ toggletest_reset=false
 hardcore=false
 grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
+chromedriver_version=false
+chromedriver_install_all=false
 
 while test $# != 0
 do
@@ -40,12 +42,16 @@ do
         "-v") verbose=true;;
         "--verbose") verbose=true;;
         "--hardcore") hardcore=true;;
+        "--chromedriver-version") chromedriver_version=$2;;
+        "--chromedriver-install-all") chromedriver_install_all=true;;
+        "--udid") udid=$2;;
     esac
+
     if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
-      shift
-      shift
+        shift
+        shift
     else
-      shift
+        shift
     fi
 done
 
@@ -69,14 +75,22 @@ run_cmd() {
     fi
 }
 
-reset_general() {
+run_cmd_output() {
+    if $verbose ; then
+        "$@"
+    else
+        "$@" 2> /dev/null
+    fi
+}
+
+reset_npm() {
     echo "RESETTING NPM"
-    set +e
     if $hardcore ; then
         echo "* Removing NPM modules"
         run_cmd rm -rf node_modules
-        echo "* Clearing out old .appiumconfig"
-        run_cmd rm -rf ./.appiumconfig
+        echo "* Clearing out old .appiumconfig.json"
+        run_cmd rm -rf ./.appiumconfig      #remove legacy config file
+        run_cmd rm -rf ./.appiumconfig.json
     fi
     if $prod_deps ; then
         echo "* Installing new or updated NPM modules"
@@ -85,19 +99,22 @@ reset_general() {
         echo "* Installing new or updated NPM modules (including devDeps)"
         run_cmd npm install .
     fi
-    install_status=$?
-    set -e
-    if [ $install_status -gt 0 ]; then
-        echo "install failed. Trying again with sudo. Only do this if it's not a network error."
-        run_cmd sudo npm install .
-    fi
+}
+
+reset_general() {
+    echo "RESETTING GENERAL"
     if $hardcore ; then
         echo "* Clearing out build dir"
         run_cmd rm -rf build
     fi
     run_cmd mkdir -p build
     echo "* Setting git revision data"
-    run_cmd $grunt setGitRev
+    run_cmd "$grunt" setGitRev
+    if [ $include_dev ]; then
+        echo "* Linking git pre-commit hook"
+        run_cmd rm -rf $(pwd)/.git/hooks/pre-commit
+        run_cmd ln -s $(pwd)/test/pre-commit-hook.sh $(pwd)/.git/hooks/pre-commit
+    fi
 }
 
 reset_ios() {
@@ -123,23 +140,6 @@ reset_ios() {
     run_cmd rm -rf build/force_quit
     run_cmd mkdir build/force_quit
     run_cmd cp -R submodules/ForceQuitUnresponsiveApps/bin/* build/force_quit
-    echo "* Cloning/updating instruments-without-delay"
-    run_cmd git submodule update --init submodules/instruments-without-delay
-    if $ios7_active ; then
-        echo "* Building instruments-without-delay"
-        run_cmd pushd submodules/instruments-without-delay
-        run_cmd ./build.sh
-        run_cmd popd
-        echo "* Moving instruments-without-delay into build/iwd"
-        run_cmd rm -rf build/iwd
-        run_cmd mkdir build/iwd
-        run_cmd cp -R submodules/instruments-without-delay/build/* build/iwd
-    fi
-    run_cmd pushd ./assets
-    echo "* Unzipping instruments without delay for XCode 4"
-    run_cmd rm -rf ../build/iwd4
-    run_cmd unzip iwd4.zip -d ../build/
-    run_cmd popd
     echo "* Cloning/updating udidetect"
     run_cmd git submodule update --init submodules/udidetect
     echo "* Building udidetect"
@@ -153,20 +153,21 @@ reset_ios() {
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
-    echo "* Copying status/xpath libs for uiauto"
-    run_cmd rm -rf $appium_home/lib/devices/ios/uiauto/lib/status.js
-    run_cmd cp $appium_home/lib/server/status.js $appium_home/lib/devices/ios/uiauto/lib/status.js
-    run_cmd rm -rf $appium_home/lib/devices/ios/uiauto/appium/xpath.js
-    run_cmd cp $appium_home/lib/xpath.js $appium_home/lib/devices/ios/uiauto/appium/xpath.js
     if $ios7_active ; then
         echo "* Cleaning/rebuilding WebViewApp"
-        run_cmd $grunt buildApp:WebViewApp
+        run_cmd $grunt buildApp:WebViewApp:iphonesimulator$sdk_ver
         run_cmd rm -rf build/WebViewApp
         run_cmd mkdir build/WebViewApp
         run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
             build/WebViewApp/
     fi
     if $include_dev ; then
+        echo "* Cloning/npm linking appium-atoms"
+        run_cmd ./bin/npmlink.sh -l appium-atoms
+        echo "* Cloning/npm linking appium-instruments"
+        run_cmd ./bin/npmlink.sh -l appium-instruments
+        echo "* Cloning/npm linking appium-uiauto"
+        run_cmd ./bin/npmlink.sh -l appium-uiauto
         if $ios7_active ; then
             if $hardcore ; then
                 echo "* Clearing out old UICatalog download"
@@ -179,12 +180,15 @@ reset_ios() {
                 echo "* Unzipping UICatalog app source"
                 run_cmd unzip UICatalog.zip
                 run_cmd popd
+                if [ "$sdk_ver" == "7.1" ]; then
+                    cp assets/UICatalog_7_1_fix/PickerViewController.m sample-code/apps/UICatalog/ViewControllers/PickerViewController.m
+                fi
             fi
             echo "* Cleaning/rebuilding iOS test app: UICatalog"
-            run_cmd $grunt buildApp:UICatalog
+            run_cmd $grunt buildApp:UICatalog:iphonesimulator:$sdk_ver
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
-        run_cmd $grunt buildApp:TestApp
+        run_cmd $grunt buildApp:TestApp:iphonesimulator:$sdk_ver
     fi
     echo "* Setting iOS config to Appium's version"
     run_cmd $grunt setConfigVer:ios
@@ -234,7 +238,17 @@ uninstall_android_app() {
     echo "* Attempting to uninstall android app $1"
     if (which adb >/dev/null); then
         if (adb devices | grep "device$" >/dev/null); then
-            run_cmd adb uninstall $1
+            if [[ ! -z $udid ]]; then
+                if (adb devices | grep "^$udid" >/dev/null); then
+                    run_cmd adb -s $udid uninstall $1
+                else
+                    echo "* Device with serial $udid not found, skipping"
+                fi
+            elif [[ $(adb devices | grep "device$" | wc -l) -eq 1 ]]; then
+                run_cmd adb uninstall $1
+            else
+                echo "* More than one device present, but no device serial provided, skipping (use --udid)"
+            fi
         else
             echo "* No devices found, skipping"
         fi
@@ -246,16 +260,16 @@ uninstall_android_app() {
 reset_apidemos() {
     run_cmd get_apidemos
     echo "* Configuring and cleaning/building Android test app: ApiDemos"
-    run_cmd $grunt configAndroidApp:ApiDemos
-    run_cmd $grunt buildAndroidApp:ApiDemos
+    run_cmd "$grunt" configAndroidApp:ApiDemos
+    run_cmd "$grunt" buildAndroidApp:ApiDemos
     uninstall_android_app com.example.android.apis
     apidemos_reset=true
 }
 
 reset_toggle_test() {
     echo "* Configuring and cleaning/building Android test app: ToggleTest"
-    run_cmd $grunt configAndroidApp:ToggleTest
-    run_cmd $grunt buildAndroidApp:ToggleTest
+    run_cmd "$grunt" configAndroidApp:ToggleTest
+    run_cmd "$grunt" buildAndroidApp:ToggleTest
     uninstall_android_app com.example.toggletest
     toggletest_reset=true
 }
@@ -296,9 +310,9 @@ reset_android() {
     require_java
     echo "* Configuring Android bootstrap"
     run_cmd rm -rf build/android_bootstrap
-    run_cmd $grunt configAndroidBootstrap
+    run_cmd "$grunt" configAndroidBootstrap
     echo "* Building Android bootstrap"
-    run_cmd $grunt buildAndroidBootstrap
+    run_cmd "$grunt" buildAndroidBootstrap
     reset_unlock_apk
     if $include_dev ; then
         reset_apidemos
@@ -306,11 +320,12 @@ reset_android() {
         reset_gps_demo
     fi
     echo "* Setting Android config to Appium's version"
-    run_cmd $grunt setConfigVer:android
+    run_cmd "$grunt" setConfigVer:android
+    reset_chromedriver
 }
 
 require_java() {
-  [ ${JAVA_HOME:?"Warning: Make sure JAVA_HOME is set properly for Java builds."} ]
+  [ '${JAVA_HOME:?"Warning: Make sure JAVA_HOME is set properly for Java builds."}' ]
 }
 
 reset_selendroid() {
@@ -323,7 +338,10 @@ reset_selendroid() {
     run_cmd git submodule update --init submodules/selendroid
     run_cmd rm -rf selendroid
     echo "* Building selendroid server and supporting libraries"
-    run_cmd $grunt buildSelendroidServer
+    run_cmd "$grunt" buildSelendroidServer
+    run_cmd pushd submodules/selendroid
+    run_cmd git reset --hard
+    run_cmd popd
     reset_unlock_apk
     if $include_dev ; then
         if ! $apidemos_reset; then
@@ -334,9 +352,10 @@ reset_selendroid() {
             reset_toggle_test
             uninstall_android_app com.example.toggletest.selendroid
         fi
-        echo "* Linking selendroid test app: WebViewDemo"
-        run_cmd rm -rf $appium_home/sample-code/apps/WebViewDemo
-        run_cmd ln -s $appium_home/submodules/selendroid/selendroid-test-app $appium_home/sample-code/apps/WebViewDemo
+        echo "* Linking selendroid test app"
+        run_cmd rm -rf $appium_home/sample-code/apps/selendroid-test-app.apk
+        test_apk=$(ls $appium_home/submodules/selendroid/selendroid-test-app/target/*.apk | head -1)
+        run_cmd ln -s $test_apk $appium_home/sample-code/apps/selendroid-test-app.apk
         uninstall_android_app io.selendroid.testapp.selendroid
         uninstall_android_app io.selendroid.testapp
         # keep older versions of package around to clean up
@@ -344,7 +363,7 @@ reset_selendroid() {
         uninstall_android_app org.openqa.selendroid.testapp
     fi
     echo "* Setting Selendroid config to Appium's version"
-    run_cmd $grunt setConfigVer:selendroid
+    run_cmd "$grunt" setConfigVer:selendroid
 }
 
 reset_gappium() {
@@ -367,10 +386,63 @@ reset_gappium() {
     fi
 }
 
+reset_chromedriver() {
+    echo "RESETTING CHROMEDRIVER"
+    if [ -d $appium_home/build/chromedriver ]; then
+        echo "* Clearing old ChromeDriver(s)"
+        run_cmd rm -rf $appium_home/build/chromedriver/*
+    else
+        run_cmd rm -rf $appium_home/build/chromedriver  # could have been an old binary
+        run_cmd mkdir $appium_home/build/chromedriver
+    fi
+    if [ "$chromedriver_version" == false ]; then
+        echo "* Finding latest version"
+        chromedriver_version=$(run_cmd_output curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+    fi
+    if ! $chromedriver_install_all ; then
+        echo "* Determining platform"
+        platform=$(run_cmd_output uname -s)
+        if [ "$platform" == "Darwin" ]; then
+            platform="mac"
+            chromedriver_file="chromedriver_mac32.zip"
+            run_cmd mkdir $appium_home/build/chromedriver/mac
+        else
+            platform="linux"
+            chromedriver_file="chromedriver_linux32.zip"
+            run_cmd mkdir $appium_home/build/chromedriver/linux
+        fi
+        install_chromedriver $platform $chromedriver_version $chromedriver_file
+    else
+        echo "* Building directory structure"
+        run_cmd mkdir $appium_home/build/chromedriver/mac
+        run_cmd mkdir $appium_home/build/chromedriver/linux
+        run_cmd mkdir $appium_home/build/chromedriver/windows
+
+        install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip"
+        install_chromedriver "windows" $chromedriver_version "chromedriver_win32.zip"
+    fi
+}
+
+install_chromedriver() {
+    platform=$1
+    version=$2
+    file=$3
+
+    echo "* Downloading ChromeDriver version $version for $platform"
+    run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o $appium_home/build/chromedriver/$platform/chromedriver.zip
+    run_cmd pushd $appium_home/build/chromedriver/$platform
+
+    echo "* Unzipping ChromeDriver"
+    run_cmd unzip chromedriver.zip
+    run_cmd rm chromedriver.zip
+    run_cmd popd
+}
+
 reset_firefoxos() {
     echo "RESETTING FIREFOXOS"
     echo "* Setting Firefox OS config to Appium's version"
-    run_cmd $grunt setConfigVer:firefoxos
+    run_cmd "$grunt" setConfigVer:firefoxos
 }
 
 cleanup() {
@@ -391,6 +463,7 @@ main() {
     if $prod_deps ; then
         echo "* Prod mode is on, will only install prod deps"
     fi
+    reset_npm
     reset_general
     if $should_reset_ios ; then
         reset_ios
@@ -409,7 +482,7 @@ main() {
     fi
     cleanup
     echo "* Setting build time and SHA info"
-    run_cmd $grunt setBuildTime
+    run_cmd "$grunt" setBuildTime
     reset_successful=true
 }
 

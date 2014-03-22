@@ -1,0 +1,3 @@
+-t 90000
+-R spec
+-r ./test/helpers/quit-gracefully

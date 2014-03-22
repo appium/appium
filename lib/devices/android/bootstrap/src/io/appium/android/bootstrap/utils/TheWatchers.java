@@ -7,13 +7,14 @@ import io.appium.android.bootstrap.Logger;
 
 public class TheWatchers {
   private static TheWatchers ourInstance = new TheWatchers();
-  private boolean alerted = false;
+  private boolean            alerted     = false;
 
   public static TheWatchers getInstance() {
     return ourInstance;
   }
 
-  private TheWatchers() { }
+  private TheWatchers() {
+  }
 
   public boolean check() {
     // Send only one alert message...
@@ -30,7 +31,8 @@ public class TheWatchers {
   }
 
   public boolean isDialogPresent() {
-    UiObject alertDialog = new UiObject(new UiSelector().packageName("com.android.systemui"));
+    UiObject alertDialog = new UiObject(
+        new UiSelector().packageName("com.android.systemui"));
     return alertDialog.exists();
   }
 }

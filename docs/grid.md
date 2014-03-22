@@ -32,6 +32,8 @@ Once you start the appium server and it registers with the grid, you will see yo
     "timeout":30000,
     "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
     "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
+    "host": <host_name_appium_server_or_ip-address_appium_server>,
+    "port": <appium_port>,
     "maxSession": 1,
     "register": true,
     "registerCycle": 5000,
@@ -42,3 +44,5 @@ Once you start the appium server and it registers with the grid, you will see yo
 ```
 
 Valid platforms are listed <a href="http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/Platform.html">here</a>
+
+If `url`, `host`, and `port` are not given, the config will be auto updated to point to localhost:whatever-port-Appium-started-on.

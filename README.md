@@ -135,5 +135,3 @@ of common errors and how to get in touch with the community if you're stumped.
 
 Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other robots is possible,
 check out the [Appium Robots](https://github.com/appium/robots) project!
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/appium/appium/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

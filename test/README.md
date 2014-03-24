@@ -11,3 +11,4 @@ Here's a list of things that aren't tested in this suite:
 * setting locale
 * --avd / avdName
 * safari ipad
+* sudo grunt authorize

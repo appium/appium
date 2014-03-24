@@ -25,6 +25,11 @@ grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
 chromedriver_version=false
 chromedriver_install_all=false
+if test -d .git ; then
+    is_git_checkout=true
+else
+    is_git_checkout=false
+fi
 
 while test $# != 0
 do
@@ -65,6 +70,11 @@ fi
 
 if ! $should_reset_ios && $should_reset_realsafari; then
     should_reset_ios=true
+fi
+
+if $include_dev && ! $is_git_checkout ; then
+    echo "Cannot run reset.sh in --dev mode if this is not a git repo"
+    exit 1;
 fi
 
 run_cmd() {
@@ -108,12 +118,16 @@ reset_general() {
         run_cmd rm -rf build
     fi
     run_cmd mkdir -p build
-    echo "* Setting git revision data"
-    run_cmd "$grunt" setGitRev
-    if [ $include_dev ]; then
-        echo "* Linking git pre-commit hook"
-        run_cmd rm -rf $(pwd)/.git/hooks/pre-commit
-        run_cmd ln -s $(pwd)/test/pre-commit-hook.sh $(pwd)/.git/hooks/pre-commit
+    if $is_git_checkout ; then
+        echo "* Setting git revision data"
+        run_cmd "$grunt" setGitRev
+        if $include_dev ; then
+            echo "* Linking git pre-commit hook"
+            run_cmd rm -rf $(pwd)/.git/hooks/pre-commit
+            run_cmd ln -s $(pwd)/test/pre-commit-hook.sh $(pwd)/.git/hooks/pre-commit
+        fi
+    else
+        echo "* Nothing to do, not a git repo"
     fi
 }
 
@@ -130,6 +144,11 @@ reset_ios() {
       ios7_active=false
     fi
     set -e
+    echo "* Setting iOS config to Appium's version"
+    run_cmd $grunt setConfigVer:ios
+    echo "* Installing ios-sim-locale"
+    run_cmd rm -f build/ios-sim-locale
+    run_cmd cp assets/ios-sim-locale build/ios-sim-locale
     echo "* Cloning/updating ForceQuitUnresponsiveApps"
     run_cmd git submodule update --init submodules/ForceQuitUnresponsiveApps
     echo "* Building ForceQuitUnresponsiveApps"
@@ -146,9 +165,6 @@ reset_ios() {
     run_cmd pushd submodules/udidetect
     run_cmd make
     run_cmd popd
-    echo "* Installing ios-sim-locale"
-    run_cmd rm -f build/ios-sim-locale
-    run_cmd cp assets/ios-sim-locale build/ios-sim-locale
     echo "* Moving udidetect into build/udidetect"
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect
@@ -190,8 +206,6 @@ reset_ios() {
         echo "* Cleaning/rebuilding iOS test app: TestApp"
         run_cmd $grunt buildApp:TestApp:iphonesimulator:$sdk_ver
     fi
-    echo "* Setting iOS config to Appium's version"
-    run_cmd $grunt setConfigVer:ios
     echo "* Cloning/updating fruitstrap"
     run_cmd git submodule update --init submodules/fruitstrap
     echo "* Making fruitstrap"

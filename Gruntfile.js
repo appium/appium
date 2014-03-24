@@ -1,7 +1,6 @@
 "use strict";
 var path = require('path')
   , gruntHelpers = require('./grunt-helpers.js')
-  , startAppium = gruntHelpers.startAppium
   , authorize = gruntHelpers.authorize
   , tail = gruntHelpers.tail
   , buildApp = gruntHelpers.buildApp
@@ -19,8 +18,7 @@ var path = require('path')
   , setDeviceConfigVer = gruntHelpers.setDeviceConfigVer
   , setBuildTime = gruntHelpers.setBuildTime
   , setGitRev = gruntHelpers.setGitRev
-  , getGitRev = require('./lib/helpers').getGitRev
-  , runTestsWithServer = gruntHelpers.runTestsWithServer;
+  , getGitRev = require('./lib/helpers').getGitRev;
 
 module.exports = function (grunt) {
   grunt.initConfig({
@@ -59,34 +57,6 @@ module.exports = function (grunt) {
       unit: ['test/unit/*.js']
     , appiumutils: ['test/functional/appium/appiumutils.js']
     }
-  , mochaTestWithServer: {
-      TestApp: ['ios', {
-        functional: ['test/functional/testapp']
-      , server: ['test/functional/appium/appium.js'
-                   , 'test/functional/appium/jsonwp.js']
-      }]
-    , UICatalog: ['ios', {
-        functional: ['test/functional/uicatalog']
-      }]
-    , WebViewApp: ['ios', {
-        functional: ['test/functional/webview']
-      }]
-    , ApiDemos: ['android', {
-        functional: ['test/functional/apidemos']
-      }]
-    , Selendroid: ['selendroid', {
-        functional: ['test/functional/selendroid']
-      }]
-    , Safari: ['ios', {
-        functional: ['test/functional/safari']
-      }]
-    , Preferences: ['ios', {
-        functional: ['test/functional/prefs']
-      }]
-    , Contacts: ['firefoxos', {
-        functional: ['test/functional/firefoxos']
-      }]
-    }
   , mochaTestConfig: {
       options: {
         timeout: 60000,
@@ -99,35 +69,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.registerTask('lint', ['jshint']);
-  grunt.registerTask('functional', "Run functional tests", function (log) {
-    runTestsWithServer(grunt, null, 'functional', null, log === "log", this.async());
-  });
-  grunt.registerTask('servertest', "Run functional server tests", function (log) {
-    runTestsWithServer(grunt, 'TestApp', 'server', null, log === "log", this.async());
-  });
-  grunt.registerTask('android', "Run functional android tests", function (log) {
-    runTestsWithServer(grunt, null, 'functional', 'android', log === "log", this.async());
-  });
-  grunt.registerTask('selendroid', "Run functional selendroid tests", function (log) {
-    runTestsWithServer(grunt, null, 'functional', 'selendroid', log === "log", this.async());
-  });
-  grunt.registerTask('ios', "Run functional ios tests", function (log) {
-    runTestsWithServer(grunt, null, 'functional', 'ios', log === "log", this.async());
-  });
-  grunt.registerTask('firefoxos', "Run functional firefoxos tests", function (log) {
-    runTestsWithServer(grunt, null, 'functional', 'firefoxos', log === "log", this.async());
-  });
-  grunt.registerTask('test', ['jshint', 'unit', 'appiumutils', 'functional', 'servertest']);
+  grunt.registerTask('test', 'mochaTest:unit');
   grunt.registerTask('unit', 'mochaTest:unit');
-  grunt.registerTask('appiumutils', 'mochaTest:appiumutils');
   grunt.registerTask('default', ['test']);
   grunt.registerTask('travis', ['jshint', 'unit']);
-  grunt.registerTask('appium', "Start the Appium server", function (appName) {
-    if (typeof appName === "undefined") {
-      appName = null;
-    }
-    startAppium(appName, true, function () {}, this.async());
-  });
   grunt.registerTask('buildApp', "Build the test app", function (appDir, sdk) {
     buildApp(appDir, this.async(), sdk);
   });

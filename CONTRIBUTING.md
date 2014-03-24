@@ -110,13 +110,16 @@ Or you can run reset for individual platforms only:
 ## Running Tests
 
 First, check out our documentation on [running tests in general](https://github.com/appium/appium/blob/master/docs/running-tests.md)
-Make sure your system is set up properly for the platforms you desire to test on.
+Make sure your system is set up properly for the platforms you desire to test
+on.
 
-Once your system is set up and your code is up to date, you can run unit tests with:
+Once your system is set up and your code is up to date, you can run unit tests
+with:
 
     grunt unit
 
-You can run functional tests for all supported platforms with:
+You can run functional tests for all supported platforms (after ensuring that
+Appium is running in another window with `node .`) with:
 
     bin/test.sh
 
@@ -125,6 +128,7 @@ Or you can run particular platform tests with `test.sh`:
     bin/test.sh --android
     bin/test.sh --ios
     bin/test.sh --ios7
+    bin/test.sh --ios71
 
 Before committing code, please run `grunt` to execute some basic tests and check
 your changes against code quality standards:
@@ -139,23 +143,11 @@ your changes against code quality standards:
 If you have an Appium server listening, you can run individual test files using
 Mocha, for example:
 
-    mocha -t 60000 -R spec test/functional/testapp/simple.js
+    mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
 
 Or individual tests (e.g., a test with the word "alert" in the name):
 
-    mocha -t 60000 -R spec --grep "alert" test/functional/apidemos
+    mocha -t 60000 -R spec --grep "alert" test/functional/ios/apidemos
 
-You can also run all of appium's tests this way. In one window, `node
-.`, in another window, sequentially (waiting for each to pass, making
-sure emulator is up, etc...):
-
-    alias mm="mocha -t 60000 -R spec"
-    mm test/functional/apidemos
-    mm test/functional/prefs
-    mm test/functional/safari
-    mm test/functional/selendroid
-    mm test/functional/testapp
-    mm test/functional/uicatalog
-    mm test/functional/webview
-
-NOTE: You will need an emulator/device with screen size of 4.0" (480x800). Some tests might fail on a different screen size.
+NOTE: For Android, you will need an emulator/device with screen size of 4.0"
+(480x800). Some tests might fail on a different screen size.

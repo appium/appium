@@ -80,7 +80,8 @@
     "bytes": "~0.2.1",
     "appium-atoms": "~0.0.5",
     "appium-instruments": "~0.1.6",
-    "appium-uiauto": "~0.0.13"
+    "appium-uiauto": "~0.0.13",
+    "mv": "~2.0.0"
   },
   "scripts": {
     "test": "grunt travis"

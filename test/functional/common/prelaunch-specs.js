@@ -52,12 +52,12 @@ describe("appium - prelaunch -", function () {
       waitForLaunch(iosApp, [], done);
     });
 
-    it('should work with force iphone', function (done) {
-      waitForLaunch(iosApp, ['--force-iphone'], done);
-    });
-
     it('should work with force ipad', function (done) {
       waitForLaunch(iosApp, ['--force-ipad'], done);
+    });
+
+    it('should work with force iphone', function (done) {
+      waitForLaunch(iosApp, ['--force-iphone'], done);
     });
 
     it('should work for safari', function (done) {

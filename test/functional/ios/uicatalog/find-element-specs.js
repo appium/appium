@@ -66,6 +66,31 @@ describe('uicatalog - find element -', function () {
       }).nodeify(done);
   });
 
+  describe('find elements using accessibility_id locator strategy', function () {
+    it('should find an element by name', function (done) {
+      driver.element('accessibility_id', 'UICatalog').then(function (el) {
+        el.should.exist;
+      }).nodeify(done);
+    });
+    it('should find a deeply nested element by name', function (done) {
+      driver.element('accessibility_id', 'UINavigationBarBackIndicatorDefault.png').then(function (el) {
+        el.should.exist;
+      }).nodeify(done);
+    });
+    it('should find an element by name beneath another element', function (done) {
+      driver.element('accessibility_id', 'Empty list').then(function (el) {
+        el.element('accessibility_id', 'Controls, Various uses of UIControl').then(function (innerEl) {
+          innerEl.should.exist;
+        }).nodeify(done);
+      });
+    });
+    it('should return an array of one element if the plural "elements" is used', function (done) {
+      driver.elements('accessibility_id', 'UICatalog').then(function (els) {
+        els.length.should.equal(1);
+      }).nodeify(done);
+    });
+  });
+
   describe('findElementsByTagName', function () {
     it('should return all image elements with internally generated ids', function (done) {
       driver.elementsByTagName('image').then(function (els) {
@@ -187,9 +212,9 @@ describe('uicatalog - find element -', function () {
       driver.element('-ios_uiautomation', '.navigationBars()[0]')
       .getAttribute('name').then(function (name) {
         if (name !== 'UICatalog') {
-          driver.back().then(done);
+          driver.back().delay(2000).nodeify(done);
         } else {
-          done();
+          Q.delay(500).nodeify(done);
         }
       });
     });

@@ -75,13 +75,13 @@ describe("apidemo - find elements -", function () {
         .elementById("buttons_1_normal").text().should.become("Normal")
         .nodeify(done);
     });
-    // TODO: find by resource id doesn't seem to work
-    it('should find a single element by resource-id @skip-android-all', function (done) {
+
+    it('should find a single element by resource-id', function (done) {
       driver
         .elementById('android:id/home').should.eventually.exist
         .nodeify(done);
     });
-    it('should find multiple elements by resource-id @skip-android-all', function (done) {
+    it('should find multiple elements by resource-id', function (done) {
       driver
         .elementsById('android:id/text1')
           .should.eventually.have.length.at.least(10)
@@ -153,6 +153,19 @@ describe("apidemo - find elements -", function () {
         .elementByXPath("//frame/frame[1]//text[3]").text()
           .should.become("App")
         .nodeify(done);
+    });
+  });
+
+  describe('find elements using accessibility_id locator strategy', function () {
+    it('should find an element by name', function (done) {
+      driver.element('accessibility_id', 'Animation').then(function (el) {
+        el.should.exist;
+      }).nodeify(done);
+    });
+    it('should return an array of one element if the plural "elements" is used', function (done) {
+      driver.elements('accessibility_id', 'Animation').then(function (els) {
+        els.length.should.equal(1);
+      }).nodeify(done);
     });
   });
 

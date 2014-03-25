@@ -392,6 +392,13 @@ public class Find extends CommandHandler {
           }
         }
         break;
+      case ACCESSIBILITY_ID:
+        sel = sel.description(text);
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        selectors.add(sel);
+        break;
       case NAME:
         sel = selectNameOrText(many, text);
         selectors.add(sel);

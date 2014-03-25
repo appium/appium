@@ -16,7 +16,7 @@ Appium additionally supports some of the [Mobile JSON Wire Protocol](https://cod
 
 You can use the direct UIAutomation component type name for the tag name, or use the simplified mapping (used in some examples below) found here:
 
-https://github.com/appium/appium/blob/master/lib/devices/ios/uiauto/lib/mechanic.js#L29
+https://github.com/appium/appium-uiauto/blob/master/uiauto/lib/mechanic.js#L30
 
 Issues
 ------

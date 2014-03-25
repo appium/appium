@@ -35,8 +35,16 @@ describe("Helpers", function () {
         warning.should.equal(expected);
       });
     });
+
+    describe("without a replacement", function () {
+      it("returns only the deprecation sentence", function () {
+        var expected = "[DEPRECATED] The xml return type has been deprecated " +
+                       "and will be removed.";
+        helpers.formatDeprecationWarning('return type', 'xml').should.equal(expected);
+      });
+    });
   });
-  describe("#produceDeprecationWarning", function () {
+  describe("#logDeprecationWarning", function () {
     beforeEach(function () {
       helpers.clearWarnings();
       sinon.spy(logger, 'warn');

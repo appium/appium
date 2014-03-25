@@ -6,10 +6,20 @@ var env = require('../../helpers/env')
   , androidApp = path.resolve(__dirname, "..", "..", "..", "sample-code",
       "apps", "ApiDemos", "bin", "ApiDemos-debug.apk")
   , spawn = require('child_process').spawn
+  , exec = require('child_process').exec
   , crazyPort = 4799;
 
+function log(data) {
+  data = (data || "").replace(/(\r)?\n$/, '');
+  if (env.VERBOSE) {
+    console.log(data);
+  } else {
+    if (data.match(/error\:/)) console.log(data);
+  }
+}
+
 var waitForLaunch = function (app, extraArgs, cb) {
-  var args = [".", "-p", crazyPort, "-l", "-dd", "-m"];
+  var args = [".", "-p", crazyPort, "-l", "-dd", "-m", "-r", "3", "-lt", JSON.stringify(env.LAUNCH_TIMEOUT)];
   if (app) {
     args = args.concat(["--app", app]);
   }
@@ -18,14 +28,13 @@ var waitForLaunch = function (app, extraArgs, cb) {
   proc.stdout.setEncoding('utf8');
   proc.stderr.setEncoding('utf8');
   var calledBack = false;
-  var output = '';
   var tm = setTimeout(function () {
     calledBack = true;
     proc.kill();
-    cb(new Error("Appium never started. Output was: " + output));
+    cb(new Error("Appium never started. set VERBOSE=1 to see output."));
   }, 60000);
   proc.stdout.on('data', function (data) {
-    output += data;
+    log(data);
     if (!calledBack && /Appium REST http interface listener started on/.test(data)) {
       clearTimeout(tm);
       proc.kill();
@@ -34,12 +43,12 @@ var waitForLaunch = function (app, extraArgs, cb) {
     }
   });
   proc.stderr.on('data', function (data) {
-    output += data;
+    log(data);
   });
   proc.on('exit', function () {
     if (!calledBack) {
       calledBack = true;
-      cb(new Error("Appium never started. Output was: " + output));
+      cb(new Error("Appium never started, set VERBOSE=1 to see output."));
     }
   });
 };
@@ -48,6 +57,21 @@ describe("appium - prelaunch -", function () {
   this.timeout(env.MOCHA_TIMEOUT);
 
   describe('ios @skip-android-all', function () {
+    beforeEach(function (done) {
+      exec('pkill -f iPhoneSimulator', done);
+    });
+
+    beforeEach(function (done) {
+      exec('pkill -f instruments', done);
+    });
+
+    afterEach(function (done) {
+      // slowdown
+      setTimeout(function () {
+        done();
+      }, 3000);
+    });
+
     it('should work for ios', function (done) {
       waitForLaunch(iosApp, [], done);
     });
@@ -60,13 +84,14 @@ describe("appium - prelaunch -", function () {
       waitForLaunch(iosApp, ['--force-iphone'], done);
     });
 
+    it('should work for safari via --safari', function (done) {
+      waitForLaunch(null, ['--safari'], done);
+    });
+
     it('should work for safari', function (done) {
       waitForLaunch('safari', [], done);
     });
 
-    it('should work for safari via --safari', function (done) {
-      waitForLaunch(null, ['--safari'], done);
-    });
   });
 
   // TODO

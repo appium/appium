@@ -212,9 +212,9 @@ describe('uicatalog - find element -', function () {
       driver.element('-ios_uiautomation', '.navigationBars()[0]')
       .getAttribute('name').then(function (name) {
         if (name !== 'UICatalog') {
-          driver.back().then(done);
+          driver.back().delay(2000).nodeify(done);
         } else {
-          done();
+          Q.delay(500).nodeify(done);
         }
       });
     });

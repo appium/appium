@@ -5,13 +5,20 @@ var env = require('./env')
   , _ = require("underscore")
   , androidUninstall = require('./reset').androidUninstall;
 
+require('colors');
+
+var trimToLength = function (str, length) {
+  return (str && str.length > length) ?
+    str.substring(0, length) + '...' : str;
+};
+
 module.exports.initSession = function (desired, opts) {
   desired = desired || {};
   opts = opts || {};
 
-  var deferred = Q.defer();
-
-  var browser;
+  var deferred = Q.defer(),
+      browser,
+      initialized;
 
   wd.addPromiseChainMethod('clickBack', function () {
     var backEl;
@@ -33,11 +40,15 @@ module.exports.initSession = function (desired, opts) {
     setUp: function () {
       browser = wd.promiseChainRemote(env.APPIUM_HOST, env.APPIUM_PORT, env.APPIUM_USERNAME, env.APPIUM_PASSWORD);
       if (env.VERBOSE) {
+        var MAX_DATA_LENGTH = 500;
         browser.on('status', function (info) {
-          console.log(info);
+          console.log(info.cyan);
         });
-        browser.on('command', function (meth, path, data) {
-          console.log(' > ' + meth, path, data || '');
+        browser.on('command', function (eventType, command, response) {
+          console.log(' > ' + eventType.cyan, command, (trimToLength(response, MAX_DATA_LENGTH) || '').grey);
+        });
+        browser.on('http', function (meth, path, data) {
+          console.log(' > ' + meth.magenta, path, (trimToLength(data, MAX_DATA_LENGTH) || '').grey);
         });
       }
       deferred.resolve(browser);
@@ -58,7 +69,7 @@ module.exports.initSession = function (desired, opts) {
             if (remainingAttempts === 0) {
               throw err;
             } else {
-              return browser.sleep(5000).then(function () {
+              return browser.sleep(10000).then(function () {
                 return init(remainingAttempts);
               });
             }
@@ -72,6 +83,7 @@ module.exports.initSession = function (desired, opts) {
             return androidUninstall(desired['app-package']);
           }
         }).then(function () { return init(attempts); })
+        .then(function () { initialized = true; })
         .setImplicitWaitTimeout(5000);
     },
     tearDown: function () {
@@ -81,7 +93,7 @@ module.exports.initSession = function (desired, opts) {
       }
       return browser.chain()
         .then(function () {
-          if (!opts['no-quit']) {
+          if (initialized && !opts['no-quit']) {
             return browser
               .quit()
               .catch(function () {
@@ -97,4 +109,3 @@ module.exports.initSession = function (desired, opts) {
     promisedBrowser: deferred.promise
   };
 };
-

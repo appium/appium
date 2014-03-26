@@ -28,7 +28,7 @@ var activateWebView = function (driver) {
   return driver.contexts().then(function (ctxs) {
     for (var idx in ctxs) {
       var ctx = ctxs[idx];
-      if (ctx.indexOf('WEBVIEW') != -1) {
+      if (ctx.indexOf('WEBVIEW') !== -1) {
         return ctx;
       }
     }
@@ -39,7 +39,6 @@ var activateWebView = function (driver) {
 };
 
 describe("gappium", function () {
-
   describe('HelloGappium', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });

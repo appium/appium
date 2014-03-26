@@ -7,6 +7,8 @@ var setup = require("../../common/setup-base")
   , desired = require('./desired');
 
 describe('testapp - location -', function () {
+  this.timeout(env.MOCHA_INIT_TIMEOUT);
+  
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -72,7 +74,6 @@ describe('testapp - location services -', function () {
   _.extend(newDesired, {
     locationServicesAuthorized: true
   });
-  this.timeout(env.MOCHA_TIMEOUT);
   it('should not work without bundleId', function (done) {
     initSession(newDesired, {'no-retry': true}).setUp()
       .then(function (err) {

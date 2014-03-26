@@ -1,5 +1,6 @@
 "use strict";
 var env = require('../../helpers/env')
+  , iosReset = require('../../helpers/reset').iosReset
   , path = require('path')
   , iosApp = path.resolve(__dirname, "..", "..", "..", "sample-code", "apps",
       "TestApp", "build", "Release-iphonesimulator", "TestApp.app")
@@ -47,21 +48,13 @@ var waitForLaunch = function (app, extraArgs, done) {
 };
 
 describe("appium - prelaunch -", function () {
-  this.timeout(env.MOCHA_TIMEOUT);
-
+  this.timeout(env.MOCHA_INIT_TIMEOUT);
   describe('ios @skip-android-all', function () {
     var proc;
 
     beforeEach(function (done) {
-      exec('pkill -f iPhoneSimulator', function () {
-        done();
-      });
-    });
-
-    beforeEach(function (done) {
-      exec('pkill -f instruments', function () {
-        done();
-      });
+      if (env.IOS && env.RESET_IOS) { return iosReset().nodeify(done); }
+      else done();
     });
 
     afterEach(function (done) {

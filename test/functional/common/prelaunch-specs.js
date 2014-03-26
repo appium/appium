@@ -58,11 +58,15 @@ describe("appium - prelaunch -", function () {
 
   describe('ios @skip-android-all', function () {
     beforeEach(function (done) {
-      exec('pkill -f iPhoneSimulator', done);
+      exec('pkill -f iPhoneSimulator', function () {
+        done();
+      });
     });
 
     beforeEach(function (done) {
-      exec('pkill -f instruments', done);
+      exec('pkill -f instruments', function () {
+        done();
+      });
     });
 
     afterEach(function (done) {

@@ -84,5 +84,6 @@ if [[ $ACTION == 'unlink' ]]; then
     for i in "${PACKAGES[@]}"
     do
         npm unlink $i
+        npm install $i
     done
 fi

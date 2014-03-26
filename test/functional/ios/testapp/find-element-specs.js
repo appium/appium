@@ -60,6 +60,13 @@ describe('testapp - find element -', function () {
         els[0].value.should.exist;
       }).nodeify(done);
   });
+  it('should find all elements by class name in the app', function (done) {
+    driver
+      .elementsByClassName('UIAButton').then(function (els) {
+        [4, 6].should.contain(els.length);
+        els[0].value.should.exist;
+      }).nodeify(done);
+  });
   it('should not find any elements on the app but fail gracefully', function (done) {
     driver.elementsByTagName('buttonNotThere').should.eventually.have.length(0)
       .nodeify(done);
@@ -75,6 +82,14 @@ describe('testapp - find element -', function () {
         err['jsonwire-error'].summary.should.eql('NoSuchElement');
         throw err;
       }).should.be.rejectedWith(/status: 7/)
+      .nodeify(done);
+  });
+  it('should not find element by incomplete class name but return respective error code', function (done) {
+    driver.elementsByClassName('notAValidReference')
+      .catch(function (err) {
+        err['jsonwire-error'].summary.should.eql('UnknownError');
+        throw err;
+      }).should.be.rejectedWith(/status: 13/)
       .nodeify(done);
   });
 

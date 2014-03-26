@@ -352,6 +352,12 @@ public class Find extends CommandHandler {
 
     switch (strategy) {
       case CLASS_NAME:
+        sel = sel.className(text);
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        selectors.add(sel);
+        break;
       case TAG_NAME:
         final String androidClass = AndroidElementClassMap.match(text);
         sel = sel.className(androidClass);

@@ -34,13 +34,13 @@ module.exports = function (grunt) {
       files: {
         src: ['*.js', './**/*.js'],
         options: {
-          ignores: ['./submodules/**/*.js', './npmdev/**/*.js', './node_modules/**/*.js', './sample-code/**/*.js', './test/**/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
+          ignores: ['./submodules/**', './npmdev/**', './node_modules/**', './sample-code/**', './test/**', './lib/server/static/**', './lib/devices/firefoxos/atoms/**']
         }
       },
       test: {
         src: ['test/**/*.js']
       , options: {
-          ignores: ['./test/harmony/**/*.js', './test/functional/_joined/*.js']
+          ignores: ['./test/harmony/**']
         , expr: true
         , globals: {
             'describe': true

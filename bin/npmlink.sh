@@ -37,13 +37,26 @@ if [[ ${#PACKAGES[*]} == 0 ]]; then
 fi
 
 function npmlink {
-    git submodule update --init submodules/$1
-    pushd submodules/$1
+    GIT_URL=`node bin/npmlink git-url $1`
+    LIVE_TAG=`node bin/npmlink live-tag $1`
+
+    mkdir -p npmdev
+    
+    if [ ! -d npmdev/$1 ]; then
+        git clone $GIT_URL npmdev/$1
+    fi
+    
+    pushd npmdev/$1
+    git stash
+    git fetch --all
     if [[ $MASTER ]]; then
         git checkout master
+    else
+        git checkout $LIVE_TAG
     fi
     npm link
     popd
+    
     npm link $1
 }
 

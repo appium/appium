@@ -7,7 +7,6 @@ var env = {};
 // local config
 env.APPIUM_HOST = process.env.APPIUM_HOST || '127.0.0.1';
 env.APPIUM_PORT = parseInt(process.env.APPIUM_PORT || 4723, 10);
-env.MOCHA_TIMEOUT = parseInt(process.env.MOCHA_TIMEOUT || 180000, 10);
 env.VERSION = process.env.VERSION;
 
 // sauce
@@ -20,13 +19,14 @@ if (env.SAUCE) {
   }
   env.APPIUM_USERNAME = process.env.SAUCE_USERNAME;
   env.APPIUM_PASSWORD = process.env.SAUCE_ACCESS_KEY;
-  env.MOCHA_TIMEOUT = parseInt(process.env.MOCHA_TIMEOUT || 500000, 10);
 }
 
-env.LAUNCH_TIMEOUT = JSON.parse(process.env.LAUNCH_TIMEOUT || 45000);
+env.LAUNCH_TIMEOUT = JSON.parse(process.env.LAUNCH_TIMEOUT || 60000);
 env.VERBOSE = process.env.VERBOSE;
 env.ISOLATED_TESTS = process.env.ISOLATED_TESTS;
 env.FAST_TESTS = !env.ISOLATED_TESTS;
+env.RESET_IOS = process.env.RESET_IOS || true;
+env.MOCHA_INIT_TIMEOUT = parseInt(process.env.MOCHA_INIT_TIMEOUT || 300000, 10);
 
 // real device or emulator
 env.REAL_DEVICE = process.env.REAL_DEVICE;

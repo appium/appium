@@ -15,3 +15,13 @@ exports.androidUninstall = function (appPackage) {
     .catch(function () {})
     .then(function () { return Q.delay(500); });
 };
+
+exports.iosReset = function () {
+  if (env.VERBOSE) console.log('Resetting ios simulator.');
+  return exec('pkill -9 -f iPhoneSimulator')
+    .catch(function () {})
+    .then(function () { return exec('pkill -9 -f instruments'); })
+    .catch(function () {})
+    .then(function () { return exec('rm -rf $HOME/Library/Application\\ Support/iPhone\\ Simulator'); })
+    .catch(function () {});
+};

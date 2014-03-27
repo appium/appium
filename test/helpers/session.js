@@ -3,6 +3,7 @@ var env = require('./env')
   , wd = require("wd")
   , Q = require("q")
   , _ = require("underscore")
+  , iosReset = require('./reset').iosReset
   , androidUninstall = require('./reset').androidUninstall;
 
 require('colors');
@@ -62,6 +63,7 @@ module.exports.initSession = function (desired, opts) {
 
       function init(remainingAttempts) {
         if (env.VERBOSE) console.log("remainingAttempts -->", remainingAttempts);
+        
         return browser
           .init(caps)
           .catch(function (err) {
@@ -78,6 +80,8 @@ module.exports.initSession = function (desired, opts) {
       var attempts = opts['no-retry'] ? 1 : 3;
       return browser.chain()
         .then(function () {
+          if (env.IOS && env.RESET_IOS) { return iosReset(); }
+        }).then(function () {
           // if android uninstall package first
           if (desired.device === 'Android' && desired['app-package']) {
             return androidUninstall(desired['app-package']);

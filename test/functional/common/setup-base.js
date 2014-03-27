@@ -11,7 +11,7 @@ chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 require("colors");
 
 module.exports = function (context, desired, opts) {
-  context.timeout(env.MOCHA_TIMEOUT);
+  context.timeout(env.MOCHA_INIT_TIMEOUT);
 
   var session = initSession(desired, opts);
 

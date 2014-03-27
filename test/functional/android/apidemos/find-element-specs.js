@@ -167,14 +167,14 @@ describe("apidemo - find elements -", function () {
     });
   });
 
-  describe('find elements using accessibility_id locator strategy', function () {
+  describe('find elements using accessibility id locator strategy', function () {
     it('should find an element by name', function (done) {
-      driver.element('accessibility_id', 'Animation').then(function (el) {
+      driver.element('accessibility id', 'Animation').then(function (el) {
         el.should.exist;
       }).nodeify(done);
     });
     it('should return an array of one element if the plural "elements" is used', function (done) {
-      driver.elements('accessibility_id', 'Animation').then(function (els) {
+      driver.elements('accessibility id', 'Animation').then(function (els) {
         els.length.should.equal(1);
       }).nodeify(done);
     });
@@ -189,9 +189,9 @@ describe("apidemo - find elements -", function () {
     });
   });
   describe('invalid locator strategy', function () {
-    it('should not accept -ios_uiautomation locator strategy', function (done) {
+    it('should not accept -ios uiautomation locator strategy', function (done) {
       driver
-        .elements('-ios_uiautomation', '.elements()').catch(function (err) {
+        .elements('-ios uiautomation', '.elements()').catch(function (err) {
           throw JSON.stringify(err.cause.value);
         })
         .should.be.rejectedWith(/The requested resource could not be found/)

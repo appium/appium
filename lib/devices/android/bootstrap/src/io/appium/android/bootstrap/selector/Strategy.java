@@ -10,7 +10,7 @@ public enum Strategy {
   CLASS_NAME(0, "class name"), CSS_SELECTOR(1, "css selector"), ID(2, "id"), NAME(
       3, "name"), LINK_TEXT(4, "link text"), PARTIAL_LINK_TEXT(5,
       "partial link text"), TAG_NAME(6, "tag name"), XPATH(7, "xpath"), DYNAMIC(
-      8, "dynamic"), ACCESSIBILITY_ID(9, "accessibility_id");
+      8, "dynamic"), ACCESSIBILITY_ID(9, "accessibility id");
 
   public static Strategy fromString(final String text) throws InvalidStrategyException {
     if (text != null) {

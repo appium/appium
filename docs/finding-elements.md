@@ -10,7 +10,8 @@ Appium supports a subset of the WebDriver locator strategies:
 
 Appium additionally supports some of the [Mobile JSON Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) locator strategies
 
-* `-ios_uiautomation`: a string corresponding to a recursive element search using the UIAutomation library (iOS-only)
+* `-ios uiautomation`: a string corresponding to a recursive element search using the UIAutomation library (iOS-only)
+* `accessibility id`: a string corresponding to a recursive element search using the Id/Name that the native Accessibility options utilize.
 
 ###Tag name mapping
 
@@ -122,12 +123,12 @@ Python:
 driver.find_elements_by_tag_name('tableCell')[5].click()
 ```
 
-### Using the -ios_uiautomation locator strategy
+### Using the "-ios uiautomation" locator strategy
 
 WD.js:
 
 ```js
-driver.element('-ios_uiautomation', '.elements()[1].cells()[2]').getAttribute('name');
+driver.element('-ios uiautomation', '.elements()[1].cells()[2]').getAttribute('name');
 ```
 
 # FindAndAct<a name="findandact"></a>

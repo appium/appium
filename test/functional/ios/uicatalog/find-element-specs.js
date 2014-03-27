@@ -207,10 +207,24 @@ describe('uicatalog - find element -', function () {
   });
 
   describe('FindElement(s)ByUIAutomation', function () {
+    var byUIA = '-ios_uiautomation';
+
+    // Running sequentially cause parallel runs crash appium
+    var filterDisplayed = function (els) {
+      var sequence = _.map(els, function (el) {
+        return function (displayedEls) {
+          return el.isDisplayed().then(function (isdisplayed) {
+            if (isdisplayed) displayedEls.push(el);
+            return displayedEls;
+          });
+        };
+      });
+      return sequence.reduce(Q.when, new Q([]));
+    };
 
     before(function (done) {
       driver
-        .element('-ios_uiautomation', '.navigationBars()[0]')
+        .element(byUIA, '.navigationBars()[0]')
           .getAttribute('name').then(function (name) {
             if (name !== 'UICatalog') {
               return driver.back().delay(2000);
@@ -223,60 +237,60 @@ describe('uicatalog - find element -', function () {
 
     it('should process most basic UIAutomation query', function (done) {
       driver
-        .elements('-ios_uiautomation', '.elements()')
+        .elements(byUIA, '.elements()').then(filterDisplayed)
           .should.eventually.have.length(2)
         .nodeify(done);
     });
     it('should process UIAutomation queries if user leaves out the first period', function (done) {
       driver
-        .elements('-ios_uiautomation', 'elements()')
+        .elements(byUIA, 'elements()').then(filterDisplayed)
           .should.eventually.have.length(2)
         .nodeify(done);
     });
     it('should get a single element', function (done) {
-      driver.element('-ios_uiautomation', '.elements()[0]').getAttribute('name')
+      driver.element(byUIA, '.elements()[0]').getAttribute('name')
         .should.become('UICatalog')
       .nodeify(done);
     });
     it('should get a single element', function (done) {
-      driver.element('-ios_uiautomation', '.elements()[1]').getAttribute('name')
+      driver.element(byUIA, '.elements()[1]').getAttribute('name')
         .should.become('Empty list')
       .nodeify(done);
     });
     it('should get single element as array', function (done) {
       driver
-        .elements('-ios_uiautomation', '.tableViews()[0]')
+        .elements(byUIA, '.tableViews()[0]')
           .should.eventually.have.length(1)
         .nodeify(done);
     });
     it('should find elements by index multiple times', function (done) {
-      driver.element('-ios_uiautomation', '.elements()[1].cells()[2]').getAttribute('name')
+      driver.element(byUIA, '.elements()[1].cells()[2]').getAttribute('name')
         .should.become('TextFields, Uses of UITextField')
       .nodeify(done);
     });
     it('should find elements by name', function (done) {
-      driver.element('-ios_uiautomation', '.elements()["UICatalog"]').getAttribute('name')
+      driver.element(byUIA, '.elements()["UICatalog"]').getAttribute('name')
         .should.become('UICatalog')
       .nodeify(done);
     });
     it('should find elements by name and index', function (done) {
-      driver.element('-ios_uiautomation', '.elements()["Empty list"].cells()[3]').getAttribute('name')
+      driver.element(byUIA, '.elements()["Empty list"].cells()[3]').getAttribute('name')
         .should.become('SearchBar, Use of UISearchBar')
       .nodeify(done);
     });
     describe('start from a given context instead of root target', function () {
       it('should process a simple query', function (done) {
-        driver.element('-ios_uiautomation', '.elements()[1]').then(function (el) {
+        driver.element(byUIA, '.elements()[1]').then(function (el) {
           el
-            .elements('-ios_uiautomation', '.elements()')
+            .elements(byUIA, '.elements()')
               .should.eventually.have.length(12)
             .nodeify(done);
         });
       });
       it('should find elements by name', function (done) {
-        driver.element('-ios_uiautomation', '.elements()[1]').then(function (el) {
+        driver.element(byUIA, '.elements()[1]').then(function (el) {
           el
-          .element('-ios_uiautomation', '.elements()["Buttons, Various uses of UIButton"]')
+          .element(byUIA, '.elements()["Buttons, Various uses of UIButton"]')
             .should.eventually.exist
           .nodeify(done);
         });

@@ -73,7 +73,7 @@ describe('uicatalog - find element -', function () {
       }).nodeify(done);
     });
     it('should find a deeply nested element by name', function (done) {
-      driver.element('accessibility_id', 'UINavigationBarBackIndicatorDefault.png').then(function (el) {
+      driver.element('accessibility_id', 'Toolbar, Uses of UIToolbar').then(function (el) {
         el.should.exist;
       }).nodeify(done);
     });

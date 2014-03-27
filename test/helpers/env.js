@@ -54,6 +54,9 @@ switch (env.DEVICE) {
   case 'ios7':
   case 'ios7_iphone':
   case 'ios7_ipad':
+  case 'ios71':
+  case 'ios71_iphone':
+  case 'ios71_ipad':
     env.CAPS = {
       browserName: ''
     , device: iphoneOrIpadSimulator(env.DEVICE)
@@ -86,7 +89,12 @@ switch (env.DEVICE) {
 
 env.IOS = env.DEVICE.match(/ios/i);
 env.IOS7 = env.DEVICE.match(/ios7/i);
+env.IOS71 = env.DEVICE.match(/ios71/i);
 env.ANDROID = env.DEVICE.match(/android/i);
+
+// better timeout settings for 71
+env.LAUNCH_TIMEOUT =  process.env.LAUNCH_TIMEOUT ? JSON.parse(process.env.LAUNCH_TIMEOUT) :
+  (env.IOS71 ? {"global": 60000, "afterSimLaunch": 10000} : 60000);
 
 // caps overide for sauce
 if (env.SAUCE) {

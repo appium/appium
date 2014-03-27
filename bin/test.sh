@@ -67,7 +67,7 @@ if $ios7_only || $all_tests; then
 fi
 
 if $ios71_only || $all_tests; then
-    run_ios_tests "7.1" "ios7"
+    run_ios_tests "7.1" "ios71"
 fi
 
 if $did_switch_xcode; then

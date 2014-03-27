@@ -189,9 +189,9 @@ describe("apidemo - find elements -", function () {
     });
   });
   describe('invalid locator strategy', function () {
-    it('should not accept -ios_uiautomation locator strategy', function (done) {
+    it('should not accept -ios uiautomation locator strategy', function (done) {
       driver
-        .elements('-ios_uiautomation', '.elements()').catch(function (err) {
+        .elements('-ios uiautomation', '.elements()').catch(function (err) {
           throw JSON.stringify(err.cause.value);
         })
         .should.be.rejectedWith(/The requested resource could not be found/)

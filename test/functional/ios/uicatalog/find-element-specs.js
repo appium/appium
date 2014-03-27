@@ -207,7 +207,7 @@ describe('uicatalog - find element -', function () {
   });
 
   describe('FindElement(s)ByUIAutomation', function () {
-    var byUIA = '-ios_uiautomation';
+    var byUIA = '-ios uiautomation';
 
     // Running sequentially cause parallel runs crash appium
     var filterDisplayed = function (els) {

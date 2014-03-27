@@ -424,13 +424,15 @@ describe('uicatalog - gestures -', function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should scroll down and up', function (done) {
-      var firstEl, location1, location2;
-      driver
+      var firstEl, location1, location2, table_view;
+      driver.elementByTagName('tableview').then(function (el) {
+        table_view = el;
+      })
       .elementByTagName('tableCell')
       .then(function (el) { firstEl = el; return el.getLocation(); })
       .then(function (loc) { location1 = loc; })
       .then(function () {
-        return driver.execute("mobile: scroll", [{direction: 'down'}]);
+        return driver.execute("mobile: scroll", [{element: table_view.value, direction: 'down'}]);
       })
       .then(function () { return firstEl.getLocation(); })
       .then(function (loc2) {
@@ -439,7 +441,7 @@ describe('uicatalog - gestures -', function () {
         loc2.y.should.not.equal(location1.y);
       })
       .then(function () {
-        return driver.execute("mobile: scroll", [{direction: 'up'}]);
+        return driver.execute("mobile: scroll", [{element: table_view.value, direction: 'up'}]);
       })
       .then(function () { return firstEl.getLocation(); })
       .then(function (loc3) {

@@ -167,6 +167,50 @@ describe("apidemo - find elements -", function () {
     });
   });
 
+  describe('real xpath', function () {
+    var f = "android.widget.FrameLayout";
+    var l = "android.widget.ListView";
+    var t = "android.widget.TextView";
+    var v = "android.view.View";
+    it('should find element by type', function (done) {
+      driver
+        .elementByRealXPath('//' + t).text()
+          .should.become("API Demos")
+        .nodeify(done);
+    });
+    it('should find element by text', function (done) {
+      driver
+        .elementByRealXPath("//" + t + "[@text='Accessibility']").text()
+          .should.become("Accessibility")
+        .nodeify(done);
+    });
+    it('should find element by partial text', function (done) {
+      driver
+        .elementByRealXPath("//" + t + "[contains(@text, 'Accessibility')]").text()
+          .should.become("Accessibility")
+        .nodeify(done);
+    });
+    it('should find the last element', function (done) {
+      driver
+        .elementByRealXPath("//" + t + "[last()]").text()
+        .then(function (text) {
+          ["OS", "Text", "Views"].should.include(text);
+        }).nodeify(done);
+    });
+    it('should find element by xpath index and child', function (done) {
+      driver
+        .elementByRealXPath("//" + f + "[1]/" + v + "[1]/" + f + "[2]/" + l + "[1]/" + t + "[3]").text()
+          .should.become("App")
+        .nodeify(done);
+    });
+    it('should find element by index and embedded desc', function (done) {
+      driver
+        .elementByRealXPath("//" + f + "//" + t + "[4]").text()
+          .should.become("App")
+        .nodeify(done);
+    });
+  });
+
   describe('find elements using accessibility id locator strategy', function () {
     it('should find an element by name', function (done) {
       driver.element('accessibility id', 'Animation').then(function (el) {

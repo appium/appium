@@ -17,6 +17,7 @@ import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -33,10 +34,10 @@ import com.android.uiautomator.core.UiSelector;
 
 /**
  * This handler is used to find elements in the Android UI.
- *
+ * 
  * Based on which {@link Strategy}, {@link UiSelector}, and optionally the
  * contextId, the element Id or Ids are returned to the user.
- *
+ * 
  */
 public class Find extends CommandHandler {
   // These variables are expected to persist across executions.
@@ -61,11 +62,11 @@ public class Find extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   *
+   * 
    * @return {@link AndroidCommandResult}
-   *
+   * 
    * @throws JSONException
-   *
+   * 
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */
@@ -74,13 +75,17 @@ public class Find extends CommandHandler {
       throws JSONException {
     final Hashtable<String, Object> params = command.params();
 
+    if (((String) params.get("strategy")).equals("index paths")) {
+      return findElementsByIndexPaths((String) params.get("selector"),
+          (Boolean) params.get("multiple"));
+    }
+
     // only makes sense on a device
     final Strategy strategy;
     try {
-       strategy = Strategy.fromString((String) params
-          .get("strategy"));
+      strategy = Strategy.fromString((String) params.get("strategy"));
     } catch (final InvalidStrategyException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
+      return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
     }
     final String contextId = (String) params.get("context");
 
@@ -285,12 +290,12 @@ public class Find extends CommandHandler {
   /**
    * Get the element from the {@link AndroidElementsHash} and return the element
    * id using JSON.
-   *
+   * 
    * @param sel
    *          A UiSelector that targets the element to fetch.
    * @param contextId
    *          The Id of the element used for the context.
-   *
+   * 
    * @return JSONObject
    * @throws JSONException
    * @throws ElementNotFoundException
@@ -304,14 +309,41 @@ public class Find extends CommandHandler {
   }
 
   /**
+   * Get a single element by its index and its parent indexes. Used to resolve
+   * an xpath query
+   * 
+   * @param indexPath
+   * @return
+   * @throws ElementNotInHashException
+   * @throws ElementNotFoundException
+   * @throws JSONException
+   */
+  private JSONObject fetchElementByIndexPath(final String indexPath)
+      throws ElementNotInHashException, ElementNotFoundException, JSONException {
+    UiSelector sel = new UiSelector().index(0);
+    Integer curIndex;
+    List<String> paths = Arrays.asList(indexPath.split("/"));
+    // throw away the first element since it will be empty, and the second
+    // element, since it will refer to the root element, which we already have
+    paths = paths.subList(2, paths.size());
+    for (final String index : paths) {
+      curIndex = new Integer(index);
+      // get a new selector which selects the current selector's child at the
+      // correct index
+      sel = sel.childSelector(new UiSelector().index(curIndex));
+    }
+    return fetchElement(sel, "");
+  }
+
+  /**
    * Get an array of elements from the {@link AndroidElementsHash} and return
    * the element's ids using JSON.
-   *
+   * 
    * @param sel
    *          A UiSelector that targets the element to fetch.
    * @param contextId
    *          The Id of the element used for the context.
-   *
+   * 
    * @return JSONObject
    * @throws JSONException
    * @throws UiObjectNotFoundException
@@ -329,9 +361,43 @@ public class Find extends CommandHandler {
   }
 
   /**
+   * Get a find element result by looking through the paths of indexes used to
+   * retrieve elements from an XPath search
+   * 
+   * @param selector
+   * @return
+   */
+  private AndroidCommandResult findElementsByIndexPaths(final String selector,
+      final Boolean multiple) {
+    final ArrayList<String> indexPaths = new ArrayList<String>(
+        Arrays.asList(selector.split(",")));
+    final JSONArray resArray = new JSONArray();
+    JSONObject resEl = new JSONObject();
+    for (final String indexPath : indexPaths) {
+      try {
+        resEl = fetchElementByIndexPath(indexPath);
+        resArray.put(resEl);
+      } catch (final JSONException e) {
+        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+      } catch (final ElementNotFoundException e) {
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
+      } catch (final ElementNotInHashException e) {
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
+      }
+    }
+    if (multiple) {
+      return getSuccessResult(resArray);
+    } else {
+      return getSuccessResult(resEl);
+    }
+  }
+
+  /**
    * Create and return a UiSelector based on the strategy, text, and how many
    * you want returned.
-   *
+   * 
    * @param strategy
    *          The {@link Strategy} used to search for the element.
    * @param text
@@ -424,7 +490,7 @@ public class Find extends CommandHandler {
 
   /**
    * Create and return a UiSelector based on Xpath attributes.
-   *
+   * 
    * @param path
    *          The Xpath path.
    * @param attr
@@ -433,7 +499,7 @@ public class Find extends CommandHandler {
    *          Any constraint.
    * @param substr
    *          Any substr.
-   *
+   * 
    * @return UiSelector
    * @throws AndroidCommandException
    */

@@ -1,13 +1,15 @@
 "use strict";
 
-var setup = require("../../common/setup-base"),
-    desired = require('./desired');
+var setup = require("../../common/setup-base")
+  , xpath = require("xpath")
+  , XMLDom = require("xmldom").DOMParser
+  , desired = require('./desired');
 
 describe('testapp - source -', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  return it('should return the page source', function (done) {
+  it('should return the page source as json', function (done) {
     driver.source().then(function (source) {
       var obj = JSON.parse(source);
       obj.should.exist;
@@ -17,5 +19,14 @@ describe('testapp - source -', function () {
       obj.children[0].children[3].rect.origin.x.should.equal(129);
       obj.children[0].children[4].visible.should.be.ok;
     }).nodeify(done);
+  });
+
+  it('should return page source as xml', function (done) {
+    driver.execute("mobile: source", [{type: "xml"}])
+      .then(function (source) {
+        var dom = new XMLDom().parseFromString(source);
+        var nodes = xpath.select('//UIAButton', dom);
+        nodes.length.should.equal(6);
+      }).nodeify(done);
   });
 });

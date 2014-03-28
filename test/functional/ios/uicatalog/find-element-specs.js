@@ -119,7 +119,7 @@ describe('uicatalog - find element -', function () {
   });
 
 
-  describe('findElement(s)ByXpath', function () {
+  describe('findElement(s)ByXPath', function () {
     var setupXpath = function (driver) {
       return driver.elementByTagName('tableCell').click();
     };
@@ -201,6 +201,93 @@ describe('uicatalog - find element -', function () {
       driver
         .resolve(setupXpath(driver))
         .elementByXPath("cell//button[contains(@name, 'Gr')]").text()
+          .should.become("Gray")
+        .nodeify(done);
+    });
+  });
+
+  describe('findElement(s)ByRealXPath', function () {
+    var setupXpath = function (driver) {
+      return driver.elementByTagName('tableCell').click();
+    };
+
+    if (process.env.FAST_TESTS) {
+      afterEach(function (done) {
+        driver
+          .back()
+          .nodeify(done);
+      });
+    }
+
+    it('should return the last button', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementByRealXPath("//UIAButton[last()]").text()
+          .should.become("Add contact")
+        .nodeify(done);
+    });
+    it('should return a single element', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementByRealXPath("//UIAButton").text()
+          .should.become("Back")
+        .nodeify(done);
+    });
+    it('should return multiple elements', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementsByRealXPath("//UIAButton")
+          .should.eventually.have.length.above(5)
+        .nodeify(done);
+    });
+    it('should filter by name', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementByRealXPath("//UIAButton[@name='Rounded']").text()
+          .should.become("Rounded")
+        .nodeify(done);
+    });
+    it('should know how to restrict root-level elements', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementByRealXPath("/UIAButton")
+          .should.be.rejectedWith(/status: 7/)
+        .nodeify(done);
+    });
+    it('should search an extended path by child', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .then(function () {
+          return spinWait(function () {
+            return driver.elementByRealXPath("//UIANavigationBar/UIAStaticText")
+              .text().should.become('Buttons');
+          });
+        }).nodeify(done);
+    });
+    it('should search an extended path by descendant', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementsByRealXPath("//UIATableCell//UIAButton").then(function (els) {
+          return Q.all(_(els).map(function (el) { return el.text(); }));
+        }).then(function (texts) {
+          texts.should.not.include("Button");
+          texts.should.include("Gray");
+        }).nodeify(done);
+    });
+    it('should filter by indices', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .then(function () {
+          return spinWait(function () {
+            return driver.elementByRealXPath("//UIATableCell[2]//UIAStaticText[1]").getAttribute('name')
+                .should.become("ButtonsViewController.m:\r(UIButton *)grayButton");
+          });
+        }).nodeify(done);
+    });
+    it('should filter by partial text', function (done) {
+      driver
+        .resolve(setupXpath(driver))
+        .elementByRealXPath("//UIATableCell//UIAButton[contains(@name, 'Gr')]").text()
           .should.become("Gray")
         .nodeify(done);
     });

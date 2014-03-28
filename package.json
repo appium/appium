@@ -79,9 +79,12 @@
     "date-utils": "~1.2.14",
     "bytes": "~0.2.1",
     "appium-atoms": "~0.0.5",
-    "appium-instruments": "~0.1.18",
-    "appium-uiauto": "~0.0.13",
-    "mv": "~2.0.0"
+    "appium-instruments": "~0.1.19",
+    "appium-uiauto": "~0.0.15",
+    "mv": "~2.0.0",
+    "js2xmlparser2": "~0.2.0",
+    "xpath": "~0.0.6",
+    "xmldom": "~0.1.19"
   },
   "scripts": {
     "test": "grunt travis"

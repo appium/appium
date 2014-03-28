@@ -29,7 +29,7 @@ describe("apidemos - source -", function () {
       .execute("mobile: source", [{type: 'xml'}]).then(function (source) {
         source.should.exist;
         var dom = new XMLDom().parseFromString(source);
-        var nodes = xpath.select('//node[@content-desc="App"]', dom);
+        var nodes = xpath.select('//android.widget.TextView[@content-desc="App"]', dom);
         nodes.length.should.equal(1);
       }).nodeify(done);
   });

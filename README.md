@@ -1,6 +1,6 @@
 # Appium
 
-> Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps.
+> Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
 
 [![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
@@ -37,7 +37,7 @@ Your environment needs to be setup for the particular mobile platforms that you
 want to run tests on. See below for particular platform requirements.
 
 If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
-[node.js and npm](http://nodejs.org) 0.8 or greater (`brew install node`).
+[node.js and npm](http://nodejs.org) 0.8 or greater (`brew install node`: make sure you have not installed Node or Appium with `sudo`, otherwise you'll likely run into problems). We recommend the latest stable version.
 
 To verify that all of Appium's dependencies are met you can use `appium-doctor`.
 Run `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
@@ -81,7 +81,7 @@ You can run an Appium server using node.js or using the application, see below.
 
 ## Writing Tests for Appium
 
-The main guide for getting started writing and running tests is [the running tests](https://github.com/appium/appium/blob/master/docs/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices.
+The main guide for getting started writing and running tests is [the running tests](https://github.com/appium/appium/blob/master/docs/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](https://github.com/appium/appium/blob/master/docs/real-devices.md).
 
 Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
 

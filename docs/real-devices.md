@@ -1,6 +1,6 @@
-Appium on real devices
+Appium on real iOS devices
 ======================
-Appium has preliminary support for real device testing.
+Appium has support for real device testing.
 
 To get started on a real device, you will need the following:
 
@@ -16,12 +16,12 @@ A valid iOS Development Distribution Certificate and Provisioning Profile are ne
 
 You will also need to [sign your app](http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/YourFirstAppStoreSubmission/ProvisionYourDevicesforDevelopment/ProvisionYourDevicesforDevelopment.html#//apple_ref/doc/uid/TP40011375-CH4-SW1).
 
-You must install your iOS app using Xcode's Run button.
+Appium will attempt to install your app using Fruitstrap, but it is often easier to pre-install your app using Xcode to ensure there are no problems.
 
 Running your tests with Appium
 ---
 
-Once your device and app are configured, you can run tests on that device by passing the -U flag to the server:
+Once your device and app are configured, you can run tests on that device by passing the -U flag to the server, and passing the bundle ID (if the app is installed on the device) or the path to the .ipa file via the `--app` flag or the `app` desired capability:
 
 ```
 node . -U <UDID> --app <bundle_id>
@@ -36,3 +36,8 @@ Troubleshooting ideas
 0. Make sure that you can run your tests against simulator
 0. Double check that you can invoke your automation from instruments.
 0. Make sure instruments in closed already
+
+Appium on real Android devices
+==============================
+
+Hooray! There's nothing extra to know about testing real Android devices: it works exactly the same as testing on emulators. Make sure that your device can connect to ADB and has Developer Mode enabled.

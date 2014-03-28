@@ -53,21 +53,21 @@ run_ios_tests() {
         echo "Did not find /Applications/Xcode-$1.app, using default"
     fi
     echo 
-    DEVICE=$2 VERSION=$1 time $appium_mocha -g  "@skip-$2|@skip-ios-all" -i \
+    DEVICE=$2 VERSION=$1 time $appium_mocha -g $3 -i \
         test/functional/common \
         test/functional/ios
 }
 
 if $ios6_only || $ios_only || $all_tests; then
-    run_ios_tests "6.1" "ios6"
+    run_ios_tests "6.1" "ios6" "@skip-ios6|@skip-ios-all"
 fi
 
 if $ios7_only || $all_tests; then
-    run_ios_tests "7.0" "ios7"
+    run_ios_tests "7.0" "ios7" "@skip-ios7|@skip-ios-all"
 fi
 
 if $ios71_only || $all_tests; then
-    run_ios_tests "7.1" "ios71"
+    run_ios_tests "7.1" "ios71" "@skip-ios71|@skip-ios7|@skip-ios-all"
 fi
 
 if $did_switch_xcode; then

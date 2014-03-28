@@ -296,17 +296,9 @@ describe('uicatalog - find element -', function () {
   describe('FindElement(s)ByUIAutomation', function () {
     var byUIA = '-ios uiautomation';
 
-    // Running sequentially cause parallel runs crash appium
     var filterDisplayed = function (els) {
-      var sequence = _.map(els, function (el) {
-        return function (displayedEls) {
-          return el.isDisplayed().then(function (isdisplayed) {
-            if (isdisplayed) displayedEls.push(el);
-            return displayedEls;
-          });
-        };
-      });
-      return sequence.reduce(Q.when, new Q([]));
+      return Q.all(_.map(els, function (el) { return el.isDisplayed(); }))
+        .then(function (res) { return _.filter(els, function (el, i) { return res[i]; }); });
     };
 
     before(function (done) {

@@ -32,14 +32,14 @@ describe('IOS', function () {
           intercept.push(result);
           if (intercept.length >= iterations) {
             for (var x = 0; x < iterations; x++) {
-              intercept[x][0].should.equal(x);
+              intercept[x][0].should.equal('' + x);
             }
             done();
           }
         };
 
       for (var i = 0; i < iterations; i++) {
-        inst.proxy(i, check);
+        inst.proxy("" + i, check);
       }
     });
   });

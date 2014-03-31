@@ -14,6 +14,25 @@ Ruby without the gem
 @driver.execute_script 'mobile: reset'
 ```
 
+##### pullFile
+
+Fetch a file from the device's filesystem, returning it base64 encoded.
+
+Takes a single argument, `path`.  On Android and iOS, this is either the path to the file (relative to the root of the app's file system).  On iOS only, if path starts with `/AppName.app`, which will be replaced with the application's .app directory
+
+```
+# Android and iOS
+'mobile: pullFile', {path: '/Library/AddressBook/AddressBook.sqlitedb'} #=> /Library/AddressBook/AddressBook.sqlitedb
+
+#iOS only
+'mobile: pullFile, {path: '/UICatalog.app/logfile.log'} #=> /Applications/12323-452262-24241-23-124124/UICatalog.app/logfile.log
+```
+
+Ruby
+```ruby
+@driver.execute_script('mobile: pullFile', {path: '/Library/AddressBook/AddressBook.sqlitedb'})
+```
+
 #### Android mobile methods
 
 ##### KeyEvent

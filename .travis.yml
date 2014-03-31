@@ -17,5 +17,3 @@ before_script:
 - ./ci/before_script_extra.sh
 script:
 - ./ci/script.sh
-after_success:
-- ./ci/upload_build_to_sauce.sh

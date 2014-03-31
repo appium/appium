@@ -1,6 +1,9 @@
+/*globals should:true */
 "use strict";
 
 var setup = require("../../common/setup-base"),
+    _ = require('underscore'),
+    initSession = require('../../../helpers/session').initSession,
     desired = require('./desired');
 
 describe('testapp - device -', function () {
@@ -21,6 +24,17 @@ describe('testapp - device -', function () {
         }).should.be.rejectedWith(/status: 13/)
         .then(function () { ((new Date().getTime() / 1000) - before).should.be.below(10); })
         .sleep(5000) // cooldown
+        .nodeify(done);
+    });
+  });
+
+  describe('deviceName', function () {
+    var newDesired = _.extend(_.clone(desired), {deviceName: "iFailure 3.5-inch"});
+    var session = initSession(newDesired, {'no-retry': true});
+
+    it('should fail gracefully with an invalid deviceName', function (done) {
+      session.setUp()
+        .should.be.rejectedWith(/environment you requested was unavailable/)
         .nodeify(done);
     });
   });

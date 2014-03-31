@@ -3,14 +3,19 @@ osx_image: mavericks
 notifications:
   email: false
 env:
+  global:
+  - secure: KNDEn/ryhd0yRGzpJSfHRKBzBIC73RKaHWFDkqD4E+iUXepwBfF2bBfningf8f++9qLNscumYZOHjQ0PWf/YALQCr5B2vHsGN+eHWc331d8f5sU/b6oyCAxsayI32lr/mNVCuHd44+ManMcKUH6831Q1qwa15o5w4dDPtJKuv6Y=
+  - secure: gZ9B0mE58AYdjVxvj5z27c+0pNJqrRzJiXdSe8T0UswR3gFxhOYoW1ikFTcij1NcQhdzDwGIDDJl30D6Z69Y73W3wagowkELasPeNcKobWqerof5lG8A6Qud90jXedABdXw9FEGnY47mG3/ZWwyx1KyOVkIlxoabkCqUwd7xaio=
   matrix:
-    - CI_CONFIG=unit
-    - CI_CONFIG=build
+  - CI_CONFIG=unit
+  - CI_CONFIG=build
 before_script:
-  - ./ci/install-node.sh
-  - ./ci/show-env.sh
-  - npm install -g jshint grunt-cli
-  - npm install
-  - ./ci/before_script_extra.sh
-script:  
-  - ./ci/script.sh
+- ./ci/install-node.sh
+- ./ci/show-env.sh
+- npm install -g jshint grunt-cli
+- npm install
+- ./ci/before_script_extra.sh
+script:
+- ./ci/script.sh
+after_success:
+- ./ci/upload_build_to_sauce.sh

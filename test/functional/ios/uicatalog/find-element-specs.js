@@ -66,6 +66,37 @@ describe('uicatalog - find element -', function () {
       }).nodeify(done);
   });
 
+  it('should not allow found elements to be mixed up', function (done) {
+    var el1, el2, el1Name, el2Name;
+    driver
+      .elementByTagName('tableCell')
+      .then(function (el) {
+        el1 = el;
+        return el1.getAttribute('name').then(function (name) {
+          el1Name = name;
+        });
+      })
+      .elementByTagName('tableCell')
+        .click()
+      .delay(1000)
+      .elementByTagName('tableCell')
+      .then(function (el) {
+        el2 = el;
+        el2.value.should.not.equal(el1.value);
+        return el2.getAttribute('name').then(function (name) {
+          el2Name = name;
+        });
+      }).then(function () {
+        el1.value.should.not.equal(el2.value);
+        el1Name.should.not.equal(el2Name);
+        // el1 is gone, so it doesn't have a name anymore
+        return el1.getAttribute('name')
+          .should.eventually.equal("");
+      })
+      .back()
+      .nodeify(done);
+  });
+
   describe('find elements using accessibility id locator strategy', function () {
     it('should find an element by name', function (done) {
       driver.element('accessibility id', 'UICatalog').then(function (el) {

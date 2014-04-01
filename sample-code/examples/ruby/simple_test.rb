@@ -40,11 +40,11 @@ def absolute_app_path
     file
 end
 
-capabilities = {
+desired_caps = {
   'browserName' => '',
   'platform' => 'Mac',
   'device' => 'iPhone Simulator',
-  'version' => '6.0',
+  'version' => '7.1',
   'app' => absolute_app_path
 }
 
@@ -52,7 +52,7 @@ server_url = "http://127.0.0.1:4723/wd/hub"
 
 describe "Computation" do
   before :all do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
+    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps, :url => server_url)
     @driver.manage.timeouts.implicit_wait = 10 # seconds
    end
 
@@ -63,37 +63,39 @@ describe "Computation" do
   it "should add two numbers" do
     values = [rand(10), rand(10)]
     expected_sum = values.reduce(&:+)
-    elements = @driver.find_elements(:tag_name, 'textField')
+    elements = @driver.find_elements(:class_name, 'UIATextField')
 
     elements.each_with_index do |element, index|
       element.send_keys values[index]
     end
 
-    button = @driver.find_element(:tag_name, 'button')
+    button = @driver.find_element(:class_name, 'UIAButton')
     button.click
 
-    actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
+    actual_sum = @driver.find_elements(:class_name, 'UIAStaticText')[0].text
     actual_sum.should eq(expected_sum.to_s)
   end
 
   it "should handle alerts" do
-    els = @driver.find_elements(:tag_name, 'button')
+    els = @driver.find_elements(:class_name, 'UIAButton')
     els[1].click
     a = @driver.switch_to.alert
-    a.text.should eq("Cool title")
+    a.text.should include("Cool title") # Returns title & text
     a.accept
   end
 
   it "should find alerts" do
-    els = @driver.find_elements(:tag_name, 'button')
+    els = @driver.find_elements(:class_name, 'UIAButton')
     els[1].click
-    alert = @driver.find_element(:tag_name, 'alert')
-    buttons = alert.find_elements(:tag_name, 'button')
-    buttons[0].text.should eq("Cancel")
+    alert = @driver.find_element(:class_name, 'UIAAlert')
+    buttons = alert.find_elements(:class_name, 'UIATableCell')
+    buttons[0].attribute('label').should eq "Cancel"
+    #.should.equal("Cancel")
+   
     buttons[0].click
     wait = Selenium::WebDriver::Wait.new(:timeout => 30) # seconds
     wait.until {
-      alerts = @driver.find_elements(:tag_name, 'alert')
+      alerts = @driver.find_elements(:class_name, 'UIAAlert')
       alerts.should be_empty
     }
   end
@@ -101,7 +103,7 @@ describe "Computation" do
   it "should get window size" do
     size = @driver.manage.window.size
     size.width.should eq(320)
-    size.height.should eq(480)
+    size.height.should eq(568)
   end
 
 end

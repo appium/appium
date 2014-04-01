@@ -15,12 +15,12 @@ include Selenium::WebDriver::DriverExtensions::HasTouchScreen
 
 APP_PATH = '../../apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'
 
-def capabilities
+def desired_caps
   {
       'browserName' => '',
       'platform' => 'Mac',
       'device' => 'iPhone Simulator',
-      'version' => '6.0',
+      'version' => '7.1',
       'app' => absolute_app_path
   }
 end
@@ -39,7 +39,7 @@ end
 
 describe "UI Catalog" do
   before(:all) do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
+    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps, :url => server_url)
     
    end
 
@@ -49,26 +49,25 @@ describe "UI Catalog" do
 
   describe "An Element" do
 
-    subject { @driver.find_elements(:tag_name, "tableView")[0]}
+    subject { @driver.find_elements(:class_name, "UIATableView")[0]}
     
     it {should_not be nil}
 
     context "when used as a selection context" do
 
       it "Can be a selection context" do
-        rows = subject.find_elements(:tag_name, "tableCell")
+        rows = subject.find_elements(:class_name, "UIATableCell")
         rows.size.should eq 12
       end
     
       it "does not return elements it does not contain" do
-        nav_bar = subject.find_elements(:tag_name, "navigationBar")
+        nav_bar = subject.find_elements(:class_name, "UIANavigationBar")
         nav_bar.length.should be 0
       end
     end
 
-    # Not currently working, no text being returned
     it "returns its text" do
-      rows = subject.find_elements(:tag_name, "tableCell")
+      rows = subject.find_elements(:class_name, "UIATableCell")
       rows[0].attribute(:name).should eq "Buttons, Various uses of UIButton"
     end
   
@@ -76,7 +75,7 @@ describe "UI Catalog" do
 
   describe "position" do
     it "is returned by the driver" do
-      third_row = @driver.find_elements(:tag_name, "tableCell")[2]
+      third_row = @driver.find_elements(:class_name, "UIATableCell")[2]
       third_row.location.x.should be 0
       third_row.location.y.should be 152
     end
@@ -96,8 +95,8 @@ describe "UI Catalog" do
   describe "attributes" do
 
     before :all do
-      @driver.find_elements(:tag_name, "tableCell")[9].click
-      @switch = @driver.find_element(:tag_name, "switch")
+      @driver.find_elements(:class_name, "UIATableCell")[9].click
+      @switch = @driver.find_element(:class_name, "UIASwitch")
     end
 
     # Go back to the menu when you're done
@@ -130,8 +129,8 @@ describe "UI Catalog" do
   describe "text fields" do
 
     before :all do
-      @driver.find_elements(:tag_name, "tableCell")[2].click
-      @text_field = @driver.find_element(:tag_name, "textField")
+      @driver.find_elements(:class_name, "UIATableCell")[2].click
+      @text_field = @driver.find_element(:class_name, "UIATextField")
     end
 
     after :all do
@@ -146,7 +145,12 @@ describe "UI Catalog" do
       @text_field.attribute("value").should eq "discombobulate"
     end
 
-    it "can accept key presses as an ActionChain"
+    it "can accept key presses as an ActionChain" do
+      @driver.action.send_keys(Selenium::WebDriver::Keys[:backspace])
+                    .send_keys('te')
+                    .perform
+      @text_field.attribute("value").should eq "discombobulatte"
+    end
 
     it "can be cleared" do
       @text_field.clear
@@ -156,8 +160,8 @@ describe "UI Catalog" do
 
   describe "alerts" do
     before :all do
-      @driver.find_elements(:tag_name, "tableCell")[10].click
-      @elements = @driver.find_elements(:tag_name, "staticText")
+      @driver.find_elements(:class_name, "UIATableCell")[10].click
+      @elements = @driver.find_elements(:class_name, "UIATableCell")
     end
 
     after :all do
@@ -171,26 +175,20 @@ describe "UI Catalog" do
     it "can be dismissed"
 
     it "can be modal & have buttons" do
-      modal = @driver.find_elements(:tag_name, "staticText")
+      modal = @driver.find_elements(:class_name, "UIAStaticText")
     end
   end
 
   describe "scrolling" do
 
-    it "can be done with co-ordinates" do
-      row = @driver.find_elements(:tag_name, "tableCell")[2]
-      initial_location = row.location
-      action = @driver.touch.flick(0, 20)
-
-      action.perform
-      initial_location.should_not eq row.location
-    end
+    # Does not work on iOS 7 yet
+    it "can be done with co-ordinates"
   end
 
   describe "sliders" do
     before :all do
-      @driver.find_elements(:tag_name, "tableCell")[1].click
-      @slider = @driver.find_element(:tag_name, "slider")
+      @driver.find_elements(:class_name, "UIATableCell")[1].click
+      @slider = @driver.find_element(:class_name, "UIASlider")
     end
 
     after :all do
@@ -222,8 +220,8 @@ describe "UI Catalog" do
 
   describe "sizes" do
     it "can be obtained from elements" do
-      table_dimensions = @driver.find_element(:tag_name, "tableView").size
-      row_dimensions = @driver.find_elements(:tag_name, "tableCell")[0].size
+      table_dimensions = @driver.find_element(:class_name, "UIATableView").size
+      row_dimensions = @driver.find_elements(:class_name, "UIATableCell")[0].size
 
       table_dimensions["width"].should eq row_dimensions["width"]
       table_dimensions["height"].should_not eq row_dimensions["height"]
@@ -233,7 +231,7 @@ describe "UI Catalog" do
   describe "page source" do
     before :all do
       @main_source = @driver.page_source
-      @driver.find_elements(:tag_name, "tableCell")[2].click
+      @driver.find_elements(:class_name, "UIATableCell")[2].click
       @text_source = @driver.page_source
     end
 

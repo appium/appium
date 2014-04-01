@@ -6,7 +6,7 @@
 require 'test/unit'
 require 'selenium-webdriver'
 
-def capabilities
+def desired_caps
 	{
 		'browserName' => 'android',
 		'platform' => 'linux',
@@ -18,7 +18,7 @@ end
 
 def init(data={})
 	server_url = 'http://127.0.0.1:4723/wd/hub'
-	driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities.merge(data), :url => server_url)
+	driver = Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps.merge(data), :url => server_url)
 	driver.manage.timeouts.implicit_wait = 20 # seconds
 	driver
 end

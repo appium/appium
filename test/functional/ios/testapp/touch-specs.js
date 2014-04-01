@@ -112,5 +112,30 @@ describe('touch actions', function () {
         .sleep(15000)
         .nodeify(done);
     });
+
+    it('should do more involved pinching in and out', function (done) {
+      driver
+        .elementsByTagName('button').then(function (buttons) {
+          var el = buttons[3];
+          var action = new TouchAction(el);
+          return action.tap().perform();
+        })
+        .sleep(500).then(function () { okIfAlert(driver); })
+        .sleep(500)
+        .elementByXPath('//window[1]/UIAMapView[1]')
+        .then(function (el) {
+          var a1 = new TouchAction(el);
+          a1.press().moveTo({ x: -100, y: 0 }).wait(3000).moveTo({ x: 100, y: 0 }).release();
+
+          var a2 = new TouchAction(el);
+          a2.press().moveTo({ x: 100, y: 0 }).wait({ ms: 3000 }).moveTo({ x: -100, y: 0 }).release();
+
+          var ma = new MultiAction(el);
+          ma.add(a1, a2);
+          ma.perform();
+        })
+        .sleep(15000)
+        .nodeify(done);
+    });
   });
 });

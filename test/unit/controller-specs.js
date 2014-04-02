@@ -33,24 +33,4 @@ describe('Controller', function () {
       logger.warn.args[0][0].should.equal(expected_error);
     });
   });
-  describe('##getPageSource', function () {
-    beforeEach(function () {
-      sinon.spy(logger, 'warn');
-    });
-    afterEach(function () {
-      logger.warn.restore();
-    });
-    it('should log a warning about imminent return type change', function () {
-      var req = {
-        device: {
-          getPageSource: function () {}
-        }
-      };
-      var res = {};
-      var message = "This method will change to return XML in a future " +
-                    "version of Appium.";
-      controller.getPageSource(req, res);
-      logger.warn.args[0][0].should.equal(message);
-    });
-  });
 });

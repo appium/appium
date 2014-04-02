@@ -74,13 +74,6 @@ describe('capabilities', function () {
           });
         });
       });
-
-      describe('platformVersion', function () {
-        it('is accessible from #version', function () {
-          var capabilities = new Capabilities({platformVersion: 32});
-          capabilities.version.should.equal(32);
-        });
-      });
     });
   });
 });

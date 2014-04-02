@@ -1,36 +1,22 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.AndroidElementClassMap;
-import io.appium.android.bootstrap.AndroidElementsHash;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Dynamic;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.WDStatus;
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
-import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
-import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
+import android.os.Build;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import io.appium.android.bootstrap.*;
+import io.appium.android.bootstrap.exceptions.*;
 import io.appium.android.bootstrap.selector.Strategy;
+import io.appium.android.bootstrap.utils.UiSelectorParser;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.os.Build;
-
-import com.android.uiautomator.core.UiObject;
-import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.android.uiautomator.core.UiScrollable;
-import com.android.uiautomator.core.UiSelector;
 
 /**
  * This handler is used to find elements in the Android UI.
@@ -44,6 +30,7 @@ public class Find extends CommandHandler {
   AndroidElementsHash      elements   = AndroidElementsHash.getInstance();
   Dynamic                  dynamic    = new Dynamic();
   public static JSONObject apkStrings = null;
+  UiSelectorParser uiSelectorParser = new UiSelectorParser();
 
   private Object[] cascadeChildSels(final ArrayList<UiSelector> tail,
       final ArrayList<String> tailOuts) {
@@ -277,6 +264,8 @@ public class Find extends CommandHandler {
         return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       } catch (final AndroidCommandException e) {
         return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+      } catch (final UiSelectorSyntaxException e) {
+        return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
       } catch (final UiObjectNotFoundException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
@@ -412,7 +401,7 @@ public class Find extends CommandHandler {
   private List<UiSelector> getSelector(final Strategy strategy,
       final String text, final boolean many) throws InvalidStrategyException,
       AndroidCommandException, UnallowedTagNameException,
-      ElementNotFoundException {
+      ElementNotFoundException, UiSelectorSyntaxException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
 
@@ -476,6 +465,17 @@ public class Find extends CommandHandler {
         selectors.add(sel);
         break;
       case XPATH:
+        break;
+      case ANDROID_UIAUTOMATOR:
+        try {
+          sel = uiSelectorParser.parse(text);
+        } catch (UiSelectorSyntaxException e) {
+          throw new UiSelectorSyntaxException("Could not parse UiSelector argument: " + e.getMessage());
+        }
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        selectors.add(sel);
         break;
       case LINK_TEXT:
       case PARTIAL_LINK_TEXT:

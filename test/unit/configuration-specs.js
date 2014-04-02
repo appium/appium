@@ -54,10 +54,11 @@ describe('Appium', function () {
         , [{}, {app: '/path/to/my.exe'}]
         , [{}, {browserName: 'Safari'}]
         , [{ipa: '/path/to/my.exe'}, {}]
+        , [{}, {platformName: 'notarealdevice'}]
         ];
         _.each(unhappyTests, function (test) {
-          var spec = 'should fail with args ' + JSON.stringify(test[0]) + ' and ' +
-                     'caps ' + JSON.stringify(test[1]);
+          var spec = 'should fail with args ' + JSON.stringify(test[0]) +
+                     ' and caps ' + JSON.stringify(test[1]);
           it(spec, function () {
             var err;
             try {
@@ -86,7 +87,7 @@ describe('Appium', function () {
       });
 
       describe('browserName', function () {
-        
+
         var browserCapabilities = [
             [{}, {platformName: 'ios', browserName: 'Safari'}, 'ios']
           , [{}, {platformName: 'Android', browserName: 'Chrome'}, 'chrome']

@@ -5,14 +5,14 @@ var setup = require("../common/setup-base")
   , getAppPath = require('../../helpers/app').getAppPath
   , fs = require('fs')
   , path = require('path')
+  , iOSSettings = require('../../../lib/devices/ios/settings.js')
   , exec = require('child_process').exec;
 
 describe('pullFile', function () {
   var driver;
   var desired = {
-      app: getAppPath('testapp')
-    , platformName: 'iPhone Simulator'
-    };
+    app: getAppPath('testapp')
+  };
   setup(this, desired).then(function (d) { driver = d; });
 
   it('should be able to fetch the Address book', function (done) {
@@ -24,15 +24,22 @@ describe('pullFile', function () {
       })
     .nodeify(done);
   });
+  it('should not be able to fetch something that does not exist', function (done) {
+    var args = {path: 'Library/AddressBook/nothere.txt'};
+    driver
+      .execute('mobile: pullFile', [args])
+      .should.eventually.be.rejectedWith(/13/)
+    .nodeify(done);
+  });
   describe('for a .app', function () {
     var fileContent = "IAmTheVeryModelOfAModernMajorTestingTool";
     var fileName = "someFile.tmp";
     var fullPath = "";
     before(function (done) {
-      var u = process.env.USER;
-      var pv = env.CAPS.version || '7.1';
-      var basePath = path.resolve('/Users', u, 'Library/Application\\ Support',
-                                  'iPhone\\ Simulator', pv, 'Applications');
+      var pv = env.CAPS.platformVersion || '7.1';
+      var simRoots = iOSSettings.getSimRootsWithVersion(pv);
+      var basePath = path.resolve(simRoots[0], 'Applications')
+                      .replace(/\s/g, '\\ ');
 
       var findCmd = 'find ' + basePath + ' -name "testapp.app"';
       exec(findCmd, function (err, stdout) {

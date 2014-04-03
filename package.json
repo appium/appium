@@ -84,7 +84,8 @@
     "mv": "~2.0.0",
     "js2xmlparser2": "~0.2.0",
     "xpath": "~0.0.6",
-    "xmldom": "~0.1.19"
+    "xmldom": "~0.1.19",
+    "sandboxed-module": "~0.3.0"
   },
   "scripts": {
     "test": "grunt travis"

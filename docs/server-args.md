@@ -36,7 +36,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`--app-wait-package`|false|(Android-only) Package name for the Android activity you want to wait for (e.g., com.example.android.myApp)|`--app-wait-package com.example.android.myApp`|
 |`--app-wait-activity`|false|(Android-only) Activity name for the Android activity you want to wait for (e.g., SplashActivity)|`--app-wait-activity SplashActivity`|
 |`--android-coverage`|false|(Android-only) Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w |`--android-coverage com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
-|`--avd`|null|name of the avd to launch|`--avd @default`|
+|`--avd`|null|(Android-only) Name of the avd to launch|`--avd @default`|
+|`--avd-args`|null|(Android-only) Additional emulator arguments to launch the avd|`--avd-args -no-snapshot-load`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--device-name`|null|(IOS-Simulator-only) name of the iOS device to use|`--device-name iPhone Retina (4-inch)`|
@@ -55,10 +56,11 @@ All flags are optional, but some are required in conjunction with certain others
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
-|`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
+|`--keystore-path`|C:\Users\matthew.dunn\.android\debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||
 |`--show-config`|false|Show info about the appium server configuration and exit||
 |`--command-timeout`|60|The default command timeout for the server to use for all sessions. Will still be overridden by newCommandTimeout cap||
+|`--webkit-port`|27753|The port that ios_webkit_debug proxy is running on  default value is 27753||
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||

@@ -8,7 +8,7 @@ describe("safari - screenshot -", function () {
 
   describe('screenshots (' + env.DEVICE + ')', function () {
     var driver;
-    setup(this, {app: 'safari'}).then(function (d) { driver = d; });
+    setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });
 
     it('should get a local screenshot', function (done) {
       var localScreenshotFile = '/tmp/test_screenshot_appium.png';

@@ -9,7 +9,6 @@ chai.should();
 
 var desired = {
   app: 'settings'
-, device: 'iPhone Simulator'
 };
 
 describe("prefs @skip-ios7", function () {
@@ -130,8 +129,7 @@ describe('safari prefs @skip-ios7', function () {
 describe('safari ios7 prefs @skip-ios6', function () {
 
   var desired = {
-    app: 'safari'
-  , device: 'iPhone Simulator'
+    browserName: 'safari'
   };
 
   var checkSafariSetting = function (setting, expected, cb) {

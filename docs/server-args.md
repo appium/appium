@@ -40,7 +40,11 @@ All flags are optional, but some are required in conjunction with certain others
 |`--avd-args`|null|(Android-only) Additional emulator arguments to launch the avd|`--avd-args -no-snapshot-load`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--safari`|false|(IOS-Only) Use the safari app||
-|`--device-name`|null|(IOS-Simulator-only) name of the iOS device to use|`--device-name iPhone Retina (4-inch)`|
+|`--device-name`|null|Name of the mobile device to use|`--device-name iPhone Retina (4-inch), Android Emulator`|
+|`--platform-name`|null|Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|
+|`--platform-version`|null|Version of the mobile platform|`--platform-version 7.1`|
+|`--automation-name`|null|Name of the automation tool: Appium or Selendroid|`--automation-name Appium`|
+|`--browser-name`|null|Name of the mobile browser: Safari or Chrome|`--browser-name Safari`|
 |`--default-device`, `-dd`|false|(IOS-Simulator-only) use the default simulator that instruments launches on its own||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
@@ -56,7 +60,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
-|`--keystore-path`|/Users/saucelabs/.android/debug.keystore|(Android-only) Path to keystore||
+|`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||

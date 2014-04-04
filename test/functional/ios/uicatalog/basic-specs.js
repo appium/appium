@@ -3,7 +3,8 @@
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require('./desired')
-  , path = require('path');
+  , path = require('path')
+  , _ = require('underscore');
 
 describe('uicatalog - basic -', function () {
 
@@ -56,6 +57,45 @@ describe('uicatalog - basic -', function () {
   describe('load zipped app', function () {
     var driver;
     var appZip = path.resolve(__dirname, "../../../../assets/UICatalog6.0.app.zip");
+    setup(this, {app: appZip})
+      .then(function (d) { driver = d; });
+
+    it('should load a zipped app via path', function (done) {
+      driver.elementByTagName('tableView')
+        .should.eventually.exist
+      .nodeify(done);
+    });
+  });
+
+  describe('load app with relative path', function () {
+    var driver;
+    var appPath = path.relative(process.cwd(), desired.app);
+    setup(this, _.defaults({'app': appPath}, desired))
+      .then(function (d) { driver = d; });
+
+    it('should load with relative path', function (done) {
+      driver.elementByTagName('tableView')
+        .should.eventually.exist
+      .nodeify(done);
+    });
+  });
+
+  describe('load app with absolute path', function () {
+    var driver;
+    var appPath = path.resolve(process.cwd(), desired.app);
+    setup(this, _.defaults({'app': appPath}, desired))
+      .then(function (d) { driver = d; });
+
+    it('should load with relative path', function (done) {
+      driver.elementByTagName('tableView')
+        .should.eventually.exist
+      .nodeify(done);
+    });
+  });
+
+  describe('load zipped app with relative path', function () {
+    var driver;
+    var appZip = "assets/UICatalog6.0.app.zip";
     setup(this, {app: appZip})
       .then(function (d) { driver = d; });
 

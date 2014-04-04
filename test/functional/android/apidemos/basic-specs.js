@@ -1,6 +1,7 @@
 "use strict";
 
-var setup = require("../../common/setup-base")
+var env = require('../../../helpers/env')
+  , setup = require("../../common/setup-base")
   , desired = require("./desired")
   , try3Times = require('../../../helpers/repeat').try3Times
   , initSession = require('../../../helpers/session').initSession
@@ -9,7 +10,8 @@ var setup = require("../../common/setup-base")
   , chai = require('chai')
   , should = chai.should()
   , spawn = require('child_process').spawn
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , androidReset = require('../../../helpers/reset').androidReset;
 
 describe("apidemo - basic -", function () {
 
@@ -235,12 +237,33 @@ describe("apidemo - basic -", function () {
 
   describe('appium android', function () {
     var session;
-    after(function () { session.tearDown(); });
+
+    if (env.FAST_TESTS) {
+      beforeEach(function (done) {
+        androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
+      });
+    }
+
+    afterEach(function () { session.tearDown(); });
+
+    it('should load an app with using absolute path', function (done) {
+      var appPath = path.resolve(desired.app);
+      session = initSession(_.defaults({'app': appPath}, desired));
+      session.setUp().nodeify(done);
+    });
+
+    it('should load an app with using relative path', function (done) {
+      var appPath = path.relative(process.cwd(), desired.app);
+      session = initSession(_.defaults({'app': appPath}, desired));
+      session.setUp().nodeify(done);
+    });
+
     it('should load a zipped app via url', function (done) {
       var appUrl = 'http://appium.s3.amazonaws.com/ApiDemos-debug.apk';
       session = initSession(_.defaults({'app': appUrl}, desired));
       session.setUp().nodeify(done);
     });
+
   });
 
 });

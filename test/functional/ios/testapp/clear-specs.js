@@ -26,6 +26,21 @@ describe('testapp - clear -', function () {
             .should.be.rejected;
         }
       })
+      .execute("mobile: hideKeyboard")
+      .elementByTagName('slider').click()
+      .nodeify(done);
+  });
+
+  it('should hide keyboard using keyName', function (done) {
+    driver
+      .elementByTagName('textField').sendKeys("1")
+      .then(function () {
+        if (!env.IOS7) {
+          return driver
+            .elementByTagName('slider').click()
+            .should.be.rejected;
+        }
+      })
       .execute("mobile: hideKeyboard", [{keyName: "Done"}])
       .elementByTagName('slider').click()
       .nodeify(done);

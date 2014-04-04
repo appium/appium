@@ -22,10 +22,11 @@ describe('Appium', function () {
         var happyTests = [
           [{}, {app: 'chromium', device: 'android'}, 'chrome']
         , [{}, {app: '/path/to/my.app', device: 'Android'}, 'android']
+        , [{}, {browserName: "safari"}, 'safari']
         , [{app: '/path/to/my.app'}, {device: 'Android'}, 'android']
         , [{}, {device: 'iPhone Simulator'}, 'ios']
-        , [{}, {device: 'iPhone Simulator', browserName: 'Safari'}, 'ios']
-        , [{}, {device: 'iPhone Simulator', browserName: 'safari'}, 'ios']
+        , [{}, {device: 'iPhone Simulator', browserName: 'Safari'}, 'safari']
+        , [{}, {device: 'iPhone Simulator', browserName: 'safari'}, 'safari']
         , [{}, {device: 'iPhone'}, 'ios']
         , [{}, {device: 'iphone'}, 'ios']
         , [{}, {device: 'ipad'}, 'ios']
@@ -52,7 +53,6 @@ describe('Appium', function () {
           [{}, {}]
         , [{}, {device: 'rando'}]
         , [{}, {app: '/path/to/my.exe'}]
-        , [{}, {browserName: 'Safari'}]
         , [{ipa: '/path/to/my.exe'}, {}]
         , [{}, {platformName: 'notarealdevice'}]
         ];
@@ -89,7 +89,7 @@ describe('Appium', function () {
       describe('browserName', function () {
 
         var browserCapabilities = [
-            [{}, {platformName: 'ios', browserName: 'Safari'}, 'ios']
+            [{}, {platformName: 'ios', browserName: 'Safari'}, 'safari']
           , [{}, {platformName: 'Android', browserName: 'Chrome'}, 'chrome']
           , [{}, {platformName: 'Android', browserName: 'Chromium'}, 'chrome']
           , [{}, {platformName: 'Android', browserName: 'browser'}, 'chrome']

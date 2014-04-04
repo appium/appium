@@ -9,7 +9,7 @@ describe("safari - windows-frame -", function () {
 
   describe('windows and frames (' + env.DEVICE + ')', function () {
     var driver;
-    setup(this, {app: 'safari'}).then(function (d) { driver = d; });
+    setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });
 
     it('getting current window should work initially', function (done) {
       driver

@@ -38,26 +38,26 @@ describe('pullFile', function () {
     before(function (done) {
       var pv = env.CAPS.platformVersion || '7.1';
       var simRoots = iOSSettings.getSimRootsWithVersion(pv);
+      if (simRoots.length < 1) {
+        return done(new Error("Didn't find any simulator directories"));
+      }
       var basePath = path.resolve(simRoots[0], 'Applications')
                       .replace(/\s/g, '\\ ');
 
       var findCmd = 'find ' + basePath + ' -name "testapp.app"';
       exec(findCmd, function (err, stdout) {
-        if (err) throw (err);
+        if (err) return done(err);
+        if (!stdout) return done(new Error("Could not find testapp.app"));
         var appRoot = stdout.replace(/\n$/, '');
         fullPath = path.resolve(appRoot, fileName);
-        fs.writeFile(fullPath, fileContent, function (err) {
-          if (err) throw (err);
-        });
-        done();
+        fs.writeFile(fullPath, fileContent, done);
       });
     });
     after(function (done) {
       if (fullPath) {
-        fs.unlink(fullPath, function (err) {
-          if (err) throw err;
-          done();
-        });
+        fs.unlink(fullPath, done);
+      } else {
+        done();
       }
     });
     it('should be able to fetch a file from the app directory', function (done) {

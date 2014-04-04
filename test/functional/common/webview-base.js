@@ -12,8 +12,14 @@ var env = require('../../helpers/env')
 // possible apps: safari, chrome, iwebview, WebViewApp, custom app
 module.exports = function (app) {
   app = app || 'WebViewApp';
+  var browserName = "";
   var isChrome = app === "chrome" || app === "chromium";
   var testEndpoint = isChrome ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
+
+  if (isChrome || app === "safari") {
+    browserName = app;
+    app = "";
+  }
 
   function _skip(reason, done) {
     console.warn("skipping: " + reason);
@@ -24,9 +30,10 @@ module.exports = function (app) {
     return setupBase(context, {
       nonSyntheticWebClick: true
     , app: app
+    , browserName: browserName
     , safariIgnoreFraudWarning: true
     , enablePerformanceLogging: true
-    });
+    }, {'no-reset': true});
   };
 
   var loadWebView = function (driver, urlToLoad, titleToSpin) {

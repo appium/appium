@@ -35,8 +35,17 @@ env.EMU = !env.REAL_DEVICE;
 // device selection
 env.DEVICE = (process.env.DEVICE || 'ios').toLowerCase();
 
-function iphoneOrIpadSimulator(device) {
-  return device.match(/ipad/i) ? 'iPad Simulator' : 'iPhone Simulator';
+function iphoneOrIpadSimulator(device, version) {
+  var isIpad = device.match(/ipad/i);
+  switch (version) {
+    case '6.1':
+    case '7.0':
+      return isIpad ? 'iPad Simulator' : 'iPhone Simulator';
+    case '7.1':
+      return isIpad ? 'iPad Retina' : 'iPhone Retina 4-inch';
+    default:
+      throw new Error("invalid version");
+  }
 }
 
 switch (env.DEVICE) {
@@ -46,41 +55,49 @@ switch (env.DEVICE) {
   case 'ios6_ipad':
     env.CAPS = {
       browserName: ''
-    , device: iphoneOrIpadSimulator(env.DEVICE),
-      app:  path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP +
-        "/build/Release-iphonesimulator/" + process.env.APP + ".app")
+    , deviceName: iphoneOrIpadSimulator(env.DEVICE, "6.1"),
+      app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
     };
     break;
   case 'ios7':
   case 'ios7_iphone':
   case 'ios7_ipad':
+    env.CAPS = {
+      browserName: ''
+    , deviceName: iphoneOrIpadSimulator(env.DEVICE, "7.0")
+    , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
+    };
+    break;
   case 'ios71':
   case 'ios71_iphone':
   case 'ios71_ipad':
     env.CAPS = {
       browserName: ''
-    , device: iphoneOrIpadSimulator(env.DEVICE)
-    , app:  path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP +
-        "/build/Release-iphonesimulator/" + process.env.APP + ".app")
+    , deviceName: iphoneOrIpadSimulator(env.DEVICE, "7.1")
+    , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
     };
     break;
   case 'android':
     env.CAPS = {
-      device: 'Android'
+      browserName: ''
+    , platformName: 'Android'
+    , deviceName: 'Android Emulator'
     };
     break;
   case 'selendroid':
     env.CAPS = {
-      browserName: 'Selendroid'
-    , device: 'Selendroid',
-      app: path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/bin/" + process.env.APP + "-debug.apk")
+      browserName: ''
+    , platformName: 'Android'
+    , automationName: 'Selendroid'
+    , deviceName: 'Android Emulator'
+    , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/bin/" + process.env.APP + "-debug.apk") : ''
     };
     break;
   case 'firefox':
     env.CAPS = {
       browserName: 'Firefox'
     , device: 'Firefox',
-      app: process.env.APP
+      app: process.env.APP ? process.env.APP : ''
     };
     break;
   default:
@@ -88,6 +105,7 @@ switch (env.DEVICE) {
 }
 
 env.IOS = env.DEVICE.match(/ios/i);
+env.IOS6 = env.DEVICE.match(/ios6/i);
 env.IOS7 = env.DEVICE.match(/ios7/i);
 env.IOS71 = env.DEVICE.match(/ios71/i);
 env.ANDROID = env.DEVICE.match(/android/i);
@@ -109,8 +127,18 @@ if (env.SAUCE) {
 
 env.CAPS.launchTimeout = env.LAUNCH_TIMEOUT;
 
+if (env.IOS) {
+  env.CAPS.platformName = "iOS";
+}
+
 if (env.VERSION) {
-  env.CAPS.version = env.VERSION;
+  env.CAPS.platformVersion = env.VERSION;
+} else if (env.IOS6) {
+  env.CAPS.platformVersion = "6.1";
+} else if (env.IOS71) {
+  env.CAPS.platformVersion = "7.1";
+} else if (env.IOS7) {
+  env.CAPS.platformVersion = "7.0";
 }
 
 // app path root

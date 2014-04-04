@@ -236,11 +236,25 @@ describe("apidemo - basic -", function () {
   describe('appium android', function () {
     var session;
     after(function () { session.tearDown(); });
+
+    it('should load an app with using absolute path', function (done) {
+      var appPath = path.resolve(desired.app);
+      session = initSession(_.defaults({'app': appPath}, desired));
+      session.setUp().nodeify(done);
+    });
+
+    it('should load an app with using relative path', function (done) {
+      var appPath = path.relative(process.cwd(), desired.app);
+      session = initSession(_.defaults({'app': appPath}, desired));
+      session.setUp().nodeify(done);
+    });
+
     it('should load a zipped app via url', function (done) {
       var appUrl = 'http://appium.s3.amazonaws.com/ApiDemos-debug.apk';
       session = initSession(_.defaults({'app': appUrl}, desired));
       session.setUp().nodeify(done);
     });
+
   });
 
 });

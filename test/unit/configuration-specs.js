@@ -80,6 +80,9 @@ describe('Appium', function () {
             [{}, {platformName: 'iOS'}, 'ios'],
           , [{}, {platformName: 'Android'}, 'android']
           , [{}, {platformName: 'FirefoxOS'}, 'firefoxos']
+          , [{platformName: 'Android'}, {}, 'android']
+          , [{platformName: 'ios'}, {}, 'ios']
+          , [{platformName: 'iOS'}, {platformName: 'android'}, 'android']
           ];
         _.each(deviceCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
@@ -93,6 +96,8 @@ describe('Appium', function () {
           , [{}, {platformName: 'Android', browserName: 'Chrome'}, 'chrome']
           , [{}, {platformName: 'Android', browserName: 'Chromium'}, 'chrome']
           , [{}, {platformName: 'Android', browserName: 'browser'}, 'chrome']
+          , [{browserName: 'browser'}, {platformName: 'Android'}, 'chrome']
+          , [{browserName: 'Safari'}, {platformName: 'ios'}, 'safari']
           ];
         _.each(browserCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
@@ -103,6 +108,9 @@ describe('Appium', function () {
 
         var automationCapabilities  = [
           [{}, {automationName: 'selendroid', platformName: 'Android'}, 'selendroid']
+        , [{automationName: 'selendroid'}, {platformName: 'Android'}, 'selendroid']
+        , [{automationName: 'selendroid'}, {automationName: 'appium', platformName: 'android'}, 'android']
+        , [{automationName: 'appium'}, {platformName: 'Android'}, 'android']
         ];
         _.each(automationCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);

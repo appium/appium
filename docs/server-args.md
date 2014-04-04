@@ -38,6 +38,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--android-coverage`|false|(Android-only) Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w |`--android-coverage com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
 |`--avd`|null|(Android-only) Name of the avd to launch|`--avd @default`|
 |`--avd-args`|null|(Android-only) Additional emulator arguments to launch the avd|`--avd-args -no-snapshot-load`|
+|`--genymotion`, `-gm`|false|(Android-only) Avd is genymotion||
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--device-name`|null|Name of the mobile device to use|`--device-name iPhone Retina (4-inch), Android Emulator`|

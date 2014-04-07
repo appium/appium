@@ -10,9 +10,13 @@ import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
 
+import android.view.MotionEvent.PointerCoords;
+
+import java.lang.reflect.Method;
+
 /**
  * Proxy class for UiObject.
- * 
+ *
  */
 public class AndroidElement {
 
@@ -231,4 +235,23 @@ public class AndroidElement {
     return el.setText(text);
   }
 
+  public boolean performMultiPointerGesture(PointerCoords[] ...touches) {
+    try {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        // The compile-time SDK expects the wrong arguments, but the runtime
+        // version in the emulator is correct. So we cannot do:
+        //   `return el.performMultiPointerGesture(touches);`
+        // Instead we need to use Reflection to do it all at runtime.
+        Method method = this.el.getClass().getMethod("performMultiPointerGesture", PointerCoords[][].class);
+        Boolean rt = (Boolean)method.invoke(this.el, (Object)touches);
+        return rt.booleanValue();
+      } else {
+        Logger.error("Device does not support API < 18!");
+        return false;
+      }
+    } catch (final Exception e) {
+      Logger.error("Exception: " + e + " (" + e.getMessage() + ")");
+      return false;
+    }
+  }
 }

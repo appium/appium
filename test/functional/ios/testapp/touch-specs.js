@@ -14,7 +14,7 @@ describe('testapp - pinch gesture -', function () {
 
     it('should pinchOpen and pinchClose map after tapping Test Gesture', function (done) {
       driver
-        .elementsByTagName('button').then(function (buttons) { return buttons[3].click(); })
+        .elementsByTagName('button').at(5).click()
         .sleep(1000).then(function () { okIfAlert(driver); })
         .elementByXPath('//window[1]/UIAMapView[1]')
         .execute("mobile: pinchOpen", [{startX: 114.0, startY: 198.0, endX: 257.0,
@@ -29,7 +29,7 @@ describe('testapp - pinch gesture -', function () {
 
 // most of these tests do not actually test anything.
 // They need to be watched to make sure they are doing something right/wrong.
-describe('touch actions', function () {
+describe('testapp - touch actions @skip-ios-all -', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
   var tap = (new TouchAction()).tap();
@@ -54,7 +54,7 @@ describe('touch actions', function () {
   describe('swipe', function () {
     it('should move the page', function (done) {
       driver
-        .elementsByTagName('button').at(3)
+        .elementsByTagName('button').at(5)
           .performTouch(tap)
         .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
@@ -68,10 +68,6 @@ describe('touch actions', function () {
   describe('wait', function () {
     it('should move the page and wait a bit', function (done) {
       driver
-        .elementsByTagName('button').at(3)
-          .performTouch(tap)
-        .sleep(500).then(function () { okIfAlert(driver); })
-        .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
           .performTouch(new TouchAction().press().moveTo({ x: 0, y: 100 })
             .wait({ ms: 5000 }).moveTo({ x: 0, y: -100 }).release())
@@ -87,9 +83,6 @@ describe('touch actions', function () {
         (new TouchAction()).press().moveTo({ x: 100, y: 0 }).release()
       );
       driver
-        .elementsByTagName('button').at(3)
-          .performTouch(tap)
-        .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
           .performTouch(multiAction)
@@ -103,9 +96,6 @@ describe('touch actions', function () {
         (new TouchAction()).press().moveTo({ x: 100, y: 0 }).wait({ ms: 3000 }).moveTo({ x: -100, y: 0 }).release()
       );
       driver
-        .elementsByTagName('button').at(3)
-          .performTouch(tap)
-        .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
           .performTouch(multiAction)

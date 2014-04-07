@@ -32,17 +32,21 @@ describe('testapp - pinch gesture -', function () {
 describe('touch actions', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
+  var tap = (new TouchAction()).tap();
 
   describe('tap', function () {
     it('should tap on a specified element', function (done) {
       driver
-        .elementsByTagName('button').then(function (buttons) {
-          var el = buttons[3];
-          var action = new TouchAction(el);
-          return action.tap().perform();
-        })
+        .elementsByTagName('button').at(3)
+          .performTouch(tap)
         .sleep(1000).then(function () { okIfAlert(driver); })
-        .sleep(15000)
+        .elementsByTagName('button').at(3)
+          .then(function (el) { return el.performTouch(tap); })
+        .sleep(1000).then(function () { okIfAlert(driver); })
+        .elementsByTagName('button').at(3)
+          .then(function (el) { return tap.performOn(el); })
+        .sleep(1000).then(function () { okIfAlert(driver); })
+        .sleep(3000)
         .nodeify(done);
     });
   });
@@ -50,18 +54,12 @@ describe('touch actions', function () {
   describe('swipe', function () {
     it('should move the page', function (done) {
       driver
-        .elementsByTagName('button').then(function (buttons) {
-          var el = buttons[3];
-          var action = new TouchAction(el);
-          return action.tap().perform();
-        })
+        .elementsByTagName('button').at(3)
+          .performTouch(tap)
         .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
-        .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().moveTo({ x: 0, y: 100 }).release().perform();
-        })
+          .performTouch((new TouchAction()).press().moveTo({ x: 0, y: 100 }).release())
         .sleep(15000)
         .nodeify(done);
     });
@@ -70,18 +68,13 @@ describe('touch actions', function () {
   describe('wait', function () {
     it('should move the page and wait a bit', function (done) {
       driver
-        .elementsByTagName('button').then(function (buttons) {
-          var el = buttons[3];
-          var action = new TouchAction(el);
-          return action.tap().perform();
-        })
+        .elementsByTagName('button').at(3)
+          .performTouch(tap)
         .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
-        .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().moveTo({ x: 0, y: 100 }).wait({ ms: 5000 }).moveTo({ x: 0, y: -100 }).release().perform();
-        })
+          .performTouch(new TouchAction().press().moveTo({ x: 0, y: 100 })
+            .wait({ ms: 5000 }).moveTo({ x: 0, y: -100 }).release())
         .sleep(15000)
         .nodeify(done);
     });
@@ -89,51 +82,33 @@ describe('touch actions', function () {
 
   describe('pinch', function () {
     it('should do some pinching', function (done) {
+      var multiAction = (new MultiAction()).add(
+        (new TouchAction()).press().moveTo({ x: -100, y: 0 }).release(),
+        (new TouchAction()).press().moveTo({ x: 100, y: 0 }).release()
+      );
       driver
-        .elementsByTagName('button').then(function (buttons) {
-          var el = buttons[3];
-          var action = new TouchAction(el);
-          return action.tap().perform();
-        })
+        .elementsByTagName('button').at(3)
+          .performTouch(tap)
         .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
-        .then(function (el) {
-          var a1 = new TouchAction(el);
-          a1.press().moveTo({ x: -100, y: 0 }).release();
-
-          var a2 = new TouchAction(el);
-          a2.press().moveTo({ x: 100, y: 0 }).release();
-
-          var ma = new MultiAction(el);
-          ma.add(a1, a2);
-          ma.perform();
-        })
+          .performTouch(multiAction)
         .sleep(15000)
         .nodeify(done);
     });
 
     it('should do more involved pinching in and out', function (done) {
+      var multiAction = (new MultiAction()).add(
+        (new TouchAction()).press().moveTo({ x: -100, y: 0 }).wait(3000).moveTo({ x: 100, y: 0 }).release(),
+        (new TouchAction()).press().moveTo({ x: 100, y: 0 }).wait({ ms: 3000 }).moveTo({ x: -100, y: 0 }).release()
+      );
       driver
-        .elementsByTagName('button').then(function (buttons) {
-          var el = buttons[3];
-          var action = new TouchAction(el);
-          return action.tap().perform();
-        })
+        .elementsByTagName('button').at(3)
+          .performTouch(tap)
         .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
-        .then(function (el) {
-          var a1 = new TouchAction(el);
-          a1.press().moveTo({ x: -100, y: 0 }).wait(3000).moveTo({ x: 100, y: 0 }).release();
-
-          var a2 = new TouchAction(el);
-          a2.press().moveTo({ x: 100, y: 0 }).wait({ ms: 3000 }).moveTo({ x: -100, y: 0 }).release();
-
-          var ma = new MultiAction(el);
-          ma.add(a1, a2);
-          ma.perform();
-        })
+          .performTouch(multiAction)
         .sleep(15000)
         .nodeify(done);
     });

@@ -227,22 +227,22 @@ describe("apidemo - find elements -", function () {
   describe('find elements by -android uiautomator locator strategy', function () {
     it('should find elements with a boolean argument', function (done) {
       driver.elements('-android uiautomator', 'new UiSelector().clickable(true)').then(function (els) {
-        els.length.should.equal(13);
+        els.length.should.be.above(11);
       }).nodeify(done);
     });
     it('should find elements without prepending "new UiSelector()"', function (done) {
       driver.elements('-android uiautomator', '.clickable(true)').then(function (els) {
-        els.length.should.equal(13);
+        els.length.should.be.above(11);
       }).nodeify(done);
     });
     it('should find elements without prepending "new UiSelector()."', function (done) {
       driver.elements('-android uiautomator', 'clickable(true)').then(function (els) {
-        els.length.should.equal(13);
+        els.length.should.be.above(11);
       }).nodeify(done);
     });
     it('should find elements without prepending "new "', function (done) {
       driver.elements('-android uiautomator', 'UiSelector().clickable(true)').then(function (els) {
-        els.length.should.equal(13);
+        els.length.should.be.above(11);
       }).nodeify(done);
     });
     it('should find an element with an int argument', function (done) {
@@ -257,12 +257,12 @@ describe("apidemo - find elements -", function () {
     });
     it('should find an element with an overloaded method argument', function (done) {
       driver.elements('-android uiautomator', 'new UiSelector().className("android.widget.TextView")').then(function (els) {
-        els.length.should.equal(12);
+        els.length.should.be.above(10);
       }).nodeify(done);
     });
     it('should find an element with a Class<T> method argument', function (done) {
       driver.elements('-android uiautomator', 'new UiSelector().className(android.widget.TextView)').then(function (els) {
-        els.length.should.equal(12);
+        els.length.should.be.above(10);
       }).nodeify(done);
     });
     it('should find an element with a long chain of methods', function (done) {

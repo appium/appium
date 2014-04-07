@@ -249,6 +249,8 @@ cases.
 
 ### Slider
  
+ **iOS**
+ 
  * **Java**
  
   ```java
@@ -257,7 +259,22 @@ cases.
   WebElement slider =  wd.findElement(By.xpath("//window[1]/slider[1]"));
   slider.sendKeys("0.1");
   ```
+ 
+**Android**
 
+  The best way to interact with the slider on Android is with the 'mobile: tap' gesture. It is difficult to find a reliable way to set a specific percentage that works on all screen sizes, however. Therefore, it is recommended to write tests that focus on minimum, 50%, and maximum.
+* **Ruby**
+
+  ```Ruby
+  # 0% 
+  @driver.execute_script 'mobile: tap', :x =>slider.location.x, :y =>slider.location.y
+  
+  # 100%
+  @driver.execute_script 'mobile: tap', :x =>slider.location.x + slider.size.width - 1, :y =>slider.location.y
+  
+  # 50%
+  slider.click
+  ```
 ### Set orientation
 
 * **WD.js:**

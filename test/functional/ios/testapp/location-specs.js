@@ -8,7 +8,7 @@ var setup = require("../../common/setup-base")
 
 describe('testapp - location -', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
-  
+
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -58,7 +58,7 @@ describe('testapp - location services -', function () {
     locationServicesAuthorized: true,
     bundleId: 'io.appium.TestApp'
   });
-  setup(this, newDesired).then(function (d) { driver = d; });
+  setup(this, newDesired, {'no-reset': true}).then(function (d) { driver = d; });
 
   it('should be able to be turned on', function (done) {
     driver
@@ -75,7 +75,7 @@ describe('testapp - location services -', function () {
     locationServicesAuthorized: true
   });
   it('should not work without bundleId', function (done) {
-    initSession(newDesired, {'no-retry': true}).setUp()
+    initSession(newDesired, {'no-retry': true, 'no-reset': true}).setUp()
       .then(function (err) {
         err.cause.value.message.should.contain("bundleId");
         throw err;
@@ -91,7 +91,7 @@ describe('testapp - location services -', function () {
     locationServicesAuthorized: false,
     bundleId: 'io.appium.TestApp'
   });
-  setup(this, newDesired).then(function (d) { driver = d; });
+  setup(this, newDesired, {'no-reset': true}).then(function (d) { driver = d; });
 
   it('should be able to be turned off', function (done) {
     driver

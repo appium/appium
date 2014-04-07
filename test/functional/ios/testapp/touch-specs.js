@@ -85,7 +85,7 @@ describe('testapp - touch actions @skip-ios-all -', function () {
       driver
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
-          .performTouch(multiAction)
+          .performMultiTouch(multiAction)
         .sleep(15000)
         .nodeify(done);
     });
@@ -98,7 +98,7 @@ describe('testapp - touch actions @skip-ios-all -', function () {
       driver
         .sleep(500)
         .elementByXPath('//window[1]/UIAMapView[1]')
-          .performTouch(multiAction)
+          .performMultiTouch(multiAction)
         .sleep(15000)
         .nodeify(done);
     });

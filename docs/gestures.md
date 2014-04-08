@@ -244,6 +244,7 @@ cases.
   JavascriptExecutor js = (JavascriptExecutor) driver;
   HashMap<String, String> scrollObject = new HashMap<String, String>();
   scrollObject.put("direction", "down");
+  scrollObject.put("element", ((RemoteWebElement) element).getId());
   js.executeScript("mobile: scroll", scrollObject);
   ```
 

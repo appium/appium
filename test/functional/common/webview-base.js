@@ -37,7 +37,7 @@ module.exports = function (app) {
   };
 
   var loadWebView = function (driver, urlToLoad, titleToSpin) {
-    return loadWebViewBase(app, driver, urlToLoad, titleToSpin);
+    return loadWebViewBase(app || browserName, driver, urlToLoad, titleToSpin);
   };
 
   describe('window title', function () {

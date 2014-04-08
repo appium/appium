@@ -1,3 +1,58 @@
+CHANGES IN VERSION 0.18.0 (from 0.17.6)
+=======================================
+
+*Important*: This is the Appium 1.0 feature-complete pre-release. Please the
+discussion group for more context and details about this release and where
+Appium is headed in the near future.
+
+#### General
+- disallow use of appium under sudo (except for authorize_ios)
+- don't autopopulate node config host (so appium url can be set in nodeconfig)
+- many build and test tweaks and fixes to improve build stability
+- don't link commit hooks if we're not in a git repo
+- add "accessibility id" locator strategy
+- get rid of a bunch of unused grunt commands
+- deprecate use of JSON page source (XML will be the standard)
+- simplify reset strategy and make reset strategies available through caps. 
+  There's now the default (fastReset), fullReset, and noReset.
+- deprecate "tag name" locator strategy
+- add real xpath support (for now under the "-real xpath" locator strategy)
+- deprecate old xpath strategy
+- a lot of work on appium CI
+- further update new capability handling and device selection; use only the
+  new caps internally
+- implement TouchAction and MultiTouch APIs
+- migrate all "mobile: " methods to their own REST endpoints; they are now
+  deprecated
+- don't allow users to send in bad platformNames; fail with an error instead
+- allow app paths relative to appium root
+- add command-line flags corresponding to the new desired capabilities
+
+#### iOS
+- add "-ios uiautomation" locator strategy
+- make backup path for built-in apps in ios 7.0 configurable
+- only count one out of the two textfields which compose an ios 7.1 textfield
+- introduce a distinction between global and post-launch timeouts for
+  instruments, to fine-tune flake management
+- rewrite screenshot logic
+- modify "mobile: scroll" to take an element argument
+- fix bug where bundleID would be improperly lowercased
+- allow changing of remote debugger ports with env variable
+- fix bug in device launching logic that would try to launch an invalid device
+  as the default
+- add "mobile: pullFile" support for retrieving files from the sim folders
+- update fruitstrap to a version which doesn't segfault for Japanese
+
+#### Android
+- make sure app is signed before getting MD5 hash for use in on-device install
+- ensure that the app is always force-stopped before uninstalling the APK
+- add "-android uiautomator" locator strategy
+- fix bug involving storing android binary paths incorrectly
+- add avdLaunchTimeout and avdReadyTimeout caps to fine-tune these timeouts
+- retry launching AVD once if it never connects to adb
+- if installing a remote apk fails, uninstall/rm, then retry
+
+
 CHANGES IN VERSION 0.17.6 (from 0.17.6)
 =======================================
 

@@ -25,8 +25,7 @@ describe("apidemo - gestures -", function () {
     it('should tap an element', function (done) {
       driver.elementByName("Animation")
         .then(function (el) {
-          var action = new TouchAction(el);
-          action.tap().perform();
+          return (new TouchAction()).tap().performOn(el);
         })
         .elementsByTagName("text").then(function (els) { return els[1]; })
           .text().should.become("Bouncing Balls")
@@ -36,8 +35,8 @@ describe("apidemo - gestures -", function () {
     it('should tap an element from an offset', function (done) {
       driver.elementByName("Animation")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap({ x: 1, y: 1 }).perform();
+          var action = new TouchAction();
+          return action.tap({ x: 1, y: 1 }).performOn(el);
         })
         .elementsByTagName("text").then(function (els) { return els[1]; })
           .text().should.become("Bouncing Balls")
@@ -48,18 +47,18 @@ describe("apidemo - gestures -", function () {
       driver
         .elementByName("Text")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .elementByName("LogTextBox")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .elementByName("Add")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap({ count: 2 }).perform();
+          var action = new TouchAction();
+          return action.tap({ count: 2 }).performOn(el);
         })
         .elementsByTagName("text")
         .then(function (els) {
@@ -74,18 +73,18 @@ describe("apidemo - gestures -", function () {
       driver
         .elementByName("Text")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .elementByName("LogTextBox")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .elementByName("Add")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap({ count: 2 }).perform();
+          var action = new TouchAction();
+          return action.tap({ count: 2 }).performOn(el);
         })
         .elementsByTagName("text")
         .then(function (els) {
@@ -101,37 +100,37 @@ describe("apidemo - gestures -", function () {
     it('should work like `tap` when immediately released', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction(el);
+          var action = new TouchAction();
           action.press();
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().perform();
+              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .sleep(500)
         .elementByName("Expandable Lists")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .sleep(500)
         .elementByName("1. Custom Adapter")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .sleep(500)
         .elementByName("People Names") //.should.eventually.exist
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .elementByName("Sample menu").should.be.rejected
         .nodeify(done);
@@ -140,37 +139,37 @@ describe("apidemo - gestures -", function () {
     it('should work like `longPress` when released after a pause', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction(el);
+          var action = new TouchAction();
           action.press();
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().perform();
+              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .sleep(500)
         .elementByName("Expandable Lists")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .sleep(500)
         .elementByName("1. Custom Adapter")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().release().perform();
+          var action = new TouchAction();
+          return action.press().release().performOn(el);
         })
         .sleep(500)
         .elementByName("People Names") //.should.eventually.exist
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.press().wait(1000).release().perform();
+          var action = new TouchAction();
+          return action.press().wait(1000).release().performOn(el);
         })
         .elementByName("Sample menu").should.eventually.exist
         .nodeify(done);
@@ -181,37 +180,37 @@ describe("apidemo - gestures -", function () {
     it('should open a context menu', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction(el);
+          var action = new TouchAction();
           action.press();
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().perform();
+              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .sleep(500)
         .elementByName("Expandable Lists")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .sleep(500)
         .elementByName("1. Custom Adapter")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .sleep(500)
         .elementByName("People Names")
         .then(function (el) {
-          var action = new TouchAction(el);
-          return action.longPress().release().perform();
+          var action = new TouchAction();
+          return action.longPress().release().performOn(el);
         })
         .elementByName("Sample menu").should.eventually.exist
         .nodeify(done);
@@ -222,12 +221,12 @@ describe("apidemo - gestures -", function () {
     it('should be possible with press/moveTo/release', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction(el);
+          var action = new TouchAction();
           action.press();
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().perform();
+              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
             });
         })
         .sleep(500)
@@ -238,8 +237,8 @@ describe("apidemo - gestures -", function () {
     it('should be possible with press/moveTo/release and pixel offset', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction(el);
-          action.press().moveTo({ x: 0, y: -400 }).release().perform();
+          var action = new TouchAction();
+          action.press().moveTo({ x: 0, y: -400 }).release().performOn(el);
         })
         .sleep(500)
         .elementByName("Views").should.eventually.exist
@@ -248,29 +247,29 @@ describe("apidemo - gestures -", function () {
   });
 
   describe('drag', function () {
-    it('should drag by pixels @skip-android-all', function (done) {
+    it('should drag by pixels', function (done) {
       driver
         .elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction(el);
+          var action = new TouchAction();
           action.press();
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().perform();
+              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction(el);
-          action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .sleep(500)
         .elementByName("Drag and Drop")
         .then(function (el) {
-          var action = new TouchAction(el);
-          action.tap().perform();
+          var action = new TouchAction();
+          return action.tap().performOn(el);
         })
         .sleep(500)
         .elementById("com.example.android.apis:id/drag_dot_3")
@@ -278,8 +277,8 @@ describe("apidemo - gestures -", function () {
           return driver
             .elementById("com.example.android.apis:id/drag_dot_2")
             .then(function (dd2) {
-              var action = new TouchAction(dd3);
-              return action.longPress().moveTo({ element: dd2.value.toString() }).release().perform();
+              var action = new TouchAction();
+              return action.longPress().moveTo({ element: dd2.value.toString() }).release().performOn(dd3);
             });
         })
         .sleep(1500)
@@ -304,19 +303,19 @@ describe("apidemo - gestures -", function () {
           return driver.execute("mobile: scrollTo", [scrollOpts]);
         }).elementByXPath("//text[@value='Views']")
         .then(function (el) {
-          return new TouchAction(el).tap().perform();
+          return new TouchAction().tap().performOn(el);
         })
         .then(function () {
           scrollOpts.text = 'Splitting Touches across Views';
           return driver.execute("mobile: scrollTo", [scrollOpts]);
         }).elementByXPath("//text[@value='Splitting Touches across Views']")
         .then(function (el) {
-          return new TouchAction(el).tap().perform();
+          return new TouchAction().tap().performOn(el);
         })
         .elementsByTagName("listView")
         .then(function (els) {
           // scroll slowly on the left
-          var a1 = new TouchAction(els[0]);
+          var a1 = new TouchAction().applyTo(els[0]);
           a1
             .press()
             .moveTo({ x: 10, y: 0 })
@@ -325,7 +324,7 @@ describe("apidemo - gestures -", function () {
             .release();
 
           // scross quickly on the right
-          var a2 = new TouchAction(els[1]);
+          var a2 = new TouchAction().applyTo(els[1]);
           a2
             .press()
             .moveTo({ x: 10, y: 0 })
@@ -333,9 +332,9 @@ describe("apidemo - gestures -", function () {
             .moveTo({ x: 10, y: -600 })
             .release();
 
-          var ma = new MultiAction(els[0]);
+          var ma = new MultiAction();
           ma.add(a1, a2);
-          ma.perform();
+          return ma.performOn(els[0]);
         })
         .sleep(15000)
         .nodeify(done);
@@ -353,19 +352,19 @@ describe("apidemo - gestures -", function () {
           return driver.execute("mobile: scrollTo", [scrollOpts]);
         }).elementByXPath("//text[@value='Views']")
         .then(function (el) {
-          return new TouchAction(el).tap().perform();
+          return new TouchAction().tap().performOn(el);
         })
         .then(function () {
           scrollOpts.text = 'Splitting Touches across Views';
           return driver.execute("mobile: scrollTo", [scrollOpts]);
         }).elementByXPath("//text[@value='Splitting Touches across Views']")
         .then(function (el) {
-          return new TouchAction(el).tap().perform();
+          return new TouchAction().tap().performOn(el);
         })
         .elementsByTagName("listView")
         .then(function (els) {
           // scroll slowly on the left
-          var a1 = new TouchAction(els[0]);
+          var a1 = new TouchAction().applyTo(els[0]);
           a1
             .press()
             .moveTo({ x: 10, y: 0 })
@@ -375,7 +374,7 @@ describe("apidemo - gestures -", function () {
             .release();
 
           // scross quickly on the right
-          var a2 = new TouchAction(els[1]);
+          var a2 = new TouchAction().applyTo(els[1]);
           a2
             .press()
             .moveTo({ x: 10, y: 100 })
@@ -384,9 +383,9 @@ describe("apidemo - gestures -", function () {
             .moveTo({ x: 10, y: -600 })
             .release();
 
-          var ma = new MultiAction(els[0]);
+          var ma = new MultiAction();
           ma.add(a1, a2);
-          ma.perform();
+          return ma.performOn(els[0]);
         })
         .sleep(15000)
         .nodeify(done);

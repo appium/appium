@@ -1,8 +1,14 @@
+---
+title: Running Tests
+layout: default
+---
+
 Running Tests
 =============
 
 <a name="prep-ios"></a>Preparing your app for test (iOS)
 -----
+
 Test apps run on the simulator have to be compiled specifically for the
 simulator, for example by executing the following command in the Xcode project:
 
@@ -17,11 +23,13 @@ unpack it for you. Nice if you're not using Appium locally.
 
 <a name="prep-android"></a>Preparing your app for test (Android)
 ------
+
 Nothing in particular needs to be done to run your .apk using Appium. If you
 want to zip it up, you can.
 
 <a name="run-ios"></a>Running your test app with Appium (iOS)
 ------
+
 The best way to see what to do currently is to look at the example tests:
 
 [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
@@ -53,6 +61,7 @@ all set now!
 
 <a name="run-android"></a>Running your test app with Appium (Android)
 -----
+
 First, make sure you have one and only one Android emulator or device
 connected. If you run `adb devices`, for example, you should see one device
 connected. This is the device Appium will use for tests. Of course, to have
@@ -106,13 +115,13 @@ all set now!
 
 <a name="run-selendroid"></a>Running your test app with Appium (Android devices &lt; 4.2, and hybrid tests)
 -----
+
 Android devices before version 4.2 (API Level 17) do not have Google's
-[UiAutomator
-framework](developer.android.com/tools/help/uiautomator/index.html) installed.
-This is what Appium uses to perform the
-automation behaviors on the device. For earlier devices or tests of hybrid
-(webview-based) apps, Appium comes bundled with another automation backend
-called [Selendroid](http://selendroid.io/).
+[UiAutomator framework](developer.android.com/tools/help/uiautomator/index.html)
+installed. This is what Appium uses to perform the automation behaviors on
+the device. For earlier devices or tests of hybrid (webview-based) apps,
+Appium comes bundled with another automation backend called [Selendroid]
+(http://selendroid.io/).
 
 To use Selendroid, all that is required is to slightly change the set of
 desired capabilities mentioned above, by replacing 'Android' with 'Selendroid':

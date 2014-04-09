@@ -1,13 +1,23 @@
+---
+title: Automating mobile web apps
+layout: default
+---
+
 Automating mobile web apps
 ======================
 
-If you're interested in automating your web app in Mobile Safari on iOS or Chrome on Android, Appium can help you. Basically, you write a normal WebDriver test, and use Appium as the Selenium server with a special set of desired capabilities.
+If you're interested in automating your web app in Mobile Safari on iOS or
+Chrome on Android, Appium can help you. Basically, you write a normal WebDriver
+test, and use Appium as the Selenium server with a special set of desired
+capabilities.
 
 ### Mobile Safari on Simulator
 
-First of all, make sure developer mode is turned on in your Safari preferences so that the remote debugger port is open.
+First of all, make sure developer mode is turned on in your Safari
+preferences so that the remote debugger port is open.
 
-If you are using the simulator or a real device, you MUST run Safari before attempting to use Appium.
+If you are using the simulator or a real device, you MUST run Safari before
+attempting to use Appium.
 
 Then, use desired capabilities like these to run your test in mobile Safari:
 
@@ -21,15 +31,22 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 
 ### Mobile Safari on a Real iOS Device
 
-To be able to run your tests against mobile Safari we use the [SafariLauncher App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once Safari has been launched the Remote Debugger automatically connects using the [ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy).
+To be able to run your tests against mobile Safari we use the [SafariLauncher
+ App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once
+ Safari has been launched the Remote Debugger automatically connects using
+ the [ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
-<b>NOTE:</b> There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38) in the ios-webkit-debug-proxy. You have to trust the machine before you can run the ios-webkit-debug-proxy against your iOS device.
+<b>NOTE:</b> There is currently [a bug](https://github
+.com/google/ios-webkit-debug-proxy/issues/38) in the ios-webkit-debug-proxy.
+You have to trust the machine before you can run the ios-webkit-debug-proxy
+against your iOS device.
 
 #### Setup
 
 Before you can run your tests against Safari on a real device you will need to:
 * Have the <b>ios-webkit-debug-proxy</b> installed and running (see the [hybrid docs](https://github.com/appium/appium/blob/master/docs/hybrid.md)  for instructions)
-* Turn on <b>web inspector</b> on iOS device (<b>settings > safari > advanced</b>, only for iOS 6.0 and up)
+* Turn on <b>web inspector</b> on iOS device (<b>settings > safari >
+advanced</b>, only for iOS 6.0 and up)
 * Create a <b>provisioning profile</b> that can be used to deploy the SafariLauncherApp.
 
 To create a profile for the launcher go into the <b>Apple Developers Member Center</b> and:
@@ -41,6 +58,7 @@ To create a profile for the launcher go into the <b>Apple Developers Member Cent
   * <b>Step 6:</b> Search for the <b>UUID</b> and the string for it is your <b>identity code</b>.
 
 Now that you have a profile open a terminal and run the following commands:
+
 ```bash
 $ git clone https://github.com/appium/appium.git
 $ cd appium
@@ -59,9 +77,11 @@ $ node /lib/server/main.js -U <UDID>
 ```
 
 #### Running your test
+
 To configure you test to run against safari simpley set the <b>"app"</b> to be <b>"safari"</b>.
 
 ##### Java Example
+
 ```java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();

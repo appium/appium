@@ -1,3 +1,8 @@
+---
+layout: default
+title: 元素定位与交互
+---
+
 元素定位与交互
 =====================================
 
@@ -71,6 +76,7 @@ Ruby:
 ```ruby
 @driver.find_element(:name, 'Go').click
 ```
+
 Python:
 
 ```python

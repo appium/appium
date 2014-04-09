@@ -1,3 +1,8 @@
+---
+title: Appium grunt commands
+layout: default
+---
+
 Appium grunt commands
 =============
 
@@ -31,4 +36,3 @@ You can overwrite the simulator by passing another SDK to grunt (to figure out
 which SDKs you have available, try `xcodebuild -showsdks`:
 
     > grunt buildApp:UICatalog:iphonesimulator6.0
-

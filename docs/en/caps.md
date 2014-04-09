@@ -1,3 +1,8 @@
+---
+title: Appium server capabilities
+layout: default
+---
+
 Appium server capabilities
 ==========
 

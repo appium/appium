@@ -1,5 +1,9 @@
-# Touch Actions
+---
+title: Touch Actions
+layout: default
+---
 
+# Touch Actions
 
 WebDriver provides an API to send some kinds of touch gestures to the devices,
 for example, to long press an element you can do:
@@ -14,6 +18,7 @@ new TouchActions(driver).longPress(imageView).perform();
 For Android Application:
 
 Java:
+
 ```java
 WebElement element = wd.findElement(By.name("API Demo"));
 JavascriptExecutor js = (JavascriptExecutor) wd;
@@ -23,6 +28,7 @@ js.executeScript("mobile: longClick", tapObject);
 ```
 
 Python:
+
 ```python
 element = wd.find_element_by_xpath("your_element_xpath")
 wd.execute_script("mobile: longClick",{ "touchCount": 1, "x": 0, "y": 300, "element":element.id })
@@ -36,5 +42,3 @@ Currently Appium support some of the gestures in the Touch Actions API:
 
 Some other gestures are supported through the "Alternative access method"
 explained in [Automating mobile gestures](gestures.md)
-
-

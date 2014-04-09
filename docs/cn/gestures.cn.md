@@ -1,3 +1,8 @@
+---
+layout: default
+title: 使移动手势自动化
+---
+
 使移动手势自动化
 ==========================
 当selenium webDriver 提供某些交互功能的支持时，它的参数并不总是能很容易的映射到底层自动化设备（比如ios中的UIAutomation）所提供的功能。为此，Appium在WebDriver 之上为移动手势增加了额外的命令和参数。
@@ -92,6 +97,7 @@
   }]
 }
 ```
+
 在这个例子中，`tap`方法被调用，使用上面定义的`x` and `y`参数。
 
 ##示例代码
@@ -124,6 +130,7 @@
   tapObject.put("element", ((RemoteWebElement) row).getId()); // 想要执行tap事件的元素id
   js.executeScript("mobile: tap", tapObject);
   ```
+
   ```java
   //在iOS app中，如果UI 控件的visible属性为“false”，通过元素的位置进行点击.
   WebElement element = wd.findElement(By.xpath("//window[1]/scrollview[1]/image[1]"));
@@ -134,6 +141,7 @@
   tapObject.put("duration", 0.1);
   js.executeScript("mobile: tap", tapObject);
   ```
+
 * **Python:**
 
   ```python
@@ -155,7 +163,7 @@
 
 * **C#:**
 
-  ```C#
+  ```c#
   Dictionary<String, Double> coords = new Dictionary<string, double>();
   coords.Add("x", 12);
   coords.Add("y", 12);
@@ -234,6 +242,7 @@
 ### 设置方向
 
 * **WD.js:**
+
   ```js
   driver.setOrientation("LANDSCAPE", function(err) {
     // continue testing

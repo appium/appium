@@ -1,3 +1,8 @@
+---
+layout: default
+title: Android Coverage
+---
+
 Android 覆盖率需要使用模拟器或者 root 过的机器。使用 instrument target 构建应用，比如 `$ ant instrument`
 
 将 `androidCoverage` 传给你设备的 capabilities，并设置为你的 instrument 的 class。

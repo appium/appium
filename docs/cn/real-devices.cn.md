@@ -1,3 +1,8 @@
+---
+layout: default
+title: Appium 在真机上
+---
+
 Appium在真机上
 ======================
 Appium已经初步支持真机测试。
@@ -28,6 +33,7 @@ Provisioning Profile
 ```
 node . -U <UDID> --app <bundle_id>
 ```
+
 这将会启动Appium并且开始在真机上测试应用。
 
 疑问解答思路

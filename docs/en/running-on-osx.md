@@ -1,4 +1,9 @@
-Running Appium on Mac OS X 
+---
+title: Running Appium on Mac OS X
+layout: default
+---
+
+Running Appium on Mac OS X
 =======
 
 Appium on OS X supports iOS and Android testing.

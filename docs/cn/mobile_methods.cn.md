@@ -1,3 +1,8 @@
+---
+layout: default
+title: 跨平台的移动测试方法
+---
+
 #### 跨平台的移动测试方法
 
 ##### 移动测试的重置方法reset
@@ -5,6 +10,7 @@
 reset方法会重置待测应用的状态
 
 Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)
+
 ```ruby
 mobile :reset
 ```

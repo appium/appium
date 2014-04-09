@@ -12,11 +12,11 @@ One of the core principles of Appium is that you shouldn't have to change your a
 Here are the steps required to talk to a web view in your Appium test:
 
 1.  Navigate to a portion of your app where a web view is active
-1.  Call [GET session/:sessionId/window_handles](http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window_handles)
-1.  This returns a list of web view ids we can access
-1.  Call [POST session/:sessionId/window](http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window) with the id of the web view you want to access
+1.  Call [GET session/:sessionId/contexts](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)
+1.  This returns a list of contexts we can access, like 'NATIVE_APP' or 'WEBVIEW_1'
+1.  Call [POST session/:sessionId/context](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) with the id of the context you want to access
 1.  (This puts your Appium session into a mode where all commands are interpreted as being intended for automating the web view, rather than the native portion of the app. For example, if you run getElementByTagName, it will operate on the DOM of the web view, rather than return UIAElements. Of course, certain WebDriver methods only make sense in one context or another, so in the wrong context you will receive an error message).
-1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `"mobile: leaveWebView"` with execute_script to leave the web frame.
+1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `context` again with the native context id to leave the web frame.
 
 ## Execution against a real iOS device
 To interrogate and interact with a web view appium establishes a connection using a remote debugger. When executing the examples below against a simulator this connection can be established directly as the simulator and the appium server are on the same machine. When executing against a real device appium is unable to access the web view directly. Therefore the connection has to be established through the USB lead. To establish this connection we use the [ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy).
@@ -55,13 +55,13 @@ Once installed you can start the proxy with the following command:
   // assuming we have an initialized `driver` object working on the UICatalog app
   driver.elementByName('Web, Use of UIWebView', function(err, el) { // find button to nav to view
     el.click(function(err) { // nav to UIWebView
-      driver.windowHandles(function(err, handles) { // get list of available views
-        driver.window(handles[0], function(err) { // choose the only available view
+      driver.contexts(function(err, contexts) { // get list of available views
+        driver.context(contexts[1], function(err) { // choose what is probably the webview context
           driver.elementsByCss('.some-class', function(err, els) { // get webpage elements by css
             els.length.should.be.above(0); // there should be some!
             els[0].text(function(elText) { // get text of the first element
               elText.should.eql("My very own text"); // it should be extremely personal and awesome
-              driver.execute("mobile: leaveWebView", function(err) { // leave webview context
+              driver.context('NATIVE_APP', function(err) { // leave webview context
                 // do more native stuff here if we want
                 driver.quit(); // stop webdrivage
               });
@@ -87,8 +87,8 @@ Once installed you can start the proxy with the following command:
   RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
   
   //switch to the latest web view
-  for(String winHandle : remoteWebDriver.getWindowHandles()){
-    remoteWebDriver.switchTo().window(winHandle);
+  for(String contextHandle : remoteWebDriver.getContexts()){
+    remoteWebDriver.switchTo().context(contextHandle);
   }
   
   //Interact with the elements on the guinea-pig page using id.
@@ -97,7 +97,7 @@ Once installed you can start the proxy with the following command:
   remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
   
   //leave the webview to go back to native app.
-  remoteWebDriver.executeScript("mobile: leaveWebView");      
+  remoteWebDriver.switchTo().context('NATIVE_APP')
   
   //close the app.
   remoteWebDriver.quit();
@@ -124,12 +124,12 @@ capabilities =
 ## Then switch to it using @driver.switch_to_window("6")
 
 Given(/^I switch to webview$/) do 
-	webview = @driver.window_handles.last
-	@driver.switch_to.window(webview)
+	webview = @driver.contexts.last
+	@driver.switch_to.context(webview)
 end
 
 Given(/^I switch out of webview$/) do
-  @driver.execute_script("mobile: leaveWebView")    
+  @driver.switch_to(@driver.contexts.first)    
 end
 
 # Now you can use CSS to select an element inside your webview
@@ -145,25 +145,18 @@ https://gist.github.com/feelobot/7309729
 <a name="android"></a>Automating hybrid Android apps
 --------------------------
 
-Appium comes with built-in hybrid support via Chromedriver. Appium also uses Selendroid under the hood for webview support on devices older than 4.4. (In that case, you'll want to specify `"device": "selendroid"` as a desired capability). Then:
-
-1.  Navigate to a portion of your app where a web view is active
-1.  Call [POST session/:sessionId/window](http://code.google.com/p/selenium/wiki/JsonWireProtocol#/session/:sessionId/window) with the string "WEBVIEW" as the window handle, e.g., `driver.window("WEBVIEW")`.
-1.  (This puts your Appium session into a mode where all commands are interpreted as being intended for automating the web view, rather than the native portion of the app. For example, if you run getElementByTagName, it will operate on the DOM of the web view, rather than return UIAElements. Of course, certain WebDriver methods only make sense in one context or another, so in the wrong context you will receive an error message).
-1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `window` again with the string "NATIVE_APP", e.g., `driver.window("NATIVE_APP")`.
-
-Note: We could have used the same strategy as above for leaving the webview (calling `mobile: leaveWebView`), however Selendroid uses the `WEBVIEW`/`NATIVE_APP` window setting strategy, which also works with regular Appium hybrid support, so we show that here for parity.
+Appium comes with built-in hybrid support via Chromedriver. Appium also uses Selendroid under the hood for webview support on devices older than 4.4. (In that case, you'll want to specify `"device": "selendroid"` as a desired capability). Then follow all the same steps as above for iOS, i.e., switching contexts, etc...
 
 ## Wd.js Code example
 
 ```js
 // assuming we have an initialized `driver` object working on a hybrid app
-driver.window("WEBVIEW", function(err) { // choose the only available view
+driver.context("WEBVIEW", function(err) { // choose the only available view
   driver.elementsByCss('.some-class', function(err, els) { // get webpage elements by css
     els.length.should.be.above(0); // there should be some!
     els[0].text(function(elText) { // get text of the first element
       elText.should.eql("My very own text"); // it should be extremely personal and awesome
-      driver.window("NATIVE_APP", function(err) { // leave webview context
+      driver.context("NATIVE_APP", function(err) { // leave webview context
         // do more native stuff here if we want
         driver.quit(); // stop webdrivage
       });
@@ -183,7 +176,7 @@ driver.window("WEBVIEW", function(err) { // choose the only available view
   RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
   
   //switch to the web view
-  remoteWebDriver.switchTo().window("WEBVIEW");
+  remoteWebDriver.switchTo().context("WEBVIEW");
   
   //Interact with the elements on the guinea-pig page using id.
   WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
@@ -191,7 +184,7 @@ driver.window("WEBVIEW", function(err) { // choose the only available view
   remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
   
   //leave the webview to go back to native app.
-  remoteWebDriver.switchTo().window("NATIVE_APP");
+  remoteWebDriver.switchTo().context("NATIVE_APP");
   
   //close the app.
   remoteWebDriver.quit();

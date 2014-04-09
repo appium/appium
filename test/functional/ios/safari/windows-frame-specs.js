@@ -1,3 +1,5 @@
+/*globals should:true */
+
 "use strict";
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
@@ -11,10 +13,10 @@ describe("safari - windows-frame -", function () {
     var driver;
     setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });
 
-    it('getting current window should work initially', function (done) {
+    it('getting current context should work initially', function (done) {
       driver
-        .windowHandle().then(function (handleId) {
-          parseInt(handleId, 10).should.be.above(0);
+        .currentContext().then(function (contextId) {
+          should.exist(contextId);
         }).nodeify(done);
     });
     describe('within webview', function () {

@@ -1,3 +1,8 @@
+---
+layout: default
+title: 名单
+---
+
 名单
 =======
 

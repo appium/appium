@@ -1,3 +1,8 @@
+---
+layout: default
+title: iOS Deploy
+---
+
 部署ios app 到手机上
 =====================================
 准备在真机上执行appium测试, 需要如下准备:
@@ -29,6 +34,7 @@ PROVISIONING_PROFILE 已经从可用的的命令中消失了，但还是有必�
 ```
 xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> CODE_SIGN_IDENTITY="iPhone Developer: Mister Smith" PROVISIONING_PROFILE="XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
 ```
+
 成功的话, app会构建到如下目录 ```<app_dir>/build/<configuration>-iphoneos/<app_name>.app```
 
 ## 用Fruitstrap进行部署
@@ -38,14 +44,19 @@ clone成功的话, 执行 ``make fruitstrap``
 然后, 然后复制生成的 ``fruitstrap``到app的所在的目录或上级目录下。
 
 运行fruitstrap 通过输入以下命令 (命令是否可用依赖于你fork的 fruitstrap):
+
 ```
 ./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID>
 ```
+
 如果是为了持续集成,你可以发现很有用的方法来记录fruitstrap命令行和日志文件中的记录, 像这样:
+
 ```
 ./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID> 2>&1 | tee fruit.out
 ```
+
 在node服务启动前fruitstrap进行需要被结束, 一个方法是扫描fruitstrap的输出来得知app完成启动。 有一个有效的方法是通过一个Rakefile 和一个 ``go_device.sh`` 脚本:
+
 ```
 bundle exec rake ci:fruit_deploy_app | while read line ; do 
    echo "$line" | grep "text to identify successful launch" 
@@ -58,6 +69,7 @@ bundle exec rake ci:fruit_deploy_app | while read line ; do
    fi
  done
 ```
+
 一旦fruitstrap的进程被结束, node 服务就可以启动并且appium测试可以被执行!
 
 下一步:

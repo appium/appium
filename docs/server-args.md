@@ -66,4 +66,5 @@ All flags are optional, but some are required in conjunction with certain others
 |`--key-password`|android|(Android-only) Key password||
 |`--show-config`|false|Show info about the appium server configuration and exit||
 |`--command-timeout`|60|The default command timeout for the server to use for all sessions. Will still be overridden by newCommandTimeout cap||
+|`--webkit-port`|27753|The port that ios_webkit_debug proxy is running on  default value is 27753||
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||

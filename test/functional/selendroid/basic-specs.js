@@ -113,7 +113,7 @@ describe('selendroid - basic -', function () {
 
   describe('command timeouts', function () {
     var driver;
-    setup(this, _.defaults({newCommandTimeout: 7}, desired))
+    setup(this, _.defaults({newCommandTimeout: 3}, desired))
      .then(function (d) { driver = d; });
 
     it('should not die if commands come in', function (done) {
@@ -126,11 +126,7 @@ describe('selendroid - basic -', function () {
             .then(find);
         } else return new Q();
       };
-      find().then(function () {
-        return driver
-          .sleep(10000)
-          .elementByName('Animation').should.be.rejected;
-      }).nodeify(done);
+      find().nodeify(done);
     });
   });
 

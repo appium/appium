@@ -1,3 +1,8 @@
+---
+title: Automating hybrid apps
+layout: default
+---
+
 Automating hybrid apps
 ======================
 
@@ -19,9 +24,11 @@ Here are the steps required to talk to a web view in your Appium test:
 1.  To stop automating in the web view context and go back to automating the native portion of the app, simply call `context` again with the native context id to leave the web frame.
 
 ## Execution against a real iOS device
+
 To interrogate and interact with a web view appium establishes a connection using a remote debugger. When executing the examples below against a simulator this connection can be established directly as the simulator and the appium server are on the same machine. When executing against a real device appium is unable to access the web view directly. Therefore the connection has to be established through the USB lead. To establish this connection we use the [ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
 To install the latest tagged version of the ios-webkit-debug-proxy using brew, run the following commands in the terminal:
+
 ``` bash
 # The first command is only required if you don't have brew installed.
 > ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
@@ -30,6 +37,7 @@ To install the latest tagged version of the ios-webkit-debug-proxy using brew, r
 ```
 
 You can also install the latest proxy by cloning it from git and installing it yourself:
+
 ``` bash
 # Please be aware that this will install the proxy with the latest code (and not a tagged version).
 > git clone https://github.com/google/ios-webkit-debug-proxy.git
@@ -41,6 +49,7 @@ You can also install the latest proxy by cloning it from git and installing it y
 ```
 
 Once installed you can start the proxy with the following command:
+
 ``` bash
 # Change the udid to be the udid of the attached device and make sure to set the port to 27753 
 # as that is the port the remote-debugger uses.
@@ -124,8 +133,8 @@ capabilities =
 ## Then switch to it using @driver.switch_to_window("6")
 
 Given(/^I switch to webview$/) do 
-	webview = @driver.contexts.last
-	@driver.switch_to.context(webview)
+  webview = @driver.contexts.last
+  @driver.switch_to.context(webview)
 end
 
 Given(/^I switch out of webview$/) do
@@ -138,6 +147,7 @@ And(/^I click a webview button $/) do
   @driver.find_element(:css, ".green_button").click
 end
 ```
+
 #### Troubleshooting Webview with Ruby:
 I created a quick function in my helper class to find web elements no matter what window its in (this is useful if your webview id changes or if you are using the same codebase to test android and ios)
 https://gist.github.com/feelobot/7309729

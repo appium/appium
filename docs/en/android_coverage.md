@@ -1,14 +1,24 @@
-Android coverage requires the emulator or a rooted device. Build your app using the instrument target, for example `$ ant instrument`
+---
+title: Android coverage
+layout: default
+---
 
-Pass `androidCoverage` to your device capabilities and set it to your instrumentation class.
+Android coverage requires the emulator or a rooted device. Build your app
+using the instrument target, for example `$ ant instrument`
+
+Pass `androidCoverage` to your device capabilities and set it to your
+instrumentation class.
 
 ```ruby
 caps = { androidCoverage: 'com.example.pkg/com.example.pkg.instrumentation.MyInstrumentation' }
 ```
 
-Appium will start your app like this: `adb shell am instrument -e coverage true -w com.example.pkg/com.example.pkg.instrumentation.MyInstrumentation`
+Appium will start your app like this:
 
-After your test completes, it's time to end the coverage collection and pull the coverage.ec file from the device.
+`adb shell am instrument -e coverage true -w com.example.pkg/com.example.pkg.instrumentation.MyInstrumentation`
+
+After your test completes, it's time to end the coverage collection and pull
+the coverage.ec file from the device.
 
 ```ruby
 mobile :endCoverage, intent: 'com.example.pkg.END_EMMA', path: '/mnt/sdcard/coverage.ec'
@@ -101,6 +111,9 @@ public class MyInstrumentation extends Instrumentation {
 
 #### Reports
 
-`ant instrument` generates a `coverage.em` file. The `mobile :endCoverage` will download the coverage.ec file for that particular run. Note that you can have any number of coverage.ec files. To merge them all together into a report, use this command:
+`ant instrument` generates a `coverage.em` file. The `mobile :endCoverage`
+will download the coverage.ec file for that particular run. Note that you can
+ have any number of coverage.ec files. To merge them all together into a
+ report, use this command:
 
 > java -cp /path/to/android-sdk-macosx/tools/lib/emma_device.jar emma report -r html -in coverage.em,coverage0.ec,coverage1.ec -sp /path/to/your-app/src

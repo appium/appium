@@ -1,3 +1,8 @@
+---
+layout: default
+title: 自动化手机网页应用
+---
+
 自动化手机网页应用
 ======================
 
@@ -10,6 +15,7 @@
 如果你打算在模拟器或真机上使用Appium的话，你必须先开发Safari。
 
 然后设置如下显示的这些信息以便于在设备中的Safari执行测试：
+
 ```js
 {
   app: 'safari'
@@ -40,6 +46,7 @@
   * <b>第六步:</b> 寻找并牢记你的<b>UUID</b> 
 
 现在你有了自己的profile文件，可以在终端中输入如下的命令:
+
 ```bash
 $ git clone https://github.com/appium/appium.git
 $ cd appium
@@ -62,6 +69,7 @@ $ node /lib/server/main.js -U <UDID>
 
 
 ##### Java 举例
+
 ```java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();

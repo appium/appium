@@ -1,3 +1,10 @@
+---
+permalink: /getting-started.html
+layout: default
+title: Getting started
+description: Want to rock your mobile app automation? This is how you get started!
+---
+
 # Appium
 
 > Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).

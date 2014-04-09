@@ -16,11 +16,11 @@ describe('uicatalog - controls -', function () {
         .nodeify(done);
     });
   }
-  
+
   it('should be able to get and set a picker value', function (done) {
     var picketIdx = env.IOS7 ? 0 : 2; // TODO: why?
     driver
-      .elementByXPath("//text[contains(@label,'Pickers')]").click()
+      .elementByXPath("//UIAStaticText[contains(@label,'Pickers')]").click()
       .elementsByTagName("picker").at(picketIdx)
       .elementByTagName('>', "pickerwheel")
       .then(function (wheel) {
@@ -38,7 +38,7 @@ describe('uicatalog - controls -', function () {
 
   it('should be able to get and set a slider value', function (done) {
     driver
-      .elementByXPath("//text[contains(@label,'Controls')]").click()
+      .elementByXPath("//UIAStaticText[contains(@label,'Controls')]").click()
       .elementByTagName("slider").then(function (slider) {
         return slider
           .getAttribute("value").should.become('50%')

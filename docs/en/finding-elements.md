@@ -154,19 +154,6 @@ WD.js:
 driver.element('-android uiautomator', 'new UiSelector().clickable(true)').getAttribute('name');
 ```
 
-# FindAndAct<a name="findandact"></a>
-
-If you want, you can find and act on an element in a single command (iOS-only).
-For example, you can find and click on an element in one call to Appium,
-using a special `mobile: findAndAct` command.
-
-Python:
-
-```python
-args = {'strategy': 'tag_name', 'selector': 'button', 'action': 'tap'}
-driver.execute_script("mobile: findAndAct", args)
-```
-
 ### Pull to refresh using a swipe gesture
 
 Python:

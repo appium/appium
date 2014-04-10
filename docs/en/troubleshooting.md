@@ -109,8 +109,8 @@ output when it's run in verbose mode so that we can diagnose what's going on.
 * Webview support works on real iOS devices with a proxy, see [discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ).
 * Sometimes iOS UI elements become invalidated milliseconds after they are
   found. This results in an error that looks like `(null) cannot be tapped`.
-  Sometimes the only solution is to put the finding-and-acting code in a retry
-  block. See also `mobile: findAndAct` on the [finding elements doc page](https://github.com/appium/appium/blob/master/docs/finding-elements.md)
+  Sometimes the only solution is to put the finding-and-clicking code in a retry
+  block.
 * Appium may have difficulties finding the `node` executable if you've
 installed Node and npm via MacPorts. You must make sure that the MacPorts bin
  folder (`/opt/local/bin` by default) is added to `PATH` somewhere in your

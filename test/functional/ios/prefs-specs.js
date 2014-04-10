@@ -19,13 +19,11 @@ describe("prefs @skip-ios7", function () {
 
     it('should turn off autocomplete', function (done) {
       var ios7 = env.DEVICE.indexOf("7") !== -1;
-      var clickGeneral = {strategy: "tag name", selector: "tableCell", index: ios7 ? 0 : 1};
-      var clickKeyboard = {strategy: "tag name", selector: "tableCell", index: ios7 ? 3 : 1};
       var switchEl;
       driver
-        .execute("mobile: findAndAct", [clickGeneral])
+        .elementsByTagName("tableCell").at(ios7 ? 0 : 1).click()
         .sleep(1000)
-        .execute("mobile: findAndAct", [clickKeyboard])
+        .elementsByTagName("tableCell").at(ios7 ? 3 : 1).click()
         .elementByXPath('//UIASwitch[@name="Auto-Correction"]')
         .then(function (el) { switchEl = el; return el; })
         .getValue().then(function (checked) {
@@ -36,9 +34,9 @@ describe("prefs @skip-ios7", function () {
 
   var checkLocServ = function (driver, expected, cb) {
     driver
-      .execute("mobile: findAndAct", [{strategy: "tag name", selector: "tableCell", index: 2}])
+      .elementsByTagName('tableCell').at(2).click()
       .sleep(1000)
-      .execute("mobile: findAndAct", [{strategy: "tag name", selector: "tableCell", index: 0}])
+      .elementByTagName('tableCell').click()
       .elementByTagName('switch')
       .getValue().then(function (checked) {
         checked.should.eql(expected);

@@ -20,10 +20,9 @@ describe("apidemo - location -", function () {
       .resolve(getText()).then(function (text) {
         text.should.not.include("Latitude: " + newLat);
         text.should.not.include("Longitude: " + newLong);
-      }).then(function () {
-        var locOpts = {latitude: newLat, longitude: newLong};
-        return driver.execute("mobile: setLocation", [locOpts]);
-      }).sleep(1000).then(getText).then(function (text) {
+      })
+      .setGeoLocation(newLat, newLong)
+      .sleep(1000).then(getText).then(function (text) {
         text.should.include("Latitude: " + newLat.substr(0, 4));
         text.should.include("Longitude: " + newLong.substr(0, 4));
       }).nodeify(done);

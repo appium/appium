@@ -6,7 +6,7 @@ var setup = require("../../common/setup-base")
 
 describe("apidemo - keyboard -", function () {
   var driver;
-  setup(this,  _.defaults({'app-activity': "view.Controls1" }, desired))
+  setup(this,  _.defaults({appActivity: "view.Controls1" }, desired))
    .then(function (d) { driver = d; });
 
   it('should be able to edit a text field', function (done) {

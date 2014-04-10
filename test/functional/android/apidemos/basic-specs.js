@@ -132,7 +132,7 @@ describe("apidemo - basic -", function () {
     var session;
     after(function () { session.tearDown(); });
     it('should still find activity', function (done) {
-      session = initSession(_.defaults({'app-activity': 'ApiDemos'}, desired));
+      session = initSession(_.defaults({appActivity: 'ApiDemos'}, desired));
       session.setUp().nodeify(done);
     });
   });
@@ -141,7 +141,7 @@ describe("apidemo - basic -", function () {
     var session;
     after(function () { session.tearDown(); });
     it('should still find activity', function (done) {
-      session = initSession(_.defaults({'app-activity': 'com.example.android.apis.ApiDemos'}, desired));
+      session = initSession(_.defaults({appActivity: 'com.example.android.apis.ApiDemos'}, desired));
       session.setUp().nodeify(done);
     });
   });
@@ -153,7 +153,7 @@ describe("apidemo - basic -", function () {
       var session;
       after(function () { session.tearDown(); });
       it('should throw an error', function (done) {
-        session = initSession(_.defaults({'app-activity': '.Blargimarg'}, desired), opts);
+        session = initSession(_.defaults({appActivity: '.Blargimarg'}, desired), opts);
         try3Times(function () {
           return session.setUp()
             .catch(function (err) { throw err.data; })

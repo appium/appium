@@ -13,7 +13,7 @@ if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
   desired = {
     app: appPath,
     appPackage: 'io.appium.gappium.sampleapp',
-    'app-activity': '.HelloGappium',
+    appActivity: '.HelloGappium',
   };
 } else {
   var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +

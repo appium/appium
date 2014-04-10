@@ -18,12 +18,6 @@ describe('uicatalog - find element -', function () {
       .nodeify(done);
   });
 
-  it('should find a single element by name', function (done) {
-    driver
-      .execute("mobile: findElementNameContains", [{name: 'uses of UIButton'}])
-        .getAttribute('name').should.become("Buttons, Various uses of UIButton")
-      .nodeify(done);
-  });
   it('should find a single element using elementByName', function (done) {
     driver
       .elementByName('UICatalog').then(function (el) {

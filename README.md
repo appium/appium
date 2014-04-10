@@ -56,16 +56,16 @@ of the dependencies are set up correctly. If running from source, you may have t
 * Mac OS X 10.7 or higher, 10.8.4 recommended
 * XCode &gt;= 4.6.3
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
-* [Ensure you read our documentation on setting yourself up for iOS testing!](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#ios)
+* [Ensure you read our documentation on setting yourself up for iOS testing!](https://github.com/appium/appium/blob/master/docs/en/running-on-osx.md#ios)
 
 ### Android Requirements
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
 * Appium supports Android on OS X, Linux and Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
-  * [linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md)
-  * [osx](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#android)
-  * [windows](https://github.com/appium/appium/blob/master/docs/running-on-windows.md)
+  * [linux](https://github.com/appium/appium/blob/master/docs/en/running-on-linux.md)
+  * [osx](https://github.com/appium/appium/blob/master/docs/en/running-on-osx.md#android)
+  * [windows](https://github.com/appium/appium/blob/master/docs/en/running-on-windows.md)
 
 ### FirefoxOS Requirements
 
@@ -88,21 +88,21 @@ You can run an Appium server using node.js or using the application, see below.
 
 ## Writing Tests for Appium
 
-The main guide for getting started writing and running tests is [the running tests](https://github.com/appium/appium/blob/master/docs/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](https://github.com/appium/appium/blob/master/docs/real-devices.md).
+The main guide for getting started writing and running tests is [the running tests](https://github.com/appium/appium/blob/master/docs/en/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](https://github.com/appium/appium/blob/master/docs/en/real-devices.md).
 
-Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/caps.md) to run your test through Appium.
+Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/en/caps.md) to run your test through Appium.
 
 You find elements by using a subset of WebDriver's element-finding strategies.
-See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating
-mobile gestures](https://github.com/appium/appium/blob/master/docs/gestures.md)
+See [finding elements](https://github.com/appium/appium/blob/master/docs/en/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating
+mobile gestures](https://github.com/appium/appium/blob/master/docs/en/gestures.md)
 like tap, flick, and swipe.
 
 You can also automate web views in hybrid apps! See the [hybrid app
-guide](https://github.com/appium/appium/blob/master/docs/hybrid.md)
+guide](https://github.com/appium/appium/blob/master/docs/en/hybrid.md)
 
 This repository contains [many examples of tests in a variety of different languages](https://github.com/appium/appium/tree/master/sample-code/examples)!
 
-For the full list of Appium doc pages, visit [this directory](https://github.com/appium/appium/blob/master/docs/).
+For the full list of Appium doc pages, visit [this directory](https://github.com/appium/appium/blob/master/docs/en/).
 
 ## How It Works
 
@@ -126,7 +126,7 @@ for instructions on how to build, test and run Appium from source.
 
 ## Project Credits & Inspiration
 
-[Credits](https://github.com/appium/appium/blob/master/docs/credits.md)
+[Credits](https://github.com/appium/appium/blob/master/docs/en/credits.md)
 
 ## Mailing List
 
@@ -134,7 +134,7 @@ Announcements and debates often take place on the [Discussion Group](https://gro
 
 ## Troubleshooting
 
-We put together a [troubleshooting guide](https://github.com/appium/appium/blob/master/docs/troubleshooting.md).
+We put together a [troubleshooting guide](https://github.com/appium/appium/blob/master/docs/en/troubleshooting.md).
 Please have a look here first if you run into any problems. It contains instructions for checking a lot
 of common errors and how to get in touch with the community if you're stumped.
 

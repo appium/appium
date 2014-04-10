@@ -84,8 +84,8 @@ module.exports.initSession = function (desired, opts) {
           }
         }).then(function () {
           // if android uninstall package first
-          if (desired.device === 'Android' && desired['app-package']) {
-            return androidUninstall(desired['app-package']);
+          if (desired.platformName === 'Android' && desired.appPackage) {
+            return androidUninstall(desired.appPackage);
           }
         }).then(function () { return init(attempts); })
         .then(function () { initialized = true; })

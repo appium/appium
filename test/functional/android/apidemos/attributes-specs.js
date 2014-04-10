@@ -12,10 +12,10 @@ describe("apidemos - attributes -", function () {
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset(desired['app-package'], desired['app-activity']).nodeify(done);
+      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
     });
   }
-    
+
   it('should be able to find text attribute', function (done) {
     driver
       .elementByName('Animation').getAttribute('text')

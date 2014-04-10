@@ -11,10 +11,10 @@ describe("apidemos - orientation -", function () {
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset(desired['app-package'], desired['app-activity']).nodeify(done);
+      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
     });
   }
-  
+
   it('should rotate screen to landscape', function (done) {
     driver
       .setOrientation("PORTRAIT")

@@ -176,31 +176,6 @@ describe("apidemo - basic -", function () {
       });
     });
 
-    describe('no activity sent in with caps', function () {
-      var session;
-      after(function () { session.tearDown(); });
-      it('should throw an error', function (done) {
-        session = initSession(_.omit(desired, 'app-activity'), opts);
-        try3Times(function () {
-          return session.setUp()
-            .catch(function (err) { throw err.data; })
-            .should.be.rejectedWith(/app-activity/);
-        }).nodeify(done);
-      });
-    });
-
-    describe('no package sent in with caps', function () {
-      var session;
-      after(function () { session.tearDown(); });
-      it('should throw an error', function (done) {
-        session = initSession(_.omit(desired, 'app-package'), opts);
-        try3Times(function () {
-          return session.setUp()
-            .catch(function (err) { throw err.data; })
-            .should.be.rejectedWith(/app-package/);
-        }).nodeify(done);
-      });
-    });
   });
 
   describe('pre-existing uiautomator session', function () {

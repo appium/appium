@@ -105,9 +105,9 @@ describe('Appium', function () {
 
     describe('package arguments and capabilities', function () {
       var packageCases = [
-        [{}, {'app-package': 'com.android.chrome'}, 'chrome']
-      , [{}, {'app-package': 'Com.Android.Chrome'}, 'chrome']
-      , [{}, {'app-package': 'lol'}, 'android']
+        [{}, {appPackage: 'com.android.chrome'}, 'chrome']
+      , [{}, {appPackage: 'Com.Android.Chrome'}, 'chrome']
+      , [{}, {appPackage: 'lol'}, 'android']
       , [{androidPackage: 'com.foo'}, {}, 'android']
       , [{androidPackage: 'com.android.browser'}, {}, 'chrome']
       ];

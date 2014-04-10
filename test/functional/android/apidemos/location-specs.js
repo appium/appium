@@ -5,9 +5,7 @@ var setup = require("../../common/setup-base")
   , path = require('path');
 
 var desired = {
-  app: path.resolve(__dirname, '../../../../sample-code/apps/gps-demo/bin/GPSTutorial1.apk'),
-  'app-package': 'de.impressive.artworx.tutorials.gps',
-  'app-activity': 'GPSTest'
+  app: path.resolve(__dirname, '../../../../sample-code/apps/gps-demo/bin/GPSTutorial1.apk')
 };
 
 describe("apidemo - location -", function () {

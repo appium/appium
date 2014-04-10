@@ -42,9 +42,9 @@ Then script your WebDriver test, sending in the following desired capabilities:
 
 ```js
 {
-    device: 'iPhone Simulator',
-    browserName: '',
-    version: '6.1',
+    platformName: 'iOS',
+    platformVersion: '6.1',
+    deviceName: 'iPhone Simulator',
     app: myApp
 }
 ```
@@ -88,12 +88,10 @@ Then script your WebDriver test, sending in the following desired capabilities:
 
 ```js
 {
-    device: 'Android',
-    browserName: '',
-    version: '4.2',
-    app: myApp,
-    'app-package': myAppPackage,
-    'app-activity': myAppActivity
+    platformName: 'Android',
+    platformVersion: '4.2',
+    deviceName: 'Android Emulator',
+    app: myApp
 }
 ```
 
@@ -101,12 +99,6 @@ In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your .apk or a .zip of it
 * A url of a zip file containg your .apk
-
-`myAppPackage` must be the java package of your application, e.g.,
-`com.example.android.myApp`.
-
-`myAppActivity` must be the Android activity you want to launch for the test,
-e.g., `MainActivity`.
 
 Using your WebDriver library of choice, set the remote session to use these
 capabilities and connect to the server running at port 4723 of localhost (or
@@ -124,16 +116,17 @@ Appium comes bundled with another automation backend called [Selendroid]
 (http://selendroid.io/).
 
 To use Selendroid, all that is required is to slightly change the set of
-desired capabilities mentioned above, by replacing 'Android' with 'Selendroid':
+desired capabilities mentioned above, by adding the `automationName` capability
+and specifying the Selendroid automation backend.
 
 ```js
 {
-    device: 'Selendroid',
-    browserName: '',
+    automationName: 'Selendroid',
+    platformName: 'Android',
+    platformVersion: '2.3',
+    deviceName: 'Android Emulator',
     version: '2.3',
-    app: myApp,
-    'app-package': myAppPackage,
-    'app-activity': myAppActivity
+    app: myApp
 }
 ```
 

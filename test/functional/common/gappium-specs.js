@@ -12,7 +12,7 @@ if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
       'HelloGappium-debug.apk'),
   desired = {
     app: appPath,
-    'app-package': 'io.appium.gappium.sampleapp',
+    appPackage: 'io.appium.gappium.sampleapp',
     'app-activity': '.HelloGappium',
   };
 } else {

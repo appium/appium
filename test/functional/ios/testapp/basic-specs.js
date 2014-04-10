@@ -107,16 +107,6 @@ describe('testapp - basic -', function () {
         .nodeify(done);
     });
 
-    it('should return app source', function (done) {
-      driver.source().then(function (source) {
-        var obj = JSON.parse(source);
-        obj.type.should.equal("UIAApplication");
-        obj.children[0].type.should.equal("UIAWindow");
-        obj.children[0].children[0].label.should.equal("TextField1");
-        ["SumLabel", "0"].should.include(obj.children[0].children[3].name);
-      }).nodeify(done);
-    });
-
     it('should interact with alert', function (done) {
       driver.elementsByTagName('button').then(function (buttons) {
         return buttons[1];

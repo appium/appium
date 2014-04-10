@@ -76,15 +76,6 @@ public class Find extends CommandHandler {
     }
 
     final String contextId = (String) params.get("context");
-    final String text = (String) params.get("selector");
-    final Boolean multiple = (Boolean) params.get("multiple");
-
-    Logger.debug("Finding " + text + " using " + strategy.toString()
-        + " with the contextId: " + contextId);
-
-    if (strategy == Strategy.INDEX_PATHS) {
-      return findElementsByIndexPaths(text, multiple);
-    }
 
     if (strategy == Strategy.DYNAMIC) {
       Logger.debug("Finding dynamic.");
@@ -192,6 +183,16 @@ public class Find extends CommandHandler {
         }
         return getErrorResult(errorMessage);
       }
+    }
+
+    final String text = (String) params.get("selector");
+    final Boolean multiple = (Boolean) params.get("multiple");
+
+    Logger.debug("Finding " + text + " using " + strategy.toString()
+        + " with the contextId: " + contextId);
+
+    if (strategy == Strategy.INDEX_PATHS) {
+      return findElementsByIndexPaths(text, multiple);
     }
 
     try {
@@ -431,8 +432,6 @@ public class Find extends CommandHandler {
       case NAME:
         sel = selectNameOrText(many, text);
         selectors.add(sel);
-        break;
-      case XPATH:
         break;
       case ANDROID_UIAUTOMATOR:
         try {

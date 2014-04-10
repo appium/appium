@@ -88,7 +88,7 @@ title: 執行測試
 
 <a name="run-selendroid"></a>用Appium測試你的app (Android 設備 &lt; 4.2, 以及混合app測試)
 -----
-低於4.2版本的Android設備 (API Level 17) 沒有安裝Google 的[用戶界面自動化框架/UiAutomator framework](developer.android.com/tools/help/uiautomator/index.html).下面的範例是早期Appium在這些設備上的測試方法。對於早期的設備以及使用混合模式(webview-based)製作的apps, Appium 包含了另一種自動化測試後端[Selendroid](http://selendroid.io/).
+低於4.2版本的Android設備 (API Level 17) 沒有安裝Google 的[用戶界面自動化框架/UiAutomator framework](http://developer.android.com/tools/help/uiautomator/index.html).下面的範例是早期Appium在這些設備上的測試方法。對於早期的設備以及使用混合模式(webview-based)製作的apps, Appium 包含了另一種自動化測試後端[Selendroid](http://selendroid.io/).
 
 要使用Selendroid, 只需要在之前提到的環境參數上稍作修改即可，把'Android' 換成 'Selendroid':
 

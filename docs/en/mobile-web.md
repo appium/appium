@@ -36,15 +36,14 @@ To be able to run your tests against mobile Safari we use the [SafariLauncher
  Safari has been launched the Remote Debugger automatically connects using
  the [ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
-<b>NOTE:</b> There is currently [a bug](https://github
-.com/google/ios-webkit-debug-proxy/issues/38) in the ios-webkit-debug-proxy.
-You have to trust the machine before you can run the ios-webkit-debug-proxy
+<b>NOTE:</b> There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
+in the ios-webkit-debug-proxy. You have to trust the machine before you can run the ios-webkit-debug-proxy
 against your iOS device.
 
 #### Setup
 
 Before you can run your tests against Safari on a real device you will need to:
-* Have the <b>ios-webkit-debug-proxy</b> installed and running (see the [hybrid docs](https://github.com/appium/appium/blob/master/docs/hybrid.md)  for instructions)
+* Have the <b>ios-webkit-debug-proxy</b> installed and running (see the [hybrid docs](hybrid)  for instructions)
 * Turn on <b>web inspector</b> on iOS device (<b>settings > safari >
 advanced</b>, only for iOS 6.0 and up)
 * Create a <b>provisioning profile</b> that can be used to deploy the SafariLauncherApp.

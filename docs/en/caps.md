@@ -8,12 +8,14 @@ Appium server capabilities
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`app`|The absolute local path _or_ remote http URL to an `.ipa` or `.apk` file, or a `.zip` containing one of these. Appium will attempt to install this app binary on the appropriate device first. Can also be one of `chrome` or `chromium` to launch Chrome or Chromium on Android, or `safari` to launch Mobile Safari on iOS. Note that this capability is not required for Android if you specify `app-package` and `app-activity` capabilities (see below).|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`, `chrome`, `chromium` on Android, `safari` on iOS|
-|`browserName`|(for Selenium compatibility)|should always be `''`; this exists because some clients require it to be sent|
-|`device`|The kind of mobile device or emulator to use|`iphone`, `ipad`, `selendroid`, `firefoxos`, `android` |
-|`version`|Android API version, iOS Version|(Android) 4.2/4.3 (iOS) 6.0/6.1/7.0|
+|`automationName`|Which automation engine to use|`Appium` (default) or `Selendroid`|
+|`platformName`|Which mobile OS platform to use|`iOS`, `Android`, or `FirefoxOS`|
+|`platformVersion`|Mobile OS version|e.g., `7.1`, `4.4`|
+|`deviceName`|The kind of mobile device or emulator to use|`iPhone Simulator`, `iPad Simulator`, `iPhone Retina 4-inch`, `Android Emulator`, `Galaxy S4`, etc...|
+|`app`|The absolute local path _or_ remote http URL to an `.ipa` or `.apk` file, or a `.zip` containing one of these. Appium will attempt to install this app binary on the appropriate device first. Note that this capability is not required for Android if you specify `app-package` and `app-activity` capabilities (see below). Incompatible with `browserName`.|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`|
+|`browserName`|Name of mobile web browser to automate. Should be an empty string if automating an app instead.|'Safari' for iOS and 'Chrome', 'Chromium', or 'Browser' for Android|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
-|`launch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
+|`autoLaunch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
 
 --
 
@@ -38,7 +40,6 @@ Appium server capabilities
 |Capability|Description|Values|
 |----|-----------|-------|
 |`calendarFormat`| (Sim-only) Calendar format to set for the iOS Simulator|e.g. `gregorian`|
-|`deviceName`| (Sim-only) name of the device to set for the iOS Simulator|e.g. `iPhone Retina (3.5-inch)`|
 |`bundleId`| Bundle ID of the app under test. Useful for starting an app on a real device or for using other caps which require the bundle ID during test startup|e.g. `io.appium.TestApp`|
 |`language`| (Sim-only) Language to set for the iOS Simulator|e.g. `fr`|
 |`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|

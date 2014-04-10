@@ -7,8 +7,8 @@ var env = require('./env')
 
 var desired = {
   app: path.resolve(__dirname, "../../sample-code/apps/selendroid-test-app.apk"),
-  'app-package': 'io.selendroid.testapp',
-  'app-activity': '.HomeScreenActivity'
+  appPackage: 'io.selendroid.testapp',
+  appActivity: '.HomeScreenActivity'
 };
 
 module.exports = function () {

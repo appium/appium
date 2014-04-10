@@ -135,7 +135,7 @@ describe('selendroid - basic -', function () {
     after(function () { session.tearDown(); });
 
     it('should not launch app', function (done) {
-      session = initSession(_.defaults({'app-activity': 'ApiDemos'}, desired), {'no-retry': true});
+      session = initSession(_.defaults({appActivity: 'ApiDemos'}, desired), {'no-retry': true});
       session.setUp()
         .should.be.rejected
         .nodeify(done);
@@ -148,7 +148,7 @@ describe('selendroid - basic -', function () {
     after(function () { session.tearDown(); });
 
     it('should still launch app', function (done) {
-      session = initSession(_.defaults({'app-activity': 'com.example.android.apis.ApiDemos'}, desired));
+      session = initSession(_.defaults({appActivity: 'com.example.android.apis.ApiDemos'}, desired));
       session.setUp()
         .nodeify(done);
     });

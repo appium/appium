@@ -9,8 +9,8 @@ module.exports = {
 
 var desired = {
   app: getAppPath('ToggleTest'),
-  'app-package': 'com.example.toggletest',
-  'app-activity': '.MainActivity',
+  appPackage: 'com.example.toggletest',
+  appActivity: '.MainActivity',
   newCommandTimeout: 90
 };
 

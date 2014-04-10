@@ -7,13 +7,11 @@ var common = require('../../lib/devices/common.js')
   , logger = loggerjs.get('appium');
 
 var _  = require('underscore')
-  , chai = require('chai')
-  , should = chai.should()
   , sinon = require('sinon');
 
 describe('devices/common.js', function () {
   var null_cb = function () {};
-  
+
   var assertLocatorValidity = function (name, loc, includeWeb, expected) {
     var cb = function () {};
     it(name, function () {

@@ -14,7 +14,7 @@ title: 在windows上运行appium
 
 # 开始安装
 
-1. 安装nodejs(http://nodejs.org/download/)(0.8版本及以上), 通过官方的安装程序来安装。
+1. 安装[nodejs](http://nodejs.org/download/) 0.8版本及以上, 通过官方的安装程序来安装。
 
 2. 安装android的sdk包，(http://developer.android.com/sdk/index.html), 运行依赖sdk中的'android'工具。并确保你安装了Level17或以上的版本api。设置`ANDROID_HOME`系统变量为你的Android SDK路径，并把tools platform-tools两个目录加入到系统的Path路径里。因为这里面包含有一些执行命令
 
@@ -41,7 +41,7 @@ title: 在windows上运行appium
 
 # 备注
 * 你必须带上--no-reset和--full-reset标记，以用于windows上的android
-* 有一个硬件加速模拟器用于android，但是它有自己的一些限制，如果你想了解更多，请参考[页面](https://github.com/appium/appium/blob/master/docs/cn/android-hax-emulator.cn.md)
+* 有一个硬件加速模拟器用于android，但是它有自己的一些限制，如果你想了解更多，请参考[页面](android-hax-emulator.cn)
 * 确保在你的AVD的`config.ini`中有一个配置项为`hw.battery=yes` 
 
 

@@ -41,4 +41,4 @@ wd.execute_script("mobile: longClick",{ "touchCount": 1, "x": 0, "y": 300, "elem
 * long press （长按）
 * single tap （单击）
 
-其他手势通过 "Alternative access method" 支持，参见 [自动化手机手势](gestures.cn.md)
+其他手势通过 "Alternative access method" 支持，参见 [自动化手机手势](gestures.cn)

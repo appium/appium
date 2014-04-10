@@ -14,7 +14,7 @@ to github or write to the appium-discuss mailing list.
 * Make sure you've followed the getting started steps in the [README](https://github.com/appium/appium/blob/master/README.md)
 * Make sure your system is set up appropriately (i.e., XCode is updated,
   Android SDK is installed and `ANDROID_HOME` is set:
-  [setup instructions](https://github.com/appium/appium/blob/master/docs/running-on-osx.md))
+  [setup instructions](running-on-osx))
 * Make sure the paths to your applications are correct
 
 ## If you're running Appium.app
@@ -48,7 +48,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * It's sometimes useful to run `adb kill-server && adb devices`. This can
   reset the connection to the Android device.
 * Make sure you know about the `app-package`, `app-activity`,
-  and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android)
+  and `app-wait-activity` desiredCapabilities (see [this doc](running-tests#run-android)
   for more information).
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
@@ -110,7 +110,7 @@ output when it's run in verbose mode so that we can diagnose what's going on.
 * Sometimes iOS UI elements become invalidated milliseconds after they are
   found. This results in an error that looks like `(null) cannot be tapped`.
   Sometimes the only solution is to put the finding-and-acting code in a retry
-  block. See also `mobile: findAndAct` on the [finding elements doc page](https://github.com/appium/appium/blob/master/docs/finding-elements.md)
+  block. See also `mobile: findAndAct` on the [finding elements doc page](finding-elements)
 * Appium may have difficulties finding the `node` executable if you've
 installed Node and npm via MacPorts. You must make sure that the MacPorts bin
  folder (`/opt/local/bin` by default) is added to `PATH` somewhere in your

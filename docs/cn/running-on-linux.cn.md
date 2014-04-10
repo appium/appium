@@ -28,11 +28,11 @@ title: 在 Linux 上运行 Appium
 
     node .
 
-你可以在 [server documentation](https://github.com/appium/appium/blob/master/docs/cn/server-args.cn.md) 找到所有的命令行参数。
+你可以在 [server documentation](server-args.cn) 找到所有的命令行参数。
 
 
 # 备注
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this
-  Android 有一些硬件加速的模拟器，这些模拟器有自己的限制。你可以在 [page](https://github.com/appium/appium/blob/master/docs/cn/android-hax-emulator.cn.md) 找到更多的信息。
+  Android 有一些硬件加速的模拟器，这些模拟器有自己的限制。你可以在 [page](android-hax-emulator.cn) 找到更多的信息。
 * 确保你使用的 AVD 里面的 `config.ini` 有这条指令 `hw.battery=yes`。

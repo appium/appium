@@ -13,23 +13,11 @@ var setup = require("../../common/setup-base"),
 describe('testapp - timeouts -', function () {
 
   afterEach(function (done) { setTimeout(done, 3000); });
-  
-  describe('command timeout settings', function () {
+
+  describe('short command timeout', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should be settable and gettable', function (done) {
-      driver
-        .execute("mobile: setCommandTimeout", [{timeout: 37}])
-        .execute("mobile: getCommandTimeout").should.become(37)
-        .nodeify(done);
-    });
-  });
-
-  describe('short timeout', function () {
-    var driver;
-    setup(this, desired).then(function (d) { driver = d; });
-   
     it('should die with short command timeout', function (done) {
       var params = {timeout: 3};
       driver
@@ -127,7 +115,7 @@ describe('testapp - timeouts -', function () {
   describe('check implicit wait', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
-    
+
     var impWaitSecs = 4;
     var impWaitCheck = function () {
       var before = new Date().getTime() / 1000;

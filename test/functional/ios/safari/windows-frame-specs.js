@@ -15,9 +15,8 @@ describe("safari - windows-frame -", function () {
 
     it('getting current context should work initially', function (done) {
       driver
-        .currentContext().then(function (contextId) {
-          should.exist(contextId);
-        }).nodeify(done);
+        .currentContext().should.eventually.be.fulfilled
+        .nodeify(done);
     });
     describe('within webview', function () {
       beforeEach(function (done) {

@@ -1,8 +1,7 @@
 "use strict";
 
 var env = require('../../../helpers/env')
-  , setup = require("../../common/setup-base")
-  , fs = require('fs');
+  , setup = require("../../common/setup-base");
 
 describe("safari - screenshot -", function () {
 
@@ -10,19 +9,6 @@ describe("safari - screenshot -", function () {
     var driver;
     setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });
 
-    it('should get a local screenshot', function (done) {
-      var localScreenshotFile = '/tmp/test_screenshot_appium.png';
-      if (fs.existsSync(localScreenshotFile)) {
-        fs.unlinkSync(localScreenshotFile);
-      }
-      driver
-        .execute("mobile: localScreenshot", [{file: localScreenshotFile}])
-        .then(function () {
-          var screenshot = fs.readFileSync(localScreenshotFile);
-          screenshot.should.exist;
-          screenshot.length.should.be.above(1000);
-        }).nodeify(done);
-    });
     it('should get an app screenshot', function (done) {
       driver
         .takeScreenshot()

@@ -16,8 +16,8 @@ describe('uicatalog - find and act -', function () {
         .nodeify(done);
     });
   }
-  
-  _.each({'tag name': 'cell', xpath: '//cell'}, function (sel, strat) {
+
+  _.each({'class name': 'UIATableCell'}, function (sel, strat) {
     it('should tap immediately on an element by ' + strat, function (done) {
       var opts = {strategy: strat, selector: sel};
       driver

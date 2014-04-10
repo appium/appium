@@ -22,10 +22,6 @@ describe('ios-controller', function () {
       var actual = createGetElementCommand('name', 'UIAKey', null, false);
       actual.should.equal("au.getElementByName('UIAKey')");
     });
-    it('should return \'GetType\' for xpath selection', function () {
-      var actual = createGetElementCommand('xpath', 'UIAKey', null, false);
-      actual.should.equal("au.getElementByXpath('UIAKey')");
-    });
     it('should return \'GetType\' for id selection', function () {
       var actual = createGetElementCommand('id', 'UIAKey', null, false);
       var expected = "var exact = au.mainApp().getFirstWithPredicateWeighted" +

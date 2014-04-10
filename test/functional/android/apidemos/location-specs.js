@@ -15,7 +15,7 @@ describe("apidemo - location -", function () {
   setup(this, desired).then(function (d) { driver = d; });
 
   it('should set geo location', function (done) {
-    var getText = function () { return driver.elementByXPath("//text[2]").text(); };
+    var getText = function () { return driver.elementByXPath("//android.widget.TextView[2]").text(); };
     var newLat = "27.17";
     var newLong = "78.04";
     driver

@@ -38,16 +38,16 @@ describe('uicatalog - basic -', function () {
 
     it('should confirm element is selected  @skip-ios7', function (done) {
       driver
-        .elementByXPath("text[contains(@text, 'Picker')]").click()
-        .elementByXPath("button[contains(@text, 'UIPicker')]").isSelected()
+        .elementByXPath("//UIAStaticText[contains(@label, 'Pickers')]").click()
+        .elementByXPath("//UIAButton[contains(@label, 'UIPicker')]").isSelected()
           .should.eventually.be.ok
         .nodeify(done);
     });
 
     it('should confirm element is not selected returns false', function (done) {
       driver
-        .elementByXPath("text[contains(@text, 'Picker')]").click()
-        .elementByXPath("button[contains(@text, 'Custom')]").isSelected()
+        .elementByXPath("//UIAStaticText[contains(@label, 'Pickers')]").click()
+        .elementByXPath("//UIAButton[contains(@label, 'Custom')]").isSelected()
           .should.not.eventually.be.ok
         .nodeify(done);
     });

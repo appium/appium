@@ -4,6 +4,7 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
   , androidReset = require('../../../helpers/reset').androidReset
+  , droidText = 'android.widget.TextView'
   , Q = require("q");
 
 describe("apidemo - gestures -", function () {
@@ -104,11 +105,11 @@ describe("apidemo - gestures -", function () {
       .then(function (el) {
         scrollOpts = { element: el.value, text: 'Views' };
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Views']").click()
+      }).elementByXPath("//" + droidText + "[@value='Views']").click()
       .then(function () {
         scrollOpts.text = 'Drag and Drop';
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Drag and Drop']").click()
+      }).elementByXPath("//" + droidText + "[@value='Drag and Drop']").click()
       .then(function () {
         return Q.all([
           driver.elementById("com.example.android.apis:id/drag_dot_3").getLocation(),
@@ -137,11 +138,11 @@ describe("apidemo - gestures -", function () {
         , text: 'Views'
         };
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Views']").click()
+      }).elementByXPath("//" + droidText + "[@value='Views']").click()
       .then(function () {
         scrollOpts.text = 'Drag and Drop';
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Drag and Drop']").click()
+      }).elementByXPath("//" + droidText + "[@value='Drag and Drop']").click()
       .then(function () {
         return Q.all([
           driver.elementById("com.example.android.apis:id/drag_dot_3"),
@@ -169,11 +170,11 @@ describe("apidemo - gestures -", function () {
         , text: 'Views'
         };
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Views']").click()
+      }).elementByXPath("//" + droidText + "[@value='Views']").click()
       .then(function () {
         scrollOpts.text = 'Drag and Drop';
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Drag and Drop']").click()
+      }).elementByXPath("//" + droidText + "[@value='Drag and Drop']").click()
       .then(function () {
         return Q.all([
           driver.elementById("com.example.android.apis:id/drag_dot_3"),
@@ -214,11 +215,11 @@ describe("apidemo - gestures -", function () {
         , text: 'Views'
         };
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='Views']").click()
+      }).elementByXPath("//" + droidText + "[@value='Views']").click()
       .then(function () {
         scrollOpts.text = 'WebView';
         return driver.execute("mobile: scrollTo", [scrollOpts]);
-      }).elementByXPath("//text[@value='WebView']").click()
+      }).elementByXPath("//" + droidText + "[@value='WebView']").click()
       .elementById("com.example.android.apis:id/wv1")
       .then(function (el) {
         var pinchOpts = {

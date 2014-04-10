@@ -10,14 +10,6 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 require("colors");
 
-wd.addPromiseChainMethod('elementByRealXPath', function (selector) {
-  return this.element('-real xpath', selector);
-});
-
-wd.addPromiseChainMethod('elementsByRealXPath', function (selector) {
-  return this.elements('-real xpath', selector);
-});
-
 module.exports = function (context, desired, opts) {
   context.timeout(env.MOCHA_INIT_TIMEOUT);
 

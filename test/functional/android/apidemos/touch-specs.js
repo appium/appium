@@ -7,6 +7,7 @@ var env = require('../../../helpers/env')
   , Q = require("q")
   , _ = require("underscore")
   , wd = require("wd")
+  , droidText = 'android.widget.TextView'
   , TouchAction = wd.TouchAction
   , MultiAction = wd.MultiAction;
 
@@ -301,14 +302,14 @@ describe("apidemo - gestures -", function () {
           , text: 'Views'
           };
           return driver.execute("mobile: scrollTo", [scrollOpts]);
-        }).elementByXPath("//text[@value='Views']")
+        }).elementByXPath("//" + droidText + "[@text='Views']")
         .then(function (el) {
           return new TouchAction().tap().performOn(el);
         })
         .then(function () {
           scrollOpts.text = 'Splitting Touches across Views';
           return driver.execute("mobile: scrollTo", [scrollOpts]);
-        }).elementByXPath("//text[@value='Splitting Touches across Views']")
+        }).elementByXPath("//" + droidText + "[@text='Splitting Touches across Views']")
         .then(function (el) {
           return new TouchAction().tap().performOn(el);
         })
@@ -350,14 +351,14 @@ describe("apidemo - gestures -", function () {
           , text: 'Views'
           };
           return driver.execute("mobile: scrollTo", [scrollOpts]);
-        }).elementByXPath("//text[@value='Views']")
+        }).elementByXPath("//" + droidText + "[@text='Views']")
         .then(function (el) {
           return new TouchAction().tap().performOn(el);
         })
         .then(function () {
           scrollOpts.text = 'Splitting Touches across Views';
           return driver.execute("mobile: scrollTo", [scrollOpts]);
-        }).elementByXPath("//text[@value='Splitting Touches across Views']")
+        }).elementByXPath("//" + droidText + "[@text='Splitting Touches across Views']")
         .then(function (el) {
           return new TouchAction().tap().performOn(el);
         })

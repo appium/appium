@@ -26,7 +26,7 @@ describe("prefs @skip-ios7", function () {
         .execute("mobile: findAndAct", [clickGeneral])
         .sleep(1000)
         .execute("mobile: findAndAct", [clickKeyboard])
-        .elementByXPath('//switch[@name="Auto-Correction"]')
+        .elementByXPath('//UIASwitch[@name="Auto-Correction"]')
         .then(function (el) { switchEl = el; return el; })
         .getValue().then(function (checked) {
           if (checked === 1) return switchEl.click();

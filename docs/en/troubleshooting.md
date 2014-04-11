@@ -14,7 +14,7 @@ to github or write to the appium-discuss mailing list.
 * Make sure you've followed the getting started steps in the [README](https://github.com/appium/appium/blob/master/README.md)
 * Make sure your system is set up appropriately (i.e., XCode is updated,
   Android SDK is installed and `ANDROID_HOME` is set:
-  [setup instructions](https://github.com/appium/appium/blob/master/docs/running-on-osx.md))
+  [setup instructions](running-on-osx)
 * Make sure the paths to your applications are correct
 
 ## If you're running Appium.app

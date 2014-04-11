@@ -47,7 +47,7 @@ To run tests on Windows, you will need to have the Android Emulator booted or
 
     node .
 
-See the [server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md)
+See the [server documentation](server-args)
 for all the command line arguments.
 
 # Notes
@@ -56,5 +56,5 @@ for all the command line arguments.
   to work on Windows.
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this
-  [page](https://github.com/appium/appium/blob/master/docs/android-hax-emulator.md).
+  [page](android-hax-emulator).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.

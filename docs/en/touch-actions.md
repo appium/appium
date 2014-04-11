@@ -41,4 +41,4 @@ Currently Appium support some of the gestures in the Touch Actions API:
 * single tap
 
 Some other gestures are supported through the "Alternative access method"
-explained in [Automating mobile gestures](gestures.md)
+explained in [Automating mobile gestures](gestures)

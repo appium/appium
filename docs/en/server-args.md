@@ -20,7 +20,6 @@ All flags are optional, but some are required in conjunction with certain others
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
-|`-dp`, `--device-port`|4724|**DEPRECATED** (Android-only) port to use on device to talk to Appium. Use --bootstrap-port instead|`--device-port 4724`|
 |`-bp`, `--bootstrap-port`|4724|(Android-only) port to use on device to talk to Appium|`--bootstrap-port 4724`|
 |`-k`, `--keep-artifacts`|false|(IOS-only) Keep Instruments trace directories||
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
@@ -29,13 +28,12 @@ All flags are optional, but some are required in conjunction with certain others
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
-|`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|
+|`-g`, `--log`|null|Also send log output to this file|`--log /path/to/appium.log`|
 |`--log-timestamp`|false|Show timestamps in console output||
 |`--log-no-colors`|false|Don't use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
 |`--native-instruments-lib`|false|(IOS-only) IOS has a weird built-in unavoidable delay. We patch this in appium. If you do not want it patched, pass in this flag.||
-|`--merciful`, `-m`|true|**DEPRECATED** Don't run the watcher process that will force-kill an unresponsive instruments||
-|`--not-merciful`, `-nm`|false|Run the watcher process that will force-kill an unresponsive instruments||
+|`--force-quit-instruments`, `-fqi`|false|Run the watcher process that will force-kill an unresponsive instruments||
 |`--app-pkg`|null|(Android-only) Java package of the Android app you want to run (e.g., com.example.android.myApp)|`--app-pkg com.example.android.myApp`|
 |`--app-activity`|null|(Android-only) Activity name for the Android activity you want to launch from your package (e.g., MainActivity)|`--app-activity MainActivity`|
 |`--app-wait-package`|false|(Android-only) Package name for the Android activity you want to wait for (e.g., com.example.android.myApp)|`--app-wait-package com.example.android.myApp`|

@@ -66,9 +66,9 @@ First, make sure you have one and only one Android emulator or device
 connected. If you run `adb devices`, for example, you should see one device
 connected. This is the device Appium will use for tests. Of course, to have
 a device connected, you'll need to have made an Android AVD (see system
-setup ([Windows](https://github.com/appium/appium/blob/master/docs/running-on-windows.md#setup),
-[Mac](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#system-setup-android),
-or [Linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md#setup))
+setup ([Windows](running-on-windows#setup),
+[Mac](running-on-osx#android),
+or [Linux](running-on-linux#setup))
 for more information). If the Android SDK tools are on your path, you can
 simply run:
 
@@ -109,7 +109,7 @@ all set now!
 -----
 
 Android devices before version 4.2 (API Level 17) do not have Google's
-[UiAutomator framework](developer.android.com/tools/help/uiautomator/index.html)
+[UiAutomator framework](http://developer.android.com/tools/help/uiautomator/index.html)
 installed. This is what Appium uses to perform the automation behaviors on
 the device. For earlier devices or tests of hybrid (webview-based) apps,
 Appium comes bundled with another automation backend called [Selendroid]

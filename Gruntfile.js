@@ -1,4 +1,5 @@
 "use strict";
+
 var path = require('path')
   , gruntHelpers = require('./grunt-helpers.js')
   , authorize = gruntHelpers.authorize

@@ -1,3 +1,24 @@
+CHANGES IN VERSION 0.18.1 (from 0.18.0)
+=======================================
+
+#### General
+- fix broken log options: --log, --log-no-colors, and --log-timestamp
+- update docs to work with Jekyll
+- change 'launch' desired cap to 'autoLaunch', same defaults
+- fix installApp, launchApp, closeApp, removeApp to use correct app path
+- fix bug in action handling for python client
+
+#### iOS
+- fix bug where iOS < 7.1 would try to ask instruments for available devices
+- loosen up sudo check for authorize_ios so it can run without issue under sudo
+
+#### Android
+- fix bug with XML page source where it wouldn't create the dump file correctly
+
+#### Selendroid
+- fix command timeout bug
+
+
 CHANGES IN VERSION 0.18.0 (from 0.17.6)
 =======================================
 

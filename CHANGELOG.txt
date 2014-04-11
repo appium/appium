@@ -1,3 +1,33 @@
+CHANGES IN VERSION 1.0-beta1 (from 0.18.0)
+=======================================
+
+#### General
+- fix broken log options: --log, --log-no-colors, and --log-timestamp
+- update docs to work with Jekyll
+- change 'launch' desired cap to 'autoLaunch', same defaults
+- fix installApp, launchApp, closeApp, removeApp to use correct app path
+- fix bug in action handling for python client
+- remove deprecated window handle support for native clients (in favor of contexts)
+- remove deprecated old xpath support and promote the '-real xpath' strategy to the
+  default
+- remove deprecated json page source in favor of xml
+- remove deprecated mobile methods: location, fireEvent, waitForPageLoad,
+  findElementNameContains, localScreenshot, getCommandTimeout, findAndAct
+- rewrite caps.md doc to use new 1.0 style caps
+
+#### iOS
+- fix bug where iOS < 7.1 would try to ask instruments for available devices
+- loosen up sudo check for authorize_ios so it can run without issue under sudo
+
+#### Android
+- fix bug with XML page source where it wouldn't create the dump file correctly
+- change caps with hyphens (-) like "app-package" to be camelCased like the
+  rest of Appium caps, e.g., "appPackage"
+
+#### Selendroid
+- fix command timeout bug
+
+
 CHANGES IN VERSION 0.18.0 (from 0.17.6)
 =======================================
 

@@ -23,18 +23,9 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 /**
  * This handler is and abstract class that contains all the common code for
  * touch event handlers.
- * 
+ *
  */
-public abstract class TouchEvent extends CommandHandler {
-  private static Field enableField(final Class<?> clazz, final String field)
-      throws SecurityException, NoSuchFieldException {
-    Logger.debug("Updating class \"" + clazz + "\" to enable field \"" + field
-        + "\"");
-    final Field fieldObject = clazz.getDeclaredField(field);
-    fieldObject.setAccessible(true);
-    return fieldObject;
-  }
-
+public abstract class TouchEvent extends TouchableEvent {
   protected AndroidElement            el;
 
   protected int                       clickX;
@@ -46,7 +37,7 @@ public abstract class TouchEvent extends CommandHandler {
   protected boolean                   isElement;
 
   /**
-   * 
+   *
    * @param command
    *          The {@link AndroidCommand}
    * @return {@link AndroidCommandResult}
@@ -112,32 +103,6 @@ public abstract class TouchEvent extends CommandHandler {
 
   protected abstract boolean executeTouchEvent()
       throws UiObjectNotFoundException;
-
-  /*
-   * getAutomatorBridge is private so we access the bridge via reflection to use
-   * the touchDown / touchUp / touchMove methods.
-   */
-  protected Object getController() throws IllegalArgumentException,
-      IllegalAccessException, SecurityException, NoSuchFieldException {
-    final UiDevice device = UiDevice.getInstance();
-    final Object bridge = enableField(device.getClass(), "mUiAutomationBridge")
-        .get(device);
-    final Object controller = enableField(bridge.getClass().getSuperclass(),
-        "mInteractionController").get(bridge);
-    return controller;
-
-  }
-
-  protected Method getMethod(final String name, final Object controller)
-      throws NoSuchMethodException, SecurityException {
-    final Class<?> controllerClass = controller.getClass();
-
-    Logger.debug("Finding methods on class: " + controllerClass);
-    final Method method = controllerClass.getDeclaredMethod(name, int.class,
-        int.class);
-    method.setAccessible(true);
-    return method;
-  }
 
   /**
    * Variables persist across executions. initialize must be called at the start

@@ -22,42 +22,58 @@ import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 import java.lang.reflect.Method;
 
 
-public class MultiPointerGesture extends CommandHandler {
+public class MultiPointerGesture extends TouchableEvent {
 
   @Override
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
-    if (!command.isElementCommand()) {
-      return getErrorResult("A gesturable view is required for this command.");
-    }
-
     try {
-      JSONArray actions = (org.json.JSONArray)command.params().get("actions");
+      PointerCoords[][] pcs = parsePointerCoords(command);
 
-      double time = computeLongestTime(actions);
-
-      PointerCoords[][] pcs = new PointerCoords[actions.length()][];
-      for (int i = 0; i < actions.length(); i++) {
-        JSONArray gestures = actions.getJSONArray(i);
-
-        pcs[i] = gesturesToPointerCoords(time, gestures);
-      }
-
-      final AndroidElement el = command.getElement();
-      if (el.performMultiPointerGesture(pcs)) {
-        return getSuccessResult("OK");
+      if (command.isElementCommand()) {
+        final AndroidElement el = command.getElement();
+        if (el.performMultiPointerGesture(pcs)) {
+          return getSuccessResult("OK");
+        } else {
+          return getErrorResult("Unable to perform multi pointer gesture");
+        }
       } else {
-        return getErrorResult("Unable to perform multi pointer gesture");
+        Object controller = getController();
+        final Method pmpg = getMethod("performMultiPointerGesture", controller);
+        Boolean rt = (Boolean)pmpg.invoke(controller, (Object)pcs);
+        if (rt.booleanValue()) {
+          return getSuccessResult("OK");
+        } else {
+          return getErrorResult("Unable to perform multi pointer gesture");
+        }
       }
     } catch (final ElementNotInHashException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final Exception e) {
       Logger.debug("Exception: " + e);
+      e.printStackTrace();
       return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
     }
   }
 
-  private PointerCoords[] gesturesToPointerCoords(double maxTime, JSONArray gestures) throws Exception {
+  private PointerCoords[][] parsePointerCoords(AndroidCommand command)
+      throws JSONException {
+    JSONArray actions = (org.json.JSONArray)command.params().get("actions");
+
+    double time = computeLongestTime(actions);
+
+    PointerCoords[][] pcs = new PointerCoords[actions.length()][];
+    for (int i = 0; i < actions.length(); i++) {
+      JSONArray gestures = actions.getJSONArray(i);
+
+      pcs[i] = gesturesToPointerCoords(time, gestures);
+    }
+
+    return pcs;
+  }
+
+  private PointerCoords[] gesturesToPointerCoords(double maxTime, JSONArray gestures)
+      throws JSONException {
     // gestures, e.g.:
     //    [
     //      {"touch":{"y":529.5,"x":120},"time":0.2},

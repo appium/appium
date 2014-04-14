@@ -28,7 +28,7 @@ module.exports = function (app) {
 
   var setup =  function (context) {
     return setupBase(context, {
-      nonSyntheticWebClick: true
+      nativeWebTap: true
     , app: app
     , browserName: browserName
     , safariIgnoreFraudWarning: true

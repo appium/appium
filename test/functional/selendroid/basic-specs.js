@@ -55,6 +55,12 @@ describe('selendroid - basic -', function () {
         .nodeify(done);
     });
 
+    it('should be able to get strings', function (done) {
+      driver
+        .execute("mobile: getStrings")
+        .nodeify(done);
+    });
+
     it('should error out nicely with incompatible commands', function (done) {
       driver
         .execute("mobile: flick", [{}])

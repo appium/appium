@@ -8,7 +8,8 @@ var desired = {
   app: path.resolve(__dirname, '../../../../sample-code/apps/gps-demo/bin/GPSTutorial1.apk')
 };
 
-describe("apidemo - location -", function () {
+// TODO: bring back when new wd is published with setGeoLocation
+describe("apidemo - location - @skip-ios-all", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

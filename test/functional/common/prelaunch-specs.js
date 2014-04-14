@@ -21,7 +21,7 @@ function log(data) {
 }
 
 var waitForLaunch = function (app, extraArgs, done) {
-  var args = [".", "-p", crazyPort, "-l", "-dd", "-m", "-r", "3", "-lt", JSON.stringify(env.LAUNCH_TIMEOUT)];
+  var args = [".", "-p", crazyPort, "-l", "-dd", "-r", "3", "-lt", JSON.stringify(env.LAUNCH_TIMEOUT)];
   if (app) {
     args = args.concat(["--app", app]);
   }

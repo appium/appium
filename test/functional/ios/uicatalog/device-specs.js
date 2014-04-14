@@ -13,7 +13,7 @@ describe('uicatalog - device -', function () {
     it("should lock the device for 4 of seconds (+/- " + allowance + "  secs)", function (done) {
       var before = new Date().getTime() / 1000;
       driver
-        .execute("mobile: lock", [{seconds: 4}])
+        .lockDevice(4)
         .then(function () {
           var now = (new Date().getTime() / 1000);
           (now - before).should.be.above(4);
@@ -27,7 +27,7 @@ describe('uicatalog - device -', function () {
     it("should background the app for 4 of seconds (+/- 6 secs)", function (done) {
       var before = new Date().getTime() / 1000;
       driver
-        .execute("mobile: background", [{seconds: 4}])
+        .backgroundApp(4)
         .then(function () {
           ((new Date().getTime() / 1000) - before).should.be.below(11);
         }).nodeify(done);

@@ -19,17 +19,17 @@ describe("apidemo - find elements -", function () {
   describe('mobile find', function () {
     it('should scroll to an element by text or content desc', function (done) {
       driver
-        .execute("mobile: find", [["scroll", [[3, "views"]], [[7, "views"]]]]).text()
+        .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).text()
           .should.become("Views")
         .nodeify(done);
     });
     it('should find a single element by content-description', function (done) {
-      driver.execute("mobile: find", [[[[7, "Animation"]]]]).text()
+      driver.complexFind([[[7, "Animation"]]]).text()
           .should.become("Animation")
         .nodeify(done);
     });
     it('should find a single element by text', function (done) {
-      driver.execute("mobile: find", [[[[3, "Animation"]]]]).text()
+      driver.complexFind([[[3, "Animation"]]]).text()
           .should.become("Animation")
         .nodeify(done);
     });
@@ -81,7 +81,7 @@ describe("apidemo - find elements -", function () {
     });
     it('should find a single element by id', function (done) {
       driver
-        .execute("mobile: find", [["scroll", [[3, "views"]], [[7, "views"]]]]).click()
+        .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
         .elementByXPath("//android.widget.TextView[@text='Buttons']").click()
         .elementById("buttons_1_normal").text().should.become("Normal")
         .nodeify(done);

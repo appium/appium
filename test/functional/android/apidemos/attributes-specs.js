@@ -70,9 +70,9 @@ describe("apidemos - attributes -", function () {
   // TODO: fix that, the second scroll doesn't scroll far enough.
   it('should be able to get selected value of a tab @skip-android-all', function (done) {
     driver
-      .execute("mobile: find", [["scroll", [[3, "views"]], [[7, "views"]]]]).click()
-      .execute("mobile: find", [["scroll", [[3, "tabs"]], [[7, "tabs"]]]]).click()
-      .execute("mobile: find", [["scroll", [[3, "content by id"]], [[7, "content by id"]]]]).click()
+      .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
+      .complexFind(["scroll", [[3, "tabs"]], [[7, "tabs"]]]).click()
+      .complexFind(["scroll", [[3, "content by id"]], [[7, "content by id"]]]).click()
       .elementsByTagName("text").then(function (els) {
         els[0].getAttribute('selected').should.become('false'); // the 1st text is not selected
         els[1].getAttribute('selected').should.become('true'); // tab 1 is selected

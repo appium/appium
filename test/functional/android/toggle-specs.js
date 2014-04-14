@@ -24,7 +24,7 @@ var toggleTest = function (promisedBrowser, displayName, toggleElementName, togg
       driver
         .elementByName(toggleElementName).text().then(function (txt) {
           initialValue = txt;
-          return driver.execute("mobile: " + toggleMethod);
+          return driver[toggleMethod]();
         })
         .then(function () {
           return driver.elementByName(toggleElementName).text().then(function (txt) {

@@ -73,7 +73,7 @@ describe('selendroid - basic -', function () {
 
     it('should be able to uninstall the app', function (done) {
       driver
-        .execute("mobile: removeApp", [{bundleId: "com.example.android.apis"}])
+        .removeApp("com.example.android.apis")
         .nodeify(done);
     });
   });
@@ -85,13 +85,13 @@ describe('selendroid - basic -', function () {
     it("should background the app", function (done) {
       var before = new Date().getTime() / 1000;
       driver
-        .execute("mobile: background", [{seconds: 3}])
+        .backgroundApp(3)
         .then(function () {
           ((new Date().getTime() / 1000) - before).should.be.above(2);
           // this should not be tested
           // ((new Date().getTime() / 1000) - before).should.be.below(5);
         })
-        .execute("mobile: currentActivity")
+        .getCurrentActivity()
           .should.eventually.include("ApiDemos")
         .nodeify(done);
     });

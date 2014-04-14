@@ -482,8 +482,7 @@ describe('uicatalog - gestures -', function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should not error', function (done) {
-      driver.execute('mobile: shake')
-        .nodeify(done);
+      driver.shakeDevice().nodeify(done);
     });
   });
 

@@ -14,10 +14,10 @@ describe("apidemos - screenshot -", function () {
   });
   it('should not cause other commands to fail', function (done) {
     driver
-      .execute("mobile: find", [[[[3, "Animation"]]]])
+      .complexFind([[[3, "Animation"]]])
       .takeScreenshot()
         .should.eventually.have.length.above(1000)
-      .execute("mobile: find", [[[[3, "Animation"]]]])
+      .complexFind([[[3, "Animation"]]])
         .should.eventually.exist
       .sleep(5000) // cooldown
       .nodeify(done);

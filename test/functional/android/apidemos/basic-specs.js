@@ -24,9 +24,8 @@ describe("apidemo - basic -", function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should die with short command timeout', function (done) {
-      var params = {timeout: 3};
       driver
-        .execute("mobile: setCommandTimeout", [params])
+        .setCommandTimeout(3000)
         .sleep(4000)
         .elementByName('Animation')
           .should.be.rejectedWith(/status: (13|6)/)
@@ -47,9 +46,8 @@ describe("apidemo - basic -", function () {
             .then(find);
         }
       };
-      var params = {timeout: 7};
       driver
-        .execute("mobile: setCommandTimeout", [params])
+        .setCommandTimeout(7000)
         .then(function () { start = Date.now(); })
         .then(find)
         .sleep(10000)
@@ -72,7 +70,7 @@ describe("apidemo - basic -", function () {
 
     it('should be able to get current activity', function (done) {
       driver
-        .execute("mobile: currentActivity")
+        .getCurrentActivity()
           .should.eventually.include("ApiDemos")
         .nodeify(done);
     });
@@ -93,22 +91,22 @@ describe("apidemo - basic -", function () {
 
     it('should be able to detect if app is installed', function (done) {
       driver
-        .execute('mobile: isAppInstalled', [{bundleId: 'foo'}])
+        .isAppInstalled('foo')
           .should.eventually.equal(false)
-        .execute('mobile: isAppInstalled', [{bundleId: 'com.example.android.apis'}])
+        .isAppInstalled('com.example.android.apis')
           .should.eventually.equal(true)
         .nodeify(done);
     });
     it("should background the app", function (done) {
       var before = new Date().getTime() / 1000;
       driver
-        .execute("mobile: background", [{seconds: 3}])
+        .backgroundApp(3)
         .then(function () {
           ((new Date().getTime() / 1000) - before).should.be.least(3);
           // should really not be checking this.
           //((new Date().getTime() / 1000) - before).should.be.below(5);
         })
-        .execute("mobile: currentActivity")
+        .getCurrentActivity()
           .should.eventually.include("ApiDemos")
         .nodeify(done);
     });
@@ -122,7 +120,7 @@ describe("apidemo - basic -", function () {
     it('should still be able to reset', function (done) {
       driver
         .sleep(3000)
-        .execute('mobile: reset')
+        .resetApp()
         .getWindowSize()
         .nodeify(done);
     });

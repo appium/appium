@@ -22,30 +22,14 @@ describe('testapp - location -', function () {
   });
 
   it('should not error with valid lat/lon and no options', function (done) {
-    var locationOpts = {
-      latitude: -30
-    , longitude: 30
-    };
-    driver.execute('mobile: setLocation', [locationOpts])
-      .nodeify(done);
-  });
-
-  it('should not error with valid lat/lon and valid options', function (done) {
-    var locationOpts = {
-      latitude: -30
-    , longitude: 30
-    , altitude: 1000
-    };
-    driver.execute('mobile: setLocation', [locationOpts])
+    driver
+      .setGeoLocation(-30, 30)
       .nodeify(done);
   });
 
   it('should error with invalid lat/lon and no options', function (done) {
-    var locationOpts = {
-      latitude: -150
-    , longitude: 30
-    };
-    driver.execute('mobile: setLocation', [locationOpts])
+    driver
+      .setGeoLocation(-150, 30)
       .should.be.rejected
       .nodeify(done);
   });

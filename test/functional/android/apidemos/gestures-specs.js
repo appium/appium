@@ -13,7 +13,7 @@ describe("apidemo - gestures -", function () {
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      driver.execute("mobile: reset")
+      driver.resetApp()
         .then(function () { return driver.sleep(3000); })
         .nodeify(done);
     });

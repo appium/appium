@@ -26,11 +26,11 @@ describe("apidemos - source -", function () {
   });
   it('should return the page source without crashing other commands', function (done) {
     driver
-      .execute("mobile: find", [[[[3, "Animation"]]]])
+      .complexFind([[[3, "Animation"]]])
       .source().then(function (source) {
         assertSource(source);
       })
-      .execute("mobile: find", [[[[3, "Animation"]]]])
+      .complexFind([[[3, "Animation"]]])
       .nodeify(done);
   });
 });

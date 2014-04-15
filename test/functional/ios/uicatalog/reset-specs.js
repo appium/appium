@@ -13,7 +13,7 @@ describe('uicatalog - reset -', function () {
       driver
         .elementsByTagName('tableView')
           .should.eventually.have.length(1)
-        .execute("mobile: reset")
+        .resetApp()
         .sleep(3000)
         .elementsByTagName('tableView')
           .should.eventually.have.length(1)

@@ -26,7 +26,7 @@ describe('testapp - clear -', function () {
             .should.be.rejected;
         }
       })
-      .execute("mobile: hideKeyboard")
+      .hideKeyboard()
       .elementByTagName('slider').click()
       .nodeify(done);
   });
@@ -41,7 +41,7 @@ describe('testapp - clear -', function () {
             .should.be.rejected;
         }
       })
-      .execute("mobile: hideKeyboard", [{keyName: "Done"}])
+      .hideKeyboard()
       .elementByTagName('slider').click()
       .nodeify(done);
   });

@@ -19,9 +19,8 @@ describe('testapp - timeouts -', function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should die with short command timeout', function (done) {
-      var params = {timeout: 3};
       driver
-        .execute("mobile: setCommandTimeout", [params])
+        .setCommandTimeout(3000)
         .sleep(5500)
         .elementByName('dont exist dogg')
           .should.be.rejectedWith(/status: (13|6)/)
@@ -34,10 +33,9 @@ describe('testapp - timeouts -', function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should die with short command timeout even after mobile reset', function (done) {
-      var params = {timeout: 3};
       driver
-        .execute("mobile: setCommandTimeout", [params])
-        .execute("mobile: reset")
+        .setCommandTimeout(3000)
+        .resetApp()
         .sleep(6500)
         .elementByName('dont exist dogg')
           .should.be.rejectedWith(/status: (13|6)/)
@@ -51,20 +49,7 @@ describe('testapp - timeouts -', function () {
 
     it('when set to 0 should disable itself', function (done) {
       driver
-        .execute("mobile: setCommandTimeout", [{timeout: 0}])
-        .sleep(3000)
-        .elementByTagName('button').should.eventually.exist
-        .nodeify(done);
-    });
-  });
-
-  describe('command timeout set to false', function () {
-    var driver;
-    setup(this, desired).then(function (d) { driver = d; });
-
-    it('when set to false should disable itself', function (done) {
-      driver
-        .execute("mobile: setCommandTimeout", [{timeout: false}])
+        .setCommandTimeout(0)
         .sleep(3000)
         .elementByTagName('button').should.eventually.exist
         .nodeify(done);
@@ -81,33 +66,6 @@ describe('testapp - timeouts -', function () {
         .sleep(5500)
         .elementByName('dont exist dogg')
           .should.be.rejectedWith(/status: (13|6)/)
-        .nodeify(done);
-    });
-  });
-
-  describe('command timeout disabled via desired caps (0)', function () {
-    var driver;
-    setup(this, _.defaults({newCommandTimeout: 0}, desired))
-      .then(function (d) { driver = d; });
-
-    it('when set to 0 should disable itself', function (done) {
-      driver
-        .sleep(5000)
-        .elementByTagName('button').should.eventually.exist
-        .nodeify(done);
-    });
-  });
-
-  describe('command timeout disabled via desired caps (false)', function () {
-    var driver;
-    setup(this, _.defaults({newCommandTimeout: false}, desired))
-      .then(function (d) { driver = d; });
-
-    it('when set to false should disable itself', function (done) {
-      driver
-        .execute("mobile: setCommandTimeout", [{timeout: false}])
-        .sleep(5000)
-        .elementByTagName('button').should.eventually.exist
         .nodeify(done);
     });
   });
@@ -139,7 +97,7 @@ describe('testapp - timeouts -', function () {
       driver
         .setImplicitWaitTimeout(impWaitSecs * 1000)
         .then(impWaitCheck)
-        .execute("mobile: reset")
+        .resetApp()
         .sleep(3000) // cooldown
         .then(impWaitCheck)
         .nodeify(done);

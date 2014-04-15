@@ -1,8 +1,7 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired")
-  , fs = require('fs');
+  , desired = require("./desired");
 
 describe("apidemos - push & pull file -", function () {
   var driver;
@@ -13,10 +12,9 @@ describe("apidemos - push & pull file -", function () {
     var base64Data = new Buffer(stringData).toString('base64');
     var remotePath = '/data/local/tmp/remote.txt';
 
-    driver.execute("mobile: pushFile", [{data: base64Data, path: remotePath}])
-      .then(function () {
-        return driver.execute("mobile: pullFile", [{path: remotePath}]);
-      })
+    driver
+      .pushFile(remotePath, base64Data)
+      .pullFile(remotePath)
       .then(function (remoteData64) {
         var remoteData = new Buffer(remoteData64, 'base64').toString();
         remoteData.should.equal(stringData);

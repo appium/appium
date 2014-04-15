@@ -41,10 +41,7 @@ describe('testapp - basic -', function () {
             if (type === "elem") {
               return function () { return elem.sendKeys(val); };
             } else if (type === "elem-setvalue") {
-              return function () {
-                return driver.execute("mobile: setValue",
-                  [{element: elem.value, value: val}]);
-              };
+              return function () { return elem.setImmediateValue(val); };
             } else if (type === "driver") {
               return function () { return elem.click().keys(val); };
             }

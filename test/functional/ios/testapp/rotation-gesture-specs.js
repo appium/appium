@@ -13,8 +13,7 @@ describe('testapp - rotation gesture -', function () {
       .then(function (buttons) { return buttons[5].click(); })
       .sleep(1000).then(function () { okIfAlert(driver); })
       .elementsByTagName('Map')
-      .execute("mobile: rotate", [{x: 114, y: 198, duration: 5, radius: 3,
-        rotation: 220, touchCount: 2}])
+      .rotate({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touchCount: 2})
       .nodeify(done);
   });
 });

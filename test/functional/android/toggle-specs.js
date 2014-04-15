@@ -35,7 +35,7 @@ var toggleTest = function (promisedBrowser, displayName, toggleElementName, togg
     });
 
     it('should toggle ' + displayName + ' back to initial value', function (done) {
-      driver.execute("mobile: " + toggleMethod)
+      driver[toggleMethod]()
         .then(function () {
           return driver.elementByName(toggleElementName).text().then(function (txt) {
             txt.should.equal(initialValue);

@@ -339,7 +339,7 @@ var setupAndroidProj = function (grunt, projPath, args, cb) {
     grunt.log.write(data);
   });
   proc.on('exit', function (code) {
-    cb(code === 0 ? null : new Error("Setup failed with code " + code));
+    cb(code === 0 ? null : new Error("Setup cmd " + cmd + " failed with code " + code));
   });
 };
 

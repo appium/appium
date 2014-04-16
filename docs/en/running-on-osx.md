@@ -1,8 +1,3 @@
----
-title: Running Appium on Mac OS X
-layout: default
----
-
 Running Appium on Mac OS X
 =======
 

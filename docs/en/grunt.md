@@ -1,8 +1,3 @@
----
-title: Appium grunt commands
-layout: default
----
-
 Appium grunt commands
 =============
 

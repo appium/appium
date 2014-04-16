@@ -1,8 +1,3 @@
----
-title: Appium on real devices
-layout: default
----
-
 Appium on real iOS devices
 ======================
 Appium has support for real device testing.

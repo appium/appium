@@ -1,8 +1,3 @@
----
-title: Running Appium on Windows
-layout: default
----
-
 Running Appium on Windows
 =======================
 

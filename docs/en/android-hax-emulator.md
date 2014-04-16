@@ -1,8 +1,3 @@
----
-title: Intel Hardware Accelerated Execution Manager
-layout: default
----
-
 # Intel® Hardware Accelerated Execution Manager
 
 If you find the android emulator a slow and your system runs on an Intel®

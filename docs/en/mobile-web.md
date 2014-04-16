@@ -1,8 +1,3 @@
----
-title: Automating mobile web apps
-layout: default
----
-
 Automating mobile web apps
 ======================
 

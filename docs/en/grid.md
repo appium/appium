@@ -1,8 +1,3 @@
----
-title: Selenium Grid
-layout: default
----
-
 Selenium Grid
 ======================
 

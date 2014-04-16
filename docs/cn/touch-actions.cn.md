@@ -1,8 +1,3 @@
----
-layout: default
-title: 触摸动作（touch actions）
----
-
 # 触摸动作（touch actions）
 
 

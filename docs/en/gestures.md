@@ -1,8 +1,3 @@
----
-title: Automating mobile gestures
-layout: default
----
-
 Automating mobile gestures
 ==========================
 

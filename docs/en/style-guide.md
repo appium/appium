@@ -1,8 +1,3 @@
----
-title: Style guide for contributors
-layout: default
----
-
 Style guide for contributors
 ============================
 

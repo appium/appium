@@ -1,8 +1,3 @@
----
-title: Touch Actions
-layout: default
----
-
 # Touch Actions
 
 WebDriver provides an API to send some kinds of touch gestures to the devices,

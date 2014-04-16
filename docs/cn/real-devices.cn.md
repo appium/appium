@@ -1,8 +1,3 @@
----
-layout: default
-title: Appium 在真机上
----
-
 Appium在真机上
 ======================
 Appium已经初步支持真机测试。

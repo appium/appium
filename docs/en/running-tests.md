@@ -1,8 +1,3 @@
----
-title: Running Tests
-layout: default
----
-
 Running Tests
 =============
 

@@ -1,8 +1,3 @@
----
-title: Running Appium on Linux
-layout: default
----
-
 Running Appium on Linux
 =======================
 

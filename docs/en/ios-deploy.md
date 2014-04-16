@@ -1,8 +1,3 @@
----
-title: Deploying your iOS app to your device
-layout: default
----
-
 Deploying your iOS app to your device
 =====================================
 To prepare for your Appium tests to run on a real device, you will need to:

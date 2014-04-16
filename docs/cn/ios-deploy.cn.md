@@ -1,8 +1,3 @@
----
-layout: default
-title: iOS Deploy
----
-
 部署ios app 到手机上
 =====================================
 准备在真机上执行appium测试, 需要如下准备:

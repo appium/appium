@@ -1,8 +1,3 @@
----
-title: Cross platform mobile methods
-layout: default
----
-
 #### Cross platform mobile methods
 
 ##### Reset

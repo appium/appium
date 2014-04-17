@@ -9,10 +9,10 @@ describe('testapp - rotation gesture -', function () {
   setup(this, desired).then(function (d) { driver = d; });
 
   it('should rotate map after tapping Test Gesture', function (done) {
-    driver.elementsByTagName('button')
+    driver.elementsByClassName('UIAButton')
       .then(function (buttons) { return buttons[5].click(); })
       .sleep(1000).then(function () { okIfAlert(driver); })
-      .elementsByTagName('Map')
+      .elementsByClassName('UIAMap')
       .rotate({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touchCount: 2})
       .nodeify(done);
   });

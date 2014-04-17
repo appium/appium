@@ -14,7 +14,7 @@ describe('testapp - pinch gesture -', function () {
 
     it('should pinchOpen and pinchClose map after tapping Test Gesture', function (done) {
       driver
-        .elementsByTagName('button').at(5).click()
+        .elementsByClassName('UIAButton').at(5).click()
         .sleep(1000).then(function () { okIfAlert(driver); })
         .elementByXPath('//UIAWindow[1]/UIAMapView[1]')
         .execute("mobile: pinchOpen", [{startX: 114.0, startY: 198.0, endX: 257.0,
@@ -37,13 +37,13 @@ describe('testapp - touch actions @skip-ios-all -', function () {
   describe('tap', function () {
     it('should tap on a specified element', function (done) {
       driver
-        .elementsByTagName('button').at(3)
+        .elementsByClassName('UIAButton').at(3)
           .performTouch(tap)
         .sleep(1000).then(function () { okIfAlert(driver); })
-        .elementsByTagName('button').at(3)
+        .elementsByClassName('UIAButton').at(3)
           .then(function (el) { return el.performTouch(tap); })
         .sleep(1000).then(function () { okIfAlert(driver); })
-        .elementsByTagName('button').at(3)
+        .elementsByClassName('UIAButton').at(3)
           .then(function (el) { return tap.performOn(el); })
         .sleep(1000).then(function () { okIfAlert(driver); })
         .sleep(3000)
@@ -54,7 +54,7 @@ describe('testapp - touch actions @skip-ios-all -', function () {
   describe('swipe', function () {
     it('should move the page', function (done) {
       driver
-        .elementsByTagName('button').at(5)
+        .elementsByClassName('UIAButton').at(5)
           .performTouch(tap)
         .sleep(500).then(function () { okIfAlert(driver); })
         .sleep(500)

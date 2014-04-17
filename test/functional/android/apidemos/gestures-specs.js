@@ -3,8 +3,8 @@
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
-  , androidReset = require('../../../helpers/reset').androidReset
   , droidText = 'android.widget.TextView'
+  , droidList = 'android.widget.ListView'
   , Q = require("q");
 
 describe("apidemo - gestures -", function () {
@@ -23,7 +23,7 @@ describe("apidemo - gestures -", function () {
     driver
       .execute("mobile: tap", [{x: 100, y: 300}])
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; })
+      .elementsByClassName(droidText).then(function (els) { return els[1]; })
         .text().should.become("Action Bar")
       .nodeify(done);
   });
@@ -34,7 +34,7 @@ describe("apidemo - gestures -", function () {
     driver
       .execute("mobile: tap", [{x: 0.6, y: 0.8}])
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["ForegroundDispatch", "Morse Code"].should.include(text);
       }).nodeify(done);
@@ -44,7 +44,7 @@ describe("apidemo - gestures -", function () {
     // I use a nexus something or other phone style thingo
     driver.elementByName("Animation").tap()
       .sleep(1500)
-      .elementsByTagName("text").then(function (els) { return els[1]; })
+      .elementsByClassName(droidText).then(function (els) { return els[1]; })
         .text().should.become("Bouncing Balls")
       .nodeify(done);
   });
@@ -101,7 +101,7 @@ describe("apidemo - gestures -", function () {
   // todo fix this: got Error response status: 13, Could not scroll element into view: Views
   it('should drag by pixels @skip-android-all', function (done) {
     var scrollOpts;
-    driver.elementByTagName("listView")
+    driver.elementByClassName(droidList)
       .then(function (el) {
         scrollOpts = { element: el.value, text: 'Views' };
         return driver.execute("mobile: scrollTo", [scrollOpts]);
@@ -131,7 +131,7 @@ describe("apidemo - gestures -", function () {
   it('should drag element to point @skip-android-all', function (done) {
     var scrollOpts;
     driver
-      .elementByTagName("listView")
+      .elementByClassName(droidList)
       .then(function (el) {
         scrollOpts = {
           element: el.value
@@ -163,7 +163,7 @@ describe("apidemo - gestures -", function () {
   it('should drag element to destEl @skip-android-all', function (done) {
     var scrollOpts;
     driver
-      .elementByTagName("listView")
+      .elementByClassName(droidList)
       .then(function (el) {
         scrollOpts = {
           element: el.value
@@ -194,7 +194,7 @@ describe("apidemo - gestures -", function () {
   it('should bring the element into view @skip-android-all', function (done) {
     driver
       // .elementByName("Views").should.be.rejected // shouldn't be visible
-      .elementByTagName("listView")
+      .elementByClassName(droidList)
       .then(function (el) {
         var scrollOpts = {
           element: el.value
@@ -208,7 +208,7 @@ describe("apidemo - gestures -", function () {
   it('should pinch out/in @skip-android-all', function (done) {
     var scrollOpts;
     driver
-      .elementByTagName("listView")
+      .elementByClassName(droidList)
       .then(function (el) {
         scrollOpts = {
           element: el.value
@@ -237,10 +237,10 @@ describe("apidemo - gestures -", function () {
     var element;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { driver.execute("mobile: longClick", [{element: element.value}]); })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);
@@ -250,10 +250,10 @@ describe("apidemo - gestures -", function () {
     var element;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { driver.execute("mobile: longClick", [{element: element.value, duration: 1000}]); })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);
@@ -263,7 +263,7 @@ describe("apidemo - gestures -", function () {
     var element, location, elSize;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { return element.getLocation(); })
       .then(function (loc) { location = loc; })
       .then(function () { return element.getSize(); })
@@ -274,7 +274,7 @@ describe("apidemo - gestures -", function () {
         driver.execute("mobile: longClick", [{x: centerX, y: centerY}]);
       })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);
@@ -284,7 +284,7 @@ describe("apidemo - gestures -", function () {
     var element, location, elSize, windowSize;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { return element.getLocation(); })
       .then(function (loc) { location = loc; })
       .then(function () { return element.getSize(); })
@@ -297,7 +297,7 @@ describe("apidemo - gestures -", function () {
         driver.execute("mobile: longClick", [{x: relX, y: relY}]);
       })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);
@@ -307,14 +307,14 @@ describe("apidemo - gestures -", function () {
     var element;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { driver.execute("mobile: down", [{element: element.value}]); })
       .sleep(3000)
       .then(function () { driver.execute("mobile: move", [{element: element.value}]); })
       .sleep(3000)
       .then(function () { driver.execute("mobile: up", [{element: element.value}]); })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);
@@ -324,7 +324,7 @@ describe("apidemo - gestures -", function () {
     var element, location, elSize, centerX, centerY;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { return element.getLocation(); })
       .then(function (loc) { location = loc; })
       .then(function () { return element.getSize(); })
@@ -339,7 +339,7 @@ describe("apidemo - gestures -", function () {
       .sleep(3000)
       .then(function () { driver.execute("mobile: up", [{x: centerX, y: centerY}]); })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);
@@ -349,7 +349,7 @@ describe("apidemo - gestures -", function () {
     var element, location, elSize, windowSize, relX, relY;
 
     driver
-      .elementsByTagName("text").then(function (els) { element = els[1]; })
+      .elementsByClassName(droidText).then(function (els) { element = els[1]; })
       .then(function () { return element.getLocation(); })
       .then(function (loc) { location = loc; })
       .then(function () { return element.getSize(); })
@@ -366,7 +366,7 @@ describe("apidemo - gestures -", function () {
       .sleep(3000)
       .then(function () { driver.execute("mobile: up", [{x: relX, y: relY}]); })
       .sleep(3000)
-      .elementsByTagName("text").then(function (els) { return els[1]; }).text()
+      .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
         ["Accessibility Node Provider"].should.include(text);
       }).nodeify(done);

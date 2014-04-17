@@ -10,7 +10,7 @@ describe('testapp - size -', function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should return the right element size', function (done) {
-      driver.elementByTagName('button').getSize().then(function (size) {
+      driver.elementByClassName('UIAButton').getSize().then(function (size) {
         size.width.should.eql(113);
         size.height.should.eql(37);
       }).nodeify(done);

@@ -21,20 +21,20 @@ describe('testapp - basic -', function () {
     var clearFields = function (driver) {
       values = [];
       return driver
-        .elementsByTagName('textField').then(function (elems) {
+        .elementsByClassName('UIATextField').then(function (elems) {
           var sequence = _(elems).map(function (elem) {
             return function () { return elem.clear(); };
           });
           return sequence.reduce(Q.when, new Q()); // running sequence
         }).then(function () {
-          return driver.elementByTagName('button').click();
+          return driver.elementByClassName('UIAButton').click();
         });
     };
 
     var populate = function (type, driver) {
       values = [];
       return driver
-        .elementsByTagName('textField').then(function (elems) {
+        .elementsByClassName('UIATextField').then(function (elems) {
           var sequence = _(elems).map(function (elem) {
             var val = Math.round(Math.random() * 10);
             values.push(val);
@@ -52,8 +52,8 @@ describe('testapp - basic -', function () {
 
     var computeAndCheck = function (driver) {
       return driver
-        .elementByTagName('button').click()
-        .elementByTagName('staticText').text().then(function (text) {
+        .elementByClassName('UIAButton').click()
+        .elementByClassName('UIAStaticText').text().then(function (text) {
           parseInt(text, 10).should.equal(values[0] + values[1]);
         });
     };
@@ -85,7 +85,7 @@ describe('testapp - basic -', function () {
 
     it('should confirm that button is displayed', function (done) {
       driver
-        .elementByTagName('textField').isDisplayed()
+        .elementByClassName('UIATextField').isDisplayed()
           .should.eventually.be.ok
         .nodeify(done);
     });
@@ -105,7 +105,7 @@ describe('testapp - basic -', function () {
     });
 
     it('should interact with alert', function (done) {
-      driver.elementsByTagName('button').then(function (buttons) {
+      driver.elementsByClassName('UIAButton').then(function (buttons) {
         return buttons[1];
       }).then(function (button) {
         return button
@@ -122,13 +122,13 @@ describe('testapp - basic -', function () {
 
 
     it('should find alert like other elements', function (done) {
-      driver.elementsByTagName('button').then(function (buttons) {
+      driver.elementsByClassName('UIAButton').then(function (buttons) {
         return buttons[1];
       }).then(function (button) {
         return button.click()
-          .elementByTagName('alert')
+          .elementByClassName('UIAAlert')
           // maybe we could get alert body text too?
-          .elementByTagName('>', 'text').text().should.become("Cool title")
+          .elementByClassName('>', 'UIAStaticText').text().should.become("Cool title")
           .dismissAlert();
       })
       .nodeify(done);
@@ -136,14 +136,14 @@ describe('testapp - basic -', function () {
 
     it('should get tag names of elements', function (done) {
       driver
-        .elementByTagName('button').getTagName().should.become("UIAButton")
-        .elementByTagName('text').getTagName().should.become("UIAStaticText")
+        .elementByClassName('UIAButton').getTagName().should.become("UIAButton")
+        .elementByClassName('UIAStaticText').getTagName().should.become("UIAStaticText")
         .nodeify(done);
     });
 
     it('should be able to get text of a button', function (done) {
       driver
-        .elementByTagName('button').text().should.become("ComputeSumButton")
+        .elementByClassName('UIAButton').text().should.become("ComputeSumButton")
         .nodeify(done);
     });
 

@@ -3,6 +3,8 @@
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
+  , atv = 'android.widget.TextView'
+  , alv = 'android.widget.ListView'
   , androidReset = require('../../../helpers/reset').androidReset;
 
 describe("apidemo - find elements -", function () {
@@ -41,23 +43,12 @@ describe("apidemo - find elements -", function () {
         .elementByName("Animation").text().should.become("Animation")
         .nodeify(done);
     });
-    it('should find a single element by tag name', function (done) {
-      driver
-        .elementByTagName("text").text().should.become("API Demos")
-        .nodeify(done);
-    });
-    it('should find multiple elements by tag name', function (done) {
-      driver
-        .elementsByTagName("text")
-          .should.eventually.have.length.at.least(10)
-        .nodeify(done);
-    });
     it('should find an element by class name', function (done) {
       driver
         .elementByClassName("android.widget.TextView").text().should.become("API Demos")
         .nodeify(done);
     });
-    it('should find an element by class name', function (done) {
+    it('should find multiple elements by class name', function (done) {
       driver
         .elementsByClassName("android.widget.TextView")
           .should.eventually.have.length.at.least(10)
@@ -65,18 +56,18 @@ describe("apidemo - find elements -", function () {
     });
     it('should not find an element that doesnt exist', function (done) {
       driver
-        .elementByTagName("blargimarg").should.be.rejectedWith(/status: 7/)
+        .elementByClassName("blargimarg").should.be.rejectedWith(/status: 7/)
         .nodeify(done);
     });
     it('should not find multiple elements that doesnt exist', function (done) {
       driver
-        .elementsByTagName("blargimarg").should.eventually.have.length(0)
+        .elementsByClassName("blargimarg").should.eventually.have.length(0)
         .nodeify(done);
     });
     it('should fail on empty locator', function (done) {
-      driver.elementsByTagName("")
+      driver.elementsByClassName("")
         .catch(function (err) { throw err.data; }).should.be.rejectedWith(/selector/)
-        .elementsByTagName("text").should.eventually.exist
+        .elementsByClassName(atv).should.eventually.exist
         .nodeify(done);
     });
     it('should find a single element by id', function (done) {
@@ -102,35 +93,35 @@ describe("apidemo - find elements -", function () {
 
   describe('find element(s) from element', function () {
     it('should find a single element by tag name', function (done) {
-      driver.elementByTagName("list").then(function (el) {
+      driver.elementByClassName(alv).then(function (el) {
         return el
-          .elementByTagName("text").text().should.become("Accessibility");
+          .elementByClassName(atv).text().should.become("Accessibility");
       }).nodeify(done);
     });
     it('should find multiple elements by tag name', function (done) {
-      driver.elementByTagName("list").then(function (el) {
+      driver.elementByClassName(alv).then(function (el) {
         return el
-          .elementsByTagName("text").should.eventually.have.length.at.least(10);
+          .elementsByClassName(atv).should.eventually.have.length.at.least(10);
       }).nodeify(done);
     });
     it('should not find an element that doesnt exist', function (done) {
-      driver.elementByTagName("list").then(function (el) {
+      driver.elementByClassName(alv).then(function (el) {
         return el
-          .elementByTagName("blargimarg").should.be.rejectedWith(/status: 7/);
+          .elementByClassName("blargimarg").should.be.rejectedWith(/status: 7/);
       }).nodeify(done);
     });
-    it('should not find multiple elements that doesnt exist', function (done) {
-      driver.elementByTagName("list").then(function (el) {
+    it('should not find multiple elements that dont exist', function (done) {
+      driver.elementByClassName(alv).then(function (el) {
         return el
-          .elementsByTagName("blargimarg").should.eventually.have.length(0);
+          .elementsByClassName("blargimarg").should.eventually.have.length(0);
       }).nodeify(done);
     });
   });
 
   describe('xpath', function () {
     var f = "android.widget.FrameLayout";
-    var l = "android.widget.ListView";
-    var t = "android.widget.TextView";
+    var l = alv;
+    var t = atv;
     var v = "android.view.View";
     it('should find element by type', function (done) {
       driver
@@ -252,14 +243,6 @@ describe("apidemo - find elements -", function () {
     });
   });
 
-  describe('unallowed tag names', function () {
-    it('should not find secure fields', function (done) {
-      driver
-        .elementsByTagName('secure').catch(function (err) { throw JSON.stringify(err.cause.value); })
-          .should.be.rejectedWith(/not supported in Android/)
-        .nodeify(done);
-    });
-  });
   describe('invalid locator strategy', function () {
     it('should not accept -ios uiautomation locator strategy', function (done) {
       driver

@@ -31,7 +31,7 @@ module.exports = function () {
           if (env.DEVICE === "selendroid") {
             return driver.elementByIdOrNull('goBack');
           } else {
-            return driver.elementByTagNameOrNull('button');
+            return driver.elementByClassNameOrNull('android.widget.Button');
           }
         })
         .then(function (el) {

@@ -1,11 +1,5 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.AndroidElementClassMap;
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
-
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -137,16 +131,7 @@ public class Dynamic {
         s = s.textContains((String) param);
         break;
       case SELECTOR_CLASS:
-        String androidClass = (String) param;
-        try {
-          androidClass = AndroidElementClassMap.match((String) param);
-        } catch (final AndroidCommandException e) {
-          // Couldn't find it in the classmap.
-          // Let it fall through and error out.
-        } catch (final UnallowedTagNameException e) {
-        }
-
-        s = s.className(androidClass);
+        s = s.className((String) param);
         break;
       case SELECTOR_DESCRIPTION:
         s = s.description((String) param);

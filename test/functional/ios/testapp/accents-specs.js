@@ -11,7 +11,7 @@ describe('testapp - accented characters', function () {
   it('should send accented text', function (done) {
     var testText = unorm.nfd("é Œ ù ḍ");
     driver
-      .elementsByTagName('textField').at(1)
+      .elementsByClassName('UIATextField').at(1)
         .sendKeys(testText)
         .text()
         .should.become(testText)
@@ -20,7 +20,7 @@ describe('testapp - accented characters', function () {
 
   it('should send delete key', function (done) {
     driver
-      .elementsByTagName('textField').at(1)
+      .elementsByClassName('UIATextField').at(1)
         .sendKeys("abc")
         .sendKeys('\uE003')
         .text()

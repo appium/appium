@@ -9,7 +9,7 @@ describe('testapp - get attribute -', function () {
 
   it('should get element attribute', function (done) {
     driver
-      .elementByTagName('button').getAttribute("name").should.become("ComputeSumButton")
+      .elementByClassName('UIAButton').getAttribute("name").should.become("ComputeSumButton")
       .nodeify(done);
   });
 });

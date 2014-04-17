@@ -10,30 +10,30 @@ describe('testapp - clear -', function () {
 
   it('should clear the text field', function (done) {
     driver
-      .elementByTagName('textField').sendKeys("some-value").text()
+      .elementByClassName('UIATextField').sendKeys("some-value").text()
         .should.become("some-value")
-      .elementByTagName('textField').clear().text().should.become('')
+      .elementByClassName('UIATextField').clear().text().should.become('')
       .nodeify(done);
   });
 
   it('should hide keyboard using default strategy @skip-ios-all', function (done) {
     driver
-      .elementByTagName('textField').sendKeys("1")
-      .elementByTagName('switch').isDisplayed()
+      .elementByClassName('UIATextField').sendKeys("1")
+      .elementByClassName('UIASwitch').isDisplayed()
         .should.become(false)
       .hideKeyboard()
-      .elementByTagName('switch').isDisplayed()
+      .elementByClassName('UIASwitch').isDisplayed()
         .should.become(true)
       .nodeify(done);
   });
 
   it('should hide keyboard using keyName', function (done) {
     driver
-      .elementByTagName('textField').sendKeys("1")
-      .elementByTagName('switch').isDisplayed()
+      .elementByClassName('UIATextField').sendKeys("1")
+      .elementByClassName('UIASwitch').isDisplayed()
         .should.become(false)
       .hideKeyboard("Done")
-      .elementByTagName('switch').isDisplayed()
+      .elementByClassName('UIASwitch').isDisplayed()
         .should.become(true)
       .nodeify(done);
   });

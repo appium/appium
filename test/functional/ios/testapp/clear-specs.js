@@ -16,33 +16,25 @@ describe('testapp - clear -', function () {
       .nodeify(done);
   });
 
-  it('should hide keyboard', function (done) {
+  it('should hide keyboard using default strategy @skip-ios-all', function (done) {
     driver
       .elementByTagName('textField').sendKeys("1")
-      .then(function () {
-        if (!env.IOS7) {
-          return driver
-            .elementByTagName('slider').click()
-            .should.be.rejected;
-        }
-      })
+      .elementByTagName('switch').isDisplayed()
+        .should.become(false)
       .hideKeyboard()
-      .elementByTagName('slider').click()
+      .elementByTagName('switch').isDisplayed()
+        .should.become(true)
       .nodeify(done);
   });
 
   it('should hide keyboard using keyName', function (done) {
     driver
       .elementByTagName('textField').sendKeys("1")
-      .then(function () {
-        if (!env.IOS7) {
-          return driver
-            .elementByTagName('slider').click()
-            .should.be.rejected;
-        }
-      })
-      .hideKeyboard()
-      .elementByTagName('slider').click()
+      .elementByTagName('switch').isDisplayed()
+        .should.become(false)
+      .hideKeyboard("Done")
+      .elementByTagName('switch').isDisplayed()
+        .should.become(true)
       .nodeify(done);
   });
 

@@ -13,11 +13,14 @@ description: Want to rock your mobile app automation? This is how you get starte
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 [![Dependency Status](https://gemnasium.com/appium/appium.png)](https://gemnasium.com/appium/appium)
 
+
 ## Supported Platforms
 
 * iOS
 * Android
 * FirefoxOS
+
+See the [platform support doc](platform-support) for more detailed information.
 
 ## Why Appium?
 
@@ -30,13 +33,16 @@ description: Want to rock your mobile app automation? This is how you get starte
    with the Selenium WebDriver API and language-specific client libraries.
 3. You can use any testing framework.
 
-Investing in [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) means you are betting
-on a single, free and open protocol for testing that has become a defacto standard. Don't lock yourself into a proprietary stack.
+Investing in the [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) protocol means you are betting on a single, free and open protocol for testing that has become a defacto standard. Don't lock yourself into a proprietary stack.
 
 If you use Apple's UIAutomation library without Appium you can only write tests
 using JavaScript and you can only run tests through the Instruments application.
 Similarly, with Google's UiAutomator you can only write tests in Java. Appium
 opens up the possibility of true cross-platform native mobile automation. Finally!
+
+## I don't get it yet...
+
+If you're new to Appium, or want a fuller description of what this is all about, please read our [Introduction to Appium Concepts](intro).
 
 ## Requirements
 

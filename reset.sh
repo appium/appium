@@ -145,7 +145,7 @@ reset_ios() {
     fi
     set -e
     echo "* Setting iOS config to Appium's version"
-    run_cmd $grunt setConfigVer:ios
+    run_cmd "$grunt" setConfigVer:ios
     echo "* Installing ios-sim-locale"
     run_cmd rm -f build/ios-sim-locale
     run_cmd cp assets/ios-sim-locale build/ios-sim-locale
@@ -171,7 +171,7 @@ reset_ios() {
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
     if $ios7_active ; then
         echo "* Cleaning/rebuilding WebViewApp"
-        run_cmd $grunt buildApp:WebViewApp:iphonesimulator$sdk_ver
+        run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
         run_cmd rm -rf build/WebViewApp
         run_cmd mkdir build/WebViewApp
         run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
@@ -201,10 +201,10 @@ reset_ios() {
                 fi
             fi
             echo "* Cleaning/rebuilding iOS test app: UICatalog"
-            run_cmd $grunt buildApp:UICatalog:iphonesimulator:$sdk_ver
+            run_cmd "$grunt" buildApp:UICatalog:iphonesimulator:$sdk_ver
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
-        run_cmd $grunt buildApp:TestApp:iphonesimulator:$sdk_ver
+        run_cmd "$grunt" buildApp:TestApp:iphonesimulator:$sdk_ver
     fi
     echo "* Cloning/updating fruitstrap"
     run_cmd git submodule update --init submodules/fruitstrap
@@ -230,7 +230,7 @@ reset_ios() {
           echo "IDENTITY_NAME = iPhone Developer" >> submodules/Safarilauncher/target.xcconfig
         fi
         echo "IDENTITY_CODE = " $provisioning_profile >> submodules/Safarilauncher/target.xcconfig
-        run_cmd $grunt buildSafariLauncherApp:iphoneos:"target.xcconfig"
+        run_cmd "$grunt" buildSafariLauncherApp:iphoneos:"target.xcconfig"
         echo "* Copying SafariLauncher for real devices to build"
         run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
     fi

@@ -1,8 +1,3 @@
----
-layout: default
-title: 在 Mac OS X 上使用 Appium
----
-
 在 Mac OS X 上使用 Appium
 =======
 

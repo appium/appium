@@ -1,8 +1,3 @@
----
-title: Automating hybrid apps
-layout: default
----
-
 Automating hybrid apps
 ======================
 

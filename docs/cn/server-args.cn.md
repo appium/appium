@@ -1,8 +1,3 @@
----
-layout: default
-title: Appium 服务器参数
----
-
 Appium 服务器参数
 ==========
 

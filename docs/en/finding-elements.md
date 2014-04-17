@@ -1,8 +1,3 @@
----
-title: Finding and interacting with elements
-layout: default
----
-
 Finding and interacting with elements
 =====================================
 

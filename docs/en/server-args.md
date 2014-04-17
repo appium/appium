@@ -1,8 +1,3 @@
----
-title: Appium server arguments
-layout: default
----
-
 Appium server arguments
 ==========
 

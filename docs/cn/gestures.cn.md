@@ -1,8 +1,3 @@
----
-layout: default
-title: 使移动手势自动化
----
-
 使移动手势自动化
 ==========================
 当selenium webDriver 提供某些交互功能的支持时，它的参数并不总是能很容易的映射到底层自动化设备（比如ios中的UIAutomation）所提供的功能。为此，Appium在WebDriver 之上为移动手势增加了额外的命令和参数。

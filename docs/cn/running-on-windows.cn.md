@@ -1,8 +1,3 @@
----
-layout: default
-title: 在windows上运行appium
----
-
 在windows上运行appium
 =======================
 

@@ -1,8 +1,3 @@
----
-title: Troubleshooting Appium
-layout: default
----
-
 Troubleshooting Appium
 ======================
 

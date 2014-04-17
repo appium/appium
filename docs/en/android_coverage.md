@@ -1,8 +1,3 @@
----
-title: Android coverage
-layout: default
----
-
 Android coverage requires the emulator or a rooted device. Build your app
 using the instrument target, for example `$ ant instrument`
 

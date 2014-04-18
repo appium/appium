@@ -1,3 +1,5 @@
+# Android Coverage
+
 Android coverage requires the emulator or a rooted device. Build your app
 using the instrument target, for example `$ ant instrument`
 
@@ -18,8 +20,6 @@ the coverage.ec file from the device.
 ```ruby
 mobile :endCoverage, intent: 'com.example.pkg.END_EMMA', path: '/mnt/sdcard/coverage.ec'
 ```
-
---
 
 `AndroidManifest.xml` defines the instrumentation and broadcast receiver.
 
@@ -104,7 +104,7 @@ public class MyInstrumentation extends Instrumentation {
 }
 ```
 
-#### Reports
+## Coverage Reports
 
 `ant instrument` generates a `coverage.em` file. The `mobile :endCoverage`
 will download the coverage.ec file for that particular run. Note that you can

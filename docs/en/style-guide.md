@@ -1,21 +1,19 @@
-Style guide for contributors
-============================
+# Style guide for contributors
 
 Thanks for your contribution to Appium! Here are the principles we use when
 writing javascript. Please conform to these so we can merge your pull request
  without going back and forth about style. The main principle is: *make your
  code look like the surrounding code*.
 
-Rebasing
---------
+## Rebasing
 
 Commits in a pull request should consist of [logical changes](https://github.com/appium/appium/pull/920#issuecomment-21588553).
 If there are multiple authors, make sure each author has their own commit.
 It's not a good idea to modify author information. Merge commits should be
 rebased out of pull requests.
 
-Linting
--------
+## Linting
+
 All code (except for code in `bootstrap.js` which uses proprietary Apple
 methods) must pass JSLint. To check your code, you can simply run `grunt
 lint` from the Appium repo dir. If you've created a new .js file,
@@ -46,8 +44,8 @@ while we're editing. See [this page](http://www.jshint.com/platforms/) for
 the list of editors and platforms and how to get your editor set up with
 automatic linting.
 
-Style notes
-------
+## Style notes
+
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
 
@@ -210,7 +208,7 @@ Style notes
     myVariable === undefined
     ```
 
-##  Test Style:
+## Test Style:
     
 Keep on the same line if it makes sense semantically and length is not an issue:
 

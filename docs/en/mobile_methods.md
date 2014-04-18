@@ -1,6 +1,6 @@
-#### Cross platform mobile methods
+# Cross platform mobile methods
 
-##### Reset
+## Reset
 
 Mobile reset will reset the app's state.
 
@@ -16,11 +16,14 @@ Ruby without the gem
 @driver.execute_script 'mobile: reset'
 ```
 
-##### pullFile
+## pullFile
 
 Fetch a file from the device's filesystem, returning it base64 encoded.
 
-Takes a single argument, `path`.  On Android and iOS, this is either the path to the file (relative to the root of the app's file system).  On iOS only, if path starts with `/AppName.app`, which will be replaced with the application's .app directory
+Takes a single argument, `path`. On Android and iOS, this is either the path
+to the file (relative to the root of the app's file system).  On iOS only,
+if path starts with `/AppName.app`, which will be replaced with the
+application's .app directory
 
 ```ruby
 # Android and iOS
@@ -36,9 +39,9 @@ Ruby
 @driver.execute_script('mobile: pullFile', {path: '/Library/AddressBook/AddressBook.sqlitedb'})
 ```
 
-#### Android mobile methods
+## Android mobile methods
 
-##### KeyEvent
+## KeyEvent
 
 [KeyEvent](http://developer.android.com/reference/android/view/KeyEvent.html) enables sending a keycode to Android.
 
@@ -62,7 +65,7 @@ Ruby without the gem
 @driver.execute_script 'mobile: keyevent', :keycode => 82
 ```
 
-#### Mobile find
+## Mobile find
 
 Java
 

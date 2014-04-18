@@ -1,12 +1,11 @@
-Automating mobile web apps
-======================
+# Automating mobile web apps
 
 If you're interested in automating your web app in Mobile Safari on iOS or
 Chrome on Android, Appium can help you. Basically, you write a normal WebDriver
 test, and use Appium as the Selenium server with a special set of desired
 capabilities.
 
-### Mobile Safari on Simulator
+## Mobile Safari on Simulator
 
 First of all, make sure developer mode is turned on in your Safari
 preferences so that the remote debugger port is open.
@@ -24,32 +23,34 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 }
 ```
 
-### Mobile Safari on a Real iOS Device
+## Mobile Safari on a Real iOS Device
 
 To be able to run your tests against mobile Safari we use the [SafariLauncher
  App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once
  Safari has been launched the Remote Debugger automatically connects using
  the [ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
-<b>NOTE:</b> There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
-in the ios-webkit-debug-proxy. You have to trust the machine before you can run the ios-webkit-debug-proxy
+**NOTE:** There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
+in the ios-webkit-debug-proxy. You have to trust the machine before you can
+run the ios-webkit-debug-proxy
 against your iOS device.
 
-#### Setup
+## Setup
 
 Before you can run your tests against Safari on a real device you will need to:
-* Have the <b>ios-webkit-debug-proxy</b> installed and running (see the [hybrid docs](hybrid)  for instructions)
-* Turn on <b>web inspector</b> on iOS device (<b>settings > safari >
-advanced</b>, only for iOS 6.0 and up)
-* Create a <b>provisioning profile</b> that can be used to deploy the SafariLauncherApp.
+* Have the **ios-webkit-debug-proxy** installed and running (see the
+[hybrid docs](hybrid.md) for instructions)
+* Turn on **web inspector** on iOS device (**settings > safari >
+advanced**, only for iOS 6.0 and up)
+* Create a **provisioning profile** that can be used to deploy the SafariLauncherApp.
 
-To create a profile for the launcher go into the <b>Apple Developers Member Center</b> and:
-  * <b>Step 1:</b> Create a <b>new App Id</b> and select the WildCard App ID option and set it to "*"
-  * <b>Step 2:</b> Create a <b>new Development Profile</b> and for App Id select the one created in step 1.
-  * <b>Step 3:</b> Select your <b>certificate(s) and device(s)</b> and click next.
-  * <b>Step 4:</b> Set the profile name and <b>generate the profile</b>.
-  * <b>Step 5:</b> Download the profile and open it with a text editor.
-  * <b>Step 6:</b> Search for the <b>UUID</b> and the string for it is your <b>identity code</b>.
+To create a profile for the launcher go into the **Apple Developers Member Center** and:
+  * **Step 1:** Create a **new App Id** and select the WildCard App ID option and set it to "*"
+  * **Step 2:** Create a **new Development Profile** and for App Id select the one created in step 1.
+  * **Step 3:** Select your **certificate(s) and device(s)** and click next.
+  * **Step 4:** Set the profile name and **generate the profile**.
+  * **Step 5:** Download the profile and open it with a text editor.
+  * **Step 6:** Search for the **UUID** and the string for it is your **identity code**.
 
 Now that you have a profile open a terminal and run the following commands:
 
@@ -70,11 +71,11 @@ $ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile
 $ node /lib/server/main.js -U <UDID>
 ```
 
-#### Running your test
+## Running your test
 
-To configure you test to run against safari simpley set the <b>"app"</b> to be <b>"safari"</b>.
+To configure you test to run against safari simpley set the **"app"** to be **"safari"**.
 
-##### Java Example
+## Java Example
 
 ```java
 //setup the web driver and launch the webview app.
@@ -93,7 +94,7 @@ remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populat
 remoteWebDriver.quit();
 ```
 
-### Mobile Chrome on Emulator or Real Device
+## Mobile Chrome on Emulator or Real Device
 
 Pre-requisites:
 

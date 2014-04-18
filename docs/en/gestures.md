@@ -1,5 +1,4 @@
-Automating mobile gestures
-==========================
+# Automating mobile gestures
 
 While the Selenium WebDriver spec has support for certain kinds of mobile
 interaction, its parameters are not always easily mappable to the
@@ -131,7 +130,7 @@ params as described above.
 
 In these examples, note that the element parameter is always optional.
 
-### Tap
+## Tap
 
 * **WD.js:**
 
@@ -200,7 +199,7 @@ coords.Add("y", 12);
 driver.ExecuteScript("mobile: tap", coords);
 ```
 
-### Flick
+## Flick
 
 * **WD.js:**
 
@@ -227,7 +226,7 @@ flickObject.put("touchCount", 2);
 js.executeScript("mobile: flick", flickObject);
 ```
 
-### Swipe
+## Swipe
 
 *Note*: Swiping is unfortunately broken in iOS7, because of a bug in Apple's
 frameworks. For iOS7, see `mobile: scroll` as a workaround that works for most
@@ -262,7 +261,7 @@ swipeObject.put("duration", 1.8);
 js.executeScript("mobile: swipe", swipeObject);
 ```
   
-### Scroll
+## Scroll
 
 * **WD.js:**
 
@@ -283,7 +282,7 @@ scrollObject.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: scroll", scrollObject);
 ```
 
-### Slider
+## Slider
  
 **iOS**
  
@@ -315,7 +314,7 @@ it is recommended to write tests that focus on minimum, 50%, and maximum.
 # 50%
 slider.click
 ```
-### Set orientation
+## Set orientation
 
 * **WD.js:**
 
@@ -331,7 +330,7 @@ driver.setOrientation("LANDSCAPE", function(err) {
 driver.orientation = "LANDSCAPE"
 ```
 
-### Scroll To
+## Scroll To
 
 ```ruby
   b = @driver.find_element :name, 'Sign In'
@@ -346,7 +345,7 @@ scrollToObject.put("element",((RemoteWebElement) element).getId());
 js.executeScript("mobile: scrollTo", scrollToObject);
 ```
 
-### longTap
+## longTap
  
  * **c#**
  

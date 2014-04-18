@@ -1,5 +1,4 @@
-Appium server capabilities
-==========
+# Appium server capabilities
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -12,9 +11,7 @@ Appium server capabilities
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
 |`autoLaunch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
 
---
-
-#### Android Only
+### Android Only
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -29,9 +26,8 @@ Appium server capabilities
 |`avdLaunchTimeout`| How long to wait in milliseconds for an avd to launch and connect to ADB (default `120000`)| `300000`|
 |`avdReadyTimeout`| How long to wait in milliseconds for an avd to finish its boot animations (default `120000`)| `300000`|
 
---
 
-#### iOS Only
+### iOS Only
 
 |Capability|Description|Values|
 |----|-----------|-------|

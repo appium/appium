@@ -1,5 +1,4 @@
-Credits
-=======
+# Credits
 
 ###  These are the projects that inspired us, or are depended upon to make Appium awesome.
 

@@ -1,24 +1,23 @@
-Selenium Grid
-======================
+# Selenium Grid
 
 You are able to register your appium server with a local grid by using the
-<b>"--nodeconfig"</b> server parameter.
+**"--nodeconfig"** server parameter.
 
 ```bash
 > node . -V --nodeconfig /path/to/nodeconfig.json
 ```
 
-In the node config file you have to define the <b>"browserName"</b>,
-<b>"version"</b> and <b>"platform"</b> and based on these parameters the grid
- will re-direct your test to the right device. You will also need to
- configure you <b>host</b> details and the <b>selenium grid</b> details. For
- a full list of all parameters and descriptions look
- [here](http://code.google.com/p/selenium/source/browse/java/server/src/org/openqa/grid/common/defaults/GridParameters.properties)
+In the node config file you have to define the **"browserName"**,
+**"version"** and **"platform"** and based on these parameters the grid
+will re-direct your test to the right device. You will also need to
+configure you **host** details and the **selenium grid** details. For
+a full list of all parameters and descriptions look
+[here](http://code.google.com/p/selenium/source/browse/java/server/src/org/openqa/grid/common/defaults/GridParameters.properties)
 
 Once you start the appium server and it registers with the grid,
 you will see your device on the grid console page:
 
-"http://<b>\<grid-ip-adress\></b>:<b>\<grid-port\></b>/grid/console"
+"http://**\<grid-ip-adress\>**:**\<grid-port\>**/grid/console"
 
 ## Grid Node Configuration Example json file
 
@@ -52,4 +51,5 @@ you will see your device on the grid console page:
 
 Valid platforms are listed [here](http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/Platform.html)
 
-If `url`, `host`, and `port` are not given, the config will be auto updated to point to localhost:whatever-port-Appium-started-on.
+If `url`, `host`, and `port` are not given, the config will be auto updated
+to point to localhost:whatever-port-Appium-started-on.

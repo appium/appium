@@ -1,5 +1,4 @@
-Troubleshooting Appium
-======================
+# Troubleshooting Appium
 
 Here's what to do if you're experiencing problems, before you submit a ticket
 to github or write to the appium-discuss mailing list.
@@ -9,7 +8,7 @@ to github or write to the appium-discuss mailing list.
 * Make sure you've followed the getting started steps in the [README](https://github.com/appium/appium/blob/master/README.md)
 * Make sure your system is set up appropriately (i.e., XCode is updated,
   Android SDK is installed and `ANDROID_HOME` is set:
-  [setup instructions](running-on-osx)
+  [setup instructions](running-on-osx.md)
 * Make sure the paths to your applications are correct
 
 ## If you're running Appium.app
@@ -104,9 +103,9 @@ output when it's run in verbose mode so that we can diagnose what's going on.
   Sometimes the only solution is to put the finding-and-clicking code in a retry
   block.
 * Appium may have difficulties finding the `node` executable if you've
-installed Node and npm via MacPorts. You must make sure that the MacPorts bin
- folder (`/opt/local/bin` by default) is added to `PATH` somewhere in your
- `~/.profile`, `~/.bash_profile` or `~/.bashrc`.
+  installed Node and npm via MacPorts. You must make sure that the MacPorts bin
+  folder (`/opt/local/bin` by default) is added to `PATH` somewhere in your
+  `~/.profile`, `~/.bash_profile` or `~/.bashrc`.
 
 ## Specific Errors
 

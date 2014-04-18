@@ -1,13 +1,12 @@
-Running Appium on Windows
-=======================
+# Running Appium on Windows
 
-# Limitations
+## Limitations
 
 If you are running Appium on Windows, you cannot use the prebuilt '.app',
 which is built for OS X only. Additionally, you will not be able to test iOS
 apps because Appium relies on OS X-only libraries to support iOS testing.
 
-# Setup
+## Setup
 
 To get started:
 
@@ -34,7 +33,7 @@ Now that you've downloaded everything, run:
 
     reset.bat
 
-# Running Appium
+## Running Appium
 
 To run tests on Windows, you will need to have the Android Emulator booted or
  an Android Device connected that is running an AVD with API Level 17 or
@@ -42,14 +41,14 @@ To run tests on Windows, you will need to have the Android Emulator booted or
 
     node .
 
-See the [server documentation](server-args)
+See the [server documentation](server-args.md)
 for all the command line arguments.
 
-# Notes
+## Notes
 
 * you must supply the --no-reset and --full-reset flags currently for android
   to work on Windows.
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this
-  [page](android-hax-emulator).
+  [page](android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.

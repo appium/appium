@@ -11,12 +11,14 @@ Then run:
 */
 
 var wd = require("yiewd"),
-    o_O = require('monocle-js').o_O;
+    o_O = require('monocle-js').o_O,
+    path = require('path');
 require('colors');
 
 var desired = {
-  device: 'Android',
-  version: "4.3", // 4.3 only
+  platformName: 'Android',
+  deviceName: 'Android Emulator',
+  "app": path.resolve(__dirname, '../..', 'apps/ContactManager/ContactManager.apk'),
   "app-package": "com.android.contacts", // built-in contact app
   "app-activity": "activities.PeopleActivity"
 };

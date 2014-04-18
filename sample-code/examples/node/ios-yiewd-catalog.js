@@ -2,6 +2,8 @@
 "use strict";
 
 /*
+TODO: Lots of click errors.
+
 First you need to install node > 0.11 to run this. 
 (You may use this https://github.com/visionmedia/n for easy install/switch 
 between node versions)
@@ -29,12 +31,12 @@ var staticServer = require('node-static'),
 
 var host, port, username, accessKey, desired, server;
 
-if (process.env.SAUCE_CONNECT){
+if (process.env.SAUCE_CONNECT) {
   // Sauce Labs + Sauce Connect config
 
   // create a local server to host our app
-  server = http.createServer(function(req, res) {
-    req.addListener('end', function() {
+  server = http.createServer(function (req, res) {
+    req.addListener('end', function () {
       fileServer.serve(req, res);
     }).resume();
   }).listen(8080);
@@ -45,13 +47,12 @@ if (process.env.SAUCE_CONNECT){
   accessKey = process.env.SAUCE_ACCESS_KEY;
 
   desired = {
+    platform: 'ios',
+    version: '7.1',
     device: 'iPhone Simulator',
+    deviceName: 'iPhone Retina (4-inch 64-bit)',
     name: "Appium: with WD",
-    //platform: "Mac",
-    version: "6.1",
     app: 'http://localhost:8080/UICatalog6.1.app.zip',
-    // version: "6.0",
-    browserName: "",
     newCommandTimeout: 60
   };
 } else {
@@ -75,21 +76,21 @@ if (process.env.SAUCE_CONNECT){
 
 var browser = wd.remote(host, port, username, accessKey);
 // See whats going on
-browser.driver.on('status', function(info) {
+browser.on('status', function (info) {
   console.log(info.cyan);
 });
-browser.driver.on('command', function(meth, path, data) {
+browser.on('command', function (meth, path, data) {
   console.log(' > ' + meth.yellow, path.grey, data || '');
 });
 
-var scrollToElement = o_O(function*(element) {
+var scrollToElement = o_O(function* (element) {
   var y = (yield element.getLocation()).y;
   while (y === 0 || y > 400) {
     // move so top of screen is y - 10
     var swipeOpts = {
-      duration: 0.5
-      , startY: 0.7
-      , endY: 0.3
+      duration: 0.5,
+      startY: 0.7,
+      endY: 0.3
     };
     yield browser.execute("mobile: swipe", [swipeOpts]);
     y = (yield element.getLocation()).y;
@@ -97,16 +98,16 @@ var scrollToElement = o_O(function*(element) {
   }
 });
 
-browser.run(function*() {
+browser.run(function* () {
   try {
     yield this.init(desired);
-    yield (yield this.elementByName("Buttons, Various uses of UIButton")).click();
+    yield this.elementByName("Buttons, Various uses of UIButton").click();
     var btns = yield this.elementsByTagName("button");
     for (var i = 1; i < 4; i++) {
       yield btns[i].click();
     }
     yield btns[0].click();
-    yield (yield this.elementByName("Controls, Various uses of UIControl")).click();
+    yield this.elementByName("Controls, Various uses of UIControl").click();
     var stdSwitch = yield this.elementByXPath("//switch[@name='Standard']");
     yield stdSwitch.sendKeys(true);
     yield stdSwitch.sendKeys(false);
@@ -122,7 +123,7 @@ browser.run(function*() {
     for (i = 0; i < 10; i += 2) {
       yield pages.sendKeys(i);
     }
-    yield (yield this.elementByName("Back")).click();
+    yield this.elementByName("Back").click();
 
     yield this.elementByName("TextFields, Uses of UITextField").click();
     yield this.elementByTagName("textfield").sendKeys("Hello World!\n");

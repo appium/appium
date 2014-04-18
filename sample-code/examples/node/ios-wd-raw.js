@@ -28,13 +28,13 @@ if (process.env.SAUCE) {
   accessKey = process.env.SAUCE_ACCESS_KEY;
 
   desired = {
-    browserName: '',
-    version: '6.1',
-    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
+    platform: 'ios',
+    version: '7.1',
     device: 'iPhone Simulator',
+    deviceName: 'iPhone Retina (4-inch 64-bit)',
+    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
     name: "Appium: with WD Mocha",
     'device-orientation': 'portrait',
-    platform: "Mac"
   };
 
 } else {
@@ -54,23 +54,23 @@ if (process.env.SAUCE) {
 }
 
 // Instantiate a new browser session
-var browser = wd.promiseChainRemote(host , port, username, accessKey);
+var browser = wd.promiseChainRemote(host, port, username, accessKey);
 
 // See whats going on
-browser.on('status', function(info) {
+browser.on('status', function (info) {
   console.log(info.cyan);
 });
-browser.on('command', function(meth, path, data) {
+browser.on('command', function (meth, path, data) {
   console.log(' > ' + meth.yellow, path.grey, data || '');
 });
 
 // Run the test
 browser
   .init(desired)
-  .then(function() {
+  .then(function () {
     browser
-      .elementsByTagName("textField").then(function(els) {
-        return els[0].type('2').then(function() {
+      .elementsByTagName("textField").then(function (els) {
+        return els[0].type('2').then(function () {
           return els[1].type('3');
         });
       })
@@ -78,13 +78,13 @@ browser
         .click()
       .elementByTagName('staticText')
         .text().should.become("5")
-      .fin(function() {
+      .fin(function () {
         return browser
           .sleep(3000)
           .quit();
       });
   })
-  .catch(function(err) {
+  .catch(function (err) {
     console.log(err);
     throw err;
   })

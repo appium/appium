@@ -19,27 +19,27 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var desired = {
-    device: 'Android',
-    //platform: "Mac",
-    version: "4.3", // Android version last tested against
-    app: "chrome",
+  platform: 'android',
+  device: 'Android',
+  version: "4.3", // Android version last tested against
+  app: "chrome",
 };
 
 // Instantiate a new browser session
-var browser = wd.promiseChainRemote("localhost" , 4723);
+var browser = wd.promiseChainRemote("localhost", 4723);
 
 // See whats going on
-browser.on('status', function(info) {
+browser.on('status', function (info) {
   console.log(info.cyan);
 });
-browser.on('command', function(meth, path, data) {
+browser.on('command', function (meth, path, data) {
   console.log(' > ' + meth.yellow, path.grey, data || '');
 });
 
 
 // Run the tests
 browser
-  .init(desired).then(function() {
+  .init(desired).then(function () {
     browser
       .get("http://saucelabs.com/test/guinea-pig")
       .elementById('i_am_an_id')
@@ -52,9 +52,9 @@ browser
         wd.asserters.textInclude("This is an awesome comment"))
       .text()
         .should.eventually.include('awesome')
-      .fin(function() { return browser.quit(); });
+      .fin(function () { return browser.quit(); });
   })
-  .catch(function(err) {
+  .catch(function (err) {
     console.log(err);
     throw err;
   })

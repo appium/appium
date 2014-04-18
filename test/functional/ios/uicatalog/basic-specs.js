@@ -22,7 +22,7 @@ describe('uicatalog - basic -', function () {
 
     it('should confirm element is not visible', function (done) {
       driver
-        .elementByTagName('tableCell').click()
+        .elementByClassName('UIATableCell').click()
         .elementByName("UIButtonTypeContactAdd").isDisplayed()
           .should.not.eventually.be.ok
         .nodeify(done);
@@ -30,7 +30,7 @@ describe('uicatalog - basic -', function () {
 
     it('should confirm element is visible', function (done) {
       driver
-        .elementByTagName('tableCell').click()
+        .elementByClassName('UIATableCell').click()
         .elementByName("UIButtonTypeRoundedRect").isDisplayed()
           .should.eventually.be.ok
         .nodeify(done);
@@ -61,7 +61,7 @@ describe('uicatalog - basic -', function () {
       .then(function (d) { driver = d; });
 
     it('should load a zipped app via path', function (done) {
-      driver.elementByTagName('tableView')
+      driver.elementByClassName('UIATableView')
         .should.eventually.exist
       .nodeify(done);
     });
@@ -74,7 +74,7 @@ describe('uicatalog - basic -', function () {
       .then(function (d) { driver = d; });
 
     it('should load with relative path', function (done) {
-      driver.elementByTagName('tableView')
+      driver.elementByClassName('UIATableView')
         .should.eventually.exist
       .nodeify(done);
     });
@@ -87,7 +87,7 @@ describe('uicatalog - basic -', function () {
       .then(function (d) { driver = d; });
 
     it('should load with relative path', function (done) {
-      driver.elementByTagName('tableView')
+      driver.elementByClassName('UIATableView')
         .should.eventually.exist
       .nodeify(done);
     });
@@ -100,7 +100,7 @@ describe('uicatalog - basic -', function () {
       .then(function (d) { driver = d; });
 
     it('should load a zipped app via path', function (done) {
-      driver.elementByTagName('tableView')
+      driver.elementByClassName('UIATableView')
         .should.eventually.exist
       .nodeify(done);
     });
@@ -114,7 +114,7 @@ describe('uicatalog - basic -', function () {
 
     it('should load a zipped app via url', function (done) {
       driver
-        .elementByTagName('tableView')
+        .elementByClassName('UIATableView')
           .should.eventually.exist
         .nodeify(done);
     });
@@ -126,7 +126,7 @@ describe('uicatalog - basic -', function () {
 
     it('should go back to using app from before', function (done) {
       driver
-        .elementsByTagName('tableView')
+        .elementsByClassName('UIATableView')
           .should.eventually.have.length.above(0)
         .nodeify(done);
     });

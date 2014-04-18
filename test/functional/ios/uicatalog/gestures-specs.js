@@ -29,11 +29,11 @@ describe('uicatalog - gestures -', function () {
 
     it('should work via webdriver method', function (done) {
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return driver
             .flick(0, -100, false)
-            .elementByTagName('tableCell').getLocation()
+            .elementByClassName('UIATableCell').getLocation()
             .then(function (location2) {
               location2.x.should.equal(location1.x);
               location2.y.should.not.equal(location1.y);
@@ -42,11 +42,11 @@ describe('uicatalog - gestures -', function () {
     });
     it('should work via mobile only method', function (done) {
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return driver
             .execute("mobile: flick", [{endX: 0, endY: 0}])
-            .elementByTagName('tableCell').getLocation()
+            .elementByClassName('UIATableCell').getLocation()
             .then(function (location2) {
               location2.x.should.equal(location1.x);
               location2.y.should.not.equal(location1.y);
@@ -63,11 +63,11 @@ describe('uicatalog - gestures -', function () {
     it('should work via mobile only method with percentage', function (done) {
       var opts = {startX: 0.75, startY: 0.75, endX: 0.25, endY: 0.25};
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return driver
             .execute("mobile: flick", [opts])
-            .elementByTagName('tableCell').getLocation()
+            .elementByClassName('UIATableCell').getLocation()
             .then(function (location2) {
               location2.x.should.equal(location1.x);
               location2.y.should.not.equal(location1.y);
@@ -90,12 +90,12 @@ describe('uicatalog - gestures -', function () {
     }
     it('should work with wd function in pixels', function (done) {
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return spinWait(function () {
             return driver
               .flick(0, -70, true)
-              .elementByTagName('tableCell').getLocation()
+              .elementByClassName('UIATableCell').getLocation()
               .then(function (location2) {
                 ((location2.x === location1.x) &&
                   (location2.y !== location1.y)
@@ -107,13 +107,13 @@ describe('uicatalog - gestures -', function () {
     });
     it('should work with wd function in percent', function (done) {
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return driver
             .flick(0, -0.1, true) // flaky
             .flick(0, -0.1, true)
             .flick(0, -0.1, true)
-            .elementByTagName('tableCell').getLocation()
+            .elementByClassName('UIATableCell').getLocation()
             .then(function (location2) {
               location2.x.should.equal(location1.x);
               location2.y.should.not.equal(location1.y, '===y');
@@ -123,12 +123,12 @@ describe('uicatalog - gestures -', function () {
     it('should work with mobile function in pixels', function (done) {
       var opts = {startX: 50, startY: 400, endX: 50, endY: 300, duration: 2};
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return spinWait(function () {
             return driver
               .execute("mobile: swipe", [opts])
-              .elementByTagName('tableCell').getLocation()
+              .elementByClassName('UIATableCell').getLocation()
               .then(function (location2) {
                 location2.x.should.equal(location1.x);
                 location2.y.should.not.equal(location1.y);
@@ -139,12 +139,12 @@ describe('uicatalog - gestures -', function () {
     it('should work with mobile function in percent', function (done) {
       var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.7, duration: 2};
       driver
-        .elementByTagName('tableCell').getLocation()
+        .elementByClassName('UIATableCell').getLocation()
         .then(function (location1) {
           return spinWait(function () {
             return driver
               .execute("mobile: swipe", [opts])
-              .elementByTagName('tableCell').getLocation()
+              .elementByClassName('UIATableCell').getLocation()
               .then(function (location2) {
                 location2.x.should.equal(location1.x);
                 location2.y.should.not.equal(location1.y);
@@ -170,7 +170,7 @@ describe('uicatalog - gestures -', function () {
     if (env.FAST_TESTS) {
       afterEach(function (done) {
         driver
-          .elementByTagName("slider")
+          .elementByClassName("UIASlider")
           .then(function (el) { if (el) return el.sendKeys(0.5); })
           .then(function (el) { if (el) return el.sendKeys(0.5); })
           .clickBack()
@@ -182,9 +182,9 @@ describe('uicatalog - gestures -', function () {
     it("slider value should change", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByTagName("tableCell").then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
         .click()
-        .elementByTagName("slider").then(function (el) { slider = el; })
+        .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
         .then(function (value) { valueBefore = value; })
         .then(function () { return slider.flick(-0.5, 0, 1); })
@@ -197,9 +197,9 @@ describe('uicatalog - gestures -', function () {
     it("should work with mobile flick", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByTagName("tableCell").then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
         .click()
-        .elementByTagName("slider").then(function (el) { slider = el; })
+        .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
         .then(function (value) { valueBefore = value; })
         .then(function () {
@@ -215,9 +215,9 @@ describe('uicatalog - gestures -', function () {
     it("should work with mobile flick and percent", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByTagName("tableCell").then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
         .click()
-        .elementByTagName("slider").then(function (el) { slider = el; })
+        .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
         .then(function (value) { valueBefore = value; })
         .then(function () {
@@ -239,7 +239,7 @@ describe('uicatalog - gestures -', function () {
     if (env.FAST_TESTS) {
       afterEach(function (done) {
         driver
-          .elementByTagName("slider")
+          .elementByClassName("UIASlider")
           .then(function (el) { if (el) return el.sendKeys(0.5); })
           .clickBack()
           .sleep(SLOW_DOWN_MS)
@@ -250,9 +250,9 @@ describe('uicatalog - gestures -', function () {
     it("slider value should change", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByTagName("tableCell").then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
         .click()
-        .elementByTagName("slider").then(function (el) { slider = el; })
+        .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
         .then(function (value) { valueBefore = value; })
         .then(function () {
@@ -269,9 +269,9 @@ describe('uicatalog - gestures -', function () {
     it("slider value should change by pixels", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByTagName("tableCell").then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
         .click()
-        .elementByTagName("slider").then(function (el) { slider = el; })
+        .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
         .then(function (value) { valueBefore = value; })
         .then(function () {
@@ -308,7 +308,7 @@ describe('uicatalog - gestures -', function () {
       };
       driver
         .execute("mobile: tap", [tapOpts])
-        .elementByTagName("textview").text()
+        .elementByClassName("UIATextView").text()
         .then(function (text) {
           text.should.include(textBlock);
         })
@@ -324,7 +324,7 @@ describe('uicatalog - gestures -', function () {
       };
       driver
         .execute("mobile: tap", [tapOpts])
-        .elementByTagName("textview").text()
+        .elementByClassName('UIATextView').text()
         .then(function (text) {
           text.should.include(textBlock);
         })
@@ -333,7 +333,7 @@ describe('uicatalog - gestures -', function () {
     it('should work with default options @skip-ios7', function (done) {
       driver
         .execute("mobile: tap")
-        .elementByTagName("textview").text()
+        .elementByClassName('UIATextView').text()
         .then(function (text) {
           text.should.include(textBlock);
         })
@@ -355,7 +355,7 @@ describe('uicatalog - gestures -', function () {
 
     it('should work in relative units', function (done) {
       driver
-        .elementsByTagName('tableCell').then(function (els) { return els[4]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[4]; })
         .then(function (el) {
           var tapOpts = {
             x: 0.5 // in relative width from left
@@ -364,14 +364,14 @@ describe('uicatalog - gestures -', function () {
           };
           return driver
             .execute("mobile: tap", [tapOpts]);
-        }).elementByTagName("textview").text()
+        }).elementByClassName('UIATextView').text()
         .then(function (text) {
           text.should.include(textBlock);
         }).nodeify(done);
     });
     it('should work in pixels', function (done) {
       driver
-        .elementsByTagName('tableCell').then(function (els) { return els[4]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[4]; })
         .then(function (el) {
           var tapOpts = {
             x: 150 // in pixels from left
@@ -380,7 +380,7 @@ describe('uicatalog - gestures -', function () {
           };
           return driver
             .execute("mobile: tap", [tapOpts]);
-        }).elementByTagName("textview").text()
+        }).elementByClassName('UIATextView').text()
         .then(function (text) {
           text.should.include(textBlock);
         }).nodeify(done);
@@ -403,7 +403,7 @@ describe('uicatalog - gestures -', function () {
 
     it('should bring the element into view', function (done) {
       var el, scrollOpts, location1;
-      driver.elementsByTagName('tableCell').then(function (els) {
+      driver.elementsByClassName('UIATableCell').then(function (els) {
         el = els[10];
         scrollOpts = { element: el.value };
       })
@@ -426,7 +426,7 @@ describe('uicatalog - gestures -', function () {
     it('should scroll down and up', function (done) {
       var firstEl, location1, location2;
       driver
-      .elementByTagName('tableCell')
+      .elementByClassName('UIATableCell')
       .then(function (el) { firstEl = el; return el.getLocation(); })
       .then(function (loc) { location1 = loc; })
       .then(function () {
@@ -450,10 +450,10 @@ describe('uicatalog - gestures -', function () {
     });
     it('should scroll down and up using element', function (done) {
       var firstEl, location1, location2, table_view;
-      driver.elementByTagName('tableview').then(function (el) {
+      driver.elementByClassName('UIATableView').then(function (el) {
         table_view = el;
       })
-      .elementByTagName('tableCell')
+      .elementByClassName('UIATableCell')
       .then(function (el) { firstEl = el; return el.getLocation(); })
       .then(function (loc) { location1 = loc; })
       .then(function () {

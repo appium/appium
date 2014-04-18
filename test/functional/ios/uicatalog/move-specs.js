@@ -11,7 +11,7 @@ describe('uicatalog - move -', function () {
 
     it('should be able to click on arbitrary x-y elements', function (done) {
       driver
-        .elementByTagName('tableCell').moveTo(10, 10).click()
+        .elementByClassName('UIATableCell').moveTo(10, 10).click()
         .elementByXPath("//UIAButton[@name='Rounded']")
           .should.eventually.exist
         .nodeify(done);

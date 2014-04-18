@@ -51,7 +51,7 @@ describe('testapp - timeouts -', function () {
       driver
         .setCommandTimeout(0)
         .sleep(3000)
-        .elementByTagName('button').should.eventually.exist
+        .elementByClassName('UIAButton').should.eventually.exist
         .nodeify(done);
     });
   });
@@ -78,7 +78,7 @@ describe('testapp - timeouts -', function () {
     var impWaitCheck = function () {
       var before = new Date().getTime() / 1000;
       return driver
-        .elementsByTagName('notgonnabethere').then(function (missing) {
+        .elementsByClassName('UIANotGonnaBeThere').then(function (missing) {
           var after = new Date().getTime() / 1000;
           (after - before).should.be.below(impWaitSecs + 2);
           (after - before).should.be.above(impWaitSecs);

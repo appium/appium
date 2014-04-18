@@ -30,7 +30,7 @@ describe("apidemos - attributes -", function () {
   it('should be able to find name attribute, falling back to text', function (done) {
     driver
       .elementByName('Animation').click()
-      .elementsByTagName('text')
+      .elementsByClassName('android.widget.TextView')
       .then(function (els) { return els[1].getAttribute('name'); })
         .should.become("Bouncing Balls")
       .back()
@@ -73,7 +73,7 @@ describe("apidemos - attributes -", function () {
       .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
       .complexFind(["scroll", [[3, "tabs"]], [[7, "tabs"]]]).click()
       .complexFind(["scroll", [[3, "content by id"]], [[7, "content by id"]]]).click()
-      .elementsByTagName("text").then(function (els) {
+      .elementsByClassName("android.widget.TextView").then(function (els) {
         els[0].getAttribute('selected').should.become('false'); // the 1st text is not selected
         els[1].getAttribute('selected').should.become('true'); // tab 1 is selected
       }).nodeify(done);

@@ -3,7 +3,6 @@ package io.appium.android.bootstrap.handler;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.AndroidElementClassMap;
 import io.appium.android.bootstrap.AndroidElementsHash;
 import io.appium.android.bootstrap.CommandHandler;
 import io.appium.android.bootstrap.Dynamic;
@@ -381,23 +380,6 @@ public class Find extends CommandHandler {
           sel = sel.instance(0);
         }
         selectors.add(sel);
-        break;
-      case TAG_NAME:
-        final String androidClass = AndroidElementClassMap.match(text);
-        sel = sel.className(androidClass);
-        if (!many) {
-          sel = sel.instance(0);
-        }
-        selectors.add(sel);
-        // Find both Button and ImageButton when tag name is button
-        if (androidClass.contentEquals("android.widget.Button")) {
-          UiSelector sel2 = new UiSelector()
-              .className("android.widget.ImageButton");
-          if (!many) {
-            sel2 = sel2.instance(0);
-          }
-          selectors.add(sel2);
-        }
         break;
       case ID:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

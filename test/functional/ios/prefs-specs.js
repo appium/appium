@@ -21,9 +21,9 @@ describe("prefs @skip-ios7", function () {
       var ios7 = env.DEVICE.indexOf("7") !== -1;
       var switchEl;
       driver
-        .elementsByTagName("tableCell").at(ios7 ? 0 : 1).click()
+        .elementsByClassName("UIATableCell").at(ios7 ? 0 : 1).click()
         .sleep(1000)
-        .elementsByTagName("tableCell").at(ios7 ? 3 : 1).click()
+        .elementsByClassName("UIATableCell").at(ios7 ? 3 : 1).click()
         .elementByXPath('//UIASwitch[@name="Auto-Correction"]')
         .then(function (el) { switchEl = el; return el; })
         .getValue().then(function (checked) {
@@ -34,10 +34,10 @@ describe("prefs @skip-ios7", function () {
 
   var checkLocServ = function (driver, expected, cb) {
     driver
-      .elementsByTagName('tableCell').at(2).click()
+      .elementsByClassName('UIATableCell').at(2).click()
       .sleep(1000)
-      .elementByTagName('tableCell').click()
-      .elementByTagName('switch')
+      .elementByClassName('UIATableCell').click()
+      .elementByClassName('UIASwitch')
       .getValue().then(function (checked) {
         checked.should.eql(expected);
       }).nodeify(cb);
@@ -67,7 +67,7 @@ describe("prefs @skip-ios7", function () {
 describe('safari prefs @skip-ios7', function () {
   var checkSafariSetting = function (driver, setting, expected, cb) {
     driver
-      .elementsByTagName("tableCell")
+      .elementsByClassName("UIATableCell")
       .then(function (els) { return els[4].click(); })
       .then(function () {
         if (setting === 'fraud') {

@@ -26,36 +26,36 @@ describe('uicatalog - find element -', function () {
   });
   it('should find an element within descendants', function (done) {
     driver
-      .elementByTagName('tableView').then(function (el) {
+      .elementByClassName('UIATableView').then(function (el) {
         el.should.exist;
-        return el.elementByTagName('text').getAttribute('name')
+        return el.elementByClassName('UIAStaticText').getAttribute('name')
           .should.become("Buttons, Various uses of UIButton");
       }).nodeify(done);
   });
 
   it('should not find an element not within itself', function (done) {
     driver
-      .elementByTagName('tableView').then(function (el) {
+      .elementByClassName('UIATableView').then(function (el) {
         el.should.exist;
-        return el.elementByTagName('navigationBar')
+        return el.elementByClassName('UIANavigationBar')
           .should.be.rejectedWith(/status: 7/);
       }).nodeify(done);
   });
 
   it('should find some elements within itself', function (done) {
     driver
-      .elementByTagName('tableCell').then(function (el) {
+      .elementByClassName('UIATableCell').then(function (el) {
         el.should.exist;
-        return el.elementsByTagName('text')
+        return el.elementsByClassName('UIAStaticText')
           .should.eventually.have.length(1);
       }).nodeify(done);
   });
 
   it('should not find elements not within itself', function (done) {
     driver
-      .elementByTagName('tableCell').then(function (el) {
+      .elementByClassName('UIATableCell').then(function (el) {
         el.should.exist;
-        el.elementsByTagName('navigationBar')
+        el.elementsByClassName('UIANavigationBar')
           .should.eventually.have.length(0);
       }).nodeify(done);
   });
@@ -63,17 +63,17 @@ describe('uicatalog - find element -', function () {
   it('should not allow found elements to be mixed up', function (done) {
     var el1, el2, el1Name, el2Name;
     driver
-      .elementByTagName('tableCell')
+      .elementByClassName('UIATableCell')
       .then(function (el) {
         el1 = el;
         return el1.getAttribute('name').then(function (name) {
           el1Name = name;
         });
       })
-      .elementByTagName('tableCell')
+      .elementByClassName('UIATableCell')
         .click()
       .delay(1000)
-      .elementByTagName('tableCell')
+      .elementByClassName('UIATableCell')
       .then(function (el) {
         el2 = el;
         el2.value.should.not.equal(el1.value);
@@ -116,9 +116,9 @@ describe('uicatalog - find element -', function () {
     });
   });
 
-  describe('findElementsByTagName', function () {
+  describe('findElementsByClassName', function () {
     it('should return all image elements with internally generated ids', function (done) {
-      driver.elementsByTagName('image').then(function (els) {
+      driver.elementsByClassName('UIAImage').then(function (els) {
         els.length.should.be.above(0);
         _(els).each(function (el) {
           el.should.exist;
@@ -127,17 +127,17 @@ describe('uicatalog - find element -', function () {
     });
   });
 
-  describe('findElementsByTagName textfield case', function () {
+  describe('findElementsByClassName textfield case', function () {
     after(function (done) {
       driver.clickBack()
       .nodeify(done);
     });
     it('should find only one textfield', function (done) {
       driver
-        .elementsByTagName('cell').then(function (els) { return els[2]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[2]; })
           .click()
         .elementByName('Rounded')
-        .elementsByTagName('>', 'textfield')
+        .elementsByClassName('>', 'UIATextField')
           .should.eventually.have.length(1)
         .nodeify(done);
     });
@@ -145,7 +145,7 @@ describe('uicatalog - find element -', function () {
 
   describe('findElement(s)ByXPath', function () {
     var setupXpath = function (driver) {
-      return driver.elementByTagName('tableCell').click();
+      return driver.elementByClassName('UIATableCell').click();
     };
 
     if (process.env.FAST_TESTS) {

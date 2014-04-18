@@ -14,7 +14,7 @@ describe('testapp - location -', function () {
 
   it('should return the right x/y coordinates', function (done) {
     driver
-      .elementByTagName('button').getLocation().then(function (location) {
+      .elementByClassName('UIAButton').getLocation().then(function (location) {
         location.x.should.equal(94);
         location.y.should.be.above(120);
       })

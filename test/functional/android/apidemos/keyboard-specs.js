@@ -11,7 +11,9 @@ describe("apidemo - keyboard -", function () {
 
   it('should be able to edit a text field', function (done) {
     var testText = "this is awesome!";
-    var el = function () { return driver.elementByTagName('editText'); };
+    var el = function () {
+      return driver.elementByClassName('android.widget.EditText');
+    };
     driver
       .resolve(el()).clear().text().should.become("")
       .then(el).sendKeys(testText).text().should.become(testText)
@@ -21,7 +23,9 @@ describe("apidemo - keyboard -", function () {
   //todo: not working in nexus 7
   it('should be able to edit and clear a text field', function (done) {
     var testText = "this is awesome!";
-    var el = function () { return driver.elementByTagName('editText'); };
+    var el = function () {
+      return driver.elementByClassName('android.widget.EditText');
+    };
     driver
       .resolve(el()).clear().text().should.become("")
       .then(el).sendKeys(testText).text().should.become(testText)

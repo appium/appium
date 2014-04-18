@@ -11,11 +11,11 @@ describe('uicatalog - reset -', function () {
 
     it("should be able to find elements after a soft reset", function (done) {
       driver
-        .elementsByTagName('tableView')
+        .elementsByClassName('UIATableView')
           .should.eventually.have.length(1)
         .resetApp()
         .sleep(3000)
-        .elementsByTagName('tableView')
+        .elementsByClassName('UIATableView')
           .should.eventually.have.length(1)
         .nodeify(done);
     });

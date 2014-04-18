@@ -9,7 +9,7 @@ describe('testapp - active -', function () {
 
   it('should return active element', function (done) {
     driver
-      .elementsByTagName('textField').then(function (elems) {
+      .elementsByClassName('UIATextField').then(function (elems) {
         return elems[1];
       }).then(function (elem) {
         return driver

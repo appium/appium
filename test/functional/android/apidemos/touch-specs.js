@@ -4,15 +4,14 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
   , androidReset = require('../../../helpers/reset').androidReset
-  , Q = require("q")
-  , _ = require("underscore")
   , wd = require("wd")
   , droidText = 'android.widget.TextView'
+  , droidList = 'android.widget.ListView'
   , TouchAction = wd.TouchAction
   , MultiAction = wd.MultiAction;
 
 
-describe("apidemo - gestures -", function () {
+describe("apidemo - touch gestures -", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -28,7 +27,7 @@ describe("apidemo - gestures -", function () {
         .then(function (el) {
           return (new TouchAction()).tap().performOn(el);
         })
-        .elementsByTagName("text").then(function (els) { return els[1]; })
+        .elementsByClassName(droidText).then(function (els) { return els[1]; })
           .text().should.become("Bouncing Balls")
         .nodeify(done);
     });
@@ -39,7 +38,7 @@ describe("apidemo - gestures -", function () {
           var action = new TouchAction();
           return action.tap({ x: 1, y: 1 }).performOn(el);
         })
-        .elementsByTagName("text").then(function (els) { return els[1]; })
+        .elementsByClassName(droidText).then(function (els) { return els[1]; })
           .text().should.become("Bouncing Balls")
         .nodeify(done);
     });
@@ -61,7 +60,7 @@ describe("apidemo - gestures -", function () {
           var action = new TouchAction();
           return action.tap({ count: 2 }).performOn(el);
         })
-        .elementsByTagName("text")
+        .elementsByClassName(droidText)
         .then(function (els) {
           return els[1];
         })
@@ -87,7 +86,7 @@ describe("apidemo - gestures -", function () {
           var action = new TouchAction();
           return action.tap({ count: 2 }).performOn(el);
         })
-        .elementsByTagName("text")
+        .elementsByClassName(droidText)
         .then(function (els) {
           return els[1];
         })
@@ -295,7 +294,7 @@ describe("apidemo - gestures -", function () {
     it('should scroll two different lists', function (done) {
       var scrollOpts = {};
       driver
-        .elementByTagName("listView")
+        .elementByClassName(droidList)
         .then(function (el) {
           scrollOpts = {
             element: el.value
@@ -313,7 +312,7 @@ describe("apidemo - gestures -", function () {
         .then(function (el) {
           return new TouchAction().tap().performOn(el);
         })
-        .elementsByTagName("listView")
+        .elementsByClassName(droidList)
         .then(function (els) {
           // scroll slowly on the left
           var a1 = new TouchAction().applyTo(els[0]);
@@ -344,7 +343,7 @@ describe("apidemo - gestures -", function () {
     it('should scroll two different lists with waits', function (done) {
       var scrollOpts = {};
       driver
-        .elementByTagName("listView")
+        .elementByClassName(droidList)
         .then(function (el) {
           scrollOpts = {
             element: el.value
@@ -362,7 +361,7 @@ describe("apidemo - gestures -", function () {
         .then(function (el) {
           return new TouchAction().tap().performOn(el);
         })
-        .elementsByTagName("listView")
+        .elementsByClassName(droidList)
         .then(function (els) {
           // scroll slowly on the left
           var a1 = new TouchAction().applyTo(els[0]);

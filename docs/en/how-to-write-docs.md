@@ -6,19 +6,18 @@ Don't use the `===` underline method of creating headers.
 ## Subheaders
 
 `##` is used to write subheaders. Don't use the `---` underline method of
-creating
-sub headers.
+creating sub headers.
 
 ### Regular headers
 
 `###` is used for headers that don't appear in the table of contents.
 Don't use h4 `####`, h5 `#####`, or h6 `######`.
 
-#### Line breaks
+### Line breaks
 
 Don't use line breaks such as `--` or `---`. This will confuse Slate.
 
-## Linking
+### Linking
 
 Link to another document using this syntax: `[link text](filename.md)`
 

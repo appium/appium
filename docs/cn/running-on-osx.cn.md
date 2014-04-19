@@ -1,16 +1,14 @@
-在 Mac OS X 上使用 Appium
-=======
+# 在 Mac OS X 上使用 Appium
 
 在 OS X 上， Appium 支持 iOS 和 Android 测试
-<a name="ios"></a>系统配置 (iOS)
---------
+
+## 系统配置 (iOS)
 
 * Appium 需要 Mac OS X 10.7， 推荐 10.8。 （经过测试， 10.9 也能工作。）
 * 确保 Xcode 和 iOS SDK 都已经安装好了。 （当前 Appium 支持 Xcode 4.6.3/iOS 6.1 和 Xcode 5/iOS 7.0。 注意不推荐在基于 Xcode 5 下且低于 7.0 的 iOS 版本进行测试。 参照下篇可以获取更多信息）
 * 你需要授权 iOS 模拟器的使用。如果你是通过 NPM 安装的 Appium，那么你可以运行 `sudo authorize_ios` （`authorize_ios`）是来自 Appium npm 包里的一个二进制执行文件。如果你是从源代码运行 Appium，那么你可以简单的使用 `sudo grunt authorize`。如果你使用`Appium.app`, 那你只要用界面来操作。
 
-<a name="ios_multiple"></a>使用多种 iOS SDK 进行测试
------------
+## 使用多种 iOS SDK 进行测试
 
 Appium 使用苹果提供的 `instruments` 来启动 iOS 模拟器，默认它会使用当前安装的 Xcode 和该 Xcode 下安装好的最高版本的 iOS SDK。这就意味着如果你想测试 iOS 6.1， 但是你安装了 iOS 7.0， 那么 Appium 会强制使用 7.0 的模拟器。 唯一的方法就是安装多个Xcode，然后在安装不同的 SDK。然后在启动 Appium 前，切换到你要测试的特定的版本。
 
@@ -22,9 +20,7 @@ Appium 使用苹果提供的 `instruments` 来启动 iOS 模拟器，默认它�
 
     sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer/
 
-
-<a name="android"></a>系统配置 (Android)
---------
+## 系统配置 (Android)
 
 * 确保你已经安装了 [Android SDK installed](http://developer.android.com/sdk/index.html)。
 * 确保你安装的 Android SDK API 大于等于 17。你可以运行 Android SDK 管理器（`android`） 然后在额外的包里选择你要安装的 API。

@@ -1,10 +1,8 @@
-Running Appium on Mac OS X
-=======
+# Running Appium on Mac OS X
 
 Appium on OS X supports iOS and Android testing.
 
-<a name="ios"></a>System setup (iOS)
---------
+## System setup (iOS)
 
 * Appium requires Mac OS X 10.7, but 10.8 is recommended.
 * Make sure you have XCode and the iOS SDK(s) installed. (Appium currently
@@ -17,8 +15,7 @@ Appium on OS X supports iOS and Android testing.
   from source, simply run `sudo grunt authorize` to do the same thing. If you
   are running `Appium.app`, you can authorize iOS through the GUI.
 
-<a name="ios_multiple"></a>Testing against multiple iOS SDKs
------------
+## Testing against multiple iOS SDKs
 
 Apple's `instruments` binary, which Appium uses to launch the iOS simulator, by
 default uses the currently-selected Xcode, and the highest iOS SDK installed
@@ -44,12 +41,12 @@ To prepare for iOS 6.1 testing. We run it again with a different Xcode:
 
 To go back to iOS 7.0 testing.
 
-<a name="android"></a>System setup (Android)
---------
+## System setup (Android)
 
 * Make sure you have the [Android SDK installed](http://developer.android.com/sdk/index.html).
 * Make sure you have Android SDK API &gt;= 17 installed. To do this, run the
-  Android SDK Manager (`android`) and select the API in the extra packages you can install.
+  Android SDK Manager (`android`) and select the API in the extra packages
+  you can install.
 * Make sure you have `ant` installed. Ant is used to build the Appium bootstrap
   jar as well as the test applications. Mac OS X Mavericks no longer comes
   pre-packaged with `ant` so you will need to [download and install it](http://ant.apache.org/bindownload.cgi).
@@ -59,7 +56,8 @@ To go back to iOS 7.0 testing.
 
         export ANDROID_HOME="/usr/local/adt/sdk"
 
-* Make sure you have [Maven 3.0.5](http://maven.apache.org/download.cgi) installed (`mvn`). Maven 3.1.1 will _not_ work!
+* Make sure you have [Maven 3.0.5](http://maven.apache.org/download.cgi)
+  installed (`mvn`). Maven 3.1.1 will _not_ work!
   We need Maven for Selendroid support, which helps Appium run on Android
   versions below 4.2.
 * Make sure you have an AVD set to a recent Android version (one that can run

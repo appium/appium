@@ -1,5 +1,5 @@
-Deploying your iOS app to your device
-=====================================
+# Deploying your iOS app to your device
+
 To prepare for your Appium tests to run on a real device, you will need to:
 
 1. Build your app with specific device-targeted parameters
@@ -23,9 +23,11 @@ CODE_SIGN_IDENTITY (Code Signing Identity)
     Example value: iPhone Developer
 ```
 
-PROVISIONING_PROFILE is missing from the index of available commands, but may be necessary.
+PROVISIONING_PROFILE is missing from the index of available commands,
+but may be necessary.
 
-Specify "CODE_SIGN_IDENTITY" & "PROVISIONING_PROFILE" settings in the xcodebuild command:
+Specify "CODE_SIGN_IDENTITY" & "PROVISIONING_PROFILE" settings in the
+xcodebuild command:
 
 ```
 xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> CODE_SIGN_IDENTITY="iPhone Developer: Mister Smith" PROVISIONING_PROFILE="XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
@@ -78,5 +80,4 @@ bundle exec rake ci:fruit_deploy_app | while read line ; do
 
 Once fruitstrap is killed, node server can be launched and Appium tests can run!
 
-Next:
-[Running Appium on Real Devices](./real-devices.html)
+Next: [Running Appium on Real Devices](./real-devices.html)

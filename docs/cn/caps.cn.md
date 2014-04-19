@@ -1,5 +1,4 @@
-Appium 服务关键字
-==========
+# Appium 服务关键字
 
 |关键字|描述|实例|
 |----|-----------|-------|
@@ -10,9 +9,7 @@ Appium 服务关键字
 |`newCommandTimeout`|设置在接受到有效命令之前结束进程并退出的时间|比如. `60`|
 |`launch`|在Appium已经安装的情况下可自动启动app。默认是`true`|`true`, `false`|
 
---
-
-#### Android特有
+## Android特有
 
 |关键字|描述|实例|
 |----|-----------|-------|
@@ -22,9 +19,7 @@ Appium 服务关键字
 |`device-ready-timeout`| 设置一个模拟器或真机准备就绪的时间|比如`5`|
 |``compressXml``| 参考[setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\))| `true`|
 
---
-
-#### iOS特有
+## iOS特有
 
 |关键字|描述|实例|
 |----|-----------|-------|
@@ -33,4 +28,3 @@ Appium 服务关键字
 |`language`| 为iOS的模拟器设置系统语言|比如. `fr`法语|
 |`launchTimeout`| 在Appium运行失败之前设置一个等待instruments的时间|比如. `20000`毫秒|
 |`locale`| 为iOS模拟器进行区域设置|比如. `fr_CA`法语|
-

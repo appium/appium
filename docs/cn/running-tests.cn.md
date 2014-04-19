@@ -1,8 +1,7 @@
-執行測試
-=============
+# 執行測試
 
-<a name="prep-ios"></a>測試前的準備 (iOS)
------
+## 測試前的準備 (iOS)
+
 在模擬器上測試apps必須要用模擬器專用的編譯器，例如說使用下列的命令來編譯 Xcode 項目：
 
     > xcodebuild -sdk iphonesimulator6.0
@@ -11,12 +10,12 @@
 
 如果需要，你可以把.app 目錄壓縮成一個zip壓縮檔！Appium 會自行解壓縮。讓你能方便在非本地運行Appium。
 
-<a name="prep-android"></a>測試前的準備 (Android)
-------
+## 測試前的準備 (Android)
+
 用Appium去執行你的.apk檔其實沒什麼特別需要注意的事項。如果需要，你可以把它壓縮成zip壓縮檔。
 
-<a name="run-ios"></a>用Appium測試你的app (iOS)
-------
+## 用Appium測試你的app (iOS)
+
 目前最好的測試方式請參照測試範例：
 
 [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
@@ -43,8 +42,8 @@
 
 在你選擇的WebDriver庫裡，設定remote session使用上述的環境參數然後使用端口 4723來連接本地服務器 (或著是使用你在Appium啟動時所設定的任意端口)。現在你已經設置完成了！
 
-<a name="run-android"></a>用Appium測試你的app (Android)
------
+## 用Appium測試你的app (Android)
+
 首先，先確定你有一個而且必須是只能一個Android模擬器或著設備連接著。如果你輸入`adb devices`，你應該只看到一個設備連接著。這將是Appium所用來測試的設備。當然，要連接一個設備，你需要準備好一個Android AVD (參考 [系統設置](https://github.com/appium/appium/blob/master/docs/system-setup.md#android) 以了解更多). 如果Android SDK工具在你的路徑下，你可以簡單的執行:
 
     emulator -avd <我的Avd名稱>
@@ -81,8 +80,8 @@
 
 在你選擇的WebDriver庫裡，設定remote session使用上述的環境參數然後使用端口 4723來連接本地服務器 (或著是使用你在Appium啟動時所設定的任意端口)。現在你已經設置完成了！
 
-<a name="run-selendroid"></a>用Appium測試你的app (Android 設備 &lt; 4.2, 以及混合app測試)
------
+## 用Appium測試你的app (Android 設備 &lt; 4.2, 以及混合app測試)
+
 低於4.2版本的Android設備 (API Level 17) 沒有安裝Google 的[用戶界面自動化框架/UiAutomator framework](http://developer.android.com/tools/help/uiautomator/index.html).下面的範例是早期Appium在這些設備上的測試方法。對於早期的設備以及使用混合模式(webview-based)製作的apps, Appium 包含了另一種自動化測試後端[Selendroid](http://selendroid.io/).
 
 要使用Selendroid, 只需要在之前提到的環境參數上稍作修改即可，把'Android' 換成 'Selendroid':

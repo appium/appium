@@ -1,19 +1,18 @@
-Selenium Grid
-======================
+# Selenium Grid
 
-使用 <b>"--nodeconfig"</b> 服务器参数，你可以在本地 selenium grid 里注册你的 appium 服务器。
+使用 **"--nodeconfig"** 服务器参数，你可以在本地 selenium grid 里注册你的 appium 服务器。
 
 ```bash
 > node . -V --nodeconfig /path/to/nodeconfig.json
 ```
 
-在 node 的配置文件里，你需要定义 <b>"browserName"</b>，<b>"version"</b> 和 <b>"platform"</b>。
-基于这些参数，selenium grid 会将你的测试定向到正确的设备上去。你还需要配置你的 <b>host</b> 详细信息和
-<b>selenium grid</b> 的详细信息。你可以在 <a href="http://code.google.com/p/selenium/source/browse/java/server/src/org/openqa/grid/common/defaults/GridParameters.properties">这里</a> 找到详细的参数列表和描述信息。
+在 node 的配置文件里，你需要定义 **"browserName"**，**"version"** 和 **"platform"**。
+基于这些参数，selenium grid 会将你的测试定向到正确的设备上去。你还需要配置你的 **host** 详细信息和
+**selenium grid** 的详细信息。你可以在 <a href="http://code.google.com/p/selenium/source/browse/java/server/src/org/openqa/grid/common/defaults/GridParameters.properties">这里</a> 找到详细的参数列表和描述信息。
 
 一旦你启动了 appium 服务器并且在 grid 里注册了信息，你会在 grid 控制台发现你的设备：
 
-"http://<b>\<grid-ip-adress\></b>:<b>\<grid-port\></b>/grid/console"
+"http://**\<grid-ip-adress\>**:**\<grid-port\>**/grid/console"
 
 ## Grid 配置文件例子
 

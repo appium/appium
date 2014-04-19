@@ -1,8 +1,6 @@
-Running Tests
-=============
+# Running Tests
 
-<a name="prep-ios"></a>Preparing your app for test (iOS)
------
+## Preparing your app for test (iOS)
 
 Test apps run on the simulator have to be compiled specifically for the
 simulator, for example by executing the following command in the Xcode project:
@@ -16,14 +14,12 @@ Appium server.
 If you want, you can zip up the .app directory into a .zip file! Appium will
 unpack it for you. Nice if you're not using Appium locally.
 
-<a name="prep-android"></a>Preparing your app for test (Android)
-------
+## Preparing your app for test (Android)
 
 Nothing in particular needs to be done to run your .apk using Appium. If you
 want to zip it up, you can.
 
-<a name="run-ios"></a>Running your test app with Appium (iOS)
-------
+## Running your test app with Appium (iOS)
 
 The best way to see what to do currently is to look at the example tests:
 
@@ -54,8 +50,7 @@ capabilities and connect to the server running at port 4723 of localhost (or
 whatever host and port you specified when you started Appium). You should be
 all set now!
 
-<a name="run-android"></a>Running your test app with Appium (Android)
------
+## Running your test app with Appium (Android)
 
 First, make sure you have one and only one Android emulator or device
 connected. If you run `adb devices`, for example, you should see one device
@@ -108,8 +103,7 @@ capabilities and connect to the server running at port 4723 of localhost (or
 whatever host and port you specified when you started Appium). You should be
 all set now!
 
-<a name="run-selendroid"></a>Running your test app with Appium (Android devices &lt; 4.2, and hybrid tests)
------
+## Running your test app with Appium (Android devices &lt; 4.2, and hybrid tests)
 
 Android devices before version 4.2 (API Level 17) do not have Google's
 [UiAutomator framework](http://developer.android.com/tools/help/uiautomator/index.html)

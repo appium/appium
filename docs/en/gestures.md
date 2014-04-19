@@ -1,5 +1,4 @@
-Automating mobile gestures
-==========================
+# Automating mobile gestures
 
 While the Selenium WebDriver spec has support for certain kinds of mobile
 interaction, its parameters are not always easily mappable to the

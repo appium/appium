@@ -1,9 +1,8 @@
-自动化手机网页应用
-======================
+# 自动化手机网页应用
 
 如果你正对于如何在iOS的Safari或Android上的Chrome做网页应用的自动化，那么Appium能够帮助你。你可以写一个最普通的WebDriver测试代码，就像使用Selenium服务一样使用Appium来满足需求。
 
-###iOS模拟器上的Safari浏览器
+##iOS模拟器上的Safari浏览器
 
 首先，我们需要先确认在你的Safari浏览器的设置中开启了开发者模式，这样Safari的远程调试端口也会被同时打开。
 
@@ -25,7 +24,7 @@
 
 <b>提示:</b> 目前针对iOS7版本的上，ios-webkit-debug-proxy有一个问题。[a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
 
-#### 前期设置
+### 前期设置
 
 当你要在真机上的Safari中执行你的测试脚本之前你需要先注意以下几点：
 *安装并正常运行<b>ios-webkit-debug-proxy</b>（具体可以参考(s[hybrid docs](https://github.com/appium/appium/blob/master/docs/hybrid.md))
@@ -59,11 +58,11 @@ $ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile
 $ node /lib/server/main.js -U <UDID>
 ```
 
-#### 执行你的测试
+### 执行你的测试
 如果要在safari下的运行你的测试, 只需要简单的配置app为safari即可
 
 
-##### Java 举例
+### Java 举例
 
 ```java
 //setup the web driver and launch the webview app.

@@ -1,5 +1,4 @@
-Appium grunt 命令
-=============
+# Appium grunt 命令
 
 [Grunt](http://gruntjs.com) 是 Node.js 的 Make! 我们用它来自动化所有的 appium 开发任务。 下面就是你能做的：
 
@@ -27,8 +26,7 @@ Appium grunt 命令
 |grunt generateAppiumIo|将 README.md 转成 appium.io 的 getting-started.html|
 |grunt setConfigVer:&lt;device&gt;|将 package.json 里面 appium 的版本号和对应设备写入 `.appiumconfig.json` 文件|
 
-其他
---------
+## 其他
 
 `grunt buildApp` 默认使用 iPhone 6.1 模拟器的 SDK 来构建应用。你可以传其他的 SDK 给 grunt 命令。
 (用 `xcodebuild -showsdks` 找出你所有的 sdk）:

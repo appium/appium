@@ -29,7 +29,7 @@ application's .app directory
 # Android and iOS
 @driver.execute_script 'mobile: pullFile', {path: '/Library/AddressBook/AddressBook.sqlitedb'} #=> /Library/AddressBook/AddressBook.sqlitedb
 
-#iOS only
+# iOS only
 @driver.execute_script 'mobile: pullFile, {path: '/UICatalog.app/logfile.log'} #=> /Applications/12323-452262-24241-23-124124/UICatalog.app/logfile.log
 ```
 

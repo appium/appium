@@ -43,7 +43,7 @@ This will start Appium and have Appium use the device to test the app.
 0. Double check that you can invoke your automation from instruments.
 0. Make sure instruments in closed already
 
-# Appium on real Android devices
+## Appium on real Android devices
 
 Hooray! There's nothing extra to know about testing real Android devices: it
 works exactly the same as testing on emulators. Make sure that your device

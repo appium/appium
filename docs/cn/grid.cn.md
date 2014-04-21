@@ -1,5 +1,4 @@
-Selenium Grid
-======================
+# Selenium Grid
 
 使用 <b>"--nodeconfig"</b> 服务器参数，你可以在本地 selenium grid 里注册你的 appium 服务器。
 

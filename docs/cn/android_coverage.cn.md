@@ -1,3 +1,5 @@
+# Android Coverage
+
 Android 覆盖率需要使用模拟器或者 root 过的机器。使用 instrument target 构建应用，比如 `$ ant instrument`
 
 将 `androidCoverage` 传给你设备的 capabilities，并设置为你的 instrument 的 class。
@@ -14,8 +16,6 @@ Appium 会用类似的命令启动应用：`adb shell am instrument -e coverage 
 ```ruby
 mobile :endCoverage, intent: 'com.example.pkg.END_EMMA', path: '/mnt/sdcard/coverage.ec'
 ```
-
---
 
 在 `AndroidManifest.xml` 里定义 instrumentation 和 broadcast 接收器。
 
@@ -100,7 +100,7 @@ public class MyInstrumentation extends Instrumentation {
 }
 ```
 
-#### 报表
+### 报表
 
 `ant instrument` 命令会生成一个 `coverage.em` 文件。你可以使用 `mobile :endCoverage` 命令来可以下载 某次运行的 coverage.ec 文件。 注意：你可以有很多个 coverage.ec 文件。你可以用下面的命令将他们合并起来：
 

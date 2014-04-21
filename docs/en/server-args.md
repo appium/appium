@@ -1,5 +1,4 @@
-Appium server arguments
-==========
+# Appium server arguments
 
 Usage: `node . [flags]`
 

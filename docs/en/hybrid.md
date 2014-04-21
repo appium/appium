@@ -1,5 +1,4 @@
-Automating hybrid apps
-======================
+# Automating hybrid apps
 
 One of the core principles of Appium is that you shouldn't have to change
 your app to test it. In line with that methodology, it is possible to test
@@ -12,8 +11,7 @@ required so that Appium knows whether you want to automate the native aspects
 *  [Hybrid iOS apps](#ios)
 *  [Hybrid Android apps](#android)
 
-<a name="ios"></a>Automating hybrid iOS apps
---------------------------
+## Automating hybrid iOS apps
 
 Here are the steps required to talk to a web view in your Appium test:
 
@@ -34,6 +32,7 @@ native portion of the app, simply call `"mobile: leaveWebView"` with
 execute_script to leave the web frame.
 
 ## Execution against a real iOS device
+
 To interrogate and interact with a web view appium establishes a connection
 using a remote debugger. When executing the examples below against a
 simulator this connection can be established directly as the simulator and
@@ -73,7 +72,10 @@ Once installed you can start the proxy with the following command:
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ``` 
 
-<b>NOTE:</b> the proxy requires the <b>"web inspector"</b> to be turned on to allow a connection to be established. Turn it on by going to <b> settings > safari > advanced </b>. Please be aware that the web inspector was <b>added as part of iOS 6</b> and was not available previously.
+**NOTE:** the proxy requires the **"web inspector"** to be turned on to allow
+a connection to be established. Turn it on by going to ** settings > safari >
+advanced **. Please be aware that the web inspector was **added as part of
+iOS 6** and was not available previously.
 
 ## Wd.js Code example
 
@@ -167,7 +169,7 @@ And(/^I click a webview button $/) do
 end
 ```
 
-#### Troubleshooting Webview with Ruby:
+### Troubleshooting Webview with Ruby:
 
 I created a quick function in [my helper class](https://gist.github.com/feelobot/7309729)
 to find web elements no matter what window its in (this is useful if your
@@ -175,8 +177,7 @@ webview id changes or if you are using the same codebase to test android and
 ios)
 
 
-<a name="android"></a>Automating hybrid Android apps
---------------------------
+## Automating hybrid Android apps
 
 Appium comes with built-in hybrid support via Chromedriver. Appium also uses
 Selendroid under the hood for webview support on devices older than 4.4. (In

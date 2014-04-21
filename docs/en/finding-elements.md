@@ -1,5 +1,4 @@
-Finding and interacting with elements
-=====================================
+# Finding and interacting with elements
 
 Appium supports a subset of the WebDriver locator strategies:
 
@@ -20,23 +19,21 @@ search using the UiAutomator Api (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search
 using the Id/Name that the native Accessibility options utilize.
 
-###Tag name mapping
+## Tag name mapping
 
 You can use the direct UIAutomation component type name for the tag name,
 or use the simplified mapping (used in some examples below) found here:
 
 https://github.com/appium/appium-uiauto/blob/master/uiauto/lib/mechanic.js#L30
 
-Issues
-------
+## Issues
 
 There's a known issue with table cell elements becoming invalidated before
 there's time to interact with them. We're working on a fix
 
-Examples
---------
+### Examples
 
-### Find all the UIAButtons on the screen
+## Find all the UIAButtons on the screen
 
 WD.js:
 
@@ -70,7 +67,7 @@ Python:
 [button.click() for button in driver.find_elements_by_tag_name('button')]
 ```
 
-### Find the element with the text (or accessibilityIdentifier) "Go"
+## Find the element with the text (or accessibilityIdentifier) "Go"
 
 WD.js:
 
@@ -94,7 +91,7 @@ Python:
 driver.find_element_by_name('Go').click()
 ```
 
-### Find the nav bar text element where the text begins with "Hi, "
+## Find the nav bar text element where the text begins with "Hi, "
 
 WD.js:
 
@@ -113,7 +110,7 @@ Ruby:
 @driver.find_element :xpath, '//navigationBar/text[contains(@value, "Hi, ")]'
 ```
 
-### Find an element by tagName
+## Find an element by tagName
 
 Java:
 
@@ -133,7 +130,7 @@ Python:
 driver.find_elements_by_tag_name('tableCell')[5].click()
 ```
 
-### Using the "-ios uiautomation" locator strategy
+## Using the "-ios uiautomation" locator strategy
 
 WD.js:
 
@@ -141,7 +138,7 @@ WD.js:
 driver.element('-ios uiautomation', '.elements()[1].cells()[2]').getAttribute('name');
 ```
 
-### Using the "-android uiautomator" locator strategy
+## Using the "-android uiautomator" locator strategy
 
 WD.js:
 
@@ -149,7 +146,7 @@ WD.js:
 driver.element('-android uiautomator', 'new UiSelector().clickable(true)').getAttribute('name');
 ```
 
-# FindAndAct<a name="findandact"></a>
+## FindAndAct
 
 If you want, you can find and act on an element in a single command (iOS-only).
 For example, you can find and click on an element in one call to Appium,
@@ -174,8 +171,7 @@ driver.execute_script(js_snippet, args)
 
 Note: driver.execute_script() is explained in [Automating Mobile Gestures: Alternative access method](https://github.com/appium/appium/wiki/Automating-mobile-gestures))
 
-Using The Appium Inspector To Locate Elements
---------
+## Using The Appium Inspector To Locate Elements
 
 Appium provides you with a neat tool that allows you to find the the elements
 you're looking for without leaving the Appium app. With the Appium Inspector
@@ -183,14 +179,14 @@ you're looking for without leaving the Appium app. With the Appium Inspector
 it's name by either clicking the element on the preview page provided,
 or locating it in the UI navigator.
 
-### Overview
+## Overview
 
 The Appium inspector has a simple layout, complete with a UI navigator,
 a preview, and record and refresh buttons, and interaction tools.
 
 ![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Overview.png)
 
-### Example
+## Example
 
 After launching the Appium Inspector (you can do this by clicking the small
 "i" button in the top right of the app) you can locate any element in the

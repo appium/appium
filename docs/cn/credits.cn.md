@@ -1,7 +1,6 @@
-名单
-=======
+# 名单
 
-###  以下这些项目，鼓舞了我们，成就了 Appium。
+##  以下这些项目，鼓舞了我们，成就了 Appium。
 
 * [Apple UIAutomation](http://developer.apple.com/library/ios/#documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
 * [GhostDriver](https://github.com/detro/ghostdriver)

@@ -165,11 +165,11 @@ Python:
 
 ```python
 js_snippet = "mobile: swipe"
-args = {'startX':0.5, 'startY':0.2, 'startX':0.5, 'startY':0.95, 'tapCount':1, 'duration':10}
+args = {'startX':0.5, 'startY':0.2, 'endX':0.5, 'endY':0.95, 'tapCount':1, 'duration':10}
 driver.execute_script(js_snippet, args)
 ```
 
-Note: driver.execute_script() is explained in [Automating Mobile Gestures: Alternative access method](https://github.com/appium/appium/wiki/Automating-mobile-gestures))
+Note: driver.execute_script() is explained in [Automating Mobile Gestures: Alternative access method](https://github.com/appium/appium/blob/master/docs/en/gestures.md#alternative-access-method))
 
 ## Using The Appium Inspector To Locate Elements
 

@@ -165,7 +165,7 @@ Python:
 
 ```python
 js_snippet = "mobile: swipe"
-args = {'startX':0.5, 'startY':0.2, 'startX':0.5, 'startY':0.95, 'tapCount':1, 'duration':10}
+args = {'startX':0.5, 'startY':0.2, 'endX':0.5, 'endY':0.95, 'tapCount':1, 'duration':10}
 driver.execute_script(js_snippet, args)
 ```
 

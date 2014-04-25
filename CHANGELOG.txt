@@ -1,3 +1,22 @@
+CHANGES IN VERSION 0.18.2 (from 0.18.1)
+=======================================
+
+#### General
+- extensive docs updates (make it ready for the new Slate docs)
+- decode sequence of actions to native "swipe" method
+- fix valid platform error message
+- update WD dep
+- fix proxying when session id is null
+- allow spaces in appium folder name in reset.sh
+
+#### Android
+- allow for different input sets to mobile: find
+- fix apk signing with custom keystore
+- allow MultiActions without an element
+- move chrome tests into their own emulator type
+- fix async bug in getting xml dump
+
+
 CHANGES IN VERSION 0.18.1 (from 0.18.0)
 =======================================
 

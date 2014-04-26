@@ -4,7 +4,7 @@
 
 ## 一般问题
 
-* 确保你是根据 [README](README) 里面的入门指南按部就班的。
+* 确保你是根据 [README](README.md) 里面的入门指南按部就班的。
 * 确保你的系统配置好了(比如， xCode 是最新的，Android SDK 安装好了， `ANDROID_HOME` 配置好了，参照 [setup instructions](https://github.com/appium/appium/blob/master/docs/running-on-osx.md) ).
 * 确保你应用的路径正确。
 

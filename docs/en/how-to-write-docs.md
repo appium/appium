@@ -22,4 +22,4 @@ Don't use line breaks such as `--` or `---`. This will confuse Slate.
 Link to another document using this syntax: `[link text](filename.md)`
 
 To link inside a document, use the `#` from the Slate URL.
-`[go direct to json](#json-wire-protocol-server-extensions)`
+`[go direct to json](filename.md#json-wire-protocol-server-extensions)`

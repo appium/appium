@@ -2,8 +2,8 @@
 
 Appium 其中一个理念就是你不能为了测试应用而修改应用。为了符合这个方法学，我们可以使用 Selenium 测试传统 web 应用的方法来测试混合 web 应用 (比如，iOS 应用里的元素 "UIWebView" )，这是有可能的。这里会有一些技术性的复杂，Appium 需要知道你是想测试原生部分呢还是web部分。幸运的是，我们还能遵守 WebDriver 的协议。
 
-*  [混合 iOS 应用](#ios)
-*  [混合 Android 应用](#android)
+*  [混合 iOS 应用](hybrid.cn.md#ios)
+*  [混合 Android 应用](hybrid.cn.md#android)
 
 ## 自动化混合 iOS 应用
 

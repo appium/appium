@@ -41,7 +41,7 @@ To run tests on Windows, you will need to have the Android Emulator booted or
 
     node .
 
-See the [server documentation](server-args)
+See the [server documentation](server-args.md)
 for all the command line arguments.
 
 ## Notes
@@ -50,5 +50,5 @@ for all the command line arguments.
   to work on Windows.
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this
-  [page](android-hax-emulator).
+  [page](android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.

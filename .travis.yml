@@ -2,6 +2,8 @@ language: objective-c
 osx_image: mavericks
 notifications:
   email: false
+rvm:
+  - 2.1.1
 env:
   global:
   - secure: KNDEn/ryhd0yRGzpJSfHRKBzBIC73RKaHWFDkqD4E+iUXepwBfF2bBfningf8f++9qLNscumYZOHjQ0PWf/YALQCr5B2vHsGN+eHWc331d8f5sU/b6oyCAxsayI32lr/mNVCuHd44+ManMcKUH6831Q1qwa15o5w4dDPtJKuv6Y=
@@ -10,6 +12,7 @@ env:
   - CI_CONFIG=unit
   - CI_CONFIG=build
 before_script:
+- gem install --no-rdoc --no-ri appium_doc_lint
 - ./ci/install-node.sh
 - ./ci/show-env.sh
 - npm install -g jshint grunt-cli

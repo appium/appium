@@ -13,7 +13,7 @@
 * Android
 * FirefoxOS
 
-See the [platform support doc](platform-support.md) for more detailed information.
+See the [platform support doc](docs/en/platform-support.md) for more detailed information.
 
 ## Why Appium?
 
@@ -35,7 +35,7 @@ opens up the possibility of true cross-platform native mobile automation. Finall
 
 ## I don't get it yet...
 
-If you're new to Appium, or want a fuller description of what this is all about, please read our [Introduction to Appium Concepts](intro.md).
+If you're new to Appium, or want a fuller description of what this is all about, please read our [Introduction to Appium Concepts](docs/en/intro.md).
 
 ## Requirements
 
@@ -55,16 +55,16 @@ of the dependencies are set up correctly. If running from source, you may have t
 * Mac OS X 10.7 or higher, 10.8.4 recommended
 * XCode &gt;= 4.6.3
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
-* [Ensure you read our documentation on setting yourself up for iOS testing!](https://github.com/appium/appium/blob/master/docs/en/running-on-osx.md#ios)
+* [Ensure you read our documentation on setting yourself up for iOS testing!](docs/en/running-on-osx.md)
 
 ### Android Requirements
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
 * Appium supports Android on OS X, Linux and Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
-  * [linux](https://github.com/appium/appium/blob/master/docs/en/running-on-linux.md)
-  * [osx](https://github.com/appium/appium/blob/master/docs/en/running-on-osx.md#android)
-  * [windows](https://github.com/appium/appium/blob/master/docs/en/running-on-windows.md)
+  * [linux](docs/en/running-on-linux.md)
+  * [osx](docs/en/running-on-osx.md)
+  * [windows](docs/en/running-on-windows.md)
 
 ### FirefoxOS Requirements
 
@@ -87,21 +87,18 @@ You can run an Appium server using node.js or using the application, see below.
 
 ## Writing Tests for Appium
 
-The main guide for getting started writing and running tests is [the running tests](https://github.com/appium/appium/blob/master/docs/en/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](https://github.com/appium/appium/blob/master/docs/en/real-devices.md).
+The main guide for getting started writing and running tests is [the running tests](docs/en/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](docs/en/real-devices.md).
 
-Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](https://github.com/appium/appium/blob/master/docs/en/caps.md) to run your test through Appium.
+Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](docs/en/caps.md) to run your test through Appium.
 
 You find elements by using a subset of WebDriver's element-finding strategies.
-See [finding elements](https://github.com/appium/appium/blob/master/docs/en/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating
-mobile gestures](https://github.com/appium/appium/blob/master/docs/en/gestures.md)
-like tap, flick, and swipe.
+See [finding elements](docs/en/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating mobile gestures](docs/en/gestures.md) like tap, flick, and swipe.
 
-You can also automate web views in hybrid apps! See the [hybrid app
-guide](https://github.com/appium/appium/blob/master/docs/en/hybrid.md)
+You can also automate web views in hybrid apps! See the [hybrid app guide](docs/en/hybrid.md)
 
-This repository contains [many examples of tests in a variety of different languages](https://github.com/appium/appium/tree/master/sample-code/examples)!
+This repository contains [many examples of tests in a variety of different languages](sample-code/examples)!
 
-For the full list of Appium doc pages, visit [this directory](https://github.com/appium/appium/blob/master/docs/en/).
+For the full list of Appium doc pages, visit [this directory](docs/en/).
 
 ## How It Works
 
@@ -120,12 +117,12 @@ Gecko-based platforms.
 
 ## Contributing
 
-Please take a look at our [contribution documentation](https://github.com/appium/appium/blob/master/CONTRIBUTING.md)
+Please take a look at our [contribution documentation](CONTRIBUTING.md)
 for instructions on how to build, test and run Appium from source.
 
 ## Project Credits & Inspiration
 
-[Credits](https://github.com/appium/appium/blob/master/docs/en/credits.md)
+[Credits](docs/en/credits.md)
 
 ## Mailing List
 
@@ -133,7 +130,7 @@ Announcements and debates often take place on the [Discussion Group](https://gro
 
 ## Troubleshooting
 
-We put together a [troubleshooting guide](https://github.com/appium/appium/blob/master/docs/en/troubleshooting.md).
+We put together a [troubleshooting guide](docs/en/troubleshooting.md).
 Please have a look here first if you run into any problems. It contains instructions for checking a lot
 of common errors and how to get in touch with the community if you're stumped.
 

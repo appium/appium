@@ -13,7 +13,7 @@
 * Android
 * FirefoxOS
 
-See the [platform support doc](platform-support) for more detailed information.
+See the [platform support doc](platform-support.md) for more detailed information.
 
 ## Why Appium?
 
@@ -35,7 +35,7 @@ opens up the possibility of true cross-platform native mobile automation. Finall
 
 ## I don't get it yet...
 
-If you're new to Appium, or want a fuller description of what this is all about, please read our [Introduction to Appium Concepts](intro).
+If you're new to Appium, or want a fuller description of what this is all about, please read our [Introduction to Appium Concepts](intro.md).
 
 ## Requirements
 

@@ -32,11 +32,11 @@ line using node.js:
 
     node .
 
-See the [server documentation](server-args) for all the command line arguments.
+See the [server documentation](server-args.md) for all the command line arguments.
 
 ## Notes
 
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this
-  [page](android-hax-emulator).
+  [page](android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.

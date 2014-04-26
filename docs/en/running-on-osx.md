@@ -67,4 +67,4 @@ To go back to iOS 7.0 testing.
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.
 * There exists a hardware accelerated emulator for android, it has its own
   limitations. For more information you can check out this
-  [page](android-hax-emulator).
+  [page](android-hax-emulator.md).

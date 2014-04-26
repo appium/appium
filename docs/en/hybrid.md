@@ -8,8 +8,8 @@ required so that Appium knows whether you want to automate the native aspects
  of the app or the web views, but thankfully, we can stay within the
  WebDriver protocol for everything.
 
-*  [Hybrid iOS apps](#ios)
-*  [Hybrid Android apps](#android)
+*  [Hybrid iOS apps](hybrid.md#automating-hybrid-ios-apps)
+*  [Hybrid Android apps](hybrid.md#automating-hybrid-android-apps)
 
 ## Automating hybrid iOS apps
 

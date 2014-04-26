@@ -15,7 +15,7 @@ multiple platforms (iOS, Android), using the same API. This enables a large
 or total amount of code reuse between iOS and Android testsuites.
 
 For specific information about what it means for Appium to "support" its
-platforms, version, and automation modalities, please see the [platform support doc](platform-support).
+platforms, version, and automation modalities, please see the [platform support doc](platform-support.md).
 
 ## Appium Philosophy
 
@@ -94,7 +94,7 @@ For example, we might set the `platformName` capability to `iOS` to tell
 Appium that we want an iOS session, rather than an Android one. Or we might
 set the `safariAllowPopups` capability to `true` in order to ensure that,
 during a Safari automation session, we're allowed to use JavaScript to open
-up new windows. See the [capabilities doc](caps) for the complete list of
+up new windows. See the [capabilities doc](caps.md) for the complete list of
 capabilities available for Appium.
 
 *Appium Server*
@@ -111,5 +111,5 @@ very handy when writing tests!
 ## Getting Started
 
 Congratulations! You are now armed with enough knowledge to begin using
-Appium. Why not head back to the [getting started doc](getting-started) for
+Appium. Why not head back to the [getting started doc](getting-started.md) for
 more detailed requirements and instructions?

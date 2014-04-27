@@ -18,7 +18,7 @@
 
 目前最好的測試方式請參照測試範例：
 
-[Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
+[Node.js](/sample-code/examples/node) | [Python](/sample-code/examples/python) | [PHP](/sample-code/examples/php) | [Ruby](/sample-code/examples/ruby) | [Java](/sample-code/examples/java)
 
 基本上來說，首先先確定你啟動了Appium:
 

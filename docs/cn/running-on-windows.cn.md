@@ -34,7 +34,7 @@
 
 ## 备注
 * 你必须带上--no-reset和--full-reset标记，以用于windows上的android
-* 有一个硬件加速模拟器用于android，但是它有自己的一些限制，如果你想了解更多，请参考[页面](android-hax-emulator.cn)
+* 有一个硬件加速模拟器用于android，但是它有自己的一些限制，如果你想了解更多，请参考[页面](android-hax-emulator.cn.md)
 * 确保在你的AVD的`config.ini`中有一个配置项为`hw.battery=yes` 
 
 

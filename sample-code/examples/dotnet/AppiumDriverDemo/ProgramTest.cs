@@ -68,7 +68,7 @@ namespace AppiumDriverDemo
 			var button = driver.FindElementByIosUIAutomation(".buttons()[\"ComputeSumButton\"]");
 			button.Click();
 
-			// TODO check the UIStaticTest
+			// TODO check the result
 		}
 
 		/// <summary>retrieves the path of the locally installed app</summary>

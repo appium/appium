@@ -47,13 +47,16 @@ namespace AppiumDriverDemo
 			Console.WriteLine("Entering addends");
 			List<int> addends = new List<int>();
 			Random randomNumberGenerator = new Random();
-			var elements = driver.FindElementsByTagName("textField");
-			foreach(var element in elements)
-			{
-				int randomNumber = randomNumberGenerator.Next(0,10);
-				element.SendKeys(randomNumber.ToString());
-				addends.Add(randomNumber);
-			}
+		
+			var element = driver.FindElementByIosUIAutomation(".textFields()[\"TextField1\"];");
+			int randomNumber = randomNumberGenerator.Next(0,10);
+			element.SendKeys(randomNumber.ToString());
+			addends.Add(randomNumber);
+
+			element = driver.FindElementByIosUIAutomation(".textFields()[\"TextField2\"];");
+			randomNumber = randomNumberGenerator.Next(0,10);
+			element.SendKeys(randomNumber.ToString());
+			addends.Add(randomNumber);
 
 			// calculate the expected result
 			int expectedResult = 0;
@@ -62,23 +65,12 @@ namespace AppiumDriverDemo
 
 			Console.WriteLine("Submitting the form");
 			// submit for computation
-			var buttons = driver.FindElementsByTagName("button");
-			buttons[0].Click();
+			var button = driver.FindElementByIosUIAutomation(".buttons()[\"ComputeSumButton\"]");
+			button.Click();
 
-			// validate the computation
-			var staticTexts = driver.FindElementsByTagName("staticText");
-			int actualResult = int.Parse(staticTexts[0].Text);
-			Assert.AreEqual (actualResult.ToString(), expectedResult.ToString());
+			// TODO check the UIStaticTest
 		}
 
-		[Test ()]
-		public void AppiumDriverMethodsTestCase ()
-		{
-			// Using appium extension methods
-			AppiumWebElement el = (AppiumWebElement) driver.FindElementByIosUIAutomation(".elements()");
-			el.SetImmediateValue ("abc");
-			Assert.False (driver.IsAppInstalled("RamdomApp"));
-		}
 		/// <summary>retrieves the path of the locally installed app</summary>
 		/// <returns>the path to the Test App</returns>
 		private static string _GetTestAppPath()

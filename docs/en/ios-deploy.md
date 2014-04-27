@@ -80,4 +80,4 @@ bundle exec rake ci:fruit_deploy_app | while read line ; do
 
 Once fruitstrap is killed, node server can be launched and Appium tests can run!
 
-Next: [Running Appium on Real Devices](./real-devices.html)
+Next: [Running Appium on Real Devices](real-devices.md)

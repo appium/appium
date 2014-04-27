@@ -110,5 +110,5 @@ very handy when writing tests!
 ## Getting Started
 
 Congratulations! You are now armed with enough knowledge to begin using
-Appium. Why not head back to the [getting started doc](getting-started.md) for
+Appium. Why not head back to the [getting started doc](../../README.md) for
 more detailed requirements and instructions?

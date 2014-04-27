@@ -1,11 +1,10 @@
 # Appium
 
-> Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
-
 [![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
 [![Dependency Status](https://gemnasium.com/appium/appium.png)](https://gemnasium.com/appium/appium)
 
+Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
 
 ## Supported Platforms
 

@@ -80,7 +80,7 @@ Appium最终开启了跨平台原生移动自动化的可能.
 我们也对 JSON Wire Protocol for [automating mobile gestures](gestures.cn.md) 做了一些扩展以支持像 tap, flick, 和 swipe 这样的动作(松开,按压,滑动等手机手势)
 
 你也可以在混合模式下自动化你的用HTML5构建的Web页面 [hybrid app guide](hybrid.cn.md)
-这个代码地址包含了 [很多不同语言的测试例子](https://github.com/appium/appium/tree/master/sample-code/examples/node)!
+这个代码地址包含了 [很多不同语言的测试例子](/sample-code/examples/node)!
 
 
 想了解全部的Appium的文档页面,请访问 [这个目录](https://github.com/appium/appium/blob/master/docs/).

@@ -2,6 +2,7 @@
 
 var env = require('../../helpers/env')
   , setupBase = require("./setup-base")
+  , wd = require('wd')
   ,  Q = require("q")
   , _ = require('underscore')
   , webviewHelper = require("../../helpers/webview")
@@ -285,10 +286,14 @@ module.exports = function (app) {
     it('should not display a phishing warning with safariIgnoreFraudWarning', function (done) {
       if (isChrome) return _skip(
         "Chrome doesn't test safariIgnoreFraudWarning", done);
+      var titleToBecomeRight = new wd.Asserter(function (driver) {
+        return driver
+          .title()
+          .should.eventually.contain("I am another page title");
+      });
       driver
-        .get("http://foo:bar@google.com")
-        .title()
-        .should.eventually.contain("Google")
+        .get(env.TEST_END_POINT + 'guinea-pig2.html')
+        .waitFor(titleToBecomeRight, 10000, 500)
         .nodeify(done);
     });
     it('should be able to get performance logs', function (done) {

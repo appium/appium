@@ -98,7 +98,7 @@ part of iOS 6** and was not available previously.
   });
 ```
 
-* For the full context, see [this node example](https://github.com/appium/appium/blob/master/sample-code/examples/node/hybrid.js)
+* For the full context, see [this node example](/sample-code/examples/node/hybrid.js)
 * *we're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
 
 ## Wd.java Code example

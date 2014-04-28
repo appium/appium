@@ -19,7 +19,21 @@ Don't use line breaks such as `--` or `---`. This will confuse Slate.
 
 ### Linking
 
-Link to another document using this syntax: `[link text](filename.md)`
+Link to the readme:
+
+`[readme](../../README.md)`
+
+Link to contributing:
+
+`[contributing](../../CONTRIBUTING.md)`
+
+Link to another document
+
+`[link text](filename.md)`
 
 To link inside a document, use the `#` from the Slate URL.
+
 `[go direct to json](filename.md#json-wire-protocol-server-extensions)`
+
+Note that hash links will break when the heading changes so linking to
+the start of the doc is preferable (`other.md` instead of `other.md#something`).

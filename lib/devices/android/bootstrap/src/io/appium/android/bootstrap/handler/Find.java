@@ -17,6 +17,10 @@ import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 import io.appium.android.bootstrap.utils.UiSelectorParser;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -468,5 +472,28 @@ public class Find extends CommandHandler {
       }
     }
     return sel;
+  }
+
+  public static void loadStringsJson() {
+    Logger.info("Loading json...");
+    try {
+      final File jsonFile = new File("/data/local/tmp/strings.json");
+      // json will not exist for apks that are only on device
+      // because the node server can't extract the json from the apk.
+      if (!jsonFile.exists()) {
+        return;
+      }
+      final DataInputStream dataInput = new DataInputStream(
+          new FileInputStream(jsonFile));
+      final byte[] jsonBytes = new byte[(int) jsonFile.length()];
+      dataInput.readFully(jsonBytes);
+      // this closes FileInputStream
+      dataInput.close();
+      final String jsonString = new String(jsonBytes, "UTF-8");
+      Find.apkStrings = new JSONObject(jsonString);
+      Logger.info("json loading complete.");
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
   }
 }

@@ -8,9 +8,6 @@ import io.appium.android.bootstrap.utils.NotImportantViews;
 import io.appium.android.bootstrap.utils.TheWatchers;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -117,7 +114,7 @@ class SocketServer {
    */
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
-    loadStringsJson();
+    Find.loadStringsJson();
     dismissCrashAlerts();
     final TimerTask updateWatchers = new TimerTask() {
       @Override
@@ -153,29 +150,6 @@ class SocketServer {
       Logger.info("Registered crash watchers.");
     } catch (Exception e) {
       Logger.info("Unable to register crash watchers.");
-    }
-  }
-
-  public void loadStringsJson() {
-    Logger.info("Loading json...");
-    try {
-      final File jsonFile = new File("/data/local/tmp/strings.json");
-      // json will not exist for apks that are only on device
-      // because the node server can't extract the json from the apk.
-      if (!jsonFile.exists()) {
-        return;
-      }
-      final DataInputStream dataInput = new DataInputStream(
-          new FileInputStream(jsonFile));
-      final byte[] jsonBytes = new byte[(int) jsonFile.length()];
-      dataInput.readFully(jsonBytes);
-      // this closes FileInputStream
-      dataInput.close();
-      final String jsonString = new String(jsonBytes, "UTF-8");
-      Find.apkStrings = new JSONObject(jsonString);
-      Logger.info("json loading complete.");
-    } catch (final Exception e) {
-      e.printStackTrace();
     }
   }
 

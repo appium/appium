@@ -5,7 +5,7 @@
 ## 一般问题
 
 * 确保你是根据 [README](README.md) 里面的入门指南按部就班的。
-* 确保你的系统配置好了(比如， xCode 是最新的，Android SDK 安装好了， `ANDROID_HOME` 配置好了，参照 [setup instructions](https://github.com/appium/appium/blob/master/docs/running-on-osx.md) ).
+* 确保你的系统配置好了(比如， xCode 是最新的，Android SDK 安装好了， `ANDROID_HOME` 配置好了，参照 [setup instructions](running-on-osx.md) ).
 * 确保你应用的路径正确。
 
 ## 如果你从 Appium.app 运行的话 (通过 dmg 安装的)
@@ -31,8 +31,8 @@
 
 * 确保 Android 模拟器启动并运行着。
 * 有时候需要运行 `adb kill-server && adb devices`。它可以帮助重置和Android设备之间的连接。
-* Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android) for more information).
-* 你得知道 `app-package`， `app-activity` 和 `app-wait-activity` (详见 [文档](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-android)).
+* Make sure you know about the `app-package`, `app-activity`, and `app-wait-activity` desiredCapabilities (see [this doc](running-tests.md) for more information).
+* 你得知道 `app-package`， `app-activity` 和 `app-wait-activity` (详见 [文档](running-tests.md)).
 
 ## IOS
 
@@ -72,7 +72,7 @@
 
 * 如果你从 Node 官网安装的 Node，那需要你使用 sudo 运行 npm。这其实并不好，试试看用 `brew install node`。
 * 使用 proxy，Webview 可以支持 iOS 真机。 见 [discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ).
-* 有时候， iOS 的 UI 元素在定位到之后几毫秒会突然变得无效。这会导致一个类似`(null) cannot be tapped`的错误。唯一的解决方法就是把finding-and-acting的代码放到 retry 块里。参见 `mobile: findAndAct` [finding elements doc page](https://github.com/appium/appium/blob/master/docs/finding-elements.md)
+* 有时候， iOS 的 UI 元素在定位到之后几毫秒会突然变得无效。这会导致一个类似`(null) cannot be tapped`的错误。唯一的解决方法就是把finding-and-acting的代码放到 retry 块里。参见 `mobile: findAndAct` [finding elements doc page](finding-elements.md)
 * 如果你通过 MacPorts 安装的 node 和 npm，那么确保 MacPorts 的 bin 文件夹 (`/opt/local/bin`) 被添加到环境变量 `PATH` 中去。
 
 ## Specific Errors

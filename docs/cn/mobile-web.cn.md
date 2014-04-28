@@ -27,7 +27,7 @@
 ### 前期设置
 
 当你要在真机上的Safari中执行你的测试脚本之前你需要先注意以下几点：
-*安装并正常运行**ios-webkit-debug-proxy**（具体可以参考(s[hybrid docs](https://github.com/appium/appium/blob/master/docs/hybrid.md))
+*安装并正常运行**ios-webkit-debug-proxy**（具体可以参考(s[hybrid docs](hybrid.md))
 *打开iOS真机中的**web inspector**，可以在iOS6.0或更高版本中的**设置 > safari > 高级**找到。
 *创建一个**provisioning profile** 能够帮助你配置safariLauncher.
 *

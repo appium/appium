@@ -40,14 +40,14 @@ Appium最终开启了跨平台原生移动自动化的可能.
 * Mac OS X 10.7 or higher, 10.8.4 recommended
 * XCode &gt;= 4.6.3
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
-* [Ensure you read our documentation on setting yourself up for iOS testing!](running-on-osx.cn.md#ios)
+* [Ensure you read our documentation on setting yourself up for iOS testing!](running-on-osx.cn.md)
 
 ### android依赖
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
 * Appium支持OS X上的Android, Linux和Windows上的beta支持.确保你通过如下的指示来配置你需要运行测试的不同系统的环境
   * [linux](running-on-linux.cn.md)
-  * [osx](running-on-osx.cn.md#android)
+  * [osx](running-on-osx.cn.md)
   * [windows](running-on-windows.cn.md)
 
 ### FirefoxOS Requirements
@@ -83,7 +83,7 @@ Appium最终开启了跨平台原生移动自动化的可能.
 这个代码地址包含了 [很多不同语言的测试例子](/sample-code/examples/node)!
 
 
-想了解全部的Appium的文档页面,请访问 [这个目录](https://github.com/appium/appium/blob/master/docs/).
+想了解全部的Appium的文档页面,请访问 [这个目录](#).
 
 ## 工作原理
 
@@ -98,7 +98,7 @@ FirefoxOS的支持依赖一个基于Gecko平台并且兼容WebDriver的自动化
 
 
 ## 如何贡献代码
-可以看下我们的文档  [contribution documentation](https://github.com/appium/appium/blob/master/CONTRIBUTING.md) 
+可以看下我们的文档  [contribution documentation](../../CONTRIBUTING.md)
 以了解如何从源代码中进行编译,测试和运行
 
 

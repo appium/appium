@@ -49,7 +49,7 @@ Java
 
 Java
 
-[MobileFindJavaTest.java](https://github.com/appium/appium/blob/master/sample-code/examples/java/junit/src/test/java/com/saucelabs/appium/MobileFindJavaTest.java)
+[MobileFindJavaTest.java](/sample-code/examples/java/junit/src/test/java/com/saucelabs/appium/MobileFindJavaTest.java)
 
 Ruby + [appium_lib gem](https://github.com/appium/ruby_lib)
 

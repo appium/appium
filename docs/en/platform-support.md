@@ -25,7 +25,7 @@ See [Running on OS X: iOS](running-on-osx.md) for iOS requirements and setup ins
 
 ## Android Support
 
-See [Running on OS X: Android](running-on-osx.md#android), [Running on Windows](running-on-windows.md), or [Running on Linux](running-on-linux.md) for Android requirements and setup instructions.
+See [Running on OS X: Android](running-on-osx.md), [Running on Windows](running-on-windows.md), or [Running on Linux](running-on-linux.md) for Android requirements and setup instructions.
 
 * Versions: 2.3 and up
   * Versions 4.2 and up are supported via Appium's own [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)

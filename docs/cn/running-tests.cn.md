@@ -44,7 +44,7 @@
 
 ## 用Appium測試你的app (Android)
 
-首先，先確定你有一個而且必須是只能一個Android模擬器或著設備連接著。如果你輸入`adb devices`，你應該只看到一個設備連接著。這將是Appium所用來測試的設備。當然，要連接一個設備，你需要準備好一個Android AVD (參考 [系統設置](https://github.com/appium/appium/blob/master/docs/system-setup.md#android) 以了解更多). 如果Android SDK工具在你的路徑下，你可以簡單的執行:
+首先，先確定你有一個而且必須是只能一個Android模擬器或著設備連接著。如果你輸入`adb devices`，你應該只看到一個設備連接著。這將是Appium所用來測試的設備。當然，要連接一個設備，你需要準備好一個Android AVD (參考 [系統設置](system-setup.md) 以了解更多). 如果Android SDK工具在你的路徑下，你可以簡單的執行:
 
     emulator -avd <我的Avd名稱>
 

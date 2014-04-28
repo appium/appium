@@ -169,7 +169,7 @@ args = {'startX':0.5, 'startY':0.2, 'endX':0.5, 'endY':0.95, 'tapCount':1, 'dura
 driver.execute_script(js_snippet, args)
 ```
 
-Note: driver.execute_script() is explained in [Automating Mobile Gestures: Alternative access method](gestures.md#alternative-access-method)
+Note: driver.execute_script() is explained in [Automating Mobile Gestures: Alternative access method](gestures.md)
 
 ## Using The Appium Inspector To Locate Elements
 

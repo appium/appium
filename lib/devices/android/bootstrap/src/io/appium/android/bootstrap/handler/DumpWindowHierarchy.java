@@ -7,6 +7,7 @@ import io.appium.android.bootstrap.CommandHandler;
 import java.io.File;
 
 import android.os.Environment;
+import android.os.SystemClock;
 
 import com.android.uiautomator.core.UiDevice;
 
@@ -17,6 +18,14 @@ import com.android.uiautomator.core.UiDevice;
  * /library/core-src/com/android/uiautomator/core/UiDevice.java
  */
 public class DumpWindowHierarchy extends CommandHandler {
+  // Note that
+  // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
+  // is directly from the UiDevice.java source code.
+  private static final File   dumpFolder   = new File(
+                                               Environment.getDataDirectory(),
+                                               "local/tmp");
+  private static final String dumpFileName = "dump.xml";
+  private static final File   dumpFile     = new File(dumpFolder, dumpFileName);
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
@@ -30,17 +39,19 @@ public class DumpWindowHierarchy extends CommandHandler {
    */
   @Override
   public AndroidCommandResult execute(final AndroidCommand command) {
+    dumpFolder.mkdirs();
 
-    final String dumpXml = "dump.xml";
-    final File dump = new File(new File(Environment.getDataDirectory(),
-        "local/tmp"), dumpXml);
-    dump.mkdirs();
-
-    if (dump.exists()) {
-      dump.delete();
+    if (dumpFile.exists()) {
+      dumpFile.delete();
     }
 
-    UiDevice.getInstance().dumpWindowHierarchy(dumpXml);
-    return getSuccessResult(true);
+    UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+
+    if (!dumpFile.exists()) {
+      SystemClock.sleep(1000);
+      UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+    }
+
+    return getSuccessResult(dumpFile.exists());
   }
 }

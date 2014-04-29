@@ -1,9 +1,8 @@
 # GETTING STARTED
 # -----------------
 # This documentation is intended to show you how to get started with a
-# simple Selenium-Webdriver test.  This test is written with RSpec but the
-# webdriver commands (everything called after @driver) will work with any
-# testing framework.
+# simple Appium & appium_lib test.  This example is written without a specific
+# testing framework in mind;  You can use appium_lib on any framework you like.
 #
 # INSTALLING RVM
 # --------------
@@ -24,15 +23,14 @@
 # -----------------
 # To actually run the tests, make sure appium is running in another terminal
 # window, then from the same window you used for the above commands, type
-#   "rspec simple_test.rb"
+#   "ruby simple_test.rb"
 #
-# It will take a while, but once it's done you should get nothing but a line telling you "1 example, 0 failures".
-
-require 'rspec'
-require 'selenium-webdriver'
+# It will take a while, but once it's done you should get nothing but a line
+# telling you "Tests Succeeded";  You'll see the iOS Simulator cranking away
+# doing actions while we're running.
+require 'appium_lib'
 
 APP_PATH = '../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
-
 
 def absolute_app_path
     file = File.join(File.dirname(__FILE__), APP_PATH)
@@ -41,69 +39,67 @@ def absolute_app_path
 end
 
 desired_caps = {
-  'browserName' => '',
-  'platform' => 'Mac',
-  'device' => 'iPhone Simulator',
-  'version' => '7.1',
+  'platformName' => 'ios',
+  'versionNumber' => '7.1',
   'app' => absolute_app_path
 }
 
-server_url = "http://127.0.0.1:4723/wd/hub"
+# Start the driver, then add all the Appium library methods to object to make
+# calling them look nicer.  You should probably do this on your test class,
+# not on Object.
+Appium::Driver.new(caps: desired_caps).start_driver
+Appium.promote_appium_methods Object
 
-describe "Computation" do
-  before :all do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps, :url => server_url)
-    @driver.manage.timeouts.implicit_wait = 10 # seconds
-   end
 
-  after :all do
-    @driver.quit
-  end
+# Add two numbers
+values = [rand(10), rand(10)]
+expected_sum = values.reduce(&:+)
 
-  it "should add two numbers" do
-    values = [rand(10), rand(10)]
-    expected_sum = values.reduce(&:+)
-    elements = @driver.find_elements(:class_name, 'UIATextField')
+# Find every textfield
+elements = e_textfields
 
-    elements.each_with_index do |element, index|
-      element.send_keys values[index]
-    end
-
-    button = @driver.find_element(:class_name, 'UIAButton')
-    button.click
-
-    actual_sum = @driver.find_elements(:class_name, 'UIAStaticText')[0].text
-    actual_sum.should eq(expected_sum.to_s)
-  end
-
-  it "should handle alerts" do
-    els = @driver.find_elements(:class_name, 'UIAButton')
-    els[1].click
-    a = @driver.switch_to.alert
-    a.text.should include("Cool title") # Returns title & text
-    a.accept
-  end
-
-  it "should find alerts" do
-    els = @driver.find_elements(:class_name, 'UIAButton')
-    els[1].click
-    alert = @driver.find_element(:class_name, 'UIAAlert')
-    buttons = alert.find_elements(:class_name, 'UIATableCell')
-    buttons[0].attribute('label').should eq "Cancel"
-    #.should.equal("Cancel")
-   
-    buttons[0].click
-    wait = Selenium::WebDriver::Wait.new(:timeout => 30) # seconds
-    wait.until {
-      alerts = @driver.find_elements(:class_name, 'UIAAlert')
-      alerts.should be_empty
-    }
-  end
-
-  it "should get window size" do
-    size = @driver.manage.window.size
-    size.width.should eq(320)
-    size.height.should eq(568)
-  end
-
+elements.each_with_index do |element, index|
+  element.type values[index]
 end
+
+# Get the first button
+button = button(1)
+button.click
+
+# Get the first static text field, then get its text
+actual_sum = first_s_text.text
+raise Exception unless actual_sum == (expected_sum.to_s)
+
+
+## Alerts are visible 
+button('show alert').click
+alert = find_element :class_name, 'UIAAlert'   # Elements can be found by :class_name
+
+## Elements can be found by their Class and value of an attribute
+cancel_button = find_ele_by_attr 'UIATableCell', :label, "Cancel"
+cancel_button.click 
+
+# Waits until no exceptions are raised
+wait(10) {
+  alerts = find_elements :class_name, 'UIAAlert'
+  raise Exception unless alerts.length == 0
+}
+
+
+## Alerts can be switched into
+button('show alert').click         # Get a button by its text
+alert = driver.switch_to.alert     # Get the text of the current alert, using
+                                   #   the Selenium::WebDriver directly
+alerting_text = alert.text
+raise Exception unless alerting_text.include? "Cool title" 
+alert_accept                      # Accept the current alert
+
+
+## Window Size is easy to get
+sizes = window_size
+raise Exception unless sizes.height == 568
+raise Exception unless sizes.width == 320
+
+# Quit when you're done!
+driver_quit
+puts "Tests Succeeded!"

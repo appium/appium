@@ -53,7 +53,7 @@ already clients written in every popular programming language. This also
 means that you're free to use whatever test runner and test framework you
 want; the client libraries are simply HTTP clients and can be mixed into your
 code any way you please. In other words, Appium & WebDriver clients are not
-technically "test frameworks"--they are "automation libraries". You can
+technically "test frameworks" -- they are "automation libraries". You can
 manage your test environment any way you like!
 
 We meet requirement #3 in the same way: WebDriver has become the de facto

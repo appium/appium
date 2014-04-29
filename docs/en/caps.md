@@ -31,6 +31,7 @@
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
 |`enablePerformanceLogging`| (Chrome and webview only) Enable Chromedriver's performance logging (default `false`)| `true`, `false`|
 |`androidDeviceReadyTimeout`|Timeout in seconds used to wait for a device to become ready after booting|e.g., `30`|
+|`androidDeviceSocket`|Devtools socket name. Needed only when tested app is a Chromium embedding browser. The socket is open by the browser and Chromedriver connects to it as a devtools client.|e.g., `chrome_devtools_remote`|
 |`avd`| Name of avd to launch|e.g., `api19`|
 |`avdLaunchTimeout`| How long to wait in milliseconds for an avd to launch and connect to ADB (default `120000`)| `300000`|
 |`avdReadyTimeout`| How long to wait in milliseconds for an avd to finish its boot animations (default `120000`)| `300000`|
@@ -40,6 +41,8 @@
 |`keystorePassword`| Password for custom keystore|e.g., `foo`|
 |`keyAlias`| Alias for key |e.g., `androiddebugkey`|
 |`keyPassword`| Password for key |e.g., `foo`|
+|`chromedriverExecutable`| The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium) |`/abs/path/to/webdriver`|
+|`specialChromedriverSessionArgs`| Custom arguments passed directly to chromedriver in chromeOptions capability. Passed as object which properties depend on a specific webdriver. |e.g., `{'androidDeviceSocket': 'opera_beta_devtools_remote',}`|
 
 
 ### iOS Only

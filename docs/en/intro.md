@@ -46,14 +46,14 @@ same app you're shipping. The vendor-provided frameworks we use are:
 We meet requirement #2 by wrapping the vendor-provided frameworks in one API,
 the [WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API.
 WebDriver (aka "Selenium WebDriver") specifies a client-server protocol
-(known as the [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol).
+(known as the [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol)).
 Given this client-server architecture, a client written in any language can
 be used to send the appropriate HTTP requests to the server. There are
 already clients written in every popular programming language. This also
 means that you're free to use whatever test runner and test framework you
 want; the client libraries are simply HTTP clients and can be mixed into your
 code any way you please. In other words, Appium & WebDriver clients are not
-technically "test frameworks"--they are "automation libraries". You can
+technically "test frameworks" -- they are "automation libraries". You can
 manage your test environment any way you like!
 
 We meet requirement #3 in the same way: WebDriver has become the de facto

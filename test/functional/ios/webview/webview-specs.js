@@ -24,6 +24,17 @@ describe('webview - webview -', function () {
       .contexts().should.eventually.have.length.above(0)
       .nodeify(done);
   });
+  it('getting list multiple times should not crash appium', function (done) {
+    driver
+      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(1)
+      .nodeify(done);
+  });
   it('contexts should be strings', function (done) {
     driver.contexts().then(function (ctxs) {
       ctxs.length.should.be.above(0);

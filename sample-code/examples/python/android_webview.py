@@ -2,15 +2,16 @@ import os
 import glob
 import unittest
 from time import sleep
-from selenium import webdriver
+
+from appium import webdriver
 
 
 class TestAndroidWebView(unittest.TestCase):
 
     def setUp(self):
         app = os.path.abspath(
-            glob.glob(os.path.join(
-                os.path.dirname(__file__), '../../apps/selendroid-test-app.apk')))
+                os.path.join(os.path.dirname(__file__),
+                             '../../apps/selendroid-test-app.apk'))
         desired_caps = {
             'device': 'selendroid',
             'app': app,
@@ -22,14 +23,20 @@ class TestAndroidWebView(unittest.TestCase):
                                        desired_caps)
 
     def test(self):
-        button = self.driver.find_element_by_id('buttonStartWebview')
+        button = self.driver.find_element_by_name('buttonStartWebviewCD')
         button.click()
 
-        self.driver.switch_to_window('WEBVIEW')
+        self.driver.switch_to.context('WEBVIEW')
 
         input_field = self.driver.find_element_by_id('name_input')
-        input_field.send_keys('Mathieu')
+        input_field.clear()
+        input_field.send_keys('Appium User')
         input_field.submit()
+
+        # test that everything is a-ok
+        source = self.driver.page_source
+        self.assertNotEqual(-1, source.find('This is my way of saying hello'))
+        self.assertNotEqual(-1, source.find('"Appium User"'))
 
     def tearDown(self):
         self.driver.quit()

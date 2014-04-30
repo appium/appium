@@ -8,7 +8,7 @@ import os
 import httplib
 import base64
 from random import randint
-from selenium import webdriver
+from appium import webdriver
 try:
     import json
 except ImportError:
@@ -18,7 +18,7 @@ SAUCE_USERNAME=os.environ.get('SAUCE_USERNAME')
 SAUCE_ACCESS_KEY=os.environ.get('SAUCE_ACCESS_KEY')
 base64string = base64.encodestring('%s:%s' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY))[:-1]
 
-class TestSequenceFunctions(unittest.TestCase):
+class SimpleIOSSauceTests(unittest.TestCase):
 
     def setUp(self):
         # set up appium
@@ -27,20 +27,16 @@ class TestSequenceFunctions(unittest.TestCase):
             command_executor='http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY),
             desired_capabilities={
                 'browserName': '',
-                'platform': 'Mac 10.8',
-                'device': 'iPhone Simulator',
-                'version': '6.1',
-                'app': app
+                'platformName': 'Android',
+                'deviceName': 'iPhone Simulator',
+                'platformVersion': '6.1',
+                'app': app,
+                'name': 'Appium Python iOS Test'
             })
-        self._values = []
 
-    def _populate(self):
-        # populate text fields with two random number
-        elems = self.driver.find_elements_by_tag_name('textField')
-        for elem in elems:
-            rndNum = randint(0, 10)
-            elem.send_keys(rndNum)
-            self._values.append(rndNum)
+    def tearDown(self):
+        print("Link to your job: https://saucelabs.com/jobs/%s" % self.driver.session_id)
+        self.driver.quit()
 
     def _set_test_status(self, jobid, passed=True):
         # Report the status of your test to Sauce
@@ -52,23 +48,32 @@ class TestSequenceFunctions(unittest.TestCase):
         result = connection.getresponse()
         return result.status == 200
 
+    def _populate(self):
+        # populate text fields with two random numbers
+        els = self.driver.find_elements_by_ios_uiautomation('elements()')
+
+        self._sum = 0
+        for i in range(2):
+            rnd = randint(0, 10)
+            els[i].send_keys(rnd)
+            self._sum += rnd
+
     def test_ui_computation(self):
         # populate text fields with values
         self._populate()
+
         # trigger computation by using the button
-        buttons = self.driver.find_elements_by_tag_name("button")
-        buttons[0].click()
+        self.driver.find_element_by_accessibility_id('ComputeSumButton').click()
+
         # is sum equal ?
-        texts = self.driver.find_elements_by_tag_name("staticText")
+        # sauce does not handle class name, so get fourth element
+        # sum = self.driver.find_elements_by_class_name("UIAStaticText")[0].text
+        sum = self.driver.find_element_by_ios_uiautomation('elements()[3]').text
         try:
-            self.assertEqual(int(texts[0].text), self._values[0] + self._values[1])
+            self.assertEqual(int(sum), self._sum)
             self._set_test_status(self.driver.session_id, True)
         except:
             self._set_test_status(self.driver.session_id, False)
-
-    def tearDown(self):
-        print("Link to your job: https://saucelabs.com/jobs/%s" % self.driver.session_id)
-        self.driver.quit()
 
 
 if __name__ == '__main__':

@@ -196,9 +196,6 @@ reset_ios() {
                 echo "* Unzipping UICatalog app source"
                 run_cmd unzip UICatalog.zip
                 run_cmd popd
-                if [ "$sdk_ver" == "7.1" ]; then
-                    cp assets/UICatalog_7_1_fix/PickerViewController.m sample-code/apps/UICatalog/ViewControllers/PickerViewController.m
-                fi
             fi
             echo "* Cleaning/rebuilding iOS test app: UICatalog"
             run_cmd "$grunt" buildApp:UICatalog:iphonesimulator:$sdk_ver

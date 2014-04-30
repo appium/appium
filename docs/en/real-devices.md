@@ -30,7 +30,10 @@ installed on the device) or the path to the .ipa file via the `--app` flag or
 the `app` desired capability:
 
 ```
+# appium 0.x
 node . -U <UDID> --app <bundle_id>
+# appium 1.x
+node . -U <UDID> --app <bundle_id> --platform-name <iOS|android>
 ```
 
 This will start Appium and have Appium use the device to test the app.

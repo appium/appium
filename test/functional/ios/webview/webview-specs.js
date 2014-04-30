@@ -42,6 +42,24 @@ describe('webview - webview -', function () {
         .should.eventually.equal("Google")
         .nodeify(done);
     });
+    it('setting context to \'WEBVIEW_1\' should work without first getting contexts', function (done) {
+      driver
+        .context("WEBVIEW_1")
+        .get("http://google.com")
+        .sleep(500)
+        .title()
+        .should.eventually.equal("Google")
+        .nodeify(done);
+    });
+    it('setting context to \'WEBVIEW\' should work', function (done) {
+      driver
+        .context("WEBVIEW")
+        .get("http://google.com")
+        .sleep(500)
+        .title()
+        .should.eventually.equal("Google")
+        .nodeify(done);
+    });
     it('setting context to \'null\' should work', function (done) {
       driver.contexts().then(function (ctxs) {
         ctxs.length.should.be.above(0);

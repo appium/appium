@@ -1,8 +1,7 @@
 "use strict";
 
-var env = require('../../../helpers/env'),
-    setup = require("../../common/setup-base"),
-    desired = require('./desired');
+var setup = require("../../common/setup-base")
+ ,  desired = require('./desired');
 
 describe('testapp - clear -', function () {
   var driver;

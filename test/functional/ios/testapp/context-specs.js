@@ -1,8 +1,7 @@
 "use strict";
 
 var setup = require("../../common/setup-base"),
-    desired = require('./desired'),
-    unorm = require('unorm');
+    desired = require('./desired');
 
 describe('testapp - context methods', function () {
   var driver;

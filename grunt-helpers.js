@@ -111,7 +111,7 @@ module.exports.runMochaTests = function (grunt, appName, testType, deviceType, c
     var file = mochaFiles.shift();
     if (typeof file !== "undefined") {
       var mochaProc = spawn('mocha', args.concat(file), {cwd: __dirname});
-      mochaProc.on("error", function (err) {
+      mochaProc.on("error", function () {
         grunt.fatal("Unable to spawn mocha process: mocha not installed?");
       });
       mochaProc.stdout.setEncoding('utf8');
@@ -376,7 +376,7 @@ var buildAndroidProj = function (grunt, projPath, target, cb) {
         var cmd = stdout.split('\r\n')[0].trim();
         grunt.log.write("Using " + cmdName + " found at " + cmd + "\n");
         var proc = spawn(cmd, [target], {cwd: projPath});
-        proc.on("error", function (err) {
+        proc.on("error", function () {
           grunt.fatal("Unable to spawn \"" + cmdName + "\"");
         });
         proc.stdout.setEncoding('utf8');

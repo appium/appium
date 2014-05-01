@@ -31,6 +31,9 @@ module.exports = function (grunt) {
       , strict: true
       , white: true
       , indent: 2
+      , undef: true
+      , unused: true
+      , eqeqeq: true
       },
       files: {
         src: ['*.js', './**/*.js'],

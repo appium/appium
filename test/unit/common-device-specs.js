@@ -2,12 +2,9 @@
 
 var common = require('../../lib/devices/common.js')
   , checkValidLocStrat = common.checkValidLocStrat
-  , clearWarnings = require('../../lib/helpers.js').clearWarnings
-  , loggerjs = require('../../lib/server/logger')
-  , logger = loggerjs.get('appium');
+  , _  = require('underscore');
 
-var _  = require('underscore')
-  , sinon = require('sinon');
+
 
 describe('devices/common.js', function () {
   var nullCb = function () {};
@@ -27,16 +24,6 @@ describe('devices/common.js', function () {
   var testLocatorIsInvalid = function (loc, webIncluded) {
     var name = 'should treat the ' + loc + ' strategy as invalid';
     assertLocatorValidity(name, loc, webIncluded, false);
-  };
-
-  var warningTemplate = _.template(
-    "[DEPRECATED] The <%= deprecated %> locator strategy has been " +
-    "deprecated and will be removed.  Please use the " +
-    "<%= replacement %> locator strategy instead."
-    );
-
-  var expectedWarning = function (selector, replacement) {
-    return warningTemplate({deprecated: selector, replacement: replacement});
   };
 
   describe('#checkValidLocStrat', function () {

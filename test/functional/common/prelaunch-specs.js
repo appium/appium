@@ -7,7 +7,6 @@ var env = require('../../helpers/env')
   , androidApp = path.resolve(__dirname, "..", "..", "..", "sample-code",
       "apps", "ApiDemos", "bin", "ApiDemos-debug.apk")
   , spawn = require('child_process').spawn
-  , exec = require('child_process').exec
   , crazyPort = 4799
   , _ = require('underscore');
 

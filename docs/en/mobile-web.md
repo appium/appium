@@ -23,6 +23,14 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 }
 ```
 
+```python
+{
+    'app': 'safari',
+    'device': 'iPhone Simulator',
+    'version': '6.1'
+}
+```
+
 ## Mobile Safari on a Real iOS Device
 
 To be able to run your tests against mobile Safari we use the [SafariLauncher
@@ -73,7 +81,7 @@ $ node /lib/server/main.js -U <UDID>
 
 ## Running your test
 
-To configure you test to run against safari simpley set the **"app"** to be **"safari"**.
+To configure you test to run against safari simply set the **"app"** to be **"safari"**.
 
 ## Java Example
 
@@ -94,6 +102,26 @@ remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populat
 remoteWebDriver.quit();
 ```
 
+## Python Example
+
+```python
+# setup the web driver and launch the webview app.
+capabilities = { 'app': 'safari' }
+driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
+
+# Navigate to the page and interact with the elements on the guinea-pig page using id.
+driver.get('http://saucelabs.com/test/guinea-pig');
+div = driver.find_element_by_id('i_am_an_id')
+# check the text retrieved matches expected value
+assertEqual('I am a div', div.text)
+
+# populate the comments field by id
+driver.find_lement_by_id('comments').send_keys('My comment')
+
+# close the driver
+driver.quit()
+```
+
 ## Mobile Chrome on Emulator or Real Device
 
 Pre-requisites:
@@ -107,5 +135,12 @@ Then, use desired capabilities like these to run your test in Chrome:
 {
   app: 'chrome'
   , device: 'Android'
+};
+```
+
+```python
+{
+    'app': 'chrome',
+    'device': 'Android'
 };
 ```

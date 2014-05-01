@@ -10,6 +10,10 @@ instrumentation class.
 caps = { androidCoverage: 'com.example.pkg/com.example.pkg.instrumentation.MyInstrumentation' }
 ```
 
+```python
+caps = { 'androidCoverage': 'com.example.pkg/com.example.pkg.instrumentation.MyInstrumentation' }
+```
+
 Appium will start your app like this:
 
 `adb shell am instrument -e coverage true -w com.example.pkg/com.example.pkg.instrumentation.MyInstrumentation`
@@ -21,6 +25,10 @@ the coverage.ec file from the device.
 mobile :endCoverage, intent: 'com.example.pkg.END_EMMA', path: '/mnt/sdcard/coverage.ec'
 ```
 
+```python
+driver.end_test_coverage(intent='com.example.pkg.END_EMMA', path='/mnt/sdcard/coverage.ec')
+```
+
 `AndroidManifest.xml` defines the instrumentation and broadcast receiver.
 
 ```xml
@@ -28,7 +36,7 @@ mobile :endCoverage, intent: 'com.example.pkg.END_EMMA', path: '/mnt/sdcard/cove
         android:name="com.example.pkg.instrumentation.MyInstrumentation"
         android:targetPackage="com.example.pkg" >
     </instrumentation>
-    
+
     <!-- adb shell am broadcast -a com.example.pkg.END_EMMA -->
     <receiver android:name="com.example.pkg.instrumentation.EndEmmaBroadcast" >
        <intent-filter>

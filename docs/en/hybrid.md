@@ -64,10 +64,10 @@ it yourself:
 Once installed you can start the proxy with the following command:
 
 ``` bash
-# Change the udid to be the udid of the attached device and make sure to set the port to 27753 
+# Change the udid to be the udid of the attached device and make sure to set the port to 27753
 # as that is the port the remote-debugger uses.
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
-``` 
+```
 
 **NOTE:** the proxy requires the **"web inspector"** to be turned on to
 allow a connection to be established. Turn it on by going to **settings >
@@ -107,23 +107,23 @@ part of iOS 6** and was not available previously.
   //setup the web driver and launch the webview app.
   DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
   desiredCapabilities.setCapability("device", "iPhone Simulator");
-  desiredCapabilities.setCapability("app", "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip");  
+  desiredCapabilities.setCapability("app", "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip");
   URL url = new URL("http://127.0.0.1:4723/wd/hub");
   RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
-  
+
   //switch to the latest web view
   for(String contextHandle : remoteWebDriver.getContexts()){
     remoteWebDriver.switchTo().context(contextHandle);
   }
-  
+
   //Interact with the elements on the guinea-pig page using id.
   WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
   Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
   remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
-  
+
   //leave the webview to go back to native app.
   remoteWebDriver.switchTo().context('NATIVE_APP')
-  
+
   //close the app.
   remoteWebDriver.quit();
 ```
@@ -132,7 +132,7 @@ part of iOS 6** and was not available previously.
 
 ```ruby
 TEST_NAME = "Example Ruby Test"
-SERVER_URL = "http://127.0.0.1:4723/wd/hub" 
+SERVER_URL = "http://127.0.0.1:4723/wd/hub"
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
 capabilities =
     {
@@ -148,13 +148,13 @@ capabilities =
 # View the appium logs while running @driver.window_handles to figure out which window is the one you want and find the associated number
 # Then switch to it using @driver.switch_to_window("6")
 
-Given(/^I switch to webview$/) do 
+Given(/^I switch to webview$/) do
   webview = @driver.contexts.last
   @driver.switch_to.context(webview)
 end
 
 Given(/^I switch out of webview$/) do
-  @driver.switch_to(@driver.contexts.first)    
+  @driver.switch_to(@driver.contexts.first)
 end
 
 # Now you can use CSS to select an element inside your webview
@@ -170,6 +170,32 @@ I created a quick function in my helper class to find web elements no matter
 what window its in (this is useful if your webview id changes or if you are
 using the same codebase to test android and ios)
 https://gist.github.com/feelobot/7309729
+
+## Wd.py Code example
+
+```python
+APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
+capabilities = {
+    'browserName': 'iOS 6.0',
+    'platform': 'Mac 10.8',
+    'device': 'iPhone Simulator',
+    'app': APP_PATH,
+    'name': "Example Python Test"
+}
+driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
+
+# switch to webview
+webview = driver.contexts.last
+driver.switch_to.context(webview)
+
+# do some webby stuff
+driver.find_element(:css, ".green_button").click
+
+# switch back to native view
+driver.switch_to(driver.contexts.first)
+
+# Now you can use CSS to select an element inside your webview
+```
 
 ## Automating hybrid Android apps
 
@@ -203,21 +229,34 @@ driver.context("WEBVIEW", function(err) { // choose the only available view
   //setup the web driver and launch the webview app.
   DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
   desiredCapabilities.setCapability("device", "Selendroid");
-  desiredCapabilities.setCapability("app", "/path/to/some.apk");  
+  desiredCapabilities.setCapability("app", "/path/to/some.apk");
   URL url = new URL("http://127.0.0.1:4723/wd/hub");
   RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
-  
+
   //switch to the web view
   remoteWebDriver.switchTo().context("WEBVIEW");
-  
+
   //Interact with the elements on the guinea-pig page using id.
   WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
   Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
   remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
-  
+
   //leave the webview to go back to native app.
   remoteWebDriver.switchTo().context("NATIVE_APP");
-  
+
   //close the app.
   remoteWebDriver.quit();
+```
+
+## Wd.py Code example
+
+```python
+# assuming we have an initialized `driver` object working on a hybrid app
+driver.switch_to.context("WEBVIEW")
+elements = driver.find_elements_by_css_selector('.some-class')
+assertLess(0, len(elements))
+assertEqual('My very own text', elements[0].text)
+
+driver.switch_to.context("NATIVE_APP")
+driver.quit()
 ```

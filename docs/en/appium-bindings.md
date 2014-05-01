@@ -32,7 +32,7 @@ lock 5
 ```
 
 ```python
-self.driver.lock(5)
+driver.lock(5)
 ```
 
 ```java
@@ -60,7 +60,7 @@ background_app 5
 ```
 
 ```python
-self.driver.background_app(5)
+driver.background_app(5)
 ```
 
 ```java
@@ -88,7 +88,7 @@ hide_keyboard
 ```
 
 ```python
-self.driver.hide_keyboard()
+driver.hide_keyboard()
 ```
 
 ```java
@@ -116,7 +116,7 @@ is_installed? "com.example.android.apis"
 ```
 
 ```python
-self.driver.is_app_installed('com.example.android.apis')
+driver.is_app_installed('com.example.android.apis')
 ```
 
 ```java
@@ -144,7 +144,7 @@ install 'path/to/my.apk'
 ```
 
 ```python
-self.driver.install_app('path/to/my.apk')
+driver.install_app('path/to/my.apk')
 ```
 
 ```java
@@ -172,7 +172,7 @@ remove 'com.example.android.apis'
 ```
 
 ```python
-self.driver.remove_app('com.example.android.apis')
+driver.remove_app('com.example.android.apis')
 ```
 
 ```java
@@ -200,7 +200,7 @@ shake
 ```
 
 ```python
-self.driver.shake()
+driver.shake()
 ```
 
 ```java
@@ -228,7 +228,7 @@ close_app
 ```
 
 ```python
-self.driver.close_app();
+driver.close_app();
 ```
 
 ```java
@@ -256,7 +256,7 @@ launch
 ```
 
 ```python
-self.driver.launch_app()
+driver.launch_app()
 ```
 
 ```java
@@ -284,7 +284,7 @@ reset
 ```
 
 ```python
-self.driver.reset()
+driver.reset()
 ```
 
 ```java
@@ -312,7 +312,7 @@ context_array = available_contexts
 ```
 
 ```python
-self.driver.contexts
+driver.contexts
 ```
 
 ```java
@@ -341,7 +341,7 @@ context = current_context
 ```
 
 ```python
-self.driver.current_context
+driver.current_context
 ```
 
 ```java
@@ -369,7 +369,7 @@ switch_to_default_context
 ```
 
 ```python
-self.driver.switch_to.context(None)
+driver.switch_to.context(None)
 ```
 
 ```java
@@ -397,7 +397,7 @@ strings = app_strings
 ```
 
 ```python
-self.driver.app_strings
+driver.app_strings
 ```
 
 ```java
@@ -425,7 +425,7 @@ key_event 176
 ```
 
 ```python
-self.driver.keyevent(176)
+driver.keyevent(176)
 ```
 
 ```java
@@ -453,7 +453,7 @@ current_activity
 ```
 
 ```python
-self.driver.current_activity
+driver.current_activity
 ```
 
 ```java
@@ -484,7 +484,8 @@ touch_action.press(element: element, x: 10, y: 10).perform
 ```
 
 ```python
-self._touch_action.tap(element, 10, 10)
+action = TouchAction(driver)
+action.press(element=el, x=10, y=10).release().perform()
 ```
 
 ```java
@@ -521,11 +522,11 @@ swipe start_x: 75, start_y: 500, end_x: 75, end_y: 0, duration: 0.8
 ```
 
 ```python
-self.driver.swipe(75, 500, 75, 0, 0.8)
+driver.swipe(75, 500, 75, 0, 0.8)
 ```
 
 ```java
-driver.swipe(75, 500, 75, 0, 800)
+driver.swipe(startx=75, starty=500, endx=75, endy=0, duration=800)
 ```
 
 ```javascript
@@ -549,7 +550,7 @@ pinch 75
 ```
 
 ```python
-self.driver.pinch(element=el)
+driver.pinch(element=el)
 ```
 
 ```java
@@ -577,7 +578,7 @@ zoom 200
 ```
 
 ```python
-self.driver.zoom(element=el)
+driver.zoom(element=el)
 ```
 
 ```java
@@ -605,7 +606,7 @@ pull_file 'Library/AddressBook/AddressBook.sqlitedb'
 ```
 
 ```python
-self.driver.pull_file('Library/AddressBook/AddressBook.sqlitedb')
+driver.pull_file('Library/AddressBook/AddressBook.sqlitedb')
 ```
 
 ```java
@@ -637,7 +638,7 @@ push_file path, data
 ```python
 data = "some data for the file"
 path = "/data/local/tmp/file.txt"
-self.driver.push_file(path, data.encode('base64'))
+driver.push_file(path, data.encode('base64'))
 ```
 
 ```java

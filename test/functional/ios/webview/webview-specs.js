@@ -25,6 +25,17 @@ describe('webview - webview -', function () {
         .contexts().should.eventually.have.length.above(0)
         .nodeify(done);
     });
+    it('getting list multiple times should not crash appium', function (done) {
+      driver
+        .contexts().should.eventually.have.length.above(1)
+        .contexts().should.eventually.have.length.above(1)
+        .contexts().should.eventually.have.length.above(1)
+        .contexts().should.eventually.have.length.above(1)
+        .contexts().should.eventually.have.length.above(1)
+        .contexts().should.eventually.have.length.above(1)
+        .contexts().should.eventually.have.length.above(1)
+        .nodeify(done);
+    });
     it('contexts should be strings', function (done) {
       driver.contexts().then(function (ctxs) {
         ctxs.length.should.be.above(0);
@@ -46,7 +57,7 @@ describe('webview - webview -', function () {
       driver
         .context("WEBVIEW_1")
         .get("http://google.com")
-        .sleep(500)
+        .sleep(1000)
         .title()
         .should.eventually.equal("Google")
         .nodeify(done);
@@ -55,7 +66,7 @@ describe('webview - webview -', function () {
       driver
         .context("WEBVIEW")
         .get("http://google.com")
-        .sleep(500)
+        .sleep(1000)
         .title()
         .should.eventually.equal("Google")
         .nodeify(done);
@@ -99,7 +110,7 @@ describe('webview - webview -', function () {
         .context("NATIVE_APP")
         .context("WEBVIEW_1")
         .get("https://saucelabs.com/home")
-        .sleep(500)
+        .sleep(1000)
         .title()
         .should.eventually.equal("Sauce Labs: Selenium Testing, Mobile Testing, JS Unit Testing and More")
         .nodeify(done);
@@ -123,6 +134,17 @@ describe('webview - webview -', function () {
     });
     it('getting list twice should not crash appium', function (done) {
       driver
+        .windowHandles().should.eventually.have.length.above(0)
+        .windowHandles().should.eventually.have.length.above(0)
+        .nodeify(done);
+    });
+    it('getting list multiple times should not crash appium', function (done) {
+      driver
+        .windowHandles().should.eventually.have.length.above(0)
+        .windowHandles().should.eventually.have.length.above(0)
+        .windowHandles().should.eventually.have.length.above(0)
+        .windowHandles().should.eventually.have.length.above(0)
+        .windowHandles().should.eventually.have.length.above(0)
         .windowHandles().should.eventually.have.length.above(0)
         .windowHandles().should.eventually.have.length.above(0)
         .nodeify(done);

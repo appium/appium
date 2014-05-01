@@ -1,8 +1,7 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired")
-  , fs = require('fs');
+  , desired = require("./desired");
 
 describe("apidemos - push & pull file -", function () {
   var driver;

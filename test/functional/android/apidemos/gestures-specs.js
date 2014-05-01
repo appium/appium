@@ -3,7 +3,6 @@
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
-  , androidReset = require('../../../helpers/reset').androidReset
   , Q = require("q");
 
 describe("apidemo - gestures -", function () {

@@ -1,19 +1,12 @@
 "use strict";
 
 var chai = require('chai')
-  , should = chai.should()
-  , sinon = require('sinon')
-  , SandboxedModule = require('sandboxed-module')
-  , fs = require('fs')
-  , path = require('path')
   , controller_path = '../../lib/devices/ios/ios-controller.js'
   , controller = require(controller_path)
-  , child_process = require('child_process')
   , createGetElementCommand = controller.createGetElementCommand
-  , getSelectorForStrategy = controller.getSelectorForStrategy
-  , errors = require('../../lib/server/errors.js')
-  , NotYetImplementedError = errors.NotYetImplementedError
-  , status = require('../../lib/server/status.js');
+  , getSelectorForStrategy = controller.getSelectorForStrategy;
+
+chai.should();
 
 describe('ios-controller', function () {
 

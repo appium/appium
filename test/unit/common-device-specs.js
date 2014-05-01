@@ -8,12 +8,13 @@ var common = require('../../lib/devices/common.js')
 
 var _  = require('underscore')
   , chai = require('chai')
-  , should = chai.should()
   , sinon = require('sinon');
+
+chai.should();
 
 describe('devices/common.js', function () {
   var null_cb = function () {};
-  
+
   var assertLocatorValidity = function (name, loc, includeWeb, expected) {
     var cb = function () {};
     it(name, function () {

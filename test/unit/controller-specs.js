@@ -2,10 +2,11 @@
 
 var controller = require('../../lib/server/controller.js')
   , chai = require('chai')
-  , should = chai.should
   , loggerjs = require('../../lib/server/logger')
   , logger = loggerjs.get('appium')
   , sinon = require('sinon');
+
+chai.should();
 
 describe('Controller', function () {
   describe('##mobileSource', function () {

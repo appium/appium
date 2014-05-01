@@ -1,4 +1,3 @@
-/*globals should:true */
 "use strict";
 
 var setup = require("../../common/setup-base"),

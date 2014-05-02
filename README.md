@@ -42,23 +42,25 @@ Your environment needs to be setup for the particular mobile platforms that you
 want to run tests on. See below for particular platform requirements.
 
 If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
-[node.js and npm](http://nodejs.org) 0.8 or greater (`brew install node`: make sure you have not installed Node or Appium with `sudo`, otherwise you'll likely run into problems). We recommend the latest stable version.
+[node.js and npm](http://nodejs.org) 0.10 or greater (`brew install node`: make sure you have not installed Node or Appium with `sudo`, otherwise you'll run into problems). We recommend the latest stable version.
 
 To verify that all of Appium's dependencies are met you can use `appium-doctor`.
 Run `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
 of the dependencies are set up correctly. If running from source, you may have to use
-`bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+`./bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+
+You also need to download the Appium client for your language so you can write tests. The Appium clients are simple extensions to the WebDriver clients. You can see the list of clients and links to download instructions at the [Appium clients list](docs/en/appium-clients.md).
 
 ### iOS Requirements
 
-* Mac OS X 10.7 or higher, 10.8.4 recommended
-* XCode &gt;= 4.6.3
+* Mac OS X 10.7 or higher, 10.9.2 recommended
+* XCode &gt;= 4.6.3, 5.1.1 recommended
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
 * [Ensure you read our documentation on setting yourself up for iOS testing!](docs/en/running-on-osx.md)
 
 ### Android Requirements
 
-* [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
+* [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18/19)
 * Appium supports Android on OS X, Linux and Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
   * [linux](docs/en/running-on-linux.md)

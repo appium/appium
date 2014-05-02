@@ -66,7 +66,7 @@ because [Appium is open source](https://github.com/appium/appium).
 
 ## Appium Concepts
 
-*Client/Server Architecture*
+**Client/Server Architecture**<br/>
 Appium is at its heart a webserver that exposes a REST API. It receives
 connections from a client, listens for commands, executes those commands on a
 mobile device, and responds with an HTTP response representing the result of
@@ -76,7 +76,7 @@ that has a client. We can put the server on a different machine than our
 tests are running on. We can write test code and rely on a cloud service
 like [Sauce Labs](https://saucelabs.com/mobile) to receive and interpret the commands.
 
-*Session*
+**Session**<br/>
 Automation is always performed in the context of a session. Clients initiate
 a session with a server in ways specific to each library,
 but they all end up sending a `POST /session` request to the server,
@@ -84,7 +84,7 @@ with a JSON object called  the 'desired capabilities' object. At this point
 the server will start up the automation session and respond with a session ID
 which can be used in sending further commands.
 
-*Desired Capabilities*
+**Desired Capabilities**<br/>
 Desired capabilities are sets of keys and values (i.e.,
 a map or hash) sent to the Appium server to tell the server what kind of
 automation session we're interested in starting up. There are also various
@@ -96,11 +96,17 @@ during a Safari automation session, we're allowed to use JavaScript to open
 up new windows. See the [capabilities doc](caps.md) for the complete list of
 capabilities available for Appium.
 
-*Appium Server*
-Appium is a server written with Node.js. It can be built and installed from
+**Appium Server**<br/>
+Appium is a server written in Node.js. It can be built and installed from
 source or directly from NPM.
 
-*Appium.app, Appium.exe*
+**Appium Clients**<br/>
+There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)
+which support Appium's extensions to the WebDriver protocol. When using Appium,
+you want to use these client libraries instead of your regular WebDriver
+client. You can view the full list of libraries [here](appium-clients.md).
+
+**Appium.app, Appium.exe**<br/>
 There exist GUI wrappers around the Appium server that can be downloaded.
 These come bundled with everything required to run the Appium server,
 so you don't need to worry about Node. They also come with an Inspector,

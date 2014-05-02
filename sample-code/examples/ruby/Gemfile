@@ -3,3 +3,4 @@ source "https://www.rubygems.org"
 gem 'appium_lib'
 gem "rest-client"
 gem "cucumber"
+gem "rspec-expectations"

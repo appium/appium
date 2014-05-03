@@ -6,10 +6,14 @@
 #
 # The instructions in the step are then executed with those variables.
 #
-# In this example, we're using rspec's assertions to test that things are happening, but you can use any ruby code you want in the steps.
+# In this example, we're using rspec's assertions to test that things are happening,
+# but you can use any ruby code you want in the steps.
 #
-# The 'selenium' object is our webdriver, set up in the cucumber/support/env.rb
+# The '$driver' object is the appium_lib driver, set up in the cucumber/support/env.rb
 # file, which is a convenient place to put it as we're likely to use it often.
+# This is a different use to most of the examples;  Cucumber steps are instances
+# of `Object`, and extending Object with Appium methods (through 
+# `promote_appium_methods`) is a bad idea.
 #
 # For more on step definitions, check out the documentation at
 # https://github.com/cucumber/cucumber/wiki/Step-Definitions
@@ -17,18 +21,32 @@
 # For more on rspec assertions, check out
 # https://www.relishapp.com/rspec/rspec-expectations/docs
 
-
 Given /^I have entered (\d+) into field (\d+) of the calculator$/ do |value, field|
-  elements = selenium.find_elements(:class_name, "UIATextField")
-  elements[field.to_i - 1].send_keys value
+  # Get a textfield by index
+  textfield = textfield(field.to_i)
+  textfield.send_keys value
+end
+
+Given /^I have entered (\d+) into a field of the calculator showing (\w+)$/ do |value, field|
+  # Get a textfield by string
+  textfield = textfield field
+  textfield.send_keys value
 end
 
 And /^I press button (\d+)$/ do |button_index|
-  button = selenium.find_elements(:class_name, "UIAButton")[button_index.to_i - 1    ]
+  # Find a button by index
+  button = button(button_index.to_i)
+  button.click
+end
+
+And /^I press a button labelled (\w+)$/ do |button_text|
+  # Find a button by text
+  button = button button_text
   button.click
 end
 
 Then /^the result should be displayed as (\d+)$/ do |expected|
-  result = selenium.find_element(:class_name, "UIAStaticText")
+  # You can get just the first of a class of elements
+  result = first_s_text
   result.attribute("value").should eq expected
 end

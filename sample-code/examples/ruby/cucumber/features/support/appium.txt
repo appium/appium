@@ -1,0 +1,5 @@
+[caps]
+platformName = "ios"
+device = "iPhone Simulator"
+platformVersion = "7.1"
+app = "../../../apps/TestApp/build/release-iphonesimulator/TestApp.app"

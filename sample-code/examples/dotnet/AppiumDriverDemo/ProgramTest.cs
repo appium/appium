@@ -26,10 +26,10 @@ namespace AppiumDriverDemo
 			// set up the remote web driver
 			Console.WriteLine("Connecting to Appium server");
 			DesiredCapabilities capabilities = new DesiredCapabilities();
-
-			capabilities.SetCapability("deviceName", "iPhone Retina (4-inch 64-bit)");
+			capabilities.SetCapability("appium-version", "1.0");
 			capabilities.SetCapability("platformName", "iOS");
 			capabilities.SetCapability("platformVersion", "7.1");
+			capabilities.SetCapability("deviceName", "iPhone Simulator");
 			capabilities.SetCapability("app", appPath);
 			driver = new AppiumDriver(new Uri("http://127.0.0.1:4723/wd/hub"), capabilities);		
 		}

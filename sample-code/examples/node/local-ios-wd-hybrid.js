@@ -16,10 +16,10 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var desired = {
-  platform: 'ios',
-  version: '7.1',
-  device: 'iPhone Simulator',
-  deviceName: 'iPhone Retina (4-inch 64-bit)',
+  'appium-version': '1.0',
+  platformName: 'iOS',
+  platformVersion: '7.1',
+  deviceName: 'iPhone Simulator',
   name: "Appium Hybrid App: with WD",
   app: "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip",
   newCommandTimeout: 60
@@ -41,6 +41,7 @@ browser
   .init(desired)
   .then(function () {
     browser
+      .context('WEBVIEW')
       .windowHandles().then(function (handles) {
         handles.should.have.length.above(0);
         return browser
@@ -48,7 +49,8 @@ browser
           .elementById('i_am_an_id')
             .text().should.become("I am a div");
       })
-      .execute("mobile: leaveWebView")
+      .context(null)
+      .catch(function(err) { console.log(err); })
       .fin(function () {
         return browser
           .sleep(3000)

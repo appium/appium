@@ -28,9 +28,10 @@ var host = "ondemand.saucelabs.com",
 var timeout = process.env.TIMEOUT || 300000;
 
 var desired = {
-  device: 'Android',
-  platform: 'Linux',
-  version: '4.2',
+  'appium-version': '1.0',
+  platformName: 'Android',
+  platformVersion: '4.3',
+  deviceName: 'Android Emulator',
   app: 'http://appium.s3.amazonaws.com/NotesList.apk',
   name: 'Sauce Android test',
   'app-activity': '.NotesList',

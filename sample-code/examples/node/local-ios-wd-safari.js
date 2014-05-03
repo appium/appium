@@ -15,11 +15,11 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var desired = {
-  platform: 'ios',
-  version: '7.1',
-  device: 'iPhone Simulator',
-  deviceName: 'iPhone Retina (4-inch 64-bit)',
-  app: "safari",
+  'appium-version': '1.0',
+  platformName: 'iOS',
+  platformVersion: '7.1',
+  deviceName: 'iPhone Simulator',
+  browserName: "safari",
   name: "Appium Safari: with WD",
   newCommandTimeout: 60
 };

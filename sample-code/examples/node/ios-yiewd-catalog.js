@@ -2,6 +2,7 @@
 "use strict";
 
 /*
+TODO: UICatalog was recently updated, we need to adapt this sample code.
 TODO: Lots of click errors.
 
 First you need to install node > 0.11 to run this. 
@@ -31,6 +32,14 @@ var staticServer = require('node-static'),
 
 var host, port, username, accessKey, desired, server;
 
+var desired = {
+  'appium-version': '1.0',
+  platformName: 'iOS',
+  platformVersion: '7.1',
+  deviceName: 'iPhone Simulator',
+  'device-orientation': 'portrait'
+};
+
 if (process.env.SAUCE_CONNECT) {
   // Sauce Labs + Sauce Connect config
 
@@ -46,15 +55,18 @@ if (process.env.SAUCE_CONNECT) {
   username = process.env.SAUCE_USERNAME;
   accessKey = process.env.SAUCE_ACCESS_KEY;
 
-  desired = {
-    platform: 'ios',
-    version: '7.1',
-    device: 'iPhone Simulator',
-    deviceName: 'iPhone Retina (4-inch 64-bit)',
-    name: "Appium: with WD",
-    app: 'http://localhost:8080/UICatalog6.1.app.zip',
-    newCommandTimeout: 60
-  };
+  desired.name = "Appium: with WD";
+  desired.app = 'http://localhost:8080/UICatalog6.1.app.zip';
+
+  // desired = {
+  //   platform: 'ios',
+  //   version: '7.1',
+  //   device: 'iPhone Simulator',
+  //   deviceName: 'iPhone Retina (4-inch 64-bit)',
+  //   name: "Appium: with WD",
+  //   app: 'http://localhost:8080/UICatalog6.1.app.zip',
+  //   newCommandTimeout: 60
+  // };
 } else {
   // local config
 
@@ -63,15 +75,16 @@ if (process.env.SAUCE_CONNECT) {
 
   var appPath = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
                              "Release-iphonesimulator", "UICatalog.app");
-  desired = {
-    device: 'iPhone Simulator',
-    name: "Appium: with WD",
-    platform: "Mac",
-    app: appPath,
-    // version: "6.0",
-    browserName: "",
-    newCommandTimeout: 60
-  };
+  desired.app = appPath;
+  // desired = {
+  //   device: 'iPhone Simulator',
+  //   name: "Appium: with WD",
+  //   platform: "Mac",
+  //   app: appPath,
+  //   // version: "6.0",
+  //   browserName: "",
+  //   newCommandTimeout: 60
+  // };
 }
 
 var browser = wd.remote(host, port, username, accessKey);
@@ -102,7 +115,7 @@ browser.run(function* () {
   try {
     yield this.init(desired);
     yield this.elementByName("Buttons, Various uses of UIButton").click();
-    var btns = yield this.elementsByTagName("button");
+    var btns = yield this.elementsByIosUIAutomation('.buttons()');
     for (var i = 1; i < 4; i++) {
       yield btns[i].click();
     }
@@ -118,25 +131,25 @@ browser.run(function* () {
     var cstSlider = yield this.elementByXPath("//slider[@name='Custom']");
     yield scrollToElement(cstSlider);
     yield cstSlider.sendKeys("1.0");
-    var pages = yield this.elementByTagName("pageIndicator");
-    yield scrollToElement(pages);
-    for (i = 0; i < 10; i += 2) {
-      yield pages.sendKeys(i);
-    }
+    // var pages = yield this.elementByTagName("pageIndicator");
+    // yield scrollToElement(pages);
+    // for (i = 0; i < 10; i += 2) {
+    //   yield pages.sendKeys(i);
+    // }
     yield this.elementByName("Back").click();
 
     yield this.elementByName("TextFields, Uses of UITextField").click();
-    yield this.elementByTagName("textfield").sendKeys("Hello World!\n");
+    yield this.elementByIosUIAutomation(".textFields();").sendKeys("Hello World!\n");
     yield this.elementByName("Back").click();
     yield this.elementByName("Pickers, Uses of UIDatePicker, UIPickerView").click();
-    var pickers = yield this.elementsByTagName("picker");
-    console.log(pickers[2].elementsByTagName);
-    var wheels = yield pickers[2].elementsByTagName("pickerwheel");
-    yield wheels[0].sendKeys("Serena Auroux");
-    yield this.elementByName("Back").click();
-    yield this.elementByName("Images, Use of UIImageView").click();
-    yield this.elementByTagName("slider").sendKeys("0.8");
-    yield this.sleep(2);
+    // var pickers = yield this.elementsByTagName("picker");
+    // console.log(pickers[2].elementsByTagName);
+    // var wheels = yield pickers[2].elementsByTagName("pickerwheel");
+    // yield wheels[0].sendKeys("Serena Auroux");
+    // yield this.elementByName("Back").click();
+    // yield this.elementByName("Images, Use of UIImageView").click();
+    // yield this.elementByTagName("slider").sendKeys("0.8");
+    // yield this.sleep(2);
     yield this.elementByName("Back").click();
 
     // todo: This part didn't work on Sauce 6.1

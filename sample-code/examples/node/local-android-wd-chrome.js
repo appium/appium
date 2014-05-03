@@ -19,10 +19,11 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var desired = {
-  platform: 'android',
-  device: 'Android',
-  version: "4.3", // Android version last tested against
-  app: "chrome",
+  'appium-version': '1.0',
+  platformName: 'Android',
+  platformVersion: '4.3',
+  deviceName: 'Android Emulator',
+  browserName: 'chrome' 
 };
 
 // Instantiate a new browser session

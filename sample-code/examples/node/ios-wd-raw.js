@@ -20,37 +20,26 @@ chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var host, port, username, accessKey, desired;
 
+var desired = {
+    'appium-version': '1.0',
+    platformName: 'iOS',
+    platformVersion: '7.1',
+    deviceName: 'iPhone Simulator',
+    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
+    'device-orientation': 'portrait',
+  };
+
 if (process.env.SAUCE) {
   // Sauce Labs config
   host = "ondemand.saucelabs.com";
   port = 80;
   username = process.env.SAUCE_USERNAME;
   accessKey = process.env.SAUCE_ACCESS_KEY;
-
-  desired = {
-    platform: 'ios',
-    version: '7.1',
-    device: 'iPhone Simulator',
-    deviceName: 'iPhone Retina (4-inch 64-bit)',
-    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
-    name: "Appium: with WD Mocha",
-    'device-orientation': 'portrait',
-  };
-
+  desired.name = "Appium: with WD Mocha";
 } else {
   // local config
   host = "localhost";
   port = 4723;
-
-  desired = {
-    device: 'iPhone Simulator',
-    name: "Appium: with WD",
-    platform: "Mac",
-    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
-    // version: "6.0",
-    browserName: "",
-    newCommandTimeout: 60
-  };
 }
 
 // Instantiate a new browser session
@@ -69,15 +58,16 @@ browser
   .init(desired)
   .then(function () {
     browser
-      .elementsByTagName("textField").then(function (els) {
+      .elementsByIosUIAutomation('.textFields();').then(function (els) {
         return els[0].type('2').then(function () {
           return els[1].type('3');
         });
       })
-      .elementByTagName('button')
+      .elementByIosUIAutomation('.buttons()')
         .click()
-      .elementByTagName('staticText')
-        .text().should.become("5")
+      // .elementByTagName('staticText')
+      //   .text().should.become("5")
+      .catch(function(err) { console.log(err); })
       .fin(function () {
         return browser
           .sleep(3000)

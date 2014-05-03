@@ -10,7 +10,9 @@ var wd = require("wd"),
 require('colors');
 
 var desired = {
+  'appium-version': '1.0',
   platformName: 'Android',
+  platformVersion: '4.3',
   deviceName: 'Android Emulator',
   "app": path.resolve(__dirname, '../..', 'apps/ContactManager/ContactManager.apk'),
   "app-package": "com.android.contacts", // built-in contact app

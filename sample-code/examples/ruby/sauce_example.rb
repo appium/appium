@@ -60,7 +60,10 @@ describe "Computation" do
       element.send_keys values[index]
     end
 
+    # You can find buttons by text or, here, index
     button(1).click
+
+    # You can find the first static text element
     first_s_text.text.should eq expected_sum.to_s
   end
 end

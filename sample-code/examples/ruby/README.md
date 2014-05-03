@@ -27,6 +27,7 @@ For more information, check out the comments at the top of [simple_test.rb](simp
 
 [u\_i\_catalog.rb](u_i_catalog.rb)
 --------------
+(NB: This example is not yet 1.0 Compliant)
 A demonstration of various things you can do with Appium.  Check this if you
 need a recipe for a specific task, or just to see how simple and powerful iOS
 testing can be.
@@ -37,8 +38,11 @@ For more information, check out the comments at the top of [u_i_catalog.rb](u_i_
 
 [Cucumber](cucumber)
 --------
-Cucumber is a Behaviour Driven Design framework that lots of people are keen
-on.
+Cucumber is a Behaviour Driven Design framework that lots of people are keen on.
+It lets you describe test actions in a clean, concise, English-like manner.
+
+This example also demonstrates the use of appium.txt, appium_lib's file-based
+configuration option.
 
 To run the Cucumber examples, you'll need to change directory to the cucumber 
 directory (`cd APPIUM-LOCATION/sample-code/examples/ruby/cucumber`) and then, 
@@ -46,3 +50,13 @@ from the commandline, run `cucumber`.
 
 For more information, check out the comments at the top of the files in the 
 cucumber directory.
+
+[Sauce Example](sauce_example.rb)
+---------------
+Shows how to run Appium 1.0.0-beta.2 on Sauce Labs.  [Sauce Labs](http://www.saucelabs.com) is a Selenium Platform as a Service company which helps you scale your web and mobile test automation.
+
+This example demonstrates how to request an Appium session using a publically accessible test application, as well as how to inform Sauce Labs of test success or failure.
+
+[XUnit Android](xunit_android.rb)
+----------------
+(NB This example is not yet 1.0 compliant)

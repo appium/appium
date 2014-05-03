@@ -1,3 +1,28 @@
+CHANGES IN VERSION 1.0.0 (from 1.0.0-beta.2)
+=======================================
+
+#### General
+- update python samples to use 1.0 style
+- don't convert 'proxy' or 'launchTimeout' caps into strings
+- make sure commit hooks use local grunt and mocha
+- update some ruby samples to use 1.0 style
+- add more 1.0 docs and sample code
+
+#### iOS
+- fix mobile safari native tap on android by offsetting tap position by 40px
+- go back to using unpatched UICatalog
+- fix autoAcceptAlerts
+- allow multiple calls to /contexts
+- update appium-instruments with fix that would prevent the basic 'iPhone
+  Simulator' device from launching correctly
+
+#### Android
+- fix gesture timing so it doesn't interpret ms as seconds
+
+#### Selendroid
+- ensure selendroid isn't proxied appium endpoint commands
+
+
 CHANGES IN VERSION 1.0.0-beta.2 (from 1.0.0-beta.1)
 =======================================
 

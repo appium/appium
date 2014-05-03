@@ -7,7 +7,7 @@ In order to run the tests, you will need to install [Apache Maven](http://maven.
 
 You will then need to start appium, eg:
 
-    grunt appium
+    appium
 
 To compile and run all tests, run:
 

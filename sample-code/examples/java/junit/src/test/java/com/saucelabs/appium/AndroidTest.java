@@ -1,15 +1,13 @@
 package com.saucelabs.appium;
 
+import io.appium.java_client.AppiumDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.HasTouchScreen;
-import org.openqa.selenium.interactions.TouchScreen;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteTouchScreen;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.File;
 import java.net.URL;
@@ -19,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 public class AndroidTest {
 
-    private WebDriver driver;
+    private AppiumDriver driver;
 
     @Before
     public void setUp() throws Exception {
@@ -29,12 +27,11 @@ public class AndroidTest {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("device","Android");
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-        capabilities.setCapability(CapabilityType.VERSION, "4.2");
-        capabilities.setCapability(CapabilityType.PLATFORM, "MAC");
+        capabilities.setCapability(CapabilityType.VERSION, "4.4");
         capabilities.setCapability("app", app.getAbsolutePath());
         capabilities.setCapability("app-package", "com.example.android.apis");
         capabilities.setCapability("app-activity", ".ApiDemos");
-        driver = new SwipeableWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
 
     @After
@@ -46,25 +43,12 @@ public class AndroidTest {
     public void apiDemo(){
         WebElement el = driver.findElement(By.name("Animation"));
         assertEquals("Animation", el.getText());
-        el = driver.findElement(By.tagName("text"));
+        el = driver.findElementByClassName("android.widget.TextView");
         assertEquals("API Demos", el.getText());
         el = driver.findElement(By.name("App"));
         el.click();
-        List<WebElement> els = driver.findElements(By.tagName("text"));
+        List<WebElement> els = driver.findElementsByClassName("android.widget.TextView");
         assertEquals("Activity", els.get(2).getText());
-    }
-
-    public class SwipeableWebDriver extends RemoteWebDriver implements HasTouchScreen {
-        private RemoteTouchScreen touch;
-
-        public SwipeableWebDriver(URL remoteAddress, Capabilities desiredCapabilities) {
-            super(remoteAddress, desiredCapabilities);
-            touch = new RemoteTouchScreen(getExecuteMethod());
-        }
-
-        public TouchScreen getTouch() {
-            return touch;
-        }
     }
 
 }

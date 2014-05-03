@@ -49,9 +49,8 @@ describe('selendroid - basic -', function () {
     });
 
     it('should be able to set location', function (done) {
-      var locOpts = {latitude: "27.17", longitude: "78.04"};
       driver
-        .execute("mobile: setLocation", [locOpts])
+        .setGeoLocation("27.17", "78.04")
         .nodeify(done);
     });
 

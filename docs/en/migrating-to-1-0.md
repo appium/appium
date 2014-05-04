@@ -72,6 +72,27 @@ Refer to your client for ways to use these new locator strategies.
 
 App source methods, which previously returned JSON, now return XML, so if you have code that relies on parsing the app source, it will need to be updated.
 
+## Hybrid support through context, not window
+
+Hybrid apps were previously supported by switching between "windows" using
+
+* `window_handles`
+* `window`
+* `switch_to.window`
+
+Now Appium supports the more conceptually consistent concept of "context". To get all of the available contexts, or the particular context the application is is, you use
+
+```python
+driver.contexts
+current = driver.context
+```
+
+And to switch between them, you use
+
+```python
+driver.switch_to.context("WEBVIEW")
+```
+
 ## No more `execute_script("mobile: xxx")`
 
 All the `mobile: ` methods have been removed, and have been replaced by native methods in the Appium client libraries. This means that a method call like `driver.execute("mobile: lock", [5])` will now look something more like `driver.lock(5)` (where `lock` has been turned into a native client method). Of course, the details on calling these methods will differ by client.

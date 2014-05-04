@@ -1,6 +1,11 @@
 package com.saucelabs.appium;
 
 
+import com.saucelabs.common.SauceOnDemandAuthentication;
+import com.saucelabs.common.SauceOnDemandSessionIdProvider;
+import com.saucelabs.testng.SauceOnDemandAuthenticationProvider;
+import com.saucelabs.testng.SauceOnDemandTestListener;
+import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,6 +14,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.net.URL;
@@ -28,14 +34,18 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Ross Rowe
  */
-public class SauceTest {
+@Listeners({SauceOnDemandTestListener.class})
+public class SauceTest implements SauceOnDemandSessionIdProvider, SauceOnDemandAuthenticationProvider {
 
     private WebDriver driver;
 
     private List<Integer> values;
 
+    public SauceOnDemandAuthentication authentication;
+
     private static final int MINIMUM = 0;
     private static final int MAXIMUM = 10;
+    private String sessionId;
 
     /**
      * Sets up appium.  You will need to either explictly set the sauce username/access key variables, or set
@@ -46,17 +56,33 @@ public class SauceTest {
     @BeforeMethod
     public void setUp() throws Exception {
         // set up appium
-        String sauceUserName = System.getenv("SAUCE_USER_NAME");
-        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
+        String username = System.getenv("SAUCE_USER_NAME");
+        String key = System.getenv("SAUCE_ACCESS_KEY");
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(key)) {
+           authentication = new SauceOnDemandAuthentication(username, key);
+        } else {
+           authentication = new SauceOnDemandAuthentication();
+        }
+
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "iOS 6.0");
         capabilities.setCapability("device", "iPhone Simulator");
         capabilities.setCapability(CapabilityType.PLATFORM, "Mac 10.8");
         capabilities.setCapability("app", "http://appium.s3.amazonaws.com/TestApp6.0.app.zip");
 
-        driver = new RemoteWebDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub", sauceUserName, sauceAccessKey)),
+        driver = new RemoteWebDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub", authentication.getUsername(), authentication.getAccessKey())),
                 capabilities);
+        sessionId = ((RemoteWebDriver)driver).getSessionId().toString();
         values = new ArrayList<Integer>();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return
+     */
+    @Override
+    public String getSessionId() {
+        return sessionId;
     }
 
     @AfterMethod
@@ -88,5 +114,14 @@ public class SauceTest {
         // is sum equal ?
         WebElement texts = driver.findElement(By.tagName("staticText"));
         assertEquals(texts.getText(), String.valueOf(values.get(0) + values.get(1)));
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return
+     */
+    @Override
+    public SauceOnDemandAuthentication getAuthentication() {
+        return authentication;
     }
 }

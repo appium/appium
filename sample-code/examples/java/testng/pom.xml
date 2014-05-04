@@ -37,6 +37,12 @@
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
+        <dependency>
+            <groupId>com.saucelabs</groupId>
+            <artifactId>sauce_testng</artifactId>
+            <version>1.0.19</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -56,5 +62,17 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>saucelabs-repository</id>
+            <url>https://repository-saucelabs.forge.cloudbees.com/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
 </project>

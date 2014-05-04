@@ -1,0 +1,11 @@
+export JAVA_HOME=$(/usr/libexec/java_home)
+
+if [ -f $HOME/tools/ant/env ]; then
+    source $HOME/tools/ant/env
+fi
+if [ -f $HOME/tools/maven/env ]; then
+    source $HOME/tools/maven/env
+fi
+if [ -f $HOME/tools/android/env ]; then
+    source $HOME/tools/android/env
+fi

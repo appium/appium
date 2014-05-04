@@ -32,7 +32,8 @@ class TestSequenceFunctions(unittest.TestCase):
         self.driver = webdriver.Remote(
             command_executor='http://127.0.0.1:4723/wd/hub',
             desired_capabilities={
-                'browserName': 'iOS',
+                'browserName': '',
+                'device': 'iPhone Simulator',
                 'platform': 'Mac',
                 'version': '6.0',
                 'app': app
@@ -57,7 +58,7 @@ class TestSequenceFunctions(unittest.TestCase):
         # there is nav bar inside the app
         nav_bar = self.driver.find_element_by_tag_name("navigationBar")
         self.assertTrue(nav_bar)
-        
+
     def test_frames(self):
         table = self.driver.find_element_by_tag_name("tableView")
         self._open_menu_position(7)
@@ -66,7 +67,7 @@ class TestSequenceFunctions(unittest.TestCase):
         #find the URL field
         textfield = self.driver.find_element_by_name("URL entry")
         self.assertEqual(textfield.get_attribute("value"), "http://www.apple.com")
-        
+
         textfield.find_element_by_tag_name("button").click()
         # send www.google.com and press the Go button (\n)
         textfield.send_keys("http://www.google.com\\n")
@@ -105,7 +106,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertTrue(segmented_control.is_displayed())
         # row is from previous view, should not be visible
         self.assertTrue(self._row.is_displayed())
-        
+
         #verify the text is what we expect
         tinted_text = self.driver.find_elements_by_tag_name("text")[4]
         self.assertEqual(tinted_text.text, "UISegmentControlStyleBar: (tinted)")
@@ -117,7 +118,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEquals(tinted_buttons[0].get_attribute("value"), '')
         self.assertEquals(tinted_buttons[1].get_attribute("value"), '1')
         self.assertEquals(tinted_buttons[2].get_attribute("value"), '')
-        
+
     def test_text_field_edit(self):
         # go to the text fields section
         self._open_menu_position(2)

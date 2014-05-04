@@ -14,11 +14,12 @@ require 'selenium-webdriver'
 APP_PATH = '../../../../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
 
 # What we need as a capability --> iOS device, where our app is, ect.
-def capabilities
+def desired_caps
   {
-    'browserName' => 'iOS',
+    'browserName' => '',
     'platform' => 'Mac',
-    'version' => '6.0',
+    'device' => 'iPhone Simulator',
+    'version' => '7.1',
     'app' => absolute_app_path
   }
 end
@@ -35,7 +36,7 @@ end
  
 # Set up a driver or, if one exists, return it
 def selenium
-  @driver ||= Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
+  @driver ||= Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps, :url => server_url)
 end
 
 After { @driver.quit }

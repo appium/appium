@@ -16,13 +16,16 @@ require 'rest_client'
 APP_PATH = 'http://appium.s3.amazonaws.com/TestApp6.0.app.zip'
 SAUCE_USERNAME = ENV['SAUCE_USERNAME']
 SAUCE_ACCESS_KEY = ENV['SAUCE_ACCESS_KEY']
-AUTH_DETAILS = "#{SAUCE_USERNAME}:#{SAUCE_ACCESS_KEY}"
 
 # This is the test itself
 describe "Computation" do
   before(:each) do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
-   end
+    @driver = Selenium::WebDriver.for(
+      :remote, 
+      :desired_capabilities => desired_caps, 
+      :url => server_url
+    )
+  end
 
   after(:each) do
     # Get the success by checking for assertion exceptions,
@@ -46,22 +49,45 @@ describe "Computation" do
   end
 end
 
-def capabilities
+def desired_caps
   {
-      'browserName' => 'iOS 6.0',
+      'browserName' => '',
       'platform' => 'Mac 10.8',
+      'version' => '6.1',
       'device' => 'iPhone Simulator',
       'app' => APP_PATH,
       'name' => 'Ruby Example for Appium',
   }
 end
 
+def auth_details
+  un = SAUCE_USERNAME
+  pw = SAUCE_ACCESS_KEY
+  
+  unless un && pw
+    STDERR.puts <<-EOF
+      Your SAUCE_USERNAME or SAUCE_ACCESS_KEY environment variables 
+      are empty or missing.
+      
+      You need to set these values to your Sauce Labs username and access
+      key, respectively.
+
+      If you don't have a Sauce Labs account, you can get one for free at
+      http://www.saucelabs.com/signup
+    EOF
+
+    exit
+  end
+
+  return "#{un}:#{pw}"
+end
+
 def server_url
-  "http://#{AUTH_DETAILS}@ondemand.saucelabs.com:80/wd/hub"
+  "http://#{auth_details}@ondemand.saucelabs.com:80/wd/hub"
 end
 
 def rest_jobs_url
-  "https://#{AUTH_DETAILS}@saucelabs.com/rest/v1/#{SAUCE_USERNAME}/jobs"
+  "https://#{auth_details}@saucelabs.com/rest/v1/#{SAUCE_USERNAME}/jobs"
 end
 
 # Because WebDriver doesn't have the concept of test failure, use the Sauce

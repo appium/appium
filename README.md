@@ -1,279 +1,139 @@
-Appium
-=========
+# Appium
 
 [![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
 [![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
+[![Dependency Status](https://gemnasium.com/appium/appium.png)](https://gemnasium.com/appium/appium)
 
-Appium is an open source, cross-platform test automation tool for native and
-hybrid mobile apps. It supports iOS, Android, and FirefoxOS platforms. Appium
-drives Apple's UIAutomation library and Android's UiAutomator framework (for
-newer platforms) using Selenium's WebDriver JSON wire protocol. Appium's iOS
-support is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS
-Auto. Appium also comes bundled with
-[Selendroid](http://github.com/DominikDary/selendroid) for testing older
-Android platforms.
+Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
 
-Testing with Appium has two big benefits:
+## Supported Platforms
 
-1.  You don't have to recompile your app or modify it in any way, due
-    to use of standard automation APIs on all platforms.
+* iOS
+* Android
+* FirefoxOS
 
-2.  You can write tests with your favorite dev tools using Java,
-    Objective-C, JavaScript, PHP, Python, Ruby, C#, Clojure, or Perl with the
-    Selenium WebDriver API and language-specific client libraries. You can use
-    any testing framework. If you use Apple's UIAutomation library without Appium
-    you can only write tests using JavaScript and you can only run tests
-    through the Instruments application. Similarly, with Google's UiAutomator
-    you can only write tests in Java. Appium opens up the possibility of true
-    cross-platform native mobile automation. Finally!
+See the [platform support doc](docs/en/platform-support.md) for more detailed information.
 
-Requirements
-------------
+## Why Appium?
 
-General:
+1. You don't have to recompile your app or modify it in any way, due
+   to use of standard automation APIs on all platforms.
+2. You can write tests with your favorite dev tools using any [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible
+   language such as Java, [Objective-C](https://github.com/appium/selenium-objective-c),
+   JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavors),
+   PHP, Python, [Ruby](https://github.com/appium/ruby_lib), C#, Clojure, or Perl
+   with the Selenium WebDriver API and language-specific client libraries.
+3. You can use any testing framework.
 
-* OS X is required for iOS automation
-  * Mac OS X 10.7 or higher, 10.8.4 recommended
-* Android works on OS X and Linux. Support for Windows is in "beta"
-* Node and npm (brew install node) (Node must be &gt;= v0.8)
+Investing in the [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) protocol means you are betting on a single, free and open protocol for testing that has become a defacto standard. Don't lock yourself into a proprietary stack.
 
-For iOS automation:
+If you use Apple's UIAutomation library without Appium you can only write tests
+using JavaScript and you can only run tests through the Instruments application.
+Similarly, with Google's UiAutomator you can only write tests in Java. Appium
+opens up the possibility of true cross-platform native mobile automation. Finally!
 
-* XCode
+## I don't get it yet...
+
+If you're new to Appium, or want a fuller description of what this is all about, please read our [Introduction to Appium Concepts](docs/en/intro.md).
+
+## Requirements
+
+Your environment needs to be setup for the particular mobile platforms that you
+want to run tests on. See below for particular platform requirements.
+
+If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
+[node.js and npm](http://nodejs.org) 0.8 or greater (`brew install node`: make sure you have not installed Node or Appium with `sudo`, otherwise you'll likely run into problems). We recommend the latest stable version.
+
+To verify that all of Appium's dependencies are met you can use `appium-doctor`.
+Run `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
+of the dependencies are set up correctly. If running from source, you may have to use
+`bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+
+### iOS Requirements
+
+* Mac OS X 10.7 or higher, 10.8.4 recommended
+* XCode &gt;= 4.6.3
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
+* [Ensure you read our documentation on setting yourself up for iOS testing!](docs/en/running-on-osx.md)
 
-For Android automation:
+### Android Requirements
 
-* Android SDK API &gt;= 17
+* [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
+* Appium supports Android on OS X, Linux and Windows. Make sure you follow the
+  directions for setting up your environment properly for testing on different OSes:
+  * [linux](docs/en/running-on-linux.md)
+  * [osx](docs/en/running-on-osx.md)
+  * [windows](docs/en/running-on-windows.md)
 
-User Quick Start
-------------
-Option 1: Use Appium.app:
+### FirefoxOS Requirements
 
-* Download the Appium.app [dmg](https://bitbucket.org/appium/appium.app/downloads/appium.dmg)
-* Run Appium.app then run a test using your favorite language / framework
+* [Firefox OS Simulator](https://developer.mozilla.org/en/docs/Tools/Firefox_OS_Simulator)
 
-Option 2: Run Appium from the command line using Node:
+## Quick Start
 
-    mkdir appium-test && cd appium-test
-    npm install -g appium  # might have to do this with sudo
-    sudo authorize_ios # enable developer use of iOS sim
-    npm install wd
-    curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
-    appium &
-    node simplest.js
+Kick up an Appium server, and then run a test written in your favorite [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol)-compatible language!
+You can run an Appium server using node.js or using the application, see below.
 
-See the next section for links on how to make sure your system is set up to run Appium tests.
+### Using Node.js
 
-Example Tests: [Node.js](https://github.com/appium/appium/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/appium/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/examples/java)
+    $ npm install -g appium
+    $ appium &
 
-Troubleshooting
----------------
+### Using the App
 
-We put together a [troubleshooting guide](https://github.com/appium/appium/blob/master/docs/troubleshooting.md). Please have a look here first if you run into any problems. It contains instructions for checking a lot of common errors and how to get in touch with the community if you're stumped.
+* [Download the Appium app](https://github.com/appium/appium/releases)
+* Run it!
 
-Write Tests for Your Apps with Appium
--------------------
-We support a sub-set of the [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods).
+## Writing Tests for Appium
 
-You find elements by using a sub-set of WebDriver's element-finding strategies. See [finding elements](https://github.com/appium/appium/blob/master/docs/finding-elements.md) for detailed information.
+The main guide for getting started writing and running tests is [the running tests](docs/en/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](docs/en/real-devices.md).
 
-We also have several extensions to the JSON Wire Protocol for [automating
-mobile gestures](https://github.com/appium/appium/blob/master/docs/gestures.md)
-like tap, flick, and swipe.
+Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](docs/en/caps.md) to run your test through Appium.
 
-You can also automate web views in hybrid apps! See the [hybrid app
-guide](https://github.com/appium/appium/blob/master/docs/hybrid.md)
+You find elements by using a subset of WebDriver's element-finding strategies.
+See [finding elements](docs/en/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating mobile gestures](docs/en/gestures.md) like tap, flick, and swipe.
 
-We support Android and iOS platforms side-by-side:
+You can also automate web views in hybrid apps! See the [hybrid app guide](docs/en/hybrid.md)
 
-* [Set up your system for Appium iOS support](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#ios)
-* [Set up your system for Appium Android support](https://github.com/appium/appium/blob/master/docs/running-on-osx.md#android)
-* [Set up your system for Android support on linux](https://github.com/appium/appium/blob/master/docs/running-on-linux.md#android)
-* [Prepare your app for an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#prep-ios)
-* [Prepare your app for an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#preparing-your-app-for-test-android)
-* [Run an iOS test](https://github.com/appium/appium/blob/master/docs/running-tests.md#run-ios)
-* [Run an Android test](https://github.com/appium/appium/blob/master/docs/running-tests.md#android-ios)
-* [Getting started with Appium and Ruby on OS X](https://github.com/appium/ruby_console/blob/master/osx.md)
+This repository contains [many examples of tests in a variety of different languages](sample-code/examples)!
 
-For the full list of Appium doc pages, visit [this directory](https://github.com/appium/appium/blob/master/docs/).
+For the full list of Appium doc pages, visit [this directory](docs/en/).
 
-- - -
+## How It Works
 
-Hacking with Appium
-------------
-Install [node.js](http://nodejs.org/) (includes npm, the node.js package manager).
-The recommended way to install node is `brew install node`. Node [installed by
-brew](http://mxcl.github.io/homebrew/) will not require sudo for npm commands.
+Appium drives various native automation frameworks and provides an API based on
+Selenium's [WebDriver JSON wire protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol).
 
-Fork the Appium repo ( [https://github.com/appium/appium](https://github.com/appium/appium) ), then clone your fork.
+Appium drives Apple's UIAutomation library for iOS support, which is based on
+[Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
-From your local repo's command prompt, install these packages using the
-following commands (if you didn't install node using homebrew, you might have
-to run npm with sudo privileges):
+Android support uses the UiAutomator framework for newer platforms and
+[Selendroid](http://github.com/DominikDary/selendroid) for older Android platforms.
 
-    npm install -g mocha
-    npm install -g grunt-cli
-    ./reset.sh --dev
+FirefoxOS support leverages [Marionette](https://developer.mozilla.org/en-US/docs/Marionette),
+an automation driver that is compatible with WebDriver and is used to automate
+Gecko-based platforms.
 
-The first two commands install test and build tools (sudo may not be necessary
-if you installed node.js via Homebrew). The third command installs all app
-dependencies, builds supporting binaries and test apps. `reset.sh` is also the
-recommended command to run after pulling changes from master. At this point,
-you're able to star the Appium server (see below for examples of various flags
-you can pass in):
+## Contributing
 
-    node server.js
+Please take a look at our [contribution documentation](CONTRIBUTING.md)
+for instructions on how to build, test and run Appium from source.
 
-Hacking with Appium (iOS)
---------------
+## Project Credits & Inspiration
 
-(First, have a look at [setting up your system for Appium iOS support](docs/running-on-osx.md#ios).)
+[Credits](docs/en/credits.md)
 
-To avoid a security dialog that may appear when launching your iOS apps you'll
-have to modify your `/etc/authorization` file in one of two ways:
+## Mailing List
 
-1.  Manually modify the element following &lt;allow-root&gt; under
-    &lt;key&gt;system.privilege.taskport&lt;/key&gt; in your
-    `/etc/authorization` file to &lt;true/&gt;.
-
-2.  Run the following grunt command which automatically modifies your
-    `/etc/authorization` file for you:
-
-        sudo grunt authorize
-
-At this point, you can simply run:
-
-    ./reset.sh --ios --dev
-
-Hacking with Appium (Android)
-----------------
-
-(First, have a look at setting up your system for Appium Android support ([linux](docs/running-on-linux.md), [osx](docs/running-on-osx.md#android) or [windows](docs/running-on-windows.md)).)
-
-Now, you can simply run:
-
-    ./reset.sh --android --dev
-
-If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for older apps:
-
-    ./reset.sh --selendroid --dev
-
-Make sure you have one and only one Android emulator or device running, e.g.
-by running this command in another process (assuming the `emulator` command is
-on your path):
-
-    emulator -avd <MyAvdName>
-
-Making sure you're up to date
------------
-Since we use dev versions of some packages, it often becomes necessary to
-install new NPM packages or update various things. There's a handy shell script
-to do all this for all platforms (the `--dev` flag gets dev npm dependencies
-and test applications used in the Appium test suite):
-
-    ./reset.sh --dev
-
-Or you can run reset for individual platforms only:
-
-    ./reset.sh --ios --dev
-    ./reset.sh --android --dev
-    ./reset.sh --selendroid --dev
-
-Running Tests
------------
-Once, your system is set up and your code is up to date, you can run various
-kinds of tests:
-
-    grunt android
-    grunt ios
-    grunt selendroid
-    grunt firefoxos
-    grunt unit
-
-Or you can run all tests:
-
-    grunt test
-
-Before committing code, please run grunt to execute some basic tests and check
-your changes against code quality standards:
-
-    grunt
-    > Running "lint:all" (lint) task
-    > Lint free.
-    > Done, without errors.
-
-Dig in deeper to Appium dev
------------
-### Advanced grunt
-Like the power of automating dev tasks? Check out the [Appium grunt
-tasks](https://github.com/appium/appium/blob/master/docs/grunt.md) available to
-help with building apps, installing apps, generating docs, etc...
-
-### Running individual tests
-
-If you have an Appium server listening, you can run individual test files using
-Mocha, for example:
-
-    mocha -t 60000 -R spec test/functional/testapp/simple.js
-
-Or individual tests (e.g., a test with the word "alert" in the name):
-
-    mocha -t 60000 -R spec --grep "alert" test/functional/apidemos
-
-You can also run all of appium's tests this way. In one window, `node
-server.js` In another window, sequentially (waiting for each to pass, making
-sure emulator is up, etc...):
-
-`alias mm="mocha -t 60000 -R spec"`
-
-```
-mm test/functional/apidemos
-mm test/functional/prefs
-mm test/functional/safari
-mm test/functional/selendroid
-mm test/functional/testapp
-mm test/functional/uicatalog
-mm test/functional/webview
-```
-
-For convenience, there's a `test.sh` script which runs just these tests which
-it is important to pass before publishing appium.
-
-### Advanced Appium server flags
-
-Do you like getting close to the metal? Or are you trying to launch an Appium
-server from a script with a custom app? If so you can start Appium without
-grunt from the command line with an app or without an app, among other things:
-
-    node server.js // launch Appium server without app
-    node server.js --app /absolute/path/to/app  // launch Appium server with app
-    node server.js --launch // pre-launch the app when appium loads
-    node server.js --log /my/appium.log // log to file instead of stdout
-    node server.js --quiet // don't log verbose output
-
-(See
-[the server documentation](https://github.com/appium/appium/blob/master/docs/server-args.md) for
-all CLI arguments.)
-
-
-Using with a [Tapster](https://github.com/hugs/tapsterbot) and other robots
------------
-
-Check out the [Appium Robots](https://github.com/appium/robots) project
-
-Contributing
-------------
-Fork the project, make a change, and send a pull request!
-
-Oh and please have a look at our [Style Guide](https://github.com/appium/appium/blob/master/docs/style-guide.md) before getting to work.
-
-Project Credits & Inspiration
-------------
-The open source community has made this project possible, please add missing projects to the list.
-
-[All the OSS code contributing to Appium](https://github.com/appium/appium/blob/master/docs/credits.md)
-
-Mailing List
------------
 Announcements and debates often take place on the [Discussion Group](https://groups.google.com/d/forum/appium-discuss), be sure to sign up!
+
+## Troubleshooting
+
+We put together a [troubleshooting guide](docs/en/troubleshooting.md).
+Please have a look here first if you run into any problems. It contains instructions for checking a lot
+of common errors and how to get in touch with the community if you're stumped.
+
+## Using Robots
+
+Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other robots is possible,
+check out the [Appium Robots](https://github.com/appium/robots) project!

@@ -28,9 +28,6 @@
 [submodule "submodules/libimobiledevice-macosx"]
 	path = submodules/libimobiledevice-macosx
 	url = https://github.com/benvium/libimobiledevice-macosx.git
-[submodule "submodules/ForceQuitUnresponsiveApps"]
-	path = submodules/ForceQuitUnresponsiveApps
-	url = https://github.com/appium/ForceQuitUnresponsiveApps.git
 [submodule "submodules/appium-atoms"]
 	path = submodules/appium-atoms
 	url = https://github.com/appium/appium-atoms.git

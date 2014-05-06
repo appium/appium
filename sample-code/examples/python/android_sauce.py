@@ -12,6 +12,7 @@ from appium import webdriver
 
 SAUCE_USERNAME = os.environ.get('SAUCE_USERNAME')
 SAUCE_ACCESS_KEY = os.environ.get('SAUCE_ACCESS_KEY')
+base64string = base64.encodestring('%s:%s' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY))[:-1]
 
 class SimpleAndroidSauceTests(unittest.TestCase):
 
@@ -21,7 +22,7 @@ class SimpleAndroidSauceTests(unittest.TestCase):
         self.driver = webdriver.Remote(
             command_executor='http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY),
             desired_capabilities={
-                'browserName': '',
+                'appium-version': '1.0.0-beta.2',
                 'platformName': 'Android',
                 'deviceName': 'Android Emulator',
                 'platformVersion': '4.2',
@@ -46,19 +47,21 @@ class SimpleAndroidSauceTests(unittest.TestCase):
         return result.status == 200
 
     def test_create_note(self):
-        driver = webdriver.Remote('http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (SAUCE_USERNAME, SAUCE_ACCESS_KEY), desired_caps)
-
-        el = driver.find_element_by_name("New note")
+        el = self.driver.find_element_by_name("New note")
         el.click()
 
-        el = driver.find_element_by_tag_name("textfield")
+        el = self.driver.find_element_by_class_name("android.widget.EditText")
         el.send_keys("This is a new note!")
 
-        el = driver.find_element_by_name("Save")
+        el = self.driver.find_element_by_name("Save")
         el.click()
 
-        els = driver.find_elements_by_tag_name("text")
-        assert els[2].text == "This is a new note!"
+        els = self.driver.find_elements_by_class_name("android.widget.TextView")
+        try:
+            self.assertEqual(els[2].text, "This is a new note!")
+            self._set_test_status(self.driver.session_id, True)
+        except:
+            self._set_test_status(self.driver.session_id, False)
 
         els[2].click()
 

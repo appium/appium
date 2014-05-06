@@ -62,10 +62,6 @@ public class Find extends CommandHandler {
       throws JSONException {
     final Hashtable<String, Object> params = command.params();
 
-    if (((String) params.get("strategy")).equals("index paths")) {
-
-    }
-
     // only makes sense on a device
     final Strategy strategy;
     try {

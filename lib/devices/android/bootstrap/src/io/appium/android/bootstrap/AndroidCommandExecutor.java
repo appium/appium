@@ -5,7 +5,7 @@ import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.Drag;
 import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
-import io.appium.android.bootstrap.handler.EnableCompressedLayoutHeirarchy;
+import io.appium.android.bootstrap.handler.DumpWindowHierarchyCompressed;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
@@ -39,7 +39,7 @@ import org.json.JSONException;
 /**
  * Command execution dispatch class. This class relays commands to the various
  * handlers.
- *
+ * 
  */
 class AndroidCommandExecutor {
 
@@ -69,11 +69,13 @@ class AndroidCommandExecutor {
     map.put("getSize", new GetSize());
     map.put("wake", new Wake());
     map.put("pressBack", new PressBack());
-    map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
+    final DumpWindowHierarchy dumpWindowHierarchy = new DumpWindowHierarchy();
+    DumpWindowHierarchy.instance = dumpWindowHierarchy;
+    map.put("dumpWindowHierarchy", dumpWindowHierarchy);
+    map.put("dumpWindowHierarchyCompressed",
+        new DumpWindowHierarchyCompressed());
     map.put("pressKeyCode", new PressKeyCode());
     map.put("takeScreenshot", new TakeScreenshot());
-    map.put("enableCompressedLayoutHeirarchy",
-        new EnableCompressedLayoutHeirarchy());
     map.put("getStrings", new GetStrings());
     map.put("getDataDir", new GetDataDir());
     map.put("performMultiPointerGesture", new MultiPointerGesture());
@@ -81,7 +83,7 @@ class AndroidCommandExecutor {
 
   /**
    * Gets the handler out of the map, and executes the command.
-   *
+   * 
    * @param command
    *          The {@link AndroidCommand}
    * @return {@link AndroidCommandResult}

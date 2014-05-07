@@ -3,6 +3,7 @@ package io.appium.android.bootstrap;
 import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.exceptions.NoAttributeFoundException;
 import io.appium.android.bootstrap.utils.Point;
+import io.appium.android.bootstrap.utils.UnicodeEncoder;
 import android.graphics.Rect;
 import android.os.Build;
 
@@ -232,7 +233,14 @@ public class AndroidElement {
   }
 
   public boolean setText(final String text) throws UiObjectNotFoundException {
-    return el.setText(text);
+    if (UnicodeEncoder.needsEncoding(text)) {
+      Logger.info("Sending Unicode text to element: " + text);
+      String encodedText = UnicodeEncoder.encode(text);
+      return el.setText(encodedText);
+    } else {
+      Logger.info("Sending plain text to element: " + text);
+      return el.setText(text);
+    }
   }
 
   public boolean performMultiPointerGesture(PointerCoords[] ...touches) {

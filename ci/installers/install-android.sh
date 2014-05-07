@@ -1,5 +1,5 @@
 #!/bin/bash
-set +e
+set -e
 
 COMPONENTS=build-tools-19.0.3,android-19,android-18,android-16,extra-android-support
 

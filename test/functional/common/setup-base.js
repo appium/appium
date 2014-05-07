@@ -16,11 +16,25 @@ module.exports = function (context, desired, opts) {
   var session = initSession(desired, opts);
 
   if (env.FAST_TESTS) {
-    before(function (done) { session.setUp().nodeify(done); });
-    after(function (done) { session.tearDown().nodeify(done); });
+    var allPassed = true;
+    before(function (done) {
+      session
+        .setUp(context.title)
+        .nodeify(done);
+    });
+    after(function (done) { session.tearDown(allPassed).nodeify(done); });
+    afterEach(function () {
+      allPassed = allPassed && this.currentTest.state === 'passed';
+    });
   } else {
-    beforeEach(function (done) { session.setUp().nodeify(done); });
-    afterEach(function (done) { session.tearDown().nodeify(done); });
+    beforeEach(function (done) {
+      session
+      .setUp(this.currentTest.parent.title + " " + this.currentTest.title)
+      .nodeify(done);
+    });
+    afterEach(function (done) {
+      session.tearDown(this.currentTest.state === 'passed').nodeify(done);
+    });
   }
 
   return session.promisedBrowser;

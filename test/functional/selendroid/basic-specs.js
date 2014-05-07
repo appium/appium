@@ -2,6 +2,7 @@
 
 process.env.DEVICE = process.env.DEVICE || "selendroid";
 var setup = require("../common/setup-base")
+  , env = require('../../../helpers/env')
   , initSession = require('../../helpers/session').initSession
   , path = require('path')
   , Q = require("q")
@@ -131,11 +132,15 @@ describe('selendroid - basic -', function () {
 
   describe('app activities with no dot', function () {
     var session;
-    after(function () { session.tearDown(); });
+    after(function () { session.tearDown(this.currentTest.state === 'passed'); });
 
     it('should not launch app', function (done) {
-      session = initSession(_.defaults({appActivity: 'ApiDemos'}, desired), {'no-retry': true});
-      session.setUp()
+      var newDesired = _.defaults({'app-activity': 'ApiDemos'}, desired);
+      if (env.SAUCE) {
+        newDesired.name = this.currentTest.parent.title + " " + this.currentTest.title;
+      }
+      session = initSession(newDesired, {'no-retry': true});
+      session.setUp(this.parent.title + " " + this.title)
         .should.be.rejected
         .nodeify(done);
     });
@@ -144,11 +149,15 @@ describe('selendroid - basic -', function () {
 
   describe('fully qualified app activities', function () {
     var session;
-    after(function () { session.tearDown(); });
+    after(function () { session.tearDown(this.currentTest.state === 'passed'); });
 
     it('should still launch app', function (done) {
-      session = initSession(_.defaults({appActivity: 'com.example.android.apis.ApiDemos'}, desired));
-      session.setUp()
+      var newDesired = _.defaults({'app-activity': 'com.example.android.apis.ApiDemos'}, desired);
+      if (env.SAUCE) {
+        newDesired.name = this.currentTest.parent.title + " " + this.currentTest.title;
+      }
+      session = initSession(newDesired);
+      session.setUp(this.parent.title + " " + this.title)
         .nodeify(done);
     });
   });

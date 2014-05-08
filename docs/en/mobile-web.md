@@ -83,14 +83,14 @@ $ node /lib/server/main.js -U <UDID>
 
 ## Running your test
 
-To configure you test to run against safari simply set the **"app"** to be **"safari"**.
+To configure you test to run against safari simply set the **"browserName"** to be **"Safari"**.
 
 ## Java Example
 
 ```java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-desiredCapabilities.setCapability("app", "safari");
+desiredCapabilities.setCapability("browserName", "Safari");
 URL url = new URL("http://127.0.0.1:4723/wd/hub");
 RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
 
@@ -108,7 +108,7 @@ remoteWebDriver.quit();
 
 ```python
 # setup the web driver and launch the webview app.
-capabilities = { 'app': 'safari' }
+capabilities = { 'browserName': 'Safari' }
 driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 
 # Navigate to the page and interact with the elements on the guinea-pig page using id.

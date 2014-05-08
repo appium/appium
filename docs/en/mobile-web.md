@@ -17,17 +17,19 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 
 ```js
 {
-  app: 'safari'
-  , device: 'iPhone Simulator'
-  , version: '6.1'
+  platformName: 'iOS'
+  , platformVersion: '6.1'
+  , browserName: 'Safari'
+  , deviceName: 'iPhone Simulator'
 }
 ```
 
 ```python
 {
-    'app': 'safari',
-    'device': 'iPhone Simulator',
-    'version': '6.1'
+  'platformName': 'iOS',
+  'platformVersion': '6.1',
+  'browserName': 'Safari',
+  'deviceName': 'iPhone Simulator'
 }
 ```
 
@@ -116,7 +118,7 @@ div = driver.find_element_by_id('i_am_an_id')
 assertEqual('I am a div', div.text)
 
 # populate the comments field by id
-driver.find_lement_by_id('comments').send_keys('My comment')
+driver.find_element_by_id('comments').send_keys('My comment')
 
 # close the driver
 driver.quit()
@@ -133,14 +135,20 @@ Then, use desired capabilities like these to run your test in Chrome:
 
 ```js
 {
-  app: 'chrome'
-  , device: 'Android'
+  platformName: 'Android'
+  , platformVersion: '4.4'
+  , deviceName: 'Android Emulator'
+  , browserName: 'Chrome'
 };
 ```
 
 ```python
 {
-    'app': 'chrome',
-    'device': 'Android'
-};
+  'platformName': 'Android',
+  'platformVersion': '4.4',
+  'deviceName': 'Android Emulator',
+  'browserName': 'Chrome'
+}
 ```
+
+Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to automate the built-in browser. On all devices you can use the 'Chromium' `browserName` cap to automate a build of Chromium.

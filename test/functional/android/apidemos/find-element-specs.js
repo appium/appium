@@ -130,7 +130,6 @@ describe("apidemo - find elements -", function () {
     var f = "android.widget.FrameLayout";
     var l = alv;
     var t = atv;
-    var v = "android.view.View";
     it('should find element by type', function (done) {
       driver
         .elementByXPath('//' + t).text()
@@ -158,7 +157,7 @@ describe("apidemo - find elements -", function () {
     });
     it('should find element by xpath index and child', function (done) {
       driver
-        .elementByXPath("//" + f + "[1]/" + v + "[1]/" + f + "[2]/" + l + "[1]/" + t + "[3]").text()
+        .elementByXPath("//" + f + "[1]/" + l + "[1]/" + t + "[3]").text()
           .should.become("App")
         .nodeify(done);
     });

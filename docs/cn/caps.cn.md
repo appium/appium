@@ -21,7 +21,6 @@
 |`app-package`| 你想运行的Android应用的包名|比如`com.example.android.myApp`, `com.android.settings`|
 |`app-wait-activity`| 你想要等待启动的Android Activity名称|比如`SplashActivity`|
 |`device-ready-timeout`| 设置一个模拟器或真机准备就绪的时间|比如`5`|
-|``compressXml``| 参考[setCompressedLayoutHeirarchy(true)](http://developer.android.com/tools/help/uiautomator/UiDevice.html#setCompressedLayoutHeirarchy(boolean\))| `true`|
 
 ### iOS特有
 

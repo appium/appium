@@ -5,7 +5,6 @@ import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.Drag;
 import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
-import io.appium.android.bootstrap.handler.DumpWindowHierarchyCompressed;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
@@ -69,11 +68,7 @@ class AndroidCommandExecutor {
     map.put("getSize", new GetSize());
     map.put("wake", new Wake());
     map.put("pressBack", new PressBack());
-    final DumpWindowHierarchy dumpWindowHierarchy = new DumpWindowHierarchy();
-    DumpWindowHierarchy.instance = dumpWindowHierarchy;
-    map.put("dumpWindowHierarchy", dumpWindowHierarchy);
-    map.put("dumpWindowHierarchyCompressed",
-        new DumpWindowHierarchyCompressed());
+    map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
     map.put("pressKeyCode", new PressKeyCode());
     map.put("takeScreenshot", new TakeScreenshot());
     map.put("getStrings", new GetStrings());

@@ -64,8 +64,14 @@ public class DumpWindowHierarchy extends CommandHandler {
         UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
 
         if (!dumpFile.exists()) {
-            SystemClock.sleep(1000);
-            UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+            for (int count = 0; count < 30; count++) {
+                SystemClock.sleep(1000);
+                UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+
+                if (dumpFile.exists()) {
+                    break;
+                }
+            }
         }
 
         return getSuccessResult(dumpFile.exists());

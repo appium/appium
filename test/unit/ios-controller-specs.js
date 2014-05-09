@@ -69,6 +69,12 @@ describe('ios-controller', function () {
           var actual = controller.getSelectorForStrategy('id', 'someSelector');
           actual.should.equal('localSelector');
         });
+        it('returns an error when the selector isn\'t in localizableStrings', function () {
+          var msg = "Id selector not found in Localizable.strings.";
+          (function () {
+            controller.getSelectorForStrategy('id', 'notFoundSelector');
+          }).should.Throw(TypeError, msg);
+        });
       });
     });
   });

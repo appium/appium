@@ -3,8 +3,11 @@
 Usage: `node . [flags]`
 
 ## Server flags
-
 All flags are optional, but some are required in conjunction with certain others.
+
+
+
+<expand_table>
 
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|

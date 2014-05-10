@@ -565,16 +565,12 @@ module.exports.installAndroidApp = function (grunt, appName, cb) {
 module.exports.generateServerDocs = function (grunt, cb) {
   var p = parser();
   var docFile = path.resolve(__dirname, "docs/en/server-args.md");
-  var md = "---\n" +
-           "title: Appium server arguments\n" +
-           "layout: default\n" +
-           "---\n\n" +
-           "Appium server arguments\n" +
-           "==========\n\n";
+  var md = "# Appium server arguments\n\n";
   md += "Usage: `node . [flags]`\n\n";
-  md += "### Server flags\n";
+  md += "## Server flags\n";
   md += "All flags are optional, but some are required in conjunction with " +
         "certain others.\n\n";
+  md += "\n\n<expand_table>\n\n";
   md += "|Flag|Default|Description|Example|\n";
   md += "|----|-------|-----------|-------|\n";
   _.each(p.rawArgs, function (arg) {

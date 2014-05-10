@@ -1,5 +1,7 @@
 # Appium server capabilities
 
+<expand_table>
+
 |Capability|Description|Values|
 |----|-----------|-------|
 |`automationName`|Which automation engine to use|`Appium` (default) or `Selendroid`|
@@ -12,6 +14,8 @@
 |`autoLaunch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
 
 ### Android Only
+
+<expand_table>
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -28,6 +32,8 @@
 
 
 ### iOS Only
+
+<expand_table>
 
 |Capability|Description|Values|
 |----|-----------|-------|

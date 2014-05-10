@@ -19,6 +19,7 @@ if (env.SAUCE) {
   }
   env.APPIUM_USERNAME = process.env.SAUCE_USERNAME;
   env.APPIUM_PASSWORD = process.env.SAUCE_ACCESS_KEY;
+  env.SAUCE_REST_ROOT = process.env.SAUCE_REST_ROOT;
 }
 
 env.LAUNCH_TIMEOUT = JSON.parse(process.env.LAUNCH_TIMEOUT || 60000);
@@ -40,9 +41,10 @@ function iphoneOrIpadSimulator(device, version) {
   switch (version) {
     case '6.1':
     case '7.0':
-      return isIpad ? 'iPad Simulator' : 'iPhone Simulator';
     case '7.1':
-      return isIpad ? 'iPad Retina' : 'iPhone Retina 4-inch';
+      return isIpad ? 'iPad Simulator' : 'iPhone Simulator';
+    // case '7.1':
+    //   return isIpad ? 'iPad Retina' : 'iPhone Retina 4-inch';
     default:
       throw new Error("invalid version");
   }
@@ -141,7 +143,22 @@ if (env.VERSION) {
   env.CAPS.platformVersion = "7.0";
 }
 
-// app path root
+// max retry
+if (process.env.MAX_RETRY) env.MAX_RETRY = parseInt(process.env.MAX_RETRY, 10);
+
+//dev tarball
+env.TARBALL = process.env.TARBALL;
+
+// add the tarball to caps
+if (env.SAUCE && env.TARBALL) {
+  env.CAPS['appium-version'] = {
+    'appium-url': env.TARBALL,
+    //'npm-install': true,
+    'download-app': false,
+    'appium-startup-args': 'minimal'
+    //'appium-startup-args': '-m'
+  };
+}
 
 // rest enf points
 env.TEST_END_POINT = 'http://localhost:' + env.APPIUM_PORT + '/test/';

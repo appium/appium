@@ -25,6 +25,7 @@ grunt="$(npm bin)/grunt"  # might not have grunt-cli installed with -g
 verbose=false
 chromedriver_version=false
 chromedriver_install_all=false
+npmlink=true
 if test -d .git ; then
     is_git_checkout=true
 else
@@ -50,6 +51,7 @@ do
         "--chromedriver-version") chromedriver_version=$2;;
         "--chromedriver-install-all") chromedriver_install_all=true;;
         "--udid") udid=$2;;
+        "--no-npmlink") npmlink=false;;
     esac
 
     if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
@@ -178,12 +180,14 @@ reset_ios() {
             build/WebViewApp/
     fi
     if $include_dev ; then
-        echo "* Cloning/npm linking appium-atoms"
-        run_cmd ./bin/npmlink.sh -l appium-atoms
-        echo "* Cloning/npm linking appium-instruments"
-        run_cmd ./bin/npmlink.sh -l appium-instruments
-        echo "* Cloning/npm linking appium-uiauto"
-        run_cmd ./bin/npmlink.sh -l appium-uiauto
+        if $npmlink ; then
+            echo "* Cloning/npm linking appium-atoms"
+            run_cmd ./bin/npmlink.sh -l appium-atoms
+            echo "* Cloning/npm linking appium-instruments"
+            run_cmd ./bin/npmlink.sh -l appium-instruments
+            echo "* Cloning/npm linking appium-uiauto"
+            run_cmd ./bin/npmlink.sh -l appium-uiauto
+        fi
         if $ios7_active ; then
             if $hardcore ; then
                 echo "* Clearing out old UICatalog download"

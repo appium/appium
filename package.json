@@ -93,7 +93,7 @@
   "devDependencies": {
     "mocha": "~1.18.2",
     "underscore-cli": "~0.2.17",
-    "wd": "~0.2.18",
+    "wd": "0.2.21",
     "yiewd": "~0.4.4",
     "monocle-js": "~0.6.1",
     "assert": "~1.1.1",

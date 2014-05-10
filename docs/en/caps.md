@@ -1,5 +1,7 @@
 # Appium server capabilities
 
+<expand_table>
+
 |Capability|Description|Values|
 |----|-----------|-------|
 |`app`|The absolute local path _or_ remote http URL to an `.ipa` or `.apk` file, or a `.zip` containing one of these. Appium will attempt to install this app binary on the appropriate device first. Can also be one of `chrome` or `chromium` to launch Chrome or Chromium on Android, or `safari` to launch Mobile Safari on iOS. Note that this capability is not required for Android if you specify `app-package` and `app-activity` capabilities (see below).|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`, `chrome`, `chromium` on Android, `safari` on iOS|
@@ -10,6 +12,8 @@
 |`launch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
 
 ## Android Only
+
+<expand_table>
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -24,6 +28,8 @@
 |`avdReadyTimeout`| How long to wait in milliseconds for an avd to finish its boot animations (default `120000`)| `300000`|
 
 ## iOS Only
+
+<expand_table>
 
 |Capability|Description|Values|
 |----|-----------|-------|

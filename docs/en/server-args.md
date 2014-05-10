@@ -2,8 +2,12 @@
 
 Usage: `node . [flags]`
 
-### Server flags
+## Server flags
 All flags are optional, but some are required in conjunction with certain others.
+
+
+
+<expand_table>
 
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
@@ -23,7 +27,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--no-reset`|false|Don't reset app state between sessions (IOS: don't delete app plist files; Android: don't uninstall app before new session)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
-|`-g`, `--log`|null|Log output to this file instead of stdout|`--log /path/to/appium.log`|
+|`-g`, `--log`|null|Also send log output to this file|`--log /path/to/appium.log`|
 |`--log-timestamp`|false|Show timestamps in console output||
 |`--log-no-colors`|false|Don't use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|

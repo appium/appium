@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-
 if [[ $CI_CONFIG == 'unit' ]]; then
     cd docs
     appium_doc_lint || exit 1
@@ -13,9 +12,9 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
     echo Xcode path: `xcode-select --print-path`
     ./reset.sh --hardcore --no-npmlink --dev --ios --verbose
     ./ci/upload_build_to_sauce.sh
-    node ci/tools/testfiles-tool.js \
-    split 'test/functional/ios/testapp/**/*-specs.js' \
-    > ci/test-split.json
+    GLOB_PATTERN='test/functional/ios/testapp/**/*-specs.js'
+    GLOB_PATTERN+=',test/functional/ios/uicatalog/**/*-specs.js'
+    node ci/tools/testfiles-tool.js split "${GLOB_PATTERN}" > ci/test-split.json
     BRANCH_CAT=ios ./ci/git-push.sh
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
@@ -39,6 +38,7 @@ elif [[ $CI_CONFIG == 'build_gappium' ]]; then
     #./ci/upload_build_to_sauce.sh
     #BRANCH_CAT=gappium ./ci/git-push.sh
 elif [[ $CI_CONFIG == 'functional' ]]; then
+    env
     TARBALL=sauce-storage:$(node ./ci/tools/build-upload-tool.js \
         ./ci/build-upload-info.json filename)
     echo node ci/tools/testfiles-tool.js list ci/test-split.json "${TEST_GROUP}"

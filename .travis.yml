@@ -34,10 +34,3 @@ before_script:
 script:
 - "./ci/script.sh"
 
-
-
-
-
-
-
-

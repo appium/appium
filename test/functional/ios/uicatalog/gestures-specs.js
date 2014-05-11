@@ -11,7 +11,7 @@ var env = require('../../../helpers/env')
 
 var SLOW_DOWN_MS = 1000;
 
-describe('uicatalog - gestures -', function () {
+describe('uicatalog - gestures', function () {
 
   describe('flick @skip-ios7', function () {
     var driver;

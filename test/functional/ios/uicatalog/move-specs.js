@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - move -', function () {
+describe('uicatalog - move', function () {
 
   describe('moveTo and click', function () {
     var driver;

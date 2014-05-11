@@ -4,7 +4,7 @@ var env = require('../../../helpers/env'),
     setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - device -', function () {
+describe('uicatalog - device', function () {
 
   describe('lock device', function () {
     var driver;

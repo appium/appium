@@ -12,7 +12,7 @@ var options = {
   'force new connection': true
 };
 
-describe('uicatalog - alerts -', function () {
+describe('uicatalog - alerts', function () {
 
   var alertTag = env.IOS7 ? '@label' : '@value';
 

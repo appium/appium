@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - reset -', function () {
+describe('uicatalog - reset', function () {
 
   describe('app reset', function () {
     var driver;

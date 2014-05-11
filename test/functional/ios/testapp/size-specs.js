@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('testapp - size -', function () {
+describe('testapp - size', function () {
 
   describe('element size', function () {
     var driver;

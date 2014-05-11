@@ -2,7 +2,7 @@
 var setup = require("../../common/setup-base")
   , desired = require('./desired');
 
-describe('testapp - find element -', function () {
+describe('testapp - find element', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

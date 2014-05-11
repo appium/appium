@@ -10,9 +10,9 @@ var env = require('../../../helpers/env')
   , path = require('path')
   , _ = require("underscore");
 
-describe('testapp - basic -', function () {
+describe('testapp - basic', function () {
 
-  describe('using calc app', function () {
+  describe('using calc app - 1', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
@@ -149,7 +149,7 @@ describe('testapp - basic -', function () {
 
   }); // end describe
 
-  describe('using calc app', function () {
+  describe('using calc app - 2', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
@@ -207,7 +207,7 @@ describe('testapp - basic -', function () {
         .nodeify(done);
     });
 
-    it('should be able to get crashlog logs', function (done) {
+    it('should be able to get crashlog logs @skip-ci', function (done) {
       var dir = path.resolve(process.env.HOME, "Library", "Logs", "DiagnosticReports");
       var msg = 'boom';
       var numBeforeLogs;

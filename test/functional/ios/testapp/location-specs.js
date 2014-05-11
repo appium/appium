@@ -6,7 +6,7 @@ var setup = require("../../common/setup-base")
   , _ = require("underscore")
   , desired = require('./desired');
 
-describe('testapp - location -', function () {
+describe('testapp - location - 1', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
 
   var driver;
@@ -35,7 +35,7 @@ describe('testapp - location -', function () {
   });
 });
 
-describe('testapp - location services -', function () {
+describe('testapp - location - 2', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
@@ -53,7 +53,7 @@ describe('testapp - location services -', function () {
   });
 });
 
-describe('testapp - location services -', function () {
+describe('testapp - location - 3', function () {
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
     locationServicesAuthorized: true
@@ -69,7 +69,7 @@ describe('testapp - location services -', function () {
   });
 });
 
-describe('testapp - location services -', function () {
+describe('testapp - location - 4', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {

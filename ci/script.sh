@@ -13,6 +13,9 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
     echo Xcode path: `xcode-select --print-path`
     ./reset.sh --hardcore --no-npmlink --dev --ios --verbose
     ./ci/upload_build_to_sauce.sh
+    node ci/tools/testfiles-tool.js \
+    split 'test/functional/ios/testapp/**/*-specs.js' \
+    > ci/test-split.json
     BRANCH_CAT=ios ./ci/git-push.sh
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
@@ -38,6 +41,9 @@ elif [[ $CI_CONFIG == 'build_gappium' ]]; then
 elif [[ $CI_CONFIG == 'functional' ]]; then
     TARBALL=sauce-storage:$(node ./ci/tools/build-upload-tool.js \
         ./ci/build-upload-info.json filename)
+    echo node ci/tools/testfiles-tool.js list ci/test-split.json "${TEST_GROUP}"
+    TEST_FILES=$(node ci/tools/testfiles-tool.js list ci/test-split.json "${TEST_GROUP}")
+    echo "TEST_FILES --> ${MOCHA_FILES}"
     SAUCE=1 \
     VERBOSE=1 \
     TARBALL="${TARBALL}" \
@@ -45,6 +51,6 @@ elif [[ $CI_CONFIG == 'functional' ]]; then
     VERSION="7.1" \
     ./node_modules/.bin/mocha \
     --recursive \
-    -g "@skip-ios71|@skip-ios7|@skip-ios-all" -i \
-    $MOCHA_FILES
+    -g "@skip-ci|@skip-ios71|@skip-ios7|@skip-ios-all" -i \
+    ${TEST_FILES}
 fi

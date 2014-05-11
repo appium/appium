@@ -7,7 +7,7 @@ var setup = require("../../common/setup-base")
   , Q = require("q")
   , _ = require('underscore');
 
-describe('testapp - simple -', function () {
+describe('testapp - simple', function () {
 
   describe('using calc app', function () {
     var driver;

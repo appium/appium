@@ -8,6 +8,8 @@ var env = require('./env')
 
 require('colors');
 
+wd.configureHttp(env.HTTP_CONFIG);
+
 var trimToLength = function (str, length) {
   return (str && str.length > length) ?
     str.substring(0, length) + '...' : str;
@@ -57,6 +59,11 @@ module.exports.initSession = function (desired, opts) {
           console.log(' > ' + meth.magenta, path, (trimToLength(data, MAX_DATA_LENGTH) || '').grey);
         });
       }
+      if(env.DEBUG_CONNECTION) {
+        browser.on('connection', function(message) {
+          console.log('connection > ' + message );
+        });
+      }
       deferred.resolve(browser);
       var caps = _.defaults(desired, env.CAPS);
 
@@ -64,6 +71,7 @@ module.exports.initSession = function (desired, opts) {
       if (env.VERBOSE) console.log("opts -->", opts);
   
       if (env.SAUCE) {
+        if(env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
         desired.name = name;
       }
  

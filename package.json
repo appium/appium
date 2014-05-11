@@ -91,23 +91,24 @@
     "test": "grunt travis"
   },
   "devDependencies": {
-    "mocha": "~1.18.2",
-    "underscore-cli": "~0.2.17",
-    "wd": "0.2.21",
-    "yiewd": "~0.4.4",
-    "monocle-js": "~0.6.1",
     "assert": "~1.1.1",
-    "grunt-mocha-test": "~0.10.0",
-    "grunt-contrib-jshint": "~0.10.0",
-    "saucelabs": "~0.1.1",
-    "socket.io-client": "~0.9.16",
-    "socks": "~0.0.1",
-    "chai-as-promised": "~4.1.1",
     "chai": "~1.9.1",
+    "chai-as-promised": "~4.1.1",
+    "glob": "^3.2.9",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-mocha-test": "~0.10.0",
+    "mocha": "~1.18.2",
+    "monocle-js": "~0.6.1",
     "node-static": "~0.7.2",
     "q": "~1.0.0",
-    "unorm": "~1.3.1",
+    "saucelabs": "~0.1.1",
     "sinon": "~1.9.0",
-    "sinon-chai": "~2.5.0"
+    "sinon-chai": "~2.5.0",
+    "socket.io-client": "~0.9.16",
+    "socks": "~0.0.1",
+    "underscore-cli": "~0.2.17",
+    "unorm": "~1.3.1",
+    "wd": "0.2.21",
+    "yiewd": "~0.4.4"
   }
 }

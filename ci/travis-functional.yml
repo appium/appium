@@ -15,9 +15,18 @@ env:
   - APPIUM_HOST=auto
   - APPIUM_PORT=auto
   - SAUCE_USERNAME=auto
+  - HTTP_TIMEOUT=300000
+  - HTTP_RETRIES=5
+  - HTTP_RETRY_DELAY=10000
+  - DEBUG_CONNECTION=1
+  - MOCHA_INIT_TIMEOUT=600000
+  - LAUNCH_TIMEOUT='{"global":120000,"afterSimLaunch":30000}'
   # <SECURE>
   matrix:
-  - MOCHA_FILES=test/functional/ios/testapp/find-element-specs.js
-  - MOCHA_FILES=test/functional/ios/testapp/get-attribute-specs.js
+  - TEST_GROUP="group 1"
+  - TEST_GROUP="group 2"
+  - TEST_GROUP="group 3"
+  - TEST_GROUP="group 4"
+  - TEST_GROUP="group 5"
 script:
 - "./ci/script.sh"

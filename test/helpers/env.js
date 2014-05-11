@@ -9,6 +9,20 @@ env.APPIUM_HOST = process.env.APPIUM_HOST || '127.0.0.1';
 env.APPIUM_PORT = parseInt(process.env.APPIUM_PORT || 4723, 10);
 env.VERSION = process.env.VERSION;
 
+// travis
+env.TRAVIS_JOB_NUMBER = process.env.TRAVIS_JOB_NUMBER;
+
+// http
+env.HTTP_CONFIG = {};
+if(process.env.HTTP_TIMEOUT)
+  { env.HTTP_CONFIG.timeout = parseInt(process.env.HTTP_TIMEOUT, 10); }
+if(process.env.HTTP_RETRIES)
+  { env.HTTP_CONFIG.retries = parseInt(process.env.HTTP_RETRIES, 10); }
+if(process.env.HTTP_RETRY_DELAY)
+  { env.HTTP_CONFIG.retryDelay = parseInt(process.env.HTTP_RETRY_DELAY, 10); }
+
+env.DEBUG_CONNECTION = process.env.DEBUG_CONNECTION;
+
 // sauce
 env.SAUCE = process.env.SAUCE;
 if (env.SAUCE) {
@@ -22,6 +36,7 @@ if (env.SAUCE) {
   env.SAUCE_REST_ROOT = process.env.SAUCE_REST_ROOT;
 }
 
+console.log("process.env.LAUNCH_TIMEOUT -->", process.env.LAUNCH_TIMEOUT);
 env.LAUNCH_TIMEOUT = JSON.parse(process.env.LAUNCH_TIMEOUT || 60000);
 env.VERBOSE = process.env.VERBOSE;
 env.ISOLATED_TESTS = process.env.ISOLATED_TESTS;

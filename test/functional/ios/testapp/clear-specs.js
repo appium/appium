@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base")
  ,  desired = require('./desired');
 
-describe('testapp - clear -', function () {
+describe('testapp - clear', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

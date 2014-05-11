@@ -4,7 +4,7 @@ var setup = require("../../common/setup-base"),
     desired = require('./desired'),
     _ = require('underscore');
 
-describe('autoAcceptAlerts cap = true', function () {
+describe('testapp - autoAcceptAlerts cap = true', function () {
   var self = this;
   var driver;
 
@@ -22,7 +22,7 @@ describe('autoAcceptAlerts cap = true', function () {
   });
 });
 
-describe('autoAcceptAlerts cap = false', function () {
+describe('testapp - autoAcceptAlerts cap = false', function () {
   var self = this;
   var driver;
 
@@ -40,7 +40,7 @@ describe('autoAcceptAlerts cap = false', function () {
   });
 });
 
-describe('autoAcceptAlerts cap = "true"', function () {
+describe('testapp - autoAcceptAlerts cap = "true"', function () {
   var self = this;
   var driver;
 
@@ -58,7 +58,7 @@ describe('autoAcceptAlerts cap = "true"', function () {
   });
 });
 
-describe('autoAcceptAlerts cap = "false"', function () {
+describe('testapp - autoAcceptAlerts cap = "false"', function () {
   var self = this;
   var driver;
 
@@ -76,7 +76,7 @@ describe('autoAcceptAlerts cap = "false"', function () {
   });
 });
 
-describe('autoAcceptAlerts cap = ""', function () {
+describe('testapp - autoAcceptAlerts cap = ""', function () {
   var self = this;
   var driver;
 

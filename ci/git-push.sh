@@ -10,7 +10,7 @@ git branch -f ${CI_BRANCH}
 git checkout ${CI_BRANCH}
 cp .travis.yml .travis.yml.master
 node ci/tools/travis-yml-tool.js .travis.yml.master ci/travis-functional.yml > .travis.yml
-git add ${UPLOAD_INFO_FILE}
+git add ${UPLOAD_INFO_FILE} .travis.yml.master ci/test-split.json
 git commit -a -m "ci ${BRANCH_CAT} branch for build #${TRAVIS_JOB_NUMBER}"
 
 # pushing

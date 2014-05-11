@@ -6,7 +6,7 @@ var okIfAlert = require('../../../helpers/alert').okIfAlert,
     TouchAction = require('wd').TouchAction,
     MultiAction = require('wd').MultiAction;
 
-describe('testapp - pinch gesture -', function () {
+describe('testapp - pinch gesture', function () {
 
   describe('pinchOpen and pinchClose gesture', function () {
     var driver;

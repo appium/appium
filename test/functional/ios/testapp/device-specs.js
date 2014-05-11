@@ -5,7 +5,7 @@ var setup = require("../../common/setup-base"),
     initSession = require('../../../helpers/session').initSession,
     desired = require('./desired');
 
-describe('testapp - device -', function () {
+describe('testapp - device', function () {
 
   describe('target actions', function () {
     var driver;

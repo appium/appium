@@ -10,6 +10,18 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 require("colors");
 
+function getTitle(context) {
+    var title = "";
+    while(context) {
+        if(context.title) {
+            if(title) title = " - " + title;
+            title = context.title + title;
+        }
+        context = context.parent;
+    }
+    return title;
+}
+
 module.exports = function (context, desired, opts) {
   context.timeout(env.MOCHA_INIT_TIMEOUT);
 
@@ -19,7 +31,7 @@ module.exports = function (context, desired, opts) {
     var allPassed = true;
     before(function (done) {
       session
-        .setUp(context.title)
+        .setUp(getTitle(context))
         .nodeify(done);
     });
     after(function (done) { session.tearDown(allPassed).nodeify(done); });

@@ -4,7 +4,7 @@ var okIfAlert = require('../../../helpers/alert').okIfAlert,
     setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('testapp - rotation gesture -', function () {
+describe('testapp - rotation gesture', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

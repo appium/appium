@@ -340,6 +340,9 @@ public class Find extends CommandHandler {
             e.getMessage());
       }
     }
+    // Reset the compression to false
+    DumpWindowHierarchy.setCompressed(false);
+    DumpWindowHierarchy.instance.execute(null);
     if (multiple) {
       return getSuccessResult(resArray);
     } else {

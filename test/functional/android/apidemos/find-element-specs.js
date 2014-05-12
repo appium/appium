@@ -89,6 +89,14 @@ describe("apidemo - find elements -", function () {
           .should.eventually.have.length.at.least(10)
         .nodeify(done);
     });
+    it('should find multiple elements by resource-id even when theres just one', function (done) {
+      driver
+        .elementsById('android:id/home')
+        .then(function (els) {
+          els.length.should.equal(1);
+        })
+        .nodeify(done);
+    });
   });
 
   describe('find element(s) from element', function () {

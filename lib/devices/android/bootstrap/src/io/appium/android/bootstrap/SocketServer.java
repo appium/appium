@@ -3,7 +3,7 @@ package io.appium.android.bootstrap;
 import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 import io.appium.android.bootstrap.exceptions.CommandTypeException;
 import io.appium.android.bootstrap.exceptions.SocketServerException;
-import io.appium.android.bootstrap.handler.Find;
+import io.appium.android.bootstrap.handler.UpdateStrings;
 import io.appium.android.bootstrap.utils.NotImportantViews;
 import io.appium.android.bootstrap.utils.TheWatchers;
 
@@ -114,7 +114,7 @@ class SocketServer {
    */
   public void listenForever() throws SocketServerException {
     Logger.info("Appium Socket Server Ready");
-    Find.loadStringsJson();
+    UpdateStrings.loadStringsJson();
     dismissCrashAlerts();
     final TimerTask updateWatchers = new TimerTask() {
       @Override

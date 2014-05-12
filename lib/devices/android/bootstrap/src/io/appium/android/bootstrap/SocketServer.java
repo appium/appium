@@ -4,6 +4,7 @@ import io.appium.android.bootstrap.exceptions.AndroidCommandException;
 import io.appium.android.bootstrap.exceptions.CommandTypeException;
 import io.appium.android.bootstrap.exceptions.SocketServerException;
 import io.appium.android.bootstrap.handler.Find;
+import io.appium.android.bootstrap.utils.NotImportantViews;
 import io.appium.android.bootstrap.utils.TheWatchers;
 
 import java.io.BufferedReader;
@@ -46,6 +47,7 @@ class SocketServer {
    * @throws SocketServerException
    */
   public SocketServer(final int port) throws SocketServerException {
+    NotImportantViews.discard(true); // must be set for API 18+
     keepListening = true;
     executor = new AndroidCommandExecutor();
     try {

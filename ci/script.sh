@@ -11,11 +11,13 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
     echo Xcode version: `xcodebuild build -version`
     echo Xcode path: `xcode-select --print-path`
     ./reset.sh --hardcore --no-npmlink --dev --ios --verbose
-    ./ci/upload_build_to_sauce.sh
-    GLOB_PATTERN='test/functional/ios/testapp/**/*-specs.js'
-    GLOB_PATTERN+=',test/functional/ios/uicatalog/**/*-specs.js'
-    node ci/tools/testfiles-tool.js split "${GLOB_PATTERN}" > ci/test-split.json
-    BRANCH_CAT=ios ./ci/git-push.sh
+    if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
+        ./ci/upload_build_to_sauce.sh
+        GLOB_PATTERN='test/functional/ios/testapp/**/*-specs.js'
+        GLOB_PATTERN+=',test/functional/ios/uicatalog/**/*-specs.js'
+        node ci/tools/testfiles-tool.js split "${GLOB_PATTERN}" > ci/test-split.json
+        BRANCH_CAT=ios ./ci/git-push.sh
+    fi
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME

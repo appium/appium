@@ -59,7 +59,8 @@ run_ios_tests() {
     echo 
     DEVICE=$2 time $appium_mocha -g $3 -i \
         test/functional/common \
-        test/functional/ios
+        test/functional/ios \
+        test/functional/gappium
 }
 
 if $ios6_only || $ios_only || $all_tests; then
@@ -101,5 +102,5 @@ if $selendroid_only || $all_tests; then
     echo "---------------------"
     DEVICE=selendroid time $appium_mocha -g  '@skip-selendroid-all' -i \
         test/functional/selendroid \
-        test/functional/common/gappium-specs.js
+        test/functional/gappium
 fi

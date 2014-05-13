@@ -51,7 +51,7 @@ describe('toggles', function () {
 
   describe('toggle cellular data', toggleTest(promisedBrowser, "cellular data", "data_toggle", "toggleData"));
   describe('toggle Flight Mode', toggleTest(promisedBrowser, "Flight Mode", "flight_toggle", "toggleFlightMode"));
-  // toggle Wi-Fi doesn't work on emulator, real device only. 
+  // toggle Wi-Fi doesn't work on emulator, real device only.
   describe('toggle Wi-Fi @skip-android-all', toggleTest(promisedBrowser, "Wi-Fi", "wifi_toggle", "toggleWiFi"));
   describe('toggle Location Services', toggleTest(promisedBrowser, "Location Services", "gps_toggle", "toggleLocationServices"));
 });

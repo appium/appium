@@ -18,26 +18,26 @@ function split() {
   _(5).times(function(i) { groups['group ' + (i + 1)] = []; });
   var files = [];
   async.eachSeries(
-    globPatterns, 
+    globPatterns,
     function(globPattern, done) {
       glob(globPattern, function (err, _files) {
-        if(err) return done(err);
+        if (err) return done(err);
         files = _.union(files, _files);
         done();
       });
-    }, 
+    },
     function(err) {
-      if(err) {
+      if (err) {
         console.log(err);
         process.exit(1);
       }
       files = _(files).reject(function(filename) {
         return blackList.indexOf(filename) >= 0;
       });
-      _(files).each(function(filename, i) { 
+      _(files).each(function(filename, i) {
         groups['group ' + ((i % 5) + 1)].push(filename);
       });
-      console.log(JSON.stringify(groups, null, 2));       
+      console.log(JSON.stringify(groups, null, 2));
     }
   );
 }
@@ -48,11 +48,13 @@ function list() {
   console.log(splitData[group].join(' '));
 }
 
-switch(action) {
+switch (action) {
   case 'split':
-    return split();
+    split();
+    break;
   case 'list':
-    return list();
+    list();
+    break;
   default:
     console.log("Invalid action");
     process.exit(1);

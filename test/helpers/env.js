@@ -15,11 +15,11 @@ env.TRAVIS_BUILD_DIR = process.env.TRAVIS_BUILD_DIR;
 
 // http
 env.HTTP_CONFIG = {};
-if(process.env.HTTP_TIMEOUT)
+if (process.env.HTTP_TIMEOUT)
   { env.HTTP_CONFIG.timeout = parseInt(process.env.HTTP_TIMEOUT, 10); }
-if(process.env.HTTP_RETRIES)
+if (process.env.HTTP_RETRIES)
   { env.HTTP_CONFIG.retries = parseInt(process.env.HTTP_RETRIES, 10); }
-if(process.env.HTTP_RETRY_DELAY)
+if (process.env.HTTP_RETRY_DELAY)
   { env.HTTP_CONFIG.retryDelay = parseInt(process.env.HTTP_RETRY_DELAY, 10); }
 
 env.DEBUG_CONNECTION = process.env.DEBUG_CONNECTION;

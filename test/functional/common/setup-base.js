@@ -12,9 +12,9 @@ require("colors");
 
 function getTitle(context) {
     var title = "";
-    while(context) {
-        if(context.title) {
-            if(title) title = " - " + title;
+    while (context) {
+        if (context.title) {
+            if (title) title = " - " + title;
             title = context.title + title;
         }
         context = context.parent;

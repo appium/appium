@@ -6,7 +6,7 @@
 # point to make sure you can run any tests at all.
 
 require 'rspec'
-require 'selenium-webdriver'
+require 'appium_lib'
 require 'net/http'
 
 include Selenium::WebDriver::DriverExtensions::HasInputDevices
@@ -17,10 +17,9 @@ APP_PATH = '../../apps/UICatalog/build/Release-iphonesimulator/UICatalog.app'
 
 def desired_caps
   {
-      'browserName' => '',
-      'platform' => 'Mac',
-      'device' => 'iPhone Simulator',
-      'version' => '7.1',
+      'platformName' => 'iOS',
+      'deviceName' => 'iPhone Simulator',
+      'versionNumber' => '7.1',
       'app' => absolute_app_path
   }
 end
@@ -33,23 +32,18 @@ def server_url
   "http://127.0.0.1:4723/wd/hub"
 end
 
-def go_back
-  @driver.find_element(:name, "Back").click
-end
-
 describe "UI Catalog" do
   before(:all) do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => desired_caps, :url => server_url)
-    
-   end
+    Appium::Driver.new(caps: desired_caps).start_driver
+    Appium.promote_appium_methods RSpec::Core::ExampleGroup
+  end
 
   after(:all) do
-    @driver.quit
+    driver_quit
   end
 
   describe "An Element" do
-
-    subject { @driver.find_elements(:class_name, "UIATableView")[0]}
+    subject { find_elements(:class_name, "UIATableView")[0] }
     
     it {should_not be nil}
 
@@ -75,7 +69,7 @@ describe "UI Catalog" do
 
   describe "position" do
     it "is returned by the driver" do
-      third_row = @driver.find_elements(:class_name, "UIATableCell")[2]
+      third_row = find_elements(:class_name, "UIATableCell")[2]
       third_row.location.x.should be 0
       third_row.location.y.should be 152
     end
@@ -83,32 +77,32 @@ describe "UI Catalog" do
 
   describe "Screenshots" do
     it "can be made in base 64" do
-      screenshot = @driver.screenshot_as :base64
+      # screenshot for Appium saves to disk, to get base64 you need
+      # to use the underlying Selenium WebDriver
+      screenshot = driver.screenshot_as :base64
       screenshot.should_not be_nil
     end
 
     it "can be saved to the filesystem" do
-      @driver.save_screenshot("./pretty_app.png")
+      screenshot("./pretty_app.png")
     end
   end
 
   describe "attributes" do
 
     before :all do
-      @driver.find_elements(:class_name, "UIATableCell")[9].click
-      @switch = @driver.find_element(:class_name, "UIASwitch")
+      find_elements(:class_name, "UIATableCell")[9].click
+      @switch = find_element(:class_name, "UIASwitch")
     end
 
     # Go back to the menu when you're done
     after :all do
-      go_back
+      back
     end
 
     it "can be tested for visibility" do
       @switch.displayed?.should be_true
     end
-    
-    it "can be tested for usability"
 
     # TODO: Text checking still seems... Not good.
     it "can have text checked" do
@@ -129,27 +123,20 @@ describe "UI Catalog" do
   describe "text fields" do
 
     before :all do
-      @driver.find_elements(:class_name, "UIATableCell")[2].click
-      @text_field = @driver.find_element(:class_name, "UIATextField")
+      find_elements(:class_name, "UIATableCell")[2].click
+      @text_field = first_textfield
     end
 
     after :all do
-      go_back
+      back
     end
 
     it "can accept key presses" do
-      @text_field.send_keys("discombobulate")
+      @text_field.type("discombobulate")
     end
 
     it "can be checked for text" do
       @text_field.attribute("value").should eq "discombobulate"
-    end
-
-    it "can accept key presses as an ActionChain" do
-      @driver.action.send_keys(Selenium::WebDriver::Keys[:backspace])
-                    .send_keys('te')
-                    .perform
-      @text_field.attribute("value").should eq "discombobulatte"
     end
 
     it "can be cleared" do
@@ -160,22 +147,34 @@ describe "UI Catalog" do
 
   describe "alerts" do
     before :all do
-      @driver.find_elements(:class_name, "UIATableCell")[10].click
-      @elements = @driver.find_elements(:class_name, "UIATableCell")
+      find_elements(:class_name, "UIATableCell")[10].click
     end
 
     after :all do
-      go_back
+      back
     end
 
-    it "can be clicked"
+    it "can be clicked" do
+      s_text("Show OK-Cancel").click
+      b = button("OK")
+      b.click
+    end
 
-    it "can be interacted with"
+    it "can be accepted" do
+      s_text("Show OK-Cancel").click
+      alert_accept
+    end
 
-    it "can be dismissed"
+    it "can be dismissed" do
+      s_text("Show OK-Cancel").click
+      alert_dismiss
+    end
 
-    it "can be modal & have buttons" do
-      modal = @driver.find_elements(:class_name, "UIAStaticText")
+    it "can be Custom" do
+      s_text("Show Custom").click
+      button_1 = button("Button1")
+      button_2 = button("Button2")
+      button_2.click
     end
   end
 
@@ -187,24 +186,28 @@ describe "UI Catalog" do
 
   describe "sliders" do
     before :all do
-      @driver.find_elements(:class_name, "UIATableCell")[1].click
-      @slider = @driver.find_element(:class_name, "UIASlider")
+      find_elements(:class_name, "UIATableCell")[1].click
+      @slider = find_element(:class_name, "UIASlider")
     end
 
     after :all do
-      go_back
+      back
     end
 
     it "can have their values read" do
-      @slider.attribute("value").should eq "50%"
+      # .value is a patched method to return the value attribute
+      @slider.value.should eq "50%"
     end
 
     it "can be changed" do
-      actions = @slider.touch.flick(@slider, -1.0, 0, :normal)
-      actions.perform
-      @slider.attribute("value").should eq "0%"
+      @slider.value.should eq "50%"
+      actions = Appium::TouchAction.new
+      actions.press element: @slider, x: 60, y: 3
+      actions.move_to element: @slider, x: 120, y: 3
+      actions.release
+      actions.perform 
+      @slider.value.should eq "100%"
     end
-
   end
 
   describe "sessions" do
@@ -212,16 +215,15 @@ describe "UI Catalog" do
       data = JSON.parse(Net::HTTP.get(URI "#{server_url}/sessions"))
       data.should_not be_nil
 
-      session_id = @driver.instance_variable_get("@bridge").instance_variable_get("@session_id")
-
+      # Convenience method to get the session ID
       session_id.should eq (data["value"][0]["id"])
     end
   end
 
   describe "sizes" do
     it "can be obtained from elements" do
-      table_dimensions = @driver.find_element(:class_name, "UIATableView").size
-      row_dimensions = @driver.find_elements(:class_name, "UIATableCell")[0].size
+      table_dimensions = find_element(:class_name, "UIATableView").size
+      row_dimensions = find_elements(:class_name, "UIATableCell")[0].size
 
       table_dimensions["width"].should eq row_dimensions["width"]
       table_dimensions["height"].should_not eq row_dimensions["height"]
@@ -230,13 +232,14 @@ describe "UI Catalog" do
 
   describe "page source" do
     before :all do
-      @main_source = @driver.page_source
-      @driver.find_elements(:class_name, "UIATableCell")[2].click
-      @text_source = @driver.page_source
+      # get_source returns the source, source prints it directly
+      @main_source = get_source
+      find_elements(:class_name, "UIATableCell")[2].click
+      @text_source = get_source
     end
 
     after :all do
-      go_back
+      back
     end
 
     it "can be obtained" do

@@ -48,9 +48,9 @@ public class SimpleTest {
         File app = new File(appDir, "TestApp.app");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-        capabilities.setCapability(CapabilityType.VERSION, "7.1");
-        capabilities.setCapability(CapabilityType.PLATFORM, "Mac");
-        capabilities.setCapability("device", "iPhone Simulator");
+        capabilities.setCapability("platformVersion", "7.1");
+        capabilities.setCapability("platformName", "iOS");
+        capabilities.setCapability("deviceName", "iPhone Simulator");
         capabilities.setCapability("app", app.getAbsolutePath());
         driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
         values = new ArrayList<Integer>();

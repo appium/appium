@@ -22,8 +22,9 @@ public class AndroidWebViewTest {
         File classpathRoot = new File(System.getProperty("user.dir"));
         File app = new File(classpathRoot, "../../../apps/selendroid-test-app.apk");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("automationName","selendroid");
-        capabilities.setCapability(CapabilityType.PLATFORM, "android");
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
+        capabilities.setCapability("automationName","Selendroid");
+        capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("app", app.getAbsolutePath());
         capabilities.setCapability("app-package", "io.selendroid.testapp");
         capabilities.setCapability("app-activity", ".HomeScreenActivity");

@@ -25,9 +25,10 @@ public class AndroidTest {
         File appDir = new File(classpathRoot, "../../../apps/ApiDemos/bin");
         File app = new File(appDir, "ApiDemos-debug.apk");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("device","Android");
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-        capabilities.setCapability(CapabilityType.VERSION, "4.4");
+        capabilities.setCapability("deviceName","Android Emulator");
+        capabilities.setCapability("platformVersion", "4.4");
+        capabilities.setCapability("platformName","Android");
         capabilities.setCapability("app", app.getAbsolutePath());
         capabilities.setCapability("app-package", "com.example.android.apis");
         capabilities.setCapability("app-activity", ".ApiDemos");

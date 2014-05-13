@@ -3,6 +3,7 @@ package io.appium.android.bootstrap.handler;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.utils.NotImportantViews;
 
 import java.io.File;
 
@@ -21,22 +22,11 @@ public class DumpWindowHierarchy extends CommandHandler {
   // Note that
   // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
   // is directly from the UiDevice.java source code.
-  private static final File    dumpFolder   = new File(Environment.getDataDirectory(), "local/tmp");
-  private static final String  dumpFileName = "dump.xml";
-  private static final File    dumpFile     = new File(dumpFolder, dumpFileName);
+  private static final File   dumpFolder   = new File(Environment.getDataDirectory(), "local/tmp");
+  private static final String dumpFileName = "dump.xml";
+  private static final File   dumpFile     = new File(dumpFolder, dumpFileName);
 
-  /*
-   * @param command The {@link AndroidCommand} used for this handler.
-   *
-   * @return {@link AndroidCommandResult}
-   *
-   * @throws JSONException
-   *
-   * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
-   * bootstrap.AndroidCommand)
-   */
-  @Override
-  public AndroidCommandResult execute(final AndroidCommand command) {
+  public static boolean dump() {
     dumpFolder.mkdirs();
 
     if (dumpFile.exists()) {
@@ -56,6 +46,22 @@ public class DumpWindowHierarchy extends CommandHandler {
       }
     }
 
-    return getSuccessResult(dumpFile.exists());
+    return dumpFile.exists();
+  }
+
+  /*
+   * @param command The {@link AndroidCommand} used for this handler.
+   *
+   * @return {@link AndroidCommandResult}
+   *
+   * @throws JSONException
+   *
+   * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
+   * bootstrap.AndroidCommand)
+   */
+  @Override
+  public AndroidCommandResult execute(final AndroidCommand command) {
+    NotImportantViews.discard(true);
+    return getSuccessResult(dump());
   }
 }

@@ -44,7 +44,6 @@ class SocketServer {
    * @throws SocketServerException
    */
   public SocketServer(final int port) throws SocketServerException {
-    NotImportantViews.discard(true); // must be set for API 18+
     keepListening = true;
     executor = new AndroidCommandExecutor();
     try {

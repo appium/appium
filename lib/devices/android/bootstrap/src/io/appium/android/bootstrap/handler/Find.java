@@ -15,6 +15,7 @@ import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
+import io.appium.android.bootstrap.utils.NotImportantViews;
 import io.appium.android.bootstrap.utils.UiSelectorParser;
 
 import java.util.ArrayList;
@@ -187,7 +188,10 @@ public class Find extends CommandHandler {
         + " with the contextId: " + contextId);
 
     if (strategy == Strategy.INDEX_PATHS) {
+      NotImportantViews.discard(true);
       return findElementsByIndexPaths(text, multiple);
+    } else {
+      NotImportantViews.discard(false);
     }
 
     try {

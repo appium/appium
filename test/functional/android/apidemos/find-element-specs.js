@@ -77,7 +77,11 @@ describe("apidemo - find elements -", function () {
         .elementById("buttons_1_normal").text().should.become("Normal")
         .nodeify(done);
     });
-
+    it('should find a single element by string id', function (done) {
+      driver
+        .elementById("activity_sample_code").text().should.become("API Demos")
+        .nodeify(done);
+    });
     it('should find a single element by resource-id', function (done) {
       driver
         .elementById('android:id/home').should.eventually.exist

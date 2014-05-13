@@ -73,6 +73,10 @@ module.exports.initSession = function (desired, opts) {
       if (env.SAUCE) {
         if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
         desired.name = name;
+        if (caps['appium-version']){
+          // locking cap list
+          caps['appium-version']['filter-caps'] = _(caps).keys();
+        }
       }
 
       function init(remainingAttempts) {

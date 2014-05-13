@@ -10,31 +10,31 @@ var action = args[0];
 
 function split() {
   var globPatterns = args[1].split(',');
-  var blackList = _((args[2] || "").split(',')).map(function(filename) {
+  var blackList = _((args[2] || "").split(',')).map(function (filename) {
     return filename.trim();
   });
 
   var groups = {};
-  _(5).times(function(i) { groups['group ' + (i + 1)] = []; });
+  _(5).times(function (i) { groups['group ' + (i + 1)] = []; });
   var files = [];
   async.eachSeries(
     globPatterns,
-    function(globPattern, done) {
+    function (globPattern, done) {
       glob(globPattern, function (err, _files) {
         if (err) return done(err);
         files = _.union(files, _files);
         done();
       });
     },
-    function(err) {
+    function (err) {
       if (err) {
         console.log(err);
         process.exit(1);
       }
-      files = _(files).reject(function(filename) {
+      files = _(files).reject(function (filename) {
         return blackList.indexOf(filename) >= 0;
       });
-      _(files).each(function(filename, i) {
+      _(files).each(function (filename, i) {
         groups['group ' + ((i % 5) + 1)].push(filename);
       });
       console.log(JSON.stringify(groups, null, 2));

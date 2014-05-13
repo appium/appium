@@ -18,13 +18,11 @@ target = target.replace(/^  # <SECURE>.*$/m, secureLines);
 _([
     'SAUCE_REST_ROOT', 'APPIUM_HOST',
     'APPIUM_PORT', 'SAUCE_USERNAME',
-]).each(function(varName) {
+]).each(function (varName) {
     var regex = new RegExp('- ' + varName + '=.*');
     var line = source.match(regex)[0];
     regex = new RegExp('- ' + varName + '=.*','g');
     target = target.replace(regex, line);
 });
 console.log(target);
-
-
 

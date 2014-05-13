@@ -60,7 +60,7 @@ module.exports.initSession = function (desired, opts) {
         });
       }
       if (env.DEBUG_CONNECTION) {
-        browser.on('connection', function(message) {
+        browser.on('connection', function (message) {
           console.log('connection > ' + message );
         });
       }

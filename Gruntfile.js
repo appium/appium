@@ -56,8 +56,7 @@ module.exports = function (grunt) {
       }
     }
   , jscs: {
-    src: ['*.js','bin/**/*.js','ci/**/*.js','lib/**/*.js',
-      'sample-code/examples/**/*.js', 'test/**/*.js'],
+    src: '**/*.js',
     options: {
         config: ".jscs.json"
       }

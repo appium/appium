@@ -1,5 +1,6 @@
 "use strict";
 
-describe('safari - webview -', function () {
+describe('safari - webview @skip-ci', function () {
+  // TODO: enable safari/webview tests on ci 
   require('../../common/webview-base')('safari');
 });

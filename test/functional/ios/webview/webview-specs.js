@@ -4,7 +4,7 @@ var setup = require("../../common/setup-base")
   , desired = require('./desired')
   , _ = require('underscore');
 
-describe('webview - webview -', function () {
+describe('webview', function () {
 
   var driver;
 

@@ -13,10 +13,7 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
     ./reset.sh --hardcore --no-npmlink --dev --ios --verbose
     if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
         ./ci/upload_build_to_sauce.sh
-        GLOB_PATTERNS=''
-        GLOB_PATTERNS+='test/functional/ios/prefs/**/*-specs.js'
-        GLOB_PATTERNS+=',test/functional/ios/testapp/**/*-specs.js'
-        GLOB_PATTERNS+=',test/functional/ios/uicatalog/**/*-specs.js'
+        GLOB_PATTERNS='test/functional/ios/**/*-specs.js'
         node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
         BRANCH_CAT=ios ./ci/git-push.sh
     fi

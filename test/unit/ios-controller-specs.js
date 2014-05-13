@@ -17,12 +17,7 @@ describe('ios-controller', function () {
     });
     it('should return \'GetType\' for id selection', function () {
       var actual = createGetElementCommand('id', 'UIAKey', null, false);
-      var expected = "var exact = au.mainApp().getFirstWithPredicateWeighted" +
-                     "(\"name == 'UIAKey' || label == 'UIAKey' || value == '" +
-                     "UIAKey'\");exact && exact.status == 0 ? exact : " +
-                     "au.mainApp().getFirstWithPredicateWeighted(\"name " +
-                     "contains[c] 'UIAKey' || label contains[c] 'UIAKey' || " +
-                     "value contains[c] 'UIAKey'\");";
+      var expected = "au.getElementById('UIAKey')";
       actual.should.equal(expected);
     });
     it('should return \'GetType\' for tag name selection', function () {

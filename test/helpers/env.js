@@ -37,9 +37,9 @@ if (env.SAUCE) {
   env.SAUCE_REST_ROOT = process.env.SAUCE_REST_ROOT;
 }
 
-console.log("process.env.LAUNCH_TIMEOUT -->", process.env.LAUNCH_TIMEOUT);
-env.LAUNCH_TIMEOUT = JSON.parse(process.env.LAUNCH_TIMEOUT || 60000);
 env.VERBOSE = process.env.VERBOSE;
+if (env.VERBOSE) console.log("process.env.LAUNCH_TIMEOUT -->", process.env.LAUNCH_TIMEOUT);
+env.LAUNCH_TIMEOUT = JSON.parse(process.env.LAUNCH_TIMEOUT || 60000);
 env.ISOLATED_TESTS = process.env.ISOLATED_TESTS;
 env.FAST_TESTS = !env.ISOLATED_TESTS;
 env.RESET_IOS = process.env.RESET_IOS || true;

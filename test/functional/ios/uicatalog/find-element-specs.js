@@ -18,6 +18,16 @@ describe('uicatalog - find element', function () {
       .nodeify(done);
   });
 
+  it('should find a single element by id wrapped in array for multi', function (done) {
+    // ButtonsExplain: 'Various uses of UIButton'
+    driver
+      .elementsById('ButtonsExplain')
+      .then(function (els) {
+        els.length.should.equal(1);
+      })
+      .nodeify(done);
+  });
+
   it('should find a single element using elementByName', function (done) {
     driver
       .elementByName('UICatalog').then(function (el) {

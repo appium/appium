@@ -4,7 +4,7 @@ var setup = require("../../common/setup-base")
   , desired = require('./desired')
   , _ = require('underscore');
 
-describe('webview - orientation -', function () {
+describe('webview - orientation', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

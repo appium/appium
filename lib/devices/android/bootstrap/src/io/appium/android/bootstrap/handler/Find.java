@@ -46,6 +46,7 @@ public class Find extends CommandHandler {
   Dynamic                  dynamic          = new Dynamic();
   public static JSONObject apkStrings       = null;
   UiSelectorParser         uiSelectorParser = new UiSelectorParser();
+  public static boolean    compressed       = false;
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
@@ -66,6 +67,13 @@ public class Find extends CommandHandler {
     final Strategy strategy;
     try {
       strategy = Strategy.fromString((String) params.get("strategy"));
+      if (!compressed && strategy == Strategy.INDEX_PATHS) {
+        compressed = true;
+        setCompressed(true);
+      } else if (compressed && strategy != Strategy.INDEX_PATHS) {
+        compressed = false;
+        setCompressed(false);
+      }
     } catch (final InvalidStrategyException e) {
       return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
     }
@@ -340,9 +348,6 @@ public class Find extends CommandHandler {
             e.getMessage());
       }
     }
-    // Reset the compression to false
-    DumpWindowHierarchy.setCompressed(false);
-    DumpWindowHierarchy.instance.execute(null);
     if (multiple) {
       return getSuccessResult(resArray);
     } else {
@@ -451,6 +456,12 @@ public class Find extends CommandHandler {
       }
     }
     return sel;
+  }
+
+  private void setCompressed(final boolean compressed) {
+    // Toggle compression
+    DumpWindowHierarchy.setCompressed(compressed);
+    DumpWindowHierarchy.instance.execute(null);
   }
 
   private UiSelector stringsXmlId(final boolean many, String text)

@@ -5,7 +5,9 @@ var chai = require('chai')
   , serverHub = serverUrl + '/wd/hub/session'
   , request = require('request');
 
-describe("appium - jsonwp -", function () {
+describe("common - jsonwp @skip-ci", function () {
+  // TODO: This cannot be tested using Sauce. It need to be run within a Travis 
+  // instance.
   describe('to a non-existent url', function () {
     it('should get 404 with text/plain body', function (done) {
       request.get(serverUrl + '/a/bad/path', function (err, res, body) {

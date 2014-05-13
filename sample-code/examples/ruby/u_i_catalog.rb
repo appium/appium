@@ -103,8 +103,6 @@ describe "UI Catalog" do
     it "can be tested for visibility" do
       @switch.displayed?.should be_true
     end
-    
-    it "can be tested for usability"
 
     # TODO: Text checking still seems... Not good.
     it "can have text checked" do
@@ -197,15 +195,19 @@ describe "UI Catalog" do
     end
 
     it "can have their values read" do
-      @slider.attribute("value").should eq "50%"
+      # .value is a patched method to return the value attribute
+      @slider.value.should eq "50%"
     end
 
     it "can be changed" do
-      actions = @slider.touch.flick(@slider, -1.0, 0, :normal)
-      actions.perform
-      @slider.attribute("value").should eq "0%"
+      @slider.value.should eq "50%"
+      actions = Appium::TouchAction.new
+      actions.press element: @slider, x: 60, y: 3
+      actions.move_to element: @slider, x: 120, y: 3
+      actions.release
+      actions.perform 
+      @slider.value.should eq "100%"
     end
-
   end
 
   describe "sessions" do
@@ -213,8 +215,7 @@ describe "UI Catalog" do
       data = JSON.parse(Net::HTTP.get(URI "#{server_url}/sessions"))
       data.should_not be_nil
 
-      #session_id = @driver.instance_variable_get("@bridge").instance_variable_get("@session_id")
-
+      # Convenience method to get the session ID
       session_id.should eq (data["value"][0]["id"])
     end
   end
@@ -231,6 +232,7 @@ describe "UI Catalog" do
 
   describe "page source" do
     before :all do
+      # get_source returns the source, source prints it directly
       @main_source = get_source
       find_elements(:class_name, "UIATableCell")[2].click
       @text_source = get_source

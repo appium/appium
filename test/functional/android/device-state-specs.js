@@ -6,7 +6,7 @@ var chai = require('chai')
   , Android = require('../../../lib/devices/android/android.js')
   , ADB = require('../../../lib/devices/android/adb');
 
-// todo: hangs when doing 'adb shell input keyevent 3' 
+// todo: hangs when doing 'adb shell input keyevent 3'
 describe("android tests - device state - @skip-android-all", function () {
 
   describe('Android Device State module', function () {

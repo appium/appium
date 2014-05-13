@@ -35,7 +35,7 @@ describe('safari prefs @skip-ios7', function () {
 });
 
 describe('safari ios7 prefs @skip-ios6 @skip-ci', function () {
-  // TODO modify the test to enable ci, right know it is checking a local file, 
+  // TODO modify the test to enable ci, right know it is checking a local file,
   // not gonna work with sauce
   var checkSafariSetting = require('./check-safari-settings').ios7;
 

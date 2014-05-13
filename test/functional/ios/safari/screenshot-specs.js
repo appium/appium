@@ -4,7 +4,7 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base");
 
 describe("safari - screenshot @skip-ci", function () {
-  // TODO: enable safari tests on ci 
+  // TODO: enable safari tests on ci
   describe('screenshots (' + env.DEVICE + ')', function () {
     var driver;
     setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });

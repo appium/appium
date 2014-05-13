@@ -6,7 +6,7 @@ var env = require('../../../helpers/env')
   , spinTitle = webviewHelper.spinTitle;
 
 describe("safari - windows-frame @skip-ci", function () {
-  // TODO: enable safari tests on ci 
+  // TODO: enable safari tests on ci
   describe('windows and frames (' + env.DEVICE + ')', function () {
     var driver;
     var desired = {

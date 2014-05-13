@@ -46,7 +46,7 @@ module.exports.initSession = function (desired, opts) {
         console.log("env.APPIUM_PORT -->", env.APPIUM_PORT);
       }
       browser = wd.promiseChainRemote(env.APPIUM_HOST, env.APPIUM_PORT, env.APPIUM_USERNAME, env.APPIUM_PASSWORD);
-      if(env.SAUCE_REST_ROOT) browser.sauceRestRoot = env.SAUCE_REST_ROOT; 
+      if (env.SAUCE_REST_ROOT) browser.sauceRestRoot = env.SAUCE_REST_ROOT;
       if (env.VERBOSE) {
         var MAX_DATA_LENGTH = 500;
         browser.on('status', function (info) {
@@ -59,8 +59,8 @@ module.exports.initSession = function (desired, opts) {
           console.log(' > ' + meth.magenta, path, (trimToLength(data, MAX_DATA_LENGTH) || '').grey);
         });
       }
-      if(env.DEBUG_CONNECTION) {
-        browser.on('connection', function(message) {
+      if (env.DEBUG_CONNECTION) {
+        browser.on('connection', function (message) {
           console.log('connection > ' + message );
         });
       }
@@ -69,12 +69,12 @@ module.exports.initSession = function (desired, opts) {
 
       if (env.VERBOSE) console.log("caps -->", caps);
       if (env.VERBOSE) console.log("opts -->", opts);
-  
+
       if (env.SAUCE) {
-        if(env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
+        if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
         desired.name = name;
       }
- 
+
       function init(remainingAttempts) {
         if (env.VERBOSE) console.log("remainingAttempts -->", remainingAttempts);
         return browser

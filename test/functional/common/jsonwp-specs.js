@@ -6,7 +6,7 @@ var chai = require('chai')
   , request = require('request');
 
 describe("common - jsonwp @skip-ci", function () {
-  // TODO: This cannot be tested using Sauce. It need to be run within a Travis 
+  // TODO: This cannot be tested using Sauce. It need to be run within a Travis
   // instance.
   describe('to a non-existent url', function () {
     it('should get 404 with text/plain body', function (done) {

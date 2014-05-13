@@ -7,7 +7,7 @@ var setup = require("../../../common/setup-base"),
 describe('testapp - timeout', function () {
 
   afterEach(function (done) { setTimeout(done, 3000); });
-  
+
   describe('via desired caps', function () {
     var driver;
     setup(this, _.defaults({newCommandTimeout: 3}, desired))

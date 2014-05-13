@@ -46,7 +46,9 @@ var waitForLaunch = function (app, extraArgs, done) {
   return proc;
 };
 
-describe("appium - prelaunch -", function () {
+describe("common - prelaunch @skip-ci", function () {
+  // TODO: test helpers need to be modified to cope prelaunch on sauce.
+  // leaving it out for now.
   this.timeout(env.MOCHA_INIT_TIMEOUT);
   describe('ios @skip-android-all', function () {
     var proc;

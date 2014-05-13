@@ -80,7 +80,7 @@
     "bytes": "~0.2.1",
     "appium-atoms": "~0.0.5",
     "appium-instruments": "~0.1.21",
-    "appium-uiauto": "~0.0.16",
+    "appium-uiauto": "~0.0.17",
     "mv": "~2.0.0",
     "js2xmlparser2": "~0.2.0",
     "xpath": "~0.0.6",

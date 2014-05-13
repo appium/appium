@@ -48,7 +48,7 @@ against your iOS device.
 ## Setup
 
 Before you can run your tests against Safari on a real device you will need to:
-* Have the **ios-webkit-debug-proxy** installed and running (see the
+* Have the **ios-webkit-debug-proxy** installed, running and listening on port 27753 (see the
 [hybrid docs](hybrid.md) for instructions)
 * Turn on **web inspector** on iOS device (**settings > safari >
 advanced**, only for iOS 6.0 and up)

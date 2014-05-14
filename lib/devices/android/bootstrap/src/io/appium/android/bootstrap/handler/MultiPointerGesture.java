@@ -1,5 +1,7 @@
 package io.appium.android.bootstrap.handler;
 
+import android.os.Build;
+
 import android.view.MotionEvent.PointerCoords;
 
 import com.android.uiautomator.core.UiObject;
@@ -39,12 +41,18 @@ public class MultiPointerGesture extends TouchableEvent {
         }
       } else {
         Object controller = getController();
-        final Method pmpg = getMethod("performMultiPointerGesture", controller);
-        Boolean rt = (Boolean)pmpg.invoke(controller, (Object)pcs);
-        if (rt.booleanValue()) {
-          return getSuccessResult("OK");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+          final Method pmpg = getMethod("performMultiPointerGesture", controller);
+          Boolean rt = (Boolean)pmpg.invoke(controller, (Object)pcs);
+          if (rt.booleanValue()) {
+            return getSuccessResult("OK");
+          } else {
+            return getErrorResult("Unable to perform multi pointer gesture");
+          }
         } else {
-          return getErrorResult("Unable to perform multi pointer gesture");
+          Logger.error("Device does not support API < 18!");
+          return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR,
+              "Cannot perform multi pointer gesture on device below API level 18");
         }
       }
     } catch (final ElementNotInHashException e) {

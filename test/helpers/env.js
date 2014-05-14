@@ -177,9 +177,10 @@ if (env.SAUCE && env.TARBALL) {
 }
 
 // rest enf points
-env.TEST_END_POINT = 'http://localhost:' + env.APPIUM_PORT + '/test/';
+env.LOCAL_APPIUM_PORT = env.SAUCE? 4443 : env.APPIUM_PORT;
+env.TEST_END_POINT = 'http://localhost:' + env.LOCAL_APPIUM_PORT + '/test/';
 env.GUINEA_TEST_END_POINT = env.TEST_END_POINT + 'guinea-pig';
-env.CHROME_TEST_END_POINT = 'http://10.0.2.2:' + env.APPIUM_PORT + '/test/';
+env.CHROME_TEST_END_POINT = 'http://10.0.2.2:' + env.LOCAL_APPIUM_PORT + '/test/';
 env.CHROME_GUINEA_TEST_END_POINT = env.CHROME_TEST_END_POINT + 'guinea-pig';
 
 module.exports = env;

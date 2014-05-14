@@ -18,7 +18,9 @@ var spinTitle = function (expTitle, browser, _timeout) {
     });
 };
 
-var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
+var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
+  var app = typeof desired === 'object' ? desired.app || desired.browserName  : desired;
+
   var uuid = uuidGenerator.v1();
   if (typeof urlToLoad === "undefined") {
     if (app === "chrome" || app === "chromium") {
@@ -55,7 +57,24 @@ var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
   }
 };
 
+
+var isChrome = function (desired) {
+  return desired.app === "chrome" || desired.app === "chromium";
+};
+
+function skip(reason, done) {
+  console.warn("skipping: " + reason);
+  done();
+}
+
+var testEndpoint = function (desired) {
+    return isChrome(desired) ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
+};
+
 module.exports = {
   spinTitle: spinTitle,
-  loadWebView: loadWebView
+  loadWebView: loadWebView,
+  isChrome: isChrome,
+  skip: skip,
+  testEndpoint: testEndpoint
 };

@@ -3,6 +3,8 @@ package io.appium.android.bootstrap.handler;
 import io.appium.android.bootstrap.CommandHandler;
 import io.appium.android.bootstrap.Logger;
 
+import android.os.Build;
+
 import android.view.MotionEvent.PointerCoords;
 
 import com.android.uiautomator.core.UiDevice;
@@ -34,8 +36,14 @@ public abstract class TouchableEvent extends CommandHandler {
     final UiDevice device = UiDevice.getInstance();
     final Object bridge = enableField(device.getClass(), "mUiAutomationBridge")
         .get(device);
-    final Object controller = enableField(bridge.getClass().getSuperclass(),
-        "mInteractionController").get(bridge);
+    Object controller = null;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      controller = enableField(bridge.getClass().getSuperclass(),
+          "mInteractionController").get(bridge);
+    } else {
+      controller = enableField(bridge.getClass(),
+          "mInteractionController").get(bridge);
+    }
     return controller;
 
   }

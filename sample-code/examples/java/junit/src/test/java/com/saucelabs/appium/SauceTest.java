@@ -70,10 +70,11 @@ public class SauceTest implements SauceOnDemandSessionIdProvider {
         String sauceAccessKey = authentication.getAccessKey();
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
-        capabilities.setCapability(CapabilityType.VERSION, "6.0");
-        capabilities.setCapability("device", "iPhone Simulator");
-        capabilities.setCapability(CapabilityType.PLATFORM, "Mac 10.8");
-        capabilities.setCapability("app", "http://appium.s3.amazonaws.com/TestApp6.0.app.zip");
+        capabilities.setCapability("platformVersion", "6.0");
+        capabilities.setCapability("deviceName", "iPhone Simulator");
+        capabilities.setCapability("platformName", "iOS");
+        capabilities.setCapability("appium-version", "1.0.0");
+      capabilities.setCapability("app", "http://appium.s3.amazonaws.com/TestApp6.0.app.zip");
 
         driver = new AppiumDriver(new URL(MessageFormat.format("http://{0}:{1}@ondemand.saucelabs.com:80/wd/hub", sauceUserName, sauceAccessKey)),
                 capabilities);

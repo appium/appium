@@ -33,9 +33,9 @@ public class SafariTest {
     @Before
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("device", "iPhone Simulator");
+        capabilities.setCapability("deviceName", "iPhone Simulator");
         capabilities.setCapability("platformName", "iOS");
-        capabilities.setCapability("version", "7.1");
+        capabilities.setCapability("platformVersion", "7.1");
         capabilities.setCapability("browserName", "safari");
         driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"),
                 capabilities);

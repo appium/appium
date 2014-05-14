@@ -132,17 +132,6 @@ env.ANDROID = env.DEVICE.match(/android/i);
 env.LAUNCH_TIMEOUT =  process.env.LAUNCH_TIMEOUT ? JSON.parse(process.env.LAUNCH_TIMEOUT) :
   (env.IOS71 ? {"global": 60000, "afterSimLaunch": 10000} : 60000);
 
-// caps overide for sauce
-if (env.SAUCE) {
-  if (env.DEVICE === 'IOS') {
-    env.CAPS.version = "6.1";
-    env.CAPS.platform = "Mac 10.8";
-  } else if (env.CAPS.device === 'Android') {
-    env.CAPS.version = "4.2";
-    env.CAPS.platform = "LINUX";
-  }
-}
-
 env.CAPS.launchTimeout = env.LAUNCH_TIMEOUT;
 
 if (env.IOS) {
@@ -174,6 +163,7 @@ if (env.SAUCE && env.TARBALL) {
     'appium-startup-args': 'minimal'
     //'appium-startup-args': '-m'
   };
+  env.CAPS.tags=[env.DEVICE];
 }
 
 // rest enf points

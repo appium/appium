@@ -1,7 +1,7 @@
-source "https://www.rubygems.org"
+source 'https://www.rubygems.org'
 
 gem 'appium_lib'
-gem "rest-client"
-gem "rspec"
-gem "cucumber"
-gem "rspec-expectations"
+gem 'rest-client'
+gem 'rspec'
+gem 'cucumber'
+gem 'rspec-expectations'

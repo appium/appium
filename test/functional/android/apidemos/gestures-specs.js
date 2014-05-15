@@ -7,7 +7,7 @@ var env = require('../../../helpers/env')
   , droidList = 'android.widget.ListView'
   , Q = require("q");
 
-describe("apidemo - gestures -", function () {
+describe("apidemo - gestures", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

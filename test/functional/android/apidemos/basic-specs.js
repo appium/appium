@@ -13,7 +13,7 @@ var env = require('../../../helpers/env')
   , _ = require('underscore')
   , androidReset = require('../../../helpers/reset').androidReset;
 
-describe("apidemo - basic -", function () {
+describe("apidemo - basic @skip-ci", function () {
 
   afterEach(function (done) {
     setTimeout(function () { done(); }, 2000); // cooldown

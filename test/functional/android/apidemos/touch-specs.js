@@ -3,7 +3,6 @@
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
-  , androidReset = require('../../../helpers/reset').androidReset
   , wd = require("wd")
   , droidText = 'android.widget.TextView'
   , droidList = 'android.widget.ListView'
@@ -11,13 +10,13 @@ var env = require('../../../helpers/env')
   , MultiAction = wd.MultiAction;
 
 
-describe("apidemo - touch gestures -", function () {
+describe("apidemo - touch gestures", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
+      driver.resetApp().nodeify(done);
     });
   }
 

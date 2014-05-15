@@ -2,16 +2,15 @@
 
 var setup = require("../../common/setup-base")
   , env = require('../../../helpers/env')
-  , desired = require("./desired")
-  , androidReset = require('../../../helpers/reset').androidReset;
+  , desired = require("./desired");
 
-describe("apidemos - orientation -", function () {
+describe("apidemos - orientation", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
+      driver.resetApp().nodeify(done);
     });
   }
 

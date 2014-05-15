@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base")
   , desired = require("./desired");
 
-describe("apidemos - screenshot -", function () {
+describe("apidemos - screenshot", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

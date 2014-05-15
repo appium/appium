@@ -1,15 +1,14 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired")
-  , path = require('path');
+  , desired = require("./desired");
 
 var desired = {
-  app: path.resolve(__dirname, '../../../../sample-code/apps/gps-demo/bin/GPSTutorial1.apk')
+  app: 'sample-code/apps/gps-demo/bin/GPSTutorial1.apk'
 };
 
 // TODO: bring back when new wd is published with setGeoLocation
-describe("apidemo - location - @skip-ios-all", function () {
+describe("apidemo - location", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

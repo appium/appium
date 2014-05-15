@@ -5,7 +5,7 @@ var setup = require("../../common/setup-base")
   , XMLDom = require("xmldom").DOMParser
   , desired = require("./desired");
 
-describe("apidemos - source -", function () {
+describe("apidemos - source", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

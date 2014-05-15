@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base")
   , desired = require("./desired");
 
-describe("apidemos - push & pull file -", function () {
+describe("apidemos - file", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

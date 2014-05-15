@@ -2,7 +2,7 @@
 
 process.env.DEVICE = process.env.DEVICE || "selendroid";
 var setup = require("../common/setup-base")
-  , env = require('../../../helpers/env')
+  , env = require('../../helpers/env')
   , initSession = require('../../helpers/session').initSession
   , path = require('path')
   , Q = require("q")

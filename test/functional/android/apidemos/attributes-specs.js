@@ -2,17 +2,16 @@
 
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
-  , desired = require("./desired")
-  , androidReset = require('../../../helpers/reset').androidReset;
+  , desired = require("./desired");
 
-describe("apidemos - attributes -", function () {
+describe("apidemos - attributes", function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
+      driver.resetApp().nodeify(done);
     });
   }
 

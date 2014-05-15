@@ -2,16 +2,15 @@
 
 var setup = require("../../common/setup-base")
   , desired = require("./desired")
-  , _ = require('underscore')
-  , androidReset = require('../../../helpers/reset').androidReset;
+  , _ = require('underscore');
 
-describe("apidemo - keyboard -", function () {
+describe("apidemo - keyboard", function () {
   var driver;
   setup(this,  _.defaults({appActivity: "view.Controls1" }, desired))
     .then(function (d) { driver = d; });
 
   beforeEach(function (done) {
-    androidReset('com.example.android.apis', 'view.Controls1').nodeify(done);
+      driver.resetApp().nodeify(done);
   });
 
   it('should be able to edit a text field', function (done) {

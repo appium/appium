@@ -16,14 +16,22 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
         GLOB_PATTERNS='test/functional/common/**/*-specs.js'
         GLOB_PATTERNS+=',test/functional/ios/**/*-specs.js'
         node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
+        cp ci/mochas/ios71-mocha ci/mocha
         BRANCH_CAT=ios ./ci/git-push.sh
     fi
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME
-    ./reset.sh --hardcore --no-npmlink --dev --android --verbose 
-    #./ci/upload_build_to_sauce.sh
-    #BRANCH_CAT=android ./ci/git-push.sh
+    ./reset.sh --hardcore --no-npmlink --dev --ios --android --verbose 
+    if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
+        rm sample-code/apps/ApiDemos
+        mv submodules/ApiDemos sample-code/apps/
+        ./ci/upload_build_to_sauce.sh
+        GLOB_PATTERNS='test/functional/android/apidemos/**/*-specs.js'
+        node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
+        cp ci/mochas/android-mocha ci/mocha
+        BRANCH_CAT=android ./ci/git-push.sh
+    fi
 elif [[ $CI_CONFIG == 'build_selendroid' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME
@@ -46,14 +54,6 @@ elif [[ $CI_CONFIG == 'functional' ]]; then
     TEST_FILES=$(node ci/tools/testfiles-tool.js list ci/test-split.json "${TEST_GROUP}")
     echo "TEST_FILES --> ${TEST_FILES}"
     if [[ -n "$TEST_FILES" ]]; then
-        SAUCE=1 \
-        VERBOSE=1 \
-        TARBALL="${TARBALL}" \
-        DEVICE="ios71" \
-        VERSION="7.1" \
-        ./node_modules/.bin/mocha \
-        --recursive \
-        -g "@skip-ci|@skip-ios71|@skip-ios7|@skip-ios-all" -i \
-        ${TEST_FILES}
+        TARBALL=$TARBALL ci/mocha ${TEST_FILES}
     fi
 fi

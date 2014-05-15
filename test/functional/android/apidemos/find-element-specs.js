@@ -4,17 +4,16 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require("./desired")
   , atv = 'android.widget.TextView'
-  , alv = 'android.widget.ListView'
-  , androidReset = require('../../../helpers/reset').androidReset;
+  , alv = 'android.widget.ListView';
 
-describe("apidemo - find elements -", function () {
+describe("apidemo - find elements", function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
+      driver.resetApp().nodeify(done);
     });
   }
 

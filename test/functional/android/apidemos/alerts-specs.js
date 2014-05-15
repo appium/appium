@@ -6,7 +6,7 @@ var env = require('../../../helpers/env')
   , net = require('net')
   , io = require('socket.io-client');
 
-describe("apidemos - alerts - @skip-android-all -", function () {
+describe("apidemos - alerts @skip-android-all", function () {
 
   setup(this, desired);
 

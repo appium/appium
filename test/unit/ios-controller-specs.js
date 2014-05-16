@@ -29,6 +29,34 @@ describe('ios-controller', function () {
       actual.should.equal("au.getElementByType('UIAKey')");
     });
   });
+  describe('#getLocalizedStringForSelector', function () {
+    describe('when there are no localizableStrings', function () {
+      beforeEach(function () {
+        controller.localizableStrings = {};
+      });
+      it('returns the selector if there are no localizableStrings', function () {
+        var actual = controller.getLocalizedStringForSelector('someSelector');
+        actual.should.equal('someSelector');
+      });
+    });
+    describe('when there are localizableStrings', function () {
+      beforeEach(function () {
+        var locString = [{'someSelector': 'localSelector'}];
+        controller.localizableStrings = locString;
+      });
+      afterEach(function () {
+        controller.localizableStrings = {};
+      });
+      it('returns the localized string', function () {
+        var actual = controller.getLocalizedStringForSelector('someSelector');
+        actual.should.equal('localSelector');
+      });
+      it('returns the selector if there is not a matching key in localizableStrings', function () {
+        var actual = controller.getLocalizedStringForSelector('notFoundSelector');
+        actual.should.equal('notFoundSelector');
+      });
+    });
+  });
   describe('#getSelectorForStrategy', function () {
     describe('given a class name', function () {
       it('should allow UIA names', function () {
@@ -40,36 +68,6 @@ describe('ios-controller', function () {
         (function () {
           getSelectorForStrategy('class name', 'key');
         }).should.Throw(TypeError, msg);
-      });
-    });
-    describe('given an id', function () {
-      describe('when there are no localizableStrings', function () {
-        beforeEach(function () {
-          controller.localizableStrings = {};
-        });
-        it('returns the selector if there aren\'t localizableStrings', function () {
-          var actual = controller.getSelectorForStrategy('id', 'someSelector');
-          actual.should.equal('someSelector');
-        });
-      });
-      describe('when there are localizableStrings', function () {
-        beforeEach(function () {
-          var locString = [{'someSelector': 'localSelector'}];
-          controller.localizableStrings = locString;
-        });
-        afterEach(function () {
-          controller.localizableStrings = {};
-        });
-        it('returns the localized string', function () {
-          var actual = controller.getSelectorForStrategy('id', 'someSelector');
-          actual.should.equal('localSelector');
-        });
-        it('returns an error when the selector isn\'t in localizableStrings', function () {
-          var msg = "Id selector not found in Localizable.strings.";
-          (function () {
-            controller.getSelectorForStrategy('id', 'notFoundSelector');
-          }).should.Throw(TypeError, msg);
-        });
       });
     });
   });

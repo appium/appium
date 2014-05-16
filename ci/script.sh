@@ -10,7 +10,7 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
     echo OS X version: `sw_vers -productVersion`
     echo Xcode version: `xcodebuild build -version`
     echo Xcode path: `xcode-select --print-path`
-    ./reset.sh --hardcore --no-npmlink --dev --ios --verbose
+    ./reset.sh --hardcore --no-npmlink --dev --ios
     if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
         ./ci/upload_build_to_sauce.sh
         GLOB_PATTERNS='test/functional/common/**/*-specs.js'
@@ -22,12 +22,13 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME
-    ./reset.sh --hardcore --no-npmlink --dev --ios --android --verbose 
+    ./reset.sh --hardcore --no-npmlink --dev --ios --android 
     if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
         rm sample-code/apps/ApiDemos
         mv submodules/ApiDemos sample-code/apps/
         ./ci/upload_build_to_sauce.sh
-        GLOB_PATTERNS='test/functional/android/apidemos/**/*-specs.js'
+        GLOB_PATTERNS='test/functional/common/**/*-specs.js'
+        GLOB_PATTERNS+=',test/functional/android/**/*-specs.js'
         node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
         cp ci/mochas/android-mocha ci/mocha
         BRANCH_CAT=android ./ci/git-push.sh

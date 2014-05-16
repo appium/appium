@@ -72,7 +72,7 @@ module.exports.initSession = function (desired, opts) {
 
       if (env.SAUCE) {
         if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
-        desired.name = name;
+        if (name) desired.name = name.replace(/@[^\s]*/,'');
         if (caps['appium-version']){
           // locking cap list
           caps['appium-version']['filter-caps'] = _(caps).keys();

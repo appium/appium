@@ -6,5 +6,5 @@ TARBALL="${TARBALL}" \
 DEVICE="android" \
 VERSION="4.3" \
 ./node_modules/.bin/mocha \
--g "@skip-ci|@skip-android-all" -i \
+-g "@skip-ci|@skip-android-all|@android-arm-only" -i \
 "$@"

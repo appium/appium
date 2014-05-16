@@ -1,12 +1,11 @@
 /*global beforeEach:true */
 "use strict";
 
-var env = require('./env')
-  , setup = require("../functional/common/setup-base")
-  , path = require('path');
+var env = require('../../helpers/env')
+  , setup = require("./setup-base");
 
 var desired = {
-  app: path.resolve(__dirname, "../../sample-code/apps/selendroid-test-app.apk"),
+  app: "sample-code/apps/selendroid-test-app.apk",
   appPackage: 'io.selendroid.testapp',
   appActivity: '.HomeScreenActivity'
 };

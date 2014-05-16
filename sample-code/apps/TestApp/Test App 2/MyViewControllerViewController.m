@@ -45,11 +45,7 @@
         self.locationMgr.delegate = self;
         [self logLocationAuth];
     }
-	[firstArg setAccessibilityIdentifier:@"IntegerA"];
-	[secondArg setAccessibilityIdentifier:@"IntegerB"];
-	[computeSumButton setAccessibilityIdentifier:@"ComputeSumButton"];
-	[answerLabel setAccessibilityIdentifier:@"Answer"];
-    [locationStatus setAccessibilityIdentifier:@"locationStatus"];
+
     return self;
 }
 
@@ -66,6 +62,14 @@
                                    selector:@selector(logLocationAuthFromTimer:)
                                    userInfo:nil
                                     repeats:NO];
+
+    [firstArg setAccessibilityIdentifier:@"IntegerA"];
+    [secondArg setAccessibilityIdentifier:@"IntegerB"];
+    [computeSumButton setAccessibilityIdentifier:@"ComputeSumButton"];
+    [answerLabel setAccessibilityIdentifier:@"Answer"];
+    [locationStatus setAccessibilityIdentifier:@"locationStatus"];
+
+    computeSumButton.titleLabel.text = NSLocalizedString(@"main.button.computeSum", @"Compute Sum button");
 }
 
 - (void)logLocationAuthFromTimer:(NSTimer *)timer

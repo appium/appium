@@ -6,11 +6,38 @@ describe('testapp - find element', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
+  describe('by id', function () {
+    it('should first attempt to match accessibility id', function (done) {
+      driver.elementById('ComputeSumButton').then(function (el) {
+        el.getTagName().should.eventually.equal('Compute Sum');
+      }).nodeify(done);
+    });
+
+    it('should attempt to match by string if no accessibility id matches', function (done) {
+      driver.elementById('Compute Sum').then(function (el) {
+        el.getTagName().should.eventually.equal('Compute Sum');
+      }).nodeify(done);
+    });
+
+    it('should use a localized string if the id is a localization key', function (done) {
+      driver.elementById('main.button.computeSum').then(function (el) {
+        el.getTagName().should.eventually.equal('Compute Sum');
+      }).nodeify(done);
+    });
+
+    it('should be able to return multiple matches', function (done) {
+      driver.elementsById('TextField').then(function (els) {
+        els.length.should.be.greaterThan(1);
+      }).nodeify(done);
+    });
+  });
+
   it('should find a single element on the app', function (done) {
     driver.elementByClassName('UIAButton').then(function (el) {
       el.value.should.exist;
     }).nodeify(done);
   });
+
   it('should not find any invalid elements on the app and throw error', function (done) {
     driver
       .elementByClassName('UIAButtonNotThere')
@@ -21,6 +48,7 @@ describe('testapp - find element', function () {
       .should.be.rejectedWith(/status: 7/)
       .nodeify(done);
   });
+
   it('should find alerts when they exist', function (done) {
     var alert = null;
     driver
@@ -36,6 +64,7 @@ describe('testapp - find element', function () {
       .dismissAlert()
       .nodeify(done);
   });
+
   it('should not find alerts when they dont exist', function (done) {
     driver.elementByClassName('UIAAlert')
       .catch(function (err) {
@@ -44,6 +73,7 @@ describe('testapp - find element', function () {
       }).should.be.rejectedWith(/status: 7/)
       .nodeify(done);
   });
+
   it('should get an error when strategy doesnt exist', function (done) {
     driver.elementByCss('UIAButton')
       .catch(function (err) {
@@ -60,6 +90,7 @@ describe('testapp - find element', function () {
         els[0].value.should.exist;
       }).nodeify(done);
   });
+
   it('should not find any elements on the app but fail gracefully', function (done) {
     driver.elementsByClassName('UIAButtonNotThere').should.eventually.have.length(0)
       .nodeify(done);
@@ -69,6 +100,7 @@ describe('testapp - find element', function () {
     driver.elementByName('ComputeSumButton').should.eventually.exist
       .nodeify(done);
   });
+
   it('should not find element by invalid name but return respective error code', function (done) {
     driver.elementByName('InvalidNameForElement')
       .catch(function (err) {
@@ -77,6 +109,7 @@ describe('testapp - find element', function () {
       }).should.be.rejectedWith(/status: 7/)
       .nodeify(done);
   });
+
   it('should not find element by incomplete class name but return respective error code', function (done) {
     driver.elementsByClassName('notAValidReference')
       .catch(function (err) {

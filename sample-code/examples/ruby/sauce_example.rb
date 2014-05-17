@@ -36,7 +36,7 @@ SAUCE_USERNAME = ENV['SAUCE_USERNAME']
 SAUCE_ACCESS_KEY = ENV['SAUCE_ACCESS_KEY']
 
 # This is the test itself
-describe "Computation" do
+describe 'Computation' do
   before(:each) do
     Appium::Driver.new(caps: desired_caps).start_driver
     Appium.promote_appium_methods RSpec::Core::ExampleGroup
@@ -50,13 +50,11 @@ describe "Computation" do
     driver_quit
   end
 
-  it "should add two numbers" do
+  it 'should add two numbers' do
     values = [rand(10), rand(10)]
     expected_sum = values.reduce(&:+)
-    # Standard selectors work to find elements
-    elements = find_elements :class_name, 'UIATextField'
 
-    elements.each_with_index do |element, index|
+    textfields.each_with_index do |element, index|
       element.send_keys values[index]
     end
 
@@ -64,13 +62,13 @@ describe "Computation" do
     button(1).click
 
     # You can find the first static text element
-    first_s_text.text.should eq expected_sum.to_s
+    first_text.text.should eq expected_sum.to_s
   end
 end
 
 def desired_caps
   {
-    'appium-version' => '1.0.0-beta.2',
+    'appium-version' => '1.0.0',
     'platformName' => 'iOS',
     'platformVersion' => '7.1',
     'deviceName' => 'iPhone Simulator',

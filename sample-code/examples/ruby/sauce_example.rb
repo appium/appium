@@ -21,7 +21,7 @@
 #
 # and install the required gems with bundler by doing:
 #   "bundle install"
-# 
+#
 # RUNNING TESTS
 # -------------
 # Run with:
@@ -64,7 +64,7 @@ describe "Computation" do
     button(1).click
 
     # You can find the first static text element
-    first_s_text.text.should eq expected_sum.to_s
+    first_text.text.should eq expected_sum.to_s
   end
 end
 
@@ -82,12 +82,12 @@ end
 def auth_details
   un = SAUCE_USERNAME
   pw = SAUCE_ACCESS_KEY
-  
+
   unless un && pw
     STDERR.puts <<-EOF
-      Your SAUCE_USERNAME or SAUCE_ACCESS_KEY environment variables 
+      Your SAUCE_USERNAME or SAUCE_ACCESS_KEY environment variables
       are empty or missing.
-      
+
       You need to set these values to your Sauce Labs username and access
       key, respectively.
 

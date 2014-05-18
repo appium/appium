@@ -1,0 +1,9 @@
+#!/bin/bash
+
+SAUCE=1 \
+VERBOSE=1 \
+TARBALL="${TARBALL}" \
+DEVICE="selendroid" \
+./node_modules/.bin/mocha \
+-g "@skip-ci|@skip-selendroid-all" -i \
+"$@"

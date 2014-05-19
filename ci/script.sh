@@ -22,7 +22,7 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME
-    ./reset.sh --hardcore --no-npmlink --dev --ios --android 
+    ./reset.sh --hardcore --no-npmlink --dev --android 
     if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
         rm sample-code/apps/ApiDemos
         mv submodules/ApiDemos sample-code/apps/

@@ -22,7 +22,7 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME
-    ./reset.sh --hardcore --no-npmlink --dev --ios --android 
+    ./reset.sh --hardcore --no-npmlink --dev --android 
     if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
         rm sample-code/apps/ApiDemos
         mv submodules/ApiDemos sample-code/apps/
@@ -37,8 +37,18 @@ elif [[ $CI_CONFIG == 'build_selendroid' ]]; then
     source ./ci/android_env
     echo JAVA_HOME: $JAVA_HOME
     ./reset.sh --hardcore --no-npmlink --dev --selendroid
-    #./ci/upload_build_to_sauce.sh
-    #BRANCH_CAT=selendroid ./ci/git-push.sh
+    if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
+        rm sample-code/apps/ApiDemos
+        mv submodules/ApiDemos sample-code/apps/
+        rm sample-code/apps/selendroid-test-app.apk
+        mv submodules/selendroid/selendroid-test-app/target/selendroid-test-app-0.10.0.apk \
+            sample-code/apps/selendroid-test-app.apk
+        ./ci/upload_build_to_sauce.sh
+        GLOB_PATTERNS='test/functional/selendroid/**/*-specs.js'
+        node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
+        cp ci/mochas/selendroid-mocha ci/mocha
+        BRANCH_CAT=selendroid ./ci/git-push.sh
+    fi
 elif [[ $CI_CONFIG == 'build_gappium' ]]; then
     source ./ci/android_env
     echo OS X version: `sw_vers -productVersion`

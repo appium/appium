@@ -2,23 +2,22 @@
 "use strict";
 
 var env = require("../../helpers/env")
-  , setup = require("../common/setup-base")
-  , path = require('path');
+  , setup = require("../common/setup-base");
 
 var desired;
 if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
-  var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
+  var appPath = 'sample-code/apps/' +
       'io.appium.gappium.sampleapp/platforms/android/ant-build/' +
-      'HelloGappium-debug.apk'),
+      'HelloGappium-debug.apk',
   desired = {
     app: appPath,
     appPackage: 'io.appium.gappium.sampleapp',
     appActivity: '.HelloGappium',
   };
 } else {
-  var appPath = path.resolve(__dirname, '../../../sample-code/apps/' +
+  var appPath = 'sample-code/apps/' +
       'io.appium.gappium.sampleapp/platforms/ios/build' +
-      (env.EMU ? '/emulator' : '') + '/HelloGappium.app'),
+      (env.EMU ? '/emulator' : '') + '/HelloGappium.app',
   desired = {
     app: appPath
   };

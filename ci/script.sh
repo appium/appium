@@ -55,9 +55,16 @@ elif [[ $CI_CONFIG == 'build_gappium' ]]; then
     echo Xcode version: `xcodebuild build -version`
     echo Xcode path: `xcode-select --print-path`
     echo JAVA_HOME: $JAVA_HOME
-    ./reset.sh --hardcore --no-npmlink --dev --gappium
-    #./ci/upload_build_to_sauce.sh
-    #BRANCH_CAT=gappium ./ci/git-push.sh
+    ./reset.sh --hardcore --ios --android --selendroid --no-npmlink 
+    ./reset.sh --gappium --dev --no-npmlink
+    if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
+        rm sample-code/apps/io.appium.gappium.sampleapp
+        mv submodules/io.appium.gappium.sampleapp sample-code/apps/
+        ./ci/upload_build_to_sauce.sh
+        sed -i.bak s/CI_CONFIG=functional/CI_CONFIG=run_gappium/g ci/travis-functional.yml
+        rm ci/*.bak
+        BRANCH_CAT=gappium ./ci/git-push.sh
+    fi
 elif [[ $CI_CONFIG == 'functional' ]]; then
     TARBALL=sauce-storage:$(node ./ci/tools/build-upload-tool.js \
         ./ci/build-upload-info.json filename)
@@ -66,5 +73,15 @@ elif [[ $CI_CONFIG == 'functional' ]]; then
     echo "TEST_FILES --> ${TEST_FILES}"
     if [[ -n "$TEST_FILES" ]]; then
         TARBALL=$TARBALL ci/mocha ${TEST_FILES}
+    fi
+elif [[ $CI_CONFIG == 'run_gappium' ]]; then
+    TARBALL=sauce-storage:$(node ./ci/tools/build-upload-tool.js \
+        ./ci/build-upload-info.json filename)
+    if [[ $TEST_GROUP == 'group 1' ]]; then
+        TARBALL=$TARBALL ci/mochas/android-mocha test/functional/gappium/**/*-specs.js
+    elif [[ $TEST_GROUP == 'group 2' ]]; then
+        TARBALL=$TARBALL ci/mochas/ios71-mocha test/functional/gappium/**/*-specs.js
+    elif [[ $TEST_GROUP == 'group 3' ]]; then
+        TARBALL=$TARBALL ci/mochas/selendroid-mocha test/functional/gappium/**/*-specs.js
     fi
 fi

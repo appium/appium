@@ -10,6 +10,11 @@ var env = require('../../../helpers/env')
   , path = require('path')
   , _ = require("underscore");
 
+function filterVisible(selector) {
+  return selector.replace(/;$/, '.withPredicate("isVisible == 1");');
+  // return selector.replace(/;$/, '.withValueForKey(1, "isVisible");');
+}
+
 describe('testapp - basic', function () {
 
   describe('using calc app - 1', function () {
@@ -34,7 +39,9 @@ describe('testapp - basic', function () {
     var populate = function (type, driver) {
       values = [];
       return driver
-        .elementsByClassName('UIATextField').then(function (elems) {
+        .elementsByIosUIAutomation(filterVisible('.textFields();'))
+        //.elementsByClassName('UIATextField')
+        .then(function (elems) {
           var sequence = _(elems).map(function (elem) {
             var val = Math.round(Math.random() * 10);
             values.push(val);

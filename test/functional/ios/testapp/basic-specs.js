@@ -8,12 +8,8 @@ var env = require('../../../helpers/env')
   , Q =  require("q")
   , fs = require('fs')
   , path = require('path')
-  , _ = require("underscore");
-
-function filterVisible(selector) {
-  return selector.replace(/;$/, '.withPredicate("isVisible == 1");');
-  // return selector.replace(/;$/, '.withValueForKey(1, "isVisible");');
-}
+  , _ = require("underscore")
+  , filterVisible = require('../../../helpers/ios-uiautomation').filterVisible;
 
 describe('testapp - basic', function () {
 
@@ -40,7 +36,6 @@ describe('testapp - basic', function () {
       values = [];
       return driver
         .elementsByIosUIAutomation(filterVisible('.textFields();'))
-        //.elementsByClassName('UIATextField')
         .then(function (elems) {
           var sequence = _(elems).map(function (elem) {
             var val = Math.round(Math.random() * 10);

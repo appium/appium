@@ -11,13 +11,13 @@ describe('uicatalog - basic', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    if (env.FAST_TESTS) {
-      beforeEach(function (done) {
-        driver
-          .back()
-          .nodeify(function () { done(); });
-      });
-    }
+    // if (env.FAST_TESTS) {
+    //   beforeEach(function (done) {
+    //     driver
+    //       .back()
+    //       .nodeify(function () { done(); });
+    //   });
+    // }
 
     it('should confirm element is not visible', function (done) {
       driver

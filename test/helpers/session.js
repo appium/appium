@@ -39,6 +39,22 @@ module.exports.initSession = function (desired, opts) {
     });
   });
 
+  wd.addPromiseChainMethod('clickButton', function (name) {
+    var buttonEl;
+    return this.elementByXPathOrNull("//UIAButton[@name = '" + name + "']")
+    .then(function (el) {
+      if (el) {
+        buttonEl = el;
+        return el.isDisplayed();
+      } else return false;
+    })
+    .then(function (isDisplayed) {
+      if (isDisplayed) {
+        return buttonEl.click();
+      }
+    });
+  });
+
   return {
     setUp: function (name) {
       if (env.VERBOSE) {
@@ -125,7 +141,7 @@ module.exports.initSession = function (desired, opts) {
           if (env.SAUCE) return browser.sauceJobStatus(passed);
         })
         .catch(function (err) { console.warn("didn't manange to set sauce status. error:", err); })
-        .sleep(2000);
+        .sleep(3000);
     },
     promisedBrowser: deferred.promise
   };

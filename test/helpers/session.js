@@ -84,6 +84,7 @@ module.exports.initSession = function (desired, opts) {
         return browser
           .init(caps)
           .catch(function (err) {
+            if (env.VERBOSE) console.log("Init failed with error -->", err);
             remainingAttempts --;
             if (remainingAttempts === 0) {
               throw err;

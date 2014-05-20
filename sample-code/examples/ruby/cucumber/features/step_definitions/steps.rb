@@ -23,30 +23,25 @@
 
 Given /^I have entered (\d+) into field (\d+) of the calculator$/ do |value, field|
   # Get a textfield by index
-  textfield = textfield(field.to_i)
-  textfield.send_keys value
+  textfield(field.to_i).type value
 end
 
 Given /^I have entered (\d+) into a field of the calculator showing (\w+)$/ do |value, field|
   # Get a textfield by string
-  textfield = textfield field
-  textfield.send_keys value
+  textfield(field).type value
 end
 
 And /^I press button (\d+)$/ do |button_index|
   # Find a button by index
-  button = button(button_index.to_i)
-  button.click
+  button(button_index.to_i).click
 end
 
 And /^I press a button labelled (\w+)$/ do |button_text|
   # Find a button by text
-  button = button button_text
-  button.click
+  button(button_text).click
 end
 
 Then /^the result should be displayed as (\d+)$/ do |expected|
   # You can get just the first of a class of elements
-  result = first_s_text
-  result.attribute("value").should eq expected
+  first_text.value.should eq expected
 end

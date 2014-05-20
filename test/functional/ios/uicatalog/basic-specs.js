@@ -5,6 +5,7 @@ var env = require('../../../helpers/env')
   , desired = require('./desired');
 
 describe('uicatalog - basic', function () {
+  var textTag = env.IOS7 ? '@label' : '@value';
 
   describe('api', function () {
     var driver;
@@ -20,21 +21,23 @@ describe('uicatalog - basic', function () {
 
     it('should confirm element is not visible', function (done) {
       driver
-        .elementByClassName('UIATableCell').click()
-        .elementByName("UIButtonTypeContactAdd").isDisplayed()
+        .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
+        .elementByXPath("//UIAButton[contains(@name, 'UINavigationBarBackIndicatorDefault')]")
+        .isDisplayed()
           .should.not.eventually.be.ok
         .nodeify(done);
     });
 
     it('should confirm element is visible', function (done) {
       driver
-        .elementByClassName('UIATableCell').click()
-        .elementByName("UIButtonTypeRoundedRect").isDisplayed()
+        .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
+        .elementByXPath("//UIATableGroup[@name = 'SYSTEM (CONTACT ADD)']")
           .should.eventually.be.ok
         .nodeify(done);
     });
 
-    it('should confirm element is selected  @skip-ios7', function (done) {
+    it('should confirm element is selected @skip-ios7', function (done) {
+      // TODO: review select implementation for ios7
       driver
         .elementByXPath("//UIAStaticText[contains(@label, 'Pickers')]").click()
         .elementByXPath("//UIAButton[contains(@label, 'UIPicker')]").isSelected()
@@ -42,7 +45,8 @@ describe('uicatalog - basic', function () {
         .nodeify(done);
     });
 
-    it('should confirm element is not selected returns false', function (done) {
+    it('should confirm element is not selected returns false @skip-ios7', function (done) {
+      // TODO: review select implementation for ios7
       driver
         .elementByXPath("//UIAStaticText[contains(@label, 'Pickers')]").click()
         .elementByXPath("//UIAButton[contains(@label, 'Custom')]").isSelected()

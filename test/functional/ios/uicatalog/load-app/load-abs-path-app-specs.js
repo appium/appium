@@ -8,7 +8,7 @@ var env = require('../../../../helpers/env')
 
 describe('uicatalog - basic', function () {
 
-  describe('load app with absolute path', function () {
+  describe('load app with absolute path @skip-ios6', function () {
     var driver;
     var appPath = path.resolve(env.SAUCE? '/Users/chef/appium' : process.cwd(), desired.app);
     setup(this, _.defaults({'app': appPath}, desired))

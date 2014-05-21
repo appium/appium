@@ -3,7 +3,7 @@
 var setup = require("../../../common/setup-base")
   , desired = require('../desired');
 
-describe('uicatalog - gestures - mobile shake', function () {
+describe('uicatalog - gestures - mobile shake @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

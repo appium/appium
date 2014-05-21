@@ -12,7 +12,7 @@ var options = {
   'force new connection': true
 };
 
-describe('uicatalog - alerts @skip-ios6', function () {
+describe('uicatalog - alerts @skip-ios7', function () {
 
   var alertTag = env.IOS7 ? '@label' : '@value';
 
@@ -30,12 +30,12 @@ describe('uicatalog - alerts @skip-ios6', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should detect Simple', function (done) {
+    it('should detect Show Simple', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label,'Alert Views')]").click()
-        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Simple')]", 10000, 1000)
-        .elementByXPath("//UIAStaticText[contains(" + alertTag + ",'Simple')]")
-          .click()
+        .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]").click()
+        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Simple')]", 10000, 1000)
+        .elementsByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Simple')]")
+        .at(1).click()
         .resolve(waitForAlert())
         .nodeify(done);
     });
@@ -44,12 +44,12 @@ describe('uicatalog - alerts @skip-ios6', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should detect Okay', function (done) {
+    it('should detect Show OK-Cancel', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label,'Alert Views')]").click()
-        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Okay')]", 10000, 1000)
-        .elementByXPath("//UIAStaticText[contains(" + alertTag + ",'Okay')]")
-          .click()
+        .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]").click()
+        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Show OK-Cancel')]", 10000, 1000)
+        .elementsByXPath("//UIAStaticText[contains(" + alertTag + ",'Show OK-Cancel')]")
+        .at(1).click()
         .resolve(waitForAlert())
         .nodeify(done);
     });
@@ -58,13 +58,12 @@ describe('uicatalog - alerts @skip-ios6', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should detect Other', function (done) {
+    it('should detect Show Custom', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label,'Alert Views')]").click()
-        //.sleep(60000)
-        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Other')]", 10000, 1000)
-        .elementByXPath("//UIAStaticText[contains(" + alertTag + ",'Other')]")
-          .click()
+        .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]").click()
+        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Custom')]", 10000, 1000)
+        .elementsByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Custom')]")
+        .at(1).click()
         .resolve(waitForAlert())
         .nodeify(done);
     });

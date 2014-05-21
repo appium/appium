@@ -4,7 +4,7 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require('./desired');
 
-describe('uicatalog - basic', function () {
+describe('uicatalog - basic @skip-ios6', function () {
   var textTag = env.IOS7 ? '@label' : '@value';
 
   describe('api', function () {

@@ -2,9 +2,9 @@
 
 var setup = require("../../../common/setup-base");
 
-describe('uicatalog - basic', function () {
+describe('uicatalog - basic @skip-ios7', function () {
 
-  describe('load zipped app with relative path @skip-ios6', function () {
+  describe('load zipped app with relative path', function () {
     var driver;
     var appZip = "assets/UICatalog6.0.app.zip";
     setup(this, {app: appZip})

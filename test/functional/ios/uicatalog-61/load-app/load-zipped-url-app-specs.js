@@ -2,9 +2,9 @@
 
 var setup = require("../../../common/setup-base");
 
-describe('uicatalog - basic', function () {
+describe('uicatalog - basic @skip-ios7', function () {
 
-  describe('load zipped app via url @skip-ios6', function () {
+  describe('load zipped app via url', function () {
     var driver;
     var appUrl = 'http://appium.s3.amazonaws.com/UICatalog6.0.app.zip';
     setup(this, {app: appUrl})

@@ -27,7 +27,7 @@ describe('testapp - device', function () {
     });
   });
 
-  describe('deviceName', function () {
+  describe('deviceName @skip-ios6', function () {
     var newDesired = _.extend(_.clone(desired), {deviceName: "iFailure 3.5-inch"});
     var session = initSession(newDesired, {'no-retry': true});
 

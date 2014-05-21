@@ -6,7 +6,7 @@ var env = require('../../../../helpers/env')
 
 var SLOW_DOWN_MS = 1000;
 
-describe('uicatalog - gestures - complex tap', function () {
+describe('uicatalog - gestures - complex tap @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

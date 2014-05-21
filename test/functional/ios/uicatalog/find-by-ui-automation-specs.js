@@ -6,7 +6,7 @@ var setup = require("../../common/setup-base")
   , _ = require("underscore")
   , filterVisible = require('../../../helpers/ios-uiautomation').filterVisible;
 
-describe('uicatalog - find by ios-ui-automation', function () {
+describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

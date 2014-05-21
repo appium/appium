@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - execute @skip-ios6', function () {
+describe('uicatalog - execute @skip-ios7', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

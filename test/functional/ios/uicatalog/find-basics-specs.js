@@ -4,7 +4,7 @@ var setup = require("../../common/setup-base")
   , desired = require('./desired')
   , _ = require('underscore');
 
-describe('uicatalog - find - basics', function () {
+describe('uicatalog - find - basics @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

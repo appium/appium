@@ -3,7 +3,7 @@
 var setup = require("../../../common/setup-base")
   , desired = require('../desired');
 
-describe('uicatalog - gestures - mobile scroll', function () {
+describe('uicatalog - gestures - mobile scroll @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

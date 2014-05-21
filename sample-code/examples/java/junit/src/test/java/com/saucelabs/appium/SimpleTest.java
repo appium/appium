@@ -185,7 +185,7 @@ public class SimpleTest {
         WebElement slider = driver.findElement(By.xpath("//UIASlider[1]"));
         assertEquals("50%", slider.getAttribute("value"));
         Point sliderLocation = getCenter(slider);
-        driver.swipe(sliderLocation.getX(), sliderLocation.getY(), sliderLocation.getX()-100, sliderLocation.getY(), 1);
+        driver.swipe(sliderLocation.getX(), sliderLocation.getY(), sliderLocation.getX()-100, sliderLocation.getY(), 1000);
 
         assertEquals("0%", slider.getAttribute("value"));
     }

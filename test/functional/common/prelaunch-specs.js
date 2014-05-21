@@ -46,7 +46,7 @@ var waitForLaunch = function (app, extraArgs, done) {
   return proc;
 };
 
-describe("common - prelaunch @skip-ci", function () {
+describe("common - prelaunch @skip-ci @skip-ios6", function () {
   // TODO: test helpers need to be modified to cope prelaunch on sauce.
   // leaving it out for now.
   this.timeout(env.MOCHA_INIT_TIMEOUT);

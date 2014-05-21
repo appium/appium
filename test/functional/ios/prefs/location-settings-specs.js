@@ -10,7 +10,9 @@ var desired = {
   app: 'settings'
 };
 
-describe("prefs @skip-ios7", function () {
+describe("prefs @skip-ios7 @skip-ios6", function () {
+  // TODO: check why it fails on ios7
+  // TODO: cannot install settings app on ios6
 
   var checkLocServ = function (driver, expected, cb) {
     driver

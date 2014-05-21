@@ -98,7 +98,7 @@ describe('webview - basics', function () {
       .nodeify(done);
   });
 
-  it('switching back and forth between native and webview contexts should work', function (done) {
+  it('switching back and forth between native and webview contexts should work @skip-ios6', function (done) {
     driver
       .contexts()
       .context("WEBVIEW_1")

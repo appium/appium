@@ -10,8 +10,8 @@ var desired = {
   app: 'settings'
 };
 
-describe("prefs @skip-ios7", function () {
-
+describe("prefs @skip-ios6", function () {
+  // TODO: cannot install settings app on ios6
   describe('settings app', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });

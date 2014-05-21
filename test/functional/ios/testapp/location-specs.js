@@ -35,7 +35,7 @@ describe('testapp - location - 1', function () {
   });
 });
 
-describe('testapp - location - 2', function () {
+describe('testapp - location - 2 @skip-ios6', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {

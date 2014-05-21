@@ -2,7 +2,7 @@
 
 var setup = require("../../common/setup-base");
 
-describe('safari - screenshots', function () {
+describe('safari - screenshots @skip-ios6', function () {
   var driver;
   setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });
 

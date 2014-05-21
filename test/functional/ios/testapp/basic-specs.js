@@ -195,7 +195,7 @@ describe('testapp - basic', function () {
       }).nodeify(done);
     });
 
-    it('should be able to get syslog logs', function (done) {
+    it('should be able to get syslog logs @skip-ios6', function (done) {
       driver
         .setImplicitWaitTimeout(4000)
         .elementByName('SumLabelz')

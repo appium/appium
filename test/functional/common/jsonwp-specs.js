@@ -5,7 +5,7 @@ var chai = require('chai')
   , serverHub = serverUrl + '/wd/hub/session'
   , request = require('request');
 
-describe("common - jsonwp @skip-ci", function () {
+describe("common - jsonwp @skip-ci @skip-ios6", function () {
   // TODO: This cannot be tested using Sauce. It need to be run within a Travis
   // instance.
   describe('to a non-existent url', function () {

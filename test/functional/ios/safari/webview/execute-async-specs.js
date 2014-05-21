@@ -1,6 +1,6 @@
 "use strict";
 var desired = require('./desired');
 
-describe("safari - webview", function () {
+describe("safari - webview @skip-ios6", function () {
   require('../../../common/webview/execute-async-base')(desired);
 });

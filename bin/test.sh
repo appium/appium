@@ -9,6 +9,7 @@ android_only=false
 android_arm_only=false
 selendroid_only=false
 all_tests=true
+xcode_switch=true
 xcode_path=""
 if command -v xcode-select 2>/dev/null; then
     xcode_path="$(xcode-select -print-path | sed s/\\/Contents\\/Developer//g)"
@@ -37,6 +38,8 @@ for arg in "$@"; do
     elif [ "$arg" = "--ios71" ]; then
         ios71_only=true
         all_tests=false
+    elif [ "$arg" = "--no-xcode-switch" ]; then
+        xcode_switch=false
     elif [ "$arg" =~ " " ]; then
         mocha_args="$mocha_args \"$arg\""
     else
@@ -49,12 +52,16 @@ appium_mocha="./node_modules/.bin/mocha --recursive $mocha_args"
 run_ios_tests() {
     echo "RUNNING IOS $1 TESTS"
     echo "---------------------"
-    if test -d /Applications/Xcode-$1.app; then
-        echo "Found Xcode for iOS $1, switching to it"
-        sudo xcode-select -switch /Applications/Xcode-$1.app
-        did_switch_xcode=true
-    else
-        echo "Did not find /Applications/Xcode-$1.app, using default"
+    
+
+    if $xcode_switch; then
+        if test -d /Applications/Xcode-$1.app; then
+            echo "Found Xcode for iOS $1, switching to it"
+            sudo xcode-select -switch /Applications/Xcode-$1.app
+            did_switch_xcode=true
+        else
+            echo "Did not find /Applications/Xcode-$1.app, using default"
+        fi
     fi
     echo 
     DEVICE=$2 time $appium_mocha -g $3 -i \

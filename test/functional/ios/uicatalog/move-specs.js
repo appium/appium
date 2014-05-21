@@ -11,9 +11,9 @@ describe('uicatalog - move', function () {
 
     it('should be able to click on arbitrary x-y elements', function (done) {
       driver
-        .elementByClassName('UIATableCell').moveTo(10, 10).click()
-        .elementByXPath("//UIAButton[@name='Rounded']")
-          .should.eventually.exist
+        .elementByXPath("//UIAStaticText[contains(@name, 'Buttons')]").moveTo(10, 10).click()
+        .elementByXPath("//UIAElement['SYSTEM (CONTACT ADD)']")
+          .should.eventually.exist  .should.eventually.exist
         .nodeify(done);
     });
   });

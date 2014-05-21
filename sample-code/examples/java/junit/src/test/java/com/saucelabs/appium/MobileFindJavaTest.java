@@ -21,45 +21,10 @@ public class MobileFindJavaTest {
 
   @Test
   public void apiDemo() throws Exception {
-    final String about_phone = scroll_to("about phone");
-    if (about_phone != null) {
-      System.out.println("scrolled to: aboutPhone");
-      System.out.println("returned: " + about_phone);
-    }
-
-    scroll_to("bluetooth");
+    driver.scrollTo("about phone");
+    driver.scrollTo("bluetooth");
   }
 
-
-  // @formatter:off
-  /*
-  This is a port of the following Ruby code from github.com/appium/ruby_lib
-  The Selenium Java bindings make it impossible to post JSON so we're using
-  HttpPost directly.
-
-  # Scroll to an element containing target text or description.
-  # @param text [String] the text to search for in the text value and content description
-  # @return [Element] the element scrolled to
-  def scroll_to text
-    args = 'scroll',
-        # textContains(text)
-        [ [3, text] ],
-        # descriptionContains(text)
-        [ [7, text] ]
-
-    mobile :find, args
-  end
-  */
-  // @formatter:on
-  public String scroll_to(String text) {
-
-    text = text.replaceAll("\"", "\\\""); // quotes must be escaped.
-    final String[] jsonString = {"\"scroll\"","[[3,\"" + text + "\"]]","[[7,\"" + text + "\"]]"};
-
-
-    return driver.complexFind(jsonString);
-
-  }
 
   @Before
   public void setUp() throws Exception {

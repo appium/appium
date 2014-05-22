@@ -9,14 +9,11 @@ var env = require('../../helpers/env')
 
 describe('selendroid - app activities', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
-
-  // TODO: this does not throw, check why
-  describe('with no dot @skip-ci', function () {
+  describe('with no dot', function () {
     var session;
     var name = this.parent.title + " " + this.title;
-
     it('should not launch app', function (done) {
-      var newDesired = _.defaults({'app-activity': 'ApiDemos'}, desired);
+      var newDesired = _.defaults({'appActivity': 'ApiDemos'}, desired);
       session = initSession(newDesired, {'no-retry': true});
       session
         .setUp(name)
@@ -36,7 +33,7 @@ describe('selendroid - app activities', function () {
     });
 
     it('should still launch app', function (done) {
-      var newDesired = _.defaults({'app-activity': 'com.example.android.apis.ApiDemos'}, desired);
+      var newDesired = _.defaults({'appActivity': 'com.example.android.apis.ApiDemos'}, desired);
       session = initSession(newDesired);
       session.setUp(name)
         .nodeify(done);

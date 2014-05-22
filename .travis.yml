@@ -14,9 +14,9 @@ env:
   - SAUCE_REST_ROOT=https://saucelabs.com/rest/v1
   - APPIUM_HOST='ondemand.saucelabs.com'
   - APPIUM_PORT=80
-  - SAUCE_USERNAME=sebv
-  - secure: W0lWyFjhSce3IbaxBVEFOqWt9er1obwDxaiBT2HqsejsViorQh7N/LRdcEj+bUFqJJr+WDZNPMoBe+hv5BZcroeT03bn1QVNVo0DR3uU9KH6wRnWqumnP46BYEqhzn3h1ayGUsBtIG+ZXIbLytOM4Cbjbj8VshI0Y88N3B0P0mw=
-  - secure: LD8NtDTcDHqnpWtBV3RSbvrv8a04sRsRwwg02eawidSXFRSbSnF5iMLooiLVEA9nquji2xfvhlS5ctNEKWgG+mTqS8APxdtMceerF6Mlg3tI1D3jTBlsQO1wOSIx9qFNZE4GGO/kB0iTvZrQ7JmRPZC3NQB/q0CLib/gTk6l8ZA=
+  - SAUCE_USERNAME=appium
+  - secure: GXGFbQptLEsKlaWnpOL2EB9hqQ4XBT6tqg7REt5j1h1jYBsfHQHSgSLt1jpzOF5kooXVbw2K7IrZyNVBXEUHR00Hp6O72FBOd+SSj8uPCJBLjAOaJWs0ZtujqGHwHpe6gadFfn0L7q0ffoV5OJVeNHHcuw4f9BaA78fTFNfm1jE=
+  - secure: WLRP9RJIHWPer189swCqMCnexS8XpVQ8FRMSXNxLXp5fUaERVzU7/ncGFeqcM8GWGIU12PP8TJUaMRa58vTGgApW6POMdAPiauepfzoru+n/S4Xrw64hmd4oK0GEZI3wgnkPofUn6TzQeXRmVG496PNzbV8KfqF4mTAesZOLSFA= 
   matrix:
   - CI_CONFIG=unit
   - CI_CONFIG=build_ios
@@ -33,4 +33,3 @@ before_script:
 - "./ci/before_script_extra.sh"
 script:
 - "./ci/script.sh"
-

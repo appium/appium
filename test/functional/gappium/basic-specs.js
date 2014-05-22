@@ -37,7 +37,7 @@ var activateWebView = function (driver) {
   });
 };
 
-describe("gappium @skip-ios6", function () {
+describe("gappium", function () {
   describe('HelloGappium', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });

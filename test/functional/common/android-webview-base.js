@@ -2,7 +2,8 @@
 "use strict";
 
 var env = require('../../helpers/env')
-  , setup = require("./setup-base");
+  , setup = require("./setup-base")
+  , Asserter = require('wd').Asserter;
 
 var desired = {
   app: "sample-code/apps/selendroid-test-app.apk",
@@ -14,10 +15,17 @@ module.exports = function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
+  var webviewContextAvailable = new Asserter(
+    function (driver) {
+      return driver
+        .contexts().should.eventually.have.length(2);
+    }
+  );
+
   beforeEach(function (done) {
     driver
       .waitForElementByName('buttonStartWebviewCD').click()
-      .sleep(500)
+      .waitFor(webviewContextAvailable, 1000, 100)
       .context('WEBVIEW')
       .nodeify(done);
   });

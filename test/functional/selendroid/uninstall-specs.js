@@ -3,7 +3,8 @@
 var setup = require("../common/setup-base")
   , desired = require('./desired');
 
-describe('selendroid - uninstall app', function () {
+// TODO: not working on sauce, investigate
+describe('selendroid - uninstall app @skip-ci', function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });

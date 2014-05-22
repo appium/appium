@@ -12,7 +12,8 @@ var options = {
   'force new connection': true
 };
 
-describe('uicatalog - alerts @skip-ios6', function () {
+//TODO waitForAlert not compatible with sauce, do it another way.
+describe('uicatalog - alerts @skip-ios6 @skip-ci', function () {
 
   var alertTag = env.IOS7 ? '@label' : '@value';
 

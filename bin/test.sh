@@ -1,5 +1,5 @@
 #!/bin/sh
-set +e
+set -e
 mocha_args=""
 ios_only=false
 ios6_only=false
@@ -8,6 +8,7 @@ ios71_only=false
 android_only=false
 android_chrome=false
 selendroid_only=false
+gappium_only=false
 all_tests=true
 xcode_switch=true
 xcode_path=""
@@ -28,6 +29,9 @@ for arg in "$@"; do
         all_tests=false
     elif [ "$arg" = "--selendroid" ]; then
         selendroid_only=true
+        all_tests=false
+    elif [ "$arg" = "--gappium" ]; then
+        gappium_only=true
         all_tests=false
     elif [ "$arg" = "--ios6" ]; then
         ios6_only=true
@@ -66,8 +70,7 @@ run_ios_tests() {
     echo 
     DEVICE=$2 time $appium_mocha -g $3 -i \
         test/functional/common \
-        test/functional/ios \
-        test/functional/gappium
+        test/functional/ios
 }
 
 if $ios6_only || $ios_only || $all_tests; then
@@ -99,7 +102,7 @@ fi
 if $android_chrome; then
     echo "RUNNING ANDROID (ARM) TESTS"
     echo "---------------------"
-    DEVICE=android time $appium_mocha \
+    DEVICE=android time $appåium_mocha \
         -g  '@skip-chrome|@skip-android-all' -i \
         test/functional/android/chrome
 fi
@@ -108,6 +111,20 @@ if $selendroid_only || $all_tests; then
     echo "RUNNING SELENDROID TESTS"
     echo "---------------------"
     DEVICE=selendroid time $appium_mocha -g  '@skip-selendroid-all' -i \
-        test/functional/selendroid \
-        test/functional/gappium
+        test/functional/selendroid
+fi
+
+if $gappium_only || $all_tests; then
+    echo "RUNNING GAPPIUM TESTS"
+    echo "---------------------"
+    DEVICE=ios71 time $appium_mocha test/functional/gappium
+    DEVICE=ios6 time $appium_mocha test/functional/gappium
+    # TODO: fix android/gappium test, no webview context found, investigate
+    # echo "Start the android emulator and press Enter."    
+    # read
+    # DEVICE=android time $appium_mocha test/functional/gappium
+    # TODO: the gappium app does not work on selendroid, investigate
+    # echo "Start the android emulator and press Enter."
+    # read
+    # DEVICE=selendroid time $appium_mocha test/functional/gappium
 fi

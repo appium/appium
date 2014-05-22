@@ -6,7 +6,7 @@ ios6_only=false
 ios7_only=false
 ios71_only=false
 android_only=false
-android_arm_only=false
+android_chrome=false
 selendroid_only=false
 all_tests=true
 xcode_switch=true
@@ -23,8 +23,8 @@ for arg in "$@"; do
     elif [ "$arg" = "--android" ]; then
         android_only=true
         all_tests=false
-    elif [ "$arg" = "--android-arm" ]; then
-        android_arm_only=true
+    elif [ "$arg" = "--android-chrome" ]; then
+        android_chrome=true
         all_tests=false
     elif [ "$arg" = "--selendroid" ]; then
         selendroid_only=true
@@ -96,12 +96,12 @@ if $android_only || $all_tests; then
         test/functional/android
 fi
 
-if $android_arm_only; then
+if $android_chrome; then
     echo "RUNNING ANDROID (ARM) TESTS"
     echo "---------------------"
-    DEVICE=android time $appium_mocha -g '@android-arm-only' \
-        test/functional/common \
-        test/functional/android
+    DEVICE=android time $appium_mocha \
+        -g  '@skip-chrome|@skip-android-all' -i \
+        test/functional/android/chrome
 fi
 
 if $selendroid_only || $all_tests; then

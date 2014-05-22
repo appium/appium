@@ -6,6 +6,17 @@ var setup = require("../../common/setup-base")
 
 describe("apidemo - keyboard", function () {
   var driver;
+
+  var runTextEditTest = function (testText, done) {
+    var el = function () {
+      return driver.waitForElementByClassName('android.widget.EditText');
+    };
+    driver
+      .resolve(el()).clear().text().should.become('')
+      .then(el).sendKeys(testText).text().should.become(testText)
+      .nodeify(done);
+  };
+
   setup(this,  _.defaults({appActivity: "view.Controls1" }, desired))
     .then(function (d) { driver = d; });
 
@@ -18,16 +29,16 @@ describe("apidemo - keyboard", function () {
     runTextEditTest(testText, done);
   });
 
-  //todo: not working in nexus 7
-  it('should be able to edit and clear a text field', function (done) {
+  // TODO: clear is not reliable
+  it('should be able to edit and clear a text field @skip-android-all', function (done) {
     var testText = "this is awesome!";
     var el = function () {
-      return driver.elementByClassName('android.widget.EditText');
+      return driver.waitForElementByClassName('android.widget.EditText');
     };
     driver
       .resolve(el()).clear().text().should.become("")
       .then(el).sendKeys(testText).text().should.become(testText)
-      .sleep(2)
+      .sleep(2000)
       .then(el).clear().text().should.become("")
       .nodeify(done);
   });
@@ -108,15 +119,4 @@ describe("apidemo - keyboard", function () {
       runTextEditTest(testText, done);
     });
   });
-
-  var runTextEditTest = function (testText, done) {
-    var el = function () {
-      return driver.elementByClassName('android.widget.EditText');
-    };
-    driver
-      .sleep(1)
-      .resolve(el()).clear().text().should.become('')
-      .then(el).sendKeys(testText).text().should.become(testText)
-      .nodeify(done);
-  };
 });

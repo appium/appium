@@ -59,7 +59,8 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
 
 
 var isChrome = function (desired) {
-  return desired.app === "chrome" || desired.app === "chromium";
+  return desired.app === "chrome" || desired.app === "chromium" ||
+    desired.browserName === "chrome" || desired.browserName === "chromium";
 };
 
 function skip(reason, done) {

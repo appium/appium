@@ -1,6 +1,7 @@
 "use strict";
 var env = require('../../helpers/env')
   , initSession = require('../../helpers/session').initSession
+  , getTitle = require('../../helpers/title').getTitle
   , wd = require('wd')
   , chai = require('chai')
   , chaiAsPromised = require('chai-as-promised');
@@ -9,18 +10,6 @@ chai.use(chaiAsPromised);
 chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 require("colors");
-
-function getTitle(context) {
-    var title = "";
-    while (context) {
-        if (context.title) {
-            if (title) title = " - " + title;
-            title = context.title + title;
-        }
-        context = context.parent;
-    }
-    return title;
-}
 
 module.exports = function (context, desired, opts) {
   context.timeout(env.MOCHA_INIT_TIMEOUT);

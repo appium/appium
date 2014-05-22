@@ -22,6 +22,7 @@ module.exports = function (desired) {
       });
     });
     describe('within webview', function () {
+      // TODO: investigate why we need that
       function _ignoreEncodingBug(value) {
         if (isChrome(desired)) {
           console.warn('Going round android bug: whitespace in cookies.');

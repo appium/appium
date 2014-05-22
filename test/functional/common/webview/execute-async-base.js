@@ -2,9 +2,7 @@
 
 var setup = require("../setup-base"),
     webviewHelper = require("../../../helpers/webview"),
-    loadWebView = webviewHelper.loadWebView,
-    isChrome = webviewHelper.isChrome,
-    skip = webviewHelper.skip;
+    loadWebView = webviewHelper.loadWebView;
 
 module.exports = function (desired) {
 
@@ -16,27 +14,21 @@ module.exports = function (desired) {
       loadWebView(desired, driver).nodeify(done);
     });
     it("should bubble up javascript errors", function (done) {
-      if (isChrome(desired)) return skip(
-        "executeAsync not working on android.", done);
       driver
         .executeAsync("'nan'--")
-          .should.be.rejectedWith(/status: 13/)
+          .should.be.rejectedWith(/status: (13|17)/)
         .nodeify(done);
     });
     it("should execute async javascript", function (done) {
-      if (isChrome(desired)) return skip(
-        "executeAsync not working on android.", done);
       driver
-        .setAsyncScriptTimeout('10000')
+        .setAsyncScriptTimeout(10000)
         .executeAsync("arguments[arguments.length - 1](123);")
           .should.become(123)
       .nodeify(done);
     });
     it("should timeout when callback isn't invoked", function (done) {
-      if (isChrome(desired)) return skip(
-        "executeAsync not working on android.", done);
       driver
-        .setAsyncScriptTimeout('2000')
+        .setAsyncScriptTimeout(2000)
         .executeAsync("return 1 + 2")
           .should.be.rejectedWith(/status: 28/)
       .nodeify(done);

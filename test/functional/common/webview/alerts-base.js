@@ -2,9 +2,7 @@
 
 var setup = require("../setup-base"),
     webviewHelper = require("../../../helpers/webview"),
-    loadWebView = webviewHelper.loadWebView,
-    isChrome = webviewHelper.isChrome,
-    skip = webviewHelper.skip;
+    loadWebView = webviewHelper.loadWebView;
 
 module.exports = function (desired) {
 
@@ -52,9 +50,7 @@ module.exports = function (desired) {
         .elementById('promptVal').getValue().should.become("yes I do!")
         .nodeify(done);
     });
-    it('should fail to set text of alert', function (done) {
-      if (isChrome(desired)) return skip(
-        "doesn't throw on android.", done);
+    it('should fail to set text of alert @skip-chrome', function (done) {
       driver
         .elementById('alert1').click()
         .alertKeys("yes I do!")

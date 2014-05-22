@@ -81,7 +81,7 @@ module.exports = function (desired) {
       driver
         .source()
         .then(function (source) {
-          source.should.include('<html>');
+          source.should.include('<html');
           source.should.include('I am a page title');
           source.should.include('i appear 3 times');
           source.should.include('</html>');
@@ -159,9 +159,7 @@ module.exports = function (desired) {
         .nodeify(done);
     });
 
-    it('should retrieve a window size', function (done) {
-      if (isChrome(desired)) return skip(
-        "only supported on desktop android.", done);
+    it('should retrieve a window size @skip-chrome', function (done) {
       driver
         .getWindowSize()
         .then(
@@ -233,9 +231,7 @@ module.exports = function (desired) {
       driver.refresh()
       .nodeify(done);
     });
-    it('should not display a phishing warning with safariIgnoreFraudWarning', function (done) {
-      if (isChrome(desired)) return skip(
-        "Chrome doesn't test safariIgnoreFraudWarning", done);
+    it('should not display a phishing warning with safariIgnoreFraudWarning @skip-chrome', function (done) {
       var titleToBecomeRight = new Asserter(function (driver) {
         return driver
           .title()

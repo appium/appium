@@ -5,6 +5,7 @@ var env = require('../../../helpers/env')
   , desired = require("./desired")
   , try3Times = require('../../../helpers/repeat').try3Times
   , initSession = require('../../../helpers/session').initSession
+  , getTitle = require('../../../helpers/title').getTitle
   , path = require('path')
   , ADB = require("../../../../lib/devices/android/adb.js")
   , chai = require('chai')
@@ -127,33 +128,39 @@ describe("apidemo - basic @skip-ci", function () {
   });
 
   describe('activity style: no period', function () {
+    this.timeout(env.MOCHA_INIT_TIMEOUT);
     var session;
-    after(function () { session.tearDown(this.currentTest.state === 'passed'); });
+    var title = getTitle(this);
+    after(function () { return session.tearDown(this.currentTest.state === 'passed'); });
     it('should still find activity', function (done) {
       session = initSession(_.defaults({appActivity: 'ApiDemos'}, desired));
-      session.setUp(this.parent.title + " " + this.title).nodeify(done);
+      session.setUp(title).nodeify(done);
     });
   });
 
   describe('activity style: fully qualified', function () {
+    this.timeout(env.MOCHA_INIT_TIMEOUT);
     var session;
-    after(function () { session.tearDown(this.currentTest.state === 'passed'); });
+    var title = getTitle(this);
+    after(function () { return session.tearDown(this.currentTest.state === 'passed'); });
     it('should still find activity', function (done) {
       session = initSession(_.defaults({appActivity: 'com.example.android.apis.ApiDemos'}, desired));
-      session.setUp(this.parent.title + " " + this.title).nodeify(done);
+      session.setUp(title).nodeify(done);
     });
   });
 
   describe('error cases', function () {
+    this.timeout(env.MOCHA_INIT_TIMEOUT);
     var opts = {'no-retry': true};
 
     describe('activity style: non-existent', function () {
       var session;
-      after(function () { session.tearDown(this.currentTest.state === 'passed'); });
+      var title = getTitle(this);
+      after(function () { return session.tearDown(this.currentTest.state === 'passed'); });
       it('should throw an error', function (done) {
         session = initSession(_.defaults({appActivity: '.Blargimarg'}, desired), opts);
         try3Times(function () {
-          return session.setUp(this.parent.title + " " + this.title)
+          return session.setUp(title)
             .catch(function (err) { throw err.data; })
             .should.be.rejectedWith(/Activity used to start app doesn't exist/);
         }).nodeify(done);
@@ -162,12 +169,13 @@ describe("apidemo - basic @skip-ci", function () {
 
     describe('bad app path', function () {
       var session;
-      after(function () { session.tearDown(this.currentTest.state === 'passed'); });
+      var title = getTitle(this);
+      after(function () { return session.tearDown(this.currentTest.state === 'passed'); });
       it('should throw an error', function (done) {
         var badAppPath = path.resolve(__dirname, "../../../sample-code/apps/ApiDemos/bin/ApiDemos-debugz.apk");
         session = initSession(_.defaults({'app': badAppPath}, desired), opts);
         try3Times(function () {
-          return session.setUp(this.parent.title + " " + this.title)
+          return session.setUp(title)
             .catch(function (err) { throw err.data; })
             .should.be.rejectedWith(/Error locating the app/);
         }).nodeify(done);
@@ -177,6 +185,7 @@ describe("apidemo - basic @skip-ci", function () {
   });
 
   describe('pre-existing uiautomator session', function () {
+    this.timeout(env.MOCHA_INIT_TIMEOUT);
     before(function (done) {
       var adb = new ADB();
       var binPath = path.resolve(__dirname, "..", "..", "..", "..", "build",
@@ -209,7 +218,10 @@ describe("apidemo - basic @skip-ci", function () {
   });
 
   describe('appium android', function () {
+    this.timeout(env.MOCHA_INIT_TIMEOUT);
+
     var session;
+    var title = getTitle(this);
 
     if (env.FAST_TESTS) {
       beforeEach(function (done) {
@@ -217,24 +229,24 @@ describe("apidemo - basic @skip-ci", function () {
       });
     }
 
-    afterEach(function () { session.tearDown(this.currentTest.state === 'passed'); });
+    afterEach(function () { return session.tearDown(this.currentTest.state === 'passed'); });
 
     it('should load an app with using absolute path', function (done) {
       var appPath = path.resolve(desired.app);
       session = initSession(_.defaults({'app': appPath}, desired));
-      session.setUp(this.parent.title + " " + this.title).nodeify(done);
+      session.setUp(title + "- abs path").nodeify(done);
     });
 
     it('should load an app with using relative path', function (done) {
       var appPath = path.relative(process.cwd(), desired.app);
       session = initSession(_.defaults({'app': appPath}, desired));
-      session.setUp(this.parent.title + " " + this.title).nodeify(done);
+      session.setUp(title + "- rel path").nodeify(done);
     });
 
     it('should load a zipped app via url', function (done) {
       var appUrl = 'http://appium.s3.amazonaws.com/ApiDemos-debug.apk';
       session = initSession(_.defaults({'app': appUrl}, desired));
-      session.setUp(this.parent.title + " " + this.title).nodeify(done);
+      session.setUp(title + "- zip url").nodeify(done);
     });
 
   });

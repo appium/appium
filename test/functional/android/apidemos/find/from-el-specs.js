@@ -1,7 +1,6 @@
 "use strict";
 
-var env = require('../../../../helpers/env')
-  , setup = require("../../../common/setup-base")
+var setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , atv = 'android.widget.TextView'
   , alv = 'android.widget.ListView';
@@ -10,12 +9,6 @@ describe("apidemo - find - from element", function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
-
-  if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
-    });
-  }
 
   it('should find a single element by tag name', function (done) {
     driver.elementByClassName(alv).then(function (el) {

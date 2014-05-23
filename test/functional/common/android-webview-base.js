@@ -3,7 +3,7 @@
 
 var env = require('../../helpers/env')
   , setup = require("./setup-base")
-  , Asserter = require('wd').Asserter;
+  , safeClear = require('../../helpers/safe-clear');
 
 var desired = {
   app: "sample-code/apps/selendroid-test-app.apk",
@@ -15,18 +15,21 @@ module.exports = function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  var webviewContextAvailable = new Asserter(
-    function (driver) {
-      return driver
-        .contexts().should.eventually.have.length(2);
-    }
-  );
-
   beforeEach(function (done) {
     driver
-      .waitForElementByName('buttonStartWebviewCD').click()
-      .waitFor(webviewContextAvailable, 1000, 100)
-      .context('WEBVIEW')
+      .setImplicitWaitTimeout(0)
+      .elementByName('buttonStartWebviewCD')
+      .then(function (el) {
+        if (el) return;
+        else return driver.back();
+      })
+      .setImplicitWaitTimeout(env.IMPLICIT_WAIT_TIMEOUT)
+      .elementByName('buttonStartWebviewCD').click()
+      .then(function () {
+        if (env.SELENDROID) return driver.waitForElementById('mainWebView');
+        else return driver.waitForElementByXPath(
+          "//android.widget.TextView[@text='Web View Interaction']");
+      }).context('WEBVIEW')
       .nodeify(done);
   });
 
@@ -47,14 +50,13 @@ module.exports = function () {
     });
   }
 
-  it('should be web view', function (done) {
-    // todo: add some sort of check here
-    done();
+  it('should be able to switch to view', function (done) {
+    driver.context('WEBVIEW').nodeify(done);
   });
 
   it('should list all contexts', function (done) {
     driver
-      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length(2)
       .nodeify(done);
   });
 
@@ -73,18 +75,26 @@ module.exports = function () {
       .nodeify(done);
   });
 
-  // selendroid test app is busted
+  // TODO: clear does not work on selendroid
   it('should clear input @skip-selendroid-all', function (done) {
+    var el;
     driver
-      .elementById('name_input').click().clear().getValue().should.become("")
+      .waitForElementById('name_input', 10000, 500)
+      .then(function (_el) { el = _el; })
+      .then(function () { return safeClear(el); })
+      .then(function () { return el.getValue().should.become(""); })
       .nodeify(done);
   });
 
-  // selendroid test app is busted
+  // TODO: clear does not work on selendroid
   it('should find and enter key sequence in input @skip-selendroid-all', function (done) {
+    var el;
     driver
-      .elementById('name_input').clear()
-        .type("Mathieu").getValue().should.become("Mathieu")
+      .elementById('name_input')
+      .then(function (_el) { el = _el; })
+      .then(function () { return safeClear(el); })
+      .then(function () { return el.type("Mathieu")
+        .getValue().should.become("Mathieu"); })
       .nodeify(done);
   });
 
@@ -94,6 +104,7 @@ module.exports = function () {
 
   it('should get web source', function (done) {
     driver
+      .waitForElementById('name_input') // making sure webview has been loaded
       .source().should.eventually.include("<title>Say Hello Demo<")
       .nodeify(done);
   });

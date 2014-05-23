@@ -1,19 +1,12 @@
 "use strict";
 
-var env = require('../../../../helpers/env')
-  , setup = require("../../../common/setup-base")
+var setup = require("../../../common/setup-base")
   , desired = require("../desired");
 
 describe("apidemo - find elements - by uiautomator", function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
-
-  if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
-    });
-  }
 
   it('should find elements with a boolean argument', function (done) {
     driver.elements('-android uiautomator', 'new UiSelector().clickable(true)').then(function (els) {

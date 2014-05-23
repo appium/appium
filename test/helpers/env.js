@@ -4,6 +4,8 @@ var path = require('path');
 
 var env = {};
 
+env.IMPLICIT_WAIT_TIMEOUT = 5000;
+
 // local config
 env.APPIUM_HOST = process.env.APPIUM_HOST || '127.0.0.1';
 env.APPIUM_PORT = parseInt(process.env.APPIUM_PORT || 4723, 10);
@@ -128,6 +130,7 @@ env.IOS6 = env.DEVICE.match(/ios6/i);
 env.IOS7 = env.DEVICE.match(/ios7/i);
 env.IOS71 = env.DEVICE.match(/ios71/i);
 env.ANDROID = env.DEVICE.match(/android/i);
+env.SELENDROID = env.DEVICE.match(/selendroid/i);
 
 // better timeout settings for 71
 env.LAUNCH_TIMEOUT =  process.env.LAUNCH_TIMEOUT ? JSON.parse(process.env.LAUNCH_TIMEOUT) :

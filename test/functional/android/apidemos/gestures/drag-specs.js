@@ -3,6 +3,7 @@
 var env = require('../../../../helpers/env')
   , setup = require("../../../common/setup-base")
   , desired = require("../desired")
+  , reset = require("../reset")
   , droidText = 'android.widget.TextView'
   , droidList = 'android.widget.ListView'
   , Q = require("q");
@@ -12,10 +13,8 @@ describe("apidemo - gestures - drag", function () {
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp()
-        .then(function () { return driver.sleep(3000); })
-        .nodeify(done);
+    beforeEach(function () {
+      return reset(driver);
     });
   }
 

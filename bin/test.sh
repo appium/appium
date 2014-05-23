@@ -100,9 +100,9 @@ if $android_only || $all_tests; then
 fi
 
 if $android_chrome; then
-    echo "RUNNING ANDROID (ARM) TESTS"
+    echo "RUNNING ANDROID CHROME TESTS"
     echo "---------------------"
-    DEVICE=android time $appåium_mocha \
+    DEVICE=android time $appium_mocha \
         -g  '@skip-chrome|@skip-android-all' -i \
         test/functional/android/chrome
 fi
@@ -119,12 +119,8 @@ if $gappium_only || $all_tests; then
     echo "---------------------"
     DEVICE=ios71 time $appium_mocha test/functional/gappium
     DEVICE=ios6 time $appium_mocha test/functional/gappium
-    # TODO: fix android/gappium test, no webview context found, investigate
-    # echo "Start the android emulator and press Enter."    
-    # read
-    # DEVICE=android time $appium_mocha test/functional/gappium
-    # TODO: the gappium app does not work on selendroid, investigate
-    # echo "Start the android emulator and press Enter."
-    # read
-    # DEVICE=selendroid time $appium_mocha test/functional/gappium
+    echo "Start the android emulator api 19 and press Enter."    
+    read
+    DEVICE=android time $appium_mocha test/functional/gappium
+    DEVICE=selendroid time $appium_mocha test/functional/gappium
 fi

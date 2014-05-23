@@ -2,15 +2,16 @@
 
 var setup = require("../../common/setup-base")
   , env = require('../../../helpers/env')
-  , desired = require("./desired");
+  , desired = require("./desired")
+  , reset = require("./reset");
 
 describe("apidemos - orientation", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
+    beforeEach(function () {
+      return reset(driver);
     });
   }
 

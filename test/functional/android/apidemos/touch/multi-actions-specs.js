@@ -15,8 +15,8 @@ describe("apidemo - touch - multi-actions", function () {
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
+    beforeEach(function () {
+      return driver.resetApp();
     });
   }
 

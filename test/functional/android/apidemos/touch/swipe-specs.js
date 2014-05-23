@@ -3,6 +3,7 @@
 var env = require('../../../../helpers/env')
   , setup = require("../../../common/setup-base")
   , desired = require("../desired")
+  , reset = require("../reset")
   , wd = require("wd")
   , TouchAction = wd.TouchAction;
 
@@ -12,8 +13,8 @@ describe("apidemo - touch - swipe", function () {
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
+    beforeEach(function () {
+      return reset(driver);
     });
   }
 

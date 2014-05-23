@@ -2,9 +2,11 @@
 "use strict";
 
 var env = require("../../helpers/env")
-  , setup = require("../common/setup-base");
+  , setup = require("../common/setup-base")
+  , ChaiAsserter = require("../../helpers/asserter").ChaiAsserter
+  , _ = require('underscore')
+  , desired;
 
-var desired;
 if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
   var appPath = 'sample-code/apps/' +
       'io.appium.gappium.sampleapp/platforms/android/ant-build/' +
@@ -24,17 +26,24 @@ if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
 }
 
 var activateWebView = function (driver) {
-  return driver.contexts().then(function (ctxs) {
-    for (var idx in ctxs) {
-      var ctx = ctxs[idx];
-      if (ctx.indexOf('WEBVIEW') !== -1) {
-        return ctx;
-      }
-    }
-    return 'WEBVIEW_1';
-  }).then(function (ctx) {
-    return driver.context(ctx).catch(function () {});
+  var webContextReady = new ChaiAsserter(function (driver) {
+    return driver
+      .contexts()
+      .then(function (ctxs) {
+        var webviewCtx = _(ctxs).find(function (ctx) {
+          return ctx.indexOf('WEBVIEW') >= 0;
+        });
+        webviewCtx.should.exist;
+        return webviewCtx;
+      });
   });
+  return driver
+    //TODO: how to detect app is ready on android, spinning doesn't work.
+    .sleep(env.ANDROID || env.SELENDROID ? 45000 : 5000) // yup takes time to load
+    .waitFor(webContextReady, 10000, 500)
+    .then(function (webviewCtx) {
+      return driver.context(webviewCtx);
+    });
 };
 
 describe("gappium", function () {
@@ -48,8 +57,7 @@ describe("gappium", function () {
 
     it('should open the app and navigate through the dialogs', function (done) {
       driver
-        .sleep(3000) // timeout to visualize test execution
-        .elementByCssSelector('.search-key')
+        .waitForElementByCssSelector('.search-key', 60000, 10000)
           .sendKeys('j')
         .elementsByCssSelector('.topcoat-list a')
         .then(function (employees) {

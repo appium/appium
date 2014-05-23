@@ -1,7 +1,6 @@
 "use strict";
 
-var env = require('../../../../helpers/env')
-  , setup = require("../../../common/setup-base")
+var setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , droidText = 'android.widget.TextView'
   , droidList = 'android.widget.ListView';
@@ -9,14 +8,6 @@ var env = require('../../../../helpers/env')
 describe("apidemo - gestures - pinch", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
-
-  if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp()
-        .then(function () { return driver.sleep(3000); })
-        .nodeify(done);
-    });
-  }
 
   // todo fix this: got Error response status: 13, Could not scroll element into view: Views
   it('should pinch out/in @skip-android-all', function (done) {

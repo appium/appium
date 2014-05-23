@@ -1,7 +1,6 @@
 "use strict";
 
-var env = require('../../../../helpers/env')
-  , setup = require("../../../common/setup-base")
+var setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , atv = 'android.widget.TextView'
   , alv = 'android.widget.ListView';
@@ -11,15 +10,14 @@ describe("apidemo - find - by xpath", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
-    });
-  }
-
   var f = "android.widget.FrameLayout";
   var l = alv;
   var t = atv;
+
+  before(function (done) {
+    driver.sleep(1000).nodeify(done);
+  });
+
   it('should find element by type', function (done) {
     driver
       .elementByXPath('//' + t).text()

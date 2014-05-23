@@ -1,16 +1,13 @@
 package io.appium.android.bootstrap.handler;
 
+import android.os.Environment;
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
 import io.appium.android.bootstrap.utils.NotImportantViews;
 
 import java.io.File;
-
-import android.os.Environment;
-import android.os.SystemClock;
-
-import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to dumpWindowHierarchy.
@@ -22,28 +19,28 @@ public class DumpWindowHierarchy extends CommandHandler {
   // Note that
   // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
   // is directly from the UiDevice.java source code.
-  private static final File   dumpFolder   = new File(Environment.getDataDirectory(), "local/tmp");
+  private static final File dumpFolder = new File(Environment.getDataDirectory(), "local/tmp");
   private static final String dumpFileName = "dump.xml";
-  private static final File   dumpFile     = new File(dumpFolder, dumpFileName);
+  private static final File dumpFile = new File(dumpFolder, dumpFileName);
+
+  private static void deleteDumpFile() {
+    if (dumpFile.exists()) {
+      dumpFile.delete();
+    }
+  }
 
   public static boolean dump() {
     dumpFolder.mkdirs();
 
-    if (dumpFile.exists()) {
-      dumpFile.delete();
-    }
+    deleteDumpFile();
 
-    UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
-
-    if (!dumpFile.exists()) {
-      for (int count = 0; count < 30; count++) {
-        SystemClock.sleep(1000);
-        UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
-
-        if (dumpFile.exists()) {
-          break;
-        }
-      }
+    try {
+      // dumpWindowHierarchy often has a NullPointerException
+      UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+    } catch (Exception e) {
+      e.printStackTrace();
+      // If there's an error then the dumpfile may exist and be empty.
+      deleteDumpFile();
     }
 
     return dumpFile.exists();

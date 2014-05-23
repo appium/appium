@@ -1,3 +1,25 @@
+CHANGES IN VERSION 1.1.0 (from 1.1.0)
+======================================
+
+#### General
+- less buggy xcode locator strategy for iOS and Android
+- fixed defaults for swipe duration
+- fixes for context switching
+
+#### iOS
+- optional argument 'language' to getStrings
+
+#### Android
+- allow for encoding of non-ASCII text
+- clearer activity error messages
+- added language and country support
+- extract strings from apk corresponding to device language instead of default to be used with ID locator strategy
+- optional argument 'language' to getStrings
+
+#### Selendroid
+- add getStrings method
+-  optional argument 'language' to getStrings
+
 CHANGES IN VERSION 1.0.0 (from 1.0.0-beta.2)
 =======================================
 
@@ -101,7 +123,7 @@ Appium is headed in the near future.
 - add "accessibility id" locator strategy
 - get rid of a bunch of unused grunt commands
 - deprecate use of JSON page source (XML will be the standard)
-- simplify reset strategy and make reset strategies available through caps. 
+- simplify reset strategy and make reset strategies available through caps.
   There's now the default (fastReset), fullReset, and noReset.
 - deprecate "tag name" locator strategy
 - add real xpath support (for now under the "-real xpath" locator strategy)
@@ -146,7 +168,7 @@ CHANGES IN VERSION 0.17.6 (from 0.17.6)
 
 #### General
 - disallow use of Appium in sudo mode
-- ensure publishes happen with a version of Node which doesn't generate 
+- ensure publishes happen with a version of Node which doesn't generate
   shasum errors in NPM
 
 
@@ -235,7 +257,7 @@ CHANGES IN VERSION 0.17.0 (from 0.16.0)
 - break out appium-instruments into its own npm package
 - fix bug where command line --force-iphone or --force-ipad wouldn't set
   device. This should fix issues with Appium.app
-- add --keep-keychains server arg / keepKeychains desired cap in order to 
+- add --keep-keychains server arg / keepKeychains desired cap in order to
   disallow deletion of Keychains dir
 - bring reset behavior back to what it was before location services / settings
   updates, so that with the default reset, most directories are still cleared
@@ -526,7 +548,7 @@ CHANGES IN VERSION 0.12.1 (from 0.12.0)
 =======================================
 
 #### General
-- add appium doctor for checking system config issues that prevent appium 
+- add appium doctor for checking system config issues that prevent appium
   from working properly. Run with `node bin/appium-doctor.js`, or
   `appium-doctor` if installed via NPM, or via the GUI in Appium.app
 - fail sooner if user passes in bad locator strategy
@@ -1063,7 +1085,7 @@ CHANGES IN VERSION 0.6.1 (from 0.6.0)
 [GENERAL]
 - started work on mobile_methods.md doc
 - added hardcore mode to reset.sh that will refresh uicatalog inter alia
-- ios-webkit-debug-proxy docs 
+- ios-webkit-debug-proxy docs
 - appium now registers correctly with selenium grid
 - better bundle/package detection
 

@@ -15,6 +15,7 @@ CHANGES IN VERSION 1.1.0 (from 1.1.0)
 - added language and country support
 - extract strings from apk corresponding to device language instead of default to be used with ID locator strategy
 - optional argument 'language' to getStrings
+- installing apps already loaded can be buggy, so appium now uninstalls then installs
 
 #### Selendroid
 - add getStrings method

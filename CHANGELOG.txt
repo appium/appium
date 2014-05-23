@@ -1,26 +1,3 @@
-CHANGES IN VERSION 1.1.0 (from 1.1.0)
-======================================
-
-#### General
-- less buggy xcode locator strategy for iOS and Android
-- fixed defaults for swipe duration
-- fixes for context switching
-
-#### iOS
-- optional argument 'language' to getStrings
-
-#### Android
-- allow for encoding of non-ASCII text
-- clearer activity error messages
-- added language and country support
-- extract strings from apk corresponding to device language instead of default to be used with ID locator strategy
-- optional argument 'language' to getStrings
-- installing apps already loaded can be buggy, so appium now uninstalls then installs
-
-#### Selendroid
-- add getStrings method
--  optional argument 'language' to getStrings
-
 CHANGES IN VERSION 1.0.0 (from 1.0.0-beta.2)
 =======================================
 

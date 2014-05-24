@@ -1,19 +1,12 @@
 "use strict";
 
-var env = require('../../../helpers/env')
-  , setup = require("../../common/setup-base")
+var setup = require("../../common/setup-base")
   , desired = require("./desired");
 
 describe("apidemos - attributes", function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
-
-  if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
-    });
-  }
 
   it('should be able to find text attribute', function (done) {
     driver

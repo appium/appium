@@ -201,7 +201,7 @@ describe("apidemo - basic @skip-ci", function () {
             pids.length.should.equal(1);
             done();
           });
-        }, 2000);
+        }, 5000);
       });
     });
 

@@ -2,17 +2,16 @@
 
 var env = require('../../../../helpers/env')
   , setup = require("../../../common/setup-base")
-  , desired = require("../desired");
+  , desired = require("../desired")
+  , reset = require("../reset");
 
 describe("apidemo - gestures - flick", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp()
-        .then(function () { return driver.sleep(3000); })
-        .nodeify(done);
+    beforeEach(function () {
+      return reset(driver);
     });
   }
 

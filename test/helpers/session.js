@@ -125,7 +125,7 @@ module.exports.initSession = function (desired, opts) {
           }
         }).then(function () { return init(attempts); })
         .then(function () { initialized = true; })
-        .setImplicitWaitTimeout(5000);
+        .setImplicitWaitTimeout(env.IMPLICIT_WAIT_TIMEOUT);
     },
     tearDown: function (passed) {
       return browser.chain()

@@ -3,17 +3,36 @@
 var env = require('../../../../helpers/env')
   , setup = require("../../../common/setup-base")
   , desired = require("../desired")
-  , droidText = 'android.widget.TextView';
+  , reset = require("../reset")
+  , droidText = 'android.widget.TextView'
+  , Q = require('q');
 
 describe("apidemo - gestures - long click", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
+    beforeEach(function () {
+      return reset(driver);
+    });
+  }
+
+  if (env.FAST_TESTS) {
     beforeEach(function (done) {
-      driver.resetApp()
-        .then(function () { return driver.sleep(3000); })
-        .nodeify(done);
+      function back(depth) {
+        if (depth < 0) return new Q();
+        return driver
+          .elementByNameOrNull("Animation")
+          .then(function (el) {
+            if (el) return;
+            else {
+              return driver.back().then(function () {
+                back(depth - 1);
+              });
+            }
+          });
+        }
+      back(3).nodeify(done);
     });
   }
 

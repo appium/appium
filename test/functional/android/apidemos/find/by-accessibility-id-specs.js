@@ -1,19 +1,12 @@
 "use strict";
 
-var env = require('../../../../helpers/env')
-  , setup = require("../../../common/setup-base")
+var setup = require("../../../common/setup-base")
   , desired = require("../desired");
 
 describe("apidemo - find - by accessibility id", function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
-
-  if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
-    });
-  }
 
   it('should find an element by name', function (done) {
     driver.element('accessibility id', 'Animation').then(function (el) {

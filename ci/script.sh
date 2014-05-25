@@ -1,5 +1,8 @@
 #!/bin/bash
 set -e
+
+BZ2_FILE=appium-ci-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
+
 if [[ $CI_CONFIG == 'unit' ]]; then
     cd docs
     appium_doc_lint || exit 1
@@ -13,11 +16,10 @@ elif [[ $CI_CONFIG == 'build_ios' ]]; then
     ./reset.sh --hardcore --no-npmlink --dev --ios
     if [[ $TRAVIS_SECURE_ENV_VARS == true ]]; then
         ./ci/upload_build_to_sauce.sh
-        GLOB_PATTERNS='test/functional/common/**/*-specs.js'
-        GLOB_PATTERNS+=',test/functional/ios/**/*-specs.js'
-        node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
-        cp ci/mochas/ios71-mocha ci/mocha
-        BRANCH_CAT=ios ./ci/git-push.sh
+        TARBALL=sauce-storage:$BZ2_FILE \
+        node ./ci/tools/parallel-mocha.js \
+        -p 30 \
+        -c ios
     fi
 elif [[ $CI_CONFIG == 'build_android' ]]; then
     source ./ci/android_env
@@ -27,11 +29,10 @@ elif [[ $CI_CONFIG == 'build_android' ]]; then
         rm sample-code/apps/ApiDemos
         mv submodules/ApiDemos sample-code/apps/
         ./ci/upload_build_to_sauce.sh
-        GLOB_PATTERNS='test/functional/common/**/*-specs.js'
-        GLOB_PATTERNS+=',test/functional/android/**/*-specs.js'
-        node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
-        cp ci/mochas/android-mocha ci/mocha
-        BRANCH_CAT=android ./ci/git-push.sh
+        TARBALL=sauce-storage:$BZ2_FILE \
+        node ./ci/tools/parallel-mocha.js \
+        -p 30 \
+        -c android
     fi
 elif [[ $CI_CONFIG == 'build_selendroid' ]]; then
     source ./ci/android_env
@@ -44,10 +45,10 @@ elif [[ $CI_CONFIG == 'build_selendroid' ]]; then
         mv submodules/selendroid/selendroid-test-app/target/selendroid-test-app-0.10.0.apk \
             sample-code/apps/selendroid-test-app.apk
         ./ci/upload_build_to_sauce.sh
-        GLOB_PATTERNS='test/functional/selendroid/**/*-specs.js'
-        node ci/tools/testfiles-tool.js split "${GLOB_PATTERNS}" > ci/test-split.json
-        cp ci/mochas/selendroid-mocha ci/mocha
-        BRANCH_CAT=selendroid ./ci/git-push.sh
+        TARBALL=sauce-storage:$BZ2_FILE \
+        node ./ci/tools/parallel-mocha.js \
+        -p 30 \
+        -c selendroid
     fi
 elif [[ $CI_CONFIG == 'build_gappium' ]]; then
     source ./ci/android_env
@@ -61,29 +62,9 @@ elif [[ $CI_CONFIG == 'build_gappium' ]]; then
         rm sample-code/apps/io.appium.gappium.sampleapp
         mv submodules/io.appium.gappium.sampleapp sample-code/apps/
         ./ci/upload_build_to_sauce.sh
-        sed -i.bak s/CI_CONFIG=functional/CI_CONFIG=run_gappium/g ci/travis-functional.yml
-        rm ci/*.bak
-        BRANCH_CAT=gappium ./ci/git-push.sh
-    fi
-elif [[ $CI_CONFIG == 'functional' ]]; then
-    TARBALL=sauce-storage:$(node ./ci/tools/build-upload-tool.js \
-        ./ci/build-upload-info.json filename)
-    echo node ci/tools/testfiles-tool.js list ci/test-split.json "${TEST_GROUP}"
-    TEST_FILES=$(node ci/tools/testfiles-tool.js list ci/test-split.json "${TEST_GROUP}")
-    echo "TEST_FILES --> ${TEST_FILES}"
-    if [[ -n "$TEST_FILES" ]]; then
-        TARBALL=$TARBALL ci/mocha ${TEST_FILES}
-    fi
-elif [[ $CI_CONFIG == 'run_gappium' ]]; then
-    TARBALL=sauce-storage:$(node ./ci/tools/build-upload-tool.js \
-        ./ci/build-upload-info.json filename)
-    if [[ $TEST_GROUP == 'group 1' ]]; then
-        # TODO: investigate WEBVIEW context issue
-        echo 'skipping android gappium test'
-        # TARBALL=$TARBALL ci/mochas/android-mocha test/functional/gappium/**/*-specs.js
-    elif [[ $TEST_GROUP == 'group 2' ]]; then
-        TARBALL=$TARBALL ci/mochas/ios71-mocha test/functional/gappium/**/*-specs.js
-    elif [[ $TEST_GROUP == 'group 3' ]]; then
-        TARBALL=$TARBALL ci/mochas/selendroid-mocha test/functional/gappium/**/*-specs.js
+        TARBALL=sauce-storage:$BZ2_FILE \
+        node ./ci/tools/parallel-mocha.js \
+        -p 30 \
+        -c gappium
     fi
 fi

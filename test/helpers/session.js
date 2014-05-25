@@ -83,9 +83,6 @@ module.exports.initSession = function (desired, opts) {
       deferred.resolve(browser);
       var caps = _.defaults(desired, env.CAPS);
 
-      if (env.VERBOSE) console.log("caps -->", caps);
-      if (env.VERBOSE) console.log("opts -->", opts);
-
       if (env.SAUCE) {
         if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
         if (name) desired.name = name.replace(/@[^\s]*/,'');
@@ -94,6 +91,9 @@ module.exports.initSession = function (desired, opts) {
           caps['appium-version']['filter-caps'] = _(caps).keys();
         }
       }
+
+      if (env.VERBOSE) console.log("caps -->", caps);
+      if (env.VERBOSE) console.log("opts -->", opts);
 
       function init(remainingAttempts) {
         if (env.VERBOSE) console.log("remainingAttempts -->", remainingAttempts);
@@ -115,12 +115,14 @@ module.exports.initSession = function (desired, opts) {
       if (env.MAX_RETRY) attempts = Math.min(env.MAX_RETRY, attempts);
       return browser.chain()
         .then(function () {
-          if (env.IOS && env.RESET_IOS && !opts['no-reset']) {
+          if (!env.SAUCE && env.IOS && env.RESET_IOS && !opts['no-reset']) {
+            // TODO this should not be necessary
             return iosReset();
           }
         }).then(function () {
           // if android uninstall package first
-          if (desired.platformName === 'Android' && desired.appPackage) {
+          if (!env.SAUCE && desired.platformName === 'Android' && desired.appPackage) {
+            // TODO this should not be necessary
             return androidUninstall(desired.appPackage);
           }
         }).then(function () { return init(attempts); })

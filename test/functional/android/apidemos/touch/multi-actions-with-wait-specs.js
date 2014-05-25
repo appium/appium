@@ -1,7 +1,6 @@
 "use strict";
 
-var env = require('../../../../helpers/env')
-  , setup = require("../../../common/setup-base")
+var setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , wd = require("wd")
   , droidText = 'android.widget.TextView'
@@ -10,17 +9,11 @@ var env = require('../../../../helpers/env')
   , MultiAction = wd.MultiAction;
 
 
-describe("apidemo - touch - multi-actions", function () {
+describe("apidemo - touch - multi-actions with wait", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  if (env.FAST_TESTS) {
-    beforeEach(function () {
-      return driver.resetApp();
-    });
-  }
-
-  it('should scroll two different lists', function (done) {
+  it('should scroll two different lists with waits', function (done) {
     var scrollOpts = {};
     driver
       .elementByClassName(droidList)
@@ -49,15 +42,17 @@ describe("apidemo - touch - multi-actions", function () {
           .press()
           .moveTo({ x: 10, y: 0 })
           .moveTo({ x: 10, y: -75 })
-          .moveTo({ x: 10, y: -150 })
+          .wait(1000)
+          .moveTo({ x: 10, y: -350 })
           .release();
 
         // scross quickly on the right
         var a2 = new TouchAction().applyTo(els[1]);
         a2
           .press()
-          .moveTo({ x: 10, y: 0 })
+          .moveTo({ x: 10, y: 100 })
           .moveTo({ x: 10, y: -300 })
+          .wait(500)
           .moveTo({ x: 10, y: -600 })
           .release();
 

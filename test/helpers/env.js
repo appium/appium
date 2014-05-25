@@ -103,16 +103,17 @@ switch (env.DEVICE) {
     , platformName: 'Android'
     , deviceName: 'Android Emulator'
     };
+    if (env.SAUCE) env.CAPS.platformVersion = '4.3';
     break;
   case 'selendroid':
     env.CAPS = {
       browserName: ''
     , platformName: 'Android'
-    , platformVersion: '4.1'
     , automationName: 'Selendroid'
     , deviceName: 'Android Emulator'
     , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/bin/" + process.env.APP + "-debug.apk") : ''
     };
+    if (env.SAUCE) env.CAPS.platformVersion = '4.1';
     break;
   case 'firefox':
     env.CAPS = {

@@ -2,7 +2,7 @@
 set -e
 
 BZ2_FILE=appium-ci-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
-UPLOAD_INFO_FILE=ci/build-upload-info.json
+UPLOAD_INFO_FILE=/tmp/build-upload-info.json
 
 # zipping/uploading
 tar \

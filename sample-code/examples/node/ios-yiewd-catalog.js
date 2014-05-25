@@ -37,7 +37,7 @@ var desired = {
   platformName: 'iOS',
   platformVersion: '7.1',
   deviceName: 'iPhone Simulator',
-  'device-orientation': 'portrait'
+  'deviceOrientation': 'portrait'
 };
 
 if (process.env.SAUCE_CONNECT) {

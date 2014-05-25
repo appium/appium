@@ -26,7 +26,7 @@ var desired = {
     platformVersion: '7.1',
     deviceName: 'iPhone Simulator',
     app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
-    'device-orientation': 'portrait',
+    'deviceOrientation': 'portrait',
   };
 
 if (process.env.SAUCE) {

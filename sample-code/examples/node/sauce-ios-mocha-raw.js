@@ -35,7 +35,7 @@ var desired = {
   deviceName: 'iPhone Simulator',
   app: 'http://appium.s3.amazonaws.com/TestApp6.0.app.zip',
   name: "Appium: with WD Mocha",
-  'device-orientation': 'portrait',
+  'deviceOrientation': 'portrait',
 };
 
 describe('notes app', function() {

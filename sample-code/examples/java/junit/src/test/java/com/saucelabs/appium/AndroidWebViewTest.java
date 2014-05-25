@@ -26,8 +26,8 @@ public class AndroidWebViewTest {
         capabilities.setCapability("automationName","Selendroid");
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("app", app.getAbsolutePath());
-        capabilities.setCapability("app-package", "io.selendroid.testapp");
-        capabilities.setCapability("app-activity", ".HomeScreenActivity");
+        capabilities.setCapability("appPackage", "io.selendroid.testapp");
+        capabilities.setCapability("appActivity", ".HomeScreenActivity");
         driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
     @After

@@ -26,7 +26,6 @@ describe('uicatalog - gestures - flick @skip-ios7 @skip-ios6', function () {
       .then(function (location1) {
         return driver
           .flick(0, -100, false)
-          .sleep(300000)
           .elementByClassName('UIATableCell').getLocation()
           .then(function (location2) {
             location2.x.should.equal(location1.x);

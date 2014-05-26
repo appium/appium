@@ -11,7 +11,7 @@ var env = require('../../helpers/env')
 describe('app activities - with no dot', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
   var session;
-  var name = this.parent.title + " " + this.title;
+  var name = this.title;
   it('should not launch app', function (done) {
     var newDesired = _.defaults({'appActivity': 'ApiDemos'}, desired);
     session = initSession(newDesired, {'no-retry': true, 'expect-error': true});

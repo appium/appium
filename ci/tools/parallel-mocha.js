@@ -84,7 +84,7 @@ var queue = async.queue(function (task, done) {
     .catch(function (err) {
       allGood = false;
       console.error(err + (err.out ? '\n' + err.out : ''));
-    }).fin(function () { clearInterval(interval); })
+    }).finally(function () { clearInterval(interval); })
     .nodeify(done);
 }, args.numOfWorkers);
 

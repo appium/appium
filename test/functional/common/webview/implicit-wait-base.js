@@ -22,7 +22,7 @@ module.exports = function (desired) {
               //((after - before) < 9).should.be.ok;
               ((after - before) > 7).should.be.ok;
             });
-        }).fin(function () {
+        }).finally(function () {
           return driver.setImplicitWaitTimeout(0);
         }).nodeify(done);
     });

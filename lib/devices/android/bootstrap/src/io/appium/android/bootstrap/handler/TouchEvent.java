@@ -8,8 +8,6 @@ import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.WDStatus;
 import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -17,15 +15,14 @@ import org.json.JSONException;
 
 import android.graphics.Rect;
 
-import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 
 /**
  * This handler is and abstract class that contains all the common code for
  * touch event handlers.
- *
+ * 
  */
-public abstract class TouchEvent extends TouchableEvent {
+public abstract class TouchEvent extends CommandHandler {
   protected AndroidElement            el;
 
   protected int                       clickX;
@@ -37,7 +34,7 @@ public abstract class TouchEvent extends TouchableEvent {
   protected boolean                   isElement;
 
   /**
-   *
+   * 
    * @param command
    *          The {@link AndroidCommand}
    * @return {@link AndroidCommandResult}

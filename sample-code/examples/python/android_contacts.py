@@ -44,7 +44,7 @@ class ContactsAndroidTests(unittest.TestCase):
         # no way to handle alerts in Android
         self.driver.find_element_by_android_uiautomator('new UiSelector().clickable(true)').click()
 
-        self.driver.keyevent(3)
+        self.driver.press_keycode(3)
 
 
 

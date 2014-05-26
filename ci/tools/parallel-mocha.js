@@ -121,6 +121,8 @@ function fillQueue(fileInfo) {
   return deferred.promise;
 }
 
+queue.pause();
 Q.all(_(fileInfos).map(function (fileInfo) {
-  return fillQueue(fileInfo);
-})).done();
+    return fillQueue(fileInfo);
+  })).then(function () { queue.resume(); })
+  .done();

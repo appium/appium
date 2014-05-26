@@ -5,7 +5,7 @@ var setup = require("../common/setup-base")
   , desired = require('./desired');
 
 
-describe('selendroid - background app', function () {
+describe('background app', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

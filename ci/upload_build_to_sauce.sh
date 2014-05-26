@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+echo "Starting to compress and upload appium."
+
 BZ2_FILE=appium-ci-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
 UPLOAD_INFO_FILE=/tmp/build-upload-info.json
 
@@ -20,3 +22,5 @@ curl \
 
 # checking/printing result file
 node ci/tools/build-upload-tool.js $UPLOAD_INFO_FILE
+
+echo "Finished to compress and upload appium."

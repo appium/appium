@@ -86,9 +86,13 @@ module.exports.initSession = function (desired, opts) {
       if (env.SAUCE) {
         if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
         if (name) desired.name = name.replace(/@[^\s]*/,'');
+        if (env.TRAVIS_BUILD_NUMBER) desired.build = env.TRAVIS_BUILD_NUMBER;
         if (caps['appium-version']){
           // locking cap list
           caps['appium-version']['filter-caps'] = _(caps).keys();
+        }
+        if (opts['expect-error']){
+          caps.tags.push('expect-error');
         }
       }
 
@@ -147,4 +151,10 @@ module.exports.initSession = function (desired, opts) {
     },
     promisedBrowser: deferred.promise
   };
+};
+
+module.exports.attachToSession = function (sessionId) {
+  var browser = wd.promiseChainRemote(env.APPIUM_HOST, env.APPIUM_PORT, env.APPIUM_USERNAME, env.APPIUM_PASSWORD);
+  browser.attach(sessionId);
+  return browser;
 };

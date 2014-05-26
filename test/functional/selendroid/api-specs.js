@@ -3,7 +3,7 @@
 var setup = require("../common/setup-base"),
     desired = require('./desired');
 
-describe('selendroid - api', function () {
+describe('api', function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });

@@ -13,6 +13,7 @@ env.VERSION = process.env.VERSION;
 
 // travis
 env.TRAVIS_JOB_NUMBER = process.env.TRAVIS_JOB_NUMBER;
+env.TRAVIS_BUILD_NUMBER = process.env.TRAVIS_BUILD_NUMBER;
 env.TRAVIS_BUILD_DIR = process.env.TRAVIS_BUILD_DIR;
 
 // http

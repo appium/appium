@@ -8,7 +8,7 @@ import org.json.JSONException;
 import com.android.uiautomator.core.UiSelector;
 
 // Constants from
-// https://android.googlesource.com/platform/frameworks/testing/+/master/uiautomator/library/src/com/android/uiautomator/core/UiSelector.java
+// https://android.googlesource.com/platform/frameworks/testing/+/master/uiautomator/library/core-src/com/android/uiautomator/core/UiSelector.java
 public class Dynamic {
   // static final int SELECTOR_NIL = 0; // nothing.
   /** text(String text) */
@@ -63,6 +63,12 @@ public class Dynamic {
   private static final int SELECTOR_DESCRIPTION_REGEX    = 27;
   /** packageNameMatches(String regex) */
   private static final int SELECTOR_PACKAGE_NAME_REGEX   = 28;
+  /** resourceId(String id) */
+  private static final int SELECTOR_RESOURCE_ID = 29;
+  /** checkable(boolean val) */
+  private static final int SELECTOR_CHECKABLE = 30;
+  /** resourceIdMatches(String regex) */
+  private static final int SELECTOR_RESOURCE_ID_REGEX = 31;
   // start internal methods at 100
   /**
    * Gets name (content desc) with a fall back to text if name is empty.
@@ -186,6 +192,15 @@ public class Dynamic {
         break;
       case SELECTOR_PACKAGE_NAME_REGEX:
         s = s.packageNameMatches((String) param);
+        break;
+      case SELECTOR_RESOURCE_ID:
+        s = s.resourceId((String) param);
+        break;
+      case SELECTOR_CHECKABLE:
+        s = s.checkable((Boolean) param);
+        break;
+      case SELECTOR_RESOURCE_ID_REGEX:
+        s = s.resourceIdMatches((String) param);
         break;
     }
   }

@@ -24,8 +24,8 @@ CHANGES IN VERSION 1.1.0 (from 1.0.0)
 - extract strings from apk corresponding to device language instead of default
   to be used with ID locator strategy
 - update complex find with new uiautomator constants
-- fix issue when passing in multiple avdArgs
-- uninstall before installing remote apk
+- upgrade Chromedriver to 2.10
+- allow automation of Chrome Beta with browserName: `ChromeBeta`
 
 #### Selendroid
 - update selendroid to 0.10.0

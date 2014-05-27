@@ -36,7 +36,8 @@ describe('Appium', function () {
         var browserCapabilities = [
             [{}, {platformName: 'ios', browserName: 'Safari'}, 'safari']
           , [{}, {platformName: 'Android', browserName: 'Chrome'}, 'chrome']
-          , [{}, {platformName: 'Android', browserName: 'Chromium'}, 'chrome']
+          , [{}, {platformName: 'Android', browserName: 'ChromeBeta'}, 'chrome']
+          , [{}, {platformName: 'Android', browserName: 'chromebeta'}, 'chrome']
           , [{}, {platformName: 'Android', browserName: 'browser'}, 'chrome']
           , [{browserName: 'browser'}, {platformName: 'Android'}, 'chrome']
           , [{browserName: 'Safari'}, {platformName: 'ios'}, 'safari']
@@ -85,6 +86,7 @@ describe('Appium', function () {
         , [{}, {app: 'Settings'}, 'ios']
         , [{}, {app: 'chrome'}, 'chrome']
         , [{}, {app: 'chromium'}, 'chrome']
+        , [{}, {app: 'chromebeta'}, 'chrome']
         , [{}, {app: 'browser'}, 'chrome']
         , [{}, {app: 'http://www.site.com/my.app.zip'}, 'ios']
         , [{}, {app: 'http://www.site.com/MY.APP.ZIp'}, 'ios']

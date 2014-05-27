@@ -1,4 +1,4 @@
 module.exports = {
-  browserName: 'chrome',
+  browserName: process.env.BROWSER_NAME || 'chrome',
   enablePerformanceLogging: true
 };

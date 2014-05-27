@@ -23,7 +23,7 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
 
   var uuid = uuidGenerator.v1();
   if (typeof urlToLoad === "undefined") {
-    if (app === "chrome" || app === "chromium") {
+    if (app === "chrome" || app === "chromium" || app === "chromebeta") {
       urlToLoad = env.CHROME_GUINEA_TEST_END_POINT + '?' + uuid;
     } else {
       urlToLoad = env.GUINEA_TEST_END_POINT + '?' + uuid;
@@ -32,7 +32,7 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
   if (typeof titleToSpin === "undefined") {
     titleToSpin = uuid;
   }
-  if (_.contains(["safari", "iwebview", "chrome", "chromium"], app)) {
+  if (_.contains(["safari", "iwebview", "chrome", "chromium", "chromebeta"], app)) {
     return browser
       .get(urlToLoad)
       .then(function () { return spinTitle(titleToSpin, browser); });
@@ -59,8 +59,9 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
 
 
 var isChrome = function (desired) {
-  return desired.app === "chrome" || desired.app === "chromium" ||
-    desired.browserName === "chrome" || desired.browserName === "chromium";
+  var chromes = ["chrome", "chromium", "chromebeta"];
+  return _.contains(chromes, desired.app) ||
+         _.contains(chromes, desired.browserName);
 };
 
 function skip(reason, done) {

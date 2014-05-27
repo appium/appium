@@ -1,3 +1,37 @@
+CHANGES IN VERSION 1.1.0 (from 1.0.0)
+======================================
+
+#### General
+- less buggy xcode locator strategy for iOS and Android
+  - note that for Android this might cause previous xpath selectors not to
+    work, since we now always set compressed hierarchy when getting the xml
+	dump used for xpath
+- fix defaults for swipe duration
+- add fixes for context switching
+- add optional argument 'language' to getStrings
+- update docs and code samples (including adding perl code samples)
+- continue work on appium CI
+- make sure we can't close already ended sessions
+- upgrade all node deps besides express
+
+#### iOS
+- add `-ios uiautomation` strategy doc
+
+#### Android
+- allow for encoding of non-ASCII text
+- clearer activity error messages
+- add language and country support
+- extract strings from apk corresponding to device language instead of default
+  to be used with ID locator strategy
+- update complex find with new uiautomator constants
+- fix issue when passing in multiple avdArgs
+- uninstall before installing remote apk
+
+#### Selendroid
+- update selendroid to 0.10.0
+- add getStrings method
+
+
 CHANGES IN VERSION 1.0.0 (from 1.0.0-beta.2)
 =======================================
 

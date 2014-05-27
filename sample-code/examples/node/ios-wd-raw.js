@@ -21,6 +21,7 @@ chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 var host, port, username, accessKey, desired;
 
 var desired = {
+    browserName: '',
     'appium-version': '1.0',
     platformName: 'iOS',
     platformVersion: '7.1',
@@ -65,8 +66,8 @@ browser
       })
       .elementByIosUIAutomation('.buttons()')
         .click()
-      // .elementByTagName('staticText')
-      //   .text().should.become("5")
+      .elementByClassName('UIAStaticText')
+        .text().should.become("5")
       .catch(function(err) { console.log(err); })
       .fin(function () {
         return browser

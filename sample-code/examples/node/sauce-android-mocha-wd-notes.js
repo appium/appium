@@ -28,6 +28,7 @@ var host = "ondemand.saucelabs.com",
 var timeout = process.env.TIMEOUT || 300000;
 
 var desired = {
+  browserName: '',
   'appium-version': '1.0',
   platformName: 'Android',
   platformVersion: '4.3',
@@ -67,11 +68,12 @@ describe('notes app', function() {
     browser
       .elementByName("New note")
         .click()
-      .elementByTagName("textfield")
+      .sleep(10000)
+      .elementByClassName('android.widget.TextView')
         .sendKeys("This is a new note!")
       .elementByName("Save")
         .click()
-      .elementsByTagName("text")
+      .elementsByClassName("android.widget.TextView")
         .then(function(els) {
           return Q.all([
             els[2].text().should.become("This is a new note!"),

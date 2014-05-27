@@ -30,8 +30,8 @@ public class AndroidTest {
         capabilities.setCapability("platformVersion", "4.4");
         capabilities.setCapability("platformName","Android");
         capabilities.setCapability("app", app.getAbsolutePath());
-        capabilities.setCapability("app-package", "com.example.android.apis");
-        capabilities.setCapability("app-activity", ".ApiDemos");
+        capabilities.setCapability("appPackage", "com.example.android.apis");
+        capabilities.setCapability("appActivity", ".ApiDemos");
         driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
 
@@ -53,9 +53,3 @@ public class AndroidTest {
     }
 
 }
-
-
-
-
-
-

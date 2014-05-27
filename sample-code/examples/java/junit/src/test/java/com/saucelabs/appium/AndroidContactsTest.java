@@ -28,8 +28,8 @@ public class AndroidContactsTest {
         capabilities.setCapability("deviceName","Android Emulator");
         capabilities.setCapability("platformVersion", "4.4");
         capabilities.setCapability("app", app.getAbsolutePath());
-        capabilities.setCapability("app-package", "com.example.android.contactmanager");
-        capabilities.setCapability("app-activity", ".ContactManager");
+        capabilities.setCapability("appPackage", "com.example.android.contactmanager");
+        capabilities.setCapability("appActivity", ".ContactManager");
         driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
 

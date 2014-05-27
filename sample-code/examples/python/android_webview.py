@@ -15,8 +15,8 @@ class TestAndroidWebView(unittest.TestCase):
         desired_caps = {
             'device': 'selendroid',
             'app': app,
-            'app-package': 'io.selendroid.testapp',
-            'app-activity': '.HomeScreenActivity'
+            'appPackage': 'io.selendroid.testapp',
+            'appActivity': '.HomeScreenActivity'
         }
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub',

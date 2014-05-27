@@ -35,8 +35,8 @@ var desired = {
   deviceName: 'Android Emulator',
   app: 'http://appium.s3.amazonaws.com/NotesList.apk',
   name: 'Sauce Android test',
-  'app-activity': '.NotesList',
-  'app-package': 'com.example.android.notepad'
+  'appActivity': '.NotesList',
+  'appPackage': 'com.example.android.notepad'
 };
 
 describe('notes app', function() {

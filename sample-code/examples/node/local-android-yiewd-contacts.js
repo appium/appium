@@ -21,8 +21,8 @@ var desired = {
   platformVersion: '4.3',
   deviceName: 'Android Emulator',
   "app": path.resolve(__dirname, '../..', 'apps/ContactManager/ContactManager.apk'),
-  "app-package": "com.android.contacts", // built-in contact app
-  "app-activity": "activities.PeopleActivity"
+  "appPackage": "com.android.contacts", // built-in contact app
+  "appActivity": "activities.PeopleActivity"
 };
 
 // Default is for very slow ARM emulator

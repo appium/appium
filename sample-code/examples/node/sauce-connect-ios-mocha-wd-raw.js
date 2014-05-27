@@ -52,7 +52,7 @@ var desired = {
   deviceName: 'iPhone Simulator',
   app: appUrl,
   name: "Appium: with WD Mocha",
-  'device-orientation': 'portrait',
+  'deviceOrientation': 'portrait',
 };
 
 describe('notes app', function() {

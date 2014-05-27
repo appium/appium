@@ -55,7 +55,6 @@ browser
             .text()
             .should.eventually.include('Some@example.com')
         ]);
-        //console.log(elements.length);
       })
       .elementByName("Save")
       .click()

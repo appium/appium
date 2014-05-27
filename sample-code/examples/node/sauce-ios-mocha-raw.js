@@ -29,6 +29,7 @@ var host = "ondemand.saucelabs.com",
 var timeout = process.env.TIMEOUT || 300000;
 
 var desired = {
+  browserName: '',  
   'appium-version': '1.0',
   platformName: 'iOS',
   platformVersion: '7.1',
@@ -79,11 +80,11 @@ describe('notes app', function() {
       })
       .elementByIosUIAutomation('.buttons()')
         .click()
-      // .elementByTagName('staticText')
-      //   .text().then(function(text) {
-      //     var sum = values[0] + values[1];
-      //     sum.should.equal(parseInt(text, 10));
-      //   })
+        .elementByClassName('UIAStaticText')
+          .text().then(function(text) {
+            var sum = values[0] + values[1];
+            sum.should.equal(parseInt(text, 10));
+          })
       .nodeify(done);
   });
 });

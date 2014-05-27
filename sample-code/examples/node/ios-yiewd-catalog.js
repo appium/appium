@@ -2,9 +2,6 @@
 "use strict";
 
 /*
-TODO: UICatalog was recently updated, we need to adapt this sample code.
-TODO: Lots of click errors.
-
 First you need to install node > 0.11 to run this. 
 (You may use this https://github.com/visionmedia/n for easy install/switch 
 between node versions)
@@ -19,7 +16,6 @@ APPIUM ON SAUCE LABS USING SAUCE CONNECT:
 */
 
 var wd = require("yiewd")
-  , o_O = require("monocle-js").o_O
   , path = require("path");
 
 require("colors");
@@ -33,6 +29,7 @@ var staticServer = require('node-static'),
 var host, port, username, accessKey, desired, server;
 
 var desired = {
+  browserName: '',
   'appium-version': '1.0',
   platformName: 'iOS',
   platformVersion: '7.1',
@@ -57,34 +54,10 @@ if (process.env.SAUCE_CONNECT) {
 
   desired.name = "Appium: with WD";
   desired.app = 'http://localhost:8080/UICatalog6.1.app.zip';
-
-  // desired = {
-  //   platform: 'ios',
-  //   version: '7.1',
-  //   device: 'iPhone Simulator',
-  //   deviceName: 'iPhone Retina (4-inch 64-bit)',
-  //   name: "Appium: with WD",
-  //   app: 'http://localhost:8080/UICatalog6.1.app.zip',
-  //   newCommandTimeout: 60
-  // };
 } else {
-  // local config
-
   host = "localhost";
   port = 4723;
-
-  var appPath = path.resolve(__dirname, "..", "..", "apps", "UICatalog", "build",
-                             "Release-iphonesimulator", "UICatalog.app");
-  desired.app = appPath;
-  // desired = {
-  //   device: 'iPhone Simulator',
-  //   name: "Appium: with WD",
-  //   platform: "Mac",
-  //   app: appPath,
-  //   // version: "6.0",
-  //   browserName: "",
-  //   newCommandTimeout: 60
-  // };
+  desired.app = 'assets/UICatalog6.1.app.zip';
 }
 
 var browser = wd.remote(host, port, username, accessKey);
@@ -96,69 +69,57 @@ browser.on('command', function (meth, path, data) {
   console.log(' > ' + meth.yellow, path.grey, data || '');
 });
 
-var scrollToElement = o_O(function* (element) {
-  var y = (yield element.getLocation()).y;
-  while (y === 0 || y > 400) {
-    // move so top of screen is y - 10
-    var swipeOpts = {
-      duration: 0.5,
-      startY: 0.7,
-      endY: 0.3
-    };
-    yield browser.execute("mobile: swipe", [swipeOpts]);
-    y = (yield element.getLocation()).y;
-    yield browser.sleep(0.5);
-  }
-});
-
 browser.run(function* () {
   try {
     yield this.init(desired);
     yield this.elementByName("Buttons, Various uses of UIButton").click();
-    var btns = yield this.elementsByIosUIAutomation('.buttons()');
+    var btns = yield this
+      .elementsByClassName('UIAButton');
     for (var i = 1; i < 4; i++) {
       yield btns[i].click();
     }
     yield btns[0].click();
     yield this.elementByName("Controls, Various uses of UIControl").click();
-    var stdSwitch = yield this.elementByXPath("//switch[@name='Standard']");
+    var stdSwitch = yield this.elementByXPath("//UIASwitch[@name='Standard']");
     yield stdSwitch.sendKeys(true);
     yield stdSwitch.sendKeys(false);
-    var stdSlider = yield this.elementByXPath("//slider[@name='Standard']");
+    var stdSlider = yield this.elementByXPath("//UIASlider[@name='Standard']");
     yield stdSlider.sendKeys("0.25");
     yield stdSlider.sendKeys("0.8");
-    yield this.execute("mobile: swipe", [{endY: 0.05, duration: 0.8}]);
-    var cstSlider = yield this.elementByXPath("//slider[@name='Custom']");
-    yield scrollToElement(cstSlider);
+    var cstSlider = yield this.elementByXPath("//UIASlider[@name='Custom']");
     yield cstSlider.sendKeys("1.0");
-    // var pages = yield this.elementByTagName("pageIndicator");
-    // yield scrollToElement(pages);
-    // for (i = 0; i < 10; i += 2) {
+    // TODO: not visible, cannot scroll to it in ios71
+    // var pages = yield this.elementByClassName("UIAPageIndicator");
+    // yield pages.moveTo();
+    // for (var i = 0; i < 10; i += 2) {
     //   yield pages.sendKeys(i);
+    //   yield this.sleep(3000);
     // }
     yield this.elementByName("Back").click();
 
     yield this.elementByName("TextFields, Uses of UITextField").click();
-    yield this.elementByIosUIAutomation(".textFields();").sendKeys("Hello World!\n");
-    yield this.elementByName("Back").click();
-    yield this.elementByName("Pickers, Uses of UIDatePicker, UIPickerView").click();
-    // var pickers = yield this.elementsByTagName("picker");
-    // console.log(pickers[2].elementsByTagName);
-    // var wheels = yield pickers[2].elementsByTagName("pickerwheel");
-    // yield wheels[0].sendKeys("Serena Auroux");
-    // yield this.elementByName("Back").click();
-    // yield this.elementByName("Images, Use of UIImageView").click();
-    // yield this.elementByTagName("slider").sendKeys("0.8");
-    // yield this.sleep(2);
+    yield this.elementByClassName("UIATextField").sendKeys("Hello World!\n");
     yield this.elementByName("Back").click();
 
-    // todo: This part didn't work on Sauce 6.1
-    // yield this.elementByName("Web, Use of UIWebView").click();
-    //var handles = yield this.windowHandles();
-    //yield this.windowHandle(handles[0]);
-    // yield this.get("https://www.saucelabs.com");
-    // yield this.execute("mobile: leaveWebView");
-    // yield this.elementByName("Back").click();
+    yield this.elementByName("Pickers, Uses of UIDatePicker, UIPickerView").click();
+    var pickers = yield this.elementsByClassName("UIAPicker");
+    /*var wheels =*/ yield pickers[0].elementsByClassName("UIAPickerWheel");    
+    // TODO: sendKey to picker is not working
+    //yield wheels[0].sendKeys("Serena Auroux");
+    yield this.elementByName("Back").click();
+
+    yield this.elementByName("Images, Use of UIImageView").click();
+    yield this.elementByClassName("UIASlider").sendKeys("0.8");
+    yield this.sleep(2);
+    yield this.elementByName("Back").click();
+
+    yield this.elementByName("Web, Use of UIWebView").click();
+    yield this.sleep(3000);
+    yield this.contexts();
+    yield this.context("WEBVIEW");
+    yield this.get("https://www.saucelabs.com");
+    yield this.context("NATIVE_APP");
+    yield this.elementByName("Back").click();
 
     console.log(yield this.source());
   } catch (e) {

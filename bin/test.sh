@@ -122,5 +122,7 @@ if $gappium_only || $all_tests; then
     echo "Start the android emulator api 19 and press Enter."    
     read
     DEVICE=android time $appium_mocha test/functional/gappium
+    echo "Start the android emulator api 16 and press Enter."    
+    read
     DEVICE=selendroid time $appium_mocha test/functional/gappium
 fi

@@ -13,6 +13,7 @@ var path = require('path')
   , buildSelendroidServer = gruntHelpers.buildSelendroidServer
   , buildAndroidApp = gruntHelpers.buildAndroidApp
   , buildSelendroidAndroidApp = gruntHelpers.buildSelendroidAndroidApp
+  , fixSelendroidAndroidManifest = gruntHelpers.fixSelendroidAndroidManifest
   , installAndroidApp = gruntHelpers.installAndroidApp
   , generateServerDocs = gruntHelpers.generateServerDocs
   , generateAppiumIo = gruntHelpers.generateAppiumIo
@@ -105,6 +106,11 @@ module.exports = function (grunt) {
   });
   grunt.registerTask('buildSelendroidServer', function () {
     buildSelendroidServer(this.async());
+  });
+  grunt.registerTask('fixSelendroidAndroidManifest', function () {
+    var destDir = path.resolve(__dirname, "build", "selendroid");
+    var dstManifest = path.resolve(destDir, "AndroidManifest.xml");
+    fixSelendroidAndroidManifest(dstManifest, this.async());
   });
   grunt.registerTask('configAndroidApp', function (appName) {
     setupAndroidApp(grunt, appName, this.async());

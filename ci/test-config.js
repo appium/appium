@@ -13,15 +13,7 @@ module.exports = {
       'test/functional/android/**/*-specs.js'
     ]
   },
-  'others':[
-    // selendroid
-    {
-      'mocha-bin': 'ci/mochas/selendroid-mocha',
-      'glob-patterns': [
-        'test/functional/selendroid/**/*-specs.js'
-      ]
-    },
-    //gappium
+  'gappium':[
     {
       'mocha-bin': 'ci/mochas/ios71-mocha',
       'glob-patterns': [
@@ -41,5 +33,11 @@ module.exports = {
         'test/functional/gappium/**/*-specs.js'
       ]
     }
-  ]
+  ],
+  'selendroid':{
+    'mocha-bin': 'ci/mochas/selendroid-mocha',
+    'glob-patterns': [
+      'test/functional/selendroid/**/*-specs.js'
+    ]
+  }
 };

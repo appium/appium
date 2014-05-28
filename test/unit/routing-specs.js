@@ -5,7 +5,6 @@ var rest = require('express')()
 
 describe('Appium', function () {
   var inst = appium({});
-  rest.use(rest.router);
 
   describe('#attachTo', function () {
     return it('should get valid routes', function (done) {

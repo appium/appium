@@ -3,7 +3,8 @@
   "strict": true,
   "undef": true,
   "unused": true,
-  "trailing": true,
   "node": true,
-  "es5": true
+  "eqeqeq": true,
+  "trailing": true,
+  "indent": 2    
 }

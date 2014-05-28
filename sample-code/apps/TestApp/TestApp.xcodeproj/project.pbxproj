@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BB2B952189053DC00D0591D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB2B951189053DC00D0591D /* CoreLocation.framework */; };
 		255BAFEC1790223300DE7158 /* GestureTestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 255BAFEA1790223300DE7158 /* GestureTestViewController.m */; };
 		255BAFED1790223300DE7158 /* GestureTestViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 255BAFEB1790223300DE7158 /* GestureTestViewController.xib */; };
 		255BAFEF1790249F00DE7158 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 255BAFEE1790249F00DE7158 /* MapKit.framework */; };
@@ -19,9 +20,11 @@
 		3647AE2C15CA00D5006F70D6 /* MyViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */; };
 		3647AE2D15CA00D5006F70D6 /* MyViewControllerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3647AE2B15CA00D5006F70D6 /* MyViewControllerViewController.xib */; };
 		36FEEFEE1656DD6000100C04 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36FEEFED1656DD6000100C04 /* Default-568h@2x.png */; };
+		EA040B6118D3DF5E00AC02D8 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1BB2B951189053DC00D0591D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		255BAFE91790223300DE7158 /* GestureTestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureTestViewController.h; sourceTree = "<group>"; };
 		255BAFEA1790223300DE7158 /* GestureTestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GestureTestViewController.m; sourceTree = "<group>"; };
 		255BAFEB1790223300DE7158 /* GestureTestViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GestureTestViewController.xib; sourceTree = "<group>"; };
@@ -40,6 +43,7 @@
 		3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyViewControllerViewController.m; sourceTree = "<group>"; };
 		3647AE2B15CA00D5006F70D6 /* MyViewControllerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyViewControllerViewController.xib; sourceTree = "<group>"; };
 		36FEEFED1656DD6000100C04 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +51,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA040B6118D3DF5E00AC02D8 /* AddressBook.framework in Frameworks */,
+				1BB2B952189053DC00D0591D /* CoreLocation.framework in Frameworks */,
 				255BAFEF1790249F00DE7158 /* MapKit.framework in Frameworks */,
 				3647AE1315CA0082006F70D6 /* UIKit.framework in Frameworks */,
 				3647AE1515CA0082006F70D6 /* Foundation.framework in Frameworks */,
@@ -79,6 +85,8 @@
 		3647AE1115CA0082006F70D6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */,
+				1BB2B951189053DC00D0591D /* CoreLocation.framework */,
 				3647AE1215CA0082006F70D6 /* UIKit.framework */,
 				3647AE1415CA0082006F70D6 /* Foundation.framework */,
 				3647AE1615CA0082006F70D6 /* CoreGraphics.framework */,

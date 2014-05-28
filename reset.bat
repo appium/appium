@@ -11,13 +11,26 @@ SET doAndroid=0
 SET doVerbose=0
 SET doForce=0
 SET pigsFly=0
+SET chromedriver_version=
+SET udid=
 
 :: Read in command line switches
-FOR %%A IN (%*) DO IF "%%A" == "--dev" SET doDev=1
-FOR %%A IN (%*) DO IF "%%A" == "--android" SET doAndroid=1
-FOR %%A IN (%*) DO IF "%%A" == "--selendroid" SET doSelendroid=1
-FOR %%A IN (%*) DO IF "%%A" == "--verbose" SET doVerbose=1
-FOR %%A IN (%*) DO IF "%%A" == "--force" SET doForce=1
+:loop
+IF "%~1" neq "" (
+  IF "%1" == "--dev" SET doDev=1
+  IF "%1" == "--android" SET doAndroid=1
+  IF "%1" == "--selendroid" SET doSelendroid=1
+  IF "%1" == "--verbose" SET doVerbose=1
+  IF "%1" == "--force" SET doForce=1
+  IF "%1" == "--chromedriver-version" IF "%2" neq "" (
+    SET "chromedriver_version=%2"
+  )
+  IF "%1" == "--udid" IF "%2" neq "" (
+    SET "udid=%2"
+  )
+  shift
+  goto :loop
+)
 
 :: If nothing is flagged do only android
 IF %doDev% == 0 IF %doSelendroid% == 0 IF %doAndroid% == 0 SET doAndroid=1
@@ -27,6 +40,8 @@ ECHO.
 ECHO =====Installing dependencies with npm=====
 ECHO.
 CALL :runCmd "npm install ."
+ECHO =====Finished installing dependencies with npm=====
+ECHO.
 
 :: Install Dev Dependencies
 if %doDev% == 1 (
@@ -34,6 +49,7 @@ if %doDev% == 1 (
   ECHO =====Installing development dependencies with npm=====
   ECHO.
   CALL :runCmd "npm install . --dev"
+  ECHO =====Finished installing development dependencies with npm=====
   ECHO.
 )
 
@@ -47,7 +63,7 @@ if %doAndroid% == 1 (
   CALL :runCmd "node_modules\.bin\grunt setConfigVer:android"
   ECHO.
   ECHO =====Reset Android Complete=====
-  
+
   ECHO.
   ECHO =====Resetting Unlock.apk=====
   ECHO.
@@ -78,6 +94,34 @@ if %doAndroid% == 1 (
     ECHO.
     ECHO =====Reset API Demos Complete=====
   )
+
+  :: Reset ChromeDriver
+  echo =====Resetting ChromeDriver=====
+  setlocal enabledelayedexpansion
+  SET "chromedriver_build_directory=.\build\chromedriver\windows"
+  echo Building directory structure
+  IF NOT EXIST .\build                      CALL :runCmd "mkdir .\build"
+  IF NOT EXIST .\build\chromedriver         CALL :runCmd "mkdir .\build\chromedriver"
+  IF NOT EXIST .\build\chromedriver\windows CALL :runCmd "mkdir !chromedriver_build_directory!"
+
+  echo Removing old files
+  IF EXIST !chromedriver_build_directory!\chromedriver.zip CALL :runCmd "del !chromedriver_build_directory!\chromedriver.zip"
+  IF EXIST !chromedriver_build_directory!\chromedriver.exe CALL :runCmd "del !chromedriver_build_directory!\chromedriver.exe"
+
+  IF NOT DEFINED chromedriver_version (
+    echo Finding latest version
+    for /f "delims=" %%a in ('curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE') do SET "chromedriver_version=%%a"
+  )
+
+  echo !chromedriver_build_directory!
+  echo Downloading and installing version !chromedriver_version!
+  CALL :runCmd "curl -L http://chromedriver.storage.googleapis.com/!chromedriver_version!/chromedriver_win32.zip -o !chromedriver_build_directory!\chromedriver.zip"
+  CALL :runCmd "PUSHD !chromedriver_build_directory!"
+  CALL :runCmd "jar xf chromedriver.zip"
+  CALL :runCmd "del chromedriver.zip"
+  CALL :runCmd "POPD"
+  
+  echo =====Reset ChromeDriver Complete=====
 )
 
 :: Reset Selendroid
@@ -92,10 +136,10 @@ IF %doSelendroid% == 1 (
   CALL :runCmd "git submodule update --init submodules\selendroid"
   CALL :runCmd "RD /S /Q selendroid | VER > NUL"
   ECHO Building selendroid server and supporting libraries
-  CALL :runCmd "set MAVEN_OPTS=-Xss1024k"
+  CALL :runCmd "set MAVEN_OPTS=-Xms512m -Xmx512m -Xss2048k"
   CALL :runCmd "node_modules\.bin\grunt buildSelendroidServer"
   CALL :runCmd "set MAVEN_OPTS="
-  
+
   :: Reset Selendroid Dev
   IF %doDev% == 1 (
     ECHO.
@@ -112,7 +156,7 @@ IF %doSelendroid% == 1 (
     CALL :uninstallAndroidApp openqa.selendroid.testapp.selendroid
     ECHO.
     ECHO =====Reset Selendroid - Dev Complete=====
-  )  
+  )
 
   ECHO Setting Selendroid config to Appium's version
   CALL :runCmd "node_modules\.bin\grunt setConfigVer:selendroid"
@@ -137,12 +181,31 @@ IF %pigsFly% == 1 (
   ECHO.
   ECHO =====Reset Gappium=====
 )
+ECHO Done, No Errors
 GOTO :EOF
 
 :: Function to uninstall an Android app
 :uninstallAndroidApp
   ECHO Attempting to uninstall android app %~1
+  FOR /F "delims=" %%i in ('adb devices ^| FINDSTR /R "device$" ^| find /v /c ""') DO SET deviceCount=%%i
+  IF %deviceCount% GEQ 1 (
+    GOTO :deviceExists
+  ) ELSE ECHO No android devices detected, skipping uninstallation
+GOTO :EOF
+
+:deviceExists
+IF DEFINED udid (
+  GOTO :udidSpecified
+) ELSE IF %deviceCount% EQU 1 (
   CALL :runCmd "adb uninstall %~1 | VER > NUL"
+) ELSE ECHO More than one device present, but no device serial provided, skipping uninstallation (use --udid)
+GOTO :EOF
+
+:udidSpecified
+FOR /F "delims=" %%i in ('adb devices ^| FINDSTR /R "^%udid%" ^| find /v /c ""') DO SET specifiedDeviceCount=%%i
+IF %specifiedDeviceCount% EQU 1 (
+  CALL :runCmd "adb -s %udid% uninstall %~1 | VER > NUL"
+) ELSE ECHO Device with serial %udid% not found, skipping installation
 GOTO :EOF
 
 :: Function to run commands
@@ -165,7 +228,7 @@ GOTO :EOF
 
 :__ErrorExit
 REM Creates a syntax error, stops immediately
-() 
+()
 GOTO :EOF
 
 :__SetErrorLevel

@@ -1,9 +1,8 @@
 # GETTING STARTED
 # -----------------
 # This documentation is intended to show you how to get started with a
-# simple Selenium-Webdriver test.  This test is written with RSpec but the
-# webdriver commands (everything called after @driver) will work with any
-# testing framework.
+# simple Appium & appium_lib test.  This example is written without a specific
+# testing framework in mind;  You can use appium_lib on any framework you like.
 #
 # INSTALLING RVM
 # --------------
@@ -24,84 +23,79 @@
 # -----------------
 # To actually run the tests, make sure appium is running in another terminal
 # window, then from the same window you used for the above commands, type
-#   "rspec simple_test.rb"
+#   "ruby simple_test.rb"
 #
-# It will take a while, but once it's done you should get nothing but a line telling you "1 example, 0 failures".
-
-require 'rspec'
-require 'selenium-webdriver'
+# It will take a while, but once it's done you should get nothing but a line
+# telling you "Tests Succeeded";  You'll see the iOS Simulator cranking away
+# doing actions while we're running.
+require 'rubygems'
+require 'appium_lib'
 
 APP_PATH = '../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
 
-
-def absolute_app_path
-    file = File.join(File.dirname(__FILE__), APP_PATH)
-    raise "App doesn't exist #{file}" unless File.exist? file
-    file
-end
-
-capabilities = {
-  'browserName' => '',
-  'platform' => 'Mac',
-  'device' => 'iPhone Simulator',
-  'version' => '6.0',
-  'app' => absolute_app_path
+desired_caps = {
+  'platformName'  => 'ios',
+  'versionNumber' => '7.1',
+  'app'           => APP_PATH
 }
 
-server_url = "http://127.0.0.1:4723/wd/hub"
+# Start the driver
+Appium::Driver.new(caps: desired_caps).start_driver
 
-describe "Computation" do
-  before :all do
-    @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => server_url)
-    @driver.manage.timeouts.implicit_wait = 10 # seconds
-   end
+module Calculator
+  module IOS
+    # Add all the Appium library methods to Test to make
+    # calling them look nicer.
+    Appium.promote_singleton_appium_methods Calculator
 
-  after :all do
-    @driver.quit
-  end
-
-  it "should add two numbers" do
-    values = [rand(10), rand(10)]
+    # Add two numbers
+    values       = [rand(10), rand(10)]
     expected_sum = values.reduce(&:+)
-    elements = @driver.find_elements(:tag_name, 'textField')
+
+    # Find every textfield.
+    elements     = textfields
 
     elements.each_with_index do |element, index|
-      element.send_keys values[index]
+      element.type values[index]
     end
 
-    button = @driver.find_element(:tag_name, 'button')
-    button.click
+    # Click the first button
+    button(1).click
 
-    actual_sum = @driver.find_elements(:tag_name, 'staticText')[0].text
-    actual_sum.should eq(expected_sum.to_s)
+    # Get the first static text field, then get its text
+    actual_sum = first_text.text
+    raise unless actual_sum == (expected_sum.to_s)
+
+    # Alerts are visible
+    button('show alert').click
+    find_element :class_name, 'UIAAlert' # Elements can be found by :class_name
+
+    # wait for alert to show
+    wait { text 'this alert is so cool' }
+
+    # Elements can be found by their Class and value of an attribute
+    find_ele_by_attr 'UIATableCell', :label, 'Cancel'
+    # Or by find
+    find('Cancel').click
+
+    # Waits until alert doesn't exist
+    wait_true { !exists { tag('UIAAlert') } }
+
+    # Alerts can be switched into
+    button('show alert').click # Get a button by its text
+    alert         = driver.switch_to.alert # Get the text of the current alert, using
+    # the Selenium::WebDriver directly
+    alerting_text = alert.text
+    raise Exception unless alerting_text.include? 'Cool title'
+    alert_accept # Accept the current alert
+
+    # Window Size is easy to get
+    sizes = window_size
+    raise Exception unless sizes.height == 568
+    raise Exception unless sizes.width == 320
+
+    # Quit when you're done!
+    driver_quit
+    puts 'Tests Succeeded!'
   end
-
-  it "should handle alerts" do
-    els = @driver.find_elements(:tag_name, 'button')
-    els[1].click
-    a = @driver.switch_to.alert
-    a.text.should eq("Cool title")
-    a.accept
-  end
-
-  it "should find alerts" do
-    els = @driver.find_elements(:tag_name, 'button')
-    els[1].click
-    alert = @driver.find_element(:tag_name, 'alert')
-    buttons = alert.find_elements(:tag_name, 'button')
-    buttons[0].text.should eq("Cancel")
-    buttons[0].click
-    wait = Selenium::WebDriver::Wait.new(:timeout => 30) # seconds
-    wait.until {
-      alerts = @driver.find_elements(:tag_name, 'alert')
-      alerts.should be_empty
-    }
-  end
-
-  it "should get window size" do
-    size = @driver.manage.window.size
-    size.width.should eq(320)
-    size.height.should eq(480)
-  end
-
 end

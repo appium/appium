@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B08D24C1844279400752049 /* cybervillainsCA.cer in Resources */ = {isa = PBXBuildFile; fileRef = 1B08D24B1844279400752049 /* cybervillainsCA.cer */; };
 		1B316481183696AA00E66A8A /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B31647F183696AA00E66A8A /* MainStoryboard_iPad.storyboard */; };
 		1BD41A8916C10EAB009D6B32 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD41A8816C10EAB009D6B32 /* UIKit.framework */; };
 		1BD41A8B16C10EAB009D6B32 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD41A8A16C10EAB009D6B32 /* Foundation.framework */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1B08D24B1844279400752049 /* cybervillainsCA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = cybervillainsCA.cer; sourceTree = "<group>"; };
 		1B316480183696AA00E66A8A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		1BD41A8516C10EAB009D6B32 /* WebViewApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebViewApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BD41A8816C10EAB009D6B32 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -99,6 +101,7 @@
 		1BD41A8F16C10EAB009D6B32 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1B08D24B1844279400752049 /* cybervillainsCA.cer */,
 				1BD41A9016C10EAB009D6B32 /* WebViewApp-Info.plist */,
 				1BD41A9116C10EAB009D6B32 /* InfoPlist.strings */,
 				1BD41A9416C10EAB009D6B32 /* main.m */,
@@ -167,6 +170,7 @@
 				1BD41A9D16C10EAB009D6B32 /* Default@2x.png in Resources */,
 				1BD41A9F16C10EAB009D6B32 /* Default-568h@2x.png in Resources */,
 				1BD41AA216C10EAB009D6B32 /* MainStoryboard_iPhone.storyboard in Resources */,
+				1B08D24C1844279400752049 /* cybervillainsCA.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

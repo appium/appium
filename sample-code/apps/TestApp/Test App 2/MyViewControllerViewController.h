@@ -20,17 +20,22 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import "GestureTestViewController.h"
 
-@interface MyViewControllerViewController : UIViewController <UITextFieldDelegate>
+@interface MyViewControllerViewController : UIViewController <UITextFieldDelegate,CLLocationManagerDelegate>
 @property (retain, nonatomic) IBOutlet UITextField *firstArg;
 @property (retain, nonatomic) IBOutlet UITextField *secondArg;
 @property (retain, nonatomic) IBOutlet UILabel *answerLabel;
+@property (retain, nonatomic) IBOutlet UISwitch *locationStatus;
 @property (retain, nonatomic) IBOutlet UIButton *computeSumButton;
-- (IBAction)testGesture:(id)sender;
+@property (nonatomic, retain) CLLocationManager *locationMgr;
 
+- (IBAction)testGesture:(id)sender;
 - (IBAction)computeAction:(id)sender;
 - (IBAction)showAlert:(id)sender;
 - (BOOL)textFieldShouldReturn:(UITextField *)textField;
+- (void)logLocationAuthFromTimer:(NSTimer *)timer;
+- (void)logLocationAuth;
 
 @end

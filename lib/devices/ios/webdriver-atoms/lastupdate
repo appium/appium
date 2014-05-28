@@ -1,7 +1,0 @@
-2013-01-24 00:28:15
-
-commit 9abc18c49e8f782c0889ac577e19c4e8b5edb924 (HEAD, refs/remotes/origin/master, refs/remotes/origin/HEAD, refs/heads/master)
-Author: Santiago Suarez Ordoñez <santiycr@gmail.com>
-Date:   Wed Jan 23 15:21:07 2013 -0800
-
-    SantiagoSuarezO: Rake task for uploading the Selenium jar to Sauce

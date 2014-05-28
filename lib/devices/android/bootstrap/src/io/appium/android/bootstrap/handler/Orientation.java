@@ -16,17 +16,17 @@ import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to get or set the orientation of the device.
- *
+ * 
  */
 public class Orientation extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   *
+   * 
    * @return {@link AndroidCommandResult}
-   *
+   * 
    * @throws JSONException
-   *
+   * 
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */
@@ -53,7 +53,7 @@ public class Orientation extends CommandHandler {
 
   /**
    * Returns the current rotation
-   *
+   * 
    * @return {@link AndroidCommandResult}
    */
   private AndroidCommandResult getRotation() {
@@ -82,7 +82,7 @@ public class Orientation extends CommandHandler {
 
   /**
    * Set the desired rotation
-   *
+   * 
    * @param orientation
    *          The rotation desired (LANDSCAPE or PORTRAIT)
    * @return {@link AndroidCommandResult}

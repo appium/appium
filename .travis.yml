@@ -16,7 +16,7 @@ env:
   - APPIUM_PORT=80
   - SAUCE_USERNAME=appium
   - secure: GXGFbQptLEsKlaWnpOL2EB9hqQ4XBT6tqg7REt5j1h1jYBsfHQHSgSLt1jpzOF5kooXVbw2K7IrZyNVBXEUHR00Hp6O72FBOd+SSj8uPCJBLjAOaJWs0ZtujqGHwHpe6gadFfn0L7q0ffoV5OJVeNHHcuw4f9BaA78fTFNfm1jE=
-  - secure: WLRP9RJIHWPer189swCqMCnexS8XpVQ8FRMSXNxLXp5fUaERVzU7/ncGFeqcM8GWGIU12PP8TJUaMRa58vTGgApW6POMdAPiauepfzoru+n/S4Xrw64hmd4oK0GEZI3wgnkPofUn6TzQeXRmVG496PNzbV8KfqF4mTAesZOLSFA= 
+  - secure: WLRP9RJIHWPer189swCqMCnexS8XpVQ8FRMSXNxLXp5fUaERVzU7/ncGFeqcM8GWGIU12PP8TJUaMRa58vTGgApW6POMdAPiauepfzoru+n/S4Xrw64hmd4oK0GEZI3wgnkPofUn6TzQeXRmVG496PNzbV8KfqF4mTAesZOLSFA=
   - HTTP_RETRIES=5
   - HTTP_RETRY_DELAY=5000
   - DEBUG_CONNECTION=1
@@ -24,9 +24,10 @@ env:
   - LAUNCH_TIMEOUT='{"global":90000,"afterSimLaunch":30000}'
   matrix:
   - CI_CONFIG=unit
-  - CI_CONFIG=others
   - CI_CONFIG=android
   - CI_CONFIG=ios
+  - CI_CONFIG=gappium
+  - CI_CONFIG=selendroid
 before_script:
 - gem install --no-rdoc --no-ri appium_doc_lint
 - "./ci/installers/install-node.sh"

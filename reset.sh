@@ -8,6 +8,7 @@ set -e
 should_reset_android=false
 should_reset_ios=false
 should_reset_selendroid=false
+should_reset_selendroid_quick=false
 should_reset_gappium=false
 should_reset_firefoxos=false
 should_reset_realsafari=false
@@ -41,6 +42,7 @@ do
         "--code-sign") code_sign_identity=$2;;
         "--profile") provisioning_profile=$2;;
         "--selendroid") should_reset_selendroid=true;;
+        "--selendroid-quick") should_reset_selendroid_quick=true;;
         "--firefoxos") should_reset_firefoxos=true;;
         "--gappium") should_reset_gappium=true;;
         "--dev") include_dev=true;;
@@ -62,7 +64,8 @@ do
     fi
 done
 
-if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid && ! $should_reset_gappium && ! $should_reset_firefoxos ; then
+if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid \
+    && ! $should_reset_gappium && ! $should_reset_firefoxos && ! $should_reset_selendroid_quick ; then
     should_reset_android=true
     should_reset_ios=true
     should_reset_selendroid=true
@@ -343,6 +346,51 @@ require_java() {
   [ '${JAVA_HOME:?"Warning: Make sure JAVA_HOME is set properly for Java builds."}' ]
 }
 
+reset_selendroid_quick() {
+    echo "RESETTING SELENDROID (QUICK)"
+    run_cmd rm -rf "${appium_home}/build/selendroid"
+    run_cmd mkdir -p "${appium_home}/build/selendroid"
+    run_cmd rm -rf /tmp/appium/selendroid
+    run_cmd mkdir -p /tmp/appium/selendroid
+    run_cmd pushd /tmp/appium/selendroid
+    echo "* Downloading metatata"
+    run_cmd wget http://search.maven.org/remotecontent?filepath=io/selendroid/selendroid-standalone/maven-metadata.xml -O maven-metadata.xml
+    selendroid_version=$(grep latest maven-metadata.xml | sed 's/ *<\/*latest\> *//g')
+    echo "* Selendroid version is ${selendroid_version}"
+    echo "* Downloading selendroid server"
+    run_cmd wget https://github.com/selendroid/selendroid/releases/download/${selendroid_version}/selendroid-standalone-${selendroid_version}-with-dependencies.jar
+    run_cmd jar xf selendroid-standalone-${selendroid_version}-with-dependencies.jar AndroidManifest.xml  prebuild/selendroid-server-${selendroid_version}.apk
+    run_cmd cp /tmp/appium/selendroid/prebuild/selendroid-server-${selendroid_version}.apk "${appium_home}/build/selendroid/selendroid.apk"
+    run_cmd cp /tmp/appium/selendroid/AndroidManifest.xml "${appium_home}/build/selendroid/AndroidManifest.xml"
+    run_cmd popd
+    run_cmd "$grunt" fixSelendroidAndroidManifest
+    if $include_dev ; then
+        if ! $apidemos_reset; then
+            reset_apidemos
+            uninstall_android_app com.example.android.apis.selendroid
+        fi
+        if ! $toggletest_reset; then
+            reset_toggle_test
+            uninstall_android_app com.example.toggletest.selendroid
+        fi
+        run_cmd pushd /tmp/appium/selendroid
+        echo "* Downloading selendroid test app"
+        run_cmd wget http://search.maven.org/remotecontent?filepath=io/selendroid/selendroid-test-app/${selendroid_version}/selendroid-test-app-${selendroid_version}.apk -O selendroid-test-app-${selendroid_version}.apk
+        run_cmd popd
+        run_cmd rm -rf "${appium_home}/sample-code/apps/selendroid-test-app.apk"
+        cp /tmp/appium/selendroid/selendroid-test-app-${selendroid_version}.apk "${appium_home}/sample-code/apps/selendroid-test-app.apk"
+        echo "* Attempting to uninstall app"
+        # uninstalling app
+        uninstall_android_app io.selendroid.testapp.selendroid
+        uninstall_android_app io.selendroid.testapp
+        # keep older versions of package around to clean up
+        uninstall_android_app org.openqa.selendroid.testapp.selendroid
+        uninstall_android_app org.openqa.selendroid.testapp
+    fi
+    echo "* Setting Selendroid config to Appium's version"
+    run_cmd "$grunt" setConfigVer:selendroid    
+}
+
 reset_selendroid() {
     echo "RESETTING SELENDROID"
     require_java
@@ -488,6 +536,9 @@ main() {
     fi
     if $should_reset_selendroid ; then
         reset_selendroid
+    fi
+    if $should_reset_selendroid_quick ; then
+        reset_selendroid_quick
     fi
     if $should_reset_firefoxos ; then
         reset_firefoxos

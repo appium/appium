@@ -39,7 +39,7 @@ var activateWebView = function (driver) {
   });
   return driver
     //TODO: how to detect app is ready on android, spinning doesn't work.
-    .sleep(env.ANDROID || env.SELENDROID ? 45000 : 5000) // yup takes time to load
+    .sleep(env.ANDROID ? 45000 : 5000) // yup takes time to load
     .waitFor(webContextReady, 10000, 500)
     .then(function (webviewCtx) {
       return driver.context(webviewCtx);

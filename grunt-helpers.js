@@ -430,6 +430,29 @@ module.exports.buildAndroidBootstrap = function (grunt, cb) {
   });
 };
 
+var fixSelendroidAndroidManifest = function (dstManifest, cb) {
+  console.log("Modifying manifest for no icons");
+  fs.readFile(dstManifest, function (err, data) {
+    if (err) {
+      console.error("Could not open new manifest");
+      return cb(err);
+    }
+    data = data.toString('utf8');
+    console.log(data);
+    var iconRe = /application[\s\S]+android:icon="[^"]+"/;
+    data = data.replace(iconRe, "application");
+    fs.writeFile(dstManifest, data, function (err) {
+      if (err) {
+        console.error("Could not write modified manifest");
+        return cb(err);
+      }
+      cb(null);
+    });
+  });
+};
+module.exports.fixSelendroidAndroidManifest = fixSelendroidAndroidManifest;
+
+
 module.exports.buildSelendroidServer = function (cb) {
   console.log("Building selendroid server");
   getSelendroidVersion(function (err, version) {
@@ -478,24 +501,7 @@ module.exports.buildSelendroidServer = function (cb) {
                   console.error("Could not copy manifest");
                   return cb(err);
                 }
-                console.log("Modifying manifest for no icons");
-                fs.readFile(dstManifest, function (err, data) {
-                  if (err) {
-                    console.error("Could not open new manifest");
-                    return cb(err);
-                  }
-                  data = data.toString('utf8');
-                  console.log(data);
-                  var iconRe = /application[\s\S]+android:icon="[^"]+"/;
-                  data = data.replace(iconRe, "application");
-                  fs.writeFile(dstManifest, data, function (err) {
-                    if (err) {
-                      console.error("Could not write modified manifest");
-                      return cb(err);
-                    }
-                    cb(null);
-                  });
-                });
+                fixSelendroidAndroidManifest(dstManifest, cb);
               });
             });
           });

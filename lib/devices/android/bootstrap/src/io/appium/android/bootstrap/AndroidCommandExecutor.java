@@ -14,6 +14,7 @@ import io.appium.android.bootstrap.handler.GetLocation;
 import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetSize;
 import io.appium.android.bootstrap.handler.GetText;
+import io.appium.android.bootstrap.handler.LongPressKeyCode;
 import io.appium.android.bootstrap.handler.MultiPointerGesture;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.Pinch;
@@ -70,6 +71,7 @@ class AndroidCommandExecutor {
     map.put("pressBack", new PressBack());
     map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
     map.put("pressKeyCode", new PressKeyCode());
+    map.put("longPressKeyCode", new LongPressKeyCode());
     map.put("takeScreenshot", new TakeScreenshot());
     map.put("updateStrings", new UpdateStrings());
     map.put("getDataDir", new GetDataDir());

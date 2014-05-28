@@ -4,6 +4,7 @@ import io.appium.android.bootstrap.Logger;
 
 import java.lang.reflect.Method;
 
+import com.android.uiautomator.common.ReflectionUtils;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 
 /**
@@ -17,9 +18,10 @@ public class TouchMove extends TouchEvent {
   protected boolean executeTouchEvent() throws UiObjectNotFoundException {
     printEventDebugLine("TouchMove");
     try {
-      final Object controller = getController();
-      final Method touchMove = getMethod("touchMove", controller);
-      return (Boolean) touchMove.invoke(controller, clickX, clickY);
+      final ReflectionUtils utils = new ReflectionUtils();
+      final Method touchMove = utils.getMethod("touchMove", int.class,
+          int.class);
+      return (Boolean) touchMove.invoke(utils.getController(), clickX, clickY);
     } catch (final Exception e) {
       Logger.debug("Problem invoking touchMove: " + e);
       return false;

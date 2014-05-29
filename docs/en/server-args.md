@@ -49,8 +49,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`--default-device`, `-dd`|false|(IOS-Simulator-only) use the default simulator that instruments launches on its own||
 |`--force-iphone`|false|(IOS-only) Use the iPhone Simulator no matter what the app wants||
 |`--force-ipad`|false|(IOS-only) Use the iPad Simulator no matter what the app wants||
-|`--language`|null|(IOS-only) language for the iOS simulator|`--language en`|
-|`--locale`|null|(IOS-only) locale for the iOS simulator|`--locale en_US`|
+|`--language`|null|Language for the iOS simulator / Android Emulator|`--language en`|
+|`--locale`|null|Locale for the iOS simulator / Android Emulator|`--locale en_US`|
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|

@@ -17,8 +17,9 @@ module.exports = function () {
 
   beforeEach(function (done) {
     driver
+      .sleep(10000)
       .setImplicitWaitTimeout(0)
-      .elementByName('buttonStartWebviewCD')
+      .waitForElementByName('buttonStartWebviewCD')
       .then(function (el) {
         if (el) return;
         else return driver.back();

@@ -23,7 +23,6 @@
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4">
                     <rect key="frame" x="94" y="122" width="113" height="37"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <accessibility key="accessibilityConfiguration" label="ComputeSumButton"/>
                     <state key="normal" title="Compute Sum">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>

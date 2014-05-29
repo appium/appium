@@ -20,6 +20,7 @@
 		3647AE2C15CA00D5006F70D6 /* MyViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */; };
 		3647AE2D15CA00D5006F70D6 /* MyViewControllerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3647AE2B15CA00D5006F70D6 /* MyViewControllerViewController.xib */; };
 		36FEEFEE1656DD6000100C04 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36FEEFED1656DD6000100C04 /* Default-568h@2x.png */; };
+		ABB96E8E192ECF150022BE43 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABB96E8C192ECF150022BE43 /* Localizable.strings */; };
 		EA040B6118D3DF5E00AC02D8 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +44,7 @@
 		3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyViewControllerViewController.m; sourceTree = "<group>"; };
 		3647AE2B15CA00D5006F70D6 /* MyViewControllerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MyViewControllerViewController.xib; sourceTree = "<group>"; };
 		36FEEFED1656DD6000100C04 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		ABB96E8D192ECF150022BE43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -115,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				3647AE1A15CA0082006F70D6 /* TestApp-Info.plist */,
+				ABB96E8C192ECF150022BE43 /* Localizable.strings */,
 				3647AE1B15CA0082006F70D6 /* InfoPlist.strings */,
 				3647AE1E15CA0082006F70D6 /* main.m */,
 				3647AE2015CA0082006F70D6 /* TestApp-Prefix.pch */,
@@ -173,6 +176,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABB96E8E192ECF150022BE43 /* Localizable.strings in Resources */,
 				3647AE1D15CA0082006F70D6 /* InfoPlist.strings in Resources */,
 				3647AE2D15CA00D5006F70D6 /* MyViewControllerViewController.xib in Resources */,
 				36FEEFEE1656DD6000100C04 /* Default-568h@2x.png in Resources */,
@@ -203,6 +207,14 @@
 				3647AE1C15CA0082006F70D6 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		ABB96E8C192ECF150022BE43 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ABB96E8D192ECF150022BE43 /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

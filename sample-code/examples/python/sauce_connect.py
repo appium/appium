@@ -38,22 +38,21 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 class MyRequestHandler(SimpleHTTPRequestHandler):
     """Serve a sample HTML page so we can check if test works properly"""
     def do_GET(self):
+        f = StringIO()
+        f.write("<html><body>Welcome to the flipside!</body></html>")
+        f.seek(0)
 
-            f = StringIO()
-            f.write("<html><body>Welcome to the flipside!</body></html>")
-            f.seek(0)
+        #send code 200 response
+        self.send_response(200)
 
-            #send code 200 response
-            self.send_response(200)
+        #send header first
+        self.send_header('Content-type', 'text-html')
+        self.end_headers()
 
-            #send header first
-            self.send_header('Content-type', 'text-html')
-            self.end_headers()
-
-            #send file content to client
-            self.wfile.write(f.read())
-            f.close()
-            return
+        #send file content to client
+        self.wfile.write(f.read())
+        f.close()
+        return
 
 
 class Selenium2OnSauce(unittest.TestCase):
@@ -101,12 +100,14 @@ class Selenium2OnSauce(unittest.TestCase):
         self.setUpWebServer()
         self.setUpTunnel()
 
-        caps = {'browserName': ''}
-        caps['platform'] = "OS X 10.8"
-        caps['version'] = "6"
-        caps['app'] = 'safari'
-        caps['device'] = 'iPhone Simulator'
-        caps['name'] = 'Appium - iOS - python'
+        desired_capabilities={
+            'browserName': '',
+            'platformName': 'Android',
+            'deviceName': 'iPhone Simulator',
+            'platformVersion': '6.1',
+            'app': app,
+            'name': 'Appium Python iOS Test (Connect)'
+        })
 
         self.driver = webdriver.Remote(
             desired_capabilities=caps,

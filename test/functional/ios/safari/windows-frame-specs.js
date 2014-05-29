@@ -5,17 +5,20 @@ var env = require('../../../helpers/env')
   , loadWebView = webviewHelper.loadWebView
   , spinTitle = webviewHelper.spinTitle;
 
-describe("safari - windows-frame -", function () {
-
+describe("safari - windows-frame @skip-ios6", function () {
+  // TODO: enable safari tests on ci
   describe('windows and frames (' + env.DEVICE + ')', function () {
     var driver;
-    setup(this, {app: 'safari'}).then(function (d) { driver = d; });
+    var desired = {
+      browserName: 'safari',
+      nativeWebTap: true
+    };
+    setup(this, desired).then(function (d) { driver = d; });
 
-    it('getting current window should work initially', function (done) {
+    it('getting current context should work initially', function (done) {
       driver
-        .windowHandle().then(function (handleId) {
-          parseInt(handleId, 10).should.be.above(0);
-        }).nodeify(done);
+        .currentContext().should.eventually.be.fulfilled
+        .nodeify(done);
     });
     describe('within webview', function () {
       beforeEach(function (done) {

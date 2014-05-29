@@ -3,10 +3,8 @@
   "strict": true,
   "undef": true,
   "unused": true,
-  "trailing": true,
   "node": true,
   "eqeqeq": true,
   "trailing": true,
-  "white": true,
   "indent": 2    
 }

@@ -3,18 +3,18 @@
 var setup = require("../../common/setup-base")
   , env = require('../../../helpers/env')
   , desired = require("./desired")
-  , androidReset = require('../../../helpers/reset').androidReset;
+  , reset = require("./reset");
 
-describe("apidemos - orientation -", function () {
+describe("apidemos - orientation", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   if (env.FAST_TESTS) {
-    beforeEach(function (done) {
-      androidReset(desired['app-package'], desired['app-activity']).nodeify(done);
+    beforeEach(function () {
+      return reset(driver);
     });
   }
-  
+
   it('should rotate screen to landscape', function (done) {
     driver
       .setOrientation("PORTRAIT")

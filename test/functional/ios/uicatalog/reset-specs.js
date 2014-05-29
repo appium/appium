@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - reset -', function () {
+describe('uicatalog - reset @skip-ios6', function () {
 
   describe('app reset', function () {
     var driver;
@@ -11,11 +11,11 @@ describe('uicatalog - reset -', function () {
 
     it("should be able to find elements after a soft reset", function (done) {
       driver
-        .elementsByTagName('tableView')
+        .elementsByClassName('UIATableView')
           .should.eventually.have.length(1)
-        .execute("mobile: reset")
+        .resetApp()
         .sleep(3000)
-        .elementsByTagName('tableView')
+        .elementsByClassName('UIATableView')
           .should.eventually.have.length(1)
         .nodeify(done);
     });

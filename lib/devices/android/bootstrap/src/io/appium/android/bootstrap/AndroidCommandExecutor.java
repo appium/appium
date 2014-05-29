@@ -5,7 +5,6 @@ import io.appium.android.bootstrap.handler.Clear;
 import io.appium.android.bootstrap.handler.Click;
 import io.appium.android.bootstrap.handler.Drag;
 import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
-import io.appium.android.bootstrap.handler.EnableCompressedLayoutHeirarchy;
 import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.handler.Flick;
 import io.appium.android.bootstrap.handler.GetAttribute;
@@ -14,8 +13,9 @@ import io.appium.android.bootstrap.handler.GetDeviceSize;
 import io.appium.android.bootstrap.handler.GetLocation;
 import io.appium.android.bootstrap.handler.GetName;
 import io.appium.android.bootstrap.handler.GetSize;
-import io.appium.android.bootstrap.handler.GetStrings;
 import io.appium.android.bootstrap.handler.GetText;
+import io.appium.android.bootstrap.handler.LongPressKeyCode;
+import io.appium.android.bootstrap.handler.MultiPointerGesture;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.Pinch;
 import io.appium.android.bootstrap.handler.PressBack;
@@ -28,6 +28,7 @@ import io.appium.android.bootstrap.handler.TouchDown;
 import io.appium.android.bootstrap.handler.TouchLongClick;
 import io.appium.android.bootstrap.handler.TouchMove;
 import io.appium.android.bootstrap.handler.TouchUp;
+import io.appium.android.bootstrap.handler.UpdateStrings;
 import io.appium.android.bootstrap.handler.WaitForIdle;
 import io.appium.android.bootstrap.handler.Wake;
 
@@ -70,11 +71,11 @@ class AndroidCommandExecutor {
     map.put("pressBack", new PressBack());
     map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
     map.put("pressKeyCode", new PressKeyCode());
+    map.put("longPressKeyCode", new LongPressKeyCode());
     map.put("takeScreenshot", new TakeScreenshot());
-    map.put("enableCompressedLayoutHeirarchy",
-        new EnableCompressedLayoutHeirarchy());
-    map.put("getStrings", new GetStrings());
+    map.put("updateStrings", new UpdateStrings());
     map.put("getDataDir", new GetDataDir());
+    map.put("performMultiPointerGesture", new MultiPointerGesture());
   }
 
   /**

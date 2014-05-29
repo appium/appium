@@ -1,5 +1,4 @@
-// This is basically a port of webdriver-test.py
-// https://github.com/hugs/appium/blob/master/sample-code/webdriver-test.py
+// todo: rewrite this using wd.sessions
 "use strict";
 
 var env = require('../../../helpers/env')
@@ -7,11 +6,12 @@ var env = require('../../../helpers/env')
   , desired = require('./desired')
   , request = require("request");
 
-describe('testapp - sessions -', function () {
+describe('testapp - sessions', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  it('should return appear in the sessions returned', function (done) {
+  // sessions is disabled on sauce
+  it('should return appear in the sessions returned @skip-ci', function (done) {
     request({
         url: "http://localhost:" + env.APPIUM_PORT + "/wd/hub/sessions"
       , method: "GET"

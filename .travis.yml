@@ -2,18 +2,38 @@ language: objective-c
 osx_image: mavericks
 notifications:
   email: false
+rvm:
+- 2.1.1
+branches:
+  only:
+  - master
+git:
+  submodules: false
 env:
   global:
-  - secure: KNDEn/ryhd0yRGzpJSfHRKBzBIC73RKaHWFDkqD4E+iUXepwBfF2bBfningf8f++9qLNscumYZOHjQ0PWf/YALQCr5B2vHsGN+eHWc331d8f5sU/b6oyCAxsayI32lr/mNVCuHd44+ManMcKUH6831Q1qwa15o5w4dDPtJKuv6Y=
-  - secure: gZ9B0mE58AYdjVxvj5z27c+0pNJqrRzJiXdSe8T0UswR3gFxhOYoW1ikFTcij1NcQhdzDwGIDDJl30D6Z69Y73W3wagowkELasPeNcKobWqerof5lG8A6Qud90jXedABdXw9FEGnY47mG3/ZWwyx1KyOVkIlxoabkCqUwd7xaio=
+  - SAUCE_REST_ROOT=https://saucelabs.com/rest/v1
+  - APPIUM_HOST='ondemand.saucelabs.com'
+  - APPIUM_PORT=80
+  - SAUCE_USERNAME=appium
+  - secure: GXGFbQptLEsKlaWnpOL2EB9hqQ4XBT6tqg7REt5j1h1jYBsfHQHSgSLt1jpzOF5kooXVbw2K7IrZyNVBXEUHR00Hp6O72FBOd+SSj8uPCJBLjAOaJWs0ZtujqGHwHpe6gadFfn0L7q0ffoV5OJVeNHHcuw4f9BaA78fTFNfm1jE=
+  - secure: WLRP9RJIHWPer189swCqMCnexS8XpVQ8FRMSXNxLXp5fUaERVzU7/ncGFeqcM8GWGIU12PP8TJUaMRa58vTGgApW6POMdAPiauepfzoru+n/S4Xrw64hmd4oK0GEZI3wgnkPofUn6TzQeXRmVG496PNzbV8KfqF4mTAesZOLSFA=
+  - HTTP_RETRIES=5
+  - HTTP_RETRY_DELAY=5000
+  - DEBUG_CONNECTION=1
+  - MOCHA_INIT_TIMEOUT=600000
+  - LAUNCH_TIMEOUT='{"global":90000,"afterSimLaunch":30000}'
   matrix:
   - CI_CONFIG=unit
-  - CI_CONFIG=build
+  - CI_CONFIG=android
+  - CI_CONFIG=ios
+  - CI_CONFIG=gappium
+  - CI_CONFIG=selendroid
 before_script:
-- ./ci/install-node.sh
-- ./ci/show-env.sh
-- npm install -g jshint grunt-cli
+- gem install --no-rdoc --no-ri appium_doc_lint
+- "./ci/installers/install-node.sh"
+- "echo Node.js version: `node -v`"
+- npm install -g jshint grunt-cli mocha
 - npm install
-- ./ci/before_script_extra.sh
+- "./ci/before_script_extra.sh"
 script:
-- ./ci/script.sh
+- "./ci/script.sh"

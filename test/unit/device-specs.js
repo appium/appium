@@ -3,8 +3,9 @@
 var Device = require('../../lib/devices/device.js')
   , capConversion = require('../../lib/server/capabilities.js').capabilityConversions
   , chai = require('chai')
-  , should = chai.should()
   , _ = require('underscore');
+
+chai.should();
 
 var Test = function () {
   this.init();

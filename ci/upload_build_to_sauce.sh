@@ -1,11 +1,26 @@
 #!/bin/sh
-GIT_COMMIT=git rev-parse --short HEAD 2> /dev/null | sed "s/\(.*\)/\1/"
-tar cfj - --exclude=node_modules --exclude=submodules . | \
+set -e
+
+echo "Starting to compress and upload appium."
+
+BZ2_FILE=appium-ci-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
+UPLOAD_INFO_FILE=/tmp/build-upload-info.json
+
+# zipping/uploading
+tar \
+    cfj - \
+    --exclude=.git \
+    --exclude=submodules . | \
 curl \
-    --verbose \
+    -k \
     --progress-bar \
     -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY \
-    -X POST "https://saucelabs.com/rest/v1/storage/${SAUCE_USERNAME}/appium-dev-${GIT_COMMIT}.bjz?overwrite=true" \
+    -X POST "${SAUCE_REST_ROOT}/storage/${SAUCE_USERNAME}/${BZ2_FILE}?overwrite=true" \
     -H "Content-Type: application/octet-stream" \
-    --data-binary @- > /tmp/curl.out
-cat /tmp/curl.out
+    --data-binary @- \
+    -o $UPLOAD_INFO_FILE
+
+# checking/printing result file
+node ci/tools/build-upload-tool.js $UPLOAD_INFO_FILE
+
+echo "Finished to compress and upload appium."

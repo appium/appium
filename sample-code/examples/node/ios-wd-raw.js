@@ -20,71 +20,62 @@ chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 
 var host, port, username, accessKey, desired;
 
+var desired = {
+    browserName: '',
+    'appium-version': '1.0',
+    platformName: 'iOS',
+    platformVersion: '7.1',
+    deviceName: 'iPhone Simulator',
+    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
+    'deviceOrientation': 'portrait',
+  };
+
 if (process.env.SAUCE) {
   // Sauce Labs config
   host = "ondemand.saucelabs.com";
   port = 80;
   username = process.env.SAUCE_USERNAME;
   accessKey = process.env.SAUCE_ACCESS_KEY;
-
-  desired = {
-    browserName: '',
-    version: '6.1',
-    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
-    device: 'iPhone Simulator',
-    name: "Appium: with WD Mocha",
-    'device-orientation': 'portrait',
-    platform: "Mac"
-  };
-
+  desired.name = "Appium: with WD Mocha";
 } else {
   // local config
   host = "localhost";
   port = 4723;
-
-  desired = {
-    device: 'iPhone Simulator',
-    name: "Appium: with WD",
-    platform: "Mac",
-    app: "http://appium.s3.amazonaws.com/TestApp6.0.app.zip",
-    // version: "6.0",
-    browserName: "",
-    newCommandTimeout: 60
-  };
 }
 
 // Instantiate a new browser session
-var browser = wd.promiseChainRemote(host , port, username, accessKey);
+var browser = wd.promiseChainRemote(host, port, username, accessKey);
 
 // See whats going on
-browser.on('status', function(info) {
+browser.on('status', function (info) {
   console.log(info.cyan);
 });
-browser.on('command', function(meth, path, data) {
+browser.on('command', function (meth, path, data) {
   console.log(' > ' + meth.yellow, path.grey, data || '');
 });
 
 // Run the test
 browser
   .init(desired)
-  .then(function() {
+  .then(function () {
     browser
-      .elementsByTagName("textField").then(function(els) {
-        return els[0].type('2').then(function() {
+      .elementsByIosUIAutomation('.textFields();').then(function (els) {
+        return els[0].type('2').then(function () {
           return els[1].type('3');
         });
       })
-      .elementByTagName('button')
+      .elementByIosUIAutomation('.buttons()')
         .click()
-      .elementByTagName('staticText')
+      .elementByClassName('UIAStaticText')
         .text().should.become("5")
-      .fin(function() {
+      .catch(function(err) { console.log(err); })
+      .fin(function () {
         return browser
           .sleep(3000)
           .quit();
       });
   })
-  .catch(function(err) {
+  .catch(function (err) {
     console.log(err);
     throw err;
   })

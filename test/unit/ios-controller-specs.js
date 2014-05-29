@@ -1,29 +1,23 @@
 "use strict";
 
 var chai = require('chai')
-  , should = chai.should
-  , controller = require('../../lib/devices/ios/ios-controller.js')
+  , controller_path = '../../lib/devices/ios/ios-controller.js'
+  , controller = require(controller_path)
   , createGetElementCommand = controller.createGetElementCommand
   , getSelectorForStrategy = controller.getSelectorForStrategy;
 
+chai.should();
+
 describe('ios-controller', function () {
+
   describe('#createGetElementCommand', function () {
     it('should return \'GetType\' for name selection', function () {
       var actual = createGetElementCommand('name', 'UIAKey', null, false);
       actual.should.equal("au.getElementByName('UIAKey')");
     });
-    it('should return \'GetType\' for xpath selection', function () {
-      var actual = createGetElementCommand('xpath', 'UIAKey', null, false);
-      actual.should.equal("au.getElementByXpath('UIAKey')");
-    });
     it('should return \'GetType\' for id selection', function () {
       var actual = createGetElementCommand('id', 'UIAKey', null, false);
-      var expected = "var exact = au.mainApp().getFirstWithPredicateWeighted" +
-                     "(\"name == 'UIAKey' || label == 'UIAKey' || value == '" +
-                     "UIAKey'\");exact && exact.status == 0 ? exact : " +
-                     "au.mainApp().getFirstWithPredicateWeighted(\"name " +
-                     "contains[c] 'UIAKey' || label contains[c] 'UIAKey' || " +
-                     "value contains[c] 'UIAKey'\");";
+      var expected = "au.getElementById('UIAKey')";
       actual.should.equal(expected);
     });
     it('should return \'GetType\' for tag name selection', function () {
@@ -35,7 +29,6 @@ describe('ios-controller', function () {
       actual.should.equal("au.getElementByType('UIAKey')");
     });
   });
-
   describe('#getSelectorForStrategy', function () {
     describe('given a class name', function () {
       it('should allow UIA names', function () {
@@ -70,6 +63,12 @@ describe('ios-controller', function () {
         it('returns the localized string', function () {
           var actual = controller.getSelectorForStrategy('id', 'someSelector');
           actual.should.equal('localSelector');
+        });
+        it('returns an error when the selector isn\'t in localizableStrings', function () {
+          var msg = "Id selector not found in Localizable.strings.";
+          (function () {
+            controller.getSelectorForStrategy('id', 'notFoundSelector');
+          }).should.Throw(TypeError, msg);
         });
       });
     });

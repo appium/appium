@@ -1,22 +1,38 @@
 package io.appium.android.bootstrap.handler;
 
-import android.os.Build;
-import com.android.uiautomator.core.UiObject;
-import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.android.uiautomator.core.UiScrollable;
-import com.android.uiautomator.core.UiSelector;
-import io.appium.android.bootstrap.*;
-import io.appium.android.bootstrap.exceptions.*;
+import io.appium.android.bootstrap.AndroidCommand;
+import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.AndroidElement;
+import io.appium.android.bootstrap.AndroidElementsHash;
+import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.Dynamic;
+import io.appium.android.bootstrap.Logger;
+import io.appium.android.bootstrap.WDStatus;
+import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
+import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
+import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
+import io.appium.android.bootstrap.utils.NotImportantViews;
 import io.appium.android.bootstrap.utils.UiSelectorParser;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.os.Build;
+
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
 
 /**
  * This handler is used to find elements in the Android UI.
@@ -27,25 +43,10 @@ import java.util.List;
  */
 public class Find extends CommandHandler {
   // These variables are expected to persist across executions.
-  AndroidElementsHash      elements   = AndroidElementsHash.getInstance();
-  Dynamic                  dynamic    = new Dynamic();
-  public static JSONObject apkStrings = null;
-  UiSelectorParser uiSelectorParser = new UiSelectorParser();
-
-  private Object[] cascadeChildSels(final ArrayList<UiSelector> tail,
-      final ArrayList<String> tailOuts) {
-    if (tail.size() == 1) {
-      final Object[] retVal = { tail.get(0), tailOuts.get(0) };
-      return retVal;
-    } else {
-      final UiSelector head = tail.remove(0);
-      final String headOut = tailOuts.remove(0);
-      final Object[] res = cascadeChildSels(tail, tailOuts);
-      final Object[] retVal = { head.childSelector((UiSelector) res[0]),
-          headOut + ".childSelector(" + (String) res[1] + ")" };
-      return retVal;
-    }
-  }
+  AndroidElementsHash      elements         = AndroidElementsHash.getInstance();
+  Dynamic                  dynamic          = new Dynamic();
+  public static JSONObject apkStrings       = null;
+  UiSelectorParser         uiSelectorParser = new UiSelectorParser();
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
@@ -62,11 +63,6 @@ public class Find extends CommandHandler {
       throws JSONException {
     final Hashtable<String, Object> params = command.params();
 
-    if (((String) params.get("strategy")).equals("index paths")) {
-      return findElementsByIndexPaths((String) params.get("selector"),
-          (Boolean) params.get("multiple"));
-    }
-
     // only makes sense on a device
     final Strategy strategy;
     try {
@@ -74,6 +70,7 @@ public class Find extends CommandHandler {
     } catch (final InvalidStrategyException e) {
       return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
     }
+
     final String contextId = (String) params.get("context");
 
     if (strategy == Strategy.DYNAMIC) {
@@ -185,94 +182,65 @@ public class Find extends CommandHandler {
     }
 
     final String text = (String) params.get("selector");
+    final Boolean multiple = (Boolean) params.get("multiple");
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId);
 
-    final Boolean multiple = (Boolean) params.get("multiple");
-    final boolean isXpath = strategy.equalsIgnoreCase("xpath");
-
-    if (isXpath) {
-      final JSONArray xpathPath = (JSONArray) params.get("path");
-      final String xpathAttr = (String) params.get("attr");
-      final String xpathConstraint = (String) params.get("constraint");
-      final Boolean xpathSubstr = (Boolean) params.get("substr");
-
-      try {
-        if (multiple) {
-          final UiSelector sel = getSelectorForXpath(xpathPath, xpathAttr,
-              xpathConstraint, xpathSubstr);
-          return getSuccessResult(fetchElements(sel, contextId));
-        } else {
-          final UiSelector sel = getSelectorForXpath(xpathPath, xpathAttr,
-              xpathConstraint, xpathSubstr);
-          return getSuccessResult(fetchElement(sel, contextId));
-        }
-      } catch (final AndroidCommandException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-      } catch (final ElementNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
-      } catch (final UnallowedTagNameException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-      } catch (final ElementNotInHashException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
-      } catch (final UiObjectNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
-      }
+    if (strategy == Strategy.INDEX_PATHS) {
+      NotImportantViews.discard(true);
+      return findElementsByIndexPaths(text, multiple);
     } else {
-      try {
-        Object result = null;
-        final JSONArray array = new JSONArray();
-        for (final UiSelector sel : getSelector(strategy, text, multiple)) {
-          // With multiple selectors, we expect that some elements may not
-          // exist.
-          try {
-            if (!multiple) {
-              result = fetchElement(sel, contextId);
-              // Return first element when multiple is false.
-              if (result != null) {
-                break;
-              }
-            } else {
-              final JSONArray results = fetchElements(sel, contextId);
-              for (int a = 0, len = results.length(); a < len; a++) {
-                array.put(results.get(a));
-              }
+      NotImportantViews.discard(false);
+    }
+
+    try {
+      Object result = null;
+      final JSONArray array = new JSONArray();
+      for (final UiSelector sel : getSelector(strategy, text, multiple)) {
+        // With multiple selectors, we expect that some elements may not
+        // exist.
+        try {
+          if (!multiple) {
+            result = fetchElement(sel, contextId);
+            // Return first element when multiple is false.
+            if (result != null) {
+              break;
             }
-          } catch (final ElementNotInHashException e) {
-          } catch (final ElementNotFoundException e) {
+          } else {
+            final JSONArray results = fetchElements(sel, contextId);
+            for (int a = 0, len = results.length(); a < len; a++) {
+              array.put(results.get(a));
+            }
           }
+        } catch (final ElementNotInHashException e) {
+        } catch (final ElementNotFoundException e) {
         }
-
-        if (multiple) {
-          result = array;
-        }
-
-        // If there are no results, then return an error.
-        if (result == null) {
-          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-              "No element found");
-        }
-
-        return getSuccessResult(result);
-      } catch (final InvalidStrategyException e) {
-        return getErrorResult(e.getMessage());
-      } catch (final UnallowedTagNameException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-      } catch (final AndroidCommandException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-      } catch (final UiSelectorSyntaxException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
-      } catch (final UiObjectNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
-      } catch (final ElementNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
       }
+
+      if (multiple) {
+        result = array;
+      }
+
+      // If there are no results, then return an error.
+      if (result == null) {
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            "No element found");
+      }
+
+      return getSuccessResult(result);
+    } catch (final InvalidStrategyException e) {
+      return getErrorResult(e.getMessage());
+    } catch (final UnallowedTagNameException e) {
+      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+    } catch (final AndroidCommandException e) {
+      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+    } catch (final UiSelectorSyntaxException e) {
+      return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
+    } catch (final UiObjectNotFoundException e) {
+      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+    } catch (final ElementNotFoundException e) {
+      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     }
   }
 
@@ -413,23 +381,6 @@ public class Find extends CommandHandler {
         }
         selectors.add(sel);
         break;
-      case TAG_NAME:
-        final String androidClass = AndroidElementClassMap.match(text);
-        sel = sel.className(androidClass);
-        if (!many) {
-          sel = sel.instance(0);
-        }
-        selectors.add(sel);
-        // Find both Button and ImageButton when tag name is button
-        if (androidClass.contentEquals("android.widget.Button")) {
-          UiSelector sel2 = new UiSelector()
-              .className("android.widget.ImageButton");
-          if (!many) {
-            sel2 = sel2.instance(0);
-          }
-          selectors.add(sel2);
-        }
-        break;
       case ID:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
           // Handle this as a resource id
@@ -464,13 +415,12 @@ public class Find extends CommandHandler {
         sel = selectNameOrText(many, text);
         selectors.add(sel);
         break;
-      case XPATH:
-        break;
       case ANDROID_UIAUTOMATOR:
         try {
           sel = uiSelectorParser.parse(text);
-        } catch (UiSelectorSyntaxException e) {
-          throw new UiSelectorSyntaxException("Could not parse UiSelector argument: " + e.getMessage());
+        } catch (final UiSelectorSyntaxException e) {
+          throw new UiSelectorSyntaxException(
+              "Could not parse UiSelector argument: " + e.getMessage());
         }
         if (!many) {
           sel = sel.instance(0);
@@ -486,119 +436,6 @@ public class Find extends CommandHandler {
     }
 
     return selectors;
-  }
-
-  /**
-   * Create and return a UiSelector based on Xpath attributes.
-   * 
-   * @param path
-   *          The Xpath path.
-   * @param attr
-   *          The attribute.
-   * @param constraint
-   *          Any constraint.
-   * @param substr
-   *          Any substr.
-   * 
-   * @return UiSelector
-   * @throws AndroidCommandException
-   */
-  private UiSelector getSelectorForXpath(final JSONArray path,
-      final String attr, final String constraint, final boolean substr)
-      throws AndroidCommandException, UnallowedTagNameException {
-    UiSelector s = new UiSelector();
-    final ArrayList<UiSelector> subSels = new ArrayList<UiSelector>();
-    final ArrayList<String> subSelOuts = new ArrayList<String>();
-    JSONObject pathObj;
-    String nodeType;
-    Object nodeIndex;
-    final String substrStr = substr ? "true" : "false";
-    Logger.info("Building xpath selector from attr " + attr
-        + " and constraint " + constraint + " and substr " + substrStr);
-    String selOut = "s";
-
-    // $driver.find_element :xpath, %(//*[contains(@text, 'agree')])
-    // info: [ANDROID] [info] Building xpath selector from attr text and
-    // constraint agree and substr true
-    // info: [ANDROID] [info] s.className('*').textContains('agree')
-    try {
-      nodeType = path.getJSONObject(0).getString("node");
-    } catch (final JSONException e) {
-      throw new AndroidCommandException(
-          "Error parsing xpath path obj from JSON");
-    }
-
-    if (attr.toLowerCase().contentEquals("text") && !constraint.isEmpty()
-        && substr == true && nodeType.contentEquals("*") == true) {
-      selOut += ".textContains('" + constraint + "')";
-      s = s.textContains(constraint);
-      Logger.info(selOut);
-      return s;
-    }
-
-    // Returns all elements of one class.
-    // //*[contains(@tag, "android.widget.Button")]
-    if (attr.toLowerCase().contentEquals("tag") && !constraint.isEmpty()
-        && substr == true && nodeType.contentEquals("*") == true) {
-      selOut += ".className('" + constraint + "')";
-      s = s.className(constraint);
-      Logger.info(selOut);
-      return s;
-    }
-
-    for (Integer i = 0; i < path.length(); i++) {
-      UiSelector subSel = new UiSelector();
-      String subSelOut = "s" + i.toString();
-      try {
-        pathObj = path.getJSONObject(i);
-        nodeType = pathObj.getString("node");
-        nodeIndex = pathObj.get("index");
-      } catch (final JSONException e) {
-        throw new AndroidCommandException(
-            "Error parsing xpath path obj from JSON");
-      }
-      nodeType = AndroidElementClassMap.match(nodeType);
-      subSel = subSel.className(nodeType);
-      subSelOut += ".className('" + nodeType + "')";
-
-      try {
-        Integer nodeIndexInt = (Integer) nodeIndex;
-        if (nodeIndexInt == -1) {
-          nodeIndexInt = elements.getElements(subSel, "").size();
-        }
-        nodeIndexInt -= 1;
-        subSel = subSel.instance(nodeIndexInt);
-        subSelOut += ".instance(" + nodeIndexInt.toString() + ")";
-      } catch (final Exception e) {
-        // nodeIndex was null
-      }
-      subSels.add(subSel);
-      subSelOuts.add(subSelOut);
-    }
-    final Object[] cascadeResult = cascadeChildSels(subSels, subSelOuts);
-    s = (UiSelector) cascadeResult[0];
-    selOut = (String) cascadeResult[1];
-    if (attr.equals("desc") || attr.equals("name")) {
-      selOut += ".description";
-      if (substr) {
-        selOut += "Contains";
-        s = s.descriptionContains(constraint);
-      } else {
-        s = s.description(constraint);
-      }
-      selOut += "('" + constraint + "')";
-    } else if (attr.equals("text") || attr.equals("value")) {
-      selOut += ".text";
-      if (substr) {
-        selOut += "Contains";
-        s = s.textContains(constraint);
-      } else {
-        s = s.text(constraint);
-      }
-      selOut += "('" + constraint + "')";
-    }
-    Logger.info(selOut);
-    return s;
   }
 
   private UiSelector selectNameOrText(final boolean many, final String text) {

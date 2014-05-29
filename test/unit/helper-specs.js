@@ -3,8 +3,9 @@
 var helpers = require('../../lib/helpers.js')
   , logger = require('../../lib/server/logger.js').get('appium')
   , chai = require('chai')
-  , should = chai.should()
   , sinon = require('sinon');
+
+chai.should();
 
 describe("Helpers", function () {
   describe("#formatDeprecationWarning", function () {

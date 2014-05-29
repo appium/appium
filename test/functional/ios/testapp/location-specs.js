@@ -6,15 +6,16 @@ var setup = require("../../common/setup-base")
   , _ = require("underscore")
   , desired = require('./desired');
 
-describe('testapp - location -', function () {
+// TODO: location tests are not working well on sauce
+describe('testapp - location - 1 @skip-ci', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
-  
+
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   it('should return the right x/y coordinates', function (done) {
     driver
-      .elementByTagName('button').getLocation().then(function (location) {
+      .elementByClassName('UIAButton').getLocation().then(function (location) {
         location.x.should.equal(94);
         location.y.should.be.above(120);
       })
@@ -22,43 +23,28 @@ describe('testapp - location -', function () {
   });
 
   it('should not error with valid lat/lon and no options', function (done) {
-    var locationOpts = {
-      latitude: -30
-    , longitude: 30
-    };
-    driver.execute('mobile: setLocation', [locationOpts])
-      .nodeify(done);
-  });
-
-  it('should not error with valid lat/lon and valid options', function (done) {
-    var locationOpts = {
-      latitude: -30
-    , longitude: 30
-    , altitude: 1000
-    };
-    driver.execute('mobile: setLocation', [locationOpts])
+    driver
+      .setGeoLocation(-30, 30)
       .nodeify(done);
   });
 
   it('should error with invalid lat/lon and no options', function (done) {
-    var locationOpts = {
-      latitude: -150
-    , longitude: 30
-    };
-    driver.execute('mobile: setLocation', [locationOpts])
+    driver
+      .setGeoLocation(-150, 30)
       .should.be.rejected
       .nodeify(done);
   });
 });
 
-describe('testapp - location services -', function () {
+// TODO: location tests are not working well on sauce
+describe('testapp - location - 2 @skip-ios6 @skip-ci', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
     locationServicesAuthorized: true,
     bundleId: 'io.appium.TestApp'
   });
-  setup(this, newDesired).then(function (d) { driver = d; });
+  setup(this, newDesired, {'no-reset': true}).then(function (d) { driver = d; });
 
   it('should be able to be turned on', function (done) {
     driver
@@ -69,13 +55,16 @@ describe('testapp - location services -', function () {
   });
 });
 
-describe('testapp - location services -', function () {
+// TODO: location tests are not working well on sauce
+describe('testapp - location - 3  @skip-ci', function () {
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
     locationServicesAuthorized: true
   });
+  var title = this.title;
   it('should not work without bundleId', function (done) {
-    initSession(newDesired, {'no-retry': true}).setUp()
+    initSession(newDesired, {'no-retry': true, 'no-reset': true})
+      .setUp(title)
       .then(function (err) {
         err.cause.value.message.should.contain("bundleId");
         throw err;
@@ -84,14 +73,15 @@ describe('testapp - location services -', function () {
   });
 });
 
-describe('testapp - location services -', function () {
+// TODO: location tests are not working well on sauce
+describe('testapp - location - 4  @skip-ci', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
     locationServicesAuthorized: false,
     bundleId: 'io.appium.TestApp'
   });
-  setup(this, newDesired).then(function (d) { driver = d; });
+  setup(this, newDesired, {'no-reset': true}).then(function (d) { driver = d; });
 
   it('should be able to be turned off', function (done) {
     driver

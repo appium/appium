@@ -22,34 +22,6 @@ describe('capabilities', function () {
       c.platformVersion.should.equal(7.0);
       (typeof c.platformVersion).should.equal("number");
     });
-    describe('with pre-mjsonwp capabilities', function () {
-      var capabilityConversion = [
-          ['device', 'platformName']
-        , ['version', 'platformVersion']
-        ];
-
-      beforeEach(function () {
-        sinon.spy(logger, "warn");
-      });
-      afterEach(function () {
-        logger.warn.restore();
-      });
-
-      _.each(capabilityConversion, function (item) {
-        var specName = "Should return a deprecation warning when given the " +
-                       JSON.stringify(item[0]) + " capability";
-        it(specName, function () {
-          var expected = "[DEPRECATED] The " + item[0] + " capability has " +
-                       "been deprecated and will be removed.  Please use " +
-                       "the " + item[1] + " capability instead.";
-          var fakeCaps = {};
-          fakeCaps[item[0]] = 'dontcare';
-          new Capabilities(fakeCaps);
-          (logger.warn.args[0][0]).should.equal(expected);
-        });
-      });
-    });
-
     describe('with mjsonwp capabilities', function () {
       describe('deprecation warnings', function () {
         var newCapabilities = [

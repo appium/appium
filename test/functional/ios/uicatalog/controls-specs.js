@@ -4,7 +4,7 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require('./desired');
 
-describe('uicatalog - controls -', function () {
+describe('uicatalog - controls @skip-ios6', function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
@@ -12,25 +12,23 @@ describe('uicatalog - controls -', function () {
   if (env.FAST_TESTS) {
     afterEach(function (done) {
       driver
-        .clickBack()
+        .clickButton('UICatalog')
         .nodeify(done);
     });
   }
-  
+
   it('should be able to get and set a picker value', function (done) {
-    var picketIdx = env.IOS7 ? 0 : 2; // TODO: why?
     driver
-      .elementByXPath("//text[contains(@label,'Pickers')]").click()
-      .elementsByTagName("picker").at(picketIdx)
-      .elementByTagName('>', "pickerwheel")
+      .elementByXPath("//UIAStaticText[contains(@label,'Picker View')]").click()
+      .elementByXPath("//UIAPickerWheel[@name = 'Red color component value']").click()
       .then(function (wheel) {
         return wheel
-          .getAttribute("values").then(function (values) {
-            return values[1];
-          }).should.become("Chris Armstrong")
+          .getAttribute("value")
+            .should.become("65. 14 of 52")
           .then(function () {
-            return wheel.type("Serena Auroux")
-              .getAttribute("value").should.become("Serena Auroux. 3 of 7");
+            return wheel.type("70")
+              .getAttribute("value")
+                .should.become("70. 15 of 52");
           });
       })
       .nodeify(done);
@@ -38,15 +36,15 @@ describe('uicatalog - controls -', function () {
 
   it('should be able to get and set a slider value', function (done) {
     driver
-      .elementByXPath("//text[contains(@label,'Controls')]").click()
-      .elementByTagName("slider").then(function (slider) {
+      .elementByXPath("//UIAStaticText[contains(@label,'Sliders')]").click()
+      .elementByClassName("UIASlider").then(function (slider) {
         return slider
-          .getAttribute("value").should.become('50%')
+          .getAttribute("value").should.become('42%')
           .then(function () {
-            return slider.sendKeys(0.8).getAttribute("value").then(function (val) {
-              ['80%', '82%'].should.include(val); // irregular 82% occurence
-            });
-          });
+            return slider.sendKeys(0.8).getAttribute("value")
+              .should.become('80%');
+          })
+          ;
       }).nodeify(done);
   });
 });

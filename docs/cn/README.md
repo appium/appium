@@ -40,15 +40,15 @@ Appium最终开启了跨平台原生移动自动化的可能.
 * Mac OS X 10.7 or higher, 10.8.4 recommended
 * XCode &gt;= 4.6.3
 * Apple Developer Tools (iPhone simulator SDK, command line tools)
-* [Ensure you read our documentation on setting yourself up for iOS testing!](https://github.com/appium/appium/blob/master/docs/cn/running-on-osx.cn.md#ios)
+* [Ensure you read our documentation on setting yourself up for iOS testing!](running-on-osx.cn.md)
 
 ### android依赖
 
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18)
 * Appium支持OS X上的Android, Linux和Windows上的beta支持.确保你通过如下的指示来配置你需要运行测试的不同系统的环境
-  * [linux](https://github.com/appium/appium/blob/master/docs/cn/running-on-linux.cn.md) 
-  * [osx](https://github.com/appium/appium/blob/master/docs/cn/running-on-osx.cn.md#android)
-  * [windows](https://github.com/appium/appium/blob/master/docs/cn/running-on-windows.cn.md)
+  * [linux](running-on-linux.cn.md)
+  * [osx](running-on-osx.cn.md)
+  * [windows](running-on-windows.cn.md)
 
 ### FirefoxOS Requirements
 
@@ -71,20 +71,19 @@ Appium最终开启了跨平台原生移动自动化的可能.
 ## 为Appium编写测试
 
 我们支持 [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods) 的一个子集
-首先还需要指定特定移动平台相关的 [desired capabilities](https://github.com/appium/appium/blob/master/docs/cn/caps.cn.md) 来通过appium运行你的测试
+首先还需要指定特定移动平台相关的 [desired capabilities](caps.cn.md) 来通过appium运行你的测试
 
 你可以通过 [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 的元素定位策略的一个子集来定位元素
-更多信息请参考 [finding elements](https://github.com/appium/appium/blob/master/docs/cn/finding-elements.cn.md) 
+更多信息请参考 [finding elements](finding-elements.cn.md)
 
 
-我们也对 JSON Wire Protocol for [automating mobile gestures](https://github.com/appium/appium/blob/master/docs/cn/gestures.cn.md) 做了一些扩展以支持像 tap, flick, 和 swipe 这样的动作(松开,按压,滑动等手机手势)
+我们也对 JSON Wire Protocol for [automating mobile gestures](gestures.cn.md) 做了一些扩展以支持像 tap, flick, 和 swipe 这样的动作(松开,按压,滑动等手机手势)
 
-你也可以在混合模式下自动化你的用HTML5构建的Web页面 [hybrid app
-guide](https://github.com/appium/appium/blob/master/docs/cn/hybrid.cn.md)
-这个代码地址包含了 [很多不同语言的测试例子](https://github.com/appium/appium/tree/master/sample-code/examples/node)!
+你也可以在混合模式下自动化你的用HTML5构建的Web页面 [hybrid app guide](hybrid.cn.md)
+这个代码地址包含了 [很多不同语言的测试例子](/sample-code/examples/node)!
 
 
-想了解全部的Appium的文档页面,请访问 [这个目录](https://github.com/appium/appium/blob/master/docs/).
+想了解全部的Appium的文档页面,请访问 [这个目录](#).
 
 ## 工作原理
 
@@ -99,13 +98,13 @@ FirefoxOS的支持依赖一个基于Gecko平台并且兼容WebDriver的自动化
 
 
 ## 如何贡献代码
-可以看下我们的文档  [contribution documentation](https://github.com/appium/appium/blob/master/CONTRIBUTING.md) 
+可以看下我们的文档  [contribution documentation](../../CONTRIBUTING.md)
 以了解如何从源代码中进行编译,测试和运行
 
 
 ## 其他项目的授权和灵感来源
 
-[Credits](https://github.com/appium/appium/blob/master/docs/cn/credits.cn.md)
+[Credits](credits.cn.md)
 
 ## 邮件列表
 
@@ -113,7 +112,7 @@ FirefoxOS的支持依赖一个基于Gecko平台并且兼容WebDriver的自动化
 
 ## 问题定位
 
-我们增加了一个 [问题定位指南](https://github.com/appium/appium/blob/master/docs/cn/troubleshooting.cn.md).
+我们增加了一个 [问题定位指南](troubleshooting.cn.md).
 如果你遇到一些问题,请看下这个问的那个.它包含了一些常见的错误说明,以及在无法解决的情况如何和社区联系
 
 

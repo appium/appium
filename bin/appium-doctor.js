@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+
 var IOSChecker = require('../lib/doctor/ios.js').IOSChecker
   , AndroidChecker = require('../lib/doctor/android.js').AndroidChecker
   , DevChecker = require('../lib/doctor/dev.js').DevChecker

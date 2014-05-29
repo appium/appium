@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - move -', function () {
+describe('uicatalog - move @skip-ios6', function () {
 
   describe('moveTo and click', function () {
     var driver;
@@ -11,9 +11,9 @@ describe('uicatalog - move -', function () {
 
     it('should be able to click on arbitrary x-y elements', function (done) {
       driver
-        .elementByTagName('tableCell').moveTo(10, 10).click()
-        .elementByXPath("button[@name='Rounded']")
-          .should.eventually.exist
+        .elementByXPath("//UIAStaticText[contains(@name, 'Buttons')]").moveTo(10, 10).click()
+        .elementByXPath("//UIAElement['SYSTEM (CONTACT ADD)']")
+          .should.eventually.exist  .should.eventually.exist
         .nodeify(done);
     });
   });

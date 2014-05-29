@@ -1,4 +1,3 @@
-/*globals should:true */
 "use strict";
 
 var setup = require("../../common/setup-base"),
@@ -6,7 +5,7 @@ var setup = require("../../common/setup-base"),
     initSession = require('../../../helpers/session').initSession,
     desired = require('./desired');
 
-describe('testapp - device -', function () {
+describe('testapp - device', function () {
 
   describe('target actions', function () {
     var driver;
@@ -17,7 +16,7 @@ describe('testapp - device -', function () {
       driver
         .sleep(5000)
         .then(function () { before = new Date().getTime() / 1000; })
-        .execute("mobile: background", [{seconds: 1}])
+        .backgroundApp(1)
         .catch(function (err) {
           err.cause.value.message.should.contain("Instruments died");
           throw err;
@@ -28,7 +27,7 @@ describe('testapp - device -', function () {
     });
   });
 
-  describe('deviceName', function () {
+  describe('deviceName @skip-ios6', function () {
     var newDesired = _.extend(_.clone(desired), {deviceName: "iFailure 3.5-inch"});
     var session = initSession(newDesired, {'no-retry': true});
 

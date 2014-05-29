@@ -45,13 +45,14 @@ var timeout = process.env.TIMEOUT || 300000;
 // Browser/app config
 var appUrl = 'http://localhost:8080/TestApp6.0.app.zip';
 var desired = {
-  browserName: '',
-  version: '6.1',
+  browserName: '',  
+  'appium-version': '1.0',
+  platformName: 'iOS',
+  platformVersion: '7.1',
+  deviceName: 'iPhone Simulator',
   app: appUrl,
-  device: 'iPhone Simulator',
   name: "Appium: with WD Mocha",
-  'device-orientation': 'portrait',
-  platform: "Mac"
+  'deviceOrientation': 'portrait',
 };
 
 describe('notes app', function() {
@@ -83,7 +84,7 @@ describe('notes app', function() {
 
   it('should fill two fields with numbers', function(done) {
     browser
-      .elementsByTagName('textField').then(function(elems) {
+      .elementsByIosUIAutomation('.textFields();').then(function(elems) {
         var seq = [];
         _(elems).each(function(elem) {
           seq.push(function() {
@@ -94,13 +95,13 @@ describe('notes app', function() {
         });
         return seq.reduce(Q.when, new Q());
       })
-      .elementByTagName('button')
+      .elementByIosUIAutomation('.buttons()')
         .click()
-      .elementByTagName('staticText')
-        .text().then(function(text) {
-          var sum = values[0] + values[1];
-          sum.should.equal(parseInt(text, 10));
-        })
+        .elementByClassName('UIAStaticText')
+          .text().then(function(text) {
+            var sum = values[0] + values[1];
+            sum.should.equal(parseInt(text, 10));
+          })
       .nodeify(done);
   });
 });

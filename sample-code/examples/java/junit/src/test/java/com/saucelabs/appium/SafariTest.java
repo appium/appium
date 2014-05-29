@@ -10,7 +10,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -34,12 +33,13 @@ public class SafariTest {
     @Before
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("device", "iPhone Simulator");
-        capabilities.setCapability("version", "6.1");
-        capabilities.setCapability("app", "safari");
+        capabilities.setCapability("deviceName", "iPhone Simulator");
+        capabilities.setCapability("platformName", "iOS");
+        capabilities.setCapability("platformVersion", "7.1");
+        capabilities.setCapability("browserName", "safari");
         driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"),
                 capabilities);
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        //driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
 
     /**
@@ -50,6 +50,7 @@ public class SafariTest {
     @Test
     public void runTest() throws Exception {
         driver.get("http://saucelabs.com/test/guinea-pig");
+        Thread.sleep(1000);
         WebElement idElement = driver.findElement(By.id("i_am_an_id"));
         assertNotNull(idElement);
         assertEquals("I am a div", idElement.getText());
@@ -59,10 +60,12 @@ public class SafariTest {
         WebElement submitElement = driver.findElement(By.id("submit"));
         assertNotNull(submitElement);
         submitElement.click();
+        Thread.sleep(7000);
         WebElement yourCommentsElement = driver.findElement(By.id("your_comments"));
         assertNotNull(yourCommentsElement);
         assertTrue(driver.findElement(By.id("your_comments")).getText().contains("This is an awesome comment"));
 
+      System.out.println(driver.getCurrentUrl());
     }
 
     /**

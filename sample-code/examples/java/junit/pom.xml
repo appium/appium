@@ -20,6 +20,11 @@
 			<version>LATEST</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>1.2.1</version>
+        </dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>

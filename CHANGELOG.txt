@@ -1,9 +1,186 @@
+CHANGES IN VERSION 1.1.0 (from 1.0.0)
+======================================
+
+#### General
+- less buggy xcode locator strategy for iOS and Android
+  - note that for Android this might cause previous xpath selectors not to
+    work, since we now always set compressed hierarchy when getting the xml
+	dump used for xpath
+- fix defaults for swipe duration
+- add fixes for context switching
+- add optional argument 'language' to getStrings
+- update docs and code samples (including adding perl code samples)
+- continue work on appium CI
+- make sure we can't close already ended sessions
+- upgrade all node deps besides express
+
+#### iOS
+- add `-ios uiautomation` strategy doc
+
+#### Android
+- allow for encoding of non-ASCII text
+- clearer activity error messages
+- add language and country support
+- extract strings from apk corresponding to device language instead of default
+  to be used with ID locator strategy
+- update complex find with new uiautomator constants
+- upgrade Chromedriver to 2.10
+- allow automation of Chrome Beta with browserName: `ChromeBeta`
+
+#### Selendroid
+- update selendroid to 0.10.0
+- add getStrings method
+
+
+CHANGES IN VERSION 1.0.0 (from 1.0.0-beta.2)
+=======================================
+
+#### General
+- update python samples to use 1.0 style
+- don't convert 'proxy' or 'launchTimeout' caps into strings
+- make sure commit hooks use local grunt and mocha
+- update some ruby samples to use 1.0 style
+- add more 1.0 docs and sample code
+
+#### iOS
+- fix mobile safari native tap on android by offsetting tap position by 40px
+- go back to using unpatched UICatalog
+- fix autoAcceptAlerts
+- allow multiple calls to /contexts
+- update appium-instruments with fix that would prevent the basic 'iPhone
+  Simulator' device from launching correctly
+
+#### Android
+- fix gesture timing so it doesn't interpret ms as seconds
+
+#### Selendroid
+- ensure selendroid isn't proxied appium endpoint commands
+
+
+CHANGES IN VERSION 1.0.0-beta.2 (from 1.0.0-beta.1)
+=======================================
+
+#### General
+- extensive docs updates (make it ready for the new Slate docs)
+- decode sequence of actions to native "swipe" method
+- fix valid platform error message
+- update WD dep
+- fix proxying when session id is null
+- allow spaces in appium folder name in reset.sh
+- get rid of tag name loc strat in favor of class name
+
+#### Android
+- allow for different input sets to mobile: find
+- fix apk signing with custom keystore
+- allow MultiActions without an element
+- move chrome tests into their own emulator type
+- fix async bug in getting xml dump
+- use async.queue to ensure synchronicity of commands
+- improve DumpWindowHierarchy so xpath queries don't crash
+
+
+CHANGES IN VERSION 1.0.0-beta.1 (from 0.18.0)
+=======================================
+
+#### General
+- fix broken log options: --log, --log-no-colors, and --log-timestamp
+- update docs to work with Jekyll
+- change 'launch' desired cap to 'autoLaunch', same defaults
+- fix installApp, launchApp, closeApp, removeApp to use correct app path
+- fix bug in action handling for python client
+- remove deprecated window handle support for native clients (in favor of contexts)
+- remove deprecated old xpath support and promote the '-real xpath' strategy to the
+  default
+- remove deprecated json page source in favor of xml
+- remove deprecated mobile methods: location, fireEvent, waitForPageLoad,
+  findElementNameContains, localScreenshot, getCommandTimeout, findAndAct
+- rewrite caps.md doc to use new 1.0 style caps
+- remove deprecated --merciful and --device-port flags (add
+  --force-quit-instruments flag instead of -m)
+- lots of docs reorganization and prep for new publishing method
+- fix valid platform list
+- update npm deps to latest (except for express)
+- remove all deprecated "mobile: xxx" commands, except for gestures for now
+- use new native methods from WD in testsuite
+
+#### iOS
+- fix bug where iOS < 7.1 would try to ask instruments for available devices
+- loosen up sudo check for authorize_ios so it can run without issue under sudo
+- rename `nonSyntheticWebClick` cap to `nativeWebTap`, and turn it off by
+  default
+
+#### Android
+- fix bug with XML page source where it wouldn't create the dump file correctly
+- change caps with hyphens (-) like "app-package" to be camelCased like the
+  rest of Appium caps, e.g., "appPackage"
+- fix bug with custom keystore apk signing
+- allow multi actions without an element
+
+#### Selendroid
+- fix command timeout bug
+
+
+CHANGES IN VERSION 0.18.0 (from 0.17.6)
+=======================================
+
+*Important*: This is the Appium 1.0 feature-complete pre-release. Please the
+discussion group for more context and details about this release and where
+Appium is headed in the near future.
+
+#### General
+- disallow use of appium under sudo (except for authorize_ios)
+- don't autopopulate node config host (so appium url can be set in nodeconfig)
+- many build and test tweaks and fixes to improve build stability
+- don't link commit hooks if we're not in a git repo
+- add "accessibility id" locator strategy
+- get rid of a bunch of unused grunt commands
+- deprecate use of JSON page source (XML will be the standard)
+- simplify reset strategy and make reset strategies available through caps.
+  There's now the default (fastReset), fullReset, and noReset.
+- deprecate "tag name" locator strategy
+- add real xpath support (for now under the "-real xpath" locator strategy)
+- deprecate old xpath strategy
+- a lot of work on appium CI
+- further update new capability handling and device selection; use only the
+  new caps internally
+- implement TouchAction and MultiTouch APIs
+- migrate all "mobile: " methods to their own REST endpoints; they are now
+  deprecated
+- don't allow users to send in bad platformNames; fail with an error instead
+- allow app paths relative to appium root
+- add command-line flags corresponding to the new desired capabilities
+
+#### iOS
+- add "-ios uiautomation" locator strategy
+- make backup path for built-in apps in ios 7.0 configurable
+- only count one out of the two textfields which compose an ios 7.1 textfield
+- introduce a distinction between global and post-launch timeouts for
+  instruments, to fine-tune flake management
+- rewrite screenshot logic
+- modify "mobile: scroll" to take an element argument
+- fix bug where bundleID would be improperly lowercased
+- allow changing of remote debugger ports with env variable
+- fix bug in device launching logic that would try to launch an invalid device
+  as the default
+- add "mobile: pullFile" support for retrieving files from the sim folders
+- update fruitstrap to a version which doesn't segfault for Japanese
+
+#### Android
+- make sure app is signed before getting MD5 hash for use in on-device install
+- ensure that the app is always force-stopped before uninstalling the APK
+- add "-android uiautomator" locator strategy
+- fix bug involving storing android binary paths incorrectly
+- add avdLaunchTimeout and avdReadyTimeout caps to fine-tune these timeouts
+- retry launching AVD once if it never connects to adb
+- if installing a remote apk fails, uninstall/rm, then retry
+
+
 CHANGES IN VERSION 0.17.6 (from 0.17.6)
 =======================================
 
 #### General
 - disallow use of Appium in sudo mode
-- ensure publishes happen with a version of Node which doesn't generate 
+- ensure publishes happen with a version of Node which doesn't generate
   shasum errors in NPM
 
 
@@ -92,7 +269,7 @@ CHANGES IN VERSION 0.17.0 (from 0.16.0)
 - break out appium-instruments into its own npm package
 - fix bug where command line --force-iphone or --force-ipad wouldn't set
   device. This should fix issues with Appium.app
-- add --keep-keychains server arg / keepKeychains desired cap in order to 
+- add --keep-keychains server arg / keepKeychains desired cap in order to
   disallow deletion of Keychains dir
 - bring reset behavior back to what it was before location services / settings
   updates, so that with the default reset, most directories are still cleared
@@ -383,7 +560,7 @@ CHANGES IN VERSION 0.12.1 (from 0.12.0)
 =======================================
 
 #### General
-- add appium doctor for checking system config issues that prevent appium 
+- add appium doctor for checking system config issues that prevent appium
   from working properly. Run with `node bin/appium-doctor.js`, or
   `appium-doctor` if installed via NPM, or via the GUI in Appium.app
 - fail sooner if user passes in bad locator strategy
@@ -920,7 +1097,7 @@ CHANGES IN VERSION 0.6.1 (from 0.6.0)
 [GENERAL]
 - started work on mobile_methods.md doc
 - added hardcore mode to reset.sh that will refresh uicatalog inter alia
-- ios-webkit-debug-proxy docs 
+- ios-webkit-debug-proxy docs
 - appium now registers correctly with selenium grid
 - better bundle/package detection
 

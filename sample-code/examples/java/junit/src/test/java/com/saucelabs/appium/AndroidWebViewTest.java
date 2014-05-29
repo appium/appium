@@ -1,19 +1,20 @@
 package com.saucelabs.appium;
 
+import io.appium.java_client.AppiumDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.HasTouchScreen;
-import org.openqa.selenium.interactions.TouchScreen;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteTouchScreen;
-import org.openqa.selenium.remote.RemoteWebDriver;
+
 import java.io.File;
 import java.net.URL;
+import java.util.Set;
 
 public class AndroidWebViewTest {
-    private WebDriver driver;
+    private AppiumDriver driver;
 
     @Before
     public void setUp() throws Exception {
@@ -21,11 +22,13 @@ public class AndroidWebViewTest {
         File classpathRoot = new File(System.getProperty("user.dir"));
         File app = new File(classpathRoot, "../../../apps/selendroid-test-app.apk");
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("device","selendroid");
+        capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
+        capabilities.setCapability("automationName","Selendroid");
+        capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("app", app.getAbsolutePath());
-        capabilities.setCapability("app-package", "io.selendroid.testapp");
-        capabilities.setCapability("app-activity", ".HomeScreenActivity");
-        driver = new SwipeableWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        capabilities.setCapability("appPackage", "io.selendroid.testapp");
+        capabilities.setCapability("appActivity", ".HomeScreenActivity");
+        driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
     @After
     public void tearDown() throws Exception {
@@ -33,27 +36,20 @@ public class AndroidWebViewTest {
     }
 
     @Test
-    public void webView(){
+    public void webView() throws InterruptedException {
         WebElement button = driver.findElement(By.id("buttonStartWebview"));
         button.click();
-        driver.switchTo().window("WEBVIEW");
+        Thread.sleep(6000);
+        Set<String> contextNames = driver.getContextHandles();
+        for (String contextName : contextNames) {
+          System.out.println(contextName);
+          if (contextName.contains("WEBVIEW")){
+            driver.context(contextName);
+          }
+        }
         WebElement inputField = driver.findElement(By.id("name_input"));
         inputField.sendKeys("Some name");
         inputField.submit();
-    }
-
-
-    public class SwipeableWebDriver extends RemoteWebDriver implements HasTouchScreen {
-        private RemoteTouchScreen touch;
-
-        public SwipeableWebDriver(URL remoteAddress, Capabilities desiredCapabilities) {
-            super(remoteAddress, desiredCapabilities);
-            touch = new RemoteTouchScreen(getExecuteMethod());
-        }
-
-        public TouchScreen getTouch() {
-            return touch;
-        }
     }
 
 }

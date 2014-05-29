@@ -18,10 +18,12 @@ var spinTitle = function (expTitle, browser, _timeout) {
     });
 };
 
-var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
+var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
+  var app = typeof desired === 'object' ? desired.app || desired.browserName  : desired;
+
   var uuid = uuidGenerator.v1();
   if (typeof urlToLoad === "undefined") {
-    if (app === "chrome" || app === "chromium") {
+    if (app === "chrome" || app === "chromium" || app === "chromebeta") {
       urlToLoad = env.CHROME_GUINEA_TEST_END_POINT + '?' + uuid;
     } else {
       urlToLoad = env.GUINEA_TEST_END_POINT + '?' + uuid;
@@ -30,7 +32,7 @@ var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
   if (typeof titleToSpin === "undefined") {
     titleToSpin = uuid;
   }
-  if (_.contains(["safari", "iwebview", "chrome", "chromium"], app)) {
+  if (_.contains(["safari", "iwebview", "chrome", "chromium", "chromebeta"], app)) {
     return browser
       .get(urlToLoad)
       .then(function () { return spinTitle(titleToSpin, browser); });
@@ -55,7 +57,26 @@ var loadWebView = function (app, browser, urlToLoad, titleToSpin) {
   }
 };
 
+
+var isChrome = function (desired) {
+  var chromes = ["chrome", "chromium", "chromebeta"];
+  return _.contains(chromes, desired.app) ||
+         _.contains(chromes, desired.browserName);
+};
+
+function skip(reason, done) {
+  console.warn("skipping: " + reason);
+  done();
+}
+
+var testEndpoint = function (desired) {
+    return isChrome(desired) ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
+};
+
 module.exports = {
   spinTitle: spinTitle,
-  loadWebView: loadWebView
+  loadWebView: loadWebView,
+  isChrome: isChrome,
+  skip: skip,
+  testEndpoint: testEndpoint
 };

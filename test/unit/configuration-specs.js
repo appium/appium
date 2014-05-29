@@ -1,8 +1,6 @@
 "use strict";
 
 var getAppium = require('../../lib/appium')
-  , chai = require('chai')
-  , should = chai.should()
   , _ = require('underscore');
 
 var assertCapsGiveCorrectDevices = function (appium, args) {
@@ -17,62 +15,6 @@ describe('Appium', function () {
   describe('#getDeviceType', function () {
     // test is [args, caps, device]
     var appium = getAppium({});
-    describe('pre mjsonwp capabilities', function () {
-      describe('device capabilities', function () {
-        var happyTests = [
-          [{}, {app: 'chromium', device: 'android'}, 'chrome']
-        , [{}, {app: '/path/to/my.app', device: 'Android'}, 'android']
-        , [{app: '/path/to/my.app'}, {device: 'Android'}, 'android']
-        , [{}, {device: 'iPhone Simulator'}, 'ios']
-        , [{}, {device: 'iPhone Simulator', browserName: 'Safari'}, 'ios']
-        , [{}, {device: 'iPhone Simulator', browserName: 'safari'}, 'ios']
-        , [{}, {device: 'iPhone'}, 'ios']
-        , [{}, {device: 'iphone'}, 'ios']
-        , [{}, {device: 'ipad'}, 'ios']
-        , [{}, {device: 'iPad Simulator'}, 'ios']
-        , [{}, {device: 'Selendroid'}, 'selendroid']
-        , [{}, {device: 'Android'}, 'android']
-        , [{}, {device: 'FirefoxOS'}, 'firefoxos']
-        , [{}, {device: 'firefox'}, 'firefoxos']
-        , [{}, {device: 'firefox', 'app-package': 'com.android.chrome'}, 'firefoxos']
-        , [{}, {device: 'iphone', 'app-package': 'lol'}, 'ios']
-        ];
-        _.each(happyTests, function (test) {
-          var spec = 'should turn ' + JSON.stringify(test[0]) + ' args and ' +
-             JSON.stringify(test[1]) + ' caps into ' + test[2] + ' device';
-          it(spec, function () {
-            appium.getDeviceType(test[0], test[1]).should.equal(test[2]);
-          });
-        });
-      });
-
-      describe('negative cases', function () {
-
-        var unhappyTests = [
-          [{}, {}]
-        , [{}, {device: 'rando'}]
-        , [{}, {app: '/path/to/my.exe'}]
-        , [{}, {browserName: 'Safari'}]
-        , [{ipa: '/path/to/my.exe'}, {}]
-        , [{}, {platformName: 'notarealdevice'}]
-        ];
-        _.each(unhappyTests, function (test) {
-          var spec = 'should fail with args ' + JSON.stringify(test[0]) +
-                     ' and caps ' + JSON.stringify(test[1]);
-          it(spec, function () {
-            var err;
-            try {
-              appium.getDeviceType(test[0], test[1]);
-            } catch (e) {
-              err = e;
-            }
-            should.exist(err);
-            err.message.should.contain("Could not determine your device");
-          });
-        });
-      });
-    });
-
     describe('mjsonwp spec capabilities', function () {
       describe('deviceName', function () {
 
@@ -80,6 +22,9 @@ describe('Appium', function () {
             [{}, {platformName: 'iOS'}, 'ios'],
           , [{}, {platformName: 'Android'}, 'android']
           , [{}, {platformName: 'FirefoxOS'}, 'firefoxos']
+          , [{platformName: 'Android'}, {}, 'android']
+          , [{platformName: 'ios'}, {}, 'ios']
+          , [{platformName: 'iOS'}, {platformName: 'android'}, 'android']
           ];
         _.each(deviceCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
@@ -89,10 +34,13 @@ describe('Appium', function () {
       describe('browserName', function () {
 
         var browserCapabilities = [
-            [{}, {platformName: 'ios', browserName: 'Safari'}, 'ios']
+            [{}, {platformName: 'ios', browserName: 'Safari'}, 'safari']
           , [{}, {platformName: 'Android', browserName: 'Chrome'}, 'chrome']
-          , [{}, {platformName: 'Android', browserName: 'Chromium'}, 'chrome']
+          , [{}, {platformName: 'Android', browserName: 'ChromeBeta'}, 'chrome']
+          , [{}, {platformName: 'Android', browserName: 'chromebeta'}, 'chrome']
           , [{}, {platformName: 'Android', browserName: 'browser'}, 'chrome']
+          , [{browserName: 'browser'}, {platformName: 'Android'}, 'chrome']
+          , [{browserName: 'Safari'}, {platformName: 'ios'}, 'safari']
           ];
         _.each(browserCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
@@ -103,6 +51,9 @@ describe('Appium', function () {
 
         var automationCapabilities  = [
           [{}, {automationName: 'selendroid', platformName: 'Android'}, 'selendroid']
+        , [{automationName: 'selendroid'}, {platformName: 'Android'}, 'selendroid']
+        , [{automationName: 'selendroid'}, {automationName: 'appium', platformName: 'android'}, 'android']
+        , [{automationName: 'appium'}, {platformName: 'Android'}, 'android']
         ];
         _.each(automationCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
@@ -135,6 +86,7 @@ describe('Appium', function () {
         , [{}, {app: 'Settings'}, 'ios']
         , [{}, {app: 'chrome'}, 'chrome']
         , [{}, {app: 'chromium'}, 'chrome']
+        , [{}, {app: 'chromebeta'}, 'chrome']
         , [{}, {app: 'browser'}, 'chrome']
         , [{}, {app: 'http://www.site.com/my.app.zip'}, 'ios']
         , [{}, {app: 'http://www.site.com/MY.APP.ZIp'}, 'ios']
@@ -155,9 +107,9 @@ describe('Appium', function () {
 
     describe('package arguments and capabilities', function () {
       var packageCases = [
-        [{}, {'app-package': 'com.android.chrome'}, 'chrome']
-      , [{}, {'app-package': 'Com.Android.Chrome'}, 'chrome']
-      , [{}, {'app-package': 'lol'}, 'android']
+        [{}, {appPackage: 'com.android.chrome'}, 'chrome']
+      , [{}, {appPackage: 'Com.Android.Chrome'}, 'chrome']
+      , [{}, {appPackage: 'lol'}, 'android']
       , [{androidPackage: 'com.foo'}, {}, 'android']
       , [{androidPackage: 'com.android.browser'}, {}, 'chrome']
       ];

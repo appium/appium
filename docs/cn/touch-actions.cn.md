@@ -14,6 +14,7 @@ new TouchActions(driver).longPress(imageView).perform();
 Android 应用：
 
 Java:
+
 ```java
 WebElement element = wd.findElement(By.name("API Demo"));
 JavascriptExecutor js = (JavascriptExecutor) wd;
@@ -23,6 +24,7 @@ js.executeScript("mobile: longClick", tapObject);
 ```
 
 Python:
+
 ```python
 element = wd.find_element_by_xpath("your_element_xpath")
 wd.execute_script("mobile: longClick",{ "touchCount": 1, "x": 0, "y": 300, "element":element.id })

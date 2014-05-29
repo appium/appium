@@ -111,7 +111,7 @@ module.exports.runMochaTests = function (grunt, appName, testType, deviceType, c
     var file = mochaFiles.shift();
     if (typeof file !== "undefined") {
       var mochaProc = spawn('mocha', args.concat(file), {cwd: __dirname});
-      mochaProc.on("error", function (err) {
+      mochaProc.on("error", function () {
         grunt.fatal("Unable to spawn mocha process: mocha not installed?");
       });
       mochaProc.stdout.setEncoding('utf8');
@@ -339,7 +339,7 @@ var setupAndroidProj = function (grunt, projPath, args, cb) {
     grunt.log.write(data);
   });
   proc.on('exit', function (code) {
-    cb(code === 0 ? null : new Error("Setup failed with code " + code));
+    cb(code === 0 ? null : new Error("Setup cmd " + cmd + " failed with code " + code));
   });
 };
 
@@ -376,7 +376,7 @@ var buildAndroidProj = function (grunt, projPath, target, cb) {
         var cmd = stdout.split('\r\n')[0].trim();
         grunt.log.write("Using " + cmdName + " found at " + cmd + "\n");
         var proc = spawn(cmd, [target], {cwd: projPath});
-        proc.on("error", function (err) {
+        proc.on("error", function () {
           grunt.fatal("Unable to spawn \"" + cmdName + "\"");
         });
         proc.stdout.setEncoding('utf8');
@@ -430,6 +430,29 @@ module.exports.buildAndroidBootstrap = function (grunt, cb) {
   });
 };
 
+var fixSelendroidAndroidManifest = function (dstManifest, cb) {
+  console.log("Modifying manifest for no icons");
+  fs.readFile(dstManifest, function (err, data) {
+    if (err) {
+      console.error("Could not open new manifest");
+      return cb(err);
+    }
+    data = data.toString('utf8');
+    console.log(data);
+    var iconRe = /application[\s\S]+android:icon="[^"]+"/;
+    data = data.replace(iconRe, "application");
+    fs.writeFile(dstManifest, data, function (err) {
+      if (err) {
+        console.error("Could not write modified manifest");
+        return cb(err);
+      }
+      cb(null);
+    });
+  });
+};
+module.exports.fixSelendroidAndroidManifest = fixSelendroidAndroidManifest;
+
+
 module.exports.buildSelendroidServer = function (cb) {
   console.log("Building selendroid server");
   getSelendroidVersion(function (err, version) {
@@ -478,24 +501,7 @@ module.exports.buildSelendroidServer = function (cb) {
                   console.error("Could not copy manifest");
                   return cb(err);
                 }
-                console.log("Modifying manifest for no icons");
-                fs.readFile(dstManifest, function (err, data) {
-                  if (err) {
-                    console.error("Could not open new manifest");
-                    return cb(err);
-                  }
-                  data = data.toString('utf8');
-                  console.log(data);
-                  var iconRe = /application[\s\S]+android:icon="[^"]+"/;
-                  data = data.replace(iconRe, "application");
-                  fs.writeFile(dstManifest, data, function (err) {
-                    if (err) {
-                      console.error("Could not write modified manifest");
-                      return cb(err);
-                    }
-                    cb(null);
-                  });
-                });
+                fixSelendroidAndroidManifest(dstManifest, cb);
               });
             });
           });
@@ -564,12 +570,13 @@ module.exports.installAndroidApp = function (grunt, appName, cb) {
 
 module.exports.generateServerDocs = function (grunt, cb) {
   var p = parser();
-  var docFile = path.resolve(__dirname, "docs/server-args.md");
-  var md = "Appium server arguments\n==========\n\n";
+  var docFile = path.resolve(__dirname, "docs/en/server-args.md");
+  var md = "# Appium server arguments\n\n";
   md += "Usage: `node . [flags]`\n\n";
-  md += "### Server flags\n";
+  md += "## Server flags\n";
   md += "All flags are optional, but some are required in conjunction with " +
         "certain others.\n\n";
+  md += "\n\n<expand_table>\n\n";
   md += "|Flag|Default|Description|Example|\n";
   md += "|----|-------|-----------|-------|\n";
   _.each(p.rawArgs, function (arg) {

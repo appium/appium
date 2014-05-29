@@ -3,16 +3,13 @@
 var setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - reset -', function () {
+describe('uicatalog - contexts @skip-ios6', function () {
+  var driver;
+  setup(this, desired).then(function (d) { driver = d; });
 
-  describe('window handles', function () {
-    var driver;
-    setup(this, desired).then(function (d) { driver = d; });
-
-    it('getting handles should do nothing when no webview open', function (done) {
-      driver
-        .windowHandles().should.eventually.have.length(0)
-        .nodeify(done);
-    });
+  it('getting contexts should do nothing when no webview open', function (done) {
+    driver
+      .contexts().should.eventually.have.length(1)
+      .nodeify(done);
   });
 });

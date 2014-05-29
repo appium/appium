@@ -12,7 +12,8 @@ var options = {
   'force new connection': true
 };
 
-describe('uicatalog - alerts -', function () {
+//TODO waitForAlert not compatible with sauce, do it another way.
+describe('uicatalog - alerts @skip-ios6 @skip-ci', function () {
 
   var alertTag = env.IOS7 ? '@label' : '@value';
 
@@ -30,12 +31,12 @@ describe('uicatalog - alerts -', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should detect Show Simple', function (done) {
+    it('should detect Simple', function (done) {
       driver
-        .elementByXPath("//text[contains(@label,'Alerts')]").click()
-        .waitForElementByXPath("//text[contains(" + alertTag + ",'Show Simple')]", 10000, 1000)
-        .elementsByXPath("//text[contains(" + alertTag + ",'Show Simple')]")
-        .at(1).click()
+        .elementByXPath("//UIAStaticText[contains(@label,'Alert Views')]").click()
+        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Simple')]", 10000, 1000)
+        .elementByXPath("//UIAStaticText[contains(" + alertTag + ",'Simple')]")
+          .click()
         .resolve(waitForAlert())
         .nodeify(done);
     });
@@ -44,12 +45,12 @@ describe('uicatalog - alerts -', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should detect Show OK-Cancel', function (done) {
+    it('should detect Okay', function (done) {
       driver
-        .elementByXPath("//text[contains(@label,'Alerts')]").click()
-        .waitForElementByXPath("//text[contains(" + alertTag + ",'Show OK-Cancel')]", 10000, 1000)
-        .elementsByXPath("//text[contains(" + alertTag + ",'Show OK-Cancel')]")
-        .at(1).click()
+        .elementByXPath("//UIAStaticText[contains(@label,'Alert Views')]").click()
+        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Okay')]", 10000, 1000)
+        .elementByXPath("//UIAStaticText[contains(" + alertTag + ",'Okay')]")
+          .click()
         .resolve(waitForAlert())
         .nodeify(done);
     });
@@ -58,12 +59,13 @@ describe('uicatalog - alerts -', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should detect Show Custom', function (done) {
+    it('should detect Other', function (done) {
       driver
-        .elementByXPath("//text[contains(@label,'Alerts')]").click()
-        .waitForElementByXPath("//text[contains(" + alertTag + ",'Show Custom')]", 10000, 1000)
-        .elementsByXPath("//text[contains(" + alertTag + ",'Show Custom')]")
-        .at(1).click()
+        .elementByXPath("//UIAStaticText[contains(@label,'Alert Views')]").click()
+        //.sleep(60000)
+        .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Other')]", 10000, 1000)
+        .elementByXPath("//UIAStaticText[contains(" + alertTag + ",'Other')]")
+          .click()
         .resolve(waitForAlert())
         .nodeify(done);
     });

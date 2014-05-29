@@ -1,6 +1,4 @@
-元素定位与交互
-=====================================
-
+# 元素定位与交互
 
 Appium支持一个Webdriver元素定位方法的子集
 
@@ -17,8 +15,7 @@ https://github.com/appium/appium/blob/master/lib/uiauto/lib/mechanic.js#L29
 对于Android下的元素对应, 可以参考
 https://github.com/appium/appium/blob/master/lib/devices/android/bootstrap/src/io/appium/android/bootstrap/AndroidElementClassMap.java
 
-例子
---------
+## 例子
 
 ### 找到屏幕上所有的UIAButtons
 
@@ -71,6 +68,7 @@ Ruby:
 ```ruby
 @driver.find_element(:name, 'Go').click
 ```
+
 Python:
 
 ```python
@@ -116,7 +114,7 @@ Python:
 driver.find_elements_by_tag_name('tableCell')[5].click()
 ```
 
-# FindAndAct<a name="findandact"></a>
+## FindAndAct
 
 你也可以通过一行命令来完成元素的查找和交互(只适用于IOS)
 举个例子, 你可以通过一次调用来实现查找一个元素并点击它, 使用的命令是`mobile: findAndAct`
@@ -140,8 +138,7 @@ driver.execute_script(js_snippet, args)
 
 备注:  driver.execute_script() 可以在 [Automating Mobile Gestures: Alternative access method](https://github.com/appium/appium/wiki/Automating-mobile-gestures)) 找到说明
 
-使用Appium Inspector来定位元素
---------
+## 使用Appium Inspector来定位元素
 
 (翻译备注: 这个工具目前只有Mac版本, 如果你使用的是windows, 可以使用android自带的traceview工具来获得元素的位置)
 

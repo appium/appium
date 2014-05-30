@@ -68,7 +68,7 @@ public class MultiPointerGesture extends CommandHandler {
       } else {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
           final ReflectionUtils utils = new ReflectionUtils();
-          final Method pmpg = utils.getMethod("performMultiPointerGesture",
+          final Method pmpg = utils.getControllerMethod("performMultiPointerGesture",
               PointerCoords[][].class);
           final Boolean rt = (Boolean) pmpg.invoke(utils.getController(),
               (Object) pcs);

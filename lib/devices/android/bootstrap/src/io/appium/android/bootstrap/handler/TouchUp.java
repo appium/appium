@@ -19,7 +19,7 @@ public class TouchUp extends TouchEvent {
     printEventDebugLine("TouchUp");
     try {
       final ReflectionUtils utils = new ReflectionUtils();
-      final Method touchUp = utils.getMethod("touchUp", int.class, int.class);
+      final Method touchUp = utils.getControllerMethod("touchUp", int.class, int.class);
       return (Boolean) touchUp.invoke(utils.getController(), clickX, clickY);
     } catch (final Exception e) {
       Logger.debug("Problem invoking touchUp: " + e);

@@ -1,13 +1,11 @@
 package com.android.uiautomator.common;
 
+import android.os.Build;
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import android.os.Build;
-
-import com.android.uiautomator.core.UiDevice;
 
 public class ReflectionUtils {
   private static Field enableField(final Class<?> clazz, final String field)
@@ -44,13 +42,15 @@ public class ReflectionUtils {
     return controller;
   }
 
-  public Method getMethod(final String name, final Class<?>... parameterTypes)
+  public Method getControllerMethod(final String name, final Class<?>... parameterTypes)
       throws NoSuchMethodException, SecurityException {
-    final Class<?> controllerClass = controller.getClass();
+    return getMethod(controller.getClass(), name, parameterTypes);
+  }
 
-    Logger.debug("Finding methods on class: " + controllerClass);
-    final Method method;
-    method = controllerClass.getDeclaredMethod(name, parameterTypes);
+  public Method getMethod(final Class clazz, String name, final Class<?>... parameterTypes)
+      throws NoSuchMethodException, SecurityException {
+    Logger.debug("Finding methods on class: " + clazz);
+    final Method method = clazz.getDeclaredMethod(name, parameterTypes);
 
     method.setAccessible(true);
     return method;

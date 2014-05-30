@@ -26,9 +26,9 @@ public class TouchLongClick extends TouchEvent {
        */
 
       final ReflectionUtils utils = new ReflectionUtils();
-      final Method touchDown = utils.getMethod("touchDown", int.class,
+      final Method touchDown = utils.getControllerMethod("touchDown", int.class,
           int.class);
-      final Method touchUp = utils.getMethod("touchUp", int.class, int.class);
+      final Method touchUp = utils.getControllerMethod("touchUp", int.class, int.class);
 
       if ((Boolean) touchDown.invoke(utils.getController(), x, y)) {
         SystemClock.sleep(duration);

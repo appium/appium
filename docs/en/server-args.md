@@ -12,6 +12,7 @@ All flags are optional, but some are required in conjunction with certain others
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
 |`--shell`|null|Enter REPL mode||
+|`--localizable-strings-dir`|en.lproj|IOS only: the relative path of the dir where Localizable.strings file resides |`--localizable-strings-dir en.lproj`|
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
 |`-q`, `--quiet`|false|Don't use verbose logging output||
@@ -68,4 +69,5 @@ All flags are optional, but some are required in conjunction with certain others
 |`--show-config`|false|Show info about the appium server configuration and exit||
 |`--command-timeout`|60|The default command timeout for the server to use for all sessions. Will still be overridden by newCommandTimeout cap||
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||
+|`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||

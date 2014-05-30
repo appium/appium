@@ -48,4 +48,61 @@ describe('capabilities', function () {
       });
     });
   });
+
+  describe('#checkStrictValidity', function () {
+
+    var capsShouldPass = function (dt, caps) {
+      var c = new Capabilities(caps);
+      c.checkStrictValidity(dt);
+    };
+
+    var capsShouldFail = function (dt, caps) {
+      var err = null;
+      try {
+        capsShouldPass(dt, caps);
+      } catch (e) {
+        err = e;
+      }
+      should.exist(err);
+    };
+
+    var iosHappyCaps = {platformName: 'iOS', platformVersion: '7.1',
+        deviceName: 'iPhone Simulator', app: 'foo'};
+
+    var androidHappyCaps = {platformName: 'Android',
+        platformVersion: '4.2', deviceName: 'Android Emulator',
+        browserName: 'Chrome'};
+
+    it('should not care about selendroid', function () {
+      var c = new Capabilities({});
+      (typeof c.checkStrictValidity("selendroid")).should.equal("undefined");
+    });
+
+    it('should not allow unknown caps', function () {
+      capsShouldFail('ios', _.extend(_.clone(iosHappyCaps), {fooBar: 'lol'}));
+      capsShouldFail('android', _.extend(_.clone(androidHappyCaps), {fooBar: 'lol'}));
+    });
+
+    it('should enforce required caps', function () {
+      capsShouldFail('ios', {safariAllowPopups: 'lol'});
+      capsShouldFail('android', {useKeystore: 'lol'});
+      capsShouldPass('ios', iosHappyCaps);
+      capsShouldPass('android', androidHappyCaps);
+    });
+
+    it('should enforce browserName/app', function () {
+      var badIos = _.clone(iosHappyCaps);
+      delete badIos.app;
+      var badAnd = _.clone(androidHappyCaps);
+      delete badAnd.browserName;
+      capsShouldFail('ios', badIos);
+      capsShouldFail('android', badAnd);
+    });
+
+    it('should not allow caps unknown for device type', function () {
+      capsShouldFail('ios', _.extend(_.clone(iosHappyCaps), {avd: 'foo'}));
+      capsShouldFail('android', _.extend(_.clone(androidHappyCaps), {bundleId: 'foo'}));
+    });
+
+  });
 });

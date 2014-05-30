@@ -20,7 +20,9 @@ describe('testapp - basics - calc app 2', function () {
 
   it('should lookup two fields by name and populate them with ' +
       'random numbers to finally sum them up', function (done) {
-    driver.elementByName('SumLabel').then(function (sumLabel) {
+    driver
+      .elementByName('Answer')
+      .then(function (sumLabel) {
       return driver.chain()
         .then(lookup.bind(null, 1))
         .then(lookup.bind(null, 2))

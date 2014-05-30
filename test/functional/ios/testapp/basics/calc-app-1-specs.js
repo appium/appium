@@ -139,7 +139,7 @@ describe('testapp - basics - calc app 1', function () {
 
   it('should be able to get text of a button', function (done) {
     driver
-      .elementByClassName('UIAButton').text().should.become("ComputeSumButton")
+      .elementByClassName('UIAButton').text().should.become("Compute Sum")
       .nodeify(done);
   });
 });

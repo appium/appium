@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -90,8 +91,8 @@ public class Dynamic {
     return value;
   }
 
-  public static ArrayList<String> finalize(
-      final ArrayList<AndroidElement> elements, final int finalizer)
+  public static List<String> finalize(
+      final List<AndroidElement> elements, final int finalizer)
       throws Exception {
     final ArrayList<String> results = new ArrayList<String>();
     for (final AndroidElement e : elements) {

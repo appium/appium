@@ -19,7 +19,7 @@ public class TouchDown extends TouchEvent {
     printEventDebugLine("TouchDown");
     try {
       final ReflectionUtils utils = new ReflectionUtils();
-      final Method touchDown = utils.getMethod("touchDown", int.class,
+      final Method touchDown = utils.getControllerMethod("touchDown", int.class,
           int.class);
       return (Boolean) touchDown.invoke(utils.getController(), clickX, clickY);
     } catch (final Exception e) {

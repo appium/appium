@@ -42,7 +42,7 @@ public class LongPressKeyCode extends CommandHandler {
       throws JSONException {
     try {
       final ReflectionUtils utils = new ReflectionUtils();
-      final Method injectEventSync = utils.getMethod("injectEventSync",
+      final Method injectEventSync = utils.getControllerMethod("injectEventSync",
           InputEvent.class);
       final Hashtable<String, Object> params = command.params();
       keyCode = (Integer) params.get("keycode");

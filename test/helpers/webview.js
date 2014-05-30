@@ -35,6 +35,7 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
   if (_.contains(["safari", "iwebview", "chrome", "chromium", "chromebeta"], app)) {
     return browser
       .get(urlToLoad)
+      .sleep(1000)
       .then(function () { return spinTitle(titleToSpin, browser); });
   } else {
     return browser

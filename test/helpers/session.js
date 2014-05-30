@@ -81,18 +81,20 @@ module.exports.initSession = function (desired, opts) {
         });
       }
       deferred.resolve(browser);
-      var caps = _.defaults(desired, env.CAPS);
+      var caps = _.clone(desired);
+      _.defaults(caps, env.CAPS);
 
       if (env.SAUCE) {
         if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
-        if (name) desired.name = name.replace(/@[^\s]*/,'');
-        if (env.TRAVIS_BUILD_NUMBER) desired.build = env.TRAVIS_BUILD_NUMBER;
+        if (name) caps.name = name.replace(/@[^\s]*/,'');
+        if (env.TRAVIS_BUILD_NUMBER) caps.build = env.TRAVIS_BUILD_NUMBER;
+        if (opts['expect-error']){
+          caps.tags.push('expect-error');
+        }
+        caps['max-duration'] = 600;
         if (caps['appium-version']){
           // locking cap list
           caps['appium-version']['filter-caps'] = _(caps).keys();
-        }
-        if (opts['expect-error']){
-          caps.tags.push('expect-error');
         }
       }
 

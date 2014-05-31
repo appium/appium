@@ -13,10 +13,12 @@ class TestAndroidWebView(unittest.TestCase):
                 os.path.join(os.path.dirname(__file__),
                              '../../apps/selendroid-test-app.apk'))
         desired_caps = {
-            'device': 'selendroid',
             'app': app,
             'appPackage': 'io.selendroid.testapp',
-            'appActivity': '.HomeScreenActivity'
+            'appActivity': '.HomeScreenActivity',
+            'platformName': 'Android',
+            'platformVersion': '4.4',
+            'deviceName': 'Android Emulator'
         }
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub',
@@ -29,6 +31,7 @@ class TestAndroidWebView(unittest.TestCase):
         self.driver.switch_to.context('WEBVIEW')
 
         input_field = self.driver.find_element_by_id('name_input')
+        sleep(1)
         input_field.clear()
         input_field.send_keys('Appium User')
         input_field.submit()

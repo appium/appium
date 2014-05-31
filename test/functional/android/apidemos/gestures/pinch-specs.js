@@ -25,7 +25,7 @@ describe("apidemo - gestures - pinch", function () {
         scrollOpts.text = 'WebView';
         return driver.execute("mobile: scrollTo", [scrollOpts]);
       }).elementByXPath("//" + droidText + "[@value='WebView']").click()
-      .elementById("com.example.android.apis:id/wv1")
+      .elementById("io.appium.android.apis:id/wv1")
       .then(function (el) {
         var pinchOpts = {
           element: el.value

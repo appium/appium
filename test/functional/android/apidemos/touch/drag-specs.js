@@ -44,19 +44,19 @@ describe("apidemo - touch - drag", function () {
           return action.tap().performOn(el);
         })
         .sleep(500)
-        .elementById("com.example.android.apis:id/drag_dot_3")
+        .elementById("io.appium.android.apis:id/drag_dot_3")
         .then(function (dd3) {
           return driver
-            .elementById("com.example.android.apis:id/drag_dot_2")
+            .elementById("io.appium.android.apis:id/drag_dot_2")
             .then(function (dd2) {
               var action = new TouchAction();
               return action.longPress().moveTo({ element: dd2.value.toString() }).release().performOn(dd3);
             });
         })
         .sleep(1500)
-        .elementById("com.example.android.apis:id/drag_result_text").text()
+        .elementById("io.appium.android.apis:id/drag_result_text").text()
           .should.become("Dropped!")
-        .sleep(15000)
+        .sleep(5000)
         .nodeify(done);
     });
   });

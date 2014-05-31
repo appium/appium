@@ -32,8 +32,8 @@ describe("apidemo - gestures - drag", function () {
       }).elementByXPath("//" + droidText + "[@value='Drag and Drop']").click()
       .then(function () {
         return Q.all([
-          driver.elementById("com.example.android.apis:id/drag_dot_3").getLocation(),
-          driver.elementById("com.example.android.apis:id/drag_dot_2").getLocation()
+          driver.elementById("io.appium.android.apis:id/drag_dot_3").getLocation(),
+          driver.elementById("io.appium.android.apis:id/drag_dot_2").getLocation()
         ]);
       }).then(function (locations) {
         var dragOpts = {
@@ -43,7 +43,7 @@ describe("apidemo - gestures - drag", function () {
         , endY: locations[1].y
         };
         return driver.execute("mobile: drag", [dragOpts]);
-      }).elementById("com.example.android.apis:id/drag_result_text").text()
+      }).elementById("io.appium.android.apis:id/drag_result_text").text()
         .should.become("Dropped!")
       .nodeify(done);
   });
@@ -65,8 +65,8 @@ describe("apidemo - gestures - drag", function () {
       }).elementByXPath("//" + droidText + "[@value='Drag and Drop']").click()
       .then(function () {
         return Q.all([
-          driver.elementById("com.example.android.apis:id/drag_dot_3"),
-          driver.elementById("com.example.android.apis:id/drag_dot_2").getLocation()
+          driver.elementById("io.appium.android.apis:id/drag_dot_3"),
+          driver.elementById("io.appium.android.apis:id/drag_dot_2").getLocation()
         ]);
       }).then(function (res) {
         var dragOpts = {
@@ -75,7 +75,7 @@ describe("apidemo - gestures - drag", function () {
         , endY: res[1].y
         };
         return driver.execute("mobile: drag", [dragOpts]);
-      }).elementById("com.example.android.apis:id/drag_result_text").text()
+      }).elementById("io.appium.android.apis:id/drag_result_text").text()
         .should.become("Dropped!")
       .nodeify(done);
   });
@@ -97,8 +97,8 @@ describe("apidemo - gestures - drag", function () {
       }).elementByXPath("//" + droidText + "[@value='Drag and Drop']").click()
       .then(function () {
         return Q.all([
-          driver.elementById("com.example.android.apis:id/drag_dot_3"),
-          driver.elementById("com.example.android.apis:id/drag_dot_2")
+          driver.elementById("io.appium.android.apis:id/drag_dot_3"),
+          driver.elementById("io.appium.android.apis:id/drag_dot_2")
         ]);
       }).then(function (els) {
         var dragOpts = {
@@ -106,7 +106,7 @@ describe("apidemo - gestures - drag", function () {
         , destEl: els[1].value
         };
         return driver.execute("mobile: drag", [dragOpts]);
-      }).elementById("com.example.android.apis:id/drag_result_text").text()
+      }).elementById("io.appium.android.apis:id/drag_result_text").text()
         .should.become("Dropped!")
       .nodeify(done);
   });

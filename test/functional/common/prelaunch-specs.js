@@ -90,7 +90,7 @@ describe("common - prelaunch @skip-ci @skip-ios6", function () {
   // TODO
   describe('android @skip-ios-all @skip-android-all', function () {
     it('should work for android', function (done) {
-      var args = ["--app-pkg", "com.example.android.apis", "--app-activity",
+      var args = ["--app-pkg", "io.appium.android.apis", "--app-activity",
         ".ApiDemos"];
       waitForLaunch(androidApp, args, done);
     });

@@ -11,7 +11,7 @@ describe('uninstall app @skip-ci', function () {
 
   it('should be able to uninstall the app', function (done) {
     driver
-      .removeApp("com.example.android.apis")
+      .removeApp("io.appium.android.apis")
       .nodeify(done);
   });
 

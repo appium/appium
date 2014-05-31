@@ -29,7 +29,10 @@ class ComplexIOSTests(unittest.TestCase):
         self.driver = webdriver.Remote(
             command_executor='http://127.0.0.1:4723/wd/hub',
             desired_capabilities={
-                'app': app
+                'app': app,
+                'platformName': 'iOS',
+                'platformVersion': '7.0',
+                'deviceName': 'iPhone Simulator'
             })
         self._values = []
 
@@ -49,10 +52,10 @@ class ComplexIOSTests(unittest.TestCase):
 
         # is number of cells/rows inside table correct
         rows = table.find_elements_by_class_name("UIATableCell")
-        self.assertEqual(12, len(rows))
+        self.assertEqual(18, len(rows))
 
         # is first one about buttons
-        self.assertEqual(rows[0].get_attribute("name"), "Buttons, Various uses of UIButton")
+        self.assertEqual(rows[0].get_attribute("name"), "Action Sheets, AAPLActionSheetViewController")
 
         # there is nav bar inside the app
         nav_bar = self.driver.find_element_by_class_name("UIANavigationBar")
@@ -60,10 +63,7 @@ class ComplexIOSTests(unittest.TestCase):
 
     def test_frames(self):
         # go into webview frame
-        self._open_menu_position(7)
-
-        scroll = self.driver.find_element_by_class_name("UIAScrollView")
-        webview = scroll.find_element_by_class_name("UIAWebView")
+        self._open_menu_position(15)
 
         # get the contexts and switch to webview
         contexts = self.driver.contexts
@@ -101,32 +101,9 @@ class ComplexIOSTests(unittest.TestCase):
         # get rid of the file
         os.remove("foo.png")
 
-    def test_attributes(self):
-        # go to the toolbar section
-        self._open_menu_position(8)
-
-        segmented_control = self.driver.find_element_by_class_name("UIASegmentedControl")
-        # segmented_control is enabled by default
-        self.assertTrue(segmented_control.is_enabled())
-        self.assertTrue(segmented_control.is_displayed())
-
-        # row is from previous view, should not be visible
-        self.assertFalse(self._row.is_displayed())
-
-        tinted_control = self.driver.find_elements_by_class_name("UIASegmentedControl")[4]
-        tinted_buttons = tinted_control.find_elements_by_class_name("UIAButton")
-
-        #verify the control has three buttons
-        self.assertEqual(3, len(tinted_buttons))
-
-        #verify the buttons have the right text
-        self.assertEquals(tinted_buttons[0].get_attribute('name'), 'Check')
-        self.assertEquals(tinted_buttons[1].get_attribute('name'), 'Search')
-        self.assertEquals(tinted_buttons[2].get_attribute('name'), 'Tools')
-
     def test_text_field_edit(self):
         # go to the text fields section
-        self._open_menu_position(2)
+        self._open_menu_position(13)
 
         text_field = self.driver.find_elements_by_class_name("UIATextField")[0]
 
@@ -144,30 +121,25 @@ class ComplexIOSTests(unittest.TestCase):
 
     def test_alert_interaction(self):
         # go to the alerts section
-        self._open_menu_position(10)
-        elements = self.driver.find_elements_by_name("Show Simple")
+        self.driver.find_element_by_name('Alert Views, AAPLAlertViewController').click()
+        triggerOk = self.driver.find_element_by_name("Simple")
 
         # TOFIX: Looks like alert object is not proper state
         # something to do with UIActionSheet vs. UIAlertView?
-        triggerOk = elements[0]
+        # triggerOk = elements[0]
         triggerOk.click()
         alert = self.driver.switch_to_alert()
-
-        # this does not work here.
-        # 'An attempt was made to operate on a modal dialog when one was not open.'
-        # check if title of alert is correct
-        # self.assertEqual(alert.text, "UIAlertView")
 
         # dismiss alert
         alert.accept()
 
         # trigger modal alert with cancel & ok buttons
-        triggerOkCancel = elements[1]
+        triggerOkCancel = self.driver.find_element_by_name("Okay / Cancel")
         triggerOkCancel.click()
         alert = self.driver.switch_to_alert()
 
         # check if title of alert is correct
-        self.assertEqual(alert.text, "UIAlertView <Alert message>")
+        self.assertEqual(alert.text, "A Short Title Is Best A message should be a short, complete sentence.")
         alert.accept()
 
     def test_slider(self):
@@ -195,13 +167,14 @@ class ComplexIOSTests(unittest.TestCase):
         # get main view soruce
         source_main = self.driver.page_source
         self.assertIn("UIATableView", source_main)
-        self.assertIn("TextFields, Uses of UITextField", source_main)
+        self.assertIn("Text Fields, AAPLTextFieldViewController", source_main)
 
         # got to text fields section
-        self._open_menu_position(2)
+        self._open_menu_position(13)
+        sleep(10)
         source_textfields = self.driver.page_source
         self.assertIn("UIAStaticText", source_textfields)
-        self.assertIn("TextFields", source_textfields)
+        self.assertIn("Text Fields", source_textfields)
 
         self.assertNotEqual(source_main, source_textfields)
 

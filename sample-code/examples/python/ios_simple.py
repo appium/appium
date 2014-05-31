@@ -18,7 +18,10 @@ class SimpleIOSTests(unittest.TestCase):
         self.driver = webdriver.Remote(
             command_executor='http://127.0.0.1:4723/wd/hub',
             desired_capabilities={
-                'app': app
+                'app': app,
+                'platformName': 'iOS',
+                'platformVersion': '7.0',
+                'deviceName': 'iPhone Simulator'
             })
 
     def tearDown(self):
@@ -58,7 +61,7 @@ class SimpleIOSTests(unittest.TestCase):
         el = self.driver.find_element_by_xpath('//UIAMapView[1]')
 
         location = el.location
-        self.driver.swipe(startx=location['x'], starty=location['y'], endx=0.5, endy=location['y'], duration=0.8)
+        self.driver.swipe(start_x=location['x'], start_y=location['y'], end_x=0.5, end_y=location['y'], duration=800)
 
 
 if __name__ == '__main__':

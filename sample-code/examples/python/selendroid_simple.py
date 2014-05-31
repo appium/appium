@@ -22,8 +22,6 @@ class SimpleSalendroidTests(unittest.TestCase):
         desired_caps['app'] = PATH(
             '../../../sample-code/apps/ApiDemos/bin/ApiDemos-debug.apk'
         )
-        desired_caps['appPackage'] = 'com.example.android.apis'
-        desired_caps['appActivity'] = '.ApiDemos'
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
 

@@ -19,7 +19,7 @@ describe('app activities - fully qualified', function () {
   });
 
   it('should still launch app', function (done) {
-    var newDesired = _.defaults({'appActivity': 'com.example.android.apis.ApiDemos'}, desired);
+    var newDesired = _.defaults({'appActivity': 'io.appium.android.apis.ApiDemos'}, desired);
     session = initSession(newDesired);
     session.setUp(name)
       .nodeify(done);

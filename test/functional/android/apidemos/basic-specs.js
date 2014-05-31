@@ -94,7 +94,7 @@ describe("apidemo - basic @skip-ci", function () {
       driver
         .isAppInstalled('foo')
           .should.eventually.equal(false)
-        .isAppInstalled('com.example.android.apis')
+        .isAppInstalled('io.appium.android.apis')
           .should.eventually.equal(true)
         .nodeify(done);
     });
@@ -144,7 +144,7 @@ describe("apidemo - basic @skip-ci", function () {
     var title = getTitle(this);
     after(function () { return session.tearDown(this.currentTest.state === 'passed'); });
     it('should still find activity', function (done) {
-      session = initSession(_.defaults({appActivity: 'com.example.android.apis.ApiDemos'}, desired));
+      session = initSession(_.defaults({appActivity: 'io.appium.android.apis.ApiDemos'}, desired));
       session.setUp(title).nodeify(done);
     });
   });
@@ -225,7 +225,7 @@ describe("apidemo - basic @skip-ci", function () {
 
     if (env.FAST_TESTS) {
       beforeEach(function (done) {
-        androidReset('com.example.android.apis', '.ApiDemos').nodeify(done);
+        androidReset('io.appium.android.apis', '.ApiDemos').nodeify(done);
       });
     }
 

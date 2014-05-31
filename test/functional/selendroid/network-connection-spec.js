@@ -5,19 +5,23 @@ var setup = require("../common/setup-base"),
 
 describe('selendroid - network-connection -', function () {
 
-  describe('toggle flight mode', function () {
+  describe('toggle flight mode twice', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
-    it('should toggle the airplane mode', function (done) {
+    it('should toggle the airplane mode twice', function (done) {
       driver
         .getNetworkConnection()
         .then(function (type) {
           var newType = (type % 2) + 1;
-          return driver
+          driver
             .setNetworkConnection(newType)
             .getNetworkConnection()
-              .should.become(newType);
-        }).nodeify(done);
+            .then(function (updatedType) {
+              (updatedType % 2).should.equal(newType % 2);
+              driver.setNetworkConnection(type)
+                .should.become(type).nodeify(done);
+            });
+        });
     });
   });
 });

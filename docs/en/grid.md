@@ -27,7 +27,7 @@ you will see your device on the grid console page:
       [
         {
           "browserName": "<e.g._iPhone5_or_iPad4>",
-          "version":"<version_of_iOS_e.g._6.1>",
+          "version":"<version_of_iOS_e.g._7.1>",
           "maxInstances": 1,
           "platform":"<platform_e.g._MAC_or_ANDROID>"
         }

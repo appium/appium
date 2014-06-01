@@ -18,7 +18,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 ```js
 {
   platformName: 'iOS'
-  , platformVersion: '6.1'
+  , platformVersion: '7.1'
   , browserName: 'Safari'
   , deviceName: 'iPhone Simulator'
 }
@@ -27,7 +27,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 ```python
 {
   'platformName': 'iOS',
-  'platformVersion': '6.1',
+  'platformVersion': '7.1',
   'browserName': 'Safari',
   'deviceName': 'iPhone Simulator'
 }

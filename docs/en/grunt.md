@@ -28,4 +28,4 @@ By default, `grunt buildApp` builds apps using the iPhone 6.1 simulator SDK.
 You can overwrite the simulator by passing another SDK to grunt (to figure out
 which SDKs you have available, try `xcodebuild -showsdks`:
 
-    > grunt buildApp:UICatalog:iphonesimulator6.0
+    > grunt buildApp:UICatalog:iphonesimulator6.1

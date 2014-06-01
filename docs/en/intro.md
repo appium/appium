@@ -106,7 +106,7 @@ which support Appium's extensions to the WebDriver protocol. When using Appium,
 you want to use these client libraries instead of your regular WebDriver
 client. You can view the full list of libraries [here](appium-clients.md).
 
-**Appium.app, Appium.exe**<br/>
+**[Appium.app](https://github.com/appium/appium-dot-app), [Appium.exe](https://github.com/appium/appium-dot-exe)**<br/>
 There exist GUI wrappers around the Appium server that can be downloaded.
 These come bundled with everything required to run the Appium server,
 so you don't need to worry about Node. They also come with an Inspector,

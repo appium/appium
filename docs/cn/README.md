@@ -17,7 +17,7 @@
 2. 你可以用你喜欢的开发工具使用任何 [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 兼容的语言来编写测试用例.比如
 Java, [Objective-C](https://github.com/appium/selenium-objective-c),
    JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavours),
-   PHP, Python, [Ruby](https://github.com/appium/ruby_lib), C#, Clojure, 或者 Perl 
+   PHP, Python, [Ruby](https://github.com/appium/ruby_lib), C#, Clojure, 或者 Perl
    可以使用标准的Selenium WebDriver API和特定语言的客户端库.
 3. 你可以使用任何测试框架.
 
@@ -66,7 +66,7 @@ Appium最终开启了跨平台原生移动自动化的可能.
 ### 使用app
 
 * [下载 Appium app](https://github.com/appium/appium/releases)
-* 运行它! 
+* 运行它!
 
 ## 为Appium编写测试
 
@@ -92,7 +92,7 @@ Appium通过多种原生自动化框架来提供基于Selenium的 [WebDriver JSO
 Appium驱动Apple的UIAutomation库提供IOS支持. UIAutomation基于[Dan Cuellar's](http://github.com/penguinho)
 
 Android支持上, 在新版本的Android使用了Uiautomator框架,老版本的android上使用了
-[Selendroid](http://github.com/DominikDary/selendroid) 
+[Selendroid](http://github.com/DominikDary/selendroid)
 
 FirefoxOS的支持依赖一个基于Gecko平台并且兼容WebDriver的自动化驱动[Marionette](https://developer.mozilla.org/en-US/docs/Marionette),不过暂不翻译了.因为暂时用不到
 
@@ -124,3 +124,12 @@ FirefoxOS的支持依赖一个基于Gecko平台并且兼容WebDriver的自动化
 文档翻译工作由[testerhome](http://testerhome.com/topics/150)在推动, 我们会不断补充更多的文档和测试用例.
 欢迎对Appium感兴趣的同学加入我们, 为开源社区贡献中国人的力量.
 
+## 贡献者
+来自 testerhome 的：
+
+* seveniruby
+* monkey
+* lihuazhang
+* FredZero
+* pinghailinfeng
+* niweyzhuce

@@ -34,7 +34,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```js
 {
     platformName: 'iOS',
-    platformVersion: '6.1',
+    platformVersion: '7.1',
     deviceName: 'iPhone Simulator',
     app: myApp
 }
@@ -43,7 +43,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```python
 {
     'platformName': 'iOS',
-    'platformVersion': '6.1',
+    'platformVersion': '7.1',
     'deviceName': 'iPhone Simulator',
     'app': myApp
 }
@@ -88,7 +88,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```js
 {
     platformName: 'Android',
-    platformVersion: '4.2',
+    platformVersion: '4.4',
     deviceName: 'Android Emulator',
     app: myApp
 }
@@ -97,7 +97,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```python
 {
     'platformName': 'Android',
-    'platformVersion': '4.2',
+    'platformVersion': '4.4',
     'deviceName': 'Android Emulator',
     'app': myApp
 }

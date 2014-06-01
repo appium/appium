@@ -240,5 +240,5 @@ h.driver
 h.driver
   .execute("'nan'--")
     .should.be.rejectedWith("status: 13")
-  .nodeify(done);        
+  .nodeify(done);
 ```

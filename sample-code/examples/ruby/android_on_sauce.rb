@@ -8,7 +8,7 @@
 #   SAUCE_ACCESS_KEY = your-sauce-key
 #
 # Then just:
-#   $ ruby android_on_sauce.rb
+#   bundle exec ruby android_on_sauce.rb
 #
 # Of note compared to the iOS example, here we're giving the package and
 # activity, no OS and an empty browserName
@@ -25,12 +25,12 @@ describe 'Notepad' do
   def desired_caps
     {
       caps:       {
-        'appium-version'  => '1.0.0',
-        'platformName'    => 'Android',
-        'platformVersion' => '4.3',
-        'deviceName'      => 'Android Emulator',
-        'app'             => 'http://appium.s3.amazonaws.com/NotesList.apk',
-        'name'            => 'Ruby Appium Android example'
+        :'appium-version' => '1.1.0',
+        platformName:     'Android',
+        platformVersion:  '4.3',
+        deviceName:       'Android Emulator',
+        app:              'http://appium.s3.amazonaws.com/NotesList.apk',
+        name:             'Ruby Appium Android example'
       },
       appium_lib: {
         wait: 60
@@ -48,7 +48,7 @@ describe 'Notepad' do
 
   it 'can create and save new notes' do
     find('New note').click
-    find_element(:class, 'android.widget.EditText').type 'This is a new note, from Ruby'
+    first_textfield.type 'This is a new note, from Ruby'
 
     find('Save').click
 

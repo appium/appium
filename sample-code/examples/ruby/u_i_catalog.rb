@@ -5,9 +5,15 @@
 # It relies on the setup in simple_test.rb, which is also a good starting 
 # point to make sure you can run any tests at all.
 #
-# run with: rspec u_i_catalog.rb
+# run using:
 #
-# run only a tagged group: rspec --tag one u_i_catalog.rb
+# bundle exec rspec u_i_catalog.rb
+#
+# run only a tagged group:
+#
+# bundle exec rspec --tag one u_i_catalog.rb
+#
+
 require 'rubygems'
 require 'rspec'
 require 'appium_lib'
@@ -22,13 +28,16 @@ APP_PATH = './UICatalog.app.zip'
 def desired_caps
   {
     caps: {
-      'platformName'  => 'iOS',
-      'deviceName'    => 'iPhone Simulator',
-      'versionNumber' => '7.1',
-      'app'           => APP_PATH
+      platformName: 'iOS',
+      deviceName:  'iPhone Simulator',
+      versionNumber:  '7.1',
+      app: APP_PATH
     },
-    appium_lib:
-          { :wait => 10 }
+    appium_lib: {
+      sauce_username: nil, # don't run on sauce
+      sauce_access_key: nil,
+      wait: 10,
+    }
   }
 end
 

@@ -20,7 +20,7 @@
 #
 # 1.  Start Appium in a terminal window
 # 2.  From another terminal window, open the cucumber example directory at 
-#     appium/sample-code/examples/ruby/cucumber/
+#     appium/sample-code/examples/ruby/cucumber_ios/
 # 3.  type 'cucumber' and hit enter
 # 4.  If you see '1 scenario (1 passed)' and some other stuff, SUCCESS! The
 #     test passed.  If you didn't, BOOOO, that's not right.  Make sure you've

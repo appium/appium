@@ -6,24 +6,24 @@
 #
 # INSTALLING RVM
 # --------------
-# We're assuming you've got rvm installed, but if not, from a terminal
-# run the following line (removing the ""'s):
+# If you don't have rvm installed, run the following terminal command
 #
-# "\curl -L https://get.rvm.io | bash -s stable --ruby"
+# \curl -L https://get.rvm.io | bash -s stable --ruby
 #
 # INSTALLING GEMS
 # ---------------
 # Then, change to the example directory:
-#   "cd appium-location/sample-code/examples/ruby"
+#   cd appium-location/sample-code/examples/ruby
 #
 # and install the required gems with bundler by doing:
-#   "bundle install"
+#   bundle install
 #
 # RUNNING THE TESTS
 # -----------------
-# To actually run the tests, make sure appium is running in another terminal
+# To run the tests, make sure appium is running in another terminal
 # window, then from the same window you used for the above commands, type
-#   "ruby simple_test.rb"
+#
+# bundle exec ruby simple_test.rb
 #
 # It will take a while, but once it's done you should get nothing but a line
 # telling you "Tests Succeeded";  You'll see the iOS Simulator cranking away
@@ -34,13 +34,19 @@ require 'appium_lib'
 APP_PATH = '../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
 
 desired_caps = {
-  'platformName'  => 'ios',
-  'versionNumber' => '7.1',
-  'app'           => APP_PATH
+  caps:       {
+    platformName:  'iOS',
+    versionNumber: '7.1',
+    app:           APP_PATH,
+  },
+  appium_lib: {
+    sauce_username:   nil, # don't run on Sauce
+    sauce_access_key: nil
+  }
 }
 
 # Start the driver
-Appium::Driver.new(caps: desired_caps).start_driver
+Appium::Driver.new(desired_caps).start_driver
 
 module Calculator
   module IOS
@@ -73,8 +79,6 @@ module Calculator
     # wait for alert to show
     wait { text 'this alert is so cool' }
 
-    # Elements can be found by their Class and value of an attribute
-    find_ele_by_attr 'UIATableCell', :label, 'Cancel'
     # Or by find
     find('Cancel').click
 

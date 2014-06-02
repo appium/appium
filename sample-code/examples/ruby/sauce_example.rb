@@ -27,18 +27,20 @@
 # Run with:
 #
 # bundle exec rspec sauce_example.rb
+#
+
 require 'rspec'
 require 'appium_lib'
 require 'json'
 require 'rest_client'
 
-SAUCE_USERNAME = ENV['SAUCE_USERNAME']
+SAUCE_USERNAME   = ENV['SAUCE_USERNAME']
 SAUCE_ACCESS_KEY = ENV['SAUCE_ACCESS_KEY']
 
 # This is the test itself
 describe 'Computation' do
   before(:each) do
-    Appium::Driver.new(caps: desired_caps).start_driver
+    Appium::Driver.new(desired_caps).start_driver
     Appium.promote_appium_methods RSpec::Core::ExampleGroup
   end
 
@@ -51,7 +53,7 @@ describe 'Computation' do
   end
 
   it 'should add two numbers' do
-    values = [rand(10), rand(10)]
+    values       = [rand(10), rand(10)]
     expected_sum = values.reduce(&:+)
 
     textfields.each_with_index do |element, index|
@@ -67,20 +69,22 @@ describe 'Computation' do
 end
 
 def desired_caps
-  {
-    'appium-version' => '1.0.0',
-    'platformName' => 'iOS',
-    'platformVersion' => '7.1',
-    'deviceName' => 'iPhone Simulator',
-    'app' => 'http://appium.s3.amazonaws.com/TestApp6.0.app.zip',
-    'name' => 'Ruby Example for Appium'
+  { caps:
+      {
+        'appium-version' => '1.1.0',
+        platformName:    'iOS',
+        platformVersion: '7.1',
+        deviceName:      'iPhone Simulator',
+        app:             'http://appium.s3.amazonaws.com/TestApp6.0.app.zip',
+        name:            'Ruby Example for Appium'
+      }
   }
 end
 
 def auth_details
   un = SAUCE_USERNAME
   pw = SAUCE_ACCESS_KEY
-  
+
   unless un && pw
     STDERR.puts <<-EOF
       Your SAUCE_USERNAME or SAUCE_ACCESS_KEY environment variables 
@@ -110,5 +114,5 @@ end
 # Because WebDriver doesn't have the concept of test failure, use the Sauce
 # Labs REST API to record job success or failure
 def update_job_success(job_id, success)
-    RestClient.put "#{rest_jobs_url}/#{job_id}", {"passed" => success}.to_json, :content_type => :json
+  RestClient.put "#{rest_jobs_url}/#{job_id}", { 'passed' => success }.to_json, :content_type => :json
 end

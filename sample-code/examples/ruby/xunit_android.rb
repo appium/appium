@@ -2,14 +2,18 @@
 # it open the system settings ui, and click the 'About phone' item to find android version
 # create by testerhome.com
 # author: seveniruby
+#
+# run using:
+# bundle exec ruby xunit_android.rb
 
+require 'rubygems'
 require 'test/unit'
-require 'selenium-webdriver'
 require 'appium_lib'
 
 class SettingsTest < Test::Unit::TestCase
   def setup
-    caps   = { caps: { platformName: 'Android', appActivity: '.Settings', appPackage: 'com.android.settings' } }
+    caps   = { caps:       { platformName: 'Android', appActivity: '.Settings', appPackage: 'com.android.settings' },
+               appium_lib: { sauce_username: nil, sauce_access_key: nil } }
     driver = Appium::Driver.new(caps)
     Appium.promote_appium_methods self.class
     driver.start_driver.manage.timeouts.implicit_wait = 20 # seconds

@@ -85,6 +85,7 @@
     "underscore": "~1.6.0",
     "underscore.string": "~2.3.3",
     "unzip": "~0.1.9",
+    "utf7": "~1.0.0",
     "uuid-js": "~0.7.4",
     "win-spawn": "~2.0.0",
     "winston": "~0.7.3",

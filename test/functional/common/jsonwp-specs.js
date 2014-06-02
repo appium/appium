@@ -30,7 +30,7 @@ describe("common - jsonwp @skip-ci @skip-ios6", function () {
   });
   describe('to a not-yet-implemented url', function () {
     it('should respond with 501 Not Implemented', function (done) {
-      var url = serverHub + '/fakesessid/ime/deactivate';
+      var url = serverHub + '/fakesessid/local_storage';
       request.post(url, function (err, res, body) {
         should.not.exist(err);
         res.statusCode.should.equal(501);

@@ -235,6 +235,7 @@ public class AndroidElement {
     if (UnicodeEncoder.needsEncoding(text)) {
       Logger.info("Sending Unicode text to element: " + text);
       String encodedText = UnicodeEncoder.encode(text);
+      Logger.debug("Encoded text: " + encodedText);
       return el.setText(encodedText);
     } else {
       Logger.info("Sending plain text to element: " + text);

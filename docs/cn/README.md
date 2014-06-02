@@ -2,9 +2,6 @@
 
 > Appium是一个支持原生,混合和移动web apps的开源的跨平台测试框架工具
 
-[![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
-[![Build Status](https://api.travis-ci.org/appium/appium.png?branch=master)](https://travis-ci.org/appium/appium)
-
 ## 支持平台
 
 * iOS

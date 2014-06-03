@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: mavericks
+xcode_sdk: 7.1
 notifications:
   email: false
 rvm:

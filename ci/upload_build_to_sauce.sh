@@ -1,14 +1,19 @@
 #!/bin/sh
 set -e
 
-echo "Starting to compress and upload appium."
+if [[ "${BZ2_FILE}" == '' ]]; then
+    echo Please set the BZ2_FILE env variable!
+    exit 1
+fi
 
-BZ2_FILE=appium-ci-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
+echo "Starting to compress and upload appium to ${BZ2_FILE}."
+
 UPLOAD_INFO_FILE=/tmp/build-upload-info.json
 
 # zipping/uploading
 tar \
     cfj - \
+    -L \
     --exclude=.git \
     --exclude=submodules . | \
 curl \

@@ -43,3 +43,6 @@
 	path = submodules/appium-uiauto
 	url = https://github.com/appium/appium-uiauto.git
 	branch = published
+[submodule "submodules/appium-adb"]
+	path = submodules/appium-adb
+	url = git@github.com:appium/appium-adb.git

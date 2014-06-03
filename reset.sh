@@ -190,6 +190,8 @@ reset_ios() {
             run_cmd ./bin/npmlink.sh -l appium-instruments
             echo "* Cloning/npm linking appium-uiauto"
             run_cmd ./bin/npmlink.sh -l appium-uiauto
+            echo "* Cloning/npm linking appium-adb"
+            run_cmd ./bin/npmlink.sh -l appium-adb
         fi
         if $ios7_active ; then
             if $hardcore ; then

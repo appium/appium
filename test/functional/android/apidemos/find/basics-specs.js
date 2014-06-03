@@ -49,14 +49,17 @@ describe("apidemo - find - basics", function () {
       .elementsByClassName(atv).should.eventually.exist
       .nodeify(done);
   });
-  it('should find a single element by id', function (done) {
+
+  // TODO: The new version of ApiDemo doesn't use id, find a better example.
+  it('should find a single element by id @skip-android-all', function (done) {
     driver
       .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
       .elementByXPath("//android.widget.TextView[@text='Buttons']").click()
       .elementById("buttons_1_normal").text().should.become("Normal")
       .nodeify(done);
   });
-  it('should find a single element by string id', function (done) {
+  // TODO: The new version of ApiDemo doesn't use id, find a better example.
+  it('should find a single element by string id @skip-android-all', function (done) {
     driver
       .elementById("activity_sample_code").text().should.become("API Demos")
       .nodeify(done);

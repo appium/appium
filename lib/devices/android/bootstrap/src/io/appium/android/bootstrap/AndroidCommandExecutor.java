@@ -16,6 +16,7 @@ import io.appium.android.bootstrap.handler.GetSize;
 import io.appium.android.bootstrap.handler.GetText;
 import io.appium.android.bootstrap.handler.LongPressKeyCode;
 import io.appium.android.bootstrap.handler.MultiPointerGesture;
+import io.appium.android.bootstrap.handler.OpenNotification;
 import io.appium.android.bootstrap.handler.Orientation;
 import io.appium.android.bootstrap.handler.Pinch;
 import io.appium.android.bootstrap.handler.PressBack;
@@ -39,7 +40,7 @@ import org.json.JSONException;
 /**
  * Command execution dispatch class. This class relays commands to the various
  * handlers.
- * 
+ *
  */
 class AndroidCommandExecutor {
 
@@ -76,11 +77,12 @@ class AndroidCommandExecutor {
     map.put("updateStrings", new UpdateStrings());
     map.put("getDataDir", new GetDataDir());
     map.put("performMultiPointerGesture", new MultiPointerGesture());
+    map.put("openNotification", new OpenNotification());
   }
 
   /**
    * Gets the handler out of the map, and executes the command.
-   * 
+   *
    * @param command
    *          The {@link AndroidCommand}
    * @return {@link AndroidCommandResult}

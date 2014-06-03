@@ -11,17 +11,17 @@ import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to get the size of the screen.
- * 
+ *
  */
 public class GetDeviceSize extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   * 
+   *
    * @return {@link AndroidCommandResult}
-   * 
+   *
    * @throws JSONException
-   * 
+   *
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */
@@ -39,7 +39,7 @@ public class GetDeviceSize extends CommandHandler {
       }
       return getSuccessResult(res);
     } else {
-      return getErrorResult("Unable to get attribute without an element.");
+      return getErrorResult("Unable to get device size on an element.");
     }
   }
 }

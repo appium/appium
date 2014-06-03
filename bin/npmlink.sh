@@ -6,6 +6,7 @@ ALL_PACKAGES=(
     'appium-atoms'
     'appium-instruments'
     'appium-uiauto'
+    'appium-adb'
 )
 
 PACKAGES=()

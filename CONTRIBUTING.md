@@ -24,16 +24,20 @@ The quick way to get started:
 
 ## Hacking with Appium
 
-From your local repo's command prompt, install the following packages using the
-following commands (if you didn't install `node` using homebrew, you might have
+Make sure you have ant,maven,adb installed and added to system PATH,also you would need
+android-16 sdk for selendroid and android-18 sdk installed.From your local repo's command
+prompt, install the following packages using the following commands
+(if you didn't install `node` using homebrew, you might have
 to run npm with sudo privileges):
 
     npm install -g mocha
     npm install -g grunt-cli
+    node bin/appium-doctor.js --dev
     ./reset.sh --dev
 
 The first two commands install test and build tools (`sudo` may not be necessary
-if you installed node.js via Homebrew). The third command installs all app
+if you installed node.js via Homebrew).The Third command verifies that all of the
+dependencies are set up correctly and fourth command installs all app
 dependencies and builds supporting binaries and test apps. `reset.sh` is also the
 recommended command to run after pulling changes from master. At this point,
 you're able to start the Appium server:

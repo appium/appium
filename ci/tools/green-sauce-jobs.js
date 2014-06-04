@@ -60,7 +60,9 @@ getJobs()
     if (result && result.YesNo.toLowerCase() === 'y') {
       console.log('Starting to green jobs.');
       return Q.all(selectedJobs.map(function (job) {
-        return updateJob(job.id, {passed: true});
+        var tags = job.tags || [];
+        if (tags.indexOf('greened') < 0) job.tags.push('greened');
+        return updateJob(job.id, {passed: true, tags: job.tags});
       })).then(function () { console.log('Finished to green jobs.'); });
     }
   }).done();

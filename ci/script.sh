@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BZ2_FILE=appium-ci-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
+TARBALL=appium-${TRAVIS_BRANCH}-${TRAVIS_JOB_NUMBER}-${TRAVIS_COMMIT:0:10}.tar.bz2
 
 RUN_SAUCE=false
 if [[ $TRAVIS_SECURE_ENV_VARS == true ]] && [[ $TRAVIS_PULL_REQUEST == false ]]; then 
@@ -20,10 +20,10 @@ elif [[ $CI_CONFIG == 'ios' ]]; then
     echo Xcode path: `xcode-select --print-path`
     ./reset.sh --no-npmlink --dev --ios
     if [[ $RUN_SAUCE == true ]]; then
-        BZ2_FILE=$BZ2_FILE ./ci/upload_build_to_sauce.sh
-        TARBALL=sauce-storage:$BZ2_FILE \
+        TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
+        TARBALL=sauce-storage:$TARBALL \
         node ./ci/tools/parallel-mocha.js \
-        -p 30 \
+        -p $IOS_CONCURRENCY \
         -c ios
     fi
 elif [[ $CI_CONFIG == 'android' ]]; then
@@ -31,10 +31,10 @@ elif [[ $CI_CONFIG == 'android' ]]; then
     echo JAVA_HOME: $JAVA_HOME
     ./reset.sh --no-npmlink --dev --android 
     if [[ $RUN_SAUCE == true ]]; then
-        BZ2_FILE=$BZ2_FILE ./ci/upload_build_to_sauce.sh
-        TARBALL=sauce-storage:$BZ2_FILE \
+        TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
+        TARBALL=sauce-storage:$TARBALL \
         node ./ci/tools/parallel-mocha.js \
-        -p 30 \
+        -p $ANDROID_CONCURRENCY \
         -c android
     fi
 elif [[ $CI_CONFIG == 'gappium' ]]; then
@@ -50,10 +50,10 @@ elif [[ $CI_CONFIG == 'gappium' ]]; then
     ./reset.sh --ios --android --selendroid-quick --no-npmlink
     ./reset.sh --dev --gappium --no-npmlink
     if [[ $RUN_SAUCE == true ]]; then
-        BZ2_FILE=$BZ2_FILE ./ci/upload_build_to_sauce.sh
-        TARBALL=sauce-storage:$BZ2_FILE \
+        TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
+        TARBALL=sauce-storage:$TARBALL \
         node ./ci/tools/parallel-mocha.js \
-        -p 10 \
+        -p $GAPPIUM_CONCURRENCY \
         -c gappium
     fi
 elif [[ $CI_CONFIG == 'selendroid' ]]; then
@@ -69,10 +69,10 @@ elif [[ $CI_CONFIG == 'selendroid' ]]; then
     ./reset.sh --android --no-npmlink
     ./reset.sh --dev --selendroid-quick --no-npmlink
     if [[ $RUN_SAUCE == true ]]; then
-        BZ2_FILE=$BZ2_FILE ./ci/upload_build_to_sauce.sh
-        TARBALL=sauce-storage:$BZ2_FILE \
+        TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
+        TARBALL=sauce-storage:$TARBALL \
         node ./ci/tools/parallel-mocha.js \
-        -p 10 \
+        -p $SELENDROID_CONCURRENCY \
         -c selendroid
     fi
 fi

@@ -26,6 +26,6 @@ curl \
     -o $UPLOAD_INFO_FILE
 
 # checking/printing result file
-node ci/tools/build-upload-tool.js $UPLOAD_INFO_FILE
+ci/tools/build-upload-tool.js $UPLOAD_INFO_FILE
 
 echo "Finished to compress and upload appium."

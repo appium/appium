@@ -22,7 +22,7 @@ elif [[ $CI_CONFIG == 'ios' ]]; then
     if [[ $RUN_SAUCE == true ]]; then
         TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
         TARBALL=sauce-storage:$TARBALL \
-        node ./ci/tools/parallel-mocha.js \
+        ./ci/tools/parallel-mocha.js \
         -p $IOS_CONCURRENCY \
         -c ios
     fi
@@ -33,7 +33,7 @@ elif [[ $CI_CONFIG == 'android' ]]; then
     if [[ $RUN_SAUCE == true ]]; then
         TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
         TARBALL=sauce-storage:$TARBALL \
-        node ./ci/tools/parallel-mocha.js \
+        ./ci/tools/parallel-mocha.js \
         -p $ANDROID_CONCURRENCY \
         -c android
     fi
@@ -52,7 +52,7 @@ elif [[ $CI_CONFIG == 'gappium' ]]; then
     if [[ $RUN_SAUCE == true ]]; then
         TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
         TARBALL=sauce-storage:$TARBALL \
-        node ./ci/tools/parallel-mocha.js \
+        ./ci/tools/parallel-mocha.js \
         -p $GAPPIUM_CONCURRENCY \
         -c gappium
     fi
@@ -71,7 +71,7 @@ elif [[ $CI_CONFIG == 'selendroid' ]]; then
     if [[ $RUN_SAUCE == true ]]; then
         TARBALL=$TARBALL ./ci/upload_build_to_sauce.sh
         TARBALL=sauce-storage:$TARBALL \
-        node ./ci/tools/parallel-mocha.js \
+        ./ci/tools/parallel-mocha.js \
         -p $SELENDROID_CONCURRENCY \
         -c selendroid
     fi

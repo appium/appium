@@ -1,12 +1,12 @@
 #!/bin/sh
 set -e
 
-if [[ "${BZ2_FILE}" == '' ]]; then
-    echo Please set the BZ2_FILE env variable!
+if [[ "${TARBALL}" == '' ]]; then
+    echo Please set the TARBALL env variable!
     exit 1
 fi
 
-echo "Starting to compress and upload appium to ${BZ2_FILE}."
+echo "Starting to compress and upload appium to ${TARBALL}."
 
 UPLOAD_INFO_FILE=/tmp/build-upload-info.json
 
@@ -20,7 +20,7 @@ curl \
     -k \
     --progress-bar \
     -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY \
-    -X POST "${SAUCE_REST_ROOT}/storage/${SAUCE_USERNAME}/${BZ2_FILE}?overwrite=true" \
+    -X POST "${SAUCE_REST_ROOT}/storage/${SAUCE_USERNAME}/${TARBALL}?overwrite=true" \
     -H "Content-Type: application/octet-stream" \
     --data-binary @- \
     -o $UPLOAD_INFO_FILE

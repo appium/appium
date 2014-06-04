@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// Note: In order to use this, you need to know the appium sauce api key.
-
 'use strict';
 
 var args = process.argv.slice(2),
@@ -13,8 +11,8 @@ var args = process.argv.slice(2),
 var buildId = args[0];
 
 if (!buildId) {
-  console.log('\nUsage: green-build <build_id>\n');
-  console.log('\nExample: green-build 4711\n');
+  console.log('\nUsage: ci/tools/green-sauce-jobs <build_id>\n');
+  console.log('\nExample: ci/tools/green-sauce-jobs 4711\n');
   process.exit(1);
 }
 
@@ -25,7 +23,7 @@ if (!process.env.SAUCE_ACCESS_KEY) {
 }
 
 var account = new Saucelabs({
-  username: process.env.SAUCE_USERNAME || 'appium',
+  username: process.env.SAUCE_USERNAME,
   password: process.env.SAUCE_ACCESS_KEY
 });
 

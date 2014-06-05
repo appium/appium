@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
- * For parsing strings passed in for the "-android uiautomator" locator strategy
+ * For parsing strings which create new UiSelector objects into UiSelector object.
  */
 public class UiSelectorParser {
 
@@ -94,7 +94,7 @@ public class UiSelectorParser {
       throw new UiSelectorSyntaxException(methodName + " method expects an argument");
     }
 
-    //add two for parentheses surrounding arg
+    // add two for parentheses surrounding arg
     text = text.substring(methodName.length() + argument.length() + 2);
 
     ArrayList<Method> overloadedMethods = getSelectorMethods(methodName);

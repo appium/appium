@@ -4,6 +4,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import com.android.uiautomator.common.ReflectionUtils;
 import com.android.uiautomator.core.UiObject;
 import io.appium.android.bootstrap.AndroidElement;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -49,5 +51,14 @@ public abstract class ElementHelpers {
     }
 
     return result;
+  }
+
+  /**
+   * Return the JSONObject which Appium returns for an element
+   *
+   * For example, appium returns elements like [{"ELEMENT":1}, {"ELEMENT":2}]
+   */
+  public static JSONObject toJSON(AndroidElement el) throws JSONException {
+    return new JSONObject().put("ELEMENT", el.getId());
   }
 }

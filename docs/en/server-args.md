@@ -61,6 +61,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
 |`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
+|`--chromedriver-executable`|null|ChromeDriver executable full path||
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
 |`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||

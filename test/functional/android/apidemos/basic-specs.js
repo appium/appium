@@ -111,6 +111,16 @@ describe("apidemo - basic @skip-ci", function () {
           .should.eventually.include("ApiDemos")
         .nodeify(done);
     });
+    it("should get app strings", function (done) {
+      driver
+        .getAppStrings()
+        .then(function (strings) {
+          _.size(strings).should.be.above(1);
+          strings.activity_sample_code.should.eql("API Demos");
+        })
+        .nodeify(done);
+    });
+
   });
 
   describe('with fastReset', function () {

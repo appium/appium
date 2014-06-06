@@ -95,7 +95,7 @@ describe('Appium with clobber', function () {
   appium.registerConfig({ios: true});
 
   describe('#start', function () {
-    return it('should clobber existing sessions', function (done) {
+    it('should clobber existing sessions', function (done) {
       var numSessions = 9
         , dc = {app: "/path/to/fake.app", device: "iPhone"};
       var loop = function (num) {
@@ -117,6 +117,19 @@ describe('Appium with clobber', function () {
       };
 
       loop(0);
+    });
+
+    it('should retain sessionOverride arg across sessions', function (done) {
+      var dc = {app: "/path/to/fake.app"};
+      appium.start(dc, function () {
+        appium.sessionOverride.should.eql(true);
+        appium.cleanupSession(null, function () {
+          appium.start(dc, function () {
+            appium.sessionOverride.should.eql(true);
+            done();
+          });
+        });
+      });
     });
   });
 });

@@ -1,6 +1,6 @@
 package com.android.uiautomator.common;
 
-import android.os.Build;
+import static io.appium.android.bootstrap.utils.API.API_18;
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.Logger;
 
@@ -24,7 +24,7 @@ public class ReflectionUtils {
     final UiDevice device = UiDevice.getInstance();
     final Object bridge = enableField(device.getClass(), "mUiAutomationBridge")
         .get(device);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (API_18) {
       controller = enableField(bridge.getClass().getSuperclass(),
           "mInteractionController").get(bridge);
     } else {

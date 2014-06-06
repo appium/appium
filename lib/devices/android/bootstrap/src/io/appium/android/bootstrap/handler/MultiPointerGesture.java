@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Build;
+import static io.appium.android.bootstrap.utils.API.API_18;
 import android.view.MotionEvent.PointerCoords;
 
 import com.android.uiautomator.common.ReflectionUtils;
@@ -66,7 +66,7 @@ public class MultiPointerGesture extends CommandHandler {
           return getErrorResult("Unable to perform multi pointer gesture");
         }
       } else {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (API_18) {
           final ReflectionUtils utils = new ReflectionUtils();
           final Method pmpg = utils.getControllerMethod("performMultiPointerGesture",
               PointerCoords[][].class);

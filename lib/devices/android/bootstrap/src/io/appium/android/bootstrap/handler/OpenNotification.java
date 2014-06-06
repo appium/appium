@@ -4,7 +4,7 @@ import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
 
-import android.os.Build;
+import static io.appium.android.bootstrap.utils.API.API_18;
 import com.android.uiautomator.core.UiDevice;
 
 /**
@@ -24,7 +24,7 @@ public class OpenNotification extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command) {
     // method was only introduced in API Level 18
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (!API_18) {
       return getErrorResult("Unable to open notifications on device below API level 18");
     }
 

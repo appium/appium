@@ -1,6 +1,6 @@
 package io.appium.android.bootstrap.handler;
 
-import android.os.Build;
+import static io.appium.android.bootstrap.utils.API.API_18;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
@@ -371,27 +371,35 @@ public class Find extends CommandHandler {
         selectors.add(sel);
         break;
       case ID:
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-          // Handle this as a resource id
+        // There are three types of ids on Android.
+        // 1. resourceId (API >= 18)
+        // 2. accessibility id (content description)
+        // 3. strings.xml id
+        if (API_18) {
           sel = sel.resourceId(text);
           if (!many) {
             sel = sel.instance(0);
           }
-
-          // Fall back to strings.xml id
-          if (!new UiObject(sel).exists()) {
-            sel = stringsXmlId(many, text);
-          }
-
-          if (sel != null) {
+          if (new UiObject(sel).exists()) {
             selectors.add(sel);
-          }
-        } else {
-          sel = stringsXmlId(many, text);
-          if (sel != null) {
-            selectors.add(sel);
+            break;
           }
         }
+
+        // must create a new selector or the selector from
+        // the resourceId search will cause problems
+        sel = new UiSelector().description(text);
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        if (new UiObject(sel).exists()) {
+          selectors.add(sel);
+          break;
+        }
+
+        // resource id and content description failed to match
+        // so the strings.xml selector is used
+        selectors.add(stringsXmlId(many, text));
         break;
       case ACCESSIBILITY_ID:
         sel = sel.description(text);

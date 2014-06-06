@@ -187,11 +187,10 @@ describe("apidemo - basic @skip-ci", function () {
         try3Times(function () {
           return session.setUp(title)
             .catch(function (err) { throw err.data; })
-            .should.be.rejectedWith(/Error locating the app/);
+            .should.eventually.be.rejectedWith(/Error locating the app/);
         }).nodeify(done);
       });
     });
-
   });
 
   describe('pre-existing uiautomator session', function () {
@@ -257,6 +256,14 @@ describe("apidemo - basic @skip-ci", function () {
       var appUrl = 'http://appium.s3.amazonaws.com/ApiDemos-debug.apk';
       session = initSession(_.defaults({'app': appUrl}, desired));
       session.setUp(title + "- zip url").nodeify(done);
+    });
+
+    it('should load an app via package', function (done) {
+      var caps = _.clone(desired);
+      caps.app = 'io.appium.android.apis';
+      caps.appActivity = '.ApiDemos';
+      session = initSession(caps, desired);
+      session.setUp(title + "- package").nodeify(done);
     });
 
   });

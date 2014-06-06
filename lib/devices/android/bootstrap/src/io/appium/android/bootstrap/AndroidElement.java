@@ -5,7 +5,7 @@ import io.appium.android.bootstrap.exceptions.NoAttributeFoundException;
 import io.appium.android.bootstrap.utils.Point;
 import io.appium.android.bootstrap.utils.UnicodeEncoder;
 import android.graphics.Rect;
-import android.os.Build;
+import static io.appium.android.bootstrap.utils.API.API_18;
 
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
@@ -43,7 +43,7 @@ public class AndroidElement {
 
   public boolean dragTo(final int destX, final int destY, final int steps)
       throws UiObjectNotFoundException {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (API_18) {
       return el.dragTo(destX, destY, steps);
     } else {
       Logger.error("Device does not support API >= 18!");
@@ -53,7 +53,7 @@ public class AndroidElement {
 
   public boolean dragTo(final UiObject destObj, final int steps)
       throws UiObjectNotFoundException {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (API_18) {
       return el.dragTo(destObj, steps);
     } else {
       Logger.error("Device does not support API >= 18!");
@@ -158,7 +158,7 @@ public class AndroidElement {
   }
 
   public String getClassName() throws UiObjectNotFoundException {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (API_18) {
       return el.getClassName();
     } else {
       Logger.error("Device does not support API >= 18!");
@@ -210,7 +210,7 @@ public class AndroidElement {
 
   public boolean pinchIn(final int percent, final int steps)
       throws UiObjectNotFoundException {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (API_18) {
       return el.pinchIn(percent, steps);
     } else {
       Logger.error("Device does not support API >= 18!");
@@ -220,7 +220,7 @@ public class AndroidElement {
 
   public boolean pinchOut(final int percent, final int steps)
       throws UiObjectNotFoundException {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+    if (API_18) {
       return el.pinchOut(percent, steps);
     } else {
       Logger.error("Device does not support API >= 18!");
@@ -245,7 +245,7 @@ public class AndroidElement {
 
   public boolean performMultiPointerGesture(PointerCoords[] ...touches) {
     try {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      if (API_18) {
         // The compile-time SDK expects the wrong arguments, but the runtime
         // version in the emulator is correct. So we cannot do:
         //   `return el.performMultiPointerGesture(touches);`

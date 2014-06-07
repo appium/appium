@@ -20,6 +20,7 @@ appium_home=$(pwd)
 reset_successful=false
 has_reset_unlock_apk=false
 has_reset_ime_apk=false
+has_reset_settings_apk=false
 apidemos_reset=false
 toggletest_reset=false
 hardcore=false
@@ -332,6 +333,22 @@ reset_unicode_ime() {
     fi
 }
 
+reset_settings_apk() {
+    if ! $has_reset_settings_apk; then
+        run_cmd rm -rf build/settings_apk
+        run_cmd mkdir -p build/settings_apk
+        echo "* Building Settings.apk"
+        settings_base="submodules/io.appium.settings"
+        run_cmd git submodule update --init $settings_base
+        run_cmd pushd $settings_base
+        run_cmd ant clean && run_cmd ant debug
+        run_cmd popd
+        run_cmd cp $settings_base/bin/settings_apk-debug.apk build/settings_apk
+        uninstall_android_app "io.appium.settings"
+        has_reset_settings_apk=true
+    fi
+}
+
 reset_android() {
     echo "RESETTING ANDROID"
     require_java
@@ -342,6 +359,7 @@ reset_android() {
     run_cmd "$grunt" buildAndroidBootstrap
     reset_unlock_apk
     reset_unicode_ime
+    reset_settings_apk
     if $include_dev ; then
         reset_apidemos
         reset_toggle_test

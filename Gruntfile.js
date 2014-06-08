@@ -54,6 +54,20 @@ module.exports = function (grunt) {
           , 'afterEach': true
           }
         }
+      },
+      examples: {
+        src: ['sample-code/examples/node/**/*.js']
+      , options: {
+        expr: true
+        , globals: {
+            'describe': true
+          , 'it': true
+          , 'before': true
+          , 'after': true
+          , 'beforeEach': true
+          , 'afterEach': true
+          }
+        }
       }
     }
   , jscs: {

@@ -1,14 +1,12 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
+import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * A cache of elements that the app has seen.
@@ -16,9 +14,6 @@ import com.android.uiautomator.core.UiSelector;
  */
 public class AndroidElementsHash {
 
-  /**
-   * @return
-   */
   public static AndroidElementsHash getInstance() {
     if (AndroidElementsHash.instance == null) {
       AndroidElementsHash.instance = new AndroidElementsHash();
@@ -56,10 +51,8 @@ public class AndroidElementsHash {
    * 
    * @param key
    * @return {@link AndroidElement}
-   * @throws ElementNotInHashException
    */
-  public AndroidElement getElement(final String key)
-      throws ElementNotInHashException {
+  public AndroidElement getElement(final String key) {
     return elements.get(key);
   }
 
@@ -75,9 +68,9 @@ public class AndroidElementsHash {
    */
   public AndroidElement getElement(final UiSelector sel, final String key)
       throws ElementNotFoundException {
-    AndroidElement baseEl = null;
+    AndroidElement baseEl;
     baseEl = elements.get(key);
-    UiObject el = null;
+    UiObject el;
 
     if (baseEl == null) {
       el = new UiObject(sel);
@@ -103,19 +96,17 @@ public class AndroidElementsHash {
    * @param sel
    * @param key
    * @return ArrayList<{@link AndroidElement}>
-   * @throws ElementNotInHashException
    * @throws UiObjectNotFoundException
    */
   public ArrayList<AndroidElement> getElements(final UiSelector sel,
-      final String key) throws ElementNotInHashException,
-      UiObjectNotFoundException {
+      final String key) throws UiObjectNotFoundException {
     boolean keepSearching = true;
     final boolean useIndex = sel.toString().contains("CLASS_REGEX=");
     final ArrayList<AndroidElement> elements = new ArrayList<AndroidElement>();
-    UiObject lastFoundObj = null;
+    UiObject lastFoundObj;
     final AndroidElement baseEl = this.getElement(key);
 
-    UiSelector tmp = null;
+    UiSelector tmp;
     int counter = 0;
     while (keepSearching) {
       if (baseEl == null) {

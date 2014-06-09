@@ -1,14 +1,12 @@
 package io.appium.android.bootstrap.handler;
 
 import com.android.uiautomator.core.UiDevice;
-
-import org.json.JSONException;
-
-import java.util.Hashtable;
-
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
+import org.json.JSONException;
+
+import java.util.Hashtable;
 
 /**
  * This handler is used to clear elements in the Android UI.

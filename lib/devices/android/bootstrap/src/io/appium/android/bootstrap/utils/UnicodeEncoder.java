@@ -18,13 +18,10 @@ public class UnicodeEncoder {
     for (int i = 0; i < chars.length; i++) {
       int cp = Character.codePointAt(chars, i);
       if (cp > 0x7F) {
-        if (cp >= 0xE000 && cp <= 0xE040) {
-          // Selenium uses a Unicode PUA to cover certain special characters
-          // see https://code.google.com/p/selenium/source/browse/java/client/src/org/openqa/selenium/Keys.java
-          // these should juse be passed through as is.
-          return false;
-        }
-        return true;
+        // Selenium uses a Unicode PUA to cover certain special characters
+        // see https://code.google.com/p/selenium/source/browse/java/client/src/org/openqa/selenium/Keys.java
+        // these should juse be passed through as is.
+        return !(cp >= 0xE000 && cp <= 0xE040);
       }
     }
     return false;

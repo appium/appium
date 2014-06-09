@@ -1,22 +1,19 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.CommandHandler;
-
-import java.lang.reflect.Method;
-import java.util.Hashtable;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.SystemClock;
 import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-
 import com.android.uiautomator.common.ReflectionUtils;
+import io.appium.android.bootstrap.AndroidCommand;
+import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.CommandHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Method;
+import java.util.Hashtable;
 
 /**
  * This handler is used to LongPressKeyCode.

@@ -1,9 +1,9 @@
 package io.appium.android.bootstrap.handler;
 
+import android.os.Environment;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
-import android.os.Environment;
 
 /**
  * This handler is used to get the data dir.

@@ -1,15 +1,9 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.WDStatus;
-
+import android.graphics.Rect;
+import io.appium.android.bootstrap.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.graphics.Rect;
 
 /**
  * This handler is used to get the text of elements that support it.

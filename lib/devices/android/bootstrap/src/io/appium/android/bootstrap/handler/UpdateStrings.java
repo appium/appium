@@ -3,14 +3,12 @@ package io.appium.android.bootstrap.handler;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.handler.Find;
 import io.appium.android.bootstrap.Logger;
+import org.json.JSONObject;
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-
-import org.json.JSONObject;
 
 /**
  * This handler is used to update the apk strings.

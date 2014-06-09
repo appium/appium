@@ -2,7 +2,6 @@ package io.appium.android.bootstrap.utils;
 
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiSelector;
-
 import io.appium.android.bootstrap.Logger;
 
 public class TheWatchers {

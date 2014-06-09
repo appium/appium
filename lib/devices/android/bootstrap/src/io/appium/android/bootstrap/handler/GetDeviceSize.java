@@ -1,13 +1,11 @@
 package io.appium.android.bootstrap.handler;
 
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to get the size of the screen.

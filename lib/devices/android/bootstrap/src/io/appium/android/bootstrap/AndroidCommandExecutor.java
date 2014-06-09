@@ -1,41 +1,9 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
-import io.appium.android.bootstrap.handler.Clear;
-import io.appium.android.bootstrap.handler.Click;
-import io.appium.android.bootstrap.handler.Drag;
-import io.appium.android.bootstrap.handler.DumpWindowHierarchy;
-import io.appium.android.bootstrap.handler.Find;
-import io.appium.android.bootstrap.handler.Flick;
-import io.appium.android.bootstrap.handler.GetAttribute;
-import io.appium.android.bootstrap.handler.GetDataDir;
-import io.appium.android.bootstrap.handler.GetDeviceSize;
-import io.appium.android.bootstrap.handler.GetLocation;
-import io.appium.android.bootstrap.handler.GetName;
-import io.appium.android.bootstrap.handler.GetSize;
-import io.appium.android.bootstrap.handler.GetText;
-import io.appium.android.bootstrap.handler.LongPressKeyCode;
-import io.appium.android.bootstrap.handler.MultiPointerGesture;
-import io.appium.android.bootstrap.handler.OpenNotification;
-import io.appium.android.bootstrap.handler.Orientation;
-import io.appium.android.bootstrap.handler.Pinch;
-import io.appium.android.bootstrap.handler.PressBack;
-import io.appium.android.bootstrap.handler.PressKeyCode;
-import io.appium.android.bootstrap.handler.ScrollTo;
-import io.appium.android.bootstrap.handler.SetText;
-import io.appium.android.bootstrap.handler.Swipe;
-import io.appium.android.bootstrap.handler.TakeScreenshot;
-import io.appium.android.bootstrap.handler.TouchDown;
-import io.appium.android.bootstrap.handler.TouchLongClick;
-import io.appium.android.bootstrap.handler.TouchMove;
-import io.appium.android.bootstrap.handler.TouchUp;
-import io.appium.android.bootstrap.handler.UpdateStrings;
-import io.appium.android.bootstrap.handler.WaitForIdle;
-import io.appium.android.bootstrap.handler.Wake;
+import io.appium.android.bootstrap.handler.*;
+import org.json.JSONException;
 
 import java.util.HashMap;
-
-import org.json.JSONException;
 
 /**
  * Command execution dispatch class. This class relays commands to the various
@@ -86,11 +54,8 @@ class AndroidCommandExecutor {
    * @param command
    *          The {@link AndroidCommand}
    * @return {@link AndroidCommandResult}
-   * @throws AndroidCommandException
    */
-  public AndroidCommandResult execute(final AndroidCommand command)
-      throws AndroidCommandException {
-
+  public AndroidCommandResult execute(final AndroidCommand command) {
     try {
       Logger.debug("Got command action: " + command.action());
 

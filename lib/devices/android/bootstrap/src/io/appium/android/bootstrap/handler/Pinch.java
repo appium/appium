@@ -1,18 +1,10 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.WDStatus;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
-
-import java.util.Hashtable;
-
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import io.appium.android.bootstrap.*;
 import org.json.JSONException;
 
-import com.android.uiautomator.core.UiObjectNotFoundException;
+import java.util.Hashtable;
 
 /**
  * This handler is used to pinch in/out elements in the Android UI.
@@ -45,17 +37,15 @@ public class Pinch extends CommandHandler {
       el = command.getElement();
       if (el == null) {
         return getErrorResult("Could not find an element with elementId: "
-            + (String) params.get("elementId"));
+            + params.get("elementId"));
       }
-    } catch (final ElementNotInHashException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final Exception e) { // JSONException, NullPointerException, etc.
       return getErrorResult("Unknown error:" + e.getMessage());
     }
 
     Logger.info("Pinching " + direction + " " + percent.toString() + "%"
         + " with steps: " + steps.toString());
-    boolean res = false;
+    boolean res;
     if (direction.equals("in")) {
       try {
         res = el.pinchIn(percent, steps);

@@ -4,17 +4,10 @@ import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
-
+import io.appium.android.bootstrap.*;
 import org.json.JSONException;
 
 import java.util.Hashtable;
-
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.WDStatus;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
 
 /**
  * This handler is used to scroll to elements in the Android UI.
@@ -76,8 +69,6 @@ public class ScrollTo extends CommandHandler {
       }
       return getSuccessResult(result);
     } catch (final UiObjectNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
-    } catch (final ElementNotInHashException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final NullPointerException e) { // el is null
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());

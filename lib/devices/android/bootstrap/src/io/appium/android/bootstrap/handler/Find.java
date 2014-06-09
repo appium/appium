@@ -1,12 +1,14 @@
 package io.appium.android.bootstrap.handler;
 
-import static io.appium.android.bootstrap.utils.API.API_18;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 import io.appium.android.bootstrap.*;
-import io.appium.android.bootstrap.exceptions.*;
+import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
+import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
+import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 import io.appium.android.bootstrap.utils.ElementHelpers;
 import io.appium.android.bootstrap.utils.NotImportantViews;
@@ -20,6 +22,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import static io.appium.android.bootstrap.utils.API.API_18;
+
 /**
  * This handler is used to find elements in the Android UI.
  * <p/>
@@ -30,7 +34,7 @@ public class Find extends CommandHandler {
   // These variables are expected to persist across executions.
   AndroidElementsHash elements = AndroidElementsHash.getInstance();
   Dynamic             dynamic  = new Dynamic();
-  public static JSONObject apkStrings = null;
+  static JSONObject apkStrings = null;
   UiSelectorParser uiSelectorParser = new UiSelectorParser();
 
   /*
@@ -88,7 +92,7 @@ public class Find extends CommandHandler {
       Logger.debug(selectors.toString());
       try {
         int finalizer = 0;
-        JSONArray pair = null;
+        JSONArray pair;
         List<AndroidElement> elementResults = new ArrayList<AndroidElement>();
         final JSONArray jsonResults = new JSONArray();
         // Start at 1 to skip over all.
@@ -97,7 +101,7 @@ public class Find extends CommandHandler {
           Logger.debug("Parsing selector " + selIndex);
           pair = (JSONArray) selectors.get(selIndex);
           Logger.debug("Pair is: " + pair);
-          UiSelector sel = null;
+          UiSelector sel;
           // 100+ int represents a method called on the element
           // after the element has been found.
           // [[4,"android.widget.EditText"],[100]] => 100
@@ -204,7 +208,6 @@ public class Find extends CommandHandler {
               array.put(results.get(a));
             }
           }
-        } catch (final ElementNotInHashException e) {
         } catch (final ElementNotFoundException e) {
         }
       }
@@ -222,10 +225,6 @@ public class Find extends CommandHandler {
       return getSuccessResult(result);
     } catch (final InvalidStrategyException e) {
       return getErrorResult(e.getMessage());
-    } catch (final UnallowedTagNameException e) {
-      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-    } catch (final AndroidCommandException e) {
-      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
     } catch (final UiSelectorSyntaxException e) {
       return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
     } catch (final UiObjectNotFoundException e) {
@@ -246,10 +245,9 @@ public class Find extends CommandHandler {
    * @return JSONObject
    * @throws JSONException
    * @throws ElementNotFoundException
-   * @throws ElementNotInHashException
    */
   private JSONObject fetchElement(final UiSelector sel, final String contextId)
-      throws JSONException, ElementNotFoundException, ElementNotInHashException {
+      throws JSONException, ElementNotFoundException {
     final JSONObject res = new JSONObject();
     final AndroidElement el = elements.getElement(sel, contextId);
     return res.put("ELEMENT", el.getId());
@@ -261,12 +259,11 @@ public class Find extends CommandHandler {
    *
    * @param indexPath
    * @return
-   * @throws ElementNotInHashException
    * @throws ElementNotFoundException
    * @throws JSONException
    */
   private JSONObject fetchElementByIndexPath(final String indexPath)
-      throws ElementNotInHashException, ElementNotFoundException, JSONException {
+      throws ElementNotFoundException, JSONException {
     UiSelector sel = new UiSelector().index(0);
     Integer curIndex;
     List<String> paths = Arrays.asList(indexPath.split("/"));
@@ -274,7 +271,7 @@ public class Find extends CommandHandler {
     // element, since it will refer to the root element, which we already have
     paths = paths.subList(2, paths.size());
     for (final String index : paths) {
-      curIndex = new Integer(index);
+      curIndex = Integer.valueOf(index);
       // get a new selector which selects the current selector's child at the
       // correct index
       sel = sel.childSelector(new UiSelector().index(curIndex));
@@ -293,11 +290,9 @@ public class Find extends CommandHandler {
    * @return JSONObject
    * @throws JSONException
    * @throws UiObjectNotFoundException
-   * @throws ElementNotInHashException
    */
   private JSONArray fetchElements(final UiSelector sel, final String contextId)
-      throws JSONException, ElementNotInHashException,
-      UiObjectNotFoundException {
+      throws JSONException, UiObjectNotFoundException {
     final JSONArray resArray = new JSONArray();
     final ArrayList<AndroidElement> els = elements.getElements(sel, contextId);
     for (final AndroidElement el : els) {
@@ -328,9 +323,6 @@ public class Find extends CommandHandler {
       } catch (final ElementNotFoundException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
-      } catch (final ElementNotInHashException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
       }
     }
     if (multiple) {
@@ -352,12 +344,10 @@ public class Find extends CommandHandler {
    *     Boolean that is either only one element (false), or many (true)
    * @return UiSelector
    * @throws InvalidStrategyException
-   * @throws AndroidCommandException
    * @throws ElementNotFoundException
    */
   private List<UiSelector> getSelector(final Strategy strategy,
                                        final String text, final boolean many) throws InvalidStrategyException,
-      AndroidCommandException, UnallowedTagNameException,
       ElementNotFoundException, UiSelectorSyntaxException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();

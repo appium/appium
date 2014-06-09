@@ -40,8 +40,7 @@ public abstract class ElementHelpers {
     List<AndroidElement> result = new ArrayList<AndroidElement>();
     List<AccessibilityNodeInfo> nodes = new ArrayList<AccessibilityNodeInfo>();
 
-    for (int index = 0; index < elements.size(); index++) {
-      AndroidElement element = elements.get(index);
+    for (AndroidElement element : elements) {
       AccessibilityNodeInfo node = elementToNode(element);
       if (!nodes.contains(node)) {
         nodes.add(node);

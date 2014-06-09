@@ -1,8 +1,7 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.exceptions.SocketServerException;
-
 import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+import io.appium.android.bootstrap.exceptions.SocketServerException;
 
 /**
  * The Bootstrap class runs the socket server.

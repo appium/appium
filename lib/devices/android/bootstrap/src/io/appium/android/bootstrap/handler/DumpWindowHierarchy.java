@@ -15,6 +15,7 @@ import java.io.File;
  * platform/frameworks/testing/+/master/uiautomator
  * /library/core-src/com/android/uiautomator/core/UiDevice.java
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class DumpWindowHierarchy extends CommandHandler {
   // Note that
   // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"

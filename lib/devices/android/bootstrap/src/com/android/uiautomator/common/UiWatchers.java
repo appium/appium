@@ -18,12 +18,7 @@
 package com.android.uiautomator.common;
 
 import android.util.Log;
-
-import com.android.uiautomator.core.UiDevice;
-import com.android.uiautomator.core.UiObject;
-import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.android.uiautomator.core.UiSelector;
-import com.android.uiautomator.core.UiWatcher;
+import com.android.uiautomator.core.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

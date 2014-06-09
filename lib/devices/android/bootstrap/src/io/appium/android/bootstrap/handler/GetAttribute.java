@@ -1,18 +1,11 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.WDStatus;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.NoAttributeFoundException;
-
-import java.util.Hashtable;
-
 import org.json.JSONException;
 
-import com.android.uiautomator.core.UiObjectNotFoundException;
+import java.util.Hashtable;
 
 /**
  * This handler is used to get an attribute of an element.
@@ -50,9 +43,6 @@ public class GetAttribute extends CommandHandler {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
       } catch (final UiObjectNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
-      } catch (final ElementNotInHashException e) {
         return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
             e.getMessage());
       } catch (final Exception e) { // el is null

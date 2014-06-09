@@ -1,18 +1,12 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Logger;
+import com.android.uiautomator.core.UiDevice;
+import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.utils.Point;
-
-import java.util.Hashtable;
-
 import org.json.JSONException;
 
-import com.android.uiautomator.core.UiDevice;
+import java.util.Hashtable;
 
 /**
  * This handler is used to flick elements in the Android UI.
@@ -63,7 +57,7 @@ public class Flick extends CommandHandler {
       throws JSONException {
     Point start = new Point(0.5, 0.5);
     Point end = new Point();
-    Double steps = null;
+    Double steps;
 
     final Hashtable<String, Object> params = command.params();
     final UiDevice d = UiDevice.getInstance();
@@ -93,7 +87,7 @@ public class Flick extends CommandHandler {
             Math.sqrt(xSpeed * xSpeed + ySpeed * ySpeed));
         steps = 1250.0 / speed + 1;
 
-        start = GetDeviceAbsPos(start);
+        start = getDeviceAbsPos(start);
         end = calculateEndPoint(start, xSpeed, ySpeed);
       } catch (final InvalidCoordinatesException e) {
         return getErrorResult(e.getMessage());

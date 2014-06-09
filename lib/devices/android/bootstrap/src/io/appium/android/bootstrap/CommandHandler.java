@@ -1,13 +1,11 @@
 package io.appium.android.bootstrap;
 
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.utils.Point;
-
-import java.util.ArrayList;
-
 import org.json.JSONException;
 
-import com.android.uiautomator.core.UiDevice;
+import java.util.ArrayList;
 
 /**
  * Base class for all handlers.
@@ -27,8 +25,8 @@ public abstract class CommandHandler {
     final ArrayList<Integer> retPos = new ArrayList<Integer>();
     final UiDevice d = UiDevice.getInstance();
 
-    final Double screenX = new Double(d.getDisplayWidth());
-    final Double screenY = new Double(d.getDisplayHeight());
+    final Double screenX = (double) d.getDisplayWidth();
+    final Double screenY = (double) d.getDisplayHeight();
 
     if (coordVals[0] < 1 && coordVals[1] < 1) {
       retPos.add((int) (screenX * coordVals[0]));
@@ -41,12 +39,12 @@ public abstract class CommandHandler {
     return retPos;
   }
 
-  protected static Point GetDeviceAbsPos(final Point point)
+  protected static Point getDeviceAbsPos(final Point point)
       throws InvalidCoordinatesException {
     final UiDevice d = UiDevice.getInstance();
     final Point retPos = new Point(point); // copy inputed point
 
-    final Double width = new Double(d.getDisplayWidth());
+    final Double width = (double) d.getDisplayWidth();
     if (point.x < 1) {
       retPos.x = width * point.x;
     }
@@ -57,7 +55,7 @@ public abstract class CommandHandler {
           + width.toString());
     }
 
-    final Double height = new Double(d.getDisplayHeight());
+    final Double height = (double) d.getDisplayHeight();
     if (point.y < 1) {
       retPos.y = height * point.y;
     }

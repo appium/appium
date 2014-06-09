@@ -1,11 +1,10 @@
 package io.appium.android.bootstrap.handler;
 
+import android.os.RemoteException;
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
-import android.os.RemoteException;
-
-import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to power on the device if it's not currently awake.

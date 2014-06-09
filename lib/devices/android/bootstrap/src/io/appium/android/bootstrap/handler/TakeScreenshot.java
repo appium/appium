@@ -1,12 +1,11 @@
 package io.appium.android.bootstrap.handler;
 
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
 
 import java.io.File;
-
-import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to TakeScreenshot.

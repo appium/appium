@@ -1,21 +1,14 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.utils.Point;
-
-import java.util.Hashtable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.android.uiautomator.core.UiDevice;
-import com.android.uiautomator.core.UiObjectNotFoundException;
+import java.util.Hashtable;
 
 /**
  * This handler is used to drag in the Android UI.
@@ -34,7 +27,7 @@ public class Drag extends CommandHandler {
    * bootstrap.AndroidCommand)
    */
 
-  private class DragArguments {
+  private static class DragArguments {
 
     public AndroidElement el;
     public AndroidElement destEl;
@@ -58,7 +51,7 @@ public class Drag extends CommandHandler {
         if (params.get("destElId") != JSONObject.NULL) {
           destEl = command.getDestElement();
         }
-      } catch (final ElementNotInHashException e) {
+      } catch (final Exception e) {
         destEl = null;
       }
       start = new Point(params.get("startX"), params.get("startY"));
@@ -67,15 +60,14 @@ public class Drag extends CommandHandler {
     }
   }
 
-  private AndroidCommandResult drag(final DragArguments dragArgs)
-      throws JSONException {
+  private AndroidCommandResult drag(final DragArguments dragArgs) {
     Point absStartPos = new Point();
     Point absEndPos = new Point();
     final UiDevice device = UiDevice.getInstance();
 
     try {
-      absStartPos = GetDeviceAbsPos(dragArgs.start);
-      absEndPos = GetDeviceAbsPos(dragArgs.end);
+      absStartPos = getDeviceAbsPos(dragArgs.start);
+      absEndPos = getDeviceAbsPos(dragArgs.end);
     } catch (final InvalidCoordinatesException e) {
       return getErrorResult(e.getMessage());
     }
@@ -91,13 +83,12 @@ public class Drag extends CommandHandler {
     return getSuccessResult(rv);
   }
 
-  private AndroidCommandResult dragElement(final DragArguments dragArgs)
-      throws JSONException {
+  private AndroidCommandResult dragElement(final DragArguments dragArgs) {
     Point absEndPos = new Point();
 
     if (dragArgs.destEl == null) {
       try {
-        absEndPos = GetDeviceAbsPos(dragArgs.end);
+        absEndPos = getDeviceAbsPos(dragArgs.end);
       } catch (final InvalidCoordinatesException e) {
         return getErrorResult(e.getMessage());
       }
@@ -120,7 +111,7 @@ public class Drag extends CommandHandler {
     } else {
       Logger.info("Dragging the element with id " + dragArgs.el.getId()
           + " to destination element with id " + dragArgs.destEl.getId()
-          + " with steps: " + dragArgs.steps.intValue());
+          + " with steps: " + dragArgs.steps);
       try {
         final boolean rv = dragArgs.el.dragTo(dragArgs.destEl.getUiObject(),
             dragArgs.steps);

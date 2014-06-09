@@ -1,8 +1,8 @@
 package io.appium.android.bootstrap.utils;
 
-import static io.appium.android.bootstrap.utils.API.API_18;
-
 import com.android.uiautomator.core.UiDevice;
+
+import static io.appium.android.bootstrap.utils.API.API_18;
 
 public abstract class NotImportantViews {
   // setCompressedLayoutHeirarchy doesn't exist on API <= 17

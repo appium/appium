@@ -1,12 +1,11 @@
 package io.appium.android.bootstrap;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.android.uiautomator.core.UiSelector;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.android.uiautomator.core.UiSelector;
+import java.util.ArrayList;
+import java.util.List;
 
 // Constants from
 // https://android.googlesource.com/platform/frameworks/testing/+/master/uiautomator/library/core-src/com/android/uiautomator/core/UiSelector.java
@@ -85,6 +84,8 @@ public class Dynamic {
     switch (finalizer) {
       case GET_NAME:
         value = result.getStringAttribute("name");
+        break;
+      default:
         break;
     }
 
@@ -202,6 +203,8 @@ public class Dynamic {
         break;
       case SELECTOR_RESOURCE_ID_REGEX:
         s = s.resourceIdMatches((String) param);
+        break;
+      default:
         break;
     }
   }

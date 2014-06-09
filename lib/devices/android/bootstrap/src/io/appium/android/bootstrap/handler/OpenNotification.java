@@ -1,11 +1,11 @@
 package io.appium.android.bootstrap.handler;
 
+import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
-import com.android.uiautomator.core.UiDevice;
 
 /**
  * This handler is used to open the notification shade on the device.

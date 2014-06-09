@@ -1,11 +1,10 @@
 package io.appium.android.bootstrap.handler;
 
+import com.android.uiautomator.common.ReflectionUtils;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 import io.appium.android.bootstrap.Logger;
 
 import java.lang.reflect.Method;
-
-import com.android.uiautomator.common.ReflectionUtils;
-import com.android.uiautomator.core.UiObjectNotFoundException;
 
 /**
  * This handler is used to perform a touchUp event on an element in the Android

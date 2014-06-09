@@ -1,18 +1,11 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.OrientationEnum;
-
-import java.util.Hashtable;
-
+import android.os.RemoteException;
+import com.android.uiautomator.core.UiDevice;
+import io.appium.android.bootstrap.*;
 import org.json.JSONException;
 
-import android.os.RemoteException;
-
-import com.android.uiautomator.core.UiDevice;
+import java.util.Hashtable;
 
 /**
  * This handler is used to get or set the orientation of the device.

@@ -1,11 +1,12 @@
 package com.android.uiautomator.common;
 
-import static io.appium.android.bootstrap.utils.API.API_18;
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import static io.appium.android.bootstrap.utils.API.API_18;
 
 public class ReflectionUtils {
   private static Field enableField(final Class<?> clazz, final String field)
@@ -38,7 +39,7 @@ public class ReflectionUtils {
    * the touchDown / touchUp / touchMove methods.
    */
   public Object getController() throws IllegalArgumentException,
-      IllegalAccessException, SecurityException, NoSuchFieldException {
+       SecurityException {
     return controller;
   }
 

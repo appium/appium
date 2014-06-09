@@ -1,13 +1,11 @@
 package io.appium.android.bootstrap;
 
 import io.appium.android.bootstrap.exceptions.CommandTypeException;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Hashtable;
 import java.util.Iterator;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * This proxy embodies the command that the handlers execute.
@@ -37,9 +35,6 @@ public class AndroidCommand {
     return json.getString("action");
   }
 
-  /**
-   * @return
-   */
   public AndroidCommandType commandType() {
     return cmdType;
   }
@@ -49,17 +44,11 @@ public class AndroidCommand {
    * provide the "desElId" parameter).
    * 
    * @return {@link AndroidElement}
-   * @throws ElementNotInHashException
    * @throws JSONException
    */
-  public AndroidElement getDestElement() throws ElementNotInHashException,
-      JSONException {
-    AndroidElement destEl = null;
-    String destElId = null;
-
-    destElId = (String) params().get("destElId");
-    destEl = AndroidElementsHash.getInstance().getElement(destElId);
-    return destEl;
+  public AndroidElement getDestElement() throws JSONException {
+    String destElId = (String) params().get("destElId");
+    return AndroidElementsHash.getInstance().getElement(destElId);
   }
 
   /**
@@ -67,17 +56,11 @@ public class AndroidCommand {
    * provide the "elementId" parameter).
    * 
    * @return {@link AndroidElement}
-   * @throws ElementNotInHashException
    * @throws JSONException
    */
-  public AndroidElement getElement() throws ElementNotInHashException,
-      JSONException {
-    AndroidElement el = null;
-    String elId = null;
-
-    elId = (String) params().get("elementId");
-    el = AndroidElementsHash.getInstance().getElement(elId);
-    return el;
+  public AndroidElement getElement() throws JSONException {
+    String elId = (String) params().get("elementId");
+    return AndroidElementsHash.getInstance().getElement(elId);
   }
 
   /**
@@ -132,5 +115,4 @@ public class AndroidCommand {
       throw new CommandTypeException("Got bad command type: " + stringType);
     }
   }
-
 }

@@ -1,23 +1,15 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.WDStatus;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
-
-import java.lang.reflect.Method;
-
+import android.view.MotionEvent.PointerCoords;
+import com.android.uiautomator.common.ReflectionUtils;
+import io.appium.android.bootstrap.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static io.appium.android.bootstrap.utils.API.API_18;
-import android.view.MotionEvent.PointerCoords;
+import java.lang.reflect.Method;
 
-import com.android.uiautomator.common.ReflectionUtils;
+import static io.appium.android.bootstrap.utils.API.API_18;
 
 public class MultiPointerGesture extends CommandHandler {
 
@@ -72,7 +64,7 @@ public class MultiPointerGesture extends CommandHandler {
               PointerCoords[][].class);
           final Boolean rt = (Boolean) pmpg.invoke(utils.getController(),
               (Object) pcs);
-          if (rt.booleanValue()) {
+          if (rt) {
             return getSuccessResult("OK");
           } else {
             return getErrorResult("Unable to perform multi pointer gesture");
@@ -83,8 +75,6 @@ public class MultiPointerGesture extends CommandHandler {
               "Cannot perform multi pointer gesture on device below API level 18");
         }
       }
-    } catch (final ElementNotInHashException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final Exception e) {
       Logger.debug("Exception: " + e);
       e.printStackTrace();

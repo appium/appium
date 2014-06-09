@@ -5,5 +5,5 @@ package io.appium.android.bootstrap;
  * 
  */
 public enum AndroidCommandType {
-  ACTION, SHUTDOWN;
+  ACTION, SHUTDOWN
 }

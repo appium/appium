@@ -1,21 +1,12 @@
 package io.appium.android.bootstrap.handler;
 
-import io.appium.android.bootstrap.AndroidCommand;
-import io.appium.android.bootstrap.AndroidCommandResult;
-import io.appium.android.bootstrap.AndroidElement;
-import io.appium.android.bootstrap.CommandHandler;
-import io.appium.android.bootstrap.Logger;
-import io.appium.android.bootstrap.WDStatus;
-import io.appium.android.bootstrap.exceptions.ElementNotInHashException;
+import android.graphics.Rect;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import io.appium.android.bootstrap.*;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-
-import org.json.JSONException;
-
-import android.graphics.Rect;
-
-import com.android.uiautomator.core.UiObjectNotFoundException;
 
 /**
  * This handler is and abstract class that contains all the common code for
@@ -89,8 +80,6 @@ public abstract class TouchEvent extends CommandHandler {
       }
 
     } catch (final UiObjectNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
-    } catch (final ElementNotInHashException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final Exception e) {
       return getErrorResult(e.getMessage());

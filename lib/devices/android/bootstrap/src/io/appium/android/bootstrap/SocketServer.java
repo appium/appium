@@ -1,25 +1,17 @@
 package io.appium.android.bootstrap;
 
-import io.appium.android.bootstrap.exceptions.AndroidCommandException;
+import com.android.uiautomator.common.UiWatchers;
 import io.appium.android.bootstrap.exceptions.CommandTypeException;
 import io.appium.android.bootstrap.exceptions.SocketServerException;
 import io.appium.android.bootstrap.handler.UpdateStrings;
-import io.appium.android.bootstrap.utils.NotImportantViews;
 import io.appium.android.bootstrap.utils.TheWatchers;
+import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.android.uiautomator.common.UiWatchers;
 
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
@@ -28,18 +20,18 @@ import com.android.uiautomator.common.UiWatchers;
  */
 class SocketServer {
 
-  ServerSocket                         server;
-  Socket                               client;
-  BufferedReader                       in;
-  PrintWriter                          out;
-  boolean                              keepListening;
+  ServerSocket   server;
+  Socket         client;
+  BufferedReader in;
+  BufferedWriter out;
+  boolean        keepListening;
   private final AndroidCommandExecutor executor;
-  private final TheWatchers            watchers = TheWatchers.getInstance();
-  private final Timer                  timer    = new Timer("WatchTimer");
+  private final TheWatchers watchers = TheWatchers.getInstance();
+  private final Timer       timer    = new Timer("WatchTimer");
 
   /**
    * Constructor
-   * 
+   *
    * @param port
    * @throws SocketServerException
    */
@@ -58,7 +50,7 @@ class SocketServer {
 
   /**
    * Constructs an @{link AndroidCommand} and returns it.
-   * 
+   *
    * @param data
    * @return @{link AndroidCommand}
    * @throws JSONException
@@ -69,24 +61,29 @@ class SocketServer {
     return new AndroidCommand(data);
   }
 
+  private StringBuilder input = new StringBuilder();
+
   /**
    * When data is available on the socket, this method is called to run the
    * command or throw an error if it can't.
-   * 
+   *
    * @throws SocketServerException
    */
   private void handleClientData() throws SocketServerException {
-    String input = "";
-    char a;
-    AndroidCommand cmd;
-    String res;
     try {
-      while ((a = (char) in.read()) != -1 && in.ready()) {
-        input += a;
+      input.setLength(0); // clear
+
+      String res;
+      int a;
+      // (char) -1 is not equal to -1.
+      // ready is checked to ensure the read call doesn't block.
+      while ((a = in.read()) != -1 && in.ready()) {
+        input.append((char) a);
       }
-      Logger.info("Got data from client: " + input);
+      String inputString = input.toString();
+      Logger.info("Got data from client: " + inputString);
       try {
-        cmd = getCommand(input);
+        AndroidCommand cmd = getCommand(inputString);
         Logger.info("Got command of type " + cmd.commandType().toString());
         res = runCommand(cmd);
         Logger.info("Returning result: " + res);
@@ -108,7 +105,7 @@ class SocketServer {
   /**
    * Listens on the socket for data, and calls {@link #handleClientData()} when
    * it's available.
-   * 
+   *
    * @throws SocketServerException
    */
   public void listenForever() throws SocketServerException {
@@ -129,8 +126,8 @@ class SocketServer {
     try {
       client = server.accept();
       Logger.info("Client connected");
-      in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-      out = new PrintWriter(client.getOutputStream(), true);
+      in = new BufferedReader(new InputStreamReader(client.getInputStream(), "UTF-8"));
+      out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
       while (keepListening) {
         handleClientData();
       }
@@ -155,9 +152,9 @@ class SocketServer {
   /**
    * When {@link #handleClientData()} has valid data, this method delegates the
    * command.
-   * 
+   *
    * @param cmd
-   *          AndroidCommand
+   *     AndroidCommand
    * @return Result
    */
   private String runCommand(final AndroidCommand cmd) {
@@ -168,7 +165,7 @@ class SocketServer {
     } else if (cmd.commandType() == AndroidCommandType.ACTION) {
       try {
         res = executor.execute(cmd);
-      } catch (final AndroidCommandException e) {
+      } catch (final Exception e) {
         res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       }
     } else {

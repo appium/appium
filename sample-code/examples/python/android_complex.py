@@ -37,7 +37,7 @@ class ComplexAndroidTests(unittest.TestCase):
         el = self.driver.find_element_by_xpath('//android.widget.TextView[contains(@text, "Animat")]')
         self.assertEqual('Animation', el.text)
 
-        el = self.driver.find_element_by_name("App")
+        el = self.driver.find_element_by_accessibility_id("App")
         el.click()
 
         els = self.driver.find_elements_by_android_uiautomator('new UiSelector().clickable(true)')
@@ -55,25 +55,25 @@ class ComplexAndroidTests(unittest.TestCase):
         els = self.driver.find_elements_by_xpath('//android.widget.TextView')
         self.driver.scroll(els[7], els[3])
 
-        el = self.driver.find_element_by_name('Views')
+        el = self.driver.find_element_by_accessibility_id('Views')
 
     def test_smiley_face(self):
         # just for the fun of it.
         # this doesn't really assert anything.
-        self.driver.find_element_by_name('Graphics').click()
+        self.driver.find_element_by_accessibility_id('Graphics').click()
 
         els = self.driver.find_elements_by_class_name('android.widget.TextView')
         self.driver.scroll(els[len(els)-1], els[0])
 
         el = None
         try:
-            el = self.driver.find_element_by_name('Touch Paint')
+            el = self.driver.find_element_by_accessibility_id('Touch Paint')
         except Exception as e:
             els = self.driver.find_elements_by_class_name('android.widget.TextView')
             self.driver.scroll(els[len(els)-1], els[0])
 
         if el is None:
-            el = self.driver.find_element_by_name('Touch Paint')
+            el = self.driver.find_element_by_accessibility_id('Touch Paint')
 
         el.click()
 

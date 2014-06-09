@@ -201,7 +201,7 @@ driver.switch_to(driver.contexts.first)
 
 Appium comes with built-in hybrid support via Chromedriver. Appium also uses
 Selendroid under the hood for webview support on devices older than 4.4. (In
-that case, you'll want to specify `"device": "selendroid"` as a desired
+that case, you'll want to specify `"automationName": "selendroid"` as a desired
 capability). Then follow all the same steps as above for iOS, i.e.,
 switching contexts, etc...
 

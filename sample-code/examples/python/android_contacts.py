@@ -26,7 +26,7 @@ class ContactsAndroidTests(unittest.TestCase):
         self.driver.quit()
 
     def test_add_contacts(self):
-        el = self.driver.find_element_by_name("Add Contact")
+        el = self.driver.find_element_by_accessibility_id("Add Contact")
         el.click()
 
         textfields = self.driver.find_elements_by_class_name("android.widget.EditText")
@@ -36,7 +36,7 @@ class ContactsAndroidTests(unittest.TestCase):
         self.assertEqual('Appium User', textfields[0].text)
         self.assertEqual('someone@appium.io', textfields[2].text)
 
-        self.driver.find_element_by_name("Save").click()
+        self.driver.find_element_by_accessibility_id("Save").click()
 
         # for some reason "save" breaks things
         alert = self.driver.switch_to_alert()

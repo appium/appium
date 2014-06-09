@@ -47,13 +47,13 @@ class SimpleAndroidSauceTests(unittest.TestCase):
         return result.status == 200
 
     def test_create_note(self):
-        el = self.driver.find_element_by_name("New note")
+        el = self.driver.find_element_by_accessibility_id("New note")
         el.click()
 
         el = self.driver.find_element_by_class_name("android.widget.EditText")
         el.send_keys("This is a new note!")
 
-        el = self.driver.find_element_by_name("Save")
+        el = self.driver.find_element_by_accessibility_id("Save")
         el.click()
 
         els = self.driver.find_elements_by_class_name("android.widget.TextView")

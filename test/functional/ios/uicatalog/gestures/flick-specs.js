@@ -124,4 +124,3 @@ describe('uicatalog - gestures - flick @skip-ios7 @skip-ios6', function () {
     });
   });
 });
-

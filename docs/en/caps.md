@@ -64,3 +64,4 @@
 |`safariOpenLinksInBackground`| (Sim-only) Whether Safari should allow links to open in new windows. Default keeps current sim setting.|`true` or `false`|
 |`keepKeyChains`| (Sim-only) Whether to keep keychains (Library/Keychains) when appium session is started/finished|`true` or `false`|
 |`localizableStringsDir`| Where to look for localizable strings. Default `en.lproj`|`en.lproj`|
+|`processArguments`| Arguments to pass to the AUT using instruments|e.g., `-myflag`|

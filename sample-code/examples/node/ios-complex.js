@@ -203,7 +203,7 @@ describe("ios simple", function () {
     });
   });
 
-  it("should retrieve an element size", function () {
+  it("should get the source", function () {
     var mainMenuSource;
     // main menu source
     return driver

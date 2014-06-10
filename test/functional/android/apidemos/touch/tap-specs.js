@@ -22,7 +22,7 @@ describe("apidemo - touch - tap", function () {
     it('should tap an element', function (done) {
       driver.elementByName("Animation")
         .then(function (el) {
-          return (new TouchAction()).tap().performOn(el);
+          return (new TouchAction(driver)).tap({el: el}).perform();
         })
         .elementsByClassName(droidText).then(function (els) { return els[1]; })
           .text().should.become("Bouncing Balls")
@@ -32,8 +32,8 @@ describe("apidemo - touch - tap", function () {
     it('should tap an element from an offset', function (done) {
       driver.elementByName("Animation")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap({ x: 1, y: 1 }).performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el, x: 1, y: 1 }).perform();
         })
         .elementsByClassName(droidText).then(function (els) { return els[1]; })
           .text().should.become("Bouncing Balls")
@@ -44,18 +44,18 @@ describe("apidemo - touch - tap", function () {
       driver
         .elementByName("Text")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .elementByName("LogTextBox")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .elementByName("Add")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap({ count: 2 }).performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el, count: 2 }).perform();
         })
         .elementsByClassName(droidText)
         .then(function (els) {
@@ -70,18 +70,18 @@ describe("apidemo - touch - tap", function () {
       driver
         .elementByName("Text")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .elementByName("LogTextBox")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .elementByName("Add")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap({ count: 2 }).performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el, count: 2 }).perform();
         })
         .elementsByClassName(droidText)
         .then(function (els) {

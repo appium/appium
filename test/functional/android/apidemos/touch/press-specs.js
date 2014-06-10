@@ -21,37 +21,37 @@ describe("apidemo - touch - press", function () {
     it('should work like `tap` when immediately released', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction();
-          action.press();
+          var action = new TouchAction(driver);
+          action.press({el: el});
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
+              return action.moveTo({ el: el2 }).release().perform();
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .sleep(500)
         .elementByName("Expandable Lists")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .sleep(500)
         .elementByName("1. Custom Adapter")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .sleep(500)
         .elementByName("People Names") //.should.eventually.exist
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .elementByName("Sample menu").should.be.rejected
         .nodeify(done);
@@ -60,37 +60,37 @@ describe("apidemo - touch - press", function () {
     it('should work like `longPress` when released after a pause', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction();
-          action.press();
+          var action = new TouchAction(driver);
+          action.press({el: el});
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
+              return action.moveTo({el: el2}).release().perform();
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .sleep(500)
         .elementByName("Expandable Lists")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .sleep(500)
         .elementByName("1. Custom Adapter")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).release().perform();
         })
         .sleep(500)
         .elementByName("People Names") //.should.eventually.exist
         .then(function (el) {
-          var action = new TouchAction();
-          return action.press().wait(1000).release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.press({el: el}).wait(1000).release().perform();
         })
         .elementByName("Sample menu").should.eventually.exist
         .nodeify(done);
@@ -98,40 +98,40 @@ describe("apidemo - touch - press", function () {
   });
 
   describe('longPress', function () {
-    it('should open a context menu', function (done) {
+    it.only('should open a context menu', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction();
-          action.press();
+          var action = new TouchAction(driver);
+          action.press({el: el});
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
+              return action.moveTo({el: el2}).release().perform();
             });
         })
         .sleep(500)
         .elementByName("Views")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .sleep(500)
         .elementByName("Expandable Lists")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .sleep(500)
         .elementByName("1. Custom Adapter")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.tap().performOn(el);
+          var action = new TouchAction(driver);
+          return action.tap({el: el}).perform();
         })
         .sleep(500)
         .elementByName("People Names")
         .then(function (el) {
-          var action = new TouchAction();
-          return action.longPress().release().performOn(el);
+          var action = new TouchAction(driver);
+          return action.longPress({el: el}).release().perform();
         })
         .elementByName("Sample menu").should.eventually.exist
         .nodeify(done);

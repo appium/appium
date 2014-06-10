@@ -56,7 +56,7 @@ class WebViewIOSSauceTests(unittest.TestCase):
         url_el = self.driver.find_element_by_xpath('//UIAApplication[1]/UIAWindow[1]/UIATextField[1]')
         url_el.send_keys('http://www.google.com')
 
-        go_el = self.driver.find_element_by_name('Go')
+        go_el = self.driver.find_element_by_accessibility_id('Go')
         go_el.click()
 
         self.driver.switch_to.context('WEBVIEW')

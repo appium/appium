@@ -5,8 +5,10 @@ from time import sleep
 
 from appium import webdriver
 
+PLATFORM_VERSION = '4.4'
 
-class TestAndroidWebView(unittest.TestCase):
+
+class AndroidWebViewTests(unittest.TestCase):
 
     def setUp(self):
         app = os.path.abspath(
@@ -17,18 +19,24 @@ class TestAndroidWebView(unittest.TestCase):
             'appPackage': 'io.selendroid.testapp',
             'appActivity': '.HomeScreenActivity',
             'platformName': 'Android',
-            'platformVersion': '4.4',
+            'platformVersion': PLATFORM_VERSION,
             'deviceName': 'Android Emulator'
         }
+
+        if (PLATFORM_VERSION != '4.4'):
+            desired_caps['automationName'] = 'selendroid'
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub',
                                        desired_caps)
 
-    def test(self):
-        button = self.driver.find_element_by_name('buttonStartWebviewCD')
+    def test_webview(self):
+        if (PLATFORM_VERSION == '4.4'):
+            button = self.driver.find_element_by_accessibility_id('buttonStartWebviewCD')
+        else:
+            button = self.driver.find_element_by_name('buttonStartWebviewCD')
         button.click()
 
-        self.driver.switch_to.context('WEBVIEW')
+        self.driver.switch_to.context('WEBVIEW_0')
 
         input_field = self.driver.find_element_by_id('name_input')
         sleep(1)
@@ -46,4 +54,5 @@ class TestAndroidWebView(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(AndroidWebViewTests)
+    unittest.TextTestRunner(verbosity=2).run(suite)

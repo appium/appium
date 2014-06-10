@@ -20,7 +20,7 @@ class SimpleIOSTests(unittest.TestCase):
             desired_capabilities={
                 'app': app,
                 'platformName': 'iOS',
-                'platformVersion': '7.0',
+                'platformVersion': '7.1',
                 'deviceName': 'iPhone Simulator'
             })
 
@@ -54,7 +54,7 @@ class SimpleIOSTests(unittest.TestCase):
         els[5].click()
 
         sleep(1)
-        el = self.driver.find_element_by_name('OK')
+        el = self.driver.find_element_by_accessibility_id('OK')
         el.click()
 
         sleep(1)

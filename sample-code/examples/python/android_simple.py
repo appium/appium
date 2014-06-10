@@ -34,15 +34,13 @@ class SimpleAndroidTests(unittest.TestCase):
 
         self.driver.back()
 
-        el = self.driver.find_element_by_name("App")
+        el = self.driver.find_element_by_accessibility_id("App")
         self.assertIsNotNone(el)
 
         els = self.driver.find_elements_by_android_uiautomator("new UiSelector().clickable(true)")
-        self.assertEqual(12, len(els))
+        self.assertGreaterEqual(12, len(els))
 
-        els = self.driver.find_elements_by_android_uiautomator('new UiSelector().enabled(true)')
-        self.assertEqual(20, len(els))
-        self.assertEqual("API Demos", els[7].text)
+        self.driver.find_element_by_android_uiautomator('text("API Demos")')
 
 
     def test_simple_actions(self):
@@ -52,8 +50,7 @@ class SimpleAndroidTests(unittest.TestCase):
         el = self.driver.find_element_by_accessibility_id('Arcs')
         el.click()
 
-        main = self.driver.find_elements_by_android_uiautomator('new UiSelector().clickable(false)')[7]
-        self.assertEqual("Graphics/Arcs", main.text)
+        self.driver.find_element_by_android_uiautomator('new UiSelector().text("Graphics/Arcs")')
 
 
 if __name__ == '__main__':

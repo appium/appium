@@ -36,7 +36,7 @@ class SimpleSalendroidTests(unittest.TestCase):
 
         el = self.driver.find_element_by_class_name("android.widget.TextView")
         # assert el.text == "Accessibility"
-        self.assertEqual('API Demos', el.text)
+        self.assertEqual('Accessibility', el.text)
 
         el = self.driver.find_element_by_name("App")
         el.click()
@@ -44,8 +44,9 @@ class SimpleSalendroidTests(unittest.TestCase):
 
         els = self.driver.find_elements_by_class_name("android.widget.TextView")
         # Selendroid gets all the elements, not just the visible ones
-        self.assertEqual(34, len(els))
-        self.assertEqual('Action Bar', els[2].text)
+        self.assertLessEqual(30, len(els))
+
+        self.driver.find_element_by_name('Action Bar')
 
         self.driver.back()
         sleep(THINK_TIME)

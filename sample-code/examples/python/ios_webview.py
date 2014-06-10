@@ -23,7 +23,7 @@ class WebViewIOSTests(unittest.TestCase):
                 'app': app,
                 'deviceName': 'iPhone Simulator',
                 'platformName': 'iOS',
-                'platformVersion': '7.0'
+                'platformVersion': '7.1'
             })
 
     def tearDown(self):
@@ -33,8 +33,9 @@ class WebViewIOSTests(unittest.TestCase):
         url_el = self.driver.find_element_by_xpath('//UIAApplication[1]/UIAWindow[1]/UIATextField[1]')
         url_el.send_keys('http://www.google.com')
 
-        go_el = self.driver.find_element_by_name('Go')
+        go_el = self.driver.find_element_by_accessibility_id('Go')
         go_el.click()
+        sleep(1)
 
         self.driver.switch_to.context('WEBVIEW')
 

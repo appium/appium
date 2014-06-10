@@ -31,7 +31,7 @@ class ComplexIOSTests(unittest.TestCase):
             desired_capabilities={
                 'app': app,
                 'platformName': 'iOS',
-                'platformVersion': '7.0',
+                'platformVersion': '7.1',
                 'deviceName': 'iPhone Simulator'
             })
         self._values = []
@@ -122,7 +122,7 @@ class ComplexIOSTests(unittest.TestCase):
     def test_alert_interaction(self):
         # go to the alerts section
         self.driver.find_element_by_name('Alert Views, AAPLAlertViewController').click()
-        triggerOk = self.driver.find_element_by_name("Simple")
+        triggerOk = self.driver.find_element_by_accessibility_id("Simple")
 
         # TOFIX: Looks like alert object is not proper state
         # something to do with UIActionSheet vs. UIAlertView?
@@ -134,7 +134,7 @@ class ComplexIOSTests(unittest.TestCase):
         alert.accept()
 
         # trigger modal alert with cancel & ok buttons
-        triggerOkCancel = self.driver.find_element_by_name("Okay / Cancel")
+        triggerOkCancel = self.driver.find_element_by_accessibility_id("Okay / Cancel")
         triggerOkCancel.click()
         alert = self.driver.switch_to_alert()
 

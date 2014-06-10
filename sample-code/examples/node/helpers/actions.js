@@ -9,5 +9,5 @@ exports.swipe = function (opts) {
     .wait(opts.duration)
     .moveTo({x: opts.endX, y: opts.endY})
     .release();
-  return this.performTouch(action);
+  return this.performTouchAction(action);
 };

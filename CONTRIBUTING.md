@@ -24,10 +24,10 @@ The quick way to get started:
 
 ## Hacking with Appium
 
-Make sure you have ant, maven, adb installed and added to system PATH, also you would need
-android-16 sdk for selendroid and android-18 sdk installed. From your local repo's command
-prompt, install the following packages using the following commands
-(if you didn't install `node` using homebrew, you might have
+Make sure you have ant, maven, adb installed and added to system PATH, also you
+would need the android-16 sdk (for Selendroid) and android-18 sdk installed.
+From your local repo's command prompt, install the following packages using the
+following commands (if you didn't install `node` using homebrew, you might have
 to run npm with sudo privileges):
 
     npm install -g mocha
@@ -35,12 +35,13 @@ to run npm with sudo privileges):
     node bin/appium-doctor.js --dev
     ./reset.sh --dev
 
-The first two commands install test and build tools (`sudo` may not be necessary
-if you installed node.js via Homebrew). The third command verifies that all of the
-dependencies are set up correctly and fourth command installs all app
-dependencies and builds supporting binaries and test apps. `reset.sh` is also the
-recommended command to run after pulling changes from master. At this point,
-you're able to start the Appium server:
+The first two commands install test and build tools (`sudo` may not be
+necessary if you installed node.js via Homebrew). The third command verifies
+that all of the dependencies are set up correctly (since dependencies for
+building Appium are different from those for simply running Appium) and fourth
+command installs all app dependencies and builds supporting binaries and test
+apps. `reset.sh` is also the recommended command to run after pulling changes
+from master. At this point, you're able to start the Appium server:
 
     node .
 
@@ -49,7 +50,7 @@ There are some arguments you can pass into the Appium server from the command-li
     node . --app /absolute/path/to/app  // launch Appium server with app
     node . --launch // pre-launch the app when appium loads
     node . --log /my/appium.log // log to file instead of stdout
-    node . --quiet // don't log verbose output
+    node . --log-level warn // don't log verbose output
 
 See [the server documentation](docs/en/server-args.md)
 for a full list of arguments.
@@ -68,7 +69,7 @@ have to modify your `/etc/authorization` file in one of two ways:
 2. Run the following grunt command which automatically modifies your
    `/etc/authorization` file for you:
 
-       sudo grunt authorize
+       sudo ./bin/authorize-ios.js
 
 At this point, run:
 
@@ -82,8 +83,7 @@ Bootstrap running for Android by running:
 
     ./reset.sh --android --dev
 
-If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for support on
-older Android platforms like 2.3, then run:
+If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for support on older Android platforms like 2.3, then run:
 
     ./reset.sh --selendroid --dev
 

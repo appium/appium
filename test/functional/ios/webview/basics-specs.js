@@ -2,7 +2,8 @@
 
 var setup = require("../../common/setup-base")
   , desired = require('./desired')
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , env = require('../../../helpers/env');
 
 describe('webview - basics', function () {
 
@@ -46,28 +47,28 @@ describe('webview - basics', function () {
   it('setting context to \'WEBVIEW_1\' should work', function (done) {
     driver.contexts().should.eventually.have.length.above(0)
       .context("WEBVIEW_1")
-      .get("http://google.com")
+      .get(env.GUINEA_TEST_END_POINT)
       .sleep(500)
       .title()
-      .should.eventually.equal("Google")
+      .should.eventually.equal("I am a page title")
       .nodeify(done);
   });
   it('setting context to \'WEBVIEW_1\' should work without first getting contexts', function (done) {
     driver
       .context("WEBVIEW_1")
-      .get("http://google.com")
+      .get(env.GUINEA_TEST_END_POINT)
       .sleep(500)
       .title()
-      .should.eventually.equal("Google")
+      .should.eventually.equal("I am a page title")
       .nodeify(done);
   });
   it('setting context to \'WEBVIEW\' should work', function (done) {
     driver
       .context("WEBVIEW")
-      .get("http://google.com")
+      .get(env.GUINEA_TEST_END_POINT)
       .sleep(500)
       .title()
-      .should.eventually.equal("Google")
+      .should.eventually.equal("I am a page title")
       .nodeify(done);
   });
   it('setting context to \'null\' should work', function (done) {
@@ -102,16 +103,16 @@ describe('webview - basics', function () {
     driver
       .contexts()
       .context("WEBVIEW_1")
-      .get("http://google.com")
+      .get(env.GUINEA_TEST_END_POINT)
       .sleep(3000)
       .title()
-      .should.eventually.equal("Google")
+      .should.eventually.equal("I am a page title")
       .context("NATIVE_APP")
       .context("WEBVIEW_1")
-      .get("https://saucelabs.com/home")
+      .get(env.GUINEA_TEST_END_POINT)
       .sleep(3000)
-      .title()
-      .should.eventually.equal("Sauce Labs: Selenium Testing, Mobile Testing, JS Unit Testing and More")
+      .elementByLinkText('i am a link').click()
+      .elementById('only_on_page_2').should.eventually.exist
       .nodeify(done);
   });
 });

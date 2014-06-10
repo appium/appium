@@ -57,7 +57,7 @@ module.exports = function () {
 
   it('should list all contexts', function (done) {
     driver
-      .contexts().should.eventually.have.length(2)
+      .contexts().should.eventually.have.length.at.least(2)
       .nodeify(done);
   });
 

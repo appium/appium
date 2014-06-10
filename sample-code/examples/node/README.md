@@ -10,6 +10,7 @@
 mocha sample-code/examples/node/ios-simple.js
 mocha sample-code/examples/node/ios-complex.js
 mocha sample-code/examples/node/ios-webview.js
+mocha sample-code/examples/node/ios-actions.js
 mocha sample-code/examples/node/ios-local-server.js
 ```
 ### dev (run against locally built app)
@@ -20,6 +21,7 @@ mocha sample-code/examples/node/ios-local-server.js
 DEV=1 mocha sample-code/examples/node/ios-simple.js
 DEV=1 mocha sample-code/examples/node/ios-complex.js
 DEV=1 mocha sample-code/examples/node/ios-webview.js
+DEV=1 mocha sample-code/examples/node/ios-actions.js
 DEV=1 mocha sample-code/examples/node/ios-local-server.js
 ```
 
@@ -33,6 +35,7 @@ export SAUCE_ACCESS_KEY=<SAUCE_ACCESS_KEY>
 SAUCE=1 mocha sample-code/examples/node/ios-simple.js
 SAUCE=1 mocha sample-code/examples/node/ios-complex.js
 SAUCE=1 mocha sample-code/examples/node/ios-webview.js
+SAUCE=1 mocha sample-code/examples/node/ios-actions.js
 ```
 
 ### Sauce Labs + Sauce Connect

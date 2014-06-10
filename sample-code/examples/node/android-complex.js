@@ -186,7 +186,7 @@ describe("android complex", function () {
           .release();
 
         var ma = new wd.MultiAction().add(a1, a2, smile);
-        return driver.performMultiTouch(ma)
+        return driver.performMultiAction(ma)
           // so you can see it
           .sleep(10000)
           .back().sleep(1000)

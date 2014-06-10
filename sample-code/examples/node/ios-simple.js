@@ -5,10 +5,7 @@ require("./helpers/setup");
 var wd = require("wd"),
     _ = require('underscore'),
     Q = require('q'),
-    actions = require("./helpers/actions"),
     serverConfigs = require('./helpers/appium-servers');
-
-wd.addPromiseChainMethod('swipe', actions.swipe);
 
 describe("ios simple", function () {
   this.timeout(300000);
@@ -69,16 +66,4 @@ describe("ios simple", function () {
       });
   });
 
-  it("should swipe", function () {
-    return driver
-      .waitForElementByName('Test Gesture', 5000).click()
-      .sleep(1000)
-      .elementByName('OK').click()
-      .sleep(1000)
-      .elementByXPath('//UIAMapView').getLocation()
-      .then(function (loc) {
-        return driver.swipe({ startX: loc.x, startY: loc.y,
-          endX: 0.5,  endY: loc.y, duration: 800 });
-      });
-  });
 });

@@ -21,18 +21,21 @@ module.exports = {
       ]
     },
     // TODO: gappium/android hangs on sauce.
+    //       suspect: context/contexts issues on linux
     // {
     //   'mocha-bin': 'ci/mochas/android-mocha',
     //   'glob-patterns': [
     //     'test/functional/gappium/**/*-specs.js'
     //   ]
     // },
-    {
-      'mocha-bin': 'ci/mochas/selendroid-mocha',
-      'glob-patterns': [
-        'test/functional/gappium/**/*-specs.js'
-      ]
-    }
+    // TODO: gappium/selendroid hangs on sauce.
+    //       suspect: context/contexts issues on linux
+    // {
+    //   'mocha-bin': 'ci/mochas/selendroid-mocha',
+    //   'glob-patterns': [
+    //     'test/functional/gappium/**/*-specs.js'
+    //   ]
+    // }
   ],
   'selendroid':{
     'mocha-bin': 'ci/mochas/selendroid-mocha',

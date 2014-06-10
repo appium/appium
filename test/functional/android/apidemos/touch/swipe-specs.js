@@ -22,12 +22,12 @@ describe("apidemo - touch - swipe", function () {
     it('should be possible with press/moveTo/release', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction();
-          action.press();
+          var action = new TouchAction(driver);
+          action.press({el: el});
           driver
             .elementByName("Animation")
             .then(function (el2) {
-              return action.moveTo({ element: el2.value.toString() }).release().performOn(el);
+              return action.moveTo({el: el2}).release().perform();
             });
         })
         .sleep(500)
@@ -38,10 +38,10 @@ describe("apidemo - touch - swipe", function () {
     it('should be possible with press/moveTo/release and pixel offset', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
-          var action = new TouchAction();
-          action.press().moveTo({ x: 0, y: -400 }).release().performOn(el);
+          var action = new TouchAction(driver);
+          action.press({el: el}).moveTo({x: 0, y: -400 }).release().perform();
         })
-        .sleep(500)
+        .sleep(3000)
         .elementByName("Views").should.eventually.exist
         .nodeify(done);
     });

@@ -1,7 +1,8 @@
 {
   "excludeFiles": ["submodules/**", "node_modules/**", 
     "./lib/server/static/**", "./lib/devices/firefoxos/atoms/*.js", 
-    "./test/harmony/**/*.js", "./sample-code/examples/node/**/*-yiewd.js"],
+    "./test/harmony/**/*.js", "./sample-code/examples/node/**/*-yiewd.js",
+    "./sample-code/apps/**"],
   "requireCurlyBraces": ["for", "while", "do", "try", "catch"],
   "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", 
     "return", "try", "catch", "function"],

@@ -1,0 +1,16 @@
+AppiumDotNetSample/bin
+AppiumDotNetSample/obj
+AppiumDotNetSample/Obj
+AppiumDotNetSample/TestResults
+AppiumDotNetSample/test-results
+*.csproj.user
+*.suo
+*.cache
+*~
+*.swp
+*.userprefs
+*.pidb
+packages
+*.nupkg
+AppiumDotNetSample/env.json
+

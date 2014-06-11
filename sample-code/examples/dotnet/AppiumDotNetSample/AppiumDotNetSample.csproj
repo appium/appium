@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7A830071-06AC-4E20-9FBB-CAA395387A7C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AppiumDotNetSample</RootNamespace>
+    <AssemblyName>AppiumDotNetSample</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebDriver">
+      <HintPath>..\packages\Selenium.WebDriver.2.42.0\lib\net40\WebDriver.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="appium-dotnet-driver">
+      <HintPath>..\packages\Appium.WebDriver.1.0.0\lib\net40\appium-dotnet-driver.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="helpers\Actions.cs" />
+    <Compile Include="helpers\AppiumServers.cs" />
+    <Compile Include="helpers\Apps.cs" />
+    <Compile Include="helpers\Caps.cs" />
+    <Compile Include="helpers\Env.cs" />
+    <Compile Include="helpers\Filters.cs" />
+    <Compile Include="helpers\LocalServer.cs" />
+    <Compile Include="AndroidComplexTest.cs" />
+    <Compile Include="AndroidLocalServerTest.cs" />
+    <Compile Include="AndroidSimpleTest.cs" />
+    <Compile Include="AndroidWebviewTest.cs" />
+    <Compile Include="IosActionsTest.cs" />
+    <Compile Include="IosComplexTest.cs" />
+    <Compile Include="IosLocalServerTest.cs" />
+    <Compile Include="IosSimpleTest.cs" />
+    <Compile Include="IosWebviewTest.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="AppiumDotNetSample.csproj" />
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

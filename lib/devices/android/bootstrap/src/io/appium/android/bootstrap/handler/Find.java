@@ -8,11 +8,10 @@ import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
 import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
-import io.appium.android.bootstrap.exceptions.UnallowedTagNameException;
 import io.appium.android.bootstrap.selector.Strategy;
 import io.appium.android.bootstrap.utils.ElementHelpers;
 import io.appium.android.bootstrap.utils.NotImportantViews;
-import io.appium.android.bootstrap.utils.UiSelectorParser;
+import io.appium.android.bootstrap.utils.UiAutomatorParser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +34,7 @@ public class Find extends CommandHandler {
   AndroidElementsHash elements = AndroidElementsHash.getInstance();
   Dynamic             dynamic  = new Dynamic();
   static JSONObject apkStrings = null;
-  UiSelectorParser uiSelectorParser = new UiSelectorParser();
+  UiAutomatorParser uiAutomatorParser = new UiAutomatorParser();
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
@@ -191,29 +190,33 @@ public class Find extends CommandHandler {
 
     try {
       Object result = null;
-      final JSONArray array = new JSONArray();
-      for (final UiSelector sel : getSelector(strategy, text, multiple)) {
-        // With multiple selectors, we expect that some elements may not
-        // exist.
-        try {
-          if (!multiple) {
-            result = fetchElement(sel, contextId);
-            // Return first element when multiple is false.
-            if (result != null) {
-              break;
-            }
-          } else {
-            final JSONArray results = fetchElements(sel, contextId);
-            for (int a = 0, len = results.length(); a < len; a++) {
-              array.put(results.get(a));
-            }
-          }
-        } catch (final ElementNotFoundException e) {
-        }
-      }
+      List<UiSelector> selectors = getSelectors(strategy, text, multiple);
 
-      if (multiple) {
-        result = array;
+      if (!multiple) {
+        for (final UiSelector sel : selectors) {
+          try {
+            result = fetchElement(sel, contextId);
+          } catch (final ElementNotFoundException e) {
+          }
+          if (result != null) {
+            break;
+          }
+        }
+      } else {
+        List<AndroidElement> foundElements = new ArrayList<AndroidElement>();
+        for (final UiSelector sel : selectors) {
+          // With multiple selectors, we expect that some elements may not
+          // exist.
+          try {
+            List<AndroidElement> elementsFromSelector = fetchElements(sel, contextId);
+            foundElements.addAll(elementsFromSelector);
+          } catch (final UiObjectNotFoundException e) {
+          }
+        }
+        if (strategy == Strategy.ANDROID_UIAUTOMATOR) {
+          foundElements = ElementHelpers.dedupe(foundElements);
+        }
+        result = elementsToJSONArray(foundElements);
       }
 
       // If there are no results, then return an error.
@@ -227,8 +230,6 @@ public class Find extends CommandHandler {
       return getErrorResult(e.getMessage());
     } catch (final UiSelectorSyntaxException e) {
       return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
-    } catch (final UiObjectNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     } catch (final ElementNotFoundException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
     }
@@ -280,23 +281,32 @@ public class Find extends CommandHandler {
   }
 
   /**
-   * Get an array of elements from the {@link AndroidElementsHash} and return
-   * the element's ids using JSON.
+   * Get an array of AndroidElement objects from the {@link AndroidElementsHash}
    *
    * @param sel
    *     A UiSelector that targets the element to fetch.
    * @param contextId
    *     The Id of the element used for the context.
-   * @return JSONObject
-   * @throws JSONException
+   * @return ArrayList<AndroidElement>
    * @throws UiObjectNotFoundException
    */
-  private JSONArray fetchElements(final UiSelector sel, final String contextId)
-      throws JSONException, UiObjectNotFoundException {
+  private ArrayList<AndroidElement> fetchElements(final UiSelector sel, final String contextId)
+      throws UiObjectNotFoundException {
+
+    return elements.getElements(sel, contextId);
+  }
+
+  /**
+   * Get a JSONArray to represent a collection of AndroidElements
+   *
+   * @param els collection of AndroidElement objects
+   * @return elements in the format which appium server returns
+   * @throws JSONException
+   */
+  private JSONArray elementsToJSONArray(List<AndroidElement> els) throws JSONException {
     final JSONArray resArray = new JSONArray();
-    final ArrayList<AndroidElement> els = elements.getElements(sel, contextId);
-    for (final AndroidElement el : els) {
-      resArray.put(new JSONObject().put("ELEMENT", el.getId()));
+    for (AndroidElement el : els) {
+      resArray.put(ElementHelpers.toJSON(el));
     }
     return resArray;
   }
@@ -346,8 +356,8 @@ public class Find extends CommandHandler {
    * @throws InvalidStrategyException
    * @throws ElementNotFoundException
    */
-  private List<UiSelector> getSelector(final Strategy strategy,
-                                       final String text, final boolean many) throws InvalidStrategyException,
+  private List<UiSelector> getSelectors(final Strategy strategy,
+                                        final String text, final boolean many) throws InvalidStrategyException,
       ElementNotFoundException, UiSelectorSyntaxException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
@@ -403,16 +413,18 @@ public class Find extends CommandHandler {
         selectors.add(sel);
         break;
       case ANDROID_UIAUTOMATOR:
+        List<UiSelector> parsedSelectors = new ArrayList<UiSelector>();
         try {
-          sel = uiSelectorParser.parse(text);
+          parsedSelectors = uiAutomatorParser.parse(text);
         } catch (final UiSelectorSyntaxException e) {
           throw new UiSelectorSyntaxException(
               "Could not parse UiSelector argument: " + e.getMessage());
         }
-        if (!many) {
-          sel = sel.instance(0);
+
+        for (UiSelector selector : parsedSelectors) {
+          selectors.add(selector);
         }
-        selectors.add(sel);
+
         break;
       case LINK_TEXT:
       case PARTIAL_LINK_TEXT:

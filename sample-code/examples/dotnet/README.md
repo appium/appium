@@ -9,7 +9,6 @@
 
 ### Use Appium dev apps 
 
-- Clone Appium.
 - Build dev version of appium `./reset.sh --android --ios --dev --hardcore`
 - `cp AppiumDotNetSample/env.json.sample AppiumDotNetSample/env.json`
 - Update `AppiumDotNetSample/env.json` set DEV=true

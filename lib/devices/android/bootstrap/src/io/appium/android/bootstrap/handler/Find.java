@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
 
@@ -35,6 +36,19 @@ public class Find extends CommandHandler {
   Dynamic             dynamic  = new Dynamic();
   static JSONObject apkStrings = null;
   UiAutomatorParser uiAutomatorParser = new UiAutomatorParser();
+  /**
+   * java_package : type / name
+   *
+   * com.example.Test:id/enter
+   *
+   * ^[a-zA-Z_]      - Java package must start with letter or underscore
+   * [a-zA-Z0-9\._]* - Java package may contain letters, numbers, periods and underscores
+   * :               - : ends the package and starts the type
+   * [^\/]+          - type is made up of at least one non-/ characters
+   * \\/             - / ends the type and starts the name
+   * [\S]+$          - the name contains at least one non-space character and then the line is ended
+   */
+  static final Pattern resourceIdRegex = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9\\._]*:[^\\/]+\\/[\\S]+$");
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
@@ -176,10 +190,10 @@ public class Find extends CommandHandler {
     }
 
     final String text = (String) params.get("selector");
-    final Boolean multiple = (Boolean) params.get("multiple");
+    final boolean multiple = (Boolean) params.get("multiple");
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
-        + " with the contextId: " + contextId);
+        + " with the contextId: " + contextId + " multiple: " + multiple);
 
     if (strategy == Strategy.INDEX_PATHS) {
       NotImportantViews.discard(true);
@@ -195,6 +209,7 @@ public class Find extends CommandHandler {
       if (!multiple) {
         for (final UiSelector sel : selectors) {
           try {
+            Logger.debug("Using: " + sel.toString());
             result = fetchElement(sel, contextId);
           } catch (final ElementNotFoundException e) {
           }
@@ -208,6 +223,7 @@ public class Find extends CommandHandler {
           // With multiple selectors, we expect that some elements may not
           // exist.
           try {
+            Logger.debug("Using: " + sel.toString());
             List<AndroidElement> elementsFromSelector = fetchElements(sel, contextId);
             foundElements.addAll(elementsFromSelector);
           } catch (final UiObjectNotFoundException e) {
@@ -375,15 +391,15 @@ public class Find extends CommandHandler {
         // 1. resourceId (API >= 18)
         // 2. accessibility id (content description)
         // 3. strings.xml id
-        if (API_18) {
+        //
+        // If text is a resource id then only use the resource id selector.
+        if (API_18 && resourceIdRegex.matcher(text).matches()) {
           sel = sel.resourceId(text);
           if (!many) {
             sel = sel.instance(0);
           }
-          if (new UiObject(sel).exists()) {
-            selectors.add(sel);
-            break;
-          }
+          selectors.add(sel);
+          break;
         }
 
         // must create a new selector or the selector from
@@ -392,14 +408,14 @@ public class Find extends CommandHandler {
         if (!many) {
           sel = sel.instance(0);
         }
-        if (new UiObject(sel).exists()) {
-          selectors.add(sel);
-          break;
-        }
+        selectors.add(sel);
 
         // resource id and content description failed to match
         // so the strings.xml selector is used
-        selectors.add(stringsXmlId(many, text));
+        UiSelector stringsXmlSelector = stringsXmlId(many, text);
+        if (stringsXmlSelector != null) {
+          selectors.add(stringsXmlSelector);
+        }
         break;
       case ACCESSIBILITY_ID:
         sel = sel.description(text);
@@ -409,7 +425,16 @@ public class Find extends CommandHandler {
         selectors.add(sel);
         break;
       case NAME:
-        sel = selectNameOrText(many, text);
+        sel = new UiSelector().description(text);
+        if (!many) {
+          sel = sel.instance(0);
+        }
+        selectors.add(sel);
+
+        sel = new UiSelector().text(text);
+        if (!many) {
+          sel = sel.instance(0);
+        }
         selectors.add(sel);
         break;
       case ANDROID_UIAUTOMATOR:
@@ -437,39 +462,21 @@ public class Find extends CommandHandler {
     return selectors;
   }
 
-  private UiSelector selectNameOrText(final boolean many, final String text) {
-    UiSelector sel = new UiSelector();
-    sel = sel.description(text);
-    if (!many) {
-      sel = sel.instance(0);
-    }
-    if (!new UiObject(sel).exists()) {
-      // now try and find it using the text attribute
-      sel = new UiSelector().text(text);
-      if (!many) {
-        sel = sel.instance(0);
-      }
-    }
-    return sel;
-  }
-
-  private UiSelector stringsXmlId(final boolean many, String text)
-      throws ElementNotFoundException {
+  /** Returns null on failure to match **/
+  private UiSelector stringsXmlId(final boolean many, String text) {
     UiSelector sel = null;
     try {
       final String xmlValue = apkStrings.getString(text);
-      sel = selectNameOrText(many, xmlValue);
-      // JSONException and NullPointerException
-    } catch (final Exception e) {
-      if (text == null) {
-        text = "";
+      if (xmlValue == null || xmlValue.isEmpty()) {
+        return null;
       }
-      // find_elements returns an empty array, not an exception
+      sel = new UiSelector().text(xmlValue);
       if (!many) {
-        throw new ElementNotFoundException("ID `" + text
-            + "` doesn't exist as text or content desc.");
+        sel = sel.instance(0);
       }
+    } catch (JSONException e) {
+    } finally {
+      return sel;
     }
-    return sel;
   }
 }

@@ -16,6 +16,7 @@
 |`locale`| (Sim/Emu-only) Locale to set for the iOS Simulator|e.g. `fr_CA`|
 |`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|
+|`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|
 
 ### Android Only
 
@@ -43,6 +44,7 @@
 |`keyPassword`| Password for key |e.g., `foo`|
 |`chromedriverExecutable`| The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium) |`/abs/path/to/webdriver`|
 |`specialChromedriverSessionArgs`| Custom arguments passed directly to chromedriver in chromeOptions capability. Passed as object which properties depend on a specific webdriver. |e.g., `{'androidDeviceSocket': 'opera_beta_devtools_remote',}`|
+|`autoWebviewTimeout`| Amount of time to wait for Webview context to become active, in ms. Defaults to `2000`| e.g. `4`|
 
 
 ### iOS Only

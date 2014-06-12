@@ -32,7 +32,9 @@ module.exports = function () {
           "//android.widget.TextView[@text='Web View Interaction']");
       })
       .contexts()
-      .context('WEBVIEW_0')
+      .then(function (ctxs) {
+        return driver.context(ctxs[ctxs.length - 1]);
+      })
       .nodeify(done);
   });
 
@@ -52,10 +54,6 @@ module.exports = function () {
         }).nodeify(done);
     });
   }
-
-  it('should be able to switch to view', function (done) {
-    driver.context('WEBVIEW_0').nodeify(done);
-  });
 
   it('should list all contexts', function (done) {
     driver

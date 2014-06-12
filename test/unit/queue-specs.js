@@ -67,7 +67,7 @@ describe('Appium', function () {
       var loop = function (num) {
         if (num > 9)
           return;
-        appium.start({app: "/path/to/fake.app", device: "iPhone"}, function (err) {
+        appium.start({app: "/path/to/fake.app", deviceName: "iPhone", platformName: "iOS"}, function (err) {
           var n = num;
           if (n === 0) {
             should.not.exist(err);
@@ -97,7 +97,7 @@ describe('Appium with clobber', function () {
   describe('#start', function () {
     it('should clobber existing sessions', function (done) {
       var numSessions = 9
-        , dc = {app: "/path/to/fake.app", device: "iPhone"};
+        , dc = {app: "/path/to/fake.app", deviceName: "iPhone", platformName: 'iOS'};
       var loop = function (num) {
         if (num > numSessions) return;
         appium.start(dc, function () {

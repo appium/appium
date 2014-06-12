@@ -98,7 +98,7 @@ describe("apidemo - touch - press", function () {
   });
 
   describe('longPress', function () {
-    it.only('should open a context menu', function (done) {
+    it('should open a context menu', function (done) {
       driver.elementByName("Content")
         .then(function (el) {
           var action = new TouchAction(driver);

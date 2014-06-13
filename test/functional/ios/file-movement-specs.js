@@ -5,8 +5,10 @@ var setup = require("../common/setup-base")
   , getAppPath = require('../../helpers/app').getAppPath
   , fs = require('fs')
   , path = require('path')
+  , Readable = require('stream').Readable
   , iOSSettings = require('../../../lib/devices/ios/settings.js')
-  , exec = require('child_process').exec;
+  , exec = require('child_process').exec
+  , Unzip = require('unzip');
 
 describe('file movements - pullFile', function () {
   var driver;
@@ -69,6 +71,36 @@ describe('file movements - pullFile', function () {
           return stringData.should.equal(fileContent);
         })
         .nodeify(done);
+    });
+  });
+  describe('file movements - pullFolder', function () {
+    it('should pull all the files in Library/AddressBook', function (done) {
+      var entryCount = 0;
+      driver.pullFolder('Library/AddressBook')
+      .then( function (data) {
+        var zipStream = new Readable();
+        zipStream._read = function noop() {};
+        zipStream
+          .pipe(Unzip.Parse())
+          .on('entry', function (entry) {
+            entryCount++;
+            entry.autodrain();
+          })
+          .on('close', function () {
+            entryCount.should.be.above(1);
+            done();
+          });
+
+        zipStream.push(data, 'base64');
+        zipStream.push(null);
+      });
+
+    });
+    it('should not be able to fetch a folder that does not exist', function (done) {
+      driver
+        .pullFolder('Library/Rollodex')
+        .should.eventually.be.rejectedWith(/13/)
+      .nodeify(done);
     });
   });
 });

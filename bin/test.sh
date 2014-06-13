@@ -67,7 +67,6 @@ run_ios_tests() {
             echo "Did not find /Applications/Xcode-$1.app, using default"
         fi
     fi
-    echo 
     DEVICE=$2 time $appium_mocha -g $3 -i \
         test/functional/common \
         test/functional/ios

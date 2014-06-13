@@ -4,44 +4,62 @@ Appium has support for real device testing.
 
 To get started on a real device, you will need the following:
 
-1. An Apple Developer ID and a valid Developer Account with a configured
-distribution certificate and provisioning profile.
-2. An iPad or iPhone.
-3. The source code of your app.
-4. A Mac with XCode and the XCode Command Line Developer Tools
+* An [Apple Developer ID](https://developer.apple.com/programs/ios/)
+ and a valid Developer Account with a configured distribution certificate and
+ provisioning profile.
+* An iPad or iPhone.
+* The source code of your app.
+* A Mac with [Xcode](https://itunes.apple.com/en/app/xcode/id497799835?mt=12)
+ and the Xcode Command Line Developer Tools.
 
 ## Provisioning Profile
 
 A valid iOS Development Distribution Certificate and Provisioning Profile are
-necessary to test on a real device. You can find information about
-configuring these in the [Apple documentation](http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/YourFirstAppStoreSubmission/TestYourApponManyDevicesandiOSVersions/TestYourApponManyDevicesandiOSVersions.html)
+necessary to test on a real device. Your app will also need to be signed. You
+can find information about this in the [Apple documentation](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/TestingYouriOSApp/TestingYouriOSApp.html).
 
-You will also need to [sign your app](http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/YourFirstAppStoreSubmission/ProvisionYourDevicesforDevelopment/ProvisionYourDevicesforDevelopment.html#//apple_ref/doc/uid/TP40011375-CH4-SW1).
-
-Appium will attempt to install your app using Fruitstrap,
-but it is often easier to pre-install your app using Xcode to ensure there
-are no problems.
+Appium will attempt to install your app using Fruitstrap, but it is often easier
+to pre-install your app using Xcode to ensure there are no problems.
 
 ## Running your tests with Appium
 
 Once your device and app are configured, you can run tests on that device by
-passing the -U flag to the server, and passing the bundle ID (if the app is
-installed on the device) or the path to the .ipa file via the `--app` flag or
- the `app` desired capability:
+passing the `-U` or `--udid` flag to the server or the `udid` desired capability,
+and the bundle ID (if the app is installed on the device) or the path to the
+`.ipa` or `.apk` file via the `--app` flag or the `app` desired capability.
+
+## Server Arguments
+
+For example, if you are prelaunching your app and wish for Appium to force use
+a specific UDID, then you may use the below command:
 
 ```
-node . -U <UDID> --app <bundle_id>
+appium -U <udid> --app <path or bundle>
 ```
 
 This will start Appium and have Appium use the device to test the app.
 
+Refer to the [Appium server arguments](server-args.md) page for more detail on
+the arguments that you can use.
+
+## Desired Capabilities
+
+You can launch the app on a device by including the following desired
+capabilities in your tests:
+
+* `app`
+* `udid`
+
+Refer to the [Appium server capabilities](caps.md) page for more detail on
+the capabilities that you can use.
+
 ## Troubleshooting ideas
 
-0. Make sure UDID is correct by checking it in xcode organizer or itunes. It
-   is a long string (20+ chars)
-0. Make sure that you can run your tests against simulator
-0. Double check that you can invoke your automation from instruments.
-0. Make sure instruments in closed already
+0. Make sure UDID is correct by checking it in Xcode Organizer or iTunes. It
+   is a long string (20+ chars).
+0. Make sure that you can run your tests against the Simulator.
+0. Double check that you can invoke your automation from Instruments.
+0. Make sure Instruments in closed already.
 
 ## Appium on real Android devices
 

@@ -63,8 +63,8 @@ function iphoneOrIpadSimulator(device, version) {
     case '7.0':
     case '7.1':
       return isIpad ? 'iPad Simulator' : 'iPhone Simulator';
-    // case '7.1':
-    //   return isIpad ? 'iPad Retina' : 'iPhone Retina 4-inch';
+    case '8.0':
+      return isIpad ? 'iPad 2' : 'iPhone 5s';
     default:
       throw new Error("invalid version");
   }
@@ -96,6 +96,15 @@ switch (env.DEVICE) {
     env.CAPS = {
       browserName: ''
     , deviceName: iphoneOrIpadSimulator(env.DEVICE, "7.1")
+    , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
+    };
+    break;
+  case 'ios8':
+  case 'ios8_iphone':
+  case 'ios8_ipad':
+    env.CAPS = {
+      browserName: ''
+    , deviceName: iphoneOrIpadSimulator(env.DEVICE, "8.0")
     , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
     };
     break;
@@ -132,12 +141,13 @@ env.IOS = env.DEVICE.match(/ios/i);
 env.IOS6 = env.DEVICE.match(/ios6/i);
 env.IOS7 = env.DEVICE.match(/ios7/i);
 env.IOS71 = env.DEVICE.match(/ios71/i);
+env.IOS8 = env.DEVICE.match(/ios8/i);
 env.ANDROID = env.DEVICE.match(/android/i);
 env.SELENDROID = env.DEVICE.match(/selendroid/i);
 
 // better timeout settings for 71
 env.LAUNCH_TIMEOUT =  process.env.LAUNCH_TIMEOUT ? JSON.parse(process.env.LAUNCH_TIMEOUT) :
-  (env.IOS71 ? {"global": 60000, "afterSimLaunch": 10000} : 60000);
+  ((env.IOS71 || env.IOS8) ? {"global": 60000, "afterSimLaunch": 10000} : 60000);
 
 env.CAPS.launchTimeout = env.LAUNCH_TIMEOUT;
 
@@ -157,6 +167,8 @@ if (env.VERSION) {
   env.CAPS.platformVersion = "7.1";
 } else if (env.IOS7) {
   env.CAPS.platformVersion = "7.0";
+} else if (env.IOS8) {
+  env.CAPS.platformVersion = "8.0";
 }
 
 // max retry

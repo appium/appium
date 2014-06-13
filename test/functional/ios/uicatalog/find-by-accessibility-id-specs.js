@@ -40,7 +40,7 @@ describe('uicatalog - find by accessibility id @skip-ios6', function () {
     driver
       .elementByXPath("//UIAStaticText[contains(@label,'Action Sheets')]").click()
       .elements('accessibility id', 'Okay / Cancel').then(function (els) {
-        els.length.should.equal(1);
+        els.length.should.equal(2);
       })
       .nodeify(done);
   });

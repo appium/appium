@@ -109,7 +109,8 @@ describe('uicatalog - find element @skip-ios7', function () {
       }).nodeify(done);
     });
     it('should find a deeply nested element by name', function (done) {
-      driver.element('accessibility id', 'Toolbar, Uses of UIToolbar').then(function (el) {
+      driver
+        .element('accessibility id', 'Toolbar, Uses of UIToolbar').then(function (el) {
         el.should.exist;
       }).nodeify(done);
     });
@@ -122,7 +123,7 @@ describe('uicatalog - find element @skip-ios7', function () {
     });
     it('should return an array of one element if the plural "elements" is used', function (done) {
       driver.elements('accessibility id', 'UICatalog').then(function (els) {
-        els.length.should.equal(1);
+        els.length.should.equal(2);
       }).nodeify(done);
     });
   });
@@ -153,6 +154,32 @@ describe('uicatalog - find element @skip-ios7', function () {
         .nodeify(done);
     });
   });
+
+  describe('findElement(s) containing name', function () {
+    after(function (done) {
+      driver.clickBack()
+      .nodeify(done);
+    });
+
+    it('should find one element', function (done) {
+      driver
+        .elementsByClassName('UIATableCell').then(function (els) { return els[2]; })
+          .click()
+        .elementByName('*Rounded*').getAttribute('name')
+          .should.become('UITextField Rounded')
+        .nodeify(done);
+    });
+
+    it('should find several element', function (done) {
+      driver
+        .elementsByClassName('UIATableCell').then(function (els) { return els[2]; })
+          .click()
+        .elementsByName('*Rounded*')
+          .should.eventually.have.length.above(3)
+        .nodeify(done);
+    });
+  });
+
 
   describe('findElement(s)ByXPath', function () {
     var setupXpath = function (driver) {

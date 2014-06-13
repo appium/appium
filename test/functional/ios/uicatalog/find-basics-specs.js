@@ -134,4 +134,28 @@ describe('uicatalog - find - basics @skip-ios6', function () {
     });
   });
 
+  describe('findElement(s) containing name', function () {
+    after(function (done) {
+      driver.clickBack()
+      .nodeify(done);
+    });
+
+    it('should find one element', function (done) {
+      driver
+        .elementByXPath("//UIAStaticText[contains(@label,'Action Sheets')]").click()
+        .elementByName('*Okay*').getAttribute('name')
+          .should.become('Okay / Cancel')
+        .nodeify(done);
+    });
+
+    it('should find several element', function (done) {
+      driver
+        .elementByXPath("//UIAStaticText[contains(@label,'Action Sheets')]").click()
+        .elementsByName('*Okay*')
+          .should.eventually.have.length(2)
+        .nodeify(done);
+    });
+  });
+
+
 });

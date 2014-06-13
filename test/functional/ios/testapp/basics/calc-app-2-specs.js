@@ -52,7 +52,7 @@ describe('testapp - basics - calc app 2', function () {
   });
 
   // TODO: Fails on sauce, investigate
-  it('should be able to get syslog logs @skip-ios6 @skip-ci', function (done) {
+  it('should be able to get syslog logs @skip-ios6 @skip-ios8 @skip-ci', function (done) {
     driver
       .setImplicitWaitTimeout(4000)
       .elementByName('SumLabelz')

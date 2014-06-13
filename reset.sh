@@ -152,12 +152,17 @@ reset_ios() {
     set +e
     sdk_ver=$(xcrun --sdk iphonesimulator --show-sdk-version 2>/dev/null)
     sdk_status=$?
-    ios7_active=true
-    if [ $sdk_status -gt 0 ] || [[ "$sdk_ver" != "7."* ]]; then
-      echo "--------------------------------------------------"
-      echo "WARNING: you do not appear to have iOS7 SDK active"
-      echo "--------------------------------------------------"
-      ios7_active=false
+    ios7_active=false
+    ios8_active=false
+    if [[ "$sdk_ver" == "7."* ]]; then
+      ios7_active=true
+    elif [[ "$sdk_ver" == "8."* ]]; then
+      ios8_active=true
+    fi
+    if [ $sdk_status -gt 0 ] || (! $ios7_active && ! $ios8_active); then
+      echo "---------------------------------------------------"
+      echo "WARNING: you do not appear to have iOS7/8 SDK active"
+      echo "---------------------------------------------------"
     fi
     set -e
     echo "* Setting iOS config to Appium's version"
@@ -186,7 +191,7 @@ reset_ios() {
             echo "* Cloning/npm linking appium-adb"
             run_cmd ./bin/npmlink.sh -l appium-adb
         fi
-        if $ios7_active ; then
+        if $ios7_active || $ios8_active ; then
             if $hardcore ; then
                 echo "* Clearing out old UICatalog download"
                 run_cmd rm -rf ./sample-code/apps/UICatalog/

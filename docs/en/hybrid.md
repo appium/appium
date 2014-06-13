@@ -205,6 +205,9 @@ that case, you'll want to specify `"automationName": "selendroid"` as a desired
 capability). Then follow all the same steps as above for iOS, i.e.,
 switching contexts, etc...
 
+Make sure 
+[setWebContentsDebuggingEnabled](http://developer.android.com/reference/android/webkit/WebView.html#setWebContentsDebuggingEnabled(boolean)) is set to true as described in the [remote debugging docs](https://developer.chrome.com/devtools/docs/remote-debugging#configure-webview).
+
 ## Wd.js Code example
 
 ```js

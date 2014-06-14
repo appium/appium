@@ -2,9 +2,12 @@
 
 ## Limitations
 
-If you are running Appium on Windows, you cannot use the prebuilt '.app',
-which is built for OS X only. Additionally, you will not be able to test iOS
-apps because Appium relies on OS X-only libraries to support iOS testing.
+If you are running Appium on Windows, you can use the
+[Appium.exe](https://github.com/appium/appium-dot-exe) client, which will allow
+you to quickly launch an Appium server and use the Inspector. You will not be
+able to test iOS apps on a locally hosted server, because Appium relies on OS
+X-only libraries to support iOS testing. You can however use the `Remote Server`
+option to connect to an Appium server running on a Mac.
 
 ## Setup
 
@@ -27,7 +30,7 @@ To get started:
    your PATH.
 1. Install [Git](http://git-scm.com/download/win) Be sure to install Git for
    windows to run in the regular command prompt.
-1. Instal [cURL](http://curl.haxx.se/download.html)
+1. Install [cURL](http://curl.haxx.se/download.html).
 
 Now that you've downloaded everything, run:
 
@@ -41,14 +44,14 @@ To run tests on Windows, you will need to have the Android Emulator booted or
 
     node .
 
-See the [server documentation](server-args.md)
-for all the command line arguments.
+See the [server documentation](server-args.md) for all the command line
+arguments.
 
 ## Notes
 
-* you must supply the --no-reset and --full-reset flags currently for android
-  to work on Windows.
-* There exists a hardware accelerated emulator for android, it has it's own
+* You must supply the `--no-reset` and `--full-reset` flags currently for
+  Android to work on Windows.
+* There exists a hardware accelerated emulator for Android, it has it's own
   limitations. For more information you can check out this
   [page](android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.

@@ -5,7 +5,7 @@ Appium on OS X supports iOS and Android testing.
 ## System setup (iOS)
 
 * Appium requires Mac OS X 10.7, but 10.8 is recommended.
-* Make sure you have XCode and the iOS SDK(s) installed. (Appium currently
+* Make sure you have Xcode and the iOS SDK(s) installed. (Appium currently
   supports Xcode 4.6.3 for iOS up to 6.1 and Xcode 5 for iOS 7.0 and 7.1. Note
   that testing against iOS versions below 7.0 using Xcode 5 is not recommended.
   See the next section for more information.)
@@ -13,7 +13,8 @@ Appium on OS X supports iOS and Android testing.
   from NPM, you'll do this by running `sudo authorize_ios` (`authorize_ios` is
   a binary made available by the Appium npm package). If you're running Appium
   from source, simply run `sudo grunt authorize` to do the same thing. If you
-  are running `Appium.app`, you can authorize iOS through the GUI.
+  are running [Appium.app](https://github.com/appium/appium-dot-app), you can
+  authorize iOS through the GUI.
 
 ## Testing against multiple iOS SDKs
 
@@ -43,13 +44,16 @@ To go back to iOS 7.1 testing.
 
 ## System setup (Android)
 
-* Make sure you have the [Android SDK installed](http://developer.android.com/sdk/index.html).
+* Make sure you have the
+  [Android SDK installed](http://developer.android.com/sdk/index.html).
 * Make sure you have Android SDK API &gt;= 17 installed. To do this, run the
-  Android SDK Manager (`android`) and select the API in the extra packages you can install.
+  Android SDK Manager (`android`) and select the API in the extra packages you
+  can install.
 * Make sure you have `ant` installed. Ant is used to build the Appium bootstrap
   jar as well as the test applications. Mac OS X Mavericks no longer comes
-  pre-packaged with `ant` so you will need to [download and install it](http://ant.apache.org/bindownload.cgi).
-* Make sure you have exported `$ANDROID_HOME`, containing your android sdk
+  pre-packaged with `ant` so you will need to
+  [download and install it](http://ant.apache.org/bindownload.cgi).
+* Make sure you have exported `$ANDROID_HOME`, containing your Android sdk
   path. If you unzipped the Android SDK to `/usr/local/adt/`, for example, you
   should add this to your shell startup:
 

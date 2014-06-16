@@ -20,7 +20,7 @@ describe('uicatalog - execute @skip-ios6', function () {
       .nodeify(done);
   });
   it('should not fail with quotes', function (done) {
-    driver.execute('console.log(\'hi\\\'s\');')
+    driver.execute('$.log(\'hi\\\'s\');')
       .nodeify(done);
   });
 });

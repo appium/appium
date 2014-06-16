@@ -17,7 +17,9 @@ describe("safari - windows-frame @skip-ios6", function () {
 
     it('getting current context should work initially', function (done) {
       driver
+        .sleep(500)
         .currentContext().should.eventually.be.fulfilled
+        .sleep(500)
         .nodeify(done);
     });
     describe('within webview', function () {

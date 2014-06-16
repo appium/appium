@@ -75,7 +75,7 @@
     "prompt": "~0.2.13",
     "request": "~2.36.0",
     "rimraf": "~2.2.8",
-    "sandboxed-module": "~0.3.0",
+    "sandboxed-module": "~1.0.0",
     "serve-favicon": "~2.0.0",
     "socket.io": "~1.0.2",
     "swig": "~1.3.2",

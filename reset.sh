@@ -453,6 +453,12 @@ reset_gappium() {
 
 reset_chromedriver() {
     echo "RESETTING CHROMEDRIVER"
+    machine=$(run_cmd_output uname -m)
+    if [ "$machine" == "i686" ]; then
+        machine="32"
+    else
+        machine="64"
+    fi
     if [ -d "$appium_home"/build/chromedriver ]; then
         echo "* Clearing old ChromeDriver(s)"
         run_cmd rm -rf "$appium_home"/build/chromedriver/*
@@ -473,7 +479,7 @@ reset_chromedriver() {
             run_cmd mkdir "$appium_home"/build/chromedriver/mac
         else
             platform="linux"
-            chromedriver_file="chromedriver_linux32.zip"
+            chromedriver_file="chromedriver_linux$machine.zip"
             run_cmd mkdir "$appium_home"/build/chromedriver/linux
         fi
         install_chromedriver $platform $chromedriver_version $chromedriver_file
@@ -484,7 +490,7 @@ reset_chromedriver() {
         run_cmd mkdir "$appium_home"/build/chromedriver/windows
 
         install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
-        install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux$machine.zip"
         install_chromedriver "windows" $chromedriver_version "chromedriver_win32.zip"
     fi
 }

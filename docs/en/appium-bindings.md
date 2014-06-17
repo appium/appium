@@ -597,6 +597,38 @@ todo: php
 driver.Zoom(100, 200);
 ```
 
+## Scroll To
+
+Scroll to an element.
+
+```ruby
+element = find_element :name, 'Element Name'
+execute_script "mobile: scrollTo", :element => element.ref
+```
+
+```python
+todo: python
+```
+
+```java
+WebElement element = driver.findElement(By.name("Element Name"));
+HashMap<String, String> arguments = new HashMap<String, String>();
+arguments.put("element", element.getId());
+(JavascriptExecutor)driver.executeScript("mobile: scrollTo", arguments);
+```
+
+```javascript
+todo: javascript
+```
+
+```php
+todo: php
+```
+
+```csharp
+todo: csharp
+```
+
 ## Pull file
 
 Pulls a file from the device.

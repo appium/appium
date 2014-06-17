@@ -17,8 +17,8 @@ mock.noop(IOS.prototype, 'configureApp');
 describe('IOS', function () {
   // we'd like to test ios.proxy; mock instruments
   var inst = new IOS({});
-  inst.instruments = {};
-  inst.instruments.sendCommand = function (cmd, cb) {
+  inst.commandProxy = {};
+  inst.commandProxy.sendCommand = function (cmd, cb) {
     // let's pretend we've got some latency here.
     var to = Math.round(Math.random() * 10);
     setTimeout(function () { cb([cmd, to]); }, to);

@@ -224,6 +224,22 @@ describe("apidemo - basic @skip-ci", function () {
           .nodeify(done);
       });
     });
+
+    describe('launching activity with custom intent parameter category', function () {
+      var driver;
+      var caps = _.clone(desired);
+      caps.appActivity = "io.appium.android.apis.app.HelloWorld";
+      caps.intentCategory = "appium.android.intent.category.SAMPLE_CODE";
+      setup(this, caps)
+       .then(function (d) { driver = d; });
+
+      it('should launch activity with intent category', function (done) {
+        driver.getCurrentActivity()
+              .should.eventually.include("HelloWorld")
+              .nodeify(done);
+      });
+    });
+
   });
 
   describe('appium android', function () {

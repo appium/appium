@@ -154,16 +154,6 @@ reset_ios() {
     echo "* Installing ios-sim-locale"
     run_cmd rm -f build/ios-sim-locale
     run_cmd cp assets/ios-sim-locale build/ios-sim-locale
-    echo "* Cloning/updating ForceQuitUnresponsiveApps"
-    run_cmd git submodule update --init submodules/ForceQuitUnresponsiveApps
-    echo "* Building ForceQuitUnresponsiveApps"
-    run_cmd pushd submodules/ForceQuitUnresponsiveApps
-    run_cmd ./build_force_quit.sh
-    run_cmd popd
-    echo "* Moving ForceQuitUnresponsiveApps into build/force_quit"
-    run_cmd rm -rf build/force_quit
-    run_cmd mkdir build/force_quit
-    run_cmd cp -R submodules/ForceQuitUnresponsiveApps/bin/* build/force_quit
     echo "* Cloning/updating udidetect"
     run_cmd git submodule update --init submodules/udidetect
     echo "* Building udidetect"

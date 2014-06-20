@@ -17,7 +17,7 @@ describe('testapp - clear', function () {
 
   // Tap outside hide keyboard strategy can only be tested in UICatalog
 
-  it.only('should hide keyboard using key', function (done) {
+  it('should hide keyboard using key', function (done) {
     driver
       .elementByClassName('UIATextField').sendKeys("1")
       .elementByClassName('UIASwitch').isDisplayed()

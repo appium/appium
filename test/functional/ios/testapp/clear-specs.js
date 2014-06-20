@@ -15,18 +15,9 @@ describe('testapp - clear', function () {
       .nodeify(done);
   });
 
-  it('should hide keyboard using default strategy @skip-ios-all', function (done) {
-    driver
-      .elementByClassName('UIATextField').sendKeys("1")
-      .elementByClassName('UIASwitch').isDisplayed()
-        .should.become(false)
-      .hideKeyboard()
-      .elementByClassName('UIASwitch').isDisplayed()
-        .should.become(true)
-      .nodeify(done);
-  });
+  // Tap outside hide keyboard strategy can only be tested in UICatalog
 
-  it('should hide keyboard using keyName', function (done) {
+  it.only('should hide keyboard using key', function (done) {
     driver
       .elementByClassName('UIATextField').sendKeys("1")
       .elementByClassName('UIASwitch').isDisplayed()
@@ -34,6 +25,28 @@ describe('testapp - clear', function () {
       .hideKeyboard("Done")
       .elementByClassName('UIASwitch').isDisplayed()
         .should.become(true)
+
+      .elementByClassName('UIATextField').sendKeys("1")
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(false)
+      .hideKeyboard({strategy: 'pressKey', key: "Done"} )
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(true)
+
+      .elementByClassName('UIATextField').sendKeys("1")
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(false)
+      .hideKeyboard({strategy: 'pressKey', keyName: "Done"} )
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(true)
+
+      .elementByClassName('UIATextField').sendKeys("1")
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(false)
+      .hideKeyboard({strategy: 'press', key: "Done"} )
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(true)
+
       .nodeify(done);
   });
 

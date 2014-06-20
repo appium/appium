@@ -9,19 +9,19 @@ describe('testapp - find element', function () {
   describe('by id', function () {
     it('should first attempt to match accessibility id', function (done) {
       driver.elementById('ComputeSumButton').then(function (el) {
-        el.getTagName().should.eventually.equal('Compute Sum');
+        return el.getAttribute('label').should.eventually.equal('Compute Sum');
       }).nodeify(done);
     });
 
     it('should attempt to match by string if no accessibility id matches', function (done) {
       driver.elementById('Compute Sum').then(function (el) {
-        el.getTagName().should.eventually.equal('Compute Sum');
+        return el.getAttribute('label').should.eventually.equal('Compute Sum');
       }).nodeify(done);
     });
 
     it('should use a localized string if the id is a localization key', function (done) {
       driver.elementById('main.button.computeSum').then(function (el) {
-        el.getTagName().should.eventually.equal('Compute Sum');
+        return el.getAttribute('label').should.eventually.equal('Compute Sum');
       }).nodeify(done);
     });
 
@@ -124,9 +124,13 @@ describe('testapp - find element', function () {
       .nodeify(done);
   });
 
-  // it('should find an element within its parent', function (done) {
-  //   driver
-  //     .elementByClassName('UIAButton').should.eventually.exist
-  //     .elementByClassName('UIALabel').should.eventually.exist
-  //     .nodeify(done);
+  it('should find an element within its parent', function (done) {
+    // there are 2 textfields with the same name imbricated.
+    driver
+      .elementById('TextField2').then(function (parent) {
+        parent.should.exist;
+        return parent.elementById('TextField2').should.eventually.exist;
+      })
+      .nodeify(done);
+  });
 });

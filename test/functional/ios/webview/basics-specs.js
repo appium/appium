@@ -47,6 +47,7 @@ describe('webview - basics', function () {
   it('setting context to \'WEBVIEW_1\' should work', function (done) {
     driver.contexts().should.eventually.have.length.above(0)
       .context("WEBVIEW_1")
+      .sleep(500)
       .get(env.GUINEA_TEST_END_POINT)
       .sleep(500)
       .title()
@@ -56,6 +57,7 @@ describe('webview - basics', function () {
   it('setting context to \'WEBVIEW_1\' should work without first getting contexts', function (done) {
     driver
       .context("WEBVIEW_1")
+      .sleep(500)
       .get(env.GUINEA_TEST_END_POINT)
       .sleep(500)
       .title()
@@ -65,6 +67,7 @@ describe('webview - basics', function () {
   it('setting context to \'WEBVIEW\' should work', function (done) {
     driver
       .context("WEBVIEW")
+      .sleep(500)
       .get(env.GUINEA_TEST_END_POINT)
       .sleep(500)
       .title()

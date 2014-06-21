@@ -1,6 +1,7 @@
 "use strict";
 
-var setup = require("../../common/setup-base"),
+var env = require('../../../helpers/env'),
+    setup = require("../../common/setup-base"),
     desired = require('./desired');
 
 describe('uicatalog - clear @skip-ios6', function () {
@@ -9,6 +10,10 @@ describe('uicatalog - clear @skip-ios6', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
+    function waitOnSauce(ms) {
+      return function () { if (env.SAUCE) return driver.sleep(ms); };
+    }
+
     it('should be able to hide keyboard with the default strategy', function (done) {
       driver
         .elementByXPath("//UIAStaticText[contains(@name, 'Web View')]").moveTo(10, 10).click()
@@ -16,6 +21,7 @@ describe('uicatalog - clear @skip-ios6', function () {
         .elementByXPath("//UIATextField").click()
         .waitForElementByAccessibilityId("Go", 5000, 500)
         .hideKeyboard()
+        .then(waitOnSauce(2000))
         .elementByAccessibilityIdOrNull("Go").should.not.eventually.exist
         .back()
         .nodeify(done);
@@ -28,6 +34,7 @@ describe('uicatalog - clear @skip-ios6', function () {
         .elementByXPath("//UIATextField").click()
         .waitForElementByAccessibilityId("Go", 5000, 500)
         .hideKeyboard({strategy: 'tapOutside'})
+        .then(waitOnSauce(2000))
         .elementByAccessibilityIdOrNull("Go").should.not.eventually.exist
         .back()
         .nodeify(done);
@@ -40,6 +47,7 @@ describe('uicatalog - clear @skip-ios6', function () {
         .elementByXPath("//UIATextField").click()
         .waitForElementByAccessibilityId("Go", 5000, 500)
         .hideKeyboard({strategy: 'tapOut'})
+        .then(waitOnSauce(2000))
         .elementByAccessibilityIdOrNull("Go").should.not.eventually.exist
         .back()
         .nodeify(done);

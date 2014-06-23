@@ -41,6 +41,10 @@ All flags are optional, but some are required in conjunction with certain others
 |`--avd`|null|(Android-only) Name of the avd to launch|`--avd @default`|
 |`--avd-args`|null|(Android-only) Additional emulator arguments to launch the avd|`--avd-args -no-snapshot-load`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
+|`--intent-action`|`android.intent.action.MAIN`|(Android-only) Intent action which will be used to start activity|`android.intent.action.VIEW`|
+|`--intent-category`|`android.intent.category.LAUNCHER`|(Android-only) Intent category which will be used to start activity|`android.intent.category.APP_CONTACTS`|
+|`--intent-flags`|`0x10200000`|(Android-only) Flags that will be used to start activity|`0x10200000`|
+|`--intent-args`|null|(Android-only) Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/tools/help/adb.html#IntentSpec)|`--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--device-name`|null|Name of the mobile device to use|`--device-name iPhone Retina (4-inch), Android Emulator`|
 |`--platform-name`|null|Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|

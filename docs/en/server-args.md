@@ -15,7 +15,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--localizable-strings-dir`|en.lproj|IOS only: the relative path of the dir where Localizable.strings file resides |`--localizable-strings-dir en.lproj`|
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
-|`-q`, `--quiet`|false|Don't use verbose logging output||
+|`-q`, `--quiet`|false|Don't use verbose logging output (deprecated, use --log-level instead)||
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
@@ -28,6 +28,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
 |`-g`, `--log`|null|Also send log output to this file|`--log /path/to/appium.log`|
+|`--log-level`|debug|log level (default: infozw)|`--log-level debug`|
 |`--log-timestamp`|false|Show timestamps in console output||
 |`--log-no-colors`|false|Don't use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
@@ -67,6 +68,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||
 |`--show-config`|false|Show info about the appium server configuration and exit||
+|`--no-perms-check`|false|Bypass Appium's checks to ensure we can read/write necessary files||
 |`--command-timeout`|60|The default command timeout for the server to use for all sessions. Will still be overridden by newCommandTimeout cap||
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||

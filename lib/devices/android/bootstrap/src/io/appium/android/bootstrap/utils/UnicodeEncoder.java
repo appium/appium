@@ -17,7 +17,7 @@ public class UnicodeEncoder {
     char[] chars = text.toCharArray();
     for (int i = 0; i < chars.length; i++) {
       int cp = Character.codePointAt(chars, i);
-      if (cp > 0x7F) {
+      if (cp > 0x7F || cp == '&') {
         // Selenium uses a Unicode PUA to cover certain special characters
         // see https://code.google.com/p/selenium/source/browse/java/client/src/org/openqa/selenium/Keys.java
         // these should juse be passed through as is.

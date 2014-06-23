@@ -79,6 +79,21 @@ if %doAndroid% == 1 (
   ECHO.
   ECHO =====Reset Unlock.apk Complete=====
 
+  ECHO.
+  ECHO =====Resetting UnicodeIME.apk=====
+  ECHO.
+  CALL :runCmd "RD /S /Q build\unicode_ime_apk | VER > NUL"
+  CALL :runCmd "MKDIR build\unicode_ime_apk"
+  ECHO Building UnicodeIME.apk
+  CALL :runCmd "git submodule update --init submodules\io.appium.android.ime"
+  CALL :runCmd "PUSHD submodules\io.appium.android.ime"
+  CALL :runCmd "ant clean"
+  CALL :runCmd "ant debug"
+  CALL :runCmd "POPD"
+  CALL :runCmd "COPY submodules\io.appium.android.ime\bin\UnicodeIME-debug.apk build\unicode_ime_apk\UnicodeIME-debug.apk"
+  ECHO.
+  ECHO =====Reset UnicodeIME.apk Complete=====
+
   :: Reset Android Dev
   IF %doDev% == 1 (
     ECHO.
@@ -120,7 +135,7 @@ if %doAndroid% == 1 (
   CALL :runCmd "jar xf chromedriver.zip"
   CALL :runCmd "del chromedriver.zip"
   CALL :runCmd "POPD"
-  
+
   echo =====Reset ChromeDriver Complete=====
 )
 

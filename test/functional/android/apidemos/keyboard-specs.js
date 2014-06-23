@@ -5,6 +5,8 @@ var setup = require("../../common/setup-base")
   , safeClear = require('../../../helpers/safe-clear')
   , _ = require('underscore');
 
+desired.unicodeKeyboard = true;
+
 // TODO: fix clear logic
 describe("apidemo - keyboard @skip-ci", function () {
   var driver;
@@ -20,7 +22,7 @@ describe("apidemo - keyboard @skip-ci", function () {
       .nodeify(done);
   };
 
-  setup(this,  _.defaults({appActivity: "view.Controls1" }, desired))
+  setup(this,  _.defaults({appActivity: ".view.Controls1" }, desired))
     .then(function (d) { driver = d; });
 
   it('should be able to edit a text field', function (done) {
@@ -59,62 +61,54 @@ describe("apidemo - keyboard @skip-ci", function () {
       runTextEditTest(testText, done);
     });
 
+    it('should be able to send - in unicode text', function (done) {
+      var testText = 'परीक्षा-परीक्षण';
+      runTextEditTest(testText, done);
+    });
+
     it('should be able to send & in text', function (done) {
       var testText = 'Fish & chips';
       runTextEditTest(testText, done);
     });
 
-    it.skip('should be able to send roman characters with diacritics', function (done) {
+    it('should be able to send & in unicode text', function (done) {
+      var testText = 'Mīna & chips';
+      runTextEditTest(testText, done);
+    });
+
+    it('should be able to send roman characters with diacritics', function (done) {
       var testText = 'Áé Œ ù ḍ';
       runTextEditTest(testText, done);
     });
 
+    // skipping because clear doesn't work reliably on RTL scripts
     it.skip('should be able to send Arabic', function (done) {
       var testText = 'تجريب';
       runTextEditTest(testText, done);
     });
 
+    // skipping because clear doesn't work reliably on RTL scripts
     it.skip('should be able to send Hebrew', function (done) {
       var testText = 'בדיקות';
       runTextEditTest(testText, done);
     });
 
-    it.skip('should be able to send Tamil', function (done) {
+    it('should be able to send Tamil', function (done) {
       var testText = 'சோதனை';
       runTextEditTest(testText, done);
     });
 
-    it.skip('should be able to send Hindi', function (done) {
-      var testText = 'परीक्षण';
-      runTextEditTest(testText, done);
-    });
-
-    it.skip('should be able to send Gujarati', function (done) {
+    it('should be able to send Gujarati', function (done) {
       var testText = 'પરીક્ષણ';
       runTextEditTest(testText, done);
     });
 
-    it.skip('should be able to send Bengali', function (done) {
-      var testText = 'টেস্টিং';
-      runTextEditTest(testText, done);
-    });
-
-    it.skip('should be able to send Chinese', function (done) {
+    it('should be able to send Chinese', function (done) {
       var testText = '测试';
       runTextEditTest(testText, done);
     });
 
-    it.skip('should be able to send Japanese', function (done) {
-      var testText = '検査';
-      runTextEditTest(testText, done);
-    });
-
-    it.skip('should be able to send Georgian', function (done) {
-      var testText = 'ტესტირება';
-      runTextEditTest(testText, done);
-    });
-
-    it.skip('should be able to send Russian', function (done) {
+    it('should be able to send Russian', function (done) {
       var testText = 'тестирование';
       runTextEditTest(testText, done);
     });

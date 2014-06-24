@@ -5,7 +5,7 @@
 ### local
 
 ```
-./reset.sh --hardcore --ios`=
+./reset.sh --hardcore --ios
 
 mocha sample-code/examples/node/ios-simple.js
 mocha sample-code/examples/node/ios-complex.js

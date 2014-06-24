@@ -14,6 +14,16 @@ describe("apidemo - find elements - by uiautomator", function () {
       els.length.should.be.above(11);
     }).nodeify(done);
   });
+  it('should find elements within the context of another element', function (done) {
+    driver
+      .elementByClassName('android.widget.LinearLayout').then(function (el) {
+        el.elementsByAndroidUIAutomator('new UiSelector().className("android.widget.TextView")')
+          .then(function (els) {
+            els.length.should.be.above(0);
+            els.length.should.be.below(3);
+        }).nodeify(done);
+      });
+  });
   it('should find elements without prepending "new UiSelector()"', function (done) {
     driver.elementsByAndroidUIAutomator('.clickable(true)').then(function (els) {
       els.length.should.be.above(11);

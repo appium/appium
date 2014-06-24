@@ -3,6 +3,7 @@ package io.appium.android.bootstrap.utils;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
+import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -183,6 +184,12 @@ public class UiScrollableParser {
   }
 
   private void applyArgsToMethod(Method method, ArrayList<String> arguments) throws UiSelectorSyntaxException {
+    StringBuilder sb = new StringBuilder();
+    for (String arg : arguments) {
+      sb.append(arg + ", ");
+    }
+    Logger.debug("UiScrollable invoking method: " + method + " args: " + sb.toString());
+
     if (method.getGenericReturnType() == UiScrollable.class && returnedUiObject) {
       throw new UiSelectorSyntaxException("Cannot call UiScrollable method \"" + method.getName() + "\" on a UiObject instance");
     }
@@ -208,17 +215,31 @@ public class UiScrollableParser {
         convertedArgs.add(coerceArgToType(parameterTypes[i], arguments.get(i)));
       }
 
-      if (method.getGenericReturnType() == UiScrollable.class) {
+      String methodName = method.getName();
+      Logger.debug("Method name: " + methodName);
+      boolean scrollIntoView = methodName.contentEquals("scrollIntoView");
+
+      if (method.getGenericReturnType() == UiScrollable.class || scrollIntoView) {
         if (convertedArgs.size() > 1) {
           throw new UiSelectorSyntaxException("No UiScrollable method that returns type UiScrollable takes more than 1 argument");
         }
         try {
-          scrollable = (UiScrollable)method.invoke(scrollable, convertedArgs.get(0));
+          if (scrollIntoView) {
+            Logger.debug("Setting uiObject for scrollIntoView");
+            UiSelector arg = (UiSelector) convertedArgs.get(0);
+            returnedUiObject = true;
+            uiObject = new UiObject(arg);
+            Logger.debug("Invoking method: " + method + " with: " + uiObject);
+            method.invoke(scrollable, uiObject);
+            Logger.debug("Invoke complete.");
+          } else {
+            scrollable = (UiScrollable)method.invoke(scrollable, convertedArgs.get(0));
+          }
         } catch (IllegalAccessException e) {
           e.printStackTrace();
           throw new UiSelectorSyntaxException("problem using reflection to call this method");
         } catch (InvocationTargetException e) {
-          e.printStackTrace();
+          Logger.error(e.getCause().toString()); // we're only interested in the cause. InvocationTarget wraps the underlying problem.
           throw new UiSelectorSyntaxException("problem using reflection to call this method");
         }
       }
@@ -259,6 +280,7 @@ public class UiScrollableParser {
   }
 
   private Object coerceArgToType(Type type, String argument) throws UiSelectorSyntaxException {
+    Logger.debug("UiScrollable coerce type: " + type + " arg: " + argument);
     if (type == boolean.class) {
       if (argument.equals("true")) {
         return true;
@@ -288,7 +310,7 @@ public class UiScrollableParser {
       }
     }
 
-    if (type == UiSelector.class) {
+    if (type == UiSelector.class || type == UiObject.class) {
       UiSelectorParser parser = new UiSelectorParser();
       return parser.parse(argument);
     }

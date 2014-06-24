@@ -147,11 +147,13 @@ your changes against code quality standards:
 If you have an Appium server listening, you can run individual test files using
 Mocha, for example:
 
-    mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
+    DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
 
 Or individual tests (e.g., a test with the word "alert" in the name):
 
-    mocha -t 60000 -R spec --grep "alert" test/functional/ios/apidemos
+    DEVICE=ios6 mocha -t 60000 -R spec --grep "alert" test/functional/ios/apidemos
 
 NOTE: For Android, you will need an emulator/device with screen size of 4.0"
 (480x800). Some tests might fail on a different screen size.
+
+`DEVICE` must be set to a valid value: `ios71`, `ios6`, `android`, `selendroid`

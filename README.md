@@ -84,8 +84,10 @@ You can run an Appium server using node.js or using the application, see below.
 
 ### Using Node.js
 
-    $ npm install -g appium
-    $ appium &
+<code>
+$ npm install -g appium
+$ appium &
+</code>
 
 ### Using the App
 

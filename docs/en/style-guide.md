@@ -49,108 +49,122 @@ automatic linting.
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
 
-    ```js
+    <code>
     var x = 1;
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     var x=1;
-    ```        
-    
+    </code>
+
 *   Spaces after commas and colons in lists, objects, function calls, etc...
 
-    ```js
+    <code>
     var x = myFunc("lol", {foo: bar, baz: boo});
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     var x = myFunc("lol",{foo:bar,baz:boo});
-    ```
+    </code>
 
 *   Always end statements with semicolons
 *   Comma-first
 
-    ```js
+    <code>
     var x = {
       foo: 'bar'
-    , baz: 'boo'
-    , wuz: 'foz'
+      , baz: 'boo'
+      , wuz: 'foz'
     };
-    ```
+    </code>
 
 *   Brackets for `function`, `if`, etc... go on same line, `else` gets sandwiched
 
-    ```js
+    <code>
     if (foo === bar) {
       // do something
     } else {
       // do something else
     }
-    ```
+    </code>
 
 *   Space after `if`, `for`, and `function`:
 
-    ```js
+    <code>
     if (foo === bar) {
-    ```
-    ```js
+    </code>
+
+    <code>
     for (var i = 0; i < 10; i ++) {
-    ```
-    ```js
+    </code>
+
+    <code>
     var lol = function (foo) {
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     if(foo === bar) {
-    ```
-    ```js
+    </code>
+
+    <code>
     for(var i = 0; i < 10; i ++) {
-    ```
-    ```js
+    </code>
+
+    <code>
     var lol = function(foo) {
-    ```
+    </code>
 
 *   Avoid bracketless `if` for one-liners:
 
-    ```js
+    <code>
     if (foo === bar) {
       foo++;
     }
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     if (foo === bar)
       foo++;
-    ```
+    </code>
 
 *   Use `===`, not `==`, and `!==`, not `!=` for no surprises
 *   Line length shouldn't be longer than 79 characters
 *   Break up long strings like this:
 
-    ```js
+    <code>
     myFunc("This is a really long string that's longer " +
             "than 79 characters so I broke it up, woo");
-    ```
+    </code>
 
 *   Comments should line up with code
 
-    ```js
+    <code>
     if (foo === 5) {
       myFunc(foo);
       // foo++;
     }
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     if (foo === 5) {
       myFunc(foo);
     //foo++;
     }
-    ```
+    </code>
 
 *   Subclassing by extending prototypes
 
-    ```js
+    <code>
     var _ = require('underscore');
 
     var SuperClass = function () {
@@ -162,70 +176,76 @@ automatic linting.
     };
 
     // Create a subclass
-    
+
     var SubClass = function () {
         this.init();
     };
 
     _.extend(SubClass.prototype, SuperClass.prototype);
-    ```
+    </code>
 
 *   Callbacks are always last in function definitions
 
-    ```js
+    <code>
     var foo = function (arg1, arg2, cb) {
       ...
     };
-    ```
+    </code>
 
 *   Define functions as variables
 
-    ```js
+    <code>
     var myFunc = function (a, b, c) {};
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     function myFunc (a, b, c) {}
-    ```
-    
+    </code>
+
 *   Variable names should be camelCased:
 
-    ```js
+    <code>
     var myVariable = 42;
-    ```
+    </code>
+
     not
-    ```js
+
+    <code>
     var my_variable = 42;
-    ```
+    </code>
 
 *    Check for undefined
 
-    ```js
+    <code>
     typeof myVariable === "undefined"
-    ```
-    not
-    ```js
-    myVariable === undefined
-    ```
+    </code>
 
-## Test Style:
-    
+    not
+
+    <code>
+    myVariable === undefined
+    </code>
+
+## Test Style
+
 Keep on the same line if it makes sense semantically and length is not an issue:
 
 Examples:
 
-```js
+<code>
   driver.elementByTagName('el1').should.become("123")
     .nodeify(done);
-  
+
   driver
     .elementsByTagName('el1').should.eventually.have.length(0)
     .nodeify(done);
-```
+</code>
 
 Alternatively use extra indents to improve readability:
 
-```js
+<code>
 h.driver
   .elementById('comments')
     .clear()
@@ -241,4 +261,4 @@ h.driver
   .execute("'nan'--")
     .should.be.rejectedWith("status: 13")
   .nodeify(done);
-```
+</code>

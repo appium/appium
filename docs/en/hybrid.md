@@ -176,11 +176,11 @@ https://gist.github.com/feelobot/7309729
 ```python
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
 capabilities = {
-    'browserName': 'iOS 6.0',
-    'platform': 'Mac 10.8',
-    'device': 'iPhone Simulator',
+    'platformName': 'iOS',
+    'deviceName': 'iPhone Simulator',
+    'deviceVersion': '7.1'
     'app': APP_PATH,
-    'name': "Example Python Test"
+    'name': "Example Hybrid Python Test"
 }
 driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 
@@ -301,4 +301,17 @@ assertEqual('My very own text', elements[0].text)
 
 driver.switch_to.context("NATIVE_APP")
 driver.quit()
+```
+
+```php
+// assuming we have an initialized object working on a hybrid app
+public function testThings()
+{
+    $this->context('WEBVIEW_1');
+
+    $els = $this->elements($this->using('css')->value('.some-class'));
+    $this->assertLessThan(0, count($els));
+
+    $this->context('NATIVE_APP');
+}
 ```

@@ -9,19 +9,19 @@ To prepare for your Appium tests to run on a real device, you will need to:
 ## Xcodebuild with parameters:
 A newer xcodebuild now allows settings to be specified. Taken from [developer.apple.com](https://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html):
 
-```
-xcodebuild [-project projectname] [-target targetname ...]
+<code>
+$ xcodebuild [-project projectname] [-target targetname ...]
              [-configuration configurationname] [-sdk [sdkfullpath | sdkname]]
              [buildaction ...] [setting=value ...] [-userdefault=value ...]
-```
+</code>
 
 This is a resource to explore the available [settings](https://developer.apple.com/library/mac/#documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html#//apple_ref/doc/uid/TP40003931-CH3-DontLinkElementID_10)
 
-```
+<code>
 CODE_SIGN_IDENTITY (Code Signing Identity)
     Description: Identifier. Specifies the name of a code signing identity.
     Example value: iPhone Developer
-```
+</code>
 
 PROVISIONING_PROFILE is missing from the index of available commands,
 but may be necessary.
@@ -29,9 +29,9 @@ but may be necessary.
 Specify "CODE_SIGN_IDENTITY" & "PROVISIONING_PROFILE" settings in the
 xcodebuild command:
 
-```
-xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> CODE_SIGN_IDENTITY="iPhone Developer: Mister Smith" PROVISIONING_PROFILE="XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
-```
+<code>
+$ xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> CODE_SIGN_IDENTITY="iPhone Developer: Mister Smith" PROVISIONING_PROFILE="XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
+</code>
 
 On success, the app will be built to your ```<app_dir>/build/<configuration>-iphoneos/<app_name>.app```
 
@@ -48,35 +48,35 @@ parent directory.
 Execute fruitstrap after a clean build by running (commands available depend
 on your fork of fruitstrap):
 
-```
-./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID>
-```
+<code>
+$ ./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID>
+<code>
 
 If you are aiming to use continuous integration in this setup,
 you may find it useful to want to log the output of fruitstrap to both
 command line and log, like so:
 
-```
-./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID> 2>&1 | tee fruit.out
-```
+<code>
+$ ./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID> 2>&1 | tee fruit.out
+</code>
 
 Since fruitstrap will need to be killed before the node server can be
 launched, an option is to scan the output of the fruitstrap launch for some
 telling sign that the app has completed launching. This may prove useful if
 you are doing this via a Rakefile and a ``go_device.sh`` script:
 
-```
-bundle exec rake ci:fruit_deploy_app | while read line ; do 
-   echo "$line" | grep "text to identify successful launch" 
-   if [ $? = 0 ] 
-   then 
-   # Actions 
-       echo "App finished launching: $line" 
-       sleep 5 
-       kill -9 `ps -aef | grep fruitstrap | grep -v grep | awk '{print $2}'` 
+<code>
+$ bundle exec rake ci:fruit_deploy_app | while read line ; do
+   echo "$line" | grep "text to identify successful launch"
+   if [ $? = 0 ]
+   then
+   # Actions
+       echo "App finished launching: $line"
+       sleep 5
+       kill -9 `ps -aef | grep fruitstrap | grep -v grep | awk '{print $2}'`
    fi
  done
-```
+<code>
 
 Once fruitstrap is killed, node server can be launched and Appium tests can run!
 

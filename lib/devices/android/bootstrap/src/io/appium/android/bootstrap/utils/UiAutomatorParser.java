@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap.utils;
 
 import com.android.uiautomator.core.UiSelector;
+import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 
 import java.util.ArrayList;
@@ -77,8 +78,10 @@ public class UiAutomatorParser {
 
     statement = text.substring(0, index);
     if (UiScrollableParser.isUiScrollable(statement)) {
+      Logger.debug("Parsing scrollable: " + statement);
       selectors.add(scrollableParser.parse(statement));
     } else {
+      Logger.debug("Parsing selector: " + statement);
       selectors.add(selectorParser.parse(statement));
     }
 

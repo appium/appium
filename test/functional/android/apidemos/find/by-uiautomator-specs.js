@@ -153,6 +153,13 @@ describe("apidemo - find elements - by uiautomator", function () {
       text.should.equal("Views");
     }).nodeify(done);
   });
+  it('should allow UiScrollable scrollIntoView', function (done) {
+    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Views").instance(0));')
+    .text()
+    .then(function (text) {
+      text.should.equal("Views");
+    }).nodeify(done);
+  });
   it('should error reasonably if a UiScrollable does not return a UiObject', function (done) {
     driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10)')
     .should.be.rejectedWith(/status: 9/)

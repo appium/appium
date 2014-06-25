@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap.utils;
 
 import com.android.uiautomator.core.UiSelector;
+import io.appium.android.bootstrap.Logger;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -151,6 +152,7 @@ public class UiSelectorParser {
   }
 
   private Object coerceArgToType(Type type, String argument) throws UiSelectorSyntaxException {
+    Logger.debug("UiSelector coerce type: " + type + " arg: " + argument);
     if (type == boolean.class) {
       if (argument.equals("true")) {
         return true;

@@ -79,9 +79,9 @@ $this->backgroundApp(5);
 driver.BackgroundApp(5);
 ```
 
-## Hide Keyboard (iOS only)
+## Hide Keyboard
 
-Hide the keyboard on iOS
+Hide the keyboard.
 
 ```ruby
 hide_keyboard

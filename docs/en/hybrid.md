@@ -197,6 +197,45 @@ driver.switch_to(driver.contexts.first)
 # Now you can use CSS to select an element inside your webview
 ```
 
+```php
+APP_PATH = 'https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip'
+class ContextTests extends PHPUnit_Extensions_AppiumTestCase
+{
+    public static $browsers = array(
+        array(
+            'desiredCapabilities' => array(
+                'platformName' => 'iOS',
+                'platformVersion' => '7.1',
+                'deviceName' => 'iPhone Simulator',
+                'app' => $myApp,
+                'name' => 'Example Hybrid PHP Test'
+            )
+        )
+    );
+
+    public function testThings()
+    {
+        $expected_contexts = array(
+            0 => 'NATIVE_APP',
+            1 => 'WEBVIEW_1'
+        );
+
+        $contexts = $this->contexts();
+        $this->assertEquals($expected_contexts, $contexts);
+
+        $this->context('WEBVIEW_1');
+        $context = $this->context();
+        $this->assertEquals('WEBVIEW_1', $context);
+
+        // do webby stuff
+
+        $this->context('NATIVE_APP');
+
+        // do mobile stuff
+    }
+}
+```
+
 ## Automating hybrid Android apps
 
 Appium comes with built-in hybrid support via Chromedriver. Appium also uses
@@ -205,7 +244,7 @@ that case, you'll want to specify `"automationName": "selendroid"` as a desired
 capability). Then follow all the same steps as above for iOS, i.e.,
 switching contexts, etc...
 
-Make sure 
+Make sure
 [setWebContentsDebuggingEnabled](http://developer.android.com/reference/android/webkit/WebView.html#setWebContentsDebuggingEnabled(boolean)) is set to true as described in the [remote debugging docs](https://developer.chrome.com/devtools/docs/remote-debugging#configure-webview).
 
 ## Wd.js Code example

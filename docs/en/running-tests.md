@@ -49,6 +49,19 @@ Then script your WebDriver test, sending in the following desired capabilities:
 }
 ```
 
+```php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'platformName' => 'iOS',
+            'platformVersion' => '7.1',
+            'deviceName' => 'iPhone Simulator',
+            'app' => $myApp
+        )
+    )
+);
+```
+
 In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your simulator-compiled .app directory or .zip
@@ -103,6 +116,19 @@ Then script your WebDriver test, sending in the following desired capabilities:
 }
 ```
 
+```php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'platformName' => 'Android',
+            'platformVersion' => '4.4',
+            'deviceName' => 'Android Emulator',
+            'app' => $myApp
+        )
+    )
+);
+```
+
 In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your .apk or a .zip of it
@@ -132,7 +158,6 @@ and specifying the Selendroid automation backend.
     platformName: 'Android',
     platformVersion: '2.3',
     deviceName: 'Android Emulator',
-    version: '2.3',
     app: myApp
 }
 ```
@@ -143,9 +168,22 @@ and specifying the Selendroid automation backend.
     'platformName': 'Android',
     'platformVersion': '2.3',
     'deviceName': 'Android Emulator',
-    'version': '2.3',
     'app': myApp
 }
+```
+
+```php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'automationName' => 'Selendroid',
+            'platformName' => 'Android',
+            'platformVersion' => '2.3',
+            'deviceName' => 'Android Emulator',
+            'app' => $myApp
+        )
+    )
+);
 ```
 
 Now Appium will start up a Selendroid test session instead of the default test

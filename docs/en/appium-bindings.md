@@ -44,7 +44,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->lock(3);
 ```
 
 ```csharp
@@ -72,7 +72,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->backgroundApp(5);
 ```
 
 ```csharp
@@ -100,7 +100,8 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->hideKeyboard();
+$this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 ```
 
 ```csharp
@@ -128,7 +129,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->isAppInstalled('com.example.android.apis');
 ```
 
 ```csharp
@@ -156,7 +157,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->installApp('path/to/my.apk');
 ```
 
 ```csharp
@@ -184,7 +185,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->removeApp('com.example.android.apis');
 ```
 
 ```csharp
@@ -212,7 +213,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->shake();
 ```
 
 ```csharp
@@ -240,7 +241,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->closeApp();
 ```
 
 ```csharp
@@ -268,7 +269,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->launchApp();
 ```
 
 ```csharp
@@ -296,7 +297,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->reset();
 ```
 
 ```csharp
@@ -324,7 +325,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->contexts();
 ```
 
 ```csharp
@@ -353,7 +354,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->context();
 ```
 
 ```csharp
@@ -381,7 +382,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->context(NULL);
 ```
 
 ```csharp
@@ -409,7 +410,8 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->appStrings();
+$this->appStrings('ru');
 ```
 
 ```csharp
@@ -437,7 +439,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->keyEvent('176');
 ```
 
 ```csharp
@@ -465,7 +467,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->currentActivity();
 ```
 
 ```csharp
@@ -500,7 +502,29 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$action = $this->initiateTouchAction();
+               ->press(array('element' => $el))
+               ->release()
+               ->perform();
+
+$action1 = $this->initiateTouchAction();
+$action1->press(array('element' => $els[0]))
+        ->moveTo(array('x' => 10, 'y' => 0))
+        ->moveTo(array('x' => 10, 'y' => -75))
+        ->moveTo(array('x' => 10, 'y' => -600))
+        ->release();
+
+$action2 = $this->initiateTouchAction();
+$action2->press(array('element' => $els[1]))
+        ->moveTo(array('x' => 10, 'y' => 10))
+        ->moveTo(array('x' => 10, 'y' => -300))
+        ->moveTo(array('x' => 10, 'y' => -600))
+        ->release();
+
+$multiAction = $this->initiateMultiAction();
+$multiAction->add($action1);
+$multiAction->add($action2);
+$multiAction->perform();
 ```
 
 ```csharp
@@ -534,7 +558,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->swipe(75, 500, 75, 0, 800);
 ```
 
 ```csharp
@@ -562,7 +586,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->pinch($el);
 ```
 
 ```csharp
@@ -590,7 +614,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->zoom($el);
 ```
 
 ```csharp
@@ -622,7 +646,8 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$els = $this->elements($this->using('class name')->value('android.widget.TextView'));
+$this->scroll($els[count($els) - 1], $els[0]);
 ```
 
 ```csharp
@@ -650,7 +675,7 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$this->pullFile('Library/AddressBook/AddressBook.sqlitedb');
 ```
 
 ```csharp
@@ -684,7 +709,9 @@ todo: javascript
 ```
 
 ```php
-todo: php
+$path = 'data/local/tmp/test_push_file.txt';
+$data = 'This is the contents of the file to push to the device.';
+$this->pushFile($path, base64_encode($data));
 ```
 
 ```csharp

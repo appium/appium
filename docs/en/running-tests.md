@@ -62,6 +62,14 @@ public static $browsers = array(
 );
 ```
 
+```java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability("platformName", "iOS");
+capabilities.setCapability("platformVersion", "7.1");
+capabilities.setCapability("deviceName", "iPhone Simulator");
+capabilities.setCapability("app", myApp);
+```
+
 In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your simulator-compiled .app directory or .zip
@@ -129,6 +137,14 @@ public static $browsers = array(
 );
 ```
 
+```java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability("platformName", "Android");
+capabilities.setCapability("platformVersion", "4.4");
+capabilities.setCapability("deviceName", "Android Emulator");
+capabilities.setCapability("app", myApp);
+```
+
 In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your .apk or a .zip of it
@@ -184,6 +200,15 @@ public static $browsers = array(
         )
     )
 );
+```
+
+```java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability("automationName", "Selendroid");
+capabilities.setCapability("platformName", "Android");
+capabilities.setCapability("platformVersion", "2.3");
+capabilities.setCapability("deviceName", "Android Emulator");
+capabilities.setCapability("app", myApp);
 ```
 
 Now Appium will start up a Selendroid test session instead of the default test

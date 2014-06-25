@@ -46,6 +46,14 @@ public static $browsers = array(
 );
 ```
 
+```java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability("platformName", "iOS");
+capabilities.setCapability("platformVersion", "7.1");
+capabilities.setCapability("browserName", "Safari");
+capabilities.setCapability("deviceName", "iPhone Simulator");
+```
+
 ## Mobile Safari on a Real iOS Device
 
 To be able to run your tests against mobile Safari we use the [SafariLauncher
@@ -201,6 +209,14 @@ public static $browsers = array(
         )
     )
 );
+```
+
+```java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability("platformName", "Android");
+capabilities.setCapability("platformVersion", "4.4");
+capabilities.setCapability("deviceName", "Android Emulator");
+capabilities.setCapability("browserName", "Chrome");
 ```
 
 Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to automate the built-in browser. On all devices you can use the 'Chromium' `browserName` cap to automate a build of Chromium.

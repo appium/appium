@@ -33,7 +33,7 @@ public class UpdateStrings extends CommandHandler {
   }
 
   public static boolean loadStringsJson() {
-    Logger.info("Loading json...");
+    Logger.debug("Loading json...");
     try {
       String filePath = "/data/local/tmp/strings.json";
       final File jsonFile = new File(filePath);
@@ -50,7 +50,7 @@ public class UpdateStrings extends CommandHandler {
       dataInput.close();
       final String jsonString = new String(jsonBytes, "UTF-8");
       Find.apkStrings = new JSONObject(jsonString);
-      Logger.info("json loading complete.");
+      Logger.debug("json loading complete.");
     } catch (final Exception e) {
       Logger.error("Error loading json: " + e.getMessage());
       return false;

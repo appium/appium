@@ -110,16 +110,16 @@ public class AndroidElementsHash {
     int counter = 0;
     while (keepSearching) {
       if (baseEl == null) {
-        Logger.info("Element[" + key + "] is null: (" + counter + ")");
+        Logger.debug("Element[" + key + "] is null: (" + counter + ")");
         if (useIndex) {
-          Logger.info("  using index...");
+          Logger.debug("  using index...");
           tmp = sel.index(counter);
         } else {
           tmp = sel.instance(counter);
         }
         lastFoundObj = new UiObject(tmp);
       } else {
-        Logger.info("Element[" + key + "] is " + baseEl.getId() + ", counter: "
+        Logger.debug("Element[" + key + "] is " + baseEl.getId() + ", counter: "
             + counter);
         lastFoundObj = baseEl.getChild(sel.instance(counter));
       }

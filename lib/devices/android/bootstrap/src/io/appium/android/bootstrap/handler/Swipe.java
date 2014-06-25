@@ -58,7 +58,7 @@ public class Swipe extends CommandHandler {
       }
     }
 
-    Logger.info("Swiping from " + absStartPos.toString() + " to "
+    Logger.debug("Swiping from " + absStartPos.toString() + " to "
         + absEndPos.toString() + " with steps: " + steps.toString());
     final boolean rv = device.swipe(absStartPos.x.intValue(),
         absStartPos.y.intValue(), absEndPos.x.intValue(),

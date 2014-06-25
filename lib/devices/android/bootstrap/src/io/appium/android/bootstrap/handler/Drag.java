@@ -72,7 +72,7 @@ public class Drag extends CommandHandler {
       return getErrorResult(e.getMessage());
     }
 
-    Logger.info("Dragging from " + absStartPos.toString() + " to "
+    Logger.debug("Dragging from " + absStartPos.toString() + " to "
         + absEndPos.toString() + " with steps: " + dragArgs.steps.toString());
     final boolean rv = device.drag(absStartPos.x.intValue(),
         absStartPos.y.intValue(), absEndPos.x.intValue(),
@@ -93,7 +93,7 @@ public class Drag extends CommandHandler {
         return getErrorResult(e.getMessage());
       }
 
-      Logger.info("Dragging the element with id " + dragArgs.el.getId()
+      Logger.debug("Dragging the element with id " + dragArgs.el.getId()
           + " to " + absEndPos.toString() + " with steps: "
           + dragArgs.steps.toString());
       try {
@@ -109,7 +109,7 @@ public class Drag extends CommandHandler {
             + e.getMessage());
       }
     } else {
-      Logger.info("Dragging the element with id " + dragArgs.el.getId()
+      Logger.debug("Dragging the element with id " + dragArgs.el.getId()
           + " to destination element with id " + dragArgs.destEl.getId()
           + " with steps: " + dragArgs.steps);
       try {

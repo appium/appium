@@ -90,7 +90,7 @@ public class Orientation extends CommandHandler {
         .getDisplayRotation());
 
     Logger.debug("Desired orientation: " + orientation);
-    Logger.info("Current rotation: " + current);
+    Logger.debug("Current rotation: " + current);
 
     if (orientation.equalsIgnoreCase("LANDSCAPE")) {
       switch (current) {

@@ -18,7 +18,7 @@ public class TheWatchers {
   public boolean check() {
     // Send only one alert message...
     if (isDialogPresent() && (!alerted)) {
-      Logger.info("Emitting system alert message");
+      Logger.debug("Emitting system alert message");
       alerted = true;
     }
 

@@ -40,7 +40,7 @@ class SocketServer {
     executor = new AndroidCommandExecutor();
     try {
       server = new ServerSocket(port);
-      Logger.info("Socket opened on port " + port);
+      Logger.debug("Socket opened on port " + port);
     } catch (final IOException e) {
       throw new SocketServerException(
           "Could not start socket server listening on " + port);
@@ -81,12 +81,12 @@ class SocketServer {
         input.append((char) a);
       }
       String inputString = input.toString();
-      Logger.info("Got data from client: " + inputString);
+      Logger.debug("Got data from client: " + inputString);
       try {
         AndroidCommand cmd = getCommand(inputString);
-        Logger.info("Got command of type " + cmd.commandType().toString());
+        Logger.debug("Got command of type " + cmd.commandType().toString());
         res = runCommand(cmd);
-        Logger.info("Returning result: " + res);
+        Logger.debug("Returning result: " + res);
       } catch (final CommandTypeException e) {
         res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage())
             .toString();
@@ -109,7 +109,7 @@ class SocketServer {
    * @throws SocketServerException
    */
   public void listenForever() throws SocketServerException {
-    Logger.info("Appium Socket Server Ready");
+    Logger.debug("Appium Socket Server Ready");
     UpdateStrings.loadStringsJson();
     dismissCrashAlerts();
     final TimerTask updateWatchers = new TimerTask() {
@@ -125,7 +125,7 @@ class SocketServer {
 
     try {
       client = server.accept();
-      Logger.info("Client connected");
+      Logger.debug("Client connected");
       in = new BufferedReader(new InputStreamReader(client.getInputStream(), "UTF-8"));
       out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
       while (keepListening) {
@@ -134,7 +134,7 @@ class SocketServer {
       in.close();
       out.close();
       client.close();
-      Logger.info("Closed client connection");
+      Logger.debug("Closed client connection");
     } catch (final IOException e) {
       throw new SocketServerException("Error when client was trying to connect");
     }
@@ -143,9 +143,9 @@ class SocketServer {
   public void dismissCrashAlerts() {
     try {
       new UiWatchers().registerAnrAndCrashWatchers();
-      Logger.info("Registered crash watchers.");
+      Logger.debug("Registered crash watchers.");
     } catch (Exception e) {
-      Logger.info("Unable to register crash watchers.");
+      Logger.debug("Unable to register crash watchers.");
     }
   }
 

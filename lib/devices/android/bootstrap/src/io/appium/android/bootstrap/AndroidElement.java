@@ -233,12 +233,12 @@ public class AndroidElement {
 
   public boolean setText(final String text) throws UiObjectNotFoundException {
     if (UnicodeEncoder.needsEncoding(text)) {
-      Logger.info("Sending Unicode text to element: " + text);
+      Logger.debug("Sending Unicode text to element: " + text);
       String encodedText = UnicodeEncoder.encode(text);
       Logger.debug("Encoded text: " + encodedText);
       return el.setText(encodedText);
     } else {
-      Logger.info("Sending plain text to element: " + text);
+      Logger.debug("Sending plain text to element: " + text);
       return el.setText(text);
     }
   }

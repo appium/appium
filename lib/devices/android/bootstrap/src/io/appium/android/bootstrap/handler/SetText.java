@@ -36,7 +36,7 @@ public class SetText extends CommandHandler {
         if (text.endsWith("\\n")) {
           pressEnter = true;
           text = text.replace("\\n", "");
-          Logger.info("Will press enter after setting text");
+          Logger.debug("Will press enter after setting text");
         }
         final Boolean result = el.setText(text);
         if (pressEnter) {

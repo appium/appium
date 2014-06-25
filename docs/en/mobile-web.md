@@ -33,6 +33,19 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 }
 ```
 
+```php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'platformName' => 'iOS',
+            'platformVersion' => '7.1',
+            'browserName' => 'Safari',
+            'deviceName' => 'iPhone Simulator'
+        )
+    )
+);
+```
+
 ## Mobile Safari on a Real iOS Device
 
 To be able to run your tests against mobile Safari we use the [SafariLauncher
@@ -124,6 +137,32 @@ driver.find_element_by_id('comments').send_keys('My comment')
 driver.quit()
 ```
 
+```php
+class ContextTests extends PHPUnit_Extensions_AppiumTestCase
+{
+    public static $browsers = array(
+        array(
+            'desiredCapabilities' => array(
+                'platformName' => 'iOS',
+                'platformVersion' => '7.1',
+                'browserName' => 'Safari',
+                'deviceName' => 'iPhone Simulator'
+            )
+        )
+    );
+
+    public function testThings()
+    {
+        $this->get('http://saucelabs.com/test/guinea-pig');
+
+        $div = $this->byId('i_am_an_id');
+        $this->assertEquals('I am a div', $div->text());
+
+        $this->byId('comments')->sendKeys('My comment');
+    }
+}
+```
+
 ## Mobile Chrome on Emulator or Real Device
 
 Pre-requisites:
@@ -149,6 +188,19 @@ Then, use desired capabilities like these to run your test in Chrome:
   'deviceName': 'Android Emulator',
   'browserName': 'Chrome'
 }
+```
+
+```php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'platformName' => 'Android',
+            'platformVersion' => '4.4',
+            'browserName' => 'Chrome',
+            'deviceName' => 'Android Emulator'
+        )
+    )
+);
 ```
 
 Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to automate the built-in browser. On all devices you can use the 'Chromium' `browserName` cap to automate a build of Chromium.

@@ -51,7 +51,7 @@ public static $browsers = array(
 To be able to run your tests against mobile Safari we use the [SafariLauncher
  App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once
  Safari has been launched the Remote Debugger automatically connects using
- the [ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy).
+ the [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
 **NOTE:** There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
 in the ios-webkit-debug-proxy. You have to trust the machine before you can
@@ -61,6 +61,7 @@ against your iOS device.
 ## Setup
 
 Before you can run your tests against Safari on a real device you will need to:
+
 * Have the **ios-webkit-debug-proxy** installed, running and listening on port 27753 (see the
 [hybrid docs](hybrid.md) for instructions)
 * Turn on **web inspector** on iOS device (**settings > safari >
@@ -68,6 +69,7 @@ advanced**, only for iOS 6.0 and up)
 * Create a **provisioning profile** that can be used to deploy the SafariLauncherApp.
 
 To create a profile for the launcher go into the **Apple Developers Member Center** and:
+
   * **Step 1:** Create a **new App Id** and select the WildCard App ID option and set it to "*"
   * **Step 2:** Create a **new Development Profile** and for App Id select the one created in step 1.
   * **Step 3:** Select your **certificate(s) and device(s)** and click next.
@@ -77,7 +79,7 @@ To create a profile for the launcher go into the **Apple Developers Member Cente
 
 Now that you have a profile open a terminal and run the following commands:
 
-```bash
+<code>
 $ git clone https://github.com/appium/appium.git
 $ cd appium
 
@@ -92,7 +94,7 @@ $ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile
 
 # Once successfully configured and with the safari launcher built, start the server as per usual
 $ node /lib/server/main.js -U <UDID>
-```
+</code>
 
 ## Running your test
 

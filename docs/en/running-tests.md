@@ -5,7 +5,9 @@
 Test apps run on the simulator have to be compiled specifically for the
 simulator, for example by executing the following command in the Xcode project:
 
-    > xcodebuild -sdk iphonesimulator6.0
+<code>
+$ xcodebuild -sdk iphonesimulator6.0
+</code>
 
 This creates a `build/Release-iphonesimulator` directory in your Xcode project
 that contains the `.app` package that you'll need to communicate with the
@@ -84,17 +86,22 @@ or [Linux](running-on-linux.md))
 for more information). If the Android SDK tools are on your path, you can
 simply run:
 
-    emulator -avd <MyAvdName>
-
+<code>
+$ emulator -avd <MyAvdName>
+</code>
 And wait for the android emulator to finish launching. Sometimes, for various
 reasons, `adb` gets stuck. If it's not showing any connected devices or
 otherwise failing, you can restart it by running:
 
-    adb kill-server && adb devices
+<code>
+$ adb kill-server && adb devices
+<code>
 
 Now, make sure Appium is running:
 
-    node .
+<code>
+$ node .
+<code>
 
 Then script your WebDriver test, sending in the following desired capabilities:
 

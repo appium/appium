@@ -1,11 +1,17 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired")
   , safeClear = require('../../../helpers/safe-clear')
   , _ = require('underscore');
 
-desired.unicodeKeyboard = true;
+// running batched will pull `unicodeKeyboard` into all tests
+var getAppPath = require('../../../helpers/app').getAppPath;
+var ucDesired = {
+  app: getAppPath('ApiDemos'),
+  device: 'Android',
+  unicodeKeyboard: true,
+  resetKeyboard: true
+};
 
 // TODO: fix clear logic
 describe("apidemo - keyboard @skip-ci", function () {
@@ -22,7 +28,7 @@ describe("apidemo - keyboard @skip-ci", function () {
       .nodeify(done);
   };
 
-  setup(this,  _.defaults({appActivity: ".view.Controls1" }, desired))
+  setup(this,  _.defaults({appActivity: ".view.Controls1" }, ucDesired))
     .then(function (d) { driver = d; });
 
   it('should be able to edit a text field', function (done) {

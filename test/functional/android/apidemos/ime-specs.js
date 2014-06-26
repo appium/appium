@@ -1,18 +1,23 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired")
   , _ = require('underscore');
 
-// ensure the unicode keyboard will be available
-desired.unicodeKeyboard = true;
+// running batched will pull `unicodeKeyboard` into all tests
+var getAppPath = require('../../../helpers/app').getAppPath;
+var ucDesired = {
+  app: getAppPath('ApiDemos'),
+  device: 'Android',
+  unicodeKeyboard: true,
+  resetKeyboard: true
+};
 
 describe("apidemo - ime", function () {
   var unicodeImeId = 'io.appium.android.ime/.UnicodeIME'
     , latinImeId = 'com.android.inputmethod.latin/.LatinIME'
     , driver;
 
-  setup(this, _.defaults({appActivity: "view.Controls1" }, desired))
+  setup(this, _.defaults({appActivity: "view.Controls1" }, ucDesired))
     .then(function (d) { driver = d; });
 
   beforeEach(function (done) {

@@ -50,6 +50,7 @@
 |`intentFlags`| Flags that will be used to start activity (default `0x10200000`)| e.g. `0x10200000`
 |`optionalIntentArguments`| Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/tools/help/adb.html#IntentSpec) | e.g. `--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`, etc.
 |`unicodeKeyboard`| Enable Unicode input, default `false`| `true` or `false`|
+|`resetKeyboard`| Reset keyboard to its original state, after running Unicode tests with `unicodeKeyboard` capability. Ignored if used alone. Default `false`| `true` or `false`|
 
 ### iOS Only
 

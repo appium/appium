@@ -74,7 +74,7 @@ allow a connection to be established. Turn it on by going to **settings >
 safari > advanced**. Please be aware that the web inspector was **added as
 part of iOS 6** and was not available previously.
 
-## Wd.js Code example
+* We're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
 
 ```js
   // assuming we have an initialized `driver` object working on the UICatalog app
@@ -98,37 +98,29 @@ part of iOS 6** and was not available previously.
   });
 ```
 
-* For the full context, see [this node example](/sample-code/examples/node/hybrid.js)
-* *we're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
-
-## Wd.java Code example
-
 ```java
-  //setup the web driver and launch the webview app.
-  DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-  desiredCapabilities.setCapability("device", "iPhone Simulator");
-  desiredCapabilities.setCapability("app", "http://appium.s3.amazonaws.com/WebViewApp6.0.app.zip");
-  URL url = new URL("http://127.0.0.1:4723/wd/hub");
-  RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
+capabilities.setCapability("platformVersion", "7.1");
+capabilities.setCapability("platformName", "iOS");
+capabilities.setCapability("deviceName", "iPhone Simulator");
+capabilities.SetCapability("app", app);
 
-  //switch to the latest web view
-  for(String contextHandle : remoteWebDriver.getContexts()){
-    remoteWebDriver.switchTo().context(contextHandle);
+driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+
+WebElement button = driver.findElement(By.id("buttonStartWebview"));
+button.click();
+Thread.sleep(6000);
+Set<String> contextNames = driver.getContextHandles();
+for (String contextName : contextNames) {
+  System.out.println(contextName);
+  if (contextName.contains("WEBVIEW")){
+    driver.context(contextName);
   }
-
-  //Interact with the elements on the guinea-pig page using id.
-  WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
-  Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
-  remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
-
-  //leave the webview to go back to native app.
-  remoteWebDriver.switchTo().context('NATIVE_APP')
-
-  //close the app.
-  remoteWebDriver.quit();
+}
+WebElement inputField = driver.findElement(By.id("name_input"));
+inputField.sendKeys("Some name");
 ```
-
-## Wd.rb Code example using cucumber
 
 ```ruby
 TEST_NAME = "Example Ruby Test"
@@ -163,15 +155,6 @@ And(/^I click a webview button $/) do
   @driver.find_element(:css, ".green_button").click
 end
 ```
-
-### Troubleshooting Webview with Ruby:
-
-I created a quick function in my helper class to find web elements no matter
-what window its in (this is useful if your webview id changes or if you are
-using the same codebase to test android and ios)
-https://gist.github.com/feelobot/7309729
-
-## Wd.py Code example
 
 ```python
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
@@ -247,8 +230,6 @@ switching contexts, etc...
 Make sure
 [setWebContentsDebuggingEnabled](http://developer.android.com/reference/android/webkit/WebView.html#setWebContentsDebuggingEnabled(boolean)) is set to true as described in the [remote debugging docs](https://developer.chrome.com/devtools/docs/remote-debugging#configure-webview).
 
-## Wd.js Code example
-
 ```js
 // assuming we have an initialized `driver` object working on a hybrid app
 driver.context("WEBVIEW", function(err) { // choose the only available view
@@ -265,32 +246,27 @@ driver.context("WEBVIEW", function(err) { // choose the only available view
 });
 ```
 
-## Wd.java Code example
-
 ```java
-  //setup the web driver and launch the webview app.
-  DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-  desiredCapabilities.setCapability("device", "Selendroid");
-  desiredCapabilities.setCapability("app", "/path/to/some.apk");
-  URL url = new URL("http://127.0.0.1:4723/wd/hub");
-  RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
+capabilities.setCapability("automationName","Selendroid");
+capabilities.setCapability("platformName", "Android");
+capabilities.setCapability("app", myApp);
+driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
-  //switch to the web view
-  remoteWebDriver.switchTo().context("WEBVIEW");
-
-  //Interact with the elements on the guinea-pig page using id.
-  WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
-  Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
-  remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
-
-  //leave the webview to go back to native app.
-  remoteWebDriver.switchTo().context("NATIVE_APP");
-
-  //close the app.
-  remoteWebDriver.quit();
+WebElement button = driver.findElement(By.id("buttonStartWebview"));
+button.click();
+Thread.sleep(6000);
+Set<String> contextNames = driver.getContextHandles();
+for (String contextName : contextNames) {
+  System.out.println(contextName);
+  if (contextName.contains("WEBVIEW")){
+    driver.context(contextName);
+  }
+}
+WebElement inputField = driver.findElement(By.id("name_input"));
+inputField.sendKeys("Some name");
 ```
-
-## Wd.py Code example
 
 ```python
 # assuming we have an initialized `driver` object working on a hybrid app

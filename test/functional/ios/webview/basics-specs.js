@@ -27,13 +27,13 @@ describe('webview - basics', function () {
   });
   it('getting list multiple times should not crash appium', function (done) {
     driver
-      .contexts().should.eventually.have.length.above(1)
-      .contexts().should.eventually.have.length.above(1)
-      .contexts().should.eventually.have.length.above(1)
-      .contexts().should.eventually.have.length.above(1)
-      .contexts().should.eventually.have.length.above(1)
-      .contexts().should.eventually.have.length.above(1)
-      .contexts().should.eventually.have.length.above(1)
+      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length.above(0)
+      .contexts().should.eventually.have.length.above(0)
       .nodeify(done);
   });
   it('contexts should be strings', function (done) {
@@ -45,7 +45,8 @@ describe('webview - basics', function () {
     }).nodeify(done);
   });
   it('setting context to \'WEBVIEW_1\' should work', function (done) {
-    driver.contexts().should.eventually.have.length.above(0)
+    driver
+      .contexts().should.eventually.have.length.above(0)
       .context("WEBVIEW_1")
       .sleep(500)
       .get(env.GUINEA_TEST_END_POINT)

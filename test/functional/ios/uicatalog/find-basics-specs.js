@@ -136,8 +136,10 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('findElement(s) containing name', function () {
     after(function (done) {
-      driver.clickBack()
-      .nodeify(done);
+      driver
+        .elementByName('UICatalog').click()
+        .sleep(1000)
+        .nodeify(done);
     });
 
     it('should find one element', function (done) {
@@ -155,6 +157,27 @@ describe('uicatalog - find - basics @skip-ios6', function () {
           .should.eventually.have.length(2)
         .nodeify(done);
     });
+  });
+
+  describe('duplicate text field', function () {
+    after(function (done) {
+      driver
+        .elementByName('UICatalog').click()
+        .sleep(1000)
+        .nodeify(done);
+    });
+
+    it('should find only one text field', function (done) {
+      driver
+        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .sleep(2000)
+        .elementByName('Empty list')
+          .elementByClassName('>','UIATableCell')
+            .elementsByClassName('>','UIATextField')
+              .should.eventually.have.length(1)
+        .nodeify(done);
+    });
+
   });
 
 

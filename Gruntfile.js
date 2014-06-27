@@ -71,7 +71,11 @@ module.exports = function (grunt) {
       }
     }
   , jscs: {
-    src: '**/*.js',
+    src: [
+      '**/*.js', '!submodules/**', '!node_modules/**',
+      '!lib/server/static/**', '!lib/devices/firefoxos/atoms/*.js',
+      '!test/harmony/**/*.js', '!sample-code/examples/node/**/*-yiewd.js',
+      '!sample-code/apps/**', '!sample-code/examples/php/vendor/**'],
     options: {
         config: ".jscs.json"
       }

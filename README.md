@@ -99,7 +99,7 @@ The main guide for getting started writing and running tests is [the running tes
 Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and extend it so that you can specify mobile-targeted [desired capabilities](docs/en/caps.md) to run your test through Appium.
 
 You find elements by using a subset of WebDriver's element-finding strategies.
-See [finding elements](docs/en/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating mobile gestures](docs/en/gestures.md) like tap, flick, and swipe.
+See [finding elements](docs/en/finding-elements.md) for detailed information. We also have several extensions to the JSON Wire Protocol for [automating mobile gestures](docs/en/touch-actions.md) like tap, flick, and swipe.
 
 You can also automate web views in hybrid apps! See the [hybrid app guide](docs/en/hybrid.md)
 

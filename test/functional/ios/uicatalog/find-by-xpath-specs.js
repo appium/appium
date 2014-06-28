@@ -15,13 +15,12 @@ describe('uicatalog - find by xpath @skip-ios6', function () {
       .click();
   };
 
-  if (process.env.FAST_TESTS) {
-    afterEach(function (done) {
-      driver
-        .clickButton('UICatalog')
-        .nodeify(done);
-    });
-  }
+  afterEach(function (done) {
+    driver
+      .elementByName('UICatalog').click()
+      .sleep(1000)
+      .nodeify(done);
+  });
 
   it('should return the last button', function (done) {
     driver
@@ -85,11 +84,44 @@ describe('uicatalog - find by xpath @skip-ios6', function () {
       .getAttribute('name').should.become("X Button")
       .nodeify(done);
   });
+
   it('should filter by partial text', function (done) {
     driver
       .resolve(setupXpath(driver))
       .elementByXPath("//UIATableCell//UIAButton[contains(@name, 'X ')]").text()
         .should.become("X Button")
       .nodeify(done);
+  });
+
+  describe('duplicate text field', function () {
+
+    it('should find only one text field', function (done) {
+      driver
+        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .sleep(2000)
+        .elementsByXPath('//UIATableView["Empty list"]/UIATableCell[1]/UIATextField')
+          .should.eventually.have.length(1)
+        .nodeify(done);
+    });
+
+    it('should find only one text field when doing relative search', function (done) {
+      driver
+        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .sleep(2000)
+        .elementsByXPath('//UIATableView["Empty list"]')
+        .elementsByXPath('>', '//UIATableCell[1]/UIATextField')
+          .should.eventually.have.length(1)
+        .nodeify(done);
+    });
+
+    it('should find only one secure text field', function (done) {
+      driver
+        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .sleep(2000)
+        .elementsByXPath('//UIATableView["Empty list"]/UIATableCell[3]/UIASecureTextField')
+          .should.eventually.have.length(1)
+        .nodeify(done);
+    });
+
   });
 });

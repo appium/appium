@@ -178,6 +178,17 @@ describe('uicatalog - find - basics @skip-ios6', function () {
         .nodeify(done);
     });
 
+    it('should find only one secure text field', function (done) {
+      driver
+        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .sleep(2000)
+        .elementByName('Empty list')
+          .elementsByClassName('>','UIATableCell').at(2)
+            .elementsByClassName('>','UIASecureTextField')
+              .should.eventually.have.length(1)
+        .nodeify(done);
+    });
+
   });
 
 

@@ -274,7 +274,7 @@ reset_apidemos() {
     echo "* Configuring and cleaning/building Android test app: ApiDemos"
     run_cmd "$grunt" configAndroidApp:ApiDemos
     run_cmd "$grunt" buildAndroidApp:ApiDemos
-    uninstall_android_app com.example.android.apis
+    uninstall_android_app io.appium.android.apis
     apidemos_reset=true
 }
 
@@ -395,11 +395,11 @@ reset_selendroid_quick() {
     if $include_dev ; then
         if ! $apidemos_reset; then
             reset_apidemos
-            uninstall_android_app com.example.android.apis.selendroid
+            uninstall_android_app io.appium.android.apis.selendroid
         fi
         if ! $toggletest_reset; then
             reset_toggle_test
-            uninstall_android_app com.example.toggletest.selendroid
+            uninstall_android_app io.appium.toggletest.selendroid
         fi
         run_cmd pushd /tmp/appium/selendroid
         echo "* Downloading selendroid test app"
@@ -438,11 +438,11 @@ reset_selendroid() {
     if $include_dev ; then
         if ! $apidemos_reset; then
             reset_apidemos
-            uninstall_android_app com.example.android.apis.selendroid
+            uninstall_android_app io.appium.android.apis.selendroid
         fi
         if ! $toggletest_reset; then
             reset_toggle_test
-            uninstall_android_app com.example.toggletest.selendroid
+            uninstall_android_app io.appium.toggletest.selendroid
         fi
         echo "* Linking selendroid test app"
         run_cmd rm -rf "$appium_home"/sample-code/apps/selendroid-test-app.apk

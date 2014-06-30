@@ -179,7 +179,7 @@ IF %doSelendroid% == 1 (
     CALL :runCmd "RD /S /Q sample-code\apps\WebViewDemo | VER > NUL"
     CALL :runCmd "MKDIR sample-code\apps\WebViewDemo"
     CALL :runCmd "XCOPY submodules\selendroid\selendroid-test-app sample-code\apps\WebViewDemo /E /Q"
-    CALL :uninstallAndroidApp com.example.android.apis.selendroid
+    CALL :uninstallAndroidApp io.appium.android.apis.selendroid
     CALL :uninstallAndroidApp io.selendroid.testapp
     CALL :uninstallAndroidApp io.selendroid.testapp.selendroid
     CALL :uninstallAndroidApp org.openqa.selendroid.testapp

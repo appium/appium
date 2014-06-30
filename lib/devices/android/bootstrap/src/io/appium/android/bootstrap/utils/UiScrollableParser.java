@@ -229,6 +229,11 @@ public class UiScrollableParser {
             UiSelector arg = (UiSelector) convertedArgs.get(0);
             returnedUiObject = true;
             uiObject = new UiObject(arg);
+            // scrollIntoView must return the object if it's already in view.
+            // without the exists check, the parser will error because there's no scrollable.
+            if (uiObject.exists()) {
+              return;
+            }
             Logger.debug("Invoking method: " + method + " with: " + uiObject);
             method.invoke(scrollable, uiObject);
             Logger.debug("Invoke complete.");

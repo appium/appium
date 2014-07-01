@@ -31,17 +31,38 @@ which has integrations with a lot of source code editors. The file `
   "strict": true,
   "undef": true,
   "unused": true,
-  "trailing": true,
   "node": true,
-  "es5": true,
-  "white": true,
-  "indent": 2
+  "eqeqeq": true,
+  "trailing": true,
+  "indent": 2    
 }
 ```
 
-These defined what we want to see warnings about, etc...,
-while we're editing. See [this page](http://www.jshint.com/platforms/) for
-the list of editors and platforms and how to get your editor set up with
+Since jshint does not enforce code style anymore, we also use 
+[jscs](https://github.com/mdevils/node-jscs), for which it also exists some 
+source editor integrations. The configuration file is:
+
+```json
+{
+  "excludeFiles": ["submodules/**", "node_modules/**",
+    "./lib/server/static/**", "./lib/devices/firefoxos/atoms/*.js",
+    "./test/harmony/**/*.js", "./sample-code/examples/node/**/*-yiewd.js",
+    "./sample-code/apps/**", "./sample-code/examples/php/vendor/**"],
+  "requireCurlyBraces": ["for", "while", "do", "try", "catch"],
+  "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch",
+    "return", "try", "catch", "function"],
+  "disallowMixedSpacesAndTabs": true,
+  "disallowTrailingWhitespace": true,
+  "requireSpacesInFunctionExpression": {
+    "beforeOpeningCurlyBrace": true
+  }
+}
+```
+
+These configuration files define the warnings you will see in your favorite 
+editor. See [this page for jshint](http://www.jshint.com/platforms/) and 
+[this page for jscs](https://github.com/mdevils/node-jscs#friendly-packages) to
+get the list of editors and platforms supported and how setup your editor for
 automatic linting.
 
 ## Style notes

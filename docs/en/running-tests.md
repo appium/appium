@@ -73,7 +73,8 @@ capabilities.setCapability("app", myApp);
 In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your simulator-compiled .app directory or .zip
-* A url of a zip file containg your .app package
+* A url of a zip file containing your .app package
+* A path to one of the sample app relative to the appium install root
 
 Using your WebDriver library of choice, set the remote session to use these
 capabilities and connect to the server running at port 4723 of localhost (or
@@ -148,7 +149,8 @@ capabilities.setCapability("app", myApp);
 In this set of capabilities, `myApp` must be either:
 
 * A local absolute path to your .apk or a .zip of it
-* A url of a zip file containg your .apk
+* A url of a zip file containing your .apk
+* A path to one of the sample app relative to the appium install root
 
 Using your WebDriver library of choice, set the remote session to use these
 capabilities and connect to the server running at port 4723 of localhost (or

@@ -72,7 +72,8 @@ connections from a client, listens for commands, executes those commands on a
 mobile device, and responds with an HTTP response representing the result of
 the command execution. The fact that we have a client/server architecture
 opens up a lot of possibilities: we can write our test code in any language
-that has a client. We can put the server on a different machine than our
+that has a http client API, but it is easier to use one of the Appium client
+library. We can put the server on a different machine than our
 tests are running on. We can write test code and rely on a cloud service
 like [Sauce Labs](https://saucelabs.com/mobile) to receive and interpret the commands.
 

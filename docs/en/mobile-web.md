@@ -15,7 +15,7 @@ attempting to use Appium.
 
 Then, use desired capabilities like these to run your test in mobile Safari:
 
-```js
+```javascript
 {
   platformName: 'iOS'
   , platformVersion: '7.1'
@@ -180,7 +180,7 @@ Pre-requisites:
 
 Then, use desired capabilities like these to run your test in Chrome:
 
-```js
+```javascript
 {
   platformName: 'Android'
   , platformVersion: '4.4'

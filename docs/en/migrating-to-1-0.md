@@ -87,10 +87,18 @@ driver.contexts
 current = driver.context
 ```
 
+```javascript
+driver.contexts().then(function (contexts) { /*...*/ })
+```
+
 And to switch between them, you use
 
 ```python
 driver.switch_to.context("WEBVIEW")
+```
+
+```javascript
+driver.currentContext().then(function (context) { /*...*/ })
 ```
 
 ## No more `execute_script("mobile: xxx")`

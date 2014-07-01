@@ -31,7 +31,7 @@ Basically, first make sure Appium is running:
 
 Then script your WebDriver test, sending in the following desired capabilities:
 
-```js
+```javascript
 {
     platformName: 'iOS',
     platformVersion: '7.1',
@@ -106,7 +106,7 @@ Now, make sure Appium is running:
 
 Then script your WebDriver test, sending in the following desired capabilities:
 
-```js
+```javascript
 {
     platformName: 'Android',
     platformVersion: '4.4',
@@ -168,7 +168,7 @@ To use Selendroid, all that is required is to slightly change the set of
 desired capabilities mentioned above, by adding the `automationName` capability
 and specifying the Selendroid automation backend.
 
-```js
+```javascript
 {
     automationName: 'Selendroid',
     platformName: 'Android',

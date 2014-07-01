@@ -113,3 +113,4 @@ output when it's run in verbose mode so that we can diagnose what's going on.
 |Action|Error|Resolution|
 |------|-----|----------|
 |Running reset.sh|xcodebuild: error: SDK "iphonesimulator6.1" cannot be located|Install the iPhone 6.1 SDK _or_ build the test apps with a separate SDK, e.g., `grunt buildApp:UICatalog:iphonesimulator5.1`|
+|Running reset.sh|Warning: Task "setGitRev" not found. Use --force to continue.|Update the submodules with `git submodule update --init` and run `reset.sh` again|

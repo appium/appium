@@ -2,6 +2,8 @@
 
 > Appium是一个支持原生,混合和移动web apps的开源的跨平台测试框架工具
 
+## [文档网站](http://appium.io/documentation.html?lang=zh)
+
 ## 支持平台
 
 * iOS

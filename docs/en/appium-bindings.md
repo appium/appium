@@ -709,7 +709,9 @@ arguments.put("element", element.getId());
 ```
 
 ```javascript
-todo: javascript
+return driver.elementByName().then(function (el) {
+  return driver.execute('mobile: scrollTo', {element: el.value});
+});
 ```
 
 ```php

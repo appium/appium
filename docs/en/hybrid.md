@@ -30,7 +30,7 @@ Here are the steps required to talk to a web view in your Appium test:
 
 ## Execution against a real iOS device
 
-To interrogate and interact with a web view appium establishes a connection
+To interact with a web view appium establishes a connection
 using a remote debugger. When executing the examples below against a
 simulator this connection can be established directly as the simulator and
 the appium server are on the same machine. When executing against a real

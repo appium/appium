@@ -8,7 +8,7 @@ apps because Appium relies on OS X-only libraries to support iOS testing.
 
 ## Setup
 
-To get started, you'll need to install node.js (v.0.8 or greater). Just
+To get started, you'll need to install node.js (v.0.10 or greater). Just
 follow the [instructions for your flavor of linux](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager).
 
 Once you've got node.js installed, install the [Android SDK](http://developer.android.com/sdk/index.html).

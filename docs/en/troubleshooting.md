@@ -96,7 +96,8 @@ output when it's run in verbose mode so that we can diagnose what's going on.
 ## Known Issues
 
 * If you've installed Node from the Node website, it requires that you use sudo
-  for `npm`. This is not ideal. Try to get node with `brew install node` instead!
+  for `npm`. This is not ideal. Try to get node with 
+  [n](https://github.com/visionmedia/n) or `brew install node` instead!
 * Webview support works on real iOS devices with a proxy, see [discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ).
 * Sometimes iOS UI elements become invalidated milliseconds after they are
   found. This results in an error that looks like `(null) cannot be tapped`.

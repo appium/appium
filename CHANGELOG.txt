@@ -1,3 +1,58 @@
+CHANGES IN VERSION 1.2.0 (from 1.1.0)
+======================================
+
+#### General
+- migrated to express 4 for the webserver
+- allow setting tmp dir with --tmp flag
+- upgrade many submodules including wd
+- add --strict-caps mode which will cause sessions to fail which send in
+  bad or unknown caps
+- add error handling for invalid multi-pointer gestures
+- add autoWebview capability to automatically get into a webview context of a
+  hybrid app
+- remove deprecated -real xpath locator strategy
+- allow bypassing appium's sudo checks
+- add generic crash handler
+- many documentation and sample code updates
+
+#### iOS
+- prevent log lines without dates from being filetered out
+- add keepAppToRetainPrefs cap to avoid deleting location plists
+- check for accessibility id matching selector then fall back to string match
+- add flag for specifying where in .app hierarchy Localizable.strings is
+- use a dynamic bootstrap in appium-uiauto
+- upgrade mechanic
+- implement pullFolder to get an entire folder from the sim
+- make sure launchAndKill can wait for specified directories before killing sim
+- get rid of ForceQuitInstruments
+- update hideKeyboard to take various possible strategies
+- fix launchAndKill to wait for safari-specific directories
+- make sure all pageload timeouts are cleared and called only once
+- disable ios grace delay
+- don't return duplicate elements
+
+#### Android
+- renamed keyevent to press_keycode and long_press_keycode
+- add dedupe to complex_find
+- fix activity-finding logic
+- fix error handling in installApp
+- extract adb code into its own package, appium-adb
+- add support for opening notifications
+- add automation support for embedded chromium
+- fix pushStrings to work with 'app' as package
+- fix id serach
+- cause appium to fail if we can't parse package/activity
+- add package name to android webview context
+- make sure UNZIP env var doesn't confuse our internal unzip calls
+- add appIntent etc capabilities so app can be launched with a certain intent
+- add IME methods, and an appium-specific IME that is automatically installed
+- add unicodeKeyboard capability which allows sending unicode text
+- fix installApp, prevent a server crash
+
+#### Selendroid
+- faster selendroid installer
+
+
 CHANGES IN VERSION 1.1.0 (from 1.0.0)
 ======================================
 

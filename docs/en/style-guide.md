@@ -49,28 +49,28 @@ automatic linting.
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
 
-    ```js
+    ```javascript
     var x = 1;
     ```
     not
-    ```js
+    ```javascript
     var x=1;
     ```        
     
 *   Spaces after commas and colons in lists, objects, function calls, etc...
 
-    ```js
+    ```javascript
     var x = myFunc("lol", {foo: bar, baz: boo});
     ```
     not
-    ```js
+    ```javascript
     var x = myFunc("lol",{foo:bar,baz:boo});
     ```
 
 *   Always end statements with semicolons
 *   Comma-first
 
-    ```js
+    ```javascript
     var x = {
       foo: 'bar'
     , baz: 'boo'
@@ -80,7 +80,7 @@ automatic linting.
 
 *   Brackets for `function`, `if`, etc... go on same line, `else` gets sandwiched
 
-    ```js
+    ```javascript
     if (foo === bar) {
       // do something
     } else {
@@ -90,35 +90,35 @@ automatic linting.
 
 *   Space after `if`, `for`, and `function`:
 
-    ```js
+    ```javascript
     if (foo === bar) {
     ```
-    ```js
+    ```javascript
     for (var i = 0; i < 10; i ++) {
     ```
-    ```js
+    ```javascript
     var lol = function (foo) {
     ```
     not
-    ```js
+    ```javascript
     if(foo === bar) {
     ```
-    ```js
+    ```javascript
     for(var i = 0; i < 10; i ++) {
     ```
-    ```js
+    ```javascript
     var lol = function(foo) {
     ```
 
 *   Avoid bracketless `if` for one-liners:
 
-    ```js
+    ```javascript
     if (foo === bar) {
       foo++;
     }
     ```
     not
-    ```js
+    ```javascript
     if (foo === bar)
       foo++;
     ```
@@ -127,21 +127,21 @@ automatic linting.
 *   Line length shouldn't be longer than 79 characters
 *   Break up long strings like this:
 
-    ```js
+    ```javascript
     myFunc("This is a really long string that's longer " +
             "than 79 characters so I broke it up, woo");
     ```
 
 *   Comments should line up with code
 
-    ```js
+    ```javascript
     if (foo === 5) {
       myFunc(foo);
       // foo++;
     }
     ```
     not
-    ```js
+    ```javascript
     if (foo === 5) {
       myFunc(foo);
     //foo++;
@@ -150,7 +150,7 @@ automatic linting.
 
 *   Subclassing by extending prototypes
 
-    ```js
+    ```javascript
     var _ = require('underscore');
 
     var SuperClass = function () {
@@ -172,7 +172,7 @@ automatic linting.
 
 *   Callbacks are always last in function definitions
 
-    ```js
+    ```javascript
     var foo = function (arg1, arg2, cb) {
       ...
     };
@@ -180,31 +180,31 @@ automatic linting.
 
 *   Define functions as variables
 
-    ```js
+    ```javascript
     var myFunc = function (a, b, c) {};
     ```
     not
-    ```js
+    ```javascript
     function myFunc (a, b, c) {}
     ```
     
 *   Variable names should be camelCased:
 
-    ```js
+    ```javascript
     var myVariable = 42;
     ```
     not
-    ```js
+    ```javascript
     var my_variable = 42;
     ```
 
 *    Check for undefined
 
-    ```js
+    ```javascript
     typeof myVariable === "undefined"
     ```
     not
-    ```js
+    ```javascript
     myVariable === undefined
     ```
 
@@ -214,7 +214,7 @@ Keep on the same line if it makes sense semantically and length is not an issue:
 
 Examples:
 
-```js
+```javascript
   driver.elementByTagName('el1').should.become("123")
     .nodeify(done);
   
@@ -225,7 +225,7 @@ Examples:
 
 Alternatively use extra indents to improve readability:
 
-```js
+```javascript
 h.driver
   .elementById('comments')
     .clear()

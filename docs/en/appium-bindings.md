@@ -40,7 +40,7 @@ driver.lockScreen(3);
 ```
 
 ```javascript
-todo: javascript
+driver.lock(3)
 ```
 
 ```php
@@ -68,7 +68,7 @@ driver.runAppInBackground(5);
 ```
 
 ```javascript
-todo: javascript
+driver.backgroundApp(5)
 ```
 
 ```php
@@ -96,7 +96,7 @@ driver.hideKeyboard();
 ```
 
 ```javascript
-todo: javascript
+driver.hideKeyboard()
 ```
 
 ```php
@@ -125,7 +125,8 @@ driver.isAppInstalled("com.example.android.apis")
 ```
 
 ```javascript
-todo: javascript
+driver.isAppInstalled("com.example.android.apis")
+  .then(function (isAppInstalled) { /*...*/ })
 ```
 
 ```php
@@ -153,7 +154,7 @@ driver.installApp("path/to/my.apk")
 ```
 
 ```javascript
-todo: javascript
+driver.installApp("path/to/my.apk")
 ```
 
 ```php
@@ -181,7 +182,7 @@ driver.removeApp("com.example.android.apis")
 ```
 
 ```javascript
-todo: javascript
+driver.removeApp("com.example.android.apis")
 ```
 
 ```php
@@ -209,7 +210,7 @@ driver.shake()
 ```
 
 ```javascript
-todo: javascript
+driver.shake()
 ```
 
 ```php
@@ -237,7 +238,7 @@ driver.closeApp()
 ```
 
 ```javascript
-todo: javascript
+driver.closeApp()
 ```
 
 ```php
@@ -265,7 +266,7 @@ driver.launchApp()
 ```
 
 ```javascript
-todo: javascript
+driver.launchApp()
 ```
 
 ```php
@@ -293,7 +294,7 @@ driver.resetApp()
 ```
 
 ```javascript
-todo: javascript
+driver.resetApp()
 ```
 
 ```php
@@ -321,7 +322,7 @@ driver.getContextHandles()
 ```
 
 ```javascript
-todo: javascript
+driver.contexts().then(function (contexts) { /*...*/ })
 ```
 
 ```php
@@ -350,7 +351,7 @@ driver.getContext()
 ```
 
 ```javascript
-todo: javascript
+driver.currentContext().then(function (context) { /*...*/ })
 ```
 
 ```php
@@ -378,7 +379,7 @@ driver.context();
 ```
 
 ```javascript
-todo: javascript
+driver.context()
 ```
 
 ```php
@@ -406,7 +407,7 @@ driver.getAppString();
 ```
 
 ```javascript
-todo: javascript
+driver.getAppStrings().then(function (appStrings) { /*...*/ })
 ```
 
 ```php
@@ -435,7 +436,7 @@ driver.sendKeyEvent(AndroidKeyCode.HOME);
 ```
 
 ```javascript
-todo: javascript
+driver.deviceKeyEvent(wd.SPECIAL_KEYS.Home)
 ```
 
 ```php
@@ -463,7 +464,7 @@ driver.currentActivity();
 ```
 
 ```javascript
-todo: javascript
+driver.getCurrentActivity().then(function (activity) { /*...*/ })
 ```
 
 ```php
@@ -498,7 +499,11 @@ perform();
 ```
 
 ```javascript
-todo: javascript
+var action = new wd.TouchAction(driver);
+action
+  .tap({el: el, x: 10, y: 10})
+  .release();
+return action.perform(); // returns a promise
 ```
 
 ```php
@@ -528,13 +533,9 @@ $multiAction->perform();
 ```
 
 ```csharp
-var touchAction1 = new TouchActions(this);
-touchAction1.Down(10, 10).Up(10, 10);
-
-var multiTouchAction = new MultiTouchAction(this);
-multiTouchAction.Add(touchAction1);
-
-PerformMultiTouchAction(multiTouchAction);
+ITouchAction action = new TouchAction(driver);
+action.Press(el, 10, 10).Release();
+action.Perform ();
 ```
 
 ## Swipe
@@ -554,7 +555,19 @@ driver.swipe(startx=75, starty=500, endx=75, endy=0, duration=800)
 ```
 
 ```javascript
-todo: javascript
+function swipe(opts) {
+  var action = new wd.TouchAction(this);
+  action
+    .press({x: opts.startX, y: opts.startY})
+    .wait(opts.duration)
+    .moveTo({x: opts.endX, y: opts.endY})
+    .release();
+  return action.perform();
+}
+wd.addPromiseChainMethod('swipe', swipe);
+// ...
+return driver.swipe({ startX: 75, startY: 500,
+  endX: 75,  endY: 0, duration: 800 });
 ```
 
 ```php
@@ -582,7 +595,34 @@ driver.pinch(element);
 ```
 
 ```javascript
-todo: javascript
+function pinch(el) {
+  return Q.all([
+    el.getSize(),
+    el.getLocation(),
+  ]).then(function(res) {
+    var size = res[0];
+    var loc = res[1];
+    var center = {
+      x: loc.x + size.width / 2, 
+      y: loc.y + size.height / 2
+    };
+    var a1 = new wd.TouchAction(this);
+    a1.press({el: el, x: center.x, y:center.y - 100}).moveTo({el: el}).release();
+    var a2 = new wd.TouchAction(this);
+    a2.press({el: el, x: center.x, y: center.y + 100}).moveTo({el: el}).release();
+    var m = new wd.MultiAction(this);
+    m.add(a1, a2);
+    return m.perform();
+  }.bind(this));
+}; 
+wd.addPromiseChainMethod('pinch', pinch);
+wd.addElementPromiseChainMethod('pinch', function() { 
+  return this.browser.pinch(this); 
+});
+// ...
+return driver.pinch(el);
+// ...
+return el.pinch();
 ```
 
 ```php
@@ -610,7 +650,34 @@ driver.zoom(element);
 ```
 
 ```javascript
-todo: javascript
+function zoom(el) {
+  return Q.all([
+    this.getWindowSize(),
+    this.getLocation(el),
+  ]).then(function(res) {
+    var size = res[0];
+    var loc = res[1];
+    var center = {
+      x: loc.x + size.width / 2, 
+      y: loc.y + size.height / 2
+    };
+    var a1 = new wd.TouchAction(this);
+    a1.press({el: el}).moveTo({el: el, x: center.x, y: center.y - 100}).release();
+    var a2 = new wd.TouchAction(this);
+    a2.press({el: el}).moveTo({el: el, x: center.x, y: center.y + 100}).release();
+    var m = new wd.MultiAction(this);
+    m.add(a1, a2);
+    return m.perform();
+  }.bind(this));
+}; 
+wd.addPromiseChainMethod('zoom', zoom);
+wd.addElementPromiseChainMethod('zoom', function() { 
+  return this.browser.zoom(this); 
+});
+// ...
+return driver.zoom(el);
+// ...
+return el.zoom();
 ```
 
 ```php
@@ -671,7 +738,8 @@ driver.pullFile("Library/AddressBook/AddressBook.sqlitedb");
 ```
 
 ```javascript
-todo: javascript
+driver.pullFile("Library/AddressBook/AddressBook.sqlitedb")
+  .then(function (base64File) { /*...*/ })
 ```
 
 ```php
@@ -705,7 +773,7 @@ driver.pushFile(path, data)
 ```
 
 ```javascript
-todo: javascript
+driver.pushFile(path, data)
 ```
 
 ```php

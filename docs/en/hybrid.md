@@ -76,26 +76,22 @@ part of iOS 6** and was not available previously.
 
 * We're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
 
-```js
-  // assuming we have an initialized `driver` object working on the UICatalog app
-  driver.elementByName('Web, Use of UIWebView', function(err, el) { // find button to nav to view
-    el.click(function(err) { // nav to UIWebView
-      driver.contexts(function(err, contexts) { // get list of available views
-        driver.context(contexts[1], function(err) { // choose what is probably the webview context
-          driver.elementsByCss('.some-class', function(err, els) { // get webpage elements by css
-            els.length.should.be.above(0); // there should be some!
-            els[0].text(function(elText) { // get text of the first element
-              elText.should.eql("My very own text"); // it should be extremely personal and awesome
-              driver.context('NATIVE_APP', function(err) { // leave webview context
-                // do more native stuff here if we want
-                driver.quit(); // stop webdrivage
-              });
-            });
-          });
-        });
-      });
-    });
-  });
+```javascript
+// assuming we have an initialized `driver` object working on the UICatalog app
+return driver
+  .elementByName('Web, Use of UIWebView') // find button to nav to view
+    .click() // nav to UIWebView
+  .contexts().then(function (contexts) { // get list of available views
+    return driver.context(contexts[1]); // choose what is probably the webview context
+  }).elementsByCss('.some-class').then(function (els) { // get webpage elements by css
+    els.length.should.be.above(0); // there should be some!
+    return els[0];
+  }).text() // get text of the first element
+    .should.become("My very own text") // it should be extremely personal and awesome
+  .context('NATIVE_APP') // leave webview context
+  // do more native stuff here if we want
+  .quit() // stop webdrivage
+  .done(); // end promise chain (may not be needed)
 ```
 
 ```java
@@ -230,20 +226,19 @@ switching contexts, etc...
 Make sure
 [setWebContentsDebuggingEnabled](http://developer.android.com/reference/android/webkit/WebView.html#setWebContentsDebuggingEnabled(boolean)) is set to true as described in the [remote debugging docs](https://developer.chrome.com/devtools/docs/remote-debugging#configure-webview).
 
-```js
+```javascript
 // assuming we have an initialized `driver` object working on a hybrid app
-driver.context("WEBVIEW", function(err) { // choose the only available view
-  driver.elementsByCss('.some-class', function(err, els) { // get webpage elements by css
+return driver
+  .context("WEBVIEW") // choose the only available view
+  .elementsByCss('.some-class').then(function (els) { // get webpage elements by css
     els.length.should.be.above(0); // there should be some!
-    els[0].text(function(elText) { // get text of the first element
-      elText.should.eql("My very own text"); // it should be extremely personal and awesome
-      driver.context("NATIVE_APP", function(err) { // leave webview context
-        // do more native stuff here if we want
-        driver.quit(); // stop webdrivage
-      });
-    });
-  });
-});
+    return els[0];
+  }).text() // get text of the first element
+    .should.become("My very own text") // it should be extremely personal and awesome
+  .context("NATIVE_APP") // leave webview context
+  // do more native stuff here if we want
+  .quit() // stop webdrivage
+  .done(); // end promise chain (may not be needed)
 ```
 
 ```java

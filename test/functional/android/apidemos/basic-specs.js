@@ -12,6 +12,7 @@ var env = require('../../../helpers/env')
   , should = chai.should()
   , spawn = require('child_process').spawn
   , _ = require('underscore')
+  , getAppPath = require('../../../helpers/app').getAppPath
   , androidReset = require('../../../helpers/reset').androidReset;
 
 describe("apidemo - basic @skip-ci", function () {
@@ -90,10 +91,16 @@ describe("apidemo - basic @skip-ci", function () {
       }).nodeify(done);
     });
 
-    it('should be able to detect if app is installed', function (done) {
+    it('should be able to install/remove app and detect its status', function (done) {
       driver
         .isAppInstalled('foo')
           .should.eventually.equal(false)
+        .isAppInstalled('io.appium.android.apis')
+          .should.eventually.equal(true)
+        .removeApp('io.appium.android.apis')
+        .isAppInstalled('io.appium.android.apis')
+          .should.eventually.equal(false)
+        .installApp(getAppPath('ApiDemos'))
         .isAppInstalled('io.appium.android.apis')
           .should.eventually.equal(true)
         .nodeify(done);

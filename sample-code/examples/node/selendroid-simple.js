@@ -11,7 +11,7 @@ describe("selendroid simple", function () {
   var driver;
   var allPassed = true;
 
-  before(function () {
+  before(function (done) {
     var serverConfig = process.env.SAUCE ?
       serverConfigs.sauce : serverConfigs.local;
     driver = wd.promiseChainRemote(serverConfig);
@@ -23,31 +23,33 @@ describe("selendroid simple", function () {
       desired.name = 'selendroid - simple';
       desired.tags = ['sample'];
     }
-    return driver
+    driver
       .init(desired)
-      .setImplicitWaitTimeout(3000);
+      .setImplicitWaitTimeout(3000)
+      .nodeify(done);
   });
 
-  after(function () {
-    return driver
+  after(function (done) {
+    driver
       .quit()
       .finally(function () {
         if (process.env.SAUCE) {
           return driver.sauceJobStatus(allPassed);
         }
-      });
+      })
+      .nodeify(done);
   });
 
   afterEach(function () {
     allPassed = allPassed && this.currentTest.state === 'passed';
   });
 
-  it("should find elements", function () {
+  it("should find elements", function (done) {
     return driver
       .waitForElementByName('Animation')
         .text().should.become('Animation')
       .elementByClassName('android.widget.TextView')
-        .text().should.become('API Demos')
+        .text().should.become('Accessibility')
       .elementByName('App').click()
       .waitForElementByXPath('//TextView[@name=\'Action Bar\']')
       .elementsByClassName('android.widget.TextView')
@@ -55,6 +57,7 @@ describe("selendroid simple", function () {
       .back()
       .sleep(3000)
       .waitForElementByName('Animation', 5000, 500)
-        .text().should.become('Animation');
+        .text().should.become('Animation')
+      .nodeify(done);
   });
 });

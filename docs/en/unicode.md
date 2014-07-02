@@ -24,7 +24,8 @@ and actual results will look exactly the same. The solution to this is to
 [normalize](http://www.unicode.org/faq/normalization.html) the text before asserting
 on it.
 
-```js
+```javascript
+// javascript
 var unorm = require('unorm');
 var testText = unorm.nfd("é Œ ù ḍ");
 driver
@@ -48,7 +49,8 @@ Unicode keyboard will remain enabled on the device after the tests are completed
 
 Then tests can pass Unicode text to editable fields using `send_keys`.
 
-```js
+```javascript
+// javascript
 var desired = {
   app: '/path/to/app',
   deviceName: 'Android Emulator',

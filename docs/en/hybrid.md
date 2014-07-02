@@ -77,6 +77,7 @@ part of iOS 6** and was not available previously.
 * We're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
 
 ```javascript
+// javascript
 // assuming we have an initialized `driver` object working on the UICatalog app
 return driver
   .elementByName('Web, Use of UIWebView') // find button to nav to view
@@ -95,6 +96,7 @@ return driver
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
 capabilities.setCapability("platformVersion", "7.1");
@@ -119,6 +121,7 @@ inputField.sendKeys("Some name");
 ```
 
 ```ruby
+# ruby
 TEST_NAME = "Example Ruby Test"
 SERVER_URL = "http://127.0.0.1:4723/wd/hub"
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
@@ -153,6 +156,7 @@ end
 ```
 
 ```python
+# python
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
 capabilities = {
     'browserName': 'iOS 6.0',
@@ -177,6 +181,7 @@ driver.switch_to(driver.contexts.first)
 ```
 
 ```php
+// php
 APP_PATH = 'https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip'
 class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 {
@@ -227,6 +232,7 @@ Make sure
 [setWebContentsDebuggingEnabled](http://developer.android.com/reference/android/webkit/WebView.html#setWebContentsDebuggingEnabled(boolean)) is set to true as described in the [remote debugging docs](https://developer.chrome.com/devtools/docs/remote-debugging#configure-webview).
 
 ```javascript
+// javascript
 // assuming we have an initialized `driver` object working on a hybrid app
 return driver
   .context("WEBVIEW") // choose the only available view
@@ -242,6 +248,7 @@ return driver
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability(CapabilityType.BROWSER_NAME, "");
 capabilities.setCapability("automationName","Selendroid");
@@ -264,6 +271,7 @@ inputField.sendKeys("Some name");
 ```
 
 ```python
+# python
 # assuming we have an initialized `driver` object working on a hybrid app
 driver.switch_to.context("WEBVIEW")
 elements = driver.find_elements_by_css_selector('.some-class')

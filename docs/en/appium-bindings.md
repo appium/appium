@@ -28,26 +28,32 @@ is resolved. If you want to use them anyway, consult the documentation for the b
 Lock the screen.
 
 ```ruby
+# ruby
 lock 5
 ```
 
 ```python
+# python
 driver.lock(5)
 ```
 
 ```java
+// java
 driver.lockScreen(3);
 ```
 
 ```javascript
+// javascript
 driver.lock(3)
 ```
 
 ```php
+// php
 $this->lock(3);
 ```
 
 ```csharp
+// c#
 driver.LockDevice(3);
 ```
 
@@ -56,26 +62,32 @@ driver.LockDevice(3);
 Send the currently active app to the background.
 
 ```ruby
+# ruby
 background_app 5
 ```
 
 ```python
+# python
 driver.background_app(5)
 ```
 
 ```java
+// java
 driver.runAppInBackground(5);
 ```
 
 ```javascript
+// javascript
 driver.backgroundApp(5)
 ```
 
 ```php
+// php
 $this->backgroundApp(5);
 ```
 
 ```csharp
+// c#
 driver.BackgroundApp(5);
 ```
 
@@ -84,27 +96,33 @@ driver.BackgroundApp(5);
 Hide the keyboard.
 
 ```ruby
+# ruby
 hide_keyboard
 ```
 
 ```python
+# python
 driver.hide_keyboard()
 ```
 
 ```java
+// java
 driver.hideKeyboard();
 ```
 
 ```javascript
+// javascript
 driver.hideKeyboard()
 ```
 
 ```php
+// php
 $this->hideKeyboard();
 $this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 ```
 
 ```csharp
+// c#
 driver.HideKeyboard("Done");
 ```
 
@@ -113,27 +131,33 @@ driver.HideKeyboard("Done");
 Check if an app is installed
 
 ```ruby
+# ruby
 is_installed? "com.example.android.apis"
 ```
 
 ```python
+# python
 driver.is_app_installed('com.example.android.apis')
 ```
 
 ```java
+// java
 driver.isAppInstalled("com.example.android.apis")
 ```
 
 ```javascript
+// javascript
 driver.isAppInstalled("com.example.android.apis")
   .then(function (isAppInstalled) { /*...*/ })
 ```
 
 ```php
+// php
 $this->isAppInstalled('com.example.android.apis');
 ```
 
 ```csharp
+// c#
 driver.IsAppInstalled("com.example.android.apis-");
 ```
 
@@ -142,26 +166,32 @@ driver.IsAppInstalled("com.example.android.apis-");
 Install an app to the device.
 
 ```ruby
+# ruby
 install 'path/to/my.apk'
 ```
 
 ```python
+# python
 driver.install_app('path/to/my.apk')
 ```
 
 ```java
+// java
 driver.installApp("path/to/my.apk")
 ```
 
 ```javascript
+// javascript
 driver.installApp("path/to/my.apk")
 ```
 
 ```php
+// php
 $this->installApp('path/to/my.apk');
 ```
 
 ```csharp
+// c#
 driver.InstallApp("path/to/my.apk");
 ```
 
@@ -170,26 +200,32 @@ driver.InstallApp("path/to/my.apk");
 Remove an app from the device.
 
 ```ruby
+# ruby
 remove 'com.example.android.apis'
 ```
 
 ```python
+# python
 driver.remove_app('com.example.android.apis')
 ```
 
 ```java
+// java
 driver.removeApp("com.example.android.apis")
 ```
 
 ```javascript
+// javascript
 driver.removeApp("com.example.android.apis")
 ```
 
 ```php
+// php
 $this->removeApp('com.example.android.apis');
 ```
 
 ```csharp
+// c#
 driver.RemoveApp("com.example.android.apis");
 ```
 
@@ -198,26 +234,32 @@ driver.RemoveApp("com.example.android.apis");
 Simulate the device shaking.
 
 ```ruby
+# ruby
 shake
 ```
 
 ```python
+# python
 driver.shake()
 ```
 
 ```java
+// java
 driver.shake()
 ```
 
 ```javascript
+// javascript
 driver.shake()
 ```
 
 ```php
+// php
 $this->shake();
 ```
 
 ```csharp
+// c#
 driver.ShakeDevice();
 ```
 
@@ -226,26 +268,32 @@ driver.ShakeDevice();
 Close the app
 
 ```ruby
+# ruby
 close_app
 ```
 
 ```python
+# python
 driver.close_app();
 ```
 
 ```java
+// java
 driver.closeApp()
 ```
 
 ```javascript
+// javascript
 driver.closeApp()
 ```
 
 ```php
+// php
 $this->closeApp();
 ```
 
 ```csharp
+// c#
 driver.CloseApp();
 ```
 
@@ -254,26 +302,32 @@ driver.CloseApp();
 Launch the app
 
 ```ruby
+# ruby
 launch
 ```
 
 ```python
+# python
 driver.launch_app()
 ```
 
 ```java
+// java
 driver.launchApp()
 ```
 
 ```javascript
+// javascript
 driver.launchApp()
 ```
 
 ```php
+// php
 $this->launchApp();
 ```
 
 ```csharp
+// c#
 driver.LaunchApp();
 ```
 
@@ -282,26 +336,32 @@ driver.LaunchApp();
 Reset the app.
 
 ```ruby
+# ruby
 reset
 ```
 
 ```python
+# python
 driver.reset()
 ```
 
 ```java
+// java
 driver.resetApp()
 ```
 
 ```javascript
+// javascript
 driver.resetApp()
 ```
 
 ```php
+// php
 $this->reset();
 ```
 
 ```csharp
+// c#
 driver.ResetApp();
 ```
 
@@ -310,26 +370,32 @@ driver.ResetApp();
 List all available contexts
 
 ```ruby
+# ruby
 context_array = available_contexts
 ```
 
 ```python
+# python
 driver.contexts
 ```
 
 ```java
+// java
 driver.getContextHandles()
 ```
 
 ```javascript
+// javascript
 driver.contexts().then(function (contexts) { /*...*/ })
 ```
 
 ```php
+// php
 $this->contexts();
 ```
 
 ```csharp
+// c#
 driver.GetContexts()
 ```
 
@@ -339,26 +405,32 @@ List the current context
 
 
 ```ruby
+# ruby
 context = current_context
 ```
 
 ```python
+# python
 driver.current_context
 ```
 
 ```java
+// java
 driver.getContext()
 ```
 
 ```javascript
+// javascript
 driver.currentContext().then(function (context) { /*...*/ })
 ```
 
 ```php
+// php
 $this->context();
 ```
 
 ```csharp
+// c#
 driver.GetContext()
 ```
 
@@ -367,26 +439,32 @@ driver.GetContext()
 Change the context to the default.
 
 ```ruby
+# ruby
 switch_to_default_context
 ```
 
 ```python
+# python
 driver.switch_to.context(None)
 ```
 
 ```java
+// java
 driver.context();
 ```
 
 ```javascript
+// javascript
 driver.context()
 ```
 
 ```php
+// php
 $this->context(NULL);
 ```
 
 ```csharp
+// c#
 driver.SetContext();
 ```
 
@@ -395,27 +473,33 @@ driver.SetContext();
 Get the app's strings.
 
 ```ruby
+# ruby
 strings = app_strings
 ```
 
 ```python
+# python
 driver.app_strings
 ```
 
 ```java
+// java
 driver.getAppString();
 ```
 
 ```javascript
+// javascript
 driver.getAppStrings().then(function (appStrings) { /*...*/ })
 ```
 
 ```php
+// php
 $this->appStrings();
 $this->appStrings('ru');
 ```
 
 ```csharp
+// c#
 driver.GetAppStrings();
 ```
 
@@ -424,26 +508,32 @@ driver.GetAppStrings();
 Send a key event to the device.
 
 ```ruby
+# ruby
 key_event 176
 ```
 
 ```python
+# python
 driver.keyevent(176)
 ```
 
 ```java
+// java
 driver.sendKeyEvent(AndroidKeyCode.HOME);
 ```
 
 ```javascript
+// javascript
 driver.deviceKeyEvent(wd.SPECIAL_KEYS.Home)
 ```
 
 ```php
+// php
 $this->keyEvent('176');
 ```
 
 ```csharp
+// c#
 driver.KeyEvent("176");
 ```
 
@@ -452,26 +542,32 @@ driver.KeyEvent("176");
 Android only. Get the current activity.
 
 ```ruby
+# ruby
 current_activity
 ```
 
 ```python
+# python
 driver.current_activity
 ```
 
 ```java
+// java
 driver.currentActivity();
 ```
 
 ```javascript
+// javascript
 driver.getCurrentActivity().then(function (activity) { /*...*/ })
 ```
 
 ```php
+// php
 $this->currentActivity();
 ```
 
 ```csharp
+// c#
 driver.GetCurrentActivity();
 ```
 
@@ -481,17 +577,20 @@ An API for generating touch actions. This section of the documentation will be
 expanded upon soon.
 
 ```ruby
+# ruby
 touch_action = Appium::TouchAction.new
 element  = find_element :name, 'Buttons, Various uses of UIButton'
 touch_action.press(element: element, x: 10, y: 10).perform
 ```
 
 ```python
+# python
 action = TouchAction(driver)
 action.press(element=el, x=10, y=10).release().perform()
 ```
 
 ```java
+// java
 TouchAction action = new TouchAction(driver)
 .press(mapview, 10, 10)
 .release().
@@ -499,6 +598,7 @@ perform();
 ```
 
 ```javascript
+// javascript
 var action = new wd.TouchAction(driver);
 action
   .tap({el: el, x: 10, y: 10})
@@ -507,6 +607,7 @@ return action.perform(); // returns a promise
 ```
 
 ```php
+// php
 $action = $this->initiateTouchAction();
                ->press(array('element' => $el))
                ->release()
@@ -533,6 +634,7 @@ $multiAction->perform();
 ```
 
 ```csharp
+// c#
 ITouchAction action = new TouchAction(driver);
 action.Press(el, 10, 10).Release();
 action.Perform ();
@@ -543,18 +645,22 @@ action.Perform ();
 Simulate a user swipe.
 
 ```ruby
+# ruby
 swipe start_x: 75, start_y: 500, end_x: 75, end_y: 0, duration: 0.8
 ```
 
 ```python
+# python
 driver.swipe(75, 500, 75, 0, 0.8)
 ```
 
 ```java
+// java
 driver.swipe(startx=75, starty=500, endx=75, endy=0, duration=800)
 ```
 
 ```javascript
+// javascript
 function swipe(opts) {
   var action = new wd.TouchAction(this);
   action
@@ -571,10 +677,12 @@ return driver.swipe({ startX: 75, startY: 500,
 ```
 
 ```php
+// php
 $this->swipe(75, 500, 75, 0, 800);
 ```
 
 ```csharp
+// c#
 todo: c#
 ```
 
@@ -583,18 +691,22 @@ todo: c#
 Pinch the screen.
 
 ```ruby
+# ruby
 pinch 75
 ```
 
 ```python
+# python
 driver.pinch(element=el)
 ```
 
 ```java
+// java
 driver.pinch(element);
 ```
 
 ```javascript
+// javascript
 function pinch(el) {
   return Q.all([
     el.getSize(),
@@ -603,7 +715,7 @@ function pinch(el) {
     var size = res[0];
     var loc = res[1];
     var center = {
-      x: loc.x + size.width / 2, 
+      x: loc.x + size.width / 2,
       y: loc.y + size.height / 2
     };
     var a1 = new wd.TouchAction(this);
@@ -614,10 +726,10 @@ function pinch(el) {
     m.add(a1, a2);
     return m.perform();
   }.bind(this));
-}; 
+};
 wd.addPromiseChainMethod('pinch', pinch);
-wd.addElementPromiseChainMethod('pinch', function() { 
-  return this.browser.pinch(this); 
+wd.addElementPromiseChainMethod('pinch', function() {
+  return this.browser.pinch(this);
 });
 // ...
 return driver.pinch(el);
@@ -630,6 +742,7 @@ $this->pinch($el);
 ```
 
 ```csharp
+// c#
 driver.Pinch(25, 25)
 ```
 
@@ -638,18 +751,22 @@ driver.Pinch(25, 25)
 Zoom the screen.
 
 ```ruby
+# ruby
 zoom 200
 ```
 
 ```python
+# python
 driver.zoom(element=el)
 ```
 
 ```java
+// java
 driver.zoom(element);
 ```
 
 ```javascript
+// javascript
 function zoom(el) {
   return Q.all([
     this.getWindowSize(),
@@ -658,7 +775,7 @@ function zoom(el) {
     var size = res[0];
     var loc = res[1];
     var center = {
-      x: loc.x + size.width / 2, 
+      x: loc.x + size.width / 2,
       y: loc.y + size.height / 2
     };
     var a1 = new wd.TouchAction(this);
@@ -669,10 +786,10 @@ function zoom(el) {
     m.add(a1, a2);
     return m.perform();
   }.bind(this));
-}; 
+};
 wd.addPromiseChainMethod('zoom', zoom);
-wd.addElementPromiseChainMethod('zoom', function() { 
-  return this.browser.zoom(this); 
+wd.addElementPromiseChainMethod('zoom', function() {
+  return this.browser.zoom(this);
 });
 // ...
 return driver.zoom(el);
@@ -681,10 +798,12 @@ return el.zoom();
 ```
 
 ```php
+// php
 $this->zoom($el);
 ```
 
 ```csharp
+// c#
 driver.Zoom(100, 200);
 ```
 
@@ -693,15 +812,18 @@ driver.Zoom(100, 200);
 Scroll to an element.
 
 ```ruby
+# ruby
 element = find_element :name, 'Element Name'
 execute_script "mobile: scrollTo", :element => element.ref
 ```
 
 ```python
+# python
 todo: python
 ```
 
 ```java
+// java
 WebElement element = driver.findElement(By.name("Element Name"));
 HashMap<String, String> arguments = new HashMap<String, String>();
 arguments.put("element", element.getId());
@@ -709,17 +831,20 @@ arguments.put("element", element.getId());
 ```
 
 ```javascript
+// javascript
 return driver.elementByName().then(function (el) {
   return driver.execute('mobile: scrollTo', {element: el.value});
 });
 ```
 
 ```php
+// php
 $els = $this->elements($this->using('class name')->value('android.widget.TextView'));
 $this->scroll($els[count($els) - 1], $els[0]);
 ```
 
 ```csharp
+// c#
 todo: csharp
 ```
 
@@ -728,27 +853,33 @@ todo: csharp
 Pulls a file from the device.
 
 ```ruby
+# ruby
 pull_file 'Library/AddressBook/AddressBook.sqlitedb'
 ```
 
 ```python
+# python
 driver.pull_file('Library/AddressBook/AddressBook.sqlitedb')
 ```
 
 ```java
+// java
 driver.pullFile("Library/AddressBook/AddressBook.sqlitedb");
 ```
 
 ```javascript
+// javascript
 driver.pullFile("Library/AddressBook/AddressBook.sqlitedb")
   .then(function (base64File) { /*...*/ })
 ```
 
 ```php
+// php
 $this->pullFile('Library/AddressBook/AddressBook.sqlitedb');
 ```
 
 ```csharp
+// c#
 driver.PullFile("Library/AddressBook/AddressBook.sqlitedb");
 ```
 
@@ -757,34 +888,40 @@ driver.PullFile("Library/AddressBook/AddressBook.sqlitedb");
 Pushes a file to the device.
 
 ```ruby
+# ruby
 data = "some data for the file"
 path = "/data/local/tmp/file.txt"
 push_file path, data
 ```
 
 ```python
+# python
 data = "some data for the file"
 path = "/data/local/tmp/file.txt"
 driver.push_file(path, data.encode('base64'))
 ```
 
 ```java
+// java
 byte[] data = Base64.encodeBase64("some data for the file".getBytes());
 String path = "/data/local/tmp/file.txt";
 driver.pushFile(path, data)
 ```
 
 ```javascript
+// javascript
 driver.pushFile(path, data)
 ```
 
 ```php
+// php
 $path = 'data/local/tmp/test_push_file.txt';
 $data = 'This is the contents of the file to push to the device.';
 $this->pushFile($path, base64_encode($data));
 ```
 
 ```csharp
+// c#
 driver.PushFile("/data/local/tmp/file.txt", "some data for the file");
 ```
 

@@ -32,6 +32,7 @@ Basically, first make sure Appium is running:
 Then script your WebDriver test, sending in the following desired capabilities:
 
 ```javascript
+// javascript
 {
     platformName: 'iOS',
     platformVersion: '7.1',
@@ -41,6 +42,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```
 
 ```python
+# python
 {
     'platformName': 'iOS',
     'platformVersion': '7.1',
@@ -50,6 +52,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```
 
 ```php
+// php
 public static $browsers = array(
     array(
         'desiredCapabilities' => array(
@@ -63,6 +66,7 @@ public static $browsers = array(
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability("platformName", "iOS");
 capabilities.setCapability("platformVersion", "7.1");
@@ -108,6 +112,7 @@ Now, make sure Appium is running:
 Then script your WebDriver test, sending in the following desired capabilities:
 
 ```javascript
+// javascript
 {
     platformName: 'Android',
     platformVersion: '4.4',
@@ -117,6 +122,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```
 
 ```python
+# python
 {
     'platformName': 'Android',
     'platformVersion': '4.4',
@@ -126,6 +132,7 @@ Then script your WebDriver test, sending in the following desired capabilities:
 ```
 
 ```php
+// php
 public static $browsers = array(
     array(
         'desiredCapabilities' => array(
@@ -139,6 +146,7 @@ public static $browsers = array(
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability("platformName", "Android");
 capabilities.setCapability("platformVersion", "4.4");
@@ -171,6 +179,7 @@ desired capabilities mentioned above, by adding the `automationName` capability
 and specifying the Selendroid automation backend.
 
 ```javascript
+// javascript
 {
     automationName: 'Selendroid',
     platformName: 'Android',
@@ -181,6 +190,7 @@ and specifying the Selendroid automation backend.
 ```
 
 ```python
+# python
 {
     'automationName': 'Selendroid',
     'platformName': 'Android',
@@ -191,6 +201,7 @@ and specifying the Selendroid automation backend.
 ```
 
 ```php
+// php
 public static $browsers = array(
     array(
         'desiredCapabilities' => array(
@@ -205,6 +216,7 @@ public static $browsers = array(
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability("automationName", "Selendroid");
 capabilities.setCapability("platformName", "Android");

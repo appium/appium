@@ -51,6 +51,9 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure the accessibility helper is turned off in your Settings app 
 * Make sure the app is compiled for the version of the simulator that's being
   run
+* Make sure the app is compiled for the simulator (or real device) as
+  appropriate (e.g., in debug mode for the simulator), or you might get
+  a `posix spawn` error.
 * If you've ever run Appium with sudo, you might need to `sudo rm
   /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use
@@ -114,3 +117,4 @@ output when it's run in verbose mode so that we can diagnose what's going on.
 |------|-----|----------|
 |Running reset.sh|xcodebuild: error: SDK "iphonesimulator6.1" cannot be located|Install the iPhone 6.1 SDK _or_ build the test apps with a separate SDK, e.g., `grunt buildApp:UICatalog:iphonesimulator5.1`|
 |Running reset.sh|Warning: Task "setGitRev" not found. Use --force to continue.|Update the submodules with `git submodule update --init` and run `reset.sh` again|
+|Running ios test|`[INST STDERR] posix spawn failure; aborting launch`|Your app is not compiled correctly for the simulator or device.|

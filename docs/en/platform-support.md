@@ -24,6 +24,9 @@ instructions.
 * Support for automating multiple devices simultaneously: No
 * Support for automating vendor-provided or third-party apps: Only
   vendor-provided apps (Preferences, Maps, etc...), and only on the simulator
+* Support for automating custom, non-standard UI controls: Minimal. You need to
+  set accessibility information on the control which enables some basic
+  automation.
 
 ## Android Support
 
@@ -61,3 +64,4 @@ instructions.
   information on these parameters.
 * Support for automating vendor-provided or third-party apps: Yes (but not
   when using the Selendroid backend)
+* Support for automating custom, non-standard UI controls: No

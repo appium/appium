@@ -106,6 +106,7 @@ See examples below:
 * **WD.js:**
 
 ```javascript
+// javascript
 // scroll the view down
 driver.execute("mobile: scroll", [{direction: 'down'}])
 // continue testing
@@ -114,6 +115,7 @@ driver.execute("mobile: scroll", [{direction: 'down'}])
 * **Java:**
 
 ```java
+// java
 JavascriptExecutor js = (JavascriptExecutor) driver;
 HashMap<String, String> scrollObject = new HashMap<String, String>();
 scrollObject.put("direction", "down");
@@ -129,6 +131,7 @@ js.executeScript("mobile: scroll", scrollObject);
  * **Java**
 
 ```java
+// java
 // slider values can be string representations of numbers between 0 and 1
 // e.g., "0.1" is 10%, "1.0" is 100%
 WebElement slider =  wd.findElement(By.xpath("//window[1]/slider[1]"));

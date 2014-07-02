@@ -21,6 +21,7 @@ Choose the setting you would like to use, and then send the correct bitmask from
 the table above.
 
 ```javascript
+// javascript
 // set airplane mode
 driver.setNetworkConnection(1)
 
@@ -38,6 +39,7 @@ Retrieving the network connection settings returns the same bitmask, from which
 the status can be decoded.
 
 ```javascript
+// javascript
 driver.getNetworkConnection().then(function (connectionType) {
   switch (connectionType) {
     case 0:
@@ -55,6 +57,6 @@ driver.getNetworkConnection().then(function (connectionType) {
     case 6:
       // wifi and data
       break;
-  }  
+  }
 });
 ```

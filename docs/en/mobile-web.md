@@ -16,6 +16,7 @@ attempting to use Appium.
 Then, use desired capabilities like these to run your test in mobile Safari:
 
 ```javascript
+// javascript
 {
   platformName: 'iOS'
   , platformVersion: '7.1'
@@ -25,6 +26,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 ```
 
 ```python
+# python
 {
   'platformName': 'iOS',
   'platformVersion': '7.1',
@@ -34,6 +36,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 ```
 
 ```php
+// php
 public static $browsers = array(
     array(
         'desiredCapabilities' => array(
@@ -47,6 +50,7 @@ public static $browsers = array(
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability("platformName", "iOS");
 capabilities.setCapability("platformVersion", "7.1");
@@ -109,6 +113,7 @@ To configure you test to run against safari simply set the **"browserName"** to 
 ## Java Example
 
 ```java
+// java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 desiredCapabilities.setCapability("browserName", "Safari");
@@ -128,6 +133,7 @@ remoteWebDriver.quit();
 ## Python Example
 
 ```python
+# python
 # setup the web driver and launch the webview app.
 capabilities = { 'browserName': 'Safari' }
 driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
@@ -146,6 +152,7 @@ driver.quit()
 ```
 
 ```php
+// php
 class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 {
     public static $browsers = array(
@@ -181,6 +188,7 @@ Pre-requisites:
 Then, use desired capabilities like these to run your test in Chrome:
 
 ```javascript
+// javascript
 {
   platformName: 'Android'
   , platformVersion: '4.4'
@@ -190,6 +198,7 @@ Then, use desired capabilities like these to run your test in Chrome:
 ```
 
 ```python
+# python
 {
   'platformName': 'Android',
   'platformVersion': '4.4',
@@ -199,6 +208,7 @@ Then, use desired capabilities like these to run your test in Chrome:
 ```
 
 ```php
+// php
 public static $browsers = array(
     array(
         'desiredCapabilities' => array(
@@ -212,6 +222,7 @@ public static $browsers = array(
 ```
 
 ```java
+// java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability("platformName", "Android");
 capabilities.setCapability("platformVersion", "4.4");

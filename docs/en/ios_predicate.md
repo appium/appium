@@ -14,6 +14,7 @@ Native JS search strategy (powered by Apple) provides much more flexibility and 
 For example:
 
 ```java
+// java
 appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPredicate(\"ANY staticTexts.isVisible == TRUE\")")
 ```
 

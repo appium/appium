@@ -83,21 +83,25 @@ Hybrid apps were previously supported by switching between "windows" using
 Now Appium supports the more conceptually consistent concept of "context". To get all of the available contexts, or the particular context the application is is, you use
 
 ```python
+# python
 driver.contexts
 current = driver.context
 ```
 
 ```javascript
+// javascript
 driver.contexts().then(function (contexts) { /*...*/ })
 ```
 
 And to switch between them, you use
 
 ```python
+# python
 driver.switch_to.context("WEBVIEW")
 ```
 
 ```javascript
+// javascript
 driver.currentContext().then(function (context) { /*...*/ })
 ```
 

@@ -1,10 +1,10 @@
-# Appium Platform Support
+## Appium Platform Support
 
 Appium supports a variety of platforms and testing modalities (native,
 hybrid, web, real devices, simulators, etc...). This document is designed to
 make explicit the level of support and requirements for each of these.
 
-## iOS Support
+### iOS Support
 
 See [Running on OS X: iOS](running-on-osx.md) for iOS requirements and setup
 instructions.
@@ -28,7 +28,7 @@ instructions.
   set accessibility information on the control which enables some basic
   automation.
 
-## Android Support
+### Android Support
 
 See [Running on OS X: Android](running-on-osx.md),
 [Running on Windows](running-on-windows.md), or

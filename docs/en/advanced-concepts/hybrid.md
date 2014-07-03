@@ -1,4 +1,4 @@
-# Automating hybrid apps
+## Automating hybrid apps
 
 One of the core principles of Appium is that you shouldn't have to change
 your app to test it. In line with that methodology, it is possible to test
@@ -8,7 +8,7 @@ required so that Appium knows whether you want to automate the native aspects
 of the app or the web views, but thankfully, we can stay within the
 WebDriver protocol for everything.
 
-## Automating hybrid iOS apps
+### Automating hybrid iOS apps
 
 Here are the steps required to talk to a web view in your Appium test:
 
@@ -28,7 +28,7 @@ Here are the steps required to talk to a web view in your Appium test:
     native portion of the app, simply call `context` again with the native
     context id to leave the web frame.
 
-## Execution against a real iOS device
+### Execution against a real iOS device
 
 To interact with a web view appium establishes a connection
 using a remote debugger. When executing the examples below against a
@@ -220,7 +220,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 }
 ```
 
-## Automating hybrid Android apps
+### Automating hybrid Android apps
 
 Appium comes with built-in hybrid support via Chromedriver. Appium also uses
 Selendroid under the hood for webview support on devices older than 4.4. (In

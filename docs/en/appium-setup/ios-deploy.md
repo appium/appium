@@ -1,4 +1,4 @@
-# Deploying your iOS app to your device
+## Deploying your iOS app to your device
 
 To prepare for your Appium tests to run on a real device, you will need to:
 
@@ -6,7 +6,7 @@ To prepare for your Appium tests to run on a real device, you will need to:
 1. Use [fruitstrap](https://github.com/ghughes/fruitstrap), a 3rd-party tool,
  to deploy this build to your device
 
-## Xcodebuild with parameters:
+### Xcodebuild with parameters:
 A newer xcodebuild now allows settings to be specified. Taken from [developer.apple.com](https://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html):
 
 ```
@@ -35,7 +35,7 @@ xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> CODE_SIG
 
 On success, the app will be built to your ```<app_dir>/build/<configuration>-iphoneos/<app_name>.app```
 
-## Deploy using Fruitstrap
+### Deploy using Fruitstrap
 
 Go clone a forked version of fruitstrap as the [ghughes version](https://github.com/ghughes/fruitstrap)
 is no longer maintained. Success has been confirmed with the [unprompted fork](https://github.com/unprompted/fruitstrap),
@@ -66,14 +66,14 @@ telling sign that the app has completed launching. This may prove useful if
 you are doing this via a Rakefile and a ``go_device.sh`` script:
 
 ```
-bundle exec rake ci:fruit_deploy_app | while read line ; do 
-   echo "$line" | grep "text to identify successful launch" 
-   if [ $? = 0 ] 
-   then 
-   # Actions 
-       echo "App finished launching: $line" 
-       sleep 5 
-       kill -9 `ps -aef | grep fruitstrap | grep -v grep | awk '{print $2}'` 
+bundle exec rake ci:fruit_deploy_app | while read line ; do
+   echo "$line" | grep "text to identify successful launch"
+   if [ $? = 0 ]
+   then
+   # Actions
+       echo "App finished launching: $line"
+       sleep 5
+       kill -9 `ps -aef | grep fruitstrap | grep -v grep | awk '{print $2}'`
    fi
  done
 ```

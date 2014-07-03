@@ -1,4 +1,4 @@
-# Automating mobile gestures
+## Automating mobile gestures
 
 While the Selenium WebDriver spec has support for certain kinds of mobile
 interaction, its parameters are not always easily mappable to the functionality
@@ -13,9 +13,9 @@ These APIs allow you to build up arbitrary gestures with multiple actuators.
 Please see the Appium client docs for your language in order to find examples
 of using this API.
 
-## An Overview of the TouchAction / MultiAction API
+### An Overview of the TouchAction / MultiAction API
 
-## TouchAction
+### TouchAction
 
 *TouchAction* objects contain a chain of events.
 
@@ -64,7 +64,7 @@ TouchAction().tap(el).perform()
 driver.perform(TouchAction().tap(el))
 ```
 
-## MultiTouch
+### MultiTouch
 
 *MultiTouch* objects are collections of TouchActions.
 
@@ -87,7 +87,7 @@ MultiAction().add(action0).add(action1).perform()
 
 
 
-## Bugs and Workarounds
+### Bugs and Workarounds
 
 An unfortunate bug exists in the iOS 7.x Simulator where ScrollViews don't
 recognize gestures initiated by UIAutomation (which Appium uses under the hood

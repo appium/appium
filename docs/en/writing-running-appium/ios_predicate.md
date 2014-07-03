@@ -1,4 +1,4 @@
-# iOS Predicate
+## iOS Predicate
 
 It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**.
 [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html) has following methods which can are very useful.
@@ -22,7 +22,7 @@ appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPre
 
 Here's a list of available Predicates (mostly taken from [Predicates Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
 
-## Basic Comparisons
+### Basic Comparisons
 
 = , ==
 - The left-hand expression is equal to the right-hand expression:
@@ -58,7 +58,7 @@ NSPredicate *betweenPredicate =
 
 This creates a predicate that matches ```( ( 1 <= attributeValue ) && ( attributeValue <= 10 ) )```
 
-## Boolean Value Predicates
+### Boolean Value Predicates
 
 TRUEPREDICATE
 - A predicate that always evaluates to ```TRUE``` .
@@ -66,7 +66,7 @@ TRUEPREDICATE
 FALSEPREDICATE
 - A predicate that always evaluates to ```FALSE```.
 
-## Basic Compound Predicates
+### Basic Compound Predicates
 
 AND , &&
 - Logical AND.
@@ -77,7 +77,7 @@ OR , ||
 NOT , !
 - Logical NOT.
 
-## String Comparisons
+### String Comparisons
 
 String comparisons are by default case and diacritic sensitive. You can modify an operator using the key characters ```c``` and ```d``` within square braces to specify case and diacritic insensitivity respectively, for example ```firstName BEGINSWITH[cd] $FIRST_NAME```
 
@@ -120,7 +120,7 @@ tableViews().firstWithPredicate("value MATCHES '.*of 7' ")
 same in Xpath: /UIATableView[matches(@value, '.*of 7')][1]
 ```
 
-## Aggregate Operations
+### Aggregate Operations
 
 ANY , SOME
 - Specifies any of the elements in the following expression. For example ```ANY children.age < 18``` .
@@ -156,7 +156,7 @@ elements()[0].tableViews()[0].cells().withPredicate("staticTexts[SIZE] > 2")
 same in Xpath: /*[1]/UIATableView[1]/UIATableCell[count(UIAStaticText) > 2]
 ```
 
-## Identifiers
+### Identifiers
 
 **C style identifier**
 - Any C style identifier that is not a reserved word.
@@ -173,7 +173,7 @@ same in Xpath: /*[1]/UIATableView[1]/UIATableCell[count(UIAStaticText) > 2]
 **[\\][uU]{hexdigit}{4}**
 - Used to escape a Unicode number ( ```\u``` or ```\U``` followed by 4 hex digits).
 
-## Literals
+### Literals
 
 Single and double quotes produce the same result, but they do not terminate each other. For example, ```"abc"``` and ```'abc'``` are identical, whereas ```"a'b'c"``` is equivalent to a space-separated concatenation of ```a, 'b', c```.
 
@@ -213,13 +213,13 @@ SELF
 0b
 - Prefix used to denote a binary digit sequence.
 
-## Reserved Words
+### Reserved Words
 
 The following words are reserved:
 
 `AND, OR, IN, NOT, ALL, ANY, SOME, NONE, LIKE, CASEINSENSITIVE, CI, MATCHES, CONTAINS, BEGINSWITH, ENDSWITH, BETWEEN, NULL, NIL, SELF, TRUE, YES, FALSE, NO, FIRST, LAST, SIZE, ANYKEY, SUBQUERY, CAST, TRUEPREDICATE, FALSEPREDICATE`
 
-## Appium predicate helpers
+### Appium predicate helpers
 
 Appium has [helpers for predicate search](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) in app.js:
 

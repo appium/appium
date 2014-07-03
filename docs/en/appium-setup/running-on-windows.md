@@ -1,6 +1,6 @@
-# Running Appium on Windows
+## Running Appium on Windows
 
-## Limitations
+### Limitations
 
 If you are running Appium on Windows, you can use the
 [Appium.exe](https://github.com/appium/appium-dot-exe) client, which will allow
@@ -9,7 +9,7 @@ able to test iOS apps on a locally hosted server, because Appium relies on OS
 X-only libraries to support iOS testing. You can however use the `Remote Server`
 option to connect to an Appium server running on a Mac.
 
-## Setup
+### Setup
 
 To get started:
 
@@ -36,7 +36,7 @@ Now that you've downloaded everything, run:
 
     reset.bat
 
-## Running Appium
+### Running Appium
 
 To run tests on Windows, you will need to have the Android Emulator booted or
  an Android Device connected that is running an AVD with API Level 17 or
@@ -47,7 +47,7 @@ To run tests on Windows, you will need to have the Android Emulator booted or
 See the [server documentation](server-args.md) for all the command line
 arguments.
 
-## Notes
+### Notes
 
 * You must supply the `--no-reset` and `--full-reset` flags currently for
   Android to work on Windows.

@@ -1,4 +1,4 @@
-# Adjusting Network Connection
+## Adjusting Network Connection
 
 The Selenium [Mobile JSON Wire Protocol Specification](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) supports an [API](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile#104) for getting and setting the network connection for a device. The API works through a bitmask, assigning an integer to each possible state:
 
@@ -10,12 +10,12 @@ The Selenium [Mobile JSON Wire Protocol Specification](https://code.google.com/p
 | 4 (Data only)      | 1    | 0    | 0 |
 | 6 (All network on) | 1    | 1    | 0 |
 
-## iOS
+### iOS
 
 Unfortunately, at the moment Appium does not support the Selenium network
 connection API for iOS.
 
-## Android
+### Android
 
 Choose the setting you would like to use, and then send the correct bitmask from
 the table above.

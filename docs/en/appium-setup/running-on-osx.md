@@ -1,8 +1,8 @@
-# Running Appium on Mac OS X
+## Running Appium on Mac OS X
 
 Appium on OS X supports iOS and Android testing.
 
-## System setup (iOS)
+### System setup (iOS)
 
 * Appium requires Mac OS X 10.7, but 10.8 is recommended.
 * Make sure you have Xcode and the iOS SDK(s) installed. (Appium currently
@@ -16,7 +16,7 @@ Appium on OS X supports iOS and Android testing.
   are running [Appium.app](https://github.com/appium/appium-dot-app), you can
   authorize iOS through the GUI.
 
-## Testing against multiple iOS SDKs
+### Testing against multiple iOS SDKs
 
 Apple's `instruments` binary, which Appium uses to launch the iOS simulator, by
 default uses the currently-selected Xcode, and the highest iOS SDK installed
@@ -42,7 +42,7 @@ To prepare for iOS 6.1 testing. We run it again with a different Xcode:
 
 To go back to iOS 7.1 testing.
 
-## System setup (Android)
+### System setup (Android)
 
 * Make sure you have the
   [Android SDK installed](http://developer.android.com/sdk/index.html).

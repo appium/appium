@@ -1,4 +1,4 @@
-# Finding and interacting with elements
+## Finding and interacting with elements
 
 Appium supports a subset of the WebDriver locator strategies:
 
@@ -15,12 +15,12 @@ search using the UiAutomator Api (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search
 using the Id/Name that the native Accessibility options utilize.
 
-## Issues
+### Issues
 
 There's a known issue with table cell elements becoming invalidated before
 there's time to interact with them. We're working on a fix
 
-## Using The Appium Inspector To Locate Elements
+### Using The Appium Inspector To Locate Elements
 
 Appium provides you with a neat tool that allows you to find the the elements
 you're looking for without leaving the Appium app. With the Appium Inspector

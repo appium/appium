@@ -1,4 +1,4 @@
-# Appium server capabilities
+## Appium server capabilities
 
 <expand_table>
 

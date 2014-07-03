@@ -1,4 +1,4 @@
-# Introduction to Appium
+## Introduction to Appium
 
 Appium is an open-source tool you can use to automate mobile native,
 mobile web, and mobile hybrid applications on iOS and Android platforms.
@@ -17,7 +17,7 @@ or total amount of code reuse between iOS and Android testsuites.
 For specific information about what it means for Appium to "support" its
 platforms, version, and automation modalities, please see the [platform support doc](platform-support.md).
 
-## Appium Philosophy
+### Appium Philosophy
 
 Appium was designed to meet mobile automation needs according to a certain
 philosophy. The key points of this philosophy can be stated as 4 requirements:
@@ -31,7 +31,7 @@ philosophy. The key points of this philosophy can be stated as 4 requirements:
 4. A mobile automation framework should be open source,
    in spirit and practice as well as in name!
 
-## Appium Design
+### Appium Design
 
 So how does the structure of the Appium project live out this philosophy? We
 meet requirement #1 by using vendor-provided automation frameworks under the
@@ -64,7 +64,7 @@ with extra API methods useful for mobile automation.
 It should be obvious that requirement #4 is a given -- you're reading this
 because [Appium is open source](https://github.com/appium/appium).
 
-## Appium Concepts
+### Appium Concepts
 
 **Client/Server Architecture**<br/>
 Appium is at its heart a webserver that exposes a REST API. It receives
@@ -114,7 +114,7 @@ so you don't need to worry about Node. They also come with an Inspector,
 which enables you to check out the hierarchy of your app. This can come in
 very handy when writing tests!
 
-## Getting Started
+### Getting Started
 
 Congratulations! You are now armed with enough knowledge to begin using
 Appium. Why not head back to the [getting started doc](../../README.md) for

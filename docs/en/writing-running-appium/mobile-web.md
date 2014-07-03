@@ -1,11 +1,11 @@
-# Automating mobile web apps
+## Automating mobile web apps
 
 If you're interested in automating your web app in Mobile Safari on iOS or
 Chrome on Android, Appium can help you. Basically, you write a normal WebDriver
 test, and use Appium as the Selenium server with a special set of desired
 capabilities.
 
-## Mobile Safari on Simulator
+### Mobile Safari on Simulator
 
 First of all, make sure developer mode is turned on in your Safari
 preferences so that the remote debugger port is open.
@@ -58,7 +58,7 @@ capabilities.setCapability("browserName", "Safari");
 capabilities.setCapability("deviceName", "iPhone Simulator");
 ```
 
-## Mobile Safari on a Real iOS Device
+### Mobile Safari on a Real iOS Device
 
 To be able to run your tests against mobile Safari we use the [SafariLauncher
  App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once
@@ -70,7 +70,7 @@ in the ios-webkit-debug-proxy. You have to trust the machine before you can
 run the ios-webkit-debug-proxy
 against your iOS device.
 
-## Setup
+### Setup
 
 Before you can run your tests against Safari on a real device you will need to:
 * Have the **ios-webkit-debug-proxy** installed, running and listening on port 27753 (see the
@@ -106,11 +106,11 @@ $ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile
 $ node /lib/server/main.js -U <UDID>
 ```
 
-## Running your test
+### Running your test
 
 To configure you test to run against safari simply set the **"browserName"** to be **"Safari"**.
 
-## Java Example
+### Java Example
 
 ```java
 // java
@@ -130,7 +130,7 @@ remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populat
 remoteWebDriver.quit();
 ```
 
-## Python Example
+### Python Example
 
 ```python
 # python
@@ -178,7 +178,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 }
 ```
 
-## Mobile Chrome on Emulator or Real Device
+### Mobile Chrome on Emulator or Real Device
 
 Pre-requisites:
 

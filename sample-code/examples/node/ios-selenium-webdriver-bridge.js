@@ -3,7 +3,7 @@
   However it is possible to attach an existing selenium-webdriver session to
   a wd browser instance as below.
 
-  prerequisite:
+  prerequisites:
     npm install selenium-webdriver
 */
 

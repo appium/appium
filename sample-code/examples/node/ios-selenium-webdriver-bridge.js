@@ -13,7 +13,7 @@ require("./helpers/setup");
 
 var webdriver = require('selenium-webdriver'),
     wd = require("wd"),
-    wdBridge = require('wd-bridge')(wd),
+    wdBridge = require('wd-bridge')(webdriver, wd),
     _ = require('underscore'),
     Q = require('q'),
     chai = require('chai');
@@ -79,7 +79,10 @@ describe("ios simple", function () {
         sum += x;
         return el.sendKeys('' + x);
       }).then(function () {
-        return driver.findElement(webdriver.By.name('Done')).click();
+        return driver.findElement(webdriver.By.name('Done'));
+      }).then(function (el) {
+        // converting to wd el
+        return wdDriver.wdEl(el).click();
       }).then(function () { return driver.sleep(1000); });
     };
     return populateField('IntegerA')
@@ -99,7 +102,10 @@ describe("ios simple", function () {
       }).then(function () {
         return wdDriver
           .elementByIosUIAutomation('elements().withName("Answer");')
-            .text();
+          .then(function (el) {
+            // converting from wd el
+            return wdDriver.swEl(el).getText();
+          });
       }).then(function (text) {
         text.should.equal("" + sum);
       });

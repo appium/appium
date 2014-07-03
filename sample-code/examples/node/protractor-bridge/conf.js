@@ -11,7 +11,7 @@
 "use strict";
 
 var wd = require('wd'),
-    wdBridge = require('wd-bridge')(wd),
+    wdBridge = require('wd-bridge')(require('protractor'), wd),
     _ = require('underscore');
 
 // An example configuration file.

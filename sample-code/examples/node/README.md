@@ -1,5 +1,9 @@
 #Node.js samples
 
+## prerequisites
+
+Upgrade Mocha to the latest version before running the tests.
+
 ##iOS
 
 ### local

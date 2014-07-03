@@ -1,7 +1,7 @@
 /*
   The appium specific methods are not yet implemented by selenium-webdriver.
-  However it is possible to attach an existing selenium-webdriver to a wd
-  browser instance as below.
+  However it is possible to attach an existing selenium-webdriver session to
+  a wd browser instance as below.
 
   prerequisite:
     npm install selenium-webdriver

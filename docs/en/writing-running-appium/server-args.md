@@ -29,6 +29,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-g`, `--log`|null|Also send log output to this file|`--log /path/to/appium.log`|
 |`--log-level`|debug|log level (default: debug)|`--log-level debug`|
 |`--log-timestamp`|false|Show timestamps in console output||
+|`--local-timezone`|false|Use local timezone for timestamps||
 |`--log-no-colors`|false|Don't use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
 |`--native-instruments-lib`|false|(IOS-only) IOS has a weird built-in unavoidable delay. We patch this in appium. If you do not want it patched, pass in this flag.||

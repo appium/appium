@@ -8,6 +8,9 @@ required so that Appium knows whether you want to automate the native aspects
 of the app or the web views, but thankfully, we can stay within the
 WebDriver protocol for everything.
 
+* We're working on filling out the methods available in web view contexts.
+[Join us in our quest!](http://appium.io/get-involved.html)
+
 ### Automating hybrid iOS apps
 
 Here are the steps required to talk to a web view in your Appium test:
@@ -74,8 +77,6 @@ allow a connection to be established. Turn it on by going to **settings >
 safari > advanced**. Please be aware that the web inspector was **added as
 part of iOS 6** and was not available previously.
 
-* We're working on filling out the methods available in web view contexts. [Join us in our quest!](http://appium.io/get-involved.html)
-
 ```javascript
 // javascript
 // assuming we have an initialized `driver` object working on the UICatalog app
@@ -127,9 +128,9 @@ SERVER_URL = "http://127.0.0.1:4723/wd/hub"
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
 capabilities =
     {
-      'browserName' => 'iOS 6.0',
-      'platform' => 'Mac 10.8',
-      'device' => 'iPhone Simulator',
+      'platformName' => 'iOS',
+      'platformVersion' => ''7.1',
+      'deviceName' => 'iPhone Simulator',
       'app' => APP_PATH,
       'name' => TEST_NAME
     }
@@ -159,11 +160,11 @@ end
 # python
 APP_PATH = "https://dl.dropboxusercontent.com/s/123456789101112/ts_ios.zip"
 capabilities = {
-    'browserName': 'iOS 6.0',
-    'platform': 'Mac 10.8',
-    'device': 'iPhone Simulator',
+    'platformName': 'iOS',
+    'platformVersion': '7.1',
+    'deviceName': 'iPhone Simulator',
     'app': APP_PATH,
-    'name': "Example Python Test"
+    'name': "Example Hybrid Python Test"
 }
 driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 

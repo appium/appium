@@ -6,7 +6,7 @@ Appium client libraries implement the [Mobile JsonWire Protocol](https://code.go
 
 Appium client libraries only **add** functionality, so they can still be used to run regular Selenium sessions.
 
-Language | Github Repo and Installation Instructions |
+Language/Framework | Github Repo and Installation Instructions |
 ----- | ----- |
 Ruby | [https://github.com/appium/ruby_lib](https://github.com/appium/ruby_lib)
 Python | [https://github.com/appium/python-client](https://github.com/appium/python-client)
@@ -14,3 +14,4 @@ Java | [https://github.com/appium/java-client](https://github.com/appium/java-cl
 JavaScript (Node.js) | [https://github.com/admc/wd](https://github.com/admc/wd)
 PHP | [https://github.com/appium/php-client](https://github.com/appium/php-client)
 C# (.NET) | [https://github.com/appium/appium-dotnet-driver](https://github.com/appium/appium-dotnet-driver)
+RobotFramework | [https://github.com/jollychang/robotframework-appiumlibrary](https://github.com/jollychang/robotframework-appiumlibrary)

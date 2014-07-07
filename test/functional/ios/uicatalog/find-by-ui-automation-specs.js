@@ -36,9 +36,9 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
         .should.eventually.have.length(2)
       .nodeify(done);
   });
-  it('should process UIAutomation queries if user leaves out the first period', function (done) {
+  it('should use raw selector code if selector doesn\'t start with a dot' , function (done) {
     driver
-      .elements(byUIA, 'elements()').then(filterDisplayed)
+      .elements(byUIA, '$.mainWindow().elements()').then(filterDisplayed)
         .should.eventually.have.length(2)
       .nodeify(done);
   });

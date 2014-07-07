@@ -1,4 +1,4 @@
-# Appium Client Libraries
+## Appium Client Libraries
 
 Appium has libraries for:
 
@@ -23,7 +23,7 @@ not generally useful. Proper coverage support will be added once [this issue](ht
 is resolved. `complexFind()` will be removed once [this issue](https://github.com/appium/appium/issues/2264)
 is resolved. If you want to use them anyway, consult the documentation for the bindings on GitHub.
 
-## Lock
+### Lock
 
 Lock the screen.
 
@@ -57,7 +57,7 @@ $this->lock(3);
 driver.LockDevice(3);
 ```
 
-## Background app
+### Background app
 
 Send the currently active app to the background.
 
@@ -91,7 +91,7 @@ $this->backgroundApp(5);
 driver.BackgroundApp(5);
 ```
 
-## Hide Keyboard
+### Hide Keyboard
 
 Hide the keyboard.
 
@@ -126,7 +126,7 @@ $this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 driver.HideKeyboard("Done");
 ```
 
-## Is installed
+### Is installed
 
 Check if an app is installed
 
@@ -161,7 +161,7 @@ $this->isAppInstalled('com.example.android.apis');
 driver.IsAppInstalled("com.example.android.apis-");
 ```
 
-## Install App
+### Install App
 
 Install an app to the device.
 
@@ -195,7 +195,7 @@ $this->installApp('path/to/my.apk');
 driver.InstallApp("path/to/my.apk");
 ```
 
-## Remove App
+### Remove App
 
 Remove an app from the device.
 
@@ -229,7 +229,7 @@ $this->removeApp('com.example.android.apis');
 driver.RemoveApp("com.example.android.apis");
 ```
 
-## Shake
+### Shake
 
 Simulate the device shaking.
 
@@ -263,7 +263,7 @@ $this->shake();
 driver.ShakeDevice();
 ```
 
-## Close app
+### Close app
 
 Close the app
 
@@ -297,7 +297,7 @@ $this->closeApp();
 driver.CloseApp();
 ```
 
-## Launch
+### Launch
 
 Launch the app
 
@@ -331,7 +331,7 @@ $this->launchApp();
 driver.LaunchApp();
 ```
 
-## Reset
+### Reset
 
 Reset the app.
 
@@ -365,7 +365,7 @@ $this->reset();
 driver.ResetApp();
 ```
 
-## Available Contexts
+### Available Contexts
 
 List all available contexts
 
@@ -399,7 +399,7 @@ $this->contexts();
 driver.GetContexts()
 ```
 
-## Current context
+### Current context
 
 List the current context
 
@@ -434,7 +434,7 @@ $this->context();
 driver.GetContext()
 ```
 
-## Switch to default context
+### Switch to default context
 
 Change the context to the default.
 
@@ -468,7 +468,7 @@ $this->context(NULL);
 driver.SetContext();
 ```
 
-## App Strings
+### App Strings
 
 Get the app's strings.
 
@@ -503,7 +503,7 @@ $this->appStrings('ru');
 driver.GetAppStrings();
 ```
 
-## Key Event
+### Key Event
 
 Send a key event to the device.
 
@@ -537,7 +537,7 @@ $this->keyEvent('176');
 driver.KeyEvent("176");
 ```
 
-## Current Activity
+### Current Activity
 
 Android only. Get the current activity.
 
@@ -571,7 +571,7 @@ $this->currentActivity();
 driver.GetCurrentActivity();
 ```
 
-## TouchAction / MultiTouchAction
+### TouchAction / MultiTouchAction
 
 An API for generating touch actions. This section of the documentation will be
 expanded upon soon.
@@ -640,7 +640,7 @@ action.Press(el, 10, 10).Release();
 action.Perform ();
 ```
 
-## Swipe
+### Swipe
 
 Simulate a user swipe.
 
@@ -686,7 +686,7 @@ $this->swipe(75, 500, 75, 0, 800);
 todo: c#
 ```
 
-## Pinch
+### Pinch
 
 Pinch the screen.
 
@@ -746,7 +746,7 @@ $this->pinch($el);
 driver.Pinch(25, 25)
 ```
 
-## Zoom
+### Zoom
 
 Zoom the screen.
 
@@ -807,7 +807,7 @@ $this->zoom($el);
 driver.Zoom(100, 200);
 ```
 
-## Scroll To
+### Scroll To
 
 Scroll to an element.
 
@@ -848,7 +848,7 @@ $this->scroll($els[count($els) - 1], $els[0]);
 todo: csharp
 ```
 
-## Pull file
+### Pull file
 
 Pulls a file from the device.
 
@@ -883,7 +883,7 @@ $this->pullFile('Library/AddressBook/AddressBook.sqlitedb');
 driver.PullFile("Library/AddressBook/AddressBook.sqlitedb");
 ```
 
-## Push File
+### Push File
 
 Pushes a file to the device.
 
@@ -925,7 +925,7 @@ $this->pushFile($path, base64_encode($data));
 driver.PushFile("/data/local/tmp/file.txt", "some data for the file");
 ```
 
-## Appium Desktop Apps
+### Appium Desktop Apps
 
 Appium's desktop app supports OS X and Windows.
 

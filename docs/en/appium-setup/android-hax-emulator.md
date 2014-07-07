@@ -1,4 +1,4 @@
-# Intel® Hardware Accelerated Execution Manager
+## Intel® Hardware Accelerated Execution Manager
 
 If you find the android emulator a slow and your system runs on an Intel®
 cpu, you can check out HAXM. HAXM let's you leverage your hardware for

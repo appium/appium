@@ -1,4 +1,4 @@
-# uiautomator UiSelector
+## uiautomator UiSelector
 
 Appium enables searching using [UiSelectors](http://developer.android.com/tools/help/uiautomator/UiSelector.html).
 [UiScrollable](http://developer.android.com/tools/help/uiautomator/UiScrollable.html)

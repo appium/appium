@@ -1,4 +1,4 @@
-# Selenium Grid
+## Selenium Grid
 
 You are able to register your appium server with a local grid by using the
 **"--nodeconfig"** server parameter.
@@ -19,7 +19,7 @@ you will see your device on the grid console page:
 
 "http://**\<grid-ip-adress\>**:**\<grid-port\>**/grid/console"
 
-## Grid Node Configuration Example json file
+### Grid Node Configuration Example json file
 
 ```xml
 {

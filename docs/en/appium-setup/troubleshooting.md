@@ -1,9 +1,9 @@
-# Troubleshooting Appium
+## Troubleshooting Appium
 
 Here's what to do if you're experiencing problems, before you submit a ticket
 to github or write to the appium-discuss mailing list.
 
-## General
+### General
 
 * Make sure you've followed the getting started steps in the [README](../../README.md)
 * Make sure your system is set up appropriately (i.e., XCode is updated,
@@ -11,17 +11,17 @@ to github or write to the appium-discuss mailing list.
   [setup instructions](running-on-osx.md)
 * Make sure the paths to your applications are correct
 
-## If you're running Appium.app
+### If you're running Appium.app
 
 * Update the app and restart. If you get a message saying the app can't be updated,
   re-download it from [appium.io](http://appium.io).
 
-## If you're running Appium from source
+### If you're running Appium from source
 
 * `git pull` to make sure you're running the latest code
 * Run the appropriate flavor of `reset.sh` based on what you're trying to
 automate:
-    
+
     ./reset.sh               # all
     ./reset.sh --ios         # ios-only
     ./reset.sh --android     # android-only
@@ -31,24 +31,24 @@ automate:
 * You can also use `appium-doctor` to automatically verify that all
   dependencies are met. If running from source, you may have to use
   `bin/appium-doctor.js` or `node bin/appium-doctor.js`.
-* If you get this error after upgrading to Android SDK 22: 
+* If you get this error after upgrading to Android SDK 22:
   `{ANDROID_HOME}/tools/ant/uibuild.xml:155: SDK does not have any Build Tools installed.`
 In the Android SDK 22, the platform and build tools are split up into their
 own items in the SDK manager. Make sure you install the build-tools and platform-tools.
 
-## Android
+### Android
 
 * Make sure the Android emulator is up and running.
 * It's sometimes useful to run `adb kill-server && adb devices`. This can
   reset the connection to the Android device.
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
-## IOS
+### IOS
 
 * Make sure Instruments.app is not open
 * If you're running the simulator, make sure your actual device is not
   plugged in
-* Make sure the accessibility helper is turned off in your Settings app 
+* Make sure the accessibility helper is turned off in your Settings app
 * Make sure the app is compiled for the version of the simulator that's being
   run
 * Make sure the app is compiled for the simulator (or real device) as
@@ -65,7 +65,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
 
-## Webview/Hybrid/Safari app support
+### Webview/Hybrid/Safari app support
 
 * Make Sure you enable the 'Web Inspector' on the real device.
 * Make Sure you enable the Safari - Advance Preferences- Developer menu for
@@ -73,12 +73,12 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If you getting this error: select_port() failed, when trying to open the
   proxy, see this [discussion](https://groups.google.com/forum/#!topic/appium-discuss/tw2GaSN8WX0)
 
-## FirefoxOS
+### FirefoxOS
 
 * Make sure the Boot-to-Gecko simulator is up and running.
 * Make sure the simulator screen is alive and unlocked (might require restarting B2G).
 
-## Let the community know
+### Let the community know
 
 Once you've tried the above steps and your issue still isn't resolved,
 here's what you can do:
@@ -97,7 +97,7 @@ and here's a link to a paste of the Appium server output)
 * Per above, it's very important to include a paste of the Appium server
 output when it's run in verbose mode so that we can diagnose what's going on.
 
-## Known Issues
+### Known Issues
 
 * If you've installed Node from the Node website, it requires that you use sudo
   for `npm`. This is not ideal. Try to get node with 
@@ -112,7 +112,7 @@ output when it's run in verbose mode so that we can diagnose what's going on.
   folder (`/opt/local/bin` by default) is added to `PATH` somewhere in your
   `~/.profile`, `~/.bash_profile` or `~/.bashrc`.
 
-## Specific Errors
+### Specific Errors
 
 |Action|Error|Resolution|
 |------|-----|----------|

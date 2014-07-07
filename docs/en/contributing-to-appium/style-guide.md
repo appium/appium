@@ -1,18 +1,18 @@
-# Style guide for contributors
+## Style guide for contributors
 
 Thanks for your contribution to Appium! Here are the principles we use when
 writing javascript. Please conform to these so we can merge your pull request
  without going back and forth about style. The main principle is: *make your
  code look like the surrounding code*.
 
-## Rebasing
+### Rebasing
 
 Commits in a pull request should consist of [logical changes](https://github.com/appium/appium/pull/920#issuecomment-21588553).
 If there are multiple authors, make sure each author has their own commit.
 It's not a good idea to modify author information. Merge commits should be
 rebased out of pull requests.
 
-## Linting
+### Linting
 
 All code (except for code in `bootstrap.js` which uses proprietary Apple
 methods) must pass JSLint. To check your code, you can simply run `grunt
@@ -65,7 +65,7 @@ editor. See [this page for jshint](http://www.jshint.com/platforms/) and
 get the list of editors and platforms supported and how setup your editor for
 automatic linting.
 
-## Style notes
+### Style notes
 
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
@@ -76,8 +76,8 @@ automatic linting.
     not
     ```javascript
     var x=1;
-    ```        
-    
+    ```
+
 *   Spaces after commas and colons in lists, objects, function calls, etc...
 
     ```javascript
@@ -183,7 +183,7 @@ automatic linting.
     };
 
     // Create a subclass
-    
+
     var SubClass = function () {
         this.init();
     };
@@ -208,7 +208,7 @@ automatic linting.
     ```javascript
     function myFunc (a, b, c) {}
     ```
-    
+
 *   Variable names should be camelCased:
 
     ```javascript
@@ -229,8 +229,8 @@ automatic linting.
     myVariable === undefined
     ```
 
-## Test Style:
-    
+### Test Style:
+
 Keep on the same line if it makes sense semantically and length is not an issue:
 
 Examples:
@@ -238,7 +238,7 @@ Examples:
 ```javascript
   driver.elementByTagName('el1').should.become("123")
     .nodeify(done);
-  
+
   driver
     .elementsByTagName('el1').should.eventually.have.length(0)
     .nodeify(done);

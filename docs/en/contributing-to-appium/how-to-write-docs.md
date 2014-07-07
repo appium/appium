@@ -1,17 +1,17 @@
-# How to write docs
+## How to write docs
 
-`#` is used to write a h1 header. Each document must start with a h1 header.
-Don't use the `===` underline method of creating headers.
+`##` is used to write a h2 header. Each document must start with a h2 header.
+This is to support appium.io docs genration.Don't use the `---` underline method of creating headers.
+Don't use h1 `#` or `===` for heading as it is not supported for table of contents (folder name is used as h1).
 
-## Subheaders
+### Subheaders
 
-`##` is used to write subheaders. Don't use the `---` underline method of
-creating sub headers.
+`###` is used to write subheaders.
 
 ### Regular headers
 
-`###` is used for headers that don't appear in the table of contents.
-Don't use h4 `####`, h5 `#####`, or h6 `######`.
+`####` is used for headers that don't appear in the table of contents.
+Don't use h5 `#####`, or h6 `######`.
 
 ### Line breaks
 

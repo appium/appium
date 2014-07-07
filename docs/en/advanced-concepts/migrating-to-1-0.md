@@ -1,8 +1,8 @@
-# Migrating your tests from Appium 0.18.x to Appium 1.x
+## Migrating your tests from Appium 0.18.x to Appium 1.x
 
 Appium 1.0 has removed a number of deprecated features from the previous versions. This guide will help you know what needs to change in your test suite to take advantage of Appium 1.0.
 
-## New client libraries
+### New client libraries
 
 The biggest thing you need to worry about is using the new Appium client libraries instead of the vanilla WebDriver clients you are currently using. Visit the [Appium client list](appium-clients.md) to find the client for your language. Downloads and instructions for integrating into your code are available on the individual client websites.
 
@@ -18,7 +18,7 @@ Instead of:
 from selenium import webdriver
 ```
 
-## New desired capabilities
+### New desired capabilities
 
 The following capabilities are no longer used:
 
@@ -36,7 +36,7 @@ The `app` capability remains the same, but now refers exclusively to non-browser
 
 We have also standardized on camelCase for Appium server caps. That means caps like `app-package` or `app-wait-activity` are now `appPackage` and `appWaitActivity` respectively. Of course, since Android app package and activity are now auto-detected, you should be able to omit them entirely in most cases.
 
-## New locator strategies
+### New locator strategies
 
 We've removed the following locator strategies:
 
@@ -68,11 +68,11 @@ We've also added the following locator strategies:
 
 Refer to your client for ways to use these new locator strategies.
 
-## XML, not JSON
+### XML, not JSON
 
 App source methods, which previously returned JSON, now return XML, so if you have code that relies on parsing the app source, it will need to be updated.
 
-## Hybrid support through context, not window
+### Hybrid support through context, not window
 
 Hybrid apps were previously supported by switching between "windows" using
 
@@ -100,12 +100,13 @@ And to switch between them, you use
 driver.switch_to.context("WEBVIEW")
 ```
 
+
 ```javascript
 // javascript
 driver.currentContext().then(function (context) { /*...*/ })
 ```
 
-## No more `execute_script("mobile: xxx")`
+### No more `execute_script("mobile: xxx")`
 
 All the `mobile: ` methods have been removed, and have been replaced by native methods in the Appium client libraries. This means that a method call like `driver.execute("mobile: lock", [5])` will now look something more like `driver.lock(5)` (where `lock` has been turned into a native client method). Of course, the details on calling these methods will differ by client.
 

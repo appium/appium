@@ -1,12 +1,12 @@
-# Running Appium on Linux
+## Running Appium on Linux
 
-## Limitations
+### Limitations
 
 If you are running Appium on Linux, you cannot use the prebuilt '.app',
 which is built for OS X only. Additionally, you will not be able to test iOS
 apps because Appium relies on OS X-only libraries to support iOS testing.
 
-## Setup
+### Setup
 
 To get started, you'll need to install node.js (v.0.10 or greater). Just
 follow the [instructions for your flavor of linux](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager).
@@ -25,7 +25,7 @@ shell startup:
 Now that you're setup to run Appium, run `./reset.sh --android` from your
 Appium checkout to install all the dependencies.
 
-## Running Appium
+### Running Appium
 
 To run tests on Linux, you will need to have the Android Emulator booted and
 running an AVD with API Level 17 or greater. Then run Appium on the command
@@ -36,7 +36,7 @@ line using node.js:
 See the [server documentation](server-args.md) for all the command line
 arguments.
 
-## Notes
+### Notes
 
 * There exists a hardware accelerated emulator for android, it has it's own
   limitations. For more information you can check out this

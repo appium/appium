@@ -1,9 +1,9 @@
-# Multi-lingual Support
+## Multi-lingual Support
 
 By default the automation tools for both iOS and Android do not support non-ASCII
 characters sent to editable fields through the keyboard.
 
-## iOS
+### iOS
 
 Appium sends non-ASCII characters to iOS editable fields directly, bypassing the
 keyboard altogether. While this allows the text to be inputted in tests, it should
@@ -36,7 +36,7 @@ driver
   .nodeify(done);
 ```
 
-## Android
+### Android
 
 Android tests allow for Unicode input by installing and using a [specialized
 keyboard](https://github.com/appium/io.appium.android.ime) that allows the text

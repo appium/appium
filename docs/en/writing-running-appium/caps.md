@@ -17,6 +17,8 @@
 |`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|
 |`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|
+|`noReset`|Don't reset app state before this session. Default `false`|`true`, `false`|
+|`fullReset`|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data. On Android, this will also remove the app after the session is complete. Default `false`|`true`, `false`|
 
 ### Android Only
 

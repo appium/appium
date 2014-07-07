@@ -83,9 +83,6 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 Once you've tried the above steps and your issue still isn't resolved,
 here's what you can do:
 
-If you've found what you believe is a bug, go straight to the [issue tracker](https://github.com/appium/appium/issues)
-and submit an issue describing the bug and a repro case.
-
 If you're having trouble getting Appium working and the error messages Appium
 provides are not clear, join the [mailing list](https://groups.google.com/d/forum/appium-discuss)
 and send a message. Please include the following:
@@ -97,10 +94,13 @@ and here's a link to a paste of the Appium server output)
 * Per above, it's very important to include a paste of the Appium server
 output when it's run in verbose mode so that we can diagnose what's going on.
 
+If you've found what you believe is a bug, go straight to the [issue tracker](https://github.com/appium/appium/issues)
+and submit an issue describing the bug and a repro case.
+
 ### Known Issues
 
 * If you've installed Node from the Node website, it requires that you use sudo
-  for `npm`. This is not ideal. Try to get node with 
+  for `npm`. This is not ideal. Try to get node with
   [n](https://github.com/visionmedia/n) or `brew install node` instead!
 * Webview support works on real iOS devices with a proxy, see [discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ).
 * Sometimes iOS UI elements become invalidated milliseconds after they are

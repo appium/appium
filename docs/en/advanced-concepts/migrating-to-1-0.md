@@ -93,6 +93,30 @@ current = driver.context
 driver.contexts().then(function (contexts) { /*...*/ })
 ```
 
+```c#
+// c#
+driver.GetContexts ()
+driver.GetContext ()
+```
+
+```java
+// java
+Set<String> contextNames = driver.getContextHandles();
+String context = driver.getContext();
+```
+
+```php
+// php
+$contexts = $this->contexts();
+$context = $this->context();
+```
+
+```ruby
+# ruby
+contexts = available_contexts
+context = current_context
+```
+
 And to switch between them, you use
 
 ```python
@@ -100,10 +124,29 @@ And to switch between them, you use
 driver.switch_to.context("WEBVIEW")
 ```
 
-
 ```javascript
 // javascript
 driver.currentContext().then(function (context) { /*...*/ })
+```
+
+```c#
+// c#
+driver.SetContext ("WEBVIEW");
+```
+
+```java
+java
+driver.context(contextName);
+```
+
+```php
+// php
+$this->context('WEBVIEW');
+```
+
+```ruby
+# ruby
+set_context "WEBVIEW"
 ```
 
 ### No more `execute_script("mobile: xxx")`

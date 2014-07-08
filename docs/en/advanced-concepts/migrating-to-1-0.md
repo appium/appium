@@ -4,7 +4,7 @@ Appium 1.0 has removed a number of deprecated features from the previous version
 
 ### New client libraries
 
-The biggest thing you need to worry about is using the new Appium client libraries instead of the vanilla WebDriver clients you are currently using. Visit the [Appium client list](appium-clients.md) to find the client for your language. Downloads and instructions for integrating into your code are available on the individual client websites.
+The biggest thing you need to worry about is using the new Appium client libraries instead of the vanilla WebDriver clients you are currently using. Visit the [Appium client list](/docs/en/about-appium/appium-clients.md) to find the client for your language. Downloads and instructions for integrating into your code are available on the individual client websites.
 
 Ultimately, you'll be doing something like (to use Python as an example):
 

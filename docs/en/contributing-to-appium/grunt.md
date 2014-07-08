@@ -26,6 +26,6 @@ kinds of appium dev tasks. Here's what you can do:
 
 By default, `grunt buildApp` builds apps using the iPhone 7.1 simulator SDK.
 You can overwrite the simulator by passing another SDK to grunt (to figure out
-which SDKs you have available, try `xcodebuild -showsdks`:
+which SDKs you have available, try running `xcodebuild -showsdks`):
 
     > grunt buildApp:UICatalog:iphonesimulator6.1

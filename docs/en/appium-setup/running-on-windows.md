@@ -16,23 +16,23 @@ To get started:
 1. Install [node.js](http://nodejs.org/download/) (v.0.10 or greater). Use the
    installer from nodejs.org.
 1. Install the [Android SDK](http://developer.android.com/sdk/index.html).
-   You will need to run the 'android' tool (included in the SDK) and make sure
+   You will need to run the 'android' tool (included in the SDK, in the `tools` folder) and make sure
    you have an API Level 17 or greater API installed. Set `ANDROID_HOME` to be
-   your Android SDK path and add the tools and platform-tools folders to your
+   your Android SDK path and add the `tools` and `platform-tools` folders to your
    PATH variable.
 1. Install the Java JDK and set `JAVA_HOME` to your JDK folder.
 1. Install [Apache Ant](http://ant.apache.org/bindownload.cgi) or use the one
    that comes with the Android Windows SDK in the eclipse\plugins folder. Be
-   sure to add the folder containing ant to your PATH variable.
+   sure to add the folder containing Ant to your PATH variable.
 1. Install [Apache Maven](http://maven.apache.org/download.cgi) and set the
-   M2HOME and M2 environment variables. Set M2HOME to the directory maven is
-   installed in, and set M2 to %M2HOME\bin. Add the path you used for M2 to
+   M2HOME and M2 environment variables. Set `M2HOME` to the directory maven is
+   installed in, and set `M2` to `%M2HOME\bin`. Add the path you used for `M2` to
    your PATH.
 1. Install [Git](http://git-scm.com/download/win) Be sure to install Git for
    windows to run in the regular command prompt.
 1. Install [cURL](http://curl.haxx.se/download.html).
 
-Now that you've downloaded everything, run:
+Now that you've downloaded everything, run the following .bat file in the folder where you installed appium:
 
     reset.bat
 
@@ -40,18 +40,18 @@ Now that you've downloaded everything, run:
 
 To run tests on Windows, you will need to have the Android Emulator booted or
  an Android Device connected that is running an AVD with API Level 17 or
- greater. Then run Appium on the command line using node.js:
+ greater. Then run Appium on the command line inside the folder where you installed appium, using node.js:
 
     node .
 
-See the [server documentation](server-args.md) for all the command line
+See the [server documentation](/docs/en/writing-running-appium/server-args.md) for all the command line
 arguments.
 
 ### Notes
 
-* You must supply the `--no-reset` and `--full-reset` flags currently for
+* You must supply the `--no-reset` and `--full-reset` flags for
   Android to work on Windows.
 * There exists a hardware accelerated emulator for Android, it has it's own
   limitations. For more information you can check out this
-  [page](android-hax-emulator.md).
+  [page](/docs/en/appium-setup/android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.

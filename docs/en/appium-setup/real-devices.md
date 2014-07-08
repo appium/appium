@@ -39,7 +39,7 @@ appium -U <udid> --app <path or bundle>
 
 This will start Appium and have Appium use the device to test the app.
 
-Refer to the [Appium server arguments](server-args.md) page for more detail on
+Refer to the [Appium server arguments](/docs/en/writing-running-appium/server-args.md) page for more detail on
 the arguments that you can use.
 
 ### Desired Capabilities
@@ -50,7 +50,7 @@ capabilities in your tests:
 * `app`
 * `udid`
 
-Refer to the [Appium server capabilities](caps.md) page for more detail on
+Refer to the [Appium server capabilities](docs/en/writing-running-appium/caps.md) page for more detail on
 the capabilities that you can use.
 
 ### Troubleshooting ideas
@@ -59,7 +59,7 @@ the capabilities that you can use.
    is a long string (20+ chars).
 0. Make sure that you can run your tests against the Simulator.
 0. Double check that you can invoke your automation from Instruments.
-0. Make sure Instruments in closed already.
+0. Make sure Instruments is not already running.
 
 ### Appium on real Android devices
 

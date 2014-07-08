@@ -1,14 +1,13 @@
 ## Troubleshooting Appium
 
 Here's what to do if you're experiencing problems, before you submit a ticket
-to github or write to the appium-discuss mailing list.
+to github or write to the [appium-discuss mailing list](https://groups.google.com/forum/#!forum/appium-discuss).
 
 ### General
 
-* Make sure you've followed the getting started steps in the [README](../../README.md)
+* Make sure you've followed the getting started steps in the [README](/README.md)
 * Make sure your system is set up appropriately (i.e., XCode is updated,
-  Android SDK is installed and `ANDROID_HOME` is set:
-  [setup instructions](running-on-osx.md)
+  Android SDK is installed and `ANDROID_HOME` is set.
 * Make sure the paths to your applications are correct
 
 ### If you're running Appium.app
@@ -22,10 +21,13 @@ to github or write to the appium-discuss mailing list.
 * Run the appropriate flavor of `reset.sh` based on what you're trying to
 automate:
 
-    ./reset.sh               # all
-    ./reset.sh --ios         # ios-only
-    ./reset.sh --android     # android-only
-    ./reset.sh --selendroid  # selendroid-only
+|command                  | explanation |
+|-------------------------|-------------|
+|./reset.sh               | # all |
+|./reset.sh --ios         | # ios-only |
+|./reset.sh --android     | # android-only |
+|./reset.sh --selendroid  | # selendroid-only |
+
 * You might also want to run `reset.sh` with the `--dev` flag if you want the
   test apps downloaded and built as well.
 * You can also use `appium-doctor` to automatically verify that all
@@ -70,6 +72,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make Sure you enable the 'Web Inspector' on the real device.
 * Make Sure you enable the Safari - Advance Preferences- Developer menu for
   simulators.
+* Make sure you are properly switching contexts using the `context` appium commands provided by your client library.
 * If you getting this error: select_port() failed, when trying to open the
   proxy, see this [discussion](https://groups.google.com/forum/#!topic/appium-discuss/tw2GaSN8WX0)
 
@@ -88,6 +91,9 @@ provides are not clear, join the [mailing list](https://groups.google.com/d/foru
 and send a message. Please include the following:
 
 * How you're running Appium (Appium.app, npm, source)
+* What operating system you are using
+* What device and version you are testing against (i.e. Android 4.4, or iOS 7.1)
+* Whether you are running against a real device or a simulator/emulator
 * The client-side and server-side errors you're getting (i.e.,
 "In Python this is the exception I get in my test script,
 and here's a link to a paste of the Appium server output)

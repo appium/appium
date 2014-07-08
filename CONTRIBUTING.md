@@ -1,13 +1,13 @@
-# Contributing to Appium
+## Contributing to Appium
 
 Fork the project, make a change, and send a pull request! Please have a look at our
-[Style Guide](docs/en/style-guide.md) before getting to work.
+[Style Guide](docs/en/contributing-to-appium/style-guide.md) before getting to work.
 Please make sure the unit and functional tests pass before sending a pull request; for more
 information on how to run tests, keep reading!
 
 Make sure you read and follow the setup instructions in the README first.
 
-## Using Appium
+### Using Appium
 
 An Appium setup involves the Appium server, which sends messages back and forth between
 your test code and devices/emulators, and a test script, written in whatever language
@@ -22,7 +22,7 @@ The quick way to get started:
     $ sudo grunt authorize # for ios only
     $ node .
 
-## Hacking with Appium
+### Hacking with Appium
 
 Make sure you have ant, maven, adb installed and added to system PATH, also you
 would need the android-16 sdk (for Selendroid) and android-18 sdk installed.
@@ -52,13 +52,13 @@ There are some arguments you can pass into the Appium server from the command-li
     node . --log /my/appium.log // log to file instead of stdout
     node . --log-level warn // don't log verbose output
 
-See [the server documentation](docs/en/server-args.md)
+See [the server documentation](docs/en/writing-running-appium/server-args.md)
 for a full list of arguments.
 
-Like the power of automating dev tasks? Check out the [Appium Grunt tasks](docs/en/grunt.md)
+Like the power of automating dev tasks? Check out the [Appium Grunt tasks](docs/en/contributing-to-appium/grunt.md)
 available to help with building apps, installing apps, generating docs, etc.
 
-### Hacking with Appium for iOS
+#### Hacking with Appium for iOS
 
 To avoid a security dialog that may appear when launching your iOS apps you'll
 have to modify your `/etc/authorization` file in one of two ways:
@@ -77,7 +77,7 @@ At this point, run:
 
 Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
 
-### Hacking with Appium for Android
+#### Hacking with Appium for Android
 
 Bootstrap running for Android by running:
 
@@ -95,7 +95,7 @@ on your path):
 
 Now you are ready to run the Appium server via `node .`.
 
-### Making sure you're up to date
+#### Making sure you're up to date
 
 Since Appium uses dev versions of some packages, it often becomes necessary to
 install new `npm` packages or update various things. There's a handy shell script
@@ -111,9 +111,9 @@ Or you can run reset for individual platforms only:
     ./reset.sh --android --dev
     ./reset.sh --selendroid --dev
 
-## Running Tests
+### Running Tests
 
-First, check out our documentation on [running tests in general](docs/en/running-tests.md)
+First, check out our documentation on [running tests in general](docs/en/writing-running-appium/running-tests.md)
 Make sure your system is set up properly for the platforms you desire to test
 on.
 
@@ -142,7 +142,7 @@ your changes against code quality standards:
     > Lint free.
     > Done, without errors.
 
-### Running individual tests
+#### Running individual tests
 
 If you have an Appium server listening, you can run individual test files using
 Mocha, for example:

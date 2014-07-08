@@ -95,7 +95,7 @@ Appium is a server written in Node.js. It can be built and installed from source
 There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)
 which support Appium's extensions to the WebDriver protocol. When using Appium,
 you want to use these client libraries instead of your regular WebDriver
-client. You can view the full list of libraries [here](/appium-clients.md).
+client. You can view the full list of libraries [here](appium-clients.md).
 
 **[Appium.app](https://github.com/appium/appium-dot-app), [Appium.exe](https://github.com/appium/appium-dot-exe)**<br/>
 There exist GUI wrappers around the Appium server that can be downloaded.

@@ -4,11 +4,11 @@ Appium on OS X supports iOS and Android testing.
 
 ### System setup (iOS)
 
-* Appium requires Mac OS X 10.7, but 10.8 is recommended.
+* Appium requires Mac OS X 10.7, but 10.8 or 10.9 is recommended.
 * Make sure you have Xcode and the iOS SDK(s) installed. (Appium currently
-  supports Xcode 4.6.3 for iOS up to 6.1 and Xcode 5 for iOS 7.0 and 7.1. Note
-  that testing against iOS versions below 7.0 using Xcode 5 is not recommended.
-  See the next section for more information.)
+  supports Xcode 4.6.3 for iOS up to 6.1 and Xcode 5.x for iOS 7.0 and 7.1.
+  Note that testing against iOS versions below 7.0 using Xcode 5 is not
+  recommended. See the next section for more information.)
 * You need to authorize use of the iOS Simulator. If you are running Appium
   from NPM, you'll do this by running `sudo authorize_ios` (`authorize_ios` is
   a binary made available by the Appium npm package). If you're running Appium

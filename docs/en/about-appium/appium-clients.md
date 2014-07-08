@@ -1,10 +1,10 @@
 ## List of client libraries with Appium server support
 
-These libraries wrap standard Selenium client libraries to provide all the regular selenium commands dictated by the [jsonWire protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and add extra commands related to controlling mobile devices, such as **MultiTouch gestures** and **screen orientation**.
+These libraries wrap standard Selenium client libraries to provide all the regular selenium commands dictated by the [JSON Wire protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and add extra commands related to controlling mobile devices, such as **multi-touch gestures** and **screen orientation**.
 
-Appium client libraries implement the [Mobile JsonWire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile), and the [W3C Webdriver spec](https://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html).
+Appium client libraries implement the [Mobile JSON Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) (an official draft extension to the standard protocol), and elements of the [W3C Webdriver spec](https://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html) (a transport-agnostic automation spec; this is where the MultiAction API is defined).
 
-Appium client libraries only **add** functionality, so they can still be used to run regular Selenium sessions.
+The Appium server itself defines custom extensions to the official protocols, giving Appium users helpful access to various device behaviors (such as installing/uninstalling apps during the course of a test session). This is why we need Appium-specific clients, not just the 'vanilla' Selenium clients. Of course, Appium client libraries only **add** functionality (in fact, they simply extend the standard Selenium clients), so they can still be used to run regular Selenium sessions.
 
 Language/Framework | Github Repo and Installation Instructions |
 ----- | ----- |

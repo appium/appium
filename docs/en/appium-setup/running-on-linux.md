@@ -28,17 +28,16 @@ Appium checkout to install all the dependencies.
 ### Running Appium
 
 To run tests on Linux, you will need to have the Android Emulator booted and
-running an AVD with API Level 17 or greater. Then run Appium on the command
-line using node.js:
-
-    node .
+running an AVD with API Level 17 or greater. Then run Appium (`appium`) after
+installing via NPM, or `node .` in the source directory if running from source.
 
 See the [server documentation](server-args.md) for all the command line
 arguments.
 
 ### Notes
 
-* There exists a hardware accelerated emulator for android, it has it's own
+* There exists a hardware accelerated emulator for android, it has its own
   limitations. For more information you can check out this
   [page](android-hax-emulator.md).
-* Make sure that `hw.battery=yes` in your AVD's `config.ini`.
+* Make sure that `hw.battery=yes` in your AVD's `config.ini`, if you want to
+  run any of the Appium tests

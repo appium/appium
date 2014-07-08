@@ -19,7 +19,7 @@ necessary to test on a real device. Your app will also need to be signed. You
 can find information about this in the [Apple documentation](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/TestingYouriOSApp/TestingYouriOSApp.html).
 
 Appium will attempt to install your app using Fruitstrap, but it is often easier
-to pre-install your app using Xcode to ensure there are no problems.
+to pre-install your app using Xcode to ensure there are no problems (see the [iOS deploy](ios-deploy.md) doc for more information).
 
 ### Running your tests with Appium
 
@@ -65,4 +65,6 @@ the capabilities that you can use.
 
 Hooray! There's nothing extra to know about testing real Android devices: it
 works exactly the same as testing on emulators. Make sure that your device
-can connect to ADB and has Developer Mode enabled.
+can connect to ADB and has Developer Mode enabled. For testing Chrome on a real
+device, you're responsible for ensuring that Chrome of an appropriate version
+is installed.

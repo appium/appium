@@ -46,7 +46,7 @@ driver
 
 ```java
 // java
-// assuming we have an initialized `driver` object for an app
+// assuming we have a set of capabilities
 driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
 Set<String> contextNames = driver.getContextHandles();
@@ -67,7 +67,7 @@ driver.quit();
 
 ```ruby
 # ruby
-# assuming we have an initialized `driver` object for an app
+# assuming we have a set of capabilities
 @driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => SERVER_URL)
 
 # I switch to the last window because its always the webview in our case, in other cases you may need to specify a window number
@@ -123,7 +123,7 @@ public function testThings()
 		$contexts = $this->contexts();
 		$this->assertEquals($expected_contexts, $contexts);
 
-		$this->context('WEBVIEW_1');
+		$this->context($contexts[1]);
 		$context = $this->context();
 		$this->assertEquals('WEBVIEW_1', $context);
 

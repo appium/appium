@@ -32,17 +32,24 @@ To get started:
    windows to run in the regular command prompt.
 1. Install [cURL](http://curl.haxx.se/download.html).
 
-Now that you've downloaded everything, run the following .bat file in the folder where you installed appium:
+Now that you've downloaded everything, if you're running from source, run the
+following .bat file in the folder where you cloned appium:
 
-    reset.bat
+```
+reset.bat
+```
 
 ### Running Appium
 
 To run tests on Windows, you will need to have the Android Emulator booted or
- an Android Device connected that is running an AVD with API Level 17 or
- greater. Then run Appium on the command line inside the folder where you installed appium, using node.js:
+an Android Device connected that is running an AVD with API Level 17 or
+greater. Then run Appium on the command line (via the `appium` command), or if
+you're running from source, inside the folder where you installed appium, using
+node.js:
 
-    node .
+```
+node .
+```
 
 See the [server documentation](/docs/en/writing-running-appium/server-args.md) for all the command line
 arguments.

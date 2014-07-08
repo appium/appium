@@ -46,29 +46,5 @@ To go back to iOS 7.1 testing.
 
 ### System setup (Android)
 
-* Make sure you have the
-  [Android SDK installed](http://developer.android.com/sdk/index.html).
-* Make sure you have Android SDK API &gt;= 17 installed. To do this, run the
-  Android SDK Manager (`android` binary in the "tools" directory of the SDK) and select the API in the extra packages you
-  can install.
-* Make sure you have `Apache Ant` installed. Ant is used to build the Appium bootstrap
-  jar as well as the test applications. Mac OS X Mavericks no longer comes
-  pre-packaged with `ant` so you will need to
-  [download and install it](http://ant.apache.org/bindownload.cgi).
-* Make sure you have exported `$ANDROID_HOME`, containing your Android sdk
-  path. If you unzipped the Android SDK to `/usr/local/adt/`, for example, you
-  should add this to your shell startup:
-
-        export ANDROID_HOME="/usr/local/adt/sdk"
-
-* Make sure you have [Maven 3.1.1](http://maven.apache.org/download.cgi)
-  or newer installed (`mvn`). We need Maven for Selendroid support,
-  which helps Appium run on Android versions below 4.2.
-* Make sure you have an AVD set to a recent Android version (one that can run
-  UIAutomator. Just choose the latest Android OS). You can create an AVD by
-  using the android SDK tools. Remember the name you give the AVD, so that you
-  can launch an emulator with it and run tests against it.
-* Make sure that `hw.battery=yes` in your AVD's `config.ini`.
-* There exists a hardware accelerated emulator for android, it has its own
-  limitations. For more information you can check out this
-  [page](/docs/en/appium-setup/android-hax-emulator.md).
+Instructions for setting up Android and running tests on Mac OS X are the same as
+those on Linux. See the [Android setup docs](/docs/en/appium-setup/android-setup.md).

@@ -12,8 +12,8 @@
 |`browserName`|Name of mobile web browser to automate. Should be an empty string if automating an app instead.|'Safari' for iOS and 'Chrome', 'Chromium', or 'Browser' for Android|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
 |`autoLaunch`|Whether to have Appium install and launch the app automatically. Default `true`|`true`, `false`|
-|`language`| (Sim/Emu-only) Language to set for the iOS Simulator|e.g. `fr`|
-|`locale`| (Sim/Emu-only) Locale to set for the iOS Simulator|e.g. `fr_CA`|
+|`language`| (Sim/Emu-only) Language to set for the simulator / emulator |e.g. `fr`|
+|`locale`| (Sim/Emu-only) Locale to set for the simulator / emulator |e.g. `fr_CA`|
 |`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|
 |`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|

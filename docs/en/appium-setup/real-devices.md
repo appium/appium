@@ -50,7 +50,7 @@ capabilities in your tests:
 * `app`
 * `udid`
 
-Refer to the [Appium server capabilities](docs/en/writing-running-appium/caps.md) page for more detail on
+Refer to the [Appium server capabilities](/docs/en/writing-running-appium/caps.md) page for more detail on
 the capabilities that you can use.
 
 ### Troubleshooting ideas

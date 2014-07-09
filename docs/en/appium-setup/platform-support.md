@@ -48,7 +48,7 @@ instructions.
   browser or Chromium only. With 4.4+, automation also works on the built-in
   "Browser" app. Chrome/Chromium/Browser must already be installed on the
   device under test. See the [mobile web doc](/docs/en/writing-running-appium/mobile-web.md) for instructions.
-* Hybrid support: Yes. See the [hybrid doc](docs/en/advanced-concepts/hybrid.md) for instructions.
+* Hybrid support: Yes. See the [hybrid doc](/docs/en/advanced-concepts/hybrid.md) for instructions.
   * With default Appium automation backend: versions 4.4 and up
   * With Selendroid automation backend: versions 2.3 and up
 * Support for automating multiple apps in one session: Yes (but not when

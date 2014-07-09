@@ -1,7 +1,7 @@
 ## Contributing to Appium
 
 Fork the project, make a change, and send a pull request! Please have a look at our
-[Style Guide](docs/en/contributing-to-appium/style-guide.md) before getting to work.
+[Style Guide](/docs/en/contributing-to-appium/style-guide.md) before getting to work.
 Please make sure the unit and functional tests pass before sending a pull request; for more
 information on how to run tests, keep reading!
 
@@ -52,10 +52,10 @@ There are some arguments you can pass into the Appium server from the command-li
     node . --log /my/appium.log // log to file instead of stdout
     node . --log-level warn // don't log verbose output
 
-See [the server documentation](docs/en/writing-running-appium/server-args.md)
+See [the server documentation](/docs/en/writing-running-appium/server-args.md)
 for a full list of arguments.
 
-Like the power of automating dev tasks? Check out the [Appium Grunt tasks](docs/en/contributing-to-appium/grunt.md)
+Like the power of automating dev tasks? Check out the [Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)
 available to help with building apps, installing apps, generating docs, etc.
 
 #### Hacking with Appium for iOS
@@ -113,7 +113,7 @@ Or you can run reset for individual platforms only:
 
 ### Running Tests
 
-First, check out our documentation on [running tests in general](docs/en/writing-running-appium/running-tests.md)
+First, check out our documentation on [running tests in general](/docs/en/writing-running-appium/running-tests.md)
 Make sure your system is set up properly for the platforms you desire to test
 on.
 

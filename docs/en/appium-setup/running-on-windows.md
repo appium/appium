@@ -56,7 +56,7 @@ arguments.
 
 ### Notes
 
-* You must supply the `--no-reset` and `--full-reset` flags for
+* You must supply the `--no-reset` or `--full-reset` flags for
   Android to work on Windows.
 * There exists a hardware accelerated emulator for Android, it has it's own
   limitations. For more information you can check out this

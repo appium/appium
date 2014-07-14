@@ -9,7 +9,7 @@ To prepare for your Appium tests to run on a real device, you will need to:
 ### Xcodebuild with parameters:
 A newer xcodebuild now allows settings to be specified. Taken from [developer.apple.com](https://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man1/xcodebuild.1.html):
 
-```
+```center
 xcodebuild [-project projectname] [-target targetname ...]
              [-configuration configurationname] [-sdk [sdkfullpath | sdkname]]
              [buildaction ...] [setting=value ...] [-userdefault=value ...]
@@ -17,7 +17,7 @@ xcodebuild [-project projectname] [-target targetname ...]
 
 This is a resource to explore the available [settings](https://developer.apple.com/library/mac/#documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html#//apple_ref/doc/uid/TP40003931-CH3-DontLinkElementID_10)
 
-```
+```center
 CODE_SIGN_IDENTITY (Code Signing Identity)
     Description: Identifier. Specifies the name of a code signing identity.
     Example value: iPhone Developer
@@ -29,7 +29,7 @@ but may be necessary.
 Specify "CODE_SIGN_IDENTITY" & "PROVISIONING_PROFILE" settings in the
 xcodebuild command:
 
-```
+```center
 xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> CODE_SIGN_IDENTITY="iPhone Developer: Mister Smith" PROVISIONING_PROFILE="XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
 ```
 
@@ -48,7 +48,7 @@ parent directory.
 Execute fruitstrap after a clean build by running (commands available depend
 on your fork of fruitstrap):
 
-```
+```center
 ./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID>
 ```
 
@@ -56,7 +56,7 @@ If you are aiming to use continuous integration in this setup,
 you may find it useful to want to log the output of fruitstrap to both
 command line and log, like so:
 
-```
+```center
 ./fruitstrap -d -b <PATH_TO_APP> -i <Device_UDID> 2>&1 | tee fruit.out
 ```
 
@@ -65,7 +65,7 @@ launched, an option is to scan the output of the fruitstrap launch for some
 telling sign that the app has completed launching. This may prove useful if
 you are doing this via a Rakefile and a ``go_device.sh`` script:
 
-```
+```center
 bundle exec rake ci:fruit_deploy_app | while read line ; do
    echo "$line" | grep "text to identify successful launch"
    if [ $? = 0 ]

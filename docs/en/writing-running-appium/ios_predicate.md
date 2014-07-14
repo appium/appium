@@ -3,7 +3,7 @@
 It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**.
 [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html) has following methods which can are very useful.
 
-```
+```center
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)
 (UIAElementArray) UIAElementArray.withPredicate(PredicateString predicateString)
 ```
@@ -26,7 +26,7 @@ Here's a list of available Predicates (mostly taken from [Predicates Programming
 
 = , ==
 - The left-hand expression is equal to the right-hand expression:
-```
+```center
 tableViews()[1].cells().firstWithPredicate("label == 'Olivia' ")
 
 same in Xpath: /UIATableView[2]/UIATableCell[@label = 'Olivia'][1]
@@ -51,7 +51,7 @@ BETWEEN
 - The left-hand expression is between, or equal to either of, the values specified in the right-hand side. The right-hand side is a two value array (an array is required to specify order) giving upper and lower bounds. For example, ```1 BETWEEN { 0 , 33 }```, or ```$INPUT BETWEEN { $LOWER, $UPPER }```.
 In Objective-C, you could create a BETWEEN predicate as shown in the following example:
 
-```
+```center
 NSPredicate *betweenPredicate =
     [NSPredicate predicateWithFormat: @"attributeName BETWEEN %@", @[@1, @10]];
 ```
@@ -84,7 +84,7 @@ String comparisons are by default case and diacritic sensitive. You can modify a
 BEGINSWITH
 - The left-hand expression begins with the right-hand expression.
 
-```
+```center
 scrollViews()[3].buttons().firstWithPredicate("name BEGINSWITH 'results toggle' ")
 
 same in Xpath: /UIAScrollView[4]/UIAButton[starts-with(@name, 'results toggle')][1]
@@ -93,7 +93,7 @@ same in Xpath: /UIAScrollView[4]/UIAButton[starts-with(@name, 'results toggle')]
 CONTAINS
 - The left-hand expression contains the right-hand expression.
 
-```
+```center
 tableViews()[1].cells().withPredicate("ANY collectionViews[0].buttons.name CONTAINS 'opera'")
 
 same in Xpath: /UIATableView[2]/UIATableCell[UIACollectionView[1]/UIAButton[contains(@name, 'opera')]]
@@ -105,7 +105,7 @@ ENDSWITH
 LIKE
 - The left hand expression equals the right-hand expression: ? and * are allowed as wildcard characters, where ? matches 1 character and * matches 0 or more characters. In Mac OS X v10.4, wildcard characters do not match newline characters.
 
-```
+```center
 tableViews()[0].cells().firstWithPredicate("name LIKE '*Total: $*' ")
 
 same in Xpath: /UIATableView[1]/UIATableCell[matches(@name, '.*Total: \$.*')][1]
@@ -114,7 +114,7 @@ same in Xpath: /UIATableView[1]/UIATableCell[matches(@name, '.*Total: \$.*')][1]
 MATCHES
 - The left hand expression equals the right hand expression using a regex -style comparison according to ICU v3 (for more details see the ICU User Guide for [Regular Expressions](http://userguide.icu-project.org/strings/regexp)).
 
-```
+```center
 tableViews().firstWithPredicate("value MATCHES '.*of 7' ")
 
 same in Xpath: /UIATableView[matches(@value, '.*of 7')][1]
@@ -125,7 +125,7 @@ same in Xpath: /UIATableView[matches(@value, '.*of 7')][1]
 ANY , SOME
 - Specifies any of the elements in the following expression. For example ```ANY children.age < 18``` .
 
-```
+```center
 tableViews()[0].cells().firstWithPredicate("SOME staticTexts.name = 'red'").staticTexts().withName('red')
 
 same in Xpath: /UIATableView[1]/UIATableCell[UIAStaticText/@name = 'red'][1]/UIAStaticText[@name = 'red']
@@ -151,7 +151,7 @@ array[LAST]
 
 array[SIZE]
 - Specifies the size of the array
-```
+```center
 elements()[0].tableViews()[0].cells().withPredicate("staticTexts[SIZE] > 2")
 same in Xpath: /*[1]/UIATableView[1]/UIATableCell[count(UIAStaticText) > 2]
 ```

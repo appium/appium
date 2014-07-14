@@ -34,7 +34,7 @@ The available events from the spec are:
 
 Here's an example of creating an action in pseudocode:
 
-```
+```center
 TouchAction().press(el0).moveTo(el1).release()
 ```
 
@@ -58,7 +58,7 @@ object.
 
 In pseudocode, both of the following are equivalent:
 
-```
+```center
 TouchAction().tap(el).perform()
 
 driver.perform(TouchAction().tap(el))
@@ -79,7 +79,7 @@ then the second, etc.
 
 Pseudocode example of tapping with two fingers:
 
-```
+```center
 action0 = TouchAction().tap(el)
 action1 = TouchAction().tap(el)
 MultiAction().add(action0).add(action1).perform()

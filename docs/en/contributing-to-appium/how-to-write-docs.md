@@ -37,3 +37,21 @@ To link inside a document, use the `#` from the Slate URL.
 
 Note that hash links will break when the heading changes so linking to
 the start of the doc is preferable (`other.md` instead of `other.md#something`).
+
+### Compatibility with appium.io
+
+#### Center aligning code in appium.io
+
+Appium.io documentation uses [slate](https://github.com/tripit/slate) for documentation.
+If code snippet in documentation is not language specific or if you want code snippet to stay
+along with text in center in appium.io documentation, use center as language in fenced code block.
+
+Example:
+
+    ```center
+    code snippet goes here.
+    ```
+
+#### Publishing
+
+To publish documentation on appium.io see [api-docs](https://github.com/appium/api-docs) and [appium.io](https://github.com/appium/appium.io).

@@ -8,13 +8,13 @@ The biggest thing you need to worry about is using the new Appium client librari
 
 Ultimately, you'll be doing something like (to use Python as an example):
 
-```
+```center
 from appium import webdriver
 ```
 
 Instead of:
 
-```
+```center
 from selenium import webdriver
 ```
 
@@ -49,13 +49,13 @@ We have now added the `accessibility_id` strategy to do what `name` used to do. 
 
 Note about `class name` and `xpath` strategies: these now require the fully-qualified class name for your element. This means that if you had an xpath selector that looked like this:
 
-```
+```center
 //table/cell/button
 ```
 
 It would now need to be:
 
-```
+```center
 //UIATableView/UIATableCell/UIAButton
 ```
 

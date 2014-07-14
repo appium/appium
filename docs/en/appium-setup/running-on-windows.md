@@ -35,7 +35,7 @@ To get started:
 Now that you've downloaded everything, if you're running from source, run the
 following .bat file in the folder where you cloned appium:
 
-```
+```center
 reset.bat
 ```
 
@@ -47,7 +47,7 @@ greater. Then run Appium on the command line (via the `appium` command), or if
 you're running from source, inside the folder where you installed appium, using
 node.js:
 
-```
+```center
 node .
 ```
 

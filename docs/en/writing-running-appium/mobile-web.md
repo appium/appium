@@ -91,7 +91,7 @@ To create a profile for the launcher go into the **Apple Developers Member Cente
 
 Now that you have a profile open a terminal and run the following commands:
 
-```
+```center
 $ git clone https://github.com/appium/appium.git
 $ cd appium
 

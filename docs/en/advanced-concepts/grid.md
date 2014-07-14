@@ -3,7 +3,7 @@
 You are able to register your appium server with a local [Selenium grid](https://code.google.com/p/selenium/wiki/Grid2) ([setup docs](http://docs.seleniumhq.org/docs/07_selenium_grid.jsp)) by using the
 `--nodeconfig` server parameter.
 
-```
+```center
 > appium --nodeconfig /path/to/nodeconfig.json
 # or, if running from source:
 > node . --nodeconfig /path/to/nodeconfig.json

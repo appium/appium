@@ -33,7 +33,7 @@ and the bundle ID (if the app is installed on the device) or the path to the
 For example, if you are prelaunching your app and wish for Appium to force use
 a specific UDID, then you may use the below command:
 
-```
+```center
 appium -U <udid> --app <path or bundle>
 ```
 

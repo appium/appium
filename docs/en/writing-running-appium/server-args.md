@@ -19,6 +19,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
+|`-ca`, `--callback-address`|(same as --address)|IP Address to use to for http callback|`--callback-address 127.0.0.1`|
+|`-cp`, `--callback-port`|(same as --port)|port to use to for http callback|`--port 4723`|
 |`-bp`, `--bootstrap-port`|4724|(Android-only) port to use on device to talk to Appium|`--bootstrap-port 4724`|
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||

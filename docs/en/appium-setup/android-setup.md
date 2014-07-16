@@ -46,3 +46,6 @@ See the [server documentation](/docs/en/writing-running-appium/server-args.md) f
   [page](/docs/en/appium-setup/android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`, if you want to
   run any of the Appium tests, or use any of the power commands.
+* Selendroid requires the following permission for your app:         
+  `<uses-permission android:name="android.**permission.INTERNET"/>`,
+  please make sure your app has internet permission set when you are using selendroid or older versions of Android i.e. 2.3 to 4.1

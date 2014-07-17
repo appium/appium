@@ -2,12 +2,14 @@ language: objective-c
 xcode_sdk: 7.1
 notifications:
   email: true
+  slack:
+    secure: E1at9Fi4d2eLagKInwGOfvvcSr8rrVti+N3HzvlcL9UcYavwzfAstMX/nXoHTl8LR5/Dh4Sdja2+NeJp2uVNwlK7aVKk5egQ8q6qAEmcXlWgjqyyTusB1lgiaOQnbOuqsntg/3X5sP8nz5+V3sggelPnOrVwNCCkVXXSff2SHhE=
 rvm:
 - 2.1.1
 branches:
   only:
   - master
-  - /with\-ci$/
+  - "/with\\-ci$/"
 git:
   submodules: false
 env:
@@ -20,7 +22,6 @@ env:
   - ANDROID_CONCURRENCY=30
   - SELENDROID_CONCURRENCY=10
   - GAPPIUM_CONCURRENCY=10
-  # below is SAUCE_ACCESS_KEY encrypted
   - secure: GXGFbQptLEsKlaWnpOL2EB9hqQ4XBT6tqg7REt5j1h1jYBsfHQHSgSLt1jpzOF5kooXVbw2K7IrZyNVBXEUHR00Hp6O72FBOd+SSj8uPCJBLjAOaJWs0ZtujqGHwHpe6gadFfn0L7q0ffoV5OJVeNHHcuw4f9BaA78fTFNfm1jE=
   - HTTP_RETRIES=5
   - HTTP_RETRY_DELAY=5000
@@ -36,7 +37,7 @@ env:
 before_script:
 - gem install --no-rdoc --no-ri appium_doc_lint
 - "./ci/installers/install-node.sh"
-- "echo Node.js version: `node -v`"
+- 'echo Node.js version: `node -v`'
 - npm install -g jshint grunt-cli mocha
 - npm install
 - "./ci/before_script_extra.sh"

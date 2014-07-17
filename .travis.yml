@@ -43,3 +43,4 @@ before_script:
 - "./ci/before_script_extra.sh"
 script:
 - "./ci/script.sh"
+- bash -c 'while true; do ping ondemand.saucelabs.com &> /dev/null; sleep 10; done' &

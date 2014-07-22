@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "adm-zip": "~0.4.4",
-    "appium-adb": "~1.3.1",
+    "appium-adb": "~1.3.2",
     "appium-atoms": "~0.0.5",
     "appium-instruments": "~1.3.0",
     "appium-uiauto": "~1.6.0",
@@ -117,7 +117,7 @@
     "socks": "~0.0.1",
     "underscore-cli": "~0.2.17",
     "unorm": "~1.3.3",
-    "wd": "~0.3.1",
+    "wd": "~0.3.4",
     "wd-bridge": "~0.0.1",
     "yiewd": "~0.5.0"
   }

@@ -298,7 +298,7 @@ describe("apidemo - basic @skip-ci", function () {
     var session;
     var title = getTitle(this);
 
-    before(function (done) {
+    beforeEach(function (done) {
       var adb = new ADB({});
       adb.uninstallApk("io.appium.android.apis", done);
     });

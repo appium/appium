@@ -40,7 +40,11 @@ before_script:
 - 'echo Node.js version: `node -v`'
 - npm install -g jshint grunt-cli mocha
 - npm install
+- "./ci/installers/install-sauce-connect.sh"
 - "./ci/before_script_extra.sh"
+- "ulimit -n 8000"
+# disabling sauce-connect until travis ichef issue is sorted
+# - "./ci/start-sauce-connect.sh"
 script:
 - "./ci/script.sh"
 - bash -c 'while true; do ping ondemand.saucelabs.com &> /dev/null; sleep 10; done' &

@@ -16,7 +16,7 @@ public class TouchLongClick extends TouchEvent {
    * UiAutomator has a broken longClick, so we'll try to implement it using the
    * touchDown / touchUp events.
    */
-  private boolean correctLongClick(final int x, final int y, final int duration) {
+  protected static boolean correctLongClick(final int x, final int y, final int duration) {
     try {
       /*
        * bridge.getClass() returns ShellUiAutomatorBridge on API 18/19 so use

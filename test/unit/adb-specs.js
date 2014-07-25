@@ -39,6 +39,13 @@ describe('adb', function () {
       return deferred.promise;
     }
 
+    it('should match api 10 line', function (done) {
+      testLine(
+        "mFocusedApp=AppWindowToken{4073e120 token=HistoryRecord{4073db90 io.appium.android.apis/.ApiDemos}}",
+        'io.appium.android.apis',
+        '.ApiDemos'
+        ).nodeify(done);
+    });
     it('should match api 16 line', function (done) {
       testLine(
         "mFocusedApp=AppWindowToken{417ee228 token=Token{41602f78 ActivityRecord{41798a08 io.appium.android.apis/.ApiDemos}}}",

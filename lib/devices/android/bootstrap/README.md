@@ -6,6 +6,7 @@ To install the Android Maven dependencies in your local environment, run the fol
 * Clone https://github.com/mosabua/maven-android-sdk-deployer into your workstation
 * Set the ANDROID_HOME environment to the location of the Android SDK, eg. `export ANDROID_HOME=/Developer/adt-bundle-mac-x86_64-20130219/sdk/`
 * Run `mvn install -P 4.3` from the `maven-android-sdk-deployer` directory. The build will fail if API 18 and some extra packages are not installed.
+* Please install all sdk and api versions of android for building `maven-android-sdk-deployer`.
 
 You can then compile the bootstrap project by running
 

@@ -25,7 +25,7 @@ The quick way to get started:
 ### Hacking with Appium
 
 Make sure you have ant, maven, adb installed and added to system PATH, also you
-would need the android-16 sdk (for Selendroid) and android-18 sdk installed.
+would need the android-16 sdk (for Selendroid) and android-19 sdk installed.
 From your local repo's command prompt, install the following packages using the
 following commands (if you didn't install `node` using homebrew, you might have
 to run npm with sudo privileges):

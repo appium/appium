@@ -38,7 +38,7 @@ the terminal you opened above, running `rspec u_i_catalog.rb`
 
 For more information, check out the comments at the top of [u_i_catalog.rb](u_i_catalog.rb#L1)
 
-## [Cucumber](cucumber)
+## [Cucumber](cucumber_ios)
 
 Cucumber is a Behaviour Driven Design framework that lots of people are keen on.
 It lets you describe test actions in a clean, concise, English-like manner.

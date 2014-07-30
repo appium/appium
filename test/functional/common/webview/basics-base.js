@@ -5,7 +5,7 @@ var env = require('../../../helpers/env'),
     webviewHelper = require("../../../helpers/webview"),
     loadWebView = webviewHelper.loadWebView,
     isChrome = webviewHelper.isChrome,
-    Asserter = require('wd').Asserter,
+    ChaiAsserter = require('../../../helpers/asserter.js').ChaiAsserter,
     Q = require('q'),
     spinTitle = webviewHelper.spinTitle,
     spinWait = require('../../../helpers/spin.js').spinWait,
@@ -232,13 +232,13 @@ module.exports = function (desired) {
       .nodeify(done);
     });
     it('should not display a phishing warning with safariIgnoreFraudWarning @skip-chrome', function (done) {
-      var titleToBecomeRight = new Asserter(function (driver) {
+      var titleToBecomeRight = new ChaiAsserter(function (driver) {
         return driver
           .title()
           .should.eventually.contain("I am another page title");
       });
       driver
-        .get(env.TEST_END_POINT + 'guinea-pig2.html')
+        .get(env.PHISHING_END_POINT + 'guinea-pig2.html')
         .waitFor(titleToBecomeRight, 10000, 500)
         .nodeify(done);
     });

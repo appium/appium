@@ -178,5 +178,6 @@ env.TEST_END_POINT = 'http://localhost:' + env.LOCAL_APPIUM_PORT + '/test/';
 env.GUINEA_TEST_END_POINT = env.TEST_END_POINT + 'guinea-pig';
 env.CHROME_TEST_END_POINT = 'http://10.0.2.2:' + env.LOCAL_APPIUM_PORT + '/test/';
 env.CHROME_GUINEA_TEST_END_POINT = env.CHROME_TEST_END_POINT + 'guinea-pig';
+env.PHISHING_END_POINT = env.TEST_END_POINT.replace('http://', 'http://foo:bar@');
 
 module.exports = env;

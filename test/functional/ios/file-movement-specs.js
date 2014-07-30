@@ -10,7 +10,7 @@ var setup = require("../common/setup-base")
   , exec = require('child_process').exec
   , Unzip = require('unzip');
 
-describe('file movements - pullFile', function () {
+describe('file movements - pullFile and pushFile', function () {
   var driver;
   var desired = {
     app: getAppPath('testapp')
@@ -32,6 +32,21 @@ describe('file movements - pullFile', function () {
       .should.eventually.be.rejectedWith(/13/)
     .nodeify(done);
   });
+  it('should be able to push and pull a file', function (done) {
+    var stringData = "random string data " + Math.random();
+    var base64Data = new Buffer(stringData).toString('base64');
+    var remotePath = 'Library/AppiumTest/remote.txt';
+
+    driver
+      .pushFile(remotePath, base64Data)
+      .pullFile(remotePath)
+      .then(function (remoteData64) {
+        var remoteData = new Buffer(remoteData64, 'base64').toString();
+        remoteData.should.equal(stringData);
+      })
+      .nodeify(done);
+  });
+
   describe('for a .app @skip-ci', function () {
     // TODO: skipping ci because of local files use, to review.
     var fileContent = "IAmTheVeryModelOfAModernMajorTestingTool";

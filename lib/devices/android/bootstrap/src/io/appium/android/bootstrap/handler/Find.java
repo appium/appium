@@ -279,20 +279,16 @@ public class Find extends CommandHandler {
    * @throws ElementNotFoundException
    * @throws JSONException
    */
-  private JSONObject fetchElementByIndexPath(final String indexPath)
+  private JSONObject fetchElementByClassAndInstance(final String indexPath)
       throws ElementNotFoundException, JSONException {
-    UiSelector sel = new UiSelector().index(0);
-    Integer curIndex;
-    List<String> paths = Arrays.asList(indexPath.split("/"));
-    // throw away the first element since it will be empty, and the second
-    // element, since it will refer to the root element, which we already have
-    paths = paths.subList(2, paths.size());
-    for (final String index : paths) {
-      curIndex = Integer.valueOf(index);
-      // get a new selector which selects the current selector's child at the
-      // correct index
-      sel = sel.childSelector(new UiSelector().index(curIndex));
-    }
+
+    // path looks like "className:instanceNumber" eg: "android.widget.Button:2"
+    String[] classInstancePair = indexPath.split(":");
+    String androidClass = classInstancePair[0];
+    String instance = classInstancePair[1];
+
+    UiSelector sel = new UiSelector().className(androidClass).instance(Integer.parseInt(instance));
+
     return fetchElement(sel, "");
   }
 
@@ -342,7 +338,7 @@ public class Find extends CommandHandler {
     JSONObject resEl = new JSONObject();
     for (final String indexPath : indexPaths) {
       try {
-        resEl = fetchElementByIndexPath(indexPath);
+        resEl = fetchElementByClassAndInstance(indexPath);
         resArray.put(resEl);
       } catch (final JSONException e) {
         return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());

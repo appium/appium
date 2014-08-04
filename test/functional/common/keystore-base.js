@@ -3,8 +3,8 @@
 var setup = require("./setup-base")
   , env = require('../../helpers/env')
   , exec = require('child_process').exec
-  , fs = require('fs')
-  , osType = require('os').type();
+  , osType = require('os').type()
+  , rimraf = require('rimraf');
 
 
 module.exports = function () {
@@ -21,23 +21,26 @@ module.exports = function () {
   };
   this.timeout(env.MOCHA_INIT_TIMEOUT);
 
-  var driver;
-  setup(this, desired).then(function (d) { driver = d; });
-
-  it('should be able to launch an app with custom keystore', function (done) {
-    fs.unlink(keystorePath, function (err) {
+  before(function (done) {
+    rimraf(keystorePath, function (err) {
       if (err) return done(err);
-      var cmd = 'keytool -genkey -v -keystore ' + keystorePath + ' -alias ' + keyAlias + ' -storepass android -keypass android -keyalg RSA -validity 14000';
-      var child = exec(cmd, function (err) {
-        if (err) return done(err);
 
-        driver
-          .getCurrentActivity()
-            .should.eventually.include(desired.appActivity)
-          .nodeify(done);
-      });
+      var cmd = 'keytool -genkey -v -keystore ' + keystorePath + ' -alias ' + keyAlias + ' -storepass android -keypass android -keyalg RSA -validity 14000';
+      var child = exec(cmd, done);
       // answer the questions that `keytool` asks
       child.stdin.write('Appium Testsuite\nAppium\nTest\nSan Francisco\nCalifornia\nUS\nyes\n');
+    });
+  });
+
+  describe('brand-new custom keystore', function () {
+    var driver;
+    setup(this, desired).then(function (d) { driver = d; });
+
+    it('should be able to launch an app with custom keystore', function (done) {
+      driver
+        .getCurrentActivity()
+          .should.eventually.include(desired.appActivity)
+        .nodeify(done);
     });
   });
 };

@@ -7,7 +7,7 @@ To get started on a real device, you will need the following:
 * An [Apple Developer ID](https://developer.apple.com/programs/ios/)
  and a valid Developer Account with a configured distribution certificate and
  provisioning profile.
-* An iPad or iPhone.
+* An iPad or iPhone. Make sure this has been set up for development in Xcode. See [this article](https://developer.apple.com/library/ios/recipes/xcode_help-devices_organizer/articles/provision_device_for_development-generic.html) for more information.
 * A signed `.ipa` file of your app, or the source code to build one.
 * A Mac with [Xcode](https://itunes.apple.com/en/app/xcode/id497799835?mt=12)
  and the Xcode Command Line Developer Tools.

@@ -2,4 +2,4 @@
 
 var testBase = require('../common/keystore-base');
 
-describe("android - keystore", testBase);
+describe("android - keystore @skip-ci", testBase);

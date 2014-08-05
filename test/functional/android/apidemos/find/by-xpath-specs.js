@@ -55,4 +55,18 @@ describe("apidemo - find - by xpath", function () {
         .should.become("App")
       .nodeify(done);
   });
+  it('should find all elements', function (done) {
+    driver
+      .elementsByXPath("//*").then(function (els) {
+        els.length.should.be.above(2);
+      })
+      .nodeify(done);
+  });
+  it('should find the first element when searching for all elements', function (done) {
+    driver
+      .elementByXPath("//*").then(function (el) {
+        return el.should.be.ok;
+      })
+      .nodeify(done);
+  });
 });

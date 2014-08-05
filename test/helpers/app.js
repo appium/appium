@@ -7,7 +7,7 @@ module.exports.getAppPath = function (app) {
     return "sample-code/apps/" + app +
       "/build/Release-iphonesimulator/" + app + ".app";
   }
-  if (env.ANDROID) {
+  if (env.ANDROID || env.SELENDROID) {
     return "sample-code/apps/" + app +
       "/bin/" + app + "-debug.apk";
   }

@@ -8,7 +8,7 @@ var env = require('../../../../helpers/env')
   , _ = require('underscore');
 
 // cannot use adb on sauce
-describe("apidemos - localization- locale @skip-ci", function () {
+describe("apidemos - localization- locale @skip-ci @skip-real-device", function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
   var driver;
   var adb = new ADB({}),

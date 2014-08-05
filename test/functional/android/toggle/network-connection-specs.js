@@ -1,11 +1,14 @@
 "use strict";
 
 var setup = require("../../common/setup-base"),
-    desired = require('./desired');
+    desired = require('./desired'),
+    _ = require('underscore');
 
 describe('network connection details', function () {
   var driver;
-  setup(this, desired).then(function (d) { driver = d; });
+  setup(this, _.defaults({
+    fullReset: true
+  }, desired)).then(function (d) { driver = d; });
 
   it('should get airplane mode', function (done) {
     driver

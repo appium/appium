@@ -32,7 +32,8 @@ module.exports = function () {
     });
   });
 
-  describe('brand-new custom keystore', function () {
+  // custom keystore doesn't make sense when running on Sauce
+  describe('brand-new custom keystore @skip-ci', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 

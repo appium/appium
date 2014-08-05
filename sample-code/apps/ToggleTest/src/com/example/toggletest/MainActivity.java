@@ -75,7 +75,12 @@ public class MainActivity extends Activity {
 			// fall through
 			Log.d(TAG, "Unable to find Setting 'wifi_on': " + e.getMessage());
 		}
-		mDataToggle.setChecked(mTelephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED);
+		try {
+			int dataOn = Settings.Global.getInt(getContentResolver(), "mobile_data");
+			mDataToggle.setChecked(dataOn != 0);
+		} catch (SettingNotFoundException e) {
+			Log.d(TAG, "Unable to find Setting 'mobile_data': " + e.getMessage());
+		}
 		boolean fMode = FlightMode.getInstance().isEnabled(this);
 		mFlightModeToggle.setChecked(fMode);
 		if (fMode) {

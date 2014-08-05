@@ -1,27 +1,21 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , _ = require('underscore');
-
-// running batched will pull `unicodeKeyboard` into all tests
-var getAppPath = require('../../../helpers/app').getAppPath;
-var ucDesired = {
-  app: getAppPath('ApiDemos'),
-  device: 'Android',
-  unicodeKeyboard: true,
-  resetKeyboard: true
-};
+  , _ = require('underscore')
+  , desired = require("./desired");
 
 describe("apidemo - ime", function () {
   var unicodeImeId = 'io.appium.android.ime/.UnicodeIME'
-    , latinImeId = 'com.android.inputmethod.latin/.LatinIME'
     , driver;
 
-  setup(this, _.defaults({appActivity: "view.Controls1" }, ucDesired))
-    .then(function (d) { driver = d; });
+  setup(this, _.defaults({
+    appActivity: "view.Controls1",
+    unicodeKeyboard: true,
+    resetKeyboard: true
+  }, desired)).then(function (d) { driver = d; });
 
   beforeEach(function (done) {
-      driver.resetApp().nodeify(done);
+    driver.resetApp().nodeify(done);
   });
 
   it('should get the default (enabled) input method', function (done) {
@@ -58,7 +52,7 @@ describe("apidemo - ime", function () {
       .activateIMEEngine(unicodeImeId)
       .activeIMEEngine().should.eventually.equal(unicodeImeId)
       .deactivateIMEEngine()
-      .activeIMEEngine().should.eventually.equal(latinImeId)
+      .activeIMEEngine().should.eventually.not.equal(unicodeImeId)
       .nodeify(done);
   });
 });

@@ -21,7 +21,10 @@ describe("apidemo - gestures - click", function () {
       .execute("mobile: tap", [{x: 100, y: 300}])
       .sleep(3000)
       .elementsByClassName(droidText).then(function (els) { return els[1]; })
-        .text().should.become("Action Bar")
+        .text()
+        .then(function (text) {
+          ['Accessibility Node Provider', 'Bouncing Balls', 'Action Bar'].should.include(text);
+        })
       .nodeify(done);
   });
   //todo: not working in nexus 7
@@ -33,7 +36,7 @@ describe("apidemo - gestures - click", function () {
       .sleep(3000)
       .elementsByClassName(droidText).then(function (els) { return els[1]; }).text()
       .then(function (text) {
-        ["ForegroundDispatch", "Morse Code"].should.include(text);
+        ["ForegroundDispatch", "Morse Code", "1. Preferences from XML"].should.include(text);
       }).nodeify(done);
   });
   it('should click via touch api', function (done) {

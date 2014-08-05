@@ -140,14 +140,14 @@ describe("apidemo - find elements - by uiautomator", function () {
     }).nodeify(done);
   });
   it('should scroll to, and return elements using UiScrollable', function (done) {
-    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).getChildByText(new UiSelector().className("android.widget.TextView"), "Views")')
+    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Views").instance(0))')
     .text()
     .then(function (text) {
       text.should.equal("Views");
     }).nodeify(done);
   });
   it('should allow chaining UiScrollable methods', function (done) {
-    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10).getChildByText(new UiSelector().className("android.widget.TextView"), "Views")')
+    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().text("Views").instance(0))')
     .text()
     .then(function (text) {
       text.should.equal("Views");

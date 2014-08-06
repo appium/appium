@@ -374,6 +374,9 @@ var buildAndroidProj = function (grunt, projPath, target, cb) {
     } else {
       if (stdout) {
         var cmd = stdout.split('\r\n')[0].trim();
+        if (isWindows && cmdName === 'ant') {
+          cmd = cmd + '.bat';
+        }
         grunt.log.write("Using " + cmdName + " found at " + cmd + "\n");
         var proc = spawn(cmd, [target], {cwd: projPath});
         proc.on("error", function () {

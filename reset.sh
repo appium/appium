@@ -19,6 +19,8 @@ prod_deps=false
 appium_home=$(pwd)
 reset_successful=false
 has_reset_unlock_apk=false
+has_reset_ime_apk=false
+has_reset_settings_apk=false
 apidemos_reset=false
 toggletest_reset=false
 hardcore=false
@@ -272,7 +274,7 @@ reset_apidemos() {
     echo "* Configuring and cleaning/building Android test app: ApiDemos"
     run_cmd "$grunt" configAndroidApp:ApiDemos
     run_cmd "$grunt" buildAndroidApp:ApiDemos
-    uninstall_android_app com.example.android.apis
+    uninstall_android_app io.appium.android.apis
     apidemos_reset=true
 }
 
@@ -315,6 +317,38 @@ reset_unlock_apk() {
     fi
 }
 
+reset_unicode_ime() {
+    if ! $has_reset_ime_apk; then
+        run_cmd rm -rf build/unicode_ime_apk
+        run_cmd mkdir -p build/unicode_ime_apk
+        echo "* Building UnicodeIME.apk"
+        ime_base="submodules/io.appium.android.ime"
+        run_cmd git submodule update --init $ime_base
+        run_cmd pushd $ime_base
+        run_cmd ant clean && run_cmd ant debug
+        run_cmd popd
+        run_cmd cp $ime_base/bin/UnicodeIME-debug.apk build/unicode_ime_apk
+        uninstall_android_app "io.appium.android.ime"
+        has_reset_ime_apk=true
+    fi
+}
+
+reset_settings_apk() {
+    if ! $has_reset_settings_apk; then
+        run_cmd rm -rf build/settings_apk
+        run_cmd mkdir -p build/settings_apk
+        echo "* Building Settings.apk"
+        settings_base="submodules/io.appium.settings"
+        run_cmd git submodule update --init $settings_base
+        run_cmd pushd $settings_base
+        run_cmd ant clean && run_cmd ant debug
+        run_cmd popd
+        run_cmd cp $settings_base/bin/settings_apk-debug.apk build/settings_apk
+        uninstall_android_app "io.appium.settings"
+        has_reset_settings_apk=true
+    fi
+}
+
 reset_android() {
     echo "RESETTING ANDROID"
     require_java
@@ -324,6 +358,8 @@ reset_android() {
     echo "* Building Android bootstrap"
     run_cmd "$grunt" buildAndroidBootstrap
     reset_unlock_apk
+    reset_unicode_ime
+    reset_settings_apk
     if $include_dev ; then
         reset_apidemos
         reset_toggle_test
@@ -359,11 +395,11 @@ reset_selendroid_quick() {
     if $include_dev ; then
         if ! $apidemos_reset; then
             reset_apidemos
-            uninstall_android_app com.example.android.apis.selendroid
+            uninstall_android_app io.appium.android.apis.selendroid
         fi
         if ! $toggletest_reset; then
             reset_toggle_test
-            uninstall_android_app com.example.toggletest.selendroid
+            uninstall_android_app io.appium.toggletest.selendroid
         fi
         run_cmd pushd /tmp/appium/selendroid
         echo "* Downloading selendroid test app"
@@ -380,7 +416,7 @@ reset_selendroid_quick() {
         uninstall_android_app org.openqa.selendroid.testapp
     fi
     echo "* Setting Selendroid config to Appium's version"
-    run_cmd "$grunt" setConfigVer:selendroid    
+    run_cmd "$grunt" setConfigVer:selendroid
 }
 
 reset_selendroid() {
@@ -398,14 +434,15 @@ reset_selendroid() {
     run_cmd git reset --hard
     run_cmd popd
     reset_unlock_apk
+    reset_unicode_ime
     if $include_dev ; then
         if ! $apidemos_reset; then
             reset_apidemos
-            uninstall_android_app com.example.android.apis.selendroid
+            uninstall_android_app io.appium.android.apis.selendroid
         fi
         if ! $toggletest_reset; then
             reset_toggle_test
-            uninstall_android_app com.example.toggletest.selendroid
+            uninstall_android_app io.appium.toggletest.selendroid
         fi
         echo "* Linking selendroid test app"
         run_cmd rm -rf "$appium_home"/sample-code/apps/selendroid-test-app.apk

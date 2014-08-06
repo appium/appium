@@ -14,6 +14,16 @@ describe("apidemo - find elements - by uiautomator", function () {
       els.length.should.be.above(11);
     }).nodeify(done);
   });
+  it('should find elements within the context of another element', function (done) {
+    driver
+      .elementByClassName('android.widget.LinearLayout').then(function (el) {
+        el.elementsByAndroidUIAutomator('new UiSelector().className("android.widget.TextView")')
+          .then(function (els) {
+            els.length.should.be.above(0);
+            els.length.should.be.below(3);
+        });
+      }).nodeify(done);
+  });
   it('should find elements without prepending "new UiSelector()"', function (done) {
     driver.elementsByAndroidUIAutomator('.clickable(true)').then(function (els) {
       els.length.should.be.above(11);
@@ -130,14 +140,21 @@ describe("apidemo - find elements - by uiautomator", function () {
     }).nodeify(done);
   });
   it('should scroll to, and return elements using UiScrollable', function (done) {
-    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).getChildByText(new UiSelector().className("android.widget.TextView"), "Views")')
+    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Views").instance(0))')
     .text()
     .then(function (text) {
       text.should.equal("Views");
     }).nodeify(done);
   });
   it('should allow chaining UiScrollable methods', function (done) {
-    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10).getChildByText(new UiSelector().className("android.widget.TextView"), "Views")')
+    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().text("Views").instance(0))')
+    .text()
+    .then(function (text) {
+      text.should.equal("Views");
+    }).nodeify(done);
+  });
+  it('should allow UiScrollable scrollIntoView', function (done) {
+    driver.elementByAndroidUIAutomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Views").instance(0));')
     .text()
     .then(function (text) {
       text.should.equal("Views");

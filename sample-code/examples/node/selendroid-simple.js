@@ -47,7 +47,7 @@ describe("selendroid simple", function () {
       .waitForElementByName('Animation')
         .text().should.become('Animation')
       .elementByClassName('android.widget.TextView')
-        .text().should.become('API Demos')
+        .text().should.eventually.match(/Accessibility|API Demos/)
       .elementByName('App').click()
       .waitForElementByXPath('//TextView[@name=\'Action Bar\']')
       .elementsByClassName('android.widget.TextView')

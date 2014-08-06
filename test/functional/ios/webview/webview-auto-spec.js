@@ -1,14 +1,14 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require('./desired')
-  , env = require('../../../helpers/env');
+  , env = require('../../../helpers/env')
+  ,  desired = require('./desired')
+  , _ = require('underscore');
 
 describe('webview - auto', function () {
   var driver;
-  desired.autoWebview = true;
 
-  setup(this, desired).then(function (d) { driver = d; });
+  setup(this, _.defaults({autoWebview: true}, desired)).then(function (d) { driver = d; });
 
   it('should go directly into webview', function (done) {
     driver

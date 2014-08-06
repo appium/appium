@@ -25,3 +25,8 @@ exports.iosReset = function () {
     .then(function () { return exec('rm -rf $HOME/Library/Application\\ Support/iPhone\\ Simulator'); })
     .catch(function () {});
 };
+
+
+exports.androidReboot = function (adb) {
+  return Q.denodeify(adb.reboot.bind(adb));
+};

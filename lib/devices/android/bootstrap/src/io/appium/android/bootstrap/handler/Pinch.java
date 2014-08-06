@@ -43,7 +43,7 @@ public class Pinch extends CommandHandler {
       return getErrorResult("Unknown error:" + e.getMessage());
     }
 
-    Logger.info("Pinching " + direction + " " + percent.toString() + "%"
+    Logger.debug("Pinching " + direction + " " + percent.toString() + "%"
         + " with steps: " + steps.toString());
     boolean res;
     if (direction.equals("in")) {

@@ -8,7 +8,7 @@ var desired = {
 };
 
 // TODO: bring back when new wd is published with setGeoLocation
-describe("apidemo - location", function () {
+describe("apidemo - location @skip-real-device", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

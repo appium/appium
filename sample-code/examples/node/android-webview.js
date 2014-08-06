@@ -50,11 +50,15 @@ describe("android webview", function () {
         .click()
       .sleep(5000)
       .contexts()
-      .context('WEBVIEW_0')
+      .then(function (ctxs) {
+        console.log(ctxs);
+        return driver.context(ctxs[ctxs.length - 1]);
+      })
       .elementById('name_input')
         .clear()
         .sendKeys('Appium User')
         .sendKeys(wd.SPECIAL_KEYS.Return)
+      .sleep(1000)
       .source().then(function (source) {
         source.should.include('This is my way of saying hello');
         source.should.include('Appium User');

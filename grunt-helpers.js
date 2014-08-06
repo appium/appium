@@ -347,14 +347,14 @@ module.exports.setupAndroidBootstrap = function (grunt, cb) {
   var projPath = path.resolve(__dirname, "lib", "devices", "android",
       "bootstrap");
   var args = ["create", "uitest-project", "-n", "AppiumBootstrap", "-t",
-              "android-18", "-p", "."];
-  // TODO: possibly check output of `android list target` to make sure api level 18 is available?
+              "android-19", "-p", "."];
+  // TODO: possibly check output of `android list target` to make sure api level 19 is available?
   setupAndroidProj(grunt, projPath, args, cb);
 };
 
 module.exports.setupAndroidApp = function (grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code", "apps", appName);
-  var args = ["update", "project", "--subprojects", "-t", "android-18", "-p", ".", "-n", appName];
+  var args = ["update", "project", "--subprojects", "-t", "android-19", "-p", ".", "-n", appName];
   setupAndroidProj(grunt, appPath, args, cb);
 };
 
@@ -374,6 +374,9 @@ var buildAndroidProj = function (grunt, projPath, target, cb) {
     } else {
       if (stdout) {
         var cmd = stdout.split('\r\n')[0].trim();
+        if (isWindows && cmdName === 'ant') {
+          cmd = cmd + '.bat';
+        }
         grunt.log.write("Using " + cmdName + " found at " + cmd + "\n");
         var proc = spawn(cmd, [target], {cwd: projPath});
         proc.on("error", function () {

@@ -79,6 +79,36 @@ if %doAndroid% == 1 (
   ECHO.
   ECHO =====Reset Unlock.apk Complete=====
 
+  ECHO.
+  ECHO =====Resetting UnicodeIME.apk=====
+  ECHO.
+  CALL :runCmd "RD /S /Q build\unicode_ime_apk | VER > NUL"
+  CALL :runCmd "MKDIR build\unicode_ime_apk"
+  ECHO Building UnicodeIME.apk
+  CALL :runCmd "git submodule update --init submodules\io.appium.android.ime"
+  CALL :runCmd "PUSHD submodules\io.appium.android.ime"
+  CALL :runCmd "ant clean"
+  CALL :runCmd "ant debug"
+  CALL :runCmd "POPD"
+  CALL :runCmd "COPY submodules\io.appium.android.ime\bin\UnicodeIME-debug.apk build\unicode_ime_apk\UnicodeIME-debug.apk"
+  ECHO.
+  ECHO =====Reset UnicodeIME.apk Complete=====
+
+  ECHO.
+  ECHO =====Resetting Settings.apk=====
+  ECHO.
+  CALL :runCmd "RD /S /Q build\settings_apk | VER > NUL"
+  CALL :runCmd "MKDIR build\settings_apk"
+  ECHO Building Settings.apk
+  CALL :runCmd "git submodule update --init submodules\io.appium.settings"
+  CALL :runCmd "PUSHD submodules\io.appium.settings"
+  CALL :runCmd "ant clean"
+  CALL :runCmd "ant debug"
+  CALL :runCmd "POPD"
+  CALL :runCmd "COPY submodules\io.appium.settings\bin\settings_apk-debug.apk build\settings_apk\settings_apk-debug.apk"
+  ECHO.
+  ECHO =====Reset Settings.apk Complete=====
+
   :: Reset Android Dev
   IF %doDev% == 1 (
     ECHO.
@@ -120,7 +150,7 @@ if %doAndroid% == 1 (
   CALL :runCmd "jar xf chromedriver.zip"
   CALL :runCmd "del chromedriver.zip"
   CALL :runCmd "POPD"
-  
+
   echo =====Reset ChromeDriver Complete=====
 )
 
@@ -149,7 +179,7 @@ IF %doSelendroid% == 1 (
     CALL :runCmd "RD /S /Q sample-code\apps\WebViewDemo | VER > NUL"
     CALL :runCmd "MKDIR sample-code\apps\WebViewDemo"
     CALL :runCmd "XCOPY submodules\selendroid\selendroid-test-app sample-code\apps\WebViewDemo /E /Q"
-    CALL :uninstallAndroidApp com.example.android.apis.selendroid
+    CALL :uninstallAndroidApp io.appium.android.apis.selendroid
     CALL :uninstallAndroidApp io.selendroid.testapp
     CALL :uninstallAndroidApp io.selendroid.testapp.selendroid
     CALL :uninstallAndroidApp org.openqa.selendroid.testapp

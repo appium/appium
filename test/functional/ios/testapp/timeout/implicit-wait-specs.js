@@ -11,29 +11,39 @@ describe('testapp - timeout', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    var impWaitSecs = 4;
-    var impWaitCheck = function () {
-      var before = new Date().getTime() / 1000;
-      return driver
-        .elementsByClassName('UIANotGonnaBeThere').then(function (missing) {
-          var after = new Date().getTime() / 1000;
-          (after - before).should.be.below(impWaitSecs + 2);
-          (after - before).should.be.above(impWaitSecs);
-          missing.should.have.length(0);
-        });
+    var impWaitCheck = function (impWaitMs) {
+      return function () {
+        var before = new Date().getTime();
+        return driver
+          .elementsByClassName('UIANotGonnaBeThere').then(function (missing) {
+            var after = new Date().getTime();
+            (after - before).should.be.below(impWaitMs + 2000);
+            (after - before).should.be.above(impWaitMs);
+            missing.should.have.length(0);
+          });
+      };
     };
 
     it('should set the implicit wait for finding elements', function (done) {
       driver
-        .setImplicitWaitTimeout(impWaitSecs * 1000)
-        .then(impWaitCheck)
+        .setImplicitWaitTimeout(4000)
+        .then(impWaitCheck(4000))
+        .nodeify(done);
+    });
+
+    it('should work with small command timeout', function (done) {
+      driver
+        .setCommandTimeout(5000)
+        .setImplicitWaitTimeout(10000)
+        .then(impWaitCheck(10000))
         .nodeify(done);
     });
 
     it('should work even with a reset in the middle', function (done) {
       driver
-        .setImplicitWaitTimeout(impWaitSecs * 1000)
-        .then(impWaitCheck)
+        .setCommandTimeout(60000)
+        .setImplicitWaitTimeout(4000)
+        .then(impWaitCheck(4000))
         .resetApp()
         .sleep(3000) // cooldown
         .then(impWaitCheck)

@@ -9,9 +9,9 @@ if [[ $TRAVIS_SECURE_ENV_VARS == true ]] && [[ $TRAVIS_PULL_REQUEST == false ]];
 fi
 
 if [[ $CI_CONFIG == 'unit' ]]; then
-    cd docs
-    appium_doc_lint || exit 1
-    cd -
+    # cd docs
+    # appium_doc_lint || exit 1
+    # cd -
     npm test
 elif [[ $CI_CONFIG == 'ios' ]]; then
     unset SUDO_UID

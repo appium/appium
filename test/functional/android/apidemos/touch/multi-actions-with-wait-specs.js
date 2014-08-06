@@ -3,39 +3,20 @@
 var setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , wd = require("wd")
-  , droidText = 'android.widget.TextView'
   , droidList = 'android.widget.ListView'
   , TouchAction = wd.TouchAction
-  , MultiAction = wd.MultiAction;
+  , MultiAction = wd.MultiAction
+  , _ = require('underscore');
 
 
 describe("apidemo - touch - multi-actions with wait", function () {
   var driver;
-  setup(this, desired).then(function (d) { driver = d; });
+  setup(this, _.defaults({
+    appActivity: '.view.SplitTouchView'
+  }, desired)).then(function (d) { driver = d; });
 
   it('should scroll two different lists with waits', function (done) {
-    var scrollOpts = {};
     driver
-      .elementByClassName(droidList)
-      .then(function (el) {
-        scrollOpts = {
-          element: el.value
-        , text: 'Views'
-        };
-        return driver.execute("mobile: scrollTo", [scrollOpts]);
-      })
-      .elementByXPath("//" + droidText + "[@text='Views']")
-      .then(function (el) {
-        return new TouchAction(driver).tap({el: el}).perform();
-      })
-      .then(function () {
-        scrollOpts.text = 'Splitting Touches across Views';
-        return driver.execute("mobile: scrollTo", [scrollOpts]);
-      })
-      .elementByXPath("//" + droidText + "[@text='Splitting Touches across Views']")
-      .then(function (el) {
-        return new TouchAction(driver).tap({el: el}).perform();
-      })
       .elementsByClassName(droidList)
       .then(function (els) {
         // scroll slowly on the left

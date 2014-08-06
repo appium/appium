@@ -1,17 +1,22 @@
 #Node.js samples
 
+## prerequisites
+
+Upgrade Mocha to the latest version before running the tests.
+
 ##iOS
 
 ### local
 
 ```
-./reset.sh --hardcore --ios`=
+./reset.sh --hardcore --ios
 
 mocha sample-code/examples/node/ios-simple.js
 mocha sample-code/examples/node/ios-complex.js
 mocha sample-code/examples/node/ios-webview.js
 mocha sample-code/examples/node/ios-actions.js
 mocha sample-code/examples/node/ios-local-server.js
+mocha sample-code/examples/node/ios-selenium-webdriver-bridge.js
 ```
 ### dev (run against locally built app)
 
@@ -23,6 +28,7 @@ DEV=1 mocha sample-code/examples/node/ios-complex.js
 DEV=1 mocha sample-code/examples/node/ios-webview.js
 DEV=1 mocha sample-code/examples/node/ios-actions.js
 DEV=1 mocha sample-code/examples/node/ios-local-server.js
+DEV=1 mocha sample-code/examples/node/ios-selenium-webdriver-bridge.js
 ```
 
 ### Sauce Labs
@@ -36,6 +42,7 @@ SAUCE=1 mocha sample-code/examples/node/ios-simple.js
 SAUCE=1 mocha sample-code/examples/node/ios-complex.js
 SAUCE=1 mocha sample-code/examples/node/ios-webview.js
 SAUCE=1 mocha sample-code/examples/node/ios-actions.js
+SAUCE=1 mocha sample-code/examples/node/ios-selenium-webdriver-bridge.js
 ```
 
 ### Sauce Labs + Sauce Connect

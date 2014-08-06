@@ -12,6 +12,8 @@ var env = require('../../../helpers/env')
   , should = chai.should()
   , spawn = require('child_process').spawn
   , _ = require('underscore')
+  , ChaiAsserter = require('../../../helpers/asserter.js').ChaiAsserter
+  , getAppPath = require('../../../helpers/app').getAppPath
   , androidReset = require('../../../helpers/reset').androidReset;
 
 describe("apidemo - basic @skip-ci", function () {
@@ -90,10 +92,16 @@ describe("apidemo - basic @skip-ci", function () {
       }).nodeify(done);
     });
 
-    it('should be able to detect if app is installed', function (done) {
+    it('should be able to install/remove app and detect its status', function (done) {
       driver
         .isAppInstalled('foo')
           .should.eventually.equal(false)
+        .isAppInstalled('io.appium.android.apis')
+          .should.eventually.equal(true)
+        .removeApp('io.appium.android.apis')
+        .isAppInstalled('io.appium.android.apis')
+          .should.eventually.equal(false)
+        .installApp(getAppPath('ApiDemos'))
         .isAppInstalled('io.appium.android.apis')
           .should.eventually.equal(true)
         .nodeify(done);
@@ -280,6 +288,63 @@ describe("apidemo - basic @skip-ci", function () {
       caps.appActivity = '.ApiDemos';
       session = initSession(caps, desired);
       session.setUp(title + "- package").nodeify(done);
+    });
+
+  });
+
+  describe('appium android', function () {
+    this.timeout(env.MOCHA_INIT_TIMEOUT);
+
+    var session;
+    var title = getTitle(this);
+
+    beforeEach(function (done) {
+      var adb = new ADB({});
+      adb.uninstallApk("io.appium.android.apis", done);
+    });
+
+    afterEach(function () { return session.tearDown(this.currentTest.state === 'passed'); });
+
+    it('should be able to start session without launching app', function (done) {
+      var appPath = path.resolve(desired.app);
+      var caps = _.defaults({'app': appPath, 'autoLaunch': false}, desired);
+      session = initSession(caps, desired);
+      var driver = session.setUp(title + "- autoLaunch");
+      var activityToBeBlank = new ChaiAsserter(function (driver) {
+        return driver
+          .getCurrentActivity()
+          .should.eventually.not.include(".ApiDemos");
+      });
+      driver
+        .waitFor(activityToBeBlank, 10000, 700)
+        .launchApp()
+        .getCurrentActivity()
+          .should.eventually.include(".ApiDemos")
+        .nodeify(done);
+    });
+
+    it('should be able to start session without installing app', function (done) {
+      var appPath = path.resolve(desired.app);
+      var appPkg = "io.appium.android.apis";
+      var caps = _.defaults({
+        app: appPkg,
+        autoLaunch: false,
+        appActivity: ".ApiDemos"
+      }, desired);
+      session = initSession(caps, desired);
+      var driver = session.setUp(title + "- autoLaunch");
+      var activityToBeBlank = new ChaiAsserter(function (driver) {
+        return driver
+          .getCurrentActivity()
+          .should.eventually.not.include(".ApiDemos");
+      });
+      driver
+        .waitFor(activityToBeBlank, 10000, 700)
+        .installApp(appPath)
+        .launchApp()
+        .getCurrentActivity()
+          .should.eventually.include(".ApiDemos")
+        .nodeify(done);
     });
 
   });

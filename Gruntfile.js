@@ -71,7 +71,11 @@ module.exports = function (grunt) {
       }
     }
   , jscs: {
-    src: '**/*.js',
+    files: [
+      '**/*.js', '!submodules/**', '!node_modules/**',
+      '!lib/server/static/**', '!lib/devices/firefoxos/atoms/*.js',
+      '!test/harmony/**/*.js', '!sample-code/examples/node/**/*-yiewd.js',
+      '!sample-code/apps/**', '!sample-code/examples/php/vendor/**'],
     options: {
         config: ".jscs.json"
       }
@@ -89,10 +93,11 @@ module.exports = function (grunt) {
   , maxBuffer: 2000 * 1024
   });
 
+  grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks("grunt-jscs-checker");
-  grunt.registerTask('lint', ['jshint','jscs']);
+  grunt.registerTask('lint', ['newer:jshint','jscs']);
   grunt.registerTask('test', 'mochaTest:unit');
   grunt.registerTask('unit', 'mochaTest:unit');
   grunt.registerTask('default', ['test']);

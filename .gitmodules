@@ -43,3 +43,9 @@
 [submodule "submodules/appium-adb"]
 	path = submodules/appium-adb
 	url = https://github.com/appium/appium-adb.git
+[submodule "submodules/io.appium.android.ime"]
+	path = submodules/io.appium.android.ime
+	url = https://github.com/appium/io.appium.android.ime.git
+[submodule "submodules/io.appium.settings"]
+	path = submodules/io.appium.settings
+	url = https://github.com/appium/io.appium.settings.git

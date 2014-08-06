@@ -8,6 +8,12 @@ var wd = require("wd"),
     serverConfigs = require('./helpers/appium-servers');
 
 wd.addPromiseChainMethod('swipe', actions.swipe);
+wd.addPromiseChainMethod('pinch', actions.pinch);
+wd.addElementPromiseChainMethod('pinch',
+  function () { return this.browser.pinch(this); });
+wd.addPromiseChainMethod('zoom', actions.zoom);
+wd.addElementPromiseChainMethod('zoom',
+  function () { return this.browser.zoom(this); });
 
 describe("ios actions", function () {
   this.timeout(300000);
@@ -109,4 +115,53 @@ describe("ios actions", function () {
           endX: 0.5,  endY: loc.y, duration: 800 });
       });
   });
+
+  it("should pinch", function () {
+    return driver
+      .waitForElementByName('Test Gesture', 5000).click()
+      .sleep(1000)
+      .elementByName('OK').click()
+      .sleep(1000)
+      .elementByXPath('//UIAMapView')
+      .then(function (el) {
+        return driver.pinch(el);
+      });
+  });
+
+  it("should pinch el", function () {
+    return driver
+      .waitForElementByName('Test Gesture', 5000).click()
+      .sleep(1000)
+      .elementByName('OK').click()
+      .sleep(1000)
+      .elementByXPath('//UIAMapView')
+      .then(function (el) {
+        return el.pinch();
+      });
+  });
+
+  it("should zoom", function () {
+    return driver
+      .waitForElementByName('Test Gesture', 5000).click()
+      .sleep(1000)
+      .elementByName('OK').click()
+      .sleep(1000)
+      .elementByXPath('//UIAMapView')
+      .then(function (el) {
+        return driver.zoom(el);
+      });
+  });
+
+  it.only("should zoom el", function () {
+    return driver
+      .waitForElementByName('Test Gesture', 5000).click()
+      .sleep(1000)
+      .elementByName('OK').click()
+      .sleep(1000)
+      .elementByXPath('//UIAMapView')
+      .then(function (el) {
+        return el.zoom();
+      });
+  });
+
 });

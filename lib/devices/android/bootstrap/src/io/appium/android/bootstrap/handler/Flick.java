@@ -95,7 +95,7 @@ public class Flick extends CommandHandler {
     }
 
     steps = Math.abs(steps);
-    Logger.info("Flicking from " + start.toString() + " to " + end.toString()
+    Logger.debug("Flicking from " + start.toString() + " to " + end.toString()
         + " with steps: " + steps.intValue());
     final boolean res = d.swipe(start.x.intValue(), start.y.intValue(),
         end.x.intValue(), end.y.intValue(), steps.intValue());

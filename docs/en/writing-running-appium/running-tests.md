@@ -68,10 +68,10 @@ public static $browsers = array(
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
-capabilities.setCapability("platformName", "iOS");
-capabilities.setCapability("platformVersion", "7.1");
-capabilities.setCapability("deviceName", "iPhone Simulator");
-capabilities.setCapability("app", myApp);
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "7.1");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
+capabilities.setCapability(MobileCapabilityType.APP, myApp);
 ```
 
 In this set of capabilities, `myApp` must be either:
@@ -148,10 +148,10 @@ public static $browsers = array(
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
-capabilities.setCapability("platformName", "Android");
-capabilities.setCapability("platformVersion", "4.4");
-capabilities.setCapability("deviceName", "Android Emulator");
-capabilities.setCapability("app", myApp);
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "4.4");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+capabilities.setCapability(MobileCapabilityType.APP, myApp);
 ```
 
 In this set of capabilities, `myApp` must be either:
@@ -218,11 +218,11 @@ public static $browsers = array(
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
-capabilities.setCapability("automationName", "Selendroid");
-capabilities.setCapability("platformName", "Android");
-capabilities.setCapability("platformVersion", "2.3");
-capabilities.setCapability("deviceName", "Android Emulator");
-capabilities.setCapability("app", myApp);
+capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Selendroid");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "2.3");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+capabilities.setCapability(MobileCapabilityType.APP, myApp);
 ```
 
 Now Appium will start up a Selendroid test session instead of the default test

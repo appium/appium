@@ -52,10 +52,10 @@ public static $browsers = array(
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
-capabilities.setCapability("platformName", "iOS");
-capabilities.setCapability("platformVersion", "7.1");
-capabilities.setCapability("browserName", "Safari");
-capabilities.setCapability("deviceName", "iPhone Simulator");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "7.1");
+capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
 ```
 
 ### Mobile Safari on a Real iOS Device
@@ -118,18 +118,18 @@ To configure you test to run against safari simply set the **"browserName"** to 
 // java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-desiredCapabilities.setCapability("browserName", "Safari");
+desiredCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
 URL url = new URL("http://127.0.0.1:4723/wd/hub");
-RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
+AppiumDriver driver = new AppiumDriver(url, desiredCapabilities);
 
 // Navigate to the page and interact with the elements on the guinea-pig page using id.
-remoteWebDriver.get("http://saucelabs.com/test/guinea-pig");
-WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
+driver.get("http://saucelabs.com/test/guinea-pig");
+WebElement div = driver.findElement(By.id("i_am_an_id"));
 Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
-remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
+driver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
 
 //close the app.
-remoteWebDriver.quit();
+driver.quit();
 ```
 
 ### Python Example
@@ -226,10 +226,10 @@ public static $browsers = array(
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
-capabilities.setCapability("platformName", "Android");
-capabilities.setCapability("platformVersion", "4.4");
-capabilities.setCapability("deviceName", "Android Emulator");
-capabilities.setCapability("browserName", "Chrome");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "4.4");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
 ```
 
 Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to automate the built-in browser. On all devices you can use the 'Chromium' `browserName` cap to automate a build of Chromium.

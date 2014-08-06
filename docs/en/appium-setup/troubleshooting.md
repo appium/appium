@@ -9,6 +9,7 @@ to github or write to the [appium-discuss mailing list](https://groups.google.co
 * Make sure your system is set up appropriately (i.e., XCode is updated,
   Android SDK is installed and `ANDROID_HOME` is set.
 * Make sure the paths to your applications are correct
+* On windows run appium.app as administrator or when running from source you need to run cmd as administrator.
 
 ### If you're running Appium.app
 

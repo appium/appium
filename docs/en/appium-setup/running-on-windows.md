@@ -56,6 +56,7 @@ arguments.
 
 ### Notes
 
+* On windows run appium.app as administrator or when running from source you need to run cmd as administrator. 
 * You must supply the `--no-reset` or `--full-reset` flags for
   Android to work on Windows.
 * There exists a hardware accelerated emulator for Android, it has it's own

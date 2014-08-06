@@ -153,6 +153,11 @@ Or individual tests (e.g., a test with the word "alert" in the name):
 
     DEVICE=ios6 mocha -t 60000 -R spec --grep "alert" test/functional/ios/apidemos
 
+For windows you have to use `set DEVICE=android` in cmd to run above tests, for example: 
+
+    set DEVICE=android
+    mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
+
 NOTE: For Android, you will need an emulator/device with screen size of 4.0"
 (480x800). Some tests might fail on a different screen size.
 

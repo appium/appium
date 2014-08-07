@@ -1,3 +1,55 @@
+CHANGES IN VERSION 1.2.1 (from 1.2.0)
+======================================
+
+#### General
+- fix up sample code
+- bring back support for autoLaunch=false case
+- reset commandTimeout during implicit wait cycles
+- remove deprecated window_handles methods
+- add --local-timezone flag that uses timezone for timestamps
+- add a configurable --callback-address and --callback-port for execute_async
+- update setLocation method to use correct spec params for geolocation
+- add networkConnection to server capabilities so clients can use the API
+- if boolean cap values are sent in as strings, convert them to boolean
+
+#### iOS
+- fix bug where we waited for safari7 dirs when we weren't on ios7.x
+- improve deviceName flexibility and device recognition
+- make sure instruments and uiauto know about the tmp dir flag
+- fix install/uninstall logic for real ios device
+- fix bug with parsing of binary vs XML plists
+- fix handling of multiple taps
+- clean up iOS simulator log
+- fix hang when ending a real safari session
+- implement pushFile for ios
+- allow .ipa in the list of downloadable app types
+- retry getting screenshot if it fails
+- fix JavaScript error when using sendKeys
+- fix error where testsuite would kill appium in its ios reset cycle
+- fix error in getting localized strings
+
+#### Android
+- fix handling of IME activation
+- fix chromedriver kill logic
+- support API level 10 style focused activity strings
+- add lots of fallback strategies for element.clear()
+- update api level dependency for the project to 19
+- add fallback strategies for finding app activity from AndroidManifest
+- fix bug with xpath searches for //*
+- fix xpath search bugs, now we use UiAutomator's instance() which is more
+  reliable
+- fix grunt-helpers bug when building appium on windows
+- retry all adb commands to make all adb commands less flakey
+
+#### Selendroid
+- fix for setValue and getContexts methods, they were not using a custom
+  selendroid port if active
+- selendroid now requires internet permission in apps; fail if it's not
+  present
+- add custom keystore support
+- upgrade selendroid to 0.11.0
+
+
 CHANGES IN VERSION 1.2.0 (from 1.1.0)
 ======================================
 

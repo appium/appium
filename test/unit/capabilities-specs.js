@@ -22,6 +22,18 @@ describe('capabilities', function () {
       c.platformVersion.should.equal(7.0);
       (typeof c.platformVersion).should.equal("number");
     });
+    it('should convert string booleans into actual booleans', function () {
+      var c = new Capabilities({
+        stringFalseCap: "false",
+        stringTrueCap: "true",
+        realFalseCap: false,
+        realTrueCap: true
+      });
+      c.stringFalseCap.should.equal(false);
+      c.stringTrueCap.should.equal(true);
+      c.realFalseCap.should.equal(false);
+      c.realTrueCap.should.equal(true);
+    });
     describe('with mjsonwp capabilities', function () {
       describe('deprecation warnings', function () {
         var newCapabilities = [

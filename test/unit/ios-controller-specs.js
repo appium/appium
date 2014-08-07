@@ -41,7 +41,7 @@ describe('ios-controller', function () {
     });
     describe('when there are localizableStrings', function () {
       beforeEach(function () {
-        var locString = [{'someSelector': 'localSelector'}];
+        var locString = {'someSelector': 'localSelector'};
         controller.localizableStrings = locString;
       });
       afterEach(function () {

@@ -40,6 +40,7 @@ CHANGES IN VERSION 1.2.1 (from 1.2.0)
   reliable
 - fix grunt-helpers bug when building appium on windows
 - retry all adb commands to make all adb commands less flakey
+- upgrade chromedriver to 2.10
 
 #### Selendroid
 - fix for setValue and getContexts methods, they were not using a custom

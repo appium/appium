@@ -2,7 +2,7 @@ package com.android.uiautomator.common;
 
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.Logger;
-
+import android.view.InputEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -19,11 +19,12 @@ public class ReflectionUtils {
   }
 
   private Object controller = null;
+  private Object bridge = null;
 
   public ReflectionUtils() throws IllegalArgumentException,
       IllegalAccessException, SecurityException, NoSuchFieldException {
     final UiDevice device = UiDevice.getInstance();
-    final Object bridge = enableField(device.getClass(), "mUiAutomationBridge")
+    bridge = enableField(device.getClass(), "mUiAutomationBridge")
         .get(device);
     if (API_18) {
       controller = enableField(bridge.getClass().getSuperclass(),
@@ -43,9 +44,21 @@ public class ReflectionUtils {
     return controller;
   }
 
+  public Object getBridge() {
+    return bridge;
+  }
+
   public Method getControllerMethod(final String name, final Class<?>... parameterTypes)
       throws NoSuchMethodException, SecurityException {
     return getMethod(controller.getClass(), name, parameterTypes);
+  }
+
+  public Method getMethodInjectInputEvent() throws NoSuchMethodException, SecurityException {
+      Class bridgeClass = bridge.getClass();
+      if (API_18) {
+          bridgeClass = bridgeClass.getSuperclass();
+      }
+      return getMethod(bridgeClass, "injectInputEvent", InputEvent.class, boolean.class);
   }
 
   public Method getMethod(final Class clazz, String name, final Class<?>... parameterTypes)

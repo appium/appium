@@ -74,3 +74,4 @@
 |`keepKeyChains`| (Sim-only) Whether to keep keychains (Library/Keychains) when appium session is started/finished|`true` or `false`|
 |`localizableStringsDir`| Where to look for localizable strings. Default `en.lproj`|`en.lproj`|
 |`processArguments`| Arguments to pass to the AUT using instruments|e.g., `-myflag`|
+|`interKeyDelay`| The delay, in ms, between keystrokes sent to an element when typing.|e.g., `100`|

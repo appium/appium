@@ -77,9 +77,9 @@ have to modify your `/etc/authorization` file in one of two ways:
 
 At this point, run:
 
-    ```center
-    ./reset.sh --ios --dev
-    ```
+```center
+./reset.sh --ios --dev
+```
 
 Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
 

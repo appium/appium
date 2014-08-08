@@ -79,5 +79,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
-|`--trace-dir`|null|Absolute path to directory Appium uses to stor trace, defaults
-to `<tmpDir>/appium-instruments`||
+|`--trace-dir`|`<tmpDir>/appium-instruments`|Absolute path to directory Appium uses to store trace.|`--trace-dir "/tmp/directory"`|

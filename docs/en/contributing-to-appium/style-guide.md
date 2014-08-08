@@ -229,6 +229,16 @@ automatic linting.
     myVariable === undefined
     ```
 
+*   Define a variable with a default value
+
+    ```javascript
+    var x = y || z;
+    ```
+    not
+    ```javascript
+    var x = y ? y : z;
+    ```
+
 ### Test Style:
 
 Keep on the same line if it makes sense semantically and length is not an issue:

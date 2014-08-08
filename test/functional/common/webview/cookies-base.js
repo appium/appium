@@ -2,7 +2,6 @@
 
 var setup = require("../setup-base"),
     webviewHelper = require("../../../helpers/webview"),
-    assert = require('assert'),
     loadWebView = webviewHelper.loadWebView,
     isChrome = webviewHelper.isChrome,
     testEndpoint = webviewHelper.testEndpoint,
@@ -134,11 +133,9 @@ module.exports = function (desired) {
               .deleteAllCookies()
               .allCookies();
           }).then(function (cookies) {
-            assert(cookies.length === 0);
+            cookies.length.should.equal(0);
           }).nodeify(done);
       });
-
-
     });
   });
 };

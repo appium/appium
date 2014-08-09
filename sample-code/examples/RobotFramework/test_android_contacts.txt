@@ -1,9 +1,0 @@
-*** Settings ***
-Resource          test_android_contact_resource.txt
-
-*** Test Cases ***
-add_contact
-    [Documentation]    demo for android_contacts(https://github.com/appium/appium/blob/master/sample-code/examples/python/android_contacts.py)
-    [Tags]    demo
-    add new contact    Appium User    someone@appium.io    5555555555
-    Page Should Contain Text    Appium User

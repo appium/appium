@@ -105,7 +105,7 @@ See [finding elements](/docs/en/writing-running-appium/finding-elements.md) for 
 
 You can also automate web views in hybrid apps! See the [hybrid app guide](/docs/en/advanced-concepts/hybrid.md)
 
-This repository contains [many examples of tests in a variety of different languages](sample-code/examples)!
+This repository contains [many examples of tests in a variety of different languages](https://github.com/appium/sample-code)!
 
 For the full list of Appium doc pages, visit [this directory](/docs/en/).
 

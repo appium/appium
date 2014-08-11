@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="qCV-AS-rCm">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="3el-3z-hw1">
+            <objects>
+                <viewController id="qCV-AS-rCm" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="lWk-kq-shm"/>
+                        <viewControllerLayoutGuide type="bottom" id="OOK-Yz-V4s"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Thv-qS-DhF">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" ambiguous="YES" misplaced="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fpx-YW-dI6" userLabel="mainWebView">
+                                <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter URL" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Kws-yb-sYg" userLabel="urlField">
+                                <rect key="frame" x="11" y="26" width="709" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Enter URL"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" keyboardAppearance="light" returnKeyType="go"/>
+                                <connections>
+                                    <action selector="urlEditBegin:" destination="qCV-AS-rCm" eventType="editingDidBegin" id="W5P-bn-iUe"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dTg-is-ALT" userLabel="navBtn">
+                                <rect key="frame" x="728" y="26" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="30" id="bs7-ZR-9af"/>
+                                </constraints>
+                                <state key="normal" title="Go">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="navBtnClicked:" destination="qCV-AS-rCm" eventType="touchUpInside" id="7JJ-EB-9zd"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Fpx-YW-dI6" firstAttribute="leading" secondItem="Thv-qS-DhF" secondAttribute="leading" id="CvG-PH-yL2"/>
+                            <constraint firstItem="Kws-yb-sYg" firstAttribute="leading" secondItem="Thv-qS-DhF" secondAttribute="leading" constant="11" id="UA1-ca-CCH"/>
+                            <constraint firstAttribute="trailing" secondItem="dTg-is-ALT" secondAttribute="trailing" constant="10" id="XFA-Zl-x8e"/>
+                            <constraint firstItem="Fpx-YW-dI6" firstAttribute="top" secondItem="dTg-is-ALT" secondAttribute="bottom" constant="8" id="Ym4-0D-Zxk"/>
+                            <constraint firstAttribute="bottom" secondItem="Fpx-YW-dI6" secondAttribute="bottom" id="bD7-wY-4P1"/>
+                            <constraint firstAttribute="trailing" secondItem="Fpx-YW-dI6" secondAttribute="trailing" id="ull-XD-N0p"/>
+                            <constraint firstItem="dTg-is-ALT" firstAttribute="leading" secondItem="Kws-yb-sYg" secondAttribute="trailing" constant="8" id="zZM-rc-NQc"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mainWebView" destination="Fpx-YW-dI6" id="PAt-NE-eXC"/>
+                        <outlet property="urlField" destination="Kws-yb-sYg" id="G6v-4L-APc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nwG-iE-fZn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1" y="-148"/>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar" statusBarStyle="lightContent"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
+</document>

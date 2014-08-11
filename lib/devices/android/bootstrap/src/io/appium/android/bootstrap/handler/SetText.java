@@ -38,7 +38,12 @@ public class SetText extends CommandHandler {
           text = text.replace("\\n", "");
           Logger.debug("Will press enter after setting text");
         }
-        final Boolean result = el.setText(text);
+        String currText = el.getText();
+        el.clearText();
+        if (!el.getText().isEmpty()) {
+          return getErrorResult("clearText not successful, aborting setText");
+        }
+        final Boolean result = el.setText(currText + text);
         if (pressEnter) {
           final UiDevice d = UiDevice.getInstance();
           d.pressEnter();

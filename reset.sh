@@ -175,14 +175,6 @@ reset_ios() {
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
-    if $ios7_active ; then
-        echo "* Cleaning/rebuilding WebViewApp"
-        run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
-        run_cmd rm -rf build/WebViewApp
-        run_cmd mkdir build/WebViewApp
-        run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
-            build/WebViewApp/
-    fi
     if $include_dev ; then
         if $npmlink ; then
             echo "* Cloning/npm linking appium-atoms"
@@ -212,6 +204,8 @@ reset_ios() {
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
         run_cmd "$grunt" buildApp:TestApp:iphonesimulator:$sdk_ver
+        echo "* Cleaning/rebuilding iOS test app: WebViewApp"
+        run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
     fi
     echo "* Cloning/updating fruitstrap"
     run_cmd git submodule update --init submodules/fruitstrap

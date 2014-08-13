@@ -507,12 +507,14 @@ reset_chromedriver() {
             platform="mac"
             chromedriver_file="chromedriver_mac32.zip"
             run_cmd mkdir "$appium_home"/build/chromedriver/mac
+            install_chromedriver $platform $chromedriver_version $chromedriver_file
         else
             platform="linux"
             chromedriver_file="chromedriver_linux$machine.zip"
+            binary="chromedriver$machine"
             run_cmd mkdir "$appium_home"/build/chromedriver/linux
+            install_chromedriver $platform $chromedriver_version $chromedriver_file $binary
         fi
-        install_chromedriver $platform $chromedriver_version $chromedriver_file
     else
         echo "* Building directory structure"
         run_cmd mkdir "$appium_home"/build/chromedriver/mac
@@ -520,7 +522,8 @@ reset_chromedriver() {
         run_cmd mkdir "$appium_home"/build/chromedriver/windows
 
         install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
-        install_chromedriver "linux" $chromedriver_version "chromedriver_linux$machine.zip"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip" "chromedriver32"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux64.zip" "chromedriver64"
         install_chromedriver "windows" $chromedriver_version "chromedriver_win32.zip"
     fi
 }
@@ -529,6 +532,7 @@ install_chromedriver() {
     platform=$1
     version=$2
     file=$3
+    binary=$4
 
     echo "* Downloading ChromeDriver version $version for $platform"
     run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o "$appium_home"/build/chromedriver/$platform/chromedriver.zip
@@ -537,6 +541,9 @@ install_chromedriver() {
     echo "* Unzipping ChromeDriver"
     run_cmd unzip chromedriver.zip
     run_cmd rm chromedriver.zip
+    if [[ $binary != "" ]]; then
+        run_cmd mv chromedriver $binary
+    fi
     run_cmd popd
 }
 

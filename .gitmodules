@@ -52,3 +52,6 @@
 [submodule "submodules/io.appium.settings"]
 	path = submodules/io.appium.settings
 	url = https://github.com/appium/io.appium.settings.git
+[submodule "submodules/sample-code"]
+	path = submodules/sample-code
+	url = https://github.com/appium/sample-code

@@ -39,9 +39,9 @@ public class SetText extends CommandHandler {
           Logger.debug("Will press enter after setting text");
         }
         String currText = el.getText();
-        el.clearText();
+        new Clear().execute(command);
         if (!el.getText().isEmpty()) {
-          return getErrorResult("clearText not successful, aborting setText");
+          Logger.debug("clearText not successful, continuing with setText anyway");
         }
         final Boolean result = el.setText(currText + text);
         if (pressEnter) {

@@ -19,6 +19,7 @@ var path = require('path')
   , generateAppiumIo = gruntHelpers.generateAppiumIo
   , setDeviceConfigVer = gruntHelpers.setDeviceConfigVer
   , setBuildTime = gruntHelpers.setBuildTime
+  , getSampleCode = gruntHelpers.getSampleCode
   , setGitRev = gruntHelpers.setGitRev
   , getGitRev = require('./lib/helpers').getGitRev;
 
@@ -154,6 +155,12 @@ module.exports = function (grunt) {
   });
   grunt.registerTask('setBuildTime', function () {
     setBuildTime(grunt, this.async());
+  });
+  grunt.registerTask('getSampleCode', function (hardcore) {
+    if (typeof hardcore !== "undefined" && hardcore === "hardcore") {
+      hardcore = true;
+    }
+    getSampleCode(grunt, hardcore, this.async());
   });
   grunt.registerTask('setGitRev', function (rev) {
     var done = this.async();

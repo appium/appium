@@ -53,6 +53,11 @@ if %doDev% == 1 (
   ECHO.
 )
 
+:: Install Sample Code
+if %doDev% == 1 (
+  CALL :runCmd "node_modules\.bin\grunt getSampleCode"
+)
+
 :: Reset Android
 if %doAndroid% == 1 (
   ECHO.

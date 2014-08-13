@@ -138,6 +138,15 @@ reset_general() {
     fi
 }
 
+reset_sample_code() {
+    echo "* Initializing sample code and test apps"
+    if $hardcore ; then
+        run_cmd "$grunt" getSampleCode:hardcore
+    else
+        run_cmd "$grunt" getSampleCode
+    fi
+}
+
 reset_ios() {
     echo "RESETTING IOS"
     set +e
@@ -563,6 +572,9 @@ main() {
     fi
     reset_npm
     reset_general
+    if $include_dev ; then
+        reset_sample_code
+    fi
     if $should_reset_ios ; then
         reset_ios
     fi

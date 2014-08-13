@@ -5,6 +5,7 @@ npm*.log
 node_modules
 *.trace
 xcuserdata
+sample-code/examples
 sample-code/apps/TestApp/build
 sample-code/apps/WebViewApp/build
 sample-code/apps/WebViewApp/WebViewApp.xcodeproj/project.xcworkspace/xcshareddata

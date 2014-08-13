@@ -8,6 +8,7 @@ kinds of appium dev tasks. Here's what you can do:
 |grunt lint|Run JSLint|
 |grunt test|Run the unit tests|
 |grunt unit|Run the unit tests|
+|grunt getSampleCode|Download sample code and apps. Accepts `:hardcore` parameter|
 |grunt buildApp:&lt;AppName&gt;:&lt;SDK&gt;|Build an iOS app for the iPhone Simulator.  Expects there to be a .app at `sample-code/apps/<AppName>/build/Release-iphonesimulator/<AppName>.app`. Default SDK is 'iphonesimulator7.1'|
 |grunt signApp:&lt;certName&gt;|Signs the test app with an absolute path to an iOS dev certificate|
 |grunt authorize|Authorize your simulator to run without prompting|

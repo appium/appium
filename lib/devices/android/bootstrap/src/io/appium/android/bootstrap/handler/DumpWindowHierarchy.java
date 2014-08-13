@@ -6,6 +6,7 @@ import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
 import io.appium.android.bootstrap.utils.NotImportantViews;
+import io.appium.android.bootstrap.utils.XMLCleanser;
 
 import java.io.File;
 
@@ -38,6 +39,7 @@ public class DumpWindowHierarchy extends CommandHandler {
     try {
       // dumpWindowHierarchy often has a NullPointerException
       UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+      XMLCleanser.cleanFile(dumpFile);
     } catch (Exception e) {
       e.printStackTrace();
       // If there's an error then the dumpfile may exist and be empty.

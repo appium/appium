@@ -9,15 +9,14 @@ import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
 import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 import io.appium.android.bootstrap.selector.Strategy;
-import io.appium.android.bootstrap.utils.ElementHelpers;
-import io.appium.android.bootstrap.utils.NotImportantViews;
-import io.appium.android.bootstrap.utils.UiAutomatorParser;
+import io.appium.android.bootstrap.utils.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -195,9 +194,8 @@ public class Find extends CommandHandler {
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
 
-    if (strategy == Strategy.INDEX_PATHS) {
-      NotImportantViews.discard(true);
-      return findElementsByIndexPaths(text, multiple);
+    if (strategy == Strategy.XPATH) {
+      return findElementsByXPath(text, multiple);
     } else {
       NotImportantViews.discard(false);
     }
@@ -274,18 +272,16 @@ public class Find extends CommandHandler {
    * Get a single element by its index and its parent indexes. Used to resolve
    * an xpath query
    *
-   * @param indexPath
+   * @param pair
    * @return
    * @throws ElementNotFoundException
    * @throws JSONException
    */
-  private JSONObject fetchElementByClassAndInstance(final String indexPath)
+  private JSONObject fetchElementByClassAndInstance(ClassInstancePair pair)
       throws ElementNotFoundException, JSONException {
 
-    // path looks like "className:instanceNumber" eg: "android.widget.Button:2"
-    String[] classInstancePair = indexPath.split(":");
-    String androidClass = classInstancePair[0];
-    String instance = classInstancePair[1];
+    String androidClass = pair.getAndroidClass();
+    String instance = pair.getInstance();
 
     UiSelector sel = new UiSelector().className(androidClass).instance(Integer.parseInt(instance));
 
@@ -323,13 +319,8 @@ public class Find extends CommandHandler {
     return resArray;
   }
 
-  /**
-   * Get a find element result by looking through the paths of indexes used to
-   * retrieve elements from an XPath search
-   *
-   * @param selector
-   * @return
-   */
+
+  /*
   private AndroidCommandResult findElementsByIndexPaths(final String selector,
                                                         final Boolean multiple) {
     final ArrayList<String> indexPaths = new ArrayList<String>(
@@ -351,6 +342,41 @@ public class Find extends CommandHandler {
       return getSuccessResult(resArray);
     } else {
       return getSuccessResult(resEl);
+    }
+  }
+  */
+
+  private AndroidCommandResult findElementsByXPath(final String expression, final Boolean multiple) {
+
+    ArrayList<ClassInstancePair> pairs;
+    try {
+      pairs = XMLHierarchy.getClassInstancePairs(expression);
+    } catch (ElementNotFoundException e) {
+      return new AndroidCommandResult(WDStatus.ELEMENT_IS_NOT_SELECTABLE, e.getMessage());
+    } catch (XPathExpressionException e) {
+      return new AndroidCommandResult(WDStatus.INVALID_SELECTOR, e.getMessage());
+    } catch (ParserConfigurationException e) {
+      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
+    }
+
+    try {
+      if (!multiple) {
+        if (pairs.size() == 0) {
+          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
+        }
+        JSONObject resEl = fetchElementByClassAndInstance(pairs.get(0));
+        return getSuccessResult(resEl);
+      } else {
+        JSONArray resArray = new JSONArray();
+        for (ClassInstancePair pair : pairs) {
+          resArray.put(fetchElementByClassAndInstance(pair));
+        }
+        return getSuccessResult(resArray);
+      }
+    } catch (ElementNotFoundException e) {
+      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+    } catch (JSONException e) {
+      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
     }
   }
 

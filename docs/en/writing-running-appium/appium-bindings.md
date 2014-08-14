@@ -126,6 +126,40 @@ $this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 driver.HideKeyboard("Done");
 ```
 
+### Open Notifications
+
+Open the notification shade *Android only*
+
+```java
+// java
+driver.openNotifications();
+```
+
+```javascript
+// javascript
+driver.openNotifications(cb);
+```
+
+```python
+# python
+driver.open_notifications()
+```
+
+```ruby
+# ruby
+openNotifications
+```
+
+```csharp
+// c#
+driver.OpenNotifications();
+```
+
+```php
+// php
+$this->openNotifications();
+```
+
 ### Is installed
 
 Check if an app is installed

@@ -3,6 +3,7 @@ package io.appium.android.bootstrap.utils;
 import android.os.Environment;
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +31,7 @@ public abstract class XMLHierarchy {
   private static final File dumpFile = new File(dumpFolder, dumpFileName);
 
   public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression) throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
-    return getClassInstancePairs(xpathExpression, getFormattedXMLRoot());
+    return getClassInstancePairs(xpathExpression, getFormattedXMLDoc());
   }
 
   public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression, Node root) throws ElementNotFoundException {
@@ -78,15 +79,15 @@ public abstract class XMLHierarchy {
     }
   }
 
-  public static Node getFormattedXMLRoot() throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
+  public static Node getFormattedXMLDoc() throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
     XPath xpath = XPathFactory.newInstance().newXPath();
 
     Node root = (Node) xpath.evaluate("/", getRawXMLHierarchy(), XPathConstants.NODE);
 
-    //rename all the nodes with their "class" attribute
-    //add an instance attribute
-
     HashMap<String, Integer> instances = new HashMap<String, Integer>();
+
+    // rename all the nodes with their "class" attribute
+    // add an instance attribute
     annotateNodes(root, instances);
 
     return root;
@@ -112,8 +113,16 @@ public abstract class XMLHierarchy {
     }
   }
 
-  private static void visitNode(Node node) {
-    node.
+  private static void visitNode(Node node, HashMap<String, Integer> instances) {
+
+    Document doc = node.getOwnerDocument();
+    NamedNodeMap attributes = node.getAttributes();
+
+    String androidClass = attributes.getNamedItem("class").getNodeValue();
+
+    doc.renameNode(node, node.getNamespaceURI(), androidClass);
+
+
   }
 
   private static void deleteDumpFile() {

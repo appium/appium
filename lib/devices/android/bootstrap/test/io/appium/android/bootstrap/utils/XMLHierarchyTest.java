@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class XMLHierarchyTest extends TestCase {
 
-  public static XPath xpath = XPathFactory.newInstance().newXPath();
+  private static XPath xpath = XPathFactory.newInstance().newXPath();
 
   public void testGetClassInstancePairs() throws Exception {
 
@@ -47,7 +47,6 @@ public class XMLHierarchyTest extends TestCase {
 
     assertEquals("class1", childNode.getNodeName());
     assertEquals("2", childNode.getAttributes().getNamedItem("instance").getNodeValue());
-
 
   }
 }

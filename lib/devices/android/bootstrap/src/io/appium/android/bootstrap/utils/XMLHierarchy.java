@@ -23,8 +23,11 @@ import java.util.HashMap;
  */
 public abstract class XMLHierarchy {
 
-  public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression) throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
-    return getClassInstancePairs(xpathExpression, getFormattedXMLDoc());
+  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression) throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
+    XPath xpath = XPathFactory.newInstance().newXPath();
+    XPathExpression exp = xpath.compile(xpathExpression);
+
+    return getClassInstancePairs(exp, getFormattedXMLDoc());
   }
 
   public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression, Node root) throws ElementNotFoundException {

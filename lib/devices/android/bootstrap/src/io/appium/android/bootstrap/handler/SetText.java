@@ -31,8 +31,9 @@ public class SetText extends CommandHandler {
       try {
         final Hashtable<String, Object> params = command.params();
         final AndroidElement el = command.getElement();
+        boolean replace = Boolean.parseBoolean(params.get("replace").toString());
         String text = params.get("text").toString();
-        Boolean pressEnter = false;
+        boolean pressEnter = false;
         if (text.endsWith("\\n")) {
           pressEnter = true;
           text = text.replace("\\n", "");
@@ -43,7 +44,10 @@ public class SetText extends CommandHandler {
         if (!el.getText().isEmpty()) {
           Logger.debug("clearText not successful, continuing with setText anyway");
         }
-        final Boolean result = el.setText(currText + text);
+        if (!replace) {
+          text = currText + text;
+        }
+        final boolean result = el.setText(text);
         if (pressEnter) {
           final UiDevice d = UiDevice.getInstance();
           d.pressEnter();

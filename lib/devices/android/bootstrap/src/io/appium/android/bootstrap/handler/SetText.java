@@ -43,7 +43,7 @@ public class SetText extends CommandHandler {
         if (!el.getText().isEmpty()) {
           Logger.debug("clearText not successful, continuing with setText anyway");
         }
-        final Boolean result = el.setText(currText + text);
+        final Boolean result = el.setText(text);
         if (pressEnter) {
           final UiDevice d = UiDevice.getInstance();
           d.pressEnter();

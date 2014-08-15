@@ -12,9 +12,7 @@ public enum Strategy {
   NAME("name"),
   LINK_TEXT("link text"),
   PARTIAL_LINK_TEXT("partial link text"),
-  INDEX_PATHS("index paths"),
   XPATH("xpath"),
-  DYNAMIC("dynamic"),
   ACCESSIBILITY_ID("accessibility id"),
   ANDROID_UIAUTOMATOR("-android uiautomator");
 

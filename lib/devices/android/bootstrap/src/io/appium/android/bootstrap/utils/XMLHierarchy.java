@@ -3,6 +3,7 @@ package io.appium.android.bootstrap.utils;
 import android.os.Environment;
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import io.appium.android.bootstrap.exceptions.InvalidSelectorException;
 import io.appium.android.bootstrap.exceptions.PairCreationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -24,11 +25,24 @@ import java.util.HashMap;
  */
 public abstract class XMLHierarchy {
 
-  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression) throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
+  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression) throws ElementNotFoundException, InvalidSelectorException, ParserConfigurationException {
     XPath xpath = XPathFactory.newInstance().newXPath();
-    XPathExpression exp = xpath.compile(xpathExpression);
+    XPathExpression exp = null;
+    try {
+      exp = xpath.compile(xpathExpression);
+    } catch (XPathExpressionException e) {
+      throw new InvalidSelectorException(e.getMessage());
+    }
 
-    return getClassInstancePairs(exp, getFormattedXMLDoc());
+    Node formattedXmlRoot;
+
+    try {
+      formattedXmlRoot = getFormattedXMLDoc();
+    } catch (XPathExpressionException e) {
+      throw new InvalidSelectorException(e.getMessage());
+    }
+
+    return getClassInstancePairs(exp, formattedXmlRoot);
   }
 
   public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression, Node root) throws ElementNotFoundException {

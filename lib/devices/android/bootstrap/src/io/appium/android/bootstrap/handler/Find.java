@@ -1,24 +1,26 @@
 package io.appium.android.bootstrap.handler;
 
-import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
-import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import io.appium.android.bootstrap.exceptions.InvalidSelectorException;
 import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 import io.appium.android.bootstrap.selector.Strategy;
-import io.appium.android.bootstrap.utils.*;
+import io.appium.android.bootstrap.utils.ClassInstancePair;
+import io.appium.android.bootstrap.utils.ElementHelpers;
+import io.appium.android.bootstrap.utils.UiAutomatorParser;
+import io.appium.android.bootstrap.utils.XMLHierarchy;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
@@ -32,7 +34,6 @@ import static io.appium.android.bootstrap.utils.API.API_18;
 public class Find extends CommandHandler {
   // These variables are expected to persist across executions.
   AndroidElementsHash elements = AndroidElementsHash.getInstance();
-  Dynamic             dynamic  = new Dynamic();
   static JSONObject apkStrings = null;
   UiAutomatorParser uiAutomatorParser = new UiAutomatorParser();
   /**
@@ -73,132 +74,11 @@ public class Find extends CommandHandler {
     }
 
     final String contextId = (String) params.get("context");
-
-    if (strategy == Strategy.DYNAMIC) {
-      Logger.debug("Finding dynamic.");
-      final JSONArray selectors = (JSONArray) params.get("selector");
-      final String option = selectors.get(0).toString().toLowerCase();
-      final boolean all = option.contentEquals("all");
-      Logger.debug("Returning all? " + all);
-      UiScrollable scrollable = null;
-      final boolean scroll = option.contentEquals("scroll");
-      boolean canScroll = true;
-      if (scroll) {
-        UiSelector scrollableListView = new UiSelector().className(
-            android.widget.ListView.class).scrollable(true);
-        if (!new UiObject(scrollableListView).exists()) {
-          // Select anything that's scrollable if there's no list view.
-          scrollableListView = new UiSelector().scrollable(true);
-        }
-
-        // Nothing scrollable exists.
-        if (!new UiObject(scrollableListView).exists()) {
-          // we're not going to scroll
-          canScroll = false;
-        }
-
-        scrollable = new UiScrollable(scrollableListView).setAsVerticalList();
-      }
-      Logger.debug("Scrolling? " + scroll);
-      // Return the first element of the first selector that matches.
-      Logger.debug(selectors.toString());
-      try {
-        int finalizer = 0;
-        JSONArray pair;
-        List<AndroidElement> elementResults = new ArrayList<AndroidElement>();
-        final JSONArray jsonResults = new JSONArray();
-        // Start at 1 to skip over all.
-        for (int selIndex = all || scroll ? 1 : 0; selIndex < selectors
-            .length(); selIndex++) {
-          Logger.debug("Parsing selector " + selIndex);
-          pair = (JSONArray) selectors.get(selIndex);
-          Logger.debug("Pair is: " + pair);
-          UiSelector sel;
-          // 100+ int represents a method called on the element
-          // after the element has been found.
-          // [[4,"android.widget.EditText"],[100]] => 100
-          final int int0 = pair.getJSONArray(pair.length() - 1).getInt(0);
-          Logger.debug("int0: " + int0);
-          sel = dynamic.get(pair);
-          Logger.debug("Selector: " + sel.toString());
-          if (int0 >= 100) {
-            finalizer = int0;
-            Logger.debug("Finalizer " + Integer.toString(int0));
-          }
-          try {
-            // fetch will throw on not found.
-            if (finalizer != 0) {
-              if (all) {
-                Logger.debug("Finding all with finalizer");
-                List<AndroidElement> eles = elements.getElements(
-                    sel, contextId);
-                Logger.debug("Elements found: " + eles);
-                for (final String found : Dynamic.finalize(eles, finalizer)) {
-                  jsonResults.put(found);
-                }
-                continue;
-              } else {
-                final AndroidElement ele = elements.getElement(sel, contextId);
-                final String result = Dynamic.finalize(ele, finalizer);
-                return getSuccessResult(result);
-              }
-            }
-
-            if (all) {
-              for (AndroidElement e : elements.getElements(sel, contextId)) {
-                elementResults.add(e);
-              }
-              continue;
-            } else if (scroll && canScroll) {
-              Logger.debug("Scrolling into view...");
-              final boolean result = scrollable.scrollIntoView(sel);
-              if (!result) {
-                continue; // try scrolling next selector
-              }
-              // return the element we've scrolled to
-              return getSuccessResult(fetchElement(sel, contextId));
-            } else {
-              return getSuccessResult(fetchElement(sel, contextId));
-            }
-          } catch (final ElementNotFoundException enf) {
-            Logger.debug("Not found.");
-          }
-        } // end for loop
-        if (all) {
-          // matching on multiple selectors may return duplicate elements
-          elementResults = ElementHelpers.dedupe(elementResults);
-
-          for (final AndroidElement el : elementResults) {
-            jsonResults.put(new JSONObject().put("ELEMENT", el.getId()));
-          }
-
-          return getSuccessResult(jsonResults);
-        }
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            "No such element.");
-      } catch (final Exception e) {
-        final String errorMessage = e.getMessage();
-        if (errorMessage != null
-            && errorMessage
-            .contains("UiAutomationService not connected. Did you call #register()?")) {
-          // Crash on not connected so Appium restarts the bootstrap jar.
-          throw new RuntimeException(e);
-        }
-        return getErrorResult(errorMessage);
-      }
-    }
-
     final String text = (String) params.get("selector");
     final boolean multiple = (Boolean) params.get("multiple");
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
-
-    if (strategy == Strategy.XPATH) {
-      return findElementsByXPath(text, multiple);
-    } else {
-      NotImportantViews.discard(false);
-    }
 
     try {
       Object result = null;
@@ -209,7 +89,7 @@ public class Find extends CommandHandler {
           try {
             Logger.debug("Using: " + sel.toString());
             result = fetchElement(sel, contextId);
-          } catch (final ElementNotFoundException e) {
+          } catch (final ElementNotFoundException ignored) {
           }
           if (result != null) {
             break;
@@ -224,7 +104,7 @@ public class Find extends CommandHandler {
             Logger.debug("Using: " + sel.toString());
             List<AndroidElement> elementsFromSelector = fetchElements(sel, contextId);
             foundElements.addAll(elementsFromSelector);
-          } catch (final UiObjectNotFoundException e) {
+          } catch (final UiObjectNotFoundException ignored) {
           }
         }
         if (strategy == Strategy.ANDROID_UIAUTOMATOR) {
@@ -246,6 +126,10 @@ public class Find extends CommandHandler {
       return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
     } catch (final ElementNotFoundException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+    } catch (ParserConfigurationException e) {
+      return getErrorResult("Error parsing xml hierarchy dump: " + e.getMessage());
+    } catch (InvalidSelectorException e) {
+      return new AndroidCommandResult(WDStatus.INVALID_SELECTOR, e.getMessage());
     }
   }
 
@@ -266,26 +150,6 @@ public class Find extends CommandHandler {
     final JSONObject res = new JSONObject();
     final AndroidElement el = elements.getElement(sel, contextId);
     return res.put("ELEMENT", el.getId());
-  }
-
-  /**
-   * Get a single element by its index and its parent indexes. Used to resolve
-   * an xpath query
-   *
-   * @param pair
-   * @return
-   * @throws ElementNotFoundException
-   * @throws JSONException
-   */
-  private JSONObject fetchElementByClassAndInstance(ClassInstancePair pair)
-      throws ElementNotFoundException, JSONException {
-
-    String androidClass = pair.getAndroidClass();
-    String instance = pair.getInstance();
-
-    UiSelector sel = new UiSelector().className(androidClass).instance(Integer.parseInt(instance));
-
-    return fetchElement(sel, "");
   }
 
   /**
@@ -319,67 +183,6 @@ public class Find extends CommandHandler {
     return resArray;
   }
 
-
-  /*
-  private AndroidCommandResult findElementsByIndexPaths(final String selector,
-                                                        final Boolean multiple) {
-    final ArrayList<String> indexPaths = new ArrayList<String>(
-        Arrays.asList(selector.split(",")));
-    final JSONArray resArray = new JSONArray();
-    JSONObject resEl = new JSONObject();
-    for (final String indexPath : indexPaths) {
-      try {
-        resEl = fetchElementByClassAndInstance(indexPath);
-        resArray.put(resEl);
-      } catch (final JSONException e) {
-        return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-      } catch (final ElementNotFoundException e) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            e.getMessage());
-      }
-    }
-    if (multiple) {
-      return getSuccessResult(resArray);
-    } else {
-      return getSuccessResult(resEl);
-    }
-  }
-  */
-
-  private AndroidCommandResult findElementsByXPath(final String expression, final Boolean multiple) {
-
-    ArrayList<ClassInstancePair> pairs;
-    try {
-      pairs = XMLHierarchy.getClassInstancePairs(expression);
-    } catch (ElementNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.ELEMENT_IS_NOT_SELECTABLE, e.getMessage());
-    } catch (XPathExpressionException e) {
-      return new AndroidCommandResult(WDStatus.INVALID_SELECTOR, e.getMessage());
-    } catch (ParserConfigurationException e) {
-      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-    }
-
-    try {
-      if (!multiple) {
-        if (pairs.size() == 0) {
-          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
-        }
-        JSONObject resEl = fetchElementByClassAndInstance(pairs.get(0));
-        return getSuccessResult(resEl);
-      } else {
-        JSONArray resArray = new JSONArray();
-        for (ClassInstancePair pair : pairs) {
-          resArray.put(fetchElementByClassAndInstance(pair));
-        }
-        return getSuccessResult(resArray);
-      }
-    } catch (ElementNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
-    } catch (JSONException e) {
-      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-    }
-  }
-
   /**
    * Create and return a UiSelector based on the strategy, text, and how many
    * you want returned.
@@ -396,11 +199,16 @@ public class Find extends CommandHandler {
    */
   private List<UiSelector> getSelectors(final Strategy strategy,
                                         final String text, final boolean many) throws InvalidStrategyException,
-      ElementNotFoundException, UiSelectorSyntaxException {
+          ElementNotFoundException, UiSelectorSyntaxException, ParserConfigurationException, InvalidSelectorException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
 
     switch (strategy) {
+      case XPATH:
+        for (UiSelector selector : getXPathSelectors(text, many)) {
+          selectors.add(selector);
+        }
+        break;
       case CLASS_NAME:
         sel = sel.className(text);
         if (!many) {
@@ -460,7 +268,7 @@ public class Find extends CommandHandler {
         selectors.add(sel);
         break;
       case ANDROID_UIAUTOMATOR:
-        List<UiSelector> parsedSelectors = new ArrayList<UiSelector>();
+        List<UiSelector> parsedSelectors;
         try {
           parsedSelectors = uiAutomatorParser.parse(text);
         } catch (final UiSelectorSyntaxException e) {
@@ -500,5 +308,25 @@ public class Find extends CommandHandler {
     } finally {
       return sel;
     }
+  }
+
+  /** returns List of UiSelectors for an xpath expression **/
+  private List<UiSelector> getXPathSelectors(final String expression, final boolean multiple) throws ElementNotFoundException, ParserConfigurationException, InvalidSelectorException {
+    List<UiSelector> selectors = new ArrayList<UiSelector>();
+
+    ArrayList<ClassInstancePair> pairs = XMLHierarchy.getClassInstancePairs(expression);
+
+    if (!multiple) {
+      if (pairs.size() == 0) {
+        throw new NoSuchElementException();
+      }
+      selectors.add(pairs.get(0).getSelector());
+    } else {
+      for (ClassInstancePair pair : pairs) {
+        selectors.add(pair.getSelector());
+      }
+    }
+
+    return selectors;
   }
 }

@@ -194,7 +194,7 @@ public class Find extends CommandHandler {
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
 
-    if (strategy == Strategy.INDEX_PATHS) {
+    if (strategy == Strategy.XPATH) {
       return findElementsByXPath(text, multiple);
     } else {
       NotImportantViews.discard(false);
@@ -361,6 +361,9 @@ public class Find extends CommandHandler {
 
     try {
       if (!multiple) {
+        if (pairs.size() == 0) {
+          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
+        }
         JSONObject resEl = fetchElementByClassAndInstance(pairs.get(0));
         return getSuccessResult(resEl);
       } else {

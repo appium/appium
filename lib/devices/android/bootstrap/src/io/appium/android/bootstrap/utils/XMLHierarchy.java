@@ -3,6 +3,7 @@ package io.appium.android.bootstrap.utils;
 import android.os.Environment;
 import com.android.uiautomator.core.UiDevice;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import io.appium.android.bootstrap.exceptions.PairCreationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -43,7 +44,11 @@ public abstract class XMLHierarchy {
     ArrayList<ClassInstancePair> pairs = new ArrayList<ClassInstancePair>();
     for (int i = 0; i < nodes.getLength(); i++) {
       if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-        pairs.add(getPairFromNode(nodes.item(i)));
+        try {
+          pairs.add(getPairFromNode(nodes.item(i)));
+        } catch (PairCreationException e) {
+          continue;
+        }
       }
     }
 
@@ -101,11 +106,18 @@ public abstract class XMLHierarchy {
   }
 
 
-  private static ClassInstancePair getPairFromNode(Node node) {
+  private static ClassInstancePair getPairFromNode(Node node) throws PairCreationException {
 
     NamedNodeMap attrElements = node.getAttributes();
-    String androidClass = attrElements.getNamedItem("class").getNodeValue();
-    String instance = attrElements.getNamedItem("instance").getNodeValue();
+    String androidClass;
+    String instance;
+
+    try {
+      androidClass = attrElements.getNamedItem("class").getNodeValue();
+      instance = attrElements.getNamedItem("instance").getNodeValue();
+    } catch (Exception e) {
+      throw new PairCreationException("Could not create ClassInstancePair object: " + e.getMessage());
+    }
 
     return new ClassInstancePair(androidClass, instance);
   }

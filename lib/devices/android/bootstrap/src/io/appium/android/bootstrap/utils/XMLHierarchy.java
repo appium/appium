@@ -23,19 +23,12 @@ import java.util.HashMap;
  */
 public abstract class XMLHierarchy {
 
-  // Note that
-  // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
-  // is directly from the UiDevice.java source code.
-  private static final File dumpFolder = new File(Environment.getDataDirectory(), "local/tmp");
-  private static final String dumpFileName = "dump.xml";
-  private static final File dumpFile = new File(dumpFolder, dumpFileName);
-
   public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression) throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
     return getClassInstancePairs(xpathExpression, getFormattedXMLDoc());
   }
 
   public static ArrayList<ClassInstancePair> getClassInstancePairs(XPathExpression xpathExpression, Node root) throws ElementNotFoundException {
-    XPath xpath = XPathFactory.newInstance().newXPath();
+
     NodeList nodes;
     try {
       nodes = (NodeList) xpathExpression.evaluate(root, XPathConstants.NODESET);
@@ -55,9 +48,16 @@ public abstract class XMLHierarchy {
   }
 
   public static InputSource getRawXMLHierarchy() throws ElementNotFoundException {
+    // Note that
+    // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
+    // is directly from the UiDevice.java source code.
+    final File dumpFolder = new File(Environment.getDataDirectory(), "local/tmp");
+    final String dumpFileName = "dump.xml";
+    final File dumpFile = new File(dumpFolder, dumpFileName);
+
     dumpFolder.mkdirs();
 
-    deleteDumpFile();
+    dumpFile.delete();
 
     //compression off by default TODO add this as a config option
     NotImportantViews.discard(false);
@@ -68,7 +68,7 @@ public abstract class XMLHierarchy {
     } catch (Exception e) {
       e.printStackTrace();
       // If there's an error then the dumpfile may exist and be empty.
-      deleteDumpFile();
+      dumpFile.delete();
     }
 
     try {
@@ -80,9 +80,13 @@ public abstract class XMLHierarchy {
   }
 
   public static Node getFormattedXMLDoc() throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
+    return formatXMLInput(getRawXMLHierarchy());
+  }
+
+  public static Node formatXMLInput(InputSource input) throws XPathExpressionException {
     XPath xpath = XPathFactory.newInstance().newXPath();
 
-    Node root = (Node) xpath.evaluate("/", getRawXMLHierarchy(), XPathConstants.NODE);
+    Node root = (Node) xpath.evaluate("/", input, XPathConstants.NODE);
 
     HashMap<String, Integer> instances = new HashMap<String, Integer>();
 
@@ -118,16 +122,24 @@ public abstract class XMLHierarchy {
     Document doc = node.getOwnerDocument();
     NamedNodeMap attributes = node.getAttributes();
 
-    String androidClass = attributes.getNamedItem("class").getNodeValue();
+    String androidClass;
+    try {
+      androidClass = attributes.getNamedItem("class").getNodeValue();
+    } catch (Exception e) {
+      return;
+    }
+
+    if (!instances.containsKey(androidClass)) {
+      instances.put(androidClass, 0);
+    }
+    Integer instance = instances.get(androidClass);
+
+    Node attrNode = doc.createAttribute("instance");
+    attrNode.setNodeValue(instance.toString());
+    attributes.setNamedItem(attrNode);
 
     doc.renameNode(node, node.getNamespaceURI(), androidClass);
 
-
-  }
-
-  private static void deleteDumpFile() {
-    if (dumpFile.exists()) {
-      dumpFile.delete();
-    }
+    instances.put(androidClass, instance+1);
   }
 }

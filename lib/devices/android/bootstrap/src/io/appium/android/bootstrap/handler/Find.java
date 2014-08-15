@@ -4,19 +4,23 @@ import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
 import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
+import io.appium.android.bootstrap.exceptions.InvalidSelectorException;
 import io.appium.android.bootstrap.exceptions.InvalidStrategyException;
 import io.appium.android.bootstrap.exceptions.UiSelectorSyntaxException;
 import io.appium.android.bootstrap.selector.Strategy;
-import io.appium.android.bootstrap.utils.*;
+import io.appium.android.bootstrap.utils.ClassInstancePair;
+import io.appium.android.bootstrap.utils.ElementHelpers;
+import io.appium.android.bootstrap.utils.UiAutomatorParser;
+import io.appium.android.bootstrap.utils.XMLHierarchy;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
@@ -76,12 +80,6 @@ public class Find extends CommandHandler {
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
 
-    if (strategy == Strategy.XPATH) {
-      return findElementsByXPath(text, multiple);
-    } else {
-      NotImportantViews.discard(false);
-    }
-
     try {
       Object result = null;
       List<UiSelector> selectors = getSelectors(strategy, text, multiple);
@@ -128,6 +126,10 @@ public class Find extends CommandHandler {
       return new AndroidCommandResult(WDStatus.UNKNOWN_COMMAND, e.getMessage());
     } catch (final ElementNotFoundException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+    } catch (ParserConfigurationException e) {
+      return getErrorResult("Error parsing xml hierarchy dump: " + e.getMessage());
+    } catch (InvalidSelectorException e) {
+      return new AndroidCommandResult(WDStatus.INVALID_SELECTOR, e.getMessage());
     }
   }
 
@@ -148,26 +150,6 @@ public class Find extends CommandHandler {
     final JSONObject res = new JSONObject();
     final AndroidElement el = elements.getElement(sel, contextId);
     return res.put("ELEMENT", el.getId());
-  }
-
-  /**
-   * Get a single element by its index and its parent indexes. Used to resolve
-   * an xpath query
-   *
-   * @param pair ClassInstancePair we are searching for
-   * @return JSONObject found by selector
-   * @throws ElementNotFoundException
-   * @throws JSONException
-   */
-  private JSONObject fetchElementByClassAndInstance(ClassInstancePair pair)
-      throws ElementNotFoundException, JSONException {
-
-    String androidClass = pair.getAndroidClass();
-    String instance = pair.getInstance();
-
-    UiSelector sel = new UiSelector().className(androidClass).instance(Integer.parseInt(instance));
-
-    return fetchElement(sel, "");
   }
 
   /**
@@ -201,40 +183,6 @@ public class Find extends CommandHandler {
     return resArray;
   }
 
-  private AndroidCommandResult findElementsByXPath(final String expression, final Boolean multiple) {
-
-    ArrayList<ClassInstancePair> pairs;
-    try {
-      pairs = XMLHierarchy.getClassInstancePairs(expression);
-    } catch (ElementNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.ELEMENT_IS_NOT_SELECTABLE, e.getMessage());
-    } catch (XPathExpressionException e) {
-      return new AndroidCommandResult(WDStatus.INVALID_SELECTOR, e.getMessage());
-    } catch (ParserConfigurationException e) {
-      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-    }
-
-    try {
-      if (!multiple) {
-        if (pairs.size() == 0) {
-          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT);
-        }
-        JSONObject resEl = fetchElementByClassAndInstance(pairs.get(0));
-        return getSuccessResult(resEl);
-      } else {
-        JSONArray resArray = new JSONArray();
-        for (ClassInstancePair pair : pairs) {
-          resArray.put(fetchElementByClassAndInstance(pair));
-        }
-        return getSuccessResult(resArray);
-      }
-    } catch (ElementNotFoundException e) {
-      return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
-    } catch (JSONException e) {
-      return new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
-    }
-  }
-
   /**
    * Create and return a UiSelector based on the strategy, text, and how many
    * you want returned.
@@ -251,14 +199,15 @@ public class Find extends CommandHandler {
    */
   private List<UiSelector> getSelectors(final Strategy strategy,
                                         final String text, final boolean many) throws InvalidStrategyException,
-      ElementNotFoundException, UiSelectorSyntaxException {
+          ElementNotFoundException, UiSelectorSyntaxException, ParserConfigurationException, InvalidSelectorException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
 
     switch (strategy) {
       case XPATH:
-
-
+        for (UiSelector selector : getXPathSelectors(text, many)) {
+          selectors.add(selector);
+        }
         break;
       case CLASS_NAME:
         sel = sel.className(text);
@@ -359,5 +308,25 @@ public class Find extends CommandHandler {
     } finally {
       return sel;
     }
+  }
+
+  /** returns List of UiSelectors for an xpath expression **/
+  private List<UiSelector> getXPathSelectors(final String expression, final boolean multiple) throws ElementNotFoundException, ParserConfigurationException, InvalidSelectorException {
+    List<UiSelector> selectors = new ArrayList<UiSelector>();
+
+    ArrayList<ClassInstancePair> pairs = XMLHierarchy.getClassInstancePairs(expression);
+
+    if (!multiple) {
+      if (pairs.size() == 0) {
+        throw new NoSuchElementException();
+      }
+      selectors.add(pairs.get(0).getSelector());
+    } else {
+      for (ClassInstancePair pair : pairs) {
+        selectors.add(pair.getSelector());
+      }
+    }
+
+    return selectors;
   }
 }

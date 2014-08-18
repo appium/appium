@@ -84,4 +84,24 @@ module.exports = function () {
       .source().should.eventually.include("<h1>This page is a Selenium sandbox<")
       .nodeify(done);
   });
+
+  it('should be able to move into and out of webview with proper proxying', function (done) {
+    driver
+      .elementById('i_am_a_textbox')
+        .should.not.be.rejected
+      // leave the webview
+      .context('NATIVE_APP')
+      // should not find the element in native context
+      .elementById('i_am_a_textbox')
+        .should.be.rejectedWith("status: 7")
+      // go back into the webview
+      .contexts()
+      .then(function (ctxs) {
+        return driver.context(ctxs[ctxs.length - 1]);
+      })
+      // should find the element in the web context
+      .elementById('i_am_a_textbox')
+        .should.not.be.rejected
+      .nodeify(done);
+  });
 };

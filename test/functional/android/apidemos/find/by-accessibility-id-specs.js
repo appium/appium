@@ -18,4 +18,9 @@ describe("apidemo - find - by accessibility id", function () {
       els.length.should.equal(1);
     }).nodeify(done);
   });
+  it('should find an element with a content-desc property containing an apostrophe', function (done) {
+    driver.element('accessibility id', "Access'ibility").then(function (el) {
+      el.should.exist;
+    }).nodeify(done);
+  });
 });

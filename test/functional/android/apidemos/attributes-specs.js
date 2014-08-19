@@ -58,16 +58,4 @@ describe("apidemos - attributes", function () {
   });
   // TODO: tests for checkable, checked, clickable, focusable, focused,
   // longClickable, scrollable, selected
-
-  // TODO: fix that, the second scroll doesn't scroll far enough.
-  it('should be able to get selected value of a tab @skip-android-all', function (done) {
-    driver
-      .complexFind(["scroll", [[3, "views"]], [[7, "views"]]]).click()
-      .complexFind(["scroll", [[3, "tabs"]], [[7, "tabs"]]]).click()
-      .complexFind(["scroll", [[3, "content by id"]], [[7, "content by id"]]]).click()
-      .elementsByClassName("android.widget.TextView").then(function (els) {
-        els[0].getAttribute('selected').should.become('false'); // the 1st text is not selected
-        els[1].getAttribute('selected').should.become('true'); // tab 1 is selected
-      }).nodeify(done);
-  });
 });

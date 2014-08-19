@@ -145,6 +145,10 @@ public abstract class XMLHierarchy {
     }
   }
 
+  // set the node's tag name to the same as it's android class.
+  // also number all instances of each class with an "instance" number. It increments for each class separately.
+  // this allows use to use class and instance to identify a node.
+  // we also take this chance to clean class names that might have dollar signs in them (and other odd characters)
   private static void visitNode(Node node, HashMap<String, Integer> instances) {
 
     Document doc = node.getOwnerDocument();
@@ -156,6 +160,8 @@ public abstract class XMLHierarchy {
     } catch (Exception e) {
       return;
     }
+
+    androidClass = cleanTagName(androidClass);
 
     if (!instances.containsKey(androidClass)) {
       instances.put(androidClass, 0);
@@ -169,5 +175,10 @@ public abstract class XMLHierarchy {
     doc.renameNode(node, node.getNamespaceURI(), androidClass);
 
     instances.put(androidClass, instance+1);
+  }
+
+  private static String cleanTagName(String name) {
+    name = name.replaceAll("[$@#&]", ".");
+    return name.replaceAll("\\s", "");
   }
 }

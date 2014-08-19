@@ -3,7 +3,7 @@ package io.appium.android.bootstrap.utils;
 import com.android.uiautomator.core.UiSelector;
 
 /**
- * Created by jonahss on 8/12/14.
+ * Simple class for holding a String 2-tuple. An android class, and instance number, used for finding elements by xpath.
  */
 public class ClassInstancePair {
 

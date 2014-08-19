@@ -18,7 +18,7 @@ describe("apidemos - source", function () {
 
   it('should return the page source', function (done) {
     driver
-      .elementByNameOrNull('Accessibility') // waiting for page to load
+      .elementByAccessibilityId('Animation') // waiting for page to load
       .source()
       .then(function (source) {
         assertSource(source);
@@ -26,11 +26,11 @@ describe("apidemos - source", function () {
   });
   it('should return the page source without crashing other commands', function (done) {
     driver
-      .complexFind([[[3, "Animation"]]])
+      .elementByAccessibilityId('Animation')
       .source().then(function (source) {
         assertSource(source);
       })
-      .complexFind([[[3, "Animation"]]])
+      .elementByAccessibilityId('Animation')
       .nodeify(done);
   });
 });

@@ -38,7 +38,6 @@ class AndroidCommandExecutor {
     map.put("getSize", new GetSize());
     map.put("wake", new Wake());
     map.put("pressBack", new PressBack());
-    map.put("dumpWindowHierarchy", new DumpWindowHierarchy());
     map.put("pressKeyCode", new PressKeyCode());
     map.put("longPressKeyCode", new LongPressKeyCode());
     map.put("takeScreenshot", new TakeScreenshot());
@@ -46,6 +45,7 @@ class AndroidCommandExecutor {
     map.put("getDataDir", new GetDataDir());
     map.put("performMultiPointerGesture", new MultiPointerGesture());
     map.put("openNotification", new OpenNotification());
+    map.put("source", new Source());
   }
 
   /**

@@ -36,11 +36,7 @@ public abstract class XMLHierarchy {
 
     Node formattedXmlRoot;
 
-    try {
-      formattedXmlRoot = getFormattedXMLDoc();
-    } catch (XPathExpressionException e) {
-      throw new InvalidSelectorException(e.getMessage());
-    }
+    formattedXmlRoot = getFormattedXMLDoc();
 
     return getClassInstancePairs(exp, formattedXmlRoot);
   }
@@ -60,16 +56,14 @@ public abstract class XMLHierarchy {
       if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
         try {
           pairs.add(getPairFromNode(nodes.item(i)));
-        } catch (PairCreationException e) {
-          continue;
-        }
+        } catch (PairCreationException e) { }
       }
     }
 
     return pairs;
   }
 
-  public static InputSource getRawXMLHierarchy() throws ElementNotFoundException {
+  public static InputSource getRawXMLHierarchy() {
     // Note that
     // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
     // is directly from the UiDevice.java source code.
@@ -97,18 +91,23 @@ public abstract class XMLHierarchy {
       return new InputSource(new FileReader(dumpFile));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      throw new ElementNotFoundException("Failed to Dump Window Hierarchy");
+      throw new RuntimeException("Failed to Dump Window Hierarchy");
     }
   }
 
-  public static Node getFormattedXMLDoc() throws ElementNotFoundException, XPathExpressionException, ParserConfigurationException {
+  public static Node getFormattedXMLDoc() {
     return formatXMLInput(getRawXMLHierarchy());
   }
 
-  public static Node formatXMLInput(InputSource input) throws XPathExpressionException {
+  public static Node formatXMLInput(InputSource input) {
     XPath xpath = XPathFactory.newInstance().newXPath();
 
-    Node root = (Node) xpath.evaluate("/", input, XPathConstants.NODE);
+    Node root = null;
+    try {
+      root = (Node) xpath.evaluate("/", input, XPathConstants.NODE);
+    } catch (XPathExpressionException e) {
+      throw new RuntimeException("Could not read xml hierarchy: " + e.getMessage());
+    }
 
     HashMap<String, Integer> instances = new HashMap<String, Integer>();
 

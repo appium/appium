@@ -125,6 +125,42 @@ $this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 driver.HideKeyboard("Done");
 ```
 
+### Start Activity
+
+Open an activity in the current app or start a new app and open an activity *Android only*
+
+```java
+// java
+driver.startActivity("appPackage","com.example.android.apis", null, null);
+```
+
+```javascript
+// javascript
+driver.startActivity({appPackage: 'com.example.android.apis', appActivity: '.Foo'}, cb);
+```
+
+```python
+# python
+driver.start_activity('com.example.android.apis', '.Foo')
+```
+
+```ruby
+# ruby
+start_activity app_package: 'io.appium.android.apis', app_activity: '.accessibility.AccessibilityNodeProviderActivity'
+```
+
+```csharp
+// c#
+driver.StartActivity("com.example.android.apis", ".Foo");
+```
+
+```php
+// php
+$this->startActivity(array("appPackage" => "com.example.android.apis",
+                            "appActivity" => ".Foo"));
+```
+
+
 ### Open Notifications
 
 Open the notification shade *Android only*

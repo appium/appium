@@ -4,8 +4,6 @@ var common = require('../../lib/devices/common.js')
   , checkValidLocStrat = common.checkValidLocStrat
   , _  = require('underscore');
 
-
-
 describe('devices/common.js', function () {
   var nullCb = function () {};
 
@@ -31,7 +29,6 @@ describe('devices/common.js', function () {
       'xpath',
       'id',
       'name',
-      'dynamic',
       'class name'
     ];
 

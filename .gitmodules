@@ -55,3 +55,6 @@
 [submodule "submodules/sample-code"]
 	path = submodules/sample-code
 	url = https://github.com/appium/sample-code
+[submodule "submodules/deviceconsole"]
+	path = submodules/deviceconsole
+	url = https://github.com/rpetrich/deviceconsole.git

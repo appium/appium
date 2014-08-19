@@ -61,7 +61,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
-|`--show-sim-log`|false|(IOS-only) if set, the iOS simulator log will be written to the console||
+|`--show-ios-log`|false|(IOS-only) if set, the iOS system log will be written to the console||
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|

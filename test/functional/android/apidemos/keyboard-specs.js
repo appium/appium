@@ -20,33 +20,74 @@ describe("apidemo - keyboard @skip-ci", function () {
       .nodeify(done);
   };
 
-  setup(this,  _.defaults({
-    appActivity: ".view.Controls1",
-    unicodeKeyboard: true,
-    resetKeyboard: true
-  }, desired)).then(function (d) { driver = d; });
+  describe('editing ascii text field', function () {
+    setup(this,  _.defaults({
+      appActivity: ".view.Controls1"
+    }, desired)).then(function (d) { driver = d; });
 
-  it('should be able to edit a text field', function (done) {
-    var testText = "Life, the Universe and Everything.";
-    runTextEditTest(testText, done);
-  });
+    it('should be able to edit a text field', function (done) {
+      var testText = "Life, the Universe and Everything.";
+      runTextEditTest(testText, done);
+    });
 
-  // TODO: clear is not reliable
-  it('should be able to edit and clear a text field', function (done) {
-    var testText = "The answer is 42.", el;
-    driver
-      .waitForElementByClassName('android.widget.EditText')
-      .then(function (_el) { el = _el; })
-      .then(function () { return safeClear(el); })
-      .then(function () { return el.sendKeys(testText).text().should.become(testText); })
-      .then(function () { return safeClear(el); })
-      // TODO: there is a bug here we should not need safeClear
-      // workaround for now.
-      .then(function () { return el.text().should.become(""); })
-      .nodeify(done);
+    // TODO: clear is not reliable
+    it('should be able to edit and clear a text field', function (done) {
+      var testText = "The answer is 42.", el;
+      driver
+        .waitForElementByClassName('android.widget.EditText')
+        .then(function (_el) { el = _el; })
+        .then(function () { return safeClear(el); })
+        .then(function () { return el.sendKeys(testText).text().should.become(testText); })
+        .then(function () { return safeClear(el); })
+        // TODO: there is a bug here we should not need safeClear
+        // workaround for now.
+        .then(function () { return el.text().should.become(""); })
+        .nodeify(done);
+    });
+
+    it('should be able to send &-', function (done) {
+      var testText = '&-';
+      runTextEditTest(testText, done);
+    });
+
+    it('should be able to send & and - in other text', function (done) {
+      var testText = 'In the mid-1990s he ate fish & chips as mayor-elect.';
+      runTextEditTest(testText, done);
+    });
+
+    it('should be able to send - in text', function (done) {
+      var testText = 'Super-test.';
+      runTextEditTest(testText, done);
+    });
   });
 
   describe('editing unicode text field', function () {
+    setup(this,  _.defaults({
+      appActivity: ".view.Controls1",
+      unicodeKeyboard: true,
+      resetKeyboard: true
+    }, desired)).then(function (d) { driver = d; });
+
+    it('should be able to edit a text field', function (done) {
+      var testText = "Life, the Universe and Everything.";
+      runTextEditTest(testText, done);
+    });
+
+    // TODO: clear is not reliable
+    it('should be able to edit and clear a text field', function (done) {
+      var testText = "The answer is 42.", el;
+      driver
+        .waitForElementByClassName('android.widget.EditText')
+        .then(function (_el) { el = _el; })
+        .then(function () { return safeClear(el); })
+        .then(function () { return el.sendKeys(testText).text().should.become(testText); })
+        .then(function () { return safeClear(el); })
+        // TODO: there is a bug here we should not need safeClear
+        // workaround for now.
+        .then(function () { return el.text().should.become(""); })
+        .nodeify(done);
+    });
+
     it('should be able to send &-', function (done) {
       var testText = '&-';
       runTextEditTest(testText, done);

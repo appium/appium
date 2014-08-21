@@ -9,17 +9,17 @@ import java.util.Hashtable;
 
 /**
  * This handler is used to set text in elements that support it.
- * 
+ *
  */
 public class SetText extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   * 
+   *
    * @return {@link AndroidCommandResult}
-   * 
+   *
    * @throws JSONException
-   * 
+   *
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */
@@ -39,6 +39,10 @@ public class SetText extends CommandHandler {
           text = text.replace("\\n", "");
           Logger.debug("Will press enter after setting text");
         }
+        boolean unicodeKeyboard = false;
+        if (params.get("unicodeKeyboard") != null) {
+          unicodeKeyboard = Boolean.parseBoolean(params.get("unicodeKeyboard").toString());
+        }
         String currText = el.getText();
         new Clear().execute(command);
         if (!el.getText().isEmpty()) {
@@ -47,7 +51,7 @@ public class SetText extends CommandHandler {
         if (!replace) {
           text = currText + text;
         }
-        final boolean result = el.setText(text);
+        final boolean result = el.setText(text, unicodeKeyboard);
         if (pressEnter) {
           final UiDevice d = UiDevice.getInstance();
           d.pressEnter();

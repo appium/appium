@@ -93,7 +93,7 @@
     "ws": "~0.4.31",
     "xml2js": "~0.4.4",
     "xmldom": "~0.1.19",
-    "xpath": "~0.0.6"
+    "xpath": "0.0.7"
   },
   "scripts": {
     "test": "grunt travis"

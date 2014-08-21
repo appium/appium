@@ -165,7 +165,8 @@ class SocketServer {
     } else if (cmd.commandType() == AndroidCommandType.ACTION) {
       try {
         res = executor.execute(cmd);
-      } catch (final Exception e) {
+      } catch (final Exception e) { // Here we catch all possible exceptions and return a JSON Wire Protocol UnknownError
+                                    // This prevents exceptions from halting the bootstrap app
         res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       }
     } else {

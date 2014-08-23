@@ -3,7 +3,8 @@
 var setup = require("../../common/setup-base")
   , desired = require('./desired')
   , _ = require('underscore')
-  , env = require('../../../helpers/env');
+  , env = require('../../../helpers/env'),
+  Q = require('q');
 
 describe('webview - basics', function () {
 
@@ -119,4 +120,24 @@ describe('webview - basics', function () {
       .elementById('only_on_page_2').should.eventually.exist
       .nodeify(done);
   });
+
+  it.only('switching contexts during async scripts should work, since contexts are cached', function (done) {
+    var webCtx;
+    driver
+      .contexts().then(function (ctxs) {
+        webCtx = _(ctxs).find(function (ctx) { return ctx.match(/WEBVIEW/); });
+        return driver
+        .context(webCtx)
+        .setAsyncScriptTimeout(20000)
+        .get(env.GUINEA_TEST_END_POINT)
+        .sleep(3000);
+      }).then(function () {
+        return Q.all([
+            driver.executeAsync('var cb = arguments[0]; setTimeout(cb, 10000);'),
+            driver.sleep(3000).context(null).sleep(3000).context(webCtx)
+          ]);
+      })
+      .nodeify(done);
+  });
+
 });

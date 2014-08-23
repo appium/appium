@@ -231,17 +231,6 @@ module.exports = function (desired) {
       driver.refresh()
       .nodeify(done);
     });
-    it('should not display a phishing warning with safariIgnoreFraudWarning @skip-chrome', function (done) {
-      var titleToBecomeRight = new ChaiAsserter(function (driver) {
-        return driver
-          .title()
-          .should.eventually.contain("I am another page title");
-      });
-      driver
-        .get(env.PHISHING_END_POINT + 'guinea-pig2.html')
-        .waitFor(titleToBecomeRight, 10000, 500)
-        .nodeify(done);
-    });
     it('should be able to get performance logs', function (done) {
       if (!isChrome(desired)) return skip(
         "Performance logs aren't available except in Chrome", done);

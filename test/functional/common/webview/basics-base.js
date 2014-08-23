@@ -1,11 +1,9 @@
 "use strict";
 
-var env = require('../../../helpers/env'),
-    setup = require("../setup-base"),
+var setup = require("../setup-base"),
     webviewHelper = require("../../../helpers/webview"),
     loadWebView = webviewHelper.loadWebView,
     isChrome = webviewHelper.isChrome,
-    ChaiAsserter = require('../../../helpers/asserter.js').ChaiAsserter,
     Q = require('q'),
     spinTitle = webviewHelper.spinTitle,
     spinWait = require('../../../helpers/spin.js').spinWait,

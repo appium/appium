@@ -13,7 +13,7 @@ describe("apidemo - find - from element", function () {
   it('should find a single element by tag name', function (done) {
     driver.elementByClassName(alv).then(function (el) {
       return el
-        .elementByClassName(atv).text().should.become("Accessibility");
+        .elementByClassName(atv).text().should.become("Access'ibility");
     }).nodeify(done);
   });
   it('should find multiple elements by tag name', function (done) {

@@ -18,6 +18,7 @@ describe("testapp - keyboard stability @skip-ci", function () {
     it("should send keys to a text field", function (done) {
       driver
         .elementByClassName('UIATextField')
+          .clear()
           .sendKeys(text)
           .text().should.become(text)
         .nodeify(done);

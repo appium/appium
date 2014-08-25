@@ -1,3 +1,48 @@
+CHANGES IN VERSION 1.2.2 (from 1.2.1)
+======================================
+
+#### General
+- add doc for running on multiple devices simultaneously
+- move sample code and sample apps out of the main appium repo
+- remove http request size limit
+
+#### iOS
+- check to make sure an element is not UIAElementNil before returning it
+- add a configurable key delay to help with keyboard smudging
+- fix issue with deleting cookies in mobile safari
+- correct sendKeys behavior not to clear text before sending keys
+- remove 'iwebview' support, since automating safari works
+- fix bug where apostraphes in accessibility ids caused elements not to be
+  found
+- use deviceconsole instead of idevicesyslog to capture ios logs
+- fix bug where automating safari on a real device would hang forever and never
+  start a session
+- fix bug where getting text() on a textfield would return its label instead of
+  its value
+
+#### Android
+- cache Chromedriver webview objects so we don't need to start a new
+  Chromedriver on every context switch
+- correct sendKeys behavior not to clear text before sending keys
+- allow chromeOptions cap object to be passed to chromedriver
+- download all chromedriver architectures for linux (32 and 64 bit)
+- make sure we stop adb logcat logging when ending a chrome session so we don't
+  leak processes
+- add noSign capability to skip the apk resigning process
+- add setText method that will clear a text field before adding text; this is
+  primarily useful for textfields with hint text where clear() does not work
+  in general
+- move xpath parsing into the android bootstrap, for fewer bugs and greater
+  reliability. NOTE: this could be a breaking change depending on the kind of
+  xpath selectors you are using
+- clean android XML tags of invalid characters like '$'
+- fix bug where '&' would be sent into a textfield as '&-'
+- add isLocked method to determine whether screen is locked
+
+#### Selendroid
+- make sure the contact manager test app has the required internet permissions
+
+
 CHANGES IN VERSION 1.2.1 (from 1.2.0)
 ======================================
 

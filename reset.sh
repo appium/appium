@@ -138,6 +138,15 @@ reset_general() {
     fi
 }
 
+reset_sample_code() {
+    echo "* Initializing sample code and test apps"
+    if $hardcore ; then
+        run_cmd "$grunt" getSampleCode:hardcore
+    else
+        run_cmd "$grunt" getSampleCode
+    fi
+}
+
 reset_ios() {
     echo "RESETTING IOS"
     set +e
@@ -166,14 +175,6 @@ reset_ios() {
     run_cmd rm -rf build/udidetect
     run_cmd mkdir build/udidetect
     run_cmd cp -R submodules/udidetect/udidetect build/udidetect/
-    if $ios7_active ; then
-        echo "* Cleaning/rebuilding WebViewApp"
-        run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
-        run_cmd rm -rf build/WebViewApp
-        run_cmd mkdir build/WebViewApp
-        run_cmd cp -R sample-code/apps/WebViewApp/build/Release-iphonesimulator/WebViewApp.app \
-            build/WebViewApp/
-    fi
     if $include_dev ; then
         if $npmlink ; then
             echo "* Cloning/npm linking appium-atoms"
@@ -203,6 +204,8 @@ reset_ios() {
         fi
         echo "* Cleaning/rebuilding iOS test app: TestApp"
         run_cmd "$grunt" buildApp:TestApp:iphonesimulator:$sdk_ver
+        echo "* Cleaning/rebuilding iOS test app: WebViewApp"
+        run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
     fi
     echo "* Cloning/updating fruitstrap"
     run_cmd git submodule update --init submodules/fruitstrap
@@ -237,6 +240,15 @@ reset_ios() {
     echo "* Copying libimobiledevice-macosx to build"
     run_cmd rm -rf build/libimobiledevice-macosx
     run_cmd cp -r submodules/libimobiledevice-macosx build/libimobiledevice-macosx
+    echo "* Cloning/updating deviceconsole"
+    run_cmd git submodule update --init submodules/deviceconsole
+    echo "* Building deviceconsole"
+    run_cmd pushd submodules/deviceconsole
+    run_cmd make
+    run_cmd popd
+    echo "* Copying deviceconsole to build"
+    run_cmd rm -rf build/deviceconsole
+    run_cmd cp -r submodules/deviceconsole build/deviceconsole
 }
 
 get_apidemos() {
@@ -504,12 +516,14 @@ reset_chromedriver() {
             platform="mac"
             chromedriver_file="chromedriver_mac32.zip"
             run_cmd mkdir "$appium_home"/build/chromedriver/mac
+            install_chromedriver $platform $chromedriver_version $chromedriver_file
         else
             platform="linux"
             chromedriver_file="chromedriver_linux$machine.zip"
+            binary="chromedriver$machine"
             run_cmd mkdir "$appium_home"/build/chromedriver/linux
+            install_chromedriver $platform $chromedriver_version $chromedriver_file $binary
         fi
-        install_chromedriver $platform $chromedriver_version $chromedriver_file
     else
         echo "* Building directory structure"
         run_cmd mkdir "$appium_home"/build/chromedriver/mac
@@ -517,7 +531,8 @@ reset_chromedriver() {
         run_cmd mkdir "$appium_home"/build/chromedriver/windows
 
         install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
-        install_chromedriver "linux" $chromedriver_version "chromedriver_linux$machine.zip"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip" "chromedriver32"
+        install_chromedriver "linux" $chromedriver_version "chromedriver_linux64.zip" "chromedriver64"
         install_chromedriver "windows" $chromedriver_version "chromedriver_win32.zip"
     fi
 }
@@ -526,6 +541,7 @@ install_chromedriver() {
     platform=$1
     version=$2
     file=$3
+    binary=$4
 
     echo "* Downloading ChromeDriver version $version for $platform"
     run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o "$appium_home"/build/chromedriver/$platform/chromedriver.zip
@@ -534,6 +550,9 @@ install_chromedriver() {
     echo "* Unzipping ChromeDriver"
     run_cmd unzip chromedriver.zip
     run_cmd rm chromedriver.zip
+    if [[ $binary != "" ]]; then
+        run_cmd mv chromedriver $binary
+    fi
     run_cmd popd
 }
 
@@ -563,6 +582,9 @@ main() {
     fi
     reset_npm
     reset_general
+    if $include_dev ; then
+        reset_sample_code
+    fi
     if $should_reset_ios ; then
         reset_ios
     fi

@@ -110,6 +110,12 @@ describe('testapp - find element', function () {
       .nodeify(done);
   });
 
+  it('should find an element with accessibility id containing an apostrophe', function (done) {
+    driver.element('accessibility id', "Access'ibility").then(function (el) {
+      el.should.exist;
+    }).nodeify(done);
+  });
+
   it('should not find element by incomplete class name but return respective error code', function (done) {
     driver.elementsByClassName('notAValidReference')
       .catch(function (err) {

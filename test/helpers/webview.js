@@ -32,7 +32,7 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
   if (typeof titleToSpin === "undefined") {
     titleToSpin = uuid;
   }
-  if (_.contains(["safari", "iwebview", "chrome", "chromium", "chromebeta"], app)) {
+  if (_.contains(["safari", "chrome", "chromium", "chromebeta"], app)) {
     return browser
       .get(urlToLoad)
       .sleep(3000)

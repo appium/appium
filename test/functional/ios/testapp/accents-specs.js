@@ -21,8 +21,9 @@ describe('testapp - accented characters', function () {
   it('should send delete key', function (done) {
     driver
       .elementsByClassName('UIATextField').at(1)
+        .clear()
         .sendKeys("abc")
-        .sendKeys('\uE003')
+        .sendKeys('\uE003\uE003\uE003')
         .text()
         .should.become("")
       .nodeify(done);

@@ -18,9 +18,8 @@ Language | Source
 [php]:      https://github.com/appium/php-client
 [nuget]:    http://www.nuget.org/packages/Appium.WebDriver/
 
-Note that some methods such as `endTestCoverage()` and `complexFind()` are
+Note that some methods such as `endTestCoverage()` are
 not generally useful. Proper coverage support will be added once [this issue](https://github.com/appium/appium/issues/2448)
-is resolved. `complexFind()` will be removed once [this issue](https://github.com/appium/appium/issues/2264)
 is resolved. If you want to use them anyway, consult the documentation for the bindings on GitHub.
 
 ### Lock
@@ -124,6 +123,40 @@ $this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 ```csharp
 // c#
 driver.HideKeyboard("Done");
+```
+
+### Open Notifications
+
+Open the notification shade *Android only*
+
+```java
+// java
+driver.openNotifications();
+```
+
+```javascript
+// javascript
+driver.openNotifications(cb);
+```
+
+```python
+# python
+driver.open_notifications()
+```
+
+```ruby
+# ruby
+openNotifications
+```
+
+```csharp
+// c#
+driver.OpenNotifications();
+```
+
+```php
+// php
+$this->openNotifications();
 ```
 
 ### Is installed

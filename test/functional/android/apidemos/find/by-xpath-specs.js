@@ -38,21 +38,21 @@ describe("apidemo - find - by xpath", function () {
   });
   it('should find the last element', function (done) {
     driver
-      .elementByXPath("//" + t + "[last()]").text()
+      .elementByXPath("(//" + t + ")[last()]").text()
       .then(function (text) {
-        ["OS", "Text", "Views"].should.include(text);
+        ["OS", "Text", "Views", "Preference"].should.include(text);
       }).nodeify(done);
   });
   it('should find element by xpath index and child', function (done) {
     driver
-      .elementByXPath("//" + f + "[1]/" + l + "[1]/" + t + "[3]").text()
+      .elementByXPath("//" + f + "[2]/" + l + "[1]/" + t + "[4]").text()
         .should.become("App")
       .nodeify(done);
   });
   it('should find element by index and embedded desc', function (done) {
     driver
-      .elementByXPath("//" + f + "//" + t + "[4]").text()
-        .should.become("App")
+      .elementByXPath("//" + f + "//" + t + "[5]").text()
+        .should.become("Content")
       .nodeify(done);
   });
   it('should find all elements', function (done) {

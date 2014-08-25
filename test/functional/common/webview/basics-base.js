@@ -1,11 +1,9 @@
 "use strict";
 
-var env = require('../../../helpers/env'),
-    setup = require("../setup-base"),
+var setup = require("../setup-base"),
     webviewHelper = require("../../../helpers/webview"),
     loadWebView = webviewHelper.loadWebView,
     isChrome = webviewHelper.isChrome,
-    ChaiAsserter = require('../../../helpers/asserter.js').ChaiAsserter,
     Q = require('q'),
     spinTitle = webviewHelper.spinTitle,
     spinWait = require('../../../helpers/spin.js').spinWait,
@@ -230,17 +228,6 @@ module.exports = function (desired) {
     it('should be able to refresh', function (done) {
       driver.refresh()
       .nodeify(done);
-    });
-    it('should not display a phishing warning with safariIgnoreFraudWarning @skip-chrome', function (done) {
-      var titleToBecomeRight = new ChaiAsserter(function (driver) {
-        return driver
-          .title()
-          .should.eventually.contain("I am another page title");
-      });
-      driver
-        .get(env.PHISHING_END_POINT + 'guinea-pig2.html')
-        .waitFor(titleToBecomeRight, 10000, 500)
-        .nodeify(done);
     });
     it('should be able to get performance logs', function (done) {
       if (!isChrome(desired)) return skip(

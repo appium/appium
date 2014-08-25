@@ -61,7 +61,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
-|`--show-sim-log`|false|(IOS-only) if set, the iOS simulator log will be written to the console||
+|`--show-ios-log`|false|(IOS-only) if set, the iOS system log will be written to the console||
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
@@ -79,5 +79,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
-|`--trace-dir`|null|Absolute path to directory Appium uses to stor trace, defaults
-to `<tmpDir>/appium-instruments`||
+|`--trace-dir`|`<tmpDir>/appium-instruments`|Absolute path to directory Appium uses to store trace.|`--trace-dir "/tmp/directory"`|

@@ -55,6 +55,52 @@ module.exports.startAppium = function (appName, verbose, readyCb, doneCb) {
   );
 };
 
+var execWithOutput = function (cmd, cb) {
+  exec(cmd, function (err, stdout, stderr) {
+    if (err) {
+      console.error("Command failed");
+      console.error("stdout:");
+      console.error(stdout);
+      console.error("stderr:");
+      console.error(stderr);
+    }
+    cb(err, stdout, stderr);
+  });
+};
+
+module.exports.getSampleCode = function (grunt, hardcore, cb) {
+  var submodulesDir = path.resolve(__dirname, "submodules");
+  var sampleCodeGit = path.resolve(submodulesDir, "sample-code");
+  var sampleCodeDir = path.resolve(__dirname, "sample-code");
+  var sampleCodeExists = fs.existsSync(sampleCodeDir);
+  var updateCmd = "git submodule update --init " + sampleCodeGit;
+  console.log("Cloning/updating Appium sample-code submodule");
+  execWithOutput(updateCmd, function (err, stdout, stderr) {
+    if (err) return cb(err);
+    var updated = false;
+    if (stdout + stderr !== "") {
+      // there were submodule updates
+      console.log("There were updates to the submodule");
+      updated = true;
+    }
+    if (hardcore || updated) {
+      console.log("Removing old sample-code");
+      console.log("Please remember to rebuild test apps");
+      rimraf.sync(sampleCodeDir);
+    }
+    if (hardcore || updated || !sampleCodeExists) {
+      console.log("Copying sample-code out for use");
+      ncp(path.resolve(sampleCodeGit, "sample-code"), sampleCodeDir, function (err) {
+        if (err) return cb(err);
+        console.log("Test apps are ready for building");
+        cb();
+      });
+    } else {
+      console.log("Sample code was not updated, doing nothing");
+    }
+  });
+};
+
 module.exports.runTestsWithServer = function (grunt, appName, testType, deviceType, verbose, cb) {
   if (typeof verbose === "undefined") {
     verbose = false;

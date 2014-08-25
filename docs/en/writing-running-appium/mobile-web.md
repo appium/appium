@@ -233,3 +233,16 @@ capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
 ```
 
 Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to automate the built-in browser. On all devices you can use the 'Chromium' `browserName` cap to automate a build of Chromium.
+
+#### Troubleshooting chromedriver
+
+As of Chrome version 33, a rooted device is no longer required. If running tests on older versions of Chrome, devices needed to be rooted as ChromeDriver required write access to the /data/local directory
+to set Chrome's command line arguments.
+
+If testing on Chrome app prior to version 33, ensure adb shell has read/write access to /data/local directory on the device:
+
+```center
+$ adb shell su -c chmod 777 /data/local
+```
+
+For more chromedriver specific documentation see [ChromeDriver documentation](https://sites.google.com/a/chromium.org/chromedriver/getting-started/getting-started---android).

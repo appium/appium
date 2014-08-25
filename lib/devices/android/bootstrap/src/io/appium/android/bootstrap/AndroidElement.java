@@ -232,7 +232,12 @@ public class AndroidElement {
   }
 
   public boolean setText(final String text) throws UiObjectNotFoundException {
-    if (UnicodeEncoder.needsEncoding(text)) {
+    return setText(text, false);
+  }
+
+  public boolean setText(final String text, boolean unicodeKeyboard)
+      throws UiObjectNotFoundException {
+    if (unicodeKeyboard && UnicodeEncoder.needsEncoding(text)) {
       Logger.debug("Sending Unicode text to element: " + text);
       String encodedText = UnicodeEncoder.encode(text);
       Logger.debug("Encoded text: " + encodedText);

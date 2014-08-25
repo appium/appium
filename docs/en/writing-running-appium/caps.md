@@ -7,7 +7,7 @@
 |`automationName`|Which automation engine to use|`Appium` (default) or `Selendroid`|
 |`platformName`|Which mobile OS platform to use|`iOS`, `Android`, or `FirefoxOS`|
 |`platformVersion`|Mobile OS version|e.g., `7.1`, `4.4`|
-|`deviceName`|The kind of mobile device or emulator to use|`iPhone Simulator`, `iPad Simulator`, `iPhone Retina 4-inch`, `Android Emulator`, `Galaxy S4`, etc...|
+|`deviceName`|The kind of mobile device or emulator to use|`iPhone Simulator`, `iPad Simulator`, `iPhone Retina 4-inch`, `Android Emulator`, `Galaxy S4`, etc.... On iOS, this should be one of the valid devices returned by instruments with `instruments -s devices`. On Android this capability is currently ignored.|
 |`app`|The absolute local path _or_ remote http URL to an `.ipa` or `.apk` file, or a `.zip` containing one of these. Appium will attempt to install this app binary on the appropriate device first. Note that this capability is not required for Android if you specify `appPackage` and `appActivity` capabilities (see below). Incompatible with `browserName`.|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`|
 |`browserName`|Name of mobile web browser to automate. Should be an empty string if automating an app instead.|'Safari' for iOS and 'Chrome', 'Chromium', or 'Browser' for Android|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
@@ -45,7 +45,6 @@
 |`keyAlias`| Alias for key |e.g., `androiddebugkey`|
 |`keyPassword`| Password for key |e.g., `foo`|
 |`chromedriverExecutable`| The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium) |`/abs/path/to/webdriver`|
-|`specialChromedriverSessionArgs`| Custom arguments passed directly to chromedriver in chromeOptions capability. Passed as object which properties depend on a specific webdriver. |e.g., `{'androidDeviceSocket': 'opera_beta_devtools_remote',}`|
 |`autoWebviewTimeout`| Amount of time to wait for Webview context to become active, in ms. Defaults to `2000`| e.g. `4`|
 |`intentAction`| Intent action which will be used to start activity (default `android.intent.action.MAIN`)| e.g.`android.intent.action.MAIN`, `android.intent.action.VIEW`|
 |`intentCategory`| Intent category which will be used to start activity (default `android.intent.category.LAUNCHER`)| e.g. `android.intent.category.LAUNCHER`, `android.intent.category.APP_CONTACTS`
@@ -53,6 +52,7 @@
 |`optionalIntentArguments`| Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/tools/help/adb.html#IntentSpec) | e.g. `--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`, etc.
 |`unicodeKeyboard`| Enable Unicode input, default `false`| `true` or `false`|
 |`resetKeyboard`| Reset keyboard to its original state, after running Unicode tests with `unicodeKeyboard` capability. Ignored if used alone. Default `false`| `true` or `false`|
+|`noSign`| Skip checking and signing of app with debug keys, will work only with UiAutomator and not with selendroid, default `false`| `true` or `false`|
 
 ### iOS Only
 
@@ -74,3 +74,4 @@
 |`keepKeyChains`| (Sim-only) Whether to keep keychains (Library/Keychains) when appium session is started/finished|`true` or `false`|
 |`localizableStringsDir`| Where to look for localizable strings. Default `en.lproj`|`en.lproj`|
 |`processArguments`| Arguments to pass to the AUT using instruments|e.g., `-myflag`|
+|`interKeyDelay`| The delay, in ms, between keystrokes sent to an element when typing.|e.g., `100`|

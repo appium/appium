@@ -6,44 +6,13 @@
 var chai = require('chai')
   , should = chai.should()
   , getAppium = require('../../lib/appium.js')
-  , path = require('path')
   , mock = require('../helpers/mock.js')
-  , IOS = require('../../lib/devices/ios/ios.js');
+  , IOS = require('../../lib/devices/ios/ios.js')
+  , path = require('path');
 
 mock.noop(IOS.prototype, 'start');
 mock.noop(IOS.prototype, 'stop');
 mock.noop(IOS.prototype, 'configureApp');
-
-describe('IOS', function () {
-  // we'd like to test ios.proxy; mock instruments
-  var inst = new IOS({});
-  inst.commandProxy = {};
-  inst.commandProxy.sendCommand = function (cmd, cb) {
-    // let's pretend we've got some latency here.
-    var to = Math.round(Math.random() * 10);
-    setTimeout(function () { cb([cmd, to]); }, to);
-  };
-
-  describe('#proxy()', function () {
-    return it('should execute one command at a time keeping the seq right', function (done) {
-      var intercept = []
-        , iterations = 100
-        , check = function (err, result) {
-          intercept.push(result);
-          if (intercept.length >= iterations) {
-            for (var x = 0; x < iterations; x++) {
-              intercept[x][0].should.equal('' + x);
-            }
-            done();
-          }
-        };
-
-      for (var i = 0; i < iterations; i++) {
-        inst.proxy("" + i, check);
-      }
-    });
-  });
-});
 
 describe('Appium', function () {
   var intercept = []

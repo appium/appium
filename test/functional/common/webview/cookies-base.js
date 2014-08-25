@@ -133,8 +133,7 @@ module.exports = function (desired) {
               .deleteAllCookies()
               .allCookies();
           }).then(function (cookies) {
-            _.pluck(cookies, 'name').should.not.include(newCookie.name);
-            _.pluck(cookies, 'value').should.not.include(newCookie.value);
+            cookies.length.should.equal(0);
           }).nodeify(done);
       });
     });

@@ -66,7 +66,7 @@ describe("apidemo - find elements - by uiautomator", function () {
     }).nodeify(done);
   });
   it('should find an element with a long chain of methods', function (done) {
-    driver.elementByAndroidUIAutomator('new UiSelector().clickable(true).className(android.widget.TextView).index(0)').text().then(function (text) {
+    driver.elementByAndroidUIAutomator('new UiSelector().clickable(true).className(android.widget.TextView).index(1)').text().then(function (text) {
       text.should.equal('Accessibility');
     }).nodeify(done);
   });

@@ -3,11 +3,10 @@
 // http://visionmedia.github.com/mocha/
 "use strict";
 
-require('chai');
-
 var path = require('path')
   , _ = require('underscore')
-  , IOS = require('../../lib/devices/ios/ios.js');
+  , IOS = require('../../lib/devices/ios/ios.js')
+  , expect = require('chai').expect;
 
 describe('IOS', function () {
   var device;
@@ -59,6 +58,33 @@ describe('IOS', function () {
     it('should return a dictionary', function (done) {
       device.parseLocalizableStrings(function () {
         device.localizableStrings.should.eql({ 'main.button.computeSum' : 'Compute Sum' });
+        done();
+      });
+    });
+  });
+
+  describe('io#configure', function () {
+    var getCaps = function () {
+      return {platformName: 'iOS', platformVersion: '7.1',
+              deviceName: 'iPhone Simulator', bundleId: 'com.test.foo',
+              udid: '132412341234'};
+    };
+
+    it('should work with just a bundleId', function (done) {
+      var iosDevice = new IOS();
+      iosDevice.configure(getCaps(), {}, function (err) {
+        expect(err).to.be.undefined;
+        done();
+      });
+    });
+
+    it('should work with app field as bundleId', function (done) {
+      var iosDevice = new IOS();
+      var caps = getCaps();
+      caps.app = caps.bundleId;
+      caps.bundleId = undefined;
+      iosDevice.configure(caps, {}, function (err) {
+        expect(err).to.be.undefined;
         done();
       });
     });

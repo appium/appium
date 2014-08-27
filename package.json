@@ -44,7 +44,7 @@
     "appium-adb": "~1.3.13",
     "appium-atoms": "~0.0.5",
     "appium-instruments": "~1.4.1",
-    "appium-uiauto": "~1.6.11",
+    "appium-uiauto": "~1.6.13",
     "argparse": "~0.1.15",
     "async": "~0.9.0",
     "binary-cookies": "~0.1.1",

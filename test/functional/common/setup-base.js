@@ -3,6 +3,7 @@ var env = require('../../helpers/env')
   , initSession = require('../../helpers/session').initSession
   , getTitle = require('../../helpers/title').getTitle
   , wd = require('wd')
+  , _ = require('underscore')
   , chai = require('chai')
   , chaiAsPromised = require('chai-as-promised');
 
@@ -11,8 +12,12 @@ chai.should();
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 require("colors");
 
-module.exports = function (context, desired, opts) {
+module.exports = function (context, desired, opts, envOverrides) {
   context.timeout(env.MOCHA_INIT_TIMEOUT);
+  env = _.clone(env);
+  if (envOverrides) {
+    _.extend(env, envOverrides);
+  }
 
   var session = initSession(desired, opts);
 

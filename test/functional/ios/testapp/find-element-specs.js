@@ -86,7 +86,7 @@ describe('testapp - find element', function () {
   it('should find all elements by class name in the app', function (done) {
     driver
       .elementsByClassName('UIAButton').then(function (els) {
-        [4, 6].should.contain(els.length);
+        [4, 7].should.contain(els.length);
         els[0].value.should.exist;
       }).nodeify(done);
   });

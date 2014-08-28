@@ -15,7 +15,7 @@ describe('testapp - source', function () {
       .then(function (source) {
         var dom = new XMLDom().parseFromString(source);
         var nodes = xpath.select('//UIAButton', dom);
-        nodes.length.should.equal(6);
+        nodes.length.should.equal(7);
       }).nodeify(done);
   });
 });

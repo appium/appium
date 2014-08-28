@@ -4,7 +4,7 @@ var env = require('../../../helpers/env'),
     setup = require("../../common/setup-base"),
     desired = require('./desired');
 
-describe('uicatalog - device @skip-ios7', function () {
+describe('uicatalog - device @skip-ios7up', function () {
 
   describe('lock device', function () {
     var driver;

@@ -2,6 +2,7 @@
 
 var setup = require("../../common/setup-base")
   , desired = require('./desired')
+  , env = require('../../../helpers/env.js')
   , Q = require("q")
   , _ = require("underscore")
   , filterVisible = require('../../../helpers/ios-uiautomation').filterVisible;
@@ -36,7 +37,7 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
         .should.eventually.have.length(2)
       .nodeify(done);
   });
-  it('should use raw selector code if selector doesn\'t start with a dot' , function (done) {
+  it('should use raw selector code if selector doesn\'t start with a dot', function (done) {
     driver
       .elements(byUIA, '$.mainWindow().elements()').then(filterDisplayed)
         .should.eventually.have.length(2)
@@ -47,9 +48,10 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
       .should.become('UICatalog')
     .nodeify(done);
   });
-  it('should get a single element', function (done) {
+  it('should get a single element with non-zero index', function (done) {
+    var variableName = env.IOS8 ? '' : 'Empty list';
     driver.element(byUIA, '.elements()[1]').getAttribute('name')
-      .should.become('Empty list')
+      .should.become(variableName)
     .nodeify(done);
   });
   it('should get single element as array', function (done) {
@@ -61,8 +63,7 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
   it('should find elements by index multiple times', function (done) {
     driver
       .element(byUIA, '.elements()[1].cells()[2]').getAttribute('name')
-        // TODO: the cells index looks wrong, should start at 1, investigate
-      .should.become('Alert Views, AAPLAlertViewController')
+      .should.eventually.contain('Alert Views')
     .nodeify(done);
   });
   it('should find elements by name', function (done) {
@@ -70,10 +71,9 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
       .should.become('UICatalog')
     .nodeify(done);
   });
-  it('should find elements by name and index', function (done) {
-    driver.element(byUIA, '.elements()["Empty list"].cells()[3]').getAttribute('name')
-      // TODO: the cells index looks wrong, should start at 1, investigate
-      .should.become('Buttons, AAPLButtonViewController')
+  it('should find elements by type and index', function (done) {
+    driver.element(byUIA, '.navigationBar().elements()[1]').getAttribute('name')
+      .should.become('Back')
     .nodeify(done);
   });
   describe('start from a given context instead of root target', function () {
@@ -86,9 +86,10 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
       });
     });
     it('should find elements by name', function (done) {
+      var axIdExt = env.IOS8 ? "" : ", AAPLButtonViewController";
       driver.element(byUIA, '.elements()[1]').then(function (el) {
         el
-        .element(byUIA, '.elements()["Buttons, AAPLButtonViewController"]')
+        .element(byUIA, '.elements()["Buttons' + axIdExt + '"]')
           .should.eventually.exist
         .nodeify(done);
       });

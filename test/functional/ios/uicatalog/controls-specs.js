@@ -24,11 +24,11 @@ describe('uicatalog - controls @skip-ios6', function () {
       .then(function (wheel) {
         return wheel
           .getAttribute("value")
-            .should.become("65. 14 of 52")
+            .should.eventually.contain("65")
           .then(function () {
             return wheel.type("70")
               .getAttribute("value")
-                .should.become("70. 15 of 52");
+                .should.eventually.contain("70");
           });
       })
       .elementByXPath("//UIAPickerWheel[@name = 'Green color component value']")
@@ -36,14 +36,14 @@ describe('uicatalog - controls @skip-ios6', function () {
         return wheel
             .type("70")
             .getAttribute("value")
-              .should.become("70. 15 of 52");
+              .should.eventually.contain("70");
       })
       .elementByXPath("//UIAPickerWheel[@name = 'Blue color component value']")
       .then(function (wheel) {
         return wheel
             .type("70")
             .getAttribute("value")
-              .should.become("70. 15 of 52");
+              .should.eventually.contain("70");
       })
       .elementByClassName("UIAPickerWheel")
         .getAttribute("values")
@@ -59,7 +59,11 @@ describe('uicatalog - controls @skip-ios6', function () {
           .getAttribute("value").should.become('42%')
           .then(function () {
             return slider.sendKeys(0.8).getAttribute("value")
-              .should.become('80%');
+              .then(function (val) {
+                var numeric = parseInt(val.replace('%', ''));
+                numeric.should.be.above(75);
+                numeric.should.be.below(85);
+              });
           })
           ;
       }).nodeify(done);

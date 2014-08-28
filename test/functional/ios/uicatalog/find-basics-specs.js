@@ -1,6 +1,7 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
+  , env = require("../../../helpers/env.js")
   , desired = require('./desired')
   , _ = require('underscore');
 
@@ -8,44 +9,44 @@ describe('uicatalog - find - basics @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  it('should find a single element by id @skip-ios7', function (done) {
-    // ById is not avalable in ios7
+  it('should find a single element by id', function (done) {
     driver
       .elementById('Date Picker')
         .should.eventually.exist
       .nodeify(done);
   });
 
-  it('should find a single element by id wrapped in array for multi @skip-ios7', function (done) {
-    // ById is not avalable in ios7
+  it('should find a single element by id wrapped in array for multi', function (done) {
     driver
-      .elementsById('Date Picker')
+      .elementsById('Back')
       .then(function (els) {
         els.length.should.equal(1);
       })
       .nodeify(done);
   });
 
-  it('should find a single element using elementByName @skip-ios7', function (done) {
+  it('should find a single element using elementByAccessibilityId', function (done) {
+    var axId = env.IOS8 ? 'AAPLImageViewController' :
+                          'Image View, AAPLImageViewController';
     driver
-      .elementByName('Image View, AAPLImageViewController')
+      .elementByAccessibilityId(axId)
       .then(function (el) {
         el.should.exist;
       }).nodeify(done);
   });
-  it('should find an element within descendants  @skip-ios7', function (done) {
+  it('should find an element within descendants', function (done) {
     driver
-      .elementByXPath("//UIATableCell[@name = 'Buttons, AAPLButtonViewController']")
+      .elementByXPath("//UIATableCell[contains(@name, 'Buttons')]")
       .then(function (el) {
         el.should.exist;
         return el.elementByClassName('UIAStaticText').getAttribute('name')
-          .should.become("Buttons, AAPLButtonViewController");
+          .should.eventually.contain("Buttons");
       }).nodeify(done);
   });
 
   it('should not find an element not within itself', function (done) {
     driver
-      .elementByXPath("//UIATableCell[@name = 'Buttons, AAPLButtonViewController']")
+      .elementByXPath("//UIATableCell[contains(@name, 'Buttons')]")
       .then(function (el) {
         el.should.exist;
         return el.elementByClassName('UIANavigationBar')
@@ -54,18 +55,19 @@ describe('uicatalog - find - basics @skip-ios6', function () {
   });
 
   it('should find some elements within itself', function (done) {
+    var elLength = env.IOS8 ? 2 : 1;
     driver
-      .elementByXPath("//UIATableCell[@name = 'Buttons, AAPLButtonViewController']")
+      .elementByXPath("//UIATableCell[contains(@name, 'Buttons')]")
       .then(function (el) {
         el.should.exist;
         return el.elementsByClassName('UIAStaticText')
-          .should.eventually.have.length(1);
+          .should.eventually.have.length(elLength);
       }).nodeify(done);
   });
 
   it('should not find elements not within itself', function (done) {
     driver
-      .elementByXPath("//UIATableCell[@name = 'Buttons, AAPLButtonViewController']")
+      .elementByXPath("//UIATableCell[contains(@name, 'Buttons')]")
       .then(function (el) {
         el.should.exist;
         el.elementsByClassName('UIANavigationBar')
@@ -124,72 +126,71 @@ describe('uicatalog - find - basics @skip-ios6', function () {
       driver.clickButton('UICatalog')
       .nodeify(done);
     });
+    var axIdExt = env.IOS8 ? '' : ', AAPLActionSheetViewController';
     it('should find only one textfield', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label,'Action Sheets')]").click()
-        .elementByName('Okay / Cancel')
+        .elementByAccessibilityId("Action Sheets" + axIdExt).click()
+        .elementByAccessibilityId('Okay / Cancel')
         .elementsByClassName('>', 'UIAStaticText')
           .should.eventually.have.length(1)
         .nodeify(done);
     });
   });
 
-  describe('findElement(s) containing name', function () {
-    after(function (done) {
+  describe('findElement(s) containing accessibility id', function () {
+    afterEach(function (done) {
       driver
-        .elementByName('UICatalog').click()
+        .clickButton('UICatalog')
         .sleep(1000)
         .nodeify(done);
     });
 
+    var axIdExt = env.IOS8 ? '' : ', AAPLActionSheetViewController';
     it('should find one element', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label,'Action Sheets')]").click()
-        .elementByName('*Okay*').getAttribute('name')
+        .elementByAccessibilityId("Action Sheets" + axIdExt).click()
+        .elementByAccessibilityId('Okay / Cancel').getAttribute('name')
           .should.become('Okay / Cancel')
         .nodeify(done);
     });
 
-    it('should find several element', function (done) {
+    it('should find several elements', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label,'Action Sheets')]").click()
-        .elementsByName('*Okay*')
+        .elementByAccessibilityId("Action Sheets" + axIdExt).click()
+        .elementsByAccessibilityId('Okay / Cancel')
           .should.eventually.have.length(2)
         .nodeify(done);
     });
   });
 
   describe('duplicate text field', function () {
-    after(function (done) {
+    afterEach(function (done) {
       driver
-        .elementByName('UICatalog').click()
+        .clickButton('UICatalog')
         .sleep(1000)
         .nodeify(done);
     });
 
-    it('should find only one text field', function (done) {
+    var axIdExt = env.IOS8 ? '' : ', AAPLTextFieldViewController';
+    it('should find only one element per text field', function (done) {
       driver
-        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .execute("mobile: scroll", {direction: 'down'})
+        .waitForElementByAccessibilityId('Text Fields' + axIdExt, 3000, 500)
+          .click()
         .sleep(2000)
-        .elementByName('Empty list')
-          .elementByClassName('>','UIATableCell')
-            .elementsByClassName('>','UIATextField')
-              .should.eventually.have.length(1)
+        .elementsByClassName('UIATextField')
+          .should.eventually.have.length(4)
         .nodeify(done);
     });
 
-    it('should find only one secure text field', function (done) {
+    it('should find only one element per secure text field', function (done) {
       driver
-        .waitForElementByName('*Text Fields*', 3000, 500).click()
+        .waitForElementByAccessibilityId('Text Fields' + axIdExt, 3000, 500)
+          .click()
         .sleep(2000)
-        .elementByName('Empty list')
-          .elementsByClassName('>','UIATableCell').at(2)
-            .elementsByClassName('>','UIASecureTextField')
-              .should.eventually.have.length(1)
+        .elementsByClassName('UIASecureTextField')
+          .should.eventually.have.length(1)
         .nodeify(done);
     });
-
   });
-
-
 });

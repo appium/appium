@@ -16,7 +16,8 @@ describe('testapp - location - 1 @skip-ci', function () {
   it('should return the right x/y coordinates', function (done) {
     driver
       .elementByClassName('UIAButton').getLocation().then(function (location) {
-        location.x.should.equal(94);
+        var possibleLocs = [94, 110]; // 110 is for iphone 6
+        possibleLocs.should.contain(parseInt(location.x, 10));
         location.y.should.be.above(120);
       })
       .nodeify(done);

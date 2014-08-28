@@ -2,7 +2,7 @@
 
 var setup = require("../../../common/setup-base");
 
-describe('uicatalog - basic @skip-ios7', function () {
+describe('uicatalog - basic @skip-ios7up', function () {
 
   describe('load zipped app via url', function () {
     var driver;

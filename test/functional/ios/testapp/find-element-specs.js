@@ -129,14 +129,4 @@ describe('testapp - find element', function () {
     driver.elementsByName('AppElem').should.eventually.have.length(3)
       .nodeify(done);
   });
-
-  it('should find an element within its parent', function (done) {
-    // there are 2 textfields with the same name imbricated.
-    driver
-      .elementById('TextField2').then(function (parent) {
-        parent.should.exist;
-        return parent.elementById('TextField2').should.eventually.exist;
-      })
-      .nodeify(done);
-  });
 });

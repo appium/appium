@@ -4,7 +4,7 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require('./desired');
 
-describe('uicatalog - controls @skip-ios7', function () {
+describe('uicatalog - controls @skip-ios7up', function () {
 
   var driver;
   setup(this, desired).then(function (d) { driver = d; });

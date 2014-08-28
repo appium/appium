@@ -13,8 +13,8 @@ describe('testapp - autoAcceptAlerts cap = true', function () {
   setup(self, caps).then(function (d) { driver = d; });
 
   it('auto-accepts alerts', function (done) {
-    driver.elementsByClassName('UIAButton')
-      .then(function (buttons) { return buttons[3].click(); })
+    driver
+      .elementByAccessibilityId('show alert').click()
       .sleep(2000)
       .alertText()
       .should.be.rejectedWith(/status: 27/)
@@ -31,8 +31,8 @@ describe('testapp - autoAcceptAlerts cap = "true"', function () {
   setup(self, caps).then(function (d) { driver = d; });
 
   it('auto-accepts alerts', function (done) {
-    driver.elementsByClassName('UIAButton')
-      .then(function (buttons) { return buttons[3].click(); })
+    driver
+      .elementByAccessibilityId('show alert').click()
       .sleep(2000)
       .alertText()
       .should.be.rejectedWith(/status: 27/)

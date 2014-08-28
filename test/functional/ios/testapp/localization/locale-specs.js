@@ -20,7 +20,9 @@ describe('localization - locale @skip-ios8', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should be english', function (done) {
+    it('should be english @skip-ios8', function (done) {
+      // ios8 doesn't do default locale; it will be whatever was last in
+      // the sim
       driver.execute('$.mainApp().preferencesValueForKey("AppleLocale");')
         .should.become('en_US')
         .nodeify(done);

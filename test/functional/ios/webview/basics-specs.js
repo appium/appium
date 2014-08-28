@@ -19,12 +19,6 @@ describe('webview - basics', function () {
     driver.contexts().should.eventually.have.length.above(0)
       .nodeify(done);
   });
-  it('getting list twice should not crash appium', function (done) {
-    driver
-      .contexts().should.eventually.have.length.above(0)
-      .contexts().should.eventually.have.length.above(0)
-      .nodeify(done);
-  });
   it('getting list multiple times should not crash appium', function (done) {
     driver
       .contexts().should.eventually.have.length.above(0)

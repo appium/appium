@@ -6,7 +6,7 @@ var env = require('../../../../helpers/env')
 
 describe('uicatalog - load zipped app @skip-ios6', function () {
   var driver;
-  var appZip = path.resolve(env.SAUCE? '/Users/chef/appium' : process.cwd(), 'assets/UICatalog6.0.app.zip');
+  var appZip = path.resolve(env.SAUCE ? '/Users/chef/appium' : process.cwd(), 'assets/UICatalog7.1.app.zip');
   setup(this, {app: appZip})
     .then(function (d) { driver = d; });
 

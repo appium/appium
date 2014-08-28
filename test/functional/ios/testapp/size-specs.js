@@ -11,8 +11,8 @@ describe('testapp - size', function () {
 
     it('should return the right element size', function (done) {
       driver.elementByClassName('UIAButton').getSize().then(function (size) {
-        size.width.should.eql(113);
-        size.height.should.eql(37);
+        size.width.should.be.above(112);
+        size.height.should.be.above(36);
       }).nodeify(done);
     });
 

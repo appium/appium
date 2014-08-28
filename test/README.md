@@ -9,3 +9,4 @@ Here's a list of things that aren't tested in this suite:
 * --avd / avdName
 * sudo grunt authorize
 * non-default --tmp
+* --full-reset

@@ -1,41 +1,40 @@
 "use strict";
 
-var setup = require("../../common/setup-base"),
-    _ = require('underscore'),
+var _ = require('underscore'),
     initSession = require('../../../helpers/session').initSession,
     desired = require('./desired');
 
+require('../../../helpers/setup-chai.js');
+
 describe('testapp - device', function () {
 
-  describe('target actions', function () {
-    var driver;
-    setup(this, desired).then(function (d) { driver = d; });
-
-    it("should die in background and respond within (+/- 6 secs)", function (done) {
-      var before;
-      driver
-        .sleep(5000)
-        .then(function () { before = new Date().getTime() / 1000; })
-        .backgroundApp(1)
-        .catch(function (err) {
-          err.cause.value.message.should.contain("Instruments died");
-          throw err;
-        }).should.be.rejectedWith(/status: 13/)
-        .then(function () { ((new Date().getTime() / 1000) - before).should.be.below(10); })
-        .sleep(5000) // cooldown
-        .nodeify(done);
-    });
-  });
-
-  describe('deviceName @skip-ios6', function () {
+  describe('invalid deviceName @skip-ios6', function () {
     var newDesired = _.extend(_.clone(desired), {deviceName: "iFailure 3.5-inch"});
     var session = initSession(newDesired, {'no-retry': true});
 
     it('should fail gracefully with an invalid deviceName', function (done) {
       session.setUp()
-        .should.be.rejectedWith(/environment you requested was unavailable/)
+        .should.eventually.be.rejectedWith(/environment you requested was unavailable/)
         .nodeify(done);
     });
   });
 
+  _.each(['iPhone', 'iPad'], function (device) {
+    describe('generic ' + device + ' deviceName @skip-ios6', function () {
+      var newDesired = _.extend(_.clone(desired), {
+        deviceName: device + " Simulator"
+      });
+      var session = initSession(newDesired, {'no-retry': true});
+
+      after(function (done) {
+        session.tearDown(this.currentTest.state === 'passed').nodeify(done);
+      });
+
+      it('should work with a generic ' + device + ' deviceName', function (done) {
+        session.setUp()
+          .nodeify(done);
+      });
+    });
+
+  });
 });

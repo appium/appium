@@ -11,7 +11,7 @@ describe("testapp - keyboard stability @skip-ci", function () {
 
   var driver;
   setup(this, _.defaults({
-    deviceName: 'iPad Simulator',
+    deviceName: 'iPad 2',
   }, desired)).then(function (d) { driver = d; });
 
   var test = function () {

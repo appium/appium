@@ -6,7 +6,8 @@ var setup = require("../common/setup-base")
   , fs = require('fs')
   , path = require('path')
   , Readable = require('stream').Readable
-  , iOSSim = require('../../../lib/devices/ios/simulator.js')
+  , Simulator = require('../../../lib/devices/ios/simulator.js')
+  , xcode = require('../../../lib/devices/ios/xcode.js')
   , exec = require('child_process').exec
   , getSimUdid = require('../../helpers/sim-udid.js').getSimUdid
   , Unzip = require('unzip');
@@ -56,40 +57,47 @@ describe('file movements - pullFile and pushFile', function () {
     before(function (done) {
       var pv = env.CAPS.platformVersion || '7.1';
       var ios8 = parseFloat(pv) >= 8;
-      var next = function (udid) {
-        var simRoots = iOSSim.getDirs(pv, udid);
-        if (simRoots.length < 1) {
-          return done(new Error("Didn't find any simulator directories"));
-        }
-        var basePath;
-        if (ios8) {
-          // ios8 apps are stored in a different directory structure, need
-          // to navigate down a few more here
-          basePath = path.resolve(simRoots[0], 'Containers', 'Bundle',
-                                     'Application');
+      xcode.getiOSSDKVersion(function (err, sdk) {
+        if (err) return done(err);
+        var next = function (udid) {
+          var sim = new Simulator({
+            platformVer: pv,
+            sdkVer: sdk,
+            udid: udid
+          });
+          var simRoots = sim.getDirs();
+          if (simRoots.length < 1) {
+            return done(new Error("Didn't find any simulator directories"));
+          }
+          var basePath;
+          if (ios8) {
+            // ios8 apps are stored in a different directory structure, need
+            // to navigate down a few more here
+            basePath = path.resolve(simRoots[0], 'Containers', 'Bundle',
+                                       'Application');
+          } else {
+            basePath = path.resolve(simRoots[0], 'Applications');
+          }
+          basePath = basePath.replace(/\s/g, '\\ ');
+
+          var findCmd = 'find ' + basePath + ' -name "TestApp.app"';
+          exec(findCmd, function (err, stdout) {
+            if (err) return done(err);
+            if (!stdout) return done(new Error("Could not find testapp.app"));
+            var appRoot = stdout.replace(/\n$/, '');
+            fullPath = path.resolve(appRoot, fileName);
+            fs.writeFile(fullPath, fileContent, done);
+          });
+        };
+        if (parseFloat(sdk) >= 8) {
+          getSimUdid('6', sdk, env.CAPS, function (err, udid) {
+            if (err) return done(err);
+            next(udid);
+          });
         } else {
-          basePath = path.resolve(simRoots[0], 'Applications');
+          next();
         }
-        basePath = basePath.replace(/\s/g, '\\ ');
-
-        var findCmd = 'find ' + basePath + ' -name "TestApp.app"';
-        exec(findCmd, function (err, stdout) {
-          if (err) return done(err);
-          if (!stdout) return done(new Error("Could not find testapp.app"));
-          var appRoot = stdout.replace(/\n$/, '');
-          fullPath = path.resolve(appRoot, fileName);
-          fs.writeFile(fullPath, fileContent, done);
-        });
-      };
-
-      if (ios8) {
-        getSimUdid('6', env.CAPS, function (err, udid) {
-          if (err) return done(err);
-          next(udid);
-        });
-      } else {
-        next();
-      }
+      });
     });
     after(function (done) {
       if (fullPath) {

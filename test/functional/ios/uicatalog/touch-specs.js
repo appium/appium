@@ -64,7 +64,7 @@ describe('uicatalog - touch @skip-ios6', function () {
               return action.perform();
             });
         })
-      .elementsByAccessibilityId('3')
+      .waitForElementsByAccessibilityId('3', 3000, 500)
         .should.eventually.have.length(2)
       .nodeify(done);
   });

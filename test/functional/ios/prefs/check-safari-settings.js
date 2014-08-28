@@ -1,7 +1,10 @@
 "use strict";
 
 var _ = require('underscore')
-  , xcode = require('../../../lib/devices/ios/xcode.js')
+  , env = require('../../../helpers/env.js')
+  , xcode = require('../../../../lib/devices/ios/xcode.js')
+  , Simulator = require('../../../../lib/devices/ios/simulator.js')
+  , settingsPlists = require('../../../../lib/devices/ios/settings.js')
   , getSimUdid = require('../../../helpers/sim-udid').getSimUdid;
 
 exports.ios6 = function (driver, setting, expected, cb) {
@@ -26,11 +29,14 @@ var ios7up = function (version, udid, setting, expected, cb) {
   var settingsSets;
   var foundSettings;
   xcode.getiOSSDKVersion(function (err, sdk) {
+    var sim = new Simulator({
+      platformVer: env.CAPS.platformVersion,
+      sdkVer: sdk,
+      udid: udid
+    });
     if (err) return cb(err);
     try {
-      var settingsPlists = require('../../../../lib/devices/ios/settings.js');
-      settingsSets = settingsPlists.getSettings(version, sdk, udid,
-                                                'mobileSafari');
+      settingsSets = settingsPlists.getSettings(sim, 'mobileSafari');
     } catch (e) {
       return cb(e);
     }
@@ -54,12 +60,14 @@ var ios7up = function (version, udid, setting, expected, cb) {
 };
 
 exports.ios7up = function (desired, setting, expected, cb) {
-  if (parseFloat(desired.platformVersion) >= 8) {
-    getSimUdid('6', desired, function (err, udid) {
-      if (err) return cb(err);
-      ios7up(desired.platformVersion, udid, setting, expected, cb);
-    });
-  } else {
-    ios7up(desired.platformVersion, null, setting, expected, cb);
-  }
+  xcode.getiOSSDKVersion(function (err, sdk) {
+    if (parseFloat(sdk) >= 8) {
+      getSimUdid('6', sdk, desired, function (err, udid) {
+        if (err) return cb(err);
+        ios7up(desired.platformVersion, udid, setting, expected, cb);
+      });
+    } else {
+      ios7up(desired.platformVersion, null, setting, expected, cb);
+    }
+  });
 };

@@ -11,12 +11,12 @@ describe('uicatalog - gestures - mobile scroll @skip-ios6', function () {
     var firstEl, location1, location2;
     driver
     .elementByClassName('UIATableCell')
-    .then(function (el) { firstEl = el; return el.getLocation(); })
+    .then(function (el) { firstEl = el; return el.getLocationInView(); })
     .then(function (loc) { location1 = loc; })
     .then(function () {
       return driver.execute("mobile: scroll", [{direction: 'down'}]);
     })
-    .then(function () { return firstEl.getLocation(); })
+    .then(function () { return firstEl.getLocationInView(); })
     .then(function (loc2) {
       location2 = loc2;
       loc2.x.should.equal(location1.x);
@@ -25,7 +25,7 @@ describe('uicatalog - gestures - mobile scroll @skip-ios6', function () {
     .then(function () {
       return driver.execute("mobile: scroll", [{direction: 'up'}]);
     })
-    .then(function () { return firstEl.getLocation(); })
+    .then(function () { return firstEl.getLocationInView(); })
     .then(function (loc3) {
       loc3.x.should.equal(location2.x);
       loc3.y.should.not.equal(location2.y);
@@ -38,12 +38,12 @@ describe('uicatalog - gestures - mobile scroll @skip-ios6', function () {
       table_view = el;
     })
     .elementByClassName('UIATableCell')
-    .then(function (el) { firstEl = el; return el.getLocation(); })
+    .then(function (el) { firstEl = el; return el.getLocationInView(); })
     .then(function (loc) { location1 = loc; })
     .then(function () {
       return driver.execute("mobile: scroll", [{element: table_view.value, direction: 'down'}]);
     })
-    .then(function () { return firstEl.getLocation(); })
+    .then(function () { return firstEl.getLocationInView(); })
     .then(function (loc2) {
       location2 = loc2;
       loc2.x.should.equal(location1.x);
@@ -52,7 +52,7 @@ describe('uicatalog - gestures - mobile scroll @skip-ios6', function () {
     .then(function () {
       return driver.execute("mobile: scroll", [{element: table_view.value, direction: 'up'}]);
     })
-    .then(function () { return firstEl.getLocation(); })
+    .then(function () { return firstEl.getLocationInView(); })
     .then(function (loc3) {
       loc3.x.should.equal(location2.x);
       loc3.y.should.not.equal(location2.y);

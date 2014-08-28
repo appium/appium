@@ -5,6 +5,7 @@ ios_only=false
 ios6_only=false
 ios7_only=false
 ios71_only=false
+ios8_only=false
 android_only=false
 android_chrome=false
 selendroid_only=false
@@ -42,6 +43,9 @@ for arg in "$@"; do
         all_tests=false
     elif [ "$arg" = "--ios71" ]; then
         ios71_only=true
+        all_tests=false
+    elif [ "$arg" = "--ios8" ]; then
+        ios8_only=true
         all_tests=false
     elif [ "$arg" = "--no-xcode-switch" ]; then
         xcode_switch=false
@@ -84,7 +88,11 @@ if $ios7_only || $all_tests; then
 fi
 
 if $ios71_only || $all_tests; then
-    run_ios_tests "7.1" "ios71" "@skip-ios71|@skip-ios7|@skip-ios-all"
+    run_ios_tests "7.1" "ios71" "@skip-ios71|@skip-ios7|@skip-ios-all|@skip-ios7up"
+fi
+
+if $ios8_only || $all_tests; then
+    run_ios_tests "8.0" "ios8" "@skip-ios8|@skip-ios-all|@skip-ios7up"
 fi
 
 if $did_switch_xcode; then

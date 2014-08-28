@@ -1,3 +1,5 @@
+/* global should:true */
+
 "use strict";
 
 var setup = require("../../../common/setup-base"),
@@ -11,23 +13,40 @@ describe('testapp - timeout', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    var impWaitCheck = function (impWaitMs) {
+    var impWaitCheck = function (strat, sel, impWaitMs) {
       return function () {
         var before = new Date().getTime();
-        return driver
-          .elementsByClassName('UIANotGonnaBeThere').then(function (missing) {
-            var after = new Date().getTime();
-            (after - before).should.be.below(impWaitMs + 2000);
-            (after - before).should.be.above(impWaitMs);
-            missing.should.have.length(0);
-          });
+        var method = driver['elementsBy' + strat](sel);
+        return method.then(function (missing) {
+          var after = new Date().getTime();
+          (after - before).should.be.below(impWaitMs + 2000);
+          (after - before).should.be.above(impWaitMs);
+          missing.should.have.length(0);
+        });
+      };
+    };
+
+    var impWaitCheckSingle = function (strat, sel, impWaitMs) {
+      return function () {
+        var before = new Date().getTime();
+        var method = driver['elementBy' + strat](sel);
+        return method.then(function (missing) {
+          should.not.exist(missing);
+        }).catch(function (err) {
+          err.status.should.equal(7);
+          var after = new Date().getTime();
+          (after - before).should.be.below(impWaitMs + 2000);
+          (after - before).should.be.above(impWaitMs);
+        });
       };
     };
 
     it('should set the implicit wait for finding elements', function (done) {
       driver
         .setImplicitWaitTimeout(4000)
-        .then(impWaitCheck(4000))
+        .then(impWaitCheck('ClassName', 'UIANotGonnaBeHere', 4000))
+        .then(impWaitCheck('AccessibilityId', 'FoShoIAintHere', 4000))
+        .then(impWaitCheckSingle('AccessibilityId', 'FoShoIAintHere', 4000))
         .nodeify(done);
     });
 
@@ -35,7 +54,7 @@ describe('testapp - timeout', function () {
       driver
         .setCommandTimeout(5000)
         .setImplicitWaitTimeout(10000)
-        .then(impWaitCheck(10000))
+        .then(impWaitCheck('ClassName', 'UIANotGonnaBeHere', 10000))
         .nodeify(done);
     });
 
@@ -43,10 +62,10 @@ describe('testapp - timeout', function () {
       driver
         .setCommandTimeout(60000)
         .setImplicitWaitTimeout(4000)
-        .then(impWaitCheck(4000))
+        .then(impWaitCheck('ClassName', 'UIANotGonnaBeHere', 4000))
         .resetApp()
         .sleep(3000) // cooldown
-        .then(impWaitCheck)
+        .then(impWaitCheck('ClassName', 'UIANotGonnaBeHere', 4000))
         .nodeify(done);
     });
   });

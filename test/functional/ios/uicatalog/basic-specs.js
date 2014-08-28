@@ -11,18 +11,18 @@ describe('uicatalog - basic @skip-ios6', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    // if (env.FAST_TESTS) {
-    //   beforeEach(function (done) {
-    //     driver
-    //       .back()
-    //       .nodeify(function () { done(); });
-    //   });
-    // }
+    if (env.FAST_TESTS) {
+      beforeEach(function (done) {
+        driver
+          .back()
+          .nodeify(function () { done(); });
+      });
+    }
 
     it('should confirm element is not visible', function (done) {
       driver
         .elementByXPath("//UIAStaticText[contains(" + textTag + ", 'Buttons')]").click()
-        .elementByXPath("//UIAButton[contains(@name, 'UINavigationBarBackIndicatorDefault')]")
+        .elementByXPath("//UIANavigationBar/UIAImage")
         .isDisplayed()
           .should.not.eventually.be.ok
         .nodeify(done);
@@ -36,20 +36,20 @@ describe('uicatalog - basic @skip-ios6', function () {
         .nodeify(done);
     });
 
-    it('should confirm element is selected @skip-ios7', function (done) {
-      // TODO: review select implementation for ios7
+    it('should confirm element is selected', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label, 'Pickers')]").click()
-        .elementByXPath("//UIAButton[contains(@label, 'UIPicker')]").isSelected()
+        .execute("mobile: scroll", {direction: 'down'})
+        .elementByXPath("//UIAStaticText[contains(@label, 'Switches')]").click()
+        .elementByClassName("UIASwitch").isSelected()
           .should.eventually.be.ok
         .nodeify(done);
     });
 
-    it('should confirm element is not selected returns false @skip-ios7', function (done) {
-      // TODO: review select implementation for ios7
+    it('should confirm element is not selected returns false', function (done) {
       driver
-        .elementByXPath("//UIAStaticText[contains(@label, 'Pickers')]").click()
-        .elementByXPath("//UIAButton[contains(@label, 'Custom')]").isSelected()
+        .execute("mobile: scroll", {direction: 'down'})
+        .elementByXPath("//UIAStaticText[contains(@label, 'Switches')]").click()
+        .elementByClassName("UIASwitch").click().isSelected()
           .should.not.eventually.be.ok
         .nodeify(done);
     });

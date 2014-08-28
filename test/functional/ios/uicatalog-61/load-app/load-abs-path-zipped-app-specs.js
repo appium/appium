@@ -4,7 +4,7 @@ var env = require('../../../../helpers/env')
   , setup = require("../../../common/setup-base")
   , path = require('path');
 
-describe('uicatalog - basic @skip-ios7', function () {
+describe('uicatalog - basic @skip-ios7up', function () {
 
   describe('load zipped app', function () {
     var driver;

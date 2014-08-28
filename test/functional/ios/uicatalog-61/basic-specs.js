@@ -4,7 +4,7 @@ var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require('./desired');
 
-describe('uicatalog - basic @skip-ios7', function () {
+describe('uicatalog - basic @skip-ios7up', function () {
 
   describe('api', function () {
     var driver;
@@ -34,7 +34,7 @@ describe('uicatalog - basic @skip-ios7', function () {
         .nodeify(done);
     });
 
-    it('should confirm element is selected  @skip-ios7', function (done) {
+    it('should confirm element is selected  @skip-ios7up', function (done) {
       driver
         .elementByXPath("//UIATableCell/UIAStaticText[contains(@label, 'Pickers')]")
           .click()

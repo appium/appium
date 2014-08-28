@@ -4,10 +4,11 @@ var ChaiAsserter = require('./asserter').ChaiAsserter;
 
 function textCleared(el) {
   return new ChaiAsserter(function () {
-      return el.text().should.become(''); });
+    return el.text().should.become('');
+  });
 }
 
-var safeClear = function (el ,remainingAttempts) {
+var safeClear = function (el, remainingAttempts) {
   if (typeof remainingAttempts !== 'number') remainingAttempts = 3;
   return el
     .clear()

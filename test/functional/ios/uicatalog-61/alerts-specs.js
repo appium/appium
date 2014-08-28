@@ -12,7 +12,7 @@ var options = {
   'force new connection': true
 };
 
-describe('uicatalog - alerts @skip-ios7', function () {
+describe('uicatalog - alerts @skip-ios7up', function () {
   var alertTag = env.IOS7 ? '@label' : '@value';
 
   var driver;

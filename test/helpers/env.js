@@ -62,9 +62,9 @@ function iphoneOrIpadSimulator(device, version) {
     case '6.1':
     case '7.0':
     case '7.1':
-      return isIpad ? 'iPad Simulator' : 'iPhone Simulator';
-    case '8.0':
       return isIpad ? 'iPad 2' : 'iPhone 5s';
+    case '8.0':
+      return isIpad ? 'iPad 2' : 'iPhone 6';
     default:
       throw new Error("invalid version");
   }

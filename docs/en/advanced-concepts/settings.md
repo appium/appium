@@ -15,8 +15,10 @@ Another example of a use-case for settings would be telling appium to ignore ele
 
 Settings are implemented via the following API endpoints:
 
-**POST** /session/sessionId/appium/settings
-  Expects a JSON hash of settings, where keys correspond to setting names, and values to the value of the setting.
+**POST** /session/:sessionId/appium/settings
 
-**GET** /session/sessionId/appium/settings
-  Returns a JSON hash of all the currently specified settings.
+>Expects a JSON hash of settings, where keys correspond to setting names, and values to the value of the setting.
+
+**GET** /session/:sessionId/appium/settings
+
+>Returns a JSON hash of all the currently specified settings.

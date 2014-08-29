@@ -76,3 +76,4 @@
 |`localizableStringsDir`| Where to look for localizable strings. Default `en.lproj`|`en.lproj`|
 |`processArguments`| Arguments to pass to the AUT using instruments|e.g., `-myflag`|
 |`interKeyDelay`| The delay, in ms, between keystrokes sent to an element when typing.|e.g., `100`|
+|`showIOSLog`| Whether to show any logs captured from a device in the appium logs. Default `false`|`true` or `false`|

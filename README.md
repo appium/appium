@@ -135,7 +135,7 @@ for instructions on how to build, test and run Appium from source.
 
 ### Mailing List
 
-Announcements and debates often take place on the [Discussion Group](https://groups.google.com/d/forum/appium-discuss), be sure to sign up!
+Announcements and debates often take place on the [Discussion Group](https://discuss.appium.io), be sure to sign up!
 
 ### Troubleshooting
 

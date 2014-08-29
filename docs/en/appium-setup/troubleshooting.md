@@ -1,7 +1,7 @@
 ## Troubleshooting Appium
 
 Here's what to do if you're experiencing problems, before you submit a ticket
-to github or write to the [appium-discuss mailing list](https://groups.google.com/forum/#!forum/appium-discuss).
+to github or write to the [appium-discuss discussion group](https://discuss.appium.io).
 
 ### General
 
@@ -88,7 +88,7 @@ Once you've tried the above steps and your issue still isn't resolved,
 here's what you can do:
 
 If you're having trouble getting Appium working and the error messages Appium
-provides are not clear, join the [mailing list](https://groups.google.com/d/forum/appium-discuss)
+provides are not clear, join the [discussion group](https://discuss.appium.io)
 and send a message. Please include the following:
 
 * How you're running Appium (Appium.app, npm, source)

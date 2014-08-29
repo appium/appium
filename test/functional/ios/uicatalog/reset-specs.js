@@ -19,5 +19,16 @@ describe('uicatalog - reset @skip-ios6', function () {
           .should.eventually.have.length(1)
         .nodeify(done);
     });
+
+    it('should successfully close an app', function (done) {
+      driver
+        .closeApp()
+        .elementsByClassName('UIATableView')
+          .should.eventually.be.rejectedWith('7')
+        .launchApp()
+        .elementsByClassName('UIATableView')
+          .should.eventually.have.length(1)
+        .nodeify(done);
+    });
   });
 });

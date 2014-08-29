@@ -18,7 +18,21 @@ Settings are implemented via the following API endpoints:
 **POST** /session/:sessionId/appium/settings
 
 >Expects a JSON hash of settings, where keys correspond to setting names, and values to the value of the setting.
+```
+{
+  settings: {
+   xpath_compression : true  
+  }  
+}
+```
 
 **GET** /session/:sessionId/appium/settings
 
 >Returns a JSON hash of all the currently specified settings.
+```
+{
+  settings: {
+   xpath_compression : true  
+  }  
+}
+```

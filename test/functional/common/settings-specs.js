@@ -17,14 +17,24 @@ describe('settings', function () {
 
   it('should return a settings object even if none specified', function (done) {
     driver
-      .settings().should.eventually.exist()
+      .settings().should.eventually.exist
       .nodeify(done);
   });
 
   it('should be able to store a setting', function (done) {
     driver
-      .settings({'settlers of': 'Catan'})
+      .updateSettings({'settlers of': 'Catan'})
       .settings().should.eventually.have.property('settlers of')
+      .nodeify(done);
+  });
+
+  it('should overwrite new settings', function (done) {
+    driver
+      .updateSettings({'settlers of': 'Catan'})
+      .updateSettings({'settlers of': 'Europa'})
+      .settings().then(function (settings) {
+        return settings['settlers of'].should.equal('Europa');
+      })
       .nodeify(done);
   });
 });

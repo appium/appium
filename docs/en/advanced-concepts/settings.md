@@ -21,7 +21,7 @@ Settings are implemented via the following API endpoints:
 ```
 {
   settings: {
-   xpath_compression : true  
+   xpathCompression : true  
   }  
 }
 ```
@@ -32,7 +32,11 @@ Settings are implemented via the following API endpoints:
 ```
 {
   settings: {
-   xpath_compression : true  
+   xpathCompression : true  
   }  
 }
 ```
+
+### Supported Settings ###
+
+**"xpathCompression"** - Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which removes some of the elements from XPath locators, in an attempt to make things less confusing or faster.

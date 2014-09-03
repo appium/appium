@@ -395,7 +395,7 @@ reset_selendroid_quick() {
     run_cmd pushd /tmp/appium/selendroid
     echo "* Downloading metatata"
     run_cmd wget http://search.maven.org/remotecontent?filepath=io/selendroid/selendroid-standalone/maven-metadata.xml -O maven-metadata.xml
-    selendroid_version=$(grep latest maven-metadata.xml | sed 's/ *<\/*latest\> *//g')
+    selendroid_version=$(grep latest maven-metadata.xml | sed 's/ *<\/*latest> *//g')
     echo "* Selendroid version is ${selendroid_version}"
     echo "* Downloading selendroid server"
     run_cmd wget https://github.com/selendroid/selendroid/releases/download/${selendroid_version}/selendroid-standalone-${selendroid_version}-with-dependencies.jar

@@ -19,13 +19,11 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-/**
- * Created by jonahss on 8/12/14.
- */
 public abstract class XMLHierarchy {
 
-  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression) throws ElementNotFoundException, InvalidSelectorException, ParserConfigurationException {
+  public final static boolean DEFAULT_XPATH_COMPRESSION_SETTING = false;
+
+  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression, boolean compression) throws ElementNotFoundException, InvalidSelectorException, ParserConfigurationException {
     XPath xpath = XPathFactory.newInstance().newXPath();
     XPathExpression exp = null;
     try {
@@ -36,7 +34,7 @@ public abstract class XMLHierarchy {
 
     Node formattedXmlRoot;
 
-    formattedXmlRoot = getFormattedXMLDoc();
+    formattedXmlRoot = getFormattedXMLDoc(compression);
 
     return getClassInstancePairs(exp, formattedXmlRoot);
   }
@@ -63,7 +61,7 @@ public abstract class XMLHierarchy {
     return pairs;
   }
 
-  public static InputSource getRawXMLHierarchy() {
+  public static InputSource getRawXMLHierarchy(boolean compression) {
     // Note that
     // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
     // is directly from the UiDevice.java source code.
@@ -75,8 +73,7 @@ public abstract class XMLHierarchy {
 
     dumpFile.delete();
 
-    //compression off by default TODO add this as a config option
-    NotImportantViews.discard(false);
+    NotImportantViews.discard(compression);
 
     try {
       // dumpWindowHierarchy often has a NullPointerException
@@ -95,8 +92,8 @@ public abstract class XMLHierarchy {
     }
   }
 
-  public static Node getFormattedXMLDoc() {
-    return formatXMLInput(getRawXMLHierarchy());
+  public static Node getFormattedXMLDoc(boolean compression) {
+    return formatXMLInput(getRawXMLHierarchy(compression));
   }
 
   public static Node formatXMLInput(InputSource input) {

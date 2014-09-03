@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.util.Hashtable;
 
 /**
  * Get page source. Return as string of XML doc
@@ -21,8 +22,14 @@ import java.io.StringWriter;
 public class Source extends CommandHandler {
   @Override
   public AndroidCommandResult execute(AndroidCommand command) throws JSONException {
+    final Hashtable<String, Object> params = command.params();
 
-    Document doc = (Document) XMLHierarchy.getFormattedXMLDoc();
+    boolean xpathCompression = XMLHierarchy.DEFAULT_XPATH_COMPRESSION_SETTING;
+    if (params.containsKey("xpathCompression")) {
+      xpathCompression = (Boolean) params.get("xpathCompression");
+    }
+
+    Document doc = (Document) XMLHierarchy.getFormattedXMLDoc(xpathCompression);
 
     TransformerFactory tf = TransformerFactory.newInstance();
     StringWriter writer = new StringWriter();

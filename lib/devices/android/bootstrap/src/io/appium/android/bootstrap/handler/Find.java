@@ -76,13 +76,17 @@ public class Find extends CommandHandler {
     final String contextId = (String) params.get("context");
     final String text = (String) params.get("selector");
     final boolean multiple = (Boolean) params.get("multiple");
+    boolean xpathCompression = XMLHierarchy.DEFAULT_XPATH_COMPRESSION_SETTING;
+    if (params.containsKey("xpathCompression")) {
+      xpathCompression = (Boolean) params.get("xpathCompression");
+    }
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
 
     try {
       Object result = null;
-      List<UiSelector> selectors = getSelectors(strategy, text, multiple);
+      List<UiSelector> selectors = getSelectors(strategy, text, multiple, xpathCompression);
 
       if (!multiple) {
         for (final UiSelector sel : selectors) {
@@ -198,14 +202,14 @@ public class Find extends CommandHandler {
    * @throws ElementNotFoundException
    */
   private List<UiSelector> getSelectors(final Strategy strategy,
-                                        final String text, final boolean many) throws InvalidStrategyException,
+                                        final String text, final boolean many, final boolean xpathCompression) throws InvalidStrategyException,
           ElementNotFoundException, UiSelectorSyntaxException, ParserConfigurationException, InvalidSelectorException {
     final List<UiSelector> selectors = new ArrayList<UiSelector>();
     UiSelector sel = new UiSelector();
 
     switch (strategy) {
       case XPATH:
-        for (UiSelector selector : getXPathSelectors(text, many)) {
+        for (UiSelector selector : getXPathSelectors(text, many, xpathCompression)) {
           selectors.add(selector);
         }
         break;
@@ -311,10 +315,10 @@ public class Find extends CommandHandler {
   }
 
   /** returns List of UiSelectors for an xpath expression **/
-  private List<UiSelector> getXPathSelectors(final String expression, final boolean multiple) throws ElementNotFoundException, ParserConfigurationException, InvalidSelectorException {
+  private List<UiSelector> getXPathSelectors(final String expression, final boolean multiple, final boolean compression) throws ElementNotFoundException, ParserConfigurationException, InvalidSelectorException {
     List<UiSelector> selectors = new ArrayList<UiSelector>();
 
-    ArrayList<ClassInstancePair> pairs = XMLHierarchy.getClassInstancePairs(expression);
+    ArrayList<ClassInstancePair> pairs = XMLHierarchy.getClassInstancePairs(expression, compression);
 
     if (!multiple) {
       if (pairs.size() == 0) {

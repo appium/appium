@@ -23,7 +23,7 @@ want to zip it up, you can.
 
 The best way to see what to do currently is to look at the example tests:
 
-[Node.js](https://github.com/appium/sample-code/sample-code/examples/node) | [Python](https://github.com/appium/sample-code/sample-code/examples/python) | [PHP](https://github.com/appium/sample-code/sample-code/examples/php) | [Ruby](https://github.com/appium/sample-code/sample-code/examples/ruby) | [Java](https://github.com/appium/sample-code/sample-code/examples/java)
+[Node.js](https://github.com/appium/sample-code/tree/master/sample-code/examples/node) | [Python](https://github.com/appium/sample-code/tree/master/sample-code/examples/python) | [PHP](https://github.com/appium/sample-code/tree/master/sample-code/examples/php) | [Ruby](https://github.com/appium/sample-code/tree/master/sample-code/examples/ruby) | [Java](https://github.com/appium/sample-code/tree/master/sample-code/examples/java)
 
 Basically, first make sure Appium is running:
 

@@ -33,4 +33,27 @@ describe("apidemos - source", function () {
       .elementByAccessibilityId('Animation')
       .nodeify(done);
   });
+  it('should get less source when compression is enabled', function (done) {
+    var getSourceWithoutCompression = function () {
+      return driver.updateSettings({"xpathCompression": false}).source();
+    };
+    var getSourceWithCompression    = function () {
+      return driver.updateSettings({"xpathCompression": true }).source();
+    };
+
+    var sourceWithoutCompression, sourceWithCompression;
+
+    getSourceWithoutCompression()
+    .then(function (els) {
+      sourceWithoutCompression = els;
+      return getSourceWithCompression();
+    })
+    .then(function (els) {
+      sourceWithCompression = els;
+    })
+    .then(function () {
+      return sourceWithoutCompression.length.should.be.greaterThan(sourceWithCompression.length);
+    })
+    .nodeify(done);
+  });
 });

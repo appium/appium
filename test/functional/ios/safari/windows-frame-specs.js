@@ -23,7 +23,9 @@ describe('safari - windows and frames (' + env.DEVICE + ') @skip-ios6"', functio
           .should.be.rejectedWith(/status: 23/)
         .nodeify(done);
     });
-    it("should be able to open and close windows", function (done) {
+    it("should be able to open and close windows @skip-ios8", function (done) {
+      // unfortunately, iOS8 doesn't respond to the close() method on window
+      // the way iOS7 does
       driver
         .elementById('blanklink').click()
         .then(function () { return spinTitle("I am another page title", driver); })

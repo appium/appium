@@ -8,3 +8,4 @@ Here's a list of things that aren't tested in this suite:
 * android with --udid (even if emulator)
 * --avd / avdName
 * sudo grunt authorize
+* non-default --tmp

@@ -22,7 +22,7 @@ module.exports = function (desired) {
             return;
           }
           return driver
-            .execute("mobile: leaveWebView")
+            .context('NATIVE_APP')
             .title()
             .should.be.rejectedWith(/status: 13/);
         }).nodeify(done);

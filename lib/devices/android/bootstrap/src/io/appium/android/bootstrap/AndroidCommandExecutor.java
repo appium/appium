@@ -46,7 +46,6 @@ class AndroidCommandExecutor {
     map.put("performMultiPointerGesture", new MultiPointerGesture());
     map.put("openNotification", new OpenNotification());
     map.put("source", new Source());
-    map.put("compressedLayoutHierarchy", new CompressedLayoutHierarchy());
   }
 
   /**

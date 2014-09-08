@@ -53,7 +53,6 @@
 |`unicodeKeyboard`| Enable Unicode input, default `false`| `true` or `false`|
 |`resetKeyboard`| Reset keyboard to its original state, after running Unicode tests with `unicodeKeyboard` capability. Ignored if used alone. Default `false`| `true` or `false`|
 |`noSign`| Skip checking and signing of app with debug keys, will work only with UiAutomator and not with selendroid, default `false`| `true` or `false`|
-|`ignoreUnimportantViews`| Calls the `setCompressedLayoutHierarchy()` uiautomator function. This capability can speed up test execution, since Accessibility commands will run faster ignoring some elements. The ignored elements will not be findable, which is why this capability has also been implemented as a toggle-able *setting* as well as a capability. Defaults to `false` | `true` or `false`
 
 ### iOS Only
 

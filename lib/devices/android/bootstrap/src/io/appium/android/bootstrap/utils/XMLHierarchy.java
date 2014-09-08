@@ -75,6 +75,9 @@ public abstract class XMLHierarchy {
 
     dumpFile.delete();
 
+    //compression off by default TODO add this as a config option
+    NotImportantViews.discard(false);
+
     try {
       // dumpWindowHierarchy often has a NullPointerException
       UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);

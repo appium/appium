@@ -3,8 +3,7 @@
 var setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , atv = 'android.widget.TextView'
-  , alv = 'android.widget.ListView'
-  ;
+  , alv = 'android.widget.ListView';
 
 describe("apidemo - find - by xpath", function () {
 
@@ -16,7 +15,7 @@ describe("apidemo - find - by xpath", function () {
   var t = atv;
 
   before(function (done) {
-    driver.sleep(2000).nodeify(done);
+    driver.sleep(1000).nodeify(done);
   });
 
   it('should find element by type', function (done) {
@@ -69,28 +68,5 @@ describe("apidemo - find - by xpath", function () {
         return el.should.be.ok;
       })
       .nodeify(done);
-  });
-  it('should find less elements with compression turned on', function (done) {
-    var getElementsWithoutCompression = function () {
-      return driver.updateSettings({"ignoreUnimportantViews": false}).elementsByXPath("//*");
-    };
-    var getElementsWithCompression    = function () {
-      return driver.updateSettings({"ignoreUnimportantViews": true }).elementsByXPath("//*");
-    };
-
-    var elementsWithoutCompression, elementsWithCompression;
-
-    getElementsWithoutCompression()
-    .then(function (els) {
-      elementsWithoutCompression = els;
-      return getElementsWithCompression();
-    })
-    .then(function (els) {
-      elementsWithCompression = els;
-    })
-    .then(function () {
-      return elementsWithoutCompression.length.should.be.greaterThan(elementsWithCompression.length);
-    })
-    .nodeify(done);
   });
 });

@@ -7,7 +7,7 @@ var env = require('../../../../helpers/env'),
     rimraf = require('rimraf'),
     path = require('path');
 
-describe('localization - locale', function () {
+describe('localization - locale @skip-ios8', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
 
   after(function () {
@@ -29,7 +29,7 @@ describe('localization - locale', function () {
 
   describe('changing locale', function () {
     var driver;
-    setup(this, _.defaults({locale: 'fr'} , desired)).then(function (d) { driver = d; });
+    setup(this, _.defaults({locale: 'fr'}, desired)).then(function (d) { driver = d; });
 
     it('should be fr', function (done) {
       driver.execute('$.mainApp().preferencesValueForKey("AppleLocale");')
@@ -40,7 +40,7 @@ describe('localization - locale', function () {
 
   describe('changing back', function () {
     var driver;
-    setup(this, _.defaults({locale: 'en_US'} , desired)).then(function (d) { driver = d; });
+    setup(this, _.defaults({locale: 'en_US'}, desired)).then(function (d) { driver = d; });
 
     it('should be en', function (done) {
       driver.execute('$.mainApp().preferencesValueForKey("AppleLocale");')

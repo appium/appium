@@ -1,8 +1,8 @@
-## Appium server arguments
+# Appium server arguments
 
 Usage: `node . [flags]`
 
-### Server flags
+## Server flags
 All flags are optional, but some are required in conjunction with certain others.
 
 
@@ -15,13 +15,13 @@ All flags are optional, but some are required in conjunction with certain others
 |`--localizable-strings-dir`|en.lproj|IOS only: the relative path of the dir where Localizable.strings file resides |`--localizable-strings-dir en.lproj`|
 |`--app`|null|IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
-|`-q`, `--quiet`|false|Don't use verbose logging output (deprecated, use --log-level instead)||
 |`-U`, `--udid`|null|Unique device identifier of the connected physical device|`--udid 1adsf-sdfas-asdf-123sdf`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
-|`-ca`, `--callback-address`|(same as --address)|IP Address to use to for http callback|`--callback-address 127.0.0.1`|
-|`-cp`, `--callback-port`|(same as --port)|port to use to for http callback|`--port 4723`|
+|`-ca`, `--callback-address`|null|callback IP Address (default: same as address)|`--callback-address 127.0.0.1`|
+|`-cp`, `--callback-port`|null|callback port (default: same as port)|`--callback-port 4723`|
 |`-bp`, `--bootstrap-port`|4724|(Android-only) port to use on device to talk to Appium|`--bootstrap-port 4724`|
+|`-k`, `--keep-artifacts`|false|deprecated, no effect, trace is now in tmp dir by default and is  cleared before each run. Please also refer to the --trace-dir flag.||
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
 |`--full-reset`|false|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data. On Android, this will also remove the app after the session is complete.||
@@ -29,7 +29,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-lt`, `--launch-timeout`|90000|(iOS-only) how long in ms to wait for Instruments to launch||
 |`-g`, `--log`|null|Also send log output to this file|`--log /path/to/appium.log`|
-|`--log-level`|debug|log level (default: debug)|`--log-level debug`|
+|`--log-level`|debug|log level; default (console[:file]): debug[:debug]|`--log-level debug`|
 |`--log-timestamp`|false|Show timestamps in console output||
 |`--local-timezone`|false|Use local timezone for timestamps||
 |`--log-no-colors`|false|Don't use colors in console output||
@@ -43,10 +43,6 @@ All flags are optional, but some are required in conjunction with certain others
 |`--avd`|null|(Android-only) Name of the avd to launch|`--avd @default`|
 |`--avd-args`|null|(Android-only) Additional emulator arguments to launch the avd|`--avd-args -no-snapshot-load`|
 |`--device-ready-timeout`|5|(Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
-|`--intent-action`|`android.intent.action.MAIN`|(Android-only) Intent action which will be used to start activity|`android.intent.action.VIEW`|
-|`--intent-category`|`android.intent.category.LAUNCHER`|(Android-only) Intent category which will be used to start activity|`android.intent.category.APP_CONTACTS`|
-|`--intent-flags`|`0x10200000`|(Android-only) Flags that will be used to start activity|`0x10200000`|
-|`--intent-args`|null|(Android-only) Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/tools/help/adb.html#IntentSpec)|`--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`|
 |`--safari`|false|(IOS-Only) Use the safari app||
 |`--device-name`|null|Name of the mobile device to use|`--device-name iPhone Retina (4-inch), Android Emulator`|
 |`--platform-name`|null|Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|
@@ -61,6 +57,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--calendar-format`|null|(IOS-only) calendar format for the iOS simulator|`--calendar-format gregorian`|
 |`--orientation`|null|(IOS-only) use LANDSCAPE or PORTRAIT to initialize all requests to this orientation|`--orientation LANDSCAPE`|
 |`--tracetemplate`|null|(IOS-only) .tracetemplate file to use with Instruments|`--tracetemplate /Users/me/Automation.tracetemplate`|
+|`--show-sim-log`|false|(IOS-only) if set, the iOS simulator log will be written to the console||
 |`--show-ios-log`|false|(IOS-only) if set, the iOS system log will be written to the console||
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
@@ -69,7 +66,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
 |`--chromedriver-executable`|null|ChromeDriver executable full path||
 |`--use-keystore`|false|(Android-only) When set the keystore will be used to sign apks.||
-|`--keystore-path`|/Users/user/.android/debug.keystore|(Android-only) Path to keystore||
+|`--keystore-path`|/Users/saucelabs/.android/debug.keystore|(Android-only) Path to keystore||
 |`--keystore-password`|android|(Android-only) Password to keystore||
 |`--key-alias`|androiddebugkey|(Android-only) Key alias||
 |`--key-password`|android|(Android-only) Key password||
@@ -79,4 +76,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
-|`--trace-dir`|`<tmpDir>/appium-instruments`|Absolute path to directory Appium uses to store trace.|`--trace-dir "/tmp/directory"`|
+|`--trace-dir`|null|Absolute path to directory Appium use to save ios instruments traces, defaults to <tmp dir>/appium-instruments||
+|`--intent-action`|android.intent.action.MAIN|(Android-only) Intent action which will be used to start activity|`--intent-action android.intent.action.MAIN`|
+|`--intent-category`|android.intent.category.LAUNCHER|(Android-only) Intent category which will be used to start activity|`--intent-category android.intent.category.APP_CONTACTS`|
+|`--intent-flags`|0x10200000|(Android-only) Flags that will be used to start activity|`--intent-flags 0x10200000`|
+|`--intent-args`|null|(Android-only) Additional intent arguments that will be used to start activity|`--intent-args 0x10200000`|

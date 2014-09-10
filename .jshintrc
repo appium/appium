@@ -6,5 +6,5 @@
   "node": true,
   "eqeqeq": true,
   "trailing": true,
-  "indent": 2    
+  "indent": 2
 }

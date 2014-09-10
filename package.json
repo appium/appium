@@ -53,6 +53,7 @@
     "bplist-parser": "~0.0.5",
     "bufferpack": "0.0.6",
     "bytes": "~1.0.0",
+    "camel-back-promise": "^1.0.0",
     "colors": "~0.6.2",
     "date-utils": "~1.2.15",
     "difflib": "~0.2.4",

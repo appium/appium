@@ -8,12 +8,13 @@ var setup = require("../common/setup-base")
   , Readable = require('stream').Readable
   , iOSSettings = require('../../../lib/devices/ios/settings.js')
   , exec = require('child_process').exec
+  , getSimUdid = require('../../helpers/sim-udid.js').getSimUdid
   , Unzip = require('unzip');
 
 describe('file movements - pullFile and pushFile', function () {
   var driver;
   var desired = {
-    app: getAppPath('testapp')
+    app: getAppPath('TestApp')
   };
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -54,21 +55,41 @@ describe('file movements - pullFile and pushFile', function () {
     var fullPath = "";
     before(function (done) {
       var pv = env.CAPS.platformVersion || '7.1';
-      var simRoots = iOSSettings.getSimRootsWithVersion(pv);
-      if (simRoots.length < 1) {
-        return done(new Error("Didn't find any simulator directories"));
-      }
-      var basePath = path.resolve(simRoots[0], 'Applications')
-                      .replace(/\s/g, '\\ ');
+      var ios8 = parseFloat(pv) >= 8;
+      var next = function (udid) {
+        var simRoots = iOSSettings.getSimRootsWithVersion(pv, udid);
+        if (simRoots.length < 1) {
+          return done(new Error("Didn't find any simulator directories"));
+        }
+        var basePath;
+        if (ios8) {
+          // ios8 apps are stored in a different directory structure, need
+          // to navigate down a few more here
+          basePath = path.resolve(simRoots[0], 'Containers', 'Bundle',
+                                     'Application');
+        } else {
+          basePath = path.resolve(simRoots[0], 'Applications');
+        }
+        basePath = basePath.replace(/\s/g, '\\ ');
 
-      var findCmd = 'find ' + basePath + ' -name "testapp.app"';
-      exec(findCmd, function (err, stdout) {
-        if (err) return done(err);
-        if (!stdout) return done(new Error("Could not find testapp.app"));
-        var appRoot = stdout.replace(/\n$/, '');
-        fullPath = path.resolve(appRoot, fileName);
-        fs.writeFile(fullPath, fileContent, done);
-      });
+        var findCmd = 'find ' + basePath + ' -name "TestApp.app"';
+        exec(findCmd, function (err, stdout) {
+          if (err) return done(err);
+          if (!stdout) return done(new Error("Could not find testapp.app"));
+          var appRoot = stdout.replace(/\n$/, '');
+          fullPath = path.resolve(appRoot, fileName);
+          fs.writeFile(fullPath, fileContent, done);
+        });
+      };
+
+      if (ios8) {
+        getSimUdid('6', env.CAPS, function (err, udid) {
+          if (err) return done(err);
+          next(udid);
+        });
+      } else {
+        next();
+      }
     });
     after(function (done) {
       if (fullPath) {
@@ -78,7 +99,7 @@ describe('file movements - pullFile and pushFile', function () {
       }
     });
     it('should be able to fetch a file from the app directory', function (done) {
-      var arg = path.resolve('/testapp.app', fileName);
+      var arg = path.resolve('/TestApp.app', fileName);
       driver
         .pullFile(arg)
         .then(function (data) {
@@ -92,7 +113,7 @@ describe('file movements - pullFile and pushFile', function () {
     it('should pull all the files in Library/AddressBook', function (done) {
       var entryCount = 0;
       driver.pullFolder('Library/AddressBook')
-      .then( function (data) {
+      .then(function (data) {
         var zipStream = new Readable();
         zipStream._read = function noop() {};
         zipStream

@@ -132,7 +132,10 @@ module.exports.initSession = function (desired, opts) {
             return androidUninstall(desired.appPackage);
           }
         }).then(function () { return init(attempts); })
-        .then(function () { initialized = true; })
+        .then(function () {
+          initialized = true;
+          browser._origCaps = caps;
+        })
         .setImplicitWaitTimeout(env.IMPLICIT_WAIT_TIMEOUT);
     },
     tearDown: function (passed) {

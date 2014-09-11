@@ -6,7 +6,7 @@ var setup = require("../common/setup-base")
   , fs = require('fs')
   , path = require('path')
   , Readable = require('stream').Readable
-  , iOSSettings = require('../../../lib/devices/ios/settings.js')
+  , iOSSim = require('../../../lib/devices/ios/simulator.js')
   , exec = require('child_process').exec
   , getSimUdid = require('../../helpers/sim-udid.js').getSimUdid
   , Unzip = require('unzip');
@@ -57,7 +57,7 @@ describe('file movements - pullFile and pushFile', function () {
       var pv = env.CAPS.platformVersion || '7.1';
       var ios8 = parseFloat(pv) >= 8;
       var next = function (udid) {
-        var simRoots = iOSSettings.getSimRootsWithVersion(pv, udid);
+        var simRoots = iOSSim.getDirs(pv, udid);
         if (simRoots.length < 1) {
           return done(new Error("Didn't find any simulator directories"));
         }

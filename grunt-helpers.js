@@ -17,9 +17,8 @@ var _ = require("underscore")
   , appiumVer = require('./package.json').version
   , fs = require('fs')
   , helpers = require('./lib/helpers')
+  , xcode = require('./lib/devices/ios/xcode.js')
   , isWindows = helpers.isWindows()
-  , getXcodeFolder = helpers.getXcodeFolder
-  , getXcodeVersion = helpers.getXcodeVersion
   , MAX_BUFFER_SIZE = 524288
   , SELENDROID_MAX_BUFFER_SIZE = 4 * MAX_BUFFER_SIZE;
 
@@ -254,7 +253,7 @@ var auth_chmodApps = function (grunt, cb) {
   } else {
     user = /\/([^\/]+)$/.exec(process.env.HOME)[1];
   }
-  getXcodeFolder(function (err, xcodeDir) {
+  xcode.getPath(function (err, xcodeDir) {
     if (err) return cb(err);
     var glob = path.resolve(xcodeDir, "Platforms/iPhoneSimulator.platform/" +
                             "Developer/SDKs/iPhoneSimulator*.sdk/Applications");
@@ -310,7 +309,7 @@ module.exports.build = function (appRoot, cb, sdk, xcconfig) {
     });
   };
   if (typeof sdk === "undefined") {
-    getXcodeVersion(function (err, version) {
+    xcode.getVersion(function (err, version) {
       if (err) return cb(err);
       var sdkVersion = version[0] === "5" ? "7.0" : "6.1";
       sdk = 'iphonesimulator' + sdkVersion;

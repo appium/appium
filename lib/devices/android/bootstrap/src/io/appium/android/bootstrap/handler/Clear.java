@@ -1,18 +1,18 @@
 package io.appium.android.bootstrap.handler;
 
-import com.android.uiautomator.core.UiObjectNotFoundException;
-import io.appium.android.bootstrap.*;
-import org.json.JSONException;
-import android.os.SystemClock;
-import android.view.KeyEvent;
-import java.lang.reflect.Method;
 import android.graphics.Rect;
-import com.android.uiautomator.common.ReflectionUtils;
-import com.android.uiautomator.core.UiObject;
+import android.os.SystemClock;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
+import com.android.uiautomator.common.ReflectionUtils;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
-
+import io.appium.android.bootstrap.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import org.json.JSONException;
 
 
 /**
@@ -43,49 +43,39 @@ public class Clear extends CommandHandler {
     if (command.isElementCommand()) {
       try {
         final AndroidElement el = command.getElement();
-        final ReflectionUtils utils = new ReflectionUtils();
-        Rect rect = el.getVisibleBounds();
-        // Trying to select entire text.
-        TouchLongClick.correctLongClick(rect.left + 20, rect.centerY(),2000);
-        UiObject selectAll = new UiObject(new UiSelector().descriptionContains("Select all"));
-        if (selectAll.waitForExists(2000)) {
-            selectAll.click();
-        }
-        // wait for the selection
-        SystemClock.sleep(500);
-        // delete it
-        final Method sendKey = utils.getControllerMethod("sendKey", int.class,int.class);
-        sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
+
+        // first, try to do native clearing
+        Logger.debug("Attempting to clear using UiObject.clearText().");
+        el.clearText();
         if (el.getText().isEmpty()) {
           return getSuccessResult(true);
         }
-        // If above strategy does not work then sending bunch of delete keys after clicking on element.
-        Logger.debug("Clearing text not successful using selectAllDelete now trying to send delete keys.");
-        String tempTextHolder = "";
-        final Object bridgeObject = utils.getBridge();
-        final Method injectInputEvent = utils.getMethodInjectInputEvent();
-        // Preventing infinite while loop.
-        while (!el.getText().isEmpty() && !tempTextHolder.equalsIgnoreCase(el.getText())) {
-            tempTextHolder = el.getText();
-            // Trying send delete keys after clicking in text box.
-            el.click();
-            // Sending 25 delete keys asynchronously
-            final long eventTime = SystemClock.uptimeMillis();
-            KeyEvent deleteEvent = new KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN,
-                    KeyEvent.KEYCODE_DEL, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
-                    InputDevice.SOURCE_KEYBOARD);
-            for (int count = 0; count < 25; count++) {
-                injectInputEvent.invoke(bridgeObject, deleteEvent, false);
-            }
+
+        final ReflectionUtils utils = new ReflectionUtils();
+
+        // next try to select everything and delete
+        Logger.debug("Clearing text not successful. Attempting to clear " +
+                     "by selecting all and deleting.");
+        if (selectAndDelete(el, utils)) {
+          return getSuccessResult(true);
         }
-        // If still text exist falling back on UIautomator clearText.
-        if (!el.getText().isEmpty()) {
-           Logger.debug("Clearing text not successful falling back to UiAutomator method clear");
-           el.clearText();
+
+        // finally try to send delete keys
+        Logger.debug("Clearing text not successful. Attempting to clear " +
+                     "by sending delete keys.");
+        if (sendDeleteKeys(el, utils)) {
+          return getSuccessResult(true);
         }
-        // If clear text is still unsuccessful throwing error back
+
         if (!el.getText().isEmpty()) {
+          // either there was a failure, or there is hint text
+          if (hasHintText(el, utils)) {
+            Logger.debug("Text remains after clearing, " +
+                         "but it appears to be hint text.");
+            return getSuccessResult(true);
+          } else {
             return getErrorResult("Clear text not successful.");
+          }
         }
         return getSuccessResult(true);
       } catch (final UiObjectNotFoundException e) {
@@ -94,7 +84,65 @@ public class Clear extends CommandHandler {
       } catch (final Exception e) { // handle NullPointerException
         return getErrorResult("Unknown error clearing text");
       }
-  }
-      return getErrorResult("Unknown error");
     }
+    return getErrorResult("Unknown error");
   }
+
+  private boolean selectAndDelete(AndroidElement el, final ReflectionUtils utils)
+      throws UiObjectNotFoundException, IllegalAccessException,
+        InvocationTargetException, NoSuchMethodException {
+    Rect rect = el.getVisibleBounds();
+    // Trying to select entire text.
+    TouchLongClick.correctLongClick(rect.left + 20, rect.centerY(), 2000);
+    UiObject selectAll = new UiObject(new UiSelector().descriptionContains("Select all"));
+    if (selectAll.waitForExists(2000)) {
+        selectAll.click();
+    }
+    // wait for the selection
+    SystemClock.sleep(500);
+    // delete it
+    final Method sendKey = utils.getControllerMethod("sendKey", int.class, int.class);
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
+
+    return el.getText().isEmpty();
+  }
+
+  private boolean sendDeleteKeys(AndroidElement el, final ReflectionUtils utils)
+      throws UiObjectNotFoundException, IllegalAccessException,
+        InvocationTargetException, NoSuchMethodException {
+    String tempTextHolder = "";
+    final Object bridgeObject = utils.getBridge();
+    final Method injectInputEvent = utils.getMethodInjectInputEvent();
+    // Preventing infinite while loop.
+    while (!el.getText().isEmpty() && !tempTextHolder.equalsIgnoreCase(el.getText())) {
+      tempTextHolder = el.getText();
+      // Trying send delete keys after clicking in text box.
+      el.click();
+      // Sending 25 delete keys asynchronously
+      final long eventTime = SystemClock.uptimeMillis();
+      KeyEvent deleteEvent = new KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN,
+              KeyEvent.KEYCODE_DEL, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+              InputDevice.SOURCE_KEYBOARD);
+      for (int count = 0; count < 25; count++) {
+          injectInputEvent.invoke(bridgeObject, deleteEvent, false);
+      }
+    }
+
+    return el.getText().isEmpty();
+  }
+
+  private boolean hasHintText(AndroidElement el, final ReflectionUtils utils)
+      throws UiObjectNotFoundException, IllegalAccessException,
+        InvocationTargetException, NoSuchMethodException {
+    // to test if the remaining text is hint text, try sending a single
+    // delete key and testing if there is any change.
+    // ignore the off-chance that the delete silently fails and we get a false
+    // positive.
+    String currText = el.getText();
+
+    final Method sendKey = utils.getControllerMethod("sendKey", int.class, int.class);
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
+
+    return currText.equals(el.getText());
+  }
+}

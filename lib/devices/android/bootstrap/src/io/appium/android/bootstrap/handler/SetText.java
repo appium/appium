@@ -46,7 +46,10 @@ public class SetText extends CommandHandler {
         String currText = el.getText();
         new Clear().execute(command);
         if (!el.getText().isEmpty()) {
-          Logger.debug("clearText not successful, continuing with setText anyway");
+          // clear could have failed, or we could have a hint in the field
+          // we'll assume it is the latter
+          Logger.debug("Text not cleared. Assuming remainder is hint text.");
+          currText = "";
         }
         if (!replace) {
           text = currText + text;

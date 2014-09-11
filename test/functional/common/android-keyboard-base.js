@@ -2,7 +2,6 @@
 
 var env = require('../../helpers/env')
   , setup = require("./setup-base")
-  , safeClear = require('../../helpers/safe-clear')
   , _ = require('underscore')
   , getAppPath = require('../../helpers/app').getAppPath;
 
@@ -24,9 +23,40 @@ module.exports = function () {
     driver
       .waitForElementByClassName('android.widget.EditText')
       .then(function (_el) { el = _el; })
-      .then(function () { return safeClear(el); })
+      .then(function () {
+        if (env.SELENDROID) {
+          return el.clear();
+        }
+      })
       .then(function () { return el.sendKeys(testText); })
       .then(function () { return el.text().should.become(testText); })
+      .nodeify(done);
+  };
+
+  var runEditAndClearTest = function (testText, done) {
+    var el;
+    driver
+      .waitForElementByClassName('android.widget.EditText')
+      .then(function (_el) { el = _el; })
+      .then(function () {
+        if (env.SELENDROID) {
+          return el.clear();
+        }
+      })
+      .then(function () { return el.sendKeys(testText).text().should.become(testText); })
+      .then(function () {
+        return el.clear().should.not.be.rejected;
+      })
+      .then(function () {
+        // Selendroid and uiautomator have different ways of dealing with
+        // hint text. In particular, Selendroid does not return it
+        // and uiautomator does.
+        var expectedText = "hint text";
+        if (env.SELENDROID) {
+          expectedText = "";
+        }
+        return el.text().should.become(expectedText);
+      })
       .nodeify(done);
   };
 
@@ -38,22 +68,12 @@ module.exports = function () {
       runTextEditTest(testText, done);
     });
 
-    // TODO: clear is not reliable
-    it('should be able to edit and clear a text field', function (done) {
-      var testText = "The answer is 42.", el;
-      driver
-        .waitForElementByClassName('android.widget.EditText')
-        .then(function (_el) { el = _el; })
-        .then(function () { return safeClear(el); })
-        .then(function () { return el.sendKeys(testText).text().should.become(testText); })
-        .then(function () { return safeClear(el); })
-        // TODO: there is a bug here we should not need safeClear
-        // workaround for now.
-        .then(function () { return el.text().should.become(""); })
-        .nodeify(done);
+    it('should be able to edit and manually clear a text field', function (done) {
+      var testText = "The answer is 42.";
+      runEditAndClearTest(testText, done);
     });
 
-    it('as should be able to send &-', function (done) {
+    it('should be able to send &-', function (done) {
       var testText = '&-';
       runTextEditTest(testText, done);
     });
@@ -80,19 +100,9 @@ module.exports = function () {
       runTextEditTest(testText, done);
     });
 
-    // TODO: clear is not reliable
-    it('should be able to edit and clear a text field', function (done) {
-      var testText = "The answer is 42.", el;
-      driver
-        .waitForElementByClassName('android.widget.EditText')
-        .then(function (_el) { el = _el; })
-        .then(function () { return safeClear(el); })
-        .then(function () { return el.sendKeys(testText).text().should.become(testText); })
-        .then(function () { return safeClear(el); })
-        // TODO: there is a bug here we should not need safeClear
-        // workaround for now.
-        .then(function () { return el.text().should.become(""); })
-        .nodeify(done);
+    it('should be able to edit and manually clear a text field', function (done) {
+      var testText = "The answer is 42.";
+      runEditAndClearTest(testText, done);
     });
 
     it('should be able to send &-', function (done) {

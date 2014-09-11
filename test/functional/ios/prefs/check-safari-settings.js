@@ -1,6 +1,7 @@
 "use strict";
 
 var _ = require('underscore')
+  , xcode = require('../../../lib/devices/ios/xcode.js')
   , getSimUdid = require('../../../helpers/sim-udid').getSimUdid;
 
 exports.ios6 = function (driver, setting, expected, cb) {
@@ -24,28 +25,32 @@ exports.ios6 = function (driver, setting, expected, cb) {
 var ios7up = function (version, udid, setting, expected, cb) {
   var settingsSets;
   var foundSettings;
-  try {
-    var settingsPlists = require('../../../../lib/devices/ios/settings.js');
-    settingsSets = settingsPlists.getSettings(version, udid, 'mobileSafari');
-  } catch (e) {
-    return cb(e);
-  }
-  _.size(settingsSets).should.be.above(0);
-  for (var i = 0; i < settingsSets.length; i++) {
+  xcode.getiOSSDKVersion(function (err, sdk) {
+    if (err) return cb(err);
     try {
-      foundSettings.push(settingsSets[i][setting]);
+      var settingsPlists = require('../../../../lib/devices/ios/settings.js');
+      settingsSets = settingsPlists.getSettings(version, sdk, udid,
+                                                'mobileSafari');
     } catch (e) {
       return cb(e);
     }
-  }
-  if (settingsSets.length > 0) {
-    console.log("More than one safari settings set found, a failure here " +
-                "might not be accurate");
-  }
-  for (i = 0; i < settingsSets.length; i++) {
-    foundSettings[i].should.eql(expected);
-  }
-  cb();
+    _.size(settingsSets).should.be.above(0);
+    for (var i = 0; i < settingsSets.length; i++) {
+      try {
+        foundSettings.push(settingsSets[i][setting]);
+      } catch (e) {
+        return cb(e);
+      }
+    }
+    if (settingsSets.length > 0) {
+      console.log("More than one safari settings set found, a failure here " +
+                  "might not be accurate");
+    }
+    for (i = 0; i < settingsSets.length; i++) {
+      foundSettings[i].should.eql(expected);
+    }
+    cb();
+  });
 };
 
 exports.ios7up = function (desired, setting, expected, cb) {

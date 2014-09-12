@@ -14,14 +14,14 @@ require("colors");
 
 module.exports = function (context, desired, opts, envOverrides) {
   context.timeout(env.MOCHA_INIT_TIMEOUT);
-  env = _.clone(env);
+  var newEnv = _.clone(env);
   if (envOverrides) {
-    _.extend(env, envOverrides);
+    _.extend(newEnv, envOverrides);
   }
 
   var session = initSession(desired, opts);
 
-  if (env.FAST_TESTS) {
+  if (newEnv.FAST_TESTS) {
     var allPassed = true;
     before(function (done) {
       session

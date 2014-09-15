@@ -11,6 +11,7 @@ var env = require('../../../helpers/env')
   , chai = require('chai')
   , should = chai.should()
   , spawn = require('child_process').spawn
+  , appPathBase = require('../app-path-base.js')
   , _ = require('underscore')
   , ChaiAsserter = require('../../../helpers/asserter.js').ChaiAsserter
   , getAppPath = require('../../../helpers/app').getAppPath
@@ -220,6 +221,8 @@ describe("apidemo - basic @skip-ci", function () {
         }).nodeify(done);
       });
     });
+
+    describe('app path with spaces', _.partial(appPathBase.spacesTest, desired));
   });
 
   describe('pre-existing uiautomator session', function () {

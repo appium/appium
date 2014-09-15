@@ -248,7 +248,8 @@ reset_ios() {
     run_cmd popd
     echo "* Copying deviceconsole to build"
     run_cmd rm -rf build/deviceconsole
-    run_cmd cp -r submodules/deviceconsole build/deviceconsole
+    run_cmd mkdir -p build/deviceconsole
+    run_cmd cp -r submodules/deviceconsole/deviceconsole build/deviceconsole/deviceconsole
 }
 
 get_apidemos() {

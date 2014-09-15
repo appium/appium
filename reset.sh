@@ -167,9 +167,6 @@ reset_ios() {
     set -e
     echo "* Setting iOS config to Appium's version"
     run_cmd "$grunt" setConfigVer:ios
-    echo "* Installing ios-sim-locale"
-    run_cmd rm -f build/ios-sim-locale
-    run_cmd cp assets/ios-sim-locale build/ios-sim-locale
     echo "* Cloning/updating udidetect"
     run_cmd git submodule update --init submodules/udidetect
     echo "* Building udidetect"

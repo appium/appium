@@ -14,6 +14,21 @@ Appium on OS X supports iOS and Android testing.
   from source, simply run `sudo grunt authorize` to do the same thing. If you
   are running [Appium.app](https://github.com/appium/appium-dot-app), you can
   authorize iOS through the GUI.
+* If you're on Xcode 6, you need to launch each simulator you intend to use
+  with appium in advance, and change the default to actually show the soft
+  keyboard if you want sendKeys to work. You can do this by clicking on any
+  textfield and hitting command-K until you notice the soft keyboard show up.
+* If you're on Xcode 6, you have a feature in Xcode called Devices
+  (command-shift-2). You need to make sure that whichever deviceName you choose
+  to use with Appium in your capabilities, there is only one of those per sdk
+  version. In other words, if you send in a deviceName cap of "iPhone 5s" and
+  a platformVersion cap of "8.0", you need to make sure that there is exactly
+  one device with the name "iPhone 5s" and the 8.0 sdk in your devices list.
+  Otherwise, Appium won't know which one to use.
+* In iOS8, devices each have their own setting which enables or disables
+  UIAutomation. It lives in a "Developer" view in the Settings app. You need to
+  verify that UIAutomaion is enabled in this view before the simulator or
+  device can be automated.
 
 ### Testing against multiple iOS SDKs
 

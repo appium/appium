@@ -49,5 +49,4 @@ describe('testapp - clear', function () {
 
       .nodeify(done);
   });
-
 });

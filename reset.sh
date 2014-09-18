@@ -189,13 +189,11 @@ reset_ios() {
         if $ios7_active ; then
             if $hardcore ; then
                 echo "* Clearing out old UICatalog download"
-                run_cmd rm -rf ./sample-code/apps/UICatalog*
+                run_cmd rm -rf ./sample-code/apps/UICatalog/
             fi
             if [ ! -d "./sample-code/apps/UICatalog" ]; then
-                echo "* Downloading UICatalog app source"
-                run_cmd curl -L https://developer.apple.com/library/ios/samplecode/UICatalog/UICatalog.zip -o ./sample-code/apps/UICatalog.zip
-                run_cmd pushd ./sample-code/apps
                 echo "* Unzipping UICatalog app source"
+                run_cmd pushd ./sample-code/apps
                 run_cmd unzip UICatalog.zip
                 run_cmd popd
             fi

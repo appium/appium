@@ -24,7 +24,7 @@ describe('should not launch app without internet permission', function () {
       .setUp(name).catch(function (err) {
         err.data.should.include("INTERNET");
         throw err;
-      }).should.be.rejectedWith(/The environment you requested was unavailable./)
+      }).should.eventually.be.rejectedWith(/The environment you requested was unavailable./)
       .nodeify(done);
   });
 });

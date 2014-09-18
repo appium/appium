@@ -26,7 +26,7 @@ module.exports.spacesTest = function (desired) {
     });
   });
 
-  after(function () { return session.tearDown(this.currentTest.state === 'passed'); });
+  after(function (done) { session.tearDown(this.currentTest.state === 'passed').nodeify(done); });
 
   it('should work with spaces in app path', function (done) {
     session = initSession(_.defaults({'app': newAppPath}, desired));

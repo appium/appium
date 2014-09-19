@@ -10,3 +10,4 @@ Here's a list of things that aren't tested in this suite:
 * sudo grunt authorize
 * non-default --tmp
 * --full-reset
+* --isolate-sim-device

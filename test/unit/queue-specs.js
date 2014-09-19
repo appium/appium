@@ -89,7 +89,7 @@ describe('Appium with clobber', function () {
     });
 
     it('should retain sessionOverride arg across sessions', function (done) {
-      var dc = {app: "/path/to/fake.app"};
+      var dc = {app: "/path/to/fake.app", deviceName: "iPhone", platformName: 'iOS'};
       appium.start(dc, function () {
         appium.sessionOverride.should.eql(true);
         appium.cleanupSession(null, function () {

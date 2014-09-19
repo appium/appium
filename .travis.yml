@@ -30,10 +30,10 @@ env:
   - LAUNCH_TIMEOUT='{"global":90000,"afterSimLaunch":30000}'
   matrix:
   - CI_CONFIG=unit
-  - CI_CONFIG=android
-  - CI_CONFIG=ios
-  - CI_CONFIG=gappium
-  - CI_CONFIG=selendroid
+  # - CI_CONFIG=android
+  # - CI_CONFIG=ios
+  # - CI_CONFIG=gappium
+  # - CI_CONFIG=selendroid
 before_script:
 - gem install --no-rdoc --no-ri appium_doc_lint
 - "./ci/installers/install-node.sh"

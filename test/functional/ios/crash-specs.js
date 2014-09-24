@@ -12,18 +12,6 @@ describe('crash recovery', function () {
 
   setup(this, desired, {}, {FAST_TESTS: false}).then(function (d) { driver = d; });
 
-  it('should be able to recover gracefully from an app crash during shutdown', function (done) {
-    driver
-      .elementByAccessibilityId("Crash")
-      .click()
-      .then(function () {
-        return driver.sleep(500);
-      })
-      .source() // will error because we shut down while responding to this
-        .should.eventually.be.rejectedWith('13')
-    .nodeify(done);
-  });
-
   it('should be able to recover gracefully from an app crash after shutdown', function (done) {
     driver
       .elementByAccessibilityId("Crash")

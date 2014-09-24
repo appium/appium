@@ -31,9 +31,7 @@ Settings are implemented via the following API endpoints:
 >Returns a JSON hash of all the currently specified settings.
 ```
 {
-  settings: {
-   ignoreUnimportantViews : true  
-  }  
+  ignoreUnimportantViews : true  
 }
 ```
 

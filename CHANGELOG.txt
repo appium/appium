@@ -1,3 +1,44 @@
+CHANGES IN VERSION 1.2.3 (from 1.2.2)
+======================================
+
+#### General
+- add a settings api (used currently only for Android xpath compression)
+- add configurable loglevels for different transports
+- allow appium to be run under sudo if the sudo user owns the appium files
+
+#### iOS
+- fix crash while recovering from instruments failure
+- add ability to launch app by 'bundleId' cap alone (no 'app' cap)
+- misc groundwork for iOS8
+- fix bug that prevented scrolling collectionViews
+- more crash recovery bugfixes
+- use 'click' atom in webviews, 'tap' sent two clicks
+- fix bug where we'd try to kill a null logging proc and crash
+- enable performance logs for webviews
+- allow automation of native frame in safari (actually works on 7.1!)
+- fix uiautomation predicate search bug
+- fix 'spawn ENOENT' bug caused by a missing deviceconsole binary
+- fix autoAcceptAlert bug
+- fix certain findElement crashes
+- fix hideKeyboard bugs
+
+#### Android
+- fix issue with unzipping apk
+- add ability to launch arbitrary apps/activities mid-session
+- add lock() method to lock screen
+- add unlock() method to unlock screen
+- fix bug where app would be classified incorrectly as not installed
+- add settings api member for setting layout hierarchy compression
+- fix crash when touch actions attempted on webviews
+- undo setText changes and simply handle hint text fields better
+
+#### Selendroid
+- fix --selendroid-quick reset.sh option
+- fix unicode keyboard issues
+- fix bug in getting window_handles
+- fix bug that would prevent launching an app with spaces in its apk path
+
+
 CHANGES IN VERSION 1.2.2 (from 1.2.1)
 ======================================
 

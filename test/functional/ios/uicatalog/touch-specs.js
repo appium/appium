@@ -5,7 +5,7 @@ var setup = require("../../common/setup-base")
   , wd = require("wd")
   , TouchAction = wd.TouchAction;
 
-describe('uicatalog - touch', function () {
+describe('uicatalog - touch @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

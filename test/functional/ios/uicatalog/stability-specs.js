@@ -3,7 +3,7 @@
 var setup = require("../../common/setup-base")
   , desired = require("./desired");
 
-describe("uicatalog - stability @skip-ci", function () {
+describe("uicatalog - stability @skip-ci @skip-ios6", function () {
 
   var runs = 20;
 

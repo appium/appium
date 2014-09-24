@@ -297,7 +297,7 @@ describe('uicatalog - find element @skip-ios7', function () {
     });
     it('should process UIAutomation queries if user leaves out the first period', function (done) {
       driver
-        .elements(byUIA, 'elements()').then(filterDisplayed)
+        .elements(byUIA, '$.mainWindow().elements()').then(filterDisplayed)
           .should.eventually.have.length(2)
         .nodeify(done);
     });

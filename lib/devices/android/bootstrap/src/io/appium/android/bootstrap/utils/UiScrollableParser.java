@@ -279,7 +279,7 @@ public class UiScrollableParser {
       }
 
       else {
-        throw new UiSelectorSyntaxException("Must only call methods on UiScrollable which return UiScrollable or UiObject objects");
+        throw new UiSelectorSyntaxException("Must only call the 'scrollIntoView' method OR methods on UiScrollable which return UiScrollable or UiObject objects");
       }
     }
   }

@@ -56,6 +56,11 @@ $this->lock(3);
 driver.LockDevice(3);
 ```
 
+```objectivec
+// objective c
+[driver lockDeviceScreen:3];
+```
+
 ### Background app
 
 Send the currently active app to the background.
@@ -88,6 +93,11 @@ $this->backgroundApp(5);
 ```csharp
 // c#
 driver.BackgroundApp(5);
+```
+
+```objectivec
+// objective c
+[driver runAppInBackground:3];
 ```
 
 ### Hide Keyboard
@@ -125,6 +135,11 @@ $this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
 driver.HideKeyboard("Done");
 ```
 
+```objectivec
+// objective c
+[driver hideKeyboard];
+```
+
 ### Start Activity
 
 Open an activity in the current app or start a new app and open an activity *Android only*
@@ -160,6 +175,10 @@ $this->startActivity(array("appPackage" => "com.example.android.apis",
                             "appActivity" => ".Foo"));
 ```
 
+```objectivec
+// objective c
+[driver startActivity:@"com.example.android.apis" package:@".Foo"];
+```
 
 ### Open Notifications
 
@@ -193,6 +212,11 @@ driver.OpenNotifications();
 ```php
 // php
 $this->openNotifications();
+```
+
+```objectivec
+// objective c
+[driver openNotifications];
 ```
 
 ### Is installed
@@ -230,6 +254,11 @@ $this->isAppInstalled('com.example.android.apis');
 driver.IsAppInstalled("com.example.android.apis-");
 ```
 
+```objectivec
+// objective c
+[driver isAppInstalled:@"com.example.android.apis-"];
+```
+
 ### Install App
 
 Install an app to the device.
@@ -262,6 +291,11 @@ $this->installApp('path/to/my.apk');
 ```csharp
 // c#
 driver.InstallApp("path/to/my.apk");
+```
+
+```objectivec
+// objective c
+[driver installAppAtPath:@"path/to/my.apk"];
 ```
 
 ### Remove App
@@ -298,6 +332,11 @@ $this->removeApp('com.example.android.apis');
 driver.RemoveApp("com.example.android.apis");
 ```
 
+```objectivec
+// objective c
+[driver removeApp:@"com.example.android.apis"];
+```
+
 ### Shake
 
 Simulate the device shaking.
@@ -330,6 +369,11 @@ $this->shake();
 ```csharp
 // c#
 driver.ShakeDevice();
+```
+
+```objectivec
+// objective c
+[driver shakeDevice];
 ```
 
 ### Close app
@@ -366,6 +410,11 @@ $this->closeApp();
 driver.CloseApp();
 ```
 
+```objectivec
+// objective c
+[driver closeApp];
+```
+
 ### Launch
 
 Launch the app
@@ -398,6 +447,11 @@ $this->launchApp();
 ```csharp
 // c#
 driver.LaunchApp();
+```
+
+```objectivec
+// objective c
+[driver launchApp];
 ```
 
 ### Reset
@@ -434,6 +488,11 @@ $this->reset();
 driver.ResetApp();
 ```
 
+```objectivec
+// objective c
+[driver resetApp];
+```
+
 ### Available Contexts
 
 List all available contexts
@@ -466,6 +525,11 @@ $this->contexts();
 ```csharp
 // c#
 driver.GetContexts()
+```
+
+```objectivec
+// objective c
+NSArray *contexts = driver.allContexts;
 ```
 
 ### Current context
@@ -503,6 +567,11 @@ $this->context();
 driver.GetContext()
 ```
 
+```objectivec
+// objective c
+NSString *context = driver.context;
+```
+
 ### Switch to default context
 
 Change the context to the default.
@@ -535,6 +604,11 @@ $this->context(NULL);
 ```csharp
 // c#
 driver.SetContext();
+```
+
+```objectivec
+// objective c
+[driver setContext:nil];
 ```
 
 ### App Strings
@@ -572,6 +646,12 @@ $this->appStrings('ru');
 driver.GetAppStrings();
 ```
 
+```objectivec
+// objective c
+[driver appStrings];
+[driver appStringsForLanguage:"@ru"];
+```
+
 ### Key Event
 
 Send a key event to the device.
@@ -606,6 +686,12 @@ $this->keyEvent('176');
 driver.KeyEvent("176");
 ```
 
+```objectivec
+// objective c
+NSError *err;
+[driver triggerKeyEvent:176 metastate:0 error:&err];
+```
+
 ### Current Activity
 
 Android only. Get the current activity.
@@ -638,6 +724,12 @@ $this->currentActivity();
 ```csharp
 // c#
 driver.GetCurrentActivity();
+```
+
+```objectivec
+// objective c
+NSError *err;
+[driver currentActivity];
 ```
 
 ### TouchAction / MultiTouchAction

@@ -2,6 +2,7 @@
 
 var _ = require('underscore'),
     initSession = require('../../../helpers/session').initSession,
+    should = require('chai').should(),
     desired = require('./desired');
 
 require('../../../helpers/setup-chai.js');
@@ -36,5 +37,23 @@ describe('testapp - device', function () {
       });
     });
 
+  });
+
+  describe("real device", function () {
+    var newDesired = _.extend(_.clone(desired), {
+      deviceName: "BadSimulator",
+      udid: "12341234123412341234"
+    });
+    var session = initSession(newDesired, {'no-retry': true});
+    it("shouldn't try to validate against sims", function (done) {
+      session.setUp()
+        .nodeify(function (err) {
+          should.exist(err);
+          var data = JSON.parse(err.data);
+          data.value.origValue.should.not.contain("BadSimulator");
+          err.message.should.contain("requested was unavailable");
+          done();
+        });
+    });
   });
 });

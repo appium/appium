@@ -1,0 +1,13 @@
+export SAUCE_REST_ROOT=https://saucelabs.com/rest/v1
+export APPIUM_HOST=ondemand.saucelabs.com
+export APPIUM_PORT=80
+
+export IOS_CONCURRENCY=10
+export ANDROID_CONCURRENCY=10
+export SELENDROID_CONCURRENCY=5
+export GAPPIUM_CONCURRENCY=5
+export HTTP_RETRIES=2
+export HTTP_RETRY_DELAY=20000
+export DEBUG_CONNECTION=1
+export MOCHA_INIT_TIMEOUT=300000
+export LAUNCH_TIMEOUT='{"global":60000,"afterSimLaunch":30000}'

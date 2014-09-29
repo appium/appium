@@ -41,7 +41,7 @@ before_script:
 - npm install -g jshint grunt-cli mocha
 - npm install
 - "./ci/installers/install-sauce-connect.sh"
-- "./ci/before_script_extra.sh"
+- "./ci/before-script-extra.sh"
 - "ulimit -n 8000"
 # disabling sauce-connect until travis ichef issue is sorted
 # - "./ci/start-sauce-connect.sh"

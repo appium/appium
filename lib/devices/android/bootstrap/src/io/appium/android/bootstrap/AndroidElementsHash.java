@@ -7,12 +7,15 @@ import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.regex.Pattern;
 
 /**
  * A cache of elements that the app has seen.
- * 
+ *
  */
 public class AndroidElementsHash {
+
+  private static final Pattern endsWithInstancePattern = Pattern.compile(".*INSTANCE=\\d+]$");
 
   public static AndroidElementsHash getInstance() {
     if (AndroidElementsHash.instance == null) {
@@ -22,9 +25,9 @@ public class AndroidElementsHash {
   }
 
   private final Hashtable<String, AndroidElement> elements;
-  private Integer                                 counter;
+  private       Integer                           counter;
 
-  private static AndroidElementsHash              instance;
+  private static AndroidElementsHash instance;
 
   /**
    * Constructor
@@ -99,10 +102,31 @@ public class AndroidElementsHash {
    * @throws UiObjectNotFoundException
    */
   public ArrayList<AndroidElement> getElements(final UiSelector sel,
-      final String key) throws UiObjectNotFoundException {
+                                               final String key) throws UiObjectNotFoundException {
     boolean keepSearching = true;
-    final boolean useIndex = sel.toString().contains("CLASS_REGEX=");
+    final String selectorString = sel.toString();
+    final boolean useIndex = selectorString.contains("CLASS_REGEX=");
+    final boolean endsWithInstance = endsWithInstancePattern.matcher(selectorString).matches();
+    Logger.debug("getElements selector:" + selectorString);
     final ArrayList<AndroidElement> elements = new ArrayList<AndroidElement>();
+
+    // If sel is UiSelector[CLASS=android.widget.Button, INSTANCE=0]
+    // then invoking instance with a non-0 argument will corrupt the selector.
+    //
+    // sel.instance(1) will transform the selector into:
+    // UiSelector[CLASS=android.widget.Button, INSTANCE=1]
+    //
+    // The selector now points to an entirely different element.
+    if (endsWithInstance) {
+      Logger.debug("Selector ends with instance.");
+      // There's exactly one element when using instance.
+      UiObject instanceObj = new UiObject(sel);
+      if (instanceObj != null && instanceObj.exists()) {
+        elements.add(addElement(instanceObj));
+      }
+      return elements;
+    }
+
     UiObject lastFoundObj;
     final AndroidElement baseEl = this.getElement(key);
 
@@ -111,12 +135,15 @@ public class AndroidElementsHash {
     while (keepSearching) {
       if (baseEl == null) {
         Logger.debug("Element[" + key + "] is null: (" + counter + ")");
+
         if (useIndex) {
           Logger.debug("  using index...");
           tmp = sel.index(counter);
         } else {
           tmp = sel.instance(counter);
         }
+
+        Logger.debug("getElements tmp selector:" + tmp.toString());
         lastFoundObj = new UiObject(tmp);
       } else {
         Logger.debug("Element[" + key + "] is " + baseEl.getId() + ", counter: "

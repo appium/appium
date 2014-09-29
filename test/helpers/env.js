@@ -13,10 +13,9 @@ env.APPIUM_HOST = process.env.APPIUM_HOST || '127.0.0.1';
 env.APPIUM_PORT = parseInt(process.env.APPIUM_PORT || 4723, 10);
 env.VERSION = process.env.VERSION;
 
-// travis
-env.TRAVIS_JOB_NUMBER = process.env.TRAVIS_JOB_NUMBER;
-env.TRAVIS_BUILD_NUMBER = process.env.TRAVIS_BUILD_NUMBER;
-env.TRAVIS_BUILD_DIR = process.env.TRAVIS_BUILD_DIR;
+// Jenkins job numbers
+env.APPIUM_BUILD_NUMBER = process.env.APPIUM_BUILD_NUMBER;
+env.APPIUM_JOB_NUMBER = process.env.APPIUM_JOB_NUMBER;
 
 // http
 env.HTTP_CONFIG = {};

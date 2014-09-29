@@ -4,19 +4,21 @@ Appium has libraries for:
 
 Language | Source
       :--|--:
-[Ruby][rubygems]  | [GitHub](https://github.com/appium/ruby_lib)
-[Python][pypi]    | [GitHub](https://github.com/appium/python-client)
-[Java][maven]     | [GitHub](https://github.com/appium/java-client)
-[JavaScript][npm] | [GitHub](https://github.com/admc/wd)
-[PHP][php]        | [GitHub](https://github.com/appium/php-client)
-[C#][nuget]       | [GitHub](https://github.com/appium/appium-dotnet-driver)
+[Ruby][rubygems]              | [GitHub](https://github.com/appium/ruby_lib)
+[Python][pypi]                | [GitHub](https://github.com/appium/python-client)
+[Java][maven]                 | [GitHub](https://github.com/appium/java-client)
+[JavaScript][npm]             | [GitHub](https://github.com/admc/wd)
+[PHP][php]                    | [GitHub](https://github.com/appium/php-client)
+[C#][nuget]                   | [GitHub](https://github.com/appium/appium-dotnet-driver)
+[Objective-C][cocoapods]      | [GitHub](https://github.com/appium/selenium-objective-c)
 
-[rubygems]: http://rubygems.org/gems/appium_lib
-[pypi]:     https://pypi.python.org/pypi/Appium-Python-Client
-[maven]:    https://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.appium%20a%3Ajava-client
-[npm]:      https://www.npmjs.org/package/wd
-[php]:      https://github.com/appium/php-client
-[nuget]:    http://www.nuget.org/packages/Appium.WebDriver/
+[rubygems]:       http://rubygems.org/gems/appium_lib
+[pypi]:           https://pypi.python.org/pypi/Appium-Python-Client
+[maven]:          https://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.appium%20a%3Ajava-client
+[npm]:            https://www.npmjs.org/package/wd
+[php]:            https://github.com/appium/php-client
+[nuget]:          http://www.nuget.org/packages/Appium.WebDriver/
+[cocoapods]:      https://github.com/appium/selenium-objective-c
 
 Note that some methods such as `endTestCoverage()` are
 not generally useful. Proper coverage support will be added once [this issue](https://github.com/appium/appium/issues/2448)

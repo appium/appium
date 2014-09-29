@@ -85,9 +85,9 @@ module.exports.initSession = function (desired, opts) {
       _.defaults(caps, env.CAPS);
 
       if (env.SAUCE) {
-        if (env.TRAVIS_JOB_NUMBER) name = '[' + env.TRAVIS_JOB_NUMBER + '] ' + name;
+        if (env.APPIUM_JOB_NUMBER) name = '[' + env.APPIUM_JOB_NUMBER + '] ' + name;
         if (name) caps.name = name.replace(/@[^\s]*/,'');
-        if (env.TRAVIS_BUILD_NUMBER) caps.build = env.TRAVIS_BUILD_NUMBER;
+        if (env.APPIUM_BUILD_NUMBER) caps.build = env.APPIUM_BUILD_NUMBER;
         if (opts['expect-error']){
           caps.tags.push('expect-error');
         }

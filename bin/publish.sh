@@ -53,4 +53,4 @@ npm cache clear appium
 npm publish
 version=$(cat package.json | underscore extract version | sed 's/\"//g')
 git tag -a "v$version" -m "tag appium@$version for npm publish"
-git push --tags upstream master
+git push --tags upstream $branch

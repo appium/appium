@@ -1,3 +1,19 @@
+CHANGES IN VERSION 1.2.4 (from 1.2.3)
+======================================
+
+#### General
+- add objective-c examples
+
+#### iOS
+- update appium-instruments with logging fixes
+- update appium-instruments with getDevices stalling fix
+
+#### Android
+- give better error for UiScrollable parse exception
+- fix UiSelector instance in finds
+- use last coordinates for touch release
+
+
 CHANGES IN VERSION 1.2.3 (from 1.2.2)
 ======================================
 

@@ -47,6 +47,13 @@ describe('testapp - clear', function () {
       .elementByClassName('UIASwitch').isDisplayed()
         .should.become(true)
 
+      .elementByClassName('UIATextField').sendKeys("1")
+      .elementByClassName('UIASwitch').isDisplayed()
+        .should.become(false)
+      .hideKeyboard({strategy: 'swipeDown'} )
+        .elementByClassName('UIASwitch').isDisplayed()
+      .should.become(true)
+
       .nodeify(done);
   });
 

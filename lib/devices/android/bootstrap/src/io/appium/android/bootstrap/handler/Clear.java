@@ -53,10 +53,24 @@ public class Clear extends CommandHandler {
 
         final ReflectionUtils utils = new ReflectionUtils();
 
+	// see if there is hint text
+        if (hasHintText(el, utils)) {
+          Logger.debug("Text remains after clearing, "
+              + "but it appears to be hint text.");
+          return getSuccessResult(true);
+        }
+
         // next try to select everything and delete
         Logger.debug("Clearing text not successful. Attempting to clear " +
                      "by selecting all and deleting.");
         if (selectAndDelete(el, utils)) {
+          return getSuccessResult(true);
+        }
+
+	// see if there is hint text
+        if (hasHintText(el, utils)) {
+          Logger.debug("Text remains after clearing, "
+              + "but it appears to be hint text.");
           return getSuccessResult(true);
         }
 
@@ -141,6 +155,9 @@ public class Clear extends CommandHandler {
     String currText = el.getText();
 
     final Method sendKey = utils.getControllerMethod("sendKey", int.class, int.class);
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DPAD_RIGHT, 0);
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DPAD_LEFT, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
 
     return currText.equals(el.getText());

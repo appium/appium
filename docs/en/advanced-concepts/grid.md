@@ -55,3 +55,5 @@ Valid platforms are listed [here](http://selenium.googlecode.com/git/docs/api/ja
 
 If `url`, `host`, and `port` are not given, the config will be auto updated
 to point to localhost:whatever-port-Appium-started-on.
+
+If your Appium server is running on a different machine to your Selenium Grid server, make sure you use an external name/IP address in your `host` & `url` docs; `localhost` and `127.0.0.1` will prevent Selenium Grid from connecting correctly.

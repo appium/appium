@@ -36,11 +36,11 @@ if (env.IOS6) {
       });
     });
   });
-} else if (env.IOS7) {
-  describe('safari ios7 prefs @skip-ci', function () {
+} else if (env.IOS7 || env.IOS8) {
+  describe('safari ios7/8 prefs @skip-ci', function () {
     // TODO modify the test to enable ci, right know it is checking a local file,
     // not gonna work with sauce
-    var checkSafariSetting = require('./check-safari-settings').ios7;
+    var checkSafariSetting = require('./check-safari-settings').ios7up;
 
     describe('using safariIgnoreFraudWarning', function () {
       var driver;
@@ -48,7 +48,8 @@ if (env.IOS6) {
         .then(function (d) { driver = d; });
 
       it('should respond to cap when true', function (done) {
-        checkSafariSetting('WarnAboutFraudulentWebsites', false, done);
+        checkSafariSetting(driver._origCaps, 'WarnAboutFraudulentWebsites',
+                           false, done);
       });
     });
 
@@ -58,7 +59,8 @@ if (env.IOS6) {
         .then(function (d) { driver = d; });
 
       it('should respond to cap when false', function (done) {
-        checkSafariSetting('WarnAboutFraudulentWebsites', true, done);
+        checkSafariSetting(driver._origCaps, 'WarnAboutFraudulentWebsites',
+                           true, done);
       });
     });
   });

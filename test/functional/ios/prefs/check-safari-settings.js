@@ -1,6 +1,11 @@
 "use strict";
 
-var _ = require('underscore');
+var _ = require('underscore')
+  , env = require('../../../helpers/env.js')
+  , xcode = require('../../../../lib/devices/ios/xcode.js')
+  , Simulator = require('../../../../lib/devices/ios/simulator.js')
+  , settingsPlists = require('../../../../lib/devices/ios/settings.js')
+  , getSimUdid = require('../../../helpers/sim-udid').getSimUdid;
 
 exports.ios6 = function (driver, setting, expected, cb) {
   driver
@@ -20,29 +25,49 @@ exports.ios6 = function (driver, setting, expected, cb) {
     }).nodeify(cb);
 };
 
-exports.ios7 = function (setting, expected, cb) {
+var ios7up = function (version, udid, setting, expected, cb) {
   var settingsSets;
   var foundSettings;
-  try {
-    var settingsPlists = require('../../../../lib/devices/ios/settings.js');
-    settingsSets = settingsPlists.getSettings('7', 'mobileSafari');
-  } catch (e) {
-    return cb(e);
-  }
-  _.size(settingsSets).should.be.above(0);
-  for (var i = 0; i < settingsSets.length; i++) {
+  xcode.getiOSSDKVersion(function (err, sdk) {
+    var sim = new Simulator({
+      platformVer: env.CAPS.platformVersion,
+      sdkVer: sdk,
+      udid: udid
+    });
+    if (err) return cb(err);
     try {
-      foundSettings.push(settingsSets[i][setting]);
+      settingsSets = settingsPlists.getSettings(sim, 'mobileSafari');
     } catch (e) {
       return cb(e);
     }
-  }
-  if (settingsSets.length > 0) {
-    console.log("More than one safari settings set found, a failure here " +
-                "might not be accurate");
-  }
-  for (i = 0; i < settingsSets.length; i++) {
-    foundSettings[i].should.eql(expected);
-  }
-  cb();
+    _.size(settingsSets).should.be.above(0);
+    for (var i = 0; i < settingsSets.length; i++) {
+      try {
+        foundSettings.push(settingsSets[i][setting]);
+      } catch (e) {
+        return cb(e);
+      }
+    }
+    if (settingsSets.length > 0) {
+      console.log("More than one safari settings set found, a failure here " +
+                  "might not be accurate");
+    }
+    for (i = 0; i < settingsSets.length; i++) {
+      foundSettings[i].should.eql(expected);
+    }
+    cb();
+  });
+};
+
+exports.ios7up = function (desired, setting, expected, cb) {
+  xcode.getiOSSDKVersion(function (err, sdk) {
+    if (parseFloat(sdk) >= 8) {
+      getSimUdid('6', sdk, desired, function (err, udid) {
+        if (err) return cb(err);
+        ios7up(desired.platformVersion, udid, setting, expected, cb);
+      });
+    } else {
+      ios7up(desired.platformVersion, null, setting, expected, cb);
+    }
+  });
 };

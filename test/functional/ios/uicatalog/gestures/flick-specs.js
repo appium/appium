@@ -6,7 +6,7 @@ var env = require('../../../../helpers/env')
 
 var SLOW_DOWN_MS = 1000;
 
-describe('uicatalog - gestures - flick @skip-ios7 @skip-ios6', function () {
+describe('uicatalog - gestures - flick @skip-ios8 @skip-ios7 @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -22,11 +22,11 @@ describe('uicatalog - gestures - flick @skip-ios7 @skip-ios6', function () {
 
   it('should work via webdriver method', function (done) {
     driver
-      .elementByClassName('UIATableCell').getLocation()
+      .elementByClassName('UIATableCell').getLocationInView()
       .then(function (location1) {
         return driver
           .flick(0, -100, false)
-          .elementByClassName('UIATableCell').getLocation()
+          .elementByClassName('UIATableCell').getLocationInView()
           .then(function (location2) {
             location2.x.should.equal(location1.x);
             location2.y.should.not.equal(location1.y);
@@ -35,11 +35,11 @@ describe('uicatalog - gestures - flick @skip-ios7 @skip-ios6', function () {
   });
   it('should work via mobile only method', function (done) {
     driver
-      .elementByClassName('UIATableCell').getLocation()
+      .elementByClassName('UIATableCell').getLocationInView()
       .then(function (location1) {
         return driver
           .execute("mobile: flick", [{endX: 0, endY: 0}])
-          .elementByClassName('UIATableCell').getLocation()
+          .elementByClassName('UIATableCell').getLocationInView()
           .then(function (location2) {
             location2.x.should.equal(location1.x);
             location2.y.should.not.equal(location1.y);
@@ -56,11 +56,11 @@ describe('uicatalog - gestures - flick @skip-ios7 @skip-ios6', function () {
   it('should work via mobile only method with percentage', function (done) {
     var opts = {startX: 0.75, startY: 0.75, endX: 0.25, endY: 0.25};
     driver
-      .elementByClassName('UIATableCell').getLocation()
+      .elementByClassName('UIATableCell').getLocationInView()
       .then(function (location1) {
         return driver
           .execute("mobile: flick", [opts])
-          .elementByClassName('UIATableCell').getLocation()
+          .elementByClassName('UIATableCell').getLocationInView()
           .then(function (location2) {
             location2.x.should.equal(location1.x);
             location2.y.should.not.equal(location1.y);

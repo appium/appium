@@ -11,9 +11,9 @@ var env = require('../../../helpers/env')
 
 var SLOW_DOWN_MS = 1000;
 
-describe('uicatalog - gestures @skip-ios7', function () {
+describe('uicatalog - gestures @skip-ios7up', function () {
 
-  describe('flick @skip-ios7', function () {
+  describe('flick @skip-ios7up', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
@@ -75,7 +75,7 @@ describe('uicatalog - gestures @skip-ios7', function () {
         }).nodeify(done);
     });
   });
-  describe('swipe gesture @skip-ios7', function () {
+  describe('swipe gesture @skip-ios7up', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
@@ -163,7 +163,7 @@ describe('uicatalog - gestures @skip-ios7', function () {
     });
   });
 
-  describe("flick element @skip-ios7", function () {
+  describe("flick element @skip-ios7up", function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
@@ -232,7 +232,7 @@ describe('uicatalog - gestures @skip-ios7', function () {
         }).nodeify(done);
     });
   });
-  describe("swipe element @skip-ios7", function () {
+  describe("swipe element @skip-ios7up", function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
@@ -314,7 +314,7 @@ describe('uicatalog - gestures @skip-ios7', function () {
         })
         .nodeify(done);
     });
-    it('should work in relative units @skip-ios7', function (done) {
+    it('should work in relative units @skip-ios7up', function (done) {
       var tapOpts = {
         tapCount: 1 // how many taps
       , duration: 2.3 // how long
@@ -330,7 +330,7 @@ describe('uicatalog - gestures @skip-ios7', function () {
         })
         .nodeify(done);
     });
-    it('should work with default options @skip-ios7', function (done) {
+    it('should work with default options @skip-ios7up', function (done) {
       driver
         .execute("mobile: tap")
         .elementByClassName('UIATextView').text()
@@ -387,7 +387,7 @@ describe('uicatalog - gestures @skip-ios7', function () {
     });
   });
 
-  describe('scroll to element @skip-ios7', function () {
+  describe('scroll to element @skip-ios7up', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 

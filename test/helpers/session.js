@@ -3,7 +3,6 @@ var env = require('./env')
   , wd = require("wd")
   , Q = require("q")
   , _ = require("underscore")
-  , iosReset = require('./reset').iosReset
   , androidUninstall = require('./reset').androidUninstall;
 
 require('colors');
@@ -53,6 +52,10 @@ module.exports.initSession = function (desired, opts) {
         return buttonEl.click();
       }
     });
+  });
+
+  wd.addPromiseChainMethod('printSource', function () {
+    return this.source().then(function (s) { console.log(s); });
   });
 
   return {
@@ -121,18 +124,16 @@ module.exports.initSession = function (desired, opts) {
       if (env.MAX_RETRY) attempts = Math.min(env.MAX_RETRY, attempts);
       return browser.chain()
         .then(function () {
-          if (!env.SAUCE && env.IOS && env.RESET_IOS && !opts['no-reset']) {
-            // TODO this should not be necessary
-            return iosReset();
-          }
-        }).then(function () {
           // if android uninstall package first
           if (!env.SAUCE && desired.platformName === 'Android' && desired.appPackage) {
             // TODO this should not be necessary
             return androidUninstall(desired.appPackage);
           }
         }).then(function () { return init(attempts); })
-        .then(function () { initialized = true; })
+        .then(function () {
+          initialized = true;
+          browser._origCaps = caps;
+        })
         .setImplicitWaitTimeout(env.IMPLICIT_WAIT_TIMEOUT);
     },
     tearDown: function (passed) {

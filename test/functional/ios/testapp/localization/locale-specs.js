@@ -20,7 +20,9 @@ describe('localization - locale', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });
 
-    it('should be english', function (done) {
+    it('should be english @skip-ios8', function (done) {
+      // ios8 doesn't do default locale; it will be whatever was last in
+      // the sim
       driver.execute('$.mainApp().preferencesValueForKey("AppleLocale");')
         .should.become('en_US')
         .nodeify(done);
@@ -29,7 +31,7 @@ describe('localization - locale', function () {
 
   describe('changing locale', function () {
     var driver;
-    setup(this, _.defaults({locale: 'fr'} , desired)).then(function (d) { driver = d; });
+    setup(this, _.defaults({locale: 'fr'}, desired)).then(function (d) { driver = d; });
 
     it('should be fr', function (done) {
       driver.execute('$.mainApp().preferencesValueForKey("AppleLocale");')
@@ -40,7 +42,7 @@ describe('localization - locale', function () {
 
   describe('changing back', function () {
     var driver;
-    setup(this, _.defaults({locale: 'en_US'} , desired)).then(function (d) { driver = d; });
+    setup(this, _.defaults({locale: 'en_US'}, desired)).then(function (d) { driver = d; });
 
     it('should be en', function (done) {
       driver.execute('$.mainApp().preferencesValueForKey("AppleLocale");')

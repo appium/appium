@@ -10,13 +10,13 @@ var desired = {
   app: 'settings'
 };
 
-describe("prefs @skip-ios7 @skip-ios6", function () {
-  // TODO: check why it fails on ios7
+describe("prefs @skip-ios6 @skip-ios7 @skip-ios8", function () {
+  // on ios8 sim it crashes when tapping on "location services"
   // TODO: cannot install settings app on ios6
 
   var checkLocServ = function (driver, expected, cb) {
     driver
-      .elementsByClassName('UIATableCell').at(2).click()
+      .elementsByClassName('UIATableCell').at(1).click()
       .sleep(1000)
       .elementByClassName('UIATableCell').click()
       .elementByClassName('UIASwitch')

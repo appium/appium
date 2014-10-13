@@ -6,7 +6,7 @@ var setup = require("../../common/setup-base")
   , _ = require("underscore")
   , spinWait = require("../../../helpers/spin.js").spinWait;
 
-describe('uicatalog - find element @skip-ios7', function () {
+describe('uicatalog - find element @skip-ios7up', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

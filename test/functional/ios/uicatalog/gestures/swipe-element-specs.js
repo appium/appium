@@ -14,18 +14,23 @@ describe("uicatalog - gestures - swipe element @skip-ios7 @skip-ios6", function 
     afterEach(function (done) {
       driver
         .elementByClassName("UIASlider")
-        .then(function (el) { if (el) return el.sendKeys(0.5); })
-        .clickBack()
+        .then(function (el) { if (el) return el.sendKeys(0.42); })
+        .clickButton('UICatalog')
         .sleep(SLOW_DOWN_MS)
         .nodeify(done);
     });
   }
 
+  var getNumericValue = function (pctVal) {
+    pctVal = pctVal.replace("%", "");
+    pctVal = parseInt(pctVal, 10);
+    return pctVal;
+  };
+
   it("slider value should change", function (done) {
     var valueBefore, slider;
     driver
-      .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
-      .click()
+      .elementByAccessibilityId('Sliders').click()
       .elementByClassName("UIASlider").then(function (el) { slider = el; })
       .then(function () { return slider.getAttribute("value"); })
       .then(function (value) { valueBefore = value; })
@@ -36,15 +41,17 @@ describe("uicatalog - gestures - swipe element @skip-ios7 @skip-ios6", function 
       })
       .then(function () { return slider.getAttribute("value"); })
       .then(function (valueAfter) {
-        valueBefore.should.equal("50%");
-        valueAfter.should.equal("20%");
+        valueBefore.should.equal("42%");
+        valueAfter = getNumericValue(valueAfter);
+        // should be around 20
+        valueAfter.should.be.above(15);
+        valueAfter.should.be.below(25);
       }).nodeify(done);
   });
   it("slider value should change by pixels", function (done) {
     var valueBefore, slider;
     driver
-      .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
-      .click()
+      .elementByAccessibilityId('Sliders').click()
       .elementByClassName("UIASlider").then(function (el) { slider = el; })
       .then(function () { return slider.getAttribute("value"); })
       .then(function (value) { valueBefore = value; })
@@ -54,8 +61,10 @@ describe("uicatalog - gestures - swipe element @skip-ios7 @skip-ios6", function 
       })
       .then(function () { return slider.getAttribute("value"); })
       .then(function (valueAfter) {
-        valueBefore.should.equal("50%");
-        valueAfter.should.equal("5%");
+        valueBefore.should.equal("42%");
+        valueAfter = getNumericValue(valueAfter);
+        // should be around 5
+        valueAfter.should.be.below(8);
       }).nodeify(done);
   });
 });

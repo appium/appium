@@ -1,6 +1,7 @@
 "use strict";
 
 var setup = require("../../common/setup-base"),
+    env = require("../../../helpers/env.js"),
     desired = require('./desired');
 
 describe('uicatalog - move @skip-ios6', function () {
@@ -10,10 +11,11 @@ describe('uicatalog - move @skip-ios6', function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should be able to click on arbitrary x-y elements', function (done) {
+      var axIdExt = env.IOS8 ? "" : ", AAPLButtonViewController";
       driver
-        .elementByXPath("//UIAStaticText[contains(@name, 'Buttons')]").moveTo(10, 10).click()
+        .elementByAccessibilityId("Buttons" + axIdExt).moveTo(10, 10).click()
         .elementByXPath("//UIAElement['SYSTEM (CONTACT ADD)']")
-          .should.eventually.exist  .should.eventually.exist
+          .should.eventually.exist.should.eventually.exist
         .nodeify(done);
     });
   });

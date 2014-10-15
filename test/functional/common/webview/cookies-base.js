@@ -17,7 +17,10 @@ module.exports = function (desired) {
       it('should be able to get cookies for a page with none', function (done) {
         loadWebView(desired, driver, testEndpoint(desired) + 'iframes.html',
             "Iframe guinea pig").then(function () {
-          return driver.allCookies().should.eventually.have.length(0);
+          return driver
+            .deleteAllCookies()
+            .get(testEndpoint(desired))
+            .allCookies().should.eventually.have.length(0);
         }).nodeify(done);
       });
     });
@@ -87,7 +90,8 @@ module.exports = function (desired) {
             // should not clobber old cookies
             _.pluck(cookies, 'name').should.include("guineacookie1");
             _.pluck(cookies, 'value').should.include(_ignoreEncodingBug("i am a cookie value"));
-          }).nodeify(done);
+          })
+          .nodeify(done);
       });
       it('should be able to delete one cookie', function (done) {
         var newCookie = {name: "newcookie", value: "i'm new here"};

@@ -2,7 +2,8 @@
 
 var env = require("../../../helpers/env")
   , setup = require("../../common/setup-base")
-  , chai = require('chai');
+  , chai = require('chai')
+  , _ = require("underscore");
 
 chai.should();
 
@@ -17,8 +18,8 @@ describe("prefs @skip-ios6", function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should turn off autocomplete', function (done) {
-      var ios7up = ["ios7", "ios71", "ios8"].indexOf(env.DEVICE) !== -1;
-      var ios8 = env.DEVICE === "ios8";
+      var ios7up = _.contains(["ios7", "ios71", "ios8", "ios81"], env.DEVICE);
+      var ios8 = _.contains(["ios8", "ios81"], env.DEVICE);
       var switchEl;
       driver
         .elementsByClassName("UIATableCell").at(ios7up ? 0 : 1).click()

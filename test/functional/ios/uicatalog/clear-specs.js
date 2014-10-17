@@ -30,7 +30,6 @@ describe('uicatalog - clear @skip-ios6', function () {
 
     it('should be able to hide keyboard with the tapOutside strategy', function (done) {
       driver
-        .execute("mobile: scroll", {direction: 'down'})
         .elementByXPath("//UIAStaticText[contains(@name, 'Web View')]").click()
         .waitForElementByXPath('//UIANavigationBar[@name="Web View"]', 5000, 500)
         .elementByXPath("//UIATextField").click()
@@ -44,7 +43,6 @@ describe('uicatalog - clear @skip-ios6', function () {
 
     it('should be able to hide keyboard with the tapOut strategy', function (done) {
       driver
-        .execute("mobile: scroll", {direction: 'down'})
         .elementByXPath("//UIAStaticText[contains(@name, 'Web View')]").click()
         .waitForElementByXPath('//UIANavigationBar[@name="Web View"]', 5000, 500)
         .elementByXPath("//UIATextField").click()
@@ -55,6 +53,5 @@ describe('uicatalog - clear @skip-ios6', function () {
         .back()
         .nodeify(done);
     });
-
   });
 });

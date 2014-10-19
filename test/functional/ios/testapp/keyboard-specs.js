@@ -7,7 +7,7 @@ var setup = require("../../common/setup-base")
 
 describe("testapp - keyboard stability @skip-ci", function () {
   var runs = 10
-    , text = 'Delhi is New @@@ QA-BREAKFAST-FOOD-0001';
+    , text = 'Delhi is New @@@ BREAKFAST-FOOD-0001';
 
   var driver;
   setup(this, _.defaults({

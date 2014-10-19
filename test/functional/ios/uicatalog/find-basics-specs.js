@@ -34,6 +34,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
         el.should.exist;
       }).nodeify(done);
   });
+
   it('should find an element within descendants', function (done) {
     driver
       .elementByXPath("//UIATableCell[contains(@name, 'Buttons')]")
@@ -77,8 +78,13 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('no mix up', function () {
     after(function (done) {
-      driver.clickButton('UICatalog')
-      .nodeify(done);
+      if (!env.IOS81) {
+        driver
+          .clickButton('UICatalog')
+          .nodeify(done);
+      } else {
+        done();
+      }
     });
 
     it('should not allow found elements to be mixed up', function (done) {
@@ -123,8 +129,13 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('findElementsByClassName textfield case', function () {
     after(function (done) {
-      driver.clickButton('UICatalog')
-      .nodeify(done);
+      if (!env.IOS81) {
+        driver
+          .clickButton('UICatalog')
+          .nodeify(done);
+      } else {
+        done();
+      }
     });
     var axIdExt = env.IOS8 ? '' : ', AAPLActionSheetViewController';
     it('should find only one textfield', function (done) {

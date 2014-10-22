@@ -17,8 +17,8 @@ function show_functional_test_info {
 }
 
 if [[ $CI_CONFIG == 'unit' ]]; then
-    npm install -g jshint grunt-cli
-    npm install
+    #npm install -g jshint grunt-cli
+    #npm install
     # cd docs
     # appium_doc_lint || exit 1
     # cd -

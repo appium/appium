@@ -35,14 +35,14 @@ env:
   # - CI_CONFIG=gappium
   # - CI_CONFIG=selendroid
 before_script:
-- gem install --no-rdoc --no-ri appium_doc_lint
+# - gem install --no-rdoc --no-ri appium_doc_lint
 - "./ci/installers/install-node.sh"
 - 'echo Node.js version: `node -v`'
 - npm install -g jshint grunt-cli mocha
 - npm install
-- "./ci/installers/install-sauce-connect.sh"
-- "./ci/before-script-extra.sh"
-- "ulimit -n 8000"
+#- "./ci/installers/install-sauce-connect.sh"
+#- "./ci/before-script-extra.sh"
+#- "ulimit -n 8000"
 # disabling sauce-connect until travis ichef issue is sorted
 # - "./ci/start-sauce-connect.sh"
 script:

@@ -11,8 +11,8 @@ describe('webview - basics', function () {
 
   setup(this, desired).then(function (d) { driver = d; });
 
-  it('getting current context should return null when none set', function (done) {
-    driver.currentContext().should.eventually.equal(null)
+  it('getting current context should return NATIVE_APP when none set', function (done) {
+    driver.currentContext().should.eventually.equal("NATIVE_APP")
       .nodeify(done);
   });
   it('getting list should work after webview open', function (done) {

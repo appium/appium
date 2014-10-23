@@ -151,11 +151,13 @@ if $gappium_only || $all_tests; then
     echo "RUNNING GAPPIUM TESTS"
     echo "---------------------"
     DEVICE=ios71 time $appium_mocha test/functional/gappium
-    DEVICE=ios6 time $appium_mocha test/functional/gappium
+    # disabling, ios6 not working yet xcode 6
+    #DEVICE=ios6 time $appium_mocha test/functional/gappium
     echo "Start the android emulator api 19 and press Enter."
     read
     DEVICE=android time $appium_mocha test/functional/gappium
-    echo "Start the android emulator api 16 and press Enter."
-    read
-    DEVICE=selendroid time $appium_mocha test/functional/gappium
+    # disabling gappium test, see https://github.com/selendroid/selendroid/issues/658
+    #echo "Start the android emulator api 16 and press Enter."
+    #read
+    #DEVICE=selendroid time $appium_mocha test/functional/gappium
 fi

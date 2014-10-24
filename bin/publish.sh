@@ -51,6 +51,6 @@ git pull upstream $branch
 ./reset.sh --hardcore --real-safari --chromedriver-install-all --chromedriver-version 2.10
 npm cache clear appium
 npm publish
-version=$(cat package.json | underscore extract version | sed 's/\"//g')
+version=$(cat package.json | $(npm bin)/underscore extract version | sed 's/\"//g')
 git tag -a "v$version" -m "tag appium@$version for npm publish"
 git push --tags upstream $branch

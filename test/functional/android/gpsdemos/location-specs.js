@@ -1,7 +1,8 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired");
+  , desired = require("./desired")
+  , Asserter = require('wd').Asserter;
 
 describe("gpsDemo - location @skip-real-device", function () {
   var driver;
@@ -17,6 +18,19 @@ describe("gpsDemo - location @skip-real-device", function () {
         });
     };
 
+    var textPopulated = new Asserter(
+      function () {
+        return getText().then(function (text) {
+          if (text === 'GPS Tutorial') {
+            var err = new Error('retry');
+            err.retriable = true; // if an asserter throws an error with the `retriable` property set to true, it gets retried
+            throw err;
+          } else {
+            return true;
+          }
+        });
+      }
+    );
 
     var newLat = "27.17";
     var newLong = "78.04";
@@ -28,7 +42,7 @@ describe("gpsDemo - location @skip-real-device", function () {
         text.should.not.include("Longitude: " + newLong);
       })
       .setGeoLocation(newLat, newLong)
-      .sleep(1000)
+      .waitFor(textPopulated, 3)
       .then(getText)
       .then(function (text) {
         text.should.include("Latitude: " + newLat.substr(0, 4));

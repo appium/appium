@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap.handler;
 
 import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
 import io.appium.android.bootstrap.utils.Point;
@@ -87,11 +88,13 @@ public class Flick extends CommandHandler {
             Math.sqrt(xSpeed * xSpeed + ySpeed * ySpeed));
         steps = 1250.0 / speed + 1;
 
-        start = getDeviceAbsPos(start);
+        start = PositionHelper.getDeviceAbsPos(start);
         end = calculateEndPoint(start, xSpeed, ySpeed);
       } catch (final InvalidCoordinatesException e) {
         return getErrorResult(e.getMessage());
-      }
+      } catch (final UiObjectNotFoundException e) {
+        return getErrorResult(e.getMessage());
+      } 
     }
 
     steps = Math.abs(steps);

@@ -66,11 +66,13 @@ public class Drag extends CommandHandler {
     final UiDevice device = UiDevice.getInstance();
 
     try {
-      absStartPos = getDeviceAbsPos(dragArgs.start);
-      absEndPos = getDeviceAbsPos(dragArgs.end);
+      absStartPos = PositionHelper.getDeviceAbsPos(dragArgs.start);
+      absEndPos = PositionHelper.getDeviceAbsPos(dragArgs.end);
     } catch (final InvalidCoordinatesException e) {
       return getErrorResult(e.getMessage());
-    }
+    } catch (final UiObjectNotFoundException e) {
+        return getErrorResult(e.getMessage());
+      } 
 
     Logger.debug("Dragging from " + absStartPos.toString() + " to "
         + absEndPos.toString() + " with steps: " + dragArgs.steps.toString());
@@ -88,10 +90,12 @@ public class Drag extends CommandHandler {
 
     if (dragArgs.destEl == null) {
       try {
-        absEndPos = getDeviceAbsPos(dragArgs.end);
+        absEndPos = PositionHelper.getDeviceAbsPos(dragArgs.end);
       } catch (final InvalidCoordinatesException e) {
         return getErrorResult(e.getMessage());
-      }
+      } catch (final UiObjectNotFoundException e) {
+        return getErrorResult(e.getMessage());
+      } 
 
       Logger.debug("Dragging the element with id " + dragArgs.el.getId()
           + " to " + absEndPos.toString() + " with steps: "

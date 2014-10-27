@@ -3,6 +3,8 @@ package io.appium.android.bootstrap.handler;
 import android.graphics.Rect;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import io.appium.android.bootstrap.*;
+import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
+import io.appium.android.bootstrap.utils.Point;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -64,8 +66,11 @@ public abstract class TouchEvent extends CommandHandler {
       } else { // no element so extract x and y from params
         final Object paramX = params.get("x");
         final Object paramY = params.get("y");
-        double targetX = 0.5;
-        double targetY = 0.5;
+        
+        // these will be defaulted to 0.5 when passed to getDeviceAbsPos
+        double targetX = 0;
+        double targetY = 0;
+        
         if (paramX != null) {
           targetX = Double.parseDouble(paramX.toString());
         }
@@ -73,11 +78,12 @@ public abstract class TouchEvent extends CommandHandler {
         if (paramY != null) {
           targetY = Double.parseDouble(paramY.toString());
         }
-
-        final ArrayList<Integer> posVals = absPosFromCoords(new Double[] {
-            targetX, targetY });
-        clickX = posVals.get(0);
-        clickY = posVals.get(1);
+        
+        Point coords = new Point(targetX, targetY);
+        coords = PositionHelper.getDeviceAbsPos(coords);
+       
+        clickX = coords.x.intValue();
+        clickY = coords.y.intValue();
       }
 
       if (executeTouchEvent()) {
@@ -86,6 +92,9 @@ public abstract class TouchEvent extends CommandHandler {
 
     } catch (final UiObjectNotFoundException e) {
       return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
+    } catch (final InvalidCoordinatesException e) {
+      return new AndroidCommandResult(WDStatus.INVALID_ELEMENT_COORDINATES, 
+          e.getMessage());
     } catch (final Exception e) {
       return getErrorResult(e.getMessage());
     }

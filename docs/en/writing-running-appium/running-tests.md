@@ -176,7 +176,9 @@ Appium comes bundled with another automation backend called [Selendroid]
 
 To use Selendroid, all that is required is to slightly change the set of
 desired capabilities mentioned above, by adding the `automationName` capability
-and specifying the Selendroid automation backend.
+and specifying the Selendroid automation backend. It is usually the case that you
+also need to use a `.` before your activity name (e.g., `.MainActivity` instead
+of `MainActivity` for your `appActivity` capability).
 
 ```javascript
 // javascript
@@ -185,7 +187,9 @@ and specifying the Selendroid automation backend.
     platformName: 'Android',
     platformVersion: '2.3',
     deviceName: 'Android Emulator',
-    app: myApp
+    app: myApp,
+    appPackage: 'com.mycompany.package',
+    appActivity: '.MainActivity'
 }
 ```
 
@@ -196,7 +200,9 @@ and specifying the Selendroid automation backend.
     'platformName': 'Android',
     'platformVersion': '2.3',
     'deviceName': 'Android Emulator',
-    'app': myApp
+    'app': myApp,
+    'appPackage': 'com.mycompany.package',
+    'appActivity': '.MainActivity'
 }
 ```
 
@@ -209,7 +215,9 @@ public static $browsers = array(
             'platformName' => 'Android',
             'platformVersion' => '2.3',
             'deviceName' => 'Android Emulator',
-            'app' => $myApp
+            'app' => $myApp,
+            'appPackage' => 'com.mycompany.package',
+            'appActivity'=> '.MainActivity'
         )
     )
 );
@@ -223,6 +231,8 @@ capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
 capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "2.3");
 capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
 capabilities.setCapability(MobileCapabilityType.APP, myApp);
+capabilities.setCapability(MobileCapabilityType.APP_PACKAGE: "com.mycompany.package");
+capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY: ".MainActivity");
 ```
 
 Now Appium will start up a Selendroid test session instead of the default test

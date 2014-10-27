@@ -26,7 +26,7 @@
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`appActivity`| Activity name for the Android activity you want to launch from your package|`MainActivity`, `.Settings`|
+|`appActivity`| Activity name for the Android activity you want to launch from your package. This often needs to be preceded by a `.` (e.g., `.MainActivity` instead of `MainActivity`)|`MainActivity`, `.Settings`|
 |`appPackage`| Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
 |`appWaitActivity`| Activity name for the Android activity you want to wait for|`SplashActivity`|
 |`appWaitPackage`| Java package of the Android app you want to wait for|`com.example.android.myApp`, `com.android.settings`|

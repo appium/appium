@@ -37,25 +37,21 @@ public class Swipe extends CommandHandler {
     Point absStartPos = new Point();
     Point absEndPos = new Point();
 
-    if (command.isElementCommand()) {
-      try {
+    try {
+      if (command.isElementCommand()) {
         final AndroidElement el = command.getElement();
         absStartPos = el.getAbsolutePosition(start);
-        absEndPos = el.getAbsolutePosition(end, false);
-      } catch (final UiObjectNotFoundException e) {
-        return getErrorResult(e.getMessage());
-      } catch (final InvalidCoordinatesException e) {
-        return getErrorResult(e.getMessage());
-      } catch (final Exception e) { // handle NullPointerException
-        return getErrorResult("Unknown error");
+        absEndPos = el.getAbsolutePosition(end);
+      } else {
+        absStartPos = PositionHelper.getDeviceAbsPos(start);
+        absEndPos = PositionHelper.getDeviceAbsPos(end);
       }
-    } else {
-      try {
-        absStartPos = getDeviceAbsPos(start);
-        absEndPos = getDeviceAbsPos(end);
-      } catch (final InvalidCoordinatesException e) {
-        return getErrorResult(e.getMessage());
-      }
+    } catch (final UiObjectNotFoundException e) {
+      return getErrorResult(e.getMessage());
+    } catch (final InvalidCoordinatesException e) {
+      return getErrorResult(e.getMessage());
+    } catch (final Exception e) { // handle NullPointerException
+      return getErrorResult("Unknown error");
     }
 
     Logger.debug("Swiping from " + absStartPos.toString() + " to "

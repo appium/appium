@@ -53,6 +53,11 @@ public abstract class TouchEvent extends CommandHandler {
         // extract x and y from the element.
         el = command.getElement();
 
+        // check if element exists without wait
+        if(! el.exists()) {
+          throw new UiObjectNotFoundException("TouchEvent element does not exist.");
+        }
+
         final Rect bounds = el.getVisibleBounds();
         clickX = bounds.centerX();
         clickY = bounds.centerY();

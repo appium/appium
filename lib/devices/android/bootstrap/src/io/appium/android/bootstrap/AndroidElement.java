@@ -39,6 +39,10 @@ public class AndroidElement {
   public boolean click() throws UiObjectNotFoundException {
     return el.click();
   }
+  
+  public boolean exists() {
+    return el.exists();
+  }
 
   public boolean dragTo(final int destX, final int destY, final int steps)
       throws UiObjectNotFoundException {

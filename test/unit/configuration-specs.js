@@ -16,10 +16,10 @@ describe('Appium', function () {
     // test is [args, caps, device]
     var appium = getAppium({});
     describe('mjsonwp spec capabilities', function () {
-      describe('deviceName', function () {
+      describe('platformName', function () {
 
         var deviceCapabilities = [
-            [{}, {platformName: 'iOS'}, 'ios'],
+            [{}, {platformName: 'iOS'}, 'ios']
           , [{}, {platformName: 'Android'}, 'android']
           , [{}, {platformName: 'FirefoxOS'}, 'firefoxos']
           , [{platformName: 'Android'}, {}, 'android']
@@ -41,6 +41,8 @@ describe('Appium', function () {
           , [{}, {platformName: 'Android', browserName: 'browser'}, 'chrome']
           , [{browserName: 'browser'}, {platformName: 'Android'}, 'chrome']
           , [{browserName: 'Safari'}, {platformName: 'ios'}, 'safari']
+          , [{browserName: 'browser'}, {platformName: 'ios'}, 'ios']
+          , [{browserName: 'Safari'}, {platformName: 'android'}, 'android']
           ];
         _.each(browserCapabilities, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
@@ -64,57 +66,46 @@ describe('Appium', function () {
     describe('non compliant capabilitites using', function () {
       describe('argument cases', function () {
         var argsCases  = [
-          [{ipa: '/path/to/my.ipa'}, {}, 'ios']
-        , [{ipa: '/path/to/MY.IPA'}, {}, 'ios']
-        , [{forceIphone: true}, {}, 'ios']
-        , [{forceIpad: true}, {}, 'ios']
-        , [{ipa: '/path/to/my.ipa', safari: true}, {}, 'ios']
-        , [{safari: true}, {}, 'safari']
-        , [{safari: true}, {app: '/path/to/my.apk'}, 'safari']
-        , [{safari: false}, {app: 'safari'}, 'safari']
-        , [{forceIpad: true}, {app: 'safari'}, 'safari']
+          [{platformName: 'ios', safari: true}, {}, 'safari']
+        , [{platformName: 'ios', safari: true}, {app: 'chrome'}, 'safari']
+        , [{platformName: 'ios', safari: false}, {app: 'safari'}, 'safari']
         ];
         _.each(argsCases, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
       });
 
-      describe('app capabilities', function () {
+      describe('app arguments and capabilities', function () {
         var appCases = [
-          [{}, {app: 'Safari'}, 'safari']
-        , [{}, {app: 'settings'}, 'ios']
-        , [{}, {app: 'Settings'}, 'ios']
-        , [{}, {app: 'chrome'}, 'chrome']
-        , [{}, {app: 'chromium'}, 'chrome']
-        , [{}, {app: 'chromebeta'}, 'chrome']
-        , [{}, {app: 'browser'}, 'chrome']
-        , [{}, {app: 'http://www.site.com/my.app.zip'}, 'ios']
-        , [{}, {app: 'http://www.site.com/MY.APP.ZIp'}, 'ios']
-        , [{}, {app: 'http://www.site.com/my.apk.zip'}, 'android']
-        , [{}, {app: 'http://www.site.com/my.apk'}, 'android']
-        , [{}, {app: 'HTTP://WWW.Site.COM/MY.APk'}, 'android']
-        , [{}, {app: '/path/to/my.app'}, 'ios']
-        , [{}, {app: '/path/to/my.apk'}, 'android']
-        , [{}, {app: '/path/to/my.apk'}, 'android']
-        , [{}, {app: '/path/to/my.apk.app'}, 'ios']
-        , [{}, {app: '/path/to/my.app.apk'}, 'android']
+          [{}, {platformName: 'ios', app: 'safari'}, 'safari']
+        , [{platformName: 'ios', app: 'Safari'}, {}, 'safari']
+        , [{}, {platformName: 'ios', app: 'settings'}, 'ios']
+        , [{}, {platformName: 'ios', app: 'lol'}, 'ios']
+        , [{}, {platformName: 'android', app: 'chrome'}, 'chrome']
+        , [{}, {platformName: 'android', app: 'chromium'}, 'chrome']
+        , [{}, {platformName: 'android', app: 'chromebeta'}, 'chrome']
+        , [{}, {platformName: 'android', app: 'browser'}, 'chrome']
+        , [{platformName: 'android', app: 'Chrome'}, {}, 'chrome']
+        , [{}, {platformName: 'android', app: 'lol'}, 'android']
+        , [{platformName: 'ios', app: 'chrome'}, {}, 'ios']
         ];
         _.each(appCases, function (test) {
           assertCapsGiveCorrectDevices(appium, test);
         });
       });
-    });
 
-    describe('package arguments and capabilities', function () {
-      var packageCases = [
-        [{}, {appPackage: 'com.android.chrome'}, 'chrome']
-      , [{}, {appPackage: 'Com.Android.Chrome'}, 'chrome']
-      , [{}, {appPackage: 'lol'}, 'android']
-      , [{androidPackage: 'com.foo'}, {}, 'android']
-      , [{androidPackage: 'com.android.browser'}, {}, 'chrome']
-      ];
-      _.each(packageCases, function (test) {
-        assertCapsGiveCorrectDevices(appium, test);
+      describe('package arguments and capabilities', function () {
+        var packageCases = [
+          [{}, {platformName: 'android', appPackage: 'com.android.chrome'}, 'chrome']
+        , [{}, {platformName: 'android', appPackage: 'Com.Android.Chrome'}, 'chrome']
+        , [{}, {platformName: 'android', appPackage: 'lol'}, 'android']
+        , [{platformName: 'android', androidPackage: 'com.foo'}, {}, 'android']
+        , [{platformName: 'android', androidPackage: 'com.android.browser'}, {}, 'chrome']
+        , [{platformName: 'ios', androidPackage: 'com.android.browser'}, {}, 'ios']
+        ];
+        _.each(packageCases, function (test) {
+          assertCapsGiveCorrectDevices(appium, test);
+        });
       });
     });
   });

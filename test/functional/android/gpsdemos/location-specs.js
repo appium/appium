@@ -1,18 +1,15 @@
 "use strict";
 
 var setup = require("../../common/setup-base")
-  , desired = require("./desired");
+  , desired = require("./desired")
+  , Asserter = require('wd').Asserter;
 
-var desired = {
-  app: 'sample-code/apps/gps-demo/bin/GPSTutorial1.apk'
-};
-
-// TODO: bring back when new wd is published with setGeoLocation
-describe("apidemo - location @skip-real-device", function () {
+describe("gpsDemo - location @skip-real-device", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
   it('should set geo location', function (done) {
+
     var getText = function () {
       return driver
         .elementsByClassName("android.widget.TextView")
@@ -20,18 +17,37 @@ describe("apidemo - location @skip-real-device", function () {
           return els[1].text();
         });
     };
+
+    var textPopulated = new Asserter(
+      function () {
+        return getText().then(function (text) {
+          if (text === 'GPS Tutorial') {
+            var err = new Error('retry');
+            err.retriable = true; // if an asserter throws an error with the `retriable` property set to true, it gets retried
+            throw err;
+          } else {
+            return true;
+          }
+        });
+      }
+    );
+
     var newLat = "27.17";
     var newLong = "78.04";
+
     driver
-      .resolve(getText()).then(function (text) {
+      .resolve(getText())
+      .then(function (text) {
         text.should.not.include("Latitude: " + newLat);
         text.should.not.include("Longitude: " + newLong);
       })
       .setGeoLocation(newLat, newLong)
-      .sleep(1000).then(getText).then(function (text) {
+      .waitFor(textPopulated, 3)
+      .then(getText)
+      .then(function (text) {
         text.should.include("Latitude: " + newLat.substr(0, 4));
         text.should.include("Longitude: " + newLong.substr(0, 4));
-      }).nodeify(done);
+      })
+      .nodeify(done);
   });
 });
-

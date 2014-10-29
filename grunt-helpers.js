@@ -72,7 +72,7 @@ module.exports.getSampleCode = function (grunt, hardcore, cb) {
   var sampleCodeGit = path.resolve(submodulesDir, "sample-code");
   var sampleCodeDir = path.resolve(__dirname, "sample-code");
   var sampleCodeExists = fs.existsSync(sampleCodeDir);
-  var updateCmd = "git submodule update --init '" + sampleCodeGit + "'";
+  var updateCmd = "git submodule update --init \"" + sampleCodeGit + "\"";
   console.log("Cloning/updating Appium sample-code submodule");
   execWithOutput(updateCmd, function (err, stdout, stderr) {
     if (err) return cb(err);

@@ -20,9 +20,10 @@ module.exports = function () {
 
   before(function (done) {
     driver
-      .sleep(1000)
+      .waitForElementByClassName('android.webkit.WebView')
       .contexts()
       .then(function (ctxs) {
+        ctxs.should.have.length(2);
         return driver.context(ctxs[ctxs.length - 1]);
       })
       .nodeify(done);
@@ -100,6 +101,27 @@ module.exports = function () {
         return driver.context(ctxs[ctxs.length - 1]);
       })
       // should find the element in the web context
+      .elementById('i_am_a_textbox')
+        .should.not.be.rejected
+      .nodeify(done);
+  });
+
+  it('should be able to get into a webview even after the webview ChromeDriver has is closed', function (done) {
+    driver
+      .context('WEBVIEW')
+      .elementById('i_am_a_textbox')
+        .should.not.be.rejected
+      .context('NATIVE_APP')
+
+      // restart activity anew, so old webview is gone
+      .startActivity({
+        appPackage: 'io.appium.android.apis',
+        appActivity: '.view.WebView1'
+      })
+      .waitForElementByClassName('android.webkit.WebView')
+      .contexts()
+        .should.eventually.have.length(2)
+      .context('WEBVIEW')
       .elementById('i_am_a_textbox')
         .should.not.be.rejected
       .nodeify(done);

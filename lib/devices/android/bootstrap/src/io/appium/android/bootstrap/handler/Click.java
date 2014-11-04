@@ -3,6 +3,8 @@ package io.appium.android.bootstrap.handler;
 import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import io.appium.android.bootstrap.*;
+import io.appium.android.bootstrap.exceptions.InvalidCoordinatesException;
+import io.appium.android.bootstrap.utils.Point;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -42,11 +44,20 @@ public class Click extends CommandHandler {
       }
     } else {
       final Hashtable<String, Object> params = command.params();
-      final Double[] coords = { Double.parseDouble(params.get("x").toString()),
-          Double.parseDouble(params.get("y").toString()) };
-      final ArrayList<Integer> posVals = absPosFromCoords(coords);
-      final boolean res = UiDevice.getInstance().click(posVals.get(0),
-          posVals.get(1));
+      Point coords = new Point(Double.parseDouble(params.get("x").toString()),
+          Double.parseDouble(params.get("y").toString()) );
+      
+      try {
+        coords = PositionHelper.getDeviceAbsPos(coords);
+      } catch (final UiObjectNotFoundException e) {
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+            e.getMessage());
+      } catch (final InvalidCoordinatesException e) {
+        return new AndroidCommandResult(WDStatus.INVALID_ELEMENT_COORDINATES,
+            e.getMessage());
+      }
+      
+      final boolean res = UiDevice.getInstance().click(coords.x.intValue(), coords.y.intValue());
       return getSuccessResult(res);
     }
   }

@@ -155,9 +155,18 @@ public class Clear extends CommandHandler {
     String currText = el.getText();
 
     final Method sendKey = utils.getControllerMethod("sendKey", int.class, int.class);
-    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DPAD_RIGHT, 0);
+    try {
+      if (!el.getBoolAttribute("focused")) {
+        Logger.debug("Could not check for hint text because the element is not focused!");
+        return false;
+      }
+    } catch(final Exception e) {
+      Logger.debug("Could not check for hint text: " + e.getMessage());
+      return false;
+    }
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_BUTTON_THUMBR, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
-    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DPAD_LEFT, 0);
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_BUTTON_THUMBL, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
 
     return currText.equals(el.getText());

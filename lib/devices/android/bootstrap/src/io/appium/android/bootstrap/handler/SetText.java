@@ -55,6 +55,9 @@ public class SetText extends CommandHandler {
           text = currText + text;
         }
         final boolean result = el.setText(text, unicodeKeyboard);
+        if (!result) {
+          return getErrorResult("el.setText() failed!");
+        }
         if (pressEnter) {
           final UiDevice d = UiDevice.getInstance();
           d.pressEnter();

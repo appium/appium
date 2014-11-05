@@ -1,3 +1,26 @@
+
+CHANGES IN VERSION 1.3.2-beta1 (from 1.3.1)
+======================================
+#### General
+- fix several internal Appium tests
+- add a sendKeyStrategy capability to allow testers to enable less reliable, but faster sendKey method
+- add handling for safeRimRafSync ENOENT mesages
+- clean up sessions when session clobbering enabled
+
+#### iOS
+- fix issue where driver.current_context is `null` for native app context
+- fix bug that prevents closing tabs in Safari
+- fix log capture when Appium starts a simulator for the first time
+- add OSX 10.10 and iOS8 support for Appium Doctor
+
+#### Android
+- fix arg and cap parsing when passing arguments to adb
+- add support for passing elements as targets for swipe actions
+- correctly calculate relative position of swipe targets
+
+#### Selendroid
+- add comment to caps page, and to running tests page, to note the need for a period before an activity
+
 CHANGES IN VERSION 1.3.1 (from 1.3.0)
 =====================================
 
@@ -275,7 +298,7 @@ CHANGES IN VERSION 1.1.0 (from 1.0.0)
 - less buggy xcode locator strategy for iOS and Android
   - note that for Android this might cause previous xpath selectors not to
     work, since we now always set compressed hierarchy when getting the xml
-	dump used for xpath
+dump used for xpath
 - fix defaults for swipe duration
 - add fixes for context switching
 - add optional argument 'language' to getStrings

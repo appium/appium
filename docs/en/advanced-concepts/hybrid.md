@@ -202,7 +202,7 @@ Once installed you can start the proxy with the following command:
 
 You may also use the ios-webkit-debug-proxy-launcher to launch the
 proxy. It monitors the proxy log for errors, and relaunch the proxy
-where needed. This is also optional and may help with recent devices
+where needed. This is also optional and may help with recent devices:
 
 ``` center
 # change the udid

@@ -12,6 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.NoSuchElementException;
 
 /**
  * The SocketServer class listens on a specific port for commands from Appium,
@@ -165,8 +166,11 @@ class SocketServer {
     } else if (cmd.commandType() == AndroidCommandType.ACTION) {
       try {
         res = executor.execute(cmd);
+      } catch (final NoSuchElementException e) {
+         res = new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, e.getMessage());
       } catch (final Exception e) { // Here we catch all possible exceptions and return a JSON Wire Protocol UnknownError
                                     // This prevents exceptions from halting the bootstrap app
+        Logger.debug("Command returned error:" + e);
         res = new AndroidCommandResult(WDStatus.UNKNOWN_ERROR, e.getMessage());
       }
     } else {

@@ -19,6 +19,21 @@ describe("apidemo - find - by xpath", function () {
     driver.sleep(2000).nodeify(done);
   });
 
+  it('should throw with status 7 when matching nothing', function (done) {
+    driver
+      .elementByXPath('//whatthat')
+      .should.be.rejectedWith(/status: 7/)
+      .nodeify(done);
+  });
+
+  it('should throw with status 7 for hierarchy root', function (done) {
+    driver
+      .elementByXPath('/*')
+      .should.be.rejectedWith(/status: 7/)
+      .nodeify(done);
+  });
+
+
   it('should find element by type', function (done) {
     driver
       .elementByXPath('//' + t).text()

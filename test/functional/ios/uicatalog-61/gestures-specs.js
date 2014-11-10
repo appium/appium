@@ -3,7 +3,6 @@
 var env = require('../../../helpers/env')
   , setup = require("../../common/setup-base")
   , desired = require('./desired')
-  , spinWait = require('../../../helpers/spin.js').spinWait
   , textBlock = "Now is the time for all good developers to come to serve their country.\n";
 
 // sebv: had to cut down original textBlock, cause text retrieved depends on device size
@@ -72,93 +71,6 @@ describe('uicatalog - gestures @skip-ios7up', function () {
               location2.x.should.equal(location1.x);
               location2.y.should.not.equal(location1.y);
             });
-        }).nodeify(done);
-    });
-  });
-  describe('swipe gesture @skip-ios7up', function () {
-    var driver;
-    setup(this, desired).then(function (d) { driver = d; });
-
-    if (env.FAST_TESTS) {
-      afterEach(function (done) {
-        driver
-          .flick(0, 70, false)
-          .flick(0, 70, false)
-          .sleep(SLOW_DOWN_MS)
-          .nodeify(done);
-      });
-    }
-    it('should work with wd function in pixels', function (done) {
-      driver
-        .elementByClassName('UIATableCell').getLocation()
-        .then(function (location1) {
-          return spinWait(function () {
-            return driver
-              .flick(0, -70, true)
-              .elementByClassName('UIATableCell').getLocation()
-              .then(function (location2) {
-                ((location2.x === location1.x) &&
-                  (location2.y !== location1.y)
-                ).should.be.ok;
-              });
-          }, 5000);
-
-        }).nodeify(done);
-    });
-    it('should work with wd function in percent', function (done) {
-      driver
-        .elementByClassName('UIATableCell').getLocation()
-        .then(function (location1) {
-          return driver
-            .flick(0, -0.1, true) // flaky
-            .flick(0, -0.1, true)
-            .flick(0, -0.1, true)
-            .elementByClassName('UIATableCell').getLocation()
-            .then(function (location2) {
-              location2.x.should.equal(location1.x);
-              location2.y.should.not.equal(location1.y, '===y');
-            });
-        }).nodeify(done);
-    });
-    it('should work with mobile function in pixels', function (done) {
-      var opts = {startX: 50, startY: 400, endX: 50, endY: 300, duration: 2};
-      driver
-        .elementByClassName('UIATableCell').getLocation()
-        .then(function (location1) {
-          return spinWait(function () {
-            return driver
-              .execute("mobile: swipe", [opts])
-              .elementByClassName('UIATableCell').getLocation()
-              .then(function (location2) {
-                location2.x.should.equal(location1.x);
-                location2.y.should.not.equal(location1.y);
-              });
-          });
-        }).nodeify(done);
-    });
-    it('should work with mobile function in percent', function (done) {
-      var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.7, duration: 2};
-      driver
-        .elementByClassName('UIATableCell').getLocation()
-        .then(function (location1) {
-          return spinWait(function () {
-            return driver
-              .execute("mobile: swipe", [opts])
-              .elementByClassName('UIATableCell').getLocation()
-              .then(function (location2) {
-                location2.x.should.equal(location1.x);
-                location2.y.should.not.equal(location1.y);
-              });
-          });
-        }).nodeify(done);
-    });
-    it('should not complete instantaneously', function (done) {
-      var start = Date.now();
-      var opts = {startX: 0.5, startY: 0.9, endX: 0.5, endY: 0.7, duration: 2};
-      driver
-        .execute("mobile: swipe", [opts])
-        .then(function () {
-          (Date.now() - start).should.be.above(1999);
         }).nodeify(done);
     });
   });
@@ -232,59 +144,7 @@ describe('uicatalog - gestures @skip-ios7up', function () {
         }).nodeify(done);
     });
   });
-  describe("swipe element @skip-ios7up", function () {
-    var driver;
-    setup(this, desired).then(function (d) { driver = d; });
 
-    if (env.FAST_TESTS) {
-      afterEach(function (done) {
-        driver
-          .elementByClassName("UIASlider")
-          .then(function (el) { if (el) return el.sendKeys(0.5); })
-          .clickBack()
-          .sleep(SLOW_DOWN_MS)
-          .nodeify(done);
-      });
-    }
-
-    it("slider value should change", function (done) {
-      var valueBefore, slider;
-      driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
-        .click()
-        .elementByClassName("UIASlider").then(function (el) { slider = el; })
-        .then(function () { return slider.getAttribute("value"); })
-        .then(function (value) { valueBefore = value; })
-        .then(function () {
-          var opts = {startX: 0.5, startY: 0.5, endX: 0.25, endY: 0.5,
-            duration: 0.3, element: slider.value};
-          return driver.execute("mobile: swipe", [opts]);
-        })
-        .then(function () { return slider.getAttribute("value"); })
-        .then(function (valueAfter) {
-          valueBefore.should.equal("50%");
-          valueAfter.should.equal("20%");
-        }).nodeify(done);
-    });
-    it("slider value should change by pixels", function (done) {
-      var valueBefore, slider;
-      driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
-        .click()
-        .elementByClassName("UIASlider").then(function (el) { slider = el; })
-        .then(function () { return slider.getAttribute("value"); })
-        .then(function (value) { valueBefore = value; })
-        .then(function () {
-          var opts = {endX: 15, endY: 10, duration: 0.3, element: slider.value};
-          return driver.execute("mobile: swipe", [opts]);
-        })
-        .then(function () { return slider.getAttribute("value"); })
-        .then(function (valueAfter) {
-          valueBefore.should.equal("50%");
-          valueAfter.should.equal("5%");
-        }).nodeify(done);
-    });
-  });
   describe('complex tap', function () {
     var driver;
     setup(this, desired).then(function (d) { driver = d; });

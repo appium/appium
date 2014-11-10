@@ -23,7 +23,7 @@ public abstract class PositionHelper {
     
     if (pointCoord == 0) {
       translatedCoord = length * 0.5;
-    } else if (pointCoord > 0 && pointCoord < 1) {
+    } else if (Math.abs(pointCoord) > 0 && Math.abs(pointCoord) < 1) {
       translatedCoord = length * pointCoord;
     } else {
       translatedCoord = pointCoord;

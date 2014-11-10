@@ -1,5 +1,6 @@
 language: objective-c
 xcode_sdk: 7.1
+sudo: false
 notifications:
   email: true
   slack:

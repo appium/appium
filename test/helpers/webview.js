@@ -23,7 +23,7 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
 
   var uuid = uuidGenerator.v1();
   if (typeof urlToLoad === "undefined") {
-    if (app === "chrome" || app === "chromium" || app === "chromebeta") {
+    if (app === "chrome" || app === "chromium" || app === "chromebeta" || app === "opera") {
       urlToLoad = env.CHROME_GUINEA_TEST_END_POINT + '?' + uuid;
     } else {
       urlToLoad = env.GUINEA_TEST_END_POINT + '?' + uuid;
@@ -32,7 +32,7 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
   if (typeof titleToSpin === "undefined") {
     titleToSpin = uuid;
   }
-  if (_.contains(["safari", "chrome", "chromium", "chromebeta"], app)) {
+  if (_.contains(["safari", "chrome", "chromium", "chromebeta", "opera"], app)) {
     return browser
       .get(urlToLoad)
       .sleep(3000)

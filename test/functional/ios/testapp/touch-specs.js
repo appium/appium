@@ -170,7 +170,7 @@ describe('testapp - swipe actions', function () {
       driver
         // test: press {element, x, y}, moveTo {destEl, x, y}
         .performTouchAction((new TouchAction())
-          .press({el: slider, x: 0, y: 0.5}).wait({ms: 500}).moveTo({el: destEl, x: -120, y: 0.5}).release())
+          .press({el: slider, x: 0, y: 0.5}).wait({ms: 500}).moveTo({el: destEl, x: -100, y: 0.5}).release())
         .then(getSliderValue)
         .then(testSliderValueNear50)
         .nodeify(done);

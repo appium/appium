@@ -156,6 +156,13 @@ describe('uicatalog - find element @skip-ios7up', function () {
   });
 
   describe('findElement(s) containing name', function () {
+    before(function (done) {
+      driver
+        .elementsByClassName('UIATableCell').then(function (els) { return els[2]; })
+          .click()
+        .nodeify(done);
+    });
+
     after(function (done) {
       driver.clickBack()
       .nodeify(done);
@@ -163,17 +170,13 @@ describe('uicatalog - find element @skip-ios7up', function () {
 
     it('should find one element', function (done) {
       driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[2]; })
-          .click()
         .elementByName('*Rounded*').getAttribute('name')
           .should.become('UITextField Rounded')
         .nodeify(done);
     });
 
-    it('should find several element', function (done) {
+    it('should find several elements', function (done) {
       driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[2]; })
-          .click()
         .elementsByName('*Rounded*')
           .should.eventually.have.length.above(3)
         .nodeify(done);

@@ -292,6 +292,7 @@ describe('uicatalog - gestures @skip-ios7up', function () {
       .then(function () {
         return driver.execute("mobile: scroll", [{direction: 'down'}]);
       })
+      .waitForElementByXPath('//UIATableCell[contains(@name, \'Transitions\')]')
       .then(function () { return firstEl.getLocation(); })
       .then(function (loc2) {
         location2 = loc2;
@@ -301,6 +302,7 @@ describe('uicatalog - gestures @skip-ios7up', function () {
       .then(function () {
         return driver.execute("mobile: scroll", [{direction: 'up'}]);
       })
+      .waitForElementByXPath('//UIATableCell[contains(@name, \'Buttons\')]')
       .then(function () { return firstEl.getLocation(); })
       .then(function (loc3) {
         loc3.x.should.equal(location2.x);
@@ -319,6 +321,7 @@ describe('uicatalog - gestures @skip-ios7up', function () {
       .then(function () {
         return driver.execute("mobile: scroll", [{element: table_view.value, direction: 'down'}]);
       })
+      .waitForElementByXPath('//UIATableCell[contains(@name, \'Transitions\')]')
       .then(function () { return firstEl.getLocation(); })
       .then(function (loc2) {
         location2 = loc2;
@@ -328,6 +331,7 @@ describe('uicatalog - gestures @skip-ios7up', function () {
       .then(function () {
         return driver.execute("mobile: scroll", [{element: table_view.value, direction: 'up'}]);
       })
+      .waitForElementByXPath('//UIATableCell[contains(@name, \'Buttons\')]')
       .then(function () { return firstEl.getLocation(); })
       .then(function (loc3) {
         loc3.x.should.equal(location2.x);

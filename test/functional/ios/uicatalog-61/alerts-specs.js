@@ -31,15 +31,16 @@ describe('uicatalog - alerts @skip-ios7up', function () {
     return deferred.promise;
   }
 
-  afterEach(function (done) {
-    driver.back()
+  before(function (done) {
+    driver
+      .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]")
+        .click()
       .nodeify(done);
   });
 
   it('should detect Show Simple', function (done) {
     var alertReceived;
     driver
-      .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]").click()
       .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Simple')]", 10000, 1000)
       .then(function () { alertReceived = waitForAlert(); })
       .elementsByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Simple')]")
@@ -53,7 +54,6 @@ describe('uicatalog - alerts @skip-ios7up', function () {
   it('should detect Show OK-Cancel', function (done) {
     var alertReceived;
     driver
-      .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]").click()
       .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Show OK-Cancel')]", 10000, 1000)
       .then(function () { alertReceived = waitForAlert(); })
       .elementsByXPath("//UIAStaticText[contains(" + alertTag + ",'Show OK-Cancel')]")
@@ -67,7 +67,6 @@ describe('uicatalog - alerts @skip-ios7up', function () {
   it('should detect Show Custom', function (done) {
     var alertReceived;
     driver
-      .elementByXPath("//UIAStaticText[contains(@label,'Alerts')]").click()
       .waitForElementByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Custom')]", 10000, 1000)
       .then(function () { alertReceived = waitForAlert(); })
       .elementsByXPath("//UIAStaticText[contains(" + alertTag + ",'Show Custom')]")
@@ -77,5 +76,4 @@ describe('uicatalog - alerts @skip-ios7up', function () {
       .dismissAlert()
       .nodeify(done);
   });
-
 });

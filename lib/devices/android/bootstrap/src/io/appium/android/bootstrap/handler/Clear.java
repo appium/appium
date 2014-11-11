@@ -53,7 +53,7 @@ public class Clear extends CommandHandler {
 
         final ReflectionUtils utils = new ReflectionUtils();
 
-	// see if there is hint text
+        // see if there is hint text
         if (hasHintText(el, utils)) {
           Logger.debug("Text remains after clearing, "
               + "but it appears to be hint text.");
@@ -67,7 +67,7 @@ public class Clear extends CommandHandler {
           return getSuccessResult(true);
         }
 
-	// see if there is hint text
+        // see if there is hint text
         if (hasHintText(el, utils)) {
           Logger.debug("Text remains after clearing, "
               + "but it appears to be hint text.");
@@ -87,7 +87,9 @@ public class Clear extends CommandHandler {
             Logger.debug("Text remains after clearing, " +
                          "but it appears to be hint text.");
             return getSuccessResult(true);
-          } else {
+          } else if (!el.getText().isEmpty()) {
+            Logger.debug("Exhausted all means to clear text but '" +
+                         el.getText() + "' remains.");
             return getErrorResult("Clear text not successful.");
           }
         }
@@ -127,17 +129,19 @@ public class Clear extends CommandHandler {
     String tempTextHolder = "";
     final Object bridgeObject = utils.getBridge();
     final Method injectInputEvent = utils.getMethodInjectInputEvent();
+
     // Preventing infinite while loop.
     while (!el.getText().isEmpty() && !tempTextHolder.equalsIgnoreCase(el.getText())) {
       tempTextHolder = el.getText();
       // Trying send delete keys after clicking in text box.
       el.click();
-      // Sending 25 delete keys asynchronously
+      // Sending correct delete keys asynchronously
+      final int length = tempTextHolder.length();
       final long eventTime = SystemClock.uptimeMillis();
       KeyEvent deleteEvent = new KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN,
               KeyEvent.KEYCODE_DEL, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
               InputDevice.SOURCE_KEYBOARD);
-      for (int count = 0; count < 25; count++) {
+      for (int count = 0; count < length; count++) {
           injectInputEvent.invoke(bridgeObject, deleteEvent, false);
       }
     }

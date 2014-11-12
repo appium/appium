@@ -109,6 +109,34 @@ Now, make sure Appium is running:
 
     node .
 
+There are several ways to start an Appium application (it works exactly
+the same as when the application is started via adb):
+
+- apk or zip only, the default activity will be launched ('app' capability)
+- apk + activity ('app' + 'appActivity' capabilities)
+- apk + activity + intent ('app' + 'appActivity' + 'appIntent' capabilities)
+- ...
+
+Activities may be specified in the following way:
+
+- absolute (e.g. appActivity: 'com.helloworld.SayHello').
+- relative to appPackage (e.g. appPackage: 'com.helloworld', appActivity='.SayHello')
+
+If the 'appWaitPackage' and 'appWaitActivity' caps are specified, Appium
+automatically spins until those activities are launched. You may specify
+multiple wait activities for instance:
+
+- appActivity: 'com.splash.SplashScreen'
+- appPackage: 'com.splash' appActivity: '.SplashScreen'
+- appPackage: 'com.splash' appActivity: '.SplashScreen,.LandingPage,com.why.GoThere'
+
+If you are not sure what activity are configured in your apk, you can
+proceed in one of the following ways:
+
+- Mac/Linux: 'adb shell dumpsys window windows | grep mFocusedApp'
+- In the Ruby console: 'adb shell dumpsys window windows\`.each_line.grep(/mFocusedApp/).first.strip'
+- In Windows terminal run 'adb shell dumpsys window windows' and manually look for the mFocusedApp line.
+
 Then script your WebDriver test, sending in the following desired capabilities:
 
 ```javascript

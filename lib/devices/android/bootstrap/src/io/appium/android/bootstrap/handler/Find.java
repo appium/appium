@@ -20,7 +20,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
@@ -318,7 +317,7 @@ public class Find extends CommandHandler {
 
     if (!multiple) {
       if (pairs.size() == 0) {
-        throw new NoSuchElementException();
+        throw new ElementNotFoundException();
       }
       selectors.add(pairs.get(0).getSelector());
     } else {

@@ -1,10 +1,17 @@
 "use strict";
 var desired = require('./desired')
-  ,  webviewHelper = require("../../../helpers/webview")
-  ,  loadWebView = webviewHelper.loadWebView
+  , _ = require('underscore')
+  , webviewHelper = require("../../../helpers/webview")
+  , loadWebView = webviewHelper.loadWebView
   , setup = require("../../common/setup-base");
 
 describe("chrome @android-arm-only", function () {
+  var tests = ['alerts', 'basics', 'cookies', 'execute-async', 'execute',
+               'frames', 'iframes', 'implicit-wait', 'touch', 'window-title'];
+  _.each(tests, function (test) {
+    require('../../common/webview/' + test + '-base')(desired);
+  });
+
   describe('contexts', function () {
     var driver;
     setup(this, desired, {'no-reset': true}).then(function (d) { driver = d; });
@@ -24,4 +31,5 @@ describe("chrome @android-arm-only", function () {
         .nodeify(done);
     });
   });
+
 });

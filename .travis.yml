@@ -1,5 +1,7 @@
-language: objective-c
-xcode_sdk: 7.1
+language: node_js
+node_js:
+  - '0.10'
+sudo: false
 notifications:
   email: true
   slack:
@@ -36,7 +38,7 @@ env:
   # - CI_CONFIG=selendroid
 before_script:
 # - gem install --no-rdoc --no-ri appium_doc_lint
-- "./ci/installers/install-node.sh"
+#- "./ci/installers/install-node.sh"
 - 'echo Node.js version: `node -v`'
 - npm install -g jshint grunt-cli mocha
 - npm install

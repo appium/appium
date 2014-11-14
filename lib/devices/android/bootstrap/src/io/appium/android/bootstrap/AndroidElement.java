@@ -2,6 +2,9 @@ package io.appium.android.bootstrap;
 
 import android.graphics.Rect;
 import android.view.MotionEvent.PointerCoords;
+import android.view.accessibility.AccessibilityNodeInfo;
+import com.android.uiautomator.common.ReflectionUtils;
+import com.android.uiautomator.core.Configurator;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
@@ -19,6 +22,8 @@ import static io.appium.android.bootstrap.utils.API.API_18;
  *
  */
 public class AndroidElement {
+
+  private final Configurator mConfig = Configurator.getInstance();
 
   private final UiObject el;
   private String         id;
@@ -120,6 +125,41 @@ public class AndroidElement {
     }
   }
 
+  public String getResourceId() throws UiObjectNotFoundException {
+    String resourceId = "";
+
+    if (!API_18) {
+      Logger.error("Device does not support API >= 18!");
+      return resourceId;
+    }
+
+    try {
+      /*
+       * Unfortunately UiObject does not implement a getResourceId method.
+       * There is currently no way to determine the resource-id of a given
+       * element represented by UiObject. Until this support is added to
+       * UiAutomater, we try to match the implementation pattern that is
+       * already used by UiObject for getting attributes using reflection.
+       * The returned string matches exactly what is displayed in the
+       * UiAutomater inspector.
+       */
+      ReflectionUtils utils = new ReflectionUtils();
+      Method method = utils.getMethod(el.getClass(), "findAccessibilityNodeInfo", long.class);
+
+      AccessibilityNodeInfo node = (AccessibilityNodeInfo)method.invoke(el, mConfig.getWaitForSelectorTimeout());
+
+      if (node == null) {
+        throw new UiObjectNotFoundException(el.getSelector().toString());
+      }
+
+      resourceId = node.getViewIdResourceName();
+    } catch (final Exception e) {
+      Logger.error("Exception: " + e + " (" + e.getMessage() + ")");
+    }
+
+    return resourceId;
+  }
+
   public String getContentDesc() throws UiObjectNotFoundException {
     return el.getContentDescription();
   }
@@ -140,6 +180,8 @@ public class AndroidElement {
       res = getText();
     } else if (attr.equals("className")) {
       res = getClassName();
+    } else if (attr.equals("resourceId")) {
+      res = getResourceId();
     } else {
       throw new NoAttributeFoundException(attr);
     }

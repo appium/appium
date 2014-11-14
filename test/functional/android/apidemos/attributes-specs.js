@@ -8,6 +8,12 @@ describe("apidemos - attributes", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
+  it('should be able to find resourceId attribute', function (done) {
+    driver
+      .elementByName('Animation').getAttribute('resourceId')
+        .should.become("android:id/text1")
+      .nodeify(done);
+  });
   it('should be able to find text attribute', function (done) {
     driver
       .elementByName('Animation').getAttribute('text')

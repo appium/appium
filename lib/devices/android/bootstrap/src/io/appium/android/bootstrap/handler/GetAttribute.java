@@ -9,17 +9,17 @@ import java.util.Hashtable;
 
 /**
  * This handler is used to get an attribute of an element.
- * 
+ *
  */
 public class GetAttribute extends CommandHandler {
 
   /*
    * @param command The {@link AndroidCommand} used for this handler.
-   * 
+   *
    * @return {@link AndroidCommandResult}
-   * 
+   *
    * @throws JSONException
-   * 
+   *
    * @see io.appium.android.bootstrap.CommandHandler#execute(io.appium.android.
    * bootstrap.AndroidCommand)
    */
@@ -34,7 +34,7 @@ public class GetAttribute extends CommandHandler {
         final AndroidElement el = command.getElement();
         final String attr = params.get("attribute").toString();
         if (attr.equals("name") || attr.equals("text")
-            || attr.equals("className")) {
+            || attr.equals("className") || attr.equals("resourceId")) {
           return getSuccessResult(el.getStringAttribute(attr));
         } else {
           return getSuccessResult(String.valueOf(el.getBoolAttribute(attr)));

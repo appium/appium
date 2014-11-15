@@ -73,6 +73,13 @@ function iphoneOrIpadSimulator(device, version) {
 }
 
 switch (env.DEVICE) {
+  case 'mock':
+    env.CAPS = {
+      platformName: 'mock'
+    , platformVersion: '1.0'
+    , deviceName: 'mock'
+    };
+    break;
   case 'ios':
   case 'ios6':
   case 'ios6_iphone':

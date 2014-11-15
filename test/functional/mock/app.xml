@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app>
+    <MockNavBar>
+        <MockTextField id="Mock App" />
+    </MockNavBar>
+    <MockWebView>
+        <html></html>
+    </MockWebView>
+</app>

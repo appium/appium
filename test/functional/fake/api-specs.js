@@ -36,5 +36,60 @@ describe("appium mock api", function () {
         .nodeify(done);
     });
   });
+
+  describe('finding elements', function () {
+    it('should find a single element', function (done) {
+      driver
+        .elementByXPath('//MockWebView')
+        .then(function (el) {
+          el.value.should.exist;
+        })
+        .nodeify(done);
+    });
+    it('should not find a single element with bad strategy', function (done) {
+      driver
+        .elementByCss('.sorry')
+        .should.eventually.be.rejectedWith(/9/)
+        .nodeify(done);
+    });
+    it('should not find a single element with bad selector', function (done) {
+      driver
+        .elementByXPath('badsel')
+        .should.eventually.be.rejectedWith(/32/)
+        .nodeify(done);
+    });
+    it('should not find a single element that is not there', function (done) {
+      driver
+        .elementByXPath('//dontexist')
+        .should.eventually.be.rejectedWith(/7/)
+        .nodeify(done);
+    });
+    it('should find multiple elements', function (done) {
+      driver
+        .elementsByXPath('//MockListItem')
+        .then(function (els) {
+          els.should.have.length(3);
+        })
+        .nodeify(done);
+    });
+    it('should not find multiple elements with bad strategy', function (done) {
+      driver
+        .elementsByCss('.sorry')
+        .should.eventually.be.rejectedWith(/9/)
+        .nodeify(done);
+    });
+    it('should not find multiple elements with bad selector', function (done) {
+      driver
+        .elementsByXPath('badsel')
+        .should.eventually.be.rejectedWith(/32/)
+        .nodeify(done);
+    });
+    it('should not find multiple elements that are not there', function (done) {
+      driver
+        .elementsByXPath('//dontexist')
+        .should.eventually.eql([])
+        .nodeify(done);
+    });
+  });
 });
 

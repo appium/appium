@@ -6,4 +6,9 @@
     <MockWebView>
         <html></html>
     </MockWebView>
+    <MockListView>
+        <MockListItem />
+        <MockListItem />
+        <MockListItem />
+    </MockListView>
 </app>

@@ -132,17 +132,19 @@ public class Clear extends CommandHandler {
 
     // Preventing infinite while loop.
     while (!el.getText().isEmpty() && !tempTextHolder.equalsIgnoreCase(el.getText())) {
-      tempTextHolder = el.getText();
       // Trying send delete keys after clicking in text box.
       el.click();
-      // Sending correct delete keys asynchronously
-      final int length = tempTextHolder.length();
-      final long eventTime = SystemClock.uptimeMillis();
-      KeyEvent deleteEvent = new KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN,
-              KeyEvent.KEYCODE_DEL, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
-              InputDevice.SOURCE_KEYBOARD);
-      for (int count = 0; count < length; count++) {
-          injectInputEvent.invoke(bridgeObject, deleteEvent, false);
+      // Sending delete keys asynchronously, both forward and backward
+      for (int key : new int[]{ KeyEvent.KEYCODE_DEL, KeyEvent.KEYCODE_FORWARD_DEL }) {
+        tempTextHolder = el.getText();
+        final int length = tempTextHolder.length();
+        final long eventTime = SystemClock.uptimeMillis();
+        KeyEvent deleteEvent = new KeyEvent(eventTime, eventTime, KeyEvent.ACTION_DOWN,
+                key, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
+                InputDevice.SOURCE_KEYBOARD);
+        for (int count = 0; count < length; count++) {
+            injectInputEvent.invoke(bridgeObject, deleteEvent, false);
+        }
       }
     }
 
@@ -172,7 +174,7 @@ public class Clear extends CommandHandler {
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_BUTTON_THUMBL, 0);
     sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_DEL, 0);
-
+    sendKey.invoke(utils.getController(), KeyEvent.KEYCODE_FORWARD_DEL, 0);
     return currText.equals(el.getText());
   }
 }

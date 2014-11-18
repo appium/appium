@@ -34,12 +34,12 @@ which has integrations with a lot of source code editors. The file `
   "node": true,
   "eqeqeq": true,
   "trailing": true,
-  "indent": 2    
+  "indent": 2
 }
 ```
 
-Since jshint does not enforce code style anymore, we also use 
-[jscs](https://github.com/mdevils/node-jscs), for which it also exists some 
+Since jshint does not enforce code style anymore, we also use
+[jscs](https://github.com/mdevils/node-jscs), for which it also exists some
 source editor integrations. The configuration file is:
 
 ```json
@@ -59,8 +59,8 @@ source editor integrations. The configuration file is:
 }
 ```
 
-These configuration files define the warnings you will see in your favorite 
-editor. See [this page for jshint](http://www.jshint.com/platforms/) and 
+These configuration files define the warnings you will see in your favorite
+editor. See [this page for jshint](http://www.jshint.com/platforms/) and
 [this page for jscs](https://github.com/mdevils/node-jscs#friendly-packages) to
 get the list of editors and platforms supported and how setup your editor for
 automatic linting.
@@ -142,6 +142,10 @@ automatic linting.
     ```javascript
     if (foo === bar)
       foo++;
+    ```
+    except in the case of short-circuiting to a callback in the event of an error
+    ```javascript
+    if (err) return cb(err);
     ```
 
 *   Use `===`, not `==`, and `!==`, not `!=` for no surprises

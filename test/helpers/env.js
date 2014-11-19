@@ -79,6 +79,7 @@ switch (env.DEVICE) {
     , platformVersion: '1.0'
     , deviceName: 'fake'
     };
+    env.NO_TEARDOWN_TIMEOUT = true;
     break;
   case 'ios':
   case 'ios6':

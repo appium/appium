@@ -9,7 +9,7 @@ make explicit the level of support and requirements for each of these.
 See [Running on OS X: iOS](running-on-osx.md) for iOS requirements and setup
 instructions.
 
-* Versions: 6.0, 6.1, 7.0, and 7.1
+* Versions: 6.0, 6.1, 7.0, 7.1, 8.0, and 8.1
 * Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by

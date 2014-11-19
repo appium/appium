@@ -8,7 +8,7 @@ var env = require("../../helpers/env")
   , desired;
 
 if (env.DEVICE === 'selendroid' || env.DEVICE === 'android') {
-  var appName = 'CordovaApp';
+  var appName = 'HelloGappium';
   var appPath = 'sample-code/apps/' +
       'io.appium.gappium.sampleapp/platforms/android/ant-build/' +
       appName + '-debug.apk',

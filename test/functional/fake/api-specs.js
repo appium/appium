@@ -91,5 +91,84 @@ describe("appium mock api", function () {
         .nodeify(done);
     });
   });
+
+  describe('interacting with elements', function () {
+    var el;
+    it('should not send keys to an invalid element', function (done) {
+      driver
+        .elementByXPath('//MockListItem')
+        .sendKeys("test value")
+        .should.eventually.be.rejectedWith(/12/)
+        .nodeify(done);
+    });
+    it('should send keys to an element', function (done) {
+      driver
+        .elementByXPath('//MockInputField')
+        .then(function (_el) {
+          el = _el;
+          return el;
+        })
+        .sendKeys("test value")
+        .nodeify(done);
+    });
+    it('should get text of an element', function (done) {
+      el
+        .text()
+        .should.eventually.become("test value")
+        .nodeify(done);
+    });
+    it('should not click an invisible element', function (done) {
+      driver
+        .elementByXPath('//MockButton[@id="Button1"]')
+        .click()
+        .should.eventually.be.rejectedWith(/12/)
+        .nodeify(done);
+    });
+    it('should click an element', function (done) {
+      driver
+        .elementByXPath('//MockButton[@id="Button2"]')
+        .then(function (_el) { el = _el; return el; })
+        .click()
+        .click()
+        .click()
+        .nodeify(done);
+    });
+    it('should get the attribute of an element', function (done) {
+      el
+        .getAttribute('clicks')
+        .should.eventually.become(3)
+        .nodeify(done);
+    });
+    it('should detect whether an element is displayed', function (done) {
+      driver
+        .elementByXPath('//MockButton[@id="Button1"]')
+        .isDisplayed()
+          .should.eventually.become(false)
+        .elementByXPath('//MockButton[@id="Button2"]')
+        .isDisplayed()
+          .should.eventually.become(true)
+        .nodeify(done);
+    });
+    it('should detect whether an element is enabled', function (done) {
+      driver
+        .elementByXPath('//MockButton[@id="Button1"]')
+        .isEnabled()
+          .should.eventually.become(false)
+        .elementByXPath('//MockButton[@id="Button2"]')
+        .isEnabled()
+          .should.eventually.become(true)
+        .nodeify(done);
+    });
+    it('should detect whether an element is enabled', function (done) {
+      driver
+        .elementByXPath('//MockButton[@id="Button1"]')
+        .isSelected()
+          .should.eventually.become(false)
+        .elementByXPath('//MockButton[@id="Button2"]')
+        .isSelected()
+          .should.eventually.become(true)
+        .nodeify(done);
+    });
+  });
 });
 

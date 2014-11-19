@@ -11,4 +11,7 @@
         <MockListItem />
         <MockListItem />
     </MockListView>
+    <MockInputField />
+    <MockButton id="Button1" visible="false" enabled="false" />
+    <MockButton id="Button2" selected="true" />
 </app>

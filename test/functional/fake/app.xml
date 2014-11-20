@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <app>
-    <MockNavBar>
+    <MockNavBar id="nav" top="1" left="1" width="100" height="100">
         <MockTextField id="Mock App" />
     </MockNavBar>
-    <MockWebView>
+    <MockWebView id="wv" top="10" left="10.57" width="20.8" height="20.5">
         <html></html>
     </MockWebView>
-    <MockListView>
-        <MockListItem />
-        <MockListItem />
+    <MockListView id="lv" top="15.3" left="20.8" width="30.5" height="2">
+        <MockListItem id="li" />
+        <MockListItem id="li" />
         <MockListItem />
     </MockListView>
-    <MockInputField />
+    <MockInputField id="input" />
     <MockButton id="Button1" visible="false" enabled="false" />
     <MockButton id="Button2" selected="true" />
 </app>

@@ -38,24 +38,12 @@ describe("appium mock api", function () {
   });
 
   describe('finding elements', function () {
-    it('should find a single element', function (done) {
+    it('should find a single element by xpath', function (done) {
       driver
         .elementByXPath('//MockWebView')
         .then(function (el) {
           el.value.should.exist;
         })
-        .nodeify(done);
-    });
-    it('should not find a single element with bad strategy', function (done) {
-      driver
-        .elementByCss('.sorry')
-        .should.eventually.be.rejectedWith(/9/)
-        .nodeify(done);
-    });
-    it('should not find a single element with bad selector', function (done) {
-      driver
-        .elementByXPath('badsel')
-        .should.eventually.be.rejectedWith(/32/)
         .nodeify(done);
     });
     it('should not find a single element that is not there', function (done) {
@@ -72,6 +60,83 @@ describe("appium mock api", function () {
         })
         .nodeify(done);
     });
+    it('should not find multiple elements that are not there', function (done) {
+      driver
+        .elementsByXPath('//dontexist')
+        .should.eventually.eql([])
+        .nodeify(done);
+    });
+
+    it('should find a single element by id', function (done) {
+      driver
+        .elementById('wv')
+        .then(function (el) {
+          el.value.should.exist;
+        })
+        .nodeify(done);
+    });
+    it('should not find a single element by id that is not there', function (done) {
+      driver
+        .elementById('dontexist')
+        .should.eventually.be.rejectedWith(/7/)
+        .nodeify(done);
+    });
+    it('should find multiple elements by id', function (done) {
+      driver
+        .elementsById('li')
+        .then(function (els) {
+          els.should.have.length(2);
+        })
+        .nodeify(done);
+    });
+    it('should not find multiple elements by id that are not there', function (done) {
+      driver
+        .elementsById('dontexist')
+        .should.eventually.eql([])
+        .nodeify(done);
+    });
+
+    it('should find a single element by class', function (done) {
+      driver
+        .elementByClassName('MockWebView')
+        .then(function (el) {
+          el.value.should.exist;
+        })
+        .nodeify(done);
+    });
+    it('should not find a single element by class that is not there', function (done) {
+      driver
+        .elementById('dontexist')
+        .should.eventually.be.rejectedWith(/7/)
+        .nodeify(done);
+    });
+    it('should find multiple elements by class', function (done) {
+      driver
+        .elementsByClassName('MockListItem')
+        .then(function (els) {
+          els.should.have.length(3);
+        })
+        .nodeify(done);
+    });
+    it('should not find multiple elements by class that are not there', function (done) {
+      driver
+        .elementsByClassName('dontexist')
+        .should.eventually.eql([])
+        .nodeify(done);
+    });
+
+    it('should not find a single element with bad strategy', function (done) {
+      driver
+        .elementByCss('.sorry')
+        .should.eventually.be.rejectedWith(/9/)
+        .nodeify(done);
+    });
+    it('should not find a single element with bad selector', function (done) {
+      driver
+        .elementByXPath('badsel')
+        .should.eventually.be.rejectedWith(/32/)
+        .nodeify(done);
+    });
     it('should not find multiple elements with bad strategy', function (done) {
       driver
         .elementsByCss('.sorry')
@@ -82,12 +147,6 @@ describe("appium mock api", function () {
       driver
         .elementsByXPath('badsel')
         .should.eventually.be.rejectedWith(/32/)
-        .nodeify(done);
-    });
-    it('should not find multiple elements that are not there', function (done) {
-      driver
-        .elementsByXPath('//dontexist')
-        .should.eventually.eql([])
         .nodeify(done);
     });
   });
@@ -167,6 +226,49 @@ describe("appium mock api", function () {
         .elementByXPath('//MockButton[@id="Button2"]')
         .isSelected()
           .should.eventually.become(true)
+        .nodeify(done);
+    });
+    it('should get the location on screen of an element', function (done) {
+      driver
+        .elementById('nav')
+        .getLocation()
+        .should.eventually.eql({x: 1, y: 1})
+        .nodeify(done);
+    });
+    it('should get the location on screen of an element with float vals', function (done) {
+      driver
+        .elementById('lv')
+        .getLocation()
+        .should.eventually.eql({x: 20.8, y: 15.3})
+        .nodeify(done);
+    });
+    it('should get the location in view of an element', function (done) {
+      driver
+        .elementById('nav')
+        .getLocationInView()
+        .should.eventually.eql({x: 1, y: 1})
+        .nodeify(done);
+    });
+    it('should get the location in view of an element with float vals', function (done) {
+      driver
+        .elementById('lv')
+        .getLocationInView()
+        .should.eventually.eql({x: 20.8, y: 15.3})
+        .nodeify(done);
+    });
+
+    it('should get the size of an element', function (done) {
+      driver
+        .elementById('nav')
+        .getSize()
+        .should.eventually.eql({width: 100, height: 100})
+        .nodeify(done);
+    });
+    it('should get the size of an element with float vals', function (done) {
+      driver
+        .elementById('wv')
+        .getSize()
+        .should.eventually.eql({width: 20.8, height: 20.5})
         .nodeify(done);
     });
   });

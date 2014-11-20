@@ -92,3 +92,23 @@ describe('testapp - location - 4  @skip-ci', function () {
       .nodeify(done);
   });
 });
+
+describe('testapp - location - 5  @skip-ci', function () {
+  var driver;
+  var newDesired = _.clone(desired);
+  _.extend(newDesired, {
+    locationServicesAuthorized: true,
+    bundleId: 'io.appium.TestApp',
+    app: 'assets/TestApp7.1.app.zip'
+  });
+
+  setup(this, newDesired, {'no-reset': true}).then(function (d) { driver = d; });
+
+  it('should be able to be turned on when using a zip/ipa file', function (done) {
+    driver
+      .elementByName('locationStatus').getValue().then(function (checked) {
+        checked.should.equal(1);
+      })
+      .nodeify(done);
+  });
+});

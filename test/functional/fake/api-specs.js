@@ -9,7 +9,7 @@ describe("appium mock api", function () {
   var driver;
   setup(this, {app: mockApp}).then(function (d) { driver = d; });
 
-  describe('contexts', function () {
+  describe('contexts and webviews', function () {
     it('should get current context', function (done) {
       driver
         .currentContext()
@@ -22,6 +22,12 @@ describe("appium mock api", function () {
            .should.eventually.become(['NATIVE_APP', 'WEBVIEW_1'])
         .nodeify(done);
     });
+    it('should not set context that is not there', function (done) {
+      driver
+        .context('WEBVIEW_FOO')
+          .should.eventually.be.rejectedWith(/35/)
+        .nodeify(done);
+    });
     it('should set context', function (done) {
       driver
         .context('WEBVIEW_1')
@@ -29,10 +35,19 @@ describe("appium mock api", function () {
           .should.eventually.become('WEBVIEW_1')
         .nodeify(done);
     });
-    it('should not set context that is not there', function (done) {
+    it('should find webview elements in a webview', function (done) {
       driver
-        .context('WEBVIEW_FOO')
-          .should.eventually.be.rejectedWith(/35/)
+        .elementByXPath('//*')
+        .getTagName()
+          .should.eventually.become('html')
+        .nodeify(done);
+    });
+    it('should go back to native context', function (done) {
+      driver
+        .context('NATIVE_APP')
+        .elementByXPath('//*')
+        .getTagName()
+          .should.eventually.become('app')
         .nodeify(done);
     });
   });
@@ -176,6 +191,21 @@ describe("appium mock api", function () {
         .should.eventually.become("test value")
         .nodeify(done);
     });
+    it('should not clear an invalid element', function (done) {
+      driver
+        .elementByXPath('//MockListItem')
+        .clear()
+        .should.eventually.be.rejectedWith(/12/)
+        .nodeify(done);
+    });
+    it('should clear an element', function (done) {
+      driver
+        .elementByXPath('//MockInputField')
+        .clear()
+        .text()
+        .should.eventually.become('')
+        .nodeify(done);
+    });
     it('should not click an invisible element', function (done) {
       driver
         .elementByXPath('//MockButton[@id="Button1"]')
@@ -196,6 +226,16 @@ describe("appium mock api", function () {
       el
         .getAttribute('clicks')
         .should.eventually.become(3)
+        .nodeify(done);
+    });
+    it('should get the name of an element', function (done) {
+      driver
+        .elementByClassName('MockInputField')
+          .getTagName()
+          .should.eventually.become('MockInputField')
+        .elementById('wv')
+          .getTagName()
+          .should.eventually.become('MockWebView')
         .nodeify(done);
     });
     it('should detect whether an element is displayed', function (done) {
@@ -269,6 +309,62 @@ describe("appium mock api", function () {
         .elementById('wv')
         .getSize()
         .should.eventually.eql({width: 20.8, height: 20.5})
+        .nodeify(done);
+    });
+    it('should determine element equality', function (done) {
+      var el1;
+      driver
+        .elementById('wv')
+        .then(function (el) {
+          el1 = el;
+          return driver;
+        })
+        .elementById('wv')
+        .then(function (el2) {
+          return el2.equals(el1);
+        })
+        .should.eventually.become(true)
+        .nodeify(done);
+    });
+    it('should determine element inequality', function (done) {
+      var el1;
+      driver
+        .elementById('wv')
+        .then(function (el) {
+          el1 = el;
+          return driver;
+        })
+        .elementById('lv')
+        .then(function (el2) {
+          return el2.equals(el1);
+        })
+        .should.eventually.become(false)
+        .nodeify(done);
+    });
+  });
+
+  describe('generic selenium actions', function () {
+    it('should not send keys without a focused element', function (done) {
+      driver
+        .keys("test")
+        .should.eventually.be.rejectedWith(/12/)
+        .nodeify(done);
+    });
+    it('should send keys to a focused element', function (done) {
+      var el;
+      driver
+        .elementById('input')
+        .then(function (_el) {
+          el = _el;
+          return el;
+        })
+        .click()
+        .keys("test")
+        .then(function () {
+          return el;
+        })
+        .text()
+        .should.eventually.become("test")
         .nodeify(done);
     });
   });

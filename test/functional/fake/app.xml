@@ -4,14 +4,20 @@
         <MockTextField id="Mock App" />
     </MockNavBar>
     <MockWebView id="wv" top="10" left="10.57" width="20.8" height="20.5">
-        <html></html>
+        <html>
+            <head/>
+            <body>
+              <h1>Hello</h1>
+              <iframe id="iframe1" />
+            </body>
+        </html>
     </MockWebView>
     <MockListView id="lv" top="15.3" left="20.8" width="30.5" height="2">
         <MockListItem id="li" />
         <MockListItem id="li" />
         <MockListItem />
     </MockListView>
-    <MockInputField id="input" />
+    <MockInputField id="input" name="TypeMe" />
     <MockButton id="Button1" visible="false" enabled="false" />
     <MockButton id="Button2" selected="true" />
 </app>

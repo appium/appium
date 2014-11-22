@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "adm-zip": "~0.4.4",
-    "appium-adb": "=1.5.1",
+    "appium-adb": "=1.6.0",
     "appium-atoms": "=0.0.5",
     "appium-instruments": "=1.4.10",
     "appium-uiauto": "=1.9.0",

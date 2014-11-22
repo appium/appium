@@ -299,22 +299,6 @@ reset_toggle_test() {
     toggletest_reset=true
 }
 
-reset_gps_demo() {
-    if $hardcore ; then
-        echo "* Removing previous copies of the gps demo"
-        run_cmd rm -rf sample-code/apps/gps-demo
-        run_cmd rm -rf sample-code/apps/gps-demo.zip
-    fi
-    if [ ! -d sample-code/apps/gps-demo ]; then
-        echo "* Downloading gps demo"
-        run_cmd pushd sample-code/apps
-        run_cmd curl http://www.impressive-artworx.de/tutorials/android/gps_tutorial_1.zip -o gps-demo.zip -s
-        run_cmd unzip gps-demo.zip
-        run_cmd mv GPSTutorial1 gps-demo
-        run_cmd popd
-    fi
-}
-
 reset_unlock_apk() {
     if ! $has_reset_unlock_apk; then
         run_cmd rm -rf build/unlock_apk
@@ -376,7 +360,6 @@ reset_android() {
     if $include_dev ; then
         reset_apidemos
         reset_toggle_test
-        reset_gps_demo
     fi
     echo "* Setting Android config to Appium's version"
     run_cmd "$grunt" setConfigVer:android

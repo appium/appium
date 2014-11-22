@@ -1,6 +1,7 @@
 "use strict";
 
 module.exports = {
-  app: 'sample-code/apps/gps-demo/bin/GPSTutorial1.apk',
+  app: require('gps-demo-app'),
   device: 'Android'
 };
+

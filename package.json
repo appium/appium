@@ -104,6 +104,7 @@
     "assert": "~1.1.1",
     "chai": "~1.10.0",
     "chai-as-promised": "~4.1.1",
+    "gps-demo-app": "https://github.com/appium/gps-demo-app/archive/master.tar.gz",
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-jscs-checker": "~0.8.1",
     "grunt-mocha-test": "~0.12.3",

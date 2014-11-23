@@ -106,7 +106,7 @@ module.exports = function () {
       .nodeify(done);
   });
 
-  it('should be able to get into a webview even after the webview ChromeDriver has is closed', function (done) {
+  it('should be able to get into a webview even after the webview ChromeDriver has is closed @skip-selendroid-all', function (done) {
     driver
       .context('WEBVIEW')
       .elementById('i_am_a_textbox')

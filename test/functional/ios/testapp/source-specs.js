@@ -16,7 +16,7 @@ var sourceIsRight = function (driver) {
   });
 };
 
-describe('testapp - source', function () {
+describe('testapp - source @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

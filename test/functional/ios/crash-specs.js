@@ -12,7 +12,7 @@ describe('crash recovery', function () {
 
   setup(this, desired, {}, {FAST_TESTS: false}).then(function (d) { driver = d; });
 
-  it('should be able to recover gracefully from an app crash after shutdown', function (done) {
+  it('should be able to recover gracefully from an app crash after shutdown @skip-ios6', function (done) {
     driver
       .elementByAccessibilityId("Crash")
       .click()

@@ -8,7 +8,7 @@ var env = require('../../../../helpers/env.js'),
     desired = require('./desired.js'),
     ChaiAsserter = require('../../../../helpers/asserter.js').ChaiAsserter;
 
-describe('safari - webview - special capabilities', function () {
+describe('safari - webview - special capabilities @skip-ios6', function () {
   describe('phishing warning', function () {
     var driver;
     var specialCaps = _.clone(desired);

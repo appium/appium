@@ -12,7 +12,7 @@ var setup = require("../common/setup-base")
   , getSimUdid = require('../../helpers/sim-udid.js').getSimUdid
   , Unzip = require('unzip');
 
-describe('file movements - pullFile and pushFile', function () {
+describe('file movements - pullFile and pushFile @skip-ios6', function () {
   var driver;
   var desired = {
     app: getAppPath('TestApp')

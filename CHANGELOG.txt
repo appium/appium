@@ -1,3 +1,37 @@
+CHANGES IN VERSION 1.3.4
+======================================
+
+#### General
+- better handling of session closing.
+- tmp dir customization via env variable.
+- app/browserName error  message fix.
+- functional test fixes.
+
+#### iOS
+- allow location services in zip file.
+- ensure a string is returned from iOS getText.
+- simpler device type detection logic.
+- screenshotWaitTimeout cap
+- added ios-webkit-debug-proxy launcher to go round libidevice 8.1 bugs
+
+#### Android
+- exec refactoring.
+- uses for latest apktool (2.0.0-RC2) when Java 7 is detected.
+- ADB.jars refactored into instance property.
+- smart keyboard  closing fix.
+- added support for getting the resourceId attribute of an element.
+- clear text fix for large centered edit fields.
+- better handling of errors in clear text.
+- ensure an already-running Android device's language and country settings are correct.
+- fixed unknown server-side error is thrown when the XPath expression doesn't match any nodes.
+- better error handling is SetText
+- edit fields with hint text fix.
+- make hideKeyboard do nothing when keyboard is present but not closable (has no UI).
+
+#### Selendroid
+- upgrade to Selendroid 0.12.0.
+- throws when getting a redirect from Selendroid.
+- added hideKeyboard support.
 
 CHANGES IN VERSION 1.3.3 (from 1.3.1)
 ======================================

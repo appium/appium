@@ -125,5 +125,6 @@ and submit an issue describing the bug and a repro case.
 |------|-----|----------|
 |Running reset.sh|xcodebuild: error: SDK "iphonesimulator6.1" cannot be located|Install the iPhone 6.1 SDK _or_ build the test apps with a separate SDK, e.g., `grunt buildApp:UICatalog:iphonesimulator5.1`|
 |Running reset.sh|Warning: Task "setGitRev" not found. Use --force to continue.|Update the submodules with `git submodule update --init` and run `reset.sh` again|
+|Running reset.sh|`[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile (default-compile) on project selendroid-server: Compilation failure [ERROR] Failure executing javac, but could not parse the error: [ERROR] [ERROR] [ERROR] The system is out of resources. [ERROR] Consult the following stack trace for details. [ERROR] java.lang.StackOverflowError `|`export MAVEN_OPTS="-Xms1024m -Xmx2048m -Xss2048k"`|
 |Running ios test|`[INST STDERR] posix spawn failure; aborting launch`|Your app is not compiled correctly for the simulator or device.|
 |Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. E.g., `sudo authorize_ios`|

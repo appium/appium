@@ -10,13 +10,13 @@ var sourceIsRight = function (driver) {
   return new ChaiAsserter(function () {
     return driver.source().then(function (source) {
       var dom = new XMLDom().parseFromString(source);
-      var nodes = xpath.select('//UIAButton', dom);
-      nodes.length.should.equal(7);
+      var nodes = xpath.select('//AppiumAUT', dom);
+      nodes.should.not.be.empty;
     });
   });
 };
 
-describe('testapp - source @skip-ios6', function () {
+describe('testapp - source', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

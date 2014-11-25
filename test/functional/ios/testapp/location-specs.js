@@ -38,7 +38,7 @@ describe('testapp - location - 1 @skip-ci', function () {
 });
 
 // TODO: location tests are not working well on sauce
-describe('testapp - location - 2 @skip-ios6 @skip-ci', function () {
+describe('testapp - location - 2 @skip-ci', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
@@ -57,7 +57,7 @@ describe('testapp - location - 2 @skip-ios6 @skip-ci', function () {
 });
 
 // TODO: location tests are not working well on sauce
-describe('testapp - location - 3  @skip-ci', function () {
+describe('testapp - location - 3 @skip-ci', function () {
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
     locationServicesAuthorized: true
@@ -75,7 +75,7 @@ describe('testapp - location - 3  @skip-ci', function () {
 });
 
 // TODO: location tests are not working well on sauce
-describe('testapp - location - 4  @skip-ci @skip-ios6', function () {
+describe('testapp - location - 4 @skip-ci', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {
@@ -93,7 +93,7 @@ describe('testapp - location - 4  @skip-ci @skip-ios6', function () {
   });
 });
 
-describe('testapp - location - 5  @skip-ci @skip-ios6', function () {
+describe('testapp - location - 5 @skip-ci', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {

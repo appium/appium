@@ -102,11 +102,11 @@ describe('testapp - swipe actions', function () {
       return pctVal;
     };
 
-    var testSliderValueNear50 = function (value) {
+    var testSliderValueNot0or100 = function (value) {
       value = getNumericValue(value);
       // should be ~50
-      value.should.be.above(45);
-      value.should.be.below(55);
+      value.should.be.above(15);
+      value.should.be.below(85);
     };
 
     var getSliderValue = function () {
@@ -134,7 +134,7 @@ describe('testapp - swipe actions', function () {
         .elementByAccessibilityId("Access'ibility")
         .then(function (el) { destEl = el;})
         .then(getSliderValue)
-        .then(testSliderValueNear50)
+        .then(testSliderValueNot0or100)
         .nodeify(done);
     });
 
@@ -153,7 +153,7 @@ describe('testapp - swipe actions', function () {
         .performTouchAction((new TouchAction())
           .press({el: slider, x: 0.8665, y: 0.5}).wait({ms: 500}).moveTo({el: slider, x: 0.5, y: 0.5}).release())
         .then(getSliderValue)
-        .then(testSliderValueNear50)
+        .then(testSliderValueNot0or100)
         .nodeify(done);
     });
 
@@ -170,9 +170,9 @@ describe('testapp - swipe actions', function () {
       driver
         // test: press {element, x, y}, moveTo {destEl, x, y}
         .performTouchAction((new TouchAction())
-          .press({el: slider, x: 0, y: 0.5}).wait({ms: 500}).moveTo({el: destEl, x: -120, y: 0.5}).release())
+          .press({el: slider, x: 0, y: 0.5}).wait({ms: 500}).moveTo({el: destEl, x: -100, y: 0.5}).release())
         .then(getSliderValue)
-        .then(testSliderValueNear50)
+        .then(testSliderValueNot0or100)
         .nodeify(done);
     });
 

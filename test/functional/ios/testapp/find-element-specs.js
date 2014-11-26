@@ -83,7 +83,7 @@ describe('testapp - find element', function () {
       .nodeify(done);
   });
 
-  it('should find all elements by class name in the app @skip-ios6', function (done) {
+  it('should find all elements by class name in the app', function (done) {
     driver
       .elementsByClassName('UIAButton').then(function (els) {
         [4, 7].should.contain(els.length);
@@ -110,7 +110,7 @@ describe('testapp - find element', function () {
       .nodeify(done);
   });
 
-  it('should find an element with accessibility id containing an apostrophe @skip-ios6', function (done) {
+  it('should find an element with accessibility id containing an apostrophe', function (done) {
     driver.element('accessibility id', "Access'ibility").then(function (el) {
       el.should.exist;
     }).nodeify(done);

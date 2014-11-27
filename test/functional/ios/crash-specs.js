@@ -17,7 +17,7 @@ describe('crash recovery', function () {
       .elementByAccessibilityId("Crash")
       .click()
       .then(function () {
-        return driver.sleep(6000);
+        return driver.sleep(10000);
       })
       .source() // will 404 because the session is gone
         .should.eventually.be.rejectedWith('6')

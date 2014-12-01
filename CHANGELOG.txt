@@ -13,6 +13,11 @@ CHANGES IN VERSION 1.3.4
 - simpler device type detection logic.
 - screenshotWaitTimeout cap
 - added ios-webkit-debug-proxy launcher to go round libidevice 8.1 bugs
+- waitForAppScript capability.
+- syslog fix
+- getStrings refactoring
+- simulator folder fix
+- doctor support for OSX 10.10.1
 
 #### Android
 - exec refactoring.
@@ -25,13 +30,14 @@ CHANGES IN VERSION 1.3.4
 - ensure an already-running Android device's language and country settings are correct.
 - fixed unknown server-side error is thrown when the XPath expression doesn't match any nodes.
 - better error handling is SetText
-- edit fields with hint text fix.
+- edit + clear fields with hint text fix.
 - make hideKeyboard do nothing when keyboard is present but not closable (has no UI).
 
 #### Selendroid
 - upgrade to Selendroid 0.12.0.
 - throws when getting a redirect from Selendroid.
 - added hideKeyboard support.
+- uses for latest apktool (2.0.0-RC2) when Java 7 is detected.
 
 CHANGES IN VERSION 1.3.3 (from 1.3.1)
 ======================================

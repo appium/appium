@@ -56,7 +56,7 @@ describe('IOS', function () {
     });
 
     it('should return a dictionary with data from Localizable.strings file', function (done) {
-      device.parseLocalizableStrings(device.args.language, undefined, function () {
+      device.parseLocalizableStrings(device.args.language, null, function () {
         device.localizableStrings.should.eql({ 'main.button.computeSum' : 'Compute Sum' });
         done();
       });

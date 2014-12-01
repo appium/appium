@@ -1,4 +1,5 @@
 module.exports = {
   browserName: process.env.BROWSER_NAME || 'chrome',
-  enablePerformanceLogging: true
+  enablePerformanceLogging: true,
+  chromeOptions: {args: ['--disable-translate']}
 };

@@ -6,7 +6,10 @@
 var path = require('path')
   , _ = require('underscore')
   , IOS = require('../../lib/devices/ios/ios.js')
-  , expect = require('chai').expect;
+  , chai = require('chai')
+  , expect = chai.expect;
+
+chai.should();
 
 describe('IOS', function () {
   var device;

@@ -393,6 +393,17 @@ describe("appium mock api", function () {
         .should.eventually.become("test")
         .nodeify(done);
     });
+    it('should set geolocation', function (done) {
+      driver
+        .setGeoLocation(-30, 30)
+        .nodeify(done);
+    });
+    it('should get app source', function (done) {
+      driver
+        .source()
+        .should.eventually.contain('<MockNavBar id="nav"')
+        .nodeify(done);
+    });
   });
 });
 

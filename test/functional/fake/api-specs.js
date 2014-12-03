@@ -9,7 +9,7 @@ describe("appium mock api", function () {
   var driver;
   setup(this, {app: mockApp}).then(function (d) { driver = d; });
 
-  describe('contexts and webviews', function () {
+  describe('contexts, webviews, frames', function () {
     it('should get current context', function (done) {
       driver
         .currentContext()
@@ -42,12 +42,38 @@ describe("appium mock api", function () {
           .should.eventually.become('html')
         .nodeify(done);
     });
+    it('should not switch to a frame that is not there', function (done) {
+      driver
+        .frame('foo')
+        .should.eventually.be.rejectedWith(/8/)
+        .nodeify(done);
+    });
+    it('should switch to an iframe', function (done) {
+      driver
+        .frame('iframe1')
+        .title()
+        .should.eventually.become('Test iFrame')
+        .nodeify(done);
+    });
+    it('should switch back to default frame', function (done) {
+      driver
+        .frame(null)
+        .title()
+        .should.eventually.become('Test Webview')
+        .nodeify(done);
+    });
     it('should go back to native context', function (done) {
       driver
         .context('NATIVE_APP')
         .elementByXPath('//*')
         .getTagName()
           .should.eventually.become('app')
+        .nodeify(done);
+    });
+    it('should not set a frame in a native context', function (done) {
+      driver
+        .frame('iframe1')
+        .should.eventually.be.rejectedWith(/36/)
         .nodeify(done);
     });
   });

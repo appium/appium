@@ -5,10 +5,21 @@
     </MockNavBar>
     <MockWebView id="wv" top="10" left="10.57" width="20.8" height="20.5">
         <html>
-            <head/>
+            <head>
+              <title>Test Webview</title>
+            </head>
             <body>
               <h1>Hello</h1>
-              <iframe id="iframe1" />
+              <iframe id="iframe1">
+                <html>
+                  <head>
+                    <title>Test iFrame</title>
+                  </head>
+                  <body>
+                    <h1>I'm an iFrame</h1>
+                  </body>
+                </html>
+              </iframe>  
             </body>
         </html>
     </MockWebView>

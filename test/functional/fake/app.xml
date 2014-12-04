@@ -31,4 +31,8 @@
     <MockInputField id="input" name="TypeMe" />
     <MockButton id="Button1" visible="false" enabled="false" />
     <MockButton id="Button2" selected="true" />
+    <MockButton id="AlertButton" showAlert="alert1" />
+    <MockButton id="AlertButton2" showAlert="alert2" />
+    <alert id="alert1" text="Fake Alert" hasPrompt="true" />
+    <alert id="alert2" text="Fake Alert 2" hasPrompt="false" />
 </app>

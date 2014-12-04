@@ -369,6 +369,67 @@ describe("appium mock api", function () {
     });
   });
 
+  describe('alerts', function () {
+    it('should not work with alerts when one is not present', function (done) {
+      driver
+        .alertText()
+          .should.eventually.be.rejectedWith(/27/)
+        .alertKeys('foo')
+          .should.eventually.be.rejectedWith(/27/)
+        .acceptAlert()
+          .should.eventually.be.rejectedWith(/27/)
+        .dismissAlert()
+          .should.eventually.be.rejectedWith(/27/)
+        .nodeify(done);
+    });
+    it('should get text of an alert', function (done) {
+      driver
+        .elementById("AlertButton")
+          .click()
+        .alertText()
+          .should.eventually.become("Fake Alert")
+        .nodeify(done);
+    });
+    it('should set the text of an alert', function (done) {
+      driver
+        .alertKeys('foo')
+        .alertText()
+          .should.eventually.become('foo')
+        .nodeify(done);
+    });
+    it('should not do other things while an alert is there', function (done) {
+      driver
+        .elementById("nav")
+        .click()
+          .should.eventually.be.rejectedWith(/26/)
+        .nodeify(done);
+    });
+    it('should accept an alert', function (done) {
+      driver
+        .acceptAlert()
+        .elementById("nav")
+        .click()
+        .nodeify(done);
+    });
+    it('should not set the text of the wrong kind of alert', function (done) {
+      driver
+        .elementById("AlertButton2")
+        .click()
+        .alertText()
+          .should.eventually.become('Fake Alert 2')
+        .alertKeys('foo')
+          .should.be.rejectedWith(/12/)
+        .nodeify(done);
+    });
+    it('should dismiss an alert', function (done) {
+      driver
+        .acceptAlert()
+        .elementById("nav")
+        .click()
+        .nodeify(done);
+    });
+  });
+
   describe('generic selenium actions', function () {
     it('should not send keys without a focused element', function (done) {
       driver

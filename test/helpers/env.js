@@ -73,6 +73,14 @@ function iphoneOrIpadSimulator(device, version) {
 }
 
 switch (env.DEVICE) {
+  case 'fake':
+    env.CAPS = {
+      platformName: 'fake'
+    , platformVersion: '1.0'
+    , deviceName: 'fake'
+    };
+    env.NO_TEARDOWN_TIMEOUT = true;
+    break;
   case 'ios':
   case 'ios6':
   case 'ios6_iphone':

@@ -150,7 +150,11 @@ module.exports.initSession = function (desired, opts) {
           if (env.SAUCE) return browser.sauceJobStatus(passed);
         })
         .catch(function (err) { console.warn("didn't manange to set sauce status. error:", err); })
-        .sleep(3000);
+        .then(function () {
+          if (!env.NO_TEARDOWN_TIMEOUT) {
+            return browser.sleep(3000);
+          }
+        });
     },
     promisedBrowser: deferred.promise
   };

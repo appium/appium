@@ -171,5 +171,17 @@ module.exports = function () {
       var testText = 'тестирование';
       runTextEditTest(testText, done);
     });
+
+    describe('pressing device key with unicode keyboard', function () {
+      it('should be able to send combination keyevents', function (done) {
+        driver
+          .waitForElementByClassName('android.widget.EditText')
+            .clear()
+          .pressDeviceKey(29, 193)
+          .elementByClassName('android.widget.EditText')
+            .text().should.become('A')
+          .nodeify(done);
+      });
+    });
   });
 };

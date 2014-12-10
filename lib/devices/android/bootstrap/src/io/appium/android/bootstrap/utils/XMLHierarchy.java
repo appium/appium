@@ -75,21 +75,30 @@ public abstract class XMLHierarchy {
 
     dumpFile.delete();
 
-    try {
-      // dumpWindowHierarchy often has a NullPointerException
-      UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
-    } catch (Exception e) {
-      e.printStackTrace();
-      // If there's an error then the dumpfile may exist and be empty.
-      dumpFile.delete();
-    }
+    for (int i = 0; i < 50; i++) {
+      try {
+        // dumpWindowHierarchy often has a NullPointerException
+        UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
+      } catch (Exception e) {
+        e.printStackTrace();
+        // If there's an error then the dumpfile may exist and be empty.
+        dumpFile.delete();
+      }
 
-    try {
-      return new InputSource(new FileReader(dumpFile));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Failed to Dump Window Hierarchy");
+      try {
+        return new InputSource(new FileReader(dumpFile));
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+    
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e1) {
+        throw new RuntimeException(e1);
+      }
     }
+    
+    throw new RuntimeException("Failed to Dump Window Hierarchy");
   }
 
   public static Node getFormattedXMLDoc() {

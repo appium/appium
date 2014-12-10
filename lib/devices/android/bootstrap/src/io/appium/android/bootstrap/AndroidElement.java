@@ -23,8 +23,6 @@ import static io.appium.android.bootstrap.utils.API.API_18;
  */
 public class AndroidElement {
 
-  private final Configurator mConfig = Configurator.getInstance();
-
   private final UiObject el;
   private String         id;
 
@@ -146,7 +144,7 @@ public class AndroidElement {
       ReflectionUtils utils = new ReflectionUtils();
       Method method = utils.getMethod(el.getClass(), "findAccessibilityNodeInfo", long.class);
 
-      AccessibilityNodeInfo node = (AccessibilityNodeInfo)method.invoke(el, mConfig.getWaitForSelectorTimeout());
+      AccessibilityNodeInfo node = (AccessibilityNodeInfo)method.invoke(el, Configurator.getInstance().getWaitForSelectorTimeout());
 
       if (node == null) {
         throw new UiObjectNotFoundException(el.getSelector().toString());

@@ -3,7 +3,6 @@ package io.appium.android.bootstrap;
 import android.graphics.Rect;
 import android.view.MotionEvent.PointerCoords;
 import android.view.accessibility.AccessibilityNodeInfo;
-import com.android.uiautomator.common.ReflectionUtils;
 import com.android.uiautomator.core.Configurator;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
@@ -13,8 +12,8 @@ import io.appium.android.bootstrap.exceptions.NoAttributeFoundException;
 import io.appium.android.bootstrap.utils.Point;
 import io.appium.android.bootstrap.utils.UnicodeEncoder;
 
-import java.lang.reflect.Method;
-
+import static io.appium.android.bootstrap.utils.ReflectionUtils.invoke;
+import static io.appium.android.bootstrap.utils.ReflectionUtils.method;
 import static io.appium.android.bootstrap.utils.API.API_18;
 
 /**
@@ -141,10 +140,8 @@ public class AndroidElement {
        * The returned string matches exactly what is displayed in the
        * UiAutomater inspector.
        */
-      ReflectionUtils utils = new ReflectionUtils();
-      Method method = utils.getMethod(el.getClass(), "findAccessibilityNodeInfo", long.class);
-
-      AccessibilityNodeInfo node = (AccessibilityNodeInfo)method.invoke(el, Configurator.getInstance().getWaitForSelectorTimeout());
+      AccessibilityNodeInfo node = (AccessibilityNodeInfo) invoke( method(el.getClass(), "findAccessibilityNodeInfo", long.class),
+              el, Configurator.getInstance().getWaitForSelectorTimeout());
 
       if (node == null) {
         throw new UiObjectNotFoundException(el.getSelector().toString());
@@ -250,9 +247,8 @@ public class AndroidElement {
         // version in the emulator is correct. So we cannot do:
         //   `return el.performMultiPointerGesture(touches);`
         // Instead we need to use Reflection to do it all at runtime.
-        Method method = this.el.getClass().getMethod("performMultiPointerGesture", PointerCoords[][].class);
-        Boolean rt = (Boolean)method.invoke(this.el, (Object)touches);
-        return rt;
+        return (Boolean) invoke(method(el.getClass(), "performMultiPointerGesture", PointerCoords[][].class),
+                el, (Object)touches);
       } else {
         Logger.error("Device does not support API < 18!");
         return false;

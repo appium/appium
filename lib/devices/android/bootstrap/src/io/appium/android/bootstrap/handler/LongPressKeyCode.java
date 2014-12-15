@@ -2,17 +2,16 @@ package io.appium.android.bootstrap.handler;
 
 import android.os.SystemClock;
 import android.view.InputDevice;
-import android.view.InputEvent;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import com.android.uiautomator.common.ReflectionUtils;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
+import io.appium.uiautomator.core.InteractionController;
+import io.appium.uiautomator.core.UiAutomatorBridge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.util.Hashtable;
 
 /**
@@ -38,9 +37,8 @@ public class LongPressKeyCode extends CommandHandler {
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
     try {
-      final ReflectionUtils utils = new ReflectionUtils();
-      final Method injectEventSync = utils.getControllerMethod("injectEventSync",
-          InputEvent.class);
+      InteractionController interactionController = UiAutomatorBridge.getInstance().getInteractionController();
+
       final Hashtable<String, Object> params = command.params();
       keyCode = (Integer) params.get("keycode");
       metaState = params.get("metastate") != JSONObject.NULL ? (Integer) params
@@ -50,16 +48,16 @@ public class LongPressKeyCode extends CommandHandler {
       final KeyEvent downEvent = new KeyEvent(eventTime, eventTime,
           KeyEvent.ACTION_DOWN, keyCode, 0, metaState,
           KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0, InputDevice.SOURCE_KEYBOARD);
-      if ((Boolean) injectEventSync.invoke(utils.getController(), downEvent)) {
+      if (interactionController.injectEventSync(downEvent)) {
         // Send a repeat event. This will cause the FLAG_LONG_PRESS to be set.
         final KeyEvent repeatEvent = KeyEvent.changeTimeRepeat(downEvent,
             eventTime, 1);
-        injectEventSync.invoke(utils.getController(), repeatEvent);
+        interactionController.injectEventSync(repeatEvent);
         // Finally, send the up event
         final KeyEvent upEvent = new KeyEvent(eventTime, eventTime,
             KeyEvent.ACTION_UP, keyCode, 0, metaState,
             KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0, InputDevice.SOURCE_KEYBOARD);
-        injectEventSync.invoke(utils.getController(), upEvent);
+        interactionController.injectEventSync(upEvent);
       }
       return getSuccessResult(true);
     } catch (final Exception e) {

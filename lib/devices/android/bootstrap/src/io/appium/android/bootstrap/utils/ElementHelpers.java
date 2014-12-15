@@ -1,7 +1,6 @@
 package io.appium.android.bootstrap.utils;
 
 import android.view.accessibility.AccessibilityNodeInfo;
-import com.android.uiautomator.common.ReflectionUtils;
 import com.android.uiautomator.core.UiObject;
 import io.appium.android.bootstrap.AndroidElement;
 import org.json.JSONException;
@@ -10,6 +9,8 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import static io.appium.android.bootstrap.utils.ReflectionUtils.method;
 
 public abstract class ElementHelpers {
 
@@ -33,8 +34,7 @@ public abstract class ElementHelpers {
    */
   public static List<AndroidElement> dedupe(List<AndroidElement> elements) {
     try {
-      ReflectionUtils utils = new ReflectionUtils();
-      findAccessibilityNodeInfo = utils.getMethod(UiObject.class, "findAccessibilityNodeInfo", long.class);
+      findAccessibilityNodeInfo = method(UiObject.class, "findAccessibilityNodeInfo", long.class);
     } catch (Exception e) {
       e.printStackTrace();
     }

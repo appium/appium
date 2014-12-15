@@ -1,10 +1,14 @@
 package io.appium.android.bootstrap.utils;
 
+import android.graphics.Point;
 import android.os.Environment;
-import com.android.uiautomator.core.UiDevice;
+import android.view.Display;
+import android.view.accessibility.AccessibilityNodeInfo;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
 import io.appium.android.bootstrap.exceptions.InvalidSelectorException;
 import io.appium.android.bootstrap.exceptions.PairCreationException;
+import io.appium.uiautomator.core.AccessibilityNodeInfoDumper;
+import io.appium.uiautomator.core.UiAutomatorBridge;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -12,20 +16,23 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 /**
  * Created by jonahss on 8/12/14.
  */
 public abstract class XMLHierarchy {
 
-  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression) throws ElementNotFoundException, InvalidSelectorException, ParserConfigurationException {
+  public static ArrayList<ClassInstancePair> getClassInstancePairs(String xpathExpression)
+          throws ElementNotFoundException, InvalidSelectorException, ParserConfigurationException {
     XPath xpath = XPathFactory.newInstance().newXPath();
     XPathExpression exp = null;
     try {
@@ -64,41 +71,34 @@ public abstract class XMLHierarchy {
   }
 
   public static InputSource getRawXMLHierarchy() {
-    // Note that
-    // "new File(new File(Environment.getDataDirectory(), "local/tmp"), fileName)"
-    // is directly from the UiDevice.java source code.
-    final File dumpFolder = new File(Environment.getDataDirectory(), "local/tmp");
-    final String dumpFileName = "dump.xml";
-    final File dumpFile = new File(dumpFolder, dumpFileName);
+    AccessibilityNodeInfo root = getRootAccessibilityNode();
+    return serializeAccessibilityNode(root);
+  }
 
-    dumpFolder.mkdirs();
-
-    dumpFile.delete();
-
-    for (int i = 0; i < 50; i++) {
-      try {
-        // dumpWindowHierarchy often has a NullPointerException
-        UiDevice.getInstance().dumpWindowHierarchy(dumpFileName);
-      } catch (Exception e) {
-        e.printStackTrace();
-        // If there's an error then the dumpfile may exist and be empty.
-        dumpFile.delete();
-      }
-
-      try {
-        return new InputSource(new FileReader(dumpFile));
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
-    
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e1) {
-        throw new RuntimeException(e1);
+  private static AccessibilityNodeInfo getRootAccessibilityNode() {
+    while(true){
+      AccessibilityNodeInfo root = UiAutomatorBridge.getInstance().getQueryController().getAccessibilityRootNode();
+      if (root != null) {
+        return root;
       }
     }
-    
-    throw new RuntimeException("Failed to Dump Window Hierarchy");
+  }
+
+  private static InputSource serializeAccessibilityNode(AccessibilityNodeInfo root) {
+    try {
+
+      final File dumpFolder = new File(Environment.getDataDirectory(), "local/tmp");
+      final File dumpFile = new File(dumpFolder, "dump.xml");
+
+      dumpFolder.mkdirs();
+      dumpFile.delete();
+
+      AccessibilityNodeInfoDumper.dumpWindowToFile(root, dumpFile);
+
+      return new InputSource(new FileReader(dumpFile));
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to Dump Window Hierarchy", e);
+    }
   }
 
   public static Node getFormattedXMLDoc() {
@@ -124,7 +124,6 @@ public abstract class XMLHierarchy {
     return root;
   }
 
-
   private static ClassInstancePair getPairFromNode(Node node) throws PairCreationException {
 
     NamedNodeMap attrElements = node.getAttributes();
@@ -141,7 +140,7 @@ public abstract class XMLHierarchy {
     return new ClassInstancePair(androidClass, instance);
   }
 
-  private static void annotateNodes(Node node, HashMap<String, Integer>instances) {
+  private static void annotateNodes(Node node, HashMap<String, Integer> instances) {
     NodeList children = node.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
@@ -180,7 +179,7 @@ public abstract class XMLHierarchy {
 
     doc.renameNode(node, node.getNamespaceURI(), androidClass);
 
-    instances.put(androidClass, instance+1);
+    instances.put(androidClass, instance + 1);
   }
 
   private static String cleanTagName(String name) {

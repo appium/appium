@@ -22,10 +22,10 @@ describe('testapp - accented characters', function () {
     driver
       .elementsByClassName('UIATextField').at(1)
         .clear()
-        .sendKeys("abc")
-        .sendKeys('\uE003\uE003\uE003')
+        .sendKeys("abcd")
+        .sendKeys('\uE003\uE003')
         .text()
-        .should.become("")
+        .should.become("ab")
       .nodeify(done);
   });
 });

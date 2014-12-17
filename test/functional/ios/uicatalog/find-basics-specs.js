@@ -78,7 +78,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('no mix up', function () {
     after(function (done) {
-      if (!env.IOS81) {
+      if (!env.IOS81 && !env.IOS82) {
         driver
           .clickButton('UICatalog')
           .nodeify(done);
@@ -129,7 +129,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('findElementsByClassName textfield case', function () {
     after(function (done) {
-      if (!env.IOS81) {
+      if (!env.IOS81 && !env.IOS82) {
         driver
           .clickButton('UICatalog')
           .nodeify(done);

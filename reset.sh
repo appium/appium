@@ -383,7 +383,9 @@ reset_selendroid_quick() {
     echo "* Selendroid version is ${selendroid_version}"
     echo "* Downloading selendroid server"
     run_cmd wget https://github.com/selendroid/selendroid/releases/download/${selendroid_version}/selendroid-standalone-${selendroid_version}-with-dependencies.jar
-    run_cmd jar xf selendroid-standalone-${selendroid_version}-with-dependencies.jar AndroidManifest.xml  prebuild/selendroid-server-${selendroid_version}.apk
+    ANDROID_MANIFEST=$(jar tf selendroid-standalone-0.12.0-with-dependencies.jar| grep AndroidManifest | grep -v class)
+    run_cmd jar xf selendroid-standalone-${selendroid_version}-with-dependencies.jar $ANDROID_MANIFEST prebuild/selendroid-server-${selendroid_version}.apk
+    mv $ANDROID_MANIFEST AndroidManifest.xml
     run_cmd cp /tmp/appium/selendroid/prebuild/selendroid-server-${selendroid_version}.apk "${appium_home}/build/selendroid/selendroid.apk"
     run_cmd cp /tmp/appium/selendroid/AndroidManifest.xml "${appium_home}/build/selendroid/AndroidManifest.xml"
     run_cmd popd

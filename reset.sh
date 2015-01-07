@@ -185,8 +185,6 @@ reset_ios() {
             run_cmd ./bin/npmlink.sh -l appium-instruments
             echo "* Cloning/npm linking appium-uiauto"
             run_cmd ./bin/npmlink.sh -l appium-uiauto
-            echo "* Cloning/npm linking appium-adb"
-            run_cmd ./bin/npmlink.sh -l appium-adb
         fi
         if $ios7_active || $ios8_active ; then
             if $hardcore ; then
@@ -346,6 +344,11 @@ reset_settings_apk() {
     fi
 }
 
+link_appium_adb() {
+    echo "* Cloning/npm linking appium-adb"
+    run_cmd ./bin/npmlink.sh -l appium-adb
+}
+
 reset_android() {
     echo "RESETTING ANDROID"
     require_java
@@ -360,6 +363,9 @@ reset_android() {
     if $include_dev ; then
         reset_apidemos
         reset_toggle_test
+        if $npmlink ; then
+            link_appium_adb
+        fi
     fi
     echo "* Setting Android config to Appium's version"
     run_cmd "$grunt" setConfigVer:android
@@ -391,6 +397,9 @@ reset_selendroid_quick() {
     run_cmd popd
     run_cmd "$grunt" fixSelendroidAndroidManifest
     if $include_dev ; then
+        if $npmlink ; then
+            link_appium_adb
+        fi
         if ! $apidemos_reset; then
             reset_apidemos
             uninstall_android_app io.appium.android.apis.selendroid
@@ -434,6 +443,9 @@ reset_selendroid() {
     reset_unlock_apk
     reset_unicode_ime
     if $include_dev ; then
+        if $npmlink ; then
+            link_appium_adb
+        fi
         if ! $apidemos_reset; then
             reset_apidemos
             uninstall_android_app io.appium.android.apis.selendroid

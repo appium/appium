@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
+import java.lang.reflect.InvocationTargetException;
 
 public class ReflectionUtils {
   private static Field enableField(final Class<?> clazz, final String field)
@@ -46,6 +47,32 @@ public class ReflectionUtils {
 
   public Object getBridge() {
     return bridge;
+  }
+  
+  /**
+   * Clears the in-process Accessibility cache, removing any stale references.
+   * Because the AccessibilityInteractionClient singleton stores copies of AccessibilityNodeInfo
+   * instances, calls to public APIs such as `recycle` do not guarantee cached references get
+   * updated.  See the android.view.accessibility AIC and ANI source code for more information.
+   */
+  public static boolean clearAccessibilityCache() {
+    boolean success = false;
+    
+    try {
+      ReflectionUtils utils = new ReflectionUtils();
+      Class c = Class.forName("android.view.accessibility.AccessibilityInteractionClient");      
+      Method getInstance = utils.getMethod(c, "getInstance");
+      Object instance = getInstance.invoke(null);
+      Method clearCache = utils.getMethod(instance.getClass(), "clearCache");
+      clearCache.invoke(instance);
+      success = true;
+    } catch (Exception ex) {
+      // Expected: ClassNotFoundException, NoSuchMethodException, IllegalAccessException,
+      // InvocationTargetException, NoSuchFieldException
+      Logger.error("Failed to clear Accessibility Node cache. " + ex.getMessage());
+    }
+
+    return success;
   }
 
   public Method getControllerMethod(final String name, final Class<?>... parameterTypes)

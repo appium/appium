@@ -1,7 +1,17 @@
 package io.appium.android.bootstrap.handler;
 
+import com.android.uiautomator.common.ReflectionUtils;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import javax.xml.parsers.ParserConfigurationException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import io.appium.android.bootstrap.*;
 import io.appium.android.bootstrap.exceptions.ElementNotFoundException;
 import io.appium.android.bootstrap.exceptions.InvalidSelectorException;
@@ -12,15 +22,6 @@ import io.appium.android.bootstrap.utils.ClassInstancePair;
 import io.appium.android.bootstrap.utils.ElementHelpers;
 import io.appium.android.bootstrap.utils.UiAutomatorParser;
 import io.appium.android.bootstrap.utils.XMLHierarchy;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
 
@@ -62,6 +63,24 @@ public class Find extends CommandHandler {
   @Override
   public AndroidCommandResult execute(final AndroidCommand command)
       throws JSONException {
+    return execute(command, false);
+  }
+  
+  /**
+   * execute implementation.
+   * 
+   * @see io.appium.android.bootstrap.handler.Find#execute(io.appium.android.
+   * bootstrap.AndroidCommand)
+   * 
+   * @param command The {@link AndroidCommand} used for this handler.
+   * 
+   * @param isRetry Is this invocation a second attempt?
+   * 
+   * @return {@link AndroidCommandResult}
+   * @throws JSONException 
+   */
+  private AndroidCommandResult execute(final AndroidCommand command, boolean isRetry)
+      throws JSONException {
     final Hashtable<String, Object> params = command.params();
 
     // only makes sense on a device
@@ -82,7 +101,6 @@ public class Find extends CommandHandler {
     try {
       Object result = null;
       List<UiSelector> selectors = getSelectors(strategy, text, multiple);
-
       if (!multiple) {
         for (final UiSelector sel : selectors) {
           try {
@@ -97,8 +115,7 @@ public class Find extends CommandHandler {
       } else {
         List<AndroidElement> foundElements = new ArrayList<AndroidElement>();
         for (final UiSelector sel : selectors) {
-          // With multiple selectors, we expect that some elements may not
-          // exist.
+          // With multiple selectors, we expect that some elements may not exist.
           try {
             Logger.debug("Using: " + sel.toString());
             List<AndroidElement> elementsFromSelector = fetchElements(sel, contextId);
@@ -112,10 +129,20 @@ public class Find extends CommandHandler {
         result = elementsToJSONArray(foundElements);
       }
 
-      // If there are no results, then return an error.
       if (result == null) {
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            "No element found");
+        if (!isRetry) {
+          Logger.debug("Failed to locate element. Clearing Accessibility cache and retrying.");
+          // some control updates fail to trigger AccessibilityEvents, resulting in stale AccessibilityNodeInfo
+          // instances. In these cases, UIAutomator will fail to locate visible elements. As a work-around,
+          // force clear the AccessibilityInteractionClient's cache and search again. This technique also
+          // appears to make Appium's searches conclude more quickly. See Appium issue #4200
+          // https://github.com/appium/appium/issues/4200
+          if (ReflectionUtils.clearAccessibilityCache()) {
+            return execute(command, true);
+          }
+        }
+        // If there are no results and we've already retried, return an error.
+        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT, "No element found");
       }
 
       return getSuccessResult(result);
@@ -131,6 +158,7 @@ public class Find extends CommandHandler {
       return new AndroidCommandResult(WDStatus.INVALID_SELECTOR, e.getMessage());
     }
   }
+
 
   /**
    * Get the element from the {@link AndroidElementsHash} and return the element

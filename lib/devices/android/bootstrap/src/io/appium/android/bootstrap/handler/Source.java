@@ -1,6 +1,6 @@
 package io.appium.android.bootstrap.handler;
 
-import com.android.uiautomator.common.ReflectionUtils;
+import io.appium.android.bootstrap.utils.ReflectionUtils;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
 import io.appium.android.bootstrap.CommandHandler;
@@ -21,13 +21,13 @@ import java.io.StringWriter;
  */
 public class Source extends CommandHandler {
   @Override
-  public AndroidCommandResult execute(AndroidCommand command) throws JSONException {
+  public AndroidCommandResult execute(final AndroidCommand command) throws JSONException {
     ReflectionUtils.clearAccessibilityCache();
 
-    Document doc = (Document) XMLHierarchy.getFormattedXMLDoc();
+    final Document doc = (Document) XMLHierarchy.getFormattedXMLDoc();
 
-    TransformerFactory tf = TransformerFactory.newInstance();
-    StringWriter writer = new StringWriter();
+    final TransformerFactory tf = TransformerFactory.newInstance();
+    final StringWriter writer = new StringWriter();
     Transformer transformer;
     String xmlString;
 
@@ -37,10 +37,10 @@ public class Source extends CommandHandler {
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
       xmlString = writer.getBuffer().toString();
 
-    } catch (TransformerConfigurationException e) {
+    } catch (final TransformerConfigurationException e) {
       e.printStackTrace();
       throw new RuntimeException("Something went terribly wrong while converting xml document to string");
-    } catch (TransformerException e) {
+    } catch (final TransformerException e) {
       return getErrorResult("Could not parse xml hierarchy to string: " + e.getMessage());
     }
 

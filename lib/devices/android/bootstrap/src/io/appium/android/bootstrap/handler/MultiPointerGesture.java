@@ -1,13 +1,16 @@
 package io.appium.android.bootstrap.handler;
 
 import android.view.MotionEvent.PointerCoords;
-import com.android.uiautomator.common.ReflectionUtils;
-import io.appium.android.bootstrap.*;
+import io.appium.android.bootstrap.AndroidCommand;
+import io.appium.android.bootstrap.AndroidCommandResult;
+import io.appium.android.bootstrap.AndroidElement;
+import io.appium.android.bootstrap.CommandHandler;
+import io.appium.android.bootstrap.Logger;
+import io.appium.android.bootstrap.WDStatus;
+import io.appium.uiautomator.core.UiAutomatorBridge;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Method;
 
 import static io.appium.android.bootstrap.utils.API.API_18;
 
@@ -59,11 +62,7 @@ public class MultiPointerGesture extends CommandHandler {
         }
       } else {
         if (API_18) {
-          final ReflectionUtils utils = new ReflectionUtils();
-          final Method pmpg = utils.getControllerMethod("performMultiPointerGesture",
-              PointerCoords[][].class);
-          final Boolean rt = (Boolean) pmpg.invoke(utils.getController(),
-              (Object) pcs);
+          Boolean rt = UiAutomatorBridge.getInstance().getInteractionController().performMultiPointerGesture(pcs);
           if (rt) {
             return getSuccessResult("OK");
           } else {

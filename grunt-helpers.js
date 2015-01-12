@@ -16,9 +16,8 @@ var _ = require("underscore")
   , parseXmlString = require('xml2js').parseString
   , appiumVer = require('./package.json').version
   , fs = require('fs')
-  , helpers = require('./lib/helpers')
   , xcode = require('./lib/devices/ios/xcode.js')
-  , isWindows = helpers.isWindows()
+  , isWindows = require('appium-support').system.isWindows()
   , MAX_BUFFER_SIZE = 524288
   , SELENDROID_MAX_BUFFER_SIZE = 4 * MAX_BUFFER_SIZE;
 

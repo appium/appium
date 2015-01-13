@@ -2,6 +2,8 @@ package io.appium.android.bootstrap.utils;
 
 import java.nio.charset.Charset;
 
+import io.appium.android.bootstrap.Logger;
+
 
 public class UnicodeEncoder {
   private static final Charset M_UTF7 = Charset.forName("x-IMAP-mailbox-name");
@@ -10,7 +12,14 @@ public class UnicodeEncoder {
 
   public static String encode(final String text) {
     byte[] encoded = text.getBytes(M_UTF7);
-    return new String(encoded, ASCII);
+    String ret = new String(encoded, ASCII);
+    if (ret.charAt(ret.length()-1) != text.charAt(text.length()-1) && !ret.endsWith("-")) {
+      // in some cases there is a problem and the closing tag is not added
+      // to the encoded text (for instance, with `ü`)
+      Logger.debug("Closing tag missing. Adding.");
+      ret = ret + "-";
+    }
+    return ret;
   }
 
   public static boolean needsEncoding(final String text) {

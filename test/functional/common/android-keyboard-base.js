@@ -8,7 +8,7 @@ var env = require('../../helpers/env')
 
 var desired = {
   app: getAppPath('ApiDemos'),
-  appActivity: '.view.Controls1',
+  appActivity: '.view.TextFields',
   newCommandTimeout: 90
 };
 if (env.SELENDROID) {
@@ -137,6 +137,11 @@ module.exports = function () {
 
     it('should be able to send roman characters with diacritics', function (done) {
       var testText = 'Áé Œ ù ḍ';
+      runTextEditTest(testText, done);
+    });
+
+    it('should be able to send a u with an umlaut', function (done) {
+      var testText = 'ü';
       runTextEditTest(testText, done);
     });
 

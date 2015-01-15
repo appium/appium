@@ -58,6 +58,29 @@ module.exports.initSession = function (desired, opts) {
     return this.source().then(function (s) { console.log(s); });
   });
 
+  wd.addPromiseChainMethod('firstWebContext', function (assertCtxLength) {
+    var d = this;
+    return d
+      .contexts()
+      .then(function (ctxs) {
+        if (!_.isUndefined(assertCtxLength) && ctxs.length !== assertCtxLength) {
+          throw new Error("Expected " + assertCtxLength + " contexts but got " +
+                          ctxs.length);
+        }
+        var context = null;
+        for (var i = 0; i < ctxs.length; i++) {
+          if (ctxs[i].indexOf('NATIVE') === -1) {
+            context = ctxs[i];
+          }
+        }
+        if (context === null) {
+          throw new Error("Could not find any web contexts. Contexts were: " +
+                          JSON.stringify(ctxs));
+        }
+        return d.context(context);
+      });
+  });
+
   return {
     setUp: function (name) {
       if (env.VERBOSE) {

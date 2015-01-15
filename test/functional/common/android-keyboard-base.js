@@ -178,7 +178,9 @@ module.exports = function () {
     });
 
     describe('pressing device key with unicode keyboard', function () {
-      it('should be able to send combination keyevents', function (done) {
+      // skip selendroid because selendroid implements keyevent with an adb
+      // call, and we are unable to send metastate that way
+      it('should be able to send combination keyevents @skip-selendroid-all', function (done) {
         driver
           .waitForElementByClassName('android.widget.EditText')
             .clear()

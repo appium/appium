@@ -1,6 +1,7 @@
 "use strict";
 
 var env = require('../../../../helpers/env')
+  , ADB = require('appium-adb')
   , setup = require("../../../common/setup-base")
   , desired = require("../desired")
   , reset = require("../reset")
@@ -9,7 +10,24 @@ var env = require('../../../../helpers/env')
 describe("apidemo - find - basics", function () {
 
   var driver;
+  var apiLevel = "0";
+  var singleResourceId = "home";
   setup(this, desired).then(function (d) { driver = d; });
+
+  before(function (done) {
+    var adb = new ADB({});
+    // the app behaves differently on different api levels when it comes to
+    // which resource ids are available for testing, so we switch here to make
+    // sure we're using the right resource id below
+    adb.getApiLevel(function (err, level) {
+      if (err) return done(err);
+      apiLevel = level;
+      if (apiLevel >= "21") {
+        singleResourceId = "decor_content_parent";
+      }
+      done();
+    });
+  });
 
   if (env.FAST_TESTS) {
     beforeEach(function () {
@@ -66,7 +84,7 @@ describe("apidemo - find - basics", function () {
   });
   it('should find a single element by resource-id', function (done) {
     driver
-      .elementById('android:id/home').should.eventually.exist
+      .elementById('android:id/' + singleResourceId).should.eventually.exist
       .nodeify(done);
   });
   it('should find multiple elements by resource-id', function (done) {
@@ -77,7 +95,7 @@ describe("apidemo - find - basics", function () {
   });
   it('should find multiple elements by resource-id even when theres just one', function (done) {
     driver
-      .elementsById('android:id/home')
+      .elementsById('android:id/' + singleResourceId)
       .then(function (els) {
         els.length.should.equal(1);
       })

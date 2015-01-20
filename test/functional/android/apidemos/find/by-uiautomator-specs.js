@@ -11,38 +11,38 @@ describe("apidemo - find elements - by uiautomator", function () {
 
   it('should find elements with a boolean argument', function (done) {
     driver.elementsByAndroidUIAutomator('new UiSelector().clickable(true)').then(function (els) {
-      els.length.should.be.above(11);
+      els.length.should.be.above(10);
     }).nodeify(done);
   });
   it('should find elements within the context of another element', function (done) {
     driver
-      .elementByClassName('android.widget.LinearLayout').then(function (el) {
+      .elementByClassName('android.widget.ListView').then(function (el) {
         el.elementsByAndroidUIAutomator('new UiSelector().className("android.widget.TextView")')
           .then(function (els) {
-            els.length.should.be.above(0);
-            els.length.should.be.below(3);
+            els.length.should.be.above(8);
+            els.length.should.be.below(12);
         });
       }).nodeify(done);
   });
   it('should find elements without prepending "new UiSelector()"', function (done) {
     driver.elementsByAndroidUIAutomator('.clickable(true)').then(function (els) {
-      els.length.should.be.above(11);
+      els.length.should.be.above(10);
     }).nodeify(done);
   });
   it('should find elements without prepending "new UiSelector()."', function (done) {
     driver.elementsByAndroidUIAutomator('clickable(true)').then(function (els) {
-      els.length.should.be.above(11);
+      els.length.should.be.above(10);
     }).nodeify(done);
   });
   it('should find elements without prepending "new "', function (done) {
     driver.elementsByAndroidUIAutomator('UiSelector().clickable(true)').then(function (els) {
-      els.length.should.be.above(11);
+      els.length.should.be.above(10);
     }).nodeify(done);
   });
   it('should ignore trailing semicolons', function (done) {
     driver.elementsByAndroidUIAutomator('new UiSelector().clickable(true);')
     .then(function (els) {
-      els.length.should.be.above(11);
+      els.length.should.be.above(10);
     }).nodeify(done);
   });
   it('should find an element with an int argument', function (done) {

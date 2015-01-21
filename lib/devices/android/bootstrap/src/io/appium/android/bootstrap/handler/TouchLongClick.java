@@ -1,15 +1,14 @@
 package io.appium.android.bootstrap.handler;
 
 import android.os.SystemClock;
-import com.android.uiautomator.common.ReflectionUtils;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import io.appium.android.bootstrap.Logger;
-
-import java.lang.reflect.Method;
+import io.appium.uiautomator.core.InteractionController;
+import io.appium.uiautomator.core.UiAutomatorBridge;
 
 /**
  * This handler is used to long click elements in the Android UI.
- * 
+ *
  */
 public class TouchLongClick extends TouchEvent {
   /*
@@ -23,14 +22,11 @@ public class TouchLongClick extends TouchEvent {
        * the super class.
        */
 
-      final ReflectionUtils utils = new ReflectionUtils();
-      final Method touchDown = utils.getControllerMethod("touchDown", int.class,
-          int.class);
-      final Method touchUp = utils.getControllerMethod("touchUp", int.class, int.class);
+      InteractionController interactionController = UiAutomatorBridge.getInstance().getInteractionController();
 
-      if ((Boolean) touchDown.invoke(utils.getController(), x, y)) {
+      if (interactionController.touchDown(x, y)) {
         SystemClock.sleep(duration);
-        if ((Boolean) touchUp.invoke(utils.getController(), x, y)) {
+        if (interactionController.touchUp(x, y)) {
           return true;
         }
       }

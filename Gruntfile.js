@@ -97,7 +97,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks("grunt-jscs-checker");
+  grunt.loadNpmTasks("grunt-jscs");
   grunt.registerTask('lint', ['newer:jshint','jscs']);
   grunt.registerTask('test', 'mochaTest:unit');
   grunt.registerTask('unit', 'mochaTest:unit');

@@ -1,5 +1,7 @@
 package io.appium.android.bootstrap.handler;
 
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiSelector;
 import static io.appium.android.bootstrap.utils.API.API_18;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;

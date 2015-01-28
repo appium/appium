@@ -24,7 +24,9 @@ var spawn = require('child_process').spawn,
 var args = process.argv.slice(2);
 
 var RESTART_ON_MESSAGES = [
-  'Invalid message _rpc_applicationUpdated'];
+  'Invalid message _rpc_applicationUpdated',
+  'Invalid message _rpc_applicationSentListing'];
+
 var PROXY_CMD = 'ios_webkit_debug_proxy';
 
 function startProxy() {

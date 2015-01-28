@@ -221,14 +221,15 @@ reset_ios() {
         echo "* Building SafariLauncher for real devices"
         run_cmd rm -rf build/SafariLauncher
         run_cmd mkdir -p build/SafariLauncher
-        run_cmd rm -f submodules/Safarilauncher/target.xcconfig
-        echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> submodules/Safarilauncher/target.xcconfig
+        run_cmd rm -f submodules/SafariLauncher/target.xcconfig
+        touch submodules/SafariLauncher/target.xcconfig
+        echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> submodules/SafariLauncher/target.xcconfig
         if [[ ! -z $code_sign_identity ]]; then
-          echo "IDENTITY_NAME = " $code_sign_identity >> submodules/Safarilauncher/target.xcconfig
+          echo "IDENTITY_NAME = " $code_sign_identity >> submodules/SafariLauncher/target.xcconfig
         else
-          echo "IDENTITY_NAME = iPhone Developer" >> submodules/Safarilauncher/target.xcconfig
+          echo "IDENTITY_NAME = iPhone Developer" >> submodules/SafariLauncher/target.xcconfig
         fi
-        echo "IDENTITY_CODE = " $provisioning_profile >> submodules/Safarilauncher/target.xcconfig
+        echo "IDENTITY_CODE = " $provisioning_profile >> submodules/SafariLauncher/target.xcconfig
         run_cmd "$grunt" buildSafariLauncherApp:iphoneos:"target.xcconfig"
         echo "* Copying SafariLauncher for real devices to build"
         run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app

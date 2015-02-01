@@ -101,4 +101,23 @@ describe("apidemo - find - basics", function () {
       })
       .nodeify(done);
   });
+  it('should find a single element by resource-id with implicit package', function (done) {
+    driver
+      .elementById(singleResourceId).should.eventually.exist
+      .nodeify(done);
+  });
+  it('should find multiple elements by resource-id with implicit package', function (done) {
+    driver
+      .elementsById('text1')
+        .should.eventually.have.length.at.least(10)
+      .nodeify(done);
+  });
+  it('should find multiple elements by resource-id  with implicit package even when theres just one', function (done) {
+    driver
+      .elementsById(singleResourceId)
+      .then(function (els) {
+        els.length.should.equal(1);
+      })
+      .nodeify(done);
+  });
 });

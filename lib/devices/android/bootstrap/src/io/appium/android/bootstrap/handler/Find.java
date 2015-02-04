@@ -124,19 +124,17 @@ public class Find extends CommandHandler {
 
     Logger.debug("Finding " + text + " using " + strategy.toString()
         + " with the contextId: " + contextId + " multiple: " + multiple);
-
+    boolean found = false;
     try {
       Object result = null;
       final List<UiSelector> selectors = getSelectors(strategy, text, multiple);
       if (!multiple) {
-        for (final UiSelector sel : selectors) {
+        for (int i = 0; i < selectors.size() && !found; i++) {
           try {
-            Logger.debug("Using: " + sel.toString());
-            result = fetchElement(sel, contextId);
+            Logger.debug("Using: " + selectors.get(i).toString());
+            result = fetchElement(selectors.get(i), contextId);
+            found = result != null;
           } catch (final ElementNotFoundException ignored) {
-          }
-          if (result != null) {
-            break;
           }
         }
       } else {
@@ -149,6 +147,7 @@ public class Find extends CommandHandler {
             final List<AndroidElement> elementsFromSelector = fetchElements(
                 sel, contextId);
             foundElements.addAll(elementsFromSelector);
+            found |= foundElements.size() > 0;
           } catch (final UiObjectNotFoundException ignored) {
           }
         }
@@ -158,26 +157,26 @@ public class Find extends CommandHandler {
         result = elementsToJSONArray(foundElements);
       }
 
-      if (result == null) {
+      if (found) {
         if (!isRetry) {
           Logger
               .debug("Failed to locate element. Clearing Accessibility cache and retrying.");
           // some control updates fail to trigger AccessibilityEvents, resulting
-          // in stale AccessibilityNodeInfo
-          // instances. In these cases, UIAutomator will fail to locate visible
-          // elements. As a work-around,
-          // force clear the AccessibilityInteractionClient's cache and search
-          // again. This technique also
-          // appears to make Appium's searches conclude more quickly. See Appium
-          // issue #4200
-          // https://github.com/appium/appium/issues/4200
+          // in stale AccessibilityNodeInfo instances. In these cases, UIAutomator 
+          // will fail to locate visible elements. As a work-around, force clear 
+          // the AccessibilityInteractionClient's cache and search again. This 
+          // technique also appears to make Appium's searches conclude more quickly.
+          // See Appium issue #4200 https://github.com/appium/appium/issues/4200
           if (ReflectionUtils.clearAccessibilityCache()) {
             return execute(command, true);
           }
         }
-        // If there are no results and we've already retried, return an error.
-        return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
-            "No element found");
+        // JSONWP spec does not return NoSuchElement
+        if (!multiple) {
+          // If there are no results and we've already retried, return an error.
+          return new AndroidCommandResult(WDStatus.NO_SUCH_ELEMENT,
+              "No element found");
+        }
       }
 
       return getSuccessResult(result);

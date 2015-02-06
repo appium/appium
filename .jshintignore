@@ -1,0 +1,5 @@
+submodules
+node_modules
+lib/server/static
+lib/devices/firefoxos/atoms
+

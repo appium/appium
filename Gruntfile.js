@@ -23,67 +23,12 @@ var path = require('path')
   , setGitRev = gruntHelpers.setGitRev
   , getGitRev = require('./lib/helpers').getGitRev;
 
+var GULP_BIN = 'node_modules/.bin/gulp';
+
 module.exports = function (grunt) {
   grunt.initConfig({
-    jshint: {
-      options: {
-        laxcomma: true
-      , node: true
-      , strict: true
-      , indent: 2
-      , undef: true
-      , unused: true
-      , eqeqeq: true
-      },
-      files: {
-        src: ['*.js', './**/*.js'],
-        options: {
-          ignores: ['./submodules/**/*.js', './node_modules/**/*.js', './sample-code/**/*.js', './test/**/*.js', './lib/server/static/**/*.js', './lib/devices/firefoxos/atoms/*.js', './lib/devices/ios/uiauto/**/*.js']
-        }
-      },
-      test: {
-        src: ['test/**/*.js']
-      , options: {
-          ignores: ['./test/harmony/**/*.js', './test/functional/_joined/*.js']
-        , expr: true
-        , globals: {
-            'describe': true
-          , 'it': true
-          , 'before': true
-          , 'after': true
-          , 'beforeEach': true
-          , 'afterEach': true
-          }
-        }
-      },
-      examples: {
-        src: ['sample-code/examples/node/**/*.js']
-      , options: {
-        expr: true
-        , globals: {
-            'describe': true
-          , 'it': true
-          , 'before': true
-          , 'after': true
-          , 'beforeEach': true
-          , 'afterEach': true
-          }
-        }
-      }
-    }
-  , jscs: {
-    files: [
-      '**/*.js', '!submodules/**', '!node_modules/**',
-      '!lib/server/static/**', '!lib/devices/firefoxos/atoms/*.js',
-      '!test/harmony/**/*.js', '!sample-code/examples/node/**/*-yiewd.js',
-      '!sample-code/apps/**', '!sample-code/examples/php/vendor/**'],
-    options: {
-        config: ".jscs.json"
-      }
-    }
-  , mochaTest: {
-      unit: ['test/unit/*.js']
-    , appiumutils: ['test/functional/appium/appiumutils.js']
+  mochaTest: {
+      appiumutils: ['test/functional/appium/appiumutils.js']
     }
   , mochaTestConfig: {
       options: {
@@ -92,15 +37,21 @@ module.exports = function (grunt) {
       }
     }
   , maxBuffer: 2000 * 1024
+  , exec: {
+      'gulp-test-unit': GULP_BIN + ' test-unit --color',
+      'gulp-jshint': GULP_BIN + ' jshint --color',
+      'gulp-jscs': GULP_BIN + ' jscs --color',
+      'gulp-lint': GULP_BIN + ' lint --color'
+    },
   });
 
-  grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks("grunt-jscs");
-  grunt.registerTask('lint', ['newer:jshint','jscs']);
-  grunt.registerTask('test', 'mochaTest:unit');
-  grunt.registerTask('unit', 'mochaTest:unit');
+  grunt.loadNpmTasks('grunt-exec');
+  grunt.registerTask('jshint', 'exec:gulp-jshint');
+  grunt.registerTask('jscs', 'exec:gulp-jscs');
+  grunt.registerTask('lint', 'exec:gulp-lint');
+  grunt.registerTask('test', 'exec:gulp-test-unit');
+  grunt.registerTask('unit', 'exec:gulp-test-unit');
   grunt.registerTask('default', ['test']);
   grunt.registerTask('travis', ['jshint','jscs', 'unit']);
   grunt.registerTask('buildApp', "Build the test app", function (appDir, sdk) {

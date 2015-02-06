@@ -2,7 +2,10 @@
 
 var common = require('../../lib/devices/common.js')
   , checkValidLocStrat = common.checkValidLocStrat
+  , chai = require('chai')
   , _  = require('underscore');
+
+chai.should();
 
 describe('devices/common.js', function () {
   var nullCb = function () {};

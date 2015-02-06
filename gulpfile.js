@@ -5,7 +5,9 @@ var gulp = require('gulp'),
     mochaStream = require('spawn-mocha-parallel').mochaStream,
     jshint = require('gulp-jshint'),
     jshintStylish = require('jshint-stylish'),
-    jscs = require('gulp-jscs');
+    jscs = require('gulp-jscs'),
+    Q = require('q'),
+    runSequence = Q.denodeify(require('run-sequence'));
 
 var mochaOpts = {
   flags: {
@@ -40,4 +42,6 @@ gulp.task('test-unit', function () {
     .on('error',  console.warn.bind(console));
 });
 
-gulp.task('default', ['test-unit']);
+gulp.task('default', function () {
+  return runSequence('lint', 'test-unit');
+});

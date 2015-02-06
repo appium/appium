@@ -12,7 +12,7 @@ var gulp = require('gulp'),
 var mochaOpts = {
   flags: {
     u: 'bdd-with-opts',
-    R: 'nyan'
+    R: process.env.MOCHA_REPORTER || 'nyan'
   },
   bin: path.join(__dirname,  'node_modules/.bin/mocha'),
   concurrency: 5

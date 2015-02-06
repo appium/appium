@@ -14,7 +14,7 @@ public class InteractionController {
   private static final String METHOD_INJECT_EVENT_SYNC = "injectEventSync";
   private static final String METHOD_TOUCH_DOWN = "touchDown";
   private static final String METHOD_TOUCH_UP = "touchUp";
-  private static final String METHOD_TOUCH_MOVE = "touchDown";
+  private static final String METHOD_TOUCH_MOVE = "touchMove";
   public static final String METHOD_PERFORM_MULTI_POINTER_GESTURE = "performMultiPointerGesture";
 
   private final Object interactionController;

@@ -130,6 +130,7 @@
     "socket.io-client": "~1.3.3",
     "socks": "~0.0.1",
     "spawn-mocha-parallel": "^1.0.0",
+    "uncolor": "~0.3.0",
     "underscore-cli": "~0.2.17",
     "unorm": "~1.3.3",
     "wd": "~0.3.8",

@@ -147,17 +147,17 @@ public class Find extends CommandHandler {
             final List<AndroidElement> elementsFromSelector = fetchElements(
                 sel, contextId);
             foundElements.addAll(elementsFromSelector);
-            found |= foundElements.size() > 0;
           } catch (final UiObjectNotFoundException ignored) {
           }
         }
         if (strategy == Strategy.ANDROID_UIAUTOMATOR) {
           foundElements = ElementHelpers.dedupe(foundElements);
         }
+        found = foundElements.size() > 0;
         result = elementsToJSONArray(foundElements);
       }
 
-      if (found) {
+      if (!found) {
         if (!isRetry) {
           Logger
               .debug("Failed to locate element. Clearing Accessibility cache and retrying.");

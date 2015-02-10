@@ -4,6 +4,8 @@ CHANGES IN VERSION 1.3.5
 #### iOS
 - fix for a bug when driver.get() never returns for page with alert.
 - iOS 8.2 support.
+- fixed safari startup crashes.
+- ensure Appium drops into the right continuation cb when selecting hybrid contexts.
 
 #### Android
 - now finds the location of adb earlier.
@@ -25,8 +27,6 @@ CHANGES IN VERSION 1.3.4
 - functional test fixes.
 
 #### iOS
-- fixed safari startup crashes
-- ensure Appium drops into the right continuation cb when selecting hybrid contexts
 - allow location services in zip file.
 - ensure a string is returned from iOS getText.
 - simpler device type detection logic.

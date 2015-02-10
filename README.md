@@ -4,7 +4,7 @@
 [![Dependency Status](https://david-dm.org/appium/appium.svg)](https://david-dm.org/appium/appium)
 [![devDependency Status](https://david-dm.org/appium/appium/dev-status.svg)](https://david-dm.org/appium/appium#info=devDependencies)
 
-[![Build Status](https://team-appium.ci.cloudbees.com/job/appium-master/badge/icon)](https://team-appium.ci.cloudbees.com/job/appium-master/)
+[![Build Status](https://team-appium.ci.cloudbees.com/buildStatus/icon?job=Appium)](https://team-appium.ci.cloudbees.com/job/Appium/)
 
 Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
 

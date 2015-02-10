@@ -9,7 +9,7 @@ CHANGES IN VERSION 1.3.5
 
 #### Android
 - now finds the location of adb earlier.
-- ensure encoding closes correcting in Bootstrap.jar.
+- ensure encoding stream in Bootstrap.jar closes correctly.
 - add workaround for issue where UiAUtomator fails to find visible elements.
 - fixed undefined member error for the release object.
 - add a delete key test.
@@ -42,7 +42,7 @@ CHANGES IN VERSION 1.3.4
 - exec refactoring.
 - uses for latest apktool (2.0.0-RC2) when Java 7 is detected.
 - ADB.jars refactored into instance property.
-- smart keyboard  closing fix.
+- smart keyboard closing fix.
 - added support for getting the resourceId attribute of an element.
 - clear text fix for large centered edit fields.
 - better handling of errors in clear text.

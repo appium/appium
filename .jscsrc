@@ -1,7 +1,7 @@
 {
   "excludeFiles": ["submodules/**", "node_modules/**",
     "./lib/server/static/**", "./lib/devices/firefoxos/atoms/*.js",
-    "./sample-code/**"],
+    "./sample-code/**", "/Users/baba/Work/appium/ci/standalone-tools/node_modules/**"],
   "requireCurlyBraces": ["for", "while", "do", "try", "catch"],
   "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch",
     "return", "try", "catch", "function"],

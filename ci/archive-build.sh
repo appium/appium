@@ -1,19 +1,19 @@
 #!/bin/bash
 set -e
 
-if [[ "${TARBALL}" == '' ]]; then
-    echo Please set the TARBALL env variable!
+if [[ "${TARGET}" == '' ]]; then
+    echo Please set the TARGET env variable!
     exit 1
 fi
-
-TARGET=/tmp/${TARBALL}
 
 echo "Starting to archive appium build into ${TARGET}."
 
 tar \
-    cfj ${TARGET} \
-    -L \
+    cfjp ${TARGET} \
+    -h \
     --exclude=.git \
+    --exclude=artefacts \
+    --exclude=node_modules \
     --exclude=submodules .
 
 echo "Finished to archive appium build."

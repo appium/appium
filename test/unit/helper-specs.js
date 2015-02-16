@@ -25,8 +25,7 @@ describe("Helpers", function () {
 
     describe("notNullOrUndefined ", function () {
       it("should work as expected", function () {
-        var undef
-          , nan = NaN
+        var nan = NaN
           , none = null
           , f = function () {}
           , o = {}
@@ -34,7 +33,7 @@ describe("Helpers", function () {
           , s = "string"
           , b = false;
 
-        helpers.notNullOrUndefined(undef).should.be.false;
+        helpers.notNullOrUndefined(undefined).should.be.false;
         helpers.notNullOrUndefined(nan).should.be.false;
         helpers.notNullOrUndefined(none).should.be.false;
         helpers.notNullOrUndefined(f).should.be.true;
@@ -42,6 +41,29 @@ describe("Helpers", function () {
         helpers.notNullOrUndefined(n).should.be.true;
         helpers.notNullOrUndefined(s).should.be.true;
         helpers.notNullOrUndefined(b).should.be.true;
+      });
+    });
+
+    describe("notNullEmptyOrUndefined ", function () {
+      it("should work as expected", function () {
+        var nan = NaN
+          , none = null
+          , f = function () {}
+          , o = {}
+          , n = 0
+          , s = "string"
+          , b = false
+          , e = "";
+
+        helpers.notNullEmptyOrUndefined(undefined).should.be.false;
+        helpers.notNullEmptyOrUndefined(nan).should.be.false;
+        helpers.notNullEmptyOrUndefined(none).should.be.false;
+        helpers.notNullEmptyOrUndefined(f).should.be.true;
+        helpers.notNullEmptyOrUndefined(o).should.be.true;
+        helpers.notNullEmptyOrUndefined(n).should.be.true;
+        helpers.notNullEmptyOrUndefined(s).should.be.true;
+        helpers.notNullEmptyOrUndefined(b).should.be.true;
+        helpers.notNullEmptyOrUndefined(e).should.be.false;
       });
     });
 

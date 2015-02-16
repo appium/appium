@@ -44,7 +44,7 @@
     "appium-adb": "=1.7.1",
     "appium-atoms": "=0.0.5",
     "appium-instruments": "=1.5.3",
-    "appium-support": "=0.0.4",
+    "appium-support": "=0.1.1",
     "appium-uiauto": "=1.10.3",
     "argparse": "~0.1.15",
     "async": "~0.9.0",

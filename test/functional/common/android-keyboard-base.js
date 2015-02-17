@@ -29,6 +29,7 @@ module.exports = function () {
         }
       })
       .then(function () { return el.sendKeys(testText); })
+      .sleep(100)
       .then(function () { return el.text().should.become(testText); })
       .nodeify(done);
   };

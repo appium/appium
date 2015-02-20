@@ -1,7 +1,10 @@
 "use strict";
 
 var getAppium = require('../../lib/appium')
+  , chai = require('chai')
   , _ = require('underscore');
+
+chai.should();
 
 var assertCapsGiveCorrectDevices = function (appium, args) {
   var spec = 'should turn ' + JSON.stringify(args[0]) + ' args and ' +

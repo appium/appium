@@ -1,7 +1,6 @@
 .irb-history
 *.swp
 .DS_Store
-npm*.log
 node_modules
 sample-code
 *.trace
@@ -12,6 +11,7 @@ test/functional/_joined
 *.autosave
 .idea/
 *.log
+*.t
 lib/devices/android/bootstrap/bin/*
 lib/devices/android/bootstrap/local.properties
 lib/devices/android/bootstrap/project.properties

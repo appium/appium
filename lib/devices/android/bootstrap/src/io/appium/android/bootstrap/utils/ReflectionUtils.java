@@ -19,7 +19,6 @@ public class ReflectionUtils {
     boolean success = false;
 
     try {
-      final ReflectionUtils utils = new ReflectionUtils();
       final Class c = Class
           .forName("android.view.accessibility.AccessibilityInteractionClient");
       final Method getInstance = ReflectionUtils.method(c, "getInstance");

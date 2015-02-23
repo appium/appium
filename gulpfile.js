@@ -148,7 +148,7 @@ gulp.task('launch-emu', function () {
 
   function waitForEmu() {
     var INIT_WAIT = 5000;
-    var MAX_WAIT_MS = 90000;
+    var MAX_WAIT_MS = 120000;
     var POOL_MS = 2000;
     var startMs = Date.now();
     function _waitForEmu () {
@@ -210,7 +210,11 @@ gulp.task('launch-emu', function () {
 });
 
 gulp.task('run-android-e2e', function () {
-  return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e', 'kill-procs');
+  return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e', 'kill-procs')
+    .catch(function (err) {
+      killProcs();
+      throw err;
+    });
 });
 
 gulp.task('default', function () {

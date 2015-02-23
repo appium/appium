@@ -10,7 +10,6 @@ echo "Starting to archive appium build into ${TARGET}."
 
 tar \
     cfjp ${TARGET} \
-    -h \
     --exclude=.git \
     --exclude=artefacts \
     --exclude=submodules .

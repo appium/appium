@@ -13,7 +13,6 @@ tar \
     -h \
     --exclude=.git \
     --exclude=artefacts \
-    --exclude=node_modules \
     --exclude=submodules .
 
 echo "Finished to archive appium build."

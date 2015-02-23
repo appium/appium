@@ -6,26 +6,58 @@
 var gulp = require('gulp'),
     _ = require('underscore'),
     Q = require('q'),
-    exec = Q.denodeify(require('child_process').exec);
+    exec = Q.denodeify(require('child_process').exec),
+    argv = require('yargs').argv,
+    request = Q.denodeify(require('request'));
 
 gulp.task('hello-world', function () {
   console.log('Hello World!');
 });
 
-gulp.task('collect-downstream-tap-results', function () {
+function encode(s) {
+  return s.replace(/\s/g, '%20');
+}
+
+function downloadS3Artifact(jobName, buildNumber, artifact) {
   var ciRootUrl = process.env.HUDSON_URL;
+  var url = ciRootUrl + 'job/' + encode(jobName) + '/' + buildNumber + '/s3/download/' + artifact;
+  console.log('Retrieving url -->', url);
+  return exec('wget ' + url);
+}
+
+gulp.task('collect-downstream-tap-results', function () {
   var jobNameRaw = process.env.LAST_TRIGGERED_JOB_NAME;
   var jobName = jobNameRaw.replace(/_/g,' ');
   var builds = process.env['TRIGGERED_BUILD_NUMBERS_' + jobNameRaw].split(',');
   var seq = _(builds).map(function (build) {
     return function () {
       var tapTgz = 'tapdata_' + build + '.tgz';
-      var url = ciRootUrl + 'job/' + jobName.replace(/\s/g, '%20') + '/' + build + '/s3/download/' + tapTgz;
-      console.log('Retrieving url -->', url);
-      return exec('wget ' + url).then(function () {
+      return downloadS3Artifact(jobName, build, tapTgz).then(function () {
         return exec('tar xfz ' + tapTgz);
       });
     };
   });
   return seq.reduce(Q.when, new Q());
 });
+
+gulp.task('download-build', function () {
+  var upstreamJobName = argv.upstreamBuildName;
+  var upstreamBuildNumber = argv.upStreamBuildNumber;
+  var ciRootUrl = process.env.HUDSON_URL;
+
+  console.log(' upstreamJobName ->', upstreamJobName);
+  console.log(' upstreamBuildNumber ->', upstreamBuildNumber);
+
+  return request(ciRootUrl + 'job/' + encode(upstreamJobName) +
+                 '/' + upstreamBuildNumber  + '/api/json')
+    .spread(function (res, body) {
+      // extracting downstream build job information
+      return _(JSON.parse(body).subBuilds).chain()
+        .filter(function (build) {
+          return build.jobName.match(/Build/);
+        }).first().value();
+    }).then(function (buildJob) {
+      return downloadS3Artifact(buildJob.jobName, buildJob.buildNumber, 'appium-build.bz2');
+    });
+});
+

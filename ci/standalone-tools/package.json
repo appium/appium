@@ -11,6 +11,7 @@
   "dependencies": {
     "gulp": "^3.8.11",
     "q": "^1.1.2",
+    "request": "^2.53.0",
     "underscore": "^1.8.1"
   },
   "devDependencies": {

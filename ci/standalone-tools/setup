@@ -6,6 +6,8 @@ then
   curl -sS  https://raw.githubusercontent.com/creationix/nvm/v0.23.3/install.sh | ( bash || true )
   source ~/.nvm/nvm.sh
   nvm install 0.10 &> nvm-install.log
+else
+  source ~/.nvm/nvm.sh
 fi
 
 # print node and npm versions

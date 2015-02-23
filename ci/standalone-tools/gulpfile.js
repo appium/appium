@@ -45,11 +45,13 @@ gulp.task('download-build', function () {
   var upstreamBuildNumber = argv.upStreamBuildNumber;
   var ciRootUrl = process.env.HUDSON_URL;
 
-  console.log(' upstreamJobName ->', upstreamJobName);
-  console.log(' upstreamBuildNumber ->', upstreamBuildNumber);
+  console.log('upstreamJobName ->', upstreamJobName);
+  console.log('upstreamBuildNumber ->', upstreamBuildNumber);
 
-  return request(ciRootUrl + 'job/' + encode(upstreamJobName) +
-                 '/' + upstreamBuildNumber  + '/api/json')
+  var upStreamJobUrl = ciRootUrl + 'job/' + encode(upstreamJobName) +
+     '/' + upstreamBuildNumber  + '/api/json';
+  console.log('upStreamJobUrl ->', upStreamJobUrl);
+  return request(upStreamJobUrl)
     .spread(function (res, body) {
       // extracting downstream build job information
       return _(JSON.parse(body).subBuilds).chain()

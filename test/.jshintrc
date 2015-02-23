@@ -10,6 +10,7 @@
   "expr": true,
   "white": true,
   "indent": 2,
+  "shelljs": false,
   "globals": {
     "describe": true,
     "it": true,

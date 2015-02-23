@@ -64,7 +64,8 @@ function splitAndroidE2ETests() {
   var testFiles = [];
   var androidGroups = {};
   return promisePipe(
-    gulp.src(['test/functional/android/**/*-specs.js', '!test/functional/android/chrome/**'], {read: false})
+    gulp.src(['test/functional/common/**/*-specs.js', 'test/functional/android/**/*-specs.js',
+              '!test/functional/android/chrome/**'], {read: false})
       .pipe(through(function (file) {
         testFiles.push(path.relative(file.cwd ,file.path));
       })).on('close', function () {
@@ -101,7 +102,7 @@ gulp.task('test-android-e2e', function () {
     var opts = newMochaOpts();
     opts.env.DEVICE='android';
     opts.env.VERBOSE=1;
-    opts.flags.g = '@skip-android-all|@android-arm-only';
+    opts.flags.g = '@skip-android-all|@android-arm-only|@skip-ci';
     opts.flags.i = true;
     opts.concurrency = 1;
     opts.liveOutput = true;

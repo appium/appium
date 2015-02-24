@@ -70,7 +70,7 @@
     "mv": "~2.0.0",
     "namp": "0.2.25",
     "ncp": "~0.5.1",
-    "node-idevice": "~0.1.2",
+    "node-idevice": "~0.1.4",
     "node-simctl": "~1.0.9",
     "node-uuid": "~1.4.1",
     "npmlog": "~0.1.1",

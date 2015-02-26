@@ -1,5 +1,7 @@
 "use strict";
 
+var argv = require('yargs').argv;
+
 var gulp = require('gulp'),
     path = require('path'),
     mochaStream = require('spawn-mocha-parallel').mochaStream,
@@ -21,7 +23,6 @@ var gulp = require('gulp'),
     assert = require('assert'),
     splitArray = require('./ci/utils/split-array');
 
-var argv = require('yargs').argv;
 var childProcs = [];
 
 function newMochaOpts() {

@@ -21,7 +21,7 @@ CodeInjector.prototype.start = function () {
     // caching code and returning 200
     this.code = req.body.code;
     console.log('code injector is saving code.  code -->', this.code);
-    res.send(200);
+    res.sendStatus(200);
   }.bind(this));
 
   this.app.get('/code', function (req, res) {

@@ -12,7 +12,7 @@ test/functional/_joined
 .idea/
 *.log
 *.t
-artefacts
+artifacts
 output
 lib/devices/android/bootstrap/bin/*
 lib/devices/android/bootstrap/local.properties

@@ -29,7 +29,8 @@ function newMochaOpts() {
   return {
     flags: {
       u: 'bdd-with-opts',
-      R: process.env.MOCHA_REPORTER || 'nyan'
+      R: process.env.MOCHA_REPORTER || 'nyan',
+      'c': true
     },
     env: _.clone(process.env),
     bin: path.join(__dirname,  'node_modules/.bin/mocha'),

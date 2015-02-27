@@ -58,3 +58,7 @@
 [submodule "submodules/deviceconsole"]
 	path = submodules/deviceconsole
 	url = https://github.com/rpetrich/deviceconsole.git
+[submodule "submodules/appium-ci-gulper"]
+	path = submodules/appium-ci-gulper
+	url = https://github.com/appium/appium-ci-gulper.git
+	branch = master

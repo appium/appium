@@ -149,6 +149,7 @@ gulp.task('launch-emu', function () {
   var LOG_PREPEND= 'emu --> ';
   var deferred = Q.defer();
 
+  var emuErrored = false;
   function waitForEmu() {
     var INIT_WAIT = 5000;
     var MAX_WAIT_MS = 120000;
@@ -156,6 +157,9 @@ gulp.task('launch-emu', function () {
     var startMs = Date.now();
     function _waitForEmu () {
       function retry() {
+        if (emuErrored) {
+          throw new Error('Emulator errored');
+        }
         if (Date.now() - startMs > MAX_WAIT_MS) {
           throw new Error('Emulator did not show up');
         }
@@ -203,6 +207,10 @@ gulp.task('launch-emu', function () {
   childProcs.push(child);
   child.stdout.pipe(out);
   child.stderr.pipe(out);
+  child.on('error', function (err) {
+    emuErrored = true;
+    deferred.reject(err);
+  });
   child.on('close', function () {
     deferred.reject('Something went wrong!');
   });

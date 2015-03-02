@@ -12,7 +12,7 @@ describe("apidemo - notifications", function () {
     appActivity: '.app.StatusBarNotifications'
   }, desired)).then(function (d) { driver = d; });
 
-  it('should open the notification shade', function (done) {
+  it('should open the notification shade @skip-ci', function (done) {
     driver
       // create a notification
       .elementByName(":-|").click()

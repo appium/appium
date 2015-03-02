@@ -69,7 +69,7 @@ describe("apidemo - find - by xpath", function () {
         ["OS", "Text", "Views", "Preference"].should.include(text);
       }).nodeify(done);
   });
-  it('should find element by xpath index and child', function (done) {
+  it('should find element by xpath index and child @skip-ci', function (done) {
     driver
       .elementByXPath("//" + f + "[2]/" + l + "[1]/" + t + "[4]").text()
         .should.become("App")

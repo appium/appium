@@ -4,7 +4,7 @@ var setup = require("../../common/setup-base"),
     desired = require('./desired'),
     _ = require('underscore');
 
-describe('network connection details', function () {
+describe('network connection details @skip-ci', function () {
   var driver;
   setup(this, _.defaults({
     fullReset: true

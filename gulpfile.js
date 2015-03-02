@@ -21,7 +21,7 @@ var gulp = require('gulp'),
     through = require('through'),
     promisePipe = require("promisepipe"),
     assert = require('assert'),
-    splitArray = require('./ci/utils/split-array');
+    splitArray = require('./test/helpers/split-array');
 
 var childProcs = [];
 

@@ -128,27 +128,21 @@ Or you can run reset for individual platforms only:
 ./reset.sh --selendroid --dev
 ```
 
-### Running Tests
+### 运行测试集
+首先，签出我们的文档[一般运行测试情况下](/docs/en/writing-running-appium/running-tests.md) 
+然后，确保你的环境在对应的平台上已经搭建好了与你所期望的那样
 
-First, check out our documentation on [running tests in
-general](/docs/en/writing-running-appium/running-tests.md) Make sure your
-system is set up properly for the platforms you desire to test on.
-
-Once your system is set up and your code is up to date, you can run unit tests
-with:
+当你的环境搭建好了之后并且你的代码是最新的，你可以通过以下的方式来运行单元测试:
 
 ```center
 grunt unit
 ```
-
-You can run functional tests for all supported platforms (after ensuring that
-Appium is running in another window with `node .`) with:
+你可以在所支持的平台上运行一些功能测试（确保后Appium用`node .`在另外一个窗口中运行）
 
 ```center
 bin/test.sh
 ```
-
-Or you can run particular platform tests with `test.sh`:
+或者你可以运行`test.sh`特定平台上的测试
 
 ```center
 bin/test.sh --android
@@ -156,11 +150,8 @@ bin/test.sh --ios
 bin/test.sh --ios7
 bin/test.sh --ios71
 ```
-
-Before committing code, please run `grunt` to execute some basic tests and
-check your changes against code quality standards. Note that this should happen
-automatically if you ran `reset.sh --dev`, which sets up the git pre-commit
-hooks.
+在提交代码时，请运行`grunt`执行一些基本的测试和核对代码质量标准的更改，请注意，这可能会自动发生的，
+如果你已经运行`reset.sh --dev`，这于你预先提交代码的操作所关联起来的。
 
 ```center
 grunt lint
@@ -179,30 +170,30 @@ grunt lint
 > >> 303 files without code style errors.
 ```
 
-#### Running individual tests
+#### 运行单独的测试
+如果你有一个Appium服务监听，你可以通过Mocha来运行单独的测试文件,例如：
 
-If you have an Appium server listening, you can run individual test files using
-Mocha, for example:
 
 ```center
 DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
 ```
+或许单独的测试集（例如，一个测试用”alert"在名称的单词）
 
-Or individual tests (e.g., a test with the word "alert" in the name):
 
 ```center
 DEVICE=ios6 mocha -t 60000 -R spec --grep "alert" test/functional/ios/uicatalog
 ```
 
-For windows you have to use `set DEVICE=android` in cmd to run above tests, for
-example:
+对于windows操作系统，你可以用`set DEVICE=android` 在cmd命令行的方式中运行以上所有测试集，例如：
+
 
 ```center
 set DEVICE=android
 mocha -t 60000 -R spec test/functional/android/apidemos/alerts-specs.js
 ```
 
-NOTE: For Android, you will need an emulator/device with screen size of 4.0"
-(480x800). Some tests might fail on a different screen size.
+注意：对于安卓系统，你将需要一个e mulator/device 4.0的屏幕大小模拟器(480x800)，有些测试集可能会失败在
+不同的屏幕大小下。
 
-`DEVICE` must be set to a valid value: `ios71`, `ios6`, `android`, `selendroid`
+`DEVICE`必须设置为一个有效的值:`ios71`, `ios6`, `android`, `selendroid`
+

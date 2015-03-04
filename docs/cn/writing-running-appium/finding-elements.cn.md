@@ -1,23 +1,33 @@
 # 元素定位与交互
 
-Appium支持一个Webdriver元素定位方法的子集
+Appium支持webdriver定位策略的其中几种方式
 
-* find by "tag name" (i.e., 通过UI的控件类型)
-* find by "name" (i.e., 通过元素的文本, 标签, 或者开发同学添加的id标示, 比如accessibilityIdentifier)
-* find by "xpath" (i.e., 具有一定约束的路径抽象标示, 基于XPath方式)
+* 根据“class”定位(i.e., UI组件类型)
+* 根据“xpath”定位 (i.e., 具有一定约束的路径抽象标示, 基于XPath方式)
 
 ###标签名抽象映射
 
-你可以使用UIAutomation的控件类型用于标签名, 或者使用简化的映射, 可以参考下如下例子
-https://github.com/appium/appium/blob/master/lib/uiauto/lib/mechanic.js#L29
+appium另外支持的 Mobile JSON 连接协议 定位策略
+https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile
 
-(官方文档外的补充)
-对于Android下的元素对应, 可以参考
-https://github.com/appium/appium/blob/master/lib/devices/android/bootstrap/src/io/appium/android/bootstrap/AndroidElementClassMap.java
+-ios uiautomation: 一个字符串对应一个递归元素的搜索使用 UIAutomation library (iOS-only)
+local://base_request.html/testerhome/appium/blob/master/docs/en/writing-running-appium/ios_predicate.md
 
+-android uiautomator: 一个对应一个递归元素的字符串 搜索使用 UiAutomator Api (Android-only)
+local://base_request.html/testerhome/appium/blob/master/docs/en/writing-running-appium/uiautomator_uiselector.md
+accessibility id: 一个对应于一个递归元素要查找的字符串 使用ID /Name，本地可选择使用。
+问题
+
+如果遇到定位元素变得无效联系并告知我们。我们将会努力修复
 ## 例子
 
-### 找到屏幕上所有的UIAButtons
+### 使用appium检查器来定位元素
+
+appium为你提供了一个整洁的工具，在你不离开appium APP的情况下允许你找到的元素。使用appium检查器（我符号旁边的启动测试按钮）你可以找到任何元素 它是通过单击预览页面元素提供的名称，或定位在UI导航.
+概述
+
+appium检查器有一个简单的布局，一个完整的UI导航， 预览，并记录和刷新按钮，和交互工具.
+https://camo.githubusercontent.com/3cf4ddd4d1b1d862149674a8d3a8d17ef5b83b40/68747470733a2f2f7261772e6769746875622e636f6d2f61707069756d2f61707069756d2f6d61737465722f6173736574732f496e73706563746f72496d616765732f4f766572766965772e706e67
 
 WD.js:
 

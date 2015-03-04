@@ -1,29 +1,29 @@
-# iOS Predicate
+# iOS 操作
 
-I'd like to share my experience in using *'-ios uiautomation'* search strategy with **Predicates**. After using Instruments/UIAutomation tool for a long time I paid attention on the following methods in [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html):
+这是值得一看 *'-ios uiautomation'* 搜索策略  **操作**. 随着我使用一段时间后，我发现如下方面需要注意： [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html):
 
 ```java
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)
 (UIAElementArray) UIAElementArray.withPredicate(PredicateString predicateString)
 ```
 
-And it turned out that native JS search strategy (powered by Apple) provides much more flexibility than I was thinking before, it is almost just like Xpath.
-**[Predicates](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html)** can be used to restrict an elements set to select only those ones for which some condition is true.
+本地的JS搜索策略（由Apple）提供了更大的灵活性，和XPath操作很像.
+**[操作](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html)** 可以用来限制一个元素设置为仅选择那些其中一些条件是真，来精确定位对象元素.
 
-For example:
+举个栗子:
 
 ```java
 appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPredicate(\"ANY staticTexts.isVisible == TRUE\")")
 ```
 
-\-  will select only those  ```UIACollectionCell``` elements that have visible ```UIAStaticText``` child elements, and themselves are childs of 1st ```UIACollectionView``` element that should be located under the main app window.  Here ```staticTexts()``` and ```isVisible()``` are methods available in ```UIAElementArray``` and ```UIAElement``` classes respectively. **Note that ```UIAElementArray``` numbering begins with ```0``` unlike Xpath where indexes counting starts from ```1```**
+\-  将只选择那些   ```UIACollectionCell``` 有可见的元素 ```UIAStaticText``` 子元素, 和选择自己的第一个孩子 ```UIACollectionView``` 在这里应位于主应用程序窗口下，这里 ```staticTexts()``` 和 ```isVisible()``` 有可用的方法 ```UIAElementArray``` 和 ```UIAElement``` 类别分开. **请注意 ```UIAElementArray``` 序列编号从 ```0``` 开始，而不是像xpath从 ```1```开始**
 
-Here's a list of available Predicates (mostly taken from [Predicates Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
+这是一个实用的操作（大多是 [操作 编程指南](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
 
-## Basic Comparisons
+## 基础比较
 
 = , ==
-- The left-hand expression is equal to the right-hand expression:
+- 左边表达式等于右边表达式的覆盖范围和内容:
 ```javascript
 tableViews()[1].cells().firstWithPredicate("label == 'Olivia' ")
 
@@ -31,56 +31,56 @@ same in Xpath: /UIATableView[2]/UIATableCell[@label = 'Olivia'][1]
 ```
 
 \>= , =\>
-- The left-hand expression is greater than or equal to the right-hand expression.
+- 左边表达式大于等于右边表达式的覆盖范围和内容.
 
 <= , =<
-- The left-hand expression is less than or equal to the right-hand expression.
+- 左边表达式小于等于右边表达式的覆盖范围和内容.
 
 \>
-- The left-hand expression is greater than the right-hand expression.
+- 左边表达式大于右边表达式的覆盖范围和内容.
 
 <
-- The left-hand expression is less than the right-hand expression.
+- 左边表达式小于右边表达式的覆盖范围和内容.
 
 != , <\>
-- The left-hand expression is not equal to the right-hand expression.
+- 左边表达式不等于右边表达式的覆盖范围和内容.
 
 BETWEEN
-- The left-hand expression is between, or equal to either of, the values specified in the right-hand side. The right-hand side is a two value array (an array is required to specify order) giving upper and lower bounds. For example, ```1 BETWEEN { 0 , 33 }```, or ```$INPUT BETWEEN { $LOWER, $UPPER }```.
-In Objective-C, you could create a BETWEEN predicate as shown in the following example:
+- 左边在右边表达式范围内容，右边表达式为一个二维数组(其中这个二维数组是由次序的) 还有上限和下限，例如 ```1 BETWEEN { 0 , 33 }```, 或者 ```$INPUT BETWEEN { $LOWER, $UPPER }```.
+在 Objective-C, 你可以创建一个限定操作，如下面的示例所示:
 
 ```objectivec
 NSPredicate *betweenPredicate =
     [NSPredicate predicateWithFormat: @"attributeName BETWEEN %@", @[@1, @10]];
 ```
 
-This creates a predicate that matches ```( ( 1 <= attributeValue ) && ( attributeValue <= 10 ) )```
+这将创建一个操作去匹配 ```( ( 1 <= attributeValue ) && ( attributeValue <= 10 ) )```
 
-## Boolean Value Predicates
+## 布尔值操作
 
-TRUEPREDICATE
-- A predicate that always evaluates to ```TRUE``` .
+TRUE 操作
+- 一个表达式恒等于 ```TRUE``` .
 
-FALSEPREDICATE
-- A predicate that always evaluates to ```FALSE```.
+FALSE操作
+- 一个表达式恒等于 ```FALSE```.
 
-## Basic Compound Predicates
+## 基本的复合操作
 
 AND , &&
-- Logical AND.
+-  AND 逻辑.
 
 OR , ||
-- Logical OR.
+-  OR 逻辑.
 
 NOT , !
-- Logical NOT.
+-  NOT 逻辑.
 
-## String Comparisons
+## 字符串比较
 
-String comparisons are by default case and diacritic sensitive. You can modify an operator using the key characters ```c``` and ```d``` within square braces to specify case and diacritic insensitivity respectively, for example ```firstName BEGINSWITH[cd] $FIRST_NAME```
+字符串比较是默认情况下并且出错较高，你可以使用关键字帮助判断  ```c``` 和 ```d```在方括号指定的情况下，分别区别不敏感，例如 名字的开头 ```firstName BEGINSWITH[cd] $FIRST_NAME```
 
 BEGINSWITH
-- The left-hand expression begins with the right-hand expression.
+- 左边内容以右边内容开始.
 
 ```javascript
 scrollViews()[3].buttons().firstWithPredicate("name BEGINSWITH 'results toggle' ")
@@ -89,7 +89,7 @@ same in Xpath: /UIAScrollView[4]/UIAButton[starts-with(@name, 'results toggle')]
 ```
 
 CONTAINS
-- The left-hand expression contains the right-hand expression.
+- 左边包含右边内容.
 
 ```javascript
 tableViews()[1].cells().withPredicate("ANY collectionViews[0].buttons.name CONTAINS 'opera'")
@@ -98,10 +98,10 @@ same in Xpath: /UIATableView[2]/UIATableCell[UIACollectionView[1]/UIAButton[cont
 ```
 
 ENDSWITH
-- The left-hand expression ends with the right-hand expression.
+- 左边以右边内容为结束.
 
 LIKE
-- The left hand expression equals the right-hand expression: ? and * are allowed as wildcard characters, where ? matches 1 character and * matches 0 or more characters. In Mac OS X v10.4, wildcard characters do not match newline characters.
+- 左边表达式等于右边表达式? 和 *是作为通配符, 这个 ? 代替任意 1 个字符， * 代替 0 或者更多字符. 在 Mac OS X v10.4, 通配符不能代替换行符.
 
 ```javascript
 tableViews()[0].cells().firstWithPredicate("name LIKE '*Total: $*' ")
@@ -110,7 +110,7 @@ same in Xpath: /UIATableView[1]/UIATableCell[matches(@name, '.*Total: \$.*')][1]
 ```
 
 MATCHES
-- The left hand expression equals the right hand expression using a regex -style comparison according to ICU v3 (for more details see the ICU User Guide for [Regular Expressions](http://userguide.icu-project.org/strings/regexp)).
+- 左手与右手表达表达使用一个正则表达式风格比较根据 ICU v3 (详情请看ICU用户指南 [正则表达式](http://userguide.icu-project.org/strings/regexp)).
 
 ```javascript
 tableViews().firstWithPredicate("value MATCHES '.*of 7' ")
@@ -118,10 +118,10 @@ tableViews().firstWithPredicate("value MATCHES '.*of 7' ")
 same in Xpath: /UIATableView[matches(@value, '.*of 7')][1]
 ```
 
-## Aggregate Operations
+## 聚合操作
 
 ANY , SOME
-- Specifies any of the elements in the following expression. For example ```ANY children.age < 18``` .
+- 指定任何下列表达式的元素。例如 ```ANY children.age < 18``` .
 
 ```javascript
 tableViews()[0].cells().firstWithPredicate("SOME staticTexts.name = 'red'").staticTexts().withName('red')
@@ -130,104 +130,104 @@ same in Xpath: /UIATableView[1]/UIATableCell[UIAStaticText/@name = 'red'][1]/UIA
 ```
 
 ALL
-- Specifies all of the elements in the following expression. For example ```ALL children.age < 18``` .
+- 指定所有下列表达式的元素。例如 ```ALL children.age < 18``` .
 
 NONE
-- Specifies none of the elements in the following expression. For example, ```NONE children.age < 18``` . This is logically equivalent to ```NOT (ANY ...)``` .
+- 指定所有下列表达式的元素。例如, ```NONE children.age < 18``` . 逻辑上等价于 ```NOT (ANY ...)``` .
 
 IN
-- Equivalent to an SQL IN operation, the left-hand side must appear in the collection specified by the right-hand side. For example, ```name IN { 'Ben', 'Melissa', 'Matthew' }``` . The collection may be an array, a set, or a dictionary—in the case of a dictionary, its values are used.
+- 相当于一个SQL操作，左边的右边必须出现在指定的集合。例如, ```name IN { 'Ben', 'Melissa', 'Matthew' }``` . 收集可能是一个数组，一组，或在词典的词典使用情况，其值.
 
 array[index]
-- Specifies the element at the specified index in the array.
+- 指定元素在数组中的指定索引.
 
 array[FIRST]
-- Specifies the first element in the array.
+- 指定数组中的第一个元素.
 
 array[LAST]
-- Specifies the last element in the array.
+- 指定数组中的最后一个元素.
 
 array[SIZE]
-- Specifies the size of the array
+- 指定数组的大小
 ```javascript
 elements()[0].tableViews()[0].cells().withPredicate("staticTexts[SIZE] > 2")
 
 same in Xpath: /*[1]/UIATableView[1]/UIATableCell[count(UIAStaticText) > 2]
 ```
 
-## Identifiers
+## 标识符
 
-**C style identifier**
-- Any C style identifier that is not a reserved word.
+**C语言 标识符**
+- 任何C风格的标识符不是保留字.
 
 **\#symbol**
-- Used to escape a reserved word into a user identifier.
+- 用来避免使用的保留字为用户标识符.
 
 **[\\]{octaldigit}{3}**
-- Used to escape an octal number ( ```\``` followed by 3 octal digits).
+- 用来避免一个八进制数 ( ```\```后面加上3位八进制).
 
 **[\\][xX]{hexdigit}{2}**
-- Used to escape a hex number ( ```\x``` or ```\X``` followed by 2 hex digits).
+- 用于避免十六进制数 ( ```\x``` 或 ```\X``` 后面加上二进制).
 
 **[\\][uU]{hexdigit}{4}**
-- Used to escape a Unicode number ( ```\u``` or ```\U``` followed by 4 hex digits).
+- 用于避免的Unicode ( ```\u``` 或 ```\U``` 用于避免的Unicode (
 
-## Literals
+## 文字
 
-Single and double quotes produce the same result, but they do not terminate each other. For example, ```"abc"``` and ```'abc'``` are identical, whereas ```"a'b'c"``` is equivalent to a space-separated concatenation of ```a, 'b', c```.
+单和双引号产生相同的结果，但他们不终止彼此。示范：```"abc"``` and ```'abc'``` 是相同的，而 ```"a'b'c"``` 相当于一个空间隔开的```a, 'b', c```.
 
 FALSE , NO
-- Logical false.
+-  false逻辑.
 
 TRUE , YES
-- Logical true.
+-  true逻辑.
 
 NULL , NIL
-- A null value.
+- 空值.
 
 SELF
-- Represents the object being evaluated.
+- 代表他本身.
 
 "text"
-- A character string.
+- 一个字符串.
 
 'text'
-- A character string.
+- 一个字符串.
 
-**Comma-separated literal array**
-- For example, ```{ 'comma', 'separated', 'literal', 'array' }``` .
+**以逗号分隔的文本数组**
+- 举个栗子, ```{ 'comma', 'separated', 'literal', 'array' }``` .
 
-**Standard integer and fixed-point notations**
-- For example, ```1 , 27 , 2.71828 , 19.75``` .
+**标准的整数和定点表示法**
+- 举个栗子, ```1 , 27 , 2.71828 , 19.75``` .
 
-**Floating-point notation with exponentiation**
-- For example, ```9.2e-5``` .
+**随着指数的浮点表示法**
+- 举个栗子, ```9.2e-5``` .
 
 0x
-- Prefix used to denote a hexadecimal digit sequence.
+- 前缀用于十六进制数字序列的这意味着十六进制.
 
 0o
-- Prefix used to denote an octal digit sequence.
+- 前缀用于denote在八进制数字序列这意味着八进制.
 
 0b
-- Prefix used to denote a binary digit sequence.
+- 前缀用于denote在八进制数字序列这意味着八进制.
 
-## Reserved Words
+## 保留字
 
-The following words are reserved:
+下面的都是保留字：
 
 `AND, OR, IN, NOT, ALL, ANY, SOME, NONE, LIKE, CASEINSENSITIVE, CI, MATCHES, CONTAINS, BEGINSWITH, ENDSWITH, BETWEEN, NULL, NIL, SELF, TRUE, YES, FALSE, NO, FIRST, LAST, SIZE, ANYKEY, SUBQUERY, CAST, TRUEPREDICATE, FALSEPREDICATE`
 
-## Appium predicate helpers
+## Appium 操作帮助
 
-Appium has [helpers for predicate search](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) in app.js:
+Appium 有 [ 专门的操作搜索帮助文档](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) in app.js:
 
 - `getFirstWithPredicate`
 - `getFirstWithPredicateWeighted`
 - `getAllWithPredicate`
 - `getNameContains`
 
-Here's a Ruby example:
+这是个Ruby的例子
 
 ```ruby
 # Ruby example

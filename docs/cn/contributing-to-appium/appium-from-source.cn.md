@@ -45,29 +45,30 @@ node .
 
 查看完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
 
-像自动化开发任务的能力？查看Appium Grunt tasks可以帮助构建[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)应用程序,安装程序,生成文档,等等。
+<<<<<<< HEAD
+Like the power of automating dev tasks? Check out the [Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)
+available to help with building apps, installing apps, generating docs, etc.
+
 
 #### 搭建iOS运行环境
 
 为了避免启动iOS apps时弹出安全警告，你可以通过以下两种方法修改/etc/authorization文件：
 
-1. Manually modify the element following `<allow-root>` under `<key>system.privilege.taskport</key>`
-   in your `/etc/authorization` file to `<true/>`.
-1. 手动将`/etc/authorization`文件中`<allow-root>`下的`<key>system.privilege.taskport</key>`改为`<true/>`
+1. 手动将`/etc/authorization`文件中的`<allow-root>` 下的`<key>system.privilege.taskport</key>`改为`<true/>`.
 
-2. 运行以下grunt命令来自动修改`/etc/authorization`文件:
+2. 运行以下grunt命令来自动修改`/etc/authorization` 文件:
 
     ```center
     sudo ./bin/authorize-ios.js
     ```
 
-然后再运行以下命令：
+然后再运行以下命令:
 
 ```center
 ./reset.sh --ios --dev
 ```
 
-现在你的appium实例已经准备就绪，运行`node .`.来启动appium server.
+现在你的appium实例已经准备就绪，运行`node .` 来启动appium server. 
 
 #### 搭建android运行环境
 
@@ -77,31 +78,31 @@ Bootstrap通过运行以下命令来启动android：
 ./reset.sh --android --dev
 ```
 
-如果你想运行[Selendroid](http://github.com/DominikDary/selendroid) 来支持像2.3这样的旧的android平台，运行以下命令：
+如果你想运行[Selendroid](http://github.com/DominikDary/selendroid)来支持2.3这样的旧的android平台，运行以下命令：
 
 ```center
 ./reset.sh --selendroid --dev
 ```
 
-确保你有且只有一个Android模拟器或者真机在运行，举个例子，在其它的设备上运行此命令（假设`emulator`命令已经在你的path中了）需执行：
+确保你有且只有一个Android模拟器或者真机在运行，举个例子，在其它的设备上运行此命令（假设emulator命令已经在你的path中了）需执行：
+
 
 ```center
 emulator -avd <MyAvdName>
 ```
 
-现在你已经可以通过运行`node .`来启动Appium服务了。
+现在你可以通过`node .`启动Appium server了.
 
 #### 确保更新到最新版本
 
+由于Appium使用一些包的开发版本，所以经常安装新的npm包和升级不同的包是很有必要的。以下命令可以将所有平台上的包进行更新（--dev标志会获取npm dev依赖和Appium测试套件中用到的应用程序）。当Appium提示版本更新时，你也可以用以下命令来更新：
 
-由于Appium使用一些dev版本的包，所以经常安装新的`npm`包和升级不同的包是很有必要的。
-以下命令可以将所有平台上的包进行更新（`--dev`标志会获取npm dev依赖和Appium测试套件中用到的应用程序）:
 
 ```center
 ./reset.sh --dev
 ```
 
-或者你可以为单独的平台运行reset命令
+或者你可以只更新指定的平台：
 
 ```center
 ./reset.sh --ios --dev

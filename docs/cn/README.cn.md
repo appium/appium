@@ -1,14 +1,22 @@
 # Appium
 
+[![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
+[![Dependency Status](https://david-dm.org/appium/appium.svg)](https://david-dm.org/appium/appium)
+[![devDependency Status](https://david-dm.org/appium/appium/dev-status.svg)](https://david-dm.org/appium/appium#info=devDependencies)
+
+[![Build Status](https://team-appium.ci.cloudbees.com/job/appium-master/badge/icon)](https://team-appium.ci.cloudbees.com/job/appium-master/)
+
 > Appium是一个支持原生,混合和移动web apps的开源的跨平台测试框架工具
 
-## [文档网站](http://appium.io/documentation.html?lang=zh)
+**Note:** 我们最近发布了Appium 1.0。如果已有Appium测试脚本，你可以检查这个文件[迁移到 1.0](/docs/en/advanced-concepts/migrating-to-1-0.md)！
 
 ## 支持平台
 
 * iOS
 * Android
 * FirefoxOS
+
+## [文档网站](http://appium.io/documentation.html?lang=zh)
 
 ## 为什么选择appium ?
 
@@ -20,7 +28,7 @@ Java, [Objective-C](https://github.com/appium/selenium-objective-c),
    可以使用标准的Selenium WebDriver API和特定语言的客户端库.
 3. 你可以使用任何测试框架.
 
-依托  [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 意味着你可以押宝在一个已经成为事实上标准的独立,自由和开放的协议.而不会被限制在任何的专利中
+依托  [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 意味着你可以押宝在一个已经成为事实上标准的独立,自由和开放的协议，而不会被限制在任何的专利中。
 
 
 如果在没有使用Appium的情况,你使用了Apple的UIAutomation库就只能通过Javascript,并且只能通过Instruments application插桩应用来运行你的测试.

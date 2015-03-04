@@ -10,7 +10,7 @@
 本地的JS搜索策略（由Apple）提供了更大的灵活性，和XPath操作很像.
 **[操作](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html)** 可以用来限制一个元素设置为仅选择那些其中一些条件是真，来精确定位对象元素.
 
-举个栗子:
+举个例子:
 
 ```java
 appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPredicate(\"ANY staticTexts.isVisible == TRUE\")")
@@ -18,7 +18,7 @@ appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPre
 
 \-  将只选择那些   ```UIACollectionCell``` 有可见的元素 ```UIAStaticText``` 子元素, 和选择自己的第一个孩子 ```UIACollectionView``` 在这里应位于主应用程序窗口下，这里 ```staticTexts()``` 和 ```isVisible()``` 有可用的方法 ```UIAElementArray``` 和 ```UIAElement``` 类别分开. **请注意 ```UIAElementArray``` 序列编号从 ```0``` 开始，而不是像xpath从 ```1```开始**
 
-这是一个实用的操作（大多是 [操作 编程指南](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
+以下是一个可用的操作的列表（主要来自 [操作编程指南](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
 
 ## 基础比较
 
@@ -195,13 +195,13 @@ SELF
 - 一个字符串.
 
 **以逗号分隔的文本数组**
-- 举个栗子, ```{ 'comma', 'separated', 'literal', 'array' }``` .
+- 举个例子, ```{ 'comma', 'separated', 'literal', 'array' }``` .
 
 **标准的整数和定点表示法**
-- 举个栗子, ```1 , 27 , 2.71828 , 19.75``` .
+- 举个例子, ```1 , 27 , 2.71828 , 19.75``` .
 
 **随着指数的浮点表示法**
-- 举个栗子, ```9.2e-5``` .
+- 举个例子, ```9.2e-5``` .
 
 0x
 - 前缀用于十六进制数字序列的这意味着十六进制.
@@ -220,7 +220,7 @@ SELF
 
 ## Appium 操作帮助
 
-Appium 有 [ 专门的操作搜索帮助文档](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) in app.js:
+Appium 有 [操作搜索帮助文档](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) in app.js:
 
 - `getFirstWithPredicate`
 - `getFirstWithPredicateWeighted`

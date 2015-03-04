@@ -1,47 +1,86 @@
 # 自动化手机网页应用
 
-如果你正对于如何在iOS的Safari或Android上的Chrome做网页应用的自动化，那么Appium能够帮助你。你可以写一个最普通的WebDriver测试代码，就像使用Selenium服务一样使用Appium来满足需求。
+如果你正对于如何在iOS的Safari或Android上的Chrome做网页应用的自动化感兴趣，
+那么Appium能够帮助你。基本上，你可以正常的写webdriver测试，只需要把Appium当
+成一个有特殊设置的selenium Server。
 
 ##iOS模拟器上的Safari浏览器
 
-首先，我们需要先确认在你的Safari浏览器的设置中开启了开发者模式，这样Safari的远程调试端口也会被同时打开。
+首先，要确保你的Safari浏览器参数中开启了开发者模式，这样Safari的远程调试端口也会被同时打开。
 
-如果你打算在模拟器或真机上使用Appium的话，你必须先开发Safari。
+不管你使用模拟器还是真机，你必须使用Appium开始之前先开启Safari。
 
 然后设置如下显示的这些信息以便于在设备中的Safari执行测试：
 
-```js
+```javascript
+// javascript
 {
-  app: 'safari'
-  , device: 'iPhone Simulator'
-  , version: '6.1'
+  platformName: 'iOS'
+  , platformVersion: '7.1'
+  , browserName: 'Safari'
+  , deviceName: 'iPhone Simulator'
 }
+```
+
+```python
+# python
+{
+  'platformName': 'iOS',
+  'platformVersion': '7.1',
+  'browserName': 'Safari',
+  'deviceName': 'iPhone Simulator'
+}
+```
+
+```php
+// php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'platformName' => 'iOS',
+            'platformVersion' => '7.1',
+            'browserName' => 'Safari',
+            'deviceName' => 'iPhone Simulator'
+        )
+    )
+);
+```
+
+```java
+// java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "7.1");
+capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
 ```
 
 ###iOS真机上的Safari浏览器
 
-为了能够在真机上的Safari执行测试，我们使用了[SafariLauncher App](https://github.com/snevesbarros/SafariLauncher)来启动Safari。使用[ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy)来自动启动Safari的远程调试功能。
+为了能够在真机上的Safari执行测试，我们使用了[SafariLauncher App](https://github.com/snevesbarros/SafariLauncher)来启动Safari。
+一旦Safari被启动，则使用[ios-webkit-webkit-proxy](https://github.com/google/ios-webkit-debug-proxy)来自动启动Safari的远程调试功能。
 
-<b>提示:</b> 目前针对iOS7版本的上，ios-webkit-debug-proxy有一个问题。[a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
+**提示:** 目前在ios-webkit-debug-proxy中有一个[问题](https://github.com/google/ios-webkit-debug-proxy/issues/38)。
+你必须添加信任才能开始运行ios-webkit-debug-proxy。
 
 ### 前期设置
 
 当你要在真机上的Safari中执行你的测试脚本之前你需要先注意以下几点：
-*安装并正常运行<b>ios-webkit-debug-proxy</b>（具体可以参考(s[hybrid docs](hybrid.md))
-*打开iOS真机中的<b>web inspector</b>，可以在iOS6.0或更高版本中的<b>设置 > safari > 高级</b>找到。
-*创建一个<b>provisioning profile</b> 能够帮助你配置safariLauncher.
+*安装并运行 **ios-webkit-debug-proxy **，并监听27753端口（具体可以参考([hybrid docs](hybrid.md))
+*打开iOS真机中的 **web inspector **，可以在iOS6.0或更高版本中的 **设置 > safari > 高级 **找到。
+*创建一个 **provisioning profile **能够帮助你配置safariLauncher.
 *
-你可以前往<b>Apple Developers Member Center</b> 创建一个launcher profile:
-  * <b>第一步:</b> 创建一个<b>新的App Id</b> 同时设置WildCard App ID这个选项置为"*"
-  * <b>第二步:</b> 为步骤1的App Id创建一个<b>new Development Profile</b> .
-  * <b>第三步:</b> 选择你的<b>certificate(s) and device(s)</b> 并选择下一步.
-  * <b>第四步:</b> 设置profile的名称以及<b>generate the profile</b>.
-  * <b>第五步:</b> 下载profile并使用文本编辑器打开.
-  * <b>第六步:</b> 寻找并牢记你的<b>UUID</b> 
+你可以前往 **Apple Developers Member Center **创建一个launcher profile:
+  *  **第一步: ** 创建一个 **新的App Id ** 同时设置WildCard App ID这个选项置为"*"
+  *  **第二步: ** 为步骤1的App Id创建一个 **new Development Profile ** .
+  *  **第三步: ** 选择你的 **certificate(s) and device(s) ** 并选择下一步.
+  *  **第四步: ** 设置profile的名称以及 **generate the profile **.
+  *  **第五步: ** 下载profile并使用文本编辑器打开.
+  *  **第六步: ** 寻找并牢记你的 **UUID ** 
 
 现在你有了自己的profile文件，可以在终端中输入如下的命令:
 
-```bash
+```center
 $ git clone https://github.com/appium/appium.git
 $ cd appium
 
@@ -58,41 +97,149 @@ $ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile
 $ node /lib/server/main.js -U <UDID>
 ```
 
-### 执行你的测试
+### 执行测试
 如果要在safari下的运行你的测试, 只需要简单的配置app为safari即可
 
 
-### Java 举例
+### Java 范例
 
 ```java
+// java
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-desiredCapabilities.setCapability("app", "safari");  
+desiredCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
 URL url = new URL("http://127.0.0.1:4723/wd/hub");
-RemoteWebDriver remoteWebDriver = new RemoteWebDriver(url, desiredCapabilities);
+AppiumDriver driver = new AppiumDriver(url, desiredCapabilities);
 
 // Navigate to the page and interact with the elements on the guinea-pig page using id.
-remoteWebDriver.get("http://saucelabs.com/test/guinea-pig");
-WebElement div = remoteWebDriver.findElement(By.id("i_am_an_id"));
+driver.get("http://saucelabs.com/test/guinea-pig");
+WebElement div = driver.findElement(By.id("i_am_an_id"));
 Assert.assertEquals("I am a div", div.getText()); //check the text retrieved matches expected value
-remoteWebDriver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
+driver.findElement(By.id("comments")).sendKeys("My comment"); //populate the comments field by id.
 
 //close the app.
-remoteWebDriver.quit();
+driver.quit();
+```
+
+### Python 范例
+
+```python
+# python
+# 设置驱动并启动 webview app.
+capabilities = { 'browserName': 'Safari' }
+driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
+
+# Navigate to the page and interact with the elements on the guinea-pig page using id.
+# 浏览网页，并使用ID与页面上的元素进行交互。
+driver.get('http://saucelabs.com/test/guinea-pig');
+div = driver.find_element_by_id('i_am_an_id')
+# 对比结果
+assertEqual('I am a div', div.text)
+
+# 按ID填写内容
+driver.find_element_by_id('comments').send_keys('My comment')
+
+# 退出driver
+driver.quit()
+```
+
+```php
+// php
+class ContextTests extends PHPUnit_Extensions_AppiumTestCase
+{
+    public static $browsers = array(
+        array(
+            'desiredCapabilities' => array(
+                'platformName' => 'iOS',
+                'platformVersion' => '7.1',
+                'browserName' => 'Safari',
+                'deviceName' => 'iPhone Simulator'
+            )
+        )
+    );
+
+    public function testThings()
+    {
+        $this->get('http://saucelabs.com/test/guinea-pig');
+
+        $div = $this->byId('i_am_an_id');
+        $this->assertEquals('I am a div', $div->text());
+
+        $this->byId('comments')->sendKeys('My comment');
+    }
+}
 ```
 
 ### 在真机或模拟器上的Chrome执行测试
 
 需要做的准备:
 
-*  确认Chrome已经安装在了你的真机或模拟器上 (应用的包名是`com.android.chrome`) .在不编译chromiun的情况下, 不可能得到模拟器上的x86版本的chrome, 你可以运行一个ARM的模拟器然后从真机上获取一个Chrome的APK安装在模拟器上.
-*  确认 [ChromeDriver](https://code.google.com/p/chromedriver/downloads/list), version &gt;= 2.0 正确的安装在你的系统上并且设置了`chromedriver`成为系统全局变量.
+*  确认Chrome已经安装在了你的真机或模拟器上 (应用的包名是`com.android.chrome`) .在不编译Chromiun的情况下, 不可能得到模拟器上的x86版本的chrome, 你可以运行一个ARM的模拟器然后从真机上获取一个Chrome的APK安装在模拟器上.
+*  如果你是使用[NPM](https://www.npmjs.org/package/appium)下载的，
+或者是在[.app](https://github.com/appium/appium-dot-app)运行的话，则你的工作已经完成。
+如果你是使用源码运行，reset会下载ChromeDriver并放在'build'。 
+使用 `--chromedriver-version` 选项会看到详细的说明 (e.g., `./reset.sh --android --chromedriver-version 2.8`)
+另外注意保持更新。
 
 接着,像这样设置就可以在Chrome上执行测试了:
 
-```js
+```javascript
+// javascript
 {
-  app: 'chrome'
-  , device: 'Android'
+  platformName: 'Android'
+  , platformVersion: '4.4'
+  , deviceName: 'Android Emulator'
+  , browserName: 'Chrome'
 };
 ```
+
+```python
+# python
+{
+  'platformName': 'Android',
+  'platformVersion': '4.4',
+  'deviceName': 'Android Emulator',
+  'browserName': 'Chrome'
+}
+```
+
+```php
+// php
+public static $browsers = array(
+    array(
+        'desiredCapabilities' => array(
+            'platformName' => 'Android',
+            'platformVersion' => '4.4',
+            'browserName' => 'Chrome',
+            'deviceName' => 'Android Emulator'
+        )
+    )
+);
+```
+
+```java
+// java
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "4.4");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
+```
+
+在4.4以上的版本，你也可以用'Browser' `browserName` 来自动运行内置浏览器。
+在所有版本你都可以用'Chromium' `browserName`来运行Chromium。
+ 
+
+#### Troubleshooting chromedriver
+
+从Chrome 33开始，不再必须将设备root。在之前的版本，设备必须按要求进行root，
+并按照/data/local directory所写的去设置参数；
+
+如果在33版之前在Chrome上测试app，确保adb shell拥有设备中/data/local目录的读写权限：
+
+```center
+$ adb shell su -c chmod 777 /data/local
+```
+
+更多关于chromedriver的文档详见[ChromeDriver documentation](https://sites.google.com/a/chromium.org/chromedriver/getting-started/getting-started---android).
+

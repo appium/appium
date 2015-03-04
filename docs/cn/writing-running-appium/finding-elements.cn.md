@@ -1,24 +1,24 @@
 # 元素定位与交互
 
-Appium支持webdriver定位策略的其中几种方式
+Appium支持webdriver定位策略的子集
 
 * 根据“class”定位(i.e., UI组件类型)
 * 根据“xpath”定位 (i.e., 具有一定约束的路径抽象标示, 基于XPath方式)
 
-###标签名抽象映射
 
-appium另外支持的 Mobile JSON 连接协议 定位策略
-https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile
+另外， Appium 还支持部分 [Mobile JSON 连接协议](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) 的定位策略
 
--ios uiautomation: 一个字符串对应一个递归元素的搜索使用 UIAutomation library (iOS-only)
+
+* `ios uiautomation`: 一个字符串对应一个递归元素的搜索使用 [UIAutomation library](ios_predicate.cn.md) (iOS-only)
 local://base_request.html/testerhome/appium/blob/master/docs/en/writing-running-appium/ios_predicate.md
 
--android uiautomator: 一个对应一个递归元素的字符串 搜索使用 UiAutomator Api (Android-only)
-local://base_request.html/testerhome/appium/blob/master/docs/en/writing-running-appium/uiautomator_uiselector.md
-accessibility id: 一个对应于一个递归元素要查找的字符串 使用ID /Name，本地可选择使用。
+* `android uiautomator`: 一个对应一个递归元素的字符串 搜索使用 [UiAutomator Api](uiautomator_uiselector.cn.md) (Android-only)
+
+* `accessibility id`: 一个对应于一个递归元素要查找的字符串 使用ID /Name，本地可选择使用。
 问题
 
-如果遇到定位元素变得无效联系并告知我们。我们将会努力修复
+如果遇到定位元素变得无效请联系并告知我们。我们将会努力修复
+
 ## 例子
 
 WD.js:

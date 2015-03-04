@@ -23,7 +23,7 @@ $ node .
 ### Appium 开发环境搭建
 
 确保你安装了ant,maven,adb并且将他们加入到了系统环境变量PATH中,与此同时你还需要安装android-16 sdk(Selendroid)和android-19 sdk. 
-从你本地仓库的命令行提示，使用下边的命令安装如下包（如果你没有使用homebrew包管理器安装node ，则你可能不得不使用sudo 权限运行npm）:
+从你本地仓库的命令行提示，使用下边的命令安装如下包（如果你没有使用自制程序安装node ，则你必须使用sudo 权限运行npm）:
 
 ```center
 npm install -g mocha
@@ -32,8 +32,8 @@ node bin/appium-doctor.js --dev
 ./reset.sh --dev
 ```
 
-前两个命令安装测试和构建工具（如果你已经通过homebrew包管理器安装了node.js就不需要sudo了）.
-第三个命令验证所有的依赖关系是否设置正确（由于依赖关系构建Appium不同于简单的运行Appium）,
+前两个命令安装测试和构建工具（如果你已经通过自制程序安装了node.js就不需要sudo了）.
+第三个命令验证所有的依赖关系是否设置正确（由于构建依赖关系不同于简单的运行Appium）,
 第四个命令安装所有程序依赖关系和构建支持二进制文件和测试应用程序。
 reset.sh也是建议先从master上pull下改变后的内容再执行命令。
 运行reset.sh 加上--dev 标志同时安装git hooks以确保代码质量在提交时是被保存过的。
@@ -43,109 +43,71 @@ reset.sh也是建议先从master上pull下改变后的内容再执行命令。
 node .
 ```
 
-查看完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
+看到完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
 
-<<<<<<< HEAD
-Like the power of automating dev tasks? Check out the [Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)
-available to help with building apps, installing apps, generating docs, etc.
-#### 搭建iOS运行环境
+像自动化开发任务的力量？查看Appium Grunt tasks可以帮助构建[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)应用程序,安装程序,生成文档,等等。
 
-为了避免启动iOS apps时弹出安全警告，你可以通过以下两种方法修改/etc/authorization文件：
+#### Hacking with Appium for iOS
 
-1. 手动将`/etc/authorization`文件中的`<allow-root>` 下的`<key>system.privilege.taskport</key>`改为`<true/>`.
-
-2. 运行以下grunt命令来自动修改`/etc/authorization` 文件:
-
-```center
-sudo ./bin/authorize-ios.js
-```
-
-然后再运行以下命令:
-=======
-像自动化开发任务的能力？查看Appium Grunt tasks可以帮助构建[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)应用程序,安装程序,生成文档,等等。
-
-#### 搭建iOS运行环境
-
-为了避免启动iOS apps时弹出安全警告，你可以通过以下两种方法修改/etc/authorization文件：
+To avoid a security dialog that may appear when launching your iOS apps you'll
+have to modify your `/etc/authorization` file in one of two ways:
 
 1. Manually modify the element following `<allow-root>` under `<key>system.privilege.taskport</key>`
    in your `/etc/authorization` file to `<true/>`.
-1. 手动将`/etc/authorization`文件中`<allow-root>`下的`<key>system.privilege.taskport</key>`改为`<true/>`
 
-2. 运行以下grunt命令来自动修改`/etc/authorization`文件:
+2. Run the following grunt command which automatically modifies your
+   `/etc/authorization` file for you:
 
     ```center
     sudo ./bin/authorize-ios.js
     ```
 
-然后再运行以下命令：
->>>>>>> 3b036a327b54f95993048fb1454321760afd1305
+At this point, run:
 
 ```center
 ./reset.sh --ios --dev
 ```
 
-<<<<<<< HEAD
-现在你的appium实例已经准备就绪，运行`node .` 来启动appium server. 
-=======
-现在你的appium实例已经准备就绪，运行`node .`.来启动appium server.
->>>>>>> 3b036a327b54f95993048fb1454321760afd1305
+Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
 
-#### 搭建android运行环境
+#### Hacking with Appium for Android
 
-Bootstrap通过运行以下命令来启动android：
+Bootstrap running for Android by running:
 
 ```center
 ./reset.sh --android --dev
 ```
 
-<<<<<<< HEAD
-如果你想运行[Selendroid](http://github.com/DominikDary/selendroid)来支持2.3这样的旧的android平台，运行以下命令：
-=======
-如果你想运行[Selendroid](http://github.com/DominikDary/selendroid) 来支持像2.3这样的旧的android平台，运行以下命令：
->>>>>>> 3b036a327b54f95993048fb1454321760afd1305
+If you want to use [Selendroid](http://github.com/DominikDary/selendroid) for
+support on older Android platforms like 2.3, then run:
 
 ```center
 ./reset.sh --selendroid --dev
 ```
 
-<<<<<<< HEAD
-确保你有且只有一个Android模拟器或者真机在运行，举个例子，在其它的设备上运行此命令（假设emulator命令已经在你的path中了）需执行：
-
-=======
-确保你有且只有一个Android模拟器或者真机在运行，举个例子，在其它的设备上运行此命令（假设`emulator`命令已经在你的path中了）需执行：
->>>>>>> 3b036a327b54f95993048fb1454321760afd1305
+Make sure you have one and only one Android emulator or device running, e.g.
+by running this command in another process (assuming the `emulator` command is
+on your path):
 
 ```center
 emulator -avd <MyAvdName>
 ```
 
-<<<<<<< HEAD
-现在你可以通过`node .`启动Appium server了.
+Now you are ready to run the Appium server via `node .`.
 
-#### 确保更新到最新版本
+#### Making sure you're up to date
 
-由于Appium使用一些包的开发版本，所以经常安装新的npm包和升级不同的包是很有必要的。以下命令可以将所有平台上的包进行更新（--dev标志会获取npm dev依赖和Appium测试套件中用到的应用程序）。当Appium提示版本更新时，你也可以用以下命令来更新：
-
-=======
-现在你已经可以通过运行`node .`来启动Appium服务了。
-
-#### 确保更新到最新版本
-
-
-由于Appium使用一些dev版本的包，所以经常安装新的`npm`包和升级不同的包是很有必要的。
-以下命令可以将所有平台上的包进行更新（`--dev`标志会获取npm dev依赖和Appium测试套件中用到的应用程序）:
->>>>>>> 3b036a327b54f95993048fb1454321760afd1305
+Since Appium uses dev versions of some packages, it often becomes necessary to
+install new `npm` packages or update various things. There's a handy shell script
+to do all this for all platforms (the `--dev` flag gets dev npm dependencies
+and test applications used in the Appium test suite). You will also need to do
+this when Appium bumps its version up:
 
 ```center
 ./reset.sh --dev
 ```
 
-<<<<<<< HEAD
-或者你可以只更新指定的平台：
-=======
-或者你可以为单独的平台运行reset命令
->>>>>>> 3b036a327b54f95993048fb1454321760afd1305
+Or you can run reset for individual platforms only:
 
 ```center
 ./reset.sh --ios --dev
@@ -154,7 +116,7 @@ emulator -avd <MyAvdName>
 ```
 
 ### 运行测试集
-首先，看看我们的文档[一般运行测试情况下](/docs/en/writing-running-appium/running-tests.md) 
+首先，签出我们的文档[一般运行测试情况下](/docs/en/writing-running-appium/running-tests.md) 
 然后，确保你的环境在对应的平台上已经搭建好了与你所期望的那样
 
 当你的环境搭建好了之后并且你的代码是最新的，你可以通过以下的方式来运行单元测试:

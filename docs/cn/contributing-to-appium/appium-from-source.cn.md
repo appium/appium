@@ -23,7 +23,7 @@ $ node .
 ### Appium 开发环境搭建
 
 确保你安装了ant,maven,adb并且将他们加入到了系统环境变量PATH中,与此同时你还需要安装android-16 sdk(Selendroid)和android-19 sdk. 
-从你本地仓库的命令行提示，使用下边的命令安装如下包（如果你没有使用自制程序安装node ，则你必须使用sudo 权限运行npm）:
+从你本地仓库的命令行提示，使用下边的命令安装如下包（如果你没有使用homebrew包管理器安装node ，则你可能不得不使用sudo 权限运行npm）:
 
 ```center
 npm install -g mocha
@@ -32,8 +32,8 @@ node bin/appium-doctor.js --dev
 ./reset.sh --dev
 ```
 
-前两个命令安装测试和构建工具（如果你已经通过自制程序安装了node.js就不需要sudo了）.
-第三个命令验证所有的依赖关系是否设置正确（由于构建依赖关系不同于简单的运行Appium）,
+前两个命令安装测试和构建工具（如果你已经通过homebrew包管理器安装了node.js就不需要sudo了）.
+第三个命令验证所有的依赖关系是否设置正确（由于依赖关系构建Appium不同于简单的运行Appium）,
 第四个命令安装所有程序依赖关系和构建支持二进制文件和测试应用程序。
 reset.sh也是建议先从master上pull下改变后的内容再执行命令。
 运行reset.sh 加上--dev 标志同时安装git hooks以确保代码质量在提交时是被保存过的。
@@ -43,9 +43,9 @@ reset.sh也是建议先从master上pull下改变后的内容再执行命令。
 node .
 ```
 
-看到完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
+查看完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
 
-像自动化开发任务的力量？查看Appium Grunt tasks可以帮助构建[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)应用程序,安装程序,生成文档,等等。
+像自动化开发任务的能力？查看Appium Grunt tasks可以帮助构建[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)应用程序,安装程序,生成文档,等等。
 
 #### 搭建iOS运行环境
 
@@ -67,7 +67,7 @@ node .
 ./reset.sh --ios --dev
 ```
 
-现在你的appium实例已经准备就绪，运行`node`.来启动appium server.
+现在你的appium实例已经准备就绪，运行`node .`.来启动appium server.
 
 #### 搭建android运行环境
 
@@ -94,7 +94,7 @@ emulator -avd <MyAvdName>
 #### 确保更新到最新版本
 
 
-由于Appium使用一些包的开发版本，所以经常安装新的`npm`包和升级不同的包是很有必要的。
+由于Appium使用一些dev版本的包，所以经常安装新的`npm`包和升级不同的包是很有必要的。
 以下命令可以将所有平台上的包进行更新（`--dev`标志会获取npm dev依赖和Appium测试套件中用到的应用程序）:
 
 ```center
@@ -110,7 +110,7 @@ emulator -avd <MyAvdName>
 ```
 
 ### 运行测试集
-首先，签出我们的文档[一般运行测试情况下](/docs/en/writing-running-appium/running-tests.md) 
+首先，看看我们的文档[一般运行测试情况下](/docs/en/writing-running-appium/running-tests.md) 
 然后，确保你的环境在对应的平台上已经搭建好了与你所期望的那样
 
 当你的环境搭建好了之后并且你的代码是最新的，你可以通过以下的方式来运行单元测试:

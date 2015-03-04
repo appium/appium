@@ -1,11 +1,11 @@
 ## Android Setup
 
-使用前，你需要安装node.js(版本大于等于0.10). 请参照 [instructions for your flavor of linux](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager).
+使用前，你需要安装node.js(版本大于等于0.10). 请参照 [instructions for your flavor of linux](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager)。
 
 当node.js安装成功后，请安装 [Android SDK](http://developer.android.com/sdk/index.html).
-运行'android'tool(位于SDK，tool文件目录下).
+运行'android'tool(位于SDK，tool文件目录下)。
 
-运行'android' tool 来安装大于等于Level 17的API.
+运行'android' tool 来安装大于等于Level 17的API。
 
 (如果你想从Appium的源码来运行，可在真机或者模拟器上用 [Apache Ant](http://ant.apache.org/) 来编译bootstrap jar包).
 

@@ -1,6 +1,6 @@
 # Intel® 硬件加速器管理
 
-如果你发现android虚拟机太慢, 并且你的系统运行在Intel® 的cpu上. 那么你可以尝试下HAXM, HAXM能够让你充分利用硬件虚拟化技术来加速android模拟器
+如果你发现android虚拟机太慢, 并且你的系统运行在Intel® 的cpu上. 那么你可以尝试下HAXM, HAXM能够让你充分利用硬件虚拟化技术来加速android模拟器。
 
 * 要安装HAXM, 你可以打开Android SDK Manager, 你可以在Extras中发现这个安装选项
 

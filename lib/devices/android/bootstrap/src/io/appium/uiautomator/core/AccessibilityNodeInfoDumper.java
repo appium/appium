@@ -15,7 +15,6 @@
  */
 package io.appium.uiautomator.core;
 import android.graphics.Point;
-import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Xml;
@@ -27,6 +26,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.regex.Pattern;
+
+
 
 /**
  *
@@ -46,7 +48,14 @@ public class AccessibilityNodeInfoDumper {
             android.widget.GridView.class.getName(), android.widget.GridLayout.class.getName(),
             android.widget.ListView.class.getName(), android.widget.TableLayout.class.getName()
     };
-
+    // XML 1.0 Legal Characters (http://stackoverflow.com/a/4237934/347155)
+    // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+    private static Pattern XML10Pattern = Pattern.compile("[^"
+                                                        + "\u0009\r\n"
+                                                        + "\u0020-\uD7FF"
+                                                        + "\uE000-\uFFFD"
+                                                        + "\ud800\udc00-\udbff\udfff"
+                                                        + "]");
     /**
      * Using {@link AccessibilityNodeInfo} this method will walk the layout hierarchy
      * and generates an xml dump to the location specified by <code>dumpFile</code>
@@ -208,27 +217,10 @@ public class AccessibilityNodeInfoDumper {
             return stripInvalidXMLChars(cs);
         }
     }
-    private static String stripInvalidXMLChars(CharSequence cs) {
-        StringBuilder ret = new StringBuilder();
-        char ch;
-        for (int i = 0; i < cs.length(); i++) {
-            ch = cs.charAt(i);
-            // code below from Html#withinStyle, this is a temporary workaround because XML
-            // serializer does not support surrogates
-            if (ch >= 0xD800 && ch <= 0xDFFF) {
-                if (ch < 0xDC00 && i + 1 < cs.length()) {
-                    char d = cs.charAt(i + 1);
-                    if (d >= 0xDC00 && d <= 0xDFFF) {
-                        i++;
-                        ret.append("?");
-                    }
-                }
-            } else if (ch > 0x7E || ch < ' ') {
-                ret.append("?");
-            } else {
-                ret.append(ch);
-            }
-        }
-        return ret.toString();
+    // Original Google code here broke UTF characters
+    private static String stripInvalidXMLChars(CharSequence charSequence) {
+        final StringBuilder sb = new StringBuilder(charSequence.length());
+        sb.append(charSequence);
+        return XML10Pattern.matcher(sb.toString()).replaceAll("?");
     }
 }

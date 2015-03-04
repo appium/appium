@@ -12,6 +12,7 @@
 |grunt selendroid|运行 selendroid 功能测试集|
 |grunt firefoxos|运行 firefoxos 功能测试集|
 |grunt unit|运行所有的单元测试|
+|grunt getSampleCode|下载示例代码和示例app. 接受`:hardcore` 参数
 |grunt buildApp:&lt;AppName&gt;:&lt;SDK&gt;|构建一个用于 iPhone 模拟器的 iOS 应用。  我们预计这个应用的路径是 `sample-code/apps/<AppName>/build/Release-iphonesimulator/<AppName>.app`. 默认的 SDK 是 'iphonesimulator6.0'|
 |grunt signApp:&lt;certName&gt;|使用开发证书的绝对路径，签名测试应用。|
 |grunt authorize|授权模拟器，使它不需要弹框请求权限。|

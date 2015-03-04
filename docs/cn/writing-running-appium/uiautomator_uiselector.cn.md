@@ -22,7 +22,7 @@ first_text = find_element(:uiautomator, 'new UiSelector().text("Animation")')
 first_text.text # "Animation"
 ```
 
-发现第一个可以滚动的控件，然后找到一个TextView的文本为“Tabs”。 “Tabs”元素将滚动到视图.
+发现第一个可以滚动的控件，然后找到一个TextView的文本为"Tabs"。 "Tabs"元素将滚动到视图.
 
 ```ruby
 # ruby

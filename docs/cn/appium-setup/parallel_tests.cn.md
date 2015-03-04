@@ -26,5 +26,5 @@ Appium提供了在一台设备上启动多个Android会话的方案，而这个�
 
 不幸的是，IOS不能进行本地并发测试。跟Android不一样，IOS在同一时间只能启动一个版本的模拟器来运行多个测试。
 
-如果你想在IOS上进行并发测试，你需要用到Sauce。只需上传你的Appium测试脚本到Sauce，它就可以按照你的设置执行多个IOS或Android的并发测试。在Sauce上执行测试的更多信息，详见[here](https://docs.saucelabs.com/tutorials/appium/).
+如果你想在IOS上进行并发测试，你需要用到Sauce。只需上传你的Appium测试脚本到Sauce，它就可以按照你的设置执行多个IOS或Android的并发测试。在Sauce上执行测试的更多信息，详见[here](https://docs.saucelabs.com/tutorials/appium/)。
 

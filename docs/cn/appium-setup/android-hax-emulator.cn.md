@@ -7,5 +7,7 @@
 * 你可以在[Inter官方网站][1]找到所有相关的文档
 * 这将需要x86的模拟镜像
 
+* 利用Intel的包来安装HAXM; Android SDK Manager有时候安装不成功，这主要取决于你安装的版本是否兼容
+
 [1]: http://software.intel.com/en-us/articles/intel-hardware-accelerated-execution-manager/ "Hax" 
 [2]: http://software.intel.com/en-us/search/site/language/en?query=Intel%20Hardware%20Accelerated%20Execution%20Manager%20%28HAXM%29 "Hax all"

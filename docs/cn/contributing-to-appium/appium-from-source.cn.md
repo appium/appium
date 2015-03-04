@@ -45,9 +45,7 @@ node .
 
 查看完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
 
-<<<<<<< HEAD
-Like the power of automating dev tasks? Check out the [Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)
-available to help with building apps, installing apps, generating docs, etc.
+想要实现任务自动化，请检出[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)来构建应用程序,安装程序,生成文档,等等。
 
 
 #### 搭建iOS运行环境
@@ -78,7 +76,7 @@ Bootstrap通过运行以下命令来启动android：
 ./reset.sh --android --dev
 ```
 
-如果你想运行[Selendroid](http://github.com/DominikDary/selendroid)来支持2.3这样的旧的android平台，运行以下命令：
+如果你想运行[Selendroid](http://github.com/DominikDary/selendroid) 来支持2.3这样的旧的android平台，运行以下命令：
 
 ```center
 ./reset.sh --selendroid --dev

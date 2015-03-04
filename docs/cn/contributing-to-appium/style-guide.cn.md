@@ -142,6 +142,11 @@
     }
     ```
 
+		except in the case of short-circuiting to a callback in the event of an error（求翻译）
+    ```javascript
+    if (err) return cb(err);
+    ```
+
 *   通过拓展原型，来创建子类
 
     ```js

@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.3.6
+======================================
+
+#### Android
+- fix XPath regression where Appium failed to recognize non-ASCII characters
+- fix regression where Appium failed to set ADB's path during Chromedriver tests
+
 CHANGES IN VERSION 1.3.5
 ======================================
 

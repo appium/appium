@@ -43,9 +43,9 @@ reset.sh也是建议先从master上pull下改变后的内容再执行命令。
 node .
 ```
 
-查看完整的服务文档参数列表[the server documentation](/docs/en/writing-running-appium/server-args.md)
+查看完整的服务文档参数列表[the server documentation](/docs/cn/writing-running-appium/server-args.md)
 
-想要实现任务自动化，请检出[Appium Grunt tasks](/docs/en/contributing-to-appium/grunt.md)来构建应用程序,安装程序,生成文档,等等。
+想要实现任务自动化，请检出[Appium Grunt tasks](/docs/cn/contributing-to-appium/grunt.md)来构建应用程序,安装程序,生成文档,等等。
 
 
 #### 搭建iOS运行环境
@@ -109,7 +109,7 @@ emulator -avd <MyAvdName>
 ```
 
 ### 运行测试集
-首先，看看我们的文档[一般运行测试情况下](/docs/en/writing-running-appium/running-tests.md) 
+首先，看看我们的文档[一般运行测试情况下](/docs/cn/writing-running-appium/running-tests.md) 
 然后，确保你的环境在对应的平台上已经搭建好了与你所期望的那样
 
 当你的环境搭建好了之后并且你的代码是最新的，你可以通过以下的方式来运行单元测试:

@@ -2,7 +2,7 @@
 
 然而Selenium WebDriver的规范对某些移动设备交互的支持，它的参数并不总是容易映射到底层的设备从而提供自动化的功能（像在iOS上进行UIAutomation）。为此，Appium在规范的最新版本中定义了新的触摸操作/多点触控 API
 ([https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html#multiactions-1](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html#multiactions-1))。
-注意，这跟使用原始JSON有线协议的早期版本的触摸操作 API不同。
+注意，这跟使用原始JSON Wire Protocol的早期版本的触摸操作 API不同。
 
 这些API可以让你使用多个驱动来建立任意手势。请参阅对应语言的Appium客户端文档，就可以找到使用这些API的例子。
 

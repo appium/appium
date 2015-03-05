@@ -82,3 +82,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--intent-category`|android.intent.category.LAUNCHER|(Android-only) Intent category which will be used to start activity|`--intent-category android.intent.category.APP_CONTACTS`|
 |`--intent-flags`|0x10200000|(Android-only) Flags that will be used to start activity|`--intent-flags 0x10200000`|
 |`--intent-args`|null|(Android-only) Additional intent arguments that will be used to start activity|`--intent-args 0x10200000`|
+|`--suppress-adb-kill-server`|false|(Android-only) If set, prevents Appium from killing the adb server instance||

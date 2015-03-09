@@ -23,28 +23,6 @@ describe("Helpers", function () {
       });
     });
 
-    describe("notNullOrUndefined ", function () {
-      it("should work as expected", function () {
-        var undef
-          , nan = NaN
-          , none = null
-          , f = function () {}
-          , o = {}
-          , n = 0
-          , s = "string"
-          , b = false;
-
-        helpers.notNullOrUndefined(undef).should.be.false;
-        helpers.notNullOrUndefined(nan).should.be.false;
-        helpers.notNullOrUndefined(none).should.be.false;
-        helpers.notNullOrUndefined(f).should.be.true;
-        helpers.notNullOrUndefined(o).should.be.true;
-        helpers.notNullOrUndefined(n).should.be.true;
-        helpers.notNullOrUndefined(s).should.be.true;
-        helpers.notNullOrUndefined(b).should.be.true;
-      });
-    });
-
     describe("with a desired capability", function () {
       it("emits the capability message", function () {
         var deprecated = "oldCap";

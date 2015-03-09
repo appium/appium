@@ -501,18 +501,31 @@ module.exports.fixSelendroidAndroidManifest = fixSelendroidAndroidManifest;
 
 
 module.exports.buildSelendroidServer = function (cb) {
-  console.log("Building selendroid server");
   getSelendroidVersion(function (err, version) {
     if (err) return cb(err);
+    console.log("Installing Cordova");
+    var cordovaDir = path.resolve(__dirname, "submodules", "selendroid",
+      "third-party", "cordova-3.7.0");
+    var cmd = "mvn install:install-file -Dfile=classes.jar -DgroupId=org.apache.cordova " +
+      "-DartifactId=cordova -Dversion=3.7.0 -Dclassifier=android -Dpackaging=jar";
+    exec(cmd, {cwd: cordovaDir}, function (err, stdout, stderr) {
+      if (err) {
+        console.error("Unable to install Cordova. Stdout was: ");
+        console.error(stdout);
+        console.error(stderr);
+        return cb(err);
+      }
+    });
+    console.log("Building selendroid server");
     var buildDir = path.resolve(__dirname, "submodules", "selendroid");
     var target = path.resolve(buildDir, "selendroid-server", "target",
       "selendroid-server-" + version + ".apk");
     var destDir = path.resolve(__dirname, "build", "selendroid");
     var destBin = path.resolve(destDir, "selendroid.apk");
     var srcManifest = path.resolve(__dirname, "submodules", "selendroid",
-        "selendroid-server", "AndroidManifest.xml");
+      "selendroid-server", "AndroidManifest.xml");
     var dstManifest = path.resolve(destDir, "AndroidManifest.xml");
-    var cmd = "mvn clean package -DskipTests=true";
+    cmd = "mvn clean package -DskipTests=true";
     exec(cmd, {cwd: buildDir, maxBuffer: SELENDROID_MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
       if (err) {
         console.error("Unable to build selendroid server. Stdout was: ");

@@ -54,6 +54,25 @@ describe("apidemo - touch - tap", function () {
         .nodeify(done);
     });
 
+    it('should tap from an absolute position', function (done) {
+      driver
+        .elementByName("Add")
+        .getLocation()
+        .then(function (loc) {
+          var x = loc.x + 10
+            , y = loc.y + 10;
+          var action = new TouchAction(driver);
+          return action.tap({x: x, y: y}).perform();
+        })
+        .elementsByClassName(droidText)
+        .then(function (els) {
+          return els[1];
+        })
+        .text()
+        .should.become("This is a test\n")
+        .nodeify(done);
+    });
+
     it('should tap an element twice', function (done) {
       driver
         .elementByName("Add")

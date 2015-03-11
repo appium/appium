@@ -6,11 +6,8 @@
 var path = require('path')
   , _ = require('underscore')
   , IOS = require('../../lib/devices/ios/ios.js')
-  , XCODE = require('../../lib/devices/ios/xcode.js')
   , chai = require('chai')
-  , expect = chai.expect
-  , fs = require('fs')
-  , env = process.env;
+  , expect = chai.expect;
 
 chai.should();
 
@@ -108,40 +105,6 @@ describe('IOS', function () {
       caps.bundleId = undefined;
       iosDevice.configure(caps, {}, function (err) {
         expect(err).to.be.undefined;
-        done();
-      });
-    });
-  });
-
-  describe('xcode#getpath', function () {
-    it('should always return a valid path', function (done) {
-      this.timeout(5000);
-      // getPath failures have been intermittent, so try a few times
-      var iterations = 100;
-      var nextTest = function () {
-        XCODE.getPath(function (err, path) {
-          expect(err).to.be.null;
-          expect(path).not.to.be.empty;
-          expect(fs.existsSync(path)).to.be.true;
-          if (--iterations > 0) {
-            nextTest();
-          } else {
-            done();
-          }
-        });
-      };
-      nextTest();
-    });
-
-    // careful, there's a bug in mocha so if you call this before
-    // 'should always return a valid path', then the other test
-    // will get passed this test's `err` object.
-    it('should fail with a bad path', function (done) {
-      env.DEVELOPER_DIR = "/foo/bar";
-
-      XCODE.getPath(function (err) {
-        env.DEVELOPER_DIR = "";
-        expect(err).not.to.be.null;
         done();
       });
     });

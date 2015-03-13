@@ -151,9 +151,9 @@ gulp.task('launch-emu', function () {
 
   var emuErrored = false;
   function waitForEmu() {
-    var INIT_WAIT = 5000;
-    var MAX_WAIT_MS = 120000;
-    var POOL_MS = 2000;
+    var INIT_WAIT = 15000;
+    var MAX_WAIT_MS = 180000;
+    var POOL_MS = 5000;
     var startMs = Date.now();
     function _waitForEmu () {
       function retry() {

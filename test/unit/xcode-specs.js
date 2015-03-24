@@ -23,4 +23,20 @@ describe('xcode.js @skip-linux', function () {
     .nodeify(done);
   });
 
+  it('should error nicely when automation trace template cannot be found', function (done) {
+    xcode.getPath = function (cb) {
+      return cb(null, '/asdfasdf');
+    };
+
+    xcode.getAutomationTraceTemplatePath()
+    .then(function () {
+      done('Should not reach here, promise should be rejected');
+    }, function (e) {
+      e.should.be.instanceof(Error);
+      done();
+    });
+
+
+  });
+
 });

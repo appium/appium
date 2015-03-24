@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.3.7-Beta
+CHANGES IN VERSION 1.3.7
 ======================================
 
 #### General

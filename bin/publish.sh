@@ -8,7 +8,8 @@ else
 fi
 
 XCODE_PATH=$(xcode-select -print-path)
-if test -d $XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk; then
+if test -d $XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk ||
+   [ -e /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 7.1.simruntime ]; then
     echo "Confirmed iOS7.1 SDK available"
 else
     echo "You don't have iOS 7.1 SDK available. Switch to Xcode 5?"

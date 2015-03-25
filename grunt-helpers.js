@@ -598,7 +598,10 @@ var getSelendroidVersion = function (cb) {
 
 module.exports.buildAndroidApp = function (grunt, appName, cb) {
   var appPath = path.resolve(__dirname, "sample-code", "apps", appName);
-  buildAndroidProj(grunt, appPath, "debug", cb);
+  buildAndroidProj(grunt, appPath, "clean", function (err) {
+    if (err) return cb(err);
+    buildAndroidProj(grunt, appPath, "debug", cb);
+  });
 };
 
 module.exports.buildSelendroidAndroidApp = function (grunt, appName, cb) {

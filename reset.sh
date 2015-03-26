@@ -205,16 +205,6 @@ reset_ios() {
         echo "* Cleaning/rebuilding iOS test app: WebViewApp"
         run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
     fi
-    echo "* Cloning/updating fruitstrap"
-    run_cmd git submodule update --init submodules/fruitstrap
-    echo "* Making fruitstrap"
-    run_cmd pushd "$appium_home"/submodules/fruitstrap/
-    run_cmd make fruitstrap
-    run_cmd popd
-    echo "* Copying fruitstrap to build"
-    run_cmd rm -rf build/fruitstrap
-    run_cmd mkdir -p build/fruitstrap
-    run_cmd cp submodules/fruitstrap/fruitstrap build/fruitstrap
     if $should_reset_realsafari; then
         echo "* Cloning/updating SafariLauncher"
         run_cmd git submodule update --init submodules/SafariLauncher

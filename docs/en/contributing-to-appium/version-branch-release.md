@@ -2,7 +2,7 @@
 
 ## Versioning
 
-Following 1.3.6, Appium switched to semantic versioning: `major | minor | patch | [-Beta{N}]`. E.g., `1.4.1` or `2.4.0-Beta4`.
+Following 1.3.6, Appium switched to semantic versioning: `major | minor | patch | [-beta{N}]`. E.g., `1.4.1` or `2.4.0-Beta4`.
 * Major: API-breaking changes; new features
 * Minor: Backward-compatible changes; may or may not include new features
 * Patch: Quick fix engineering; no new features

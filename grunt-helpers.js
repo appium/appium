@@ -256,6 +256,10 @@ var auth_chmodApps = function (grunt, cb) {
     if (err) return cb(err);
     var glob = path.resolve(xcodeDir, "Platforms/iPhoneSimulator.platform/" +
                             "Developer/SDKs/iPhoneSimulator*.sdk/Applications");
+    glob += " ";
+    glob += path.resolve("/Library/Developer/CoreSimulator/" +
+                         "Profiles/Runtimes/iOS\\ *.simruntime/" +
+                         "Contents/Resources/RuntimeRoot/Applications/");
     var cmd = "chown -R " + user + ": " + glob;
     exec(cmd, function (err) {
       if (err) grunt.fatal(err);

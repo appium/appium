@@ -2,6 +2,7 @@ package io.appium.android.bootstrap.handler;
 
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiSelector;
+import android.os.Bundle;
 import static io.appium.android.bootstrap.utils.API.API_18;
 import io.appium.android.bootstrap.AndroidCommand;
 import io.appium.android.bootstrap.AndroidCommandResult;
@@ -42,6 +43,7 @@ public class Find extends CommandHandler {
   // These variables are expected to persist across executions.
   AndroidElementsHash  elements          = AndroidElementsHash.getInstance();
   static JSONObject    apkStrings        = null;
+  public static Bundle params            = null;
   UiAutomatorParser    uiAutomatorParser = new UiAutomatorParser();
   /**
    * java_package : type / name
@@ -270,13 +272,36 @@ public class Find extends CommandHandler {
         // 3. strings.xml id
         //
         // If text is a resource id then only use the resource id selector.
-        if (API_18 && resourceIdRegex.matcher(text).matches()) {
-          sel = sel.resourceId(text);
-          if (!many) {
-            sel = sel.instance(0);
+        if (API_18) {
+          if (resourceIdRegex.matcher(text).matches()) {
+            sel = sel.resourceId(text);
+            if (!many) {
+              sel = sel.instance(0);
+            }
+            selectors.add(sel);
+            break;
+          } else {
+            // not a fully qualified resource id
+            // transform "textToBeChanged" into:
+            // com.example.android.testing.espresso.BasicSample:id/textToBeChanged
+            // android:id/textToBeChanged
+            // either it's prefixed with the app package or the android system page.
+            String pkg = (String) params.get("pkg");
+
+            if (pkg != null) {
+              sel = sel.resourceId(pkg + ":id/" + text);
+              if (!many) {
+                sel = sel.instance(0);
+              }
+              selectors.add(sel);
+            }
+
+            sel = sel.resourceId("android:id/" + text);
+            if (!many) {
+              sel = sel.instance(0);
+            }
+            selectors.add(sel);
           }
-          selectors.add(sel);
-          break;
         }
 
         // must create a new selector or the selector from

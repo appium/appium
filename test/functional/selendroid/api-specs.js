@@ -1,6 +1,7 @@
 "use strict";
 
 var setup = require("../common/setup-base"),
+    getAppPath = require('../../helpers/app').getAppPath,
     desired = require('./desired');
 
 describe('api', function () {
@@ -49,6 +50,21 @@ describe('api', function () {
         err.cause.value.origValue.should.contain('mobile:');
         throw err;
       }).should.be.rejectedWith(/status: 9/)
+      .nodeify(done);
+  });
+
+  it('should be able to install/remove app and detect its status', function (done) {
+    driver
+      .isAppInstalled('foo')
+        .should.eventually.equal(false)
+      .isAppInstalled('io.appium.android.apis')
+        .should.eventually.equal(true)
+      .removeApp('io.appium.android.apis')
+      .isAppInstalled('io.appium.android.apis')
+        .should.eventually.equal(false)
+      .installApp(getAppPath('ApiDemos'))
+      .isAppInstalled('io.appium.android.apis')
+        .should.eventually.equal(true)
       .nodeify(done);
   });
 

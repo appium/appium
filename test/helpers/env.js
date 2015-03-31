@@ -234,6 +234,7 @@ if (env.SAUCE && env.TARBALL) {
 // rest enf points
 env.localIP = function () {
   var ip = _.chain(os.networkInterfaces())
+    .values()
     .flatten()
     .filter(function (val) {
       return (val.family === 'IPv4' && val.internal === false);

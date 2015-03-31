@@ -3,9 +3,7 @@
 var helpers = require('../../lib/helpers.js')
   , logger = require('../../lib/server/logger.js').get('appium')
   , chai = require('chai')
-  , sinon = require('sinon')
-  , xcode = require('../../lib/devices/ios/xcode.js')
-  , hasValue = require('appium-support').util.hasValue;
+  , sinon = require('sinon');
 
 chai.should();
 
@@ -92,8 +90,10 @@ describe("Helpers", function () {
     });
   });
   describe('xcode version', function () {
-    it('parses xcode version with space', function () {
-      if(hasValue(xcode.getVersion('/Applications/ Xcode 6.1.1.app/Contents/Developer')).should.be.false)
+     it('parses xcode version with space', function () {
+        var expected = "/Applications/ Xcode 6.1.1.app/Contents/Developer";
+        var actual = "/Applications/\\ Xcode\\ 6.1.1.app/Contents/Developer"
+      if(helpers.escapeSpace(expected).should.equal(actual))
         logger.warn('xcode vesrion identified');
       else
         throw "xcode version unidentified";

@@ -3,7 +3,9 @@
 var helpers = require('../../lib/helpers.js')
   , logger = require('../../lib/server/logger.js').get('appium')
   , chai = require('chai')
-  , sinon = require('sinon');
+  , sinon = require('sinon')
+  , xcode = require('../../lib/devices/ios/xcode.js')
+  , hasValue = require('appium-support').util.hasValue;
 
 chai.should();
 
@@ -87,6 +89,14 @@ describe("Helpers", function () {
     it('does nothing if no dep warnings happened', function () {
       helpers.logFinalDeprecationWarning();
       logger.warn.called.should.equal(false);
+    });
+  });
+  describe('xcode version', function () {
+    it('parses xcode version with space', function () {
+      if(hasValue(xcode.getVersion('/Applications/ Xcode 6.1.1.app/Contents/Developer')).should.be.false)
+        logger.warn('xcode vesrion identified');
+      else
+        throw "xcode version unidentified";
     });
   });
 });

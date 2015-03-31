@@ -93,10 +93,12 @@ describe("Helpers", function () {
      it('parses xcode version with space', function () {
         var expected = "/Applications/ Xcode 6.1.1.app/Contents/Developer";
         var actual = "/Applications/\\ Xcode\\ 6.1.1.app/Contents/Developer"
-      if(helpers.escapeSpace(expected).should.equal(actual))
+      if(helpers.escapeSpace(expected).should.equal(actual)){
         logger.warn('xcode vesrion identified');
-      else
+      }
+      else{
         throw "xcode version unidentified";
+      }
     });
   });
 });

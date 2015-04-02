@@ -75,7 +75,7 @@ against your iOS device.
 Before you can run your tests against Safari on a real device you will need to:
 
 * Have the **ios-webkit-debug-proxy** installed, running and listening on port 27753 (see the
-[hybrid docs](hybrid.md) for instructions)
+[hybrid docs](/docs/en/advanced-concepts/hybrid.md#execution-against-a-real-ios-device) for instructions)
 * Turn on **web inspector** on iOS device (**settings > safari >
 advanced**, only for iOS 6.0 and up)
 * Create a **provisioning profile** that can be used to deploy the SafariLauncherApp.

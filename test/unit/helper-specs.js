@@ -89,4 +89,11 @@ describe("Helpers", function () {
       logger.warn.called.should.equal(false);
     });
   });
+  describe('xcode version', function () {
+    it('parses xcode version with space', function () {
+      var actual = "/Applications/ Xcode 6.1.1.app/Contents/Developer";
+      var expected = "/Applications/\\ Xcode\\ 6.1.1.app/Contents/Developer"
+      helpers.escapeSpace(actual).should.equal(expected);
+    });
+  });
 });

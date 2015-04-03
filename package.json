@@ -88,6 +88,7 @@
     "temp": "~0.8.1",
     "through": "~2.3.6",
     "touch": "0.0.3",
+    "udidetect": "^1.0.6",
     "underscore": "~1.8.1",
     "underscore.string": "~3.0.3",
     "unzip": "~0.1.11",

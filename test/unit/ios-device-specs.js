@@ -83,6 +83,15 @@ describe('IOS', function () {
     });
   });
 
+  describe('ios#isSpringBoard', function () {
+    it('should return true if uiApp object name == SpringBoard and false if it is not', function () {
+      var uiApp = {"@":{"name":"SpringBoard","label":" ","value":null,"dom":null,"enabled":true,"valid":true,"visible":true,"hint":null,"path":"/0","x":0,"y":20,"width":320,"height":548},">":[{"UIAWindow":{"@":{"name":null,"label":null,"value":null,"dom":null,"enabled":true}}}]};
+      expect(IOS.isSpringBoard(uiApp)).to.be.true;
+      uiApp["@"].name = "foo";
+      expect(IOS.isSpringBoard(uiApp)).to.be.false;
+    });
+  });
+
   describe('io#configure', function () {
     var getCaps = function () {
       return {platformName: 'iOS', platformVersion: '7.1',

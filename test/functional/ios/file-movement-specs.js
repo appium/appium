@@ -7,7 +7,7 @@ var setup = require("../common/setup-base")
   , path = require('path')
   , Readable = require('stream').Readable
   , Simulator = require('../../../lib/devices/ios/simulator.js')
-  , xcode = require('../../../lib/devices/ios/xcode.js')
+  , xcode = require('../../../lib/future.js').xcode
   , exec = require('child_process').exec
   , getSimUdid = require('../../helpers/sim-udid.js').getSimUdid
   , Unzip = require('unzip');
@@ -66,7 +66,7 @@ describe('file movements - pullFile and pushFile', function () {
     before(function (done) {
       var pv = env.CAPS.platformVersion || '7.1';
       var ios8 = parseFloat(pv) >= 8;
-      xcode.getiOSSDKVersion(function (err, sdk) {
+      xcode.getMaxIOSSDK(function (err, sdk) {
         if (err) return done(err);
         var next = function (udid) {
           var sim = new Simulator({

@@ -43,7 +43,7 @@
     "adm-zip": "~0.4.7",
     "appium-adb": "=1.7.5",
     "appium-atoms": "=0.0.5",
-    "appium-instruments": "=1.5.5",
+    "appium-instruments": "=1.7.1",
     "appium-support": "=1.0.1",
     "appium-uiauto": "=1.10.7",
     "appium-xcode": "=1.0.1",

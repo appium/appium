@@ -195,6 +195,10 @@ if (env.REAL_DEVICE && env.IOS) {
   env.CAPS.udid = "auto";
 }
 
+if (process.env.UDID) {
+  env.CAPS.udid = process.env.UDID;
+}
+
 if (env.VERSION) {
   env.CAPS.platformVersion = env.VERSION;
 } else if (env.IOS6) {

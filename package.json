@@ -43,9 +43,10 @@
     "adm-zip": "~0.4.7",
     "appium-adb": "=1.7.5",
     "appium-atoms": "=0.0.5",
-    "appium-instruments": "=1.5.4",
-    "appium-support": "=0.1.1",
+    "appium-instruments": "=1.7.1",
+    "appium-support": "=1.0.1",
     "appium-uiauto": "=1.10.7",
+    "appium-xcode": "=1.0.1",
     "argparse": "~1.0.1",
     "async": "~0.9.0",
     "binary-cookies": "~0.1.1",
@@ -87,12 +88,14 @@
     "temp": "~0.8.1",
     "through": "~2.3.6",
     "touch": "0.0.3",
+    "traceur": "0.0.87",
     "underscore": "~1.8.1",
     "underscore.string": "~3.0.3",
     "unzip": "~0.1.11",
     "utf7": "~1.0.0",
     "uuid-js": "~0.7.5",
     "vargs": "~0.1.0",
+    "which": "^1.0.9",
     "win-spawn": "~2.0.0",
     "winston": "~0.9.0",
     "ws": "~0.7.1",
@@ -141,5 +144,8 @@
     "yargs": "^3.0.4",
     "yiewd": "~0.6.0",
     "rewire": "^2.3.1"
+  },
+  "optionalDependencies": {
+    "udidetect": "^1.0.7"
   }
 }

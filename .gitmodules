@@ -13,9 +13,6 @@
 [submodule "submodules/io.appium.gappium.sampleapp"]
 	path = submodules/io.appium.gappium.sampleapp
 	url = https://github.com/appium/io.appium.gappium.sampleapp.git
-[submodule "submodules/udidetect"]
-	path = submodules/udidetect
-	url = https://github.com/vaskas/udidetect.git
 [submodule "submodules/unlock_apk"]
 	path = submodules/unlock_apk
 	url = https://github.com/appium/unlock_apk.git

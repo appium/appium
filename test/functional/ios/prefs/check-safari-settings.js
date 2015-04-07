@@ -2,7 +2,7 @@
 
 var _ = require('underscore')
   , env = require('../../../helpers/env.js')
-  , xcode = require('../../../../lib/devices/ios/xcode.js')
+  , xcode = require('../../../../lib/future.js').xcode
   , Simulator = require('../../../../lib/devices/ios/simulator.js')
   , settingsPlists = require('../../../../lib/devices/ios/settings.js')
   , getSimUdid = require('../../../helpers/sim-udid').getSimUdid;
@@ -28,7 +28,7 @@ exports.ios6 = function (driver, setting, expected, cb) {
 var ios7up = function (version, udid, setting, expected, cb) {
   var settingsSets;
   var foundSettings;
-  xcode.getiOSSDKVersion(function (err, sdk) {
+  xcode.getMaxIOSSDK(function (err, sdk) {
     var sim = new Simulator({
       platformVer: env.CAPS.platformVersion,
       sdkVer: sdk,
@@ -60,7 +60,7 @@ var ios7up = function (version, udid, setting, expected, cb) {
 };
 
 exports.ios7up = function (desired, setting, expected, cb) {
-  xcode.getiOSSDKVersion(function (err, sdk) {
+  xcode.getMaxIOSSDK(function (err, sdk) {
     if (parseFloat(sdk) >= 8) {
       getSimUdid('6', sdk, desired, function (err, udid) {
         if (err) return cb(err);

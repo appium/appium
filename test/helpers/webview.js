@@ -2,7 +2,9 @@
 
 var env = require("./env")
   , _ = require('underscore')
-  , uuidGenerator = require('node-uuid');
+  , uuidGenerator = require('node-uuid')
+  , CHROMES = ["chrome", "chromium", "chromebeta", "browser"]
+  , BROWSERS = CHROMES.concat(["safari"]);
 
 var spinTitle = function (expTitle, browser, _timeout) {
   var timeout = typeof _timeout === 'undefined' ? 90 : _timeout;
@@ -23,16 +25,12 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
 
   var uuid = uuidGenerator.v1();
   if (typeof urlToLoad === "undefined") {
-    if (app === "chrome" || app === "chromium" || app === "chromebeta") {
-      urlToLoad = env.CHROME_GUINEA_TEST_END_POINT + '?' + uuid;
-    } else {
-      urlToLoad = env.GUINEA_TEST_END_POINT + '?' + uuid;
-    }
+    urlToLoad = guineaEndpoint(app) + '?' + uuid;
   }
   if (typeof titleToSpin === "undefined") {
     titleToSpin = uuid;
   }
-  if (_.contains(["safari", "chrome", "chromium", "chromebeta"], app)) {
+  if (_.contains(BROWSERS, app)) {
     return browser
       .get(urlToLoad)
       .sleep(3000)
@@ -60,9 +58,11 @@ var loadWebView = function (desired, browser, urlToLoad, titleToSpin) {
 
 
 var isChrome = function (desired) {
-  var chromes = ["chrome", "chromium", "chromebeta"];
-  return _.contains(chromes, desired.app) ||
-         _.contains(chromes, desired.browserName);
+  if (typeof desired === "string") {
+    desired = {browserName: desired};
+  }
+  return _.contains(CHROMES, desired.app) ||
+         _.contains(CHROMES, desired.browserName);
 };
 
 function skip(reason, done) {
@@ -71,7 +71,12 @@ function skip(reason, done) {
 }
 
 var testEndpoint = function (desired) {
-    return isChrome(desired) ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
+  return isChrome(desired) ? env.CHROME_TEST_END_POINT : env.TEST_END_POINT;
+};
+
+var guineaEndpoint = function (desired) {
+  return isChrome(desired) ? env.CHROME_GUINEA_TEST_END_POINT :
+                             env.GUINEA_TEST_END_POINT;
 };
 
 module.exports = {

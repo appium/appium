@@ -4,7 +4,7 @@ var _ = require('underscore'),
     initSession = require('../../../helpers/session').initSession,
     should = require('chai').should(),
     expect = require('chai').expect,
-    XCODE = require('../../../../lib/devices/ios/xcode.js'),
+    XCODE = require('../../../../lib/future.js').xcode,
     fs = require('fs'),
     env = process.env,
     desired = require('./desired');
@@ -38,6 +38,8 @@ describe('testapp - device', function () {
     // will get passed this test's `err` object.
     it('should fail with a bad path', function (done) {
       env.DEVELOPER_DIR = "/foo/bar";
+
+      XCODE.clearInternalCache();
 
       XCODE.getPath(function (err) {
         env.DEVELOPER_DIR = "";

@@ -4,7 +4,8 @@ var chai = require('chai')
   , controller_path = '../../lib/devices/ios/ios-controller.js'
   , controller = require(controller_path)
   , createGetElementCommand = controller.createGetElementCommand
-  , getSelectorForStrategy = controller.getSelectorForStrategy;
+  , getSelectorForStrategy = controller.getSelectorForStrategy
+  , _ = require('underscore');
 
 chai.should();
 
@@ -68,6 +69,29 @@ describe('ios-controller', function () {
         (function () {
           getSelectorForStrategy('class name', 'key');
         }).should.Throw(TypeError, msg);
+      });
+    });
+  });
+  describe('#parseTouch', function () {
+    describe('given a touch sequence with absolute coordinates', function () {
+      it('should use offsets for moveTo', function (done) {
+        var actions = [ { action: 'press', options: { x: 100, y: 101 } },
+                        { action: 'moveTo', options: { x: 50, y: 51 } },
+                        { action: 'wait', options: { ms: 5000 } },
+                        { action: 'moveTo', options: { x: -40, y: -41 } },
+                        { action: 'release', options: {} } ];
+        controller.parseTouch(actions, function (err, touchStates) {
+          touchStates.length.should.equal(4); // `release` is removed
+
+          var locs = [{x: 100, y: 101}, {x: 150, y: 152}, {x: 150, y: 152}, {x: 110, y: 111}];
+          _.each(touchStates, function (state, index) {
+            var action = state.touch[0];
+            action.x.should.equal(locs[index].x);
+            action.y.should.equal(locs[index].y);
+          });
+
+          done();
+        });
       });
     });
   });

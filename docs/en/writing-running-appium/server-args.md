@@ -21,7 +21,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-ca`, `--callback-address`|null|callback IP Address (default: same as address)|`--callback-address 127.0.0.1`|
 |`-cp`, `--callback-port`|null|callback port (default: same as port)|`--callback-port 4723`|
 |`-bp`, `--bootstrap-port`|4724|(Android-only) port to use on device to talk to Appium|`--bootstrap-port 4724`|
-|`-k`, `--keep-artifacts`|false|deprecated, no effect, trace is now in tmp dir by default and is  cleared before each run. Please also refer to the --trace-dir flag.||
+|`-k`, `--keep-artifacts`|false|[DEPRECATED] no effect, trace is now in tmp dir by default and is  cleared before each run. Please also refer to the --trace-dir flag.||
 |`-r`, `--backend-retries`|3|(iOS-only) How many times to retry launching Instruments before saying it crashed or timed out|`--backend-retries 3`|
 |`--session-override`|false|Enables session override (clobbering)||
 |`--full-reset`|false|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data. On Android, this will also remove the app after the session is complete.||
@@ -77,10 +77,12 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keep-keychains`|false|(iOS) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--isolate-sim-device`|false|Xcode 6 has a bug on some platforms where a certain simulator can only be launched without error if all other simulator devices are first deleted. This option causes Appium to delete all devices other than the one being used by Appium. Note that this is a permanent deletion, and you are responsible for using simctl or xcode to manage the categories of devices used with Appium.||
-|`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. Defaults to the `APPIUM_TMP_DIR` variable and then to `/tmp` on *nix/Mac and to the `TEMP` variable on windows.||
+|`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
 |`--trace-dir`|null|Absolute path to directory Appium use to save ios instruments traces, defaults to <tmp dir>/appium-instruments||
 |`--intent-action`|android.intent.action.MAIN|(Android-only) Intent action which will be used to start activity|`--intent-action android.intent.action.MAIN`|
 |`--intent-category`|android.intent.category.LAUNCHER|(Android-only) Intent category which will be used to start activity|`--intent-category android.intent.category.APP_CONTACTS`|
 |`--intent-flags`|0x10200000|(Android-only) Flags that will be used to start activity|`--intent-flags 0x10200000`|
 |`--intent-args`|null|(Android-only) Additional intent arguments that will be used to start activity|`--intent-args 0x10200000`|
+|`--dont-stop-app-on-reset`|false|(Android-only) When included, refrains from stopping the app before restart||
+|`--debug-log-spacing`|false|Add exaggerated spacing in logs to help with visual inspection||
 |`--suppress-adb-kill-server`|false|(Android-only) If set, prevents Appium from killing the adb server instance||

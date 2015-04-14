@@ -9,7 +9,8 @@ describe('safari - windows and frames (' + env.DEVICE + ') @skip-ios6"', functio
   var driver;
   var desired = {
     browserName: 'safari',
-    nativeWebTap: true
+    nativeWebTap: true,
+    safariAllowPopups: true
   };
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -48,6 +49,14 @@ describe('safari - windows and frames (' + env.DEVICE + ') @skip-ios6"', functio
         .forward()
         .elementById('only_on_page_2')
         .nodeify(done);
+    });
+    it("should be able to open js popup windows", function (done) {
+      // unfortunately, iOS8 doesn't respond to the close() method on window
+      // the way iOS7 does
+      driver
+        .elementById('popuplink').click()
+        .then(function () { return spinTitle("I am another page title", driver); })
+      .nodeify(done);
     });
   });
 });

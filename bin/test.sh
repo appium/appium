@@ -15,12 +15,6 @@ selendroid_only=false
 gappium_only=false
 real_device=false
 all_tests=true
-xcode_switch=true
-xcode_path=""
-if command -v xcode-select 2>/dev/null; then
-    xcode_path="$(xcode-select -print-path | sed s/\\/Contents\\/Developer//g)"
-fi
-did_switch_xcode=false
 
 for arg in "$@"; do
     if [ "$arg" = "--ios" ]; then
@@ -59,8 +53,6 @@ for arg in "$@"; do
     elif [ "$arg" = "--ios83" ]; then
         ios83_only=true
         all_tests=false
-    elif [ "$arg" = "--no-xcode-switch" ]; then
-        xcode_switch=false
     elif [ "$arg" = "--real-device" ]; then
         real_device=true
     elif [ "$arg" =~ " " ]; then
@@ -77,15 +69,6 @@ run_ios_tests() {
     echo "---------------------"
 
 
-    if $xcode_switch; then
-        if test -d /Applications/Xcode-$1.app; then
-            echo "Found Xcode for iOS $1, switching to it"
-            sudo xcode-select -switch /Applications/Xcode-$1.app
-            did_switch_xcode=true
-        else
-            echo "Did not find /Applications/Xcode-$1.app, using default"
-        fi
-    fi
     DEVICE=$2 time $appium_mocha -g $3 -i \
         test/functional/common \
         test/functional/ios
@@ -117,11 +100,6 @@ fi
 
 if $ios83_only || $all_tests; then
     run_ios_tests "8.3" "ios83" "@skip-ios83|@skip-ios82|@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up"
-fi
-
-if $did_switch_xcode; then
-    echo "Switching back to default Xcode ($xcode_path)"
-    sudo xcode-select -switch $xcode_path
 fi
 
 if $android_only || $all_tests; then

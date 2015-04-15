@@ -262,7 +262,12 @@ var auth_chmodApps = function (grunt, cb) {
                          "Contents/Resources/RuntimeRoot/Applications/");
     var cmd = "chown -R " + user + ": " + glob;
     exec(cmd, function (err) {
-      if (err) grunt.fatal(err);
+      if (err) {
+        grunt.log.writeln("Encountered an issue chmodding iOS sim app dirs. " +
+                          "This may be because they don't exist on your " +
+                          "system, which is not necessarily a problem. The " +
+                          "error was: " + err.message);
+      }
       cb();
     });
   });

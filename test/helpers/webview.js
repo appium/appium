@@ -6,16 +6,21 @@ var env = require("./env")
   , CHROMES = ["chrome", "chromium", "chromebeta", "browser"]
   , BROWSERS = CHROMES.concat(["safari"]);
 
-var spinTitle = function (expTitle, browser, _timeout) {
+var spinTitle = function (expTitle, browser, _timeout, _curTitle) {
   var timeout = typeof _timeout === 'undefined' ? 90 : _timeout;
-  timeout.should.be.above(0);
+  if (timeout <= 0) {
+    throw new Error("Title never became '" + expTitle + "'. Last known " +
+                    "title was '" + _curTitle + "'");
+  }
   return browser
     .title()
     .then(function (pageTitle) {
       if (pageTitle.indexOf(expTitle) < 0) {
         return browser
           .sleep(500)
-          .then(function () { return spinTitle(expTitle, browser, timeout - 1); });
+          .then(function () {
+            return spinTitle(expTitle, browser, timeout - 1, pageTitle);
+          });
       }
     });
 };

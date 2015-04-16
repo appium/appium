@@ -3,7 +3,8 @@
 var setup = require("../../../common/setup-base")
   , desired = require('../desired')
   , fs = require('fs')
-  , path = require('path');
+  , path = require('path')
+  , _ = require('underscore');
 
 describe('testapp - basics - calc app 2', function () {
   var driver;
@@ -69,18 +70,20 @@ describe('testapp - basics - calc app 2', function () {
   it('should be able to get crashlog logs @skip-ci', function (done) {
     var dir = path.resolve(process.env.HOME, "Library", "Logs", "DiagnosticReports");
     var msg = 'boom';
-    var numBeforeLogs;
     driver
-      .log('crashlog').then(function (logsBefore) {
-        numBeforeLogs = logsBefore.length;
+      .log('crashlog').then(function (/* logs */) {
         fs.writeFileSync(dir + '/myApp_' + Date.parse(new Date()) + '_rocksauce.crash', msg);
-      }).log('crashlog').then(function (logsAfter) {
-        logsAfter.length.should.be.above(0);
-        logsAfter.length.should.not.equal(numBeforeLogs);
-        logsAfter[0].message.should.not.include("\n");
-        logsAfter[0].message.should.equal(msg);
-        logsAfter[0].level.should.equal("ALL");
-        logsAfter[0].timestamp.should.exist;
-      }).nodeify(done);
+      })
+      .log('crashlog').then(function (logs) {
+        logs.length.should.equal(1);
+        _.last(logs).message.should.not.include("\n");
+        _.last(logs).message.should.equal(msg);
+        _.last(logs).level.should.equal("ALL");
+        _.last(logs).timestamp.should.exist;
+      })
+      .log('crashlog').then(function (logs) {
+        logs.length.should.equal(0);
+      })
+      .nodeify(done);
   });
 });

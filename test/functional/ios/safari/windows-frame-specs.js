@@ -50,13 +50,30 @@ describe('safari - windows and frames (' + env.DEVICE + ') @skip-ios6"', functio
         .elementById('only_on_page_2')
         .nodeify(done);
     });
-    it("should be able to open js popup windows", function (done) {
-      // unfortunately, iOS8 doesn't respond to the close() method on window
-      // the way iOS7 does
+    it("should be able to open js popup windows with safariAllowPopups set to true", function (done) {
       driver
-        .elementById('popuplink').click()
-        .then(function () { return spinTitle("I am another page title", driver); })
+        .execute("window.open('/test/guinea-pig2.html', null);")
+        .then(function () { return spinTitle("I am another page title", driver, 30); })
       .nodeify(done);
     });
+  });
+});
+
+describe('safari - windows and frames (' + env.DEVICE + ') @skip-ios6 - without safariAllowPopups', function () {
+  var driver;
+  var desired = {
+    browserName: 'safari',
+    safariAllowPopups: false
+  };
+  setup(this, desired).then(function (d) { driver = d; });
+  beforeEach(function (done) {
+    loadWebView("safari", driver).nodeify(done);
+  });
+  it("should not be able to open js popup windows with safariAllowPopups set to false", function (done) {
+    driver
+      .execute("window.open('/test/guinea-pig2.html', null);")
+      .then(function () { return spinTitle("I am another page title", driver, 15); })
+      .should.eventually.be.rejectedWith("Title never became 'I am another")
+    .nodeify(done);
   });
 });

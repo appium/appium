@@ -68,10 +68,10 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
 * Tests on iOS may exhibit symptoms similar to a memory leak including sluggish
-  performance or hangs. If you experience this proplem, it's likely due to a
-  known issue with NSLog. One option is to remove all references to NSLog in
-  your code. However, there are several more nuanced approaches that may also
-  help without refactoring.
+  performance or hangs. If you experience this problem, it's likely due to a
+  known issue with NSLog. One option is to remove NSLog from your code.
+  However, there are several more nuanced approaches that may also help without
+  requiring that you refactor.
 
   ### Workaround 1
   NSLog is a macro and can be redefined. E.g.,

@@ -123,9 +123,19 @@ describe('testapp - basics - calc app 1', function () {
     }).then(function (button) {
       return button.click()
         .elementByClassName('UIAAlert')
-        // maybe we could get alert body text too?
-        .elementByClassName('>', 'UIAStaticText').text().should.become("Cool title")
-        .dismissAlert();
+        .elementsByClassName('>', 'UIAStaticText')
+        .then(function (els) {
+          return Q.all(_.map(els, function (el) {
+            return el.text();
+          }));
+        })
+        .then(function (texts) {
+          texts.should.include('Cool title');
+          texts.should.include('this alert is so cool.');
+        });
+    })
+    .fin(function () {
+      return driver.dismissAlert();
     })
     .nodeify(done);
   });

@@ -67,6 +67,65 @@ own items in the SDK manager. Make sure you install the build-tools and platform
   a new version of Xcode, as well.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
+* Tests on iOS may exhibit symptoms similar to a memory leak including sluggish
+  performance or hangs. If you experience this proplem, it's likely due to a
+  known issue with NSLog. One option is to remove all references to NSLog in
+  your code. However, there are several more nuanced approaches that may also
+  help without refactoring.
+
+  ### Workaround 1
+  NSLog is a macro and can be redefined. E.g.,
+  ```objectivec
+  // *You'll need to define TEST or TEST2 and then recompile.*
+
+  #ifdef TEST
+    #define NSLog(...) _BlackHoleTestLogger(__VA_ARGS__);
+  #endif // TEST
+  #ifdef TEST2
+    #define NSLog(...) _StdoutTestLogger(__VA_ARGS__);
+  #endif // TEST2
+
+  void _BlackHoleTestLogger(NSString *format, ...) {
+      //
+  }
+
+  void _StdoutTestLogger(NSString *format, ...) {
+      va_list argumentList;
+      va_start(argumentList, format);
+      NSMutableString * message = [[NSMutableString alloc] initWithFormat:format
+                                                  arguments:argumentList];
+
+      printf(message);
+
+      va_end(argumentList);
+      [message release];
+  }
+  ```
+
+  ### Workaround 2
+  Manually replace the underlying function that NSLog wraps. This method was recommended by
+  [Apple in a similar context.](https://support.apple.com/kb/TA45403?locale=en_US&viewlocale=en_US)
+
+  ```objectivec
+  extern void _NSSetLogCStringFunction(void(*)(const char *, unsigned, BOOL));
+
+  static void _GarbageFreeLogCString(const char *message, unsigned length, BOOL withSyslogBanner) {
+     fprintf(stderr, "%s\\n", message);
+  }
+
+  int main (int argc, const char *argv[]) {
+     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+     int exitCode;
+
+     setbuf(stderr, NULL);
+
+     _NSSetLogCStringFunction(_GarbageFreeLogCString);
+     exitCode = WOApplicationMain(@"Application", argc, argv);
+     [pool release];
+     return exitCode;
+  }
+```
+
 
 ### Webview/Hybrid/Safari app support
 

@@ -101,6 +101,9 @@ describe('testapp - location - 5 @skip-ci', function () {
     bundleId: 'io.appium.TestApp',
     app: 'assets/TestApp7.1.app.zip'
   });
+  if (env.IOS8) {
+    newDesired.app = 'assets/TestApp8.app.zip';
+  }
 
   setup(this, newDesired, {'no-reset': true}).then(function (d) { driver = d; });
 

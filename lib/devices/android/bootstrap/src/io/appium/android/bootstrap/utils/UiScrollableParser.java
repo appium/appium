@@ -1,6 +1,7 @@
 package io.appium.android.bootstrap.utils;
 
 import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
 import io.appium.android.bootstrap.Logger;
@@ -244,6 +245,11 @@ public class UiScrollableParser {
           e.printStackTrace();
           throw new UiSelectorSyntaxException("problem using reflection to call this method");
         } catch (InvocationTargetException e) {
+          // Ignoring UiObjectNotFoundException as this handled during actual find.
+          if (e.getCause() instanceof UiObjectNotFoundException) {
+            Logger.debug("Ignoring UiObjectNotFoundException when using reflection to invoke method.");
+            return;
+          }
           Logger.error(e.getCause().toString()); // we're only interested in the cause. InvocationTarget wraps the underlying problem.
           throw new UiSelectorSyntaxException("problem using reflection to call this method");
         }

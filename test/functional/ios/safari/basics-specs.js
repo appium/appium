@@ -4,7 +4,7 @@ var env = require('../../../helpers/env'),
     setup = require("../../common/setup-base");
 
 describe('safari - basics @skip-ios6', function () {
-  if (env.IOS81) {
+  if (env.IOS8 && !env.IOS80) {
     describe('default init' ,function () {
       var driver;
       setup(this, {browserName: 'safari'}).then(function (d) { driver = d; });

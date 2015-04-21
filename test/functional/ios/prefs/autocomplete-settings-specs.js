@@ -2,8 +2,7 @@
 
 var env = require("../../../helpers/env")
   , setup = require("../../common/setup-base")
-  , chai = require('chai')
-  , _ = require("underscore");
+  , chai = require('chai');
 
 chai.should();
 
@@ -18,13 +17,12 @@ describe("prefs @skip-ios6", function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should turn off autocomplete', function (done) {
-      var ios7up = _.contains(["ios7", "ios71", "ios8", "ios81", "ios82", "ios83"], env.DEVICE);
-      var ios8 = _.contains(["ios8", "ios81", "ios82", "ios83"], env.DEVICE);
+      var ios7up = env.IOS7 || env.IOS8;
       var switchEl;
       driver
         .elementsByClassName("UIATableCell").at(ios7up ? 0 : 1).click()
         .sleep(1000)
-        .elementsByClassName("UIATableCell").at(ios7up ? (ios8 ? 2 : 3) : 1)
+        .elementsByClassName("UIATableCell").at(ios7up ? (env.IOS8 ? 2 : 3) : 1)
           .click()
         .elementByXPath('//UIASwitch[@name="Auto-Correction"]')
         .then(function (el) { switchEl = el; return el; })

@@ -9,6 +9,7 @@ ios8_only=false
 ios81_only=false
 ios82_only=false
 ios83_only=false
+ios84_only=false
 android_only=false
 android_chrome=false
 selendroid_only=false
@@ -52,6 +53,9 @@ for arg in "$@"; do
         all_tests=false
     elif [ "$arg" = "--ios83" ]; then
         ios83_only=true
+        all_tests=false
+    elif [ "$arg" = "--ios84" ]; then
+        ios84_only=true
         all_tests=false
     elif [ "$arg" = "--real-device" ]; then
         real_device=true
@@ -100,6 +104,10 @@ fi
 
 if $ios83_only || $all_tests; then
     run_ios_tests "8.3" "ios83" "@skip-ios83|@skip-ios82|@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up"
+fi
+
+if $ios84_only || $all_tests; then
+    run_ios_tests "8.4" "ios84" "@skip-ios84|@skip-ios82|@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up"
 fi
 
 if $android_only || $all_tests; then

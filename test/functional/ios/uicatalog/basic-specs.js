@@ -52,7 +52,7 @@ describe('uicatalog - basic @skip-ios6', function () {
           .catch(function (err) {
             // Instruments is broken in 8.1, 8.2, 8.3
             // can't scroll if already scrolled all the way down
-            err.status.should.equal(status.codes.JavaScriptError);
+            err.status.should.equal(status.codes.JavaScriptError.code);
           })
         .elementByXPath("//UIAStaticText[contains(@label, 'Switches')]").click()
         .elementByClassName("UIASwitch").click().isSelected()

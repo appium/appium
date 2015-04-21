@@ -66,10 +66,28 @@ do
     fi
 done
 
+run_cmd_output() {
+    if $verbose ; then
+        "$@"
+    else
+        "$@" 2> /dev/null
+    fi
+}
+
+echo "* Determining platform"
+if [ $(run_cmd_output uname -s) == "Darwin" ]; then
+    platform="mac"
+else
+    platform="linux"
+fi
+echo "* Platform is $platform"
+
 if ! $should_reset_android && ! $should_reset_ios && ! $should_reset_selendroid \
     && ! $should_reset_gappium && ! $should_reset_firefoxos && ! $should_reset_selendroid_quick ; then
     should_reset_android=true
-    should_reset_ios=true
+    if [ "$platform" == "mac" ]; then
+	should_reset_ios=true
+    fi
     should_reset_selendroid=true
     should_reset_gappium=true
     should_reset_firefoxos=true
@@ -89,14 +107,6 @@ run_cmd() {
         "$@"
     else
         "$@" >/dev/null 2>&1
-    fi
-}
-
-run_cmd_output() {
-    if $verbose ; then
-        "$@"
-    else
-        "$@" 2> /dev/null
     fi
 }
 
@@ -462,7 +472,7 @@ reset_gappium() {
         run_cmd git submodule update --init submodules/io.appium.gappium.sampleapp
         run_cmd pushd submodules/io.appium.gappium.sampleapp
         echo "* Building Gappium test app"
-        run_cmd ./reset.sh -v
+        run_cmd ./reset.sh -v --platform $platform
         run_cmd popd
         echo "* Linking Gappium test app"
         run_cmd ln -s "$appium_home"/submodules/io.appium.gappium.sampleapp "$appium_home"/sample-code/apps/io.appium.gappium.sampleapp
@@ -489,15 +499,11 @@ reset_chromedriver() {
         chromedriver_version=$(run_cmd_output curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
     fi
     if ! $chromedriver_install_all ; then
-        echo "* Determining platform"
-        platform=$(run_cmd_output uname -s)
-        if [ "$platform" == "Darwin" ]; then
-            platform="mac"
+        if [ "$platform" == "mac" ]; then
             chromedriver_file="chromedriver_mac32.zip"
             run_cmd mkdir "$appium_home"/build/chromedriver/mac
             install_chromedriver $platform $chromedriver_version $chromedriver_file
         else
-            platform="linux"
             chromedriver_file="chromedriver_linux$machine.zip"
             binary="chromedriver$machine"
             run_cmd mkdir "$appium_home"/build/chromedriver/linux

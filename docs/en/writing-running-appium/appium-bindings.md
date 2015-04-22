@@ -986,7 +986,7 @@ execute_script "mobile: scrollTo", :element => element.ref
 
 ```python
 # python
-todo: python
+driver.execute_script("mobile: scrollTo", {"element": element.id})
 ```
 
 ```java

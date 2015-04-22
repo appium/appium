@@ -60,15 +60,15 @@ capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator")
 
 ### Mobile Safari on a Real iOS Device
 
-To be able to run your tests against mobile Safari we use the [SafariLauncher
- App](https://github.com/snevesbarros/SafariLauncher) to launch Safari. Once
- Safari has been launched the Remote Debugger automatically connects using
- the [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy).
+We use the [SafariLauncher
+ App](https://github.com/snevesbarros/SafariLauncher) to launch Safari and run
+ tests against mobile Safari. Once Safari has been launched the Remote Debugger
+ automatically connects using the
+ [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy). When
+ working with ios-webkit-debug-proxy, you have to trust the machine before you can
+ can run tests against your iOS device.
 
-**NOTE:** There is currently [a bug](https://github.com/google/ios-webkit-debug-proxy/issues/38)
-in the ios-webkit-debug-proxy. You have to trust the machine before you can
-run the ios-webkit-debug-proxy
-against your iOS device.
+ For instruction on how to install and run ios-webkit-debugger-proxy see [iOS webKit debug proxy](/docs/en/advanced-concepts/ios-webkit-debug-proxy.md) documentation.
 
 ### Setup
 

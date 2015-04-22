@@ -163,56 +163,6 @@ When executing against a real iOS device appium is unable to access the web view
 connection has to be established through the USB lead. To establish this
 connection we use the [ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
-To install the latest tagged version of the ios-webkit-debug-proxy using
-brew, run the following commands in the terminal:
-
-``` center
-# The first command is only required if you don't have brew installed.
-> ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
-> brew update
-> brew install ios-webkit-debug-proxy
-```
-
-You can also install the latest proxy by cloning it from git and installing
-it yourself:
-
-``` center
-# Please be aware that this will install the proxy with the latest code (and not a tagged version).
-> git clone https://github.com/google/ios-webkit-debug-proxy.git
-> cd ios-webkit-debug-proxy
-> ./autogen.sh
-> ./configure
-> make
-> sudo make install
-```
-
-If you use a recent device, you may need to install the latest
-ideviceinstaller, this is optional:
-
-```
-brew install --HEAD ideviceinstaller
-```
-
-Once installed you can start the proxy with the following command:
-
-``` center
-# Change the udid to be the udid of the attached device and make sure to set the port to 27753
-# as that is the port the remote-debugger uses.
-> ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
-```
-
-You may also use the ios-webkit-debug-proxy-launcher to launch the
-proxy. It monitors the proxy log for errors, and relaunch the proxy
-where needed. This is also optional and may help with recent devices:
-
-``` center
-# change the udid
-> ./bin/ios-webkit-debug-proxy-launcher.js -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
-```
-
-**NOTE:** the proxy requires the **"web inspector"** to be turned on to
-allow a connection to be established. Turn it on by going to **settings >
-safari > advanced**. Please be aware that the web inspector was **added as
-part of iOS 6** and was not available previously.
+For instruction on how to install and run ios-webkit-debugger-proxy see [iOS webkit debug proxy](/docs/en/advanced-concepts/ios-webkit-debug-proxy.md) documentation.
 
 Now you can start an appium test session and follow the generalized instructions above.

@@ -1,10 +1,14 @@
 ## Appium
 
-[![NPM version](https://badge.fury.io/js/appium.png)](https://npmjs.org/package/appium)
+[![NPM version](https://badge.fury.io/js/appium.svg)](https://npmjs.org/package/appium)
 [![Dependency Status](https://david-dm.org/appium/appium.svg)](https://david-dm.org/appium/appium)
 [![devDependency Status](https://david-dm.org/appium/appium/dev-status.svg)](https://david-dm.org/appium/appium#info=devDependencies)
 
-[![Build Status](https://team-appium.ci.cloudbees.com/job/appium-master/badge/icon)](https://team-appium.ci.cloudbees.com/job/appium-master/)
+[![Monthly Downloads](https://img.shields.io/npm/dm/appium.svg)](https://npmjs.org/package/appium)
+[![Pull Requests](http://issuestats.com/github/appium/appium/badge/pr?style=flat)](http://issuestats.com/github/appium/appium)
+[![Issues Closed](http://issuestats.com/github/appium/appium/badge/issue?style=flat)](http://issuestats.com/github/appium/appium)
+
+[![Build Status](https://team-appium.ci.cloudbees.com/job/Appium/badge/icon)](https://team-appium.ci.cloudbees.com/job/Appium/)
 
 Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
 

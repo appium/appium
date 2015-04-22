@@ -109,10 +109,14 @@ class SocketServer {
    *
    * @throws SocketServerException
    */
-  public void listenForever() throws SocketServerException {
+  public void listenForever(boolean disableAndroidWatchers) throws SocketServerException {
     Logger.debug("Appium Socket Server Ready");
     UpdateStrings.loadStringsJson();
-    dismissCrashAlerts();
+    if (disableAndroidWatchers) {
+      Logger.debug("Skipped registering crash watchers.");
+    } else {
+      dismissCrashAlerts();
+    }
     final TimerTask updateWatchers = new TimerTask() {
       @Override
       public void run() {

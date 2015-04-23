@@ -3,7 +3,8 @@
 var env = require('../../helpers/env')
   , setup = require("./setup-base")
   , _ = require('underscore')
-  , getAppPath = require('../../helpers/app').getAppPath;
+  , getAppPath = require('../../helpers/app').getAppPath
+  , status = require('../../../lib/server/status');
 
 
 var desired = {
@@ -86,6 +87,32 @@ module.exports = function () {
     it('should be able to send - in text', function (done) {
       var testText = 'Super-test.';
       runTextEditTest(testText, done);
+    });
+
+    describe('pressing device key', function () {
+      it('should be able to send keyevents', function (done) {
+        driver
+          .waitForElementByClassName('android.widget.EditText')
+          .elementById('com.android.launcher:id/search_button')
+            .should.be.rejectedWith(status.codes.NoSuchElement.code)
+          .pressDeviceKey(3)
+          .waitForElementById('com.android.launcher:id/search_button')
+          .elementByClassName('android.widget.EditText')
+            .should.be.rejectedWith(status.codes.NoSuchElement.code)
+          .nodeify(done);
+      });
+
+      // skip selendroid because selendroid implements keyevent with an adb
+      // call, and we are unable to send metastate that way
+      it('should be able to send combination keyevents @skip-selendroid-all', function (done) {
+        driver
+          .waitForElementByClassName('android.widget.EditText')
+            .clear()
+          .pressDeviceKey(29, 193)
+          .elementByClassName('android.widget.EditText')
+            .text().should.become('A')
+          .nodeify(done);
+      });
     });
   });
 
@@ -178,6 +205,18 @@ module.exports = function () {
     });
 
     describe('pressing device key with unicode keyboard', function () {
+      it('should be able to send keyevents', function (done) {
+        driver
+          .waitForElementByClassName('android.widget.EditText')
+          .elementById('com.android.launcher:id/search_button')
+            .should.be.rejectedWith(status.codes.NoSuchElement.code)
+          .pressDeviceKey(3)
+          .waitForElementById('com.android.launcher:id/search_button')
+          .elementByClassName('android.widget.EditText')
+            .should.be.rejectedWith(status.codes.NoSuchElement.code)
+          .nodeify(done);
+      });
+
       // skip selendroid because selendroid implements keyevent with an adb
       // call, and we are unable to send metastate that way
       it('should be able to send combination keyevents @skip-selendroid-all', function (done) {

@@ -104,16 +104,50 @@ To allow access to this special feature, we override the `execute` or
 `executeScript` methods in the driver, and prefix the command with `mobile: `.
 See examples below:
 
-* **WD.js:**
+To scroll, pass direction in which you intend to scroll as parameter.
+
 
 ```javascript
 // javascript
-// scroll the view down
 driver.execute("mobile: scroll", [{direction: 'down'}])
-// continue testing
 ```
 
-* **Java:**
+```java
+// java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+HashMap<String, String> scrollObject = new HashMap<String, String>();
+scrollObject.put("direction", "down");
+js.executeScript("mobile: scroll", scrollObject);
+```
+
+```ruby
+# ruby
+execute_script 'mobile: scroll', direction: 'down'
+```
+
+```python
+# python
+driver.execute_script("mobile: scroll", {"direction": "down"})
+```
+
+```csharp
+// c#
+Dictionary<string, string> scrollObject = new Dictionary<string, string>();
+scrollObject.Add("direction", "down");
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
+```
+
+```php
+$params = array(array('direction' => 'down'));
+$driver->executeScript("mobile: scroll", $params);
+```
+
+Sample to scroll using direction and element.
+
+```javascript
+// javascript
+driver.execute("mobile: scroll", [{direction: 'down', element: element.value}]);
+```
 
 ```java
 // java
@@ -122,6 +156,29 @@ HashMap<String, String> scrollObject = new HashMap<String, String>();
 scrollObject.put("direction", "down");
 scrollObject.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: scroll", scrollObject);
+```
+
+```ruby
+# ruby
+execute_script 'mobile: scroll', direction: 'down', element: element.ref
+```
+
+```python
+# python
+driver.execute_script("mobile: scroll", {"direction": "down", element: element.getAttribute("id")})
+```
+
+```csharp
+// c#
+Dictionary<string, string> scrollObject = new Dictionary<string, string>();
+scrollObject.Add("direction", "down");
+scrollObject.Add("element", <element_id>);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
+```
+
+```php
+$params = array(array('direction' => 'down', 'element' => element.GetAttribute("id")));
+$driver->executeScript("mobile: scroll", $params);
 ```
 
 **Automating Sliders**

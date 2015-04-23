@@ -3,13 +3,11 @@
 var env = require('../../helpers/env')
   , setup = require("./setup-base")
   , _ = require('underscore')
-  , getAppPath = require('../../helpers/app').getAppPath
-  , status = require('../../../lib/server/status');
+  , getAppPath = require('../../helpers/app').getAppPath;
 
 
 var desired = {
   app: getAppPath('ApiDemos'),
-  appActivity: '.view.TextFields',
   newCommandTimeout: 90
 };
 if (env.SELENDROID) {
@@ -19,219 +17,192 @@ if (env.SELENDROID) {
 module.exports = function () {
   var driver;
 
-  var runTextEditTest = function (testText, done) {
+  var runTextEditTest = function (testText, keys, done) {
     var el;
     driver
-      .waitForElementByClassName('android.widget.EditText')
-      .then(function (_el) { el = _el; })
+      .waitForElementsByClassName('android.widget.EditText')
+      // use a text field with no hint text, so clear is faster
+      .then(function (els) {
+        el = _.last(els);
+        return el;
+      })
+      .clear()
       .then(function () {
-        if (env.SELENDROID) {
-          return el.clear();
+        if (keys) {
+          return driver.keys(testText);
+        } else {
+          return el.sendKeys(testText);
         }
       })
-      .then(function () { return el.sendKeys(testText); })
+      .then(function () {
+        if (env.SELENDROID) {
+          // in Selendroid mode we sometimes get the text before
+          // it is fully sent to the element
+          return driver.sleep(300);
+        }
+      })
       .then(function () { return el.text().should.become(testText); })
       .nodeify(done);
   };
 
-  var runEditAndClearTest = function (testText, done) {
+  var runEditAndClearTest = function (testText, keys, done) {
     var el;
     driver
-      .waitForElementByClassName('android.widget.EditText')
-      .then(function (_el) { el = _el; })
+      .waitForElementsByClassName('android.widget.EditText')
+      .then(function (els) {
+        el = _.last(els);
+        return el;
+      })
+      .clear()
       .then(function () {
-        if (env.SELENDROID) {
-          return el.clear();
+        if (keys) {
+          return driver.keys(testText);
+        } else {
+          return el.sendKeys(testText);
         }
       })
-      .then(function () { return el.sendKeys(testText).text().should.become(testText); })
+      .then(function () {
+        el.text().should.become(testText);
+      })
       .then(function () {
         return el.clear().should.not.be.rejected;
       })
       .then(function () {
-        // Selendroid and uiautomator have different ways of dealing with
-        // hint text. In particular, Selendroid does not return it
-        // and uiautomator does.
-        var expectedText = "hint text";
-        if (env.SELENDROID) {
-          expectedText = "";
-        }
+        var expectedText = "";
         return el.text().should.become(expectedText);
       })
       .nodeify(done);
   };
 
-  describe('editing ascii text field', function () {
-    setup(this, desired).then(function (d) { driver = d; });
+  var runKeyboardTests = function (testText) {
+    return function () {
+      it('should work with sendKeys', function (done) {
+        runTextEditTest(testText, false, done);
+      });
+      it('should work with keys', function (done) {
+        runTextEditTest(testText, true, done);
+      });
+    };
+  };
 
-    it('should be able to edit a text field', function (done) {
-      var testText = "Life, the Universe and Everything.";
-      runTextEditTest(testText, done);
+  var runKeyEventTests = function () {
+    var editTextField = 'android.widget.TextView';
+    if (env.SELENDROID) {
+      // with Selendroid we can't find classes by their parent class
+      // and with uiautomator we can't find the subclass.
+      editTextField = 'io.appium.android.apis.text.LogTextBox';
+    }
+
+    // skip selendroid because selendroid implements keyevent with an adb
+    // call, and we are unable to send metastate that way
+    it('should be able to send combination keyevents @skip-selendroid-all', function (done) {
+      driver
+        .elementById('clear').click()
+        .pressDeviceKey(29, 193)
+        .elementsByClassName(editTextField)
+        .then(function (els) {
+          return _.last(els).text();
+        })
+        .then(function (txt) {
+          txt.should.include('keyCode=KEYCODE_A');
+          txt.should.include('metaState=META_SHIFT_ON');
+        })
+        .nodeify(done);
     });
 
-    it('should be able to edit and manually clear a text field', function (done) {
-      var testText = "The answer is 42.";
-      runEditAndClearTest(testText, done);
+    it('should be able to send keyevents', function (done) {
+      driver
+        .elementById('clear').click()
+        .pressDeviceKey(82)
+        .elementsByClassName(editTextField)
+        .then(function (els) {
+          return _.last(els).text();
+        })
+        .then(function (txt) {
+          txt.should.include('[keycode=82]');
+          txt.should.include('keyCode=KEYCODE_MENU');
+        })
+        .nodeify(done);
     });
+  };
 
-    it('should be able to send &-', function (done) {
-      var testText = '&-';
-      runTextEditTest(testText, done);
+  var runManualClearTests = function () {
+    var testText = "The answer is 42.";
+    it('should work with sendKeys', function (done) {
+      runEditAndClearTest(testText, false, done);
     });
-
-    it('should be able to send & and - in other text', function (done) {
-      var testText = 'In the mid-1990s he ate fish & chips as mayor-elect.';
-      runTextEditTest(testText, done);
+    it('should work with keys', function (done) {
+      runEditAndClearTest(testText, true, done);
     });
+  };
 
-    it('should be able to send - in text', function (done) {
-      var testText = 'Super-test.';
-      runTextEditTest(testText, done);
-    });
 
-    describe('pressing device key', function () {
-      // skip selendroid because selendroid implements keyevent with an adb
-      // call, and we are unable to send metastate that way
-      it('should be able to send combination keyevents @skip-selendroid-all', function (done) {
-        driver
-          .waitForElementByClassName('android.widget.EditText')
-            .clear()
-          .pressDeviceKey(29, 193)
-          .elementByClassName('android.widget.EditText')
-            .text().should.become('A')
-          .nodeify(done);
+  describe('editing a text field', function () {
+    var appActivity = '.view.TextFields';
+    var tests = [
+      { label: 'editing a text field', text: 'Life, the Universe and Everything.' },
+      { label: 'sending &-', text: '&-' },
+      { label: 'sending & and - in other text', text: 'In the mid-1990s he ate fish & chips as mayor-elect.' },
+      { label: 'sending - in text', text: 'Super-test.' },
+    ];
+
+    describe('ascii', function () {
+      setup(this, _.defaults({
+        appActivity: appActivity
+      }, desired)).then(function (d) { driver = d; });
+
+      _.each(tests, function (test) {
+        describe(test.label, runKeyboardTests(test.text));
       });
 
-      it('should be able to send keyevents', function (done) {
-        // This test need to be last before session ending, it exeits the app.
-        driver
-          .waitForElementByClassName('android.widget.EditText')
-          .elementById('com.android.launcher:id/search_button')
-            .should.be.rejectedWith(status.codes.NoSuchElement.code)
-          .pressDeviceKey(3)
-          .waitForElementById('com.android.launcher:id/search_button')
-          .elementByClassName('android.widget.EditText')
-            .should.be.rejectedWith(status.codes.NoSuchElement.code)
-          .nodeify(done);
+      describe('editing and manually clearing a text field', runManualClearTests);
+    });
+
+    describe('unicode', function () {
+      setup(this,  _.defaults({
+        appActivity: appActivity,
+        unicodeKeyboard: true,
+        resetKeyboard: true
+      }, desired)).then(function (d) { driver = d; });
+
+      var unicodeTests = _.union(tests, [
+        { label: 'should be able to send - in unicode text', text: 'परीक्षा-परीक्षण' },
+        { label: 'should be able to send & in text', text: 'Fish & chips' },
+        { label: 'should be able to send & in unicode text', text: 'Mīna & chips' },
+        { label: 'should be able to send roman characters with diacritics', text: 'Áé Œ ù ḍ' },
+        { label: 'should be able to send a u with an umlaut', text: 'ü' },
+        { label: 'should be able to send Tamil', text: 'சோதனை' },
+        { label: 'should be able to send Gujarati', text: 'પરીક્ષણ' },
+        { label: 'should be able to send Chinese', text: '测试' },
+        { label: 'should be able to send Russian', text: 'тестирование' },
+        // skip rtl languages, which don't clear correctly atm
+        // { label: 'should be able to send Arabic', 'تجريب'],
+        // { label: 'should be able to send Hebrew', 'בדיקות'],
+      ]);
+
+      _.each(unicodeTests, function (test) {
+        describe(test.label, runKeyboardTests(test.text));
       });
 
+      describe('editing and manually clearing a text field', runManualClearTests);
     });
   });
 
-  describe('editing unicode text field', function () {
-    setup(this,  _.defaults({
-      unicodeKeyboard: true,
-      resetKeyboard: true
-    }, desired)).then(function (d) { driver = d; });
-
-    it('should be able to edit a text field', function (done) {
-      var testText = "Life, the Universe and Everything.";
-      runTextEditTest(testText, done);
+  describe('key events', function () {
+    var appActivity = '.text.KeyEventText';
+    describe('ascii', function () {
+      setup(this, _.defaults({
+        appActivity: appActivity
+      }, desired)).then(function (d) { driver = d; });
+      describe('pressing device key', runKeyEventTests);
     });
-
-    it('should be able to edit and manually clear a text field', function (done) {
-      var testText = "The answer is 42.";
-      runEditAndClearTest(testText, done);
-    });
-
-    it('should be able to send &-', function (done) {
-      var testText = '&-';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send & and - in other text', function (done) {
-      var testText = 'In the mid-1990s he ate fish & chips as mayor-elect.';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send - in text', function (done) {
-      var testText = 'Super-test.';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send - in unicode text', function (done) {
-      var testText = 'परीक्षा-परीक्षण';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send & in text', function (done) {
-      var testText = 'Fish & chips';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send & in unicode text', function (done) {
-      var testText = 'Mīna & chips';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send roman characters with diacritics', function (done) {
-      var testText = 'Áé Œ ù ḍ';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send a u with an umlaut', function (done) {
-      var testText = 'ü';
-      runTextEditTest(testText, done);
-    });
-
-    // skipping because clear doesn't work reliably on RTL scripts
-    it.skip('should be able to send Arabic', function (done) {
-      var testText = 'تجريب';
-      runTextEditTest(testText, done);
-    });
-
-    // skipping because clear doesn't work reliably on RTL scripts
-    it.skip('should be able to send Hebrew', function (done) {
-      var testText = 'בדיקות';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send Tamil', function (done) {
-      var testText = 'சோதனை';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send Gujarati', function (done) {
-      var testText = 'પરીક્ષણ';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send Chinese', function (done) {
-      var testText = '测试';
-      runTextEditTest(testText, done);
-    });
-
-    it('should be able to send Russian', function (done) {
-      var testText = 'тестирование';
-      runTextEditTest(testText, done);
-    });
-
-    describe('pressing device key with unicode keyboard', function () {
-      // skip selendroid because selendroid implements keyevent with an adb
-      // call, and we are unable to send metastate that way
-      it('should be able to send combination keyevents @skip-selendroid-all', function (done) {
-        driver
-          .waitForElementByClassName('android.widget.EditText')
-            .clear()
-          .pressDeviceKey(29, 193)
-          .elementByClassName('android.widget.EditText')
-            .text().should.become('A')
-          .nodeify(done);
-      });
-
-      it('should be able to send keyevents', function (done) {
-        // This test need to be last before session ending, it exeits the app.
-        driver
-          .waitForElementByClassName('android.widget.EditText')
-          .elementById('com.android.launcher:id/search_button')
-            .should.be.rejectedWith(status.codes.NoSuchElement.code)
-          .pressDeviceKey(3)
-          .waitForElementById('com.android.launcher:id/search_button')
-          .elementByClassName('android.widget.EditText')
-            .should.be.rejectedWith(status.codes.NoSuchElement.code)
-          .nodeify(done);
-      });
-
+    describe('unicode', function () {
+      setup(this, _.defaults({
+        appActivity: appActivity,
+        unicodeKeyboard: true,
+        resetKeyboard: true
+      }, desired)).then(function (d) { driver = d; });
+      describe('pressing device key', runKeyEventTests);
     });
   });
 };

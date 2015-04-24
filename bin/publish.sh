@@ -7,18 +7,9 @@ else
     branch="$1"
 fi
 
-XCODE_PATH=$(xcode-select -print-path)
-if test -d $XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk ||
-   [ -e /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 7.1.simruntime ]; then
-    echo "Confirmed iOS7.1 SDK available"
-else
-    echo "You don't have iOS 7.1 SDK available. Switch to Xcode 5?"
-    exit 1
-fi
-
-node --version | grep "v0.10" >/dev/null
+node --version | grep "v0.12" >/dev/null
 if [ $? -gt 0 ]; then
-    echo "You need to publish Appium using Node 0.10.x, not $(node --version)"
+    echo "You need to publish Appium using Node 0.12.x, not $(node --version)"
     exit 1;
 else
     echo "Node version OK"
@@ -50,7 +41,7 @@ set -e
 echo "Getting latest from upstream:$branch"
 git pull upstream $branch
 echo "Resetting"
-./reset.sh --hardcore --real-safari --chromedriver-install-all --chromedriver-version 2.15
+./reset.sh --hardcore --chromedriver-install-all --chromedriver-version 2.15
 version=$(cat package.json | $(npm bin)/underscore extract version | sed 's/\"//g')
 echo "Clearing npm cache"
 npm cache clear appium

@@ -1,3 +1,41 @@
+CHANGES IN VERSION 1.4
+======================================
+
+#### General
+- fix for broken `./reset.sh --dev` due broken UICatalog build package in sample-code submodule
+- fix for issues with cookie encoding
+- updated sample code
+- updated documentation
+- updated test suite
+
+#### iOS
+- Support for iOS 8.3
+- fix for issues relating to finding xcode folder
+- new sever flag `--instruments <path>` to specify custom path to instruments commandLine tool
+- fix for getOrientation
+- fix for iOS crash log retrieval
+
+#### Android
+- fix for killing chromedriver on windows
+- fix for parsing java version correctly
+- support for searching elements by id without passing package name
+- requesting capabilities from server now returns correct deviceName and platformVersion for Android
+- fix for scrollTo
+- new capability `disableAndroidWatchers`
+- deprecated capability `stopAppOnReset`
+- new capability `dontStopAppOnReset`
+
+#### Selendroid
+- Support for installApp, isAppInstalled and removeApp
+
+#### Android+Chrome
+- Chormedriver version updated to 2.15
+- fix for driver.quit()
+
+#### iOS+Safari
+- fix for handling real device object
+- fix for safariAllowPopups for iOS 8.x
+
 CHANGES IN VERSION 1.3.7
 ======================================
 
@@ -1369,17 +1407,15 @@ CHANGES IN VERSION 0.8.1 (from 0.8.0)
 ### SELENDROID
 - fall back to `am start` if Selendroid doesn't successfully launch the app
 
-
--------------------------------------
 CHANGES IN VERSION 0.8.0 (from 0.7.3)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - bump maxBuffer for various subprocesses
 - automatically re-register appium with grid if it disconnects
 - augment style guide
 - allow appium tests to read appium server port from $APPIUM_PORT
 
-[IOS]
+### IOS
 - add support for locking device for X seconds
 - add support for backgrounding app for X seconds
 - make finding node/instruments_client more robust for instruments context
@@ -1387,7 +1423,7 @@ CHANGES IN VERSION 0.8.0 (from 0.7.3)
 - add shortcut for UIACollectionCell and UIATableCell
 - ensure isEnabled returns a boolean value
 
-[ANDROID]
+### ANDROID
 - add mobile: searchId method to search for string by ID
 - add mobile: resolveId method to resolve strings
 - fix activity detection to be more allowing of different strings
@@ -1398,27 +1434,25 @@ CHANGES IN VERSION 0.8.0 (from 0.7.3)
 - make screenshot work on windows
 - fix scrollTo support
 
-[CHROME]
+### CHROME
 - add support for automating Chrome on Android!
 
-[SELENDROID]
+### SELENDROID
 - update selendroid to 90aef5d
 
--------------------------------------
 CHANGES IN VERSION 0.7.3 (from 0.7.2)
--------------------------------------
-[IOS]
+=====================================
+### IOS
 - bugfix: authorize_ios needed #!
 
--------------------------------------
 CHANGES IN VERSION 0.7.2 (from 0.7.1)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - make sure reset.sh checks for JAVA_HOME set for android/selendroid
 - add mobile: reset docs
 - alias POST /touch/click to POST /click
 
-[IOS]
+### IOS
 - fix discrepancy between isDisplayed() and isVisible() and isEnabled()
 - use new Automation.tracetemplate
 - fixes for checking alerts in webviews
@@ -1427,28 +1461,26 @@ CHANGES IN VERSION 0.7.2 (from 0.7.1)
 - add authorize_ios binary to npm install so npm users can authorize their ios
   sim
 
-[ANDROID]
+### ANDROID
 - use path.resolve in a cross-platform way
 
-[SELENDROID]
+### SELENDROID
 - fix use of adb from within selendroid
 - keyevent support
 - fix app-wait-activity
 
--------------------------------------
 CHANGES IN VERSION 0.7.1 (from 0.7.0)
--------------------------------------
-[SELENDROID]
+=====================================
+### SELENDROID
 - update to new version with new build instructions
 - make selendroid port configurable
 
-[WINDOWS]
+### WINDOWS
 - fix use of exec and spawn so external commands work
 
--------------------------------------
 CHANGES IN VERSION 0.7.0 (from 0.6.1)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - allow new session requests to override current session; this can be disabled
   with the --no-session-override flag
 - make sure reset.sh fails if android bootstrap can't build
@@ -1459,7 +1491,7 @@ CHANGES IN VERSION 0.7.0 (from 0.6.1)
 - bringing some error messages into line across platforms
 - fix some issues with grunt building functions
 
-[ANDROID]
+### ANDROID
 - add find element by ID (parses strings.xml)
 - remove a sleep in bootstrap server that caused delays
 - make sure app is uninstalled when not using fast reset
@@ -1469,38 +1501,36 @@ CHANGES IN VERSION 0.7.0 (from 0.6.1)
 - clean up and fix issues relating to mid-session bootstrap.jar restart
 - app-wait-activity now takes comma-separated list of valid activities
 
-[IOS]
+### IOS
 - fix some tests
 - fix mobile: reset
 
--------------------------------------
 CHANGES IN VERSION 0.6.1 (from 0.6.0)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - started work on mobile_methods.md doc
 - added hardcore mode to reset.sh that will refresh uicatalog inter alia
 - ios-webkit-debug-proxy docs
 - appium now registers correctly with selenium grid
 - better bundle/package detection
 
-[IOS]
+### IOS
 - mobile: setLocation and POST /location for setting geolocation
 - updated tests to work with new uicatalog version
 - allow registering a websocket handler for alerts
 - escape sendKeys values so you can send '
 - fixed up tests a little bit
 
-[ANDROID]
+### ANDROID
 - fix fast reset race condition
 - fix lack of AndroidManifest.xml.src in npm
 - allow registering a websocket handler for alerts
 - added method for getting location of element
 - fixed package name for webviews
 
--------------------------------------
 CHANGES IN VERSION 0.6.0 (from 0.5.2)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - initial Windows appium support (Android-only)
 - reset.sh no longer fails silently if it errors
 - added reset.bat for windows
@@ -1509,89 +1539,81 @@ CHANGES IN VERSION 0.6.0 (from 0.5.2)
 - include the git revision in the status object and in the logs at startup
 - misc bugfixes
 
-[IOS]
+### IOS
 - ability to talk to mobile Safari on a real device over USB
 - added native back() method
 - sendKeys now only taps on field if it doesn't already have focus
 
-[ANDROID]
+### ANDROID
 - find by name checks to see if it found the element
 - find by xpath no longer returns duplicate elements
 - add support for ADT 22
 - add "mobile: waitForPageLoad" that waits for indicators to clear
 - fix scrollTo
 
-[SELENDROID]
+### SELENDROID
 - build selendroid modded servers in /tmp for npm
 - fixed issue with running tests for multiple apps sequentially
 
-[ROBOT]
+### ROBOT
 - initial support for robot automation (robot intercepts tap etc)
 
-[APPIUM.EXE]
+### APPIUM.EXE
 - not strictly part of appium, but the Windows GUI has arrived in beta!
 
--------------------------------------
 CHANGES IN VERSION 0.5.2 (from 0.5.1)
--------------------------------------
-[IOS]
+=====================================
+### IOS
 - fixed regression in mobile safari pre-launch
 
--------------------------------------
 CHANGES IN VERSION 0.5.1 (from 0.5.0)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - updates to python examples
 - refactored configuration code
 - initial work making Appium's node code windows-compatible
 - more lenient treatment of relationship between $HOME and system username
 
-[IOS]
+### IOS
 - fixing webview not waiting for page loading on url nav issue
 - added node-idevice which streamlines installing .ipas on real devices
 - implement scrollTo
 - fixed bug in xpath code which returned last element first
 
-[ANDROID]
+### ANDROID
 - add some docs for installing HAXM
 - add scroll_into_view for mobile: find
 - completed android element class map
 
-[SELENDROID]
+### SELENDROID
 - http timeout tweaks
 
-
-------------------------------------
 CHANGES IN VERSION 0.5.0 (from 0.4.1)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - significant change for command-line params for appium:
     - --without-delay is now on by default. to turn it off, use
       --native-instruments-lib if you don't want it
     - --fast-reset is now on by default. to turn it off, use --full-reset
     - --verbose is now on by default. to turn it off, use --quiet
 
-
--------------------------------------
 CHANGES IN VERSION 0.4.1 (from 0.4.0)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - added --dev flag to reset.sh to optionally include test apps / dev deps
 - added --verbose flag to reset.sh to optionally spew info (was default)
 - reset.sh now puts all binaries in /build so it can be packaged and reused by
   npm et al
 
-[IOS]
+### IOS
 - added more Java examples
 
-[SELENDROID]
+### SELENDROID
 - updated selendroid to 56581e27b45c3a4483d89701fc893ac37b172e46
 
-
--------------------------------------
 CHANGES IN VERSION 0.4.0 (from 0.3.1)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - more python examples including for android
 - node android code example
 - migrated wiki to appium/docs
@@ -1600,11 +1622,11 @@ CHANGES IN VERSION 0.4.0 (from 0.3.1)
 - add a config check to make sure reset.sh was run for a specific device
   before allowing appium to try to start a session with that device
 
-[IOS]
+### IOS
 - various efforts to fix/workaround the (null).tap() issue in UIAutomation
 - added shake()
 
-[ANDROID]
+### ANDROID
 - partial match on content-desc
 - find aapt in SDK or path
 - better logging all around
@@ -1614,25 +1636,23 @@ CHANGES IN VERSION 0.4.0 (from 0.3.1)
 - added getName()
 - fix mobile: find
 
-[SELENDROID]
+### SELENDROID
 - updated selendroid to 0.4
 - don't re-build selendroid for each app, just re-insert manifest and build
   selendroid in reset.sh instead
 
-[FIREFOXOS]
+### FIREFOXOS
 - Initial Firefox OS support landed!
 
-
--------------------------------------
 CHANGES IN VERSION 0.3.1 (from 0.3.0)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - support for xpath indexes
 - support for xpath last()
 - docs specific to linux
 - fix name of npm binary-plist dependency
 
-[IOS]
+### IOS
 - update instruments-without-delay (fix #432)
 - fix #437 (implicit wait didn't work after ios reset)
 - when searching for @text, fall back to @label and @value
@@ -1641,7 +1661,7 @@ CHANGES IN VERSION 0.3.1 (from 0.3.0)
 - add "collection" tag name
 - make sure to do a clean build before building sample apps
 
-[ANDROID]
+### ANDROID
 - fix xpath wildcard issue
 - fix tag name selector
 - alias "window" tag name to "frame"
@@ -1652,22 +1672,20 @@ CHANGES IN VERSION 0.3.1 (from 0.3.0)
 - screenshot support
 - support for the clear() method
 
-[SELENDROID]
+### SELENDROID
 - fix proxy behavior
 - added example/test for selendroid webview
 - add WebViewDemo app with tasks for building it
 
-
--------------------------------------
 CHANGES IN VERSION 0.3.0 (from 0.2.3)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - Running tests with grunt will now not crash on first test failure
 - Rewrote reset.sh to respect sudo and to run for individual platforms
 - Changed markdown rendering engine and logic for generating appium.io from
   README.md
 
-[ANDROID]
+### ANDROID
 - Add "mobile: find" method for complex find combinations
 - Check that clean.apk is signed
 - Orientation support
@@ -1675,16 +1693,14 @@ CHANGES IN VERSION 0.3.0 (from 0.2.3)
 - Massive refactoring of adb.js
 - Added Selendroid proxy support (!)
 
-
--------------------------------------
 CHANGES IN VERSION 0.2.3 (from 0.2.2)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - removed bloated appium.io submodule, replaced with no-binary one
 - Fix plist resetting regression (#342)
 - Fix to ensure GET /sessions doesn't return false information
 
-[IOS]
+### IOS
 - Allow instruments to find node binaries in MacPorts default location
 - Allow instruments to find node binaries from Appium.app
 - Rotate screenshots to match orientation of device
@@ -1696,7 +1712,7 @@ CHANGES IN VERSION 0.2.3 (from 0.2.2)
 - C# example updates
 - Fixed a few minor regressions
 
-[ANDROID]
+### ANDROID
 - Large refactoring of bootstrap code
 - Moved ApiDemos code into a submodule which is included and built for tests
 - Fix install command
@@ -1705,10 +1721,9 @@ CHANGES IN VERSION 0.2.3 (from 0.2.2)
 - Some error message improvements
 - Make sure we lint adb.js
 
--------------------------------------
 CHANGES IN VERSION 0.2.2 (from 0.2.1)
--------------------------------------
-[IOS]
+=====================================
+### IOS
 - safari: use js close() instead of clicking buttons to close windows
 - webview: make title() always return title for default context
 - webview: async javascript execute
@@ -1717,33 +1732,31 @@ CHANGES IN VERSION 0.2.2 (from 0.2.1)
 - webview: get/set/delete cookie(s)
 - correctly rotate screenshot images if taken in landscape mode
 
-[ANDROID]
+### ANDROID
 - add eclipse formatting file for bootstrap
 - stop when activity fails to show up
 - make content-desc search case-insensitive and partial
 - allow launching emulator according to device id
 - only sign app for clean apk once
 
--------------------------------------
 CHANGES IN VERSION 0.2.1 (from 0.2.0)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - fix bug in npm dependencies (make swig a real dependency)
 
-[IOS]
+### IOS
 - fixed scoping bug in alert handling
 - get rid of --warp flag, instruments-without-delay is better
 - safari: clear cookies/history/windows in between test runs
 
--------------------------------------
 CHANGES IN VERSION 0.2.0 (from 0.1.3)
--------------------------------------
-[GENERAL]
+=====================================
+### GENERAL
 - updates to reset.sh
 - host our own guinea pig html page for webview tests
 - updated java examples and docs
 
-[IOS]
+### IOS
 - webview: isActive()
 - webview: submit()
 - webview: clear()
@@ -1770,7 +1783,7 @@ CHANGES IN VERSION 0.2.0 (from 0.1.3)
 - bugfix in ios.js that left multiple remote debugger objs hanging around
 - bumped command timeout since webview commands don't reset it
 
-[ANDROID]
+### ANDROID
 - fix in swipe where steps weren't converted to integers
 - "mobile: keyevent" for hitting arbitrary keys
 - native back()

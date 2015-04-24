@@ -47,7 +47,7 @@ node .
 
 1. 安装nodejs
 
-2、使用npm安装appium，npm install -g appium
+2. 使用npm安装appium，npm install -g appium
 
 ### 运行appium
 启动appium，直接运行appium 即可。

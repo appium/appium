@@ -206,23 +206,20 @@ reset_ios() {
         run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
     fi
     if $should_reset_realsafari; then
-        echo "* Cloning/updating SafariLauncher"
-        run_cmd git submodule update --init submodules/SafariLauncher
         echo "* Building SafariLauncher for real devices"
         run_cmd rm -rf build/SafariLauncher
         run_cmd mkdir -p build/SafariLauncher
-        run_cmd rm -f submodules/SafariLauncher/target.xcconfig
-        touch submodules/SafariLauncher/target.xcconfig
-        echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> submodules/SafariLauncher/target.xcconfig
+        touch build/SafariLauncher/target.xcconfig
+        echo "BUNDLE_ID = com.bytearc.SafariLauncher" >> build/SafariLauncher/target.xcconfig
         if [[ ! -z $code_sign_identity ]]; then
-          echo "IDENTITY_NAME = " $code_sign_identity >> submodules/SafariLauncher/target.xcconfig
+          echo "IDENTITY_NAME = " $code_sign_identity >> build/SafariLauncher/target.xcconfig
         else
-          echo "IDENTITY_NAME = iPhone Developer" >> submodules/SafariLauncher/target.xcconfig
+          echo "IDENTITY_NAME = iPhone Developer" >> build/SafariLauncher/target.xcconfig
         fi
-        echo "IDENTITY_CODE = " $provisioning_profile >> submodules/SafariLauncher/target.xcconfig
-        run_cmd "$grunt" buildSafariLauncherApp:iphoneos:"target.xcconfig"
+        echo "IDENTITY_CODE = " $provisioning_profile >> build/SafariLauncher/target.xcconfig
+        run_cmd "$grunt" buildSafariLauncherApp:iphoneos:"$appium_home/build/SafariLauncher/target.xcconfig"
         echo "* Copying SafariLauncher for real devices to build"
-        run_cmd zip -r build/SafariLauncher/SafariLauncher submodules/SafariLauncher/build/Release-iphoneos/SafariLauncher.app
+        run_cmd zip -r build/SafariLauncher/SafariLauncher node_modules/safari-launcher/build/Release-iphoneos/SafariLauncher.app
     fi
     echo "* Cloning/updating libimobiledevice-macosx"
     run_cmd git submodule update --init submodules/libimobiledevice-macosx

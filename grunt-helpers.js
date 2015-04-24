@@ -355,7 +355,7 @@ module.exports.signApp = function (appName, certName, cb) {
 };
 
 module.exports.buildSafariLauncherApp = function (cb, sdk, xcconfig) {
-  var appRoot = path.resolve(__dirname, "submodules", "SafariLauncher");
+  var appRoot = path.resolve(require.resolve('safari-launcher'), '..');
   module.exports.build(appRoot, function (err) {
     if (err !== null) {
       console.log(err);

@@ -1,8 +1,8 @@
-# Appium server arguments
+## Appium server arguments
 
 Usage: `node . [flags]`
 
-## Server flags
+### Server flags
 All flags are optional, but some are required in conjunction with certain others.
 
 

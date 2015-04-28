@@ -265,7 +265,11 @@ env.localIP = function () {
 };
 
 env.LOCAL_APPIUM_PORT = env.SAUCE ? 4443 : env.APPIUM_PORT;
-env.TEST_END_POINT = 'http://localhost:' + env.LOCAL_APPIUM_PORT + '/test/';
+if (env.REAL_DEVICE) {
+  env.TEST_END_POINT = 'http://' + env.localIP() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
+} else {
+  env.TEST_END_POINT = 'http://localhost:' + env.LOCAL_APPIUM_PORT + '/test/';
+}
 env.GUINEA_TEST_END_POINT = env.TEST_END_POINT + 'guinea-pig';
 if (env.REAL_DEVICE) {
   env.CHROME_TEST_END_POINT = 'http://' + env.localIP() + ':' + env.LOCAL_APPIUM_PORT + '/test/';

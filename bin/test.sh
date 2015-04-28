@@ -72,10 +72,19 @@ run_ios_tests() {
     echo "RUNNING IOS $1 TESTS"
     echo "---------------------"
 
+    tag_regex=$3
+    if $real_device; then
+        tag_regex="$3|@skip-real-device"
+    fi
 
-    DEVICE=$2 time $appium_mocha -g $3 -i \
-        test/functional/common \
-        test/functional/ios
+    if $real_device; then
+        DEVICE=$2 REAL_DEVICE=true time $appium_mocha -g $tag_regex -i \
+           test/functional/ios
+    else
+       DEVICE=$2 time $appium_mocha -g $3 -i \
+           test/functional/common \
+           test/functional/ios
+    fi
 }
 
 if $ios6_only || $ios_only || $all_tests; then

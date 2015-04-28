@@ -10,7 +10,7 @@ var desired = {
   app: 'settings'
 };
 
-describe("prefs @skip-ios6", function () {
+describe("prefs @skip-ios6 @skip-real-device", function () {
   // TODO: cannot install settings app on ios6
 
   var checkLocServ = function (driver, expected, cb) {
@@ -44,4 +44,3 @@ describe("prefs @skip-ios6", function () {
     });
   });
 });
-

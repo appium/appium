@@ -10,7 +10,7 @@ var desired = {
   app: 'settings'
 };
 
-describe("prefs @skip-ios6", function () {
+describe("prefs @skip-ios6 @skip-real-device", function () {
   // TODO: cannot install settings app on ios6
   describe('settings app', function () {
     var driver;
@@ -33,4 +33,3 @@ describe("prefs @skip-ios6", function () {
   });
 
 });
-

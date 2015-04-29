@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.4
+CHANGES IN VERSION 1.4 (from 1.3.7)
 ======================================
 
 #### General
@@ -9,7 +9,11 @@ CHANGES IN VERSION 1.4
 - updated test suite
 
 #### iOS
-- Support for iOS 8.3
+- support for iOS 8.3
+- deprecate iOS 6.1 and iOS 7.0 (support will be removed soon, probably 1.5)
+- deprecate Xcodes less than 6.3 (moving to support of latest versions only,
+  and Xcode 6.3+ together allows automation of all supported iOS versions). The
+  only exception to this is the combination of Xcode 6.0.1 + iOS 8.0.
 - fix for issues relating to finding xcode folder
 - new sever flag `--instruments <path>` to specify custom path to instruments commandLine tool
 - fix for getOrientation
@@ -31,6 +35,7 @@ CHANGES IN VERSION 1.4
 #### Android+Chrome
 - Chormedriver version updated to 2.15
 - fix for driver.quit()
+- use the correct ADB path already identified by Appium
 
 #### iOS+Safari
 - fix for handling real device object

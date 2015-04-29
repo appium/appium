@@ -17,16 +17,19 @@ describe('android-controller', function () {
                         { action: 'moveTo', options: { x: -40, y: -41 } },
                         { action: 'release', options: {} } ];
         controller.parseTouch(actions, false, function (err, touchStates) {
-          touchStates.length.should.equal(4);
+          touchStates.length.should.equal(5);
 
           var actions = [{action: 'press', x: 100, y: 101},
                          {action: 'moveTo', x: 150, y: 152},
                          {action: 'wait', x: 150, y: 152},
-                         {action: 'moveTo', x: 110, y: 111}];
+                         {action: 'moveTo', x: 110, y: 111},
+                         {action: 'release'}];
           _.each(touchStates, function (state, index) {
             state.action.should.equal(actions[index].action);
-            state.options.x.should.equal(actions[index].x);
-            state.options.y.should.equal(actions[index].y);
+            if (actions[index].action !== 'release') {
+              state.options.x.should.equal(actions[index].x);
+              state.options.y.should.equal(actions[index].y);
+            }
           });
 
           done();

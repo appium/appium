@@ -57,3 +57,38 @@ describe("apidemo - touch - press", function () {
     });
   });
 });
+
+describe("apidemo - touch - longpress - release", function () {
+  var driver;
+  setup(this, _.defaults({
+    appActivity: '.view.SecureView'
+  }, desired)).then(function (d) { driver= d;});
+  describe('press released after pause should call release', function () {
+    it('should open an alert dialog', function (done) {
+      driver
+        .elementByName("Don't click! It'll cost you!")
+        .then(function (el) {
+          var action = new TouchAction(driver);
+          return action.press({el: el}).wait(1000).release().perform();
+        })
+        .elementByName("Oops...").should.eventually.exist
+        .then(function (el) {
+          el.click();
+        })
+        .nodeify(done);
+    });
+  });
+
+  describe('longPress should call release', function () {
+    it('should open an alert dialog', function (done) {
+      driver
+        .elementByName("Don't click! It'll cost you!")
+        .then(function (el) {
+          var action = new TouchAction(driver);
+          return action.longPress({el: el}).release().perform();
+        })
+        .elementByName("Oh no!").should.eventually.exist
+        .nodeify(done);
+    });
+  });
+});

@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.5 (from 1.4.?)
+======================================
+
+*IN DEVELOPMENT*
+
+- add Tapster support for some more touch methods
+
+
 CHANGES IN VERSION 1.4 (from 1.3.7)
 ======================================
 
@@ -7,6 +15,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - updated sample code
 - updated documentation
 - updated test suite
+- deprecate node 0.10
 
 #### iOS
 - support for iOS 8.3
@@ -14,7 +23,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - deprecate Xcodes less than 6.3 (moving to support of latest versions only,
   and Xcode 6.3+ together allows automation of all supported iOS versions). The
   only exception to this is the combination of Xcode 6.0.1 + iOS 8.0.
-- fix for issues relating to finding xcode folder
+- fix for issues relating to finding xcode folder and Info.plist
 - new sever flag `--instruments <path>` to specify custom path to instruments commandLine tool
 - fix for getOrientation
 - fix for iOS crash log retrieval
@@ -28,6 +37,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - new capability `disableAndroidWatchers`
 - deprecated capability `stopAppOnReset`
 - new capability `dontStopAppOnReset`
+- fix a crash possibly encountered during extracting app strings
 
 #### Selendroid
 - Support for installApp, isAppInstalled and removeApp
@@ -40,6 +50,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 #### iOS+Safari
 - fix for handling real device object
 - fix for safariAllowPopups for iOS 8.x
+- reduce logging in remote debugger for real devices, and don't use console.log
 
 CHANGES IN VERSION 1.3.7
 ======================================

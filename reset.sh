@@ -186,24 +186,6 @@ reset_ios() {
             echo "* Cloning/npm linking appium-uiauto"
             run_cmd ./bin/npmlink.sh -l appium-uiauto
         fi
-        if $ios7_active || $ios8_active ; then
-            if $hardcore ; then
-                echo "* Clearing out old UICatalog download"
-                run_cmd rm -rf ./sample-code/apps/UICatalog/
-            fi
-            if [ ! -d "./sample-code/apps/UICatalog" ]; then
-                echo "* Unzipping UICatalog app source"
-                run_cmd pushd ./sample-code/apps
-                run_cmd unzip UICatalog.zip
-                run_cmd popd
-            fi
-            echo "* Cleaning/rebuilding iOS test app: UICatalog"
-            run_cmd "$grunt" buildApp:UICatalog:iphonesimulator:$sdk_ver
-        fi
-        echo "* Cleaning/rebuilding iOS test app: TestApp"
-        run_cmd "$grunt" buildApp:TestApp:iphonesimulator:$sdk_ver
-        echo "* Cleaning/rebuilding iOS test app: WebViewApp"
-        run_cmd "$grunt" buildApp:WebViewApp:iphonesimulator$sdk_ver
     fi
     if $should_reset_realsafari; then
         echo "* Building SafariLauncher for real devices"

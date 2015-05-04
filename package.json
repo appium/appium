@@ -60,6 +60,7 @@
     "colors": "~1.0.3",
     "date-utils": "~1.2.16",
     "difflib": "~0.2.4",
+    "es6-promise": "^2.1.1",
     "express": "~4.11.2",
     "glob": "~4.4.0",
     "grunt": "~0.4.5",

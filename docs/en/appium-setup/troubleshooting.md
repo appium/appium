@@ -67,6 +67,14 @@ own items in the SDK manager. Make sure you install the build-tools and platform
   a new version of Xcode, as well.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
+* If you have custom elements in your app, they will not be automatable by
+  UIAutomation (and therefore Appium) by default. You need to set the
+  accessibility status to 'enabled' on them. The way to do this in code is:
+
+  ```center
+  [myCustomView setAccessibilityEnabled:YES];
+  ```
+
 * Tests on iOS may exhibit symptoms similar to a memory leak including sluggish
   performance or hangs. If you experience this problem, it's likely due to a
   known issue with NSLog. One option is to remove NSLog from your code.

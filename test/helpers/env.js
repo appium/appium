@@ -1,8 +1,7 @@
 "use strict";
 
 var path = require('path')
-  , _ = require('underscore')
-  , os = require('os');
+  , localIp = require('appium-support').util.localIp;
 
 var env = {};
 
@@ -251,28 +250,15 @@ if (env.SAUCE && env.TARBALL) {
   env.CAPS.tags = [env.DEVICE];
 }
 
-// rest enf points
-env.localIP = function () {
-  var ip = _.chain(os.networkInterfaces())
-    .values()
-    .flatten()
-    .filter(function (val) {
-      return (val.family === 'IPv4' && val.internal === false);
-    })
-    .pluck('address')
-    .first().value();
-  return ip;
-};
-
 env.LOCAL_APPIUM_PORT = env.SAUCE ? 4443 : env.APPIUM_PORT;
 if (env.REAL_DEVICE) {
-  env.TEST_END_POINT = 'http://' + env.localIP() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
+  env.TEST_END_POINT = 'http://' + localIp() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
 } else {
   env.TEST_END_POINT = 'http://localhost:' + env.LOCAL_APPIUM_PORT + '/test/';
 }
 env.GUINEA_TEST_END_POINT = env.TEST_END_POINT + 'guinea-pig';
 if (env.REAL_DEVICE) {
-  env.CHROME_TEST_END_POINT = 'http://' + env.localIP() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
+  env.CHROME_TEST_END_POINT = 'http://' + localIp() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
 } else {
   env.CHROME_TEST_END_POINT = 'http://10.0.2.2:' + env.LOCAL_APPIUM_PORT + '/test/';
 }

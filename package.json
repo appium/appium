@@ -45,7 +45,7 @@
     "appium-atoms": "=0.0.5",
     "appium-chromedriver": "^1.1.0",
     "appium-instruments": "=2.0.2",
-    "appium-support": "=1.0.4",
+    "appium-support": "=1.0.5",
     "appium-uiauto": "=1.10.8",
     "appium-xcode": "=2.0.4",
     "argparse": "~1.0.1",

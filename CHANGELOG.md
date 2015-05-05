@@ -38,6 +38,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - deprecated capability `stopAppOnReset`
 - new capability `dontStopAppOnReset`
 - fix a crash possibly encountered during extracting app strings
+- new server argument `suppress-adb-kill-server`
 
 #### Selendroid
 - Support for installApp, isAppInstalled and removeApp

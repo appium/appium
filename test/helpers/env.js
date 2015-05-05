@@ -252,7 +252,7 @@ if (env.SAUCE && env.TARBALL) {
 
 env.LOCAL_APPIUM_PORT = env.SAUCE ? 4443 : env.APPIUM_PORT;
 if (env.REAL_DEVICE) {
-  env.TEST_END_POINT = 'http://' + env.localIP() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
+  env.TEST_END_POINT = 'http://' + localIp() + ':' + env.LOCAL_APPIUM_PORT + '/test/';
 } else {
   env.TEST_END_POINT = 'http://localhost:' + env.LOCAL_APPIUM_PORT + '/test/';
 }

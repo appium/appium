@@ -52,6 +52,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - fix for handling real device object
 - fix for safariAllowPopups for iOS 8.x
 - reduce logging in remote debugger for real devices, and don't use console.log
+- fix issues with SafariLauncher on real devices
 
 CHANGES IN VERSION 1.3.7
 ======================================

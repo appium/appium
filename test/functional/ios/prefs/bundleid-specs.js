@@ -9,7 +9,7 @@ var desired = {
   bundleId: 'com.apple.Preferences'
 };
 
-describe('settings app @skip-ios6 @skip-ios7', function () {
+describe('settings app @skip-ios6 @skip-ios7 @skip-real-device', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 

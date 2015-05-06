@@ -39,6 +39,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - new capability `dontStopAppOnReset`
 - fix a crash possibly encountered during extracting app strings
 - new server argument `suppress-adb-kill-server`
+- fix issue with `keys()`; now it correctly targets currently-focused element
 
 #### Selendroid
 - Support for installApp, isAppInstalled and removeApp
@@ -53,6 +54,7 @@ CHANGES IN VERSION 1.4 (from 1.3.7)
 - fix for safariAllowPopups for iOS 8.x
 - reduce logging in remote debugger for real devices, and don't use console.log
 - fix issues with SafariLauncher on real devices
+- fix execute_async so that it now works at all
 
 CHANGES IN VERSION 1.3.7
 ======================================

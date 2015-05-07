@@ -62,21 +62,35 @@ gulp.task('test-unit', function () {
     .on('error',  console.warn.bind(console));
 });
 
-function splitAndroidE2ETests() {
+function splitE2ETests(srcGlobPattern) {
   var testFiles = [];
-  var androidGroups = {};
+  var groups = {};
   return promisePipe(
-    gulp.src(['test/functional/common/**/*-specs.js', 'test/functional/android/**/*-specs.js',
-              '!test/functional/android/chrome/**'], {read: false})
+    gulp.src(srcGlobPattern , {read: false})
       .pipe(through(function (file) {
         testFiles.push(path.relative(file.cwd ,file.path));
       })).on('close', function () {
         testFiles.sort();
-        androidGroups = splitArray(testFiles, argv.androidTestSplit);
+        groups = splitArray(testFiles, argv.testSplit);
       })).then(function () {
-        assert(androidGroups.length === argv.androidTestSplit);
-        return androidGroups;
+        assert(groups.length === argv.testSplit);
+        return groups;
       });
+}
+
+function splitAndroidE2ETests() {
+  return splitE2ETests([
+    'test/functional/common/**/*-specs.js',
+    'test/functional/android/**/*-specs.js',
+    '!test/functional/android/chrome/**'
+  ]);
+}
+
+function splitIosE2ETests() {
+  return splitE2ETests([
+    'test/functional/common/**/*-specs.js',
+    'test/functional/ios/**/*-specs.js'
+  ]);
 }
 
 function killProcs() {
@@ -89,31 +103,63 @@ gulp.task('kill-procs', function () {
   killProcs();
 });
 
-gulp.task('show-android-e2e-tests-split', function () {
-  return splitAndroidE2ETests()
-    .then(function (androidGroups) {
-      console.log('Android groups:');
-      _(androidGroups).each(function (group, i) {
+function showSplit(splitPromise, prefix) {
+  return splitPromise
+    .then(function (groups) {
+      console.log(prefix + ' groups:');
+      _(groups).each(function (group, i) {
         console.log(i + 1, '-->', group);
       });
     });
+}
+
+gulp.task('show-android-e2e-tests-split', function () {
+  return showSplit(splitAndroidE2ETests(), 'Android');
 });
 
-gulp.task('test-android-e2e', function () {
-  return splitAndroidE2ETests().then(function (androidGroups) {
+gulp.task('show-ios-e2e-tests-split', function () {
+  return showSplit(splitIosE2ETests(), 'iOS');
+});
+
+function newMochaE2EOpts() {
     var opts = newMochaOpts();
-    opts.env.DEVICE='android';
-    opts.env.VERBOSE=1;
-    opts.flags.g = '@skip-android-all|@android-arm-only|@skip-ci';
-    opts.flags.i = true;
     opts.concurrency = 1;
     opts.liveOutput = true;
     opts.liveOutputPrepend= 'client -> ';
     opts.fileOutput = 'client.log';
+}
+
+gulp.task('test-android-e2e', function () {
+  return splitAndroidE2ETests().then(function (testGroups) {
+    var opts = newMochaE2EOpts();
+    opts.env.DEVICE='android';
+    opts.env.VERBOSE=1;
+    opts.flags.g = '@skip-android-all|@android-arm-only|@skip-ci';
+    opts.flags.i = true;
     var mocha = mochaStream(opts);
-    var androidGroup = androidGroups[argv.androidTestGroup - 1];
-    console.log('running tests for:' + androidGroup);
-    return promisePipe( gulp.src(androidGroup, {read: false})
+    var testGroup = testGroups[argv.testGroup - 1];
+    console.log('running tests for:' + testGroup);
+    return promisePipe( gulp.src(testGroup, {read: false})
+      .pipe(mocha)
+      .on('error',  function (err) {
+        killProcs();
+        throw err;
+      })
+    );
+  });
+});
+
+gulp.task('test-ios-e2e', function () {
+  return splitIosE2ETests().then(function (testGroups) {
+    var opts = newMochaE2EOpts();
+    opts.env.DEVICE='ios81'; // TODO: make that configurable
+    opts.env.VERBOSE=1;
+    opts.flags.g = '@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up';
+    opts.flags.i = true;
+    var mocha = mochaStream(opts);
+    var testGroup = testGroups[argv.testGroup - 1];
+    console.log('running tests for:' + testGroup);
+    return promisePipe( gulp.src(testGroup, {read: false})
       .pipe(mocha)
       .on('error',  function (err) {
         killProcs();
@@ -222,6 +268,14 @@ gulp.task('launch-emu', function () {
 
 gulp.task('run-android-e2e', function () {
   return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e', 'kill-procs')
+    .catch(function (err) {
+      killProcs();
+      throw err;
+    });
+});
+
+gulp.task('run-ios-e2e', function () {
+  return runSequence('launch-appium', 'test-ios-e2e', 'kill-procs')
     .catch(function (err) {
       killProcs();
       throw err;

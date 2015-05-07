@@ -2,7 +2,7 @@
 
 var setup = require("../common/setup-base")
   , env = require('../../helpers/env')
-  , getAppPath = require('../../helpers/app').getAppPath
+  , getAppPath = require('sample-apps')
   , fs = require('fs')
   , path = require('path')
   , Readable = require('stream').Readable
@@ -10,12 +10,13 @@ var setup = require("../common/setup-base")
   , xcode = require('../../../lib/future.js').xcode
   , exec = require('child_process').exec
   , getSimUdid = require('../../helpers/sim-udid.js').getSimUdid
-  , Unzip = require('unzip');
+  , Unzip = require('unzip')
+  , _ = require('underscore');
 
 describe('file movements - pullFile and pushFile @skip-real-device', function () {
   var driver;
   var desired = {
-    app: getAppPath('TestApp')
+    app: getAppPath('TestApp', env.REAL_DEVICE)
   };
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -63,6 +64,9 @@ describe('file movements - pullFile and pushFile @skip-real-device', function ()
     var fileContent = "IAmTheVeryModelOfAModernMajorTestingTool";
     var fileName = "someFile.tmp";
     var fullPath = "";
+    var appPath = getAppPath('TestApp', env.REAL_DEVICE);
+    var appName = _.last(appPath.split(path.sep));
+
     before(function (done) {
       var pv = env.CAPS.platformVersion || '7.1';
       var ios8 = parseFloat(pv) >= 8;
@@ -88,10 +92,10 @@ describe('file movements - pullFile and pushFile @skip-real-device', function ()
             basePath = path.resolve(simRoots[0], 'Applications');
           }
           basePath = basePath.replace(/\s/g, '\\ ');
-          var findCmd = 'find ' + basePath + ' -name "TestApp.app"';
+          var findCmd = 'find ' + basePath + ' -name "' + appName + '"';
           exec(findCmd, function (err, stdout) {
             if (err) return done(err);
-            if (!stdout) return done(new Error("Could not find testapp.app"));
+            if (!stdout) return done(new Error("Could not find", appName));
             var appRoot = stdout.replace(/\n$/, '');
             fullPath = path.resolve(appRoot, fileName);
             fs.writeFile(fullPath, fileContent, done);
@@ -109,7 +113,7 @@ describe('file movements - pullFile and pushFile @skip-real-device', function ()
     });
 
     it('should be able to fetch a file from the app directory', function (done) {
-      var arg = path.resolve('/TestApp.app', fileName);
+      var arg = path.resolve('/' + appName, fileName);
       driver
         .pullFile(arg)
         .then(function (data) {

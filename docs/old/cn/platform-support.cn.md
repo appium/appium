@@ -11,7 +11,7 @@ Appimu时候支持的平台版本和上述测试方式的必备条件。
 * 版本号：6.1 , 7.0 , and 7.1
 * 支持设备： iPhone 模拟器, iPad 模拟器以及iPhones 和 iPads真机
 * 是否支持原生应用：支持 。同时支持模拟器中调试应用版本和正确签名的真机ipa。
-  其他相关支持由苹果的[UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
+  其他相关支持由苹果的[UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
   框架提供。
 * 是否支持内嵌浏览器：支持, Safari浏览器已经通过测试。对于
   真机,则需要安装调试工具 ios-webkit-remote-debugger，很遗憾

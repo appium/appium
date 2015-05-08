@@ -1,6 +1,6 @@
 # iOS Predicate
 
-I'd like to share my experience in using *'-ios uiautomation'* search strategy with **Predicates**. After using Instruments/UIAutomation tool for a long time I paid attention on the following methods in [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html):
+I'd like to share my experience in using *'-ios uiautomation'* search strategy with **Predicates**. After using Instruments/UIAutomation tool for a long time I paid attention on the following methods in [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/):
 
 ```java
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)

@@ -13,7 +13,7 @@ instructions.
 * Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by
-  Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
+  Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
   framework.
 * Mobile web support: Yes, via automation of mobile Safari. For real devices,
   ios-webkit-remote-debugger is required, and automation of native aspects of

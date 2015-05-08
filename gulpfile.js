@@ -127,6 +127,7 @@ function newMochaE2EOpts() {
     opts.liveOutput = true;
     opts.liveOutputPrepend= 'client -> ';
     opts.fileOutput = 'client.log';
+    return opts;
 }
 
 gulp.task('test-android-e2e', function () {

@@ -21,7 +21,7 @@ Appium 是一个自动化测试开源工具，支持 iOS 平台和 Android 平�
 
 那么 Appium 架构是如何实现这个哲学呢？为了满足第一条，Appium 真正的工作引擎其实是第三方自动化框架。这样，我们就不需在你的应用里植入 Appium 相关或者第三方的代码。这意味着你测试使用的应用与最终发布的应用并无二致。我们使用以下的第三方框架：
 
-* iOS: 苹果的 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
+* iOS: 苹果的 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef)
 * Android 4.2+: Google's [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation由单独的项目[Selendroid](http://selendroid.io)提供支持 )
 

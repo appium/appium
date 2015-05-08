@@ -1,7 +1,7 @@
 ## iOS Predicate
 
 It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**.
-[UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html) has following methods which can are very useful.
+[UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) has following methods which can are very useful.
 
 ```center
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)

@@ -133,7 +133,7 @@
     "promisepipe": "^1.0.1",
     "rewire": "^2.3.1",
     "run-sequence": "^1.0.2",
-    "sample-apps": "=2.0.1",
+    "sample-apps": "https://github.com/sebv/sample-apps/archive/master.tar.gz",
     "saucelabs": "~0.1.1",
     "sinon": "~1.12.2",
     "sinon-chai": "~2.7.0",

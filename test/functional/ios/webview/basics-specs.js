@@ -38,9 +38,8 @@ describe('webview - basics', function () {
       });
     }).nodeify(done);
   });
-  it('setting context to \'WEBVIEW_1\' should work', function (done) {
+  it('setting context without getting contexts should work', function (done) {
     driver
-      .contexts().should.eventually.have.length.above(0)
       .context("WEBVIEW_1")
       .sleep(500)
       .get(env.GUINEA_TEST_END_POINT)
@@ -49,15 +48,18 @@ describe('webview - basics', function () {
       .should.eventually.equal("I am a page title")
       .nodeify(done);
   });
-  it('setting context to \'WEBVIEW_1\' should work without first getting contexts', function (done) {
-    driver
-      .context("WEBVIEW_1")
-      .sleep(500)
-      .get(env.GUINEA_TEST_END_POINT)
-      .sleep(500)
-      .title()
-      .should.eventually.equal("I am a page title")
-      .nodeify(done);
+  it('setting context to \'WEBVIEW_X\' should work', function (done) {
+    driver.contexts().then(function (contexts) {
+      contexts.should.have.length.above(0);
+      driver
+        .context(contexts[1])
+        .sleep(500)
+        .get(env.GUINEA_TEST_END_POINT)
+        .sleep(1000)
+        .title()
+        .should.eventually.equal("I am a page title")
+        .nodeify(done);
+    });
   });
   it('setting context to \'WEBVIEW\' should work', function (done) {
     driver
@@ -92,25 +94,26 @@ describe('webview - basics', function () {
 
   it('setting context to non-existent context should return \'NoSuchContext\' (status: 35)', function (done) {
     driver
-      .context("WEBVIEW_42")
+      .context("WEBVIEW_420")
       .should.be.rejectedWith(/status: 35/)
       .nodeify(done);
   });
 
   it('switching back and forth between native and webview contexts should work @skip-ios6', function (done) {
-    driver
-      .contexts()
-      .context("WEBVIEW_1")
+    driver.contexts().then(function (contexts) {
+      driver
+      .context(contexts[1])
       .get(env.GUINEA_TEST_END_POINT)
       .sleep(3000)
       .title()
       .should.eventually.equal("I am a page title")
       .context("NATIVE_APP")
-      .context("WEBVIEW_1")
+      .context(contexts[1])
       .get(env.GUINEA_TEST_END_POINT)
       .sleep(3000)
       .elementByLinkText('i am a link').click()
       .elementById('only_on_page_2').should.eventually.exist
       .nodeify(done);
+    });
   });
 });

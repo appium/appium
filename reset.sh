@@ -460,64 +460,11 @@ reset_gappium() {
 
 reset_chromedriver() {
     echo "RESETTING CHROMEDRIVER"
-    machine=$(run_cmd_output uname -m)
-    if [ "$machine" == "i686" ]; then
-        machine="32"
-    else
-        machine="64"
+    if $chromedriver_install_all ; then
+        run_cmd pushd node_modules/appium-chromedriver/
+        run_cmd npm run-script chromedriver_all
+        run_cmd popd
     fi
-    if [ -d "$appium_home"/build/chromedriver ]; then
-        echo "* Clearing old ChromeDriver(s)"
-        run_cmd rm -rf "$appium_home"/build/chromedriver/*
-    else
-        run_cmd rm -rf "$appium_home"/build/chromedriver  # could have been an old binary
-        run_cmd mkdir "$appium_home"/build/chromedriver
-    fi
-    if [ "$chromedriver_version" == false ]; then
-        echo "* Finding latest version"
-        chromedriver_version=$(run_cmd_output curl -L http://chromedriver.storage.googleapis.com/LATEST_RELEASE)
-    fi
-    if ! $chromedriver_install_all ; then
-        if [ "$platform" == "mac" ]; then
-            chromedriver_file="chromedriver_mac32.zip"
-            run_cmd mkdir "$appium_home"/build/chromedriver/mac
-            install_chromedriver $platform $chromedriver_version $chromedriver_file
-        else
-            chromedriver_file="chromedriver_linux$machine.zip"
-            binary="chromedriver$machine"
-            run_cmd mkdir "$appium_home"/build/chromedriver/linux
-            install_chromedriver $platform $chromedriver_version $chromedriver_file $binary
-        fi
-    else
-        echo "* Building directory structure"
-        run_cmd mkdir "$appium_home"/build/chromedriver/mac
-        run_cmd mkdir "$appium_home"/build/chromedriver/linux
-        run_cmd mkdir "$appium_home"/build/chromedriver/windows
-
-        install_chromedriver "mac" $chromedriver_version "chromedriver_mac32.zip"
-        install_chromedriver "linux" $chromedriver_version "chromedriver_linux32.zip" "chromedriver32"
-        install_chromedriver "linux" $chromedriver_version "chromedriver_linux64.zip" "chromedriver64"
-        install_chromedriver "windows" $chromedriver_version "chromedriver_win32.zip"
-    fi
-}
-
-install_chromedriver() {
-    platform=$1
-    version=$2
-    file=$3
-    binary=$4
-
-    echo "* Downloading ChromeDriver version $version for $platform"
-    run_cmd curl -L http://chromedriver.storage.googleapis.com/$version/$file -o "$appium_home"/build/chromedriver/$platform/chromedriver.zip
-    run_cmd pushd "$appium_home"/build/chromedriver/$platform
-
-    echo "* Unzipping ChromeDriver"
-    run_cmd unzip chromedriver.zip
-    run_cmd rm chromedriver.zip
-    if [[ $binary != "" ]]; then
-        run_cmd mv chromedriver $binary
-    fi
-    run_cmd popd
 }
 
 reset_firefoxos() {

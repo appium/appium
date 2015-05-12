@@ -185,9 +185,9 @@ function launchAppium(opts) {
   out.pipe(fs.createWriteStream('appium.log'));
   var child;
   if (opts.asCurrentUser) {
-    spawn("ci/as_current_user", ['node', '.'], { detached: false });
+    child = spawn("ci/as_current_user", ['node', '.'], { detached: false });
    } else {
-    spawn("node", ['.'], { detached: false });
+    child = spawn("node", ['.'], { detached: false });
   }
   childProcs.push(child);
   child.stdout.pipe(out);

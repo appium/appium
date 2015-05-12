@@ -1,0 +1,14 @@
+function as_user {
+    local user="$1"
+    local user_pid=$(ps -axj | awk "/^$user / {print \$2;exit}")
+    local command="sudo launchctl bsexec $user_pid sudo -u '$user' $2"
+    echo "Running:"
+    echo "$command"
+    eval $command
+}
+
+function as_current_user {
+    as_user "$(whoami)" "$*"
+}
+
+as_current_user "$*"

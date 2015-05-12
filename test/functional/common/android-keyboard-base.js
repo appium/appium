@@ -41,7 +41,12 @@ module.exports = function () {
           return driver.sleep(300);
         }
       })
-      .then(function () { return el.text().should.become(testText); })
+      .then(function () { return el.text(); })
+      .then(function (text) {
+        // For samsung samsung S5 text is appended with ". Editing."
+        text = text.replace(". Editing.", "");
+        return text.should.be.equal(testText);
+      })
       .nodeify(done);
   };
 
@@ -68,8 +73,12 @@ module.exports = function () {
         return el.clear().should.not.be.rejected;
       })
       .then(function () {
-        var expectedText = "";
-        return el.text().should.become(expectedText);
+        return el.text();
+      })
+      .then(function (text) {
+        // For samsung samsung S5 text is appended with ". Editing."
+        text = text.replace("Editing.", "");
+        text.should.be.equal("");
       })
       .nodeify(done);
   };

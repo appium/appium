@@ -170,7 +170,8 @@ gulp.task('test-ios-e2e', function () {
   });
 });
 
-gulp.task('launch-appium', function () {
+function launchAppium(opts) {
+  opts = opts || {};
   var deferred = Q.defer();
   var out = new stream.PassThrough();
 
@@ -182,7 +183,12 @@ gulp.task('launch-appium', function () {
       console.log('server -->', line);
     });
   out.pipe(fs.createWriteStream('appium.log'));
-  var child = spawn("node", ['.'], { detached: false });
+  var child;
+  if (opts.asCurrentUser) {
+    spawn("ci/as_current_user", ['node', '.'], { detached: false });
+   } else {
+    spawn("node", ['.'], { detached: false });
+  }
   childProcs.push(child);
   child.stdout.pipe(out);
   child.stderr.pipe(out);
@@ -190,6 +196,14 @@ gulp.task('launch-appium', function () {
     deferred.reject('Something went wrong!');
   });
   return deferred.promise;
+}
+
+gulp.task('launch-appium', function () {
+  launchAppium();
+});
+
+gulp.task('launch-appium-as-current-user', function () {
+  launchAppium({asCurrentUser: true});
 });
 
 gulp.task('launch-emu', function () {
@@ -276,7 +290,7 @@ gulp.task('run-android-e2e', function () {
 });
 
 gulp.task('run-ios-e2e', function () {
-  return runSequence('launch-appium', 'test-ios-e2e', 'kill-procs')
+  return runSequence('launch-appium-as-current-user', 'test-ios-e2e', 'kill-procs')
     .catch(function (err) {
       killProcs();
       throw err;

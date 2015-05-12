@@ -49,7 +49,7 @@ public class UiAutomatorBridge {
   }
 
   public boolean injectInputEvent(InputEvent event, boolean sync) {
-    return (Boolean) invoke(method(CLASS_UI_AUTOMATOR_BRIDGE, METHOD_INJECT_INPUT_EVENT, InputEvent.class, Boolean.class),
+    return (Boolean) invoke(method(CLASS_UI_AUTOMATOR_BRIDGE, METHOD_INJECT_INPUT_EVENT, InputEvent.class, boolean.class),
             uiAutomatorBridge, event, sync);
   }
 

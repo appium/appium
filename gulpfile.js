@@ -94,13 +94,15 @@ function splitIosE2ETests() {
 }
 
 function killProcs() {
-  _(childProcs).each(function (child) {
-    try { child.kill(); } catch (err) {}
+  return exec("sudo pkill -f 'sudo -u appium node'").then(function () { // killing bsexec processes
+    _(childProcs).each(function (child) {
+      try { child.kill(); } catch (err) {}
+    });
   });
 }
 
 gulp.task('kill-procs', function () {
-  killProcs();
+  return killProcs();
 });
 
 function showSplit(splitPromise, prefix) {

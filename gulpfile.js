@@ -190,7 +190,8 @@ function launchAppium(opts) {
       return exec('whoami').spread(function (stdout) {
         currentUser = stdout.trim();
         console.log('currentUser ->', currentUser);
-        return exec("ps -axj | awk \"/^" + currentUser + " / {print \\$2;exit}");
+        var cmd = "ps -axj | grep loginwindow | awk \"/^" + currentUser + " / {print \\$2;exit}\"";
+        return exec(cmd);
       }).spread(function (stdout) {
         var userPid = stdout.trim();
         console.log('userPid ->', userPid);

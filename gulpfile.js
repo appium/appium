@@ -183,8 +183,7 @@ function launchAppium(opts) {
       console.log('server -->', line);
     });
   out.pipe(fs.createWriteStream('appium.log'));
-  var child;
-  new Q(function () {
+  (function () {
     if (opts.asCurrentUser) {
       console.log('Running appium as current user.');
       var currentUser;
@@ -195,13 +194,13 @@ function launchAppium(opts) {
       }).spread(function (stdout) {
         var userPid = stdout.trim();
         console.log('userPid ->', userPid);
-        child = spawn("sudo", [ 'launchctl', 'bsexec', userPid,
+        return spawn("sudo", [ 'launchctl', 'bsexec', userPid,
           'sudo', '-u', currentUser  ,'node', '.'], { detached: false });
       });
     } else {
-      child = spawn("node", ['.'], { detached: false });
+      return new Q(spawn("node", ['.'], { detached: false }));
     }
-  }).then(function () {
+  })().then(function (child) {
     childProcs.push(child);
     child.stdout.pipe(out);
     child.stderr.pipe(out);

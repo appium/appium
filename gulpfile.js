@@ -184,16 +184,30 @@ function launchAppium(opts) {
     });
   out.pipe(fs.createWriteStream('appium.log'));
   var child;
+  new Q(function () {
   if (opts.asCurrentUser) {
-    child = spawn("ci/as_current_user", ['node', '.'], { detached: false });
+    console.log('Running appium as current user.');
+    var currentUser;
+    return exec('whoami').spread(function (stdout) {
+      currentUser = stdout.trim();
+      console.log('currentUser ->', currentUser);
+      return exec("ps -axj | awk \"/^" + currentUser + " / {print \\$2;exit}");
+    }).spread(function (stdout) {
+      var userPid = stdout.trim();
+      console.log('userPid ->', userPid);
+      child = spawn("sudo", [ 'launchctl', 'bsexec', userPid,
+        'sudo', '-u', currentUser  ,'node', '.'], { detached: false });
+    });
    } else {
     child = spawn("node", ['.'], { detached: false });
-  }
-  childProcs.push(child);
-  child.stdout.pipe(out);
-  child.stderr.pipe(out);
-  child.on('close', function () {
-    deferred.reject('Something went wrong!');
+    }
+  }).then(function () {
+    childProcs.push(child);
+    child.stdout.pipe(out);
+    child.stderr.pipe(out);
+    child.on('close', function () {
+      deferred.reject('Something went wrong!');
+    });
   });
   return deferred.promise;
 }

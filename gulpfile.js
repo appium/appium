@@ -94,14 +94,12 @@ function splitIosE2ETests() {
 }
 
 function killProcs() {
-  _(childProcs).each(function (child) {
-    try { child.kill(); } catch (err) {}
+  return exec("sudo pkill -f 'sudo -u appium node' || true").then(function () { // killing bsexec processes
+    _(childProcs).each(function (child) {
+      try { child.kill(); } catch (err) {}
+    });
   });
 }
-
-gulp.task('kill-procs', function () {
-  killProcs();
-});
 
 function showSplit(splitPromise, prefix) {
   return splitPromise
@@ -140,13 +138,11 @@ gulp.task('test-android-e2e', function () {
     var mocha = mochaStream(opts);
     var testGroup = testGroups[argv.testGroup - 1];
     console.log('running tests for:' + testGroup);
-    return promisePipe( gulp.src(testGroup, {read: false})
+    return promisePipe(gulp.src(testGroup, {read: false})
       .pipe(mocha)
-      .on('error',  function (err) {
-        killProcs();
-        throw err;
-      })
-    );
+    ).fin(function () {
+      return killProcs();
+    });
   });
 });
 
@@ -160,13 +156,11 @@ gulp.task('test-ios-e2e', function () {
     var mocha = mochaStream(opts);
     var testGroup = testGroups[argv.testGroup - 1];
     console.log('running tests for:' + testGroup);
-    return promisePipe( gulp.src(testGroup, {read: false})
+    return promisePipe(gulp.src(testGroup, {read: false})
       .pipe(mocha)
-      .on('error',  function (err) {
-        killProcs();
-        throw err;
-      })
-    );
+    ).fin(function () {
+      return killProcs();
+    });
   });
 });
 
@@ -183,18 +177,32 @@ function launchAppium(opts) {
       console.log('server -->', line);
     });
   out.pipe(fs.createWriteStream('appium.log'));
-  var child;
-  if (opts.asCurrentUser) {
-    child = spawn("ci/as_current_user", ['node', '.'], { detached: false });
-   } else {
-    child = spawn("node", ['.'], { detached: false });
-  }
-  childProcs.push(child);
-  child.stdout.pipe(out);
-  child.stderr.pipe(out);
-  child.on('close', function () {
-    deferred.reject('Something went wrong!');
-  });
+  (function () {
+    if (opts.asCurrentUser) {
+      console.log('Running appium as current user.');
+      var currentUser;
+      return exec('whoami').spread(function (stdout) {
+        currentUser = stdout.trim();
+        console.log('currentUser ->', currentUser);
+        var cmd = "ps -axj | grep loginwindow | awk \"/^" + currentUser + " / {print \\$2;exit}\"";
+        return exec(cmd);
+      }).spread(function (stdout) {
+        var userPid = stdout.trim();
+        console.log('userPid ->', userPid);
+        return spawn("sudo", [ 'launchctl', 'bsexec', userPid,
+          'sudo', '-u', currentUser  ,'node', '.'], { detached: false });
+      });
+    } else {
+      return new Q(spawn("node", ['.'], { detached: false }));
+    }
+  })().then(function (child) {
+    childProcs.push(child);
+    child.stdout.pipe(out);
+    child.stderr.pipe(out);
+    child.on('close', function () {
+      deferred.reject('Something went wrong!');
+    });
+  }).done();
   return deferred.promise;
 }
 
@@ -282,7 +290,7 @@ gulp.task('launch-emu', function () {
 });
 
 gulp.task('run-android-e2e', function () {
-  return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e', 'kill-procs')
+  return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e')
     .catch(function (err) {
       killProcs();
       throw err;
@@ -290,7 +298,7 @@ gulp.task('run-android-e2e', function () {
 });
 
 gulp.task('run-ios-e2e', function () {
-  return runSequence('launch-appium-as-current-user', 'test-ios-e2e', 'kill-procs')
+  return runSequence('launch-appium-as-current-user', 'test-ios-e2e')
     .catch(function (err) {
       killProcs();
       throw err;

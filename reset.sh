@@ -139,9 +139,11 @@ reset_general() {
         echo "* Setting git revision data"
         run_cmd "$grunt" setGitRev
         if $include_dev ; then
-            echo "* Linking git pre-commit hook"
+            echo "* Linking git hooks"
             run_cmd rm -rf "$(pwd)"/.git/hooks/pre-commit
+            run_cmd rm -rf "$(pwd)"/.git/hooks/pre-push
             run_cmd ln -s "$(pwd)"/test/pre-commit-hook.sh "$(pwd)"/.git/hooks/pre-commit
+            run_cmd ln -s "$(pwd)"/test/pre-push-hook.sh "$(pwd)"/.git/hooks/pre-push
         fi
     else
         echo "* Nothing to do, not a git repo"
@@ -459,8 +461,9 @@ reset_gappium() {
 }
 
 reset_chromedriver() {
-    echo "RESETTING CHROMEDRIVER"
     if $chromedriver_install_all ; then
+        echo "RESETTING CHROMEDRIVER"
+        echo "* Installing all chromedrivers, not just the ones for this system"
         run_cmd pushd node_modules/appium-chromedriver/
         run_cmd npm run-script chromedriver_all
         run_cmd popd

@@ -101,10 +101,6 @@ function killProcs() {
   });
 }
 
-gulp.task('kill-procs', function () {
-  return killProcs();
-});
-
 function showSplit(splitPromise, prefix) {
   return splitPromise
     .then(function (groups) {
@@ -142,13 +138,11 @@ gulp.task('test-android-e2e', function () {
     var mocha = mochaStream(opts);
     var testGroup = testGroups[argv.testGroup - 1];
     console.log('running tests for:' + testGroup);
-    return promisePipe( gulp.src(testGroup, {read: false})
+    return promisePipe(gulp.src(testGroup, {read: false})
       .pipe(mocha)
-      .on('error',  function (err) {
-        killProcs();
-        throw err;
-      })
-    );
+    ).fin(function () {
+      return killProcs();
+    });
   });
 });
 
@@ -162,13 +156,11 @@ gulp.task('test-ios-e2e', function () {
     var mocha = mochaStream(opts);
     var testGroup = testGroups[argv.testGroup - 1];
     console.log('running tests for:' + testGroup);
-    return promisePipe( gulp.src(testGroup, {read: false})
+    return promisePipe(gulp.src(testGroup, {read: false})
       .pipe(mocha)
-      .on('error',  function (err) {
-        killProcs();
-        throw err;
-      })
-    );
+    ).fin(function () {
+      return killProcs();
+    });
   });
 });
 
@@ -298,7 +290,7 @@ gulp.task('launch-emu', function () {
 });
 
 gulp.task('run-android-e2e', function () {
-  return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e', 'kill-procs')
+  return runSequence(['launch-emu', 'launch-appium'], 'test-android-e2e')
     .catch(function (err) {
       killProcs();
       throw err;
@@ -306,7 +298,7 @@ gulp.task('run-android-e2e', function () {
 });
 
 gulp.task('run-ios-e2e', function () {
-  return runSequence('launch-appium-as-current-user', 'test-ios-e2e', 'kill-procs')
+  return runSequence('launch-appium-as-current-user', 'test-ios-e2e')
     .catch(function (err) {
       killProcs();
       throw err;

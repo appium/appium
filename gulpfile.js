@@ -94,7 +94,7 @@ function splitIosE2ETests() {
 }
 
 function killProcs() {
-  return exec("sudo pkill -f 'sudo -u appium node'").then(function () { // killing bsexec processes
+  return exec("sudo pkill -f 'sudo -u appium node' || true").then(function () { // killing bsexec processes
     _(childProcs).each(function (child) {
       try { child.kill(); } catch (err) {}
     });

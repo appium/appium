@@ -80,18 +80,22 @@ var runEditAndClearTest = function (driver, testText, keys, done) {
     .nodeify(done);
 };
 
-var runKeyboardTests = function (driver, testText) {
-  return function () {
-    it('should work with sendKeys', function (done) {
-      runTextEditTest(driver, testText, false, done);
-    });
-    it('should work with keys', function (done) {
-      runTextEditTest(driver, testText, true, done);
-    });
-  };
+var runKeyboardTests = function (driverPromise, testText) {
+  var driver;
+  driverPromise.then(function (d) { driver = d; });
+
+  it('should work with sendKeys', function (done) {
+    runTextEditTest(driver, testText, false, done);
+  });
+  it('should work with keys', function (done) {
+    runTextEditTest(driver, testText, true, done);
+  });
 };
 
-var runKeyEventTests = function (driver) {
+var runKeyEventTests = function (driverPromise) {
+  var driver;
+  driverPromise.then(function (d) { driver = d; });
+
   var editTextField = 'android.widget.TextView';
   if (env.SELENDROID) {
     // with Selendroid we can't find classes by their parent class
@@ -132,7 +136,10 @@ var runKeyEventTests = function (driver) {
   });
 };
 
-var runManualClearTests = function (driver) {
+var runManualClearTests = function (driverPromise) {
+  var driver;
+  driverPromise.then(function (d) { driver = d; });
+
   var testText = "The answer is 42.";
   it('should work with sendKeys', function (done) {
     runEditAndClearTest(driver, testText, false, done);
@@ -169,87 +176,85 @@ var languageTests = [
 ];
 
 exports.textFieldTests = function () {
-  var driver;
-
   describe('editing a text field', function () {
     describe('ascii', function () {
-      setup(this, _.defaults({
+      var driverPromise = setup(this, _.defaults({
         appActivity: appActivity
-      }, desired)).then(function (d) { driver = d; });
+      }, desired));
 
       _.each(tests, function (test) {
-        describe(test.label, runKeyboardTests(driver, test.text));
+        describe(test.label, function () {
+          runKeyboardTests(driverPromise, test.text);
+        });
       });
 
       describe('editing and manually clearing a text field', function () {
-        runManualClearTests(driver);
+        runManualClearTests(driverPromise);
       });
     });
   });
 };
 
 exports.unicodeTextFieldTests = function () {
-  var driver;
-
   describe('unicode', function () {
-    setup(this,  _.defaults({
+    var driverPromise = setup(this,  _.defaults({
       appActivity: appActivity,
       unicodeKeyboard: true,
       resetKeyboard: true
-    }, desired)).then(function (d) { driver = d; });
+    }, desired));
 
     _.each(unicodeTests, function (test) {
-      describe(test.label, runKeyboardTests(driver, test.text));
+      describe(test.label, function () {
+        runKeyboardTests(driverPromise, test.text);
+      });
     });
 
     describe('editing and manually clearing a text field', function () {
-      runManualClearTests(driver);
+      runManualClearTests(driverPromise);
     });
   });
 };
 
 exports.unicodeLanguagesTests = function () {
-  var driver;
-
   describe('unicode', function () {
-    setup(this,  _.defaults({
+    var driverPromise = setup(this,  _.defaults({
       appActivity: appActivity,
       unicodeKeyboard: true,
       resetKeyboard: true
-    }, desired)).then(function (d) { driver = d; });
+    }, desired));
 
     _.each(languageTests, function (test) {
-      describe(test.label, runKeyboardTests(driver, test.text));
+      describe(test.label, function () {
+        runKeyboardTests(driverPromise, test.text);
+      });
     });
 
     describe('editing and manually clearing a text field', function () {
-      runManualClearTests(driver);
+      runManualClearTests(driverPromise);
     });
   });
 };
 
 
 exports.keyEventsTests = function () {
-  var driver;
-
   describe('key events', function () {
     var appActivity = '.text.KeyEventText';
     describe('ascii', function () {
-      setup(this, _.defaults({
+      var driverPromise = setup(this, _.defaults({
         appActivity: appActivity
-      }, desired)).then(function (d) { driver = d; });
+      }, desired));
       describe('pressing device key', function () {
-        runKeyEventTests(driver);
+        runKeyEventTests(driverPromise);
       });
     });
     describe('unicode', function () {
-      setup(this, _.defaults({
+      var driverPromise = setup(this, _.defaults({
         appActivity: appActivity,
         unicodeKeyboard: true,
         resetKeyboard: true
-      }, desired)).then(function (d) { driver = d; });
+      }, desired));
       describe('pressing device key', function () {
-        runKeyEventTests(driver);
+        runKeyEventTests(driverPromise);
       });
     });
   });

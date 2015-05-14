@@ -151,7 +151,7 @@ gulp.task('test-ios-e2e', function () {
     var opts = newMochaE2EOpts();
     opts.env.DEVICE='ios81'; // TODO: make that configurable
     opts.env.VERBOSE=1;
-    opts.flags.g = '@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up';
+    opts.flags.g = '@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up|@skip-ci';
     opts.flags.i = true;
     var mocha = mochaStream(opts);
     var testGroup = testGroups[argv.testGroup - 1];

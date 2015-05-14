@@ -35,7 +35,9 @@ describe("apidemos - lock", function () {
       .should.eventually.be.ok
       .nodeify(done);
       });
-  it('should unlock the screen', function (done) {
+
+  // TODO: flaky test
+  it('should unlock the screen @skip-ci', function (done) {
     driver
       .lockDevice(3)
       .waitFor(isLockedAsserter({expected: true}), 5000, 500)

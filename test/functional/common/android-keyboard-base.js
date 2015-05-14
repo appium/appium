@@ -150,12 +150,15 @@ var tests = [
   { label: 'sending - in text', text: 'Super-test.' },
 ];
 
-var languageTests = [
+var unicodeTests = _.union(tests, [
   { label: 'should be able to send - in unicode text', text: 'परीक्षा-परीक्षण' },
   { label: 'should be able to send & in text', text: 'Fish & chips' },
   { label: 'should be able to send & in unicode text', text: 'Mīna & chips' },
   { label: 'should be able to send roman characters with diacritics', text: 'Áé Œ ù ḍ' },
   { label: 'should be able to send a u with an umlaut', text: 'ü' },
+]);
+
+var languageTests = [
   { label: 'should be able to send Tamil', text: 'சோதனை' },
   { label: 'should be able to send Gujarati', text: 'પરીક્ષણ' },
   { label: 'should be able to send Chinese', text: '测试' },
@@ -195,7 +198,7 @@ exports.unicodeTextFieldTests = function () {
       resetKeyboard: true
     }, desired)).then(function (d) { driver = d; });
 
-    _.each(tests, function (test) {
+    _.each(unicodeTests, function (test) {
       describe(test.label, runKeyboardTests(driver, test.text));
     });
 

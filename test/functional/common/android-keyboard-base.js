@@ -175,18 +175,20 @@ var languageTests = [
   // { label: 'should be able to send Hebrew', 'בדיקות'],
 ];
 
-exports.textFieldTests = function () {
+exports.textFieldTests = function (exclude) {
   describe('editing a text field', function () {
     describe('ascii', function () {
       var driverPromise = setup(this, _.defaults({
         appActivity: appActivity
       }, desired));
 
-      _.each(tests, function (test) {
+      _(tests).chain().filter(function (test) {
+        return !exclude || exclude.indexOf(test.text) < 0;
+      }).each(function (test) {
         describe(test.label, function () {
           runKeyboardTests(driverPromise, test.text);
         });
-      });
+      }).value();
 
       describe('editing and manually clearing a text field', function () {
         runManualClearTests(driverPromise);
@@ -195,7 +197,7 @@ exports.textFieldTests = function () {
   });
 };
 
-exports.unicodeTextFieldTests = function () {
+exports.unicodeTextFieldTests = function (exclude) {
   describe('unicode', function () {
     var driverPromise = setup(this,  _.defaults({
       appActivity: appActivity,
@@ -203,11 +205,13 @@ exports.unicodeTextFieldTests = function () {
       resetKeyboard: true
     }, desired));
 
-    _.each(unicodeTests, function (test) {
+    _(unicodeTests).chain().filter(function (test) {
+        return !exclude || exclude.indexOf(test.text) < 0;
+      }).each(function (test) {
       describe(test.label, function () {
         runKeyboardTests(driverPromise, test.text);
       });
-    });
+    }).value();
 
     describe('editing and manually clearing a text field', function () {
       runManualClearTests(driverPromise);

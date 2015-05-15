@@ -8,7 +8,8 @@ describe("gpsDemo - location @skip-real-device", function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
-  it('should set geo location', function (done) {
+  // TODO:flaky test
+  it('should set geo location @skip-ci', function (done) {
 
     var getText = function () {
       return driver

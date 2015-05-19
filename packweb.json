@@ -12,13 +12,15 @@
             "appium-chromedriver",
             "appium-jsonwp-proxy",
             "appium-logger",
-            "appium-support",
             "appium-instruments",
+            "appium-support",
+            "appium-express",
             "appium-uiauto",
             "appium-uiautomator",
             "appium-xcode",
             "io.appium.settings",
             "jsonwp-status",
+            "mobile-json-wire-protocol",
             "node-simctl"
         ],
         "appium-tools": [

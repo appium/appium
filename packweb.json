@@ -10,6 +10,7 @@
             "appium-android-ime",
             "appium-atoms",
             "appium-chromedriver",
+            "appium-jsonwp-proxy",
             "appium-logger",
             "appium-support",
             "appium-instruments",
@@ -17,7 +18,6 @@
             "appium-uiautomator",
             "appium-xcode",
             "io.appium.settings",
-            "jsonwp-proxy",
             "jsonwp-status",
             "node-simctl"
         ],

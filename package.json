@@ -1,0 +1,43 @@
+{
+  "name": "appium-base-driver",
+  "description": "Description goes here.",
+  "keywords": [
+    "appium"
+  ],
+  "version": "1.0.0",
+  "author": "appium",
+  "license": "Apache License 2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium-base-driver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium-base-driver/issues"
+  },
+  "engines": [
+    "node"
+  ],
+  "main": "./build/index.js",
+  "bin": {},
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "babel-runtime": "^5.3.3",
+    "source-map-support": "^0.2.10",
+    "babel-core": "^5.4.3"
+  },
+  "scripts": {
+    "prepublish": "./node_modules/.bin/gulp prepublish",
+    "test": "./node_modules/.bin/gulp once",
+    "watch": "./node_modules/.bin/gulp"
+  },
+  "devDependencies": {
+    "appium-gulp-plugins": "^1.1.1",
+    "chai": "^2.3.0",
+    "chai-as-promised": "^5.0.0",
+    "gulp": "^3.8.11",
+    "mochawait": "^2.0.0",
+    "yargs": "^3.9.0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "excludeFiles": ["node_modules/**"],
+  "requireCurlyBraces": ["for", "while", "do", "try", "catch"],
+  "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch",
+    "return", "try", "catch", "function"],
+  "disallowMixedSpacesAndTabs": true,
+  "disallowTrailingWhitespace": true,
+  "requireSpacesInFunctionExpression": {
+    "beforeOpeningCurlyBrace": true
+  }
+}

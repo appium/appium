@@ -1,6 +1,5 @@
 // transpile:main
 
-import {default as sample} from './lib/sample';
-
-export {sample};
+import { BaseDriver } from './lib/driver';
+export { BaseDriver };
 

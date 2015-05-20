@@ -1,10 +1,10 @@
 {
   "name": "appium-base-driver",
-  "description": "Description goes here.",
+  "description": "Base driver class for Appium drivers",
   "keywords": [
     "appium"
   ],
-  "version": "1.0.0",
+  "version": "0.0.1",
   "author": "appium",
   "license": "Apache License 2.0",
   "repository": {

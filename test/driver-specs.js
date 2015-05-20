@@ -1,6 +1,9 @@
 // transpile:mocha
 
 import { BaseDriver } from '../..';
+import { server } from 'appium-express';
+import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
+import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
@@ -33,3 +36,26 @@ describe('BaseDriver', () => {
   });
 });
 
+describe('BaseDriver via HTTP', () => {
+  let baseServer, d = new BaseDriver();
+  before(async () => {
+    baseServer = await server(routeConfiguringFunction(d), 8181);
+  });
+  after(() => {
+    baseServer.close();
+  });
+
+  it('should create session and retrieve a session id', async () => {
+    let res = await request({
+      url: 'http://localhost:8181/wd/hub/session',
+      method: 'POST',
+      json: {desiredCapabilities: {}, requiredCapabilities: {}},
+      simple: false,
+      resolveWithFullResponse: true
+    });
+    res.statusCode.should.equal(200);
+    res.body.status.should.equal(0);
+    should.exist(res.body.sessionId);
+    res.body.value.should.eql({});
+  });
+});

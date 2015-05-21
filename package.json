@@ -26,6 +26,7 @@
     "appium-logger": "^1.0.0",
     "babel-core": "^5.4.3",
     "babel-runtime": "^5.3.3",
+    "bluebird": "^2.9.25",
     "lodash": "^3.9.1",
     "mobile-json-wire-protocol": "^0.3.0",
     "source-map-support": "^0.2.10",

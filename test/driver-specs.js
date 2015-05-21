@@ -7,6 +7,7 @@ import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
+import B from 'bluebird';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
@@ -63,7 +64,20 @@ describe('BaseDriver', () => {
   it.skip('should emit an unexpected end session event', async () => {
   });
 
-  it.skip('should error in response to any command sent during shutdown', async () => {
+  it('should error if commanded after shutdown', async () => {
+    await d.createSession({});
+
+    d.deleteSession = async () => {
+      await B.delay(30);
+      await this.deleteSession();
+    }.bind(d);
+
+    let del = d.deleteSession();
+    let url = d.execute('getSession');
+
+    B.join([del, url]);
+
+    url.should.eventually.be.rejectedWith('session');
   });
 
 });
@@ -86,6 +100,7 @@ describe('BaseDriver via HTTP', () => {
         simple: false,
         resolveWithFullResponse: true
       });
+
       res.statusCode.should.equal(200);
       res.body.status.should.equal(0);
       should.exist(res.body.sessionId);

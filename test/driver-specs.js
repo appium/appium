@@ -164,7 +164,7 @@ describe('BaseDriver via HTTP', () => {
   });
 
   describe('session handling', () => {
-    it('should create session and retrieve a session id', async () => {
+    it('should create session and retrieve a session id, then delete it', async () => {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session',
         method: 'POST',
@@ -177,17 +177,69 @@ describe('BaseDriver via HTTP', () => {
       res.body.status.should.equal(0);
       should.exist(res.body.sessionId);
       res.body.value.should.eql({});
+
+      res = await request({
+        url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
+        method: 'DELETE',
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true
+      });
+
+      res.statusCode.should.equal(200);
+      res.body.status.should.equal(0);
+      should.equal(d.sessionId, null);
     });
   });
 
+  it.skip('should throw NYI for commands not implemented', async () => {
+  });
+
   describe('command timeouts', () => {
-    it.skip('should throw NYI for commands not implemented', async () => {
-    });
+    function startSession (timeout) {
+      let caps = {newCommandTimeout: timeout};
+      return request({
+        url: 'http://localhost:8181/wd/hub/session',
+        method: 'POST',
+        json: {desiredCapabilities: caps, requiredCapabilities: {}},
+        simple: false
+      });
+    }
+
+    function endSession (id) {
+      return request({
+        url: `http://localhost:8181/wd/hub/session/${id}`,
+        method: 'DELETE',
+        json: true,
+        simple: false
+      });
+    }
+
+    d.findElement = function () {
+      return 'foo';
+    }.bind(d);
 
     it.skip('should timeout on commands using default commandTimeout', async () => {
     });
 
-    it.skip('should timeout on commands using commandTimeout cap', async () => {
+    it('should timeout on commands using commandTimeout cap', async () => {
+      let newSession = await startSession(0.25);
+      await request({
+        url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
+        method: 'POST',
+        json: {using: 'name', value: 'foo'},
+      });
+      await B.delay(400);
+      let res = await request({
+        url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
+        method: 'GET',
+        json: true,
+        simple: false
+      });
+      res.status.should.equal(6);
+      should.equal(d.sessionId, null);
+      res = await endSession(newSession.sessionId);
+      res.status.should.equal(6);
     });
 
     it.skip('should not timeout with commandTimeout of false', async () => {

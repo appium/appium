@@ -80,6 +80,78 @@ describe('BaseDriver', () => {
     url.should.eventually.be.rejectedWith('session');
   });
 
+  describe('command queue', () => {
+    let d = new BaseDriver();
+    let waitMs = 10;
+    d.getStatus = async () => {
+      await B.delay(waitMs);
+      return Date.now();
+    }.bind(d);
+
+    d.getSessions = async () => {
+      await B.delay(waitMs);
+      throw new Error("multipass");
+    }.bind(d);
+
+    it('should queue commands and execute/respond in the order received', async () => {
+      let numCmds = 10;
+      let cmds = [];
+      for (let i = 0; i < numCmds; i++) {
+        cmds.push(d.execute('getStatus'));
+      }
+      let results = await B.all(cmds);
+      for (let i = 1; i < numCmds; i++) {
+        if (results[i] <= results[i - 1]) {
+          throw new Error("Got result out of order");
+        }
+      }
+    });
+
+    it('should handle errors correctly when queuing', async () => {
+      let numCmds = 10;
+      let cmds = [];
+      for (let i = 0; i < numCmds; i++) {
+        if (i === 5) {
+          cmds.push(d.execute('getSessions'));
+        } else {
+          cmds.push(d.execute('getStatus'));
+        }
+      }
+      let results = await B.settle(cmds);
+      for (let i = 1; i < 5; i++) {
+        if (results[i].value() <= results[i - 1].value()) {
+          throw new Error("Got result out of order");
+        }
+      }
+      results[5].reason().message.should.contain("multipass");
+      for (let i = 7; i < numCmds; i++) {
+        if (results[i].value() <= results[i - 1].value()) {
+          throw new Error("Got result out of order");
+        }
+      }
+    });
+
+    it('should not care if queue empties for a bit', async () => {
+      let numCmds = 10;
+      let cmds = [];
+      for (let i = 0; i < numCmds; i++) {
+        cmds.push(d.execute('getStatus'));
+      }
+      let results = await B.all(cmds);
+      cmds = [];
+      for (let i = 0; i < numCmds; i++) {
+        cmds.push(d.execute('getStatus'));
+      }
+      results = await B.all(cmds);
+      for (let i = 1; i < numCmds; i++) {
+        if (results[i] <= results[i - 1]) {
+          throw new Error("Got result out of order");
+        }
+      }
+    });
+
+  });
+
 });
 
 describe('BaseDriver via HTTP', () => {
@@ -105,35 +177,6 @@ describe('BaseDriver via HTTP', () => {
       res.body.status.should.equal(0);
       should.exist(res.body.sessionId);
       res.body.value.should.eql({});
-    });
-  });
-
-  describe('command queue', () => {
-    function buildStatusRequest () {
-      return request({
-        url: 'http://localhost:8181/wd/hub/status',
-        method: 'GET',
-        json: true
-      });
-    }
-    it('should queue commands and execute/respond in the order received', async () => {
-      let numCmds = 10;
-      let waitMs = 10;
-      let cmds = [];
-      for (let i = 0; i < numCmds; i++) {
-        cmds.push(buildStatusRequest());
-      }
-      d.getStatus = async () => {
-        await B.delay(waitMs);
-        return Date.now();
-      }.bind(d);
-
-      let results = await B.all(cmds);
-      for (let i = 1; i < numCmds; i++) {
-        if (results[i].value <= results[i - 1].value) {
-          throw new Error("Got result out of order");
-        }
-      }
     });
   });
 

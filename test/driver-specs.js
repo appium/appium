@@ -41,13 +41,11 @@ describe('BaseDriver', () => {
 
   it('should get the current session', async () => {
     let [,caps] = await d.createSession({});
-
     caps.should.equal(await d.getSession());
   });
 
   it('should return sessions if no session exists', async () => {
     let sessions = await d.getSessions();
-
     sessions.length.should.equal(0);
   });
 
@@ -61,6 +59,13 @@ describe('BaseDriver', () => {
       capabilities: {a: 'cap'}
     });
   });
+
+  it.skip('should emit an unexpected end session event', async () => {
+  });
+
+  it.skip('should error in response to any command sent during shutdown', async () => {
+  });
+
 });
 
 describe('BaseDriver via HTTP', () => {
@@ -72,17 +77,44 @@ describe('BaseDriver via HTTP', () => {
     baseServer.close();
   });
 
-  it('should create session and retrieve a session id', async () => {
-    let res = await request({
-      url: 'http://localhost:8181/wd/hub/session',
-      method: 'POST',
-      json: {desiredCapabilities: {}, requiredCapabilities: {}},
-      simple: false,
-      resolveWithFullResponse: true
+  describe('session handling', () => {
+    it('should create session and retrieve a session id', async () => {
+      let res = await request({
+        url: 'http://localhost:8181/wd/hub/session',
+        method: 'POST',
+        json: {desiredCapabilities: {}, requiredCapabilities: {}},
+        simple: false,
+        resolveWithFullResponse: true
+      });
+      res.statusCode.should.equal(200);
+      res.body.status.should.equal(0);
+      should.exist(res.body.sessionId);
+      res.body.value.should.eql({});
     });
-    res.statusCode.should.equal(200);
-    res.body.status.should.equal(0);
-    should.exist(res.body.sessionId);
-    res.body.value.should.eql({});
   });
+
+  it.skip('should queue commands and execute/respond in the order received', async () => {
+  });
+
+  describe('command timeouts', () => {
+    it.skip('should throw NYI for commands not implemented', async () => {
+    });
+
+    it.skip('should timeout on commands using default commandTimeout', async () => {
+    });
+
+    it.skip('should timeout on commands using commandTimeout cap', async () => {
+    });
+
+    it.skip('should not timeout with commandTimeout of false', async () => {
+    });
+
+    it.skip('should not timeout with commandTimeout of 0', async () => {
+    });
+  });
+
+  describe('settings api', () => {
+    // TODO port over settings tests
+  });
+
 });

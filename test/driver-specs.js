@@ -12,27 +12,54 @@ const should = chai.should();
 chai.use(chaiAsPromised);
 
 describe('BaseDriver', () => {
+
+  let d;
+
+  beforeEach(() => {
+    d = new BaseDriver();
+  });
+
   it('should return a sessionId from createSession', async () => {
-    let d = new BaseDriver();
-    let sessId = await d.createSession({});
+    let [sessId] = await d.createSession({});
     should.exist(sessId);
     sessId.should.be.a('string');
     sessId.length.should.be.above(5);
   });
 
   it('should not be able to start two sessions without closing the first', async () => {
-    let d = new BaseDriver();
     await d.createSession({});
     await d.createSession({}).should.eventually.be.rejectedWith('session');
   });
 
   it('should be able to delete a session', async () => {
-    let d = new BaseDriver();
     let sessionId1 = await d.createSession({});
     await d.deleteSession();
     should.equal(d.sessionId, null);
     let sessionId2 = await d.createSession({});
     sessionId1.should.not.eql(sessionId2);
+  });
+
+  it('should get the current session', async () => {
+    let [,caps] = await d.createSession({});
+
+    caps.should.equal(await d.getSession());
+  });
+
+  it('should return sessions if no session exists', async () => {
+    let sessions = await d.getSessions();
+
+    sessions.length.should.equal(0);
+  });
+
+  it('should return sessions', async () => {
+    await d.createSession({a: 'cap'});
+    let sessions = await d.getSessions();
+
+    sessions.length.should.equal(1);
+    sessions[0].should.eql({
+      id: d.sessionId,
+      capabilities: {a: 'cap'}
+    });
   });
 });
 

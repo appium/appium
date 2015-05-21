@@ -67,12 +67,12 @@ describe('BaseDriver', () => {
   it('should error if commanded after shutdown', async () => {
     await d.createSession({});
 
-    d.deleteSession = async () => {
+    d.deleteSession = async function () {
       await B.delay(30);
       await this.deleteSession();
     }.bind(d);
 
-    let del = d.deleteSession();
+    let del = d.execute('deleteSession');
     let url = d.execute('getSession');
 
     B.join([del, url]);
@@ -108,7 +108,33 @@ describe('BaseDriver via HTTP', () => {
     });
   });
 
-  it.skip('should queue commands and execute/respond in the order received', async () => {
+  describe('command queue', () => {
+    function buildStatusRequest () {
+      return request({
+        url: 'http://localhost:8181/wd/hub/status',
+        method: 'GET',
+        json: true
+      });
+    }
+    it('should queue commands and execute/respond in the order received', async () => {
+      let numCmds = 10;
+      let waitMs = 10;
+      let cmds = [];
+      for (let i = 0; i < numCmds; i++) {
+        cmds.push(buildStatusRequest());
+      }
+      d.getStatus = async () => {
+        await B.delay(waitMs);
+        return Date.now();
+      }.bind(d);
+
+      let results = await B.all(cmds);
+      for (let i = 1; i < numCmds; i++) {
+        if (results[i].value <= results[i - 1].value) {
+          throw new Error("Got result out of order");
+        }
+      }
+    });
   });
 
   describe('command timeouts', () => {

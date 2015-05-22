@@ -64,22 +64,6 @@ describe('BaseDriver', () => {
   it.skip('should emit an unexpected end session event', async () => {
   });
 
-  it('should error if commanded after shutdown', async () => {
-    await d.createSession({});
-
-    d.deleteSession = async function () {
-      await B.delay(30);
-      await this.deleteSession();
-    }.bind(d);
-
-    let del = d.execute('deleteSession');
-    let url = d.execute('getSession');
-
-    B.join([del, url]);
-
-    url.should.eventually.be.rejectedWith('session');
-  });
-
   describe('command queue', () => {
     let d = new BaseDriver();
     let waitMs = 10;

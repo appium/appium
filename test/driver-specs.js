@@ -219,6 +219,11 @@ describe('BaseDriver via HTTP', () => {
       return 'foo';
     }.bind(d);
 
+    d.findElements = async function () {
+      await B.delay(200);
+      return ['foo'];
+    }.bind(d);
+
     it.skip('should timeout on commands using default commandTimeout', async () => {
     });
 
@@ -242,11 +247,42 @@ describe('BaseDriver via HTTP', () => {
       res.status.should.equal(6);
     });
 
-    it.skip('should not timeout with commandTimeout of false', async () => {
+    it('should not timeout with commandTimeout of false', async () => {
+      let newSession = await startSession(0.1);
+      let start = Date.now();
+      let res = await request({
+        url: `http://localhost:8181/wd/hub/session/${d.sessionId}/elements`,
+        method: 'POST',
+        json: {using: 'name', value: 'foo'},
+      });
+      (Date.now() - start).should.be.above(150);
+      res.value.should.eql(['foo']);
+      await endSession(newSession.sessionId);
     });
 
     it.skip('should not timeout with commandTimeout of 0', async () => {
     });
+
+    it('should not timeout if its just the command taking awhile', async () => {
+      let newSession = await startSession(0.25);
+      await request({
+        url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
+        method: 'POST',
+        json: {using: 'name', value: 'foo'},
+      });
+      await B.delay(400);
+      let res = await request({
+        url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
+        method: 'GET',
+        json: true,
+        simple: false
+      });
+      res.status.should.equal(6);
+      should.equal(d.sessionId, null);
+      res = await endSession(newSession.sessionId);
+      res.status.should.equal(6);
+    });
+
   });
 
   describe('settings api', () => {

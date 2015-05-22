@@ -1,2 +1,0 @@
-This is used to test github webhooks.
-0

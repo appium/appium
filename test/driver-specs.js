@@ -267,6 +267,15 @@ describe('BaseDriver via HTTP', () => {
       res.status.should.equal(6);
     });
 
+    it('should not have a timer running before or after a session', async () => {
+      should.not.exist(d.noCommandTimer);
+      let newSession = await startSession(0.25);
+      newSession.sessionId.should.equal(d.sessionId);
+      should.exist(d.noCommandTimer);
+      await endSession(newSession.sessionId);
+      should.not.exist(d.noCommandTimer);
+    });
+
   });
 
   describe('settings api', () => {

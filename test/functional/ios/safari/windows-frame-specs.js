@@ -50,9 +50,12 @@ describe('safari - windows and frames (' + env.DEVICE + ') @skip-ios6"', functio
         .elementById('only_on_page_2')
         .nodeify(done);
     });
-    it("should be able to open js popup windows with safariAllowPopups set to true", function (done) {
+
+    // broken on real devices, see https://github.com/appium/appium/issues/5167
+    it("should be able to open js popup windows with safariAllowPopups set to true @skip-real-device", function (done) {
       driver
-        .execute("window.open('/test/guinea-pig2.html', null);")
+        .elementByLinkText('i am a new window link')
+        .click()
         .then(function () { return spinTitle("I am another page title", driver, 30); })
       .nodeify(done);
     });

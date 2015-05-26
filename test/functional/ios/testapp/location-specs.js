@@ -75,7 +75,7 @@ describe('testapp - location - 3 @skip-ci', function () {
 });
 
 // TODO: location tests are not working well on sauce
-describe('testapp - location - 4 @skip-ci', function () {
+describe('testapp - location - 4 @skip-ci @skip-real-device', function () {
   var driver;
   var newDesired = _.clone(desired);
   _.extend(newDesired, {

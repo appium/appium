@@ -4,7 +4,7 @@ var setup = require("../common/setup-base")
   , _ = require("underscore")
   , getAppPath = require('../../helpers/app').getAppPath;
 
-describe('crash recovery', function () {
+describe('crash recovery @skip-real-device', function () {
   var driver;
   var desired = {
     app: getAppPath('TestApp')
@@ -25,7 +25,7 @@ describe('crash recovery', function () {
   });
 });
 
-describe('crash commands', function () {
+describe('crash commands @skip-real-device', function () {
 
   var driver;
   var desired = {

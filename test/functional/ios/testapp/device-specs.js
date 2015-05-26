@@ -49,7 +49,7 @@ describe('testapp - device', function () {
     });
   });
 
-  describe('invalid deviceName @skip-ios6', function () {
+  describe('invalid deviceName @skip-ios6 @skip-real-device', function () {
     var newDesired = _.extend(_.clone(desired), {deviceName: "iFailure 3.5-inch"});
     var session = initSession(newDesired, {'no-retry': true});
 
@@ -60,23 +60,32 @@ describe('testapp - device', function () {
     });
   });
 
-  _.each(['iPhone', 'iPad'], function (device) {
-    describe('generic ' + device + ' deviceName @skip-ios6', function () {
-      var newDesired = _.extend(_.clone(desired), {
-        deviceName: device + " Simulator"
-      });
-      var session = initSession(newDesired, {'no-retry': true});
+  describe('generic deviceName @skip-ios6', function () {
+    var session;
 
-      after(function (done) {
-        session.tearDown(this.currentTest.state === 'passed').nodeify(done);
-      });
-
-      it('should work with a generic ' + device + ' deviceName', function (done) {
-        session.setUp()
-          .nodeify(done);
-      });
+    afterEach(function (done) {
+      session.tearDown(this.currentTest.state === 'passed').nodeify(done);
     });
 
+    it('should work with a generic iPhone deviceName', function (done) {
+      var newDesired = _.extend(_.clone(desired), {
+        deviceName: "iPhone Simulator"
+      });
+
+      session = initSession(newDesired, {'no-retry': true});
+      session.setUp()
+        .nodeify(done);
+    });
+
+    it('should work with a generic iPad deviceName', function (done) {
+      var newDesired = _.extend(_.clone(desired), {
+        deviceName: "iPad Simulator"
+      });
+
+      session = initSession(newDesired, {'no-retry': true});
+      session.setUp()
+        .nodeify(done);
+    });
   });
 
   describe("real device", function () {

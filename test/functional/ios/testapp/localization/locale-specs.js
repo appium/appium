@@ -29,7 +29,7 @@ describe('localization - locale', function () {
     });
   });
 
-  describe('changing locale', function () {
+  describe('changing locale @skip-real-device', function () {
     var driver;
     setup(this, _.defaults({locale: 'fr'}, desired)).then(function (d) { driver = d; });
 
@@ -40,7 +40,7 @@ describe('localization - locale', function () {
     });
   });
 
-  describe('changing back', function () {
+  describe('changing back @skip-real-device', function () {
     var driver;
     setup(this, _.defaults({locale: 'en_US'}, desired)).then(function (d) { driver = d; });
 

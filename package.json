@@ -53,7 +53,7 @@
     "binary-cookies": "~0.1.1",
     "body-parser": "~1.12.0",
     "bplist-creator": "~0.0.5",
-    "bplist-parser": "~0.0.6",
+    "bplist-parser": "^0.1.0",
     "bufferpack": "0.0.6",
     "bytes": "~1.0.0",
     "camel-back-promise": "^1.0.0",

@@ -81,11 +81,15 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         return ['foo'];
       }.bind(d);
 
-      it.skip('should timeout on commands using default commandTimeout', async () => {
+      it('should set a default commandTimeout', async () => {
+        let newSession = await startSession();
+        d.newCommandTimeoutMs.should.be.above(0);
+        await endSession(newSession.sessionId);
       });
 
       it('should timeout on commands using commandTimeout cap', async () => {
         let newSession = await startSession(0.25);
+
         await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
           method: 'POST',
@@ -117,7 +121,27 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         await endSession(newSession.sessionId);
       });
 
-      it.skip('should not timeout with commandTimeout of 0', async () => {
+      it('should not timeout with commandTimeout of 0', async () => {
+        d.newCommandTimeoutMs = 2;
+        let newSession = await startSession(0);
+
+        await request({
+          url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
+          method: 'POST',
+          json: {using: 'name', value: 'foo'},
+        });
+        await B.delay(400);
+        let res = await request({
+          url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
+          method: 'GET',
+          json: true,
+          simple: false
+        });
+        res.status.should.equal(0);
+        res = await endSession(newSession.sessionId);
+        res.status.should.equal(0);
+
+        d.newCommandTimeoutMs = 60 * 1000;
       });
 
       it('should not timeout if its just the command taking awhile', async () => {

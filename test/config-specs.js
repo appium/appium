@@ -105,14 +105,14 @@ describe('Config', () => {
 
   describe('server arguments', () => {
     let parser = getParser();
+    let args = {};
+    beforeEach(() => {
+      // give all the defaults
+      for (let rawArg of parser.rawArgs) {
+        args[rawArg[1].dest] = rawArg[1].defaultValue;
+      }
+    });
     describe('getNonDefaultArgs', () => {
-      let args = {};
-      beforeEach(() => {
-        // give all the defaults
-        for (let rawArg of parser.rawArgs) {
-          args[rawArg[1].dest] = rawArg[1].defaultValue;
-        }
-      });
       it('should show none if we have all the defaults', () => {
         let nonDefaultArgs = getNonDefaultArgs(parser, args);
         _.keys(nonDefaultArgs).length.should.equal(0);
@@ -126,7 +126,6 @@ describe('Config', () => {
     });
 
     describe('getDeprecatedArgs', () => {
-      let args = {};
       it('should show none if we have no deprecated arguments', () => {
         let deprecatedArgs = getDeprecatedArgs(parser, args);
         _.keys(deprecatedArgs).length.should.equal(0);
@@ -136,6 +135,12 @@ describe('Config', () => {
         let deprecatedArgs = getDeprecatedArgs(parser, args);
         _.keys(deprecatedArgs).length.should.equal(1);
         should.exist(deprecatedArgs['--show-sim-log']);
+      });
+      it('should catch a non-boolean deprecated argument', () => {
+        args.calendarFormat = 'orwellian';
+        let deprecatedArgs = getDeprecatedArgs(parser, args);
+        _.keys(deprecatedArgs).length.should.equal(1);
+        should.exist(deprecatedArgs['--calendar-format']);
       });
     });
   });

@@ -36,7 +36,8 @@ describe('safari - webview - special capabilities @skip-ios6', function () {
     });
   });
 
-  describe('performance logs', function () {
+  // skipped on real devices, see https://github.com/appium/appium/issues/5166
+  describe('performance logs @skip-real-device', function () {
     var driver;
     var specialCaps = _.clone(desired);
     specialCaps.loggingPrefs = {performance: 'ALL'};

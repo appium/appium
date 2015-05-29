@@ -1,4 +1,3 @@
-import { BaseDriver } from '../lib/driver';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
@@ -9,13 +8,13 @@ chai.use(chaiAsPromised);
 
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
-function baseDriverUnitTests () {
+function baseDriverUnitTests (DriverClass) {
   describe('BaseDriver', () => {
 
     let d;
 
     beforeEach(() => {
-      d = new BaseDriver();
+      d = new DriverClass();
     });
 
     it('should return a sessionId from createSession', async () => {
@@ -63,7 +62,7 @@ function baseDriverUnitTests () {
     });
 
     describe('command queue', () => {
-      let d = new BaseDriver();
+      let d = new DriverClass();
       let waitMs = 10;
       d.getStatus = async () => {
         await B.delay(waitMs);

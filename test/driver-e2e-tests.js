@@ -1,4 +1,3 @@
-import { BaseDriver } from '../lib/driver';
 import { server } from 'appium-express';
 import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
 import request from 'request-promise';
@@ -10,9 +9,9 @@ import B from 'bluebird';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-function baseDriverE2ETests () {
+function baseDriverE2ETests (DriverClass) {
   describe('BaseDriver (e2e)', () => {
-    let baseServer, d = new BaseDriver();
+    let baseServer, d = new DriverClass();
     before(async () => {
       baseServer = await server(routeConfiguringFunction(d), 8181);
     });

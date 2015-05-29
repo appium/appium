@@ -11,6 +11,6 @@ git pull origin master
 popd
 
 # This sets up node etc...
-pushd submodules/appium-ci/jenkins-tools
+pushd submodules/appium-ci/jenkins-gulper
 source ./setup
 { set -x; } 2>/dev/null

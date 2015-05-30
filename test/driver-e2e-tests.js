@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { server } from 'appium-express';
 import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
 import request from 'request-promise';
@@ -9,7 +10,7 @@ import B from 'bluebird';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-function baseDriverE2ETests (DriverClass) {
+function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
   describe('BaseDriver (e2e)', () => {
     let baseServer, d = new DriverClass();
     before(async () => {
@@ -24,7 +25,7 @@ function baseDriverE2ETests (DriverClass) {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
-          json: {desiredCapabilities: {}, requiredCapabilities: {}},
+          json: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
           simple: false,
           resolveWithFullResponse: true
         });
@@ -53,7 +54,8 @@ function baseDriverE2ETests (DriverClass) {
 
     describe('command timeouts', () => {
       function startSession (timeout) {
-        let caps = {newCommandTimeout: timeout};
+        let caps = _.clone(defaultCaps);
+        caps.newCommandTimeout = timeout;
         return request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',

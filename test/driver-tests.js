@@ -8,7 +8,7 @@ chai.use(chaiAsPromised);
 
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
-function baseDriverUnitTests (DriverClass) {
+function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
   describe('BaseDriver', () => {
 
     let d;
@@ -18,27 +18,27 @@ function baseDriverUnitTests (DriverClass) {
     });
 
     it('should return a sessionId from createSession', async () => {
-      let [sessId] = await d.createSession({});
+      let [sessId] = await d.createSession(defaultCaps);
       should.exist(sessId);
       sessId.should.be.a('string');
       sessId.length.should.be.above(5);
     });
 
     it('should not be able to start two sessions without closing the first', async () => {
-      await d.createSession({});
-      await d.createSession({}).should.eventually.be.rejectedWith('session');
+      await d.createSession(defaultCaps);
+      await d.createSession(defaultCaps).should.eventually.be.rejectedWith('session');
     });
 
     it('should be able to delete a session', async () => {
-      let sessionId1 = await d.createSession({});
+      let sessionId1 = await d.createSession(defaultCaps);
       await d.deleteSession();
       should.equal(d.sessionId, null);
-      let sessionId2 = await d.createSession({});
+      let sessionId2 = await d.createSession(defaultCaps);
       sessionId1.should.not.eql(sessionId2);
     });
 
     it('should get the current session', async () => {
-      let [,caps] = await d.createSession({});
+      let [,caps] = await d.createSession(defaultCaps);
       caps.should.equal(await d.getSession());
     });
 

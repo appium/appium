@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
@@ -48,13 +49,15 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
 
     it('should return sessions', async () => {
-      await d.createSession({a: 'cap'});
+      let caps = _.clone(defaultCaps);
+      caps.a = 'cap';
+      await d.createSession(caps);
       let sessions = await d.getSessions();
 
       sessions.length.should.equal(1);
       sessions[0].should.eql({
         id: d.sessionId,
-        capabilities: {a: 'cap'}
+        capabilities: caps
       });
     });
 

@@ -33,7 +33,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         res.statusCode.should.equal(200);
         res.body.status.should.equal(0);
         should.exist(res.body.sessionId);
-        res.body.value.should.eql({});
+        res.body.value.should.eql(defaultCaps);
 
         res = await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
@@ -60,7 +60,6 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
           json: {desiredCapabilities: caps, requiredCapabilities: {}},
-          simple: false
         });
       }
 

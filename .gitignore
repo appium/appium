@@ -29,3 +29,13 @@ build/
 .idea
 *DerivedData
 __pycache__
+*.swp
+*.swm
+*.swo
+*.swn
+.sw*
+*.out
+.idea/*
+Thumbs.db
+coverage/
+.project

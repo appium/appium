@@ -34,6 +34,11 @@ describe("apidemos - attributes", function () {
       .back()
       .nodeify(done);
   });
+  it('should be able to find content description attribute', function (done) {
+    driver.elementByName('Animation').getAttribute('contentDescription')
+        .should.become("Animation")
+      .nodeify(done);
+  });
   it('should be able to find displayed attribute', function (done) {
     driver
       .elementByName('Animation').getAttribute('displayed')

@@ -136,7 +136,7 @@ describe('Config', () => {
         _.keys(deprecatedArgs).length.should.equal(1);
         should.exist(deprecatedArgs['--show-sim-log']);
       });
-      it('should catch a non-boolean deprecated argument', () => {
+      it.skip('should catch a non-boolean deprecated argument', () => {
         args.calendarFormat = 'orwellian';
         let deprecatedArgs = getDeprecatedArgs(parser, args);
         _.keys(deprecatedArgs).length.should.equal(1);

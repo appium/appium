@@ -41,7 +41,7 @@ public class AndroidElement {
   public boolean click() throws UiObjectNotFoundException {
     return el.click();
   }
-  
+
   public boolean exists() {
     return el.exists();
   }
@@ -65,13 +65,13 @@ public class AndroidElement {
       return false;
     }
   }
-  
+
   public Point getAbsolutePosition(final Point point)
       throws UiObjectNotFoundException, InvalidCoordinatesException {
     final Rect rect = this.getBounds();
-    
+
     Logger.debug("Element bounds: " + rect.toShortString());
-    
+
     return PositionHelper.getAbsolutePosition(point, rect, new Point(rect.left, rect.top), false);
   }
 
@@ -171,6 +171,8 @@ public class AndroidElement {
       if (res.equals("")) {
         res = getText();
       }
+    } else if (attr.equals("contentDescription")) {
+      res = getContentDesc();
     } else if (attr.equals("text")) {
       res = getText();
     } else if (attr.equals("className")) {

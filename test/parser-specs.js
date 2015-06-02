@@ -5,7 +5,7 @@ import getParser from '../lib/parser';
 import chai from 'chai';
 
 const should = chai.should();
-const oldArgv = _.clone(process.env);
+const oldArgv = _.clone(process.argv);
 
 describe('Parser', () => {
   before(() => {

@@ -39,7 +39,7 @@ large-scale future plans for Appium.
 |Windows Phone Support|There has been some work done on automating Windows Phone apps. We could take this all the way to integration with Appium in the form of a WindowsDriver.|
 |FirefoxOS Support|Our initial support for FirefoxOS has not been updated. It should be re-added as a FirefoxOSDriver in the new architecture|
 
-## Completed Roamdap Projects
+## Completed Roadmap Projects
 
 | Project | Description | Completed | Appium Release | Notes |
 |---------|-------------|-----------|----------------|-------|

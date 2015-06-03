@@ -1,32 +1,36 @@
 // transpile:mocha
 
-import _ from 'lodash';
 import getParser from '../lib/parser';
 import chai from 'chai';
 
 const should = chai.should();
-const oldArgv = _.clone(process.argv);
 
 describe('Parser', () => {
-  before(() => {
-    process.argv = [];
-  });
-  after(() => {
-    process.argv = oldArgv;
-  });
+  let p = getParser();
   it('should return an arg parser', () => {
-    let p = getParser();
     should.exist(p.parseArgs);
-    p.parseArgs().should.have.property('port');
+    p.parseArgs([]).should.have.property('port');
   });
   it('should keep the raw server flags array', () => {
-    let p = getParser();
     should.exist(p.rawArgs);
   });
   it('should have help for every arg', () => {
-    let p = getParser();
     for (let arg of p.rawArgs) {
       arg[1].should.have.property('help');
     }
+  });
+  it('should throw an error with unknown argument', () => {
+    (() => {p.parseArgs(['--apple']);}).should.throw;
+  });
+  it('should parse default capabilities correctly', () => {
+    let defaultCapabilities = {a: 'b'};
+    let args = p.parseArgs(['--default-capabilities',
+                            JSON.stringify(defaultCapabilities)]);
+    args.defaultCapabilities.should.eql(defaultCapabilities);
+  });
+  it('should parse args that are caps into default capabilities', () => {
+    let defaultCapabilities = {localizableStringsDir: '/my/dir'};
+    let args = p.parseArgs(['--localizable-strings-dir', '/my/dir']);
+    args.defaultCapabilities.should.eql(defaultCapabilities);
   });
 });

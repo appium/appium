@@ -131,12 +131,12 @@ describe('Config', () => {
         _.keys(deprecatedArgs).length.should.equal(0);
       });
       it('should catch a deprecated argument', () => {
-        args.showSimulatorLog = true;
+        args.showIOSLog = true;
         let deprecatedArgs = getDeprecatedArgs(parser, args);
         _.keys(deprecatedArgs).length.should.equal(1);
-        should.exist(deprecatedArgs['--show-sim-log']);
+        should.exist(deprecatedArgs['--show-ios-log']);
       });
-      it.skip('should catch a non-boolean deprecated argument', () => {
+      it('should catch a non-boolean deprecated argument', () => {
         args.calendarFormat = 'orwellian';
         let deprecatedArgs = getDeprecatedArgs(parser, args);
         _.keys(deprecatedArgs).length.should.equal(1);

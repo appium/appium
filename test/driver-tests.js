@@ -133,9 +133,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           }
         }
       });
-
     });
-
   });
 }
 

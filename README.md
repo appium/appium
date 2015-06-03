@@ -12,8 +12,6 @@
 
 Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
 
-**Note:** we have just recently released Appium 1.0. If you already have a bunch of Appium tests, you might want to check out the [Migrating to 1.0](/docs/en/advanced-concepts/migrating-to-1-0.md) doc!
-
 ### Supported Platforms
 
 * iOS
@@ -132,6 +130,10 @@ Gecko-based platforms.
 
 Please take a look at our [contribution documentation](CONTRIBUTING.md)
 for instructions on how to build, test and run Appium from source.
+
+### Roadmap
+
+Interested in where Appium is heading in the future? Check out the [Roadmap](ROADMAP.md)
 
 ### Project Credits & Inspiration
 

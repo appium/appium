@@ -1,5 +1,6 @@
 // transpile:mocha
 
+import _ from 'lodash';
 import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -31,7 +32,7 @@ describe('FakeDriver - via HTTP', () => {
     }
   });
 
-  describe('commands', () => {
+  describe('session handling', () => {
     it('should start and stop a session', async () => {
       let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
       let [sessionId] = await driver.init(caps);
@@ -39,6 +40,32 @@ describe('FakeDriver - via HTTP', () => {
       sessionId.should.be.a('string');
       await driver.quit();
       await driver.title().should.eventually.be.rejectedWith(/terminated/);
+    });
+
+    it('should be able to run two FakeDriver sessions simultaneously', async () => {
+      let driver1 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let [sessionId1] = await driver1.init(caps);
+      should.exist(sessionId1);
+      sessionId1.should.be.a('string');
+      let driver2 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let [sessionId2] = await driver2.init(caps);
+      should.exist(sessionId2);
+      sessionId2.should.be.a('string');
+      sessionId1.should.not.equal(sessionId2);
+      await driver1.quit();
+      await driver2.quit();
+    });
+
+    it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async () => {
+      let uniqueCaps = _.clone(caps);
+      uniqueCaps.uniqueApp = true;
+      let driver1 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let [sessionId1] = await driver1.init(uniqueCaps);
+      should.exist(sessionId1);
+      sessionId1.should.be.a('string');
+      let driver2 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      await driver2.init(caps).should.eventually.be.rejected;
+      await driver1.quit();
     });
   });
 });

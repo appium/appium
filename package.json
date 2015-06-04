@@ -47,10 +47,10 @@
     "date-utils": "^1.2.17",
     "lodash": "^3.9.1",
     "mkdirp": "^0.5.1",
-    "mobile-json-wire-protocol": "^0.9.0",
     "npmlog": "^1.2.1",
     "source-map-support": "^0.3.1",
     "teen_process": "^1.1.0",
+    "mobile-json-wire-protocol": "^0.10.1",
     "winston": "^1.0.0"
   },
   "scripts": {

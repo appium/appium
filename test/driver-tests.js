@@ -66,6 +66,13 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
     describe('command queue', () => {
       let d = new DriverClass();
+
+      // disabling timeout for those test because it couses the node process
+      // to hang at exit, (because the timeout is still alive).
+      // TODO: there is some bit of logic to be implemented so that commands
+      // like 'getStatus' do not trigger the command timeout.
+      d.newCommandTimeoutMs = null;
+
       let waitMs = 10;
       d.getStatus = async () => {
         await B.delay(waitMs);

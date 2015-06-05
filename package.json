@@ -6,7 +6,7 @@
   ],
   "version": "0.1.13",
   "author": "appium",
-  "license": "Apache License 2.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium-base-driver.git"

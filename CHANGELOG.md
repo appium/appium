@@ -5,6 +5,27 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.2 (from 1.4.1)
+===================================
+
+#### General
+- update ES6-based dependencies which got bit by a breaking Regenerator
+  change
+
+#### iOS
+- keep track of the correct app ID for Safari webviews (fixes problems in
+  finding the webview for iOS)
+
+#### Android
+- fix sendKeys and clear for Samsung devices
+
+
+CHANGES IN VERSION 1.4.1 (from 1.4)
+===================================
+
+#### Chromedriver
+- have the appium-chromedriver manage the chromedriver binary download/install
+
 
 CHANGES IN VERSION 1.4 (from 1.3.7)
 ======================================

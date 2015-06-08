@@ -41,7 +41,7 @@ set -e
 echo "Getting latest from upstream:$branch"
 git pull upstream $branch
 echo "Resetting"
-./reset.sh --hardcore --chromedriver-install-all --chromedriver-version 2.15
+./reset.sh --hardcore --chromedriver-install-all --chromedriver-version 2.16
 version=$(cat package.json | $(npm bin)/underscore extract version | sed 's/\"//g')
 echo "Clearing npm cache"
 npm cache clear appium

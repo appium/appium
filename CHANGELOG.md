@@ -5,6 +5,13 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.3 (from 1.4.2)
+===================================
+
+#### iOS
+- update the appium-instruments dependency with working subdeps
+
+
 CHANGES IN VERSION 1.4.2 (from 1.4.1)
 ===================================
 

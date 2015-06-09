@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.4.2",
+  "version": "1.4.3",
   "author": "https://github.com/appium",
   "licenses": [
     {
@@ -44,7 +44,7 @@
     "appium-adb": "=1.7.5",
     "appium-atoms": "=0.0.5",
     "appium-chromedriver": "^2.0.0",
-    "appium-instruments": "=2.0.2",
+    "appium-instruments": "^2.0.4",
     "appium-support": "=1.0.5",
     "appium-uiauto": "=1.10.8",
     "appium-xcode": "^2.0.5",

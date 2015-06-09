@@ -2,7 +2,7 @@
 set +e
 
 if [[ "$1" = "" ]]; then
-    branch="master"
+    branch="1.4.0-stable"
 else
     branch="$1"
 fi
@@ -15,13 +15,6 @@ else
     echo "Node version OK"
 fi
 
-git remote | grep "upstream" >/dev/null
-if [ $? -gt 0 ]; then
-    echo "You need to have an 'upstream' remote to pull from / push tags to"
-    exit 1
-else
-    echo "Git remote OK"
-fi
 git status | grep -E "nothing to commit.+working directory clean" >/dev/null
 if [ $? -gt 0 ]; then
     echo "Working directory isn't clean, commit/clean then publish"
@@ -29,19 +22,9 @@ if [ $? -gt 0 ]; then
 else
     echo "Working directory clean"
 fi
-git status | grep "Your branch is ahead" >/dev/null
-if [ $? -eq 0 ]; then
-    echo "Your branch isn't in sync with origin"
-    exit 1
-else
-    echo "In sync with origin"
-fi
 
 set -e
-echo "Getting latest from upstream:$branch"
-git pull upstream $branch
-echo "Resetting"
-./reset.sh --hardcore --chromedriver-install-all --chromedriver-version 2.15
+#./reset.sh --hardcore --chromedriver-install-all --chromedriver-version 2.15
 version=$(cat package.json | $(npm bin)/underscore extract version | sed 's/\"//g')
 echo "Clearing npm cache"
 npm cache clear appium

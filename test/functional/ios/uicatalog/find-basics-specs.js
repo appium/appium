@@ -26,8 +26,8 @@ describe('uicatalog - find - basics @skip-ios6', function () {
   });
 
   it('should find a single element using elementByAccessibilityId', function (done) {
-    var axId = env.IOS8 ? 'AAPLImageViewController' :
-                          'Image View, AAPLImageViewController';
+    var axId = (env.IOS8 || env.IOS9) ? 'AAPLImageViewController' :
+                                        'Image View, AAPLImageViewController';
     driver
       .elementByAccessibilityId(axId)
       .then(function (el) {
@@ -56,7 +56,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
   });
 
   it('should find some elements within itself', function (done) {
-    var elLength = env.IOS8 ? 2 : 1;
+    var elLength = (env.IOS8 || env.IOS9) ? 2 : 1;
     driver
       .elementByXPath("//UIATableCell[contains(@name, 'Buttons')]")
       .then(function (el) {
@@ -78,7 +78,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('no mix up', function () {
     after(function (done) {
-      if (!env.IOS81 && !env.IOS82 && !env.IOS83 && !env.IOS84) {
+      if (!env.IOS81 && !env.IOS82 && !env.IOS83 && !env.IOS84 && !env.IOS9) {
         driver
           .clickButton('UICatalog')
           .nodeify(done);
@@ -129,7 +129,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
 
   describe('findElementsByClassName textfield case', function () {
     after(function (done) {
-      if (!env.IOS81 && !env.IOS82 && !env.IOS83 && !env.IOS84) {
+      if (!env.IOS81 && !env.IOS82 && !env.IOS83 && !env.IOS84 && !env.IOS9) {
         driver
           .clickButton('UICatalog')
           .nodeify(done);
@@ -137,7 +137,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
         done();
       }
     });
-    var axIdExt = env.IOS8 ? '' : ', AAPLActionSheetViewController';
+    var axIdExt = (env.IOS8 || env.IOS9) ? '' : ', AAPLActionSheetViewController';
     it('should find only one textfield', function (done) {
       driver
         .elementByAccessibilityId("Action Sheets" + axIdExt).click()
@@ -156,7 +156,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
         .nodeify(done);
     });
 
-    var axIdExt = env.IOS8 ? '' : ', AAPLActionSheetViewController';
+    var axIdExt = (env.IOS8 || env.IOS9) ? '' : ', AAPLActionSheetViewController';
     it('should find one element', function (done) {
       driver
         .elementByAccessibilityId("Action Sheets" + axIdExt).click()
@@ -182,7 +182,7 @@ describe('uicatalog - find - basics @skip-ios6', function () {
         .nodeify(done);
     });
 
-    var axIdExt = env.IOS8 ? '' : ', AAPLTextFieldViewController';
+    var axIdExt = (env.IOS8 || env.IOS9) ? '' : ', AAPLTextFieldViewController';
     it('should find only one element per text field', function (done) {
       driver
         .execute("mobile: scroll", {direction: 'down'})

@@ -17,7 +17,7 @@ describe("prefs @skip-ios6", function () {
     setup(this, desired).then(function (d) { driver = d; });
 
     it('should turn off autocomplete', function (done) {
-      var ios7up = env.IOS7 || env.IOS8;
+      var ios7up = env.IOS7 || env.IOS8 || env.IOS9;
       var switchEl;
       driver
         .elementsByClassName("UIATableCell").at(ios7up ? 0 : 1).click()

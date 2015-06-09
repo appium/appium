@@ -101,7 +101,7 @@ describe('testapp - location - 5 @skip-ci', function () {
     bundleId: 'io.appium.TestApp',
     app: 'assets/TestApp7.1.app.zip'
   });
-  if (env.IOS8) {
+  if (env.IOS8 || env.IOS9) {
     newDesired.app = 'assets/TestApp8.app.zip';
   }
 

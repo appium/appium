@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "appium-logger": "^1.1.0",
-    "babel-core": "5.5.5",
     "babel-runtime": "5.5.5",
     "bluebird": "^2.9.25",
     "lodash": "^3.9.1",
@@ -41,7 +40,7 @@
     "watch": "./node_modules/.bin/gulp"
   },
   "devDependencies": {
-    "appium-express": "^0.0.1",
+    "appium-express": "^0.0.3",
     "appium-gulp-plugins": "^1.1.1",
     "chai": "^2.3.0",
     "chai-as-promised": "^5.0.0",

@@ -5,6 +5,15 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.4 (from 1.4.3)
+===================================
+
+#### Chromedriver / Android hybrid
+- fix a problem in downstream appium-chromedriver; no longer rely on async
+  methods returning objects of the Promise type. This was causing undefined
+  errors when running Chromedriver/hybrid tests.
+
+
 CHANGES IN VERSION 1.4.3 (from 1.4.2)
 ===================================
 

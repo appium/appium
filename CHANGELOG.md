@@ -5,6 +5,14 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.6 (from 1.4.5)
+===================================
+
+#### General
+- this is a republish because of a misconfiguration before 1.4.5 got published
+  resulting in a server startup failure
+
+
 CHANGES IN VERSION 1.4.5 (from 1.4.4)
 ===================================
 

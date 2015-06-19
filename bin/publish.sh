@@ -41,8 +41,10 @@ set -e
 echo "Getting latest from upstream:$branch"
 git pull upstream $branch
 echo "Resetting"
-./reset.sh --hardcore --chromedriver-install-all --chromedriver-version 2.15
-version=$(cat package.json | $(npm bin)/underscore extract version | sed 's/\"//g')
+./reset.sh --no-npmlink --hardcore --chromedriver-install-all --chromedriver-version 2.15
+rm -rf node_modules npm-shrinkwrap.json
+npm install --production && npm shrinkwrap
+version=$(cat package.json | node -e "console.log(require('./package.json').version)" | sed 's/\"//g')
 echo "Clearing npm cache"
 npm cache clear appium
 echo "Publishing on npm"

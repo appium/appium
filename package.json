@@ -39,7 +39,7 @@
     "watch": "./node_modules/.bin/gulp"
   },
   "devDependencies": {
-    "appium-express": "^0.0.3",
+    "appium-express": "^0.0.4",
     "appium-gulp-plugins": "^1.1.1",
     "chai": "^2.3.0",
     "chai-as-promised": "^5.0.0",

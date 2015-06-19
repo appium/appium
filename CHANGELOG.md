@@ -5,6 +5,13 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.5 (from 1.4.4)
+===================================
+
+#### General
+- fix problem with npm shrinkwrap that caused Appium not to start
+
+
 CHANGES IN VERSION 1.4.4 (from 1.4.3)
 ===================================
 

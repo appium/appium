@@ -31,7 +31,6 @@
     "request-promise": "^0.4.2",
     "source-map-support": "^0.2.10",
     "uuid-js": "^0.7.5",
-    "sinon": "^1.14.1",
     "validate.js": "^0.7.1"
   },
   "scripts": {
@@ -46,6 +45,7 @@
     "chai-as-promised": "^5.0.0",
     "gulp": "^3.8.11",
     "mochawait": "^2.0.0",
+    "sinon": "^1.14.1",
     "yargs": "^3.9.0"
   }
 }

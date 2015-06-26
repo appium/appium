@@ -1,6 +1,10 @@
 #!/bin/bash
 # Prevents force-pushing to master
 
+if $ALLOW_FORCE_PUSH; then
+    exit 0
+fi
+
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 PUSH_COMMAND=`ps -ocommand= -p $PPID`
 PROTECTED_BRANCHES="^(master)"

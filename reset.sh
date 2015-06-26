@@ -29,6 +29,7 @@ verbose=false
 chromedriver_version=false
 chromedriver_install_all=false
 npmlink=true
+shrinkwrap_opt=""
 if test -d .git ; then
     is_git_checkout=true
 else
@@ -56,6 +57,7 @@ do
         "--chromedriver-install-all") chromedriver_install_all=true;;
         "--udid") udid=$2;;
         "--no-npmlink") npmlink=false;;
+        "--no-shrinkwrap") shrinkwrap_opt="--no-shrinkwrap";;
     esac
 
     if [[ -n "$2" ]] && [[ "$2" != --* ]]; then
@@ -121,10 +123,10 @@ reset_npm() {
     fi
     if $prod_deps ; then
         echo "* Installing new or updated NPM modules"
-        run_cmd npm install --production .
+        run_cmd npm install --production $shrinkwrap_opt .
     else
         echo "* Installing new or updated NPM modules (including devDeps)"
-        run_cmd npm install .
+        run_cmd npm install $shrinkwrap_opt .
     fi
 }
 

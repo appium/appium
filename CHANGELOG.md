@@ -5,6 +5,14 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+
+CHANGES IN VERSION 1.4.7 (from 1.4.6)
+===================================
+
+#### Chromedriver / Android hybrid
+- fix for problem in downstream jsonwp-proxy; now sessionId returned is replaced
+  with sessionId present in url(original sessionId). Fixed this in appium-jsonwp-proxy 1.2.3
+
 CHANGES IN VERSION 1.4.6 (from 1.4.5)
 ===================================
 

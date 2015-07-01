@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.4.7-beta",
+  "version": "1.4.7-beta2",
   "author": "https://github.com/appium",
   "licenses": [
     {
@@ -88,6 +88,7 @@
     "sandboxed-module": "~2.0.0",
     "serve-favicon": "~2.2.0",
     "socket.io": "~1.3.4",
+    "socket.io-client": "~1.3.4",
     "stack-trace": "0.0.9",
     "swig": "~1.4.2",
     "temp": "~0.8.1",
@@ -138,7 +139,6 @@
     "saucelabs": "~0.1.1",
     "sinon": "~1.12.2",
     "sinon-chai": "~2.7.0",
-    "socket.io-client": "~1.3.4",
     "socks": "~0.0.1",
     "spawn-mocha-parallel": "~1.3.1",
     "split": "^0.3.3",

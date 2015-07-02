@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.4.7-beta3",
+  "version": "1.4.7",
   "npm-shrinkwrap-version": "5.4.0",
   "node-version": "v0.12.5",
   "dependencies": {
@@ -1315,8 +1315,8 @@
           }
         },
         "type-is": {
-          "version": "1.6.3",
-          "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.6.3.tgz",
+          "version": "1.6.4",
+          "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.6.4.tgz",
           "dependencies": {
             "media-typer": {
               "version": "0.3.0",

@@ -1,8 +1,8 @@
 {
   "name": "appium",
-  "version": "1.4.7-beta2",
+  "version": "1.4.7-beta3",
   "npm-shrinkwrap-version": "5.4.0",
-  "node-version": "v0.12.2",
+  "node-version": "v0.12.5",
   "dependencies": {
     "adm-zip": {
       "version": "0.4.7",

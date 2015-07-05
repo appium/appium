@@ -3,6 +3,13 @@ appium-doctor
 
 [![Build Status](https://travis-ci.org/appium/appium-doctor.svg?branch=master)](https://travis-ci.org/appium/appium-doctor)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-doctor/badge.svg?branch=sebv-doctor-who)](https://coveralls.io/r/appium/appium-doctor?branch=sebv-doctor-who)
+
+### Install
+
+```
+npm install appium-doctor -g
+```
+
 ### Usage
 
 ```

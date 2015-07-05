@@ -41,3 +41,12 @@ npm run watch
 ```
 npm test
 ```
+
+## Hack Cli
+
+Use the `--demo` option to simulate the fix process.
+
+```
+appium-doctor --demo
+```
+

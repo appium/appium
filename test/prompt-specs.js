@@ -4,7 +4,7 @@ import chai from 'chai';
 import 'mochawait';
 import {fixIt, clear } from '../lib/prompt';
 import { inquirer } from '../lib/utils';
-import { withMocks, verifyAll } from './mock-utils';
+import { withMocks, verify } from 'appium-test-support';
 
 chai.should();
 let P = Promise;
@@ -16,7 +16,7 @@ describe('prompt', withMocks({inquirer}, (mocks) => {
     mocks.inquirer.expects('prompt').once().returns(P.resolve(
       { confirmation: 'yes' }));
     (await fixIt()).should.equal('yes');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('fixit always ', async () => {
@@ -26,7 +26,7 @@ describe('prompt', withMocks({inquirer}, (mocks) => {
     (await fixIt()).should.equal('yes');
     (await fixIt()).should.equal('yes');
     (await fixIt()).should.equal('yes');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('fixit never ', async () => {
@@ -36,7 +36,7 @@ describe('prompt', withMocks({inquirer}, (mocks) => {
     (await fixIt()).should.equal('no');
     (await fixIt()).should.equal('no');
     (await fixIt()).should.equal('no');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
 

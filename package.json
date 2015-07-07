@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "appium-gulp-plugins": "^1.2.12",
+    "appium-test-support": "0.0.2",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.8.11",

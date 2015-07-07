@@ -8,12 +8,12 @@ import * as utils from '../lib/utils';
 import * as prompter from '../lib/prompt';
 import NodeDetector from '../lib/node-detector';
 import FixSkippedError from '../lib/doctor';
+import log from '../lib/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { newLogStub } from './log-utils.js';
 import 'mochawait';
 import B from 'bluebird';
-import { withMocks, verifyAll, getSandbox } from './mock-utils';
+import { withMocks, verify, stubLog } from 'appium-test-support';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -33,7 +33,7 @@ describe('ios', () => {
         ok: true,
         message: 'Xcode is installed at: /a/b/c/d'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - xcode-select', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Something wrong!')));
@@ -41,7 +41,7 @@ describe('ios', () => {
         ok: false,
         message: 'Xcode is NOT installed!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - path not exists', async () => {
       mocks.tp.expects('exec').once().returns(
@@ -51,13 +51,13 @@ describe('ios', () => {
         ok: false,
         message: 'Xcode cannot be found at \'/a/b/c/d\'!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix', async () => {
       (await check.fix()).should.equal('Manually install Xcode.');
     });
   }));
-  describe('XcodeCmdLineToolsCheck', withMocks({tp, utils, prompter} ,(mocks) => {
+  describe('XcodeCmdLineToolsCheck', withMocks({tp, utils, prompter} ,(mocks, S) => {
     let check = new XcodeCmdLineToolsCheck();
     it('autofix', () => {
       check.autofix.should.be.ok;
@@ -70,7 +70,7 @@ describe('ios', () => {
         ok: true,
         message: 'Xcode Command Line Tools are installed.'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - pkgutil crash', async () => {
       mocks.utils.expects('macOsxVersion').once().returns(B.resolve('10.10'));
@@ -79,7 +79,7 @@ describe('ios', () => {
         ok: false,
         message: 'Xcode Command Line Tools are NOT installed!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - no install time', async () => {
       mocks.utils.expects('macOsxVersion').once().returns(B.resolve('10.10'));
@@ -89,25 +89,25 @@ describe('ios', () => {
         ok: false,
         message: 'Xcode Command Line Tools are NOT installed!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix - yes', async () => {
-      let logStub = newLogStub(getSandbox(mocks), {stripColors: true});
+      let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.tp.expects('exec').once().returns(
         P.resolve({stdout: '', stderr: ''}));
       mocks.prompter.expects('fixIt').once().returns(P.resolve('yes'));
       await check.fix();
-      verifyAll(mocks);
+      verify(mocks);
       logStub.output.should.equal([
         'info: The following command need be executed: xcode-select --install',
       ].join('\n'));
     });
     it('fix - no', async () => {
-      let logStub = newLogStub(getSandbox(mocks), {stripColors: true});
+      let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.tp.expects('exec').never();
       mocks.prompter.expects('fixIt').once().returns(P.resolve('no'));
       await check.fix().should.be.rejectedWith(FixSkippedError);
-      verifyAll(mocks);
+      verify(mocks);
       logStub.output.should.equal([
         'info: The following command need be executed: xcode-select --install',
         'info: Skipping you will need to install Xcode manually.'
@@ -115,23 +115,23 @@ describe('ios', () => {
     });
   }));
 
-  describe('authorizeIosFix', withMocks({utils, prompter} ,(mocks) => {
+  describe('authorizeIosFix', withMocks({utils, prompter} ,(mocks, S) => {
     it('fix - yes', async () => {
-      let logStub = newLogStub(getSandbox(mocks), {stripColors: true});
+      let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.utils.expects('authorizeIos').once();
       mocks.prompter.expects('fixIt').once().returns(P.resolve('yes'));
       await fixes.authorizeIosFix();
-      verifyAll(mocks);
+      verify(mocks);
       logStub.output.should.equal([
         'info: The authorize iOS script need to be run.',
       ].join('\n'));
     });
     it('fix - no', async () => {
-      let logStub = newLogStub(getSandbox(mocks), {stripColors: true});
+      let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.utils.expects('authorizeIos').never();
       mocks.prompter.expects('fixIt').once().returns(P.resolve('no'));
       await fixes.authorizeIosFix().should.be.rejectedWith(FixSkippedError);
-      verifyAll(mocks);
+      verify(mocks);
       logStub.output.should.equal([
         'info: The authorize iOS script need to be run.',
         'info: Skipping you will need to run the authorize iOS manually.'
@@ -150,7 +150,7 @@ describe('ios', () => {
         ok: true,
         message: 'DevToolsSecurity is enabled.'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - DevToolsSecurity crash', async () => {
       mocks.tp.expects('exec').once().returns(Promise.reject(new Error('Something wrong!')));
@@ -158,7 +158,7 @@ describe('ios', () => {
         ok: false,
         message: 'DevToolsSecurity is NOT enabled!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - not enabled', async () => {
       mocks.tp.expects('exec').once().returns(
@@ -167,12 +167,12 @@ describe('ios', () => {
         ok: false,
         message: 'DevToolsSecurity is NOT enabled!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix', async () => {
       mocks.fixes.expects('authorizeIosFix').once();
       await check.fix();
-      verifyAll(mocks);
+      verify(mocks);
     });
   }));
   describe('AuthorizationDbCheck', withMocks({fixes, tp, fs, utils} ,(mocks) => {
@@ -187,7 +187,7 @@ describe('ios', () => {
         ok: true,
         message: 'The Authorization DB is set up properly.'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - success - 10.8', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
@@ -198,7 +198,7 @@ describe('ios', () => {
         ok: true,
         message: 'The Authorization DB is set up properly.'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - 10.10 - security', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
@@ -207,7 +207,7 @@ describe('ios', () => {
         ok: false,
         message: 'The Authorization DB is NOT set up properly.'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - /etc/authorization', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
@@ -217,12 +217,12 @@ describe('ios', () => {
         ok: false,
         message: 'The Authorization DB is NOT set up properly.'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix', async () => {
       mocks.fixes.expects('authorizeIosFix').once();
       await check.fix();
-      verifyAll(mocks);
+      verify(mocks);
     });
   }));
   describe('NodeBinaryCheck', withMocks({NodeDetector} ,(mocks) => {
@@ -236,7 +236,7 @@ describe('ios', () => {
         ok: true,
         message: 'The Node.js binary was found at: /a/b/c/d'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure', async () => {
       mocks.NodeDetector.expects('detect').once().returns(P.resolve(null));
@@ -244,7 +244,7 @@ describe('ios', () => {
         ok: false,
         message: 'The Node.js binary was NOT found!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix', async () => {
       (await check.fix()).should.equal('Manually setup Node.js.');

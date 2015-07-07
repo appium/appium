@@ -4,15 +4,14 @@ import { EnvVarAndPathCheck, AndroidToolCheck } from '../lib/android';
 import { fs } from '../lib/utils';
 import chai from 'chai';
 import 'mochawait';
-import { cloneEnv } from './env-utils.js';
-import { withMocks, verifyAll } from './mock-utils';
+import { withMocks, verify, stubEnv } from 'appium-test-support';
 
 chai.should();
 let P = Promise;
 
 describe('android', () => {
   describe('EnvVarAndPathCheck', withMocks({fs} ,(mocks) => {
-    cloneEnv();
+    stubEnv();
     let check = new EnvVarAndPathCheck('ANDROID_HOME');
     it('autofix', () => {
       check.autofix.should.not.be.ok;
@@ -24,7 +23,7 @@ describe('android', () => {
         ok: true,
         message: 'ANDROID_HOME is set to: /a/b/c/d'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('failure - not set', async () => {
       delete process.env.ANDROID_HOME;
@@ -32,7 +31,7 @@ describe('android', () => {
         ok: false,
         message: 'ANDROID_HOME is NOT set!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('failure - file not exists', async () => {
       process.env.ANDROID_HOME = '/a/b/c/d';
@@ -42,14 +41,14 @@ describe('android', () => {
         message: 'ANDROID_HOME is set to \'/a/b/c/d\' ' +
           'but this is NOT a valid path!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix', async () => {
       (await check.fix()).should.equal('Manually configure ANDROID_HOME.');
     });
   }));
   describe('AndroidToolCheck', withMocks({fs} ,(mocks) => {
-    cloneEnv();
+    stubEnv();
     let check = new AndroidToolCheck('adb', 'platform-tools/adb');
     it('autofix', () => {
       check.autofix.should.not.be.ok;
@@ -61,7 +60,7 @@ describe('android', () => {
         ok: true,
         message: 'adb exists at: /a/b/c/d/platform-tools/adb'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - no ANDROID_HOME', async () => {
       delete process.env.ANDROID_HOME;
@@ -69,7 +68,7 @@ describe('android', () => {
         ok: false,
         message: 'adb could not be found because ANDROID_HOME is NOT set!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('diagnose - failure - path not valid', async () => {
       process.env.ANDROID_HOME = '/a/b/c/d';
@@ -78,7 +77,7 @@ describe('android', () => {
         ok: false,
         message: 'adb could NOT be found at \'/a/b/c/d/platform-tools/adb\'!'
       });
-      verifyAll(mocks);
+      verify(mocks);
     });
     it('fix - ANDROID_HOME', async () => {
       delete process.env.ANDROID_HOME;

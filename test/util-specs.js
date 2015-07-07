@@ -6,7 +6,7 @@ import chai from 'chai';
 import 'mochawait';
 import path from 'path';
 import B from 'bluebird';
-import { withMocks, verifyAll } from './mock-utils';
+import { withMocks, verify } from 'appium-test-support';
 
 chai.should();
 let P = Promise;
@@ -19,7 +19,7 @@ describe('utils', () => {
         B.resolve({stdout: '10.10.1\n', stderr: ''}));
       let v = await macOsxVersion();
       v.should.equal('10.10');
-      verifyAll(mocks);
+      verify(mocks);
     });
   }));
 
@@ -39,7 +39,7 @@ describe('utils', () => {
     it('should work', async () => {
       mocks.tp.expects('exec').once().returns(P.resolve(["", ""]));
       await authorizeIos();
-      verifyAll(mocks);
+      verify(mocks);
     });
   }));
 

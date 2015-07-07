@@ -6,24 +6,25 @@ import { fs } from '../lib/utils';
 import * as tp from 'teen_process';
 import NodeDetector from '../lib/node-detector';
 import B from 'bluebird';
-import { withMocks, verifyAll, getSandbox } from './mock-utils';
+import { withMocks, verify } from 'appium-test-support';
+
 
 chai.should();
 let expect = chai.expect;
 
-describe('NodeDetector', withMocks({fs, tp}, (mocks) => {
+describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
 
  it('retrieveInCommonPlaces - success', async () => {
     mocks.fs.expects('exists').once().returns(B.resolve(true));
     (await NodeDetector.retrieveInCommonPlaces())
       .should.equal('/usr/local/bin/node');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('retrieveInCommonPlaces - failure', async () => {
     mocks.fs.expects('exists').twice().returns(B.resolve(false));
     expect(await NodeDetector.retrieveInCommonPlaces()).to.be.a('null');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   // retrieveUsingWhichCommand
@@ -34,14 +35,14 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks) => {
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await NodeDetector[method]())
         .should.equal('/a/b/c/d');
-      verifyAll(mocks);
+      verify(mocks);
     });
 
     it(method + ' - failure - path not found ', async () => {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: 'aaa not found\n', stderr: ''}));
       expect(await NodeDetector[method]()).to.be.a('null');
-      verifyAll(mocks);
+      verify(mocks);
     });
     it(method + ' - failure - path not exist', async () => {
       mocks.tp.expects('exec').once().returns(
@@ -60,7 +61,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks) => {
       B.resolve('{"node_bin": "/a/b/c/d"}'));
     (await NodeDetector.retrieveUsingAppiumConfigFile())
       .should.equal('/a/b/c/d');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('retrieveUsingAppiumConfigFile - failure - not json', async () => {
@@ -69,7 +70,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks) => {
       B.resolve('{node_bin: "/a/b/c/d"}'));
     expect(await NodeDetector.retrieveUsingAppiumConfigFile())
       .to.be.a('null');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('retrieveUsingAppiumConfigFile - failure - path does not exist', async () => {
@@ -79,27 +80,27 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks) => {
       B.resolve('{"node_bin": "/a/b/c/d"}'));
     expect(await NodeDetector.retrieveUsingAppiumConfigFile())
       .to.be.a('null');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('checkForNodeBinary - success', async () => {
-    mocks.NodeDetector = getSandbox(mocks).mock(NodeDetector);
+    mocks.NodeDetector = S.sandbox.mock(NodeDetector);
     mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingWhichCommand').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingAppleScript').returns('/a/b/c/d');
     mocks.NodeDetector.expects('retrieveUsingAppiumConfigFile').never();
     (await NodeDetector.detect()).should.equal('/a/b/c/d');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
   it('checkForNodeBinary - failure', async () => {
-    mocks.NodeDetector = getSandbox(mocks).mock(NodeDetector);
+    mocks.NodeDetector = S.sandbox.mock(NodeDetector);
     mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingWhichCommand').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingAppleScript').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingAppiumConfigFile').once().returns(null);
     expect(await NodeDetector.detect()).to.be.a('null');
-    verifyAll(mocks);
+    verify(mocks);
   });
 
 }));

@@ -179,6 +179,30 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       // TODO port over settings tests
     });
 
+    describe('unexpected exits', () => {
+      it('should reject a current command when the driver crashes', async () => {
+        d._oldGetStatus = d.getStatus;
+        d.getStatus = async function () {
+          console.log('getting new status');
+          await B.delay(100);
+          console.log('done w/ status');
+        }.bind(d);
+        let p = request({
+          url: 'http://localhost:8181/wd/hub/status',
+          method: 'GET',
+          json: true,
+          simple: false
+        });
+        // make sure that the request gets to the server before our shutdown
+        await B.delay(20);
+        d.startUnexpectedShutdown(new Error("Crashytimes"));
+        let res = await p;
+        res.status.should.equal(13);
+        res.value.message.should.contain('Crashytimes');
+        await d.onUnexpectedShutdown.should.be.rejectedWith('Crashytimes');
+      });
+    });
+
   });
 }
 

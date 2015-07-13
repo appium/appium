@@ -13,7 +13,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
   describe('BaseDriver', () => {
 
     let d;
-
     beforeEach(() => {
       d = new DriverClass();
     });
@@ -61,7 +60,47 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       });
     });
 
-    it.skip('should emit an unexpected end session event', async () => {
+    it('should fulfill an unexpected driver quit promise', async () => {
+      // make a command that will wait a bit so we can crash while it's running
+      d.getStatus = async function () {
+        await B.delay(100);
+      }.bind(d);
+      let cmdPromise = d.execute('getStatus');
+      await B.delay(0);
+      d.startUnexpectedShutdown(new Error("We crashed"));
+      await cmdPromise.should.be.rejectedWith(/We crashed/);
+      await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+    });
+
+    it('should not allow commands in middle of unexpected shutdown', async () => {
+      // make a command that will wait a bit so we can crash while it's running
+      d.oldDeleteSession = d.deleteSession;
+      d.deleteSession = async function () {
+        await B.delay(100);
+        await this.oldDeleteSession();
+      }.bind(d);
+      let caps = _.clone(defaultCaps);
+      await d.createSession(caps);
+      d.startUnexpectedShutdown(new Error("We crashed"));
+      await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+      await d.execute('getSession').should.be.rejectedWith(/shut down/);
+    });
+
+    it('should allow new commands after done shutting down', async () => {
+      // make a command that will wait a bit so we can crash while it's running
+      d.oldDeleteSession = d.deleteSession;
+      d.deleteSession = async function () {
+        await B.delay(100);
+        await this.oldDeleteSession();
+      }.bind(d);
+      let caps = _.clone(defaultCaps);
+      await d.createSession(caps);
+      d.startUnexpectedShutdown(new Error("We crashed"));
+      await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+      await d.execute('getSession').should.be.rejectedWith(/shut down/);
+      await B.delay(100);
+      await d.execute('createSession', caps);
+      await d.deleteSession();
     });
 
     describe('command queue', () => {

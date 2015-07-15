@@ -6,6 +6,15 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 - add Tapster support for some more touch methods
 
 
+CHANGES IN VERSION 1.4.8 (from 1.4.7)
+===================================
+
+#### General
+- fix for Windows users! Now the system architecture is properly detected, npm installs should work again
+
+#### Chromedriver / Android hybrid
+- fix for an issue in responding to `/status` api endpoint, this is used heavily by Selenium grid
+
 CHANGES IN VERSION 1.4.7 (from 1.4.6)
 ===================================
 

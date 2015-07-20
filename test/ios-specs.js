@@ -3,9 +3,8 @@
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
   AuthorizationDbCheck, NodeBinaryCheck} from '../lib/ios';
 import { fs } from '../lib/utils';
-import * as authorizeIos from 'authorize-ios';
-import * as tp from 'teen_process';
 import * as utils from '../lib/utils';
+import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';
 import NodeDetector from '../lib/node-detector';
 import FixSkippedError from '../lib/doctor';
@@ -116,10 +115,10 @@ describe('ios', () => {
     });
   }));
 
-  describe('authorizeIosFix', withMocks({utils, prompter, authorizeIos} ,(mocks, S) => {
+  describe('authorizeIosFix', withMocks({utils, prompter} ,(mocks, S) => {
     it('fix - yes', async () => {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      mocks.authorizeIos.expects('authorize').once();
+      mocks.utils.expects('authorize').once();
       mocks.prompter.expects('fixIt').once().returns(P.resolve('yes'));
       await fixes.authorizeIosFix();
       verify(mocks);
@@ -129,7 +128,7 @@ describe('ios', () => {
     });
     it('fix - no', async () => {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      mocks.authorizeIos.expects('authorize').never();
+      mocks.utils.expects('authorize').never();
       mocks.prompter.expects('fixIt').once().returns(P.resolve('no'));
       await fixes.authorizeIosFix().should.be.rejectedWith(FixSkippedError);
       verify(mocks);

@@ -28,10 +28,10 @@
     "appium-logger": "^1.1.5",
     "appium-support": "^1.1.1",
     "authorize-ios": "^1.0.0",
-    "babel-runtime": "=5.6.15",
+    "babel-runtime": "=5.6.16",
     "bluebird": "^2.9.30",
     "colors": "^1.1.2",
-    "inquirer": "^0.8.5",
+    "inquirer": "^0.9.0",
     "lodash": "^3.9.3",
     "source-map-support": "^0.3.1",
     "teen_process": "^1.2.2",
@@ -44,12 +44,12 @@
   },
   "devDependencies": {
     "appium-gulp-plugins": "^1.2.12",
-    "appium-test-support": "0.0.2",
+    "appium-test-support": "^0.0.5",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
     "gulp": "^3.8.11",
     "mochawait": "^2.0.0",
-    "sinon": "~1.14.1",
+    "sinon": "^1.15.4",
     "uncolor": "^0.3.0"
   }
 }

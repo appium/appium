@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { pkgRoot, fs, macOsxVersion, authorizeIos } from '../lib/utils';
+import { pkgRoot, fs, macOsxVersion } from '../lib/utils';
 import * as tp from 'teen_process';
 import chai from 'chai';
 import 'mochawait';
@@ -9,7 +9,6 @@ import B from 'bluebird';
 import { withMocks, verify } from 'appium-test-support';
 
 chai.should();
-let P = Promise;
 
 describe('utils', () => {
 
@@ -33,14 +32,6 @@ describe('utils', () => {
       'wow.txt'))).should.be.ok;
     (await fs.exists(path.resolve(pkgRoot, 'test', 'fixtures',
       'notwow.txt'))).should.not.be.ok;
-   });
-
-   describe('authorizeIos', withMocks({tp}, (mocks) => {
-    it('should work', async () => {
-      mocks.tp.expects('exec').once().returns(P.resolve(["", ""]));
-      await authorizeIos();
-      verify(mocks);
-    });
-  }));
+  });
 
 });

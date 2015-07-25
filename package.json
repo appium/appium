@@ -23,6 +23,7 @@
     "lib": "lib"
   },
   "dependencies": {
+    "adm-zip": "^0.4.7",
     "appium-logger": "^1.1.0",
     "babel-runtime": "5.5.5",
     "bluebird": "^2.9.25",
@@ -30,6 +31,7 @@
     "mobile-json-wire-protocol": "^0.10.1",
     "request-promise": "^0.4.2",
     "source-map-support": "^0.2.10",
+    "teen_process": "^1.2.2",
     "uuid-js": "^0.7.5",
     "validate.js": "^0.7.1"
   },

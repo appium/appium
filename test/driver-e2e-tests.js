@@ -183,9 +183,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should reject a current command when the driver crashes', async () => {
         d._oldGetStatus = d.getStatus;
         d.getStatus = async function () {
-          console.log('getting new status');
           await B.delay(100);
-          console.log('done w/ status');
         }.bind(d);
         let p = request({
           url: 'http://localhost:8181/wd/hub/status',

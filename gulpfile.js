@@ -5,5 +5,6 @@ var gulp = require('gulp'),
 
 boilerplate({
   build: 'appium-base-driver',
-  jscs: false
+  jscs: false,
+  watchE2E: true
 });

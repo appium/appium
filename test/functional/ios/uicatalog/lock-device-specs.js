@@ -7,7 +7,7 @@ var env = require('../../../helpers/env'),
 describe('uicatalog - lock device @skip-ios6', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
-  var allowance = (env.IOS7 || env.IOS8) ? 9 : 2;
+  var allowance = (env.IOS7 || env.IOS8 || env.IOS9) ? 9 : 2;
   it("should lock the device for 4 seconds (+/- " + allowance + "  secs)", function (done) {
     var before = new Date().getTime() / 1000;
     driver

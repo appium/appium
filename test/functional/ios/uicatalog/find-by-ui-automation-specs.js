@@ -49,7 +49,7 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
     .nodeify(done);
   });
   it('should get a single element with non-zero index', function (done) {
-    var variableName = env.IOS8 ? '' : 'Empty list';
+    var variableName = env.IOS8 || env.IOS9 ? '' : 'Empty list';
     driver.element(byUIA, '.elements()[1]').getAttribute('name')
       .should.become(variableName)
     .nodeify(done);
@@ -81,12 +81,12 @@ describe('uicatalog - find by ios-ui-automation @skip-ios6', function () {
       driver.element(byUIA, '.elements()[1]').then(function (el) {
         el
           .elements(byUIA, filterVisible('.elements();'))
-            .should.eventually.have.length(12)
+            .should.eventually.have.length(env.IOS9 ? 10 : 12)
           .nodeify(done);
       });
     });
     it('should find elements by name', function (done) {
-      var axIdExt = env.IOS8 ? "" : ", AAPLButtonViewController";
+      var axIdExt = env.IOS8 || env.IOS9 ? "" : ", AAPLButtonViewController";
       driver.element(byUIA, '.elements()[1]').then(function (el) {
         el
         .element(byUIA, '.elements()["Buttons' + axIdExt + '"]')

@@ -34,7 +34,9 @@ Appium Base driver has some properties that all drivers share:
  
  - `driver.sessionId` - this is the ID of the current session. It gets populated automaticall by `baseDriver.createSession`.
 
+ - `driver.proxyReqRes()` - used by mjsonwp module for proxying http commands to another process (like chromedriver or selendroid)
  
+ - `driver.jwpProxyAvoid` - used by mjsonwp module. You can specify what REST api routes which you want to SKIP the automatic proxy to another server (which is optional) and instead be handled by your driver.
 
 
 ## Watch

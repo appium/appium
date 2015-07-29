@@ -30,13 +30,13 @@ Appium Base driver has some properties that all drivers share:
 
  - `driver.createSession(caps)` - this is the function which gets desired capabilities and creates a session. Make sure to call `super.createSession(caps)` so that things like `this.sessionId` and `this.caps` are populated, and the caps are validated against your `desiredCapConstraints`.
 
- - `driver.caps` - these are the desired capabilities for the current session.
+- `driver.caps` - these are the desired capabilities for the current session.
  
- - `driver.sessionId` - this is the ID of the current session. It gets populated automaticall by `baseDriver.createSession`.
+- `driver.sessionId` - this is the ID of the current session. It gets populated automaticall by `baseDriver.createSession`.
 
- - `driver.proxyReqRes()` - used by mjsonwp module for proxying http commands to another process (like chromedriver or selendroid)
+- `driver.proxyReqRes()` - used by mjsonwp module for proxying http commands to another process (like chromedriver or selendroid)
  
- - `driver.jwpProxyAvoid` - used by mjsonwp module. You can specify what REST api routes which you want to SKIP the automatic proxy to another server (which is optional) and instead be handled by your driver.
+- `driver.jwpProxyAvoid` - used by mjsonwp module. You can specify what REST api routes which you want to SKIP the automatic proxy to another server (which is optional) and instead be handled by your driver.
 
 
 Base driver exposes a promise called `onUnexpectedShutdown` which is a promise which your driver must reject in cases where an unexpected error occurs and you want to signal to the appium server at large that your driver is now shutting down.

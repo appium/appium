@@ -28,6 +28,10 @@ Appium Base driver has some properties that all drivers share:
 
  - `driver.caps` - these are the desired capabilities for the current session. Your `createSession` method should set `this.caps`.
 
+ - `desiredCapConstraints` - Base driver sets this property with a customer `setter` function so that when you create a driver, you can add an object which defines the validation contraints of which desired capabilities your new driver can handle. Of course each driver will have it's own specific desired capabilities. Look for examples on our other drivers.
+ 
+
+
 ## Watch
 
 ```

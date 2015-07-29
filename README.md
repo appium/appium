@@ -24,9 +24,9 @@ Writing your own appium driver starts with inheriting and extending this Base dr
 
 Appium Base driver has some properties that all drivers share:
 
-`driver.opts` - these are the options passed into the driver constructor. Your driver's constructor should take an object of options and pass it on the the Base driver by calling `super(opts)` in your constructor.
+ - `driver.opts` - these are the options passed into the driver constructor. Your driver's constructor should take an object of options and pass it on the the Base driver by calling `super(opts)` in your constructor.
 
-`driver.caps` - these are the desired capabilities for the current session. Your `createSession` method should set `this.caps`.
+ - `driver.caps` - these are the desired capabilities for the current session. Your `createSession` method should set `this.caps`.
 
 ## Watch
 

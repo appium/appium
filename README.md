@@ -39,6 +39,11 @@ Appium Base driver has some properties that all drivers share:
  - `driver.jwpProxyAvoid` - used by mjsonwp module. You can specify what REST api routes which you want to SKIP the automatic proxy to another server (which is optional) and instead be handled by your driver.
 
 
+Base driver exposes a promise called `onUnexpectedShutdown` which is a promise which your driver must reject in cases where an unexpected error occurs and you want to signal to the appium server at large that your driver is now shutting down.
+
+Your driver should also implement a startUnexpectedShutdown method?
+
+
 ## Watch
 
 ```

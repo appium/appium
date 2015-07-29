@@ -8,7 +8,7 @@ appium-base-driver
 [![Build Status](https://travis-ci.org/appium/appium-base-driver.svg?branch=master)](https://travis-ci.org/appium/appium-base-driver)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-base-driver/badge.svg?branch=master)](https://coveralls.io/r/appium/appium-base-driver?branch=master)
 
-This is parent class that all [appium](appium.io) drivers inherit from. Appium drivers themselves can either be started from the command line as standalone appium servers, or can be included by another module (appium) which then proxies commands to the appropriate driver based on [Desired Capabilities](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md).
+This is the parent class that all [appium](appium.io) drivers inherit from. Appium drivers themselves can either be started from the command line as standalone appium servers, or can be included by another module (appium) which then proxies commands to the appropriate driver based on [Desired Capabilities](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md).
 
 An appium driver is a module which processes [Mobile Json Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) commands and controls a device accordingly. The commands can either come in over HTTP as json api requests, or they can be passed to the driver object programmatically as already-parsed json object (without the HTTP headers and junk).
 

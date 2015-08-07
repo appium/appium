@@ -5,6 +5,12 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.10 (from 1.4.9)
+===================================
+
+#### General
+- fixed bug in a config file accidentally published in version 1.4.9
+
 CHANGES IN VERSION 1.4.9 (from 1.4.8)
 ===================================
 

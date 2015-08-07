@@ -5,6 +5,12 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.9 (from 1.4.8)
+===================================
+
+#### iOS
+- support for iOS9 and xcode 7
+- at this point instruments-without-delay is not supported for xcode-7
 
 CHANGES IN VERSION 1.4.8 (from 1.4.7)
 ===================================

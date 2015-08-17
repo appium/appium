@@ -6,6 +6,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
 import B from 'bluebird';
+import DeviceSettings from '../lib/device-settings';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
@@ -176,7 +177,20 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     });
 
     describe('settings api', () => {
-      // TODO port over settings tests
+      before(() => {
+        d.settings = new DeviceSettings({ignoreUnimportantViews: false});
+      });
+      it('should be able to get settings object',() => {
+        d.settings.getSettings().ignoreUnimportantViews.should.be.false;
+      });
+      it('should throw error when updateSettings method is not defined', async () => {
+        await d.settings.update({ignoreUnimportantViews: true}).should.eventually
+                .be.rejectedWith("onSettingsUpdate");
+      });
+      it('should throw error for invalid update object', async () => {
+        await d.settings.update("invalid json").should.eventually
+                .be.rejectedWith("JSON");
+      });
     });
 
     describe('unexpected exits', () => {

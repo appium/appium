@@ -29,7 +29,7 @@
     "babel-runtime": "5.5.5",
     "bluebird": "^2.9.25",
     "lodash": "^3.9.1",
-    "mobile-json-wire-protocol": "^0.10.1",
+    "mobile-json-wire-protocol": "^0.12.4",
     "request-promise": "^0.4.2",
     "source-map-support": "^0.2.10",
     "teen_process": "^1.2.2",

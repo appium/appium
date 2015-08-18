@@ -1,5 +1,6 @@
 // transpile:main
 
 import { BaseDriver } from './lib/driver';
-export { BaseDriver };
+import DeviceSettings from './lib/device-settings';
 
+export { BaseDriver, DeviceSettings };

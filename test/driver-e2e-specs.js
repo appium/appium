@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== "0";
-const caps = {platformName: "Fake", app: TEST_FAKE_APP};
+const caps = {platformName: "Fake", deviceName: "Fake", app: TEST_FAKE_APP};
 
 describe('FakeDriver - via HTTP', () => {
   let server = null;

@@ -10,7 +10,7 @@ import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
-const BASE_CAPS = {platformName: 'Fake', app: TEST_FAKE_APP};
+const BASE_CAPS = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
 
 describe('AppiumDriver', () => {
   describe('getAppiumRouter', () => {

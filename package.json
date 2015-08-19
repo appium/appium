@@ -35,23 +35,22 @@
     "doc": "./docs"
   },
   "dependencies": {
-    "appium-android-driver": "^0.0.1",
-    "appium-base-driver": "^0.1.0",
-    "appium-express": "0.0.1",
-    "appium-fake-driver": "^0.1.0",
+    "appium-android-driver": "latest",
+    "appium-base-driver": "latest",
+    "appium-express": "latest",
+    "appium-fake-driver": "latest",
     "appium-logger": "^1.0.0",
     "argparse": "^1.0.2",
     "asyncbox": "^2.0.2",
-    "babel-core": "^5.4.3",
-    "babel-runtime": "^5.3.3",
+    "babel-runtime": "=5.8.20",
     "bluebird": "^2.9.25",
     "date-utils": "^1.2.17",
     "lodash": "^3.9.1",
     "mkdirp": "^0.5.1",
+    "mobile-json-wire-protocol": "latest",
     "npmlog": "^1.2.1",
     "source-map-support": "^0.3.1",
     "teen_process": "^1.1.0",
-    "mobile-json-wire-protocol": "^0.10.1",
     "winston": "^1.0.0"
   },
   "scripts": {
@@ -59,7 +58,7 @@
   },
   "devDependencies": {
     "appium-gulp-plugins": "^1.1.2",
-    "chai": "^2.3.0",
+    "chai": "^3.2.0",
     "chai-as-promised": "^5.0.0",
     "gulp": "^3.8.11",
     "mocha": "^2.2.5",

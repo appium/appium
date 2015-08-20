@@ -39,6 +39,7 @@
     "appium-base-driver": "latest",
     "appium-express": "latest",
     "appium-fake-driver": "latest",
+    "appium-ios-driver": "latest",
     "appium-logger": "^1.0.0",
     "argparse": "^1.0.2",
     "asyncbox": "^2.0.2",

@@ -26,6 +26,7 @@
     "adm-zip": "^0.4.7",
     "appium-logger": "^1.1.0",
     "appium-support": "^2.0.0-beta8",
+    "asyncbox": "^2.3.0",
     "babel-runtime": "5.5.5",
     "bluebird": "^2.9.25",
     "lodash": "^3.9.1",

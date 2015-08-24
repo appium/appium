@@ -65,7 +65,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       d.getStatus = async function () {
         await B.delay(100);
       }.bind(d);
-      let cmdPromise = d.execute('getStatus');
+      let cmdPromise = d.executeCommand('getStatus');
       await B.delay(0);
       d.startUnexpectedShutdown(new Error("We crashed"));
       await cmdPromise.should.be.rejectedWith(/We crashed/);
@@ -83,7 +83,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       await d.createSession(caps);
       d.startUnexpectedShutdown(new Error("We crashed"));
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
-      await d.execute('getSession').should.be.rejectedWith(/shut down/);
+      await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
     });
 
     it('should allow new commands after done shutting down', async () => {
@@ -97,9 +97,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       await d.createSession(caps);
       d.startUnexpectedShutdown(new Error("We crashed"));
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
-      await d.execute('getSession').should.be.rejectedWith(/shut down/);
+      await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
       await B.delay(100);
-      await d.execute('createSession', caps);
+      await d.executeCommand('createSession', caps);
       await d.deleteSession();
     });
 
@@ -123,11 +123,11 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         throw new Error("multipass");
       }.bind(d);
 
-      it('should queue commands and execute/respond in the order received', async () => {
+      it('should queue commands and.executeCommand/respond in the order received', async () => {
         let numCmds = 10;
         let cmds = [];
         for (let i = 0; i < numCmds; i++) {
-          cmds.push(d.execute('getStatus'));
+          cmds.push(d.executeCommand('getStatus'));
         }
         let results = await B.all(cmds);
         for (let i = 1; i < numCmds; i++) {
@@ -142,9 +142,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         let cmds = [];
         for (let i = 0; i < numCmds; i++) {
           if (i === 5) {
-            cmds.push(d.execute('getSessions'));
+            cmds.push(d.executeCommand('getSessions'));
           } else {
-            cmds.push(d.execute('getStatus'));
+            cmds.push(d.executeCommand('getStatus'));
           }
         }
         let results = await B.settle(cmds);
@@ -165,12 +165,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         let numCmds = 10;
         let cmds = [];
         for (let i = 0; i < numCmds; i++) {
-          cmds.push(d.execute('getStatus'));
+          cmds.push(d.executeCommand('getStatus'));
         }
         let results = await B.all(cmds);
         cmds = [];
         for (let i = 0; i < numCmds; i++) {
-          cmds.push(d.execute('getStatus'));
+          cmds.push(d.executeCommand('getStatus'));
         }
         results = await B.all(cmds);
         for (let i = 1; i < numCmds; i++) {

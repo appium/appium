@@ -43,5 +43,9 @@ describe('devices/android/android-common.js', function () {
       testDouble.value().should.be.equal('1.8.0_22');
     });
 
+    it('parses OpenJDK versioning', function () {
+      androidCommon.parseJavaVersion('openjdk version 1.8').should.be.equal('1.8');
+    });
+
   });
 });

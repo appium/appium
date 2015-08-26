@@ -25,17 +25,17 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "appium-logger": "^1.1.0",
-    "appium-support": "^2.0.0-beta8",
+    "appium-support": "beta",
     "asyncbox": "^2.3.0",
-    "babel-runtime": "5.5.5",
+    "babel-runtime": "=5.8.20",
     "bluebird": "^2.9.25",
     "lodash": "^3.9.1",
-    "mobile-json-wire-protocol": "^0.19.0",
+    "mobile-json-wire-protocol": "latest",
     "request-promise": "^0.4.2",
-    "source-map-support": "^0.2.10",
+    "source-map-support": "^0.3.2",
     "teen_process": "^1.2.2",
     "uuid-js": "^0.7.5",
-    "validate.js": "^0.7.1"
+    "validate.js": "^0.8.0"
   },
   "scripts": {
     "prepublish": "./node_modules/.bin/gulp prepublish",
@@ -43,9 +43,9 @@
     "watch": "./node_modules/.bin/gulp"
   },
   "devDependencies": {
-    "appium-express": "^0.0.4",
+    "appium-express": "latest",
     "appium-gulp-plugins": "^1.1.1",
-    "chai": "^2.3.0",
+    "chai": "^3.2.0",
     "chai-as-promised": "^5.0.0",
     "gulp": "^3.8.11",
     "mochawait": "^2.0.0",

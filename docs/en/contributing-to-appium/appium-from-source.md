@@ -185,7 +185,7 @@ If you have an Appium server listening, you can run individual test files using
 Mocha, for example:
 
 ```center
-DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
+DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple-specs.js
 ```
 
 Or individual tests (e.g., a test with the word "alert" in the name):

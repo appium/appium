@@ -27,7 +27,7 @@
     "appium-logger": "^1.1.0",
     "appium-support": "beta",
     "asyncbox": "^2.3.0",
-    "babel-runtime": "=5.8.20",
+    "babel-runtime": "=5.5.5",
     "bluebird": "^2.9.25",
     "lodash": "^3.9.1",
     "mobile-json-wire-protocol": "latest",

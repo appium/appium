@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.5.0",
+  "version": "1.5.0-beta1",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -52,7 +52,8 @@
     "npmlog": "^1.2.1",
     "source-map-support": "^0.3.1",
     "teen_process": "^1.1.0",
-    "winston": "^1.0.0"
+    "winston": "^1.0.0",
+    "yargs": "^3.24.0"
   },
   "scripts": {
     "test": "grunt travis"

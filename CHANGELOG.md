@@ -5,6 +5,13 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.11 (from 1.4.10)
+===================================
+
+#### iOS
+- fix for iOS simulator selector for Xcode 7
+- fix for selecting default device for iOS9
+
 CHANGES IN VERSION 1.4.10 (from 1.4.9)
 ===================================
 

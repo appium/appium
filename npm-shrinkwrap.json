@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.5.0-beta1",
+  "version": "1.5.0-beta3",
   "npm-shrinkwrap-version": "5.4.0",
   "node-version": "v0.12.7",
   "dependencies": {
@@ -1095,8 +1095,8 @@
           }
         },
         "request": {
-          "version": "2.61.0",
-          "resolved": "https://registry.npmjs.org/request/-/request-2.61.0.tgz",
+          "version": "2.62.0",
+          "resolved": "https://registry.npmjs.org/request/-/request-2.62.0.tgz",
           "dependencies": {
             "aws-sign2": {
               "version": "0.5.0",
@@ -1319,8 +1319,8 @@
               "resolved": "https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.8.0.tgz"
             },
             "qs": {
-              "version": "4.0.0",
-              "resolved": "https://registry.npmjs.org/qs/-/qs-4.0.0.tgz"
+              "version": "5.1.0",
+              "resolved": "https://registry.npmjs.org/qs/-/qs-5.1.0.tgz"
             },
             "stringstream": {
               "version": "0.0.4",
@@ -1413,8 +1413,8 @@
           "resolved": "https://registry.npmjs.org/q/-/q-1.4.1.tgz"
         },
         "request": {
-          "version": "2.61.0",
-          "resolved": "https://registry.npmjs.org/request/-/request-2.61.0.tgz",
+          "version": "2.62.0",
+          "resolved": "https://registry.npmjs.org/request/-/request-2.62.0.tgz",
           "dependencies": {
             "aws-sign2": {
               "version": "0.5.0",
@@ -1637,8 +1637,8 @@
               "resolved": "https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.8.0.tgz"
             },
             "qs": {
-              "version": "4.0.0",
-              "resolved": "https://registry.npmjs.org/qs/-/qs-4.0.0.tgz"
+              "version": "5.1.0",
+              "resolved": "https://registry.npmjs.org/qs/-/qs-5.1.0.tgz"
             },
             "stringstream": {
               "version": "0.0.4",
@@ -2289,8 +2289,8 @@
                   }
                 },
                 "request": {
-                  "version": "2.61.0",
-                  "resolved": "https://registry.npmjs.org/request/-/request-2.61.0.tgz",
+                  "version": "2.62.0",
+                  "resolved": "https://registry.npmjs.org/request/-/request-2.62.0.tgz",
                   "dependencies": {
                     "aws-sign2": {
                       "version": "0.5.0",
@@ -2475,8 +2475,8 @@
                       "resolved": "https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.8.0.tgz"
                     },
                     "qs": {
-                      "version": "4.0.0",
-                      "resolved": "https://registry.npmjs.org/qs/-/qs-4.0.0.tgz"
+                      "version": "5.1.0",
+                      "resolved": "https://registry.npmjs.org/qs/-/qs-5.1.0.tgz"
                     },
                     "stringstream": {
                       "version": "0.0.4",
@@ -3713,8 +3713,8 @@
                   }
                 },
                 "request": {
-                  "version": "2.61.0",
-                  "resolved": "https://registry.npmjs.org/request/-/request-2.61.0.tgz",
+                  "version": "2.62.0",
+                  "resolved": "https://registry.npmjs.org/request/-/request-2.62.0.tgz",
                   "dependencies": {
                     "aws-sign2": {
                       "version": "0.5.0",
@@ -3895,8 +3895,8 @@
                       "resolved": "https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.8.0.tgz"
                     },
                     "qs": {
-                      "version": "4.0.0",
-                      "resolved": "https://registry.npmjs.org/qs/-/qs-4.0.0.tgz"
+                      "version": "5.1.0",
+                      "resolved": "https://registry.npmjs.org/qs/-/qs-5.1.0.tgz"
                     },
                     "stringstream": {
                       "version": "0.0.4",

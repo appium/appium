@@ -40,7 +40,7 @@
     "appium-express": "latest",
     "appium-fake-driver": "latest",
     "appium-ios-driver": "latest",
-    "appium-logger": "^1.0.0",
+    "appium-logger": "latest",
     "argparse": "^1.0.2",
     "asyncbox": "^2.0.2",
     "babel-runtime": "=5.8.20",

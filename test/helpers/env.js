@@ -74,6 +74,8 @@ function iphoneOrIpadSimulator(device, version) {
       return isIpad ? 'iPad 2' : 'iPhone 6';
     case '9.0':
       return isIpad ? 'iPad 2' : 'iPhone 6';
+    case '9.1':
+      return isIpad ? 'iPad 2' : 'iPhone 6';
     default:
       throw new Error("invalid version");
   }
@@ -163,6 +165,15 @@ switch (env.DEVICE) {
     , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
     };
     break;
+  case 'ios91':
+  case 'ios91_iphone':
+  case 'ios91_ipad':
+    env.CAPS = {
+      browserName: ''
+    , deviceName: iphoneOrIpadSimulator(env.DEVICE, "9.1")
+    , app: process.env.APP ? path.resolve(__dirname, "../../sample-code/apps/" + process.env.APP + "/build/Release-iphonesimulator/" + process.env.APP + ".app") : ''
+    };
+    break;
   case 'android':
     env.CAPS = {
       browserName: ''
@@ -203,6 +214,7 @@ env.IOS82 = env.DEVICE.match(/ios82/i);
 env.IOS83 = env.DEVICE.match(/ios83/i);
 env.IOS84 = env.DEVICE.match(/ios84/i);
 env.IOS9 = env.DEVICE.match(/ios9/i);
+env.IOS91 = env.DEVICE.match(/ios91/i);
 env.ANDROID = env.DEVICE.match(/android/i);
 env.SELENDROID = env.DEVICE.match(/selendroid/i);
 
@@ -242,6 +254,8 @@ if (env.VERSION) {
   env.CAPS.platformVersion = "8.4";
 } else if (env.IOS8) {
   env.CAPS.platformVersion = "8.0";
+} else if (env.IOS91) {
+  env.CAPS.platformVersion = "9.1";
 } else if (env.IOS9) {
   env.CAPS.platformVersion = "9.0";
 }

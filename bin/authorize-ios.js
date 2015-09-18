@@ -1,4 +1,6 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
-throw new Error("iOS Authorization has not been ported yet");
+var authorize = require('authorize-ios');
+
+authorize();

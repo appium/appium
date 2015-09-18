@@ -28,7 +28,8 @@
   "bin": {
     "appium": "./build/lib/main.js",
     "appium-doctor": "./bin/appium-doctor.js",
-    "authorize_ios": "./bin/authorize-ios.js"
+    "authorize_ios": "./bin/authorize-ios.js",
+    "authorize-ios": "./bin/authorize-ios.js"
   },
   "directories": {
     "lib": "./lib",
@@ -37,13 +38,15 @@
   "dependencies": {
     "appium-android-driver": "latest",
     "appium-base-driver": "latest",
+    "appium-doctor": "0.0.6",
     "appium-express": "latest",
     "appium-fake-driver": "latest",
     "appium-ios-driver": "latest",
     "appium-logger": "latest",
     "argparse": "^1.0.2",
     "asyncbox": "^2.0.2",
-    "babel-runtime": "=5.8.20",
+    "authorize-ios": "^1.0.3",
+    "babel-runtime": "=5.8.24",
     "bluebird": "^2.9.25",
     "date-utils": "^1.2.17",
     "lodash": "^3.9.1",

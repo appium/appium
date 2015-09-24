@@ -62,9 +62,12 @@ var ios7up = function (version, udid, setting, expected, cb) {
 exports.ios7up = function (desired, setting, expected, cb) {
   xcode.getMaxIOSSDK(function (err, sdk) {
     if (parseFloat(sdk) >= 8) {
-      getSimUdid('6', sdk, desired, function (err, udid) {
+      xcode.getVersion(function (err, xcodeVersion) {
         if (err) return cb(err);
-        ios7up(desired.platformVersion, udid, setting, expected, cb);
+        getSimUdid(xcodeVersion, sdk, desired, function (err, udid) {
+          if (err) return cb(err);
+          ios7up(desired.platformVersion, udid, setting, expected, cb);
+        });
       });
     } else {
       ios7up(desired.platformVersion, null, setting, expected, cb);

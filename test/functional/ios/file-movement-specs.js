@@ -102,9 +102,12 @@ describe('file movements - pullFile and pushFile @skip-real-device', function ()
           });
         };
         if (parseFloat(sdk) >= 8) {
-          getSimUdid('6', sdk, env.CAPS, function (err, udid) {
+          xcode.getVersion(function (err, xcodeVersion) {
             if (err) return done(err);
-            next(udid);
+            getSimUdid(xcodeVersion, sdk, env.CAPS, function (err, udid) {
+              if (err) return done(err);
+              next(udid);
+            });
           });
         } else {
           next();

@@ -1052,7 +1052,7 @@ driver.PullFile("Library/AddressBook/AddressBook.sqlitedb");
 
 ### Push File
 
-Pushes a file to the device.
+Pushes a file to the device. *Android only*
 
 ```ruby
 # ruby

@@ -24,6 +24,7 @@
             "appium-ios-simulator",
             "appium-remote-debugger",
             "appium-selendroid-driver",
+            "appium-selendroid-installer",
             "appium-support",
             "appium-uiauto",
             "appium-uiautomator",
@@ -69,6 +70,7 @@
             "jlipps",
             "jonahss",
             "moizjv",
+            "scottdixon",
             "sebv"
         ],
         "appium-contrib": [
@@ -76,6 +78,7 @@
             "jlipps",
             "jonahss",
             "moizjv",
+            "scottdixon",
             "sebv",
             "bootstraponline"
         ],
@@ -84,6 +87,7 @@
             "jlipps",
             "jonahss",
             "moizjv",
+            "scottdixon",
             "sebv"
         ],
         "appium-apps": [
@@ -92,6 +96,7 @@
             "jonahss",
             "moizjv",
             "sebv",
+            "scottdixon",
             "bootstraponline"
         ],
         "extra-jlipps": [

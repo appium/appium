@@ -4,7 +4,7 @@
   "keywords": [
     "appium"
   ],
-  "version": "0.4.9",
+  "version": "0.4.10",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -24,10 +24,10 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
-    "appium-logger": "^1.1.0",
-    "appium-support": "beta",
+    "appium-logger": "^2.0.0",
+    "appium-support": "^2.0.0",
     "asyncbox": "^2.3.0",
-    "babel-runtime": "=5.5.5",
+    "babel-runtime": "=5.8.24",
     "bluebird": "^2.9.25",
     "lodash": "^3.9.1",
     "mobile-json-wire-protocol": "latest",

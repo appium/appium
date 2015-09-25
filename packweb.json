@@ -1,0 +1,112 @@
+{
+    "packages": {
+        "appium-core": [
+            "appium"
+        ],
+        "appium-contrib": [
+            "android-apidemos",
+            "appium-adb",
+            "appium-android-bootstrap",
+            "appium-android-driver",
+            "appium-android-ime",
+            "appium-atoms",
+            "appium-base-driver",
+            "appium-chromedriver",
+            "appium-cookies",
+            "appium-doctor",
+            "appium-express",
+            "appium-fake-driver",
+            "appium-jsonwp-proxy",
+            "appium-logger",
+            "appium-instruments",
+            "appium-ios-driver",
+            "appium-ios-log",
+            "appium-ios-simulator",
+            "appium-remote-debugger",
+            "appium-selendroid-driver",
+            "appium-selendroid-installer",
+            "appium-support",
+            "appium-uiauto",
+            "appium-uiautomator",
+            "appium-unlock",
+            "appium-xcode",
+            "authorize-ios",
+            "io.appium.settings",
+            "jsonwp-status",
+            "mobile-json-wire-protocol",
+            "node-simctl"
+        ],
+        "appium-tools": [
+            "appium-ci",
+            "appium-ci-standalone-tools",
+            "appium-gulp-plugins",
+            "appium-package-master",
+            "appium-transpile-runtime",
+            "appium-jenkins",
+            "teen_process",
+            "packweb",
+            "turtledeps"
+        ],
+        "appium-apps": [
+            "gps-demo-app",
+            "io.appium.gappium.sampleapp",
+            "ios-test-app",
+            "ios-uicatalog",
+            "ios-webview-app",
+            "toggle-test-app",
+            "sample-apps"
+        ],
+        "extra-jlipps": [
+            "asyncbox",
+            "mochawait"
+        ],
+        "extra-wd": [
+            "wd"
+        ]
+    },
+    "owners": {
+        "appium-core": [
+            "imurchie",
+            "jlipps",
+            "jonahss",
+            "moizjv",
+            "scottdixon",
+            "sebv"
+        ],
+        "appium-contrib": [
+            "imurchie",
+            "jlipps",
+            "jonahss",
+            "moizjv",
+            "scottdixon",
+            "sebv",
+            "bootstraponline"
+        ],
+        "appium-tools": [
+            "imurchie",
+            "jlipps",
+            "jonahss",
+            "moizjv",
+            "scottdixon",
+            "sebv"
+        ],
+        "appium-apps": [
+            "imurchie",
+            "jlipps",
+            "jonahss",
+            "moizjv",
+            "sebv",
+            "scottdixon",
+            "bootstraponline"
+        ],
+        "extra-jlipps": [
+            "jlipps"
+        ],
+        "extra-wd": [
+            "admc",
+            "jlipps",
+            "sebv",
+            "sourishkrout"
+        ]
+    }
+}

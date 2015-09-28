@@ -103,6 +103,11 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       await d.deleteSession();
     });
 
+    it('should have a method to get driver for a session', async () => {
+      let [sessId] = await d.createSession(defaultCaps);
+      d.driverForSession(sessId).should.eql(d);
+    });
+
     describe('command queue', () => {
       let d = new DriverClass();
 

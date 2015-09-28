@@ -11,6 +11,7 @@ CHANGES IN VERSION 1.4.12 (from 1.4.11)
 #### iOS
 - support for iOS9.1
 - fix for iOS simulator with similar device names on Xcode 7
+- fix to idevicelog (real device) to record logs only for device under test
 
 CHANGES IN VERSION 1.4.11 (from 1.4.10)
 ===================================

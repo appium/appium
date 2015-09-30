@@ -5,6 +5,12 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.13 (from 1.4.12)
+===================================
+
+#### Chromedriver
+- Setting appium-chromedriver version to 2.3.2 as it is stable on Node version 0.10.32
+
 CHANGES IN VERSION 1.4.12 (from 1.4.11)
 ===================================
 

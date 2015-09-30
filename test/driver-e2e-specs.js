@@ -5,7 +5,6 @@ import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
-import 'mochawait';
 import { main as appiumServer } from '../lib/main';
 import { getDefaultArgs } from '../lib/parser';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';

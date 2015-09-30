@@ -9,7 +9,7 @@ import { getGitRev, getAppiumConfig, checkNodeOk, warnNodeDeprecations,
          validateTmpDir, showConfig, checkValidPort } from '../lib/config';
 import getParser from '../lib/parser';
 import logger from '../lib/logger';
-import 'mochawait';
+
 
 let should = chai.should();
 chai.use(chaiAsPromised);

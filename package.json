@@ -42,7 +42,7 @@
     "appium-express": "latest",
     "appium-fake-driver": "latest",
     "appium-ios-driver": "latest",
-    "appium-logger": "latest",
+    "appium-logger": "^2.0.0",
     "argparse": "^1.0.2",
     "asyncbox": "^2.0.2",
     "authorize-ios": "^1.0.3",
@@ -53,7 +53,7 @@
     "mkdirp": "^0.5.1",
     "mobile-json-wire-protocol": "latest",
     "npmlog": "^1.2.1",
-    "source-map-support": "^0.3.1",
+    "source-map-support": "^0.3.2",
     "teen_process": "^1.1.0",
     "winston": "^1.0.0",
     "yargs": "^3.24.0"
@@ -67,7 +67,6 @@
     "chai-as-promised": "^5.0.0",
     "gulp": "^3.8.11",
     "mocha": "^2.2.5",
-    "mochawait": "^2.0.0",
     "sinon": "^1.14.1",
     "wd": "~0.3.11"
   }

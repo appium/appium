@@ -4,7 +4,6 @@ import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import B from 'bluebird';
 import DeviceSettings from '../lib/device-settings';
 
@@ -197,7 +196,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should reject a current command when the driver crashes', async () => {
         d._oldGetStatus = d.getStatus;
         d.getStatus = async function () {
-          await B.delay(100);
+          await B.delay(5000);
         }.bind(d);
         let p = request({
           url: 'http://localhost:8181/wd/hub/status',

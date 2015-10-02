@@ -1,7 +1,6 @@
 import chai from 'chai';
 import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import { fs } from 'appium-support';
 import h from '../lib/helpers';
 

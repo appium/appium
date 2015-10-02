@@ -2,7 +2,6 @@ import { BaseDriver } from '..';
 import { errors } from 'mobile-json-wire-protocol';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import logger from '../lib/logger.js';
 import sinon from 'sinon';
 

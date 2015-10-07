@@ -39,7 +39,7 @@
     "appium-android-driver": "latest",
     "appium-base-driver": "latest",
     "appium-doctor": "0.0.6",
-    "appium-express": "latest",
+    "appium-express": "^1.0.0",
     "appium-fake-driver": "latest",
     "appium-ios-driver": "latest",
     "appium-logger": "^2.0.0",

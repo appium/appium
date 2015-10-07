@@ -1,4 +1,4 @@
-import { BaseDriver } from '..';
+import BaseDriver from '..';
 import { errors } from 'mobile-json-wire-protocol';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

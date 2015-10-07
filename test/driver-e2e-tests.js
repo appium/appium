@@ -184,11 +184,11 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
       it('should throw error when updateSettings method is not defined', async () => {
         await d.settings.update({ignoreUnimportantViews: true}).should.eventually
-                .be.rejectedWith("onSettingsUpdate");
+                .be.rejectedWith('onSettingsUpdate');
       });
       it('should throw error for invalid update object', async () => {
-        await d.settings.update("invalid json").should.eventually
-                .be.rejectedWith("JSON");
+        await d.settings.update('invalid json').should.eventually
+                .be.rejectedWith('JSON');
       });
     });
 
@@ -206,7 +206,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         });
         // make sure that the request gets to the server before our shutdown
         await B.delay(20);
-        d.startUnexpectedShutdown(new Error("Crashytimes"));
+        d.startUnexpectedShutdown(new Error('Crashytimes'));
         let res = await p;
         res.status.should.equal(13);
         res.value.message.should.contain('Crashytimes');

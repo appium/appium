@@ -86,4 +86,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--dont-stop-app-on-reset`|false|(Android-only) When included, refrains from stopping the app before restart||
 |`--debug-log-spacing`|false|Add exaggerated spacing in logs to help with visual inspection||
 |`--suppress-adb-kill-server`|false|(Android-only) If set, prevents Appium from killing the adb server instance||
-|`--webkit-debug-proxy-port`|false|((IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--webkit-debug-proxy-port 27753`|
+|`--webkit-debug-proxy-port`|false|(IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--webkit-debug-proxy-port 27753`|

@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import B from 'bluebird';
 
 const should = chai.should();
@@ -67,7 +66,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       }.bind(d);
       let cmdPromise = d.executeCommand('getStatus');
       await B.delay(0);
-      d.startUnexpectedShutdown(new Error("We crashed"));
+      d.startUnexpectedShutdown(new Error('We crashed'));
       await cmdPromise.should.be.rejectedWith(/We crashed/);
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
     });
@@ -81,7 +80,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       }.bind(d);
       let caps = _.clone(defaultCaps);
       await d.createSession(caps);
-      d.startUnexpectedShutdown(new Error("We crashed"));
+      d.startUnexpectedShutdown(new Error('We crashed'));
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
       await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
     });
@@ -95,7 +94,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       }.bind(d);
       let caps = _.clone(defaultCaps);
       await d.createSession(caps);
-      d.startUnexpectedShutdown(new Error("We crashed"));
+      d.startUnexpectedShutdown(new Error('We crashed'));
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
       await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
       await B.delay(100);
@@ -111,12 +110,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     describe('command queue', () => {
       let d = new DriverClass();
 
-      // disabling timeout for those test because it couses the node process
-      // to hang at exit, (because the timeout is still alive).
-      // TODO: there is some bit of logic to be implemented so that commands
-      // like 'getStatus' do not trigger the command timeout.
-      d.newCommandTimeoutMs = null;
-
       let waitMs = 10;
       d.getStatus = async () => {
         await B.delay(waitMs);
@@ -125,8 +118,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
       d.getSessions = async () => {
         await B.delay(waitMs);
-        throw new Error("multipass");
+        throw new Error('multipass');
       }.bind(d);
+
+      afterEach(() => {
+        d.clearNewCommandTimeout();
+      });
 
       it('should queue commands and.executeCommand/respond in the order received', async () => {
         let numCmds = 10;
@@ -137,7 +134,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         let results = await B.all(cmds);
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
-            throw new Error("Got result out of order");
+            throw new Error('Got result out of order');
           }
         }
       });
@@ -155,13 +152,13 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         let results = await B.settle(cmds);
         for (let i = 1; i < 5; i++) {
           if (results[i].value() <= results[i - 1].value()) {
-            throw new Error("Got result out of order");
+            throw new Error('Got result out of order');
           }
         }
-        results[5].reason().message.should.contain("multipass");
+        results[5].reason().message.should.contain('multipass');
         for (let i = 7; i < numCmds; i++) {
           if (results[i].value() <= results[i - 1].value()) {
-            throw new Error("Got result out of order");
+            throw new Error('Got result out of order');
           }
         }
       });
@@ -180,7 +177,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         results = await B.all(cmds);
         for (let i = 1; i < numCmds; i++) {
           if (results[i] <= results[i - 1]) {
-            throw new Error("Got result out of order");
+            throw new Error('Got result out of order');
           }
         }
       });

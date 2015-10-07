@@ -4,7 +4,6 @@ import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import B from 'bluebird';
 import DeviceSettings from '../lib/device-settings';
 
@@ -185,11 +184,11 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
       it('should throw error when updateSettings method is not defined', async () => {
         await d.settings.update({ignoreUnimportantViews: true}).should.eventually
-                .be.rejectedWith("onSettingsUpdate");
+                .be.rejectedWith('onSettingsUpdate');
       });
       it('should throw error for invalid update object', async () => {
-        await d.settings.update("invalid json").should.eventually
-                .be.rejectedWith("JSON");
+        await d.settings.update('invalid json').should.eventually
+                .be.rejectedWith('JSON');
       });
     });
 
@@ -197,7 +196,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should reject a current command when the driver crashes', async () => {
         d._oldGetStatus = d.getStatus;
         d.getStatus = async function () {
-          await B.delay(100);
+          await B.delay(5000);
         }.bind(d);
         let p = request({
           url: 'http://localhost:8181/wd/hub/status',
@@ -207,7 +206,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         });
         // make sure that the request gets to the server before our shutdown
         await B.delay(20);
-        d.startUnexpectedShutdown(new Error("Crashytimes"));
+        d.startUnexpectedShutdown(new Error('Crashytimes'));
         let res = await p;
         res.status.should.equal(13);
         res.value.message.should.contain('Crashytimes');

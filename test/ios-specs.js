@@ -2,7 +2,7 @@
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
   AuthorizationDbCheck, NodeBinaryCheck} from '../lib/ios';
-import { fs } from '../lib/utils';
+import { fs } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';

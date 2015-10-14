@@ -1,6 +1,7 @@
 // transpile:mocha
 
-import { pkgRoot, fs } from '../lib/utils';
+import { pkgRoot } from '../lib/utils';
+import { fs } from 'appium-support';
 import chai from 'chai';
 import 'mochawait';
 import path from 'path';

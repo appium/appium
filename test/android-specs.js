@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { EnvVarAndPathCheck, AndroidToolCheck } from '../lib/android';
-import { fs } from '../lib/utils';
+import { fs } from 'appium-support';
 import chai from 'chai';
 import 'mochawait';
 import { withMocks, verify, stubEnv } from 'appium-test-support';

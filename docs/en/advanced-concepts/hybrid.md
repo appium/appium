@@ -139,7 +139,7 @@ public function testThings()
 ### Automating hybrid Android apps
 
 Appium comes with built-in hybrid support via Chromedriver. Appium also uses
-Selendroid under the hood for webview support on devices older than 4.4. (In
+Selendroid under the hood for webview support on devices older than 4.2. (In
 that case, you'll want to specify `"automationName": "selendroid"` as a desired
 capability).
 

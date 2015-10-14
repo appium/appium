@@ -4,7 +4,7 @@
   "keywords": [
     "appium"
   ],
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -26,16 +26,16 @@
   },
   "dependencies": {
     "appium-logger": "^2.0.0",
-    "appium-support": "^2.0.6",
-    "authorize-ios": "^1.0.0",
+    "appium-support": "^2.0.4",
+    "authorize-ios": "^1.0.3",
     "babel-runtime": "=5.8.24",
-    "bluebird": "^2.9.30",
+    "bluebird": "^2.10.2",
     "colors": "^1.1.2",
-    "inquirer": "^0.9.0",
-    "lodash": "^3.9.3",
-    "source-map-support": "^0.3.1",
-    "teen_process": "^1.2.2",
-    "yargs": "^3.14.0"
+    "inquirer": "^0.10.1",
+    "lodash": "^3.10.1",
+    "source-map-support": "^0.3.2",
+    "teen_process": "^1.3.1",
+    "yargs": "^3.27.0"
   },
   "scripts": {
     "prepublish": "./node_modules/.bin/gulp prepublish",
@@ -45,11 +45,11 @@
   "devDependencies": {
     "appium-gulp-plugins": "^1.3.11",
     "appium-test-support": "^0.0.5",
-    "chai": "^3.0.0",
+    "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
-    "gulp": "^3.8.11",
-    "mochawait": "^2.0.0",
-    "sinon": "^1.15.4",
+    "gulp": "^3.9.0",
+    "mochawait": "^2.0.1",
+    "sinon": "^1.17.1",
     "uncolor": "^0.3.0"
   }
 }

@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "appium-logger": "^2.0.0",
-    "appium-support": "^2.0.0",
+    "appium-support": "^2.0.6",
     "authorize-ios": "^1.0.0",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.9.30",

@@ -1,26 +1,13 @@
 // transpile:mocha
 
-import { pkgRoot, fs, macOsxVersion } from '../lib/utils';
-import * as tp from 'teen_process';
+import { pkgRoot, fs } from '../lib/utils';
 import chai from 'chai';
 import 'mochawait';
 import path from 'path';
-import B from 'bluebird';
-import { withMocks, verify } from 'appium-test-support';
 
 chai.should();
 
 describe('utils', () => {
-
-  describe('macOsxVersion', withMocks({tp}, (mocks) => {
-    it('it should return the correct version.', async () => {
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '10.10.1\n', stderr: ''}));
-      let v = await macOsxVersion();
-      v.should.equal('10.10');
-      verify(mocks);
-    });
-  }));
 
   it('fs.readFile', async () => {
     (await fs.readFile(path.resolve(pkgRoot, 'test', 'fixtures',

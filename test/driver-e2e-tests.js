@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { server } from 'appium-express';
+import server from 'appium-express';
 import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
 import request from 'request-promise';
 import chai from 'chai';

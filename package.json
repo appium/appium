@@ -27,7 +27,7 @@
   "main": "./build/lib/main.js",
   "bin": {
     "appium": "./build/lib/main.js",
-    "appium-doctor": "./bin/appium-doctor.js",
+    "appium-doctor": "./node_modules/appium-doctor/appium-doctor.js",
     "authorize_ios": "./bin/authorize-ios.js",
     "authorize-ios": "./bin/authorize-ios.js"
   },

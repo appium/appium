@@ -38,7 +38,7 @@
   "dependencies": {
     "appium-android-driver": "latest",
     "appium-base-driver": "latest",
-    "appium-doctor": "0.0.6",
+    "appium-doctor": "1.0.0",
     "appium-express": "^1.0.0",
     "appium-fake-driver": "latest",
     "appium-ios-driver": "latest",

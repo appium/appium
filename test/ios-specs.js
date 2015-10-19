@@ -2,7 +2,7 @@
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
   AuthorizationDbCheck, NodeBinaryCheck} from '../lib/ios';
-import { fs } from '../lib/utils';
+import { fs } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';
@@ -14,6 +14,7 @@ import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
 import B from 'bluebird';
 import { withMocks, verify, stubLog } from 'appium-test-support';
+import { system } from 'appium-support';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -57,13 +58,13 @@ describe('ios', () => {
       (await check.fix()).should.equal('Manually install Xcode.');
     });
   }));
-  describe('XcodeCmdLineToolsCheck', withMocks({tp, utils, prompter} ,(mocks, S) => {
+  describe('XcodeCmdLineToolsCheck', withMocks({tp, utils, prompter, system} ,(mocks, S) => {
     let check = new XcodeCmdLineToolsCheck();
     it('autofix', () => {
       check.autofix.should.be.ok;
     });
     it('diagnose - success', async () => {
-      mocks.utils.expects('macOsxVersion').once().returns(P.resolve('10.10'));
+      mocks.system.expects('macOsxVersion').once().returns(P.resolve('10.10'));
       mocks.tp.expects('exec').once().returns(
         P.resolve({stdout: '1234 install-time\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -73,7 +74,7 @@ describe('ios', () => {
       verify(mocks);
     });
     it('diagnose - failure - pkgutil crash', async () => {
-      mocks.utils.expects('macOsxVersion').once().returns(B.resolve('10.10'));
+      mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.10'));
       mocks.tp.expects('exec').once().returns(Promise.reject(new Error('Something wrong!')));
       (await check.diagnose()).should.deep.equal({
         ok: false,
@@ -82,7 +83,7 @@ describe('ios', () => {
       verify(mocks);
     });
     it('diagnose - failure - no install time', async () => {
-      mocks.utils.expects('macOsxVersion').once().returns(B.resolve('10.10'));
+      mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.10'));
       mocks.tp.expects('exec').once().returns(
         P.resolve({stdout: '1234 abcd\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -175,7 +176,7 @@ describe('ios', () => {
       verify(mocks);
     });
   }));
-  describe('AuthorizationDbCheck', withMocks({fixes, tp, fs, utils} ,(mocks) => {
+  describe('AuthorizationDbCheck', withMocks({fixes, tp, fs, utils, system} ,(mocks) => {
     let check = new AuthorizationDbCheck();
     it('autofix', () => {
       check.autofix.should.be.ok;
@@ -191,7 +192,7 @@ describe('ios', () => {
     });
     it('diagnose - success - 10.8', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
-      mocks.utils.expects('macOsxVersion').once().returns(P.resolve('10.8'));
+      mocks.system.expects('macOsxVersion').once().returns(P.resolve('10.8'));
       mocks.fs.expects('readFile').once().returns(P.resolve(
         '<key>system.privilege.taskport</key> \n <dict>\n <key>allow-root</key>\n <true/>')); 
       (await check.diagnose()).should.deep.equal({
@@ -202,7 +203,7 @@ describe('ios', () => {
     });
     it('diagnose - failure - 10.10 - security', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
-      mocks.utils.expects('macOsxVersion').once().returns(P.resolve('10.10'));
+      mocks.system.expects('macOsxVersion').once().returns(P.resolve('10.10'));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'The Authorization DB is NOT set up properly.'
@@ -211,7 +212,7 @@ describe('ios', () => {
     });
     it('diagnose - failure - /etc/authorization', async () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
-      mocks.utils.expects('macOsxVersion').once().returns(P.resolve('10.8'));
+      mocks.system.expects('macOsxVersion').once().returns(P.resolve('10.8'));
       mocks.fs.expects('readFile').once().returns(P.resolve(''));
       (await check.diagnose()).should.deep.equal({
         ok: false,

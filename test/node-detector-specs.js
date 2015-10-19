@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import 'mochawait';
-import { fs } from '../lib/utils';
+import { fs } from 'appium-support';
 import * as tp from 'teen_process';
 import NodeDetector from '../lib/node-detector';
 import B from 'bluebird';

@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { BinaryIsInPathCheck, AndroidSdkExists } from '../lib/dev';
-import { fs } from '../lib/utils';
+import { fs } from 'appium-support';
 import * as tp from 'teen_process';
 import chai from 'chai';
 import 'mochawait';

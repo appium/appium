@@ -4,7 +4,7 @@ import { DirCheck, FileCheck } from '../lib/demo';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import 'mochawait';
-import { fs } from '../lib/utils';
+import { fs } from 'appium-support';
 import * as tp from 'teen_process';
 import * as prompt from '../lib/prompt';
 import log from '../lib/logger';

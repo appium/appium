@@ -12,7 +12,7 @@ We expect all members of the Appium community, including paid and unpaid agents,
 
 ### Appium Community Citizenship
 
-A supplemental goal of this Code of Conduct is to increase community citizenship by encouraging participants to recognize and strengthen the relationships between our actions and their effects on our community. Communities mirror the societies in which they exist, and positive action is essential to counteract the many forms of inequality and abuses of power that exist in society.
+A supplemental goal of this Code of Conduct is to increase community citizenship by encouraging participants to recognize and strengthen the relationships between our actions and their effects on our community. Communities mirror the societies in which they exist, and positive action is essential to counteract the many forms of inequality and abuses of power that exist in society. Unfortunately, many of today's societies come laden with assumptions about persons or personal attributes that are harmful or disprespectful. As a global community, we want Appium to represent the _best_ of how we can respect each other, and to that end we desire all community members to participate in creating a safe and creative space.
 
 If you see someone who is making an extra effort to ensure our community is welcoming, friendly, and encourages all participants to contribute to the fullest extent, we want to know.
 
@@ -27,7 +27,7 @@ Expected behavior:
 
   * Participate in an authentic and active way. In doing so, you contribute to the health and longevity of this community.
   * Exercise consideration and respect in your speech and actions.
-  * Don't make assumptions about a person's background, abilities, or intentions.
+  * Don't make assumptions about a person's background, abilities, or intentions. When in doubt, ask questions.
   * Attempt collaboration before conflict.
   * Refrain from demeaning, discriminatory, or harassing behavior and speech.
   * Be mindful of your surroundings and of your fellow participants. Alert community leaders if you notice a dangerous situation, someone in distress, or violations of this Code of Conduct, even if they seem inconsequential.
@@ -36,23 +36,23 @@ Any spamming, trolling, flaming, baiting, or other attention-stealing behaviour 
 
 Avoid using offensive or harassing nicknames or other identifiers that might detract from a friendly, safe, and welcoming environment for all.
 
-Harassing other users of Appium is never tolerated, whether via public or private media. Harassment includes, but is not limited to:
+Harassing other users of Appium is never tolerated, whether via public or private media. We include below some examples of what we consider to be harassment. The point of being very specific here is education rather than legalism; in some communities these behaviors would be normal. In Appium we want to have a high standard for all our interactions. This list is not exhaustive, it is illustrative.
 
-  * Verbal or written comments that reinforce social structures of domination related to gender, gender identity, gender expression, sexual orientation, disability, physical appearance, body size, race, age, and religion (or lack thereof).
+  * Verbal or written comments that reinforce social structures of domination related to gender, gender identity, gender expression, sexual orientation, disability, physical appearance, body size, race, age, and religion (or lack thereof). We want Appium to be a place where community members are free from default negative perspectives attached to any aspect of them, regardless of how "normal" that might be in the outside world.
   * Use of nudity, sexual images, and/or sexually explicit language.
   * Deliberate intimidation, stalking or following.
   * Harassing photography or recording.
   * Sustained disruption of discussion threads, issues, talks or other events.
   * Inappropriate physical contact.
   * Unwelcome sexual attention.
-  * Microaggressive behaviors. Microaggressions are brief and commonplace daily verbal, behavioral, or environmental indignities, whether intentional or unintentional, that communicate hostile, derogatory, or negative racial or sexual slights and insults. We consider microaggressions to be a form of harassment, and we will take appropriate action for incidences of microagressions.
+  * Brief and commonplace verbal, behavioral, or environmental indignities, whether intentional or unintentional, that communicate hostile, derogatory, or negative racial or sexual slights and insults.
 
 
 ### Consequences of Unacceptable Behavior
 
-Unacceptable behavior from any community member, including sponsors and those with decision-making authority, will not be tolerated.
+Willful unacceptable behavior from any community member, including sponsors and those with decision-making authority, will not be tolerated. Anyone asked to stop unacceptable behavior is expected to comply immediately.
 
-Anyone asked to stop unacceptable behavior is expected to comply immediately.
+Unintentional unacceptable behavior is an exciting opportunity for learning and growth, and _not_ an opportunity for community members to punish the transgressor. The Appium community consists of developers from all over the world, with drastically different cultures and default assumptions of what is appropriate. While we want to maintain the highest of standards for our interactions, as we have outlined above, we want to do so with an attitude of gentle education, not condemnation. The maintainers pledge to work in respectful ways to motivate acceptable behavior, and only turn to stronger methods of enforcement when necessary. The point of this Code of Conduct is to create a safe space, and that includes safety while learning from mistakes.
 
 If a community member engages in unacceptable behavior, the community organizers may take any action they deem appropriate, up to and including a temporary ban or permanent expulsion from the community without warning (and without refund in the case of a paid event). Individuals who have been banned are not allowed to participate in online discussions on [appium.io](https://discuss.appium.io/) and in the [Appium github organization](https://github.com/appium). In addition, they will not be allowed to attend any events organized by the Appium team.
 

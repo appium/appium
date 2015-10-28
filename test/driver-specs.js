@@ -123,5 +123,11 @@ describe('AppiumDriver', () => {
     });
     describe('sessionExists', () => {
     });
+    describe('getDriverForCaps', () => {
+      it('should not blow up if user doesnt provide platformName', () => {
+        let appium = new AppiumDriver({});
+        (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
+      });
+    });
   });
 });

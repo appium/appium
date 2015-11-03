@@ -182,6 +182,48 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         }
       });
     });
+
+    describe('proxying', () => {
+      let sessId;
+      beforeEach(async () => {
+        [sessId] = await d.createSession(defaultCaps);
+      });
+      describe('#proxyActive', () => {
+        it('should exist', () => {
+          d.proxyActive.should.be.an.instanceof(Function);
+        });
+        it('should return false', () => {
+          d.proxyActive(sessId).should.be.false;
+        });
+        it('should throw an error when sessionId is wrong', () => {
+          (() => { d.proxyActive('aaa'); }).should.throw;
+        });
+      });
+
+      describe('#getProxyAvoidList', () => {
+        it('should exist', () => {
+          d.getProxyAvoidList.should.be.an.instanceof(Function);
+        });
+        it('should return an array', () => {
+          d.getProxyAvoidList(sessId).should.be.an.instanceof(Array);
+        });
+        it('should throw an error when sessionId is wrong', () => {
+          (() => { d.getProxyAvoidList('aaa'); }).should.throw;
+        });
+      });
+
+      describe('#canProxy', () => {
+        it('should have a #canProxy method', () => {
+          d.canProxy.should.be.an.instanceof(Function);
+        });
+        it('should return false from #canProxy', () => {
+          d.canProxy(sessId).should.be.false;
+        });
+        it('should throw an error when sessionId is wrong', () => {
+          (() => { d.canProxy(); }).should.throw;
+        });
+      });
+    });
   });
 }
 

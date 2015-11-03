@@ -4,7 +4,7 @@
   "keywords": [
     "appium"
   ],
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -25,7 +25,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "appium-logger": "^2.0.0",
-    "appium-support": "^2.0.0",
+    "appium-support": "^2.0.7",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.10.2",

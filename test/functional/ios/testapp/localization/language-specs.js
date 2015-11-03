@@ -1,4 +1,4 @@
-"use strict";
+  "use strict";
 
 var env = require('../../../../helpers/env'),
     setup = require("../../../common/setup-base"),
@@ -7,7 +7,7 @@ var env = require('../../../../helpers/env'),
     rimraf = require('rimraf'),
     path = require('path');
 
-describe('localization - language @skip-ios8', function () {
+describe('localization - language', function () {
   this.timeout(env.MOCHA_INIT_TIMEOUT);
 
   after(function () {
@@ -21,9 +21,10 @@ describe('localization - language @skip-ios8', function () {
     var driver;
     setup(this, _.defaults({language: 'fr'}, desired)).then(function (d) { driver = d; });
 
-    it('should be fr', function (done) {
+    it('should contain fr', function (done) {
+      // iOS 9+ returns 'fr-US', earlier iOS versions return 'fr'
       driver.execute('$.mainApp().preferencesValueForKey("AppleLanguages")[0];')
-        .should.become('fr')
+        .should.eventually.contain('fr')
         .nodeify(done);
     });
   });
@@ -32,9 +33,10 @@ describe('localization - language @skip-ios8', function () {
     var driver;
     setup(this, _.defaults({language: 'de'}, desired)).then(function (d) { driver = d; });
 
-    it('should be de', function (done) {
+    it('should contain de', function (done) {
+      // iOS 9+ returns 'de-US', earlier iOS versions return 'de'
       driver.execute('$.mainApp().preferencesValueForKey("AppleLanguages")[0];')
-        .should.become('de')
+        .should.eventually.contain('de')
         .nodeify(done);
     });
   });

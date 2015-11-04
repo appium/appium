@@ -1,4 +1,4 @@
-  "use strict";
+"use strict";
 
 var env = require('../../../../helpers/env'),
     setup = require("../../../common/setup-base"),

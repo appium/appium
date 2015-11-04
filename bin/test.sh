@@ -140,7 +140,7 @@ if $ios91_only || $all_tests; then
 fi
 
 if $ios92_only || $all_tests; then
-    run_ios_tests "9.2" "ios92" "@skip-ios92|@skip-ios91|@skip-ios9|@skip-ios84|@skip-ios82|@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up"
+    run_ios_tests "9.2" "ios92" "@skip-ios92|@skip-ios-all|@skip-ios7up"
 fi
 
 if $android_only || $all_tests; then

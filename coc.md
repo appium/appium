@@ -20,7 +20,7 @@ In general: treat others how you would like to be treated, were you in their pla
 
 ### What will organizers do about inappropriate behavior?
 
-If we notice you doing or saying something appropriate, an organizer will explain why it's inappropriate and ask you to stop. We won't demonize or vilify you. But please do stop the inappropriate behavior so we can get back to writing and discussing code in a safe environment. If you have philosophical disagreements about what's actually inappropriate, please take them to a separate public or private conversation with an Appium maintainer so we don't turn pull requests into an ethics debate.
+If we notice you doing or saying something inappropriate, an organizer will explain why it's inappropriate and ask you to stop. We won't demonize or vilify you. But please do stop the inappropriate behavior so we can get back to writing and discussing code in a safe environment. If you have philosophical disagreements about what's actually inappropriate, please take them to a separate public or private conversation with an Appium maintainer so we don't turn pull requests into an ethics debate.
 
 If you keep doing unacceptable things, we'll likely ban you, report you to GitHub, or take other appropriate action.
 

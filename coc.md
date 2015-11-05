@@ -2,7 +2,7 @@
 
 ### What is this code of conduct for?
 
-Appium is a piece of technology, but **the core of the Appium community is the people in it**. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, gender identity and expression, sexual orientation, ability, physical appearance, body size, race, age, socioeconomic status, religion (or lack thereof), or other marginalized aspect of comunity members. We expect all members of the Appium community to abide by this Code of Conduct whenever interacting in online or in-person venues (pull requests, GitHub issues, 1-1 or group chat, meetups, conferences, etc...)
+Appium is a piece of technology, but **the core of the Appium community is the people in it**. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, gender identity and expression, sexual orientation, ability, physical appearance, body size, race, age, socioeconomic status, religion (or lack thereof), or other marginalized aspect of comunity members. We expect all members of the Appium community to abide by this Code of Conduct whenever interacting in Appium venues (pull requests, GitHub issues, 1-1 or group chat, meetups, conferences, etc...)
 
 ### Examples of inappropriate behavior
 
@@ -20,7 +20,7 @@ In general: treat others how you would like to be treated, were you in their pla
 
 ### What will organizers do about inappropriate behavior?
 
-If we notice you doing or saying something appropriate, we'll explain why it's inappropriate and ask you to stop. We won't demonize or vilify you. But please do stop the inappropriate behavior so we can get back to writing and discussing code in a safe environment. If you have philosophical disagreements about what's actually inappropriate, please take them to a separate public or private conversation with an Appium maintainer so we don't turn pull requests into an ethics debate.
+If we notice you doing or saying something appropriate, an organizer will explain why it's inappropriate and ask you to stop. We won't demonize or vilify you. But please do stop the inappropriate behavior so we can get back to writing and discussing code in a safe environment. If you have philosophical disagreements about what's actually inappropriate, please take them to a separate public or private conversation with an Appium maintainer so we don't turn pull requests into an ethics debate.
 
 If you keep doing unacceptable things, we'll likely ban you, report you to GitHub, or take other appropriate action.
 

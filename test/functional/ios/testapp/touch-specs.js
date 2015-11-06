@@ -131,8 +131,13 @@ describe('testapp - swipe actions', function () {
           rightPos.x = x + re.width + 5;
           leftPos.y = rightPos.y = centerPos.y = y + (re.height * 0.5);
         })
-        .elementByAccessibilityId("Access'ibility")
-        .then(function (el) { destEl = el;})
+        .elementByAccessibilityId("location alert")
+        .then(function (el) {
+          // Our tests below expect the slider to be taken to 100%, so
+          // here we're getting the 'location alert' element because it's
+          // on the right hand side of the app, which we'll drag to.
+          destEl = el;
+        })
         .then(getSliderValue)
         .then(testSliderValueNot0or100)
         .nodeify(done);

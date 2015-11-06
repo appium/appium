@@ -6,7 +6,7 @@ var env = require('../../../../helpers/env')
 
 var SLOW_DOWN_MS = 1000;
 
-describe('uicatalog - gestures - flick @skip-ios8 @skip-ios7 @skip-ios6', function () {
+describe('uicatalog - gestures - flick @skip-ios-all', function () {
   var driver;
   setup(this, desired).then(function (d) { driver = d; });
 
@@ -69,11 +69,13 @@ describe('uicatalog - gestures - flick @skip-ios8 @skip-ios7 @skip-ios6', functi
   });
 
   describe('with element', function () {
-
+    afterEach(function () {
+      driver.back();
+    });
     it("slider value should change", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[10]; })
         .click()
         .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
@@ -88,7 +90,7 @@ describe('uicatalog - gestures - flick @skip-ios8 @skip-ios7 @skip-ios6', functi
     it("should work with mobile flick", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[10]; })
         .click()
         .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })
@@ -106,7 +108,7 @@ describe('uicatalog - gestures - flick @skip-ios8 @skip-ios7 @skip-ios6', functi
     it("should work with mobile flick and percent", function (done) {
       var valueBefore, slider;
       driver
-        .elementsByClassName('UIATableCell').then(function (els) { return els[1]; })
+        .elementsByClassName('UIATableCell').then(function (els) { return els[10]; })
         .click()
         .elementByClassName("UIASlider").then(function (el) { slider = el; })
         .then(function () { return slider.getAttribute("value"); })

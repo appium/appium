@@ -61,8 +61,8 @@ describe('testapp - device', function () {
   });
 
   describe('generic deviceName @skip-ios6', function () {
+    this.timeout(60000);
     var session;
-
     afterEach(function (done) {
       session.tearDown(this.currentTest.state === 'passed').nodeify(done);
     });

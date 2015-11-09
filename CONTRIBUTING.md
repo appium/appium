@@ -5,7 +5,7 @@ Fork the project, make a change, and send a pull request! Please have a look at 
 Please make sure the unit and functional tests pass before sending a pull request; for more
 information on how to run tests, keep reading!
 
-Make sure you read and follow the setup instructions in the README first.
+Make sure you read and follow the setup instructions in the README first. And note that all participation in the Appium community (including code submissions) is governed by our [Code of Conduct](CONDUCT.md).
 
 ### Running Appium from Source and doing dev on Appium
 

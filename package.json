@@ -13,12 +13,7 @@
   ],
   "version": "1.4.14",
   "author": "https://github.com/appium",
-  "licenses": [
-    {
-      "type": "apache-2.0",
-      "url": "https://raw.github.com/appium/appium/master/LICENSE"
-    }
-  ],
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"

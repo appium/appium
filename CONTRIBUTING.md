@@ -17,6 +17,10 @@ have a look at our [running from source
 doc](/docs/en/contributing-to-appium/appium-from-source.md) for more
 information on how to get set up to run tests and start slinging code.
 
+Before we accept your contribution of code, you will need to e-sign our
+[Contributor License Agreement](https://docs.google.com/forms/d/1lOfXRw_0VCk7gYzjj4WLetGu7yelDVo5LWh0z7pGftE/viewform). Please let us know you've done so in your
+pull request!
+
 ### Become an Appium Triager
 
 You can help us manage our issue tracker! All you need is enough familiarity with Appium to try and reproduce bugs. We triage issues by having conversations with the issue creator and then either closing the issue or moving it into the [Bugs](https://github.com/appium/appium/milestones/Bugs) or [Features](https://github.com/appium/appium/milestones/Features) milestone. We use these buckets as the backlogs for our upcoming releases.

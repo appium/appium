@@ -5,6 +5,12 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.15 (from 1.4.14)
+===================================
+
+#### iOS
+- fix for safari and webview issues in iOS9+
+
 CHANGES IN VERSION 1.4.14 (from 1.4.13)
 ===================================
 

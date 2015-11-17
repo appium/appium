@@ -102,10 +102,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           json: true,
           simple: false
         });
-        res.status.should.equal(13);
+        res.status.should.equal(6);
         should.equal(d.sessionId, null);
         res = await endSession(newSession.sessionId);
-        res.status.should.equal(13);
+        res.status.should.equal(6);
       });
 
       it('should not timeout with commandTimeout of false', async () => {
@@ -158,10 +158,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           json: true,
           simple: false
         });
-        res.status.should.equal(13);
+        res.status.should.equal(6);
         should.equal(d.sessionId, null);
         res = await endSession(newSession.sessionId);
-        res.status.should.equal(13);
+        res.status.should.equal(6);
       });
 
       it('should not have a timer running before or after a session', async () => {

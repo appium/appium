@@ -109,7 +109,7 @@ class SocketServer {
    *
    * @throws SocketServerException
    */
-  public void listenForever(boolean disableAndroidWatchers) throws SocketServerException {
+  public void listenForever(boolean disableAndroidWatchers, boolean acceptSSLCerts) throws SocketServerException {
     Logger.debug("Appium Socket Server Ready");
     UpdateStrings.loadStringsJson();
     if (disableAndroidWatchers) {
@@ -117,6 +117,12 @@ class SocketServer {
     } else {
       dismissCrashAlerts();
     }
+
+    if (acceptSSLCerts) {
+      Logger.debug("Accepting SSL certificate errors.");
+      acceptSSLCertificates();
+    }
+
     final TimerTask updateWatchers = new TimerTask() {
       @Override
       public void run() {
@@ -151,6 +157,15 @@ class SocketServer {
       Logger.debug("Registered crash watchers.");
     } catch (Exception e) {
       Logger.debug("Unable to register crash watchers.");
+    }
+  }
+
+  public void acceptSSLCertificates() {
+    try {
+      new UiWatchers().registerAcceptSSLCertWatcher();
+      Logger.debug("Registered SSL certificate error watcher.");
+    } catch (Exception e) {
+      Logger.debug("Unable to register SSL certificate error watcher.");
     }
   }
 

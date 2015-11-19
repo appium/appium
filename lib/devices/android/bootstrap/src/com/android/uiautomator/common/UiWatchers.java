@@ -122,6 +122,27 @@ public class UiWatchers {
     Log.i(LOG_TAG, "Registed GUI Exception watchers");
   }
 
+  public void registerAcceptSSLCertWatcher() {
+    UiDevice.getInstance().registerWatcher("SSLCERTERROR", new UiWatcher() {
+      @Override
+      public boolean checkForCondition() {
+        UiObject continueButton = new UiObject(new UiSelector()
+          .className("android.widget.Button").packageName("com.android.browser").text("Continue"));
+        if (continueButton.exists()) {
+          try {
+            continueButton.click();
+            return true; // triggered
+          } catch (UiObjectNotFoundException e) {
+            Log.e(LOG_TAG, "Exception", e);
+          }
+        }
+        return false; // no trigger
+      }
+    });
+
+    Log.i(LOG_TAG, "Registered SSL Certificate Error Watchers");
+  }
+
   public void onAnrDetected(String errorText) {
     mErrors.add(errorText);
   }

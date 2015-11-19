@@ -60,6 +60,7 @@ the capabilities that you can use.
 0. Make sure that you can run your tests against the Simulator.
 0. Double check that you can invoke your automation from Instruments.
 0. Make sure Instruments is not already running.
+0. Make sure UI Automation is enabled on your device. Settings -> Developer -> Enable UI Automation
 
 ### Appium on real Android devices
 

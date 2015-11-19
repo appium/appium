@@ -133,6 +133,10 @@ Gecko-based platforms.
 Please take a look at our [contribution documentation](CONTRIBUTING.md)
 for instructions on how to build, test and run Appium from source.
 
+### Roadmap
+
+Interested in where Appium is heading in the future? Check out the [Roadmap](ROADMAP.md)
+
 ### Project Credits & Inspiration
 
 [Credits](/docs/en/contributing-to-appium/credits.md)

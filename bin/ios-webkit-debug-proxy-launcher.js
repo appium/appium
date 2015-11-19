@@ -28,11 +28,18 @@ var RESTART_ON_MESSAGES = [
   'Invalid message _rpc_applicationSentListing'];
 
 var PROXY_CMD = 'ios_webkit_debug_proxy';
+var proxy;
 
-function startProxy() {
+var handleKillProcess = function (exitCode) {
+  console.log('\nKilling proxy process!');
+  proxy.kill('SIGTERM');
+  process.exit((exitCode || 0));
+};
+
+var startProxy = function () {
   console.log('RUNNING:', PROXY_CMD, args.join(' '));
 
-  var proxy = spawn(PROXY_CMD, args);
+  proxy = spawn(PROXY_CMD, args);
 
   proxy.stdout.on('data', function (data) {
     console.log('stdout: ' + data);
@@ -54,7 +61,10 @@ function startProxy() {
   proxy.on('close', function (code) {
     console.log('child process exited with code ' + code);
   });
-}
+};
+
+process.on('SIGINT', handleKillProcess);
+process.on('SIGTERM', handleKillProcess);
 
 startProxy();
 

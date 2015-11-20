@@ -165,16 +165,16 @@ hooks.
 ```center
 grunt lint
 > Running "newer:jshint" (newer) task
-> 
+>
 > Running "newer:jshint:files" (newer) task
 > No newer files to process.
-> 
+>
 > Running "newer:jshint:test" (newer) task
 > No newer files to process.
-> 
+>
 > Running "newer:jshint:examples" (newer) task
 > No newer files to process.
-> 
+>
 > Running "jscs:files" (jscs) task
 > >> 303 files without code style errors.
 ```
@@ -185,7 +185,7 @@ If you have an Appium server listening, you can run individual test files using
 Mocha, for example:
 
 ```center
-DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple.js
+DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple-specs.js
 ```
 
 Or individual tests (e.g., a test with the word "alert" in the name):

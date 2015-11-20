@@ -5,6 +5,124 @@ CHANGES IN VERSION 1.5 (from 1.4.?)
 
 - add Tapster support for some more touch methods
 
+CHANGES IN VERSION 1.4.15 (from 1.4.14)
+===================================
+
+#### iOS
+- fix for safari and webview issues in iOS9+
+
+CHANGES IN VERSION 1.4.14 (from 1.4.13)
+===================================
+
+#### iOS
+- support for iOS9.2
+- fix for webview, resolving context issues in iOS9+
+
+#### Selendroid
+- upgrade to Selendroid 0.17.0.
+
+CHANGES IN VERSION 1.4.13 (from 1.4.12)
+===================================
+
+#### Chromedriver
+- Setting appium-chromedriver version to 2.3.2 as it is stable on Node version 0.10.32
+
+CHANGES IN VERSION 1.4.12 (from 1.4.11)
+===================================
+
+#### iOS
+- support for iOS9.1
+- fix for iOS simulator with similar device names on Xcode 7
+- fix to idevicelog (real device) to record logs only for device under test
+
+CHANGES IN VERSION 1.4.11 (from 1.4.10)
+===================================
+
+#### iOS
+- fix for iOS simulator selector for Xcode 7
+- fix for selecting default device for iOS9
+
+CHANGES IN VERSION 1.4.10 (from 1.4.9)
+===================================
+
+#### General
+- fixed bug in a config file accidentally published in version 1.4.9
+
+CHANGES IN VERSION 1.4.9 (from 1.4.8)
+===================================
+
+#### iOS
+- support for iOS9 and xcode 7
+- at this point instruments-without-delay is not supported for xcode-7
+
+CHANGES IN VERSION 1.4.8 (from 1.4.7)
+===================================
+
+#### General
+- fix for Windows users! Now the system architecture is properly detected, npm installs should work again
+
+#### Chromedriver / Android hybrid
+- fix for an issue in responding to `/status` api endpoint, this is used heavily by Selenium grid
+
+CHANGES IN VERSION 1.4.7 (from 1.4.6)
+===================================
+
+#### Chromedriver / Android hybrid
+- fix for problem in downstream jsonwp-proxy; now sessionId returned is replaced
+  with sessionId present in url(original sessionId). Fixed this in appium-jsonwp-proxy 1.2.3
+
+CHANGES IN VERSION 1.4.6 (from 1.4.5)
+===================================
+
+#### General
+- this is a republish because of a misconfiguration before 1.4.5 got published
+  resulting in a server startup failure
+
+
+CHANGES IN VERSION 1.4.5 (from 1.4.4)
+===================================
+
+#### General
+- fix problem with npm shrinkwrap that caused Appium not to start
+
+
+CHANGES IN VERSION 1.4.4 (from 1.4.3)
+===================================
+
+#### Chromedriver / Android hybrid
+- fix a problem in downstream appium-chromedriver; no longer rely on async
+  methods returning objects of the Promise type. This was causing undefined
+  errors when running Chromedriver/hybrid tests.
+
+
+CHANGES IN VERSION 1.4.3 (from 1.4.2)
+===================================
+
+#### iOS
+- update the appium-instruments dependency with working subdeps
+
+
+CHANGES IN VERSION 1.4.2 (from 1.4.1)
+===================================
+
+#### General
+- update ES6-based dependencies which got bit by a breaking Regenerator
+  change
+
+#### iOS
+- keep track of the correct app ID for Safari webviews (fixes problems in
+  finding the webview for iOS)
+
+#### Android
+- fix sendKeys and clear for Samsung devices
+
+
+CHANGES IN VERSION 1.4.1 (from 1.4)
+===================================
+
+#### Chromedriver
+- have the appium-chromedriver manage the chromedriver binary download/install
+
 
 CHANGES IN VERSION 1.4 (from 1.3.7)
 ======================================

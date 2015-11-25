@@ -36,12 +36,12 @@
     "doc": "./docs"
   },
   "dependencies": {
-    "appium-android-driver": "latest",
-    "appium-base-driver": "latest",
+    "appium-android-driver": "^1.1.1",
+    "appium-base-driver": "^1.1.2",
     "appium-doctor": "1.0.0",
     "appium-express": "^1.0.0",
     "appium-fake-driver": "latest",
-    "appium-ios-driver": "latest",
+    "appium-ios-driver": "^1.0.0",
     "appium-logger": "^2.0.0",
     "appium-selendroid-driver": "^1.0.0",
     "appium-support": "^2.0.7",

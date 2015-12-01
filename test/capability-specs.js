@@ -158,6 +158,26 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
+  describe('boolean capabilities', () => {
+    it('should allow a string "false"', async () => {
+      await d.createSession({
+        'platformName': 'iOS',
+        'deviceName': 'Delorean',
+        'noReset': '"false"'
+      });
+      logger.warn.callCount.should.be.above(0);
+    });
+
+    it('should allow a string "ttrue"', async () => {
+      await d.createSession({
+        'platformName': 'iOS',
+        'deviceName': 'Delorean',
+        'noReset': '"true"'
+      });
+      logger.warn.callCount.should.be.above(0);
+    });
+  });
+
   it ('should error if objects in caps', async function () {
     try {
       await d.createSession({

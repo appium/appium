@@ -163,16 +163,16 @@ describe('Desired Capabilities', () => {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
-        'noReset': '"false"'
+        'noReset': 'false'
       });
       logger.warn.callCount.should.be.above(0);
     });
 
-    it('should allow a string "ttrue"', async () => {
+    it('should allow a string "true"', async () => {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
-        'noReset': '"true"'
+        'noReset': 'true'
       });
       logger.warn.callCount.should.be.above(0);
     });

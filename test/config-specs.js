@@ -32,6 +32,7 @@ describe('Config', () => {
         config.should.be.an('object');
         should.exist(config['git-sha']);
         should.exist(config.built);
+        should.exist(config.version);
       });
     });
     describe('showConfig', () => {

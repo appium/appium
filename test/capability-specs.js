@@ -228,4 +228,60 @@ describe('Desired Capabilities', () => {
 
     logger.warn.callCount.should.equal(0);
   });
+
+  it('should not validate against null/undefined caps', async function () {
+    d.desiredCapConstraints = {
+      'foo': {
+        isString: true
+      }
+    };
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: null
+    });
+    await d.deleteSession();
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: 1
+    }).should.eventually.be.rejectedWith(/was not valid/);
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: undefined
+    });
+    await d.deleteSession();
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: ''
+    });
+    await d.deleteSession();
+  });
+
+  it('should still validate null/undefined caps whose presence is required', async () => {
+    d.desiredCapConstraints = {
+      foo: {
+        presence: true
+      }
+    };
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: null
+    }).should.eventually.be.rejectedWith(/blank/);
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: ''
+    }).should.eventually.be.rejectedWith(/blank/);
+
+  });
 });

@@ -1,6 +1,6 @@
 # Appium in a Nutshell
 
-![Appium packages](./packages-graph.png)
+![Appium packages](./appium-packages.png)
 
 ## appium
 - runs basic checks

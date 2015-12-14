@@ -30,12 +30,26 @@ gulp.task('docs', ['transpile'], function () {
     var argNames = arg[0];
     var exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];
     var argOpts = arg[1];
+
+    // --keystore-path defaultValue contains a user-specific path,
+    // let's replace it with <user>/...
+    if (arg[0][0] === '--keystore-path') {
+      var userPath = process.env.HOME || process.env.USERPROFILE;
+      argOpts.defaultValue = argOpts.defaultValue.replace(userPath, '&lt;user&gt;')
+    }
+
+    // handle empty objects
+    if (JSON.stringify(argOpts.defaultValue) === '{}'){
+      argOpts.defaultValue = '{}';
+    }
+
     md += "|`" + argNames.join("`, `") + "`";
     md += "|" + ((typeof argOpts.defaultValue === "undefined") ? "" : argOpts.defaultValue);
     md += "|" + argOpts.help;
     md += "|" + ((typeof argOpts.example === "undefined") ? "" : "`" + exampleArg + " " + argOpts.example + "`");
     md += "|\n";
   });
+  // console.log(md);
   fs.writeFile(docFile, md, function (err) {
     if (err) {
       console.log(err.stack);

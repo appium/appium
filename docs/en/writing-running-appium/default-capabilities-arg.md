@@ -1,3 +1,5 @@
+# The --default-capabilities flag
+
 Appium 1.5 does away with most CLI flags; the remainder can be converted into JSON and made part of the --default-capabilities flag. For example:
 
 ```
@@ -5,7 +7,7 @@ Appium 1.5 does away with most CLI flags; the remainder can be converted into JS
 ```
 
 | Flag                      | JSON key                |
-|-----------------------------------------------------|
+|---------------------------|-------------------------|
 | --keep-artifacts          | keepArtifacts           |
 | --platform-name           | platformName            |
 | --platform-version        | platformVersion         |

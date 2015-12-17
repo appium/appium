@@ -77,7 +77,7 @@ Before you can run your tests against Safari on a real device you will need to:
 * Have the **ios-webkit-debug-proxy** installed, running and listening on port 27753 (see the
 [hybrid docs](/docs/en/advanced-concepts/hybrid.md#execution-against-a-real-ios-device) for instructions)
 * Turn on **web inspector** on iOS device (**settings > safari >
-advanced**, only for iOS 6.0 and up)
+advanced**)
 * Create a **provisioning profile** that can be used to deploy the SafariLauncherApp.
 
 To create a profile for the launcher go into the **Apple Developers Member Center** and:
@@ -95,14 +95,14 @@ Now that you have a profile open a terminal and run the following commands:
 $ git clone https://github.com/appium/appium.git
 $ cd appium
 
-# Option 1: You dont define any parameters and it will set the code signing identity to 'iPhone Developer'
+# Option 1: You don't define any parameters and it will set the code signing identity to 'iPhone Developer'
 $ ./reset.sh --ios --real-safari
 
 # Option 2: You define the code signing identity and allow xcode to select the profile identity code (if it can).
-$ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>'
+$ ./reset.sh --ios --real-safari --code-sign '<code signing identity>'
 
 # Option 3: You define both the code signing identity and profile identity code.
-$ ./reset.sh --ios --real-safari --code-sign '<code signing idendity>' --profile '<retrieved profile identity code>'
+$ ./reset.sh --ios --real-safari --code-sign '<code signing identity>' --profile '<retrieved profile identity code>'
 
 # Once successfully configured and with the safari launcher built, start the server as per usual
 $ node /lib/server/main.js -U <UDID>

@@ -17,13 +17,12 @@ large-scale future plans for Appium.
 
 | Project | Description | ETD | Projected Appium Release |
 |---------|-------------|-----|--------------------------|
-|[Architecture Overhaul](https://github.com/appium/appium/issues/5169)|Appium's architecture has grown unwieldy enough that adding new features and preventing regressions has become difficult. A rearchitecture is in order to solve these issues as well as migrate the codebase to a form of JS much easier to work in and understand.|8/2015|1.5|
+|[Architecture Overhaul](https://github.com/appium/appium/issues/5169)|Appium's architecture has grown unwieldy enough that adding new features and preventing regressions has become difficult. A rearchitecture is in order to solve these issues as well as migrate the codebase to a form of JS much easier to work in and understand.|12/2015|1.5|
 
 ## Upcoming Projects (in rough order of priority)
 
 | Project | Description |
 |---------|-------------|
-|iOS 8.4 support|Appium should support iOS 8.4 / Xcode 6.2|
 |Apple Watch support|Appium should support Apple Watch apps via the Watch simulator|
 |Onboarding Overhaul|The current Appium docs leave a lot to be desired. The format is confusing (it would be better for API docs), the content is outdated, and many things are still undocumented. This project would go back to the drawing board in all of these areas and put together something genuinely helpful for the community, which hopefully reduces the kind of support issues we're currently flooded by.|
 |New Appium GUIs|The current Appium GUIs (Appium.app and Appium.exe) have a number of issues. They aren't maintained by the core Appium team. They're written in Objective-C and C# respectively: two languages, and specifically, two languages other than Appium's core language. Because of this they lag behind the Appium server and are often broken. However, users love them primarily because of the Inspector feature (the thing that lets them graphically navigate their app), so we have to field a ton of complaints about these projects. There's an opportunity to start over. With [Electron](http://electron.atom.io/), we'd be able to take the new version of Appium we're working on and embed it directly inside a Node-based GUI app written using the languages and technologies the core team is experienced with. We'd have one codebase and could distribute the app on Mac, Windows, and Linux. The GUIs would become an official part of Appium's release cycle so they wouldn't be broken.|

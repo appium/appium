@@ -1,5 +1,7 @@
 # Appium server arguments
 
+Many Appium 1.5 server arguments have been deprecated in favor of the [--default-capabilities flag](./default-capabilities-arg.md).
+
 Usage: `node . [flags]`
 
 ## Server flags
@@ -50,7 +52,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--suppress-adb-kill-server`|false|(Android-only) If set, prevents Appium from killing the adb server instance||
 |`--async-trace`|false|Add long stack traces to log entries. Recommended for debugging only.||
 |`--webkit-debug-proxy-port`|27753|(IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--webkit-debug-proxy-port 27753`|
-|`--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by recieved capabilities.|`--default-capabilities {"app": "myapp.app", "deviceName": "iPhone Simulator"}`|
+|`--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities.|`--default-capabilities {"app": "myapp.app", "deviceName": "iPhone Simulator"}`|
 |`-k`, `--keep-artifacts`|false|[DEPRECATED] - no effect, trace is now in tmp dir by default and is cleared before each run. Please also refer to the --trace-dir flag.||
 |`--platform-name`|null|[DEPRECATED] - Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|
 |`--platform-version`|null|[DEPRECATED] - Version of the mobile platform|`--platform-version 7.1`|

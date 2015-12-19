@@ -20,7 +20,7 @@ gulp.task('docs', ['transpile'], function () {
   var docFile = path.resolve(__dirname, "docs/en/writing-running-appium/server-args.md");
   var md = "# Appium server arguments\n\n";
   md += "Many Appium 1.5 server arguments have been deprecated in favor of the "
-  md += "[--default-capabilities flag](./default-capabilities-arg.md)."
+  md += "[--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md)."
   md += "\n\nUsage: `node . [flags]`\n\n";
   md += "## Server flags\n";
   md += "All flags are optional, but some are required in conjunction with " +

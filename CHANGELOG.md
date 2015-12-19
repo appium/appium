@@ -1,9 +1,39 @@
-CHANGES IN VERSION 1.5 (from 1.4.?)
+CHANGES IN VERSION 1.5 (from 1.4.16)
 ======================================
 
-*IN DEVELOPMENT*
+*NOTE*: Appium 1.5 is a complete rewrite of Appium from the ground up. Every
+effort has been made to avoid any breaking changes but caution should be
+exercised. Please let us know on GitHub if you notice any issues with your
+tests.
 
+#### Internal changes
+- get rid of reset.sh and various other appium build tools in favor of a simple
+  npm install
+- split apart Appium into various smaller modules each with their own
+  repositories and NPM packages
+- use gulp instead of grunt
+- use babel to transpile from
+- get rid of .appiumconfig.json
+
+#### General
+- deprecate server arguments that are also desired capabilities. Instead, add
+  a --default-capabilities argument which takes a JSON string of capabilities
+  that will be the default for any session. E.g., --default-capabilities
+  '{"launchTimeout": 60000}'
+- Various docs and contributing docs updates (including a code of conduct for
+  the project)
+
+#### iOS
 - add Tapster support for some more touch methods
+
+#### Android
+- enable navigating to an android URI via the set url driver methods
+
+CHANGES IN VERSION 1.4.16 (from 1.4.15)
+===================================
+
+#### iOS
+- fix for safari and webview issues for 9.2
 
 CHANGES IN VERSION 1.4.15 (from 1.4.14)
 ===================================

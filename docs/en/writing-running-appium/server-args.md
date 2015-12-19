@@ -1,6 +1,6 @@
 # Appium server arguments
 
-Many Appium 1.5 server arguments have been deprecated in favor of the [--default-capabilities flag](./default-capabilities-arg.md).
+Many Appium 1.5 server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).
 
 Usage: `node . [flags]`
 

@@ -1,7 +1,6 @@
 // transpile:mocha
 
 import chai from 'chai';
-import 'mochawait';
 import { fixIt, clear } from '../lib/prompt';
 import { inquirer } from '../lib/utils';
 import { withMocks, verify } from 'appium-test-support';

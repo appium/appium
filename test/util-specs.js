@@ -3,7 +3,6 @@
 import { pkgRoot } from '../lib/utils';
 import { fs } from 'appium-support';
 import chai from 'chai';
-import 'mochawait';
 import path from 'path';
 
 chai.should();

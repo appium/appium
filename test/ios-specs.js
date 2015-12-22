@@ -11,7 +11,6 @@ import FixSkippedError from '../lib/doctor';
 import log from '../lib/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import 'mochawait';
 import B from 'bluebird';
 import { withMocks, verify, stubLog } from 'appium-test-support';
 import { system } from 'appium-support';
@@ -194,7 +193,7 @@ describe('ios', () => {
       mocks.tp.expects('exec').once().returns(P.reject(new Error('Oh No!')));
       mocks.system.expects('macOsxVersion').once().returns(P.resolve('10.8'));
       mocks.fs.expects('readFile').once().returns(P.resolve(
-        '<key>system.privilege.taskport</key> \n <dict>\n <key>allow-root</key>\n <true/>')); 
+        '<key>system.privilege.taskport</key> \n <dict>\n <key>allow-root</key>\n <true/>'));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         message: 'The Authorization DB is set up properly.'

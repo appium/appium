@@ -2,7 +2,6 @@
 
 import { Doctor, DoctorCheck, FixSkippedError } from '../lib/doctor';
 import chai from 'chai';
-import 'mochawait';
 import { withSandbox, withMocks, verify, stubLog } from 'appium-test-support';
 import log from '../lib/logger';
 

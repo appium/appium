@@ -2,7 +2,6 @@
 
 import newDoctor from '../lib/factory';
 import chai from 'chai';
-import 'mochawait';
 
 chai.should();
 

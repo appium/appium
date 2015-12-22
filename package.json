@@ -47,9 +47,6 @@
     "appium-test-support": "^0.0.5",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",
-    "gulp": "^3.9.0",
-    "mochawait": "^2.0.1",
-    "sinon": "^1.17.1",
-    "uncolor": "^0.3.0"
+    "gulp": "^3.9.0"
   }
 }

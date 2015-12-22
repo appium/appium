@@ -36,4 +36,7 @@ let opts = yargs.argv;
 
 configurePrompt(opts);
 configureBinaryLog(opts);
-newDoctor(opts).run();
+newDoctor(opts).run().catch(function (e) {
+  console.error(e);
+  process.exit(1);
+});

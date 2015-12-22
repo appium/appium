@@ -23,9 +23,7 @@ to github or write to the [appium-discuss discussion group](https://discuss.appi
 * Re-install dependencies: `npm install`
 * Re-transpile the code: `gulp transpile`
 
-* You can also use `appium-doctor` to automatically verify that all
-  dependencies are met. If running from source, you may have to use
-  `bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+* You can also use [Appium Doctor](https://github.com/appium/appium-doctor) to determine whether your system is configured correctly for Appium.
 * If you get this error after upgrading to Android SDK 22:
   `{ANDROID_HOME}/tools/ant/uibuild.xml:155: SDK does not have any Build Tools installed.`
 In the Android SDK 22, the platform and build tools are split up into their

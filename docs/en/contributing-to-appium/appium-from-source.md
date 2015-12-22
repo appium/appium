@@ -37,7 +37,7 @@ to run `npm` with sudo privileges):
 ```center
 npm install -g mocha
 npm install -g gulp
-node ./bin/appium-doctor.js --dev
+npm install -g appium-doctor && appium-doctor --dev
 npm install
 gulp transpile
 ```

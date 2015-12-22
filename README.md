@@ -53,10 +53,12 @@ If you want to run Appium via an `npm install`, hack with or contribute to Appiu
 `brew install node` to install Node.js. Make sure you have not installed Node or Appium with `sudo`,
 otherwise you'll run into problems). We recommend the latest stable version.
 
-To verify that all of Appium's dependencies are met you can use `appium-doctor`.
-Run `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
-of the dependencies are set up correctly. If running from source, you may have to use
-`./bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+To verify that all of Appium's dependencies are met you can use
+`appium-doctor`.  Install it with `npm install -g appium-doctor` (or run it
+from [source](https://github.com/appium/appium-doctor)), then run
+`appium-doctor` and supply the `--ios` or `--android` flags to verify that all
+of the dependencies are set up correctly. If running from source, you may have
+to use `./bin/appium-doctor.js` or `node bin/appium-doctor.js`.
 
 You also need to download the Appium client for your language so you can write tests. The Appium clients are simple extensions to the WebDriver clients. You can see the list of clients and links to download instructions at the [Appium clients list](/docs/en/about-appium/appium-clients.md).
 

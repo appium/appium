@@ -22,12 +22,20 @@ tests.
   '{"launchTimeout": 60000}'
 - Various docs and contributing docs updates (including a code of conduct for
   the project)
+- add capability validation on the protocol and driver level
 
 #### iOS
 - add Tapster support for some more touch methods
+- iPhone 6 + 6S support
 
 #### Android
-- enable navigating to an android URI via the set url driver methods
+- enable navigating to an android URI via the set url driver methods, e.g.,
+  driver.get('content://contacts/people/1')
+- fix some adb issues in Windows (e.g., signWithCustomCert, sdk binary names)
+- fix issue with UIWatcher ssl certificate errors
+- if you want to install all chromedrivers, use --chromedriver-install-all; if
+  you want to install a specific chromedriver version, use
+  --chromedriver-version="$VER"
 
 CHANGES IN VERSION 1.4.16 (from 1.4.15)
 ===================================

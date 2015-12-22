@@ -29,6 +29,7 @@
             "appium-uiauto",
             "appium-uiautomator",
             "appium-unlock",
+            "appium-webdriveragent-driver",
             "appium-xcode",
             "authorize-ios",
             "io.appium.settings",

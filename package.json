@@ -1,6 +1,6 @@
 {
   "name": "appium-doctor",
-  "description": "Description goes here.",
+  "description": "Test environment for fitness to run Appium",
   "keywords": [
     "appium"
   ],
@@ -17,7 +17,7 @@
   "engines": [
     "node"
   ],
-  "main": "./build/index.js",
+  "main": "./appium-doctor.js",
   "bin": {
     "appium-doctor": "./appium-doctor.js"
   },

@@ -8,6 +8,7 @@ on run argv
         set frontmost to true
         keystroke "h" using {shift down, command down} # background app
         delay delayInSec
+        set frontmost to true
         keystroke "h" using {shift down, command down} # go to home screen, page 1
         delay 1
         tell slider 1 of window 1

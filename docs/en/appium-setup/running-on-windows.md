@@ -13,7 +13,7 @@ option to connect to an Appium server running on a Mac.
 
 To get started:
 
-1. Install [node.js](http://nodejs.org/download/) (v.0.10 or greater). Use the
+1. Install [node.js](http://nodejs.org/download/) (v.0.12 or greater). Use the
    installer from nodejs.org.
 1. Install the [Android SDK](http://developer.android.com/sdk/index.html).
    You will need to run the 'android' tool (included in the SDK, in the `tools` folder) and make sure

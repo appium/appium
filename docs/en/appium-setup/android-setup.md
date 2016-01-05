@@ -1,6 +1,6 @@
 ## Android Setup
 
-To get started, you'll need to install node.js (v0.10 or greater). Just
+To get started, you'll need to install node.js (v0.12 or greater). Just
 follow the [instructions for your flavor of linux](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager).
 
 Once you've got node.js installed, install the [Android SDK](http://developer.android.com/sdk/index.html).

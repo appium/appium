@@ -49,7 +49,7 @@ Your environment needs to be setup for the particular mobile platforms that you
 want to run tests on. See below for particular platform requirements.
 
 If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
-[node.js and npm](http://nodejs.org) 0.10 or greater (use [n](https://github.com/visionmedia/n) or
+[node.js and npm](http://nodejs.org) 0.12 or greater (use [n](https://github.com/visionmedia/n) or
 `brew install node` to install Node.js. Make sure you have not installed Node or Appium with `sudo`,
 otherwise you'll run into problems). We recommend the latest stable version.
 

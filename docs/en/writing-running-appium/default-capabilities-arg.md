@@ -1,6 +1,6 @@
 ## The --default-capabilities flag
 
-Appium 1.5 does away with most CLI flags; the remainder can be converted into JSON and made part of the --default-capabilities flag. For example:
+Appium 1.5 does away with most CLI flags; the remainder can be converted into JSON and made part of the `--default-capabilities` flag. For example:
 
 ```
 --default-capabilities '{"app": "myapp.app", "deviceName": "iPhone Simulator"}'

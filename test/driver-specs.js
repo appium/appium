@@ -129,6 +129,17 @@ describe('AppiumDriver', () => {
         sessions[1].id.should.equal(session2[0]);
         sessions[1].capabilities.should.eql(session2[1]);
       });
+      describe('getStatus', () => {
+        let appium;
+        before(() => {
+          appium = new AppiumDriver({});
+        });
+        it('should return a status', async () => {
+          let status = await appium.getStatus();
+          status.build.should.exist;
+          status.build.version.should.exist;
+        });
+      });
     });
     describe('sessionExists', () => {
     });

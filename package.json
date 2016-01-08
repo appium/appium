@@ -38,7 +38,7 @@
     "adm-zip": "~0.4.7",
     "appium-adb": "=1.7.5",
     "appium-atoms": "=0.0.5",
-    "appium-chromedriver": "=2.3.2",
+    "appium-chromedriver": "=2.3.3",
     "appium-instruments": "^2.0.6",
     "appium-support": "=1.1.2",
     "appium-uiauto": "^1.10.10",

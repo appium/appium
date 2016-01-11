@@ -95,17 +95,8 @@ Now that you have a profile open a terminal and run the following commands:
 $ git clone https://github.com/appium/appium.git
 $ cd appium
 
-# Option 1: You don't define any parameters and it will set the code signing identity to 'iPhone Developer'
-$ ./reset.sh --ios --real-safari
-
-# Option 2: You define the code signing identity and allow xcode to select the profile identity code (if it can).
-$ ./reset.sh --ios --real-safari --code-sign '<code signing identity>'
-
-# Option 3: You define both the code signing identity and profile identity code.
-$ ./reset.sh --ios --real-safari --code-sign '<code signing identity>' --profile '<retrieved profile identity code>'
-
-# Once successfully configured and with the safari launcher built, start the server as per usual
-$ node /lib/server/main.js -U <UDID>
+# Start the server as per usual
+$ node /lib/main.js -U <UDID>
 ```
 
 ### Running your test

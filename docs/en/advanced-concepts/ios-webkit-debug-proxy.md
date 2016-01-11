@@ -11,7 +11,7 @@ Homebrew, run the following commands in the terminal:
 
  ``` center
  # The first command is only required if you don't have brew installed.
- > ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+ > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
  > brew update
  > brew install ios-webkit-debug-proxy
  ```

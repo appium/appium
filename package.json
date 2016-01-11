@@ -51,8 +51,8 @@
     "lodash": "^3.9.1",
     "mobile-json-wire-protocol": "^1.0.5",
     "npmlog": "^1.2.1",
-    "request-promise": "^1.0.2",
     "source-map-support": "^0.3.2",
+    "request-promise": "^1.0.2",
     "teen_process": "^1.1.0",
     "winston": "^1.0.0"
   },

@@ -89,23 +89,14 @@ To create a profile for the launcher go into the **Apple Developers Member Cente
   * **Step 5:** Download the profile and open it with a text editor.
   * **Step 6:** Search for the **UUID** and the string for it is your **identity code**.
 
-Now that you have a profile open a terminal and run the following commands:
+Now simply include your UDID and device name in your desired capabilities:
 
 ```center
-$ git clone https://github.com/appium/appium.git
-$ cd appium
-
-# Option 1: You don't define any parameters and it will set the code signing identity to 'iPhone Developer'
-$ ./reset.sh --ios --real-safari
-
-# Option 2: You define the code signing identity and allow xcode to select the profile identity code (if it can).
-$ ./reset.sh --ios --real-safari --code-sign '<code signing identity>'
-
-# Option 3: You define both the code signing identity and profile identity code.
-$ ./reset.sh --ios --real-safari --code-sign '<code signing identity>' --profile '<retrieved profile identity code>'
-
-# Once successfully configured and with the safari launcher built, start the server as per usual
-$ node /lib/server/main.js -U <UDID>
+{
+  "udid": '...',
+  "deviceName": '...',
+  "browserName": "Safari"
+}
 ```
 
 ### Running your test
@@ -185,7 +176,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 Pre-requisites:
 
 *  Make sure Chrome (an app with the package `com.android.chrome`) is installed on your device or emulator. Getting Chrome for the x86 version of the emulator is not currently possible without building Chromium, so you may want to run an ARM emulator and then copy a Chrome APK from a real device to get Chrome on an emulator.
-*  If downloaded from [NPM](https://www.npmjs.org/package/appium), or running from the [.app](https://github.com/appium/appium-dot-app), nothing needs to be done. If running from source, the `reset` script will download ChromeDriver and put it in `build`. A particular version can be specified by passing the `--chromedriver-version` option (e.g., `./reset.sh --android --chromedriver-version 2.8`), otherwise the most recent one will be retrieved.
+*  If downloaded from [NPM](https://www.npmjs.org/package/appium), or running from the [.app](https://github.com/appium/appium-dot-app), nothing needs to be done. If running from source, `npm install` will download ChromeDriver and put it in `node_modules/appium-android-driver/node_modules/appium-chromedriver/chromedriver`. A particular version can be specified by passing the `--chromedriver_version` config property (e.g., `npm install appium --chromedriver_version="2.16"`), otherwise the most recent one will be retrieved.
 
 Then, use desired capabilities like these to run your test in Chrome:
 

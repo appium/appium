@@ -21,7 +21,7 @@ The quick way to get started:
 git clone https://github.com/appium/appium.git
 cd appium
 npm install
-gulp transpile
+gulp transpile # requires gulp, see below
 sudo ./bin/authorize-ios.js # for ios only
 node .
 ```
@@ -37,6 +37,7 @@ to run `npm` with sudo privileges):
 ```center
 npm install -g mocha
 npm install -g gulp
+npm install -g gulp-cli
 npm install -g appium-doctor && appium-doctor --dev
 npm install
 gulp transpile
@@ -146,50 +147,5 @@ Appium is running in another window with `node .`) with:
 gulp e2e-test
 ```
 
-Before committing code, please run `gulp` to execute some basic tests and
+Before committing code, please run `gulp once` to execute some basic tests and
 check your changes against code quality standards.
-
-```center
-grunt lint
-> Running "newer:jshint" (newer) task
->
-> Running "newer:jshint:files" (newer) task
-> No newer files to process.
->
-> Running "newer:jshint:test" (newer) task
-> No newer files to process.
->
-> Running "newer:jshint:examples" (newer) task
-> No newer files to process.
->
-> Running "jscs:files" (jscs) task
-> >> 303 files without code style errors.
-```
-
-#### Running individual tests
-
-If you have an Appium server listening, you can run individual test files using
-Mocha, for example:
-
-```center
-DEVICE=ios71 mocha -t 60000 -R spec test/functional/ios/testapp/simple-specs.js
-```
-
-Or individual tests (e.g., a test with the word "alert" in the name):
-
-```center
-DEVICE=ios6 mocha -t 60000 -R spec --grep "alert" test/functional/ios/uicatalog
-```
-
-For windows you have to use `set DEVICE=android` in cmd to run above tests, for
-example:
-
-```center
-set DEVICE=android
-mocha -t 60000 -R spec test/functional/android/apidemos/alerts-specs.js
-```
-
-NOTE: For Android, you will need an emulator/device with screen size of 4.0"
-(480x800). Some tests might fail on a different screen size.
-
-`DEVICE` must be set to a valid value: `ios71`, `ios6`, `android`, `selendroid`

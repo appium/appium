@@ -69,5 +69,8 @@
     "mocha": "^2.2.5",
     "sinon": "^1.14.1",
     "wd": "~0.3.11"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.0.6"
   }
 }

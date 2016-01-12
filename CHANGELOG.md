@@ -23,6 +23,7 @@ tests.
 - Various docs and contributing docs updates (including a code of conduct for
   the project)
 - add capability validation on the protocol and driver level
+- Appium now requires Node 0.12 as a minimum Node version
 
 #### iOS
 - add Tapster support for some more touch methods

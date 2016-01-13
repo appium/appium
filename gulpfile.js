@@ -94,7 +94,7 @@ function splitIosE2ETests() {
 }
 
 function killProcs() {
-  return exec("sudo pkill -f 'sudo -u appium node' || true").then(function () { // killing bsexec processes
+  return exec("sudo pkill -f 'sudo -u appium node' || true").then(function () { // killing launchctl appium processes
     _(childProcs).each(function (child) {
       try { child.kill(); } catch (err) {}
     });
@@ -180,18 +180,38 @@ function launchAppium(opts) {
   (function () {
     if (opts.asCurrentUser) {
       console.log('Running appium as current user.');
-      var currentUser;
-      return exec('whoami').spread(function (stdout) {
-        currentUser = stdout.trim();
-        console.log('currentUser ->', currentUser);
-        var cmd = "ps -axj | grep loginwindow | awk \"/^" + currentUser + " / {print \\$2;exit}\"";
-        return exec(cmd);
-      }).spread(function (stdout) {
-        var userPid = stdout.trim();
-        console.log('userPid ->', userPid);
-        return spawn("sudo", [ 'launchctl', 'bsexec', userPid,
-          'sudo', '-u', currentUser  ,'node', '.'], { detached: false });
-      });
+      // todo detect system
+      //var yosemiteAsUser = function () {
+        //var currentUser;
+        //return exec('whoami').spread(function (stdout) {
+            //currentUser = stdout.trim();
+            //console.log('currentUser ->', currentUser);
+            //var cmd = "ps -axj | grep loginwindow | awk \"/^" + currentUser + " / {print \\$2;exit}\"";
+            //return exec(cmd);
+          //}).spread(function (stdout) {
+            //var userPid = stdout.trim();
+            //console.log('userPid ->', userPid);
+            //return spawn("sudo", [ 'launchctl', 'bsexec', userPid,
+              //'sudo', '-u', currentUser  ,'node', '.'], { detached: false });
+          //});
+      //};
+      var elCapitanAsUser = function () {
+        var currentUser;
+        return exec('whoami').spread(function (stdout) {
+            currentUser = stdout.trim();
+            console.log('currentUser ->', currentUser);
+            var cmd = "id -u " + currentUser;
+            return exec(cmd);
+          }).spread(function (stdout) {
+            var userId = stdout.trim();
+            console.log('userUd ->', userId);
+            return spawn("sudo", [ 'launchctl', 'asuser', userId,
+              'sudo', '-u', currentUser  ,'node', '.'], { detached: false });
+          });
+      };
+      var asCurrentUser = elCapitanAsUser;
+      return asCurrentUser();
+
     } else {
       return new Q(spawn("node", ['.'], { detached: false }));
     }

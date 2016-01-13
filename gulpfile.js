@@ -149,9 +149,9 @@ gulp.task('test-android-e2e', function () {
 gulp.task('test-ios-e2e', function () {
   return splitIosE2ETests().then(function (testGroups) {
     var opts = newMochaE2EOpts();
-    opts.env.DEVICE='ios81'; // TODO: make that configurable
+    opts.env.DEVICE='ios92'; // TODO: make that configurable
     opts.env.VERBOSE=1;
-    opts.flags.g = '@skip-ios81|@skip-ios8|@skip-ios-all|@skip-ios7up|@skip-ci';
+    opts.flags.g = '@skip-ios92|@skip-ios9|@skip-ios-all|@skip-ios7up|@skip-ci';
     opts.flags.i = true;
     var mocha = mochaStream(opts);
     var testGroup = testGroups[argv.testGroup - 1];

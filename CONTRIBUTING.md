@@ -8,7 +8,7 @@ Note that no matter how you contribute, your participation is governed by our
 ### Make changes to the Appium code or docs
 
 Fork the project, make a change, and send a pull request! Please have a look at
-our [Style Guide](/docs/en/contributing-to-appium/style-guide.md) before
+our [Style Guide](/docs/en/contributing-to-appium/style-guide-2.0.md) before
 getting to work.  Please make sure the unit and functional tests pass before
 sending a pull request; for more information on how to run tests, keep reading!
 
@@ -18,9 +18,18 @@ governed by our [Code of Conduct](CONDUCT.md). Then, have a look at our
 [running from source doc](/docs/en/contributing-to-appium/appium-from-source.md) for more
 information on how to get set up to run tests and start slinging code.
 
+You will probably also want to have a look at this more in-depth [Developer's
+Overview](/docs/en/contributing-to-appium/developers-overview.md) of the Appium
+project, how Appium is architected, how to make changes to modules, and so on.
+
 ### Become an Appium Triager
 
-You can help us manage our issue tracker! All you need is enough familiarity with Appium to try and reproduce bugs. We triage issues by having conversations with the issue creator and then either closing the issue or moving it into the [Bugs](https://github.com/appium/appium/milestones/Bugs) or [Features](https://github.com/appium/appium/milestones/Features) milestone. We use these buckets as the backlogs for our upcoming releases.
+You can help us manage our issue tracker! All you need is enough familiarity
+with Appium to try and reproduce bugs. We triage issues by having conversations
+with the issue creator and then either closing the issue or moving it into the
+[Bugs](https://github.com/appium/appium/milestones/Bugs) or
+[Features](https://github.com/appium/appium/milestones/Features) milestone. We
+use these buckets as the backlogs for our upcoming releases.
 
 We use this "algorithm" for triaging issues, which anyone can jump in and follow:
 

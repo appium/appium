@@ -57,8 +57,7 @@ To verify that all of Appium's dependencies are met you can use
 `appium-doctor`.  Install it with `npm install -g appium-doctor` (or run it
 from [source](https://github.com/appium/appium-doctor)), then run
 `appium-doctor` and supply the `--ios` or `--android` flags to verify that all
-of the dependencies are set up correctly. If running from source, you may have
-to use `./bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+of the dependencies are set up correctly. 
 
 You also need to download the Appium client for your language so you can write tests. The Appium clients are simple extensions to the WebDriver clients. You can see the list of clients and links to download instructions at the [Appium clients list](/docs/en/about-appium/appium-clients.md).
 

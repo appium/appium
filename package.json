@@ -29,13 +29,13 @@
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.10.2",
-    "lodash": "^3.10.1",
+    "lodash": "^4.0.0",
     "mobile-json-wire-protocol": "^1.0.0",
     "request": "^2.64.0",
-    "source-map-support": "^0.3.2",
+    "source-map-support": "^0.4.0",
     "teen_process": "^1.3.1",
     "uuid-js": "^0.7.5",
-    "validate.js": "^0.8.0"
+    "validate.js": "^0.9.0"
   },
   "scripts": {
     "prepublish": "./node_modules/.bin/gulp prepublish",
@@ -50,7 +50,7 @@
     "content-disposition": "^0.5.0",
     "finalhandler": "^0.4.0",
     "gulp": "^3.9.0",
-    "request-promise": "^0.4.3",
+    "request-promise": "^2.0.0",
     "serve-static": "^1.10.0",
     "sinon": "^1.17.1"
   }

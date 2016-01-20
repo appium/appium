@@ -66,5 +66,17 @@ describe('FakeDriver - via HTTP', () => {
       await driver2.init(caps).should.eventually.be.rejected;
       await driver1.quit();
     });
+
+    it('should use the newCommandTimeout of the inner Driver on session creation', async () => {
+      let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+
+      caps.newCommandTimeout = 0.25;
+
+      let [sessionId] = await driver.init(caps);
+      should.exist(sessionId);
+
+      await B.delay(250);
+      await driver.source().should.eventually.be.rejectedWith(/terminated/);
+    });
   });
 });

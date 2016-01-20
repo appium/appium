@@ -3,13 +3,13 @@
 For iOS >= 9.0 instruments without delay (iwd) does not work by passing binaries through
 the command line (appium does this under the hood for xcode < 7). See [iwd](https://github.com/lawrencelomax/instruments-without-delay/tree/xcode7-quirks#xcode-7--ios-9-support)
 
-For enabling iwd for xcode >= 7, from your appium repository run:
+For enabling iwd for xcode >= 7,
+- Checkout [appium-instruments](https://github.com/appium/appium-instruments)
+- Run `xcode_iwd.sh` present in `<appium-instruments>/bin/`
 
 ```
-sh ./bin/xcode_iwd.sh <path to xcode> <path to appium>
+sh <appium-instruments>/bin/xcode_iwd.sh <path to xcode> <path to appium-instruments>
 ```
-eg. `sh ./bin/xcode_iwd.sh /Applications/Xcode.app /Users/xyz/appium/`
+eg. `sh ./bin/xcode_iwd.sh /Applications/Xcode.app /Users/xyz/appium-instruments/`
 
-Note:
-- Make sure your appium version >= 1.4.11 and node_modules are updated
-- iwd with xcode7 will only work for iOS >= 9.0, you can switch to older xcode for iOS < 9.0
+Note: iwd with xcode7 will only work for iOS >= 9.0, you can switch to older xcode for iOS < 9.0

@@ -3,8 +3,8 @@
   "version": "1.5.0-beta11",
   "dependencies": {
     "appium-android-driver": {
-      "version": "1.6.0",
-      "from": "appium-android-driver@>=1.6.0 <2.0.0",
+      "version": "1.6.1",
+      "from": "appium-android-driver@>=1.6.1 <2.0.0",
       "dependencies": {
         "adm-zip": {
           "version": "0.4.7",

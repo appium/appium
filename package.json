@@ -34,7 +34,7 @@
     "doc": "./docs"
   },
   "dependencies": {
-    "appium-android-driver": "^1.6.0",
+    "appium-android-driver": "^1.6.1",
     "appium-base-driver": "^1.3.0",
     "appium-express": "^1.2.0",
     "appium-fake-driver": "^0.1.9",

@@ -25,6 +25,7 @@ tests.
 - add capability validation on the protocol and driver level
 - Appium now requires Node 0.12 as a minimum Node version
 - (breaking) remove the 'autoLaunch' capability since it added a significant amount of complexity to the startup flow and Appium shouldn't be responsible for this kind of use case
+- remove long-deprecated `name` locator strategy
 
 #### iOS
 - add Tapster support for some more touch methods

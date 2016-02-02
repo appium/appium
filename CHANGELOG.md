@@ -30,6 +30,7 @@ tests.
 #### iOS
 - add Tapster support for some more touch methods
 - iPhone 6 + 6S support
+- iOS 9.3 support
 
 #### Android
 - enable navigating to an android URI via the set url driver methods, e.g.,

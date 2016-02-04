@@ -3,12 +3,12 @@
 var gulp = require('gulp'),
     boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp),
     path = require('path'),
-    fs = require('fs'),
-    shrinkwrap = require('./npm-shrinkwrap.json');
+    fs = require('fs');
 
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
 gulp.task('fixShrinkwrap', function (done) {
+  var shrinkwrap = require('./npm-shrinkwrap.json');
   delete shrinkwrap.dependencies.fsevents;
   var shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);

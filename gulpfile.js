@@ -8,7 +8,14 @@ var gulp = require('gulp'),
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
 gulp.task('fixShrinkwrap', function (done) {
-  var shrinkwrap = require('./npm-shrinkwrap.json');
+  var shrinkwrap;
+  try {
+    shrinkwrap = require('./npm-shrinkwrap.json');
+  } catch (err) {
+    console.error('Could not find shrinkwrap; skipping fixing shrinkwrap. ' +
+                  '(Original error: ' + err.message + ')');
+    return;
+  }
   delete shrinkwrap.dependencies.fsevents;
   var shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);

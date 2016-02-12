@@ -40,6 +40,8 @@ tests.
 - if you want to install all chromedrivers, use --chromedriver-install-all; if
   you want to install a specific chromedriver version, use
   --chromedriver-version="$VER"
+- `driver.closeApp` no longer runs through the shutdown routine; it simply
+  force-stops the app
 
 CHANGES IN VERSION 1.4.16 (from 1.4.15)
 ===================================

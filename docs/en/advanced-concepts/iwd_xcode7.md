@@ -6,9 +6,9 @@ the command line (appium does this under the hood for xcode < 7). See [iwd](http
 For enabling iwd for xcode >= 7, from your appium repository run:
 
 ```
-sh ./bin/xcode_iwd.sh <path to xcode> <path to appium>
+sudo sh ./bin/xcode_iwd.sh <path to xcode> <path to appium>
 ```
-eg. `sh ./bin/xcode_iwd.sh /Applications/Xcode.app /Users/xyz/appium/`
+eg. `sudo sh ./bin/xcode_iwd.sh /Applications/Xcode.app /usr/local/lib/node_modules/appium`
 
 Note:
 - Make sure your appium version >= 1.4.11 and node_modules are updated

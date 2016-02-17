@@ -22,6 +22,10 @@ You will probably also want to have a look at this more in-depth [Developer's
 Overview](/docs/en/contributing-to-appium/developers-overview.md) of the Appium
 project, how Appium is architected, how to make changes to modules, and so on.
 
+Finally, before we accept your code, you will need to have signed our
+[Contributor License
+Agreement](https://docs.google.com/forms/d/1lOfXRw_0VCk7gYzjj4WLetGu7yelDVo5LWh0z7pGftE/viewform).
+
 ### Become an Appium Triager
 
 You can help us manage our issue tracker! All you need is enough familiarity

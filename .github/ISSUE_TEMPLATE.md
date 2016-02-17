@@ -6,7 +6,7 @@ Briefly describe the issue you are experiencing (or the feature you want to see 
 
 * Appium version (or git revision) that exhibits the issue:
 * Last Appium version that did not exhibit the issue (if applicable):
-* Desktop system and version used to run Appium:
+* Desktop OS/version used to run Appium:
 * Node.js version (unless using Appium.app|exe):
 * Mobile platform/version under test:
 * Real device or emulator/simulator:

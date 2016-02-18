@@ -3,7 +3,8 @@
 var chai = require('chai')
   , controller_path = '../../lib/devices/android/android-controller.js'
   , controller = require(controller_path)
-  , _ = require('underscore');
+  , _ = require('underscore')
+  , sinon = require('sinon');
 
 chai.should();
 
@@ -36,5 +37,53 @@ describe('android-controller', function () {
         });
       });
     });
+  });
+
+  describe('#performTouch', function() {
+      describe('longPress, moveTo, release - converted to drag', function(done) {
+        var actions = [ { action: 'longPress', options: { x: 100, y: 101 } },
+          { action: 'moveTo', options: { x: 50, y: 51 } },
+          { action: 'release', options: {} } ];
+
+        beforeEach(function() {
+          sinon.stub(controller, 'drag', function(startX, startY, endX, endY, duration, touchCount, elementId, destElId, cb) {
+            cb();
+          });
+
+          controller.adb = {
+            getApiLevel: sinon.stub().callsArgWith(0, null, 4)
+          }
+        });
+
+        afterEach(function() {
+          controller.drag.restore();
+        });
+
+        it('longPress does not have duration', function(done) {
+          controller.performTouch(actions, function() {
+            sinon.assert.calledWith(controller.drag, 100, 101, 50, 51, 1, 1, undefined, undefined);
+            done();
+          });
+        });
+
+        it('longPress does have a duration', function(done) {
+          actions[0].options.duration = 7000;
+
+          controller.performTouch(actions, function() {
+            sinon.assert.calledWith(controller.drag, 100, 101, 50, 51, 7, 1, undefined, undefined);
+            done();
+          });
+        });
+
+        it('longPress duration less than 1 second', function(done) {
+          actions[0].options.duration = 700;
+          controller.adb.getApiLevel.callsArgWith(0, null, 6);
+
+          controller.performTouch(actions, function() {
+            sinon.assert.calledWith(controller.drag, 100, 101, 50, 51, 2, 1, undefined, undefined);
+            done();
+          });
+        });
+      });
   });
 });

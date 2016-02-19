@@ -42,6 +42,8 @@ tests.
   --chromedriver-version="$VER"
 - `driver.closeApp` no longer runs through the shutdown routine; it simply
   force-stops the app
+- The `ANDROID_ADB_SERVER_PORT` environment variable has been removed in favor
+  of the `adbPort` desired capability, which does the same thing.
 
 CHANGES IN VERSION 1.4.16 (from 1.4.15)
 ===================================

@@ -90,12 +90,12 @@ You can run an Appium server using node.js or using the application, see below.
 
 ```
 $ npm install -g appium
-$ appium &
+$ appium
 ```
 
 #### Using the App
 
-* [Download the Appium app](https://github.com/appium/appium/releases)
+* [Download the Appium app](https://bitbucket.org/appium/appium.app/downloads/)
 * Run it!
 
 ### Writing Tests for Appium

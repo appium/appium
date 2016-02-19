@@ -109,4 +109,4 @@ which enables you to check out the hierarchy of your app. This can come in handy
 
 ### Getting Started
 
-Congratulations! You are now armed with enough knowledge to begin using Appium. Why not head to the [getting started doc](/README.md) for more detailed requirements and instructions?
+Congratulations! You are now armed with enough knowledge to begin using Appium. Why not head to the [getting started doc](https://github.com/appium/appium/blob/master/README.md) for more detailed requirements and instructions?

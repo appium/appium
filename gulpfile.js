@@ -23,7 +23,7 @@ gulp.task('fixShrinkwrap', function (done) {
 });
 
 gulp.task('nsp', function (cb) {
-  gulpNSP({shrinkwrap: __dirname + './npm-shrinkwrap.json',stopOnError: true,output: 'summary'}, cb);
+  gulpNSP({shrinkwrap: __dirname + '/npm-shrinkwrap.json',stopOnError: true,output: 'summary'}, cb);
 });
 
 boilerplate({

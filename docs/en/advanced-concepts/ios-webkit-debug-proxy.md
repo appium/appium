@@ -16,37 +16,6 @@ Homebrew, run the following commands in the terminal:
  > brew install ios-webkit-debug-proxy
  ```
 
-**NOTE:** As of April 2, 2015, the primary ios-webkit-debug-proxy repository
-has not been updated for some time. **We currently recommend using [James Chuong's
-fork](https://github.com/jchuong/ios-webkit-debug-proxy)**. To do so, you'll need
-to build from source. If you're unfamiliar with building with GMake, try following
-the steps below.
-
-#### Building ios-webkit-debug-proxy from source
-
-Open the command terminal on your mac. You can find instructions on how to open the
-terminal via your favorite search engine. Once that is open, verify you have
-[Homebew](http://brew.sh/) installed:
-
-```shell
-$ brew -v
-```
-
-When you're certain you have Homebrew, do the following (the $ indicates the command
-line prompt, do not enter it):
-
-```shell
-$ cd  ~
-$ git clone https://github.com/jchuong/ios-webkit-debug-proxy.git
-$ cd ios-webkit-debug-proxy
-$ brew install autoconf automake libusb libplist usbmuxd
-$ brew install --HEAD ideviceinstaller
-$ ./autogen.sh
-$ ./configure
-$ make
-$ sudo make install
-```
-
 #### Running ios-webkit-debug-proxy
 
 Once installed you can start the proxy with the following command:

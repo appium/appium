@@ -6,6 +6,10 @@ var gulp = require('gulp'),
     fs = require('fs'),
     gulpNSP = require('gulp-nsp');
 
+gulp.task('nsp', function (cb) {
+  gulpNSP({package: __dirname + '/package.json',stopOnError: true,output: 'summary'}, cb);
+});
+
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
 gulp.task('fixShrinkwrap', function (done) {
@@ -20,10 +24,6 @@ gulp.task('fixShrinkwrap', function (done) {
   delete shrinkwrap.dependencies.fsevents;
   var shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);
-});
-
-gulp.task('nsp', function (cb) {
-  gulpNSP({shrinkwrap: __dirname + '/npm-shrinkwrap.json',stopOnError: true,output: 'summary'}, cb);
 });
 
 boilerplate({

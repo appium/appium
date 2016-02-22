@@ -89,7 +89,11 @@ during a Safari automation session, we're allowed to use JavaScript to open
 up new windows. See the [capabilities doc](/docs/en/writing-running-appium/caps.md) for the complete list of capabilities available for Appium.
 
 **Appium Server**<br/>
-Appium is a server written in Node.js. It can be built and installed from source or installed directly from NPM.
+Appium is a server written in Node.js. It can be built and installed [from source](github.com/appium/appium) or installed directly from NPM:
+```
+$ npm install -g appium
+$ appium
+```
 
 **Appium Clients**<br/>
 There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)
@@ -105,4 +109,4 @@ which enables you to check out the hierarchy of your app. This can come in handy
 
 ### Getting Started
 
-Congratulations! You are now armed with enough knowledge to begin using Appium. Why not head to the [getting started doc](/README.md) for more detailed requirements and instructions?
+Congratulations! You are now armed with enough knowledge to begin using Appium. Why not head to the [getting started doc](https://github.com/appium/appium/blob/master/README.md) for more detailed requirements and instructions?

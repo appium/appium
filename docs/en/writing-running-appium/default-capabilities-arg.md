@@ -6,6 +6,10 @@ Appium 1.5 does away with most CLI flags; the remainder can be converted into JS
 --default-capabilities '{"app": "myapp.app", "deviceName": "iPhone Simulator"}'
 ```
 
+**Windows users** will need to escape the quotes: `--default-capabilities "{\"app\": \"myapp.app\"}"`
+
+
+
 | Flag                      | JSON key                |
 |---------------------------|-------------------------|
 | --keep-artifacts          | keepArtifacts           |

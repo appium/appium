@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.5.0-beta15",
+  "version": "1.5.0-beta16",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -40,7 +40,7 @@
     "appium-fake-driver": "^0.1.9",
     "appium-ios-driver": "^1.8.6",
     "appium-logger": "^2.1.0",
-    "appium-selendroid-driver": "^1.2.1",
+    "appium-selendroid-driver": "^1.2.2",
     "appium-support": "^2.0.9",
     "argparse": "^1.0.2",
     "asyncbox": "^2.3.1",

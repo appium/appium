@@ -104,7 +104,14 @@ driver.BackgroundApp(5);
 
 ### Hide Keyboard
 
-Hide the keyboard.
+Hide the keyboard. *Note*: on iOS, this helper function is not guaranteed to
+work. There is no automation hook for hiding the keyboard, and apps are free to
+allow the user to hide the keyboard using any of a variety of different
+strategies, whether that is tapping outside the keyboard, swiping down, etc...
+We encourage you, rather than using this method, to think about how a _user_
+would hide the keyboard in your app, and tell Appium to do that instead (swipe,
+tap on a certain coordinate, etc...). That being said, the default behavior
+here might help you.
 
 ```ruby
 # ruby

@@ -3,7 +3,16 @@
 var gulp = require('gulp'),
     boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp),
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs'),
+    gulpNSP = require('gulp-nsp');
+
+gulp.task('nsp', function (cb) {
+  gulpNSP({
+    shrinkwrap: path.join(__dirname, 'npm-shrinkwrap.json'),
+    package: path.join(__dirname, 'package.json'),
+    stopOnError: true,
+    output: 'summary'}, cb);
+});
 
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
@@ -20,9 +29,6 @@ gulp.task('fixShrinkwrap', function (done) {
   var shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);
 });
-
-
-
 
 boilerplate({
   build: 'appium',

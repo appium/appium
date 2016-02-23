@@ -8,10 +8,7 @@ Appium on OS X supports iOS and Android testing.
 * Make sure you have Xcode and the iOS SDK(s) installed. Xcode version 7.1 is
   recommended as earlier versions of Xcode are limited in which versions of iOS
   they can test against. See the next section for more detail.
-* You need to authorize use of the iOS Simulator by running `sudo authorize_ios`
-  (`authorize_ios` is a binary made available by the Appium npm package). If you
-  are running [Appium.app](https://github.com/appium/appium-dot-app), you can
-  authorize iOS through the GUI.
+* You need to authorize use of the iOS Simulator. See [below](#authorizing-ios-on-the-computer).
 * If you're on Xcode 7.x, Instruments Without Delay (IWD) does not work. You can
   enable IWD (which will significantly speed up your tests) using
   [this method](/docs/en/advanced-concepts/iwd_xcode7.md)
@@ -30,6 +27,31 @@ Appium on OS X supports iOS and Android testing.
   UIAutomation. It lives in a "Developer" view in the Settings app. You need to
   verify that UIAutomaion is enabled in this view before the simulator or
   device can be automated.
+
+### Authorizing iOS on the computer
+
+You need to authorize use of the iOS Simulator by running the `authorize-ios`
+binary made available through `npm`. If you installed globally, by running
+`npm install -g appium`, use
+
+```
+sudo authorize-ios
+```
+
+If you installed locally, the binary will be installed within the `node_modules/.bin`
+directory, so use
+
+```
+sudo node_modules/.bin/authorize-ios
+
+# alternatively
+sudo $(npm bin)/authorize-ios
+```
+
+If you are running [Appium.app](https://github.com/appium/appium-dot-app), you can
+authorize iOS through the GUI.
+
+You need to do this every time you install a new version of Xcode.
 
 ### Testing against multiple iOS SDKs
 

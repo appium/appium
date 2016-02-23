@@ -7,7 +7,11 @@ var gulp = require('gulp'),
     gulpNSP = require('gulp-nsp');
 
 gulp.task('nsp', function (cb) {
-  gulpNSP({package: __dirname + '/package.json',stopOnError: true,output: 'summary'}, cb);
+  gulpNSP({
+    shrinkwrap: path.join(__dirname, 'npm-shrinkwrap.json'),
+    package: path.join(__dirname, 'package.json'),
+    stopOnError: true,
+    output: 'summary'}, cb);
 });
 
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts

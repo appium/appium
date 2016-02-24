@@ -134,9 +134,9 @@
       "resolved": "https://registry.npmjs.org/appium-instruments/-/appium-instruments-3.6.0.tgz"
     },
     "appium-ios-driver": {
-      "version": "1.8.6",
-      "from": "appium-ios-driver@>=1.8.6 <2.0.0",
-      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-1.8.6.tgz",
+      "version": "1.8.7",
+      "from": "appium-ios-driver@>=1.8.7 <2.0.0",
+      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-1.8.7.tgz",
       "dependencies": {
         "lodash": {
           "version": "4.5.1",

@@ -6,26 +6,22 @@ effort has been made to avoid any breaking changes but caution should be
 exercised. Please let us know on GitHub if you notice any issues with your
 tests.
 
-#### Internal changes
-- get rid of reset.sh and various other appium build tools in favor of a simple
-  npm install
-- split apart Appium into various smaller modules each with their own
-  repositories and NPM packages
-- use gulp instead of grunt
-- use babel to transpile from
-- get rid of .appiumconfig.json
-
 #### General
-- deprecate server arguments that are also desired capabilities. Instead, add
-  a --default-capabilities argument which takes a JSON string of capabilities
-  that will be the default for any session. E.g., --default-capabilities
-  '{"launchTimeout": 60000}'
+- Appium now requires Node 0.12 as a minimum Node version
+- Deprecate server arguments that are also desired capabilities. Instead, add
+  a `--default-capabilities` argument which takes a JSON string of capabilities
+  that will be the default for any session. E.g., `--default-capabilities '{"launchTimeout": 60000}'`
 - Various docs and contributing docs updates (including a code of conduct for
   the project)
-- add capability validation on the protocol and driver level
-- Appium now requires Node 0.12 as a minimum Node version
-- (breaking) remove the 'autoLaunch' capability since it added a significant amount of complexity to the startup flow and Appium shouldn't be responsible for this kind of use case
-- remove long-deprecated `name` locator strategy
+- Add capability validation on the protocol and driver level. Along with this
+  we have tightened up requirements on capability values so that they can be
+  strictly validated. For example, before you were able to send in a string
+  value of `"180"` for the `newCommandTimeout` capability. Now you must send in
+  an actual JSON number, e.g., `180`.
+- Remove the 'autoLaunch' capability since it added a significant
+  amount of complexity to the startup flow and Appium shouldn't be responsible
+  for this kind of use case
+- Remove long-deprecated `name` locator strategy
 
 #### iOS
 - add Tapster support for some more touch methods
@@ -44,6 +40,15 @@ tests.
   force-stops the app
 - The `ANDROID_ADB_SERVER_PORT` environment variable has been removed in favor
   of the `adbPort` desired capability, which does the same thing.
+
+#### Internal changes
+- get rid of reset.sh and various other appium build tools in favor of a simple
+  npm install
+- split apart Appium into various smaller modules each with their own
+  repositories and NPM packages
+- use gulp instead of grunt
+- use babel to transpile from
+- get rid of .appiumconfig.json
 
 CHANGES IN VERSION 1.4.16 (from 1.4.15)
 ===================================

@@ -50,11 +50,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If you've ever run Appium with sudo, you might need to `sudo rm
   /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use
-  of Instruments. Usually a box will pop up that you enter your password into
-  . If you're running Appium from source, you can simply run `sudo grunt authorize`
-  from the main repo to avoid getting this popup. If you're running from npm,
-  run `sudo authorize_ios` instead. You need to do this every time you install
-  a new version of Xcode, as well.
+  of Instruments. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer).
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
 * If you have custom elements in your app, they will not be automatable by
@@ -181,4 +177,4 @@ and submit an issue describing the bug and a repro case.
 |Action|Error|Resolution|
 |------|-----|----------|
 |Running ios test|`[INST STDERR] posix spawn failure; aborting launch`|Your app is not compiled correctly for the simulator or device.|
-|Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. E.g., `sudo authorize_ios`|
+|Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer)|

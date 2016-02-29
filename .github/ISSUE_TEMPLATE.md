@@ -21,9 +21,11 @@ Describe in more detail the problem you have been experiencing, if necessary.
 Create a [gist](https://gist.github.com) which is a paste of your _full_ Appium logs, and link them here. Do _not_ paste your full Appium logs here, as it will make this issue very long and hard to read! If you are reporting a bug, _always_ include Appium logs!
 
 
-## Code To Reproduce Issue
+## Code To Reproduce Issue [ Good To Have ]
+
+Please remember that, with sample code; it's easier to reproduce bug and much faster to fix it.
 
 Please git clone https://github.com/appium/sample-code and use one of your favourite languages and sample apps to reproduce issue.
-In case similar scenario is missing in sample-code , please submit PR with one of the sample apps provided.
 
-PLEASE remember with sample code, it's easier to reproduce bug and much faster to fix it.
+In case a similar scenario is missing in sample-code , please submit a PR with one of the sample apps provided.
+

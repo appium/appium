@@ -825,7 +825,7 @@ swipe start_x: 75, start_y: 500, end_x: 75, end_y: 0, duration: 0.8
 
 ```python
 # python
-driver.swipe(start=75, starty=500, endx=75, endy=0, duration=800)
+driver.swipe(start_x=75, start_y=500, end_x=75, end_y=0, duration=800)
 ```
 
 ```java

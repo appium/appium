@@ -22,6 +22,7 @@ tests.
   amount of complexity to the startup flow and Appium shouldn't be responsible
   for this kind of use case
 - Remove long-deprecated `name` locator strategy
+- Remove long-deprecated `mobile: xxx` gesture commands, except scroll
 
 #### iOS
 - add Tapster support for some more touch methods

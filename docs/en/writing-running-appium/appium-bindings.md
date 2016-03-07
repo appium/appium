@@ -987,27 +987,28 @@ Scroll to an element.
 
 ```ruby
 # ruby
-element = find_element :name, 'Element Name'
-execute_script "mobile: scrollTo", :element => element.ref
+element = find_element :name, "Element Name"
+execute_script "mobile: scroll", direction: "down", element: element.ref
 ```
 
 ```python
 # python
-driver.execute_script("mobile: scrollTo", {"element": element.id})
+driver.execute_script("mobile: scroll", {"direction": "down", element: element.id})
 ```
 
 ```java
 // java
-WebElement element = driver.findElement(By.name("Element Name"));
-HashMap<String, String> arguments = new HashMap<String, String>();
-arguments.put("element", element.getId());
-(JavascriptExecutor)driver.executeScript("mobile: scrollTo", arguments);
+JavascriptExecutor js = (JavascriptExecutor) driver;
+HashMap<String, String> scrollObject = new HashMap<String, String>();
+scrollObject.put("direction", "down");
+scrollObject.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: scroll", scrollObject);
 ```
 
 ```javascript
 // javascript
 return driver.elementByName().then(function (el) {
-  return driver.execute('mobile: scrollTo', {element: el.value});
+  driver.execute("mobile: scroll", [{direction: "down", element: el.value}]);
 });
 ```
 
@@ -1019,7 +1020,10 @@ $this->scroll($els[count($els) - 1], $els[0]);
 
 ```csharp
 // c#
-todo: csharp
+Dictionary<string, string> scrollObject = new Dictionary<string, string>();
+scrollObject.Add("direction", "down");
+scrollObject.Add("element", <element_id>);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
 ```
 
 ### Pull file

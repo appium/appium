@@ -26,7 +26,7 @@ Appium 是一个自动化测试开源工具，支持 iOS 平台和 Android 平�
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation由单独的项目[Selendroid](http://selendroid.io)提供支持 )
 
 为了满足第二点，我们把这些第三方框架封装成一套 API，[WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API.WebDriver（也就是 "Selenium WebDriver"） 指定了客户端到服务端的协议。
-(参见 [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol))。使用这种客户端-服务端的架构，我们可以使用任何语言来编写客户端，向服务端发送恰当的 HTTP 请求。
+(参见 [JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html))。使用这种客户端-服务端的架构，我们可以使用任何语言来编写客户端，向服务端发送恰当的 HTTP 请求。
 目前已经实现了大多数流行语言版本的客户端，这意味着你可以使用任何测试套件或者测试框架。客户端库就是简单的HTTP 客户，可以以任何你喜欢的方式潜入你的代码。换句话说，Appium 和 WebDriver 客户端不是技术意义上的“测试框架”，而是“自动化库”。你可以在你的测试环境中随意使用这些自动化库！
 
 事实上 WebDriver 已经成为 web 浏览器自动化的标准，也成了 W3C 的标准 —— [W3C Working Draft](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html)。我们又何必为移动做一个完全不同的呢？所以我们扩充了[WebDriver 的协议](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)，在原有的基础上添加移动自动化相关的 API 方法，这也满足了第三条理念。

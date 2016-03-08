@@ -38,7 +38,7 @@ third-party code or frameworks to your app. This means **you're testing the same
 We meet requirement #2 by wrapping the vendor-provided frameworks in one API,
 the [WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API.
 WebDriver (aka "Selenium WebDriver") specifies a client-server protocol
-(known as the [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol)).
+(known as the [JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html)).
 Given this client-server architecture, a client written in any language can
 be used to send the appropriate HTTP requests to the server. There are
 already [clients written in every popular programming language](http://appium.io/downloads). This also

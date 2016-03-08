@@ -41,7 +41,7 @@ HTTP 客户，可以以任何你喜欢的方式潜入你的代码。换句话说
 
 事实上 WebDriver 已经成为 web 浏览器自动化的标准，也成了 W3C 的标准 —— [W3C Working Draft](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html)。
 我们又何必为移动做一个完全不同的呢？
-所以我们扩充了[WebDriver 的协议](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)，
+所以我们扩充了[WebDriver 的协议](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)，
 在原有的基础上添加移动自动化相关的 API 方法，这也也满足了第三条理念。
 
 第四条就不用说了，[Appium 是开源的](https://github.com/appium/appium)。

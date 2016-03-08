@@ -1,6 +1,6 @@
 ## 客户端类库列表及Appium服务端支持
 
-这些类库封装了标准Selenium客户端类库，为用户提供所有常见的[JSON](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 格式selenium命令以及额外的移动设备控制相关的命令，如多点**触控手势**和**屏幕朝向**。
+这些类库封装了标准Selenium客户端类库，为用户提供所有常见的[JSON](https://w3c.github.io/webdriver/webdriver-spec.html) 格式selenium命令以及额外的移动设备控制相关的命令，如多点**触控手势**和**屏幕朝向**。
 
 Appium客户端类库实现了[Mobile JSON Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)（一个标准协议的官方扩展草稿）和[W3C Webdriver spec](https://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html)（一个传输不可预知的自动化协议，该协议定义了MultiAction 接口）的元素。
 

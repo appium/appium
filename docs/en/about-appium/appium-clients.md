@@ -1,6 +1,6 @@
 ## List of client libraries with Appium server support
 
-These libraries wrap standard Selenium client libraries to provide all the regular selenium commands dictated by the [JSON Wire protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol), and add extra commands related to controlling mobile devices, such as **multi-touch gestures** and **screen orientation**.
+These libraries wrap standard Selenium client libraries to provide all the regular selenium commands dictated by the [JSON Wire protocol](https://w3c.github.io/webdriver/webdriver-spec.html), and add extra commands related to controlling mobile devices, such as **multi-touch gestures** and **screen orientation**.
 
 Appium client libraries implement the [Mobile JSON Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) (an official draft extension to the standard protocol), and elements of the [W3C Webdriver spec](https://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html) (a transport-agnostic automation spec; this is where the MultiAction API is defined).
 

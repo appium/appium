@@ -23,14 +23,14 @@ Appium 是一个开源的，跨平台的自动化测试工具。
 
 1. 因为 Appium 在所有平台上都使用了标准的自动化接口，
 所以你不需要以重新编译或者修改你的 app。
-2. 你可以用你喜欢的开发工具，使用任何 [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 兼容的语言来编写测试用例。比如
+2. 你可以用你喜欢的开发工具，使用任何 [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) 兼容的语言来编写测试用例。比如
 Java， [Objective-C](https://github.com/appium/selenium-objective-c)，
    JavaScript with Node.js (in both [callback](https://github.com/admc/wd) and [yield-based](https://github.com/jlipps/yiewd) flavours)，
    PHP， Python， [Ruby](https://github.com/appium/ruby_lib)， C#， Clojure， 或者 Perl。
    可以使用标准的Selenium WebDriver API和特定语言的客户端库。
 3. 你可以使用任何测试框架。
 
-投资  [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 意味着你可以押宝在一个已经成为标准的独立，自由和开放的协议。你不会被任何专利限制。
+投资  [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) 意味着你可以押宝在一个已经成为标准的独立，自由和开放的协议。你不会被任何专利限制。
 
 
 如果没有 Appium，你就只能用 Javascript 来写 Apple 的 UIAutomation 脚本，并且只能通过Instruments 应用来运行你的测试。同样的，在 Google 的UiAutomator体系下，你只能用 Java 写你的测试案例。Appium 最终开启了跨平台原生移动自动化的可能。
@@ -69,7 +69,7 @@ Java， [Objective-C](https://github.com/appium/selenium-objective-c)，
 * [Firefox OS Simulator](https://developer.mozilla.org/en/docs/Tools/Firefox_OS_Simulator)
 
 ### 快速开始
-启动 Appium server，并运行用你喜欢的 [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 兼容的语言编写的测试用例。
+启动 Appium server，并运行用你喜欢的 [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) 兼容的语言编写的测试用例。
 你可以用 node.js 或者下面的应用程序来运行 Appium
 
 #### 使用 Node.js
@@ -92,7 +92,7 @@ Java， [Objective-C](https://github.com/appium/selenium-objective-c)，
 我们支持 [Selenium WebDriver JSON Wire Protocol](https://github.com/appium/appium/wiki/JSON-Wire-Protocol:-Supported-Methods) 的一个子集，而且在此之上扩展了移动平台相关的特性。所以你可以
 指定特定移动平台[desired capabilities](writing-running-appium/caps.cn.md) 来运行你的测试。
 
-你可以通过 [WebDriver](https://code.google.com/p/selenium/wiki/JsonWireProtocol) 元素定位策略的子集来定位元素。更多信息请参考 [finding elements](writing-running-appium/finding-elements.cn.md)
+你可以通过 [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) 元素定位策略的子集来定位元素。更多信息请参考 [finding elements](writing-running-appium/finding-elements.cn.md)
 为了支持移动手势[automating mobile gestures](writing-running-appium/touch-actions.cn.md)，比如
  tap，flick 和 swipe，我们扩展了JSON Wire Protocolor。
 
@@ -102,7 +102,7 @@ Java， [Objective-C](https://github.com/appium/selenium-objective-c)，
 
 ### 工作原理
 
-Appium 可以驱动多种原生自动化框架，同时也提供基于 Selenium 的 [WebDriver JSON wire protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol) api。
+Appium 可以驱动多种原生自动化框架，同时也提供基于 Selenium 的 [WebDriver JSON wire protocol](https://w3c.github.io/webdriver/webdriver-spec.html) api。
 
 基于[Dan Cuellar's](http://github.com/penguinho) 在 iOS 自动化上的成果，Appium 通过驱动 Apple 的 UIAutomation 库来提供 iOS 支持。
 

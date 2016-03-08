@@ -5,7 +5,7 @@ Appium支持webdriver定位策略的子集
 * 根据"class"定位(例如， UI组件类型)
 * 根据"xpath"定位 (例如，具有一定约束的路径抽象标示, 基于XPath方式)
 
-另外， Appium 还支持部分 [Mobile JSON 连接协议](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) 的定位策略
+另外， Appium 还支持部分 [Mobile JSON 连接协议](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) 的定位策略
 
 * `ios uiautomation`: 一个递归地、对应使用 [UIAutomation library](ios_predicate.cn.md) 搜索元素的字符串(iOS-only)
 * `android uiautomator`: 一个递归地、对应使用 [UiAutomator Api](uiautomator_uiselector.cn.md)搜索元素的字符串 (Android-only)

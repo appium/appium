@@ -6,7 +6,7 @@ Appium supports a subset of the WebDriver locator strategies:
 * find by "xpath" (i.e., an abstract representation of a path to an element,
 with certain constraints)
 
-Appium additionally supports some of the [Mobile JSON Wire Protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) locator strategies
+Appium additionally supports some of the [Mobile JSON Wire Protocol](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) locator strategies
 
 * `-ios uiautomation`: a string corresponding to a recursive element search
 using the [UIAutomation library](ios_predicate.md) (iOS-only)

@@ -135,7 +135,14 @@ into master, then cherry-pick individual patches to the release branch (perhaps
 even multiple release branches). Then we again publish from those branches with
 the updated patch version (`1.5.1` or `2.0.1` for example).
 
-0. Remove the NPM shrinkwrap JSON file.
+**A note about `npm shrinkwrap`:** We use [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap)
+in order to lock dependencies on release. Without it, any development on dependent
+packages will be reflected when Appium is installed, which may lead to issues. Since
+the configuration file, `npm-shrinkwrap.json`, only exists on release branches,
+it is necessary to manually manage it during the release process. It needs to be
+checked in to GitHub along with changes to `package.json`.
+
+0. Remove the NPM shrinkwrap JSON file if it exists.
 0. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
 0. `rm -rf node_modules && npm install --production` to get just the production deps.
 0. `npm shrinkwrap` to write the new NPM shrinkwrap JSON file.

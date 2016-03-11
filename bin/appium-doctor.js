@@ -1,10 +1,10 @@
 // transpile:main
 
 import yargs from 'yargs';
-//import _ from 'lodash';
 import newDoctor from '../lib/factory';
 import { configureBinaryLog } from '../lib/utils';
 import { configure as configurePrompt } from '../lib/prompt';
+import { system } from 'appium-support';
 
 yargs
   .strict()
@@ -27,7 +27,7 @@ yargs
   .alias('h', 'help')
   .check(function(argv) {
     if(!argv.ios && !argv.android && !argv.demo) {
-      argv.ios = true;
+      argv.ios = system.isMac();
       argv.android = true;
     }
     return true;

@@ -1,3 +1,31 @@
+CHANGES IN VERSION 1.5.1 (from 1.5)
+===================================
+
+*NOTE*: Appium 1.5.1 is a bug-fix release.
+
+#### General
+- allow `platformName` to be any case
+- Windows process handling is cleaned up
+- Desired capabilities `language` and `locale` added
+
+#### iOS
+- Fix handling of return values from `executeScript` in Safari
+- Don't stop if Instruments doesn't shut down in a timely manner
+- Escape single quotes in all methods that set the value on an element
+- Allow custom device names
+- Make full use of process arguments to Instruments
+
+#### Android
+- Make use of `--bootstrap-port` server argument
+- Fix `keystorePassword` capability to allow a string
+- Fix handling of localization in Android 6
+- Use Appium's unlock logic for Chrome sessions
+- Make sure reset works
+- Make unlock more reliable for later versions of Android
+- Allow Xpath searching from the context of another element
+- Make full use of process arguments to adb
+- Better error messages when ChromeDriver fails to start
+
 CHANGES IN VERSION 1.5 (from 1.4.16)
 ======================================
 

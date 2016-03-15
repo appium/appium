@@ -12,9 +12,9 @@ WebDriver protocol for everything.
 Here are the steps required to talk to a web view in your Appium test:
 
 1.  Navigate to a portion of your app where a web view is active
-1.  Call [GET session/:sessionId/contexts](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)
+1.  Call [GET session/:sessionId/contexts](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)
 1.  This returns a list of contexts we can access, like 'NATIVE_APP' or 'WEBVIEW_1'
-1.  Call [POST session/:sessionId/context](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)
+1.  Call [POST session/:sessionId/context](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)
     with the id of the context you want to access
 1.  (This puts your Appium session into a mode where all commands are
     interpreted as being intended for automating the web view,

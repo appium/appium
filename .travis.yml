@@ -1,6 +1,7 @@
 language: node_js
+sudo: false
 node_js:
-  - "5"
+  - "stable"
   - "4"
   - "0.12"
 after_success:

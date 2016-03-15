@@ -1,6 +1,6 @@
 ## 调整网络设置
 
-Selenium 的 [Mobile JSON Wire Protocol Specification](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) 支持一个获取和设置设备网络连接的 [API](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile#104) 。这个 API 通过位掩码（bitmask）工作，把所有可能的状态用一个整型数据表示：
+Selenium 的 [Mobile JSON Wire Protocol Specification](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) 支持一个获取和设置设备网络连接的 [API](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#104) 。这个 API 通过位掩码（bitmask）工作，把所有可能的状态用一个整型数据表示：
 
 | 值 (别名)           | 数据连接 | Wifi 连接 | 飞行模式 |
 | ------------------ | ---- | ---- | ------------- |

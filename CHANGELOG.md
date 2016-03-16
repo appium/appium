@@ -26,6 +26,7 @@ tests.
 
 #### iOS
 - add Tapster support for some more touch methods
+- fix moveTo: treat coordinates as relative, instead of absolute 
 - iPhone 6 + 6S support
 - iOS 9.3 support
 

@@ -166,6 +166,9 @@ describe('Desired Capabilities', () => {
         'noReset': 'false'
       });
       logger.warn.callCount.should.be.above(0);
+
+      let sessions = await d.getSessions();
+      sessions[0].capabilities.noReset.should.eql(false);
     });
 
     it('should allow a string "true"', async () => {
@@ -175,6 +178,21 @@ describe('Desired Capabilities', () => {
         'noReset': 'true'
       });
       logger.warn.callCount.should.be.above(0);
+
+      let sessions = await d.getSessions();
+      sessions[0].capabilities.noReset.should.eql(true);
+    });
+
+    it('should allow a string "true" in string capabilities', async () => {
+      await d.createSession({
+        'platformName': 'iOS',
+        'deviceName': 'Delorean',
+        'language': 'true'
+      });
+      logger.warn.callCount.should.equal(0);
+
+      let sessions = await d.getSessions();
+      sessions[0].capabilities.language.should.eql('true');
     });
   });
 

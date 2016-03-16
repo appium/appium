@@ -55,7 +55,7 @@
     "request-promise": "^1.0.2",
     "source-map-support": "^0.4.0",
     "teen_process": "^1.5.2",
-    "winston": "^1.1.2"
+    "winston": "^2.2.0"
   },
   "scripts": {
     "prepublish": "gulp prepublish",

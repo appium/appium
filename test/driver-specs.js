@@ -71,15 +71,6 @@ describe('AppiumDriver', () => {
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it('should call inner driver\'s createSession with desired capabilities with string booleans transformed to booleans', async () => {
-        let sentCaps = _.extend({autoAcceptAlerts: 'false', autoDismissAlerts: 'true'}, BASE_CAPS);
-        let expectedCaps = _.extend({autoAcceptAlerts: false, autoDismissAlerts: true}, BASE_CAPS);
-        mockFakeDriver.expects("createSession")
-          .once().withExactArgs(expectedCaps, undefined, [])
-          .returns([1, expectedCaps]);
-        await appium.createSession(sentCaps);
-        mockFakeDriver.verify();
-      });
     });
     describe('deleteSession', () => {
       let appium

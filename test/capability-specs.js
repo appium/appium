@@ -196,6 +196,44 @@ describe('Desired Capabilities', () => {
     });
   });
 
+  describe('number capabilities', () => {
+    it('should allow a string "1"', async () => {
+      await d.createSession({
+        'platformName': 'iOS',
+        'deviceName': 'Delorean',
+        'newCommandTimeout': '1'
+      });
+      logger.warn.callCount.should.be.above(0);
+
+      let sessions = await d.getSessions();
+      sessions[0].capabilities.newCommandTimeout.should.eql(1);
+    });
+
+    it('should allow a string "1.1"', async () => {
+      await d.createSession({
+        'platformName': 'iOS',
+        'deviceName': 'Delorean',
+        'newCommandTimeout': '1.1'
+      });
+      logger.warn.callCount.should.be.above(0);
+
+      let sessions = await d.getSessions();
+      sessions[0].capabilities.newCommandTimeout.should.eql(1.1);
+    });
+
+    it('should allow a string "1" in string capabilities', async () => {
+      await d.createSession({
+        'platformName': 'iOS',
+        'deviceName': 'Delorean',
+        'language': '1'
+      });
+      logger.warn.callCount.should.equal(0);
+
+      let sessions = await d.getSessions();
+      sessions[0].capabilities.language.should.eql('1');
+    });
+  });
+
   it ('should error if objects in caps', async function () {
     try {
       await d.createSession({

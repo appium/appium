@@ -176,7 +176,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 Pre-requisites:
 
 *  Make sure Chrome (an app with the package `com.android.chrome`) is installed on your device or emulator. Getting Chrome for the x86 version of the emulator is not currently possible without building Chromium, so you may want to run an ARM emulator and then copy a Chrome APK from a real device to get Chrome on an emulator.
-*  If downloaded from [NPM](https://www.npmjs.org/package/appium), or running from the [.app](https://github.com/appium/appium-dot-app), nothing needs to be done. If running from source, `npm install` will download ChromeDriver and put it in `node_modules/appium-android-driver/node_modules/appium-chromedriver/chromedriver`. A particular version can be specified by passing the `--chromedriver_version` config property (e.g., `npm install appium --chromedriver_version="2.16"`), otherwise the most recent one will be retrieved.
+*  If downloaded from [NPM](https://www.npmjs.org/package/appium), or running from the [.app](https://github.com/appium/appium-dot-app), nothing needs to be done. If running from source, `npm install` will download ChromeDriver and put it in `node_modules/appium-chromedriver/chromedriver/<OS name>/` for users having npm v3+ and for npm v2 it will be in `node_modules/appium-android-driver/node_modules/appium-chromedriver/chromedriver/<OS name>/`. A particular version can be specified by passing the `--chromedriver_version` config property (e.g., `npm install appium --chromedriver_version="2.16"`), otherwise the most recent one will be retrieved.
 
 Then, use desired capabilities like these to run your test in Chrome:
 

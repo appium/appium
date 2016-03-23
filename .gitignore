@@ -30,3 +30,4 @@ build/
 *DerivedData
 __pycache__
 old
+.tern-project

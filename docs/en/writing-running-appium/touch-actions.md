@@ -44,10 +44,18 @@ to another position, and removing their finger from the screen.
 Appium performs the events in sequence. You can add a `wait` event to control
 the timing of the gesture.
 
+`moveTo` coordinates are *relative* to the current position. For example, dragging from
+100,100 to 200,200 can be achieved by:
+```
+.press(100,100) // Start at 100,00
+.moveTo(100,100) // Increase X & Y by 100 each, ending up at 200,200
+
+```
+
 The appium client libraries have different ways of implementing this, for example:
 you can pass in coordinates or an element to a `moveTo` event. Passing both
 coordinates _and_ an element will treat the coordinates as relative to the
-elements position, rather than absolute.
+element's position, rather than relative to the current position.
 
 Calling the `perform` event sends the entire sequence of events to appium,
 and the touch gesture is run on your device.

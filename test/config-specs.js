@@ -55,7 +55,7 @@ describe('Config', () => {
       // but also to have access to process methods
       // so copy them over to a writable object
       let tempProcess = {};
-      for (let [prop, value] of _.pairs(process)) {
+      for (let [prop, value] of _.toPairs(process)) {
         tempProcess[prop] = value;
       }
       process = tempProcess;

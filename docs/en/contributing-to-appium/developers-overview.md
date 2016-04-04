@@ -151,6 +151,7 @@ checked in to GitHub along with changes to `package.json`.
 0. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
 0. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a 1.5.0`. This is not necessary for beta versions.
 0. Push the tag to upstream: `git push --tags <remote> <branch>`
+0. Install dev dependencies (or at least `gulp` and `appium-gulp-plugins`).
 0. Run `npm publish` (with `--tag beta` if this isn't an official release).
 0. Update the docs at appium.io. Check out the appium.io repo from github, check out the `gh-pages` branch and pull latest. Run `rake publish`.
 0. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.

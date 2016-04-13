@@ -183,6 +183,31 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       });
     });
 
+    describe('timeouts', () => {
+      let sessId;
+      before(async () => {
+        [sessId] = await d.createSession(defaultCaps);
+      });
+      describe('command', () => {
+        it('should exist by default', async () => {
+          d.newCommandTimeoutMs.should.equal(60000);
+        });
+        it('should be settable through `timeouts`', async () => {
+          await d.timeouts('command', 20);
+          d.newCommandTimeoutMs.should.equal(20);
+        });
+      });
+      describe('implicit', () => {
+        it('should not exist by default', async () => {
+          d.implicitWaitMs.should.equal(0);
+        });
+        it('should be settable through `timeouts`', async () => {
+          await d.timeouts('implicit', 20);
+          d.implicitWaitMs.should.equal(20);
+        });
+      });
+    });
+
     describe('proxying', () => {
       let sessId;
       beforeEach(async () => {

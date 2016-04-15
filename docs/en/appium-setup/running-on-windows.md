@@ -15,12 +15,14 @@ To get started:
 
 1. Install [node.js](http://nodejs.org/download/) (v.0.12 or greater). Use the
    installer from nodejs.org.
+1. Install `appium-doctor` in order to check your system: `npm install appium-doctor -g`.
+   Then run by typing `appium-doctor`.
 1. Install the [Android SDK](http://developer.android.com/sdk/index.html).
    You will need to run the 'android' tool (included in the SDK, in the `tools` folder) and make sure
    you have an API Level 17 or greater API installed. Set `ANDROID_HOME` to be
    your Android SDK path and add the `tools` and `platform-tools` folders to your
    PATH variable.
-1. Install the Java JDK and set `JAVA_HOME` to your JDK folder.
+1. Install the Java JDK and set `JAVA_HOME` to your JDK's `bin` folder.
 1. Install [Apache Ant](http://ant.apache.org/bindownload.cgi) or use the one
    that comes with the Android Windows SDK in the eclipse\plugins folder. Be
    sure to add the folder containing Ant to your PATH variable.

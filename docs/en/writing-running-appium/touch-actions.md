@@ -47,7 +47,7 @@ the timing of the gesture.
 `moveTo` coordinates are *relative* to the current position. For example, dragging from
 100,100 to 200,200 can be achieved by:
 ```
-.press(100,100) // Start at 100,00
+.press(100,100) // Start at 100,100
 .moveTo(100,100) // Increase X & Y by 100 each, ending up at 200,200
 
 ```

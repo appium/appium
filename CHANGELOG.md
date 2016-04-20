@@ -1,3 +1,32 @@
+CHANGES IN VERSION 1.5.2 (from 1.5.1)
+===================================
+
+*NOTE*: Appium 1.5.2 is a bug-fix release.
+
+#### General
+- deprecated `--command-timeout`. Use `newCommandTimeout` desired capability instead
+- ensure implicit wait can be set through `timeout` method
+- add better logging for `EPIPE` errors
+
+#### iOS
+- make sure `ipa` files are handled correctly for installing on real devices
+- ensure that existing SafariLauncher on device is used instead of rebuilding and reinstalling
+- fix issues with getting webview contexts on real devices
+- add full timeout support through `timeout` method
+- make sure Xpath searches respect implicit wait timeout
+- make sure bare Instruments process arguments are accepted
+
+#### Android
+- fix failure when `apk` file is too large
+- re-implement setting geolocation so it does not use Telnet.
+- add support for Chromium browser
+- fix issues with `flick`
+- fix bug where touch action `release` would throw an error
+- fix bug in later Android SDK version where noticing a newly started avd would fail
+- implement `autoWebviewTimeout`
+
+
+
 CHANGES IN VERSION 1.5.1 (from 1.5)
 ===================================
 

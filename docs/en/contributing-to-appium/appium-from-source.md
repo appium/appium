@@ -22,7 +22,7 @@ git clone https://github.com/appium/appium.git
 cd appium
 npm install
 gulp transpile # requires gulp, see below
-sudo node_modules/.bin/authorize-ios.js # for ios only
+sudo node_modules/.bin/authorize-ios # for ios only
 # alternatively
 sudo $(npm bin)/authorize-ios
 node .

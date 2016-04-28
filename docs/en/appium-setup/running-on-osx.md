@@ -63,3 +63,67 @@ To go back to iOS 7.1 testing.
 
 Instructions for setting up Android and running tests on Mac OS X are the same as
 those on Linux. See the [Android setup docs](/docs/en/appium-setup/android-setup.md).
+
+### Running iOS tests on OS X using Jenkins
+
+First download the jenkins-cli.jar and verify the Mac successfully connects to Jenkins master. Ensure you've run the `authorize_ios` command mentioned above.
+
+`wget https://jenkins.ci.cloudbees.com/jnlpJars/jenkins-cli.jar`
+
+```
+java -jar jenkins-cli.jar \
+ -s https://team-appium.ci.cloudbees.com \
+ -i ~/.ssh/id_rsa \
+ on-premise-executor \ 
+ -fsroot ~/jenkins \
+ -labels osx \
+ -name mac_appium
+ ```
+
+Next define a LaunchAgent for Jenkins to launch automatically on login. A LaunchDaemon will not work because daemons don't have GUI access. Make sure the plist doesn't contain the `SessionCreate` or `User` key as that may prevent tests from running. You'll see a `Failed to authorize rights` error if misconfigured.
+
+```
+$ sudo nano /Library/LaunchAgents/com.jenkins.ci.plist 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jenkins.ci</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>java</string>
+        <string>-Djava.awt.headless=true</string>
+        <string>-jar</string>
+        <string>/Users/appium/jenkins/jenkins-cli.jar</string>
+        <string>-s</string>
+        <string>https://instructure.ci.cloudbees.com</string>
+        <string>on-premise-executor</string>
+        <string>-fsroot</string>
+        <string>/Users/appium/jenkins</string>
+        <string>-executors</string>
+        <string>1</string>
+        <string>-labels</string>
+        <string>mac</string>
+        <string>-name</string>
+        <string>mac_appium</string>
+    </array>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/appium/jenkins/stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/appium/jenkins/error.log</string>
+</dict>
+</plist>
+```
+
+Finally set the owner, permissions, and then start the agent.
+
+```
+sudo chown root:wheel /Library/LaunchAgents/com.jenkins.ci.plist
+sudo chmod 644 /Library/LaunchAgents/com.jenkins.ci.plist
+ 
+launchctl load /Library/LaunchAgents/com.jenkins.ci.plist
+launchctl start com.jenkins.ci
+```

@@ -71,7 +71,7 @@ describe('AppiumDriver', () => {
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it.only('should kill all other sessions if sessionOverride is on', async () => {
+      it('should kill all other sessions if sessionOverride is on', async () => {
         appium.args.sessionOverride = true;
 
         // mock three sessions that should be removed when the new one is created

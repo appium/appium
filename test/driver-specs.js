@@ -71,6 +71,41 @@ describe('AppiumDriver', () => {
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
+      it.only('should kill all other sessions if sessionOverride is on', async () => {
+        appium.args.sessionOverride = true;
+
+        // mock three sessions that should be removed when the new one is created
+        let fakeDrivers = [new FakeDriver(),
+                           new FakeDriver(),
+                           new FakeDriver()];
+        let mockFakeDrivers = _.map(fakeDrivers, (fd) => {return sinon.mock(fd);});
+        mockFakeDrivers[0].expects('deleteSession')
+          .once();
+        mockFakeDrivers[1].expects('deleteSession')
+          .once()
+          .throws('Cannot shut down Android driver; it has already shut down');
+        mockFakeDrivers[2].expects('deleteSession')
+          .once();
+        appium.sessions['abc-123-xyz'] = fakeDrivers[0];
+        appium.sessions['xyz-321-abc'] = fakeDrivers[1];
+        appium.sessions['123-abc-xyz'] = fakeDrivers[2];
+
+        let sessions = await appium.getSessions();
+        sessions.should.have.length(3);
+
+        mockFakeDriver.expects("createSession")
+          .once().withExactArgs(BASE_CAPS, undefined, [])
+          .returns([1, BASE_CAPS]);
+        await appium.createSession(BASE_CAPS);
+
+        sessions = await appium.getSessions();
+        sessions.should.have.length(1);
+
+        for (let mfd of mockFakeDrivers) {
+          mfd.verify();
+        }
+        mockFakeDriver.verify();
+      });
     });
     describe('deleteSession', () => {
       let appium

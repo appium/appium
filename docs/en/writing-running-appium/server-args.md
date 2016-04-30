@@ -1,10 +1,10 @@
-## Appium server arguments
+# Appium server arguments
 
 Many Appium 1.5 server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).
 
 Usage: `node . [flags]`
 
-### Server flags
+## Server flags
 All flags are optional, but some are required in conjunction with certain others.
 
 
@@ -43,7 +43,6 @@ All flags are optional, but some are required in conjunction with certain others
 |`--chromedriver-executable`|null|ChromeDriver executable full path||
 |`--show-config`|false|Show info about the appium server configuration and exit||
 |`--no-perms-check`|false|Bypass Appium's checks to ensure we can read/write necessary files||
-|`--command-timeout`|60|The default command timeout for the server to use for all sessions (in seconds and should be less than 2147483). Will still be overridden by newCommandTimeout cap||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--isolate-sim-device`|false|Xcode 6 has a bug on some platforms where a certain simulator can only be launched without error if all other simulator devices are first deleted. This option causes Appium to delete all devices other than the one being used by Appium. Note that this is a permanent deletion, and you are responsible for using simctl or xcode to manage the categories of devices used with Appium.||
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
@@ -52,7 +51,8 @@ All flags are optional, but some are required in conjunction with certain others
 |`--suppress-adb-kill-server`|false|(Android-only) If set, prevents Appium from killing the adb server instance||
 |`--async-trace`|false|Add long stack traces to log entries. Recommended for debugging only.||
 |`--webkit-debug-proxy-port`|27753|(IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--webkit-debug-proxy-port 27753`|
-|`--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. [More infomation](/docs/en/writing-running-appium/default-capabilities-arg.md). |`--default-capabilities '{"app": "myapp.app", "deviceName": "iPhone Simulator"}'`|
+|`-dc`, `--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities.|`--default-capabilities [ '{"app": "myapp.app", "deviceName": "iPhone Simulator"}' | /path/to/caps.json ]`|
+|`--command-timeout`|60|[DEPRECATED] No effect. This used to be the default command timeout for the server to use for all sessions (in seconds and should be less than 2147483). Use newCommandTimeout cap instead||
 |`-k`, `--keep-artifacts`|false|[DEPRECATED] - no effect, trace is now in tmp dir by default and is cleared before each run. Please also refer to the --trace-dir flag.||
 |`--platform-name`|null|[DEPRECATED] - Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|
 |`--platform-version`|null|[DEPRECATED] - Version of the mobile platform|`--platform-version 7.1`|

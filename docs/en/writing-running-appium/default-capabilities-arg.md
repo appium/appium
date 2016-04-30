@@ -3,10 +3,13 @@
 Appium 1.5 does away with most CLI flags; the remainder can be converted into JSON and made part of the `--default-capabilities` flag. For example:
 
 ```
+# raw JSON as an argument
 --default-capabilities '{"app": "myapp.app", "deviceName": "iPhone Simulator"}'
+# or the name of a JSON file
+--default-capabilities /path/to/file.json
 ```
 
-**Windows users** will need to escape the quotes: `--default-capabilities "{\"app\": \"myapp.app\"}"`
+**Windows users** will need to escape the quotes in JSON passed on the command line: `--default-capabilities "{\"app\": \"myapp.app\"}"`
 
 
 

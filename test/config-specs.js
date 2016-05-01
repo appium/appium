@@ -64,17 +64,21 @@ describe('Config', () => {
       process = _process;
     });
     describe('checkNodeOk', () => {
-      it('should fail if node is below 0.10', () => {
+      it('should fail if node is below 0.12', () => {
         process.version = 'v0.9.12';
-        checkNodeOk.should.throw;
+        checkNodeOk.should.throw();
+        process.version = 'v0.1';
+        checkNodeOk.should.throw();
+        process.version = 'v0.10.36';
+        checkNodeOk.should.throw();
       });
-      it('should succeed if node is 0.10+', () => {
-        process.version = 'v0.10.0';
-        checkNodeOk.should.not.throw;
+      it('should succeed if node is 0.12+', () => {
+        process.version = 'v0.12.0';
+        checkNodeOk.should.not.throw();
       });
       it('should succeed if node is 1.x', () => {
         process.version = 'v1.0.0';
-        checkNodeOk.should.not.throw;
+        checkNodeOk.should.not.throw();
       });
     });
 
@@ -106,6 +110,7 @@ describe('Config', () => {
 
   describe('server arguments', () => {
     let parser = getParser();
+    parser.debug = true; // throw instead of exit on error; pass as option instead?
     let args = {};
     beforeEach(() => {
       // give all the defaults
@@ -175,85 +180,109 @@ describe('Config', () => {
 
   describe('validateServerArgs', () => {
     let parser = getParser();
+    parser.debug = true; // throw instead of exit on error; pass as option instead?
+    const defaultArgs = {};
+    // give all the defaults
+    for (let rawArg of parser.rawArgs) {
+      defaultArgs[rawArg[1].dest] = rawArg[1].defaultValue;
+    }
+    let args = {};
+    beforeEach(() => {
+      args = _.clone(defaultArgs);
+    });
     describe('mutually exclusive server arguments', () => {
       describe('noReset and fullReset', () => {
         it('should not allow both', () => {
           (() => {
-            validateServerArgs(parser, {noReset: true, fullReset: true});
-          }).should.throw;
+            args.noReset = args.fullReset = true;
+            validateServerArgs(parser, args);
+          }).should.throw();
         });
         it('should allow noReset', () => {
           (() => {
-            validateServerArgs(parser, {noReset: true});
-          }).should.not.throw;
+            args.noReset = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
         it('should allow fullReset', () => {
           (() => {
-            validateServerArgs(parser, {fullReset: true});
-          }).should.not.throw;
+            args.fullReset = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
       });
       describe('ipa and safari', () => {
         it('should not allow both', () => {
           (() => {
-            validateServerArgs(parser, {ipa: true, safari: true});
-          }).should.throw;
+            args.ipa = args.safari = true;
+            validateServerArgs(parser, args);
+          }).should.throw();
         });
         it('should allow ipa', () => {
           (() => {
-            validateServerArgs(parser, {ipa: true});
-          }).should.not.throw;
+            args.ipa = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
         it('should allow safari', () => {
           (() => {
-            validateServerArgs(parser, {safari: true});
-          }).should.not.throw;
+            args.safari = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
       });
       describe('app and safari', () => {
         it('should not allow both', () => {
           (() => {
-            validateServerArgs(parser, {app: true, safari: true});
-          }).should.throw;
+            args.app = args.safari = true;
+            validateServerArgs(parser, args);
+          }).should.throw();
         });
         it('should allow app', () => {
           (() => {
-            validateServerArgs(parser, {app: true});
-          }).should.not.throw;
+            args.app = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
       });
       describe('forceIphone and forceIpad', () => {
         it('should not allow both', () => {
           (() => {
-            validateServerArgs(parser, {forceIphone: true, forceIpad: true});
-          }).should.throw;
+            args.forceIphone = args.forceIpad = true;
+            validateServerArgs(parser, args);
+          }).should.throw();
         });
         it('should allow forceIphone', () => {
           (() => {
-            validateServerArgs(parser, {forceIphone: true});
-          }).should.not.throw;
+            args.forceIphone = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
         it('should allow forceIpad', () => {
           (() => {
-            validateServerArgs(parser, {forceIpad: true});
-          }).should.not.throw;
+            args.forceIpad = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
       });
       describe('deviceName and defaultDevice', () => {
         it('should not allow both', () => {
           (() => {
-            validateServerArgs(parser, {deviceName: true, defaultDevice: true});
-          }).should.throw;
+            args.deviceName = args.defaultDevice = true;
+            validateServerArgs(parser, args);
+          }).should.throw();
         });
         it('should allow deviceName', () => {
           (() => {
-            validateServerArgs(parser, {deviceName: true});
-          }).should.not.throw;
+            args.deviceName = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
         it('should allow defaultDevice', () => {
           (() => {
-            validateServerArgs(parser, {defaultDevice: true});
-          }).should.not.throw;
+            args.defaultDevice = true;
+            validateServerArgs(parser, args);
+          }).should.not.throw();
         });
       });
     });
@@ -262,13 +291,16 @@ describe('Config', () => {
       // the only argument left is `backendRetries`
       describe('backendRetries', () => {
         it('should fail with value less than 0', () => {
-          (() => {validateServerArgs(parser, {backendRetries: -1});}).should.throw;
+          args.backendRetries = -1;
+          (() => {validateServerArgs(parser, args);}).should.throw();
         });
         it('should succeed with value of 0', () => {
-          (() => {validateServerArgs(parser, {backendRetries: 0});}).should.not.throw;
+          args.backendRetries = 0;
+          (() => {validateServerArgs(parser, args);}).should.not.throw();
         });
         it('should succeed with value above 0', () => {
-          (() => {validateServerArgs(parser, {backendRetries: 100});}).should.not.throw;
+          args.backendRetries = 100;
+          (() => {validateServerArgs(parser, args);}).should.not.throw();
         });
       });
     });

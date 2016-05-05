@@ -19,7 +19,7 @@
 "use strict";
 
 var spawn = require('child_process').spawn,
-    _ = require('underscore');
+    _ = require('lodash');
 
 var args = process.argv.slice(2);
 

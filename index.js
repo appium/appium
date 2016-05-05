@@ -1,7 +1,17 @@
 // transpile:main
 
-import BaseDriver from './lib/driver';
-import DeviceSettings from './lib/device-settings';
+// BaseDriver exports
+import BaseDriver from './lib/basedriver/driver';
+import DeviceSettings from './lib/basedriver/device-settings';
 
 export { BaseDriver, DeviceSettings };
 export default BaseDriver;
+
+// MJSONWP exports
+
+import { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
+         errorFromCode, ALL_COMMANDS, NO_SESSION_ID_COMMANDS,
+         isSessionCommand } from './lib/mjsonwp';
+
+export { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
+         errorFromCode, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, isSessionCommand };

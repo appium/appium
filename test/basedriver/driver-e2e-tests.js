@@ -1,11 +1,10 @@
 import _ from 'lodash';
 import server from 'appium-express';
-import { routeConfiguringFunction } from 'mobile-json-wire-protocol';
+import { routeConfiguringFunction, DeviceSettings } from '../..';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import DeviceSettings from '../lib/device-settings';
 
 const should = chai.should();
 chai.use(chaiAsPromised);

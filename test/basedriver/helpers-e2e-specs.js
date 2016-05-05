@@ -2,7 +2,7 @@ import chai from 'chai';
 import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import { fs } from 'appium-support';
-import h from '../lib/helpers';
+import h from '../../lib/basedriver/helpers';
 import http from 'http';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
@@ -13,7 +13,8 @@ chai.should();
 chai.use(chaiAsPromised);
 
 function getFixture (file) {
-  return path.resolve(__dirname, '..', '..', 'test', 'fixtures', file);
+  return path.resolve(__dirname, '..', '..', '..', 'test', 'basedriver',
+                      'fixtures', file);
 }
 
 describe('app download and configuration', () => {
@@ -58,7 +59,8 @@ describe('app download and configuration', () => {
       // use a local server so there is no dependency on the internet
       let server;
       before(() => {
-        let dir = path.resolve(__dirname, '..', '..', 'test', 'fixtures');
+        let dir = path.resolve(__dirname, '..', '..', '..', 'test',
+                               'basedriver', 'fixtures');
         let serve = serveStatic(dir, {
           index: false,
           setHeaders: function (res, path) {

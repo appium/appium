@@ -1,0 +1,22 @@
+{
+  "laxcomma": true,
+  "undef": true,
+  "unused": true,
+  "trailing": true,
+  "node": true,
+  "eqeqeq": true,
+  "trailing": true,
+  "expr": true,
+  "white": true,
+  "indent": 2,
+  "esnext": true,
+  "experimental": ["asyncawait"],
+  "globals": {
+    "describe": true,
+    "it": true,
+    "before": true,
+    "after": true,
+    "beforeEach": true,
+    "afterEach": true
+  }
+}

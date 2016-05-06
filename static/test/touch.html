@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<html>
+<head>
+  <title>I am a page title</title>
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <style>
+    .flickElem {
+      position: relative;
+      width: 10px;
+      height: 10px;
+      left: 40px;
+      background-color: #ff0000;
+    }
+  </style>
+</head>
+<body style1="border: solid 1px red; margin: 0; padding: 0">
+
+<h1>This page is a Selenium sandbox</h1>
+
+<div id="flickElem" class="flickElem">&nbsp;</div><br/><span></span>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    var flickElem = $("#flickElem");
+
+    flickElem.bind("touchstart", function(event) {
+      var x = event.originalEvent.touches[0].pageX,
+          y = event.originalEvent.touches[0].pageY,
+          offset = flickElem.offset(),
+          dx = x - offset.left,
+          dy = y - offset.top;
+
+      flickElem.bind("touchmove", function(event) {
+        flickElem.offset({
+          left: event.originalEvent.touches[0].pageX - dx,
+          top: event.originalEvent.touches[0].pageY - dy
+        });
+      });
+
+      flickElem.bind("touchend", function(event) {
+        flickElem.offset({
+          left: event.originalEvent.changedTouches[0].pageX - dx,
+          top: event.originalEvent.changedTouches[0].pageY - dy
+        });
+
+        flickElem.unbind("touchmove");
+      });
+    });
+  });
+
+</script>
+
+</body>
+</html>

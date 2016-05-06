@@ -1,8 +1,7 @@
 // transpile:mocha
 
-import { routeConfiguringFunction } from '../..';
+import { server, routeConfiguringFunction } from '../..';
 import { FakeDriver } from './fake-driver';
-import server from 'appium-express';
 import _ from 'lodash';
 import request from 'request-promise';
 import chai from 'chai';

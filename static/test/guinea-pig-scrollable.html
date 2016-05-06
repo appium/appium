@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>I am a page title</title>
+  <script type="text/javascript" src="/js/jquery.min.js"></script>
+</head>
+<body>
+
+<h1>This page is a Selenium sandbox</h1>
+<h2>That is looooong!</h2>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+I am some page content
+<div id="i_am_an_id" class="i_am_a_class">I am a div</div>
+<a href="/test/guinea-pig2.html" id="i am a link">i am a link</a><br/>
+<a href="/test/guinea-pig2.html" id="blanklink" target="_blank">i am a new window link</a>
+<div>i appear 3 times</div>
+<div>i appear 3 times</div>
+<div>i appear 3 times</div>
+<div id="popuplink" onclick="setTimeout(function() { window.open('/test/guinea-pig2.html', 'popupwin'); }, 500);">i cause a popup window</div>
+<div id="invisible div" style="display:none;">i am invisible</div>
+<div>
+  <a id="alert1" href="javascript:void(0);" onclick="alert('I am an alert')">I cause an alert</a>
+  <a id="prompt1" href="javascript:void(0);" onclick="$('#promptVal').val(prompt('Do you like javascript?'));">I cause a prompt</a>
+  <input type="text" value="" id="promptVal" /></div>
+<form id="the_forms_id">
+<p>
+<input id="i_am_a_textbox" name="i_am_a_textbox" type="text" value="i has no focus" />
+</p>
+<input type="checkbox" id="unchecked_checkbox" name="unchecked_checkbox"/>
+<input type="checkbox" id="checked_checkbox" name="checked_checkbox" checked="checked"/>
+<select name="selectbox">
+  <option value="value1">First option</option>
+  <option value="value2">Second option</option>
+  <option value="value3">Third option</option>
+</select>
+
+</form>
+<span id="your_comments">
+  Your comments: <%= comment %><br/>
+</span>
+&#x00F1;&#x2603;
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#i_am_a_textbox").focus(function(){$(this).val("");})
+      .blur(function(){$(this).val("i has no focus");});
+  });
+</script>
+
+  <div class="border">
+
+  <form id="jumpContact" method="post">
+    <p>
+      <label for="fbemail">Email:</label><br>
+      <input id="fbemail" type="text" size="50" name="fbemail" placeholder="We would really like to follow up!"></input>
+    </p>
+    <p>
+      <label for="comments">Comments:</label><br>
+      <textarea id="comments" style="width:400px;height:100px" name="comments" placeholder="Thanks in advance, this is really helpful."></textarea>
+    </p>
+    <div style="float:right">
+      <input class="jumpButton" type="submit" name="submit" id="submit" value="send" />
+    </div>
+  </form>
+  </div>
+
+  <p>Server time: <span id="servertime">{{ serverTime }}</span></p>
+  <p>Client time: <span id="clienttime"></span></p>
+  <script type="text/javascript">
+    var uuid;
+    try {uuid = window.location.toString().match(/\?(.*)$/)[1]; } catch (ign) {}
+    if (uuid) document.title = document.title + " - " + uuid;
+    $("#clienttime").text(parseInt(new Date().getTime() / 1000));
+  </script>
+
+  <p id="useragent"><%= userAgent %></p>
+
+</body>
+</html>

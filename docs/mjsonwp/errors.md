@@ -51,7 +51,7 @@ There are, in addition, two helper methods for dealing with errors
   - `type` - the error class to test against
 - usage
   ```js
-  import { errors, isErrorType } from 'mobile-json-wire-protocol';
+  import { errors, isErrorType } from 'appium-base-driver';
 
   try {
     // do some stuff...
@@ -70,7 +70,7 @@ There are, in addition, two helper methods for dealing with errors
   - `message` - the message to be encapsulated in the error
 - usage
   ```js
-  import { errors, errorFromCode } from 'mobile-json-wire-protocol';
+  import { errors, errorFromCode } from 'appium-base-driver';
 
   let error = errorFromCode(6, 'an error has occurred');
 

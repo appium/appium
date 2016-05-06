@@ -15,3 +15,9 @@ import { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
 
 export { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
          errorFromCode, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, isSessionCommand };
+
+// Express exports
+
+import { server } from './lib/express/server';
+
+export { server };

@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import server from 'appium-express';
-import { routeConfiguringFunction, DeviceSettings } from '../..';
+import { server, routeConfiguringFunction, DeviceSettings } from '../..';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

@@ -1,7 +1,7 @@
 // transpile:mocha
 /* global describe:true, it:true, before:true, after:true */
 
-import JWProxy from '..';
+import { JWProxy } from '../..';
 import cp from 'child_process';
 import chai from 'chai';
 import { sleep } from 'asyncbox';

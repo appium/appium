@@ -21,3 +21,9 @@ export { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
 import { server } from './lib/express/server';
 
 export { server };
+
+// jsonwp-proxy exports
+
+import JWProxy from './lib/jsonwp-proxy/proxy';
+
+export { JWProxy };

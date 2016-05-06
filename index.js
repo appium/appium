@@ -27,3 +27,9 @@ export { server };
 import JWProxy from './lib/jsonwp-proxy/proxy';
 
 export { JWProxy };
+
+// jsonwp-status exports
+
+import { codes, getSummaryByCode } from './lib/jsonwp-status/status';
+const statusCodes = codes;
+export {statusCodes, getSummaryByCode };

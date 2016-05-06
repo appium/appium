@@ -33,7 +33,6 @@
     "colors": "^1.1.2",
     "es6-error": "^2.0.2",
     "express": "^4.13.3",
-    "jsonwp-status": "0.0.1",
     "lodash": "^4.0.0",
     "method-override": "^2.3.5",
     "morgan": "^1.6.1",

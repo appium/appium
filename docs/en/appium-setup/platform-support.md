@@ -38,7 +38,7 @@ instructions.
 * Versions: 2.3 and up
   * Versions 2.3 through 4.2 are supported via Appium's bundled version of
     [Selendroid](http://selendroid.io), which utilizes [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). Selendroid has a different set of commands than the default Appium (though this is rapidly being minimized) and a different support profile. To access this automation backend, use the `automationName` capability with the value `Selendroid`.
-  * Versions 4.2 and up are supported via Appium's own [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
+  * Versions 4.2 and up are supported via Appium's own [UiAutomator](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
       libraries. This is the default automation backend.
 * Devices: Android emulators and real Android devices
 * Native app support: Yes

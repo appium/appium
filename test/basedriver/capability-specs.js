@@ -1,8 +1,8 @@
-import BaseDriver from '..';
-import { errors } from 'mobile-json-wire-protocol';
+import BaseDriver from '../..';
+import { errors } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import logger from '../lib/logger.js';
+import logger from '../../lib/basedriver/logger';
 import sinon from 'sinon';
 
 const should = chai.should();

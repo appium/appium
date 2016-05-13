@@ -1,4 +1,4 @@
-import { isPackageOrBundle } from '../lib/helpers';
+import { isPackageOrBundle } from '../../lib/basedriver/helpers';
 import chai from 'chai';
 chai.should();
 

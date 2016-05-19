@@ -16,14 +16,14 @@
 - starts baseServer (appium-express)
   - passes routes given by driver
 
-## appium-express
+## appium-express (part of appium-base-driver)
 - starts express server (allows x-domain-origin)
 - initialises routes from AppiumDriver
 - timeout handling
 - serves a static page for test purposes
 - connects req/res events to logger
 
-## mobile-json-wire-protocol
+## mobile-json-wire-protocol (part of appium-base-driver)
 - provides list of Appium commands
 - subclassed by drivers that will use the protocol
   - kind of middleware between client and driver
@@ -146,7 +146,7 @@
 - launches, restarts and stops (or kills all) chrome instances
 - uses appium-jsonwp-proxy to send json wire protocol commands to the driver
 
-## jsonwp-proxy
+## jsonwp-proxy (part of appium-base-driver)
 - allows to send json wire protocol commands to a server that understands it (browser drivers)
 - parses response into json
 - allows to proxy requests to a proxied server

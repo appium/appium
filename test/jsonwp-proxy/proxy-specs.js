@@ -134,18 +134,11 @@ describe('proxy', () => {
       e.value.should.eql({message: 'Invisible element'});
       e.status.should.equal(11);
     });
-    it('should throw when a command fails with a 200', async () => {
+    it('should return response body when a command fails with a 200', async () => {
       let j = mockProxy({sessionId: '123'});
-      let e = null;
-      try {
-        await j.command('/element/200/text', 'GET');
-      } catch (err) {
-        e = err;
-      }
-      should.exist(e);
-      e.message.should.contain('Original error: Invisible element');
-      e.value.should.eql({message: 'Invisible element'});
-      e.status.should.equal(11);
+      let res = await j.command('/element/200/text', 'GET');
+      res.value.should.eql({message: 'Invisible element'});
+      res.status.should.eql(11);
     });
     it('should throw when a command fails with a 100', async () => {
       let j = mockProxy({sessionId: '123'});

@@ -1,3 +1,46 @@
+CHANGES IN VERSION 1.5.3 (from 1.5.2)
+===================================
+
+*NOTE*: Appium 1.5.3 is primarily a bug-fix release.
+
+It also adds functionality to support for iOS [WKWebViews](https://developer.apple.com/library/ios/documentation/WebKit/Reference/WKWebView_Ref/) and for automating the iOS Calendar app, as well as adding a capability to use `abd` for screenshots in Android web/hybrid sessions, selecting the correct version of Android emulator, and providing a list of Android activities to wait for on session startup.
+
+Further, Android session reporting is increased, so that automation clients can get the device UDID for the automation session, as well as the currently running `appPackage` and `appActivity`.
+
+#### General
+- Allow `--default-capabilities` server argument to specify a file containing the default capabilities.
+- Fix handling of statuses from proxied drivers (Chrome, Selendroid, etc.).
+- Fix handling of `browserName` capability for Selenium Grid usage.
+- Fix intermittent bug where creating a directory might crash the server.
+- Fix handling of `--session-override` server argument.
+
+#### iOS
+- Add support for `WKWebView`-based webviews.
+- Add support for automating the built-in Calandar app.
+- Fix `ios-debug-proxy-launcher`.
+- Fix bug where scrolling in Safari would crash.
+- Fix handling of Safari in "new window" state.
+- Fix handling of arguments for `keys` method so that clients that send an array do not fail.
+- Clean up handling of `ipa` files for real device tests.
+- Make sure `processArguments` parsing works.
+- Fix iwd script to allow re-running.
+
+#### Android
+- Add `nativeWebScreenshot` capability, to use `adb` screenshots instead of ChromeDriver if necessary.
+- Add support to auto-select device based on `platformVersion` rather than using first available device.
+- Allow `appWaitActivity` to be a list of activities
+- Fix setting wifi and data state
+- Implement `initAutoWebView` capability.
+- Report `appPackage`, `appActivity`, and `deviceUDID` when requesting session details.
+- Make sure unlock app is closed at the end of a session so that the device works again.
+- Fix handling of unlock to make less flakey.
+- Make sure unicode encoding works correctly when strings are long.
+- Fix handling of `disableAndroidWatchers` capability.
+- Fix killing ChromeDriver on Ubuntu 16.04.
+- Fix bug where early ChromeDriver failure crashed Appium.
+
+
+
 CHANGES IN VERSION 1.5.2 (from 1.5.1)
 ===================================
 

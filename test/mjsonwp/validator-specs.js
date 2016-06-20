@@ -25,6 +25,9 @@ describe('MJSONWP', () => {
       it('should succeed when given an about scheme', async () => {
         (() => {validators.setUrl('about:blank');}).should.not.throw;
       });
+      it('should succeed when given a data scheme', async () => {
+        (() => {validators.setUrl('data:text/html,<html></html>');}).should.not.throw;
+      });
     });
     describe('implicitWait', () => {
       it('should fail when given no ms', async () => {

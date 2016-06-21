@@ -14,8 +14,8 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     before(async () => {
       baseServer = await server(routeConfiguringFunction(d), 8181);
     });
-    after(() => {
-      baseServer.close();
+    after(async () => {
+      await baseServer.close();
     });
 
     describe('session handling', () => {

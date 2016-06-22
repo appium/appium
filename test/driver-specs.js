@@ -7,6 +7,8 @@ import _ from 'lodash';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { WebDriverAgentDriver } from 'appium-xcuitest-driver';
+
 
 chai.use(chaiAsPromised);
 
@@ -170,9 +172,18 @@ describe('AppiumDriver', () => {
     describe('sessionExists', () => {
     });
     describe('getDriverForCaps', () => {
-      it('should not blow up if user doesnt provide platformName', () => {
+      it('should not blow up if user does not provide platformName', () => {
         let appium = new AppiumDriver({});
         (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
+      });
+      it('should get WebDriverAgentDriver driver for automationName of XCUITest', () => {
+        let appium = new AppiumDriver({});
+        let driver = appium.getDriverForCaps({
+          platformName: 'iOS',
+          automationName: 'XCUITest'
+        });
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(WebDriverAgentDriver);
       });
     });
   });

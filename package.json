@@ -42,6 +42,7 @@
     "appium-logger": "^2.1.0",
     "appium-selendroid-driver": "^1.3.4",
     "appium-support": "^2.3.0",
+    "appium-xcuitest-driver": "^1.0.4",
     "argparse": "^1.0.7",
     "asyncbox": "^2.3.1",
     "authorize-ios": "^1.0.4",

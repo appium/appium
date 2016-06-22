@@ -6,6 +6,7 @@ import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+import B from 'bluebird';
 
 
 chai.should();
@@ -43,11 +44,16 @@ describe('server', () => {
       app.get('/error', () => {
         throw new Error('hahaha');
       });
+      app.get('/pause', async (req, res) => {
+        res.header['content-type'] = 'text/html';
+        await B.delay(1000);
+        res.status(200).send('We have waited!');
+      });
     }
     hwServer = await server(configureRoutes, 8181);
   });
   after(async () => {
-    hwServer.close();
+    await hwServer.close();
     errorStub.restore();
   });
 
@@ -75,5 +81,18 @@ describe('server', () => {
   it('should error if we try to start on a bad hostname', async () => {
     await server(() => {}, 8181, 'lolcathost').should.be.rejectedWith(/ENOTFOUND/);
     await server(() => {}, 8181, '1.1.1.1').should.be.rejectedWith(/EADDRNOTAVAIL/);
+  });
+  it('should wait for the server close connections before finishing closing', async () => {
+    let bodyPromise = request('http://localhost:8181/pause');
+
+    // relinquish control so that we don't close before the request is received
+    await B.delay(100);
+
+    let before = Date.now();
+    await hwServer.close();
+    // expect slightly less than the request waited, since we paused above
+    (Date.now() - before).should.be.above(900);
+
+    (await bodyPromise).should.equal('We have waited!');
   });
 });

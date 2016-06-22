@@ -27,7 +27,7 @@ describe('FakeDriver - via HTTP', () => {
   });
   after(async () => {
     if (server) {
-      await B.promisify(server.close.bind(server))();
+      await server.close();
     }
   });
 

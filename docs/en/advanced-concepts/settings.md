@@ -38,3 +38,17 @@ Settings are implemented via the following API endpoints:
 ### Supported Settings
 
 **"ignoreUnimportantViews"** - Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which ignores all views which are marked IMPORTANT_FOR_ACCESSIBILITY_NO or IMPORTANT_FOR_ACCESSIBILITY_AUTO (and have been deemed not important by the system), in an attempt to make things less confusing or faster.
+
+#### Android UiAutomator Configurator
+
+sets [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) timeouts and delays in Android devices. only works in Android API 18 and above.
+
+**"actionAcknowledgmentTimeout"** - Int which is the same as [setActionAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setActionAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(3 * 1000 milliseconds)
+
+**"keyInjectionDelay"** - Int which is the same as [setKeyInjectionDelay](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setKeyInjectionDelay(long)). If a negative value is given, it would set to default(0 milliseconds)
+
+**"scrollAcknowledgmentTimeout"** - Int which is the same as [setScrollAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setScrollAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(200 milliseconds)
+
+**"waitForIdleTimeout"** - Int which is the same as [setWaitForIdleTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForIdleTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds)
+
+**"waitForSelectorTimeout"** - Int which is the same as [setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds)

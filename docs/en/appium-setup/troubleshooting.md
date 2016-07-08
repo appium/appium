@@ -51,6 +51,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
   /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use
   of Instruments. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer).
+* If Instruments is crashing when running against a physical device ("exited with code 253"), ensure Xcode has downloaded device symbols. Go to Window -> Devices, and it should start automatically. This is needed after iOS version upgrades.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
 * If you have custom elements in your app, they will not be automatable by

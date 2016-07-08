@@ -109,6 +109,7 @@ $ sudo nano /Library/LaunchAgents/com.jenkins.ci.plist
         <string>mac</string>
         <string>-name</string>
         <string>mac_appium</string>
+        <string>-persistent</string>
     </array>
     <key>KeepAlive</key>
     <true/>

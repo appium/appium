@@ -16,6 +16,11 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       d = new DriverClass();
     });
 
+    it('should return an empty status object', async () => {
+      let status = await d.getStatus();
+      status.should.eql({});
+    });
+
     it('should return a sessionId from createSession', async () => {
       let [sessId] = await d.createSession(defaultCaps);
       should.exist(sessId);

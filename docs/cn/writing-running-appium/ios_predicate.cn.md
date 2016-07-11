@@ -1,6 +1,6 @@
-## iOS 谓词(Predicate)
+## iOS 断言(Predicate)
 
-在查看 *'-ios uiautomation'* 搜索策略时了解 **谓词(Predicate)** 十分必要。 [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)有下列几种非常有用的方法:
+在查看 *'-ios uiautomation'* 搜索策略时了解 **断言(Predicate)** 十分必要。 [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)有下列几种非常有用的方法:
 
 ```center
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)
@@ -8,7 +8,7 @@
 ```
 
 原生的JS搜索策略（由Apple提供）提供了更大的灵活性，并且和XPath很像。
-**[谓词(Predicate)](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html)** 可以通过使用多个匹配条件来准确定位某一个或某一组元素（相当于只有搜索条件与元素的计算结果为 true 时这些元素才会被认为是匹配的）。
+**[断言(Predicate)](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html)** 可以通过使用多个匹配条件来准确定位某一个或某一组元素（相当于只有搜索条件与元素的计算结果为 true 时这些元素才会被认为是匹配的）。
 
 （翻译备注：XPath 是一门用来定位 xml 文档中的元素的语言，能提供基于路径、元素属性等条件的定位策略）
 
@@ -21,7 +21,7 @@ appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPre
 
 \-  将只选择那些在主视图第一个 ```UIACollectionView``` 元素下的、拥有可见子元素 ```UIAStaticText``` 的 ```UIACollectionCell``` 元素。在这里， ```staticTexts()``` 和 ```isVisible()``` 分别是```UIAElementArray``` 和 ```UIAElement``` 的子方法。 **注意： ```UIAElementArray``` 序列编号从 ```0``` 开始，而不是像 Xpath 那样从 ```1```开始**
 
-以下是所有可用的谓词(Predicate)的列表（主要取自 [谓词(Predicate) 编程指南](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
+以下是所有可用的断言(Predicate)的列表（主要取自 [断言(Predicate) 编程指南](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html))
 
 ### 基本比较
 
@@ -50,16 +50,16 @@ same in Xpath: /UIATableView[2]/UIATableCell[@label = 'Olivia'][1]
 
 BETWEEN
 - 左边表达式的值在右边表达式的两个边界值之间或等于其中一个边界值。右边表达式为一个有两个值的数组，数组的第一个值是上限，第二个值是下限(这个顺序是固定的) ，例如 ```1 BETWEEN { 0 , 33 }```， 或者 ```$INPUT BETWEEN { $LOWER, $UPPER }```。
-在 Objective-C， 你可以创建一个自定义的 BETWEEN 谓词(Predicate)，如下面的示例所示:
+在 Objective-C， 你可以创建一个自定义的 BETWEEN 断言(Predicate)，如下面的示例所示:
 
 ```center
 NSPredicate *betweenPredicate =
     [NSPredicate predicateWithFormat: @"attributeName BETWEEN %@", @[@1, @10]];
 ```
 
-这创建了一个等价于 ```( ( 1 <= attributeValue ) && ( attributeValue <= 10 ) )``` 的谓词
+这创建了一个等价于 ```( ( 1 <= attributeValue ) && ( attributeValue <= 10 ) )``` 的断言
 
-### 布尔值谓词
+### 布尔值断言
 
 TRUEPREDICATE
 - 计算结果恒等于 ```TRUE``` 。
@@ -67,7 +67,7 @@ TRUEPREDICATE
 FALSEPREDICATE
 - 计算结果恒等于 ```FALSE```。
 
-### 基本的复合谓词
+### 基本的复合断言
 
 AND , &&
 -  逻辑与。
@@ -225,9 +225,9 @@ SELF
 
 `AND, OR, IN, NOT, ALL, ANY, SOME, NONE, LIKE, CASEINSENSITIVE, CI, MATCHES, CONTAINS, BEGINSWITH, ENDSWITH, BETWEEN, NULL, NIL, SELF, TRUE, YES, FALSE, NO, FIRST, LAST, SIZE, ANYKEY, SUBQUERY, CAST, TRUEPREDICATE, FALSEPREDICATE`
 
-### Appium 谓词(predicate)帮助文档
+### Appium 断言(predicate)帮助文档
 
-Appium 在app.js中有 [专门的谓词(predicate)使用帮助文档](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) :
+Appium 在app.js中有 [专门的断言(predicate)使用帮助文档](https://github.com/appium/appium-uiauto/blob/3052dace828db2ab3d722281fb7853cbcbc3252f/uiauto/appium/app.js#L68) :
 
 - `getFirstWithPredicate`
 - `getFirstWithPredicateWeighted`

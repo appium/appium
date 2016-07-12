@@ -1,5 +1,4 @@
-import BaseDriver from '../..';
-import { errors } from '../..';
+import { default as BaseDriver, errors } from '../..';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import logger from '../../lib/basedriver/logger';

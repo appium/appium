@@ -288,18 +288,18 @@ describe('MJSONWP', async () => {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/touch/perform',
           method: 'POST',
-          json: [{"action":"tap","options":{"element":"3"}}]
+          json: [{"action":"tap", "options":{"element":"3"}}]
         });
-        res.value.should.deep.equal([[{"action":"tap","options":{"element":"3"}}], 'foo']);
+        res.value.should.deep.equal([[{"action":"tap", "options":{"element":"3"}}], 'foo']);
       });
 
       it('should not wrap twice', async () => {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/touch/perform',
           method: 'POST',
-          json: {actions: [{"action":"tap","options":{"element":"3"}}]}
+          json: {actions: [{"action":"tap", "options":{"element":"3"}}]}
         });
-        res.value.should.deep.equal([[{"action":"tap","options":{"element":"3"}}], 'foo']);
+        res.value.should.deep.equal([[{"action":"tap", "options":{"element":"3"}}], 'foo']);
       });
 
     });
@@ -311,7 +311,7 @@ describe('MJSONWP', async () => {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
-          json: {desiredCapabilities: desiredCapabilities}
+          json: {desiredCapabilities}
         });
         res.status.should.equal(0);
         res.value.should.eql(desiredCapabilities);
@@ -321,8 +321,8 @@ describe('MJSONWP', async () => {
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
           json: {
-            desiredCapabilities: desiredCapabilities,
-            requiredCapabilities: requiredCapabilities
+            desiredCapabilities,
+            requiredCapabilities
           }
         });
         res.status.should.equal(0);
@@ -340,7 +340,7 @@ describe('MJSONWP', async () => {
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
           json: {
-            desiredCapabilities: desiredCapabilities,
+            desiredCapabilities,
             randomCapabilitied: {z: '-a'}
           }
         }).should.eventually.be.rejectedWith('400');
@@ -505,7 +505,7 @@ describe('MJSONWP', async () => {
           message: 'An unknown server-side error occurred while processing ' +
                    'the command. Original error: Too Fresh!'
         },
-        sessionId: sessionId
+        sessionId
       });
     });
 

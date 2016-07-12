@@ -63,7 +63,7 @@ describe('app download and configuration', () => {
                                'basedriver', 'fixtures');
         let serve = serveStatic(dir, {
           index: false,
-          setHeaders: function (res, path) {
+          setHeaders: (res, path) => {
             res.setHeader('Content-Disposition', contentDisposition(path));
           }
         });

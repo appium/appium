@@ -94,7 +94,7 @@ describe('doctor', () => {
         'warn: - Manual fix for 3 is do something.',
         'info: ###',
         'info: ',
-        'info: Bye, run appium-doctor again when the all the manual fixes have been applied!',
+        'info: Bye, run appium-doctor again when all manual fixes have been applied!',
         'info: '
       ].join('\n'));
     });

@@ -220,6 +220,25 @@ describe('MJSONWP', async () => {
       });
     });
 
+    it('should return the correct error even if driver does not throw', async () => {
+      let res =  await request({
+        url: 'http://localhost:8181/wd/hub/session/foo/appium/receive_async_response',
+        method: 'POST',
+        json: {response: 'baz'},
+        resolveWithFullResponse: true,
+        simple: false
+      });
+      res.statusCode.should.equal(500);
+      res.body.should.eql({
+        status: 13,
+        value: {
+          message: 'An unknown server-side error occurred while processing ' +
+                   'the command. Original error: Mishandled Driver Error'
+        },
+        sessionId: "foo"
+      });
+    });
+
     describe('multiple sets of arguments', () => {
       describe('optional', () => {
         it('should allow moveto with element', async () => {

@@ -177,7 +177,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       before(() => {
         d.settings = new DeviceSettings({ignoreUnimportantViews: false});
       });
-      it('should be able to get settings object',() => {
+      it('should be able to get settings object', () => {
         d.settings.getSettings().ignoreUnimportantViews.should.be.false;
       });
       it('should throw error when updateSettings method is not defined', async () => {

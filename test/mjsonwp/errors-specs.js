@@ -123,7 +123,7 @@ describe('errorFromCode', () => {
           .should.have.property('jsonwpCode', error.errorCode);
         errorFromCode(error.errorCode)
           .should.have.property('message', error.errorMsg);
-        if(!_.includes([13, 33],error.errorCode)) {
+        if (!_.includes([13, 33], error.errorCode)) {
           errorFromCode(error.errorCode, 'abcd')
             .should.have.property('jsonwpCode', error.errorCode);
           errorFromCode(error.errorCode, 'abcd')

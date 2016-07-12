@@ -42,7 +42,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
 
     it('should get the current session', async () => {
-      let [,caps] = await d.createSession(defaultCaps);
+      let [, caps] = await d.createSession(defaultCaps);
       caps.should.equal(await d.getSession());
     });
 
@@ -116,12 +116,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       let d = new DriverClass();
 
       let waitMs = 10;
-      d.getStatus = async () => {
+      d.getStatus = async function () {
         await B.delay(waitMs);
         return Date.now();
       }.bind(d);
 
-      d.getSessions = async () => {
+      d.getSessions = async function () {
         await B.delay(waitMs);
         throw new Error('multipass');
       }.bind(d);
@@ -189,9 +189,8 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
 
     describe('timeouts', () => {
-      let sessId;
       before(async () => {
-        [sessId] = await d.createSession(defaultCaps);
+        await d.createSession(defaultCaps);
       });
       describe('command', () => {
         it('should exist by default', async () => {

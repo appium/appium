@@ -19,4 +19,5 @@ before_install:
 after_success:
   - gulp coveralls
 script:
+  - gulp eslint
   - _FORCE_LOGS=1 npm test

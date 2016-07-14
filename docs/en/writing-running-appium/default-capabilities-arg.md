@@ -52,3 +52,4 @@ Appium 1.5 does away with most CLI flags; the remainder can be converted into JS
 | --keep-keychains          | keepKeyChains           |
 | --localizable-strings-dir | localizableStringsDir   |
 | --show-ios-log            | showIOSLog              |
+| --reboot                  | reboot                  |

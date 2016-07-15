@@ -60,6 +60,7 @@
 |`chromeOptions`| Allows passing chromeOptions capability for ChromeDriver. For more information see [chromeOptions](https://sites.google.com/a/chromium.org/chromedriver/capabilities) | `chromeOptions: {args: ['--disable-popup-blocking']}` |
 |`recreateChromeDriverSessions`| Kill ChromeDriver session when moving to a non-ChromeDriver webview. Defaults to `false` | `true` or `false`|
 |`nativeWebScreenshot`| In a web context, use native (adb) method for taking a screenshot, rather than proxying to ChromeDriver. Defaults to `false` | `true` or `false`|
+|`androidScreenshotPath`| The name of the directory on the device in which the screenshot will be put. Defaults to `/data/local/tmp` |e.g. `/sdcard/screenshots/`|
 
 ### iOS Only
 

@@ -1,5 +1,9 @@
 "use strict";
 
+// turn all logging on since we have tests that rely on npmlog logs actually
+// getting sent to the handler
+process.env._FORCE_LOGS="1";
+
 var gulp = require('gulp'),
     boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp),
     path = require('path'),

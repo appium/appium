@@ -6,7 +6,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import { main as appiumServer } from '../lib/main';
-import { getDefaultArgs } from '../lib/parser';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 
 chai.use(chaiAsPromised);
@@ -19,9 +18,7 @@ describe('FakeDriver - via HTTP', () => {
   let server = null;
   before(async () => {
     if (shouldStartServer) {
-      let args = getDefaultArgs();
-      args.port = TEST_PORT;
-      args.host = TEST_HOST;
+      let args = {port: TEST_PORT, host: TEST_HOST};
       server = await appiumServer(args);
     }
   });
@@ -79,4 +76,28 @@ describe('FakeDriver - via HTTP', () => {
       await driver.source().should.eventually.be.rejectedWith(/terminated/);
     });
   });
+});
+
+describe('Logsink', () => {
+  let server = null;
+  let logs = [];
+  let logHandler = (level, message) => {
+    logs.push([level, message]);
+  };
+  let args = {port: TEST_PORT, host: TEST_HOST, logHandler};
+
+  before(async () => {
+    server = await appiumServer(args);
+  });
+
+  after(async () => {
+    await server.close();
+  });
+
+  it('should send logs to a logHandler passed in by a parent package', async () => {
+    logs.length.should.be.above(1);
+    logs[0].length.should.equal(2);
+    logs[0][1].should.include("Welcome to Appium");
+  });
+
 });

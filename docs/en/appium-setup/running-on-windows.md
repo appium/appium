@@ -13,7 +13,7 @@ option to connect to an Appium server running on a Mac.
 
 To get started:
 
-1. Install [node.js](http://nodejs.org/download/) (v.0.12 or greater). Use the
+1. Install [node.js](http://nodejs.org/download/) (v4 or greater). Use the
    installer from nodejs.org.
 1. Install `appium-doctor` in order to check your system: `npm install appium-doctor -g`.
    Then run by typing `appium-doctor`.

@@ -42,8 +42,8 @@ describe('Config', () => {
       it('should log the config to console', async () => {
         let config = await getAppiumConfig();
         await showConfig();
-        console.log.calledOnce.should.be.true;
-        console.log.getCall(0).args[0].should.contain(JSON.stringify(config));
+        console.log.calledOnce.should.be.true;  // eslint-disable-line no-console
+        console.log.getCall(0).args[0].should.contain(JSON.stringify(config)); // eslint-disable-line no-console
       });
     });
   });

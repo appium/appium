@@ -1,3 +1,4 @@
+/* eslint no-console:0 */
 "use strict";
 
 // turn all logging on since we have tests that rely on npmlog logs actually
@@ -43,8 +44,8 @@ gulp.task('docs', ['transpile'], function () {
   var appiumArguments = parser.getParser().rawArgs;
   var docFile = path.resolve(__dirname, "docs/en/writing-running-appium/server-args.md");
   var md = "# Appium server arguments\n\n";
-  md += "Many Appium 1.5 server arguments have been deprecated in favor of the "
-  md += "[--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md)."
+  md += "Many Appium 1.5 server arguments have been deprecated in favor of the ";
+  md += "[--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).";
   md += "\n\nUsage: `node . [flags]`\n\n";
   md += "## Server flags\n";
   md += "All flags are optional, but some are required in conjunction with " +
@@ -61,7 +62,7 @@ gulp.task('docs', ['transpile'], function () {
     // let's replace it with <user>/...
     if (arg[0][0] === '--keystore-path') {
       var userPath = process.env.HOME || process.env.USERPROFILE;
-      argOpts.defaultValue = argOpts.defaultValue.replace(userPath, '&lt;user&gt;')
+      argOpts.defaultValue = argOpts.defaultValue.replace(userPath, '&lt;user&gt;');
     }
 
     // handle empty objects

@@ -33,6 +33,7 @@
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
 |`enablePerformanceLogging`| (Chrome and webview only) Enable Chromedriver's performance logging (default `false`)| `true`, `false`|
 |`androidDeviceReadyTimeout`|Timeout in seconds used to wait for a device to become ready after booting|e.g., `30`|
+|`androidInstallTimeout`|Timeout in milliseconds used to wait for an apk to install to the device. Defaults to `90000` |e.g., `90000`|
 |`adbPort`|Port used to connect to the ADB server (default `5037`)|`5037`|
 |`androidDeviceSocket`|Devtools socket name. Needed only when tested app is a Chromium embedding browser. The socket is open by the browser and Chromedriver connects to it as a devtools client.|e.g., `chrome_devtools_remote`|
 |`avd`| Name of avd to launch|e.g., `api19`|
@@ -59,6 +60,7 @@
 |`chromeOptions`| Allows passing chromeOptions capability for ChromeDriver. For more information see [chromeOptions](https://sites.google.com/a/chromium.org/chromedriver/capabilities) | `chromeOptions: {args: ['--disable-popup-blocking']}` |
 |`recreateChromeDriverSessions`| Kill ChromeDriver session when moving to a non-ChromeDriver webview. Defaults to `false` | `true` or `false`|
 |`nativeWebScreenshot`| In a web context, use native (adb) method for taking a screenshot, rather than proxying to ChromeDriver. Defaults to `false` | `true` or `false`|
+|`androidScreenshotPath`| The name of the directory on the device in which the screenshot will be put. Defaults to `/data/local/tmp` |e.g. `/sdcard/screenshots/`|
 
 ### iOS Only
 
@@ -90,3 +92,12 @@
 |`waitForAppScript`| The ios automation script used to determined if the app has been launched, by default the system wait for the page source not to be empty. The result must be a boolean |e.g. `true;`, `target.elements().length > 0;`, `$.delay(5000); true;` |
 |`webviewConnectRetries`| Number of times to send connection message to remote debugger, to get webview. Default: `8` |e.g., `12`|
 |`appName`| The display name of the application under test. Used to automate backgrounding the app in iOS 9+.|e.g., `UICatalog`|
+
+### You.i Engine Only
+
+<expand_table>
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`youiEngineAppAddress`| The IP address of the device on which the app is running. Use `localhost` for simulator.
+Use device’s IP address for a real device. |e.g. `localhost` or `192.168.1.203`|

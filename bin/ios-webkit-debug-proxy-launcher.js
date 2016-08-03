@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint no-console:0 */
+
 /*
  * Small tool, launching and monitoring ios-web-kit-proxy, and relauching
  * on predefined errors.
@@ -48,7 +50,7 @@ var startProxy = function () {
   proxy.stderr.on('data', function (data) {
     console.log('stderr: ' + data);
     var restartMessage = _(RESTART_ON_MESSAGES).find(function (message) {
-       return ('' + data).indexOf(message) >= 0;
+      return ('' + data).indexOf(message) >= 0;
     });
     if (restartMessage) {
       console.log('Detected error message:', restartMessage);

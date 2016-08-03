@@ -3,6 +3,8 @@ sudo: false
 node_js:
   - "stable"
   - "4"
-  - "0.12"
+script:
+  - npm run lint
+  - npm run test
 after_success:
   - gulp coveralls

@@ -4,7 +4,7 @@
 
 ## appium
 - runs basic checks
-  - node version (>= 0.12)
+  - node version (>= 4)
   - CLI arguments checks
     - contains all available and supported CLI arguments
     - check for deprecation and mutual exclusion

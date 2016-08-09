@@ -16,7 +16,7 @@ Further, Android session reporting is increased, so that automation clients can 
 
 #### iOS
 - Add support for `WKWebView`-based webviews.
-- Add support for automating the built-in Calandar app.
+- Add support for automating the built-in Calendar app.
 - Fix `ios-debug-proxy-launcher`.
 - Fix bug where scrolling in Safari would crash.
 - Fix handling of Safari in "new window" state.

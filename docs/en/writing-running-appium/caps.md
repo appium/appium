@@ -101,3 +101,13 @@
 |----|-----------|-------|
 |`youiEngineAppAddress`| The IP address of the device on which the app is running. Use `localhost` for simulator.
 Use device’s IP address for a real device. |e.g. `localhost` or `192.168.1.203`|
+
+### WinAppDriver Only
+
+<expand_table>
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`platformName`| Which platform the test is being done on |e.g. `Windows`|
+|`deviceName`| The name of the device being tested on | e.g. `WindowsPC`|
+|`app`| appID of the windows app for testing or the path to the .exe file. See [this page](/docs/en/writing-running-appium/windows-app-testing.md) for details on how to find the appID | e.g. `c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App`|

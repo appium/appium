@@ -8,6 +8,7 @@ import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
+import { IosDriver } from 'appium-ios-driver';
 
 
 chai.use(chaiAsPromised);
@@ -183,6 +184,58 @@ describe('AppiumDriver', () => {
           automationName: 'XCUITest'
         });
         driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+      });
+      it('should get iosdriver for ios < 10', () => {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'iOS',
+          platformVersion: '8.0',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = '8.1';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = '9.4';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = '';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = 'foo';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        delete caps.platformVersion;
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+      });
+      it('should get xcuitestdriver for ios >= 10', () => {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'iOS',
+          platformVersion: '10',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+
+        caps.platformVersion = '10.0';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(XCUITestDriver);
+
+        caps.platformVersion = '10.1';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(XCUITestDriver);
+
+        caps.platformVersion = '12.14';
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
       });
     });

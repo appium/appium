@@ -1,3 +1,42 @@
+CHANGES IN VERSION 1.6.0 beta 1 (from 1.5.3)
+===================================
+
+This release of Appium marks the beginning of support for two brand new platforms:
+* [Windows](https://www.microsoft.com/en-us/windows) desktop applications (see the [usage documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/windows-app-testing.md))
+* [You.i TV](http://www.youi.tv/) (see the [driver documentation](https://github.com/YOU-i-Labs/appium-youiengine-driver#appium-youi-engine-driver)).
+
+Further, since Apple removed the Instruments automation functionality in Xcode 8,
+this release of Appium has preliminary support for XCUITest, allowing for the automation
+of applications in iOS 9.3 and 10.
+
+#### General
+- Require Node 4 or above (**possible breaking change**)
+- Add `automationName` entries for `XCUITest`, and `youiengine`
+- Add `platformName` entry for `Windows`
+
+#### iOS
+- Add preliminary support for Xcode 8 and iOS 10 (using `automationName` of `XCUITest`). For information on using this driver, see the [driver documentation](https://github.com/appium/appium-xcuitest-driver#external-dependencies)
+- Make sure device name gets properly translated into actual device name
+- Fix case where orientation would get lost
+- Fix Safari page change logic to actually catch when a page changes
+- Try harder to kill Instruments if the normal way does not work, to avoid hanging processes
+
+#### Android
+- Add `androidInstallTimeout` desired capability, to customize the timeout when installing an app
+- Add `androidScreenshotPath` desired capability, to set the path in which screenshot files are saved on the device
+- Add `appWaitDuration` desired capability, to customize how long to wait for an application
+- Fix optional intent arguments to allow for hyphens
+- Wait for apps to launch before proceeding
+- Switch to clearing text fields using adb, to improve reliability and speed
+- Add ability to detect screen orientation
+- Make sure Selendroid mode doesn't lose connection through adb when network changes
+- Make sure the release action in a touch action chain doesn't happen in the wrong place
+- Make application install more reliable
+- Fix screenshot on Windows
+- Make Chromedriver connect on a random port if none specified
+
+
+
 CHANGES IN VERSION 1.5.3 (from 1.5.2)
 ===================================
 

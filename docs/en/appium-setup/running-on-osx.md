@@ -61,6 +61,19 @@ If you're using multiple Xcode versions, you can switch between them using:
 
     sudo xcode-select --switch &lt;path to required xcode&gt;
 
+### Testing using Xcode 8 (including iOS 10) with XCUITest
+
+In order to automate iOS devices with Xcode 8 (which includes all testing of iOS 10+),
+you need to install the [Carthage](https://github.com/Carthage/Carthage) dependency
+manager:
+
+```
+brew install carthage
+```
+
+
+
+
 ### System setup (Android)
 
 Instructions for setting up Android and running tests on Mac OS X are the same as
@@ -76,7 +89,7 @@ First download the jenkins-cli.jar and verify the Mac successfully connects to J
 java -jar jenkins-cli.jar \
  -s https://team-appium.ci.cloudbees.com \
  -i ~/.ssh/id_rsa \
- on-premise-executor \ 
+ on-premise-executor \
  -fsroot ~/jenkins \
  -labels osx \
  -name mac_appium
@@ -85,7 +98,7 @@ java -jar jenkins-cli.jar \
 Next define a LaunchAgent for Jenkins to launch automatically on login. A LaunchDaemon will not work because daemons don't have GUI access. Make sure the plist doesn't contain the `SessionCreate` or `User` key as that may prevent tests from running. You'll see a `Failed to authorize rights` error if misconfigured.
 
 ```
-$ sudo nano /Library/LaunchAgents/com.jenkins.ci.plist 
+$ sudo nano /Library/LaunchAgents/com.jenkins.ci.plist
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -126,7 +139,7 @@ Finally set the owner, permissions, and then start the agent.
 ```
 sudo chown root:wheel /Library/LaunchAgents/com.jenkins.ci.plist
 sudo chmod 644 /Library/LaunchAgents/com.jenkins.ci.plist
- 
+
 launchctl load /Library/LaunchAgents/com.jenkins.ci.plist
 launchctl start com.jenkins.ci
 ```

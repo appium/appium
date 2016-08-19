@@ -10,13 +10,14 @@
 
 [![Build Status](https://team-appium.ci.cloudbees.com/job/Appium/badge/icon)](https://team-appium.ci.cloudbees.com/job/Appium/)
 
-Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS), emulators (Android), and real devices (iOS, Android).
-
+Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, Windows, FirefoxOS).
 
 ### Supported Platforms
 
 * iOS
 * Android
+* Windows
+* FirefoxOS
 
 See the [platform support doc](/docs/en/appium-setup/platform-support.md) for more detailed information.
 
@@ -75,6 +76,15 @@ You also need to download the Appium client for your language so you can write t
   * [Linux](/docs/en/appium-setup/running-on-linux.md)
   * [OS X](/docs/en/appium-setup/running-on-osx.md)
   * [Windows](/docs/en/appium-setup/running-on-windows.md)
+  
+#### Windows Requirements
+
+* Windows 10
+* [Documentation](/docs/en/appium-setup/running-on-windows.md)
+
+#### FirefoxOS Requirements
+
+* [Firefox OS Simulator](https://developer.mozilla.org/en/docs/Tools/Firefox_OS_Simulator)
 
 ### Quick Start
 
@@ -118,6 +128,12 @@ Appium drives Apple's UI Automation library for iOS support, which is based on
 
 Android support uses the UI Automator framework for newer platforms and
 [Selendroid](http://github.com/DominikDary/selendroid) for older Android platforms.
+
+Windows support uses Microsoft's [WinAppDriver](https://github.com/Microsoft/WinAppDriver)
+
+FirefoxOS support leverages [Marionette](https://developer.mozilla.org/en-US/docs/Marionette),
+an automation driver that is compatible with WebDriver and is used to automate
+Gecko-based platforms.
 
 ### Contributing
 

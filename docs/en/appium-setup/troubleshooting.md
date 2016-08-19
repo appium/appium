@@ -36,6 +36,12 @@ own items in the SDK manager. Make sure you install the build-tools and platform
   reset the connection to the Android device.
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
+### Windows
+
+* Make sure developer mode is on
+* Make sure command prompt is Admin
+* Check that the URL Appium server is listening to matches the one specified in test script
+
 ### IOS
 
 * Make sure Instruments.app is not open

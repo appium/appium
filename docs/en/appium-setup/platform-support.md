@@ -61,3 +61,9 @@ instructions.
 * Support for automating vendor-provided or third-party apps: Yes (but not
   when using the Selendroid backend)
 * Support for automating custom, non-standard UI controls: No
+
+### Windows Support
+
+See [running on Windows](running-on-windows.md) for details
+
+* [Windows App Testing](windows-app-testing.md)

@@ -1,6 +1,6 @@
 ## Adjusting Network Connection
 
-The Selenium [Mobile JSON Wire Protocol Specification](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile) supports an [API](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile#104) for getting and setting the network connection for a device. The API works through a bitmask, assigning an integer to each possible state:
+The Selenium [Mobile JSON Wire Protocol Specification](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) supports an [API](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#104) for getting and setting the network connection for a device. The API works through a bitmask, assigning an integer to each possible state:
 
 | Value (Alias)      | Data | Wifi | Airplane Mode |
 | ------------------ | ---- | ---- | ------------- |
@@ -19,6 +19,11 @@ connection API for iOS.
 
 Choose the setting you would like to use, and then send the correct bitmask from
 the table above.
+
+### Windows
+
+Unfortunately, at the moment Appium does not support the Selenium network
+connection API for Windows.
 
 ```javascript
 // javascript

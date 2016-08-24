@@ -9,11 +9,11 @@ make explicit the level of support and requirements for each of these.
 See [Running on OS X: iOS](running-on-osx.md) for iOS requirements and setup
 instructions.
 
-* Versions: 6.0, 6.1, 7.0, 7.1, 8.0, and 8.1
+* Versions: 7.1, 8.0, 8.1, 8.2, 8.3, 8.4, 9.0, 9.1 and 9.2
 * Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by
-  Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
+  Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
   framework.
 * Mobile web support: Yes, via automation of mobile Safari. For real devices,
   ios-webkit-remote-debugger is required, and automation of native aspects of
@@ -38,7 +38,7 @@ instructions.
 * Versions: 2.3 and up
   * Versions 2.3 through 4.2 are supported via Appium's bundled version of
     [Selendroid](http://selendroid.io), which utilizes [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). Selendroid has a different set of commands than the default Appium (though this is rapidly being minimized) and a different support profile. To access this automation backend, use the `automationName` capability with the value `Selendroid`.
-  * Versions 4.2 and up are supported via Appium's own [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
+  * Versions 4.2 and up are supported via Appium's own [UiAutomator](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
       libraries. This is the default automation backend.
 * Devices: Android emulators and real Android devices
 * Native app support: Yes
@@ -61,3 +61,9 @@ instructions.
 * Support for automating vendor-provided or third-party apps: Yes (but not
   when using the Selendroid backend)
 * Support for automating custom, non-standard UI controls: No
+
+### Windows Support
+
+See [running on Windows](running-on-windows.md) for details
+
+* [Windows App Testing](windows-app-testing.md)

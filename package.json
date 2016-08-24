@@ -11,14 +11,9 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.3.4-beta1",
+  "version": "1.6.0-beta1",
   "author": "https://github.com/appium",
-  "licenses": [
-    {
-      "type": "apache-2.0",
-      "url": "https://raw.github.com/appium/appium/master/LICENSE"
-    }
-  ],
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"
@@ -26,102 +21,73 @@
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
-  "engines": [
-    "node"
-  ],
-  "main": "./lib/server/main.js",
+  "engines": {
+    "node": ">=4",
+    "npm": ">=3"
+  },
+  "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./bin/appium.js",
-    "appium-doctor": "./bin/appium-doctor.js",
-    "authorize_ios": "./bin/authorize-ios.js"
+    "appium": "./build/lib/main.js",
+    "authorize-ios": "./node_modules/.bin/authorize-ios"
   },
   "directories": {
     "lib": "./lib",
     "doc": "./docs"
   },
   "dependencies": {
-    "adm-zip": "~0.4.4",
-    "appium-adb": "=1.6.0",
-    "appium-atoms": "=0.0.5",
-    "appium-instruments": "=1.4.10",
-    "appium-uiauto": "=1.9.0",
-    "argparse": "~0.1.15",
-    "async": "~0.9.0",
-    "binary-cookies": "~0.1.1",
-    "body-parser": "~1.4.3",
-    "bplist-creator": "~0.0.4",
-    "bplist-parser": "~0.0.5",
-    "bufferpack": "0.0.6",
-    "bytes": "~1.0.0",
-    "camel-back-promise": "^1.0.0",
-    "colors": "~0.6.2",
-    "date-utils": "~1.2.15",
-    "difflib": "~0.2.4",
-    "express": "~4.5.1",
-    "glob": "~4.0.0",
-    "grunt": "~0.4.5",
-    "grunt-cli": "~0.1.13",
-    "js2xmlparser2": "~0.2.0",
-    "md5calculator": "~0.0.3",
-    "method-override": "~2.0.1",
-    "mkdirp": "^0.5.0",
-    "morgan": "~1.1.1",
-    "mv": "~2.0.0",
-    "namp": "0.2.25",
-    "ncp": "~0.5.1",
-    "node-idevice": "~0.1.2",
-    "node-uuid": "~1.4.1",
-    "path": "~0.4.9",
-    "plist": "~1.0.0",
-    "prompt": "~0.2.13",
-    "q": "~1.0.1",
-    "request": "~2.36.0",
-    "rimraf": "~2.2.8",
-    "sandboxed-module": "~1.0.0",
-    "serve-favicon": "~2.0.0",
-    "socket.io": "~1.0.2",
-    "swig": "~1.4.1",
-    "temp": "~0.8.0",
-    "through": "~2.3.4",
-    "touch": "0.0.3",
-    "underscore": "~1.6.0",
-    "underscore.string": "~2.3.3",
-    "unzip": "~0.1.9",
-    "utf7": "~1.0.0",
-    "uuid-js": "~0.7.4",
-    "vargs": "~0.1.0",
-    "win-spawn": "~2.0.0",
-    "winston": "~0.7.3",
-    "ws": "~0.4.31",
-    "xml2js": "~0.4.4",
-    "xmldom": "~0.1.19",
-    "xpath": "0.0.7"
+    "appium-android-driver": "^1.10.19",
+    "appium-base-driver": "^2.0.8",
+    "appium-fake-driver": "^0.1.10",
+    "appium-ios-driver": "^1.12.19",
+    "appium-logger": "^2.1.0",
+    "appium-selendroid-driver": "^1.3.4",
+    "appium-support": "^2.3.0",
+    "appium-xcuitest-driver": "^2.0.0",
+    "appium-youiengine-driver": "^1.0.3",
+    "appium-windows-driver": "^0.1.2",
+    "argparse": "^1.0.7",
+    "asyncbox": "^2.3.1",
+    "authorize-ios": "^1.0.4",
+    "babel-runtime": "=5.8.24",
+    "bluebird": "^2.10.2",
+    "continuation-local-storage": "^3.1.7",
+    "date-utils": "^1.2.21",
+    "lodash": "^4.13.1",
+    "npmlog": "^2.0.4",
+    "request-promise": "^1.0.2",
+    "source-map-support": "^0.4.0",
+    "teen_process": "^1.7.1",
+    "winston": "^2.2.0"
   },
   "scripts": {
-    "test": "grunt travis"
+    "prepublish": "gulp prepublish",
+    "test": "gulp once",
+    "watch": "gulp",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "lint": "gulp eslint"
   },
+  "pre-commit": [
+    "precommit-msg",
+    "lint",
+    "test"
+  ],
   "devDependencies": {
-    "assert": "~1.1.1",
-    "chai": "~1.10.0",
-    "chai-as-promised": "~4.1.1",
-    "gps-demo-app": "https://github.com/appium/gps-demo-app/archive/master.tar.gz",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-jscs-checker": "~0.8.1",
-    "grunt-mocha-test": "~0.12.3",
-    "grunt-newer": "~0.8.0",
-    "js-yaml": "~3.2.3",
-    "mocha": "~2.0.1",
-    "monocle-js": "~1.0.0",
-    "node-static": "~0.7.3",
-    "saucelabs": "~0.1.1",
-    "sinon": "~1.12.0",
-    "sinon-chai": "~2.6.0",
-    "socket.io-client": "~1.2.1",
-    "socks": "~0.0.1",
-    "underscore-cli": "~0.2.17",
-    "unorm": "~1.3.3",
-    "wd": "~0.3.8",
-    "wd-bridge": "~0.0.1",
-    "yiewd": "~0.6.0"
+    "appium-gulp-plugins": "^1.4.5",
+    "babel-eslint": "^6.1.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
+    "eslint": "^2.13.1",
+    "eslint-config-appium": "0.0.6",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-import": "^1.9.2",
+    "eslint-plugin-mocha": "^3.0.0",
+    "gulp": "^3.9.1",
+    "mocha": "^2.5.3",
+    "pre-commit": "^1.1.3",
+    "sinon": "^1.17.4",
+    "wd": "~0.4.0"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.0.12"
   }
 }

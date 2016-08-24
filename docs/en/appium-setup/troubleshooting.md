@@ -19,21 +19,11 @@ to github or write to the [appium-discuss discussion group](https://discuss.appi
 ### If you're running Appium from source
 
 * `git pull` to make sure you're running the latest code
-* Run the appropriate flavor of `reset.sh` based on what you're trying to
-automate:
+* Remove old dependencies: `rm -rf node_modules`
+* Re-install dependencies: `npm install`
+* Re-transpile the code: `gulp transpile`
 
-|command                  | explanation |
-|-------------------------|-------------|
-|./reset.sh               | # all |
-|./reset.sh --ios         | # ios-only |
-|./reset.sh --android     | # android-only |
-|./reset.sh --selendroid  | # selendroid-only |
-
-* You might also want to run `reset.sh` with the `--dev` flag if you want the
-  test apps downloaded and built as well.
-* You can also use `appium-doctor` to automatically verify that all
-  dependencies are met. If running from source, you may have to use
-  `bin/appium-doctor.js` or `node bin/appium-doctor.js`.
+* You can also use [Appium Doctor](https://github.com/appium/appium-doctor) to determine whether your system is configured correctly for Appium.
 * If you get this error after upgrading to Android SDK 22:
   `{ANDROID_HOME}/tools/ant/uibuild.xml:155: SDK does not have any Build Tools installed.`
 In the Android SDK 22, the platform and build tools are split up into their
@@ -45,6 +35,12 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * It's sometimes useful to run `adb kill-server && adb devices`. This can
   reset the connection to the Android device.
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
+
+### Windows
+
+* Make sure developer mode is on
+* Make sure command prompt is Admin
+* Check that the URL Appium server is listening to matches the one specified in test script
 
 ### IOS
 
@@ -60,13 +56,77 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If you've ever run Appium with sudo, you might need to `sudo rm
   /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use
-  of Instruments. Usually a box will pop up that you enter your password into
-  . If you're running Appium from source, you can simply run `sudo grunt authorize`
-  from the main repo to avoid getting this popup. If you're running from npm,
-  run `sudo authorize_ios` instead. You need to do this every time you install
-  a new version of Xcode, as well.
+  of Instruments. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer).
+* If Instruments is crashing when running against a physical device ("exited with code 253"), ensure Xcode has downloaded device symbols. Go to Window -> Devices, and it should start automatically. This is needed after iOS version upgrades.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
+* If you have custom elements in your app, they will not be automatable by
+  UIAutomation (and therefore Appium) by default. You need to set the
+  accessibility status to 'enabled' on them. The way to do this in code is:
+
+  ```center
+  [myCustomView setAccessibilityEnabled:YES];
+  ```
+
+* Tests on iOS may exhibit symptoms similar to a memory leak including sluggish
+  performance or hangs. If you experience this problem, it's likely due to a
+  known issue with NSLog. One option is to remove NSLog from your code.
+  However, there are several more nuanced approaches that may also help without
+  requiring that you refactor.
+
+  ### Workaround 1
+  NSLog is a macro and can be redefined. E.g.,
+  ```objectivec
+  // *You'll need to define TEST or TEST2 and then recompile.*
+
+  #ifdef TEST
+    #define NSLog(...) _BlackHoleTestLogger(__VA_ARGS__);
+  #endif // TEST
+  #ifdef TEST2
+    #define NSLog(...) _StdoutTestLogger(__VA_ARGS__);
+  #endif // TEST2
+
+  void _BlackHoleTestLogger(NSString *format, ...) {
+      //
+  }
+
+  void _StdoutTestLogger(NSString *format, ...) {
+      va_list argumentList;
+      va_start(argumentList, format);
+      NSMutableString * message = [[NSMutableString alloc] initWithFormat:format
+                                                  arguments:argumentList];
+
+      printf(message);
+
+      va_end(argumentList);
+      [message release];
+  }
+  ```
+
+  ### Workaround 2
+  Manually replace the underlying function that NSLog wraps. This method was recommended by
+  [Apple in a similar context.](https://support.apple.com/kb/TA45403?locale=en_US&viewlocale=en_US)
+
+  ```objectivec
+  extern void _NSSetLogCStringFunction(void(*)(const char *, unsigned, BOOL));
+
+  static void _GarbageFreeLogCString(const char *message, unsigned length, BOOL withSyslogBanner) {
+     fprintf(stderr, "%s\\n", message);
+  }
+
+  int main (int argc, const char *argv[]) {
+     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+     int exitCode;
+
+     setbuf(stderr, NULL);
+
+     _NSSetLogCStringFunction(_GarbageFreeLogCString);
+     exitCode = WOApplicationMain(@"Application", argc, argv);
+     [pool release];
+     return exitCode;
+  }
+```
+
 
 ### Webview/Hybrid/Safari app support
 
@@ -107,7 +167,7 @@ and submit an issue describing the bug and a repro case.
 ### Known Issues
 
 * If you've installed Node from the Node website, it requires that you use sudo
-  for `npm`. This is not ideal. Try to get node with
+  for `npm`. This is not ideal. Try to get node with [nvm](https://github.com/creationix/nvm),
   [n](https://github.com/visionmedia/n) or `brew install node` instead!
 * Webview support works on real iOS devices with a proxy, see [discussion](https://groups.google.com/d/msg/appium-discuss/u1ropm4OEbY/uJ3y422a5_kJ).
 * Sometimes iOS UI elements become invalidated milliseconds after they are
@@ -123,8 +183,5 @@ and submit an issue describing the bug and a repro case.
 
 |Action|Error|Resolution|
 |------|-----|----------|
-|Running reset.sh|xcodebuild: error: SDK "iphonesimulator6.1" cannot be located|Install the iPhone 6.1 SDK _or_ build the test apps with a separate SDK, e.g., `grunt buildApp:UICatalog:iphonesimulator5.1`|
-|Running reset.sh|Warning: Task "setGitRev" not found. Use --force to continue.|Update the submodules with `git submodule update --init` and run `reset.sh` again|
-|Running reset.sh|`[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:2.3.2:compile (default-compile) on project selendroid-server: Compilation failure [ERROR] Failure executing javac, but could not parse the error: [ERROR] [ERROR] [ERROR] The system is out of resources. [ERROR] Consult the following stack trace for details. [ERROR] java.lang.StackOverflowError `|`export MAVEN_OPTS="-Xms1024m -Xmx2048m -Xss2048k"`|
 |Running ios test|`[INST STDERR] posix spawn failure; aborting launch`|Your app is not compiled correctly for the simulator or device.|
-|Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. E.g., `sudo authorize_ios`|
+|Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer)|

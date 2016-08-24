@@ -1,7 +1,7 @@
 ## iOS Predicate
 
 It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**.
-[UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html) has following methods which can are very useful.
+[UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) has following methods which can are very useful.
 
 ```center
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)
@@ -9,7 +9,7 @@ It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**
 ```
 
 Native JS search strategy (powered by Apple) provides much more flexibility and is like Xpath.
-**[Predicates](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html)** can be used to restrict an elements set to select only those ones for which some condition is true.
+**[Predicates](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html)** can be used to restrict an elements set to select only those ones for which some condition is true.
 
 For example:
 
@@ -20,7 +20,7 @@ appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPre
 
 \-  will select only those  ```UIACollectionCell``` elements that have visible ```UIAStaticText``` child elements, and themselves are childs of 1st ```UIACollectionView``` element that should be located under the main app window.  Here ```staticTexts()``` and ```isVisible()``` are methods available in ```UIAElementArray``` and ```UIAElement``` classes respectively. **Note that ```UIAElementArray``` numbering begins with ```0``` unlike Xpath where indexes counting starts from ```1```**
 
-Here's a list of available Predicates (mostly taken from [Predicates Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/predicates.html))
+Here's a list of available Predicates (mostly taken from [Predicates Programming Guide](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Predicates/AdditionalChapters/Introduction.html))
 
 ### Basic Comparisons
 

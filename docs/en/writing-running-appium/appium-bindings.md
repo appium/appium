@@ -104,7 +104,14 @@ driver.BackgroundApp(5);
 
 ### Hide Keyboard
 
-Hide the keyboard.
+Hide the keyboard. *Note*: on iOS, this helper function is not guaranteed to
+work. There is no automation hook for hiding the keyboard, and apps are free to
+allow the user to hide the keyboard using any of a variety of different
+strategies, whether that is tapping outside the keyboard, swiping down, etc...
+We encourage you, rather than using this method, to think about how a _user_
+would hide the keyboard in your app, and tell Appium to do that instead (swipe,
+tap on a certain coordinate, etc...). That being said, the default behavior
+here might help you.
 
 ```ruby
 # ruby
@@ -818,7 +825,7 @@ swipe start_x: 75, start_y: 500, end_x: 75, end_y: 0, duration: 0.8
 
 ```python
 # python
-driver.swipe(start=75, starty=500, endx=75, endy=0, duration=800)
+driver.swipe(start_x=75, start_y=500, end_x=75, end_y=0, duration=800)
 ```
 
 ```java
@@ -980,27 +987,28 @@ Scroll to an element.
 
 ```ruby
 # ruby
-element = find_element :name, 'Element Name'
-execute_script "mobile: scrollTo", :element => element.ref
+element = find_element :name, "Element Name"
+execute_script "mobile: scroll", direction: "down", element: element.ref
 ```
 
 ```python
 # python
-todo: python
+driver.execute_script("mobile: scroll", {"direction": "down", element: element.id})
 ```
 
 ```java
 // java
-WebElement element = driver.findElement(By.name("Element Name"));
-HashMap<String, String> arguments = new HashMap<String, String>();
-arguments.put("element", element.getId());
-(JavascriptExecutor)driver.executeScript("mobile: scrollTo", arguments);
+JavascriptExecutor js = (JavascriptExecutor) driver;
+HashMap<String, String> scrollObject = new HashMap<String, String>();
+scrollObject.put("direction", "down");
+scrollObject.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: scroll", scrollObject);
 ```
 
 ```javascript
 // javascript
 return driver.elementByName().then(function (el) {
-  return driver.execute('mobile: scrollTo', {element: el.value});
+  driver.execute("mobile: scroll", [{direction: "down", element: el.value}]);
 });
 ```
 
@@ -1012,7 +1020,10 @@ $this->scroll($els[count($els) - 1], $els[0]);
 
 ```csharp
 // c#
-todo: csharp
+Dictionary<string, string> scrollObject = new Dictionary<string, string>();
+scrollObject.Add("direction", "down");
+scrollObject.Add("element", <element_id>);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
 ```
 
 ### Pull file

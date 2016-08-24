@@ -1,10 +1,11 @@
 {
   "laxcomma": true,
-  "strict": true,
   "undef": true,
   "unused": true,
   "node": true,
   "eqeqeq": true,
   "trailing": true,
-  "indent": 2
+  "indent": 2,
+  "esnext": true,
+  "experimental": ["asyncawait"]
 }

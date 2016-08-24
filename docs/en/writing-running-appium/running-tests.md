@@ -19,6 +19,10 @@ unpack it for you. Nice if you're not using Appium locally.
 Nothing in particular needs to be done to run your .apk using Appium. If you
 want to zip it up, you can.
 
+### Preparing your app for test (Windows)
+
+Nothing in particular needs to be done to run your test.
+
 ### Running your test app with Appium (iOS)
 
 The best way to see what to do currently is to look at the example tests:
@@ -91,9 +95,9 @@ First, make sure you have one and only one Android emulator or device
 connected. If you run `adb devices`, for example, you should see one device
 connected. This is the device Appium will use for tests. Of course, to have
 a device connected, you'll need to have made an Android AVD (see system
-setup ([Windows](running-on-windows.md),
-[Mac](running-on-osx.md),
-or [Linux](running-on-linux.md))
+setup ([Windows](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-windows.md),
+[Mac](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-osx.md),
+or [Linux](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-linux.md))
 for more information). If the Android SDK tools are on your path, you can
 simply run:
 
@@ -196,7 +200,7 @@ all set now!
 ### Running your test app with Appium (Android devices &lt; 4.2, and hybrid tests)
 
 Android devices before version 4.2 (API Level 17) do not have Google's
-[UiAutomator framework](http://developer.android.com/tools/help/uiautomator/index.html)
+[UiAutomator framework](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
 installed. This is what Appium uses to perform the automation behaviors on
 the device. For earlier devices or tests of hybrid (webview-based) apps,
 Appium comes bundled with another automation backend called [Selendroid]
@@ -268,3 +272,11 @@ session. One of the downsides to using Selendroid is that its API differs
 sometimes significantly with Appium's. Therefore we recommend you thoroughly
 read [Selendroid's documentation](http://selendroid.io/native.html) before
 writing your scripts for older devices or hybrid apps.
+
+### Running your test app with Appium (Windows)
+
+Ensure that Appium is listening
+
+Deploy your test from your test runner of choice
+
+See our [samples](https://github.com/Microsoft/WinAppDriver/tree/master/Samples) for details

@@ -2,7 +2,7 @@
 
 Appium is an open-source tool for automating native,
 mobile web, and hybrid applications on iOS and Android platforms.
-**Native apps** are those written using the iOS or Android SDKs. **Mobile web apps** are web apps accessed using a mobile browser (Appium supports
+**Native apps** are those written using the iOS, Android, or Windows SDKs. **Mobile web apps** are web apps accessed using a mobile browser (Appium supports
 Safari on iOS and Chrome or the built-in 'Browser' app on Android). **Hybrid apps** have a
 wrapper around a "webview" -- a native control that enables interaction with
 web content. Projects like [Phonegap](http://phonegap.com/),
@@ -10,7 +10,7 @@ make it easy to build apps using web technologies that are then bundled into
 a native wrapper, creating a hybrid app.
 
 Importantly, Appium is "cross-platform": it allows you to write tests against
-multiple platforms (iOS, Android), using the same API. This enables code reuse between iOS and Android testsuites.
+multiple platforms (iOS, Android, Windows), using the same API. This enables code reuse between iOS, Android, and Windows testsuites.
 
 For specific information about what it means for Appium to "support" its
 platforms, and automation modalities, please see the [platform support doc](/docs/en/appium-setup/platform-support.md).
@@ -31,14 +31,15 @@ meet requirement #1 by using vendor-provided automation frameworks under the
 hood. That way, we don't need to compile in any Appium-specific or
 third-party code or frameworks to your app. This means **you're testing the same app you're shipping**. The vendor-provided frameworks we use are:
 
-* iOS: Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
+* iOS: Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * Android 4.2+: Google's [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation support is provided by bundling a separate project, [Selendroid](http://selendroid.io))
+* Windows: Microsoft's [WinAppDriver](http://github.com/microsoft/winappdriver) 
 
 We meet requirement #2 by wrapping the vendor-provided frameworks in one API,
 the [WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API.
 WebDriver (aka "Selenium WebDriver") specifies a client-server protocol
-(known as the [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol)).
+(known as the [JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html)).
 Given this client-server architecture, a client written in any language can
 be used to send the appropriate HTTP requests to the server. There are
 already [clients written in every popular programming language](http://appium.io/downloads). This also
@@ -50,7 +51,7 @@ manage your test environment any way you like!
 
 We meet requirement #3 in the same way: WebDriver has become the de facto
 standard for automating web browsers, and is a [W3C Working Draft](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html).
-Why do something totally different for mobile? Instead we have [extended the protocol](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)
+Why do something totally different for mobile? Instead we have [extended the protocol](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)
 with extra API methods useful for mobile automation.
 
 It should be obvious that requirement #4 is a given -- you're reading this
@@ -83,13 +84,17 @@ a map or hash) sent to the Appium server to tell the server what kind of
 automation session we're interested in starting up. There are also various
 capabilities which can modify the behavior of the server during automation.
 For example, we might set the `platformName` capability to `iOS` to tell
-Appium that we want an iOS session, rather than an Android one. Or we might
+Appium that we want an iOS session, rather than an Android or Windows one. Or we might
 set the `safariAllowPopups` capability to `true` in order to ensure that,
 during a Safari automation session, we're allowed to use JavaScript to open
 up new windows. See the [capabilities doc](/docs/en/writing-running-appium/caps.md) for the complete list of capabilities available for Appium.
 
 **Appium Server**<br/>
-Appium is a server written in Node.js. It can be built and installed from source or installed directly from NPM.
+Appium is a server written in Node.js. It can be built and installed [from source](https://github.com/appium/appium/blob/master/docs/en/contributing-to-appium/appium-from-source.md) or installed directly from NPM:
+```
+$ npm install -g appium
+$ appium
+```
 
 **Appium Clients**<br/>
 There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)
@@ -105,4 +110,4 @@ which enables you to check out the hierarchy of your app. This can come in handy
 
 ### Getting Started
 
-Congratulations! You are now armed with enough knowledge to begin using Appium. Why not head to the [getting started doc](/README.md) for more detailed requirements and instructions?
+Congratulations! You are now armed with enough knowledge to begin using Appium. Why not head to the [getting started doc](https://github.com/appium/appium/blob/master/README.md) for more detailed requirements and instructions?

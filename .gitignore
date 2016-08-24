@@ -1,7 +1,6 @@
 .irb-history
 *.swp
 .DS_Store
-npm*.log
 node_modules
 sample-code
 *.trace
@@ -12,6 +11,10 @@ test/functional/_joined
 *.autosave
 .idea/
 *.log
+*.t
+artifacts
+input
+output
 lib/devices/android/bootstrap/bin/*
 lib/devices/android/bootstrap/local.properties
 lib/devices/android/bootstrap/project.properties
@@ -24,6 +27,7 @@ org.eclipse.ltk.core.refactoring.prefs
 .appiumconfig*
 build/
 .idea
-lib/devices/ios/uiauto/lib/status.js
-lib/devices/ios/uiauto/appium/xpath.js
 *DerivedData
+__pycache__
+old
+.tern-project

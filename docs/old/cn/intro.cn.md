@@ -27,13 +27,13 @@ Appium 是一个自动化测试开源工具，支持 iOS 平台和 Android 平�
 这样，我们就不需在你的应用里植入 Appium 特定或者第三方的代码。这就意味着你在测试你将发布的应用。我们
 使用以下的第三方框架：
 
-* iOS: 苹果的 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/_index.html)
+* iOS: 苹果的 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * Android 4.2+: Google's [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation support is provided by bundling a separate project, [Selendroid](http://selendroid.io))
 
 为了满足第二点，我们把这些第三方框架封装成一套 API， [WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API.
 WebDriver （也就是 "Selenium WebDriver"） 指定了客户端到服务端的协议。
-(参见 [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol))。
+(参见 [JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html))。
 使用这种客户端-服务端的架构，我们可以使用任何语言来编写客户端，向服务端发送恰当的 HTTP 请求。
 而且目前已经有大多数流行语言版本的客户端实现了。这也意味着你可以使用任何测试套件或者测试框架。客户端库就是简单的
 HTTP 客户，可以以任何你喜欢的方式潜入你的代码。换句话说，Appium 和 WebDriver 客户端不是技术意义上的“测试框架”，
@@ -41,7 +41,7 @@ HTTP 客户，可以以任何你喜欢的方式潜入你的代码。换句话说
 
 事实上 WebDriver 已经成为 web 浏览器自动化的标准，也成了 W3C 的标准 —— [W3C Working Draft](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html)。
 我们又何必为移动做一个完全不同的呢？
-所以我们扩充了[WebDriver 的协议](https://code.google.com/p/selenium/source/browse/spec-draft.md?repo=mobile)，
+所以我们扩充了[WebDriver 的协议](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)，
 在原有的基础上添加移动自动化相关的 API 方法，这也也满足了第三条理念。
 
 第四条就不用说了，[Appium 是开源的](https://github.com/appium/appium)。

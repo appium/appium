@@ -44,10 +44,18 @@ to another position, and removing their finger from the screen.
 Appium performs the events in sequence. You can add a `wait` event to control
 the timing of the gesture.
 
+`moveTo` coordinates are *relative* to the current position. For example, dragging from
+100,100 to 200,200 can be achieved by:
+```
+.press(100,100) // Start at 100,100
+.moveTo(100,100) // Increase X & Y by 100 each, ending up at 200,200
+
+```
+
 The appium client libraries have different ways of implementing this, for example:
 you can pass in coordinates or an element to a `moveTo` event. Passing both
 coordinates _and_ an element will treat the coordinates as relative to the
-elements position, rather than absolute.
+element's position, rather than relative to the current position.
 
 Calling the `perform` event sends the entire sequence of events to appium,
 and the touch gesture is run on your device.
@@ -89,11 +97,12 @@ MultiAction().add(action0).add(action1).perform()
 
 ### Bugs and Workarounds
 
-An unfortunate bug exists in the iOS 7.x Simulator where ScrollViews don't
-recognize gestures initiated by UIAutomation (which Appium uses under the hood
-for iOS). To work around this, we have provided access to a different
-function, `scroll`, which in many cases allows you to do what you wanted to do
-with a ScrollView, namely, scroll it!
+An unfortunate bug exists in the iOS 7.0 - 8.x Simulators where ScrollViews,
+CollectionViews, and TableViews don't recognize gestures initiated by
+UIAutomation (which Appium uses under the hood for iOS). To work around this,
+we have provided access to a different function, `scroll`, which in many cases
+allows you to do what you wanted to do with one of these views, namely, scroll
+it!
 
 
 **Scrolling**
@@ -103,16 +112,50 @@ To allow access to this special feature, we override the `execute` or
 `executeScript` methods in the driver, and prefix the command with `mobile: `.
 See examples below:
 
-* **WD.js:**
+To scroll, pass direction in which you intend to scroll as parameter.
+
 
 ```javascript
 // javascript
-// scroll the view down
 driver.execute("mobile: scroll", [{direction: 'down'}])
-// continue testing
 ```
 
-* **Java:**
+```java
+// java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+HashMap<String, String> scrollObject = new HashMap<String, String>();
+scrollObject.put("direction", "down");
+js.executeScript("mobile: scroll", scrollObject);
+```
+
+```ruby
+# ruby
+execute_script 'mobile: scroll', direction: 'down'
+```
+
+```python
+# python
+driver.execute_script("mobile: scroll", {"direction": "down"})
+```
+
+```csharp
+// c#
+Dictionary<string, string> scrollObject = new Dictionary<string, string>();
+scrollObject.Add("direction", "down");
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
+```
+
+```php
+$params = array(array('direction' => 'down'));
+$driver->executeScript("mobile: scroll", $params);
+```
+
+Sample to scroll using direction and element.
+
+```javascript
+// javascript
+driver.execute("mobile: scroll", [{direction: 'down', element: element.value}]);
+```
 
 ```java
 // java
@@ -121,6 +164,29 @@ HashMap<String, String> scrollObject = new HashMap<String, String>();
 scrollObject.put("direction", "down");
 scrollObject.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: scroll", scrollObject);
+```
+
+```ruby
+# ruby
+execute_script 'mobile: scroll', direction: 'down', element: element.ref
+```
+
+```python
+# python
+driver.execute_script("mobile: scroll", {"direction": "down", element: element.getAttribute("id")})
+```
+
+```csharp
+// c#
+Dictionary<string, string> scrollObject = new Dictionary<string, string>();
+scrollObject.Add("direction", "down");
+scrollObject.Add("element", <element_id>);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
+```
+
+```php
+$params = array(array('direction' => 'down', 'element' => element.GetAttribute("id")));
+$driver->executeScript("mobile: scroll", $params);
 ```
 
 **Automating Sliders**

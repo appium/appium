@@ -10,7 +10,7 @@ See [Windows App Testing](/docs/en/writing-running-appium/windows-app-testing.md
 
 To get started:
 
-   1. Download latest [node and npm tools](https://nodejs.org/download/release/v6.3.0/node-v6.3.0-x64.msi) MSI (version >= 6.0). The `npm` and `nodejs` paths should be in your PATH environment variable. 
+   1. Download latest [node and npm tools](https://nodejs.org/download/release/v6.3.0/node-v6.3.0-x64.msi) MSI (version >= 6.0). The `npm` and `nodejs` paths should be in your PATH environment variable.
    2. Download latest Java JDK [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (accept the license agreement first). Set 'JAVA_HOME' to be your JDK path. The `bin` in that directory should be added to your PATH variable.
    3. Install the [Android SDK](http://developer.android.com/sdk/index.html). Set `ANDROID_HOME` to be
    your Android SDK path and add the `tools` and `platform-tools` folders to your
@@ -24,7 +24,7 @@ To get started:
 
 ## Additional Setup for Android App Testing
 
-   1. To run tests on Windows, you will need to have the Android Emulator booted or an Android Device connected that is running an AVD with API Level 17 orgreater. Then run Appium on the command line (via the `appium` command)
+   1. To run tests on Windows, you will need to have the Android Emulator booted or an Android Device connected that is running an AVD with API Level 17 or greater. Then run Appium on the command line (via the `appium` command)
    2. Within test script, change value of 'platformVersion' to correspond with emulator version (i.e. '4.4.4')
    3. Within test script, change value of 'app' to PATH('path of .apk') and ensure the entire path (including close parenthesis) is on one line
 
@@ -51,6 +51,3 @@ arguments.
   limitations. For more information you can check out this
   [page](/docs/en/appium-setup/android-hax-emulator.md).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`.
-
-
-

@@ -1,7 +1,7 @@
 ## How to write docs
 
 `##` is used to write a h2 header. Each document must start with a h2 header.
-This is to support appium.io docs genration.Don't use the `---` underline method of creating headers.
+This is to support appium.io docs generation. Don't use the `---` underline method of creating headers.
 Don't use h1 `#` or `===` for heading as it is not supported for table of contents (folder name is used as h1).
 
 ### Subheaders

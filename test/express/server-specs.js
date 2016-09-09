@@ -7,6 +7,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import B from 'bluebird';
+import _ from 'lodash';
 
 
 chai.should();
@@ -79,8 +80,8 @@ describe('server', () => {
     await server(() => {}, 8181).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should error if we try to start on a bad hostname', async () => {
-    await server(() => {}, 8181, 'lolcathost').should.be.rejectedWith(/ENOTFOUND/);
-    await server(() => {}, 8181, '1.1.1.1').should.be.rejectedWith(/EADDRNOTAVAIL/);
+    await server(_.noop, 8181, 'lolcathost').should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL/);
+    await server(_.noop, 8181, '1.1.1.1').should.be.rejectedWith(/EADDRNOTAVAIL/);
   });
   it('should wait for the server close connections before finishing closing', async () => {
     let bodyPromise = request('http://localhost:8181/pause');

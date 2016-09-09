@@ -1,12 +1,11 @@
 // transpile:mocha
 
-import { server, routeConfiguringFunction } from '../..';
+import { server, routeConfiguringFunction, errors } from '../..';
 import { FakeDriver } from './fake-driver';
 import _ from 'lodash';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-
 
 let should = chai.should();
 chai.use(chaiAsPromised);
@@ -584,6 +583,27 @@ describe('MJSONWP', async () => {
                    'error: foo'
         },
         sessionId
+      });
+    });
+
+    it('should able to throw ProxyRequestError in proxying', async () => {
+      driver.proxyReqRes = async function () {
+        var jsonwp = {status: 35, value: "No such context found.", sessionId: "foo"};
+        throw  new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
+      };
+      let res = await request({
+        url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
+        method: 'POST',
+        json: {url: 'http://google.com'},
+        resolveWithFullResponse: true,
+        simple: false
+      });
+
+      res.statusCode.should.equal(500);
+      res.body.should.eql({
+        status: 35,
+        "value": { "message": "No such context found."},
+        sessionId: "foo"
       });
     });
 

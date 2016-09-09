@@ -114,6 +114,12 @@ describe('errors', () => {
     new errors.BadParametersError()
       .should.have.property('message');
   });
+  it('ProxyRequestError should have message and jsonwp', () => {
+    new errors.ProxyRequestError()
+        .should.have.property('jsonwp');
+    new errors.ProxyRequestError()
+        .should.have.property('message');
+  });
 });
 describe('errorFromCode', () => {
   for (let error of errorsList) {

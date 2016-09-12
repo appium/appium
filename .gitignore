@@ -3,3 +3,4 @@ build
 *.log
 .DS_Store
 coverage
+.idea/

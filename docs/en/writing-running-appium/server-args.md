@@ -52,6 +52,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--async-trace`|false|Add long stack traces to log entries. Recommended for debugging only.||
 |`--webkit-debug-proxy-port`|27753|(IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--webkit-debug-proxy-port 27753`|
 |`-dc`, `--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities.|`--default-capabilities [ '{"app": "myapp.app", "deviceName": "iPhone Simulator"}' | /path/to/caps.json ]`|
+|`--reboot`|false| - (Android-only) reboot emulator after each session and kill it at the end||
 |`--command-timeout`|60|[DEPRECATED] No effect. This used to be the default command timeout for the server to use for all sessions (in seconds and should be less than 2147483). Use newCommandTimeout cap instead||
 |`-k`, `--keep-artifacts`|false|[DEPRECATED] - no effect, trace is now in tmp dir by default and is cleared before each run. Please also refer to the --trace-dir flag.||
 |`--platform-name`|null|[DEPRECATED] - Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|

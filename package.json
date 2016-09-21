@@ -44,7 +44,7 @@
     "appium-support": "^2.3.0",
     "appium-xcuitest-driver": "^2.0.0",
     "appium-youiengine-driver": "^1.0.3",
-    "appium-windows-driver": "^0.1.2",
+    "appium-windows-driver": "^0.x",
     "argparse": "^1.0.7",
     "asyncbox": "^2.3.1",
     "authorize-ios": "^1.0.4",

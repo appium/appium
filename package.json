@@ -37,7 +37,7 @@
     "method-override": "^2.3.5",
     "morgan": "^1.6.1",
     "request": "^2.64.0",
-    "request-promise": "^2.0.0",
+    "request-promise": "^4.1.1",
     "serve-favicon": "^2.3.0",
     "source-map-support": "^0.4.0",
     "teen_process": "^1.5.2",

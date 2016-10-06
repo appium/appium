@@ -1,12 +1,13 @@
 // transpile:mocha
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-  AuthorizationDbCheck, NodeBinaryCheck} from '../lib/ios';
+  AuthorizationDbCheck, NodeBinaryCheck, CarthageCheck } from '../lib/ios';
 import { fs } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';
 import NodeDetector from '../lib/node-detector';
+import CarthageDetector from '../lib/carthage-detector';
 import FixSkippedError from '../lib/doctor';
 import log from '../lib/logger';
 import chai from 'chai';
@@ -248,6 +249,31 @@ describe('ios', () => {
     });
     it('fix', async () => {
       (await check.fix()).should.equal('Manually setup Node.js.');
+    });
+  }));
+  describe('CarthageCheck', withMocks({CarthageDetector}, (mocks) => {
+    let check = new CarthageCheck();
+    it('autofix', () => {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async () => {
+      mocks.CarthageDetector.expects('detect').once().returns(P.resolve('/usr/local/bin/carthage'));
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        message: 'Carthage was found at: /usr/local/bin/carthage'
+      });
+      verify(mocks);
+    });
+    it('diagnose - failure', async () => {
+      mocks.CarthageDetector.expects('detect').once().returns(P.resolve(null));
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        message: 'Carthage was NOT found!'
+      });
+      verify(mocks);
+    });
+    it('fix', async () => {
+      (await check.fix()).should.equal('Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
     });
   }));
 });

@@ -8,7 +8,7 @@ Windows specific UI testing on Appium is powered by [WinAppDriver] (https://gith
 ## C# Samples
 1. Pull and open `CalculatorTest.sln` under [CalculatorTest](https://github.com/Microsoft/WinAppDriver/tree/master/Samples/C%23/CalculatorTest)
 2. In Visual Studio 2015 with the test solution open build the test and select **Test > Run > All Tests**
- 
+
 ## Features
 Windows Application Driver supports testing **Universal Windows Platform (UWP)** and **Classic Windows (Win32)** apps on **Windows 10 PC**
 
@@ -42,6 +42,13 @@ NotepadSession = new IOSDriver<IOSElement>(new Uri("http://127.0.0.1:4723"), app
 // Control the AlarmClock app
 NotepadSession.FindElementByClassName("Edit").SendKeys("This is some text");
 ```
+
+### Starting a Session
+Note that you should additionally use these capabilities to ensure you are getting a Windows App automation session:
+
+`platformName`: `Windows`
+`deviceName`: `WindowsPC`
+
 ### Inspecting UI Elements
 Microsoft Visual Studio 2015 by default includes Windows SDK that provides great tool to inspect the application you are testing. This tool allows you to see every UI element/node that you can query using Windows Application Driver. This **inspect.exe** tool can be found under the Windows SDK folder such as `C:\Program Files (x86)\Windows Kits\10\bin\x86`
 

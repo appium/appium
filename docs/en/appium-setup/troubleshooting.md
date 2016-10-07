@@ -136,6 +136,8 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure you are properly switching contexts using the `context` appium commands provided by your client library.
 * If you getting this error: select_port() failed, when trying to open the
   proxy, see this [discussion](https://groups.google.com/forum/#!topic/appium-discuss/tw2GaSN8WX0)
+* In a Safari session, if the logs indicate that the initial url cannot be entered, make sure that
+  you have the software keyboard enabled. See this [discussion](https://github.com/appium/appium/issues/6440).
 
 ### FirefoxOS
 

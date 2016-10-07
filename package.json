@@ -27,8 +27,7 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js",
-    "authorize-ios": "./node_modules/.bin/authorize-ios"
+    "appium": "./build/lib/main.js"
   },
   "directories": {
     "lib": "./lib",
@@ -48,7 +47,6 @@
     "appium-windows-driver": "^0.x",
     "argparse": "^1.0.7",
     "asyncbox": "^2.3.1",
-    "authorize-ios": "^1.0.4",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.10.2",
     "continuation-local-storage": "^3.1.7",

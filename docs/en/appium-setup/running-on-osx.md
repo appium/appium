@@ -31,21 +31,16 @@ Appium on OS X supports iOS and Android testing.
 ### Authorizing iOS on the computer
 
 You need to authorize use of the iOS Simulator by running the `authorize-ios`
-binary made available through `npm`. If you installed globally, by running
-`npm install -g appium`, use
+binary made available through `npm`. Install the program by running
+
+```
+npm install -g authorize-ios
+```
+
+And the invoke the program using
 
 ```
 sudo authorize-ios
-```
-
-If you installed locally, the binary will be installed within the `node_modules/.bin`
-directory, so use
-
-```
-sudo node_modules/.bin/authorize-ios
-
-# alternatively
-sudo $(npm bin)/authorize-ios
 ```
 
 If you are running [Appium.app](https://github.com/appium/appium-dot-app), you can
@@ -81,7 +76,7 @@ those on Linux. See the [Android setup docs](/docs/en/appium-setup/android-setup
 
 ### Running iOS tests on OS X using Jenkins
 
-First download the jenkins-cli.jar and verify the Mac successfully connects to Jenkins master. Ensure you've run the `authorize_ios` command mentioned above.
+First download the jenkins-cli.jar and verify the Mac successfully connects to Jenkins master. Ensure you've run the `authorize-ios` command mentioned above.
 
 `wget https://jenkins.ci.cloudbees.com/jnlpJars/jenkins-cli.jar`
 

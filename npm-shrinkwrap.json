@@ -432,9 +432,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "2.0.25",
-      "from": "appium-xcuitest-driver@>=2.0.25 <3.0.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.0.25.tgz",
+      "version": "2.0.26",
+      "from": "appium-xcuitest-driver@>=2.0.26 <3.0.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.0.26.tgz",
       "dependencies": {
         "bluebird": {
           "version": "3.4.6",
@@ -2539,9 +2539,9 @@
       "resolved": "https://registry.npmjs.org/rimraf/-/rimraf-2.5.4.tgz",
       "dependencies": {
         "glob": {
-          "version": "7.1.0",
+          "version": "7.1.1",
           "from": "glob@>=7.0.5 <8.0.0",
-          "resolved": "https://registry.npmjs.org/glob/-/glob-7.1.0.tgz"
+          "resolved": "https://registry.npmjs.org/glob/-/glob-7.1.1.tgz"
         }
       }
     },

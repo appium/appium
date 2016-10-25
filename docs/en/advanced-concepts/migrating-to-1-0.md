@@ -1,3 +1,5 @@
+*This document is old, and only of interest for those migrating to Appium 1.x from an earlier version*
+
 ## Migrating your tests from Appium 0.18.x to Appium 1.x
 
 Appium 1.0 has removed a number of deprecated features from the previous versions. This guide will help you know what needs to change in your test suite to take advantage of Appium 1.0.

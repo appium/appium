@@ -81,10 +81,8 @@ have to modify your `/etc/authorization` file in one of two ways:
    `/etc/authorization` file for you:
 
     ```center
-    sudo node_modules/.bin/authorize-ios.js
-
-    # alternatively
-	sudo $(npm bin)/authorize-ios
+    npm install -g authorize-ios
+    sudo authorize-ios
 	```
 
 At this point, run:

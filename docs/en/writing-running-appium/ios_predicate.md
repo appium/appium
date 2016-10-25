@@ -1,5 +1,7 @@
 ## iOS Predicate
 
+*NOTE*: for now, iOS predicates are only relevant with respect to the `-ios uiautomation` locator strategy, which only exists in iOS 9.3 and below.
+
 It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**.
 [UIAutomation JavaScript API](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) has following methods which can are very useful.
 

@@ -31,18 +31,18 @@ Here are the steps required to talk to a web view in your Appium test:
 // javascript
 // assuming we have an initialized `driver` object for an app
 driver
-	.contexts().then(function (contexts) { // get list of available views. Returns array: ["NATIVE_APP","WEBVIEW_1"]
-		return driver.context(contexts[1]); // choose the webview context
-	})
+    .contexts().then(function (contexts) { // get list of available views. Returns array: ["NATIVE_APP","WEBVIEW_1"]
+        return driver.context(contexts[1]); // choose the webview context
+    })
 
-	// do some web testing
-	.elementsByCss('.green_button').click()
+    // do some web testing
+    .elementsByCss('.green_button').click()
 
-	.context('NATIVE_APP') // leave webview context
+    .context('NATIVE_APP') // leave webview context
 
-	// do more native stuff here if we want
+    // do more native stuff here if we want
 
-	.quit() // stop webdrivage
+    .quit() // stop webdrivage
 ```
 
 ```java
@@ -52,7 +52,7 @@ driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities)
 
 Set<String> contextNames = driver.getContextHandles();
 for (String contextName : contextNames) {
-	System.out.println(contextNames); //prints out something like NATIVE_APP \n WEBVIEW_1
+    System.out.println(contextNames); //prints out something like NATIVE_APP \n WEBVIEW_1
 }
 driver.context(contextNames.toArray()[1]); // set context to WEBVIEW_1
 
@@ -76,18 +76,18 @@ driver.quit();
 # Then switch to it using @driver.switch_to.context("WEBVIEW_6")
 
 Given(/^I switch to webview$/) do
-	webview = @driver.contexts.last
-	@driver.switch_to.context(webview)
+    webview = @driver.contexts.last
+    @driver.switch_to.context(webview)
 end
 
 Given(/^I switch out of webview$/) do
-	@driver.switch_to.context(@driver.contexts.first)
+    @driver.switch_to.context(@driver.contexts.first)
 end
 
 # Now you can use CSS to select an element inside your webview
 
 And(/^I click a webview button $/) do
-	@driver.find_element(:css, ".green_button").click
+    @driver.find_element(:css, ".green_button").click
 end
 ```
 
@@ -116,23 +116,23 @@ driver.quit()
 
 public function testThings()
 {
-		$expected_contexts = array(
-				0 => 'NATIVE_APP',
-				1 => 'WEBVIEW_1'
-		);
+        $expected_contexts = array(
+                0 => 'NATIVE_APP',
+                1 => 'WEBVIEW_1'
+        );
 
-		$contexts = $this->contexts();
-		$this->assertEquals($expected_contexts, $contexts);
+        $contexts = $this->contexts();
+        $this->assertEquals($expected_contexts, $contexts);
 
-		$this->context($contexts[1]);
-		$context = $this->context();
-		$this->assertEquals('WEBVIEW_1', $context);
+        $this->context($contexts[1]);
+        $context = $this->context();
+        $this->assertEquals('WEBVIEW_1', $context);
 
-		// do webby stuff
+        // do webby stuff
 
-		$this->context('NATIVE_APP');
+        $this->context('NATIVE_APP');
 
-		// do mobile stuff
+        // do mobile stuff
 }
 ```
 

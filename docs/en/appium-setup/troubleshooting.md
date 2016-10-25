@@ -139,11 +139,6 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * In a Safari session, if the logs indicate that the initial url cannot be entered, make sure that
   you have the software keyboard enabled. See this [discussion](https://github.com/appium/appium/issues/6440).
 
-### FirefoxOS
-
-* Make sure the Boot-to-Gecko simulator is up and running.
-* Make sure the simulator screen is alive and unlocked (might require restarting B2G).
-
 ### Let the community know
 
 Once you've tried the above steps and your issue still isn't resolved,

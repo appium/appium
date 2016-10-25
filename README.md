@@ -12,7 +12,6 @@
 
 Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, Windows, FirefoxOS).
 
-
 ### Supported Platforms
 
 * iOS
@@ -35,9 +34,9 @@ See the [platform support doc](/docs/en/appium-setup/platform-support.md) for mo
 
 Investing in the [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) protocol means you are betting on a single, free and open protocol for testing that has become a defacto standard. Don't lock yourself into a proprietary stack.
 
-If you use Apple's UIAutomation library without Appium you can only write tests
+If you use Apple's UI Automation library without Appium you can only write tests
 using JavaScript and you can only run tests through the Instruments application.
-Similarly, with Google's UiAutomator you can only write tests in Java. Appium
+Similarly, with Google's UI Automator you can only write tests in Java. Appium
 opens up the possibility of true cross-platform native mobile automation. Finally!
 
 ### I don't get it yet...
@@ -50,7 +49,7 @@ Your environment needs to be setup for the particular mobile platforms that you
 want to run tests on. See below for particular platform requirements.
 
 If you want to run Appium via an `npm install`, hack with or contribute to Appium, you will need
-[node.js and npm](http://nodejs.org) 4 or greater (use [n](https://github.com/visionmedia/n) or
+[Node.js and npm](http://nodejs.org) 4 or greater (use [n](https://github.com/visionmedia/n) or
 `brew install node` to install Node.js. Make sure you have not installed Node or Appium with `sudo`,
 otherwise you'll run into problems). We recommend the latest stable version.
 
@@ -74,9 +73,9 @@ You also need to download the Appium client for your language so you can write t
 * [Android SDK](http://developer.android.com) API &gt;= 17 (Additional features require 18/19)
 * Appium supports Android on OS X, Linux and Windows. Make sure you follow the
   directions for setting up your environment properly for testing on different OSes:
-  * [linux](/docs/en/appium-setup/running-on-linux.md)
-  * [osx](/docs/en/appium-setup/running-on-osx.md)
-  * [windows](/docs/en/appium-setup/running-on-windows.md)
+  * [Linux](/docs/en/appium-setup/running-on-linux.md)
+  * [OS X](/docs/en/appium-setup/running-on-osx.md)
+  * [Windows](/docs/en/appium-setup/running-on-windows.md)
   
 #### Windows Requirements
 
@@ -90,7 +89,7 @@ You also need to download the Appium client for your language so you can write t
 ### Quick Start
 
 Kick up an Appium server, and then run a test written in your favorite [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html)-compatible language!
-You can run an Appium server using node.js or using the application, see below.
+You can run an Appium server using Node.js or using the application, see below.
 
 #### Using Node.js
 
@@ -106,7 +105,7 @@ $ appium
 
 ### Writing Tests for Appium
 
-The main guide for getting started writing and running tests is [the running tests](/docs/en/writing-running-appium/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](/docs/en/appium-setup/real-devices.md).
+The main guide for getting started writing and running tests is [the running tests](/docs/en/writing-running-appium/running-tests.md) doc, which includes explanations for iOS, Android, and older Android devices. If you're interested in testing on physical hardware, you may be interested in our [real devices guide](/docs/en/appium-setup/real-devices.md).
 
 Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html), and extend it so that you can specify mobile-targeted [desired capabilities](/docs/en/writing-running-appium/caps.md) to run your test through Appium.
 
@@ -124,10 +123,10 @@ For the full list of Appium doc pages, visit [this directory](/docs/en/).
 Appium drives various native automation frameworks and provides an API based on
 Selenium's [WebDriver JSON wire protocol](https://w3c.github.io/webdriver/webdriver-spec.html).
 
-Appium drives Apple's UIAutomation library for iOS support, which is based on
+Appium drives Apple's UI Automation library for iOS support, which is based on
 [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
-Android support uses the UiAutomator framework for newer platforms and
+Android support uses the UI Automator framework for newer platforms and
 [Selendroid](http://github.com/DominikDary/selendroid) for older Android platforms.
 
 Windows support uses Microsoft's [WinAppDriver](https://github.com/Microsoft/WinAppDriver)

@@ -14,3 +14,4 @@
 * [instruments-without-delay](https://github.com/facebook/instruments-without-delay)
 * [deviceconsole](https://github.com/rpetrich/deviceconsole)
 * [WinAppDriver](http://github.com/Microsoft/WinAppDriver)
+* [WebDriverAgent](https://github.com/facebook/webdriveragent)

@@ -1,6 +1,6 @@
 ## The --default-capabilities flag
 
-Appium 1.5 does away with most CLI flags; the remainder can be converted into JSON and made part of the `--default-capabilities` flag. For example:
+Appium 1.5 does away with most CLI flags that existed previously; the remainder can be converted into JSON and made part of the `--default-capabilities` flag. For example:
 
 ```
 # raw JSON as an argument
@@ -34,7 +34,7 @@ Appium 1.5 does away with most CLI flags; the remainder can be converted into JS
 | --app-wait-package        | appWaitPackage          |
 | --app-wait-activity       | appWaitActivity         |
 | --device-ready-timeout    | deviceReadyTimeout      |
-| --android-coverage        | androidCoverage         | 
+| --android-coverage        | androidCoverage         |
 | --avd                     | avd                     |
 | --avd-args                | avdArgs                 |
 | --use-keystore            | useKeystore             |

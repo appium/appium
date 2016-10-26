@@ -21,8 +21,8 @@ Settings are implemented via the following API endpoints:
 ```
 {
   settings: {
-   ignoreUnimportantViews : true  
-  }  
+   ignoreUnimportantViews : true
+  }
 }
 ```
 
@@ -31,9 +31,11 @@ Settings are implemented via the following API endpoints:
 >Returns a JSON hash of all the currently specified settings.
 ```
 {
-  ignoreUnimportantViews : true  
+  ignoreUnimportantViews : true
 }
 ```
+
+Note that the actual commands you would use in your test script differ based on the language; see the specific Appium client documention for more information.
 
 ### Supported Settings
 

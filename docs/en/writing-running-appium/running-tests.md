@@ -275,8 +275,6 @@ writing your scripts for older devices or hybrid apps.
 
 ### Running your test app with Appium (Windows)
 
-Ensure that Appium is listening
+Simply ensure that Appium is listening, and run your test with your test runner of choice.
 
-Deploy your test from your test runner of choice
-
-See our [samples](https://github.com/Microsoft/WinAppDriver/tree/master/Samples) for details
+See our [samples](https://github.com/Microsoft/WinAppDriver/tree/master/Samples) for details.

@@ -1,6 +1,6 @@
 ## Appium gulp commands
 
-[Gulp](http://gulpjs.com) is like make for Node.js! We use it to automate all
+[Gulp](http://gulpjs.com) is like `make` for Node.js! We use it to automate all
 kinds of appium dev tasks. Here's what you can do:
 
 |Task|Description|

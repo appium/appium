@@ -9,21 +9,21 @@ make explicit the level of support and requirements for each of these.
 See [Running on OS X: iOS](running-on-osx.md) for iOS requirements and setup
 instructions.
 
-* Versions: 7.1, 8.0, 8.1, 8.2, 8.3, 8.4, 9.0, 9.1 and 9.2
+* Versions: 7.1 and up
 * Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by
-  Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+  Apple's [XCUITest](https://developer.apple.com/reference/xctest) (or [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) for older versions)
   framework.
 * Mobile web support: Yes, via automation of mobile Safari. For real devices,
-  ios-webkit-remote-debugger is required, and automation of native aspects of
+  `ios-webkit-remote-debugger` is required, and automation of native aspects of
   the Safari interface is not possible. See the [mobile web doc](/docs/en/writing-running-appium/mobile-web.md) for instructions.
 * Hybrid support: Yes. For real devices, ios-webkit-remote-debugger is
   required. See the [hybrid doc](/docs/en/advanced-concepts/hybrid.md) for instructions.
 * Support for automating multiple apps in one session: No
 * Support for automating multiple devices simultaneously: No
 * Support for automating vendor-provided or third-party apps: Only
-  vendor-provided apps (Preferences, Maps, etc...), and only on the simulator
+  vendor-provided apps (Preferences, Maps, etc...), and only on the simulator. For iOS 10+, you can automate the home screen as well.
 * Support for automating custom, non-standard UI controls: Minimal. You need to
   set accessibility information on the control which enables some basic
   automation.
@@ -62,8 +62,9 @@ instructions.
   when using the Selendroid backend)
 * Support for automating custom, non-standard UI controls: No
 
-### Windows Support
+### Windows Desktop Support
 
-See [running on Windows](running-on-windows.md) for details
+See these docs for details:
 
+* [Running on Windows](running-on-windows.md)
 * [Windows App Testing](windows-app-testing.md)

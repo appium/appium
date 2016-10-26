@@ -50,12 +50,13 @@ Once installed you can start the proxy with the following command:
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ```
 
-You may also use the ios-webkit-debug-proxy-launcher to launch the
+You may also use `ios-webkit-debug-proxy-launcher`, a small script included with the Appium codebase, to launch the
 proxy. It monitors the proxy log for errors, and relaunch the proxy
 where needed. This is also optional and may help with recent devices:
 
 ``` center
 # change the udid
+# note, this is run from an Appium repository
 > ./bin/ios-webkit-debug-proxy-launcher.js -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ```
 

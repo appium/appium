@@ -68,7 +68,7 @@ driver.findElement(z)
 
 ```
 
-where _x_ and _y_ are non-xpath locators and _z_ is a xpath locator).
+where x and y are non-xpath locators and z is a xpath locator).
 
 ### System dependencies
 

@@ -24,9 +24,51 @@ This locator strategy was specifically built on UIAutomation, so it is not inclu
 ### `xpath` locator strategy
 
 1. Try not to use XPath locators unless there is absolutely no other alternatives. In general, xpath locators might be times slower, than other types of locators like accessibility id, class name and predicate (up to 100 times slower in some special cases). They are so slow, because xpath location is not natively supported by Apple's XCTest framework.
-2. Use driver.findElement(x) call instead of driver.findElements(x)[0] to lookup single element by xpath. The more possible UI elements are matched by your locator the slower it is.
-3. Be very specific when locating elements by xpath. Such locators like //* may take minutes to complete depending on how many UI elements your application has (e. g. driver.findElement(By.xpath("//XCUIElementTypeButton[@value='blabla']")) is faster than driver.findElement(By.xpath("//*[@value='blabla']")) or driver.findElement(By.xpath("//XCUIElementTypeButton"))).
-4. In most cases it would be faster to perform multiple nested findElement calls than to perform a single call by xpath (e.g. driver.findElement(x).findElement(y) is usually faster than driver.findElement(z), where x and y are non-xpath locators and z is a xpath locator).
+2. Use
+
+```
+driver.findElement(x)
+```
+
+call instead of driver.findElements(x)[0] to lookup single element by xpath. The more possible UI elements are matched by your locator the slower it is.
+3. Be very specific when locating elements by xpath. Such locators like
+
+```
+//*
+```
+
+may take minutes to complete depending on how many UI elements your application has (e. g.
+
+```
+driver.findElement(By.xpath("//XCUIElementTypeButton[@value='blabla']"))
+```
+
+is faster than
+
+```
+driver.findElement(By.xpath("//*[@value='blabla']"))
+```
+
+or
+
+```
+driver.findElement(By.xpath("//XCUIElementTypeButton")))
+```
+
+4. In most cases it would be faster to perform multiple nested findElement calls than to perform a single call by xpath (e.g.
+
+```
+driver.findElement(x).findElement(y)
+```
+
+is usually faster than
+
+```
+driver.findElement(z)
+
+```
+
+where _x_ and _y_ are non-xpath locators and _z_ is a xpath locator).
 
 ### System dependencies
 

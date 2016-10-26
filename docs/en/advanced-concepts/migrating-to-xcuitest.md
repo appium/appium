@@ -30,7 +30,13 @@ This locator strategy was specifically built on UIAutomation, so it is not inclu
 driver.findElement(x)
 ```
 
-call instead of driver.findElements(x)[0] to lookup single element by xpath. The more possible UI elements are matched by your locator the slower it is.
+call instead of
+
+```
+driver.findElements(x)[0]
+```
+
+to lookup single element by xpath. The more possible UI elements are matched by your locator the slower it is.
 3. Be very specific when locating elements by xpath. Such locators like
 
 ```

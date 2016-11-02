@@ -30,6 +30,32 @@ _development_ questions, not _usage_ questions or bug reports. Usage questions
 belong on [discuss.appium.io](https://discuss.appium.io). The GitHub issue
 tracker is for bug reports and feature requests only.
 
+### Agile Development Workflow
+
+The Appium team runs development according to a very lightweight version of
+SCRUM. Every two weeks we begin a new "sprint", or a period of time in which we
+have decided what we want to accomplish. Anyone familiar with the Appium
+codebase is welcome to attend our sprint planning and participate as a SCRUM
+team member for that sprint. No long-term commitments required! During the
+sprint, we update each other with daily progress in the `#standup` room in our
+[Appium Slack Group](https://appium.slack.com) (there are no real-time daily
+standups). At the end of the sprint, to celebrate our accomplishments and
+reflect on how things went, we hold a "retrospective", which might result in
+a list of things we can try differently or do better next time around.
+
+Ultimately, the goal is to time an Appium release at the end of each sprint, so
+every two weeks. We're not quite there, but hopefully we will be soon.
+
+Current meeting times:
+* Sprint Planning: every other Monday from 10:00 AM - 10:45 AM (Pacific Time)
+* Sprint Retrospective: every other _other_ Friday from 1:00 PM - 1:30 PM (Pacific Time)
+
+We hold meetings using [Zoom](https://zoom.us) video chat.
+
+If you are interested in participating a sprint, ping `@jlipps` or `@isaac` in
+the Appium Slack Group, or DM `@jlipps` on Twitter, and we'll share how to join
+the video chat for the next sprint.
+
 ### Architecture
 
 Appium is primarily a collection of [node.js](http://nodejs.org) packages that

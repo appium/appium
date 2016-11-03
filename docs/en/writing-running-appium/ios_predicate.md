@@ -24,7 +24,11 @@ appiumDriver.findElementsByIosUIAutomation("collectionViews()[0].cells().withPre
 
 ```java
 // java
+<<<<<<< 628526216dc7d52f71ed9f676861af86aae971af
 appiumDriver.findElementsByIosNsPredicate("isWDVisible == 1");
+=======
+appiumDriver.findElementsByIosNsPredicate("ANY staticTexts.isVisible == TRUE");
+>>>>>>> Document '-ios predicate string' locator strategy
 ```
 
 \-  will select only those  ```UIACollectionCell``` elements that have visible ```UIAStaticText``` child elements, and themselves are childs of 1st ```UIACollectionView``` element that should be located under the main app window.  Here ```staticTexts()``` and ```isVisible()``` are methods available in ```UIAElementArray``` and ```UIAElement``` classes respectively. **Note that ```UIAElementArray``` numbering begins with ```0``` unlike Xpath where indexes counting starts from ```1```**

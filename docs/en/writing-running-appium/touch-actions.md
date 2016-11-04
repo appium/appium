@@ -117,7 +117,7 @@ To scroll, pass direction in which you intend to scroll as parameter.
 
 ```javascript
 // javascript
-driver.execute('mobile: scroll', {direction: ['down']})
+driver.execute('mobile: scroll', {direction: 'down'})
 ```
 
 ```java
@@ -154,7 +154,7 @@ Sample to scroll using direction and element.
 
 ```javascript
 // javascript
-driver.execute('mobile: scroll', {direction: ['down'], element: element.value.ELEMENT});
+driver.execute('mobile: scroll', {direction: 'down', element: element.value.ELEMENT});
 ```
 
 ```java

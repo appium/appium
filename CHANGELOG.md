@@ -1,3 +1,60 @@
+CHANGES IN VERSION 1.6.1-Beta (from 1.6.0)
+===================================
+
+*NOTE*: Appium 1.6.1 will be primarily a bug-fix release.
+
+Appium 1.6.1 is the first release since bringing Appium into the [JS Foundation](https://js.foundation/)
+(see [press release](https://js.foundation/announcements/2016/10/17/Linux-Foundation-Unites-JavaScript-Community-Open-Web-Development/)).
+
+Much of the development energy has been spent on fixing issues that have come up
+from the newly-integrated XCUITest and UI Automator 2 vendor-provided test
+backends.
+
+*Known Problems in XCUITest implementation*
+* Interacting with elements in LANDSCAPE mode
+
+#### General
+* Add `clearSystemFiles` desired capability, to specify whether to delete any generated
+files at the end of a session (see iOS and Android entries for particulars)
+* Better handle signals for stopping server
+* Fix operation of Selenium 3 Grid
+* Log more of the proxied requests and responses, for better debugging
+* Better handle source mapping for IDE support
+* Move `appium-doctor` into globally-installed utility, not bundled with server
+
+
+##### iOS
+* Add support for iOS 10.1
+* Add support for iOS 10.2 Beta 1
+* Add `clearSystemFiles` desired capability to specify whether to Core Simulator
+files, and Instruments (for iOS Driver) or XCUITest (for XCUITest Driver) generated files
+* Ensure correct files are tested when checking for Simulator newness
+* Map `iPad Simulator` `deviceName` to iPad Retina instead of discontinued iPad 2
+* Gracefully return when Webkit Remote Debugger doesn't return on a real device
+* Better log errors from xcode handling
+* XCUITest driver
+  * clean up logging to remove confusing "Waiting..." lines
+  * Fix issue in which switching to NATIVE_APP would still proxy find commands to Remote debugger
+  * Fix handling of Selenium Grids
+  * Correctly handle long press so duration is respected
+  * Add `tapWithShortPressDuration` desired capability to specify a length for tapping,
+  if the regular tap is too long for the app under test
+  * Add support for scrolling through Touch Actions
+  * Make sure keyboard is available when keys are sent to Text Fields
+
+
+##### Android
+* Use ChromeDriver version 2.25
+* Correctly handle `--suppress-adb-kill-server` command line argument
+* Pass actual failure back when session fail and deleting the session also fails
+* Add `clearSystemFiles` desired capability to specify whether to delete temporary
+copies of the application under test at the end of the session
+* Fix issue where finding UI Automator process id would throw an error
+* UI Automator 2 driver
+  * Fix handling of element attributes
+  * Better handle element finding
+
+
 CHANGES IN VERSION 1.6.0 (from 1.5.3)
 ===================================
 

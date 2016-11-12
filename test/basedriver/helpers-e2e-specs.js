@@ -74,6 +74,12 @@ describe('app download and configuration', () => {
             res.end();
             return;
           }
+          // for testing zip file content types
+          if (req.url.indexOf('mime-zip') !== -1) {
+            res.setHeader('Content-Type', 'application/zip');
+          } else if (req.url.indexOf('mime-bip') !== 1) {
+            res.setHeader('Content-Type', 'application/bip');
+          }
           serve(req, res, finalhandler(req, res));
         });
         server.listen(8000);
@@ -88,9 +94,34 @@ describe('app download and configuration', () => {
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an app\n');
       });
+      it('should download an app file', async () => {
+        let newAppPath = await h.configureApp('http://localhost:8000/FakeIOSApp.app', '.app');
+        newAppPath.should.contain('.app');
+        let contents = await fs.readFile(newAppPath, 'utf8');
+        contents.should.eql('this is not really an app\n');
+      });
+      it('should download an apk file', async () => {
+        let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.apk', '.apk');
+        newAppPath.should.contain('.apk');
+        let contents = await fs.readFile(newAppPath, 'utf8');
+        contents.should.eql('this is not really an apk\n');
+      });
       it('should handle zip file that cannot be downloaded', async () => {
         await h.configureApp('http://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
           .should.be.rejectedWith(/Problem downloading app from url/);
+      });
+      it('should recognize zip mime types and unzip the downloaded file', async () => {
+        let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.asd?mime-zip', '.apk');
+        newAppPath.should.contain('FakeAndroidApp.apk');
+        newAppPath.should.not.contain('.asd');
+        let contents = await fs.readFile(newAppPath, 'utf8');
+        contents.should.eql('this is not really an apk\n');
+      });
+      it('should treat an unknown mime type as an app', async () => {
+        let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.apk?mime-bip', '.apk');
+        newAppPath.should.contain('.apk');
+        let contents = await fs.readFile(newAppPath, 'utf8');
+        contents.should.eql('this is not really an apk\n');
       });
       it('should handle server not available', async () => {
         server.close();

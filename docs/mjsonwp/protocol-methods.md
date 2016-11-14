@@ -118,6 +118,7 @@ POST        | `/wd/hub/session/{sessionId}/appium/device/install_app`           
 POST        | `/wd/hub/session/{sessionId}/appium/device/remove_app`                 | Remote an app from the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/app_installed`              | Check whether the specified app is installed on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/hide_keyboard`              | Hide the soft keyboard.
+GET         | `/wd/hub/session/{sessionId}/appium/device/is_keyboard_shown`          | Whether or not the soft keyboard is shown.
 POST        | `/wd/hub/session/{sessionId}/appium/device/push_file`                  | Place a file onto the device in a particular place.
 POST        | `/wd/hub/session/{sessionId}/appium/device/pull_file`                  | Retrieve a file from the device's file system.
 POST        | `/wd/hub/session/{sessionId}/appium/device/pull_folder`                | Retrieve a folder from the device's file system.
@@ -127,6 +128,8 @@ POST        | `/wd/hub/session/{sessionId}/appium/device/toggle_wifi`           
 POST        | `/wd/hub/session/{sessionId}/appium/device/toggle_location_services`   | Switch the state of the location service.
 POST        | `/wd/hub/session/{sessionId}/appium/device/open_notifications`         | Open the notifications pane on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/start_activity`             | Start the specified activity on the device.
+GET         | `/wd/hub/session/{sessionId}/appium/device/system_bars`                | Retrieve visibility and bounds information of the status and navigation bars.
+GET         | `/wd/hub/session/{sessionId}/appium/device/display_density`            | Retrieve the display density of the device.
 POST        | `/wd/hub/session/{sessionId}/appium/simulator/touch_id`                | Simulate a successful or failed touch id event on the simulator.
 POST        | `/wd/hub/session/{sessionId}/appium/app/launch`                        | Launch the given application on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/app/close`                         | Close the given application.

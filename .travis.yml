@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-  - "4"
-  - "5"
+  - "7"
   - "6"
+  - "4"
 sudo: required
 dist: trusty
 addons:

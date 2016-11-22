@@ -1,4 +1,4 @@
-## Migrating your iOS tests from UIAutomation (iOS 9.2 and below) to XCUITest (iOS 9.3 and up)
+## Migrating your iOS tests from UIAutomation (iOS 9.3 and below) to XCUITest (iOS 9.3 and up)
 
 For iOS automation, Appium relies on system frameworks provided by Apple. For iOS 9.2 and below, Apple's only automation technology was called UIAutomation, and it ran in the context of a process called "Instruments". As of iOS 10, Apple has completely removed the UIAutomation instrument, thus making it impossible for Appium to allow testing in the way it used to. Fortunately, Apple introduced a new automation technology, called XCUITest, beginning with iOS 9.3. For iOS 10 and up, this will be the only supported automation framework from Apple.
 
@@ -94,6 +94,9 @@ We will endeavor to add these features back in future releases of Appium.
 
 Finally, a list of known issues with the initial 1.6 release:
 
-* [Problems with processArguments](https://github.com/appium/appium/issues/6888)
+* Unable to interact with elements on devices in Landscape mode (https://github.com/appium/appium/issues/6994)
+* `shake` is not implemented due to lack of support from Apple
+* `lock` is not implemented due to lack of support from Apple
+* Setting geo-location not supported due to lack of support from Apple
 
 As far as possible, we will add the missing features and fix other known issues in the [1.6.1 Milestone](https://github.com/appium/appium/milestone/27), so following that may be of interest to you.

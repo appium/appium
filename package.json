@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.7",
-    "appium-logger": "^2.1.0",
     "appium-support": "^2.0.9",
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
@@ -36,6 +35,7 @@
     "lodash": "^4.0.0",
     "method-override": "^2.3.5",
     "morgan": "^1.6.1",
+    "npmlog": "^4.0.1",
     "request": "^2.64.0",
     "request-promise": "^4.1.1",
     "serve-favicon": "^2.3.0",

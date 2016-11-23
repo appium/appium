@@ -109,6 +109,8 @@ POST        | `/wd/hub/session/{sessionId}/appium/device/shake`                 
 POST        | `/wd/hub/session/{sessionId}/appium/device/lock`                       | Lock the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/unlock`                     | Unlock the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/is_locked`                  | Check whether the device is locked or not.
+POST        | `/wd/hub/session/{sessionId}/appium/performanceData/types`             | returns the information types of the system state which is supported to read as like cpu, memory, network traffic, and battery.
+POST        | `/wd/hub/session/{sessionId}/appium/getPerformanceData`				 | returns the information of the system state which is supported to read as like cpu, memory, network traffic, and battery.
 POST        | `/wd/hub/session/{sessionId}/appium/device/press_keycode`              | Press a particular key code on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/long_press_keycode`         | Press and hold a particular key code on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/keyevent`                   | Send a key code to the device.

@@ -28,7 +28,7 @@ Appium 1.5 does away with most CLI flags that existed previously; the remainder 
 | --udid                    | udid                    |
 | --orientation             | orientation             |
 | --no-reset                | noReset                 |
-| --full-reset              | rullReset               |
+| --full-reset              | fullReset               |
 | --app-pkg                 | appPackage              |
 | --app-activity            | appActivity             |
 | --app-wait-package        | appWaitPackage          |

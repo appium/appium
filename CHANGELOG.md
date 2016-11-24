@@ -1,7 +1,5 @@
-CHANGES IN VERSION 1.6.1-Beta (from 1.6.0)
+CHANGES IN VERSION 1.6.1 (from 1.6.0)
 ===================================
-
-*NOTE*: Appium 1.6.1 will be primarily a bug-fix release.
 
 Appium 1.6.1 is the first release since bringing Appium into the [JS Foundation](https://js.foundation/)
 (see [press release](https://js.foundation/announcements/2016/10/17/Linux-Foundation-Unites-JavaScript-Community-Open-Web-Development/)).
@@ -9,9 +7,6 @@ Appium 1.6.1 is the first release since bringing Appium into the [JS Foundation]
 Much of the development energy has been spent on fixing issues that have come up
 from the newly-integrated XCUITest and UI Automator 2 vendor-provided test
 backends.
-
-*Known Problems in XCUITest implementation*
-* Interacting with elements in LANDSCAPE mode
 
 #### General
 * Add `clearSystemFiles` desired capability, to specify whether to delete any generated
@@ -21,6 +16,8 @@ files at the end of a session (see iOS and Android entries for particulars)
 * Log more of the proxied requests and responses, for better debugging
 * Better handle source mapping for IDE support
 * Move `appium-doctor` into globally-installed utility, not bundled with server
+* Move `appium-logger` into `appium-base-driver`
+* Better handle downloading of zip files which may not have a `.zip` extension (like `.apk`)
 
 
 ##### iOS
@@ -32,15 +29,24 @@ files, and Instruments (for iOS Driver) or XCUITest (for XCUITest Driver) genera
 * Map `iPad Simulator` `deviceName` to iPad Retina instead of discontinued iPad 2
 * Gracefully return when Webkit Remote Debugger doesn't return on a real device
 * Better log errors from xcode handling
-* XCUITest driver
-  * clean up logging to remove confusing "Waiting..." lines
-  * Fix issue in which switching to NATIVE_APP would still proxy find commands to Remote debugger
-  * Fix handling of Selenium Grids
-  * Correctly handle long press so duration is respected
-  * Add `tapWithShortPressDuration` desired capability to specify a length for tapping,
-  if the regular tap is too long for the app under test
-  * Add support for scrolling through Touch Actions
-  * Make sure keyboard is available when keys are sent to Text Fields
+* Add `customSSLCert` capability to pre-authorize a specific SSL cert in the iOS trust store
+* During reset, don't try to uninstall an app from a real device if it's not installed
+
+
+##### iOS - XCUITest specific
+* clean up logging to remove confusing "Waiting..." lines
+* Fix issue in which switching to NATIVE_APP would still proxy find commands to Remote debugger
+* Fix handling of Selenium Grids
+* Correctly handle long press so duration is respected
+* Add `tapWithShortPressDuration` desired capability to specify a length for tapping,
+if the regular tap is too long for the app under test
+* Add support for scrolling through Touch Actions
+* Make sure keyboard is available when keys are sent to Text Fields
+* Add support for Zoom via Touch Action API (Pinch still not supported by Apple)
+* Fix implementation of double tap
+* Improvements in startup flow for real devices
+* Allow gestures on coordinates, not just elements
+* Add `scaleFactor` capability to direct Appium to set the simulator scale
 
 
 ##### Android
@@ -50,9 +56,18 @@ files, and Instruments (for iOS Driver) or XCUITest (for XCUITest Driver) genera
 * Add `clearSystemFiles` desired capability to specify whether to delete temporary
 copies of the application under test at the end of the session
 * Fix issue where finding UI Automator process id would throw an error
-* UI Automator 2 driver
-  * Fix handling of element attributes
-  * Better handle element finding
+* Add `chromeAndroidPackage` capability which will be passed to `chromeOptions`
+* Add APIs for gathering various kinds of performance data
+* Ensure we don't try to stop app if `dontStopAppOnReset` is in force
+* Fix issue where we tried to determine the bounds of a non-existent element
+
+
+##### Android - UiAutomator2
+* Fix handling of element attributes
+* Better handle element finding
+* Toast message verification support
+* Ensure that there is a <hierarchy> root tag for xml/xpath source
+* Implement /rotation endpoint (supports 4 rotations)
 
 
 CHANGES IN VERSION 1.6.0 (from 1.5.3)

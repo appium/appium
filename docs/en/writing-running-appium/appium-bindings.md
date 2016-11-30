@@ -210,7 +210,7 @@ driver.open_notifications()
 
 ```ruby
 # ruby
-openNotifications
+open_notifications
 ```
 
 ```csharp
@@ -434,7 +434,7 @@ autoLaunch=false.
 
 ```ruby
 # ruby
-launch
+launch_app
 ```
 
 ```python
@@ -473,7 +473,7 @@ Reset the app.
 
 ```ruby
 # ruby
-reset
+driver.reset
 ```
 
 ```python
@@ -630,7 +630,7 @@ Get the app's strings.
 
 ```ruby
 # ruby
-strings = app_strings
+app_strings
 ```
 
 ```python

@@ -1,3 +1,33 @@
+CHANGES IN VERSION 1.6.2 (from 1.6.1)
+===================================
+
+_This is a small, mostly-emergency release because we realized we omitted
+XCUITest upgrades via WebDriverAgent that we had mistakenly presumed were part
+of 1.6.1._
+
+#### iOS - XCUITest
+* Upgrade version of WebDriverAgent used. Includes following updates:
+    * Support for setting values on sliders
+    * Fix tapping in various orientations
+    * Allow tapping on arbitrary coordinates
+    * Support for pinch gestures
+    * Make `clear` faster
+    * Improve xpath query performance
+* Add `preventWDAAttachments` capability to help with XCUITest speed and disk usage
+
+#### Android - UiAutomator2
+* Code refactoring to pave the way for some UiAutomator2 wifi automation work
+* Find an unused system port automatically to avoid port clashes
+
+#### Windows
+* Upgrade WinAppDriver to 0.7. Includes following updates:
+    * Click on arbitrary elements
+    * Support for sendKeys modifiers
+    * Various bugfixes
+    * Added `GET /orientation`
+    * Added support for WPF apps
+
+
 CHANGES IN VERSION 1.6.1 (from 1.6.0)
 ===================================
 

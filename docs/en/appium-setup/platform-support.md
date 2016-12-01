@@ -67,4 +67,4 @@ instructions.
 See these docs for details:
 
 * [Running on Windows](running-on-windows.md)
-* [Windows App Testing](windows-app-testing.md)
+* [Windows App Testing](/docs/en/writing-running-appium/windows-app-testing.md)

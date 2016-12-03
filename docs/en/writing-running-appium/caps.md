@@ -111,7 +111,7 @@
 |`keychainPath`|Full path to the private development key exported from the system keychain. Used in conjunction with `keychainPassword` when testing on real devices.|e.g., `/path/to/MyPrivateKey.p12`|
 |`keychainPassword`|Password for unlocking keychain specified in `keychainPath`.|e.g., `super awesome password`|
 |`scaleFactor`|Simulator scale factor. This is useful to have if the default resolution of simulated device is greater than the actual display resolution. So you can scale the simulator to see the whole device screen without scrolling. |Acceptable values are: `'1.0', '0.75', '0.5', '0.33' and '0.25'`. The value should be a string.|
-|'preventWDAAttachments`|Sets read only permissons to Attachments subfolder of WebDriverAgent root inside Xcode's DerivedData. This is necessary to prevent XCTest framework from creating tons of unnecessary screenshots and logs, which are impossible to shutdown using programming interfaces provided by Apple.|Setting the capability to `true` will set Posix permissions of the folder to `555` and `false` will reset them back to `755`|
+|`preventWDAAttachments`|Sets read only permissons to Attachments subfolder of WebDriverAgent root inside Xcode's DerivedData. This is necessary to prevent XCTest framework from creating tons of unnecessary screenshots and logs, which are impossible to shutdown using programming interfaces provided by Apple.|Setting the capability to `true` will set Posix permissions of the folder to `555` and `false` will reset them back to `755`|
 
 ### You.i Engine Only
 

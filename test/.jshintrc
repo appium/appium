@@ -5,7 +5,6 @@
   "trailing": true,
   "node": true,
   "eqeqeq": true,
-  "trailing": true,
   "expr": true,
   "white": true,
   "indent": 2,

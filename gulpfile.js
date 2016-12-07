@@ -1,4 +1,5 @@
 /* eslint no-console:0 */
+/* eslint-disable promise/prefer-await-to-callbacks */
 "use strict";
 
 // turn all logging on since we have tests that rely on npmlog logs actually
@@ -32,10 +33,12 @@ gulp.task('fixShrinkwrap', function (done) {
 boilerplate({
   build: 'appium',
   jscs: false,
+  jshint: false,
   test: {
     files: ['${testDir}/**/*-specs.js']
   },
   extraPrepublishTasks: ['fixShrinkwrap'],
+  preCommitTasks: ['eslint', 'once'],
 });
 
 // generates server arguments readme
@@ -66,7 +69,7 @@ gulp.task('docs', ['transpile'], function () {
     }
 
     // handle empty objects
-    if (JSON.stringify(argOpts.defaultValue) === '{}'){
+    if (JSON.stringify(argOpts.defaultValue) === '{}') {
       argOpts.defaultValue = '{}';
     }
 

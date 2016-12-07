@@ -9,8 +9,9 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
 import { IosDriver } from 'appium-ios-driver';
+import { sleep } from 'asyncbox';
 
-
+chai.should();
 chai.use(chaiAsPromised);
 
 const BASE_CAPS = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
@@ -171,6 +172,42 @@ describe('AppiumDriver', () => {
       });
     });
     describe('sessionExists', () => {
+    });
+    describe('attachUnexpectedShutdownHandler', () => {
+      let appium
+        , mockFakeDriver;
+      beforeEach(() => {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+      });
+      afterEach(() => {
+        mockFakeDriver.restore();
+        appium.args.defaultCapabilities = {};
+      });
+
+      it('should remove session if inner driver unexpectedly exits with an error', async () => {
+        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        _.keys(appium.sessions).should.contain(sessionId);
+        appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error("Oops"));
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        _.keys(appium.sessions).should.not.contain(sessionId);
+      });
+      it('should remove session if inner driver unexpectedly exits with no error', async () => {
+        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        _.keys(appium.sessions).should.contain(sessionId);
+        appium.sessions[sessionId].unexpectedShutdownDeferred.resolve();
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        _.keys(appium.sessions).should.not.contain(sessionId);
+      });
+      it('should not remove session if inner driver cancels unexpected exit', async () => {
+        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        _.keys(appium.sessions).should.contain(sessionId);
+        appium.sessions[sessionId].onUnexpectedShutdown.cancel();
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        _.keys(appium.sessions).should.contain(sessionId);
+      });
     });
     describe('getDriverForCaps', () => {
       it('should not blow up if user does not provide platformName', () => {

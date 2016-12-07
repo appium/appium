@@ -1,3 +1,28 @@
+CHANGES IN VERSION 1.6.3 (from 1.6.2)
+===================================
+
+_This is another emergency release due to an issue with the NPM shrinkwrap_
+
+#### iOS - XCUITest
+* Upgrade version of WebDriverAgent used. Includes following updates:
+    * Improve xpath query performance
+    * Verify predicates
+
+#### Android
+* Fix bug where we would attempt to get target SDK version from manifests
+  even when they might not include it
+* Actually pass the `acceptSslCerts` capability to the underlying automation
+  so that it can have an effect
+
+#### Windows
+* _Actually_ upgrade WinAppDriver to 0.7. Includes following updates:
+    * Click on arbitrary elements
+    * Support for sendKeys modifiers
+    * Various bugfixes
+    * Added `GET /orientation`
+    * Added support for WPF apps
+
+
 CHANGES IN VERSION 1.6.2 (from 1.6.1)
 ===================================
 

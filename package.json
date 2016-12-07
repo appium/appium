@@ -80,6 +80,7 @@
     "eslint-plugin-babel": "3.x",
     "eslint-plugin-import": "1.x",
     "eslint-plugin-mocha": "3.x",
+    "eslint-plugin-promise": "3.x",
     "gulp": "3.x",
     "mocha": "2.x",
     "pre-commit": "1.x",

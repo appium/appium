@@ -3,19 +3,42 @@ CHANGES IN VERSION 1.6.3 (from 1.6.2)
 
 _This is another emergency release due to an issue with the NPM shrinkwrap_
 
+#### iOS
+
+* Fixed issue where we might try and uninstall an ssl cert from a real device
+  where this isn't sensible
+
 #### iOS - XCUITest
 * Upgrade version of WebDriverAgent used. Includes following updates:
     * Improve xpath query performance
     * Verify predicates
+    * Fix crash for some xpath selectors
+* Decorate proxied getSession response with Appium's capabilities (fixes
+  issues with clients that call getSession to determine server capabilities
+  and are confused by WDA's non-standard response) ([#7480](https://github.com/appium/appium/issues/7480))
+* Fix issue with starting XCUITests on a real device, due to changes in WDA
+  that invalidated our startup detection logic. ([#7313](https://github.com/appium/appium/issues/7313))
+* Allow connecting to an already-running WebDriverAgent through the
+  `webDriverAgentUrl` capability, rather than starting our own
 
 #### Android
 * Fix bug where we would attempt to get target SDK version from manifests
-  even when they might not include it
+  even when they might not include it. ([#7353](https://github.com/appium/appium/issues/7353))
 * Actually pass the `acceptSslCerts` capability to the underlying automation
-  so that it can have an effect
+  so that it can have an effect ([#7326](https://github.com/appium/appium/issues/7326))
+* Updated permission granting logic to speed up permission granting by doing
+  it in bulk rather than one at a time ([#7493](https://github.com/appium/appium/issues/7493))
+* Hide the new permission granting logic behind an `autoGrantPermissions`
+  capability which doesn't attempt to grant permissions unless it's `true`
+  ([#7497](https://github.com/appium/appium/issues/7497))
+
+#### Android - Uiautomator2
+
+* Add ability to verify TOAST messages (these can't be interacted with, only
+  text retrieval allowed)
 
 #### Windows
-* _Actually_ upgrade WinAppDriver to 0.7. Includes following updates:
+* _Actually_ upgrade WinAppDriver to 0.7 ([#7445](https://github.com/appium/appium/issues/7445)). Includes following updates:
     * Click on arbitrary elements
     * Support for sendKeys modifiers
     * Various bugfixes

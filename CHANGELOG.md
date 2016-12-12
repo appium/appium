@@ -5,8 +5,10 @@ _This is another emergency release due to an issue with the NPM shrinkwrap_
 
 #### iOS
 
-* Fixed issue where we might try and uninstall an ssl cert from a real device
+* Fix issue where we might try and uninstall an ssl cert from a real device
   where this isn't sensible
+* Fix another issue with acceptSslCerts where it might potentially miss the
+  correct sim UDID
 
 #### iOS - XCUITest
 * Upgrade version of WebDriverAgent used. Includes following updates:

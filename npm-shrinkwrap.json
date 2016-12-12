@@ -250,9 +250,9 @@
       }
     },
     "appium-ios-driver": {
-      "version": "1.13.1",
+      "version": "1.13.2",
       "from": "appium-ios-driver@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-1.13.1.tgz",
+      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-1.13.2.tgz",
       "dependencies": {
         "xpath": {
           "version": "0.0.22",
@@ -279,9 +279,9 @@
       }
     },
     "appium-ios-simulator": {
-      "version": "1.10.0",
+      "version": "1.10.1",
       "from": "appium-ios-simulator@>=1.9.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/appium-ios-simulator/-/appium-ios-simulator-1.10.0.tgz"
+      "resolved": "https://registry.npmjs.org/appium-ios-simulator/-/appium-ios-simulator-1.10.1.tgz"
     },
     "appium-logger": {
       "version": "2.1.0",
@@ -364,9 +364,9 @@
       }
     },
     "appium-uiautomator2-driver": {
-      "version": "0.2.2",
+      "version": "0.2.3",
       "from": "appium-uiautomator2-driver@>=0.0.0 <1.0.0",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-driver/-/appium-uiautomator2-driver-0.2.2.tgz",
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-driver/-/appium-uiautomator2-driver-0.2.3.tgz",
       "dependencies": {
         "lodash": {
           "version": "3.10.1",
@@ -393,9 +393,9 @@
       }
     },
     "appium-uiautomator2-server": {
-      "version": "0.0.7",
+      "version": "0.0.8",
       "from": "appium-uiautomator2-server@>=0.0.0 <1.0.0",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-0.0.7.tgz"
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-0.0.8.tgz"
     },
     "appium-unlock": {
       "version": "0.1.1",

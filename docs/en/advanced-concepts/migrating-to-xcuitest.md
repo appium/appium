@@ -99,5 +99,6 @@ Finally, a list of known issues with the initial 1.6 release:
 * `lock` is not implemented due to lack of support from Apple
 * Setting geo-location not supported due to lack of support from Apple
 * Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
+* The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work.
 
 As far as possible, we will add the missing features and fix other known issues in the [1.6.1 Milestone](https://github.com/appium/appium/milestone/27), so following that may be of interest to you.

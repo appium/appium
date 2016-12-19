@@ -100,5 +100,6 @@ Finally, a list of known issues with the initial 1.6 release:
 * Setting geo-location not supported due to lack of support from Apple
 * Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
 * The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work.
+* In UIAutomation, if you attempted to tap on an element outside the visible frame, it would work. In the new XCUITest driver, it will unfortunately have no effect. You'll have to navigate to the element the way a user would in order to tap it.
 
 As far as possible, we will add the missing features and fix other known issues in the [1.6.1 Milestone](https://github.com/appium/appium/milestone/27), so following that may be of interest to you.

@@ -98,7 +98,8 @@ Finally, a list of known issues with the initial 1.6 release:
 * `shake` is not implemented due to lack of support from Apple
 * `lock` is not implemented due to lack of support from Apple
 * Setting geo-location not supported due to lack of support from Apple
-* Through multi action API, `zoom` works but `pinch` does not, due to Apple issue.
+* Through the TouchAction/MultiAction API, `zoom` gestures work but `pinch` gestures do not, due to an Apple issue.
+* Through the TouchAction/MultiAction API, `swipe` gestures are currently not supported, though they should be soon (https://github.com/appium/appium/issues/7573)
 * The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work.
 * In UIAutomation, if you attempted to tap on an element outside the visible frame, it would work. In the new XCUITest driver, it will unfortunately have no effect. You'll have to navigate to the element the way a user would in order to tap it.
 

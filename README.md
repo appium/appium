@@ -15,7 +15,6 @@ This is the parent class that all [appium](appium.io) drivers inherit from, alon
 * [The Mobile JSON Wire Protocol Encapsulation](lib/mjsonwp)
 * [The JSONWP Proxy Library](lib/jsonwp-proxy)
 * [The JSONWP Status Library](lib/jsonwp-status)
-* [The Appium Logger](lib/logger)
 
 *Note*: Issue tracking for this repo has been disabled. Please use the [main Appium issue tracker](https://github.com/appium/appium/issues) instead.
 

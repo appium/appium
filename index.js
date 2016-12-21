@@ -27,7 +27,3 @@ export { JWProxy };
 import { codes, getSummaryByCode } from './lib/jsonwp-status/status';
 const statusCodes = codes;
 export { statusCodes, getSummaryByCode };
-
-// logger exports
-import { getLogger, patchLogger } from './lib/logger/logger';
-export { getLogger, patchLogger };

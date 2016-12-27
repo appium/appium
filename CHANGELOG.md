@@ -1,3 +1,61 @@
+CHANGES IN VERSION 1.6.4 Beta (from 1.6.3)
+===================================
+
+**Note:** This is a **_BETA_** release. Please direct any issues to the [Appium
+issue tracker](https://github.com/appium/appium/issues) and provide as much
+information as possible.
+
+#### General
+* Fixed `UnhandledPromiseRejection` errors when running Appium with Node version
+  7
+* Better indicate missing necessary programs to users
+* Fix session creation logging
+* Fix server shutdown on `SIGINT` and `SIGTERM` signals
+* Ensure that all requests have `application/json` content-type
+
+#### iOS
+* Fix issues with error handling in Safari/Webview handling
+* Increase simulator launch timeout for iOS 10+
+* Better handling of page selection in Safari
+* Fix memory usage issues when device logs get large
+
+#### iOS - XCUITest
+* Changed the way the Appium checks that WebDriverAgent is running on the device,
+  so that rather than searching the logs, the device is pinged until it is
+  ready.
+  - Removed `realDeviceLogger` capability, since we no longer check the logs
+* Add `useNewWDA` capability, which forces uninstall of the WDA app from the
+  device before each session
+* Add `wdaLaunchTimeout` capability, which specified the time, in `ms`, to wait
+  for WDA to be loaded and launched on the device
+* Allow for the auto-generation of the Xcode config file used to configurable
+  WDA before launch. This includes _two_ new desired capabilities
+  - `xcodeOrgId` - the Apple developer team identifier string
+  - `xcodeSigningId` - a string representing a signing certificate, defaulting to
+    "iPhone Developer"
+* Allow for automatic changing of bundle id for WDA in cases where a
+  provisioning profile cannot be made for default bundle
+  - add `updatedWDABundleId` capability to specify bundle id for which there is
+    a valid provisioning profile
+* Speed up setting the value of text fields
+* Add `wdaConnectionTimeout` to control how long the server waits for WDA to
+  allow connections
+* Fix handling of local port on real devices
+* Speed up Safari interactions
+* Fix session deletion to ensure that clean up happens
+* Add `mobile: swipe` execute method
+* Ensure that scrolling through `mobile: scroll` works in web context
+
+#### Android
+* Default installation to ChromeDriver 2.26
+* Add device manufacturer, model, and screen size to session details
+* Fix bug in checking avd status on some systems
+* Allow wildcards in `appWaitActivity` capability
+
+#### Android - Selendroid
+* Fix handling of host binary configuration for more precise installation options
+
+
 CHANGES IN VERSION 1.6.3 (from 1.6.2)
 ===================================
 

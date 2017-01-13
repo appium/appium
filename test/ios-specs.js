@@ -1,12 +1,11 @@
 // transpile:mocha
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-  AuthorizationDbCheck, NodeBinaryCheck, CarthageCheck } from '../lib/ios';
+  AuthorizationDbCheck, CarthageCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';
-import NodeDetector from '../lib/node-detector';
 import CarthageDetector from '../lib/carthage-detector';
 import FixSkippedError from '../lib/doctor';
 import log from '../lib/logger';
@@ -224,31 +223,6 @@ describe('ios', () => {
       mocks.fixes.expects('authorizeIosFix').once();
       await check.fix();
       verify(mocks);
-    });
-  }));
-  describe('NodeBinaryCheck', withMocks({NodeDetector}, (mocks) => {
-    let check = new NodeBinaryCheck();
-    it('autofix', () => {
-      check.autofix.should.not.be.ok;
-    });
-    it('diagnose - success', async () => {
-      mocks.NodeDetector.expects('detect').once().returns(P.resolve('/a/b/c/d'));
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        message: 'The Node.js binary was found at: /a/b/c/d'
-      });
-      verify(mocks);
-    });
-    it('diagnose - failure', async () => {
-      mocks.NodeDetector.expects('detect').once().returns(P.resolve(null));
-      (await check.diagnose()).should.deep.equal({
-        ok: false,
-        message: 'The Node.js binary was NOT found!'
-      });
-      verify(mocks);
-    });
-    it('fix', async () => {
-      (await check.fix()).should.equal('Manually setup Node.js.');
     });
   }));
   describe('CarthageCheck', withMocks({CarthageDetector}, (mocks) => {

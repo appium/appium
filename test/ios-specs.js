@@ -2,7 +2,7 @@
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
   AuthorizationDbCheck, NodeBinaryCheck, CarthageCheck } from '../lib/ios';
-import { fs } from 'appium-support';
+import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';
@@ -14,14 +14,14 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { withMocks, verify, stubLog } from 'appium-test-support';
-import { system } from 'appium-support';
+
 
 chai.should();
 chai.use(chaiAsPromised);
 let P = Promise;
 
 describe('ios', () => {
-  describe('XcodeCheck', withMocks({tp, fs} ,(mocks) => {
+  describe('XcodeCheck', withMocks({tp, fs}, (mocks) => {
     let check = new XcodeCheck();
     it('autofix', () => {
       check.autofix.should.not.be.ok;
@@ -58,7 +58,7 @@ describe('ios', () => {
       (await check.fix()).should.equal('Manually install Xcode.');
     });
   }));
-  describe('XcodeCmdLineToolsCheck', withMocks({tp, utils, prompter, system} ,(mocks, S) => {
+  describe('XcodeCmdLineToolsCheck', withMocks({tp, utils, prompter, system}, (mocks, S) => {
     let check = new XcodeCmdLineToolsCheck();
     it('autofix', () => {
       check.autofix.should.be.ok;
@@ -116,7 +116,7 @@ describe('ios', () => {
     });
   }));
 
-  describe('authorizeIosFix', withMocks({utils, prompter} ,(mocks, S) => {
+  describe('authorizeIosFix', withMocks({utils, prompter}, (mocks, S) => {
     it('fix - yes', async () => {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.utils.expects('authorize').once();
@@ -139,7 +139,7 @@ describe('ios', () => {
       ].join('\n'));
     });
   }));
-  describe('DevToolsSecurityCheck', withMocks({fixes, tp} ,(mocks) => {
+  describe('DevToolsSecurityCheck', withMocks({fixes, tp}, (mocks) => {
     let check = new DevToolsSecurityCheck();
     it('autofix', () => {
       check.autofix.should.be.ok;
@@ -176,7 +176,7 @@ describe('ios', () => {
       verify(mocks);
     });
   }));
-  describe('AuthorizationDbCheck', withMocks({fixes, tp, fs, utils, system} ,(mocks) => {
+  describe('AuthorizationDbCheck', withMocks({fixes, tp, fs, utils, system}, (mocks) => {
     let check = new AuthorizationDbCheck();
     it('autofix', () => {
       check.autofix.should.be.ok;
@@ -226,7 +226,7 @@ describe('ios', () => {
       verify(mocks);
     });
   }));
-  describe('NodeBinaryCheck', withMocks({NodeDetector} ,(mocks) => {
+  describe('NodeBinaryCheck', withMocks({NodeDetector}, (mocks) => {
     let check = new NodeBinaryCheck();
     it('autofix', () => {
       check.autofix.should.not.be.ok;

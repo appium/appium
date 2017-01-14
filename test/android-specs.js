@@ -9,7 +9,7 @@ chai.should();
 let P = Promise;
 
 describe('android', () => {
-  describe('EnvVarAndPathCheck', withMocks({fs} ,(mocks) => {
+  describe('EnvVarAndPathCheck', withMocks({fs}, (mocks) => {
     stubEnv();
     let check = new EnvVarAndPathCheck('ANDROID_HOME');
     it('autofix', () => {
@@ -46,7 +46,7 @@ describe('android', () => {
       (await check.fix()).should.equal('Manually configure ANDROID_HOME.');
     });
   }));
-  describe('AndroidToolCheck', withMocks({fs} ,(mocks) => {
+  describe('AndroidToolCheck', withMocks({fs}, (mocks) => {
     stubEnv();
     let check = new AndroidToolCheck('adb', 'platform-tools/adb');
     it('autofix', () => {

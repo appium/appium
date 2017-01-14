@@ -12,8 +12,7 @@ chai.should();
 let expect = chai.expect;
 
 describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
-
- it('retrieveInCommonPlaces - success', async () => {
+  it('retrieveInCommonPlaces - success', async () => {
     mocks.fs.expects('exists').once().returns(B.resolve(true));
     (await NodeDetector.retrieveInCommonPlaces())
       .should.equal('/usr/local/bin/node');

@@ -19,7 +19,7 @@ describe('doctor', () => {
     doctor.checks.should.have.length(3);
   });
 
-  function configure() {
+  function configure () {
     let doctor = new Doctor();
     let checks = [new DoctorCheck(), new DoctorCheck(), new DoctorCheck()];
     doctor.register(checks);
@@ -48,7 +48,7 @@ describe('doctor', () => {
     });
   }));
 
-  describe('reportSuccess', withMocks({},(mocks, S) => {
+  describe('reportSuccess', withMocks({}, (mocks, S) => {
     let doctor = new Doctor();
     it('should report success when no fixes are needed', async () => {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
@@ -66,7 +66,7 @@ describe('doctor', () => {
     });
   }));
 
-  describe('reportManualFixes', withMocks({},(mocks, S) => {
+  describe('reportManualFixes', withMocks({}, (mocks, S) => {
     let doctor = new Doctor();
     it('should ask for manual fixes to be applied', async () => {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
@@ -76,13 +76,13 @@ describe('doctor', () => {
         {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
         {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
       ];
-      for(let i=0; i<doctor.toFix.length; i++) {
+      for (let i=0; i<doctor.toFix.length; i++) {
         let m = S.sandbox.mock(doctor.toFix[i].check);
-        if(doctor.toFix[i].check.autofix) {
+        if (doctor.toFix[i].check.autofix) {
           m.expects('fix').never();
         } else {
           m.expects('fix').once().returns(P.resolve(`Manual fix for ${i} is do something.`));
-       }
+        }
       }
       (await doctor.reportManualFixes()).should.equal(true);
       verify(mocks);
@@ -197,7 +197,7 @@ describe('doctor', () => {
         'info: ',
         'info: Bye, all issues have been fixed!',
         'info: ',
-         ].join('\n'));
+      ].join('\n'));
     });
 
     it('failure', async () => {
@@ -209,7 +209,7 @@ describe('doctor', () => {
       ];
       let succeed = false;
       S.sandbox.stub(doctor, 'runAutoFix', (f) => {
-        if(succeed) {
+        if (succeed) {
           log.info('succeeded, Autofix log go there.');
           f.fixed = true;
         } else {
@@ -228,7 +228,7 @@ describe('doctor', () => {
         'info: ',
         'info: Bye, a few issues remain, fix manually and/or rerun appium-doctor!',
         'info: ',
-         ].join('\n'));
+      ].join('\n'));
     });
   }));
 
@@ -238,7 +238,7 @@ describe('doctor', () => {
       try {
         let doctor = new Doctor();
         await doctor.run();
-      } catch(err) {
+      } catch (err) {
       }
     });
     it('should report success', async () => {

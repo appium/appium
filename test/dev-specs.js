@@ -10,7 +10,7 @@ chai.should();
 let P = Promise;
 
 describe('dev', () => {
-  describe('BinaryIsInPathCheck', withMocks({tp, fs} ,(mocks) => {
+  describe('BinaryIsInPathCheck', withMocks({tp, fs}, (mocks) => {
     stubEnv();
     let check = new BinaryIsInPathCheck('mvn');
     it('autofix', () => {
@@ -53,7 +53,7 @@ describe('dev', () => {
       (await check.fix()).should.equal('Manually install the mvn binary and add it to PATH.');
     });
   }));
-  describe('AndroidSdkExists', withMocks({fs} ,(mocks) => {
+  describe('AndroidSdkExists', withMocks({fs}, (mocks) => {
     stubEnv();
     let check = new AndroidSdkExists('android-16');
     it('autofix', () => {

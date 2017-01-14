@@ -25,8 +25,8 @@ yargs
   .describe('demo', 'Run appium-doctor demo (for dev).')
   .help('h')
   .alias('h', 'help')
-  .check(function(argv) {
-    if(!argv.ios && !argv.android && !argv.demo) {
+  .check(function (argv) {
+    if (!argv.ios && !argv.android && !argv.demo) {
       argv.ios = system.isMac();
       argv.android = true;
     }
@@ -37,6 +37,6 @@ let opts = yargs.argv;
 configurePrompt(opts);
 configureBinaryLog(opts);
 newDoctor(opts).run().catch(function (e) {
-  console.error(e);
+  console.error(e); // eslint-disable-line no-console
   process.exit(1);
 });

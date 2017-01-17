@@ -26,7 +26,7 @@ To test a UWP app, you can use any Selenium supported language and simply specif
 // Launch the AlarmClock app
 DesiredCapabilities appCapabilities = new DesiredCapabilities();
 appCapabilities.SetCapability("app", "Microsoft.WindowsAlarms_8wekyb3d8bbwe!App");
-AlarmClockSession = new IOSDriver<IOSElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
+AlarmClockSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
 // Control the AlarmClock app
 AlarmClockSession.FindElementByAccessibilityId("AddAlarmButton").Click();
 AlarmClockSession.FindElementByAccessibilityId("AlarmNameTextBox").Clear();
@@ -38,7 +38,7 @@ To test a classic Windows app, you can also use any Selenium supported language 
 // Launch Notepad
 DesiredCapabilities appCapabilities = new DesiredCapabilities();
 appCapabilities.SetCapability("app", @"C:\Windows\System32\notepad.exe");
-NotepadSession = new IOSDriver<IOSElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
+NotepadSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
 // Control the AlarmClock app
 NotepadSession.FindElementByClassName("Edit").SendKeys("This is some text");
 ```

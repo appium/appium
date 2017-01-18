@@ -94,7 +94,7 @@ describe('doctor', () => {
         'warn: - Manual fix for 3 is do something.',
         'info: ###',
         'info: ',
-        'info: Bye, run appium-doctor again when all manual fixes have been applied!',
+        'info: Bye! Run appium-doctor again when all manual fixes have been applied!',
         'info: '
       ].join('\n'));
     });
@@ -195,7 +195,7 @@ describe('doctor', () => {
         'info: ',
         'info: Autofix log go there.',
         'info: ',
-        'info: Bye, all issues have been fixed!',
+        'info: Bye! All issues have been fixed!',
         'info: ',
       ].join('\n'));
     });
@@ -226,7 +226,7 @@ describe('doctor', () => {
         'info: ',
         'warn: failed, Autofix log go there.',
         'info: ',
-        'info: Bye, a few issues remain, fix manually and/or rerun appium-doctor!',
+        'info: Bye! A few issues remain, fix manually and/or rerun appium-doctor!',
         'info: ',
       ].join('\n'));
     });

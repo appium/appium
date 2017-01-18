@@ -6,6 +6,7 @@ import { configureBinaryLog } from '../lib/utils';
 import { configure as configurePrompt } from '../lib/prompt';
 import { system } from 'appium-support';
 
+
 yargs
   .strict()
   .usage('Usage: $0 [options, defaults: --ios --android]')
@@ -32,7 +33,11 @@ yargs
     }
     return true;
   });
-let opts = yargs.argv;
+
+// make sure we use the general checks for every test
+let opts = Object.assign({
+  general: true,
+}, yargs.argv);
 
 configurePrompt(opts);
 configureBinaryLog(opts);

@@ -102,5 +102,6 @@ Finally, a list of known issues with the initial 1.6 release:
 * Through the TouchAction/MultiAction API, `swipe` gestures are currently not supported, though they should be soon (https://github.com/appium/appium/issues/7573)
 * The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work.
 * In UIAutomation, if you attempted to tap on an element outside the visible frame, it would work. In the new XCUITest driver, it will unfortunately have no effect. You'll have to navigate to the element the way a user would in order to tap it.
+* There is an issue with the iOS SDK such that PickerWheels built using certain API methods are not automatable by XCUITest. See https://github.com/appium/appium/issues/6962 for the workaround, to ensure your PickerWheels are built properly.
 
 As far as possible, we will add the missing features and fix other known issues in the [1.6.1 Milestone](https://github.com/appium/appium/milestone/27), so following that may be of interest to you.

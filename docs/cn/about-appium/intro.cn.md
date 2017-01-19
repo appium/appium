@@ -4,19 +4,19 @@ Appium 是一个开源工具，用于自动化 iOS 手机 、 Android 手机和 
 
 重要的是，Appium 是跨平台的：它允许你用同样的 API 对多平台写测试，做到在 iOS 、Android 和 Windows 测试套件之间复用代码。
 
-了解 Appium “支持”这些平台意味着什么、有哪些自动化方式的详细信息，请参见[ Appium 支持的平台](/docs/en/appium-setup/platform-support.md)。
+了解 Appium “支持”这些平台意味着什么、有哪些自动化方式的详细信息，请参见[ Appium 支持的平台](/docs/cn/appium-setup/platform-support.md)。
 
 ### Appium 的理念
 
 Appium 旨在满足移动端自动化需求的理念，概述为以下四个原则：  
-1. 你不应该为了自动化，而不得不重新编译或者以任何方式修改你的应用。
+1. 你没有必要为了自动化而重新编译你的应用或者以任何方式修改它。
 2. 你不应该被限制在特定的语言或框架上以编写运行测试。
 3. 移动端自动化框架在自动化接口方面不应该重造轮子。
 4. 移动端自动化框架应该开源，不但在名义上而且在精神和实践上。
 
 ### Appium 的设计
 
-那么 Appium 项目的架构如何实现这一理念呢？为了实现第一点要求，我们其实使用了（系统本身的）供应商提供的自动化框架。这样，我们不需要把 Appium 特定的或者第三方的代码编译进你的应用。这意味着你测试使用的应用与最终发布的应用并无二致。我们使用以下（系统本身的）供应商提供的自动化框架：
+那么 Appium 项目的架构如何实现这一理念呢？为了实现第一点要求，我们其实使用了系统自带的自动化框架。这样，我们不需要把 Appium 特定的或者第三方的代码编译进你的应用。这意味着你测试使用的应用与最终发布的应用并无二致。我们使用以下系统自带的自动化框架：
 
 * iOS 9.3 及以上：苹果的 [XCUITest](https://developer.apple.com/reference/xctest)
 * iOS 9.3 及以下：苹果的 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
@@ -40,7 +40,7 @@ Appium 的核心是暴露 REST API 的网络服务器。它接受来自客户端
 自动化始终在一个会话的上下文中执行，这些客户端程序库以各自的方式发起与服务器的会话，但都以发给服务器一个 `POST /session` 请求结束，请求中包含一个被称作 'desired capabilities' 的 JSON 对象。这时服务器就会开启这个自动化会话，并返回一个用于发送后续命令的会话 ID。
 
 **Desired Capabilities**<br/>
-Desired capabilities 是一些发送给 Appium 服务器的键值对集合 (比如 map 或 hash），告诉服务器我们想要启动什么类型的自动化会话。也有各种可以在自动化运行时修改服务器行为的 capabilities。例如，我们可以把 `platformName` capability 设置为 `iOS`，告诉 Appium 我们想要 iOS 会话，而不是 Android 或者 Windows 会话。我们也可以设置 `safariAllowPopups` capability 为 `true` ，确保我们在 Safari 自动化会话中可以使用 javascript 打开新窗口。有关 Appium capabilities 的完整列表，请参阅 [capabilities doc](/docs/en/writing-running-appium/caps.md) 。
+Desired capabilities 是一些发送给 Appium 服务器的键值对集合 (比如 map 或 hash），告诉服务器我们想要启动什么类型的自动化会话。也有各种可以在自动化运行时修改服务器行为的 capabilities。例如，我们可以把 `platformName` capability 设置为 `iOS`，告诉 Appium 我们想要 iOS 会话，而不是 Android 或者 Windows 会话。我们也可以设置 `safariAllowPopups` capability 为 `true` ，确保我们在 Safari 自动化会话中可以使用 javascript 打开新窗口。有关 Appium capabilities 的完整列表，请参阅 [capabilities doc](/docs/cn/writing-running-appium/caps.md) 。
 
 **Appium 服务器**<br/>
 Appium 是用 Node.js 写的服务器。它可以从[源码](https://github.com/appium/appium/blob/master/docs/en/contributing-to-appium/appium-from-source.md)构建安装或者从 NPM 直接安装：
@@ -57,4 +57,4 @@ $ appium
 
 ### 入门指南
 
-恭喜！你现在有足够的知识来使用 Appium 了。 为什么不前往 [入门指南](https://github.com/appium/appium/blob/master/README.md) 了解更多详细的要求和指南呢？
+恭喜！你现在有足够的知识来使用 Appium 了。 为什么不前往 [入门指南](/docs/cn/README.md) 了解更多详细的要求和指南呢？

@@ -1,23 +1,22 @@
 ## Settings
+Settings是appium引入的一个新概念。 它们目前不是Mobile JSON Wire协议或Webdriver规范的一部分。
 
-Settings are a new concept introduced by appium. They are currently not a part of the Mobile JSON Wire Protocol, or the Webdriver spec.
+Settings是用来指定appium server的工作方式。
 
-Settings are a way to specify the behavior of the appium server.
+Settings有以下特点:
+ - 可变性，Settings在一个会话中是可以被修改的。
+ - 临时性，Settings只对当前会话生效，新建立的会话会被重置。
+ - 局限性，Settings只能控制appium server，不能控制被测应用或设备。
 
-Settings are:
- - Mutable, they can be changed during a session
- - Only relevant during the session they are applied. They are reset for each new session.
- - Control the way the appium server behaves during test automation. They do not apply to controlling the app or device under test.
+以Android的`ignoreUnimportantViews`为例。Android中可以设置`ignoreUnimportantViews`用来忽略所有与当前视图无关的元素，这样可以让用例执行的更快。注意，当用户需要访问这些被忽略的元素时，需要禁用`ignoreUnimportantViews`后并重新启用。 
 
-An example of a setting would be `ignoreUnimportantViews` for Android. Android can be set to ignore elements in the View Hierarchy which it deems irrelevant. Setting this can cause tests to run faster. A user who *wants* to access the ignored elements however, would want to disable `ignoreUnimportantViews`, and reenable it afterwards.
+另外一个例子是Settings让appium忽略当前不可见的元素。
 
-Another example of a use-case for settings would be telling appium to ignore elements which are not visible.
-
-Settings are implemented via the following API endpoints:
+Settings可以通过下面的API实现：
 
 **POST** /session/:sessionId/appium/settings
 
->Expects a JSON hash of settings, where keys correspond to setting names, and values to the value of the setting.
+>以JSON格式进行配置。
 ```
 {
   settings: {
@@ -28,29 +27,29 @@ Settings are implemented via the following API endpoints:
 
 **GET** /session/:sessionId/appium/settings
 
->Returns a JSON hash of all the currently specified settings.
+>以JSON格式返回当前所有配置。
 ```
 {
   ignoreUnimportantViews : true
 }
 ```
 
-Note that the actual commands you would use in your test script differ based on the language; see the specific Appium client documention for more information.
+注意，实际的命令因您的脚本所使用的语言而异; 请参阅具体的Appium客户端文档以获取更多信息。
 
-### Supported Settings
+### 支持的Settings
 
-**"ignoreUnimportantViews"** - Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which ignores all views which are marked IMPORTANT_FOR_ACCESSIBILITY_NO or IMPORTANT_FOR_ACCESSIBILITY_AUTO (and have been deemed not important by the system), in an attempt to make things less confusing or faster.
+**"ignoreUnimportantViews"** - 布尔类型，被设置为true时，Android设备会使用`setCompressedLayoutHeirarchy()`忽略标记了IMPORTANT_FOR_ACCESSIBILITY_NO或IMPORTANT_FOR_ACCESSIBILITY_AUTO（以及被系统认为不重要的）的元素，这样可以让脚本变得简单或执行的更快。
 
 #### Android UiAutomator Configurator
 
-sets [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) timeouts and delays in Android devices. only works in Android API 18 and above.
+设置[UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) 的超时时间和延迟. 只支持Android API 18 及以上版本。
 
-**"actionAcknowledgmentTimeout"** - Int which is the same as [setActionAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setActionAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(3 * 1000 milliseconds)
+**"actionAcknowledgmentTimeout"** - Int类型，与[setActionAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setActionAcknowledgmentTimeout(long))相同。被设置为负数时将取默认值(3 * 1000 milliseconds)
 
-**"keyInjectionDelay"** - Int which is the same as [setKeyInjectionDelay](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setKeyInjectionDelay(long)). If a negative value is given, it would set to default(0 milliseconds)
+**"keyInjectionDelay"** - Int类型，与[setKeyInjectionDelay](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setKeyInjectionDelay(long))相同。被设置为负数时将取默认值(0 milliseconds)
 
-**"scrollAcknowledgmentTimeout"** - Int which is the same as [setScrollAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setScrollAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(200 milliseconds)
+**"scrollAcknowledgmentTimeout"** - Int类型，与[setScrollAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setScrollAcknowledgmentTimeout(long))相同。被设置为负数时将取默认值(200 milliseconds)
 
-**"waitForIdleTimeout"** - Int which is the same as [setWaitForIdleTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForIdleTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds)
+**"waitForIdleTimeout"** - Int类型，与[setWaitForIdleTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForIdleTimeout(long))相同。被设置为负数时将取默认值(10 * 1000 milliseconds)
 
-**"waitForSelectorTimeout"** - Int which is the same as [setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds)
+**"waitForSelectorTimeout"** - Int类型，与[setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long))相同。被设置为负数时将取默认值(10 * 1000 milliseconds)

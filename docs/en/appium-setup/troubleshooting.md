@@ -60,6 +60,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If Instruments is crashing when running against a physical device ("exited with code 253"), ensure Xcode has downloaded device symbols. Go to Window -> Devices, and it should start automatically. This is needed after iOS version upgrades.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
+* Make sure your macOS keychain that holds the certificate(s) needed for building your app and the WebDriverAgent is unlocked. Especialy if you are using ssh. General symptom to look for is `codesign` failure.
 * If you have custom elements in your app, they will not be automatable by
   UIAutomation (and therefore Appium) by default. You need to set the
   accessibility status to 'enabled' on them. The way to do this in code is:

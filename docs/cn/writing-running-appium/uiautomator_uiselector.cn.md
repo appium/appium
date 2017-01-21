@@ -4,7 +4,7 @@ Appium可以使用[UiSelectors](http://developer.android.com/reference/android/s
 [UiScrollable](http://developer.android.com/reference/android/support/test/uiautomator/UiScrollable.html)
 也是支持的。
 
-注意，根据索引查找并不可靠，所以更应该使用实例(instance)来取而代之。后续的示例是使用Ruby针对api demo apk来编写的。
+注意，根据索引查找并不可靠，所以更应该使用实例(instance)来取而代之。后续的示例是使用Ruby针对api demos apk来编写的。
 
 
 查找第一个textview。

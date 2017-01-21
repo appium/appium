@@ -1,13 +1,13 @@
 ## 多语言支持
 
-以编程方式处理非拉丁字符时存在的一个问题是对于带有音标的字符可能会有多种编码方式。所以，
+以编程方式处理非拉丁字符时存在的一个问题是对于带有音标的字符可能会有多种编码方式。如此，
 对于字母`é`，有两种编码：一个单字符`é`(Unicode的`LATIN SMALL LETTER E WITH ACUTE`
 （带有尖标的小写拉丁字母E）)和字母`e`后跟上音标`́`的组合(`COMBINING ACUTE ACCENT`
-（组合尖音标）)。为了解决这个问题，有个`normalization(标准化)`，一种让["相同的字符串有一个唯一的二进制表示"](http://www.unicode.org/reports/tr15/)
+（组合尖音标）)。为了解决这个问题，就有了`normalization(标准化)`，一种让["相同的字符串有一个唯一的二进制表示"](http://www.unicode.org/reports/tr15/)
 的运算。
 
-幸运的是，对ASCII文本（即不需要再被标准化的文本）标准化不会引起任何变化，并且进行多次运算也不会有效果。
-因此，这个标准化函数在文本上调用无产生负面效果的风险。
+幸运的是，对ASCII文本（即不需要再被标准化的文本）进行标准化不会引起任何变化，且执行多次运算也不会有效果。
+因此，这个标准化函数在文本上调用不会有产生负面效果的风险。
 
 ```javascript
 // javascript
@@ -17,8 +17,8 @@ var unorm = require('unorm');
 unorm.nfd('Adélaïde Hervé') === unorm.nfd(unorm.nfd('Adélaïde Hervé'));
 ```
 
-所以，当处理测试中的unicode文本时，你需要进行标准化，最好是对预期的文本和从Appium接收到的文本都做。
-进行标准化的方式有很多种，所以要确保对两者执行的运算相同！
+因此，当处理测试中的unicode文本时，你需要进行标准化，对预期的文本和从Appium接收到的文本都做会更好。
+进行标准化的方式有很多种，所以要确保对两边的字符串执行相同的运算！
 
 ```javascript
 // javascript
@@ -31,7 +31,7 @@ driver
     });
 ```
 
-有种问题的迹象是对编码后的unicode文本的断言失败但报告上看起来是相同的字符串：
+问题的标志之一是对编码后的unicode文本的断言失败但报告上看起来是相同的字符串：
 
 ```shell
 AssertionError: expected 'François Gérard' to deeply equal 'François Gérard'

@@ -4,7 +4,7 @@
 
 ### UIObject2
 
-不同于UiObject，UIElement被绑定到一个特殊的view实例上，并且可能在底层view对象被销毁后变得陈旧。因此，如果UI发生的显著的变化，可能就必须去调用findObject(BySelector)以获得一个新的UiObject2实例。
+不同于UiObject，UIElement被绑定到一个特殊的view实例上，并且可能在底层view对象被销毁后变成过期的。因此，如果UI发生的显著的变化，可能就必须去调用findObject(BySelector)以获得一个新的UiObject2实例。
 
 ### 构建系统
 
@@ -18,7 +18,7 @@ UIAutomator 2利用了Gradle作为构建系统的能力。之前的UIAutomator�
 
 ADB对UIAutomator 2的处理有轻微的不同。
 
-最初版本的UiAutomator作为一个shell程序运行：
+原始版本的UiAutomator作为一个shell程序运行：
 
 ```adb shell uiautomator runtest ...```
 

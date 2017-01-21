@@ -2,9 +2,9 @@
 
 尽管Selenium WebDriver的规范已经支持了关键类型的移动交互,但它的参数并不总是那么容易地
 映射到底层的设备自动化框架（对iOS来说像是UIAutomation）所提供的方法上。为此，Appium
-实现了在最新的规范中定义的新的触摸操作和多重操作API
-([https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html#multiactions-1](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html#multiactions-1))。
-注意，这与早期版本中原始的JSON Wire协议里的触摸操作不同。
+实现了在最新的规范([https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html#multiactions-1](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html#multiactions-1))
+中定义的新的触摸操作和多重操作API。
+注意，这与早期版本中原始的JSON Wire协议里的触摸操作API不同。
 
 这些API允许你使用多个执行器去建立任意的手势。
 请查看对应语言的Appium客户端文档来查看使用这些API的示例。
@@ -85,7 +85,7 @@ MultiAction().add(action0).add(action1).perform()
 
 在iOS 7.0 - 8.x 模拟器上不幸存在着一个缺陷，ScrollViews、CollectionViews和TableViews
 不能识别UIAutomation（Appium在iOS底层所使用的框架）所创建的手势。为了避免这些，我们已经
-提供了一个可以使用的新函数`scroll`，它在大多数情况下能让你完成你想在这些view中的任意一个
+提供了一个可用的新函数`scroll`，它在大多数情况下能让你完成你想在这些view中的任意一个
 上去做的事，也就是，滚动它！
 
 

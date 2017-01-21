@@ -18,7 +18,7 @@ describe('server configuration', () => {
     let app = {use: sinon.spy(), all: sinon.spy()};
     let configureRoutes = () => {};
     configureServer(app, configureRoutes);
-    app.use.callCount.should.equal(14);
+    app.use.callCount.should.equal(15);
     app.all.callCount.should.equal(3);
   });
 

@@ -49,6 +49,19 @@ describe('MJSONWP', async () => {
       });
     });
 
+    it('should assume requests without a Content-Type are json requests', async () => {
+      let res = await request({
+        url: 'http://localhost:8181/wd/hub/session/foo/url',
+        method: 'POST',
+        body: JSON.stringify({url: 'http://google.com'}),
+      });
+      JSON.parse(res).should.eql({
+        status: 0,
+        value: "Navigated to: http://google.com",
+        sessionId: "foo"
+      });
+    });
+
     it('should respond to x-www-form-urlencoded as well as json requests', async () => {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',

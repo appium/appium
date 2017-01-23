@@ -6,17 +6,17 @@ Settings是用来指定appium server的工作方式。
 Settings有以下特点:
  - 可变性，Settings在一个会话中是可以被修改的。
  - 临时性，Settings只对当前会话生效，新建立的会话会被重置。
- - 局限性，Settings只能控制appium server，不能控制被测应用或设备。
+ - 局限性，Settings只用来控制appium server，不能用于控制被测应用或设备。
 
 以Android的`ignoreUnimportantViews`为例。Android中可以设置`ignoreUnimportantViews`用来忽略所有与当前视图无关的元素，这样可以让用例执行的更快。注意，当用户需要访问这些被忽略的元素时，需要禁用`ignoreUnimportantViews`后并重新启用。 
 
 另外一个例子是Settings让appium忽略当前不可见的元素。
 
-Settings可以通过下面的API实现：
+Settings通过下面的API实现：
 
 **POST** /session/:sessionId/appium/settings
 
->以JSON格式进行配置。
+>Settings使用键值对(name:value)的JSON格式，name为setting的名字，value是setting的取值。
 ```
 {
   settings: {
@@ -38,7 +38,7 @@ Settings可以通过下面的API实现：
 
 ### 支持的Settings
 
-**"ignoreUnimportantViews"** - 布尔类型，被设置为true时，Android设备会使用`setCompressedLayoutHeirarchy()`忽略标记了IMPORTANT_FOR_ACCESSIBILITY_NO或IMPORTANT_FOR_ACCESSIBILITY_AUTO（以及被系统认为不重要的）的元素，这样可以让脚本变得简单或执行的更快。
+**"ignoreUnimportantViews"** - 布尔类型。设置为false时，Android设备不会忽略任何视图；被设置为true时，会使用`setCompressedLayoutHeirarchy()`忽略标记了IMPORTANT_FOR_ACCESSIBILITY_NO或IMPORTANT_FOR_ACCESSIBILITY_AUTO（以及被系统认为不重要的）的视图，从而尽量让脚本变得简单或执行的更快。
 
 #### Android UiAutomator Configurator
 

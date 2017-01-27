@@ -105,7 +105,7 @@ allows you to do what you wanted to do with one of these views, namely, scroll
 it!
 
 
-**Scrolling**
+**Scrolling<a name="scrolling">**
 
 
 To allow access to this special feature, we override the `execute` or
@@ -188,6 +188,14 @@ scrollObject.Add("element", <element_id>);
 $params = array(array('direction' => 'down', 'element' => element.GetAttribute("id")));
 $driver->executeScript("mobile: scroll", $params);
 ```
+
+**Swiping**
+
+This is an XCUITest driver specific method that is similar to scrolling (for reference, see 
+https://developer.apple.com/reference/xctest/xcuielement). 
+
+This method has the same API as [Scrolling](#scrolling), just replace "mobile: scroll"
+with "mobile: swipe"
 
 **Automating Sliders**
 

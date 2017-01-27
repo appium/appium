@@ -191,7 +191,7 @@ $driver->executeScript("mobile: scroll", $params);
 
 **Swiping**
 
-This is an XCTest specific method that is similar to scrolling (for reference, see 
+This is an XCUITest driver specific method that is similar to scrolling (for reference, see 
 https://developer.apple.com/reference/xctest/xcuielement). 
 
 This method has the same API as [Scrolling](#scrolling), just replace "mobile: scroll"

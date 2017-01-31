@@ -212,6 +212,17 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       });
     });
 
+    describe('reset compatibility', () => {
+      it('should not allow both fullReset and noReset to be true', async () => {
+        let newCaps = Object.assign({}, defaultCaps, {
+          fullReset: true,
+          noReset: true
+        });
+        await d.createSession(newCaps).should.eventually.be.rejectedWith(
+            /noReset.+fullReset/);
+      });
+    });
+
     describe('proxying', () => {
       let sessId;
       beforeEach(async () => {

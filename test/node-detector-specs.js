@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import chai from 'chai';
-import { fs } from 'appium-support';
+import { fs, system } from 'appium-support';
 import * as tp from 'teen_process';
 import NodeDetector from '../lib/node-detector';
 import B from 'bluebird';
@@ -25,8 +25,11 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
     verify(mocks);
   });
 
-  // retrieveUsingWhichCommand
+  // retrieveUsingSystemCall
   let testRetrieveWithScript = (method) => {
+    if (method === 'retrieveUsingAppleScript') {
+      system.isMac = () => true;
+    }
     it(method + ' - success', async () => {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
@@ -50,7 +53,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
     });
   };
 
-  testRetrieveWithScript('retrieveUsingWhichCommand');
+  testRetrieveWithScript('retrieveUsingSystemCall');
   testRetrieveWithScript('retrieveUsingAppleScript');
 
   it('retrieveUsingAppiumConfigFile - success', async () => {
@@ -84,7 +87,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
   it('checkForNodeBinary - success', async () => {
     mocks.NodeDetector = S.sandbox.mock(NodeDetector);
     mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
-    mocks.NodeDetector.expects('retrieveUsingWhichCommand').once().returns(null);
+    mocks.NodeDetector.expects('retrieveUsingSystemCall').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingAppleScript').returns('/a/b/c/d');
     mocks.NodeDetector.expects('retrieveUsingAppiumConfigFile').never();
     (await NodeDetector.detect()).should.equal('/a/b/c/d');
@@ -94,7 +97,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
   it('checkForNodeBinary - failure', async () => {
     mocks.NodeDetector = S.sandbox.mock(NodeDetector);
     mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
-    mocks.NodeDetector.expects('retrieveUsingWhichCommand').once().returns(null);
+    mocks.NodeDetector.expects('retrieveUsingSystemCall').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingAppleScript').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingAppiumConfigFile').once().returns(null);
     expect(await NodeDetector.detect()).to.be.a('null');

@@ -25,7 +25,7 @@ Appium on OS X supports iOS and Android testing.
   Otherwise, Appium won't know which one to use.
 * In iOS 8, devices each have their own setting which enables or disables
   UIAutomation. It lives in a "Developer" view in the Settings app. You need to
-  verify that UIAutomaion is enabled in this view before the simulator or
+  verify that UIAutomation is enabled in this view before the simulator or
   device can be automated.
 
 ### Authorizing iOS on the computer

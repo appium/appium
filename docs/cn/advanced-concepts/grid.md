@@ -1,6 +1,6 @@
 # Selenium Grid
 
-你可以使用 <b>"--nodeconfig"</b> 服务器参数，你可以在本地 [Selenium grid](https://code.google.com/p/selenium/wiki/Grid2) ([setup docs](http://docs.seleniumhq.org/docs/07_selenium_grid.jsp)) 里注册你的 appium 服务器。
+你可以使用 <b>"--nodeconfig"</b> 服务器参数，可以在本地 [Selenium grid](https://code.google.com/p/selenium/wiki/Grid2) ([setup docs](http://docs.seleniumhq.org/docs/07_selenium_grid.jsp)) 里注册你的 appium 服务器。
 
 ```bash
 >  appium --nodeconfig /path/to/nodeconfig.json

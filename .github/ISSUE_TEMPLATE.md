@@ -23,7 +23,7 @@ Create a [gist](https://gist.github.com) which is a paste of your _full_ Appium 
 
 ## Code To Reproduce Issue [ Good To Have ]
 
-Please remember that, with sample code; it's easier to reproduce the bug and it's much faster to fix it.
+Please remember that with sample code it's easier to reproduce the bug and it's much faster to fix it.
 
 Please git clone https://github.com/appium/sample-code and use one of your favourite languages and sample apps to reproduce the issue.
 

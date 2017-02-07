@@ -1,9 +1,11 @@
 # Selenium Grid
 
-使用 <b>"--nodeconfig"</b> 服务器参数，你可以在本地 selenium grid 里注册你的 appium 服务器。
+你可以使用 <b>"--nodeconfig"</b> 服务器参数，你可以在本地 [Selenium grid](https://code.google.com/p/selenium/wiki/Grid2) ([setup docs](http://docs.seleniumhq.org/docs/07_selenium_grid.jsp)) 里注册你的 appium 服务器。
 
 ```bash
-> node . -V --nodeconfig /path/to/nodeconfig.json
+>  appium --nodeconfig /path/to/nodeconfig.json
+# 或者通过在源文件中执行
+> node . --nodeconfig /path/to/nodeconfig.json
 ```
 
 在 node 的配置文件里，你需要定义 <b>"browserName"</b>，<b>"version"</b> 和 <b>"platform"</b>。
@@ -12,9 +14,9 @@
 
 一旦你启动了 appium 服务器并且在 grid 里注册了信息，你会在 grid 控制台发现你的设备：
 
-"http://<b>\<grid-ip-adress\></b>:<b>\<grid-port\></b>/grid/console"
+"http://**\<grid-ip-adress\>**:**\<grid-port\>**/grid/console"
 
-## Grid 配置文件例子
+## Grid node的配置文件例子
 
 ```xml
 {
@@ -22,7 +24,7 @@
       [
         {
           "browserName": "<e.g._iPhone5_or_iPad4>",
-          "version":"<version_of_iOS_e.g._6.1>",
+          "version":"<version_of_iOS_e.g._7.1>",
           "maxInstances": 1,
           "platform":"<platform_e.g._MAC_or_ANDROID>"
         }
@@ -33,6 +35,8 @@
     "timeout":30000,
     "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
     "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
+    "host": <host_name_appium_server_or_ip-address_appium_server>,
+    "port": <appium_port>,
     "maxSession": 1,
     "register": true,
     "registerCycle": 5000,

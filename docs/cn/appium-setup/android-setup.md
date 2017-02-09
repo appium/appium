@@ -8,7 +8,7 @@
 
 运行 `android` tool，并使用他来安装 Level 17 或更高级的 API。
 
-（若你希望通过源码去运行 Appium，你通常还需要在真机或模拟器用 [Apache Ant](http://ant.apache.org/) 去构建 bootstrap jar包）
+（如果想通过源码运行 Appium，需要先用 [Apache Ant](http://ant.apache.org/) 去构建出 bootstrap jar包，Appium 将依赖该 jar 包在 Android 模拟器或真机上运行。）
 
 
 最后，设置环境变量`$ANDROID_HOME`为你的 Android SDK 路径。举个例子，假如你解压了 Android SDK 到 /usr/local/adt/，你应该在添加这行命令到你的 shell 环境变量中：

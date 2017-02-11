@@ -18,7 +18,6 @@ exists to outline large-scale future plans for Appium.
 | Project | Description | ETD | Projected Appium Release |
 |---------|-------------|-----|--------------------------|
 |[Android 7.0 Support](https://github.com/appium/appium/issues/7156)|Support Android 7 (Nougat)|11/2016|1.6.1|
-|[iOS 10.1 Support](https://github.com/appium/appium/issues/7105)|Support iOS 10.1|11/2016|1.6.1|
 |[New Appium GUIs](https://github.com/appium/appium/issues/7167)|The current Appium GUIs (Appium.app and Appium.exe) have a number of issues. They aren't maintained by the core Appium team. They're written in Objective-C and C# respectively: two languages, and specifically, two languages other than Appium's core language. Because of this they lag behind the Appium server and are often broken. However, users love them primarily because of the Inspector feature (the thing that lets them graphically navigate their app), so we have to field a ton of complaints about these projects. There's an opportunity to start over. With [Electron](http://electron.atom.io/), we'd be able to take the new version of Appium we're working on and embed it directly inside a Node-based GUI app written using the languages and technologies the core team is experienced with. We'd have one codebase and could distribute the app on Mac, Windows, and Linux. The GUIs would become an official part of Appium's release cycle so they wouldn't be broken.|Q1 2017|N/A|
 
 ## Upcoming Projects (in rough order of priority)
@@ -26,7 +25,6 @@ exists to outline large-scale future plans for Appium.
 | Project | Description |
 |---------|-------------|
 |[Android 7.1.1 Support](https://github.com/appium/appium/issues/7165)|Google has released Android 7.1.1 (API Level 25). Ensure it works with UiAutomator 1/2|
-|[iOS 10.2 Support](https://github.com/appium/appium/issues/7166)|Support iOS 10.2|
 |[Appium CI + Metrics Improvements](https://github.com/appium/appium/issues/7168)|We have CI servers running via Cloudbees that we don't understand and which break. Let's document and own them so they work reliably. Also, let's implement gathering various metrics about driver performance so we can track this over time and ensure we're not releasing a driver which has decreased in performance or reliability.|
 |[Onboarding Overhaul](https://github.com/appium/appium/issues/7169)|The current Appium docs leave a lot to be desired. The format is confusing (it would be better for API docs), the content is outdated, and many things are still undocumented. This project would go back to the drawing board in all of these areas and put together something genuinely helpful for the community, which hopefully reduces the kind of support issues we're currently flooded by.|
 |[Appium Client Library Updates](https://github.com/appium/appium/issues/7170)|It's been too long since we ensured that Appium's client libraries were up to date with the server|
@@ -48,6 +46,8 @@ exists to outline large-scale future plans for Appium.
 
 | Project | Description | Completed | Appium Release | Notes |
 |---------|-------------|-----------|----------------|-------|
+|[iOS 10.2 Support](https://github.com/appium/appium/issues/7166)|Support iOS 10.2|11/2016|1.6.1||
+|[iOS 10.1 Support](https://github.com/appium/appium/issues/7105)|Support iOS 10.1|11/2016|1.6.1||
 |UiAutomator2 integration|Google has released [UiAutomator 2](http://developer.android.com/reference/android/support/test/uiautomator/package-summary.html), and it promises to fix some issues and limitations with the previous UiAutomator support. We will build this inside of Selendroid since it requires an instrumentation context.|10/2016?|1.6.0|
 |XCUITest integration / iOS 10 support|Instruments + UIAutomation has been working well for many Appium users, but requires crazy workarounds to deal with bugs which remain unfixed on the Apple side. Also, UIAutomation has been removed in favor of XCUITest for iOS 10+. This new backend would exist alongside the UIAutomation backend.|10/2016|1.6.0||
 |iOS 9.3 support|Appium should support iOS 9.3 / Xcode 7.3|3/2016|1.5.1||

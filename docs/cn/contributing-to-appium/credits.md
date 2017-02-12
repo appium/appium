@@ -1,6 +1,6 @@
-## Credits
+## 鸣谢
 
-###  These are the projects that inspired us, or are depended upon to make Appium awesome.
+###  以下是在Appium的开发过程中予我们以启示，或是为Appium锦上添花的项目
 
 * [Apple UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * [GhostDriver](https://github.com/detro/ghostdriver)

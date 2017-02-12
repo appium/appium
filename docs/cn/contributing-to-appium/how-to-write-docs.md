@@ -1,57 +1,54 @@
-## How to write docs
+## 如何编写文档
 
-`##` is used to write a h2 header. Each document must start with a h2 header.
-This is to support appium.io docs generation. Don't use the `---` underline method of creating headers.
-Don't use h1 `#` or `===` for heading as it is not supported for table of contents (folder name is used as h1).
+`##`用于写一个h2头。 每个文档必须以h2开头。这是为了支持appium.io文档生成。不要使用`---`下划线方法创建标题。
+不要对标题使用h1`＃`或`===`，因为它不支持目录（文件夹名称用作h1）。
 
-### Subheaders
+### 副标题
 
-`###` is used to write subheaders.
+`###` 用于编写副标题
 
-### Regular headers
+### 常规标题
 
-`####` is used for headers that don't appear in the table of contents.
-Don't use h5 `#####`, or h6 `######`.
+`####` 用于不出现在目录里的标题。 
+不要使用h5 `#####`或者h6`######`
 
-### Line breaks
+### 换行符
 
-Don't use line breaks such as `--` or `---`. This will confuse Slate.
+不要使用 `--` 或者 `---`这样的换行符。 这样会混淆版面。
 
-### Linking
+### 链接
 
-Link to the readme:
+链接到 readme :
 
 `[readme](../../README.md)`
 
-Link to contributing:
+链接到贡献榜：
 
 `[contributing](../../CONTRIBUTING.md)`
 
-Link to another document
+链接到另一个文件
 
 `[link text](filename.md)`
 
-To link inside a document, use the `#` from the Slate URL.
+如果想链接文件内部，请使用`#` 作为版面URL
 
 `[go direct to json](filename.md#json-wire-protocol-server-extensions)`
 
-Note that hash links will break when the heading changes so linking to
-the start of the doc is preferable (`other.md` instead of `other.md#something`).
+请注意，当标题改变时，哈希链接会被破坏掉。所以更好的选择时链接到文件的开头（用`other.md` 取代 `other.md#something`）
 
-### Compatibility with appium.io
+### 与appium.io的兼容性
 
-#### Center aligning code in appium.io
+### 在appium.io里中居对齐代码
 
-Appium.io documentation uses [slate](https://github.com/tripit/slate) for documentation.
-If code snippet in documentation is not language specific or if you want code snippet to stay
-along with text in center in appium.io documentation, use center as language in fenced code block.
+Appium.io文档使用[slate]（https://github.com/tripit/slate）获取文档。
+如果文档中的代码段不是特定的语言，或者你希望代码段保留在appium.io文档的居中部分，请使用`center`作为代码区的后缀。
 
-Example:
+例如：
 
     ```center
-    code snippet goes here.
+    代码段放置于此。
     ```
 
-#### Publishing
+#### 出版
 
-To publish documentation on appium.io see [api-docs](https://github.com/appium/api-docs) and [appium.io](https://github.com/appium/appium.io).
+要在appium.io上发布文档，请参阅[api-docs](https://github.com/appium/api-docs) 和 [appium.io](https://github.com/appium/appium.io).

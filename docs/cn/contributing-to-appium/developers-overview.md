@@ -1,191 +1,138 @@
-## A Developer's Overview of Appium
+## 一个开发人员对于Appium的概述
 
-Before reading this document, please ensure that you have read and understood
-the more general [introduction to Appium
-concepts](/docs/en/about-appium/intro.md) and the more general [contribution
-instructions](/CONTRIBUTING.md).
+在阅读这个此文档之前，请确保你已经阅读并理解了关于[Appium的基本概念](/docs/cn/about-appium/intro.md)，
+以及关于如何参与[Appium贡献说明](/CONTRIBUTING.md)
 
-### Technical Vision
+### 技术的远观
 
-Appium aims to be a Mobile JSONWP front-end for the best app automation
-technologies. That's it. We want to take all the different useful automation
-engines and smooth away their differences and gotchas by making Appium drivers
-for them and bringing them under the umbrella of Appium itself. This is very
-similar to the goal of the Selenium project. For our part, we want to have
-every driver be an independent entity (separate repo, tests, etc...) even as it
-uses shared libraries that make the development of an Appium driver as simple
-and boilerplate-free as possible. We use modern JavaScript because JavaScript
-is everywhere and it's easy for many developers to understand and contribute
-back to.
+Appium致力于成为一个移动JSONWP前端，实现最佳的应用自动化测试技术。仅此而已。我们想要采用所有不同的
+但自带亮点的自动化引擎，通过制作Appium驱动程序来平滑它们的差异和瑕疵，同时将它们纳入Appium。这与
+Selenium项目有异曲同工之妙。对于我们而言，我们想要每一个驱动都是一个独立的实体（单独的repo， 测试，
+等等）即便它们使用共享库，这一举措会使Appium驱动程序的开发变得尽可能简单，而且不拘泥于样板。我们之所以
+使用现今流行的JavaScript，因为它们无处不在，而且对于很多开发人员而言容易理解并易于贡献。
 
-### Developer Community
+### 开发者社区
 
-Anyone is welcome to become an Appium developer; just read this guide and get
-some of your code merged, and you are one of us! If you stick around and help
-a lot, we will also make you a committer so that you can continue to help the
-community more easily. If you are developing code for Appium and have
-questions, reach out to the developer community at
-`appium-developers@googlegroups.com`. Note that this is a mailing list for
-_development_ questions, not _usage_ questions or bug reports. Usage questions
-belong on [discuss.appium.io](https://discuss.appium.io). The GitHub issue
-tracker is for bug reports and feature requests only.
+欢迎任何人成为Appium开发人员，你仅需要阅读此指南并把你的一些代码合并进来，那么你就成为了我们一员。
+如果你坚持不懈并且广施善缘，我们将会把你升级为一名提交者，这样你能继续帮助社区发展而且省去很多纷繁复杂。
+如果你在开发Appium的时候遇到疑问，请前往我们的开发人员社区`appium-developers@googlegroups.com`.
+请注意，这是一个为_开发_疑问而设的邮件列表，而不是关于_使用_疑问。 有关使用问题请前往[discuss.appium.io](https://discuss.appium.io)
+Github问题跟踪只是用于bug提交和功能需求。
 
-### Agile Development Workflow
+### 敏捷开发工作流程
 
-The Appium team runs development according to a very lightweight version of
-SCRUM. Every two weeks we begin a new "sprint", or a period of time in which we
-have decided what we want to accomplish. Anyone familiar with the Appium
-codebase is welcome to attend our sprint planning and participate as a SCRUM
-team member for that sprint. No long-term commitments required! During the
-sprint, we update each other with daily progress in the `#standup` room in our
-[Appium Slack Group](https://appium.slack.com) (there are no real-time daily
-standups). At the end of the sprint, to celebrate our accomplishments and
-reflect on how things went, we hold a "retrospective", which might result in
-a list of things we can try differently or do better next time around.
+Appium团队根据轻量化的scrum版本来运行开发。每两个星期我们开始一个新的“冲刺”，或者每一段时间，我们
+会决定团队下一阶段需要完成的事情。我们欢迎任何熟悉Appium代码库的人参加我们的冲刺计划，并将视作SCRUM参与团队成员。
+参与者无需是代码长期提交者。冲刺期间，我们将在在我们[Appium slack 团队](https://appium.slack.com)的
+`#standup` 聊天室更新我们每个人的进程（没有实时的每天站立会议）。冲刺结束时，我们将举行“回顾”活动，以此来
+庆祝我们取得的成就并总结活动进展如何，这可能会生成一个关于如何进行不同尝试又或者如何做的更好的总结列表。
 
-Ultimately, the goal is to time an Appium release at the end of each sprint, so
-every two weeks. We're not quite there, but hopefully we will be soon.
+最终，我们的目标是在每一个冲刺结束时计划一个Appium版本，也就是说每两个星期一个周期。我们还没有实现这个目标，但希望
+我们能很快达成。
 
-Current meeting times:
-* Sprint Planning: every other Monday from 10:00 AM - 10:45 AM (Pacific Time)
-* Sprint Retrospective: every other _other_ Friday from 1:00 PM - 1:30 PM (Pacific Time)
+当前会议时间：
+* 冲刺计划： 每两个周一 10:00 AM - 10:45 AM （太平洋时间）
+* 冲刺回顾： 每三个周五 1:00 PM -  1:30 PM（太平洋时间）
 
-We hold meetings using [Zoom](https://zoom.us) video chat.
+我们使用[Zoom](https://zoom.us)视讯来举行会议
 
-For project management, we use the [ZenHub](http://zenhub.com) browser plugin,
-which adds various features like Kanban boards and Epics to the GitHub
-interface. To fully participate in Appium SCRUM, you'll need to have this
-browser plugin installed.
+关于项目管理，我们使用[ZenHub](http://zenhub.com) 浏览器插件，它向GitHub接口提供了例如
+Kanban boards 和 Epics 这些功能。要完全参与到Appium SCRUM，你需要安装上述的这些浏览器插件。
 
-If you are interested in participating a sprint, ping `@jlipps` or `@isaac` in
-the Appium Slack Group, or DM `@jlipps` on Twitter, and we'll share how to join
-the video chat for the next sprint.
+如果你有意参加冲刺，你可以在Appium Slack群组里联系`@jlipps` 或者 `@isaac`，又或者直接在推特
+上联系`@jlipps`，我们将会在下一次冲刺里分享如何加入视频聊天。
 
-### Architecture
+### 构造
 
-Appium is primarily a collection of [node.js](http://nodejs.org) packages that
-combine to form a running node.js server. These packages are maintained
-independently of one another and each have their own GitHub repo, CI, and
-release process. Some packages (like `appium-ios-driver`) are large and add
-significant functionality to Appium, while others play a support role and
-expose one specific bit of functionality that is reused by other packages.
+Appium主要是一个[node.js](http://nodejs.org)包的集合，以此组合形成一个运行的node.js服务器。
+每一个包都被单独维护并拥各自的GitHub repo, CI和发行流程。一些软件包(比如 `appium-ios-driver`)
+很大，并且给Appinum添加了很重要的功能。相比而言，其他软件包则扮演着一个辅助的角色，而且高度曝光其某个
+特定并被反复利的功能。
 
-For an overview of the package hierarchy and the role that each package plays,
-please check out our [package
-overview](/docs/en/contributing-to-appium/appium-packages.md) doc.
+有关软件包的层次结构和每一个包所起的作用，请前往我们[包的概述](/docs/cn/contributing-to-appium/appium-packages.md)文档。
 
-### Transpilation
+### 转化
 
-Appium is written in a new form of JavaScript, called ES6 (or now ES2015).
-Because this version of the language is not yet supported natively by older
-versions of node.js, Appium code is _transpiled_ to ES5 (the more
-widely-supported version of JS). This transpilation process must occur before
-any code is run. In addition to the new language features of ES6, we have
-adopted two very important keywords from the _subsequent_ version of JS, namely
-`async` and `await`, which assist in writing asynchronous code cleanly. Because
-of the transpilation step, Appium packages include tools which watch code for
-changes and automatically re-transpile the code. Usually, the same tool will
-automatically run unit tests as well to ensure that nothing small has broken.
-Most Appium packages have this as the default behavior when running `gulp`.
+Appium是用JavaScript的新形式编写的，称为ES6（或现在的ES2015）。因为这个版本的语言尚未被老版本
+node.js的原生支持，Appium代码是_被移植_到ES5（JS更为广泛支持的版本）。这个转化过程必须发生在所有
+代码运行之前。除了ES6的新语言特性，我们也从JS的_后续_版本中采用了很重要的关键词，`async` 和 `await`,
+这有助于编写整洁的异步代码。因为这个代换的步骤，Appium软件包囊括了观察代码变化和重新编排代码的工具。
+通常而言，同样的工具会自动运行单元测试，同时确保没有任何小的纰漏。大多Appium软件包在运行`gulp`的时候
+把上述过程当做默认行为。
 
-### Linting and Style
+### 漏洞排查和代码风格
 
-It's important for all of Appium's JS to look and feel the same. This includes
-style conventions as well as coding patterns and which libraries we use to
-solve various problems. You should get familiar with our new [ES2015 Style
-Guide](/docs/en/contributing-to-appium/style-guide-2.0.md). When transpiling,
-Appium packages will automatically run JSHint or other lint tools and provide
-warning or error feedback if the code doesn't conform to our style. These tools
-are not necessarily exhaustive of the kinds of style issues we care about, so
-we may also mention style issues in our reviews. This isn't to be nit-picky but
-to have a clean, consistent, and readable codebase!
+对于所有AppiumJS而言，代码外观和使用感觉同样重要。这包括样式常规，编码模式以及我们解决各种问题时使用的
+库。你应该熟悉我们新的[ES2015 风格指南](/docs/cn/contributing-to-appium/style-guide-2.0.md)。
+当转化时，Appium包将自动运行JSHint或其他lint工具，并在代码不符合我们规范的时候提供警告或错误反馈。
+这些工具不一定能顾全我们关心的种种风格问题，所以我们在review代码的时候也应该注意代码规范问题。这不是
+吹毛求疵，而是为了有一个整洁，一致并且可读的代码库。
 
-### Submitting Code
+### 提交代码
 
-Getting your code into Appium is easy: just submit a PR to one of our repos and
-engage with the maintainers in the review process. We have a number of
-requirements for code submissions (but don't worry! If the following seems like
-a lot, we will helpfully and patiently walk you through each step. Just send in
-your PR and we'll go from there):
+将你的代码提交到Appium很容易：你只需要提交一个pull请求到我们的repos并在代码review的过程中与我们的
+维护者进行互动。我们对代码提交有一系列的要求（但是不用担心！如果下面所列的太过繁复，我们将会为你一一道来）。
+那我们就从你提交PR的那一步开始吧：
 
-* Follow the style of the surrounding code and our Style Guide
-* Atomic commits--one commit per logical change (i.e., make sure that commits don't need to come in a group in order for the program to work. It should work at any given commit). Usually this means one commit per PR. You'll want to get very familiar with `git rebase -i` and squashing!
-* No merge commits: always rebase on top of latest master (or whatever other branch you're asking to merge into) before submitting your PR.
-* Almost all changes should have tests. Bugfixes should at the least have unit tests that prove that the bug has been fixed. New features should have unit tests and in most cases e2e tests to prove that the feature actually works. We will be happy to walk you through the test creation process. Reading the surrounding test code is a good place to start. Our CI systems usually run test coverage statistics and we will likely not merge code that decreases test coverage.
+* 参考其他代码的样式和我们的样式指南
+* Atomic 提交 -- 每个逻辑变化进行一次提交（例如：确保你的提交不用进入组论即可以正常运行,而且它在任何指定提交下都应该正常运行）这通常意味着每个PR一个提交。你将想要非常熟悉的`git rebase -i` 和压缩。
+* 没有合并提交：在提交你的PR之前，通常在最新的master之上进行rebase（或者其它你想要merge进去的branch）。
+* 几乎所有的更改都应该有测试。关于漏洞修复，至少应该有单元测试以证明这个bug已被修复。新功能应该有单元测试，并且在大多数情况下进行e2e测试，以证明该功能正常工作。我们将乐意带你浏览测试的创建过程。阅读其他的测试代码会是一个很好的开始。我们的CI系统通常运行测试覆盖率统计，而且我们不大可能去合并那些会降低测试覆盖率的代码。
 
-If you do all of these things before submission, your code will almost
-certainly be accepted very quickly! Of course, if you're thinking of making
-a change to Appium that requires a lot of work, you might reach out to the
-developers list to make sure that the change is in line with our philosophy and
-in principle something that we'll accept before you get going.
+如果你在提交之前做了所有这些事情，你的代码将可能很快被接受。当然，如果你打算对Appium进行大量的改造工作，你可以联系开发人员，以确保这些改变符合我们的理念，这样在你开动之前确保我们会接受这些改动。
 
-### Testing
+### 测试
 
-Always make sure that your changes are tested! In addition to writing unit and
-e2e tests, make sure you run existing tests before you begin to make changes
-and before you push code to be reviewed. We do have CI set up for every Appium
-repository as a safety net for reviewers to know whether the code they are
-reviewing has passed muster. Running tests in any Appium package is easy!
-Unless the README says otherwise, here are the things you can do:
+始终确保你的更改已经被测试过！ 除了单测试和e2e测试，请确保在你开始进行更改和提交review之前，所有现有测试都被运行。
+我们有为每一个Appium repo设置CI存储库作为安全网，这样便于审阅者知晓代码是否已经通过测试。在任何Appium包运行测试都很容易！
+以下是你可以做的事情（除非README另有说明）：
 
 ```
-gulp                    # watch directory to re-transpile on code change, and run unit tests
-gulp once               # same as above but don't watch
-gulp unit-test          # transpile and run unit tests
-gulp e2e-test           # transpile and run end-to-end/functional tests
-_FORCE_LOGS=1 <command> # show module log output during test run
+gulp                    # 监测目录下重编译代码更改，以及运行单元测试
+gulp once               # 同上，当不提供监测
+gulp unit-test          # 转化和运行单元测试
+gulp e2e-test           # 转化以及运行端到端／功能测试
+_FORCE_LOGS=1 <command> # 显示测试运行期间的模块日志输出
 ```
 
-Note that we have a convention for unit test files to end in `-specs.js` and
-for e2e test files to end in `-e2e-specs.js`.
+请注意，单元测试的文件后缀通常为 `-specs.js` ，而e2e测试文件后缀则为`-e2e-specs.js`.
 
-### Releasing
+### 发布
 
-The release process for any Appium module other than the main Appium package is
-pretty straightforward (note that you will need to be an NPM owner for the
-package if you want to publish it. Ownership is managed by the Appium
-committers; talk to @jlipps or @imurchie if you believe you should be an owner
-and are not):
+任何非Appium主包的发布流程都是非常简洁明了的（请注意：如果你想要发布它，你需要成为一个NPM的所有者。
+所有权由Appium提交着管理； 如果你对所有者有任何疑问，请联系@jlipps 或者 @imurchie）。
 
-0. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
-0. Determine whether we have a patch (bugfix), minor (feature), or major (breaking) release according to the principles of [SemVer](http://semver.org/) (see also this explanation of [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning)).
-0. Update the CHANGELOG and/or README with any appropriate changes and commit. Most subpackages don't have a CHANGELOG.
-0. Run `npm version <version-type>` with the appropriate version type.
-0. Push the appropriate branch to GitHub, and don't forget to include the `--tags` flag to include the tag just created by `npm version`.
-0. Run `npm publish` (with `--tag beta` if this isn't an official release).
+0. `rm -rf node_modules && npm install` 并运行测试以确保全新安装正常工作
+0. 根据[SemVer](http://semver.org/) 规则决定我们是否需要发布一个补丁（漏洞修复），微调（功能）或者是主要（迭代）(请参考 [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning).
+0. 通过任何适当的更改和提交来更新CHANGELOG以README文件。大多数子包没有CHANGELOG。
+0. 通过适当的版本类型运行 `npm version <version-type>` 
+0. 将适当的分支推送到GitHub, 不要忘记加入`--tags` 来标记刚由 `npm version`创建的标志.
+0. 运行 `npm publish` (如果不是正式版， 请使用`--tag beta`).
 
-For the main Appium packages, all the above steps must be taken, but with
-several changes. One reason is that for the main package we use NPM shrinkwrap
-to ensure dependencies don't change between installations. Another reason is
-that we develop on master and release on various branches. The way it works is
-as follows: we always develop and add new code to master. When we are ready to
-make a new minor or major release (i.e., `1.5.0` or `2.0.0`), we create
-a release branch (`1.5` or `2.0` respectively). We then publish off of that
-branch. As we feel the need to make patch releases, we first pull the patch
-into master, then cherry-pick individual patches to the release branch (perhaps
-even multiple release branches). Then we again publish from those branches with
-the updated patch version (`1.5.1` or `2.0.1` for example).
+对于Appium的主包发布，上述步骤必须执行，但有以下改变。一个原因是对于主包，我们使用NPM收缩包装
+以确保依赖性在安装的时候不更改。另一个原因是我们在master上开发和各种分支上发布。它的工作方式是
+如下：我们经常在master上开发和增加新的代码。 当我们准备好了做一个新的次要或主要版本（例如`1.5.0`
+或`2.0.0`），我们创建一个发布分支（分别为`1.5`或`2.0`）。然后我们发布该分支。 一旦我们认为需要修复补丁，
+所以我们首先将补丁拉到master中，然后将单个补丁挑选到发布分支（甚至是多个发布分支）。 然后我们再次
+从这些分支发布更新的补丁版本（例如`1.5.1`或`2.0.1`）。
 
-**A note about `npm shrinkwrap`:** We use [npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap)
-in order to lock dependencies on release. Without it, any development on dependent
-packages will be reflected when Appium is installed, which may lead to issues. Since
-the configuration file, `npm-shrinkwrap.json`, only exists on release branches,
-it is necessary to manually manage it during the release process. It needs to be
-checked in to GitHub along with changes to `package.json`.
+**关于 `npm shrinkwrap`的注释：** 我们使用[npm shrinkwrap](https://docs.npmjs.com/cli/shrinkwrap)是为了在发布时锁定依赖关系。
+没有它，任何依赖包上的开发将在安装Appium时反应出来，这可能会导致问题。 由于配置文件`npm-shrinkwrap.json`仅存在于发布分支上，
+因此有必要在发布过程中手动管理它。 它需要与对`package.json`的更改一起检入到GitHub。
 
-0. Remove the NPM shrinkwrap JSON file if it exists.
-0. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
-0. `rm -rf node_modules && npm install --production` to get just the production deps.
-0. `npm shrinkwrap` to write the new NPM shrinkwrap JSON file.
-0. Determine whether we have a patch (bugfix), minor (feature), or major (breaking) release according to the principles of SemVer.
-0. Update `package.json` with the appropriate new version.
-0. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
-0. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a 1.5.0`. This is not necessary for beta versions.
-0. Push the tag to upstream: `git push --tags <remote> <branch>`
-0. Install dev dependencies (or at least `gulp` and `appium-gulp-plugins`).
-0. Run `npm publish` (with `--tag beta` if this isn't an official release).
-0. Update the docs at appium.io. Check out the appium.io repo from github, check out the `gh-pages` branch and pull latest. Run `rake publish`.
-0. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.
-0. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
-0. Notify Appium.app and Appium.exe of the new build so that new GUIs can be released.
-0. Notify @jlipps to so he can tweet a link to the discuss post.
+0. 如果 NPM shrinkwrap JSON 文件存在，请移除.
+0. `rm -rf node_modules && npm install` 并运行测试以确保全新安装正常工作
+0. `rm -rf node_modules && npm install --production` 以获取仅production部分.
+0. `npm shrinkwrap` 来编写新的 NPM shrinkwrap JSON 文件.
+0. 根据SemVer来决定我们是否需要发布一个补丁（漏洞修复），微调（功能）或者是主要（迭代）
+0. 用合适的新版本信息来更新`package.json` 
+0. 对CHANGELOG/README进行合适的更改，同shrinkwrap 和 `package.json`的改变一起以PR的形式进行提交审核。待它被整合之后，把它`pull`进`release`分支。
+0. 在发布分支（通常是一个小分支，如`1.5`或`1.4`）上创建一个形式为`v <version>`的标签：`git tag -av <version>`，例如`git tag -a 1.5.0`。 这对测试版本不是必需的。
+0. 把标签推送到上游分支： `git push --tags <remote> <branch>`
+0. 安装dev依赖 （或者至少`gulp` 和 `appium-gulp-plugins`）
+0. 运行`npm publish`（如果这不是正式版本，请使用`--tag beta` ）。
+0. 在appium.io更新文档。 从github的check out appium.io repo，check out`gh-pages`分支和并更新到最新版本。 然后运行`rake publish`。
+0. 在GitHub上创建一个新版本：转到`https://github.com/appium/appium/releases/tag/v <VERSION>`并点击“编辑标签”。 输入发布名称为`<VERSION>`（例如，`2.0.5`），然后粘贴到更改日志（但不是此版本的changelog标题）。 如果是试用版，请标记为预发布。
+0. 在 discuss.appium.io 创建新的帖子来宣布release. 请创建于 "News"类别. 粘贴在changelog和任何可选的评论。 置顶当前帖子并取消置顶上一个release帖子。
+0. 请告知 Appium.app 和 Appium.exe 新的build，以便可以发布新的应用界面。
+0. 请告知 @jlipps，以便他可以发布一个链接到讨论帖子。

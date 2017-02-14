@@ -58,3 +58,5 @@ $ appium
 ### 入门指南
 
 恭喜！你现在有足够的知识来使用 Appium 了。 为什么不前往 [入门指南](/docs/cn/README.md) 了解更多详细的要求和指南呢？
+
+由 @黑水 翻译，TesterHome 社区 id：sanlengjingvv

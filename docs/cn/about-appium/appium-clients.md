@@ -16,3 +16,5 @@ Objective C | [https://github.com/appium/selenium-objective-c](https://github.co
 PHP | [https://github.com/appium/php-client](https://github.com/appium/php-client)
 C# (.NET) | [https://github.com/appium/appium-dotnet-driver](https://github.com/appium/appium-dotnet-driver)
 RobotFramework | [https://github.com/jollychang/robotframework-appiumlibrary](https://github.com/jollychang/robotframework-appiumlibrary)
+
+由 @黑水 翻译，TesterHome 社区 id：sanlengjingvv

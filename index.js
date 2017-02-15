@@ -9,11 +9,12 @@ export default BaseDriver;
 
 // MJSONWP exports
 import { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromCode, ALL_COMMANDS, NO_SESSION_ID_COMMANDS,
-         isSessionCommand } from './lib/mjsonwp';
+         errorFromCode, ALL_COMMANDS, METHOD_MAP, routeToCommandName,
+         NO_SESSION_ID_COMMANDS, isSessionCommand } from './lib/mjsonwp';
 
 export { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromCode, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, isSessionCommand };
+         errorFromCode, ALL_COMMANDS, METHOD_MAP, routeToCommandName,
+         NO_SESSION_ID_COMMANDS, isSessionCommand };
 
 // Express exports
 import { server } from './lib/express/server';

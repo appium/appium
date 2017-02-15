@@ -103,7 +103,7 @@ Finally, a list of known issues with the initial 1.6 release (we'll strike throu
 * `lock` is not implemented due to lack of support from Apple
 * Setting geo-location not supported due to lack of support from Apple
 * Through the TouchAction/MultiAction API, `zoom` gestures work but `pinch` gestures do not, due to an Apple issue.
-* Through the TouchAction/MultiAction API, `swipe` gestures are currently not supported, though they should be soon (https://github.com/appium/appium/issues/7573)
+* ~~Through the TouchAction/MultiAction API, `swipe` gestures are currently not supported, though they should be soon (https://github.com/appium/appium/issues/7573)~~
 * The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work, and there is continued debate about whether we will be able to implement them in the future.
 * There is an issue with the iOS SDK such that PickerWheels built using certain API methods are not automatable by XCUITest. See https://github.com/appium/appium/issues/6962 for the workaround, to ensure your PickerWheels are built properly.
 

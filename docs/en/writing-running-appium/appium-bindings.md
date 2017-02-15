@@ -1107,19 +1107,22 @@ driver.PushFile("/data/local/tmp/file.txt", "some data for the file");
 
 Here you will find sample code for getting/setting appium serverSetting.
 For more information on how they work, and which settings are supported, see
-[the settings docs][/docs/en/advanced-concepts/settings.md]
+[the settings docs](/docs/en/advanced-concepts/settings.md).
 
 ```ruby
+# ruby
 current_settings = get_settings
 update_settings someSetting: true
 ```
 
 ```python
+# python
 current_settings = driver.get_settings()
 driver.update_settings({"someSetting": true})
 ```
 
 ```java
+// java
 JsonObject settings = driver.getSettings()
 // java-client doesn't support setting arbitrary settings, just settings which are already provided by appium.
 // So for the 'ignoreUnimportantViews' setting, the following method exists:
@@ -1127,16 +1130,19 @@ driver.ignoreUnimportantViews(true);
 ```
 
 ```javascript
+// javascript
 var settings = driver.settings();
 browser.updateSettings({'someSetting': true});
 ```
 
 ```php
+// php
 $settings = $this->getSettings();
 $this->updateSettings(array('cyberdelia' => "open"));
 ```
 
 ```csharp
+// c#
 Dictionary<String, Object>settings = driver.GetSettings();
 // dotnet-driver doesn't support setting arbitrary settings, just settings which are already provided by appium.
 // So for the 'ignoreUnimportantViews' setting, the following method exists:

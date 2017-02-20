@@ -198,7 +198,7 @@
     var my_variable = 42;
     ```
 
-*    检查是否有未定义的变量：
+*   检查是否有未定义的变量：
 
     ```javascript
     typeof myVariable === "undefined"

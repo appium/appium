@@ -9,7 +9,7 @@ with certain constraints)
 Appium additionally supports some of the [Mobile JSON Wire Protocol](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) locator strategies
 
 * `-ios uiautomation`: a string corresponding to a recursive element search
-using the [UIAutomation library](ios_predicate.md) (iOS-only)
+using the [UIAutomation library](ios_predicate.md) (iOS 9.3 and below only)
 * `-android uiautomator`: a string corresponding to a recursive element
 search using the [UiAutomator Api](uiautomator_uiselector.md) (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search

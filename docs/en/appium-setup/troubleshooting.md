@@ -36,6 +36,12 @@ own items in the SDK manager. Make sure you install the build-tools and platform
   reset the connection to the Android device.
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
+### Windows
+
+* Make sure developer mode is on
+* Make sure command prompt is Admin
+* Check that the URL Appium server is listening to matches the one specified in test script
+
 ### IOS
 
 * Make sure Instruments.app is not open
@@ -54,6 +60,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If Instruments is crashing when running against a physical device ("exited with code 253"), ensure Xcode has downloaded device symbols. Go to Window -> Devices, and it should start automatically. This is needed after iOS version upgrades.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
+* Make sure your macOS keychain that holds the certificate(s) needed for building your app and the WebDriverAgent is unlocked. Especialy if you are using ssh. General symptom to look for is `codesign` failure.
 * If you have custom elements in your app, they will not be automatable by
   UIAutomation (and therefore Appium) by default. You need to set the
   accessibility status to 'enabled' on them. The way to do this in code is:
@@ -130,11 +137,8 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure you are properly switching contexts using the `context` appium commands provided by your client library.
 * If you getting this error: select_port() failed, when trying to open the
   proxy, see this [discussion](https://groups.google.com/forum/#!topic/appium-discuss/tw2GaSN8WX0)
-
-### FirefoxOS
-
-* Make sure the Boot-to-Gecko simulator is up and running.
-* Make sure the simulator screen is alive and unlocked (might require restarting B2G).
+* In a Safari session, if the logs indicate that the initial url cannot be entered, make sure that
+  you have the software keyboard enabled. See this [discussion](https://github.com/appium/appium/issues/6440).
 
 ### Let the community know
 

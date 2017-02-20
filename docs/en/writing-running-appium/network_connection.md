@@ -20,6 +20,11 @@ connection API for iOS.
 Choose the setting you would like to use, and then send the correct bitmask from
 the table above.
 
+### Windows
+
+Unfortunately, at the moment Appium does not support the Selenium network
+connection API for Windows.
+
 ```javascript
 // javascript
 // set airplane mode

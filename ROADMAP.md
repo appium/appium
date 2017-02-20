@@ -17,31 +17,41 @@ exists to outline large-scale future plans for Appium.
 
 | Project | Description | ETD | Projected Appium Release |
 |---------|-------------|-----|--------------------------|
-|[Architecture Overhaul](https://github.com/appium/appium/issues/5169)|Appium's architecture has grown unwieldy enough that adding new features and preventing regressions has become difficult. A rearchitecture is in order to solve these issues as well as migrate the codebase to a form of JS much easier to work in and understand.|1/2016|1.5|
-|XCUITest backend integration|Instruments + UIAutomation has been working well for many Appium users, but requires crazy workarounds to deal with bugs which remain unfixed on the Apple side. We should explore Apple's newer technology, XCUITest, in order to see if the overall experience is more stable. This new backend would exist alongside the UIAutomation backend.|3/2016?|Beta in 1.6?|
-|UiAutomator2 backend integration|Google has released [UiAutomator 2](http://developer.android.com/reference/android/support/test/uiautomator/package-summary.html), and it promises to fix some issues and limitations with the previous UiAutomator support. We will build this inside of Selendroid since it requires an instrumentation context.|3/2016?|TBD|
-|iOS 9.3 support|Appium should support iOS 9.3 / Xcode 7.3|2/2016|1.6?||
+|[Android 7.0 Support](https://github.com/appium/appium/issues/7156)|Support Android 7 (Nougat)|11/2016|1.6.1|
+|[New Appium GUIs](https://github.com/appium/appium/issues/7167)|The current Appium GUIs (Appium.app and Appium.exe) have a number of issues. They aren't maintained by the core Appium team. They're written in Objective-C and C# respectively: two languages, and specifically, two languages other than Appium's core language. Because of this they lag behind the Appium server and are often broken. However, users love them primarily because of the Inspector feature (the thing that lets them graphically navigate their app), so we have to field a ton of complaints about these projects. There's an opportunity to start over. With [Electron](http://electron.atom.io/), we'd be able to take the new version of Appium we're working on and embed it directly inside a Node-based GUI app written using the languages and technologies the core team is experienced with. We'd have one codebase and could distribute the app on Mac, Windows, and Linux. The GUIs would become an official part of Appium's release cycle so they wouldn't be broken.|Q1 2017|N/A|
 
 ## Upcoming Projects (in rough order of priority)
 
 | Project | Description |
 |---------|-------------|
-|Apple Watch support|Appium should support Apple Watch apps via the Watch simulator|
-|Onboarding Overhaul|The current Appium docs leave a lot to be desired. The format is confusing (it would be better for API docs), the content is outdated, and many things are still undocumented. This project would go back to the drawing board in all of these areas and put together something genuinely helpful for the community, which hopefully reduces the kind of support issues we're currently flooded by.|
-|New Appium GUIs|The current Appium GUIs (Appium.app and Appium.exe) have a number of issues. They aren't maintained by the core Appium team. They're written in Objective-C and C# respectively: two languages, and specifically, two languages other than Appium's core language. Because of this they lag behind the Appium server and are often broken. However, users love them primarily because of the Inspector feature (the thing that lets them graphically navigate their app), so we have to field a ton of complaints about these projects. There's an opportunity to start over. With [Electron](http://electron.atom.io/), we'd be able to take the new version of Appium we're working on and embed it directly inside a Node-based GUI app written using the languages and technologies the core team is experienced with. We'd have one codebase and could distribute the app on Mac, Windows, and Linux. The GUIs would become an official part of Appium's release cycle so they wouldn't be broken.|
-|Unity3d backend POC|This is a research project to determine whether we can add some kind of support for 3d game automation, probably based on the Unity3d game development platform.|
-|Dynamic Test App|Our current test applications (the ones used to test Appium's iOS and Android support) are not ideal. We use too many of them and the ones we use have a random hodgepodge of app SDK features, sometimes not enough to sufficiently test automation support. Using [Titanium](https://github.com/appcelerator/titanium_mobile), we can develop an app that allows us to inject whatever native code we need, as we need it. The app thus changes itself test-by-test to have whatever UI features we need for that particular test. It gives us much more fine-grained control over what we're testing. The app code would also be cross-platform and written in JS, which would make it easier for the core team to write and maintain.|
+|[Android 7.1.1 Support](https://github.com/appium/appium/issues/7165)|Google has released Android 7.1.1 (API Level 25). Ensure it works with UiAutomator 1/2|
+|[Appium CI + Metrics Improvements](https://github.com/appium/appium/issues/7168)|We have CI servers running via Cloudbees that we don't understand and which break. Let's document and own them so they work reliably. Also, let's implement gathering various metrics about driver performance so we can track this over time and ensure we're not releasing a driver which has decreased in performance or reliability.|
+|[Onboarding Overhaul](https://github.com/appium/appium/issues/7169)|The current Appium docs leave a lot to be desired. The format is confusing (it would be better for API docs), the content is outdated, and many things are still undocumented. This project would go back to the drawing board in all of these areas and put together something genuinely helpful for the community, which hopefully reduces the kind of support issues we're currently flooded by.|
+|[Appium Client Library Updates](https://github.com/appium/appium/issues/7170)|It's been too long since we ensured that Appium's client libraries were up to date with the server|
+|[Sample Code Overhaul](https://github.com/appium/appium/issues/7171)|Our sample code repo has grown tangled and broken. Let's make a new one with minimal examples which are the same across every language, and actually maintain the repo so as not to let it become overgrown.|
+|[Test App Overhaul](https://github.com/appium/appium/issues/7172)|Our current test applications (the ones used to test Appium's iOS and Android support) are not ideal. We use too many of them and the ones we use have a random hodgepodge of app SDK features, sometimes not enough to sufficiently test automation support. It'd be great to find a way to ensure our test app(s) have all the features we need to test, and keep in sync with our requirements.|
+|[iOS Test Startup Time Improvement](https://github.com/appium/appium/issues/7173)|iOS startup times have gotten progressively longer with each iOS release. In part this is Apple's fault and there's not anything we can do about it. But we should investigate and see if we can be more efficient in how we start, especially given that we can now focus on XCUITest and leave Instruments behind|
+|[Appium Dearchitecture](https://github.com/appium/appium/issues/7174)|OK, we went a bit overboard in Appium 1.5 by exploding Appium into 40+ repos and NPM packages. Let's think a little more critically about it and consolidate into the minimal number of repos/packages that make sense for our code and community patterns.|
+|[Appium 2.0](https://github.com/appium/appium/issues/7175)|Appium, rather than bundling all the separate drivers by default, becomes a driver management interface (in addition to continuing to play the role of automation frontend server). Appium gets a set of CLI tools for users to pick and choose which drivers and versions of drivers they want to use via Appium|
 
-## Projects Under Consideration (unprioritized)
+## Projects Under Consideration (unplanned and unprioritized)
 
 | Project | Description |
 |---------|-------------|
 |Windows Phone Support|There has been some work done on automating Windows Phone apps. We could take this all the way to integration with Appium in the form of a WindowsDriver.|
+|Apple Watch support|Appium should support Apple Watch apps via the Watch simulator|
+|Unity3d backend POC|This is a research project to determine whether we can add some kind of support for 3d game automation, probably based on the Unity3d game development platform.|
 
 ## Completed Roadmap Projects
 
 | Project | Description | Completed | Appium Release | Notes |
 |---------|-------------|-----------|----------------|-------|
+|[iOS 10.2 Support](https://github.com/appium/appium/issues/7166)|Support iOS 10.2|11/2016|1.6.1||
+|[iOS 10.1 Support](https://github.com/appium/appium/issues/7105)|Support iOS 10.1|11/2016|1.6.1||
+|UiAutomator2 integration|Google has released [UiAutomator 2](http://developer.android.com/reference/android/support/test/uiautomator/package-summary.html), and it promises to fix some issues and limitations with the previous UiAutomator support. We will build this inside of Selendroid since it requires an instrumentation context.|10/2016?|1.6.0|
+|XCUITest integration / iOS 10 support|Instruments + UIAutomation has been working well for many Appium users, but requires crazy workarounds to deal with bugs which remain unfixed on the Apple side. Also, UIAutomation has been removed in favor of XCUITest for iOS 10+. This new backend would exist alongside the UIAutomation backend.|10/2016|1.6.0||
+|iOS 9.3 support|Appium should support iOS 9.3 / Xcode 7.3|3/2016|1.5.1||
+|[Architecture Overhaul](https://github.com/appium/appium/issues/5169)|Appium's architecture has grown unwieldy enough that adding new features and preventing regressions has become difficult. A rearchitecture is in order to solve these issues as well as migrate the codebase to a form of JS much easier to work in and understand.|2/2015|1.5.0||
 |iOS 9.2 support|Appium should support iOS 9.2 / Xcode 7.2|11/2015|1.4.14||
 |iOS 9.1 support|Appium should support iOS 9.1 / Xcode 7.1|10/2015|1.4.12||
 |iOS 9.0 support|Appium should support iOS 9.0 / Xcode 7.0|10/2015|1.4.11||

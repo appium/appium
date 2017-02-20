@@ -1,3 +1,292 @@
+CHANGES IN VERSION 1.6.4 Beta (from 1.6.3)
+===================================
+
+**Note:** This is a **_BETA_** release. Please direct any issues to the [Appium
+issue tracker](https://github.com/appium/appium/issues) and provide as much
+information as possible.
+
+#### General
+* Fixed `UnhandledPromiseRejection` errors when running Appium with Node version
+  7
+* Better indicate missing necessary programs to users
+* Fix session creation logging
+* Fix server shutdown on `SIGINT` and `SIGTERM` signals
+* Ensure that all requests have `application/json` content-type
+
+#### iOS
+* Fix issues with error handling in Safari/Webview handling
+* Increase simulator launch timeout for iOS 10+
+* Better handling of page selection in Safari
+* Fix memory usage issues when device logs get large
+
+#### iOS - XCUITest
+* Changed the way the Appium checks that WebDriverAgent is running on the device,
+  so that rather than searching the logs, the device is pinged until it is
+  ready.
+  - Removed `realDeviceLogger` capability, since we no longer check the logs
+* Add `useNewWDA` capability, which forces uninstall of the WDA app from the
+  device before each session
+* Add `wdaLaunchTimeout` capability, which specified the time, in `ms`, to wait
+  for WDA to be loaded and launched on the device
+* Allow for the auto-generation of the Xcode config file used to configurable
+  WDA before launch. This includes _two_ new desired capabilities
+  - `xcodeOrgId` - the Apple developer team identifier string
+  - `xcodeSigningId` - a string representing a signing certificate, defaulting to
+    "iPhone Developer"
+* Allow for automatic changing of bundle id for WDA in cases where a
+  provisioning profile cannot be made for default bundle
+  - add `updatedWDABundleId` capability to specify bundle id for which there is
+    a valid provisioning profile
+* Speed up setting the value of text fields
+* Add `wdaConnectionTimeout` to control how long the server waits for WDA to
+  allow connections
+* Fix handling of local port on real devices
+* Speed up Safari interactions
+* Fix session deletion to ensure that clean up happens
+* Add `mobile: swipe` execute method
+* Ensure that scrolling through `mobile: scroll` works in web context
+
+#### Android
+* Default installation to ChromeDriver 2.26
+* Add device manufacturer, model, and screen size to session details
+* Fix bug in checking avd status on some systems
+* Allow wildcards in `appWaitActivity` capability
+
+#### Android - Selendroid
+* Fix handling of host binary configuration for more precise installation options
+
+
+CHANGES IN VERSION 1.6.3 (from 1.6.2)
+===================================
+
+_This is another emergency release due to an issue with the NPM shrinkwrap_
+
+#### iOS
+
+* Fix issue where we might try and uninstall an ssl cert from a real device
+  where this isn't sensible
+* Fix another issue with acceptSslCerts where it might potentially miss the
+  correct sim UDID
+
+#### iOS - XCUITest
+* Upgrade version of WebDriverAgent used. Includes following updates:
+    * Improve xpath query performance
+    * Verify predicates
+    * Fix crash for some xpath selectors
+* Decorate proxied getSession response with Appium's capabilities (fixes
+  issues with clients that call getSession to determine server capabilities
+  and are confused by WDA's non-standard response) ([#7480](https://github.com/appium/appium/issues/7480))
+* Fix issue with starting XCUITests on a real device, due to changes in WDA
+  that invalidated our startup detection logic. ([#7313](https://github.com/appium/appium/issues/7313))
+* Allow connecting to an already-running WebDriverAgent through the
+  `webDriverAgentUrl` capability, rather than starting our own
+
+#### Android
+* Fix bug where we would attempt to get target SDK version from manifests
+  even when they might not include it. ([#7353](https://github.com/appium/appium/issues/7353))
+* Actually pass the `acceptSslCerts` capability to the underlying automation
+  so that it can have an effect ([#7326](https://github.com/appium/appium/issues/7326))
+* Updated permission granting logic to speed up permission granting by doing
+  it in bulk rather than one at a time ([#7493](https://github.com/appium/appium/issues/7493))
+* Hide the new permission granting logic behind an `autoGrantPermissions`
+  capability which doesn't attempt to grant permissions unless it's `true`
+  ([#7497](https://github.com/appium/appium/issues/7497))
+
+#### Android - Uiautomator2
+
+* Add ability to verify TOAST messages (these can't be interacted with, only
+  text retrieval allowed)
+
+#### Windows
+* _Actually_ upgrade WinAppDriver to 0.7 ([#7445](https://github.com/appium/appium/issues/7445)). Includes following updates:
+    * Click on arbitrary elements
+    * Support for sendKeys modifiers
+    * Various bugfixes
+    * Added `GET /orientation`
+    * Added support for WPF apps
+
+
+CHANGES IN VERSION 1.6.2 (from 1.6.1)
+===================================
+
+_This is a small, mostly-emergency release because we realized we omitted
+XCUITest upgrades via WebDriverAgent that we had mistakenly presumed were part
+of 1.6.1._
+
+#### iOS - XCUITest
+* Upgrade version of WebDriverAgent used. Includes following updates:
+    * Support for setting values on sliders
+    * Fix tapping in various orientations
+    * Allow tapping on arbitrary coordinates
+    * Support for pinch gestures
+    * Make `clear` faster
+    * Improve xpath query performance
+* Add `preventWDAAttachments` capability to help with XCUITest speed and disk usage
+
+#### Android - UiAutomator2
+* Code refactoring to pave the way for some UiAutomator2 wifi automation work
+* Find an unused system port automatically to avoid port clashes
+
+#### Windows
+* Upgrade WinAppDriver to 0.7. Includes following updates:
+    * Click on arbitrary elements
+    * Support for sendKeys modifiers
+    * Various bugfixes
+    * Added `GET /orientation`
+    * Added support for WPF apps
+
+
+CHANGES IN VERSION 1.6.1 (from 1.6.0)
+===================================
+
+Appium 1.6.1 is the first release since bringing Appium into the [JS Foundation](https://js.foundation/)
+(see [press release](https://js.foundation/announcements/2016/10/17/Linux-Foundation-Unites-JavaScript-Community-Open-Web-Development/)).
+
+Much of the development energy has been spent on fixing issues that have come up
+from the newly-integrated XCUITest and UI Automator 2 vendor-provided test
+backends.
+
+#### General
+* Add `clearSystemFiles` desired capability, to specify whether to delete any generated
+files at the end of a session (see iOS and Android entries for particulars)
+* Better handle signals for stopping server
+* Fix operation of Selenium 3 Grid
+* Log more of the proxied requests and responses, for better debugging
+* Better handle source mapping for IDE support
+* Move `appium-doctor` into globally-installed utility, not bundled with server
+* Move `appium-logger` into `appium-base-driver`
+* Better handle downloading of zip files which may not have a `.zip` extension (like `.apk`)
+
+
+##### iOS
+* Add support for iOS 10.1
+* Add support for iOS 10.2 Beta 1
+* Add `clearSystemFiles` desired capability to specify whether to Core Simulator
+files, and Instruments (for iOS Driver) or XCUITest (for XCUITest Driver) generated files
+* Ensure correct files are tested when checking for Simulator newness
+* Map `iPad Simulator` `deviceName` to iPad Retina instead of discontinued iPad 2
+* Gracefully return when Webkit Remote Debugger doesn't return on a real device
+* Better log errors from xcode handling
+* Add `customSSLCert` capability to pre-authorize a specific SSL cert in the iOS trust store
+* During reset, don't try to uninstall an app from a real device if it's not installed
+
+
+##### iOS - XCUITest specific
+* clean up logging to remove confusing "Waiting..." lines
+* Fix issue in which switching to NATIVE_APP would still proxy find commands to Remote debugger
+* Fix handling of Selenium Grids
+* Correctly handle long press so duration is respected
+* Add `tapWithShortPressDuration` desired capability to specify a length for tapping,
+if the regular tap is too long for the app under test
+* Add support for scrolling through Touch Actions
+* Make sure keyboard is available when keys are sent to Text Fields
+* Add support for Zoom via Touch Action API (Pinch still not supported by Apple)
+* Fix implementation of double tap
+* Improvements in startup flow for real devices
+* Allow gestures on coordinates, not just elements
+* Add `scaleFactor` capability to direct Appium to set the simulator scale
+
+
+##### Android
+* Use ChromeDriver version 2.25
+* Correctly handle `--suppress-adb-kill-server` command line argument
+* Pass actual failure back when session fail and deleting the session also fails
+* Add `clearSystemFiles` desired capability to specify whether to delete temporary
+copies of the application under test at the end of the session
+* Fix issue where finding UI Automator process id would throw an error
+* Add `chromeAndroidPackage` capability which will be passed to `chromeOptions`
+* Add APIs for gathering various kinds of performance data
+* Ensure we don't try to stop app if `dontStopAppOnReset` is in force
+* Fix issue where we tried to determine the bounds of a non-existent element
+
+
+##### Android - UiAutomator2
+* Fix handling of element attributes
+* Better handle element finding
+* Toast message verification support
+* Ensure that there is a <hierarchy> root tag for xml/xpath source
+* Implement /rotation endpoint (supports 4 rotations)
+
+
+CHANGES IN VERSION 1.6.0 (from 1.5.3)
+===================================
+
+This release of Appium is a significant milestone, introducing support for two new platforms:
+* [Windows](https://www.microsoft.com/en-us/windows) desktop applications (see the [usage documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/windows-app-testing.md)).
+* [You.i TV](http://www.youi.tv/) (see the [driver documentation](https://github.com/YOU-i-Labs/appium-youiengine-driver#appium-youi-engine-driver)).
+
+There is also support for two new frameworks for automating iOS and Android:
+* XCUITest support for automating iOS 9.3 and 10 (see [migration docs](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/migrating-to-xcuitest.md) and [driver docs](https://github.com/appium/appium-xcuitest-driver#appium-xcuitest-driver)).
+* UI Automator 2 support for enhanced automation of Android devices (see [wiki](https://github.com/appium/appium-uiautomator2-server/wiki)).
+
+#### General
+- Require Node 4 or above (**possible breaking change**)
+- Add `automationName` capability entries for `XCUITest`, `UIAutomator2`, and `youiengine`
+- Add `platformName` capability entry for `Windows`
+
+#### iOS
+- Add  support for Xcode 8 and iOS 10 (using `automationName` of `XCUITest`). For information on using this driver, see the [driver documentation](https://github.com/appium/appium-xcuitest-driver#external-dependencies)
+- Make sure device name gets properly translated into actual device name
+- Fix case where orientation would get lost
+- Fix Safari page change logic to actually catch when a page changes
+- Try harder to kill Instruments if the normal way does not work, to avoid hanging processes
+- Move `authorize-ios` into global package
+
+#### Android
+- Add `androidInstallTimeout` desired capability, to customize the timeout when installing an app
+- Add `androidScreenshotPath` desired capability, to set the path in which screenshot files are saved on the device
+- Add `appWaitDuration` desired capability, to customize how long to wait for an application
+- Fix optional intent arguments to allow for hyphens
+- Wait for apps to launch before proceeding
+- Switch to clearing text fields using adb, to improve reliability and speed
+- Add ability to detect screen orientation
+- Make sure Selendroid mode doesn't lose connection through adb when network changes
+- Make sure the release action in a touch action chain doesn't happen in the wrong place
+- Make application install more reliable
+- Fix screenshot on Windows
+- Make Chromedriver connect on a random port if none specified
+- Add `reboot` server argument, to specify that the avd ought to be cleaned and rebooted
+
+
+CHANGES IN VERSION 1.6.0 beta 1 (from 1.5.3)
+===================================
+
+This release of Appium marks the beginning of support for two brand new platforms:
+* [Windows](https://www.microsoft.com/en-us/windows) desktop applications (see the [usage documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/windows-app-testing.md))
+* [You.i TV](http://www.youi.tv/) (see the [driver documentation](https://github.com/YOU-i-Labs/appium-youiengine-driver#appium-youi-engine-driver)).
+
+Further, since Apple removed the Instruments automation functionality in Xcode 8,
+this release of Appium has preliminary support for XCUITest, allowing for the automation
+of applications in iOS 9.3 and 10.
+
+#### General
+- Require Node 4 or above (**possible breaking change**)
+- Add `automationName` entries for `XCUITest`, and `youiengine`
+- Add `platformName` entry for `Windows`
+
+#### iOS
+- Add preliminary support for Xcode 8 and iOS 10 (using `automationName` of `XCUITest`). For information on using this driver, see the [driver documentation](https://github.com/appium/appium-xcuitest-driver#external-dependencies)
+- Make sure device name gets properly translated into actual device name
+- Fix case where orientation would get lost
+- Fix Safari page change logic to actually catch when a page changes
+- Try harder to kill Instruments if the normal way does not work, to avoid hanging processes
+
+#### Android
+- Add `androidInstallTimeout` desired capability, to customize the timeout when installing an app
+- Add `androidScreenshotPath` desired capability, to set the path in which screenshot files are saved on the device
+- Add `appWaitDuration` desired capability, to customize how long to wait for an application
+- Fix optional intent arguments to allow for hyphens
+- Wait for apps to launch before proceeding
+- Switch to clearing text fields using adb, to improve reliability and speed
+- Add ability to detect screen orientation
+- Make sure Selendroid mode doesn't lose connection through adb when network changes
+- Make sure the release action in a touch action chain doesn't happen in the wrong place
+- Make application install more reliable
+- Fix screenshot on Windows
+- Make Chromedriver connect on a random port if none specified
+
+
+
 CHANGES IN VERSION 1.5.3 (from 1.5.2)
 ===================================
 

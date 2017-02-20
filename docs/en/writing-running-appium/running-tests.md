@@ -19,6 +19,10 @@ unpack it for you. Nice if you're not using Appium locally.
 Nothing in particular needs to be done to run your .apk using Appium. If you
 want to zip it up, you can.
 
+### Preparing your app for test (Windows)
+
+Nothing in particular needs to be done to run your test.
+
 ### Running your test app with Appium (iOS)
 
 The best way to see what to do currently is to look at the example tests:
@@ -268,3 +272,9 @@ session. One of the downsides to using Selendroid is that its API differs
 sometimes significantly with Appium's. Therefore we recommend you thoroughly
 read [Selendroid's documentation](http://selendroid.io/native.html) before
 writing your scripts for older devices or hybrid apps.
+
+### Running your test app with Appium (Windows)
+
+Simply ensure that Appium is listening, and run your test with your test runner of choice.
+
+See our [samples](https://github.com/Microsoft/WinAppDriver/tree/master/Samples) for details.

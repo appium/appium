@@ -1,5 +1,6 @@
 import path from 'path';
 import wd from 'wd';
+import B from 'bluebird';
 
 const TEST_HOST = 'localhost';
 const TEST_PORT = 4723;
@@ -18,7 +19,7 @@ function initSession (caps) {
   after(async () => {
     await driver.quit();
   });
-  return new Promise((_resolve) => {
+  return new B((_resolve) => {
     resolve = _resolve;
   });
 }

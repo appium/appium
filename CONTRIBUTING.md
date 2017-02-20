@@ -60,11 +60,4 @@ are any questions that you can answer.
 ### Submit bug reports or feature requests
 
 Just use the GitHub issue tracker to submit your bug reports and feature
-requests. If you are submitting a bug report, please remember to include:
-
-* Your complete Appium log (as a [gist](https://gist.github.com)---do *NOT* paste the whole thing into the issue description). This will tell us the exact version of Appium and the exact capabilities you are using, so you don't have to.
-* Your relevant client code, if you are able to share it (again a gist is most useful).
-* Any other information helpful in trying to reproduce your issue.
-
-In general, the less work we have to do to reproduce a bug, the faster we will
-fix it. So please include as much information as possible up front!
+requests. If you are submitting a bug report, please follow the [issue template](https://github.com/appium/appium/issues/new).

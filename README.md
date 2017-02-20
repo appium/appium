@@ -10,14 +10,14 @@
 
 [![Build Status](https://team-appium.ci.cloudbees.com/job/Appium/badge/icon)](https://team-appium.ci.cloudbees.com/job/Appium/)
 
-Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS, FirefoxOS), emulators (Android), and real devices (iOS, Android, FirefoxOS).
+Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS), emulators (Android), and real devices (iOS, Android, Windows).
 
 
 ### Supported Platforms
 
 * iOS
 * Android
-* FirefoxOS
+* Windows
 
 See the [platform support doc](/docs/en/appium-setup/platform-support.md) for more detailed information.
 
@@ -77,9 +77,10 @@ You also need to download the Appium client for your language so you can write t
   * [osx](/docs/en/appium-setup/running-on-osx.md)
   * [windows](/docs/en/appium-setup/running-on-windows.md)
 
-#### FirefoxOS Requirements
+#### Windows Requirements
 
-* [Firefox OS Simulator](https://developer.mozilla.org/en/docs/Tools/Firefox_OS_Simulator)
+* Windows 10
+* [Documentation](/docs/en/appium-setup/running-on-windows.md)
 
 ### Quick Start
 
@@ -93,7 +94,14 @@ $ npm install -g appium
 $ appium
 ```
 
-#### Using the App
+As we said above, you may want to run `appium-doctor` to ensure your system is set up properly:
+
+```
+$ npm install -g appium-doctor
+$ appium-doctor
+```
+
+#### Using the Appium Desktop App
 
 * [Download the Appium app](https://bitbucket.org/appium/appium.app/downloads/)
 * Run it!
@@ -101,6 +109,8 @@ $ appium
 ### Writing Tests for Appium
 
 The main guide for getting started writing and running tests is [the running tests](/docs/en/writing-running-appium/running-tests.md) doc, which includes explanations for iOS, Android, and Android older devices. If you're interested in testing on physical hardware, you might be interested in our [real devices guide](/docs/en/appium-setup/real-devices.md).
+
+(*Note*: If you're automating iOS 10+, be sure to check out our [XCUITest Migration Guide](/docs/en/advanced-concepts/migrating-to-xcuitest.md) since Apple's automation support has changed significantly since iOS 10, with corresponding changes in Appium).
 
 Essentially, we support a subset of the [Selenium WebDriver JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html), and extend it so that you can specify mobile-targeted [desired capabilities](/docs/en/writing-running-appium/caps.md) to run your test through Appium.
 
@@ -118,15 +128,14 @@ For the full list of Appium doc pages, visit [this directory](/docs/en/).
 Appium drives various native automation frameworks and provides an API based on
 Selenium's [WebDriver JSON wire protocol](https://w3c.github.io/webdriver/webdriver-spec.html).
 
-Appium drives Apple's UIAutomation library for iOS support, which is based on
-[Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
+For new iOS versions (9.3 and up), Appium drives Apple's XCUITest library. Our support for XCUITest utilizes Facebook's [WebDriverAgent](https://github.com/facebook/webdriveragent) project.
+
+For older iOS versions (9.3 and below), Appium drives Apple's UIAutomation library, using a strategy which is based on [Dan Cuellar's](http://github.com/penguinho) work on iOS Auto.
 
 Android support uses the UiAutomator framework for newer platforms and
 [Selendroid](http://github.com/DominikDary/selendroid) for older Android platforms.
 
-FirefoxOS support leverages [Marionette](https://developer.mozilla.org/en-US/docs/Marionette),
-an automation driver that is compatible with WebDriver and is used to automate
-Gecko-based platforms.
+Windows support uses Microsoft's [WinAppDriver](https://github.com/Microsoft/WinAppDriver)
 
 ### Contributing
 
@@ -137,11 +146,12 @@ for instructions on how to build, test and run Appium from source.
 
 Interested in where Appium is heading in the future? Check out the [Roadmap](ROADMAP.md)
 
-### Project Credits & Inspiration
+### Project History, Credits & Inspiration
 
-[Credits](/docs/en/contributing-to-appium/credits.md)
+* [History](http://appium.io/history)
+* [Credits](/docs/en/contributing-to-appium/credits.md)
 
-### Mailing List
+### User Forums
 
 Announcements and debates often take place on the [Discussion Group](https://discuss.appium.io), be sure to sign up!
 

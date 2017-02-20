@@ -21,6 +21,22 @@ can find information about this in the [Apple documentation](https://developer.a
 Appium will attempt to install your app using Fruitstrap, but it is often easier
 to pre-install your app using Xcode to ensure there are no problems (see the [iOS deploy](ios-deploy.md) doc for more information).
 
+### Testing using Xcode 8 (including iOS 10) with XCUITest
+
+This functionality currently depends on logging based on `idevicesyslog`, and
+port forwarding based on `iProxy`, both of which are part of `libimobiledevice`.
+Install it with [Homebrew](http://brew.sh/),
+
+```
+brew install libimobiledevice
+```
+
+Alternatively, logging can be done using `deviceconsole`, which is available
+[here](https://github.com/rpetrich/deviceconsole). To choose between them, use
+the desired capability `realDeviceLogger`, passing in the path to the logging
+program.
+
+
 ### Running your tests with Appium
 
 Once your device and app are configured, you can run tests on that device by

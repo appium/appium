@@ -29,6 +29,7 @@
 |`appPackage`| Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
 |`appWaitActivity`| Activity name for the Android activity you want to wait for|`SplashActivity`|
 |`appWaitPackage`| Java package of the Android app you want to wait for|`com.example.android.myApp`, `com.android.settings`|
+|`appWaitDuration`| Timeout in milliseconds used to wait for the appWaitActivity to launch (default `20000`)| `30000`|
 |`deviceReadyTimeout`| Timeout in seconds while waiting for device to become ready|`5`|
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
 |`enablePerformanceLogging`| (Chrome and webview only) Enable Chromedriver's performance logging (default `false`)| `true`, `false`|
@@ -61,6 +62,7 @@
 |`recreateChromeDriverSessions`| Kill ChromeDriver session when moving to a non-ChromeDriver webview. Defaults to `false` | `true` or `false`|
 |`nativeWebScreenshot`| In a web context, use native (adb) method for taking a screenshot, rather than proxying to ChromeDriver. Defaults to `false` | `true` or `false`|
 |`androidScreenshotPath`| The name of the directory on the device in which the screenshot will be put. Defaults to `/data/local/tmp` |e.g. `/sdcard/screenshots/`|
+|`autoGrantPermissions`|Have Appium automatically determine which permissions your app requires and grant them to the app on install. Defaults to `false`|`true` or `false`|
 
 ### iOS Only
 
@@ -74,8 +76,8 @@
 |`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|
 |`locationServicesEnabled`| (Sim-only) Force location services to be either on or off. Default is to keep current sim setting.|`true` or `false`|
 |`locationServicesAuthorized`| (Sim-only) Set location services to be authorized or not authorized for app via plist, so that location services alert doesn't pop up. Default is to keep current sim setting. Note that if you use this setting you MUST also use the `bundleId` capability to send in your app's bundle ID.|`true` or `false`|
-|`autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is false.|`true` or `false`|
-|`autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is false.|`true` or `false`|
+|`autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is false. Does not work on `XCUITest`-based tests.|`true` or `false`|
+|`autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is false. Does not work on `XCUITest`-based tests.|`true` or `false`|
 |`nativeInstrumentsLib`| Use native intruments lib (ie disable instruments-without-delay).|`true` or `false`|
 |`nativeWebTap`| (Sim-only) Enable "real", non-javascript-based web taps in Safari. Default: `false`. Warning: depending on viewport size/ratio this might not accurately tap an element|`true` or `false`|
 |`safariInitialUrl`| (Sim-only) (>= 8.1) Initial safari url, default is a local welcome page | e.g. `https://www.github.com` |
@@ -92,6 +94,27 @@
 |`waitForAppScript`| The ios automation script used to determined if the app has been launched, by default the system wait for the page source not to be empty. The result must be a boolean |e.g. `true;`, `target.elements().length > 0;`, `$.delay(5000); true;` |
 |`webviewConnectRetries`| Number of times to send connection message to remote debugger, to get webview. Default: `8` |e.g., `12`|
 |`appName`| The display name of the application under test. Used to automate backgrounding the app in iOS 9+.|e.g., `UICatalog`|
+|`customSSLCert`|(Sim/Emu-only) Add an SSL certificate to simulator. | e.g. <br/>`-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...`<br/>`-----END CERTIFICATE-----`|
+
+
+### iOS Only, using XCUITest
+
+<expand_table>
+
+|Capability|Description|Values|
+|----------|-----------|------|
+|`processArguments`|Process arguments and environment which will be sent to the WebDriverAgent server.|`{ args: ["a", "b", "c"] , env: { "a": "b", "c": "d" } }` or `'{"args": ["a", "b", "c"], "env": { "a": "b", "c": "d" }}'`|
+|`wdaLocalPort`|This value if specified, will be used to forward traffic from Mac host to real ios devices over USB. Default value is same as port number used by WDA on device.|e.g., `8100`|
+|`showXcodeLog`|Whether to display the output of the Xcode command used to run the tests. If this is `true`, there will be **lots** of extra logging at startup. Defaults to `false`|e.g., `true`|
+|`iosInstallPause`|Time in milliseconds to pause between installing the application and starting WebDriverAgent on the device. Used particularly for larger applications. Defaults to `0`|e.g., `8000`|
+|`xcodeConfigFile`|Full path to an optional Xcode configuration file that specifies the code signing identity and team for running the WebDriverAgent on the real device.|e.g., `/path/to/myconfig.xcconfig`|
+|`keychainPath`|Full path to the private development key exported from the system keychain. Used in conjunction with `keychainPassword` when testing on real devices.|e.g., `/path/to/MyPrivateKey.p12`|
+|`keychainPassword`|Password for unlocking keychain specified in `keychainPath`.|e.g., `super awesome password`|
+|`scaleFactor`|Simulator scale factor. This is useful to have if the default resolution of simulated device is greater than the actual display resolution. So you can scale the simulator to see the whole device screen without scrolling. |Acceptable values are: `'1.0', '0.75', '0.5', '0.33' and '0.25'`. The value should be a string.|
+|`preventWDAAttachments`|Sets read only permissons to Attachments subfolder of WebDriverAgent root inside Xcode's DerivedData. This is necessary to prevent XCTest framework from creating tons of unnecessary screenshots and logs, which are impossible to shutdown using programming interfaces provided by Apple.|Setting the capability to `true` will set Posix permissions of the folder to `555` and `false` will reset them back to `755`|
+|`webDriverAgentUrl`|If provided, Appium will connect to an existing WebDriverAgent instance at this URL instead of starting a new one.|e.g., `http://localhost:8100`|
+|`useNewWDA`|If `true`, forces uninstall of any existing WebDriverAgent app on device. This can provide stability in some situations. Defaults to `false`.|e.g., `true`|
+|`wdaLaunchTimeout`|Time, in ms, to wait for WebDriverAgewnt to be pingable. Defaults to 60000ms.|e.g., `30000`|
 
 ### You.i Engine Only
 
@@ -101,3 +124,13 @@
 |----|-----------|-------|
 |`youiEngineAppAddress`| The IP address of the device on which the app is running. Use `localhost` for simulator.
 Use device’s IP address for a real device. |e.g. `localhost` or `192.168.1.203`|
+
+### WinAppDriver Only
+
+<expand_table>
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`platformName`| Which platform the test is being done on |e.g. `Windows`|
+|`deviceName`| The name of the device being tested on | e.g. `WindowsPC`|
+|`app`| appID of the windows app for testing or the path to the .exe file. See [this page](/docs/en/writing-running-appium/windows-app-testing.md) for details on how to find the appID | e.g. `c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App`|

@@ -1,16 +1,9 @@
 ## Introduction to Appium
 
-Appium is an open-source tool for automating native,
-mobile web, and hybrid applications on iOS and Android platforms.
-**Native apps** are those written using the iOS or Android SDKs. **Mobile web apps** are web apps accessed using a mobile browser (Appium supports
-Safari on iOS and Chrome or the built-in 'Browser' app on Android). **Hybrid apps** have a
-wrapper around a "webview" -- a native control that enables interaction with
-web content. Projects like [Phonegap](http://phonegap.com/),
-make it easy to build apps using web technologies that are then bundled into
-a native wrapper, creating a hybrid app.
+Appium is an open-source tool for automating native, mobile web, and hybrid applications on iOS mobile, Android mobile, and Windows desktop platforms.  **Native apps** are those written using the iOS, Android, or Windows SDKs.  **Mobile web apps** are web apps accessed using a mobile browser (Appium supports Safari on iOS and Chrome or the built-in 'Browser' app on Android).  **Hybrid apps** have a wrapper around a "webview" -- a native control that enables interaction with web content. Projects like [Phonegap](http://phonegap.com/), make it easy to build apps using web technologies that are then bundled into a native wrapper, creating a hybrid app.
 
 Importantly, Appium is "cross-platform": it allows you to write tests against
-multiple platforms (iOS, Android), using the same API. This enables code reuse between iOS and Android testsuites.
+multiple platforms (iOS, Android, Windows), using the same API. This enables code reuse between iOS, Android, and Windows testsuites.
 
 For specific information about what it means for Appium to "support" its
 platforms, and automation modalities, please see the [platform support doc](/docs/en/appium-setup/platform-support.md).
@@ -31,9 +24,11 @@ meet requirement #1 by using vendor-provided automation frameworks under the
 hood. That way, we don't need to compile in any Appium-specific or
 third-party code or frameworks to your app. This means **you're testing the same app you're shipping**. The vendor-provided frameworks we use are:
 
-* iOS: Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+* iOS 9.3 and above: Apple's [XCUITest](https://developer.apple.com/reference/xctest)
+* iOS 9.3 and lower: Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * Android 4.2+: Google's [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation support is provided by bundling a separate project, [Selendroid](http://selendroid.io))
+* Windows: Microsoft's [WinAppDriver](http://github.com/microsoft/winappdriver)
 
 We meet requirement #2 by wrapping the vendor-provided frameworks in one API,
 the [WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API.
@@ -83,7 +78,7 @@ a map or hash) sent to the Appium server to tell the server what kind of
 automation session we're interested in starting up. There are also various
 capabilities which can modify the behavior of the server during automation.
 For example, we might set the `platformName` capability to `iOS` to tell
-Appium that we want an iOS session, rather than an Android one. Or we might
+Appium that we want an iOS session, rather than an Android or Windows one. Or we might
 set the `safariAllowPopups` capability to `true` in order to ensure that,
 during a Safari automation session, we're allowed to use JavaScript to open
 up new windows. See the [capabilities doc](/docs/en/writing-running-appium/caps.md) for the complete list of capabilities available for Appium.

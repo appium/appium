@@ -8,8 +8,10 @@ import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
+import { IosDriver } from 'appium-ios-driver';
+import { sleep } from 'asyncbox';
 
-
+chai.should();
 chai.use(chaiAsPromised);
 
 const BASE_CAPS = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
@@ -171,6 +173,42 @@ describe('AppiumDriver', () => {
     });
     describe('sessionExists', () => {
     });
+    describe('attachUnexpectedShutdownHandler', () => {
+      let appium
+        , mockFakeDriver;
+      beforeEach(() => {
+        [appium, mockFakeDriver] = getDriverAndFakeDriver();
+      });
+      afterEach(() => {
+        mockFakeDriver.restore();
+        appium.args.defaultCapabilities = {};
+      });
+
+      it('should remove session if inner driver unexpectedly exits with an error', async () => {
+        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        _.keys(appium.sessions).should.contain(sessionId);
+        appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error("Oops"));
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        _.keys(appium.sessions).should.not.contain(sessionId);
+      });
+      it('should remove session if inner driver unexpectedly exits with no error', async () => {
+        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        _.keys(appium.sessions).should.contain(sessionId);
+        appium.sessions[sessionId].unexpectedShutdownDeferred.resolve();
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        _.keys(appium.sessions).should.not.contain(sessionId);
+      });
+      it('should not remove session if inner driver cancels unexpected exit', async () => {
+        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        _.keys(appium.sessions).should.contain(sessionId);
+        appium.sessions[sessionId].onUnexpectedShutdown.cancel();
+        // let event loop spin so rejection is handled
+        await sleep(1);
+        _.keys(appium.sessions).should.contain(sessionId);
+      });
+    });
     describe('getDriverForCaps', () => {
       it('should not blow up if user does not provide platformName', () => {
         let appium = new AppiumDriver({});
@@ -183,6 +221,58 @@ describe('AppiumDriver', () => {
           automationName: 'XCUITest'
         });
         driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+      });
+      it('should get iosdriver for ios < 10', () => {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'iOS',
+          platformVersion: '8.0',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = '8.1';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = '9.4';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = '';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        caps.platformVersion = 'foo';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+
+        delete caps.platformVersion;
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(IosDriver);
+      });
+      it('should get xcuitestdriver for ios >= 10', () => {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'iOS',
+          platformVersion: '10',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+
+        caps.platformVersion = '10.0';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(XCUITestDriver);
+
+        caps.platformVersion = '10.1';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(XCUITestDriver);
+
+        caps.platformVersion = '12.14';
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
       });
     });

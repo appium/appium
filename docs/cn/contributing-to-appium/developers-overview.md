@@ -100,7 +100,7 @@ _FORCE_LOGS=1 <command> # 显示测试运行期间的模块日志输出
 ### 发布
 
 任何非Appium主包的发布流程都是非常简洁明了的（请注意：如果你想要发布它，你需要成为一个NPM的所有者。
-所有权由Appium提交着管理； 如果你对所有者有任何疑问，请联系@jlipps 或者 @imurchie）。
+所有权由Appium提交者管理； 如果你对所有者有任何疑问，请联系@jlipps 或者 @imurchie）。
 
 0. `rm -rf node_modules && npm install` 并运行测试以确保全新安装正常工作
 0. 根据[SemVer](http://semver.org/) 规则决定我们是否需要发布一个补丁（漏洞修复），微调（功能）或者是主要（迭代）(请参考 [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning).

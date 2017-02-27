@@ -25,8 +25,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-logger": "^2.0.0",
-    "appium-support": "^2.0.4",
+    "appium-support": "^2.5.0",
     "authorize-ios": "^1.0.3",
     "babel-runtime": "=5.8.24",
     "bluebird": "^2.10.2",

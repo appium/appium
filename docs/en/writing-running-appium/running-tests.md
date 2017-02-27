@@ -3,7 +3,7 @@
 ### Preparing your app for test (iOS)
 
 Test apps run on the simulator have to be compiled specifically for the
-simulator, for example by executing the following command in the Xcode project:
+simulator, for example by executing the following command in the Xcode project (you can use `xcodebuild -showsdks` to see the list of available SDKs):
 
     > xcodebuild -sdk iphonesimulator6.0
 

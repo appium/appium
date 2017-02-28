@@ -9,7 +9,7 @@
     - contains all available and supported CLI arguments
     - check for deprecation and mutual exclusion
 - put logging together
-  - mixture out of npmlog, winston and appium-logger
+  - mixture out of npmlog, winston and a custom logger
 - initiates AppiumDriver (extends Basedriver)
   - assigns iOS/Android/Selendroid/Fake driver to session
   - creates/deletes Appium session

@@ -2,15 +2,15 @@
 
 import { init as logsinkInit, clear as logsinkClear } from '../lib/logsink';
 import sinon from 'sinon';
-import { getLogger } from 'appium-logger';
+import { logger } from 'appium-support';
 
 
 // temporarily turn on logging to stdio, so we can catch and query
 let forceLogs = process.env._FORCE_LOGS;
 process.env._FORCE_LOGS = 1;
-let logger = getLogger('Appium');
+let log = logger.getLogger('Appium');
 
-describe('Logger', () => {
+describe('logging', () => {
   let stderrSpy;
   let stdoutSpy;
   beforeEach(() => {
@@ -31,9 +31,9 @@ describe('Logger', () => {
   const debugMsg = 'some debug';
 
   function doLogging () {
-    logger.error(errorMsg);
-    logger.warn(warnMsg);
-    logger.debug(debugMsg);
+    log.error(errorMsg);
+    log.warn(warnMsg);
+    log.debug(debugMsg);
   }
 
   it('should send error, info and debug when loglevel is debug', async () => {

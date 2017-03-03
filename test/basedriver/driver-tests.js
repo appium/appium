@@ -264,6 +264,76 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         });
       });
     });
+
+    describe('event timing framework', () => {
+      let beforeStartTime;
+      beforeEach(async () => {
+        beforeStartTime = Date.now();
+        d.shouldValidateCaps = false;
+        await d.executeCommand('createSession', [defaultCaps]);
+      });
+      describe('#eventHistory', () => {
+        it('should have an eventHistory property', () => {
+          should.exist(d.eventHistory);
+          should.exist(d.eventHistory.commands);
+        });
+
+        it('should have a session start timing after session start', () => {
+          let {newSessionRequested, newSessionStarted} = d.eventHistory;
+          newSessionRequested.should.have.length(1);
+          newSessionStarted.should.have.length(1);
+          newSessionRequested[0].should.be.a('number');
+          newSessionStarted[0].should.be.a('number');
+          (newSessionRequested[0] >= beforeStartTime).should.be.true;
+          (newSessionStarted[0] >= newSessionRequested[0]).should.be.true;
+        });
+
+        it('should include a commands list', async () => {
+          await d.executeCommand('getStatus', []);
+          d.eventHistory.commands.length.should.equal(2);
+          d.eventHistory.commands[1].cmd.should.equal('getStatus');
+          d.eventHistory.commands[1].startTime.should.be.a('number');
+          d.eventHistory.commands[1].endTime.should.be.a('number');
+        });
+      });
+      describe('#logEvent', () => {
+        it('should allow logging arbitrary events', () => {
+          d.logEvent('foo');
+          d.eventHistory.foo[0].should.be.a('number');
+          (d.eventHistory.foo[0] >= beforeStartTime).should.be.true;
+        });
+        it('should not allow reserved or oddly formed event names', () => {
+          (() => {
+            d.logEvent('commands');
+          }).should.throw();
+          (() => {
+            d.logEvent(1);
+          }).should.throw();
+          (() => {
+            d.logEvent({});
+          }).should.throw();
+        });
+      });
+      it('should allow logging the same event multiple times', () => {
+        d.logEvent('bar');
+        d.logEvent('bar');
+        d.eventHistory.bar.should.have.length(2);
+        d.eventHistory.bar[1].should.be.a('number');
+        (d.eventHistory.bar[1] >= d.eventHistory.bar[0]).should.be.true;
+      });
+      describe('getSession decoration', () => {
+        it('should decorate getSession response if opt-in cap is provided', async () => {
+          let res = await d.getSession();
+          should.not.exist(res.events);
+
+          d.caps.eventTimings = true;
+          res = await d.getSession();
+          should.exist(res.events);
+          should.exist(res.events.newSessionRequested);
+          res.events.newSessionRequested[0].should.be.a('number');
+        });
+      });
+    });
   });
 }
 

@@ -18,6 +18,32 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       await baseServer.close();
     });
 
+    function startSession (caps) {
+      return request({
+        url: 'http://localhost:8181/wd/hub/session',
+        method: 'POST',
+        json: {desiredCapabilities: caps, requiredCapabilities: {}},
+      });
+    }
+
+    function endSession (id) {
+      return request({
+        url: `http://localhost:8181/wd/hub/session/${id}`,
+        method: 'DELETE',
+        json: true,
+        simple: false
+      });
+    }
+
+    function getSession (id) {
+      return request({
+        url: `http://localhost:8181/wd/hub/session/${id}`,
+        method: 'GET',
+        json: true,
+        simple: false
+      });
+    }
+
     describe('session handling', () => {
       it('should create session and retrieve a session id, then delete it', async () => {
         let res = await request({
@@ -51,23 +77,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     });
 
     describe('command timeouts', () => {
-      function startSession (timeout) {
+      function startTimeoutSession (timeout) {
         let caps = _.clone(defaultCaps);
         caps.newCommandTimeout = timeout;
-        return request({
-          url: 'http://localhost:8181/wd/hub/session',
-          method: 'POST',
-          json: {desiredCapabilities: caps, requiredCapabilities: {}},
-        });
-      }
-
-      function endSession (id) {
-        return request({
-          url: `http://localhost:8181/wd/hub/session/${id}`,
-          method: 'DELETE',
-          json: true,
-          simple: false
-        });
+        return startSession(caps);
       }
 
       d.findElement = function () {
@@ -80,13 +93,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       }.bind(d);
 
       it('should set a default commandTimeout', async () => {
-        let newSession = await startSession();
+        let newSession = await startTimeoutSession();
         d.newCommandTimeoutMs.should.be.above(0);
         await endSession(newSession.sessionId);
       });
 
       it('should timeout on commands using commandTimeout cap', async () => {
-        let newSession = await startSession(0.25);
+        let newSession = await startTimeoutSession(0.25);
 
         await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
@@ -107,7 +120,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
 
       it('should not timeout with commandTimeout of false', async () => {
-        let newSession = await startSession(0.1);
+        let newSession = await startTimeoutSession(0.1);
         let start = Date.now();
         let res = await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/elements`,
@@ -121,7 +134,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
       it('should not timeout with commandTimeout of 0', async () => {
         d.newCommandTimeoutMs = 2;
-        let newSession = await startSession(0);
+        let newSession = await startTimeoutSession(0);
 
         await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
@@ -143,7 +156,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
 
       it('should not timeout if its just the command taking awhile', async () => {
-        let newSession = await startSession(0.25);
+        let newSession = await startTimeoutSession(0.25);
         await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
           method: 'POST',
@@ -164,7 +177,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
       it('should not have a timer running before or after a session', async () => {
         should.not.exist(d.noCommandTimer);
-        let newSession = await startSession(0.25);
+        let newSession = await startTimeoutSession(0.25);
         newSession.sessionId.should.equal(d.sessionId);
         should.exist(d.noCommandTimer);
         await endSession(newSession.sessionId);
@@ -209,6 +222,26 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         res.status.should.equal(13);
         res.value.message.should.contain('Crashytimes');
         await d.onUnexpectedShutdown.should.be.rejectedWith('Crashytimes');
+      });
+    });
+
+    describe('event timings', () => {
+      it('should not add timings if not using opt-in cap', async () => {
+        let session = await startSession(defaultCaps);
+        let res = await getSession(session.sessionId);
+        should.not.exist(res.events);
+        await endSession(session.sessionId);
+      });
+      it('should add start session timings', async () => {
+        let caps = Object.assign({}, defaultCaps, {eventTimings: true});
+        let session = await startSession(caps);
+        let res = (await getSession(session.sessionId)).value;
+        should.exist(res.events);
+        should.exist(res.events.newSessionRequested);
+        should.exist(res.events.newSessionStarted);
+        res.events.newSessionRequested[0].should.be.a('number');
+        res.events.newSessionStarted[0].should.be.a('number');
+        await endSession(session.sessionId);
       });
     });
 

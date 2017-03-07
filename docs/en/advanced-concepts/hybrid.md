@@ -2,7 +2,7 @@
 
 One of the core principles of Appium is that you shouldn't have to change
 your app to test it. In line with that methodology, it is possible to test
-hybrid web apps (e.g., the [UIAWebView](https://developer.apple.com/library/ios/documentation/ToolsLanguages/Reference/UIAWebViewClassReference/)
+hybrid web apps (e.g., the [UIWebView](https://developer.apple.com/reference/uikit/uiwebview)
 elements in an iOS app) the same way
 you can with Selenium for web apps. There is a bit of technical complexity
 required so that Appium knows whether you want to automate the native aspects

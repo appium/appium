@@ -32,6 +32,7 @@
             "appium-unlock",
             "appium-webdriveragent-driver",
             "appium-xcode",
+            "appium-xcuitest-driver",
             "authorize-ios",
             "io.appium.settings",
             "jsonwp-status",
@@ -70,35 +71,23 @@
         "appium-core": [
             "imurchie",
             "jlipps",
-            "jonahss",
-            "moizjv",
-            "scottdixon",
-            "sebv"
+            "dangraham"
         ],
         "appium-contrib": [
             "imurchie",
             "jlipps",
-            "jonahss",
-            "moizjv",
-            "scottdixon",
-            "sebv",
-            "bootstraponline"
+            "bootstraponline",
+            "dangraham"
         ],
         "appium-tools": [
             "imurchie",
             "jlipps",
-            "jonahss",
-            "moizjv",
-            "scottdixon",
-            "sebv"
+            "dangraham"
         ],
         "appium-apps": [
             "imurchie",
             "jlipps",
-            "jonahss",
-            "moizjv",
-            "sebv",
-            "scottdixon",
+            "dangraham",
             "bootstraponline"
         ],
         "extra-jlipps": [

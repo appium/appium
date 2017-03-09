@@ -993,7 +993,7 @@ execute_script "mobile: scroll", direction: "down", element: element.ref
 
 ```python
 # python
-driver.execute_script("mobile: scroll", {"direction": "down", element: element.id})
+driver.execute_script("mobile: scroll", {"direction": "down", "element": element.id})
 ```
 
 ```java

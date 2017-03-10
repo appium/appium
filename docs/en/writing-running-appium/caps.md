@@ -117,6 +117,7 @@
 |`wdaLaunchTimeout`|Time, in ms, to wait for WebDriverAgewnt to be pingable. Defaults to 60000ms.|e.g., `30000`|
 |`calendarAccessAuthorized`|If truthy, enables calendar access on IOS Simulator with given bundleId. If `false`, disables
 calendar access on IOS Simulator with given bundleId. Otherwise, the calendar authorizationStatus remains unchanged.||
+|`startIWDP`| Run an instance of ios_webkit_debug_proxy inside driver. Default false. |
 
 ### You.i Engine Only
 

@@ -90,18 +90,21 @@ Unfortunately, the XCUITest API and the UIAutomation API are not equivalent. In 
 
 We will endeavor to add these features back in future releases of Appium.
 
+#### Scrolling and clicking
+
+In the previous UIAutomation-based driver, if you tried to click on an element that wasn't in view, UIAutomation would scroll to the element automatically and then tap it. With XCUITest, this is no longer the case. You are now responsible for ensuring your element is in view before interacting with it (the same way a user would be responsible for the same).
+
 ### Other known issues
 
-Finally, a list of known issues with the initial 1.6 release:
+Finally, a list of known issues with the initial 1.6 release (we'll strike through issues which have been resolved):
 
-* Unable to interact with elements on devices in Landscape mode (https://github.com/appium/appium/issues/6994)
+* ~~Unable to interact with elements on devices in Landscape mode (https://github.com/appium/appium/issues/6994)~~
 * `shake` is not implemented due to lack of support from Apple
 * `lock` is not implemented due to lack of support from Apple
 * Setting geo-location not supported due to lack of support from Apple
 * Through the TouchAction/MultiAction API, `zoom` gestures work but `pinch` gestures do not, due to an Apple issue.
-* Through the TouchAction/MultiAction API, `swipe` gestures are currently not supported, though they should be soon (https://github.com/appium/appium/issues/7573)
-* The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work.
-* In UIAutomation, if you attempted to tap on an element outside the visible frame, it would work. In the new XCUITest driver, it will unfortunately have no effect. You'll have to navigate to the element the way a user would in order to tap it.
+* ~~Through the TouchAction/MultiAction API, `swipe` gestures are currently not supported, though they should be soon (https://github.com/appium/appium/issues/7573)~~
+* The capabilities `autoAcceptAlerts` and `autoDismissAlerts` do not currently work, and there is continued debate about whether we will be able to implement them in the future.
 * There is an issue with the iOS SDK such that PickerWheels built using certain API methods are not automatable by XCUITest. See https://github.com/appium/appium/issues/6962 for the workaround, to ensure your PickerWheels are built properly.
 
-As far as possible, we will add the missing features and fix other known issues in the [1.6.1 Milestone](https://github.com/appium/appium/milestone/27), so following that may be of interest to you.
+As far as possible, we will add the missing features and fix other known issues in future versions of Appium.

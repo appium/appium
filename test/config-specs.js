@@ -194,6 +194,30 @@ describe('Config', () => {
     });
   });
 
+  describe('parsing args with empty argv[1]', () => {
+    let argv1;
+
+    before(() => {
+      argv1 = process.argv[1];
+    });
+
+    after(() => {
+      process.argv[1] = argv1;
+    });
+
+    it('should not fail if process.argv[1] is undefined', () => {
+      process.argv[1] = undefined;
+      let args = getParser();
+      args.prog.should.be.equal('Appium');
+    });
+
+    it('should set "prog" to process.argv[1]', () => {
+      process.argv[1] = 'Hello World';
+      let args = getParser();
+      args.prog.should.be.equal('Hello World');
+    });
+  });
+
   describe('validateServerArgs', () => {
     let parser = getParser();
     parser.debug = true; // throw instead of exit on error; pass as option instead?

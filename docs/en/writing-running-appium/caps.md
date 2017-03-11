@@ -115,6 +115,8 @@
 |`webDriverAgentUrl`|If provided, Appium will connect to an existing WebDriverAgent instance at this URL instead of starting a new one.|e.g., `http://localhost:8100`|
 |`useNewWDA`|If `true`, forces uninstall of any existing WebDriverAgent app on device. This can provide stability in some situations. Defaults to `false`.|e.g., `true`|
 |`wdaLaunchTimeout`|Time, in ms, to wait for WebDriverAgewnt to be pingable. Defaults to 60000ms.|e.g., `30000`|
+|`calendarAccessAuthorized`|If truthy, enables calendar access on IOS Simulator with given bundleId. If `false`, disables
+calendar access on IOS Simulator with given bundleId. Otherwise, the calendar authorizationStatus remains unchanged.||
 
 ### You.i Engine Only
 

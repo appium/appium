@@ -14,17 +14,19 @@ Briefly describe the issue you are experiencing (or the feature you want to see 
 
 ## Details
 
-Describe in more detail the problem you have been experiencing, if necessary.
+If necessary, describe the problem you have been experiencing in more detail.
 
 ## Link to Appium logs
 
-Create a [gist](https://gist.github.com) which is a paste of your _full_ Appium logs, and link them here. Do _not_ paste your full Appium logs here, as it will make this issue very long and hard to read! If you are reporting a bug, _always_ include Appium logs!
+Create a [GIST](https://gist.github.com) which is a paste of your _full_ Appium logs, and link them here. 
+Do _NOT_ paste your full Appium logs here, as it will make this issue very long and hard to read! 
+If you are reporting a bug, _always_ include Appium logs!
 
 
 ## Code To Reproduce Issue [ Good To Have ]
 
-Please remember that, with sample code; it's easier to reproduce bug and much faster to fix it.
+Please remember that with sample code it's easier to reproduce the bug and it's much faster to fix it.
 
-Please git clone https://github.com/appium/sample-code and use one of your favourite languages and sample apps to reproduce issue.
+Please git clone https://github.com/appium/sample-code and use one of your favourite languages and sample apps to reproduce the issue.
 
 In case a similar scenario is missing in sample-code, please submit a PR with one of the sample apps provided.

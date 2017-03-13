@@ -43,7 +43,6 @@
             "appium-ci",
             "appium-ci-standalone-tools",
             "appium-gulp-plugins",
-            "appium-package-master",
             "appium-transpile-runtime",
             "appium-jenkins",
             "teen_process",

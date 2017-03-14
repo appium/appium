@@ -50,6 +50,20 @@ Once installed you can start the proxy with the following command:
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ```
 
+You can also set the desired capability called 'startIWDP' to true (https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md). This will run the above command as a subprocess from within Appium and will set the udid, so you don't have to run ios_webkit_debug_proxy yourself anymore. It monitors the proxy for crashes and relaunches when needed.
+
+``` center
+// example desired capabilities
+{
+  "browserName": "Safari",
+  "platformName": "iOS",
+  "deviceName": "iPhone 7",
+  "automationName": "XCUITest",
+  "startIWDP": true,
+  "udid": "auto"
+}
+```
+
 You may also use `ios-webkit-debug-proxy-launcher`, a small script included with the Appium codebase, to launch the
 proxy. It monitors the proxy log for errors, and relaunch the proxy
 where needed. This is also optional and may help with recent devices:

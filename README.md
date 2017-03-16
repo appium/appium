@@ -10,7 +10,7 @@
 
 [![Build Status](https://team-appium.ci.cloudbees.com/job/Appium/badge/icon)](https://team-appium.ci.cloudbees.com/job/Appium/)
 
-Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web apps, tested on simulators (iOS), emulators (Android), and real devices (iOS, Android, Windows).
+Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web and desktop apps, tested on simulators (iOS), emulators (Android), and real devices (iOS, Android, Windows, Mac).
 
 
 ### Supported Platforms
@@ -18,6 +18,7 @@ Appium is an open source, cross-platform test automation tool for native, hybrid
 * iOS
 * Android
 * Windows
+* Mac
 
 See the [platform support doc](/docs/en/appium-setup/platform-support.md) for more detailed information.
 
@@ -81,6 +82,10 @@ You also need to download the Appium client for your language so you can write t
 
 * Windows 10
 * [Documentation](/docs/en/appium-setup/running-on-windows.md)
+
+#### Mac Requirements
+
+* Mac OS X 10.7 +
 
 ### Quick Start
 

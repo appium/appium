@@ -38,6 +38,7 @@
     "appium-base-driver": "2.x",
     "appium-fake-driver": "0.x",
     "appium-ios-driver": "1.x",
+    "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",
     "appium-uiautomator2-driver": "0.x",

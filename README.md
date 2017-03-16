@@ -86,9 +86,7 @@ You also need to download the Appium client for your language so you can write t
 #### Mac Requirements
 
 * Mac OS X 10.7 +
-* The Appium for Mac binaries do not currently ship with Appium, so you will need to:
-   1. [Download a release](https://github.com/appium/appium-for-mac/releases/tag/0.2.0) and unzip the application into your `/Applications` folder
-   2. Follow the [brief supplemental installation instructions](https://github.com/appium/appium-for-mac#installation)
+* [Documentation](https://github.com/penguinho/appium/blob/mac-driver/docs/en/appium-setup/running-on-osx.md#testing-mac-apps)
 
 ### Quick Start
 

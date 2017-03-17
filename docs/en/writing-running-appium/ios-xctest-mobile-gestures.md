@@ -69,8 +69,9 @@ Performs pinch gesture on the given element or on the application element.
 
  * _element_: Element id to pinch on. Application element will be used instead if this
  parameter is not provided
- * _scale_: Pinch scale of type float. Mandatory parameter
- * _velocity_: Pinch velocity pf type float. Mandatory parameter
+ * _scale_: Pinch scale of type float. Use a scale between 0 and 1 to "pinch close" or
+ zoom out and a scale greater than 1 to "pinch open" or zoom in. Mandatory parameter
+ * _velocity_: The velocity of the pinch in scale factor per second (float value). Mandatory parameter
 
 #### Usage examples
 

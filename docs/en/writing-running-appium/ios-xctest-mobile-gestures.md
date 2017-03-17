@@ -13,7 +13,11 @@ without any preliminary notice.
 ### mobile: swipe
 
 This gesture performs a simple "swipe" gesture on the particular screen element or
-on the application element, which is usually the whole screen.
+on the application element, which is usually the whole screen. This method does not
+accept coordnates and siply emulates single swipe with one finger. It might be
+useful for such cases like album pagination, switching views, etc. More advanced
+cases may require to call "mobile: dragFromToForDuration", where one can supply
+coordinates and duration.
 
 #### Supported arguments
 
@@ -38,7 +42,11 @@ js.executeScript("mobile: swipe", scrollObject);
 Scrolls the element or the whole screen. Different scrolling strategies are supported.
 Arguments define the choosen strategy: either 'name', 'direction', 'predicateString' or
 'toVisible' in that order. All strategies are exclusive and only one strategy
-can be applied at a single moment of time.
+can be applied at a single moment of time. Use "mobile: scroll" to emulate precise
+scrolling in tables or collection views, where it is already known to which element
+the scrolling should be performed. Although, there is one known limitation there: in case
+it is necessary to perform too many scroll gestures on parent container to reach the
+necessary child element (tens of them) then the method call may fail.
 
 #### Supported arguments
 
@@ -46,7 +54,10 @@ can be applied at a single moment of time.
  * _name_: the accessibility id of the child element, to which scrolling is performed.
  The same result can be achieved by setting _predicateString_ argument to
  'name == accessibilityId'. Has no effect if _element_ is not a container
- * _direction_: Either 'up', 'down', 'left' or 'right'
+ * _direction_: Either 'up', 'down', 'left' or 'right'. The main difference from
+ _swipe_ call with the same argument is that _scroll_ will try to move the current viewport
+ exactly to the next/previous page (the term "page" means the content, which fits into
+ a single device screen)
  * _predicateString_: the NSPredicate locator of the child element, to which
  the scrolling should be performed. Has no effect if _element_ is not a container
  * _toVisible_: Boolean parameter. If set to _true_ then asks to scroll to

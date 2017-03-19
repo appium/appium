@@ -1,4 +1,4 @@
-## Automating Mobile Gestures For iOS with WDA/XCTest backend
+## Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend
 
 Unfortunately Apple's XCTest framework does not natively support W3C standards for
 TouchAction interface implementation. Although, it provides rich set of gestures,

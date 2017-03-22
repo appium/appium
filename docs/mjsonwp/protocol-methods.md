@@ -132,6 +132,7 @@ POST        | `/wd/hub/session/{sessionId}/appium/device/open_notifications`    
 POST        | `/wd/hub/session/{sessionId}/appium/device/start_activity`             | Start the specified activity on the device.
 GET         | `/wd/hub/session/{sessionId}/appium/device/system_bars`                | Retrieve visibility and bounds information of the status and navigation bars.
 GET         | `/wd/hub/session/{sessionId}/appium/device/display_density`            | Retrieve the display density of the device.
+POST        | `/wd/hub/session/{sessionId}/appium/simulator/toggle_touch_id_enrollment` | Toggle enrollment of touch id on the simulator.
 POST        | `/wd/hub/session/{sessionId}/appium/simulator/touch_id`                | Simulate a successful or failed touch id event on the simulator.
 POST        | `/wd/hub/session/{sessionId}/appium/app/launch`                        | Launch the given application on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/app/close`                         | Close the given application.

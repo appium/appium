@@ -1,33 +1,29 @@
-## iOS WebKit Debug Proxy
+## iOS WebKit 调试代理
 
-For accessing web views on real iOS device appium uses [ios_webkit_debug_proxy](https://github.com/google/ios-webkit-debug-proxy).
+[ios_webkit_debug_proxy](https://github.com/google/ios-webkit-debug-proxy) 用于在 iOS 真机上访问网页视图。
 
-### Installation
+### 安装
 
-#### Using Homebrew
+#### 使用 Homebrew
 
-To install the latest tagged version of the ios-webkit-debug-proxy using
-Homebrew, run the following commands in the terminal:
+在终端执行以下命令使用 Homebrew 安装最新版本的 ios-webkit-debug-proxy ：
 
  ``` center
- # The first command is only required if you don't have brew installed.
+ # 没有安装 brew 时才需要第一条命令。
  > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
  > brew update
  > brew install ios-webkit-debug-proxy
  ```
 
-#### Building ios-webkit-debug-proxy from source
+#### 从源码构建 ios-webkit-debug-proxy
 
-Open the command terminal on your mac. You can find instructions on how to open the
-terminal via your favorite search engine. Once that is open, verify you have
-[Homebew](http://brew.sh/) installed:
+在你的 mac 上打开终端。你可以通过喜欢的搜索引擎查找如何打开终端的操作指南。打开后确认你已经安装了 [Homebew](http://brew.sh/)：
 
 ```shell
 $ brew -v
 ```
 
-When you're certain you have Homebrew, do the following (the $ indicates the command
-line prompt, do not enter it):
+确认 Homebrew 已安装后，按下面的做（ $ 是命令行提示符，不用输入）：
 
 ```shell
 $ cd  ~
@@ -39,21 +35,20 @@ $ make
 $ sudo make install
 ```
 
-#### Running ios-webkit-debug-proxy
+#### 运行 ios-webkit-debug-proxy
 
-Once installed you can start the proxy with the following command:
+安装后使用以下命令启动代理：
 
 ``` center
-# Change the udid to be the udid of the attached device and make sure to set the port to 27753
-# as that is the port the remote-debugger uses. You can learn how to retrieve the UDID from
-# Apple's developer resources.
+# 修改 udid 为目标设备的 udid 并确认 remote-debugger 使用 27753 端口。
+# 你可以从苹果开发者资源学习如何获取 UDID 。
 > ios_webkit_debug_proxy -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ```
 
-You can also set the desired capability called 'startIWDP' to true (https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md). This will run the above command as a subprocess from within Appium and will set the udid, so you don't have to run ios_webkit_debug_proxy yourself anymore. It monitors the proxy for crashes and relaunches when needed.
+你也可以设置 'startIWDP' desired capability 为 true (https://github.com/appium/appium/blob/master/docs/cn/writing-running-appium/caps.md)。Appium 将在子进程中运行上述命令并设置 udid，所以你不再需要自己运行 ios_webkit_debug_proxy 。它监控代理崩溃并在需要的时候重启。
 
 ``` center
-// example desired capabilities
+// desired capabilities 示例
 {
   "browserName": "Safari",
   "platformName": "iOS",
@@ -64,17 +59,13 @@ You can also set the desired capability called 'startIWDP' to true (https://gith
 }
 ```
 
-You may also use `ios-webkit-debug-proxy-launcher`, a small script included with the Appium codebase, to launch the
-proxy. It monitors the proxy log for errors, and relaunch the proxy
-where needed. This is also optional and may help with recent devices:
+你也可以使用 `ios-webkit-debug-proxy-launcher`，一个包含在 Appium 代码库中的小脚本，启动代理。它从代理日志中监控错误，并在需要时重启代理。这是可选的并对最近的设备有帮助。
 
 ``` center
-# change the udid
-# note, this is run from an Appium repository
+# 修改 udid
+# 注意，在 Appium 仓库中运行
 > ./bin/ios-webkit-debug-proxy-launcher.js -c 0e4b2f612b65e98c1d07d22ee08678130d345429:27753 -d
 ```
 
-**NOTE:** the proxy requires the **"web inspector"** to be turned on to
-allow a connection to be established. Turn it on by going to **settings >
-safari > advanced**. Please be aware that the web inspector was **added as
-part of iOS 6** and was not available previously.
+**注意：** 为了允许建立连接，代理需要打开 **"Web 检查器"**。在 **设置 >
+safari > 高级** 中打开。Web 检查器作为 iOS6 的一部分被添加，不在之前的版本中提供，请知悉。

@@ -1,14 +1,14 @@
-## Setting up instruments without delay (iwd) for xcode 7 and iOS >= 9.0
+## 为 xcode 7 和 iOS >= 9.0 配置无延迟 instruments（iwd）
 
-For iOS >= 9.0 instruments without delay (iwd) does not work by passing binaries through the command line (appium does this under the hood for xcode < 7). See [iwd](https://github.com/lawrencelomax/instruments-without-delay/tree/xcode7-quirks#xcode-7--ios-9-support)
+iOS >= 9.0 ，通过命令行传递二进制文件配置无延迟 instruments 不生效时使用（在 xcode < 7 时 appium 会这样做 ），参阅 [iwd](https://github.com/lawrencelomax/instruments-without-delay/tree/xcode7-quirks#xcode-7--ios-9-support)
 
-For enabling iwd for xcode >= 7,
-- Check out [appium-instruments](https://github.com/appium/appium-instruments)
-- Run `xcode-iwd.sh` present in `<appium-instruments>/bin/`, with arguments as indicated below:
+在 xcode >= 7 上启用 iwd，
+- 检出 [appium-instruments](https://github.com/appium/appium-instruments)
+- 在 `<appium-instruments>/bin/` 下附带以下指示的参数运行 `xcode-iwd.sh` ：
 
 ```
 sh <appium-instruments>/bin/xcode-iwd.sh <path to xcode> <path to appium-instruments>
 ```
-eg. `sh ./bin/xcode-iwd.sh /Applications/Xcode.app /Users/xyz/appium-instruments/`
+比如： `sh ./bin/xcode-iwd.sh /Applications/Xcode.app /Users/xyz/appium-instruments/`
 
-Note: iwd with Xcode 7 will only work for iOS >= 9.0, you can switch to an older version of Xcode for iOS < 9.0
+注意：Xcode 7 的 iwd 只在 iOS >= 9.0 时有效，你可以在 iOS < 9.0 时切换一个旧版本的 Xcode

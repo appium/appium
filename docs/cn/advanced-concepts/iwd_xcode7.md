@@ -12,3 +12,5 @@ sh <appium-instruments>/bin/xcode-iwd.sh <path to xcode> <path to appium-instrum
 比如： `sh ./bin/xcode-iwd.sh /Applications/Xcode.app /Users/xyz/appium-instruments/`
 
 注意：Xcode 7 的 iwd 只在 iOS >= 9.0 时有效，你可以在 iOS < 9.0 时切换一个旧版本的 Xcode
+
+由 @黑水 翻译，TesterHome 社区 id：sanlengjingvv

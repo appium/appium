@@ -69,3 +69,5 @@ $ sudo make install
 
 **注意：** 为了允许建立连接，代理需要打开 **"Web 检查器"**。在 **设置 >
 safari > 高级** 中打开。Web 检查器作为 iOS6 的一部分被添加，不在之前的版本中提供，请知悉。
+
+由 @黑水 翻译，TesterHome 社区 id：sanlengjingvv

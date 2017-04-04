@@ -18,6 +18,7 @@
 |`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|
 |`noReset`|Don't reset app state before this session. Default `false`|`true`, `false`|
 |`fullReset`|(iOS) Delete the entire simulator folder. (Android) Reset app state by uninstalling app instead of clearing app data. On Android, this will also remove the app after the session is complete. Default `false`|`true`, `false`|
+|`eventTimings`|Enable or disable the reporting of the timings for various Appium-internal events (e.g., the start and end of each command, etc.). Defaults to `false`. To enable, use `true`. The timings are then reported as `events` property on response to querying the current session.|e.g., `true`|
 
 ### Android Only
 

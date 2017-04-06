@@ -51,6 +51,7 @@
     "bluebird": "2.x",
     "continuation-local-storage": "3.x",
     "date-utils": "1.x",
+    "heapdump": "0.x",
     "lodash": "4.x",
     "npmlog": "2.x",
     "request-promise": "1.x",

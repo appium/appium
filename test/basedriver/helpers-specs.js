@@ -1,6 +1,8 @@
 import { isPackageOrBundle } from '../../lib/basedriver/helpers';
 import chai from 'chai';
-chai.should();
+import chaiAsPromised from 'chai-as-promised';
+
+chai.use(chaiAsPromised);
 
 describe('helpers', () => {
   describe('#isPackageOrBundle', () => {

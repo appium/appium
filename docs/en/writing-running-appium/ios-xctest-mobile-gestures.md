@@ -184,6 +184,31 @@ js.executeScript("mobile: dragFromToForDuration", params);
 ```
 
 
+### mobile: selectPickerWheelValue
+
+Performs selection of the next or previous picker wheel value. This might
+be useful if these values are populated dynamically, so you don't know which
+one to select or value selection does not work because of XCTest bug.
+
+#### Supported arguments
+
+ * _element_: Element id to perform drag on. The element should be of type
+ XCUIElementTypePickerWheel. Manadatory parameter
+ * _order_: Either _next_ to select the value next to the current one
+ from the target picker wheel or _previous_ to select the previous one. Mandatory parameter
+
+#### Usage examples
+
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+Map<String, String> params = new HashMap<>();
+params.put("order", "next");
+params.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: selectPickerWheelValue", params);
+```
+
+
 ### Advanced Topics
 
 Check [WDA Element Commands API](https://github.com/facebook/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBElementCommands.m)

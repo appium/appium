@@ -192,8 +192,8 @@ one to select or value selection does not work because of XCTest bug.
 
 #### Supported arguments
 
- * _element_: Element id to perform drag on. The element should be of type
- XCUIElementTypePickerWheel. Manadatory parameter
+ * _element_: PickerWheel element id to perform value selection on. The element should
+ be of type XCUIElementTypePickerWheel. Manadatory parameter
  * _order_: Either _next_ to select the value next to the current one
  from the target picker wheel or _previous_ to select the previous one. Mandatory parameter
 

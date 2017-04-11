@@ -746,7 +746,7 @@ NSError *err;
 ```ruby
 # ruby
 touch_action = Appium::TouchAction.new
-element  = find_element :name, 'Buttons, Various uses of UIButton'
+element  = find_element :accessibility_id, 'Buttons, Various uses of UIButton'
 touch_action.press(element: element, x: 10, y: 10).perform
 ```
 
@@ -980,7 +980,7 @@ driver.Zoom(100, 200);
 
 ```ruby
 # ruby
-element = find_element :name, 'Element Name'
+element = find_element :accessibility_id, 'Element ID'
 execute_script "mobile: scrollTo", :element => element.ref
 ```
 
@@ -991,7 +991,7 @@ todo: python
 
 ```java
 // java
-WebElement element = driver.findElement(By.name("Element Name"));
+WebElement element = driver.findElementByAccessibilityId("Element ID");
 HashMap<String, String> arguments = new HashMap<String, String>();
 arguments.put("element", element.getId());
 (JavascriptExecutor)driver.executeScript("mobile: scrollTo", arguments);
@@ -999,7 +999,7 @@ arguments.put("element", element.getId());
 
 ```javascript
 // javascript
-return driver.elementByName().then(function (el) {
+return driver.elementByAccessibilityId().then(function (el) {
   return driver.execute('mobile: scrollTo', {element: el.value});
 });
 ```

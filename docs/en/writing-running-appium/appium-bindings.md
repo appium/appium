@@ -753,7 +753,7 @@ expanded upon soon.
 ```ruby
 # ruby
 touch_action = Appium::TouchAction.new
-element  = find_element :name, 'Buttons, Various uses of UIButton'
+element  = find_element :accessibility_id, 'Buttons, Various uses of UIButton'
 touch_action.press(element: element, x: 10, y: 10).perform
 ```
 
@@ -987,7 +987,7 @@ Scroll to an element.
 
 ```ruby
 # ruby
-element = find_element :name, "Element Name"
+element = find_element :accessibility_id, "Element ID"
 execute_script "mobile: scroll", direction: "down", element: element.ref
 ```
 
@@ -1007,7 +1007,7 @@ js.executeScript("mobile: scroll", scrollObject);
 
 ```javascript
 // javascript
-return driver.elementByName().then(function (el) {
+return driver.elementByAccessibilityId().then(function (el) {
   driver.execute("mobile: scroll", [{direction: "down", element: el.value}]);
 });
 ```

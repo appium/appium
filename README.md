@@ -109,7 +109,7 @@ $ appium-doctor
 
 #### Using the Appium Desktop App
 
-* [Download the Appium app](https://bitbucket.org/appium/appium.app/downloads/)
+* [Download the Appium app](https://www.github.com/appium/appium-desktop/releases/latest/)
 * Run it!
 
 ### Writing Tests for Appium

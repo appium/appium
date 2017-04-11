@@ -30,10 +30,10 @@ coordinates and duration.
 ```java
 // Java
 JavascriptExecutor js = (JavascriptExecutor) driver;
-HashMap<String, String> scrollObject = new HashMap<String, String>();
+Map<String, Object> params = new HashMap<>();
 scrollObject.put("direction", "down");
 scrollObject.put("element", ((RemoteWebElement) element).getId());
-js.executeScript("mobile: swipe", scrollObject);
+js.executeScript("mobile: swipe", params);
 ```
 
 
@@ -123,8 +123,8 @@ Performs two finger tap gesture on the given element or on the application eleme
 
 ```csharp
 // c#
-Dictionary<string, string> tfTap = new Dictionary<string, string>();
-tfTap.Add("element", <element_id>);
+Dictionary<string, object> tfTap = new Dictionary<string, object>();
+tfTap.Add("element", element.Id);
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap));
 ```
 
@@ -173,7 +173,7 @@ on the screen
 ```java
 // Java
 JavascriptExecutor js = (JavascriptExecutor) driver;
-HashMap<String, String> params = new HashMap<String, Object>();
+Map<String, Object> params = new HashMap<>();
 params.put("duration", 1.0);
 params.put("fromX", 100);
 params.put("fromY", 100);
@@ -202,7 +202,7 @@ one to select or value selection does not work because of XCTest bug.
 ```java
 // Java
 JavascriptExecutor js = (JavascriptExecutor) driver;
-Map<String, String> params = new HashMap<>();
+Map<String, Object> params = new HashMap<>();
 params.put("order", "next");
 params.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: selectPickerWheelValue", params);

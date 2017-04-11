@@ -987,7 +987,7 @@ Scroll to an element.
 
 ```ruby
 # ruby
-element = find_element :accessibility_id, "Element Name"
+element = find_element :accessibility_id, "Element ID"
 execute_script "mobile: scroll", direction: "down", element: element.ref
 ```
 
@@ -1007,7 +1007,7 @@ js.executeScript("mobile: scroll", scrollObject);
 
 ```javascript
 // javascript
-return driver.elementByName().then(function (el) {
+return driver.elementByAccessibilityId().then(function (el) {
   driver.execute("mobile: scroll", [{direction: "down", element: el.value}]);
 });
 ```

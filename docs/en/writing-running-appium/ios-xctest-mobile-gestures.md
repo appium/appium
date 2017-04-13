@@ -22,18 +22,18 @@ coordinates and duration.
 #### Supported arguments
 
  * _direction_: Either 'up', 'down', 'left' or 'right'. The parameter is mandatory
- * _element_: Element id to swipe on. Application element will be used instead if this
- parameter is not provided
+ * _element_: The internal element identifier (as hexadecimal hash string) to swipe on.
+ Application element will be used instead if this parameter is not provided
 
 #### Usage examples
 
 ```java
 // Java
 JavascriptExecutor js = (JavascriptExecutor) driver;
-HashMap<String, String> scrollObject = new HashMap<String, String>();
+Map<String, Object> params = new HashMap<>();
 scrollObject.put("direction", "down");
 scrollObject.put("element", ((RemoteWebElement) element).getId());
-js.executeScript("mobile: swipe", scrollObject);
+js.executeScript("mobile: swipe", params);
 ```
 
 
@@ -50,7 +50,8 @@ necessary child element (tens of them) then the method call may fail.
 
 #### Supported arguments
 
- * _element_: Element id to scroll. Application element will be used if this argument is not set
+ * _element_: The internal element identifier (as hexadecimal hash string) to scroll on.
+ Application element will be used if this argument is not set
  * _name_: the accessibility id of the child element, to which scrolling is performed.
  The same result can be achieved by setting _predicateString_ argument to
  'name == accessibilityId'. Has no effect if _element_ is not a container
@@ -78,8 +79,8 @@ Performs pinch gesture on the given element or on the application element.
 
 #### Supported arguments
 
- * _element_: Element id to pinch on. Application element will be used instead if this
- parameter is not provided
+ * _element_: The internal element identifier (as hexadecimal hash string) to pinch on.
+ Application element will be used instead if this parameter is not provided
  * _scale_: Pinch scale of type float. Use a scale between 0 and 1 to "pinch close" or
  zoom out and a scale greater than 1 to "pinch open" or zoom in. Mandatory parameter
  * _velocity_: The velocity of the pinch in scale factor per second (float value). Mandatory parameter
@@ -88,7 +89,7 @@ Performs pinch gesture on the given element or on the application element.
 
 ```ruby
 # Ruby
-execute_script 'mobile: pinch', scale: 0.5, velocity: 1.1
+execute_script 'mobile: pinch', scale: 0.5, velocity: 1.1, element: element.ref
 ```
 
 
@@ -98,7 +99,7 @@ Performs double tap gesture on the given element or on the screen.
 
 #### Supported arguments
 
- * _element_: Element id to double tap on
+ * _element_: The internal element identifier (as hexadecimal hash string) to double tap on
  * _x_: Screen x tap coordinate of type float. Mandatory parameter only if _element_ is not set
  * _y_: Screen y tap coordinate of type float. Mandatory parameter only if _element_ is not set
 
@@ -116,15 +117,16 @@ Performs two finger tap gesture on the given element or on the application eleme
 
 #### Supported arguments
 
- * _element_: Element id to double tap on. Application element will be used instead if this
+ * _element_: The internal element identifier (as hexadecimal hash string) to double tap on.
+ Application element will be used instead if this
  parameter is not provided
 
 #### Usage examples
 
 ```csharp
 // c#
-Dictionary<string, string> tfTap = new Dictionary<string, string>();
-tfTap.Add("element", <element_id>);
+Dictionary<string, object> tfTap = new Dictionary<string, object>();
+tfTap.Add("element", element.Id);
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap));
 ```
 
@@ -135,8 +137,8 @@ Performs tap gesture by coordinates on the given element or on the screen.
 
 #### Supported arguments
 
- * _element_: Element id to long tap on. _x_ and _y_ tap coordinates
- will be calulated relatively to the current element position on the
+ * _element_: The internal element identifier (as hexadecimal hash string) to long tap on.
+ _x_ and _y_ tap coordinates will be calulated relatively to the current element position on the
  screen if this argument is provided. Otherwise they should be calculated
  relatively to screen borders.
  * _x_: x tap coordinate of type float. Mandatory parameter
@@ -158,9 +160,9 @@ on the screen
 
 #### Supported arguments
 
- * _element_: Element id to perform drag on. All the coordinates will be calculated
- relatively this this element position on the screen. Absolute screen coordinates
- are expected if this argument is not set
+ * _element_: The internal element identifier (as hexadecimal hash string) to perform drag on.
+ All the coordinates will be calculated relatively this this element position on the screen.
+ Absolute screen coordinates are expected if this argument is not set
  * _duration_: Float number of seconds in range [0.5, 60]. How long the tap gesture at
  starting drag point should be before to start dragging. Mandatory parameter
  * _fromX_: The x coordinate of starting drag point (type float). Mandatory parameter
@@ -173,7 +175,7 @@ on the screen
 ```java
 // Java
 JavascriptExecutor js = (JavascriptExecutor) driver;
-HashMap<String, String> params = new HashMap<String, Object>();
+Map<String, Object> params = new HashMap<>();
 params.put("duration", 1.0);
 params.put("fromX", 100);
 params.put("fromY", 100);
@@ -181,6 +183,31 @@ params.put("toX", 200);
 params.put("toY", 200);
 params.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: dragFromToForDuration", params);
+```
+
+
+### mobile: selectPickerWheelValue
+
+Performs selection of the next or previous picker wheel value. This might
+be useful if these values are populated dynamically, so you don't know which
+one to select or value selection does not work because of XCTest bug.
+
+#### Supported arguments
+
+ * _element_: PickerWheel's internal element id (as hexadecimal hash string) to perform
+ value selection on. The element must be of type XCUIElementTypePickerWheel. Mandatory parameter
+ * _order_: Either _next_ to select the value next to the current one
+ from the target picker wheel or _previous_ to select the previous one. Mandatory parameter
+
+#### Usage examples
+
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+Map<String, Object> params = new HashMap<>();
+params.put("order", "next");
+params.put("element", ((RemoteWebElement) element).getId());
+js.executeScript("mobile: selectPickerWheelValue", params);
 ```
 
 

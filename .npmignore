@@ -14,3 +14,7 @@ _vimrc_local.vim
 *.prefs
 .jshintrc
 ./.npmignore
+.github/
+docs/
+.jscsrc
+.jshintignore

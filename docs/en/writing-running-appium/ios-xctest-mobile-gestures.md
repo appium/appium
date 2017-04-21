@@ -198,6 +198,11 @@ one to select or value selection does not work because of XCTest bug.
  value selection on. The element must be of type XCUIElementTypePickerWheel. Mandatory parameter
  * _order_: Either _next_ to select the value next to the current one
  from the target picker wheel or _previous_ to select the previous one. Mandatory parameter
+ * _offset_: The value in range [0.01, 0.5]. It defines how far from picker
+ wheel's center the click should happen. The actual distance is culculated by
+ multiplying this value to the actual picker wheel height. Too small offset value
+ may not change the picker wheel value and too high value may cause the wheel to switch
+ two or more values at once. Usually the optimal value is located in range [0.15, 0.3]. _0.2_ by default
 
 #### Usage examples
 
@@ -206,6 +211,7 @@ one to select or value selection does not work because of XCTest bug.
 JavascriptExecutor js = (JavascriptExecutor) driver;
 Map<String, Object> params = new HashMap<>();
 params.put("order", "next");
+params.put("offset", 0.15);
 params.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: selectPickerWheelValue", params);
 ```

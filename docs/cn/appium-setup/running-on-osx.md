@@ -1,96 +1,70 @@
-## Running Appium on Mac OS X
 ## 在 Mac OS Xcode 上运行 Appium
 
-Appium on OS X supports iOS and Android testing.
-在 OS X 平台上，Appium 支持 iOS 与 Android 的测试。
+在 OS X 上，Appium 支持 iOS 与 Android 测试。
 
-### System setup (iOS)
-### 系统设置（iOS）
+### 系统配置（iOS）
 
-* Appium requires Mac OS X 10.10 or greater.
 * Appium 要求 Mac OS X 10.10 或更高的系统版本。
+* 确保你已经安装 Xcode 与 iOS 的 SDK。推荐使用 Xcode 7.1版本，因为早期版本的 Xcode 的版本对于可测试的 iOS 版本是受限的。查看下面的章节可以了解更多信息。
+* 你需要给 iOS 模拟器授权使用。请查看[下面章节](#authorizing-ios-on-the-computer)。
+* 如果你使用 Xcode 7.0 及以上版本，Instruments Without Delay(IWD) 已经失效了。你通过[这个方法](/docs/en/advanced-concepts/iwd_xcode7.md)去使用 IWD (它会使你的测试速度显著提升)。
+* 如果你使用 Xcode 6，使用 Appium 前你得提前启动模拟器。假如你想发送文本信息，你得改变他的默认设置，去开启虚拟键盘。开启键盘后，你就可以通过点击输入框，或使用快捷键（comand + K）去调出键盘。
+* 如果你使用 Xcode 6，Xcode 上有个模块叫 Devices（快捷键：comand-shift-2）。使用 Appium 的时候，你只需要在 capabilities 中的 devicesName 参数填上你的设备名字，每一个 sdk 版本都会对应一个设备。换句话说，如果你在 capabilities 里设置了 devicesName 为 "iPhone 5s" 以及 platformVersion 为 "8.0"，你就得保证在设备列表里，这是唯一一个使用 8.0 sdk 且名为"iPhone 5s"的设备。否则，Appium 就不会知道你想用的哪台设备。
+* 在 iOS 8，可以在`设置`里开启或者关闭 UIAutomation。该设置就在手机的设置里一个叫"Developer"页面。在使用模拟器或者真机去做自动化前，你需要去该页面验证 UIautomation 开关是否已经开启。
 
-* Make sure you have Xcode and the iOS SDK(s) installed. Xcode version 7.1 is
-  recommended as earlier versions of Xcode are limited in which versions of iOS
-  they can test against. See the next section for more detail.
-* 确保你已经安装 Xcode 与 iOS 的 SDK。Xcode 的版本在7.1
 
-* You need to authorize use of the iOS Simulator. See [below](#authorizing-ios-on-the-computer).
-* If you're on Xcode 7.x and up, Instruments Without Delay (IWD) does not work.
-  You can enable IWD (which will significantly speed up your tests) using [this
-  method](/docs/en/advanced-concepts/iwd_xcode7.md)
-* If you're on Xcode 6, you need to launch each simulator you intend to use
-  with appium in advance, and change the default to actually show the soft
-  keyboard if you want sendKeys to work. You can do this by clicking on any
-  textfield and hitting command-K until you notice the soft keyboard show up.
-* If you're on Xcode 6, you have a feature in Xcode called Devices
-  (command-shift-2). You need to make sure that whichever deviceName you choose
-  to use with Appium in your capabilities, there is only one of those per sdk
-  version. In other words, if you send in a deviceName cap of "iPhone 5s" and
-  a platformVersion cap of "8.0", you need to make sure that there is exactly
-  one device with the name "iPhone 5s" and the 8.0 sdk in your devices list.
-  Otherwise, Appium won't know which one to use.
-* In iOS 8, devices each have their own setting which enables or disables
-  UIAutomation. It lives in a "Developer" view in the Settings app. You need to
-  verify that UIAutomation is enabled in this view before the simulator or
-  device can be automated.
+### 授权 iOS 设备给你的电脑
 
-### Authorizing iOS on the computer
-
-You need to authorize use of the iOS Simulator by running the `authorize-ios`
-binary made available through `npm`. Install the program by running
+你要运行 `authorize-ios` 工具进行授权，可以通过 `npm` 去安装该工具，运行以下命令进行安装
 
 ```
 npm install -g authorize-ios
 ```
 
-And the invoke the program using
+然后运行以下命令去调起该工具
 
 ```
 sudo authorize-ios
 ```
 
-If you are running [Appium.app](https://github.com/appium/appium-dot-app), you can
-authorize iOS through the GUI.
+如果你是使用 [Appium.app](https://github.com/appium/appium-dot-app)，你可以在 GUI 界面进行授权。
 
-You need to do this every time you install a new version of Xcode.
+每次更新 Xcode 版本的时候，你都需要重复以上步骤哦！
 
-### Testing against multiple iOS SDKs
+### 使用多种 iOS SDK 测试
 
-Xcode version 7.1 allows for automatic testing against iOS versions 7.1 and later.
+Xcode 7.1 版本允许使用 iOS 7.1 以及更高级的系统版本去做自动化测试。
 
-If you're using multiple Xcode versions, you can switch between them using:
+如果你使用多个 Xcode 版本，你使用以下命令去切换版本：
 
     sudo xcode-select --switch &lt;path to required xcode&gt;
 
-### Testing using Xcode 8 (including iOS 10) with XCUITest
+### 在 Xcode 8（包括 iOS 10）下使用 XCUITest 进行测试 
 
-In order to automate iOS devices with Xcode 8 (which includes all testing of iOS 10+),
-you need to install the [Carthage](https://github.com/Carthage/Carthage) dependency
-manager:
-
+为了在 Xcode 8（其中包括所有 iOS 10+ 的测试）使用 iOS 真机做自动化，你要安装 [Carthage](https://github.com/Carthage/Carthage) 去做依赖管理：
 ```
 brew install carthage
 ```
 
-### Testing Mac apps
+### 测试 Mac 应用
 
-Currently, the Mac app driver for appium does not ship with the AppiumForMac binary, which means, in order to automate Mac apps you must manually install the AppiumForMac application and grant it the appropriate OS X Accessibility permissions.
+目前为止，Mac 对应的 appium driver 在 AppiumForMac 的二进制文件还没发布，也就是说如果你想进行 Mac 应用的自动化，你就得手动去安装 AppiumForMac 应用，并且对 OS X 授予可访问权限。
 
-To Install Appium for Mac:
-1. [Download a release](https://github.com/appium/appium-for-mac/releases/tag/0.2.0) and unzip the application into your `/Applications` folder
-2. Follow the [brief supplemental installation instructions](https://github.com/appium/appium-for-mac#installation) to enable appium to have access to OS X's Accessibility APIs
 
-For more information on using Appium for mac, checkout the [docs](https://github.com/appium/appium-for-mac#appium-for-mac).
+如何安装 Appium for Mac：
+1. [下载该发布版本](https://github.com/appium/appium-for-mac/releases/tag/0.2.0)，将他解压缩到 `/Applications` 文件夹中
+2. 查看 [简要补充安装说明](https://github.com/appium/appium-for-mac#installation)，确保 appium 放访问到 OS X 的 Accessibility APIs
 
-### System setup (Android)
+更多相关如何使用 Appium for mac 的相关信息，请查阅该[文档](https://github.com/appium/appium-for-mac#appium-for-mac)。
 
-Instructions for setting up Android and running tests on Mac OS X are the same as
-those on Linux. See the [Android setup docs](/docs/en/appium-setup/android-setup.md).
 
-### Running iOS tests on OS X using Jenkins
+### 系统配置（Android）
 
-First download the jenkins-cli.jar and verify the Mac successfully connects to Jenkins master. Ensure you've run the `authorize-ios` command mentioned above.
+Android 的设置操作指南与在 Mac OS X 上的设置，大致与 Linux 上的设置相似，可以参考 [Android 设置文档](/docs/en/appium-setup/android-setup.md)。
+
+### 使用 Jenkins 在 OS X 上运行 iOS 测试
+
+第一步就是下载 jenkins-cli.jar，以及验证你的 Mac 是否成功的连接上 Jenkins 主机。确保已经运行了 `authorize-ios` 等相关的命令。
 
 `wget https://jenkins.ci.cloudbees.com/jnlpJars/jenkins-cli.jar`
 
@@ -104,7 +78,8 @@ java -jar jenkins-cli.jar \
  -name mac_appium
  ```
 
-Next define a LaunchAgent for Jenkins to launch automatically on login. A LaunchDaemon will not work because daemons don't have GUI access. Make sure the plist doesn't contain the `SessionCreate` or `User` key as that may prevent tests from running. You'll see a `Failed to authorize rights` error if misconfigured.
+接下来为了在登录的时候可以自动启动，定义一个 Jenkins 的 LaunchAgent。LaunchDaemon 将会停止工作，因为 deamons 没有获取 GUI 的访问权限。确保 plist 文件不会包含`SessionCreate` 或 `User` 这两个键值，就防止测试在运行时启动。如果漏了配置，你会看到该报错： `Failed to authorize rights`。
+
 
 ```
 $ sudo nano /Library/LaunchAgents/com.jenkins.ci.plist
@@ -143,7 +118,7 @@ $ sudo nano /Library/LaunchAgents/com.jenkins.ci.plist
 </plist>
 ```
 
-Finally set the owner, permissions, and then start the agent.
+最后设置 owner，权限，再开启代理。
 
 ```
 sudo chown root:wheel /Library/LaunchAgents/com.jenkins.ci.plist
@@ -153,24 +128,21 @@ launchctl load /Library/LaunchAgents/com.jenkins.ci.plist
 launchctl start com.jenkins.ci
 ```
 
+### 运行 iOS 测试时生成的文件
 
-### Files generated by iOS test runs
-
-Testing on iOS generates files that can sometimes get large. These include logs,
-temporary files, and derived data from Xcode runs. Generally the following locations
-are where they are found, should they need to be deleted:
+测试 iOS 的过程中生成的文件有时可能会过大。这些文件包含日志，临时文件，还有 Xcode 运行时产生的数据。一般来说，下面的这些地址都是这些文件保存的地方，可以删除他们节省空间：
 
 ```
 $HOME/Library/Logs/CoreSimulator/*
 ```
 
-For Instruments-based tests (iOS _not_ using `XCUITest` as `automationName`):
+基于 Instruments 的测试 (iOS 不是使用 `XCUITest` 作为 `automationName`):
 
 ```
 /Library/Caches/com.apple.dt.instruments/*
 ```
 
-For XCUITest-based tests:
+基于 XCUITest 的测试：
 
 ```
 $HOME/Library/Developer/Xcode/DerivedData/*

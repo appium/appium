@@ -50,7 +50,7 @@
     "babel-runtime": "=5.8.24",
     "bluebird": "2.x",
     "continuation-local-storage": "3.x",
-    "date-utils": "1.x",
+    "dateformat": "^2.0.0",
     "lodash": "4.x",
     "npmlog": "2.x",
     "request": "^2.81.0",

@@ -106,10 +106,7 @@
 
 <expand_table>
 
-|Capability|Description|Values|
-|----|-----------|-------|
-|`youiEngineAppAddress`| The IP address of the device on which the app is running. Use `localhost` for simulator.
-Use device’s IP address for a real device. |e.g. `localhost` or `192.168.1.203`|
+(For You.i Engine-specific capabilities, please refer to the documentation on the [You.i Engine driver](https://github.com/YOU-i-Labs/appium-youiengine-driver#desired-capabilities) itself.)
 
 ### WinAppDriver Only
 

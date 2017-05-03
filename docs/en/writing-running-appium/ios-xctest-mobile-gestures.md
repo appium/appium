@@ -217,6 +217,26 @@ js.executeScript("mobile: selectPickerWheelValue", params);
 ```
 
 
+### mobile: alert
+
+Performs operations on NSAlert instance.
+
+#### Supported arguments
+
+ * _action_: The following actions are supported: _accept_, _dismiss_ and _getButtons_.
+ Mandatory parameter
+ * _buttonLabel_: The label text of an existing alert button to click on. This is an
+ optional parameter and is only valid in combination with _accept_ and _dismiss_
+ actions.
+
+#### Usage examples
+
+```python
+# Python
+driver.execute_script('mobile: alert', {'action': 'accept', 'buttonLabel': 'My Cool Alert Button'});
+```
+
+
 ### Advanced Topics
 
 Check [WDA Element Commands API](https://github.com/facebook/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBElementCommands.m)

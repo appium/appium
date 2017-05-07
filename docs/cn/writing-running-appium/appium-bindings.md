@@ -1,8 +1,8 @@
-## Appium Client Libraries
+## Appium 客户端类库
 
-Appium has libraries for:
+Appium 支持以下语言的客户端类库：
 
-Language | Source
+语言 | 源码
       :--|--:
 [Ruby][rubygems]              | [GitHub](https://github.com/appium/ruby_lib)
 [Python][pypi]                | [GitHub](https://github.com/appium/python-client)
@@ -20,13 +20,12 @@ Language | Source
 [nuget]:          http://www.nuget.org/packages/Appium.WebDriver/
 [cocoapods]:      https://github.com/appium/selenium-objective-c
 
-Note that some methods such as `endTestCoverage()` are
-not generally useful. Proper coverage support will be added once [this issue](https://github.com/appium/appium/issues/2448)
-is resolved. If you want to use them anyway, consult the documentation for the bindings on GitHub.
 
-### Lock
+注意，一些方法类似 `endTestCoverage()` 目前并不能完全支持。当[这个问题](https://github.com/appium/appium/issues/2448)被解决后，适当的覆盖率支持才会被添加。如果你仍然想使用这些方法，请参考 GitHub 上关于 bindings 的文档。
 
-Lock the screen.
+### 锁定
+
+锁定屏幕。
 
 ```ruby
 # ruby
@@ -63,9 +62,9 @@ driver.LockDevice(3);
 [driver lockDeviceScreen:3];
 ```
 
-### Background app
+### 将应用切换至后台
 
-Send the currently active app to the background.
+将当前的应用切换到后台。
 
 ```ruby
 # ruby
@@ -102,16 +101,11 @@ driver.BackgroundApp(5);
 [driver runAppInBackground:3];
 ```
 
-### Hide Keyboard
+### 收起键盘
 
-Hide the keyboard. *Note*: on iOS, this helper function is not guaranteed to
-work. There is no automation hook for hiding the keyboard, and apps are free to
-allow the user to hide the keyboard using any of a variety of different
-strategies, whether that is tapping outside the keyboard, swiping down, etc...
-We encourage you, rather than using this method, to think about how a _user_
-would hide the keyboard in your app, and tell Appium to do that instead (swipe,
-tap on a certain coordinate, etc...). That being said, the default behavior
-here might help you.
+收起键盘。
+*注意*: 在 iOS，这辅助功能并不能保证一定有效。因为没有用于隐藏键盘的 automation hook，而且应用是允许用户去使用各种策略去收起键盘的，无论是点击键盘以外的区域，还是向下滑动诸如此类...相比于使用该方法，我们更加鼓励你去思考 _用户_ 在应用中是如何收起键盘，并告诉 Appium 去执行，代替掉内些操作（滑动，点击一个固定的坐标，等等...）。话虽如此，但默认的行为是可能是最能帮助到你的。
+
 
 ```ruby
 # ruby
@@ -149,9 +143,9 @@ driver.HideKeyboard("Done");
 [driver hideKeyboard];
 ```
 
-### Start Activity
+### 启动 Activity
 
-Open an activity in the current app or start a new app and open an activity *Android only*
+在当前 app 打开一个 activity，或者新打开一个应用并启动一个 acticity， *仅支持 Android*。
 
 ```java
 // java
@@ -189,9 +183,11 @@ $this->startActivity(array("appPackage" => "com.example.android.apis",
 [driver startActivity:@"com.example.android.apis" package:@".Foo"];
 ```
 
-### Open Notifications
 
-Open the notification shade *Android only*
+### 打开通知栏
+
+打开通知栏，*仅支持 Android*。
+
 
 ```java
 // java
@@ -228,9 +224,9 @@ $this->openNotifications();
 [driver openNotifications];
 ```
 
-### Is installed
+### 应用是否已安装
 
-Check if an app is installed
+检查应用是否已被安装。
 
 ```ruby
 # ruby
@@ -268,9 +264,9 @@ driver.IsAppInstalled("com.example.android.apis-");
 [driver isAppInstalled:@"com.example.android.apis-"];
 ```
 
-### Install App
+### 安装应用
 
-Install an app to the device.
+在设备上安装应用。
 
 ```ruby
 # ruby
@@ -307,9 +303,9 @@ driver.InstallApp("path/to/my.apk");
 [driver installAppAtPath:@"path/to/my.apk"];
 ```
 
-### Remove App
+### 卸载应用
 
-Remove an app from the device.
+移除设备上的应用。
 
 ```ruby
 # ruby
@@ -346,9 +342,9 @@ driver.RemoveApp("com.example.android.apis");
 [driver removeApp:@"com.example.android.apis"];
 ```
 
-### Shake
+### 摇一摇
 
-Simulate the device shaking.
+模拟摇晃设备的操作。
 
 ```ruby
 # ruby
@@ -385,9 +381,9 @@ driver.ShakeDevice();
 [driver shakeDevice];
 ```
 
-### Close app
+### 关闭应用
 
-Close the app
+关闭应用。
 
 ```ruby
 # ruby
@@ -424,13 +420,9 @@ driver.CloseApp();
 [driver closeApp];
 ```
 
-### Launch
+### 启动（Launch）
 
-Launch the session for the desired capabilities. Note that this is the
-companion to the autoLaunch=false capability. This is not for launching
-arbitrary apps/activities---for that use `start_activity`. This is for
-continuing the initialization ("launch") process if you have used
-autoLaunch=false.
+为 desired capabilities 启动一个 session。请注意只有设置了 autoLaunch=false 关键字时才会生效。使用 `start_activity` 这个参数不是为了随意启动一个应用或 activities。这是在你设置了 autoLaunch=false 后，用来继续执行初始化（"launch"）流程的。
 
 ```ruby
 # ruby
@@ -467,9 +459,9 @@ driver.LaunchApp();
 [driver launchApp];
 ```
 
-### Reset
+### 重置
 
-Reset the app.
+重置应用。
 
 ```ruby
 # ruby
@@ -506,9 +498,9 @@ driver.ResetApp();
 [driver resetApp];
 ```
 
-### Available Contexts
+### 可用的 Contexts
 
-List all available contexts
+列出所有可用的 contexts。
 
 ```ruby
 # ruby
@@ -545,10 +537,9 @@ driver.GetContexts()
 NSArray *contexts = driver.allContexts;
 ```
 
-### Current context
+### 当前 context
 
-List the current context
-
+列出当前的 context。
 
 ```ruby
 # ruby
@@ -585,9 +576,9 @@ driver.GetContext()
 NSString *context = driver.context;
 ```
 
-### Switch to default context
+### 切换至默认的 context
 
-Change the context to the default.
+切换回默认的 context。
 
 ```ruby
 # ruby
@@ -624,9 +615,9 @@ driver.SetContext();
 [driver setContext:nil];
 ```
 
-### App Strings
+### 应用的字符串
 
-Get the app's strings.
+获得应用的字符串。
 
 ```ruby
 # ruby
@@ -665,9 +656,9 @@ driver.GetAppStrings();
 [driver appStringsForLanguage:"@ru"];
 ```
 
-### Key Event
+### 按键事件
 
-Send a key event to the device.
+给设备发送按键事件。
 
 ```ruby
 # ruby
@@ -705,9 +696,9 @@ NSError *err;
 [driver triggerKeyEvent:176 metastate:0 error:&err];
 ```
 
-### Current Activity
+### 当前 Activity
 
-Android only. Get the current activity.
+获取当前的 Acticity，但仅支持 Android。
 
 ```ruby
 # ruby
@@ -745,10 +736,10 @@ NSError *err;
 [driver currentActivity];
 ```
 
-### TouchAction / MultiTouchAction
+### 点击操作 / 多点触控操作
 
-An API for generating touch actions. This section of the documentation will be
-expanded upon soon.
+用于生成点击操作的 API。这部分文档的内容将会很快被补充进来。
+
 
 ```ruby
 # ruby
@@ -814,9 +805,9 @@ action.Press(el, 10, 10).Release();
 action.Perform ();
 ```
 
-### Swipe
+### 滑动屏幕
 
-Simulate a user swipe.
+模拟用户滑动屏幕的操作。
 
 ```ruby
 # ruby
@@ -860,9 +851,9 @@ $this->swipe(75, 500, 75, 0, 800);
 todo: c#
 ```
 
-### Pinch
+### 捏（Pinch）手势
 
-Pinch the screen.
+在屏幕上使用捏（Pinch）手势。
 
 ```ruby
 # ruby
@@ -920,9 +911,9 @@ $this->pinch($el);
 driver.Pinch(25, 25)
 ```
 
-### Zoom
+### 放大屏幕（Zoom）
 
-Zoom the screen.
+在屏幕上使用放大手势。
 
 ```ruby
 # ruby
@@ -981,9 +972,10 @@ $this->zoom($el);
 driver.Zoom(100, 200);
 ```
 
-### Scroll To
 
-Scroll to an element.
+### 滚动到
+
+滚动到某个元素。
 
 ```ruby
 # ruby
@@ -1026,9 +1018,9 @@ scrollObject.Add("element", <element_id>);
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
 ```
 
-### Pull file
+### 拉出（pull）文件
 
-Pulls a file from the device.
+从设备上拉出文件。
 
 ```ruby
 # ruby
@@ -1061,9 +1053,9 @@ $this->pullFile('Library/AddressBook/AddressBook.sqlitedb');
 driver.PullFile("Library/AddressBook/AddressBook.sqlitedb");
 ```
 
-### Push File
+### 推送（push）文件
 
-Pushes a file to the device.
+推送文件到设备。
 
 ```ruby
 # ruby
@@ -1103,11 +1095,9 @@ $this->pushFile($path, base64_encode($data));
 driver.PushFile("/data/local/tmp/file.txt", "some data for the file");
 ```
 
-### Settings
+### 设置
 
-Here you will find sample code for getting/setting appium serverSetting.
-For more information on how they work, and which settings are supported, see
-[the settings docs](/docs/en/advanced-concepts/settings.md).
+在这你会找到关于获取或设置 appium 服务器设置的示例代码。如果想了解工作原理，以及支持哪些设置，请查看[设置文档](/docs/en/advanced-concepts/settings.md)
 
 ```ruby
 # ruby
@@ -1149,9 +1139,10 @@ Dictionary<String, Object>settings = driver.GetSettings();
 driver.IgnoreUnimportantViews(true);
 ```
 
-### Appium Desktop Apps
 
-Appium's desktop app supports OS X and Windows.
+### Appium 桌面应用
+
+Appium 的桌面应用支持 OS X 与 Windows。
 
 - [Appium.app for OS X][bitbucket]
 - [Appium.exe for Windows][bitbucket]

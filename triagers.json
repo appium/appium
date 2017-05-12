@@ -1,0 +1,11 @@
+{
+    "repos": [{
+      "user": "appium",
+      "repo": "appium",
+      "triagers": ["SrinivasanTarget", "jlipps", "vikramvi"],
+      "autoLabels": ["NeedsTriage"],
+      "validLabels": ["1.5-beta","Android","Bug","Cannot Reproduce","Documentation","DriverIssue","Enhancement","GUI","Hybrid Apps","iOS","Linux","LogRequested","Mac","Mobile Chrome","Mobile Safari","NeedsTriage","NoActivity","NotABug","OnGoing","Question","Real Devices","ReproNeeded","Robots","Selendroid","SemVer:Breaking","TechDebt","ThirdpartyIssue","Windows"]
+    }],
+    "bot": "triager"
+}
+

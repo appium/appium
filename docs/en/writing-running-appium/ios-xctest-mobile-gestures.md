@@ -111,6 +111,28 @@ driver.execute('mobile: doubleTap', {element: element.value.ELEMENT});
 ```
 
 
+### mobile: touchAndHold
+
+Performs long press gesture on the given element or on the screen.
+
+#### Supported arguments
+
+ * _element_: The internal element identifier (as hexadecimal hash string) to long tap on
+ * _duration_: The float duration of press action in seconds. Mandatory patameter
+ * _x_: Screen x long tap coordinate of type float. Mandatory parameter only if _element_ is not set
+ * _y_: Screen y long tap coordinate of type float. Mandatory parameter only if _element_ is not set
+
+#### Usage examples
+
+```csharp
+// c#
+Dictionary<string, object> tfLongTap = new Dictionary<string, object>();
+tfLongTap.Add("element", element.Id);
+tfLongTap.Add("duration", 2.0);
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap));
+```
+
+
 ### mobile: twoFingerTap
 
 Performs two finger tap gesture on the given element or on the application element.

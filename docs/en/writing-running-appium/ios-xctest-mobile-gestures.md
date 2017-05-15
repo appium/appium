@@ -129,7 +129,7 @@ Performs long press gesture on the given element or on the screen.
 Dictionary<string, object> tfLongTap = new Dictionary<string, object>();
 tfLongTap.Add("element", element.Id);
 tfLongTap.Add("duration", 2.0);
-((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap));
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: touchAndHold", tfLongTap);
 ```
 
 
@@ -149,7 +149,7 @@ Performs two finger tap gesture on the given element or on the application eleme
 // c#
 Dictionary<string, object> tfTap = new Dictionary<string, object>();
 tfTap.Add("element", element.Id);
-((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap));
+((IJavaScriptExecutor)driver).ExecuteScript("mobile: twoFingerTap", tfTap);
 ```
 
 

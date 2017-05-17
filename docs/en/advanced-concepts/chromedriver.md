@@ -1,8 +1,9 @@
 ## Chromedriver
 
-Appium supports automating web pages (in Chrome and the built-in Browser) and
+Appium supports automating Android web pages (in Chrome and the built-in Browser) and
 hybrid apps that are Chrome-backed, by managing a [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/)
-instance and proxying commands to it when necessary.It comes bundled with the [latest version of Chromedriver](https://chromedriver.storage.googleapis.com/LATEST_RELEASE), installed through the
+instance and proxying commands to it when necessary. It comes bundled with the
+[latest version of Chromedriver](https://chromedriver.storage.googleapis.com/LATEST_RELEASE), installed through the
 npm package [appium-chromedriver](https://www.npmjs.com/package/appium-chromedriver)
 (Github: [appium-chromedriver](https://github.com/appium/appium-chromedriver)).
 

@@ -159,7 +159,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 Pre-requisites:
 
 *  Make sure Chrome (an app with the package `com.android.chrome`) is installed on your device or emulator. Getting Chrome for the x86 version of the emulator is not currently possible without building Chromium, so you may want to run an ARM emulator and then copy a Chrome APK from a real device to get Chrome on an emulator.
-*  Chromedriver needs to be installed and capable of automating the Chrome on the device. See [here](/docs/en/advanced-concepts/chromedriver.md).
+*  Chromedriver needs to be installed and configured for automating the specific version of Chrome available on the device. See [here](/docs/en/advanced-concepts/chromedriver.md) for more information and details.
 
 Then, use desired capabilities like these to run your test in Chrome:
 

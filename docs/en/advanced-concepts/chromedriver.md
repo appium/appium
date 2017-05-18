@@ -18,7 +18,8 @@ Original error: unknown error: Chrome version must be >= 55.0.2883.0
 To get around this, Appium can be configured to use a particular Chromedriver version,
 either at install time, by either passing the `--chromedriver_version` config
 property (e.g., `npm install appium --chromedriver_version="2.16"`) or specifying
-the version in the `CHROMEDRIVER_VERSION` environment variable (i.e., `CHROMEDRIVER_VERSION=2.20 npm install appium`),
+the version in the `CHROMEDRIVER_VERSION` environment variable (i.e., `CHROMEDRIVER_VERSION=2.20 npm install appium`;
+this can also be set to `LATEST` to get the most recent version),
 or at runtime, by specifying the `--chromedriver-executable` server flag, along
 with the full path to the Chromedriver executable which was manually downloaded
 (e.g., `appium --chromedriver-executable /path/to/my/chromedriver`).
@@ -64,3 +65,30 @@ the minimum supported version for any particular version, get the [Chromium](htt
 [source code](https://chromium.googlesource.com/chromium/src/+/master/docs/get_the_code.md),
 check out the release commit, and check the variable `kMinimumSupportedChromeVersion`
 in the file `src/chrome/test/chromedriver/chrome/version.cc`.
+
+### Installing an network issues
+
+When Appium is installed it needs to download Chromedriver, so there is the possibility
+that there could be network problems that make the install fail.
+
+By default Chromedriver is retrieved from `https://chromedriver.storage.googleapis.com/`.
+To use a mirror of the ChromeDriver binaries use npm config property `chromedriver_cdnurl`.
+
+```bash
+npm install appium-chromedriver --chromedriver_cdnurl=http://npm.taobao.org/mirrors/chromedriver
+```
+
+Or add the property into your [`.npmrc`](https://docs.npmjs.com/files/npmrc) file.
+
+```bash
+chromedriver_cdnurl=http://npm.taobao.org/mirrors/chromedriver
+```
+
+Another option is to use PATH variable `CHROMEDRIVER_CDNURL`.
+
+```bash
+CHROMEDRIVER_CDNURL=http://npm.taobao.org/mirrors/chromedriver npm install appium-chromedriver
+```
+
+It may also be necessary to adjust network proxy and firewall settings to allow
+the download to occur.

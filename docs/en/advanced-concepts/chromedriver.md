@@ -16,9 +16,12 @@ Original error: unknown error: Chrome version must be >= 55.0.2883.0
 ```
 
 To get around this, Appium can be configured to use a particular Chromedriver version,
-either at install time, by passing the `--chromedriver_version` config property (e.g., `npm install appium --chromedriver_version="2.16"`),
+either at install time, by either passing the `--chromedriver_version` config
+property (e.g., `npm install appium --chromedriver_version="2.16"`) or specifying
+the version in the `CHROMEDRIVER_VERSION` environment variable (i.e., `CHROMEDRIVER_VERSION=2.20 npm install appium`),
 or at runtime, by specifying the `--chromedriver-executable` server flag, along
-with the full path to the Chromedriver executable which was manually downloaded.
+with the full path to the Chromedriver executable which was manually downloaded
+(e.g., `appium --chromedriver-executable /path/to/my/chromedriver`).
 
 The following is a list of Chromedriver versions and their corresponding minimum
 Chrome version that is automatable:

@@ -65,41 +65,55 @@ driver.LockDevice(3);
 
 ### Background app
 
-Send the currently active app to the background.
+Send the currently active app to the background, and either return after a certain amount of time, or leave the app deactivated.
+
+There are 2 types of parameters which may be passed to this method:
+
+1. An integer (in seconds): how long to background the app for. -1 means to deactivate the app entirely. This style of parameter is deprecated.
+2. An object that looks like `{"timeout": secs}`, where `secs` is again an integer with the semantics mentioned just above in 1, or `null` (which means to deactivate entirely).
 
 ```ruby
 # ruby
-background_app 5
+background_app 5  # background app for 5 seconds
+background_app -1  # deactivate app
 ```
 
 ```python
 # python
-driver.background_app(5)
+driver.background_app(5)  # background for 5 seconds
+driver.background_app(-1) # deactivate app
+driver.background_app({'timeout': None}) # deactivate app
 ```
 
 ```java
 // java
-driver.runAppInBackground(5);
+driver.runAppInBackground(5);  // for 5 seconds
+driver.runAppInBackground(-1);  // deactivate completely
 ```
 
 ```javascript
 // javascript
-driver.backgroundApp(5)
+driver.backgroundApp(5);  // for 5 seconds
+driver.backgroundApp(-1); // deactivate app
+driver.backgroundApp({timeout: null}); // deactivate app
 ```
 
 ```php
 // php
 $this->backgroundApp(5);
+$this->backgroundApp(-1);
 ```
 
 ```csharp
 // c#
 driver.BackgroundApp(5);
+driver.BackgroundApp(-1);
 ```
 
 ```objectivec
 // objective c
 [driver runAppInBackground:3];
+[driver runAppInBackground:-1];
 ```
 
 ### Hide Keyboard
@@ -753,7 +767,7 @@ expanded upon soon.
 ```ruby
 # ruby
 touch_action = Appium::TouchAction.new
-element  = find_element :name, 'Buttons, Various uses of UIButton'
+element  = find_element :accessibility_id, 'Buttons, Various uses of UIButton'
 touch_action.press(element: element, x: 10, y: 10).perform
 ```
 
@@ -987,7 +1001,7 @@ Scroll to an element.
 
 ```ruby
 # ruby
-element = find_element :name, "Element Name"
+element = find_element :accessibility_id, "Element ID"
 execute_script "mobile: scroll", direction: "down", element: element.ref
 ```
 
@@ -1007,7 +1021,7 @@ js.executeScript("mobile: scroll", scrollObject);
 
 ```javascript
 // javascript
-return driver.elementByName().then(function (el) {
+return driver.elementByAccessibilityId().then(function (el) {
   driver.execute("mobile: scroll", [{direction: "down", element: el.value}]);
 });
 ```
@@ -1151,9 +1165,6 @@ driver.IgnoreUnimportantViews(true);
 
 ### Appium Desktop Apps
 
-Appium's desktop app supports OS X and Windows.
+Appium's desktop app supports OS X, Windows and Linux.
 
-- [Appium.app for OS X][bitbucket]
-- [Appium.exe for Windows][bitbucket]
-
-[bitbucket]: https://bitbucket.org/appium/appium.app/downloads/
+- [Appium Desktop][https://www.github.com/appium/appium-desktop/releases/latest]

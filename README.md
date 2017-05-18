@@ -9,6 +9,7 @@
 [![Issues Closed](http://issuestats.com/github/appium/appium/badge/issue?style=flat)](http://issuestats.com/github/appium/appium)
 
 [![Build Status](https://team-appium.ci.cloudbees.com/job/Appium/badge/icon)](https://team-appium.ci.cloudbees.com/job/Appium/)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_shield)
 
 Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web and desktop apps, tested on simulators (iOS), emulators (Android), and real devices (iOS, Android, Windows, Mac).
 
@@ -109,7 +110,7 @@ $ appium-doctor
 
 #### Using the Appium Desktop App
 
-* [Download the Appium app](https://bitbucket.org/appium/appium.app/downloads/)
+* [Download the Appium app](https://www.github.com/appium/appium-desktop/releases/latest/)
 * Run it!
 
 ### Writing Tests for Appium
@@ -171,3 +172,7 @@ of common errors and how to get in touch with the community if you're stumped.
 
 Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other robots is possible,
 check out the [Appium Robots](https://github.com/appium/robots) project!
+
+### License
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_large)

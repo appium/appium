@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.6.4-beta.2",
+  "version": "1.6.5-beta",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -42,17 +42,18 @@
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",
     "appium-uiautomator2-driver": "0.x",
+    "appium-windows-driver": "0.x",
     "appium-xcuitest-driver": "2.x",
     "appium-youiengine-driver": "1.x",
-    "appium-windows-driver": "0.x",
     "argparse": "1.x",
     "asyncbox": "2.x",
     "babel-runtime": "=5.8.24",
     "bluebird": "2.x",
     "continuation-local-storage": "3.x",
-    "date-utils": "1.x",
+    "dateformat": "^2.0.0",
     "lodash": "4.x",
     "npmlog": "2.x",
+    "request": "^2.81.0",
     "request-promise": "1.x",
     "source-map-support": "0.x",
     "teen_process": "1.x",
@@ -88,6 +89,7 @@
     "wd": "1.x"
   },
   "optionalDependencies": {
-    "fsevents": "1.x"
+    "fsevents": "1.x",
+    "heapdump": "0.x"
   }
 }

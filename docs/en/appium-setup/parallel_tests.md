@@ -22,7 +22,7 @@ As long as your Appium and Appium bootstrap ports are between 0 and 65536, all t
 
 If you are using chromedriver or selendroid, set a different port for each server.
 
-If you are using [appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server), set a different system port with `systemPort` capability since sometimes the same ports is conflictted such as [this issue](https://github.com/appium/appium/issues/7745).
+If you are using [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver), set a different system port for each Appium instanceset with `systemPort` capability since sometimes there can be a port conflict if different ports aren't used, such as in [this issue](https://github.com/appium/appium/issues/7745).
 
 ### Parallel iOS Tests
 

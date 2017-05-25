@@ -29,7 +29,7 @@
 |----|-----------|-------|
 |`appActivity`| Activity name for the Android activity you want to launch from your package. This often needs to be preceded by a `.` (e.g., `.MainActivity` instead of `MainActivity`)|`MainActivity`, `.Settings`|
 |`appPackage`| Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
-|`appWaitActivity`| Activity name for the Android activity you want to wait for|`SplashActivity`|
+|`appWaitActivity`| Activity name/names, comma separated, for the Android activity you want to wait for|`SplashActivity`, `SplashActivity,OtherActivity`, `*`, `*.SplashActivity`|
 |`appWaitPackage`| Java package of the Android app you want to wait for|`com.example.android.myApp`, `com.android.settings`|
 |`appWaitDuration`| Timeout in milliseconds used to wait for the appWaitActivity to launch (default `20000`)| `30000`|
 |`deviceReadyTimeout`| Timeout in seconds while waiting for device to become ready|`5`|

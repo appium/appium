@@ -6,9 +6,19 @@ issue tracker](https://github.com/appium/appium/issues) and provide as much
 information as possible.
 
 This release exists to provide an updatable package in order to get the latest
-work on Appium. To install, first uninstall Appium (`npm uninstall -g appium`)
-and then re-install with the `beta` tag (`npm install -g appium@beta`). To get
-any changes that have been published to sub-packages, simply repeat that process.
+work on Appium. To install, first uninstall Appium and then re-install with the
+`beta` tag. To get any changes that have been published to sub-packages, simply
+repeat that process.
+```
+npm uninstall -g appium
+npm install -g appium@beta
+```
+
+If you are running iOS tests with the XCUITest backend (i.e., iOS 10+ tests, and
+some iOS 9.3 tests, if the `automationName` capability is set to `XCUITest`), you
+should also remove the old build artifacts.
+1. Remove derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData/WebDriverAgent-*`
+2. Remove `WebDriverAgentRunner` application from any real device being tested.
 
 
 CHANGES IN VERSION 1.6.5 (from 1.6.4)

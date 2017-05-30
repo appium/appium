@@ -251,6 +251,36 @@ describe('MJSONWP', async () => {
       });
     });
 
+    describe('w3c sendkeys migration', () => {
+      it('should accept value for sendkeys', async () => {
+        let res = await request({
+          url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
+          method: 'POST',
+          json: {value: "text to type"}
+        });
+        res.status.should.equal(0);
+        res.value.should.eql(["text to type", "bar"]);
+      });
+      it('should accept text for sendkeys', async () => {
+        let res = await request({
+          url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
+          method: 'POST',
+          json: {text: "text to type"}
+        });
+        res.status.should.equal(0);
+        res.value.should.eql(["text to type", "bar"]);
+      });
+      it('should accept value and text for sendkeys, and use value', async () => {
+        let res = await request({
+          url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
+          method: 'POST',
+          json: {value: "text to type", text: "text to ignore"}
+        });
+        res.status.should.equal(0);
+        res.value.should.eql(["text to type", "bar"]);
+      });
+    });
+
     describe('multiple sets of arguments', () => {
       describe('optional', () => {
         it('should allow moveto with element', async () => {
@@ -316,7 +346,7 @@ describe('MJSONWP', async () => {
 
     });
 
-    describe('optional sets of arguments', async () => {
+    describe('optional sets of arguments', () => {
       let desiredCapabilities = {a: 'b'};
       let requiredCapabilities = {c: 'd'};
       let capabilities = {e: 'f'};

@@ -95,8 +95,8 @@ class FakeDriver extends MobileJsonWireProtocol {
     return [attr, elementId, sessionId];
   }
 
-  async setValue (elementId, value) {
-    return value;
+  async setValue (value, elementId) {
+    return [value, elementId];
   }
 
   async performTouch (...args) {

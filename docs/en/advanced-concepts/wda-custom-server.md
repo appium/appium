@@ -1,16 +1,17 @@
 ## How To Set Up And Customize WebDriverAgent Server
 
 Appium for iOS uses [Facebook's WebDriverAgent](https://github.com/facebook/WebDriverAgent)
-as automation backend. This backend is based on Apple's XCTest framework and shares all the
+as the automation backend. This backend is based on Apple's XCTest framework and shares all the
 known problem that are present in XCTest. For some of them we have workarounds, but there
-are some, that are hardly possible to workaround. The approach described in this article
-allows to make automated tests more stable and gives you more control over what is happening
-under the hood.
+are some that are hardly possible to workaround. The approach described in this article
+enables you to have full control over how WDA is built, managed, and run on the device. This way
+you may fine-tune your automated tests in CI environment and make them more stable in
+long-running perspective.
 
 Important points:
  * The steps below are not necessary if default Appium capabilites are used.
  The server will do everything for you, however you won't have so much control over WDA.
- * It is mandatory to have SSH/Terminal access to the machine where the device under test
+ * It is mandatory to have SSH or physical access to the machine to which the device under test
  is connected.
 
 

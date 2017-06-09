@@ -20,6 +20,8 @@ should also remove the old build artifacts.
 1. Remove derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData/WebDriverAgent-*`
 2. Remove `WebDriverAgentRunner` application from any real device being tested.
 
+#### Android
+* Add beta version of Espresso Driver. To use, set `automationName = espresso`.
 
 CHANGES IN VERSION 1.6.5 (from 1.6.4)
 ===================================

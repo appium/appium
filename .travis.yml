@@ -1,18 +1,26 @@
-language: node_js
-sudo: false
-node_js:
-  - "7"
-  - "6"
-  - "4"
+language: android
+android:
+  components:
+  - platform-tools
+  - tools
+  - build-tools-25.0.1
+  - android-25
 env:
-  - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
+  - CXX=g++-4.8 _FORCE_LOGS=1
+matrix:
+  include:
+    - os: linux
+    - os: osx
 script:
+  - java -version
+  # need to also set up Node environment
+  - rm -rf ~/.nvm
+  - git clone https://github.com/creationix/nvm.git ~/.nvm
+  - source ~/.nvm/nvm.sh
+  - nvm install 6
+  - node --version
+  - npm install -g gulp mocha
+  - npm install
   - npm run lint
   - npm run test
 after_success:

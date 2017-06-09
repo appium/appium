@@ -1,6 +1,9 @@
 #!/bin/sh
-
+sed -i "/alias hackpium/d" ~/.bashrc
 echo "\033[1;32m Installing Dependencies.....\033[0m "
+echo "\033[1;32m Installing fbsiimctl.....\033[0m "
+brew tap facebook/fb
+brew install fbsimctl --HEAD
 echo "\033[1;32m Installing mocha.....\033[0m "
 npm install -g mocha
 echo "\033[1;32m Installing gulp.....\033[0m "
@@ -18,8 +21,8 @@ cd node_modules/appium-ios-simulator && gulp transpile && cd ../..
 cd node_modules/node-simctl && gulp transpile && cd ../..
 
 papium="$(pwd)"
-printf "alias hackpium='node ${papium}'" >> $HOME/.bashrc
-source  $HOME/.bashrc
+printf "\nalias hackpium='node ${papium}'" >> $HOME/.bashrc
+source ~/.bashrc
 
 
 

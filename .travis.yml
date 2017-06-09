@@ -1,5 +1,7 @@
 language: android
-sudo: false
+os:
+	- linux
+	- osx
 android:
   components:
     - platform-tools
@@ -7,8 +9,7 @@ android:
     - build-tools-25.0.1
     - android-25
 env:
-  - CXX=g++-4.8
-  - _FORCE_LOGS=1
+  - CXX=g++-4.8 _FORCE_LOGS=1
 addons:
   apt:
     sources:
@@ -16,13 +17,23 @@ addons:
     packages:
       - g++-4.8
       - oracle-java8-set-default
+matrix:
+	include:
+		- os: linux
+		  dist: trusty
+		  sudo: required
+		  node_js: 6
+		- os: osx
+		  osx_image: xcode8.3
+		  node_js: 6
+			
 script:
   - java -version
   # need to also set up Node environment
-  - rm -rf ~/.nvm
-  - git clone https://github.com/creationix/nvm.git ~/.nvm
-  - source ~/.nvm/nvm.sh
-  - nvm install 6
+  #- rm -rf ~/.nvm
+  #- git clone https://github.com/creationix/nvm.git ~/.nvm
+  #- source ~/.nvm/nvm.sh
+  #- nvm install 6
   - node --version
   - npm install -g gulp mocha
   - npm install

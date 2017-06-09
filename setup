@@ -1,6 +1,13 @@
 #!/bin/sh
 
-echo -e "\033[1;32m Installing Dependencies.....\033[0m "
+echo "\033[1;32m Installing Dependencies.....\033[0m "
+echo "\033[1;32m Installing mocha.....\033[0m "
+npm install -g mocha
+echo "\033[1;32m Installing gulp.....\033[0m "
+npm install -g gulp
+echo "\033[1;32m Installing gulp-cli.....\033[0m "
+npm install -g gulp-cli
+echo "\033[1;32m Installing appium.....\033[0m "
 npm install
 
 

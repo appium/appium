@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.6.6-beta (from 1.6.5)
+CHANGES IN VERSION 1.6.6-beta.2 (from 1.6.5)
 ===================================
 
 **Note:** This is a **_BETA_** release. Please direct any issues to the [Appium
@@ -19,6 +19,10 @@ some iOS 9.3 tests, if the `automationName` capability is set to `XCUITest`), yo
 should also remove the old build artifacts.
 1. Remove derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData/WebDriverAgent-*`
 2. Remove `WebDriverAgentRunner` application from any real device being tested.
+
+#### Android
+
+* Added experimental Espresso driver
 
 
 CHANGES IN VERSION 1.6.5 (from 1.6.4)

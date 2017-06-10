@@ -1,3 +1,79 @@
+CHANGES IN VERSION 1.6.6-beta (from 1.6.5)
+===================================
+
+**Note:** This is a **_BETA_** release. Please direct any issues to the [Appium
+issue tracker](https://github.com/appium/appium/issues) and provide as much
+information as possible.
+
+This release exists to provide an updatable package in order to get the latest
+work on Appium. To install, first uninstall Appium and then re-install with the
+`beta` tag. To get any changes that have been published to sub-packages, simply
+repeat that process.
+```
+npm uninstall -g appium
+npm install -g appium@beta
+```
+
+If you are running iOS tests with the XCUITest backend (i.e., iOS 10+ tests, and
+some iOS 9.3 tests, if the `automationName` capability is set to `XCUITest`), you
+should also remove the old build artifacts.
+1. Remove derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData/WebDriverAgent-*`
+2. Remove `WebDriverAgentRunner` application from any real device being tested.
+
+#### Android
+* Add beta version of Espresso Driver. To use, set `automationName = espresso`.
+
+CHANGES IN VERSION 1.6.5 (from 1.6.4)
+===================================
+
+Appium 1.6.5 fixes many issues and continues the trend to make more aspects of
+the automation process configurable.
+
+#### General
+* Add `--enable-heapdump` server flag to turn on NodeJS memory dump collection,
+  to aid in memory management.
+* Better logging of erroneous responses.
+* Full support of W3C specification's handling of capabilities.
+* Fix licensing in all dependencies.
+
+#### Android
+* Fix backgrounding of app.
+* Add `androidInstallPath` capability to specify where on the device apps are installed.
+* Speed up taking screenshots on Android 5.0 and higher devices.
+* Fix handling of activity names that are inner classes.
+* Support latest Android SDK directory structure.
+* Fix issue where granting permissions would fail if there were too many.
+* Fix handling of parent element information when finding elements.
+
+#### Android - UIAutomator 2
+* Fix handling of boolean return values.
+* Add `skipUnlock` capability to skip the device unlock process.
+* Fix issue where setting the network connection would crash.
+
+
+#### iOS
+* Add `enableAsyncExecuteFromHttps` capability to allow simulators to execute
+  asynchronous JavaScript on pages using HTTPS.
+* Allow setting url in native context, for opening deep links.
+* Better memory management when capturing device logs.
+* Add `webkitResponseTimeout` capability to adjust the timeout for responses in
+  Safari real device tests.
+* Add `enablePerformanceLogging` capability (previously Android-only) to turn on
+  performance logging in Safari tests.
+
+#### iOS - XCUITest
+* Fully support `clearSystemFiles` desired capability, deleting the derived data
+  for the `xcodebuild` process.
+* Fix `longPress` duration, to be milliseconds.
+* Add `mobile: selectPickerWheelValue` method to aid in interacting with picker wheels.
+* Add `mobile: alert` method to enable passing of `buttonLabel` option, to handle
+  alerts with non-standard button names.
+* Fix hanging if an app is not installed and only bundle identifier is given in
+  capabilities.
+* Allow `platformVersion` to be a number or a string.
+
+
+
 CHANGES IN VERSION 1.6.5-beta (from 1.6.4)
 ===================================
 

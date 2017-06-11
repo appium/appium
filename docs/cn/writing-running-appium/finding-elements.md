@@ -25,7 +25,6 @@ Appium 为我们提供了一个灵活的工具(Appium Inspector)，使你不退�
 
 ### 概述
 
-The Appium inspector has a simple layout, complete with a UI navigator,a preview, and record and refresh buttons, and interaction tools.
 Appium inspector 界面布局十分简单，由以下几个部分组成：UI 导航器，预览窗口，录制按钮和刷新按钮，还有交互工具。
 
 ![步骤 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Overview.png)

@@ -1,16 +1,17 @@
-#!/bin/sh
+#!/usr/bin/env bash
 sed -i "/alias hackpium/d" ~/.bashrc
-echo "\033[1;32m Installing Dependencies.....\033[0m "
-echo "\033[1;32m Installing fbsiimctl.....\033[0m "
+sed -i '/bashrc/d' ~/.bash_profile
+echo -e "\033[1;32m Installing Dependencies.....\033[0m "
+echo -e "\033[1;32m Installing fbsimctl.....\033[0m "
 brew tap facebook/fb
 brew install fbsimctl --HEAD
-echo "\033[1;32m Installing mocha.....\033[0m "
+echo -e "\033[1;32m Installing mocha.....\033[0m "
 npm install -g mocha
-echo "\033[1;32m Installing gulp.....\033[0m "
+echo -e "\033[1;32m Installing gulp.....\033[0m "
 npm install -g gulp
-echo "\033[1;32m Installing gulp-cli.....\033[0m "
+echo -e "\033[1;32m Installing gulp-cli.....\033[0m "
 npm install -g gulp-cli
-echo "\033[1;32m Installing appium.....\033[0m "
+echo -e "\033[1;32m Installing appium.....\033[0m "
 npm install
 
 
@@ -22,9 +23,11 @@ cd node_modules/node-simctl && gulp transpile && cd ../..
 
 papium="$(pwd)"
 printf "\nalias hackpium='node ${papium}'" >> $HOME/.bashrc
-source ~/.bashrc
+printf "\nsource ~/.bashrc" >> $HOME/.bash_profile
+source ~/.bash_profile
+
+echo -e "\033[1;32m Finished....\033[0m "
+echo -e "\033[1;32m How to run appium '$ hackpium -p (custom port)'\033[0m "
+echo -e "\033[1;32m Reload your terminal before you can using it \033[0m"
 
 
-
-echo "\033[1;32m Finished....\033[0m "
-echo "\033[1;32m How to run appium '$ hackpium -p (custom port)'\033[0m "

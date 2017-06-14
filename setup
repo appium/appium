@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-sed -i "/alias hackpium/d" ~/.bashrc
-sed -i '/bashrc/d' ~/.bash_profile
 echo -e "\033[1;32m Installing Dependencies.....\033[0m "
 echo -e "\033[1;32m Installing fbsimctl.....\033[0m "
 brew tap facebook/fb
@@ -11,23 +9,15 @@ echo -e "\033[1;32m Installing gulp.....\033[0m "
 npm install -g gulp
 echo -e "\033[1;32m Installing gulp-cli.....\033[0m "
 npm install -g gulp-cli
+echo -e "\033[1;32m Installing appium-gulp-plugins.....\033[0m "
+npm install -g appium-gulp-plugins
 echo -e "\033[1;32m Installing appium.....\033[0m "
-npm install
+npm install -g
 
-
-gulp transpile
-
-cd node_modules/appium-xcuitest-driver && gulp transpile && cd ../..
-cd node_modules/appium-ios-simulator && gulp transpile && cd ../..
-cd node_modules/node-simctl && gulp transpile && cd ../..
-
-papium="$(pwd)"
-printf "\nalias hackpium='node ${papium}'" >> $HOME/.bashrc
-printf "\nsource ~/.bashrc" >> $HOME/.bash_profile
-source ~/.bash_profile
+node_global="$(npm config get prefix)"
+cd ${node_global}/lib/node_modules/hackpium/node_modules/appium-xcuitest-driver && gulp transpile
+cd ${node_global}/lib/node_modules/hackpium/node_modules/appium-ios-simulator && gulp transpile
+cd ${node_global}/lib/node_modules/hackpium/node_modules/node-simctl && gulp transpile
 
 echo -e "\033[1;32m Finished....\033[0m "
 echo -e "\033[1;32m How to run appium '$ hackpium -p (custom port)'\033[0m "
-echo -e "\033[1;32m Reload your terminal before you can using it \033[0m"
-
-

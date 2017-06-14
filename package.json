@@ -1,6 +1,6 @@
 {
-  "name": "appium",
-  "description": "Automation for Apps.",
+  "name": "hackpium",
+  "description": "appium to run multiple iOS Simulator",
   "tags": [
     "automation",
     "javascript",
@@ -27,7 +27,7 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js"
+    "hackpium": "./build/lib/main.js"
   },
   "directories": {
     "lib": "./lib",

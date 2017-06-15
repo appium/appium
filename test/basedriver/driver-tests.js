@@ -2,6 +2,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
+import { DeviceSettings } from '../..';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
@@ -333,6 +334,16 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           res.events.newSessionRequested[0].should.be.a('number');
         });
       });
+    });
+  });
+
+  describe('DeviceSettings', () => {
+    it('should not hold on to reference of defaults in constructor', () => {
+      let obj = {foo: 'bar'};
+      let d1 = new DeviceSettings(obj);
+      let d2 = new DeviceSettings(obj);
+      d1._settings.foo = 'baz';
+      d1._settings.should.not.eql(d2._settings);
     });
   });
 }

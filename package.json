@@ -1,6 +1,6 @@
 {
-  "name": "appium",
-  "description": "Automation for Apps.",
+  "name": "hackpium",
+  "description": "appium to run multiple iOS Simulator",
   "tags": [
     "automation",
     "javascript",
@@ -27,7 +27,7 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js"
+    "hackpium": "./build/lib/main.js"
   },
   "directories": {
     "lib": "./lib",
@@ -39,12 +39,13 @@
     "appium-espresso-driver": "^1.0.0-beta",
     "appium-fake-driver": "0.x",
     "appium-ios-driver": "1.x",
+    "appium-ios-simulator": "git+https://github.com/KMK-ONLINE/appium-ios-simulator.git",
     "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",
     "appium-uiautomator2-driver": "0.x",
     "appium-windows-driver": "0.x",
-    "appium-xcuitest-driver": "2.x",
+    "appium-xcuitest-driver": "git+https://github.com/KMK-ONLINE/appium-xcuitest-driver.git",
     "appium-youiengine-driver": "1.x",
     "argparse": "1.x",
     "asyncbox": "2.x",
@@ -53,6 +54,7 @@
     "continuation-local-storage": "3.x",
     "dateformat": "^2.0.0",
     "lodash": "4.x",
+    "node-simctl": "git+https://github.com/KMK-ONLINE/node-simctl.git",
     "npmlog": "2.x",
     "request": "^2.81.0",
     "request-promise": "1.x",

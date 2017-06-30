@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+echo -e "\033[1;32m Installing Dependencies.....\033[0m "
+echo -e "\033[1;32m Installing fbsimctl.....\033[0m "
+brew tap facebook/fb
+brew install fbsimctl --HEAD
+echo -e "\033[1;32m Installing mocha.....\033[0m "
+npm install -g mocha
+echo -e "\033[1;32m Installing gulp.....\033[0m "
+npm install -g gulp
+echo -e "\033[1;32m Installing gulp-cli.....\033[0m "
+npm install -g gulp-cli
+echo -e "\033[1;32m Installing appium-gulp-plugins.....\033[0m "
+npm install -g appium-gulp-plugins
+echo -e "\033[1;32m Installing appium.....\033[0m "
+npm install -g
+
+node_global="$(npm config get prefix)"
+cd ${node_global}/lib/node_modules/hackpium/node_modules/appium-xcuitest-driver && gulp transpile
+cd ${node_global}/lib/node_modules/hackpium/node_modules/appium-ios-simulator && gulp transpile
+cd ${node_global}/lib/node_modules/hackpium/node_modules/node-simctl && gulp transpile
+
+echo -e "\033[1;32m Finished....\033[0m "
+echo -e "\033[1;32m How to run appium '$ hackpium -p (custom port)'\033[0m "

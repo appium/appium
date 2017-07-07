@@ -94,6 +94,12 @@ describe('app download and configuration', () => {
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an app\n');
       });
+      it('should download zip file with query string', async () => {
+        let newAppPath = await h.configureApp('http://localhost:8000/FakeIOSApp.app.zip?sv=abc&sr=def', '.app');
+        newAppPath.should.contain('.app');
+        let contents = await fs.readFile(newAppPath, 'utf8');
+        contents.should.eql('this is not really an app\n');
+      });
       it('should download an app file', async () => {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeIOSApp.app', '.app');
         newAppPath.should.contain('.app');
@@ -112,6 +118,13 @@ describe('app download and configuration', () => {
       });
       it('should recognize zip mime types and unzip the downloaded file', async () => {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.asd?mime-zip', '.apk');
+        newAppPath.should.contain('FakeAndroidApp.apk');
+        newAppPath.should.not.contain('.asd');
+        let contents = await fs.readFile(newAppPath, 'utf8');
+        contents.should.eql('this is not really an apk\n');
+      });
+      it('should recognize zip mime types and unzip the downloaded file with query string', async () => {
+        let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.asd?mime-zip&sv=abc&sr=def', '.apk');
         newAppPath.should.contain('FakeAndroidApp.apk');
         newAppPath.should.not.contain('.asd');
         let contents = await fs.readFile(newAppPath, 'utf8');

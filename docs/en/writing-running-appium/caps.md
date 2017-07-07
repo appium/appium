@@ -34,6 +34,7 @@
 |`appWaitDuration`| Timeout in milliseconds used to wait for the appWaitActivity to launch (default `20000`)| `30000`|
 |`deviceReadyTimeout`| Timeout in seconds while waiting for device to become ready|`5`|
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
+|`androidCoverageEndIntent`| A broadcast action implemented by yourself which is used to dump coverage into file system. Passed to -a in adb shell am broadcast -a | `com.example.pkg.END_EMMA`|
 |`androidDeviceReadyTimeout`|Timeout in seconds used to wait for a device to become ready after booting|e.g., `30`|
 |`androidInstallTimeout`|Timeout in milliseconds used to wait for an apk to install to the device. Defaults to `90000` |e.g., `90000`|
 |`androidInstallPath`| The name of the directory on the device in which the apk will be push before install. Defaults to `/data/local/tmp` |e.g. `/sdcard/Downloads/`|

@@ -35,7 +35,7 @@ Appium 1.5 does away with most CLI flags that existed previously; the remainder 
 | --app-wait-activity             | appWaitActivity               |
 | --device-ready-timeout          | deviceReadyTimeout            |
 | --android-coverage              | androidCoverage               |
-| --android-coverage-end-intent   |                               |
+| --android-coverage-end-intent   | androidCoverageEndIntent      |
 | --avd                           | avd                           |
 | --avd-args                      | avdArgs                       |
 | --use-keystore                  | useKeystore                   |

@@ -74,7 +74,6 @@ All flags are optional, but some are required in conjunction with certain others
 |`--app-wait-activity`|false|[DEPRECATED] - (Android-only) Activity name for the Android activity you want to wait for (e.g., SplashActivity)|`--app-wait-activity SplashActivity`|
 |`--device-ready-timeout`|5|[DEPRECATED] - (Android-only) Timeout in seconds while waiting for device to become ready|`--device-ready-timeout 5`|
 |`--android-coverage`|false|[DEPRECATED] - (Android-only) Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w |`--android-coverage com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
-|`--android-coverage-end-intent`|false| [DEPRECATED] - A broadcast action implemented by yourself which is used to dump coverage into file system. Passed to -a in adb shell am broadcast -a |`--android-coverage-end-intent com.example.pkg.END_EMMA`|
 |`--avd`|null|[DEPRECATED] - (Android-only) Name of the avd to launch|`--avd @default`|
 |`--avd-args`|null|[DEPRECATED] - (Android-only) Additional emulator arguments to launch the avd|`--avd-args -no-snapshot-load`|
 |`--use-keystore`|false|[DEPRECATED] - (Android-only) When set the keystore will be used to sign apks.||

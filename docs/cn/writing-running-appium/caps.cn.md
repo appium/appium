@@ -31,6 +31,7 @@
 |`appWaitActivity`| 你想要等待启动的 Android Activity 名称|`SplashActivity`|
 |`deviceReadyTimeout`| 设置等待一个模拟器或真机准备就绪的超时时间|`5`|
 |`androidCoverage`| 用于执行测试的 instrumentation 类。作为命令 `adb shell am instrument -e coverage true -w` 的 `-w` 参数。| `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
+|`androidCoverageEndIntent`| 你自己实现的用于提取覆盖率到文件的BroadCast Action。 作为命令 adb shell am broadcast -a 的 -a 的参数，作为命令 `adb shell am broadcast -a ` 的 `-a` 参数。你必须实现接收这个Action的BroadCastReceiver，并且在这个Receiver中实现覆盖率文件的产生。| `com.example.pkg.END_EMMA` |
 |`enablePerformanceLogging`| (仅适用于 Chrome 和 webview) 开启 Chromedriver 的性能日志。 (默认 `false`) | `true`, `false`|
 |`androidDeviceReadyTimeout`|等待设备在启动应用后准备就绪的超时时间。以秒为单位。|如 `30`|
 |`androidDeviceSocket`|开发工具的 socket 名称。只有在被测应用是一个使用 Chromium 内核的浏览器时需要。 socket 会被浏览器打开，然后 Chromedriver 把它作为开发者工具来进行连接。|如 `chrome_devtools_remote`|

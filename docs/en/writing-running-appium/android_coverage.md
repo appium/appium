@@ -5,7 +5,7 @@
 * Need to implement a BroadcastReceiver to export coverage to disk files. This is because `Instrumentation` only collects data into memory.
 
 ## Project Structure
-* You may need a following structure of files:
+* You may need the following structure of files:
 ```
 src/main/java/com/example/pkg
    |____ MainActivity.java *Your main activity*
@@ -251,13 +251,13 @@ dependencies {
 ```
 
 
-### [3] Now, build apk and run Appium tests!!
+### [3] Now, build apk and run Appium tests!
 The coverage.ec will be generated at /data/data/com.example.pkg/files. Pull it out.
 
-### [4] 关于拉出HTML报告
-当你跑完测试后，程序会在你手机的app里产生coverage.ec这样的文件。
-* [1] 首先，利用adb pull把coverage.ec拉出手机
-* [2] 关于如何把ec转化成HTML，你可以在gradle里加入下列task：
+### [4] About generating HTML reports
+To get the HTML report of coverage.ec, you need following steps:
+* [1] pull it into file system by `adb pull` 
+* [2] create the following task in your gradle file:
 ```groovy
 def coverageSourceDirs = [
         './src/main/java'

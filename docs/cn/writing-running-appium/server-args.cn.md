@@ -40,6 +40,7 @@
 |`--app-wait-package`|false|(Android-only) 你想等待的 Activity 的包名。(比如， com.example.android.myApp)|`--app-wait-package com.example.android.myApp`|
 |`--app-wait-activity`|false|(Android-only) 你想等待的 Activity 名字(比如， SplashActivity)|`--app-wait-activity SplashActivity`|
 |`--android-coverage`|false|(Android-only) 完全符合条件的 instrumentation 类。 作为命令 adb shell am instrument -e coverage true -w 的 -w 的参数 |`--android-coverage com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
+|`--android-coverage-end-intent`|false|(Android-only) 你自己实现的用于提取覆盖率到文件的BroadCast Action。 作为命令 adb shell am broadcast -a 的 -a 的参数 |`--android-coverage com.example.pkg.END_EMMA`|
 |`--avd`|null|(Android-only) 要启动的 avd 的名字||`--avd @default`|
 |`--avd-args`|null|(Android-only) 添加额外的参数给要启动avd|`--avd-args -no-snapshot-load`|
 |`--device-ready-timeout`|5|(Android-only) 等待设备准备好的时间，以秒为单位|`--device-ready-timeout 5`|

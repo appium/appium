@@ -2,15 +2,15 @@
 
 Appium has libraries for:
 
-Language | Source
-      :--|--:
-[Ruby][rubygems]              | [GitHub](https://github.com/appium/ruby_lib)
-[Python][pypi]                | [GitHub](https://github.com/appium/python-client)
-[Java][maven]                 | [GitHub](https://github.com/appium/java-client)
-[JavaScript][npm]             | [GitHub](https://github.com/admc/wd)
-[PHP][php]                    | [GitHub](https://github.com/appium/php-client)
-[C#][nuget]                   | [GitHub](https://github.com/appium/appium-dotnet-driver)
-[Objective-C][cocoapods]      | [GitHub](https://github.com/appium/selenium-objective-c)
+| Language | Source |
+|:---------|-------:|
+| [Ruby][rubygems]              | [GitHub](https://github.com/appium/ruby_lib) |
+| [Python][pypi]                | [GitHub](https://github.com/appium/python-client) |
+| [Java][maven]                 | [GitHub](https://github.com/appium/java-client) |
+| [JavaScript][npm]             | [GitHub](https://github.com/admc/wd) |
+| [PHP][php]                    | [GitHub](https://github.com/appium/php-client) |
+| [C#][nuget]                   | [GitHub](https://github.com/appium/appium-dotnet-driver) |
+| [Objective-C][cocoapods]      | [GitHub](https://github.com/appium/selenium-objective-c) |
 
 [rubygems]:       http://rubygems.org/gems/appium_lib
 [pypi]:           https://pypi.python.org/pypi/Appium-Python-Client

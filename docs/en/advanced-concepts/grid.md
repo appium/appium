@@ -51,7 +51,7 @@ you will see your device on the grid console page:
 }
 ```
 
-Valid platforms are listed [here](http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/Platform.html)
+Valid platforms are listed [here](http://www.seleniumhq.org/about/platforms.jsp)
 
 If `url`, `host`, and `port` are not given, the config will be auto updated
 to point to localhost:whatever-port-Appium-started-on.

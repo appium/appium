@@ -785,18 +785,12 @@ driver.getCurrentPackage().then(function (package) { /*...*/ })
 
 ```php
 // php
-$this->currentPackage();
+$this->getCurrentPackage();
 ```
 
 ```csharp
 // c#
 driver.GetCurrentPackage();
-```
-
-```objectivec
-// objective c
-NSError *err;
-[driver currentPackage];
 ```
 
 ### TouchAction / MultiTouchAction

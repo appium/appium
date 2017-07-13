@@ -759,6 +759,46 @@ NSError *err;
 [driver currentActivity];
 ```
 
+### Current Package
+
+Android only. Get the current package.
+
+```ruby
+# ruby
+current_package
+```
+
+```python
+# python
+driver.current_package
+```
+
+```java
+// java
+driver.currentPackage();
+```
+
+```javascript
+// javascript
+driver.getCurrentPackage().then(function (package) { /*...*/ })
+```
+
+```php
+// php
+$this->currentPackage();
+```
+
+```csharp
+// c#
+driver.GetCurrentPackage();
+```
+
+```objectivec
+// objective c
+NSError *err;
+[driver currentPackage];
+```
+
 ### TouchAction / MultiTouchAction
 
 An API for generating touch actions. This section of the documentation will be

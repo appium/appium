@@ -775,7 +775,7 @@ driver.current_package
 
 ```java
 // java
-driver.currentPackage();
+driver.getCurrentPackage();
 ```
 
 ```javascript
@@ -785,7 +785,7 @@ driver.getCurrentPackage().then(function (package) { /*...*/ })
 
 ```php
 // php
-$this->getCurrentPackage();
+$this->currentPackage();
 ```
 
 ```csharp

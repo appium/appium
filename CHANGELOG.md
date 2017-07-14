@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.6.6-beta.2 (from 1.6.5)
+CHANGES IN VERSION 1.6.6-beta.3 (from 1.6.5)
 ===================================
 
 **Note:** This is a **_BETA_** release. Please direct any issues to the [Appium

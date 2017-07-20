@@ -58,7 +58,8 @@
     "request-promise": "1.x",
     "source-map-support": "0.x",
     "teen_process": "1.x",
-    "winston": "2.x"
+    "winston": "2.x",
+    "authorize-ios": "^1.x"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
@@ -74,6 +75,7 @@
   ],
   "devDependencies": {
     "appium-gulp-plugins": "1.x",
+    "appium-test-support": "^0.0.5",
     "babel-eslint": "6.x",
     "chai": "3.x",
     "chai-as-promised": "5.x",

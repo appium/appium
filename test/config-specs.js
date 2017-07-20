@@ -39,6 +39,9 @@ describe('Config', () => {
       before(() => {
         sinon.spy(console, "log");
       });
+      after(() => {
+        console.log.restore(); // eslint-disable-line no-console
+      });
       it('should log the config to console', async () => {
         let config = await getAppiumConfig();
         await showConfig();
@@ -88,10 +91,14 @@ describe('Config', () => {
       });
     });
 
+    
     describe('warnNodeDeprecations', () => {
       let spy;
       before(() => {
         spy = sinon.spy(logger, "warn");
+      });
+      after(() => { 
+        logger.warn.restore();
       });
       beforeEach(() => {
         spy.reset();

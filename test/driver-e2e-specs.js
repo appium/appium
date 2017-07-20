@@ -97,7 +97,7 @@ describe('Logsink', () => {
   it('should send logs to a logHandler passed in by a parent package', async () => {
     logs.length.should.be.above(1);
     logs[0].length.should.equal(2);
-    logs[0][1].should.include("Welcome to Appium");
+    logs[0][1].should.include("Appium");
   });
 
 });

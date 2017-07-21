@@ -1,27 +1,27 @@
 # Android Coverage Guide
 ## Requirement
 * Only Emulators or rooted phones are acceptable
-* Need add UiAutomator2 supprt in your apps. That is to say, you need implement a subclass of `Instrumentation`. `Instrumentation` will be responsible to collect your coverage. 
+* Need to add UiAutomator2 support in your apps. That is to say, you need to implement a subclass of `Instrumentation`. `Instrumentation` will be responsible to collect your coverage. 
 * Need to implement a BroadcastReceiver to export coverage to disk files. This is because `Instrumentation` only collects data into memory.
 
 ## Project Structure
-* You may need the following structure of files:
+You may need the following structure of files:
 ```
 src/main/java/com/example/pkg
    |____ MainActivity.java *Your main activity*
    |____ InstrumentActivityListener.java *A customized interface for exporting coverage to files*
    |____ InstrumentActivity.java *Activity launched for coverage. But in most cases, this should be same as MainActivity. The only difference is that it will include a `InstrumentActivityListener` to export coverage data to disk files.
-   |____ JacocoInstrumentation.java  The instrument class created by you. Also it needs implemeting InstrumentActivitylistener.
+   |____ JacocoInstrumentation.java  The instrument class created by you. Also it needs to implement `InstrumentActivitylistener`.
    |____ EndEmmaBroadCast.java A broadcast receiver which will be invoked by appium-uiautomator2-driver at the end of testing. You need implementing logic to invoke InstrumentActivityListener so as to export coverage to files.
 ```
-* Configure followings in your caps  
+Configure followings in your caps:  
  `automationName` ： `uiautomator2` (case irrelevant)  
  `androidCoverage` ： {package}/{instrumentation class}, in our example, `com.example.pkg/com.example.pkg.JacocoInstrumentation`  
  `appWaitActivity` ： the FQCN of the activity of InstrumentActivity, in our example, `com.example.pkg.InstrumentActivity`  
  `appWaitPackage` ： {package}，in our example, `com.example.pkg`  
  `androidCoverageEndIntent` ： The action of the broadcast receiver to invoke the exporting of coverage data to files, in our example `com.example.pkg.END_EMMA`  
 
-* Methodology  
+Methodology  
  Appium (appium-uiautomator2-driver) will launch app via command like：`adb shell am instrument -e coverage true -w com.example.pkg/com.example.pkg.JacocoInstrumentation`  
  After testing is done, Appium (appium-uiautomator2-driver) will execute `adb shell am broadcast -a com.example.pkg.END_EMMA` to export coverage to files（If you implement such export in the broadcast receiver）
 

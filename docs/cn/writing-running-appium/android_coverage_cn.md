@@ -5,7 +5,7 @@
 * 由于Instrumentation的数据存在于内存中，因此你还需要实现一个BroadCastReceiver，用于在Instrumentation结束时将Instrument结果输出到手机存储器的文件中。
 
 ## 项目结构
-* 你的项目需要看起来类似如下的结构
+你的项目需要看起来类似如下的结构
 ```
 src/main/java/com/example/pkg
    |____ MainActivity.java 你的主Activity
@@ -15,14 +15,14 @@ src/main/java/com/example/pkg
    |____ EndEmmaBroadCast.java 用于接受结束信号广播的接收器，它将调用InstrumentActivityListener并导出覆盖率。
 ```
 
-* 你在配置Caps时要做如下设置  
+你在配置Caps时要做如下设置  
  `automationName` ： `uiautomator2` (无视大小写)  
  `androidCoverage` ： {package}/{instrumentation class}, 在我们的例子中是com.example.pkg/com.example.pkg.JacocoInstrumentation  
  `appWaitActivity` ： 用作Insutrment的Activity的全名，在我们的例子中是com.example.pkg.InstrumentActivity
  `appWaitPackage` ： {package}，在我们的例子中是com.example.pkg  
  `androidCoverageEndIntent` ： 用作将当前coverage输出至文件中的BroadCasterReceiver的Action名，在我们的例子中是 `com.example.pkg.END_EMMA`  
 
-* 工作原理  
+工作原理  
  Appium 会用类似的命令启动应用：`adb shell am instrument -e coverage true -w com.example.pkg/com.example.pkg.JacocoInstrumentation`  
  在测试完成后，会用`adb shell am broadcast -a com.example.pkg.END_EMMA` 使覆盖率可以被收集（前提是你亲自实现它）
 

@@ -1,6 +1,6 @@
 # Windows 应用的 UI 测试
 
-Appium 在 Windows 上的 UI 测试是由 [WinAppDriver] (https://github.com/Microsoft/WinAppDriver) 驱动的，这个组件已作为 Appium 的一部分一起下载安装。
+在 Appium 中，Windows 应用的 UI 测试是由 [WinAppDriver] (https://github.com/Microsoft/WinAppDriver) 支持的，Appium 在下载安装的时候已经带了这部分。
 
 ## Java 示例
 1. 在 Java IDE （比如 IntelliJ）中打开包含示例项目工程的目录，如：[CalculatorTest](https://github.com/Microsoft/WinAppDriver/tree/master/Samples/Java/CalculatorTest)
@@ -14,7 +14,7 @@ Appium 在 Windows 上的 UI 测试是由 [WinAppDriver] (https://github.com/Mic
 Windows Application Driver 支持测试 **Windows 10 PC** 上的**Universal Windows Platform (UWP)** 及 **Classic Windows (Win32)** 应用。
 
 ## 创建你的测试脚本
-你可以使用 Appium 或 Selenium 支持的编程语言来编写测试脚本，在下面的例子中，我们会使用 C# 在 **Microsoft Visual Studio 2015** 编写测试脚本。
+你可以使用任意一个 Appium 或 Selenium 支持的编程语言来编写测试脚本，在下面的例子中，我们会使用 C# 在 **Microsoft Visual Studio 2015** 编写测试脚本。
 
 ## 创建测试项目工程
 1. 打开 **Microsoft Visual Studio 2015**
@@ -38,7 +38,7 @@ AlarmClockSession.FindElementByAccessibilityId("AlarmNameTextBox").Clear();
 在测试自己的应用时，你可以在项目工程下生成的文件 `AppX\vs.appxrecipe` 中找到该应用的 **Application id**，如：```c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App```，这个文件位于 RegisteredUserNmodeAppID 节点下。
 
 ### Classic Windows 应用的测试
-同样的，你可以使用 Selenium 支持的编程语言来编写对 Classic Windows 应用的测试脚本，并在 app capabilities entry 中指定该应用的**full executable path**。下面的例子是对 Windows 系统下的应用 **Notepad** 创建一个测试 session：
+同样的，你可以使用任意一门 Selenium 支持的编程语言来编写对 Classic Windows 应用的测试脚本，并在 app capabilities entry 中指定该应用的**绝对路径**。下面的例子是对 Windows 系统下的应用 **Notepad** 创建一个测试 session：
 
 ```c#
 // Launch Notepad
@@ -63,3 +63,5 @@ NotepadSession.FindElementByClassName("Edit").SendKeys("This is some text");
 | accessibility id	|   AutomationId   	|
 |    class name   	|     ClassName    	|
 |       name      	|       Name       	|
+
+本文由 [fishky2](https://github.com/fishky2) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。

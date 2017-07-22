@@ -1,6 +1,6 @@
-# Reset Strategies
+# 重置策略
 
-| Automation Name | default | fullReset | noReset |
+| 自动化平台 | 默认 | fullReset | noReset |
 | --------------- | ------- | --------- | ------- |
-| iOS (including XCUITest) | Shut down sim after test. Do not destroy sim. Do not uninstall app from real device. | Uninstall app after real device test, destroy Simulator after sim test | Do not destroy or shut down sim after test. Start tests running on whichever sim is running, or device is plugged in |
-| Android | Stop and clear app data after test. Do not uninstall apk | Stop app, clear app data and uninstall apk after test | Do not stop app, do not clear app data, and do not uninstall apk. |
+| iOS (包括XCUITest) | 测试完成后关闭模拟器。不销毁模拟器。不从真机上卸载应用。 | 测试完成后卸载应用, 模拟器测试结束后销毁模拟器。 | 测试结束后不销毁或者关闭模拟器。启动测试运行在任意正在运行的模拟器或者插入的真机。 |
+| Android | 测试结束后停止应用，清理应用数据，不卸载应用包。 | 测试结束后停止应用，清理应用数据，卸载应用包。 | 不停止应用，不清理应用数据，不卸载应用包。 |

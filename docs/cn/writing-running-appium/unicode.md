@@ -1,13 +1,13 @@
 ## 多语言支持
 
-以编程方式处理非拉丁字符时存在的一个问题是对于带有音标的字符可能会有多种编码方式。如此，
-对于字母`é`，有两种编码：一个单字符`é`(Unicode的`LATIN SMALL LETTER E WITH ACUTE`
+编程语言在处理非拉丁字符时候有一个问题，带重音符号的字符有多种编码方式。比如，
+字母`é`，有两种编码：一个单字符`é`(Unicode的`LATIN SMALL LETTER E WITH ACUTE`
 （带有尖标的小写拉丁字母E）)和字母`e`后跟上音标`́`的组合(`COMBINING ACUTE ACCENT`
 （组合尖音标）)。为了解决这个问题，就有了`normalization(标准化)`，一种让["相同的字符串有一个唯一的二进制表示"](http://www.unicode.org/reports/tr15/)
 的运算。
 
-幸运的是，对ASCII文本（即不需要再被标准化的文本）进行标准化不会引起任何变化，且执行多次运算也不会有效果。
-因此，这个标准化函数在文本上调用不会有产生负面效果的风险。
+幸运的是，对ASCII文本（即不需要再被标准化的文本）进行标准化不会引起任何变化，且执行多次运算也不会有副作用。
+因此，这个标准化函数在文本上调用不会有副作用的风险。
 
 ```javascript
 // javascript
@@ -17,7 +17,7 @@ var unorm = require('unorm');
 unorm.nfd('Adélaïde Hervé') === unorm.nfd(unorm.nfd('Adélaïde Hervé'));
 ```
 
-因此，当处理测试中的unicode文本时，你需要进行标准化，对预期的文本和从Appium接收到的文本都做会更好。
+因此，当处理测试中的unicode文本时，你最好对预期的文本和从Appium接收到的文本都进行标准化。
 进行标准化的方式有很多种，所以要确保对两边的字符串执行相同的运算！
 
 ```javascript
@@ -31,7 +31,7 @@ driver
     });
 ```
 
-问题的标志之一是对编码后的unicode文本的断言失败但报告上看起来是相同的字符串：
+问题的端倪是对编码后的unicode文本的断言失败但从报告上看，却是相同的字符串：
 
 ```shell
 AssertionError: expected 'François Gérard' to deeply equal 'François Gérard'
@@ -86,7 +86,7 @@ driver
 #### Android
 
 Android测试通过安装和使用一个[特殊键盘](https://github.com/appium/io.appium.android.ime)
-来允许Unicode输入，它允许将文本作为ASCII文本在Appium和被测应用间传递。
+来允许Unicode输入，它允许将文本像ASCII一样在Appium和被测应用间传递。
 
 为了使用这个功能，将`unicodeKeyboard` desired capability设置为`true`。如果键盘需要被还原成初始状态，
 将`resetKeyboard` desired capability也设置为`true`。不然设备上的Appium的Unicode键盘将会在测试完成后留用。
@@ -111,3 +111,4 @@ driver
   .should.eventually.become(testText)
   .nodeify(done);
 ```
+本文由 [NativeZhang](https://github.com/NativeZhang) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。

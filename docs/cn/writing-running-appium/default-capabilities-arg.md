@@ -1,16 +1,16 @@
-## The --default-capabilities flag
+## --default-capabilities 标识
 
-Appium 1.5 does away with most CLI flags that existed previously; the remainder can be converted into JSON and made part of the `--default-capabilities` flag. For example:
+Appium 1.5 移除了大部分旧版本遗留的 CLI 标识；其余部分可转换成 JSON 并成为 `--default-capabilities` 标识的一部分。
+举个例子:
 
 ```
-# raw JSON as an argument
+# 未处理的 JSON 作为一个参数
 --default-capabilities '{"app": "myapp.app", "deviceName": "iPhone Simulator"}'
-# or the name of a JSON file
+# 或一个 JSON 文件的名字
 --default-capabilities /path/to/file.json
 ```
 
-**Windows users** will need to escape the quotes in JSON passed on the command line: `--default-capabilities "{\"app\": \"myapp.app\"}"`
-
+**Windows 用户**在命令行传递 JSON 时记得去掉引号：`--default-capabilities "{\"app\": \"myapp.app\"}"`
 
 
 | Flag                      | JSON key                |

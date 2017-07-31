@@ -130,9 +130,9 @@ describe('AppiumDriver', () => {
         sessions.should.have.length(0);
       });
       it('should call inner driver\'s deleteSession method', async () => {
-        let [sessionId] = await appium.createSession(BASE_CAPS);
+        const [sessionId] = await appium.createSession(BASE_CAPS);
         mockFakeDriver.expects("deleteSession")
-          .once().withExactArgs()
+          .once().withExactArgs(sessionId, [])
           .returns();
         await appium.deleteSession(sessionId);
         mockFakeDriver.verify();

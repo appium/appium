@@ -3,9 +3,9 @@
 Appium for iOS uses [Facebook's WebDriverAgent](https://github.com/facebook/WebDriverAgent)
 as the automation backend. This backend is based on Apple's XCTest framework and shares all the
 known problem that are present in XCTest. For some of them we have workarounds, but there
-are some that are hardly possible to workaround. The approach described in this article
-enables you to have full control over how WDA is built, managed, and run on the device. This way
-you may fine-tune your automated tests in CI environment and make them more stable in
+are some that are hardly possible to workaround, for example https://github.com/facebook/WebDriverAgent/issues/507.
+The approach described in this article enables you to have full control over how WDA is built, managed,
+and run on the device. This way you may fine-tune your automated tests in CI environment and make them more stable in
 long-running perspective.
 
 Important points:
@@ -26,6 +26,12 @@ If this was a fresh install then it is also necessary to download third-party de
 ```bash
 cd /usr/local/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent
 ./Scripts/bootstrap.sh -d
+```
+
+Also, it might be necessary to create an empty folder for WDA resources:
+
+```bash
+mkdir -p /usr/local/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent/Resources/WebDriverAgent.bundle
 ```
 
 No futher confuguration steps are needed if you're going to execute your automated tests on
@@ -220,6 +226,9 @@ public class WDAServer {
             final Map<String, String> env = pb.environment();
             // This is needed for Jenkins
             env.put("BUILD_ID", "dontKillMe");
+            // This line is important. If USE_PORT environment variable is not set then WDA
+            // takes port number zero by default and won't accept any incoming requests
+            env.put("USE_PORT", Integer.toString(PORT));
             log.info(String.format("Waiting max %s for WDA to be (re)started on %s:%s...", RESTART_TIMEOUT.toString(),
                     hostname, PORT));
             final Timedelta started = Timedelta.now();
@@ -260,20 +269,6 @@ public class WDAServer {
             }
         }
         return Optional.empty();
-    }
-
-    public void resetLogs() {
-        for (File logFile : new File[]{XCODEBUILD_LOG, IPROXY_LOG}) {
-            if (logFile.exists()) {
-                try {
-                    final PrintWriter writer = new PrintWriter(logFile);
-                    writer.print("");
-                    writer.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 }
 ```

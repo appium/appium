@@ -20,31 +20,28 @@ using the Id/Name that the native Accessibility options utilize.
 There's a known issue with table cell elements becoming invalidated before
 there's time to interact with them. We're working on a fix
 
-### Using The Appium Inspector To Locate Elements
+### Using Appium Desktop To Locate Elements
 
 Appium provides you with a neat tool that allows you to find the the elements
-you're looking for without leaving the Appium app. With the Appium Inspector
-(the i symbol next to the start test button) you can find any element and
-it's name by either clicking the element on the preview page provided,
-or locating it in the UI navigator.
+you're looking for. With [Appium Desktop](https://github.com/appium/appium-desktop) you 
+can find any element and its locators by either clicking the element on the screenshot 
+image, or locating it in the source tree.
 
 ### Overview
 
-The Appium inspector has a simple layout, complete with a UI navigator,
-a preview, and record and refresh buttons, and interaction tools.
+Appium Desktop has a simple layout, complete with a source tree,
+a screenshot, and record and refresh buttons, and interaction tools.
 
-![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Overview.png)
+![](https://github.com/appium/appium-desktop/blob/master/docs/images/screen-inspector-and-logs.png)
 
 ### Example
 
-After launching the Appium Inspector (you can do this by clicking the small
-"i" button in the top right of the app) you can locate any element in the
-preview. In this test, I'm looking for the id of the "show alert" button.
+After launching Appium Desktop and starting a session, you can locate any element in the
+source. In this test, I'm looking for the accessibility id of the "Compute Sum" button.
 
-![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Step1.png)
+To find the accessibility id of this button, I click the "Compute Sum" button in the
+screenshot. The element is then highlighted in the source tree. In the panel on the right,
+I can see the accessibility id.
 
-To find the id of this button, I click the "show alert" button in the
-inspector preview. The Appium inspector then highlights the element in the UI
-navigator, showing me both the id and element type of the button I clicked.
+![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector.png)
 
-![Step 1](https://raw.github.com/appium/appium/master/assets/InspectorImages/Step2.png)

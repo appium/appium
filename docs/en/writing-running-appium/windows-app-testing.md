@@ -1,5 +1,5 @@
 #Windows Application UI Testing
-Windows specific UI testing on Appium is powered by [WinAppDriver] (https://github.com/Microsoft/WinAppDriver), which is downloaded as part of the Appium install.
+Windows specific UI testing on Appium is powered by [WinAppDriver](https://github.com/Microsoft/WinAppDriver), which is downloaded as part of the Appium install.
 
 ## Java Samples
 1. Open the sample folder as an existing project in a Java IDE such as IntelliJ. For example: [CalculatorTest](https://github.com/Microsoft/WinAppDriver/tree/master/Samples/Java/CalculatorTest)

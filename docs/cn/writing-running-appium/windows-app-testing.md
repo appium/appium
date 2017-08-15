@@ -1,6 +1,6 @@
 # Windows 应用的 UI 测试
 
-在 Appium 中，Windows 应用的 UI 测试是由 [WinAppDriver] (https://github.com/Microsoft/WinAppDriver) 支持的，Appium 在下载安装的时候已经带了这部分。
+在 Appium 中，Windows 应用的 UI 测试是由 [WinAppDriver](https://github.com/Microsoft/WinAppDriver) 支持的，Appium 在下载安装的时候已经带了这部分。
 
 ## Java 示例
 1. 在 Java IDE （比如 IntelliJ）中打开包含示例项目工程的目录，如：[CalculatorTest](https://github.com/Microsoft/WinAppDriver/tree/master/Samples/Java/CalculatorTest)

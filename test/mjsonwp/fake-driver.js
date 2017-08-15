@@ -10,7 +10,9 @@ class FakeDriver extends MobileJsonWireProtocol {
   }
 
   sessionExists (sessionId) {
-    if (!sessionId) return false;
+    if (!sessionId) {
+      return false;
+    }
     return sessionId === this.sessionId;
   }
 

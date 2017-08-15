@@ -9,8 +9,8 @@ describe('caps', () => {
   // Tests based on: https://www.w3.org/TR/webdriver/#dfn-validate-caps
   describe('#validateCaps', () => {
     it('returns invalid argument error if "capability" is not a JSON object (1)', () => {
-      for (let arg of [undefined, null, 1, true, 'string']) { 
-        (function () { validateCaps(arg); }).should.throw(/must be a JSON object/); // jshint ignore:line
+      for (let arg of [undefined, null, 1, true, 'string']) {
+        (function () { validateCaps(arg); }).should.throw(/must be a JSON object/);
       }
     });
 
@@ -138,7 +138,7 @@ describe('caps', () => {
     it('returns invalid argument error if "firstMatch" is not an array and is not undefined (3.2)', () => {
       for (let arg of [null, 1, true, 'string']) {
         caps.firstMatch = arg;
-        (function (){ parseCaps(caps); }).should.throw(/must be a JSON array or undefined/); // jshint ignore:line
+        (function () { parseCaps(caps); }).should.throw(/must be a JSON array or undefined/);
       }
     });
 
@@ -210,7 +210,7 @@ describe('caps', () => {
 
     it('should return merged caps', () => {
       processCaps({
-        alwaysMatch: {hello: 'world'}, 
+        alwaysMatch: {hello: 'world'},
         firstMatch: [{foo: 'bar'}]
       }).should.deep.equal({hello: 'world', foo: 'bar'});
     });

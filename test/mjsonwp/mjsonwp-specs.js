@@ -469,7 +469,7 @@ describe('MJSONWP', async () => {
       mjsonwpServer.close();
     });
 
-    afterEach( () => {
+    afterEach(() => {
       driver.sessionId = null;
     });
 
@@ -633,7 +633,7 @@ describe('MJSONWP', async () => {
 
     it('should able to throw ProxyRequestError in proxying', async () => {
       driver.proxyReqRes = async function () {
-        var jsonwp = {status: 35, value: "No such context found.", sessionId: "foo"};
+        let jsonwp = {status: 35, value: "No such context found.", sessionId: "foo"};
         throw  new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
       };
       let res = await request({

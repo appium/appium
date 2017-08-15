@@ -29,7 +29,7 @@ describe('helpers', () => {
       });
 
       // Write the base64 contents of FakeIOSApp.app.zip to the mock filesystem
-      
+
       const fakeIOSAppZip = 'UEsDBBQACAAIABF8/EYAAAAAAAAAAAAAAAAOABAARmFrZUlPU0FwcC5hcHBVWAwALwO4VQIDuFX1ARQAK8nILFYAorz8EoWi1MScnEqFxDyFxIICLgBQSwcIR93jPhoAAAAaAAAAUEsBAhUDFAAIAAgAEXz8Rkfd4z4aAAAAGgAAAA4ADAAAAAAAAAAAQKSBAAAAAEZha2VJT1NBcHAuYXBwVVgIAC8DuFUCA7hVUEsFBgAAAAABAAEASAAAAGYAAAAAAA==';
       await fs.writeFile(path.resolve(mockDir, 'FakeIOSApp.app.zip'), fakeIOSAppZip, 'base64');
     });

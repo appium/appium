@@ -1201,4 +1201,4 @@ driver.IgnoreUnimportantViews(true);
 
 Appium's desktop app supports OS X, Windows and Linux.
 
-- [Appium Desktop][https://www.github.com/appium/appium-desktop/releases/latest]
+- [Appium Desktop](https://www.github.com/appium/appium-desktop/releases/latest)

@@ -24,7 +24,7 @@ project, how Appium is architected, how to make changes to modules, and so on.
 
 Finally, before we accept your code, you will need to have signed our
 [Contributor License
-Agreement](https://docs.google.com/forms/d/1lOfXRw_0VCk7gYzjj4WLetGu7yelDVo5LWh0z7pGftE/viewform).
+Agreement](https://cla.js.foundation/appium/appium).
 
 ### Become an Appium Triager
 

@@ -8,17 +8,17 @@
 You may need the following structure of files:
 ```
 src/main/java/com/example/pkg
-   |____ MainActivity.java *Your main activity*
-   |____ InstrumentActivityListener.java *A customized interface for exporting coverage to files*
-   |____ InstrumentActivity.java *Activity launched for coverage. But in most cases, this should be same as MainActivity. The only difference is that it will include a `InstrumentActivityListener` to export coverage data to disk files.
-   |____ JacocoInstrumentation.java  The instrument class created by you. Also it needs to implement `InstrumentActivitylistener`.
-   |____ EndEmmaBroadCast.java A broadcast receiver which will be invoked by appium-uiautomator2-driver at the end of testing. You need implementing logic to invoke InstrumentActivityListener so as to export coverage to files.
+   |____ MainActivity.java    Your main activity
+   |____ InstrumentActivityListener.java     A customized interface for exporting coverage to files
+   |____ InstrumentActivity.java    Activity launched for coverage. But in most cases, this should be same as MainActivity. The only difference is that it will include a `InstrumentActivityListener` to export coverage data to disk files.
+   |____ JacocoInstrumentation.java    The instrument class created by you. Also it needs to implement `InstrumentActivitylistener`.
+   |____ EndEmmaBroadCast.java    A broadcast receiver which will be invoked by appium-uiautomator2-driver at the end of testing. You need implementing logic to invoke InstrumentActivityListener so as to export coverage to files.
 ```
 Configure followings in your caps:  
- `automationName` ： `uiautomator2` (case irrelevant)  
- `androidCoverage` ： {package}/{instrumentation class}, in our example, `com.example.pkg/com.example.pkg.JacocoInstrumentation`  
- `appWaitActivity` ： the FQCN of the activity of InstrumentActivity, in our example, `com.example.pkg.InstrumentActivity`  
- `appWaitPackage` ： {package}，in our example, `com.example.pkg`  
+ * automationName ： `uiautomator2` (case irrelevant)  
+ * androidCoverage ： {package}/{instrumentation class}, in our example, `com.example.pkg/com.example.pkg.JacocoInstrumentation`  
+ * appWaitActivity ： the FQCN of the activity of InstrumentActivity, in our example, `com.example.pkg.InstrumentActivity`  
+ * appWaitPackage ： {package}，in our example, `com.example.pkg`  
  `androidCoverageEndIntent` ： The action of the broadcast receiver to invoke the exporting of coverage data to files, in our example `com.example.pkg.END_EMMA`  
 
 Methodology  

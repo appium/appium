@@ -16,11 +16,11 @@ src/main/java/com/example/pkg
 ```
 
 你在配置Caps时要做如下设置  
- `automationName` ： `uiautomator2` (无视大小写)  
- `androidCoverage` ： {package}/{instrumentation class}, 在我们的例子中是com.example.pkg/com.example.pkg.JacocoInstrumentation  
- `appWaitActivity` ： 用作Insutrment的Activity的全名，在我们的例子中是com.example.pkg.InstrumentActivity
- `appWaitPackage` ： {package}，在我们的例子中是com.example.pkg  
- `androidCoverageEndIntent` ： 用作将当前coverage输出至文件中的BroadCasterReceiver的Action名，在我们的例子中是 `com.example.pkg.END_EMMA`  
+ * automationName ： `uiautomator2` (无视大小写)  
+ * androidCoverage ： {package}/{instrumentation class}, 在我们的例子中是com.example.pkg/com.example.pkg.JacocoInstrumentation  
+ * appWaitActivity ： 用作Insutrment的Activity的全名，在我们的例子中是com.example.pkg.InstrumentActivity
+ * appWaitPackage ： {package}，在我们的例子中是com.example.pkg  
+ * androidCoverageEndIntent ： 用作将当前coverage输出至文件中的BroadCasterReceiver的Action名，在我们的例子中是 `com.example.pkg.END_EMMA`  
 
 工作原理  
  Appium 会用类似的命令启动应用：`adb shell am instrument -e coverage true -w com.example.pkg/com.example.pkg.JacocoInstrumentation`  

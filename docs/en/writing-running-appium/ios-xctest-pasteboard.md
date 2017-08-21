@@ -1,14 +1,14 @@
 ## Automating Simulator Pasteboard Actions For iOS With WebDriverAgent/XCTest Backend
 
-There is a possibility in Appium to set the content of iOS Simulator pasteboard
-and read the content from there if needed. Each Simulator maintains it's own pasteboard.
+There is a possibility in Appium to set the content of the iOS Simulator pasteboard
+and read the content from there if needed. Each Simulator maintains its own pasteboard.
 This feature is only available since Xcode SDK 8.1.
 Unfortunately, real devices don't provide such features.
 
 
 ### mobile: setPasteboard
 
-This command with set the content of Simulator's pasteboard to the particular string
+This command sets the content of Simulator's pasteboard to the particular string
 provided as an argument. Also, it is possible to customize the encoding of the given
 string.
 

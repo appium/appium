@@ -51,14 +51,14 @@
     "mocha": "mocha",
     "e2e-test": "gulp e2e-test",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "precommit-test": "_FORCE_LOGS=1 gulp once"
+    "precommit-test": "REPORTER=dot gulp once"
   },
   "pre-commit": [
     "precommit-msg",
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "^2.1.4",
+    "appium-gulp-plugins": "^2.2.0",
     "babel-eslint": "^7.1.1",
     "chai": "^3.3.0",
     "chai-as-promised": "^5.1.0",

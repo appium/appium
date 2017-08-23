@@ -40,12 +40,12 @@ On success, the app will be built to your ```<app_dir>/build/<configuration>-iph
 To install the latest tagged version of the ideviceinstaller using
 Homebrew, run the following commands in the terminal:
 
- ``` center
- # The first command is only required if you don't have brew installed.
- > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
- > brew update
- > brew install ideviceinstaller
- > ideviceinstaller -u <UDID of device> -i <path of .app/.ipa>
- ```
+``` center
+# The first command is only required if you don't have brew installed.
+> ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+> brew update
+> brew install ideviceinstaller
+> ideviceinstaller -u <UDID of device> -i <path of .app/.ipa>
+```
 
 Next: [Running Appium on Real Devices](real-devices.md)

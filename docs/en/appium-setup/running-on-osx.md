@@ -95,7 +95,7 @@ java -jar jenkins-cli.jar \
  -fsroot ~/jenkins \
  -labels osx \
  -name mac_appium
- ```
+```
 
 Next define a LaunchAgent for Jenkins to launch automatically on login. A LaunchDaemon will not work because daemons don't have GUI access. Make sure the plist doesn't contain the `SessionCreate` or `User` key as that may prevent tests from running. You'll see a `Failed to authorize rights` error if misconfigured.
 

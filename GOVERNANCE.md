@@ -12,19 +12,23 @@ Appium are also incentivized to give back.
 ### The Technical Committee
 
 The project is officially led by a Technical Committee (TC), currently
-consisting of [@jlipps](https://github.com/jlipps),
-[@bootstraponline](https://github.com/bootstraponline),
-[@penguinho](https://github.com/penguinho),
-[@dandoveralba](https://github.com/dandoveralba), and [@mykola-mokhnach](https://github.com/mykola-mokhnach) who all represent different
-companies and different types of contribution to the Appium Project. The TC is
-responsible for high-level decisions (like establishing a feature roadmap,
-accepting sponsorship, organizing conferences, etc...), adjudicating conflicts
-between members of the community, and making changes to the project's
-governance processes.
+consisting of:
+
+* [@jlipps](https://github.com/jlipps),
+* [@bootstraponline](https://github.com/bootstraponline),
+* [@penguinho](https://github.com/penguinho),
+* [@dandoveralba](https://github.com/dandoveralba)
+* [@mykola-mokhnach](https://github.com/mykola-mokhnach)
+
+They all represent different companies and different types of contribution to
+the Appium Project. The TC is responsible for high-level decisions (like
+establishing a feature roadmap, accepting sponsorship, organizing conferences,
+etc...), adjudicating conflicts between members of the community, and making
+changes to the project's governance processes.
 
 * Membership in the TC is granted by unanimous vote of current TC members.
 * TC members can step down at any time.
-* No more than 1/4 of TC members may belong to the same company.
+* No more than 1/3 of TC members may belong to the same company.
 * Changes to project governance require unanimous vote of the TC.
 
 ### Project Committers
@@ -44,11 +48,19 @@ and so on.
 * Appium has a large ecosystem of repositories. Some are 'core' in the sense of being central subpackages with a lot of traffic like `appium/appium` or `appium/appium-ios-driver`. Others are 'peripheral' in the sense of receiving few changes, being maintained by 1 person or no one, etc..., like `appium/ruby_lib` or `appium/appium_thor` For 'core' repos, committers should not merge their own code straightaway. Like all contributors they should open a PR and get a +1 from another committer. For 'peripheral' repos for which they are the sole maintainer or for which they have a good understanding, it is obtuse to insist on another contributor's +1 and this rule should be relaxed in that case. In sum: use good judgment and don't ram code through without a review when you can help it.
 
 The current committers are (in addition to the TC members above):
-[imurchie](https://github.com/imurchie), [sebv](https://github.com/sebv),
-[Jonahss](https://github.com/Jonahss), [moizjv](https://github.com/moizjv),
-[scottdixon](https://github.com/scottdixon),
-[Astro03](https://github.com/Astro03) (appium-dot-exe),
-[edgy360](https://github.com/edgy360) (appium-dot-app).
+
+* [@imurchie](https://github.com/imurchie)
+* [@dpgraham](https://github.com/dpgraham)
+* [@TikhomirovSergey](https://github.com/TikhomirovSergey)
+* [@sravanmedarapu](https://github.com/sravanmedarapu)
+* [@moizjv](https://github.com/moizjv)
+* [@KazuCocoa](https://github.com/KazuCocoa)
+* [@SrinivasanTarget](https://github.com/SrinivasanTarget)
+* [@christian-bromann](https://github.com/christian-bromann)
+* [@vrunoa](https://github.com/vrunoa)
+* [@saikrishna321](https://github.com/saikrishna321)
+* [@butomo1989](https://github.com/butomo1989)
+* [@vikramvi](https://github.com/vikramvi)
 
 ### Contributors
 

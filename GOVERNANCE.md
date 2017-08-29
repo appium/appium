@@ -14,11 +14,14 @@ Appium are also incentivized to give back.
 The project is officially led by a Technical Committee (TC), currently
 consisting of:
 
-* [@jlipps](https://github.com/jlipps),
-* [@bootstraponline](https://github.com/bootstraponline),
-* [@penguinho](https://github.com/penguinho),
+* [@jlipps](https://github.com/jlipps)
+* [@bootstraponline](https://github.com/bootstraponline)
+* [@penguinho](https://github.com/penguinho)
 * [@dandoveralba](https://github.com/dandoveralba)
 * [@mykola-mokhnach](https://github.com/mykola-mokhnach)
+* [@imurchie](https://github.com/imurchie)
+* [@TikhomirovSergey](https://github.com/TikhomirovSergey)
+* [@KazuCocoa](https://github.com/KazuCocoa)
 
 They all represent different companies and different types of contribution to
 the Appium Project. The TC is responsible for high-level decisions (like
@@ -49,12 +52,9 @@ and so on.
 
 The current committers are (in addition to the TC members above):
 
-* [@imurchie](https://github.com/imurchie)
 * [@dpgraham](https://github.com/dpgraham)
-* [@TikhomirovSergey](https://github.com/TikhomirovSergey)
 * [@sravanmedarapu](https://github.com/sravanmedarapu)
 * [@moizjv](https://github.com/moizjv)
-* [@KazuCocoa](https://github.com/KazuCocoa)
 * [@SrinivasanTarget](https://github.com/SrinivasanTarget)
 * [@christian-bromann](https://github.com/christian-bromann)
 * [@vrunoa](https://github.com/vrunoa)

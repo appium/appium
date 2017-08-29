@@ -3,7 +3,6 @@ sudo: false
 node_js:
   - "7"
   - "6"
-  - "4"
 env:
   - CXX=g++-4.8
 addons:

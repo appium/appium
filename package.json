@@ -22,7 +22,7 @@
     "url": "https://github.com/appium/appium/issues"
   },
   "engines": {
-    "node": ">=4",
+    "node": ">=5",
     "npm": ">=3"
   },
   "main": "./build/lib/main.js",
@@ -68,13 +68,13 @@
     "build": "gulp transpile",
     "mocha": "mocha",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint",
     "coverage": "gulp coveralls"
   },
   "pre-commit": [
     "precommit-msg",
-    "lint",
-    "test"
+    "precommit-test"
   ],
   "devDependencies": {
     "appium-gulp-plugins": "2.x",

@@ -12,5 +12,5 @@ _vimrc_local.vim
 *.trace
 *.sublime-
 *.prefs
-.jshintrc
 ./.npmignore
+coverage

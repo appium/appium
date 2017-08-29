@@ -64,9 +64,12 @@
   "scripts": {
     "prepublish": "gulp prepublish",
     "test": "gulp once",
-    "watch": "gulp",
+    "watch": "gulp watch",
+    "build": "gulp transpile",
+    "mocha": "mocha",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "lint": "gulp eslint"
+    "lint": "gulp eslint",
+    "coverage": "gulp coveralls"
   },
   "pre-commit": [
     "precommit-msg",
@@ -74,15 +77,15 @@
     "test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "1.x",
-    "babel-eslint": "6.x",
+    "appium-gulp-plugins": "2.x",
+    "babel-eslint": "7.x",
     "chai": "3.x",
     "chai-as-promised": "5.x",
-    "eslint": "2.x",
-    "eslint-config-appium": "0.x",
+    "eslint": "3.x",
+    "eslint-config-appium": "2.x",
     "eslint-plugin-babel": "3.x",
-    "eslint-plugin-import": "1.x",
-    "eslint-plugin-mocha": "3.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-mocha": "4.x",
     "eslint-plugin-promise": "3.x",
     "gulp": "3.x",
     "mocha": "2.x",

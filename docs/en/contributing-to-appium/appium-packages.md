@@ -228,7 +228,7 @@
 - contains task for
   - e2e and unit tests (with coverage reporting)
   - transpiling ES2016 into ES5
-  - static code analysis (jshint)
+  - static code analysis (eslint)
   - watch task for dev
 
 ## appium-remote-debugger

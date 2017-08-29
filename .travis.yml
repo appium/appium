@@ -13,7 +13,6 @@ addons:
     packages:
       - g++-4.8
 script:
-  - npm run lint
   - npm run test
 after_success:
-  - gulp coveralls
+  - npm run coverage

@@ -20,25 +20,25 @@
 
 "use strict";
 
-var spawn = require('child_process').spawn,
-    _ = require('lodash');
+const spawn = require('child_process').spawn;
+const _ = require('lodash');
 
-var args = process.argv.slice(2);
+const args = process.argv.slice(2);
 
-var RESTART_ON_MESSAGES = [
+const RESTART_ON_MESSAGES = [
   'Invalid message _rpc_applicationUpdated',
   'Invalid message _rpc_applicationSentListing'];
 
-var PROXY_CMD = 'ios_webkit_debug_proxy';
-var proxy;
+const PROXY_CMD = 'ios_webkit_debug_proxy';
+let proxy;
 
-var handleKillProcess = function (exitCode) {
+const handleKillProcess = function (exitCode) {
   console.log('\nKilling proxy process!');
   proxy.kill('SIGTERM');
   process.exit((exitCode || 0));
 };
 
-var startProxy = function () {
+const startProxy = function () {
   console.log('RUNNING:', PROXY_CMD, args.join(' '));
 
   proxy = spawn(PROXY_CMD, args);
@@ -49,7 +49,7 @@ var startProxy = function () {
 
   proxy.stderr.on('data', function (data) {
     console.log('stderr: ' + data);
-    var restartMessage = _(RESTART_ON_MESSAGES).find(function (message) {
+    const restartMessage = _(RESTART_ON_MESSAGES).find(function (message) {
       return ('' + data).indexOf(message) >= 0;
     });
     if (restartMessage) {

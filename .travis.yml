@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - "7"
   - "6"
-  - "4"
 sudo: required
 dist: trusty
 addons:
@@ -16,7 +15,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - sleep 3
 after_success:
-  - gulp coveralls
+  - npm run coverage
 script:
-  - gulp eslint
+  - npm run lint
   - npm test && _FORCE_LOGS=1 npm run e2e-test

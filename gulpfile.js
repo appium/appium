@@ -6,15 +6,15 @@
 // getting sent to the handler
 process.env._FORCE_LOGS="1";
 
-var gulp = require('gulp'),
-    boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp),
-    path = require('path'),
-    fs = require('fs');
+const gulp = require('gulp');
+const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
+const path = require('path');
+const fs = require('fs');
 
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
 gulp.task('fixShrinkwrap', function (done) {
-  var shrinkwrap;
+  let shrinkwrap;
   try {
     shrinkwrap = require('./npm-shrinkwrap.json');
   } catch (err) {
@@ -23,7 +23,7 @@ gulp.task('fixShrinkwrap', function (done) {
     return;
   }
   delete shrinkwrap.dependencies.fsevents;
-  var shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
+  const shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);
 });
 
@@ -32,8 +32,6 @@ gulp.task('fixShrinkwrap', function (done) {
 
 boilerplate({
   build: 'appium',
-  jscs: false,
-  jshint: false,
   test: {
     files: ['${testDir}/**/*-specs.js']
   },
@@ -43,10 +41,10 @@ boilerplate({
 
 // generates server arguments readme
 gulp.task('docs', ['transpile'], function () {
-  var parser = require('./build/lib/parser.js');
-  var appiumArguments = parser.getParser().rawArgs;
-  var docFile = path.resolve(__dirname, "docs/en/writing-running-appium/server-args.md");
-  var md = "# Appium server arguments\n\n";
+  const parser = require('./build/lib/parser.js');
+  const appiumArguments = parser.getParser().rawArgs;
+  const docFile = path.resolve(__dirname, "docs/en/writing-running-appium/server-args.md");
+  let md = "# Appium server arguments\n\n";
   md += "Many Appium 1.5 server arguments have been deprecated in favor of the ";
   md += "[--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).";
   md += "\n\nUsage: `node . [flags]`\n\n";
@@ -57,14 +55,14 @@ gulp.task('docs', ['transpile'], function () {
   md += "|Flag|Default|Description|Example|\n";
   md += "|----|-------|-----------|-------|\n";
   appiumArguments.forEach(function (arg) {
-    var argNames = arg[0];
-    var exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];
-    var argOpts = arg[1];
+    const argNames = arg[0];
+    const exampleArg = typeof arg[0][1] === "undefined" ? arg[0][0] : arg[0][1];
+    const argOpts = arg[1];
 
     // --keystore-path defaultValue contains a user-specific path,
     // let's replace it with <user>/...
     if (arg[0][0] === '--keystore-path') {
-      var userPath = process.env.HOME || process.env.USERPROFILE;
+      const userPath = process.env.HOME || process.env.USERPROFILE;
       argOpts.defaultValue = argOpts.defaultValue.replace(userPath, '&lt;user&gt;');
     }
 

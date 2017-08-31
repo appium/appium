@@ -31,3 +31,4 @@ build/
 __pycache__
 old
 .tern-project
+coverage

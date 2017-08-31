@@ -65,6 +65,8 @@ describe('Config', () => {
     });
     describe('checkNodeOk', () => {
       it('should fail if node is below 4', () => {
+        process.version = 'v4.4.7';
+        checkNodeOk.should.throw();
         process.version = 'v0.9.12';
         checkNodeOk.should.throw();
         process.version = 'v0.1';
@@ -74,16 +76,20 @@ describe('Config', () => {
         process.version = 'v0.12.14';
         checkNodeOk.should.throw();
       });
-      it('should succeed if node is 4+', () => {
-        process.version = 'v4.4.7';
-        checkNodeOk.should.not.throw();
-      });
       it('should succeed if node is 5+', () => {
         process.version = 'v5.7.0';
         checkNodeOk.should.not.throw();
       });
       it('should succeed if node is 6+', () => {
         process.version = 'v6.3.1';
+        checkNodeOk.should.not.throw();
+      });
+      it('should succeed if node is 7+', () => {
+        process.version = 'v7.1.1';
+        checkNodeOk.should.not.throw();
+      });
+      it('should succeed if node is 8+', () => {
+        process.version = 'v8.1.2';
         checkNodeOk.should.not.throw();
       });
     });

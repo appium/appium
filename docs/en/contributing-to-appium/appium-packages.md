@@ -4,7 +4,7 @@
 
 ## appium
 - runs basic checks
-  - node version (>= 4)
+  - node version (>= 5)
   - CLI arguments checks
     - contains all available and supported CLI arguments
     - check for deprecation and mutual exclusion
@@ -228,7 +228,7 @@
 - contains task for
   - e2e and unit tests (with coverage reporting)
   - transpiling ES2016 into ES5
-  - static code analysis (jshint)
+  - static code analysis (eslint)
   - watch task for dev
 
 ## appium-remote-debugger

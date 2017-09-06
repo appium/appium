@@ -4,7 +4,7 @@
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`automationName`|Which automation engine to use|`Appium` (default) or `Selendroid`|
+|`automationName`|Which automation engine to use|`Appium` (default) or `Selendroid` or `UiAutomator2` or `Espresso` for Android or `XCUITest` for iOS or `YouiEngine` for application built with You.i Engine|
 |`platformName`|Which mobile OS platform to use|`iOS`, `Android`, or `FirefoxOS`|
 |`platformVersion`|Mobile OS version|e.g., `7.1`, `4.4`|
 |`deviceName`|The kind of mobile device or emulator to use|`iPhone Simulator`, `iPad Simulator`, `iPhone Retina 4-inch`, `Android Emulator`, `Galaxy S4`, etc.... On iOS, this should be one of the valid devices returned by instruments with `instruments -s devices`. On Android this capability is currently ignored, though it remains required.|

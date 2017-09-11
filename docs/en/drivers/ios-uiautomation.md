@@ -9,7 +9,7 @@
 Appium's former method for iOS app automation was based on `UIAutomation`, an
 Apple-provided framework that shipped with the iOS SDK until iOS 10, when it
 was removed. `UIAutomation` was one of the tools included in Apple's
-`instruments` profiling system, and provided a JavaScript API that ran
+Instruments profiling system, and provided a JavaScript API that ran
 synchronously in the context of a single app. The Appium UIAutomation driver
 established an asynchronous, session-based WebDriver front end for this API.
 
@@ -36,8 +36,9 @@ value of `iOS`. Of course, you must also include appropriate `platformVersion`,
 
 The UIAutomation driver supports a number of standard [Appium
 capabilities](/docs/en/writing-running-appium/caps.md), but has an additional
-set of capabilities that work for this driver only (see the "iOS" section of
-the aforementioned doc).
+set of capabilities that work for this driver only (see the [iOS
+section](/docs/en/writing-running-appium/caps.md#ios-only) of the
+aforementioned doc).
 
 To automate Safari instead of your own application, leave the `app` capability
 empty and instead set the `browserName` capability to `Safari`.
@@ -49,6 +50,10 @@ on how the commands map to behaviors for the UIAutomation driver, see the [API
 Reference](#TODO).
 
 ### Simulator Setup
+
+(Note that due to limitations of Xcode and the iOS simulator, only one
+simulator may be open, and automated, at any given time. For multiple simulator
+support, you will need to upgrade to the [XCUITest driver](ios-xcuitest.md)).
 
 1. To allow the iOS simulator to be automated by Instruments, you need to
    modify the authorization database for the system. Appium provides an easy
@@ -94,7 +99,7 @@ a successful automation strategy using this driver are as follows:
    running on your specific device. For example:
 
     ```
-    xcodebuild -sdk <iphoneos> -target <target_name> -configuration <Debug> \
+    xcodebuild -sdk <iphoneos> -target <target_name> -configuration Debug \
         CODE_SIGN_IDENTITY="iPhone Developer: Mister Smith" \
         PROVISIONING_PROFILE="XXXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX"
     ```

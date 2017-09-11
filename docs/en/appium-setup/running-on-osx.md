@@ -4,7 +4,7 @@ Appium on OS X supports iOS and Android testing.
 
 ### Testing iOS Apps
 
-Instructions for gettting going with one of our iOS drivers are included here:
+Instructions for getting going with one of our iOS drivers are included here:
 
 * The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
 * The (deprecated) [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)

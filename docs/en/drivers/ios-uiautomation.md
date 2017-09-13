@@ -72,7 +72,8 @@ support, you will need to upgrade to the [XCUITest driver](ios-xcuitest.md)).
    must be installed manually by the user in advance of using Appium. The way
    to do this is as follows:
 
-    * Clone the [appium-instruments](https://github.com/appium/appium-instruments) repository
+    * Clone the [appium-ios-driver](https://github.com/appium/appium-ios-driver)
+      repository.
     * Inside the repo, run the `xcode-iwd.sh` script included in the `bin` dir,
       passing it several arguments: (1) the path to the Xcode app you are
       using. (2) The path to the appium-instruments directory. For example:

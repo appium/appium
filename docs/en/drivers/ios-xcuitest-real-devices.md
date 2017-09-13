@@ -12,10 +12,13 @@ brew install libimobiledevice
 
 In addition to the dependency on `libimobiledevice`, Appium support for real
 devices running iOS 9.3 and above using Xcode 8+ also depends on `ios-deploy`,
-which is easily available through [npm](https://www.npmjs.com/package/ios-deploy):
+which is easily available through [npm](https://www.npmjs.com/package/ios-deploy) or [Homebrew](http://brew.sh/):
 
 ```
 npm install -g ios-deploy
+```
+```
+brew install ios-deploy
 ```
 
 The way that the XCUITest driver works is via the installation of a helper

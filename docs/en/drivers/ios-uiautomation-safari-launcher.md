@@ -1,4 +1,4 @@
-## Mobile Web on iOS 9.3 and below Real Devices: SafariLauncher
+## SafariLauncher Setup Instructions
 
 Running mobile web tests on iOS real devices with iOS 9.3 or below, using Instruments,
 requires the introduction of a third-party app, [SafariLauncher](https://github.com/snevesbarros/SafariLauncher).
@@ -58,34 +58,34 @@ git clone https://github.com/snevesbarros/SafariLauncher.git
 Once you have a local copy of the source code for the `SafariLauncher` app, open
 [Xcode](https://developer.apple.com/xcode/) and then open the `SafariLauncher` project
 
-![Opening SafariLauncher project](safari-launcher/opening.png)
+![Opening SafariLauncher project](ios-uiautomation-safari-launcher-img/opening.png)
 
 In the `SafariLauncher` target pane you will see an error, saying that there needs
 to be a provisioning profile for this app
 
-![No provisioning profile error](safari-launcher/no-provisioning-profile.png)
+![No provisioning profile error](ios-uiautomation-safari-launcher-img/no-provisioning-profile.png)
 
 In order to fix this, you first need to enter a "Bundle Identifier" for the app. The default
 expected by Appium is `com.bytearc.SafariLauncher`, but this might not be available
 for you to build. In that case, choose something else, and make note of it. Then
 choose a "Team", and allow the provisioning profile to be created
 
-![Fixing provisioning profile error](safari-launcher/changing-bundleid.png)
+![Fixing provisioning profile error](ios-uiautomation-safari-launcher-img/changing-bundleid.png)
 
 Finally, make sure your device is connected to the computer, and choose it as the
 target
 
-![Choosing device](safari-launcher/choosing-target.png)
+![Choosing device](ios-uiautomation-safari-launcher-img/choosing-target.png)
 
 And run the build and install actions to compile the app and push it onto your
 device
 
-![Running SafariLauncher](safari-launcher/running.png)
+![Running SafariLauncher](ios-uiautomation-safari-launcher-img/running.png)
 
 Now you have a working `SafariLauncher` on your device. The app itself is a plain
 screen that will launch `Safari` at the click of a button
 
-![SafariLauncher on device](safari-launcher/safarilauncher.png)
+![SafariLauncher on device](ios-uiautomation-safari-launcher-img/safarilauncher.png)
 
 The last step is only necessary if you chose a bundle identifier for the app that
 is different from the default (`com.bytearc.SafariLauncher`). If you did, it is

@@ -31,6 +31,13 @@ repo.
 * For correct functioning of the driver, additional system libraries are
   required (see the Setup sections below).
 
+### Migrating from the UIAutomation Driver
+
+If you are migrating to the XCUITest driver from Appium's old
+[UIAutomation-based driver](/docs/en/drivers/ios-uiautomation.md), you may wish
+to consult this [migration
+guide](/docs/en/advanced-concepts/migrating-to-1-0.md).
+
 ### Usage
 
 The way to start a session using the XCUITest driver is to include the
@@ -46,6 +53,9 @@ capabilities](/docs/en/writing-running-appium/caps.md), but has an additional
 set of capabilities that modulate the behavior of the driver. These can be
 found currently at the [appium-xcuitest-driver
 README](https://github.com/appium/appium-xcuitest-driver#desired-capabilities).
+
+To automate Safari instead of your own application, leave the `app` capability
+empty and instead set the `browserName` capability to `Safari`.
 
 
 ### Commands

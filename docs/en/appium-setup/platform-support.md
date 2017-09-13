@@ -30,10 +30,12 @@ instructions.
 
 ### Android Support
 
-See [Running on OS X: Android](running-on-osx.md),
-[Running on Windows](running-on-windows.md), or
-[Running on Linux](running-on-linux.md) for Android requirements and setup
-instructions.
+Android automation is supported with two drivers:
+
+* The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
+* The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+
+Please refer to these driver docs for setup instructions.
 
 * Versions: 2.3 and up
   * Versions 2.3 through 4.2 are supported via Appium's bundled version of

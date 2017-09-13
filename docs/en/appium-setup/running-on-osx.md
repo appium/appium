@@ -21,6 +21,7 @@ For more information on using Appium for mac, checkout the [docs](https://github
 
 ### Testing Android App
 
-Instructions for setting up Android and running tests on Mac OS X are the same as
-those on Linux. See the [Android setup docs](/docs/en/appium-setup/android-setup.md).
+Instructions for setting up Android and running tests on Mac OS X are the same
+as those on Linux. See the [UiAutomator2
+Driver](/docs/en/drivers/android-uiautomator2.md) for more information.
 

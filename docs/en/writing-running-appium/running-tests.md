@@ -94,12 +94,8 @@ all set now!
 First, make sure you have one and only one Android emulator or device
 connected. If you run `adb devices`, for example, you should see one device
 connected. This is the device Appium will use for tests. Of course, to have
-a device connected, you'll need to have made an Android AVD (see system
-setup ([Windows](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-windows.md),
-[Mac](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-osx.md),
-or [Linux](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-linux.md))
-for more information). If the Android SDK tools are on your path, you can
-simply run:
+a device connected, you'll need to have made an Android AVD. If the Android SDK
+tools are on your path, you can simply run:
 
     emulator -avd <MyAvdName>
 

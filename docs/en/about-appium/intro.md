@@ -43,7 +43,7 @@ shipping**. The vendor-provided frameworks we use are:
 
 * iOS 9.3 and above: Apple's [XCUITest](https://developer.apple.com/reference/xctest)
 * iOS 9.3 and lower: Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
-* Android 4.2+: Google's [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
+* Android 4.2+: Google's [UiAutomator/UiAutomator2](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation support is provided by bundling a separate project, [Selendroid](http://selendroid.io))
 * Windows: Microsoft's [WinAppDriver](http://github.com/microsoft/winappdriver)
 

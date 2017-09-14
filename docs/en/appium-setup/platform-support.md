@@ -72,5 +72,5 @@ Please refer to these driver docs for setup instructions.
 
 See these docs for details:
 
-* [Running on Windows](running-on-windows.md)
+* The [Windows Driver](/docs/en/drivers/windows.md) doc
 * [Windows App Testing](/docs/en/writing-running-appium/windows-app-testing.md)

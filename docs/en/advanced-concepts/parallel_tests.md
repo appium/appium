@@ -10,7 +10,7 @@ The important flags for automating multiple Android sessions are:
 - `--chromedriver-port` the chromedriver port (if using webviews or chrome)
 - `--selendroid-port` the selendroid port (if using selendroid)
 
-More information on these flags can be found [here](../writing-running-appium/caps.md).
+More information on these flags can be found [here](/docs/en/writing-running-appium/caps.md).
 
 If we had two devices with the ID's 43364 and 32456, we would start two different Appium servers with the following commands:
 

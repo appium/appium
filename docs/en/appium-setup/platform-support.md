@@ -70,7 +70,4 @@ Please refer to these driver docs for setup instructions.
 
 ### Windows Desktop Support
 
-See these docs for details:
-
-* The [Windows Driver](/docs/en/drivers/windows.md) doc
-* [Windows App Testing](/docs/en/writing-running-appium/windows-app-testing.md)
+See the [Windows Driver](/docs/en/drivers/windows.md) doc for details

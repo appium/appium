@@ -31,8 +31,8 @@ coordinates and duration.
 // Java
 JavascriptExecutor js = (JavascriptExecutor) driver;
 Map<String, Object> params = new HashMap<>();
-scrollObject.put("direction", "down");
-scrollObject.put("element", ((RemoteWebElement) element).getId());
+params.put("direction", "down");
+params.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: swipe", params);
 ```
 

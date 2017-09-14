@@ -1,6 +1,6 @@
 # Real Device Continuous Integration
 
-Appium uses a service called TestObject that allows us to run automated functional tests against real devices.
+Appium uses a service called [TestObject](https://testobject.com/) that allows us to run automated functional tests against real devices.
 
 ## How it works
 

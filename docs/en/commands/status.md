@@ -40,13 +40,13 @@ Implementations may optionally include additional meta information as part of th
 
 |Platform|Automation Name|Supported|
 | ------------- |-------------| -----|
-|iOS|[XCUITest](docs/en/drivers/ios-xcuitest.md)|(yes)|
-||[iOS](docs/en/drivers/ios-xcuitest.md)|(yes)|(yes)|
-|Android|[Espresso](docs/en/drivers/android-espresso.md)|(yes)|(yes)|
-||[UiAutomator2](docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
-||[UiAutomator](docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
-|Windows|[WinAppDriver](https://github.com/Microsoft/WinAppDriver)|(yes)|(yes)|
-|Mac|[Mac](https://github.com/appium/appium-mac-driver)|(yes)|(yes)|
+|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(yes)|
+||[iOS](/docs/en/drivers/ios-xcuitest.md)|(yes)|(yes)|
+|Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
+||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
+||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
+|Windows|[WinAppDriver](/docs/en/drivers/windows.md)|(yes)|(yes)|
+|Mac|[Mac](/docs/en/drivers/mac.md)|(yes)|(yes)|
 
 ## HTTP API Specifications
 
@@ -54,7 +54,11 @@ Implementations may optionally include additional meta information as part of th
 
 `GET /wd/hub/status`
 
-### Parameters
+### URL Parameters
+
+`none`
+
+### JSON Parameters
 
 `none`
 

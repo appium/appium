@@ -16,7 +16,7 @@ Older Android-based drivers include:
 
 ### Requirements and Support
 
-(In addition to Appium's [general requirements](#TODO))
+In addition to Appium's general requirements:
 
 * Java 7 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
@@ -59,7 +59,7 @@ Reference](#TODO).
 
 ### Basic Setup
 
-1. Ensure that you have Appium's [general dependencies](#TODO) (e.g., Node
+1. Ensure that you have Appium's general dependencies (e.g., Node
    & NPM) installed and configured.
 
 1. Ensure that Java (the JDK, not just the JRE) is installed and Java binaries

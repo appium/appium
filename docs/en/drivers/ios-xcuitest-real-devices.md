@@ -21,6 +21,10 @@ npm install -g ios-deploy
 brew install ios-deploy
 ```
 
+(For hybrid or web tests, you will also need to follow the
+[ios-webkit-debug-proxy](/docs/en/advanced-concepts/ios-webkit-debug-proxy.md)
+setup instructions)
+
 The way that the XCUITest driver works is via the installation of a helper
 application called `WebDriverAgent-Runner` onto the device, through which the
 application under test is automated. While this is simple in theory, the hoops

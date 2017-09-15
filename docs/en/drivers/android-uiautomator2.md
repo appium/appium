@@ -11,12 +11,12 @@ Development of the UiAutomator2 driver happens at the
 repo.
 
 Older Android-based drivers include:
-* The [UiAutomator Driver](android-uiautomator.md)
-* The [Selendroid Driver](#TODO)
+* The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+* The [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 
 ### Requirements and Support
 
-(In addition to Appium's [general requirements](#TODO))
+In addition to Appium's general requirements:
 
 * Java 7 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
@@ -29,12 +29,17 @@ the value `UiAutomator2`. Of course, you must also include appropriate
 `platformName` (=`Android`), `platformVersion`, `deviceName`, and `app`
 capabilities, at a minimum.
 
+It is highly recommended to also set the `appPackage` and `appActivity`
+capabilities in order to let Appium know exactly which package and activity
+should be launched for your application. Otherwise, Appium will try to
+determine these automatically from your app manifest.
+
 ### Capabilities
 
 The UiAutomator2 driver supports a number of standard [Appium
 capabilities](/docs/en/writing-running-appium/caps.md), but has an additional
 set of capabilities that modulate the behavior of the driver. These can be
-found currently at [Android
+found currently at the [Android
 section](/docs/en/writing-running-appium/caps.md#android-only) of the
 aforementioned doc.
 
@@ -54,7 +59,7 @@ Reference](#TODO).
 
 ### Basic Setup
 
-1. Ensure that you have Appium's [general dependencies](#TODO) (e.g., Node
+1. Ensure that you have Appium's general dependencies (e.g., Node
    & NPM) installed and configured.
 
 1. Ensure that Java (the JDK, not just the JRE) is installed and Java binaries

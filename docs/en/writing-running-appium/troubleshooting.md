@@ -56,7 +56,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * If you've ever run Appium with sudo, you might need to `sudo rm
   /tmp/instruments_sock` and try again as not-sudo.
 * If this is the first time you've run Appium, make sure to authorize the use
-  of Instruments. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer).
+  of Instruments. See the [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md) doc.
 * If Instruments is crashing when running against a physical device ("exited with code 253"), ensure Xcode has downloaded device symbols. Go to Window -> Devices, and it should start automatically. This is needed after iOS version upgrades.
 * If you see `iOS Simulator failed to install the application.` and the
   paths are correct, try restarting the computer.
@@ -182,4 +182,4 @@ and submit an issue describing the bug and a repro case.
 |Action|Error|Resolution|
 |------|-----|----------|
 |Running ios test|`[INST STDERR] posix spawn failure; aborting launch`|Your app is not compiled correctly for the simulator or device.|
-|Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. See [running on OSX documentation](./running-on-osx.md#authorizing-ios-on-the-computer)|
+|Running mobile safari test|`error: Could not prepare mobile safari with version '7.1'`|You probably need to run the authorize script again to make the iOS SDK files writeable. See the [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)|

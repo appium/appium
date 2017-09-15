@@ -69,7 +69,8 @@ particular brand of automation.
 
 If you want to run Appium via an `npm install`, hack with or contribute to
 Appium, you will need [node.js and npm](http://nodejs.org) 4 or greater (use
-[n](https://github.com/visionmedia/n) or `brew install node` to install
+[nvm](https://github.com/creationix/nvm),
+[n](https://github.com/visionmedia/n), or `brew install node` to install
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
 you'll run into problems). We recommend the latest stable version.
 

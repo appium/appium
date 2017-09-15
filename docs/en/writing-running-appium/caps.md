@@ -14,7 +14,7 @@ Some important capabilities are demonstrated in the following example:
     "platformName": "iOS",
     "platformVersion": "11.0",
     "deviceName": "iPhone 7",
-    "automationName": XCUITest",
+    "automationName": "XCUITest",
     "app": "/path/to/my.app"
 }
 ```

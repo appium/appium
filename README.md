@@ -68,11 +68,12 @@ to run tests on. Each of the drivers above documents the requirements for their
 particular brand of automation.
 
 If you want to run Appium via an `npm install`, hack with or contribute to
-Appium, you will need [node.js and npm](http://nodejs.org) 4 or greater (use
+Appium, you will need [node.js and npm](http://nodejs.org) (use
 [nvm](https://github.com/creationix/nvm),
 [n](https://github.com/visionmedia/n), or `brew install node` to install
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
-you'll run into problems). We recommend the latest stable version.
+you'll run into problems). We recommend the latest stable version, though
+Appium supports Node 6+.
 
 To verify that all of Appium's dependencies are met you can use
 `appium-doctor`.  Install it with `npm install -g appium-doctor` (or run it

@@ -44,8 +44,8 @@ Please refer to these driver docs for setup instructions.
 
 * Versions: 2.3 and up
   * Versions 2.3 through 4.2 are supported via Appium's [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
-  * Versions 4.2 and up are supported via Appium's [UiAutomator](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
-      libraries. This is the default automation backend.
+  * Versions 4.2 and up are supported via Appium's [UiAutomator and UiAutomator2](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
+      libraries. UiAutomator is the default driver.
 * Devices: Android emulators and real Android devices
 * Native app support: Yes
 * Mobile web support: Yes (but not when using Selendroid backend). Automation

@@ -11,8 +11,8 @@ Development of the UiAutomator2 driver happens at the
 repo.
 
 Older Android-based drivers include:
-* The [UiAutomator Driver](android-uiautomator.md)
-* The [Selendroid Driver](android-selendroid.md)
+* The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+* The [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 
 ### Requirements and Support
 

@@ -106,7 +106,7 @@ list of capabilities available for Appium.
 
 **Appium Server**<br/>
 Appium is a server written in Node.js. It can be built and installed [from
-source](https://github.com/appium/appium/blob/master/docs/en/contributing-to-appium/appium-from-source.md)
+source](/docs/en/contributing-to-appium/appium-from-source.md)
 or installed directly from NPM:
 
 ```
@@ -118,7 +118,8 @@ $ appium
 There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)
 which support Appium's extensions to the WebDriver protocol. When using Appium,
 you want to use these client libraries instead of your regular WebDriver
-client. You can view the full list of libraries [here](appium-clients.md).
+client. You can view the full list of libraries
+[here](/docs/en/about-appium/appium-clients.md).
 
 **[Appium Desktop](https://github.com/appium/appium-desktop)**<br/>
 There is a GUI wrapper around the Appium server that can be downloaded for any
@@ -130,6 +131,5 @@ writing tests.
 ### Getting Started
 
 Congratulations! You are now armed with enough knowledge to begin using Appium.
-Why not head to the [getting started
-doc](https://github.com/appium/appium/blob/master/README.md) for more detailed
+Why not head to the [getting started doc](/README.md) for more detailed
 requirements and instructions?

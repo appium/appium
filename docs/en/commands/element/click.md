@@ -1,0 +1,72 @@
+# Click
+
+Retrieve the server’s current status.
+
+## Example Usage
+
+```java
+// Java
+MobileElement el = driver.findElementByAccessibilityId("SomeId");
+el.click();
+```
+```python
+# Python 
+el = self.driver.find_element_by_accessibility_id('SomeId')
+el.click();
+```
+```javascript
+// Javascript
+// webdriver.io
+driver.click('#SomeId');
+
+// wd (async/await)
+var element = await driver.elementByAccessibilityId('id', 'SomeId');
+await element.click();
+```
+```ruby
+find_element(:accessibility_id, 'SomeId').click
+```
+
+## Description
+
+Clicks element at it's center point. If the element’s center point is obscured by another element, an element click intercepted error is returned. If the element is outside the viewport, an element not interactable error is returned.
+
+Not all drivers automatically scroll the element into view and may need to be scrolled to in order to interact with it.
+
+## Client Docs
+
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--)
+* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.action_chains.ActionChains.click)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/action/click.html)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1672)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#click-instance_method)
+
+## Compatibility
+
+|Platform|Automation Name|Supported|
+| ------------- |-------------| -----|
+|iOS|[XCUITest](docs/en/drivers/ios-xcuitest.md)|(yes)|
+||[iOS](docs/en/drivers/ios-xcuitest.md)|(yes)|(yes)|
+|Android|[Espresso](docs/en/drivers/android-espresso.md)|(yes)|(yes)|
+||[UiAutomator2](docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
+||[UiAutomator](docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
+|Windows|[WinAppDriver](https://github.com/Microsoft/WinAppDriver)|(yes)|(yes)|
+|Mac|[Mac](https://github.com/appium/appium-mac-driver)|(yes)|(yes)|
+
+## HTTP API Specifications
+
+### Endpoint
+
+`GET /wd/hub/status`
+
+### Parameters
+
+`none`
+
+### Example Response
+
+Returns `null` if successful.
+
+## See Also
+
+[W3C Specification](https://www.w3.org/TR/webdriver/#element-click)

@@ -18,7 +18,7 @@ Development of the UIAutomation driver is done at the
 
 ### Requirements and Support
 
-(In addition to Appium's [general requirements](#TODO))
+In addition to Appium's general requirements:
 
 * Xcode 7 or lower.
 * iOS simulators or devices with version 9.3 or lower.

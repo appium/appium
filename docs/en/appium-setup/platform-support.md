@@ -6,10 +6,14 @@ make explicit the level of support and requirements for each of these.
 
 ### iOS Support
 
-See [Running on OS X: iOS](running-on-osx.md) for iOS requirements and setup
-instructions.
+iOS automation is supported with two drivers:
 
-* Versions: 7.1 and up
+* The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
+* The (deprecated) [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)
+
+Please refer to these driver docs for setup instructions.
+
+* Versions: 9.0 and up (as a rule, Appium supports the latest two iOS versions)
 * Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by
@@ -33,15 +37,15 @@ instructions.
 Android automation is supported with two drivers:
 
 * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
-* The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+* The (deprecated) [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+* The (deprecated) [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 
 Please refer to these driver docs for setup instructions.
 
 * Versions: 2.3 and up
-  * Versions 2.3 through 4.2 are supported via Appium's bundled version of
-    [Selendroid](http://selendroid.io), which utilizes [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). Selendroid has a different set of commands than the default Appium (though this is rapidly being minimized) and a different support profile. To access this automation backend, use the `automationName` capability with the value `Selendroid`.
-  * Versions 4.2 and up are supported via Appium's own [UiAutomator](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
-      libraries. This is the default automation backend.
+  * Versions 2.3 through 4.2 are supported via Appium's [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
+  * Versions 4.2 and up are supported via Appium's [UiAutomator and UiAutomator2](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
+      libraries. UiAutomator is the default driver.
 * Devices: Android emulators and real Android devices
 * Native app support: Yes
 * Mobile web support: Yes (but not when using Selendroid backend). Automation
@@ -66,7 +70,4 @@ Please refer to these driver docs for setup instructions.
 
 ### Windows Desktop Support
 
-See these docs for details:
-
-* [Running on Windows](running-on-windows.md)
-* [Windows App Testing](/docs/en/writing-running-appium/windows-app-testing.md)
+See the [Windows Driver](/docs/en/drivers/windows.md) doc for details

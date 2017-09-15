@@ -21,7 +21,7 @@ repo.
 
 ### Requirements and Support
 
-(In addition to Appium's [general requirements](#TODO))
+In addition to Appium's general requirements:
 
 * Apple's XCUITest library is only available on iOS simulators and devices that
   are running iOS 9.3 or higher.
@@ -70,7 +70,7 @@ Reference](#TODO).
 _(We recommend the use of [Homebrew](https://brew.sh) for installing system
 dependencies)_
 
-1. Ensure that you have Appium's [general dependencies](#TODO) (e.g., Node
+1. Ensure that you have Appium's general dependencies (e.g., Node
    & NPM) installed and configured.
 2. Install the [Carthage](https://github.com/Carthage/Carthage) dependency
    manager:

@@ -1,6 +1,37 @@
-## Appium server capabilities
+## Appium Desired Capabilities
 
-<expand_table>
+Desired Capabilities are keys and values encoded in a JSON object, sent by
+Appium clients to the server when a new automation session is requested. They
+tell the Appium drivers all kinds of important things about how you want your
+test to work. Each Appium client builds capabilities in a way specific to the
+client's language, but at the end of the day, they are sent over to Appium as
+JSON objects.
+
+Some important capabilities are demonstrated in the following example:
+
+```json
+{
+    "platformName": "iOS",
+    "platformVersion": "11.0",
+    "deviceName": "iPhone 7",
+    "automationName": "XCUITest",
+    "app": "/path/to/my.app"
+}
+```
+
+This set of Desired Capabilities expresses the desire for Appium to begin an
+automation session on an iPhone 7 simulator with iOS 11, using the [XCUITest
+Driver](/docs/en/drivers/ios-xcuitest.md), with `/path/to/my.app` as the app
+under test.
+
+There are many, many Capabilities that Appium supports. Capabilities also
+differ by driver, though there are a standard set that most drivers pay
+attention to. What follows are a series of tables outlining the various Desired
+Capabilities available in general and for specific drivers.
+
+### General Capabilities
+
+These Capabilities span multiple drivers.
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -23,7 +54,8 @@
 
 ### Android Only
 
-<expand_table>
+These Capabilities are available only on Android-based drivers (like
+[UiAutomator2](/docs/en/drivers/android-uiautomator2.md) for example).
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -73,7 +105,9 @@
 
 ### iOS Only
 
-<expand_table>
+These Capabilities are available only on the [XCUITest
+Driver](/docs/en/drivers/ios-xcuitest.md) and the deprecated [UIAutomation
+Driver](/docs/en/drivers/ios-uiautomation.md).
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -106,20 +140,8 @@
 
 ### iOS Only, using XCUITest
 
-(For XCUITest-specific capabilities, please refer to the documentation on the [XCUITest driver](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) itself.)
+(For XCUITest-specific capabilities, please refer to the documentation on the [XCUITest Driver repo](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) itself.)
 
 ### You.i Engine Only
 
-<expand_table>
-
 (For You.i Engine-specific capabilities, please refer to the documentation on the [You.i Engine driver](https://github.com/YOU-i-Labs/appium-youiengine-driver#desired-capabilities) itself.)
-
-### WinAppDriver Only
-
-<expand_table>
-
-|Capability|Description|Values|
-|----|-----------|-------|
-|`platformName`| Which platform the test is being done on |e.g. `Windows`|
-|`deviceName`| The name of the device being tested on | e.g. `WindowsPC`|
-|`app`| appID of the windows app for testing or the path to the .exe file. See [this page](/docs/en/writing-running-appium/windows-app-testing.md) for details on how to find the appID | e.g. `c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App`|

@@ -4,7 +4,7 @@ Appium has beta support for automation of OS X desktop applications.
 Development of this driver happens at the
 [appium-mac-driver](https://github.com/appium/appium-mac-driver), and relies on
 a native OS X binary called
-[AppiupmForMac](https://github.com/appium/appium-for-mac).
+[AppiumForMac](https://github.com/appium/appium-for-mac).
 
 ### Requirements and Support
 

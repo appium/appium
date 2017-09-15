@@ -34,7 +34,7 @@ capabilities, at a minimum.
 The UiAutomator2 driver supports a number of standard [Appium
 capabilities](/docs/en/writing-running-appium/caps.md), but has an additional
 set of capabilities that modulate the behavior of the driver. These can be
-found currently at [Android
+found currently at the [Android
 section](/docs/en/writing-running-appium/caps.md#android-only) of the
 aforementioned doc.
 

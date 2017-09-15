@@ -32,11 +32,8 @@ capability, at a minimum (see below).
 ### Capabilities
 
 The Windows driver supports a number of standard [Appium
-capabilities](/docs/en/writing-running-appium/caps.md), but has an additional
-set of capabilities that modulate the behavior of the driver. These can be
-found currently at the [Windows
-section](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md#winappdriver-only)
-of the aforementioned doc.
+capabilities](/docs/en/writing-running-appium/caps.md). See below for how these
+should be used specifically with the Windows driver.
 
 ### Setup
 
@@ -120,6 +117,7 @@ you are getting a Windows App automation session:
 
 `platformName`: `Windows`
 `deviceName`: `WindowsPC`
+`app`: the appID of the Windows app for testing, or the path to the .exe file
 
 #### Inspecting UI Elements
 

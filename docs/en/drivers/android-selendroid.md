@@ -23,7 +23,7 @@ In addition to Appium's general requirements:
 
 ### Usage
 
-The way to start a session using the Espresso driver is to include the
+The way to start a session using the Selendroid driver is to include the
 `automationName` [capability](#TODO) in your [new session request](#TODO), with
 the value `Selendroid`. Of course, you must also include appropriate
 `platformName` (=`Android`), `platformVersion`, `deviceName`, and `app`

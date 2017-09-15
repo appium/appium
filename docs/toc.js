@@ -1,4 +1,4 @@
-{
+module.exports = {
   "en": [
     ["Home", "about-appium/intro.md"],
     ["About", ["about-appium",
@@ -66,4 +66,4 @@
       ["Credits", "credits.md"]]]
   ], "cn": [
   ]
-}
+};

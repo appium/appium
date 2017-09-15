@@ -32,3 +32,4 @@ __pycache__
 old
 .tern-project
 coverage
+docs/mkdocs.yml

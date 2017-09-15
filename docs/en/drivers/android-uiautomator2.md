@@ -12,7 +12,7 @@ repo.
 
 Older Android-based drivers include:
 * The [UiAutomator Driver](android-uiautomator.md)
-* The [Selendroid Driver](#TODO)
+* The [Selendroid Driver](android-selendroid.md)
 
 ### Requirements and Support
 
@@ -28,6 +28,11 @@ The way to start a session using the UiAutomator2 driver is to include the
 the value `UiAutomator2`. Of course, you must also include appropriate
 `platformName` (=`Android`), `platformVersion`, `deviceName`, and `app`
 capabilities, at a minimum.
+
+It is highly recommended to also set the `appPackage` and `appActivity`
+capabilities in order to let Appium know exactly which package and activity
+should be launched for your application. Otherwise, Appium will try to
+determine these automatically from your app manifest.
 
 ### Capabilities
 

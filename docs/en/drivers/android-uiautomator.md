@@ -29,6 +29,11 @@ the value `Android`. Of course, you must also include appropriate
 `platformVersion`, `deviceName`, and `app` capabilities, at a minimum. In the
 case of this driver, no `automationName` capability should be used.
 
+It is highly recommended to also set the `appPackage` and `appActivity`
+capabilities in order to let Appium know exactly which package and activity
+should be launched for your application. Otherwise, Appium will try to
+determine these automatically from your app manifest.
+
 ### Capabilities
 
 The UiAutomator driver supports a number of standard [Appium

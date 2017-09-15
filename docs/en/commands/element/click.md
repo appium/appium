@@ -1,6 +1,6 @@
 # Click
 
-Retrieve the server’s current status.
+Click element at it's center point.
 
 ## Example Usage
 
@@ -58,7 +58,7 @@ Not all drivers automatically scroll the element into view and may need to be sc
 |Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
 ||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
 ||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
-|Windows|[WinAppDriver](/docs/en/drivers/windows.md)|(yes)|(yes)|
+|Windows|[Windows](/docs/en/drivers/windows.md)|(yes)|(yes)|
 |Mac|[Mac](/docs/en/drivers/mac.md)|(yes)|(yes)|
 
 ## HTTP API Specifications

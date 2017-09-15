@@ -45,7 +45,7 @@ Implementations may optionally include additional meta information as part of th
 |Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
 ||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
 ||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
-|Windows|[WinAppDriver](/docs/en/drivers/windows.md)|(yes)|(yes)|
+|Windows|[Windows](/docs/en/drivers/windows.md)|(yes)|(yes)|
 |Mac|[Mac](/docs/en/drivers/mac.md)|(yes)|(yes)|
 
 ## HTTP API Specifications

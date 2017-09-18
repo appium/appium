@@ -35,6 +35,8 @@ Implementations may optionally include additional meta information as part of th
 * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.utils.is_url_connectable)
 * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/status.html)
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L44)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method)
+* TODO: PHP
 
 ## Compatibility
 

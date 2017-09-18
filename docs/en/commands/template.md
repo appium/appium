@@ -21,6 +21,9 @@ await driver.status();
 ```ruby
 # Ruby example
 ```
+```php
+# PHP example
+```
 
 ## Description
 
@@ -37,20 +40,21 @@ Optional section. If the command is straightforward, no need to add samples, the
 * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/status.html)
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1438)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#click-instance_method)
+* TODO: PHP
 
 ## Support
 
 ### Appium Server
 
-|Platform|Automation Name|Appium Version|Driver Version|
+|Platform|Platform Version|Automation Name|Appium Version|Driver Version|
 |--------|---------------|--------------|--------------|
-|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
-||[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
-|Android|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
-||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
-||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
-|Windows|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
-|Mac|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
+|iOS|min version|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+||min version|[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+|Android|min version|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
+||min version|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
+||min version|[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
+|Windows|min version|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
+|Mac|min version|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
 
 ### Appium Clients 
 

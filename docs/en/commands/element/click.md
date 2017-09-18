@@ -24,7 +24,7 @@ let element = await driver.elementByAccessibilityId('id', 'SomeId');
 await element.click();
 ```
 ```ruby
-find_element(:accessibility_id, 'SomeId').click
+@driver.find_element(:accessibility_id, 'SomeId').click
 ```
 ```php
 # TODO
@@ -45,7 +45,7 @@ Not all drivers automatically scroll the element into view and may need to be sc
 * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.click)
 * [Javascript (WebdriverIO)](http://webdriver.io/api/action/click.html)
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1672)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#click-instance_method)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#click-instance_method)
 * PHP (TODO)
 * C# (TODO)
 
@@ -54,7 +54,7 @@ Not all drivers automatically scroll the element into view and may need to be sc
 |Platform|Automation Name|Supported|
 | ------------- |-------------| -----|
 |iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(yes)|
-||[iOS](/docs/en/drivers/ios-xcuitest.md)|(yes)|(yes)|
+||[iOS](/docs/en/drivers/ios-uiautomation.md)|(yes)|(yes)|
 |Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
 ||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
 ||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
@@ -65,7 +65,7 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/element/:element_id/click`
+`POST /wd/hub/session/:session_id/element/:element_id/click`
 
 ### URL Parameters
 

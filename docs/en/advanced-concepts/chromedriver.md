@@ -28,7 +28,7 @@ The following is a list of Chromedriver versions and their corresponding minimum
 Chrome version that is automatable:
 
 | Version | Minimum Chrome Version | Link to Chromedriver                                                      |
-|=========|========================|===========================================================================|
+|---------|------------------------|---------------------------------------------------------------------------|
 | 2.29    | 57.0.2987.0            | [link](https://chromedriver.storage.googleapis.com/index.html?path=2.29/) |
 | 2.28    | 55.0.2883.0            | [link](https://chromedriver.storage.googleapis.com/index.html?path=2.28/) |
 | 2.27    | 54.0.2840.0            | [link](https://chromedriver.storage.googleapis.com/index.html?path=2.27/) |

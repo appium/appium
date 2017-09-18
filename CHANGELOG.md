@@ -1,3 +1,89 @@
+CHANGES IN VERSION 1.7.0 (from 1.6.5)
+===================================
+
+**Note:** This is a feature release, marking two major changes:
+  * Support iOS 11 through Xcode 9 beta 6
+  * Support multiple simultaneous sessions in Android and iOS (9+)
+
+**Known Issues:**
+  * Android
+    * Webviews on Android O do not work because of a bug in Chromedriver. We
+      are working on a workaround. Chrome sessions still work
+  * iOS
+    * Touch ID enrollment on simulators in Xcode 9 does not work because of an
+      issue with AppleScript
+    * Scaling simulators with Xcode 9 does not work
+    * Simulators in Xcode 9 produce no meaningful device logs
+    * Parallel Safari/Webview sessions are not working due to an Apple bug
+
+#### General
+* Fix handling of sending keys to elements in recent versions of Selenium
+* Allow `app` capability that is a url to have query parameters
+* Begin to allow multiple device support in situations where it is possible
+  (e.g., iOS under Xcode 9)
+* Add `isHeadless` capability to allow running simulator/emulator with no UI
+
+#### iOS
+* Add command to upload media to simulator
+* Fix reliability of touch ID functionality
+* Fix detection of system apps
+* Update atoms used for MobileSafari automation to those of Selenium 3.5.3
+* Add `realDeviceLogger` capability to allow specification of what program to
+  use to capture logs on real device
+* Fix handling of `enablePerformanceLogging` capability in Safari tests
+* Fix offset when Safari on an iPad has multiple tabs
+
+#### iOS - XCUITest
+* Support for latest Beta of iOS 11 (Xcode 9 beta 6)
+* Multiple device support
+* Fix handling of bundle id on simulators
+* Make `nativeWebTap` a setting as well as a desired capability
+* Allow `nativeWebTap` to work on real devices
+* Do not try to uninstall app before installing on real device, which was causing
+  many issues
+* Fix clearing of text fields
+* Change behavior of `useNewWDA`: if `true`, forces uninstall of any existing
+  WebDriverAgent app on device. Set it to `true` if you want to apply different
+  startup options for WebDriverAgent for each session. Real devices require
+  WebDriverAgent client to run for as long as possible without reinstall/restart
+  to avoid issues. The `false` value will try to detect currently running WDA
+  listener executed by previous testing session(s) and reuse it if possible,
+  which is highly recommended for real device testing and to speed up suites of
+  multiple tests in general. A new WDA session will be triggered at the default
+  URL (http://localhost:8100) if WDA is not listening and `webDriverAgentUrl`
+  capability is not set.
+* Allow setting url in native context
+* Fix screenshot functionality
+
+#### Android
+* Add `remoteAdbHost` capability to specify the host on which adb is running, if
+  it is not localhost
+* Add methods to start and stop recording the screen
+* Fix screenshot commands
+* Skip setting of mock location for emulators
+* Add methods for emulator phone capacity: `sendSMS`, `gsmCall`, `gsmSignal`,
+  `gsmVoice`, `powerAC`, `powerCapacity`, and `networkSpeed`
+* Fix cleanup of adb port forwarding during Chrome sessions
+* Fix error where package name would be appended to fully qualified activity
+  name and package finding would then fail
+* Properly handle bootstrap failure on launch
+* Make sure correct logger is used for bootstrap
+
+#### Android - UIAutomator 2
+* Fix handling of `adbPort` capability
+* Fix coverage handling
+* Handle pressing and long pressing key codes
+* Enable `nativeWebScreenshot` capability
+* Fix restoring of IME when `unicodeKeyboard`/`resetKeyboard` capabilities are
+  used
+* Add `disableWindowAnimation` capability to launch instrumentation with no
+  animation
+* Correctly start ChromeDriver session for Chrome session
+* Allow getting `password` attribute from elements
+
+
+
+
 CHANGES IN VERSION 1.7.0-beta (from 1.6.5)
 ===================================
 

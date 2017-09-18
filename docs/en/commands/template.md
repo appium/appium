@@ -1,4 +1,4 @@
-# <Name of Command>
+# Template <Name of Command>
 
 A brief description of the command.
 
@@ -38,17 +38,30 @@ Optional section. If the command is straightforward, no need to add samples, the
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1438)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#click-instance_method)
 
-## Compatibility
+## Support
 
-|Platform|Automation Name|Supported|
-| ------------- |-------------| -----|
-|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(yes)|
-||[iOS](/docs/en/drivers/ios-xcuitest.md)|(yes)|(yes)|
-|Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
-||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
-||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
-|Windows|[Windows](/docs/en/drivers/windows.md)|(yes)|(yes)|
-|Mac|[Mac](/docs/en/drivers/mac.md)|(yes)|(yes)|
+### Appium Server
+
+|Platform|Automation Name|Appium Version|Driver Version|
+|--------|---------------|--------------|--------------|
+|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+||[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+|Android|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
+||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
+||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
+|Windows|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
+|Mac|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
+
+### Appium Clients 
+
+|Language|Supported|
+|--------|---------|
+|[Java](https://github.com/appium/java-client/releases/latest)|(yes)|
+|[Python](https://github.com/appium/python-client)|(yes)|
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)|(yes)|
+|[Javascript (WD)](https://github.com/admc/wd/releases)|(yes)|
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)|(yes)|
+|[PHP](https://github.com/appium/php-client/releases/latest)|(yes)|
 
 ## HTTP API Specifications
 

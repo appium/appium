@@ -46,7 +46,7 @@ Optional section. If the command is straightforward, no need to add samples, the
 
 ### Appium Server
 
-|Platform|Platform Version|Automation Name|Appium Version|Driver Version|
+|Platform|Platform Version|Driver Name|Driver Version|Appium Version|
 |--------|---------------|--------------|--------------|
 |iOS|min version|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
 ||min version|[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
@@ -73,22 +73,36 @@ Optional section. If the command is straightforward, no need to add samples, the
 
 `POST /wd/hub/path/to/endpoint`
 
-### Example Parameters
+### URL Parameters
 
-```javascript
-{
-  value: "A value"
-}
-```
+|name|description|
+|----|-----------|
+|field_name_1|Description of field_name_1|
+|field_name_2|Description of field_name_2|
 
-### Example Response
+or
 
-```javascript
-{
-  "state": "success",
-  "value": "A value"
-}
-```
+(none)
+
+### JSON Parameters
+
+|name|description|
+|----|-----------|
+|field_name_1|Description of field_name_1|
+|field_name_2|Description of field_name_2|
+
+or
+
+(none)
+
+### Response
+
+|name|type|description|
+|----|----|-----------|
+|field_name_1|number|Description of field_name_1|
+|field_name_2|number|Description of field_name_2|
+|object.key1|string|Description of key1|
+|object.key2|string|Description of key2|
 
 ## Specifications
 
@@ -96,6 +110,4 @@ Optional section. If the command is straightforward, no need to add samples, the
 ## See Also
 
 * [W3C Specification](https://www.w3.org/TR/webdriver/#status) Link to the w3c spec if there is one
-* Link one
-* Link two
-* Link three
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclick)

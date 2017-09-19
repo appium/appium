@@ -40,15 +40,15 @@ Implementations may optionally include additional meta information as part of th
 
 ## Compatibility
 
-|Platform|Automation Name|Supported|
-| ------------- |-------------| -----|
-|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(yes)|
-||[iOS](/docs/en/drivers/ios-xcuitest.md)|(yes)|(yes)|
-|Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
-||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
-||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
-|Windows|[Windows](/docs/en/drivers/windows.md)|(yes)|(yes)|
-|Mac|[Mac](/docs/en/drivers/mac.md)|(yes)|(yes)|
+|Platform|Platform Version|Driver Name|Driver Version|Appium Version|
+|--------|---------------|--------------|--------------|
+|iOS|min version|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+||min version|[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+|Android|min version|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
+||min version|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
+||min version|[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
+|Windows|min version|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
+|Mac|min version|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
 
 ## HTTP API Specifications
 
@@ -64,18 +64,18 @@ Implementations may optionally include additional meta information as part of th
 
 `none`
 
-### Example Response
+### Response
 
-```javascript
-{
-  "state": "success",
-  "os": {
-    "name": "iOS",
-    "version": "10.3"
-  }
-}
-```
+|Key|Type|Value|
+|===|====|=====|
+|build.version|string|A generic release label (i.e. "2.0rc3")|
+|build.revision|string|The revision of the local source control client from which the server was built|
+|build.time|string|A timestamp from when the server was built.|
+|os.arch|string|The current system architecture.|
+|os.name|string|The name of the operating system the server is currently running on: "windows", "linux", etc.|
+|os.version|string|The operating system version.|
 
 ## See Also
 
-[W3C Specification](https://www.w3.org/TR/webdriver/#status)  (NOTE: Not all Appium drivers follow the w3 specification)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#status)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#status)

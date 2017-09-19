@@ -51,15 +51,15 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 ## Compatibility
 
-|Platform|Automation Name|Supported|
-| ------------- |-------------| -----|
-|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(yes)|
-||[iOS](/docs/en/drivers/ios-uiautomation.md)|(yes)|(yes)|
-|Android|[Espresso](/docs/en/drivers/android-espresso.md)|(yes)|(yes)|
-||[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(yes)|(yes)|
-||[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(yes)|(yes)|
-|Windows|[Windows](/docs/en/drivers/windows.md)|(yes)|(yes)|
-|Mac|[Mac](/docs/en/drivers/mac.md)|(yes)|(yes)|
+|Platform|Platform Version|Driver Name|Driver Version|Appium Version|
+|--------|---------------|--------------|--------------|
+|iOS|min version|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+||min version|[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
+|Android|min version|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
+||min version|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
+||min version|[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
+|Windows|min version|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
+|Mac|min version|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
 
 ## HTTP API Specifications
 
@@ -78,10 +78,11 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 (none)
 
-### Example Response
+### Response
 
-Returns `null` if successful.
+`null`
 
 ## See Also
 
-[W3C Specification](https://www.w3.org/TR/webdriver/#element-click)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#element-click)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclick)

@@ -77,11 +77,11 @@ Implementations may optionally include additional meta information as part of th
 
 ### URL Parameters
 
-`none`
+None
 
 ### JSON Parameters
 
-`none`
+None
 
 ### Response
 

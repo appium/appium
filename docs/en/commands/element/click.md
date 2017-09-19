@@ -86,7 +86,7 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 ### JSON Parameters
 
-(none)
+None
 
 ### Response
 

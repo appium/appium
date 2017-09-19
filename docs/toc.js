@@ -17,19 +17,10 @@ module.exports = {
       ["UIAutomation (iOS)", "ios-uiautomation.md"]]],
     ["Commands", ["commands",
       ["Status", "status.md"],
-      ["Template", "template.md"],
       ["Element", ["element",
         ["Click", "click.md"]
       ]]
     ]],
-    /*["Setup", ["appium-setup",
-      ["Supported Platforms", "platform-support.md"],
-      ["Running on OS X", "running-on-osx.md"],
-      ["Running on Windows", "running-on-windows.md"],
-      ["Android HAX Emulation", "android-hax-emulator.md"],
-      ["Real iOS Devices", "real-devices-ios.md"],
-      ["Setup for Parallel Testing", "parallel_tests.md"],
-      ["Troubleshooting", "troubleshooting.md"]]],*/
     ["Writing & Running Tests", ["writing-running-appium",
       ["Running Tests", "running-tests.md"],
       ["CLI Arguments", "server-args.md"],

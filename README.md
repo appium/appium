@@ -15,12 +15,15 @@ Appium is an open source, cross-platform test automation tool for native,
 hybrid and mobile web and desktop apps. We support simulators (iOS), emulators
 (Android), and real devices (iOS, Android, Windows, Mac).
 
+Want to skip straight to the action? Check out our [getting
+started](/docs/en/about-appium/getting-started.md) doc.
 
 ### Supported Platforms
 
-Each platform is supported by one or more "drivers", which know how to automate
-that particular platform. Choose a driver below for specific information about
-that driver, and how to set your system up for using it:
+Appium supports app automation across a variety of platforms, like iOS,
+Android, and Windows. Each platform is supported by one or more "drivers",
+which know how to automate that particular platform. Choose a driver below for
+specific information about how that driver works and how to set it up:
 
 * iOS
     * The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
@@ -43,6 +46,10 @@ that driver, and how to set your system up for using it:
    C#, Clojure, or Perl with the Selenium WebDriver API and [language-specific
    client libraries](/docs/en/about-appium/appium-clients.md).
 3. You can use any testing framework.
+4. Appium has built-in mobile web and hybrid app support. Within the same
+   script you can switch seamlessly between native app automation and webview
+   automation, all using the WebDriver model that's already the standard for
+   web automation.
 
 Investing in the
 [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) protocol means
@@ -55,8 +62,6 @@ Similarly, with Google's UiAutomator or Espresso you can only write tests in
 Java. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
-### I don't get it yet...
-
 If you're new to Appium, or want a fuller description of what this is all
 about, please read our [Introduction to Appium
 Concepts](/docs/en/about-appium/intro.md).
@@ -65,78 +70,22 @@ Concepts](/docs/en/about-appium/intro.md).
 
 Your environment needs to be set up for the particular platforms that you want
 to run tests on. Each of the drivers above documents the requirements for their
-particular brand of automation.
+particular brand of automation. At a minimum, you will need to be able to run
+Node.js 6+.
 
-If you want to run Appium via an `npm install`, hack with or contribute to
-Appium, you will need [node.js and npm](http://nodejs.org) (use
-[nvm](https://github.com/creationix/nvm),
-[n](https://github.com/visionmedia/n), or `brew install node` to install
-Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
-you'll run into problems). We recommend the latest stable version, though
-Appium supports Node 6+.
+### Get Started
 
-To verify that all of Appium's dependencies are met you can use
-`appium-doctor`.  Install it with `npm install -g appium-doctor` (or run it
-from [source](https://github.com/appium/appium-doctor)), then run
-`appium-doctor` and supply the `--ios` or `--android` flags to verify that all
-of the dependencies are set up correctly.
+Check out our [Getting Started](/docs/en/about-appium/getting-started.md) guide
+to get going with Appium.
 
-You also need to download the Appium client for your language so you can write
-tests. The Appium clients are simple extensions to the WebDriver clients. You
-can see the list of clients and links to download instructions at the [Appium
-clients list](/docs/en/about-appium/appium-clients.md).
+There is also a repository that contains [many examples of tests in a variety
+of different languages](https://github.com/appium/sample-code)!
 
-### Quick Start
+### Documentation
 
-Kick up an Appium server, and then run a test written in your favorite
-[WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html)-compatible
-language!  You can run an Appium server using node.js or using Appium Desktop;
-see below.
-
-#### Using Node.js
-
-```
-npm install -g appium
-appium
-```
-
-As we said above, you may want to run `appium-doctor` to ensure your system is
-set up properly:
-
-```
-npm install -g appium-doctor
-appium-doctor
-```
-
-#### Using the Appium Desktop App
-
-* [Download Appium Desktop](https://www.github.com/appium/appium-desktop/releases/latest/)
-* Run it!
-
-### How it Works
-
-To see how to start session with a particular Appium driver, refer to that
-driver's specific doc page.
-
-Essentially, we support a subset of the [Selenium WebDriver JSON Wire
-Protocol](https://w3c.github.io/webdriver/webdriver-spec.html), and extend it
-so that you can specify mobile-targeted [desired
-capabilities](/docs/en/writing-running-appium/caps.md) to run your test through
-Appium.
-
-You find elements by using a subset of WebDriver's element-finding strategies.
-See [finding elements](/docs/en/writing-running-appium/finding-elements.md) for
-detailed information. We also have several extensions to the JSON Wire Protocol
-for [automating mobile
-gestures](/docs/en/writing-running-appium/touch-actions.md) like tap, flick,
-and swipe.
-
-You can also automate webviews in hybrid apps! See the [hybrid app
-guide](/docs/en/advanced-concepts/hybrid.md)
-
-This repository contains [many examples of tests in a variety of different languages](https://github.com/appium/sample-code)!
-
-For the full list of Appium doc pages, visit [this directory](/docs/en/).
+For prettily-rendered docs, please visit [appium.io](http://appium.io). You can
+always find the full list of Appium doc pages at [Appium's GitHub
+Repo](https://github.com/appium/appium/tree/master/docs/en/) as well.
 
 ### Contributing
 
@@ -164,12 +113,6 @@ guide](/docs/en/writing-running-appium/troubleshooting.md).  Please have a look
 here first if you run into any problems. It contains instructions for checking
 a lot of common errors and how to get in touch with the community if you're
 stumped.
-
-### Using Robots
-
-Using Appium with [Tapster](https://github.com/hugs/tapsterbot) and other
-robots is possible, check out the [Appium
-Robots](https://github.com/appium/robots) project!
 
 ### License
 

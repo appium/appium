@@ -29,9 +29,6 @@ await element.click();
 ```php
 # TODO
 ```
-```csharp
-// TODO
-```
 
 ## Description
 

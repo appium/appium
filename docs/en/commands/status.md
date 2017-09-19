@@ -20,6 +20,12 @@ driver.status();
 // wd
 await driver.status();
 ```
+```ruby
+# Ruby example
+```
+```php
+# PHP example
+```
 
 ## Description
 

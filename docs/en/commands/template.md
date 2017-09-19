@@ -46,13 +46,14 @@ Optional section. If the command is straightforward, no need to add samples, the
 
 ### Appium Server
 
-|Platform|Support|Appium Version|Driver|Driver Version|
+|Platform|Driver|Support|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-|iOS|9.0| All |[XCUITest](/docs/en/drivers/ios-xcuitest.md)|All|
-||8.0| All |[iOS](/docs/en/drivers/ios-xcuitest.md)|1.21.0|
-|Android|9.0| All |[Espresso](/docs/en/drivers/android-espresso.md)|All|
-||8.0| All| [UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|All|
-|Windows|8|1.5|[Windows](/docs/en/drivers/windows.md)|All|
+|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|9.3| 1.6.0 |All|
+| |[iOS](/docs/en/drivers/ios-xcuitest.md)|8.0| All | All |
+|Android|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|8.0| 1.6.0 | All|
+| |[UiAutomator](/docs/en/drivers/android-uiautomator.md)| 8.0 | All | All |
+| |[Espresso](/docs/en/drivers/android-espresso.md)| TBD | TBD |TBD
+|Windows|[Windows](/docs/en/drivers/windows.md)| 8 | 1.6.0 |All|
 |Mac|None||||
 
 ### Appium Clients 

@@ -48,15 +48,15 @@ Implementations may optionally include additional meta information as part of th
 
 ### Appium Server
 
-|Platform|Support|Appium Version|Driver|Driver Version|
+|Platform|Driver|Support|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-|iOS|9.3| 1.6.0 |[XCUITest](/docs/en/drivers/ios-xcuitest.md)|All|
-| |8.0| All |[iOS](/docs/en/drivers/ios-xcuitest.md)| All |
-|Android|8.0| 1.6.0 | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|All|
-| |8.0| All| [UiAutomator](/docs/en/drivers/android-uiautomator.md)|All|
-| | TBD | TBD |[Espresso](/docs/en/drivers/android-espresso.md)|TBD
-|Windows| 8 | 1.6.0 |[Windows](/docs/en/drivers/windows.md)|All|
-|Mac|Yes|1.6.4|[Mac](/docs/en/drivers/mac.md)|All|
+|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|9.3| 1.6.0 |All|
+| |[iOS](/docs/en/drivers/ios-xcuitest.md)|8.0| All | All |
+|Android|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|8.0| 1.6.0 | All|
+| |[UiAutomator](/docs/en/drivers/android-uiautomator.md)| 8.0 | All | All |
+| |[Espresso](/docs/en/drivers/android-espresso.md)| TBD | TBD |TBD
+|Windows|[Windows](/docs/en/drivers/windows.md)| 8 | 1.6.0 |All|
+|Mac|[Mac](/docs/en/drivers/mac.md)|Yes|1.6.4|All|
 
 ### Appium Clients 
 
@@ -89,10 +89,6 @@ Implementations may optionally include additional meta information as part of th
 |---|----|----|
 |build.version|string|A generic release label (i.e. "2.0rc3")|
 |build.revision|string|The revision of the local source control client from which the server was built|
-|build.time|string|A timestamp from when the server was built.|
-|os.arch|string|The current system architecture.|
-|os.name|string|The name of the operating system the server is currently running on: "windows", "linux", etc.|
-|os.version|string|The operating system version.|
 
 ## See Also
 

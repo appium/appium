@@ -50,15 +50,15 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 ### Appium Server
 
-|Platform|Driver|Support|Appium Version|Driver Version|
+|Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|9.3| 1.6.0 |All|
-| |[iOS](/docs/en/drivers/ios-xcuitest.md)|8.0| All | All |
-|Android|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|8.0| 1.6.0 | All|
-| |[UiAutomator](/docs/en/drivers/android-uiautomator.md)| 8.0 | All | All |
+|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)| 9.3+ | 1.6.0+ | All |
+| |[UIAutomation](/docs/en/drivers/ios-xcuitest.md)| 8.0 to 9.3 | All | All |
+|Android|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)| ? | 1.6.0+ | All|
+| |[UiAutomator](/docs/en/drivers/android-uiautomator.md)| 4.2+ | All | All |
 | |[Espresso](/docs/en/drivers/android-espresso.md)| TBD | TBD |TBD
-|Windows|[Windows](/docs/en/drivers/windows.md)| 8 | 1.6.0 |All|
-|Mac|[Mac](/docs/en/drivers/mac.md)|Yes|1.6.4|All|
+|Windows|[Windows](/docs/en/drivers/windows.md)| 10+ | 1.6.0+ |All|
+|Mac|[Mac](/docs/en/drivers/mac.md)|?| 1.6.4+ |All|
 
 ### Appium Clients 
 

@@ -46,26 +46,25 @@ Optional section. If the command is straightforward, no need to add samples, the
 
 ### Appium Server
 
-|Platform|Platform Version|Driver Name|Driver Version|Appium Version|
-|--------|---------------|--------------|--------------|
-|iOS|min version|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
-||min version|[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
-|Android|min version|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
-||min version|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
-||min version|[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
-|Windows|min version|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
-|Mac|min version|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
+|Platform|Support|Appium Version|Driver|Driver Version|
+|--------|----------------|------|--------------|--------------|
+|iOS|9.0| All |[XCUITest](/docs/en/drivers/ios-xcuitest.md)|All|
+||8.0| All |[iOS](/docs/en/drivers/ios-xcuitest.md)|1.21.0|
+|Android|9.0| All |[Espresso](/docs/en/drivers/android-espresso.md)|All|
+||8.0| All| [UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|All|
+|Windows|8|1.5|[Windows](/docs/en/drivers/windows.md)|All|
+|Mac|None||||
 
 ### Appium Clients 
 
-|Language|Supported|
-|--------|---------|
-|[Java](https://github.com/appium/java-client/releases/latest)|(yes)|
-|[Python](https://github.com/appium/python-client)|(yes)|
-|[Javascript (WebdriverIO)](http://webdriver.io/index.html)|(yes)|
-|[Javascript (WD)](https://github.com/admc/wd/releases)|(yes)|
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)|(yes)|
-|[PHP](https://github.com/appium/php-client/releases/latest)|(yes)|
+|Language|Support|
+|--------|-------|
+|[Java](https://github.com/appium/java-client/releases/latest)|All|
+|[Python](https://github.com/appium/python-client)|All|
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)|1.12.3|
+|[Javascript (WD)](https://github.com/admc/wd/releases)|None|
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)|All|
+|[PHP](https://github.com/appium/php-client/releases/latest)|All|
 
 ## HTTP API Specifications
 

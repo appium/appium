@@ -49,17 +49,30 @@ Not all drivers automatically scroll the element into view and may need to be sc
 * PHP (TODO)
 * C# (TODO)
 
-## Compatibility
+## Support
 
-|Platform|Platform Version|Driver Name|Driver Version|Appium Version|
-|--------|---------------|--------------|--------------|
-|iOS|min version|[XCUITest](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
-||min version|[iOS](/docs/en/drivers/ios-xcuitest.md)|(all)|(all)|
-|Android|min version|[Espresso](/docs/en/drivers/android-espresso.md)|(all)|(all)|
-||min version|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|(all)|(all)|
-||min version|[UiAutomator](/docs/en/drivers/android-uiautomator.md)|(all)|(all)|
-|Windows|min version|[Windows](/docs/en/drivers/windows.md)|(all)|(all)|
-|Mac|min version|[Mac](/docs/en/drivers/mac.md)|(all)|(all)|
+### Appium Server
+
+|Platform|Support|Appium Version|Driver|Driver Version|
+|--------|----------------|------|--------------|--------------|
+|iOS|9.3| 1.6.0 |[XCUITest](/docs/en/drivers/ios-xcuitest.md)|All|
+| |8.0| All |[iOS](/docs/en/drivers/ios-xcuitest.md)| All |
+|Android|8.0| 1.6.0 | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md)|All|
+| |8.0| All| [UiAutomator](/docs/en/drivers/android-uiautomator.md)|All|
+| | TBD | TBD |[Espresso](/docs/en/drivers/android-espresso.md)|TBD
+|Windows| 8 | 1.6.0 |[Windows](/docs/en/drivers/windows.md)|All|
+|Mac|Yes|1.6.4|[Mac](/docs/en/drivers/mac.md)|All|
+
+### Appium Clients 
+
+|Language|Support|
+|--------|-------|
+|[Java](https://github.com/appium/java-client/releases/latest)|All|
+|[Python](https://github.com/appium/python-client)|All|
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)|All|
+|[Javascript (WD)](https://github.com/admc/wd/releases)|All|
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)|All|
+|[PHP](https://github.com/appium/php-client/releases/latest)|All|
 
 ## HTTP API Specifications
 

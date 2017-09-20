@@ -13,7 +13,14 @@ module.exports = {
       ["Espresso (Android)", "android-espresso.md"],
       ["Selendroid (Android)", "android-selendroid.md"],
       ["Windows", "windows.md"],
-      ["Mac", "mac.md"]]],
+      ["Mac", "mac.md"],
+      ["UIAutomation (iOS)", "ios-uiautomation.md"]]],
+    ["Commands", ["commands",
+      ["Status", "status.md"],
+      ["Element", ["element",
+        ["Click", "click.md"]
+      ]]
+    ]],
     ["Writing & Running Tests", ["writing-running-appium",
       ["Running Tests", "running-tests.md"],
       ["CLI Arguments", "server-args.md"],

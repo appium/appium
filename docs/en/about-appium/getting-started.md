@@ -12,8 +12,8 @@ is a graphical, desktop-based way to launch the Appium server.
 
 #### Installation via NPM
 
-If you want to run Appium via an `npm install`, hack with or contribute to
-Appium, you will need [Node.js and NPM](http://nodejs.org) (use
+If you want to run Appium via an `npm install`, hack with Appium, or contribute
+to Appium, you will need [Node.js and NPM](http://nodejs.org) (use
 [nvm](https://github.com/creationix/nvm),
 [n](https://github.com/visionmedia/n), or `brew install node` to install
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
@@ -37,10 +37,10 @@ You probably want to use Appium to automate something specific, like an iOS or
 Android application. Support for the automation of a particular platform is
 provided by an Appium "driver". There are a number of such drivers that give
 you access to different kinds of automation technologies, and each come with
-their own particular setup requirements. Mostly these requirements are the same
-requirements as for app development on a specific platform. For example, to
-automate Android applications using one of our Android drivers, you'll need the
-Android SDK configured on your system.
+their own particular setup requirements. Most of these requirements are the
+same requirements as for app development on a specific platform. For example,
+to automate Android applications using one of our Android drivers, you'll need
+the Android SDK configured on your system.
 
 At some point, make sure you review the driver documentation for the platform
 you want to automate, so your system is set up correctly:

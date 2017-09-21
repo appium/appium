@@ -5,7 +5,6 @@ module.exports = {
       ["Introduction", "intro.md"],
       ["Getting Started", "getting-started.md"],
       ["The Appium Clients", "appium-clients.md"],
-      ["Supported Platforms", "platform-support.md"]]],
     ["Drivers", ["drivers",
       ["XCUITest (iOS)", "ios-xcuitest.md"],
       ["UIAutomation (iOS)", "ios-uiautomation.md"],

@@ -19,6 +19,15 @@ Development of the XCUITest driver happens at the
 [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver)
 repo.
 
+### Feature Overview
+
+* Native iOS app automation (simulator and real device)
+* Hybrid iOS app automation (simulator and real device, extra setup required for real device)
+* Mobile Safari automation (simulator and real device, extra setup required for real device)
+* Automate multiple apps in one session (inter-app test flows)
+* Automation of your own apps (apps you have the source code for). Automation of 3rd-party apps is not possible except on real devices and by manually finding the app icon. Full automation of Apple's built-in apps (Preferences, Mail, etc...) is also possible on simulators.
+* Automation of standard UI controls (for native apps). Custom UI controls cannot be automated unless they have accessibility properties set to behave like standard controls.
+
 ### Requirements and Support
 
 In addition to Appium's general requirements:

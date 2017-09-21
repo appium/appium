@@ -14,6 +14,14 @@ Older Android-based drivers include:
 * The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
 * The [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 
+### Feature Overview
+
+* Native Android app automation (simulator and real device, including 3rd-party apps)
+* Hybrid Android app automation (simulator and real device)
+* Mobile browser automation (Chrome and "Browser") (simulator and real device)
+* Automate multiple apps in one session (inter-app test flows)
+* Automation of standard UI controls (for native apps). Custom UI controls are often not automatable
+
 ### Requirements and Support
 
 In addition to Appium's general requirements:

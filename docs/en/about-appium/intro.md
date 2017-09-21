@@ -15,12 +15,13 @@ Importantly, Appium is "cross-platform": it allows you to write tests against
 multiple platforms (iOS, Android, Windows), using the same API. This enables
 code reuse between iOS, Android, and Windows testsuites.
 
-For specific information about what it means for Appium to "support" its
-platforms, and automation modalities, please see the [platform support
-doc](/docs/en/appium-setup/platform-support.md).
+The rest of this doc explains Appium's philosophy and how the project is
+organized, along with the concepts you need to know in order to begin writing
+Appium tests successfully.
 
 If you want to skip the rest of this conceptual introduction and head straight
-to instructions for getting going as a first-time user, check out our [Getting
+to practical step-by-step instructions for installing Appium, getting going as
+a first-time user, and writing your first test, check out our [Getting
 Started](/docs/en/about-appium/getting-started.md) guide.
 
 ### Appium Philosophy

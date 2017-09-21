@@ -6,6 +6,7 @@ import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import replaceExt from 'replace-ext';
 import _ from 'lodash';
+import { asyncify } from 'asyncbox';
 import validator from './validator';
 
 // What range of platforms do the driver's support
@@ -46,7 +47,6 @@ Handlebars.registerHelper('versions', (object, name, driverName) => {
       min = appiumRanges[driverName][0];
     } else if (name === 'platform' && platformRanges[driverName]) {
       min = platformRanges[driverName][0];
-      console.log('!!!setting min', min);
     }
   }
 
@@ -64,21 +64,16 @@ Handlebars.registerHelper('versions', (object, name, driverName) => {
     return `${min}+`;
   } else if (!min) {
     return `<= ${max}`;
-  } else {
-    return `${min} to ${max}`;
   }
+
+  return `${min} to ${max}`;
 });
 
-Handlebars.registerHelper('hyphenate', (str) => {
-  return str.replace('_', '-');
-});
-
-Handlebars.registerHelper('uppercase', (str) => {
-  return str.toUpperCase();
-});
+Handlebars.registerHelper('hyphenate', (str) =>  str.replace('_', '-'));
+Handlebars.registerHelper('uppercase', (str) => str.toUpperCase());
 
 Handlebars.registerHelper('capitalize', (driverName) => {
-  switch (driverName) {
+  switch (driverName.toLowerCase()) {
     case 'xcuitest':
       return 'XCUITest';
     case 'uiautomation':
@@ -88,38 +83,35 @@ Handlebars.registerHelper('capitalize', (driverName) => {
     case 'uiautomator':
       return 'UiAutomator';
     default:
-      return driverName[0].toUpperCase() + driverName.substr(1);
+      return driverName.length === 0 ? driverName : driverName[0].toUpperCase() + driverName.substr(1);
   }
 });
 
-(async function () {
-  try {
-    const commands = path.resolve(__dirname, 'commands/**/*.yml');
-    console.log('Traversing YML files', commands);
-    for (let filename of await fs.glob(commands)) {
-      console.log('Rendering file:', filename, path.relative(__dirname, filename), path.extname(filename));
+async function main () {
+  const commands = path.resolve(__dirname, 'commands/**/*.yml');
+  console.log('Traversing YML files', commands);
+  for (let filename of await fs.glob(commands)) {
+    console.log('Rendering file:', filename, path.relative(__dirname, filename), path.extname(filename));
 
-      // Translate the YML specs to JS
-      const inputYML = await fs.readFile(filename, 'utf8');
-      const inputJS = yaml.load(inputYML);
-      const validationErrors = validate(inputJS, validator);
-      if (validationErrors) {
-        throw new Error(validationErrors);
-      }
-
-      // Pass the inputJS into our Handlebars template
-      const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'template.md'), 'utf8'), {noEscape: true, strict: true});
-      const markdown = template(inputJS);
-
-      // Write the markdown to it's right place
-      const markdownPath = replaceExt(path.relative(__dirname, filename), '.md');
-      const outfile = path.resolve(__dirname, '..', 'docs', 'en', markdownPath);
-      console.log('Writing file to:', outfile);
-      await fs.writeFile(outfile, markdown, 'utf8');
+    // Translate the YML specs to JS
+    const inputYML = await fs.readFile(filename, 'utf8');
+    const inputJS = yaml.load(inputYML);
+    const validationErrors = validate(inputJS, validator);
+    if (validationErrors) {
+      throw new Error(validationErrors);
     }
-  } catch (e) {
-    console.error(e);
-    process.exit(-1);
+
+    // Pass the inputJS into our Handlebars template
+    const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'template.md'), 'utf8'), {noEscape: true, strict: true});
+    const markdown = template(inputJS);
+
+    // Write the markdown to its right place
+    const markdownPath = replaceExt(path.relative(__dirname, filename), '.md');
+    const outfile = path.resolve(__dirname, '..', 'docs', 'en', markdownPath);
+    console.log('Writing file to:', outfile);
+    await fs.writeFile(outfile, markdown, 'utf8');
   }
-})();
+}
+
+asyncify(main);
 /* eslint-enable */

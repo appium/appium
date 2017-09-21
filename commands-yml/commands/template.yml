@@ -54,6 +54,7 @@ driver_support:
   android:
     uiautomator2:
       platform_min: '8.0'
+    uiautomator: true
   mac:
     mac:
       platform_min: '?' # TODO

@@ -70,7 +70,8 @@
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint",
-    "coverage": "gulp coveralls"
+    "coverage": "gulp coveralls",
+    "generate-docs": "babel-node ./commands-yml/parse.js"
   },
   "pre-commit": [
     "precommit-msg",
@@ -78,7 +79,9 @@
   ],
   "devDependencies": {
     "appium-gulp-plugins": "2.x",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "7.x",
+    "babel-preset-env": "^1.6.0",
     "chai": "3.x",
     "chai-as-promised": "5.x",
     "eslint": "3.x",
@@ -88,10 +91,14 @@
     "eslint-plugin-mocha": "4.x",
     "eslint-plugin-promise": "3.x",
     "gulp": "3.x",
+    "handlebars": "^4.0.10",
     "mocha": "2.x",
     "pre-commit": "1.x",
+    "replace-ext": "^1.0.0",
     "sinon": "1.x",
-    "wd": "1.x"
+    "validate.js": "^0.11.1",
+    "wd": "1.x",
+    "yaml-js": "^0.2.0"
   },
   "optionalDependencies": {
     "fsevents": "1.x",

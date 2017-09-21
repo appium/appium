@@ -52,15 +52,31 @@ and so on.
 
 The current committers are (in addition to the TC members above):
 
-* [@dpgraham](https://github.com/dpgraham)
-* [@sravanmedarapu](https://github.com/sravanmedarapu)
+* [@hugs](https://github.com/hugs)
+* [@filmaj](https://github.com/filmaj)
+* [@aluedeke](https://github.com/aluedeke)
+* [@sebv](https://github.com/sebv)
+* [@vgrigoruk](https://github.com/vgrigoruk)
+* [@DylanLacey](https://github.com/DylanLacey)
+* [@maudineormsby](https://github.com/maudineormsby)
+* [@titusfortner](https://github.com/titusfortner)
+* [@bayandin](https://github.com/bayandin)
+* [@jdeff](https://github.com/jdeff)
 * [@moizjv](https://github.com/moizjv)
-* [@SrinivasanTarget](https://github.com/SrinivasanTarget)
-* [@christian-bromann](https://github.com/christian-bromann)
-* [@vrunoa](https://github.com/vrunoa)
+* [@gempesaw](https://github.com/gempesaw)
+* [@Jonahss](https://github.com/Jonahss)
+* [@JamieEdge](https://github.com/JamieEdge)
 * [@saikrishna321](https://github.com/saikrishna321)
-* [@butomo1989](https://github.com/butomo1989)
-* [@vikramvi](https://github.com/vikramvi)
+* [@sravanmedarapu](https://github.com/sravanmedarapu)
+* [@peepa](https://github.com/peepa)
+* [@scottdixon](https://github.com/scottdixon)
+* [@drpy](https://github.com/drpy)
+* [@Astro03](https://github.com/Astro03)
+* [@sbonebrake](https://github.com/sbonebrake)
+* [@SrinivasanTarget](https://github.com/SrinivasanTarget)
+* [@triager](https://github.com/triager)
+* [@ddkjin](https://github.com/ddkjin)
+* [@stuartbrussell-intuit](https://github.com/stuartbrussell-intuit)
 
 ### Contributors
 

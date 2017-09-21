@@ -131,5 +131,6 @@ writing tests.
 ### Getting Started
 
 Congratulations! You are now armed with enough knowledge to begin using Appium.
-Why not head to the [getting started doc](/README.md) for more detailed
-requirements and instructions?
+Why not head to the [getting started
+doc](/docs/en/about-appium/getting-started.md) for more detailed requirements
+and instructions?

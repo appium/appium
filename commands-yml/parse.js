@@ -5,20 +5,58 @@ import { fs } from 'appium-support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import replaceExt from 'replace-ext';
+import _ from 'lodash';
 import validator from './validator';
 
+// What range of platforms do the driver's support
+const platformRanges = {
+  xcuitest: ['9.3'],
+  uiautomation: ['8.0', '9.3'],
+  uiautomator2: ['?'],
+  uiautomator: ['4.2'],
+  windows: ['10'],
+  mac: ['?'], // TODO
+};
+
+// When was the driver supported in Appium?
+const appiumRanges = {
+  xcuitest: ['1.6.0'],
+  uiautomator2: ['1.6.0'],
+  espresso: ['?'],
+  windows: ['1.6.0'],
+  mac: ['1.6.4'],
+};
+
+
 // Create Handlebars helper that shows a version range
-Handlebars.registerHelper('versions', (object, name) => {
+Handlebars.registerHelper('versions', (object, name, driverName) => {
   if (!object) {
     return 'None';
   }
 
-  if (object === true) {
-    return 'All';
+  if (!_.isObject(object)) {
+    object = {};
   }
 
-  const min = object[name ? `${name}_min` : 'min'];
-  const max = object[name ? `${name}_max` : 'max'];
+  let min = object[name ? `${name}_min` : 'min'];
+  let max = object[name ? `${name}_max` : 'max'];
+
+  if (!min) {
+    if (name === 'appium' && appiumRanges[driverName]) {
+      min = appiumRanges[driverName][0];
+    } else if (name === 'platform' && platformRanges[driverName]) {
+      min = platformRanges[driverName][0];
+      console.log('!!!setting min', min);
+    }
+  }
+
+  if (!max) {
+    if (name === 'appium' && appiumRanges[driverName]) {
+      max = appiumRanges[driverName][1];
+    } else if (name === 'platform' && platformRanges[driverName]) {
+      max = platformRanges[driverName][1];
+    }
+  }
 
   if (!min && !max) {
     return 'All';

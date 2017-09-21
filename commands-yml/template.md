@@ -53,16 +53,16 @@
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
 {{#each driver_support.ios}}
-| {{#if @first}}iOS{{/if}} | [{{capitalize @key}}](/docs/en/drivers/ios-{{@key}}.md) | {{versions this "platform"}} | {{versions this "appium"}} | {{versions this "driver"}} |
+| {{#if @first}}iOS{{/if}} | [{{capitalize @key}}](/docs/en/drivers/ios-{{@key}}.md) | {{versions this "platform" @key}} | {{versions this "appium" @key}} | {{versions this "driver" @key}} |
 {{/each}}
 {{#each driver_support.android}}
-| {{#if @first}}Android{{/if}} | [{{capitalize @key}}](/docs/en/drivers/android-{{@key}}.md) | {{versions this "platform"}} | {{versions this "appium"}} | {{versions this "driver"}} |
+| {{#if @first}}Android{{/if}} | [{{capitalize @key}}](/docs/en/drivers/android-{{@key}}.md) | {{versions this "platform" @key}} | {{versions this "appium" @key}} | {{versions this "driver" @key}} |
 {{/each}}
 {{#each driver_support.mac}}
-| {{#if @first}}Mac{{/if}} | [{{capitalize @key}}](/docs/en/drivers/{{@key}}.md) | {{versions this "platform"}} | {{versions this "appium"}} | {{versions this "driver"}} |
+| {{#if @first}}Mac{{/if}} | [{{capitalize @key}}](/docs/en/drivers/{{@key}}.md) | {{versions this "platform" @key}} | {{versions this "appium" @key}} | {{versions this "driver" @key}} |
 {{/each}}
 {{#each driver_support.windows}}
-| {{#if @first}}Windows{{/if}} | [{{capitalize @key}}](/docs/en/drivers/{{@key}}.md) | {{versions this "platform"}} | {{versions this "appium"}} | {{versions this "driver"}} |
+| {{#if @first}}Windows{{/if}} | [{{capitalize @key}}](/docs/en/drivers/{{@key}}.md) | {{versions this "platform" @key}} | {{versions this "appium" @key}} | {{versions this "driver" @key}} |
 {{/each}}
 
 ### Appium Clients 

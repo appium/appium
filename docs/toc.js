@@ -3,6 +3,7 @@ module.exports = {
     ["Home", "about-appium/intro.md"],
     ["About", ["about-appium",
       ["Introduction", "intro.md"],
+      ["Getting Started", "getting-started.md"],
       ["The Appium Clients", "appium-clients.md"],
       ["Supported Platforms", "platform-support.md"]]],
     ["Drivers", ["drivers",

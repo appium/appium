@@ -19,6 +19,10 @@ For specific information about what it means for Appium to "support" its
 platforms, and automation modalities, please see the [platform support
 doc](/docs/en/appium-setup/platform-support.md).
 
+If you want to skip the rest of this conceptual introduction and head straight
+to instructions for getting going as a first-time user, check out our [Getting
+Started](/docs/en/about-appium/getting-started.md) guide.
+
 ### Appium Philosophy
 
 Appium was designed to meet mobile automation needs according to a philosophy

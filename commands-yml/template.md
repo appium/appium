@@ -1,6 +1,6 @@
 # {{name}}
 
-{{description}}
+{{short_description}}
 ## Example Usage
 
 ```java
@@ -20,15 +20,15 @@
 {{example_usage.javascript_wd}}
 ```
 ```ruby
-# Ruby example
+# Ruby
 {{example_usage.ruby}}
 ```
 ```php
-# PHP example
+# PHP
 {{example_usage.php}}
 ```
 ```csharp
-// C# example
+// C#
 {{example_usage.csharp}}
 ```
 
@@ -75,7 +75,7 @@
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| {{versions client_support.javascript_wd}} |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| {{versions client_support.ruby}} |
 |[PHP](https://github.com/appium/php-client/releases/latest)| {{versions client_support.php}} |
-|[C#](https://github.com/appium/appium-dotnet-driver/releases/tag/1.2.0.8)| {{versions client_support.csharp}} |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| {{versions client_support.csharp}} |
 
 ## HTTP API Specifications
 
@@ -107,11 +107,15 @@ None
 
 ### Response
 
+{{#if endpoint.response}}
 |name|type|description|
 |----|----|-----------|
 {{#each endpoint.response}}
 | {{this.name}} | {{this.type}} | {{this.description}} |
 {{/each}}
+{{else}}
+null
+{{/if}}
 
 ## See Also
 

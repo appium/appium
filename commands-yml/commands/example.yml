@@ -1,6 +1,6 @@
 ---
 name: 'Template'
-
+short_description: Brief description
 description:
   >
     An indepth description

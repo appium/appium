@@ -1,30 +1,41 @@
 # Status
 
-Retrieve the server’s current status.
-
+Retrieve the server’s current status
 ## Example Usage
 
 ```java
 // Java
-// new Status(); // TODO: How to get status in Java
+// TODO
 ```
 ```python
-# Python 
-# (not implemented)
+# Python
+selenium.webdriver.common.utils.is_url_connectable(port)
+
 ```
 ```javascript
 // Javascript
-// webdriver.io
+// webdriver.io example
 driver.status();
 
-// wd
+
+// wd example
 await driver.status();
+
 ```
 ```ruby
-# Ruby example
+# Ruby
+# TODO
+
 ```
 ```php
-# PHP example
+# PHP
+# TODO
+
+```
+```csharp
+// C#
+// TODO
+
 ```
 
 ## Description
@@ -35,14 +46,16 @@ The readiness state is represented by the ready property of the body, which is f
 
 Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.
 
+
 ## Client Docs
 
-* [Java](http://seleniumhq.github.io/selenium/docs/api/java/index.html)
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/)
 * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.utils.is_url_connectable)
 * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/status.html)
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L44)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method)
-* TODO: PHP
+* [PHP](https://github.com/appium/php-client/)
+* [C#](https://github.com/appium/appium-dotnet-driver/)
 
 ## Support
 
@@ -50,24 +63,24 @@ Implementations may optionally include additional meta information as part of th
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-|iOS|[XCUITest](/docs/en/drivers/ios-xcuitest.md)| 9.3+ | 1.6.0+ | All |
-| |[UIAutomation](/docs/en/drivers/ios-xcuitest.md)| 8.0 to 9.3 | All | All |
-|Android|[UiAutomator2](/docs/en/drivers/android-uiautomator2.md)| ? | 1.6.0+ | All|
-| |[UiAutomator](/docs/en/drivers/android-uiautomator.md)| 4.2+ | All | All |
-| |[Espresso](/docs/en/drivers/android-espresso.md)| TBD | TBD |TBD
-|Windows|[Windows](/docs/en/drivers/windows.md)| 10+ | 1.6.0+ |All|
-|Mac|[Mac](/docs/en/drivers/mac.md)|?| 1.6.4+ |All|
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
+| Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
+| Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
 ### Appium Clients 
 
 |Language|Support|
 |--------|-------|
-|[Java](https://github.com/appium/java-client/releases/latest)|All|
-|[Python](https://github.com/appium/python-client)|All|
-|[Javascript (WebdriverIO)](http://webdriver.io/index.html)|All|
-|[Javascript (WD)](https://github.com/admc/wd/releases)|All|
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)|All|
-|[PHP](https://github.com/appium/php-client/releases/latest)|All|
+|[Java](https://github.com/appium/java-client/releases/latest)| All |
+|[Python](https://github.com/appium/python-client/releases/latest)| All |
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |
+|[PHP](https://github.com/appium/php-client/releases/latest)| All |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |
 
 ## HTTP API Specifications
 
@@ -77,7 +90,9 @@ Implementations may optionally include additional meta information as part of th
 
 ### URL Parameters
 
-None
+|name|description|
+|----|-----------|
+
 
 ### JSON Parameters
 
@@ -85,10 +100,10 @@ None
 
 ### Response
 
-|Key|Type|Value|
-|---|----|----|
-|build.version|string|A generic release label (i.e. "2.0rc3")|
-|build.revision|string|The revision of the local source control client from which the server was built|
+|name|type|description|
+|----|----|-----------|
+| build.version | string | A generic release label (i.e. "2.0rc3") |
+| build.revision | string | The revision of the local source control client from which the server was built |
 
 ## See Also
 

@@ -1,0 +1,70 @@
+---
+name: Active Element
+short_description: Gets the active element of the current session
+description:
+  >
+    Get the element on the page that currently has focus. The element will be returned as a MobileElement JSON object.
+
+example_usage:
+  java:
+    |
+      WebElement currentElement = driver.switchTo().activeElement();
+  python:
+    |
+      element = driver.switch_to.active_element
+  javascript_wd:
+    |
+      let element = await driver.active();
+  javascript_wdio:
+    |
+      driver.elementActive();
+  ruby:
+    |
+      # TODO Ruby example
+  php:
+    |
+      // TODO PHP example
+  csharp:
+    |
+      // TODO C# example
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--"
+  python: "http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.remote.webdriver.WebDriver.switch_to_active_element" # TODO
+  javascript_wdio: "http://webdriver.io/api/protocol/elementActive.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1934"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/" # TODO
+  php: "https://github.com/appium/php-client/" # TODO
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element/active
+  method: 'POST'
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#get-active-element
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementactive

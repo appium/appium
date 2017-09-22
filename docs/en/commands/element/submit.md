@@ -1,55 +1,58 @@
-# Active Element
+# Submit Form
 
-Gets the active element of the current session
+Submit a FORM element
 ## Example Usage
 
 ```java
 // Java
-WebElement currentElement = driver.switchTo().activeElement();
+MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
+element.submit();
 
 ```
 ```python
 # Python
-element = driver.switch_to.active_element
+el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+el.submit();
 
 ```
 ```javascript
 // Javascript
 // webdriver.io example
-driver.elementActive();
+driver.submitForm("~SomeAccessibilityId");
 
 
 // wd example
-let element = await driver.active();
+let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+await element.submit();
 
 ```
 ```ruby
 # Ruby
-# TODO Ruby example
+# TODO Ruby sample
 
 ```
 ```php
 # PHP
-// TODO PHP example
+// TODO PHP sample
 
 ```
 ```csharp
 // C#
-// TODO C# example
+// TODO C# sample
 
 ```
 
 ## Description
 
-Get the element on the page that currently has focus. The element will be returned as a MobileElement JSON object.
+The submit command may also be applied to any element that is a descendant of a FORM element
 
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--)
-* [Python](http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.remote.webdriver.WebDriver.switch_to_active_element)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementActive.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1934)
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#submit--)
+* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.submit)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/action/submitForm.html)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1741)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
@@ -83,7 +86,7 @@ Get the element on the page that currently has focus. The element will be return
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/active`
+`POST /wd/hub/session/:session_id/element/:element_id/submit`
 
 ### URL Parameters
 
@@ -99,5 +102,4 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#get-active-element)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementactive)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidsubmit)

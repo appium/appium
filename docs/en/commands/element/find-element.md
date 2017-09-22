@@ -1,55 +1,58 @@
-# Active Element
+# Find Element
 
-Gets the active element of the current session
+Click on an element
 ## Example Usage
 
 ```java
 // Java
-WebElement currentElement = driver.switchTo().activeElement();
+MobileElement elementOne = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeClassName");
 
 ```
 ```python
 # Python
-element = driver.switch_to.active_element
+el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
 
 ```
 ```javascript
 // Javascript
 // webdriver.io example
-driver.elementActive();
+driver.element("~SomeAccessibilityId");
 
 
 // wd example
-let element = await driver.active();
+let elementOne = await driver.elementByAccessibilityId("SomeAccessibilityID");
+let elementTwo = await driver.element("id", "SomeID");
 
 ```
 ```ruby
 # Ruby
-# TODO Ruby example
+@driver.find_element(:accessibility_id, 'SomeAccessibilityID')
 
 ```
 ```php
 # PHP
-// TODO PHP example
+// TODO PHP sample
 
 ```
 ```csharp
 // C#
-// TODO C# example
+// TODO C# sample
 
 ```
 
 ## Description
 
-Get the element on the page that currently has focus. The element will be returned as a MobileElement JSON object.
+Located element will be returned as a MobileElement JSON object.
+The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
 
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--)
-* [Python](http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.remote.webdriver.WebDriver.switch_to_active_element)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementActive.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1934)
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElement-org.openqa.selenium.By-)
+* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/element.html#Usage)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L745)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
@@ -83,15 +86,20 @@ Get the element on the page that currently has focus. The element will be return
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/active`
+`POST /wd/hub/session/:session_id/element`
 
 ### URL Parameters
 
-None
+|name|description|
+|----|-----------|
+|session_id|ID of the session to route the command to|
 
 ### JSON Parameters
 
-None
+|name|type|description|
+|----|-----------|
+| using | string | The locator strategy to use |
+| value | string | The search target |
 
 ### Response
 
@@ -99,5 +107,5 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#get-active-element)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementactive)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#find-element)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelement)

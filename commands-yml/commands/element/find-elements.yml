@@ -1,0 +1,82 @@
+---
+name: Find Elements
+short_description: Search for multiple elements
+description:
+  >
+     The located elements will be returned as a list of MobileElement JSON objects.  #TODO: Let's make a document with the locator strategies that this links to
+
+example_usage:
+  java:
+    |
+      List<MobileElement> elementsOne = (MobileElement) driver.findElementsByAccessibilityId("SomeAccessibilityID");
+      List<MobileElement> elementsTwo = (MobileElement) driver.findElementsByClassName("SomeClassName");
+  python:
+    |
+      el = self.driver.find_elements_by_accessibility_id('SomeAccessibilityID')
+  javascript_wd:
+    |
+      let elementsOne = await driver.elementsByAccessibilityId("SomeAccessibilityID");
+      let elementsTwo = await driver.elements("id", "SomeID");
+  javascript_wdio:
+    |
+      driver.elements("~SomeAccessibilityId");
+  ruby:
+    |
+      # TODO Ruby sample
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElements-org.openqa.selenium.By-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_elements"
+  javascript_wdio: "http://webdriver.io/api/protocol/elements.html#Usage"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L798"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/" # TODO Ruby documentation link
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/elements
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: using
+      type: string
+      description: The locator strategy to use
+    - name: value
+      type: string
+      description: The search target
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-find-elements
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelements

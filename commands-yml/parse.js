@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import path from 'path';
 import yaml from 'yaml-js';
-import { fs } from 'appium-support';
+import { fs, mkdirp } from 'appium-support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import replaceExt from 'replace-ext';
@@ -43,9 +43,9 @@ Handlebars.registerHelper('versions', (object, name, driverName) => {
   let max = object[name ? `${name}_max` : 'max'];
 
   if (!min) {
-    if (name === 'appium' && appiumRanges[driverName]) {
+    if (name === 'appium' && _.isArray(appiumRanges[driverName])) {
       min = appiumRanges[driverName][0];
-    } else if (name === 'platform' && platformRanges[driverName]) {
+    } else if (name === 'platform' && _.isArray(platformRanges[driverName])) {
       min = platformRanges[driverName][0];
     }
   }
@@ -98,7 +98,7 @@ async function main () {
     const inputJS = yaml.load(inputYML);
     const validationErrors = validate(inputJS, validator);
     if (validationErrors) {
-      throw new Error(validationErrors);
+      throw new Error(`Data validation error for ${filename}: ${JSON.stringify(validationErrors)}`);
     }
 
     // Pass the inputJS into our Handlebars template
@@ -109,6 +109,7 @@ async function main () {
     const markdownPath = replaceExt(path.relative(__dirname, filename), '.md');
     const outfile = path.resolve(__dirname, '..', 'docs', 'en', markdownPath);
     console.log('Writing file to:', outfile);
+    await mkdirp(path.dirname(outfile));
     await fs.writeFile(outfile, markdown, 'utf8');
   }
 }

@@ -12,7 +12,7 @@ validate.validators.hasAttributes = function (value, options) {
     return;
   }
 
-  if (_.isObject(value) && !_.isArray(value)) {
+  if (!_.isArray(value)) {
     value = [value];
   }
 
@@ -27,6 +27,7 @@ validate.validators.hasAttributes = function (value, options) {
 
 export default {
   'name': {presence: true},
+  'short_description': {presence: true},
   'example_usage': {presence: true},
   'example_usage.java': {presence: true},
   'example_usage.javascript_wdio': {presence: true},
@@ -46,7 +47,7 @@ export default {
   'endpoint.url': {presence: true},
   'endpoint.url_parameters': { 'array': true, hasAttributes: ['name', 'description'] },
   'endpoint.json_parameters': { 'array': true, hasAttributes: ['name', 'description'] },
-  'endpoint.response': {presence: true, hasAttributes: ['name', 'type', 'description'] },
+  'endpoint.response': {hasAttributes: ['name', 'type', 'description'] },
   'specifications': {presence: true},
   'links': { 'array': true, hasAttributes: ['name', 'url'] },
 };

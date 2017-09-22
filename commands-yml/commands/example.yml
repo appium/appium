@@ -1,6 +1,6 @@
 ---
 name: 'Template'
-
+short_description: Brief description
 description:
   >
     An indepth description
@@ -25,7 +25,7 @@ example_usage:
       # Ruby Code here
   php:
     |
-      # PHP Code here
+      // PHP Code here
   csharp:
     |
       // CSharp Code here

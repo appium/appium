@@ -1,6 +1,6 @@
 # Click
 
-Click element at it's center point.
+Click element at its center point.
 ## Example Usage
 
 ```java
@@ -33,7 +33,7 @@ await element.click();
 ```
 ```php
 # PHP
-# TODO
+// TODO
 
 ```
 ```csharp
@@ -91,11 +91,7 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 ### URL Parameters
 
-|name|description|
-|----|-----------|
-|session_id|UUID of the session|
-|element_id|UUID of the element|
-
+None
 
 ### JSON Parameters
 

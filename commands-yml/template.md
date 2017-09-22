@@ -85,12 +85,15 @@
 
 ### URL Parameters
 
+{{#if endpoint.json_parameters}}
 |name|description|
 |----|-----------|
 {{#each endpoint.url_parameters}}
 |{{this.name}}|{{this.description}}|
 {{/each}}
-
+{{else}}
+None
+{{/if}}
 
 ### JSON Parameters
 
@@ -100,7 +103,6 @@
 {{#each endpoint.json_parameters}}
 | {{this.name}} | {{this.type}} | {{this.description}} |
 {{/each}}
-
 {{else}}
 None
 {{/if}}

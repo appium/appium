@@ -32,7 +32,7 @@ await driver.status();
 ```
 ```php
 # PHP
-# PHP Code here
+// PHP Code here
 
 ```
 ```csharp
@@ -93,14 +93,12 @@ An indepth description of what this command does
 |session_id|ID of the session|
 |element_id|ID of the element|
 
-
 ### JSON Parameters
 
 |name|type|description|
 |----|-----------|
 | item | Object | Description of Item |
 | item.1 | String | Item One description |
-
 
 ### Response
 

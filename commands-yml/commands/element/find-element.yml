@@ -1,10 +1,8 @@
 ---
 name: Find Element
-short_description: Click on an element
+short_description: Search for an element on the page
 description:
   >
-     Located element will be returned as a MobileElement JSON object.
-
      The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
 
 example_usage:

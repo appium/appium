@@ -3,7 +3,9 @@ name: Submit Form
 short_description: Submit a FORM element
 description:
   >
-     The submit command may also be applied to any element that is a descendant of a FORM element
+     The submit command may also be applied to any element that is a descendant of a FORM element.
+
+     This feature is only supported from within WebView context.
 
 example_usage:
   java:
@@ -43,11 +45,11 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: true
-    uiautomation: true
+    xcuitest: false
+    uiautomation: false
   android:
-    uiautomator2: true
-    uiautomator: true
+    uiautomator2: false
+    uiautomator: false
   mac:
     mac: true
   windows:
@@ -70,7 +72,7 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
     - name: element_id
-      description: ID of the element to route the command to
+      description: ID of the element to submit
 
 # Links to specifications. Should link to at least one specification
 specifications: 

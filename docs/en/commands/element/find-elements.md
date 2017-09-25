@@ -41,9 +41,15 @@ let elementsTwo = await driver.elements("id", "SomeID");
 
 ```
 
+## Selector Strategies
+|Strategy|Description|
+|--------|-----------|
+|Accessibility ID|Read a unique identifier for a UI element.|
+|Class Name||
+
 ## Description
 
-The located elements will be returned as a list of MobileElement JSON objects.  #TODO: Let's make a document with the locator strategies that this links to
+Get a list of elements that match the [locator selector](/docs/en/about-appium/getting-started).
 
 
 ## Client Docs

@@ -1,33 +1,34 @@
-# Find Element
+# Get Element Text
 
-Click on an element
+Returns visible text for element
 ## Example Usage
 
 ```java
 // Java
-MobileElement elementOne = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeClassName");
+MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
+let elText = element.getText();
 
 ```
 ```python
 # Python
-el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+# el = self.driver.find_element_by_accessibility_id('SomeId')
+# TODO: Python example
 
 ```
 ```javascript
 // Javascript
 // webdriver.io example
-driver.element("~SomeAccessibilityId");
+driver.getText("~SomeAccessibilityId");
 
 
 // wd example
-let elementOne = driver.elementByAccessibilityId("SomeAccessibilityID");
-let elementTwo = await driver.element("id", "SomeID");
+let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+await element.submit();
 
 ```
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID')
+# TODO Ruby sample
 
 ```
 ```php
@@ -41,18 +42,18 @@ let elementTwo = await driver.element("id", "SomeID");
 
 ```
 
+
 ## Description
 
-Located element will be returned as a MobileElement JSON object.
-The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
+Returns the visible text for the element.
 
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElement-org.openqa.selenium.By-)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/element.html#Usage)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L745)
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--)
+* [Python](http://selenium-python.readthedocs.io/api.html)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/property/getText.html)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1832)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
@@ -86,20 +87,15 @@ The locator strategy returns the first element it finds. #TODO: Let's make a doc
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element`
+`GET /wd/hub/session/:session_id/element/:element_id/text`
 
 ### URL Parameters
 
-|name|description|
-|----|-----------|
-|session_id|ID of the session to route the command to|
+None
 
 ### JSON Parameters
 
-|name|type|description|
-|----|-----------|
-| using | string | The locator strategy to use |
-| value | string | The search target |
+None
 
 ### Response
 
@@ -107,5 +103,5 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#find-element)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelement)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-text)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidtext)

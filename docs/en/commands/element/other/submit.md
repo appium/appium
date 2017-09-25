@@ -1,24 +1,24 @@
-# Get Element Text
+# Submit Form
 
-Returns visible text for element
+Submit a FORM element
 ## Example Usage
 
 ```java
 // Java
 MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
-let elText = element.getText();
+element.submit();
 
 ```
 ```python
 # Python
-# el = self.driver.find_element_by_accessibility_id('SomeId')
-# TODO: Python example
+el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+el.submit();
 
 ```
 ```javascript
 // Javascript
 // webdriver.io example
-driver.getText("~SomeAccessibilityId");
+driver.submitForm("~SomeAccessibilityId");
 
 
 // wd example
@@ -42,17 +42,19 @@ await element.submit();
 
 ```
 
+
 ## Description
 
-Returns the visible text for the element.
+The submit command may also be applied to any element that is a descendant of a FORM element.
+This feature is only supported from within WebView context.
 
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--)
-* [Python](http://selenium-python.readthedocs.io/api.html)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/property/getText.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1832)
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#submit--)
+* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.submit)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/action/submitForm.html)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1741)
 * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
@@ -63,10 +65,10 @@ Returns the visible text for the element.
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
-|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
-|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
@@ -86,7 +88,7 @@ Returns the visible text for the element.
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/element/:element_id/text`
+`POST /wd/hub/session/:session_id/element/:element_id/submit`
 
 ### URL Parameters
 
@@ -102,5 +104,4 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-text)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidtext)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidsubmit)

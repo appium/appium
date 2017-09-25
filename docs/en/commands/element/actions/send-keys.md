@@ -1,6 +1,6 @@
 # Send Keys
 
-Click on an element
+Send a sequence of key strokes to an element
 ## Example Usage
 
 ```java
@@ -40,6 +40,7 @@ await element.type("Hello world!")
 // TODO C# sample
 
 ```
+
 
 ## Description
 

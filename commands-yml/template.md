@@ -32,6 +32,16 @@
 {{example_usage.csharp}}
 ```
 
+{{#if selector_strategies}}
+## Selector Strategies
+|Strategy|Description|
+|--------|-----------|
+{{#each selector_strategies}}
+|{{this.name}}|{{this.description}}|
+{{/each}}
+|@key|
+{{/if}}
+
 ## Description
 
 {{description}}

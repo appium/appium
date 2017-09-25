@@ -1,9 +1,9 @@
 ---
-name: Active Element
+name: Get Active Element
 short_description: Gets the active element of the current session
 description:
   >
-    Get the element on the page that currently has focus. The element will be returned as a MobileElement JSON object.
+    Get the element on the page that currently has focus.
 
 example_usage:
   java:
@@ -40,15 +40,15 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: true
-    uiautomation: true
+    xcuitest: false
+    uiautomation: false
   android:
-    uiautomator2: true
-    uiautomator: true
+    uiautomator2: false
+    uiautomator: false
   mac:
-    mac: true
+    mac: false
   windows:
-    windows: true
+    windows: false
 client_support:
   java: true
   python: true

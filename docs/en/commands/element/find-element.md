@@ -1,6 +1,6 @@
 # Find Element
 
-Click on an element
+Search for an element
 ## Example Usage
 
 ```java
@@ -41,9 +41,9 @@ let elementTwo = await driver.element("id", "SomeID");
 
 ```
 
+
 ## Description
 
-Located element will be returned as a MobileElement JSON object.
 The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
 
 

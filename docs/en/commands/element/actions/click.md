@@ -1,59 +1,61 @@
-# Submit Form
+# Click
 
-Submit a FORM element
+Click element at its center point.
 ## Example Usage
 
 ```java
 // Java
-MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
-element.submit();
+MobileElement el = driver.findElementByAccessibilityId("SomeId");
+el.click();
 
 ```
 ```python
 # Python
-el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
-el.submit();
+el = self.driver.find_element_by_accessibility_id('SomeId')
+el.click();
 
 ```
 ```javascript
 // Javascript
 // webdriver.io example
-driver.submitForm("~SomeAccessibilityId");
+driver.click('#SomeId');
 
 
 // wd example
-let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-await element.submit();
+let element = await driver.elementByAccessibilityId('id', 'SomeId');
+await element.click();
 
 ```
 ```ruby
 # Ruby
-# TODO Ruby sample
+@driver.find_element(:accessibility_id, 'SomeId').click
 
 ```
 ```php
 # PHP
-// TODO PHP sample
+// TODO
 
 ```
 ```csharp
 // C#
-// TODO C# sample
+// TODO
 
 ```
 
+
 ## Description
 
-The submit command may also be applied to any element that is a descendant of a FORM element
+Clicks element at its center point. If the element's center point is obscured by another element, an element click intercepted error is returned. If the element is outside the viewport, an element not interactable error is returned.
+Not all drivers automatically scroll the element into view and may need to be scrolled to in order to interact with it.
 
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#submit--)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.submit)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/action/submitForm.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1741)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--)
+* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.click)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/action/click.html)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1672)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#click-instance_method)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
 
@@ -86,7 +88,7 @@ The submit command may also be applied to any element that is a descendant of a 
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/:element_id/submit`
+`POST /wd/hub/session/:session_id/element/:element_id/click`
 
 ### URL Parameters
 
@@ -102,4 +104,5 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidsubmit)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#element-click)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclick)

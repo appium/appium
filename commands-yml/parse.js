@@ -90,6 +90,7 @@ Handlebars.registerHelper('capitalize', (driverName) => {
 async function main () {
   const commands = path.resolve(__dirname, 'commands/**/*.yml');
   console.log('Traversing YML files', commands);
+  await fs.rimraf(path.resolve(__dirname, '..', 'docs', 'en', 'commands'));
   for (let filename of await fs.glob(commands)) {
     console.log('Rendering file:', filename, path.relative(__dirname, filename), path.extname(filename));
 

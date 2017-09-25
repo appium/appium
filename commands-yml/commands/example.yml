@@ -76,7 +76,7 @@ endpoint:
     - name: session_id
       description: ID of the session
     - name: element_id
-      description: ID of the element
+      description: ID of the element to blah blah blah
   json_parameters:
     - name: item
       type: Object

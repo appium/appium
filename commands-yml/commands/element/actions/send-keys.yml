@@ -69,7 +69,7 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
     - name: element_id
-      description: ID of the element to route the command to.
+      description: ID of the element to send keys to.
   json_parameters:
     - name: value
       type: array<string>

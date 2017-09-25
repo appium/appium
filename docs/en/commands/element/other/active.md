@@ -1,4 +1,4 @@
-# Active Element
+# Get Active Element
 
 Gets the active element of the current session
 ## Example Usage
@@ -39,9 +39,10 @@ let element = await driver.active();
 
 ```
 
+
 ## Description
 
-Get the element on the page that currently has focus. The element will be returned as a MobileElement JSON object.
+Get the element on the page that currently has focus.
 
 
 ## Client Docs
@@ -60,12 +61,12 @@ Get the element on the page that currently has focus. The element will be return
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
-|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
-|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
-| Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
-| Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
+| Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
+| Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
 
 ### Appium Clients 
 

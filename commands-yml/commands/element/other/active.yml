@@ -63,6 +63,10 @@ client_support:
 endpoint:
   url: /wd/hub/session/:session_id/element/active
   method: 'POST'
+  response:
+    - name: ELEMENT
+      type: object
+      description: A JSON object for the located element
 
 # Links to specifications. Should link to at least one specification
 specifications: 

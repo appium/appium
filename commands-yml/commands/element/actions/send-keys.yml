@@ -22,7 +22,7 @@ example_usage:
       driver.setValue("~SomeAccessibilityId");
   ruby:
     |
-      @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!"")
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
   php:
     |
       // TODO PHP sample

@@ -1,0 +1,79 @@
+---
+name: Get Element Attribute
+short_description: Get the value of an element's attribute
+
+example_usage:
+  java:
+    |
+      List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      String tagName = element.getAttribute("content-desc");
+  python:
+    |
+      tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').get_attribute('content-desc')
+  javascript_wd:
+    |
+      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+      let tagName = await element.getAttribute("content-desc");
+  javascript_wdio:
+    |
+      let attribute = driver.getAttribute("~SomeAccessibilityId", "content-desc");
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.get_attribute"
+  javascript_wdio: "http://webdriver.io/api/property/getAttribute.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1350"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# TODO: Confirm if all the drivers support this
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/elements/:element_id/attribute/:name
+  method: 'GET'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: element_id
+      description: ID of the element to get the attribute from
+    - name: name
+      description: The name of the attribute
+  response:
+    - type: string
+      description: The value of the attribute or null if not set
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-attribute
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidattributename

@@ -27,7 +27,7 @@ let elementsTwo = await driver.elements("id", "SomeID");
 ```
 ```ruby
 # Ruby
-# TODO Ruby sample
+@driver.find_elements("~SomeAccessibilityID")
 
 ```
 ```php
@@ -44,8 +44,10 @@ let elementsTwo = await driver.elements("id", "SomeID");
 ## Selector Strategies
 |Strategy|Description|
 |--------|-----------|
-|Accessibility ID|Read a unique identifier for a UI element.|
-|Class Name||
+|Accessibility ID|Read a unique identifier for a UI element. For XCUITest it is the element's `resource-id` attribute. For Android it is the element's `content-desc` attribute.|
+|Class name|For IOS it is the full name of the XCUI element and begins with XCUI. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)|
+|ID|Native element identifier. For Android|
+|@key|
 
 ## Description
 
@@ -58,7 +60,7 @@ Get a list of elements that match the [locator selector](/docs/en/about-appium/g
 * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_elements)
 * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elements.html#Usage)
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L798)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
 
@@ -108,7 +110,7 @@ Get a list of elements that match the [locator selector](/docs/en/about-appium/g
 
 ### Response
 
-null
+A list of of JSON objects for the located elements (Array<String>)
 
 ## See Also
 

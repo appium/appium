@@ -42,9 +42,11 @@
 |@key|
 {{/if}}
 
+{{#if description}}
 ## Description
 
 {{description}}
+{{/if}}
 
 ## Client Docs
 
@@ -120,11 +122,15 @@ None
 ### Response
 
 {{#if endpoint.response}}
+{{#if_eq endpoint.response.length 1}}
+{{endpoint.response.0.description}} ({{endpoint.response.0.type}})
+{{else}}
 |name|type|description|
 |----|----|-----------|
 {{#each endpoint.response}}
 | {{this.name}} | {{this.type}} | {{this.description}} |
 {{/each}}
+{{/if_eq}}
 {{else}}
 null
 {{/if}}

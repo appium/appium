@@ -35,7 +35,7 @@ export default {
   'example_usage.ruby': {presence: true},
   'example_usage.csharp': {presence: true},
   'example_usage.php': {presence: true},
-  'description': {presence: true},
+  'description': {},
   'client_docs.java': {presence: true, url: true},
   'client_docs.javascript_wdio': {presence: true, url: true},
   'client_docs.javascript_wd': {presence: true, url: true},
@@ -47,7 +47,7 @@ export default {
   'endpoint.url': {presence: true},
   'endpoint.url_parameters': { 'array': true, hasAttributes: ['name', 'description'] },
   'endpoint.json_parameters': { 'array': true, hasAttributes: ['name', 'description'] },
-  'endpoint.response': {hasAttributes: ['name', 'type', 'description'] },
+  'endpoint.response': {hasAttributes: ['type', 'description'] },
   'specifications': {presence: true},
   'links': { 'array': true, hasAttributes: ['name', 'url'] },
 };

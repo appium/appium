@@ -31,11 +31,11 @@ module.exports = {
           ["Selected", "selected.md"],
           ["Enabled", "enabled.md"],
           ["Displayed", "enabled.md"],
-          ["Equals Element", "equals-element.md"],
         ]],
         ["Other", ["other",
           ["Submit", "submit.md"],
           ["Active Element", "active.md"],
+          ["Equals Element", "equals-element.md"],
         ]]
       ]]
     ]],

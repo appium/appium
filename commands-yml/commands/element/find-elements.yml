@@ -85,7 +85,7 @@ endpoint:
       description: The search target
   response:
     - type: Array<String>
-    - description: A list of of JSON objects for the located elements
+      description: A list of of JSON objects for the located elements
 
 # Links to specifications. Should link to at least one specification
 specifications: 

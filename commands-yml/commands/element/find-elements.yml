@@ -5,12 +5,13 @@ description:
   >
      Get a list of elements that match the [locator selector](/docs/en/about-appium/getting-started).
 selector_strategies:
+  # TODO Document the rest
   - name: Accessibility ID
     description: Read a unique identifier for a UI element. For XCUITest it is the element's `resource-id` attribute. For Android it is the element's `content-desc` attribute.
   - name: Class name
     description: "For IOS it is the full name of the XCUI element and begins with XCUI. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)"
   - name: ID
-    description: Native element identifier. For Android
+    description: Native element identifier. For Android 
     
 example_usage:
   java:

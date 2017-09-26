@@ -1,3 +1,29 @@
+CHANGES IN VERSION 1.7.1 (from 1.7.0)
+===================================
+
+Appium 1.7.1 fixes multiple issues with the previous release. 
+
+#### iOS
+* Add ability to change default Simulator preferences
+
+#### iOS - XCUITest
+* Can use xctestrun file to launch WDA
+* Fix bug that was causing startCapture to be called more than once
+* Apply a workaround for setting default device orientation
+* Update offset determination for iPad
+
+#### iOS+Safari
+* Add handler for starting/stopping JS console capture
+
+#### Android
+* Add support to force upgrade settings app
+* Always assumes the file to be pushed by `pushFile` command contains binary data
+* Add ADB option to to force reinstall on upgrade
+
+#### Android - UiAutomator 2
+* Do not proxy getting app strings
+
+
 CHANGES IN VERSION 1.7.0 (from 1.6.5)
 ===================================
 

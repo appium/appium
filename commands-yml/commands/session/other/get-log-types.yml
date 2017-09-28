@@ -1,0 +1,73 @@
+---
+name: Get available log types
+short_description: Get the log for a given log type. Log buffer is reset after each request
+   
+example_usage:
+  java:
+    |
+      Set<String> logEntries = driver.getLogTypes();
+  python:
+    |
+      log_types = driver.log_types();
+  javascript_wd:
+    |
+      const logTypes = await driver.logTypes();
+
+  javascript_wdio:
+    |
+      driver.log()
+  ruby:
+    |
+      log_types = @driver.logTypes
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/logging/SessionLogs.html#getLogTypes--"
+  python: "http://selenium-python.readthedocs.io/api.html?highlight=get_log#selenium.webdriver.remote.webdriver.WebDriver.log_types"
+  javascript_wdio: "http://webdriver.io/api/protocol/logTypes.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L441"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FRemote%2FOSS%2FBridge:available_log_types"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true # TODO Confirm this that mouse movements
+  windows:
+    windows: true # TODO Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/log
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: array<string>
+      description: The list of log types
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidlogtypes

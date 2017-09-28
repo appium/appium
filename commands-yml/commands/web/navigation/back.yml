@@ -1,6 +1,6 @@
 ---
 name: Go Back
-short_description: Navigate backwards in the browser history, if possible
+short_description: Navigate backwards in the browser history, if possible (Web context only)
 
 example_usage:
   java:
@@ -37,11 +37,11 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: true
-    uiautomation: true
+    xcuitest: false
+    uiautomation: false
   android:
-    uiautomator2: true
-    uiautomator: true
+    uiautomator2: false
+    uiautomator: false
   mac:
     mac: false
   windows:

@@ -1,19 +1,17 @@
 ---
-name: Touch Up
-short_description: Finger up on the screen
+name: Double Tap
+short_description: Double tap on the touch screen using finger motion events
    
 example_usage:
   java:
     |
       TouchActions action = new TouchActions(driver);
-      action.down(10, 10);
-      action.up(20, 20);
+      action.doubleTap(element);
       action.perform();
   python:
     |
       actions = TouchActions(driver)
-      actions.tap_and_hold(20, 20)
-      actions.release(50, 50)
+      actions.double_tap(element)
       actions.perform()
   javascript_wd:
     |
@@ -22,21 +20,12 @@ example_usage:
 
       // Using touch actions
       let action = new wd.TouchAction();
-      action.press({x: 10, y: 10});
-      action.release({x: 20, y: 20});
+      action.tap({el: element});
       action.perform();
       await driver.performTouchAction(action);
-
-  javascript_wdio:
-    |
-      driver.touchMultiPerform([
-        { action: 'press', options: { x: 100, y: 250 }},
-        { action: 'moveTo', options: { x: 300, y: 100 }},
-        { action: 'release' }
-      ]);
   ruby:
     |
-      @driver.touch_action.down(element).up(50, 50).perform
+      @driver.touch_action.double_tap(element).perform
   php:
     |
       // TODO PHP sample
@@ -45,11 +34,10 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#up-int-int-"
-  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.release"
-  javascript_wdio: "http://webdriver.io/api/mobile/touchMultiPerform.html"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#doubleTap-org.openqa.selenium.WebElement-"
+  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.double_tap"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -77,19 +65,16 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/touch/up
+  url: /session/:session_id/touch/doubleclick
   method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: x
+    - name: element
       type: number
-      description: X coordinate on the screen
-    - name: y
-      type: number
-      description: Y coordinate on the screen
+      description: ID of the element to double tap on
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchup
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchdoubleclick

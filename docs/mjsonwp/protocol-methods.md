@@ -4,7 +4,7 @@ The following are endpoints that are currently supported by the Appium server. P
 
 ### WebDriver endpoints
 
-See the WebDriver [W3C](https://w3c.github.io/webdriver/webdriver-spec.html#list-of-endpoints) and [JSON Wire Protocol](https://code.google.com/p/selenium/wiki/JsonWireProtocol) specifications.
+See the WebDriver [W3C](https://w3c.github.io/webdriver/webdriver-spec.html#list-of-endpoints) and [JSON Wire Protocol](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol) specifications.
 
 HTTP Method | Path                                                                   | Details
 ------------|------------------------------------------------------------------------|---------

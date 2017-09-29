@@ -77,7 +77,11 @@ module.exports = {
           ["Button Down", "button-down.md"],
           ["Button Up", "button-up.md"],
         ]],
+<<<<<<< HEAD
         ["Touch", ["mouse",
+=======
+        ["Touch", ["touch",
+>>>>>>> 4a8c0f90... Document Appium touch actions
           ["Single Tap", "tap.md"],
           ["Double Tap", "double-tap.md"],
           ["Move", "move.md"],
@@ -86,14 +90,15 @@ module.exports = {
           ["Long Press", "long-press.md"],
           ["Scroll", "scroll.md"],
           ["Flick", "flick.md"],
+<<<<<<< HEAD
+=======
+          ["Multi Touch Perform", "multi-touch-perform.md"],
+          ["Touch Perform", "touch-perform.md"],
+>>>>>>> 4a8c0f90... Document Appium touch actions
         ]],
       ]],
       ["Web", ["web",
         ["Window", ["window",
-          ["Set Window", "set-window.md"],
-          ["Close Window", "close-window.md"],
-          ["Get Handle", "get-handle.md"],
-          ["Get Handles", "get-handles.md"],
           ["Set Window", "set-window.md"],
           ["Close Window", "close-window.md"],
           ["Get Handle", "get-handle.md"],

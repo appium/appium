@@ -1,9 +1,6 @@
 ---
 name: Get Active Element
 short_description: Gets the active element of the current session
-description:
-  >
-    Get the element on the page that currently has focus.
 
 example_usage:
   java:

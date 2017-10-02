@@ -9,16 +9,13 @@ example_usage:
   python:
     |
       self.driver.long_press_keycode(10);
-  javascript_wd:
-    |
-      await driver.deviceKeyEvent(10);
 
   javascript_wdio:
     |
-      driver.pressKeyCode(10);
+      driver.longPressKeyCode(10);
   ruby:
     |
-      @driver.press_keycode(10)
+      @driver.long_press_keycode(10)
   php:
     |
       // TODO PHP sample
@@ -30,8 +27,7 @@ client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/PressesKeyCode.html#longPressKeyCode-int-"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L431"
   javascript_wdio: "http://webdriver.io/api/mobile/longPressKeycode.html"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2422"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:press_keycode"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:long_press_keycode"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

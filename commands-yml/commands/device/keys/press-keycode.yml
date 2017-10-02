@@ -1,21 +1,21 @@
 ---
 name: Press Key Code
-short_description: Send a key event to the device
+short_description: Press a particular key on the device
   
 example_usage:
   java:
     |
-      driver.longPressKeyCode(10);
+      driver.pressKeyCode(10);
   python:
     |
       self.driver.press_keycode(10);
 
   javascript_wdio:
     |
-      driver.longPressKeycode(10);
+      driver.pressKeycode(10);
   ruby:
     |
-      @driver.long_press_keycode(10)
+      @driver.press_keycode(10)
   php:
     |
       // TODO PHP sample

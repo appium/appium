@@ -18,7 +18,19 @@ module.exports = {
     ["Commands", ["commands",
       ["Status", "status.md"],
       ["Element", ["element",
-        ["Click", "click.md"]
+        ["Find Element", "find-element.md"],
+        ["Find Elements", "find-elements.md"],
+        ["Actions", ["actions",
+          ["Click", "click.md"],
+          ["Send Keys", "send-keys.md"],
+        ]],
+        ["Attributes", ["attributes",
+          ["Text", "text.md"],
+        ]],
+        ["Other", ["other",
+          ["Submit", "submit.md"],
+          ["Active Element", "active.md"],
+        ]]
       ]]
     ]],
     ["Writing & Running Tests", ["writing-running-appium",

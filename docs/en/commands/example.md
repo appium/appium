@@ -41,6 +41,7 @@ await driver.status();
 
 ```
 
+
 ## Description
 
 An indepth description of what this command does

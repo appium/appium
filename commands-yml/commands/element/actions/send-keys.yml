@@ -1,0 +1,81 @@
+---
+name: Send Keys
+short_description: Send a sequence of key strokes to an element
+description:
+  >
+    Any UTF-8 character may be specified, however, if the server does not support native key events, it should simulate key strokes for a standard US keyboard layout. The Unicode Private Use Area code points, 0xE000-0xF8FF, are used to represent pressable, non-text keys (see table below).
+
+example_usage:
+  java:
+    |
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      element.sendKeys("Hello world!");
+  python:
+    |
+      self.driver.find_element_by_accessibility_id('SomeAccessibilityID').send_keys('Hello world!')
+  javascript_wd:
+    |
+      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+      await element.type("Hello world!")
+  javascript_wdio:
+    |
+      driver.setValue("~SomeAccessibilityId");
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!"")
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#sendKeys-java.lang.CharSequence...-"
+  python: "http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.common.action_chains.ActionChains.send_keys"
+  javascript_wdio: "http://webdriver.io/api/action/setValue.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1700"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#send_keys-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element/value
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: element_id
+      description: ID of the element to send keys to.
+  json_parameters:
+    - name: value
+      type: array<string>
+      description: The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed.
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-element-send-keys
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidvalue

@@ -42,6 +42,7 @@ await element.click();
 
 ```
 
+
 ## Description
 
 Clicks element at its center point. If the element's center point is obscured by another element, an element click intercepted error is returned. If the element is outside the viewport, an element not interactable error is returned.

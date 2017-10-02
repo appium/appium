@@ -1,0 +1,104 @@
+# Get Active Element
+
+Gets the active element of the current session
+## Example Usage
+
+```java
+// Java
+WebElement currentElement = driver.switchTo().activeElement();
+
+```
+```python
+# Python
+element = driver.switch_to.active_element
+
+```
+```javascript
+// Javascript
+// webdriver.io example
+driver.elementActive();
+
+
+// wd example
+let element = await driver.active();
+
+```
+```ruby
+# Ruby
+# TODO Ruby example
+
+```
+```php
+# PHP
+// TODO PHP example
+
+```
+```csharp
+// C#
+// TODO C# example
+
+```
+
+
+## Description
+
+Get the element on the page that currently has focus.
+
+
+## Client Docs
+
+* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--)
+* [Python](http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.remote.webdriver.WebDriver.switch_to_active_element)
+* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementActive.html)
+* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1934)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
+* [PHP](https://github.com/appium/php-client/)
+* [C#](https://github.com/appium/appium-dotnet-driver/)
+
+## Support
+
+### Appium Server
+
+|Platform|Driver|Platform Versions|Appium Version|Driver Version|
+|--------|----------------|------|--------------|--------------|
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
+| Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
+| Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
+
+### Appium Clients 
+
+|Language|Support|
+|--------|-------|
+|[Java](https://github.com/appium/java-client/releases/latest)| All |
+|[Python](https://github.com/appium/python-client/releases/latest)| All |
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |
+|[PHP](https://github.com/appium/php-client/releases/latest)| All |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |
+
+## HTTP API Specifications
+
+### Endpoint
+
+`POST /wd/hub/session/:session_id/element/active`
+
+### URL Parameters
+
+None
+
+### JSON Parameters
+
+None
+
+### Response
+
+null
+
+## See Also
+
+* [W3C Specification](https://www.w3.org/TR/webdriver/#get-active-element)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementactive)

@@ -26,6 +26,12 @@ The important capabilities:
 - `platformVersion` Simulator OS version
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
 
+#### Parallel Safari Real device
+
+- `udid` the device id
+- `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
+- `webkitDebugProxyPort` unique webKitProxy, as IWDP defaults to 27753
+
 Parallel Safari/Webview sessions are not working due to an Apple bug
 
 Refer: https://github.com/appium/appium/issues/9209

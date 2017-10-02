@@ -14,14 +14,14 @@ description:
 example_usage:
   java:
     |
-      TouchActions action = new TouchActions(driver);
-      action.down(10, 10);
+      TouchAction action = new TouchAction(driver);
+      action.press(10, 10);
       action.moveTo(10, 100);
-      action.up(20, 20);
+      action.release(20, 20);
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      actions = TouchAction(driver)
       actions.tap_and_hold(20, 20)
       actions.move_to(10, 100)
       actions.release(50, 50)
@@ -107,7 +107,8 @@ endpoint:
       type: number
       description: The Y coordinate of the operation (relative to top left corner)
     - name: opts.count
-      type: count
+      type: number
+      description: Tap count
 
 # Links to specifications. Should link to at least one specification
 specifications:

@@ -1,0 +1,155 @@
+---
+name: Switch Context
+short_description: Switch to a context
+
+description:
+  |
+    This command is only applicable to native apps. Because native apps (like iOS and Android apps) can have WebViews, Appium can switch the 'context' to a
+    WebView context and from there it receives standard Selenium web commands.
+
+    For example, Android apps can have WebViews, and [Chromedriver](https://sites.google.com/a/chromium.org/chromedriver/) can be the driver for those WebViews.
+    When the 'context' changes to a WebView, Appium will proxy through commands to chromedriver, which will automate the web app.
+
+example_usage:
+  java:
+    |
+      // Remember the current context
+      String originalContext = driver.getContext();
+
+      // Switch the context
+      Set<String> contextMap = driver.getContextHandles();
+      List<String> contexts = new ArrayList<String>(contextMap);
+      driver.context(contexts.get(1));
+
+      // Now that we're inside a WebView context, we can do web selenium commands
+      WebElement element = findElement(By.className("foo"));
+      element.click();
+
+      // Switch back to original context and interact with native elements
+      driver.context(originalContext);
+      MobileElement mobileElement = findElement(By.accessibilityId("bar"));
+      mobileElement.click();
+  python:
+    |
+      # Remember the current context
+      original_context = self.driver.current_context()
+
+      # Switch the context
+      contexts = self.driver.contexts
+      driver.switch_to.context(contexts[1])
+
+      # Now that we're inside a WebView context, we can do web selenium commands
+      element = self.driver.find_element_by_class_name('foo')
+      element.click();
+
+      # Switch back to original context and interact with native elements
+      driver.switch_to.context(original_context)
+      element = find_element_by_accessibility_id('bar')
+      element.click()
+
+  javascript_wd:
+    |
+      // Remember the current context
+      let originalContext = await driver.currentContext();
+
+      // Switch the context
+      let contexts = await driver.contexts();
+      await driver.context(contexts[1]);
+
+      // Now that we're inside a WebView context, we can do web selenium commands
+      let element = await driver.elementByClassName('foo');
+      await element.click();
+
+      // Switch back to original context and interact with native elements
+      await driver.context(originalContext);
+      let element = await elementByAccessibilityId('bar');
+      await element.click();
+
+  javascript_wdio:
+    |
+      // Remember the current context
+      let originalContext = await driver.context();
+
+      // Switch the context
+      let contexts = await driver.contexts();
+      await driver.context(contexts[1]);
+
+      // Now that we're inside a WebView context, we can do web selenium commands
+      let element = await driver.elementByClassName('foo');
+      await element.click();
+
+      // Switch back to original context and interact with native elements
+      await driver.context(originalContext);
+      let element = await element('bar');
+      await element.click();
+  ruby:
+    |
+      # Remember the current context
+      original_context = self.driver.available_()
+
+      # Switch the context
+      contexts = self.driver.contexts
+      driver.switch_to.context(contexts[1])
+
+      # Now that we're inside a WebView context, we can do web selenium commands
+      element = self.driver.find_element_by_class_name('foo')
+      element.click();
+
+      # Switch back to original context and interact with native elements
+      driver.switch_to.context(original_context)
+      element = find_element_by_accessibility_id('bar')
+      element.click()
+
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#context-java.lang.String-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L655"
+  javascript_wdio: "http://webdriver.io/api/mobile/context.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L288"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:set_context"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# TODO: Confirm if all the drivers support this
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true # TODO: Confirm this
+  windows:
+    windows: true # TODO: Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/context
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: name
+      type: string
+      description: The handle of the context to switch to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L278

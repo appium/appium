@@ -7,23 +7,23 @@ example_usage:
   java:
     |
       MultiTouchAction action = new MultiTouchAction(driver);
-      action.down(10, 10);
+      action.press(10, 10);
       action.moveTo(10, 100);
-      action.up(20, 20);
+      action.release();
       action.perform();
   python:
     |
       actions = MultiTouchAction(driver)
       actions.tap_and_hold(20, 20)
       actions.move_to(10, 100)
-      actions.release(50, 50)
+      actions.release()
       actions.perform()
   javascript_wd:
     |
       let action = new wd.MultiTouchAction();
       action.press({x: 10, y: 10});
       action.moveTo({x: 10, y: 100});
-      action.release({x: 20, y: 20});
+      action.release();
       action.perform();
       await driver.performMultiTouchAction(action);
 
@@ -77,7 +77,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/touch/perform
+  url: /session/:session_id/touch/multi/perform
   method: POST
   url_parameters:
     - name: session_id
@@ -99,7 +99,8 @@ endpoint:
       type: number
       description: The Y coordinate of the operation (relative to top left corner)
     - name: opts.count
-      type: count
+      type: number
+      description: Tap count
 
 # Links to specifications. Should link to at least one specification
 specifications:

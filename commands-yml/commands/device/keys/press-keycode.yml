@@ -1,0 +1,73 @@
+---
+name: Press Key Code
+short_description: Send a key event to the device
+  
+example_usage:
+  java:
+    |
+      driver.longPressKeyCode(10);
+  python:
+    |
+      self.driver.press_keycode(10);
+
+  javascript_wdio:
+    |
+      driver.longPressKeycode(10);
+  ruby:
+    |
+      @driver.long_press_keycode(10)
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/PressesKeyCode.html#pressKeyCode-int-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L415"
+  javascript_wdio: "http://webdriver.io/api/mobile/longPressKeycode.html"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:long_press_keycode"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO Confirm this that mouse movements
+  windows:
+    windows: false # TODO Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/device/press_keycode
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: keycode
+      type: number
+      description: \[Key code](http://developer.android.com/reference/android/view/KeyEvent.html) pressed on the device
+    - name: metastate
+      type: number
+      description: Metastate for the keypress
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L328

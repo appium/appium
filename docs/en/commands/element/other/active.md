@@ -96,7 +96,7 @@ None
 
 ### Response
 
-null
+A JSON object for the located element (object)
 
 ## See Also
 

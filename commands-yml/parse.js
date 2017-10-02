@@ -87,6 +87,14 @@ Handlebars.registerHelper('capitalize', (driverName) => {
   }
 });
 
+Handlebars.registerHelper('if_eq', function (a, b, opts) {
+  if (a === b) {
+    return opts.fn(this);
+  } else {
+    return opts.inverse(this);
+  }
+});
+
 async function main () {
   const commands = path.resolve(__dirname, 'commands/**/*.yml');
   console.log('Traversing YML files', commands);

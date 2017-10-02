@@ -5,6 +5,8 @@ description:
   >
     Any UTF-8 character may be specified, however, if the server does not support native key events, it should simulate key strokes for a standard US keyboard layout. The Unicode Private Use Area code points, 0xE000-0xF8FF, are used to represent pressable, non-text keys (see table below).
 
+    (See [Unicode document](/docs/en/writing-running-appium/unicode.md) for information on Unicode characters)
+
 example_usage:
   java:
     |
@@ -22,7 +24,7 @@ example_usage:
       driver.setValue("~SomeAccessibilityId");
   ruby:
     |
-      @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!"")
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
   php:
     |
       // TODO PHP sample

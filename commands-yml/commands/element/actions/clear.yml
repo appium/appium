@@ -1,0 +1,73 @@
+---
+name: Clear Element
+short_description: Clear an element's value
+example_usage:
+  java:
+    |
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      element.clear();
+  python:
+    |
+      self.driver.find_element_by_accessibility_id('SomeAccessibilityID').clear()
+  javascript_wd:
+    |
+      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+      await element.clear();
+  javascript_wdio:
+    |
+      driver.clearElement("~SomeAccessibilityId");
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#clear--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.clear"
+  javascript_wdio: "http://webdriver.io/api/action/clearElement.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1780"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element/:element_id/clear
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: element_id
+      description: ID of the element to clear.
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclear

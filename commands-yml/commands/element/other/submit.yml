@@ -3,9 +3,7 @@ name: Submit Form
 short_description: Submit a FORM element
 description:
   >
-     The submit command may also be applied to any element that is a descendant of a FORM element.
-
-     This feature is only supported from within WebView context.
+     The submit command may also be applied to any element that is a descendant of a FORM element (Web only)
 
 example_usage:
   java:

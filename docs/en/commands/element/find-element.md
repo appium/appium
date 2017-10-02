@@ -1,6 +1,6 @@
 # Find Element
 
-Search for an element
+Search for an element on the page
 ## Example Usage
 
 ```java
@@ -53,7 +53,7 @@ The locator strategy returns the first element it finds. #TODO: Let's make a doc
 * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element)
 * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/element.html#Usage)
 * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L745)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
+* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element)
 * [PHP](https://github.com/appium/php-client/)
 * [C#](https://github.com/appium/appium-dotnet-driver/)
 
@@ -103,7 +103,7 @@ The locator strategy returns the first element it finds. #TODO: Let's make a doc
 
 ### Response
 
-null
+A JSON object for the located element (object)
 
 ## See Also
 

@@ -92,7 +92,7 @@ An indepth description of what this command does
 |name|description|
 |----|-----------|
 |session_id|ID of the session|
-|element_id|ID of the element|
+|element_id|ID of the element to blah blah blah|
 
 ### JSON Parameters
 
@@ -103,9 +103,7 @@ An indepth description of what this command does
 
 ### Response
 
-|name|type|description|
-|----|----|-----------|
-| build.version | string | A generic release label (i.e. "2.0rc3") |
+A generic release label (i.e. "2.0rc3") (string)
 
 ## See Also
 

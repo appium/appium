@@ -1,0 +1,77 @@
+---
+name: Is Element Displayed
+short_description: Determine if an element is currently displayed
+example_usage:
+  java:
+    |
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      boolean isDisplayed = element.isDisplayed();
+  python:
+    |
+      self.driver.find_element_by_accessibility_id('SomeAccessibilityID').is_displayed()
+  javascript_wd:
+    |
+      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+      let isDisplayed = await element.isDisplayed();
+    
+  # Note that elementIdDisplayed is not a typo in this document, it's a WDIO typo
+  javascript_wdio:
+    |
+      let isDisplayed = driver.elementIdDisplayed("~SomeAccessibilityId");
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isDisplayed--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.is_displayed"
+  javascript_wdio: "http://webdriver.io/api/protocol/elementIdDisplayed.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1370"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# TODO: Confirm support for these per platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element/:element_id/displayed
+  method: 'GET'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: element_id
+      description: ID of the element to check if it is displayed
+  response:
+    - type: boolean
+      description: Whether the element is displayed
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementiddisplayed

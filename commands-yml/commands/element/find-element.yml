@@ -35,7 +35,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element"
   javascript_wdio: "http://webdriver.io/api/protocol/element.html#Usage"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L745"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/" # TODO Ruby documentation link
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -75,6 +75,10 @@ endpoint:
     - name: value
       type: string
       description: The search target
+  response: 
+    - name: ELEMENT
+      type: object
+      description: A JSON object for the located element
 
 # Links to specifications. Should link to at least one specification
 specifications: 

@@ -1,0 +1,68 @@
+---
+name: Get Current Package
+short_description: Get the name of the current Android package
+    
+example_usage:
+  java:
+    |
+      String package = driver.getCurrentPackage();
+  python:
+    |
+      package = self.driver.current_package();
+  javascript_wd:
+    |
+      let package = await driver.getCurrentPackage();
+  ruby:
+    |
+      @driver.current_package;
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/StartsActivity.html#getCurrentPackage--"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L453"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2526"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:current_package"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/current_package
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: string
+      name: Name of the current [package](https://developer.android.com/reference/java/lang/Package.html)
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L369

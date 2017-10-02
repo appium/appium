@@ -1,0 +1,76 @@
+---
+name: Remove App
+short_description: Remove an app from the device
+    
+example_usage:
+  java:
+    |
+      driver.removeApp("com.example.AppName");
+  python:
+    |
+      self.driver.remove_app('com.example.AppName');
+  javascript_wd:
+    |
+      await driver.removeAppFromDevice('com.example.AppName');
+  javascript_wdio:
+    |
+      driver.removeApp('com.example.AppName')
+  ruby:
+    |
+      @driver.remove_app('com.example.AppName');
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#removeApp-java.lang.String-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L566"
+  javascript_wdio: "http://webdriver.io/api/mobile/removeApp.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2563"
+  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L39"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO: Verify this
+  windows:
+    windows: false # TODO: Verify this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/remove_app
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: appId
+      type: string
+      description: The iOS [App ID](https://developer.apple.com/library/content/documentation/General/Conceptual/DevPedia-CocoaCore/AppID.html)
+    - name: bundleId
+      type: string
+      description: iOS bundleID or Android package name
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L375

@@ -1,0 +1,80 @@
+---
+name: Rotate
+short_description: Rotate the device in three dimensions
+    
+example_usage:
+  java:
+    |
+      driver.rotate(new DeviceRotation(10, 10, 10));
+  javascript_wd:
+    |
+      driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touchCount: 2});
+  javascript_wdio:
+    |
+      driver.rotate(100, 100);
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#rotate-org.openqa.selenium.DeviceRotation-"
+  javascript_wdio: "http://webdriver.io/api/mobile/rotate.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2470"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/rotate
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: x
+      type: number
+      description: x offset to use for the center of the rotate gesture
+    - name: y
+      type: number
+      description: y offset to use for the center of the rotate gesture
+    - name: radius
+      type: number
+      description: The distance in points from the center to the edge of the circular path
+    - name: rotation
+      type: number
+      description: The length of rotation in radians
+    - name: touchCount
+      type: number
+      description: The number of touches to use in the specified gesture. (Effectively, the number of fingers a user would use to make the specified gesture.) Valid values are 1 to 5.
+    - name: duration
+      type: number
+      description: The length of hold time for the specified gesture, in seconds.
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L361

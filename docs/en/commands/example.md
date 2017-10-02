@@ -9,12 +9,14 @@ MobileElement el = driver.findElementByAccessibilityId("SomeId");
 el.click();
 
 ```
+
 ```python
 # Python
 el = self.driver.find_element_by_accessibility_id('SomeId')
 el.click();
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -25,16 +27,19 @@ await driver.status();
 await driver.status();
 
 ```
+
 ```ruby
 # Ruby
 # Ruby Code here
 
 ```
+
 ```php
 # PHP
 // PHP Code here
 
 ```
+
 ```csharp
 // C#
 // CSharp Code here
@@ -49,13 +54,13 @@ An indepth description of what this command does
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--)
-* [Python](https://github.com/appium/python-client)
-* [Javascript (WebdriverIO)](http://webdriver.io/index.html)
-* [Javascript (WD)](https://github.com/admc/wd/releases)
-* [Ruby](https://github.com/appium/ruby_lib/releases/latest)
-* [PHP](https://github.com/appium/php-client/releases/latest-)
-* [C#](https://github.com/appium/appium)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--) 
+ * [Python](https://github.com/appium/python-client) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/index.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/releases) 
+ * [Ruby](https://github.com/appium/ruby_lib/releases/latest) 
+ * [PHP](https://github.com/appium/php-client/releases/latest-) 
+ * [C#](https://github.com/appium/appium) 
 
 ## Support
 

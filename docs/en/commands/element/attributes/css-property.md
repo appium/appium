@@ -1,36 +1,36 @@
-# Get Tag Name
+# Get Element CSS Value
 
-Get an element's tag name
+Query the value of a web element's computed CSS property
 ## Example Usage
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-String tagName = element.getTagName();
+List<MobileElement> element = (MobileElement) driver.findElementById("SomeId");
+String cssProperty = element.getCssValue("style");
 
 ```
 
 ```python
 # Python
-tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
+cssProperty = self.driver.find_element_by_accessibility_id('SomeId').value_of_css_property("style")
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+let cssProperty = driver.getCssProperty("~SomeId", "style");
 
 
 // wd example
-let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-let tagName = await element.getTagName();
+let element = await driver.elementById("SomeId");
+let cssProperty = await element.getComputedCss();
 
 ```
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+@driver.find_element(:id, 'SomeId').css_value
 
 ```
 
@@ -47,14 +47,20 @@ let tagName = await element.getTagName();
 ```
 
 
+## Description
+
+The CSS property to query should be specified using the CSS property name, not the JavaScript property name (e.g. background-color instead of backgroundColor).
+
+This command only applies to webview contexts
+
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--) 
- * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name) 
- * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getTagName.html) 
- * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1336) 
- * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method) 
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getCssValue--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.value_of_css_property) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getCssProperty.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1447) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value) 
  * [PHP](https://github.com/appium/php-client/) 
  * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
@@ -87,7 +93,7 @@ let tagName = await element.getTagName();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/elements/:element_id/name`
+`GET /wd/hub/session/:session_id/elements/:element_id/css/:property_name`
 
 ### URL Parameters
 
@@ -99,9 +105,9 @@ None
 
 ### Response
 
-The tag name of the element (string)
+Value of the CSS property (string)
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-css-value)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidcsspropertyname)

@@ -1,36 +1,36 @@
-# Get Tag Name
+# Get Element Size
 
-Get an element's tag name
+Determine an element's size in pixels
 ## Example Usage
 
 ```java
 // Java
 List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-String tagName = element.getTagName();
+Dimension elementSize = element.getSize();
 
 ```
 
 ```python
 # Python
-tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
+size = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').size
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+let size = driver.getElementSize("~SomeAccessibilityId");
 
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-let tagName = await element.getTagName();
+let size = await element.getSize();
 
 ```
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+@driver.find_element(:accessibility_id, 'SomeAccessibilityID').size
 
 ```
 
@@ -47,14 +47,17 @@ let tagName = await element.getTagName();
 ```
 
 
+## Description
+
+The size will be returned as an object with width and height properties.
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--) 
- * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name) 
- * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getTagName.html) 
- * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1336) 
- * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method) 
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getSize--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.size) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getElementSize.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L2203) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:size) 
  * [PHP](https://github.com/appium/php-client/) 
  * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
@@ -87,7 +90,7 @@ let tagName = await element.getTagName();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/elements/:element_id/name`
+`GET /wd/hub/session/:session_id/elements/:element_id/size`
 
 ### URL Parameters
 
@@ -99,9 +102,11 @@ None
 
 ### Response
 
-The tag name of the element (string)
+|name|type|description|
+|----|----|-----------|
+| width | number | Width of the element |
+| height | number | Height of the element |
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidsize)

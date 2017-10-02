@@ -1,36 +1,37 @@
-# Send Keys
+# Get Element Text
 
-Send a sequence of key strokes to an element
+Returns visible text for element
 ## Example Usage
 
 ```java
 // Java
-MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-element.sendKeys("Hello world!");
+MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
+let elText = element.getText();
 
 ```
 
 ```python
 # Python
-self.driver.find_element_by_accessibility_id('SomeAccessibilityID').send_keys('Hello world!')
+# el = self.driver.find_element_by_accessibility_id('SomeId')
+# TODO: Python example
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-driver.setValue("~SomeAccessibilityId");
+driver.getText("~SomeAccessibilityId");
 
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-await element.type("Hello world!")
+await element.submit();
 
 ```
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
+# TODO Ruby sample
 
 ```
 
@@ -49,17 +50,16 @@ await element.type("Hello world!")
 
 ## Description
 
-Any UTF-8 character may be specified, however, if the server does not support native key events, it should simulate key strokes for a standard US keyboard layout. The Unicode Private Use Area code points, 0xE000-0xF8FF, are used to represent pressable, non-text keys (see table below).
-(See [Unicode document](/docs/en/writing-running-appium/unicode.md) for information on Unicode characters)
+Returns the visible text for the element.
 
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#sendKeys-java.lang.CharSequence...-) 
- * [Python](http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.common.action_chains.ActionChains.send_keys) 
- * [Javascript (WebdriverIO)](http://webdriver.io/api/action/setValue.html) 
- * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1700) 
- * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#send_keys-instance_method) 
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getText.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1832) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/) 
  * [PHP](https://github.com/appium/php-client/) 
  * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
@@ -92,20 +92,15 @@ Any UTF-8 character may be specified, however, if the server does not support na
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/value`
+`POST /wd/hub/session/:session_id/element/:element_id/value`
 
 ### URL Parameters
 
-|name|description|
-|----|-----------|
-|session_id|ID of the session to route the command to|
-|element_id|ID of the element to send keys to.|
+None
 
 ### JSON Parameters
 
-|name|type|description|
-|----|-----------|
-| value | array<string> | The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed. |
+None
 
 ### Response
 
@@ -113,5 +108,5 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-element-send-keys)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-text)
 * [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidvalue)

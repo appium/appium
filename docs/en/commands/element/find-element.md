@@ -9,11 +9,13 @@ MobileElement elementOne = (MobileElement) driver.findElementByAccessibilityId("
 MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeClassName");
 
 ```
+
 ```python
 # Python
 el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -25,16 +27,19 @@ let elementOne = await driver.elementByAccessibilityId("SomeAccessibilityID");
 let elementTwo = await driver.element("id", "SomeID");
 
 ```
+
 ```ruby
 # Ruby
 @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -49,13 +54,13 @@ The locator strategy returns the first element it finds. #TODO: Let's make a doc
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElement-org.openqa.selenium.By-)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/element.html#Usage)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L745)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElement-org.openqa.selenium.By-) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/element.html#Usage) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L745) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

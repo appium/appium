@@ -9,12 +9,14 @@ MobileElement el = driver.findElementByAccessibilityId("SomeId");
 el.click();
 
 ```
+
 ```python
 # Python
 el = self.driver.find_element_by_accessibility_id('SomeId')
 el.click();
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -26,16 +28,19 @@ let element = await driver.elementByAccessibilityId('id', 'SomeId');
 await element.click();
 
 ```
+
 ```ruby
 # Ruby
 @driver.find_element(:accessibility_id, 'SomeId').click
 
 ```
+
 ```php
 # PHP
 // TODO
 
 ```
+
 ```csharp
 // C#
 // TODO
@@ -51,13 +56,13 @@ Not all drivers automatically scroll the element into view and may need to be sc
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.click)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/action/click.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1672)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#click-instance_method)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.click) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/action/click.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1672) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#click-instance_method) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

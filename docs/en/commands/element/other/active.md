@@ -8,11 +8,13 @@ Gets the active element of the current session
 WebElement currentElement = driver.switchTo().activeElement();
 
 ```
+
 ```python
 # Python
 element = driver.switch_to.active_element
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -23,16 +25,19 @@ driver.elementActive();
 let element = await driver.active();
 
 ```
+
 ```ruby
 # Ruby
 # TODO Ruby example
 
 ```
+
 ```php
 # PHP
 // TODO PHP example
 
 ```
+
 ```csharp
 // C#
 // TODO C# example
@@ -40,20 +45,16 @@ let element = await driver.active();
 ```
 
 
-## Description
-
-Get the element on the page that currently has focus.
-
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--)
-* [Python](http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.remote.webdriver.WebDriver.switch_to_active_element)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementActive.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1934)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html?highlight=active_element#selenium.webdriver.remote.webdriver.WebDriver.switch_to_active_element) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementActive.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1934) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

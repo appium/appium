@@ -1,0 +1,91 @@
+---
+name: Create New Session
+short_description: Create a new session
+description:
+  |
+    The server should attempt to create a session that most closely matches the desired and required capabilities. 
+    
+    * [JSONWP Spec](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1) Required capabilities have higher priority than desired capabilities and must be set for the session to be created
+    * [W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)
+    
+example_usage:
+  java:
+    |
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      element.clear();
+  python:
+    |
+      self.driver.find_element_by_accessibility_id('SomeAccessibilityID').clear()
+  javascript_wd:
+    |
+      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+      await element.clear();
+  javascript_wdio:
+    |
+      driver.clearElement("~SomeAccessibilityId");
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/DefaultSession.html#createSession-org.openqa.selenium.remote.server.DriverFactory-org.openqa.selenium.remote.server.Clock-org.openqa.selenium.remote.SessionId-org.openqa.selenium.Capabilities-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.clear"
+  javascript_wdio: "http://webdriver.io/api/action/clearElement.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1780"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session
+  method: POST
+  json_parameters:
+    - name: desiredCapabilities
+      type: object
+      description: ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's [desired capabilities](/docs/en/writing-running-appium/caps.md)
+    - name: requiredCapabilities
+      type: object
+      description: ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's required capabilities that must be applied by remote end
+    - name: capabilities
+      type: object
+      description: ([W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) object containing 'alwaysMatch' and 'firstMatch' properties
+    - name: capabilities.alwaysMatch
+      type: object
+      description: The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match
+    - name: capabilities.firstMatch
+      type: array<object>
+      description: List of capabilities that the remote end tries to match. Matches the first in the list.
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-new-session
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1

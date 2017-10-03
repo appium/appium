@@ -9,12 +9,14 @@ MobileElement element = (MobileElement) driver.findElementByClassName("SomeClass
 let elText = element.getText();
 
 ```
+
 ```python
 # Python
 # el = self.driver.find_element_by_accessibility_id('SomeId')
 # TODO: Python example
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -26,16 +28,19 @@ let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
 await element.submit();
 
 ```
+
 ```ruby
 # Ruby
 # TODO Ruby sample
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -50,13 +55,13 @@ Returns the visible text for the element.
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--)
-* [Python](http://selenium-python.readthedocs.io/api.html)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/property/getText.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1832)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getText.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1832) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

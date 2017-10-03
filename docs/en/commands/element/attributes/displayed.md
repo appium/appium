@@ -9,11 +9,13 @@ MobileElement element = (MobileElement) driver.findElementByAccessibilityId("Som
 boolean isDisplayed = element.isDisplayed();
 
 ```
+
 ```python
 # Python
 self.driver.find_element_by_accessibility_id('SomeAccessibilityID').is_displayed()
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -25,16 +27,19 @@ let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
 let isDisplayed = await element.isDisplayed();
 
 ```
+
 ```ruby
 # Ruby
 @driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?()
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -45,13 +50,13 @@ let isDisplayed = await element.isDisplayed();
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isDisplayed--)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.is_displayed)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementIdDisplayed.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1370)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isDisplayed--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.is_displayed) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementIdDisplayed.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1370) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

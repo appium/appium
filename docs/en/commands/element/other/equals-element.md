@@ -11,11 +11,13 @@ MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeOt
 boolean isEqual = elementOne.equals(elementTwo);
 
 ```
+
 ```python
 # Python
 # TODO Python sample
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -28,16 +30,19 @@ let elementTwo = await driver.elementByClassName("someOtherClass");
 let isEqual = await elementOne.equalsElement(elementTwo);
 
 ```
+
 ```ruby
 # Ruby
 # TODO Ruby example
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -48,13 +53,13 @@ let isEqual = await elementOne.equalsElement(elementTwo);
 
 ## Client Docs
 
-* [Java](https://appium.github.io/java-client/io/appium/java_client/MobileElement.html)
-* [Python](http://selenium-python.readthedocs.io/api.html)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/state/isEnabled.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1463)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://appium.github.io/java-client/io/appium/java_client/MobileElement.html) 
+ * [Python](http://selenium-python.readthedocs.io/api.html) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/state/isEnabled.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1463) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

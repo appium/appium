@@ -7,11 +7,13 @@ Retrieve the server’s current status
 // Java
 // TODO
 ```
+
 ```python
 # Python
 selenium.webdriver.common.utils.is_url_connectable(port)
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -22,16 +24,19 @@ driver.status();
 await driver.status();
 
 ```
+
 ```ruby
 # Ruby
 # TODO
 
 ```
+
 ```php
 # PHP
 // TODO
 
 ```
+
 ```csharp
 // C#
 // TODO
@@ -50,13 +55,13 @@ Implementations may optionally include additional meta information as part of th
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.utils.is_url_connectable)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/status.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L44)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.utils.is_url_connectable) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/status.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L44) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

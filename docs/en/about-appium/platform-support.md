@@ -21,9 +21,9 @@ Please refer to these driver docs for setup instructions.
   framework.
 * Mobile web support: Yes, via automation of mobile Safari. For real devices,
   `ios-webkit-remote-debugger` is required, and automation of native aspects of
-  the Safari interface is not possible. See the [mobile web doc](/docs/en/writing-running-appium/mobile-web.md) for instructions.
+  the Safari interface is not possible. See the [mobile web doc](/docs/en/writing-running-appium/web/mobile-web.md) for instructions.
 * Hybrid support: Yes. For real devices, ios-webkit-remote-debugger is
-  required. See the [hybrid doc](/docs/en/advanced-concepts/hybrid.md) for instructions.
+  required. See the [hybrid doc](/docs/en/writing-running-appium/web/hybrid.md) for instructions.
 * Support for automating multiple apps in one session: No
 * Support for automating multiple devices simultaneously: No
 * Support for automating vendor-provided or third-party apps: Only
@@ -53,8 +53,8 @@ Please refer to these driver docs for setup instructions.
   server as a proxy. With 4.2 and 4.3, automation works on official Chrome
   browser or Chromium only. With 4.4+, automation also works on the built-in
   "Browser" app. Chrome/Chromium/Browser must already be installed on the
-  device under test. See the [mobile web doc](/docs/en/writing-running-appium/mobile-web.md) for instructions.
-* Hybrid support: Yes. See the [hybrid doc](/docs/en/advanced-concepts/hybrid.md) for instructions.
+  device under test. See the [mobile web doc](/docs/en/writing-running-appium/web/mobile-web.md) for instructions.
+* Hybrid support: Yes. See the [hybrid doc](/docs/en/writing-running-appium/web/hybrid.md) for instructions.
   * With default Appium automation backend: versions 4.4 and up
   * With Selendroid automation backend: versions 2.3 and up
 * Support for automating multiple apps in one session: Yes (but not when

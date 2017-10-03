@@ -1,0 +1,78 @@
+---
+name: Get All Contexts
+short_description: Get all the contexts available to automate
+description:
+  >
+    Retrieve all the contexts available to be automated. This will include, at
+    least, the native context. There can also be zero or more web view contexts.
+    For information on the format of the context names, see the [get context
+    documentation](/docs/en/commands/context/get-context.md).
+
+
+    For information on contexts, see Appium's [hybrid automation docs](/docs/en/writing-running-appium/web/hybrid.md).
+
+example_usage:
+  java:
+    |
+      Set<String> contextNames = driver.getContextHandles();
+  python:
+    |
+      contexts = driver.contexts
+  javascript_wd:
+    |
+      let contexts = await driver.contexts();
+  javascript_wdio:
+    |
+      let contexts = driver.contexts();
+  ruby:
+    |
+      contexts = @driver.available_contexts
+  php:
+    |
+      $contexts = $driver->contexts();
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://github.com/appium/java-client"
+  python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
+  javascript_wdio: "http://webdriver.io/api/mobile/contexts.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
+  ruby: "https://github.com/appium/ruby_lib"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element/value
+  method: 'POST'
+  response:
+    - type: Array<String>
+      description: Array of the names of all available contexts
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts

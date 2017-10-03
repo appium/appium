@@ -1,0 +1,99 @@
+---
+name: Set Current Context
+short_description: Set the context being automated
+description:
+  >
+    Set the current context to that passed in. If this is moving into a web view
+    context it will involve attempting to connect to that web view:
+
+      * iOS - attempt to connect to the application through the remote debugger
+      * Android - start a [Chromedriver](/docs/en/writing-running-appium/web/chromedriver.md)
+        process and begin a session to connect to the web view
+
+
+    For information on contexts, see Appium's [hybrid automation docs](/docs/en/writing-running-appium/web/hybrid.md).
+
+example_usage:
+  java:
+    |
+      Set<String> contextNames = driver.getContextHandles();
+      driver.context(contextNames.toArray()[1]);
+      // ...
+      driver.context("NATIVE_APP");
+  python:
+    |
+      webview = driver.contexts[1]
+      driver.switch_to.context(webview)
+      # ...
+      driver.switch_to.context('NATIVE_APP')
+  javascript_wd:
+    |
+      let contexts = await driver.contexts();
+      await driver.context(contexts[1]);
+      // ...
+      await driver.context('NATIVE_APP');
+  javascript_wdio:
+    |
+      let contexts = driver.contexts();
+      driver.context(contexts[1]);
+      // ...
+      driver.context('NATIVE_APP');
+  ruby:
+    |
+      webview = @driver.available_contexts[1]
+      @driver.switch_to.context(webview)
+      # ...
+      @driver.switch_to.context('NATIVE_APP')
+  php:
+    |
+      $contexts = $driver->contexts();
+      $driver->context($contexts[1]);
+      // ...
+      $driver->context('NATIVE_APP');
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://github.com/appium/java-client"
+  python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
+  javascript_wdio: "http://webdriver.io/api/mobile/context.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
+  ruby: "https://github.com/appium/ruby_lib"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element/value
+  method: 'POST'
+  json_parameters:
+    - name: name
+      type: String
+      description: The name of the context to which to change
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts

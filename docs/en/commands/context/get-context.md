@@ -1,42 +1,42 @@
-# Get Tag Name
+# Get Current Context
 
-Get an element's tag name
+Get the current context in which Appium is running
 ## Example Usage
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-String tagName = element.getTagName();
+String context = driver.getContext();
 
 ```
 
 ```python
 # Python
-tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
+context = driver.current_context
+# of
+context = driver.context
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+let context = driver.context();
 
 
 // wd example
-let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-let tagName = await element.getTagName();
+let context = await driver.currentContext();
 
 ```
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+context = @driver.current_context
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$context = $driver->context();
 
 ```
 
@@ -47,14 +47,24 @@ let tagName = await element.getTagName();
 ```
 
 
+## Description
+
+Retrieve the current context. This can be either `NATIVE_APP` for the native context, or a web view context, which will be:
+
+  * iOS - `WEBVIEW_<id>`
+  * Android - `WEBVIEW_<package name>`
+
+
+For information on contexts, see Appium's [hybrid automation docs](/docs/en/writing-running-appium/web/hybrid.md).
+
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--) 
- * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name) 
- * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getTagName.html) 
- * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1336) 
- * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method) 
+ * [Java](https://github.com/appium/java-client) 
+ * [Python](https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/mobile/context.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/doc/api.md) 
+ * [Ruby](https://github.com/appium/ruby_lib) 
  * [PHP](https://github.com/appium/php-client/) 
  * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
@@ -68,8 +78,8 @@ let tagName = await element.getTagName();
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
 | Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
-| Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
-| Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
+| Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
+| Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
 
 ### Appium Clients
 
@@ -87,7 +97,7 @@ let tagName = await element.getTagName();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/elements/:element_id/name`
+`GET /wd/hub/session/:session_id/context`
 
 ### URL Parameters
 
@@ -99,9 +109,8 @@ None
 
 ### Response
 
-The tag name of the element (`string`)
+The name of the current context (`String`)
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname)
+* [JSONWP Specification](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)

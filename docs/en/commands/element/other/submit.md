@@ -76,7 +76,7 @@ The submit command may also be applied to any element that is a descendant of a 
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|

@@ -78,7 +78,7 @@ The server should attempt to create a session that most closely matches the desi
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -105,11 +105,11 @@ The server should attempt to create a session that most closely matches the desi
 
 |name|type|description|
 |----|-----------|
-| desiredCapabilities | object | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's [desired capabilities](/docs/en/writing-running-appium/caps.md) |
-| requiredCapabilities | object | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's required capabilities that must be applied by remote end |
-| capabilities | object | ([W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) object containing 'alwaysMatch' and 'firstMatch' properties |
-| capabilities.alwaysMatch | object | The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match |
-| capabilities.firstMatch | array<object> | List of capabilities that the remote end tries to match. Matches the first in the list. |
+| desiredCapabilities | `object` | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's [desired capabilities](/docs/en/writing-running-appium/caps.md) |
+| requiredCapabilities | `object` | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's required capabilities that must be applied by remote end |
+| capabilities | `object` | ([W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) object containing 'alwaysMatch' and 'firstMatch' properties |
+| capabilities.alwaysMatch | `object` | The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match |
+| capabilities.firstMatch | `array<object>` | List of capabilities that the remote end tries to match. Matches the first in the list. |
 
 ### Response
 

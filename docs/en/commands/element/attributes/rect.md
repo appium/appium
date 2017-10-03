@@ -1,37 +1,33 @@
-# Get Tag Name
+# Get Element Rect
 
-Get an element's tag name
+Gets dimensions and coordinates of an element
 ## Example Usage
 
 ```java
 // Java
 List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-String tagName = element.getTagName();
+Rectangle rect = element.getRect();
 
 ```
 
 ```python
-# Python
-tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
-
+# Not supported
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+let rect = driver.elementIdRect("~SomeAccessibilityId");
 
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-let tagName = await element.getTagName();
+let rect = await element.getRect();
 
 ```
 
 ```ruby
-# Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
-
+# Not supported
 ```
 
 ```php
@@ -50,11 +46,11 @@ let tagName = await element.getTagName();
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--) 
- * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name) 
- * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getTagName.html) 
- * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1336) 
- * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method) 
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getRect--) 
+
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elementIdRect.html) 
+
+
  * [PHP](https://github.com/appium/php-client/) 
  * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
@@ -87,7 +83,7 @@ let tagName = await element.getTagName();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/elements/:element_id/name`
+`GET /wd/hub/session/:session_id/elements/:element_id/rect`
 
 ### URL Parameters
 
@@ -99,9 +95,13 @@ None
 
 ### Response
 
-The tag name of the element (string)
+|name|type|description|
+|----|----|-----------|
+| x | number | X coordinate |
+| y | number | Y coordinate |
+| height | number | Height of the bounding rectangle |
+| weight | number | Width of the bounding rectangle |
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-rect)

@@ -9,11 +9,13 @@ List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityI
 String tagName = element.getAttribute("content-desc");
 
 ```
+
 ```python
 # Python
 tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').get_attribute('content-desc')
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -25,16 +27,19 @@ let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
 let tagName = await element.getAttribute("content-desc");
 
 ```
+
 ```ruby
 # Ruby
 @driver.find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -45,13 +50,13 @@ let tagName = await element.getAttribute("content-desc");
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.get_attribute)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/property/getAttribute.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1350)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.get_attribute) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getAttribute.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1350) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

@@ -9,12 +9,14 @@ MobileElement element = (MobileElement) driver.findElementByClassName("SomeClass
 element.submit();
 
 ```
+
 ```python
 # Python
 el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
 el.submit();
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -26,16 +28,19 @@ let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
 await element.submit();
 
 ```
+
 ```ruby
 # Ruby
 # TODO Ruby sample
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -45,19 +50,18 @@ await element.submit();
 
 ## Description
 
-The submit command may also be applied to any element that is a descendant of a FORM element.
-This feature is only supported from within WebView context.
+The submit command may also be applied to any element that is a descendant of a FORM element (Web only)
 
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#submit--)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.submit)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/action/submitForm.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1741)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#submit--) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.submit) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/action/submitForm.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1741) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

@@ -1,62 +1,51 @@
-# Get Tag Name
+# Get Element Location in View
 
-Get an element's tag name
+Determine an element's location on the screen once it has been scrolled into view (mainly an internal command and not supported by all clients)
 ## Example Usage
 
 ```java
-// Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-String tagName = element.getTagName();
-
+// Not supported
 ```
 
 ```python
-# Python
-tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
-
+# Not supported
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+let location = driver.getLocationInView("~SomeAccessibilityId");
 
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-let tagName = await element.getTagName();
+let location = await element.getLocationInView();
 
 ```
 
 ```ruby
-# Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
-
+# Not supported
 ```
 
 ```php
-# PHP
-// TODO PHP sample
-
+// Not supported
 ```
 
 ```csharp
-// C#
-// TODO C# sample
-
+// Not supported
 ```
 
 
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--) 
- * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name) 
- * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getTagName.html) 
- * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1336) 
- * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method) 
- * [PHP](https://github.com/appium/php-client/) 
- * [C#](https://github.com/appium/appium-dotnet-driver/) 
+
+
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/property/getLocationInView.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L2189) 
+
+
+
 
 ## Support
 
@@ -87,7 +76,7 @@ let tagName = await element.getTagName();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/elements/:element_id/name`
+`GET /wd/hub/session/:session_id/elements/:element_id/location_in_view`
 
 ### URL Parameters
 
@@ -99,9 +88,11 @@ None
 
 ### Response
 
-The tag name of the element (string)
+|name|type|description|
+|----|----|-----------|
+| x | number | X coordinate |
+| y | number | Y coordinate |
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidlocation_in_view)

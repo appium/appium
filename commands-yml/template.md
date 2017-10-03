@@ -4,32 +4,61 @@
 ## Example Usage
 
 ```java
+{{#if example_usage.java}}
 // Java
 {{example_usage.java}}
+{{else}}
+// Not supported
+{{/if}}
 ```
+
 ```python
+{{#if example_usage.python}}
 # Python
 {{example_usage.python}}
+{{else}}
+# Not supported
+{{/if}}
 ```
+
 ```javascript
+{{#if example_usage.javascript_wdio}}
 // Javascript
 // webdriver.io example
 {{example_usage.javascript_wdio}}
 
 // wd example
 {{example_usage.javascript_wd}}
+{{else}}
+// Not supported
+{{/if}}
 ```
+
 ```ruby
+{{#if example_usage.ruby}}
 # Ruby
 {{example_usage.ruby}}
+{{else}}
+# Not supported
+{{/if}}
 ```
+
 ```php
+{{#if example_usage.php}}
 # PHP
 {{example_usage.php}}
+{{else}}
+// Not supported
+{{/if}}
 ```
+
 ```csharp
+{{#if example_usage.csharp}}
 // C#
 {{example_usage.csharp}}
+{{else}}
+// Not supported
+{{/if}}
 ```
 
 {{#if selector_strategies}}
@@ -50,13 +79,13 @@
 
 ## Client Docs
 
-* [Java]({{client_docs.java}})
-* [Python]({{client_docs.python}})
-* [Javascript (WebdriverIO)]({{client_docs.javascript_wdio}})
-* [Javascript (WD)]({{client_docs.javascript_wd}})
-* [Ruby]({{client_docs.ruby}})
-* [PHP]({{client_docs.php}})
-* [C#]({{client_docs.csharp}})
+{{#if client_docs.java}} * [Java]({{client_docs.java}}) {{/if}}
+{{#if client_docs.python}} * [Python]({{client_docs.python}}) {{/if}}
+{{#if client_docs.javascript_wdio}} * [Javascript (WebdriverIO)]({{client_docs.javascript_wdio}}) {{/if}}
+{{#if client_docs.javascript_wd}} * [Javascript (WD)]({{client_docs.javascript_wd}}) {{/if}}
+{{#if client_docs.ruby}} * [Ruby]({{client_docs.ruby}}) {{/if}}
+{{#if client_docs.php}} * [PHP]({{client_docs.php}}) {{/if}}
+{{#if client_docs.csharp}} * [C#]({{client_docs.csharp}}) {{/if}}
 
 ## Support
 

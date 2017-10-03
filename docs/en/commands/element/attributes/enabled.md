@@ -9,11 +9,13 @@ MobileElement element = (MobileElement) driver.findElementByAccessibilityId("Som
 boolean isEnabled = element.isEnabled();
 
 ```
+
 ```python
 # Python
 self.driver.find_element_by_accessibility_id('SomeAccessibilityID').is_enabled()
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -25,16 +27,19 @@ let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
 let isEnabled = await element.isEnabled();
 
 ```
+
 ```ruby
 # Ruby
 @driver.find_element(:accessibility_id, "SomeAccessibilityID").enabled?()
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -45,13 +50,13 @@ let isEnabled = await element.isEnabled();
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isEnabled---)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.is_enabled)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/state/isEnabled.html)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1386)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#isEnabled---) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.is_enabled) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/state/isEnabled.html) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1386) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

@@ -1,6 +1,6 @@
-# Clear Element
+# Create New Session
 
-Clear an element's value
+Create a new session
 ## Example Usage
 
 ```java
@@ -47,10 +47,17 @@ await element.clear();
 ```
 
 
+## Description
+
+The server should attempt to create a session that most closely matches the desired and required capabilities. 
+
+* [JSONWP Spec](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1) Required capabilities have higher priority than desired capabilities and must be set for the session to be created
+* [W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)
+
 
 ## Client Docs
 
- * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#clear--) 
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/DefaultSession.html#createSession-org.openqa.selenium.remote.server.DriverFactory-org.openqa.selenium.remote.server.Clock-org.openqa.selenium.remote.SessionId-org.openqa.selenium.Capabilities-) 
  * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.clear) 
  * [Javascript (WebdriverIO)](http://webdriver.io/api/action/clearElement.html) 
  * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L1780) 
@@ -87,15 +94,22 @@ await element.clear();
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/:element_id/clear`
+`POST /session`
 
 ### URL Parameters
 
-None
+|name|description|
+|----|-----------|
 
 ### JSON Parameters
 
-None
+|name|type|description|
+|----|-----------|
+| desiredCapabilities | object | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's [desired capabilities](/docs/en/writing-running-appium/caps.md) |
+| requiredCapabilities | object | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's required capabilities that must be applied by remote end |
+| capabilities | object | ([W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) object containing 'alwaysMatch' and 'firstMatch' properties |
+| capabilities.alwaysMatch | object | The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match |
+| capabilities.firstMatch | array<object> | List of capabilities that the remote end tries to match. Matches the first in the list. |
 
 ### Response
 
@@ -103,5 +117,5 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclear)
+* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-new-session)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)

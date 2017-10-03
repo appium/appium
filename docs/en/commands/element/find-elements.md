@@ -9,11 +9,13 @@ List<MobileElement> elementsOne = (MobileElement) driver.findElementsByAccessibi
 List<MobileElement> elementsTwo = (MobileElement) driver.findElementsByClassName("SomeClassName");
 
 ```
+
 ```python
 # Python
 el = self.driver.find_elements_by_accessibility_id('SomeAccessibilityID')
 
 ```
+
 ```javascript
 // Javascript
 // webdriver.io example
@@ -25,16 +27,19 @@ let elementsOne = await driver.elementsByAccessibilityId("SomeAccessibilityID");
 let elementsTwo = await driver.elements("id", "SomeID");
 
 ```
+
 ```ruby
 # Ruby
 @driver.find_elements("~SomeAccessibilityID")
 
 ```
+
 ```php
 # PHP
 // TODO PHP sample
 
 ```
+
 ```csharp
 // C#
 // TODO C# sample
@@ -45,7 +50,7 @@ let elementsTwo = await driver.elements("id", "SomeID");
 |Strategy|Description|
 |--------|-----------|
 |Accessibility ID|Read a unique identifier for a UI element. For XCUITest it is the element's `resource-id` attribute. For Android it is the element's `content-desc` attribute.|
-|Class name|For IOS it is the full name of the XCUI element and begins with XCUI. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)|
+|Class name|For IOS it is the full name of the XCUI element and begins with XCUIElementType. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)|
 |ID|Native element identifier. For Android|
 |@key|
 
@@ -56,13 +61,13 @@ Get a list of elements that match the [locator selector](/docs/en/about-appium/g
 
 ## Client Docs
 
-* [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElements-org.openqa.selenium.By-)
-* [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_elements)
-* [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elements.html#Usage)
-* [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L798)
-* [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements)
-* [PHP](https://github.com/appium/php-client/)
-* [C#](https://github.com/appium/appium-dotnet-driver/)
+ * [Java](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElements-org.openqa.selenium.By-) 
+ * [Python](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_elements) 
+ * [Javascript (WebdriverIO)](http://webdriver.io/api/protocol/elements.html#Usage) 
+ * [Javascript (WD)](https://github.com/admc/wd/blob/master/lib/commands.js#L798) 
+ * [Ruby](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements) 
+ * [PHP](https://github.com/appium/php-client/) 
+ * [C#](https://github.com/appium/appium-dotnet-driver/) 
 
 ## Support
 

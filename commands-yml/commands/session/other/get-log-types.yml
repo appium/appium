@@ -59,7 +59,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/log
+  url: /session/:session_id/log/types
   method: POST
   url_parameters:
     - name: session_id

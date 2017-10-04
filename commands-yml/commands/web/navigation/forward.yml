@@ -1,0 +1,70 @@
+---
+name: Go Forward
+short_description: Navigate forwards in the browser history, if possible (Web context only)
+
+example_usage:
+  java:
+    |
+      driver.forward();
+  python:
+    |
+      self.driver.forward()
+  javascript_wd:
+    |
+      await driver.forward();
+  javascript_wdio:
+    |
+      driver.forward();
+  ruby:
+    |
+      @driver.forward()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.Navigation.html#forward--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.forward"
+  javascript_wdio: "http://webdriver.io/api/protocol/forward.html#description"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L626"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:forward"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/forward
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-forward
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidforward

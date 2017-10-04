@@ -24,7 +24,7 @@ driver_support:
     xcuitest: false
     uiautomation: false
   android:
-    uiautomator2: true
+    uiautomator2: false
     uiautomator: true
   mac:
     mac: false
@@ -41,7 +41,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/device/gsm_signal
+  url: /session/:session_id/device/gsm_voice
   method: POST
   url_parameters:
     - name: session_id

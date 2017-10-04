@@ -47,8 +47,8 @@ driver_support:
   windows:
     windows: false
 client_support:
-  java: false
-  python: false
+  java: true
+  python: true
   ruby: true
   php: true
   csharp: true

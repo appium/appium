@@ -1,6 +1,6 @@
 ---
-name: Toggle Airplane Mode
-short_description: Toggle airplane mode on device
+name: Send SMS
+short_description: Simulate an SMS message (Emulator only)
 
 example_usage:
   javascript_wd:

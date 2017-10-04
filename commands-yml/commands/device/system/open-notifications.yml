@@ -1,6 +1,6 @@
 ---
-name: Toggle Airplane Mode
-short_description: Toggle airplane mode on device
+name: Open Notifications
+short_description: Open Android notifications (Emulator only)
 
 example_usage:
   java:
@@ -47,8 +47,8 @@ driver_support:
   windows:
     windows: false
 client_support:
-  java: false
-  python: false
+  java: true
+  python: true
   ruby: true
   php: true
   csharp: true

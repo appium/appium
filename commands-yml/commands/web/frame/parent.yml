@@ -1,0 +1,73 @@
+---
+name: Switch to Parent Frame
+short_description: Change focus to the parent context (Web context only)
+
+description:
+  |
+     If the current context is the top level browsing context, the context remains unchanged
+
+example_usage:
+  java:
+    |
+      driver.switchTo().parentFrame();
+  python:
+    |
+      self.driver.switch_to.parent()
+  javascript_wdio:
+    |
+      driver.frameParent();
+  ruby:
+    |
+      @driver.parent_frame()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#parentFrame--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_url"
+  javascript_wdio: "http://webdriver.io/api/protocol/frameParent.html"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TargetLocator:parent_frame"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/url
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: string
+      description: The current URL
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-switch-to-parent-frame
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidframeparent

@@ -1,0 +1,80 @@
+---
+name: Set Window Position
+short_description: Change the position of the specified window (Web context only)
+
+example_usage:
+  java:
+    |
+      driver.manage().window().setPosition(new Dimension(10, 10));
+  python:
+    |
+      self.driver.set_window_position(10, 10)
+  javascript_wd:
+    |
+      await driver.setWindowPosition(10, 10, "handleName"); // Set position of window by handle name
+      await driver.setWindowPosition(10, 10); // Set current window
+  javascript_wdio:
+    |
+      driver.windowHandlePosition("handleName", {x: 10, y: 10}); // Set by window handle hame
+      driver.windowHandlePosition({x: 10, y: 10}); // Current window
+  ruby:
+    |
+      @driver.reposition_window(10, 10)
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.Window.html#setPosition-org.openqa.selenium.Point-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.set_window_position"
+  javascript_wdio: "http://webdriver.io/api/protocol/windowHandlePosition.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L604"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:reposition_window"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/window/:window_handle/position
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: window_handle
+      description: Handle of the window to get position of. If 'current' it will get position of current window.
+  json_parameters:
+    - name: x
+      type: number
+      description: The x coordinate relative to the top left corner of the window
+    - name: y
+      type: number
+      description: The y coordinate relative to the top left corner of the window
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#post-sessionsessionidwindowwindowhandleposition

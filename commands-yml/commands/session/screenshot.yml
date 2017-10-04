@@ -1,0 +1,74 @@
+---
+name: Take Screenshot
+short_description: Take a screenshot of the current viewport/window/page
+
+example_usage:
+  java:
+    |
+      File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+
+  python:
+    |
+      screenshotBase64 = self.driver.get_screenshot_as_base64()
+  javascript_wd:
+    |
+      let screenshot = await driver.takeScreenshot();
+  javascript_wdio:
+    |
+      let screenshot = driver.screenshot();
+  ruby:
+    |
+      @driver.screenshot_as(:base64)
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#getScreenshotAs-org.openqa.selenium.OutputType-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_screenshot_as_base64"
+  javascript_wdio: "http://webdriver.io/api/protocol/screenshot.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1089"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/TakesScreenshot"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/screenshot
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: string
+      description: The screenshot as a base64 encoded PNG
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-take-screenshot
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidscreenshot

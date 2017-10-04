@@ -12,4 +12,4 @@ addons:
     packages:
       - g++-4.8
 script:
-  - npm run test
+  - npm run generate-docs && npm run test

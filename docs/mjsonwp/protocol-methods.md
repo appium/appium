@@ -118,6 +118,7 @@ POST        | `/wd/hub/session/{sessionId}/appium/device/long_press_keycode`    
 POST        | `/wd/hub/session/{sessionId}/appium/device/keyevent`                   | Send a key code to the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/rotate`                     | Rotate the device in three dimensions.
 GET         | `/wd/hub/session/{sessionId}/appium/device/current_activity`           | Retrieve the current activity running on the device.
+GET         | `/wd/hub/session/{sessionId}/appium/device/current_package`            | Retrieve the current package running on the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/install_app`                | Install the given app onto the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/remove_app`                 | Remote an app from the device.
 POST        | `/wd/hub/session/{sessionId}/appium/device/app_installed`              | Check whether the specified app is installed on the device.

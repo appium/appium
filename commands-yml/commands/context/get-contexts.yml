@@ -35,7 +35,7 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://github.com/appium/java-client"
+  java: "http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContextHandles--"
   python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
   javascript_wdio: "http://webdriver.io/api/mobile/contexts.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
@@ -67,8 +67,8 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/value
-  method: 'POST'
+  url: /wd/hub/session/:session_id/contexts
+  method: 'GET'
   response:
     - type: Array<String>
       description: Array of the names of all available contexts

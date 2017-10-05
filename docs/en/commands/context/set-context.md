@@ -77,7 +77,7 @@ For information on contexts, see Appium's [hybrid automation docs](/docs/en/writ
 
 ## Client Docs
 
- * [Java](https://github.com/appium/java-client) 
+ * [Java](http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#context-java.lang.String-) 
  * [Python](https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview) 
  * [Javascript (WebdriverIO)](http://webdriver.io/api/mobile/context.html) 
  * [Javascript (WD)](https://github.com/admc/wd/blob/master/doc/api.md) 
@@ -114,7 +114,7 @@ For information on contexts, see Appium's [hybrid automation docs](/docs/en/writ
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/value`
+`POST /wd/hub/session/:session_id/context`
 
 ### URL Parameters
 

@@ -12,7 +12,7 @@ String context = driver.getContext();
 ```python
 # Python
 context = driver.current_context
-# of
+# or
 context = driver.context
 
 ```
@@ -60,7 +60,7 @@ For information on contexts, see Appium's [hybrid automation docs](/docs/en/writ
 
 ## Client Docs
 
- * [Java](https://github.com/appium/java-client) 
+ * [Java](http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContext--) 
  * [Python](https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview) 
  * [Javascript (WebdriverIO)](http://webdriver.io/api/mobile/context.html) 
  * [Javascript (WD)](https://github.com/admc/wd/blob/master/doc/api.md) 

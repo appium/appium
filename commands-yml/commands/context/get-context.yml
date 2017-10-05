@@ -19,7 +19,7 @@ example_usage:
   python:
     |
       context = driver.current_context
-      # of
+      # or
       context = driver.context
   javascript_wd:
     |
@@ -38,7 +38,7 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://github.com/appium/java-client"
+  java: "http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContext--"
   python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
   javascript_wdio: "http://webdriver.io/api/mobile/context.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"

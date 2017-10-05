@@ -120,6 +120,7 @@ For information on contexts, see Appium's [hybrid automation docs](/docs/en/writ
 
 |name|description|
 |----|-----------|
+|session_id|ID of the session to route the command to|
 
 ### JSON Parameters
 

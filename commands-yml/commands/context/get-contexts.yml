@@ -69,6 +69,9 @@ client_support:
 endpoint:
   url: /wd/hub/session/:session_id/contexts
   method: 'GET'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
   response:
     - type: Array<String>
       description: Array of the names of all available contexts

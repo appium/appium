@@ -89,6 +89,9 @@ client_support:
 endpoint:
   url: /wd/hub/session/:session_id/context
   method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
   json_parameters:
     - name: name
       type: String

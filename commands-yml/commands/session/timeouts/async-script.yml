@@ -1,5 +1,5 @@
 ---
-name: Get Timeouts
+name: Set Script Timeout
 short_description: Set the amount of time, in milliseconds, that asynchronous scripts executed by [execute async](/docs/en/commands/session/execute-async.md) are permitted to run before they are aborted (Web context only)
    
 example_usage:

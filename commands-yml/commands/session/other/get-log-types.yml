@@ -5,7 +5,7 @@ short_description: Get the log for a given log type. Log buffer is reset after e
 example_usage:
   java:
     |
-      Set<String> logEntries = driver.getLogTypes();
+      Set<String> logEntries = driver.manage().logs().getAvailableLogTypes();
   python:
     |
       log_types = driver.log_types();

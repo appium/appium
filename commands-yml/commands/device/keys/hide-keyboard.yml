@@ -1,25 +1,20 @@
 ---
-name: Find Element
-short_description: Search for an element on the page
-description:
-  >
-     The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
+name: Hide Keyboard
+short_description: Hide soft keyboard
 
 example_usage:
   java:
     |
-      MobileElement elementOne = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-      MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeClassName");
+      driver.hideKeyboard();
   python:
     |
-      el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+      self.driver.hide_keyboard()
   javascript_wd:
     |
-      let elementOne = await driver.elementByAccessibilityId("SomeAccessibilityID");
-      let elementTwo = await driver.element("id", "SomeID");
+      await driver.hideDeviceKeyboard();
   javascript_wdio:
     |
-      driver.element("~SomeAccessibilityId");
+      driver.hideDeviceKeyboard();
   ruby:
     |
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
@@ -31,11 +26,11 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElement-org.openqa.selenium.By-"
-  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.find_element"
-  javascript_wdio: "http://webdriver.io/api/protocol/element.html#Usage"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L745"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/" # TODO Ruby documentation link
+  java: "http://appium.github.io/java-client/io/appium/java_client/HidesKeyboard.html#hideKeyboard--"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L378"
+  javascript_wdio: "http://webdriver.io/api/mobile/hideDeviceKeyboard.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2609"
+  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L42"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -48,7 +43,7 @@ driver_support:
     uiautomator2: true
     uiautomator: true
   mac:
-    mac: true
+    mac: false
   windows:
     windows: true
 client_support:
@@ -69,14 +64,19 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: using
+    - name: strategy
       type: string
-      description: The locator strategy to use
-    - name: value
+      description: Hide keyboard strategy (optional)
+    - name: key
       type: string
-      description: The search target
+      description: Key (optional)
+    - name: keyCode
+      type: string
+      description: Key code (optional)
+    - name: keyName
+      type: string
+      description: Key name (optional)
 
 # Links to specifications. Should link to at least one specification
-specifications: 
-  w3c: https://www.w3.org/TR/webdriver/#find-element
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelement
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L381

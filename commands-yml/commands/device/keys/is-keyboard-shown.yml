@@ -1,0 +1,62 @@
+---
+name: Is Keyboard Shown
+short_description: Whether or not the soft keyboard is shown
+
+example_usage:
+  java:
+    |
+      boolean isKeyboardShown = driver.manager().isKeyboardShown();
+  ruby:
+    |
+      @driver.is_keyboard_shown();
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/HasDeviceDetails.html#isKeyboardShown--"
+  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L24"
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: false
+  ruby: true
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: strategy
+      type: string
+      description: Hide keyboard strategy (optional)
+    - name: key
+      type: string
+      description: Key (optional)
+    - name: keyCode
+      type: string
+      description: Key code (optional)
+    - name: keyName
+      type: string
+      description: Key name (optional)
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L384

@@ -5,8 +5,7 @@ short_description: Retrieve the capabilities of the specified session
 example_usage:
   java:
     |
-        DriverSessions driverSessions = new DriverSessions();
-        Session session = driverSessions.get("c8db88a0-47a6-47a1-802d-164d746c06aa");
+      Map<String, Object> caps = driver.getSessionDetails();
   python:
     |
       desired_caps = self.driver.desired_capabilities()

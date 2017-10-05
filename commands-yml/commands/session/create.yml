@@ -24,15 +24,13 @@ example_usage:
         
   python:
     |
-      desired_caps = {}
-      desired_caps['platformName'] = 'Android'
-      desired_caps['platformVersion'] = '7.0'
-      desired_caps['deviceName'] = 'Android Emulator'
-      desired_caps['automationName'] = 'UiAutomator2'
-      desired_caps['app'] = PATH(
-          '/path/to/app.apk'
-      )
-
+      desired_caps = desired_caps = {
+        'platformName': 'Android',
+        'platformVersion': '7.0',
+        'deviceName': 'Android Emulator',
+        'automationName': 'UiAutomator2',
+        'app': PATH('/path/to/app')
+      }
       self.driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
   javascript_wd:
     |
@@ -59,10 +57,10 @@ example_usage:
       let client = webdriverio.remote(options);
   ruby:
     |
-      APP_PATH = '../../apps/TestApp/build/release-iphonesimulator/TestApp.app'
+      APP_PATH = '../../path/to/app.app'
 
       desired_caps = {
-        caps:       {
+        caps: {
           platformName:  'iOS',
           platformVersion: '10.2',
           deviceName:    'iPhone 6',

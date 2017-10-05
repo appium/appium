@@ -1,6 +1,6 @@
 ---
-name: Delete Session
-short_description: Delete the session
+name: End Session
+short_description: End the running session
    
 example_usage:
   java:

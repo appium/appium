@@ -1,6 +1,6 @@
 ---
 name: Get Session Capabilities
-short_description: Retrieve the capabilities of the specified
+short_description: Retrieve the capabilities of the specified session
    
 example_usage:
   java:

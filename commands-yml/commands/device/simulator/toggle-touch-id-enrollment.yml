@@ -7,7 +7,7 @@ description:
     To enable this feature, the `allowTouchIdEnroll` desired capability must be set to true. When `allowTouchIdEnroll` is set to true
     the Simulator will be enrolled by default, and the 'Toggle Touch ID Enrollment' changes the enrollment state.
 
-    This call will only work if Appium process or its parent application (e.g. Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
+    This call will only work if the Appium process or its parent application (e.g., Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
 
 example_usage:
   java:
@@ -65,12 +65,12 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/simulator/touch_id
+  url: /session/:session_id/simulator/toggle_touch_id_enrollment
   method: 'POST'
   json_parameters:
-    - name: match
+    - name: enabled
       type: boolean
-      description: Are we simulating a successful touch (true) or a failed touch (false)
+      description: If true, enable, if falsey disable, otherwise toggle (optional)
 
 # Links to specifications. Should link to at least one specification
 specifications: 

@@ -60,7 +60,10 @@ endpoint:
       description: The type of system state which wants to read. It should be one of the supported performance data types.
     - name: data_read_timeout
       type: number
-      description: The number of attempts to read
+      description: The number of attempts to read (optional)
+  response:
+    - type: array<string>
+      description: The information type of the system state which is supported to read as like cpu, memory, network traffic, and battery
 
 # Links to specifications. Should link to at least one specification
 specifications:

@@ -6,10 +6,17 @@ short_description: Perform a multi touch action sequence
 example_usage:
   java:
     |
-      MultiTouchAction action = new MultiTouchAction(driver);
-      action.press(10, 10);
-      action.moveTo(10, 100);
-      action.release();
+      TouchAction actionOne = new TouchAction();
+      actionOne.press(10, 10);
+      actionOne.moveTo(10, 100);
+      actionOne.release();
+      TouchAction actionTwo = new TouchAction();
+      actionTwo.press(20, 20);
+      actionTwo.moveTo(20, 200);
+      actionTwo.release();
+      MultiTouchAction action = new MultiTouchAction();
+      action.add(actionOne);
+      action.add(actionTwo);
       action.perform();
   python:
     |

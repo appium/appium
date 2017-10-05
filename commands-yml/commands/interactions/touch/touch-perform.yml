@@ -17,21 +17,21 @@ example_usage:
       TouchAction action = new TouchAction(driver);
       action.press(10, 10);
       action.moveTo(10, 100);
-      action.release(20, 20);
+      action.release();
       action.perform();
   python:
     |
       actions = TouchAction(driver)
       actions.tap_and_hold(20, 20)
       actions.move_to(10, 100)
-      actions.release(50, 50)
+      actions.release()
       actions.perform()
   javascript_wd:
     |
       let action = new wd.TouchAction();
       action.press({x: 10, y: 10});
       action.moveTo({x: 10, y: 100});
-      action.release({x: 20, y: 20});
+      action.release();
       action.perform();
       await driver.performTouchAction(action);
 

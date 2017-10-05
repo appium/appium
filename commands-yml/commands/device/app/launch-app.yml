@@ -62,13 +62,6 @@ endpoint:
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
-  json_parameters:
-    - name: app
-      type: string
-      description: Name of the app
-    - name: bundleId
-      type: string
-      description: The app's bundle ID
 
 # Links to specifications. Should link to at least one specification
 specifications: 

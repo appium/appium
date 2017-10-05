@@ -4,7 +4,7 @@ short_description: Get app strings
 example_usage:
   java:
     |
-      Map<String> appStrings = driver.getAppStringMap("en", "/path/to/file");
+      Map<String, String> appStrings = driver.getAppStringMap("en", "/path/to/file");
   python:
     |
       appStrings = self.driver.app_strings("en", "/path/to/file")
@@ -65,10 +65,10 @@ endpoint:
   json_parameters:
     - name: language
       type: string
-      description: Language code
+      description: Language code (optional)
     - name: stringFile
       type: string
-      description: Path to the string file
+      description: Path to the string file (optional)
 
 # Links to specifications. Should link to at least one specification
 specifications: 

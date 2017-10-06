@@ -1,0 +1,74 @@
+---
+name: Navigate to URL
+short_description: Navigate to a new URL (Web context only)
+
+example_usage:
+  java:
+    |
+      driver.get("http://appium.io/");
+  python:
+    |
+      self.driver.get("http://appium.io/")
+  javascript_wd:
+    |
+      await driver.url("http://appium.io/");
+  javascript_wdio:
+    |
+      driver.url("http://appium.io");
+  ruby:
+    |
+      @driver.get("http://appium.io")
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.html#get-java.lang.String-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get"
+  javascript_wdio: "http://webdriver.io/api/protocol/url.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L486"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:get"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/url
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: url
+      type: string
+      description: The URL to navigate to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-go
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidurl

@@ -1,0 +1,82 @@
+---
+name: Set Timeouts
+short_description: Configure the amount of time that a particular type of operation can execute for before they are aborted
+
+description: 
+  |
+    The types of timeouts are 'page load', 'script' and 'implicit'. (The example usage is just 'page load')
+   
+example_usage:
+  java:
+    |
+       driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
+  python:
+    |
+      self.driver.set_page_load_timeout(5000)
+  javascript_wd:
+    |
+    await driver.setPageLoadTimeout(5000);
+
+  javascript_wdio:
+    |
+      driver.timeouts('pageLoad', 5000)
+  ruby:
+    |
+      @driver.implicit_wait(5) # Ruby translates it to seconds
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.RemoteTimeouts.html#pageLoadTimeout-long-java.util.concurrent.TimeUnit-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.set_page_load_timeout"
+  javascript_wdio: "http://webdriver.io/guide/testrunner/timeouts.html#Selenium-timeouts"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L714"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts:implicit_wait="
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/timeouts
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: type
+      type: string
+      description: "The type of operation to set the timeout for. Valid values are: 'script' for script timeouts, 'implicit' for modifying the implicit wait timeout and 'page load' for setting a page load timeout."
+    - name: ms
+      type: number
+      description: The amount of time, in milliseconds, that time-limited commands are permitted to run
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  w3c: https://www.w3.org/TR/webdriver/#set-timeouts
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtimeouts

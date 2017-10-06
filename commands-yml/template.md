@@ -26,7 +26,12 @@
 // Javascript
 // webdriver.io example
 {{example_usage.javascript_wdio}}
+{{else}}
+// Not supported
+{{/if}}
 
+
+{{#if example_usage.javascript_wd}}
 // wd example
 {{example_usage.javascript_wd}}
 {{else}}
@@ -142,11 +147,7 @@ None
 |name|type|description|
 |----|-----------|
 {{#each endpoint.json_parameters}}
-<<<<<<< HEAD
-| {{this.name}} | `{{this.type}}` | {{this.description}} |
-=======
-| {{{this.name}}} | {{{this.type}}} | {{{this.description}}} |
->>>>>>> Add more commands documentation
+| {{{this.name}}} | `{{{this.type}}}` | {{{this.description}}} |
 {{/each}}
 {{else}}
 None

@@ -1,0 +1,60 @@
+---
+name: Get Performance Data Types
+short_description: Returns the information types of the system state which is supported to read as like cpu, memory, network traffic, and battery
+  
+example_usage:
+  java:
+    |
+      List<String> performanceTypes = driver.getSupportedPerformanceDataTypes();
+  ruby:
+    |
+      @driver.get_performance_data_types()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/HasSupportedPerformanceDataType.html#getSupportedPerformanceDataTypes--"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:get_performance_data_types"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO Confirm this that mouse movements
+  windows:
+    windows: false # TODO Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/performanceData/types
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: array<string>
+      description: The available performance data types (cpuinfo|batteryinfo|networkinfo|memoryinfo)
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L322

@@ -15,7 +15,7 @@ Don't use h5 `#####`, or h6 `######`.
 
 ### Line breaks
 
-Don't use line breaks such as `--` or `---`. This will confuse Slate.
+Don't use line breaks such as `--` or `---`.
 
 ### Linking
 
@@ -31,27 +31,22 @@ Link to another document
 
 `[link text](filename.md)`
 
-To link inside a document, use the `#` from the Slate URL.
+### Writing Commands Documents
 
-`[go direct to json](filename.md#json-wire-protocol-server-extensions)`
+The [command documents](/docs/en/commands) located in `docs/en/commands`, are generated
+docs and aren't meant to be edited directly. The command documentation is defined in
+`commands-yml/commands`.
 
-Note that hash links will break when the heading changes so linking to
-the start of the doc is preferable (`other.md` instead of `other.md#something`).
+### Generating Commands Documents
 
-### Compatibility with appium.io
+To generate the commands docs, run `npm run generate-docs`. This will generate the markdown
+files in `docs/en/commands` and then they need to be committed and pushed.
 
-#### Center aligning code in appium.io
+### Adding Documents to Appium.io
 
-Appium.io documentation uses [slate](https://github.com/tripit/slate) for documentation.
-If code snippet in documentation is not language specific or if you want code snippet to stay
-along with text in center in appium.io documentation, use center as language in fenced code block.
-
-Example:
-
-    ```center
-    code snippet goes here.
-    ```
+Markdown files in `docs/` aren't automatically added to the site. To add a document to https://appium.io
+you need to add it as an entry in [toc.js](/docs/toc.js)
 
 #### Publishing
 
-To publish documentation on appium.io see [api-docs](https://github.com/appium/api-docs) and [appium.io](https://github.com/appium/appium.io).
+To publish documentation on appium.io see [appium.io](https://github.com/appium/appium.io).

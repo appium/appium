@@ -1,0 +1,72 @@
+---
+name: Get Current Activity
+short_description: Get the name of the current Android activity
+    
+example_usage:
+  java:
+    |
+      String activity = driver.currentActivity();
+  python:
+    |
+      activity = self.driver.current_activity();
+  javascript_wd:
+    |
+      let activity = await driver.getCurrentActivity();
+  javascript_wdio:
+    |
+      let activity = driver.currentActivity();
+  ruby:
+    |
+      @driver.current_activity;
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/StartsActivity.html#currentActivity--"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L447"
+  javascript_wdio: "http://webdriver.io/api/mobile/currentActivity.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2519"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:current_activity"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/current_activity
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: string
+      description: Name of the current [activity](https://developer.android.com/reference/android/app/Activity.html)
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L366

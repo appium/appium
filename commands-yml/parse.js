@@ -8,6 +8,8 @@ import replaceExt from 'replace-ext';
 import _ from 'lodash';
 import { asyncify } from 'asyncbox';
 import validator from './validator';
+import url from 'url';
+
 
 // What range of platforms do the driver's support
 const platformRanges = {
@@ -93,6 +95,11 @@ Handlebars.registerHelper('if_eq', function (a, b, opts) {
   } else {
     return opts.inverse(this);
   }
+});
+
+Handlebars.registerHelper('base_url', function (fullUrl) {
+  const baseUrl = url.parse(fullUrl);
+  return baseUrl.hostname;
 });
 
 async function main () {

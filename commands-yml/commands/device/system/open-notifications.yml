@@ -1,0 +1,68 @@
+---
+name: Open Notifications
+short_description: Open Android notifications (Emulator only)
+
+example_usage:
+  java:
+    |
+      driver.openNotifications();
+  python:
+    |
+      self.driver.open_notifications();
+  javascript_wd:
+    |
+      await driver.openNotifications();
+  javascript_wdio:
+    |
+      driver.openNotifications();
+  ruby:
+    |
+      @driver.open_notifications();
+  php:
+    |
+      // TODO
+  csharp:
+    |
+      // TODO
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/AndroidDriver.html#openNotifications--"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L676"
+  javascript_wdio: "http://webdriver.io/api/mobile/openNotifications.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3004"
+  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L18"
+  php: "https://github.com/appium/php-client/" # TODO
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/device/open_notifications
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L408

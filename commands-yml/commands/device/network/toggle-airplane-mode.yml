@@ -1,0 +1,60 @@
+---
+name: Toggle Airplane Mode
+short_description: Toggle airplane mode on device
+
+example_usage:
+  javascript_wd:
+    |
+      await driver.toggleAirplaneMode();
+  javascript_wdio:
+    |
+      driver.toggleAirplaneMode();
+  ruby:
+    |
+      @driver.toggle_flight_mode();
+  php:
+    |
+      // TODO
+  csharp:
+    |
+      // TODO
+
+client_docs:
+  javascript_wdio: "http://webdriver.io/api/mobile/toggleAirplaneMode.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2712"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:toggle_flight_mode"
+  php: "https://github.com/appium/php-client/" # TODO
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/toggle_airplane_mode
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L396

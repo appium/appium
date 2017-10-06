@@ -1,0 +1,62 @@
+---
+name: Send SMS
+short_description: Simulate an SMS message (Emulator only)
+
+example_usage:
+  javascript_wd:
+    |
+      await driver.sendSms('555-123-4567', 'Hey lol');
+  ruby:
+    |
+      @driver.toggle_flight_mode();
+  php:
+    |
+      // TODO
+  csharp:
+    |
+      // TODO
+
+client_docs:
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3183"
+  php: "https://github.com/appium/php-client/" # TODO
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/device/send_sms
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: phoneNumber
+      type: string
+      description: The phone number to send the SMS too
+    - name: message
+      type: string
+      description: The SMS message
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L396

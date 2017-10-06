@@ -71,7 +71,7 @@ let tagName = await element.getAttribute("content-desc");
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -99,7 +99,7 @@ None
 
 ### Response
 
-The value of the attribute or null if not set (string)
+The value of the attribute or null if not set (`string`)
 
 ## See Also
 

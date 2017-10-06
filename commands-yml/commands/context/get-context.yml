@@ -1,0 +1,84 @@
+---
+name: Get Current Context
+short_description: Get the current context in which Appium is running
+description:
+  >
+    Retrieve the current context. This can be either `NATIVE_APP` for the native
+    context, or a web view context, which will be:
+
+      * iOS - `WEBVIEW_<id>`
+      * Android - `WEBVIEW_<package name>`
+
+
+    For information on contexts, see Appium's [hybrid automation docs](/docs/en/writing-running-appium/web/hybrid.md).
+
+example_usage:
+  java:
+    |
+      String context = driver.getContext();
+  python:
+    |
+      context = driver.current_context
+      # or
+      context = driver.context
+  javascript_wd:
+    |
+      let context = await driver.currentContext();
+  javascript_wdio:
+    |
+      let context = driver.context();
+  ruby:
+    |
+      context = @driver.current_context
+  php:
+    |
+      $context = $driver->context();
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContext--"
+  python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
+  javascript_wdio: "http://webdriver.io/api/mobile/context.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
+  ruby: "https://github.com/appium/ruby_lib"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/context
+  method: 'GET'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: String
+      description: The name of the current context
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts

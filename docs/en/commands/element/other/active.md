@@ -69,7 +69,7 @@ let element = await driver.active();
 | Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
 | Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -97,7 +97,7 @@ None
 
 ### Response
 
-A JSON object for the located element (object)
+A JSON object for the located element (`object`)
 
 ## See Also
 

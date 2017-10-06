@@ -67,7 +67,7 @@ let rect = await element.getRect();
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -97,10 +97,10 @@ None
 
 |name|type|description|
 |----|----|-----------|
-| x | number | X coordinate |
-| y | number | Y coordinate |
-| height | number | Height of the bounding rectangle |
-| weight | number | Width of the bounding rectangle |
+| x | `number` | X coordinate |
+| y | `number` | Y coordinate |
+| height | `number` | Height of the bounding rectangle |
+| weight | `number` | Width of the bounding rectangle |
 
 ## See Also
 

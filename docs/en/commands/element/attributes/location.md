@@ -74,7 +74,7 @@ The point (0, 0) refers to the upper-left corner of the page. The element's coor
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -104,8 +104,8 @@ None
 
 |name|type|description|
 |----|----|-----------|
-| x | number | X coordinate |
-| y | number | Y coordinate |
+| x | `number` | X coordinate |
+| y | `number` | Y coordinate |
 
 ## See Also
 

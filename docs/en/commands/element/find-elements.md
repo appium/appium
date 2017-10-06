@@ -82,7 +82,7 @@ Get a list of elements that match the [locator selector](/docs/en/about-appium/g
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -110,12 +110,12 @@ Get a list of elements that match the [locator selector](/docs/en/about-appium/g
 
 |name|type|description|
 |----|-----------|
-| using | string | The locator strategy to use |
-| value | string | The search target |
+| using | `string` | The locator strategy to use |
+| value | `string` | The search target |
 
 ### Response
 
-A list of of JSON objects for the located elements (Array<String>)
+A list of of JSON objects for the located elements (`Array<String>`)
 
 ## See Also
 

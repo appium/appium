@@ -60,7 +60,7 @@ let location = await element.getLocationInView();
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -90,8 +90,8 @@ None
 
 |name|type|description|
 |----|----|-----------|
-| x | number | X coordinate |
-| y | number | Y coordinate |
+| x | `number` | X coordinate |
+| y | `number` | Y coordinate |
 
 ## See Also
 

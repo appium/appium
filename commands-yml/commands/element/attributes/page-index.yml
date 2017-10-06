@@ -1,0 +1,77 @@
+---
+name: Get Tag Name
+short_description: Get an element's tag name
+
+example_usage:
+  java:
+    |
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      String tagName = element.getTagName();
+  python:
+    |
+      tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
+  javascript_wd:
+    |
+      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
+      let tagName = await element.getTagName();
+  javascript_wdio:
+    |
+      let tagName = driver.getTagName("~SomeAccessibilityId");
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name"
+  javascript_wdio: "http://webdriver.io/api/property/getTagName.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1336"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# TODO: Confirm if all the drivers support this
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/elements/:element_id/name
+  method: 'GET'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: element_id
+      description: ID of the element to get the name from
+  response:
+    - type: string
+      description: The tag name of the element
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname

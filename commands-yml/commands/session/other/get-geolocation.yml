@@ -1,0 +1,80 @@
+---
+name: Get Geolocation
+short_description: Get the current geo location
+   
+example_usage:
+  java:
+    |
+      Location location = driver.location(); // Must be a driver that implements LocationContext
+  python:
+    |
+      location = self.driver.location()
+  javascript_wd:
+    |
+      let location = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746c06aa');
+
+  javascript_wdio:
+    |
+      let location = driver.location();
+  ruby:
+    |
+      @driver.location()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/html5/LocationContext.html#location--"
+  python: "http://selenium-python.readthedocs.io/api.html"
+  javascript_wdio: "http://webdriver.io/api/protocol/location.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L393"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasLocation#set_location-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/location
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - name: latitude
+      type: number
+      description: The current geolocation latitude
+    - name: longitude
+      type: number
+      description: The current geolocation longitude
+    - name: altitude
+      type: number
+      description: The current geolocation altitude
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidlocation

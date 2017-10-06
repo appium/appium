@@ -74,7 +74,7 @@ An indepth description of what this command does
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -103,12 +103,12 @@ An indepth description of what this command does
 
 |name|type|description|
 |----|-----------|
-| item | Object | Description of Item |
-| item.1 | String | Item One description |
+| item | `Object` | Description of Item |
+| item.1 | `String` | Item One description |
 
 ### Response
 
-A generic release label (i.e. "2.0rc3") (string)
+A generic release label (i.e. "2.0rc3") (`string`)
 
 ## See Also
 

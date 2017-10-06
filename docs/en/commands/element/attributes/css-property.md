@@ -77,7 +77,7 @@ This command only applies to webview contexts
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -105,7 +105,7 @@ None
 
 ### Response
 
-Value of the CSS property (string)
+Value of the CSS property (`string`)
 
 ## See Also
 

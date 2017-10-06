@@ -47,7 +47,7 @@ For web tests, to automate Chrome instead of your own application, leave the
 `app` capability empty and instead set the `browserName` capability to
 `Chrome`. Note that you are responsible for ensuring that Chrome is on the
 emulator/device, and that it is of a [version compatible with
-Chromedriver](/docs/en/advanced-concepts/chromedriver.md).
+Chromedriver](/docs/en/writing-running-appium/web/chromedriver.md).
 
 
 ### Commands

@@ -74,7 +74,7 @@ The size will be returned as an object with width and height properties.
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -104,8 +104,8 @@ None
 
 |name|type|description|
 |----|----|-----------|
-| width | number | Width of the element |
-| height | number | Height of the element |
+| width | `number` | Width of the element |
+| height | `number` | Height of the element |
 
 ## See Also
 

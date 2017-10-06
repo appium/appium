@@ -76,7 +76,7 @@ Implementations may optionally include additional meta information as part of th
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -106,8 +106,8 @@ None
 
 |name|type|description|
 |----|----|-----------|
-| build.version | string | A generic release label (i.e. "2.0rc3") |
-| build.revision | string | The revision of the local source control client from which the server was built |
+| build.version | `string` | A generic release label (i.e. "2.0rc3") |
+| build.revision | `string` | The revision of the local source control client from which the server was built |
 
 ## See Also
 

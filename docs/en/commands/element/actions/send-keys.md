@@ -76,7 +76,7 @@ Any UTF-8 character may be specified, however, if the server does not support na
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -105,7 +105,7 @@ Any UTF-8 character may be specified, however, if the server does not support na
 
 |name|type|description|
 |----|-----------|
-| value | array<string> | The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed. |
+| value | `array<string>` | The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed. |
 
 ### Response
 

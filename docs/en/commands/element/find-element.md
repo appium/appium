@@ -75,7 +75,7 @@ The locator strategy returns the first element it finds. #TODO: Let's make a doc
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -103,12 +103,12 @@ The locator strategy returns the first element it finds. #TODO: Let's make a doc
 
 |name|type|description|
 |----|-----------|
-| using | string | The locator strategy to use |
-| value | string | The search target |
+| using | `string` | The locator strategy to use |
+| value | `string` | The search target |
 
 ### Response
 
-A JSON object for the located element (object)
+A JSON object for the located element (`object`)
 
 ## See Also
 

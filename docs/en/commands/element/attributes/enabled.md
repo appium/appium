@@ -71,7 +71,7 @@ let isEnabled = await element.isEnabled();
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -99,7 +99,7 @@ None
 
 ### Response
 
-Whether the element is enabled (boolean)
+Whether the element is enabled (`boolean`)
 
 ## See Also
 

@@ -106,7 +106,7 @@
 | {{#if @first}}Windows{{/if}} | [{{capitalize @key}}](/docs/en/drivers/{{@key}}.md) | {{versions this "platform" @key}} | {{versions this "appium" @key}} | {{versions this "driver" @key}} |
 {{/each}}
 
-### Appium Clients 
+### Appium Clients
 
 |Language|Support|
 |--------|-------|
@@ -142,7 +142,7 @@ None
 |name|type|description|
 |----|-----------|
 {{#each endpoint.json_parameters}}
-| {{this.name}} | {{this.type}} | {{this.description}} |
+| {{this.name}} | `{{this.type}}` | {{this.description}} |
 {{/each}}
 {{else}}
 None
@@ -152,12 +152,12 @@ None
 
 {{#if endpoint.response}}
 {{#if_eq endpoint.response.length 1}}
-{{endpoint.response.0.description}} ({{endpoint.response.0.type}})
+{{endpoint.response.0.description}} (`{{endpoint.response.0.type}}`)
 {{else}}
 |name|type|description|
 |----|----|-----------|
 {{#each endpoint.response}}
-| {{this.name}} | {{this.type}} | {{this.description}} |
+| {{this.name}} | `{{this.type}}` | {{this.description}} |
 {{/each}}
 {{/if_eq}}
 {{else}}

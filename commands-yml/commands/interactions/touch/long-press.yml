@@ -1,42 +1,37 @@
 ---
-name: Tap
-short_description: Finger move on the screen
+name: Long Tap
+short_description: Long press on the touch screen using finger motion events
    
 example_usage:
   java:
     |
       TouchActions action = new TouchActions(driver);
-      action.down(10, 10);
-      action.move(50, 50);
+      action.longPress(element);
       action.perform();
   python:
     |
       actions = TouchActions(driver)
-      actions.tap_and_hold(element)
-      actions.move(50, 50)
+      actions.long_press(element)
       actions.perform()
   javascript_wd:
     |
-      // Using tapElement method
-      await driver.tapElement(elementOne);
-
       // Using touch actions
       let action = new wd.TouchAction();
-      action.press({x: 10, y: 10});
-      action.moveTo({x: 50, y: 50});
+      action.longPress({el: element});
       action.perform();
       await driver.performTouchAction(action);
 
   javascript_wdio:
     |
-      driver.touchMultiPerform([
-        { action: 'press', options: { x: 100, y: 250 }},
-        { action: 'moveTo', options: { x: 300, y: 100 }},
-        { action: 'release' }
-      ]);
+      driver.touchPerform({
+        action: 'longPress',
+        options: {
+          element: element
+        }
+      });
   ruby:
     |
-      @driver.touch_action.down(element).move().perform
+      @driver.touch_action.long_press(element).perform
   php:
     |
       // TODO PHP sample
@@ -45,11 +40,11 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#down-int-int-"
-  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.move"
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#longPress-org.openqa.selenium.WebElement-"
+  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.long_press"
   javascript_wdio: "http://webdriver.io/api/mobile/touchPerform.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1531"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:move"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:long_press"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -77,19 +72,16 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/touch/move
+  url: /session/:session_id/touch/longclick
   method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: x
+    - name: element
       type: number
-      description: X coordinate on the screen
-    - name: y
-      type: number
-      description: Y coordinate on the screen
+      description: ID of the element to double tap on
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchmove
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchlongclick

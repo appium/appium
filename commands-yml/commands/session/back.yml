@@ -37,23 +37,23 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: false
-    uiautomation: false
+    xcuitest: true
+    uiautomation: true
   android:
-    uiautomator2: false
-    uiautomator: false
+    uiautomator2: true
+    uiautomator: true
   mac:
-    mac: false
+    mac: true
   windows:
-    windows: false
+    windows: true
 client_support:
-  java: false
-  python: false
-  ruby: false
-  php: false
-  csharp: false
-  javascript_wd: false
-  javascript_wdio: false
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
   
 
 # Information about the HTTP endpoints

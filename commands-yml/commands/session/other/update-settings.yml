@@ -1,5 +1,5 @@
 ---
-name: Get Device Settings
+name: Update Device Settings
 short_description: Update the current setting on the device
 example_usage:
   javascript_wd:

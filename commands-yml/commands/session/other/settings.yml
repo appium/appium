@@ -1,13 +1,13 @@
 ---
-name: Update Device Settings
-short_description: Update the current setting on the device
+name: Retrieve Device Settings
+short_description: Retrieve the current setting on the device
 example_usage:
   javascript_wd:
     |
       await driver.settings(settings);
   javascript_wdio:
     |
-      driver.updateSettings(settings);
+      let settings = driver.settings(settings);
 
 client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"

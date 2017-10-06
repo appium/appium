@@ -4,7 +4,7 @@ short_description: Update the current setting on the device
 example_usage:
   javascript_wd:
     |
-      await driver.settings();
+      let settings = await driver.settings();
   javascript_wdio:
     |
       let settings = driver.settings();
@@ -26,11 +26,11 @@ driver_support:
   windows:
     windows: true
 client_support:
-  java: true
-  python: true
-  ruby: true
-  php: true
-  csharp: true
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
   javascript_wd: true
   javascript_wdio: true
   

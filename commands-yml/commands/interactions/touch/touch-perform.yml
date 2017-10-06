@@ -4,7 +4,7 @@ short_description: Perform a touch action sequence
    
 description:
   |
-    This functionality is only available from within a mobile context
+    This functionality is only available from within a native context
 
     'Touch Perform' works similarly to the other singular touch interactions, except that this allows you to chain together more than one touch action as one
     command. This is useful because Appium commands are sent over the network and there's latency between commands. This latency can make certain touch 
@@ -14,24 +14,26 @@ description:
 example_usage:
   java:
     |
-      TouchActions action = new TouchActions(driver);
-      action.down(10, 10);
+      TouchAction action = new TouchAction(driver);
+      action.press(10, 10);
       action.moveTo(10, 100);
-      action.up(20, 20);
+      action.release();
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      from appium.webdriver.common.touch_action import TouchAction
+      
+      actions = TouchAction(driver)
       actions.tap_and_hold(20, 20)
       actions.move_to(10, 100)
-      actions.release(50, 50)
+      actions.release()
       actions.perform()
   javascript_wd:
     |
       let action = new wd.TouchAction();
       action.press({x: 10, y: 10});
       action.moveTo({x: 10, y: 100});
-      action.release({x: 20, y: 20});
+      action.release();
       action.perform();
       await driver.performTouchAction(action);
 
@@ -107,7 +109,8 @@ endpoint:
       type: number
       description: The Y coordinate of the operation (relative to top left corner)
     - name: opts.count
-      type: count
+      type: number
+      description: Tap count
 
 # Links to specifications. Should link to at least one specification
 specifications:

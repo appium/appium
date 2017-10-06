@@ -1,0 +1,77 @@
+---
+name: Push File
+short_description: Place a file onto the device in a particular place
+    
+example_usage:
+  java:
+    |
+      driver.pushFile("/path/to/device/foo.bar", new File("/Users/johndoe/files/foo.bar"));
+  python:
+    |
+      self.driver.push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+  javascript_wd:
+    |
+      await driver.pushFileToDevice('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+  javascript_wdio:
+    |
+      let data = new Buffer("Hello World").toString('base64');
+      driver.pushFile('/data/local/tmp/file.txt', data);
+  ruby:
+    |
+      @driver.push_file('/Users/johndoe/path/to/app.apk');
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/PushesFiles.html#pushFile-java.lang.String-java.io.File-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L515"
+  javascript_wdio: "http://webdriver.io/api/mobile/pushFile.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2640"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:push_file"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO: Verify this
+  windows:
+    windows: false # TODO: Verify this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/push_file
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: path
+      type: string
+      description: Path to install the data to
+    - name: data
+      type: string
+      description: Contents of file in base64
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L387

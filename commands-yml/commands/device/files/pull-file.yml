@@ -1,0 +1,76 @@
+---
+name: Pull File
+short_description: Retrieve a file from the device's file system
+    
+example_usage:
+  java:
+    |
+      byte[] fileBase64 = driver.pullFile("/path/to/device/foo.bar");
+  python:
+    |
+      file_base64 = self.driver.pull_file('/path/to/device/foo.bar');
+  javascript_wd:
+    |
+      let fileBase64 = await driver.pullFile('/path/to/device/foo.bar');
+  javascript_wdio:
+    |
+      let data = driver.pullFile('/data/local/tmp/file.txt');
+  ruby:
+    |
+      @driver.pull_file('/data/local/tmp/file.txt');
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/InteractsWithFiles.html#pullFile-java.lang.String-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L491"
+  javascript_wdio: "http://webdriver.io/api/mobile/pullFile.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2665"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:pull_file"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO: Verify this
+  windows:
+    windows: false # TODO: Verify this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/pull_file
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: path
+      type: string
+      description: Path on the device to pull file from
+  response:
+    - type: string
+      description: Contents of file in base64
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L390

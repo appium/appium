@@ -50,13 +50,13 @@ driver_support:
   windows:
     windows: false
 client_support:
-  java: false
-  python: false
-  ruby: false
-  php: false
-  csharp: false
-  javascript_wd: false
-  javascript_wdio: false
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
   
 
 # Information about the HTTP endpoints
@@ -67,7 +67,8 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - type: object
+    - name: cookie
+      type: object
       description: The cookie to add
 
 # Links to specifications. Should link to at least one specification

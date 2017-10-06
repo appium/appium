@@ -1,0 +1,80 @@
+---
+name: Double Tap
+short_description: Double tap on the touch screen using finger motion events
+   
+example_usage:
+  java:
+    |
+      TouchActions action = new TouchActions(driver);
+      action.doubleTap(element);
+      action.perform();
+  python:
+    |
+      actions = TouchActions(driver)
+      actions.double_tap(element)
+      actions.perform()
+  javascript_wd:
+    |
+      // Using tapElement method
+      await driver.tapElement(elementOne);
+
+      // Using touch actions
+      let action = new wd.TouchAction();
+      action.tap({el: element});
+      action.perform();
+      await driver.performTouchAction(action);
+  ruby:
+    |
+      @driver.touch_action.double_tap(element).perform
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#doubleTap-org.openqa.selenium.WebElement-"
+  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.double_tap"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+   xcuitest: false
+   uiautomation: false
+android:
+  uiautomator2: false
+  uiautomator: false
+  mac:
+    mac: true # TODO Confirm this that mouse movements
+  windows:
+    windows: true # TODO Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/touch/doubleclick
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: element
+      type: number
+      description: ID of the element to double tap on
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchdoubleclick

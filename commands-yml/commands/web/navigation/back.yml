@@ -1,6 +1,6 @@
 ---
 name: Go Back
-short_description: Navigate backwards in the browser history, if possible
+short_description: Navigate backwards in the browser history, if possible (Web context only)
 
 example_usage:
   java:

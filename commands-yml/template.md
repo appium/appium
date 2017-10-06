@@ -135,7 +135,7 @@ None
 
 {{#if endpoint.json_parameters}}
 |name|type|description|
-|----|-----------|
+|----|----|-----------|
 {{#each endpoint.json_parameters}}
 | {{{this.name}}} | `{{{this.type}}}` | {{{this.description}}} |
 {{/each}}

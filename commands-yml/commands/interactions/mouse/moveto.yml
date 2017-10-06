@@ -1,5 +1,5 @@
 ---
-name: Set Orientation
+name: Move Mouse To
 short_description: Move the mouse by an offset of the specificed element
    
 description:
@@ -11,9 +11,12 @@ example_usage:
     |
       Actions action = new Actions(driver);
       action.moveTo(element, 10, 10);
+      action.perform()
   python:
     |
-      driver.move_to(element, 10, 10)
+      actions = ActionChains(driver)
+      actions.move_to(element, 10, 10)
+      actions.perform()
   javascript_wd:
     |
       await driver.moveTo(element, 10, 10);

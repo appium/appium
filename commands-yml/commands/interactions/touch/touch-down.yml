@@ -29,7 +29,7 @@ example_usage:
 
   javascript_wdio:
     |
-      driver.touchPerform([
+      driver.touchMultiPerform([
         { action: 'press', options: { x: 100, y: 250 }},
         { action: 'moveTo', options: { x: 300, y: 100 }},
         { action: 'release' }
@@ -47,7 +47,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#down-int-int-"
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.tap_and_hold"
-  javascript_wdio: "http://webdriver.io/api/mobile/touchPerform.html"
+  javascript_wdio: "http://webdriver.io/api/mobile/touchMultiPerform.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
   ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TouchActionBuilder#down-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link

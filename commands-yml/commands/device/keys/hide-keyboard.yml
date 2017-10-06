@@ -1,0 +1,82 @@
+---
+name: Hide Keyboard
+short_description: Hide soft keyboard
+
+example_usage:
+  java:
+    |
+      driver.hideKeyboard();
+  python:
+    |
+      self.driver.hide_keyboard()
+  javascript_wd:
+    |
+      await driver.hideDeviceKeyboard();
+  javascript_wdio:
+    |
+      driver.hideDeviceKeyboard();
+  ruby:
+    |
+      @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/HidesKeyboard.html#hideKeyboard--"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L378"
+  javascript_wdio: "http://webdriver.io/api/mobile/hideDeviceKeyboard.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2609"
+  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L42"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/element
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: strategy
+      type: string
+      description: Hide keyboard strategy (optional)
+    - name: key
+      type: string
+      description: Key (optional)
+    - name: keyCode
+      type: string
+      description: Key code (optional)
+    - name: keyName
+      type: string
+      description: Key name (optional)
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L381

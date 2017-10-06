@@ -2,6 +2,9 @@
 name: Retrieve Device Settings
 short_description: Retrieve the current setting on the device
 example_usage:
+  java:
+    |
+      Map<String, Object> settings = driver.getSettings();
   javascript_wd:
     |
       await driver.settings(settings);
@@ -10,6 +13,7 @@ example_usage:
       let settings = driver.settings(settings);
 
 client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#getSettings--"
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3032"
 
@@ -26,7 +30,7 @@ driver_support:
   windows:
     windows: true
 client_support:
-  java: false
+  java: true
   python: false
   ruby: false
   php: false

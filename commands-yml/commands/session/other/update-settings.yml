@@ -2,14 +2,18 @@
 name: Update Device Settings
 short_description: Update the current setting on the device
 example_usage:
+  java:
+    |
+      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, new Boolean(true));
   javascript_wd:
     |
-      let settings = await driver.settings();
+      let settings = await driver.settings("settings");
   javascript_wdio:
     |
-      let settings = driver.settings();
+      let settings = driver.settings("settings");
 
 client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-"
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3018"
 
@@ -26,7 +30,7 @@ driver_support:
   windows:
     windows: true
 client_support:
-  java: false
+  java: true
   python: false
   ruby: false
   php: false

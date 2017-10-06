@@ -1,0 +1,95 @@
+---
+name: Touch Down
+short_description: Finger down on the screen
+   
+example_usage:
+  java:
+    |
+      TouchActions action = new TouchActions(driver);
+      action.down(10, 10);
+      action.move(50, 50);
+      action.perform();
+  python:
+    |
+      actions = TouchActions(driver)
+      actions.tap_and_hold(element)
+      actions.move(50, 50)
+      actions.perform()
+  javascript_wd:
+    |
+      // Using tapElement method
+      await driver.tapElement(elementOne);
+
+      // Using touch actions
+      let action = new wd.TouchAction();
+      action.press({x: 10, y: 10});
+      action.moveTo({x: 50, y: 50});
+      action.perform();
+      await driver.performTouchAction(action);
+
+  javascript_wdio:
+    |
+      driver.touchPerform([
+        { action: 'press', options: { x: 100, y: 250 }},
+        { action: 'moveTo', options: { x: 300, y: 100 }},
+        { action: 'release' }
+      ]);
+  ruby:
+    |
+      @driver.touch_action.down(element).move().perform
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#down-int-int-"
+  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.tap_and_hold"
+  javascript_wdio: "http://webdriver.io/api/mobile/touchPerform.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TouchActionBuilder#down-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true # TODO Confirm this that mouse movements
+  windows:
+    windows: true # TODO Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/touch/down
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: x
+      type: number
+      description: X coordinate on the screen
+    - name: y
+      type: number
+      description: Y coordinate on the screen
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchdown

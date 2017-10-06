@@ -1,0 +1,70 @@
+---
+name: Get Title
+short_description: Get the current page title (Web context only)
+
+example_usage:
+  java:
+    |
+      String title = driver.getTitle();
+  python:
+    |
+      title = self.driver.title()
+  javascript_wd:
+    |
+      let title = await driver.title();
+  javascript_wdio:
+    |
+      let handle = driver.title();
+  ruby:
+    |
+      @driver.title
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#getTitle--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.title"
+  javascript_wdio: "http://webdriver.io/api/protocol/title.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1794"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:title"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/title
+  method: GET
+  response:
+    - type: string
+      description: The current page title
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-get-title
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtitle

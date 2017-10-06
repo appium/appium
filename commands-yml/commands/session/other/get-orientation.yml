@@ -1,0 +1,73 @@
+---
+name: Get Orientation
+short_description: Get the current device/browser orientation
+   
+example_usage:
+  java:
+    |
+      ScreenOrientation orientation = driver.getOrientation();
+  python:
+    |
+      orientation = self.driver.orientation()
+  javascript_wd:
+    |
+      let orientation = await driver.getOrientation();
+
+  javascript_wdio:
+    |
+      let orientation = driver.orientation();
+  ruby:
+    |
+      @driver.orientation()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/Rotatable.html#getOrientation--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.orientation"
+  javascript_wdio: "http://webdriver.io/api/mobile/orientation.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2021"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/Rotatable:orientation"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/orientation
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: string
+      description: The current browser orientation {LANDSCAPE|PORTRAIT}
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidorientation

@@ -1,0 +1,68 @@
+---
+name: Close an App
+short_description: Close an app on device
+example_usage:
+  java:
+    |
+      driver.closeApp();
+  python:
+    |
+      self.driver.close_app()
+  javascript_wd:
+    |
+      await driver.closeApp();
+  javascript_wdio:
+    |
+      driver.close_app();
+  ruby:
+    |
+      @driver.close_app()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#closeApp--"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L584"
+  javascript_wdio: "http://webdriver.io/api/mobile/closeApp.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2798"
+  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L10"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/app/close
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L433

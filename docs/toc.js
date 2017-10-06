@@ -64,6 +64,10 @@ module.exports = {
             ["Is Locked", "is-locked.md"],
           ]],
           ["Other", ["other",
+          ["Rotate", "rotate.md"],
+          ["Current Activity", "current-activity.md"],
+          ["Current Package", "current-package.md"],
+          ["Start Activity", "start-activity.md"],
             ["Get Performance Data", "get-performance-data.md"],
             ["Performance Data Types", "performance-data-types.md"],
           ]],
@@ -109,11 +113,7 @@ module.exports = {
           ["Button Down", "button-down.md"],
           ["Button Up", "button-up.md"],
         ]],
-<<<<<<< HEAD
-        ["Touch", ["mouse",
-=======
         ["Touch", ["touch",
->>>>>>> 4a8c0f90... Document Appium touch actions
           ["Single Tap", "tap.md"],
           ["Double Tap", "double-tap.md"],
           ["Move", "move.md"],
@@ -122,11 +122,8 @@ module.exports = {
           ["Long Press", "long-press.md"],
           ["Scroll", "scroll.md"],
           ["Flick", "flick.md"],
-<<<<<<< HEAD
-=======
           ["Multi Touch Perform", "multi-touch-perform.md"],
           ["Touch Perform", "touch-perform.md"],
->>>>>>> 4a8c0f90... Document Appium touch actions
         ]],
       ]],
       ["Web", ["web",
@@ -161,7 +158,6 @@ module.exports = {
         ]],
         ["Execute Async", "execute-async.md"],
         ["Execute", "execute.md"],
-      ]]
     ]],
     ["Writing & Running Tests", ["writing-running-appium",
       ["Running Tests", "running-tests.md"],

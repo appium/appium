@@ -1,0 +1,97 @@
+---
+name: Start Activity
+short_description: Get the name of the current Android activity
+    
+example_usage:
+  java:
+    |
+      driver.currentActivity(new Activity("com.example", "ActivityName"));
+  python:
+    |
+      self.driver.start_activity("com.example", "ActivityName");
+  javascript_wd:
+    |
+      await driver.startActivity({
+        appPackage: "com.example",
+        appActivity: "ActivityName"
+      });
+  javascript_wdio:
+    |
+      driver.startActivity("com.example", "ActivityName");
+  ruby:
+    |
+      @driver.start_activity("com.example", "ActivityName");
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/AndroidMobileCommandHelper.html#startActivityCommand-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-boolean-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L591"
+  javascript_wdio: "http://webdriver.io/api/mobile/startActivity.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2948"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:start_activity"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/device/start_activity
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: appPackage
+      type: string
+      description: Name of the [package](https://developer.android.com/reference/java/lang/Package.html)
+    - name: appActivity
+      type: string
+      description: Name of the [activity](https://developer.android.com/reference/android/app/Activity.html)
+    - name: appWaitPackage
+      type: string
+      description: Automation will begin after this package starts
+    - name: intentAction
+      type: string
+      description: "[Intent](https://developer.android.com/reference/android/content/Intent.html) action which will be used to start activity"
+    - name: intentCategory
+      type: string
+      description: Intent category which will be used to start activity
+    - name: intentFlags
+      type: string
+      description: Flags that will be used to start activity
+    - name: optionalIntentArguments
+      type: string
+      description: Additional intent arguments that will be used to start activity
+    - name: dontStopAppOnReset
+      type: boolean
+      description: Should the app stop on reset
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L411

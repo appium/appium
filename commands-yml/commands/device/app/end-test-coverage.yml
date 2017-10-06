@@ -1,0 +1,71 @@
+---
+name: End Test Coverage
+short_description: Get test coverage data
+example_usage:
+  java:
+    |
+      driver.endTestCoverage("Intent", "/path");
+  python:
+    |
+      self.driver.end_test_coverage("Intent", "/path")
+  javascript_wd:
+    |
+      await driver.endTestCoverageForApp("Intent", "/path");
+  ruby:
+    |
+      @driver.end_coverage("Intent", "/path")
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/android/AndroidDriver.html#endTestCoverage-java.lang.String-java.lang.String-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L627"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2858"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:end_coverage"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: false
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/app/end_test_coverage
+  method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: intent
+      type: string
+      description: Intent to broadcast
+    - name: path
+      type: string
+      description: Path to .ec file
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L442

@@ -1,0 +1,113 @@
+# Perform Touch ID
+
+Simulate a [touch id](https://support.apple.com/en-ca/ht201371) event (iOS Simulator only)
+## Example Usage
+
+```java
+// Java
+driver.performTouchID(false); // Simulates a failed touch
+driver.performTouchID(true); // Simulates a passing touch
+
+```
+
+```python
+# Python
+self.driver.touch_id(false); # Simulates a failed touch
+self.driver.touch_id(true); # Simulates a passing touch
+
+```
+
+```javascript
+// Javascript
+// webdriver.io example
+driver.touchId(false); // Simulates a failed touch
+driver.touchId(true); // Simulates a passing touch
+
+
+
+// wd example
+await driver.touchId(false); // Simulates a failed touch
+await driver.touchId(true); // Simulates a failed touch
+
+```
+
+```ruby
+# Ruby
+@driver.touch_id(false) # Simulates a failed touch
+@driver.touch_id(true) # Simulates a passing touch
+
+```
+
+```php
+# PHP
+// TODO PHP sample
+
+```
+
+```csharp
+// C#
+// TODO C# sample
+
+```
+
+
+## Description
+
+To enable this feature, the `allowTouchIdEnroll` desired capability must be set to true and the Simulator
+must be [enrolled](https://support.apple.com/en-ca/ht201371). 
+
+When you set `allowTouchIdEnroll` to true, it will set the Simulator to be enrolled by default. 
+The enrollment state can be [toggled](/docs/en/commands/simulator/toggle-touch-id-enrollment)
+
+This call will only work if Appium process or its parent application (e.g. Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
+
+
+## Support
+
+### Appium Server
+
+|Platform|Driver|Platform Versions|Appium Version|Driver Version|
+|--------|----------------|------|--------------|--------------|
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
+| Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
+| Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
+
+### Appium Clients
+
+|Language|Support|Documentation|
+|--------|-------|-------------|
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/ios/PerformsTouchID.html#performTouchID-boolean-)  |
+|[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L661)  |
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/touchId.html)  |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3133)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Ios/Device:touch_id)  |
+|[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
+
+## HTTP API Specifications
+
+### Endpoint
+
+`POST /session/:session_id/simulator/touch_id`
+
+### URL Parameters
+
+None
+
+### JSON Parameters
+
+|name|type|description|
+|----|----|-----------|
+| match | `boolean` | Are we simulating a successful touch (true) or a failed touch (false) |
+
+### Response
+
+null
+
+## See Also
+
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L424)
+* [Appium Docs](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/touch-id.md)

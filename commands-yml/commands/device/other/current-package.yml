@@ -61,7 +61,7 @@ endpoint:
       description: ID of the session to route the command to
   response:
     - type: string
-      name: Name of the current [package](https://developer.android.com/reference/java/lang/Package.html)
+      description: Name of the current [package](https://developer.android.com/reference/java/lang/Package.html)
 
 # Links to specifications. Should link to at least one specification
 specifications: 

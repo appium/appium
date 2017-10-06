@@ -1,0 +1,71 @@
+---
+name: End Session
+short_description: End the running session
+   
+example_usage:
+  java:
+    |
+      driver.quit();
+  python:
+    |
+      self.driver.quit()
+  javascript_wd:
+    |
+      await driver.quit();
+
+  javascript_wdio:
+    |
+      driver.end();
+  ruby:
+    |
+      @driver.quit();
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#quit--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.quit"
+  javascript_wdio: "http://webdriver.io/api/utility/end.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L470"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:quit"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id
+  method: DELETE
+  url_parameters:
+    - name: session_id
+      description: ID of the session to delete
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  w3c: https://www.w3.org/TR/webdriver/#dfn-delete-session
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionid

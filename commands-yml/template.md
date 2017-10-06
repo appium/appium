@@ -126,7 +126,7 @@
 
 ### URL Parameters
 
-{{#if endpoint.json_parameters}}
+{{#if endpoint.url_parameters}}
 |name|description|
 |----|-----------|
 {{#each endpoint.url_parameters}}
@@ -142,7 +142,11 @@ None
 |name|type|description|
 |----|-----------|
 {{#each endpoint.json_parameters}}
+<<<<<<< HEAD
 | {{this.name}} | `{{this.type}}` | {{this.description}} |
+=======
+| {{{this.name}}} | {{{this.type}}} | {{{this.description}}} |
+>>>>>>> Add more commands documentation
 {{/each}}
 {{else}}
 None

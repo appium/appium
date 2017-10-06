@@ -6,26 +6,70 @@ description:
     The server should attempt to create a session that most closely matches the desired and required capabilities. 
     
     * [JSONWP Spec](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1) Required capabilities have higher priority than desired capabilities and must be set for the session to be created
-    * [W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)
+    * [W3C Spec](https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)
     
 example_usage:
   java:
     |
-      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-      element.clear();
+        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
+        desiredCapabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "10.3");
+        desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
+        desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
+        desiredCapabilities.setCapability(MobileCapabilityType.APP, "/path/to/ios/app.zip");
+
+        URL url = new URL("http://127.0.0.1:4723/wd/hub");
+
+        IOSDriver driver = new IOSDriver(url, desiredCapabilities);
+        String sessionId = driver.getSessionId().toString();
+        
   python:
     |
-      self.driver.find_element_by_accessibility_id('SomeAccessibilityID').clear()
+      desired_caps = desired_caps = {
+        'platformName': 'Android',
+        'platformVersion': '7.0',
+        'deviceName': 'Android Emulator',
+        'automationName': 'UiAutomator2',
+        'app': PATH('/path/to/app')
+      }
+      self.driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
   javascript_wd:
     |
-      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-      await element.clear();
+      let driver = await wd.promiseChainRemote({
+        host: '127.0.0.1',
+        port: 4723
+      });
+      let desiredCaps = {
+        platformName: 'Android',
+        platformVersion: '7.0',
+        deviceName: 'Android Emulator',
+        app: path.resolve('path', 'to', 'app.apk')
+      };
+      await driver.init(desiredCaps);
+
   javascript_wdio:
     |
-      driver.clearElement("~SomeAccessibilityId");
+      let options = { desiredCapabilities: { 
+        platformName: 'Android',
+        platformVersion: '7.0',
+        automationName: 'UiAutomator2',
+        app: path.resolve('path', 'to', 'app.apk')
+      }};
+      let client = webdriverio.remote(options);
   ruby:
     |
-      @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear()
+      APP_PATH = '../../path/to/app.app'
+
+      desired_caps = {
+        caps: {
+          platformName:  'iOS',
+          platformVersion: '10.2',
+          deviceName:    'iPhone 6',
+          app:           APP_PATH,
+          automationName: "XCUITest"
+        }
+      }
+
+      Appium::Driver.new(desired_caps).start_driver
   php:
     |
       // TODO PHP sample
@@ -83,7 +127,10 @@ endpoint:
       description: The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match
     - name: capabilities.firstMatch
       type: array<object>
-      description: List of capabilities that the remote end tries to match. Matches the first in the list.
+      description: List of capabilities that the remote end tries to match. Matches the first in the list
+  response:
+    - type: object
+      description: An object describing the session's capabilities
 
 # Links to specifications. Should link to at least one specification
 specifications: 

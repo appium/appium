@@ -1,0 +1,70 @@
+---
+name: Get Window Handle
+short_description: Retrieve the current window handle (Web context only)
+
+example_usage:
+  java:
+    |
+      String windowHandle = driver.getWindowHandle();
+  python:
+    |
+      window_handle = self.driver.current_window_handle()
+  javascript_wd:
+    |
+      let windowHandle = await driver.windowHandle();
+  javascript_wdio:
+    |
+      let handle = driver.windowHandle();
+  ruby:
+    |
+      @driver.window_handle
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.html#getWindowHandle--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_window_handle"
+  javascript_wdio: "http://webdriver.io/api/protocol/windowHandle.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L365"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handle"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/window_handle
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-get-window-handle
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindow_handle

@@ -1,0 +1,100 @@
+# Rotate
+
+Rotate the device in three dimensions
+## Example Usage
+
+```java
+// Java
+driver.rotate(new DeviceRotation(10, 10, 10));
+
+```
+
+```python
+# Not supported
+```
+
+```javascript
+// Javascript
+// webdriver.io example
+driver.rotate(100, 100);
+
+
+
+// wd example
+driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touchCount: 2});
+
+```
+
+```ruby
+# Not supported
+```
+
+```php
+# PHP
+// TODO PHP sample
+
+```
+
+```csharp
+// C#
+// TODO C# sample
+
+```
+
+
+
+## Support
+
+### Appium Server
+
+|Platform|Driver|Platform Versions|Appium Version|Driver Version|
+|--------|----------------|------|--------------|--------------|
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
+| Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
+| Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
+
+### Appium Clients
+
+|Language|Support|Documentation|
+|--------|-------|-------------|
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#rotate-org.openqa.selenium.DeviceRotation-)  |
+|[Python](https://github.com/appium/python-client/releases/latest)| All |  |
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/rotate.html)  |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2470)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  |
+|[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
+
+## HTTP API Specifications
+
+### Endpoint
+
+`POST /wd/hub/session/:session_id/device/rotate`
+
+### URL Parameters
+
+|name|description|
+|----|-----------|
+|session_id|ID of the session to route the command to|
+
+### JSON Parameters
+
+|name|type|description|
+|----|----|-----------|
+| x | `number` | x offset to use for the center of the rotate gesture |
+| y | `number` | y offset to use for the center of the rotate gesture |
+| radius | `number` | The distance in points from the center to the edge of the circular path |
+| rotation | `number` | The length of rotation in radians |
+| touchCount | `number` | The number of touches to use in the specified gesture. (Effectively, the number of fingers a user would use to make the specified gesture.) Valid values are 1 to 5. |
+| duration | `number` | The length of hold time for the specified gesture, in seconds. |
+
+### Response
+
+null
+
+## See Also
+
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L361)

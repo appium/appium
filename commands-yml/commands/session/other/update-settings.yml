@@ -1,0 +1,57 @@
+---
+name: Update Device Settings
+short_description: Update the current setting on the device
+example_usage:
+  java:
+    |
+      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, new Boolean(true));
+  javascript_wd:
+    |
+      let settings = await driver.settings("settings");
+  javascript_wdio:
+    |
+      let settings = driver.settings("settings");
+
+client_docs:
+  java: "http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-"
+  javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3018"
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: true
+  javascript_wdio: true
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/appium/settings
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - name: settings
+      type: string
+      description: Settings string
+
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L454

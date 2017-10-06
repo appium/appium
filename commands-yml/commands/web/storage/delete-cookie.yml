@@ -1,0 +1,72 @@
+---
+name: Delete Cookie
+short_description: Delete the cookie with the given name (Web context only)
+
+example_usage:
+  java:
+    |
+      driver.manage().deleteCookieNamed("cookie_name");
+  python:
+    |
+      self.driver.delete_cookie("cookie_name")
+  javascript_wd:
+    |
+      await driver.deleteCookie("cookie_name");
+  javascript_wdio:
+    |
+      driver.cookie("delete", "cookie_name");
+  ruby:
+    |
+      @driver.delete_cookie("cookie_name")
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.html#deleteCookieNamed-java.lang.String-"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.delete_cookie"
+  javascript_wdio: "http://webdriver.io/api/cookie/deleteCookie.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2007"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:delete_cookie"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:sessionId/cookie/:name
+  method: DELETE
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+    - name: name
+      description: Name of cookie to delete
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-delete-cookie
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidcookiename

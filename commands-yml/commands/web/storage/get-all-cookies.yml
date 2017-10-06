@@ -1,0 +1,73 @@
+---
+name: Get All Cookies
+short_description: Retrieve all cookies visible to the current page (Web context only)
+
+example_usage:
+  java:
+    |
+      Set<Cookie> allcookies = driver.manage().getCookies();
+  python:
+    |
+      cookies = self.driver.get_cookies()
+  javascript_wd:
+    |
+      let cookies = await driver.allCookies();
+  javascript_wdio:
+    |
+      let cookies = driver.cookie();
+  ruby:
+    |
+      @driver.all_cookies
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.html#getCookies--"
+  python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_cookies"
+  javascript_wdio: "http://webdriver.io/api/protocol/cookie.html"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1957"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:all_cookies"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: false
+    uiautomator: false
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+  
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:sessionId/cookie
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  response:
+    - type: array<object>
+      description: A list of cookies
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://www.w3.org/TR/webdriver/#dfn-get-all-cookies
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#get-sessionsessionidcookie

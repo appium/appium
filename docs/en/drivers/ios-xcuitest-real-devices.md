@@ -22,7 +22,7 @@ brew install ios-deploy
 ```
 
 (For hybrid or web tests, you will also need to follow the
-[ios-webkit-debug-proxy](/docs/en/advanced-concepts/ios-webkit-debug-proxy.md)
+[ios-webkit-debug-proxy](/docs/en/writing-running-appium/web/ios-webkit-debug-proxy.md)
 setup instructions)
 
 The way that the XCUITest driver works is via the installation of a helper

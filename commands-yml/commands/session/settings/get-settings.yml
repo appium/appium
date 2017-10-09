@@ -1,6 +1,6 @@
 ---
 name: Retrieve Device Settings
-short_description: Retrieve the current setting on the device
+short_description: Retrieve the current settings on the device
 example_usage:
   java:
     |
@@ -42,14 +42,13 @@ client_support:
 # Information about the HTTP endpoints
 endpoint:
   url: /wd/hub/session/:session_id/appium/settings
-  method: 'POST'
+  method: GET
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
-  json_parameters:
-    - name: settings
-      type: string
-      description: Settings string
+  response:
+    - type: array<object>
+      description: a JSON hash of all the currently specified settings, see [Settings API](/docs/en/advanced-concepts/settings.md).
 
 
 # Links to specifications. Should link to at least one specification

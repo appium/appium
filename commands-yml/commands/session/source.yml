@@ -72,6 +72,9 @@ endpoint:
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
+  response:
+    - type: string
+      description: The sources of current context.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

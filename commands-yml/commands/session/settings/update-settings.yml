@@ -4,7 +4,7 @@ short_description: Update the current setting on the device
 example_usage:
   java:
     |
-      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, new Boolean(true));
+      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, Duration.ofSeconds(5));
   javascript_wd:
     |
       let settings = await driver.settings("settings");
@@ -42,15 +42,14 @@ client_support:
 # Information about the HTTP endpoints
 endpoint:
   url: /wd/hub/session/:session_id/appium/settings
-  method: GET
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
-  response:
+  json_parameters:
     - name: settings
-      type: string
-      description: Settings string
-
+      type: array<object>
+      description: a JSON hash of settings to update, see [Settings API](/docs/en/advanced-concepts/settings.md).
 
 # Links to specifications. Should link to at least one specification
 specifications: 

@@ -74,4 +74,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtouchscroll
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidlog

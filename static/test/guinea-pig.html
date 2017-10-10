@@ -8,6 +8,9 @@
     console.log('Hello from Appium');
     console.log('Loading guinea-pig page');
     console.log('Done');
+    if ('<%= throwError %>') {
+      throw new Error('JavaScript Error: <%= throwError %>');
+    }
   </script>
 </head>
 <body>

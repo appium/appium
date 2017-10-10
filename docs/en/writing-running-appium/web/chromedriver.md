@@ -40,8 +40,9 @@ appium --chromedriver-executable /path/to/my/chromedriver
 The following is a list of Chromedriver versions and their corresponding minimum
 Chrome version that is automatable:
 
-| Version | Minimum Chrome Version | Link to Chromedriver                                                       |
-|---------|------------------------|----------------------------------------------------------------------------|
+| Version | Minimum Chrome Version | Link to Chromedriver                                                              |
+|---------|------------------------|-----------------------------------------------------------------------------------|
+| 2.33    | 60.0.3112.0            | [v2.33 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.33/) |
 | 2.32    | 59.0.3071.0            | [v2.32 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.32/) |
 | 2.31    | 58.0.3029.0            | [v2.31 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.31/) |
 | 2.30    | 58.0.3029.0            | [v2.30 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.30/) |

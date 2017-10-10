@@ -5,7 +5,7 @@ Get the log for a given log type. Log buffer is reset after each request
 
 ```java
 // Java
-Set<String> logEntries = driver.manage().logs().getAvailableLogTypes();
+Set<String> logTypes = driver.manage().logs().getAvailableLogTypes();
 
 ```
 
@@ -76,7 +76,7 @@ log_types = @driver.logTypes
 
 ### Endpoint
 
-`POST /session/:session_id/log/types`
+`GET /session/:session_id/log/types`
 
 ### URL Parameters
 

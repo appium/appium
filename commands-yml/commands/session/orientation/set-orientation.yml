@@ -5,7 +5,7 @@ short_description: Set the current device/browser orientation
 example_usage:
   java:
     |
-      ScreenOrientation orientation = driver.rotate(ScreenOrientation.LANDSCAPE);
+      driver.rotate(ScreenOrientation.LANDSCAPE);
   python:
     |
       driver.orientation = "LANDSCAPE"
@@ -60,13 +60,14 @@ client_support:
 # Information about the HTTP endpoints
 endpoint:
   url: /session/:session_id/orientation
-  method: GET
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
-  response:
-    - type: string
-      description: The current browser orientation {LANDSCAPE|PORTRAIT}
+  json_parameters:
+    - name: orientation
+      type: string
+      description: The desired orientation - {LANDSCAPE|PORTRAIT}.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

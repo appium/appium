@@ -5,7 +5,7 @@ Set the current device/browser orientation
 
 ```java
 // Java
-ScreenOrientation orientation = driver.rotate(ScreenOrientation.LANDSCAPE);
+driver.rotate(ScreenOrientation.LANDSCAPE);
 
 ```
 
@@ -76,7 +76,7 @@ await driver.setOrientation();
 
 ### Endpoint
 
-`GET /session/:session_id/orientation`
+`POST /session/:session_id/orientation`
 
 ### URL Parameters
 
@@ -86,11 +86,13 @@ await driver.setOrientation();
 
 ### JSON Parameters
 
-None
+|name|type|description|
+|----|----|-----------|
+| orientation | `string` | The desired orientation - {LANDSCAPE|PORTRAIT}. |
 
 ### Response
 
-The current browser orientation {LANDSCAPE|PORTRAIT} (`string`)
+null
 
 ## See Also
 

@@ -99,7 +99,7 @@ None
 
 ### Response
 
-null
+The sources of current context. (`string`)
 
 ## See Also
 

@@ -121,7 +121,7 @@ endpoint:
       description: ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's required capabilities that must be applied by remote end
     - name: capabilities
       type: object
-      description: ([W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) object containing 'alwaysMatch' and 'firstMatch' properties
+      description: ([W3C specification](https://www.w3.org/TR/webdriver/#dfn-new-session)) object containing 'alwaysMatch' and 'firstMatch' properties
     - name: capabilities.alwaysMatch
       type: object
       description: The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match

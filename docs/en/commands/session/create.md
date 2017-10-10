@@ -139,7 +139,7 @@ None
 |----|----|-----------|
 | desiredCapabilities | `object` | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's [desired capabilities](/docs/en/writing-running-appium/caps.md) |
 | requiredCapabilities | `object` | ([JSONWP specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1)) Object describing session's required capabilities that must be applied by remote end |
-| capabilities | `object` | ([W3C specification])(https://www.w3.org/TR/webdriver/#dfn-new-session) object containing 'alwaysMatch' and 'firstMatch' properties |
+| capabilities | `object` | ([W3C specification](https://www.w3.org/TR/webdriver/#dfn-new-session)) object containing 'alwaysMatch' and 'firstMatch' properties |
 | capabilities.alwaysMatch | `object` | The [desired capabilities](/docs/en/writing-running-appium/caps.md) that the remote end must match |
 | capabilities.firstMatch | `array<object>` | List of capabilities that the remote end tries to match. Matches the first in the list |
 

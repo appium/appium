@@ -1,11 +1,11 @@
-# Update Device Settings
+# Retrieve Device Settings
 
-Update the current setting on the device
+Retrieve the current settings on the device
 ## Example Usage
 
 ```java
 // Java
-driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, new Boolean(true));
+Map<String, Object> settings = driver.getSettings();
 
 ```
 
@@ -16,12 +16,12 @@ driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, new Boolean(true));
 ```javascript
 // Javascript
 // webdriver.io example
-let settings = driver.settings("settings");
+let settings = driver.settings(settings);
 
 
 
 // wd example
-let settings = await driver.settings("settings");
+await driver.settings(settings);
 
 ```
 
@@ -56,10 +56,10 @@ let settings = await driver.settings("settings");
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-)  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#getSettings--)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/settings.html)  |
-|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3018)  |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3032)  |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  |
@@ -82,7 +82,7 @@ None
 
 ### Response
 
-Settings string (`string`)
+a JSON hash of all the currently specified settings, see [Settings API](/docs/en/advanced-concepts/settings.md). (`array<object>`)
 
 ## See Also
 

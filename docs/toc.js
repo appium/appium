@@ -14,7 +14,6 @@ module.exports = {
       ["Selendroid (Android)", "android-selendroid.md"],
       ["Windows", "windows.md"],
       ["Mac", "mac.md"],
-      ["UIAutomation (iOS)", "ios-uiautomation.md"],
     ]],
     ["Commands", ["commands",
       ["Status", "status.md"],

@@ -9,7 +9,7 @@ This endpoint allows to retrieve the current native page source from WDA as a st
 
 #### Supported arguments
 
- * _format_: The name of the format to represent the UI source in. Possible values are: _xml_ and _json_. The same output as for _getPageSource_ source will be generated in case this argument is omitted.
+ * _format_: The name of the format to represent the UI source in. Possible values are: _xml_,  _json_ and _description_. The same output as for _getPageSource_ source will be generated in case this argument is omitted.
 
 #### Usage examples
 

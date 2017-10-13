@@ -5,7 +5,7 @@ short_description: Press and hold a particular key code on the device
 example_usage:
   java:
     |
-      driver.longPressKeyCode(10);
+      driver.longPressKeyCode(AndroidKeyCode.HOME);
   python:
     |
       self.driver.long_press_keycode(10);
@@ -63,7 +63,7 @@ endpoint:
   json_parameters:
     - name: keycode
       type: number
-      description: \[Key code](http://developer.android.com/reference/android/view/KeyEvent.html) pressed on the device
+      description: Key code pressed on the device. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html).
     - name: metastate
       type: number
       description: Metastate for the keypress

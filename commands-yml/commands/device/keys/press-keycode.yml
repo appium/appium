@@ -5,7 +5,7 @@ short_description: Press a particular key on the device
 example_usage:
   java:
     |
-      driver.pressKeyCode(10);
+      driver.pressKeyCode(AndroidKeyCode.SPACE, AndroidKeyMetastate.META_SHIFT_ON);
   python:
     |
       self.driver.press_keycode(10);
@@ -63,7 +63,7 @@ endpoint:
   json_parameters:
     - name: keycode
       type: number
-      description: \[Key code](http://developer.android.com/reference/android/view/KeyEvent.html) pressed on the device
+      description: Key code pressed on the device. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html).
     - name: metastate
       type: number
       description: Metastate for the keypress

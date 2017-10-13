@@ -5,7 +5,7 @@ Press and hold a particular key code on the device
 
 ```java
 // Java
-driver.longPressKeyCode(10);
+driver.longPressKeyCode(AndroidKeyCode.HOME);
 
 ```
 
@@ -86,7 +86,7 @@ driver.longPressKeyCode(10);
 
 |name|type|description|
 |----|----|-----------|
-| keycode | `number` | \[Key code](http://developer.android.com/reference/android/view/KeyEvent.html) pressed on the device |
+| keycode | `number` | Key code pressed on the device. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html). |
 | metastate | `number` | Metastate for the keypress |
 
 ### Response

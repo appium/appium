@@ -80,7 +80,7 @@ await driver.gsmCall('555-123-4567', 'Phone');
 |name|type|description|
 |----|----|-----------|
 | phoneNumber | `string` | The phone number to call to |
-| action | `string` | The action (call|accept|cancel|hold). |
+| action | `string` | The action - 'call', 'accept', 'cancel', 'hold'. |
 
 ### Response
 

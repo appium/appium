@@ -79,7 +79,7 @@ await driver.gsmVoice('Voice state');
 
 |name|type|description|
 |----|----|-----------|
-| state | `string` | State of GSM voice (unregistered|home|roaming|searching|denied|off|on). |
+| state | `string` | State of GSM voice - 'unregistered', 'home', 'roaming', 'searching', 'denied', 'off', 'on'. |
 
 ### Response
 

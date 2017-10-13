@@ -49,7 +49,7 @@ endpoint:
   json_parameters:
     - name: state
       type: string
-      description: State of GSM voice (unregistered|home|roaming|searching|denied|off|on).
+      description: State of GSM voice - 'unregistered', 'home', 'roaming', 'searching', 'denied', 'off', 'on'.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

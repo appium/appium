@@ -52,7 +52,7 @@ endpoint:
       description: The phone number to call to
     - name: action
       type: string
-      description: The action (call|accept|cancel|hold).
+      description: The action - 'call', 'accept', 'cancel', 'hold'.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

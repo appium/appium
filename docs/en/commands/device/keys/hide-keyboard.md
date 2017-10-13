@@ -88,7 +88,7 @@ await driver.hideDeviceKeyboard();
 
 |name|type|description|
 |----|----|-----------|
-| strategy | `string` | Hide keyboard strategy (optional, UIAutomation only). Available strategies (press|pressKey|swipeDown|tapOut|tapOutside|default). |
+| strategy | `string` | Hide keyboard strategy (optional, UIAutomation only). Available strategies - 'press', 'pressKey', 'swipeDown', 'tapOut', 'tapOutside', 'default'. |
 | key | `string` | Key (optional) |
 | keyCode | `string` | Key code (optional) |
 | keyName | `string` | Key name (optional) |

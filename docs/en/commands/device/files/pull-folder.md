@@ -88,11 +88,11 @@ let folderBase64 = await driver.pullFolder('/path/to/device/foo.bar');
 
 |name|type|description|
 |----|----|-----------|
-| path | `string` | Path on the device to pull file from |
+| path | `string` | Path to an entire folder on the device |
 
 ### Response
 
-Contents of file in base64 (`string`)
+A string of Base64 encoded data, representing a zip archive of the contents of the requested folder. (`string`)
 
 ## See Also
 

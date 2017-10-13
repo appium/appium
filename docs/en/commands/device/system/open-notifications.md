@@ -76,7 +76,7 @@ await driver.openNotifications();
 
 ### Endpoint
 
-`POST /session/:session_id/device/open_notifications`
+`POST /session/:session_id/appium/device/open_notifications`
 
 ### URL Parameters
 

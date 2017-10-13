@@ -29,7 +29,7 @@ await driver.hideDeviceKeyboard();
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID')
+@driver.hide_keyboard()
 
 ```
 
@@ -76,7 +76,7 @@ await driver.hideDeviceKeyboard();
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element`
+`POST /wd/hub/session/:session_id/appium/device/hide_keyboard`
 
 ### URL Parameters
 
@@ -88,7 +88,7 @@ await driver.hideDeviceKeyboard();
 
 |name|type|description|
 |----|----|-----------|
-| strategy | `string` | Hide keyboard strategy (optional) |
+| strategy | `string` | Hide keyboard strategy (optional, UIAutomation only). Available strategies (press|pressKey|swipeDown|tapOut|tapOutside|default). |
 | key | `string` | Key (optional) |
 | keyCode | `string` | Key code (optional) |
 | keyName | `string` | Key name (optional) |

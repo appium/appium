@@ -83,11 +83,13 @@ This call will only work if the Appium process or its parent application (e.g., 
 
 ### Endpoint
 
-`POST /session/:session_id/simulator/toggle_touch_id_enrollment`
+`POST /session/:session_id/appium/simulator/toggle_touch_id_enrollment`
 
 ### URL Parameters
 
-None
+|name|description|
+|----|-----------|
+|session_id|ID of the session to route the command to|
 
 ### JSON Parameters
 
@@ -101,4 +103,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L424)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L427)

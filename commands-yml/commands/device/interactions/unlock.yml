@@ -37,8 +37,8 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: true
-    uiautomation: true
+    xcuitest: false
+    uiautomation: false
   android:
     uiautomator2: true
     uiautomator: true

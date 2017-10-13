@@ -86,7 +86,9 @@ await driver.lock();
 
 ### JSON Parameters
 
-None
+|name|type|description|
+|----|----|-----------|
+| seconds | `number` | How long to lock the screen (iOS only). |
 
 ### Response
 

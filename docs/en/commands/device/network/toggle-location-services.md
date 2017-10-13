@@ -74,7 +74,7 @@ await driver.toggleLocationServices();
 
 ### Endpoint
 
-`POST /session/:session_id/device/toggle_location_services`
+`POST /session/:session_id/appium/device/toggle_location_services`
 
 ### URL Parameters
 

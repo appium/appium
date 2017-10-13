@@ -76,7 +76,7 @@ let fileBase64 = await driver.pullFile('/path/to/device/foo.bar');
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/pull_file`
+`POST /wd/hub/session/:session_id/appium/device/pull_file`
 
 ### URL Parameters
 

@@ -22,7 +22,7 @@ await driver.sendSms('555-123-4567', 'Hey lol');
 
 ```ruby
 # Ruby
-@driver.toggle_flight_mode();
+// TODO
 
 ```
 
@@ -61,15 +61,15 @@ await driver.sendSms('555-123-4567', 'Hey lol');
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3183)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  |
-|[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
-|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
+|[PHP](https://github.com/appium/php-client/releases/latest)| None |  [github.com](https://github.com/appium/php-client/)  |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 
 ## HTTP API Specifications
 
 ### Endpoint
 
-`POST /session/:session_id/device/send_sms`
+`POST /session/:session_id/appium/device/send_sms`
 
 ### URL Parameters
 
@@ -90,4 +90,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L396)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L337)

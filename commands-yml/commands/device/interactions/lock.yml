@@ -65,6 +65,10 @@ endpoint:
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
+  json_parameters:
+    - name: seconds
+      type: number
+      description: How long to lock the screen (iOS only).
 
 # Links to specifications. Should link to at least one specification
 specifications:

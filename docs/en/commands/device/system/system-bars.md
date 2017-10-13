@@ -69,7 +69,7 @@ Map<String, String> systemBars = driver.getSystemBars();
 
 ### Endpoint
 
-`POST /session/:session_id/device/system_bars`
+`GET /session/:session_id/appium/device/system_bars`
 
 ### URL Parameters
 
@@ -83,7 +83,7 @@ None
 
 ### Response
 
-null
+Information about visibility and bounds of status and navigation bar (`array<object>`)
 
 ## See Also
 

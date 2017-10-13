@@ -88,7 +88,7 @@ await driver.backgroundApp(10);
 
 |name|type|description|
 |----|----|-----------|
-| seconds | `number` | How long to run app in background. Minimum resolution time is one second. |
+| seconds | `number` | How long to run app in background. |
 
 ### Response
 

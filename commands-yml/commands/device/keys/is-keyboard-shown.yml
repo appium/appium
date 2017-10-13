@@ -5,7 +5,7 @@ short_description: Whether or not the soft keyboard is shown
 example_usage:
   java:
     |
-      boolean isKeyboardShown = driver.manager().isKeyboardShown();
+      boolean isKeyboardShown = driver.isKeyboardShown();
   ruby:
     |
       @driver.is_keyboard_shown();
@@ -38,24 +38,14 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element
-  method: 'POST'
+  url: /wd/hub/session/:session_id/appium/device/is_keyboard_shown
+  method: 'GET'
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
-  json_parameters:
-    - name: strategy
-      type: string
-      description: Hide keyboard strategy (optional)
-    - name: key
-      type: string
-      description: Key (optional)
-    - name: keyCode
-      type: string
-      description: Key code (optional)
-    - name: keyName
-      type: string
-      description: Key name (optional)
+  response:
+    - type: boolean
+      description: True if the keyboard is shown.
 
 # Links to specifications. Should link to at least one specification
 specifications:

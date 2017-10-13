@@ -5,7 +5,7 @@ Get the name of the current Android activity
 
 ```java
 // Java
-driver.currentActivity(new Activity("com.example", "ActivityName"));
+driver.startActivity(new Activity("com.example", "ActivityName"));
 
 ```
 

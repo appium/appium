@@ -59,7 +59,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/device/push_file
+  url: /wd/hub/session/:session_id/appium/device/push_file
   method: POST
   url_parameters:
     - name: session_id

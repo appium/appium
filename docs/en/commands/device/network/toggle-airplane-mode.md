@@ -72,7 +72,7 @@ await driver.toggleAirplaneMode();
 
 ### Endpoint
 
-`POST /session/:session_id/toggle_airplane_mode`
+`POST /session/:session_id/appium/device/toggle_airplane_mode`
 
 ### URL Parameters
 

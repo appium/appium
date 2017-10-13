@@ -33,15 +33,15 @@ driver_support:
 client_support:
   java: false
   python: false
-  ruby: true
-  php: true
-  csharp: true
+  ruby: false
+  php: false
+  csharp: false
   javascript_wd: true
   javascript_wdio: true
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/device/gsm_voice
+  url: /session/:session_id/appium/device/gsm_voice
   method: POST
   url_parameters:
     - name: session_id
@@ -49,7 +49,7 @@ endpoint:
   json_parameters:
     - name: state
       type: string
-      description: State of GSM voice
+      description: State of GSM voice (unregistered|home|roaming|searching|denied|off|on).
 
 # Links to specifications. Should link to at least one specification
 specifications: 

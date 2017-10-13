@@ -67,7 +67,7 @@ describe('proxy', () => {
       j.getUrlForProxy('/wd/hub/session/456/element/200/value')
        .should.eql('http://localhost:4444/wd/hub/session/123/element/200/value');
     });
-    it('should work with urls which do not have sessiopn ids', async () => {
+    it('should work with urls which do not have session ids', async () => {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('http://host.com:1234/wd/hub/session')
        .should.eql('http://localhost:4444/wd/hub/session');
@@ -134,11 +134,18 @@ describe('proxy', () => {
       e.value.should.eql({message: 'Invisible element'});
       e.status.should.equal(11);
     });
-    it('should return response body when a command fails with a 200', async () => {
+    it('should throw when a command fails with a 200 because the status is not 0', async () => {
       let j = mockProxy({sessionId: '123'});
-      let res = await j.command('/element/200/text', 'GET');
-      res.value.should.eql({message: 'Invisible element'});
-      res.status.should.eql(11);
+      let e = null;
+      try {
+        await j.command('/element/200/text', 'GET');
+      } catch (err) {
+        e = err;
+      }
+      should.exist(e);
+      e.message.should.contain('Original error: Invisible element');
+      e.value.should.eql({message: 'Invisible element'});
+      e.status.should.equal(11);
     });
     it('should throw when a command fails with a 100', async () => {
       let j = mockProxy({sessionId: '123'});

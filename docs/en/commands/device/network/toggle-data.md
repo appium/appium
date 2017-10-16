@@ -70,7 +70,7 @@ await driver.toggleData();
 
 ### Endpoint
 
-`POST /session/:session_id/device/toggle_data`
+`POST /session/:session_id/appium/device/toggle_data`
 
 ### URL Parameters
 

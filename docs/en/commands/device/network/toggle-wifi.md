@@ -70,7 +70,7 @@ await driver.toggleWiFi();
 
 ### Endpoint
 
-`POST /session/:session_id/device/toggle_wifi`
+`POST /session/:session_id/appium/device/toggle_wifi`
 
 ### URL Parameters
 

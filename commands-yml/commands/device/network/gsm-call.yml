@@ -33,15 +33,15 @@ driver_support:
 client_support:
   java: false
   python: false
-  ruby: true
-  php: true
-  csharp: true
+  ruby: false
+  php: false
+  csharp: false
   javascript_wd: true
   javascript_wdio: true
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/device/gsm_call
+  url: /session/:session_id/appium/device/gsm_call
   method: POST
   url_parameters:
     - name: session_id
@@ -50,9 +50,9 @@ endpoint:
     - name: phoneNumber
       type: string
       description: The phone number to call to
-    - name: message
+    - name: action
       type: string
-      description: The action
+      description: The action - 'call', 'accept', 'cancel', 'hold'.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

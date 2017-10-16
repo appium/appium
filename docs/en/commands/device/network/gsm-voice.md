@@ -59,15 +59,15 @@ await driver.gsmVoice('Voice state');
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3241)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  |
-|[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
-|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
+|[PHP](https://github.com/appium/php-client/releases/latest)| None |  [github.com](https://github.com/appium/php-client/)  |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 
 ## HTTP API Specifications
 
 ### Endpoint
 
-`POST /session/:session_id/device/gsm_voice`
+`POST /session/:session_id/appium/device/gsm_voice`
 
 ### URL Parameters
 
@@ -79,7 +79,7 @@ await driver.gsmVoice('Voice state');
 
 |name|type|description|
 |----|----|-----------|
-| state | `string` | State of GSM voice |
+| state | `string` | State of GSM voice - 'unregistered', 'home', 'roaming', 'searching', 'denied', 'off', 'on'. |
 
 ### Response
 

@@ -36,10 +36,10 @@ driver_support:
     windows: false # TODO Confirm this
 client_support:
   java: true
-  python: true
+  python: false
   ruby: true
-  php: true
-  csharp: true
+  php: false
+  csharp: false
   javascript_wd: true
   javascript_wdio: true
   

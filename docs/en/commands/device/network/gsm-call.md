@@ -59,15 +59,15 @@ await driver.gsmCall('555-123-4567', 'Phone');
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3183)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  |
-|[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
-|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
+|[PHP](https://github.com/appium/php-client/releases/latest)| None |  [github.com](https://github.com/appium/php-client/)  |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 
 ## HTTP API Specifications
 
 ### Endpoint
 
-`POST /session/:session_id/device/gsm_call`
+`POST /session/:session_id/appium/device/gsm_call`
 
 ### URL Parameters
 
@@ -80,7 +80,7 @@ await driver.gsmCall('555-123-4567', 'Phone');
 |name|type|description|
 |----|----|-----------|
 | phoneNumber | `string` | The phone number to call to |
-| message | `string` | The action |
+| action | `string` | The action - 'call', 'accept', 'cancel', 'hold'. |
 
 ### Response
 

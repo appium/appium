@@ -5,7 +5,7 @@ short_description: Get the name of the current Android activity
 example_usage:
   java:
     |
-      driver.currentActivity(new Activity("com.example", "ActivityName"));
+      driver.startActivity(new Activity("com.example", "ActivityName"));
   python:
     |
       self.driver.start_activity("com.example", "ActivityName");

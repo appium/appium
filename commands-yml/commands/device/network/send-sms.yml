@@ -8,7 +8,7 @@ example_usage:
       await driver.sendSms('555-123-4567', 'Hey lol');
   ruby:
     |
-      @driver.toggle_flight_mode();
+      // TODO
   php:
     |
       // TODO
@@ -36,15 +36,15 @@ driver_support:
 client_support:
   java: false
   python: false
-  ruby: true
-  php: true
-  csharp: true
+  ruby: false
+  php: false
+  csharp: false
   javascript_wd: true
   javascript_wdio: true
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/device/send_sms
+  url: /session/:session_id/appium/device/send_sms
   method: POST
   url_parameters:
     - name: session_id
@@ -59,4 +59,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications: 
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L396
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L337

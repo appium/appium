@@ -76,6 +76,8 @@ module.exports = {
           ["Rotate", "rotate.md"],
         ]],
         ["Keys", ["keys",
+          ["Press keycode", "press-keycode.md"],
+          ["Long press keycode", "long-press-keycode.md"],
           ["Hide Keyboard", "hide-keyboard.md"],
           ["Is Keyboard Shown", "is-keyboard-shown.md"],
         ]],

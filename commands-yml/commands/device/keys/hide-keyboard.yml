@@ -17,7 +17,7 @@ example_usage:
       driver.hideDeviceKeyboard();
   ruby:
     |
-      @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
+      @driver.hide_keyboard()
   php:
     |
       // TODO PHP sample
@@ -58,7 +58,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element
+  url: /wd/hub/session/:session_id/appium/device/hide_keyboard
   method: 'POST'
   url_parameters:
     - name: session_id
@@ -66,7 +66,7 @@ endpoint:
   json_parameters:
     - name: strategy
       type: string
-      description: Hide keyboard strategy (optional)
+      description: Hide keyboard strategy (optional, UIAutomation only). Available strategies - 'press', 'pressKey', 'swipeDown', 'tapOut', 'tapOutside', 'default'.
     - name: key
       type: string
       description: Key (optional)

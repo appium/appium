@@ -65,8 +65,11 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/simulator/toggle_touch_id_enrollment
+  url: /session/:session_id/appium/simulator/toggle_touch_id_enrollment
   method: 'POST'
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
   json_parameters:
     - name: enabled
       type: boolean
@@ -74,4 +77,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications: 
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L424
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L427

@@ -66,10 +66,10 @@ endpoint:
   json_parameters:
     - name: path
       type: string
-      description: Path on the device to pull file from
+      description: Path to an entire folder on the device
   response:
     - type: string
-      description: Contents of file in base64
+      description: A string of Base64 encoded data, representing a zip archive of the contents of the requested folder.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

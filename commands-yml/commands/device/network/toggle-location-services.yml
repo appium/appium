@@ -53,7 +53,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/device/toggle_location_services
+  url: /session/:session_id/appium/device/toggle_location_services
   method: POST
   url_parameters:
     - name: session_id

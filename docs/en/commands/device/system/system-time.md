@@ -76,7 +76,7 @@ let time = await driver.getDeviceTime();
 
 ### Endpoint
 
-`GET /session/:session_id/device/system_time`
+`GET /session/:session_id/appium/device/system_time`
 
 ### URL Parameters
 
@@ -90,7 +90,7 @@ None
 
 ### Response
 
-null
+Time on the device (`string`)
 
 ## See Also
 

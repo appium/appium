@@ -65,7 +65,7 @@ endpoint:
   json_parameters:
     - name: seconds
       type: number
-      description: How long to run app in background. Minimum resolution time is one second.
+      description: How long to run app in background.
 
 # Links to specifications. Should link to at least one specification
 specifications: 

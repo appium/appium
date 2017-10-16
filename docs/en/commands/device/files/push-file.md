@@ -77,7 +77,7 @@ await driver.pushFileToDevice('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/push_file`
+`POST /wd/hub/session/:session_id/appium/device/push_file`
 
 ### URL Parameters
 

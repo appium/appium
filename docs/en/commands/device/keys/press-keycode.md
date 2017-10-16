@@ -5,7 +5,7 @@ Press a particular key on the device
 
 ```java
 // Java
-driver.pressKeyCode(10);
+driver.pressKeyCode(AndroidKeyCode.SPACE, AndroidKeyMetastate.META_SHIFT_ON);
 
 ```
 
@@ -86,7 +86,7 @@ driver.pressKeycode(10);
 
 |name|type|description|
 |----|----|-----------|
-| keycode | `number` | \[Key code](http://developer.android.com/reference/android/view/KeyEvent.html) pressed on the device |
+| keycode | `number` | Key code pressed on the device. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html). |
 | metastate | `number` | Metastate for the keypress |
 
 ### Response

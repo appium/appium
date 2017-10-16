@@ -57,7 +57,7 @@ To enable this feature, the `allowTouchIdEnroll` desired capability must be set 
 must be [enrolled](https://support.apple.com/en-ca/ht201371). 
 
 When you set `allowTouchIdEnroll` to true, it will set the Simulator to be enrolled by default. 
-The enrollment state can be [toggled](/docs/en/commands/simulator/toggle-touch-id-enrollment)
+The enrollment state can be [toggled](/docs/en/commands/device/simulator/toggle-touch-id-enrollment)
 
 This call will only work if Appium process or its parent application (e.g. Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
 
@@ -91,11 +91,13 @@ This call will only work if Appium process or its parent application (e.g. Termi
 
 ### Endpoint
 
-`POST /session/:session_id/simulator/touch_id`
+`POST /session/:session_id/appium/simulator/touch_id`
 
 ### URL Parameters
 
-None
+|name|description|
+|----|-----------|
+|session_id|ID of the session to route the command to|
 
 ### JSON Parameters
 

@@ -5,7 +5,7 @@ Whether or not the soft keyboard is shown
 
 ```java
 // Java
-boolean isKeyboardShown = driver.manager().isKeyboardShown();
+boolean isKeyboardShown = driver.isKeyboardShown();
 
 ```
 
@@ -65,7 +65,7 @@ boolean isKeyboardShown = driver.manager().isKeyboardShown();
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element`
+`GET /wd/hub/session/:session_id/appium/device/is_keyboard_shown`
 
 ### URL Parameters
 
@@ -75,16 +75,11 @@ boolean isKeyboardShown = driver.manager().isKeyboardShown();
 
 ### JSON Parameters
 
-|name|type|description|
-|----|----|-----------|
-| strategy | `string` | Hide keyboard strategy (optional) |
-| key | `string` | Key (optional) |
-| keyCode | `string` | Key code (optional) |
-| keyName | `string` | Key name (optional) |
+None
 
 ### Response
 
-null
+True if the keyboard is shown. (`boolean`)
 
 ## See Also
 

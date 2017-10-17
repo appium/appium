@@ -111,12 +111,12 @@ Finally, a list of known issues with the initial 1.6 release (we'll strike throu
 
 最后，列出了初始 1.6 版本的已知问题（已解决的问题会被横线划去）：
 
-* ~~无法以横向模式与设备上的元素进行交互（https://github.com/appium/appium/issues/6994)~~
+* <del>无法以横向模式与设备上的元素进行交互（https://github.com/appium/appium/issues/6994)</del>
 * `shake` 苹果不支持所以我们没有实现
 * `lock` 苹果不支持所以我们没有实现
 * 设置地理位置不被苹果支持，我们也不支持
 * 通过TouchAction / MultiAction API，`zoom` 手势支持，因为苹果的一个bug，`pinch` 手势不支持。
-* ~~通过TouchAction / MultiAction API，`swipe`手势目前不受支持，应该很快解决（https://github.com/appium/appium/issues/7573）~~
+* <del>通过TouchAction / MultiAction API，`swipe`手势目前不受支持，应该很快解决（https://github.com/appium/appium/issues/7573）</del>
 * `autoAcceptAlerts`， `autoDismissAlerts`目前还不能工作，而且我们是否能够在将来实施这些，存在争议。
 * iOS SDK 有一个问题，因此使用某些 API 方法构建的 PickerWheels 不能由 XCUITest 自动执行。有关解决方法，请参阅https://github.com/appium/appium/issues/6962，以确保您的 PickerWheels 正确构建。
 

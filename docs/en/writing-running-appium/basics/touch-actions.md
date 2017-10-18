@@ -105,7 +105,7 @@ allows you to do what you wanted to do with one of these views, namely, scroll
 it!
 
 
-**Scrolling<a name="scrolling">**
+**Scrolling**
 
 
 To allow access to this special feature, we override the `execute` or
@@ -117,7 +117,7 @@ To scroll, pass direction in which you intend to scroll as parameter.
 
 ```javascript
 // javascript
-driver.execute('mobile: scroll', {direction: 'down'})
+driver.execute('mobile: scroll', {direction: 'down'});
 ```
 
 ```java

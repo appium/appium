@@ -9,9 +9,9 @@ with certain constraints)
 Appium additionally supports some of the [Mobile JSON Wire Protocol](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) locator strategies
 
 * `-ios uiautomation`: a string corresponding to a recursive element search
-using the [UIAutomation library](ios_predicate.md) (iOS 9.3 and below only)
+using the [UIAutomation library](ios-predicate.md) (iOS 9.3 and below only)
 * `-android uiautomator`: a string corresponding to a recursive element
-search using the [UiAutomator Api](uiautomator_uiselector.md) (Android-only)
+search using the [UiAutomator Api](uiautomator-uiselector.md) (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search
 using the Id/Name that the native Accessibility options utilize.
 
@@ -23,8 +23,8 @@ there's time to interact with them. We're working on a fix
 ### Using Appium Desktop To Locate Elements
 
 Appium provides you with a neat tool that allows you to find the the elements
-you're looking for. With [Appium Desktop](https://github.com/appium/appium-desktop) you 
-can find any element and its locators by either clicking the element on the screenshot 
+you're looking for. With [Appium Desktop](https://github.com/appium/appium-desktop) you
+can find any element and its locators by either clicking the element on the screenshot
 image, or locating it in the source tree.
 
 ### Overview
@@ -44,4 +44,3 @@ screenshot. The element is then highlighted in the source tree. In the panel on 
 I can see the accessibility id.
 
 ![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector.png)
-

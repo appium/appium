@@ -5,14 +5,20 @@ description:
   >
      Get a list of elements that match the [locator selector](/docs/en/about-appium/getting-started).
 selector_strategies:
-  # TODO Document the rest
   - name: Accessibility ID
     description: Read a unique identifier for a UI element. For XCUITest it is the element's `resource-id` attribute. For Android it is the element's `content-desc` attribute.
   - name: Class name
     description: "For IOS it is the full name of the XCUI element and begins with XCUIElementType. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)"
   - name: ID
-    description: Native element identifier. For Android 
-    
+    description: Native element identifier. For Android it is
+  - name: Name
+    description: Name of element
+  - name: XPath
+    description: Search the app XML source using xpath (not recommended, has performance issues)
+  - name: Android UiAutomator
+    description: Use the UI Automator API, in particular the UiSelector class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.    
+  - name: IOS UIAutomation
+    description: When automating an iOS application, Apple’s UI Automation framework can be used to find elements
 example_usage:
   java:
     |

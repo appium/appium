@@ -1,6 +1,6 @@
 ---
 name: Start Activity
-short_description: Get the name of the current Android activity
+short_description: Start an Android activity by providing package name and activity name
     
 example_usage:
   java:

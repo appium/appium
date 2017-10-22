@@ -19,7 +19,7 @@ module.exports = {
       ["Status", "status.md"],
       ["Session", ["session",
         ["Create", "create.md"],
-        ["Delete", "delete.md"],
+        ["End", "delete.md"],
         ["Get Session Capabilities", "get.md"],
         ["Go Back", "back.md"],
         ["Screenshot", "screenshot.md"],

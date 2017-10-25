@@ -10,13 +10,13 @@ selector_strategies:
   - name: Class name
     description: "For IOS it is the full name of the XCUI element and begins with XCUIElementType. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)"
   - name: ID
-    description: Native element identifier. For Android it is
+    description: Native element identifier. `resource-id` for android; `name` for iOS.
   - name: Name
     description: Name of element
   - name: XPath
     description: Search the app XML source using xpath (not recommended, has performance issues)
   - name: Android UiAutomator
-    description: Use the UI Automator API, in particular the UiSelector class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.    
+    description: Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.    
   - name: IOS UIAutomation
     description: When automating an iOS application, Apple’s UI Automation framework can be used to find elements
 example_usage:

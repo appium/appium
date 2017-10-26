@@ -120,7 +120,7 @@ Additional tips for emulators:
 * There exists a hardware accelerated emulator for Android, though it has its
   own limitations. It can be installed from Intel's website, or through the
   Android SDK Manager. For more information, go
-  [here](http://software.intel.com/en-us/articles/intel-hardware-accelerated-execution-manager/).
+  [here](https://software.intel.com/en-us/articles/intel-hardware-accelerated-execution-manager-intel-haxm).
 * Make sure that `hw.battery=yes` in your AVD's `config.ini`, if you want to
   run any of the Appium tests, or use any of the power commands. (As of Android
   5.0, this is the default.)

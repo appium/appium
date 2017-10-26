@@ -57,7 +57,7 @@ let elementsTwo = await driver.elements("id", "SomeID");
 
 ## Description
 
-Get a list of elements that match the [locator selector](/docs/en/about-appium/getting-started).
+Get a list of elements that match the [locator selector](/docs/en/about-appium/getting-started.md).
 
 
 ## Support

@@ -48,7 +48,7 @@ await driver.setPageLoadTimeout(5000);
 
 ## Description
 
-The types of timeouts are 'page load', ['script'](/docs/en/commands/session/async-script.md) and ['implicit'](/docs/en/commands/session/implicit.md). (The example usage is just 'page load')
+The types of timeouts are 'page load', ['script'](/docs/en/commands/session/timeouts/async-script.md) and ['implicit'](/docs/en/commands/session/timeouts/implicit-wait.md). (The example usage is just 'page load')
 
 
 ## Support

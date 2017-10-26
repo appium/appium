@@ -36,7 +36,7 @@ In addition to Appium's general requirements:
 If you are migrating to the XCUITest driver from Appium's old
 [UIAutomation-based driver](/docs/en/drivers/ios-uiautomation.md), you may wish
 to consult this [migration
-guide](/docs/en/advanced-concepts/migrating-to-1-0.md).
+guide](/docs/en/advanced-concepts/migrating-to-xcuitest.md).
 
 ### Usage
 

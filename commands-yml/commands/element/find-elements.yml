@@ -18,7 +18,7 @@ selector_strategies:
   - name: Android UiAutomator
     description: Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.    
   - name: IOS UIAutomation
-    description: When automating an iOS application, Apple’s [Instruments](https://github.com/appium/appium/blob/master/docs/en/drivers/ios-uiautomation.md) framework can be used to find elements
+    description: When automating an iOS application, Apple’s [Instruments](/docs/en/drivers/ios-uiautomation.md) framework can be used to find elements
 example_usage:
   java:
     |

@@ -50,7 +50,7 @@ let elementTwo = await driver.element("id", "SomeID");
 
 ## Description
 
-The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
+Get the first element that matches a locator [strategy](/docs/en/commands/element/find-elements#selector-strategies)
 
 
 ## Support

@@ -52,8 +52,11 @@ let elementsTwo = await driver.elements("id", "SomeID");
 |--------|-----------|
 |Accessibility ID|Read a unique identifier for a UI element. For XCUITest it is the element's `resource-id` attribute. For Android it is the element's `content-desc` attribute.|
 |Class name|For IOS it is the full name of the XCUI element and begins with XCUIElementType. For Android it is the full name of the UIAutomator2 class (e.g.: android.widget.TextView)|
-|ID|Native element identifier. For Android|
-|@key|
+|ID|Native element identifier. For Android it is|
+|Name|Name of element|
+|XPath|Search the app XML source using xpath (not recommended, has performance issues)|
+|Android UiAutomator|Use the UI Automator API, in particular the UiSelector class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.|
+|IOS UIAutomation|When automating an iOS application, Apple’s UI Automation framework can be used to find elements|
 
 ## Description
 

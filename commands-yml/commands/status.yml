@@ -30,7 +30,7 @@ example_usage:
       // TODO
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/" # TODO
+  # java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/" # TODO
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.utils.is_url_connectable"
   javascript_wdio: "http://webdriver.io/api/protocol/status.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L44"

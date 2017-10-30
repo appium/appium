@@ -1,6 +1,6 @@
 # Set Script Timeout
 
-Set the amount of time, in milliseconds, that asynchronous scripts executed by [execute async](/docs/en/commands/session/execute-async.md) are permitted to run before they are aborted (Web context only)
+Set the amount of time, in milliseconds, that asynchronous scripts executed by [execute async](/docs/en/commands/session/timeouts/async-script.md) are permitted to run before they are aborted (Web context only)
 ## Example Usage
 
 ```java

@@ -9,7 +9,7 @@ capabilities.
 ### iOS mobile web automation
 
 Appium can automate the Safari browser on real and simulated iOS devices. It is
-accessed by setting the `browserName` [desired capabilty]((/docs/en/writing-running-appium/caps.md))
+accessed by setting the `browserName` [desired capabilty](/docs/en/writing-running-appium/caps.md)
 to `"Safari"` while leaving the `app` capability empty.
 
 You **must** run Safari on the device before attempting to use Appium, in order
@@ -182,7 +182,7 @@ Pre-requisites:
   device. See [here](/docs/en/writing-running-appium/web/chromedriver.md) for more
   information and details about compatibility.
 
-Then, use [desired capabilties]((/docs/en/writing-running-appium/caps.md)) like
+Then, use [desired capabilties](/docs/en/writing-running-appium/caps.md) like
 these to run your test in Chrome:
 
 ```javascript

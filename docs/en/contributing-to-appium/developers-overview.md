@@ -3,7 +3,7 @@
 Before reading this document, please ensure that you have read and understood
 the more general [introduction to Appium
 concepts](/docs/en/about-appium/intro.md) and the more general [contribution
-instructions](/CONTRIBUTING.md).
+instructions](https://github.com/appium/appium/blob/master/CONTRIBUTING.md).
 
 ### Technical Vision
 

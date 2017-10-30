@@ -192,7 +192,7 @@ directly. Therefore the connection has to be established through the USB cable.
 To establish this connection we use the [ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy).
 
 For instruction on how to install and run `ios-webkit-debugger-proxy` see the
-[iOS webkit debug proxy](/docs/en/writing-running-appium/ios-webkit-debug-proxy.md)
+[iOS webkit debug proxy](/writing-running-appium/web/ios-webkit-debug-proxy.md)
 documentation.
 
 Now you can start an Appium test session and follow the generalized instructions

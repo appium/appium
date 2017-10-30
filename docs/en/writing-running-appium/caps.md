@@ -47,8 +47,8 @@ These Capabilities span multiple drivers.
 |`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|
 |`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|
-|`noReset`| Don't reset app state before this session. See [here](/docs/en/writing-running-appium/reset-strategies.md) for more details  |`true`, `false`|
-|`fullReset`| Perform a complete reset. See [here](/docs/en/writing-running-appium/reset-strategies.md) for more details |`true`, `false`|
+|`noReset`| Don't reset app state before this session. See [here](/docs/en/writing-running-appium/other/reset-strategies.md) for more details  |`true`, `false`|
+|`fullReset`| Perform a complete reset. See [here](/docs/en/writing-running-appium/other/reset-strategies.md) for more details |`true`, `false`|
 |`eventTimings`|Enable or disable the reporting of the timings for various Appium-internal events (e.g., the start and end of each command, etc.). Defaults to `false`. To enable, use `true`. The timings are then reported as `events` property on response to querying the current session. See the [event timing docs](/docs/en/advanced-concepts/event-timings.md) for the the structure of this response.|e.g., `true`|
 |`enablePerformanceLogging`| (Web and webview only) Enable Chromedriver's (on Android) or Safari's (on iOS) performance logging (default `false`)| `true`, `false`|
 

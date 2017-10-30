@@ -17,7 +17,7 @@ code reuse between iOS, Android, and Windows testsuites.
 
 For specific information about what it means for Appium to "support" its
 platforms, and automation modalities, please see the [platform support
-doc](/docs/en/appium-setup/platform-support.md).
+doc](/docs/en/about-appium/platform-support.md).
 
 ### Appium Philosophy
 

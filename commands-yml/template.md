@@ -73,7 +73,6 @@
 {{#each selector_strategies}}
 |{{this.name}}|{{this.description}}|
 {{/each}}
-|@key|
 {{/if}}
 
 {{#if description}}

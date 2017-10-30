@@ -3,7 +3,7 @@ name: Find Element
 short_description: Search for an element on the page
 description:
   >
-     The locator strategy returns the first element it finds. #TODO: Let's make a document with the locator strategies that this links to
+     Get the first element that matches a locator [strategy](/docs/en/commands/element/find-elements#selector-strategies)
 
 example_usage:
   java:

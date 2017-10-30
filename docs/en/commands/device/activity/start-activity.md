@@ -1,6 +1,6 @@
 # Start Activity
 
-Get the name of the current Android activity
+Start an Android activity by providing package name and activity name
 ## Example Usage
 
 ```java

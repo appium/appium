@@ -33,7 +33,7 @@ Link to another document
 
 ### Writing Commands Documents
 
-The [command documents](/docs/en/commands) located in `docs/en/commands`, are generated
+The command documents located in `docs/en/commands`, are generated
 docs and aren't meant to be edited directly. The command documentation is defined in
 `commands-yml/commands`.
 

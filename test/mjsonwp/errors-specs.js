@@ -4,6 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 
 chai.use(chaiAsPromised);
+chai.should();
 
 // Error codes and messages have been added according to JsonWireProtocol see
 // https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes
@@ -144,5 +145,35 @@ describe('errorFromCode', () => {
     errorFromCode(99)
       .should.have.property('message', 'An unknown server-side error occurred ' +
                                        'while processing the command.');
+  });
+});
+describe('w3c Status Codes', () => {
+  it('should match the correct error codes', function () {
+    let non400Errors = [
+      ['NoSuchDriverError', 404],
+      ['JavaScriptError', 500],
+      ['MoveTargetOutOfBoundsError', 500],
+      ['NoSuchCookieError', 404],
+      ['NoSuchElementError', 404],
+      ['ScriptTimeoutError', 408],
+      ['SessionNotCreatedError', 500],
+      ['TimeoutError', 408],
+      ['UnableToSetCookieError', 500],
+      ['UnableToCaptureScreen', 500],
+      ['UnexpectedAlertOpenError', 500],
+      ['UnknownCommandError', 404],
+      ['UnknownError', 500],
+      ['UnknownMethodError', 405],
+      ['UnsupportedOperationError', 500],
+    ];
+
+    // Test the errors that we don't expect to return 400 code
+    for (let [errorName, expectedErrorCode] of non400Errors) {
+      errors[errorName].should.exist;
+      (new errors[errorName]()).should.have.property('w3cStatus', expectedErrorCode);
+    }
+
+    // Test an error that we expect to return 400 code
+    (new errors.NoSuchFrameError()).should.have.property('w3cStatus', 400);
   });
 });

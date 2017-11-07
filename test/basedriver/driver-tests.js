@@ -108,6 +108,28 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       await d.deleteSession();
     });
 
+    it('should distinguish between W3C and JSONWP session', async () => {
+      // Test JSONWP
+      await d.executeCommand('createSession', {
+        platformName: 'Fake',
+        deviceName: 'Commodore 64',
+      });
+
+      d.protocol.should.equal('MJSONWP');
+      await d.executeCommand('deleteSession');
+
+      // Test W3C (leave first 2 args null because those are the JSONWP args)
+      await d.executeCommand('createSession', null, null, {
+        alwaysMatch: {
+          platformName: 'Fake',
+          deviceName: 'Commodore 64',
+        },
+        firstMatch: [],
+      });
+
+      d.protocol.should.equal('W3C');
+    });
+
     it('should have a method to get driver for a session', async () => {
       let [sessId] = await d.createSession(defaultCaps);
       d.driverForSession(sessId).should.eql(d);

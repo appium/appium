@@ -1,4 +1,4 @@
-import { errors, MobileJsonWireProtocol } from '../..';
+import { errors, MobileJsonWireProtocol, BaseDriver } from '../..';
 import _ from 'lodash';
 
 class FakeDriver extends MobileJsonWireProtocol {
@@ -34,6 +34,9 @@ class FakeDriver extends MobileJsonWireProtocol {
   async executeCommand (cmd, ...args) {
     if (!this[cmd]) {
       throw new errors.NotYetImplementedError();
+    }
+    if (cmd === 'createSession') {
+      this.protocol = BaseDriver.determineProtocol.apply(null, args);
     }
     return await this[cmd](...args);
   }

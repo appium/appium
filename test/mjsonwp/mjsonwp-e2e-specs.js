@@ -6,6 +6,7 @@ import _ from 'lodash';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import sinon from 'sinon';
 
 let should = chai.should();
 chai.use(chaiAsPromised);
@@ -350,7 +351,7 @@ describe('MJSONWP', async () => {
       let desiredCapabilities = {a: 'b'};
       let requiredCapabilities = {c: 'd'};
       let capabilities = {e: 'f'};
-      it('should allow create session with desired caps', async () => {
+      it('should allow create session with desired caps (MJSONWP)', async () => {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
@@ -378,7 +379,7 @@ describe('MJSONWP', async () => {
           json: {},
         }).should.eventually.be.rejectedWith('400');
       });
-      it('should allow create session with capabilities', async () => {
+      it('should allow create session with capabilities (W3C)', async () => {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
@@ -388,6 +389,41 @@ describe('MJSONWP', async () => {
         });
         res.status.should.equal(0);
         res.value.should.eql(capabilities);
+      });
+      it('should fail with code 408 when starting W3C session and then running a command that throws a TimeoutError', async () => {
+        let w3cCaps = {
+          alwaysMatch: {
+            platformName: 'Fake',
+            deviceName: 'Commodore 64',
+          },
+          firstMatch: [{}],
+        };
+        let {sessionId} = await request({
+          url: 'http://localhost:8181/wd/hub/session',
+          method: 'POST',
+          json: {
+            capabilities: w3cCaps,
+          }
+        });
+        let {statusCode:badStatusCode} = await request({
+          url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
+          method: 'POST',
+          json: {
+            bad: 'params',
+          }
+        }).should.eventually.be.rejected;
+        badStatusCode.should.equal(400);
+
+        sinon.stub(driver, 'setUrl', () => { throw new errors.TimeoutError; });
+        let {statusCode} = await request({
+          url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
+          method: 'POST',
+          json: {
+            url: 'https://example.com/',
+          }
+        }).should.eventually.be.rejected;
+        statusCode.should.equal(408);
+        sinon.restore(driver, 'setUrl');
       });
     });
 

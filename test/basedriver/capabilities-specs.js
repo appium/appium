@@ -1,4 +1,4 @@
-import { parseCaps, validateCaps, mergeCaps, processCaps } from '../../lib/basedriver/capabilities';
+import { parseCaps, validateCaps, mergeCaps, processCapabilities } from '../../lib/basedriver/capabilities';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -205,11 +205,11 @@ describe('caps', () => {
 
   describe('#processCaps', () => {
     it('should return "alwaysMatch" if "firstMatch" and "constraints" were not provided', () => {
-      processCaps({}).should.deep.equal({});
+      processCapabilities({}).should.deep.equal({});
     });
 
     it('should return merged caps', () => {
-      processCaps({
+      processCapabilities({
         alwaysMatch: {hello: 'world'},
         firstMatch: [{foo: 'bar'}]
       }).should.deep.equal({hello: 'world', foo: 'bar'});

@@ -1,6 +1,6 @@
-## Running appium with multiple Xcode versions installed
+## Running Appium with multiple Xcode versions installed
 
-If you have multiple Xcode installations you may choose which toolset appium
+If you have multiple Xcode installations you may choose which toolset Appium
 should use with one of two ways:
 
 ### xcode-select tool
@@ -11,13 +11,13 @@ Assuming you want to choose `/Applications/Xcode7.app`:
   ```
   sudo xcode-select -s /Applications/Xcode7.app/Contents/Developer
   ```
-2. Run appium (from command line or with GUI).
+2. Run Appium (from command line or with GUI).
   ```
   appium
   ```
 
 ### Environment variable
-No privileges needed, affects only the current shell, so appium should be started
+No privileges needed, affects only the current shell, so Appium should be started
 within that shell.
 
 Assuming you want to choose `/Applications/Xcode9.app`:
@@ -25,7 +25,7 @@ Assuming you want to choose `/Applications/Xcode9.app`:
   ```
   export DEVELOPER_DIR=/Applications/Xcode9.app/Contents/Developer
   ```
-2. Run appium *from the same shell.*
+2. Run Appium *from the same shell.*
   ```
   appium
   ```

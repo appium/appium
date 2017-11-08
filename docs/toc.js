@@ -230,6 +230,7 @@ module.exports = {
       ["Using Selenium Grid with Appium", "grid.md"],
       ["Cross-domain iframes", "cross-domain-iframes.md"],
       ["Using a custom WDA server", "wda-custom-server.md"],
+      ["Running with multiple versions of Xcode", "multiple-xcode-versions.md"],
       ["The Event Timings API", "event-timings.md"],
       ["Setup for Parallel Testing", "parallel-tests.md"],
       ["The Settings API", "settings.md"]]],

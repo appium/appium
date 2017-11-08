@@ -17,13 +17,13 @@ Assuming you want to choose `/Applications/Xcode7.app`:
   ```
 
 ### Environment variable
-No privileges needed, affects only current shell, so appium should be started
+No privileges needed, affects only the current shell, so appium should be started
 within that shell.
 
 Assuming you want to choose `/Applications/Xcode9.app`:
 1. Set `DEVELOPER_DIR` environment variable.
   ```
-  DEVELOPER_DIR=/Applications/Xcode9.app/Contents/Developer
+  export DEVELOPER_DIR=/Applications/Xcode9.app/Contents/Developer
   ```
 2. Run appium *from the same shell.*
   ```

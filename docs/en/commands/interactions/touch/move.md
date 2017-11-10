@@ -1,4 +1,4 @@
-# Tap
+# Move To
 
 Finger move on the screen
 ## Example Usage

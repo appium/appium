@@ -39,7 +39,10 @@ Note that the actual commands you would use in your test script differ based on 
 
 ### Supported Settings
 
-**"ignoreUnimportantViews"** - Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which ignores all views which are marked IMPORTANT_FOR_ACCESSIBILITY_NO or IMPORTANT_FOR_ACCESSIBILITY_AUTO (and have been deemed not important by the system), in an attempt to make things less confusing or faster.
+|Name|Description|Values|
+|----|----|----|
+|`ignoreUnimportantViews`|Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which ignores all views which are marked IMPORTANT_FOR_ACCESSIBILITY_NO or IMPORTANT_FOR_ACCESSIBILITY_AUTO (and have been deemed not important by the system), in an attempt to make things less confusing or faster. `false` by default. | `false` or `true` |
+|`allowInvisibleElements`|For UiAutomator2 Driver. Boolean which set whether Android device should show all elements, visible and invisible. `false` by default. | `false` or `true` |
 
 #### Android UiAutomator Configurator
 

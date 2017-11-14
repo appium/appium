@@ -54,6 +54,7 @@ module.exports = {
           ["Start Activity", "start-activity.md"],
           ["Current Activity", "current-activity.md"],
           ["Current Package", "current-package.md"],
+          ["Broadcast Intent", "broadcast-intent.md"],
         ]],
         ["App", ["app",
           ["Install App", "install-app.md"],

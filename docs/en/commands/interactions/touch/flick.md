@@ -1,4 +1,4 @@
-# Tap
+# Flick
 
 Flick on the touch screen using finger motion events
 ## Example Usage

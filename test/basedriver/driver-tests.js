@@ -7,6 +7,14 @@ import { DeviceSettings } from '../..';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
+const w3cCaps = {
+  alwaysMatch: {
+    platformName: 'Fake',
+    deviceName: 'Commodore 64',
+  },
+  firstMatch: [],
+};
+
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
 function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
@@ -231,6 +239,29 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         it('should be settable through `timeouts`', async () => {
           await d.timeouts('implicit', 20);
           d.implicitWaitMs.should.equal(20);
+        });
+      });
+    });
+
+    describe('timeouts (W3C)', () => {
+      beforeEach(async () => {
+        await d.createSession(null, null, w3cCaps);
+      });
+      afterEach(async () => {
+        await d.deleteSession();
+      });
+      it('should get timeouts that we set', async () => {
+        await d.timeouts('implicit', 1000);
+        await d.getTimeouts().should.eventually.have.property('implicit', 1000);
+        await d.timeouts('command', 2000);
+        await d.getTimeouts().should.eventually.deep.equal({
+          implicit: 1000,
+          command: 2000,
+        });
+        await d.timeouts('implicit', 3000);
+        await d.getTimeouts().should.eventually.deep.equal({
+          implicit: 3000,
+          command: 2000,
         });
       });
     });

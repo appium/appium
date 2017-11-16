@@ -17,16 +17,19 @@ describe('MJSONWP', () => {
         (() => {validators.setUrl('foo');}).should.throw(/url/i);
       });
       it('should succeed when given url starting with http', async () => {
-        (() => {validators.setUrl('http://appium.io');}).should.not.throw;
+        (() => {validators.setUrl('http://appium.io');}).should.not.throw();
       });
       it('should succeed when given an android-like scheme', async () => {
-        (() => {validators.setUrl('content://contacts/people/1');}).should.not.throw;
+        (() => {validators.setUrl('content://contacts/people/1');}).should.not.throw();
+      });
+      it('should succeed with hyphens dots and plus chars in the scheme', async () => {
+        (() => {validators.setUrl('my-app.a+b://login');}).should.not.throw();
       });
       it('should succeed when given an about scheme', async () => {
-        (() => {validators.setUrl('about:blank');}).should.not.throw;
+        (() => {validators.setUrl('about:blank');}).should.not.throw();
       });
       it('should succeed when given a data scheme', async () => {
-        (() => {validators.setUrl('data:text/html,<html></html>');}).should.not.throw;
+        (() => {validators.setUrl('data:text/html,<html></html>');}).should.not.throw();
       });
     });
     describe('implicitWait', () => {
@@ -40,10 +43,10 @@ describe('MJSONWP', () => {
         (() => {validators.implicitWait(-1);}).should.throw(/ms/i);
       });
       it('should succeed when given an ms of 0', async () => {
-        (() => {validators.implicitWait(0);}).should.not.throw;
+        (() => {validators.implicitWait(0);}).should.not.throw();
       });
       it('should succeed when given an ms greater than 0', async () => {
-        (() => {validators.implicitWait(100);}).should.not.throw;
+        (() => {validators.implicitWait(100);}).should.not.throw();
       });
     });
     describe('asyncScriptTimeout', () => {
@@ -57,10 +60,10 @@ describe('MJSONWP', () => {
         (() => {validators.asyncScriptTimeout(-1);}).should.throw(/ms/i);
       });
       it('should succeed when given an ms of 0', async () => {
-        (() => {validators.asyncScriptTimeout(0);}).should.not.throw;
+        (() => {validators.asyncScriptTimeout(0);}).should.not.throw();
       });
       it('should succeed when given an ms greater than 0', async () => {
-        (() => {validators.asyncScriptTimeout(100);}).should.not.throw;
+        (() => {validators.asyncScriptTimeout(100);}).should.not.throw();
       });
     });
     describe('other timeouts', () => {
@@ -74,10 +77,10 @@ describe('MJSONWP', () => {
         (() => {validators.timeouts('page load', -1);}).should.throw(/ms/i);
       });
       it('should succeed when given an ms of 0', async () => {
-        (() => {validators.timeouts('page load', 0);}).should.not.throw;
+        (() => {validators.timeouts('page load', 0);}).should.not.throw();
       });
       it('should succeed when given an ms greater than 0', async () => {
-        (() => {validators.timeouts('page load', 100);}).should.not.throw;
+        (() => {validators.timeouts('page load', 100);}).should.not.throw();
       });
       it('should not allow an invalid timeout type', async () => {
         (() => {validators.timeouts('foofoo', 100);}).should.throw(/'foofoo'/);
@@ -88,9 +91,9 @@ describe('MJSONWP', () => {
         (() => {validators.clickCurrent(4);}).should.throw(/0, 1, or 2/i);
       });
       it('should succeed when given a valid button', async () => {
-        (() => {validators.clickCurrent(0);}).should.not.throw;
-        (() => {validators.clickCurrent(1);}).should.not.throw;
-        (() => {validators.clickCurrent(2);}).should.not.throw;
+        (() => {validators.clickCurrent(0);}).should.not.throw();
+        (() => {validators.clickCurrent(1);}).should.not.throw();
+        (() => {validators.clickCurrent(2);}).should.not.throw();
       });
     });
     describe('setNetworkConnection', () => {
@@ -101,11 +104,11 @@ describe('MJSONWP', () => {
         (() => {validators.setNetworkConnection(8);}).should.throw(/0, 1, 2, 4, 6/i);
       });
       it('should succeed when given a valid type', async () => {
-        (() => {validators.setNetworkConnection(0);}).should.not.throw;
-        (() => {validators.setNetworkConnection(1);}).should.not.throw;
-        (() => {validators.setNetworkConnection(2);}).should.not.throw;
-        (() => {validators.setNetworkConnection(4);}).should.not.throw;
-        (() => {validators.setNetworkConnection(6);}).should.not.throw;
+        (() => {validators.setNetworkConnection(0);}).should.not.throw();
+        (() => {validators.setNetworkConnection(1);}).should.not.throw();
+        (() => {validators.setNetworkConnection(2);}).should.not.throw();
+        (() => {validators.setNetworkConnection(4);}).should.not.throw();
+        (() => {validators.setNetworkConnection(6);}).should.not.throw();
       });
     });
   });

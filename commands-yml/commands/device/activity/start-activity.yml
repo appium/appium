@@ -20,7 +20,7 @@ example_usage:
       driver.startActivity("com.example", "ActivityName");
   ruby:
     |
-      @driver.start_activity("com.example", "ActivityName");
+      @driver.start_activity app_package: "com.example", app_activity: "ActivityName"
   php:
     |
       // TODO PHP sample
@@ -33,7 +33,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L591"
   javascript_wdio: "http://webdriver.io/api/mobile/startActivity.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2948"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:start_activity"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Android/Device#start_activity-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

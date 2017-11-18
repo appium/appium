@@ -21,7 +21,8 @@ example_usage:
       driver.status();
   ruby:
     |
-      # TODO
+      @driver.remote_status
+      remote_status
   php:
     |
       // TODO

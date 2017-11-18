@@ -16,7 +16,7 @@ example_usage:
       driver.reset();
   ruby:
     |
-      @driver.reset()
+      @driver.reset
   php:
     |
       // TODO PHP sample
@@ -29,7 +29,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L372"
   javascript_wdio: "http://webdriver.io/api/mobile/reset.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2827"
-  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L11"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#reset-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

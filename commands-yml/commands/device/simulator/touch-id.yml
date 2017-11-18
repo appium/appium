@@ -45,7 +45,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L661"
   javascript_wdio: "http://webdriver.io/api/mobile/touchId.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3133"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Ios/Device:touch_id"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Ios/Device#touch_id-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

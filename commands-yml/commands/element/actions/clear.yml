@@ -18,7 +18,7 @@ example_usage:
       driver.clearElement("~SomeAccessibilityId");
   ruby:
     |
-      @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear()
+      @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear
   php:
     |
       // TODO PHP sample

@@ -8,11 +8,11 @@ example_usage:
       boolean isKeyboardShown = driver.isKeyboardShown();
   ruby:
     |
-      @driver.is_keyboard_shown();
+      @driver.is_keyboard_shown
 
 client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/android/HasDeviceDetails.html#isKeyboardShown--"
-  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L24"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#is_keyboard_shown-instance_method"
 
 # Driver support by platform
 driver_support:

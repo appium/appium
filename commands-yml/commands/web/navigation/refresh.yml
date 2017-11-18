@@ -17,7 +17,7 @@ example_usage:
       driver.refresh();
   ruby:
     |
-      @driver.refresh()
+      @driver.refresh
   php:
     |
       // TODO PHP sample

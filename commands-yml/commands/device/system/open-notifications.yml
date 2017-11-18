@@ -30,7 +30,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L676"
   javascript_wdio: "http://webdriver.io/api/mobile/openNotifications.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3004"
-  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L18"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#open_notifications-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

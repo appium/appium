@@ -7,15 +7,15 @@ example_usage:
       driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, Duration.ofSeconds(5));
   javascript_wd:
     |
-      let settings = await driver.settings("settings");
+      await driver.updateSettings({nativeWebTap: true});
   javascript_wdio:
     |
-      let settings = driver.settings("settings");
+      driver.settings({nativeWebTap: true});
 
 client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-"
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3018"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3032"
 
 # Driver support by platform
 driver_support:
@@ -37,7 +37,7 @@ client_support:
   csharp: false
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -52,5 +52,5 @@ endpoint:
       description: a JSON hash of settings to update, see [Settings API](/docs/en/advanced-concepts/settings.md).
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L454

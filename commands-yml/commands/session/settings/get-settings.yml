@@ -7,15 +7,15 @@ example_usage:
       Map<String, Object> settings = driver.getSettings();
   javascript_wd:
     |
-      await driver.settings(settings);
+      await driver.settings();
   javascript_wdio:
     |
-      let settings = driver.settings(settings);
+      let settings = driver.settings();
 
 client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#getSettings--"
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3032"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3018"
 
 # Driver support by platform
 driver_support:
@@ -37,7 +37,7 @@ client_support:
   csharp: false
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -52,5 +52,5 @@ endpoint:
 
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L454

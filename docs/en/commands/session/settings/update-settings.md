@@ -16,12 +16,12 @@ driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, Duration.ofSeconds(5));
 ```javascript
 // Javascript
 // webdriver.io example
-let settings = driver.settings("settings");
+driver.settings({nativeWebTap: true});
 
 
 
 // wd example
-let settings = await driver.settings("settings");
+await driver.updateSettings({nativeWebTap: true});
 
 ```
 
@@ -59,7 +59,7 @@ let settings = await driver.settings("settings");
 |[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/settings.html)  |
-|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3018)  |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3032)  |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  |

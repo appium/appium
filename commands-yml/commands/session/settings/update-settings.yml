@@ -11,11 +11,15 @@ example_usage:
   javascript_wdio:
     |
       driver.settings({nativeWebTap: true});
+  ruby:
+    |
+      @driver.update_settings(sample: 'value')
 
 client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-"
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3032"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#update_settings-instance_method"
 
 # Driver support by platform
 driver_support:

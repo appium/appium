@@ -15,11 +15,13 @@ example_usage:
     |
       await driver.lock();
       await driver.unlock();
-
   javascript_wdio:
     |
       driver.lock()
         .unlock();
+  ruby:
+    |
+      @driver.unlock
   php:
     |
       // TODO PHP sample
@@ -31,6 +33,7 @@ client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/android/LocksAndroidDevice.html#unlockDevice---"
   javascript_wdio: "http://webdriver.io/api/mobile/unlock.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2386"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#unlock-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

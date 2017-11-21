@@ -15,7 +15,7 @@ example_usage:
       driver.isLocked();
   ruby:
     |
-      @driver.device_locked()
+      @driver.device_locked?
   php:
     |
       // TODO PHP sample
@@ -27,7 +27,7 @@ client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/android/LocksAndroidDevice.html#isLocked--"
   javascript_wdio: "http://webdriver.io/api/mobile/isLocked.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2407"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:device_locked%3F"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#device_locked%3F-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

@@ -11,7 +11,7 @@ example_usage:
       driver.toggleAirplaneMode();
   ruby:
     |
-      @driver.toggle_flight_mode();
+      @driver.toggle_flight_mode
   php:
     |
       // TODO
@@ -22,7 +22,7 @@ example_usage:
 client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/toggleAirplaneMode.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2712"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:toggle_flight_mode"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#toggle_flight_mode-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

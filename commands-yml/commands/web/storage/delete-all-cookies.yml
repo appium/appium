@@ -17,7 +17,7 @@ example_usage:
       driver.cookie("delete");
   ruby:
     |
-      @driver.delete_all_cookies()
+      @driver.delete_all_cookies
   php:
     |
       // TODO PHP sample

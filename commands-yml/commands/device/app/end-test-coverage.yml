@@ -25,7 +25,7 @@ client_docs:
   java: "http://appium.github.io/java-client/io/appium/java_client/android/AndroidDriver.html#endTestCoverage-java.lang.String-java.lang.String-"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L627"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2858"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:end_coverage"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Android/Device#end_coverage-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

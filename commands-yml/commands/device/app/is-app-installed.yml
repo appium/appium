@@ -30,7 +30,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L542"
   javascript_wdio: "http://webdriver.io/api/mobile/isAppInstalled.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2586"
-  ruby: "https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L40"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#app_installed%3F-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

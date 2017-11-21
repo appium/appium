@@ -18,7 +18,7 @@ example_usage:
       let caps = driver.session('c8db88a0-47a6-47a1-802d-164d746c06aa');
   ruby:
     |
-      @driver.session_capabilities()
+      @driver.session_capabilities
   php:
     |
       // TODO PHP sample

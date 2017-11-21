@@ -42,7 +42,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
   javascript_wdio: "http://webdriver.io/api/mobile/context.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
-  ruby: "https://github.com/appium/ruby_lib"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

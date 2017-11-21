@@ -18,7 +18,7 @@ example_usage:
       driver.frameParent();
   ruby:
     |
-      @driver.parent_frame()
+      @driver.parent_frame
   php:
     |
       // TODO PHP sample

@@ -18,7 +18,7 @@ example_usage:
       driver.end();
   ruby:
     |
-      @driver.quit();
+      @driver.quit
   php:
     |
       // TODO PHP sample

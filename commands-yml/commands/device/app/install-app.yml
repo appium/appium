@@ -17,7 +17,7 @@ example_usage:
       driver.installApp('/Users/johndoe/path/to/app.apk')
   ruby:
     |
-      @driver.install_app('/Users/johndoe/path/to/app.apk');
+      @driver.install_app('/Users/johndoe/path/to/app.apk')
   php:
     |
       // TODO PHP sample
@@ -30,7 +30,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L554"
   javascript_wdio: "http://webdriver.io/api/mobile/installApp.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2540"
-  ruby: "https://github.com/appium/ruby_lib/blob/eb7680f6db1e821901045beacba0a8b80de722fb/lib/appium_lib/core/common/command.rb#L38"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#install_app-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

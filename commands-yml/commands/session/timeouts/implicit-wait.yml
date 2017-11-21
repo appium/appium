@@ -27,7 +27,7 @@ example_usage:
       driver.timeoutsImplicitWait(5000)
   ruby:
     |
-      @driver.implicit_wait(5) # Ruby translates it to seconds
+      @driver.manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
   php:
     |
       // TODO PHP sample

@@ -18,7 +18,7 @@ example_usage:
       let logs = driver.log('driver')
   ruby:
     |
-      @driver.logs('driver')
+      @driver.get_log('driver')
   php:
     |
       // TODO PHP sample
@@ -31,7 +31,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html?highlight=get_log#selenium.webdriver.remote.webdriver.WebDriver.get_log"
   javascript_wdio: "http://webdriver.io/api/protocol/log.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L455"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Common#get_log-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

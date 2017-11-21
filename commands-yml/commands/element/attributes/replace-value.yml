@@ -1,29 +1,27 @@
 ---
-name: Get Element Text
-short_description: Returns visible text for element
+name: Replace the value
+short_description: Replace the value to element directly
 description:
   >
-     Returns the visible text for the element.
+     Replace the value to element directly.
 
 example_usage:
   java:
     |
-      MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
-      let elText = element.getText();
+      // TODO Java sample
   python:
     |
-      # el = self.driver.find_element_by_accessibility_id('SomeId')
-      # TODO: Python example
+      // TODO: Python example
   javascript_wd:
     |
-      let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-      await element.submit();
+      // TODO JavaScript sample
   javascript_wdio:
     |
-      driver.getText("~SomeAccessibilityId");
+      // TODO JavaScript sample
   ruby:
     |
-      # TODO Ruby sample
+      element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
+      @driver.replace_value element, 'some'
   php:
     |
       // TODO PHP sample
@@ -32,11 +30,11 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--"
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--" # TODO Java documentation link
   python: "http://selenium-python.readthedocs.io/api.html" # TODO Python documentation link
-  javascript_wdio: "http://webdriver.io/api/property/getText.html"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1832"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/" # TODO Ruby documentation link
+  javascript_wdio: "http://webdriver.io/api/property/getText.html" # TODO JAvaScript documentation link
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1832" # TODO JAvaScript documentation link
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#replace_value-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -64,15 +62,18 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/:element_id/value
+  url: /wd/hub/session/:session_id/appium/element/:element_id/replace_value
   method: 'POST'
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
     - name: element_id
       description: ID of the element to get the text from
+  json_parameters:
+    - name: value
+      type: array<string>
+      description: The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed.
 
 # Links to specifications. Should link to at least one specification
 specifications: 
-  w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-text
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidvalue
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L451

@@ -29,7 +29,7 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L529"
   javascript_wdio: "http://webdriver.io/api/mobile/background.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2841"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:background_app"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#background_app-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

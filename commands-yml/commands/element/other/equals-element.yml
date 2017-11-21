@@ -23,7 +23,9 @@ example_usage:
       # TODO WDIO example
   ruby:
     |
-      # TODO Ruby example
+      element1 = @driver.find_element :class_name, "someClass"
+      element2 = @driver.find_element :class_name, "someOtherClass"
+      element1 == element2
   php:
     |
       // TODO PHP sample
@@ -36,7 +38,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html" # TODO Python documentation link
   javascript_wdio: "http://webdriver.io/api/state/isEnabled.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1463"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method"
+  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

@@ -1,7 +1,66 @@
+CHANGES IN VERSION 1.7.2 (from 1.7.1)
+===================================
+
+Appium 1.7.2 is a feature and bug fix release. It fixes many issues found in
+ealier releases.
+
+
+#### General
+* Fix memory leak in server logging
+* Add support for MacOS 10.13
+* Clean up logging to make messages more clear and useful
+
+
+#### iOS
+* Simulators
+  * Clean up handling in Xcode 9
+  * Add support for `shake` gesture (requires AppleScript)
+  * Add support for custom geo locations (requires AppleScript)
+  * Add possibility to clear caches
+  * Make sure execution does not fail when trying to shut down simulators that
+    are already shut down
+* Fix handling of source when within a frame/iframe, so that the source of the
+  frame is retrieved instead of that of the top-most frameset
+* Fix error when unable to parse real device date/time, to return unparsable
+  date rather than `Invalid Date`
+* Fix getting crash logs
+* Fix getting device logs in iOS 10+
+* Fix cleaning up of temporary files
+* Correctly handle device names for iPhone 7, 8 and X in Xcode 9
+* Fix screenshots for larger real devices
+* Fix runtime Xcode selection through `DEVELOPER_DIR` environment variable
+* Add `useJSONSource` desired capability to force Appium to use WDA JSON source
+  and parse locally, to speed up source retrieval on larger devices
+
+#### iOS - Instruments-specific
+
+
+#### Android
+* Fix handling of install/upgrade of Appium helper apps (for settings manipulation
+  and unlocking of devices)
+* Add support for Chromedriver 2.33 (which supports webviews on Android O)
+* Add `showChromedriverLog` desired capability to bring Chromedriver logs in-line
+  in the Appium server logs
+* Fix error in stopping coverage when session failed to start
+* Add support for getting and setting animation state
+* Fix handling of size-limited text fields in API levels below 24
+* Add support for getting the current value of progress bars
+* Fix handling of initial orientation, and make sure no orientation is set if
+  nothing is requested
+* Make sure all UiAutomator commands are properly handled
+* Ensure `pageLoadStrategy` capability is passed to Chromedriver
+* Add support to get currently running package name
+* Ensure non-working Chromedriver is correctly handled
+
+
+#### Android - UiAutomator-specific
+* Add `password` to retrievable attributes
+
+
 CHANGES IN VERSION 1.7.1 (from 1.7.0)
 ===================================
 
-Appium 1.7.1 fixes multiple issues with the previous release. 
+Appium 1.7.1 fixes multiple issues with the previous release.
 
 #### iOS
 * Add ability to change default Simulator preferences

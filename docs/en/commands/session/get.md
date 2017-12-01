@@ -29,7 +29,7 @@ let caps = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746c06a
 
 ```ruby
 # Ruby
-@driver.session_capabilities()
+@driver.session_capabilities
 
 ```
 

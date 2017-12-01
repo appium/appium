@@ -29,7 +29,7 @@ await driver.forward();
 
 ```ruby
 # Ruby
-@driver.forward()
+@driver.forward
 
 ```
 

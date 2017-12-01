@@ -37,7 +37,8 @@ let location = await element.getLocation();
 
 ```php
 # PHP
-// TODO PHP sample
+$el = $this->byAccessibilityId('SomeAccessibilityID');
+$location = $el->location();
 
 ```
 

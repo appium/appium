@@ -37,7 +37,8 @@ let size = await element.getSize();
 
 ```php
 # PHP
-// TODO PHP sample
+$el = $this->byAccessibilityId('SomeAccessibilityID');
+$size = $el->size();
 
 ```
 

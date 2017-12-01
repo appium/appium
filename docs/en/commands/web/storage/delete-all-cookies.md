@@ -29,7 +29,7 @@ await driver.deleteAllCookies();
 
 ```ruby
 # Ruby
-@driver.delete_all_cookies()
+@driver.delete_all_cookies
 
 ```
 

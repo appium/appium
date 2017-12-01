@@ -1,7 +1,7 @@
 ---
 name: Install App
 short_description: Install the given app onto the device
-    
+
 example_usage:
   java:
     |
@@ -20,7 +20,7 @@ example_usage:
       @driver.install_app('/Users/johndoe/path/to/app.apk')
   php:
     |
-      // TODO PHP sample
+      $driver->installApp('/Users/johndoe/path/to/app.apk');
   csharp:
     |
       // TODO C# sample
@@ -54,7 +54,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -69,5 +69,5 @@ endpoint:
       description: Path of the app being installed
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L372

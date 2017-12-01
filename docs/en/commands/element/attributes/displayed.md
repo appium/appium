@@ -31,13 +31,14 @@ let isDisplayed = await element.isDisplayed();
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?()
+@driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$el = $this->byAccessibilityId('SomeAccessibilityID');
+$isDisplayed = $el->displayed();
 
 ```
 

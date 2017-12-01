@@ -37,7 +37,7 @@ let elementTwo = await driver.element("id", "SomeID");
 
 ```php
 # PHP
-// TODO PHP sample
+$el = $this->byAccessibilityId('SomeAccessibilityID');
 
 ```
 
@@ -50,7 +50,7 @@ let elementTwo = await driver.element("id", "SomeID");
 
 ## Description
 
-Get the first element that matches a locator [strategy](/docs/en/commands/element/find-elements#selector-strategies)
+Get the first element that matches a [locator strategy](/docs/en/commands/element/find-elements.md#selector-strategies)
 
 
 ## Support

@@ -21,7 +21,7 @@ example_usage:
       @driver.shake
   php:
     |
-      // TODO PHP sample
+      $driver->shake();
   csharp:
     |
       // TODO C# sample
@@ -38,7 +38,7 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: false
+    xcuitest: true (simulator only)
     uiautomation: true
   android:
     uiautomator2: false
@@ -55,7 +55,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

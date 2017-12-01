@@ -31,7 +31,7 @@ await element.clear();
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, "SomeAccessibilityID").clear()
+@driver.find_element(:accessibility_id, "SomeAccessibilityID").clear
 
 ```
 

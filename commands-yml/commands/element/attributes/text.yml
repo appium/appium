@@ -12,8 +12,8 @@ example_usage:
       let elText = element.getText();
   python:
     |
-      # el = self.driver.find_element_by_accessibility_id('SomeId')
-      # TODO: Python example
+      el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+      text = el.text
   javascript_wd:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
@@ -27,7 +27,8 @@ example_usage:
       element.text
   php:
     |
-      // TODO PHP sample
+      $el = $this->byAccessibilityId('SomeAccessibilityID');
+      $text = $el->text();
   csharp:
     |
       // TODO C# sample
@@ -61,7 +62,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -74,6 +75,6 @@ endpoint:
       description: ID of the element to get the text from
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-text
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidtext

@@ -31,13 +31,13 @@ let elementsTwo = await driver.elements("id", "SomeID");
 
 ```ruby
 # Ruby
-@driver.find_elements("~SomeAccessibilityID")
+@driver.find_elements(:accessibility_id, "~SomeAccessibilityID")
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$els = $this->elements($this->using('accessibility id')->value('SomeAccessibilityID'));
 
 ```
 

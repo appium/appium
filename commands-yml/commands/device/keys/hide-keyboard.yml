@@ -20,7 +20,10 @@ example_usage:
       @driver.hide_keyboard
   php:
     |
-      // TODO PHP sample
+      $driver->hideKeyboard();
+      $driver->hideKeyboard(array(
+            'keyName' => 'Done'
+      ));
   csharp:
     |
       // TODO C# sample
@@ -54,7 +57,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

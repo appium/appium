@@ -31,7 +31,7 @@ let isSelected = await element.isSelected();
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, "SomeAccessibilityID").selected?()
+@driver.find_element(:accessibility_id, "SomeAccessibilityID").selected?
 
 ```
 

@@ -1,38 +1,36 @@
-# Get Element Text
+# Replace the value
 
-Returns visible text for element
+Replace the value to element directly
 ## Example Usage
 
 ```java
 // Java
-MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
-let elText = element.getText();
+// TODO Java sample
 
 ```
 
 ```python
 # Python
-# el = self.driver.find_element_by_accessibility_id('SomeId')
-# TODO: Python example
+// TODO: Python example
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-driver.getText("~SomeAccessibilityId");
+// TODO JavaScript sample
 
 
 
 // wd example
-let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-await element.submit();
+// TODO JavaScript sample
 
 ```
 
 ```ruby
 # Ruby
-# TODO Ruby sample
+element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
+@driver.replace_value element, 'some'
 
 ```
 
@@ -51,7 +49,7 @@ await element.submit();
 
 ## Description
 
-Returns the visible text for the element.
+Replace the value to element directly.
 
 
 ## Support
@@ -75,7 +73,7 @@ Returns the visible text for the element.
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [selenium-python.readthedocs.io](http://selenium-python.readthedocs.io/api.html)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/property/getText.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L1832)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#replace_value-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 
@@ -83,7 +81,7 @@ Returns the visible text for the element.
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/element/:element_id/value`
+`POST /wd/hub/session/:session_id/appium/element/:element_id/replace_value`
 
 ### URL Parameters
 
@@ -94,7 +92,9 @@ Returns the visible text for the element.
 
 ### JSON Parameters
 
-None
+|name|type|description|
+|----|----|-----------|
+| value | `array<string>` | The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed. |
 
 ### Response
 
@@ -102,5 +102,4 @@ null
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-text)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidvalue)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L451)

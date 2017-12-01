@@ -29,7 +29,7 @@ await driver.setOrientation();
 
 ```ruby
 # Ruby
-@driver.orientation("LANDSCAPE")
+@driver.rotation = :landscape
 
 ```
 

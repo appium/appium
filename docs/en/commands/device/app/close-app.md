@@ -29,13 +29,13 @@ await driver.closeApp();
 
 ```ruby
 # Ruby
-@driver.close_app()
+@driver.close_app
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$driver->closeApp();
 
 ```
 
@@ -68,7 +68,7 @@ await driver.closeApp();
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L584)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/closeApp.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2798)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [github.com](https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L10)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#close_app-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

@@ -29,7 +29,7 @@ await driver.toggleTouchIdEnrollment();
 
 ```ruby
 # Ruby
-@driver.toggle_touch_id_enrollment()
+@driver.toggle_touch_id_enrollment
 
 ```
 
@@ -75,7 +75,7 @@ This call will only work if the Appium process or its parent application (e.g., 
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L670)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/toggleTouchIdEnrollment.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3150)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [github.com](https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L64)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Ios/Device#toggle_touch_id_enrollment-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

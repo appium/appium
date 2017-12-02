@@ -37,7 +37,8 @@ await element.type("Hello world!")
 
 ```php
 # PHP
-// TODO PHP sample
+$el = $this->byAccessibilityId('SomeAccessibilityID');
+$el->setText('Hello world!');
 
 ```
 

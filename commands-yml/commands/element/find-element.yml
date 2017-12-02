@@ -3,7 +3,7 @@ name: Find Element
 short_description: Search for an element on the page
 description:
   >
-     Get the first element that matches a locator [strategy](/docs/en/commands/element/find-elements#selector-strategies)
+     Get the first element that matches a [locator strategy](/docs/en/commands/element/find-elements.md#selector-strategies)
 
 example_usage:
   java:
@@ -25,7 +25,7 @@ example_usage:
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
   php:
     |
-      // TODO PHP sample
+      $el = $this->byAccessibilityId('SomeAccessibilityID');
   csharp:
     |
       // TODO C# sample
@@ -59,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -75,12 +75,12 @@ endpoint:
     - name: value
       type: string
       description: The search target
-  response: 
+  response:
     - name: ELEMENT
       type: object
       description: A JSON object for the located element
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#find-element
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelement

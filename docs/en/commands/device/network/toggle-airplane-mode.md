@@ -25,7 +25,7 @@ await driver.toggleAirplaneMode();
 
 ```ruby
 # Ruby
-@driver.toggle_flight_mode();
+@driver.toggle_flight_mode
 
 ```
 
@@ -64,7 +64,7 @@ await driver.toggleAirplaneMode();
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/toggleAirplaneMode.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2712)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:toggle_flight_mode)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#toggle_flight_mode-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

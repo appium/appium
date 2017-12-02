@@ -29,7 +29,7 @@ let orientation = await driver.getOrientation();
 
 ```ruby
 # Ruby
-@driver.orientation()
+@driver.orientation
 
 ```
 

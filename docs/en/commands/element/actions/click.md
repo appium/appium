@@ -38,7 +38,7 @@ await element.click();
 
 ```php
 # PHP
-// TODO
+$driver->byAccessibilityId('SomeId')->click();
 
 ```
 

@@ -29,13 +29,13 @@ await driver.shake();
 
 ```ruby
 # Ruby
-@driver.shake()
+@driver.shake
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$driver->shake();
 
 ```
 
@@ -53,7 +53,7 @@ await driver.shake();
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
 | Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
@@ -68,7 +68,7 @@ await driver.shake();
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L655)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/shake.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2342)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:shake)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#shake-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

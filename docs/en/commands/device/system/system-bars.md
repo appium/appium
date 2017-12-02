@@ -22,7 +22,7 @@ Map<String, String> systemBars = driver.getSystemBars();
 
 ```ruby
 # Ruby
-@driver.get_system_bars();
+@driver.get_system_bars
 
 ```
 
@@ -61,7 +61,7 @@ Map<String, String> systemBars = driver.getSystemBars();
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None |  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:get_system_bars)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#get_system_bars-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

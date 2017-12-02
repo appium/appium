@@ -29,7 +29,7 @@ await driver.refresh();
 
 ```ruby
 # Ruby
-@driver.refresh()
+@driver.refresh
 
 ```
 

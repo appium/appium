@@ -5,33 +5,31 @@ Get an element's tag name
 
 ```java
 // Java
-MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
-String tagName = element.getTagName();
+// TODO Java sample
 
 ```
 
 ```python
 # Python
-tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').tag_name
+// TODO Python sample
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+// TODO javascript_wdio sample
 
 
 
 // wd example
-let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-let tagName = await element.getTagName();
+// TODO javascript_wd sample
 
 ```
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+// TODO Ruby sample
 
 ```
 
@@ -78,7 +76,7 @@ let tagName = await element.getTagName();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/elements/:element_id/name`
+`GET /wd/hub/session/:session_id/element/:element_id/pageIndex`
 
 ### URL Parameters
 
@@ -97,5 +95,4 @@ The tag name of the element (`string`)
 
 ## See Also
 
-* [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L285)

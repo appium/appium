@@ -32,13 +32,14 @@ await driver.startActivity({
 
 ```ruby
 # Ruby
-@driver.start_activity("com.example", "ActivityName");
+@driver.start_activity app_package: "com.example", app_activity: "ActivityName"
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$driver->startActivity(array('appPackage' => 'com.example',
+                             'appActivity' => 'ActivityName'));
 
 ```
 
@@ -71,7 +72,7 @@ await driver.startActivity({
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L591)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/startActivity.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2948)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:start_activity)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Android/Device#start_activity-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

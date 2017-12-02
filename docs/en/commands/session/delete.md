@@ -29,7 +29,7 @@ await driver.quit();
 
 ```ruby
 # Ruby
-@driver.quit();
+@driver.quit
 
 ```
 

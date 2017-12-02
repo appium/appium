@@ -42,9 +42,9 @@ await driver.context('NATIVE_APP');
 ```ruby
 # Ruby
 webview = @driver.available_contexts[1]
-@driver.switch_to.context(webview)
+@driver.set_context(webview)
 # ...
-@driver.switch_to.context('NATIVE_APP')
+@driver.set_context('NATIVE_APP')
 
 ```
 
@@ -97,7 +97,7 @@ For information on contexts, see Appium's [hybrid automation docs](/docs/en/writ
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/context.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/doc/api.md)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [github.com](https://github.com/appium/ruby_lib)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#set_context-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

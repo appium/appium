@@ -29,13 +29,13 @@ let fileBase64 = await driver.pullFile('/path/to/device/foo.bar');
 
 ```ruby
 # Ruby
-@driver.pull_file('/data/local/tmp/file.txt');
+@driver.pull_file('/data/local/tmp/file.txt')
 
 ```
 
 ```php
 # PHP
-// TODO PHP sample
+$data = $driver->pullFile('data/local/tmp/file.txt');
 
 ```
 
@@ -68,7 +68,7 @@ let fileBase64 = await driver.pullFile('/path/to/device/foo.bar');
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L491)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/pullFile.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2665)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Core/Device:pull_file)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#pull_file-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

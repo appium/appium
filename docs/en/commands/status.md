@@ -28,7 +28,8 @@ await driver.status();
 
 ```ruby
 # Ruby
-# TODO
+@driver.remote_status
+remote_status
 
 ```
 

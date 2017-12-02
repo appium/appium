@@ -22,7 +22,7 @@ boolean isKeyboardShown = driver.isKeyboardShown();
 
 ```ruby
 # Ruby
-@driver.is_keyboard_shown();
+@driver.is_keyboard_shown
 
 ```
 
@@ -57,7 +57,7 @@ boolean isKeyboardShown = driver.isKeyboardShown();
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None |  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [github.com](https://github.com/appium/ruby_lib/blob/master/lib/appium_lib/core/common/command.rb#L24)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#is_keyboard_shown-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  |
 

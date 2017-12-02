@@ -27,7 +27,8 @@ example_usage:
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
   php:
     |
-      // TODO PHP sample
+      $el = $this->byAccessibilityId('SomeAccessibilityID');
+      $el->setText('Hello world!');
   csharp:
     |
       // TODO C# sample
@@ -61,7 +62,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -78,6 +79,6 @@ endpoint:
       description: The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-element-send-keys
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidvalue

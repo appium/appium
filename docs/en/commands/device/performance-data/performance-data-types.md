@@ -22,7 +22,7 @@ List<String> performanceTypes = driver.getSupportedPerformanceDataTypes();
 
 ```ruby
 # Ruby
-@driver.get_performance_data_types()
+@driver.get_performance_data_types
 
 ```
 
@@ -61,7 +61,7 @@ List<String> performanceTypes = driver.getSupportedPerformanceDataTypes();
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:get_performance_data_types)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Android/Device#get_performance_data_types-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

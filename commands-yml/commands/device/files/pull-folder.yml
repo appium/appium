@@ -1,7 +1,7 @@
 ---
 name: Pull Folder
 short_description: Retrieve a folder from the device's file system
-    
+
 example_usage:
   java:
     |
@@ -20,7 +20,7 @@ example_usage:
       @driver.pull_folder('/data/local/tmp/file.txt')
   php:
     |
-      // TODO PHP sample
+      $folderBase64 = $driver->pullFolder($path);
   csharp:
     |
       // TODO C# sample
@@ -54,7 +54,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -72,5 +72,5 @@ endpoint:
       description: A string of Base64 encoded data, representing a zip archive of the contents of the requested folder.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L393

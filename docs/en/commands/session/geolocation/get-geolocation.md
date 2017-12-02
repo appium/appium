@@ -29,7 +29,7 @@ let location = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746
 
 ```ruby
 # Ruby
-@driver.location()
+@driver.location
 
 ```
 

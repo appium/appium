@@ -27,7 +27,7 @@ example_usage:
       @driver.find_element(:accessibility_id, 'SomeId').click
   php:
     |
-      // TODO
+      $driver->byAccessibilityId('SomeId')->click();
   csharp:
     |
       // TODO
@@ -61,7 +61,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -74,6 +74,6 @@ endpoint:
       description: UUID of the element
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#element-click
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclick

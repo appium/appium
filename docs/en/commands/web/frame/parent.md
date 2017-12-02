@@ -27,7 +27,7 @@ driver.frameParent();
 
 ```ruby
 # Ruby
-@driver.parent_frame()
+@driver.parent_frame
 
 ```
 

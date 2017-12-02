@@ -37,7 +37,8 @@ let tagName = await element.getAttribute("content-desc");
 
 ```php
 # PHP
-// TODO PHP sample
+$el = $this->byAccessibilityId('SomeAccessibilityID');
+$name = $el->attribute('name');
 
 ```
 

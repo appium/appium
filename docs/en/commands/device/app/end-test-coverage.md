@@ -32,7 +32,7 @@ await driver.endTestCoverageForApp("Intent", "/path");
 
 ```php
 # PHP
-// TODO PHP sample
+$driver->endTestCoverage('Intent', '/path');
 
 ```
 
@@ -65,7 +65,7 @@ await driver.endTestCoverageForApp("Intent", "/path");
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L627)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2858)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib/Appium/Android/Device:end_coverage)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Android/Device#end_coverage-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

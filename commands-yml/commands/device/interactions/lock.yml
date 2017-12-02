@@ -1,7 +1,7 @@
 ---
 name: Lock
 short_description: Lock the device
-  
+
 
 example_usage:
   java:
@@ -23,7 +23,7 @@ example_usage:
       @driver.lock(5) # lock 5 seconds
   php:
     |
-      // TODO PHP sample
+      $driver->lock(5);
   csharp:
     |
       // TODO C# sample
@@ -57,7 +57,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

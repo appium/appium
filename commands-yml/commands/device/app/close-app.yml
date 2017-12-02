@@ -19,7 +19,7 @@ example_usage:
       @driver.close_app
   php:
     |
-      // TODO PHP sample
+      $driver->closeApp();
   csharp:
     |
       // TODO C# sample
@@ -53,7 +53,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -64,5 +64,5 @@ endpoint:
       description: ID of the session to route the command to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L433

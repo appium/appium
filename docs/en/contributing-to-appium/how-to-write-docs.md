@@ -45,7 +45,8 @@ files in `docs/en/commands` and then they need to be committed and pushed.
 ### Adding Documents to Appium.io
 
 Markdown files in `docs/` aren't automatically added to the site. To add a document to https://appium.io
-you need to add it as an entry in [toc.js](/docs/toc.js)
+you need to add it as an entry in the appropriate location in the table of
+contents, [toc.js](https://github.com/appium/appium/blob/master/docs/toc.js)
 
 #### Publishing
 

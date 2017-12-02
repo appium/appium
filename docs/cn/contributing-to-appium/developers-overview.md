@@ -1,7 +1,7 @@
 ## 一个开发人员对于Appium的概述
 
 在阅读这个此文档之前，请确保你已经阅读并理解了关于[Appium的基本概念](/docs/cn/about-appium/intro.md)，
-以及关于如何参与[Appium贡献说明](/CONTRIBUTING.md)
+以及关于如何参与[Appium贡献说明](https://github.com/appium/appium/blob/master/CONTRIBUTING.md)
 
 ### 技术愿景
 
@@ -105,7 +105,7 @@ _FORCE_LOGS=1 <command> # 显示测试运行期间的模块日志输出
 0. `rm -rf node_modules && npm install` 并运行测试以确保全新安装正常工作
 0. 根据[SemVer](http://semver.org/) 规则决定我们是否需要发布一个补丁（漏洞修复），微调（功能）或者是主要（迭代）(请参考 [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning).
 0. 通过任何适当的更改和提交来更新CHANGELOG以README文件。大多数子包没有CHANGELOG。
-0. 通过适当的版本类型运行 `npm version <version-type>` 
+0. 通过适当的版本类型运行 `npm version <version-type>`
 0. 将适当的分支推送到GitHub, 不要忘记加入`--tags` 来标记刚由 `npm version`创建的标志.
 0. 运行 `npm publish` (如果不是正式版， 请使用`--tag beta`).
 
@@ -125,7 +125,7 @@ _FORCE_LOGS=1 <command> # 显示测试运行期间的模块日志输出
 0. `rm -rf node_modules && npm install --production` 以获取仅production部分.
 0. `npm shrinkwrap` 来编写新的 NPM shrinkwrap JSON 文件.
 0. 根据SemVer来决定我们是否需要发布一个补丁（漏洞修复），微调（功能）或者是主要（迭代）
-0. 用合适的新版本信息来更新`package.json` 
+0. 用合适的新版本信息来更新`package.json`
 0. 对CHANGELOG/README进行合适的更改，同shrinkwrap 和 `package.json`的改变一起以PR的形式进行提交审核。待它被合并之后，把它`pull`进`release`分支。
 0. 在发布分支（通常是一个小分支，如`1.5`或`1.4`）上创建一个形式为`v <version>`的标签：`git tag -av <version>`，例如`git tag -a 1.5.0`。 这对测试版本不是必需的。
 0. 把标签推送到上游分支： `git push --tags <remote> <branch>`

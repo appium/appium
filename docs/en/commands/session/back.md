@@ -29,7 +29,7 @@ await driver.back();
 
 ```ruby
 # Ruby
-@driver.back()
+@driver.back
 
 ```
 

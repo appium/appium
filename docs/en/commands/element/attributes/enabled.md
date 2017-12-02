@@ -31,7 +31,7 @@ let isEnabled = await element.isEnabled();
 
 ```ruby
 # Ruby
-@driver.find_element(:accessibility_id, "SomeAccessibilityID").enabled?()
+@driver.find_element(:accessibility_id, "SomeAccessibilityID").enabled?
 
 ```
 

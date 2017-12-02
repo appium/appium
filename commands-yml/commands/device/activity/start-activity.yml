@@ -1,7 +1,7 @@
 ---
 name: Start Activity
 short_description: Start an Android activity by providing package name and activity name
-    
+
 example_usage:
   java:
     |
@@ -23,7 +23,8 @@ example_usage:
       @driver.start_activity app_package: "com.example", app_activity: "ActivityName"
   php:
     |
-      // TODO PHP sample
+      $driver->startActivity(array('appPackage' => 'com.example',
+                                   'appActivity' => 'ActivityName'));
   csharp:
     |
       // TODO C# sample
@@ -57,7 +58,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -93,5 +94,5 @@ endpoint:
       description: Should the app stop on reset
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L411

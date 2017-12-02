@@ -38,7 +38,7 @@ Xcode 7.1 版本允许使用 iOS 7.1 以及更高级的系统版本去做自动�
 
     sudo xcode-select --switch &lt;path to required xcode&gt;
 
-### 在 Xcode 8（包括 iOS 10）下使用 XCUITest 进行测试 
+### 在 Xcode 8（包括 iOS 10）下使用 XCUITest 进行测试
 
 为了在 Xcode 8（其中包括所有 iOS 10+ 的测试）使用 iOS 真机做自动化，你要安装 [Carthage](https://github.com/Carthage/Carthage) 去做依赖管理：
 ```
@@ -59,7 +59,7 @@ brew install carthage
 
 ### 系统配置（Android）
 
-Android 的设置操作指南与在 Mac OS X 上的设置，大致与 Linux 上的设置相似，可以参考 [Android 设置文档](/docs/en/appium-setup/android-setup.md)。
+Android 的设置操作指南与在 Mac OS X 上的设置，大致与 Linux 上的设置相似，可以参考 [Android 设置文档](/docs/en/drivers/android-uiautomator2.md#basic-setup)。
 
 ### 使用 Jenkins 在 OS X 上运行 iOS 测试
 

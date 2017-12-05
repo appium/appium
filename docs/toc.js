@@ -5,7 +5,9 @@ module.exports = {
       ["Introduction", "intro.md"],
       ["The Appium Clients", "appium-clients.md"],
       ["Getting Started", "getting-started.md"],
-      ["Supported Platforms", "platform-support.md"]]],
+      ["Supported Platforms", "platform-support.md"],
+      ["API Documentation", "api.md"],
+    ]],
     ["Drivers", ["drivers",
       ["XCUITest (iOS)", "ios-xcuitest.md"],
       ["XCUITest Real Devices (iOS)", "ios-xcuitest-real-devices.md"],
@@ -47,7 +49,6 @@ module.exports = {
           ["Update Settings", "update-settings.md"],
           ["Get Device Settings", "get-settings.md"],
         ]],
-        /* ["Receive Async Response", "receive-async-response.md"], */
       ]],
       ["Device", ["device",
         ["Activity", ["activity",
@@ -193,7 +194,7 @@ module.exports = {
         ]],
         ["Execute Async", "execute-async.md"],
         ["Execute", "execute.md"],
-      ]]
+      ]],
     ]],
     ["Writing & Running Tests", ["writing-running-appium",
       ["Running Tests", "running-tests.md"],

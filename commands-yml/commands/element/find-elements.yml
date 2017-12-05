@@ -3,7 +3,7 @@ name: Find Elements
 short_description: Search for multiple elements
 description:
   >
-     Get a list of elements that match the [locator selector](/docs/en/writing-running-appium/finding-elements/).
+     Get a list of elements that match the [locator selector](/docs/en/writing-running-appium/finding-elements.md).
 selector_strategies:
   - name: Accessibility ID
     description: Read a unique identifier for a UI element. For XCUITest it is the element's `resource-id` attribute. For Android it is the element's `content-desc` attribute.

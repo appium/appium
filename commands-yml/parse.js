@@ -102,7 +102,7 @@ Handlebars.registerHelper('base_url', function (fullUrl) {
   return baseUrl.hostname;
 });
 
-async function main () {
+async function generateCommands () {
   const commands = path.resolve(__dirname, 'commands/**/*.yml');
   console.log('Traversing YML files', commands);
   await fs.rimraf(path.resolve(__dirname, '..', 'docs', 'en', 'commands'));
@@ -132,6 +132,46 @@ async function main () {
     fileCount++;
   }
   console.log(`Done writing ${fileCount} command documents`);
+}
+
+async function generateCommandIndex () {
+  const apiIndex = path.resolve(__dirname, '..', 'docs', 'en', 'about-appium', 'api.md');
+  console.log(`Creating API index '${apiIndex}'`);
+
+  function getTree (element, path) {
+    let node = {
+      name: element[0],
+    };
+    if (!_.isArray(element[1])) {
+      node.path = `${path}/${element[1]}`;
+    } else {
+      const name = element[1].shift();
+      node.commands = [];
+      for (let subElement of element[1]) {
+        node.commands.push(getTree(subElement, `${path}/${name}`));
+      }
+    }
+    return node;
+  }
+
+  // parse the toc.js file and get the commands into the form of
+  //   {commands: [{name: '', path: ''}, {name: '', commands: [...]}]}
+  const toc = require(path.resolve(__dirname, '..', 'docs', 'toc.js'));
+  const commandToc = _.find(toc.en, (value) => value.indexOf('Commands') === 0);
+  let commands = [];
+  for (let el of commandToc[1].slice(1)) {
+    commands.push(getTree(el, '/docs/en/commands'));
+  }
+
+  const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
+  const markdown = template({commands});
+  await fs.writeFile(apiIndex, markdown, 'utf8');
+  console.log(`Done writing API index`);
+}
+
+async function main () {
+  await generateCommands();
+  await generateCommandIndex();
 }
 
 asyncify(main);

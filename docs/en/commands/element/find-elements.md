@@ -60,7 +60,7 @@ $els = $this->elements($this->using('accessibility id')->value('SomeAccessibilit
 
 ## Description
 
-Get a list of elements that match the [locator selector](/docs/en/about-appium/getting-started.md).
+Get a list of elements that match the [locator selector](/docs/en/writing-running-appium/finding-elements.md).
 
 
 ## Support

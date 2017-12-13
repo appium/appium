@@ -28,3 +28,7 @@ export { JWProxy };
 import { codes, getSummaryByCode } from './lib/jsonwp-status/status';
 const statusCodes = codes;
 export { statusCodes, getSummaryByCode };
+
+// W3C capabilities parser
+import { processCapabilities } from './lib/basedriver/capabilities';
+export { processCapabilities };

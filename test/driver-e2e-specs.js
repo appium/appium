@@ -86,7 +86,7 @@ describe('FakeDriver - via HTTP', () => {
         }
       };
 
-      const { status, value, sessionId } = await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, form: w3cCaps, json: true});
+      const { status, value, sessionId } = await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, json: w3cCaps});
       status.should.equal(0);
       sessionId.should.be.a.string;
       value.should.exist;
@@ -97,7 +97,7 @@ describe('FakeDriver - via HTTP', () => {
       screenshotStatus.should.equal(0);
 
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it throws correct error
-      await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/execute/async`, form: {script: '', args: ['a']}, json: true}).should.eventually.be.rejectedWith(/not yet been implemented/);
+      await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejectedWith(/not yet been implemented/);
 
       // Now try with invalid capabilities and check that it returns 500 status
       const badW3Ccaps = {
@@ -108,7 +108,7 @@ describe('FakeDriver - via HTTP', () => {
       };
 
       try {
-        await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, form: badW3Ccaps});
+        await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, json: badW3Ccaps});
       } catch (e) {
         e.statusCode.should.equal(500);
       }

@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.7.2-beta3",
+  "version": "1.7.2-beta4",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -53,6 +53,7 @@
     "bluebird": "2.x",
     "continuation-local-storage": "3.x",
     "dateformat": "^2.0.0",
+    "fkill": "^5.2.0",
     "lodash": "4.x",
     "npmlog": "2.x",
     "request": "^2.81.0",

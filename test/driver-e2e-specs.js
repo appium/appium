@@ -113,6 +113,23 @@ describe('FakeDriver - via HTTP', () => {
         e.statusCode.should.equal(500);
       }
     });
+
+    it('should accept a combo of W3C and JSONWP capabilities', async () => {
+      const combinedCaps = {
+        "desiredCapabilities": caps,
+        "capabilities": {
+          "alwaysMatch": {},
+          "firstMatch": [{
+            "platformName": "Fake",
+          }]
+        }
+      };
+
+      const { status, value, sessionId } = await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, json: combinedCaps});
+      status.should.equal(0);
+      value.platformName.should.equal('Fake');
+      sessionId.should.exist;
+    });
   });
 });
 

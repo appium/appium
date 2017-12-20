@@ -2,14 +2,17 @@ CHANGES IN VERSION 1.7.2 (from 1.7.1)
 ===================================
 
 Appium 1.7.2 is a feature and bug fix release. It fixes many issues found in
-ealier releases.
+earlier releases.
 
 
 #### General
 * Fix memory leak in server logging
 * Add support for MacOS 10.13
 * Clean up logging to make messages more clear and useful
-
+* Add `printPageSourceOnFindFailure` to automatically log the current page source when finding an
+  element or elements fails
+* Add ability to take screenshots of an element
+* Begin to handle Selenium W3C specification
 
 #### iOS
 * Simulators
@@ -31,6 +34,7 @@ ealier releases.
 * Fix runtime Xcode selection through `DEVELOPER_DIR` environment variable
 * Add `useJSONSource` desired capability to force Appium to use WDA JSON source
   and parse locally, to speed up source retrieval on larger devices
+* Fix file pushing/pulling so it works for simulators and real devices
 
 #### iOS - Instruments-specific
 
@@ -51,10 +55,10 @@ ealier releases.
 * Ensure `pageLoadStrategy` capability is passed to Chromedriver
 * Add support to get currently running package name
 * Ensure non-working Chromedriver is correctly handled
-
-
-#### Android - UiAutomator-specific
-* Add `password` to retrievable attributes
+* Add `password` to retrievable element attributes
+* Fix locale/language setting
+* Add `clearDeviceLogsOnStart` desired capability, to clear `adb` `logcat` logs when the session is started
+* Add `--relaxed-security`, and `mobile: shell` access to `adb`
 
 
 CHANGES IN VERSION 1.7.1 (from 1.7.0)

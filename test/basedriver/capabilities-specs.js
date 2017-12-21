@@ -229,5 +229,23 @@ describe('caps', function () {
         firstMatch: [{'appium:browserName': 'Anything'}],
       })).should.throw(/standard capabilities/);
     });
+
+    it('should not throw an exception if presence constraint is not met on a firstMatch capability', function () {
+      const caps = processCapabilities({
+        alwaysMatch: {'platformName': 'Fake', 'appium:fakeCap': 'foobar'},
+        firstMatch: [{'foo': 'bar'}],
+      }, {
+        platformName: {
+          presence: true,
+        },
+        fakeCap: {
+          presence: true
+        },
+      });
+
+      caps.platformName.should.equal('Fake');
+      caps.fakeCap.should.equal('foobar');
+      caps.foo.should.equal('bar');
+    });
   });
 });

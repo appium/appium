@@ -398,13 +398,14 @@ describe('MJSONWP', async () => {
           },
           firstMatch: [{}],
         };
-        let {sessionId} = await request({
+        let {value} = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
           json: {
             capabilities: w3cCaps,
           }
         });
+        let sessionId = value.sessionId;
         let {statusCode:badStatusCode} = await request({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
           method: 'POST',

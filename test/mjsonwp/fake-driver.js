@@ -5,6 +5,7 @@ class FakeDriver extends MobileJsonWireProtocol {
 
   constructor () {
     super();
+    this.protocol = BaseDriver.DRIVER_PROTOCOL.MJSONWP;
     this.sessionId = null;
     this.jwpProxyActive = false;
   }

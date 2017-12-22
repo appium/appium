@@ -7,17 +7,17 @@ import { DeviceSettings } from '../..';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-const w3cCaps = {
-  alwaysMatch: {
-    platformName: 'Fake',
-    deviceName: 'Commodore 64',
-  },
-  firstMatch: [],
-};
-
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
 function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
+  const w3cCaps = {
+    alwaysMatch: Object.assign({}, defaultCaps, {
+      platformName: 'Fake',
+      deviceName: 'Commodore 64',
+    }),
+    firstMatch: [],
+  };
+
   describe('BaseDriver', () => {
 
     let d;
@@ -118,20 +118,20 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
     it('should distinguish between W3C and JSONWP session', async () => {
       // Test JSONWP
-      await d.executeCommand('createSession', {
+      await d.executeCommand('createSession', Object.assign({}, defaultCaps, {
         platformName: 'Fake',
         deviceName: 'Commodore 64',
-      });
+      }));
 
       d.protocol.should.equal('MJSONWP');
       await d.executeCommand('deleteSession');
 
       // Test W3C (leave first 2 args null because those are the JSONWP args)
       await d.executeCommand('createSession', null, null, {
-        alwaysMatch: {
+        alwaysMatch: Object.assign({}, defaultCaps, {
           platformName: 'Fake',
           deviceName: 'Commodore 64',
-        },
+        }),
         firstMatch: [],
       });
 
@@ -324,7 +324,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       beforeEach(async () => {
         beforeStartTime = Date.now();
         d.shouldValidateCaps = false;
-        await d.executeCommand('createSession', [defaultCaps]);
+        await d.executeCommand('createSession', defaultCaps);
       });
       describe('#eventHistory', () => {
         it('should have an eventHistory property', () => {

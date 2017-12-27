@@ -2,6 +2,7 @@
 *.swp
 .DS_Store
 node_modules
+package-lock.json
 sample-code
 *.trace
 xcuserdata

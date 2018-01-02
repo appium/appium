@@ -1,0 +1,487 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3E166C6B1683954A008893AA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E166C6A1683954A008893AA /* UIKit.framework */; };
+		3E166C6D1683954A008893AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E166C6C1683954A008893AA /* Foundation.framework */; };
+		3E166C6F1683954A008893AA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E166C6E1683954A008893AA /* CoreGraphics.framework */; };
+		3E166C751683954A008893AA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C731683954A008893AA /* InfoPlist.strings */; };
+		3E166C771683954A008893AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E166C761683954A008893AA /* main.m */; };
+		3E166C7B1683954A008893AA /* RCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E166C7A1683954A008893AA /* RCAppDelegate.m */; };
+		3E166C7D1683954A008893AA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C7C1683954A008893AA /* Default.png */; };
+		3E166C7F1683954A008893AA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C7E1683954A008893AA /* Default@2x.png */; };
+		3E166C811683954A008893AA /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C801683954A008893AA /* Default-568h@2x.png */; };
+		3E166C841683954A008893AA /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C821683954A008893AA /* MainStoryboard_iPhone.storyboard */; };
+		3E166C871683954A008893AA /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C851683954A008893AA /* MainStoryboard_iPad.storyboard */; };
+		3E166C8A1683954A008893AA /* RCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E166C891683954A008893AA /* RCViewController.m */; };
+		3E166C921683954A008893AA /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E166C911683954A008893AA /* SenTestingKit.framework */; };
+		3E166C931683954A008893AA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E166C6A1683954A008893AA /* UIKit.framework */; };
+		3E166C941683954A008893AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E166C6C1683954A008893AA /* Foundation.framework */; };
+		3E166C9C1683954A008893AA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3E166C9A1683954A008893AA /* InfoPlist.strings */; };
+		3E166C9F1683954A008893AA /* RobotCalibrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E166C9E1683954A008893AA /* RobotCalibrationTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3E166C951683954A008893AA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E166C5F1683954A008893AA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E166C661683954A008893AA;
+			remoteInfo = RobotCalibration;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3E166C671683954A008893AA /* RobotCalibration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RobotCalibration.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E166C6A1683954A008893AA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		3E166C6C1683954A008893AA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		3E166C6E1683954A008893AA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		3E166C721683954A008893AA /* RobotCalibration-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RobotCalibration-Info.plist"; sourceTree = "<group>"; };
+		3E166C741683954A008893AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3E166C761683954A008893AA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3E166C781683954A008893AA /* RobotCalibration-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RobotCalibration-Prefix.pch"; sourceTree = "<group>"; };
+		3E166C791683954A008893AA /* RCAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCAppDelegate.h; sourceTree = "<group>"; };
+		3E166C7A1683954A008893AA /* RCAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCAppDelegate.m; sourceTree = "<group>"; };
+		3E166C7C1683954A008893AA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		3E166C7E1683954A008893AA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		3E166C801683954A008893AA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		3E166C831683954A008893AA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		3E166C861683954A008893AA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		3E166C881683954A008893AA /* RCViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCViewController.h; sourceTree = "<group>"; };
+		3E166C891683954A008893AA /* RCViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCViewController.m; sourceTree = "<group>"; };
+		3E166C901683954A008893AA /* RobotCalibrationTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RobotCalibrationTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E166C911683954A008893AA /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		3E166C991683954A008893AA /* RobotCalibrationTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "RobotCalibrationTests-Info.plist"; sourceTree = "<group>"; };
+		3E166C9B1683954A008893AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3E166C9D1683954A008893AA /* RobotCalibrationTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobotCalibrationTests.h; sourceTree = "<group>"; };
+		3E166C9E1683954A008893AA /* RobotCalibrationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RobotCalibrationTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3E166C641683954A008893AA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E166C6B1683954A008893AA /* UIKit.framework in Frameworks */,
+				3E166C6D1683954A008893AA /* Foundation.framework in Frameworks */,
+				3E166C6F1683954A008893AA /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E166C8C1683954A008893AA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E166C921683954A008893AA /* SenTestingKit.framework in Frameworks */,
+				3E166C931683954A008893AA /* UIKit.framework in Frameworks */,
+				3E166C941683954A008893AA /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3E166C5E1683954A008893AA = {
+			isa = PBXGroup;
+			children = (
+				3E166C701683954A008893AA /* RobotCalibration */,
+				3E166C971683954A008893AA /* RobotCalibrationTests */,
+				3E166C691683954A008893AA /* Frameworks */,
+				3E166C681683954A008893AA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3E166C681683954A008893AA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3E166C671683954A008893AA /* RobotCalibration.app */,
+				3E166C901683954A008893AA /* RobotCalibrationTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3E166C691683954A008893AA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3E166C6A1683954A008893AA /* UIKit.framework */,
+				3E166C6C1683954A008893AA /* Foundation.framework */,
+				3E166C6E1683954A008893AA /* CoreGraphics.framework */,
+				3E166C911683954A008893AA /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3E166C701683954A008893AA /* RobotCalibration */ = {
+			isa = PBXGroup;
+			children = (
+				3E166C791683954A008893AA /* RCAppDelegate.h */,
+				3E166C7A1683954A008893AA /* RCAppDelegate.m */,
+				3E166C821683954A008893AA /* MainStoryboard_iPhone.storyboard */,
+				3E166C851683954A008893AA /* MainStoryboard_iPad.storyboard */,
+				3E166C881683954A008893AA /* RCViewController.h */,
+				3E166C891683954A008893AA /* RCViewController.m */,
+				3E166C711683954A008893AA /* Supporting Files */,
+			);
+			path = RobotCalibration;
+			sourceTree = "<group>";
+		};
+		3E166C711683954A008893AA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3E166C721683954A008893AA /* RobotCalibration-Info.plist */,
+				3E166C731683954A008893AA /* InfoPlist.strings */,
+				3E166C761683954A008893AA /* main.m */,
+				3E166C781683954A008893AA /* RobotCalibration-Prefix.pch */,
+				3E166C7C1683954A008893AA /* Default.png */,
+				3E166C7E1683954A008893AA /* Default@2x.png */,
+				3E166C801683954A008893AA /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3E166C971683954A008893AA /* RobotCalibrationTests */ = {
+			isa = PBXGroup;
+			children = (
+				3E166C9D1683954A008893AA /* RobotCalibrationTests.h */,
+				3E166C9E1683954A008893AA /* RobotCalibrationTests.m */,
+				3E166C981683954A008893AA /* Supporting Files */,
+			);
+			path = RobotCalibrationTests;
+			sourceTree = "<group>";
+		};
+		3E166C981683954A008893AA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				3E166C991683954A008893AA /* RobotCalibrationTests-Info.plist */,
+				3E166C9A1683954A008893AA /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3E166C661683954A008893AA /* RobotCalibration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E166CA21683954A008893AA /* Build configuration list for PBXNativeTarget "RobotCalibration" */;
+			buildPhases = (
+				3E166C631683954A008893AA /* Sources */,
+				3E166C641683954A008893AA /* Frameworks */,
+				3E166C651683954A008893AA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RobotCalibration;
+			productName = RobotCalibration;
+			productReference = 3E166C671683954A008893AA /* RobotCalibration.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3E166C8F1683954A008893AA /* RobotCalibrationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E166CA51683954A008893AA /* Build configuration list for PBXNativeTarget "RobotCalibrationTests" */;
+			buildPhases = (
+				3E166C8B1683954A008893AA /* Sources */,
+				3E166C8C1683954A008893AA /* Frameworks */,
+				3E166C8D1683954A008893AA /* Resources */,
+				3E166C8E1683954A008893AA /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3E166C961683954A008893AA /* PBXTargetDependency */,
+			);
+			name = RobotCalibrationTests;
+			productName = RobotCalibrationTests;
+			productReference = 3E166C901683954A008893AA /* RobotCalibrationTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3E166C5F1683954A008893AA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = RC;
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Appium Contributors";
+			};
+			buildConfigurationList = 3E166C621683954A008893AA /* Build configuration list for PBXProject "RobotCalibration" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3E166C5E1683954A008893AA;
+			productRefGroup = 3E166C681683954A008893AA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3E166C661683954A008893AA /* RobotCalibration */,
+				3E166C8F1683954A008893AA /* RobotCalibrationTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3E166C651683954A008893AA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E166C751683954A008893AA /* InfoPlist.strings in Resources */,
+				3E166C7D1683954A008893AA /* Default.png in Resources */,
+				3E166C7F1683954A008893AA /* Default@2x.png in Resources */,
+				3E166C811683954A008893AA /* Default-568h@2x.png in Resources */,
+				3E166C841683954A008893AA /* MainStoryboard_iPhone.storyboard in Resources */,
+				3E166C871683954A008893AA /* MainStoryboard_iPad.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E166C8D1683954A008893AA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E166C9C1683954A008893AA /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3E166C8E1683954A008893AA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3E166C631683954A008893AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E166C771683954A008893AA /* main.m in Sources */,
+				3E166C7B1683954A008893AA /* RCAppDelegate.m in Sources */,
+				3E166C8A1683954A008893AA /* RCViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E166C8B1683954A008893AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E166C9F1683954A008893AA /* RobotCalibrationTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3E166C961683954A008893AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E166C661683954A008893AA /* RobotCalibration */;
+			targetProxy = 3E166C951683954A008893AA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3E166C731683954A008893AA /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3E166C741683954A008893AA /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		3E166C821683954A008893AA /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3E166C831683954A008893AA /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		3E166C851683954A008893AA /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3E166C861683954A008893AA /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		3E166C9A1683954A008893AA /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3E166C9B1683954A008893AA /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3E166CA01683954A008893AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3E166CA11683954A008893AA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3E166CA31683954A008893AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RobotCalibration/RobotCalibration-Prefix.pch";
+				INFOPLIST_FILE = "RobotCalibration/RobotCalibration-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		3E166CA41683954A008893AA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RobotCalibration/RobotCalibration-Prefix.pch";
+				INFOPLIST_FILE = "RobotCalibration/RobotCalibration-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		3E166CA61683954A008893AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RobotCalibration.app/RobotCalibration";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RobotCalibration/RobotCalibration-Prefix.pch";
+				INFOPLIST_FILE = "RobotCalibrationTests/RobotCalibrationTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		3E166CA71683954A008893AA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/RobotCalibration.app/RobotCalibration";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "RobotCalibration/RobotCalibration-Prefix.pch";
+				INFOPLIST_FILE = "RobotCalibrationTests/RobotCalibrationTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3E166C621683954A008893AA /* Build configuration list for PBXProject "RobotCalibration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E166CA01683954A008893AA /* Debug */,
+				3E166CA11683954A008893AA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E166CA21683954A008893AA /* Build configuration list for PBXNativeTarget "RobotCalibration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E166CA31683954A008893AA /* Debug */,
+				3E166CA41683954A008893AA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E166CA51683954A008893AA /* Build configuration list for PBXNativeTarget "RobotCalibrationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E166CA61683954A008893AA /* Debug */,
+				3E166CA71683954A008893AA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3E166C5F1683954A008893AA /* Project object */;
+}

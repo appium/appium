@@ -3,7 +3,7 @@ import path from 'path';
 const iosCaps = {
   platformName: 'iOS',
   automationName: 'XCUITest',
-  deviceName: 'iPhone SE' || process.env.IOS_DEVICE_NAME,
+  deviceName: 'iPhone 6s' || process.env.IOS_DEVICE_NAME,
   platformVersion: '11.2' || process.env.IOS_PLATFORM_VERSION,
   app: undefined, // Will be added in tests
 };

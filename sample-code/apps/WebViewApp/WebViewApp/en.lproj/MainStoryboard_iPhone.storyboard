@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
+    <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="5">
+            <objects>
+                <viewController id="2" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ziN-bi-Hmk"/>
+                        <viewControllerLayoutGuide type="bottom" id="Yvd-56-AS5"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="3">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <webView contentMode="scaleToFill" ambiguous="YES" misplaced="YES" scalesPageToFit="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j6V-02-y3c" userLabel="mainWebView">
+                                <rect key="frame" x="0.0" y="52" width="320" height="516"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </webView>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter URL" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="5jG-hg-xoz" userLabel="urlField">
+                                <rect key="frame" x="6" y="19" width="268" height="30"/>
+                                <accessibility key="accessibilityConfiguration" label="Enter URL"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="URL" keyboardAppearance="light" returnKeyType="go"/>
+                                <connections>
+                                    <action selector="urlEditBegin:" destination="2" eventType="editingDidBegin" id="dCi-yj-FXo"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MWy-27-3UL" userLabel="navBtn">
+                                <rect key="frame" x="282" y="19" width="30" height="33"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="39" id="1cf-j3-mlo"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="vtn-Uz-5da"/>
+                                </constraints>
+                                <state key="normal" title="Go">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="navBtnClicked:" destination="2" eventType="touchUpInside" id="Rsc-0w-ITd"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="5jG-hg-xoz" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="6" id="2Ks-XM-D2v"/>
+                            <constraint firstAttribute="trailing" secondItem="MWy-27-3UL" secondAttribute="trailing" constant="8" id="Bh9-6N-JJN"/>
+                            <constraint firstItem="MWy-27-3UL" firstAttribute="leading" secondItem="5jG-hg-xoz" secondAttribute="trailing" constant="8" id="G3O-zu-CNw"/>
+                            <constraint firstAttribute="bottom" secondItem="j6V-02-y3c" secondAttribute="bottom" id="S24-Vd-TWc"/>
+                            <constraint firstItem="j6V-02-y3c" firstAttribute="leading" secondItem="3" secondAttribute="leading" id="YBh-Kb-lZg"/>
+                            <constraint firstAttribute="trailing" secondItem="j6V-02-y3c" secondAttribute="trailing" id="cd8-d2-3uT"/>
+                            <constraint firstItem="j6V-02-y3c" firstAttribute="top" secondItem="5jG-hg-xoz" secondAttribute="bottom" constant="3" id="yPl-Y8-0pO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="mainWebView" destination="j6V-02-y3c" id="E6z-uM-BZ9"/>
+                        <outlet property="urlField" destination="5jG-hg-xoz" id="xp2-AC-Iq9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

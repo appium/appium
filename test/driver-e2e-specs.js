@@ -95,9 +95,8 @@ describe('FakeDriver - via HTTP', () => {
       const { status:screenshotStatus, value:screenshotValue } = await request({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/screenshot`, json: true});
       screenshotValue.should.equal('hahahanotreallyascreenshot');
       screenshotStatus.should.equal(0);
-
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it throws correct error
-      await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejectedWith(/not yet been implemented/);
+      await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejectedWith(/501/);
 
       // Now try with invalid capabilities and check that it returns 500 status
       const badW3Ccaps = {

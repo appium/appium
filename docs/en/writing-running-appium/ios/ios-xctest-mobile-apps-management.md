@@ -1,13 +1,13 @@
 ## Advanced Applications Management Commands For iOS With WebDriverAgent/XCTest Backend
 
-Since Xcode9 there is a possibility to manage multiple applications in scope of a single session. It makes possible to open iOS preferences and change values there while the application under test is in background and then restore it back or check scenarious, where the application under test is terminated and then started again. Appium for iOS has special set of `mobile:` subcommands, which provides user interface to such features.
+Since Xcode9 there is a possibility to manage multiple applications in scope of a single session. It makes it possible to open iOS preferences and change values there while the application under test is in background and then restore it back to foreground or check scenarious, where the application under test is terminated and then started again. Appium for iOS has special set of `mobile:` subcommands, which provides user interface to such features.
 
 `Important note`: Make sure you don't cache WebElement instances between application restarts, since they are going to be invalidated after each restart.
 
 
 ### mobile: installApp
 
-Installs given application to the device under test. If the same application is already installed then it's going to be installed over it, which allows to test upgrades. Be careful while reinstalling the main application under test - make sure you called `terminateApp` for it first, otherwise WebDriverAgent will detect it as a potential application crash.
+Installs given application to the device under test. If the same application is already installed then it's going to be installed over the existing one, which allows you to test upgrades. Be careful while reinstalling the main application under test: make sure that `terminateApp` has been called first, otherwise WebDriverAgent will detect the state as a potential crash of the application.
 
 #### Supported arguments
 

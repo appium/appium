@@ -14,3 +14,4 @@ _vimrc_local.vim
 *.prefs
 ./.npmignore
 coverage
+sample-code/javascript-wd/node_modules

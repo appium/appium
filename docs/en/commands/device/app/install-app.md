@@ -46,6 +46,10 @@ $driver->installApp('/Users/johndoe/path/to/app.apk');
 ```
 
 
+## Description
+
+iOS tests with XCUITest can also use the `mobile: installApp` method. See detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-installapp).
+
 
 ## Support
 

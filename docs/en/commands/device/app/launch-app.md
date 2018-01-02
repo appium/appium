@@ -46,6 +46,10 @@ $driver->launchApp();
 ```
 
 
+## Description
+
+iOS tests with XCUITest can also use the `mobile: launchApp` method. See detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-launchapp).
+
 
 ## Support
 

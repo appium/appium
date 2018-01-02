@@ -1,6 +1,6 @@
 ## Advanced Applications Management Commands For iOS With WebDriverAgent/XCTest Backend
 
-Since Xcode9 there is a possibility to manage multiple applications in scope of a single session. It makes possible to open iOS preferences and change values there while the application under test is in foreground and then restore it back or check scenarious, where the application under test is terminated and then started again. Appium for iOS has special set of `mobile:` subcommands, which provides user interface to such features.
+Since Xcode9 there is a possibility to manage multiple applications in scope of a single session. It makes possible to open iOS preferences and change values there while the application under test is in background and then restore it back or check scenarious, where the application under test is terminated and then started again. Appium for iOS has special set of `mobile:` subcommands, which provides user interface to such features.
 
 `Important note`: Make sure you don't cache WebElement instances between application restarts, since they are going to be invalidated after each restart.
 
@@ -64,12 +64,16 @@ Executes an existing application on the device. If the application is already ru
 #### Supported arguments
 
  * _bundleId_: The bundle identifier of the application, which is going to be executed. Mandatory argument.
+ * _arguments_: The list of command line arguments. Optional.
+ * _environment_: Environemnt variables mapping. Optional.
 
 #### Usage examples
 
 ```python
 # Python
-driver.execute_script('mobile: launchApp', {'bundleId': 'com.myapp'});
+driver.execute_script('mobile: launchApp', {'bundleId': 'com.myapp',
+                                            'arguments': ('-foo', '--bar'),
+                                            'environment': {'foo': 'bar'}})
 ```
 
 

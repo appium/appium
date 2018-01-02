@@ -21,6 +21,13 @@ const androidCaps = {
   app: undefined, // Will be added in tests
 };
 
+const androidCaps = {
+  platformName: 'Android',
+  automationName: 'UiAutomator2',
+  deviceName: 'Android' || process.env.ANDROID_DEVICE_NAME,
+  app: undefined, // Will be added in tests
+};
+
 const serverConfig = {
   host: process.env.APPIUM_HOST || 'localhost',
   port: process.env.APPIUM_PORT || 4723

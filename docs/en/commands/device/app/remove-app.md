@@ -46,6 +46,10 @@ $driver->removeApp('com.example.AppName');
 ```
 
 
+## Description
+
+iOS tests with XCUITest can also use the `mobile: removeApp` method. See detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-removeapp).
+
 
 ## Support
 

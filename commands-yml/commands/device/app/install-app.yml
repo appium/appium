@@ -1,6 +1,10 @@
 ---
 name: Install App
 short_description: Install the given app onto the device
+description:
+  >
+    iOS tests with XCUITest can also use the `mobile: installApp` method. See
+    detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-installapp).
 
 example_usage:
   java:

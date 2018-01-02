@@ -211,6 +211,7 @@ module.exports = {
       ]],
       ["iOS", ["ios",
         ["XCUITest Mobile Gestures", "ios-xctest-mobile-gestures.md"],
+        ["XCUITest Mobile App Management", "ios-xctest-mobile-apps-management.md"],
         ["iOS Pasteboard Guide", "ios-xctest-pasteboard.md"],
         ["iOS Predicate Guide", "ios-predicate.md"],
         ["iOS Touch ID Guide", "ios-touch-id.md"],

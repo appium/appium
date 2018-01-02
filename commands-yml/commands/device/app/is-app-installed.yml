@@ -1,6 +1,10 @@
 ---
 name: Is App Installed
 short_description: Check whether the specified app is installed on the device
+description:
+  >
+    iOS tests with XCUITest can also use the `mobile: isAppInstalled` method. See
+    detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-isappinstalled).
 
 example_usage:
   java:

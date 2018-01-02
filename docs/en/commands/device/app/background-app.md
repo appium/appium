@@ -46,6 +46,22 @@ $driver->backgroundApp(10);
 ```
 
 
+## Description
+
+Send the currently active app to the background, and either return after a certain amount of time, or leave the app deactivated.
+There are 3 types of parameters which may be passed to this method:
+
+1. An object that looks like `{"timeout": secs}`, where `secs` is an
+   integer designating how long, in seconds, to background the app for. -1
+   means to deactivate the app entirely.
+
+2. `null`, which means to deactivate the app entirely.
+3. _Deprecated_ An integer: how long, in seconds, to background the app for. -1 means to
+   deactivate the app entirely.
+
+
+iOS tests with XCUITest can also use the `mobile: terminateApp` method to terminate the current app (see detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-terminateapp)), and the `mobile: activateApp` to activate an existing application on the device under test and moves it to the foreground (see detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-activateapp)).
+
 
 ## Support
 

@@ -4,7 +4,7 @@ import { iosCaps, serverConfig } from '../helpers/caps';
 
 const {assert} = chai;
 
-describe('Basic IOS interactions', function () {
+describe('Basic IOS selectors', function () {
 
   let driver;
 
@@ -28,6 +28,12 @@ describe('Basic IOS interactions', function () {
     const computeSumButtons = await driver.elementsByAccessibilityId('ComputeSumButton');
     assert.equal(computeSumButtons.length, 1);
     await computeSumButtons[0].click();
+  });
+
+  it('should find elements by class name', async function () {
+    // Find element by name
+    const windowElements = await driver.elementsByClassName('XCUIElementTypeWindow');
+    assert.isAbove(windowElements.length, 1);
   });
 
   it('should find elements by NSPredicateString', async function () {

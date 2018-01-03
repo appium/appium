@@ -18,3 +18,6 @@ _vimrc_local.vim
 *.trace
 *.sublime-
 *.prefs
+./.npmignore
+coverage
+sample-code/

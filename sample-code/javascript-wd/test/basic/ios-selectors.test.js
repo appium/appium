@@ -36,7 +36,7 @@ describe('Basic IOS interactions', function () {
     assert.isAbove(allVisibleElements.length, 1);
   });
 
-  it.only('should find elements by class chain', async function () {
+  it('should find elements by class chain', async function () {
     // This is also an IOS-specific selector strategy. Similar to XPath. This is recommended over XPath.
     const windowElement = await driver.elements('-ios class chain', 'XCUIElementTypeWindow[1]/*[2]');
     assert.equal(windowElement.length, 1);

@@ -24,7 +24,8 @@ const androidCaps = {
 const androidCaps = {
   platformName: 'Android',
   automationName: 'UiAutomator2',
-  deviceName: process.env.ANDROID_DEVICE_NAME || 'Android',
+  deviceName: process.env.ANDROID_DEVICE_NAME || 'Android GoogleAPI Emulator',
+  platformVersion: process.env.ANDROID_PLATFORM_VERSION,
   app: undefined, // Will be added in tests
 };
 

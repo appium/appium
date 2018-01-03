@@ -33,3 +33,4 @@ old
 .tern-project
 coverage
 docs/mkdocs.yml
+sample-code/javascript-wd/node_modules

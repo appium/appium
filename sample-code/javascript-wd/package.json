@@ -6,7 +6,7 @@
     "test": "mocha test/**/*.test.js"
   },
   "author": "Dan Graham",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-polyfill": "^6.26.0",

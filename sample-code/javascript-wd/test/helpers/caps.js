@@ -28,7 +28,10 @@ const androidCaps = {
   app: undefined, // Will be added in tests
 };
 
-const serverConfig = {
+const serverConfig = process.env.SAUCE_LABS ? {
+  host: 'ondemand.saucelabs.com',
+  port: 80
+} : {
   host: process.env.APPIUM_HOST || 'localhost',
   port: process.env.APPIUM_PORT || 4723
 };

@@ -10,22 +10,14 @@ const iosCaps = {
 
 // Leave the Android platformVersion blank and set deviceName to a random string (Android deviceName is ignored by Appium but is still required)
 // If we're using SauceLabs, set the Android deviceName and platformVersion to the latest supported SauceLabs device and version
-const DEFAULT_ANDROID_DEVICE_NAME = process.env.SAUCE ? 'Android GoogleAPI Emulator' : 'My Android Device';
-const DEFAULT_ANDROID_PLATFORM_VERSION = process.env.SAUCE ? '7.1' : null;
+const DEFAULT_ANDROID_DEVICE_NAME = process.env.SAUCE_LABS ? 'Android GoogleAPI Emulator' : 'My Android Device';
+const DEFAULT_ANDROID_PLATFORM_VERSION = process.env.SAUCE_LABS ? '7.1' : null;
 
 const androidCaps = {
   platformName: 'Android',
   automationName: 'UiAutomator2',
   deviceName: process.env.ANDROID_DEVICE_NAME || DEFAULT_ANDROID_DEVICE_NAME,
   platformVersion: process.env.ANDROID_PLATFORM_VERSION || DEFAULT_ANDROID_PLATFORM_VERSION,
-  app: undefined, // Will be added in tests
-};
-
-const androidCaps = {
-  platformName: 'Android',
-  automationName: 'UiAutomator2',
-  deviceName: process.env.ANDROID_DEVICE_NAME || 'Android GoogleAPI Emulator',
-  platformVersion: process.env.ANDROID_PLATFORM_VERSION,
   app: undefined, // Will be added in tests
 };
 

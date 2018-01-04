@@ -10,8 +10,8 @@ const iosCaps = {
 
 // Leave the Android platformVersion blank and set deviceName to a random string (Android deviceName is ignored by Appium but is still required)
 // If we're using SauceLabs, set the Android deviceName and platformVersion to the latest supported SauceLabs device and version
-const DEFAULT_ANDROID_DEVICE_NAME = process.env.SAUCE_LABS ? 'Android GoogleAPI Emulator' : 'My Android Device';
-const DEFAULT_ANDROID_PLATFORM_VERSION = process.env.SAUCE_LABS ? '7.1' : null;
+const DEFAULT_ANDROID_DEVICE_NAME = process.env.SAUCE ? 'Android GoogleAPI Emulator' : 'My Android Device';
+const DEFAULT_ANDROID_PLATFORM_VERSION = process.env.SAUCE ? '7.1' : null;
 
 const androidCaps = {
   platformName: 'Android',
@@ -21,10 +21,7 @@ const androidCaps = {
   app: undefined, // Will be added in tests
 };
 
-const serverConfig = process.env.SAUCE_LABS ? {
-  host: 'ondemand.saucelabs.com',
-  port: 80
-} : {
+const serverConfig = {
   host: process.env.APPIUM_HOST || 'localhost',
   port: process.env.APPIUM_PORT || 4723
 };

@@ -40,7 +40,7 @@ describe('MJSONWP', () => {
       }
       let hash = shasum.digest('hex').substring(0, 8);
       // Modify the hash whenever the protocol has intentionally been modified.
-      hash.should.equal('a991dc46');
+      hash.should.equal('6b555735');
     });
   });
 

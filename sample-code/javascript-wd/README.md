@@ -1,4 +1,4 @@
-# C# Sample Code
+# Javascript WD Client Sample Code
 
 ## Setup
 

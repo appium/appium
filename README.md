@@ -78,8 +78,8 @@ Node.js 6+.
 Check out our [Getting Started](/docs/en/about-appium/getting-started.md) guide
 to get going with Appium.
 
-There is also a repository that contains [many examples of tests in a variety
-of different languages](https://github.com/appium/sample-code)!
+There is also sample code that contains [many examples of tests in a variety
+of different languages](https://github.com/appium/appium/sample-code)!
 
 ### Documentation
 

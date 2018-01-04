@@ -14,4 +14,3 @@ _vimrc_local.vim
 *.prefs
 ./.npmignore
 coverage
-sample-code/

@@ -1,0 +1,3 @@
+--compilers babel-core/register
+--require babel-polyfill
+--timeout 1800000

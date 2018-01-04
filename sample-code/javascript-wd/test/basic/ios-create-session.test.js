@@ -21,6 +21,11 @@ describe('Create session', function () {
     // Now that session is running, check that 'sessions' length is one
     assert.equal((await driver.sessions()).length, 1);
 
+    // Check that the XCUIElementTypeApplication was what we expect it to be
+    const applicationElement = await driver.elementByClassName('XCUIElementTypeApplication');
+    const applicationName = await applicationElement.getAttribute('name');
+    assert.equal(applicationName, 'TestApp');
+
     // Quit the session
     await driver.quit();
 

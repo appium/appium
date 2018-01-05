@@ -38,8 +38,7 @@ describe('Basic Android interactions', function () {
     await onSearchRequestedButton.click();
 
     // Check that the text matches the search term
-    await driver.waitForElementById('android:id/search_src_text');
-    const searchText = await driver.elementById('android:id/search_src_text');
+    const searchText = await driver.waitForElementById('android:id/search_src_text');
     const searchTextValue = await searchText.text();
     assert.equal(searchTextValue, 'Hello world!');
   });
@@ -51,10 +50,11 @@ describe('Basic Android interactions', function () {
     // Click button that opens a dialog
     const openDialogButton = await driver.elementById('io.appium.android.apis:id/two_buttons');
     await openDialogButton.click();
-    await driver.waitForElementById('android:id/alertTitle');
 
     // Check that the dialog is there
-    const alertText = (await driver.elementById('android:id/alertTitle')).text();
+    const alertElement = await driver.waitForElementById('android:id/alertTitle');
+    const alertText = await alertElement.text();
+    assert.equal(alertText, `Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop.`);
     const closeDialogButton = await driver.elementById('android:id/button1');
 
     // Close the dialog

@@ -9,7 +9,7 @@ Sample Appium code written in multiple client languages
 
 ## Environment variables
 
-* `DEV`: If set to true, runs apps that are in local directory, otherwise runs  apps that are downloaded from GitHub
+* `DEV`: If set to true, runs  apps that are downloaded from GitHub, otherwise runs apps that are in local directory
 * `IOS_DEVICE_NAME`: Sets the `deviceName` capability for iOS. Otherwise uses some default
 * `IOS_PLATFORM_VERSION`: Sets the `platformVersion` capability for iOS. Otherwise uses some default
 * `ANDROID_DEVICE_NAME`: Sets the `deviceName` capability for Android. Otherwise uses some default

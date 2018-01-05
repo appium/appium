@@ -26,8 +26,7 @@ describe('Basic IOS interactions', function () {
   it('should send keys to inputs', async function () {
     // Find TextField input element
     const textInputId = `TextField1`;
-    await driver.waitForElementByAccessibilityId(textInputId);
-    const textViewsEl = await driver.elementByAccessibilityId(textInputId);
+    const textViewsEl = await driver.waitForElementByAccessibilityId(textInputId);
 
     // Check that it doesn't have a value
     let value = await textViewsEl.getValue();
@@ -44,14 +43,12 @@ describe('Basic IOS interactions', function () {
   it('should click a button that opens an alert', async function () {
     // Find Button element and click on it
     const buttonElementId = `show alert`;
-    await driver.waitForElementByAccessibilityId(buttonElementId);
-    const buttonElement = await driver.elementByAccessibilityId(buttonElementId);
+    const buttonElement = await driver.waitForElementByAccessibilityId(buttonElementId);
     await buttonElement.click();
 
     // Wait for the alert to show up
     const alertTitleId = `Cool title`;
-    await driver.waitForElementByAccessibilityId(alertTitleId);
-    const alertTitleElement = await driver.elementByAccessibilityId(alertTitleId);
+    const alertTitleElement = await driver.waitForElementByAccessibilityId(alertTitleId);
 
     // Check the text
     const alertTitle = await alertTitleElement.text();

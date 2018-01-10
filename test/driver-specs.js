@@ -2,7 +2,7 @@
 
 import { AppiumDriver, getAppiumRouter } from '../lib/appium';
 import { FakeDriver } from 'appium-fake-driver';
-import { TEST_FAKE_APP } from './helpers';
+import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 import sinon from 'sinon';
 import chai from 'chai';
@@ -10,18 +10,11 @@ import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
 import { IosDriver } from 'appium-ios-driver';
 import { sleep } from 'asyncbox';
+import { insertAppiumPrefixes } from '../lib/utils';
 
-const should = chai.should();
+chai.should();
 chai.use(chaiAsPromised);
 
-const insertAppiumPrefixes = AppiumDriver.prototype.insertAppiumPrefixes;
-
-const BASE_CAPS = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
-const W3C_PREFIXED_CAPS = {...insertAppiumPrefixes(BASE_CAPS)};
-const W3C_CAPS = {
-  alwaysMatch:{...W3C_PREFIXED_CAPS},
-  firstMatch: [{}],
-};
 const SESSION_ID = 1;
 
 describe('AppiumDriver', () => {
@@ -147,111 +140,6 @@ describe('AppiumDriver', () => {
         mockFakeDriver.verify();
       });
     });
-    describe('getCaps()', () => {
-      let appium;
-      beforeEach(() => {
-        [appium] = getDriverAndFakeDriver();
-      });
-      it('should return JSONWP caps unchanged if only JSONWP caps provided', function () {
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(BASE_CAPS);
-        desiredCaps.should.deep.equal(BASE_CAPS);
-        newJsonwpCaps.should.deep.equal(BASE_CAPS);
-        should.not.exist(newW3CCapabilities);
-      });
-      it('should return W3C caps unchanged if only W3C caps were provided', function () {
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(undefined, W3C_CAPS);
-        desiredCaps.should.deep.equal(BASE_CAPS);
-        should.not.exist(newJsonwpCaps);
-        newW3CCapabilities.should.deep.equal(W3C_CAPS);
-      });
-      it('should return JSONWP and W3C caps if both were provided', function () {
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(BASE_CAPS, W3C_CAPS);
-        desiredCaps.should.deep.equal(BASE_CAPS);
-        newJsonwpCaps.should.deep.equal(BASE_CAPS);
-        newW3CCapabilities.should.deep.equal(W3C_CAPS);
-      });
-      it('should merge the capabilities together if some are different', function () {
-        let jsonwpCaps = {
-          ...BASE_CAPS,
-          foo: 'bar',
-        };
-        let w3cCaps = {
-          ...W3C_CAPS,
-          alwaysMatch: {
-            ...W3C_CAPS.alwaysMatch,
-            'appium:hello': 'world',
-          }
-        };
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(jsonwpCaps, w3cCaps);
-
-        let expectedCaps = {
-          ...jsonwpCaps,
-          'hello': 'world'
-        };
-
-        desiredCaps.should.deep.equal(expectedCaps);
-        newJsonwpCaps.should.deep.equal(expectedCaps);
-        newW3CCapabilities.should.deep.equal({
-          alwaysMatch: {...insertAppiumPrefixes(expectedCaps)},
-          firstMatch: [{}],
-        });
-      });
-      it('should merge the capabilities together and give preference to W3C if some are matching', function () {
-        // Add caps to JSONWP caps
-        let jsonwpCaps = {
-          foo: 'bar',
-          ...BASE_CAPS,
-        };
-
-        // Add caps to W3C caps
-        let w3cCaps = {
-          alwaysMatch: {
-            hello: 'world',
-            foo: 'BAR',
-            ...BASE_CAPS,
-          },
-          firstMatch: [{}],
-        };
-
-        // Expected result is that w3c caps override jsonwp caps
-        let expectedDesiredCaps = {
-          ...jsonwpCaps,
-          ...w3cCaps.alwaysMatch,
-        };
-
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(jsonwpCaps, w3cCaps);
-        desiredCaps.foo.should.equal('BAR');
-        desiredCaps.should.deep.equal(expectedDesiredCaps);
-        newJsonwpCaps.should.deep.equal(expectedDesiredCaps);
-        newW3CCapabilities.should.deep.equal({
-          alwaysMatch: insertAppiumPrefixes(expectedDesiredCaps),
-          firstMatch: [{}],
-        });
-      });
-      it('should include default capabilities in results', function () {
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(BASE_CAPS, W3C_CAPS, {}, {foo: 'bar'});
-        desiredCaps.should.deep.equal({foo: 'bar', ...BASE_CAPS});
-        newJsonwpCaps.should.deep.equal({foo: 'bar', ...BASE_CAPS});
-        newW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'bar', ...insertAppiumPrefixes(BASE_CAPS)});
-      });
-      it('should reject if W3C caps are not passing constraints', function () {
-        (() => appium.getCaps(BASE_CAPS, W3C_CAPS, {hello: {presence: true}})).should.throw(/'hello' can't be blank/);
-      });
-      it('should only accept W3C caps that have passing constraints', function () {
-        let w3cCaps = {
-          ...W3C_CAPS,
-          firstMatch: [
-            {foo: 'bar'},
-            {hello: 'world'},
-          ],
-        };
-        let {desiredCaps, newJsonwpCaps, newW3CCapabilities} = appium.getCaps(BASE_CAPS, w3cCaps, {hello: {presence: true}});
-        const expectedResult = {hello: 'world', ...BASE_CAPS};
-        desiredCaps.should.deep.equal(expectedResult);
-        newJsonwpCaps.should.deep.equal(expectedResult);
-        newW3CCapabilities.alwaysMatch.should.deep.equal(insertAppiumPrefixes(expectedResult));
-      });
-    });
     describe('deleteSession', () => {
       let appium;
       let mockFakeDriver;
@@ -308,55 +196,6 @@ describe('AppiumDriver', () => {
         sessions[0].capabilities.should.eql(session1[1]);
         sessions[1].id.should.equal(session2[0]);
         sessions[1].capabilities.should.eql(session2[1]);
-      });
-    });
-    describe('applyAppiumPrefixes()', function () {
-      let appium;
-      before(() => {
-        appium = new AppiumDriver({});
-      });
-
-      it('should apply prefixes to non-standard capabilities', function () {
-        appium.insertAppiumPrefixes({
-          someCap: 'someCap',
-        }).should.deep.equal({
-          'appium:someCap': 'someCap',
-        });
-      });
-      it('should not apply prefixes to standard capabilities', function () {
-        appium.insertAppiumPrefixes({
-          browserName: 'BrowserName',
-          platformName: 'PlatformName',
-        }).should.deep.equal({
-          browserName: 'BrowserName',
-          platformName: 'PlatformName',
-        });
-      });
-      it('should not apply prefixes to capabilities that already have a prefix', function () {
-        appium.insertAppiumPrefixes({
-          'appium:someCap': 'someCap',
-          'moz:someOtherCap': 'someOtherCap',
-        }).should.deep.equal({
-          'appium:someCap': 'someCap',
-          'moz:someOtherCap': 'someOtherCap',
-        });
-      });
-      it('should apply prefixes to capabilities non-prefixed, non-standard capabilities; should not apply prefixes to any capabilities', function () {
-        appium.insertAppiumPrefixes({
-          'appium:someCap': 'someCap',
-          'moz:someOtherCap': 'someOtherCap',
-          browserName: 'BrowserName',
-          platformName: 'PlatformName',
-          someOtherCap: 'someOtherCap',
-          yetAnotherCap: 'yetAnotherCap',
-        }).should.deep.equal({
-          'appium:someCap': 'someCap',
-          'moz:someOtherCap': 'someOtherCap',
-          browserName: 'BrowserName',
-          platformName: 'PlatformName',
-          'appium:someOtherCap': 'someOtherCap',
-          'appium:yetAnotherCap': 'yetAnotherCap',
-        });
       });
     });
     describe('getStatus', () => {

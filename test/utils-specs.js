@@ -147,7 +147,7 @@ describe('utils', function () {
         'moz:someOtherCap': 'someOtherCap',
       });
     });
-    it('should apply prefixes to capabilities non-prefixed, non-standard capabilities; should not apply prefixes to any capabilities', function () {
+    it('should apply prefixes to non-prefixed, non-standard capabilities; should not apply prefixes to any other capabilities', function () {
       insertAppiumPrefixes({
         'appium:someCap': 'someCap',
         'moz:someOtherCap': 'someOtherCap',

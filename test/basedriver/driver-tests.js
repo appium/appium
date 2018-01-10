@@ -15,7 +15,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       platformName: 'Fake',
       deviceName: 'Commodore 64',
     }),
-    firstMatch: [],
+    firstMatch: [{}],
   };
 
   describe('BaseDriver', () => {
@@ -132,7 +132,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           platformName: 'Fake',
           deviceName: 'Commodore 64',
         }),
-        firstMatch: [],
+        firstMatch: [{}],
       });
 
       d.protocol.should.equal('W3C');

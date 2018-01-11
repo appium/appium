@@ -380,15 +380,15 @@ describe('MJSONWP', async () => {
         }).should.eventually.be.rejectedWith('400');
       });
       it('should allow create session with capabilities (W3C)', async () => {
-        let res = await request({
+        let {status, value} = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
           json: {
             capabilities,
           }
         });
-        res.status.should.equal(0);
-        res.value.should.eql(capabilities);
+        should.not.exist(status);
+        value.capabilities.should.eql(capabilities);
       });
       it('should fail with code 408 when starting W3C session and then running a command that throws a TimeoutError', async () => {
         let w3cCaps = {

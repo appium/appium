@@ -290,9 +290,8 @@ describe('caps', function () {
       })).should.throw(/'missingCap' can't be blank/);
     });
 
-    describe('validate Appium-like constraints', function () {
+    describe('validate Appium constraints', function () {
       let constraints = {...desiredCapabilityConstraints};
-      constraints.automationName.inclusionCaseInsensitive.push('Fake');
 
       let matchingCaps = {'platformName': 'Fake', 'automationName': 'Fake', 'deviceName': 'Fake'};
       let caps;

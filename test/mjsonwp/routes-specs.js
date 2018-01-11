@@ -40,11 +40,16 @@ describe('MJSONWP', () => {
       }
       let hash = shasum.digest('hex').substring(0, 8);
       // Modify the hash whenever the protocol has intentionally been modified.
-      hash.should.equal('6b555735');
+      hash.should.equal('94cbb31c');
     });
   });
 
   describe('check route to command name conversion', () => {
+    it('should properly lookup correct command name for endpoint with session', () => {
+      const cmdName = routeToCommandName('/timeouts', 'POST');
+      cmdName.should.equal('timeouts');
+    });
+
     it('should properly lookup correct command name for endpoint with session', () => {
       const cmdName = routeToCommandName('/timeouts/implicit_wait', 'POST');
       cmdName.should.equal('implicitWait');

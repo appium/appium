@@ -347,13 +347,15 @@ describe('MJSONWP', async () => {
 
     });
 
-    describe('optional sets of arguments', () => {
+    describe('create sessions via HTTP endpoint', () => {
       let desiredCapabilities = {a: 'b'};
       let requiredCapabilities = {c: 'd'};
       let capabilities = {e: 'f'};
+      let baseUrl = `http://localhost:8181/wd/hub/session`;
+
       it('should allow create session with desired caps (MJSONWP)', async () => {
         let res = await request({
-          url: 'http://localhost:8181/wd/hub/session',
+          url: baseUrl,
           method: 'POST',
           json: {desiredCapabilities}
         });
@@ -362,7 +364,7 @@ describe('MJSONWP', async () => {
       });
       it('should allow create session with desired and required caps', async () => {
         let res = await request({
-          url: 'http://localhost:8181/wd/hub/session',
+          url: baseUrl,
           method: 'POST',
           json: {
             desiredCapabilities,
@@ -374,23 +376,26 @@ describe('MJSONWP', async () => {
       });
       it('should fail to create session without capabilities or desiredCapabilities', async () => {
         await request({
-          url: 'http://localhost:8181/wd/hub/session',
+          url: baseUrl,
           method: 'POST',
           json: {},
         }).should.eventually.be.rejectedWith('400');
       });
       it('should allow create session with capabilities (W3C)', async () => {
-        let {status, value} = await request({
-          url: 'http://localhost:8181/wd/hub/session',
+        let {status, value, sessionId} = await request({
+          url: baseUrl,
           method: 'POST',
           json: {
             capabilities,
           }
         });
         should.not.exist(status);
+        should.not.exist(sessionId);
         value.capabilities.should.eql(capabilities);
+        value.sessionId.should.exist;
       });
-      it('should fail with code 408 when starting W3C session and then running a command that throws a TimeoutError', async () => {
+
+      describe('w3c endpoints', async function () {
         let w3cCaps = {
           alwaysMatch: {
             platformName: 'Fake',
@@ -398,33 +403,79 @@ describe('MJSONWP', async () => {
           },
           firstMatch: [{}],
         };
-        let {value} = await request({
-          url: 'http://localhost:8181/wd/hub/session',
-          method: 'POST',
-          json: {
-            capabilities: w3cCaps,
-          }
-        });
-        let sessionId = value.sessionId;
-        let {statusCode:badStatusCode} = await request({
-          url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
-          method: 'POST',
-          json: {
-            bad: 'params',
-          }
-        }).should.eventually.be.rejected;
-        badStatusCode.should.equal(400);
+        let sessionUrl;
 
-        sinon.stub(driver, 'setUrl', () => { throw new errors.TimeoutError; });
-        let {statusCode} = await request({
-          url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
-          method: 'POST',
-          json: {
-            url: 'https://example.com/',
-          }
-        }).should.eventually.be.rejected;
-        statusCode.should.equal(408);
-        sinon.restore(driver, 'setUrl');
+        beforeEach(async function () {
+          // Start a session
+          let {value} = await request.post(baseUrl, {
+            json: {
+              capabilities: w3cCaps,
+            }
+          });
+          sessionUrl = `${baseUrl}/${value.sessionId}`;
+        });
+
+        afterEach(async function () {
+          // Delete the session
+          await request.delete(sessionUrl);
+        });
+
+        it(`should throw 400 Bad Parameters exception if the parameters are bad`, async () => {
+          const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
+            json: {
+              bad: 'params',
+            }
+          }).should.eventually.be.rejected;
+          message.should.match(/Parameters were incorrect/);
+          statusCode.should.equal(400);
+        });
+
+        it(`should throw 404 Not Found exception if the command hasn't been implemented yet`, async () => {
+          const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
+            json: {
+              actions: [],
+            }
+          }).should.eventually.be.rejected;
+          message.should.match(/Method has not yet been implemented/);
+          statusCode.should.equal(404);
+        });
+
+        it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async () => {
+          driver.performActions = () => { throw new Error(`Didn't work`); };
+          const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
+            json: {
+              actions: [],
+            }
+          }).should.eventually.be.rejected;
+          message.should.match(/500[\w\W]*Didn't work/);
+          statusCode.should.equal(500);
+          delete driver.performActions;
+        });
+
+        it(`should fail with a 408 error if it throws a TimeoutError exception`, async () => {
+          sinon.stub(driver, 'setUrl', () => { throw new errors.TimeoutError; });
+          let {statusCode} = await request({
+            url: `${sessionUrl}/url`,
+            method: 'POST',
+            json: {
+              url: 'https://example.com/',
+            }
+          }).should.eventually.be.rejected;
+          statusCode.should.equal(408);
+          sinon.restore(driver, 'setUrl');
+        });
+
+        it(`should pass with 200 HTTP status code if the command returns a value`, async () => {
+          driver.performActions = (actions) => 'It works ' + actions.join('');
+          const {status, value} = await request.post(`${sessionUrl}/actions`, {
+            json: {
+              actions: ['a', 'b', 'c'],
+            }
+          });
+          should.not.exist(status);
+          value.should.equal('It works abc');
+          delete driver.performActions;
+        });
       });
     });
 

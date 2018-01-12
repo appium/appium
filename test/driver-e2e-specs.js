@@ -153,7 +153,7 @@ describe('FakeDriver - via HTTP', () => {
     });
 
     it('should reject bad W3C capabilities with a BadParametersError (400)', async () => {
-      const caps = {
+      const w3cCaps = {
         "capabilities": {
           "alwaysMatch": {
             ...caps,
@@ -161,9 +161,24 @@ describe('FakeDriver - via HTTP', () => {
           }
         },
       };
-      const {message, statusCode} = await request.post({url: baseUrl, json: caps}).should.eventually.be.rejected;
+      const {message, statusCode} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
       message.should.match(/BadAutomationName not part of/);
       statusCode.should.equal(400);
+    });
+
+    it('should accept capabilities that are provided in the firstMatch array', async () => {
+      const w3cCaps = {
+        "capabilities": {
+          "alwaysMatch": {},
+          "firstMatch": [{}, {
+            ...caps
+          }],
+        },
+      };
+      const {value, sessionId, status} = await request.post({url: baseUrl, json: w3cCaps});
+      should.not.exist(status);
+      should.not.exist(sessionId);
+      value.capabilities.should.deep.equal(caps);
     });
   });
 });

@@ -50,7 +50,7 @@ describe('AppiumDriver', () => {
 
       it('should call inner driver\'s createSession with desired capabilities', async () => {
         mockFakeDriver.expects("createSession")
-          .once().withExactArgs(BASE_CAPS, undefined, undefined, [])
+          .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
@@ -99,7 +99,7 @@ describe('AppiumDriver', () => {
         sessions.should.have.length(3);
 
         mockFakeDriver.expects("createSession")
-          .once().withExactArgs(BASE_CAPS, undefined, undefined, [])
+          .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
 
@@ -113,7 +113,7 @@ describe('AppiumDriver', () => {
       });
       it('should call "createSession" with W3C capabilities argument, if provided', async function () {
         mockFakeDriver.expects("createSession")
-          .once().withArgs(undefined, undefined, W3C_CAPS)
+          .once().withArgs(null, undefined, W3C_CAPS)
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(undefined, undefined, W3C_CAPS);
         mockFakeDriver.verify();
@@ -127,7 +127,7 @@ describe('AppiumDriver', () => {
           },
         };
         mockFakeDriver.expects("createSession")
-          .once().withArgs(undefined, undefined, {
+          .once().withArgs(null, undefined, {
             alwaysMatch: {
               ...w3cCaps.alwaysMatch,
               'appium:someOtherParm': 'someOtherParm',

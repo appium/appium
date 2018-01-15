@@ -339,4 +339,36 @@ describe('Desired Capabilities', () => {
     }).should.eventually.be.rejectedWith(/blank/);
 
   });
+
+  describe('w3c', async () => {
+    it('should accept w3c capabilities', async () => {
+      const [sessionId, caps] = await d.createSession(null, null, {
+        alwaysMatch: {
+          platformName: 'iOS',
+          deviceName: 'Delorean'
+        }, firstMatch: [{}],
+      });
+      sessionId.should.exist;
+      caps.should.eql({
+        platformName: 'iOS',
+        deviceName: 'Delorean',
+      });
+      await d.deleteSession();
+    });
+
+    it('should ignore w3c capabilities if it is not a plain JSON object', async () => {
+      for (let val of [true, "string", [], 100]) {
+        const [sessionId, caps] = await d.createSession({
+          platformName: 'iOS',
+          deviceName: 'Delorean'
+        }, null, val);
+        sessionId.should.exist;
+        caps.should.eql({
+          platformName: 'iOS',
+          deviceName: 'Delorean',
+        });
+        await d.deleteSession();
+      }
+    });
+  });
 });

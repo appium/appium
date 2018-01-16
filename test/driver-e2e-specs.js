@@ -17,11 +17,10 @@ const caps = {platformName: "Fake", deviceName: "Fake", app: TEST_FAKE_APP};
 
 describe('FakeDriver - via HTTP', () => {
   let server = null;
-  let baseUrl;
+  const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async () => {
     if (shouldStartServer) {
       let args = {port: TEST_PORT, host: TEST_HOST};
-      baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
       server = await appiumServer(args);
     }
   });

@@ -1,12 +1,14 @@
 // transpile:mocha
 
-import { server, routeConfiguringFunction, errors } from '../..';
+import { server, routeConfiguringFunction, errors, JWProxy } from '../..';
 import { FakeDriver } from './fake-driver';
 import _ from 'lodash';
 import request from 'request-promise';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+import HTTPStatusCodes from 'http-status-codes';
+import { createProxyServer, addHandler } from './helpers';
 
 let should = chai.should();
 chai.use(chaiAsPromised);
@@ -404,6 +406,7 @@ describe('MJSONWP', async () => {
           firstMatch: [{}],
         };
         let sessionUrl;
+        let sessionId;
 
         beforeEach(async function () {
           // Start a session
@@ -412,7 +415,8 @@ describe('MJSONWP', async () => {
               capabilities: w3cCaps,
             }
           });
-          sessionUrl = `${baseUrl}/${value.sessionId}`;
+          sessionId = value.sessionId;
+          sessionUrl = `${baseUrl}/${sessionId}`;
         });
 
         afterEach(async function () {
@@ -467,14 +471,70 @@ describe('MJSONWP', async () => {
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async () => {
           driver.performActions = (actions) => 'It works ' + actions.join('');
-          const {status, value} = await request.post(`${sessionUrl}/actions`, {
+          const {status, value, sessionId} = await request.post(`${sessionUrl}/actions`, {
             json: {
               actions: ['a', 'b', 'c'],
             }
           });
+          should.not.exist(sessionId);
           should.not.exist(status);
           value.should.equal('It works abc');
           delete driver.performActions;
+        });
+
+        describe('jwproxy', function () {
+          let port = 56562;
+          let server, jwproxy, app;
+          beforeEach(function () {
+            let res = createProxyServer(sessionId, port);
+            server = res.server;
+            app = res.app;
+            jwproxy = new JWProxy({host: 'localhost', port});
+            jwproxy.sessionId = sessionId;
+            driver.performActions = async (actions) => await jwproxy.command('/perform-actions', 'POST', actions);
+          });
+
+          afterEach(function () {
+            server.close();
+            delete driver.performActions;
+          });
+
+          it('should work if a proxied request returns a response with status 200', async () => {
+            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+              res.json({
+                sessionId: req.params.sessionId,
+                value: req.body,
+                status: 0,
+              });
+            });
+
+            const {status, value, sessionId} = await request.post(`${sessionUrl}/actions`, {
+              json: {
+                actions: [1, 2, 3],
+              },
+            });
+            value.should.eql([1, 2, 3]);
+            should.not.exist(status);
+            should.not.exist(sessionId);
+          });
+
+          it('should work if a proxied request returns a MJSONWP error response', async () => {
+            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+              res.status(500).json({
+                sessionId,
+                status: 6,
+                value: 'A problem occurred',
+              });
+            });
+            const {statusCode, message} = await request.post(`${sessionUrl}/actions`, {
+              json: {
+                actions: [1, 2, 3],
+              }
+            }).should.eventually.be.rejected;
+            statusCode.should.equal(HTTPStatusCodes.NOT_FOUND);
+            message.should.match(/A problem occurred/);
+          });
+
         });
       });
     });

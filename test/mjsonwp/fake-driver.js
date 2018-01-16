@@ -1,7 +1,7 @@
-import { errors, MobileJsonWireProtocol, BaseDriver } from '../..';
+import { errors, BaseDriver } from '../..';
 import _ from 'lodash';
 
-class FakeDriver extends MobileJsonWireProtocol {
+class FakeDriver extends BaseDriver {
 
   constructor () {
     super();

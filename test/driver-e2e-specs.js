@@ -17,6 +17,7 @@ const caps = {platformName: "Fake", deviceName: "Fake", app: TEST_FAKE_APP};
 
 describe('FakeDriver - via HTTP', () => {
   let server = null;
+  const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async () => {
     if (shouldStartServer) {
       let args = {port: TEST_PORT, host: TEST_HOST};
@@ -77,7 +78,7 @@ describe('FakeDriver - via HTTP', () => {
       await driver.source().should.eventually.be.rejectedWith(/terminated/);
     });
 
-    it('should accept W3C capabilities', async () => {
+    it('should accept valid W3C capabilities and start a W3C session', async () => {
       // Try with valid capabilities and check that it returns a session ID
       const w3cCaps = {
         capabilities: {
@@ -86,19 +87,33 @@ describe('FakeDriver - via HTTP', () => {
         }
       };
 
-      const { status, value, sessionId } = await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, json: w3cCaps});
-      status.should.equal(0);
-      sessionId.should.be.a.string;
+      // Create the session
+      const {status, value, sessionId} = await request.post({url: baseUrl, json: w3cCaps});
+      should.not.exist(status); // Test that it's a W3C session by checking that 'status' is not in the response
+      should.not.exist(sessionId);
+      value.sessionId.should.be.a.string;
       value.should.exist;
+      value.capabilities.should.deep.equal({
+        platformName: 'Fake',
+        deviceName: 'Fake',
+        app: TEST_FAKE_APP,
+      });
 
       // Now use that sessionId to call /screenshot
-      const { status:screenshotStatus, value:screenshotValue } = await request({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/screenshot`, json: true});
+      const {status:screenshotStatus, value:screenshotValue} = await request({url: `${baseUrl}/${value.sessionId}/screenshot`, json: true});
+      should.not.exist(screenshotStatus);
       screenshotValue.should.equal('hahahanotreallyascreenshot');
-      screenshotStatus.should.equal(0);
-      // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it throws correct error
-      await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session/${sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejectedWith(/501/);
 
-      // Now try with invalid capabilities and check that it returns 500 status
+      // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
+      const {statusCode, message} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
+      statusCode.should.equal(404);
+      message.should.match(/Method has not yet been implemented/);
+
+      // End session
+      await request.delete({url: `${baseUrl}/${value.sessionId}`}).should.eventually.be.resolved;
+    });
+
+    it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async () => {
       const badW3Ccaps = {
         capabilities: {
           alwaysMatch: {},
@@ -106,28 +121,63 @@ describe('FakeDriver - via HTTP', () => {
         }
       };
 
-      try {
-        await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, json: badW3Ccaps});
-      } catch (e) {
-        e.statusCode.should.equal(500);
-      }
+      const {statusCode, message} = await request.post({url: baseUrl, json: badW3Ccaps}).should.eventually.be.rejected;
+      statusCode.should.equal(400);
+      message.should.match(/can't be blank/);
     });
 
-    it('should accept a combo of W3C and JSONWP capabilities', async () => {
+    it('should accept a combo of W3C and JSONWP capabilities but default to W3C', async () => {
       const combinedCaps = {
-        "desiredCapabilities": caps,
+        "desiredCapabilities": {
+          ...caps,
+          mjsonwpParam: 'mjsonwpParam',
+        },
         "capabilities": {
-          "alwaysMatch": {},
+          "alwaysMatch": {...caps},
           "firstMatch": [{
-            "platformName": "Fake",
-          }]
+            w3cParam: 'w3cParam',
+          }],
         }
       };
 
-      const { status, value, sessionId } = await request.post({url: `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`, json: combinedCaps});
-      status.should.equal(0);
-      value.platformName.should.equal('Fake');
-      sessionId.should.exist;
+      const {status, value, sessionId} = await request.post({url: baseUrl, json: combinedCaps});
+      should.not.exist(status); // If it's a W3C session, should not respond with 'status'
+      should.not.exist(sessionId);
+      value.sessionId.should.exist;
+      value.capabilities.should.deep.equal({
+        ...caps,
+        w3cParam: 'w3cParam',
+        mjsonwpParam: 'mjsonwpParam', // Note: For now we're accepting a mix of the two to alleviate client issues. This ought to not be supported in the future though.
+      });
+    });
+
+    it('should reject bad W3C capabilities with a BadParametersError (400)', async () => {
+      const w3cCaps = {
+        "capabilities": {
+          "alwaysMatch": {
+            ...caps,
+            "automationName": "BadAutomationName",
+          }
+        },
+      };
+      const {message, statusCode} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      message.should.match(/BadAutomationName not part of/);
+      statusCode.should.equal(400);
+    });
+
+    it('should accept capabilities that are provided in the firstMatch array', async () => {
+      const w3cCaps = {
+        "capabilities": {
+          "alwaysMatch": {},
+          "firstMatch": [{}, {
+            ...caps
+          }],
+        },
+      };
+      const {value, sessionId, status} = await request.post({url: baseUrl, json: w3cCaps});
+      should.not.exist(status);
+      should.not.exist(sessionId);
+      value.capabilities.should.deep.equal(caps);
     });
   });
 });

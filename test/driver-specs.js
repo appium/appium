@@ -2,7 +2,7 @@
 
 import { AppiumDriver, getAppiumRouter } from '../lib/appium';
 import { FakeDriver } from 'appium-fake-driver';
-import { TEST_FAKE_APP } from './helpers';
+import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 import sinon from 'sinon';
 import chai from 'chai';
@@ -10,11 +10,11 @@ import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
 import { IosDriver } from 'appium-ios-driver';
 import { sleep } from 'asyncbox';
+import { insertAppiumPrefixes } from '../lib/utils';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-const BASE_CAPS = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
 const SESSION_ID = 1;
 
 describe('AppiumDriver', () => {
@@ -50,7 +50,7 @@ describe('AppiumDriver', () => {
 
       it('should call inner driver\'s createSession with desired capabilities', async () => {
         mockFakeDriver.expects("createSession")
-          .once().withExactArgs(BASE_CAPS, undefined, [])
+          .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
@@ -99,7 +99,7 @@ describe('AppiumDriver', () => {
         sessions.should.have.length(3);
 
         mockFakeDriver.expects("createSession")
-          .once().withExactArgs(BASE_CAPS, undefined, [])
+          .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
 
@@ -109,6 +109,34 @@ describe('AppiumDriver', () => {
         for (let mfd of mockFakeDrivers) {
           mfd.verify();
         }
+        mockFakeDriver.verify();
+      });
+      it('should call "createSession" with W3C capabilities argument, if provided', async function () {
+        mockFakeDriver.expects("createSession")
+          .once().withArgs(null, undefined, W3C_CAPS)
+          .returns([SESSION_ID, BASE_CAPS]);
+        await appium.createSession(undefined, undefined, W3C_CAPS);
+        mockFakeDriver.verify();
+      });
+      it('should call "createSession" with W3C capabilities argument with additional provided parameters', async function () {
+        let w3cCaps = {
+          ...W3C_CAPS,
+          alwaysMatch: {
+            ...W3C_CAPS.alwaysMatch,
+            'appium:someOtherParm': 'someOtherParm',
+          },
+        };
+        mockFakeDriver.expects("createSession")
+          .once().withArgs(null, undefined, {
+            alwaysMatch: {
+              ...w3cCaps.alwaysMatch,
+              'appium:someOtherParm': 'someOtherParm',
+            },
+            firstMatch: [{}],
+          })
+          .returns([SESSION_ID, insertAppiumPrefixes(BASE_CAPS)]);
+
+        await appium.createSession(undefined, undefined, w3cCaps);
         mockFakeDriver.verify();
       });
     });

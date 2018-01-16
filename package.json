@@ -35,9 +35,9 @@
   },
   "dependencies": {
     "appium-android-driver": "1.x",
-    "appium-base-driver": "2.x",
+    "appium-base-driver": "^2.20.0",
     "appium-espresso-driver": "^1.0.0-beta.3",
-    "appium-fake-driver": "^0.2.x",
+    "appium-fake-driver": "^0.3.0",
     "appium-ios-driver": "1.x",
     "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",

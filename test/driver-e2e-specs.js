@@ -15,23 +15,23 @@ const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== "0";
 const caps = {platformName: "Fake", deviceName: "Fake", app: TEST_FAKE_APP};
 
-describe('FakeDriver - via HTTP', () => {
+describe('FakeDriver - via HTTP', function () {
   let server = null;
   const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
-  before(async () => {
+  before(async function () {
     if (shouldStartServer) {
       let args = {port: TEST_PORT, host: TEST_HOST};
       server = await appiumServer(args);
     }
   });
-  after(async () => {
+  after(async function () {
     if (server) {
       await server.close();
     }
   });
 
-  describe('session handling', () => {
-    it('should start and stop a session', async () => {
+  describe('session handling', function () {
+    it('should start and stop a session', async function () {
       let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
       let [sessionId] = await driver.init(caps);
       should.exist(sessionId);
@@ -40,7 +40,7 @@ describe('FakeDriver - via HTTP', () => {
       await driver.title().should.eventually.be.rejectedWith(/terminated/);
     });
 
-    it('should be able to run two FakeDriver sessions simultaneously', async () => {
+    it('should be able to run two FakeDriver sessions simultaneously', async function () {
       let driver1 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
       let [sessionId1] = await driver1.init(caps);
       should.exist(sessionId1);
@@ -54,7 +54,7 @@ describe('FakeDriver - via HTTP', () => {
       await driver2.quit();
     });
 
-    it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async () => {
+    it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async function () {
       let uniqueCaps = _.clone(caps);
       uniqueCaps.uniqueApp = true;
       let driver1 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
@@ -66,7 +66,7 @@ describe('FakeDriver - via HTTP', () => {
       await driver1.quit();
     });
 
-    it('should use the newCommandTimeout of the inner Driver on session creation', async () => {
+    it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
       let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
 
       caps.newCommandTimeout = 0.25;
@@ -78,7 +78,7 @@ describe('FakeDriver - via HTTP', () => {
       await driver.source().should.eventually.be.rejectedWith(/terminated/);
     });
 
-    it('should accept valid W3C capabilities and start a W3C session', async () => {
+    it('should accept valid W3C capabilities and start a W3C session', async function () {
       // Try with valid capabilities and check that it returns a session ID
       const w3cCaps = {
         capabilities: {
@@ -113,7 +113,7 @@ describe('FakeDriver - via HTTP', () => {
       await request.delete({url: `${baseUrl}/${value.sessionId}`}).should.eventually.be.resolved;
     });
 
-    it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async () => {
+    it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function () {
       const badW3Ccaps = {
         capabilities: {
           alwaysMatch: {},
@@ -126,7 +126,7 @@ describe('FakeDriver - via HTTP', () => {
       message.should.match(/can't be blank/);
     });
 
-    it('should accept a combo of W3C and JSONWP capabilities but default to W3C', async () => {
+    it('should accept a combo of W3C and JSONWP capabilities but default to W3C', async function () {
       const combinedCaps = {
         "desiredCapabilities": {
           ...caps,
@@ -151,7 +151,7 @@ describe('FakeDriver - via HTTP', () => {
       });
     });
 
-    it('should reject bad W3C capabilities with a BadParametersError (400)', async () => {
+    it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {
       const w3cCaps = {
         "capabilities": {
           "alwaysMatch": {
@@ -165,7 +165,7 @@ describe('FakeDriver - via HTTP', () => {
       statusCode.should.equal(400);
     });
 
-    it('should accept capabilities that are provided in the firstMatch array', async () => {
+    it('should accept capabilities that are provided in the firstMatch array', async function () {
       const w3cCaps = {
         "capabilities": {
           "alwaysMatch": {},
@@ -182,7 +182,7 @@ describe('FakeDriver - via HTTP', () => {
   });
 });
 
-describe('Logsink', () => {
+describe('Logsink', function () {
   let server = null;
   let logs = [];
   let logHandler = (level, message) => {
@@ -190,15 +190,15 @@ describe('Logsink', () => {
   };
   let args = {port: TEST_PORT, host: TEST_HOST, logHandler};
 
-  before(async () => {
+  before(async function () {
     server = await appiumServer(args);
   });
 
-  after(async () => {
+  after(async function () {
     await server.close();
   });
 
-  it('should send logs to a logHandler passed in by a parent package', async () => {
+  it('should send logs to a logHandler passed in by a parent package', async function () {
     logs.length.should.be.above(1);
     logs[0].length.should.equal(2);
     logs[0][1].should.include("Welcome to Appium");

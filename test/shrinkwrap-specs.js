@@ -8,12 +8,12 @@ import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe.skip('shrinkwrap checks', () => {
-  it('shrinkwrap file should exist', async () => {
+describe.skip('shrinkwrap checks', function () {
+  it('shrinkwrap file should exist', async function () {
     require('../../npm-shrinkwrap.json');
   });
 
-  it('shrinkwrap should not include fsevents', async () => {
+  it('shrinkwrap should not include fsevents', async function () {
     // fsevents is an optional dep that only works on Mac.
     // if it's in shrinkwrap, non-Mac hosts won't be able to install appium
     let shrinkwrap = require('../../npm-shrinkwrap.json');

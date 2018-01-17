@@ -17,15 +17,15 @@ chai.use(chaiAsPromised);
 
 const SESSION_ID = 1;
 
-describe('AppiumDriver', () => {
-  describe('getAppiumRouter', () => {
-    it('should return a route configuring function', async () => {
+describe('AppiumDriver', function () {
+  describe('getAppiumRouter', function () {
+    it('should return a route configuring function', async function () {
       let routeConfiguringFunction = getAppiumRouter({});
       routeConfiguringFunction.should.be.a.function;
     });
   });
 
-  describe('AppiumDriver', () => {
+  describe('AppiumDriver', function () {
     function getDriverAndFakeDriver () {
       let appium = new AppiumDriver({});
       let fakeDriver = new FakeDriver();
@@ -37,25 +37,25 @@ describe('AppiumDriver', () => {
       };
       return [appium, mockFakeDriver];
     }
-    describe('createSession', () => {
+    describe('createSession', function () {
       let appium;
       let mockFakeDriver;
-      beforeEach(() => {
+      beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver();
       });
-      afterEach(async () => {
+      afterEach(async function () {
         mockFakeDriver.restore();
         await appium.deleteSession(SESSION_ID);
       });
 
-      it('should call inner driver\'s createSession with desired capabilities', async () => {
+      it('should call inner driver\'s createSession with desired capabilities', async function () {
         mockFakeDriver.expects("createSession")
           .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it('should call inner driver\'s createSession with desired and default capabilities', async () => {
+      it('should call inner driver\'s createSession with desired and default capabilities', async function () {
         let defaultCaps = {deviceName: 'Emulator'}
           , allCaps = _.extend(_.clone(defaultCaps), BASE_CAPS);
         appium.args.defaultCapabilities = defaultCaps;
@@ -65,7 +65,7 @@ describe('AppiumDriver', () => {
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it('should call inner driver\'s createSession with desired and default capabilities without overriding caps', async () => {
+      it('should call inner driver\'s createSession with desired and default capabilities without overriding caps', async function () {
         // a default capability with the same key as a desired capability
         // should do nothing
         let defaultCaps = {platformName: 'Ersatz'};
@@ -76,7 +76,7 @@ describe('AppiumDriver', () => {
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it('should kill all other sessions if sessionOverride is on', async () => {
+      it('should kill all other sessions if sessionOverride is on', async function () {
         appium.args.sessionOverride = true;
 
         // mock three sessions that should be removed when the new one is created
@@ -140,16 +140,16 @@ describe('AppiumDriver', () => {
         mockFakeDriver.verify();
       });
     });
-    describe('deleteSession', () => {
+    describe('deleteSession', function () {
       let appium;
       let mockFakeDriver;
-      beforeEach(() => {
+      beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver();
       });
-      afterEach(() => {
+      afterEach(function () {
         mockFakeDriver.restore();
       });
-      it('should remove the session if it is found', async () => {
+      it('should remove the session if it is found', async function () {
         let [sessionId] = await appium.createSession(BASE_CAPS);
         let sessions = await appium.getSessions();
         sessions.should.have.length(1);
@@ -157,7 +157,7 @@ describe('AppiumDriver', () => {
         sessions = await appium.getSessions();
         sessions.should.have.length(0);
       });
-      it('should call inner driver\'s deleteSession method', async () => {
+      it('should call inner driver\'s deleteSession method', async function () {
         const [sessionId] = await appium.createSession(BASE_CAPS);
         mockFakeDriver.expects("deleteSession")
           .once().withExactArgs(sessionId, [])
@@ -169,23 +169,23 @@ describe('AppiumDriver', () => {
         await mockFakeDriver.object.deleteSession();
       });
     });
-    describe('getSessions', () => {
+    describe('getSessions', function () {
       let appium;
       let sessions;
-      before(() => {
+      before(function () {
         appium = new AppiumDriver({});
       });
-      afterEach(async () => {
+      afterEach(async function () {
         for (let session of sessions) {
           await appium.deleteSession(session.id);
         }
       });
-      it('should return an empty array of sessions', async () => {
+      it('should return an empty array of sessions', async function () {
         sessions = await appium.getSessions();
         sessions.should.be.an.array;
         sessions.should.be.empty;
       });
-      it('should return sessions created', async () => {
+      it('should return sessions created', async function () {
         let session1 = await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'value'}));
         let session2 = await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'other value'}));
 
@@ -198,32 +198,32 @@ describe('AppiumDriver', () => {
         sessions[1].capabilities.should.eql(session2[1]);
       });
     });
-    describe('getStatus', () => {
+    describe('getStatus', function () {
       let appium;
-      before(() => {
+      before(function () {
         appium = new AppiumDriver({});
       });
-      it('should return a status', async () => {
+      it('should return a status', async function () {
         let status = await appium.getStatus();
         status.build.should.exist;
         status.build.version.should.exist;
       });
     });
-    describe('sessionExists', () => {
+    describe('sessionExists', function () {
     });
-    describe('attachUnexpectedShutdownHandler', () => {
+    describe('attachUnexpectedShutdownHandler', function () {
       let appium
         , mockFakeDriver;
-      beforeEach(() => {
+      beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver();
       });
-      afterEach(async () => {
+      afterEach(async function () {
         await mockFakeDriver.object.deleteSession();
         mockFakeDriver.restore();
         appium.args.defaultCapabilities = {};
       });
 
-      it('should remove session if inner driver unexpectedly exits with an error', async () => {
+      it('should remove session if inner driver unexpectedly exits with an error', async function () {
         let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error("Oops"));
@@ -231,7 +231,7 @@ describe('AppiumDriver', () => {
         await sleep(1);
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
-      it('should remove session if inner driver unexpectedly exits with no error', async () => {
+      it('should remove session if inner driver unexpectedly exits with no error', async function () {
         let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].unexpectedShutdownDeferred.resolve();
@@ -239,7 +239,7 @@ describe('AppiumDriver', () => {
         await sleep(1);
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
-      it('should not remove session if inner driver cancels unexpected exit', async () => {
+      it('should not remove session if inner driver cancels unexpected exit', async function () {
         let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].onUnexpectedShutdown.cancel();
@@ -248,12 +248,12 @@ describe('AppiumDriver', () => {
         _.keys(appium.sessions).should.contain(sessionId);
       });
     });
-    describe('getDriverForCaps', () => {
-      it('should not blow up if user does not provide platformName', () => {
+    describe('getDriverForCaps', function () {
+      it('should not blow up if user does not provide platformName', function () {
         let appium = new AppiumDriver({});
         (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
       });
-      it('should get XCUITestDriver driver for automationName of XCUITest', () => {
+      it('should get XCUITestDriver driver for automationName of XCUITest', function () {
         let appium = new AppiumDriver({});
         let driver = appium.getDriverForCaps({
           platformName: 'iOS',
@@ -262,7 +262,7 @@ describe('AppiumDriver', () => {
         driver.should.be.an.instanceof(Function);
         driver.should.equal(XCUITestDriver);
       });
-      it('should get iosdriver for ios < 10', () => {
+      it('should get iosdriver for ios < 10', function () {
         let appium = new AppiumDriver({});
         let caps = {
           platformName: 'iOS',
@@ -292,7 +292,7 @@ describe('AppiumDriver', () => {
         driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
       });
-      it('should get xcuitestdriver for ios >= 10', () => {
+      it('should get xcuitestdriver for ios >= 10', function () {
         let appium = new AppiumDriver({});
         let caps = {
           platformName: 'iOS',

@@ -8,7 +8,7 @@ const should = chai.should();
 chai.use(chaiAsPromised);
 
 describe('utils', function () {
-  describe('parseCapsForInnerDriver()', () => {
+  describe('parseCapsForInnerDriver()', function () {
     it('should return JSONWP caps unchanged if only JSONWP caps provided', function () {
       let {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);

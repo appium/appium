@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.8.0-beta (from 1.7.2)
+===================================
+
+Appium 1.8.0 introduces full support for the [W3C WebDriver specification](https://www.w3.org/TR/webdriver/)
+([digested version of the spec](https://github.com/jlipps/simple-wd-spec)).
+
+
 CHANGES IN VERSION 1.7.2 (from 1.7.1)
 ===================================
 

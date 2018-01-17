@@ -12,12 +12,12 @@ const TEST_FAKE_APP = path.resolve(__dirname, "..", "..", "node_modules",
 function initSession (caps) {
   let resolve = () => {};
   let driver;
-  before(async () => {
+  before(async function () {
     driver = wd.promiseChainRemote({host: TEST_HOST, port: TEST_PORT});
     resolve(driver);
     await driver.init(caps);
   });
-  after(async () => {
+  after(async function () {
     await driver.quit();
   });
   return new B((_resolve) => {

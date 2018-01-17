@@ -4,3 +4,4 @@ build
 working
 .DS_Store
 coverage
+package-lock.json

@@ -100,32 +100,32 @@ let errorsList = [
    errorCode: 13}
 ];
 
-describe('errors', () => {
+describe('errors', function () {
   for (let error of errorsList) {
-    it(error.errorName + ' should have correct code and messg', () => {
+    it(error.errorName + ' should have correct code and messg', function () {
       new errors[error.errorName]()
         .should.have.property('jsonwpCode', error.errorCode);
       new errors[error.errorName]()
         .should.have.property('message', error.errorMsg);
     });
   }
-  it('BadParametersError should not have code and should have messg', () => {
+  it('BadParametersError should not have code and should have messg', function () {
     new errors.BadParametersError()
       .should.not.have.property('jsonwpCode');
     new errors.BadParametersError()
       .should.have.property('message');
   });
-  it('ProxyRequestError should have message and jsonwp', () => {
+  it('ProxyRequestError should have message and jsonwp', function () {
     new errors.ProxyRequestError()
         .should.have.property('jsonwp');
     new errors.ProxyRequestError()
         .should.have.property('message');
   });
 });
-describe('errorFromCode', () => {
+describe('errorFromCode', function () {
   for (let error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
-      it(error.errorCode + ' should return correct error', () => {
+      it(error.errorCode + ' should return correct error', function () {
         errorFromCode(error.errorCode)
           .should.have.property('jsonwpCode', error.errorCode);
         errorFromCode(error.errorCode)
@@ -139,7 +139,7 @@ describe('errorFromCode', () => {
       });
     }
   }
-  it('should throw unknown error for unknown code', () => {
+  it('should throw unknown error for unknown code', function () {
     errorFromCode(99)
       .should.have.property('jsonwpCode', 13);
     errorFromCode(99)
@@ -147,7 +147,7 @@ describe('errorFromCode', () => {
                                        'while processing the command.');
   });
 });
-describe('w3c Status Codes', () => {
+describe('w3c Status Codes', function () {
   it('should match the correct error codes', function () {
     let non400Errors = [
       ['NoSuchDriverError', 404],

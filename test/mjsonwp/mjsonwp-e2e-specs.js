@@ -13,33 +13,33 @@ import { createProxyServer, addHandler } from './helpers';
 let should = chai.should();
 chai.use(chaiAsPromised);
 
-describe('MJSONWP', async () => {
+describe('MJSONWP', async function () {
 
   //TODO: more tests!:
   // Unknown commands should return 404
 
-  describe('direct to driver', () => {
+  describe('direct to driver', function () {
     let d = new FakeDriver();
-    it('should return response values directly from the driver', async () => {
+    it('should return response values directly from the driver', async function () {
       (await d.setUrl("http://google.com")).should.contain("google");
     });
   });
 
-  describe('via express router', () => {
+  describe('via express router', function () {
     let mjsonwpServer;
     let driver;
 
-    before(async () => {
+    before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
       mjsonwpServer = await server(routeConfiguringFunction(driver), 8181);
     });
 
-    after(async () => {
+    after(async function () {
       mjsonwpServer.close();
     });
 
-    it('should proxy to driver and return valid jsonwp response', async () => {
+    it('should proxy to driver and return valid jsonwp response', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',
         method: 'POST',
@@ -52,7 +52,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should assume requests without a Content-Type are json requests', async () => {
+    it('should assume requests without a Content-Type are json requests', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',
         method: 'POST',
@@ -65,7 +65,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should respond to x-www-form-urlencoded as well as json requests', async () => {
+    it('should respond to x-www-form-urlencoded as well as json requests', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',
         method: 'POST',
@@ -78,7 +78,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should include url request parameters for methods to use - sessionid', async () => {
+    it('should include url request parameters for methods to use - sessionid', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/back',
         method: 'POST',
@@ -93,7 +93,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should include url request parameters for methods to use - elementid', async () => {
+    it('should include url request parameters for methods to use - elementid', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/element/bar/click',
         method: 'POST',
@@ -103,7 +103,7 @@ describe('MJSONWP', async () => {
       res.value.should.eql(["bar", "foo"]);
     });
 
-    it('should include url req params in the order: custom, element, session', async () => {
+    it('should include url req params in the order: custom, element, session', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/element/bar/attribute/baz',
         method: 'GET',
@@ -114,7 +114,7 @@ describe('MJSONWP', async () => {
 
     });
 
-    it('should respond with 400 Bad Request if parameters missing', async () => {
+    it('should respond with 400 Bad Request if parameters missing', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',
         method: 'POST',
@@ -127,7 +127,7 @@ describe('MJSONWP', async () => {
       res.body.should.contain("url");
     });
 
-    it('should reject requests with a badly formatted body and not crash', async () => {
+    it('should reject requests with a badly formatted body and not crash', async function () {
       await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',
         method: 'POST',
@@ -147,7 +147,7 @@ describe('MJSONWP', async () => {
 
     });
 
-    it('should get 404 for bad routes', async () => {
+    it('should get 404 for bad routes', async function () {
       await request({
         url: 'http://localhost:8181/wd/hub/blargimarg',
         method: 'GET'
@@ -156,7 +156,7 @@ describe('MJSONWP', async () => {
 
     // TODO pass this test
     // https://github.com/appium/node-mobile-json-wire-protocol/issues/3
-    it('4xx responses should have content-type of text/plain', async () => {
+    it('4xx responses should have content-type of text/plain', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/blargimargarita',
         method: 'GET',
@@ -167,7 +167,7 @@ describe('MJSONWP', async () => {
       res.headers['content-type'].should.include('text/plain');
     });
 
-    it('should throw not yet implemented for unfilledout commands', async () => {
+    it('should throw not yet implemented for unfilledout commands', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/element/bar/location',
         method: 'GET',
@@ -186,7 +186,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should throw not implemented for ignored commands', async () => {
+    it('should throw not implemented for ignored commands', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/buttonup',
         method: 'POST',
@@ -205,7 +205,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should get 400 for bad parameters', async () => {
+    it('should get 400 for bad parameters', async function () {
       await request({
         url: 'http://localhost:8181/wd/hub/session/foo/url',
         method: 'POST',
@@ -213,7 +213,7 @@ describe('MJSONWP', async () => {
       }).should.eventually.be.rejectedWith("400");
     });
 
-    it('should ignore special extra payload params in the right contexts', async () => {
+    it('should ignore special extra payload params in the right contexts', async function () {
       await request({
         url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
         method: 'POST',
@@ -235,7 +235,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should return the correct error even if driver does not throw', async () => {
+    it('should return the correct error even if driver does not throw', async function () {
       let res =  await request({
         url: 'http://localhost:8181/wd/hub/session/foo/appium/receive_async_response',
         method: 'POST',
@@ -254,8 +254,8 @@ describe('MJSONWP', async () => {
       });
     });
 
-    describe('w3c sendkeys migration', () => {
-      it('should accept value for sendkeys', async () => {
+    describe('w3c sendkeys migration', function () {
+      it('should accept value for sendkeys', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
           method: 'POST',
@@ -264,7 +264,7 @@ describe('MJSONWP', async () => {
         res.status.should.equal(0);
         res.value.should.eql(["text to type", "bar"]);
       });
-      it('should accept text for sendkeys', async () => {
+      it('should accept text for sendkeys', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
           method: 'POST',
@@ -273,7 +273,7 @@ describe('MJSONWP', async () => {
         res.status.should.equal(0);
         res.value.should.eql(["text to type", "bar"]);
       });
-      it('should accept value and text for sendkeys, and use value', async () => {
+      it('should accept value and text for sendkeys, and use value', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/element/bar/value',
           method: 'POST',
@@ -284,9 +284,9 @@ describe('MJSONWP', async () => {
       });
     });
 
-    describe('multiple sets of arguments', () => {
-      describe('optional', () => {
-        it('should allow moveto with element', async () => {
+    describe('multiple sets of arguments', function () {
+      describe('optional', function () {
+        it('should allow moveto with element', async function () {
           let res = await request({
             url: 'http://localhost:8181/wd/hub/session/foo/moveto',
             method: 'POST',
@@ -295,7 +295,7 @@ describe('MJSONWP', async () => {
           res.status.should.equal(0);
           res.value.should.eql(['3', null, null]);
         });
-        it('should allow moveto with xoffset/yoffset', async () => {
+        it('should allow moveto with xoffset/yoffset', async function () {
           let res = await request({
             url: 'http://localhost:8181/wd/hub/session/foo/moveto',
             method: 'POST',
@@ -305,8 +305,8 @@ describe('MJSONWP', async () => {
           res.value.should.eql([null, 42, 17]);
         });
       });
-      describe('required', () => {
-        it('should allow removeApp with appId', async () => {
+      describe('required', function () {
+        it('should allow removeApp with appId', async function () {
           let res = await request({
             url: 'http://localhost:8181/wd/hub/session/foo/appium/device/remove_app',
             method: 'POST',
@@ -315,7 +315,7 @@ describe('MJSONWP', async () => {
           res.status.should.equal(0);
           res.value.should.eql(42);
         });
-        it('should allow removeApp with bundleId', async () => {
+        it('should allow removeApp with bundleId', async function () {
           let res = await request({
             url: 'http://localhost:8181/wd/hub/session/foo/appium/device/remove_app',
             method: 'POST',
@@ -327,9 +327,9 @@ describe('MJSONWP', async () => {
       });
     });
 
-    describe('default param wrap', () => {
+    describe('default param wrap', function () {
 
-      it('should wrap', async () => {
+      it('should wrap', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/touch/perform',
           method: 'POST',
@@ -338,7 +338,7 @@ describe('MJSONWP', async () => {
         res.value.should.deep.equal([[{"action":"tap", "options":{"element":"3"}}], 'foo']);
       });
 
-      it('should not wrap twice', async () => {
+      it('should not wrap twice', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session/foo/touch/perform',
           method: 'POST',
@@ -349,13 +349,13 @@ describe('MJSONWP', async () => {
 
     });
 
-    describe('create sessions via HTTP endpoint', () => {
+    describe('create sessions via HTTP endpoint', function () {
       let desiredCapabilities = {a: 'b'};
       let requiredCapabilities = {c: 'd'};
       let capabilities = {e: 'f'};
       let baseUrl = `http://localhost:8181/wd/hub/session`;
 
-      it('should allow create session with desired caps (MJSONWP)', async () => {
+      it('should allow create session with desired caps (MJSONWP)', async function () {
         let res = await request({
           url: baseUrl,
           method: 'POST',
@@ -364,7 +364,7 @@ describe('MJSONWP', async () => {
         res.status.should.equal(0);
         res.value.should.eql(desiredCapabilities);
       });
-      it('should allow create session with desired and required caps', async () => {
+      it('should allow create session with desired and required caps', async function () {
         let res = await request({
           url: baseUrl,
           method: 'POST',
@@ -376,14 +376,14 @@ describe('MJSONWP', async () => {
         res.status.should.equal(0);
         res.value.should.eql(_.extend({}, desiredCapabilities, requiredCapabilities));
       });
-      it('should fail to create session without capabilities or desiredCapabilities', async () => {
+      it('should fail to create session without capabilities or desiredCapabilities', async function () {
         await request({
           url: baseUrl,
           method: 'POST',
           json: {},
         }).should.eventually.be.rejectedWith('400');
       });
-      it('should allow create session with capabilities (W3C)', async () => {
+      it('should allow create session with capabilities (W3C)', async function () {
         let {status, value, sessionId} = await request({
           url: baseUrl,
           method: 'POST',
@@ -424,7 +424,7 @@ describe('MJSONWP', async () => {
           await request.delete(sessionUrl);
         });
 
-        it(`should throw 400 Bad Parameters exception if the parameters are bad`, async () => {
+        it(`should throw 400 Bad Parameters exception if the parameters are bad`, async function () {
           const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
             json: {
               bad: 'params',
@@ -434,7 +434,7 @@ describe('MJSONWP', async () => {
           statusCode.should.equal(400);
         });
 
-        it(`should throw 404 Not Found exception if the command hasn't been implemented yet`, async () => {
+        it(`should throw 404 Not Found exception if the command hasn't been implemented yet`, async function () {
           const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
             json: {
               actions: [],
@@ -444,7 +444,7 @@ describe('MJSONWP', async () => {
           statusCode.should.equal(404);
         });
 
-        it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async () => {
+        it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {
           driver.performActions = () => { throw new Error(`Didn't work`); };
           const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
             json: {
@@ -456,7 +456,7 @@ describe('MJSONWP', async () => {
           delete driver.performActions;
         });
 
-        it(`should fail with a 408 error if it throws a TimeoutError exception`, async () => {
+        it(`should fail with a 408 error if it throws a TimeoutError exception`, async function () {
           sinon.stub(driver, 'setUrl', () => { throw new errors.TimeoutError; });
           let {statusCode} = await request({
             url: `${sessionUrl}/url`,
@@ -469,7 +469,7 @@ describe('MJSONWP', async () => {
           sinon.restore(driver, 'setUrl');
         });
 
-        it(`should pass with 200 HTTP status code if the command returns a value`, async () => {
+        it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
           driver.performActions = (actions) => 'It works ' + actions.join('');
           const {status, value, sessionId} = await request.post(`${sessionUrl}/actions`, {
             json: {
@@ -499,7 +499,7 @@ describe('MJSONWP', async () => {
             delete driver.performActions;
           });
 
-          it('should work if a proxied request returns a response with status 200', async () => {
+          it('should work if a proxied request returns a response with status 200', async function () {
             addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.json({
                 sessionId: req.params.sessionId,
@@ -518,7 +518,7 @@ describe('MJSONWP', async () => {
             should.not.exist(sessionId);
           });
 
-          it('should work if a proxied request returns a MJSONWP error response', async () => {
+          it('should work if a proxied request returns a MJSONWP error response', async function () {
             addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(500).json({
                 sessionId,
@@ -539,7 +539,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should handle commands with no response values', async () => {
+    it('should handle commands with no response values', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/forward',
         method: 'POST',
@@ -552,7 +552,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should allow empty string response values', async () => {
+    it('should allow empty string response values', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/element/bar/text',
         method: 'GET',
@@ -565,7 +565,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should send 500 response and an Unknown object for rejected commands', async () => {
+    it('should send 500 response and an Unknown object for rejected commands', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo/refresh',
         method: 'POST',
@@ -585,7 +585,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should not throw UnknownError when known', async () => {
+    it('should not throw UnknownError when known', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session/foo',
         method: 'GET',
@@ -605,23 +605,23 @@ describe('MJSONWP', async () => {
     });
   });
 
-  describe('session Ids', () => {
+  describe('session Ids', function () {
     let driver = new FakeDriver();
     let mjsonwpServer;
 
-    before(async () => {
+    before(async function () {
       mjsonwpServer = await server(routeConfiguringFunction(driver), 8181);
     });
 
-    after(async () => {
+    after(async function () {
       mjsonwpServer.close();
     });
 
-    afterEach(() => {
+    afterEach(function () {
       driver.sessionId = null;
     });
 
-    it('returns null SessionId for commands without sessionIds', async () => {
+    it('returns null SessionId for commands without sessionIds', async function () {
       let res = await request({
         url: 'http://localhost:8181/wd/hub/status',
         method: 'GET',
@@ -631,7 +631,7 @@ describe('MJSONWP', async () => {
       should.equal(res.sessionId, null);
     });
 
-    it('responds with the same session ID in the request', async () => {
+    it('responds with the same session ID in the request', async function () {
       let sessionId = 'Vader Sessions';
       driver.sessionId = sessionId;
 
@@ -645,7 +645,7 @@ describe('MJSONWP', async () => {
       res.sessionId.should.eql(sessionId);
     });
 
-    it('yells if no session exists', async () => {
+    it('yells if no session exists', async function () {
       let sessionId = 'Vader Sessions';
 
       let res = await request({
@@ -661,7 +661,7 @@ describe('MJSONWP', async () => {
       res.body.value.message.should.contain('session');
     });
 
-    it('yells if invalid session is sent', async () => {
+    it('yells if invalid session is sent', async function () {
       let sessionId = 'Vader Sessions';
       driver.sessionId = 'recession';
 
@@ -678,7 +678,7 @@ describe('MJSONWP', async () => {
       res.body.value.message.should.contain('session');
     });
 
-    it('should have session IDs in error responses', async () => {
+    it('should have session IDs in error responses', async function () {
       let sessionId = 'Vader Sessions';
       driver.sessionId = sessionId;
 
@@ -701,7 +701,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should return a new session ID on create', async () => {
+    it('should return a new session ID on create', async function () {
 
       let res = await request({
         url: 'http://localhost:8181/wd/hub/session',
@@ -715,12 +715,12 @@ describe('MJSONWP', async () => {
     });
   });
 
-  describe('via drivers jsonwp proxy', () => {
+  describe('via drivers jsonwp proxy', function () {
     let driver;
     let sessionId = 'foo';
     let mjsonwpServer;
 
-    beforeEach(async () => {
+    beforeEach(async function () {
       driver = new FakeDriver();
       driver.sessionId = sessionId;
       driver.proxyActive = () => { return true; };
@@ -729,11 +729,11 @@ describe('MJSONWP', async () => {
       mjsonwpServer = await server(routeConfiguringFunction(driver), 8181);
     });
 
-    afterEach(async () => {
+    afterEach(async function () {
       mjsonwpServer.close();
     });
 
-    it('should give a nice error if proxying is set but no proxy function exists', async () => {
+    it('should give a nice error if proxying is set but no proxy function exists', async function () {
       driver.canProxy = () => { return false; };
       let res = await request({
         url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
@@ -755,7 +755,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should pass on any errors in proxying', async () => {
+    it('should pass on any errors in proxying', async function () {
       driver.proxyReqRes = async function () {
         throw new Error("foo");
       };
@@ -779,7 +779,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should able to throw ProxyRequestError in proxying', async () => {
+    it('should able to throw ProxyRequestError in proxying', async function () {
       driver.proxyReqRes = async function () {
         let jsonwp = {status: 35, value: "No such context found.", sessionId: "foo"};
         throw  new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
@@ -800,7 +800,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should let the proxy handle req/res', async () => {
+    it('should let the proxy handle req/res', async function () {
       driver.proxyReqRes = async function (req, res) {
         res.status(200).json({custom: 'data'});
       };
@@ -816,7 +816,7 @@ describe('MJSONWP', async () => {
       res.body.should.eql({custom: 'data'});
     });
 
-    it('should avoid jsonwp proxying when path matches avoidance list', async () => {
+    it('should avoid jsonwp proxying when path matches avoidance list', async function () {
       driver.getProxyAvoidList = () => { return [['POST', new RegExp('^/session/[^/]+/url$')]]; };
       let res = await request({
         url: `http://localhost:8181/wd/hub/session/${sessionId}/url`,
@@ -834,7 +834,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should fail if avoid proxy list is malformed in some way', async () => {
+    it('should fail if avoid proxy list is malformed in some way', async function () {
       async function badProxyAvoidanceList (list) {
         driver.getProxyAvoidList = () => { return list; };
         let res = await request({
@@ -860,7 +860,7 @@ describe('MJSONWP', async () => {
       }
     });
 
-    it('should avoid proxying non-session commands even if not in the list', async () => {
+    it('should avoid proxying non-session commands even if not in the list', async function () {
       driver.getProxyAvoidList = () => { return [['POST', new RegExp('')]]; };
 
       let res = await request({
@@ -879,7 +879,7 @@ describe('MJSONWP', async () => {
       });
     });
 
-    it('should avoid proxying deleteSession commands', async () => {
+    it('should avoid proxying deleteSession commands', async function () {
       driver.getProxyAvoidList = () => { return [['POST', new RegExp('')]]; };
 
       driver.sessionId.should.equal(sessionId);

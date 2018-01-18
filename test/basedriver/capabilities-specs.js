@@ -103,7 +103,7 @@ describe('caps', function () {
   describe('#parseCaps', function () {
     let caps;
 
-    beforeEach(() => {
+    beforeEach(function () {
       caps = {};
     });
 
@@ -209,7 +209,7 @@ describe('caps', function () {
     });
 
     describe('returns a matchedCaps object (6)', function () {
-      beforeEach(() => {
+      beforeEach(function () {
         caps.alwaysMatch = {hello: 'world'};
       });
 

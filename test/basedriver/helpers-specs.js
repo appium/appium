@@ -8,21 +8,21 @@ import mockFS from 'mock-fs';
 
 chai.use(chaiAsPromised);
 
-describe('helpers', () => {
-  describe('#isPackageOrBundle', () => {
-    it('should accept packages and bundles', () => {
+describe('helpers', function () {
+  describe('#isPackageOrBundle', function () {
+    it('should accept packages and bundles', function () {
       isPackageOrBundle('io.appium.testapp').should.be.true;
     });
-    it('should not accept non-packages or non-bundles', () => {
+    it('should not accept non-packages or non-bundles', function () {
       isPackageOrBundle('foo').should.be.false;
       isPackageOrBundle('/path/to/an.app').should.be.false;
       isPackageOrBundle('/path/to/an.apk').should.be.false;
     });
   });
 
-  describe('#unzipFile', () => {
+  describe('#unzipFile', function () {
     let mockDir = 'path/to/mock/dir';
-    before(async () => {
+    before(async function () {
       // Start mock filesystem
       mockFS({
         [mockDir]: {},
@@ -34,11 +34,11 @@ describe('helpers', () => {
       await fs.writeFile(path.resolve(mockDir, 'FakeIOSApp.app.zip'), fakeIOSAppZip, 'base64');
     });
 
-    after(() => {
+    after(function () {
       mockFS.restore();
     });
 
-    it('should unzip a .zip file (force isWindows to be true so we can test the internal zip library)', async () => {
+    it('should unzip a .zip file (force isWindows to be true so we can test the internal zip library)', async function () {
       const forceWindows = sinon.stub(system, 'isWindows', () => true);
       await unzipFile(path.resolve(mockDir, 'FakeIOSApp.app.zip'));
       await fs.readFile(path.resolve(mockDir, 'FakeIOSApp.app'), 'utf8').should.eventually.deep.equal('this is not really an app\n');

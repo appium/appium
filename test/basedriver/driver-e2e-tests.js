@@ -9,12 +9,12 @@ const should = chai.should();
 chai.use(chaiAsPromised);
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
-  describe('BaseDriver (e2e)', () => {
+  describe('BaseDriver (e2e)', function () {
     let baseServer, d = new DriverClass();
-    before(async () => {
+    before(async function () {
       baseServer = await server(routeConfiguringFunction(d), 8181);
     });
-    after(async () => {
+    after(async function () {
       await baseServer.close();
     });
 
@@ -44,8 +44,8 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
     }
 
-    describe('session handling', () => {
-      it('should create session and retrieve a session id, then delete it', async () => {
+    describe('session handling', function () {
+      it('should create session and retrieve a session id, then delete it', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
@@ -76,7 +76,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     it.skip('should throw NYI for commands not implemented', async () => {
     });
 
-    describe('command timeouts', () => {
+    describe('command timeouts', function () {
       function startTimeoutSession (timeout) {
         let caps = _.clone(defaultCaps);
         caps.newCommandTimeout = timeout;
@@ -92,13 +92,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         return ['foo'];
       }.bind(d);
 
-      it('should set a default commandTimeout', async () => {
+      it('should set a default commandTimeout', async function () {
         let newSession = await startTimeoutSession();
         d.newCommandTimeoutMs.should.be.above(0);
         await endSession(newSession.sessionId);
       });
 
-      it('should timeout on commands using commandTimeout cap', async () => {
+      it('should timeout on commands using commandTimeout cap', async function () {
         let newSession = await startTimeoutSession(0.25);
 
         await request({
@@ -119,7 +119,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         res.status.should.equal(6);
       });
 
-      it('should not timeout with commandTimeout of false', async () => {
+      it('should not timeout with commandTimeout of false', async function () {
         let newSession = await startTimeoutSession(0.1);
         let start = Date.now();
         let res = await request({
@@ -132,7 +132,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         await endSession(newSession.sessionId);
       });
 
-      it('should not timeout with commandTimeout of 0', async () => {
+      it('should not timeout with commandTimeout of 0', async function () {
         d.newCommandTimeoutMs = 2;
         let newSession = await startTimeoutSession(0);
 
@@ -155,7 +155,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         d.newCommandTimeoutMs = 60 * 1000;
       });
 
-      it('should not timeout if its just the command taking awhile', async () => {
+      it('should not timeout if its just the command taking awhile', async function () {
         let newSession = await startTimeoutSession(0.25);
         await request({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
@@ -175,7 +175,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         res.status.should.equal(6);
       });
 
-      it('should not have a timer running before or after a session', async () => {
+      it('should not have a timer running before or after a session', async function () {
         should.not.exist(d.noCommandTimer);
         let newSession = await startTimeoutSession(0.25);
         newSession.sessionId.should.equal(d.sessionId);
@@ -186,25 +186,25 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
     });
 
-    describe('settings api', () => {
-      before(() => {
+    describe('settings api', function () {
+      before(function () {
         d.settings = new DeviceSettings({ignoreUnimportantViews: false});
       });
-      it('should be able to get settings object', () => {
+      it('should be able to get settings object', function () {
         d.settings.getSettings().ignoreUnimportantViews.should.be.false;
       });
-      it('should throw error when updateSettings method is not defined', async () => {
+      it('should throw error when updateSettings method is not defined', async function () {
         await d.settings.update({ignoreUnimportantViews: true}).should.eventually
                 .be.rejectedWith('onSettingsUpdate');
       });
-      it('should throw error for invalid update object', async () => {
+      it('should throw error for invalid update object', async function () {
         await d.settings.update('invalid json').should.eventually
                 .be.rejectedWith('JSON');
       });
     });
 
-    describe('unexpected exits', () => {
-      it('should reject a current command when the driver crashes', async () => {
+    describe('unexpected exits', function () {
+      it('should reject a current command when the driver crashes', async function () {
         d._oldGetStatus = d.getStatus;
         d.getStatus = async function () {
           await B.delay(5000);
@@ -225,14 +225,14 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
     });
 
-    describe('event timings', () => {
-      it('should not add timings if not using opt-in cap', async () => {
+    describe('event timings', function () {
+      it('should not add timings if not using opt-in cap', async function () {
         let session = await startSession(defaultCaps);
         let res = await getSession(session.sessionId);
         should.not.exist(res.events);
         await endSession(session.sessionId);
       });
-      it('should add start session timings', async () => {
+      it('should add start session timings', async function () {
         let caps = Object.assign({}, defaultCaps, {eventTimings: true});
         let session = await startSession(caps);
         let res = (await getSession(session.sessionId)).value;

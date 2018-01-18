@@ -8,13 +8,13 @@ import chai from 'chai';
 
 chai.should();
 
-describe('MJSONWP', () => {
+describe('MJSONWP', function () {
 
   // TODO test against an explicit protocol rather than a hash of a previous
   // protocol
 
-  describe('ensure protocol consistency', () => {
-    it('should not change protocol between patch versions', async () => {
+  describe('ensure protocol consistency', function () {
+    it('should not change protocol between patch versions', async function () {
       let shasum = crypto.createHash('sha1');
       for (let [url, urlMapping] of _.toPairs(METHOD_MAP)) {
         shasum.update(url);
@@ -44,33 +44,33 @@ describe('MJSONWP', () => {
     });
   });
 
-  describe('check route to command name conversion', () => {
-    it('should properly lookup correct command name for endpoint with session', () => {
+  describe('check route to command name conversion', function () {
+    it('should properly lookup correct command name for endpoint with session', function () {
       const cmdName = routeToCommandName('/timeouts', 'POST');
       cmdName.should.equal('timeouts');
     });
 
-    it('should properly lookup correct command name for endpoint with session', () => {
+    it('should properly lookup correct command name for endpoint with session', function () {
       const cmdName = routeToCommandName('/timeouts/implicit_wait', 'POST');
       cmdName.should.equal('implicitWait');
     });
 
-    it('should properly lookup correct command name for endpoint without session', () => {
+    it('should properly lookup correct command name for endpoint without session', function () {
       const cmdName = routeToCommandName('/status', 'GET');
       cmdName.should.equal('getStatus');
     });
 
-    it('should properly lookup correct command name for endpoint without leading slash', () => {
+    it('should properly lookup correct command name for endpoint without leading slash', function () {
       const cmdName = routeToCommandName('status', 'GET');
       cmdName.should.equal('getStatus');
     });
 
-    it('should properly lookup correct command name for fully specified endpoint', () => {
+    it('should properly lookup correct command name for fully specified endpoint', function () {
       const cmdName = routeToCommandName('/wd/hub/status', 'GET');
       cmdName.should.equal('getStatus');
     });
 
-    it('should not find command name if incorrect input data has been specified', () => {
+    it('should not find command name if incorrect input data has been specified', function () {
       for (let [route, method] of [['/wd/hub/status', 'POST'],
                                    ['/xstatus', 'GET'],
                                    ['status', 'POST']]) {

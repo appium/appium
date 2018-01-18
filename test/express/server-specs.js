@@ -13,8 +13,8 @@ import _ from 'lodash';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('server configuration', () => {
-  it('should actually use the middleware', () => {
+describe('server configuration', function () {
+  it('should actually use the middleware', function () {
     let app = {use: sinon.spy(), all: sinon.spy()};
     let configureRoutes = () => {};
     configureServer(app, configureRoutes);
@@ -22,17 +22,17 @@ describe('server configuration', () => {
     app.all.callCount.should.equal(4);
   });
 
-  it('should reject if error thrown in configureRoutes parameter', async () => {
+  it('should reject if error thrown in configureRoutes parameter', async function () {
     let configureRoutes = () => {
       throw new Error('I am Mr. MeeSeeks look at me!');
     };
     await server(configureRoutes, 8181).should.be.rejectedWith('MeeSeeks');
   });
 });
-describe('server', () => {
+describe('server', function () {
   let hwServer;
   let errorStub;
-  before(async () => {
+  before(async function () {
     errorStub = sinon.stub(console, 'error');
     function configureRoutes (app) {
       app.get('/', (req, res) => {
@@ -53,16 +53,16 @@ describe('server', () => {
     }
     hwServer = await server(configureRoutes, 8181);
   });
-  after(async () => {
+  after(async function () {
     await hwServer.close();
     errorStub.restore();
   });
 
-  it('should start up with our middleware', async () => {
+  it('should start up with our middleware', async function () {
     let body = await request('http://localhost:8181/');
     body.should.eql('Hello World!');
   });
-  it('should fix broken context type', async () => {
+  it('should fix broken context type', async function () {
     let body = await request({
       url: 'http://localhost:8181/wd/hub/python',
       headers: {
@@ -72,18 +72,18 @@ describe('server', () => {
     });
     body.should.eql('application/json');
   });
-  it('should catch errors in the catchall', async () => {
+  it('should catch errors in the catchall', async function () {
     await request('http://localhost:8181/error')
       .should.be.rejectedWith(/hahaha/);
   });
-  it('should error if we try to start again on a port that is used', async () => {
+  it('should error if we try to start again on a port that is used', async function () {
     await server(() => {}, 8181).should.be.rejectedWith(/EADDRINUSE/);
   });
-  it('should error if we try to start on a bad hostname', async () => {
+  it('should error if we try to start on a bad hostname', async function () {
     await server(_.noop, 8181, 'lolcathost').should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL/);
     await server(_.noop, 8181, '1.1.1.1').should.be.rejectedWith(/EADDRNOTAVAIL/);
   });
-  it('should wait for the server close connections before finishing closing', async () => {
+  it('should wait for the server close connections before finishing closing', async function () {
     let bodyPromise = request('http://localhost:8181/pause');
 
     // relinquish control so that we don't close before the request is received

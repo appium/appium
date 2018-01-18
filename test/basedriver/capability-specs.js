@@ -7,20 +7,20 @@ import sinon from 'sinon';
 const should = chai.should();
 chai.use(chaiAsPromised);
 
-describe('Desired Capabilities', () => {
+describe('Desired Capabilities', function () {
 
   let d;
 
-  beforeEach(() => {
+  beforeEach(function () {
     d = new BaseDriver();
     sinon.spy(logger, 'warn');
   });
 
-  afterEach(() => {
+  afterEach(function () {
     logger.warn.restore();
   });
 
-  it('should require platformName and deviceName', async () => {
+  it('should require platformName and deviceName', async function () {
     try {
       await d.createSession({});
     } catch (e) {
@@ -33,7 +33,7 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
-  it('should require platformName', async () => {
+  it('should require platformName', async function () {
     try {
       await d.createSession({'platformName': 'iOS'});
     } catch (e) {
@@ -45,7 +45,7 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
-  it('should require deviceName', async () => {
+  it('should require deviceName', async function () {
     try {
       await d.createSession({'deviceName': 'Delorean'});
     } catch (e) {
@@ -57,7 +57,7 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
-  it('should not care about cap order', async () => {
+  it('should not care about cap order', async function () {
 
     await d.createSession({
       deviceName: 'Delorean',
@@ -66,7 +66,7 @@ describe('Desired Capabilities', () => {
 
   });
 
-  it('should check required caps which are added to driver', async () => {
+  it('should check required caps which are added to driver', async function () {
     d.desiredCapConstraints = {
       necessary: {
         presence: true
@@ -93,7 +93,7 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
-  it('should check added required caps in addition to base', async () => {
+  it('should check added required caps in addition to base', async function () {
     d.desiredCapConstraints = {
       necessary: {
         presence: true
@@ -120,7 +120,7 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
-  it('should accept extra capabilities', async () => {
+  it('should accept extra capabilities', async function () {
     await d.createSession({
       'platformName': 'iOS',
       'deviceName': 'Delorean',
@@ -142,7 +142,7 @@ describe('Desired Capabilities', () => {
     logger.warn.callCount.should.be.above(0);
   });
 
-  it('should be sensitive to the case of caps', async () => {
+  it('should be sensitive to the case of caps', async function () {
     try {
       await d.createSession({
         'platformname': 'iOS',
@@ -157,8 +157,8 @@ describe('Desired Capabilities', () => {
     should.fail('error should have been thrown');
   });
 
-  describe('boolean capabilities', () => {
-    it('should allow a string "false"', async () => {
+  describe('boolean capabilities', function () {
+    it('should allow a string "false"', async function () {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
@@ -170,7 +170,7 @@ describe('Desired Capabilities', () => {
       sessions[0].capabilities.noReset.should.eql(false);
     });
 
-    it('should allow a string "true"', async () => {
+    it('should allow a string "true"', async function () {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
@@ -182,7 +182,7 @@ describe('Desired Capabilities', () => {
       sessions[0].capabilities.noReset.should.eql(true);
     });
 
-    it('should allow a string "true" in string capabilities', async () => {
+    it('should allow a string "true" in string capabilities', async function () {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
@@ -195,8 +195,8 @@ describe('Desired Capabilities', () => {
     });
   });
 
-  describe('number capabilities', () => {
-    it('should allow a string "1"', async () => {
+  describe('number capabilities', function () {
+    it('should allow a string "1"', async function () {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
@@ -208,7 +208,7 @@ describe('Desired Capabilities', () => {
       sessions[0].capabilities.newCommandTimeout.should.eql(1);
     });
 
-    it('should allow a string "1.1"', async () => {
+    it('should allow a string "1.1"', async function () {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
@@ -220,7 +220,7 @@ describe('Desired Capabilities', () => {
       sessions[0].capabilities.newCommandTimeout.should.eql(1.1);
     });
 
-    it('should allow a string "1" in string capabilities', async () => {
+    it('should allow a string "1" in string capabilities', async function () {
       await d.createSession({
         'platformName': 'iOS',
         'deviceName': 'Delorean',
@@ -319,7 +319,7 @@ describe('Desired Capabilities', () => {
     await d.deleteSession();
   });
 
-  it('should still validate null/undefined caps whose presence is required', async () => {
+  it('should still validate null/undefined caps whose presence is required', async function () {
     d.desiredCapConstraints = {
       foo: {
         presence: true
@@ -340,8 +340,8 @@ describe('Desired Capabilities', () => {
 
   });
 
-  describe('w3c', async () => {
-    it('should accept w3c capabilities', async () => {
+  describe('w3c', async function () {
+    it('should accept w3c capabilities', async function () {
       const [sessionId, caps] = await d.createSession(null, null, {
         alwaysMatch: {
           platformName: 'iOS',
@@ -356,7 +356,7 @@ describe('Desired Capabilities', () => {
       await d.deleteSession();
     });
 
-    it('should ignore w3c capabilities if it is not a plain JSON object', async () => {
+    it('should ignore w3c capabilities if it is not a plain JSON object', async function () {
       for (let val of [true, "string", [], 100]) {
         const [sessionId, caps] = await d.createSession({
           platformName: 'iOS',

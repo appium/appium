@@ -9,8 +9,8 @@ import sinon from 'sinon';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('welcome', () => {
-  it('should fill the template', async () => {
+describe('welcome', function () {
+  it('should fill the template', async function () {
     let res = {
       send: sinon.spy()
     };

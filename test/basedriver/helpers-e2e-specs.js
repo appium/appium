@@ -17,48 +17,48 @@ function getFixture (file) {
                       'fixtures', file);
 }
 
-describe('app download and configuration', () => {
-  describe('configureApp', () => {
-    it('should get the path for a local .app', async () => {
+describe('app download and configuration', function () {
+  describe('configureApp', function () {
+    it('should get the path for a local .app', async function () {
       let newAppPath = await h.configureApp(getFixture('FakeIOSApp.app'), '.app');
       newAppPath.should.contain('FakeIOSApp.app');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an app\n');
     });
-    it('should get the path for a local .apk', async () => {
+    it('should get the path for a local .apk', async function () {
       let newAppPath = await h.configureApp(getFixture('FakeAndroidApp.apk'), '.apk');
       newAppPath.should.contain('FakeAndroidApp.apk');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an apk\n');
     });
-    it('should unzip and get the path for a local .app.zip', async () => {
+    it('should unzip and get the path for a local .app.zip', async function () {
       let newAppPath = await h.configureApp(getFixture('FakeIOSApp.app.zip'), '.app');
       newAppPath.should.contain('FakeIOSApp.app');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an app\n');
     });
-    it('should unzip and get the path for a local .ipa', async () => {
+    it('should unzip and get the path for a local .ipa', async function () {
       let newAppPath = await h.configureApp(getFixture('FakeIOSApp.ipa'), '.app');
       newAppPath.should.contain('FakeIOSApp.app');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an app\n');
     });
-    it('should fail for a bad zip file', async () => {
+    it('should fail for a bad zip file', async function () {
       await h.configureApp(getFixture('BadZippedApp.zip'), '.app')
         .should.be.rejectedWith('Error testing zip archive, are you sure this is a zip file?');
     });
-    it('should fail if extensions do not match', async () => {
+    it('should fail if extensions do not match', async function () {
       await h.configureApp(getFixture('FakeIOSApp.app'), '.wrong')
         .should.be.rejectedWith(/did not have extension '.wrong'/);
     });
-    it('should fail if zip file does not contain an app whose extension matches', async () => {
+    it('should fail if zip file does not contain an app whose extension matches', async function () {
       await h.configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')
         .should.be.rejectedWith(/could not find a .wrong bundle in it/);
     });
-    describe('should download an app from the web', async () => {
+    describe('should download an app from the web', async function () {
       // use a local server so there is no dependency on the internet
       let server;
-      before(() => {
+      before(function () {
         let dir = path.resolve(__dirname, '..', '..', '..', 'test',
                                'basedriver', 'fixtures');
         let serve = serveStatic(dir, {
@@ -84,59 +84,59 @@ describe('app download and configuration', () => {
         });
         server.listen(8000);
       });
-      after(() => {
+      after(function () {
         server.close();
       });
 
-      it('should download zip file', async () => {
+      it('should download zip file', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeIOSApp.app.zip', '.app');
         newAppPath.should.contain('FakeIOSApp.app');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an app\n');
       });
-      it('should download zip file with query string', async () => {
+      it('should download zip file with query string', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeIOSApp.app.zip?sv=abc&sr=def', '.app');
         newAppPath.should.contain('.app');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an app\n');
       });
-      it('should download an app file', async () => {
+      it('should download an app file', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeIOSApp.app', '.app');
         newAppPath.should.contain('.app');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an app\n');
       });
-      it('should download an apk file', async () => {
+      it('should download an apk file', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.apk', '.apk');
         newAppPath.should.contain('.apk');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an apk\n');
       });
-      it('should handle zip file that cannot be downloaded', async () => {
+      it('should handle zip file that cannot be downloaded', async function () {
         await h.configureApp('http://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
           .should.be.rejectedWith(/Problem downloading app from url/);
       });
-      it('should recognize zip mime types and unzip the downloaded file', async () => {
+      it('should recognize zip mime types and unzip the downloaded file', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.asd?mime-zip', '.apk');
         newAppPath.should.contain('FakeAndroidApp.apk');
         newAppPath.should.not.contain('.asd');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an apk\n');
       });
-      it('should recognize zip mime types and unzip the downloaded file with query string', async () => {
+      it('should recognize zip mime types and unzip the downloaded file with query string', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.asd?mime-zip&sv=abc&sr=def', '.apk');
         newAppPath.should.contain('FakeAndroidApp.apk');
         newAppPath.should.not.contain('.asd');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an apk\n');
       });
-      it('should treat an unknown mime type as an app', async () => {
+      it('should treat an unknown mime type as an app', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.apk?mime-bip', '.apk');
         newAppPath.should.contain('.apk');
         let contents = await fs.readFile(newAppPath, 'utf8');
         contents.should.eql('this is not really an apk\n');
       });
-      it('should handle server not available', async () => {
+      it('should handle server not available', async function () {
         server.close();
         await h.configureApp('http://localhost:8000/FakeIOSApp.app.zip', '.app')
           .should.be.rejectedWith(/ECONNREFUSED/);

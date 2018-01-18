@@ -139,6 +139,28 @@ describe('AppiumDriver', function () {
         await appium.createSession(undefined, undefined, w3cCaps);
         mockFakeDriver.verify();
       });
+      it('should call "createSession" with JSONWP capabilities if W3C has incomplete capabilities', async function () {
+        let w3cCaps = {
+          ...W3C_CAPS,
+          alwaysMatch: {
+            ...W3C_CAPS.alwaysMatch,
+            'appium:someOtherParm': 'someOtherParm',
+          },
+        };
+
+        let jsonwpCaps = {
+          ...BASE_CAPS,
+          automationName: 'Fake',
+          someOtherParam: 'someOtherParam',
+        };
+
+        mockFakeDriver.expects("createSession")
+          .once().withArgs(jsonwpCaps, undefined, null)
+          .returns([SESSION_ID, jsonwpCaps]);
+
+        await appium.createSession(jsonwpCaps, undefined, w3cCaps);
+        mockFakeDriver.verify();
+      });
     });
     describe('deleteSession', function () {
       let appium;

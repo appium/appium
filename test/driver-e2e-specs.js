@@ -130,7 +130,6 @@ describe('FakeDriver - via HTTP', function () {
       const combinedCaps = {
         "desiredCapabilities": {
           ...caps,
-          mjsonwpParam: 'mjsonwpParam',
         },
         "capabilities": {
           "alwaysMatch": {...caps},
@@ -147,7 +146,32 @@ describe('FakeDriver - via HTTP', function () {
       value.capabilities.should.deep.equal({
         ...caps,
         w3cParam: 'w3cParam',
-        mjsonwpParam: 'mjsonwpParam', // Note: For now we're accepting a mix of the two to alleviate client issues. This ought to not be supported in the future though.
+      });
+    });
+
+    it('should accept a combo of W3C and JSONWP but use JSONWP if desiredCapabilities contains extraneous keys', async function () {
+      const combinedCaps = {
+        "desiredCapabilities": {
+          ...caps,
+          automationName: 'Fake',
+          anotherParam: 'Hello',
+        },
+        "capabilities": {
+          "alwaysMatch": {...caps},
+          "firstMatch": [{
+            w3cParam: 'w3cParam',
+          }],
+        }
+      };
+
+      const {status, sessionId, value} = await request.post({url: baseUrl, json: combinedCaps});
+      status.should.exist;
+      sessionId.should.exist;
+      should.not.exist(value.sessionId);
+      value.should.deep.equal({
+        ...caps,
+        automationName: 'Fake',
+        anotherParam: 'Hello',
       });
     });
 

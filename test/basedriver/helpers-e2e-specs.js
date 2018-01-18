@@ -49,7 +49,7 @@ describe('app download and configuration', () => {
     });
     it('should fail if extensions do not match', async () => {
       await h.configureApp(getFixture('FakeIOSApp.app'), '.wrong')
-        .should.be.rejectedWith(/did not have extension .wrong/);
+        .should.be.rejectedWith(/did not have extension '.wrong'/);
     });
     it('should fail if zip file does not contain an app whose extension matches', async () => {
       await h.configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')

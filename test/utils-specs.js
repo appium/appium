@@ -10,27 +10,27 @@ chai.use(chaiAsPromised);
 describe('utils', function () {
   describe('parseCapsForInnerDriver()', function () {
     it('should return JSONWP caps unchanged if only JSONWP caps provided', function () {
-      let {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS);
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);
-      processedJsonwpCaps.should.deep.equal(BASE_CAPS);
+      processedJsonwpCapabilities.should.deep.equal(BASE_CAPS);
       should.not.exist(processedW3CCapabilities);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
-      let {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(undefined, W3C_CAPS);
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(undefined, W3C_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);
-      should.not.exist(processedJsonwpCaps);
+      should.not.exist(processedJsonwpCapabilities);
       processedW3CCapabilities.should.deep.equal(W3C_CAPS);
     });
     it('should return JSONWP and W3C caps if both were provided', function () {
-      let {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS);
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);
-      processedJsonwpCaps.should.deep.equal(BASE_CAPS);
+      processedJsonwpCapabilities.should.deep.equal(BASE_CAPS);
       processedW3CCapabilities.should.deep.equal(W3C_CAPS);
     });
     it('should include default capabilities in results', function () {
-      let {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, {foo: 'bar'});
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, {foo: 'bar'});
       desiredCaps.should.deep.equal({foo: 'bar', ...BASE_CAPS});
-      processedJsonwpCaps.should.deep.equal({foo: 'bar', ...BASE_CAPS});
+      processedJsonwpCapabilities.should.deep.equal({foo: 'bar', ...BASE_CAPS});
       processedW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'bar', ...insertAppiumPrefixes(BASE_CAPS)});
     });
     it('should reject if W3C caps are not passing constraints', function () {
@@ -44,10 +44,10 @@ describe('utils', function () {
           {hello: 'world'},
         ],
       };
-      let {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {hello: {presence: true}});
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {hello: {presence: true}});
       const expectedResult = {hello: 'world', ...BASE_CAPS};
       desiredCaps.should.deep.equal(expectedResult);
-      processedJsonwpCaps.should.deep.equal({...BASE_CAPS});
+      processedJsonwpCapabilities.should.deep.equal({...BASE_CAPS});
       processedW3CCapabilities.alwaysMatch.should.deep.equal(insertAppiumPrefixes(expectedResult));
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
@@ -66,13 +66,13 @@ describe('utils', function () {
         ...BASE_CAPS,
         automationName: 'Fake',
       };
-      const {desiredCaps, processedJsonwpCaps, processedW3CCapabilities} = parseCapsForInnerDriver(jsonwpCaps, {
+      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(jsonwpCaps, {
         alwaysMatch: {platformName: 'Fake', propertyName: 'PROP_NAME'},
       });
 
       should.not.exist(processedW3CCapabilities);
       desiredCaps.should.eql(jsonwpCaps);
-      processedJsonwpCaps.should.eql(jsonwpCaps);
+      processedJsonwpCapabilities.should.eql(jsonwpCaps);
     });
   });
 

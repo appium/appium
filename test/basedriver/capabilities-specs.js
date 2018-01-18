@@ -1,4 +1,4 @@
-import { parseCaps, validateCaps, mergeCaps, processCapabilities } from '../../lib/basedriver/capabilities';
+import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps } from '../../lib/basedriver/capabilities';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
@@ -378,6 +378,59 @@ describe('caps', function () {
         };
         (() => processCapabilities(caps, constraints)).should.throw(/Could not find matching capabilities/);
       });
+    });
+  });
+  describe('.findNonPrefixedCaps', () => {
+    it('should find alwaysMatch caps with no prefix', function () {
+      findNonPrefixedCaps({alwaysMatch: {
+        'non-standard': 'dummy',
+      }}).should.eql(['non-standard']);
+    });
+    it('should not find a standard cap in alwaysMatch', function () {
+      findNonPrefixedCaps({alwaysMatch: {
+        'platformName': 'Any',
+      }}).should.eql([]);
+    });
+    it('should find firstMatch caps with no prefix', function () {
+      findNonPrefixedCaps({alwaysMatch: {}, firstMatch: [{
+        'non-standard': 'dummy',
+      }]}).should.eql(['non-standard']);
+    });
+    it('should not find a standard cap in prefix', function () {
+      findNonPrefixedCaps({alwaysMatch: {}, firstMatch: [{
+        'platformName': 'Any',
+      }]}).should.eql([]);
+    });
+    it('should find firstMatch caps in second item of firstMatch array', function () {
+      findNonPrefixedCaps({alwaysMatch: {}, firstMatch: [{}, {
+        'non-standard': 'dummy',
+      }]}).should.eql(['non-standard']);
+    });
+    it('should remove duplicates from alwaysMatch and firstMatch', function () {
+      findNonPrefixedCaps({alwaysMatch: {
+        'non-standard': 'something',
+      }, firstMatch: [{
+        'non-standard': 'dummy',
+      }]}).should.eql(['non-standard']);
+    });
+    it('should remove duplicates from firstMatch', function () {
+      findNonPrefixedCaps({firstMatch: [{
+        'non-standard': 'dummy',
+      }, {
+        'non-standard': 'dummy 2',
+      }]}).should.eql(['non-standard']);
+    });
+    it('should remove duplicates and keep standard capabilities', function () {
+      const alwaysMatch = {
+        platformName: 'Fake',
+        nonStandardOne: 'non-standard',
+        nonStandardTwo: 'non-standard',
+      };
+      const firstMatch = [
+        {nonStandardThree: 'non-standard', nonStandardFour: 'non-standard', browserName: 'FakeBrowser'},
+        {nonStandardThree: 'non-standard', nonStandardFour: 'non-standard', nonStandardFive: 'non-standard', browserVersion: 'whateva'},
+      ];
+      findNonPrefixedCaps({alwaysMatch, firstMatch}).should.eql(['nonStandardOne', 'nonStandardTwo', 'nonStandardThree', 'nonStandardFour', 'nonStandardFive']);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { isPackageOrBundle, unzipFile } from '../../lib/basedriver/helpers';
+import { isPackageOrBundle, unzipFile, renameKey } from '../../lib/basedriver/helpers';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
@@ -7,6 +7,7 @@ import { system, fs } from 'appium-support';
 import mockFS from 'mock-fs';
 
 chai.use(chaiAsPromised);
+const should = chai.should();
 
 describe('helpers', function () {
   describe('#isPackageOrBundle', function () {
@@ -43,6 +44,60 @@ describe('helpers', function () {
       await unzipFile(path.resolve(mockDir, 'FakeIOSApp.app.zip'));
       await fs.readFile(path.resolve(mockDir, 'FakeIOSApp.app'), 'utf8').should.eventually.deep.equal('this is not really an app\n');
       forceWindows.restore();
+    });
+  });
+
+  describe('#renameKey', function () {
+    it('should translate key in an object', function () {
+      renameKey({'foo': 'hello world'}, 'foo', 'bar').should.eql({'bar': 'hello world'});
+    });
+    it('should translate key in an object within an object', function () {
+      renameKey({'key': {'foo': 'hello world'}}, 'foo', 'bar').should.eql({'key': {'bar': 'hello world'}});
+    });
+    it('should translate key in an object with an array', function () {
+      renameKey([
+        {'key': {'foo': 'hello world'}},
+        {'foo': 'HELLO WORLD'}
+      ], 'foo', 'bar').should.eql([
+        {'key': {'bar': 'hello world'}},
+        {'bar': 'HELLO WORLD'}
+      ]);
+    });
+    it('should not do anything to primitives', function () {
+      [0, 1, -1, true, false, null, undefined, "", "Hello World"].forEach((item) => {
+        should.equal(renameKey(item), item);
+      });
+    });
+    it('should rename keys on big complex objects', function () {
+      const input = [
+        {'foo': 'bar'},
+        {
+          hello: {
+            world: {
+              'foo': 'BAR',
+            }
+          },
+          foo: 'bahr'
+        },
+        'foo',
+        null,
+        0
+      ];
+      const expectedOutput = [
+        {'FOO': 'bar'},
+        {
+          hello: {
+            world: {
+              'FOO': 'BAR',
+            }
+          },
+          FOO: 'bahr'
+        },
+        'foo',
+        null,
+        0
+      ];
+      renameKey(input, 'foo', 'FOO').should.deep.equal(expectedOutput);
     });
   });
 });

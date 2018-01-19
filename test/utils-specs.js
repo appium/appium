@@ -34,7 +34,7 @@ describe('utils', function () {
       processedW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'bar', ...insertAppiumPrefixes(BASE_CAPS)});
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      (() => parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {hello: {presence: true}})).should.throw(/'hello' can't be blank/);
+      (() => parseCapsForInnerDriver(undefined, W3C_CAPS, {hello: {presence: true}})).should.throw(/'hello' can't be blank/);
     });
     it('should only accept W3C caps that have passing constraints', function () {
       let w3cCaps = {
@@ -73,6 +73,21 @@ describe('utils', function () {
       should.not.exist(processedW3CCapabilities);
       desiredCaps.should.eql(jsonwpCaps);
       processedJsonwpCapabilities.should.eql(jsonwpCaps);
+    });
+    it('should fall back to MJSONWP caps if W3C capabilities are invalid', function () {
+      let w3cCapabilities = {
+        alwaysMatch: {platformName: 'Fake', propertyName: 'PROP_NAME'},
+      };
+      let constraints = {
+        deviceName: {
+          presence: true,
+        }
+      };
+      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver({...BASE_CAPS}, w3cCapabilities, constraints);
+
+      should.not.exist(processedW3CCapabilities);
+      desiredCaps.should.eql(BASE_CAPS);
+      processedJsonwpCapabilities.should.eql(BASE_CAPS);
     });
   });
 

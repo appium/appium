@@ -203,6 +203,25 @@ describe('FakeDriver - via HTTP', function () {
       should.not.exist(sessionId);
       value.capabilities.should.deep.equal(caps);
     });
+
+    it('should fall back to MJSONWP if w3c caps are invalid', async function () {
+      const combinedCaps = {
+        "desiredCapabilities": {
+          ...caps,
+        },
+        "capabilities": {
+          "alwaysMatch": {},
+          "firstMatch": [{}, {
+            ...caps,
+            deviceName: null,
+          }],
+        },
+      };
+      const {value, sessionId, status} = await request.post({url: baseUrl, json: combinedCaps});
+      status.should.exist;
+      sessionId.should.exist;
+      value.should.deep.equal(caps);
+    });
   });
 });
 

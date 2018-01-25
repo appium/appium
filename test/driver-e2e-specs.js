@@ -107,7 +107,10 @@ describe('FakeDriver - via HTTP', function () {
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
       const {statusCode, error} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
       statusCode.should.equal(404);
-      error.value.message.should.match(/Method has not yet been implemented/);
+      const {error:errorMessage, message, stacktrace} = error.value;
+      errorMessage.should.match(/A command could not be executed/);
+      message.should.match(/Method has not yet been implemented/);
+      stacktrace.should.match(/FakeDriver.executeCommand/);
 
       // End session
       await request.delete({url: `${baseUrl}/${value.sessionId}`}).should.eventually.be.resolved;
@@ -184,7 +187,8 @@ describe('FakeDriver - via HTTP', function () {
           }
         },
       };
-      const {error, statusCode} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      const {error, statusCode, response} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      response.headers['content-type'].should.match(/application\/json/);
       const {message} = error.value;
       message.should.match(/BadAutomationName not part of/);
       statusCode.should.equal(400);

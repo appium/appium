@@ -1,4 +1,5 @@
 import { errors, errorFromCode } from '../..';
+import { getResponseForW3CError } from '../../lib/mjsonwp/errors';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
@@ -175,5 +176,40 @@ describe('w3c Status Codes', function () {
 
     // Test an error that we expect to return 400 code
     (new errors.NoSuchFrameError()).should.have.property('w3cStatus', 400);
+  });
+});
+describe('.getResponseForW3CError', function () {
+  it('should return an error, message and stacktrace for just a generic exception', function () {
+    try {
+      throw new Error('Some random error');
+    } catch (e) {
+      const [httpStatus, httpResponseBody] = getResponseForW3CError(e);
+      httpStatus.should.equal(500);
+      const {error, message, stacktrace} = httpResponseBody.value;
+      message.should.match(/Some random error/);
+      error.should.equal('An unknown error occurred in the remote end while processing the command');
+      stacktrace.should.match(/at getResponseForW3CError/);
+      stacktrace.should.match(/Some random error/);
+      stacktrace.should.match(/errors-specs.js/);
+    }
+  });
+  it('should return an error, message and stacktrace for a NoSuchElementError', function () {
+    const noSuchElementError = new errors.NoSuchElementError('specific error message');
+    const [httpStatus, httpResponseBody] = getResponseForW3CError(noSuchElementError);
+    httpStatus.should.equal(404);
+    const {error, message, stacktrace} = httpResponseBody.value;
+    error.should.equal('An element could not be located on the page using the given search parameters');
+    message.should.match(/specific error message/);
+    stacktrace.should.match(/errors-specs.js/);
+  });
+  it('should handle BadParametersError', function () {
+    const badParamsError = new errors.BadParametersError('__FOO__', '__BAR__', '__HELLO_WORLD__');
+    const [httpStatus, httpResponseBody] = getResponseForW3CError(badParamsError);
+    httpStatus.should.equal(400);
+    const {error, message, stacktrace} = httpResponseBody.value;
+    error.should.equal('The arguments passed to a command are either invalid or malformed');
+    message.should.match(/__BAR__/);
+    message.should.match(/__HELLO_WORLD__/);
+    stacktrace.should.match(/errors-specs.js/);
   });
 });

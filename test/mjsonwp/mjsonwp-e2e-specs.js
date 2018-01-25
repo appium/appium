@@ -426,34 +426,51 @@ describe('MJSONWP', async function () {
         });
 
         it(`should throw 400 Bad Parameters exception if the parameters are bad`, async function () {
-          const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
+          const {statusCode, error} = await request.post(`${sessionUrl}/actions`, {
             json: {
               bad: 'params',
             }
           }).should.eventually.be.rejected;
-          message.should.match(/Parameters were incorrect/);
           statusCode.should.equal(400);
+
+          const {error:w3cError, message, stacktrace} = error.value;
+          message.should.match(/Parameters were incorrect/);
+          stacktrace.should.match(/mjsonwp.js/);
+          w3cError.should.be.a.string;
+          w3cError.should.equal(errors.BadParametersError.error());
         });
 
         it(`should throw 404 Not Found exception if the command hasn't been implemented yet`, async function () {
-          const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
+          const {statusCode, error} = await request.post(`${sessionUrl}/actions`, {
             json: {
               actions: [],
             }
           }).should.eventually.be.rejected;
-          message.should.match(/Method has not yet been implemented/);
           statusCode.should.equal(404);
+
+          const {error:w3cError, message, stacktrace} = error.value;
+          message.should.match(/Method has not yet been implemented/);
+          stacktrace.should.match(/mjsonwp.js/);
+          w3cError.should.be.a.string;
+          w3cError.should.equal(errors.UnknownCommandError.error());
+          message.should.match(/Method has not yet been implemented/);
         });
 
         it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {
           driver.performActions = () => { throw new Error(`Didn't work`); };
-          const {message, statusCode} = await request.post(`${sessionUrl}/actions`, {
+          const {statusCode, error} = await request.post(`${sessionUrl}/actions`, {
             json: {
               actions: [],
             }
           }).should.eventually.be.rejected;
-          message.should.match(/500[\w\W]*Didn't work/);
           statusCode.should.equal(500);
+
+          const {error:w3cError, message, stacktrace} = error.value;
+          stacktrace.should.match(/mjsonwp.js/);
+          w3cError.should.be.a.string;
+          w3cError.should.equal(errors.UnknownError.error());
+          message.should.match(/Didn't work/);
+
           delete driver.performActions;
         });
 
@@ -496,7 +513,7 @@ describe('MJSONWP', async function () {
 
         it(`should fail with a 408 error if it throws a TimeoutError exception`, async () => {
           sinon.stub(driver, 'setUrl', () => { throw new errors.TimeoutError; });
-          let {statusCode} = await request({
+          let {statusCode, error} = await request({
             url: `${sessionUrl}/url`,
             method: 'POST',
             json: {
@@ -504,6 +521,13 @@ describe('MJSONWP', async function () {
             }
           }).should.eventually.be.rejected;
           statusCode.should.equal(408);
+
+          const {error:w3cError, message, stacktrace} = error.value;
+          stacktrace.should.match(/mjsonwp.js/);
+          w3cError.should.be.a.string;
+          w3cError.should.equal(errors.TimeoutError.error());
+          message.should.match(/An operation did not complete before its timeout expired/);
+
           sinon.restore(driver, 'setUrl');
         });
 

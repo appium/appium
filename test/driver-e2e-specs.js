@@ -184,7 +184,8 @@ describe('FakeDriver - via HTTP', function () {
           }
         },
       };
-      const {error, statusCode} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      const {error, statusCode, response} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      response.headers['content-type'].should.match(/application\/json/);
       const {message} = error.value;
       message.should.match(/BadAutomationName not part of/);
       statusCode.should.equal(400);

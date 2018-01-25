@@ -338,53 +338,6 @@ describe('AppiumDriver', function () {
         driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
       });
-      it('should get uiatomator2 for android >= 6', function () {
-        let appium = new AppiumDriver({});
-        let caps = {
-          platformName: 'Android',
-          platformVersion: '6',
-        };
-        let driver = appium.getDriverForCaps(caps);
-        driver.should.be.an.instanceof(Function);
-        driver.should.equal(AndroidUiautomator2Driver);
-
-        caps.platformVersion = '6.0.1';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(AndroidUiautomator2Driver);
-
-        caps.platformVersion = '8.1';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(AndroidUiautomator2Driver);
-      });
-      it('should get uiatomator for android < 6 or if platformVersion cannot be parsed', function () {
-        let appium = new AppiumDriver({});
-        let caps = {
-          platformName: 'Android',
-          platformVersion: '5.0',
-        };
-        let driver = appium.getDriverForCaps(caps);
-        driver.should.be.an.instanceof(Function);
-        driver.should.equal(AndroidDriver);
-
-        caps.platformVersion = undefined;
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(AndroidDriver);
-
-        caps.platformVersion = 'abc';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(AndroidDriver);
-      });
-      it('should get uiatomator for android >= 6 if set forcefully', function () {
-        let appium = new AppiumDriver({});
-        let caps = {
-          platformName: 'Android',
-          platformVersion: '7.2',
-          automationName: 'uiautomator',
-        };
-        let driver = appium.getDriverForCaps(caps);
-        driver.should.be.an.instanceof(Function);
-        driver.should.equal(AndroidDriver);
-      });
     });
   });
 });

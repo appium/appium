@@ -105,9 +105,9 @@ describe('FakeDriver - via HTTP', function () {
       screenshotValue.should.equal('hahahanotreallyascreenshot');
 
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
-      const {statusCode, message} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
+      const {statusCode, error} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
       statusCode.should.equal(404);
-      message.should.match(/Method has not yet been implemented/);
+      error.value.message.should.match(/Method has not yet been implemented/);
 
       // End session
       await request.delete({url: `${baseUrl}/${value.sessionId}`}).should.eventually.be.resolved;
@@ -121,9 +121,9 @@ describe('FakeDriver - via HTTP', function () {
         }
       };
 
-      const {statusCode, message} = await request.post({url: baseUrl, json: badW3Ccaps}).should.eventually.be.rejected;
+      const {statusCode, error} = await request.post({url: baseUrl, json: badW3Ccaps}).should.eventually.be.rejected;
       statusCode.should.equal(400);
-      message.should.match(/can't be blank/);
+      error.value.message.should.match(/can't be blank/);
     });
 
     it('should accept a combo of W3C and JSONWP capabilities but default to W3C', async function () {
@@ -184,7 +184,8 @@ describe('FakeDriver - via HTTP', function () {
           }
         },
       };
-      const {message, statusCode} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      const {error, statusCode} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
+      const {message} = error.value;
       message.should.match(/BadAutomationName not part of/);
       statusCode.should.equal(400);
     });

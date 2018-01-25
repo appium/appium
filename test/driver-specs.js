@@ -8,8 +8,6 @@ import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
-import { AndroidDriver } from 'appium-android-driver';
-import { AndroidUiautomator2Driver } from 'appium-uiautomator2-driver';
 import { IosDriver } from 'appium-ios-driver';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes } from '../lib/utils';

@@ -58,7 +58,7 @@
     "npmlog": "2.x",
     "request": "^2.81.0",
     "request-promise": "1.x",
-    "source-map-support": "^0.5.3",
+    "source-map-support": "0.x",
     "teen_process": "1.x",
     "winston": "2.x"
   },
@@ -80,14 +80,14 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "^2.2.2",
+    "appium-gulp-plugins": "2.x",
     "babel-cli": "^6.26.0",
     "babel-eslint": "7.x",
     "babel-preset-env": "^1.6.0",
     "chai": "3.x",
     "chai-as-promised": "5.x",
     "eslint": "3.x",
-    "eslint-config-appium": "^2.1.0",
+    "eslint-config-appium": "2.x",
     "eslint-plugin-babel": "3.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-mocha": "4.x",

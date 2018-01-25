@@ -8,6 +8,8 @@ import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
+import { AndroidDriver } from 'appium-android-driver';
+import { AndroidUiautomator2Driver } from 'appium-uiautomator2-driver';
 import { IosDriver } from 'appium-ios-driver';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes } from '../lib/utils';
@@ -335,6 +337,53 @@ describe('AppiumDriver', function () {
         caps.platformVersion = '12.14';
         driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
+      });
+      it('should get uiatomator2 for android >= 6', function () {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'Android',
+          platformVersion: '6',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(AndroidUiautomator2Driver);
+
+        caps.platformVersion = '6.0.1';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(AndroidUiautomator2Driver);
+
+        caps.platformVersion = '8.1';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(AndroidUiautomator2Driver);
+      });
+      it('should get uiatomator for android < 6 or if platformVersion cannot be parsed', function () {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'Android',
+          platformVersion: '5.0',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(AndroidDriver);
+
+        caps.platformVersion = undefined;
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(AndroidDriver);
+
+        caps.platformVersion = 'abc';
+        driver = appium.getDriverForCaps(caps);
+        driver.should.equal(AndroidDriver);
+      });
+      it('should get uiatomator for android >= 6 if set forcefully', function () {
+        let appium = new AppiumDriver({});
+        let caps = {
+          platformName: 'Android',
+          platformVersion: '7.2',
+          automationName: 'uiautomator',
+        };
+        let driver = appium.getDriverForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(AndroidDriver);
       });
     });
   });

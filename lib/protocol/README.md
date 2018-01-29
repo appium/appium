@@ -2,14 +2,29 @@
 
 An abstraction of the Mobile JSON Wire Protocol ([spec](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)) and the W3C Wire Protocol ([spec](https://www.w3.org/TR/webdriver/) with Appium extensions (as specified [here](http://www.w3.org/TR/webdriver/#protocol-extensions)).
 
+### Protocol Detection
+
+In the event that a session is requested, and both MJSONWP _and_ W3C capabilities are provided, like this
+
+```json
+{
+  "capabilities: {"alwaysMatch": {...}, "firstMatch": [{...}, ...]},
+  "desiredCapabilities": {...}
+}
+```
+
+a W3C session will be served _unless_ the W3C Capabilities are incomplete. So if the "desiredCapabilities" object has more keys
+then whatever the capabilities were matched for the W3C capabilities, then an MJSONWP session will be served instead
+
 
 ### Endpoints in the protocol
 
 The Mobile JSON Wire Protocol package gives access to a number of endpoints documented [here](https://github.com/appium/appium-base-driver/blob/master/docs/mjsonwp/protocol-methods.md).
 
-The W3C WebDriver Protocol package gives access to 
+The W3C WebDriver Protocol package gives access to a number of endpoints documented in the [official documentation](https://www.w3.org/TR/webdriver/) and the 
+[simplified spec](https://github.com/jlipps/simple-wd-spec)
 
-### MobileJsonWireProtocol
+### Protocol
 
 The basic class, subclassed by drivers that will use the protocol.
 
@@ -36,7 +51,10 @@ An array of commands that do not need a session associated with them.
 
 ### Errors
 
-This package exports a number of classes and methods related to Selenium error handling. There are error classes for each Selenium error type (see [here](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes), as well as the context errors in the [mobile spec](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts)). The list of errors, and their meanings, can be found [here](https://github.com/appium/appium-base-driver/blob/master/docs/mjsonwp/errors.md).
+This package exports a number of classes and methods related to Selenium error handling. There are error classes for each Selenium error type (see [JSONWP Errors](https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes), as well as the context errors in the [mobile spec](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts). 
+
+The list of errors, and their meanings, can be found [here for JSONWP](https://github.com/appium/appium-base-driver/blob/master/docs/mjsonwp/errors.md) and
+[here for W3C Errors](https://www.w3.org/TR/webdriver/#handling-errors))
 
 There are, in addition, two helper methods for dealing with errors
 

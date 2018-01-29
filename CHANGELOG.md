@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.8.0-beta2 (from 1.8.0-beta)
+===================================
+
+* Use MJSONWP if desiredCapabilities have extraneuous parameters
+* Fall back to MJSONWP if session request for W3C Capabilities throws an exception
+
 CHANGES IN VERSION 1.8.0-beta (from 1.7.2)
 ===================================
 

@@ -380,7 +380,7 @@ describe('caps', function () {
       });
     });
   });
-  describe('.findNonPrefixedCaps', () => {
+  describe('.findNonPrefixedCaps', function () {
     it('should find alwaysMatch caps with no prefix', function () {
       findNonPrefixedCaps({alwaysMatch: {
         'non-standard': 'dummy',

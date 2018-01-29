@@ -1,12 +1,13 @@
-## mobile-json-wire-protocol
+## webdriver and mobile-json-wire protocols
 
-An abstraction of the Mobile JSON Wire Protocol ([spec](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)) with Appium extensions (as specified [here](http://www.w3.org/TR/webdriver/#protocol-extensions)).
+An abstraction of the Mobile JSON Wire Protocol ([spec](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)) and the W3C Wire Protocol ([spec](https://www.w3.org/TR/webdriver/) with Appium extensions (as specified [here](http://www.w3.org/TR/webdriver/#protocol-extensions)).
 
 
 ### Endpoints in the protocol
 
 The Mobile JSON Wire Protocol package gives access to a number of endpoints documented [here](https://github.com/appium/appium-base-driver/blob/master/docs/mjsonwp/protocol-methods.md).
 
+The W3C WebDriver Protocol package gives access to 
 
 ### MobileJsonWireProtocol
 

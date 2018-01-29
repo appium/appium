@@ -1,14 +1,14 @@
 // transpile:mocha
 
 import { _ } from 'lodash';
-import { METHOD_MAP, routeToCommandName } from '../../lib/mjsonwp/routes';
+import { METHOD_MAP, routeToCommandName } from '../../lib/protocol/routes';
 import crypto from 'crypto';
 import chai from 'chai';
 
 
 chai.should();
 
-describe('MJSONWP', function () {
+describe('Protocol', function () {
 
   // TODO test against an explicit protocol rather than a hash of a previous
   // protocol

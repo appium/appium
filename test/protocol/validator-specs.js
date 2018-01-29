@@ -1,13 +1,13 @@
 // transpile:mocha
 
-import { validators } from '../../lib/mjsonwp/validators';
+import { validators } from '../../lib/protocol/validators';
 import chai from 'chai';
 import BaseDriver from "../../lib/basedriver/driver";
 
 
 chai.should();
 
-describe('MJSONWP', function () {
+describe('Protocol', function () {
   describe('direct to driver', function () {
 
     describe('setUrl', function () {

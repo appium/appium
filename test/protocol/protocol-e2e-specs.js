@@ -9,12 +9,12 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import HTTPStatusCodes from 'http-status-codes';
 import { createProxyServer, addHandler } from './helpers';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../../lib/mjsonwp/mjsonwp';
+import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../../lib/protocol/protocol';
 
 let should = chai.should();
 chai.use(chaiAsPromised);
 
-describe('MJSONWP', async function () {
+describe('Protocol', async function () {
 
   //TODO: more tests!:
   // Unknown commands should return 404
@@ -435,7 +435,7 @@ describe('MJSONWP', async function () {
 
           const {error:w3cError, message, stacktrace} = error.value;
           message.should.match(/Parameters were incorrect/);
-          stacktrace.should.match(/mjsonwp.js/);
+          stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.BadParametersError.error());
         });
@@ -450,7 +450,7 @@ describe('MJSONWP', async function () {
 
           const {error:w3cError, message, stacktrace} = error.value;
           message.should.match(/Method has not yet been implemented/);
-          stacktrace.should.match(/mjsonwp.js/);
+          stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.UnknownCommandError.error());
           message.should.match(/Method has not yet been implemented/);
@@ -466,7 +466,7 @@ describe('MJSONWP', async function () {
           statusCode.should.equal(500);
 
           const {error:w3cError, message, stacktrace} = error.value;
-          stacktrace.should.match(/mjsonwp.js/);
+          stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.UnknownError.error());
           message.should.match(/Didn't work/);
@@ -511,7 +511,7 @@ describe('MJSONWP', async function () {
           driver.findElements = findElementsBackup;
         });
 
-        it(`should fail with a 408 error if it throws a TimeoutError exception`, async () => {
+        it(`should fail with a 408 error if it throws a TimeoutError exception`, async function () {
           sinon.stub(driver, 'setUrl', () => { throw new errors.TimeoutError; });
           let {statusCode, error} = await request({
             url: `${sessionUrl}/url`,
@@ -523,7 +523,7 @@ describe('MJSONWP', async function () {
           statusCode.should.equal(408);
 
           const {error:w3cError, message, stacktrace} = error.value;
-          stacktrace.should.match(/mjsonwp.js/);
+          stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.TimeoutError.error());
           message.should.match(/An operation did not complete before its timeout expired/);

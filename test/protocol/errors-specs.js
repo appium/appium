@@ -1,5 +1,5 @@
 import { errors, errorFromCode } from '../..';
-import { getResponseForW3CError } from '../../lib/mjsonwp/errors';
+import { getResponseForW3CError } from '../../lib/protocol/errors';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';

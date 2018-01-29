@@ -8,11 +8,11 @@ export { BaseDriver, DeviceSettings };
 export default BaseDriver;
 
 // MJSONWP exports
-import { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
+import { Protocol, routeConfiguringFunction, errors, isErrorType,
          errorFromCode, ALL_COMMANDS, METHOD_MAP, routeToCommandName,
-         NO_SESSION_ID_COMMANDS, isSessionCommand } from './lib/mjsonwp';
+         NO_SESSION_ID_COMMANDS, isSessionCommand } from './lib/protocol';
 
-export { MobileJsonWireProtocol, routeConfiguringFunction, errors, isErrorType,
+export { Protocol, routeConfiguringFunction, errors, isErrorType,
          errorFromCode, ALL_COMMANDS, METHOD_MAP, routeToCommandName,
          NO_SESSION_ID_COMMANDS, isSessionCommand };
 

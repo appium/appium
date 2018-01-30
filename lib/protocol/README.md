@@ -6,14 +6,17 @@ An abstraction of the Mobile JSON Wire Protocol ([spec](https://github.com/Selen
 
 In the event that a session is requested, and both MJSONWP _and_ W3C capabilities are provided, like this
 
-```json
+```
 {
-  "capabilities: {"alwaysMatch": {...}, "firstMatch": [{...}, ...]},
+  "capabilities: {
+    "alwaysMatch": {...}, 
+    "firstMatch": [{...}, ...]
+  },
   "desiredCapabilities": {...}
 }
 ```
 
-a W3C session will be served _unless_ the W3C Capabilities are incomplete. So if the "desiredCapabilities" object has more keys
+a W3C session will be served _unless_ the W3C Capabilities are incomplete. So if the `"desiredCapabilities"` object has more keys
 then whatever the capabilities were matched for the W3C capabilities, then an MJSONWP session will be served instead
 
 

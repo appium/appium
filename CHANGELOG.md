@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.8.0-beta3 (from 1.8.0-beta2)
+===================================
+
+#### Android
+* Log message recommending user to use UIAutomator2 if platform version is greater or equal to 6 
+
 CHANGES IN VERSION 1.8.0-beta2 (from 1.8.0-beta)
 ===================================
 

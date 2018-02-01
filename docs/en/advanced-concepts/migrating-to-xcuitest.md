@@ -23,7 +23,7 @@ This locator strategy was specifically built on UIAutomation, so it is not inclu
 
 ### `xpath` locator strategy
 
-1. Try not to use XPath locators unless there is absolutely no other alternatives. In general, xpath locators might be times slower, than other types of locators like accessibility id, class name and predicate (up to 100 times slower in some special cases). They are so slow, because xpath location is not natively supported by Apple's XCTest framework.
+1. Try not to use XPath locators unless there is absolutely no other alternative. In general, xpath locators might be many times slower than other types of locators like accessibility id, class name and predicate (up to 100 times slower in some special cases). They are so slow, because xpath location is not natively supported by Apple's XCTest framework.
 2. Use
 
 ```

@@ -1,0 +1,16 @@
+{
+  "name": "webdriverio-sample-appium-tests",
+  "version": "1.0.0",
+  "description": "Sample tests using webdriverio",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --timeout 6000000 test/"
+  },
+  "author": "Daniel Graham",
+  "license": "ISC",
+  "devDependencies": {
+    "assert": "^1.4.1",
+    "mocha": "^5.0.0",
+    "webdriverio": "^4.10.2"
+  }
+}

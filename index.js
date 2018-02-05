@@ -9,11 +9,13 @@ export default BaseDriver;
 
 // MJSONWP exports
 import { Protocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromCode, ALL_COMMANDS, METHOD_MAP, routeToCommandName,
+         errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
+         ALL_COMMANDS, METHOD_MAP, routeToCommandName,
          NO_SESSION_ID_COMMANDS, isSessionCommand } from './lib/protocol';
 
 export { Protocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromCode, ALL_COMMANDS, METHOD_MAP, routeToCommandName,
+         errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errorFromW3CJsonCode as errorFromCode,
+         ALL_COMMANDS, METHOD_MAP, routeToCommandName,
          NO_SESSION_ID_COMMANDS, isSessionCommand };
 
 // Express exports

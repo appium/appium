@@ -14,7 +14,7 @@ import { Protocol, routeConfiguringFunction, errors, isErrorType,
          NO_SESSION_ID_COMMANDS, isSessionCommand } from './lib/protocol';
 
 export { Protocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errorFromW3CJsonCode as errorFromCode,
+         errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errorFromMJSONWPStatusCode as errorFromCode,
          ALL_COMMANDS, METHOD_MAP, routeToCommandName,
          NO_SESSION_ID_COMMANDS, isSessionCommand };
 

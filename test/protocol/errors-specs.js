@@ -385,6 +385,13 @@ describe('.getActualError', function () {
       }).getActualError();
       isErrorType(actualError, errors.UnknownError).should.be.true;
     });
+    it('should parse a JSON string', function () {
+      const actualError = new errors.ProxyRequestError('Error message does not matter', JSON.stringify({
+        value: 'Does not matter',
+        status: -100
+      })).getActualError();
+      isErrorType(actualError, errors.UnknownError).should.be.true;
+    });
   });
 
   describe('W3C', function () {
@@ -413,6 +420,15 @@ describe('.getActualError', function () {
         },
       }, 456).getActualError();
       isErrorType(actualError, errors.UnknownError).should.be.true;
+    });
+    it('should parse a JSON string', function () {
+      const actualError = new errors.ProxyRequestError('Error message does not matter', JSON.stringify({
+        value: {
+          error: errors.StaleElementReferenceError.error(),
+
+        },
+      }), HTTPStatusCodes.BAD_REQUEST).getActualError();
+      isErrorType(actualError, errors.StaleElementReferenceError).should.be.true;
     });
   });
 });

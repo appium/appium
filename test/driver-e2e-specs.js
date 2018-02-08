@@ -108,7 +108,7 @@ describe('FakeDriver - via HTTP', function () {
       const {statusCode, error} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
       statusCode.should.equal(404);
       const {error:errorMessage, message, stacktrace} = error.value;
-      errorMessage.should.match(/A command could not be executed/);
+      errorMessage.should.match(/unknown method/);
       message.should.match(/Method has not yet been implemented/);
       stacktrace.should.match(/FakeDriver.executeCommand/);
 

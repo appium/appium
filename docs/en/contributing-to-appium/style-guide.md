@@ -51,7 +51,7 @@ will enforce most of these rules!
 *   Spaces after commas and colons in lists, objects, function calls, etc...
 
     ```js
-    let x = myFunc('lol, {foo: bar, baz: boo});
+    let x = myFunc('lol', {foo: bar, baz: boo});
     ```
     not
     ```js
@@ -127,8 +127,8 @@ will enforce most of these rules!
 *   Break up long strings like this:
 
     ```javascript
-    myFunc("This is a really long string that's longer " +
-            "than 79 characters so I broke it up, woo");
+    myFunc('This is a really long string that's longer ' +
+           'than 79 characters so I broke it up, woo');
     ```
 
 *   Comments should line up with code
@@ -157,7 +157,7 @@ will enforce most of these rules!
     let my_variable = 42;
     ```
 
-*    Check for `undefined` using Appium's [appium-support](https://github.com/appium/appium-support) package
+*   Check for `undefined` using Appium's [appium-support](https://github.com/appium/appium-support) package
 
     ```js
     util.hasValue(myVariable)

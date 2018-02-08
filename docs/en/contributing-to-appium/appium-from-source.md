@@ -8,7 +8,7 @@ request; for more information on how to run tests, keep reading!
 
 ### Node.js
 
-Appium is written in JavaScript, and run with the [Node.js]() engine. Currently
+Appium is written in JavaScript, and run with the [Node.js](https://nodejs.org/en/) engine. Currently
 version 6+ is supported. While Node.js can be installed globally on the system,
 a version manager is _highly_ recommended.
 * NVM - [https://github.com/creationix/nvm](https://github.com/creationix/nvm)
@@ -36,7 +36,7 @@ node .
 
 ### Hacking on Appium
 
-Install the [appium-doctor]() tool, and run it to verify all of the 
+Install the [appium-doctor](https://github.com/appium/appium-doctor) tool, and run it to verify all of the
 dependencies are set up correctly (since dependencies for building Appium
 are different from those for simply running it):
 ```
@@ -83,9 +83,7 @@ have to modify your `/etc/authorization` file in one of two ways:
 At this point, run:
 
 ```
-rm -rf node-modules
-npm install
-gulp transpile
+rm -rf node-modules && npm install
 ```
 
 Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
@@ -141,7 +139,7 @@ are necessary to link the two:
     ```
     cd B
     ```
-2. Use [NPM link]() to create symbolic link to this package
+2. Use [NPM link](https://docs.npmjs.com/cli/link) to create symbolic link to this package
     ```
     npm link
     ```
@@ -149,7 +147,7 @@ are necessary to link the two:
     ```
     cd A
     ```
-4. Use [NPM link]() to link the dependent package `B` to the development version
+4. Use [NPM link](https://docs.npmjs.com/cli/link) to link the dependent package `B` to the development version
     ```
     npm link B
     ```

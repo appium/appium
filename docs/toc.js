@@ -239,8 +239,8 @@ module.exports = {
     ["Contributing", ["contributing-to-appium",
       ["Running Appium from Source", "appium-from-source.md"],
       ["Developer Overview", "developers-overview.md"],
-      ["Standard Gulp Commands", "gulp.md"],
-      ["Appium Style Guide", "style-guide-2.0.md"],
+      ["Standard Dev Commands", "dev-tools.md"],
+      ["Appium Style Guide", "style-guide.md"],
       ["How to Write Docs", "how-to-write-docs.md"],
       ["Appium Package Structure", "appium-packages.md"],
       ["Credits", "credits.md"]]]

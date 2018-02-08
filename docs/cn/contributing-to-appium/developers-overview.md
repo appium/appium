@@ -63,7 +63,7 @@ node.js的原生支持，Appium代码是_被移植_到ES5（JS更为广泛支持
 ### 排查和代码风格
 
 对于所有Appium的JS而言，代码外观和使用感觉同样重要。这包括样式常规，编码模式以及我们解决各种问题时使用的
-库。你应该熟悉我们新的[ES2015 风格指南](/docs/cn/contributing-to-appium/style-guide-2.0.md)。
+库。你应该熟悉我们新的[ES2015 风格指南](/docs/cn/contributing-to-appium/style-guide.md)。
 当转化时，Appium包将自动运行JSHint或其他lint工具，并在代码不符合我们规范的时候提供警告或错误反馈。
 这些工具不一定能顾全我们关心的种种风格问题，所以我们在review代码的时候也应该注意代码规范问题。这不是
 吹毛求疵，而是为了有一个整洁，一致并且可读的代码库。

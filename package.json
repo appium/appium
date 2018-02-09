@@ -74,7 +74,8 @@
     "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint",
     "coverage": "gulp coveralls",
-    "generate-docs": "babel-node ./commands-yml/parse.js"
+    "generate-docs": "babel-node ./commands-yml/parse.js",
+    "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install"
   },
   "pre-commit": [
     "precommit-msg",

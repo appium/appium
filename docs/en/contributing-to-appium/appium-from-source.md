@@ -8,7 +8,7 @@ request; for more information on how to run tests, keep reading!
 
 ### Node.js
 
-Appium is written in JavaScript, and run with the [Node.js](https://nodejs.org/en/) engine. Currently
+Appium is written in JavaScript, and run with the [Node.js](https://nodejs.org/) engine. Currently
 version 6+ is supported. While Node.js can be installed globally on the system,
 a version manager is _highly_ recommended.
 * NVM - [https://github.com/creationix/nvm](https://github.com/creationix/nvm)
@@ -52,7 +52,7 @@ When pulling new code from GitHub, if there are changes to `package.json` it
 is necessary to remove the old dependencies and re-run `npm install`:
 
 ```
-rm -rf node_modules && npm install
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 At this point, you will be able to start the Appium server:
@@ -83,7 +83,7 @@ have to modify your `/etc/authorization` file in one of two ways:
 At this point, run:
 
 ```
-rm -rf node-modules && npm install
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
@@ -98,7 +98,7 @@ From your local repo's command prompt, install/run the following:
 Set up Appium by running:
 
 ```
-rm -rf node_modules && npm install
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 Make sure you have one and only one Android emulator or device running, e.g.,
@@ -120,7 +120,7 @@ its version up. Prior to running `npm install` it is recommended to remove
 all the old dependencies in the `node_modules` directory:
 
 ```
-rm -rf node_modules && npm install
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 ### Different packages

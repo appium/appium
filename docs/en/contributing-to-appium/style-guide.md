@@ -7,8 +7,9 @@ code look like the surrounding code*.
 
 ### JavaScript
 
-With the exception of the code that runs on devices ([appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server) for 
-Android, [WebDriverAgent](https://github.com/appium/WebDriverAgent) for iOS), Appium is written in [Node.js](). If you are
+With the exception of the code that runs on the devices themselves 
+([appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server) for 
+Android, [WebDriverAgent](https://github.com/appium/WebDriverAgent) for iOS), Appium is written in [Node.js](https://nodejs.org/). If you are
 not familiar with JavaScript, please familiarize yourself before attempting
 to modify the code. There are plenty of good, free resources (see, for example,
 [You Don't Know JavaScript](https://github.com/getify/You-Dont-Know-JS)).

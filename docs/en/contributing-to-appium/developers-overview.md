@@ -147,7 +147,7 @@ package if you want to publish it. Ownership is managed by the Appium
 committers; talk to @jlipps or @imurchie if you believe you should be an owner
 and are not):
 
-1. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
+1. `rm -rf node_modules && rm -rf package-lock.json && npm install` and run tests to make sure a clean install works.
 1. Determine whether we have a patch (bugfix), minor (feature), or major (breaking) release according to the principles of [SemVer](http://semver.org/) (see also this explanation of [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning)).
 1. Update the `CHANGELOG` and/or `README` with any appropriate changes and commit. Most subpackages don't have a `CHANGELOG`.
 1. Run `npm version <version-type>` with the appropriate version type.

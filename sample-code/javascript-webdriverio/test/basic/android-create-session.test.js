@@ -1,13 +1,12 @@
-var webdriverio = require('webdriverio');
-var androidOptions = require('../helpers/caps').androidOptions;
-var app = require('../helpers/apps').androidApiDemos;
-var assert = require('chai').assert;
+const webdriverio = require('webdriverio');
+const androidOptions = require('../../helpers/caps').androidOptions;
+const app = require('../../helpers/apps').androidApiDemos;
+const assert = require('chai').assert;
 
 androidOptions.desiredCapabilities.app = app;
 
-
 describe('Create Android session', function () {
-  var client;
+  const client;
 
   before(function () {
     client = webdriverio.remote(androidOptions);

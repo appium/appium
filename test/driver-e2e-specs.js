@@ -150,6 +150,9 @@ describe('FakeDriver - via HTTP', function () {
         ...caps,
         w3cParam: 'w3cParam',
       });
+
+      // End session
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
     });
 
     it('should accept a combo of W3C and JSONWP but use JSONWP if desiredCapabilities contains extraneous keys', async function () {
@@ -176,6 +179,9 @@ describe('FakeDriver - via HTTP', function () {
         automationName: 'Fake',
         anotherParam: 'Hello',
       });
+
+      // End session
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
     });
 
     it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {
@@ -207,6 +213,9 @@ describe('FakeDriver - via HTTP', function () {
       should.not.exist(status);
       should.not.exist(sessionId);
       value.capabilities.should.deep.equal(caps);
+
+      // End session
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
     });
 
     it('should fall back to MJSONWP if w3c caps are invalid', async function () {
@@ -226,6 +235,9 @@ describe('FakeDriver - via HTTP', function () {
       status.should.exist;
       sessionId.should.exist;
       value.should.deep.equal(caps);
+
+      // End session
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
     });
   });
 });
@@ -248,8 +260,9 @@ describe('Logsink', function () {
 
   it('should send logs to a logHandler passed in by a parent package', async function () {
     logs.length.should.be.above(1);
-    logs[0].length.should.equal(2);
-    logs[0][1].should.include("Welcome to Appium");
+    let welcomeIndex = logs[0][1].includes('versions of node') ? 1 : 0;
+    logs[welcomeIndex].length.should.equal(2);
+    logs[welcomeIndex][1].should.include("Welcome to Appium");
   });
 
 });

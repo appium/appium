@@ -64,7 +64,7 @@ describe('Config', function () {
       process = _process;
     });
     describe('checkNodeOk', function () {
-      it('should fail if node is below 4', function () {
+      it('should fail if node is below 6', function () {
         process.version = 'v4.4.7';
         checkNodeOk.should.throw();
         process.version = 'v0.9.12';
@@ -75,10 +75,8 @@ describe('Config', function () {
         checkNodeOk.should.throw();
         process.version = 'v0.12.14';
         checkNodeOk.should.throw();
-      });
-      it('should succeed if node is 5+', function () {
         process.version = 'v5.7.0';
-        checkNodeOk.should.not.throw();
+        checkNodeOk.should.throw();
       });
       it('should succeed if node is 6+', function () {
         process.version = 'v6.3.1';
@@ -92,6 +90,10 @@ describe('Config', function () {
         process.version = 'v8.1.2';
         checkNodeOk.should.not.throw();
       });
+      it('should succeed if node is 9+', function () {
+        process.version = 'v9.1.2';
+        checkNodeOk.should.not.throw();
+      });
     });
 
     describe('warnNodeDeprecations', function () {
@@ -102,28 +104,18 @@ describe('Config', function () {
       beforeEach(function () {
         spy.reset();
       });
-      it('should log a warning if node is below 4', function () {
-        process.version = 'v0.9.12';
+      it('should log a warning if node is below 8', function () {
+        process.version = 'v7.10.1';
         warnNodeDeprecations();
         logger.warn.callCount.should.equal(1);
       });
-      it('should log a warning if node is 0.12', function () {
-        process.version = 'v0.12.0';
-        warnNodeDeprecations();
-        logger.warn.callCount.should.equal(1);
-      });
-      it('should not log a warning if node is 4+', function () {
-        process.version = 'v4.4.7';
+      it('should not log a warning if node is 8+', function () {
+        process.version = 'v8.0.0';
         warnNodeDeprecations();
         logger.warn.callCount.should.equal(0);
       });
-      it('should not log a warning if node is 5+', function () {
-        process.version = 'v5.7.0';
-        warnNodeDeprecations();
-        logger.warn.callCount.should.equal(0);
-      });
-      it('should not log a warning if node is 6+', function () {
-        process.version = 'v6.3.1';
+      it('should not log a warning if node is 9+', function () {
+        process.version = 'v9.0.0';
         warnNodeDeprecations();
         logger.warn.callCount.should.equal(0);
       });

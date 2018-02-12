@@ -28,27 +28,27 @@ The versioning and release model shape how we set Appium milestones. The next mi
 For Appium, the basic flow looks like this:
 
    1. All PRs go to `master` (aka `trunk`).
-   2. Whoever is leading a release acts as the "release engineer" (RE). When the release is ready to be shared (“Beta" status or better), the RE creates a new branch `v[Major].[Minor].[Patch]-branch`.
-   3. PRs continue to go to `master`.
-   4. If the release requires fixes committed to `master`, the RE cherrypicks those commits into the release branch. 
-   5. The release branch can be amended with hotfixes for subsequent patch releases. This allows the team to carefully scope small changesets for quick release. Fixes can also be pulled into previous release  branches branches when needed.  
-   6. Rinse, repeat.
+   1. Whoever is leading a release acts as the "release engineer" (RE). When the release is ready to be shared (“Beta" status or better), the RE creates a new branch `v[Major].[Minor].[Patch]-branch`.
+   1. PRs continue to go to `master`.
+   1. If the release requires fixes committed to `master`, the RE cherrypicks those commits into the release branch. 
+   1. The release branch can be amended with hotfixes for subsequent patch releases. This allows the team to carefully scope small changesets for quick release. Fixes can also be pulled into previous release  branches branches when needed.  
+   1. Rinse, repeat.
 
 Developers can maintain working branches however they like. These are strictly for personal use. All “official” branches should conform to the model defined above.
 
 ### Example
 
    1. It’s 1 June. The Appium team plans on releasing 20.1-beta on 15 July and the full 20.1 release on 1 August.
-   2. For the next six weeks, the team commits their work to `master`.
-   3. On 15 July, the acting RE creates `20.1-branch`. The first node is tagged “20.1.0 Beta”.
-   4. One team member begins fixing bugs in the beta. The fixes are committed to `master`.
-   5. Other contributors begin committing changes that are planned for 20.2. These also go to `master`.
-   6. The RE cherrypicks the fixes into `20.1-branch`, leaving the other changes on `master`.
-   7. The team celebrates that all the beta bugs are fixed for the 1 August release.
-   8. The RE tags HEAD of `20.1-branch` as `20.1.0` and publishes the release.
-   9. A few weeks later, a crash is discovered in `20.1.0` and users need a fix NOW.
-   10. The acting RE pulls the crash fix from master into `20.1-branch`, tags HEAD as `20.1.1`, and publishes the hotfix.
-   11. The cycle repeats once the `20.2` release is ready. 
+   1. For the next six weeks, the team commits their work to `master`.
+   1. On 15 July, the acting RE creates `20.1-branch`. The first node is tagged “20.1.0 Beta”.
+   1. One team member begins fixing bugs in the beta. The fixes are committed to `master`.
+   1. Other contributors begin committing changes that are planned for 20.2. These also go to `master`.
+   1. The RE cherrypicks the fixes into `20.1-branch`, leaving the other changes on `master`.
+   1. The team celebrates that all the beta bugs are fixed for the 1 August release.
+   1. The RE tags HEAD of `20.1-branch` as `20.1.0` and publishes the release.
+   1. A few weeks later, a crash is discovered in `20.1.0` and users need a fix NOW.
+   1. The acting RE pulls the crash fix from master into `20.1-branch`, tags HEAD as `20.1.1`, and publishes the hotfix.
+   1. The cycle repeats once the `20.2` release is ready. 
 
 
 

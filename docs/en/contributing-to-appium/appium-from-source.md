@@ -2,11 +2,20 @@
 
 So you want to run Appium from source and help fix bugs and add features?
 Great! Just fork the project, make a change, and send a pull request! Please
-have a look at our [Style Guide](style-guide-2.0.md) before getting to work.
+have a look at our [Style Guide](style-guide.md) before getting to work.
 Please make sure the unit and functional tests pass before sending a pull
 request; for more information on how to run tests, keep reading!
 
-Make sure you read and follow the setup instructions in the README first.
+### Node.js
+
+Appium is written in JavaScript, and run with the [Node.js](https://nodejs.org/) engine. Currently
+version 6+ is supported. While Node.js can be installed globally on the system,
+a version manager is _highly_ recommended.
+* NVM - [https://github.com/creationix/nvm](https://github.com/creationix/nvm)
+* N - [https://github.com/tj/n](https://github.com/tj/n)
+
+Your Node.js installation will include the [NPM](https://www.npmjs.com/) package manager, which Appium
+will need in order to manage dependencies. Appiums supports NPM version 3+.
 
 ### Setting up Appium from Source
 
@@ -17,57 +26,43 @@ instance of an Appium server, and then run your test.
 
 The quick way to get started:
 
-```center
+```
 git clone https://github.com/appium/appium.git
 cd appium
 npm install
-gulp transpile # requires gulp, see below
-npm install -g authorize-ios # for ios only
-authorize-ios                # for ios only
+npm run build
 node .
 ```
 
 ### Hacking on Appium
 
-Make sure you have `ant`, `maven`, `adb` installed and added to system `PATH`, also you
-would need the android-16 sdk (for Selendroid) and android-19 sdk installed.
-From your local repo's command prompt, install the following packages using the
-following commands (if you didn't install `node` using Homebrew, you might have
-to run `npm` with sudo privileges):
-
-```center
-npm install -g mocha
-npm install -g gulp
-npm install -g gulp-cli
-npm install -g appium-doctor && appium-doctor --dev
-npm install
-gulp transpile
+Install the [appium-doctor](https://github.com/appium/appium-doctor) tool, and run it to verify all of the
+dependencies are set up correctly (since dependencies for building Appium
+are different from those for simply running it):
 ```
-
-The first two commands install test and build tools (`sudo` may not be
-necessary if you installed node.js via Homebrew). The third command verifies
-that all of the dependencies are set up correctly (since dependencies for
-building Appium are different from those for simply running Appium) and fourth
-command installs all app dependencies and builds supporting binaries and test
-apps. The final command transpiles all the code so that `node` can run it.
+npm install -g appium-doctor
+appium-doctor --dev
+```
+Install the Node.js dependencies:
+```
+npm install
+```
 
 When pulling new code from GitHub, if there are changes to `package.json` it
 is necessary to remove the old dependencies and re-run `npm install`:
 
-```center
-rm -rf node_modules
-npm install
-gulp transpile
+```
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 At this point, you will be able to start the Appium server:
 
-```center
+```
 node .
 ```
 
 See [the server documentation](/docs/en/writing-running-appium/server-args.md)
-for a full list of arguments.
+for a full list of command line arguments that can be used.
 
 #### Hacking with Appium for iOS
 
@@ -80,36 +75,37 @@ have to modify your `/etc/authorization` file in one of two ways:
 2. Run the following command which automatically modifies your
    `/etc/authorization` file for you:
 
-    ```center
+    ```
     npm install -g authorize-ios
     sudo authorize-ios
 	```
 
 At this point, run:
 
-```center
-rm -rf node-modules
-npm install
-gulp transpile
+```
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
 
 #### Hacking with Appium for Android
 
+To work on Android, make sure you have `ant`, `maven`, and `adb` installed 
+and added to system `PATH` environment variable. Also you would need the 
+android-16 sdk (for `Selendroid`) and android-19+ sdk installed.
+From your local repo's command prompt, install/run the following:
+
 Set up Appium by running:
 
-```center
-rm -rf node-modules
-npm install
-gulp transpile
+```
+rm -rf node_modules && rm -rf package-lock.json && npm install
 ```
 
 Make sure you have one and only one Android emulator or device running, e.g.,
 by running this command in another process (assuming the `emulator` command is
 on your path):
 
-```center
+```
 emulator -avd <MyAvdName>
 ```
 
@@ -123,11 +119,43 @@ update everything necessary. You will also need to do this when Appium bumps
 its version up. Prior to running `npm install` it is recommended to remove
 all the old dependencies in the `node_modules` directory:
 
-```center
-rm -rf node-modules
-npm install
-gulp transpile
 ```
+rm -rf node_modules && rm -rf package-lock.json && npm install
+```
+
+### Different packages
+
+Appium is made up of a number of different packages. While it is often possible
+to work in a single package, it is also often the case that work, whether fixing
+a bug or adding a new feature, requires working on multiple packages simultaneously.
+
+Unfortunately the dependencies installed when running `npm install` are those that
+have already been published, so some work is needed to link together local development
+versions of the packages that are being worked on.
+
+In the case where one package, `A`, depends on another package, `B`, the following steps 
+are necessary to link the two:
+1. In one terminal, enter into package `B`
+    ```
+    cd B
+    ```
+2. Use [NPM link](https://docs.npmjs.com/cli/link) to create symbolic link to this package
+    ```
+    npm link
+    ```
+3. In another terminal, enter into package `A`
+    ```
+    cd A
+    ```
+4. Use [NPM link](https://docs.npmjs.com/cli/link) to link the dependent package `B` to the development version
+    ```
+    npm link B
+    ```
+
+Now the version of `B` that `A` uses will be your local version. Remember, however, that
+changes made to the JavaScript will only be available when they have been transpiled, so
+when you are going to test from package `A`, run `npm run build` in the directory for 
+package `B`.
 
 ### Running Tests
 
@@ -138,16 +166,23 @@ system is set up properly for the platforms you desire to test on.
 Once your system is set up and your code is up to date, you can run unit tests
 with:
 
-```center
-gulp once
+```
+npm run test
 ```
 
 You can run functional tests for all supported platforms (after ensuring that
 Appium is running in another window with `node .`) with:
 
-```center
-gulp e2e-test
+```
+npm run e2e-test
 ```
 
-Before committing code, please run `gulp once` to execute some basic tests and
-check your changes against code quality standards.
+### Committing code
+
+Each Appium package installs a pre-commit hook which will run the [linter](https://eslint.org/) and
+the unit tests before the commit is made. Any error in either of these will stop
+the commit from occurring.
+
+Once code is committed and a [pull request](https://help.github.com/articles/about-pull-requests/) 
+is made to the correct Appium respository on [GitHub](https://github.com/), Appium build system 
+will run all of the functional tests.

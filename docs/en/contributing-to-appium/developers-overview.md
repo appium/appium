@@ -93,7 +93,7 @@ Most Appium packages have this as the default behavior when running `gulp`.
 It's important for all of Appium's JS to look and feel the same. This includes
 style conventions as well as coding patterns and which libraries we use to
 solve various problems. You should get familiar with our new [ES2015 Style
-Guide](/docs/en/contributing-to-appium/style-guide-2.0.md). When transpiling,
+Guide](/docs/en/contributing-to-appium/style-guide.md). When transpiling,
 Appium packages will automatically run ESLint or other lint tools and provide
 warning or error feedback if the code doesn't conform to our style. These tools
 are not necessarily exhaustive of the kinds of style issues we care about, so
@@ -147,12 +147,12 @@ package if you want to publish it. Ownership is managed by the Appium
 committers; talk to @jlipps or @imurchie if you believe you should be an owner
 and are not):
 
-0. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
-0. Determine whether we have a patch (bugfix), minor (feature), or major (breaking) release according to the principles of [SemVer](http://semver.org/) (see also this explanation of [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning)).
-0. Update the `CHANGELOG` and/or `README` with any appropriate changes and commit. Most subpackages don't have a `CHANGELOG`.
-0. Run `npm version <version-type>` with the appropriate version type.
-0. Push the appropriate branch to GitHub, and don't forget to include the `--tags` flag to include the tag just created by `npm version`.
-0. Run `npm publish` (with `--tag beta` if this isn't an official release).
+1. `rm -rf node_modules && rm -rf package-lock.json && npm install` and run tests to make sure a clean install works.
+1. Determine whether we have a patch (bugfix), minor (feature), or major (breaking) release according to the principles of [SemVer](http://semver.org/) (see also this explanation of [how SemVer works with NPM](https://docs.npmjs.com/getting-started/semantic-versioning)).
+1. Update the `CHANGELOG` and/or `README` with any appropriate changes and commit. Most subpackages don't have a `CHANGELOG`.
+1. Run `npm version <version-type>` with the appropriate version type.
+1. Push the appropriate branch to GitHub, and don't forget to include the `--tags` flag to include the tag just created by `npm version`.
+1. Run `npm publish` (with `--tag beta` if this isn't an official release).
 
 For the main Appium packages, all the above steps must be taken, but with
 several changes. One reason is that for the main package we use NPM shrinkwrap
@@ -175,20 +175,20 @@ checked in to GitHub along with changes to `package.json`. With npm 5+ there is
 also a `package-lock.json` file produced. During the shrinkwrap process this is
 converted into the `npm-shrinkwrap.json` file.
 
-0. Remove the NPM shrinkwrap and package-lock JSON files if they exists.
-0. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
-0. Determine whether we have a `patch` (bugfix), `minor` (feature), or `major` (breaking) release according to the principles of SemVer.
-0. Update `package.json` with the appropriate new version.
-0. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
-0. `rm -rf node_modules && npm install --production` to get just the production dependencies.
-0. `npm shrinkwrap` to write the new NPM shrinkwrap JSON file, and commit this file.
-0. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a v1.5.0`. This is not necessary for beta versions.
-0. Push the tag to upstream: `git push --tags <remote> <branch>`
-0. Install dev dependencies (or at least `gulp` and `appium-gulp-plugins`), and undo the changes to the NPM shrinkwrap JSON file (e.g., `git checkout -- npm-shrinkwrap.json`).
-0. Run `npm publish` (with `--tag beta` if this isn't an official release).
-0. Remove the NPM shrinkwrap JSON file from Git and push the changes
-0. Update the docs at appium.io. Check out the appium.io repo from github, check out the `gh-pages` branch and pull latest. Run `rake publish`.
-0. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.
-0. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
-0. Begin process of releasing `appium-desktop`.
-0. Notify @jlipps to so he can tweet a link to the discuss post.
+1. Remove the NPM shrinkwrap and package-lock JSON files if they exists.
+1. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
+1. Determine whether we have a `patch` (bugfix), `minor` (feature), or `major` (breaking) release according to the principles of SemVer.
+1. Update `package.json` with the appropriate new version.
+1. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
+1. `rm -rf node_modules && npm install --production` to get just the production dependencies.
+1. `npm shrinkwrap` to write the new NPM shrinkwrap JSON file, and commit this file.
+1. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a v1.5.0`. This is not necessary for beta versions.
+1. Push the tag to upstream: `git push --tags <remote> <branch>`
+1. Install dev dependencies (or at least `gulp` and `appium-gulp-plugins`), and undo the changes to the NPM shrinkwrap JSON file (e.g., `git checkout -- npm-shrinkwrap.json`).
+1. Run `npm publish` (with `--tag beta` if this isn't an official release).
+1. Remove the NPM shrinkwrap JSON file from Git and push the changes
+1. Update the docs at appium.io. Check out the appium.io repo from github, check out the `gh-pages` branch and pull latest. Run `rake publish`.
+1. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.
+1. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
+1. Begin process of releasing `appium-desktop`.
+1. Notify @jlipps to so he can tweet a link to the discuss post.

@@ -2,8 +2,17 @@
 
 Thanks for your contribution to Appium! Here are the principles we use when
 writing javascript. Please conform to these so we can merge your pull request
- without going back and forth about style. The main principle is: *make your
- code look like the surrounding code*.
+without going back and forth about style. The main principle is: *make your
+code look like the surrounding code*.
+
+### JavaScript
+
+With the exception of the code that runs on the devices themselves 
+([appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server) for 
+Android, [WebDriverAgent](https://github.com/appium/WebDriverAgent) for iOS), Appium is written in [Node.js](https://nodejs.org/). If you are
+not familiar with JavaScript, please familiarize yourself before attempting
+to modify the code. There are plenty of good, free resources (see, for example,
+[You Don't Know JavaScript](https://github.com/getify/You-Dont-Know-JS)).
 
 ### Rebasing
 
@@ -14,266 +23,187 @@ rebased out of pull requests.
 
 ### Linting
 
-All code (except for code in `bootstrap.js` which uses proprietary Apple
-methods) must pass JSLint. To check your code, you can simply run `grunt
-lint` from the Appium repo dir. If you've created a new .js file,
-please make sure it is covered by the wildcards in `grunt.js` or that it is
-added specifically.
+All code must pass [ESLint](https://eslint.org/). To check your code, you can simply run `npm run lint`
+from the Appium repo dir. The configuration is specified in the 
+[eslint-config-appium](https://github.com/appium/eslint-config-appium) package.
 
-It's easy to have your code linted as you type, which makes the whole process
-much smoother. We like [jshint](http://www.jshint.com),
-which has integrations with a lot of source code editors. The file `
-.jshintrc` is checked into the repo, and its contents are:
-
-```json
-{
-  "laxcomma": true,
-  "strict": true,
-  "undef": true,
-  "unused": true,
-  "node": true,
-  "eqeqeq": true,
-  "trailing": true,
-  "indent": 2
-}
-```
-
-Since jshint does not enforce code style anymore, we also use
-[jscs](https://github.com/mdevils/node-jscs), for which it also exists some
-source editor integrations. The configuration file is:
-
-```json
-{
-  "excludeFiles": ["submodules/**", "node_modules/**",
-    "./lib/server/static/**", "./lib/devices/firefoxos/atoms/*.js",
-    "./test/harmony/**/*.js", "./sample-code/examples/node/**/*-yiewd.js",
-    "./sample-code/apps/**", "./sample-code/examples/php/vendor/**"],
-  "requireCurlyBraces": ["for", "while", "do", "try", "catch"],
-  "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch",
-    "return", "try", "catch", "function"],
-  "disallowMixedSpacesAndTabs": true,
-  "disallowTrailingWhitespace": true,
-  "requireSpacesInFunctionExpression": {
-    "beforeOpeningCurlyBrace": true
-  }
-}
-```
-
-These configuration files define the warnings you will see in your favorite
-editor. See [this page for jshint](http://www.jshint.com/platforms/) and
-[this page for jscs](https://github.com/mdevils/node-jscs#friendly-packages) to
-get the list of editors and platforms supported and how setup your editor for
-automatic linting.
+Most modern editors have integration with ESLint. See [here](https://eslint.org/docs/user-guide/integrations) for details.
 
 ### Style notes
+
+We use a future version of JavaScript and take advantage of the [Babel](https://babeljs.io/)
+transpiler to render it down to what is supported by current versions of
+[Node.js](https://nodejs.org/). We use [ES2015](https://babeljs.io/learn-es2015/) (formerly called ES6) with some
+not-yet-standard features, namely [async/await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function). This style guide
+must be followed diligently in all Appium contributions! Luckily, linting
+will enforce most of these rules!
 
 *   Use two spaces for indentation, *no tabs*
 *   Use single spaces around operators
 
-    ```javascript
-    var x = 1;
+    ```js
+    let x = 1;
     ```
     not
-    ```javascript
-    var x=1;
+    ```js
+    let x=1;
     ```
 
 *   Spaces after commas and colons in lists, objects, function calls, etc...
 
-    ```javascript
-    var x = myFunc("lol", {foo: bar, baz: boo});
+    ```js
+    let x = myFunc('lol', {foo: bar, baz: boo});
     ```
     not
-    ```javascript
-    var x = myFunc("lol",{foo:bar,baz:boo});
+    ```js
+    let x = myFunc('lol',{foo:bar,baz:boo});
     ```
 
-*   Always end statements with semicolons
-*   Comma-first
-
-    ```javascript
-    var x = {
-      foo: 'bar'
-    , baz: 'boo'
-    , wuz: 'foz'
-    };
-    ```
-
+*   Always end statements with semicolons (see, for example, [Kent Dodds](https://blog.kentcdodds.com/semicolons-in-javascript-a-preference-dd8fc8b80895))
 *   Brackets for `function`, `if`, etc... go on same line, `else` gets sandwiched
 
-    ```javascript
+    ```js
     if (foo === bar) {
       // do something
     } else {
       // do something else
     }
     ```
+    not
+    ```js
+    if (foo === bar) 
+    {
+      // do something
+    } 
+    else 
+    {
+      // do something else
+    }
+    ```
 
 *   Space after `if`, `for`, and `function`:
 
-    ```javascript
+    ```js
     if (foo === bar) {
     ```
-    ```javascript
-    for (var i = 0; i < 10; i ++) {
+    ```js
+    for (let i = 0; i < 10; i ++) {
     ```
-    ```javascript
-    var lol = function (foo) {
+    ```js
+    let lol = function (foo) {
     ```
     not
-    ```javascript
+    ```js
     if(foo === bar) {
     ```
-    ```javascript
-    for(var i = 0; i < 10; i ++) {
+    ```js
+    for(let i = 0; i < 10; i ++) {
     ```
-    ```javascript
-    var lol = function(foo) {
+    ```js
+    let lol = function(foo) {
     ```
 
 *   Avoid bracketless `if` for one-liners:
 
-    ```javascript
+    ```js
     if (foo === bar) {
       foo++;
     }
     ```
     not
-    ```javascript
+    ```js
     if (foo === bar)
       foo++;
     ```
-    except in the case of short-circuiting to a callback in the event of an error
-    ```javascript
-    if (err) return cb(err);
+    except in the case of short-circuiting to return/error
+    ```js
+    if (err) return;
+    ```
+    ```js
+    if (err) throw new Error(err);
     ```
 
-*   Use `===`, not `==`, and `!==`, not `!=` for no surprises
+*   Use `===`, not `==`, and `!==`, not `!=` for [no surprises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness)
 *   Line length shouldn't be longer than 79 characters
 *   Break up long strings like this:
 
     ```javascript
-    myFunc("This is a really long string that's longer " +
-            "than 79 characters so I broke it up, woo");
+    myFunc('This is a really long string that's longer ' +
+           'than 79 characters so I broke it up, woo');
     ```
 
 *   Comments should line up with code
 
-    ```javascript
+    ```js
     if (foo === 5) {
       myFunc(foo);
       // foo++;
     }
     ```
     not
-    ```javascript
+    ```js
     if (foo === 5) {
       myFunc(foo);
     //foo++;
     }
     ```
 
-*   Subclassing by extending prototypes
-
-    ```javascript
-    var _ = require('underscore');
-
-    var SuperClass = function () {
-      this.init();
-    };
-
-    SuperClass.prototype.init = function () {
-      // initialize
-    };
-
-    // Create a subclass
-
-    var SubClass = function () {
-        this.init();
-    };
-
-    _.extend(SubClass.prototype, SuperClass.prototype);
-    ```
-
-*   Callbacks are always last in function definitions
-
-    ```javascript
-    var foo = function (arg1, arg2, cb) {
-      ...
-    };
-    ```
-
-*   Define functions as variables
-
-    ```javascript
-    var myFunc = function (a, b, c) {};
-    ```
-    not
-    ```javascript
-    function myFunc (a, b, c) {}
-    ```
-
 *   Variable names should be camelCased:
 
-    ```javascript
-    var myVariable = 42;
+    ```js
+    let myVariable = 42;
     ```
     not
-    ```javascript
-    var my_variable = 42;
+    ```js
+    let my_variable = 42;
     ```
 
-*    Check for undefined
+*   Check for `undefined` using Appium's [appium-support](https://github.com/appium/appium-support) package
 
-    ```javascript
-    typeof myVariable === "undefined"
-    ```
-    not
-    ```javascript
-    myVariable === undefined
+    ```js
+    util.hasValue(myVariable)
     ```
 
 *   Define a variable with a default value
 
-    ```javascript
-    var x = y || z;
+    ```js
+    let x = y || z;
     ```
     not
-    ```javascript
-    var x = y ? y : z;
+    ```js
+    let x = y ? y : z;
     ```
 
 ### Test Style:
+
+Tests are written using [mocha](https://mochajs.org/) and [chai](http://chaijs.com/). The WebDriver 
+library used is [wd](https://github.com/admc/wd).
 
 Keep on the same line if it makes sense semantically and length is not an issue:
 
 Examples:
 
-```javascript
-  driver.elementByTagName('el1').should.become("123")
-    .nodeify(done);
+```js
+driver.elementByTagName('el1').should.become('123');
 
-  driver
-    .elementsByTagName('el1').should.eventually.have.length(0)
-    .nodeify(done);
+driver
+  .elementsByTagName('el1').should.eventually.have.length(0);
 ```
 
 Alternatively use extra indents to improve readability:
 
-```javascript
-h.driver
+```js
+driver
   .elementById('comments')
     .clear()
     .click()
-    .keys("hello world")
+    .keys('hello world')
     .getValue()
-    .should.become("hello world")
+    .should.become('hello world')
   .elementById('comments')
-    .getValue().should.become("hello world")
-  .nodeify(done);
+    .getValue().should.become('hello world');
 
-h.driver
-  .execute("'nan'--")
-    .should.be.rejectedWith("status: 13")
-  .nodeify(done);
+driver
+  .execute("'NaN'--")
+    .should.be.rejectedWith('status: 13');
 ```

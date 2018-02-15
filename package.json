@@ -38,7 +38,7 @@
     "appium-base-driver": "^2.20.2",
     "appium-espresso-driver": "^1.0.0-beta.3",
     "appium-fake-driver": "^0.3.0",
-    "appium-ios-driver": "1.x",
+    "appium-ios-driver": "2.x",
     "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",

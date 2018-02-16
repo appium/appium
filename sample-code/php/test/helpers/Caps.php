@@ -34,12 +34,12 @@ define('ANDROID_PLATFORM_VERSION', $androidPlatformVersion);
 define('ANDROID_DEVICE_NAME', $androidDeviceName);
 
 class Caps {
-  public static function getIosCaps($app) {
+  public static function getIosCaps($app, $browserName="") {
     return array(
       array(
         "local" => IS_LOCAL,
         "port" => PORT,
-        "browserName" => "",
+        "browserName" => $browserName,
         "desiredCapabilities" => array(
           "platformName" => "iOS",
           "automationName" => "XCUITest",
@@ -51,12 +51,12 @@ class Caps {
     );
   }
 
-  public static function getAndroidCaps($app, $appActivity) {
+  public static function getAndroidCaps($app, $appActivity="", $browserName="") {
     return array(
       array(
         "local" => IS_LOCAL,
         "port" => PORT,
-        "browserName" => "",
+        "browserName" => $browserName,
         "desiredCapabilities" => array(
           "platformName" => "Android",
           "automationName" => "UIAutomator2",

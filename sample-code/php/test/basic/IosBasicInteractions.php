@@ -9,7 +9,7 @@ define("APP", Apps::getApps()["iosTestApp"]);
 define("CAPS", Caps::getIosCaps(APP, ".app.SearchInvoke"));
 
 
-class AndroidBasicInteractions extends PHPUnit_Extensions_AppiumTestCase {
+class IosBasicInteractions extends PHPUnit_Extensions_AppiumTestCase {
     public static $browsers = CAPS;
 
     public function testShouldSendKeysToSearchBoxAndCheckValue()

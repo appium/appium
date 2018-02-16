@@ -46,7 +46,7 @@
     "appium-windows-driver": "1.x",
     "appium-xcuitest-driver": "2.x",
     "appium-youiengine-driver": "1.x",
-    "appium-argparse": "1.x",
+    "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
     "babel-runtime": "=5.8.24",

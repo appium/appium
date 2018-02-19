@@ -580,7 +580,7 @@ describe('Protocol', async function () {
             should.not.exist(sessionId);
           });
 
-          it('should work if a proxied request returns a MJSONWP error response', async function () {
+          it('should return error if a proxied request returns a MJSONWP error response', async function () {
             addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(500).json({
                 sessionId,
@@ -597,7 +597,28 @@ describe('Protocol', async function () {
             message.should.match(/A problem occurred/);
           });
 
-          it('should work if a proxied request returns a W3C error response', async function () {
+          it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {
+            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+              res.status(200).json({
+                sessionId: 'Fake Session Id',
+                status: 7,
+                value: 'A problem occurred',
+              });
+            });
+            const {statusCode, message, error} = await request.post(`${sessionUrl}/actions`, {
+              json: {
+                actions: [1, 2, 3],
+              }
+            }).should.eventually.be.rejected;
+            statusCode.should.equal(HTTPStatusCodes.NOT_FOUND);
+            message.should.match(/A problem occurred/);
+            const {error:w3cError, message:errMessage, stacktrace} = error.value;
+            w3cError.should.equal('no such element');
+            errMessage.should.match(/A problem occurred/);
+            stacktrace.should.exist;
+          });
+
+          it('should return error if a proxied request returns a W3C error response', async function () {
             addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(404).json({
                 value: {
@@ -619,7 +640,7 @@ describe('Protocol', async function () {
             stacktrace.should.match(/arbitrary stacktrace/);
           });
 
-          it('should work if a proxied request returns a W3C error response', async function () {
+          it('should return an error if a proxied request returns a W3C error response', async function () {
             addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(444).json({
                 value: {
@@ -640,7 +661,6 @@ describe('Protocol', async function () {
             w3cError.should.equal('unknown error');
             stacktrace.should.match(/arbitrary stacktrace/);
           });
-
         });
       });
     });

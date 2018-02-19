@@ -361,6 +361,18 @@ describe('.getResponseForW3CError', function () {
     message.should.match(/__HELLO_WORLD__/);
     stacktrace.should.match(/errors-specs.js/);
   });
+  it('should translate JSONWP errors', function () {
+    const [httpStatus, httpResponseBody] = getResponseForW3CError({
+      status: 7,
+      value: 'My custom message',
+      sessionId: 'Fake Session Id',
+    });
+    httpStatus.should.equal(404);
+    const {error, message, stacktrace} = httpResponseBody.value;
+    message.should.equal('My custom message');
+    error.should.equal('no such element');
+    stacktrace.should.exist;
+  });
 });
 describe('.getActualError', function () {
   describe('MJSONWP', function () {

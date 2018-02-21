@@ -18,7 +18,7 @@ self.driver.close_app()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.close_app();
+driver.closeApp();
 
 
 

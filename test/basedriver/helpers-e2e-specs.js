@@ -116,6 +116,16 @@ describe('app download and configuration', function () {
         await h.configureApp('http://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
           .should.be.rejectedWith(/Problem downloading app from url/);
       });
+      it('should handle invalid protocol', async function () {
+        await h.configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')
+          .should.be.rejectedWith(/is not supported/);
+        await h.configureApp('ftp://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
+          .should.be.rejectedWith(/is not supported/);
+      });
+      it('should handle missing file in Windows path format', async function () {
+        await h.configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app')
+          .should.be.rejectedWith(/does not exist or is not accessible/);
+      });
       it('should recognize zip mime types and unzip the downloaded file', async function () {
         let newAppPath = await h.configureApp('http://localhost:8000/FakeAndroidApp.asd?mime-zip', '.apk');
         newAppPath.should.contain('FakeAndroidApp.apk');

@@ -17,7 +17,7 @@ example_usage:
   javascript_wd:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
-      await element.submit();
+      await element.text();
   javascript_wdio:
     |
       driver.getText("~SomeAccessibilityId");

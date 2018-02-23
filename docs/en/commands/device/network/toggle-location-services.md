@@ -28,7 +28,9 @@ await driver.toggleLocationServices();
 ```
 
 ```ruby
-# Not supported
+# Ruby
+@driver.toggle_location_services
+
 ```
 
 ```php
@@ -66,7 +68,7 @@ await driver.toggleLocationServices();
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L774)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/toggleLocationServices.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2758)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Device#toggle_location_services-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

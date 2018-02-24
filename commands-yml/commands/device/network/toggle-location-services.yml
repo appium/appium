@@ -49,7 +49,7 @@ driver_support:
 client_support:
   java: true
   python: true
-  ruby: false
+  ruby: true
   php: true
   csharp: true
   javascript_wd: true

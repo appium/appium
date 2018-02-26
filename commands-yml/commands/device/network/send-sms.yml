@@ -8,7 +8,7 @@ example_usage:
       await driver.sendSms('555-123-4567', 'Hey lol');
   ruby:
     |
-      // TODO
+      @driver.send_sms(phone_number: '555-123-4567', message: 'Hey lol')
   php:
     |
       // TODO
@@ -18,6 +18,7 @@ example_usage:
 
 client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3183"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Android/Device/Emulator#send_sms-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
@@ -36,7 +37,7 @@ driver_support:
 client_support:
   java: false
   python: false
-  ruby: false
+  ruby: true
   php: false
   csharp: false
   javascript_wd: true

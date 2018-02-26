@@ -6,6 +6,9 @@ example_usage:
   javascript_wd:
     |
       await driver.gsmCall('555-123-4567', 'Phone');
+  ruby:
+    |
+      @driver.gsm_call(phone_number: '555-123-4567', action: :call)
   php:
     |
       // TODO
@@ -15,6 +18,7 @@ example_usage:
 
 client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3183"
+  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Android/Device/Emulator#gsm_call-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
@@ -33,7 +37,7 @@ driver_support:
 client_support:
   java: false
   python: false
-  ruby: false
+  ruby: true
   php: false
   csharp: false
   javascript_wd: true

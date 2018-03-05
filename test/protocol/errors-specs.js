@@ -301,6 +301,10 @@ describe('w3c Status Codes', function () {
   it('should match the correct error codes', function () {
     let non400Errors = [
       ['NoSuchDriverError', 404],
+      ['NoSuchFrameError', 404],
+      ['NoAlertOpenError', 404],
+      ['NoSuchWindowError', 404],
+      ['StaleElementReferenceError', 404],
       ['JavaScriptError', 500],
       ['MoveTargetOutOfBoundsError', 500],
       ['NoSuchCookieError', 404],

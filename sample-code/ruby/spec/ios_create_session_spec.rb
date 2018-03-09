@@ -20,7 +20,6 @@ desired_caps = {
   }
 }
 
-
 describe 'Create session' do
   it 'should create and destroy IOS sessions' do
     @driver = Appium::Driver.new(desired_caps, true).start_driver

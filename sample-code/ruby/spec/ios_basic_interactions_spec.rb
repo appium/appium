@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'appium_lib'
+require 'test/unit'
+extend Test::Unit::Assertions
 
 APP_PATH = '../apps/TestApp.app.zip'
 
@@ -19,4 +21,15 @@ desired_caps = {
 }
 
 # Start the driver
-Appium::Driver.new(desired_caps, true).start_driver
+describe "IOS Basic Interactions" do
+  before do
+    @driver = Appium::Driver.new(desired_caps, true).start_driver
+  end
+
+  it "should send keys to inputs" do
+    @textFieldEl = @driver.find_element(:id, "TextField1")
+    expect(@textFieldEl.attribute(:value)).to be_nil
+    @textFieldEl.send_keys("Hello World!")
+    expect(@textFieldEl.attribute(:value)).to eq("Hello World!")
+  end
+end

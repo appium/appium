@@ -1,0 +1,12 @@
+{
+  "name": "username/my-php-project",
+  "repositories": [
+      {
+          "type": "vcs",
+          "url": "https://github.com/appium/php-client"
+      }
+  ],
+  "require": {
+      "appium/php-client": "dev-master"
+  }
+}

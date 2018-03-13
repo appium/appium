@@ -23,11 +23,11 @@ describe 'Create Chrome web session' do
   it 'should create and destroy Android browser session' do
     @driver = Appium::Driver.new(desired_caps, true).start_driver
 
-    @driver.get('https://www.google.com');
+    @driver.get('https://www.google.com')
 
-    @page_title = @driver.title();
-    expect(@page_title).to eql('Google');
+    @page_title = @driver.title()
+    expect(@page_title).to eql('Google')
 
-    @driver.quit();
+    @driver.quit()
   end
 end

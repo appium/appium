@@ -1,6 +1,6 @@
 source 'https://www.rubygems.org'
 
-gem 'appium_lib',         '~> 9.7.4'
+gem 'appium_lib',         '~> 9.10'
 gem 'rest-client',        '~> 2.0.2'
 gem 'rspec',              '~> 3.6.0'
 gem 'cucumber',           '~> 2.4.0'

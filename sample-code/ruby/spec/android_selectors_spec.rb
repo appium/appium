@@ -26,8 +26,6 @@ desired_caps = {
 
 describe 'Basic Android selectors' do
 
-  @driver
-
   before(:all) do
     @driver = Appium::Driver.new(desired_caps, true).start_driver
   end

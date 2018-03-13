@@ -27,8 +27,6 @@ desired_caps = {
 
 describe 'Basic Android interactions' do
 
-  @driver
-
   before(:all) do
     @driver = Appium::Driver.new(desired_caps, true).start_driver
   end

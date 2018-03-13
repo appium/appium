@@ -30,28 +30,28 @@ describe 'Basic IOS selectors' do
   end
 
   it 'should find elements by Accessibility ID' do
-    @compute_sum_buttons = @driver.find_elements(:accessibility_id, 'ComputeSumButton');
+    @compute_sum_buttons = @driver.find_elements(:accessibility_id, 'ComputeSumButton')
     expect(@compute_sum_buttons.length).to eql(1)
-    @compute_sum_buttons[0].click();
+    @compute_sum_buttons[0].click()
   end
 
   it 'should find elements by class name' do
-    @window_elements = @driver.find_elements(:class_name, 'XCUIElementTypeWindow');
+    @window_elements = @driver.find_elements(:class_name, 'XCUIElementTypeWindow')
     expect(@window_elements.length).to be > 1
   end
 
   it 'should find elements by NSPredicateString' do
-    @all_visible_elements = @driver.find_elements(:predicate, 'visible = 1');
-    expect(@all_visible_elements.length).to be > 1;
+    @all_visible_elements = @driver.find_elements(:predicate, 'visible = 1')
+    expect(@all_visible_elements.length).to be > 1
   end
 
   it 'should find elements by class chain' do
-    @window_element = @driver.find_elements(:class_chain, 'XCUIElementTypeWindow[1]/*[2]');
-    expect(@window_element.length).to be(1);
+    @window_element = @driver.find_elements(:class_chain, 'XCUIElementTypeWindow[1]/*[2]')
+    expect(@window_element.length).to be(1)
   end
 
   it 'should find elements by XPath' do
-    @buttons = @driver.find_elements(:xpath, '//XCUIElementTypeWindow//XCUIElementTypeButton');
-    expect(@buttons.length).to be > 1;
+    @buttons = @driver.find_elements(:xpath, '//XCUIElementTypeWindow//XCUIElementTypeButton')
+    expect(@buttons.length).to be > 1
   end
 end

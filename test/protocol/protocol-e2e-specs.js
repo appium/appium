@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { server, routeConfiguringFunction, errors, JWProxy } from '../..';
+import { server, routeConfiguringFunction, errors, JWProxy, BaseDriver } from '../..';
 import { FakeDriver } from './fake-driver';
 import _ from 'lodash';
 import request from 'request-promise';
@@ -396,6 +396,32 @@ describe('Protocol', async function () {
         should.not.exist(sessionId);
         value.capabilities.should.eql(capabilities);
         value.sessionId.should.exist;
+      });
+      it('should fall back to MJSONWP if driver does not support W3C yet', async function () {
+        const createSessionStub = sinon.stub(driver, 'createSession', (capabilities) => {
+          driver.sessionId = null;
+          return BaseDriver.prototype.createSession.call(driver, capabilities);
+        });
+        let caps = {
+          ...desiredCapabilities,
+          platformName: 'Fake',
+          deviceName: 'Fake',
+        };
+        let {status, value, sessionId} = await request({
+          url: baseUrl,
+          method: 'POST',
+          json: {
+            desiredCapabilities: caps,
+            capabilities: {
+              alwaysMatch: caps,
+              firstMatch: [{}],
+            },
+          }
+        });
+        should.exist(status);
+        should.exist(sessionId);
+        value.should.eql(caps);
+        createSessionStub.restore();
       });
 
       describe('w3c endpoints', async function () {

@@ -139,6 +139,18 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       d.protocol.should.equal('W3C');
     });
 
+    describe('protocol detection', function () {
+      it('should use MJSONWP if only JSONWP caps are provided', async function () {
+        await d.createSession(defaultCaps);
+        d.protocol.should.equal('MJSONWP');
+      });
+
+      it('should use W3C if only W3C caps are provided', async function () {
+        await d.createSession(null, null, {alwaysMatch: defaultCaps, firstMatch: [{}]});
+        d.protocol.should.equal('W3C');
+      });
+    });
+
     it('should have a method to get driver for a session', async function () {
       let [sessId] = await d.createSession(defaultCaps);
       d.driverForSession(sessId).should.eql(d);

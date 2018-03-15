@@ -73,7 +73,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
     });
 
-    it.skip('should throw NYI for commands not implemented', async () => {
+    it.skip('should throw NYI for commands not implemented', async function () {
     });
 
     describe('command timeouts', function () {

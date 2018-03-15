@@ -4,4 +4,4 @@ build
 .DS_Store
 coverage
 .idea/
-package-lock.json
+package-lock.json*

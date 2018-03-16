@@ -173,7 +173,6 @@ describe('FakeDriver - via HTTP', function () {
         }
       };
 
-      //const {status, sessionId, value} = await request.post({url: baseUrl, json: combinedCaps});
       const {sessionId, status, value} = await request.post({url: baseUrl, json: combinedCaps});
       status.should.exist;
       sessionId.should.exist;

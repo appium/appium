@@ -8,6 +8,9 @@ import wd from 'wd';
 import request from 'request-promise';
 import { main as appiumServer } from '../lib/main';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
+import { BaseDriver } from 'appium-base-driver';
+import { FakeDriver } from 'appium-fake-driver';
+import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
@@ -170,7 +173,8 @@ describe('FakeDriver - via HTTP', function () {
         }
       };
 
-      const {status, sessionId, value} = await request.post({url: baseUrl, json: combinedCaps});
+      //const {status, sessionId, value} = await request.post({url: baseUrl, json: combinedCaps});
+      const {sessionId, status, value} = await request.post({url: baseUrl, json: combinedCaps});
       status.should.exist;
       sessionId.should.exist;
       should.not.exist(value.sessionId);
@@ -238,6 +242,68 @@ describe('FakeDriver - via HTTP', function () {
 
       // End session
       await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
+    });
+
+    it('should fall back to MJSONWP if Inner Driver is not ready for W3C', async function () {
+      const combinedCaps = {
+        "desiredCapabilities": {
+          ...caps,
+        },
+        "capabilities": {
+          "alwaysMatch": {
+            ...caps,
+            deviceName: null,
+          },
+        },
+      };
+      const createSessionStub = sinon.stub(FakeDriver.prototype, 'createSession', async function (jsonwpCaps) {
+        const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
+        this.protocol.should.equal('MJSONWP');
+        return res;
+      });
+
+      const {value, sessionId, status} = await request.post({url: baseUrl, json: combinedCaps});
+      status.should.exist;
+      sessionId.should.exist;
+      value.should.deep.equal(caps);
+
+      createSessionStub.restore();
+    });
+
+    it('should handle concurrent MJSONWP and W3C sessions', async function () {
+      const combinedCaps = {
+        "desiredCapabilities": {
+          ...caps,
+        },
+        "capabilities": {
+          "alwaysMatch": {
+            ...caps,
+          },
+        },
+      };
+
+      // Have an MJSONWP and W3C session running concurrently
+      const {sessionId:mjsonwpSessId, value:mjsonwpValue, status} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'capabilities')});
+      const {value} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'desiredCapabilities')});
+      const w3cSessId = value.sessionId;
+
+      status.should.exist;
+      mjsonwpValue.should.eql(caps);
+      mjsonwpSessId.should.exist;
+      value.sessionId.should.exist;
+      value.capabilities.should.eql(caps);
+
+      // Test that both return the proper payload based on their protocol
+      const mjsonwpPayload = await request(`${baseUrl}/${mjsonwpSessId}`, {json: true});
+      const w3cPayload = await request(`${baseUrl}/${w3cSessId}`, {json: true});
+
+      // Test that the payloads are MJSONWP and W3C
+      mjsonwpPayload.sessionId.should.exist;
+      mjsonwpPayload.status.should.exist;
+      mjsonwpPayload.value.should.eql(caps);
+      should.not.exist(w3cPayload.sessionId);
+      should.not.exist(w3cPayload.status);
+      w3cPayload.value.should.eql(caps);
     });
   });
 });

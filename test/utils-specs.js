@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { parseCapsForInnerDriver, insertAppiumPrefixes } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
+import _ from 'lodash';
 
 
 const should = chai.should();
@@ -34,7 +35,10 @@ describe('utils', function () {
       processedW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'bar', ...insertAppiumPrefixes(BASE_CAPS)});
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      (() => parseCapsForInnerDriver(undefined, W3C_CAPS, {hello: {presence: true}})).should.throw(/'hello' can't be blank/);
+      const err = parseCapsForInnerDriver(undefined, W3C_CAPS, {hello: {presence: true}}).error;
+      err.message.should.match(/'hello' can't be blank/);
+      _.isError(err).should.be.true;
+
     });
     it('should only accept W3C caps that have passing constraints', function () {
       let w3cCaps = {

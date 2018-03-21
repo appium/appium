@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "7"
+  - "8"
   - "6"
 sudo: required
 dist: trusty
@@ -10,12 +10,13 @@ addons:
       - google-chrome
     packages:
       - google-chrome-stable
+env:
+  - COMMAND="npm test"
+  - COMMAND="npm run e2e-test" _FORCE_LOGS=1
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - sleep 3
 after_success:
   - npm run coverage
-script:
-  - npm run lint
-  - npm test && _FORCE_LOGS=1 npm run e2e-test
+script: $COMMAND

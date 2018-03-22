@@ -41,7 +41,8 @@
     "source-map-support": "^0.4.18",
     "teen_process": "^1.11.0",
     "uuid-js": "^0.7.5",
-    "validate.js": "^0.9.0"
+    "validate.js": "^0.9.0",
+    "ws": "^5.0.0"
   },
   "scripts": {
     "prepublish": "gulp prepublish",

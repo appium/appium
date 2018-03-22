@@ -28,6 +28,7 @@ module.exports = {
         ["Get Session Capabilities", "get.md"],
         ["Go Back", "back.md"],
         ["Screenshot", "screenshot.md"],
+        ["Source", "source.md"],
         ["Timeouts", ["timeouts",
           ["Timeouts", "timeouts.md"],
           ["Implicit Wait", "implicit-wait.md"],

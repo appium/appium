@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { AppiumDriver, getAppiumRouter } from '../lib/appium';
+import { AppiumDriver } from '../lib/appium';
 import { FakeDriver } from 'appium-fake-driver';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
@@ -18,13 +18,6 @@ chai.use(chaiAsPromised);
 const SESSION_ID = 1;
 
 describe('AppiumDriver', function () {
-  describe('getAppiumRouter', function () {
-    it('should return a route configuring function', async function () {
-      let routeConfiguringFunction = getAppiumRouter({});
-      routeConfiguringFunction.should.be.a.function;
-    });
-  });
-
   describe('AppiumDriver', function () {
     function getDriverAndFakeDriver () {
       let appium = new AppiumDriver({});

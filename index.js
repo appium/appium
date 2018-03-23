@@ -34,3 +34,7 @@ export { statusCodes, getSummaryByCode };
 // W3C capabilities parser
 import { processCapabilities } from './lib/basedriver/capabilities';
 export { processCapabilities };
+
+// Web socket helpers
+import { DEFAULT_WS_PATHNAME_PREFIX } from './lib/express/websocket';
+export { DEFAULT_WS_PATHNAME_PREFIX };

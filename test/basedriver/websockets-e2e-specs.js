@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import { server, routeConfiguringFunction} from '../..';
+import { server, routeConfiguringFunction,
+         DEFAULT_WS_PATHNAME_PREFIX } from '../..';
 import { FakeDriver } from '../protocol/fake-driver';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -35,13 +36,13 @@ describe('Websockets (e2e)', function () {
         }
       });
       const previousListenerCount = baseServer.listenerCount('upgrade');
-      const endpoint = '/hello';
-      const timeout  = 5000;
+      const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
+      const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
       baseServer.listenerCount('upgrade').should.be.above(previousListenerCount);
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
-        const client = new WebSocket(`ws://localhost:${PORT}/ws${endpoint}`);
+        const client = new WebSocket(`ws://localhost:${PORT}${endpoint}`);
         client.on('message', (data) => {
           data.should.eql(WS_DATA);
           resolve();
@@ -54,7 +55,7 @@ describe('Websockets (e2e)', function () {
       (await baseServer.removeWebSocketHandler(endpoint)).should.be.true;
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(0);
       await new B((resolve, reject) => {
-        const client = new WebSocket(`ws://localhost:${PORT}/ws${endpoint}`);
+        const client = new WebSocket(`ws://localhost:${PORT}${endpoint}`);
         client.on('message', (data) =>
           reject(new Error(`No websocket messages are expected after the handler ` +
                            `has been removed. '${data}' is received instead. `))

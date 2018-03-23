@@ -6,10 +6,9 @@ applications on iOS mobile, Android mobile, and Windows desktop platforms.
 **Mobile web apps** are web apps accessed using a mobile browser (Appium
 supports Safari on iOS and Chrome or the built-in 'Browser' app on Android).
 **Hybrid apps** have a wrapper around a "webview" -- a native control that
-enables interaction with web content. Projects like
-[Phonegap](http://phonegap.com/), make it easy to build apps using web
-technologies that are then bundled into a native wrapper, creating a hybrid
-app.
+enables interaction with web content. Projects like [Apache Cordova](https://cordova.apache.org) 
+or [Phonegap](http://phonegap.com/) make it easy to build apps using web 
+technologies that are then bundled into a native wrapper, creating a hybrid app.
 
 Importantly, Appium is "cross-platform": it allows you to write tests against
 multiple platforms (iOS, Android, Windows), using the same API. This enables

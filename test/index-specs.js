@@ -5,8 +5,8 @@ import chai from 'chai';
 
 chai.should();
 
-describe('index', () => {
-  it('should work', () => {
+describe('index', function () {
+  it('should work', function () {
     newDoctor.should.exists;
     Doctor.should.exists;
     DoctorCheck.should.exists;

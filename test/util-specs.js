@@ -7,14 +7,14 @@ import path from 'path';
 
 chai.should();
 
-describe('utils', () => {
+describe('utils', function () {
 
-  it('fs.readFile', async () => {
+  it('fs.readFile', async function () {
     (await fs.readFile(path.resolve(pkgRoot, 'test', 'fixtures',
       'wow.txt'), 'utf8')).should.include('WOW');
   });
 
-  it('fs.exists', async () => {
+  it('fs.exists', async function () {
     (await fs.exists(path.resolve(pkgRoot, 'test', 'fixtures',
       'wow.txt'))).should.be.ok;
     (await fs.exists(path.resolve(pkgRoot, 'test', 'fixtures',

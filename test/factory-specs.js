@@ -5,9 +5,9 @@ import chai from 'chai';
 
 chai.should();
 
-describe('factory', () => {
+describe('factory', function () {
   for (let config of [{'ios': true}, {'android': true}, {'dev': true}]) {
-    it('should work for ' + config, () => {
+    it('should work for ' + config, function () {
       let doctor = newDoctor(config);
       doctor.should.exists;
       doctor.checks.should.have.length.above(0);

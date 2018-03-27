@@ -14,36 +14,36 @@ chai.should();
 chai.use(chaiAsPromised);
 let P = Promise;
 
-describe('demo', () => {
+describe('demo', function () {
   describe('DirCheck', withMocks({fs}, (mocks) => {
     let check = new DirCheck('/a/b/c/d');
 
-    it('diagnose - success', async () => {
+    it('diagnose - success', async function () {
       mocks.fs.expects('exists').once().returns(P.resolve(true));
       mocks.fs.expects('lstat').once().returns(
-        P.resolve({isDirectory: () => { return true; }}));
+        P.resolve({isDirectory: function () { return true; }}));
       (await check.diagnose()).should.deep.equal(
         { ok: true, message: 'Found directory at: /a/b/c/d' });
       verify(mocks);
     });
 
-    it('failure - not there', async () => {
+    it('failure - not there', async function () {
       mocks.fs.expects('exists').once().returns(P.resolve(false));
       (await check.diagnose()).should.deep.equal(
         { ok: false, message: 'Could NOT find directory at \'/a/b/c/d\'!' });
       verify(mocks);
     });
 
-    it('failure - not a dir', async () => {
+    it('failure - not a dir', async function () {
       mocks.fs.expects('exists').once().returns(P.resolve(true));
       mocks.fs.expects('lstat').once().returns(
-        P.resolve({isDirectory: () => { return false; }}));
+        P.resolve({isDirectory: function () { return false; }}));
       (await check.diagnose()).should.deep.equal(
         { ok: false, message: '\'/a/b/c/d\' is NOT a directory!' });
       verify(mocks);
     });
 
-    it('fix', async () => {
+    it('fix', async function () {
       (await check.fix()).should.equal('Manually create a directory at: /a/b/c/d');
     });
   }));
@@ -51,21 +51,21 @@ describe('demo', () => {
   describe('FileCheck', withMocks({fs, tp, prompt}, (mocks, S) => {
     let check = new FileCheck('/a/b/c/d');
 
-    it('diagnose - success', async () => {
+    it('diagnose - success', async function () {
       mocks.fs.expects('exists').once().returns(P.resolve(true));
       (await check.diagnose()).should.deep.equal(
         { ok: true, message: 'Found file at: /a/b/c/d' });
       verify(mocks);
     });
 
-    it('failure - not there', async () => {
+    it('failure - not there', async function () {
       mocks.fs.expects('exists').once().returns(P.resolve(false));
       (await check.diagnose()).should.deep.equal(
         { ok: false, message: 'Could NOT find file at \'/a/b/c/d\'!' });
       verify(mocks);
     });
 
-    it('fix - yes', async () => {
+    it('fix - yes', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.prompt.expects('fixIt').once().returns(P.resolve('yes'));
       mocks.tp.expects('exec').once().returns(
@@ -75,7 +75,7 @@ describe('demo', () => {
       logStub.output.should.equal('info: The following command need be executed: touch \'/a/b/c/d\'');
     });
 
-    it('fix - no', async () => {
+    it('fix - no', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.prompt.expects('fixIt').once().returns(P.resolve('no'));
       mocks.tp.expects('exec').never();

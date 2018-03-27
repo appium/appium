@@ -9,14 +9,14 @@ import { withMocks, verify, stubEnv } from 'appium-test-support';
 chai.should();
 let P = Promise;
 
-describe('dev', () => {
+describe('dev', function () {
   describe('BinaryIsInPathCheck', withMocks({tp, fs}, (mocks) => {
     stubEnv();
     let check = new BinaryIsInPathCheck('mvn');
-    it('autofix', () => {
+    it('autofix', function () {
       check.autofix.should.not.be.ok;
     });
-    it('diagnose - success', async () => {
+    it('diagnose - success', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
         P.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
@@ -27,7 +27,7 @@ describe('dev', () => {
       });
       verify(mocks);
     });
-    it('diagnose - failure - not in path ', async () => {
+    it('diagnose - failure - not in path ', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
         P.resolve({stdout: 'mvn not found\n', stderr:''}));
@@ -37,7 +37,7 @@ describe('dev', () => {
       });
       verify(mocks);
     });
-    it('diagnose - failure - invalid path', async () => {
+    it('diagnose - failure - invalid path', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
         P.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
@@ -49,17 +49,17 @@ describe('dev', () => {
       });
       verify(mocks);
     });
-    it('fix', async () => {
+    it('fix', async function () {
       (await check.fix()).should.equal('Manually install the mvn binary and add it to PATH.');
     });
   }));
   describe('AndroidSdkExists', withMocks({fs}, (mocks) => {
     stubEnv();
     let check = new AndroidSdkExists('android-16');
-    it('autofix', () => {
+    it('autofix', function () {
       check.autofix.should.not.be.ok;
     });
-    it('diagnose - success', async () => {
+    it('diagnose - success', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
       mocks.fs.expects('exists').once().returns(P.resolve(true));
       (await check.diagnose()).should.deep.equal({
@@ -68,7 +68,7 @@ describe('dev', () => {
       });
       verify(mocks);
     });
-    it('failure - missing android home', async () => {
+    it('failure - missing android home', async function () {
       delete process.env.ANDROID_HOME;
       (await check.diagnose()).should.deep.equal({
         ok: false,
@@ -76,7 +76,7 @@ describe('dev', () => {
       });
       verify(mocks);
     });
-    it('diagnose - failure - invalid path', async () => {
+    it('diagnose - failure - invalid path', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
       mocks.fs.expects('exists').once().returns(P.resolve(false));
       (await check.diagnose()).should.deep.equal({
@@ -85,11 +85,11 @@ describe('dev', () => {
       });
       verify(mocks);
     });
-    it('fix - ANDROID_HOME', async () => {
+    it('fix - ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;
       (await check.fix()).should.equal('Manually configure ANDROID_HOME.');
     });
-    it('fix - install', async () => {
+    it('fix - install', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
       (await check.fix()).should.equal('Manually install the android-16 sdk.');
     });

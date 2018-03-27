@@ -10,7 +10,7 @@ let P = Promise;
 
 describe('prompt', withMocks({inquirer}, (mocks) => {
 
-  it('fixit - yes', async () => {
+  it('fixit - yes', async function () {
     clear();
     mocks.inquirer.expects('prompt').once().returns(P.resolve(
       { confirmation: 'yes' }));
@@ -18,7 +18,7 @@ describe('prompt', withMocks({inquirer}, (mocks) => {
     verify(mocks);
   });
 
-  it('fixit always ', async () => {
+  it('fixit always ', async function () {
     clear();
     mocks.inquirer.expects('prompt').once().returns(P.resolve(
       { confirmation: 'always' }));
@@ -28,7 +28,7 @@ describe('prompt', withMocks({inquirer}, (mocks) => {
     verify(mocks);
   });
 
-  it('fixit never ', async () => {
+  it('fixit never ', async function () {
     clear();
     mocks.inquirer.expects('prompt').once().returns(P.resolve(
       { confirmation: 'never' }));

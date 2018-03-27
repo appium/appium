@@ -12,14 +12,14 @@ chai.should();
 let expect = chai.expect;
 
 describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
-  it('retrieveInCommonPlaces - success', async () => {
+  it('retrieveInCommonPlaces - success', async function () {
     mocks.fs.expects('exists').once().returns(B.resolve(true));
     (await NodeDetector.retrieveInCommonPlaces())
       .should.equal('/usr/local/bin/node');
     verify(mocks);
   });
 
-  it('retrieveInCommonPlaces - failure', async () => {
+  it('retrieveInCommonPlaces - failure', async function () {
     mocks.fs.expects('exists').twice().returns(B.resolve(false));
     expect(await NodeDetector.retrieveInCommonPlaces()).to.be.a('null');
     verify(mocks);
@@ -28,9 +28,9 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
   // retrieveUsingSystemCall
   let testRetrieveWithScript = (method) => {
     if (method === 'retrieveUsingAppleScript') {
-      system.isMac = () => true;
+      system.isMac = function () true;
     }
-    it(method + ' - success', async () => {
+    it(method + ' - success', async function () {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
       mocks.fs.expects('exists').once().returns(B.resolve(true));
@@ -39,13 +39,13 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
       verify(mocks);
     });
 
-    it(method + ' - failure - path not found ', async () => {
+    it(method + ' - failure - path not found ', async function () {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: 'aaa not found\n', stderr: ''}));
       expect(await NodeDetector[method]()).to.be.a('null');
       verify(mocks);
     });
-    it(method + ' - failure - path not exist', async () => {
+    it(method + ' - failure - path not exist', async function () {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
       mocks.fs.expects('exists').once().returns(B.resolve(false));
@@ -56,7 +56,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
   testRetrieveWithScript('retrieveUsingSystemCall');
   testRetrieveWithScript('retrieveUsingAppleScript');
 
-  it('retrieveUsingAppiumConfigFile - success', async () => {
+  it('retrieveUsingAppiumConfigFile - success', async function () {
     mocks.fs.expects('exists').twice().returns(B.resolve(true));
     mocks.fs.expects('readFile').once().returns(
       B.resolve('{"node_bin": "/a/b/c/d"}'));
@@ -65,7 +65,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
     verify(mocks);
   });
 
-  it('retrieveUsingAppiumConfigFile - failure - not json', async () => {
+  it('retrieveUsingAppiumConfigFile - failure - not json', async function () {
     mocks.fs.expects('exists').once().returns(B.resolve(true));
     mocks.fs.expects('readFile').once().returns(
       B.resolve('{node_bin: "/a/b/c/d"}'));
@@ -74,7 +74,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
     verify(mocks);
   });
 
-  it('retrieveUsingAppiumConfigFile - failure - path does not exist', async () => {
+  it('retrieveUsingAppiumConfigFile - failure - path does not exist', async function () {
     mocks.fs.expects('exists').once().returns(B.resolve(true));
     mocks.fs.expects('exists').once().returns(B.resolve(false));
     mocks.fs.expects('readFile').once().returns(
@@ -84,7 +84,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
     verify(mocks);
   });
 
-  it('checkForNodeBinary - success', async () => {
+  it('checkForNodeBinary - success', async function () {
     mocks.NodeDetector = S.sandbox.mock(NodeDetector);
     mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingSystemCall').once().returns(null);
@@ -94,7 +94,7 @@ describe('NodeDetector', withMocks({fs, tp}, (mocks, S) => {
     verify(mocks);
   });
 
-  it('checkForNodeBinary - failure', async () => {
+  it('checkForNodeBinary - failure', async function () {
     mocks.NodeDetector = S.sandbox.mock(NodeDetector);
     mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
     mocks.NodeDetector.expects('retrieveUsingSystemCall').once().returns(null);

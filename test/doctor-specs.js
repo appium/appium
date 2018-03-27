@@ -8,9 +8,9 @@ import log from '../lib/logger';
 chai.should();
 let P = Promise;
 
-describe('doctor', () => {
+describe('doctor', function () {
 
-  it('register', () => {
+  it('register', function () {
     let doctor = new Doctor();
     doctor.checks.should.have.length(0);
     doctor.register(new DoctorCheck());
@@ -27,7 +27,7 @@ describe('doctor', () => {
   }
 
   describe('diagnose', withMocks({}, (mocks, S) => {
-    it('should detect all issues', async () => {
+    it('should detect all issues', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       let {doctor, checks} = configure();
       mocks.checks = checks.map((check) => { return S.sandbox.mock(check); });
@@ -50,7 +50,7 @@ describe('doctor', () => {
 
   describe('reportSuccess', withMocks({}, (mocks, S) => {
     let doctor = new Doctor();
-    it('should report success when no fixes are needed', async () => {
+    it('should report success when no fixes are needed', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       doctor.toFix = [];
       (await doctor.reportSuccess()).should.equal(true);
@@ -60,7 +60,7 @@ describe('doctor', () => {
       ].join('\n'));
     });
 
-    it('should return false when fixes are needed', async () => {
+    it('should return false when fixes are needed', async function () {
       doctor.toFix = [{}];
       (await doctor.reportSuccess()).should.equal(false);
     });
@@ -68,7 +68,7 @@ describe('doctor', () => {
 
   describe('reportManualFixes', withMocks({}, (mocks, S) => {
     let doctor = new Doctor();
-    it('should ask for manual fixes to be applied', async () => {
+    it('should ask for manual fixes to be applied', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       doctor.toFix = [
         {error: 'Oh no this need to be manually fixed.', check: new DoctorCheck()},
@@ -99,7 +99,7 @@ describe('doctor', () => {
       ].join('\n'));
     });
 
-    it('should return false when there is no manual fix', async () => {
+    it('should return false when there is no manual fix', async function () {
       doctor.toFix = [{error: 'Oh no!', check: new DoctorCheck({autofix: true}) }];
       (await doctor.reportManualFixes()).should.equal(false);
     });
@@ -110,12 +110,12 @@ describe('doctor', () => {
     let fix = {
       error: 'Something wrong!',
       check: {
-        fix: () => {},
-        diagnose: () => {}
+        fix: function () {},
+        diagnose: function () {}
       }
     };
 
-    it('fix - success', async () => {
+    it('fix - success', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.check = S.sandbox.mock(fix.check);
       mocks.check.expects('fix').once();
@@ -131,7 +131,7 @@ describe('doctor', () => {
       ].join('\n'));
     });
 
-    it('fix - skipped', async () => {
+    it('fix - skipped', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.check = S.sandbox.mock(fix.check);
       mocks.check.expects('fix').once().throws(new FixSkippedError());
@@ -143,7 +143,7 @@ describe('doctor', () => {
       ].join('\n'));
     });
 
-    it('fix - crash', async () => {
+    it('fix - crash', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.check = S.sandbox.mock(fix.check);
       mocks.check.expects('fix').once().throws(new Error('Oh No!'));
@@ -156,7 +156,7 @@ describe('doctor', () => {
       ].join('\n'));
     });
 
-    it('fix - didn\'t fix', async () => {
+    it('fix - didn\'t fix', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       mocks.check = S.sandbox.mock(fix.check);
       mocks.check.expects('fix').once();
@@ -175,7 +175,7 @@ describe('doctor', () => {
 
   describe('runAutoFixes',  withSandbox({}, (S) => {
     let doctor = new Doctor();
-    it('success', async () => {
+    it('success', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       doctor.toFix = [
         {error: 'Oh no.', check: new DoctorCheck({autofix: true})},
@@ -200,7 +200,7 @@ describe('doctor', () => {
       ].join('\n'));
     });
 
-    it('failure', async () => {
+    it('failure', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       doctor.toFix = [
         {error: 'Oh no.', check: new DoctorCheck({autofix: true})},
@@ -234,14 +234,14 @@ describe('doctor', () => {
 
   describe('run',  withMocks({}, (mocks, S) => {
     let doctor = new Doctor();
-    it('should work', async () => {
+    it('should work', async function () {
       try {
         let doctor = new Doctor();
         await doctor.run();
       } catch (err) {
       }
     });
-    it('should report success', async () => {
+    it('should report success', async function () {
       mocks.doctor = S.sandbox.mock(doctor);
       mocks.doctor.expects('diagnose').once();
       mocks.doctor.expects('reportSuccess').once().returns(true);
@@ -250,7 +250,7 @@ describe('doctor', () => {
       await doctor.run();
       verify(mocks);
     });
-    it('should report manual fixes', async () => {
+    it('should report manual fixes', async function () {
       mocks.doctor = S.sandbox.mock(doctor);
       mocks.doctor.expects('diagnose').once();
       mocks.doctor.expects('reportSuccess').once().returns(false);
@@ -259,7 +259,7 @@ describe('doctor', () => {
       await doctor.run();
       verify(mocks);
     });
-    it('should run autofixes', async () => {
+    it('should run autofixes', async function () {
       mocks.doctor = S.sandbox.mock(doctor);
       mocks.doctor.expects('diagnose').once();
       mocks.doctor.expects('reportSuccess').once().returns(false);

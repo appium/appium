@@ -12,13 +12,13 @@ chai.should();
 chai.use(chaiAsPromised);
 let P = Promise;
 
-describe('general', () => {
+describe('general', function () {
   describe('NodeBinaryCheck', withMocks({NodeDetector}, (mocks) => {
     let check = new NodeBinaryCheck();
-    it('autofix', () => {
+    it('autofix', function () {
       check.autofix.should.not.be.ok;
     });
-    it('diagnose - success', async () => {
+    it('diagnose - success', async function () {
       mocks.NodeDetector.expects('detect').once().returns(P.resolve('/a/b/c/d'));
       (await check.diagnose()).should.deep.equal({
         ok: true,
@@ -26,7 +26,7 @@ describe('general', () => {
       });
       verify(mocks);
     });
-    it('diagnose - failure', async () => {
+    it('diagnose - failure', async function () {
       mocks.NodeDetector.expects('detect').once().returns(P.resolve(null));
       (await check.diagnose()).should.deep.equal({
         ok: false,
@@ -34,17 +34,17 @@ describe('general', () => {
       });
       verify(mocks);
     });
-    it('fix', async () => {
+    it('fix', async function () {
       (await check.fix()).should.equal('Manually setup Node.js.');
     });
   }));
 
   describe('NodeVersionCheck', withMocks({NodeDetector, tp}, (mocks) => {
     let check = new NodeVersionCheck();
-    it('autofix', () => {
+    it('autofix', function () {
       check.autofix.should.not.be.ok;
     });
-    it('diagnose - success', async () => {
+    it('diagnose - success', async function () {
       mocks.NodeDetector.expects('detect').once().returns(P.resolve('/a/b/c/d'));
       mocks.tp.expects('exec').once().returns(P.resolve({stdout: 'v4.5.6', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -53,7 +53,7 @@ describe('general', () => {
       });
       verify(mocks);
     });
-    it('diagnose - failure - insufficient version', async () => {
+    it('diagnose - failure - insufficient version', async function () {
       mocks.NodeDetector.expects('detect').once().returns(P.resolve('/a/b/c/d'));
       mocks.tp.expects('exec').once().returns(P.resolve({stdout: 'v0.12.18', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -62,7 +62,7 @@ describe('general', () => {
       });
       verify(mocks);
     });
-    it('diagnose - failure - bad output', async () => {
+    it('diagnose - failure - bad output', async function () {
       mocks.NodeDetector.expects('detect').once().returns(P.resolve('/a/b/c/d'));
       mocks.tp.expects('exec').once().returns(P.resolve({stdout: 'blahblahblah', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -71,7 +71,7 @@ describe('general', () => {
       });
       verify(mocks);
     });
-    it('fix', async () => {
+    it('fix', async function () {
       (await check.fix()).should.equal('Manually upgrade Node.js.');
     });
   }));

@@ -8,8 +8,10 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-public class AndroidCreateSessionTest {
+public class AndroidCreateWebSessionTest {
     private AndroidDriver<WebElement> driver;
     private static AppiumDriverLocalService service;
 
@@ -22,8 +24,7 @@ public class AndroidCreateSessionTest {
         service.start();
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("deviceName", "Android Emulator");
-        capabilities.setCapability("app", app.getAbsolutePath());
-        capabilities.setCapability("appPackage", "io.appium.android.apis");
+        capabilities.setCapability("browserName", "Chrome");
         capabilities.setCapability("appActivity", ".ApiDemos");
         driver = new AndroidDriver<WebElement>(service.getUrl(), capabilities);
     }
@@ -34,10 +35,9 @@ public class AndroidCreateSessionTest {
     }
 
     @Test()
-    public void testCreateSession() {
-        String activity = driver.currentActivity();
-        String pkg = driver.getCurrentPackage();
-        Assert.assertEquals(activity, ".ApiDemos");
-        Assert.assertEquals(pkg, "io.appium.android.apis");
+    public void testCreateWebSession() throws URISyntaxException {
+        driver.get(new URI("http://www.google.com").toString());
+        String title = driver.getTitle();
+        Assert.assertEquals(title, "Google");
     }
 }

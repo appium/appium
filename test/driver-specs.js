@@ -165,7 +165,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver.restore();
       });
       it('should remove the session if it is found', async function () {
-        let [sessionId] = await appium.createSession(BASE_CAPS);
+        let [sessionId] = (await appium.createSession(BASE_CAPS)).value;
         let sessions = await appium.getSessions();
         sessions.should.have.length(1);
         await appium.deleteSession(sessionId);
@@ -173,7 +173,7 @@ describe('AppiumDriver', function () {
         sessions.should.have.length(0);
       });
       it('should call inner driver\'s deleteSession method', async function () {
-        const [sessionId] = await appium.createSession(BASE_CAPS);
+        const [sessionId] =  (await appium.createSession(BASE_CAPS)).value;
         mockFakeDriver.expects("deleteSession")
           .once().withExactArgs(sessionId, [])
           .returns();
@@ -201,8 +201,8 @@ describe('AppiumDriver', function () {
         sessions.should.be.empty;
       });
       it('should return sessions created', async function () {
-        let session1 = await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'value'}));
-        let session2 = await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'other value'}));
+        let session1 = (await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'value'}))).value;
+        let session2 = (await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'other value'}))).value;
 
         sessions = await appium.getSessions();
         sessions.should.be.an.array;
@@ -239,7 +239,7 @@ describe('AppiumDriver', function () {
       });
 
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
-        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error("Oops"));
         // let event loop spin so rejection is handled
@@ -247,7 +247,7 @@ describe('AppiumDriver', function () {
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
       it('should remove session if inner driver unexpectedly exits with no error', async function () {
-        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].unexpectedShutdownDeferred.resolve();
         // let event loop spin so rejection is handled
@@ -255,7 +255,7 @@ describe('AppiumDriver', function () {
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
       it('should not remove session if inner driver cancels unexpected exit', async function () {
-        let [sessionId,] = await appium.createSession(_.clone(BASE_CAPS)); // eslint-disable-line comma-spacing
+        let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].onUnexpectedShutdown.cancel();
         // let event loop spin so rejection is handled

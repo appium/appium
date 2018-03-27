@@ -216,7 +216,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           simple: false
         });
         // make sure that the request gets to the server before our shutdown
-        await B.delay(20);
+        await B.delay(100);
         d.startUnexpectedShutdown(new Error('Crashytimes'));
         let res = await p;
         res.status.should.equal(13);

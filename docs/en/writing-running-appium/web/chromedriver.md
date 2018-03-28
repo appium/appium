@@ -73,8 +73,8 @@ Chrome version that is automatable:
 | 2.9     | 31.0.1650.59           | [v2.9 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.9/)   |
 | 2.8     | 30.0.1573.2            | [v2.8 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.8/)   |
 | 2.7     | 30.0.1573.2            | [v2.7 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.7/)   |
-| 2.6     |                        | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
-| 2.5     |                        | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
+| 2.6     | 29.0.1545.0            | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
+| 2.5     | 29.0.1545.0            | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
 | 2.4     | 29.0.1545.0            | [v2.4 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.4/)   |
 | 2.3     | 28.0.1500.0            | [v2.3 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.3/)   |
 | 2.2     | 27.0.1453.0            | [v2.2 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.2/)   |

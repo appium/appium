@@ -42,6 +42,8 @@ Chrome version that is automatable:
 
 | Version | Minimum Chrome Version | Link to Chromedriver                                                              |
 |---------|------------------------|-----------------------------------------------------------------------------------|
+| 2.37    | 64.0.3282.0            | [v2.37 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.37/) |
+| 2.36    | 63.0.3239.0            | [v2.36 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.36/) |
 | 2.35    | 62.0.3202.0            | [v2.35 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.35/) |
 | 2.34    | 61.0.3163.0            | [v2.34 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.34/) |
 | 2.33    | 60.0.3112.0            | [v2.33 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.33/) |
@@ -71,8 +73,8 @@ Chrome version that is automatable:
 | 2.9     | 31.0.1650.59           | [v2.9 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.9/)   |
 | 2.8     | 30.0.1573.2            | [v2.8 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.8/)   |
 | 2.7     | 30.0.1573.2            | [v2.7 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.7/)   |
-| 2.6     |                        | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
-| 2.5     |                        | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
+| 2.6     | 29.0.1545.0            | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
+| 2.5     | 29.0.1545.0            | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
 | 2.4     | 29.0.1545.0            | [v2.4 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.4/)   |
 | 2.3     | 28.0.1500.0            | [v2.3 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.3/)   |
 | 2.2     | 27.0.1453.0            | [v2.2 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.2/)   |

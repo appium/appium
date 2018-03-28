@@ -47,6 +47,7 @@ you will see your device on the grid console page:
     "registerCycle": 5000,
     "hubPort": <grid_port>,
     "hubHost": "<Grid_host_name_or_grid_ip-address>"
+    "hubProtocol": "<Protocol_of_Grid_defaults_to_http>"
   }
 }
 ```

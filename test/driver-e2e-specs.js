@@ -72,9 +72,11 @@ describe('FakeDriver - via HTTP', function () {
     it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
       let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
 
-      caps.newCommandTimeout = 0.25;
+      let localCaps = Object.assign({
+        newCommandTimeout: 0.25,
+      }, caps);
 
-      let [sessionId] = await driver.init(caps);
+      let [sessionId] = await driver.init(localCaps);
       should.exist(sessionId);
 
       await B.delay(250);
@@ -303,6 +305,9 @@ describe('FakeDriver - via HTTP', function () {
       should.not.exist(w3cPayload.sessionId);
       should.not.exist(w3cPayload.status);
       w3cPayload.value.should.eql(caps);
+
+      // End session
+      await request.delete({url: `${baseUrl}/${value.sessionId}`}).should.eventually.be.resolved;
     });
   });
 });
@@ -313,7 +318,11 @@ describe('Logsink', function () {
   let logHandler = (level, message) => {
     logs.push([level, message]);
   };
-  let args = {port: TEST_PORT, host: TEST_HOST, logHandler};
+  let args = {
+    port: TEST_PORT,
+    host: TEST_HOST,
+    logHandler,
+  };
 
   before(async function () {
     server = await appiumServer(args);
@@ -327,7 +336,6 @@ describe('Logsink', function () {
     logs.length.should.be.above(1);
     let welcomeIndex = logs[0][1].includes('versions of node') ? 1 : 0;
     logs[welcomeIndex].length.should.equal(2);
-    logs[welcomeIndex][1].should.include("Welcome to Appium");
+    logs[welcomeIndex][1].should.include('Welcome to Appium');
   });
-
 });

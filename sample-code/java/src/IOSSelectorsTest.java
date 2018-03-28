@@ -1,5 +1,4 @@
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
@@ -10,18 +9,14 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.util.List;
 
-public class IOSSelectorsTest {
+public class IOSSelectorsTest extends BaseTest {
     private IOSDriver<WebElement> driver;
-    private static AppiumDriverLocalService service;
 
     @BeforeSuite
     public void setUp() throws Exception {
         File classpathRoot = new File(System.getProperty("user.dir"));
         File appDir = new File(classpathRoot, "../apps");
         File app = new File(appDir.getCanonicalPath(), "TestApp.app.zip");
-        service = AppiumDriverLocalService.buildDefaultService();
-        service.start();
-
         String deviceName = System.getenv("IOS_DEVICE_NAME");
         String platformVersion = System.getenv("IOS_PLATFORM_VERSION");
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -29,7 +24,7 @@ public class IOSSelectorsTest {
         capabilities.setCapability("platformVerison", platformVersion == null ? "11.1" : platformVersion);
         capabilities.setCapability("app", app.getAbsolutePath());
         capabilities.setCapability("automationName", "XCUITest");
-        driver = new IOSDriver<WebElement>(service.getUrl(), capabilities);
+        driver = new IOSDriver<WebElement>(getServiceUrl(), capabilities);
     }
 
     @AfterSuite

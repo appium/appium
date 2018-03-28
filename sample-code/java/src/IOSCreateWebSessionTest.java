@@ -1,6 +1,4 @@
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.ios.IOSElement;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.Assert;
@@ -8,17 +6,13 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import java.io.File;
+import java.io.IOException;
 
-public class IOSCreateWebSessionTest {
+public class IOSCreateWebSessionTest extends BaseTest {
     private IOSDriver<WebElement> driver;
-    private static AppiumDriverLocalService service;
 
     @BeforeSuite
-    public void setUp() throws Exception {
-        service = AppiumDriverLocalService.buildDefaultService();
-        service.start();
-
+    public void setUp() throws IOException {
         String deviceName = System.getenv("IOS_DEVICE_NAME");
         String platformVersion = System.getenv("IOS_PLATFORM_VERSION");
         DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -26,7 +20,7 @@ public class IOSCreateWebSessionTest {
         capabilities.setCapability("platformVerison", platformVersion == null ? "11.1" : platformVersion);
         capabilities.setCapability("browserName", "Safari");
         capabilities.setCapability("automationName", "XCUITest");
-        driver = new IOSDriver<WebElement>(service.getUrl(), capabilities);
+        driver = new IOSDriver<WebElement>(getServiceUrl(), capabilities);
     }
 
     @AfterSuite

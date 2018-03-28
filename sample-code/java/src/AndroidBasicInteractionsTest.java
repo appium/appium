@@ -1,48 +1,45 @@
 import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.AndroidElement;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 
-public class AndroidBasicInteractionsTest {
+public class AndroidBasicInteractionsTest extends BaseTest {
     private AndroidDriver<WebElement> driver;
-    private static AppiumDriverLocalService service;
     private final String SEARCH_ACTIVITY = ".app.SearchInvoke";
     private final String ALERT_DIALOG_ACTIVITY = ".app.AlertDialogSamples";
     private final String PACKAGE = "io.appium.android.apis";
 
-    @BeforeSuite
-    public void setUp() throws Exception {
+    @BeforeClass
+    public void setUp() throws IOException {
         File classpathRoot = new File(System.getProperty("user.dir"));
         File appDir = new File(classpathRoot, "../apps");
         File app = new File(appDir.getCanonicalPath(), "ApiDemos-debug.apk");
-        service = AppiumDriverLocalService.buildDefaultService();
-        service.start();
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("deviceName", "Android Emulator");
         capabilities.setCapability("app", app.getAbsolutePath());
-        capabilities.setCapability("appPackage", PACKAGE);
-        capabilities.setCapability("appActivity", SEARCH_ACTIVITY);
-        driver = new AndroidDriver<WebElement>(service.getUrl(), capabilities);
+        driver = new AndroidDriver<WebElement>(getServiceUrl(), capabilities);
     }
 
-    @AfterSuite
+    @AfterClass
     public void tearDown() {
         driver.quit();
     }
 
+
     @Test()
     public void testSendKeys() {
+        driver.startActivity(new Activity(PACKAGE, SEARCH_ACTIVITY));
         AndroidElement searchBoxEl = (AndroidElement) driver.findElementById("txt_query_prefill");
         searchBoxEl.sendKeys("Hello world!");
         AndroidElement onSearchRequestedBtn = (AndroidElement) driver.findElementById("btn_start_search");

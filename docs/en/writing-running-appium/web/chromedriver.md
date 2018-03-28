@@ -42,6 +42,7 @@ Chrome version that is automatable:
 
 | Version | Minimum Chrome Version | Link to Chromedriver                                                              |
 |---------|------------------------|-----------------------------------------------------------------------------------|
+| 2.37    | 64.0.3282.0            | [v2.37 (lint)](https://chromedriver.storage.googleapis.com/index.html?path=2.37/) |
 | 2.36    | 63.0.3239.0            | [v2.36 (lint)](https://chromedriver.storage.googleapis.com/index.html?path=2.36/) |
 | 2.35    | 62.0.3202.0            | [v2.35 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.35/) |
 | 2.34    | 61.0.3163.0            | [v2.34 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.34/) |

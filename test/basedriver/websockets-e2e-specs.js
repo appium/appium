@@ -43,6 +43,10 @@ describe('Websockets (e2e)', function () {
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://localhost:${PORT}${endpoint}`);
+        client.on('connection', (ws, req) => {
+          ws.should.not.be.empty;
+          req.connection.remoteAddress.should.not.be.empty;
+        });
         client.on('message', (data) => {
           data.should.eql(WS_DATA);
           resolve();

@@ -73,3 +73,6 @@ endpoint:
       description: The type of the content to get. Plaintext, Image, URL. Android supports only plaintext.
   response:
     - type: string
+      description: Clipboard content as base64-encoded string or an empty string if the clipboard is empty
+
+specifications: no

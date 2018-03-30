@@ -76,3 +76,6 @@ endpoint:
       description: Clipboard data label for Android.
   response:
     - type: string
+      description: Response from Appium server
+
+specifications: no

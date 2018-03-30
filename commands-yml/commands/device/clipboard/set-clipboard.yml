@@ -8,9 +8,11 @@ description:
 example_usage:
   java:
     |
+      driver.setClipboard('happy testing');
       driver.setClipboardText('happy testing');
   python:
     |
+      self.driver.set_clipboard('happy testing')
       self.driver.set_clipboard_text('happy testing')
   javascript_wd:
     |
@@ -67,12 +69,12 @@ endpoint:
   json_parameters:
     - name: content
       type: String
-      description: The actual clipboard content.
+      description: The actual base64 encoded clipboard content.
     - name: contentType
-      type: String
+      type: string
       description: The type of the content to get. Plaintext, Image, URL. Android supports only plaintext.
     - name: label
-      type: String
+      type: string
       description: Clipboard data label for Android.
   response:
     - type: string

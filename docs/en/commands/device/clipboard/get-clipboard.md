@@ -5,12 +5,14 @@ Get the content of the system clipboard
 
 ```java
 // Java
+driver.getClipboard();
 driver.getClipboardText();
 
 ```
 
 ```python
 # Python
+self.driver.get_clipboard()
 self.driver.get_clipboard_text()
 
 ```
@@ -92,8 +94,7 @@ Get the content of the system clipboard
 
 |name|type|description|
 |----|----|-----------|
-| content | `String` | The actual clipboard content. |
-| contentType | `String` | The type of the content to get. Plaintext, Image, URL. Android supports only plaintext. |
+| contentType | `string` | The type of the content to get. Plaintext, Image, URL. Android supports only plaintext. |
 
 ### Response
 

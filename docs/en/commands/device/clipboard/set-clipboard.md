@@ -5,12 +5,14 @@ Set the content of the system clipboard
 
 ```java
 // Java
+driver.setClipboard('happy testing');
 driver.setClipboardText('happy testing');
 
 ```
 
 ```python
 # Python
+self.driver.set_clipboard('happy testing')
 self.driver.set_clipboard_text('happy testing')
 
 ```
@@ -92,9 +94,9 @@ Set the content of the system clipboard
 
 |name|type|description|
 |----|----|-----------|
-| content | `String` | The actual clipboard content. |
-| contentType | `String` | The type of the content to get. Plaintext, Image, URL. Android supports only plaintext. |
-| label | `String` | Clipboard data label for Android. |
+| content | `String` | The actual base64 encoded clipboard content. |
+| contentType | `string` | The type of the content to get. Plaintext, Image, URL. Android supports only plaintext. |
+| label | `string` | Clipboard data label for Android. |
 
 ### Response
 

@@ -8,9 +8,11 @@ description:
 example_usage:
   java:
     |
+      driver.getClipboard();
       driver.getClipboardText();
   python:
     |
+      self.driver.get_clipboard()
       self.driver.get_clipboard_text()
   javascript_wd:
     |
@@ -65,11 +67,8 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: content
-      type: String
-      description: The actual clipboard content.
     - name: contentType
-      type: String
+      type: string
       description: The type of the content to get. Plaintext, Image, URL. Android supports only plaintext.
   response:
     - type: string

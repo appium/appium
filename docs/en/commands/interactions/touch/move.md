@@ -1,6 +1,6 @@
 # Tap
 
-Finger move on the screen
+Finger move on the screen where the movement is relative to the initial press
 ## Example Usage
 
 ```java
@@ -24,9 +24,17 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
+// Move to 200,200 (as in, an additional 100 in each direction)
 driver.touchMultiPerform([
-  { action: 'press', options: { x: 100, y: 250 }},
-  { action: 'moveTo', options: { x: 300, y: 100 }},
+  { action: 'press', options: { x: 100, y: 100 }},
+  { action: 'moveTo', options: { x: 100, y: 100 }},
+  { action: 'release' }
+]);
+
+// Move to // Move to 0,0 (as in, an additional -100 in each direction)
+driver.touchMultiPerform([
+  { action: 'press', options: { x: 100, y: 100 }},
+  { action: 'moveTo', options: { x: -100, y: -100 }},
   { action: 'release' }
 ]);
 
@@ -37,9 +45,17 @@ driver.touchMultiPerform([
 await driver.tapElement(elementOne);
 
 // Using touch actions
+// Move to 60,60 (as in, an additional 50 in each direction)
 let action = new wd.TouchAction();
 action.press({x: 10, y: 10});
 action.moveTo({x: 50, y: 50});
+action.perform();
+await driver.performTouchAction(action);
+
+// Move to 0,0 (as in, an additional -10 in each direction)
+let action = new wd.TouchAction();
+action.press({x: 10, y: 10});
+action.moveTo({x: -10, y: -10});
 action.perform();
 await driver.performTouchAction(action);
 

@@ -31,7 +31,7 @@ driver.touchMultiPerform([
   { action: 'release' }
 ]);
 
-// Move to // Move to 0,0 (as in, an additional -100 in each direction)
+// Move to 0,0 (as in, an additional -100 in each direction)
 driver.touchMultiPerform([
   { action: 'press', options: { x: 100, y: 100 }},
   { action: 'moveTo', options: { x: -100, y: -100 }},

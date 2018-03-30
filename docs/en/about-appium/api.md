@@ -23,6 +23,9 @@
       <a href='/docs/en/commands/session/screenshot.md'>Screenshot</a>
     </li>
     <li>
+      <a href='/docs/en/commands/session/source.md'>Source</a>
+    </li>
+    <li>
       Timeouts<ul>    <li>
       <a href='/docs/en/commands/session/timeouts/timeouts.md'>Timeouts</a>
     </li>

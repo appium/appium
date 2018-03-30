@@ -52,8 +52,8 @@ In a web context, the source returns the source HTML of the current window. In a
 
 This method is useful for inspecting your application hierarchy and using that to write [selectors](/docs/en/commands/element/find-element.md)
 
-(NOTE: iOS and Android don't have standard ways of defining their application source, so on calls to 'Get Page Source' Appium traverses the app hierarchy 
-and creates an XML document. Thus, getting the source can oftentime be an expensive and time-consuming operation) 
+(NOTE: iOS and Android don't have standard ways of defining their application source, so on calls to 'Get Page Source' Appium traverses the app hierarchy
+and creates an XML document. Thus, getting the source can often be an expensive and time-consuming operation)
 
 
 ## Support

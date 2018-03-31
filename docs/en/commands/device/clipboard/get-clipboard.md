@@ -5,7 +5,7 @@ Get the content of the system clipboard
 
 ```java
 // Java
-driver.getClipboard();
+driver.getClipboard(ClipboardContentType.PLAINTEXT); // To get plaintext
 driver.getClipboardText();
 
 ```

@@ -8,7 +8,7 @@ description:
 example_usage:
   java:
     |
-      driver.getClipboard();
+      driver.getClipboard(ClipboardContentType.PLAINTEXT); // get plaintext
       driver.getClipboardText();
   python:
     |

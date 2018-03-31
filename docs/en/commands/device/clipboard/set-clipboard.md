@@ -5,8 +5,9 @@ Set the content of the system clipboard
 
 ```java
 // Java
-driver.setClipboard('happy testing');
-driver.setClipboardText('happy testing');
+// base64Content is Base64-encoded content
+driver.setClipboard("label", ClipboardContentType.PLAINTEXT, base64Content);
+driver.setClipboardText("happy testing");
 
 ```
 

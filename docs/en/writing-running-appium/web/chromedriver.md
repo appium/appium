@@ -88,6 +88,29 @@ check out the release commit, and check the variable `kMinimumSupportedChromeVer
 in the file `src/chrome/test/chromedriver/chrome/version.cc`. (To find the
 release commits, you can use `git log --pretty=format:'%h | %s%d' | grep -i "Release Chromedriver version"`.)
 
+### Automatic discovery of compatible Chromedriver
+
+Beginning with Appium 1.8.0, Appium is able to pick the correct Chromedriver for the
+version of Chrome under test. While Appium only comes bundled with the Chromedriver
+most recently released at the time of the Appium version's release, more Chromedriver
+versions can be downloaded and either placed inside the Appium installation (_not
+  recommended_ since upgrading Appium will remove them) or in a custom location,
+which can be indicated to Appium with the `chromedriverExecutableDir` desired
+capability. This capability is the absolute path to the directory in which you have
+placed one or more Chromedriver executables.
+
+As well, since new versions of Chromedriver may be available that were not when
+an Appium version was released, a custom mapping of Chromedrivers to the minimum
+Chrome version they support can be given to Appium through the `chromedriverChromeMappingFile`
+desired capability. This should be the absolute path to a file with the mapping
+in it. The contents of the file need to be parsable as a JSON object, like:
+```JSON
+{
+  "2.42": "63.0.3239",
+  "2.41": "62.0.3202"
+}
+```
+
 ### Installing an network issues
 
 When Appium is installed it needs to download Chromedriver, so there is the possibility

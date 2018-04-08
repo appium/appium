@@ -16,11 +16,14 @@ Briefly describe the issue you are experiencing (or the feature you want to see 
 
 If necessary, describe the problem you have been experiencing in more detail.
 
-## Link to Appium logs
-
-Create a [GIST](https://gist.github.com) which is a paste of your _full_ Appium logs, and link them here. 
-Do _NOT_ paste your full Appium logs here, as it will make this issue very long and hard to read! 
-If you are reporting a bug, _always_ include Appium logs!
+## Appium logs
+<details><summary>Appium Logs</summary>
+<p>
+  ```
+  [ PASTE YOUR APPIUM LOGS HERE ]
+  ```
+</p>
+</details>
 
 
 ## Code To Reproduce Issue [ Good To Have ]

@@ -19,9 +19,11 @@ If necessary, describe the problem you have been experiencing in more detail.
 ## Appium logs
 <details><summary>Appium Logs</summary>
 <p>
+  
   ```
   [ PASTE YOUR APPIUM LOGS HERE ]
   ```
+  
 </p>
 </details>
 

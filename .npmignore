@@ -1,6 +1,11 @@
 assets/
 submodules/
 test/
+coverage/
+commands-yml/
+docs/
+sample-code/
+
 _vimrc_local.vim
 *.swp
 *.swo
@@ -12,5 +17,3 @@ _vimrc_local.vim
 *.trace
 *.sublime-
 *.prefs
-./.npmignore
-coverage

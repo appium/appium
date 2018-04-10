@@ -14,6 +14,8 @@ Appium 1.8.0 introduces full support for the [W3C WebDriver specification](https
 * All `moveTo` operations in touch actions now take coordinates as absolute
 * Support for registering selenium grid through HTTPS by setting the configuration
   key `"hubProtocol"` to `"https"`
+* Add `otherApps` desired capability, to specify array of ancillary apps to install
+  on session creation
 
 #### iOS
 * Support for iOS 11.3/Xcode 9.3

@@ -110,17 +110,18 @@ async function generateCommands () {
   for (let filename of await fs.glob(commands)) {
     console.log('Rendering file:', filename, path.relative(__dirname, filename), path.extname(filename));
 
-    // Translate the YML specs to JS
+    // Translate the YML specs to JSON
     const inputYML = await fs.readFile(filename, 'utf8');
-    const inputJS = yaml.load(inputYML);
-    const validationErrors = validate(inputJS, validator);
+    const inputJSON = yaml.load(inputYML);
+    inputJSON.ymlFileName = `/${path.relative(__dirname, filename)}`;
+    const validationErrors = validate(inputJSON, validator);
     if (validationErrors) {
       throw new Error(`Data validation error for ${filename}: ${JSON.stringify(validationErrors)}`);
     }
 
     // Pass the inputJS into our Handlebars template
     const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'template.md'), 'utf8'), {noEscape: true, strict: true});
-    const markdown = template(inputJS);
+    const markdown = template(inputJSON);
 
     // Write the markdown to its right place
     const markdownPath = replaceExt(path.relative(__dirname, filename), '.md');

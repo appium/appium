@@ -34,6 +34,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure the Android emulator is up and running.
 * It's sometimes useful to run `adb kill-server && adb devices`. This can
   reset the connection to the Android device.
+* If you're running the Android emulator using Fastboot, try doing a cold boot (Android Studio > Tools > AVD Manager > Actions > Cold Boot Now)
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 
 ### Windows

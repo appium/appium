@@ -113,7 +113,7 @@ async function generateCommands () {
     // Translate the YML specs to JSON
     const inputYML = await fs.readFile(filename, 'utf8');
     const inputJSON = yaml.load(inputYML);
-    inputJSON.ymlFileName = `/${path.relative(__dirname, filename)}`;
+    inputJSON.ymlFileName = `/${path.relative(path.resolve(__dirname, '..'), filename)}`;
     const validationErrors = validate(inputJSON, validator);
     if (validationErrors) {
       throw new Error(`Data validation error for ${filename}: ${JSON.stringify(validationErrors)}`);

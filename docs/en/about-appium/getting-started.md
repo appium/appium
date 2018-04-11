@@ -251,7 +251,7 @@ behaving as if an invisible user were tapping on it!
 We've only scratched the surface of what you can do with Appium. Check out
 these resources to help you on your journey:
 
-* The Appium [command reference](#TODO) - learn about what commands are available, how to use them with specific client libraries, etc...
+* The Appium [command reference](http://appium.io/docs/en/commands/status/) - learn about what commands are available, how to use them with specific client libraries, etc...
 * The [sample-code](https://github.com/appium/sample-code) repository, where lots more code samples are available
 * [discuss.appium.io](https://discuss.appium.io) - this is the Appium community forum, which is a great first place to go for help getting started, or if you think you may have run into a bug
 * The Appium [issue tracker](https://github.com/appium/appium/issues) - let the Appium maintainers know here if you think you've found a bug

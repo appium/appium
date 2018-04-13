@@ -187,7 +187,8 @@ converted into the `npm-shrinkwrap.json` file.
 1. Install dev dependencies (or at least `gulp` and `appium-gulp-plugins`), and undo the changes to the NPM shrinkwrap JSON file (e.g., `git checkout -- npm-shrinkwrap.json`).
 1. Run `npm publish` (with `--tag beta` if this isn't an official release).
 1. Remove the NPM shrinkwrap JSON file from Git and push the changes
-1. Update the docs at appium.io. Check out the appium.io repo from github, check out the `gh-pages` branch and pull latest. Run `rake publish`.
+1. Run `npm run generate-docs` and make a pull request with the generated docs.
+1. Update the docs at appium.io. Check out the appium.io repo from github, check out the `gh-pages` branch and pull latest. Run `npm run build:docs:local`, and then commit and push the generated file changes.
 1. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.
 1. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
 1. Begin process of releasing `appium-desktop`.

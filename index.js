@@ -19,6 +19,8 @@ export { Protocol, routeConfiguringFunction, errors, isErrorType,
          NO_SESSION_ID_COMMANDS, isSessionCommand };
 
 // Express exports
+import { STATIC_DIR } from './lib/express/static';
+export { STATIC_DIR };
 import { server } from './lib/express/server';
 export { server };
 

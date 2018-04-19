@@ -77,6 +77,7 @@ The current committers are (in addition to the TC members above):
 * [@triager](https://github.com/triager)
 * [@ddkjin](https://github.com/ddkjin)
 * [@stuartbrussell-intuit](https://github.com/stuartbrussell-intuit)
+* [@vmaxim](https://github.com/vmaxim)
 
 ### Contributors
 

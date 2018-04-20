@@ -1,3 +1,54 @@
+CHANGES IN VERSION 1.8.0 (from 1.7.2)
+===================================
+
+Appium 1.8.0 introduces full support for the [W3C WebDriver specification](https://www.w3.org/TR/webdriver/)
+([digested version of the spec](https://github.com/jlipps/simple-wd-spec)).
+
+#### General
+* Minimum [NodeJS](https://nodejs.org/en/) version moved to 6
+* Add methods for
+  * getting and setting the clipboard contents
+  * get full screen screenshots
+  * Application management
+* More efficient app downloading by caching URLs
+* All `moveTo` operations in touch actions now take coordinates as absolute
+* Support for registering selenium grid through HTTPS by setting the configuration
+  key `"hubProtocol"` to `"https"`
+* Add `otherApps` desired capability, to specify array of ancillary apps to install
+  on session creation
+
+#### iOS
+* Support for iOS 11.3/Xcode 9.3
+* Fix handling of process arguments
+* Add capabilities
+  * `shutdownOtherSimulators` - shutdown other running simulators at session start up
+* Add ability to record screen
+* Add support for complex gestures
+* Fix handling of custom SSL certificate on simulators
+* Better handling of `xcodebuild` processes
+* Maintain keychains while upgrading apps
+* Better handle simulators in unexpected states
+* Add performance measuring (see [documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-performance.md))
+
+#### Android
+* Support for Android P (API Level 28)
+  * Known issue in screenshot: https://issuetracker.google.com/issues/76114030
+* Fix handling of webview contexts when resetting apps
+* Fix handling of screen recording
+* Make sure intent is broadcast when file is uploaded
+* Add possibility to broadcast device logs through WebSocket
+* Chromedriver
+  * Bundle version 2.37
+  * Automatically choose compatible Chromedriver for Chrome version
+    * `chromedriverExecutableDir` capability to specify where Chromedrivers are located
+    * `chromedriverChromeMappingFile` capability to specify what Chromedriver version corresponds to what Chrome version
+* Fix Handling of idle state waiting
+* Speed up screenshot logic in UiAutomator2
+* Allow disabling of notification watching through settings
+* Fix parsing and granting of permissions for app under test
+* Support deep linking and Android Instant Apps
+
+
 CHANGES IN VERSION 1.8.0-beta (from 1.7.2)
 ===================================
 

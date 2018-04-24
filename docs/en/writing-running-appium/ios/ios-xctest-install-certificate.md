@@ -1,11 +1,11 @@
-## Automating Intstallation of Self-Signed Certificate on iOS
+## Automating Installation of Self-Signed Certificate on iOS
 
-Unfortunately, Apple does not provide any command line options, which can help to install self-signed certificate on the device or Simulator. However, there is [over-the-air](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/Introduction/Introduction.html) enrollment technology, which allows to deploy several types of entities, including such certificates, by simply downloading specially prepared configuration files with built-in web browser. After the configuration is downloaded it can be accepted and installed by going through several simple wizard steps.
+Unfortunately, Apple does not provide any command line options, which can help to install self-signed certificate on the device or Simulator. However, there is [over-the-air](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/Introduction/Introduction.html) enrollment technology, which allows to deploy several types of entities, including such certificates, by simply downloading specially prepared configuration files with built-in web browser. After the configuration is downloaded it can be installed and trusted by going through several simple wizard steps.
 
 
 ### mobile: installCertificate
 
-This command receives the content of an existing certificate in PEM format, transforms the content to a special config format and deploys it on Appium's built-in HTTP server, so the config can be downloaded and accepted on the device under test. Thus the main requirement is that the hostname and port, where Appium server is running, are reachable on the device under test.
+This command receives the content of an existing certificate in PEM format, transforms the content to a special config format and deploys it on Appium's built-in HTTP server, so the config can be downloaded and accepted on the device under test. Thus the main requirement is that the hostname and port, where Appium server is running, are reachable on the device under test. After the certificate is installed the script is going to open System Preferences again and enable it inside Certificate Trust Settings if it is disabled.
 
 #### Supported arguments
 

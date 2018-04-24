@@ -5,7 +5,7 @@ Unfortunately, Apple does not provide any command line options, which can help t
 
 ### mobile: installCertificate
 
-This command receives the content of an existing certificate in PEM format, transforms the content to a special config format and and deploys it on Appium's built-in HTTP server, so it can be downloaded and accepted on the device under test. Thus the main requirement is that the hostname and port, where Appium server is running, are reachable on the device under test.
+This command receives the content of an existing certificate in PEM format, transforms the content to a special config format and deploys it on Appium's built-in HTTP server, so the config can be downloaded and accepted on the device under test. Thus the main requirement is that the hostname and port, where Appium server is running, are reachable on the device under test.
 
 #### Supported arguments
 

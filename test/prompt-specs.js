@@ -3,39 +3,40 @@
 import chai from 'chai';
 import { fixIt, clear } from '../lib/prompt';
 import { inquirer } from '../lib/utils';
-import { withMocks, verify } from 'appium-test-support';
+import { withMocks } from 'appium-test-support';
+import B from 'bluebird';
+
 
 chai.should();
-let P = Promise;
 
 describe('prompt', withMocks({inquirer}, (mocks) => {
 
   it('fixit - yes', async function () {
     clear();
-    mocks.inquirer.expects('prompt').once().returns(P.resolve(
+    mocks.inquirer.expects('prompt').once().returns(B.resolve(
       { confirmation: 'yes' }));
     (await fixIt()).should.equal('yes');
-    verify(mocks);
+    mocks.verify();
   });
 
   it('fixit always ', async function () {
     clear();
-    mocks.inquirer.expects('prompt').once().returns(P.resolve(
+    mocks.inquirer.expects('prompt').once().returns(B.resolve(
       { confirmation: 'always' }));
     (await fixIt()).should.equal('yes');
     (await fixIt()).should.equal('yes');
     (await fixIt()).should.equal('yes');
-    verify(mocks);
+    mocks.verify();
   });
 
   it('fixit never ', async function () {
     clear();
-    mocks.inquirer.expects('prompt').once().returns(P.resolve(
+    mocks.inquirer.expects('prompt').once().returns(B.resolve(
       { confirmation: 'never' }));
     (await fixIt()).should.equal('no');
     (await fixIt()).should.equal('no');
     (await fixIt()).should.equal('no');
-    verify(mocks);
+    mocks.verify();
   });
 
 

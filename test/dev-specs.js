@@ -4,10 +4,11 @@ import { BinaryIsInPathCheck, AndroidSdkExists } from '../lib/dev';
 import { fs } from 'appium-support';
 import * as tp from 'teen_process';
 import chai from 'chai';
-import { withMocks, verify, stubEnv } from 'appium-test-support';
+import { withMocks, stubEnv } from 'appium-test-support';
+import B from 'bluebird';
+
 
 chai.should();
-let P = Promise;
 
 describe('dev', function () {
   describe('BinaryIsInPathCheck', withMocks({tp, fs}, (mocks) => {
@@ -19,35 +20,35 @@ describe('dev', function () {
     it('diagnose - success', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
-        P.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
-      mocks.fs.expects('exists').once().returns(P.resolve(true));
+        B.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
+      mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         message: 'mvn was found at /a/b/c/d/mvn'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('diagnose - failure - not in path ', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
-        P.resolve({stdout: 'mvn not found\n', stderr:''}));
+        B.resolve({stdout: 'mvn not found\n', stderr:''}));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'mvn is MISSING in PATH!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('diagnose - failure - invalid path', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
-        P.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
-      mocks.fs.expects('exists').once().returns(P.resolve(false));
+        B.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
+      mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'mvn was found in PATH at \'/a/b/c/d/mvn\', ' +
           'but this is NOT a valid path!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('fix', async function () {
       (await check.fix()).should.equal('Manually install the mvn binary and add it to PATH.');
@@ -61,12 +62,12 @@ describe('dev', function () {
     });
     it('diagnose - success', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(P.resolve(true));
+      mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         message: 'android-16 was found at: /a/b/c/d/platforms/android-16'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('failure - missing android home', async function () {
       delete process.env.ANDROID_HOME;
@@ -74,16 +75,16 @@ describe('dev', function () {
         ok: false,
         message: 'android-16 could not be found because ANDROID_HOME is NOT set!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('diagnose - failure - invalid path', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(P.resolve(false));
+      mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'android-16 could NOT be found at \'/a/b/c/d/platforms/android-16\'!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('fix - ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;

@@ -3,10 +3,11 @@
 import { EnvVarAndPathCheck, AndroidToolCheck } from '../lib/android';
 import { fs } from 'appium-support';
 import chai from 'chai';
-import { withMocks, verify, stubEnv } from 'appium-test-support';
+import { withMocks, stubEnv } from 'appium-test-support';
+import B from 'bluebird';
+
 
 chai.should();
-let P = Promise;
 
 describe('android', function () {
   describe('EnvVarAndPathCheck', withMocks({fs}, (mocks) => {
@@ -17,12 +18,12 @@ describe('android', function () {
     });
     it('diagnose - success', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(P.resolve(true));
+      mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         message: 'ANDROID_HOME is set to: /a/b/c/d'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('failure - not set', async function () {
       delete process.env.ANDROID_HOME;
@@ -30,17 +31,17 @@ describe('android', function () {
         ok: false,
         message: 'ANDROID_HOME is NOT set!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('failure - file not exists', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(P.resolve(false));
+      mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'ANDROID_HOME is set to \'/a/b/c/d\' ' +
           'but this is NOT a valid path!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('fix', async function () {
       (await check.fix()).should.equal('Manually configure ANDROID_HOME.');
@@ -54,12 +55,12 @@ describe('android', function () {
     });
     it('diagnose - success', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(P.resolve(true));
+      mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         message: 'adb exists at: /a/b/c/d/platform-tools/adb'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('diagnose - failure - no ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;
@@ -67,16 +68,16 @@ describe('android', function () {
         ok: false,
         message: 'adb could not be found because ANDROID_HOME is NOT set!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('diagnose - failure - path not valid', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(P.resolve(false));
+      mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'adb could NOT be found at \'/a/b/c/d/platform-tools/adb\'!'
       });
-      verify(mocks);
+      mocks.verify();
     });
     it('fix - ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;

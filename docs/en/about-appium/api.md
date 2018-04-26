@@ -7,6 +7,9 @@
       <a href='/docs/en/commands/status.md'>Status</a>
     </li>
     <li>
+      <a href='/docs/en/commands/mobile-command.md'>Execute Mobile Command</a>
+    </li>
+    <li>
       Session<ul>    <li>
       <a href='/docs/en/commands/session/create.md'>Create</a>
     </li>
@@ -440,9 +443,6 @@
       <a href='/docs/en/commands/web/execute.md'>Execute</a>
     </li>
 </ul>
-    </li>
-    <li>
-      <a href='/docs/en/commands/mobile-command.md'>Execute Mobile Command</a>
     </li>
 </ul>
 </div>

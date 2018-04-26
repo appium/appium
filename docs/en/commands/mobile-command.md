@@ -66,24 +66,37 @@ List of available commands:
 ### IOS
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
-| mobile:scroll | (see [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures/)) |||
+| mobile:scroll | (see [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/writing-running-appium/ios/ios-xctest-mobile-gestures/)) |||
 | mobile:viewportScreenshot | Like `screenshot` but only includes contents of viewport | <none> | <none> |
 
 ### IOS (XCUITest Only)
+* [IOS XCTest Mobile Gestures](/writing-running-appium/ios/ios-xctest-mobile-gestures)
+* [Advanced Applications Managemenet Commands For iOS with WebDriverAgent/XCTest Backend](/writing-running-appium/ios/ios-xctest-mobile-apps-management)
+* [IOS Pasteboard Commands](/writing-running-appium/ios/ios-xctest-pasteboard/)
+* [IOS Predicate Guide](/writing-running-appium/ios/ios-predicate/)
+* [IOS TouchID](/writing-running-appium/ios/ios-touch-id/)
+* [IOS Install Certificate](/writing-running-appium/ios/ios-xctest-install-certificate.md)
+
+| Command | Description | Argument | Argument Example |
+| ------- | ----------- | -------- | ---------------- |
+| mobile:startPerfRecord | Starts performance profiling for the device under test | <none> | |
+| mobile:stopPerfRecord | Stops performance profiling for the device under test | <none> | |
+| mobile:startLogsBroadcast | Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. | <none> | |
+| mobile:stopLogsBroadcast | Stops the iOS system logs broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | |
 
 ### Android
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
-| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires server flag `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
+| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/writing-running-appium/server-args/#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
 | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/logcat` endpoint | <none> | <none> |
 | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
 
 ### Android (UiAutomator2 only)
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
-| mobile:scrollBackTo | Scroll from one element to another | {elementId, elementToId} | {elementId: 2, elementToId: 1} |
+| mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
 | mobile:viewportScreenshot | Like `screenshot` but only includes contents of viewport | <none> | <none> |
-| mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | {url, package} | {url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"} |
+| mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
 
 
 ## Support

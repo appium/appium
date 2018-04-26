@@ -64,13 +64,13 @@ driver_support:
   windows:
     windows: false
 client_support:
-  java: false
-  python: false
-  ruby: false
-  php: false
-  csharp: false
-  javascript_wd: false
-  javascript_wdio: false
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
   
 
 # Information about the HTTP endpoints

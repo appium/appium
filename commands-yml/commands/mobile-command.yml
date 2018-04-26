@@ -114,13 +114,13 @@
     json_parameters:
       - name: script
         type: string
-        description: The script to execute
+        description: The mobile command to execute
       - name: args
         type: array
-        description: The script arguments
+        description: The JSON serializable arguments
     response:
       - type: any
-        description: The script result
+        description: The command result
   
   # Links to specifications. Should link to at least one specification
   specifications: 

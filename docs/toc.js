@@ -196,6 +196,7 @@ module.exports = {
         ["Execute Async", "execute-async.md"],
         ["Execute", "execute.md"],
       ]],
+      ["Execute Mobile Command", "mobile-command.md"],
     ]],
     ["Writing & Running Tests", ["writing-running-appium",
       ["Running Tests", "running-tests.md"],

@@ -1,0 +1,94 @@
+---
+  name: Execute Mobile Command
+  short_description: Execute a native mobile command
+  
+  description:
+    |
+      ### Mobile Commands
+      // TODO: make a table here enumerating them all
+  
+  example_usage:
+    java:
+      |
+        // java
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        HashMap<String, String> scrollObject = new HashMap<String, String>();
+        scrollObject.put("direction", "down");
+        js.executeScript("mobile: scroll", scrollObject);
+  
+    python:
+      |
+        self.driver.execute_script("mobile:")
+    javascript_wd:
+      |
+        await driver.safeAsync('mobile:');
+    javascript_wdio:
+      |
+        var result = browser.execute('mobile:')
+  
+        // node.js context - client and console are available
+        console.log(result.value); // outputs: 10
+    ruby:
+      |
+        @driver.execute_script("mobile:")
+    php:
+      |
+        // TODO PHP sample
+    csharp:
+      |
+        // TODO C# sample
+  
+  client_docs:
+    java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#executeScript-java.lang.String-java.lang.Object...-"
+    python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.execute_script"
+    javascript_wdio: "http://webdriver.io/api/protocol/execute.html"
+    javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
+    ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
+    php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+    csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  
+  # Driver support by platform
+  driver_support:
+    ios:
+      xcuitest: true
+      uiautomation: true
+    android:
+      uiautomator2: true
+      uiautomator: true
+    mac:
+      mac: true
+    windows:
+      windows: true
+  client_support:
+    java: true
+    python: true
+    ruby: true
+    php: true
+    csharp: true
+    javascript_wd: true
+    javascript_wdio: true
+    
+  
+  # Information about the HTTP endpoints
+  endpoint:
+    url: /wd/hub/session/:session_id/execute
+    method: GET
+    url_parameters:
+      - name: session_id
+        description: ID of the session to route the command to
+    json_parameters:
+      - name: script
+        type: string
+        description: The script to execute
+      - name: args
+        type: array
+        description: The script arguments
+    response:
+      - type: any
+        description: The script result
+  
+  # Links to specifications. Should link to at least one specification
+  specifications: 
+    w3c: https://www.w3.org/TR/webdriver/#dfn-execute-script
+    jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async
+  

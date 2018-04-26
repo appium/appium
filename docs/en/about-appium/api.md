@@ -441,5 +441,8 @@
     </li>
 </ul>
     </li>
+    <li>
+      <a href='/docs/en/commands/mobile-command.md'>Execute Mobile Command</a>
+    </li>
 </ul>
 </div>

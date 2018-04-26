@@ -56,19 +56,16 @@
   
     python:
       |
-        self.driver.execute_script("mobile:")
+        self.driver.execute_script("mobile: scroll", {'direction': 'down'})
     javascript_wd:
       |
-        await driver.safeAsync('mobile:');
+        await driver.execute('mobile: scroll', {direction: 'down'});
     javascript_wdio:
       |
-        var result = browser.execute('mobile:')
-  
-        // node.js context - client and console are available
-        console.log(result.value); // outputs: 10
+        var result = browser.execute('mobile: scroll', {direction: 'down'})
     ruby:
       |
-        @driver.execute_script("mobile:")
+        @driver.execute_script("mobile: scroll", { "direction" => "down"})
     php:
       |
         // TODO PHP sample
@@ -128,5 +125,5 @@
   # Links to specifications. Should link to at least one specification
   specifications: 
     w3c: https://www.w3.org/TR/webdriver/#dfn-execute-script
-    jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async
+    jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute
   

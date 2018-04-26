@@ -31,7 +31,7 @@ console.log(result.value); // outputs: 10
 
 
 // wd example
-await driver.safeAsync('document.title');
+await driver.execute('document.title');
 
 ```
 

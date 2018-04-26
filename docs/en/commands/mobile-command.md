@@ -17,28 +17,25 @@ js.executeScript("mobile: scroll", scrollObject);
 
 ```python
 # Python
-self.driver.execute_script("mobile:")
+self.driver.execute_script("mobile: scroll", {'direction': 'down'})
 
 ```
 
 ```javascript
 // Javascript
 // webdriver.io example
-var result = browser.execute('mobile:')
-
-// node.js context - client and console are available
-console.log(result.value); // outputs: 10
+var result = browser.execute('mobile: scroll', {direction: 'down'})
 
 
 
 // wd example
-await driver.safeAsync('mobile:');
+await driver.execute('mobile: scroll', {direction: 'down'});
 
 ```
 
 ```ruby
 # Ruby
-@driver.execute_script("mobile:")
+@driver.execute_script("mobile: scroll", { "direction" => "down"})
 
 ```
 
@@ -57,17 +54,16 @@ await driver.safeAsync('mobile:');
 
 ## Description
 
-Execute a variety of native, mobile commands that don't have a specific endpoint
+Execute a variety of native, mobile commands that aren't associated with a specific endpoint
 
-Syntax is `execute(mobile: <commandName>, <JSON serializable argument>)` 
+Syntax is `execute("mobile: <commandName>", <JSON serializable argument>)` 
 
 List of available commands:
 
 ### IOS
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
-| mobile:scroll | (see [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/writing-running-appium/ios/ios-xctest-mobile-gestures/)) |||
-| mobile:viewportScreenshot | Like `screenshot` but only includes contents of viewport | <none> | <none> |
+| mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
 
 ### IOS (XCUITest Only)
 * [IOS XCTest Mobile Gestures](/writing-running-appium/ios/ios-xctest-mobile-gestures)
@@ -95,7 +91,7 @@ List of available commands:
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
 | mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
-| mobile:viewportScreenshot | Like `screenshot` but only includes contents of viewport | <none> | <none> |
+| mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
 | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
 
 
@@ -150,4 +146,4 @@ The script result (`any`)
 ## See Also
 
 * [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-execute-script)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async)
+* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute)

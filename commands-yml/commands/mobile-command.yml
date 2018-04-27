@@ -61,9 +61,7 @@
   example_usage:
     java:
       |
-        HashMap<String, String> scrollObject = new HashMap<String, String>();
-        scrollObject.put("direction", "down");
-        driver.executeScript("mobile: scroll", scrollObject);
+        driver.executeScript("mobile: scroll", ImmutableMap.of("direction", "down"));;
   
     python:
       |

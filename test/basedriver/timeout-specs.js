@@ -19,8 +19,8 @@ describe('timeout', function () {
     driver.implicitWaitMs = 0;
   });
   afterEach(function () {
-    implicitWaitSpy.reset();
-    newCommandTimeoutSpy.reset();
+    implicitWaitSpy.resetHistory();
+    newCommandTimeoutSpy.resetHistory();
   });
   describe('timeouts', function () {
     describe('errors', function () {

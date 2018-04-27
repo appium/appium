@@ -20,10 +20,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
   };
 
   describe('BaseDriver', function () {
-
     let d;
     beforeEach(function () {
       d = new DriverClass();
+    });
+    afterEach(async function () {
+      await d.deleteSession();
     });
 
     it('should return an empty status object', async function () {

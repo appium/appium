@@ -8,7 +8,6 @@ const should = chai.should();
 chai.use(chaiAsPromised);
 
 describe('Desired Capabilities', function () {
-
   let d;
 
   beforeEach(function () {
@@ -319,7 +318,7 @@ describe('Desired Capabilities', function () {
     await d.deleteSession();
   });
 
-  it('should still validate null/undefined caps whose presence is required', async function () {
+  it('should still validate null/undefined/empty caps whose presence is required', async function () {
     d.desiredCapConstraints = {
       foo: {
         presence: true

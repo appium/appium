@@ -40,7 +40,7 @@ describe('helpers', function () {
     });
 
     it('should unzip a .zip file (force isWindows to be true so we can test the internal zip library)', async function () {
-      const forceWindows = sinon.stub(system, 'isWindows', () => true);
+      const forceWindows = sinon.stub(system, 'isWindows').returns(true);
       await unzipFile(path.resolve(mockDir, 'FakeIOSApp.app.zip'));
       await fs.readFile(path.resolve(mockDir, 'FakeIOSApp.app'), 'utf8').should.eventually.deep.equal('this is not really an app\n');
       forceWindows.restore();

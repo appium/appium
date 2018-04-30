@@ -34,5 +34,4 @@ result = driver.execute_script('mobile: shell', {
     'timeout': 5000
 })
 assert result['stdout'] == 'arg1 arg2'
-
 ```

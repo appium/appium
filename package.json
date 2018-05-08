@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.8.1-beta1",
+  "version": "1.8.1",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -45,7 +45,7 @@
     "appium-uiautomator2-driver": "1.x",
     "appium-windows-driver": "1.x",
     "appium-xcuitest-driver": "2.x",
-    "appium-youiengine-driver": "1.x",
+    "appium-youiengine-driver": "^1.0.17",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
@@ -93,7 +93,6 @@
     "eslint-plugin-import": "2.x",
     "eslint-plugin-mocha": "4.x",
     "eslint-plugin-promise": "3.x",
-    "gulp": "3.x",
     "handlebars": "^4.0.10",
     "mocha": "5.x",
     "pre-commit": "1.x",

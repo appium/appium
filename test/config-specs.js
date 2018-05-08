@@ -102,7 +102,7 @@ describe('Config', function () {
         spy = sinon.spy(logger, "warn");
       });
       beforeEach(function () {
-        spy.reset();
+        spy.resetHistory();
       });
       it('should log a warning if node is below 8', function () {
         process.version = 'v7.10.1';

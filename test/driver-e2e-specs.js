@@ -116,7 +116,7 @@ describe('FakeDriver - via HTTP', function () {
       stacktrace.should.match(/FakeDriver.executeCommand/);
 
       // End session
-      await request.delete({url: `${baseUrl}/${value.sessionId}`}).should.eventually.be.resolved;
+      await request.delete({url: `${baseUrl}/${value.sessionId}`});
     });
 
     it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function () {
@@ -155,7 +155,7 @@ describe('FakeDriver - via HTTP', function () {
       });
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` });
     });
 
     it('should accept a combo of W3C and JSONWP but use JSONWP if desiredCapabilities contains extraneous keys', async function () {
@@ -184,7 +184,7 @@ describe('FakeDriver - via HTTP', function () {
       });
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
+      await request.delete({ url: `${baseUrl}/${sessionId}` });
     });
 
     it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {
@@ -218,7 +218,7 @@ describe('FakeDriver - via HTTP', function () {
       value.capabilities.should.deep.equal(caps);
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` });
     });
 
     it('should fall back to MJSONWP if w3c caps are invalid', async function () {
@@ -240,7 +240,7 @@ describe('FakeDriver - via HTTP', function () {
       value.should.deep.equal(caps);
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` }).should.eventually.be.resolved;
+      await request.delete({ url: `${baseUrl}/${sessionId}` });
     });
 
     it('should fall back to MJSONWP if Inner Driver is not ready for W3C', async function () {
@@ -255,7 +255,7 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      const createSessionStub = sinon.stub(FakeDriver.prototype, 'createSession', async function (jsonwpCaps) {
+      const createSessionStub = sinon.stub(FakeDriver.prototype, 'createSession').callsFake(async function (jsonwpCaps) {
         const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
         this.protocol.should.equal('MJSONWP');
         return res;
@@ -303,6 +303,10 @@ describe('FakeDriver - via HTTP', function () {
       should.not.exist(w3cPayload.sessionId);
       should.not.exist(w3cPayload.status);
       w3cPayload.value.should.eql(caps);
+
+      // End session
+      await request.delete({url: `${baseUrl}/${mjsonwpSessId}`});
+      await request.delete({url: `${baseUrl}/${w3cSessId}`});
     });
   });
 });
@@ -310,7 +314,7 @@ describe('FakeDriver - via HTTP', function () {
 describe('Logsink', function () {
   let server = null;
   let logs = [];
-  let logHandler = (level, message) => {
+  let logHandler = function (level, message) {
     logs.push([level, message]);
   };
   let args = {port: TEST_PORT, host: TEST_HOST, logHandler};

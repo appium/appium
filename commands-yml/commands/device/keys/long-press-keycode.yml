@@ -66,7 +66,10 @@ endpoint:
       description: Key code pressed on the device. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html).
     - name: metastate
       type: number
-      description: Metastate for the keypress
+      description: Metastate for the keypress. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html).
+    - name: flags
+      type: number
+      description: Flags for the keypress. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html).
 
 # Links to specifications. Should link to at least one specification
 specifications:

@@ -1,3 +1,35 @@
+CHANGES IN VERSION 1.8.1 (from 1.8.0)
+===================================
+
+Appium 1.8.0 introduces full support for the [W3C WebDriver specification](https://www.w3.org/TR/webdriver/)
+([digested version of the spec](https://github.com/jlipps/simple-wd-spec)).
+
+#### General
+* Fix shrinkwrap problem caused due to package-lock being set to false (#10660)
+
+#### iOS
+* Add keyboard presence versification endpoint (see http://appium.io/docs/en/commands/device/keys/is-keyboard-shown/)
+* Add `mobile:startLogsBroadcast` feature (see http://appium.io/docs/en/commands/mobile-command/)
+* Add cap called `realDeviceScreenshotter` to use idevicescreenshot for real device screenshots
+* Add application platform verification
+* Validates that `webdriverAgentUrl` capability is a valid URL
+* Add an extension to retrieve battery info from a real device
+* Fix Safari console log retrieval
+* Fix `encodeBase64OrUpload` to use `v8.getHeapStatistics` instead of `process.memoryUsage`
+
+#### Android
+* Return the current connection state instead of undefined for setNetworkConnection
+* Add a possibility to include stderr output into adb:shell call
+* Add flags argument to pressKeyCode
+* Add a possibility to set user profile index while launching applications
+* Make it possible to retrieve a battery info from the device under test (mobile:batteryInfo)
+* Add `deviceApiLevel` to returned session capabilities
+* Remove non-working `setWifiState` endpoint call
+* Fix logcat listener removal
+* Fix passing suppressKillServer option while creating ADB instance
+* Fix FTP protocol detection
+* Improve swipe unlock action
+
 CHANGES IN VERSION 1.8.0 (from 1.7.2)
 ===================================
 

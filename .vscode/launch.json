@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "."
+            ]
+        },
+        {
+            "name": "Attach Debug",
+            "type": "node",
+            "request": "attach",
+            "cwd": "${workspaceFolder}",
+            "port": 9229
+        },
+        {
+            "name": "Test All",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/_mocha",
+            "args": [
+                "--require", "babel-core/register",
+                "--timeout", "999999",
+                "--colors",
+                "${workspaceFolder}/test"
+            ]
+        },
+        {
+            "name": "Test Current File",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/node_modules/.bin/_mocha",
+            "args": [
+                "--require", "babel-core/register",
+                "--timeout", "999999",
+                "--colors",
+                "${file}"
+            ]
+        }
+    ]
+}

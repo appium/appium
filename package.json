@@ -97,7 +97,6 @@
     "gulp": "3.x",
     "handlebars": "^4.0.10",
     "mocha": "5.x",
-    "nodemon": "^1.17.4",
     "pre-commit": "1.x",
     "replace-ext": "^1.0.0",
     "sinon": "5.x",

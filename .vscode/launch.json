@@ -5,12 +5,9 @@
             "name": "Debug",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceFolder}/node_modules/.bin/nodemon",
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "args": [
-                "--exec", "babel-node",
-                "--presets", "babel-preset-env", 
                 "."
             ]
         },

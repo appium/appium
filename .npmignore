@@ -5,6 +5,7 @@ coverage/
 commands-yml/
 docs/
 sample-code/
+.vscode/
 
 _vimrc_local.vim
 *.swp

@@ -641,6 +641,27 @@ describe('Protocol', async function () {
             message.should.match(/A problem occurred/);
           });
 
+          it('should return W3C error if a proxied request returns a W3C error response', async function () {
+            const error = new Error(`Some error occurred`);
+            error.w3cStatus = 414;
+            const executeCommandStub = sinon.stub(driver, 'executeCommand').returns({
+              protocol: 'W3C',
+              error,
+            });
+            const res = await request.post(`${sessionUrl}/actions`, {
+              json: {
+                actions: [1, 2, 3],
+              }
+            }).should.eventually.be.rejected;
+            const {statusCode, error:returnedError} = res;
+            statusCode.should.equal(414);
+            const {error:w3cError, message:errMessage, stacktrace} = returnedError.value;
+            w3cError.should.equal('unknown error');
+            stacktrace.should.match(/Some error occurred/);
+            errMessage.should.equal('Some error occurred');
+            executeCommandStub.restore();
+          });
+
           it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {
             addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(200).json({

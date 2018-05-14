@@ -31,7 +31,8 @@ describe('Protocol', async function () {
       parseProtocol({protocol: 'MJSONWP', value}).should.eql({isW3C: false, isMJSONWP: true, value});
     });
     it('should throw if {protocol: "MJSONWP", error}', function () {
-      (() => parseProtocol({protocol: 'W3C', error: new Error('some error')})).should.throw(/some error/);
+      const error = new Error('some error');
+      parseProtocol({protocol: 'W3C', error}).error.should.equal(error);
     });
   });
 });

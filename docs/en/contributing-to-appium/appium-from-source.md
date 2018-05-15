@@ -177,6 +177,19 @@ Appium is running in another window with `node .`) with:
 npm run e2e-test
 ```
 
+### Debugging Node
+
+This project has multiple launch configurations for running NodeJS code from within [VSCode](https://code.visualstudio.com/)
+
+* _Debug_: Runs Appium server in debug mode so you can set breakpoints inside VSCode source files
+* _Attach Debug_: Attach to a currently running Appium server
+  * Example Usage
+    * From root, run `node --inspect-brk . --port 5555`
+    * Run `attach debug`
+    * Setup breakpoints in VSCode
+* _Test All_: Runs all mocha tests in `test/`. Can setup breakpoints in test code and source code
+* _Test Current File_: Runs the currently focused-on mocha file. Fails if it's not valid mocha test
+
 ### Committing code
 
 Each Appium package installs a pre-commit hook which will run the [linter](https://eslint.org/) and

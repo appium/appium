@@ -49,6 +49,9 @@
       | mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/writing-running-appium/server-args/#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
       | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/logcat` endpoint | <none> | <none> |
       | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
+      | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
+      | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
+      | mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |

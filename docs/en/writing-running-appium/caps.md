@@ -60,10 +60,10 @@ These Capabilities are available only on Android-based drivers (like
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`appActivity`| Activity name for the Android activity you want to launch from your package. This often needs to be preceded by a `.` (e.g., `.MainActivity` instead of `MainActivity`). The value can set automatically if you set `app` capability from AndroidManifest.|`MainActivity`, `.Settings`|
-|`appPackage`| Java package of the Android app you want to run. The value can set automatically if you set `app` capability from AndroidManifest.|`com.example.android.myApp`, `com.android.settings`|
-|`appWaitActivity`| Activity name/names, comma separated, for the Android activity you want to wait for. If `appActivity` and `appPackage` aren't set, the value will be `appActivity` by default. |`SplashActivity`, `SplashActivity,OtherActivity`, `*`, `*.SplashActivity`|
-|`appWaitPackage`| Java package of the Android app you want to wait for. If `appActivity` and `appPackage` aren't set, the value will be `appPackage` by default.|`com.example.android.myApp`, `com.android.settings`|
+|`appActivity`| Activity name for the Android activity you want to launch from your package. This often needs to be preceded by a `.` (e.g., `.MainActivity` instead of `MainActivity`). By default this capability is received from the package manifest (action: android.intent.action.MAIN , category: android.intent.category.LAUNCHER) |`MainActivity`, `.Settings`|
+|`appPackage`| Java package of the Android app you want to run. By default this capability is received from the package manifest (@package attribute value)|`com.example.android.myApp`, `com.android.settings`|
+|`appWaitActivity`| Activity name/names, comma separated, for the Android activity you want to wait for. By default the value of this capability is the same as for `appActivity`. You must set `appWaitActivity` to wait for activities if your capability has `appActivity` and `appPackage` |`SplashActivity`, `SplashActivity,OtherActivity`, `*`, `*.SplashActivity`|
+|`appWaitPackage`| Java package of the Android app you want to wait for. By default the value of this capability is the same as for `appActivity` |`com.example.android.myApp`, `com.android.settings`|
 |`appWaitDuration`| Timeout in milliseconds used to wait for the appWaitActivity to launch (default `20000`)| `30000`|
 |`deviceReadyTimeout`| Timeout in seconds while waiting for device to become ready|`5`|
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|

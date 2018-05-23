@@ -16,7 +16,7 @@ action.perform();
 ```python
 # Python
 from appium.webdriver.common.touch_action import TouchAction
-
+// ...
 actions = TouchAction(driver)
 actions.tap_and_hold(20, 20)
 actions.move_to(10, 100)
@@ -41,8 +41,7 @@ let action = new wd.TouchAction();
 action.press({x: 10, y: 10});
 action.moveTo({x: 10, y: 100});
 action.release();
-action.perform();
-await driver.performTouchAction(action);
+await action.perform();
 
 ```
 
@@ -70,7 +69,7 @@ await driver.performTouchAction(action);
 This functionality is only available from within a native context
 
 'Touch Perform' works similarly to the other singular touch interactions, except that this allows you to chain together more than one touch action as one
-command. This is useful because Appium commands are sent over the network and there's latency between commands. This latency can make certain touch 
+command. This is useful because Appium commands are sent over the network and there's latency between commands. This latency can make certain touch
 interactions impossible because some interactions need to be performed in one sequence. Vertical, for example, requires pressing down, moving to a different
 y coordinate, and then releasing. For it to work, there can't be a delay between the interactions.
 
@@ -129,4 +128,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L292)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L292)

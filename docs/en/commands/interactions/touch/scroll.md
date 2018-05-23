@@ -13,7 +13,9 @@ action.perform();
 
 ```python
 # Python
-actions = TouchActions(driver)
+from appium.webdriver.common.touch_action import TouchAction
+# ...
+actions = TouchAction(driver)
 actions.scroll_from_element(element, 10, 100)
 actions.scroll(10, 100)
 actions.perform()

@@ -1,7 +1,7 @@
 ---
 name: Touch Down
 short_description: Finger down on the screen
-   
+
 example_usage:
   java:
     |
@@ -11,7 +11,9 @@ example_usage:
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      from appium.webdriver.common.touch_action import TouchAction
+      # ...
+      actions = TouchAction(driver)
       actions.tap_and_hold(element)
       actions.move(50, 50)
       actions.perform()
@@ -24,9 +26,7 @@ example_usage:
       let action = new wd.TouchAction();
       action.press({x: 10, y: 10});
       action.moveTo({x: 50, y: 50});
-      action.perform();
-      await driver.performTouchAction(action);
-
+      await action.perform();
   javascript_wdio:
     |
       driver.touchMultiPerform([
@@ -73,7 +73,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

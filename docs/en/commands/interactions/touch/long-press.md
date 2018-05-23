@@ -13,7 +13,9 @@ action.perform();
 
 ```python
 # Python
-actions = TouchActions(driver)
+from appium.webdriver.common.touch_action import TouchAction
+# ...
+actions = TouchAction(driver)
 actions.long_press(element)
 actions.perform()
 
@@ -35,8 +37,7 @@ driver.touchPerform({
 // Using touch actions
 let action = new wd.TouchAction();
 action.longPress({el: element});
-action.perform();
-await driver.performTouchAction(action);
+await action.perform();
 
 ```
 

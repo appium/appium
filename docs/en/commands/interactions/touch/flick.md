@@ -13,7 +13,9 @@ action.perform();
 
 ```python
 # Python
-actions = TouchActions(driver)
+from appium.webdriver.common.touch_action import TouchAction
+# ...
+actions = TouchAction(driver)
 actions.flick_element(element, 1, 10, 10)
 actions.perform()
 

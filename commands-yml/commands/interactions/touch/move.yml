@@ -1,7 +1,9 @@
 ---
-name: Tap
+name: Move
 short_description: Finger move on the screen
-   
+description:
+  >
+    As of Appium 1.8.0 all move actions take coordinates that are absolute.
 example_usage:
   java:
     |
@@ -11,22 +13,19 @@ example_usage:
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      from appium.webdriver.common.touch_action import TouchAction
+      # ...
+      actions = TouchAction(driver)
       actions.tap_and_hold(element)
       actions.move(50, 50)
       actions.perform()
   javascript_wd:
     |
-      // Using tapElement method
-      await driver.tapElement(elementOne);
-
-      // Using touch actions
       let action = new wd.TouchAction();
-      action.press({x: 10, y: 10});
-      action.moveTo({x: 50, y: 50});
-      action.perform();
-      await driver.performTouchAction(action);
-
+      action.press({x: 10, y: 10})
+            .moveTo({x: 50, y: 50})
+            .release();
+      await action.perform();
   javascript_wdio:
     |
       driver.touchMultiPerform([
@@ -73,7 +72,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

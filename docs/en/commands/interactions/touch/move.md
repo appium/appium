@@ -16,7 +16,9 @@ action.perform();
 
 ```python
 # Python
-actions = TouchActions(driver)
+from appium.webdriver.common.touch_action import TouchAction
+# ...
+actions = TouchAction(driver)
 actions.tap_and_hold(element)
 actions.move(50, 50)
 actions.perform()
@@ -39,8 +41,7 @@ let action = new wd.TouchAction();
 action.press({x: 10, y: 10})
       .moveTo({x: 50, y: 50})
       .release();
-action.perform();
-await driver.performTouchAction(action);
+await action.perform();
 
 ```
 

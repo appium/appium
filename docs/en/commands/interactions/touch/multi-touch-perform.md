@@ -7,11 +7,11 @@ Perform a multi touch action sequence
 
 ```java
 // Java
-TouchAction actionOne = new TouchAction();
+TouchActions actionOne = new TouchAction();
 actionOne.press(10, 10);
 actionOne.moveTo(10, 100);
 actionOne.release();
-TouchAction actionTwo = new TouchAction();
+TouchActions actionTwo = new TouchAction();
 actionTwo.press(20, 20);
 actionTwo.moveTo(20, 200);
 actionTwo.release();
@@ -59,7 +59,7 @@ let action = new wd.MultiTouchAction();
 action.press({x: 10, y: 10});
 action.moveTo({x: 10, y: 100});
 action.release();
-await driver.performMultiTouchAction(action);
+await action.perform();
 
 ```
 
@@ -137,4 +137,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L295)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L295)

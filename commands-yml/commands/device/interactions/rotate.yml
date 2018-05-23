@@ -1,7 +1,7 @@
 ---
 name: Rotate
 short_description: Rotate the device in three dimensions
-    
+
 example_usage:
   java:
     |
@@ -46,11 +46,11 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/device/rotate
+  url: /wd/hub/session/:session_id/appium/device/rotate
   method: 'POST'
   url_parameters:
     - name: session_id
@@ -76,5 +76,5 @@ endpoint:
       description: The length of hold time for the specified gesture, in seconds.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L361

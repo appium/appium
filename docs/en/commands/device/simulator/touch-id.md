@@ -113,5 +113,5 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L424)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L497)
 * [Appium Docs](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/touch-id.md)

@@ -82,7 +82,7 @@ iOS tests with XCUITest can also use the `mobile: installApp` method. See detail
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/install_app`
+`POST /wd/hub/session/:session_id/appium/device/install_app`
 
 ### URL Parameters
 
@@ -102,4 +102,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L372)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L402)

@@ -82,7 +82,7 @@ iOS tests with XCUITest can also use the `mobile: removeApp` method. See detaile
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/remove_app`
+`POST /wd/hub/session/:session_id/appium/device/remove_app`
 
 ### URL Parameters
 
@@ -103,4 +103,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L375)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L418)

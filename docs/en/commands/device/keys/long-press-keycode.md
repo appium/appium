@@ -89,7 +89,8 @@ driver.longPressKeyCode(10);
 |name|type|description|
 |----|----|-----------|
 | keycode | `number` | Key code pressed on the device. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html). |
-| metastate | `number` | Metastate for the keypress |
+| metastate | `number` | Metastate for the keypress. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html). |
+| flags | `number` | Flags for the keypress. See [Key Event](http://developer.android.com/reference/android/view/KeyEvent.html). |
 
 ### Response
 
@@ -97,4 +98,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L331)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L331)

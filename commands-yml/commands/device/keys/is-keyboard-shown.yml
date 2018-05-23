@@ -34,7 +34,7 @@ client_support:
   csharp: false
   javascript_wd: false
   javascript_wdio: false
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -49,4 +49,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L384
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L384

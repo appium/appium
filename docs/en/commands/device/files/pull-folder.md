@@ -78,7 +78,7 @@ $folderBase64 = $driver->pullFolder($path);
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/pull_folder`
+`POST /wd/hub/session/:session_id/appium/device/pull_folder`
 
 ### URL Parameters
 
@@ -98,4 +98,4 @@ A string of Base64 encoded data, representing a zip archive of the contents of t
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L393)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L466)

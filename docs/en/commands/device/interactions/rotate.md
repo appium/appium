@@ -74,7 +74,7 @@ driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touc
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/rotate`
+`POST /wd/hub/session/:session_id/appium/device/rotate`
 
 ### URL Parameters
 
@@ -99,4 +99,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L361)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L390)

@@ -73,7 +73,7 @@ let package = await driver.getCurrentPackage();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/device/current_package`
+`GET /wd/hub/session/:session_id/appium/device/current_package`
 
 ### URL Parameters
 
@@ -91,4 +91,4 @@ Name of the current [package](https://developer.android.com/reference/java/lang/
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L369)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L398)

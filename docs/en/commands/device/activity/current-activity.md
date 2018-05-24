@@ -76,7 +76,7 @@ $activity = $driver->currentActivity();
 
 ### Endpoint
 
-`GET /wd/hub/session/:session_id/device/current_activity`
+`GET /wd/hub/session/:session_id/appium/device/current_activity`
 
 ### URL Parameters
 
@@ -94,4 +94,4 @@ Name of the current [activity](https://developer.android.com/reference/android/a
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L366)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L395)

@@ -80,7 +80,7 @@ iOS tests with XCUITest can also use the `mobile: isAppInstalled` method. See de
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/app_installed`
+`POST /wd/hub/session/:session_id/appium/device/app_installed`
 
 ### URL Parameters
 
@@ -100,4 +100,4 @@ Return true if installed, false if not (`boolean`)
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L378)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L434)

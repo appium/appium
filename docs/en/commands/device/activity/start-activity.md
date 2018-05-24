@@ -80,7 +80,7 @@ $driver->startActivity(array('appPackage' => 'com.example',
 
 ### Endpoint
 
-`POST /wd/hub/session/:session_id/device/start_activity`
+`POST /wd/hub/session/:session_id/appium/device/start_activity`
 
 ### URL Parameters
 
@@ -107,4 +107,4 @@ null
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L411)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L484)

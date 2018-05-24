@@ -94,6 +94,8 @@
     "eslint-plugin-import": "2.x",
     "eslint-plugin-mocha": "4.x",
     "eslint-plugin-promise": "3.x",
+    "fancy-log": "^1.3.2",
+    "gulp": "3.x",
     "handlebars": "^4.0.10",
     "mocha": "5.x",
     "pre-commit": "1.x",

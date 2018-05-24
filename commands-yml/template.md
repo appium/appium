@@ -161,10 +161,10 @@ null
 ## See Also
 
 {{#if specifications.w3c}}
-* [W3C Specification]({{specifications.w3c}})
+* [W3C Specification]({{spec_url specifications.w3c endpoint.url}})
 {{/if}}
 {{#if specifications.jsonwp}}
-* [JSONWP Specification]({{specifications.jsonwp}})
+* [JSONWP Specification]({{spec_url specifications.jsonwp endpoint.url}})
 {{/if}}
 {{#each links}}
 * [{{this.name}}]({{this.url}})

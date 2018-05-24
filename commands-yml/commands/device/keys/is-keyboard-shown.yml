@@ -49,4 +49,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L384
+  jsonwp: routes.js

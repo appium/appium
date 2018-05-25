@@ -6,8 +6,8 @@ applications on iOS mobile, Android mobile, and Windows desktop platforms.
 **Mobile web apps** are web apps accessed using a mobile browser (Appium
 supports Safari on iOS and Chrome or the built-in 'Browser' app on Android).
 **Hybrid apps** have a wrapper around a "webview" -- a native control that
-enables interaction with web content. Projects like [Apache Cordova](https://cordova.apache.org) 
-or [Phonegap](http://phonegap.com/) make it easy to build apps using web 
+enables interaction with web content. Projects like [Apache Cordova](https://cordova.apache.org)
+or [Phonegap](http://phonegap.com/) make it easy to build apps using web
 technologies that are then bundled into a native wrapper, creating a hybrid app.
 
 Importantly, Appium is "cross-platform": it allows you to write tests against
@@ -41,7 +41,7 @@ code or frameworks to your app. This means **you're testing the same app you're
 shipping**. The vendor-provided frameworks we use are:
 
 * iOS 9.3 and above: Apple's [XCUITest](https://developer.apple.com/reference/xctest)
-* iOS 9.3 and lower: Apple's [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+* iOS 9.3 and lower: Apple's [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * Android 4.2+: Google's [UiAutomator/UiAutomator2](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: Google's [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html). (Instrumentation support is provided by bundling a separate project, [Selendroid](http://selendroid.io))
 * Windows: Microsoft's [WinAppDriver](http://github.com/microsoft/winappdriver)
@@ -80,7 +80,7 @@ up a lot of possibilities: we can write our test code in any language that has
 a http client API, but it is easier to use one of the [Appium client
 libraries](http://appium.io/downloads). We can put the server on a different
 machine than our tests are running on. We can write test code and rely on
-a cloud service like [Sauce Labs](https://saucelabs.com/mobile) to receive and
+a cloud service like [Sauce Labs](https://saucelabs.com/products/mobile-app-testing) to receive and
 interpret the commands.
 
 **Session**<br/>

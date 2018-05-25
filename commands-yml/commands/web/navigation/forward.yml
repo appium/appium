@@ -30,7 +30,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.forward"
   javascript_wdio: "http://webdriver.io/api/protocol/forward.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L626"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:forward"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:forward"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

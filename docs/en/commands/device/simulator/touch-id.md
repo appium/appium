@@ -56,9 +56,9 @@ await driver.touchId(true); // Simulates a failed touch
 ## Description
 
 To enable this feature, the `allowTouchIdEnroll` desired capability must be set to true and the Simulator
-must be [enrolled](https://support.apple.com/en-ca/ht201371). 
+must be [enrolled](https://support.apple.com/en-ca/ht201371).
 
-When you set `allowTouchIdEnroll` to true, it will set the Simulator to be enrolled by default. 
+When you set `allowTouchIdEnroll` to true, it will set the Simulator to be enrolled by default.
 The enrollment state can be [toggled](/docs/en/commands/device/simulator/toggle-touch-id-enrollment.md)
 
 This call will only work if Appium process or its parent application (e.g. Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
@@ -81,11 +81,11 @@ This call will only work if Appium process or its parent application (e.g. Termi
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/ios/PerformsTouchID.html#performTouchID-boolean-)  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/ios/PerformsTouchID.html#performTouchID-boolean-)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L661)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/touchId.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3133)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Ios/Device#touch_id-instance_method)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#touch_id-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

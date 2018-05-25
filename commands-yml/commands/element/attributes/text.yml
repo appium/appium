@@ -38,7 +38,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html" # TODO Python documentation link
   javascript_wdio: "http://webdriver.io/api/property/getText.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1832"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#text-instance_method"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#text-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

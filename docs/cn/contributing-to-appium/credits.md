@@ -2,7 +2,7 @@
 
 ###  以下是在Appium的开发过程中予我们以启示，或是为Appium锦上添花的项目
 
-* [Apple UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+* [Apple UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * [GhostDriver](https://github.com/detro/ghostdriver)
 * [IOS Auto](https://github.com/penguinho/applecart)
 * [IOS Driver](https://github.com/ios-driver/ios-driver)

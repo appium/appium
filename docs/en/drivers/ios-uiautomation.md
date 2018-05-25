@@ -110,7 +110,7 @@ a successful automation strategy using this driver are as follows:
    there are no signing issues. There are a number of methods for installing
    apps onto devices. One is to just use Xcode itself. Another is to use the
    `ideviceinstaller` tool provided as part of the `libimobiledevice` suite.
-   A third is to use [ios-deploy](https://npmjs.org/packages/ios-deploy).
+   A third is to use [ios-deploy](https://npmjs.org/package/ios-deploy).
    Here's an example for `ideviceinstaller`:
 
     ```

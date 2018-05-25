@@ -62,7 +62,7 @@ driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touc
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#rotate-org.openqa.selenium.DeviceRotation-)  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#rotate-org.openqa.selenium.DeviceRotation-)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/rotate.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2470)  |

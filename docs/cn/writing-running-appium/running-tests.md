@@ -86,9 +86,9 @@ capabilities.setCapability(MobileCapabilityType.APP, myApp);
 ### 使用 Appium 测试你的应用 (Android)
 
 首先,确保你有一个且只有一个 Android 模拟器或设备连接。例如，如果你运行 `adb devices`,
-你应该只看到一个设备连接。这个设备就是 Appium 用来测试的。当然, 要连接上一个设备，你需要配置一个 Android AVD (更多信息参考[Windows](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-windows.md),
-[Mac](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-osx.md),
-或者 [Linux](https://github.com/appium/appium/blob/master/docs/en/appium-setup/running-on-linux.md)))。如果你的系统变量 PATH 里有 Android SDK 的工具路径,你可以简单运行如下命令：
+你应该只看到一个设备连接。这个设备就是 Appium 用来测试的。当然, 要连接上一个设备，你需要配置一个 Android AVD (更多信息参考[Windows](/docs/cn/appium-setup/running-on-windows.md),
+[Mac](/docs/cn/appium-setup/running-on-osx.md),
+或者 [Linux](/docs/cn/appium-setup/running-on-linux.md)))。如果你的系统变量 PATH 里有 Android SDK 的工具路径,你可以简单运行如下命令：
 
     emulator -avd <MyAvdName>
 
@@ -172,7 +172,7 @@ capabilities.setCapability(MobileCapabilityType.APP, myApp);
 在这组 capabilities 里，`myApp` 必须是以下任意一个：
 
 * apk 或者 zip 文件的绝对路径
-* apk 的 zip 文件的 url 链接 
+* apk 的 zip 文件的 url 链接
 * 基于 appium 安装根目录的示例应用的相对路径
 
 用你选择的 WebDriver （客户端）库，使用这些 capabilities 和本地的4723端口建立远程会话（或任何启动 Appium 时候指定的主机和端口）。现在你应该都设置好了！
@@ -242,11 +242,11 @@ capabilities.setCapability(MobileCapabilityType.APP_ACTIVITY: ".MainActivity");
 
 现在 Appium 将启动一个 Selendroid 测试会话而不是默认的测试会话。
 使用 Selendroid 的缺点之一是,它的一些 API 和Appium 有着显著的差别。
-因此,我们建议你在为旧设备或混合应用程序编写脚本时，彻读(Selendroid文档)(http://selendroid.io/native.html) 
+因此,我们建议你在为旧设备或混合应用程序编写脚本时，彻读(Selendroid文档)(http://selendroid.io/native.html)
 
-###运行你的测试程序与Appium(Windows) 
+###运行你的测试程序与Appium(Windows)
 
-只需确保 Appium 在监听，然后运行你的测试。 
+只需确保 Appium 在监听，然后运行你的测试。
 
 有关详细信息,请参阅我们的[samples](https://github.com/Microsoft/WinAppDriver/tree/master/Samples)。
 

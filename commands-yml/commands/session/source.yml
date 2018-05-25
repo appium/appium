@@ -39,7 +39,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.page_source"
   javascript_wdio: "http://webdriver.io/api/protocol/source.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1808"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:page_source"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:page_source"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

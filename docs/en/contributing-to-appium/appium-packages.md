@@ -93,7 +93,7 @@
 - provides method to bootstrap simulator/realdevice (dynamic-bootstrap)
   - javascript files which are run in the iOS UI Automation context (not node)
   - responsible to execute actual iOS UI Automation commands
-  - see [UIAutomation docs](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+  - see [UIAutomation docs](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
   - command flow is like
     - Webdriver command -> iOS driver command -> uiauto-command
 

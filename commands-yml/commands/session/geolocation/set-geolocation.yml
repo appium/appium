@@ -31,7 +31,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html"
   javascript_wdio: "http://webdriver.io/api/protocol/location.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L407"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

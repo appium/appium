@@ -8,7 +8,7 @@ Appium 支持多种平台以及各种测试方式（native，hybrid，web，真�
 
 * 版本：7.1 及以上版本
 * 设备：iPhone 模拟器，iPad 模拟器，以及 iPhone 和 iPad 的真机
-* 是否支持 Native 应用：支持。如在模拟器执行，需要 debug 版本的 .app 包，在真机上运行则需要已签名的 .ipa 包。底层的框架是由苹果的 [XCUITest](https://developer.apple.com/reference/xctest) (或 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) 支持更旧的版本) 所提供支持
+* 是否支持 Native 应用：支持。如在模拟器执行，需要 debug 版本的 .app 包，在真机上运行则需要已签名的 .ipa 包。底层的框架是由苹果的 [XCUITest](https://developer.apple.com/reference/xctest) (或 [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) 支持更旧的版本) 所提供支持
 * 是否支持移动端浏览器：支持。我们通过移动端的 Safari 进行自动化测试。对于真机，`ios-webkit-remote-debugger` 工具是必须的。可惜的是对于 Safari 的 native 部分的自动化目前还不支持。更多介绍请查看 [mobile web doc](/docs/cn/writing-running-appium/mobile-web.md)。
 * 是否支持 Hybrid 应用：支持。如使用真机，ios-webkit-remote-debugger 工具也是必须的。更多介绍请查看 [hybrid doc](/docs/cn/advanced-concepts/hybrid.md)。
 * 是否支持在一个 session 中多个应用的自动化：不支持

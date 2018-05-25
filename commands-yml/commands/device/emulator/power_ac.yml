@@ -16,8 +16,8 @@ example_usage:
       @driver.set_power_ac :on
 
 client_docs:
-  java: "http://appium.github.io/java-client/" # TODO: Link
-  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Android/Device/Emulator#set_power_ac-instance_method"
+  java: "https://appium.github.io/java-client/" # TODO: Link
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device/Emulator#set_power_ac-instance_method"
 
 # Driver support by platform
 driver_support:
@@ -39,7 +39,7 @@ client_support:
   csharp: false
   javascript_wd: false
   javascript_wdio: false
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -54,5 +54,5 @@ endpoint:
       description: set the state. on or off
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L381

@@ -127,7 +127,7 @@ samples for many languages and platforms.)
 
 #### Setting up the Appium Client
 
-For this example, we'll use [Webdriver.io](https://webdriver.io) as our Appium
+For this example, we'll use [Webdriver.io](http://webdriver.io) as our Appium
 client. Create a directory for this example, then run:
 
 ```

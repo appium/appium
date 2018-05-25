@@ -30,7 +30,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.window_handles"
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandles.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L379"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handles"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handles"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

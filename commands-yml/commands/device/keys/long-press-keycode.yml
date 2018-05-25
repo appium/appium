@@ -24,10 +24,10 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "http://appium.github.io/java-client/io/appium/java_client/PressesKeyCode.html#longPressKeyCode-int-"
+  java: "https://appium.github.io/java-client/io/appium/java_client/PressesKeyCode.html#longPressKeyCode-int-"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L431"
   javascript_wdio: "http://webdriver.io/api/mobile/longPressKeycode.html"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#long_press_keycode-instance_method"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#long_press_keycode-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

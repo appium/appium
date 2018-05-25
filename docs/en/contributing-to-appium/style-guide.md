@@ -7,8 +7,8 @@ code look like the surrounding code*.
 
 ### JavaScript
 
-With the exception of the code that runs on the devices themselves 
-([appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server) for 
+With the exception of the code that runs on the devices themselves
+([appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server) for
 Android, [WebDriverAgent](https://github.com/appium/WebDriverAgent) for iOS), Appium is written in [Node.js](https://nodejs.org/). If you are
 not familiar with JavaScript, please familiarize yourself before attempting
 to modify the code. There are plenty of good, free resources (see, for example,
@@ -24,7 +24,7 @@ rebased out of pull requests.
 ### Linting
 
 All code must pass [ESLint](https://eslint.org/). To check your code, you can simply run `npm run lint`
-from the Appium repo dir. The configuration is specified in the 
+from the Appium repo dir. The configuration is specified in the
 [eslint-config-appium](https://github.com/appium/eslint-config-appium) package.
 
 Most modern editors have integration with ESLint. See [here](https://eslint.org/docs/user-guide/integrations) for details.
@@ -59,7 +59,7 @@ will enforce most of these rules!
     let x = myFunc('lol',{foo:bar,baz:boo});
     ```
 
-*   Always end statements with semicolons (see, for example, [Kent Dodds](https://blog.kentcdodds.com/semicolons-in-javascript-a-preference-dd8fc8b80895))
+*   Always end statements with semicolons
 *   Brackets for `function`, `if`, etc... go on same line, `else` gets sandwiched
 
     ```js
@@ -71,11 +71,11 @@ will enforce most of these rules!
     ```
     not
     ```js
-    if (foo === bar) 
+    if (foo === bar)
     {
       // do something
-    } 
-    else 
+    }
+    else
     {
       // do something else
     }
@@ -176,7 +176,7 @@ will enforce most of these rules!
 
 ### Test Style:
 
-Tests are written using [mocha](https://mochajs.org/) and [chai](http://chaijs.com/). The WebDriver 
+Tests are written using [mocha](https://mochajs.org/) and [chai](http://chaijs.com/). The WebDriver
 library used is [wd](https://github.com/admc/wd).
 
 Keep on the same line if it makes sense semantically and length is not an issue:

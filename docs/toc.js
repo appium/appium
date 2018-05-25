@@ -217,6 +217,7 @@ module.exports = {
         ["iOS Pasteboard Guide", "ios-xctest-pasteboard.md"],
         ["iOS Predicate Guide", "ios-predicate.md"],
         ["iOS Touch ID Guide", "ios-touch-id.md"],
+        ["iOS Install Certificate", "ios-xctest-install-certificate.md"],
       ]],
       ["Android", ["android",
         ["UiSelector Guide", "uiautomator-uiselector.md"],

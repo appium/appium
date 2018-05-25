@@ -93,7 +93,7 @@
 - 提供bootstrap simulator/realdevice (dynamic-bootstrap)的方法
   - 在iOS UI自动化上下文（非节点）中运行的JavaScript文件
   - 负责执行实际的iOS UI Automation命令
-  - 参考 [UIAutomation docs](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+  - 参考 [UIAutomation docs](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
   - 命令流程就像
     - Webdriver 命令-> iOS driver 命令 -> uiauto-命令
 

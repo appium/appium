@@ -90,7 +90,7 @@
     python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.execute_script"
     javascript_wdio: "http://webdriver.io/api/protocol/execute.html"
     javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
-    ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
+    ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
     php: "https://github.com/appium/php-client/" # TODO PHP documentation link
     csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

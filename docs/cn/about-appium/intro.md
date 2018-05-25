@@ -19,7 +19,7 @@ Appium 旨在满足移动端自动化需求的理念，概述为以下四个原�
 那么 Appium 项目的架构如何实现这一理念呢？为了实现第一点要求，我们其实使用了系统自带的自动化框架。这样，我们不需要把 Appium 特定的或者第三方的代码编译进你的应用。这意味着你测试使用的应用与最终发布的应用并无二致。我们使用以下系统自带的自动化框架：
 
 * iOS 9.3 及以上：苹果的 [XCUITest](https://developer.apple.com/reference/xctest)
-* iOS 9.3 及以下：苹果的 [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+* iOS 9.3 及以下：苹果的 [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * Android 4.2+: 谷歌的 [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
 * Android 2.3+: 谷歌的 [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html)（通过绑定另外的项目——[ Selendroid ](http://selendroid.io)提供 Instrumentation 的支持）
 * Windows: 微软的 [WinAppDriver](http://github.com/microsoft/winappdriver)

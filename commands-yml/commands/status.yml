@@ -35,7 +35,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.utils.is_url_connectable"
   javascript_wdio: "http://webdriver.io/api/protocol/status.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L44"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

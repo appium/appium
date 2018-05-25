@@ -30,7 +30,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.refresh"
   javascript_wdio: "http://webdriver.io/api/protocol/refresh.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L503"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:refresh"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:refresh"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

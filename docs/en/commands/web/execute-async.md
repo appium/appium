@@ -89,7 +89,7 @@ Arguments may be any JSON-primitive, array, or JSON object. JSON objects that de
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  [selenium-python.readthedocs.io](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.execute_async_script)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  [webdriver.io](http://webdriver.io/api/protocol/executeAsync.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L182)  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  [www.rubydoc.info](http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_async_script)  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  [www.rubydoc.info](https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_async_script)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  [github.com](https://github.com/appium/php-client/)  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  [github.com](https://github.com/appium/appium-dotnet-driver/)  |
 

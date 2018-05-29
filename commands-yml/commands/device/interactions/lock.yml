@@ -29,7 +29,7 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://appium.github.io/java-client/io/appium/java_client/android/LocksAndroidDevice.html#lockDevice--"
+  java: "http://appium.github.io/java-client/io/appium/java_client/LocksDevice.html#lockDevice--"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L643"
   javascript_wdio: "http://webdriver.io/api/mobile/lock.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2363"

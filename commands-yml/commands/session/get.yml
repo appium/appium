@@ -27,7 +27,7 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/DefaultDriverSessions.html#get-org.openqa.selenium.remote.SessionId-"
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/ActiveSessions.html#get-org.openqa.selenium.remote.SessionId-"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.desired_capabilities"
   javascript_wdio: "http://webdriver.io/api/protocol/session.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L227"

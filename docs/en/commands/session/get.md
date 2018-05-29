@@ -66,7 +66,7 @@ let caps = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746c06a
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| All |  [seleniumhq.github.io](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/DefaultDriverSessions.html#get-org.openqa.selenium.remote.SessionId-)  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [seleniumhq.github.io](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/ActiveSessions.html#get-org.openqa.selenium.remote.SessionId-)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [selenium-python.readthedocs.io](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.desired_capabilities)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/protocol/session.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L227)  |

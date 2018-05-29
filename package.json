@@ -84,11 +84,11 @@
   "devDependencies": {
     "appium-gulp-plugins": "2.x",
     "babel-cli": "^6.26.0",
-    "babel-eslint": "7.x",
+    "babel-eslint": "^7.x",
     "babel-preset-env": "^1.7.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",
-    "eslint": "3.x",
+    "eslint": "^3.x",
     "eslint-config-appium": "2.x",
     "eslint-plugin-babel": "3.x",
     "eslint-plugin-import": "2.x",
@@ -108,5 +108,18 @@
   "optionalDependencies": {
     "fsevents": "1.x",
     "heapdump": "0.x"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "babel-eslint",
+      "babel-preset-env",
+      "eslint",
+      "eslint-plugin-babel",
+      "eslint-plugin-import",
+      "eslint-plugin-mocha",
+      "eslint-plugin-promise",
+      "gulp",
+      "babel-runtime"
+    ]
   }
 }

@@ -87,9 +87,9 @@ describe('app download and configuration', function () {
             }
             // for testing zip file content types
             if (req.url.indexOf('mime-zip') !== -1) {
-              res.setHeader('Content-Type', 'application/zip');
+              res.setHeader('content-type', 'application/zip');
             } else if (req.url.indexOf('mime-bip') !== 1) {
-              res.setHeader('Content-Type', 'application/bip');
+              res.setHeader('content-type', 'application/bip');
             }
             serve(req, res, finalhandler(req, res));
           });

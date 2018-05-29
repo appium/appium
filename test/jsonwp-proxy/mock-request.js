@@ -32,7 +32,7 @@ async function request (opts) {
   let [statusCode, body] = resFixture(opts.url, opts.method, opts.json);
   let response = {
     statusCode,
-    headers: {'Content-type': 'application/json'},
+    headers: {'content-type': 'application/json; charset=utf-8'},
     body
   };
   return response;

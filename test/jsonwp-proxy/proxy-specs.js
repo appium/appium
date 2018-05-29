@@ -166,7 +166,7 @@ describe('proxy', function () {
       let j = mockProxy();
       let [req, res] = buildReqRes('/status', 'GET');
       await j.proxyReqRes(req, res);
-      res.headers['Content-type'].should.equal('application/json');
+      res.headers['content-type'].should.equal('application/json; charset=utf-8');
       res.sentCode.should.equal(200);
       res.sentBody.should.eql({status: 0, value: {foo: 'bar'}});
     });

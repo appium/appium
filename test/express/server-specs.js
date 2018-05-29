@@ -70,7 +70,7 @@ describe('server', function () {
         'content-type': 'application/x-www-form-urlencoded'
       }
     });
-    body.should.eql('application/json');
+    body.should.eql('application/json; charset=utf-8');
   });
   it('should catch errors in the catchall', async function () {
     await request('http://localhost:8181/error')

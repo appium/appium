@@ -43,6 +43,8 @@ assertFalse(result.getPoints2().isEmpty());
 assertNotNull(result.getRect2());
 ```
 
+All the `FeaturesMatchingOptions` builder methods above contain detailed descriptions in their docstrings.
+
 ```ruby
 # Ruby
 image1 = File.read 'first/image/path.png'
@@ -56,8 +58,6 @@ assert_equal %w(points1 rect1 points2 rect2 totalCount count visualization), mat
 File.write 'match_result_visual.png', Base64.decode64(match_result_visual['visualization'])
 assert File.size? 'match_result_visual.png'
 ```
-
-All the `FeaturesMatchingOptions` builder methods above contain detailed descriptions in their docstrings.
 
 ### Visualization Example
 
@@ -81,6 +81,8 @@ assertThat(result.getVisualization().length, is(greaterThan(0)));
 assertNotNull(result.getRect());
 ```
 
+All the `OccurrenceMatchingOptions` builder methods above contain detailed descriptions in their docstrings.
+
 ```ruby
 # Ruby
 image1 = File.read 'first/image/path.png'
@@ -94,8 +96,6 @@ assert_equal %w(rect visualization), find_result_visual.keys
 File.write 'find_result_visual.png', Base64.decode64(find_result_visual['visualization'])
 assert File.size? 'find_result_visual.png'
 ```
-
-All the `OccurrenceMatchingOptions` builder methods above contain detailed descriptions in their docstrings.
 
 ### Visualization Example
 
@@ -121,6 +121,8 @@ assertThat(result.getVisualization().length, is(greaterThan(0)));
 assertThat(result.getScore(), is(greaterThan(0.0)));
 ```
 
+All the `SimilarityMatchingOptions` builder methods above contain detailed descriptions in their docstrings.
+
 ```ruby
 # Ruby
 image1 = File.read 'first/image/path.png'
@@ -134,8 +136,6 @@ assert_equal %w(score visualization), get_images_result_visual.keys
 File.write 'get_images_result_visual.png', Base64.decode64(get_images_result_visual['visualization'])
 assert File.size? 'get_images_result_visual.png'
 ```
-
-All the `SimilarityMatchingOptions` builder methods above contain detailed descriptions in their docstrings.
 
 ### Visualization Example
 

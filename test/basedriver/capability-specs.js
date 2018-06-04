@@ -322,7 +322,7 @@ describe('Desired Capabilities', function () {
     d.desiredCapConstraints = {
       foo: {
         presence: true
-      }
+      },
     };
 
     await d.createSession({
@@ -337,6 +337,23 @@ describe('Desired Capabilities', function () {
       foo: ''
     }).should.eventually.be.rejectedWith(/blank/);
 
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: {}
+    }).should.eventually.be.rejectedWith(/blank/);
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: []
+    }).should.eventually.be.rejectedWith(/blank/);
+
+    await d.createSession({
+      platformName: 'iOS',
+      deviceName: 'Dumb',
+      foo: '  '
+    }).should.eventually.be.rejectedWith(/blank/);
   });
 
   describe('w3c', async function () {

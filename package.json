@@ -41,7 +41,7 @@
     "source-map-support": "^0.5.5",
     "teen_process": "^1.11.0",
     "uuid-js": "^0.7.5",
-    "validate.js": "^0.11.0",
+    "validate.js": "^0.12.0",
     "ws": "^5.0.0"
   },
   "scripts": {
@@ -80,6 +80,20 @@
     "mock-fs": "^4.5.0",
     "pre-commit": "^1.1.3",
     "serve-static": "^1.13.1",
-    "sinon": "^4.5.0"
+    "sinon": "^5.0.10"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "babel-eslint",
+      "babel-preset-env",
+      "bluebird",
+      "eslint",
+      "eslint-plugin-babel",
+      "eslint-plugin-import",
+      "eslint-plugin-mocha",
+      "eslint-plugin-promise",
+      "gulp",
+      "babel-runtime"
+    ]
   }
 }

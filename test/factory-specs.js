@@ -9,7 +9,7 @@ describe('factory', function () {
   function getTest (config) {
     return function runTest () {
       let doctor = newDoctor(config);
-      doctor.should.exists;
+      doctor.should.exist;
       doctor.checks.should.have.length.above(0);
     };
   }

@@ -7,8 +7,8 @@ chai.should();
 
 describe('index', function () {
   it('should work', function () {
-    newDoctor.should.exists;
-    Doctor.should.exists;
-    DoctorCheck.should.exists;
+    newDoctor.should.exist;
+    Doctor.should.exist;
+    DoctorCheck.should.exist;
   });
 });

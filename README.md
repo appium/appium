@@ -4,6 +4,7 @@ Attempts to diagnose and fix common Node, iOS and Android configuration issues b
 
 [![Build Status](https://travis-ci.org/appium/appium-doctor.svg?branch=master)](https://travis-ci.org/appium/appium-doctor)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-doctor/badge.svg?branch=master&service=github)](https://coveralls.io/github/appium/appium-doctor?branch=master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium-doctor.svg)](https://greenkeeper.io/)
 
 ### Install
 
@@ -50,4 +51,3 @@ Use the `--demo` option to simulate the fix process.
 ```
 appium-doctor --demo
 ```
-

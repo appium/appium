@@ -75,7 +75,8 @@
     "lint": "gulp eslint",
     "coverage": "gulp coveralls",
     "generate-docs": "babel-node ./commands-yml/parse.js",
-    "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install"
+    "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
+    "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production"
   },
   "pre-commit": [
     "precommit-msg",

@@ -403,6 +403,33 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         });
       });
     });
+    describe('.reset', function () {
+      it('should reset as W3C if the original session was W3C', async function () {
+        const caps = {
+          alwaysMatch: {
+            deviceName: 'Fake',
+            automationName: 'Fake',
+            platformName: 'Fake',
+          },
+          firstMatch: [{}],
+        };
+        await d.createSession(undefined, undefined, caps);
+        d.protocol.should.equal('W3C');
+        await d.reset();
+        d.protocol.should.equal('W3C');
+      });
+      it('should reset as MJSONWP if the original session was MJSONWP', async function () {
+        const caps = {
+          deviceName: 'Fake',
+          automationName: 'Fake',
+          platformName: 'Fake',
+        };
+        await d.createSession(caps);
+        d.protocol.should.equal('MJSONWP');
+        await d.reset();
+        d.protocol.should.equal('MJSONWP');
+      });
+    });
   });
 
   describe('DeviceSettings', function () {

@@ -130,9 +130,7 @@ describe('proxy', function () {
         e = err;
       }
       should.exist(e);
-      e.message.should.contain('Original error: Invisible element');
-      e.value.should.eql({message: 'Invisible element'});
-      e.status.should.equal(11);
+      e.message.should.contain('Invisible element');
     });
     it('should throw when a command fails with a 200 because the status is not 0', async function () {
       let j = mockProxy({sessionId: '123'});
@@ -143,9 +141,7 @@ describe('proxy', function () {
         e = err;
       }
       should.exist(e);
-      e.message.should.contain('Original error: Invisible element');
-      e.value.should.eql({message: 'Invisible element'});
-      e.status.should.equal(11);
+      e.message.should.contain('Invisible element');
     });
     it('should throw when a command fails with a 100', async function () {
       let j = mockProxy({sessionId: '123'});
@@ -156,9 +152,7 @@ describe('proxy', function () {
         e = err;
       }
       should.exist(e);
-      e.message.should.contain('Original error: chrome not reachable');
-      e.value.should.eql({message: 'chrome not reachable'});
-      e.status.should.equal(0);
+      e.message.should.contain('chrome not reachable');
     });
   });
   describe('req/res proxy', function () {

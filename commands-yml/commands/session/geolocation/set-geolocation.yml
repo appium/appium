@@ -9,13 +9,12 @@ example_usage:
   python:
     |
       self.driver.set_location(49, 123, 10)
-  javascript_wd:
-    |
-      let location = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746c06aa');
-
   javascript_wdio:
     |
       driver.location({latitude: 121.21, longitude: 11.56, altitude: 94.23});
+  javascript_wd:
+    |
+      await driver.setGeoLocation(121.21, 11.56, 10);
   ruby:
     |
       @driver.set_location(121.21, 11.56, 94.23)

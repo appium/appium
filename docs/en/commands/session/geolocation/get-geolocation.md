@@ -25,7 +25,7 @@ let location = driver.location();
 
 
 // wd example
-let location = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746c06aa');
+let location = await driver.getGeoLocation();
 
 ```
 

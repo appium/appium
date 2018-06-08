@@ -25,7 +25,7 @@ driver.location({latitude: 121.21, longitude: 11.56, altitude: 94.23});
 
 
 // wd example
-let location = await driver.sessionCapabilities('c8db88a0-47a6-47a1-802d-164d746c06aa');
+await driver.setGeoLocation(121.21, 11.56, 10);
 
 ```
 

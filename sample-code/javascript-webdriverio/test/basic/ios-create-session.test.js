@@ -6,7 +6,7 @@ const assert = require('chai').assert;
 iosOptions.desiredCapabilities.app = app;
 
 describe('Create session', function () {
-  const client;
+  let client;
 
   beforeEach(function () {
     client = webdriverio.remote(iosOptions);

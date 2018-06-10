@@ -1,12 +1,10 @@
 const webdriverio = require('webdriverio');
-const androidOptions = require('../../helpers/caps').androidOptions;
+const androidOptions = require('../../helpers/caps').androidWebOptions;
 const app = require('../../helpers/apps').androidApiDemos;
 const assert = require('chai').assert;
 
-androidOptions.desiredCapabilities.browserName = 'Chrome';
-
 describe('Create Chrome web session', function () {
-  const client;
+  let client;
 
   before(function () {
     client = webdriverio.remote(androidOptions);
@@ -20,7 +18,7 @@ describe('Create Chrome web session', function () {
   it('should create and destroy Android browser session', async function () {
 
     // Navigate to google.com
-    return client.get('https://www.google.com')
+    return client.url('https://www.google.com')
       .title(function (res) {
         assert.equal(res.value, 'Google')
       })

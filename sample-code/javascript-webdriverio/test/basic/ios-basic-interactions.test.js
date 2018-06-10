@@ -7,7 +7,7 @@ iosOptions.desiredCapabilities.app = app;
 
 describe('Basic IOS interactions', function () {
 
-  const client;
+  let client;
 
   beforeEach(function () {
     client = webdriverio.remote(iosOptions);
@@ -28,7 +28,7 @@ describe('Basic IOS interactions', function () {
       });
   });
 
-  it.only('should click a button that opens an alert', async function () {
+  it('should click a button that opens an alert', async function () {
     return client
       .waitForExist('~show alert', 5000)
       .element('~show alert')

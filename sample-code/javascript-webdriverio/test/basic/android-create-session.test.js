@@ -6,7 +6,7 @@ const assert = require('chai').assert;
 androidOptions.desiredCapabilities.app = app;
 
 describe('Create Android session', function () {
-  const client;
+  let client;
 
   before(function () {
     client = webdriverio.remote(androidOptions);

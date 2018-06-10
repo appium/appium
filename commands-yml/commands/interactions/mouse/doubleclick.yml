@@ -39,7 +39,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.action_chains.ActionChains.double_click"
   javascript_wdio: "http://webdriver.io/api/action/doubleClick.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1686"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:double_click"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:double_click"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

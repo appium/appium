@@ -1,7 +1,7 @@
 ---
 name: Get Current Package
 short_description: Get the name of the current Android package
-    
+
 example_usage:
   java:
     |
@@ -23,10 +23,10 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "http://appium.github.io/java-client/io/appium/java_client/android/StartsActivity.html#getCurrentPackage--"
+  java: "https://appium.github.io/java-client/io/appium/java_client/android/StartsActivity.html#getCurrentPackage--"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L453"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2526"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_package-instance_method"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_package-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -50,11 +50,11 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: false
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/device/current_package
+  url: /wd/hub/session/:session_id/appium/device/current_package
   method: GET
   url_parameters:
     - name: session_id
@@ -64,5 +64,5 @@ endpoint:
       description: Name of the current [package](https://developer.android.com/reference/java/lang/Package.html)
 
 # Links to specifications. Should link to at least one specification
-specifications: 
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L369
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L369

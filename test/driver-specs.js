@@ -197,7 +197,7 @@ describe('AppiumDriver', function () {
       });
       it('should return an empty array of sessions', async function () {
         sessions = await appium.getSessions();
-        sessions.should.be.an.array;
+        sessions.should.be.an('array');
         sessions.should.be.empty;
       });
       it('should return sessions created', async function () {
@@ -205,7 +205,7 @@ describe('AppiumDriver', function () {
         let session2 = (await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'other value'}))).value;
 
         sessions = await appium.getSessions();
-        sessions.should.be.an.array;
+        sessions.should.be.an('array');
         sessions.should.have.length(2);
         sessions[0].id.should.equal(session1[0]);
         sessions[0].capabilities.should.eql(session1[1]);

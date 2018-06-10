@@ -1,6 +1,12 @@
 assets/
 submodules/
 test/
+coverage/
+commands-yml/
+docs/
+sample-code/
+.vscode/
+
 _vimrc_local.vim
 *.swp
 *.swo
@@ -12,6 +18,9 @@ _vimrc_local.vim
 *.trace
 *.sublime-
 *.prefs
+<<<<<<< HEAD
 ./.npmignore
 coverage
 sample-code/
+=======
+>>>>>>> 27df40944e2adebfa17822185c1feb6a2f41e3e7

@@ -60,10 +60,10 @@ These Capabilities are available only on Android-based drivers (like
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`appActivity`| Activity name for the Android activity you want to launch from your package. This often needs to be preceded by a `.` (e.g., `.MainActivity` instead of `MainActivity`)|`MainActivity`, `.Settings`|
-|`appPackage`| Java package of the Android app you want to run|`com.example.android.myApp`, `com.android.settings`|
-|`appWaitActivity`| Activity name/names, comma separated, for the Android activity you want to wait for|`SplashActivity`, `SplashActivity,OtherActivity`, `*`, `*.SplashActivity`|
-|`appWaitPackage`| Java package of the Android app you want to wait for|`com.example.android.myApp`, `com.android.settings`|
+|`appActivity`| Activity name for the Android activity you want to launch from your package. This often needs to be preceded by a `.` (e.g., `.MainActivity` instead of `MainActivity`). By default this capability is received from the package manifest (action: android.intent.action.MAIN , category: android.intent.category.LAUNCHER) |`MainActivity`, `.Settings`|
+|`appPackage`| Java package of the Android app you want to run. By default this capability is received from the package manifest (@package attribute value)|`com.example.android.myApp`, `com.android.settings`|
+|`appWaitActivity`| Activity name/names, comma separated, for the Android activity you want to wait for. By default the value of this capability is the same as for `appActivity`. You must set it to the very first focused application activity name in case it is different from the one which is set as `appActivity` if your capability has `appActivity` and `appPackage`. |`SplashActivity`, `SplashActivity,OtherActivity`, `*`, `*.SplashActivity`|
+|`appWaitPackage`| Java package of the Android app you want to wait for. By default the value of this capability is the same as for `appActivity` |`com.example.android.myApp`, `com.android.settings`|
 |`appWaitDuration`| Timeout in milliseconds used to wait for the appWaitActivity to launch (default `20000`)| `30000`|
 |`deviceReadyTimeout`| Timeout in seconds while waiting for device to become ready|`5`|
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
@@ -85,6 +85,8 @@ These Capabilities are available only on Android-based drivers (like
 |`keyAlias`| Alias for key |e.g., `androiddebugkey`|
 |`keyPassword`| Password for key |e.g., `foo`|
 |`chromedriverExecutable`| The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium) |`/abs/path/to/webdriver`|
+|`chromedriverExecutableDir`| The absolute path to a directory to look for Chromedriver executables in, for automatic discovery of compatible Chromedrivers |`/abs/path/to/chromedriver/directory`|
+|`chromedriverChromeMappingFile`| The absolute path to a file which maps Chromedriver versions to the minimum Chrome that it supports |`/abs/path/to/mapping.json`|
 |`autoWebviewTimeout`| Amount of time to wait for Webview context to become active, in ms. Defaults to `2000`| e.g. `4`|
 |`intentAction`| Intent action which will be used to start activity (default `android.intent.action.MAIN`)| e.g.`android.intent.action.MAIN`, `android.intent.action.VIEW`|
 |`intentCategory`| Intent category which will be used to start activity (default `android.intent.category.LAUNCHER`)| e.g. `android.intent.category.LAUNCHER`, `android.intent.category.APP_CONTACTS`
@@ -106,6 +108,7 @@ These Capabilities are available only on Android-based drivers (like
 |`isHeadless`|Set this capability to `true` to run the Emulator headless when device display is not needed to be visible. `false` is the default value. _isHeadless_ is also support for iOS, check XCUITest-specific capabilities. |e.g., `true`|
 |`uiautomator2ServerLaunchTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
 |`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
+|`otherApps`|App or list of apps (as a JSON array) to install prior to running tests|e.g., `"/path/to/app.apk"`, `https://www.example.com/url/to/app.apk`, `["/path/to/app-a.apk", "/path/to/app-b.apk"]`|
 
 ### iOS Only
 

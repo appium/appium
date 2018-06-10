@@ -22,10 +22,10 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "http://appium.github.io/java-client/io/appium/java_client/android/AndroidDriver.html#endTestCoverage-java.lang.String-java.lang.String-"
+  java: "https://appium.github.io/java-client/io/appium/java_client/android/AndroidDriver.html#endTestCoverage-java.lang.String-java.lang.String-"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L627"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2858"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Android/Device#end_coverage-instance_method"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#end_coverage-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -68,4 +68,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L442
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L442

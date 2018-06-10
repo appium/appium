@@ -7,6 +7,9 @@
       <a href='/docs/en/commands/status.md'>Status</a>
     </li>
     <li>
+      <a href='/docs/en/commands/mobile-command.md'>Execute Mobile Command</a>
+    </li>
+    <li>
       Session<ul>    <li>
       <a href='/docs/en/commands/session/create.md'>Create</a>
     </li>
@@ -21,6 +24,9 @@
     </li>
     <li>
       <a href='/docs/en/commands/session/screenshot.md'>Screenshot</a>
+    </li>
+    <li>
+      <a href='/docs/en/commands/session/source.md'>Source</a>
     </li>
     <li>
       Timeouts<ul>    <li>

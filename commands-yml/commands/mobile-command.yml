@@ -1,0 +1,143 @@
+---
+  name: Execute Mobile Command
+  short_description: Execute a native mobile command
+
+  description:
+    |
+      Execute a variety of native, mobile commands that aren't associated with a specific endpoint
+
+      Syntax is `execute("mobile: <commandName>", <JSON serializable argument>)`
+      (see [Execute Script](/docs/en/commands/web/execute.md) for more details
+      on syntax).
+
+      List of available commands:
+
+      ### IOS
+      | Command | Description | Argument | Argument Example |
+      | ------- | ----------- | -------- | ---------------- |
+      | mobile:viewportScreenshot | Like [screenshot](/docs/en/commands/session/screenshot.md) but only includes contents of viewport | <none> | <none> |
+
+      ### IOS (XCUITest Only)
+      | Command | Description | Argument | Argument Example |
+      | ------- | ----------- | -------- | ---------------- |
+      | mobile:startPerfRecord | Starts performance profiling for the device under test | <none> | |
+      | mobile:stopPerfRecord | Stops performance profiling for the device under test | <none> | |
+      | mobile:startLogsBroadcast | Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. | <none> | |
+      | mobile:stopLogsBroadcast | Stops the iOS system logs broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | |
+      | mobile:swipe | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-swipe)  | | |
+      | mobile:scroll | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-scroll)  | | |
+      | mobile:pinch | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-pinch)  | | |
+      | mobile:doubleTap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-doubleTap)  | | |
+      | mobile:touchAndHold | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-touchAndHold)  | | |
+      | mobile:twoFingerTap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-twoFingerTap)  |  | |
+      | mobile:tap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-tap)  | | |
+      | mobile:dragFromToForDuration | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-dragFromToForDuration)  | | |
+      | mobile:selectPickerWheelValue | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-selectPickerWheelValue)  | | |
+      | mobile:alert | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-alert)  | | |
+      | mobile:installApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-installapp)  | | |
+      | mobile:removeApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-removeapp)  | | |
+      | mobile:isAppInstalled | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-isappinstalled)  | | |
+      | mobile:launchApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-launchapp)  | | |
+      | mobile:terminateApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-terminateapp)  | | |
+      | mobile:activateApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-activateapp)  | | |
+      | mobile:queryAppState | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-queryappstate)  | | |
+      | mobile:setPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-setpasteboard)  | | |
+      | mobile:getPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-getpasteboard)  | | |
+      | mobile:installCertificate | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-install-certificate.md)  | | |
+      | mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)) | | |
+
+      ### Android
+      | Command | Description | Argument | Argument Example |
+      | ------- | ----------- | -------- | ---------------- |
+      | mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/docs/en/writing-running-appium/server-args.md#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
+      | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/logcat` endpoint | <none> | <none> |
+      | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
+      | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
+      | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
+      | mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
+
+      ### Android (UiAutomator2 only)
+      | Command | Description | Argument | Argument Example |
+      | ------- | ----------- | -------- | ---------------- |
+      | mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
+      | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
+      | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
+
+
+  example_usage:
+    java:
+      |
+        driver.executeScript("mobile: scroll", ImmutableMap.of("direction", "down"));;
+
+    python:
+      |
+        self.driver.execute_script("mobile: scroll", {'direction': 'down'})
+    javascript_wd:
+      |
+        await driver.execute('mobile: scroll', {direction: 'down'});
+    javascript_wdio:
+      |
+        var result = browser.execute('mobile: scroll', {direction: 'down'})
+    ruby:
+      |
+        @driver.execute_script("mobile: scroll", { "direction" => "down"})
+    php:
+      |
+        // TODO PHP sample
+    csharp:
+      |
+        // TODO C# sample
+
+  client_docs:
+    java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#executeScript-java.lang.String-java.lang.Object...-"
+    python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.execute_script"
+    javascript_wdio: "http://webdriver.io/api/protocol/execute.html"
+    javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
+    ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
+    php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+    csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+  # Driver support by platform
+  driver_support:
+    ios:
+      xcuitest: true
+      uiautomation: true
+    android:
+      uiautomator2: true
+      uiautomator: true
+    mac:
+      mac: true
+    windows:
+      windows: true
+  client_support:
+    java: true
+    python: true
+    ruby: true
+    php: true
+    csharp: true
+    javascript_wd: true
+    javascript_wdio: true
+
+
+  # Information about the HTTP endpoints
+  endpoint:
+    url: /wd/hub/session/:session_id/execute
+    method: GET
+    url_parameters:
+      - name: session_id
+        description: ID of the session to route the command to
+    json_parameters:
+      - name: script
+        type: string
+        description: The mobile command to execute
+      - name: args
+        type: array
+        description: The JSON serializable arguments
+    response:
+      - type: any
+        description: The command result
+
+  # Links to specifications. Should link to at least one specification
+  specifications:
+    w3c: https://www.w3.org/TR/webdriver/#dfn-execute-script
+    jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute

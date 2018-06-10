@@ -2,7 +2,7 @@
 
 ###  These are the projects that inspired us, or are depended upon to make Appium awesome.
 
-* [Apple UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
+* [Apple UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
 * [GhostDriver](https://github.com/detro/ghostdriver)
 * [IOS Auto](https://github.com/penguinho/applecart)
 * [IOS Driver](https://github.com/ios-driver/ios-driver)

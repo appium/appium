@@ -30,7 +30,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name"
   javascript_wdio: "http://webdriver.io/api/property/getTagName.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1336"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -71,4 +71,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications: 
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L285
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L285

@@ -1,7 +1,7 @@
 ---
 name: Scroll
 short_description: Scroll on the touch screen using finger based motion events
-   
+
 example_usage:
   java:
     |
@@ -10,14 +10,15 @@ example_usage:
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      from appium.webdriver.common.touch_action import TouchAction
+      # ...
+      actions = TouchAction(driver)
       actions.scroll_from_element(element, 10, 100)
       actions.scroll(10, 100)
       actions.perform()
   javascript_wd:
     |
       await driver.scroll(10, 100);
-
   javascript_wdio:
     |
       driver.touchScroll({
@@ -40,7 +41,7 @@ client_docs:
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.scroll"
   javascript_wdio: "http://webdriver.io/api/protocol/touchScroll.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -64,7 +65,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

@@ -21,7 +21,7 @@
 
 ### 对于 Android 老版本的一些额外配置
 
-Appium 是用 [Selendroid](https://selendroid.io) 去运行Android 2.3到4.1版本。当 Appium 检测到当前正在运行旧版本，它就会自动地切换 Selendroid 去运行（这里不太对，如果要使用 Selendroid 需要指定），但假如你是使用源码去运行，你还需要一些额外的配置。
+Appium 是用 [Selendroid](http://selendroid.io) 去运行Android 2.3到4.1版本。当 Appium 检测到当前正在运行旧版本，它就会自动地切换 Selendroid 去运行（这里不太对，如果要使用 Selendroid 需要指定），但假如你是使用源码去运行，你还需要一些额外的配置。
 
 * 确保你已经安装 [Maven 3.1.1](http://maven.apache.org/download.cgi) 或已更新到 `mvn` 的最新版本
 

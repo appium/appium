@@ -1,7 +1,7 @@
 ---
 name: Tap
 short_description: Flick on the touch screen using finger motion events
-   
+
 example_usage:
   java:
     |
@@ -10,13 +10,14 @@ example_usage:
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      from appium.webdriver.common.touch_action import TouchAction
+      # ...
+      actions = TouchAction(driver)
       actions.flick_element(element, 1, 10, 10)
       actions.perform()
   javascript_wd:
     |
       await element.flick(1, 10, 10);
-
   javascript_wdio:
     |
       driver.touchFlick('<ELEMENT_ID>', 1, 10, 10);
@@ -35,7 +36,7 @@ client_docs:
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.flick_element"
   javascript_wdio: "http://webdriver.io/api/protocol/touchFlick.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1513"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -59,7 +60,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -81,7 +82,7 @@ endpoint:
     - name: speed
       type: number
       description: The speed in pixels per seconds
-    
+
 
 # Links to specifications. Should link to at least one specification
 specifications:

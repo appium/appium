@@ -26,11 +26,11 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "http://appium.github.io/java-client/io/appium/java_client/InteractsWithFiles.html#pullFolder-java.lang.String-"
+  java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithFiles.html#pullFolder-java.lang.String-"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L503"
   javascript_wdio: "http://webdriver.io/api/mobile/pullFolder.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2688"
-  ruby: "http://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#pull_folder-instance_method"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#pull_folder-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -58,7 +58,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/device/pull_folder
+  url: /wd/hub/session/:session_id/appium/device/pull_folder
   method: POST
   url_parameters:
     - name: session_id
@@ -73,4 +73,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/mjsonwp/routes.js#L393
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L393

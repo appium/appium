@@ -14,10 +14,10 @@ Appium has libraries for:
 
 [rubygems]:       http://rubygems.org/gems/appium_lib
 [pypi]:           https://pypi.python.org/pypi/Appium-Python-Client
-[maven]:          https://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.appium%20a%3Ajava-client
+[maven]:          https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.appium%22%20AND%20a%3A%22java-client%22
 [npm]:            https://www.npmjs.org/package/wd
 [php]:            https://github.com/appium/php-client
-[nuget]:          http://www.nuget.org/packages/Appium.WebDriver/
+[nuget]:          https://www.nuget.org/packages/Appium.WebDriver/
 [cocoapods]:      https://github.com/appium/selenium-objective-c
 
 Note that some methods such as `endTestCoverage()` are

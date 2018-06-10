@@ -42,7 +42,8 @@ Chrome version that is automatable:
 
 | Version | Minimum Chrome Version | Link to Chromedriver                                                              |
 |---------|------------------------|-----------------------------------------------------------------------------------|
-| 2.36    | 63.0.3239.0            | [v2.36 (lint)](https://chromedriver.storage.googleapis.com/index.html?path=2.36/) |
+| 2.37    | 64.0.3282.0            | [v2.37 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.37/) |
+| 2.36    | 63.0.3239.0            | [v2.36 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.36/) |
 | 2.35    | 62.0.3202.0            | [v2.35 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.35/) |
 | 2.34    | 61.0.3163.0            | [v2.34 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.34/) |
 | 2.33    | 60.0.3112.0            | [v2.33 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.33/) |
@@ -72,8 +73,8 @@ Chrome version that is automatable:
 | 2.9     | 31.0.1650.59           | [v2.9 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.9/)   |
 | 2.8     | 30.0.1573.2            | [v2.8 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.8/)   |
 | 2.7     | 30.0.1573.2            | [v2.7 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.7/)   |
-| 2.6     |                        | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
-| 2.5     |                        | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
+| 2.6     | 29.0.1545.0            | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
+| 2.5     | 29.0.1545.0            | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
 | 2.4     | 29.0.1545.0            | [v2.4 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.4/)   |
 | 2.3     | 28.0.1500.0            | [v2.3 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.3/)   |
 | 2.2     | 27.0.1453.0            | [v2.2 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.2/)   |
@@ -86,6 +87,29 @@ the minimum supported version for any particular version, get the [Chromium](htt
 check out the release commit, and check the variable `kMinimumSupportedChromeVersion`
 in the file `src/chrome/test/chromedriver/chrome/version.cc`. (To find the
 release commits, you can use `git log --pretty=format:'%h | %s%d' | grep -i "Release Chromedriver version"`.)
+
+### Automatic discovery of compatible Chromedriver
+
+Beginning with Appium 1.8.0, Appium is able to pick the correct Chromedriver for the
+version of Chrome under test. While Appium only comes bundled with the Chromedriver
+most recently released at the time of the Appium version's release, more Chromedriver
+versions can be downloaded and either placed inside the Appium installation (_not
+  recommended_ since upgrading Appium will remove them) or in a custom location,
+which can be indicated to Appium with the `chromedriverExecutableDir` desired
+capability. This capability is the absolute path to the directory in which you have
+placed one or more Chromedriver executables.
+
+As well, since new versions of Chromedriver may be available that were not when
+an Appium version was released, a custom mapping of Chromedrivers to the minimum
+Chrome version they support can be given to Appium through the `chromedriverChromeMappingFile`
+desired capability. This should be the absolute path to a file with the mapping
+in it. The contents of the file need to be parsable as a JSON object, like:
+```JSON
+{
+  "2.42": "63.0.3239",
+  "2.41": "62.0.3202"
+}
+```
 
 ### Installing an network issues
 

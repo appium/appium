@@ -127,7 +127,7 @@ samples for many languages and platforms.)
 
 #### Setting up the Appium Client
 
-For this example, we'll use [Webdriver.io](https://webdriver.io) as our Appium
+For this example, we'll use [Webdriver.io](http://webdriver.io) as our Appium
 client. Create a directory for this example, then run:
 
 ```
@@ -251,7 +251,12 @@ behaving as if an invisible user were tapping on it!
 We've only scratched the surface of what you can do with Appium. Check out
 these resources to help you on your journey:
 
+<<<<<<< HEAD
 * The Appium [command reference](https://appium.io/docs/en/commands/status/) - learn about what commands are available, how to use them with specific client libraries, etc...
 * The [sample-code](https://github.com/appium/appium/sample-code) repository, where lots more code samples are available
+=======
+* The Appium [command reference](http://appium.io/docs/en/commands/status/) - learn about what commands are available, how to use them with specific client libraries, etc...
+* The [sample-code](https://github.com/appium/sample-code) repository, where lots more code samples are available
+>>>>>>> 27df40944e2adebfa17822185c1feb6a2f41e3e7
 * [discuss.appium.io](https://discuss.appium.io) - this is the Appium community forum, which is a great first place to go for help getting started, or if you think you may have run into a bug
 * The Appium [issue tracker](https://github.com/appium/appium/issues) - let the Appium maintainers know here if you think you've found a bug

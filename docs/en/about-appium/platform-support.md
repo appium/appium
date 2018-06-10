@@ -17,7 +17,7 @@ Please refer to these driver docs for setup instructions.
 * Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by
-  Apple's [XCUITest](https://developer.apple.com/reference/xctest) (or [UIAutomation](https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) for older versions)
+  Apple's [XCUITest](https://developer.apple.com/reference/xctest) (or [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) for older versions)
   framework.
 * Mobile web support: Yes, via automation of mobile Safari. For real devices,
   `ios-webkit-remote-debugger` is required, and automation of native aspects of

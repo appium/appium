@@ -1,7 +1,7 @@
 ---
 name: Touch Up
 short_description: Finger up on the screen
-   
+
 example_usage:
   java:
     |
@@ -11,7 +11,9 @@ example_usage:
       action.perform();
   python:
     |
-      actions = TouchActions(driver)
+      from appium.webdriver.common.touch_action import TouchAction
+      # ...
+      actions = TouchAction(driver)
       actions.tap_and_hold(20, 20)
       actions.release(50, 50)
       actions.perform()
@@ -24,9 +26,7 @@ example_usage:
       let action = new wd.TouchAction();
       action.press({x: 10, y: 10});
       action.release({x: 20, y: 20});
-      action.perform();
-      await driver.performTouchAction(action);
-
+      await action.perform();
   javascript_wdio:
     |
       driver.touchMultiPerform([
@@ -49,7 +49,7 @@ client_docs:
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.release"
   javascript_wdio: "http://webdriver.io/api/mobile/touchMultiPerform.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
-  ruby: "http://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -73,7 +73,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

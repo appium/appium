@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import path from 'path';
 import yaml from 'yaml-js';
 import { fs, mkdirp } from 'appium-support';
@@ -9,6 +8,8 @@ import _ from 'lodash';
 import { asyncify } from 'asyncbox';
 import validator from './validator';
 import url from 'url';
+import log from 'fancy-log';
+import { exec } from 'teen_process';
 
 
 // What range of platforms do the driver's support
@@ -74,7 +75,7 @@ Handlebars.registerHelper('versions', (object, name, driverName) => {
 Handlebars.registerHelper('hyphenate', (str) =>  str.replace('_', '-'));
 Handlebars.registerHelper('uppercase', (str) => str.toUpperCase());
 
-Handlebars.registerHelper('capitalize', (driverName) => {
+Handlebars.registerHelper('capitalize', function (driverName) {
   switch (driverName.toLowerCase()) {
     case 'xcuitest':
       return 'XCUITest';
@@ -102,41 +103,84 @@ Handlebars.registerHelper('base_url', function (fullUrl) {
   return baseUrl.hostname;
 });
 
+async function registerSpecUrlHelper () {
+  const npmRoot = (await exec('npm', ['root'])).stdout.trim();
+  const routesFile = await fs.readFile(path.resolve(npmRoot, 'appium-base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
+  const routesFileLines = routesFile.split('\n');
+
+  Handlebars.registerHelper('spec_url', function (specUrl, endpoint) {
+    // return the url if it is not a link to our routes doc
+    if (!specUrl.includes('routes.js')) {
+      return specUrl;
+    }
+    // make sure it is a full url
+    if (specUrl.startsWith('routes.js')) {
+      specUrl = `https://github.com/appium/appium-base-driver/blob/master/lib/protocol/${specUrl}`;
+    }
+
+    // strip off any line numbers
+    specUrl = specUrl.split('#L')[0];
+
+    // the endpoint here is often `session_id` and we need `sessionId`
+    endpoint = endpoint.replace('session_id', 'sessionId');
+    // and `element_id` and we need `elementId`
+    endpoint = endpoint.replace('element_id', 'elementId');
+
+    // find the line number for this endpoint
+    let index;
+    for (const i in routesFileLines) {
+      if (routesFileLines[i].includes(endpoint)) {
+        // line numbers are 1-indexed
+        index = parseInt(i, 10) + 1;
+        break;
+      }
+    }
+    if (_.isUndefined(index)) {
+      throw new Error(`Unable to find entry in 'appium-base-driver#routes' for endpoint '${endpoint}'`);
+    }
+
+    return `${specUrl}#L${index}`;
+  });
+}
+
 async function generateCommands () {
+  await registerSpecUrlHelper();
+
   const commands = path.resolve(__dirname, 'commands/**/*.yml');
-  console.log('Traversing YML files', commands);
+  log('Traversing YML files', commands);
   await fs.rimraf(path.resolve(__dirname, '..', 'docs', 'en', 'commands'));
   let fileCount = 0;
   for (let filename of await fs.glob(commands)) {
-    console.log('Rendering file:', filename, path.relative(__dirname, filename), path.extname(filename));
+    log(`Rendering file: ${filename} ${path.relative(__dirname, filename)}`);
 
-    // Translate the YML specs to JS
+    // Translate the YML specs to JSON
     const inputYML = await fs.readFile(filename, 'utf8');
-    const inputJS = yaml.load(inputYML);
-    const validationErrors = validate(inputJS, validator);
+    const inputJSON = yaml.load(inputYML);
+    inputJSON.ymlFileName = `/${path.relative(path.resolve(__dirname, '..'), filename)}`;
+    const validationErrors = validate(inputJSON, validator);
     if (validationErrors) {
       throw new Error(`Data validation error for ${filename}: ${JSON.stringify(validationErrors)}`);
     }
 
     // Pass the inputJS into our Handlebars template
     const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'template.md'), 'utf8'), {noEscape: true, strict: true});
-    const markdown = template(inputJS);
+    const markdown = template(inputJSON);
 
     // Write the markdown to its right place
     const markdownPath = replaceExt(path.relative(__dirname, filename), '.md');
     const outfile = path.resolve(__dirname, '..', 'docs', 'en', markdownPath);
-    console.log('Writing file to:', outfile);
+    log(`    Writing to: ${outfile}`);
     await mkdirp(path.dirname(outfile));
     await fs.writeFile(outfile, markdown, 'utf8');
 
     fileCount++;
   }
-  console.log(`Done writing ${fileCount} command documents`);
+  log(`Done writing ${fileCount} command documents`);
 }
 
 async function generateCommandIndex () {
   const apiIndex = path.resolve(__dirname, '..', 'docs', 'en', 'about-appium', 'api.md');
-  console.log(`Creating API index '${apiIndex}'`);
+  log(`Creating API index '${apiIndex}'`);
 
   function getTree (element, path) {
     let node = {
@@ -163,10 +207,10 @@ async function generateCommandIndex () {
     commands.push(getTree(el, '/docs/en/commands'));
   }
 
-  const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
-  const markdown = template({commands});
-  await fs.writeFile(apiIndex, markdown, 'utf8');
-  console.log(`Done writing API index`);
+  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
+  const commandMarkdown = commandTemplate({commands});
+  await fs.writeFile(apiIndex, commandMarkdown, 'utf8');
+  log(`Done writing API index`);
 }
 
 async function main () {

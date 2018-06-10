@@ -1,3 +1,83 @@
+CHANGES IN VERSION 1.8.1 (from 1.8.0)
+===================================
+
+Appium 1.8.1 introduces multiple fixes and features. Most notably, it improves the performance of XCUITest
+getPageSource.
+
+#### General
+* Fix shrinkwrap problem caused due to package-lock being set to false (#10660)
+
+#### iOS
+* Add keyboard presence verification endpoint (see http://appium.io/docs/en/commands/device/keys/is-keyboard-shown/)
+* Add `mobile:startLogsBroadcast` feature (see http://appium.io/docs/en/commands/mobile-command/)
+* Add cap called `realDeviceScreenshotter` to use idevicescreenshot for real device screenshots
+* Add application platform verification
+* Validates that `webdriverAgentUrl` capability is a valid URL
+* Add an extension to retrieve battery info from a real device
+* Fix Safari console log retrieval
+
+#### Android
+* Return the current connection state instead of undefined for setNetworkConnection
+* Add a possibility to include stderr output into adb:shell call (see https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/android/android-shell.md#supported-arguments)
+* Add flags argument to pressKeyCode so it is possible to generate IME actions if needed (UIAutomator2 only)
+* Add a cap called `userProfile` which is an integer to enforce user profile while launching applications
+* Make it possible to retrieve a battery info from the device under test (mobile:batteryInfo)
+* Add `deviceApiLevel` to returned session capabilities (UIAutomator2 only)
+* Fix passing suppressKillServer option while creating ADB instance
+* Improve performance of swipe unlock action
+* Improve restore from background behaviour
+
+CHANGES IN VERSION 1.8.0 (from 1.7.2)
+===================================
+
+Appium 1.8.0 introduces full support for the [W3C WebDriver specification](https://www.w3.org/TR/webdriver/)
+([digested version of the spec](https://github.com/jlipps/simple-wd-spec)).
+
+#### General
+* Minimum [NodeJS](https://nodejs.org/en/) version moved to 6
+* Add methods for
+  * getting and setting the clipboard contents
+  * get full screen screenshots
+  * Application management
+* More efficient app downloading by caching URLs
+* All `moveTo` operations in touch actions now take coordinates as absolute
+* Support for registering selenium grid through HTTPS by setting the configuration
+  key `"hubProtocol"` to `"https"`
+* Add `otherApps` desired capability, to specify array of ancillary apps to install
+  on session creation
+
+#### iOS
+* Support for iOS 11.3/Xcode 9.3
+* Fix handling of process arguments
+* Add capabilities
+  * `shutdownOtherSimulators` - shutdown other running simulators at session start up
+* Add ability to record screen
+* Add support for complex gestures
+* Fix handling of custom SSL certificate on simulators
+* Better handling of `xcodebuild` processes
+* Maintain keychains while upgrading apps
+* Better handle simulators in unexpected states
+* Add performance measuring (see [documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-performance.md))
+
+#### Android
+* Support for Android P (API Level 28)
+  * Known issue in screenshot: https://issuetracker.google.com/issues/76114030
+* Fix handling of webview contexts when resetting apps
+* Fix handling of screen recording
+* Make sure intent is broadcast when file is uploaded
+* Add possibility to broadcast device logs through WebSocket
+* Chromedriver
+  * Bundle version 2.37
+  * Automatically choose compatible Chromedriver for Chrome version
+    * `chromedriverExecutableDir` capability to specify where Chromedrivers are located
+    * `chromedriverChromeMappingFile` capability to specify what Chromedriver version corresponds to what Chrome version
+* Fix Handling of idle state waiting
+* Speed up screenshot logic in UiAutomator2
+* Allow disabling of notification watching through settings
+* Fix parsing and granting of permissions for app under test
+* Support deep linking and Android Instant Apps
+
+
 CHANGES IN VERSION 1.8.0-beta (from 1.7.2)
 ===================================
 
@@ -244,6 +324,8 @@ the automation process configurable.
 * Fix licensing in all dependencies.
 
 #### Android
+* Added handlers for basic system alerts, so now it is possible to accept/decline/get text of the most of 
+them using the standard Selenium's switchTo().alert() interface (UIA2 only)
 * Fix backgrounding of app.
 * Add `androidInstallPath` capability to specify where on the device apps are installed.
 * Speed up taking screenshots on Android 5.0 and higher devices.

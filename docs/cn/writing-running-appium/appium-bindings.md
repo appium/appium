@@ -713,7 +713,7 @@ NSError *err;
 
 ### 当前 Activity
 
-获取当前的 Acticity。仅支持 Android。
+获取当前的 Activity。仅支持 Android。
 
 ```ruby
 # ruby

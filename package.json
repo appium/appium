@@ -61,7 +61,7 @@
     "semver": "^5.5.0",
     "source-map-support": "0.x",
     "teen_process": "1.x",
-    "winston": "^3.0.0"
+    "winston": "2.x"
   },
   "scripts": {
     "prepublish": "gulp prepublish",
@@ -120,7 +120,8 @@
       "eslint-plugin-mocha",
       "eslint-plugin-promise",
       "gulp",
-      "babel-runtime"
+      "babel-runtime",
+      "winston"
     ]
   }
 }

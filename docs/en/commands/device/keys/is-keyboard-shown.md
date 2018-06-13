@@ -19,7 +19,9 @@ boolean isKeyboardShown = driver.isKeyboardShown();
 // Not supported
 
 
-// Not supported
+// wd example
+await driver.isKeyboardShown();
+
 ```
 
 ```ruby
@@ -58,7 +60,7 @@ boolean isKeyboardShown = driver.isKeyboardShown();
 |[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/android/HasDeviceDetails.html#isKeyboardShown--)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
-|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None |  |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2638)  |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#is_keyboard_shown-instance_method)  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  |

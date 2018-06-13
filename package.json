@@ -120,7 +120,8 @@
       "eslint-plugin-mocha",
       "eslint-plugin-promise",
       "gulp",
-      "babel-runtime"
+      "babel-runtime",
+      "winston"
     ]
   }
 }

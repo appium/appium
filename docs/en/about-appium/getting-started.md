@@ -45,16 +45,16 @@ the Android SDK configured on your system.
 At some point, make sure you review the driver documentation for the platform
 you want to automate, so your system is set up correctly:
 
-* The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md) (for iOS apps)
-* The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md) (for Android apps)
-* The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
-* The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
-* (BETA) The [Espresso Driver](/docs/en/drivers/android-espresso.md) (for Android apps)
+- The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md) (for iOS apps)
+- The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md) (for Android apps)
+- The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
+- The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
+- (BETA) The [Espresso Driver](/docs/en/drivers/android-espresso.md) (for Android apps)
 
 ### Verifying the Installation
 
 To verify that all of Appium's dependencies are met you can use
-`appium-doctor`.  Install it with `npm install -g appium-doctor`, then run the
+`appium-doctor`. Install it with `npm install -g appium-doctor`, then run the
 `appium-doctor` command, supplying the `--ios` or `--android` flags to verify
 that all of the dependencies are set up correctly.
 
@@ -118,10 +118,10 @@ samples for many languages and platforms.)
 
 #### Prerequisites
 
-* We'll assume you have an Android 8.0 emulator configured and running (the
+- We'll assume you have an Android 8.0 emulator configured and running (the
   example will work on lower versions, just fix the version numbers
   accordingly)
-* We'll assume you have [this test
+- We'll assume you have [this test
   APK](https://github.com/appium/appium/raw/master/sample-code/apps/ApiDemos-debug.apk)
   downloaded and available on your local filesystem
 
@@ -141,7 +141,7 @@ client object:
 
 ```js
 // javascript
-const wdio = require('webdriverio');
+const wdio = require("webdriverio");
 ```
 
 The next thing we need to do is to start an Appium session. We do this by
@@ -151,12 +151,12 @@ values that get sent to the Appium server during session initialization, that
 tell Appium what kind of thing we want to automate. The minimum set of required
 capabilities for any Appium driver should include:
 
-* `platformName`: the name of the platform to automate
-* `platformVersion`: the version of the platform to automate
-* `deviceName`: the kind of device to automate
-* `app`: the path to the app you want to automate (but use the `browserName`
+- `platformName`: the name of the platform to automate
+- `platformVersion`: the version of the platform to automate
+- `deviceName`: the kind of device to automate
+- `app`: the path to the app you want to automate (but use the `browserName`
   capability instead in the case of automating a web browser)
-* `automationName`: the name of the driver you wish to use
+- `automationName`: the name of the driver you wish to use
 
 For more information on Desired Capabilities and for a list of all the
 Capabilities you can use in Appium, see our [Capabilities
@@ -191,7 +191,6 @@ session, perform some test commands, and end the session. In our case, we will
 simply tap into a few menus and then back out the way we came before ending the
 session:
 
-
 ```js
 // javascript
 client
@@ -217,7 +216,7 @@ Putting it all together, the file should look like:
 ```js
 // javascript
 
-const wdio = require('webdriverio');
+const wdio = require("webdriverio");
 
 const opts = {
   port: 4723,
@@ -251,7 +250,8 @@ behaving as if an invisible user were tapping on it!
 We've only scratched the surface of what you can do with Appium. Check out
 these resources to help you on your journey:
 
-* The Appium [command reference](https://appium.io/docs/en/commands/status/) - learn about what commands are available, how to use them with specific client libraries, etc...
-* The [sample-code](https://github.com/appium/appium/sample-code) repository, where lots more code samples are available
-* [discuss.appium.io](https://discuss.appium.io) - this is the Appium community forum, which is a great first place to go for help getting started, or if you think you may have run into a bug
-* The Appium [issue tracker](https://github.com/appium/appium/issues) - let the Appium maintainers know here if you think you've found a bug
+- The Appium [command reference](https://appium.io/docs/en/commands/status/) - learn about what commands are available, how to use them with specific client libraries, etc...
+- The [sample-code](https://github.com/appium/appium/sample-code) repository, where lots more code samples are available
+
+- [discuss.appium.io](https://discuss.appium.io) - this is the Appium community forum, which is a great first place to go for help getting started, or if you think you may have run into a bug
+- The Appium [issue tracker](https://github.com/appium/appium/issues) - let the Appium maintainers know here if you think you've found a bug

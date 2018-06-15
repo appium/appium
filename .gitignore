@@ -3,14 +3,15 @@
 .DS_Store
 node_modules
 package-lock.json
-sample-code
 *.trace
 xcuserdata
 *.sublime-*
 test/functional/_joined
 *.iml
+!sample-code/java/*.iml
 *.autosave
 .idea/
+!sample-code/java/.idea/
 *.log
 *.t
 artifacts
@@ -34,3 +35,7 @@ old
 .tern-project
 coverage
 docs/mkdocs.yml
+sample-code/javascript-wd/node_modules
+sample-code/php/vendor
+sample-code/php/composer.lock
+sample-code/java/out/

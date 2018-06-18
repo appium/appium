@@ -76,7 +76,10 @@
     "coverage": "gulp coveralls",
     "generate-docs": "babel-node ./commands-yml/parse.js",
     "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
-    "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production"
+    "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production",
+    "zip": "zip -r appium.zip .",
+    "bintray:upload": "echo \"Stub: upload to bintray\"",
+    "bintray:publish": "echo \"Stub: publish to bintray\""
   },
   "pre-commit": [
     "precommit-msg",

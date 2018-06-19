@@ -19,4 +19,4 @@ jobs:
       node_js: 8
       # if: branch = master # TODO: Uncomment this
       os: osx # Need to have an OSX build to build XCUITestDriver
-      script: npm install && npm run zip-and-upload
+      script: npm --production install && npm run zip-and-upload

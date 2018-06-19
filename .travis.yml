@@ -12,11 +12,32 @@ jobs:
   include:
     - name: test
       node_js:
-        - "8"
+        - "9"
         - "7"
       script: npm run generate-docs && npm run test && npm run e2e-test
     - name: bundle
-      node_js: 8
+      env:
+        - NODE_ENV=production
+      node_js: 9
+      branches:
+        only:
+	        - master
       # if: branch = master # TODO: Uncomment this
-      os: osx # Need to have an OSX build to build XCUITestDriver
-      script: npm --production install && npm run zip-and-upload
+      os: osx # Need to use Mac OSX build to build XCUITestDriver
+      osx_image: xcode9.4
+      script:
+        # Install prod dependencies
+        - npm install
+
+        # Install only the dev dependencies that we need
+        - npm install --only=dev gulp
+        - npm install --only=dev appium-gulp-plugins
+
+        # Build the assets
+	- npm run build
+
+        # Remove the dev depenedencies
+        - npm prune 
+
+        # Zip up and upload this to bintray
+        - npm run zip-and-upload

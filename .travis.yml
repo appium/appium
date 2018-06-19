@@ -1,8 +1,5 @@
 language: node_js
 sudo: false
-node_js:
-  - "7"
-  - "6"
 env:
   - CXX=g++-4.8
 addons:
@@ -11,5 +8,15 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
-script:
-  - npm run generate-docs && npm run test && npm run e2e-test
+jobs:
+  include:
+    - name: test
+      node_js:
+        - "8"
+        - "7"
+      script: npm run generate-docs && npm run test && npm run e2e-test
+    - name: bundle
+      node_js: 8
+      # if: branch = master # TODO: Uncomment this
+      os: osx # Need to have an OSX build to build XCUITestDriver
+      script: npm install && npm run zip-and-upload

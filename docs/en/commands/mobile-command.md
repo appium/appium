@@ -53,6 +53,8 @@ await driver.execute('mobile: scroll', {direction: 'down'});
 Execute a variety of native, mobile commands that aren't associated with a specific endpoint
 
 Syntax is `execute("mobile: <commandName>", <JSON serializable argument>)`
+(see [Execute Script](/docs/en/commands/web/execute.md) for more details
+on syntax).
 
 List of available commands:
 
@@ -88,6 +90,7 @@ List of available commands:
 | mobile:setPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-setpasteboard)  | | |
 | mobile:getPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-getpasteboard)  | | |
 | mobile:installCertificate | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-install-certificate.md)  | | |
+| mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)) | | |
 
 ### Android
 | Command | Description | Argument | Argument Example |

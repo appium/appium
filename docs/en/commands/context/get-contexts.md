@@ -51,7 +51,7 @@ $contexts = $driver->contexts();
 ## Description
 
 Retrieve all the contexts available to be automated. This will include, at least, the native context. There can also be zero or more web view contexts. For information on the format of the context names, see the [get context documentation](/docs/en/commands/context/get-context.md).
-
+On iOS, using the XCUITest driver, one can use the `mobile: getContexts` [mobile command](/docs/en/commands/mobile-command.md) as an alternative to the standard method in order to get the title and url associated with each context as additional metadata.
 For information on contexts, see Appium's [hybrid automation docs](/docs/en/writing-running-appium/web/hybrid.md).
 
 

@@ -62,6 +62,8 @@ The script argument defines the script to execute in the form of a function body
 
 Arguments may be any JSON-primitive, array, or JSON object. JSON objects that define a WebElement reference will be converted to the corresponding DOM element. Likewise, any WebElements in the script result will be returned to the client as WebElement JSON objects.
 
+For `execute` in the native context, see [Mobile Commands](/docs/en/commands/mobile-command.md).
+
 
 ## Support
 

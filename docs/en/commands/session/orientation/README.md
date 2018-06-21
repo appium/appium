@@ -1,0 +1,11 @@
+## Appium API Documentation
+
+  ### /docs/en/commands/session/orientation
+
+<div class="api-index">
+
+<ul>
+    <li><a href='/docs/en/commands/session/orientation/get-orientation.md'>Get Orientation</a></li>
+    <li><a href='/docs/en/commands/session/orientation/set-orientation.md'>Set Orientation</a></li>
+</ul>
+</div>

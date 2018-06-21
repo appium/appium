@@ -1,0 +1,14 @@
+## Appium API Documentation
+
+  ### /docs/en/commands/device/interactions
+
+<div class="api-index">
+
+<ul>
+    <li><a href='/docs/en/commands/device/interactions/shake.md'>Shake</a></li>
+    <li><a href='/docs/en/commands/device/interactions/lock.md'>Lock</a></li>
+    <li><a href='/docs/en/commands/device/interactions/unlock.md'>Unlock</a></li>
+    <li><a href='/docs/en/commands/device/interactions/is-locked.md'>Is Locked</a></li>
+    <li><a href='/docs/en/commands/device/interactions/rotate.md'>Rotate</a></li>
+</ul>
+</div>

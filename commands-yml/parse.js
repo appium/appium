@@ -1,6 +1,6 @@
 import path from 'path';
 import yaml from 'yaml-js';
-import { fs, mkdirp } from 'appium-support';
+import { fs, mkdirp, util } from 'appium-support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import replaceExt from 'replace-ext';
@@ -179,9 +179,6 @@ async function generateCommands () {
 }
 
 async function generateCommandIndex () {
-  const apiIndex = path.resolve(__dirname, '..', 'docs', 'en', 'about-appium', 'api.md');
-  log(`Creating API index '${apiIndex}'`);
-
   function getTree (element, path) {
     let node = {
       name: element[0],
@@ -189,6 +186,7 @@ async function generateCommandIndex () {
     if (!_.isArray(element[1])) {
       node.path = `${path}/${element[1]}`;
     } else {
+      node.path = `${path}/${element[1][0]}`;
       const name = element[1].shift();
       node.commands = [];
       for (let subElement of element[1]) {
@@ -202,15 +200,50 @@ async function generateCommandIndex () {
   //   {commands: [{name: '', path: ''}, {name: '', commands: [...]}]}
   const toc = require(path.resolve(__dirname, '..', 'docs', 'toc.js'));
   const commandToc = _.find(toc.en, (value) => value.indexOf('Commands') === 0);
-  let commands = [];
+  // const commands = commandToc[1].slice(1).map((el) => getTree(el, '/docs/en/commands'));
+  const commands = [];
   for (let el of commandToc[1].slice(1)) {
     commands.push(getTree(el, '/docs/en/commands'));
   }
 
   const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
-  const commandMarkdown = commandTemplate({commands});
-  await fs.writeFile(apiIndex, commandMarkdown, 'utf8');
-  log(`Done writing API index`);
+
+  async function writeIndex (index, commands, indexPath) {
+    log(`Creating API index '${index}'`);
+    const commandMarkdown = commandTemplate({
+      commands,
+      path: indexPath,
+    });
+    await fs.writeFile(index, commandMarkdown, 'utf8');
+  }
+
+  const apiIndex = path.resolve(__dirname, '..', 'docs', 'en', 'about-appium', 'api.md');
+  await writeIndex(apiIndex, commands);
+  log(`Done writing main API index`);
+
+  async function writeIndividualIndexes (command) {
+    if (!util.hasValue(command.commands)) {
+      // this is a leaf, so end
+      return;
+    }
+
+    // write this node
+    const relPath = command.path.startsWith(path.sep) ? command.path.substring(1) : command.path;
+    const index = path.resolve(__dirname, '..', relPath, 'README.md');
+    await writeIndex(index, command.commands, command.path);
+
+    // go through all the sub-commands
+    for (const el of command.commands) {
+      await writeIndividualIndexes(el);
+    }
+  }
+
+  // go through the full tree and generate readme files
+  const index = path.resolve(__dirname, '..', 'docs', 'en', 'commands', 'README.md');
+  await writeIndex(index, commands);
+  for (const el of commands) {
+    await writeIndividualIndexes(el);
+  }
 }
 
 async function main () {

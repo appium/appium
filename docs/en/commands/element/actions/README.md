@@ -1,0 +1,12 @@
+## Appium API Documentation
+
+  ### /docs/en/commands/element/actions
+
+<div class="api-index">
+
+<ul>
+    <li><a href='/docs/en/commands/element/actions/click.md'>Click</a></li>
+    <li><a href='/docs/en/commands/element/actions/send-keys.md'>Send Keys</a></li>
+    <li><a href='/docs/en/commands/element/actions/clear.md'>Clear</a></li>
+</ul>
+</div>

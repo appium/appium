@@ -1,11 +1,13 @@
 ## Appium API Documentation
 
+{{#if path}}
+  ### {{path}}
+{{/if}}
+
 <div class="api-index">
 {{#*inline "commands"}}
   {{#each commands}}
-    <li>
-      {{#if path}}<a href='{{path}}'>{{name}}</a>{{else}}{{name}}<ul>{{>commands}}</ul>{{/if}}
-    </li>
+    <li>{{#if commands}}<a href='{{path}}'>{{name}}</a><ul>{{>commands}}</ul>{{else}}<a href='{{path}}'>{{name}}</a>{{/if}}</li>
   {{/each}}
 {{/inline}}
 

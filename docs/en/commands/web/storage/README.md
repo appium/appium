@@ -1,0 +1,13 @@
+## Appium API Documentation
+
+  ### /docs/en/commands/web/storage
+
+<div class="api-index">
+
+<ul>
+    <li><a href='/docs/en/commands/web/storage/get-all-cookies.md'>Get All Cookies</a></li>
+    <li><a href='/docs/en/commands/web/storage/set-cookie.md'>Set Cookie</a></li>
+    <li><a href='/docs/en/commands/web/storage/delete-cookie.md'>Delete Cookie</a></li>
+    <li><a href='/docs/en/commands/web/storage/delete-all-cookies.md'>Delete All Cookies</a></li>
+</ul>
+</div>

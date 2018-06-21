@@ -4,52 +4,44 @@
             "appium"
         ],
         "appium-contrib": [
-            "android-apidemos",
             "appium-adb",
             "appium-android-bootstrap",
             "appium-android-driver",
             "appium-android-ime",
-            "appium-atoms",
             "appium-base-driver",
             "appium-chromedriver",
-            "appium-cookies",
             "appium-doctor",
-            "appium-express",
             "appium-fake-driver",
-            "appium-jsonwp-proxy",
-            "appium-logger",
             "appium-instruments",
             "appium-ios-driver",
-            "appium-ios-log",
             "appium-ios-simulator",
+            "aappium-mac-driver",
             "appium-remote-debugger",
             "appium-safari-driver",
             "appium-selendroid-driver",
-            "appium-selendroid-installer",
             "appium-support",
             "appium-uiauto",
             "appium-uiautomator",
+            "appium-uiautomator2-driver",
+            "appium-uiautomator2-server",
             "appium-unlock",
-            "appium-webdriveragent-driver",
             "appium-xcode",
             "appium-xcuitest-driver",
             "authorize-ios",
+            "eslint-config-appium",
             "io.appium.settings",
-            "jsonwp-status",
-            "mobile-json-wire-protocol",
+            "node-idevice",
             "node-simctl"
         ],
         "appium-tools": [
             "appium-ci",
-            "appium-ci-standalone-tools",
             "appium-gulp-plugins",
-            "appium-transpile-runtime",
-            "appium-jenkins",
+            "appium-test-support",
             "teen_process",
-            "packweb",
-            "turtledeps"
+            "packweb"
         ],
         "appium-apps": [
+            "android-apidemos",
             "gps-demo-app",
             "io.appium.gappium.sampleapp",
             "ios-test-app",
@@ -59,8 +51,7 @@
             "sample-apps"
         ],
         "extra-jlipps": [
-            "asyncbox",
-            "mochawait"
+            "asyncbox"
         ],
         "extra-wd": [
             "wd"
@@ -75,7 +66,6 @@
         "appium-contrib": [
             "imurchie",
             "jlipps",
-            "bootstraponline",
             "dangraham"
         ],
         "appium-tools": [
@@ -87,7 +77,6 @@
             "imurchie",
             "jlipps",
             "dangraham",
-            "bootstraponline"
         ],
         "extra-jlipps": [
             "jlipps"

@@ -65,6 +65,7 @@
   },
   "scripts": {
     "prepublish": "gulp prepublish",
+    "publish": "gulp prepublish",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
     "watch": "gulp watch",
@@ -76,14 +77,17 @@
     "coverage": "gulp coveralls",
     "generate-docs": "babel-node ./commands-yml/parse.js",
     "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
-    "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production"
+    "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production",
+    "zip": "zip -qr appium.zip .",
+    "upload": "node ./build/test/scripts/bintray-upload.js",
+    "zip-and-upload": "npm run zip && npm run upload"
   },
   "pre-commit": [
     "precommit-msg",
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "2.x",
+    "appium-gulp-plugins": "^2.4.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.x",
     "babel-preset-env": "^1.7.0",
@@ -96,7 +100,7 @@
     "eslint-plugin-mocha": "4.x",
     "eslint-plugin-promise": "3.x",
     "fancy-log": "^1.3.2",
-    "gulp": "3.x",
+    "gulp": "^3.9.1",
     "handlebars": "^4.0.10",
     "mocha": "5.x",
     "pre-commit": "1.x",

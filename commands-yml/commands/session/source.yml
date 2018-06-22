@@ -17,7 +17,7 @@ example_usage:
       String pageSource = driver.getPageSource();
   python:
     |
-      source = self.driver.page_source()
+      source = self.driver.page_source
   javascript_wd:
     |
       let pageSource = await driver.source();

@@ -1,4 +1,4 @@
-## Appium
+   ## Appium
 
 [![NPM version](https://badge.fury.io/js/appium.svg)](https://npmjs.org/package/appium)
 [![Dependency Status](https://david-dm.org/appium/appium.svg)](https://david-dm.org/appium/appium)

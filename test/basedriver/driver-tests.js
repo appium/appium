@@ -408,6 +408,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       it('should reset as W3C if the original session was W3C', async function () {
         const caps = {
           alwaysMatch: Object.assign({}, defaultCaps, {
+            app: 'Fake',
             deviceName: 'Fake',
             automationName: 'Fake',
             platformName: 'Fake',
@@ -421,6 +422,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       });
       it('should reset as MJSONWP if the original session was MJSONWP', async function () {
         const caps = Object.assign({}, defaultCaps, {
+          app: 'Fake',
           deviceName: 'Fake',
           automationName: 'Fake',
           platformName: 'Fake',

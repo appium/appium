@@ -8,17 +8,17 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+node_js:
+  - "10"
+  - "8"
+  - "6"
 jobs:
   include:
     - name: test
-      node_js:
-        - "9"
-        - "7"
       script: npm run generate-docs && npm run test && npm run e2e-test
     - name: bundle
       env:
         - NODE_ENV=production
-      node_js: 9
       branches:
         only:
           - master

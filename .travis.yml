@@ -19,9 +19,7 @@ jobs:
       env:
         - NODE_ENV=production
       node_js: 9
-      branches:
-        only:
-          - master
+      if: branch = master
       os: osx # Need to use Mac OSX build to build XCUITestDriver
       osx_image: xcode9.4
       script:

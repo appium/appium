@@ -160,7 +160,7 @@ describe('FakeDriver - via HTTP', function () {
       await request.delete({ url: `${baseUrl}/${value.sessionId}` });
     });
 
-    it('should accept a combo of W3C and JSONWP but use JSONWP if desiredCapabilities contains extraneous keys', async function () {
+    it('should accept a combo of W3C and JSONWP and if JSONWP has extraneous keys, they should be merged into W3C capabilities', async function () {
       const combinedCaps = {
         "desiredCapabilities": {
           ...caps,
@@ -176,17 +176,18 @@ describe('FakeDriver - via HTTP', function () {
       };
 
       const {sessionId, status, value} = await request.post({url: baseUrl, json: combinedCaps});
-      status.should.exist;
-      sessionId.should.exist;
-      should.not.exist(value.sessionId);
-      value.should.deep.equal({
+      should.not.exist(sessionId);
+      should.not.exist(status);
+      value.sessionId.should.exist;
+      value.capabilities.should.deep.equal({
         ...caps,
         automationName: 'Fake',
         anotherParam: 'Hello',
+        w3cParam: 'w3cParam',
       });
 
       // End session
-      await request.delete({ url: `${baseUrl}/${sessionId}` });
+      await request.delete({ url: `${baseUrl}/${value.sessionId}` });
     });
 
     it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {

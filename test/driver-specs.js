@@ -275,11 +275,11 @@ describe('AppiumDriver', function () {
     describe('getDriverForCaps', function () {
       it('should not blow up if user does not provide platformName', async function () {
         let appium = new AppiumDriver({});
-        await appium.getDriverForCaps({}).should.eventually.be.rejectedWith(/platformName/);
+        (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
       });
       it('should get XCUITestDriver driver for automationName of XCUITest', async function () {
         let appium = new AppiumDriver({});
-        let driver = await appium.getDriverForCaps({
+        let driver = appium.getDriverForCaps({
           platformName: 'iOS',
           automationName: 'XCUITest'
         });
@@ -292,28 +292,28 @@ describe('AppiumDriver', function () {
           platformName: 'iOS',
           platformVersion: '8.0',
         };
-        let driver = await appium.getDriverForCaps(caps);
+        let driver = appium.getDriverForCaps(caps);
         driver.should.be.an.instanceof(Function);
         driver.should.equal(IosDriver);
 
         caps.platformVersion = '8.1';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
 
         caps.platformVersion = '9.4';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
 
         caps.platformVersion = '';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
 
         caps.platformVersion = 'foo';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
 
         delete caps.platformVersion;
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
       });
       it('should get xcuitestdriver for ios >= 10', async function () {
@@ -322,20 +322,20 @@ describe('AppiumDriver', function () {
           platformName: 'iOS',
           platformVersion: '10',
         };
-        let driver = await appium.getDriverForCaps(caps);
+        let driver = appium.getDriverForCaps(caps);
         driver.should.be.an.instanceof(Function);
         driver.should.equal(XCUITestDriver);
 
         caps.platformVersion = '10.0';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
 
         caps.platformVersion = '10.1';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
 
         caps.platformVersion = '12.14';
-        driver = await appium.getDriverForCaps(caps);
+        driver = appium.getDriverForCaps(caps);
         driver.should.equal(XCUITestDriver);
       });
     });

@@ -42,6 +42,7 @@
     "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",
+    "appium-tizen-driver": "^1.0.0-beta",
     "appium-uiautomator2-driver": "1.x",
     "appium-windows-driver": "1.x",
     "appium-xcuitest-driver": "2.x",

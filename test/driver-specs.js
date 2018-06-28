@@ -263,7 +263,7 @@ describe('AppiumDriver', function () {
         _.keys(appium.sessions).should.contain(sessionId);
       });
     });
-    describe('getDriverForCaps', async function () {
+    describe('getDriverForCaps', function () {
       it('should not blow up if user does not provide platformName', async function () {
         let appium = new AppiumDriver({});
         await appium.getDriverForCaps({}).should.eventually.be.rejectedWith(/platformName/);

@@ -407,12 +407,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     describe('.reset', function () {
       it('should reset as W3C if the original session was W3C', async function () {
         const caps = {
-          alwaysMatch: Object.assign({}, defaultCaps, {
+          alwaysMatch: Object.assign({}, {
             app: 'Fake',
             deviceName: 'Fake',
             automationName: 'Fake',
             platformName: 'Fake',
-          }),
+          }, defaultCaps),
           firstMatch: [{}],
         };
         await d.createSession(undefined, undefined, caps);
@@ -421,12 +421,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         d.protocol.should.equal('W3C');
       });
       it('should reset as MJSONWP if the original session was MJSONWP', async function () {
-        const caps = Object.assign({}, defaultCaps, {
+        const caps = Object.assign({}, {
           app: 'Fake',
           deviceName: 'Fake',
           automationName: 'Fake',
           platformName: 'Fake',
-        });
+        }, defaultCaps);
         await d.createSession(caps);
         d.protocol.should.equal('MJSONWP');
         await d.reset();

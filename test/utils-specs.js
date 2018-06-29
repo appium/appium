@@ -60,7 +60,10 @@ describe('utils', function () {
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
       parseCapsForInnerDriver(undefined, {
-        alwaysMatch: {platformName: 'Fake', propertyName: 'PROP_NAME'},
+        alwaysMatch: {
+          platformName: 'Fake',
+          propertyName: 'PROP_NAME',
+        },
       }).processedW3CCapabilities.should.deep.equal({
         alwaysMatch: {
           platformName: 'Fake',

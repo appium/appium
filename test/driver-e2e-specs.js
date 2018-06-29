@@ -192,15 +192,16 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {
       const w3cCaps = {
-        "capabilities": {
-          "alwaysMatch": {
+        capabilities: {
+          alwaysMatch: {
             ...caps,
-            "automationName": "BadAutomationName",
-          }
+            automationName: "BadAutomationName",
+          },
         },
       };
       const {error, statusCode, response} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
       response.headers['content-type'].should.match(/application\/json/);
+
       const {message} = error.value;
       message.should.match(/BadAutomationName not part of/);
       statusCode.should.equal(400);
@@ -208,9 +209,9 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
       const w3cCaps = {
-        "capabilities": {
-          "alwaysMatch": {},
-          "firstMatch": [{}, {
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [{}, {
             ...caps
           }],
         },
@@ -226,12 +227,12 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should fall back to MJSONWP if w3c caps are invalid', async function () {
       const combinedCaps = {
-        "desiredCapabilities": {
+        desiredCapabilities: {
           ...caps,
         },
-        "capabilities": {
-          "alwaysMatch": {},
-          "firstMatch": [{}, {
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [{}, {
             ...caps,
             deviceName: null,
           }],
@@ -248,11 +249,11 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should fall back to MJSONWP if Inner Driver is not ready for W3C', async function () {
       const combinedCaps = {
-        "desiredCapabilities": {
+        desiredCapabilities: {
           ...caps,
         },
-        "capabilities": {
-          "alwaysMatch": {
+        capabilities: {
+          alwaysMatch: {
             ...caps,
             deviceName: null,
           },
@@ -274,40 +275,40 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should handle concurrent MJSONWP and W3C sessions', async function () {
       const combinedCaps = {
-        "desiredCapabilities": {
+        desiredCapabilities: {
           ...caps,
         },
-        "capabilities": {
-          "alwaysMatch": {
+        capabilities: {
+          alwaysMatch: {
             ...caps,
           },
+          firstMatch: [],
         },
       };
 
       // Have an MJSONWP and W3C session running concurrently
       const {sessionId:mjsonwpSessId, value:mjsonwpValue, status} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'capabilities')});
-      const {value} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'desiredCapabilities')});
-      const w3cSessId = value.sessionId;
-
       status.should.exist;
       mjsonwpValue.should.eql(caps);
       mjsonwpSessId.should.exist;
-      value.sessionId.should.exist;
+
+      const {value} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'desiredCapabilities')});
+      const w3cSessId = value.sessionId;
+      w3cSessId.should.exist;
       value.capabilities.should.eql(caps);
 
       // Test that both return the proper payload based on their protocol
       const mjsonwpPayload = await request(`${baseUrl}/${mjsonwpSessId}`, {json: true});
-      const w3cPayload = await request(`${baseUrl}/${w3cSessId}`, {json: true});
-
-      // Test that the payloads are MJSONWP and W3C
       mjsonwpPayload.sessionId.should.exist;
       mjsonwpPayload.status.should.exist;
       mjsonwpPayload.value.should.eql(caps);
+
+      const w3cPayload = await request(`${baseUrl}/${w3cSessId}`, {json: true});
       should.not.exist(w3cPayload.sessionId);
       should.not.exist(w3cPayload.status);
       w3cPayload.value.should.eql(caps);
 
-      // End session
+      // End sessions
       await request.delete({url: `${baseUrl}/${mjsonwpSessId}`});
       await request.delete({url: `${baseUrl}/${w3cSessId}`});
     });

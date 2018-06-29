@@ -357,16 +357,6 @@ describe('caps', function () {
         (() => processCapabilities(caps, constraints)).should.throw(/'deviceName' can't be blank/);
       });
 
-      it('should fail when a bad automation name is provided', function () {
-        caps = {
-          alwaysMatch: {
-            ...matchingCaps,
-            automationName: 'NotAValidAutomationName',
-          },
-        };
-        (() => processCapabilities(caps, constraints)).should.throw(/'automationName' NotAValidAutomationName not part of/);
-      });
-
       it('should fail when bad parameters are passed in more than one firstMatch capability', function () {
         caps = {
           alwaysMatch: {},

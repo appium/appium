@@ -147,8 +147,17 @@ describe('AppiumDriver', function () {
           someOtherParam: 'someOtherParam',
         };
 
+        let expectedW3cCaps = {
+          ...w3cCaps,
+          alwaysMatch: {
+            ...w3cCaps.alwaysMatch,
+            'appium:automationName': 'Fake',
+            'appium:someOtherParam': 'someOtherParam',
+          },
+        };
+
         mockFakeDriver.expects("createSession")
-          .once().withArgs(jsonwpCaps, undefined, null)
+          .once().withArgs(jsonwpCaps, undefined, expectedW3cCaps)
           .returns([SESSION_ID, jsonwpCaps]);
 
         await appium.createSession(jsonwpCaps, undefined, w3cCaps);

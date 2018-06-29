@@ -69,7 +69,7 @@ describe('utils', function () {
         firstMatch: [{}],
       });
     });
-    it('should fall back to MJSONWP caps if MJSONWP contains extraneous caps that aren not in W3C', function () {
+    it('should merge extraneous MJSONWP caps into W3C', function () {
       let jsonwpCaps = {
         ...BASE_CAPS,
         automationName: 'Fake',
@@ -78,12 +78,27 @@ describe('utils', function () {
         alwaysMatch: {platformName: 'Fake', propertyName: 'PROP_NAME'},
       });
 
-      should.not.exist(processedW3CCapabilities);
-      desiredCaps.should.eql(jsonwpCaps);
+      // We expect a combo of jsonwp caps and w3c provided caps with `appium:` prefix for non-standard caps
+      const expectedCaps = {};
+
+      for (let [key, value] of _.toPairs(jsonwpCaps)) {
+        if (key !== 'platformName') {
+          expectedCaps[`appium:${key}`] = value;
+        } else {
+          expectedCaps[key] = value;
+        }
+      }
+      expectedCaps['appium:propertyName'] = 'PROP_NAME';
+
+      processedW3CCapabilities.alwaysMatch.should.eql(expectedCaps);
+      desiredCaps.should.eql({
+        ...jsonwpCaps,
+        propertyName: 'PROP_NAME',
+      });
       processedJsonwpCapabilities.should.eql(jsonwpCaps);
-      protocol.should.equal('MJSONWP');
+      protocol.should.equal('W3C');
     });
-    it('should fall back to MJSONWP caps if W3C capabilities are invalid', function () {
+    it('should fix W3C caps by using MJSONWP if invalid W3C caps were provided', function () {
       let w3cCapabilities = {
         alwaysMatch: {platformName: 'Fake', propertyName: 'PROP_NAME'},
       };
@@ -93,11 +108,10 @@ describe('utils', function () {
         }
       };
       const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} = parseCapsForInnerDriver({...BASE_CAPS}, w3cCapabilities, constraints);
-
-      should.not.exist(processedW3CCapabilities);
-      desiredCaps.should.eql(BASE_CAPS);
+      processedW3CCapabilities.should.exist;
+      desiredCaps.should.eql({...BASE_CAPS, propertyName: 'PROP_NAME'});
       processedJsonwpCapabilities.should.eql(BASE_CAPS);
-      protocol.should.equal('MJSONWP');
+      protocol.should.equal('W3C');
     });
   });
 

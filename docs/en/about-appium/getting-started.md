@@ -113,7 +113,7 @@ additional dependencies.
 
 (Chances are, you'll eventually want to automate something other than Android
 using something other than JavaScript. In that case, check out our
-[sample-code](https://github.com/appium/sample-code), which has code
+[sample-code](https://github.com/appium/sample-code/tree/master/sample-code), which has code
 samples for many languages and platforms.)
 
 #### Prerequisites

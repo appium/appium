@@ -66,7 +66,7 @@ await driver.longPressKeyCode(10);
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/PressesKeyCode.html#longPressKeyCode-int-)  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All |  [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/windows/PressesKeyCode.html#longPressKeyCode-int-)  |
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L431)  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/mobile/longPressKeycode.html)  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2478)  |

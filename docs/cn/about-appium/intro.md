@@ -20,7 +20,7 @@ Appium 旨在满足移动端自动化需求的理念，概述为以下四个原�
 
 * iOS 9.3 及以上：苹果的 [XCUITest](https://developer.apple.com/reference/xctest)
 * iOS 9.3 及以下：苹果的 [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)
-* Android 4.2+: 谷歌的 [UiAutomator](http://developer.android.com/tools/help/uiautomator/index.html)
+* Android 4.2+: 谷歌的 [UiAutomator](https://developer.android.com/training/testing/ui-automator)
 * Android 2.3+: 谷歌的 [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html)（通过绑定另外的项目——[ Selendroid ](http://selendroid.io)提供 Instrumentation 的支持）
 * Windows: 微软的 [WinAppDriver](http://github.com/microsoft/winappdriver)
 

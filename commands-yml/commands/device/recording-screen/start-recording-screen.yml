@@ -26,9 +26,9 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: "https://appium.github.io/java-client/io/appium/java_client/android/HasSupportedPerformanceDataType.html#getSupportedPerformanceDataTypes--"
+  java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3412"
-  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method or https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -86,14 +86,14 @@ endpoint:
       description: Whether to try to catch and upload/return the currently running screen recording
                    (`false`, the default setting on server) or ignore the result of it
                    and start a new recording immediately (`true`).
+    - name: time_limit
+      type: string
+      description: Recording time. 180 seconds is by default.
     - name: video_type
       type: string
       description: (iOS Only) The format of the screen capture to be recorded.
                    Available formats "h264", "mp4" or "fmp4". Default is "mp4".
                    Only works for Simulator.
-    - name: time_limit
-      type: string
-      description: Recording time. 180 seconds is by default.
     - name: video_quality
       type: string
       description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). Only works for real devices.
@@ -113,7 +113,6 @@ endpoint:
       description: (Android Only) Set it to `true` in order to display additional information on the video overlay,
                    such as a timestamp, that is helpful in videos captured to illustrate bugs.
                    This option is only supported since API level 27 (Android O).
-  response:
 
-# Links to specifications. Should link to at least one specification
 specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L345

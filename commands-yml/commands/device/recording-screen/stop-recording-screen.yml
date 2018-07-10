@@ -1,0 +1,79 @@
+---
+name: Stop Recording Screen
+short_description: Stop recording screen
+
+example_usage:
+  java:
+    |
+      driver.stopRecordingScreen();
+      driver.stopRecordingScreen(new BaseStopScreenRecordingOptions(....));
+  javascript_wd:
+    |
+      await driver.stopRecordingScreen();
+  ruby:
+    |
+      @driver.stop_recording_screen
+      @driver.stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
+  python:
+    |
+      self.driver.stop_recording_screen()
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: "https://appium.github.io/java-client/io/appium/java_client/android/HasSupportedPerformanceDataType.html#getSupportedPerformanceDataTypes--"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3398"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#stop_recording_screen-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: false
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO Confirm this that mouse movements
+  windows:
+    windows: false # TODO Confirm this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: false
+  csharp: false
+  javascript_wd: true
+  javascript_wdio: true
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/stop_recording_screen
+  method: POST
+  url_parameters:
+    - name: remote_path
+      description: The path to the remote location, where the resulting video should be uploaded.
+                   The following protocols are supported http/https, ftp.
+                   Null or empty string value (the default setting) means the content of resulting
+                   file should be encoded as Base64 and passed as the endpoint response value.
+                   An exception will be thrown if the generated media file is too big to
+                   fit into the available process memory.
+    - name: username
+      description: The name of the user for the remote authentication.
+    - name: password
+      description: The password for the remote authentication.
+    - name: method
+      description: The http multipart upload method name. The 'PUT' one is used by default.
+  response:
+    - type:
+      description: The available performance data types (cpuinfo|batteryinfo|networkinfo|memoryinfo)
+
+# Links to specifications. Should link to at least one specification
+specifications:

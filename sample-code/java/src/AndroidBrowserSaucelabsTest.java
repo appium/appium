@@ -21,10 +21,9 @@ public class AndroidBrowserSaucelabsTest extends BaseTest{
     @BeforeTest
     public void beforeTest( ) throws MalformedURLException {
         DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability(MobileCapabilityType.APPIUM_VERSION, "1.7.2");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "4.4");
         capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME,"Android");
-        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,"Appium");
+        capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME,"UiAutomator2");
         capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Samsung Galaxy S4 Emulator");
         capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Browser");
         capabilities.setCapability("newCommandTimeout", 2000);

@@ -39,7 +39,7 @@ export default {
   'client_docs.java': {url: true},
   'client_docs.javascript_wdio': {url: true},
   'client_docs.javascript_wd': {url: true},
-  'client_docs.ruby': {url: true},
+  'client_docs.ruby': {},
   'client_docs.csharp': {url: true},
   'client_docs.php': {url: true},
   'endpoint': {presence: true},

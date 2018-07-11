@@ -72,8 +72,8 @@ endpoint:
     - name: method
       description: The http multipart upload method name. The 'PUT' one is used by default.
   response:
-    - type:
-      description: The available performance data types (cpuinfo|batteryinfo|networkinfo|memoryinfo)
+    - type: string
+      description: Base64 encoded string. If remote_path is set, the response is empty string.
 
 # Links to specifications. Should link to at least one specification
 specifications:

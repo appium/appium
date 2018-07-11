@@ -1,6 +1,6 @@
 ---
-name: Start Record Screen
-short_description: Returns the information of the system state which is supported to read as like cpu, memory, network traffic, and battery
+name: Start Recording Screen
+short_description: Start recording screen
 
 example_usage:
   java:
@@ -97,6 +97,10 @@ endpoint:
     - name: video_quality
       type: string
       description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). Only works for real devices.
+    - name: bit_rate
+      type: string
+      description: (iOS Only) The video bit rate for the video, in megabits per second.
+                   4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above.
     - name: video_size
       type: string
       description: (Android Only) The format is widthxheight.
@@ -104,10 +108,6 @@ endpoint:
                    1280x720 if not. For best results,
                    use a size supported by your device's Advanced Video Coding (AVC) encoder.
                    For example, "1280x720"
-    - name: bit_rate
-      type: string
-      description: (iOS Only) The video bit rate for the video, in megabits per second.
-                   4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above.
     - name: bug_report
       type: string
       description: (Android Only) Set it to `true` in order to display additional information on the video overlay,

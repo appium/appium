@@ -106,13 +106,13 @@
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| {{versions client_support.java}} | {{#if client_docs.java}} [{{base_url client_docs.java}}]({{client_docs.java}}) {{/if}} |
-|[Python](https://github.com/appium/python-client/releases/latest)| {{versions client_support.python}} | {{#if client_docs.python}} [{{base_url client_docs.python}}]({{client_docs.python}}) {{/if}} |
-|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| {{versions client_support.javascript_wdio}} | {{#if client_docs.javascript_wdio}} [{{base_url client_docs.javascript_wdio}}]({{client_docs.javascript_wdio}}) {{/if}} |
-|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| {{versions client_support.javascript_wd}} | {{#if client_docs.javascript_wd}} [{{base_url client_docs.javascript_wd}}]({{client_docs.javascript_wd}}) {{/if}} |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| {{versions client_support.ruby}} | {{#if client_docs.ruby}} [{{base_url client_docs.ruby}}]({{client_docs.ruby}}) {{/if}} |
-|[PHP](https://github.com/appium/php-client/releases/latest)| {{versions client_support.php}} | {{#if client_docs.php}} [{{base_url client_docs.php}}]({{client_docs.php}}) {{/if}} |
-|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| {{versions client_support.csharp}} | {{#if client_docs.csharp}} [{{base_url client_docs.csharp}}]({{client_docs.csharp}}) {{/if}} |
+|[Java](https://github.com/appium/java-client/releases/latest)| {{versions client_support.java}} | {{client_url client_docs.java}} |
+|[Python](https://github.com/appium/python-client/releases/latest)| {{versions client_support.python}} | {{client_url client_docs.python}} |
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| {{versions client_support.javascript_wdio}} | {{client_url client_docs.wdio}} |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| {{versions client_support.javascript_wd}} | {{client_url client_docs.javascript_wd}} |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| {{versions client_support.ruby}} | {{client_url client_docs.ruby}} |
+|[PHP](https://github.com/appium/php-client/releases/latest)| {{versions client_support.php}} | {{client_url client_docs.php}} |
+|[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| {{versions client_support.csharp}} | {{client_url client_docs.csharp}} |
 
 ## HTTP API Specifications
 

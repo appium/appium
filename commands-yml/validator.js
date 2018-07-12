@@ -16,10 +16,29 @@ validate.validators.hasAttributes = function (value, options) {
     value = [value];
   }
 
-  for (let item of value) {
-    for (let option of options) {
+  for (const item of value) {
+    for (const option of options) {
       if (_.isUndefined(item[option])) {
         return `must have attributes: ${options}`;
+      }
+    }
+  }
+};
+
+validate.validators.hasPossibleAttributes = function (value, options) {
+  if (!value) {
+    return;
+  }
+
+  // if just a bare value, allow it through
+  if (!_.isArray(value)) {
+    return;
+  }
+
+  for (const item of value) {
+    for (const key of _.keys(item)) {
+      if (!options.includes(key)) {
+        return `must not include '${key}'. Available options: ${options}`;
       }
     }
   }
@@ -36,7 +55,7 @@ export default {
   'example_usage.csharp': {},
   'example_usage.php': {},
   'description': {},
-  'client_docs.java': {url: true},
+  'client_docs.java': {hasPossibleAttributes: ['url', 'android', 'ios']},
   'client_docs.javascript_wdio': {url: true},
   'client_docs.javascript_wd': {url: true},
   'client_docs.ruby': {},
@@ -45,9 +64,9 @@ export default {
   'endpoint': {presence: true},
   'driver_support': {presence: true},
   'endpoint.url': {presence: true},
-  'endpoint.url_parameters': { 'array': true, hasAttributes: ['name', 'description'] },
-  'endpoint.json_parameters': { 'array': true, hasAttributes: ['name', 'description'] },
+  'endpoint.url_parameters': {array: true, hasAttributes: ['name', 'description']},
+  'endpoint.json_parameters': {array: true, hasAttributes: ['name', 'description']},
   'endpoint.response': {hasAttributes: ['type', 'description'] },
   'specifications': {presence: true},
-  'links': { 'array': true, hasAttributes: ['name', 'url'] },
+  'links': {array: true, hasAttributes: ['name', 'url']},
 };

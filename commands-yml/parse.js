@@ -98,9 +98,39 @@ Handlebars.registerHelper('if_eq', function (a, b, opts) {
   }
 });
 
-Handlebars.registerHelper('base_url', function (fullUrl) {
+function getBaseHostname (fullUrl) {
   const baseUrl = url.parse(fullUrl);
   return baseUrl.hostname;
+}
+
+Handlebars.registerHelper('base_url', function (fullUrl) {
+  return getBaseHostname(fullUrl);
+});
+
+Handlebars.registerHelper('client_url', function (clientUrl) {
+  if (!clientUrl) {
+    return;
+  }
+
+  const createUrlString = function createUrlString (clientUrl, name = getBaseHostname(clientUrl)) {
+    return `[${name}](${clientUrl})`;
+  };
+
+  if (!_.isArray(clientUrl)) {
+    return createUrlString(clientUrl);
+  }
+
+  let urlStrings = [];
+  for (const item of clientUrl) {
+    for (let [key, value] of _.toPairs(item)) {
+      key = key.toLowerCase();
+      const urlStr = ['ios', 'android'].includes(key)
+        ? createUrlString(value, key === 'ios' ? 'iOS' : 'Android')
+        : createUrlString(value);
+      urlStrings.push(urlStr);
+    }
+  }
+  return urlStrings.join(' ');
 });
 
 async function registerSpecUrlHelper () {

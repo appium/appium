@@ -59,8 +59,8 @@ let location = await element.getLocationInView();
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All |  |
 |[Python](https://github.com/appium/python-client/releases/latest)| All |  |
-|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  [webdriver.io](http://webdriver.io/api/property/getLocationInView.html)  |
-|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2189)  |
+|[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2189) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All |  |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All |  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All |  |

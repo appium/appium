@@ -7,7 +7,7 @@
 <div class="api-index">
 
 <ul>
-    <li><a href='/docs/en/commands/device/recording-screen/start-recording-screen.md'>Start Recording Screen</a></li>
-    <li><a href='/docs/en/commands/device/recording-screen/stop-recording-screen.md'>Stop Recording Screen</a></li>
+    <li><a href='/docs/en/commands/device/recording-screen/start-recording-screen.md'>Start Screen Recording</a></li>
+    <li><a href='/docs/en/commands/device/recording-screen/stop-recording-screen.md'>Stop Screen Recording</a></li>
 </ul>
 </div>

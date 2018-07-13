@@ -48,6 +48,9 @@
     <li><a href='/docs/en/commands/device/performance-data'>Performance Data</a><ul>    <li><a href='/docs/en/commands/device/performance-data/get-performance-data.md'>Get Performance Data</a></li>
     <li><a href='/docs/en/commands/device/performance-data/performance-data-types.md'>Performance Data Types</a></li>
 </ul></li>
+    <li><a href='/docs/en/commands/device/recording-screen'>Recording Screen</a><ul>    <li><a href='/docs/en/commands/device/recording-screen/start-recording-screen.md'>Start Recording Screen</a></li>
+    <li><a href='/docs/en/commands/device/recording-screen/stop-recording-screen.md'>Stop Recording Screen</a></li>
+</ul></li>
     <li><a href='/docs/en/commands/device/simulator'>Simulator</a><ul>    <li><a href='/docs/en/commands/device/simulator/touch-id.md'>Perform Touch ID</a></li>
     <li><a href='/docs/en/commands/device/simulator/toggle-touch-id-enrollment.md'>Toggle Touch ID Enrollment</a></li>
 </ul></li>

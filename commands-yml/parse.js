@@ -6,7 +6,7 @@ import Handlebars from 'handlebars';
 import replaceExt from 'replace-ext';
 import _ from 'lodash';
 import { asyncify } from 'asyncbox';
-import validator from './validator';
+import { validator, CLIENT_URL_TYPES } from './validator';
 import url from 'url';
 import log from 'fancy-log';
 import { exec } from 'teen_process';
@@ -124,9 +124,9 @@ Handlebars.registerHelper('client_url', function (clientUrl) {
   for (const item of clientUrl) {
     for (let [key, value] of _.toPairs(item)) {
       key = key.toLowerCase();
-      const urlStr = ['ios', 'android'].includes(key)
-        ? createUrlString(value, key === 'ios' ? 'iOS' : 'Android')
-        : createUrlString(value);
+      const urlStr = CLIENT_URL_TYPES[key] === 'hostname'
+        ? createUrlString(value)
+        : createUrlString(value, CLIENT_URL_TYPES[key]);
       urlStrings.push(urlStr);
     }
   }

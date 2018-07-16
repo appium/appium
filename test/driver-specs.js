@@ -1,32 +1,36 @@
 // transpile:mocha
 
 import { AppiumDriver } from '../lib/appium';
-import { FakeDriver } from 'appium-fake-driver';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 import sinon from 'sinon';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { XCUITestDriver } from 'appium-xcuitest-driver';
-import { IosDriver } from 'appium-ios-driver';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes } from '../lib/utils';
+import { getDriver, DRIVER_MAP } from '../lib/driver-utils';
+
 
 chai.should();
 chai.use(chaiAsPromised);
+
+// get a copy of the FakeDriver constructor
+const FakeDriver = getDriver({
+  automationName: 'Fake',
+  platformName: 'Fake',
+});
 
 const SESSION_ID = 1;
 
 describe('AppiumDriver', function () {
   describe('AppiumDriver', function () {
     function getDriverAndFakeDriver () {
-      let appium = new AppiumDriver({});
-      let fakeDriver = new FakeDriver();
-      let mockFakeDriver = sinon.mock(fakeDriver);
-      appium.getDriverForCaps = function (/*args*/) {
-        return () => {
-          return fakeDriver;
-        };
+      const appium = new AppiumDriver({});
+      const fakeDriver = new FakeDriver();
+      const mockFakeDriver = sinon.mock(fakeDriver);
+      // replace the driver returned, with one that will give our mocked instance
+      DRIVER_MAP.FakeDriver.driver = function () {
+        return fakeDriver;
       };
       return [appium, mockFakeDriver];
     }
@@ -37,8 +41,9 @@ describe('AppiumDriver', function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver();
       });
       afterEach(async function () {
-        mockFakeDriver.restore();
         await appium.deleteSession(SESSION_ID);
+        mockFakeDriver.restore();
+        DRIVER_MAP.FakeDriver.driver = FakeDriver;
       });
 
       it('should call inner driver\'s createSession with desired capabilities', async function () {
@@ -49,8 +54,11 @@ describe('AppiumDriver', function () {
         mockFakeDriver.verify();
       });
       it('should call inner driver\'s createSession with desired and default capabilities', async function () {
-        let defaultCaps = {deviceName: 'Emulator'}
-          , allCaps = _.extend(_.clone(defaultCaps), BASE_CAPS);
+        const defaultCaps = {
+          deviceName: 'Emulator'
+        };
+        const allCaps = Object.assign({}, defaultCaps, BASE_CAPS);
+
         appium.args.defaultCapabilities = defaultCaps;
         mockFakeDriver.expects("createSession")
           .once().withArgs(allCaps)
@@ -172,6 +180,7 @@ describe('AppiumDriver', function () {
       });
       afterEach(function () {
         mockFakeDriver.restore();
+        DRIVER_MAP.FakeDriver.driver = FakeDriver;
       });
       it('should remove the session if it is found', async function () {
         let [sessionId] = (await appium.createSession(BASE_CAPS)).value;
@@ -210,8 +219,8 @@ describe('AppiumDriver', function () {
         sessions.should.be.empty;
       });
       it('should return sessions created', async function () {
-        let session1 = (await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'value'}))).value;
-        let session2 = (await appium.createSession(_.extend(_.clone(BASE_CAPS), {cap: 'other value'}))).value;
+        let session1 = (await appium.createSession(Object.assign({}, BASE_CAPS, {cap: 'value'}))).value;
+        let session2 = (await appium.createSession(Object.assign({}, BASE_CAPS, {cap: 'other value'}))).value;
 
         sessions = await appium.getSessions();
         sessions.should.be.an('array');
@@ -245,6 +254,7 @@ describe('AppiumDriver', function () {
         await mockFakeDriver.object.deleteSession();
         mockFakeDriver.restore();
         appium.args.defaultCapabilities = {};
+        DRIVER_MAP.FakeDriver.driver = FakeDriver;
       });
 
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
@@ -270,73 +280,6 @@ describe('AppiumDriver', function () {
         // let event loop spin so rejection is handled
         await sleep(1);
         _.keys(appium.sessions).should.contain(sessionId);
-      });
-    });
-    describe('getDriverForCaps', function () {
-      it('should not blow up if user does not provide platformName', async function () {
-        let appium = new AppiumDriver({});
-        (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
-      });
-      it('should get XCUITestDriver driver for automationName of XCUITest', async function () {
-        let appium = new AppiumDriver({});
-        let driver = appium.getDriverForCaps({
-          platformName: 'iOS',
-          automationName: 'XCUITest'
-        });
-        driver.should.be.an.instanceof(Function);
-        driver.should.equal(XCUITestDriver);
-      });
-      it('should get iosdriver for ios < 10', async function () {
-        let appium = new AppiumDriver({});
-        let caps = {
-          platformName: 'iOS',
-          platformVersion: '8.0',
-        };
-        let driver = appium.getDriverForCaps(caps);
-        driver.should.be.an.instanceof(Function);
-        driver.should.equal(IosDriver);
-
-        caps.platformVersion = '8.1';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(IosDriver);
-
-        caps.platformVersion = '9.4';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(IosDriver);
-
-        caps.platformVersion = '';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(IosDriver);
-
-        caps.platformVersion = 'foo';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(IosDriver);
-
-        delete caps.platformVersion;
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(IosDriver);
-      });
-      it('should get xcuitestdriver for ios >= 10', async function () {
-        let appium = new AppiumDriver({});
-        let caps = {
-          platformName: 'iOS',
-          platformVersion: '10',
-        };
-        let driver = appium.getDriverForCaps(caps);
-        driver.should.be.an.instanceof(Function);
-        driver.should.equal(XCUITestDriver);
-
-        caps.platformVersion = '10.0';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(XCUITestDriver);
-
-        caps.platformVersion = '10.1';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(XCUITestDriver);
-
-        caps.platformVersion = '12.14';
-        driver = appium.getDriverForCaps(caps);
-        driver.should.equal(XCUITestDriver);
       });
     });
   });

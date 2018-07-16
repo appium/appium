@@ -1,0 +1,84 @@
+{
+  "SelendroidDriver": {
+    "driverClass": "SelendroidDriver",
+    "packageName": "appium-selendroid-driver",
+    "automationName": "Selendroid",
+    "repository": "https://github.com/appium/appium-selendroid-driver"
+  },
+  "AndroidUiautomator2Driver": {
+    "driverClass": "AndroidUiautomator2Driver",
+    "packageName": "appium-uiautomator2-driver",
+    "automationName": "UiAutomator2",
+    "repository": "https://github.com/appium/appium-uiautomator2-driver"
+  },
+  "XCUITestDriver": {
+    "driverClass": "XCUITestDriver",
+    "packageName": "appium-xcuitest-driver",
+    "automationName": "XCUITest",
+    "repository": "https://github.com/appium/appium-xcuitest-driver"
+  },
+  "YouiEngineDriver": {
+    "driverClass": "YouiEngineDriver",
+    "packageName": "appium-youiengine-driver",
+    "automationName": "YouiEngine",
+    "repository": ""
+  },
+  "FakeDriver": {
+    "driverClass": "FakeDriver",
+    "packageName": "appium-fake-driver",
+    "automationName": "Fake",
+    "platformName": "Fake",
+    "repository": "https://github.com/appium/appium-fake-driver"
+  },
+  "AndroidDriver": {
+    "driverClass": "AndroidDriver",
+    "packageName": "appium-android-driver",
+    "platformName": "Android",
+    "repository": "https://github.com/appium/appium-android-driver",
+    "constraints": [{
+      "type": "capability",
+      "capability": "platformVersion",
+      "condition": ">=6.0.0",
+      "alternativeDriver": "AndroidDriver",
+      "message": "Consider setting 'automationName' capability to 'UiAutomator2' on Android >= 6, since UIAutomator framework is not maintained anymore by the OS vendor."
+    }]
+  },
+  "IosDriver": {
+    "driverClass": "IosDriver",
+    "packageName": "appium-ios-driver",
+    "platformName": "iOS",
+    "repository": "https://github.com/appium/appium-ios-driver",
+    "constraints": [{
+      "type": "capability",
+      "capability": "platformVersion",
+      "condition": ">=10.0.0",
+      "alternativeDriver": "XCUITestDriver",
+      "message": "Requested iOS support with version >= 10, using 'XCUITest' driver instead of UIAutomation-based driver, since the latter is unsupported on iOS 10 and up."
+    }]
+  },
+  "WindowsDriver": {
+    "driverClass": "WindowsDriver",
+    "packageName": "appium-windows-driver",
+    "platformName": "Windows",
+    "repository": ""
+  },
+  "MacDriver": {
+    "driverClass": "MacDriver",
+    "packageName": "appium-mac-driver",
+    "platformName": "Mac",
+    "repository": ""
+  },
+  "EspressoDriver": {
+    "driverClass": "EspressoDriver",
+    "packageName": "appium-espresso-driver",
+    "automationName": "Espresso",
+    "repository": "https://github.com/appium/appium-espresso-driver"
+  },
+  "TizenDriver": {
+    "driverClass": "TizenDriver",
+    "packageName": "appium-tizen-driver",
+    "automationName": "Tizen",
+    "platformName": "Tizen",
+    "repository": ""
+  }
+}

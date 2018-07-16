@@ -31,8 +31,11 @@ example_usage:
       // CSharp Code here
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--"
-  python: "https://github.com/appium/python-client"
+  java:
+    - url: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--"
+  python:
+    - android: "https://github.com/appium/python-client/android-command"
+      ios: "https://github.com/appium/python-client/ios-command"
   javascript_wdio: "http://webdriver.io/index.html"
   javascript_wd: "https://github.com/admc/wd/releases"
   ruby: "https://github.com/appium/ruby_lib/releases/latest"
@@ -66,7 +69,7 @@ client_support:
     min: 2
   ruby: true # If true, means it supports all
   php: false # If false(y), means it is not supported
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -90,7 +93,7 @@ endpoint:
       description: A generic release label (i.e. "2.0rc3")
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#element-click
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclick
 

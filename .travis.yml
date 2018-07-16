@@ -45,7 +45,10 @@ jobs:
         - osx_image: xcode9.4
       env:
         - NODE_ENV=production
-        - CXX=
+        - CC=gcc
+        - CXX=g++
+      before_install:
+        - gcc --version
       install:
         # Install prod dependencies
         - npm install

@@ -76,7 +76,6 @@ describe('proxying partial urls', function () {
     let j = new JWProxy({sessionId: '123'});
     let proxyUrl = j.getUrlForProxy(incomingUrl);
     proxyUrl.should.equal('http://localhost:4444/wd/hub/session/123/timeouts/implicit_wait');
-
   });
   it('should proxy session commands based off /session as ""', function () {
     let incomingUrl = '';
@@ -87,6 +86,12 @@ describe('proxying partial urls', function () {
     proxyUrl.should.equal('http://localhost:4444/wd/hub/session/123');
   });
   it('should proxy session commands without /session', function () {
+    let incomingUrl = '/wd/hub/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
+    let j = new JWProxy({sessionId: 'barbaz'});
+    let proxyUrl = j.getUrlForProxy(incomingUrl);
+    proxyUrl.should.equal('http://localhost:4444/wd/hub/session/barbaz/cookie/session-something-or-other');
+  });
+  it(`should proxy session commands when '/session' is in the url`, function () {
     let incomingUrl = '/element';
     let j = new JWProxy({sessionId: 'barbaz'});
     let proxyUrl = j.getUrlForProxy(incomingUrl);

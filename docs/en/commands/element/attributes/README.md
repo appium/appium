@@ -12,7 +12,7 @@
     <li><a href='/docs/en/commands/element/attributes/attribute.md'>Attribute</a></li>
     <li><a href='/docs/en/commands/element/attributes/selected.md'>Selected</a></li>
     <li><a href='/docs/en/commands/element/attributes/enabled.md'>Enabled</a></li>
-    <li><a href='/docs/en/commands/element/attributes/enabled.md'>Displayed</a></li>
+    <li><a href='/docs/en/commands/element/attributes/displayed.md'>Displayed</a></li>
     <li><a href='/docs/en/commands/element/attributes/location.md'>Location</a></li>
     <li><a href='/docs/en/commands/element/attributes/size.md'>Size</a></li>
     <li><a href='/docs/en/commands/element/attributes/rect.md'>Rect</a></li>

@@ -129,7 +129,7 @@ module.exports = {
           ["Attribute", "attribute.md"],
           ["Selected", "selected.md"],
           ["Enabled", "enabled.md"],
-          ["Displayed", "enabled.md"],
+          ["Displayed", "displayed.md"],
           ["Location", "location.md"],
           ["Size", "size.md"],
           ["Rect", "rect.md"],

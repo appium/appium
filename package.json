@@ -42,7 +42,7 @@
     "teen_process": "^1.11.0",
     "uuid-js": "^0.7.5",
     "validate.js": "^0.12.0",
-    "ws": "^5.0.0"
+    "ws": "^6.0.0"
   },
   "scripts": {
     "prepublish": "gulp prepublish",

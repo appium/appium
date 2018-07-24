@@ -45,6 +45,7 @@
     "ws": "^6.0.0"
   },
   "scripts": {
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "prepublish": "gulp prepublish",
     "test": "gulp once",
     "watch": "gulp watch",

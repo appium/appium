@@ -24,7 +24,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--session-override`|false|Enables session override (clobbering)||
 |`-l`, `--pre-launch`|false|Pre-launch the application before allowing the first session (Requires --app and, for Android, --app-pkg and --app-activity)||
 |`-g`, `--log`|null|Also send log output to this file|`--log /path/to/appium.log`|
-|`--log-level`|debug|log level; default (console[:file]): debug[:debug]|`--log-level debug`|
+|`--log-level`|debug|Set the server log level for console and logfile (specified as `console-level:logfile-level`, with both being the same if only one value is supplied). Possible values are `debug`, `info`, `warn`, `error`, which are progressively less verbose.|`--log-level error:debug`|
 |`--log-timestamp`|false|Show timestamps in console output||
 |`--local-timezone`|false|Use local timezone for timestamps||
 |`--log-no-colors`|false|Do not use colors in console output||

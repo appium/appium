@@ -181,7 +181,7 @@ describe('proxy', function () {
         e = err;
       }
       should.exist(e);
-      e.message.should.contain('Invisible element');
+      e.error.should.eql('element not visible');
     });
     it('should throw when a command fails with a 100', async function () {
       let j = mockProxy({sessionId: '123'});

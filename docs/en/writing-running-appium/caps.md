@@ -144,8 +144,7 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 |`appName`| The display name of the application under test. Used to automate backgrounding the app in iOS 9+.|e.g., `UICatalog`|
 |`customSSLCert`|(Sim only) Add an SSL certificate to IOS Simulator. | e.g. <br/>`-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...`<br/>`-----END CERTIFICATE-----`|
 |`webkitResponseTimeout`|(Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000`|e.g., `10000`|
-|`remoteDebugProxyPort`| (Sim only, <= 11.2) If set, Appium sends and receives remote debugging messages through a proxy on this local port instead of communicating with the iOS remote debugger directly. |e.g. `12000`|
-|`remoteDebugProxySocketPath`| (Sim only >= 11.3) If set, Appium sends and receives remote debugging messages through a proxy on this unix socket instead of communicating with the iOS remote debugger directly. |e.g. `"/tmp/my.proxy.socket"`|
+|`remoteDebugProxy`| (Sim only, <= 11.2) If set, Appium sends and receives remote debugging messages through a proxy on either the local port (Sim only, <= 11.2) or a proxy on this unix socket (Sim only >= 11.3) instead of communicating with the iOS remote debugger directly. |e.g. `12000` or `"/tmp/my.proxy.socket"`|
 
 ### iOS Only, using XCUITest
 

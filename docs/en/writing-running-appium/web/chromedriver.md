@@ -42,6 +42,10 @@ Chrome version that is automatable:
 
 | Version | Minimum Chrome Version | Link to Chromedriver                                                              |
 |---------|------------------------|-----------------------------------------------------------------------------------|
+| 2.41    | 67.0.3360.0            | [v2.41 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.41/) |
+| 2.40    | 66.0.3359.0            | [v2.40 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.40/) |
+| 2.39    | 66.0.3359.0            | [v2.39 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.39/) |
+| 2.38    | 65.0.3325.0            | [v2.38 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.38/) |
 | 2.37    | 64.0.3282.0            | [v2.37 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.37/) |
 | 2.36    | 63.0.3239.0            | [v2.36 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.36/) |
 | 2.35    | 62.0.3202.0            | [v2.35 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.35/) |
@@ -137,3 +141,8 @@ CHROMEDRIVER_CDNURL=http://npm.taobao.org/mirrors/chromedriver npm install appiu
 
 It may also be necessary to adjust network proxy and firewall settings to allow
 the download to occur.
+
+### W3C support
+Chromedriver hasn't followed the W3C standard yet. If you encounter proxy command error like [this issue](https://github.com/appium/python-client/issues/234), please update your Chromedriver version.
+Old Android devices can't use newer chrome drivers. You can avoid the error if you run tests with the Mobile JSON Wire Protocol.
+You can read the history of W3C support in Chromedriver from [downloads](https://sites.google.com/a/chromium.org/chromedriver/downloads).

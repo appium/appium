@@ -143,6 +143,6 @@ It may also be necessary to adjust network proxy and firewall settings to allow
 the download to occur.
 
 ### W3C support
-Chrome Driver hasn't followed the W3C standard yet. If you encounter proxy command error like [this issue](https://github.com/appium/python-client/issues/234), please update your chrome driver version.
-Old Android devices can't use newer chrome drivers. You can avoid the error if you run tests with Mobile JSON protocol.  
-You can read the history of W3C support in chrome driver from [downloads](https://sites.google.com/a/chromium.org/chromedriver/downloads) page.
+Chromedriver hasn't followed the W3C standard yet. If you encounter proxy command error like [this issue](https://github.com/appium/python-client/issues/234), please update your Chromedriver version.
+Old Android devices can't use newer chrome drivers. You can avoid the error if you run tests with the Mobile JSON Wire Protocol.
+You can read the history of W3C support in Chromedriver from [downloads](https://sites.google.com/a/chromium.org/chromedriver/downloads).

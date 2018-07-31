@@ -68,7 +68,7 @@ List of available commands:
 | ------- | ----------- | -------- | ---------------- |
 | mobile:startPerfRecord | Starts performance profiling for the device under test | <none> | |
 | mobile:stopPerfRecord | Stops performance profiling for the device under test | <none> | |
-| mobile:startLogsBroadcast | Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/syslog` endpoint. | <none> | |
+| mobile:startLogsBroadcast | Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/device/syslog` endpoint. | <none> | |
 | mobile:stopLogsBroadcast | Stops the iOS system logs broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | |
 | mobile:swipe | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-swipe)  | | |
 | mobile:scroll | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-scroll)  | | |
@@ -96,7 +96,7 @@ List of available commands:
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
 | mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/docs/en/writing-running-appium/server-args.md#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
-| mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/logcat` endpoint | <none> | <none> |
+| mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/device/logcat` endpoint | <none> | <none> |
 | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
 | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
 | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |

@@ -145,7 +145,7 @@ installed, and is _not_ recommended):
     $ which appium
     /path/where/installed/bin/appium
 ```
-*   Note: If you have installed Appium Appyour appium folder path will be following. 
+*   Note: If you have installed [Appium Desktop App](http://appium.io/downloads.html), your appium folder path might be following, instead above. If so, change to following directory and follow rest of the steps.
 ```
     /Applications/Appium.app/Contents/Resources/app/node_modules/appium/
 ```

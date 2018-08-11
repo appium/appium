@@ -145,6 +145,10 @@ installed, and is _not_ recommended):
     $ which appium
     /path/where/installed/bin/appium
 ```
+*   Note: If you have installed Appium Appyour appium folder path will be following. 
+```
+    /Applications/Appium.app/Contents/Resources/app/node_modules/appium/
+```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
     will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent`.
     Open a terminal and go to that location, then run the following in order to

@@ -56,6 +56,7 @@
     "dateformat": "^3.0.3",
     "find-root": "^1.1.0",
     "lodash": "=4.17.9",
+    "longjohn": "^0.2.12",
     "npmlog": "4.x",
     "request": "^2.81.0",
     "request-promise": "4.x",

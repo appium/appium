@@ -117,37 +117,23 @@ describe('proxy', function () {
       j = mockProxy();
     });
     it('should take W3C inputs and produce MJSONWP + W3C compatible objects', async function () {
-      let timeoutObjects = await j.getTimeoutRequestObjects({protocol: 'W3C', script: 100});
+      let timeoutObjects = await j.getTimeoutRequestObjects({script: 100});
       timeoutObjects.length.should.equal(1);
-      timeoutObjects[0].should.eql({script: 100, pageLoad: undefined, implicit: undefined, type: 'script', ms: 100});
+      timeoutObjects[0].should.eql({type: 'script', ms: 100});
     });
     it('should take multiple W3C timeouts and produce multiple MJSONWP + W3C compatible objects', async function () {
-      let [scriptTimeout, pageLoadTimeout, implicitTimeout] = await j.getTimeoutRequestObjects({protocol: 'W3C', script: 100, pageLoad: 200, implicit: 300});
-      const expectedObjBase = {script: 100, pageLoad: 200, implicit: 300};
+      let [scriptTimeout, pageLoadTimeout, implicitTimeout] = await j.getTimeoutRequestObjects({script: 100, pageLoad: 200, implicit: 300});
       scriptTimeout.should.eql({
-        ...expectedObjBase,
         type: 'script',
         ms: 100,
       });
       pageLoadTimeout.should.eql({
-        ...expectedObjBase,
         type: 'pageLoad',
         ms: 200,
       });
       implicitTimeout.should.eql({
-        ...expectedObjBase,
         type: 'implicit',
         ms: 300,
-      });
-    });
-    it('should create W3C timeouts from MJSONWP inputs', async function () {
-      let [timeoutObject] = await j.getTimeoutRequestObjects({protocol: 'MJSONWP', type: 'script', ms: 200});
-      timeoutObject.should.eql({
-        script: 200,
-        pageLoad: undefined,
-        implicit: undefined,
-        type: 'script',
-        ms: 200,
       });
     });
   });

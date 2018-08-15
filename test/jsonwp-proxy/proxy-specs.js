@@ -128,7 +128,7 @@ describe('proxy', function () {
         ms: 100,
       });
       pageLoadTimeout.should.eql({
-        type: 'pageLoad',
+        type: 'page load',
         ms: 200,
       });
       implicitTimeout.should.eql({

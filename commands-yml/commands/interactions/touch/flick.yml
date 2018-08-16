@@ -1,5 +1,5 @@
 ---
-name: Tap
+name: Flick
 short_description: Flick on the touch screen using finger motion events
 
 example_usage:

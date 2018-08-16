@@ -1,0 +1,165 @@
+---
+name: Actions
+short_description: Perform a chain or multiple chains of keyboard and poiner (touch, mouse, stylus)
+description:
+  |
+  * input source: Represents an input device (pointer or key) that a series of actions are dispatched to. The input source has a unique ID.
+  * action: An action that is dispatched to an input source. For a keyboard source, this can be 'keyDown' or 'keyUp'. For a pointer event this can be 'pointerMove',
+    'pointerDown', or 'pointerUp'. 'pause' events can also be sent to the device.
+  
+  The Actions API takes a list of input sources and executes each 'tick'. A 'tick' is a slice of an action chain, so if you have two input sources, the first 'tick'
+  is the 0-indexed action, the second 'tick' is the 1-indexed action, etc.... All of the actions per tick are executed concurrently.
+  
+example_usage:
+  java:
+    WebElement source = (MobileElement) driver.findElementsByAccessibilityId("SomeAccessibilityID");
+    WebElement target = (MobileElement) driver.findElementsByAccessibilityId("SomeOtherAccessibilityID");
+
+    Actions actionBuilder = new Actions(driver);
+    Action dragAndDropAction = actionBuilder.clickAndHold(source)
+                                            .moveToElement(target, 1, 1)
+                                            .release(target)
+                                            .build();
+    dragAndDropAction.perform();
+  python:
+    |
+      element = driver.find_element_by_accessibility_id("elId")
+      actions = ActionChains(driver)
+      actions.move_to_element(el)
+      actions.click(hidden_submenu)
+      actions.perform()
+  javascript_wd:
+    |
+      // Not supported
+  javascript_wdio:
+    |
+      // Example: expressing a 1-second pinch-and-zoom
+      // with a 500ms wait after the fingers first touch:
+      browser.actions([{
+          "type": "pointer",
+          "id": "finger1",
+          "parameters": {"pointerType": "touch"},
+          "actions": [
+              {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
+              {"type": "pointerDown", "button": 0},
+              {"type": "pause", "duration": 500},
+              {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": -50, "y": 0},
+              {"type": "pointerUp", "button": 0}
+          ]
+      }, {
+          "type": "pointer",
+          "id": "finger2",
+          "parameters": {"pointerType": "touch"},
+          "actions": [
+              {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
+              {"type": "pointerDown", "button": 0},
+              {"type": "pause", "duration": 500},
+              {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": 50, "y": 0},
+              {"type": "pointerUp", "button": 0}
+          ]
+      }]);
+
+      // release an action
+      browser.actions();
+  ruby:
+    |
+      # Send keys to an element
+      action_builder = driver.action
+      keyboard = action_builder.key_input
+      el = driver.find_element(id: "some_id")
+      driver.action.click(el).pause(keyboard).pause(keyboard).pause(keyboard).send_keys('keys').perform
+
+  php:
+    |
+      // TODO
+  csharp:
+    |
+      // TODO
+
+client_docs:
+  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html"
+  python: "https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains"
+  javascript_wdio: "http://webdriver.io/api/protocol/actions.html"
+  #javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L44"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/W3CActionBuilder"
+  php: "https://github.com/jupeter/selenium-php-webdriver/blob/master/Webdriver/Common/ActionChains.php"
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:sessionId/actions
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: actions
+      type: array<array>
+      description: An array of input sources
+    - name: actions[$INDEX]
+      type: object
+      description: An object that represents an input source
+    - name: actions[$INDEX].type
+      type: string
+      description: The type of input source. Can be 'pointer', 'key' or 'null'
+    - name: actions[$INDEX].id
+      type: string
+      description: Unique identifier of the input device which is used for current and future actions
+    - name: actions[$INDEX].parameters
+      type: object
+      description: (optional) Set parameters for the input source. Required for 'pointer' inputs
+    - name: actions[$INDEX].parameters.pointerType
+      type: string
+      description: Type of pointer. Can be 'touch', 'mouse' or 'pen'
+    - name: actions[$INDEX].actions
+      type: array<object>
+      description: A list of actions to perform on the input source
+    - name: actions[$INDEX].actions
+      type: array<object>
+      description: A list of actions to perform on the input source
+    - name: actions[$INDEX].actions[$INDEX]
+      type: object
+      description: The action to perform on the input source
+    - name: actions[$INDEX].actions[$INDEX].type
+      type: string
+      description: The type of action. For any input source it can be 'pause'. For 'pointer' input source 'pointerMove', 'pointerUp' or 'pointerDown'. For 'key' it can be 'keyDown' or 'keyUp'
+    - name: actions[$INDEX].actions[$INDEX].value
+      type: string
+      description: For a 'keyUp' or 'keyDown' action thevalue to send to the keyboard. Should be a one-character string ("s", "\uE009")
+    - name: actions[$INDEX].actions[$INDEX].duration
+      type: number
+      description: How long to perform the action in 'ms'. Only applicable to 'pause' and 'pointerMove'.
+    - name: actions[$INDEX].actions[$INDEX].origin
+      type: string|object
+      description: For 'pointerMove', this tells the input source what x,y are relative to. Can be 'viewport', 'pointer' or \{'element-6066-11e4-a52e-4f735466cecf': '<ELEMENT_ID>'\}
+    - name: actions[$INDEX].actions[$INDEX].x
+      type: number
+      description: X coordinate of pointer move event
+    - name: actions[$INDEX].actions[$INDEX].y
+      type: number
+      description: Y coordinate of pointer move event
+
+# Links to specifications. Should link to at least one specification
+specifications: 
+  w3c: https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html

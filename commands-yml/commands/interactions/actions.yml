@@ -88,11 +88,11 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: true
-    uiautomation: true
+    xcuitest: false
+    uiautomation: false
   android:
     uiautomator2: true
-    uiautomator: true
+    uiautomator: false
   mac:
     mac: true
   windows:
@@ -152,7 +152,7 @@ endpoint:
       description: How long to perform the action in 'ms'. Only applicable to 'pause' and 'pointerMove'.
     - name: actions[$INDEX].actions[$INDEX].origin
       type: string|object
-      description: For 'pointerMove', this tells the input source what x,y are relative to. Can be 'viewport', 'pointer' or \{'element-6066-11e4-a52e-4f735466cecf': '<ELEMENT_ID>'\}
+      description: For 'pointerMove', this tells the input source what x,y are relative to. Can be 'viewport', 'pointer' or \{'element-6066-11e4-a52e-4f735466cecf'&#58; '<ELEMENT_ID>'\}
     - name: actions[$INDEX].actions[$INDEX].x
       type: number
       description: X coordinate of pointer move event

@@ -26,8 +26,8 @@ describe 'Create Android session' do
 
     @activity = @driver.current_activity
     @pkg = @driver.current_package
-    expect("#{@pkg}#{@activity}").to eql('io.appium.android.apis.ApiDemos')
+    expect("#{@pkg}#{@activity}").to eql 'io.appium.android.apis.ApiDemos'
 
-    @driver.quit()
+    @driver.quit
   end
 end

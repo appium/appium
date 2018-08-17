@@ -35,22 +35,22 @@ describe 'Basic Android selectors' do
   end
 
   it 'should find elements by Accessibility ID' do
-    @search_parameters_element = @driver.find_elements(:accessibility_id, 'Content')
-    expect(@search_parameters_element.length).to eql 1
+    search_parameters_element = @driver.find_elements :accessibility_id, 'Content'
+    expect(search_parameters_element.length).to eql 1
   end
 
   it 'should find elements by ID' do
-    @action_bar_container_elements = @driver.find_elements(:id, 'android:id/action_bar_container')
-    expect(@action_bar_container_elements.length).to eql 1
+    action_bar_container_elements = @driver.find_elements :id, 'android:id/action_bar_container'
+    expect(action_bar_container_elements.length).to eql 1
   end
 
   it 'should find elements by class name' do
-    @linear_layout_elements = @driver.find_elements(:class_name, 'android.widget.FrameLayout')
-    expect(@linear_layout_elements.length).to be > 1
+    linear_layout_elements = @driver.find_elements :class_name, 'android.widget.FrameLayout'
+    expect(linear_layout_elements.length).to be > 1
   end
 
   it 'should find elements by XPath' do
-    @linear_layout_elements = @driver.find_elements(:xpath, "//*[@class='android.widget.FrameLayout']")
-    expect(@linear_layout_elements.length).to be > 1
+    linear_layout_elements = @driver.find_elements :xpath, "//*[@class='android.widget.FrameLayout']"
+    expect(linear_layout_elements.length).to be > 1
   end
 end

@@ -22,11 +22,11 @@ desired_caps = {
 
 describe 'Create session' do
   it 'should create and destroy IOS sessions' do
-    @driver = Appium::Driver.new(desired_caps, true).start_driver
+    @driver = Appium::Driver.new(desired_caps, false).start_driver
 
-    @application_element = @driver.find_element(:class_name, 'XCUIElementTypeApplication')
-    @application_name = @application_element.attribute(:name)
-    expect(@application_name).to eq('TestApp')
+    application_element = @driver.find_element :class_name, 'XCUIElementTypeApplication'
+    application_name = application_element.attribute :name
+    expect(application_name).to eq 'TestApp'
 
     @driver.quit
   end

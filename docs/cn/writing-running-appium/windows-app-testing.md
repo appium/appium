@@ -64,4 +64,4 @@ NotepadSession.FindElementByClassName("Edit").SendKeys("This is some text");
 |    class name   	|     ClassName    	|
 |       name      	|       Name       	|
 
-本文由 [fishky2](https://github.com/fishky2) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 fishky2 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。

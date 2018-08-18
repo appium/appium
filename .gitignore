@@ -39,4 +39,7 @@ sample-code/javascript-wd/node_modules
 sample-code/php/vendor
 sample-code/php/composer.lock
 sample-code/java/out/
+sample-code/python/test/__pycache__/
+sample-code/python/test/results/
+sample-code/python/.pytest_cache/
 appium.zip

@@ -55,7 +55,7 @@ the timing of the gesture.
 The appium client libraries have different ways of implementing this, for example:
 you can pass in coordinates or an element to a `moveTo` event. Passing both
 coordinates _and_ an element will treat the coordinates as relative to the
-element's position, rather than relative to the current position.
+element's position, rather than absolute.
 
 Calling the `perform` event sends the entire sequence of events to appium,
 and the touch gesture is run on your device.

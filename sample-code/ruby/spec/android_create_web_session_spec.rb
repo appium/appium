@@ -25,9 +25,9 @@ describe 'Create Chrome web session' do
 
     @driver.get('https://www.google.com')
 
-    @page_title = @driver.title()
-    expect(@page_title).to eql('Google')
+    @page_title = @driver.title
+    expect(@page_title).to eql 'Google'
 
-    @driver.quit()
+    @driver.quit
   end
 end

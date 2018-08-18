@@ -23,7 +23,7 @@ desired_caps = {
 # Start the driver
 describe "IOS Basic Interactions" do
   before(:all) do
-    @driver = Appium::Driver.new(desired_caps, true).start_driver
+    @driver = Appium::Driver.new(desired_caps, false).start_driver
   end
 
   after(:all) do
@@ -31,19 +31,19 @@ describe "IOS Basic Interactions" do
   end
 
   it "should send keys to inputs" do
-    @textFieldEl = @driver.find_element(:id, "TextField1")
-    expect(@textFieldEl.attribute(:value)).to be_nil
-    @textFieldEl.send_keys("Hello World!")
-    expect(@textFieldEl.attribute(:value)).to eq("Hello World!")
+    textFieldEl = @driver.find_element :id, "TextField1"
+    expect(textFieldEl.attribute(:value)).to be_nil
+    textFieldEl.send_keys "Hello World!"
+    expect(textFieldEl.attribute(:value)).to eq "Hello World!"
   end
 
   it "should click a button that opens an alert" do
-    @buttonElementId = "show alert"
-    @buttonElement = @driver.find_element(:accessibility_id, @buttonElementId)
-    @buttonElement.click()
-    @alertTitleId = "Cool title"
-    @alertTitleElement = @driver.find_element(:accessibility_id, @alertTitleId)
-    @alertTitle = @alertTitleElement.attribute(:value)
-    expect(@alertTitle.attribute(:value)).to eq("Cool title")
+    buttonElementId = "show alert"
+    buttonElement = @driver.find_element :accessibility_id, buttonElementId
+    buttonElement.click
+    alertTitleId = "Cool title"
+    alertTitleElement = @driver.find_element :accessibility_id, alertTitleId
+    alertTitle = alertTitleElement.attribute :name
+    expect(alertTitle).to eq "Cool title"
   end
 end

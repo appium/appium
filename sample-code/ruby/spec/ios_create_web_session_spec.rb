@@ -22,10 +22,10 @@ desired_caps = {
 
 describe 'Create Safari session' do
   it 'should create and destroy IOS Safari session' do
-    @driver = Appium::Driver.new(desired_caps, true).start_driver
+    @driver = Appium::Driver.new(desired_caps, false).start_driver
 
-    @driver.get('https://www.google.com')
-    expect(@driver.title).to eql('Google')
+    @driver.get 'https://www.google.com'
+    expect(@driver.title).to eql 'Google'
 
     @driver.quit
   end

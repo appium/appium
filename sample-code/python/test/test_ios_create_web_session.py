@@ -3,17 +3,19 @@ import os
 
 from appium import webdriver
 
+
 class TestIOSCreateWebSession():
 
     if os.getenv('SAUCE_USERNAME') and os.getenv('SAUCE_ACCESS_KEY'):
-        EXECUTOR = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
+        EXECUTOR = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
+            os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
 
     @pytest.fixture(scope="function")
     def driver(self, request, device_logger):
         driver = webdriver.Remote(
-            command_executor= self.EXECUTOR,
+            command_executor=self.EXECUTOR,
             desired_capabilities={
                 'platformName': 'iOS',
                 'automationName': 'XCUITest',

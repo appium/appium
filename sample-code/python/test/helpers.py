@@ -1,8 +1,10 @@
 import os
 
+
 def ensure_dir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
+
 
 def take_screenhot_and_logcat(driver, device_logger, calling_request):
     logcat_dir = device_logger.logcat_dir
@@ -14,6 +16,7 @@ def take_screenhot_and_logcat(driver, device_logger, calling_request):
         data_string = str(data['timestamp']) + ":  " + str(data['message'])
         logcat_file.write((data_string + '\n').encode("UTF-8"))
     logcat_file.close()
+
 
 def take_screenhot_and_syslog(driver, device_logger, calling_request):
     syslog_dir = device_logger.logcat_dir

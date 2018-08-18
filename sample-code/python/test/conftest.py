@@ -4,6 +4,7 @@ import os
 
 from helpers import ensure_dir
 
+
 def pytest_configure(config):
     if not hasattr(config, "slaveinput"):
         current_day = (datetime.datetime.now().strftime("%Y_%m_%d_%H_%S"))
@@ -17,10 +18,12 @@ def pytest_configure(config):
         config.screen_shot_dir = os.path.join(result_dir_test_run, "screenshots")
         config.logcat_dir = os.path.join(result_dir_test_run, "logcat")
 
+
 class DeviceLogger:
     def __init__(self, logcat_dir, screenshot_dir):
         self.screenshot_dir = screenshot_dir
         self.logcat_dir = logcat_dir
+
 
 @pytest.fixture(scope="function")
 def device_logger(request):

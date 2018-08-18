@@ -4,14 +4,17 @@ import os
 from appium import webdriver
 from helpers import take_screenhot_and_logcat
 
+
 class TestAndroidBasicInteractions():
     PACKAGE = 'io.appium.android.apis'
     SEARCH_ACTIVITY = '.app.SearchInvoke'
     ALERT_DIALOG_ACTIVITY = '.app.AlertDialogSamples'
-    APP_PATH = 'http://appium.github.io/appium/assets/ApiDemos-debug.apk' if os.getenv('SAUCE_LABS') else os.path.abspath('../apps/ApiDemos-debug.apk')
+    APP_PATH = 'http://appium.github.io/appium/assets/ApiDemos-debug.apk' if os.getenv(
+        'SAUCE_LABS') else os.path.abspath('../apps/ApiDemos-debug.apk')
 
     if os.getenv('SAUCE_USERNAME') and os.getenv('SAUCE_ACCESS_KEY'):
-        EXECUTOR = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
+        EXECUTOR = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
+            os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
 
@@ -19,8 +22,8 @@ class TestAndroidBasicInteractions():
     def driver(self, request, device_logger):
         calling_request = request._pyfuncitem.name
         driver = webdriver.Remote(
-            command_executor = self.EXECUTOR,
-            desired_capabilities = {
+            command_executor=self.EXECUTOR,
+            desired_capabilities={
                 'app': self.APP_PATH,
                 'platformName': 'Android',
                 'automationName': 'UIAutomator2',

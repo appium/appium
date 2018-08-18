@@ -1,5 +1,4 @@
 # Python Sample Code
-
 ## Setup
 
 ```

@@ -1,2 +1,2 @@
-Appium-Python-Client
+Appium-Python-Client>=0.28
 pytest

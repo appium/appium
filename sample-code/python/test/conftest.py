@@ -27,4 +27,3 @@ def device_logger(request):
     logcat_dir = request.config.logcat_dir
     screenshot_dir = request.config.screen_shot_dir
     return DeviceLogger(logcat_dir, screenshot_dir)
-

@@ -1,10 +1,10 @@
-import pytest
+import unittest
 import os
 
 from appium import webdriver
 
-
-class TestAndroidSelectors():
+# Run standard unittest base.
+class TestAndroidSelectors(unittest.TestCase):
     APP_PATH = 'http://appium.github.io/appium/assets/ApiDemos-debug.apk' if os.getenv(
         'SAUCE_LABS') else os.path.abspath('../apps/ApiDemos-debug.apk')
 
@@ -14,9 +14,8 @@ class TestAndroidSelectors():
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
 
-    @pytest.fixture(scope="function")
-    def driver(self, request, device_logger):
-        driver = webdriver.Remote(
+    def setUp(self):
+        self.driver = webdriver.Remote(
             command_executor=self.EXECUTOR,
             desired_capabilities={
                 'app': self.APP_PATH,
@@ -26,13 +25,11 @@ class TestAndroidSelectors():
                 'deviceName': os.getenv('ANDROID_DEVICE_VERSION') or 'Android',
             }
         )
-        driver.implicitly_wait(10)
+        self.driver.implicitly_wait(10)
 
-        return driver
-
-    def test_should_create_and_destroy_android_session(self, driver):
-        activity = driver.current_activity
-        pkg = driver.current_package
+    def test_should_create_and_destroy_android_session(self):
+        activity = self.driver.current_activity
+        pkg = self.driver.current_package
 
         assert 'io.appium.android.apis.ApiDemos' == pkg + activity
-        driver.quit()
+        self.driver.quit()

@@ -1,10 +1,10 @@
-import pytest
+import unittest
 import os
 
 from appium import webdriver
 
-
-class TestIOSSelectors():
+# Run standard unittest base.
+class TestIOSSelectors(unittest.TestCase):
     APP_PATH = 'http://appium.github.io/appium/assets/TestApp7.1.app.zip' if os.getenv(
         'SAUCE_LABS') else os.path.abspath('../apps/TestApp.app.zip')
 
@@ -14,9 +14,8 @@ class TestIOSSelectors():
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
 
-    @pytest.fixture(scope="function")
-    def driver(self, request, device_logger):
-        driver = webdriver.Remote(
+    def setUp(self):
+        self.driver = webdriver.Remote(
             command_executor=self.EXECUTOR,
             desired_capabilities={
                 'app': self.APP_PATH,
@@ -26,13 +25,11 @@ class TestIOSSelectors():
                 'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
             }
         )
-        driver.implicitly_wait(10)
+        self.driver.implicitly_wait(10)
 
-        return driver
-
-    def test_should_create_and_destroy_ios_session(self, driver):
-        app_element = driver.find_element_by_class_name('XCUIElementTypeApplication')
+    def test_should_create_and_destroy_ios_session(self):
+        app_element = self.driver.find_element_by_class_name('XCUIElementTypeApplication')
         app_element_name = app_element.get_attribute('name')
 
         assert 'TestApp' == app_element_name
-        driver.quit()
+        self.driver.quit()

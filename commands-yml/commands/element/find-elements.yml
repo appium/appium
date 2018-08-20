@@ -15,8 +15,10 @@ selector_strategies:
     description: Name of element
   - name: XPath
     description: Search the app XML source using xpath (not recommended, has performance issues)
-  - name: Android UiAutomator
+  - name: Android UiAutomator (UiAutomator2 only)
     description: Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.
+  - name: Android View Tag (Espresso only)
+    description: Locate an element by it's [view tag](https://developer.android.com/reference/android/support/test/espresso/matcher/ViewMatchers.html#withTagValue(org.hamcrest.Matcher%3Cjava.lang.Object%3E))
   - name: IOS UIAutomation
     description: When automating an iOS application, Apple’s [Instruments](/docs/en/drivers/ios-uiautomation.md) framework can be used to find elements
 example_usage:

@@ -3,6 +3,7 @@ import os
 
 from appium import webdriver
 from helpers import take_screenhot_and_syslog
+from selenium.common.exceptions import InvalidSessionIdException
 
 
 class TestIOSCreateWebSession():
@@ -29,7 +30,6 @@ class TestIOSCreateWebSession():
 
         def fin():
             take_screenhot_and_syslog(driver, device_logger, calling_request)
-            driver.quit()
 
         request.addfinalizer(fin)
 
@@ -42,3 +42,7 @@ class TestIOSCreateWebSession():
 
         assert 'Google' == title
         driver.quit()
+
+        with pytest.raises(InvalidSessionIdException) as excinfo:
+            driver.title
+        assert 'A session is either terminated or not started' == excinfo.value.msg

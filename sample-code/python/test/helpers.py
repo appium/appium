@@ -1,4 +1,5 @@
 import os
+from selenium.common.exceptions import InvalidSessionIdException
 
 
 def ensure_dir(directory):
@@ -16,8 +17,13 @@ def take_screenhot_and_syslog(driver, device_logger, calling_request):
 def __save_log_type(driver, device_logger, calling_request, type):
     logcat_dir = device_logger.logcat_dir
     screenshot_dir = device_logger.screenshot_dir
-    driver.save_screenshot(os.path.join(screenshot_dir, calling_request + '.png'))
-    logcat_data = driver.get_log(type)
+
+    try:
+        driver.save_screenshot(os.path.join(screenshot_dir, calling_request + '.png'))
+        logcat_data = driver.get_log(type)
+    except InvalidSessionIdException:
+        return
+
     with open(os.path.join(logcat_dir, '{}_{}.log'.format(calling_request, type)), 'wb') as logcat_file:
         for data in logcat_data:
             data_string = '{}:  {}'.format(data['timestamp'], data['message'])

@@ -2,6 +2,7 @@ import unittest
 import os
 
 from appium import webdriver
+from selenium.common.exceptions import InvalidSessionIdException
 
 # Run standard unittest base.
 class TestAndroidSelectors(unittest.TestCase):
@@ -27,12 +28,13 @@ class TestAndroidSelectors(unittest.TestCase):
         )
         self.driver.implicitly_wait(10)
 
-    def tearDown(self):
-        self.driver.quit() # Make sure quite driver even if assertion fails in test cases
-
     def test_should_create_and_destroy_android_session(self):
         activity = self.driver.current_activity
         pkg = self.driver.current_package
 
-        assert 'io.appium.android.apis.ApiDemos' == pkg + activity
+        self.assertEquals('io.appium.android.apis.ApiDemos', '{}{}'.format(pkg, activity))
         self.driver.quit()
+
+        with self.assertRaises(InvalidSessionIdException) as excinfo:
+            self.driver.title
+        self.assertEquals('A session is either terminated or not started', excinfo.exception.msg)

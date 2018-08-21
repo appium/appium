@@ -27,6 +27,9 @@ class TestIOSSelectors(unittest.TestCase):
         )
         self.driver.implicitly_wait(10)
 
+    def tearDown(self):
+        self.driver.quit() # Make sure quite driver even if assertion fails in test cases
+
     def test_should_create_and_destroy_ios_session(self):
         app_element = self.driver.find_element_by_class_name('XCUIElementTypeApplication')
         app_element_name = app_element.get_attribute('name')

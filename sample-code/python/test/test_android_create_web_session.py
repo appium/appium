@@ -2,6 +2,7 @@ import pytest
 import os
 
 from appium import webdriver
+from helpers import take_screenhot_and_logcat
 
 
 class TestAndroidCreateWebSession():
@@ -14,6 +15,7 @@ class TestAndroidCreateWebSession():
 
     @pytest.fixture(scope='function')
     def driver(self, request, device_logger):
+        calling_request = request._pyfuncitem.name
         driver = webdriver.Remote(
             command_executor=self.EXECUTOR,
             desired_capabilities={
@@ -24,8 +26,14 @@ class TestAndroidCreateWebSession():
                 'browserName': 'Chrome'
             }
         )
-        driver.implicitly_wait(10)
 
+        def fin():
+            take_screenhot_and_logcat(driver, device_logger, calling_request)
+            driver.quit()
+
+        request.addfinalizer(fin)
+
+        driver.implicitly_wait(10)
         return driver
 
     def test_should_create_and_destroy_android_session(self, driver):

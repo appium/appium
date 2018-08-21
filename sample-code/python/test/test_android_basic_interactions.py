@@ -1,5 +1,6 @@
 import pytest
 import os
+import textwrap
 
 from appium import webdriver
 from helpers import take_screenhot_and_logcat
@@ -32,13 +33,14 @@ class TestAndroidBasicInteractions():
                 'appActivity': self.SEARCH_ACTIVITY
             }
         )
-        driver.implicitly_wait(10)
 
         def fin():
             take_screenhot_and_logcat(driver, device_logger, calling_request)
             driver.quit()
 
         request.addfinalizer(fin)
+
+        driver.implicitly_wait(10)
         return driver
 
     def test_should_send_keys_to_search_box_and_then_check_the_value(self, driver):
@@ -62,7 +64,9 @@ class TestAndroidBasicInteractions():
         alert_element = driver.find_element_by_id('android:id/alertTitle')
         alert_text = alert_element.text
 
-        assert 'Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop.' == alert_text
+        assert textwrap.dedent('''\
+        Lorem ipsum dolor sit aie consectetur adipiscing
+        Plloaso mako nuto siwuf cakso dodtos anr koop.''') == alert_text
 
         close_dialog_button = driver.find_element_by_id('android:id/button1')
         close_dialog_button.click()

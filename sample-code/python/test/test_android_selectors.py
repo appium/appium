@@ -28,13 +28,14 @@ class TestAndroidBasicInteractions():
                 'deviceName': os.getenv('ANDROID_DEVICE_VERSION') or 'Android'
             }
         )
-        driver.implicitly_wait(10)
 
         def fin():
             take_screenhot_and_logcat(driver, device_logger, calling_request)
             driver.quit()
 
         request.addfinalizer(fin)
+
+        driver.implicitly_wait(10)
         return driver
 
     def test_should_find_elements_by_accessibility_id(self, driver):

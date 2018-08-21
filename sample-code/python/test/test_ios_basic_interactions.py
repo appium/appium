@@ -28,13 +28,14 @@ class TestIOSBasicInteractions():
                 'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
             }
         )
-        driver.implicitly_wait(10)
 
         def fin():
             take_screenhot_and_syslog(driver, device_logger, calling_request)
             driver.quit()
 
         request.addfinalizer(fin)
+
+        driver.implicitly_wait(10)
         return driver
 
     def test_should_send_keys_to_inputs(self, driver):

@@ -45,11 +45,11 @@ class TestIOSBasicInteractions():
 
     def test_should_find_elements_by_class_name(self, driver):
         window_elements = driver.find_elements_by_class_name('XCUIElementTypeWindow')
-        assert 1 < len(window_elements)
+        assert 2 == len(window_elements)
 
     def test_should_find_elements_by_nspredicate(self, driver):
         all_visible_elements = driver.find_elements_by_ios_predicate('visible = 1')
-        assert 1 < len(all_visible_elements)
+        assert 27 == len(all_visible_elements)
 
     def test_should_find_elements_by_class_chain(self, driver):
         window_element = driver.find_elements_by_ios_class_chain('XCUIElementTypeWindow[1]/*[2]')
@@ -57,4 +57,4 @@ class TestIOSBasicInteractions():
 
     def test_should_find_elements_by_xpath(self, driver):
         action_bar_container_elements = driver.find_elements_by_xpath('//XCUIElementTypeWindow//XCUIElementTypeButton')
-        assert 1 < len(action_bar_container_elements)
+        assert 8 == len(action_bar_container_elements)

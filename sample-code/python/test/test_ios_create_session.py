@@ -22,7 +22,7 @@ class TestIOSSelectors(unittest.TestCase):
                 'app': self.APP_PATH,
                 'platformName': 'iOS',
                 'automationName': 'XCUITest',
-                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '10.3',
+                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '11.1',
                 'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
             }
         )

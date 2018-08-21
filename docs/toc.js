@@ -167,6 +167,7 @@ module.exports = {
           ["Multi Touch Perform", "multi-touch-perform.md"],
           ["Touch Perform", "touch-perform.md"],
         ]],
+        ["W3C Actions", "actions.md"],
       ]],
       ["Web", ["web",
         ["Window", ["window",

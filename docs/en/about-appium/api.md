@@ -127,6 +127,7 @@
     <li><a href='/docs/en/commands/interactions/touch/multi-touch-perform.md'>Multi Touch Perform</a></li>
     <li><a href='/docs/en/commands/interactions/touch/touch-perform.md'>Touch Perform</a></li>
 </ul></li>
+    <li><a href='/docs/en/commands/interactions/actions.md'>W3C Actions</a></li>
 </ul></li>
     <li><a href='/docs/en/commands/web'>Web</a><ul>    <li><a href='/docs/en/commands/web/window'>Window</a><ul>    <li><a href='/docs/en/commands/web/window/set-window.md'>Set Window</a></li>
     <li><a href='/docs/en/commands/web/window/close-window.md'>Close Window</a></li>

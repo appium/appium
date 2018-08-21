@@ -7,7 +7,7 @@ from appium import webdriver
 class TestIOSCreateWebSession():
 
     if os.getenv('SAUCE_USERNAME') and os.getenv('SAUCE_ACCESS_KEY'):
-        EXECUTOR = 'http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (
+        EXECUTOR = 'http://{}:{}@ondemand.saucelabs.com:80/wd/hub'.format(
             os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'

@@ -1,6 +1,6 @@
 ---
 name: Actions
-short_description: Perform a chain or multiple chains of keyboard and pointer (touch, mouse, stylus)
+short_description: Perform a chain or multiple chains of keyboard and pointer (touch, mouse, stylus) actions
 description:
   |
   * input source: Represents an input device (pointer or key) that a series of actions are dispatched to. The input source has a unique ID.

@@ -22,7 +22,7 @@ def __save_log_type(driver, device_logger, calling_request, type):
         driver.save_screenshot(os.path.join(screenshot_dir, calling_request + '.png'))
         logcat_data = driver.get_log(type)
     except InvalidSessionIdException:
-        return
+        logcat_data = ''
 
     with open(os.path.join(logcat_dir, '{}_{}.log'.format(calling_request, type)), 'wb') as logcat_file:
         for data in logcat_data:

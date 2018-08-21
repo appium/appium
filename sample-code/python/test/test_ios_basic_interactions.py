@@ -40,7 +40,7 @@ class TestIOSBasicInteractions():
 
     def test_should_send_keys_to_inputs(self, driver):
         text_field_el = driver.find_element_by_id('TextField1')
-        assert None == text_field_el.get_attribute('value')
+        assert text_field_el.get_attribute('value') is None
         text_field_el.send_keys('Hello World!')
         assert 'Hello World!' == text_field_el.get_attribute('value')
 

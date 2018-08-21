@@ -10,12 +10,12 @@ class TestIOSBasicInteractions():
         'SAUCE_LABS') else os.path.abspath('../apps/TestApp.app.zip')
 
     if os.getenv('SAUCE_USERNAME') and os.getenv('SAUCE_ACCESS_KEY'):
-        EXECUTOR = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
+        EXECUTOR = 'http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (
             os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
 
-    @pytest.fixture(scope="function")
+    @pytest.fixture(scope='function')
     def driver(self, request, device_logger):
         calling_request = request._pyfuncitem.name
         driver = webdriver.Remote(
@@ -51,4 +51,4 @@ class TestIOSBasicInteractions():
         alert_title_element_id = 'Cool title'
         alert_title_element = driver.find_element_by_accessibility_id(alert_title_element_id)
         alert_title = alert_title_element.get_attribute('name')
-        assert "Cool title" == alert_title
+        assert 'Cool title' == alert_title

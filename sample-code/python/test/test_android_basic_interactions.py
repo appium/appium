@@ -13,12 +13,12 @@ class TestAndroidBasicInteractions():
         'SAUCE_LABS') else os.path.abspath('../apps/ApiDemos-debug.apk')
 
     if os.getenv('SAUCE_USERNAME') and os.getenv('SAUCE_ACCESS_KEY'):
-        EXECUTOR = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub" % (
+        EXECUTOR = 'http://%s:%s@ondemand.saucelabs.com:80/wd/hub' % (
             os.getenv('SAUCE_USERNAME'), os.getenv('SAUCE_ACCESS_KEY'))
     else:
         EXECUTOR = 'http://127.0.0.1:4723/wd/hub'
 
-    @pytest.fixture(scope="function")
+    @pytest.fixture(scope='function')
     def driver(self, request, device_logger):
         calling_request = request._pyfuncitem.name
         driver = webdriver.Remote(
@@ -62,7 +62,7 @@ class TestAndroidBasicInteractions():
         alert_element = driver.find_element_by_id('android:id/alertTitle')
         alert_text = alert_element.text
 
-        assert "Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop." == alert_text
+        assert 'Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop.' == alert_text
 
         close_dialog_button = driver.find_element_by_id('android:id/button1')
         close_dialog_button.click()

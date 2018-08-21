@@ -6,17 +6,17 @@ from helpers import ensure_dir
 
 
 def pytest_configure(config):
-    if not hasattr(config, "slaveinput"):
-        current_day = (datetime.datetime.now().strftime("%Y_%m_%d_%H_%S"))
-        ensure_dir("results")
-        ensure_dir(os.path.join("results", current_day))
-        result_dir = os.path.join(os.path.dirname(__file__), "results", current_day)
+    if not hasattr(config, 'slaveinput'):
+        current_day = (datetime.datetime.now().strftime('%Y_%m_%d_%H_%S'))
+        ensure_dir('results')
+        ensure_dir(os.path.join('slaveinput', current_day))
+        result_dir = os.path.join(os.path.dirname(__file__), 'results', current_day)
         ensure_dir(result_dir)
         result_dir_test_run = result_dir
-        ensure_dir(os.path.join(result_dir_test_run, "screenshots"))
-        ensure_dir(os.path.join(result_dir_test_run, "logcat"))
-        config.screen_shot_dir = os.path.join(result_dir_test_run, "screenshots")
-        config.logcat_dir = os.path.join(result_dir_test_run, "logcat")
+        ensure_dir(os.path.join(result_dir_test_run, 'screenshots'))
+        ensure_dir(os.path.join(result_dir_test_run, 'logcat'))
+        config.screen_shot_dir = os.path.join(result_dir_test_run, 'screenshots')
+        config.logcat_dir = os.path.join(result_dir_test_run, 'logcat')
 
 
 class DeviceLogger:
@@ -25,7 +25,7 @@ class DeviceLogger:
         self.logcat_dir = logcat_dir
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope='function')
 def device_logger(request):
     logcat_dir = request.config.logcat_dir
     screenshot_dir = request.config.screen_shot_dir

@@ -77,7 +77,7 @@ Must be called once for every buttondown command issued. See the note in click a
 |--------|----------------|------|--------------|--------------|
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+| Android | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |

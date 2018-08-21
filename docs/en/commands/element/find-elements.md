@@ -57,7 +57,8 @@ $els = $this->elements($this->using('accessibility id')->value('SomeAccessibilit
 |ID|Native element identifier. `resource-id` for android; `name` for iOS.|
 |Name|Name of element|
 |XPath|Search the app XML source using xpath (not recommended, has performance issues)|
-|Android UiAutomator|Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.|
+|Android UiAutomator (UiAutomator2 only)|Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.|
+|Android View Tag (Espresso only)|Locate an element by its [view tag](https://developer.android.com/reference/android/support/test/espresso/matcher/ViewMatchers.html#withTagValue(org.hamcrest.Matcher%3Cjava.lang.Object%3E))|
 |IOS UIAutomation|When automating an iOS application, Apple’s [Instruments](/docs/en/drivers/ios-uiautomation.md) framework can be used to find elements|
 
 ## Description
@@ -73,7 +74,8 @@ Get a list of elements that match the [locator selector](/docs/en/writing-runnin
 |--------|----------------|------|--------------|--------------|
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
+| Android | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.9.0+ | All |
+|  | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |

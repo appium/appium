@@ -2,7 +2,7 @@
 
 # Actions
 
-Perform a chain or multiple chains of keyboard and poiner (touch, mouse, stylus)
+Perform a chain or multiple chains of keyboard and pointer (touch, mouse, stylus) actions
 ## Example Usage
 
 ```java
@@ -101,7 +101,8 @@ is the 0-indexed action, the second 'tick' is the 1-indexed action, etc.... All 
 |--------|----------------|------|--------------|--------------|
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
+| Android | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.9.0+ | All |
+|  | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |

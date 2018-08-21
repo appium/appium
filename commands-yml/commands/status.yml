@@ -46,6 +46,7 @@ driver_support:
     uiautomation: true
   android:
     espresso: true
+    espresso: true
     uiautomator2: true
     uiautomator: true
   mac:

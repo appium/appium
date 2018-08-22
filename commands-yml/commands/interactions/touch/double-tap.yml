@@ -47,13 +47,14 @@ driver_support:
   ios:
    xcuitest: false
    uiautomation: false
-android:
-  uiautomator2: false
-  uiautomator: false
-  mac:
-    mac: true # TODO Confirm this that mouse movements
-  windows:
-    windows: true # TODO Confirm this
+  android:
+    uiautomator2: false
+    espresso: false
+    uiautomator: false
+    mac:
+      mac: true # TODO Confirm this that mouse movements
+    windows:
+      windows: true # TODO Confirm this
 client_support:
   java: true
   python: true

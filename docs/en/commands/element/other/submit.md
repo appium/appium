@@ -66,6 +66,7 @@ The submit command may also be applied to any element that is a descendant of a 
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
 | Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.6.0+ | All |

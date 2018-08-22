@@ -16,6 +16,7 @@ import { exec } from 'teen_process';
 const platformRanges = {
   xcuitest: ['9.3'],
   uiautomation: ['8.0', '9.3'],
+  espresso: ['?'],
   uiautomator2: ['?'],
   uiautomator: ['4.2'],
   windows: ['10'],
@@ -26,7 +27,7 @@ const platformRanges = {
 const appiumRanges = {
   xcuitest: ['1.6.0'],
   uiautomator2: ['1.6.0'],
-  espresso: ['?'],
+  espresso: ['1.9.0'],
   windows: ['1.6.0'],
   mac: ['1.6.4'],
 };
@@ -85,6 +86,8 @@ Handlebars.registerHelper('capitalize', function (driverName) {
       return 'UiAutomator2';
     case 'uiautomator':
       return 'UiAutomator';
+    case 'espresso':
+      return 'Espresso';
     default:
       return driverName.length === 0 ? driverName : driverName[0].toUpperCase() + driverName.substr(1);
   }

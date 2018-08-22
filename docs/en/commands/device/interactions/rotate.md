@@ -51,9 +51,10 @@ driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touc
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
 | Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
 | Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
 | Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |

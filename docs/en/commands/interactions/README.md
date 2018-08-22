@@ -24,5 +24,6 @@
     <li><a href='/docs/en/commands/interactions/touch/multi-touch-perform.md'>Multi Touch Perform</a></li>
     <li><a href='/docs/en/commands/interactions/touch/touch-perform.md'>Touch Perform</a></li>
 </ul></li>
+    <li><a href='/docs/en/commands/interactions/actions.md'>W3C Actions</a></li>
 </ul>
 </div>

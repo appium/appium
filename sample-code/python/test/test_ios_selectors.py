@@ -33,7 +33,6 @@ class TestIOSBasicInteractions():
     def test_should_find_elements_by_accessibility_id(self, driver):
         search_parameters_element = driver.find_elements_by_accessibility_id('ComputeSumButton')
         assert 1 == len(search_parameters_element)
-        search_parameters_element[0].click()
 
     def test_should_find_elements_by_class_name(self, driver):
         window_elements = driver.find_elements_by_class_name('XCUIElementTypeWindow')

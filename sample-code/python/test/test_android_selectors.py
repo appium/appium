@@ -3,7 +3,6 @@ import os
 
 from appium import webdriver
 from helpers import take_screenhot_and_logcat, ANDROID_APP_PATH, EXECUTOR
-from selenium.common.exceptions import APP_PATH
 
 
 class TestAndroidBasicInteractions():
@@ -41,8 +40,8 @@ class TestAndroidBasicInteractions():
 
     def test_should_find_elements_by_class_name(self, driver):
         action_bar_container_elements = driver.find_elements_by_class_name('android.widget.FrameLayout')
-        assert 1 < len(action_bar_container_elements)
+        assert 3 == len(action_bar_container_elements)
 
     def test_should_find_elements_by_xpath(self, driver):
         action_bar_container_elements = driver.find_elements_by_xpath('//*[@class="android.widget.FrameLayout"]')
-        assert 1 < len(action_bar_container_elements)
+        assert 3 == len(action_bar_container_elements)

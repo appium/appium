@@ -42,4 +42,3 @@ def __save_log_type(driver, device_logger, calling_request, type):
         for data in logcat_data:
             data_string = '{}:  {}'.format(data['timestamp'], data['message'])
             logcat_file.write((data_string + '\n').encode('UTF-8'))
-    logcat_file.close()

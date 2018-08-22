@@ -1,0 +1,2 @@
+Appium-Python-Client>=0.28
+pytest

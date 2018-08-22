@@ -1,7 +1,4 @@
-require 'rubygems'
-require 'appium_lib'
-require 'test/unit'
-extend Test::Unit::Assertions
+require 'spec_helper'
 
 desired_caps = {
   caps: {
@@ -18,7 +15,6 @@ desired_caps = {
   }
 }
 
-
 describe 'Create Chrome web session' do
   it 'should create and destroy Android browser session' do
     @driver = Appium::Driver.new(desired_caps, true).start_driver
@@ -29,5 +25,6 @@ describe 'Create Chrome web session' do
     expect(@page_title).to eql 'Google'
 
     @driver.quit
+    expect { @driver.title }.to raise_error(Selenium::WebDriver::Error::InvalidSessionIdError, 'A session is either terminated or not started')
   end
 end

@@ -1,14 +1,9 @@
-require 'rubygems'
-require 'appium_lib'
-require 'test/unit'
-extend Test::Unit::Assertions
-
-APP_PATH = ENV['SAUCE_LABS'] ? 'http://appium.github.io/appium/assets/TestApp7.1.app.zip' : '../apps/TestApp.app.zip'
+require 'spec_helper'
 
 desired_caps = {
   caps: {
     platformName:  'iOS',
-    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '11.1',
+    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '10.3',
     deviceName:    ENV["IOS_DEVICE_NAME"] || 'iPhone 6s',
     automationName: 'XCUITest',
     browserName: 'Safari',
@@ -28,5 +23,6 @@ describe 'Create Safari session' do
     expect(@driver.title).to eql 'Google'
 
     @driver.quit
+    expect { @driver.title }.to raise_error(Selenium::WebDriver::Error::InvalidSessionIdError, 'A session is either terminated or not started')
   end
 end

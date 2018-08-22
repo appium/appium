@@ -66,6 +66,11 @@ await action.perform();
 |--------|----------------|------|--------------|--------------|
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
+|  | [Mac](/docs/en/drivers/android-mac.md) | ?+ | 1.6.4+ | All |
+|  | [Windows](/docs/en/drivers/android-windows.md) | 10+ | 1.6.0+ | All |
 
 ### Appium Clients
 

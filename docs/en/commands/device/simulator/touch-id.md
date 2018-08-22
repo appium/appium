@@ -72,7 +72,8 @@ This call will only work if Appium process or its parent application (e.g. Termi
 |--------|----------------|------|--------------|--------------|
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
-| Android | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
+|  | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
 | Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
 | Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |

@@ -3,7 +3,7 @@ require 'spec_helper'
 desired_caps = {
   caps: {
     platformName:  'iOS',
-    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '10.3',
+    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '11.4',
     deviceName:    ENV["IOS_DEVICE_NAME"] || 'iPhone 6s',
     app:           IOS_APP,
     automationName: 'XCUITest',

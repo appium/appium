@@ -1,22 +1,13 @@
-require 'rubygems'
-require 'appium_lib'
-require 'test/unit'
-extend Test::Unit::Assertions
-
-PACKAGE = 'io.appium.android.apis'
-SEARCH_ACTIVITY = '.app.SearchInvoke'
-ALERT_DIALOG_ACTIVITY = '.app.AlertDialogSamples'
-
-APP_PATH = ENV['SAUCE_LABS'] ? 'http://appium.github.io/appium/assets/ApiDemos-debug.apk' : '../apps/ApiDemos-debug.apk'
+require 'spec_helper'
 
 desired_caps = {
   caps: {
     platformName:  'Android',
     platformVersion: ENV['SAUCE_LABS'] ? (ENV["ANDROID_PLATFORM_VERSION"] || '7.1') : ENV["ANDROID_PLATFORM_VERSION"],
     deviceName:    ENV["ANDROID_DEVICE_VERSION"] || 'Android',
-    app:           APP_PATH,
+    app:           ANDROID_APP,
     automationName: 'UIAutomator2',
-    appActivity: SEARCH_ACTIVITY
+    appActivity: '.app.SearchInvoke'
   },
   appium_lib: {
     sauce_username:   ENV['SAUCE_LABS'] ? ENV['SAUCE_USERNAME'] : nil,
@@ -48,7 +39,7 @@ describe 'Basic Android interactions' do
   end
 
   it 'should click a button that opens an alert and then dismisses it' do
-    @driver.start_activity app_package: PACKAGE, app_activity: ALERT_DIALOG_ACTIVITY
+    @driver.start_activity app_package: ANDROID_PACKAGE, app_activity: '.app.AlertDialogSamples'
 
     open_dialog_button = @driver.find_element :id, 'io.appium.android.apis:id/two_buttons'
     open_dialog_button.click

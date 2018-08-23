@@ -1,16 +1,11 @@
-require 'rubygems'
-require 'appium_lib'
-require 'test/unit'
-extend Test::Unit::Assertions
-
-APP_PATH = ENV['SAUCE_LABS'] ? 'http://appium.github.io/appium/assets/ApiDemos-debug.apk' : '../apps/ApiDemos-debug.apk'
+require 'spec_helper'
 
 desired_caps = {
   caps: {
     platformName:  'Android',
     platformVersion: ENV['SAUCE_LABS'] ? (ENV["ANDROID_PLATFORM_VERSION"] || '7.1') : ENV["ANDROID_PLATFORM_VERSION"],
     deviceName:    ENV["ANDROID_DEVICE_VERSION"] || 'Android',
-    app:           APP_PATH,
+    app:           ANDROID_APP,
     automationName: 'UIAutomator2',
   },
   appium_lib: {
@@ -29,5 +24,6 @@ describe 'Create Android session' do
     expect("#{@pkg}#{@activity}").to eql 'io.appium.android.apis.ApiDemos'
 
     @driver.quit
+    expect { @driver.current_package }.to raise_error(Selenium::WebDriver::Error::InvalidSessionIdError, 'A session is either terminated or not started')
   end
 end

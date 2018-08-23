@@ -1,16 +1,11 @@
-require 'rubygems'
-require 'appium_lib'
-require 'test/unit'
-extend Test::Unit::Assertions
-
-APP_PATH = ENV['SAUCE_LABS'] ? 'http://appium.github.io/appium/assets/TestApp7.1.app.zip' : '../apps/TestApp.app.zip'
+require 'spec_helper'
 
 desired_caps = {
   caps: {
     platformName:  'iOS',
-    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '11.1',
+    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '11.4',
     deviceName:    ENV["IOS_DEVICE_NAME"] || 'iPhone 6s',
-    app:           APP_PATH,
+    app:           IOS_APP,
     automationName: 'XCUITest',
   },
   appium_lib: {

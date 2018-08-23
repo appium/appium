@@ -1,20 +1,11 @@
-require 'rubygems'
-require 'appium_lib'
-require 'test/unit'
-extend Test::Unit::Assertions
-
-PACKAGE = 'io.appium.android.apis'
-SEARCH_ACTIVITY = '.app.SearchInvoke'
-ALERT_DIALOG_ACTIVITY = '.app.AlertDialogSamples'
-
-APP_PATH = ENV['SAUCE_LABS'] ? 'http://appium.github.io/appium/assets/ApiDemos-debug.apk' : '../apps/ApiDemos-debug.apk'
+require 'spec_helper'
 
 desired_caps = {
   caps: {
     platformName:  'Android',
     platformVersion: ENV['SAUCE_LABS'] ? (ENV["ANDROID_PLATFORM_VERSION"] || '7.1') : ENV["ANDROID_PLATFORM_VERSION"],
     deviceName:    ENV["ANDROID_DEVICE_VERSION"] || 'Android',
-    app:           APP_PATH,
+    app:           ANDROID_APP,
     automationName: 'UIAutomator2'
   },
   appium_lib: {
@@ -46,11 +37,11 @@ describe 'Basic Android selectors' do
 
   it 'should find elements by class name' do
     linear_layout_elements = @driver.find_elements :class_name, 'android.widget.FrameLayout'
-    expect(linear_layout_elements.length).to be > 1
+    expect(linear_layout_elements.length).to eql 3
   end
 
   it 'should find elements by XPath' do
     linear_layout_elements = @driver.find_elements :xpath, "//*[@class='android.widget.FrameLayout']"
-    expect(linear_layout_elements.length).to be > 1
+    expect(linear_layout_elements.length).to eql 3
   end
 end

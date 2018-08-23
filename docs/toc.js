@@ -226,6 +226,7 @@ module.exports = {
       ["Android", ["android",
         ["UiSelector Guide", "uiautomator-uiselector.md"],
         ["Android Code Coverage Guide", "android-coverage.md"],
+        ["Activities Startup Troubleshooting Guide", "activity-startup.md"],
       ]],
       ["Other", ["other",
         ["Reset Strategies", "reset-strategies.md"],

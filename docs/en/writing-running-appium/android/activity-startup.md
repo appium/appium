@@ -19,7 +19,7 @@ All these capabilities are optional. If they are not set explicitly then Appium 
 
 ### How Appium Starts Activities
 
-Activities are started by [Call activity manager `am`](https://developer.android.com/studio/command-line/adb#am). Appium tries to start the `appPackage`/`appActivity` combination using `am start` and then waits until the `appWaitPackage`/`appWaitActivity` is focused until the `appWaitDuration` timeout expires. The currently focused activity name is parsed from `adb shell dumpsys window windows` command output (`mFocusedApp` or `mCurrentFocus` entries). For more details check on the implementation of `startApp`, and `getFocusedPackageAndActivity` methods in the [appium-adb](https://github.com/appium/appium-adb/blob/master/lib/tools/apk-utils.js) package.
+Activities are started by [Call activity manager `am`](https://developer.android.com/studio/command-line/adb#am). Appium tries to start the `appPackage`/`appActivity` combination using `am start` and then waits until the `appWaitPackage`/`appWaitActivity` is focused or the `appWaitDuration` timeout expires. The currently focused activity name is parsed from `adb shell dumpsys window windows` command output (`mFocusedApp` or `mCurrentFocus` entries). For more details check on the implementation of `startApp`, and `getFocusedPackageAndActivity` methods in the [appium-adb](https://github.com/appium/appium-adb/blob/master/lib/tools/apk-utils.js) package.
 
 
 ### Possible Problems And Solutions

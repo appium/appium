@@ -15,7 +15,8 @@ Appium 1.9.0 is a feature release, comprising multiple updates.
 * Fix status retrieval to speed up performance.
 
 #### iOS
-* Add support for Xcode 10 and iOS 12.
+* Add support for Xcode 10 beta 5 and iOS 12 beta 5.
+* Add preliminary support for MacOS Mojave beta.
 * Add face id biometric support.
 * Fix retrieval of device time, and add optional `format` parameter.
 * Do not crash if there is no `idevicesyslog` when ending session.
@@ -25,8 +26,9 @@ Appium 1.9.0 is a feature release, comprising multiple updates.
     remote debugger sits.
   * `safariGarbageCollect` - turn on/off JS garbage collection in Safari.
   * `showSafariNetworkLog` - print Safari network logs in the Appium server logs.
+  * `mjpegServerPort` - port to which screenshots can be streamed.
 * Fix handling of settings updates, so simulators are not restarted unnecessarily.
-* Allow pulling of files and folder from real devices.
+* Allow pulling of folder from real devices.
 * Add `mobile: getContexts` execute function, to retrieve meta-information (title,
   url, etc.) about available contexts.
 * Fix certificate retrieval and handling.
@@ -43,15 +45,17 @@ Appium 1.9.0 is a feature release, comprising multiple updates.
   * `mjpegScreenshotUrl` - url to stream screenshots to.
   * `chromedriverUseSystemExecutable` - boolean flag to use the default Chromedriver
     installed with Appium, avoiding any attempt to find correct Chromedriver.
-  * `disableWindowAnimation` - disable window animations on device.
+  * `disableWindowAnimation` - disable window animations on device (now available
+    on UiAutomator _and_ UiAutomator2).
   * `pageLoadStrategy` - page load strategy for Chromedriver.
 * Allow test-only APKs to be installed.
 * Fix implicit wait handling for finding elements.
 * Better handle Unicode IME installation.
 * Relax package validation logic.
 * Fix error in UiAutomator searches with nested quotes.
-* Perform accessibility refresh when needed.
+* Perform accessibility refresh when needed on UiAutomator2.
 * Improve logic for determining if apps need upgrade.
+* Fix screen recording to allow longer recordings, up to 30 minutes.
 
 
 CHANGES IN VERSION 1.8.1 (from 1.8.0)

@@ -45,16 +45,16 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-   xcuitest: false
-   uiautomation: false
+    xcuitest: true
+    uiautomation: true
   android:
-    uiautomator2: false
-    espresso: false
-    uiautomator: false
-    mac:
-      mac: true # TODO Confirm this that mouse movements
-    windows:
-      windows: true # TODO Confirm this
+    espresso: true
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: true # TODO Confirm this that mouse movements
+  windows:
+    windows: true # TODO Confirm this
 client_support:
   java: true
   python: true
@@ -63,7 +63,6 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-
 
 # Information about the HTTP endpoints
 endpoint:

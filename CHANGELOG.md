@@ -1,3 +1,59 @@
+CHANGES IN VERSION 1.9.0 (from 1.8.1)
+===================================
+
+Appium 1.9.0 is a feature release, comprising multiple updates.
+
+#### General
+* Full W3C Specification support.
+* Add full beta of [Espresso driver](https://github.com/appium/appium-espresso-driver)
+  for Android automation (used by specifying `automationName` capability to be
+  `"Espresso"`).
+* Add driver for [Samsung Tizen devices](https://github.com/Samsung/appium-tizen-driver)
+* Add `-image` find element strategy,
+* Fix `--async-trace` server argument, and rename as `--long-stacktrace`
+* Sample code has been moved into the main repository to aid in maintenance.
+* Fix status retrieval to speed up performance.
+
+#### iOS
+* Add support for Xcode 10 and iOS 12.
+* Add face id biometric support.
+* Fix retrieval of device time, and add optional `format` parameter.
+* Do not crash if there is no `idevicesyslog` when ending session.
+* Handle frames when page changes in Safari.
+* Add desired capabilities:
+  * `remoteDebugProxy` - port or Unix domain socket on which a proxy for the
+    remote debugger sits.
+  * `safariGarbageCollect` - turn on/off JS garbage collection in Safari.
+  * `showSafariNetworkLog` - print Safari network logs in the Appium server logs.
+* Fix handling of settings updates, so simulators are not restarted unnecessarily.
+* Allow pulling of files and folder from real devices.
+* Add `mobile: getContexts` execute function, to retrieve meta-information (title,
+  url, etc.) about available contexts.
+* Fix certificate retrieval and handling.
+* Fix cookie handling, to allow secure cookies.
+* Fix Safari timeout issues.
+* Add support to retrieve Safari network logs, as `safariNetwork` log type.
+
+#### Android
+* Update Chromedriver to v2.41.
+* Get Chrome version for Webviews in Android 7+, to find correct Chromedriver.
+* Make sure UiAutomator processes are cleaned up during test.
+* Fix handling of `autoWebview` capability.
+* New desired capabilities:
+  * `mjpegScreenshotUrl` - url to stream screenshots to.
+  * `chromedriverUseSystemExecutable` - boolean flag to use the default Chromedriver
+    installed with Appium, avoiding any attempt to find correct Chromedriver.
+  * `disableWindowAnimation` - disable window animations on device.
+  * `pageLoadStrategy` - page load strategy for Chromedriver.
+* Allow test-only APKs to be installed.
+* Fix implicit wait handling for finding elements.
+* Better handle Unicode IME installation.
+* Relax package validation logic.
+* Fix error in UiAutomator searches with nested quotes.
+* Perform accessibility refresh when needed.
+* Improve logic for determining if apps need upgrade.
+
+
 CHANGES IN VERSION 1.8.1 (from 1.8.0)
 ===================================
 
@@ -324,7 +380,7 @@ the automation process configurable.
 * Fix licensing in all dependencies.
 
 #### Android
-* Added handlers for basic system alerts, so now it is possible to accept/decline/get text of the most of 
+* Added handlers for basic system alerts, so now it is possible to accept/decline/get text of the most of
 them using the standard Selenium's switchTo().alert() interface (UIA2 only)
 * Fix backgrounding of app.
 * Add `androidInstallPath` capability to specify where on the device apps are installed.

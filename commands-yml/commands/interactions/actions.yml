@@ -15,12 +15,17 @@ example_usage:
     WebElement source = (MobileElement) driver.findElementsByAccessibilityId("SomeAccessibilityID");
     WebElement target = (MobileElement) driver.findElementsByAccessibilityId("SomeOtherAccessibilityID");
 
-    Actions actionBuilder = new Actions(driver);
-    Action dragAndDropAction = actionBuilder.clickAndHold(source)
-                                            .moveToElement(target, 1, 1)
-                                            .release(target)
-                                            .build();
-    dragAndDropAction.perform();
+    Point source = dragMe.getCenter();
+    Point target = driver.findElementByAccessibilityId("dropzone").getCenter();
+    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+    Sequence dragNDrop = new Sequence(finger, 1);
+    dragNDrop.addAction(finger.createPointerMove(Duration.ofSeconds(1),
+    PointerInput.Origin.viewport(), source.x, source.y));
+    dragNDrop.addAction(finger.createPointerDown(PointerInput.MouseButton.MIDDLE.asArg()));
+    dragNDrop.addAction(finger.createPointerMove(Duration.ofSeconds(1),
+    PointerInput.Origin.viewport(),target.x, target.y));
+    dragNDrop.addAction(finger.createPointerUp(PointerInput.MouseButton.MIDDLE.asArg()));
+    driver.perform(Arrays.asList(dragNDrop));
   python:
     |
       element = driver.find_element_by_accessibility_id("elId")

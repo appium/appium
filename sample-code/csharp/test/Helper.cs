@@ -4,8 +4,6 @@ namespace AppiumDotNetSamples.Helper
 {
     public static class Env
     {
-        // Please specify your working directory since sometimes it fails to get working directory with `Environment.CurrentDirectory`
-        // e.g. APPIUM_ROOT_PATH=/path/to/your/
         public static String rootDirectory = System.IO.Path.GetFullPath($"{System.AppDomain.CurrentDomain.BaseDirectory.ToString()}/../../../..");
 
         static public bool IsSauce()

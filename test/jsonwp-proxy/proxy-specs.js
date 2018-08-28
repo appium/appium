@@ -111,32 +111,6 @@ describe('proxy', function () {
       body.should.eql({status: 11, value: {message: 'Invisible element'}});
     });
   });
-  describe('getTimeoutRequestObjects', function () {
-    let j;
-    before(function () {
-      j = mockProxy();
-    });
-    it('should take W3C inputs and produce MJSONWP + W3C compatible objects', async function () {
-      let timeoutObjects = await j.getTimeoutRequestObjects({script: 100});
-      timeoutObjects.length.should.equal(1);
-      timeoutObjects[0].should.eql({type: 'script', ms: 100});
-    });
-    it('should take multiple W3C timeouts and produce multiple MJSONWP + W3C compatible objects', async function () {
-      let [scriptTimeout, pageLoadTimeout, implicitTimeout] = await j.getTimeoutRequestObjects({script: 100, pageLoad: 200, implicit: 300});
-      scriptTimeout.should.eql({
-        type: 'script',
-        ms: 100,
-      });
-      pageLoadTimeout.should.eql({
-        type: 'page load',
-        ms: 200,
-      });
-      implicitTimeout.should.eql({
-        type: 'implicit',
-        ms: 300,
-      });
-    });
-  });
   describe('command proxy', function () {
     it('should successfully proxy command', async function () {
       let j = mockProxy();

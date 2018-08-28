@@ -252,8 +252,8 @@ for this).
 
 ### Troubleshooting ideas
 
-0. Make sure UDID is correct by checking it in Xcode Organizer or iTunes. It
+1. Make sure UDID is correct by checking it in Xcode Organizer or iTunes. It
    is a long string (20+ chars).
-0. Make sure that you can run your tests against the Simulator.
-0. Make sure UI Automation is enabled on your device. Settings -> Developer ->
+1. Make sure that you can run your tests against the Simulator.
+1. Make sure UI Automation is enabled on your device. Settings -> Developer ->
    Enable UI Automation

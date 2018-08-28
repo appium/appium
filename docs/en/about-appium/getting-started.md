@@ -23,7 +23,7 @@ Appium supports Node 6+.
 The actual installation is as simple as:
 
 ```
-npm install -g appium
+npm install -g appium --unsafe-perm=true --allow-root
 ```
 
 #### Installation via Desktop App Download

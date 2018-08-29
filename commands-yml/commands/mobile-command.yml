@@ -67,7 +67,7 @@
   example_usage:
     java:
       |
-        driver.executeScript("mobile: scroll", ImmutableMap.of("direction", "down"));;
+        driver.executeScript("mobile: scroll", ImmutableMap.of("direction", "down"));
 
     python:
       |

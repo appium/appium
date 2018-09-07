@@ -75,7 +75,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubyzip (1.2.1)
+    rubyzip (1.2.2)
     sauce_whisk (0.1.0)
       json
       rest-client (~> 2.0)

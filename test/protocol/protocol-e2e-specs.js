@@ -456,7 +456,7 @@ describe('Protocol', async function () {
         let sessionUrl;
 
         beforeEach(async function () {
-          // Start a session
+          // Start a W3C session
           let {value} = await request.post(`${baseUrl}/session`, {
             json: {
               capabilities: w3cCaps,
@@ -903,7 +903,7 @@ describe('Protocol', async function () {
       });
 
       should.exist(res.sessionId);
-      res.sessionId.should.equal('1234');
+      res.sessionId.indexOf('fakeSession_').should.equal(0);
       res.value.should.eql({greeting: 'hello', valediction: 'bye'});
     });
   });
@@ -988,7 +988,9 @@ describe('Protocol', async function () {
       res.statusCode.should.equal(500);
       res.body.should.eql({
         status: 35,
-        "value": { "message": "No such context found."},
+        value: {
+          message: "No such context found."
+        },
         sessionId: "foo"
       });
     });

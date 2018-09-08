@@ -1,5 +1,6 @@
 import { errors, BaseDriver } from '../..';
 import _ from 'lodash';
+import UUID from 'uuid-js';
 
 class FakeDriver extends BaseDriver {
 
@@ -22,7 +23,8 @@ class FakeDriver extends BaseDriver {
   }
 
   async createSession (desiredCapabilities, requiredCapabilities, capabilities) {
-    this.sessionId = "1234";
+    // Use a counter to make sure each session has a unique id
+    this.sessionId = `fakeSession_${UUID.create().hex}`;
     if (capabilities) {
       return [this.sessionId, capabilities];
     } else {

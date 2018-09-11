@@ -4,39 +4,13 @@ import '../..'; // NOTE: For some reason this file needs to be imported to preve
 import chai from 'chai';
 import sinon from 'sinon';
 import chaiAsPromised from 'chai-as-promised';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, parseProtocol, driverShouldDoJwpProxy, IMAGE_ELEMENT_PREFIX } from '../../lib/protocol/protocol';
+import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, driverShouldDoJwpProxy, IMAGE_ELEMENT_PREFIX } from '../../lib/protocol/protocol';
 import BaseDriver from '../../lib/basedriver/driver';
 
 chai.should();
 chai.use(chaiAsPromised);
 
 describe('Protocol', async function () {
-
-  describe('#parseProtocol', function () {
-    it('should parse {protocol: "MJSONWP"} as MJSONWP', function () {
-      parseProtocol({protocol: 'MJSONWP', value: undefined}).should.eql({isW3C: false, isMJSONWP: true, value: undefined});
-    });
-    it('should parse {protocol: "W3C"} as W3C', function () {
-      parseProtocol({protocol: 'W3C', value: undefined}).should.eql({isW3C: true, isMJSONWP: false, value: undefined});
-    });
-    it('should parse {protocol: "MJSONWP", value: false} as MJSONWP with value: false', function () {
-      parseProtocol({protocol: 'MJSONWP', value: false}).should.eql({isW3C: false, isMJSONWP: true, value: false});
-    });
-    it('should parse {protocol: "W3C", value: 0} as W3C with value: 0', function () {
-      parseProtocol({protocol: 'W3C', value: 0}).should.eql({isW3C: true, isMJSONWP: false, value: 0});
-    });
-    it('should parse {protocol: "MJSONWP", value: "string"}', function () {
-      parseProtocol({protocol: 'MJSONWP', value: "string"}).should.eql({isW3C: false, isMJSONWP: true, value: "string"});
-    });
-    it('should parse {protocol: "W3C", value: {obj}}', function () {
-      const value = {hello: 'world', goodbye: 'whirl'};
-      parseProtocol({protocol: 'MJSONWP', value}).should.eql({isW3C: false, isMJSONWP: true, value});
-    });
-    it('should throw if {protocol: "MJSONWP", error}', function () {
-      const error = new Error('some error');
-      parseProtocol({protocol: 'W3C', error}).error.should.equal(error);
-    });
-  });
 
   describe('#driverShouldDoJwpProxy', function () {
     it('should not proxy if an image element is found in request url', function () {

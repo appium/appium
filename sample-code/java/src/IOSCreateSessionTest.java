@@ -22,7 +22,7 @@ public class IOSCreateSessionTest extends BaseTest {
         String platformVersion = System.getenv("IOS_PLATFORM_VERSION");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("deviceName", deviceName == null ? "iPhone 6s" : deviceName);
-        capabilities.setCapability("platformVerison", platformVersion == null ? "11.1" : platformVersion);
+        capabilities.setCapability("platformVersion", platformVersion == null ? "11.1" : platformVersion);
         capabilities.setCapability("app", app.getAbsolutePath());
         capabilities.setCapability("automationName", "XCUITest");
         driver = new IOSDriver<WebElement>(getServiceUrl(), capabilities);
@@ -32,7 +32,7 @@ public class IOSCreateSessionTest extends BaseTest {
     public void tearDown() {
         driver.quit();
     }
-    
+
     @Test
     public void testCreateSession () {
         // Check that the XCUIElementTypeApplication was what we expect it to be

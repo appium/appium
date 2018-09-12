@@ -24,7 +24,7 @@ public class IOSBasicInteractionsTest extends BaseTest {
         String platformVersion = System.getenv("IOS_PLATFORM_VERSION");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("deviceName", deviceName == null ? "iPhone 6s" : deviceName);
-        capabilities.setCapability("platformVerison", platformVersion == null ? "11.1" : platformVersion);
+        capabilities.setCapability("platformVersion", platformVersion == null ? "11.1" : platformVersion);
         capabilities.setCapability("app", app.getAbsolutePath());
         capabilities.setCapability("automationName", "XCUITest");
         driver = new IOSDriver<WebElement>(getServiceUrl(), capabilities);

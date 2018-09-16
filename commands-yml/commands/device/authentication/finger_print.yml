@@ -7,6 +7,8 @@ description:
     For Android emulator.
     Authenticate users by using their finger print scans.
 
+    Touch ID by iOS is [here](http://appium.io/docs/en/commands/device/simulator/touch-id/)
+
 example_usage:
   java:
     |

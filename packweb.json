@@ -5,7 +5,6 @@
         ],
         "appium-contrib": [
             "appium-adb",
-            "appium-android-bootstrap",
             "appium-android-driver",
             "appium-android-ime",
             "appium-base-driver",

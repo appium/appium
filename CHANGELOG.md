@@ -4,7 +4,8 @@ CHANGES IN VERSION 1.9.1 (from 1.9.0)
 Appium 1.9.1 is a patch release
 
 #### General
-* Append the current session identifier to the protocol name prefix
+* Append the current session identifier to the protocol name prefix in server logs
+* Fix the way current protocol is determined from execute response
 
 #### iOS
 * Support Xcode 10 and iOS 12.0

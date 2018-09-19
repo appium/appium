@@ -3,15 +3,17 @@ CHANGES IN VERSION 1.9.1 (from 1.9.0)
 
 Appium 1.9.1 is a patch release
 
+#### General
+* Append the current session identifier to the protocol name prefix
+
 #### iOS
 * Support Xcode 10 and iOS 12.0
-* Add a possibility to set container type for Simulator
+* Add a possibility to set container type for Simulator while pushing/pulling files
 * Fix W3C format handling by receiveAsyncResponse command
 
 #### Android
 * Fix `getStrings` for no app
-* Return the current geolocation from `setGeoLocation`
-* Fix handling of getting geolocation endpoint (UiAutomator2 only)
+* Return the current geolocation from `getGeoLocation`
 * Add `mobile:mobileGetDeviceInfo` command (UiAutomator2 only)
 * Make 'by tag name' selector compatible with View Tag selector (Espresso only)
 * Convert mouse action events to touch actions (Espresso only)

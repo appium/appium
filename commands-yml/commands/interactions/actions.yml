@@ -35,7 +35,24 @@ example_usage:
       actions.perform()
   javascript_wd:
     |
-      // Not supported
+      // Performs a 'pinch-and-zoom'
+      var actions = new wd.W3CActions(driver);
+      var touchInput = actions.addTouchInput();
+      touchInput.pointerMove({duration: 0, x: 100, y: 100});
+      touchInput.pointerDown({button: 0});
+      touchInput.pause({duration: 500});
+      touchInput.pointerMove({duration: 1000, origin: 'pointer', x: -50, y: 100});
+      touchInput.pointerUp({button: 0});
+      var secondTouchInput = actions.addTouchInput();
+      secondTouchInput.pointerMove({duration: 0, x: 200, y: 200});
+      secondTouchInput.pointerDown({button: 0});
+      secondTouchInput.pause({duration: 300});
+      secondTouchInput.pointerMove({duration: 1000, origin: 'pointer', x: 50, y: 100});
+      secondTouchInput.pointerUp({button: 0});
+      await actions.perform();
+      
+      // Releases any previously run actions (e.g.: if a key is 'down' because of /actions, releases it using key up)
+      await driver.releaseW3CActions();
   javascript_wdio:
     |
       // Example: expressing a 1-second pinch-and-zoom

@@ -1,3 +1,23 @@
+CHANGES IN VERSION 1.9.1 (from 1.9.0)
+===================================
+
+Appium 1.9.1 is a patch release
+
+#### iOS
+* Support Xcode 10 and iOS 12.0
+* Fix container type parsing
+* Fix W3C format handling by receiveAsyncResponse command
+
+#### Android
+* Fix `getStrings` for no app
+* Return the current geolocation from `setGeoLocation`
+* Add /location to the list of NO_PROXY endpoints (UiAutomator2 only)
+* Add `mobile:mobileGetDeviceInfo` command (UiAutomator2 only)
+* Make 'by tag name' selector compatible with View Tag selector (Espresso only)
+* Convert mouse action events to touch actions (Espresso only)
+* 
+
+
 CHANGES IN VERSION 1.9.0 (from 1.8.1)
 ===================================
 

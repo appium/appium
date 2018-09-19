@@ -8,18 +8,3 @@ export function createProxyServer (sessionId, port) {
   let server = app.listen(port);
   return {app, server};
 }
-
-let handlers = {
-  post: {},
-  get: {},
-  delete: {},
-  put: {},
-};
-
-export function addHandler (app, method, url, handler) {
-  method = method.toLowerCase();
-  if (!handlers[method][url]) {
-    app[method](url, (req, res) => handlers[method][url].call(this, req, res));
-  }
-  handlers[method][url] = handler;
-}

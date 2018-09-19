@@ -8,7 +8,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import HTTPStatusCodes from 'http-status-codes';
-import { createProxyServer, addHandler } from './helpers';
+import { createProxyServer } from './helpers';
 import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../../lib/protocol/protocol';
 
 
@@ -606,7 +606,7 @@ describe('Protocol', async function () {
           });
 
           it('should work if a proxied request returns a response with status 200', async function () {
-            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+            app.post('/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.json({
                 sessionId: req.params.sessionId,
                 value: req.body,
@@ -625,7 +625,7 @@ describe('Protocol', async function () {
           });
 
           it('should return error if a proxied request returns a MJSONWP error response', async function () {
-            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+            app.post('/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(500).json({
                 sessionId,
                 status: 6,
@@ -663,7 +663,7 @@ describe('Protocol', async function () {
           });
 
           it('should return error if a proxied request returns a MJSONWP error response but HTTP status code is 200', async function () {
-            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+            app.post('/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(200).json({
                 sessionId: 'Fake Session Id',
                 status: 7,
@@ -684,7 +684,7 @@ describe('Protocol', async function () {
           });
 
           it('should return error if a proxied request returns a W3C error response', async function () {
-            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+            app.post('/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.status(404).json({
                 value: {
                   error: 'no such element',
@@ -706,7 +706,7 @@ describe('Protocol', async function () {
           });
 
           it('should return an error if a proxied request returns a W3C error response', async function () {
-            addHandler(app, 'post', '/wd/hub/session/:sessionId/perform-actions', (req, res) => {
+            app.post('/wd/hub/session/:sessionId/perform-actions', (req, res) => {
               res.set('Connection', 'close');
               res.status(444).json({
                 value: {

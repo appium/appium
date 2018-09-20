@@ -1,7 +1,7 @@
 CHANGES IN VERSION 1.9.1 (from 1.9.0)
 ===================================
 
-Appium 1.9.1 is a patch release
+Appium 1.9.1 is a patch release. Next version will likely not support Xcode 8
 
 #### General
 * Append the current session identifier to the protocol name prefix in server logs

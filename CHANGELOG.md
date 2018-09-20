@@ -11,9 +11,11 @@ Appium 1.9.1 is a patch release
 * Support Xcode 10 and iOS 12.0
 * Add a possibility to set container type for Simulator while pushing/pulling files
 * Fix W3C format handling by receiveAsyncResponse command
+* Fix iPhone X Simulator screen recording
 
 #### Android
 * Fix `getStrings` for no app
+* Fix screen recording bug
 * Return the current geolocation from `getGeoLocation`
 * Add `mobile:mobileGetDeviceInfo` command (UiAutomator2 only)
 * Make 'by tag name' selector compatible with View Tag selector (Espresso only)

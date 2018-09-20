@@ -99,4 +99,4 @@ Base64 encoded string. If remote_path is set, the response is empty string. (`st
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L348)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L364)

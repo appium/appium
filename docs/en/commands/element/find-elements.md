@@ -57,6 +57,7 @@ $els = $this->elements($this->using('accessibility id')->value('SomeAccessibilit
 |ID|Native element identifier. `resource-id` for android; `name` for iOS.|
 |Name|Name of element|
 |XPath|Search the app XML source using xpath (not recommended, has performance issues)|
+|Image|Locate an element by matching it with a base 64 encoded image file|
 |Android UiAutomator (UiAutomator2 only)|Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.|
 |Android View Tag (Espresso only)|Locate an element by its [view tag](https://developer.android.com/reference/android/support/test/espresso/matcher/ViewMatchers.html#withTagValue(org.hamcrest.Matcher%3Cjava.lang.Object%3E))|
 |IOS UIAutomation|When automating an iOS application, Apple’s [Instruments](/docs/en/drivers/ios-uiautomation.md) framework can be used to find elements|

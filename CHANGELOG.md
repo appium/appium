@@ -19,6 +19,13 @@ Appium 1.9.1 is a patch release
 * Make 'by tag name' selector compatible with View Tag selector (Espresso only)
 * Convert mouse action events to touch actions (Espresso only)
 
+#### Windows
+* Add more support for [W3C Actions API](https://www.w3.org/TR/webdriver1/#actions)
+  * Support pointer input methods: up, down and move
+  * Add advanced modifier attributes to 'touch' inputs: pressure, twist, width, height
+  * Add advanced modifier attributes to 'pen' inputs: pressure, twist, tilt x and y, eraser, barrel button
+  * Support interpolation for 'pen' and 'multitouch'
+
 
 CHANGES IN VERSION 1.9.0 (from 1.8.1)
 ===================================

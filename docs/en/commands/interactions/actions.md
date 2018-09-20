@@ -8,7 +8,7 @@ Perform a chain or multiple chains of keyboard and pointer (touch, mouse, stylus
 ```java
 // Java
 WebElement source = (MobileElement) driver.findElementsByAccessibilityId("SomeAccessibilityID"); WebElement target = (MobileElement) driver.findElementsByAccessibilityId("SomeOtherAccessibilityID");
-Actions actionBuilder = new Actions(driver); Action dragAndDropAction = actionBuilder.clickAndHold(source) .moveToElement(target, 1, 1) .release(target) .build(); dragAndDropAction.perform();
+Point source = dragMe.getCenter(); Point target = driver.findElementByAccessibilityId("dropzone").getCenter(); PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger"); Sequence dragNDrop = new Sequence(finger, 1); dragNDrop.addAction(finger.createPointerMove(Duration.ofMillis(0), PointerInput.Origin.viewport(), source.x, source.y)); dragNDrop.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg())); dragNDrop.addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(),target.x, target.y)); dragNDrop.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())); driver.perform(Arrays.asList(dragNDrop));
 ```
 
 ```python
@@ -56,17 +56,54 @@ browser.actions();
 
 
 // wd example
-// Not supported
+// Performs a 'pinch-and-zoom'
+var actions = new wd.W3CActions(driver);
+var touchInput = actions.addTouchInput();
+touchInput.pointerMove({duration: 0, x: 100, y: 100});
+touchInput.pointerDown({button: 0});
+touchInput.pause({duration: 500});
+touchInput.pointerMove({duration: 1000, origin: 'pointer', x: -50, y: 100});
+touchInput.pointerUp({button: 0});
+var secondTouchInput = actions.addTouchInput();
+secondTouchInput.pointerMove({duration: 0, x: 200, y: 200});
+secondTouchInput.pointerDown({button: 0});
+secondTouchInput.pause({duration: 300});
+secondTouchInput.pointerMove({duration: 1000, origin: 'pointer', x: 50, y: 100});
+secondTouchInput.pointerUp({button: 0});
+await actions.perform();
+
+// Releases any previously run actions (e.g.: if a key is 'down' because of /actions, releases it using key up)
+await driver.releaseW3CActions();
 
 ```
 
 ```ruby
 # Ruby
 # Send keys to an element
+# Build Single action chain
 action_builder = driver.action
-keyboard = action_builder.key_input
+keyboard = action_builder.key_inputs
 el = driver.find_element(id: "some_id")
 driver.action.click(el).pause(keyboard).pause(keyboard).pause(keyboard).send_keys('keys').perform
+
+# Build multiple action chains
+# Example: expressing a 1-second pinch-and-zoom
+# with a 500ms wait after the fingers first touch:
+f1 = driver.action.add_pointer_input(:touch, 'finger1')
+f1.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
+f1.create_pointer_down(:left)
+f1.create_pause(0.5)
+f1.create_pointer_move(duration: 1, x: 200, y: 200, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
+f1.create_pointer_up(:left)
+
+f2 = driver.action.add_pointer_input(:touch, 'finger2')
+f2.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
+f2.create_pointer_down(:left)
+f2.create_pause(0.5)
+f2.create_pointer_move(duration: 1, x: 200, y: 800, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
+f2.create_pointer_up(:left)
+
+driver.perform_actions [f1, f2]
 
 ```
 

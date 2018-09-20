@@ -91,9 +91,9 @@ await driver.setGeoLocation(121.21, 11.56, 10);
 
 |name|type|description|
 |----|----|-----------|
-| latitude | `number` | The current geolocation latitude |
-| longitude | `number` | The current geolocation longitude |
-| altitude | `number` | The current geolocation altitude |
+| latitude | `number` | The desired geolocation latitude |
+| longitude | `number` | The desired geolocation longitude |
+| altitude | `number` | The desired geolocation altitude (optional) |
 
 ### Response
 

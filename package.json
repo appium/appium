@@ -82,7 +82,8 @@
     "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production",
     "zip": "zip -qr appium.zip .",
     "upload": "node ./build/test/scripts/bintray-upload.js",
-    "zip-and-upload": "npm run zip && npm run upload"
+    "zip-and-upload": "npm run zip && npm run upload",
+    "release-beta": "release pre beta && npm publish --tag beta"
   },
   "pre-commit": [
     "precommit-msg",
@@ -106,6 +107,7 @@
     "handlebars": "^4.0.10",
     "mocha": "5.x",
     "pre-commit": "1.x",
+    "release": "^4.0.2",
     "replace-ext": "^1.0.0",
     "sinon": "^6.0.0",
     "validate.js": "^0.12.0",

@@ -113,7 +113,10 @@ module.exports = {
           ["Open Notifications", "open-notifications.md"],
           ["System Bars", "system-bars.md"],
           ["System Time", "system-time.md"],
-        ]]
+        ]],
+        ["Authentication", ["authentication",
+          ["Finger Print", "finger-print.md"],
+        ]],
       ]],
       ["Element", ["element",
         ["Find Element", "find-element.md"],

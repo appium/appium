@@ -11,7 +11,7 @@ description:
 
     This call will only work if Appium process or its parent application (e.g. Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
 
-    Finger Pring by Android is [here](http://appium.io/docs/en/commands/device/authentication/finger_print/)
+    Finger Print by Android is [here](http://appium.io/docs/en/commands/device/authentication/finger-print/)
 
 
 example_usage:

@@ -145,6 +145,10 @@ installed, and is _not_ recommended):
     $ which appium
     /path/where/installed/bin/appium
 ```
+*   Note: If you have installed ![Appium Desktop App](http://appium.io/downloads.html), your appium folder path might be following, instead above. If so, change to following directory and follow rest of the steps.
+```
+    /Applications/Appium.app/Contents/Resources/app/node_modules/appium/
+```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
     will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent`.
     Open a terminal and go to that location, then run the following in order to
@@ -257,3 +261,4 @@ for this).
 1. Make sure that you can run your tests against the Simulator.
 1. Make sure UI Automation is enabled on your device. Settings -> Developer ->
    Enable UI Automation
+0. If you are using appium desktop app, chekcout the details logs to find your appium folder.

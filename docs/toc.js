@@ -231,6 +231,8 @@ module.exports = {
         ["UiSelector Guide", "uiautomator-uiselector.md"],
         ["Android Code Coverage Guide", "android-coverage.md"],
         ["Activities Startup Troubleshooting Guide", "activity-startup.md"],
+        ["How To Execute Shell Commands On The Remote Device", "android-shell.md"],
+        ["How To Emulate IME Actions Generation", "android-ime.md"],
       ]],
       ["Other", ["other",
         ["Reset Strategies", "reset-strategies.md"],

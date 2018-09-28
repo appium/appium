@@ -25,14 +25,12 @@ describe('Parser', function () {
   });
   it('should parse default capabilities correctly from a string', function () {
     let defaultCapabilities = {a: 'b'};
-    let args = p.parseArgs(['--default-capabilities',
-                            JSON.stringify(defaultCapabilities)]);
+    let args = p.parseArgs(['--default-capabilities', JSON.stringify(defaultCapabilities)]);
     args.defaultCapabilities.should.eql(defaultCapabilities);
   });
   it('should parse default capabilities correctly from a file', function () {
     let defaultCapabilities = {a: 'b'};
-    let args = p.parseArgs(['--default-capabilities',
-                           'test/fixtures/caps.json']);
+    let args = p.parseArgs(['--default-capabilities', 'test/fixtures/caps.json']);
     args.defaultCapabilities.should.eql(defaultCapabilities);
   });
   it('should throw an error with invalid arg to default capabilities', function () {

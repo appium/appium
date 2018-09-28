@@ -4,12 +4,13 @@
 
 // turn all logging on since we have tests that rely on npmlog logs actually
 // getting sent to the handler
-process.env._FORCE_LOGS="1";
+process.env._FORCE_LOGS = "1";
 
 const gulp = require('gulp');
 const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
 const path = require('path');
 const fs = require('fs');
+
 
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
@@ -20,15 +21,12 @@ gulp.task('fixShrinkwrap', function (done) {
   } catch (err) {
     console.error('Could not find shrinkwrap; skipping fixing shrinkwrap. ' +
                   '(Original error: ' + err.message + ')');
-    return;
+    return done();
   }
   delete shrinkwrap.dependencies.fsevents;
   const shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);
 });
-
-
-
 
 boilerplate({
   build: 'appium',
@@ -40,7 +38,7 @@ boilerplate({
 });
 
 // generates server arguments readme
-gulp.task('docs', ['transpile'], function () {
+gulp.task('docs', gulp.series(['transpile']), function () {
   const parser = require('./build/lib/parser.js');
   const appiumArguments = parser.getParser().rawArgs;
   const docFile = path.resolve(__dirname, "docs/en/writing-running-appium/server-args.md");
@@ -77,7 +75,7 @@ gulp.task('docs', ['transpile'], function () {
     md += "|" + ((typeof argOpts.example === "undefined") ? "" : "`" + exampleArg + " " + argOpts.example + "`");
     md += "|\n";
   });
-  // console.log(md);
+
   fs.writeFile(docFile, md, function (err) {
     if (err) {
       console.log(err.stack);

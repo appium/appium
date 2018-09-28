@@ -22,8 +22,8 @@
     "url": "https://github.com/appium/appium/issues"
   },
   "engines": {
-    "node": ">=6",
-    "npm": ">=3"
+    "node": ">=8",
+    "npm": ">=6"
   },
   "main": "./build/lib/main.js",
   "bin": {
@@ -33,7 +33,13 @@
     "lib": "./lib",
     "doc": "./docs"
   },
+  "files": [
+    "bin",
+    "lib",
+    "build/lib"
+  ],
   "dependencies": {
+    "@babel/runtime": "^7.0.0",
     "appium-android-driver": "^4.0.0",
     "appium-base-driver": "3.x",
     "appium-espresso-driver": ">=1.0.0-beta.13",
@@ -50,7 +56,6 @@
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
-    "babel-runtime": "=5.8.24",
     "bluebird": "3.x",
     "continuation-local-storage": "3.x",
     "dateformat": "^3.0.3",
@@ -66,7 +71,7 @@
     "winston": "2.x"
   },
   "scripts": {
-    "prepublish": "gulp prepublish",
+    "prepare": "gulp prepublish",
     "publish": "gulp prepublish",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
@@ -90,20 +95,20 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "^2.4.0",
+    "ajv": "^6.5.3",
+    "appium-gulp-plugins": "^3.1.0",
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^7.x",
+    "babel-eslint": "^10.0.0",
     "babel-preset-env": "^1.7.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",
-    "eslint": "^3.x",
-    "eslint-config-appium": "2.x",
-    "eslint-plugin-babel": "3.x",
-    "eslint-plugin-import": "2.x",
-    "eslint-plugin-mocha": "4.x",
-    "eslint-plugin-promise": "3.x",
+    "eslint": "^5.2.0",
+    "eslint-config-appium": "3.x",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-promise": "^4.0.0",
     "fancy-log": "^1.3.2",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "handlebars": "^4.0.10",
     "mocha": "5.x",
     "pre-commit": "1.x",
@@ -120,15 +125,6 @@
   },
   "greenkeeper": {
     "ignore": [
-      "babel-eslint",
-      "babel-preset-env",
-      "eslint",
-      "eslint-plugin-babel",
-      "eslint-plugin-import",
-      "eslint-plugin-mocha",
-      "eslint-plugin-promise",
-      "gulp",
-      "babel-runtime",
       "winston"
     ]
   }

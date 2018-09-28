@@ -73,7 +73,7 @@ Handlebars.registerHelper('versions', (object, name, driverName) => {
   return `${min} to ${max}`;
 });
 
-Handlebars.registerHelper('hyphenate', (str) =>  str.replace('_', '-'));
+Handlebars.registerHelper('hyphenate', (str) => str.replace('_', '-'));
 Handlebars.registerHelper('uppercase', (str) => str.toUpperCase());
 
 Handlebars.registerHelper('capitalize', function (driverName) {

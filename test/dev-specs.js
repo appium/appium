@@ -31,7 +31,7 @@ describe('dev', function () {
     it('diagnose - failure - not in path ', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
       mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: 'mvn not found\n', stderr:''}));
+        B.resolve({stdout: 'mvn not found\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'mvn is MISSING in PATH!'

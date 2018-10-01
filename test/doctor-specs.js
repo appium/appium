@@ -76,7 +76,7 @@ describe('doctor', function () {
         {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
         {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
       ];
-      for (let i=0; i<doctor.toFix.length; i++) {
+      for (let i = 0; i < doctor.toFix.length; i++) {
         let m = S.sandbox.mock(doctor.toFix[i].check);
         if (doctor.toFix[i].check.autofix) {
           m.expects('fix').never();
@@ -105,7 +105,7 @@ describe('doctor', function () {
     });
   }));
 
-  describe('runAutoFix',  withSandbox({}, (S) => {
+  describe('runAutoFix', withSandbox({}, (S) => {
     let doctor = new Doctor();
     let fix = {
       error: 'Something wrong!',
@@ -173,7 +173,7 @@ describe('doctor', function () {
     });
   }));
 
-  describe('runAutoFixes',  withSandbox({}, (S) => {
+  describe('runAutoFixes', withSandbox({}, (S) => {
     let doctor = new Doctor();
     it('success', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
@@ -232,7 +232,7 @@ describe('doctor', function () {
     });
   }));
 
-  describe('run',  withSandbox({}, (S) => {
+  describe('run', withSandbox({}, (S) => {
     let doctor = new Doctor();
     it('should work', async function () {
       try {

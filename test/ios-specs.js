@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-  AuthorizationDbCheck, CarthageCheck } from '../lib/ios';
+         AuthorizationDbCheck, CarthageCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -117,7 +117,7 @@ describe('ios', function () {
   describe('authorizeIosFix', withSandbox({mocks: {utils, prompter}}, (S) => {
     it('fix - yes', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      S.mocks.utils.expects('authorize').once();
+      S.mocks.utils.expects('authorizeIos').once();
       S.mocks.prompter.expects('fixIt').once().returns(B.resolve('yes'));
       await fixes.authorizeIosFix();
       S.verify();
@@ -127,7 +127,7 @@ describe('ios', function () {
     });
     it('fix - no', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      S.mocks.utils.expects('authorize').never();
+      S.mocks.utils.expects('authorizeIos').never();
       S.mocks.prompter.expects('fixIt').once().returns(B.resolve('no'));
       await fixes.authorizeIosFix().should.be.rejectedWith(FixSkippedError);
       S.verify();

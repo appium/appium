@@ -63,7 +63,7 @@ The enrollment state can be [toggled](/docs/en/commands/device/simulator/toggle-
 
 This call will only work if Appium process or its parent application (e.g. Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
 
-Finger Pring by Android is [here](http://appium.io/docs/en/commands/device/authentication/finger_print/)
+Finger Print by Android is [here](http://appium.io/docs/en/commands/device/authentication/finger-print/)
 
 
 ## Support

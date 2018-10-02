@@ -13,7 +13,7 @@ String package = driver.getCurrentPackage();
 
 ```python
 # Python
-package = self.driver.current_package();
+package = self.driver.current_package;
 
 ```
 

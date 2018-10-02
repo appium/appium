@@ -82,6 +82,8 @@
     <li><a href='/docs/en/commands/device/system/system-bars.md'>System Bars</a></li>
     <li><a href='/docs/en/commands/device/system/system-time.md'>System Time</a></li>
 </ul></li>
+    <li><a href='/docs/en/commands/device/authentication'>Authentication</a><ul>    <li><a href='/docs/en/commands/device/authentication/finger-print.md'>Finger Print</a></li>
+</ul></li>
 </ul></li>
     <li><a href='/docs/en/commands/element'>Element</a><ul>    <li><a href='/docs/en/commands/element/find-element.md'>Find Element</a></li>
     <li><a href='/docs/en/commands/element/find-elements.md'>Find Elements</a></li>

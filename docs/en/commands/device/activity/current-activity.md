@@ -13,7 +13,7 @@ String activity = driver.currentActivity();
 
 ```python
 # Python
-activity = self.driver.current_activity();
+activity = self.driver.current_activity;
 
 ```
 

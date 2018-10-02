@@ -6,7 +6,7 @@ The important capabilities:
 
 - `udid` the device id
 - `chromeDriverPort` the chromedriver port (if using webviews or chrome)
-- `systemPort` If you are using [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver), set a different system port for each Appium instanceset with `systemPort` capability since sometimes there can be a port conflict if different ports aren't used, such as in [this issue](https://github.com/appium/appium/issues/7745).
+- `systemPort` If you are using [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver), set a different system port for each android session, set with `systemPort` capability since sometimes there can be a port conflict if different ports aren't used, such as in [this issue](https://github.com/appium/appium/issues/7745).
 
 
 ### Parallel iOS Tests

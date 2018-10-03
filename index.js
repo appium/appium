@@ -9,15 +9,17 @@ export { BaseDriver, DeviceSettings, ImageElement, BASEDRIVER_HANDLED_SETTINGS }
 export default BaseDriver;
 
 // MJSONWP exports
-import { Protocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
-         ALL_COMMANDS, METHOD_MAP, routeToCommandName,
-         NO_SESSION_ID_COMMANDS, isSessionCommand } from './lib/protocol';
+import {
+  Protocol, routeConfiguringFunction, errors, isErrorType,
+  errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
+  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
+} from './lib/protocol';
 
-export { Protocol, routeConfiguringFunction, errors, isErrorType,
-         errorFromMJSONWPStatusCode, errorFromW3CJsonCode, errorFromMJSONWPStatusCode as errorFromCode,
-         ALL_COMMANDS, METHOD_MAP, routeToCommandName,
-         NO_SESSION_ID_COMMANDS, isSessionCommand };
+export {
+  Protocol, routeConfiguringFunction, errors, isErrorType,
+  errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
+  errorFromMJSONWPStatusCode as errorFromCode, ALL_COMMANDS, METHOD_MAP,
+  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand };
 
 // Express exports
 import { STATIC_DIR } from './lib/express/static';

@@ -69,13 +69,13 @@ describe('timeout', function () {
   });
   describe('implicitWait', function () {
     it('should call setImplicitWait when given an integer', async function () {
-      driver.setImplicitWait(42);
+      await driver.implicitWait(42);
       implicitWaitSpy.calledOnce.should.be.true;
       implicitWaitSpy.firstCall.args[0].should.equal(42);
       driver.implicitWaitMs.should.eql(42);
     });
-    it('should call setImplicitWait when given a string', function () {
-      driver.implicitWait('42');
+    it('should call setImplicitWait when given a string', async function () {
+      await driver.implicitWait('42');
       implicitWaitSpy.calledOnce.should.be.true;
       implicitWaitSpy.firstCall.args[0].should.equal(42);
       driver.implicitWaitMs.should.eql(42);

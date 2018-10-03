@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import { errors, BaseDriver } from '../..';
 import _ from 'lodash';
 import UUID from 'uuid-js';

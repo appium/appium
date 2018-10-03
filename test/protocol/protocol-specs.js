@@ -10,7 +10,7 @@ import BaseDriver from '../../lib/basedriver/driver';
 chai.should();
 chai.use(chaiAsPromised);
 
-describe('Protocol', async function () {
+describe('Protocol', function () {
 
   describe('#driverShouldDoJwpProxy', function () {
     it('should not proxy if an image element is found in request url', function () {

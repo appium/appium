@@ -356,7 +356,7 @@ describe('Desired Capabilities', function () {
     }).should.eventually.be.rejectedWith(/blank/);
   });
 
-  describe('w3c', async function () {
+  describe('w3c', function () {
     it('should accept w3c capabilities', async function () {
       const [sessionId, caps] = await d.createSession(null, null, {
         alwaysMatch: {

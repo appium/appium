@@ -56,7 +56,7 @@ describe('app download and configuration', function () {
       await h.configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')
         .should.be.rejectedWith(/could not find a .wrong bundle in it/);
     });
-    describe('should download an app from the web', async function () {
+    describe('should download an app from the web', function () {
       const port = 8000;
       const serverUrl = `http://localhost:${port}`;
 

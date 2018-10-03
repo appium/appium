@@ -57,17 +57,17 @@ describe('proxy', function () {
     j.sessionId.should.equal('123');
   });
   describe('getUrlForProxy', function () {
-    it('should modify session id, host, and port', async function () {
+    it('should modify session id, host, and port', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('http://host.com:1234/wd/hub/session/456/element/200/value')
        .should.eql('http://localhost:4444/wd/hub/session/123/element/200/value');
     });
-    it('should prepend scheme, host and port if not provided', async function () {
+    it('should prepend scheme, host and port if not provided', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('/wd/hub/session/456/element/200/value')
        .should.eql('http://localhost:4444/wd/hub/session/123/element/200/value');
     });
-    it('should work with urls which do not have session ids', async function () {
+    it('should work with urls which do not have session ids', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('http://host.com:1234/wd/hub/session')
        .should.eql('http://localhost:4444/wd/hub/session');
@@ -75,7 +75,7 @@ describe('proxy', function () {
       let newUrl = j.getUrlForProxy('/wd/hub/session');
       newUrl.should.eql('http://localhost:4444/wd/hub/session');
     });
-    it('should throw an error if url requires a sessionId but its null', async function () {
+    it('should throw an error if url requires a sessionId but its null', function () {
       let j = mockProxy();
       let e;
       try {
@@ -86,7 +86,7 @@ describe('proxy', function () {
       should.exist(e);
       e.message.should.contain('without session id');
     });
-    it('should not throw an error if url does not require a session id and its null', async function () {
+    it('should not throw an error if url does not require a session id and its null', function () {
       let j = mockProxy();
       let newUrl = j.getUrlForProxy('/wd/hub/status');
 
@@ -100,7 +100,7 @@ describe('proxy', function () {
       res.statusCode.should.equal(200);
       body.should.eql({status: 0, value: {foo: 'bar'}});
     });
-    it('should pass along request errors', async function () {
+    it('should pass along request errors', function () {
       let j = mockProxy({sessionId: '123'});
       j.proxy('/badurl', 'GET').should.eventually.be.rejectedWith("Could not proxy");
     });
@@ -117,7 +117,7 @@ describe('proxy', function () {
       let res = await j.command('/status', 'GET');
       res.should.eql({foo: 'bar'});
     });
-    it('should pass along request errors', async function () {
+    it('should pass along request errors', function () {
       let j = mockProxy({sessionId: '123'});
       j.command('/badurl', 'GET').should.eventually.be.rejectedWith("Could not proxy");
     });
@@ -180,7 +180,7 @@ describe('proxy', function () {
       let j = mockProxy({sessionId: '123'});
       let [req, res] = buildReqRes('/wd/hub/status', 'GET');
       await j.proxyReqRes(req, res);
-      res.sentBody.should.eql({status: 0, value: {'foo':'bar'}});
+      res.sentBody.should.eql({status: 0, value: {'foo': 'bar'}});
     });
     it('should proxy strange responses', async function () {
       let j = mockProxy({sessionId: '123'});

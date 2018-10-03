@@ -240,7 +240,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         await d.createSession(defaultCaps);
       });
       describe('command', function () {
-        it('should exist by default', async function () {
+        it('should exist by default', function () {
           d.newCommandTimeoutMs.should.equal(60000);
         });
         it('should be settable through `timeouts`', async function () {
@@ -249,7 +249,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         });
       });
       describe('implicit', function () {
-        it('should not exist by default', async function () {
+        it('should not exist by default', function () {
           d.implicitWaitMs.should.equal(0);
         });
         it('should be settable through `timeouts`', async function () {

@@ -18,7 +18,7 @@ chai.use(chaiAsPromised);
 const serverPort = 8181;
 const baseUrl = `http://localhost:${serverPort}/wd/hub`;
 
-describe('Protocol', async function () {
+describe('Protocol', function () {
 
   //TODO: more tests!:
   // Unknown commands should return 404
@@ -239,7 +239,7 @@ describe('Protocol', async function () {
     });
 
     it('should return the correct error even if driver does not throw', async function () {
-      let res =  await request({
+      let res = await request({
         url: `${baseUrl}/session/foo/appium/receive_async_response`,
         method: 'POST',
         json: {response: 'baz'},
@@ -335,18 +335,18 @@ describe('Protocol', async function () {
         let res = await request({
           url: `${baseUrl}/session/foo/touch/perform`,
           method: 'POST',
-          json: [{"action":"tap", "options":{"element":"3"}}]
+          json: [{"action": "tap", "options": {"element": "3"}}]
         });
-        res.value.should.deep.equal([[{"action":"tap", "options":{"element":"3"}}], 'foo']);
+        res.value.should.deep.equal([[{"action": "tap", "options": {"element": "3"}}], 'foo']);
       });
 
       it('should not wrap twice', async function () {
         let res = await request({
           url: `${baseUrl}/session/foo/touch/perform`,
           method: 'POST',
-          json: {actions: [{"action":"tap", "options":{"element":"3"}}]}
+          json: {actions: [{"action": "tap", "options": {"element": "3"}}]}
         });
-        res.value.should.deep.equal([[{"action":"tap", "options":{"element":"3"}}], 'foo']);
+        res.value.should.deep.equal([[{"action": "tap", "options": {"element": "3"}}], 'foo']);
       });
 
     });
@@ -445,7 +445,7 @@ describe('Protocol', async function () {
         createSessionStub.restore();
       });
 
-      describe('w3c endpoints', async function () {
+      describe('w3c endpoints', function () {
         let w3cCaps = {
           alwaysMatch: {
             platformName: 'Fake',
@@ -474,7 +474,7 @@ describe('Protocol', async function () {
           }).should.eventually.be.rejected;
           statusCode.should.equal(400);
 
-          const {error:w3cError, message, stacktrace} = error.value;
+          const {error: w3cError, message, stacktrace} = error.value;
           message.should.match(/Parameters were incorrect/);
           stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
@@ -489,7 +489,7 @@ describe('Protocol', async function () {
           }).should.eventually.be.rejected;
           statusCode.should.equal(404);
 
-          const {error:w3cError, message, stacktrace} = error.value;
+          const {error: w3cError, message, stacktrace} = error.value;
           message.should.match(/Method has not yet been implemented/);
           stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
@@ -506,7 +506,7 @@ describe('Protocol', async function () {
           }).should.eventually.be.rejected;
           statusCode.should.equal(500);
 
-          const {error:w3cError, message, stacktrace} = error.value;
+          const {error: w3cError, message, stacktrace} = error.value;
           stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.UnknownError.error());
@@ -565,7 +565,7 @@ describe('Protocol', async function () {
           }).should.eventually.be.rejected;
           statusCode.should.equal(408);
 
-          const {error:w3cError, message, stacktrace} = error.value;
+          const {error: w3cError, message, stacktrace} = error.value;
           stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.TimeoutError.error());
@@ -653,9 +653,9 @@ describe('Protocol', async function () {
                 actions: [1, 2, 3],
               }
             }).should.eventually.be.rejected;
-            const {statusCode, error:returnedError} = res;
+            const {statusCode, error: returnedError} = res;
             statusCode.should.equal(414);
-            const {error:w3cError, message:errMessage, stacktrace} = returnedError.value;
+            const {error: w3cError, message: errMessage, stacktrace} = returnedError.value;
             w3cError.should.equal('unknown error');
             stacktrace.should.match(/Some error occurred/);
             errMessage.should.equal('Some error occurred');
@@ -677,7 +677,7 @@ describe('Protocol', async function () {
             }).should.eventually.be.rejected;
             statusCode.should.equal(HTTPStatusCodes.NOT_FOUND);
             message.should.match(/A problem occurred/);
-            const {error:w3cError, message:errMessage, stacktrace} = error.value;
+            const {error: w3cError, message: errMessage, stacktrace} = error.value;
             w3cError.should.equal('no such element');
             errMessage.should.match(/A problem occurred/);
             stacktrace.should.exist;
@@ -700,7 +700,7 @@ describe('Protocol', async function () {
             }).should.eventually.be.rejected;
             statusCode.should.equal(HTTPStatusCodes.NOT_FOUND);
             message.should.match(/does not make a difference/);
-            const {error:w3cError, stacktrace} = error.value;
+            const {error: w3cError, stacktrace} = error.value;
             w3cError.should.equal('no such element');
             stacktrace.should.match(/arbitrary stacktrace/);
           });
@@ -723,7 +723,7 @@ describe('Protocol', async function () {
             }).should.eventually.be.rejected;
             statusCode.should.equal(HTTPStatusCodes.INTERNAL_SERVER_ERROR);
             message.should.match(/does not make a difference/);
-            const {error:w3cError, stacktrace} = error.value;
+            const {error: w3cError, stacktrace} = error.value;
             w3cError.should.equal('unknown error');
             stacktrace.should.match(/arbitrary stacktrace/);
           });
@@ -949,7 +949,7 @@ describe('Protocol', async function () {
     });
 
     it('should pass on any errors in proxying', async function () {
-      driver.proxyReqRes = async function () {
+      driver.proxyReqRes = async function () { // eslint-disable-line require-await
         throw new Error("foo");
       };
       let res = await request({
@@ -973,9 +973,9 @@ describe('Protocol', async function () {
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
-      driver.proxyReqRes = async function () {
+      driver.proxyReqRes = async function () { // eslint-disable-line require-await
         let jsonwp = {status: 35, value: "No such context found.", sessionId: "foo"};
-        throw  new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
+        throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
       };
       let res = await request({
         url: `${baseUrl}/session/${sessionId}/url`,
@@ -996,7 +996,7 @@ describe('Protocol', async function () {
     });
 
     it('should let the proxy handle req/res', async function () {
-      driver.proxyReqRes = async function (req, res) {
+      driver.proxyReqRes = async function (req, res) { // eslint-disable-line require-await
         res.status(200).json({custom: 'data'});
       };
       let res = await request({

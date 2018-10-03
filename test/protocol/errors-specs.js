@@ -281,7 +281,7 @@ describe('errorFromW3CJsonCode', function () {
   for (let error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
       it(error.errorName + ' should return correct error', function () {
-        const {error:w3cError} = error;
+        const {error: w3cError} = error;
         if (w3cError) {
           errorFromW3CJsonCode(w3cError).error.should.equal(error.error);
           errorFromW3CJsonCode(w3cError).should.have.property('message', error.errorMsg);

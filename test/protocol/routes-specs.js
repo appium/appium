@@ -14,7 +14,7 @@ describe('Protocol', function () {
   // protocol
 
   describe('ensure protocol consistency', function () {
-    it('should not change protocol between patch versions', async function () {
+    it('should not change protocol between patch versions', function () {
       let shasum = crypto.createHash('sha1');
       for (let [url, urlMapping] of _.toPairs(METHOD_MAP)) {
         shasum.update(url);
@@ -71,9 +71,7 @@ describe('Protocol', function () {
     });
 
     it('should not find command name if incorrect input data has been specified', function () {
-      for (let [route, method] of [['/wd/hub/status', 'POST'],
-                                   ['/xstatus', 'GET'],
-                                   ['status', 'POST']]) {
+      for (let [route, method] of [['/wd/hub/status', 'POST'], ['/xstatus', 'GET'], ['status', 'POST']]) {
         const cmdName = routeToCommandName(route, method);
         chai.should().equal(cmdName, undefined);
       }

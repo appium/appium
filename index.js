@@ -1,19 +1,26 @@
 // transpile:main
 
 // BaseDriver exports
-import BaseDriver from './lib/basedriver/driver';
-import { ImageElement } from './lib/basedriver/image-element';
-import DeviceSettings, { BASEDRIVER_HANDLED_SETTINGS } from './lib/basedriver/device-settings';
+import * as driver from './lib/basedriver/driver';
+import * as image from './lib/basedriver/image-element';
+import * as deviceSettings from './lib/basedriver/device-settings';
+
+const { BaseDriver } = driver;
+const { ImageElement } = image;
+const { DeviceSettings, BASEDRIVER_HANDLED_SETTINGS } = deviceSettings;
 
 export { BaseDriver, DeviceSettings, ImageElement, BASEDRIVER_HANDLED_SETTINGS };
 export default BaseDriver;
 
+
 // MJSONWP exports
-import {
+import * as protocol from './lib/protocol';
+
+const {
   Protocol, routeConfiguringFunction, errors, isErrorType,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
-} from './lib/protocol';
+} = protocol;
 
 export {
   Protocol, routeConfiguringFunction, errors, isErrorType,
@@ -22,24 +29,30 @@ export {
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand };
 
 // Express exports
-import { STATIC_DIR } from './lib/express/static';
+import * as staticIndex from './lib/express/static';
+const { STATIC_DIR } = staticIndex;
 export { STATIC_DIR };
-import { server } from './lib/express/server';
+
+import * as serverIndex from './lib/express/server';
+const { server } = serverIndex;
 export { server };
 
 // jsonwp-proxy exports
-import JWProxy from './lib/jsonwp-proxy/proxy';
+import * as proxyIndex from './lib/jsonwp-proxy/proxy';
+const { JWProxy } = proxyIndex;
 export { JWProxy };
 
 // jsonwp-status exports
-import { codes, getSummaryByCode } from './lib/jsonwp-status/status';
-const statusCodes = codes;
+import * as statusIndex from './lib/jsonwp-status/status';
+const { codes: statusCodes, getSummaryByCode } = statusIndex;
 export { statusCodes, getSummaryByCode };
 
 // W3C capabilities parser
-import { processCapabilities } from './lib/basedriver/capabilities';
+import * as caps from './lib/basedriver/capabilities';
+const { processCapabilities } = caps;
 export { processCapabilities };
 
 // Web socket helpers
-import { DEFAULT_WS_PATHNAME_PREFIX } from './lib/express/websocket';
+import * as ws from './lib/express/websocket';
+const { DEFAULT_WS_PATHNAME_PREFIX } = ws;
 export { DEFAULT_WS_PATHNAME_PREFIX };

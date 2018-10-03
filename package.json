@@ -26,8 +26,10 @@
     "index.js",
     "lib",
     "static",
+    "test/basedriver",
     "build/index.js",
-    "build/lib"
+    "build/lib",
+    "build/test/basedriver"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",

@@ -24,7 +24,7 @@ describe('AppiumDriver', function () {
       let fakeDriver = new FakeDriver();
       let mockFakeDriver = sinon.mock(fakeDriver);
       appium.getDriverForCaps = function (/*args*/) {
-        return () => {
+        return function Driver () {
           return fakeDriver;
         };
       };
@@ -41,16 +41,16 @@ describe('AppiumDriver', function () {
         await appium.deleteSession(SESSION_ID);
       });
 
-      it('should call inner driver\'s createSession with desired capabilities', async function () {
+      it(`should call inner driver's createSession with desired capabilities`, async function () {
         mockFakeDriver.expects("createSession")
           .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it('should call inner driver\'s createSession with desired and default capabilities', async function () {
-        let defaultCaps = {deviceName: 'Emulator'}
-          , allCaps = _.extend(_.clone(defaultCaps), BASE_CAPS);
+      it(`should call inner driver's createSession with desired and default capabilities`, async function () {
+        let defaultCaps = {deviceName: 'Emulator'};
+        let allCaps = _.extend(_.clone(defaultCaps), BASE_CAPS);
         appium.args.defaultCapabilities = defaultCaps;
         mockFakeDriver.expects("createSession")
           .once().withArgs(allCaps)
@@ -58,7 +58,7 @@ describe('AppiumDriver', function () {
         await appium.createSession(BASE_CAPS);
         mockFakeDriver.verify();
       });
-      it('should call inner driver\'s createSession with desired and default capabilities without overriding caps', async function () {
+      it(`should call inner driver's createSession with desired and default capabilities without overriding caps`, async function () {
         // a default capability with the same key as a desired capability
         // should do nothing
         let defaultCaps = {platformName: 'Ersatz'};
@@ -73,9 +73,11 @@ describe('AppiumDriver', function () {
         appium.args.sessionOverride = true;
 
         // mock three sessions that should be removed when the new one is created
-        let fakeDrivers = [new FakeDriver(),
-                           new FakeDriver(),
-                           new FakeDriver()];
+        let fakeDrivers = [
+          new FakeDriver(),
+          new FakeDriver(),
+          new FakeDriver(),
+        ];
         let mockFakeDrivers = _.map(fakeDrivers, (fd) => {return sinon.mock(fd);});
         mockFakeDrivers[0].expects('deleteSession')
           .once();
@@ -182,7 +184,7 @@ describe('AppiumDriver', function () {
         sessions.should.have.length(0);
       });
       it('should call inner driver\'s deleteSession method', async function () {
-        const [sessionId] =  (await appium.createSession(BASE_CAPS)).value;
+        const [sessionId] = (await appium.createSession(BASE_CAPS)).value;
         mockFakeDriver.expects("deleteSession")
           .once().withExactArgs(sessionId, [])
           .returns();
@@ -236,8 +238,8 @@ describe('AppiumDriver', function () {
     describe('sessionExists', function () {
     });
     describe('attachUnexpectedShutdownHandler', function () {
-      let appium
-        , mockFakeDriver;
+      let appium;
+      let mockFakeDriver;
       beforeEach(function () {
         [appium, mockFakeDriver] = getDriverAndFakeDriver();
       });
@@ -273,11 +275,11 @@ describe('AppiumDriver', function () {
       });
     });
     describe('getDriverForCaps', function () {
-      it('should not blow up if user does not provide platformName', async function () {
+      it('should not blow up if user does not provide platformName', function () {
         let appium = new AppiumDriver({});
         (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
       });
-      it('should get XCUITestDriver driver for automationName of XCUITest', async function () {
+      it('should get XCUITestDriver driver for automationName of XCUITest', function () {
         let appium = new AppiumDriver({});
         let driver = appium.getDriverForCaps({
           platformName: 'iOS',
@@ -286,7 +288,7 @@ describe('AppiumDriver', function () {
         driver.should.be.an.instanceof(Function);
         driver.should.equal(XCUITestDriver);
       });
-      it('should get iosdriver for ios < 10', async function () {
+      it('should get iosdriver for ios < 10', function () {
         let appium = new AppiumDriver({});
         let caps = {
           platformName: 'iOS',
@@ -316,7 +318,7 @@ describe('AppiumDriver', function () {
         driver = appium.getDriverForCaps(caps);
         driver.should.equal(IosDriver);
       });
-      it('should get xcuitestdriver for ios >= 10', async function () {
+      it('should get xcuitestdriver for ios >= 10', function () {
         let appium = new AppiumDriver({});
         let caps = {
           platformName: 'iOS',

@@ -30,7 +30,7 @@ describe('Config', function () {
   describe('Appium config', function () {
     describe('getBuildInfo', function () {
       async function verifyBuildInfoUpdate (useLocalGit) {
-        const buildInfo = await getBuildInfo();
+        const buildInfo = getBuildInfo();
         mockFs.expects('exists').atLeast(1).returns(useLocalGit);
         buildInfo['git-sha'] = undefined;
         buildInfo.built = undefined;
@@ -118,9 +118,9 @@ describe('Config', function () {
         sinon.spy(console, "log");
       });
       it('should log the config to console', async function () {
-        const config = await getBuildInfo();
+        const config = getBuildInfo();
         await showConfig();
-        console.log.calledOnce.should.be.true;  // eslint-disable-line no-console
+        console.log.calledOnce.should.be.true; // eslint-disable-line no-console
         console.log.getCall(0).args[0].should.contain(JSON.stringify(config)); // eslint-disable-line no-console
       });
     });
@@ -136,10 +136,10 @@ describe('Config', function () {
       for (let [prop, value] of _.toPairs(process)) {
         tempProcess[prop] = value;
       }
-      process = tempProcess;
+      process = tempProcess; // eslint-disable-line no-global-assign
     });
     after(function () {
-      process = _process;
+      process = _process; // eslint-disable-line no-global-assign
     });
     describe('checkNodeOk', function () {
       it('should fail if node is below 6', function () {
@@ -259,13 +259,13 @@ describe('Config', function () {
   });
 
   describe('validateTmpDir', function () {
-    it('should fail to use a tmp dir with incorrect permissions', async function () {
+    it('should fail to use a tmp dir with incorrect permissions', function () {
       validateTmpDir('/private/if_you_run_with_sudo_this_wont_fail').should.be.rejectedWith(/could not ensure/);
     });
-    it('should fail to use an undefined tmp dir', async function () {
+    it('should fail to use an undefined tmp dir', function () {
       validateTmpDir().should.be.rejectedWith(/could not ensure/);
     });
-    it('should be able to use a tmp dir with correct permissions', async function () {
+    it('should be able to use a tmp dir with correct permissions', function () {
       validateTmpDir('/tmp/test_tmp_dir/with/any/number/of/levels').should.not.be.rejected;
     });
   });

@@ -105,14 +105,14 @@ describe('FakeDriver - via HTTP', function () {
       });
 
       // Now use that sessionId to call /screenshot
-      const {status:screenshotStatus, value:screenshotValue} = await request({url: `${baseUrl}/${value.sessionId}/screenshot`, json: true});
+      const {status: screenshotStatus, value: screenshotValue} = await request({url: `${baseUrl}/${value.sessionId}/screenshot`, json: true});
       should.not.exist(screenshotStatus);
       screenshotValue.should.equal('hahahanotreallyascreenshot');
 
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
       const {statusCode, error} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
       statusCode.should.equal(404);
-      const {error:errorMessage, message, stacktrace} = error.value;
+      const {error: errorMessage, message, stacktrace} = error.value;
       errorMessage.should.match(/unknown method/);
       message.should.match(/Method has not yet been implemented/);
       stacktrace.should.match(/FakeDriver.executeCommand/);
@@ -287,7 +287,7 @@ describe('FakeDriver - via HTTP', function () {
       };
 
       // Have an MJSONWP and W3C session running concurrently
-      const {sessionId:mjsonwpSessId, value:mjsonwpValue, status} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'capabilities')});
+      const {sessionId: mjsonwpSessId, value: mjsonwpValue, status} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'capabilities')});
       status.should.exist;
       mjsonwpValue.should.eql(caps);
       mjsonwpSessId.should.exist;
@@ -335,7 +335,7 @@ describe('Logsink', function () {
     await server.close();
   });
 
-  it('should send logs to a logHandler passed in by a parent package', async function () {
+  it('should send logs to a logHandler passed in by a parent package', function () {
     logs.length.should.be.above(1);
     let welcomeIndex = logs[0][1].includes('versions of node') ? 1 : 0;
     logs[welcomeIndex].length.should.equal(2);

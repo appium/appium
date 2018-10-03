@@ -27,12 +27,6 @@ jobs:
       os:
         - linux
         - sudo: false
-      script: npm run test && npm run e2e-test
-      node_js: "6"
-    - stage:
-      os:
-        - linux
-        - sudo: false
       env:
         # this is just to indicate in the Travis job list that this is generating docs
         - GENERATE_DOCS=true

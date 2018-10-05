@@ -1,15 +1,18 @@
 ## Finding and interacting with elements
 
-Appium supports a subset of the WebDriver locator strategies:
+Appium supports a subset of the WebDriver locator strategies such as:
 
 * find by "class" (i.e., ui component type)
 * find by "xpath" (i.e., an abstract representation of a path to an element,
 with certain constraints)
 
+You can see a list of them in [Selector Strategies](/docs/en/commands/element/find-elements.md#selector-strategies)
+
 Appium additionally supports some of the [Mobile JSON Wire Protocol](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md) locator strategies
 
-* `-ios uiautomation`: a string corresponding to a recursive element search
-using the [UIAutomation library](/docs/en/writing-running-appium/ios/ios-predicate.md) (iOS 9.3 and below only)
+* `-ios predicate string` : a string corresponding to a recursive element search
+using the [iOS Predicate](/docs/en/writing-running-appium/ios/ios-predicate.md) (iOS 10.0 and above)
+    * `-ios uiautomation` for iOS 9.3 and below
 * `-android uiautomator`: a string corresponding to a recursive element
 search using the [UiAutomator Api](/docs/en/writing-running-appium/android/uiautomator-uiselector.md) (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search
@@ -44,3 +47,10 @@ screenshot. The element is then highlighted in the source tree. In the panel on 
 I can see the accessibility id.
 
 ![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector.png)
+
+### REPL
+[REPL](https://en.wikipedia.org/wiki/Read–eval–print_loop) is a simple interactive language shell.
+You can invoke various command interactively. It will help you to make sure your scenarios interactively with Appium server.
+
+- [Appium Ruby Console](https://github.com/appium/ruby_console)
+- [WebDriverIO with debug mode](http://webdriver.io/api/utility/debug.html)

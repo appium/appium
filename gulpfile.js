@@ -30,6 +30,13 @@ gulp.task('fixShrinkwrap', function (done) {
 
 boilerplate({
   build: 'appium',
+  files: [
+    '*.js',
+    'lib/**/*.js',
+    'test/**/*.js',
+    'commands-yml/**/*.js',
+    '!gulpfile.js',
+  ],
   test: {
     files: ['${testDir}/**/*-specs.js']
   },

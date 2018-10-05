@@ -82,7 +82,7 @@
     "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint",
     "coverage": "gulp coveralls",
-    "generate-docs": "babel-node ./commands-yml/parse.js",
+    "generate-docs": "node ./build/commands-yml/parse.js",
     "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
     "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production",
     "zip": "zip -qr appium.zip .",
@@ -97,9 +97,7 @@
   "devDependencies": {
     "ajv": "^6.5.3",
     "appium-gulp-plugins": "^3.1.0",
-    "babel-cli": "^6.26.0",
     "babel-eslint": "^10.0.0",
-    "babel-preset-env": "^1.7.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "eslint": "^5.2.0",

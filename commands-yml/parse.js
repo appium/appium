@@ -9,7 +9,7 @@ import { asyncify } from 'asyncbox';
 import { validator, CLIENT_URL_TYPES } from './validator';
 import url from 'url';
 import log from 'fancy-log';
-import { exec } from 'teen_process';
+import findRoot from 'find-root';
 
 
 // What range of platforms do the driver's support
@@ -32,6 +32,7 @@ const appiumRanges = {
   mac: ['1.6.4'],
 };
 
+const rootFolder = findRoot(__dirname);
 
 // Create Handlebars helper that shows a version range
 Handlebars.registerHelper('versions', (object, name, driverName) => {
@@ -137,8 +138,7 @@ Handlebars.registerHelper('client_url', function (clientUrl) {
 });
 
 async function registerSpecUrlHelper () {
-  const npmRoot = (await exec('npm', ['root'])).stdout.trim();
-  const routesFile = await fs.readFile(path.resolve(npmRoot, 'appium-base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
+  const routesFile = await fs.readFile(path.resolve(rootFolder, 'node_modules', 'appium-base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
   const routesFileLines = routesFile.split('\n');
 
   Handlebars.registerHelper('spec_url', function (specUrl, endpoint) {
@@ -179,29 +179,33 @@ async function registerSpecUrlHelper () {
 async function generateCommands () {
   await registerSpecUrlHelper();
 
-  const commands = path.resolve(__dirname, 'commands/**/*.yml');
+  const commands = path.resolve(rootFolder, 'commands-yml', 'commands/**/*.yml');
   log('Traversing YML files', commands);
-  await fs.rimraf(path.resolve(__dirname, '..', 'docs', 'en', 'commands'));
+  await fs.rimraf(path.resolve(rootFolder, 'docs', 'en', 'commands'));
+
+  // get the template from which the md files will be created
+  const template = Handlebars.compile(await fs.readFile(path.resolve(rootFolder, 'commands-yml', 'template.md'), 'utf8'), {noEscape: true, strict: true});
+
   let fileCount = 0;
-  for (let filename of await fs.glob(commands)) {
-    log(`Rendering file: ${filename} ${path.relative(__dirname, filename)}`);
+  for (const filename of await fs.glob(commands)) {
+    const relativeFilename = path.relative(path.resolve(rootFolder, 'commands-yml'), filename);
+    log(`Rendering file: ${filename} ${relativeFilename}`);
 
     // Translate the YML specs to JSON
     const inputYML = await fs.readFile(filename, 'utf8');
     const inputJSON = yaml.load(inputYML);
-    inputJSON.ymlFileName = `/${path.relative(path.resolve(__dirname, '..'), filename)}`;
+    inputJSON.ymlFileName = `/${path.relative(rootFolder, filename)}`;
     const validationErrors = validate(inputJSON, validator);
     if (validationErrors) {
       throw new Error(`Data validation error for ${filename}: ${JSON.stringify(validationErrors)}`);
     }
 
     // Pass the inputJS into our Handlebars template
-    const template = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'template.md'), 'utf8'), {noEscape: true, strict: true});
     const markdown = template(inputJSON);
 
     // Write the markdown to its right place
-    const markdownPath = replaceExt(path.relative(__dirname, filename), '.md');
-    const outfile = path.resolve(__dirname, '..', 'docs', 'en', markdownPath);
+    const markdownPath = replaceExt(relativeFilename, '.md');
+    const outfile = path.resolve(rootFolder, 'docs', 'en', markdownPath);
     log(`    Writing to: ${outfile}`);
     await mkdirp(path.dirname(outfile));
     await fs.writeFile(outfile, markdown, 'utf8');
@@ -231,15 +235,14 @@ async function generateCommandIndex () {
 
   // parse the toc.js file and get the commands into the form of
   //   {commands: [{name: '', path: ''}, {name: '', commands: [...]}]}
-  const toc = require(path.resolve(__dirname, '..', 'docs', 'toc.js'));
+  const toc = require(path.resolve(rootFolder, 'docs', 'toc.js'));
   const commandToc = _.find(toc.en, (value) => value.indexOf('Commands') === 0);
-  // const commands = commandToc[1].slice(1).map((el) => getTree(el, '/docs/en/commands'));
   const commands = [];
   for (let el of commandToc[1].slice(1)) {
     commands.push(getTree(el, '/docs/en/commands'));
   }
 
-  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(__dirname, 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
+  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(rootFolder, 'commands-yml', 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
 
   async function writeIndex (index, commands, indexPath) {
     log(`Creating API index '${index}'`);
@@ -250,7 +253,7 @@ async function generateCommandIndex () {
     await fs.writeFile(index, commandMarkdown, 'utf8');
   }
 
-  const apiIndex = path.resolve(__dirname, '..', 'docs', 'en', 'about-appium', 'api.md');
+  const apiIndex = path.resolve(rootFolder, 'docs', 'en', 'about-appium', 'api.md');
   await writeIndex(apiIndex, commands);
   log(`Done writing main API index`);
 
@@ -262,7 +265,7 @@ async function generateCommandIndex () {
 
     // write this node
     const relPath = command.path.startsWith(path.sep) ? command.path.substring(1) : command.path;
-    const index = path.resolve(__dirname, '..', relPath, 'README.md');
+    const index = path.resolve(rootFolder, relPath, 'README.md');
     await writeIndex(index, command.commands, command.path);
 
     // go through all the sub-commands
@@ -272,7 +275,7 @@ async function generateCommandIndex () {
   }
 
   // go through the full tree and generate readme files
-  const index = path.resolve(__dirname, '..', 'docs', 'en', 'commands', 'README.md');
+  const index = path.resolve(rootFolder, 'docs', 'en', 'commands', 'README.md');
   await writeIndex(index, commands);
   for (const el of commands) {
     await writeIndividualIndexes(el);
@@ -285,4 +288,3 @@ async function main () {
 }
 
 asyncify(main);
-/* eslint-enable */

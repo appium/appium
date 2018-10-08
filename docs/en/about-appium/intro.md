@@ -114,8 +114,9 @@ $ appium
 ```
 
 The `beta` of Appium is available via NPM with `npm install -g appium@beta`.
-It is developing version so it might have breaking changes.
-Please uninstall `appium@beta` once before installing it to make the dependencies clean.
+It is the development version so it might have breaking changes.
+Please uninstall `appium@beta` (`npm uninstall -g appium@beta`) before installing
+new versions in order to have a clean set of dependencies.
 
 **Appium Clients**<br/>
 There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)

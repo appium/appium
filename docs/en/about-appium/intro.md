@@ -106,12 +106,16 @@ list of capabilities available for Appium.
 **Appium Server**<br/>
 Appium is a server written in Node.js. It can be built and installed [from
 source](/docs/en/contributing-to-appium/appium-from-source.md)
-or installed directly from NPM:
+or installed directly from [NPM](https://www.npmjs.com/package/appium):
 
 ```
 $ npm install -g appium
 $ appium
 ```
+
+The `beta` of Appium is available via NPM with `npm install -g appium@beta`.
+It is developing version so it might have breaking changes.
+Please uninstall `appium@beta` once before installing it to make the dependencies clean.
 
 **Appium Clients**<br/>
 There are client libraries (in Java, Ruby, Python, PHP, JavaScript, and C#)

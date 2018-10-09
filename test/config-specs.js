@@ -34,7 +34,7 @@ describe('Config', function () {
         mockFs.expects('exists').atLeast(1).returns(useLocalGit);
         buildInfo['git-sha'] = undefined;
         buildInfo.built = undefined;
-        await updateBuildInfo();
+        await updateBuildInfo(true);
         buildInfo.should.be.an('object');
         should.exist(buildInfo['git-sha']);
         should.exist(buildInfo.built);

@@ -33,7 +33,8 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+     driver.Manage().Timeouts().ImplicitWait=TimeSpan.FromSeconds(30);
+
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.RemoteTimeouts.html#implicitlyWait-long-java.util.concurrent.TimeUnit-"

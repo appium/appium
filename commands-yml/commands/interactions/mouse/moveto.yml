@@ -11,7 +11,7 @@ example_usage:
     |
       Actions action = new Actions(driver);
       action.moveTo(element, 10, 10);
-      action.perform()
+      action.perform();
   python:
     |
       actions = ActionChains(driver)

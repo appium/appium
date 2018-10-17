@@ -43,7 +43,7 @@ await driver.setImplicitWaitTimeout(5000);
 
 ```csharp
 // C#
-// TODO C# sample
+driver.Manage().Timeouts().ImplicitWait=TimeSpan.FromSeconds(30);
 
 ```
 

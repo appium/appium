@@ -24,7 +24,7 @@ await driver.gsmCall('555-123-4567', 'Phone');
 
 ```ruby
 # Ruby
-@driver.gsm_call(phone_number: '555-123-4567', action: :call)
+@driver.gsm_call(phone_number: '5551234567', action: :call)
 
 ```
 

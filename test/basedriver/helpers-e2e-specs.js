@@ -2,7 +2,7 @@ import chai from 'chai';
 import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import { fs } from 'appium-support';
-import h from '../../lib/basedriver/helpers';
+import { configureApp } from '../../lib/basedriver/helpers';
 import http from 'http';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
@@ -14,47 +14,46 @@ chai.should();
 chai.use(chaiAsPromised);
 
 function getFixture (file) {
-  return path.resolve(__dirname, '..', '..', '..', 'test', 'basedriver',
-                      'fixtures', file);
+  return path.resolve(__dirname, '..', '..', '..', 'test', 'basedriver', 'fixtures', file);
 }
 
 describe('app download and configuration', function () {
   describe('configureApp', function () {
     it('should get the path for a local .app', async function () {
-      let newAppPath = await h.configureApp(getFixture('FakeIOSApp.app'), '.app');
+      let newAppPath = await configureApp(getFixture('FakeIOSApp.app'), '.app');
       newAppPath.should.contain('FakeIOSApp.app');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an app\n');
     });
     it('should get the path for a local .apk', async function () {
-      let newAppPath = await h.configureApp(getFixture('FakeAndroidApp.apk'), '.apk');
+      let newAppPath = await configureApp(getFixture('FakeAndroidApp.apk'), '.apk');
       newAppPath.should.contain('FakeAndroidApp.apk');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an apk\n');
     });
     it('should unzip and get the path for a local .app.zip', async function () {
-      let newAppPath = await h.configureApp(getFixture('FakeIOSApp.app.zip'), '.app');
+      let newAppPath = await configureApp(getFixture('FakeIOSApp.app.zip'), '.app');
       newAppPath.should.contain('FakeIOSApp.app');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an app\n');
     });
     it('should unzip and get the path for a local .ipa', async function () {
-      let newAppPath = await h.configureApp(getFixture('FakeIOSApp.ipa'), '.app');
+      let newAppPath = await configureApp(getFixture('FakeIOSApp.ipa'), '.app');
       newAppPath.should.contain('FakeIOSApp.app');
       let contents = await fs.readFile(newAppPath, 'utf8');
       contents.should.eql('this is not really an app\n');
     });
     it('should fail for a bad zip file', async function () {
-      await h.configureApp(getFixture('BadZippedApp.zip'), '.app')
-        .should.be.rejectedWith('Error testing zip archive, are you sure this is a zip file?');
+      await configureApp(getFixture('BadZippedApp.zip'), '.app')
+        .should.be.rejectedWith(/PK/);
     });
     it('should fail if extensions do not match', async function () {
-      await h.configureApp(getFixture('FakeIOSApp.app'), '.wrong')
-        .should.be.rejectedWith(/did not have extension '.wrong'/);
+      await configureApp(getFixture('FakeIOSApp.app'), '.wrong')
+        .should.be.rejectedWith(/did not have extension/);
     });
     it('should fail if zip file does not contain an app whose extension matches', async function () {
-      await h.configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')
-        .should.be.rejectedWith(/could not find a .wrong bundle in it/);
+      await configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')
+        .should.be.rejectedWith(/could not find/);
     });
     describe('should download an app from the web', function () {
       const port = 8000;
@@ -62,7 +61,7 @@ describe('app download and configuration', function () {
 
       describe('server not available', function () {
         it('should handle server not available', async function () {
-          await h.configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app')
+          await configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app')
             .should.eventually.be.rejectedWith(/ECONNREFUSED/);
         });
       });
@@ -70,8 +69,7 @@ describe('app download and configuration', function () {
         // use a local server so there is no dependency on the internet
         let server;
         before(function () {
-          const dir = path.resolve(__dirname, '..', '..', '..', 'test',
-                                   'basedriver', 'fixtures');
+          const dir = path.resolve(__dirname, '..', '..', '..', 'test', 'basedriver', 'fixtures');
           const serve = serveStatic(dir, {
             index: false,
             setHeaders: (res, path) => {
@@ -111,59 +109,65 @@ describe('app download and configuration', function () {
         });
 
         it('should download zip file', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app');
+          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app.zip`, '.app');
           newAppPath.should.contain('FakeIOSApp.app');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an app\n');
         });
         it('should download zip file with query string', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeIOSApp.app.zip?sv=abc&sr=def`, '.app');
+          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app.zip?sv=abc&sr=def`, '.app');
           newAppPath.should.contain('.app');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an app\n');
         });
         it('should download an app file', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeIOSApp.app`, '.app');
+          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app`, '.app');
           newAppPath.should.contain('.app');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an app\n');
         });
+        it('should accept multiple extensions', async function () {
+          let newAppPath = await configureApp(`${serverUrl}/FakeIOSApp.app.zip`, ['.app', '.aab']);
+          newAppPath.should.contain('FakeIOSApp.app');
+          let contents = await fs.readFile(newAppPath, 'utf8');
+          contents.should.eql('this is not really an app\n');
+        });
         it('should download an apk file', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk`, '.apk');
           newAppPath.should.contain('.apk');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');
         });
         it('should handle zip file that cannot be downloaded', async function () {
-          await h.configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app')
+          await configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app')
             .should.eventually.be.rejectedWith(/Problem downloading app from url/);
         });
         it('should handle invalid protocol', async function () {
-          await h.configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')
+          await configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')
             .should.eventually.be.rejectedWith(/is not supported/);
-          await h.configureApp('ftp://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
+          await configureApp('ftp://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
             .should.eventually.be.rejectedWith(/is not supported/);
         });
         it('should handle missing file in Windows path format', async function () {
-          await h.configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app')
+          await configureApp('C:\\missing\\FakeIOSApp.app.zip', '.app')
             .should.eventually.be.rejectedWith(/does not exist or is not accessible/);
         });
         it('should recognize zip mime types and unzip the downloaded file', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeAndroidApp.asd?mime-zip`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?mime-zip`, '.apk');
           newAppPath.should.contain('FakeAndroidApp.apk');
           newAppPath.should.not.contain('.asd');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');
         });
         it('should recognize zip mime types and unzip the downloaded file with query string', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeAndroidApp.asd?mime-zip&sv=abc&sr=def`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?mime-zip&sv=abc&sr=def`, '.apk');
           newAppPath.should.contain('FakeAndroidApp.apk');
           newAppPath.should.not.contain('.asd');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');
         });
         it('should treat an unknown mime type as an app', async function () {
-          let newAppPath = await h.configureApp(`${serverUrl}/FakeAndroidApp.apk?mime-bip`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?mime-bip`, '.apk');
           newAppPath.should.contain('.apk');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');

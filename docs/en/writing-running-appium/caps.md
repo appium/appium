@@ -42,7 +42,7 @@ These Capabilities span multiple drivers.
 |`app`|The absolute local path _or_ remote http URL to a `.ipa` file (IOS), `.app` folder (IOS Simulator) or `.apk` file (Android), or a `.zip` file containing one of these (for .app, the .app folder must be the root of the zip file). Appium will attempt to install this app binary on the appropriate device first. Note that this capability is not required for Android if you specify `appPackage` and `appActivity` capabilities (see below). Incompatible with `browserName`.|`/abs/path/to/my.apk` or `http://myapp.com/app.ipa`|
 |`browserName`|Name of mobile web browser to automate. Should be an empty string if automating an app instead.|'Safari' for iOS and 'Chrome', 'Chromium', or 'Browser' for Android|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
-|`language`| Language to set for iOS and Android. On iOS, it's available for simulator. |e.g. `fr`|
+|`language`| Language to set for iOS and Android. On iOS, it is only available for simulator. |e.g. `fr`|
 |`locale`| Locale to set for iOS and Android. On iOS, it's available for simulator. `fr_CA` format for iOS. `CA` format (country) for Android |e.g. `fr_CA`, `CA` |
 |`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|

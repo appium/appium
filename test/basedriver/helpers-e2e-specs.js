@@ -53,7 +53,7 @@ describe('app download and configuration', function () {
     });
     it('should fail if zip file does not contain an app whose extension matches', async function () {
       await configureApp(getFixture('FakeIOSApp.app.zip'), '.wrong')
-        .should.be.rejectedWith(/could not find/);
+        .should.be.rejectedWith(/did not have extension/);
     });
     describe('should download an app from the web', function () {
       const port = 8000;

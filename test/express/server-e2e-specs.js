@@ -70,7 +70,7 @@ describe('server', function () {
     let before = Date.now();
     await hwServer.close();
     // expect slightly less than the request waited, since we paused above
-    (Date.now() - before).should.be.above(900);
+    (Date.now() - before).should.be.above(800);
 
     (await bodyPromise).should.equal('We have waited!');
   });

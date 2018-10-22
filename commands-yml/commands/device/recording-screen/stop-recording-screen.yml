@@ -59,7 +59,7 @@ endpoint:
   url: /session/:session_id/appium/stop_recording_screen
   method: POST
   url_parameters:
-    - name: remote_path
+    - name: remotePath
       description: The path to the remote location, where the resulting video should be uploaded.
                    The following protocols are supported http/https, ftp.
                    Null or empty string value (the default setting) means the content of resulting

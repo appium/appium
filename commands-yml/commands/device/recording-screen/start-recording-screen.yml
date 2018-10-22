@@ -65,7 +65,7 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: remote_path
+    - name: remotePath
       type: string
       description: The path to the remote location, where the resulting video should be uploaded.
                    The following protocols are supported http/https, ftp.
@@ -84,34 +84,34 @@ endpoint:
     - name: method
       type: string
       description: The http multipart upload method name. The 'PUT' one is used by default.
-    - name: force_restart
+    - name: forceRestart
       type: boolean
       description: Whether to try to catch and upload/return the currently running screen recording
                    (`false`, the default setting on server) or ignore the result of it
                    and start a new recording immediately (`true`).
-    - name: time_limit
+    - name: timeLimit
       type: string
       description: Recording time. 180 seconds is by default.
-    - name: video_type
+    - name: videoType
       type: string
       description: (iOS Only) The format of the screen capture to be recorded.
                    Available formats "h264", "mp4" or "fmp4". Default is "mp4".
                    Only works for Simulator.
-    - name: video_quality
+    - name: videoQuality
       type: string
       description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). Only works for real devices.
-    - name: bit_rate
+    - name: bitRate
       type: string
       description: (iOS Only) The video bit rate for the video, in megabits per second.
                    4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above.
-    - name: video_size
+    - name: videoSize
       type: string
       description: (Android Only) The format is widthxheight.
                    The default value is the device's native display resolution (if supported),
                    1280x720 if not. For best results,
                    use a size supported by your device's Advanced Video Coding (AVC) encoder.
                    For example, "1280x720"
-    - name: bug_report
+    - name: bugReport
       type: string
       description: (Android Only) Set it to `true` in order to display additional information on the video overlay,
                    such as a timestamp, that is helpful in videos captured to illustrate bugs.

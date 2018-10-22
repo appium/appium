@@ -11,12 +11,19 @@ env:
 node_js: "10"
 jobs:
   include:
-    - stage: Tests
+    - stage: Shrinkwrap
+      node_js: 10
+      before_script: 
+    - stage: Tests + Shrinkwrap
       os:
         - linux
         - sudo: false
-      script: npm run test && npm run e2e-test
       node_js: "10"
+      before_install: npm install -g greenkeeper-lockfile
+      install: npm install
+      before_script: greenkeeper-lockfile-update
+      script: npm run test && npm run e2e-test
+      after_script: greenkeeper-lockfile-update
     - stage:
       os:
         - linux

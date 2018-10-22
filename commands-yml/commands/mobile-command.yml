@@ -46,7 +46,7 @@
       | mobile:installCertificate | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-install-certificate.md)  | | |
       | mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)) | | |
       | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
-      | mobile:pressButton | Press a physical button. Supported button name is _home_. _volumeup_ and _volumedown_ are available for real devices. [link for the command](https://github.com/appium/WebDriverAgent/blob/master/WebDriverAgentLib/Categories/XCUIDevice+FBHelpers.m#L201) | `{name}` | `{name: "home"}` |
+      | mobile:pressButton | Press a physical button. The supported button name is is _home_. _volumeup_ and _volumedown_ are available for real devices | `{name}` | `{name: "home"}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |

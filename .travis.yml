@@ -57,11 +57,13 @@ jobs:
       script:
         - git checkout $TRAVIS_BRANCH
         - git branch --set-upstream-to origin/$TRAVIS_BRANCH
-        - node ./build/test/scripts/is-package-json-commit.js || release-it minor --preRelease=beta --no-npm.publish
+
+        # If it's not just a 'package.json' commit, 
+        - node ./build/test/scripts/is-package-json-commit.js || release-it --preRelease=beta --no-npm.publish
     
     - stage: Bundle zip and publish beta
       # only want to run this on the main master branch
-      # if: tag # TODO: This should only be called on 'tag' branches
+      if: tag
       os:
         - osx
         - osx_image: xcode9.4
@@ -90,4 +92,4 @@ jobs:
         - mv npm-shrinkwrap-no-dev-deps.json npm-shrinkwrap.json
       script:
         - npm run zip-and-upload
-        - npm run release-beta
+        - npm publish --tag beta

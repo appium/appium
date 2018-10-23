@@ -11,25 +11,28 @@ env:
 node_js: "10"
 jobs:
   include:
-    - stage: Shrinkwrap
-      node_js: 10
-      before_script: 
-    - stage: Tests + Shrinkwrap
+    # Run the tests and generate/update npm-shrinkwrap.json
+    - stage: Tests and Shrinkwrap
       os:
         - linux
         - sudo: false
       node_js: "10"
-      before_install: npm install -g greenkeeper-lockfile
+      before_install: 
+        - npm install -g greenkeeper-lockfile
+        - bash ./bin/has-code-changes.sh || travis_terminate 0 # If only .md files were changed, exit
       install: npm install
       before_script: greenkeeper-lockfile-update
       script: npm run test && npm run e2e-test
       after_script: greenkeeper-lockfile-update
-    - stage:
+
+    # Run tests in Node versions
+    - stage: Test other Node versions
       os:
         - linux
         - sudo: false
       script: npm run test && npm run e2e-test
       node_js: "8"
+
     - stage:
       os:
         - linux
@@ -38,9 +41,11 @@ jobs:
         # this is just to indicate in the Travis job list that this is generating docs
         - GENERATE_DOCS=true
       script: npm run generate-docs
-    - stage: BinTray Bundle Build and Upload
+
+    
+    - stage: Bundle zip and publish beta
       # only want to run this on the main master branch
-      if: branch = master AND type != pull_request
+      # if: branch = master AND type != pull_request # TODO: DO NOT COMMIT THIS COMMENTED OUT! THIS NEEDS TO PUT BACK BEFORE MERGING TO MASTER!
       os:
         - osx
         - osx_image: xcode9.4
@@ -63,4 +68,6 @@ jobs:
 
         # Remove the dev depenedencies
         - npm prune
-      script: npm run zip-and-upload
+      script: 
+        - npm run zip-and-upload
+        - npm run release-beta

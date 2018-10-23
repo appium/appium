@@ -88,7 +88,8 @@
     "zip": "zip -qr appium.zip .",
     "upload": "node ./build/test/scripts/bintray-upload.js",
     "zip-and-upload": "npm run zip && npm run upload",
-    "release-beta": "release pre beta && npm publish --tag beta"
+    "release-beta": "release pre beta && npm publish --tag beta",
+    "echo": "echo stuff"
   },
   "pre-commit": [
     "precommit-msg",

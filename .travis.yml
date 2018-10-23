@@ -50,15 +50,16 @@ jobs:
       script: npm run generate-docs
 
     - stage: Tag beta
+      # if: branch = master AND type != pull_request
       os:
         - linux
         - sudo: false
       script:
-        - npm version patch --beta
+        - release-it minor --preRelease=beta
     
     - stage: Bundle zip and publish beta
       # only want to run this on the main master branch
-      # if: branch = master AND type != pull_request # TODO: DO NOT COMMIT THIS COMMENTED OUT! THIS NEEDS TO PUT BACK BEFORE MERGING TO MASTER!
+      # if: tag # TODO: This should only be called on 'tag' branches
       os:
         - osx
         - osx_image: xcode9.4

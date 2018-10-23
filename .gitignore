@@ -2,7 +2,6 @@
 *.swp
 .DS_Store
 node_modules
-package-lock.json
 *.trace
 xcuserdata
 *.sublime-*
@@ -52,3 +51,4 @@ sample-code/csharp/test/obj
 sample-code/csharp/test/bin
 sample-code/csharp/packages
 appium.zip
+npm-shrinkwrap.json

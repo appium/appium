@@ -12,20 +12,18 @@ node_js: "10"
 jobs:
   include:
     # Run the tests and generate/update npm-shrinkwrap.json
-    - stage: Shrinkwrap
-      env:
-        - NODE_ENV=production
+    - stage: Lockfile
       os:
         - linux
         - sudo: false
       node_js: "10"
-      before_install: 
+      before_install:
+        - bash ./bin/has-code-changes.sh || travis_terminate 0 # If only .md files were changed, exit the build altogether
         - npm install -g greenkeeper-lockfile
-        - bash ./bin/has-code-changes.sh || travis_terminate 0 # If only .md files were changed, exit
-      install: npm install
       before_script: greenkeeper-lockfile-update
       script: npm run test
       after_script: greenkeeper-lockfile-update
+
     # Run the tests and generate/update npm-shrinkwrap.json
     - stage: Tests
       os:
@@ -51,6 +49,12 @@ jobs:
         - GENERATE_DOCS=true
       script: npm run generate-docs
 
+    - stage: Tag beta
+      os:
+        - linux
+        - sudo: false
+      script:
+        - npm version patch --beta
     
     - stage: Bundle zip and publish beta
       # only want to run this on the main master branch
@@ -59,23 +63,28 @@ jobs:
         - osx
         - osx_image: xcode9.4
       env:
-        - NODE_ENV=production
         - CC=gcc
         - CXX=g++
       before_install:
         - gcc --version
       install:
+        # Installs dependencies specified in package-lock.json
         - npm ci
-        
-        # Install only the dev dependencies that we need
-        - npm install --only=dev gulp
-        - npm install --only=dev appium-gulp-plugins
       before_script:
-        # Build the assets
-        - npm run build
+        # Strip out devDependencies and shrinkwrap it
+        - rimraf package-lock.json
+        - npm prune --production
+        - npm shrinkwrap --production
 
-        # Remove the dev depenedencies
-        - npm prune
-      script: 
+        # Backup the npm-shrinkwrap.json file
+        - mv npm-shrinkwrap.json npm-shrinkwrap-no-dev-deps.json
+
+        # Re-install so that we get the dev dependencies back
+        - npm install
+
+        # Restore npm-shrinkwrap.json to what it was before (with no dev dependencies)
+        - rimraf package-lock.json
+        - mv npm-shrinkwrap-no-dev-deps.json npm-shrinkwrap.json
+      script:
         - npm run zip-and-upload
         - npm run release-beta

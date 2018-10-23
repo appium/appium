@@ -54,6 +54,8 @@ jobs:
       os:
         - linux
         - sudo: false
+      install:
+        - npm install -g release-it
       script:
         - git checkout $TRAVIS_BRANCH
         - git branch --set-upstream-to origin/$TRAVIS_BRANCH

@@ -57,7 +57,7 @@ jobs:
       script:
         - git checkout $TRAVIS_BRANCH
         - git branch --set-upstream-to origin/$TRAVIS_BRANCH
-        - node ./build/test/scripts/is-package-json-commit.js || release-it minor --preRelease=beta
+        - node ./build/test/scripts/is-package-json-commit.js || release-it minor --preRelease=beta --no-npm.publish
     
     - stage: Bundle zip and publish beta
       # only want to run this on the main master branch

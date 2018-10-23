@@ -10,6 +10,7 @@ to github or write to the [appium-discuss discussion group](https://discuss.appi
   Android SDK is installed and `ANDROID_HOME` is set.
 * Make sure the paths to your applications are correct
 * On windows run appium.app as administrator or when running from source you need to run cmd as administrator.
+* When installing on Mac, make sure the user as write permissions for `/usr/local/lib` or install Appium with the command `npm install -g appium --unsafe-perm=true --allow-root`
 
 ### If you're running Appium.app
 

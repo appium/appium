@@ -12,7 +12,9 @@ node_js: "10"
 jobs:
   include:
     # Run the tests and generate/update npm-shrinkwrap.json
-    - stage: Tests and Shrinkwrap
+    - stage: Shrinkwrap
+      env:
+        - NODE_ENV=production
       os:
         - linux
         - sudo: false
@@ -22,11 +24,18 @@ jobs:
         - bash ./bin/has-code-changes.sh || travis_terminate 0 # If only .md files were changed, exit
       install: npm install
       before_script: greenkeeper-lockfile-update
-      script: npm run test && npm run e2e-test
+      script: npm run test
       after_script: greenkeeper-lockfile-update
+    # Run the tests and generate/update npm-shrinkwrap.json
+    - stage: Tests
+      os:
+        - linux
+        - sudo: false
+      node_js: "10"
+      script: npm run test && npm run e2e-test
 
     # Run tests in Node versions
-    - stage: Test other Node versions
+    - stage:
       os:
         - linux
         - sudo: false
@@ -56,9 +65,8 @@ jobs:
       before_install:
         - gcc --version
       install:
-        # Install prod dependencies
-        - npm install
-
+        - npm ci
+        
         # Install only the dev dependencies that we need
         - npm install --only=dev gulp
         - npm install --only=dev appium-gulp-plugins

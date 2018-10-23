@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.9.2-beta.2",
+  "version": "1.9.2",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -112,6 +112,7 @@
     "ncp": "^2.0.0",
     "pre-commit": "1.x",
     "release": "^4.0.2",
+    "release-it": "^7.6.2",
     "replace-ext": "^1.0.0",
     "rimraf": "^2.6.2",
     "sinon": "^6.0.0",

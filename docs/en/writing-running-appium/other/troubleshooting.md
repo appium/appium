@@ -35,10 +35,10 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure the Android emulator is up and running.
 * It's sometimes useful to run `adb kill-server && adb devices`. This can
   reset the connection to the Android device.
-* If you're running the Android emulator using Fastboot, try doing a cold boot (Android Studio > Tools > AVD Manager > Actions > Cold Boot Now)
+* If you're running the Android emulator using Fastboot and the emulator isn't being detected by adb, try doing a cold boot:  `Android Studio > Tools > AVD Manager > Actions > Cold Boot Now`
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
-* After calling `driver.setPowerAC(PowerACState.OFF);` you must recreate your session.
-* When using `-wipe-data` in `AVD_ARGS` the `NO_RESET` capability will be ignored if set to true.
+* After setting power state to `off` (e.g.: `driver.setPowerAC(PowerACState.OFF);`) you must create a new session.
+* When using `-wipe-data` in `avdArgs` the `noReset` capability will be ignored if set to true.
 
 ### Windows
 

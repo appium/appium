@@ -68,7 +68,7 @@
     "semver": "^5.5.0",
     "source-map-support": "0.x",
     "teen_process": "1.x",
-    "winston": "2.x"
+    "winston": "3.x"
   },
   "scripts": {
     "prepare": "gulp prepublish",
@@ -122,8 +122,6 @@
     "heapdump": "0.x"
   },
   "greenkeeper": {
-    "ignore": [
-      "winston"
-    ]
+    "ignore": []
   }
 }

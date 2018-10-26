@@ -66,6 +66,11 @@
       | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
       | mobile:mobileGetDeviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
 
+      ### Android (Espresso only)
+      | Command | Description | Argument | Argument Example |
+      | ------- | ----------- | -------- | ---------------- |
+      | mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{elementId, direction}` | `{elementId: 2, direction: "down|up|left|right"}` |
+
   example_usage:
     java:
       |

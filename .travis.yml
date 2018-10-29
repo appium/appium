@@ -16,6 +16,12 @@ jobs:
         - linux
         - sudo: false
       script: npm run test && npm run e2e-test
+      node_js: "11"
+    - stage:
+      os:
+        - linux
+        - sudo: false
+      script: npm run test && npm run e2e-test
       node_js: "10"
     - stage:
       os:

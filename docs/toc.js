@@ -233,6 +233,7 @@ module.exports = {
         ["Activities Startup Troubleshooting Guide", "activity-startup.md"],
         ["How To Execute Shell Commands On The Remote Device", "android-shell.md"],
         ["How To Emulate IME Actions Generation", "android-ime.md"],
+        ["How To Test Android App Bundle", "android-appbundle.md"]
       ]],
       ["Other", ["other",
         ["Reset Strategies", "reset-strategies.md"],

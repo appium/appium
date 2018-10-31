@@ -22,23 +22,17 @@ We can get distributed apk files from the `.aab` file via [bundletool](https://g
         ```
 3. Set the `.apks` in your `app` capability.
     ```ruby
-    caps: {
+    desired_capability = caps: {
         platformName: :android,
         automationName: 'uiautomator2',
         platformVersion: '8.1',
         deviceName: 'Android Emulator',
-        app: "path/to/your.apks",
+        app: "path/to/your.apks",   # This line is important
         fullReset: true,
         ...
-    },
-    appium_lib: {
-        export_session: true,
-        wait: 30,
-        wait_timeout: 20,
-        wait_interval: 1
     }
 
-    core = ::Appium::Core.for(ANDROID_OPS_EN)
+    core = ::Appium::Core.for(desired_capability)
     driver = core.start_driver
     ```
 

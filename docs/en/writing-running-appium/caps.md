@@ -43,7 +43,7 @@ These Capabilities span multiple drivers.
 |`browserName`|Name of mobile web browser to automate. Should be an empty string if automating an app instead.|'Safari' for iOS and 'Chrome', 'Chromium', or 'Browser' for Android|
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
 |`language`| Language to set for iOS and Android. It is only available for simulator on iOS |e.g. `fr`|
-|`locale`| Locale to set for iOS and Android. It is only available for simulator on iOS. `fr_CA` format for iOS. `CA` format (country name abbreviation) for Android |e.g. `fr_CA`, `CA` |
+|`locale`| Locale to set for iOS and Android. It is only available for simulator on iOS. `fr_CA` format for iOS. `CA` format (country name abbreviation) for Android. `zh-Hans-CN` styled locale is availabe with `localeScript` addressed in _Android Only_ section |e.g. `fr_CA`, `CA` |
 |`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|
 |`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|
@@ -111,6 +111,7 @@ These Capabilities are available only on Android-based drivers (like
 |`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
 |`otherApps`|App or list of apps (as a JSON array) to install prior to running tests|e.g., `"/path/to/app.apk"`, `https://www.example.com/url/to/app.apk`, `["/path/to/app-a.apk", "/path/to/app-b.apk"]`|
 |`adbExecTimeout`| Timeout in milliseconds used to wait for adb command execution. Defaults to `20000` |e.g., `50000`|
+|`localeScript`| `Script` in the part of [locale](https://developer.android.com/reference/java/util/Locale.html) on Android over API Level 21. It is `Hans` in `zh-Hans-CN` | e.g., `Hans`|
 
 ### iOS Only
 

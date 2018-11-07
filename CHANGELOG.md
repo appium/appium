@@ -13,7 +13,6 @@ Appium 1.10.0 is a minor release.
 #### Android
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for performing editor actions [#428](https://github.com/appium/appium-android-driver/pull/428)
 * Send custom keystore [capabilities] to ADB (useKeystore, keystorePath, keystorePassword, keyAlias, keyPassword) [#431](https://github.com/appium/appium-android-driver/pull/431)
-* Deprecate `unlock helper` APK [#435](https://github.com/appium/appium-android-driver/pull/435)
 * Add `localeScript` capability to set script in `locale` (https://developer.android.com/reference/java/util/Locale) [#460](https://github.com/appium/appium-android-driver/pull/460)
 * Fix [bug](https://github.com/appium/appium/issues/11619) calling `getRect` in MJSONWP mode [#240](https://github.com/appium/appium-uiautomator2-driver/pull/240)
 * Fix pin entry error on Samsung devices that wasn't correctly locating the "Enter" button [#458](https://github.com/appium/appium-android-driver/pull/458)

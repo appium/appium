@@ -5,7 +5,8 @@ Appium 1.10.0 is a minor release.
 
 #### General
 * Bring Espresso Driver out of beta and into general availability
-* Discontinue support for Xcode 8
+* Support Xcode 10, discontinue support for Xcode 8
+* Improve string extractions for Android and iOS
 
 #### iOS
 * Add biometrics (touchId, faceId) [methods](http://appium.io/docs/en/commands/mobile-command/#ios-xcuitest-only) that can enroll/unenroll biometrics and send matching/non-matching biometric inputs

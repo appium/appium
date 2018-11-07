@@ -61,6 +61,7 @@
       | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
       | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
       | mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
+      | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | {action} | {action: "previous"}|
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |

@@ -50,7 +50,8 @@
       | mobile:enrollBiometric | Enroll (or unenroll) an iOS Simulator to use [biometrics](https://developer.apple.com/design/human-interface-guidelines/ios/user-interaction/authentication/#face-id-and-touch-id) | `{isEnabled}` | `{isEnabled: true}` |
       | mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
       | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
-
+      | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
+      
       ### Android
       | Command | Description | Argument | Argument Example |
       | ------- | ----------- | -------- | ---------------- |

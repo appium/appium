@@ -49,8 +49,13 @@ Note that the actual commands you would use in your test script differ based on 
 |Name|Description|Values|
 |----|----|----|
 |`ignoreUnimportantViews`|Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which ignores all views which are marked IMPORTANT_FOR_ACCESSIBILITY_NO or IMPORTANT_FOR_ACCESSIBILITY_AUTO (and have been deemed not important by the system), in an attempt to make things less confusing or faster. `false` by default. | `false` or `true` |
-|`allowInvisibleElements`|For UiAutomator2 Driver. Boolean which set whether Android device should show all elements, visible and invisible. `false` by default. | `false` or `true` |
-|`enableNotificationListener`| For UiAutomator2 Driver. Boolean which sets whether the Android device should enable or disable the `NotificationListener`. `true` by default.  | `false` or `true` |
+
+#### UiAutomator2
+
+|Name|Description|Values|
+|----|----|----|
+|`allowInvisibleElements`| Boolean which set whether Android device should show all elements, visible and invisible. `false` by default. | `false` or `true` |
+|`enableNotificationListener`| Boolean which sets whether the Android device should enable or disable the `NotificationListener`. `true` by default.  | `false` or `true` |
 |`actionAcknowledgmentTimeout`| Int (milliseconds) which is the same as [setActionAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setActionAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(3 * 1000 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `5000` |
 |`keyInjectionDelay`| Int (milliseconds) which is the same as [setKeyInjectionDelay](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setKeyInjectionDelay(long)). If a negative value is given, it would set to default(0 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `5000` |
 |`scrollAcknowledgmentTimeout`| Int (milliseconds) which is the same as [setScrollAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setScrollAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(200 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `300` |
@@ -58,6 +63,8 @@ Note that the actual commands you would use in your test script differ based on 
 |`waitForSelectorTimeout`| Int (milliseconds) which is the same as [setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `10000` |
 
 ### iOS Only
+
+#### XCUITest
 
 |Name|Description|Values|
 |----|----|----|

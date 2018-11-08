@@ -102,8 +102,9 @@ following desired capabilities:
    
 ### Optional Setup
 
-Although not strictly required, we recommend installing FBSimulatorControl for better
-results.
+Although not strictly required, we recommend installing FBSimulatorControl for
+better handling of various iOS Simulator operations, such as: biometrics,
+geolocation setting and window focussing.
 
 ```
 # Get the Facebook Tap.

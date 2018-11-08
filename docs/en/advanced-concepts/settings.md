@@ -37,24 +37,36 @@ Settings are implemented via the following API endpoints:
 
 Note that the actual commands you would use in your test script differ based on the language; see the specific Appium client documention for more information.
 
-### Supported Settings
+## General Supported Settings
+
+|Name|Description|Values|
+|----|----|----|
+|`shouldUseCompactResponses`| Returns compact (standards-compliant) & faster responses in find element/s. Defaults to `true` | `false` or `true` |
+|`elementResponseAttributes`| The comma-separated list of fields to return with each element. It works only `shouldUseCompactResponses` is `false`. Defaults to "type,label" in iOS, "" in Android. | e.g., `"name,text,rect,attribute/name,attribute/value"` |
+
+### Android Only
 
 |Name|Description|Values|
 |----|----|----|
 |`ignoreUnimportantViews`|Boolean which sets whether Android devices should use `setCompressedLayoutHeirarchy()` which ignores all views which are marked IMPORTANT_FOR_ACCESSIBILITY_NO or IMPORTANT_FOR_ACCESSIBILITY_AUTO (and have been deemed not important by the system), in an attempt to make things less confusing or faster. `false` by default. | `false` or `true` |
-|`allowInvisibleElements`|For UiAutomator2 Driver. Boolean which set whether Android device should show all elements, visible and invisible. `false` by default. | `false` or `true` |
-|`enableNotificationListener`| For UiAutomator2 Driver. Boolean which sets whether the Android device should enable or disable the `NotificationListener`. `true` by default.  | `false` or `true` |
 
-#### Android UiAutomator Configurator
+#### UiAutomator2
 
-sets [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) timeouts and delays in Android devices. only works in Android API 18 and above.
+|Name|Description|Values|
+|----|----|----|
+|`allowInvisibleElements`| Boolean which set whether Android device should show all elements, visible and invisible. `false` by default. | `false` or `true` |
+|`enableNotificationListener`| Boolean which sets whether the Android device should enable or disable the `NotificationListener`. `true` by default.  | `false` or `true` |
+|`actionAcknowledgmentTimeout`| Int (milliseconds) which is the same as [setActionAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setActionAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(3 * 1000 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `5000` |
+|`keyInjectionDelay`| Int (milliseconds) which is the same as [setKeyInjectionDelay](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setKeyInjectionDelay(long)). If a negative value is given, it would set to default(0 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `5000` |
+|`scrollAcknowledgmentTimeout`| Int (milliseconds) which is the same as [setScrollAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setScrollAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(200 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `300` |
+|`waitForIdleTimeout`| Int (milliseconds) which is the same as [setWaitForIdleTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForIdleTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `10000` |
+|`waitForSelectorTimeout`| Int (milliseconds) which is the same as [setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `10000` |
 
-**"actionAcknowledgmentTimeout"** - Int which is the same as [setActionAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setActionAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(3 * 1000 milliseconds)
+### iOS Only
 
-**"keyInjectionDelay"** - Int which is the same as [setKeyInjectionDelay](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setKeyInjectionDelay(long)). If a negative value is given, it would set to default(0 milliseconds)
+#### XCUITest
 
-**"scrollAcknowledgmentTimeout"** - Int which is the same as [setScrollAcknowledgmentTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setScrollAcknowledgmentTimeout(long)). If a negative value is given, it would set to default(200 milliseconds)
-
-**"waitForIdleTimeout"** - Int which is the same as [setWaitForIdleTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForIdleTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds)
-
-**"waitForSelectorTimeout"** - Int which is the same as [setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds)
+|Name|Description|Values|
+|----|----|----|
+|`mjpegServerScreenshotQuality`| The quality of the screenshots generated by the screenshots broadcaster, expressed as a value from `0` to `100`. The value `0` represents the maximum compression (or lowest quality) while the value `100` represents the least compression (or best quality). The default value is `25`. | e.g., `10` |
+|`mjpegServerFramerate`| The framerate at which the background screenshots broadcaster should broadcast screenshots in range `1..60`. The default value is `10` (Frames Per Second). Setting zero value will cause the framerate to be at its maximum possible value. | e.g., `60` |

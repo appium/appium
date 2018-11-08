@@ -51,6 +51,8 @@
       | mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
       | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
       | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
+      | mobile:setPermission | Set the permission state of a service on a single app. Services are: calendar, camera, contacts, homekit, microphone, photos, reminders, medialibrary, motion, health, siri. States are: yes, no, unset | `{service, state, bundleId}` | `{service: "calendar", state: "yes", bundleId: "com.example.MyAppsBundleId"}`|
+      | mobile:getPermission | Get the permission state of a service on a single app. Services are: calendar, camera, contacts, homekit, microphone, photos, reminders, medialibrary, motion, health, siri. | `{service, bundleId}` | `{service: "calendar", bundleId: "com.example.MyAppsBundleId"}`|
       
       ### Android
       | Command | Description | Argument | Argument Example |

@@ -10,9 +10,10 @@ Appium 1.10.0 is a minor release.
 * Fix synchronization of applications caching [#274](https://github.com/appium/appium-base-driver/pull/274)
 
 #### iOS
-* Add [mobile:](http://appium.io/docs/en/commands/mobile-command/#ios-xcuitest-only) methods
-  * Add biometrics (touchId, faceId) methods that can enroll/unenroll biometric features and send matching/non-matching biometric inputs (iOS Simulator only)
-  * Add getter and setter for "permissions". Services are: calendar, camera, contacts, homekit, microphone, photos, reminders, medialibrary, motion, health, siri. States are: yes, no, unset.
+* Add [mobile:](http://appium.io/docs/en/commands/mobile-command/#ios-xcuitest-only) methods:
+  * Add biometrics (touchId, faceId) methods that can enroll/unenroll biometric features and send matching/non-matching biometric inputs (iOS Simulator only) [#816](https://github.com/appium/appium-xcuitest-driver/pull/816)
+  * Add method to clear keychains for an iOS Simulator (#816)[https://github.com/appium/appium-xcuitest-driver/pull/816]
+  * Add getter and setter for "permissions". Services are: calendar, camera, contacts, homekit, microphone, photos, reminders, medialibrary, motion, health, siri. States are: yes, no, unset. [#818](https://github.com/appium/appium-xcuitest-driver/pull/818)
 * Add possibility to upload files into different container types on Simulator [#770](https://github.com/appium/appium-xcuitest-driver/pull/770)
 * Add [reduceMotion](https://github.com/appium/appium-xcuitest-driver/blob/master/README.md#L161) capability [#760](https://github.com/appium/appium-xcuitest-driver/pull/760)
 * Improve video recording

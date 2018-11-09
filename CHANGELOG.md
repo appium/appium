@@ -1,7 +1,7 @@
 CHANGES IN VERSION 1.10.0 (from 1.9.1)
 ===================================
 
-Appium 1.10.0 is a minor release.
+Appium 1.10.0 is a minor release. 
 
 #### General
 * Bring Espresso Driver out of beta and into general availability
@@ -13,7 +13,7 @@ Appium 1.10.0 is a minor release.
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command/#ios-xcuitest-only) methods:
   * Add biometrics (touchId, faceId) methods that can enroll/unenroll biometric features and send matching/non-matching biometric inputs (iOS Simulator only) [#816](https://github.com/appium/appium-xcuitest-driver/pull/816)
   * Add method to clear keychains for an iOS Simulator (#816)[https://github.com/appium/appium-xcuitest-driver/pull/816]
-  * Add getter and setter for "permissions". Services are: calendar, camera, contacts, homekit, microphone, photos, reminders, medialibrary, motion, health, siri. States are: yes, no, unset. [#818](https://github.com/appium/appium-xcuitest-driver/pull/818)
+* Add [permissions capability](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) that sets service permissions (calendar, siri, etc...) prior to creating a session [#818](https://github.com/appium/appium-xcuitest-driver/pull/818)
 * Add possibility to upload files into different container types on Simulator [#770](https://github.com/appium/appium-xcuitest-driver/pull/770)
 * Add [reduceMotion](https://github.com/appium/appium-xcuitest-driver/blob/master/README.md#L161) capability [#760](https://github.com/appium/appium-xcuitest-driver/pull/760)
 * Improve video recording

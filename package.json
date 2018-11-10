@@ -118,7 +118,7 @@
     "yaml-js": "^0.2.0"
   },
   "optionalDependencies": {
-    "fsevents": "1.x",
+    "fsevents": "^2.0.0",
     "heapdump": "0.x"
   },
   "greenkeeper": {

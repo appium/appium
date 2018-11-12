@@ -28,7 +28,7 @@ example_usage:
       // PHP Code here
   csharp:
     |
-      // CSharp Code here
+      driver.FindElementById("elementId").Click();
 
 client_docs:
   java:

@@ -22,6 +22,7 @@ Appium 1.10.0 is a minor release.
 
 #### Android
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for performing editor actions [#428](https://github.com/appium/appium-android-driver/pull/428)
+* Can record videos up to 30 minutes (requires FFMPEG to be installed) [#399](https://github.com/appium/appium-android-driver/pull/399)
 * Add `localeScript` capability to set script in `locale` (https://developer.android.com/reference/java/util/Locale) [#460](https://github.com/appium/appium-android-driver/pull/460)
 * Improved video recording
 * Fix [bug](https://github.com/appium/appium/issues/11619) calling `getRect` in MJSONWP sessions [#240](https://github.com/appium/appium-uiautomator2-driver/pull/240)

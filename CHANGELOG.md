@@ -6,6 +6,7 @@ Appium 1.10.0 is a minor release.
 #### General
 * Bring Espresso Driver out of beta and into general availability
 * Support Xcode 10, discontinue support for Xcode 8
+* Bump up minimum Node version to 8 and minimum NPM version to 6
 * Improve string extractions for Android and iOS
 * Fix synchronization of applications caching [#274](https://github.com/appium/appium-base-driver/pull/274)
 

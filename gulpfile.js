@@ -10,6 +10,7 @@ const gulp = require('gulp');
 const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
 const path = require('path');
 const fs = require('fs');
+const log = require('fancy-log');
 
 
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
@@ -19,8 +20,8 @@ gulp.task('fixShrinkwrap', function (done) {
   try {
     shrinkwrap = require('./npm-shrinkwrap.json');
   } catch (err) {
-    console.error('Could not find shrinkwrap; skipping fixing shrinkwrap. ' +
-                  '(Original error: ' + err.message + ')');
+    log.error('Could not find shrinkwrap; skipping fixing shrinkwrap. ' +
+              `(Original error: ${err.message})`);
     return done();
   }
   delete shrinkwrap.dependencies.fsevents;
@@ -85,9 +86,9 @@ gulp.task('docs', gulp.series(['transpile']), function () {
 
   fs.writeFile(docFile, md, function (err) {
     if (err) {
-      console.log(err.stack);
+      log(err.stack);
     } else {
-      console.log("New docs written! Don't forget to commit and push");
+      log("New docs written! Don't forget to commit and push");
     }
   });
 });

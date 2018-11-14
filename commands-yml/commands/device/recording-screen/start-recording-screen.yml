@@ -99,7 +99,11 @@ endpoint:
                    Only works for Simulator.
     - name: videoQuality
       type: string
-      description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). Only works for real devices.
+      description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium).
+    - name: videoFps
+      type: string
+      description: (iOS Only) The Frames Per Second rate of the recorded video.
+                   Change this value if the resulting video is too slow or too fast. Defaults to 10.
     - name: bitRate
       type: string
       description: (iOS Only) The video bit rate for the video, in megabits per second.

@@ -104,6 +104,7 @@ endpoint:
       type: string
       description: (iOS Only) The Frames Per Second rate of the recorded video.
                    Change this value if the resulting video is too slow or too fast. Defaults to 10.
+                   This can decrease the resulting file size so that it will skip more frames drecreasing the value.
     - name: bitRate
       type: string
       description: (iOS Only) The video bit rate for the video, in megabits per second.

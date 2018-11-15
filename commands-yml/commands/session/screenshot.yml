@@ -25,6 +25,9 @@ example_usage:
       let screenshot = driver.screenshot();
   ruby:
     |
+      # ruby_lib
+      screenshot_as(:base64)
+
       # ruby_lib_core
       @driver.screenshot_as(:base64)
   php:

@@ -34,6 +34,9 @@ example_usage:
       });
   ruby:
     |
+      # ruby_lib
+      touch_action.single_tap(element).perform
+
       # ruby_lib_core
       @driver.touch_action.single_tap(element).perform
   php:

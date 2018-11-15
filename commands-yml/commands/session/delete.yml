@@ -18,6 +18,9 @@ example_usage:
       driver.end();
   ruby:
     |
+      # ruby_lib
+      quit
+
       # ruby_lib_core
       @driver.quit
   php:

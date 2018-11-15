@@ -18,6 +18,9 @@ example_usage:
       let isEnabled = driver.isEnabled("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      find_element(:accessibility_id, "SomeAccessibilityID").enabled?
+
       # ruby_lib_core
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").enabled?
   php:

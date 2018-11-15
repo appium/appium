@@ -18,6 +18,9 @@ example_usage:
       driver.log()
   ruby:
     |
+      # ruby_lib
+      get_available_log_types
+
       # ruby_lib_core
       @driver.get_available_log_types
   php:

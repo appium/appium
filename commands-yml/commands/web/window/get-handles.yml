@@ -17,6 +17,9 @@ example_usage:
       let handles = driver.windowHandles();
   ruby:
     |
+      # ruby_lib
+      window_handles
+
       # ruby_lib_core
       @driver.window_handles
   php:

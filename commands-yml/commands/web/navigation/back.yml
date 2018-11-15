@@ -17,6 +17,9 @@ example_usage:
       driver.back();
   ruby:
     |
+      # ruby_lib
+      back
+
       # ruby_lib_core
       @driver.back
   php:

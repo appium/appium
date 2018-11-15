@@ -20,8 +20,12 @@ example_usage:
       let handleTwoSize = driver.windowHandleSize("handleName");
   ruby:
     |
+      # ruby_lib
+      window_size
+      window_size("handleName")
+
       # ruby_lib_core
-      @driver.window_size()
+      @driver.window_size
       @driver.window_size("handleName")
   php:
     |

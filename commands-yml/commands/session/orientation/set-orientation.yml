@@ -17,6 +17,9 @@ example_usage:
       driver.orientation("LANDSCAPE");
   ruby:
     |
+      # ruby_lib
+      rotation = :landscape
+
       # ruby_lib_core
       @driver.rotation = :landscape
   php:

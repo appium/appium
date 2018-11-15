@@ -17,6 +17,9 @@ example_usage:
       driver.elementActive();
   ruby:
     |
+      # ruby_lib
+      switch_to.active_element
+
       # ruby_lib_core
       @driver.switch_to.active_element
   php:

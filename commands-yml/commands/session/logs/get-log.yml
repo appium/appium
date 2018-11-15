@@ -18,6 +18,9 @@ example_usage:
       let logs = driver.log('driver')
   ruby:
     |
+      # ruby_lib
+      get_log('driver')
+
       # ruby_lib_core
       @driver.get_log('driver')
   php:

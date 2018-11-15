@@ -17,6 +17,9 @@ example_usage:
       driver.cookie("delete");
   ruby:
     |
+      # ruby_lib
+      delete_all_cookies
+
       # ruby_lib_core
       @driver.delete_all_cookies
   php:

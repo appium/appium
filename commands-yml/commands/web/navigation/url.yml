@@ -17,6 +17,9 @@ example_usage:
       let url = driver.url();
   ruby:
     |
+      # ruby_lib
+      current_url
+
       # ruby_lib_core
       @driver.current_url
   php:

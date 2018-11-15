@@ -21,6 +21,9 @@ example_usage:
       driver.frame(3);
   ruby:
     |
+      # ruby_lib
+      switch_to.frame(3)
+
       # ruby_lib_core
       @driver.switch_to.frame(3)
   php:

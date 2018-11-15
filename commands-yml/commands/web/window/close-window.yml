@@ -17,8 +17,11 @@ example_usage:
       driver.close();
   ruby:
     |
+      # ruby_lib
+      close
+
       # ruby_lib_core
-      @driver.close()
+      @driver.close
   php:
     |
       // TODO PHP sample

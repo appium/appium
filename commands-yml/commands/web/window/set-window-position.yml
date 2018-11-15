@@ -19,6 +19,9 @@ example_usage:
       driver.windowHandlePosition({x: 10, y: 10}); // Current window
   ruby:
     |
+      # ruby_lib
+      reposition_window(10, 10)
+
       # ruby_lib_core
       @driver.reposition_window(10, 10)
   php:

@@ -18,6 +18,9 @@ example_usage:
       let orientation = driver.orientation();
   ruby:
     |
+      # ruby_lib
+      orientation
+
       # ruby_lib_core
       @driver.orientation
   php:

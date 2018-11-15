@@ -17,6 +17,9 @@ example_usage:
       let cookies = driver.cookie();
   ruby:
     |
+      # ruby_lib
+      all_cookies
+
       # ruby_lib_core
       @driver.all_cookies
   php:

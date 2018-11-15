@@ -20,8 +20,12 @@ example_usage:
       let handleTwoPosition = driver.windowHandlePosition("handleName");
   ruby:
     |
+      # ruby_lib
+      window_position
+      window_position("handleName")
+
       # ruby_lib_core
-      @driver.window_position()
+      @driver.window_position
       @driver.window_position("handleName")
   php:
     |

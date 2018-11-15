@@ -26,6 +26,9 @@ example_usage:
         .click();
   ruby:
     |
+      # ruby_lib
+      action.move_to(element).click.perform
+
       # ruby_lib_core
       @driver.action.move_to(element).click.perform
   php:

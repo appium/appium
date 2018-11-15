@@ -19,8 +19,11 @@ example_usage:
       driver.windowHandleSize({height: 10, width: 10}); // Current window
   ruby:
     |
+      # ruby_lib
+      maximize_window
+
       # ruby_lib_core
-      @driver.maximize_window()
+      @driver.maximize_window
   php:
     |
       // TODO PHP sample

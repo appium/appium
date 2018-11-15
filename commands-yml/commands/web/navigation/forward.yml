@@ -17,6 +17,9 @@ example_usage:
       driver.forward();
   ruby:
     |
+      # ruby_lib
+      forward
+
       # ruby_lib_core
       @driver.forward
   php:

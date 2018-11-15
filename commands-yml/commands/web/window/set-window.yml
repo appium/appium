@@ -17,6 +17,9 @@ example_usage:
       driver.window("handle");
   ruby:
     |
+      # ruby_lib
+      switch_to.window("handle")
+
       # ruby_lib_core
       @driver.switch_to.window("handle")
   php:

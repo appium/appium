@@ -17,6 +17,9 @@ example_usage:
       driver.refresh();
   ruby:
     |
+      # ruby_lib
+      refresh
+
       # ruby_lib_core
       @driver.refresh
   php:

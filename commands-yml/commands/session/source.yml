@@ -26,6 +26,9 @@ example_usage:
       let source = driver.source();
   ruby:
     |
+      # ruby_lib
+      page_source
+
       # ruby_lib_core
       @driver.page_source
   php:

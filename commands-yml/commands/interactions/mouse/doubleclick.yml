@@ -26,6 +26,9 @@ example_usage:
         .doubleClick();
   ruby:
     |
+      # ruby_lib
+      action.move_to(element).double_click.perform
+
       # ruby_lib_core
       @driver.action.move_to(element).double_click.perform
   php:

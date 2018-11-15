@@ -20,6 +20,10 @@ example_usage:
       // TODO JavaScript sample
   ruby:
     |
+      # ruby_lib
+      element = find_element :accessibility_id, "SomeAccessibilityID"
+      replace_value element, 'some'
+
       # ruby_lib_core
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       @driver.replace_value element, 'some'

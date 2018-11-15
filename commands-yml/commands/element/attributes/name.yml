@@ -19,6 +19,9 @@ example_usage:
       let tagName = driver.getTagName("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+
       # ruby_lib_core
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
   php:

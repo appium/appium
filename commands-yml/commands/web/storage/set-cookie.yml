@@ -20,6 +20,9 @@ example_usage:
       });
   ruby:
     |
+      # ruby_lib
+      add_cookie(:name => 'foo', :value => 'bar')
+
       # ruby_lib_core
       @driver.add_cookie(:name => 'foo', :value => 'bar')
   php:

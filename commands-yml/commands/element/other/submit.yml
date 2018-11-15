@@ -23,6 +23,10 @@ example_usage:
       driver.submitForm("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      element = find_element :class_name, "someClass"
+      element.submit element
+
       # ruby_lib_core
       element = @driver.find_element :class_name, "someClass"
       element.submit element

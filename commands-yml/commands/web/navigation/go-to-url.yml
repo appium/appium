@@ -17,6 +17,9 @@ example_usage:
       driver.url("http://appium.io");
   ruby:
     |
+      # ruby_lib
+      get("http://appium.io")
+
       # ruby_lib_core
       @driver.get("http://appium.io")
   php:

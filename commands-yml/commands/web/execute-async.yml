@@ -38,6 +38,9 @@ example_usage:
       console.log(result.value); // outputs: 10
   ruby:
     |
+      # ruby_lib
+      execute_async_script("document.title")
+
       # ruby_lib_core
       @driver.execute_async_script("document.title")
   php:

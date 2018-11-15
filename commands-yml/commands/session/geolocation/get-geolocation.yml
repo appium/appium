@@ -17,6 +17,9 @@ example_usage:
       let location = await driver.getGeoLocation();
   ruby:
     |
+      # ruby_lib
+      location
+
       # ruby_lib_core
       @driver.location
   php:

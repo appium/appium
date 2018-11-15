@@ -17,6 +17,9 @@ example_usage:
       let handle = driver.title();
   ruby:
     |
+      # ruby_lib
+      title
+
       # ruby_lib_core
       @driver.title
   php:

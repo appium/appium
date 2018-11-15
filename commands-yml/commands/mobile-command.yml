@@ -92,6 +92,9 @@
         var result = browser.execute('mobile: scroll', {direction: 'down'})
     ruby:
       |
+        # ruby_lib
+        execute_script("mobile: scroll", { "direction" => "down"})
+
         # ruby_lib_core
         @driver.execute_script("mobile: scroll", { "direction" => "down"})
     php:

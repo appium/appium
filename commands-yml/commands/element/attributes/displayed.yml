@@ -20,6 +20,9 @@ example_usage:
       let isDisplayed = driver.elementIdDisplayed("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      find_element(:accessibility_id, "SomeAccessibilityID").displayed?
+
       # ruby_lib_core
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?
   php:

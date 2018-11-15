@@ -22,6 +22,9 @@ example_usage:
       driver.element("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      find_element(:accessibility_id, 'SomeAccessibilityID')
+
       # ruby_lib_core
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
   php:

@@ -30,6 +30,9 @@ example_usage:
         .buttonDown();
   ruby:
     |
+      # ruby_lib
+      action.move_to(element).click_and_hold.perform
+
       # ruby_lib_core
       @driver.action.move_to(element).click_and_hold.perform
   php:

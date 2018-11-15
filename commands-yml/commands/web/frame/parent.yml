@@ -18,6 +18,9 @@ example_usage:
       driver.frameParent();
   ruby:
     |
+      # ruby_lib
+      parent_frame
+
       # ruby_lib_core
       @driver.parent_frame
   php:

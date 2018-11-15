@@ -23,6 +23,10 @@ example_usage:
       driver.getText("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      element = find_element :accessibility_id, "SomeAccessibilityID"
+      element.text
+
       # ruby_lib_core
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       element.text

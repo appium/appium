@@ -16,6 +16,7 @@ example_usage:
       let rect = driver.elementIdRect("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib_core
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       element.rect
   php:
@@ -53,7 +54,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -78,5 +79,5 @@ endpoint:
       type: number
       description: Width of the bounding rectangle
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-rect

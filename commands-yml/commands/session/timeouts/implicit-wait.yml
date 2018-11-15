@@ -20,13 +20,14 @@ example_usage:
       self.driver.implicitly_wait(5000)
   javascript_wd:
     |
-    await driver.setImplicitWaitTimeout(5000);
+      await driver.setImplicitWaitTimeout(5000);
 
   javascript_wdio:
     |
       driver.timeoutsImplicitWait(5000)
   ruby:
     |
+      # ruby_lib_core
       @driver.manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
   php:
     |
@@ -66,7 +67,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

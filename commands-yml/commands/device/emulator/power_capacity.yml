@@ -13,6 +13,10 @@ example_usage:
       driver.setPowerCapacity(100);
   ruby:
     |
+      # ruby_lib
+      set_power_capacity 50
+
+      # ruby_lib_core
       @driver.set_power_capacity 50
 
 client_docs:

@@ -13,6 +13,10 @@ example_usage:
       driver.setPowerAC(PowerACState.OFF);
   ruby:
     |
+      # ruby_lib
+      set_power_ac :on
+
+      # ruby_lib_core
       @driver.set_power_ac :on
 
 client_docs:

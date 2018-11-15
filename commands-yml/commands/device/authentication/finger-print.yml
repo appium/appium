@@ -24,6 +24,10 @@ example_usage:
       await driver.fingerprint(1);
   ruby:
     |
+      # ruby_lib_core
+      finger_print 1
+
+      # ruby_lib_core
       @driver.finger_print 1
   php:
     |

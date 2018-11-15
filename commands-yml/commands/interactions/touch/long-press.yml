@@ -31,6 +31,7 @@ example_usage:
       });
   ruby:
     |
+      # ruby_lib_core
       @driver.touch_action.long_press(element).perform
   php:
     |

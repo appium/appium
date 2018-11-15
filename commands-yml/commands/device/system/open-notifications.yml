@@ -17,6 +17,10 @@ example_usage:
       driver.openNotifications();
   ruby:
     |
+      # ruby_lib
+      open_notifications();
+
+      # ruby_lib_core
       @driver.open_notifications();
   php:
     |

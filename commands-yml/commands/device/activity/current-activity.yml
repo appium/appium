@@ -17,6 +17,10 @@ example_usage:
       let activity = driver.currentActivity();
   ruby:
     |
+      # ruby_lib
+      current_activity
+
+      # ruby_lib_core
       @driver.current_activity
   php:
     |

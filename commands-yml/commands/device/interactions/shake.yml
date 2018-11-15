@@ -18,6 +18,10 @@ example_usage:
       driver.shake();
   ruby:
     |
+      # ruby_lib
+      shake
+
+      # ruby_lib_core
       @driver.shake
   php:
     |

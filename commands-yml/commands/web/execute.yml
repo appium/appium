@@ -34,6 +34,7 @@ example_usage:
       console.log(result.value); // outputs: 10
   ruby:
     |
+      # ruby_lib_core
       @driver.execute_script("document.title")
   php:
     |

@@ -17,6 +17,10 @@ example_usage:
       let time = await driver.getDeviceTime();
   ruby:
     |
+      # ruby_lib
+      device_time
+
+      # ruby_lib_core
       @driver.device_time
   php:
     |

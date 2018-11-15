@@ -2,10 +2,10 @@
 name: Set Timeouts
 short_description: Configure the amount of time that a particular type of operation can execute for before they are aborted
 
-description: 
+description:
   |
     The types of timeouts are 'page load', ['script'](/docs/en/commands/session/timeouts/async-script.md) and ['implicit'](/docs/en/commands/session/timeouts/implicit-wait.md). (The example usage is just 'page load')
-   
+
 example_usage:
   java:
     |
@@ -15,13 +15,14 @@ example_usage:
       self.driver.set_page_load_timeout(5000)
   javascript_wd:
     |
-    await driver.setPageLoadTimeout(5000);
+      await driver.setPageLoadTimeout(5000);
 
   javascript_wdio:
     |
       driver.timeouts('pageLoad', 5000)
   ruby:
     |
+      # ruby_lib_core
       @driver.timeout('pageLoad', 5) # Ruby translates it to seconds
   php:
     |
@@ -60,7 +61,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

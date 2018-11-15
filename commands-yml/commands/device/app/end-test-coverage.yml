@@ -13,6 +13,10 @@ example_usage:
       await driver.endTestCoverageForApp("Intent", "/path");
   ruby:
     |
+      # ruby_lib
+      end_coverage("Intent", "/path")
+
+      # ruby_lib_core
       @driver.end_coverage("Intent", "/path")
   php:
     |

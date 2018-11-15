@@ -1,7 +1,7 @@
 ---
 name: Set Orientation
 short_description: Set the current device/browser orientation
-   
+
 example_usage:
   java:
     |
@@ -17,6 +17,7 @@ example_usage:
       driver.orientation("LANDSCAPE");
   ruby:
     |
+      # ruby_lib_core
       @driver.rotation = :landscape
   php:
     |
@@ -55,7 +56,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -70,5 +71,5 @@ endpoint:
       description: The desired orientation - {LANDSCAPE|PORTRAIT}.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#post-sessionsessionidorientation

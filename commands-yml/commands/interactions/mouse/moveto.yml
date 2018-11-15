@@ -1,9 +1,9 @@
 ---
 name: Move Mouse To
 short_description: Move the mouse by an offset of the specificed element
-   
+
 description:
-  | 
+  |
     If no element is specified, the move is relative to the current mouse cursor. If an element is provided but no offset, the mouse will be moved to the center of the element. If the element is not visible, it will be scrolled into view.
 
 example_usage:
@@ -26,6 +26,7 @@ example_usage:
       driver.moveTo(element, 10, 10);
   ruby:
     |
+      # ruby_lib_core
       @driver.mouse.move_to(element)
       @driver.mouse.move_to(element, 5, 5)
   php:
@@ -65,7 +66,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

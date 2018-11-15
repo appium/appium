@@ -36,6 +36,7 @@ example_usage:
       ]);
   ruby:
     |
+      # ruby_lib_core
       @driver.touch_action.down(element).up(50, 50).perform
   php:
     |

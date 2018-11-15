@@ -20,6 +20,7 @@ example_usage:
       // TODO JavaScript sample
   ruby:
     |
+      # ruby_lib_core
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       @driver.replace_value element, 'some'
   php:
@@ -59,7 +60,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -76,5 +77,5 @@ endpoint:
       description: The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L451

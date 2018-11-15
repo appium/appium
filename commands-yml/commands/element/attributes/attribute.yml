@@ -19,6 +19,10 @@ example_usage:
       let attribute = driver.getAttribute("~SomeAccessibilityId", "content-desc");
   ruby:
     |
+      # ruby_lib
+      find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")
+
+      # ruby_lib_core
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")
   php:
     |

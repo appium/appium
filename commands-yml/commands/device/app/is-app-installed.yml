@@ -21,7 +21,11 @@ example_usage:
       driver.isAppInstalled('com.example.AppName')
   ruby:
     |
-      @driver.app_installed?('com.example.AppName');
+      # ruby_lib
+      app_installed?('com.example.AppName')
+
+      # ruby_lib_core
+      @driver.app_installed?('com.example.AppName')
   php:
     |
       $driver->isAppInstalled('com.example.AppName')

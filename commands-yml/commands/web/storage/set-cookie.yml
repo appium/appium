@@ -20,6 +20,7 @@ example_usage:
       });
   ruby:
     |
+      # ruby_lib_core
       @driver.add_cookie(:name => 'foo', :value => 'bar')
   php:
     |
@@ -58,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -73,6 +74,6 @@ endpoint:
       description: The cookie to add
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-delete-cookie
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidcookie

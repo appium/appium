@@ -21,6 +21,7 @@ example_usage:
       let size = driver.getElementSize("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib_core
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID').size
   php:
     |

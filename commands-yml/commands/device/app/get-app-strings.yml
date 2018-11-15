@@ -16,6 +16,10 @@ example_usage:
       let appStrings = driver.getAppStrings("en");
   ruby:
     |
+      # ruby_lib
+      app_strings("en")
+
+      # ruby_lib_core
       @driver.app_strings("en")
   php:
     |

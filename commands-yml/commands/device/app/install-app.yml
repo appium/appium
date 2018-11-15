@@ -21,6 +21,10 @@ example_usage:
       driver.installApp('/Users/johndoe/path/to/app.apk')
   ruby:
     |
+      # ruby_lib
+      install_app('/Users/johndoe/path/to/app.apk')
+
+      # ruby_lib_core
       @driver.install_app('/Users/johndoe/path/to/app.apk')
   php:
     |

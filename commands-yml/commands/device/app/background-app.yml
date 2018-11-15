@@ -38,6 +38,10 @@ example_usage:
       driver.background(10);
   ruby:
     |
+      # ruby_lib
+      background_app(10)
+
+      # ruby_lib_core
       @driver.background_app(10)
   php:
     |

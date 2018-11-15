@@ -23,6 +23,10 @@ example_usage:
       await driver.setClipboard('happy testing', 'plaintext')
   ruby:
     |
+      # ruby_lib
+      set_clipboard content: 'happy testing'
+
+      # ruby_lib_core
       @driver.set_clipboard content: 'happy testing'
   php:
     |

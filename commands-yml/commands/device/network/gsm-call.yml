@@ -8,6 +8,10 @@ example_usage:
       await driver.gsmCall('555-123-4567', 'Phone');
   ruby:
     |
+      # ruby_lib
+      gsm_call(phone_number: '5551234567', action: :call)
+
+      # ruby_lib_core
       @driver.gsm_call(phone_number: '5551234567', action: :call)
   php:
     |

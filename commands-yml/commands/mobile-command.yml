@@ -51,7 +51,7 @@
       | mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
       | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
       | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
-      
+
       ### Android
       | Command | Description | Argument | Argument Example |
       | ------- | ----------- | -------- | ---------------- |
@@ -92,6 +92,7 @@
         var result = browser.execute('mobile: scroll', {direction: 'down'})
     ruby:
       |
+        # ruby_lib_core
         @driver.execute_script("mobile: scroll", { "direction" => "down"})
     php:
       |

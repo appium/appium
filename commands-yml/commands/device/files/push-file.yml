@@ -18,6 +18,10 @@ example_usage:
       driver.pushFile('/data/local/tmp/file.txt', data);
   ruby:
     |
+      # ruby_lib
+      push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
+
+      # ruby_lib_core
       @driver.push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
   php:
     |

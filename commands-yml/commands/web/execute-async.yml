@@ -38,6 +38,7 @@ example_usage:
       console.log(result.value); // outputs: 10
   ruby:
     |
+      # ruby_lib_core
       @driver.execute_async_script("document.title")
   php:
     |
@@ -76,7 +77,7 @@ client_support:
   csharp: false
   javascript_wd: false
   javascript_wdio: false
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -97,6 +98,6 @@ endpoint:
       description: The script result
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-execute-async-script
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async

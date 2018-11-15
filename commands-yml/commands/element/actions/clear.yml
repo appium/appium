@@ -18,6 +18,10 @@ example_usage:
       driver.clearElement("~SomeAccessibilityId");
   ruby:
     |
+      # ruby_lib
+      find_element(:accessibility_id, "SomeAccessibilityID").clear
+
+      # ruby_lib_core
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear
   php:
     |
@@ -56,7 +60,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -69,6 +73,6 @@ endpoint:
       description: ID of the element to clear.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidclear

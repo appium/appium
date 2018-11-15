@@ -40,6 +40,13 @@ example_usage:
       driver.context('NATIVE_APP');
   ruby:
     |
+      # ruby_lib
+      webview = available_contexts[1]
+      set_context(webview)
+      # ...
+      set_context('NATIVE_APP')
+
+      # ruby_lib_core
       webview = @driver.available_contexts[1]
       @driver.set_context(webview)
       # ...

@@ -14,6 +14,10 @@ example_usage:
       let package = await driver.getCurrentPackage();
   ruby:
     |
+      # ruby_lib
+      current_package
+
+      # ruby_lib_core
       @driver.current_package
   php:
     |

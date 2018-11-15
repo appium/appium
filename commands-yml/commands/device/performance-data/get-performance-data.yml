@@ -11,6 +11,10 @@ example_usage:
       await driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
   ruby:
     |
+      # ruby_lib
+      get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo', data_read_timeout: 10
+
+      # ruby_lib_core
       @driver.get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo', data_read_timeout: 10
   php:
     |

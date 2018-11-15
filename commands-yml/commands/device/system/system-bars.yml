@@ -8,6 +8,10 @@ example_usage:
       Map<String, String> systemBars = driver.getSystemBars();
   ruby:
     |
+      # ruby_lib
+      get_system_bars
+
+      # ruby_lib_core
       @driver.get_system_bars
   php:
     |
@@ -56,5 +60,5 @@ endpoint:
       description: Information about visibility and bounds of status and navigation bar
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L418

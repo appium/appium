@@ -20,6 +20,10 @@ example_usage:
       driver.startActivity("com.example", "ActivityName");
   ruby:
     |
+      # ruby_lib
+      start_activity app_package: "com.example", app_activity: "ActivityName"
+
+      # ruby_lib_core
       @driver.start_activity app_package: "com.example", app_activity: "ActivityName"
   php:
     |

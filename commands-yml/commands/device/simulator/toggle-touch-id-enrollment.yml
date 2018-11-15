@@ -24,6 +24,10 @@ example_usage:
       driver.toggleTouchIdEnrollment(true);
   ruby:
     |
+      # ruby_lib
+      toggle_touch_id_enrollment
+
+      # ruby_lib_core
       @driver.toggle_touch_id_enrollment
   php:
     |

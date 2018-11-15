@@ -29,6 +29,9 @@ example_usage:
       let context = driver.context();
   ruby:
     |
+      # ruby_lib
+      context = current_context
+      # ruby_lib_core
       context = @driver.current_context
   php:
     |

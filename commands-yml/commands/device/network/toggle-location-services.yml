@@ -17,6 +17,10 @@ example_usage:
       driver.toggleLocationServices();
   ruby:
     |
+      # ruby_lib
+      toggle_location_services
+
+      # ruby_lib_core
       @driver.toggle_location_services
   php:
     |
@@ -65,5 +69,5 @@ endpoint:
       description: ID of the session to route the command to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L405

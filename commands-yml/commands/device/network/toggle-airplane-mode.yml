@@ -11,6 +11,10 @@ example_usage:
       driver.toggleAirplaneMode();
   ruby:
     |
+      # ruby_lib
+      toggle_flight_mode
+
+      # ruby_lib_core
       @driver.toggle_flight_mode
   php:
     |
@@ -57,5 +61,5 @@ endpoint:
       description: ID of the session to route the command to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L396

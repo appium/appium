@@ -15,6 +15,10 @@ example_usage:
       driver.isLocked();
   ruby:
     |
+      # ruby_lib
+      device_locked?
+
+      # ruby_lib_core
       @driver.device_locked?
   php:
     |

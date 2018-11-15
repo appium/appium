@@ -17,6 +17,10 @@ example_usage:
       let data = driver.pullFile('/data/local/tmp/file.txt');
   ruby:
     |
+      # ruby_lib
+      pull_file('/data/local/tmp/file.txt')
+
+      # ruby_lib_core
       @driver.pull_file('/data/local/tmp/file.txt')
   php:
     |

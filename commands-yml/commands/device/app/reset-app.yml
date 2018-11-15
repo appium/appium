@@ -16,6 +16,10 @@ example_usage:
       driver.reset();
   ruby:
     |
+      # ruby_lib
+      reset
+
+      # ruby_lib_core
       @driver.reset
   php:
     |

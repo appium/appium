@@ -22,6 +22,10 @@ example_usage:
       await driver.getClipboard();
   ruby:
     |
+      # ruby_lib
+      get_clipboard
+
+      # ruby_lib_core
       @driver.get_clipboard
   php:
     |

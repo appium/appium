@@ -21,6 +21,10 @@ example_usage:
         .unlock();
   ruby:
     |
+      # ruby_lib
+      unlock
+
+      # ruby_lib_core
       @driver.unlock
   php:
     |

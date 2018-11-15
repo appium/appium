@@ -30,7 +30,10 @@ example_usage:
       let contexts = driver.contexts();
   ruby:
     |
-      contexts = @driver.available_contexts
+      # ruby_lib
+      context = available_contexts
+      # ruby_lib_core
+      context = @driver.available_contexts
   php:
     |
       $contexts = $driver->contexts();

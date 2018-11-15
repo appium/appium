@@ -33,6 +33,11 @@ example_usage:
       driver.touchId(true); // Simulates a passing touch
   ruby:
     |
+      # ruby_lib
+      touch_id(false)
+      touch_id(true)
+
+      # ruby_lib_core
       @driver.touch_id(false) # Simulates a failed touch
       @driver.touch_id(true) # Simulates a passing touch
   php:

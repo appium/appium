@@ -1,7 +1,7 @@
 ---
 name: Press Key Code
 short_description: Press a particular key on the device
-  
+
 example_usage:
   java:
     |
@@ -17,6 +17,10 @@ example_usage:
       await driver.pressKeycode(10);
   ruby:
     |
+      # ruby_lib
+      press_keycode(10)
+
+      # ruby_lib_core
       @driver.press_keycode(10)
   php:
     |
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

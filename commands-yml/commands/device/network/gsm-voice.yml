@@ -8,6 +8,10 @@ example_usage:
       await driver.gsmVoice('Voice state');
   ruby:
     |
+      # ruby_lib
+      gsm_voice :home
+
+      # ruby_lib_core
       @driver.gsm_voice :home
   php:
     |

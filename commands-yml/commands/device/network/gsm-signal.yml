@@ -8,6 +8,10 @@ example_usage:
       await driver.gsmSignal(3);
   ruby:
     |
+      # ruby_lib
+      gsm_signal :good
+
+      # ruby_lib_core
       @driver.gsm_signal :good
   php:
     |

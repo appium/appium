@@ -21,6 +21,10 @@ example_usage:
       driver.launch();
   ruby:
     |
+      # ruby_lib
+      launch_app
+
+      # ruby_lib_core
       @driver.launch_app
   php:
     |

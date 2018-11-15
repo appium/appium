@@ -21,8 +21,11 @@ example_usage:
       driver.status();
   ruby:
     |
-      @driver.remote_status
+      # ruby_lib
       remote_status
+
+      # ruby_lib_core
+      @driver.remote_status
   php:
     |
       // TODO
@@ -75,6 +78,6 @@ endpoint:
       description: The revision of the local source control client from which the server was built
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#status
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#status

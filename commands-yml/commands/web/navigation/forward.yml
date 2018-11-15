@@ -17,6 +17,7 @@ example_usage:
       driver.forward();
   ruby:
     |
+      # ruby_lib_core
       @driver.forward
   php:
     |
@@ -55,7 +56,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -66,6 +67,6 @@ endpoint:
       description: ID of the session to route the command to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-forward
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidforward

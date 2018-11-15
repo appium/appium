@@ -23,6 +23,7 @@ example_usage:
       # TODO WDIO example
   ruby:
     |
+      # ruby_lib_core
       element1 = @driver.find_element :class_name, "someClass"
       element2 = @driver.find_element :class_name, "someOtherClass"
       element1 == element2

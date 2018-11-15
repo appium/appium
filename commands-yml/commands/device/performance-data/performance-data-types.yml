@@ -11,6 +11,10 @@ example_usage:
       await driver.getSupportedPerformanceDataTypes();
   ruby:
     |
+      # ruby_lib
+      get_performance_data_types
+
+      # ruby_lib_core
       @driver.get_performance_data_types
   php:
     |

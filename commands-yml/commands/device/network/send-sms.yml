@@ -8,6 +8,10 @@ example_usage:
       await driver.sendSms('555-123-4567', 'Hey lol');
   ruby:
     |
+      # ruby_lib
+      send_sms(phone_number: '555-123-4567', message: 'Hey lol')
+
+      # ruby_lib_core
       @driver.send_sms(phone_number: '555-123-4567', message: 'Hey lol')
   php:
     |

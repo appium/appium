@@ -13,6 +13,7 @@ example_usage:
       driver.settings({nativeWebTap: true});
   ruby:
     |
+      # ruby_lib_core
       @driver.update_settings(sample: 'value')
 
 client_docs:

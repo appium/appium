@@ -26,6 +26,7 @@ example_usage:
       await action.perform();
   ruby:
     |
+      # ruby_lib_core
       @driver.touch_action.double_tap(element).perform
   php:
     |

@@ -17,6 +17,10 @@ example_usage:
       driver.hideDeviceKeyboard();
   ruby:
     |
+      # ruby_lib
+      hide_keyboard
+
+      # ruby_lib_core
       @driver.hide_keyboard
   php:
     |

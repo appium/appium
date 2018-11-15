@@ -1,7 +1,7 @@
 ---
 name: Button Down
 short_description: Click and hold the left mouse button at the current mouse coordinates
-   
+
 description:
   |
     Note that the next mouse-related command that should follow is buttonup . Any other mouse command (such as click or another call to buttondown) will yield undefined behavior
@@ -30,6 +30,7 @@ example_usage:
         .buttonDown();
   ruby:
     |
+      # ruby_lib_core
       @driver.action.move_to(element).click_and_hold.perform
   php:
     |
@@ -68,7 +69,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

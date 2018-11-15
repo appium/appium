@@ -1,7 +1,7 @@
 ---
 name: Long Press Key Code
 short_description: Press and hold a particular key code on the device
-  
+
 example_usage:
   java:
     |
@@ -17,6 +17,10 @@ example_usage:
       await driver.longPressKeyCode(10);
   ruby:
     |
+      # ruby_lib
+      long_press_keycode(10)
+
+      # ruby_lib_core
       @driver.long_press_keycode(10)
   php:
     |
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

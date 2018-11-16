@@ -18,8 +18,8 @@ example_usage:
     |
       # ruby_lib
       app_strings("en")
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.app_strings("en")
   php:
     |

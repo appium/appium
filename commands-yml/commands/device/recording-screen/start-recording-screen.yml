@@ -17,7 +17,8 @@ example_usage:
       start_recording_screen video_size: '1280x720', time_limit: '180', bit_rate: '5000000' # Android
       start_recording_screen video_type: 'h264', time_limit: '260' # iOS
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.start_recording_screen
       @driver.start_recording_screen video_size: '1280x720', time_limit: '180', bit_rate: '5000000' # Android
       @driver.start_recording_screen video_type: 'h264', time_limit: '260' # iOS

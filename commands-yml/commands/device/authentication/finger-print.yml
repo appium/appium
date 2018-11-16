@@ -26,8 +26,8 @@ example_usage:
     |
       # ruby_lib_core
       finger_print 1
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.finger_print 1
   php:
     |

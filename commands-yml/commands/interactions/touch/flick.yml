@@ -26,7 +26,8 @@ example_usage:
       # ruby_lib
       touch_action.flick(element, 1, 10, 10).perform
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.touch_action.flick(element, 1, 10, 10).perform
   php:
     |

@@ -27,7 +27,8 @@ example_usage:
       # ruby_lib
       find_element(:accessibility_id, 'SomeId').click
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.find_element(:accessibility_id, 'SomeId').click
   php:
     |

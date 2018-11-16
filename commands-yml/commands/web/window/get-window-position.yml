@@ -24,7 +24,8 @@ example_usage:
       window_position
       window_position("handleName")
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.window_position
       @driver.window_position("handleName")
   php:

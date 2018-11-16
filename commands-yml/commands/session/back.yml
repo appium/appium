@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       back
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.back
   php:
     |

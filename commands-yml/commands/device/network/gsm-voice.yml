@@ -11,7 +11,8 @@ example_usage:
       # ruby_lib
       gsm_voice :home
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.gsm_voice :home
   php:
     |

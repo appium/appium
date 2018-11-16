@@ -30,7 +30,8 @@ example_usage:
       mouse.move_to(element)
       mouse.move_to(element, 5, 5)
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.mouse.move_to(element)
       @driver.mouse.move_to(element, 5, 5)
   php:

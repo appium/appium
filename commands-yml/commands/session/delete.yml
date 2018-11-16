@@ -21,7 +21,8 @@ example_usage:
       # ruby_lib
       quit
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.quit
   php:
     |

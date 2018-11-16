@@ -22,7 +22,8 @@ example_usage:
       # ruby_lib
       resize_to(10, 10)
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.resize_to(10, 10)
   php:
     |

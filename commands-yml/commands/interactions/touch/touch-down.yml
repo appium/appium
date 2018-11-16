@@ -39,7 +39,8 @@ example_usage:
       # ruby_lib
       touch_action.down(element).move().perform
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.touch_action.down(element).move().perform
   php:
     |

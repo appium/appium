@@ -15,8 +15,8 @@ example_usage:
     |
       # ruby_lib
       end_coverage("Intent", "/path")
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.end_coverage("Intent", "/path")
   php:
     |

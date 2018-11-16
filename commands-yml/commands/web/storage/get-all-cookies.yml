@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       all_cookies
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.all_cookies
   php:
     |

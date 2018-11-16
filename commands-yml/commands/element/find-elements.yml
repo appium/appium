@@ -44,7 +44,8 @@ example_usage:
       # ruby_lib
       find_elements(:accessibility_id, "~SomeAccessibilityID")
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.find_elements(:accessibility_id, "~SomeAccessibilityID")
   php:
     |

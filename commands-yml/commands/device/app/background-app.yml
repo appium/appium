@@ -36,12 +36,11 @@ example_usage:
   javascript_wdio:
     |
       driver.background(10);
-  ruby:
+  ruby_lib:
     |
-      # ruby_lib
       background_app(10)
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.background_app(10)
   php:
     |

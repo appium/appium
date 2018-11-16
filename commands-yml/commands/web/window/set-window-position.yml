@@ -22,7 +22,8 @@ example_usage:
       # ruby_lib
       reposition_window(10, 10)
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.reposition_window(10, 10)
   php:
     |

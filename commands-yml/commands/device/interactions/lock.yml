@@ -22,8 +22,8 @@ example_usage:
       # ruby_lib
       lock
       lock(5) # lock 5 seconds
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.lock
       @driver.lock(5) # lock 5 seconds
   php:

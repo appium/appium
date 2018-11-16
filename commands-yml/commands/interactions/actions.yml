@@ -112,7 +112,8 @@ example_usage:
 
       perform_actions [f1, f2]
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       # Send keys to an element
       # Build Single action chain
       action_builder = @driver.action

@@ -19,8 +19,8 @@ example_usage:
     |
       # ruby_lib
       long_press_keycode(10)
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.long_press_keycode(10)
   php:
     |

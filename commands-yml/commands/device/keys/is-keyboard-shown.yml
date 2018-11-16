@@ -13,8 +13,8 @@ example_usage:
     |
       # ruby_lib
       is_keyboard_shown
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.is_keyboard_shown
 
 client_docs:

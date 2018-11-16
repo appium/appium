@@ -29,7 +29,8 @@ example_usage:
       # ruby_lib
       action.move_to(element).double_click.perform
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.action.move_to(element).double_click.perform
   php:
     |

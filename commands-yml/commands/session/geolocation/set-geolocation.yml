@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       set_location(121.21, 11.56, 94.23)
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.set_location(121.21, 11.56, 94.23)
   php:
     |

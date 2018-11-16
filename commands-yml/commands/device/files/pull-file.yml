@@ -19,8 +19,8 @@ example_usage:
     |
       # ruby_lib
       pull_file('/data/local/tmp/file.txt')
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.pull_file('/data/local/tmp/file.txt')
   php:
     |

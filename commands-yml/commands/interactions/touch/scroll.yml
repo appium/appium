@@ -31,7 +31,8 @@ example_usage:
       # ruby_lib
       touch_action.scroll(element, 10, 100).perform
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.touch_action.scroll(element, 10, 100).perform
   php:
     |

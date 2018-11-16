@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       session_capabilities
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.session_capabilities
   php:
     |

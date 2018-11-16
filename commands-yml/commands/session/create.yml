@@ -72,7 +72,8 @@ example_usage:
       # ruby_lib
       Appium::Driver.new(desired_caps).start_driver
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       ::Appium::Core.for(desired_caps).start_driver
   php:
     |

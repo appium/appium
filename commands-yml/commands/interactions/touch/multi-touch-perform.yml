@@ -54,7 +54,8 @@ example_usage:
       # ruby_lib
       multi_touch.down(element).move_to(10, 100).up(50, 50).perform
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.multi_touch.down(element).move_to(10, 100).up(50, 50).perform
   php:
     |

@@ -27,7 +27,8 @@ example_usage:
       # ruby_lib
       find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
   php:
     |

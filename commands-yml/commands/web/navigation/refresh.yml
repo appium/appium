@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       refresh
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.refresh
   php:
     |

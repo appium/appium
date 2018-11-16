@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       window_handles
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.window_handles
   php:
     |

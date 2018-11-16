@@ -24,7 +24,8 @@ example_usage:
       window_size
       window_size("handleName")
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.window_size
       @driver.window_size("handleName")
   php:

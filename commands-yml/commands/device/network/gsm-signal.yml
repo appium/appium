@@ -11,7 +11,8 @@ example_usage:
       # ruby_lib
       gsm_signal :good
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.gsm_signal :good
   php:
     |

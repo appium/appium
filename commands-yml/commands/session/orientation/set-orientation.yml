@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       rotation = :landscape
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.rotation = :landscape
   php:
     |

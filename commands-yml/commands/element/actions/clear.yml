@@ -21,7 +21,8 @@ example_usage:
       # ruby_lib
       find_element(:accessibility_id, "SomeAccessibilityID").clear
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear
   php:
     |

@@ -37,7 +37,8 @@ example_usage:
       # ruby_lib
       execute_script("document.title")
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.execute_script("document.title")
   php:
     |

@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       delete_cookie("cookie_name")
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.delete_cookie("cookie_name")
   php:
     |

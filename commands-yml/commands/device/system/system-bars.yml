@@ -11,7 +11,8 @@ example_usage:
       # ruby_lib
       get_system_bars
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.get_system_bars
   php:
     |

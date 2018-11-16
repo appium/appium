@@ -14,12 +14,12 @@ example_usage:
   javascript_wdio:
     |
       driver.close_app();
-  ruby:
+  ruby_lib:
     |
       # ruby_lib
       close_app
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.close_app
   php:
     |

@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       current_url
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.current_url
   php:
     |

@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       open_notifications();
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.open_notifications();
   php:
     |

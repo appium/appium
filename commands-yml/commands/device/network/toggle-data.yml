@@ -14,7 +14,8 @@ example_usage:
       # ruby_lib
       toggle_data
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.toggle_data
   php:
     |

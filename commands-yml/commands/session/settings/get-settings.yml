@@ -16,7 +16,8 @@ example_usage:
       # ruby_lib
       get_settings
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.get_settings
   python:
     |

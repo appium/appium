@@ -11,7 +11,8 @@ example_usage:
       # ruby_lib
       send_sms(phone_number: '555-123-4567', message: 'Hey lol')
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.send_sms(phone_number: '555-123-4567', message: 'Hey lol')
   php:
     |

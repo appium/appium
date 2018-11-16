@@ -20,7 +20,8 @@ example_usage:
       # ruby_lib
       toggle_location_services
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.toggle_location_services
   php:
     |

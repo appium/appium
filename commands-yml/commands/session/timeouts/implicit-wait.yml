@@ -30,7 +30,8 @@ example_usage:
       # ruby_lib
       manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
   php:
     |

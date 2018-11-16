@@ -5,7 +5,7 @@ short_description: Releases the mouse button previously held
 description:
   |
     Must be called once for every buttondown command issued. See the note in click and buttondown about implications of out-of-order commands.
-   
+
 example_usage:
   java:
     |
@@ -36,7 +36,11 @@ example_usage:
         .buttonDown()
         .moveTo(element, 10, 10)
         .buttonUp();
-  ruby:
+  ruby_lib:
+    |
+      action.click_and_hold(el).move_to(el, 10, 10).release.perform
+
+  ruby_lib_core:
     |
       @driver.action.click_and_hold(el).move_to(el, 10, 10).release.perform
   php:
@@ -76,7 +80,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

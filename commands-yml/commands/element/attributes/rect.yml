@@ -20,7 +20,8 @@ example_usage:
       element = find_element :accessibility_id, "SomeAccessibilityID"
       element.rect
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       element.rect
   php:

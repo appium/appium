@@ -21,7 +21,8 @@ example_usage:
       # ruby_lib
       parent_frame
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.parent_frame
   php:
     |

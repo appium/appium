@@ -28,7 +28,8 @@ example_usage:
       element2 = find_element :class_name, "someOtherClass"
       element1 == element2
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       element1 = @driver.find_element :class_name, "someClass"
       element2 = @driver.find_element :class_name, "someOtherClass"
       element1 == element2

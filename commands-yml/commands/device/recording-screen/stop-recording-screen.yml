@@ -16,7 +16,8 @@ example_usage:
       stop_recording_screen
       stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.stop_recording_screen
       @driver.stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
   python:

@@ -29,7 +29,8 @@ example_usage:
       # ruby_lib
       page_source
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.page_source
   php:
     |

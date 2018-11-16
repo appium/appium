@@ -17,8 +17,8 @@ example_usage:
     |
       # ruby_lib
       device_locked?
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.device_locked?
   php:
     |

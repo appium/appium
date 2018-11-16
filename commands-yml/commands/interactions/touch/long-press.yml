@@ -34,7 +34,8 @@ example_usage:
       # ruby_lib
       touch_action.long_press(element).perform
 
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.touch_action.long_press(element).perform
   php:
     |

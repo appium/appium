@@ -25,8 +25,8 @@ example_usage:
     |
       # ruby_lib
       set_clipboard content: 'happy testing'
-
-      # ruby_lib_core
+  ruby_lib_core:
+    |
       @driver.set_clipboard content: 'happy testing'
   php:
     |

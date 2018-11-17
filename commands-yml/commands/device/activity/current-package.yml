@@ -16,6 +16,7 @@ example_usage:
     |
       current_package
   ruby_core:
+    |
       @driver.current_package
   php:
     |

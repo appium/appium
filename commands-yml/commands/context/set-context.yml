@@ -45,6 +45,7 @@ example_usage:
       # ...
       set_context('NATIVE_APP')
   ruby_core:
+    |
       webview = @driver.available_contexts[1]
       @driver.set_context(webview)
       # ...

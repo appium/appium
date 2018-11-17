@@ -6,7 +6,9 @@ Toggle airplane mode on device
 ## Example Usage
 
 ```java
-// Not supported
+// Java
+driver.toggleAirplaneMode();
+
 ```
 
 ```python
@@ -63,7 +65,7 @@ await driver.toggleAirplaneMode();
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| None |  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/android/SupportsNetworkStateManagement.html#toggleAirplaneMode--) |
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2712) |

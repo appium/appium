@@ -3,6 +3,9 @@ name: GSM Call
 short_description: Make GSM call (Emulator only)
 
 example_usage:
+  java:
+    |
+      driver.makeGsmCall("5551234567", GsmCallActions.CALL);
   javascript_wd:
     |
       await driver.gsmCall('555-123-4567', 'Phone');
@@ -17,6 +20,7 @@ example_usage:
       // TODO
 
 client_docs:
+  java: "https://appium.github.io/java-client/io/appium/java_client/android/SupportsSpecialEmulatorCommands.html#makeGsmCall-java.lang.String-io.appium.java_client.android.GsmCallActions-"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3183"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device/Emulator#gsm_call-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
@@ -36,7 +40,7 @@ driver_support:
   windows:
     windows: false
 client_support:
-  java: false
+  java: true
   python: false
   ruby: true
   php: false

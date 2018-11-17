@@ -38,10 +38,8 @@ example_usage:
       console.log(result.value); // outputs: 10
   ruby:
     |
-      # ruby_lib
       execute_async_script("document.title")
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.execute_async_script("document.title")
   php:
@@ -57,6 +55,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/executeAsync.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L182"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_async_script"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_async_script"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

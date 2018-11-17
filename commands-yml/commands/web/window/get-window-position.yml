@@ -20,11 +20,9 @@ example_usage:
       let handleTwoPosition = driver.windowHandlePosition("handleName");
   ruby:
     |
-      # ruby_lib
       window_position
       window_position("handleName")
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.window_position
       @driver.window_position("handleName")
@@ -41,6 +39,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandlePosition.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L586"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_position"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_position"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

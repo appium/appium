@@ -20,11 +20,9 @@ example_usage:
       let handleTwoSize = driver.windowHandleSize("handleName");
   ruby:
     |
-      # ruby_lib
       window_size
       window_size("handleName")
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.window_size
       @driver.window_size("handleName")
@@ -41,6 +39,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandleSize.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L546"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_size"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_size"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

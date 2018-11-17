@@ -23,10 +23,8 @@ example_usage:
       driver.touchFlick('<ELEMENT_ID>', 1, 10, 10);
   ruby:
     |
-      # ruby_lib
       touch_action.flick(element, 1, 10, 10).perform
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.touch_action.flick(element, 1, 10, 10).perform
   php:
@@ -42,6 +40,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/touchFlick.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1513"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

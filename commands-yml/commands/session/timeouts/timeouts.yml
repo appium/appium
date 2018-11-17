@@ -22,10 +22,8 @@ example_usage:
       driver.timeouts('pageLoad', 5000)
   ruby:
     |
-      # ruby_lib
       timeout('pageLoad', 5) # Ruby translates it to seconds
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.timeout('pageLoad', 5) # Ruby translates it to seconds
   php:
@@ -41,6 +39,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/guide/testrunner/timeouts.html#Selenium-timeouts"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L714"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/OSS/Bridge#timeout-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/OSS/Bridge#timeout-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

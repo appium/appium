@@ -21,10 +21,8 @@ example_usage:
       driver.status();
   ruby:
     |
-      # ruby_lib
       remote_status
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.remote_status
   php:
@@ -40,6 +38,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/status.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L44"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasRemoteStatus#remote_status-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

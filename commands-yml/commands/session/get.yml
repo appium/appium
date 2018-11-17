@@ -17,10 +17,8 @@ example_usage:
       let caps = driver.session('c8db88a0-47a6-47a1-802d-164d746c06aa');
   ruby:
     |
-      # ruby_lib
       session_capabilities
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.session_capabilities
   php:
@@ -36,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/session.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L227"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FRemote%2FOSS%2FBridge:session_capabilities"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FRemote%2FOSS%2FBridge:session_capabilities"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

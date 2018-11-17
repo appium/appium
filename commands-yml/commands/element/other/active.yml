@@ -17,10 +17,8 @@ example_usage:
       driver.elementActive();
   ruby:
     |
-      # ruby_lib
       switch_to.active_element
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.switch_to.active_element
   php:
@@ -36,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/elementActive.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1934"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

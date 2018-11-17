@@ -27,10 +27,10 @@ example_usage:
   javascript_wdio:
     |
       let context = driver.context();
-  ruby_lib:
+  ruby:
     |
       context = current_context
-  ruby_lib_core:
+  ruby_core:
       context = @driver.current_context
   php:
     |
@@ -44,8 +44,8 @@ client_docs:
   python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
   javascript_wdio: "http://webdriver.io/api/mobile/context.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
-  ruby_lib: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
-  ruby_lib_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

@@ -18,10 +18,8 @@ example_usage:
       driver.frameParent();
   ruby:
     |
-      # ruby_lib
       parent_frame
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.parent_frame
   php:
@@ -36,6 +34,7 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_url"
   javascript_wdio: "http://webdriver.io/api/protocol/frameParent.html"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TargetLocator:parent_frame"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TargetLocator:parent_frame"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

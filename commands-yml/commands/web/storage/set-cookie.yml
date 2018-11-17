@@ -20,10 +20,8 @@ example_usage:
       });
   ruby:
     |
-      # ruby_lib
       add_cookie(:name => 'foo', :value => 'bar')
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.add_cookie(:name => 'foo', :value => 'bar')
   php:
@@ -39,6 +37,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/cookie.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1971"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:add_cookie"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:add_cookie"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

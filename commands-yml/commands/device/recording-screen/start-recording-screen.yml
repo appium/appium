@@ -12,12 +12,10 @@ example_usage:
       await driver.startRecordingScreen();
   ruby:
     |
-      # ruby_lib
       start_recording_screen
       start_recording_screen video_size: '1280x720', time_limit: '180', bit_rate: '5000000' # Android
       start_recording_screen video_type: 'h264', time_limit: '260' # iOS
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.start_recording_screen
       @driver.start_recording_screen video_size: '1280x720', time_limit: '180', bit_rate: '5000000' # Android
@@ -36,6 +34,9 @@ client_docs:
   java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3412"
   ruby:
+    - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method"
+      ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method"
+  ruby_core:
     - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method"
       ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link

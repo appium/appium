@@ -30,10 +30,8 @@ example_usage:
         .buttonDown();
   ruby:
     |
-      # ruby_lib
       action.move_to(element).click_and_hold.perform
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.action.move_to(element).click_and_hold.perform
   php:
@@ -49,6 +47,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/buttonDown.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1625"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:click_and_hold"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:click_and_hold"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

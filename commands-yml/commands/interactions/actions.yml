@@ -85,7 +85,6 @@ example_usage:
       browser.actions();
   ruby:
     |
-      # ruby_lib
       # Send keys to an element
       # Build Single action chain
       action_builder = action
@@ -111,8 +110,7 @@ example_usage:
       f2.create_pointer_up(:left)
 
       perform_actions [f1, f2]
-
-  ruby_lib_core:
+  ruby_core:
     |
       # Send keys to an element
       # Build Single action chain
@@ -152,6 +150,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/actions.html"
   #javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L44"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/W3CActionBuilder"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/W3CActionBuilder"
   php: "https://github.com/jupeter/selenium-php-webdriver/blob/master/Webdriver/Common/ActionChains.php"
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

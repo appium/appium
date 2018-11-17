@@ -17,10 +17,8 @@ example_usage:
       driver.url("http://appium.io");
   ruby:
     |
-      # ruby_lib
       get("http://appium.io")
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.get("http://appium.io")
   php:
@@ -36,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/url.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L486"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:get"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:get"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

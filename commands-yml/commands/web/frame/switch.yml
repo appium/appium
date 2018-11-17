@@ -21,10 +21,8 @@ example_usage:
       driver.frame(3);
   ruby:
     |
-      # ruby_lib
       switch_to.frame(3)
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.switch_to.frame(3)
   php:
@@ -40,6 +38,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/frame.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L332"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:switch_to_frame"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:switch_to_frame"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

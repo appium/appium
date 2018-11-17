@@ -25,10 +25,8 @@ example_usage:
       let cssProperty = driver.getCssProperty("~SomeId", "style");
   ruby:
     |
-      # ruby_lib
       find_element(:id, 'SomeId').css_value
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.find_element(:id, 'SomeId').css_value
   php:
@@ -44,6 +42,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/property/getCssProperty.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1447"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

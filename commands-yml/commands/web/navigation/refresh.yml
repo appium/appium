@@ -17,10 +17,8 @@ example_usage:
       driver.refresh();
   ruby:
     |
-      # ruby_lib
       refresh
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.refresh
   php:
@@ -36,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/refresh.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L503"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:refresh"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:refresh"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

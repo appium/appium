@@ -19,10 +19,8 @@ example_usage:
       driver.windowHandleSize({height: 10, width: 10}); // Current window
   ruby:
     |
-      # ruby_lib
       maximize_window
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.maximize_window
   php:
@@ -38,6 +36,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandleSize.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L564"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:maximize_window"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:maximize_window"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

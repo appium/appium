@@ -27,10 +27,8 @@ example_usage:
       driver.timeoutsImplicitWait(5000)
   ruby:
     |
-      # ruby_lib
       manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
   php:
@@ -47,6 +45,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/timeoutsImplicitWait.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L681"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts:implicit_wait="
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts:implicit_wait="
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

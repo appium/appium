@@ -17,10 +17,8 @@ example_usage:
       await driver.setGeoLocation(121.21, 11.56, 10);
   ruby:
     |
-      # ruby_lib
       set_location(121.21, 11.56, 94.23)
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.set_location(121.21, 11.56, 94.23)
   php:
@@ -36,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/location.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L407"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

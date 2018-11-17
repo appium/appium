@@ -22,10 +22,8 @@ example_usage:
       driver.element("~SomeAccessibilityId");
   ruby:
     |
-      # ruby_lib
       find_element(:accessibility_id, 'SomeAccessibilityID')
-
-  ruby_lib_core:
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
   php:
@@ -41,6 +39,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/element.html#Usage"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L745"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

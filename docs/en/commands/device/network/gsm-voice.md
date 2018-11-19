@@ -6,7 +6,9 @@ Set GSM voice state (Emulator only)
 ## Example Usage
 
 ```java
-// Not supported
+// Java
+driver.setGsmVoice(GsmVoiceState.HOME);
+
 ```
 
 ```python
@@ -65,7 +67,7 @@ gsm_voice :home
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| None |  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/android/SupportsSpecialEmulatorCommands.html#setGsmVoice-io.appium.java_client.android.GsmVoiceState-) |
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3241) |

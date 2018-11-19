@@ -7,7 +7,7 @@ Apple provides the `instruments` tool with quite a rich set of features for desk
 
 This command starts the performance recorder for the given profile name (template) on the device under test. In case this command is called two or more times in a row then the previous recorder will be forcefully stopped and the new one will start. All the previous data will be lost.
 
-Important: It is expected, that `--relaxed-security` command line parameter is set for the Appium server command line in order to meassure Simulator performance, since the `instruments` tool records the data from all running processes on the host machine.
+Important: It is expected, that `--relaxed-security` command line parameter is set for the Appium server command line in order to measure Simulator performance, since the `instruments` tool records the data from all running processes on the host machine.
 
 #### Supported arguments
 

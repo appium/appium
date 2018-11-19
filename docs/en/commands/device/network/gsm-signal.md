@@ -24,6 +24,11 @@ await driver.gsmSignal(3);
 
 ```ruby
 # Ruby
+# ruby_lib example
+gsm_signal :good
+
+
+# ruby_lib_core example
 @driver.gsm_signal :good
 
 ```

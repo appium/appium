@@ -47,6 +47,11 @@ await driver.buttonUp();
 
 ```ruby
 # Ruby
+# ruby_lib example
+action.click_and_hold(el).move_to(el, 10, 10).release.perform
+
+
+# ruby_lib_core example
 @driver.action.click_and_hold(el).move_to(el, 10, 10).release.perform
 
 ```

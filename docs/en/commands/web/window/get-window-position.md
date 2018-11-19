@@ -34,7 +34,13 @@ let handleTwoPosition = await driver.getWindowPosition("handleName");
 
 ```ruby
 # Ruby
-@driver.window_position()
+# ruby_lib example
+window_position
+window_position("handleName")
+
+
+# ruby_lib_core example
+@driver.window_position
 @driver.window_position("handleName")
 
 ```

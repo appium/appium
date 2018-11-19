@@ -31,6 +31,11 @@ await driver.execute('mobile: scroll', {direction: 'down'});
 
 ```ruby
 # Ruby
+# ruby_lib example
+execute_script("mobile: scroll", { "direction" => "down"})
+
+
+# ruby_lib_core example
 @driver.execute_script("mobile: scroll", { "direction" => "down"})
 
 ```
@@ -91,6 +96,12 @@ List of available commands:
 | mobile:getPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-getpasteboard)  | | |
 | mobile:installCertificate | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-install-certificate.md)  | | |
 | mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)) | | |
+| mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
+| mobile:pressButton | Press a physical button. The supported button name is is _home_. _volumeup_ and _volumedown_ are available for real devices | `{name}` | `{name: "home"}` |
+| mobile:enrollBiometric | Enroll (or unenroll) an iOS Simulator to use [biometrics](https://developer.apple.com/design/human-interface-guidelines/ios/user-interaction/authentication/#face-id-and-touch-id) | `{isEnabled}` | `{isEnabled: true}` |
+| mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
+| mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
+| mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
 
 ### Android
 | Command | Description | Argument | Argument Example |
@@ -101,6 +112,7 @@ List of available commands:
 | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
 | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
 | mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
+| mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | {action} | {action: "previous"}|
 
 ### Android (UiAutomator2 only)
 | Command | Description | Argument | Argument Example |
@@ -108,7 +120,12 @@ List of available commands:
 | mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
 | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
 | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
-| mobile:mobileGetDeviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
+| mobile:getDeviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
+
+### Android (Espresso only)
+| Command | Description | Argument | Argument Example |
+| ------- | ----------- | -------- | ---------------- |
+| mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{elementId, direction}` | `{elementId: 2, direction: "down|up|left|right"}` |
 
 
 ## Support

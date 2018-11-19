@@ -31,6 +31,11 @@ let orientation = await driver.getOrientation();
 
 ```ruby
 # Ruby
+# ruby_lib example
+orientation
+
+
+# ruby_lib_core example
 @driver.orientation
 
 ```

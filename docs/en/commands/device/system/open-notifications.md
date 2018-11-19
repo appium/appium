@@ -31,6 +31,11 @@ await driver.openNotifications();
 
 ```ruby
 # Ruby
+# ruby_lib example
+open_notifications();
+
+
+# ruby_lib_core example
 @driver.open_notifications();
 
 ```

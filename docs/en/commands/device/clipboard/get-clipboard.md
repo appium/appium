@@ -33,6 +33,11 @@ await driver.getClipboard();
 
 ```ruby
 # Ruby
+# ruby_lib example
+get_clipboard
+
+
+# ruby_lib_core example
 @driver.get_clipboard
 
 ```
@@ -77,7 +82,7 @@ Get the content of the system clipboard
 |[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/releases) |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [github.com](https://github.com/appium/ruby_lib/releases/latest) |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [Android](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#get_clipboard-instance_method) [iOS](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#get_clipboard-instance_method) |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None | [github.com](https://github.com/appium/php-client/releases/latest-) |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None | [github.com](https://github.com/appium/appium) |
 

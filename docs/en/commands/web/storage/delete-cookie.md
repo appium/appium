@@ -31,6 +31,11 @@ await driver.deleteCookie("cookie_name");
 
 ```ruby
 # Ruby
+# ruby_lib example
+delete_cookie("cookie_name")
+
+
+# ruby_lib_core example
 @driver.delete_cookie("cookie_name")
 
 ```

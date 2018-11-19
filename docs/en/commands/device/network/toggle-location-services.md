@@ -31,6 +31,11 @@ await driver.toggleLocationServices();
 
 ```ruby
 # Ruby
+# ruby_lib example
+toggle_location_services
+
+
+# ruby_lib_core example
 @driver.toggle_location_services
 
 ```

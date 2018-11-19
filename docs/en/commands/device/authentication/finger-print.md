@@ -31,6 +31,11 @@ await driver.fingerprint(1);
 
 ```ruby
 # Ruby
+# ruby_lib example
+finger_print 1
+
+
+# ruby_lib_core example
 @driver.finger_print 1
 
 ```

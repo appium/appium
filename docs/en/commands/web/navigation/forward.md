@@ -31,6 +31,11 @@ await driver.forward();
 
 ```ruby
 # Ruby
+# ruby_lib example
+forward
+
+
+# ruby_lib_core example
 @driver.forward
 
 ```

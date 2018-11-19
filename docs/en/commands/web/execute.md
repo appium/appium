@@ -37,6 +37,11 @@ await driver.execute('document.title');
 
 ```ruby
 # Ruby
+# ruby_lib example
+execute_script("document.title")
+
+
+# ruby_lib_core example
 @driver.execute_script("document.title")
 
 ```

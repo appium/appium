@@ -36,6 +36,13 @@ let isEqual = await elementOne.equalsElement(elementTwo);
 
 ```ruby
 # Ruby
+# ruby_lib example
+element1 = find_element :class_name, "someClass"
+element2 = find_element :class_name, "someOtherClass"
+element1 == element2
+
+
+# ruby_lib_core example
 element1 = @driver.find_element :class_name, "someClass"
 element2 = @driver.find_element :class_name, "someOtherClass"
 element1 == element2

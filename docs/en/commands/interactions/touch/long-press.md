@@ -45,6 +45,11 @@ await action.perform();
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_action.long_press(element).perform
+
+
+# ruby_lib_core example
 @driver.touch_action.long_press(element).perform
 
 ```

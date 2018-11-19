@@ -39,6 +39,11 @@ await driver.buttonDown();
 
 ```ruby
 # Ruby
+# ruby_lib example
+action.move_to(element).click_and_hold.perform
+
+
+# ruby_lib_core example
 @driver.action.move_to(element).click_and_hold.perform
 
 ```

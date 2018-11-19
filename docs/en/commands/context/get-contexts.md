@@ -31,7 +31,12 @@ let contexts = await driver.contexts();
 
 ```ruby
 # Ruby
-contexts = @driver.available_contexts
+# ruby_lib example
+context = available_contexts
+
+
+# ruby_lib_core example
+context = @driver.available_contexts
 
 ```
 

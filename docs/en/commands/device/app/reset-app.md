@@ -31,6 +31,11 @@ await driver.resetApp();
 
 ```ruby
 # Ruby
+# ruby_lib example
+reset
+
+
+# ruby_lib_core example
 @driver.reset
 
 ```

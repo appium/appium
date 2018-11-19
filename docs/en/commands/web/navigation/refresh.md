@@ -31,6 +31,11 @@ await driver.refresh();
 
 ```ruby
 # Ruby
+# ruby_lib example
+refresh
+
+
+# ruby_lib_core example
 @driver.refresh
 
 ```

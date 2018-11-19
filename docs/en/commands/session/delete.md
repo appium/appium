@@ -31,6 +31,11 @@ await driver.quit();
 
 ```ruby
 # Ruby
+# ruby_lib example
+quit
+
+
+# ruby_lib_core example
 @driver.quit
 
 ```

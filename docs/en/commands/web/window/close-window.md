@@ -31,7 +31,12 @@ await driver.close();
 
 ```ruby
 # Ruby
-@driver.close()
+# ruby_lib example
+close
+
+
+# ruby_lib_core example
+@driver.close
 
 ```
 

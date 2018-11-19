@@ -31,6 +31,11 @@ await driver.setOrientation('LANDSCAPE');
 
 ```ruby
 # Ruby
+# ruby_lib example
+rotation = :landscape
+
+
+# ruby_lib_core example
 @driver.rotation = :landscape
 
 ```

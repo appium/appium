@@ -31,6 +31,11 @@ await driver.url("http://appium.io/");
 
 ```ruby
 # Ruby
+# ruby_lib example
+get("http://appium.io")
+
+
+# ruby_lib_core example
 @driver.get("http://appium.io")
 
 ```

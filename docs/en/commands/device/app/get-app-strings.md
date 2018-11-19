@@ -31,6 +31,11 @@ let appStrings = await driver.getAppStrings();
 
 ```ruby
 # Ruby
+# ruby_lib example
+app_strings("en")
+
+
+# ruby_lib_core example
 @driver.app_strings("en")
 
 ```

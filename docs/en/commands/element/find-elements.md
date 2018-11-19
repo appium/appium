@@ -33,6 +33,11 @@ let elementsTwo = await driver.elements("id", "SomeID");
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_elements(:accessibility_id, "~SomeAccessibilityID")
+
+
+# ruby_lib_core example
 @driver.find_elements(:accessibility_id, "~SomeAccessibilityID")
 
 ```

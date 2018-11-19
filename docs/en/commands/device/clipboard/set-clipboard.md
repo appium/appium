@@ -34,6 +34,11 @@ await driver.setClipboard('happy testing', 'plaintext')
 
 ```ruby
 # Ruby
+# ruby_lib example
+set_clipboard content: 'happy testing'
+
+
+# ruby_lib_core example
 @driver.set_clipboard content: 'happy testing'
 
 ```
@@ -78,7 +83,7 @@ Set the content of the system clipboard
 |[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/releases) |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [github.com](https://github.com/appium/ruby_lib/releases/latest) |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [iOS](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#set_clipboard-instance_method) [Android](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#set_clipboard-instance_method) |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None | [github.com](https://github.com/appium/php-client/releases/latest-) |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None | [github.com](https://github.com/appium/appium) |
 

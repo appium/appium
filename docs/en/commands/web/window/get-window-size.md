@@ -34,7 +34,13 @@ let handleTwoSize = await driver.getWindowSize("handleName");
 
 ```ruby
 # Ruby
-@driver.window_size()
+# ruby_lib example
+window_size
+window_size("handleName")
+
+
+# ruby_lib_core example
+@driver.window_size
 @driver.window_size("handleName")
 
 ```

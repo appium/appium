@@ -31,6 +31,11 @@ await driver.setGeoLocation(121.21, 11.56, 10);
 
 ```ruby
 # Ruby
+# ruby_lib example
+set_location(121.21, 11.56, 94.23)
+
+
+# ruby_lib_core example
 @driver.set_location(121.21, 11.56, 94.23)
 
 ```

@@ -31,6 +31,11 @@ await driver.pressKeycode(10);
 
 ```ruby
 # Ruby
+# ruby_lib example
+press_keycode(10)
+
+
+# ruby_lib_core example
 @driver.press_keycode(10)
 
 ```

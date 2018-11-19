@@ -37,6 +37,11 @@ await element.flick(1, 10, 10);
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_action.flick(element, 1, 10, 10).perform
+
+
+# ruby_lib_core example
 @driver.touch_action.flick(element, 1, 10, 10).perform
 
 ```

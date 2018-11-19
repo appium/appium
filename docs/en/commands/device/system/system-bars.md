@@ -24,6 +24,11 @@ Map<String, String> systemBars = driver.getSystemBars();
 
 ```ruby
 # Ruby
+# ruby_lib example
+get_system_bars
+
+
+# ruby_lib_core example
 @driver.get_system_bars
 
 ```

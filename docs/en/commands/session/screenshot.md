@@ -31,6 +31,11 @@ let screenshot = await driver.takeScreenshot();
 
 ```ruby
 # Ruby
+# ruby_lib example
+driver.screenshot_as(:base64) # via core_lib
+
+
+# ruby_lib_core example
 @driver.screenshot_as(:base64)
 
 ```
@@ -52,7 +57,7 @@ let screenshot = await driver.takeScreenshot();
 
 Takes a screenshot of the viewport in a native context (iOS, Android) and takes a screenshot of the window in web context
 
-Note that some platforms may have settings that prevent screenshots from being taken, for security reason. One such feature is 
+Note that some platforms may have settings that prevent screenshots from being taken, for security reason. One such feature is
 the [Android FLAG_SECURE layout parameter](https://developer.android.com/reference/android/view/WindowManager.LayoutParams.html#FLAG_SECURE)
 
 
@@ -78,7 +83,7 @@ the [Android FLAG_SECURE layout parameter](https://developer.android.com/referen
 |[Python](https://github.com/appium/python-client/releases/latest)| All | [selenium-python.readthedocs.io](http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_screenshot_as_base64) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L1089) |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/TakesScreenshot) |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/TakeScreenshot#screenshot_as-instance_method) |
 |[PHP](https://github.com/appium/php-client/releases/latest)| All | [github.com](https://github.com/appium/php-client/) |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All | [github.com](https://github.com/appium/appium-dotnet-driver/) |
 

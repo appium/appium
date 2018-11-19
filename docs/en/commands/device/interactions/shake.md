@@ -31,6 +31,11 @@ await driver.shake();
 
 ```ruby
 # Ruby
+# ruby_lib example
+shake
+
+
+# ruby_lib_core example
 @driver.shake
 
 ```

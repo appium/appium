@@ -29,6 +29,11 @@ let isLocked = await driver.isLocked();
 
 ```ruby
 # Ruby
+# ruby_lib example
+device_locked?
+
+
+# ruby_lib_core example
 @driver.device_locked?
 
 ```

@@ -26,6 +26,11 @@ await driver.isKeyboardShown();
 
 ```ruby
 # Ruby
+# ruby_lib example
+is_keyboard_shown
+
+
+# ruby_lib_core example
 @driver.is_keyboard_shown
 
 ```

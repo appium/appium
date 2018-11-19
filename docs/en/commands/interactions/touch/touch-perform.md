@@ -49,6 +49,11 @@ await action.perform();
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_action.down(element).move_to(10, 100).up(50, 50).perform
+
+
+# ruby_lib_core example
 @driver.touch_action.down(element).move_to(10, 100).up(50, 50).perform
 
 ```

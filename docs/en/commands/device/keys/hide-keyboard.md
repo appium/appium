@@ -31,6 +31,11 @@ await driver.hideDeviceKeyboard();
 
 ```ruby
 # Ruby
+# ruby_lib example
+hide_keyboard
+
+
+# ruby_lib_core example
 @driver.hide_keyboard
 
 ```

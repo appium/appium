@@ -28,6 +28,11 @@ await driver.endTestCoverageForApp("Intent", "/path");
 
 ```ruby
 # Ruby
+# ruby_lib example
+end_coverage("Intent", "/path")
+
+
+# ruby_lib_core example
 @driver.end_coverage("Intent", "/path")
 
 ```

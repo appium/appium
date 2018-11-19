@@ -31,6 +31,11 @@ let element = await driver.active();
 
 ```ruby
 # Ruby
+# ruby_lib example
+switch_to.active_element
+
+
+# ruby_lib_core example
 @driver.switch_to.active_element
 
 ```

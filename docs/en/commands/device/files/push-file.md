@@ -32,6 +32,11 @@ await driver.pushFileToDevice('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2
 
 ```ruby
 # Ruby
+# ruby_lib example
+push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
+
+
+# ruby_lib_core example
 @driver.push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
 
 ```

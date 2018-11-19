@@ -34,6 +34,11 @@ await driver.startActivity({
 
 ```ruby
 # Ruby
+# ruby_lib example
+start_activity app_package: "com.example", app_activity: "ActivityName"
+
+
+# ruby_lib_core example
 @driver.start_activity app_package: "com.example", app_activity: "ActivityName"
 
 ```

@@ -31,6 +31,12 @@ Replace the value to element directly
 
 ```ruby
 # Ruby
+# ruby_lib example
+element = find_element :accessibility_id, "SomeAccessibilityID"
+replace_value element, 'some'
+
+
+# ruby_lib_core example
 element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
 @driver.replace_value element, 'some'
 

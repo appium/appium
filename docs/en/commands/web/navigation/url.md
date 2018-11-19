@@ -31,6 +31,11 @@ let url = await driver.url();
 
 ```ruby
 # Ruby
+# ruby_lib example
+current_url
+
+
+# ruby_lib_core example
 @driver.current_url
 
 ```

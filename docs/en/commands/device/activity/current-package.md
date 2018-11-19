@@ -28,6 +28,11 @@ let package = await driver.getCurrentPackage();
 
 ```ruby
 # Ruby
+# ruby_lib example
+current_package
+
+
+# ruby_lib_core example
 @driver.current_package
 
 ```

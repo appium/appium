@@ -34,6 +34,12 @@ await element.text();
 
 ```ruby
 # Ruby
+# ruby_lib example
+element = find_element :accessibility_id, "SomeAccessibilityID"
+element.text
+
+
+# ruby_lib_core example
 element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
 element.text
 

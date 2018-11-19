@@ -31,6 +31,11 @@ let location = await driver.getGeoLocation();
 
 ```ruby
 # Ruby
+# ruby_lib example
+location
+
+
+# ruby_lib_core example
 @driver.location
 
 ```

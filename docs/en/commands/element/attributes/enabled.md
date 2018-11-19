@@ -33,6 +33,11 @@ let isEnabled = await element.isEnabled();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, "SomeAccessibilityID").enabled?
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, "SomeAccessibilityID").enabled?
 
 ```

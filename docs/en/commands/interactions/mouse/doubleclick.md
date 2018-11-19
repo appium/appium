@@ -39,6 +39,11 @@ await driver.doubleclick();
 
 ```ruby
 # Ruby
+# ruby_lib example
+action.move_to(element).double_click.perform
+
+
+# ruby_lib_core example
 @driver.action.move_to(element).double_click.perform
 
 ```

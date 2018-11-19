@@ -40,6 +40,11 @@ await driver.safeExecuteAsync('document.title');
 
 ```ruby
 # Ruby
+# ruby_lib example
+execute_async_script("document.title")
+
+
+# ruby_lib_core example
 @driver.execute_async_script("document.title")
 
 ```

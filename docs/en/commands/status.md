@@ -30,8 +30,12 @@ await driver.status();
 
 ```ruby
 # Ruby
-@driver.remote_status
+# ruby_lib example
 remote_status
+
+
+# ruby_lib_core example
+@driver.remote_status
 
 ```
 

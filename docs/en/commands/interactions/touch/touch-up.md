@@ -50,6 +50,11 @@ await action.perform();
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_action.down(element).up(50, 50).perform
+
+
+# ruby_lib_core example
 @driver.touch_action.down(element).up(50, 50).perform
 
 ```

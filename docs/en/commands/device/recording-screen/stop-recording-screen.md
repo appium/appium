@@ -29,6 +29,12 @@ await driver.stopRecordingScreen();
 
 ```ruby
 # Ruby
+# ruby_lib example
+stop_recording_screen
+stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
+
+
+# ruby_lib_core example
 @driver.stop_recording_screen
 @driver.stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
 
@@ -84,7 +90,7 @@ await driver.stopRecordingScreen();
 
 |name|description|
 |----|-----------|
-|remote_path|The path to the remote location, where the resulting video should be uploaded. The following protocols are supported http/https, ftp. Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated media file is too big to fit into the available process memory.|
+|remotePath|The path to the remote location, where the resulting video should be uploaded. The following protocols are supported http/https, ftp. Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated media file is too big to fit into the available process memory.|
 |username|The name of the user for the remote authentication.|
 |password|The password for the remote authentication.|
 |method|The http multipart upload method name. The 'PUT' one is used by default.|

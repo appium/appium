@@ -27,6 +27,11 @@ await driver.toggleAirplaneMode();
 
 ```ruby
 # Ruby
+# ruby_lib example
+toggle_flight_mode
+
+
+# ruby_lib_core example
 @driver.toggle_flight_mode
 
 ```

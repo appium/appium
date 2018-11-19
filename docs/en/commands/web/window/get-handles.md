@@ -31,6 +31,11 @@ let windowHandle = await driver.windowHandles();
 
 ```ruby
 # Ruby
+# ruby_lib example
+window_handles
+
+
+# ruby_lib_core example
 @driver.window_handles
 
 ```

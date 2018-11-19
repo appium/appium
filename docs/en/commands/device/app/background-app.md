@@ -31,6 +31,11 @@ await driver.backgroundApp(10);
 
 ```ruby
 # Ruby
+# ruby_lib example
+background_app(10)
+
+
+# ruby_lib_core example
 @driver.background_app(10)
 
 ```

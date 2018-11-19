@@ -40,6 +40,11 @@ await action.perform();
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_action.double_tap(element).perform
+
+
+# ruby_lib_core example
 @driver.touch_action.double_tap(element).perform
 
 ```

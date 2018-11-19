@@ -33,6 +33,11 @@ await driver.setWindowPosition(10, 10); // Set current window
 
 ```ruby
 # Ruby
+# ruby_lib example
+reposition_window(10, 10)
+
+
+# ruby_lib_core example
 @driver.reposition_window(10, 10)
 
 ```

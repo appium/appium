@@ -31,6 +31,11 @@ await driver.setAsyncScriptTimeout(5000);
 
 ```ruby
 # Ruby
+# ruby_lib example
+script_timeout(5) # Ruby translates it to seconds
+
+
+# ruby_lib_core example
 @driver.script_timeout(5) # Ruby translates it to seconds
 
 ```

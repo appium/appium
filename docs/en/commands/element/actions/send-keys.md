@@ -33,6 +33,11 @@ await element.type("Hello world!")
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
 
 ```

@@ -33,6 +33,11 @@ await element.clear();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, "SomeAccessibilityID").clear
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, "SomeAccessibilityID").clear
 
 ```

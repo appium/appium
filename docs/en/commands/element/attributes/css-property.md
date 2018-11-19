@@ -33,6 +33,11 @@ let cssProperty = await element.getComputedCss();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:id, 'SomeId').css_value
+
+
+# ruby_lib_core example
 @driver.find_element(:id, 'SomeId').css_value
 
 ```

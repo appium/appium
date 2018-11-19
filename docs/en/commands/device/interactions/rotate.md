@@ -29,6 +29,8 @@ driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touc
 
 ```ruby
 # Not supported
+
+# Not supported
 ```
 
 ```php

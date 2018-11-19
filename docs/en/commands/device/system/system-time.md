@@ -31,6 +31,11 @@ let time = await driver.getDeviceTime();
 
 ```ruby
 # Ruby
+# ruby_lib example
+device_time
+
+
+# ruby_lib_core example
 @driver.device_time
 
 ```

@@ -31,6 +31,11 @@ let title = await driver.title();
 
 ```ruby
 # Ruby
+# ruby_lib example
+title
+
+
+# ruby_lib_core example
 @driver.title
 
 ```

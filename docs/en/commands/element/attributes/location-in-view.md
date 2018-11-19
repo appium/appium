@@ -28,6 +28,8 @@ let location = await element.getLocationInView();
 
 ```ruby
 # Not supported
+
+# Not supported
 ```
 
 ```php

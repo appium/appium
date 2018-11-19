@@ -31,6 +31,12 @@ await driver.lock();
 
 ```ruby
 # Ruby
+# ruby_lib example
+lock
+lock(5) # lock 5 seconds
+
+
+# ruby_lib_core example
 @driver.lock
 @driver.lock(5) # lock 5 seconds
 

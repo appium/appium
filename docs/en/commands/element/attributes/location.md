@@ -33,6 +33,11 @@ let location = await element.getLocation();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, 'SomeAccessibilityID').location
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, 'SomeAccessibilityID').location
 
 ```

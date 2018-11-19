@@ -31,6 +31,11 @@ let caps = await driver.sessionCapabilities();
 
 ```ruby
 # Ruby
+# ruby_lib example
+session_capabilities
+
+
+# ruby_lib_core example
 @driver.session_capabilities
 
 ```

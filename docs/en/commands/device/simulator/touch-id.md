@@ -35,6 +35,12 @@ await driver.touchId(true); // Simulates a failed touch
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_id(false)
+touch_id(true)
+
+
+# ruby_lib_core example
 @driver.touch_id(false) # Simulates a failed touch
 @driver.touch_id(true) # Simulates a passing touch
 

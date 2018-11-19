@@ -31,6 +31,11 @@ let activity = await driver.getCurrentActivity();
 
 ```ruby
 # Ruby
+# ruby_lib example
+current_activity
+
+
+# ruby_lib_core example
 @driver.current_activity
 
 ```

@@ -31,6 +31,12 @@ let rect = await element.getRect();
 
 ```ruby
 # Ruby
+# ruby_lib example
+element = find_element :accessibility_id, "SomeAccessibilityID"
+element.rect
+
+
+# ruby_lib_core example
 element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
 element.rect
 

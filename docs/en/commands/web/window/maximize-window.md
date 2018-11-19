@@ -33,6 +33,11 @@ await driver.maximize(); // Set current window
 
 ```ruby
 # Ruby
+# ruby_lib example
+resize_to(10, 10)
+
+
+# ruby_lib_core example
 @driver.resize_to(10, 10)
 
 ```

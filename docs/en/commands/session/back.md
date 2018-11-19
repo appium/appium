@@ -31,6 +31,11 @@ await driver.back();
 
 ```ruby
 # Ruby
+# ruby_lib example
+back
+
+
+# ruby_lib_core example
 @driver.back
 
 ```

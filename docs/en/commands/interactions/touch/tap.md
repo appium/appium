@@ -48,6 +48,11 @@ await action.perform();
 
 ```ruby
 # Ruby
+# ruby_lib example
+touch_action.single_tap(element).perform
+
+
+# ruby_lib_core example
 @driver.touch_action.single_tap(element).perform
 
 ```

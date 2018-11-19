@@ -31,6 +31,11 @@ await driver.removeAppFromDevice('com.example.AppName');
 
 ```ruby
 # Ruby
+# ruby_lib example
+remove_app('com.example.AppName')
+
+
+# ruby_lib_core example
 @driver.remove_app('com.example.AppName')
 
 ```

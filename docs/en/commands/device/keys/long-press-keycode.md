@@ -31,6 +31,11 @@ await driver.longPressKeyCode(10);
 
 ```ruby
 # Ruby
+# ruby_lib example
+long_press_keycode(10)
+
+
+# ruby_lib_core example
 @driver.long_press_keycode(10)
 
 ```

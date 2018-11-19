@@ -31,6 +31,11 @@ await driver.launchApp();
 
 ```ruby
 # Ruby
+# ruby_lib example
+launch_app
+
+
+# ruby_lib_core example
 @driver.launch_app
 
 ```

@@ -33,6 +33,11 @@ let size = await element.getSize();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, 'SomeAccessibilityID').size
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, 'SomeAccessibilityID').size
 
 ```

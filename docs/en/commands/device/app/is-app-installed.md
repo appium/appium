@@ -31,7 +31,12 @@ await driver.isAppInstalledOnDevice('com.example.AppName');
 
 ```ruby
 # Ruby
-@driver.app_installed?('com.example.AppName');
+# ruby_lib example
+app_installed?('com.example.AppName')
+
+
+# ruby_lib_core example
+@driver.app_installed?('com.example.AppName')
 
 ```
 

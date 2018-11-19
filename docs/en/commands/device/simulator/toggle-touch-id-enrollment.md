@@ -31,6 +31,11 @@ await driver.toggleTouchIdEnrollment();
 
 ```ruby
 # Ruby
+# ruby_lib example
+toggle_touch_id_enrollment
+
+
+# ruby_lib_core example
 @driver.toggle_touch_id_enrollment
 
 ```

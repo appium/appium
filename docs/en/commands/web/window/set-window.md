@@ -31,6 +31,11 @@ await driver.window("handle");
 
 ```ruby
 # Ruby
+# ruby_lib example
+switch_to.window("handle")
+
+
+# ruby_lib_core example
 @driver.switch_to.window("handle")
 
 ```

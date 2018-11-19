@@ -33,8 +33,12 @@ let context = await driver.currentContext();
 
 ```ruby
 # Ruby
-context = @driver.current_context
+# ruby_lib example
+context = current_context
 
+
+# ruby_lib_core example
+context = @driver.current_context
 ```
 
 ```php

@@ -29,6 +29,11 @@ driver.frameParent();
 
 ```ruby
 # Ruby
+# ruby_lib example
+parent_frame
+
+
+# ruby_lib_core example
 @driver.parent_frame
 
 ```

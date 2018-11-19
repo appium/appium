@@ -24,6 +24,11 @@ await driver.sendSms('555-123-4567', 'Hey lol');
 
 ```ruby
 # Ruby
+# ruby_lib example
+send_sms(phone_number: '555-123-4567', message: 'Hey lol')
+
+
+# ruby_lib_core example
 @driver.send_sms(phone_number: '555-123-4567', message: 'Hey lol')
 
 ```

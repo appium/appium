@@ -24,6 +24,11 @@ await driver.gsmVoice('Voice state');
 
 ```ruby
 # Ruby
+# ruby_lib example
+gsm_voice :home
+
+
+# ruby_lib_core example
 @driver.gsm_voice :home
 
 ```

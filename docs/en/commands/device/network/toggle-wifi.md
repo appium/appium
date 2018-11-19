@@ -27,6 +27,11 @@ await driver.toggleWiFi();
 
 ```ruby
 # Ruby
+# ruby_lib example
+toggle_wifi
+
+
+# ruby_lib_core example
 @driver.toggle_wifi
 
 ```

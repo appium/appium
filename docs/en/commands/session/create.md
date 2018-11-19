@@ -36,7 +36,7 @@ self.driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
 ```javascript
 // Javascript
 // webdriver.io example
-let options = { desiredCapabilities: { 
+let options = { desiredCapabilities: {
   platformName: 'Android',
   platformVersion: '7.0',
   automationName: 'UiAutomator2',
@@ -63,6 +63,7 @@ await driver.init(desiredCaps);
 
 ```ruby
 # Ruby
+# ruby_lib example
 APP_PATH = '../../path/to/app.app'
 
 desired_caps = {
@@ -77,6 +78,10 @@ desired_caps = {
 
 Appium::Driver.new(desired_caps).start_driver
 
+
+# ruby_lib_core example
+::Appium::Core.for(desired_caps).start_driver
+
 ```
 
 ```php
@@ -87,14 +92,21 @@ Appium::Driver.new(desired_caps).start_driver
 
 ```csharp
 // C#
-// TODO C# sample
+DesiredCapabilities capabilities = new DesiredCapabilities();
+capabilities.SetCapability(MobileCapabilityType.PlatformName, "Android");
+capabilities.SetCapability(MobileCapabilityType.PlatformVersion, "7.1.1");
+capabilities.SetCapability(MobileCapabilityType.DeviceName, "Android Device");
+capabilities.SetCapability("appPackage", "com.instagram.android");
+capabilities.SetCapability("appActivity", "com.instagram.android.activity.MainTabActivity");
+
+AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/wd/hub/"), capabilities);
 
 ```
 
 
 ## Description
 
-The server should attempt to create a session that most closely matches the desired and required capabilities. 
+The server should attempt to create a session that most closely matches the desired and required capabilities.
 
 * [JSONWP Spec](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1) Required capabilities have higher priority than desired capabilities and must be set for the session to be created
 * [W3C Spec](https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)

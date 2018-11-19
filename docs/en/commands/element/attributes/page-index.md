@@ -31,8 +31,11 @@ Get an element's tag name
 
 ```ruby
 # Ruby
+# ruby_lib example
 // TODO Ruby sample
 
+
+# Not supported
 ```
 
 ```php

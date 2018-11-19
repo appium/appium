@@ -33,7 +33,12 @@ await driver.setWindowSize(10, 10); // Set current window
 
 ```ruby
 # Ruby
-@driver.maximize_window()
+# ruby_lib example
+maximize_window
+
+
+# ruby_lib_core example
+@driver.maximize_window
 
 ```
 

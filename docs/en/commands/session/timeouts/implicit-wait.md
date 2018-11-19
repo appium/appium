@@ -31,6 +31,11 @@ await driver.setImplicitWaitTimeout(5000);
 
 ```ruby
 # Ruby
+# ruby_lib example
+manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
+
+
+# ruby_lib_core example
 @driver.manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
 
 ```

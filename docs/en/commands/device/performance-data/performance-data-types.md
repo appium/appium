@@ -26,6 +26,11 @@ await driver.getSupportedPerformanceDataTypes();
 
 ```ruby
 # Ruby
+# ruby_lib example
+get_performance_data_types
+
+
+# ruby_lib_core example
 @driver.get_performance_data_types
 
 ```

@@ -34,6 +34,12 @@ await element.submit();
 
 ```ruby
 # Ruby
+# ruby_lib example
+element = find_element :class_name, "someClass"
+element.submit element
+
+
+# ruby_lib_core example
 element = @driver.find_element :class_name, "someClass"
 element.submit element
 

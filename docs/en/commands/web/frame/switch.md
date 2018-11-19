@@ -31,6 +31,11 @@ await driver.frame(3);
 
 ```ruby
 # Ruby
+# ruby_lib example
+switch_to.frame(3)
+
+
+# ruby_lib_core example
 @driver.switch_to.frame(3)
 
 ```

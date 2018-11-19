@@ -31,6 +31,11 @@ let folderBase64 = await driver.pullFolder('/path/to/device/foo.bar');
 
 ```ruby
 # Ruby
+# ruby_lib example
+pull_folder('/data/local/tmp/file.txt')
+
+
+# ruby_lib_core example
 @driver.pull_folder('/data/local/tmp/file.txt')
 
 ```

@@ -33,7 +33,12 @@ await driver.status();
 
 ```ruby
 # Ruby
-# Ruby Code here
+# ruby_lib example
+# Ruby Code in ruby_lib here
+
+
+# ruby_lib_core example
+# Ruby Code in ruby_lib_core here
 
 ```
 

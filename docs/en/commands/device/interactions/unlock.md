@@ -35,6 +35,11 @@ await driver.unlock();
 
 ```ruby
 # Ruby
+# ruby_lib example
+unlock
+
+
+# ruby_lib_core example
 @driver.unlock
 
 ```

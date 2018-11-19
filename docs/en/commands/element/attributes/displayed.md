@@ -33,6 +33,11 @@ let isDisplayed = await element.isDisplayed();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, "SomeAccessibilityID").displayed?
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?
 
 ```

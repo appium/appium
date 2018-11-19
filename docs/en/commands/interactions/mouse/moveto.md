@@ -9,7 +9,7 @@ Move the mouse by an offset of the specificed element
 // Java
 Actions action = new Actions(driver);
 action.moveTo(element, 10, 10);
-action.perform()
+action.perform();
 
 ```
 
@@ -35,6 +35,12 @@ await driver.moveTo(element, 10, 10);
 
 ```ruby
 # Ruby
+# ruby_lib example
+mouse.move_to(element)
+mouse.move_to(element, 5, 5)
+
+
+# ruby_lib_core example
 @driver.mouse.move_to(element)
 @driver.mouse.move_to(element, 5, 5)
 

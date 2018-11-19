@@ -31,7 +31,12 @@ const logTypes = await driver.logTypes();
 
 ```ruby
 # Ruby
-@driver.get_available_log_types
+# ruby_lib example
+get_available_log_types
+
+
+# ruby_lib_core example
+@driver.logs.available_types
 
 ```
 

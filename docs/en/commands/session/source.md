@@ -31,6 +31,11 @@ let pageSource = await driver.source();
 
 ```ruby
 # Ruby
+# ruby_lib example
+page_source
+
+
+# ruby_lib_core example
 @driver.page_source
 
 ```

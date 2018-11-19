@@ -31,6 +31,11 @@ await driver.installAppOnDevice('/Users/johndoe/path/to/app.apk');
 
 ```ruby
 # Ruby
+# ruby_lib example
+install_app('/Users/johndoe/path/to/app.apk')
+
+
+# ruby_lib_core example
 @driver.install_app('/Users/johndoe/path/to/app.apk')
 
 ```

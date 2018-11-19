@@ -27,6 +27,11 @@ await driver.toggleData();
 
 ```ruby
 # Ruby
+# ruby_lib example
+toggle_data
+
+
+# ruby_lib_core example
 @driver.toggle_data
 
 ```

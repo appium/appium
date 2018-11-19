@@ -33,6 +33,11 @@ let tagName = await element.getTagName();
 
 ```ruby
 # Ruby
+# ruby_lib example
+find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+
+
+# ruby_lib_core example
 @driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
 
 ```

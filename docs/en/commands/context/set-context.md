@@ -43,6 +43,14 @@ await driver.context('NATIVE_APP');
 
 ```ruby
 # Ruby
+# ruby_lib example
+webview = available_contexts[1]
+set_context(webview)
+# ...
+set_context('NATIVE_APP')
+
+
+# ruby_lib_core example
 webview = @driver.available_contexts[1]
 @driver.set_context(webview)
 # ...

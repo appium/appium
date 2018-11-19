@@ -23,6 +23,11 @@ example_usage:
       # TODO WDIO example
   ruby:
     |
+      element1 = find_element :class_name, "someClass"
+      element2 = find_element :class_name, "someOtherClass"
+      element1 == element2
+  ruby_core:
+    |
       element1 = @driver.find_element :class_name, "someClass"
       element2 = @driver.find_element :class_name, "someOtherClass"
       element1 == element2
@@ -39,6 +44,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/state/isEnabled.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1463"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

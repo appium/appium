@@ -18,6 +18,9 @@ example_usage:
       driver.pushFile('/data/local/tmp/file.txt', data);
   ruby:
     |
+      push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
+  ruby_core:
+    |
       @driver.push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
   php:
     |
@@ -32,6 +35,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/pushFile.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2640"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#push_file-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#push_file-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

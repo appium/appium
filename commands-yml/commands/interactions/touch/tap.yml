@@ -34,6 +34,9 @@ example_usage:
       });
   ruby:
     |
+      touch_action.single_tap(element).perform
+  ruby_core:
+    |
       @driver.touch_action.single_tap(element).perform
   php:
     |
@@ -48,6 +51,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/touchPerform.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1531"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:single_tap"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:single_tap"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

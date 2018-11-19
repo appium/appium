@@ -8,7 +8,7 @@ The Appium server itself defines custom extensions to the official protocols, gi
 
 Language/Framework | Github Repo and Installation Instructions |
 ----- | ----- |
-Ruby | [https://github.com/appium/ruby_lib](https://github.com/appium/ruby_lib)
+Ruby | [https://github.com/appium/ruby_lib](https://github.com/appium/ruby_lib), [https://github.com/appium/ruby_lib_core](https://github.com/appium/ruby_lib_core)
 Python | [https://github.com/appium/python-client](https://github.com/appium/python-client)
 Java | [https://github.com/appium/java-client](https://github.com/appium/java-client)
 JavaScript (Node.js) | [https://github.com/admc/wd](https://github.com/admc/wd)

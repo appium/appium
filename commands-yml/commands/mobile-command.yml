@@ -51,7 +51,7 @@
       | mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
       | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
       | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
-      
+
       ### Android
       | Command | Description | Argument | Argument Example |
       | ------- | ----------- | -------- | ---------------- |
@@ -92,6 +92,9 @@
         var result = browser.execute('mobile: scroll', {direction: 'down'})
     ruby:
       |
+        execute_script("mobile: scroll", { "direction" => "down"})
+    ruby_core:
+      |
         @driver.execute_script("mobile: scroll", { "direction" => "down"})
     php:
       |
@@ -106,6 +109,7 @@
     javascript_wdio: "http://webdriver.io/api/protocol/execute.html"
     javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
     ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
+    ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
     php: "https://github.com/appium/php-client/" # TODO PHP documentation link
     csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

@@ -44,7 +44,15 @@
 ```ruby
 {{#if example_usage.ruby}}
 # Ruby
+# ruby_lib example
 {{example_usage.ruby}}
+{{else}}
+# Not supported
+{{/if}}
+
+{{#if example_usage.ruby_core}}
+# ruby_lib_core example
+{{example_usage.ruby_core}}
 {{else}}
 # Not supported
 {{/if}}

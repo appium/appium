@@ -16,6 +16,10 @@ example_usage:
       let rect = driver.elementIdRect("~SomeAccessibilityId");
   ruby:
     |
+      element = find_element :accessibility_id, "SomeAccessibilityID"
+      element.rect
+  ruby_core:
+    |
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       element.rect
   php:
@@ -29,6 +33,7 @@ client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getRect--"
   javascript_wdio: "http://webdriver.io/api/protocol/elementIdRect.html"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#rect-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#rect-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -53,7 +58,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -78,5 +83,5 @@ endpoint:
       type: number
       description: Width of the bounding rectangle
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-rect

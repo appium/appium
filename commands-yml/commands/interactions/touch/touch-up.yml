@@ -36,6 +36,9 @@ example_usage:
       ]);
   ruby:
     |
+      touch_action.down(element).up(50, 50).perform
+  ruby_core:
+    |
       @driver.touch_action.down(element).up(50, 50).perform
   php:
     |
@@ -50,6 +53,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/touchMultiPerform.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

@@ -66,6 +66,7 @@ These Capabilities are available only on Android-based drivers (like
 |`appWaitPackage`| Java package of the Android app you want to wait for. By default the value of this capability is the same as for `appActivity` |`com.example.android.myApp`, `com.android.settings`|
 |`appWaitDuration`| Timeout in milliseconds used to wait for the appWaitActivity to launch (default `20000`)| `30000`|
 |`deviceReadyTimeout`| Timeout in seconds while waiting for device to become ready|`5`|
+|`allowTestPackages`| Allow to install a test package which has `android:testOnly="true"` in the manifest. `false` by default |`true` or `false`|
 |`androidCoverage`| Fully qualified instrumentation class. Passed to -w in adb shell am instrument -e coverage true -w | `com.my.Pkg/com.my.Pkg.instrumentation.MyInstrumentation`|
 |`androidCoverageEndIntent`| A broadcast action implemented by yourself which is used to dump coverage into file system. Passed to -a in adb shell am broadcast -a | `com.example.pkg.END_EMMA`|
 |`androidDeviceReadyTimeout`|Timeout in seconds used to wait for a device to become ready after booting|e.g., `30`|

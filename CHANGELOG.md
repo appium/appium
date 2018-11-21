@@ -24,9 +24,12 @@ Appium 1.10.0 is a minor release.
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for performing editor actions [#428](https://github.com/appium/appium-android-driver/pull/428)
 * Can record videos up to 30 minutes (requires [FFMPEG](https://www.ffmpeg.org/) to be installed) [#399](https://github.com/appium/appium-android-driver/pull/399)
 * Add `localeScript` capability to set script in `locale` (https://developer.android.com/reference/java/util/Locale) [#460](https://github.com/appium/appium-android-driver/pull/460)
+* Allow `locale` and `language` for real devices under API level 23 [#379](https://github.com/appium/appium-adb/pull/379)
 * Improved video recording
 * Fix [bug](https://github.com/appium/appium/issues/11619) calling `getRect` in MJSONWP sessions [#240](https://github.com/appium/appium-uiautomator2-driver/pull/240)
 * Fix pin entry error on Samsung devices that wasn't correctly locating the "Enter" button [#458](https://github.com/appium/appium-android-driver/pull/458)
+* Relax [hidden API policy](https://developer.android.com/about/versions/pie/restrictions-non-sdk-interfaces) for Android P and above
+* Support running tests using Android App Bundle [#11601](https://github.com/appium/appium/pull/11601)
 
 #### Android (UiAutomator2)
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for retrieving device information [#221](https://github.com/appium/appium-uiautomator2-driver/pull/211)

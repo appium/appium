@@ -63,3 +63,17 @@ jobs:
         # Remove the dev depenedencies
         - npm prune
       script: npm run zip-and-upload
+    - stage: Put in PR for documentation
+      # if: tag # TODO Only run this on tag
+      os: osx
+      script:
+        - brew install hub
+        - pip install mkdocs==0.16.3
+        - git clone https://github.com/appium/appium.io.git && cd appium.io/
+        - git checkout gh-pages && git pull origin gh-pages && git checkout -b docs-$TRAVIS_TAG
+        - npm install
+        - npm run build:docs
+        - git commit -a -n -m 'Updated docs for latest Appium version'
+        - git push origin docs-$TRAVIS_TAG
+        - hub pull-request -b "appium:gh-pages" -h "appium:docs-$TRAVIS_TAG" -m "Update documentation for latest version"
+

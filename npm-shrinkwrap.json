@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.10.0-beta.1",
+  "version": "1.10.0-beta.2",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1072,9 +1072,9 @@
       }
     },
     "appium-youiengine-driver": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/appium-youiengine-driver/-/appium-youiengine-driver-1.1.0.tgz",
-      "integrity": "sha512-atdL1EdCXsaX3rGLd1YZI6wyGyzOsnVDvNoUdQ7p1YfGoL80eORToUHPn9CdgXbE0HnRzkCYo2Xkf7hZVD/6/w==",
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/appium-youiengine-driver/-/appium-youiengine-driver-1.1.1.tgz",
+      "integrity": "sha512-99kDzLFlSosacaoqQo7Iw+7pXnQ+x4LpiNqW+nFYvygq/MahQLOzufbgcVYxUqKZhdMuZey4Z0IdqHJ0t6dJHQ==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-android-driver": "4.x",

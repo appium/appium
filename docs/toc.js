@@ -243,6 +243,8 @@ module.exports = {
       ]],
     ]],
     ["Advanced", ["advanced-concepts",
+      ["Finding Image Elements", "image-elements.md"],
+      ["Using Element Finding Plugins", "element-finding-plugins.md"],
       ["Migrating to XCUITest", "migrating-to-xcuitest.md"],
       ["Using Selenium Grid with Appium", "grid.md"],
       ["Cross-domain iframes", "cross-domain-iframes.md"],

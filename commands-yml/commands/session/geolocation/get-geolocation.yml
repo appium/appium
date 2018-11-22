@@ -26,7 +26,7 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Location location = driver.Location;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/html5/LocationContext.html#location--"

@@ -9,7 +9,7 @@ Appium 1.10.0 is a minor release.
 * Bump up minimum Node version to 8 and minimum NPM version to 6
 * Improve string extractions for Android and iOS
 * Fix synchronization of applications caching [#274](https://github.com/appium/appium-base-driver/pull/274)
-* Add `--allow-cors` flag to server flags
+* Disable CORS on `createServer` by default.Add `--allow-cors` flag to server flags [#11719](https://github.com/appium/appium/pull/11719)
 
 #### iOS
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command/#ios-xcuitest-only) methods:

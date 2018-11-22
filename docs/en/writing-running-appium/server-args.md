@@ -14,6 +14,7 @@ All flags are optional, but some are required in conjunction with certain others
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
 |`--shell`|null|Enter REPL mode||
+|`--allow-cors`|false|Turn on CORS compatibility mode, which will allow connections to the Appium server from within websites hosted on any domain. Be careful when enabling this feature, since there is a potential security risk if you visit a website that uses a cross-domain request to initiate or introspect sessions on your running Appium server.||
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|

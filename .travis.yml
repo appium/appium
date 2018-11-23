@@ -45,7 +45,7 @@ jobs:
       
       - git commit -a -n -m 'Update generated docs [ci skip]'
       - git push origin generate-docs-$TRAVIS_COMMIT
-      - hub pull-request -b "appium:gh-pages" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Commit auto-generated docs"
+      - hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Commit auto-generated docs"
 
     - stage: BinTray Bundle Build and Upload
       # only want to run this on the main master branch

@@ -30,7 +30,8 @@ jobs:
         # this is just to indicate in the Travis job list that this is generating docs
         - GENERATE_DOCS=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
-        - brew install hub
+        #- brew install hub
+        - hub --version
         - git checkout -b generate-docs-$TRAVIS_COMMIT
         - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
       script:

@@ -48,7 +48,7 @@ location
 
 ```csharp
 // C#
-// TODO C# sample
+Location location = driver.Location;
 
 ```
 

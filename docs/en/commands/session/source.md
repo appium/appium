@@ -48,7 +48,7 @@ page_source
 
 ```csharp
 // C#
-// TODO C# sample
+string pageSource = driver.PageSource;
 
 ```
 

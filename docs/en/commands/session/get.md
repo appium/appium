@@ -48,7 +48,7 @@ session_capabilities
 
 ```csharp
 // C#
-// TODO C# sample
+ICapabilities caps = driver.Capabilities;
 
 ```
 

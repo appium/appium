@@ -48,7 +48,7 @@ driver.screenshot_as(:base64) # via core_lib
 
 ```csharp
 // C#
-// TODO C# sample
+Screenshot screenshot = driver.GetScreenshot();
 
 ```
 

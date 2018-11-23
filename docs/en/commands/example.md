@@ -50,7 +50,7 @@ await driver.status();
 
 ```csharp
 // C#
-// CSharp Code here
+driver.FindElementById("elementId").Click();
 
 ```
 

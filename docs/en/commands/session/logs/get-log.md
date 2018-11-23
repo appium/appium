@@ -48,7 +48,7 @@ get_log('driver')
 
 ```csharp
 // C#
-// TODO C# sample
+ILogs logs = driver.Manage().Logs;
 
 ```
 

@@ -48,7 +48,7 @@ get_available_log_types
 
 ```csharp
 // C#
-// TODO C# sample
+IReadOnlyCollection<string> logTypes = driver.Manage().Logs.AvailableLogTypes;
 
 ```
 

@@ -48,7 +48,7 @@ orientation
 
 ```csharp
 // C#
-// TODO C# sample
+ScreenOrientation orientation = driver.Orientation;
 
 ```
 

@@ -48,7 +48,7 @@ quit
 
 ```csharp
 // C#
-// TODO C# sample
+driver.Quit();
 
 ```
 

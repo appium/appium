@@ -48,7 +48,9 @@ set_location(121.21, 11.56, 94.23)
 
 ```csharp
 // C#
-// TODO C# sample
+driver.Location.Altitude = 94.23;
+driver.Location.Latitude = 121.21;
+driver.Location.Longitude = 11.56;
 
 ```
 

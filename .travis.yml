@@ -43,8 +43,8 @@ jobs:
       - npm install -g uncommitted
 
       # If no docs were generated, don't do anything
-      - if [ uncommitted ]; then
-          exit 0
+      - if [ !uncommitted ]; then
+          travis_terminate 0  
         fi
       
       - git commit -a -n -m 'Update generated docs [ci skip]'

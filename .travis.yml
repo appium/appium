@@ -30,9 +30,7 @@ jobs:
       script: npm run test && npm run e2e-test
       node_js: "8"
     - stage:
-      os:
-        - linux
-        - sudo: false
+      os: osx
       env:
         # this is just to indicate in the Travis job list that this is generating docs
         - GENERATE_DOCS=true

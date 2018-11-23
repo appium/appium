@@ -28,8 +28,7 @@ jobs:
       if: branch = master
       env:
         # this is just to indicate in the Travis job list that this is generating docs
-        - GENERATE_DOCS=true
-        - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
+        - GENERATE_DOCS=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
         - brew install hub
         - git checkout -b generate-docs-$TRAVIS_COMMIT

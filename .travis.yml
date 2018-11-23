@@ -33,6 +33,7 @@ jobs:
       before_script:
         - brew install hub
         - git checkout -b generate-docs-$TRAVIS_COMMIT
+        - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
       script:
       - npm run generate-docs
       - npm install -g uncommitted

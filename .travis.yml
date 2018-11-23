@@ -35,19 +35,23 @@ jobs:
         - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
         - git reset --hard origin/master
         - git checkout -b generate-docs-$TRAVIS_COMMIT
-      script:
-      - npm run generate-docs
-      - npm install -g uncommitted
+        - npm install
+        - npm install -g uncommitted
 
-      # If no docs were generated, don't do anything
-      - |
-        if [ !uncommitted ]; then
-          travis_terminate 0
-        fi
-      
-      - git commit -a -n -m 'Update generated docs [ci skip]'
-      - git push origin generate-docs-$TRAVIS_COMMIT
-      - hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Update auto-generated docs"
+      script:
+        # Generate the docs
+        - npm run generate-docs
+
+        # If no docs were generated, don't do anything
+        - |
+          if [ !uncommitted ]; then
+            exit 0
+          fi
+        
+        # Make a PR to update the docs
+        - git commit -a -n -m 'Update generated docs [ci skip]'
+        - git push origin generate-docs-$TRAVIS_COMMIT
+        - hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Update auto-generated docs"
 
     - stage: BinTray Bundle Build and Upload
       # only want to run this on the main master branch
@@ -83,11 +87,15 @@ jobs:
       before_script:
         - brew install hub
         - pip install mkdocs==0.16.3
+
+        # Checkout appium.io repository
         - git clone https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium.io.git --branch=gh-pages && cd appium.io/
         - git checkout -b docs-$TRAVIS_TAG
         - bundle install
         - npm install
+
       script:
+        # Build the docs and make a PR to get them on appium.io
         - npm run build:docs
         - git commit -a -n -m 'Updated docs for latest Appium version'
         - git push origin docs-$TRAVIS_TAG

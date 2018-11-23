@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.10.0-beta.2",
+  "version": "1.10.0-beta.3",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -611,9 +611,9 @@
       }
     },
     "appium-espresso-driver": {
-      "version": "1.2.1",
-      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.2.1.tgz",
-      "integrity": "sha512-BuqzSypDcTh0q+j0XlIEga3QGa/U0pU5IYhjhs0Efz6xrvrJiHHVkExTy02L0CQMYCTr3LTtgF2JTNGoajLewQ==",
+      "version": "1.2.2",
+      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.2.2.tgz",
+      "integrity": "sha512-+S1YPptG13jEjUfHRqD4vsugfXB48sOlk8VwUfSKXticWdpHSYehVDmyuDUQwYfQ1XKrxNOyHD2zg4q1J2A2pw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-adb": "^6.25.0",

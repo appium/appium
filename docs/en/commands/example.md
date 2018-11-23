@@ -94,7 +94,7 @@ An indepth description of what this command does
 
 |name|description|
 |----|-----------|
-|session_id|ID of the session|
+|session_id|ID of the session (TODO DELETE ME. DO NOT COMMIT!)|
 |element_id|ID of the element to blah blah blah|
 
 ### JSON Parameters

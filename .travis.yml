@@ -32,6 +32,7 @@ jobs:
       before_script:
         - brew install hub
         - hub --version
+        - git checkout master && git pull origin master
         - git checkout -b generate-docs-$TRAVIS_COMMIT
         - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
       script:

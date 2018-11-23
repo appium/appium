@@ -141,7 +141,7 @@ for e2e test files to end in `-e2e-specs.js`.
 
 ### Updating Appium site docs
 
-The [Appium site] is built using a site generator that translates the markdown in https://github.com/appium/appium to static HTML
+The [Appium site](https://appium.io) is built using a site generator that translates the markdown in https://github.com/appium/appium to static HTML
 
 To update the site docs, follow these steps:
 

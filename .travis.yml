@@ -67,6 +67,8 @@ jobs:
     - stage: Update Documentation
       # if: tag # TODO Only run this on tag
       os: osx
+      env:
+        - HUB_VERBOSE=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
         - brew install hub
         - pip install mkdocs==0.16.3

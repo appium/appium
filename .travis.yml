@@ -80,7 +80,7 @@ jobs:
         - npm prune
       script: npm run zip-and-upload
     - stage: Update Documentation
-      # if: tag # TODO Only run this on tag
+      if: tag
       os: osx
       env:
         - HUB_VERBOSE=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN

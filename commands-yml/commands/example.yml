@@ -81,7 +81,7 @@ endpoint:
   method: 'POST'
   url_parameters:
     - name: session_id
-      description: ID of the session
+      description: ID of the session (TODO DELETE ME. DO NOT COMMIT!)
     - name: element_id
       description: ID of the element to blah blah blah
   json_parameters:

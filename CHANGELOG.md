@@ -1,3 +1,44 @@
+CHANGES IN VERSION 1.10.0 (from 1.9.1)
+===================================
+
+Appium 1.10.0 is a minor release. 
+
+#### General
+* Bring Espresso Driver out of beta and into general availability
+* Support Xcode 10, discontinue support for Xcode 8
+* Bump up minimum Node version to 8 and minimum NPM version to 6
+* Improve string extractions for Android and iOS
+* Fix synchronization of applications caching [#274](https://github.com/appium/appium-base-driver/pull/274)
+* Disable CORS on `createServer` by default.Add `--allow-cors` flag to server flags [#11719](https://github.com/appium/appium/pull/11719)
+
+#### iOS
+* Add [mobile:](http://appium.io/docs/en/commands/mobile-command/#ios-xcuitest-only) methods:
+  * Add biometrics (touchId, faceId) methods that can enroll/unenroll biometric features and send matching/non-matching biometric inputs (iOS Simulator only) [#816](https://github.com/appium/appium-xcuitest-driver/pull/816)
+  * Add method to clear keychains for an iOS Simulator [#816](https://github.com/appium/appium-xcuitest-driver/pull/816)
+* Add [permissions capability](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) that sets service permissions (calendar, siri, etc...) prior to creating a session [#818](https://github.com/appium/appium-xcuitest-driver/pull/818)
+* Add possibility to upload files into different container types on Simulator [#770](https://github.com/appium/appium-xcuitest-driver/pull/770)
+* Add [reduceMotion](https://github.com/appium/appium-xcuitest-driver/blob/master/README.md#L161) capability [#760](https://github.com/appium/appium-xcuitest-driver/pull/760)
+* Improve video recording
+* Improved iOS simulator booting procedure
+
+#### Android
+* Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for performing editor actions [#428](https://github.com/appium/appium-android-driver/pull/428)
+* Can record videos up to 30 minutes (requires [FFMPEG](https://www.ffmpeg.org/) to be installed) [#399](https://github.com/appium/appium-android-driver/pull/399)
+* Add `localeScript` capability to set script in `locale` (https://developer.android.com/reference/java/util/Locale) [#460](https://github.com/appium/appium-android-driver/pull/460)
+* Allow `locale` and `language` for real devices under API level 23 [#379](https://github.com/appium/appium-adb/pull/379)
+* Improved video recording
+* Fix [bug](https://github.com/appium/appium/issues/11619) calling `getRect` in MJSONWP sessions [#240](https://github.com/appium/appium-uiautomator2-driver/pull/240)
+* Fix pin entry error on Samsung devices that wasn't correctly locating the "Enter" button [#458](https://github.com/appium/appium-android-driver/pull/458)
+* Relax [hidden API policy](https://developer.android.com/about/versions/pie/restrictions-non-sdk-interfaces) for Android P and above
+* Support running tests using Android App Bundle [#11601](https://github.com/appium/appium/pull/11601)
+
+#### Android (UiAutomator2)
+* Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for retrieving device information [#221](https://github.com/appium/appium-uiautomator2-driver/pull/211)
+* Support `.apks` bundles [#233](https://github.com/appium/appium-uiautomator2-driver/pull/233)
+* Fix bug with timeouts calls for W3C sessions [#239](https://github.com/appium/appium-uiautomator2-driver/pull/239)
+* Refactored XML source generation and xpath search in order to fix known bugs and to improve the general performance of these operations [#208](https://github.com/appium/appium-uiautomator2-server/pull/208)
+* Refactored and fixed issues with W3C Actions [#205](https://github.com/appium/appium-uiautomator2-server/pull/205)
+
 CHANGES IN VERSION 1.9.1 (from 1.9.0)
 ===================================
 

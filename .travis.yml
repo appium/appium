@@ -29,9 +29,20 @@ jobs:
         # this is just to indicate in the Travis job list that this is generating docs
         - GENERATE_DOCS=true
         - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
+      before_script:
+        - brew install hub
+        - git checkout -b generate-docs-$TRAVIS_COMMIT
       script:
       - npm run generate-docs
-      - 
+      - npm install -g uncommitted
+
+      # Only do PR if docs were generated
+      - if [ uncommitted ]; then
+          git commit -a -n -m 'Update generated docs [ci skip]' && 
+          git push origin generate-docs-$TRAVIS_COMMIT &&
+          hub pull-request -b "appium:gh-pages" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Commit auto-generated docs"
+        fi
+
     - stage: BinTray Bundle Build and Upload
       # only want to run this on the main master branch
       if: branch = master AND type != pull_request

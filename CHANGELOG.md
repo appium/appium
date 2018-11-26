@@ -20,6 +20,7 @@ Appium 1.10.0 is a minor release.
 * Add [reduceMotion](https://github.com/appium/appium-xcuitest-driver/blob/master/README.md#L161) capability [#760](https://github.com/appium/appium-xcuitest-driver/pull/760)
 * Improve video recording
 * Improved iOS simulator booting procedure
+* Add mobile endpoint for running Siri commands [#837](https://github.com/appium/appium-xcuitest-driver/pull/837)
 
 #### Android
 * Add [mobile:](http://appium.io/docs/en/commands/mobile-command) command for performing editor actions [#428](https://github.com/appium/appium-android-driver/pull/428)

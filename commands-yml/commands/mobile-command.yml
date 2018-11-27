@@ -59,10 +59,7 @@
       | mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/docs/en/writing-running-appium/server-args.md#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
       | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/logcat` endpoint | <none> | <none> |
       | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
-      | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
-      | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
-      | mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
-      | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | {action} | {action: "previous"}|
+      | mobile:performEditorAction | Performs the given editor action on the focused input field (available from Appium v1.10.0). The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | {action} | {action: "previous"}|
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |
@@ -71,6 +68,9 @@
       | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
       | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
       | mobile:getDeviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
+      | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
+      | mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
+      | mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
 
       ### Android (Espresso only)
       | Command | Description | Argument | Argument Example |

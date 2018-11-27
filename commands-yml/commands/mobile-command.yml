@@ -76,6 +76,7 @@
       | Command | Description | Argument | Argument Example |
       | ------- | ----------- | -------- | ---------------- |
       | mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{elementId, direction}` | `{elementId: 2, direction: "down|up|left|right"}` |
+      | mobile:isToastVisible | Make sure the visibility of toast message. `text` is a mandatory. `isRegex` is an optional. `text` will be parsed as regular expression pattern if `isRegex` is `true`. `isRegex` is `false` by default. It returns `true`, the `text` exists, or `false,  the `text` does not exist. | `{text, isRegexp}` | `{ text: 'A toast' }`, `{ text: '^regex$', isRegexp: true } `|
 
   example_usage:
     java:

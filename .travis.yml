@@ -12,27 +12,19 @@ node_js: "10"
 jobs:
   include:
     - stage: Tests
-      os:
-        - linux
-        - sudo: false
+      os: linux
       script: npm run test && npm run e2e-test
       node_js: "11"
     - stage:
-      os:
-        - linux
-        - sudo: false
+      os: linux
       script: npm run test && npm run e2e-test
       node_js: "10"
     - stage:
-      os:
-        - linux
-        - sudo: false
+      os: linux
       script: npm run test && npm run e2e-test
       node_js: "8"
     - stage:
-      os:
-        - linux
-        - sudo: false
+      os: linux
       env:
         # this is just to indicate in the Travis job list that this is generating docs
         - GENERATE_DOCS=true

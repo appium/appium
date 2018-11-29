@@ -117,6 +117,7 @@ These Capabilities are available only on Android-based drivers (like
 These Capabilities are available only on the [UiAutomator2 Driver](/doc/en/drivers/android-uiautomator2.md)
 
 |Capability|Description|Values|
+|----|-----------|-------|
 |`uiautomator2ServerLaunchTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
 |`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
 
@@ -125,6 +126,7 @@ These Capabilities are available only on the [UiAutomator2 Driver](/doc/en/drive
 These Capabilities are available only on the [Espresso Driver](/doc/en/drivers/android-espresso.md)
 
 |Capability|Description|Values|
+|----|-----------|-------|
 |`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for an espresso server to launch. Defaults to `30000` |e.g., `50000`|
 
 

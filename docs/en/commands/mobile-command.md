@@ -102,6 +102,7 @@ List of available commands:
 | mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
 | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
 | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
+| mobile:siriCommand| Sends a command to Siri | `{text}` | `{text: "What time is it?"}` |
 
 ### Android
 | Command | Description | Argument | Argument Example |
@@ -109,14 +110,14 @@ List of available commands:
 | mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/docs/en/writing-running-appium/server-args.md#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
 | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/logcat` endpoint | <none> | <none> |
 | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
-| mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
-| mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
-| mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
 | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | {action} | {action: "previous"}|
 
 ### Android (UiAutomator2 only)
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
+| mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
+| mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
+| mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
 | mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
 | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
 | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
@@ -126,6 +127,7 @@ List of available commands:
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
 | mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{elementId, direction}` | `{elementId: 2, direction: "down|up|left|right"}` |
+| mobile:isToastVisible | Check whether a toast message is visible. `text` is the mandatory argument. `isRegexp` is optional. `text` will be parsed as a regular expression pattern if `isRegexp` is `true`. `isRegexp` is `false` by default. It returns `true` if the `text` exists, or `false` otherwise. | `{text, isRegexp}` | `{ text: 'A toast' }`, `{ text: '^regex$', isRegexp: true } `|
 
 
 ## Support

@@ -98,4 +98,4 @@ a JSON hash of all the currently specified settings, see [Settings API](/docs/en
 
 ## See Also
 
-* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L553)
+* [JSONWP Specification](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L546)

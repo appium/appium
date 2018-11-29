@@ -133,7 +133,7 @@ npm run lint            # run eslint on the code
 npm run watch           # watch directory to re-transpile on code change, lint, and run unit tests
 npm run test            # same as above but don't watch
 npm run e2e-test        # transpile and run end-to-end/functional tests
-_FORCE_LOGS=1. <command> # show module log output during test run
+_FORCE_LOGS=1 <command> # show module log output during test run
 ```
 
 Note that we have a convention for unit test files to end in `-specs.js` and
@@ -150,7 +150,6 @@ To update the site docs, follow these steps:
 1. Check out and pull the latest `gh-pages` branch
 1. Follow the setup guide in the README.md
 1. Generate the docs by running `npm run build:docs`
-1. Test by running `npm run serve` and navigating to https://localhost:4000/
 1. Make a new branch
 1. Commit and push changes and make a pull request to have changes merged into `gh-pages`
 

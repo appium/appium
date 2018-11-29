@@ -73,7 +73,7 @@ These Capabilities are available only on Android-based drivers (like
 |`androidInstallTimeout`|Timeout in milliseconds used to wait for an apk to install to the device. Defaults to `90000` |e.g., `90000`|
 |`androidInstallPath`| The name of the directory on the device in which the apk will be push before install. Defaults to `/data/local/tmp` |e.g. `/sdcard/Downloads/`|
 |`adbPort`|Port used to connect to the ADB server (default `5037`)|`5037`|
-|`systemPort` | `systemPort` used to connect to [appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server), default is `8200` in general and selects one port from `8200` to `8299`. When you run tests in parallel, you must adjust the port to avoid conflicts. Read [Parallel Testing Setup Guide](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/parallel-tests.md#parallel-android-tests) for more details. | e.g., `8201` |
+|`systemPort` | `systemPort` used to connect to [appium-uiautomator2-server](https://github.com/appium/appium-uiautomator2-server) or [appium-espresso-driver](https://github.com/appium/appium-espresso-driver). The default is `8200` in general and selects one port from `8200` to `8299` for _appium-uiautomator2-server_, it is `8300` from `8300` to `8399` for _appium-espresso-driver_. When you run tests in parallel, you must adjust the port to avoid conflicts. Read [Parallel Testing Setup Guide](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/parallel-tests.md#parallel-android-tests) for more details. | e.g., `8201` |
 |`remoteAdbHost`|Optional remote ADB server host|e.g.: 192.168.0.101|
 |`androidDeviceSocket`|Devtools socket name. Needed only when tested app is a Chromium embedding browser. The socket is open by the browser and Chromedriver connects to it as a devtools client.|e.g., `chrome_devtools_remote`|
 |`avd`| Name of avd to launch|e.g., `api19`|
@@ -108,12 +108,27 @@ These Capabilities are available only on Android-based drivers (like
 |`networkSpeed`|Set the network speed emulation. Specify the maximum network upload and download speeds. Defaults to `full`| `['full','gsm', 'edge', 'hscsd', 'gprs', 'umts', 'hsdpa', 'lte', 'evdo']` Check [-netspeed option](https://developer.android.com/studio/run/emulator-commandline.html) more info about speed emulation for avds|
 |`gpsEnabled`|Toggle gps location provider for emulators before starting the session. By default the emulator will have this option enabled or not according to how it has been provisioned.|`true` or `false`|
 |`isHeadless`|Set this capability to `true` to run the Emulator headless when device display is not needed to be visible. `false` is the default value. _isHeadless_ is also support for iOS, check XCUITest-specific capabilities. |e.g., `true`|
-|`uiautomator2ServerLaunchTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
-|`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for an espresso server to launch. Defaults to `30000` |e.g., `50000`|
-|`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
 |`otherApps`|App or list of apps (as a JSON array) to install prior to running tests|e.g., `"/path/to/app.apk"`, `https://www.example.com/url/to/app.apk`, `["/path/to/app-a.apk", "/path/to/app-b.apk"]`|
 |`adbExecTimeout`| Timeout in milliseconds used to wait for adb command execution. Defaults to `20000` |e.g., `50000`|
 |`localeScript`| Sets the locale [script](https://developer.android.com/reference/java/util/Locale) | e.g., ` "Cyrl"` (Cyrillic)|
+
+#### UIAutomator2 Only
+
+These Capabilities are available only on the [UiAutomator2 Driver](/doc/en/drivers/android-uiautomator2.md)
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`uiautomator2ServerLaunchTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
+|`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
+
+#### Espresso Only
+
+These Capabilities are available only on the [Espresso Driver](/doc/en/drivers/android-espresso.md)
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for an espresso server to launch. Defaults to `30000` |e.g., `50000`|
+
 
 ### iOS Only
 
@@ -151,7 +166,7 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 |`webkitResponseTimeout`|(Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000`|e.g., `10000`|
 |`remoteDebugProxy`| (Sim only, <= 11.2) If set, Appium sends and receives remote debugging messages through a proxy on either the local port (Sim only, <= 11.2) or a proxy on this unix socket (Sim only >= 11.3) instead of communicating with the iOS remote debugger directly. |e.g. `12000` or `"/tmp/my.proxy.socket"`|
 
-### iOS Only, using XCUITest
+#### iOS Only, using XCUITest
 
 (For XCUITest-specific capabilities, please refer to the documentation on the [XCUITest Driver repo](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) itself.)
 

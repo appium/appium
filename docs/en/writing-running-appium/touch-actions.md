@@ -60,18 +60,6 @@ element's position, rather than absolute.
 Calling the `perform` event sends the entire sequence of events to appium,
 and the touch gesture is run on your device.
 
-Appium clients also allow one to directly execute a TouchAction through the
-driver object, rather than calling the `perform` event on the TouchAction
-object.
-
-In pseudocode, both of the following are equivalent:
-
-```center
-TouchAction().tap(el).perform()
-
-driver.perform(TouchAction().tap(el))
-```
-
 ### MultiTouch
 
 *MultiTouch* objects are collections of TouchActions.

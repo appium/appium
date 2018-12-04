@@ -48,11 +48,11 @@
     "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",
-    "appium-tizen-driver": "1.1.1-beta.3",
+    "appium-tizen-driver": "^1.1.1-beta.3",
     "appium-uiautomator2-driver": "1.x",
     "appium-windows-driver": "1.x",
     "appium-xcuitest-driver": "2.x",
-    "appium-youiengine-driver": "1.x",
+    "appium-youiengine-driver": "^1.1.1",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
@@ -87,8 +87,7 @@
     "shrinkwrap-prod": "rm -rf package-lock.json && npm prune --production && npm shrinkwrap",
     "zip": "zip -qr appium.zip .",
     "upload": "node ./build/test/scripts/bintray-upload.js",
-    "zip-and-upload": "npm run zip && npm run upload",
-    "release-beta": "release pre beta && npm publish --tag beta"
+    "zip-and-upload": "npm run zip && npm run upload"
   },
   "pre-commit": [
     "precommit-msg",
@@ -110,7 +109,6 @@
     "handlebars": "^4.0.10",
     "mocha": "5.x",
     "pre-commit": "1.x",
-    "release": "^4.0.2",
     "replace-ext": "^1.0.0",
     "sinon": "^6.0.0",
     "validate.js": "^0.12.0",

@@ -98,7 +98,7 @@ endpoint:
   json_parameters:
     - name: action
       type: string
-      description: The type of action to perform (moveTo|release|press|tap|wait)
+      description: The type of action to perform (moveTo\|release\|press\|tap\|wait)
     - name: options
       type: object
       description: The parameters of the action

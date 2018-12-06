@@ -271,6 +271,9 @@ describe('FakeDriver - via HTTP', function () {
       value.should.deep.equal(caps);
 
       createSessionStub.restore();
+
+      // End session
+      await request.delete({ url: `${baseUrl}/${sessionId}` });
     });
 
     it('should handle concurrent MJSONWP and W3C sessions', async function () {

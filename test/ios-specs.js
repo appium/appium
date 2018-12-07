@@ -62,17 +62,15 @@ describe('ios', function () {
       check.autofix.should.be.ok;
     });
     it('diagnose - success', async function () {
-      S.mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.10'));
       S.mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '1234 install-time\n', stderr: ''}));
+        B.resolve({stdout: '/Applications/Xcode.app/Contents/Developer\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: true,
-        message: 'Xcode Command Line Tools are installed.'
+        message: 'Xcode Command Line Tools are installed in: /Applications/Xcode.app/Contents/Developer\n'
       });
       S.verify();
     });
     it('diagnose - failure - pkgutil crash', async function () {
-      S.mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.10'));
       S.mocks.tp.expects('exec').once().throws(new Error('Something wrong!'));
       (await check.diagnose()).should.deep.equal({
         ok: false,
@@ -80,10 +78,8 @@ describe('ios', function () {
       });
       S.verify();
     });
-    it('diagnose - failure - no install time', async function () {
-      S.mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.10'));
-      S.mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '1234 abcd\n', stderr: ''}));
+    it('diagnose - failure - xcode-select -p returns status 2', async function () {
+      S.mocks.tp.expects('exec').once().throws(new Error());
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'Xcode Command Line Tools are NOT installed!'

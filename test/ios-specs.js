@@ -175,7 +175,7 @@ describe('ios', function () {
     it('autofix', function () {
       check.autofix.should.be.ok;
     });
-    it('diagnose - success - 10.10', async function () {
+    it('diagnose - success', async function () {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '1234 is-developer\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -184,30 +184,8 @@ describe('ios', function () {
       });
       mocks.verify();
     });
-    it('diagnose - success - 10.8', async function () {
+    it('diagnose - failure', async function () {
       mocks.tp.expects('exec').once().returns(B.reject(new Error('Oh No!')));
-      mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.8'));
-      mocks.fs.expects('readFile').once().returns(B.resolve(
-        '<key>system.privilege.taskport</key> \n <dict>\n <key>allow-root</key>\n <true/>'));
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        message: 'The Authorization DB is set up properly.'
-      });
-      mocks.verify();
-    });
-    it('diagnose - failure - 10.10 - security', async function () {
-      mocks.tp.expects('exec').once().returns(B.reject(new Error('Oh No!')));
-      mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.10'));
-      (await check.diagnose()).should.deep.equal({
-        ok: false,
-        message: 'The Authorization DB is NOT set up properly.'
-      });
-      mocks.verify();
-    });
-    it('diagnose - failure - /etc/authorization', async function () {
-      mocks.tp.expects('exec').once().returns(B.reject(new Error('Oh No!')));
-      mocks.system.expects('macOsxVersion').once().returns(B.resolve('10.8'));
-      mocks.fs.expects('readFile').once().returns(B.resolve(''));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'The Authorization DB is NOT set up properly.'

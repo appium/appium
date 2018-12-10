@@ -19,8 +19,7 @@ describe('dev', function () {
     });
     it('diagnose - success', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
+      mocks.fs.expects('which').once().returns(B.resolve('/a/b/c/d/mvn'));
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
@@ -30,8 +29,8 @@ describe('dev', function () {
     });
     it('diagnose - failure - not in path ', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: 'mvn not found\n', stderr: ''}));
+      mocks.fs.expects('which').once().returns(
+        B.resolve({stack: 'mvn not found'}));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         message: 'mvn is MISSING in PATH: /a/b/c/d;/e/f/g/h'
@@ -40,8 +39,8 @@ describe('dev', function () {
     });
     it('diagnose - failure - invalid path', async function () {
       process.env.PATH = '/a/b/c/d;/e/f/g/h';
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '/a/b/c/d/mvn\n', stderr: ''}));
+      mocks.fs.expects('which').once().returns(
+        B.resolve('/a/b/c/d/mvn'));
       mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,

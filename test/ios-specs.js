@@ -66,7 +66,7 @@ describe('ios', function () {
         B.resolve({stdout: '/Applications/Xcode.app/Contents/Developer\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: true,
-        message: 'Xcode Command Line Tools are installed in: /Applications/Xcode.app/Contents/Developer\n'
+        message: 'Xcode Command Line Tools are installed in: /Applications/Xcode.app/Contents/Developer'
       });
       S.verify();
     });

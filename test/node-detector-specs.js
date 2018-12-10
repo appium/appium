@@ -26,44 +26,53 @@ describe('NodeDetector', withSandbox({mocks: {fs, tp, system}}, (S) => {
     S.verify();
   });
 
-  // retrieveUsingSystemCall
-  let testRetrieveWithScript = (method) => {
-    if (method === 'retrieveUsingAppleScript') {
-      system.isMac = () => true;
-    }
-    it(method + ' - success', async function () {
-      S.mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: `/a/b/c/d/node${EOL}`, stderr: ''}));
-      S.mocks.fs.expects('exists').once().returns(B.resolve(true));
-      (await NodeDetector[method]())
-        .should.equal('/a/b/c/d/node');
-      S.verify();
-    });
-    it(method + ' - failure - path not found ', async function () {
-      S.mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: 'aaa not found\n', stderr: ''}));
-      expect(await NodeDetector[method]()).to.be.a('null');
-      S.verify();
-    });
-    it(method + ' - failure - path not exist', async function () {
-      S.mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
-      S.mocks.fs.expects('exists').once().returns(B.resolve(false));
-      expect(await NodeDetector[method]()).to.be.a('null');
-    });
-  };
-
-  testRetrieveWithScript('retrieveUsingSystemCall');
-  testRetrieveWithScript('retrieveUsingAppleScript');
-
-  it('testRetrieveWithScript - success - where returns multiple lines ', async function () {
-    S.mocks.system.expects('isWindows').twice().returns(true);
+  it('retrieveUsingAppleScript - success', async function () {
+    system.isMac = () => true;
     S.mocks.tp.expects('exec').once().returns(
-      B.resolve({stdout: `/a/b/node${EOL}/c/d/e/node${EOL}`, stderr: ''}));
+      B.resolve({stdout: `/a/b/c/d/node${EOL}`, stderr: ''}));
+    S.mocks.fs.expects('exists').once().returns(B.resolve(true));
+    (await NodeDetector.retrieveUsingAppleScript()).should.equal('/a/b/c/d/node');
+    S.verify();
+  });
+  it('retrieveUsingAppleScript - failure - path not found ', async function () {
+    system.isMac = () => true;
+    S.mocks.tp.expects('exec').once().returns(
+      B.resolve({stdout: 'aaa not found\n', stderr: ''}));
+    expect(await NodeDetector.retrieveUsingAppleScript()).to.be.a('null');
+    S.verify();
+  });
+  it('retrieveUsingAppleScript - failure - path not exist', async function () {
+    system.isMac = () => true;
+    S.mocks.tp.expects('exec').once().returns(
+      B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
+    S.mocks.fs.expects('exists').once().returns(B.resolve(false));
+    expect(await NodeDetector.retrieveUsingAppleScript()).to.be.a('null');
+  });
+
+  it('retrieveUsingSystemCall - success - where returns multiple lines ', async function () {
+    S.mocks.fs.expects('which').once().returns(B.resolve('/a/b/node.exe'));
     S.mocks.fs.expects('exists').once().returns(B.resolve(true));
     (await NodeDetector.retrieveUsingSystemCall())
-      .should.equal('/a/b/node');
+      .should.equal('/a/b/node.exe');
     S.verify();
+  });
+  it('retrieveUsingSystemCall - success', async function () {
+    S.mocks.fs.expects('which').once().returns(B.resolve('/a/b/c/d/node'));
+    S.mocks.fs.expects('exists').once().returns(B.resolve(true));
+    (await NodeDetector.retrieveUsingSystemCall()).should.equal('/a/b/c/d/node');
+    S.verify();
+  });
+  it('retrieveUsingSystemCall - failure - path not found ', async function () {
+    S.mocks.fs.expects('which').once().returns(
+      B.resolve({stack: 'Error: not found: carthage'}));
+    expect(await NodeDetector.retrieveUsingSystemCall()).to.be.a('null');
+    S.verify();
+  });
+  it('retrieveUsingSystemCall - failure - path not exist', async function () {
+    S.mocks.fs.expects('which').once().returns(
+      B.resolve('/a/b/c/d'));
+    S.mocks.fs.expects('exists').once().returns(B.resolve(false));
+    expect(await NodeDetector.retrieveUsingSystemCall()).to.be.a('null');
   });
 
   it('retrieveUsingAppiumConfigFile - success', async function () {

@@ -531,10 +531,12 @@ describe('Protocol', function () {
           const expectedValue = [
             {
               something: {
+                [MJSONWP_ELEMENT_KEY]: 'fooo',
                 [W3C_ELEMENT_KEY]: 'fooo',
                 other: 'bar'
               }
             }, {
+              [MJSONWP_ELEMENT_KEY]: 'bar',
               [W3C_ELEMENT_KEY]: 'bar'
             },
             'ignore',

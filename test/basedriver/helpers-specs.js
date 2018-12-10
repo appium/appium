@@ -1,4 +1,4 @@
-import { isPackageOrBundle, renameKey } from '../../lib/basedriver/helpers';
+import { isPackageOrBundle, duplicateKeys } from '../../lib/basedriver/helpers';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -18,25 +18,44 @@ describe('helpers', function () {
     });
   });
 
-  describe('#renameKey', function () {
+  describe('#duplicateKeys', function () {
     it('should translate key in an object', function () {
-      renameKey({'foo': 'hello world'}, 'foo', 'bar').should.eql({'bar': 'hello world'});
+      duplicateKeys({'foo': 'hello world'}, 'foo', 'bar').should.eql({'foo': 'hello world', 'bar': 'hello world'});
     });
     it('should translate key in an object within an object', function () {
-      renameKey({'key': {'foo': 'hello world'}}, 'foo', 'bar').should.eql({'key': {'bar': 'hello world'}});
+      duplicateKeys({'key': {'foo': 'hello world'}}, 'foo', 'bar').should.eql({'key': {'foo': 'hello world', 'bar': 'hello world'}});
     });
     it('should translate key in an object with an array', function () {
-      renameKey([
+      duplicateKeys([
         {'key': {'foo': 'hello world'}},
         {'foo': 'HELLO WORLD'}
       ], 'foo', 'bar').should.eql([
-        {'key': {'bar': 'hello world'}},
-        {'bar': 'HELLO WORLD'}
+        {'key': {'foo': 'hello world', 'bar': 'hello world'}},
+        {'foo': 'HELLO WORLD', 'bar': 'HELLO WORLD'}
       ]);
+    });
+    it('should duplicate both keys', function () {
+      duplicateKeys({
+        'keyOne': {
+          'foo': 'hello world',
+        },
+        'keyTwo': {
+          'bar': 'HELLO WORLD',
+        },
+      }, 'foo', 'bar').should.eql({
+        'keyOne': {
+          'foo': 'hello world',
+          'bar': 'hello world',
+        },
+        'keyTwo': {
+          'bar': 'HELLO WORLD',
+          'foo': 'HELLO WORLD',
+        }
+      });
     });
     it('should not do anything to primitives', function () {
       [0, 1, -1, true, false, null, undefined, "", "Hello World"].forEach((item) => {
-        should.equal(renameKey(item), item);
+        should.equal(duplicateKeys(item), item);
       });
     });
     it('should rename keys on big complex objects', function () {
@@ -55,20 +74,22 @@ describe('helpers', function () {
         0
       ];
       const expectedOutput = [
-        {'FOO': 'bar'},
+        {'foo': 'bar', 'FOO': 'bar'},
         {
           hello: {
             world: {
+              'foo': 'BAR',
               'FOO': 'BAR',
             }
           },
+          foo: 'bahr',
           FOO: 'bahr'
         },
         'foo',
         null,
         0
       ];
-      renameKey(input, 'foo', 'FOO').should.deep.equal(expectedOutput);
+      duplicateKeys(input, 'foo', 'FOO').should.deep.equal(expectedOutput);
     });
   });
 });

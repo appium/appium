@@ -36,8 +36,7 @@ describe('NodeDetector', withSandbox({mocks: {fs, tp, system}}, (S) => {
   });
   it('retrieveUsingAppleScript - failure - path not found ', async function () {
     system.isMac = () => true;
-    S.mocks.tp.expects('exec').once().returns(
-      B.resolve({stdout: 'aaa not found\n', stderr: ''}));
+    S.mocks.tp.expects('exec').once().throws(Error());
     expect(await NodeDetector.retrieveUsingAppleScript()).to.be.a('null');
     S.verify();
   });
@@ -63,8 +62,7 @@ describe('NodeDetector', withSandbox({mocks: {fs, tp, system}}, (S) => {
     S.verify();
   });
   it('retrieveUsingSystemCall - failure - path not found ', async function () {
-    S.mocks.fs.expects('which').once().returns(
-      B.resolve({stack: 'Error: not found: carthage'}));
+    S.mocks.fs.expects('which').once().throws(Error('not found: carthage'));
     expect(await NodeDetector.retrieveUsingSystemCall()).to.be.a('null');
     S.verify();
   });

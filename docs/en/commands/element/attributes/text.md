@@ -8,7 +8,7 @@ Returns visible text for element
 ```java
 // Java
 MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
-let elText = element.getText();
+String elText = element.getText();
 
 ```
 

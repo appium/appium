@@ -83,8 +83,7 @@
     "lint": "gulp eslint",
     "coverage": "gulp coveralls",
     "generate-docs": "node ./build/commands-yml/parse.js",
-    "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
-    "shrinkwrap-prod": "rm -rf package-lock.json && npm prune --production && npm shrinkwrap",
+    "shrinkwrap-prod": "rimraf package-lock.json && npm prune --production && npm shrinkwrap && npm install --no-shrinkwrap",
     "zip": "zip -qr appium.zip .",
     "upload": "node ./build/test/scripts/bintray-upload.js",
     "zip-and-upload": "npm run zip && npm run upload"
@@ -110,6 +109,7 @@
     "mocha": "5.x",
     "pre-commit": "1.x",
     "replace-ext": "^1.0.0",
+    "rimraf": "^2.6.2",
     "sinon": "^6.0.0",
     "validate.js": "^0.12.0",
     "wd": "^1.10.0",

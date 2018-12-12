@@ -54,7 +54,9 @@ mouse.move_to(element, 5, 5)
 
 ```csharp
 // C#
-// TODO C# sample
+Actions action = new Actions(driver);
+action.MoveToElement(element, 10, 10);
+action.Perform();
 
 ```
 

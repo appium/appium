@@ -123,7 +123,7 @@ y coordinate, and then releasing. For it to work, there can't be a delay between
 
 |name|type|description|
 |----|----|-----------|
-| action | `string` | The type of action to perform (moveTo|release|press|tap|wait) |
+| action | `string` | The type of action to perform (moveTo\|release\|press\|tap\|wait) |
 | options | `object` | The parameters of the action |
 | opts.element | `string` | The ID of the element |
 | opts.x | `number` | The X coordinate of the operation (relative to top left corner) |

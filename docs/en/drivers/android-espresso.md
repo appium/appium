@@ -1,6 +1,6 @@
 ## The Espresso Driver for Android
 
-Appium currently has beta-level support for the
+Appium currently has support for the
 [Espresso](https://developer.android.com/training/testing/espresso/index.html)
 automation technology via its own Espresso driver. This driver works by kicking
 off an Espresso run on a device, with our own automation server as part of the

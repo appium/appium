@@ -56,7 +56,10 @@ action.move_to(element).click.perform
 
 ```csharp
 // C#
-// TODO C# sample
+Actions action = new Actions(driver);
+action.MoveToElement(element);
+action.Click();
+action.Perform();
 
 ```
 

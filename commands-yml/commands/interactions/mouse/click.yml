@@ -35,7 +35,12 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Actions action = new Actions(driver);
+      action.MoveToElement(element);
+      action.Click();
+      action.Perform();
+
+
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html#click--"

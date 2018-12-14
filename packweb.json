@@ -6,7 +6,6 @@
         "appium-contrib": [
             "appium-adb",
             "appium-android-driver",
-            "appium-android-ime",
             "appium-base-driver",
             "appium-chromedriver",
             "appium-doctor",
@@ -20,7 +19,6 @@
             "appium-support",
             "appium-uiautomator2-driver",
             "appium-uiautomator2-server",
-            "appium-unlock",
             "appium-xcode",
             "appium-xcuitest-driver",
             "authorize-ios",

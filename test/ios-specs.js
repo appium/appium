@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-         AuthorizationDbCheck, CarthageCheck } from '../lib/ios';
+         AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck, OptionalFbsimctlCommandCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -30,6 +30,7 @@ describe('ios', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'Xcode is installed at: /a/b/c/d'
       });
       mocks.verify();
@@ -38,6 +39,7 @@ describe('ios', function () {
       mocks.tp.expects('exec').once().returns(B.reject(new Error('Something wrong!')));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'Xcode is NOT installed!'
       });
       mocks.verify();
@@ -48,6 +50,7 @@ describe('ios', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'Xcode cannot be found at \'/a/b/c/d\'!'
       });
       mocks.verify();
@@ -66,6 +69,7 @@ describe('ios', function () {
         B.resolve({stdout: '/Applications/Xcode.app/Contents/Developer\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'Xcode Command Line Tools are installed in: /Applications/Xcode.app/Contents/Developer'
       });
       S.verify();
@@ -74,6 +78,7 @@ describe('ios', function () {
       S.mocks.tp.expects('exec').once().throws(new Error('Something wrong!'));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'Xcode Command Line Tools are NOT installed!'
       });
       S.verify();
@@ -82,6 +87,7 @@ describe('ios', function () {
       S.mocks.tp.expects('exec').once().throws(new Error());
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'Xcode Command Line Tools are NOT installed!'
       });
       S.verify();
@@ -143,6 +149,7 @@ describe('ios', function () {
         B.resolve({stdout: '1234 enabled\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'DevToolsSecurity is enabled.'
       });
       mocks.verify();
@@ -151,6 +158,7 @@ describe('ios', function () {
       mocks.tp.expects('exec').once().returns(B.reject(new Error('Something wrong!')));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'DevToolsSecurity is NOT enabled!'
       });
       mocks.verify();
@@ -160,6 +168,7 @@ describe('ios', function () {
         B.resolve({stdout: '1234 abcd\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'DevToolsSecurity is NOT enabled!'
       });
       mocks.verify();
@@ -180,6 +189,7 @@ describe('ios', function () {
         B.resolve({stdout: '1234 is-developer\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'The Authorization DB is set up properly.'
       });
       mocks.verify();
@@ -188,6 +198,7 @@ describe('ios', function () {
       mocks.tp.expects('exec').once().returns(B.reject(new Error('Oh No!')));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'The Authorization DB is NOT set up properly.'
       });
       mocks.verify();
@@ -207,6 +218,7 @@ describe('ios', function () {
       mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'Carthage was found at: /usr/local/bin/carthage'
       });
       mocks.verify();
@@ -215,12 +227,71 @@ describe('ios', function () {
       mocks.CarthageDetector.expects('detect').once().returns(B.resolve(null));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'Carthage was NOT found!'
       });
       mocks.verify();
     });
     it('fix', async function () {
       (await check.fix()).should.equal('Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
+    });
+  }));
+
+  describe('OptionalFbsimctlCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalFbsimctlCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/fbsimctl');
+      mocks.tp.expects('exec').once().returns({stdout: 'vxx.xx.xx', stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'fbsimctl is installed at: path/to/fbsimctl. Installed versions are: vxx.xx.xx'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'fbsimctl cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('Why fbsimctl is needed and how to install it is: http://appium.io/docs/en/drivers/ios-xcuitest/');
+    });
+  }));
+
+  describe('OptionalApplesimutilsCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalApplesimutilsCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/applesimutils');
+      mocks.tp.expects('exec').once().returns({stdout: 'vxx.xx.xx', stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'applesimutils is installed at: path/to/applesimutils. Installed versions are: vxx.xx.xx'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'applesimutils cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('Why applesimutils is needed and how to install it is: http://appium.io/docs/en/drivers/ios-xcuitest/');
     });
   }));
 });

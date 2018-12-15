@@ -23,6 +23,7 @@ describe('dev', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'mvn was found at /a/b/c/d/mvn'
       });
       mocks.verify();
@@ -33,6 +34,7 @@ describe('dev', function () {
         B.resolve({stack: 'mvn not found'}));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'mvn is MISSING in PATH: /a/b/c/d;/e/f/g/h'
       });
       mocks.verify();
@@ -44,6 +46,7 @@ describe('dev', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'mvn is MISSING in PATH: /a/b/c/d;/e/f/g/h'
       });
       mocks.verify();
@@ -63,6 +66,7 @@ describe('dev', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'android-16 was found at: /a/b/c/d/platforms/android-16'
       });
       mocks.verify();
@@ -71,6 +75,7 @@ describe('dev', function () {
       delete process.env.ANDROID_HOME;
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'android-16 could not be found because ANDROID_HOME is NOT set!'
       });
       mocks.verify();
@@ -80,6 +85,7 @@ describe('dev', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'android-16 could NOT be found at \'/a/b/c/d/platforms/android-16\'!'
       });
       mocks.verify();

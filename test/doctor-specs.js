@@ -21,7 +21,7 @@ describe('doctor', function () {
 
   function configure () {
     let doctor = new Doctor();
-    let checks = [new DoctorCheck(), new DoctorCheck(), new DoctorCheck()];
+    let checks = [new DoctorCheck(), new DoctorCheck(), new DoctorCheck(), new DoctorCheck(), new DoctorCheck()];
     doctor.register(checks);
     return {doctor, checks};
   }
@@ -32,18 +32,26 @@ describe('doctor', function () {
       let {doctor, checks} = configure();
       S.mocks.checks = checks.map((check) => { return S.sandbox.mock(check); });
       S.mocks.checks[0].expects('diagnose').once().returns({ok: true, message: "All Good!"});
-      S.mocks.checks[1].expects('diagnose').once().returns({ok: false, message: "Oh No!"});
+      S.mocks.checks[1].expects('diagnose').twice().returns({ok: true, optional: true, message: "All Good Option!"});
       S.mocks.checks[2].expects('diagnose').once().returns({ok: false, message: "Oh No!"});
+      S.mocks.checks[3].expects('diagnose').twice().returns({ok: false, optional: true, message: "Oh No Option!"});
+      S.mocks.checks[4].expects('diagnose').once().returns({ok: false, message: "Oh No!"});
       await doctor.diagnose();
       S.verify();
       doctor.toFix.should.have.length(2);
+      doctor.toFixOptionals.should.have.length(1);
       logStub.output.should.equal([
-        'info: ### Diagnostic starting ###',
+        'info: ### Diagnostic for necessary dependencies starting ###',
         'info:  ✔ All Good!',
         'warn:  ✖ Oh No!',
         'warn:  ✖ Oh No!',
-        'info: ### Diagnostic completed, 2 fixes needed. ###',
-        'info: '
+        'info: ### Diagnostic for necessary dependencies completed, 2 fixes needed. ###',
+        'info: ',
+        'info: ### Diagnostic for optional dependencies starting ###',
+        'info:  ✔ All Good Option!',
+        'warn:  ✖ Oh No Option!',
+        'info: ### Diagnostic for optional dependencies completed, one fix needed. ###',
+        'info: ',
       ].join('\n'));
     });
   }));
@@ -52,8 +60,7 @@ describe('doctor', function () {
     let doctor = new Doctor();
     it('should report success when no fixes are needed', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      doctor.toFix = [];
-      (await doctor.reportSuccess()).should.equal(true);
+      (await doctor.reportSuccess(doctor.toFix.length, doctor.toFixOptionals.length)).should.equal(true);
       logStub.output.should.equal([
         'info: Everything looks good, bye!',
         'info: '
@@ -62,7 +69,7 @@ describe('doctor', function () {
 
     it('should return false when fixes are needed', async function () {
       doctor.toFix = [{}];
-      (await doctor.reportSuccess()).should.equal(false);
+      (await doctor.reportSuccess(doctor.toFix.length)).should.equal(false);
     });
   }));
 
@@ -76,6 +83,7 @@ describe('doctor', function () {
         {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
         {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
       ];
+      doctor.toFixOptionals = [];
       for (let i = 0; i < doctor.toFix.length; i++) {
         let m = S.sandbox.mock(doctor.toFix[i].check);
         if (doctor.toFix[i].check.autofix) {
@@ -84,14 +92,75 @@ describe('doctor', function () {
           m.expects('fix').once().returns(B.resolve(`Manual fix for ${i} is do something.`));
         }
       }
-      (await doctor.reportManualFixes()).should.equal(true);
+      (await doctor.reportManualFixes(doctor.toFix, doctor.toFixOptionals)).should.equal(true);
       S.verify();
       logStub.output.should.equal([
         'info: ### Manual Fixes Needed ###',
         'info: The configuration cannot be automatically fixed, please do the following first:',
-        'warn: - Manual fix for 0 is do something.',
-        'warn: - Manual fix for 2 is do something.',
-        'warn: - Manual fix for 3 is do something.',
+        'warn:  ➜ Manual fix for 0 is do something.',
+        'warn:  ➜ Manual fix for 2 is do something.',
+        'warn:  ➜ Manual fix for 3 is do something.',
+        'info: ',
+        'info: ###',
+        'info: ',
+        'info: Bye! Run appium-doctor again when all manual fixes have been applied!',
+        'info: '
+      ].join('\n'));
+    });
+
+    it('should ask for manual fixes to be applied for optional', async function () {
+      let logStub = stubLog(S.sandbox, log, {stripColors: true});
+      doctor.toFix = [];
+      doctor.toFixOptionals = [
+        {error: 'Oh no this need to be manually fixed.', check: new DoctorCheck()},
+        {error: 'Oh no this also need to be manually fixed.', check: new DoctorCheck()},
+      ];
+      for (let i = 0; i < doctor.toFixOptionals.length; i++) {
+        let m = S.sandbox.mock(doctor.toFixOptionals[i].check);
+        if (doctor.toFixOptionals[i].check.autofix) {
+          m.expects('fix').never();
+        } else {
+          m.expects('fix').once().returns(B.resolve(`Manual fix for ${i} is do something.`));
+        }
+      }
+      (await doctor.reportManualFixes(doctor.toFix, doctor.toFixOptionals)).should.equal(true);
+      S.verify();
+      logStub.output.should.equal([
+        'info: ### Optional Manual Fixes ###',
+        'info: The configuration can install optionally. Please do the following manually:',
+        'warn:  ➜ Manual fix for 0 is do something.',
+        'warn:  ➜ Manual fix for 1 is do something.',
+        'info: ',
+        'info: ###',
+        'info: ',
+        'info: Bye! Run appium-doctor again when all manual fixes have been applied!',
+        'info: '
+      ].join('\n'));
+    });
+
+    it('should ask for manual fixes to be applied for necessary and optional', async function () {
+      let logStub = stubLog(S.sandbox, log, {stripColors: true});
+      doctor.toFix = [
+        {error: 'Oh no this need to be manually fixed.', check: new DoctorCheck()}
+      ];
+      doctor.toFixOptionals = [
+        {error: 'Oh no this need to be manually fixed, but it is optional.', check: new DoctorCheck()},
+      ];
+
+      S.sandbox.mock(doctor.toFix[0].check).expects('fix').once().returns(B.resolve(`Manual fix for 0 is do something.`));
+      S.sandbox.mock(doctor.toFixOptionals[0].check).expects('fix').once().returns(B.resolve(`Manual fix for 0 is do something.`));
+
+      (await doctor.reportManualFixes(doctor.toFix, doctor.toFixOptionals)).should.equal(true);
+      S.verify();
+      logStub.output.should.equal([
+        'info: ### Manual Fixes Needed ###',
+        'info: The configuration cannot be automatically fixed, please do the following first:',
+        'warn:  ➜ Manual fix for 0 is do something.',
+        'info: ',
+        'info: ### Optional Manual Fixes ###',
+        'info: The configuration can install optionally. Please do the following manually:',
+        'warn:  ➜ Manual fix for 0 is do something.',
+        'info: ',
         'info: ###',
         'info: ',
         'info: Bye! Run appium-doctor again when all manual fixes have been applied!',
@@ -120,7 +189,10 @@ describe('doctor', function () {
       S.mocks.check = S.sandbox.mock(fix.check);
       S.mocks.check.expects('fix').once();
       S.mocks.check.expects('diagnose').once().returns(B.resolve({
-        ok: true, message: 'It worked'}));
+        ok: true,
+        optional: false,
+        message: 'It worked'
+      }));
       await doctor.runAutoFix(fix);
       S.verify();
       logStub.output.should.equal([

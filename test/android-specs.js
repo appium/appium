@@ -21,6 +21,7 @@ describe('android', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'ANDROID_HOME is set to: /a/b/c/d'
       });
       mocks.verify();
@@ -29,6 +30,7 @@ describe('android', function () {
       delete process.env.ANDROID_HOME;
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'ANDROID_HOME is NOT set!'
       });
       mocks.verify();
@@ -38,6 +40,7 @@ describe('android', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'ANDROID_HOME is set to \'/a/b/c/d\' ' +
           'but this is NOT a valid path!'
       });
@@ -58,6 +61,7 @@ describe('android', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(true));
       (await check.diagnose()).should.deep.equal({
         ok: true,
+        optional: false,
         message: 'adb exists at: /a/b/c/d/platform-tools/adb'
       });
       mocks.verify();
@@ -66,6 +70,7 @@ describe('android', function () {
       delete process.env.ANDROID_HOME;
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'adb could not be found because ANDROID_HOME is NOT set!'
       });
       mocks.verify();
@@ -75,6 +80,7 @@ describe('android', function () {
       mocks.fs.expects('exists').once().returns(B.resolve(false));
       (await check.diagnose()).should.deep.equal({
         ok: false,
+        optional: false,
         message: 'adb could NOT be found at \'/a/b/c/d/platform-tools/adb\'!'
       });
       mocks.verify();

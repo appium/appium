@@ -36,21 +36,17 @@ jobs:
         - git reset --hard origin/master
         - git checkout -b generate-docs-$TRAVIS_COMMIT
         - npm install
-
       script:
         # Generate the docs
         - npm run generate-docs
 
-        # If no docs were generated, don't do anything
+        # If docs were generated, make a PR to update the docs
         - |
-          if [[ -z $(git status -s) ]]; then
-            exit 0
+          if [[ -n $(git status -s) ]]; then
+            git commit -a -n -m 'Update generated docs';
+            git push origin generate-docs-$TRAVIS_COMMIT;
+            hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Update auto-generated docs";
           fi
-        
-        # Make a PR to update the docs
-        - git commit -a -n -m 'Update generated docs [ci skip]'
-        - git push origin generate-docs-$TRAVIS_COMMIT
-        - hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Update auto-generated docs"
 
     - stage: BinTray Bundle Build and Upload
       # only want to run this on the main master branch
@@ -78,7 +74,7 @@ jobs:
         # Remove the dev depenedencies
         - npm prune
       script: npm run zip-and-upload
-      
+
     - stage: Update Documentation
       if: tag
       os: osx

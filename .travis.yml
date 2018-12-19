@@ -23,17 +23,10 @@ jobs:
       os: linux
       script: npm run test && npm run e2e-test
       node_js: "8"
-    - stage:
-      name: test documentation generation
-      os: linux
-      before_script:
-        - npm install
-      script:
-        - npm run generate-docs
 
     - stage: Auto-generate documentation
       os: osx
-      if: branch = master AND type != pull_request AND !tag
+      #if: branch = master AND type != pull_request AND !tag
       env:
         - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
@@ -46,6 +39,7 @@ jobs:
       script:
         # Generate the docs
         - npm run generate-docs
+        - git add .
 
         # If docs were generated, make a PR to update the docs
         - |

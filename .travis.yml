@@ -24,11 +24,18 @@ jobs:
       script: npm run test && npm run e2e-test
       node_js: "8"
     - stage:
+      name: test documentation generation
+      os: linux
+      before_script:
+        - npm install
+      script:
+        - npm run generate-docs
+
+    - stage: Auto-generate documentation
       os: osx
       if: branch = master AND type != pull_request AND !tag
       env:
-        # this is just to indicate in the Travis job list that this is generating docs
-        - GENERATE_DOCS=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
+        - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
         - brew install hub
         - hub --version
@@ -60,6 +67,7 @@ jobs:
         - CXX=g++
       before_install:
         - gcc --version
+        - brew upgrade carthage
       install:
         # Install prod dependencies
         - npm install
@@ -67,6 +75,14 @@ jobs:
         # Install only the dev dependencies that we need
         - npm install --only=dev gulp
         - npm install --only=dev appium-gulp-plugins
+
+        # get appium-xcuitest-driver fully built
+        - pushd node_modules/appium-xcuitest-driver/WebDriverAgent
+        # do not use build script because Travis _will_ have rate limits
+        - carthage bootstrap --no-use-binaries
+        - cp Cartfile.resolved Carthage
+        - mkdir -p ./Resources/WebDriverAgent.bundle
+        - popd
       before_script:
         # Build the assets
         - npm run build

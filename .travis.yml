@@ -25,7 +25,7 @@ jobs:
       node_js: "8"
     - stage:
       name: test documentation generation
-      os: osx
+      os: linux
       before_script:
         - npm install
       script:

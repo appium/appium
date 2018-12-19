@@ -60,6 +60,7 @@ jobs:
         - CXX=g++
       before_install:
         - gcc --version
+        - brew upgrade carthage
       install:
         # Install prod dependencies
         - npm install
@@ -67,6 +68,14 @@ jobs:
         # Install only the dev dependencies that we need
         - npm install --only=dev gulp
         - npm install --only=dev appium-gulp-plugins
+
+        # get appium-xcuitest-driver fully built
+        - pushd node_modules/appium-xcuitest-driver/WebDriverAgent
+        # do not use build script because Travis _will_ have rate limits
+        - carthage bootstrap --no-use-binaries
+        - cp Cartfile.resolved Carthage
+        - mkdir -p ./Resources/WebDriverAgent.bundle
+        - popd
       before_script:
         # Build the assets
         - npm run build

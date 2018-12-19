@@ -66,10 +66,10 @@ const log = logger.getLogger('Bintray');
       }
     });
   } catch (e) {
-    if (e.statusCode !== 409) {
+    if (e.statusCode === 409) {
       // Doesn't fail on 409 because sometimes 409 means that the asset was already published
       // and if that's the case, we don't want it to fail
-      log.error(`Didn't publish upload. Upload is already available. Reason:`, e.message);
+      log.error(`Did not publish upload. Upload is already available. Reason: ${e.message}`);
     } else {
       log.error(`Failed to publish 'appium.zip' to ${BUILD_NAME}. Reason: ${JSON.stringify(e)}`);
       process.exit(-1);

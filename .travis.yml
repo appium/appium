@@ -30,22 +30,21 @@ jobs:
         - npm install
       script:
         - npm run generate-docs
-
     - stage: Auto-generate documentation
       os: osx
-      if: branch = master AND type != pull_request AND !tag
+      #if: branch = master AND type != pull_request AND !tag
       env:
         - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
         - brew install hub
         - hub --version
         - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
-        - git reset --hard origin/master
         - git checkout -b generate-docs-$TRAVIS_COMMIT
         - npm install
       script:
         # Generate the docs
         - npm run generate-docs
+        - git add .
 
         # If docs were generated, make a PR to update the docs
         - |

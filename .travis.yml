@@ -24,12 +24,12 @@ jobs:
       script: npm run test && npm run e2e-test
       node_js: "8"
     - stage:
-       name: test documentation generation
-       os: linux
-       before_script:
-         - npm install
-       script:
-         - npm run generate-docs
+      name: test documentation generation
+      os: linux
+      before_script:
+        - npm install
+      script:
+        - npm run generate-docs
     - stage: Auto-generate documentation
       os: osx
       if: branch = master AND type != pull_request AND !tag

@@ -85,7 +85,7 @@ MultiAction().add(action0).add(action1).perform()
 
 ### Bugs and Workarounds
 
-An unfortunate bug exists in the iOS 7.0 - 8.x Simulators where ScrollViews,
+An unfortunate bug exists in iOS Device 7.0 - 8.x Simulators where ScrollViews,
 CollectionViews, and TableViews don't recognize gestures initiated by
 UIAutomation (which Appium uses under the hood for iOS). To work around this,
 we have provided access to a different function, `scroll`, which in many cases

@@ -63,8 +63,6 @@ Note that the actual commands you would use in your test script differ based on 
 |`waitForSelectorTimeout`| Int (milliseconds) which is the same as [setWaitForSelectorTimeout](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html#setWaitForSelectorTimeout(long)). If a negative value is given, it would set to default(10 * 1000 milliseconds). Handled by [UiAutomator Configurator](https://developer.android.com/reference/android/support/test/uiautomator/Configurator.html) in Android API 18 and above. | e.g., `10000` |
 |`normalizeTagNames`| Translate all class name used as XML tags to the limited set of ASCII characters supported by Apache Harmony library and used by default in Android to avoid possible XML parsing exceptions caused by XPath lookup. The translation is based on [junidecode](https://github.com/gcardone/junidecode). This improve [this issue](https://github.com/appium/appium/issues/11854) case. `false` by default. | `false` or `true` |
 
-
-
 ### iOS Only
 
 #### XCUITest

@@ -32,7 +32,7 @@ jobs:
         - npm run generate-docs
     - stage: Auto-generate documentation
       os: osx
-      #if: branch = master AND type != pull_request AND !tag
+      if: branch = master AND type != pull_request AND !tag
       env:
         - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:

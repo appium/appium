@@ -86,7 +86,7 @@
     "generate-docs": "node ./build/commands-yml/parse.js",
     "shrinkwrap-prod": "rimraf package-lock.json && npm prune --production && npm shrinkwrap && npm install --no-shrinkwrap",
     "zip": "zip -qr appium.zip .",
-    "upload": "node ./build/test/scripts/bintray-upload.js",
+    "upload": "gulp github-upload",
     "zip-and-upload": "npm run zip && npm run upload"
   },
   "pre-commit": [
@@ -94,6 +94,7 @@
     "precommit-test"
   ],
   "devDependencies": {
+    "@octokit/rest": "^16.3.0",
     "ajv": "^6.5.3",
     "appium-gulp-plugins": "^3.1.0",
     "babel-eslint": "^10.0.0",

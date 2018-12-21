@@ -59,7 +59,7 @@ jobs:
             hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Update auto-generated docs";
           fi
     - stage:
-      name: BinTray Bundle
+      name: Bundle
       # only want to run this on the main master branch
       if: branch = master AND type != pull_request
       os:

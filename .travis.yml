@@ -93,7 +93,11 @@ jobs:
 
         # Remove the dev depenedencies
         - npm prune
-      script: npm run zip-and-upload
+      script:
+        - npm run zip
+        - npm install --only=dev gulp
+        - npm install --only=dev appium-gulp-plugins
+        - npm run upload
 
     - stage: Update appium.io
       if: tag

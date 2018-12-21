@@ -30,7 +30,9 @@ jobs:
         - npm install
       script:
         - npm run generate-docs
-    - stage: Auto-generate documentation
+
+    - stage: Update assets
+      name: Documentation
       os: osx
       if: branch = master AND type != pull_request AND !tag
       env:
@@ -46,6 +48,9 @@ jobs:
         - npm run generate-docs
         - git add .
 
+        # log the status so we know what is going on, on failure
+        - git status -s
+
         # If docs were generated, make a PR to update the docs
         - |
           if [[ -n $(git status -s) ]]; then
@@ -53,8 +58,8 @@ jobs:
             git push origin generate-docs-$TRAVIS_COMMIT;
             hub pull-request -b "appium:master" -h "appium:generate-docs-$TRAVIS_COMMIT" -m "Update auto-generated docs";
           fi
-
-    - stage: BinTray Bundle Build and Upload
+    - stage:
+      name: BinTray Bundle
       # only want to run this on the main master branch
       if: branch = master AND type != pull_request
       os:
@@ -90,7 +95,7 @@ jobs:
         - npm prune
       script: npm run zip-and-upload
 
-    - stage: Update Documentation
+    - stage: Update appium.io
       if: tag
       os: osx
       env:

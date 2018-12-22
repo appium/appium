@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-         AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck, OptionalFbsimctlCommandCheck } from '../lib/ios';
+         AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck, OptionalFbsimctlCommandCheck, OptionalIdevicelocationCommandCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -262,7 +262,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Why fbsimctl is needed and how to install it is: http://appium.io/docs/en/drivers/ios-xcuitest/');
+      (await check.fix()).should.equal('Why fbsimctl is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/');
     });
   }));
 
@@ -291,7 +291,35 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Why applesimutils is needed and how to install it is: http://appium.io/docs/en/drivers/ios-xcuitest/');
+      (await check.fix()).should.equal('Why applesimutils is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/');
+    });
+  }));
+
+  describe('OptionalIdevicelocationCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalIdevicelocationCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/idevicelocation');
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'idevicelocation is installed at: path/to/idevicelocation'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'idevicelocation cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('idevicelocation is used to set geolocation for real device. Please read https://github.com/JonGabilondoAngulo/idevicelocation to install it');
     });
   }));
 });

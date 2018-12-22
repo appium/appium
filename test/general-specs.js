@@ -1,7 +1,8 @@
 // transpile:mocha
 
-import { NodeBinaryCheck, NodeVersionCheck, OptionalOpencv4nodejsCommandCheck } from '../lib/general';
+import { NodeBinaryCheck, NodeVersionCheck, OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck } from '../lib/general';
 import * as tp from 'teen_process';
+import * as utils from '../lib/utils';
 import NodeDetector from '../lib/node-detector';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -106,7 +107,40 @@ describe('general', function () {
     });
     it('fix', async function () {
       (await check.fix()).should.
-        equal('Why opencv4nodejs is needed and how to install it is: https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/image-comparison.md');
+        equal('Why opencv4nodejs is needed and how to install it: https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/image-comparison.md');
+    });
+  }));
+
+  describe('OptionalFfmpegCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalFfmpegCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.tp.expects('exec').once().returns({stdout: `ffmpeg version 4.1 Copyright (c) 2000-2018 the FFmpeg developers
+      built with Apple LLVM version 10.0.0 (clang-1000.11.45.5)
+      configuration: --prefix=/usr/local/Cellar/ffmpeg/4.1_1 --enable-shared --enable-pthreads --enable-version3 --enable-hardcoded-tables --enable-avresample --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gpl --enable-libmp3lame --enable-libopus --enable-libsnappy --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libxvid --enable-lzma --enable-opencl --enable-videotoolbox
+      libavutil      56. 22.100 / 56. 22.100
+      libpostproc    55.  3.100 / 55.  3.100`, stderr: ''});
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/ffmpeg');
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'ffmpeg is installed at: path/to/ffmpeg. ffmpeg version 4.1 Copyright (c) 2000-2018 the FFmpeg developers'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'ffmpeg cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('ffmpeg is needed to record screen features. Please read https://www.ffmpeg.org/ to install it');
     });
   }));
 });

@@ -23,6 +23,17 @@ describe('Protocol Converter', function () {
       timeoutObjects.length.should.equal(1);
       timeoutObjects[0].should.eql({type: 'script', ms: 100});
     });
+    it('should ignore invalid entries while converting from W3C', function () {
+      converter.downstreamProtocol = MJSONWP;
+      let timeoutObjects = converter.getTimeoutRequestObjects({
+        script: 100,
+        sessionId: '5432a4f3-cd89-4781-8905-ea9d3150840c',
+        bar: -1,
+        baz: undefined,
+      });
+      timeoutObjects.length.should.equal(1);
+      timeoutObjects[0].should.eql({type: 'script', ms: 100});
+    });
     it('should take multiple W3C timeouts and produce multiple MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
       let [scriptTimeout, pageLoadTimeout, implicitTimeout] = converter.getTimeoutRequestObjects({script: 100, pageLoad: 200, implicit: 300});

@@ -44,33 +44,33 @@ const androidWebCaps = {
 const serverConfig = {
   host: process.env.APPIUM_HOST || "localhost",
   port: process.env.APPIUM_PORT || 4723,
-  logLevel: "verbose"
+  logLevel: "info"
 };
 
 const androidOptions = Object.assign(
   {
-    desiredCapabilities: androidCaps
+    capabilities: androidCaps
   },
   serverConfig
 );
 
 const iosOptions = Object.assign(
   {
-    desiredCapabilities: iosCaps
+    capabilities: iosCaps
   },
   serverConfig
 );
 
 const androidWebOptions = Object.assign(
   {
-    desiredCapabilities: androidWebCaps
+    capabilities: androidWebCaps
   },
   serverConfig
 );
 
 const iosWebOptions = Object.assign(
   {
-    desiredCapabilities: iosWebCaps
+    capabilities: iosWebCaps
   },
   serverConfig
 );

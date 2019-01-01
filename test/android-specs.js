@@ -1,7 +1,9 @@
 // transpile:mocha
 
-import { EnvVarAndPathCheck, AndroidToolCheck } from '../lib/android';
+import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck } from '../lib/android';
 import { fs } from 'appium-support';
+import * as utils from '../lib/utils';
+import * as tp from 'teen_process';
 import chai from 'chai';
 import { withMocks, stubEnv } from 'appium-test-support';
 import B from 'bluebird';
@@ -93,6 +95,34 @@ describe('android', function () {
     it('fix - install', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
       (await check.fix()).should.equal('Manually install adb and add it to PATH.');
+    });
+  }));
+
+  describe('OptionalAppBundleCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalAppBundleCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/bundletool.jar');
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'bundletool.jar is installed at: path/to/bundletool.jar'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'bundletool.jar cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('bundletool.jar is used to handle Android App Bundle. Please read http://appium.io/docs/en/writing-running-appium/android/android-appbundle/ to install it');
     });
   }));
 });

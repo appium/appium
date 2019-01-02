@@ -5,14 +5,14 @@ const assert = require("chai").assert;
 
 androidOptions.capabilities.app = app;
 
-describe("Create Android session", () => {
+describe("Create Android session", function() {
   let client;
 
   before(async() => {
     client = await webdriverio.remote(androidOptions);
   });
 
-  it("should create and destroy a session", async() => {
+  it("should create and destroy a session", async function() {
      const res = await client.status();
      assert.isObject(res.build);
      const current_package = await client.getCurrentPackage();

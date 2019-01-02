@@ -5,14 +5,14 @@ const assert = require("chai").assert;
 
 iosOptions.capabilities.app = app;
 
-describe("Create session",() => {
+describe("Create session", function() {
   let client;
 
-  beforeEach(async() => {
+  beforeEach(async function() {
     client = await webdriverio.remote(iosOptions);
   });
 
-  it("should create and destroy IOS sessions", async() => {
+  it("should create and destroy IOS sessions", async function() {
     const res = await client.status();
     assert.isObject(res.build);
     const element = await client.findElement("class name","XCUIElementTypeApplication");

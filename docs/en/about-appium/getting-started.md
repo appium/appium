@@ -193,12 +193,12 @@ session:
 
 ```js
 // javascript
-    const elementId = await client.findElement("accessibility id","TextField1");
-    client.elementSendKeys(elementId.ELEMENT, "Hello World!");
-    const elementValue = await client.findElement("accessibility id","TextField1");
-    await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
-      assert.equal(attr,"Hello World!");
-    });
+const elementId = await client.findElement("accessibility id","TextField1");
+client.elementSendKeys(elementId.ELEMENT, "Hello World!"); 
+const elementValue = await client.findElement("accessibility id","TextField1");
+await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
+assert.equal(attr,"Hello World!");
+});
 ```
 
 What's going on here is that after creating a session and launching our app,
@@ -233,8 +233,8 @@ const client = wdio.remote(opts);
 const elementId = await client.findElement("accessibility id","TextField1");    client.elementSendKeys(elementId.ELEMENT, "Hello World!");
 const elementValue = await client.findElement("accessibility id","TextField1");
 await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
-      assert.equal(attr,"Hello World!");
-    });
+assert.equal(attr,"Hello World!");
+});
 ```
 
 You can try and run this test on your own. Simply save it and execute it using

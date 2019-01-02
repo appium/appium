@@ -122,6 +122,19 @@
     "heapdump": "0.x"
   },
   "greenkeeper": {
+    "groups": {
+      "appium": {
+        "packages": [
+          "package.json"
+        ]
+      },
+      "sample-code": {
+        "packages": [
+          "sample-code/javascript-wd/package.json",
+          "sample-code/javascript-webdriverio/package.json"
+        ]
+      }
+    },
     "ignore": []
   }
 }

@@ -168,7 +168,7 @@ So here is how we begin to construct a session in our test file:
 // javascript
 const opts = {
   port: 4723,
-  desiredCapabilities: {
+  capabilities: {
     platformName: "Android",
     platformVersion: "8.0",
     deviceName: "Android Emulator",
@@ -193,13 +193,12 @@ session:
 
 ```js
 // javascript
-client
-  .init()
-  .click("~App")
-  .click("~Alert Dialogs")
-  .back()
-  .back()
-  .end();
+const elementId = await client.findElement("accessibility id","TextField1");
+client.elementSendKeys(elementId.ELEMENT, "Hello World!"); 
+const elementValue = await client.findElement("accessibility id","TextField1");
+await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
+assert.equal(attr,"Hello World!");
+});
 ```
 
 What's going on here is that after creating a session and launching our app,
@@ -220,7 +219,7 @@ const wdio = require("webdriverio");
 
 const opts = {
   port: 4723,
-  desiredCapabilities: {
+  capabilities: {
     platformName: "Android",
     platformVersion: "8.0",
     deviceName: "Android Emulator",
@@ -231,13 +230,11 @@ const opts = {
 
 const client = wdio.remote(opts);
 
-client
-  .init()
-  .click("~App")
-  .click("~Alert Dialogs")
-  .back()
-  .back()
-  .end();
+const elementId = await client.findElement("accessibility id","TextField1");    client.elementSendKeys(elementId.ELEMENT, "Hello World!");
+const elementValue = await client.findElement("accessibility id","TextField1");
+await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
+assert.equal(attr,"Hello World!");
+});
 ```
 
 You can try and run this test on your own. Simply save it and execute it using

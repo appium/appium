@@ -24,7 +24,7 @@
     <li><a href='/docs/en/commands/device/app/end-test-coverage.md'>End Test Coverage</a></li>
 </ul></li>
     <li><a href='/docs/en/commands/device/clipboard'>Clipboard</a><ul>    <li><a href='/docs/en/commands/device/clipboard/get-clipboard.md'>Get Clipboard</a></li>
-    <li><a href='/docs/en/commands/device/clipboard/set-Clipboard.md'>Set Clipboard</a></li>
+    <li><a href='/docs/en/commands/device/clipboard/set-clipboard.md'>Set Clipboard</a></li>
 </ul></li>
     <li><a href='/docs/en/commands/device/emulator'>Emulator</a><ul>    <li><a href='/docs/en/commands/device/emulator/power_ac.md'>Power AC</a></li>
     <li><a href='/docs/en/commands/device/emulator/power_capacity.md'>Power Capacity</a></li>

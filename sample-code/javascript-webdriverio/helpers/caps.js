@@ -1,10 +1,8 @@
-const path = require("path");
-
 const iosCaps = {
   platformName: "iOS",
   automationName: "XCUITest",
   deviceName: process.env.IOS_DEVICE_NAME || "iPhone 6s",
-  platformVersion: process.env.IOS_PLATFORM_VERSION || "11.1",
+  platformVersion: process.env.IOS_PLATFORM_VERSION || "12.1",
   app: undefined // Will be added in tests
 };
 
@@ -12,7 +10,7 @@ const iosWebCaps = {
   platformName: "iOS",
   automationName: "XCUITest",
   deviceName: process.env.IOS_DEVICE_NAME || "iPhone 6s",
-  platformVersion: process.env.IOS_PLATFORM_VERSION || "11.1",
+  platformVersion: process.env.IOS_PLATFORM_VERSION || "12.1",
   browserName: "Safari"
 };
 

@@ -2,21 +2,22 @@ const webdriverio = require("webdriverio");
 const androidOptions = require("../../helpers/caps").androidWebOptions;
 const assert = require("chai").assert;
 
-describe("Create Chrome web session", function() {
+describe("Create Chrome web session", function () {
   let client;
 
-  before(async function() {
+  before(async function () {
     client = await webdriverio.remote(androidOptions);
   });
 
-  after(async function() {
+  after(async function () {
     return await client.deleteSession();
   });
 
-  it("should create and destroy Android browser session", async function() {
+  it("should create and destroy Android browser session", async function () {
     // Navigate to google.com
-    let client = await webdriverio.remote(iosOptions);
+    const client = await webdriverio.remote(androidOptions);
     await client.url("https://www.google.com");
+
     const title = await client.getTitle();
     assert.equal(title, "Google");
   });

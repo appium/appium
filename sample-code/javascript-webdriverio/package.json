@@ -4,7 +4,8 @@
   "description": "Sample tests using webdriverio",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 6000000 test/basic"
+    "test": "mocha test/basic",
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
   "author": "Daniel Graham",
   "license": "Apache-2.0",

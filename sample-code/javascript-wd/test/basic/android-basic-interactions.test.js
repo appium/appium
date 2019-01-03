@@ -1,15 +1,14 @@
 import wd from 'wd';
 import chai from 'chai';
 import { androidCaps, serverConfig } from '../helpers/caps';
-
 const {assert} = chai;
+
 
 const PACKAGE = 'io.appium.android.apis';
 const SEARCH_ACTIVITY = '.app.SearchInvoke';
 const ALERT_DIALOG_ACTIVITY = '.app.AlertDialogSamples';
 
 describe('Basic Android interactions', function () {
-
   let driver;
 
   before(async function () {

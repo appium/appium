@@ -1,6 +1,6 @@
 import wd from 'wd';
 import chai from 'chai';
-import { iosCaps, androidCaps, serverConfig } from '../helpers/caps';
+import { androidCaps, serverConfig } from '../helpers/caps';
 
 const {assert} = chai;
 

@@ -1,15 +1,15 @@
-import path from 'path';
-
 const iosCaps = {
   platformName: 'iOS',
   automationName: 'XCUITest',
-  deviceName:  process.env.IOS_DEVICE_NAME || 'iPhone 6s',
-  platformVersion: process.env.IOS_PLATFORM_VERSION || '11.1',
+  deviceName: process.env.IOS_DEVICE_NAME || 'iPhone 6s',
+  platformVersion: process.env.IOS_PLATFORM_VERSION || '12.1',
   app: undefined, // Will be added in tests
 };
 
-// Leave the Android platformVersion blank and set deviceName to a random string (Android deviceName is ignored by Appium but is still required)
-// If we're using SauceLabs, set the Android deviceName and platformVersion to the latest supported SauceLabs device and version
+// Leave the Android platformVersion blank and set deviceName to a random string
+// (Android deviceName is ignored by Appium but is still required)
+// If we're using SauceLabs, set the Android deviceName and platformVersion to
+// the latest supported SauceLabs device and version
 const DEFAULT_ANDROID_DEVICE_NAME = process.env.SAUCE_LABS ? 'Android GoogleAPI Emulator' : 'My Android Device';
 const DEFAULT_ANDROID_PLATFORM_VERSION = process.env.SAUCE_LABS ? '7.1' : null;
 

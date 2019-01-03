@@ -71,7 +71,7 @@ module.exports = {
         ]],
         ["Clipboard", ["clipboard",
           ["Get Clipboard", "get-clipboard.md"],
-          ["Set Clipboard", "set-Clipboard.md"],
+          ["Set Clipboard", "set-clipboard.md"],
         ]],
         ["Emulator", ["emulator",
           ["Power AC", "power_ac.md"],

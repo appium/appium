@@ -21,7 +21,12 @@ As of version 1.9.2, Appium supports the use of plugins that can be used to assi
     }
     ```
 
-    "plug" is the shortcut, and "my-element-finding-plugin" is the reference. You will use the shortcut in your own test code, so it can be any string which is a valid JSON key. The reference must be a reference to the plugin's Node module, and it must be formatted in such a way that Appium can [require](https://nodejs.org/api/modules.html#modules_require) it using Node's [module resolution](https://medium.freecodecamp.org/requiring-modules-in-node-js-everything-you-need-to-know-e7fbd119be8).
+    "plug" is the shortcut, and "my-element-finding-plugin" is the reference.
+    You will use the shortcut in your own test code, so it can be any string
+    which is a valid JSON key. The reference must be a reference to the plugin's
+    Node module, and it must be formatted in such a way that Appium can
+    [require](https://nodejs.org/api/modules.html#modules_require) it using
+    Node's [module resolution](https://medium.freecodecamp.org/requiring-modules-in-node-js-everything-you-need-to-know-e7fbd119be8).
 
 Once you've started a session with this capability, we say that the plugin (or plugins---multiple plugins are of course supported) are _registered_. You can find an element using a registered plugin by doing two things:
 

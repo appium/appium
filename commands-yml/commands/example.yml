@@ -43,7 +43,7 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/releases"
   ruby: "https://github.com/appium/ruby_lib/releases/latest"
   ruby_core: "https://github.com/appium/ruby_lib/releases/latest"
-  php: "https://github.com/appium/php-client/releases/latest-"
+  php: "https://github.com/appium/php-client/releases/latest"
   csharp: "https://github.com/appium/appium" # TODO
 
 # Driver support by platform

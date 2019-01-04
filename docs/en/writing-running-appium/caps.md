@@ -115,7 +115,7 @@ These Capabilities are available only on Android-based drivers (like
 
 #### UIAutomator2 Only
 
-These Capabilities are available only on the [UiAutomator2 Driver](/doc/en/drivers/android-uiautomator2.md)
+These Capabilities are available only on the [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -125,7 +125,7 @@ These Capabilities are available only on the [UiAutomator2 Driver](/doc/en/drive
 
 #### Espresso Only
 
-These Capabilities are available only on the [Espresso Driver](/doc/en/drivers/android-espresso.md)
+These Capabilities are available only on the [Espresso Driver](/docs/en/drivers/android-espresso.md)
 
 |Capability|Description|Values|
 |----|-----------|-------|

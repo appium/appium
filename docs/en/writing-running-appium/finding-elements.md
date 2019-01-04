@@ -54,8 +54,9 @@ I can see the accessibility id.
 ![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector.png)
 
 ### REPL
-A [REPL](https://en.wikipedia.org/wiki/Read–eval–print_loop) is a simple interactive language shell.
-You can invoke various command interactively. It will help you to make sure your scenarios interactively with Appium server.
+A [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) is a simple
+interactive language shell. You can invoke various command interactively. It
+will help you to make sure your scenarios interactively with Appium server.
 
 - [Appium Ruby Console](https://github.com/appium/ruby_console)
 - [WebDriverIO with debug mode](http://webdriver.io/api/utility/debug.html)

@@ -10,27 +10,31 @@ example_usage:
   java:
     |
       driver.activateApp('com.apple.Preferences');
+      driver.activateApp('io.appium.android.apis');
   python:
     |
       driver.activate_app('com.apple.Preferences')
+      driver.activate_app('io.appium.android.apis')
   javascript_wd:
     |
-      // TODO
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
   javascript_wdio:
     |
-      // TODO
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
   ruby:
     |
       activate_app('com.apple.Preferences')
+      activate_app('io.appium.android.apis')
   ruby_core:
     |
       @driver.activate_app('com.apple.Preferences')
+      @driver.activate_app('io.appium.android.apis')
   php:
     |
-      // todo
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
   csharp:
     |
-      // TODO C# sample
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#activateApp-java.lang.String-"

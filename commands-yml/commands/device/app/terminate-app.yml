@@ -10,27 +10,31 @@ example_usage:
   java:
     |
       driver.terminateApp('com.apple.Preferences');
+      driver.terminateApp('io.appium.android.apis');
   python:
     |
       driver.terminate_app('com.apple.Preferences')
+      driver.terminate_app('io.appium.android.apis')
   javascript_wd:
     |
-      // TODO
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
   javascript_wdio:
     |
-      // TODO
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
   ruby:
     |
       terminate_app('com.apple.Preferences')
+      terminate_app('io.appium.android.apis')
   ruby_core:
     |
       @driver.terminate_app('com.apple.Preferences')
+      @driver.terminate_app('io.appium.android.apis')
   php:
     |
-      // todo
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
   csharp:
     |
-      // TODO C# sample
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#terminateApp-java.lang.String-"

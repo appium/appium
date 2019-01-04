@@ -14,7 +14,7 @@ without any preliminary notice.
 
 This gesture performs a simple "swipe" gesture on the particular screen element or
 on the application element, which is usually the whole screen. This method does not
-accept coordnates and siply emulates single swipe with one finger. It might be
+accept coordinates and simply emulates single swipe with one finger. It might be
 useful for such cases like album pagination, switching views, etc. More advanced
 cases may require to call "mobile: dragFromToForDuration", where one can supply
 coordinates and duration.

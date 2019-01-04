@@ -24,11 +24,11 @@ example_usage:
   ruby:
     |
       app_state('com.apple.Preferences')
-      app_state('io.appium.android.apis')
+      query_app_state('io.appium.android.apis') # `query_` prefix is also available
   ruby_core:
     |
       @driver.app_state('com.apple.Preferences')
-      @driver.app_state('io.appium.android.apis')
+      @driver.query_app_state('io.appium.android.apis') # `query_` prefix is also available
   php:
     |
       // Supports only `mobile: queryAppState` for iOS, XCUITest

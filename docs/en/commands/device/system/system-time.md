@@ -13,7 +13,7 @@ String time = driver.getDeviceTime();
 
 ```python
 # Python
-time = self.driver.device_time()
+time = self.driver.device_time
 
 ```
 

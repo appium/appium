@@ -43,6 +43,9 @@
     <li><a href='/docs/en/commands/device/app/close-app.md'>Close App</a></li>
     <li><a href='/docs/en/commands/device/app/reset-app.md'>Reset App</a></li>
     <li><a href='/docs/en/commands/device/app/remove-app.md'>Remove App</a></li>
+    <li><a href='/docs/en/commands/device/app/activate-app.md'>Activate App</a></li>
+    <li><a href='/docs/en/commands/device/app/terminate-app.md'>Terminate App</a></li>
+    <li><a href='/docs/en/commands/device/app/app-state.md'>Get App State</a></li>
     <li><a href='/docs/en/commands/device/app/get-app-strings.md'>Get App Strings</a></li>
     <li><a href='/docs/en/commands/device/app/end-test-coverage.md'>End Test Coverage</a></li>
 </ul></li>

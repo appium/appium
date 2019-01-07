@@ -102,7 +102,7 @@ describe('proxy', function () {
     });
     it('should pass along request errors', function () {
       let j = mockProxy({sessionId: '123'});
-      j.proxy('/badurl', 'GET').should.eventually.be.rejectedWith("Could not proxy");
+      j.proxy('/badurl', 'GET').should.eventually.be.rejectedWith('Could not proxy');
     });
     it('should proxy error responses and codes', async function () {
       let j = mockProxy({sessionId: '123'});
@@ -119,7 +119,7 @@ describe('proxy', function () {
     });
     it('should pass along request errors', function () {
       let j = mockProxy({sessionId: '123'});
-      j.command('/badurl', 'GET').should.eventually.be.rejectedWith("Could not proxy");
+      j.command('/badurl', 'GET').should.eventually.be.rejectedWith('Could not proxy');
     });
     it('should throw when a command fails', async function () {
       let j = mockProxy({sessionId: '123'});

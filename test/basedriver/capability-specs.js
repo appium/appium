@@ -373,7 +373,7 @@ describe('Desired Capabilities', function () {
     });
 
     it('should ignore w3c capabilities if it is not a plain JSON object', async function () {
-      for (let val of [true, "string", [], 100]) {
+      for (let val of [true, 'string', [], 100]) {
         const [sessionId, caps] = await d.createSession({
           platformName: 'iOS',
           deviceName: 'Delorean'

@@ -11,7 +11,7 @@ function resFixture (url, method, json) {
   if (/\/element\/200\/value$/.test(url)) {
     return [200, {status: 0, sessionId: 'innersessionid', value: 'foobar'}];
   }
-  if (/\/session$/.test(url) && method === "POST") {
+  if (/\/session$/.test(url) && method === 'POST') {
     if (json.desiredCapabilities && json.desiredCapabilities.redirect) {
       return [303, 'http://localhost:4444/wd/hub/session/123'];
     } else {
@@ -26,7 +26,7 @@ function resFixture (url, method, json) {
 
 async function request (opts) { // eslint-disable-line require-await
   if (/badurl$/.test(opts.url)) {
-    throw new Error("noworky");
+    throw new Error('noworky');
   }
 
   let [statusCode, body] = resFixture(opts.url, opts.method, opts.json);

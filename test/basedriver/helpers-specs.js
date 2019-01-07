@@ -54,7 +54,7 @@ describe('helpers', function () {
       });
     });
     it('should not do anything to primitives', function () {
-      [0, 1, -1, true, false, null, undefined, "", "Hello World"].forEach((item) => {
+      [0, 1, -1, true, false, null, undefined, '', 'Hello World'].forEach((item) => {
         should.equal(duplicateKeys(item), item);
       });
     });

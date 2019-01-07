@@ -37,7 +37,7 @@ describe('Protocol', function () {
         (() => {validators.implicitWait();}).should.throw(/ms/i);
       });
       it('should fail when given a non-numeric ms', function () {
-        (() => {validators.implicitWait("five");}).should.throw(/ms/i);
+        (() => {validators.implicitWait('five');}).should.throw(/ms/i);
       });
       it('should fail when given a negative ms', function () {
         (() => {validators.implicitWait(-1);}).should.throw(/ms/i);
@@ -54,7 +54,7 @@ describe('Protocol', function () {
         (() => {validators.asyncScriptTimeout();}).should.throw(/ms/i);
       });
       it('should fail when given a non-numeric ms', function () {
-        (() => {validators.asyncScriptTimeout("five");}).should.throw(/ms/i);
+        (() => {validators.asyncScriptTimeout('five');}).should.throw(/ms/i);
       });
       it('should fail when given a negative ms', function () {
         (() => {validators.asyncScriptTimeout(-1);}).should.throw(/ms/i);

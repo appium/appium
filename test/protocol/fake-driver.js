@@ -59,7 +59,7 @@ class FakeDriver extends BaseDriver {
   }
 
   async getUrl () {
-    return "http://foobar.com";
+    return 'http://foobar.com';
   }
 
   async back (sessionId) {
@@ -97,7 +97,7 @@ class FakeDriver extends BaseDriver {
   }
 
   async getText () {
-    return "";
+    return '';
   }
 
   async getAttribute (attr, elementId, sessionId) {

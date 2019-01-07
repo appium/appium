@@ -26,7 +26,7 @@ describe('Protocol', function () {
   describe('direct to driver', function () {
     let d = new FakeDriver();
     it('should return response values directly from the driver', async function () {
-      (await d.setUrl("http://google.com")).should.contain("google");
+      (await d.setUrl('http://google.com')).should.contain('google');
     });
   });
 
@@ -52,8 +52,8 @@ describe('Protocol', function () {
       });
       res.should.eql({
         status: 0,
-        value: "Navigated to: http://google.com",
-        sessionId: "foo"
+        value: 'Navigated to: http://google.com',
+        sessionId: 'foo'
       });
     });
 
@@ -65,8 +65,8 @@ describe('Protocol', function () {
       });
       JSON.parse(res).should.eql({
         status: 0,
-        value: "Navigated to: http://google.com",
-        sessionId: "foo"
+        value: 'Navigated to: http://google.com',
+        sessionId: 'foo'
       });
     });
 
@@ -78,8 +78,8 @@ describe('Protocol', function () {
       });
       JSON.parse(res).should.eql({
         status: 0,
-        value: "Navigated to: http://google.com",
-        sessionId: "foo"
+        value: 'Navigated to: http://google.com',
+        sessionId: 'foo'
       });
     });
 
@@ -93,8 +93,8 @@ describe('Protocol', function () {
       });
       res.body.should.eql({
         status: 0,
-        value: "foo",
-        sessionId: "foo"
+        value: 'foo',
+        sessionId: 'foo'
       });
     });
 
@@ -105,7 +105,7 @@ describe('Protocol', function () {
         json: {}
       });
       res.status.should.equal(0);
-      res.value.should.eql(["bar", "foo"]);
+      res.value.should.eql(['bar', 'foo']);
     });
 
     it('should include url req params in the order: custom, element, session', async function () {
@@ -115,7 +115,7 @@ describe('Protocol', function () {
         json: {}
       });
       res.status.should.equal(0);
-      res.value.should.eql(["baz", "bar", "foo"]);
+      res.value.should.eql(['baz', 'bar', 'foo']);
     });
 
     it('should respond with 400 Bad Request if parameters missing', async function () {
@@ -127,14 +127,14 @@ describe('Protocol', function () {
         simple: false
       });
       res.statusCode.should.equal(400);
-      res.body.should.contain("url");
+      res.body.should.contain('url');
     });
 
     it('should reject requests with a badly formatted body and not crash', async function () {
       await request({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        json: "oh hello"
+        json: 'oh hello'
       }).should.eventually.be.rejected;
 
       let res = await request({
@@ -144,8 +144,8 @@ describe('Protocol', function () {
       });
       res.should.eql({
         status: 0,
-        value: "Navigated to: http://google.com",
-        sessionId: "foo"
+        value: 'Navigated to: http://google.com',
+        sessionId: 'foo'
       });
 
     });
@@ -154,7 +154,7 @@ describe('Protocol', function () {
       await request({
         url: `${baseUrl}/blargimarg`,
         method: 'GET'
-      }).should.eventually.be.rejectedWith("404");
+      }).should.eventually.be.rejectedWith('404');
     });
 
     // TODO pass this test
@@ -213,7 +213,7 @@ describe('Protocol', function () {
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
         json: {}
-      }).should.eventually.be.rejectedWith("400");
+      }).should.eventually.be.rejectedWith('400');
     });
 
     it('should ignore special extra payload params in the right contexts', async function () {
@@ -227,7 +227,7 @@ describe('Protocol', function () {
         url: `${baseUrl}/session/foo/element/bar/value`,
         method: 'POST',
         json: {id: 'baz'}
-      }).should.eventually.be.rejectedWith("400");
+      }).should.eventually.be.rejectedWith('400');
 
       // make sure adding the optional 'id' doesn't clobber a route where we
       // have an actual required 'id'
@@ -253,7 +253,7 @@ describe('Protocol', function () {
           message: 'An unknown server-side error occurred while processing ' +
                    'the command. Original error: Mishandled Driver Error'
         },
-        sessionId: "foo"
+        sessionId: 'foo'
       });
     });
 
@@ -262,28 +262,28 @@ describe('Protocol', function () {
         let res = await request({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          json: {value: "text to type"}
+          json: {value: 'text to type'}
         });
         res.status.should.equal(0);
-        res.value.should.eql(["text to type", "bar"]);
+        res.value.should.eql(['text to type', 'bar']);
       });
       it('should accept text for sendkeys', async function () {
         let res = await request({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          json: {text: "text to type"}
+          json: {text: 'text to type'}
         });
         res.status.should.equal(0);
-        res.value.should.eql(["text to type", "bar"]);
+        res.value.should.eql(['text to type', 'bar']);
       });
       it('should accept value and text for sendkeys, and use value', async function () {
         let res = await request({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          json: {value: "text to type", text: "text to ignore"}
+          json: {value: 'text to type', text: 'text to ignore'}
         });
         res.status.should.equal(0);
-        res.value.should.eql(["text to type", "bar"]);
+        res.value.should.eql(['text to type', 'bar']);
       });
     });
 
@@ -335,18 +335,18 @@ describe('Protocol', function () {
         let res = await request({
           url: `${baseUrl}/session/foo/touch/perform`,
           method: 'POST',
-          json: [{"action": "tap", "options": {"element": "3"}}]
+          json: [{'action': 'tap', 'options': {'element': '3'}}]
         });
-        res.value.should.deep.equal([[{"action": "tap", "options": {"element": "3"}}], 'foo']);
+        res.value.should.deep.equal([[{'action': 'tap', 'options': {'element': '3'}}], 'foo']);
       });
 
       it('should not wrap twice', async function () {
         let res = await request({
           url: `${baseUrl}/session/foo/touch/perform`,
           method: 'POST',
-          json: {actions: [{"action": "tap", "options": {"element": "3"}}]}
+          json: {actions: [{'action': 'tap', 'options': {'element': '3'}}]}
         });
-        res.value.should.deep.equal([[{"action": "tap", "options": {"element": "3"}}], 'foo']);
+        res.value.should.deep.equal([[{'action': 'tap', 'options': {'element': '3'}}], 'foo']);
       });
 
     });
@@ -743,7 +743,7 @@ describe('Protocol', function () {
       res.should.eql({
         status: 0,
         value: null,
-        sessionId: "foo"
+        sessionId: 'foo'
       });
     });
 
@@ -755,8 +755,8 @@ describe('Protocol', function () {
       });
       res.should.eql({
         status: 0,
-        value: "",
-        sessionId: "foo"
+        value: '',
+        sessionId: 'foo'
       });
     });
 
@@ -776,7 +776,7 @@ describe('Protocol', function () {
           message: 'An unknown server-side error occurred while processing ' +
                    'the command. Original error: Too Fresh!'
         },
-        sessionId: "foo"
+        sessionId: 'foo'
       });
     });
 
@@ -795,7 +795,7 @@ describe('Protocol', function () {
         value: {
           message: 'A session is either terminated or not started'
         },
-        sessionId: "foo"
+        sessionId: 'foo'
       });
     });
   });
@@ -952,7 +952,7 @@ describe('Protocol', function () {
 
     it('should pass on any errors in proxying', async function () {
       driver.proxyReqRes = async function () { // eslint-disable-line require-await
-        throw new Error("foo");
+        throw new Error('foo');
       };
       let res = await request({
         url: `${baseUrl}/session/${sessionId}/url`,
@@ -976,7 +976,7 @@ describe('Protocol', function () {
 
     it('should able to throw ProxyRequestError in proxying', async function () {
       driver.proxyReqRes = async function () { // eslint-disable-line require-await
-        let jsonwp = {status: 35, value: "No such context found.", sessionId: "foo"};
+        let jsonwp = {status: 35, value: 'No such context found.', sessionId: 'foo'};
         throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
       };
       let res = await request({
@@ -991,9 +991,9 @@ describe('Protocol', function () {
       res.body.should.eql({
         status: 35,
         value: {
-          message: "No such context found."
+          message: 'No such context found.'
         },
-        sessionId: "foo"
+        sessionId: 'foo'
       });
     });
 
@@ -1026,7 +1026,7 @@ describe('Protocol', function () {
       res.statusCode.should.equal(200);
       res.body.should.eql({
         status: 0,
-        value: "Navigated to: http://google.com",
+        value: 'Navigated to: http://google.com',
         sessionId
       });
     });
@@ -1044,7 +1044,7 @@ describe('Protocol', function () {
 
         res.statusCode.should.equal(500);
         res.body.status.should.equal(13);
-        res.body.value.message.should.contain("roxy");
+        res.body.value.message.should.contain('roxy');
       }
       const lists = [
         'foo',

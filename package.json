@@ -82,6 +82,7 @@
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp eslint",
+    "lint:fix": "gulp eslint --fix",
     "coverage": "gulp coveralls",
     "generate-docs": "node ./build/commands-yml/parse.js",
     "shrinkwrap-prod": "rimraf package-lock.json && npm prune --production && npm shrinkwrap && npm install --no-shrinkwrap",

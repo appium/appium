@@ -230,7 +230,8 @@ const opts = {
 
 const client = wdio.remote(opts);
 
-const elementId = await client.findElement("accessibility id","TextField1");    client.elementSendKeys(elementId.ELEMENT, "Hello World!");
+const elementId = await client.findElement("accessibility id","TextField1");
+await client.elementSendKeys(elementId.ELEMENT, "Hello World!");
 const elementValue = await client.findElement("accessibility id","TextField1");
 await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
 assert.equal(attr,"Hello World!");

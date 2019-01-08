@@ -18,7 +18,7 @@
  *     brew install --HEAD ideviceinstaller
  */
 
-"use strict";
+'use strict';
 
 const spawn = require('child_process').spawn;
 const _ = require('lodash');

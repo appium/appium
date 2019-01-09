@@ -36,7 +36,8 @@
   "files": [
     "bin",
     "lib",
-    "build/lib"
+    "build/lib",
+    "npm-shrinkwrap.json"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",

@@ -36,7 +36,8 @@
   "files": [
     "bin",
     "lib",
-    "build/lib"
+    "build/lib",
+    "npm-shrinkwrap.json"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
@@ -85,7 +86,7 @@
     "lint:fix": "gulp eslint --fix",
     "coverage": "gulp coveralls",
     "generate-docs": "node ./build/commands-yml/parse.js",
-    "shrinkwrap-prod": "rimraf package-lock.json && rimraf node_modules && npm install --production && npm shrinkwrap && npm install --no-shrinkwrap",
+    "shrinkwrap-prod": "rimraf package-lock.json && rimraf node_modules && npm install --production && npm shrinkwrap && node ./check-npm-pack-files && npm install --no-shrinkwrap",
     "zip": "zip -qr appium.zip .",
     "upload": "gulp github-upload",
     "zip-and-upload": "npm run zip && npm run upload"

@@ -25,4 +25,4 @@ if (!_.isEmpty(missingFiles)) {
   throw new Error(`Files '${missingFiles.join(', ')}' are not included in package.json "files". Please make sure these files are included before publishing.`);
 }
 
-process.exit(1);
+process.exit(0);

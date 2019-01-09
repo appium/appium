@@ -195,7 +195,7 @@ converted into the `npm-shrinkwrap.json` file.
 1. Determine whether we have a `patch` (bugfix), `minor` (feature), or `major` (breaking) release according to the principles of SemVer.
 1. Update `package.json` with the appropriate new version.
 1. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
-1. Run `npm run shrinkwrap-prod`. This script prunes dev dependencies (leaving only production dependencies), creates a production-only `npm-shrinkwrap.json` and then re-installs the dev dependencies by doing `npm install --no-shrinkwrap`.
+1. Run `npm run shrinkwrap:prod`. This script prunes dev dependencies (leaving only production dependencies), creates a production-only `npm-shrinkwrap.json` and then re-installs the dev dependencies by doing `npm install --no-shrinkwrap`.
 1. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a v1.5.0`. This is not necessary for beta versions.
 1. Push the tag to upstream: `git push --tags <remote> <branch>`
 1. Run `npm publish` (with `--tag beta` if this isn't an official release).

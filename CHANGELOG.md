@@ -1,3 +1,40 @@
+CHANGES IN VERSION 1.11.0 (from 1.10.0)
+===================================
+
+Appium 1.11.0 is a minor release
+
+#### General
+
+#### iOS
+
+#### Android
+* Add `chromedriverDisableBuildCheck` capability [#474](https://github.com/appium/appium-android-driver/pull/474)
+* Add `skipDeviceInitialization` capability [#480](https://github.com/appium/appium-android-driver/pull/480)
+* Fall back to pressing BACK button if ESC fails to close soft keyboard [#471](https://github.com/appium/appium-android-driver/pull/471)
+* Fix: Include API level 23 for granting of permissions to apps. 23 was being incorrectly excluded previously [#473](https://github.com/appium/appium-android-driver/pull/473)
+* Fix: Only call `helpers.ensureDeviceLocale` if language or locale was set [#477](https://github.com/appium/appium-android-driver/pull/477)
+* Fix: Don't regard apps as 'temporary' if the `app` is a relative path [#479](https://github.com/appium/appium-android-driver/pull/479)
+
+#### Android (UiAutomator2)
+* Add `skipSererInstallation` capability [#266](https://github.com/appium/appium-uiautomator2-driver/pull/266)
+* Improve XML source building performance by using Jaxen/JDOM2 library [#237](https://github.com/appium/appium-uiautomator2-server/pull/237)
+* Fix duplicate chrome startup [#266](https://github.com/appium/appium-uiautomator2-driver/pull/266)
+
+#### Android (Espresso)
+* Add `mobile:` endpoints to run [Espresso contrib methods](http://appium.io/docs/en/commands/mobile-command/): `openDrawer`, `closeDrawer`, `setDate`, `setTime`, `navigateTo`, `scrollToPage` [#324](https://github.com/appium/appium-espresso-driver/pull/324)
+* Add `mobile: backdoor` method [#317](https://github.com/appium/appium-espresso-driver/pull/317)
+* Add `mobile: flashElement` method [#337](https://github.com/appium/appium-espresso-driver/pull/337)
+* Backport [clipboard features](http://appium.io/docs/en/commands/device/clipboard/get-clipboard/) from UiAutomator2 [#361](https://github.com/appium/appium-espresso-driver/pull/361)
+* Fix XML memory problems
+  * Limit traversal depth [#341](https://github.com/appium/appium-espresso-driver/pull/341)
+  * Fallback to using filesystem if in-memory can't handle XML [#344](https://github.com/appium/appium-espresso-driver/pull/344)
+* Fix ID selector by automatically prefixing with package name [#346](https://github.com/appium/appium-espresso-driver/pull/346)
+* Fix crash on calling `/enabled` and `/selected` on elements [#353](https://github.com/appium/appium-espresso-driver/pull/353)
+* Fix server uninstall. Uninstalls if server is older or newer than currently installed Espresso server [#358](https://github.com/appium/appium-espresso-driver/pull/358)
+
+
+
+
 CHANGES IN VERSION 1.10.0 (from 1.9.1)
 ===================================
 

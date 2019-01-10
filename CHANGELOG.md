@@ -12,9 +12,11 @@ Appium 1.11.0 is a minor release
 * Add `skipDeviceInitialization` capability which speeds up session startup for cases where Appium doesn't need to wait for the device, push a settings app, or set permissions [#480](https://github.com/appium/appium-android-driver/pull/480)
 * Fall back to pressing BACK button if ESC fails to close soft keyboard [#471](https://github.com/appium/appium-android-driver/pull/471)
 * Improve XML source building performance by using Jaxen/JDOM2 library on Espresso and UiAutomator2 [#237](https://github.com/appium/appium-uiautomator2-server/pull/237)
+* Add setting `normalizeTagNames` which is set to true by default, which normalizes source tag names to workaround parsing problems
 * Fix: Include API level 23 for granting of permissions to apps. 23 was being incorrectly excluded previously [#473](https://github.com/appium/appium-android-driver/pull/473)
 * Fix: Only call `helpers.ensureDeviceLocale` if language or locale was set, to avoid spending startup time on locale unnecessarily [#477](https://github.com/appium/appium-android-driver/pull/477)
 * Fix: Don't regard apps as 'temporary' if the `app` is a relative path [#479](https://github.com/appium/appium-android-driver/pull/479)
+* Fix session init. Uninstalls Espresso server if server is older or newer than currently installed Espresso server [#358](https://github.com/appium/appium-espresso-driver/pull/358)
 
 #### Android (UiAutomator2)
 * Add `skipServerInstallation` capability that skips the step of installing the UIAutomator2 server [#266](https://github.com/appium/appium-uiautomator2-driver/pull/266)
@@ -23,14 +25,15 @@ Appium 1.11.0 is a minor release
 #### Android (Espresso)
 * Add `mobile:` endpoints to run [Espresso contrib methods](http://appium.io/docs/en/commands/mobile-command/): `openDrawer`, `closeDrawer`, `setDate`, `setTime`, `navigateTo`, `scrollToPage` [#324](https://github.com/appium/appium-espresso-driver/pull/324) (warning: See [open issue](https://github.com/appium/appium-espresso-driver/issues/331) from problem with `scrollToPage`)
 * Add `mobile: backdoor` method that allows accessing app-internal functionality [#317](https://github.com/appium/appium-espresso-driver/pull/317)
+* Add `nativeWebScreenshot` capability to allow screen capture of webviews [#366](https://github.com/appium/appium-espresso-driver/pull/366)
 * Add `mobile: flashElement` method [#337](https://github.com/appium/appium-espresso-driver/pull/337)
 * Backport [clipboard features](http://appium.io/docs/en/commands/device/clipboard/get-clipboard/) from UiAutomator2 [#361](https://github.com/appium/appium-espresso-driver/pull/361)
 * Fix XML memory problems
   * Limit traversal depth [#341](https://github.com/appium/appium-espresso-driver/pull/341)
   * Fallback to using filesystem if in-memory can't handle XML [#344](https://github.com/appium/appium-espresso-driver/pull/344)
-* Fix ID selector by automatically prefixing with package name [#346](https://github.com/appium/appium-espresso-driver/pull/346)
+  * Limit max length of text value to 64K
+* Fix ID selector by automatically prefixing with current package name [#346](https://github.com/appium/appium-espresso-driver/pull/346)
 * Fix crash on calling `/enabled` and `/selected` on elements [#353](https://github.com/appium/appium-espresso-driver/pull/353)
-* Fix server uninstall. Uninstalls if server is older or newer than currently installed Espresso server [#358](https://github.com/appium/appium-espresso-driver/pull/358)
 
 
 

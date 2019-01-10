@@ -36,7 +36,8 @@
   "files": [
     "bin",
     "lib",
-    "build/lib"
+    "build/lib",
+    "npm-shrinkwrap.json"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
@@ -84,7 +85,7 @@
     "coverage": "gulp coveralls",
     "generate-docs": "node ./build/commands-yml/parse.js",
     "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
-    "shrinkwrap-prod": "rm -rf package-lock.json && npm prune --production && npm shrinkwrap",
+    "shrinkwrap:prod": "rimraf package-lock.json && rimraf node_modules && npm install --production && npm shrinkwrap && node ./check-npm-pack-files && npm install --no-shrinkwrap",
     "zip": "zip -qr appium.zip .",
     "upload": "node ./build/test/scripts/bintray-upload.js",
     "zip-and-upload": "npm run zip && npm run upload",

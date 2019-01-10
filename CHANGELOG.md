@@ -3,9 +3,8 @@ CHANGES IN VERSION 1.11.0 (from 1.10.0)
 
 Appium 1.11.0 is a minor release
 
-#### General
-
 #### iOS
+* Fix issues with MJPEG video streaming [#134](https://github.com/appium/WebDriverAgent/pull/134) 
 
 #### Android
 * Add `chromedriverDisableBuildCheck` capability which sets the `--disable-build-check` flag on Chromedriver [#474](https://github.com/appium/appium-android-driver/pull/474)
@@ -31,7 +30,7 @@ Appium 1.11.0 is a minor release
 * Fix XML memory problems
   * Limit traversal depth [#341](https://github.com/appium/appium-espresso-driver/pull/341)
   * Fallback to using filesystem if in-memory can't handle XML [#344](https://github.com/appium/appium-espresso-driver/pull/344)
-  * Limit max length of text value to 64K
+  * Limit max length of text values in the XML to 64K
 * Fix ID selector by automatically prefixing with current package name [#346](https://github.com/appium/appium-espresso-driver/pull/346)
 * Fix crash on calling `/enabled` and `/selected` on elements [#353](https://github.com/appium/appium-espresso-driver/pull/353)
 

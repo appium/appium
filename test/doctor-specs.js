@@ -31,11 +31,11 @@ describe('doctor', function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       let {doctor, checks} = configure();
       S.mocks.checks = checks.map((check) => { return S.sandbox.mock(check); });
-      S.mocks.checks[0].expects('diagnose').once().returns({ok: true, message: "All Good!"});
-      S.mocks.checks[1].expects('diagnose').twice().returns({ok: true, optional: true, message: "All Good Option!"});
-      S.mocks.checks[2].expects('diagnose').once().returns({ok: false, message: "Oh No!"});
-      S.mocks.checks[3].expects('diagnose').twice().returns({ok: false, optional: true, message: "Oh No Option!"});
-      S.mocks.checks[4].expects('diagnose').once().returns({ok: false, message: "Oh No!"});
+      S.mocks.checks[0].expects('diagnose').once().returns({ok: true, message: 'All Good!'});
+      S.mocks.checks[1].expects('diagnose').twice().returns({ok: true, optional: true, message: 'All Good Option!'});
+      S.mocks.checks[2].expects('diagnose').once().returns({ok: false, message: 'Oh No!'});
+      S.mocks.checks[3].expects('diagnose').twice().returns({ok: false, optional: true, message: 'Oh No Option!'});
+      S.mocks.checks[4].expects('diagnose').once().returns({ok: false, message: 'Oh No!'});
       await doctor.diagnose();
       S.verify();
       doctor.toFix.should.have.length(2);

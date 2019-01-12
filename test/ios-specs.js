@@ -252,6 +252,16 @@ describe('ios', function () {
       });
       mocks.verify();
     });
+    it('diagnose - success - custom install', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/fbsimctl');
+      mocks.tp.expects('exec').once().throws(`Command 'brew list --versions fbsimctl' exited with code 1`);
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'fbsimctl is installed at: path/to/fbsimctl. It is prbably installed as custom install.'
+      });
+      mocks.verify();
+    });
     it('diagnose - failure', async function () {
       mocks.utils.expects('resolveExecutablePath').once().returns(false);
       (await check.diagnose()).should.deep.equal({

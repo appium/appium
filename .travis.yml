@@ -39,7 +39,7 @@ jobs:
       env:
         - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
-        - brew install hub
+        - brew install hub || true
         - hub --version
         - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
         - git checkout -b generate-docs-$TRAVIS_COMMIT
@@ -72,7 +72,7 @@ jobs:
         - CXX=g++
       before_install:
         - gcc --version
-        - brew upgrade carthage
+        - brew upgrade carthage || true
       install:
         # Install prod dependencies
         - npm install
@@ -106,7 +106,7 @@ jobs:
       env:
         - HUB_VERBOSE=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
-        - brew install hub
+        - brew install hub || true
         - pip install mkdocs==0.16.3
 
         # Checkout appium.io repository

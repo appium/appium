@@ -142,35 +142,36 @@ describe('Config', function () {
       process = _process; // eslint-disable-line no-global-assign
     });
     describe('checkNodeOk', function () {
-      it('should fail if node is below 6', function () {
-        process.version = 'v4.4.7';
-        checkNodeOk.should.throw();
-        process.version = 'v0.9.12';
-        checkNodeOk.should.throw();
-        process.version = 'v0.1';
-        checkNodeOk.should.throw();
-        process.version = 'v0.10.36';
-        checkNodeOk.should.throw();
-        process.version = 'v0.12.14';
-        checkNodeOk.should.throw();
-        process.version = 'v5.7.0';
-        checkNodeOk.should.throw();
+      describe('unsupported nodes', function () {
+        const unsupportedVersions = [
+          'v0.1', 'v0.9.12', 'v0.10.36', 'v0.12.14',
+          'v4.4.7', 'v5.7.0', 'v6.3.1', 'v7.1.1',
+        ];
+        for (const version of unsupportedVersions) {
+          it(`should fail if node is ${version}`, function () {
+            process.version = version;
+            checkNodeOk.should.throw();
+          });
+        }
       });
-      it('should succeed if node is 6+', function () {
-        process.version = 'v6.3.1';
-        checkNodeOk.should.not.throw();
-      });
-      it('should succeed if node is 7+', function () {
-        process.version = 'v7.1.1';
-        checkNodeOk.should.not.throw();
-      });
-      it('should succeed if node is 8+', function () {
-        process.version = 'v8.1.2';
-        checkNodeOk.should.not.throw();
-      });
-      it('should succeed if node is 9+', function () {
-        process.version = 'v9.1.2';
-        checkNodeOk.should.not.throw();
+
+      describe('supported nodes', function () {
+        it('should succeed if node is 8+', function () {
+          process.version = 'v8.1.2';
+          checkNodeOk.should.not.throw();
+        });
+        it('should succeed if node is 9+', function () {
+          process.version = 'v9.1.2';
+          checkNodeOk.should.not.throw();
+        });
+        it('should succeed if node is 10+', function () {
+          process.version = 'v10.0.1';
+          checkNodeOk.should.not.throw();
+        });
+        it('should succeed if node is 11+', function () {
+          process.version = 'v11.6.0';
+          checkNodeOk.should.not.throw();
+        });
       });
     });
 
@@ -181,11 +182,6 @@ describe('Config', function () {
       });
       beforeEach(function () {
         spy.resetHistory();
-      });
-      it('should log a warning if node is below 8', function () {
-        process.version = 'v7.10.1';
-        warnNodeDeprecations();
-        logger.warn.callCount.should.equal(1);
       });
       it('should not log a warning if node is 8+', function () {
         process.version = 'v8.0.0';

@@ -76,8 +76,7 @@ have to modify your `/etc/authorization` file in one of two ways:
    `/etc/authorization` file for you:
 
     ```
-    npm install -g authorize-ios
-    sudo authorize-ios
+    sudo npm run authorize-ios
 	```
 
 At this point, run:
@@ -90,8 +89,8 @@ Now your Appium instance is ready to go. Run `node .` to kick up the Appium serv
 
 #### Hacking with Appium for Android
 
-To work on Android, make sure you have `ant`, `maven`, and `adb` installed 
-and added to system `PATH` environment variable. Also you would need the 
+To work on Android, make sure you have `ant`, `maven`, and `adb` installed
+and added to system `PATH` environment variable. Also you would need the
 android-16 sdk (for `Selendroid`) and android-19+ sdk installed.
 From your local repo's command prompt, install/run the following:
 
@@ -133,7 +132,7 @@ Unfortunately the dependencies installed when running `npm install` are those th
 have already been published, so some work is needed to link together local development
 versions of the packages that are being worked on.
 
-In the case where one package, `A`, depends on another package, `B`, the following steps 
+In the case where one package, `A`, depends on another package, `B`, the following steps
 are necessary to link the two:
 1. In one terminal, enter into package `B`
     ```
@@ -154,7 +153,7 @@ are necessary to link the two:
 
 Now the version of `B` that `A` uses will be your local version. Remember, however, that
 changes made to the JavaScript will only be available when they have been transpiled, so
-when you are going to test from package `A`, run `npm run build` in the directory for 
+when you are going to test from package `A`, run `npm run build` in the directory for
 package `B`.
 
 ### Running Tests
@@ -196,6 +195,6 @@ Each Appium package installs a pre-commit hook which will run the [linter](https
 the unit tests before the commit is made. Any error in either of these will stop
 the commit from occurring.
 
-Once code is committed and a [pull request](https://help.github.com/articles/about-pull-requests/) 
-is made to the correct Appium respository on [GitHub](https://github.com/), Appium build system 
+Once code is committed and a [pull request](https://help.github.com/articles/about-pull-requests/)
+is made to the correct Appium respository on [GitHub](https://github.com/), Appium build system
 will run all of the functional tests.

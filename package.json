@@ -27,7 +27,8 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js"
+    "appium": "./build/lib/main.js",
+    "authorize-ios": "./node_modules/.bin/authorize-ios"
   },
   "directories": {
     "lib": "./lib",
@@ -89,7 +90,8 @@
     "shrinkwrap:prod": "rimraf package-lock.json && rimraf node_modules && npm install --production && npm shrinkwrap && node ./check-npm-pack-files && npm install --no-shrinkwrap",
     "zip": "zip -qr appium.zip .",
     "upload": "gulp github-upload",
-    "zip-and-upload": "npm run zip && npm run upload"
+    "zip-and-upload": "npm run zip && npm run upload",
+    "authorize-ios": "authorize-ios"
   },
   "pre-commit": [
     "precommit-msg",

@@ -20,6 +20,7 @@ Appium 1.11.0 is a minor release
 #### Android (UiAutomator2)
 * Add `skipServerInstallation` capability that skips the step of installing the UIAutomator2 server [#266](https://github.com/appium/appium-uiautomator2-driver/pull/266)
 * Fix duplicate chrome startup [#266](https://github.com/appium/appium-uiautomator2-driver/pull/266)
+* Only perform uiautomation process cleanup if instrumentation crashes [#280](https://github.com/appium/appium-uiautomator2-driver/pull/280)
 
 #### Android (Espresso)
 * Add `mobile:` endpoints to run [Espresso contrib methods](http://appium.io/docs/en/commands/mobile-command/): `openDrawer`, `closeDrawer`, `setDate`, `setTime`, `navigateTo`, `scrollToPage` [#324](https://github.com/appium/appium-espresso-driver/pull/324) (warning: See [open issue](https://github.com/appium/appium-espresso-driver/issues/331) from problem with `scrollToPage`)
@@ -33,8 +34,8 @@ Appium 1.11.0 is a minor release
   * Limit max length of text values in the XML to 64K
 * Fix ID selector by automatically prefixing with current package name [#346](https://github.com/appium/appium-espresso-driver/pull/346)
 * Fix crash on calling `/enabled` and `/selected` on elements [#353](https://github.com/appium/appium-espresso-driver/pull/353)
-
-
+* Fix element screenshot endpoint to support MJSONWP and not just W3C [#370](https://github.com/appium/appium-espresso-driver/pull/370)
+* Add `nativeWebScreenshot` capability [#366](https://github.com/appium/appium-espresso-driver/pull/366)
 
 
 CHANGES IN VERSION 1.10.0 (from 1.9.1)

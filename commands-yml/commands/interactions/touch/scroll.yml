@@ -28,10 +28,10 @@ example_usage:
       });
   ruby:
     |
-      touch_action.scroll(element, 10, 100).perform
+      touch_actions.scroll(element, 10, 100).perform
   ruby_core:
     |
-      @driver.touch_action.scroll(element, 10, 100).perform
+      @driver.touch_actions.scroll(element, 10, 100).perform
   php:
     |
       // TODO PHP sample

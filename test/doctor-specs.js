@@ -50,7 +50,7 @@ describe('doctor', function () {
         'info: ### Diagnostic for optional dependencies starting ###',
         'info:  ✔ All Good Option!',
         'warn:  ✖ Oh No Option!',
-        'info: ### Diagnostic for optional dependencies completed, one fix needed. ###',
+        'info: ### Diagnostic for optional dependencies completed, one fix possible. ###',
         'info: ',
       ].join('\n'));
     });

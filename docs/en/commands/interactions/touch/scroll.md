@@ -41,10 +41,10 @@ await driver.scroll(10, 100);
 ```ruby
 # Ruby
 # ruby_lib example
-touch_action.scroll(element, 10, 100).perform
+touch_actions.scroll(element, 10, 100).perform
 
 # ruby_lib_core example
-@driver.touch_action.scroll(element, 10, 100).perform
+@driver.touch_actions.scroll(element, 10, 100).perform
 
 ```
 

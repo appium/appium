@@ -1,7 +1,9 @@
 // transpile:mocha
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-         AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck, OptionalFbsimctlCommandCheck, OptionalIdevicelocationCommandCheck } from '../lib/ios';
+         AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck,
+         OptionalFbsimctlCommandCheck, OptionalIdevicelocationCommandCheck,
+         OptionalIOSDeployCommandCheck, OptionalIOSWebkitDebugProxyCommandCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -330,6 +332,65 @@ describe('ios', function () {
     });
     it('fix', async function () {
       (await check.fix()).should.equal('idevicelocation is used to set geolocation for real device. Please read https://github.com/JonGabilondoAngulo/idevicelocation to install it');
+    });
+  }));
+
+  describe('OptionalIOSDeployCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalIOSDeployCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/ios-deploy');
+      mocks.tp.expects('exec').once().returns({stdout: '1.9.4', stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'ios-deploy is installed at: path/to/ios-deploy. Installed version is: 1.9.4'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'ios-deploy cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('ios-deploy is used to install iOS applications to real device. Please read http://appium.io/docs/en/drivers/ios-xcuitest-real-devices/ to install it');
+    });
+  }));
+
+  describe('OptionalIOSWebkitDebugProxyCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalIOSWebkitDebugProxyCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/ios_webkit_debug_proxy');
+      mocks.tp.expects('exec').once().returns({stdout: `ios_webkit_debug_proxy 1.8.3\ninfo AppiumDoctor Built with libimobiledevice v1.2.0, libplist v2.0.0`, stderr: ''});
+
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'ios_webkit_debug_proxy is installed at: path/to/ios_webkit_debug_proxy. Installed version is: 1.8.3, info AppiumDoctor Built with libimobiledevice v1.2.0, libplist v2.0.0'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'ios_webkit_debug_proxy cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('ios_webkit_debug_proxy is used to proxy requets from Appium to MobileSafari running on real device. Please read https://github.com/google/ios-webkit-debug-proxy to install it');
     });
   }));
 });

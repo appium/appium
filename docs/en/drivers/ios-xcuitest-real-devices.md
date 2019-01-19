@@ -31,7 +31,7 @@ application under test is automated. While this is simple in theory, the hoops
 of code signing and provisioning applications for development and testing can
 make this a bit of a headache.
 
-[appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) is also helpful to resolve dependencies.
+The documentation on [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) is also helpful to resolve dependencies.
 
 ### Basic (automatic) configuration
 

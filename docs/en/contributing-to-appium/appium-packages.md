@@ -121,12 +121,6 @@
 - uses simctl to talk to the simulator
 - works for Xcode 6 and 7
 
-## authorize-ios
-- utility that pre-authorizes Instruments to run UIAutomation scripts against iOS devices
-- enables developer tools by calling “DevToolsSecurity —enable”
-- authorises user as developer calling “authorizationdb"
-- changes ownerships of simulator directories
-
 ## node-simctl
 - wrapper around simctl binary (cli utility to control an iOS simulator)
 - executed as a subcommand of xcrun (locate or invoke developer tools from the command-line)

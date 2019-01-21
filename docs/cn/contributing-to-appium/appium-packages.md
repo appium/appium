@@ -14,7 +14,7 @@
   - 为iOS/Android/Selendroid/Fake Driver 建立会话
   - 创建/删除Appium会话
 - 启动baseServer (appium-express)
-  - 通过驱动给出的路径 
+  - 通过驱动给出的路径
 
 ## appium-express (部分appium basedriver)
 - 启动express server（允许x-domain-origin）
@@ -108,7 +108,7 @@
 ## appium-ios日志
 - 捕获iOS模拟器或实际设备的控制台，性能和崩溃日志
 - 通过调用tail来从系统路径获取日志（模拟器设备）
-- 或通过调用deviceconsole（实际设备） 
+- 或通过调用deviceconsole（实际设备）
 - 使用远程调试器来抓取性能日志
 - 崩溃日志保留在系统上的“.crash”文件中
 
@@ -121,17 +121,11 @@
 - 使用simctl与模拟器通信
 - 适用于Xcode 6和7
 
-## authorize-iOS
-- 程序预先授权Instruments针对iOS设备运行UIAutomation脚本
-- 通过调用“DevToolsSecurity -enable”来启用开发人员工具
-- 授权用户作为开发人员调用“authorizationdb”
-- 改变模拟器目录的所有权
-
 ## node-simctl
 - 封装simctl二进制（cli实用程序来控制iOS模拟器）
 - 作为xcrun的子命令执行（从命令行查找或调用开发人员工具）
 - 包含功能
-  - 安装/删除应用程序 
+  - 安装/删除应用程序
   - 启动和关闭模拟器
   - 创建/清除/删除设备
   - 获取设备列表
@@ -229,7 +223,7 @@
 - 具有定制插件的开发包使用交叉应用模块（仅适用于Appium开发）
 - 包含任务
   - e2e和单元测试（覆盖率报告）
-  - 将ES2016 转换成 ES5 
+  - 将ES2016 转换成 ES5
   - 静态代码分析（jshint）
   - 开发人员的任务
 

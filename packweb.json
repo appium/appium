@@ -21,7 +21,6 @@
             "appium-uiautomator2-server",
             "appium-xcode",
             "appium-xcuitest-driver",
-            "authorize-ios",
             "eslint-config-appium",
             "io.appium.settings",
             "node-idevice",

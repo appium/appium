@@ -22,18 +22,16 @@ Appium 的配置涉及：
 git clone https://github.com/appium/appium.git
 cd appium
 npm install
-gulp transpile # requires gulp, see below
-npm install -g authorize-ios # for ios only
-authorize-ios                # for ios only
+npm run build
+npm run authorize-ios                # for ios only
 node .
 ```
 ```center
 git clone https://github.com/appium/appium.git
 cd appium
 npm install
-gulp transpile # 需要gulp，往下看
-npm install -g authorize-ios # 仅iOS
-authorize-ios                # 仅iOS
+npm run build # 需要gulp，往下看
+npm run authorize-ios                # 仅iOS
 node .
 ```
 
@@ -49,9 +47,6 @@ to run `npm` with sudo privileges):
 确保已安装 `ant`、 `maven`、 `adb` 且已添加到 `PATH` 环境变量，还需要安装 android-16 的 sdk（Selendroid需要使用）和 android-19 的 sdk。在 Appium 本地仓库打开命令行，使用以下命令安装以下包（如果你没有使用Homebrew安装过 node，可能需要使用 sudo 运行 npm）：
 
 ```center
-npm install -g mocha
-npm install -g gulp
-npm install -g gulp-cli
 npm install -g appium-doctor && appium-doctor --dev
 npm install
 gulp transpile
@@ -68,7 +63,7 @@ is necessary to remove the old dependencies and re-run `npm install`:
 ```center
 rm -rf node_modules
 npm install
-gulp transpile
+npm run build
 ```
 
 此时，您将可以启动 Appium Server：
@@ -86,12 +81,11 @@ node .
 
 为了避免启动iOS应用程序时可能出现的安全对话框，您必须通过以下两种方式之一修改 `/etc/authorization` 文件：
 
-1. 手动修改 `/etc/authorization` 文件中的 `<key>system.privilege.taskport</key>` 下的 `<allow-root>`的值为 `<true/>`。 
+1. 手动修改 `/etc/authorization` 文件中的 `<key>system.privilege.taskport</key>` 下的 `<allow-root>`的值为 `<true/>`。
 2. 运行以下命令，为您自动修改 `/etc/authorization` 文件：
 
     ```center
-    npm install -g authorize-ios
-    sudo authorize-ios
+    sudo npm run authorize-ios
 	```
 
 
@@ -100,7 +94,7 @@ node .
 ```center
 rm -rf node-modules
 npm install
-gulp transpile
+npm run build
 ```
 
 现在你的 Appium 实例已经准备好了。运行 `node .` 以启动Appium服务器。
@@ -112,7 +106,7 @@ gulp transpile
 ```center
 rm -rf node-modules
 npm install
-gulp transpile
+npm run build
 ```
 
 确保您只有一个 Android 模拟器或设备运行，例如，通过在另一个进程中运行此命令（假设 `emulator` 命令在您的路径上）：
@@ -130,7 +124,7 @@ emulator -avd <MyAvdName>
 ```center
 rm -rf node-modules
 npm install
-gulp transpile
+npm run build
 ```
 
 ### 运行测试
@@ -141,15 +135,15 @@ general](/docs/cn/writing-running-appium/running-tests.md) 的文档，确保您
 一旦您的系统配置完毕，您的代码是最新的，您可以运行单元测试：
 
 ```center
-gulp once
+npm run test
 ```
 
 您可以对所有受支持的平台运行功能测试（确保在另一个窗口中运行Appium `node .`）与：
 
 ```center
-gulp e2e-test
+npm run e2e-test
 ```
 
-在提交代码之前，请运行 `gulp once` 一些基本测试，并根据代码质量标准检查您的更改。
+在提交代码之前，请运行 `npm run test` 一些基本测试，并根据代码质量标准检查您的更改。
 
 本文由 [校长](https://testerhome.com/xushizhao) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。

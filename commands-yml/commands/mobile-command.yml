@@ -111,7 +111,7 @@
         // TODO PHP sample
     csharp:
       |
-        // TODO C# sample
+       driver.ExecuteScript("mobile:scroll", new Dictionary<string, string> { { "direction", "down" } });
 
   client_docs:
     java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#executeScript-java.lang.String-java.lang.Object...-"

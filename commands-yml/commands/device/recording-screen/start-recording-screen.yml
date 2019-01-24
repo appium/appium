@@ -81,7 +81,7 @@ endpoint:
                    file should be encoded as Base64 and passed as the endpoint response value.
                    An exception will be thrown if the generated media file is too big to
                    fit into the available process memory.
-                   This option only has an effect if there is screen recording process in progreess
+                   This option only has an effect if there is screen recording process in progress
                    and `forceRestart` parameter is not set to `true`.
     - name: username
       type: string

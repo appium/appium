@@ -98,9 +98,8 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "@octokit/rest": "^16.3.0",
     "ajv": "^6.5.3",
-    "appium-gulp-plugins": "^3.1.0",
+    "appium-gulp-plugins": "^3.6.0",
     "babel-eslint": "^10.0.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",

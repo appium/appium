@@ -45,7 +45,7 @@ execute_script("mobile: scroll", { "direction" => "down"})
 
 ```csharp
 // C#
-// TODO C# sample
+driver.ExecuteScript("mobile:scroll", new Dictionary<string, string> { { "direction", "down" } });
 
 ```
 

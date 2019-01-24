@@ -102,7 +102,7 @@ start_recording_screen video_type: 'h264', time_limit: '260' # iOS
 
 |name|type|description|
 |----|----|-----------|
-| remotePath | `string` | The path to the remote location, where the resulting video should be uploaded. The following protocols are supported http/https, ftp. Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated media file is too big to fit into the available process memory. This option only has an effect if there is screen recording process in progreess and `forceRestart` parameter is not set to `true`. |
+| remotePath | `string` | The path to the remote location, where the resulting video should be uploaded. The following protocols are supported http/https, ftp. Null or empty string value (the default setting) means the content of resulting file should be encoded as Base64 and passed as the endpoint response value. An exception will be thrown if the generated media file is too big to fit into the available process memory. This option only has an effect if there is screen recording process in progress and `forceRestart` parameter is not set to `true`. |
 | username | `string` | The name of the user for the remote authentication. |
 | password | `string` | The password for the remote authentication. |
 | method | `string` | The http multipart upload method name. The 'PUT' one is used by default. |

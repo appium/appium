@@ -69,4 +69,47 @@ describe('Protocol Converter', function () {
       timeoutObjects[0].should.eql({type: 'implicit', ms: 300});
     });
   });
+
+  describe('setValue', function () {
+    let converter;
+    let responseBody;
+    before(function () {
+      responseBody = null;
+      converter = new ProtocolConverter((url, method, body) => {
+        responseBody = body;
+      });
+    });
+    beforeEach(function () {
+      responseBody = {};
+    });
+
+    it('should calculate value if not present', async function () {
+      await converter.proxySetValue('', '', {
+        text: 'bla',
+      });
+      responseBody.should.eql({
+        text: 'bla',
+        value: ['b', 'l', 'a'],
+      });
+    });
+    it('should calculate text if not present', async function () {
+      await converter.proxySetValue('', '', {
+        value: ['b', 'l', 'a'],
+      });
+      responseBody.should.eql({
+        text: 'bla',
+        value: ['b', 'l', 'a'],
+      });
+    });
+    it('should keep the response body unchanged if both value and text are present', async function () {
+      await converter.proxySetValue('', '', {
+        text: 'bla',
+        value: ['b', 'l', 'a'],
+      });
+      responseBody.should.eql({
+        text: 'bla',
+        value: ['b', 'l', 'a'],
+      });
+    });
+  });
 });

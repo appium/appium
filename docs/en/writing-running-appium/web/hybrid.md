@@ -67,7 +67,7 @@ driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities)
 
 Set<String> contextNames = driver.getContextHandles();
 for (String contextName : contextNames) {
-    System.out.println(contextNames); //prints out something like NATIVE_APP \n WEBVIEW_1
+    System.out.println(contextName); //prints out something like NATIVE_APP \n WEBVIEW_1
 }
 driver.context(contextNames.toArray()[1]); // set context to WEBVIEW_1
 

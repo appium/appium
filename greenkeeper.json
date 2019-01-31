@@ -1,0 +1,11 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "package.json",
+        "sample-code/javascript-wd/package.json",
+        "sample-code/javascript-webdriverio/package.json"
+      ]
+    }
+  }
+}

@@ -113,6 +113,7 @@ These Capabilities are available only on Android-based drivers (like
 |`localeScript`| Sets the locale [script](https://developer.android.com/reference/java/util/Locale) | e.g., ` "Cyrl"` (Cyrillic)|
 |`skipDeviceInitialization`| Skip device initialization which includes i.a.: installation and running of Settings app or setting of permissions. Can be used to improve startup performance when the device was already used for automation and it's prepared for the next automation. Defaults to `false` | `true` or `false`|
 |`chromedriverDisableBuildCheck`| Sets the chromedriver flag `--disable-build-check` for Chrome webview tests | `true` or `false` |
+|`skipUnlock`|Skips unlock in creating session process. Defaults to `false` | `true` or `false` |
 
 #### UIAutomator2 Only
 

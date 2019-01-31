@@ -2,7 +2,11 @@
   "groups": {
     "default": {
       "packages": [
-        "package.json",
+        "package.json"
+      ]
+    },
+    "sample-code": {
+      "packages": [
         "sample-code/javascript-wd/package.json",
         "sample-code/javascript-webdriverio/package.json"
       ]

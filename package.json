@@ -115,7 +115,7 @@
     "pre-commit": "1.x",
     "replace-ext": "^1.0.0",
     "rimraf": "^2.6.2",
-    "sinon": "^6.0.0",
+    "sinon": "^7.2.3",
     "validate.js": "^0.12.0",
     "wd": "^1.10.0",
     "yaml-js": "^0.2.0"
@@ -123,21 +123,5 @@
   "optionalDependencies": {
     "fsevents": "2.x",
     "heapdump": "0.x"
-  },
-  "greenkeeper": {
-    "groups": {
-      "appium": {
-        "packages": [
-          "package.json"
-        ]
-      },
-      "sample-code": {
-        "packages": [
-          "sample-code/javascript-wd/package.json",
-          "sample-code/javascript-webdriverio/package.json"
-        ]
-      }
-    },
-    "ignore": []
   }
 }

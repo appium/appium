@@ -27,6 +27,10 @@ describe('ios', function () {
       check.autofix.should.not.be.ok;
     });
     it('diagnose - success', async function () {
+      // xcrun
+      mocks.tp.expects('exec').once().returns(
+        B.resolve({stdout: 'usage: simctl [--set <path>] [--profiles <path>] <subcommand> ...', stderr: ''}));
+      // xcode-select
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
       mocks.fs.expects('exists').once().returns(B.resolve(true));
@@ -38,6 +42,10 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - failure - xcode-select', async function () {
+      // xcrun
+      mocks.tp.expects('exec').once().returns(
+        B.resolve({stdout: 'usage: simctl [--set <path>] [--profiles <path>] <subcommand> ...', stderr: ''}));
+      // xcode-select
       mocks.tp.expects('exec').once().returns(B.reject(new Error('Something wrong!')));
       (await check.diagnose()).should.deep.equal({
         ok: false,
@@ -47,6 +55,10 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - failure - path not exists', async function () {
+      // xcrun
+      mocks.tp.expects('exec').once().returns(
+        B.resolve({stdout: 'usage: simctl [--set <path>] [--profiles <path>] <subcommand> ...', stderr: ''}));
+      // xcode-select
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
       mocks.fs.expects('exists').once().returns(B.resolve(false));
@@ -57,8 +69,19 @@ describe('ios', function () {
       });
       mocks.verify();
     });
+    it('diagnose - failure - xcrun does not work', async function () {
+      // xcrun
+      mocks.tp.expects('exec').once().returns(B.reject(new Error('xcrun: error: unable to find utility "simctl", not a developer tool or in PATH')));
+      // no xcode-select
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: false,
+        message: 'Xcode is NOT installed!'
+      });
+      mocks.verify();
+    });
     it('fix', async function () {
-      (await check.fix()).should.equal('Manually install Xcode.');
+      (await check.fix()).should.equal("Manually install Xcode, and make sure 'xcode-select -p' command shows proper path like '/Applications/Xcode.app/Contents/Developer'");
     });
   }));
   describe('XcodeCmdLineToolsCheck', withSandbox({mocks: {tp, utils, prompter, system}}, (S) => {

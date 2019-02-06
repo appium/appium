@@ -343,6 +343,27 @@ describe('AppiumDriver', function () {
         ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(XCUITestDriver);
       });
+      it('should be able to handle different cases in automationName', function () {
+        const appium = new AppiumDriver({});
+        const caps = {
+          platformName: 'iOS',
+          platformVersion: '10',
+          automationName: 'XcUiTeSt',
+        };
+        let {driver} = appium.getDriverAndVersionForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+      });
+      it('should be able to handle different case in platformName', function () {
+        const appium = new AppiumDriver({});
+        const caps = {
+          platformName: 'IoS',
+          platformVersion: '10',
+        };
+        let {driver} = appium.getDriverAndVersionForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+      });
     });
   });
 });

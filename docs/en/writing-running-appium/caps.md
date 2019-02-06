@@ -114,6 +114,9 @@ These Capabilities are available only on Android-based drivers (like
 |`skipDeviceInitialization`| Skip device initialization which includes i.a.: installation and running of Settings app or setting of permissions. Can be used to improve startup performance when the device was already used for automation and it's prepared for the next automation. Defaults to `false` | `true` or `false`|
 |`chromedriverDisableBuildCheck`| Sets the chromedriver flag `--disable-build-check` for Chrome webview tests | `true` or `false` |
 |`skipUnlock`|Skips unlock during session creation. Defaults to `false` | `true` or `false` |
+|`unlockType`|Unlock the target device with particular lock pattern instead of just waking up the device with a helper app. It works with `unlockKey` capability. Defaults to undefined. `fingerprint` is available only for Android 6.0+ and emulators. Read [unlock doc](https://github.com/appium/appium-android-driver/blob/master/docs/UNLOCK.md) in android driver. | `['pin', 'password', 'pattern', 'fingerprint']` |
+|`unlockKey`|A key pattern to unlock used by `unlockType`. |e.g., '1111'|
+
 
 #### UIAutomator2 Only
 

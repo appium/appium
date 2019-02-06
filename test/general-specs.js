@@ -1,6 +1,7 @@
 // transpile:mocha
 
-import { NodeBinaryCheck, NodeVersionCheck, OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck } from '../lib/general';
+import { NodeBinaryCheck, NodeVersionCheck, OptionalPythonVersionCheck,
+         OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck } from '../lib/general';
 import * as tp from 'teen_process';
 import * as utils from '../lib/utils';
 import NodeDetector from '../lib/node-detector';
@@ -150,6 +151,57 @@ describe('general', function () {
     });
     it('fix', async function () {
       (await check.fix()).should.equal('ffmpeg is needed to record screen features. Please read https://www.ffmpeg.org/ to install it');
+    });
+  }));
+
+  describe('OptionalPythonVersionCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalPythonVersionCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/python');
+      mocks.tp.expects('exec').once().returns({stdout: '', stderr: 'Python 2.7.15'});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'Python required by node-gyp (used by heapdump) is installed at: path/to/python. Installed version is: 2.7.15'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      process.env.PATH = '/a/b/c/d;/e/f/g/h';
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'Python required by node-gyp (used by heapdump) not found in PATH: /a/b/c/d;/e/f/g/h'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure with Python 3', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/python');
+      mocks.tp.expects('exec').once().returns({stdout: '', stderr: 'Python 3.7'});
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'Python version required by node-gyp (used by heapdump) should be 2.x'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure with no version output', async function () {
+      process.env.PATH = '/a/b/c/d;/e/f/g/h';
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/python');
+      mocks.tp.expects('exec').once().returns({stdout: '', stderr: 'Python no version'});
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: "Unable to identify Python version correctly (version = 'null') at path/to/python. Please make sure your Python environment in PATH: /a/b/c/d;/e/f/g/h. node-gyp (used by heapdump) requires Python 2.x"
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.equal('Manually configure Python 2.x environment. node-gyp which is NodeJS toolchain requires Python 2.x');
     });
   }));
 });

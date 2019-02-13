@@ -5,6 +5,7 @@ Appium 1.11.0 is a minor release
 
 #### iOS
 * Fix issues with MJPEG video streaming [#134](https://github.com/appium/WebDriverAgent/pull/134) 
+* Xcode 10.2 device list support [appium/node-simctl#77](https://github.com/appium/node-simctl/pull/77)
 
 #### Android
 * Add `chromedriverDisableBuildCheck` capability which sets the `--disable-build-check` flag on Chromedriver [#474](https://github.com/appium/appium-android-driver/pull/474)

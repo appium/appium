@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.11.0-rc.0",
+  "version": "1.11.1-rc.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1384,9 +1384,9 @@
       }
     },
     "appium-uiautomator2-server": {
-      "version": "3.2.1",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-3.2.1.tgz",
-      "integrity": "sha512-KIFQx6ItughwcCtD6GtVi2WsaL1eQbFpbBmuqQFLzIKjmrDHS7t56Vq9Yu7e30Gx13fTR/DXDOW3tohfLf3zsQ=="
+      "version": "3.2.2",
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-3.2.2.tgz",
+      "integrity": "sha512-F0ENrG32wxoiqU6YuGbNk3zAFN6LHWBWySxq9i/P9+S77QcX3WkrhEpHmQU8b0/61mClXzwOYwDVWvyhuotbSw=="
     },
     "appium-windows-driver": {
       "version": "1.5.1",

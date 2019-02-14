@@ -42,7 +42,7 @@
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "appium-android-driver": "^4.8.0",
-    "appium-base-driver": "^3.13.2",
+    "appium-base-driver": "^3.15.2",
     "appium-espresso-driver": "^1.7.1",
     "appium-fake-driver": "^0.6.2",
     "appium-ios-driver": "^2.13.2",
@@ -50,7 +50,7 @@
     "appium-selendroid-driver": "^1.13.3",
     "appium-support": "^2.25.0",
     "appium-tizen-driver": "^1.1.1-beta.3",
-    "appium-uiautomator2-driver": "^1.27.0",
+    "appium-uiautomator2-driver": "^1.29.1",
     "appium-windows-driver": "^1.5.1",
     "appium-xcuitest-driver": "^2.105.1",
     "appium-youiengine-driver": "^1.1.2",

@@ -13,6 +13,10 @@ These APIs allow you to build up arbitrary gestures with multiple actuators.
 Please see the Appium client docs for your language in order to find examples
 of using this API.
 
+**Note for W3C actions**
+
+[W3C actions](https://www.w3.org/TR/webdriver1/#actions) is also available in some drivers such as XCUITest, UIA2 and Espresso. [API doc](http://appium.io/docs/en/commands/interactions/actions/) and API docs of each binding help to understand how to call them.
+
 ### An Overview of the TouchAction / MultiAction API
 
 ### TouchAction

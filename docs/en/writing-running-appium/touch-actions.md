@@ -15,7 +15,11 @@ of using this API.
 
 **Note for W3C actions**
 
-[W3C actions](https://www.w3.org/TR/webdriver1/#actions) is also available in some drivers such as XCUITest, UIA2 and Espresso. [API doc](http://appium.io/docs/en/commands/interactions/actions/) and API docs of each binding help to understand how to call them.
+[W3C actions](https://www.w3.org/TR/webdriver1/#actions) is also parcially available in some drivers such as XCUITest, UIA2 and Espresso.
+We've implemented W3C actions as possible, but OSs has limitations to behave full W3C compatible actions.
+e.g. WDA cannot handle zero wait [PR](https://github.com/appium/appium-xcuitest-driver/pull/753). Additional actions in [espresso](https://github.com/appium/appium-espresso-driver/issues/272).
+
+[API doc](http://appium.io/docs/en/commands/interactions/actions/) and API docs of each client help to understand how to call them.
 
 ### An Overview of the TouchAction / MultiAction API
 
@@ -183,8 +187,8 @@ $driver->executeScript("mobile: scroll", $params);
 
 **Swiping**
 
-This is an XCUITest driver specific method that is similar to scrolling (for reference, see 
-https://developer.apple.com/reference/xctest/xcuielement). 
+This is an XCUITest driver specific method that is similar to scrolling (for reference, see
+https://developer.apple.com/reference/xctest/xcuielement).
 
 This method has the same API as [Scrolling](#scrolling), just replace "mobile: scroll"
 with "mobile: swipe"

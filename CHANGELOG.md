@@ -1,3 +1,18 @@
+CHANGES IN VERSION 1.11.1 (from 1.11.0)
+===================================
+
+Appium 1.11.1 is a patch release
+
+#### General
+* Upgrade Appium You.I Engine Driver to 1.1.2
+* Fix protocol translation bug (W3C -> MJSONWP) in `/actions` [#302](https://github.com/appium/appium-base-driver/pull/302)
+* Fix protocol conversion for `setValue` [#297](https://github.com/appium/appium-base-driver/pull/297)
+
+#### Android (UiAutomator2 only)
+* Fix null pointer exception on Session Details retrieval [#247](https://github.com/appium/appium-uiautomator2-server/pull/247)
+* Make logging configurable [#242](https://github.com/appium/appium-uiautomator2-server/pull/242)
+* Change implementation of the ScrollTo command, so that now it supports different strategies to search for a GUI element (by accessibility id, by class name, and by using the Android uiautomator selectors) [#244](https://github.com/appium/appium-uiautomator2-server/pull/244)
+
 CHANGES IN VERSION 1.11.0 (from 1.10.0)
 ===================================
 

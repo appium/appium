@@ -73,8 +73,11 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
-    "prepare": "gulp prepublish",
-    "publish": "gulp prepublish",
+    "prepublish": "gulp prepublish",
+    "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
+    "postpublish": "npm run restore-shrinkwrap",
+    "prune-shrinkwrap": "npm ci --production --ignore-scripts && npm shrinkwrap && npm install --only=dev --no-shrinkwrap",
+    "restore-shrinkwrap": "git checkout HEAD -- npm-shrinkwrap.json",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
     "watch": "gulp watch",
@@ -85,7 +88,6 @@
     "lint": "gulp eslint",
     "coverage": "gulp coveralls",
     "generate-docs": "node ./build/commands-yml/parse.js",
-    "shrinkwrap-prod": "rimraf package-lock.json && npm prune --production && npm shrinkwrap && npm install --no-shrinkwrap",
     "zip": "zip -qr appium.zip .",
     "upload": "gulp github-upload",
     "zip-and-upload": "npm run zip && npm run upload"

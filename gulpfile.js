@@ -12,8 +12,6 @@ const path = require('path');
 const fs = require('fs');
 const log = require('fancy-log');
 
-require('./ci/gulp');
-
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
 
@@ -26,9 +24,7 @@ gulp.task('fixShrinkwrap', function (done) {
               `(Original error: ${err.message})`);
     return done();
   }
-
-// remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
-// see https://github.com/npm/npm/issues/2679
+  
   delete shrinkwrap.dependencies.fsevents;
   const shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);

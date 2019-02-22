@@ -116,6 +116,7 @@ These Capabilities are available only on Android-based drivers (like
 |`unlockType`|Unlock the target device with particular lock pattern instead of just waking up the device with a helper app. It works with `unlockKey` capability. Defaults to undefined. `fingerprint` is available only for Android 6.0+ and emulators. Read [unlock doc](https://github.com/appium/appium-android-driver/blob/master/docs/UNLOCK.md) in android driver. | `['pin', 'password', 'pattern', 'fingerprint']` |
 |`unlockKey`|A key pattern to unlock used by `unlockType`. |e.g., '1111'|
 |`autoLaunch`| Initializing the app under test automatically. Appium does not install/launch the app under test if this is `false`. Defaults to `true` | `true` or `false` |
+|`skipLogcatCapture`|Skips to start capturing logcat. It might improve performance such as network. Defaults to `false`. |`true` or `false`|
 
 #### UIAutomator (1 & 2)
 

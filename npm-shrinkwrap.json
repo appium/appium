@@ -1023,13 +1023,13 @@
       }
     },
     "appium-ios-driver": {
-      "version": "2.13.2",
-      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-2.13.2.tgz",
-      "integrity": "sha512-XnGUQb1S/DHL+NVd10PuzjQY8IWXcvVMeebplGCLGfZsGt4lBnB8qi0v57TWrcmeog8n/Qj9hgRNGm+ECYfZHg==",
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-4.1.0.tgz",
+      "integrity": "sha512-I1lK3o+Kkzq2qCW2aC1X4bo3vTRd9Pi3QQKRmjOPYJlswBevDXQ5nUNNEsabxUO8kMkPdtJphWTrMz0gGg6Oxw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^3.0.0",
-        "appium-ios-simulator": "^3.0.0",
+        "appium-ios-simulator": "^3.9.0",
         "appium-remote-debugger": "^3.20.0",
         "appium-support": "^2.25.0",
         "appium-xcode": "^3.1.0",
@@ -1040,7 +1040,7 @@
         "lodash": "^4.13.1",
         "moment": "^2.22.2",
         "node-idevice": "^0.1.6",
-        "node-simctl": "^3.11.5",
+        "node-simctl": "^4.0.0",
         "pem": "^1.8.3",
         "portfinder": "^1.0.13",
         "request": "^2.79.0",
@@ -1055,6 +1055,41 @@
         "yargs": "^12.0.1"
       },
       "dependencies": {
+        "appium-ios-simulator": {
+          "version": "3.10.0",
+          "resolved": "https://registry.npmjs.org/appium-ios-simulator/-/appium-ios-simulator-3.10.0.tgz",
+          "integrity": "sha512-FKb/Prga3RTjATw3eCqCLTT1r541Lh/44RpQElIgIvxZcDTutf2UVXiKy1pBWUL9Ylyu9d+KmXRIGUelpaxyEw==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "appium-support": "^2.4.0",
+            "appium-xcode": "^3.1.0",
+            "async-lock": "^1.0.0",
+            "asyncbox": "^2.3.1",
+            "bluebird": "^3.5.1",
+            "fkill": "^5.0.0",
+            "lodash": "^4.2.1",
+            "node-simctl": "^4.0.0",
+            "openssl-wrapper": "^0.3.4",
+            "semver": "^5.5.0",
+            "shell-quote": "^1.6.1",
+            "source-map-support": "^0.5.3",
+            "teen_process": "^1.3.0"
+          }
+        },
+        "node-simctl": {
+          "version": "4.0.2",
+          "resolved": "https://registry.npmjs.org/node-simctl/-/node-simctl-4.0.2.tgz",
+          "integrity": "sha512-W9vkzeAA/h6Tby2TijAtv0weN7TdAA3zNXlaH8hGNMXvvcdTLj/w7tIKigAPnRlN3kDmfqPHB3Hjw3WdxhZ5Ug==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "appium-support": "^2.4.0",
+            "appium-xcode": "^3.1.0",
+            "asyncbox": "^2.3.1",
+            "lodash": "^4.2.1",
+            "source-map-support": "^0.5.5",
+            "teen_process": "^1.5.1"
+          }
+        },
         "xpath": {
           "version": "0.0.24",
           "resolved": "https://registry.npmjs.org/xpath/-/xpath-0.0.24.tgz",
@@ -1446,6 +1481,46 @@
         "ws": "^6.0.0",
         "xmldom": "^0.1.27",
         "yargs": "^12.0.1"
+      },
+      "dependencies": {
+        "appium-ios-driver": {
+          "version": "2.13.2",
+          "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-2.13.2.tgz",
+          "integrity": "sha512-XnGUQb1S/DHL+NVd10PuzjQY8IWXcvVMeebplGCLGfZsGt4lBnB8qi0v57TWrcmeog8n/Qj9hgRNGm+ECYfZHg==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "appium-base-driver": "^3.0.0",
+            "appium-ios-simulator": "^3.0.0",
+            "appium-remote-debugger": "^3.20.0",
+            "appium-support": "^2.25.0",
+            "appium-xcode": "^3.1.0",
+            "asyncbox": "^2.3.1",
+            "bluebird": "^3.5.1",
+            "colors": "^1.1.2",
+            "js2xmlparser2": "^0.2.0",
+            "lodash": "^4.13.1",
+            "moment": "^2.22.2",
+            "node-idevice": "^0.1.6",
+            "node-simctl": "^3.11.5",
+            "pem": "^1.8.3",
+            "portfinder": "^1.0.13",
+            "request": "^2.79.0",
+            "request-promise": "^4.1.1",
+            "safari-launcher": "^2.0.5",
+            "source-map-support": "^0.5.5",
+            "teen_process": "^1.6.0",
+            "through": "^2.3.8",
+            "uuid-js": "^0.7.5",
+            "xmldom": "^0.1.22",
+            "xpath": "^0.0.24",
+            "yargs": "^12.0.1"
+          }
+        },
+        "xpath": {
+          "version": "0.0.24",
+          "resolved": "https://registry.npmjs.org/xpath/-/xpath-0.0.24.tgz",
+          "integrity": "sha1-Gt4WLhzFI8jTn8fQavwW6iFvKfs="
+        }
       }
     },
     "appium-youiengine-driver": {
@@ -1467,6 +1542,46 @@
         "selenium-webdriver": "3.x",
         "shelljs": "0.8.x",
         "source-map-support": "^0.5.9"
+      },
+      "dependencies": {
+        "appium-ios-driver": {
+          "version": "2.13.2",
+          "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-2.13.2.tgz",
+          "integrity": "sha512-XnGUQb1S/DHL+NVd10PuzjQY8IWXcvVMeebplGCLGfZsGt4lBnB8qi0v57TWrcmeog8n/Qj9hgRNGm+ECYfZHg==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "appium-base-driver": "^3.0.0",
+            "appium-ios-simulator": "^3.0.0",
+            "appium-remote-debugger": "^3.20.0",
+            "appium-support": "^2.25.0",
+            "appium-xcode": "^3.1.0",
+            "asyncbox": "^2.3.1",
+            "bluebird": "^3.5.1",
+            "colors": "^1.1.2",
+            "js2xmlparser2": "^0.2.0",
+            "lodash": "^4.13.1",
+            "moment": "^2.22.2",
+            "node-idevice": "^0.1.6",
+            "node-simctl": "^3.11.5",
+            "pem": "^1.8.3",
+            "portfinder": "^1.0.13",
+            "request": "^2.79.0",
+            "request-promise": "^4.1.1",
+            "safari-launcher": "^2.0.5",
+            "source-map-support": "^0.5.5",
+            "teen_process": "^1.6.0",
+            "through": "^2.3.8",
+            "uuid-js": "^0.7.5",
+            "xmldom": "^0.1.22",
+            "xpath": "^0.0.24",
+            "yargs": "^12.0.1"
+          }
+        },
+        "xpath": {
+          "version": "0.0.24",
+          "resolved": "https://registry.npmjs.org/xpath/-/xpath-0.0.24.tgz",
+          "integrity": "sha1-Gt4WLhzFI8jTn8fQavwW6iFvKfs="
+        }
       }
     },
     "aproba": {
@@ -3423,9 +3538,9 @@
       "integrity": "sha1-32BBeABfUi8V60SQ5yR6G/qmf4w="
     },
     "pem": {
-      "version": "1.13.2",
-      "resolved": "https://registry.npmjs.org/pem/-/pem-1.13.2.tgz",
-      "integrity": "sha512-MPJWuEb/r6AG+GpZi2JnfNtGAZDeL/8+ERKwXEWRuST5i+4lq/Uy36B352OWIUSPQGH+HR1HEDcIDi+8cKxXNg==",
+      "version": "1.14.2",
+      "resolved": "https://registry.npmjs.org/pem/-/pem-1.14.2.tgz",
+      "integrity": "sha512-TOnPtq3ZFnCniOZ+rka4pk8UIze9xG1qI+wNE7EmkiR/cg+53uVvk5QbkWZ7M6RsuOxzz62FW1hlAobJr/lTOA==",
       "requires": {
         "es6-promisify": "^6.0.0",
         "md5": "^2.2.1",

@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { NodeBinaryCheck, NodeVersionCheck, OptionalPythonVersionCheck,
-         OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck } from '../lib/general';
+         OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck, OptionalMjpegConsumerCommandCheck } from '../lib/general';
 import * as tp from 'teen_process';
 import * as utils from '../lib/utils';
 import NodeDetector from '../lib/node-detector';
@@ -151,6 +151,44 @@ describe('general', function () {
     });
     it('fix', async function () {
       (await check.fix()).should.equal('ffmpeg is needed to record screen features. Please read https://www.ffmpeg.org/ to install it');
+    });
+  }));
+
+  describe('OptionalMjpegConsumerCommandCheck', withMocks({tp}, (mocks) => {
+    let check = new OptionalMjpegConsumerCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.tp.expects('exec').once().returns({stdout: `/path/to/node/node/v11.4.0/lib\n└── mjpeg-consumer@1.1.0`, stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'mjpeg-consumer is installed at: /path/to/node/node/v11.4.0/lib. Installed version is: 1.1.0'
+      });
+      mocks.verify();
+    });
+    it('diagnose - success, but not sure if the library exist, no mjpeg-consumer@1.1.0', async function () {
+      mocks.tp.expects('exec').once().returns({stdout: `/path/to/node/node/v11.4.0/mjpeg-consumer`, stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'mjpeg-consumer is probably installed at: /path/to/node/node/v11.4.0/mjpeg-consumer.'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.tp.expects('exec').once().returns({stdout: 'not found', stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'mjpeg-consumer cannot be found.'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      (await check.fix()).should.
+        equal('mjpeg-consumer module is required to use MJPEG-over-HTTP features. Please install it with `npm i -g mjpeg-consumer`.');
     });
   }));
 

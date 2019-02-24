@@ -89,7 +89,18 @@ describe('general', function () {
       check.autofix.should.not.be.ok;
     });
     it('diagnose - success', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: `/path/to/node/node/v11.4.0/lib\n└── opencv4nodejs@4.13.0`, stderr: ''});
+      mocks.tp.expects('exec').once().returns({stdout: `
+        {
+          "dependencies": {
+            "opencv4nodejs": {
+              "version": "4.13.0",
+              "from": "opencv4nodejs",
+              "resolved": "https://registry.npmjs.org/opencv4nodejs/-/opencv4nodejs-4.14.1.tgz"
+            }
+          },
+          "path": "/path/to/node/node/v11.4.0/lib"
+        }
+      `, stderr: ''});
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: true,
@@ -97,17 +108,8 @@ describe('general', function () {
       });
       mocks.verify();
     });
-    it('diagnose - success, but not sure if the library exist, no opencv4nodejs@4.13.0', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: `/path/to/node/node/v11.4.0/opencv4nodejs`, stderr: ''});
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: true,
-        message: 'opencv4nodejs is probably installed at: /path/to/node/node/v11.4.0/opencv4nodejs.'
-      });
-      mocks.verify();
-    });
     it('diagnose - failure', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: 'not found', stderr: ''});
+      mocks.tp.expects('exec').once().returns({stdout: '{}', stderr: ''});
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: true,
@@ -160,7 +162,18 @@ describe('general', function () {
       check.autofix.should.not.be.ok;
     });
     it('diagnose - success', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: `/path/to/node/node/v11.4.0/lib\n└── mjpeg-consumer@1.1.0`, stderr: ''});
+      mocks.tp.expects('exec').once().returns({stdout: `
+        {
+          "dependencies": {
+            "mjpeg-consumer": {
+              "version": "1.1.0",
+              "from": "mjpeg-consumer",
+              "resolved": "https://registry.npmjs.org/mjpeg-consumer/-/mjpeg-consumer-1.1.0.tgz"
+            }
+          },
+          "path": "/path/to/node/node/v11.4.0/lib"
+        }
+      `, stderr: ''});
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: true,
@@ -168,17 +181,8 @@ describe('general', function () {
       });
       mocks.verify();
     });
-    it('diagnose - success, but not sure if the library exist, no mjpeg-consumer@1.1.0', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: `/path/to/node/node/v11.4.0/mjpeg-consumer`, stderr: ''});
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: true,
-        message: 'mjpeg-consumer is probably installed at: /path/to/node/node/v11.4.0/mjpeg-consumer.'
-      });
-      mocks.verify();
-    });
     it('diagnose - failure', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: 'not found', stderr: ''});
+      mocks.tp.expects('exec').once().returns({stdout: '{}', stderr: ''});
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: true,

@@ -35,3 +35,10 @@ Refer: https://github.com/appium/appium/issues/9209
 - `udid` the device id
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
 - `webkitDebugProxyPort` unique webKitProxy, as IWDP defaults to 27753
+
+### Troubleshooting
+
+When running on Jenkins, watch out for the [ProcessTreeKiller](https://wiki.jenkins.io/display/JENKINS/ProcessTreeKiller) when running multiple parallel test jobs on the same machine. If you are spawning simulators in one test job, Jenkins might kill all your simulators when the first test ends - causing errors in the remaining test jobs!
+
+Use `BUILD_ID=dontKillMe` to prevent this from happening.
+

@@ -1,6 +1,8 @@
 ---
 name: Press Key Code
-short_description: Press a particular key on the device
+short_description: Press a particular key on an Android Device
+
+description: See https://developer.android.com/reference/android/view/KeyEvent.html for reference of available Android key code values
 
 example_usage:
   java:

@@ -15,9 +15,9 @@ of using this API.
 
 **Note for W3C actions**
 
-[W3C actions](https://www.w3.org/TR/webdriver1/#actions) is also parcially available in some drivers such as XCUITest, UIA2 and Espresso.
-We've implemented W3C actions as possible, but OSs has limitations to behave full W3C compatible actions.
-e.g. WDA cannot handle zero wait [PR](https://github.com/appium/appium-xcuitest-driver/pull/753). Additional actions in [espresso](https://github.com/appium/appium-espresso-driver/issues/272).
+[W3C actions](https://www.w3.org/TR/webdriver1/#actions) is also available in some drivers such as XCUITest, UIA2, Espresso and Windows.
+W3C actions are implemented to the best of the limitations of the operating systems' test frameworks.
+e.g. WDA cannot handle zero wait [PR](https://github.com/appium/appium-xcuitest-driver/pull/753).
 
 [API doc](http://appium.io/docs/en/commands/interactions/actions/) and API docs of each client help to understand how to call them.
 

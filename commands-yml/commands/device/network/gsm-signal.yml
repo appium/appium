@@ -60,7 +60,7 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: signalStrengh
+    - name: signalStrength
       type: string
       description: Signal strength in the range [0, 4]
 

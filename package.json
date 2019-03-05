@@ -77,7 +77,7 @@
     "prepublish": "gulp prepublish",
     "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
     "postpublish": "npm run restore-shrinkwrap",
-    "prune-shrinkwrap": "npm ci --production --ignore-scripts && npm shrinkwrap && npm install --only=dev --no-shrinkwrap",
+    "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm shrinkwrap && npm install --only=dev --no-shrinkwrap)",
     "restore-shrinkwrap": "git checkout HEAD -- npm-shrinkwrap.json",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",

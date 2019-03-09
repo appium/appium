@@ -118,7 +118,7 @@ List of available commands:
 | mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
 | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
 | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
-| mobile:getDeviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
+| mobile:deviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
 
 ### Android (Espresso only)
 | Command | Description | Argument | Argument Example |

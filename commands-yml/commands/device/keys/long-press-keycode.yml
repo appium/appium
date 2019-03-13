@@ -1,6 +1,8 @@
 ---
 name: Long Press Key Code
-short_description: Press and hold a particular key code on the device
+short_description: Press and hold a particular key code on an Android device
+
+description: See https://developer.android.com/reference/android/view/KeyEvent.html# for reference of available Android key codes
 
 example_usage:
   java:

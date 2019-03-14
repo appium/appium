@@ -1,0 +1,34 @@
+jobs:
+  - job: bundle_and_upload_appium_zip
+    pool:
+      vmImage: 'macOS 10.13'
+    variables:
+      CC: gcc
+      CXX: g++
+    steps:
+    - script: gcc --version
+      displayName: Print GCC Version
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '11.x'
+    - script: npm install
+      displayName: Install NPM Dependencies
+    - script: |
+        pushd node_modules/appium-xcuitest-driver/WebDriverAgent
+        carthage bootstrap --no-use-binaries
+        cp Cartfile.resolved Carthage
+        mkdir -p ./Resources/WebDriverAgent.bundle
+        popd
+      displayName: Fully build XCUITestDriver
+    - script: npm run build
+      displayName: npm run build
+    - script: npm prune --production
+      displayName: Prune Dev Dependencies
+    - script: npm run zip
+      displayName: Create the bundle zip
+    - script: npm install
+      displayName: Reinstall dev dependencies
+    - script: npm run upload
+      displayName: Upload to appium/appium-build-store Github Releases
+    - script: npx gulp sauce-storage-upload
+      displayName: Upload to Sauce Storage as sauce-storage:appium.zip

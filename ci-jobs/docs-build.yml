@@ -1,0 +1,7 @@
+jobs:
+  job: Generate Docs
+  pool:
+    vmImage: 'macOS 10.13'
+  steps:
+  - script: brew install hub
+    displayName: Install Hub

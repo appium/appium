@@ -11,7 +11,7 @@ jobs:
     - task: NodeTool@0
       inputs:
         versionSpec: '11.x'
-    - script: npm install
+    - script: npm ci || npm install # "npm ci" if shrinkwrap is present
       displayName: Install NPM Dependencies
     - script: |
         pushd node_modules/appium-xcuitest-driver/WebDriverAgent
@@ -23,10 +23,10 @@ jobs:
     - script: npm run build
       displayName: npm run build
     - script: npm prune --production
-      displayName: Prune Dev Dependencies
+      displayName: Get rid of dev dependencies
     - script: npm run zip
       displayName: Create the bundle zip
-    - script: npm install
+    - script: npm install 
       displayName: Reinstall dev dependencies
     - script: npm run upload
       env:
@@ -35,4 +35,4 @@ jobs:
     - script: npx gulp sauce-storage-upload
       displayName: Upload to Sauce Storage as sauce-storage:appium.zip
       env:
-        GITHUB_TOKEN: $(GITHUB_TOKEN
+        GITHUB_TOKEN: $(GITHUB_TOKEN)

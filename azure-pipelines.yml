@@ -9,8 +9,6 @@ jobs:
     steps:
     - script: gcc --version
       displayName: Print GCC Version
-    - script: brew upgrade carthage
-      displayName: Upgrade Carthage
     - task: NodeTool@0
       inputs:
         versionSpec: '11.x'

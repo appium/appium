@@ -34,3 +34,5 @@ jobs:
       displayName: Upload to appium/appium-build-store Github Releases
     - script: npx gulp sauce-storage-upload
       displayName: Upload to Sauce Storage as sauce-storage:appium.zip
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN

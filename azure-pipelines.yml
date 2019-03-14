@@ -1,7 +1,7 @@
 jobs:
   - job: bundle_and_upload_appium_zip
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: 'macOS 10.13'
     variables:
       NODE_ENV: production
       CC: gcc
@@ -40,4 +40,4 @@ jobs:
     - script: npm run upload
       displayName: Upload to appium/appium-build-store
     - script: npx gulp sauce-storage-upload
-      displayName: Upload to Sauce Storage
+      displayName: Upload to Sauce Storage as sauce-storage:appium.zip

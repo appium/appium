@@ -1,6 +1,4 @@
-parameters:
-
-
+# parameters: # No params yet, but may add later
 jobs:
   - job: bundle_and_upload_appium_zip
     pool:
@@ -9,7 +7,6 @@ jobs:
       CC: gcc
       CXX: g++
     steps:
-    - script: git status
     - script: gcc --version
       displayName: Print GCC Version
     - task: NodeTool@0

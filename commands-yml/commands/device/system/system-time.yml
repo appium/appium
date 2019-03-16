@@ -9,8 +9,7 @@ example_usage:
   python:
     |
       time = self.driver.device_time
-      
-      # Available since Appium 1.11.0 and Appium-Python-Client v0.35
+
       time = self.driver.get_device_time()
       time = self.driver.get_device_time("YYYY-MM-DD")
   javascript_wdio:

@@ -9,6 +9,9 @@ example_usage:
   python:
     |
       time = self.driver.device_time
+
+      time = self.driver.get_device_time()
+      time = self.driver.get_device_time("YYYY-MM-DD")
   javascript_wdio:
     |
       let time = driver.getDeviceTime();

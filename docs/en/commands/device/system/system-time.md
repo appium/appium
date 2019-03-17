@@ -15,6 +15,9 @@ String time = driver.getDeviceTime();
 # Python
 time = self.driver.device_time
 
+time = self.driver.get_device_time()
+time = self.driver.get_device_time("YYYY-MM-DD")
+
 ```
 
 ```javascript

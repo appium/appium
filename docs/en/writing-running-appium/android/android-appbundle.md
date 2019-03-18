@@ -13,7 +13,7 @@ We can get distributed apk files from the `.aab` file via the CLI. Using the gen
     - The `.aab` is available over Android Studio 3.2
     - You must sign correctly when you generate `.apks` from `.aab`. This step requires data signing.
         ```bash
-        $ java -jar apks/bundletool-all-0.6.0.jar build-apks \
+        $ java -jar apks/bundletool.jar build-apks \
           --bundle apks/release/release/app.aab \ # A generated aab file
           --output apks/AppBundleSample.apks \    # An apks file you'd like to out put to
           --ks apks/sign \                        # Signing keystore
@@ -40,6 +40,10 @@ We can get distributed apk files from the `.aab` file via the CLI. Using the gen
 You can find another way to get test APKs in https://developer.android.com/guide/app-bundle/
 
 ## Tips
+### Make `bundletool.jar` executable
+
+Make sure the bundletool is executable.
+`$ chmod 655 /path/to/bundletool.jar` can make it executable, for example.
 
 ### Test with different languages
 

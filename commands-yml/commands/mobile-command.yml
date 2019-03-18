@@ -59,7 +59,9 @@
       | mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/docs/en/writing-running-appium/server-args.md#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
       | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/device/logcat` endpoint | <none> | <none> |
       | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
-      | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | {action} | {action: "previous"}|
+      | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | `{action}` | `{action: "previous"}`|
+      | mobile:getPermissions | Gets a list of permissions which are `denied`, `granted` or `requested`. | `{type, appPackage}` | `{type: "granted", appPackage: "io.appium.android.apis"}`|
+      | mobile:changePermissions | Grants or revokes permissions. | `{action, appPackage, permissions}` |  `{action: "grant", appPackage: "io.appium.android.apis", permissions: "android.permission.READ_CONTACTS"}`, `{action: "revoke", appPackage: "io.appium.android.apis", permissions: ["android.permission.READ_CONTACTS", "android.permission.CAMERA"]}` |
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |
@@ -75,7 +77,7 @@
       ### Android (Espresso only)
       | Command | Description | Argument | Argument Example |
       | ------- | ----------- | -------- | ---------------- |
-      | mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{elementId, direction}` | `{elementId: 2, direction: "down|up|left|right"}` |      
+      | mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{elementId, direction}` | `{elementId: 2, direction: "down|up|left|right"}` |
       | mobile:swipe | Perform ["GeneralSwipeAction"](https://developer.android.com/reference/androidx/test/espresso/action/GeneralSwipeAction) | `{elementId, swiper, startCoordinates, endCoordinates, precisionDescriber}` | `{elementId: 3, swiper: "FAST|SLOW", startCoordinates: 'BOTTOM_RIGHT', endCoordinates: 'TOP_RIGHT', precisionDescriber: 'FINGER'}` |
       | mobile:clickAction | Perform ["ClickAction"](https://developer.android.com/reference/androidx/test/espresso/action/GeneralClickAction) | `{elementId, tapper, coordinatesProvider, precisionDescriber, inputDevice, buttonState}` | `{elementId: 2, tapper: 'Long', coordinatesProvider: 'BOTTOM_RIGHT', precisionDescriber: 'Thumb', inputDevice: 0, buttonState: 0}` |
       | mobile:isToastVisible | Check whether a toast message is visible. `text` is the mandatory argument. `isRegexp` is optional. `text` will be parsed as a regular expression pattern if `isRegexp` is `true`. `isRegexp` is `false` by default. It returns `true` if the `text` exists, or `false` otherwise. | `{text, isRegexp}` | `{ text: 'A toast' }`, `{ text: '^regex$', isRegexp: true } `|

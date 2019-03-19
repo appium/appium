@@ -37,7 +37,7 @@ example_usage:
       $context = $driver->context();
   csharp:
     |
-      // TODO C# sample
+       string Context = driver.Context;
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContext--"

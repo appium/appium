@@ -1,7 +1,13 @@
-CHANGES IN VERSION 1.12.0 (FROM 1.12.0)
+CHANGES IN VERSION 1.12.0 (FROM 1.11.1)
 ===================================
 
-#### GENERAL
+#### General
+
+#### iOS
+* Add `eventLoopIdleDelaySec` capability. Delays the invocation of `-[XCUIApplicationProcess setEventLoopHasIdled:]` by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason) [#881](https://github.com/appium/appium-xcuitest-driver/pull/881)
+* Remove `webkitDebugProxyPort` constraint [#883](https://github.com/appium/appium-xcuitest-driver/pull/883)
+* More helpful logging
+
 
 
 CHANGES IN VERSION 1.11.1 (from 1.11.0)

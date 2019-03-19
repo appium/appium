@@ -58,7 +58,15 @@ example_usage:
       $driver->context('NATIVE_APP');
   csharp:
     |
-      // TODO C# sample
+    // Switch to specific webview
+      List<string> AllContexts = new List<string>();
+        foreach (var context in (driver.Contexts))
+        {
+            AllContexts.Add(context);
+        }
+      driver.Context = (AllContexts[1]);
+     // Switch to NATIVE_APP
+     driver.Context = ("NATIVE_APP");
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#context-java.lang.String-"

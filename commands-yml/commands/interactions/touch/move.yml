@@ -1,5 +1,5 @@
 ---
-name: Move
+name: Move To
 short_description: Finger move on the screen
 description:
   >
@@ -9,7 +9,7 @@ example_usage:
     |
       TouchActions action = new TouchActions(driver);
       action.down(10, 10);
-      action.move(50, 50);
+      action.moveTo(50, 50);
       action.perform();
   python:
     |
@@ -17,7 +17,7 @@ example_usage:
       # ...
       actions = TouchAction(driver)
       actions.tap_and_hold(element)
-      actions.move(50, 50)
+      actions.move_to(element, 50, 50)
       actions.perform()
   javascript_wd:
     |
@@ -35,10 +35,10 @@ example_usage:
       ]);
   ruby:
     |
-      touch_action.down(element).move().perform
+      touch_action.down(element).move_to().perform
   ruby_core:
     |
-      @driver.touch_action.down(element).move().perform
+      @driver.touch_action.down(element).move_to().perform
   php:
     |
       // TODO PHP sample

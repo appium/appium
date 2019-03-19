@@ -39,7 +39,11 @@ example_usage:
       $contexts = $driver->contexts();
   csharp:
     |
-      // TODO C# sample
+       List<string> AllContexts = new List<string>();
+            foreach (var context in (driver.Contexts))
+            {
+                AllContexts.Add(context);
+            }
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContextHandles--"

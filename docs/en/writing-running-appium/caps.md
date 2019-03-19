@@ -86,6 +86,7 @@ These Capabilities are available only on Android-based drivers (like
 |`keyAlias`| Alias for key |e.g., `androiddebugkey`|
 |`keyPassword`| Password for key |e.g., `foo`|
 |`chromedriverExecutable`| The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium) |`/abs/path/to/webdriver`|
+|`chromedriverArgs`| An array of arguments to be passed to the chromedriver binary when it's run by Appium. By default no CLI args are added beyond what Appium uses internally (such as `--url-base`, `--port`, `--adb-port`, and `--log-path`. | e.g., `["--disable-gpu", "--disable-web-security"]` |
 |`chromedriverExecutableDir`| The absolute path to a directory to look for Chromedriver executables in, for automatic discovery of compatible Chromedrivers. Ignored if `chromedriverUseSystemExecutable` is `true` |`/abs/path/to/chromedriver/directory`|
 |`chromedriverChromeMappingFile` | The absolute path to a file which maps Chromedriver versions to the minimum Chrome that it supports. Ignored if `chromedriverUseSystemExecutable` is `true`|`/abs/path/to/mapping.json`|
 |`chromedriverUseSystemExecutable`| If `true`, bypasses automatic Chromedriver configuration and uses the version that comes downloaded with Appium. Ignored if `chromedriverExecutable` is set. Defaults to `false` |e.g., `true`|

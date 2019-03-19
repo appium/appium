@@ -172,7 +172,7 @@ module.exports = {
         ['Touch', ['touch',
           ['Single Tap', 'tap.md'],
           ['Double Tap', 'double-tap.md'],
-          ['Move To', 'move-to.md'],
+          ['Move', 'move.md'],
           ['Touch Down', 'touch-down.md'],
           ['Touch Up', 'touch-up.md'],
           ['Long Press', 'long-press.md'],

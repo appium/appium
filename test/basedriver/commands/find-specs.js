@@ -113,25 +113,6 @@ describe('finding elements by image', function () {
       sinon.stub(d, 'fixImageTemplateScale').returns(newTemplate);
       d.fixImageTemplateScale.callCount.should.eql(0);
     });
-    it('should not fix template size scale if no scale value', async function () {
-      const newTemplate = 'iVBORbaz';
-      await helpers.fixImageTemplateScale(newTemplate).should.eventually.eql(newTemplate);
-    });
-    it('should not fix template size scale if it is null', async function () {
-      const newTemplate = 'iVBORbaz';
-      await helpers.fixImageTemplateScale(newTemplate, null)
-        .should.eventually.eql(newTemplate);
-    });
-    it('should not fix template size scale if it is not number', async function () {
-      const newTemplate = 'iVBORbaz';
-      await helpers.fixImageTemplateScale(newTemplate, 'wrong-scale')
-        .should.eventually.eql(newTemplate);
-    });
-    it('should fix template size scale', async function () {
-      const actual = 'iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAWElEQVR4AU3BQRWAQAhAwa/PGBsEgrC16AFBKEIPXW7OXO+Rmey9iQjMjHFzrLUwM7qbqmLcHKpKRFBVuDvj4agq3B1VRUQYT2bS3QwRQVUZF/CaGRHB3wc1vSZbHO5+BgAAAABJRU5ErkJggg==';
-      await helpers.fixImageTemplateScale(TINY_PNG, { xScale: 1.5, yScale: 1.5 })
-        .should.eventually.eql(actual);
-    });
 
     it('should throw an error if template match fails', async function () {
       const d = new TestDriver();
@@ -162,6 +143,81 @@ describe('finding elements by image', function () {
       (imgEl instanceof ImageElement).should.be.true;
       d._imgElCache.has(imgEl.id).should.be.false;
       imgEl.rect.should.eql(rect);
+    });
+  });
+
+  describe('fixImageTemplateScale', function () {
+    it('should not fix template size scale if no scale value', async function () {
+      const newTemplate = 'iVBORbaz';
+      await helpers.fixImageTemplateScale(newTemplate, {fixImageTemplateScale: true})
+        .should.eventually.eql(newTemplate);
+    });
+
+    it('should not fix template size scale if it is null', async function () {
+      const newTemplate = 'iVBORbaz';
+      await helpers.fixImageTemplateScale(newTemplate, null)
+        .should.eventually.eql(newTemplate);
+    });
+
+    it('should not fix template size scale if it is not number', async function () {
+      const newTemplate = 'iVBORbaz';
+      await helpers.fixImageTemplateScale(newTemplate, 'wrong-scale')
+        .should.eventually.eql(newTemplate);
+    });
+
+    it('should fix template size scale', async function () {
+      const actual = 'iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAWElEQVR4AU3BQRWAQAhAwa/PGBsEgrC16AFBKEIPXW7OXO+Rmey9iQjMjHFzrLUwM7qbqmLcHKpKRFBVuDvj4agq3B1VRUQYT2bS3QwRQVUZF/CaGRHB3wc1vSZbHO5+BgAAAABJRU5ErkJggg==';
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        fixImageTemplateScale: true, xScale: 1.5, yScale: 1.5
+      }).should.eventually.eql(actual);
+    });
+
+    it('should not fix template size scale because of fixImageTemplateScale is false', async function () {
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        fixImageTemplateScale: false, xScale: 1.5, yScale: 1.5
+      }).should.eventually.eql(TINY_PNG);
+    });
+
+    it('should fix template size scale with default scale', async function () {
+      const actual = 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABwUlEQVR4AaXBPUsrQQCG0SeX+cBdkTjwTpG1NPgLpjY/fW1stt4UYmm2cJqwMCsaw70uJJ3CBc9Z/P3Cl+12S9u2tG1L27bEGLm/v2ez2bDZbJDEd/7wS4YT7z3X19fc3Nxwd3dHXdd47xnHkefnZ8ZxpKoq6rqmqiqMMcwMJ1VV0TQN0zThnOPj44O6rsk503UdkmiahqZpWK1WGGOYGU7quqZpGqy1SCLnTM6Z19dXcs5IYpomrLVI4uLigpnhpKoqVqsVkjgcDjw9PdF1HTlnuq5DEs45JHE4HDgznByPR97e3pimiVIK4zhyPB7x3hNCIITA5eUl3nsWiwVnhpNSCsMwsNvtGIaB/X5PKQVJpJSQxHq9RhLOOc4MJ9M0sdvt2G639H3PTBIxRiQhCUnEGLHWcmY4KaUwDAN93/P4+MhyuSSlhCRSSkjCOYe1FmstZ6bve2YvLy/s93tmy+USSUhCEpIIIfAd8/DwwOz9/Z1SCpJIKSGJ9XqNJJxz/MS0bcvs6uoKScQYkYQkJBFjxFrLT0zbtsxub29JKSGJlBKScM5hrcVay09MzplZjJHPz0+894QQCCHwP/7wS/8A4e6nAg+R8LwAAAAASUVORK5CYII=';
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        defaultImageTemplateScale: 4.0
+      }).should.eventually.eql(actual);
+    });
+
+    it('should fix template size scale with default scale and image scale', async function () {
+      const actual = 'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACaUlEQVR4AbXBMWvrWBSF0c9BsFPtW91UR1U6+///FKlKKt8qqnyqnMozggkI8xgMj6x1uv+L/6zryrIsrOvKsiys68qyLFwuF87nM5fLhfP5zOVy4Xw+84wXftkLv2ziQBK26b0TEVQVu4jANrvM5Hq9spOEJCQhCUlI4mjiQBK26b1TVewkYRvb7DKTMQaZiW1s01rDNraRxNHEgSRaa1QVO0m01jjKTDKTXe+d3jtVxU4SjyYOJGGbnSRs03snM8lMMpPb7UZmkplEBFXFThK2eTRxIAnbSMI2VcX39zdjDMYYZCaZyRiDMQZVxU4StqkqHk0cSEISf5KZ7DKTMQbLsrCTRGuN3jtVxaOJg6qiqqgqqoqqoqoYY5CZ7GwTEdzvd97f34kIeu/YRhKPJg6qiswkM7ndbmQmmUlmkpnsbBMR2CYimOeZ3ju2kcSjiYOqIjP5+vpi2za2bWPbNo5aa7TW2PXe6b3Te6e1hiQeTRxUFbfbjW3bGGNwvV4ZY2Ab27TWsI1tbGMb27TWsI0kHk0cVBWZybZtXK9XPj8/+fj4YJ5nIoLWGraJCOZ5RhKSkIQkJPFo4qCqyEy2bWOMwefnJ+u6cjqdsM3ONvM8cz6feca0ris/rtcrmcnONhHB/X7n/f2diKD3jm0k8axpWRZ+ZCaZyc42EYFtIoJ5num9YxtJPGta15U/sY1tdm9vb/Te6b1jG0k8a1qWhR+2sU1rjdYatrGNbWxjm9YaknjWtK4rPyKCiKC1hm0igojg9fUVSUhCEpJ41rQsC0e22dkmIrhcLvyNF/7H6XTib73wy174Zf8AJEsePtlPj10AAAAASUVORK5CYII=';
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        defaultImageTemplateScale: 4.0,
+        fixImageTemplateScale: true,
+        xScale: 1.5, yScale: 1.5
+      }).should.eventually.eql(actual);
+    });
+
+    it('should not fix template size scale with default scale and image scale', async function () {
+      const actual = 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABwUlEQVR4AaXBPUsrQQCG0SeX+cBdkTjwTpG1NPgLpjY/fW1stt4UYmm2cJqwMCsaw70uJJ3CBc9Z/P3Cl+12S9u2tG1L27bEGLm/v2ez2bDZbJDEd/7wS4YT7z3X19fc3Nxwd3dHXdd47xnHkefnZ8ZxpKoq6rqmqiqMMcwMJ1VV0TQN0zThnOPj44O6rsk503UdkmiahqZpWK1WGGOYGU7quqZpGqy1SCLnTM6Z19dXcs5IYpomrLVI4uLigpnhpKoqVqsVkjgcDjw9PdF1HTlnuq5DEs45JHE4HDgznByPR97e3pimiVIK4zhyPB7x3hNCIITA5eUl3nsWiwVnhpNSCsMwsNvtGIaB/X5PKQVJpJSQxHq9RhLOOc4MJ9M0sdvt2G639H3PTBIxRiQhCUnEGLHWcmY4KaUwDAN93/P4+MhyuSSlhCRSSkjCOYe1FmstZ6bve2YvLy/s93tmy+USSUhCEpIIIfAd8/DwwOz9/Z1SCpJIKSGJ9XqNJJxz/MS0bcvs6uoKScQYkYQkJBFjxFrLT0zbtsxub29JKSGJlBKScM5hrcVay09MzplZjJHPz0+894QQCCHwP/7wS/8A4e6nAg+R8LwAAAAASUVORK5CYII=';
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        defaultImageTemplateScale: 4.0,
+        fixImageTemplateScale: false,
+        xScale: 1.5, yScale: 1.5
+      }).should.eventually.eql(actual);
+    });
+
+    it('should not fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        defaultImageTemplateScale: 4.0,
+        ignoreDefaultImageTemplateScale: true,
+      }).should.eventually.eql(TINY_PNG);
+    });
+
+    it('should ignore defaultImageTemplateScale to fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
+      const actual = 'iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAWElEQVR4AU3BQRWAQAhAwa/PGBsEgrC16AFBKEIPXW7OXO+Rmey9iQjMjHFzrLUwM7qbqmLcHKpKRFBVuDvj4agq3B1VRUQYT2bS3QwRQVUZF/CaGRHB3wc1vSZbHO5+BgAAAABJRU5ErkJggg==';
+      await helpers.fixImageTemplateScale(TINY_PNG, {
+        defaultImageTemplateScale: 4.0,
+        ignoreDefaultImageTemplateScale: true,
+        fixImageTemplateScale: true,
+        xScale: 1.5, yScale: 1.5
+      }).should.eventually.eql(actual);
     });
   });
 
@@ -223,24 +279,66 @@ describe('finding elements by image', function () {
       const d = new TestDriver();
       sinon.stub(d, 'getScreenshot').returns(TINY_PNG);
 
-      // try first with portrait screen
+      // try first with portrait screen, screen = 8 x 12
       let screen = [TINY_PNG_DIMS[0] * 2, TINY_PNG_DIMS[1] * 3];
+      let expectedScale = { xScale: 2.67, yScale: 4 };
+
       const {b64Screenshot, scale} = await d.getScreenshotForImageFind(...screen);
       b64Screenshot.should.not.eql(TINY_PNG);
       let screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
       screenshotObj.bitmap.width.should.eql(screen[0]);
       screenshotObj.bitmap.height.should.eql(screen[1]);
-      scale.should.eql({ xScale: 2, yScale: 3 });
+      scale.xScale.toFixed(2).should.eql(expectedScale.xScale.toString());
+      scale.yScale.should.eql(expectedScale.yScale);
 
-      // then with landscape screen
+      // then with landscape screen, screen = 12 x 8
       screen = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
+      expectedScale = { xScale: 4, yScale: 2.67 };
+
       const {b64Screenshot: newScreen, scale: newScale} = await d.getScreenshotForImageFind(...screen);
       newScreen.should.not.eql(TINY_PNG);
       screenshotObj = await imageUtil.getJimpImage(newScreen);
       screenshotObj.bitmap.width.should.eql(screen[0]);
       screenshotObj.bitmap.height.should.eql(screen[1]);
-      newScale.should.eql({ xScale: 3, yScale: 2 });
+      newScale.xScale.should.eql(expectedScale.xScale);
+      newScale.yScale.toFixed(2).should.eql(expectedScale.yScale.toString());
     });
+
+    it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio with fixImageTemplateScale', async function () {
+      const d = new TestDriver();
+      sinon.stub(d, 'getScreenshot').returns(TINY_PNG);
+
+      // try first with portrait screen, screen = 8 x 12
+      let screen = [TINY_PNG_DIMS[0] * 2, TINY_PNG_DIMS[1] * 3];
+      let expectedScale = { xScale: 2.67, yScale: 4 };
+
+      const {b64Screenshot, scale} = await d.getScreenshotForImageFind(...screen);
+      b64Screenshot.should.not.eql(TINY_PNG);
+      let screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
+      screenshotObj.bitmap.width.should.eql(screen[0]);
+      screenshotObj.bitmap.height.should.eql(screen[1]);
+      scale.xScale.toFixed(2).should.eql(expectedScale.xScale.toString());
+      scale.yScale.should.eql(expectedScale.yScale);
+      // 8 x 12 stretched TINY_PNG
+      await helpers.fixImageTemplateScale(b64Screenshot, {fixImageTemplateScale: true, scale})
+        .should.eventually.eql('iVBORw0KGgoAAAANSUhEUgAAAAgAAAAMCAYAAABfnvydAAAAJ0lEQVR4AYXBAQEAIACDMKR/p0fTBrKdbZcPCRIkSJAgQYIECRIkPAzBA1TpeNwZAAAAAElFTkSuQmCC');
+
+      // then with landscape screen, screen = 12 x 8
+      screen = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
+      expectedScale = { xScale: 4, yScale: 2.67 };
+
+      const {b64Screenshot: newScreen, scale: newScale} = await d.getScreenshotForImageFind(...screen);
+      newScreen.should.not.eql(TINY_PNG);
+      screenshotObj = await imageUtil.getJimpImage(newScreen);
+      screenshotObj.bitmap.width.should.eql(screen[0]);
+      screenshotObj.bitmap.height.should.eql(screen[1]);
+      newScale.xScale.should.eql(expectedScale.xScale);
+      newScale.yScale.toFixed(2).should.eql(expectedScale.yScale.toString());
+      // 12 x 8 stretched TINY_PNG
+      await helpers.fixImageTemplateScale(newScreen, {fixImageTemplateScale: true, scale})
+        .should.eventually.eql('iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAI0lEQVR4AZXBAQEAMAyDMI5/T5W2ayB5245AIokkkkgiiST6+W4DTLyo5PUAAAAASUVORK5CYII=');
+    });
+
   });
 });
 

@@ -46,7 +46,7 @@ $context = $driver->context();
 
 ```csharp
 // C#
-// TODO C# sample
+string Context = driver.Context;
 
 ```
 

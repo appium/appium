@@ -45,7 +45,11 @@ $contexts = $driver->contexts();
 
 ```csharp
 // C#
-// TODO C# sample
+List<string> AllContexts = new List<string>();
+     foreach (var context in (driver.Contexts))
+     {
+         AllContexts.Add(context);
+     }
 
 ```
 

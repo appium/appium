@@ -1,3 +1,45 @@
+CHANGES IN VERSION 1.12.0 (FROM 1.11.1)
+===================================
+
+Appium 1.12.0 is a minor release
+
+#### General
+* Fix wrong coordination in _find element by_ . [#306](https://github.com/appium/appium-base-driver/pull/306), [#307](https://github.com/appium/appium-base-driver/pull/307)
+* Added `fixImageTemplateScale` and `defaultImageTemplateScale` to arrange image comparison logic. Read [doc](docs/en/advanced-concepts/image-elements.md) for more details
+
+#### Android
+* Add `mobile:` endpoint for enabling/disabling/viewing app permissions [#305](https://github.com/appium/appium-uiautomator2-driver/pull/305)
+* Fix exception caused when Appium Settings fails to provide geolocation [#493](https://github.com/appium/appium-android-driver/pull/493)
+* Stop chromedriver proxies when reset command is called [#495](https://github.com/appium/appium-android-driver/pull/495)
+* Fix pin unlock errors. Turn screen off before doing pin unlock to ensure pin unlock screen has no existing entries. [#498](https://github.com/appium/appium-android-driver/pull/498)
+* Add `uninstallOtherPackages` capability [#289](https://github.com/appium/appium-uiautomator2-driver/pull/289)
+* Fix pattern unlock problems caused by not using relative touches [#489](https://github.com/appium/appium-android-driver/pull/489)
+* Add `chromedriverArgs` capability that passes chromedriver flags into sessions [#519](https://github.com/appium/appium-android-driver/pull/519/files)
+ * Add `skipLogcatCapture` capability that skip capturing logcat, for possible performance enhancement.
+
+#### Android (UiAutomator2 only)
+* Verify file system permissions before signing files to avoid confusing signing errors [#294](https://github.com/appium/appium-uiautomator2-driver/pull/294)
+
+#### Android (Espresso only)
+* Add `dataMatcher` selector strategy [#386](https://github.com/appium/appium-espresso-driver/pull/386)
+* `mobile:` commands
+  * Call UiAutomator commands from Espresso [#371](https://github.com/appium/appium-espresso-driver/pull/371)
+  * `swipe` and `clickAction` delegates to Espresso's `GeneralSwipeAction` and `GeneralClickAction` [#372](https://github.com/appium/appium-espresso-driver/pull/372)
+  * `webAtom` which delgates to Espresso's `Web Atoms` library [#380](https://github.com/appium/appium-espresso-driver/pull/380)
+* Fix orientation change event to not require element [#383](https://github.com/appium/appium-espresso-driver/pull/383)
+* Add `remoteAdbHost` capability to allow tests on remote machines [#381](https://github.com/appium/appium-espresso-driver/pull/381)
+
+#### iOS
+* Add `eventLoopIdleDelaySec` capability. Delays the invocation of `-[XCUIApplicationProcess setEventLoopHasIdled:]` by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason) [#881](https://github.com/appium/appium-xcuitest-driver/pull/881)
+* Add `-r` flag for video recording to make screen video recording more flexible [#867](https://github.com/appium/appium-xcuitest-driver/pull/867)` 
+* Add `enforceFreshSimulatorCreation` capability [#859](https://github.com/appium/appium-xcuitest-driver/pull/859)
+* More helpful logging
+*-* add `mjpegScalingFactor` settings that change image scale of mjpeg server to stream screen [#138](https://github.com/appium/WebDriverAgent/pull/138)
+- Fix `useXctestrunFile` capability for newer Xcode [#903](https://github.com/appium/appium-xcuitest-driver/pull/903)
+- Returns a couple of lines of xcodebuild error message if WDA xcodebuild fails. It helps to understand the cause. [#888](https://github.com/appium/appium-xcuitest-driver/pull/888)
+
+
+
 CHANGES IN VERSION 1.11.1 (from 1.11.0)
 ===================================
 

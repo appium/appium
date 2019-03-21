@@ -3,6 +3,10 @@ CHANGES IN VERSION 1.12.0 (FROM 1.11.1)
 
 Appium 1.12.0 is a minor release
 
+#### General
+* Fix wrong coordination in _find element by_ . [#306](https://github.com/appium/appium-base-driver/pull/306), [#307](https://github.com/appium/appium-base-driver/pull/307)
+* Added `fixImageTemplateScale` and `defaultImageTemplateScale` to arrange image comparison logic. Read [doc](docs/en/advanced-concepts/image-elements.md) for more details
+
 #### Android
 * Add `mobile:` endpoint for enabling/disabling/viewing app permissions [#305](https://github.com/appium/appium-uiautomator2-driver/pull/305)
 * Fix exception caused when Appium Settings fails to provide geolocation [#493](https://github.com/appium/appium-android-driver/pull/493)
@@ -11,6 +15,7 @@ Appium 1.12.0 is a minor release
 * Add `uninstallOtherPackages` capability [#289](https://github.com/appium/appium-uiautomator2-driver/pull/289)
 * Fix pattern unlock problems caused by not using relative touches [#489](https://github.com/appium/appium-android-driver/pull/489)
 * Add `chromedriverArgs` capability that passes chromedriver flags into sessions [#519](https://github.com/appium/appium-android-driver/pull/519/files)
+ * Add `skipLogcatCapture` capability that skip capturing logcat, for possible performance enhancement.
 
 #### Android (UiAutomator2 only)
 * Verify file system permissions before signing files to avoid confusing signing errors [#294](https://github.com/appium/appium-uiautomator2-driver/pull/294)
@@ -26,9 +31,12 @@ Appium 1.12.0 is a minor release
 
 #### iOS
 * Add `eventLoopIdleDelaySec` capability. Delays the invocation of `-[XCUIApplicationProcess setEventLoopHasIdled:]` by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason) [#881](https://github.com/appium/appium-xcuitest-driver/pull/881)
-* Add `-r` flag for video recording [#867](https://github.com/appium/appium-xcuitest-driver/pull/867)` 
+* Add `-r` flag for video recording to make screen video recording more flexible [#867](https://github.com/appium/appium-xcuitest-driver/pull/867)` 
 * Add `enforceFreshSimulatorCreation` capability [#859](https://github.com/appium/appium-xcuitest-driver/pull/859)
 * More helpful logging
+*-* add `mjpegScalingFactor` settings that change image scale of mjpeg server to stream screen [#138](https://github.com/appium/WebDriverAgent/pull/138)
+- Fix `useXctestrunFile` capability for newer Xcode [#903](https://github.com/appium/appium-xcuitest-driver/pull/903)
+- Returns a couple of lines of xcodebuild error message if WDA xcodebuild fails. It helps to understand the cause. [#888](https://github.com/appium/appium-xcuitest-driver/pull/888)
 
 
 

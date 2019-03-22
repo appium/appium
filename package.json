@@ -100,16 +100,10 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "ajv": "^6.5.3",
     "appium-gulp-plugins": "^3.6.0",
-    "babel-eslint": "^10.0.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",
-    "eslint": "^5.2.0",
     "eslint-config-appium": "^4.0.1",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-mocha": "^5.0.0",
-    "eslint-plugin-promise": "^4.0.0",
     "fancy-log": "^1.3.2",
     "gulp": "^4.0.0",
     "handlebars": "^4.0.10",

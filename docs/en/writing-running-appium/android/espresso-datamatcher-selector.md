@@ -1,6 +1,6 @@
 ## Espresso DataMatcher Selector 
 
-By delegating to Espresso's [Data Matcher](https://developer.android.com/reference/android/support/test/espresso/DataInteraction), we can target views that are not visible in the viewport without having to manually scroll the Views on screen. Instead we target the [Adapters](https://developer.android.com/reference/android/widget/AdapterView))
+By delegating to Espresso's [Data Matcher](https://developer.android.com/reference/android/support/test/espresso/DataInteraction), we can target views that are not visible in the viewport without the need to manually scroll the Views on screen.
 
 ### AdapterViews
 

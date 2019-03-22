@@ -2,13 +2,13 @@ import validate from 'validate.js';
 import _ from 'lodash';
 
 
-validate.validators.array = function (value, options, key, attributes) {
+validate.validators.array = function array (value, options, key, attributes) {
   if (attributes[key] && !validate.isArray(attributes[key])) {
     return `must be an array`;
   }
 };
 
-validate.validators.hasAttributes = function (value, options) {
+validate.validators.hasAttributes = function hasAttributes (value, options) {
   if (!value) {
     return;
   }
@@ -26,7 +26,7 @@ validate.validators.hasAttributes = function (value, options) {
   }
 };
 
-validate.validators.hasPossibleAttributes = function (value, options) {
+validate.validators.hasPossibleAttributes = function hasPossibleAttributes (value, options) {
   if (!value) {
     return;
   }

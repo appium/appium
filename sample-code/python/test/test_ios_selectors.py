@@ -16,8 +16,8 @@ class TestIOSBasicInteractions():
                 'app': IOS_APP_PATH,
                 'platformName': 'iOS',
                 'automationName': 'XCUITest',
-                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '11.1',
-                'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
+                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '12.1',
+                'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 8',
             }
         )
 
@@ -40,10 +40,10 @@ class TestIOSBasicInteractions():
 
     def test_should_find_elements_by_nspredicate(self, driver):
         all_visible_elements = driver.find_elements_by_ios_predicate('visible = 1')
-        assert 27 == len(all_visible_elements)
+        assert 25 <= len(all_visible_elements)
 
     def test_should_find_elements_by_class_chain(self, driver):
-        window_element = driver.find_elements_by_ios_class_chain('XCUIElementTypeWindow[1]/*[2]')
+        window_element = driver.find_elements_by_ios_class_chain('XCUIElementTypeWindow[1]/*')
         assert 1 == len(window_element)
 
     def test_should_find_elements_by_xpath(self, driver):

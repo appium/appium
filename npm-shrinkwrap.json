@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.12.0",
+  "version": "1.12.1-rc.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1696,14 +1696,14 @@
       }
     },
     "appium-ios-driver": {
-      "version": "4.2.0",
-      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-4.2.0.tgz",
-      "integrity": "sha512-mrQaLpvpuYFliT6e4AA4SNAUDrMoScW43d9PYWJEdS0C5p6ldxdt5cByF78F0cFR/0/1OKcgI4EWXTo+TytyaQ==",
+      "version": "4.2.1",
+      "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-4.2.1.tgz",
+      "integrity": "sha512-AK4repPvBNxZcCMr/ARUSeQe1ZmXx51g6HbSKqC/gxwlZVEMRmTKeqs4CDE+Bo/lOJJiazt7Mg9jjMf2LLIWDQ==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^3.0.0",
         "appium-ios-simulator": "^3.9.0",
-        "appium-remote-debugger": "^3.20.0",
+        "appium-remote-debugger": "^4.0.0",
         "appium-support": "^2.25.0",
         "appium-xcode": "^3.1.0",
         "asyncbox": "^2.3.1",
@@ -1728,6 +1728,27 @@
         "yargs": "^13.1.0"
       },
       "dependencies": {
+        "appium-remote-debugger": {
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-4.0.0.tgz",
+          "integrity": "sha512-J+WGWaDOAm8k5XQrUhJmieTDCc4MXL184QBHEVgeeH7TeasY7gBe2vZEP72WNIYrO6qEX40ypObL9yffGJxbzA==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "appium-base-driver": "^3.0.0",
+            "appium-support": "^2.4.0",
+            "bluebird": "^3.4.7",
+            "bplist-creator": "0.0.7",
+            "bplist-parser": "^0.1.0",
+            "bufferpack": "0.0.6",
+            "es6-error": "^4.1.1",
+            "lodash": "^4.17.11",
+            "request": "^2.79.0",
+            "request-promise": "^4.1.1",
+            "source-map-support": "^0.5.5",
+            "uuid-js": "^0.7.5",
+            "ws": "^6.0.0"
+          }
+        },
         "xpath": {
           "version": "0.0.24",
           "resolved": "https://registry.npmjs.org/xpath/-/xpath-0.0.24.tgz",
@@ -2517,16 +2538,16 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "2.110.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.110.0.tgz",
-      "integrity": "sha512-gXL6cS8F50hUfKZ0jbk9ou2NgcFbJxmyo4QQ5TGoxtSfYhFaHyCKjE2JJXcfRObHx4VjYJssyvEpj2U+J+ybaQ==",
+      "version": "2.110.1",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.110.1.tgz",
+      "integrity": "sha512-G9HYnOlEboga6z/oTtTOZwG15zpxwl71NxFnr7bfddZw22zffYACGLsk0FiRDfi70v+s2RffLOGuAjhjdmaBVA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^3.0.0",
         "appium-ios-driver": "^4.0.0",
         "appium-ios-simulator": "^3.9.0",
-        "appium-remote-debugger": "^3.16.0",
-        "appium-support": "^2.25.0",
+        "appium-remote-debugger": "^4.0.0",
+        "appium-support": "^2.26.1",
         "appium-xcode": "^3.2.0",
         "async-lock": "^1.0.0",
         "asyncbox": "^2.3.1",
@@ -2542,6 +2563,29 @@
         "ws": "^6.0.0",
         "xmldom": "^0.1.27",
         "yargs": "^13.1.0"
+      },
+      "dependencies": {
+        "appium-remote-debugger": {
+          "version": "4.0.0",
+          "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-4.0.0.tgz",
+          "integrity": "sha512-J+WGWaDOAm8k5XQrUhJmieTDCc4MXL184QBHEVgeeH7TeasY7gBe2vZEP72WNIYrO6qEX40ypObL9yffGJxbzA==",
+          "requires": {
+            "@babel/runtime": "^7.0.0",
+            "appium-base-driver": "^3.0.0",
+            "appium-support": "^2.4.0",
+            "bluebird": "^3.4.7",
+            "bplist-creator": "0.0.7",
+            "bplist-parser": "^0.1.0",
+            "bufferpack": "0.0.6",
+            "es6-error": "^4.1.1",
+            "lodash": "^4.17.11",
+            "request": "^2.79.0",
+            "request-promise": "^4.1.1",
+            "source-map-support": "^0.5.5",
+            "uuid-js": "^0.7.5",
+            "ws": "^6.0.0"
+          }
+        }
       }
     },
     "appium-youiengine-driver": {

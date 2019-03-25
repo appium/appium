@@ -1,6 +1,6 @@
 ## Espresso DataMatcher Selector 
 
-By delegating to Espresso's [Data Matcher](https://developer.android.com/reference/android/support/test/espresso/DataInteraction), we can target views that are off-screen  without the need to manually scroll the Views on-screen.
+By delegating to Espresso's [Data Matcher](https://developer.android.com/reference/android/support/test/espresso/DataInteraction), we can target views that are not visible in the viewport without the need to manually scroll the Views on screen.
 
 ### AdapterViews
 
@@ -106,11 +106,13 @@ The args are a list of args that the method takes (can be undefined if it takes 
 
 Examples of JSON matchers with the equivalent Espresso `onData` matcher
 
+#### StartsWith
+
 ```js
-// 'startsWith'
+// 'startsWith' JSON
 {
   "name": "startsWith",
-  "args": "substr" // if it's a single arg, we can omit the array
+  "args": "substr" // if it's a single arg, we don't need args to be an array
 }
 ```
 
@@ -119,8 +121,10 @@ Examples of JSON matchers with the equivalent Espresso `onData` matcher
 onData(startsWith("substr"));
 ```
 
+#### Multiple Matchers
+
 ```js
-// multiple matchers
+// 'multiple matchers' JSON
 {
   "name": "allOf",
   "args": [
@@ -138,8 +142,10 @@ onData(startsWith("substr"));
 onData(allOf(is(instanceOf(Map.class)), hasEntry(equalTo("STR"), is("item: 50"))));
 ```
 
+#### Cursor Matchers
+
 ```js
-// cursor matchers
+// 'cursor matchers' JSON
 {
   "name": "is", "args": {
     "name": "instanceOf", "args": "Cursor.class"

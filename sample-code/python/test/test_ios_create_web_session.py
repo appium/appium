@@ -16,8 +16,8 @@ class TestIOSCreateWebSession():
             desired_capabilities={
                 'platformName': 'iOS',
                 'automationName': 'XCUITest',
-                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '10.3',
-                'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
+                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '12.1',
+                'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 8',
                 'browserName': 'Safari'
             }
         )

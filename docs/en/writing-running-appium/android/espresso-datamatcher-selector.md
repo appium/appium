@@ -6,7 +6,7 @@ By delegating to Espresso's [Data Matcher](https://developer.android.com/referen
 
 Android apps have special types of Views called [AdapterViews](https://developer.android.com/reference/android/widget/AdapterView) (e.g.: `ScrollView`, `ListView`, `GridView`) which have child views, but only render that child views that are on-screen. The AdapterView has "adapter" object which stores all the data for that view's children, including the views that aren't being rendered.
 
-When using Espresso's Data Matcher, you can target views that are off-screen by writing a [Hamcrest matcher](http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html) that selects an item from an adapter. When that item is located, if the view is not visible in the View hierarchy, Espresso immediately scrolls it into the viewport.
+When using Espresso's Data Matcher, you can target views that are off-screen by writing a [Hamcrest matcher](http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html) that selects an item from an adapter. If the item is not in the view hierarchy, Espresso automatically scrolls it into view.
 
 ### Example
 
@@ -51,246 +51,14 @@ The `ListView` node in the above XML has an attribute called `adapters` that con
     intent = Intent {
         cmp = io.appium.android.apis / .view.Buttons1
     }
-}, {
-    contentDescription = Chronometer,
-    title = Chronometer,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.ChronometerDemo
-    }
-}, {
-    contentDescription = Controls,
-    title = Controls,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Custom,
-    title = Custom,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.CustomView1
-    }
-}, {
-    contentDescription = Date Widgets,
-    title = Date Widgets,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Drag and Drop,
-    title = Drag and Drop,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.DragAndDropDemo
-    }
-}, {
-    contentDescription = Expandable Lists,
-    title = Expandable Lists,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Focus,
-    title = Focus,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Gallery,
-    title = Gallery,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Game Controller Input,
-    title = Game Controller Input,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.GameControllerInput
-    }
-}, {
-    contentDescription = Grid,
-    title = Grid,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Hover Events,
-    title = Hover Events,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.Hover
-    }
-}, {
-    contentDescription = ImageButton,
-    title = ImageButton,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.ImageButton1
-    }
-}, {
-    contentDescription = ImageSwitcher,
-    title = ImageSwitcher,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.ImageSwitcher1
-    }
-}, {
-    contentDescription = ImageView,
-    title = ImageView,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.ImageView1
-    }
-}, {
-    contentDescription = Layout Animation,
-    title = Layout Animation,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Layouts,
-    title = Layouts,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Lists,
-    title = Lists,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Picker,
-    title = Picker,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.CustomPicker1
-    }
-}, {
-    contentDescription = Popup Menu,
-    title = Popup Menu,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.PopupMenu1
-    }
-}, {
-    contentDescription = Progress Bar,
-    title = Progress Bar,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Radio Group,
-    title = Radio Group,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.RadioGroup1
-    }
-}, {
-    contentDescription = Rating Bar,
-    title = Rating Bar,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.RatingBar1
-    }
-}, {
-    contentDescription = Rotating Button,
-    title = Rotating Button,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.RotatingButton
-    }
-}, {
-    contentDescription = ScrollBars,
-    title = ScrollBars,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Search View,
-    title = Search View,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Secure View,
-    title = Secure View,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.SecureView
-    }
-}, {
-    contentDescription = Seek Bar,
-    title = Seek Bar,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.SeekBar1
-    }
-}, {
-    contentDescription = Spinner,
-    title = Spinner,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.Spinner1
-    }
-}, {
-    contentDescription = Splitting Touches across Views,
-    title = Splitting Touches across Views,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.SplitTouchView
-    }
-}, {
-    contentDescription = Switches,
-    title = Switches,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.Switches
-    }
-}, {
-    contentDescription = System UI Visibility,
-    title = System UI Visibility,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = Tabs,
-    title = Tabs,
-    intent = Intent {
-        cmp = io.appium.android.apis / .ApiDemos(has extras)
-    }
-}, {
-    contentDescription = TextClock,
-    title = TextClock,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.TextClockDemo
-    }
-}, {
-    contentDescription = TextFields,
-    title = TextFields,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.TextFields
-    }
-}, {
-    contentDescription = TextSwitcher,
-    title = TextSwitcher,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.TextSwitcher1
-    }
-}, {
-    contentDescription = Visibility,
-    title = Visibility,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.Visibility1
-    }
-}, {
-    contentDescription = WebView,
-    title = WebView,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.WebView1
-    }
-}, {
-    contentDescription = WebView2,
-    title = WebView2,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.WebView2
-    }
-}, {
-    contentDescription = WebView3,
-    title = WebView3,
-    intent = Intent {
-        cmp = io.appium.android.apis / .view.WebView3
-    }
-}
+},
+...
 ```
 
 These items can be targeted using a datamatcher selector. Here's a code snippet that shows how to locate and click `TextClock`:
 
 ```js
+// Javascript example
 driver.findElementById("list")
   .findElement("-android datamatcher", JSON.stringify({
     "name": "hasEntry",
@@ -302,6 +70,7 @@ driver.findElementById("list")
 This Appium selector is equivalent to writing this matcher in Espresso:
 
 ```java
+// Espresso code (not Appium code)
 onData(hasEntry("title", "textClock")
   .inAdapterView(withId("android:id/list))
   .perform(click());
@@ -333,6 +102,63 @@ The name is a Hamcrest matcher method name. This defaults to the `org.hamcrest.M
 
 The args are a list of args that the method takes (can be undefined if it takes no args). These can be strings, numbers, booleans or other hamcrest matcher JSON definitions.
 
+### JSON matcher samples
+
+Examples of JSON matchers with the equivalent Espresso `onData` matcher
+
+```js
+// 'startsWith'
+{
+  "name": "startsWith",
+  "args": "substr" // if it's a single arg, we can omit the array
+}
+```
+
+```java
+// Espresso 'startsWith' example
+onData(startsWith("substr"));
+```
+
+```js
+// multiple matchers
+{
+  "name": "allOf",
+  "args": [
+    {"name": "instanceOf", "args": "Map.class"},
+    {"name": "hasEntry", "args": {
+      "name": "equalTo", "args": "STR"
+    }},
+    {"name": "is", "args": "item: 50"}
+  ]
+}
+```
+
+```java
+// Espresso 'multiple matchers' example
+onData(allOf(is(instanceOf(Map.class)), hasEntry(equalTo("STR"), is("item: 50"))));
+```
+
+```js
+// cursor matchers
+{
+  "name": "is", "args": {
+    "name": "instanceOf", "args": "Cursor.class"
+  },
+  "name": "CursorMatchers.withRowString", "args": [
+    "job_title", {"name": "is", "args": "Barista"}
+  ]
+}
+```
+
+```java
+// Espresso 'cursor matchers' example
+onData(
+    is(instanceOf(Cursor.class)), 
+    CursorMatchers.withRowString("job_title", is("Barista"))
+);
+```
+
 
 ### Resources
 * Explanation of Views vs. Data in Espresso: https://medium.com/androiddevelopers/adapterviews-and-espresso-f4172aa853cf
+* Espresso lists: https://developer.android.com/training/testing/espresso/lists

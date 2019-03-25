@@ -1,7 +1,7 @@
 CHANGES IN VERSION 1.12.1 (FROM 1.12.0)
 ===================================
 
-Appium 1.12.1 is a patch release for supporting Xcode 10.2 (iOS 12.2)
+Appium 1.12.1 is a patch release that addresses WebView issues caused by Xcode 10.2 (iOS 12.2)
 
 #### iOS
 - Updated Appium Remote Debugger so that Safari webview tests are compatible with Xcode 10.2 (addresses [issue #12239](https://github.com/appium/appium/issues/12239)) [#118](https://github.com/appium/appium-remote-debugger/pull/118)

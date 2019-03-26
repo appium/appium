@@ -119,6 +119,7 @@ These Capabilities are available only on Android-based drivers (like
 |`autoLaunch`| Initializing the app under test automatically. Appium does not install/launch the app under test if this is `false`. Defaults to `true` | `true` or `false` |
 |`skipLogcatCapture`|Skips to start capturing logcat. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`uninstallOtherPackages`| A package, list of packages or `*` to uninstall package/s before installing apks for test. `'*'` uninstall all of thrid-party packages except for packages which is necessary for Appium to test such as `io.appium.settings` or `io.appium.uiautomator2.server` since Appium already contains the logic to manage them. | e.g. `"io.appium.example"`, `["io.appium.example1", "io.appium.example2"]`, `'*'` |
+|`disableWindowAnimation`|Set device animation scale zero if the value is `true`. After session is complete, Appium restores the animation scale to it's original value. Defaults to `false` | `true`, `false` |
 
 #### UIAutomator (1 & 2)
 

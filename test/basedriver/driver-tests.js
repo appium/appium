@@ -81,6 +81,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       // make a command that will wait a bit so we can crash while it's running
       d.getStatus = async function () {
         await B.delay(100);
+        return 'good status';
       }.bind(d);
       let cmdPromise = d.executeCommand('getStatus');
       await B.delay(0);

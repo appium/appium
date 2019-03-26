@@ -1,13 +1,13 @@
 CHANGES IN VERSION 1.12.1 (FROM 1.12.0)
 ===================================
 
-Appium 1.12.1 is a patch release that addresses WebView issues caused by Xcode 10.2 (iOS 12.2)
+Appium 1.12.1 is a patch release that addresses iOS Simulator 12.2 WebView issues
 
 #### iOS
-- Updated Appium Remote Debugger so that Safari webview tests are compatible with Xcode 10.2 (addresses [issue #12239](https://github.com/appium/appium/issues/12239)) [#118](https://github.com/appium/appium-remote-debugger/pull/118)
-- Fix `screenshotQuality` cap not being forwarded to WebDriverAgent [#907](https://github.com/appium/appium-xcuitest-driver/pull/907)
-- Fix xctestrun file detection when `useXctestrunFile` is true [#903](https://github.com/appium/appium-xcuitest-driver/pull/903)
-- Fix problem with Appium not using cached WebDriverAgent [#909](https://github.com/appium/appium-xcuitest-driver/pull/909)
+* Updated Appium Remote Debugger so that Safari webview tests are compatible with Xcode 10.2 (addresses [issue #12239](https://github.com/appium/appium/issues/12239)) [#118](https://github.com/appium/appium-remote-debugger/pull/118)
+* Fix `screenshotQuality` cap not being forwarded to WebDriverAgent [#907](https://github.com/appium/appium-xcuitest-driver/pull/907)
+* Fix xctestrun file detection when `useXctestrunFile` is true [#903](https://github.com/appium/appium-xcuitest-driver/pull/903)
+* Fix problem with Appium not using cached WebDriverAgent [#909](https://github.com/appium/appium-xcuitest-driver/pull/909)
 
 
 CHANGES IN VERSION 1.12.0 (FROM 1.11.1)

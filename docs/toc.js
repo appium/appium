@@ -240,6 +240,7 @@ module.exports = {
       ]],
       ['Android', ['android',
         ['UiSelector Guide', 'uiautomator-uiselector.md'],
+        ['Espresso Datamatcher Guide', 'espresso-datamatcher-selector.md'],
         ['Android Code Coverage Guide', 'android-coverage.md'],
         ['Activities Startup Troubleshooting Guide', 'activity-startup.md'],
         ['How To Execute Shell Commands On The Remote Device', 'android-shell.md'],

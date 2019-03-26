@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       driver.toggleWifi();
+  python:
+    |
+      driver.toggle_wifi();
   javascript_wd:
     |
       await driver.toggleWiFi();
@@ -49,7 +52,7 @@ driver_support:
     windows: false
 client_support:
   java: true
-  python: false
+  python: true
   ruby: true
   php: true
   csharp: true

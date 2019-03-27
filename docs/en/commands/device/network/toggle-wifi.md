@@ -13,7 +13,7 @@ driver.toggleWifi();
 
 ```python
 # Python
-driver.toggle_wifi();
+driver.toggle_wifi()
 
 ```
 

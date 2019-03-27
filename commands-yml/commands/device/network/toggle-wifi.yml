@@ -8,7 +8,7 @@ example_usage:
       driver.toggleWifi();
   python:
     |
-      driver.toggle_wifi();
+      driver.toggle_wifi()
   javascript_wd:
     |
       await driver.toggleWiFi();

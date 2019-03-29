@@ -9,6 +9,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
 import { IosDriver } from 'appium-ios-driver';
+import { AndroidDriver } from 'appium-android-driver';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes } from '../lib/utils';
 
@@ -281,6 +282,15 @@ describe('AppiumDriver', function () {
       it('should not blow up if user does not provide platformName', function () {
         const appium = new AppiumDriver({});
         (() => { appium.getDriverAndVersionForCaps({}); }).should.throw(/platformName/);
+      });
+      it('should ignore automationName Appium', function () {
+        const appium = new AppiumDriver({});
+        const {driver} = appium.getDriverAndVersionForCaps({
+          platformName: 'Android',
+          automationName: 'Appium'
+        });
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(AndroidDriver);
       });
       it('should get XCUITestDriver driver for automationName of XCUITest', function () {
         const appium = new AppiumDriver({});

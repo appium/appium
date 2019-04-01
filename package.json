@@ -117,7 +117,6 @@
     "yaml-js": "^0.2.0"
   },
   "optionalDependencies": {
-    "fsevents": "2.x",
-    "heapdump": "0.x"
+    "fsevents": "2.x"
   }
 }

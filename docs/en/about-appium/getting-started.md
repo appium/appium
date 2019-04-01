@@ -45,7 +45,7 @@ the Android SDK configured on your system.
 At some point, make sure you review the driver documentation for the platform
 you want to automate, so your system is set up correctly:
 
-- The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md) (for iOS apps)
+- The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md) (for iOS and tvOS apps)
 - The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md) (for Android apps)
 - The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
 - The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
@@ -194,7 +194,7 @@ session:
 ```js
 // javascript
 const elementId = await client.findElement("accessibility id","TextField1");
-client.elementSendKeys(elementId.ELEMENT, "Hello World!"); 
+client.elementSendKeys(elementId.ELEMENT, "Hello World!");
 const elementValue = await client.findElement("accessibility id","TextField1");
 await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
 assert.equal(attr,"Hello World!");

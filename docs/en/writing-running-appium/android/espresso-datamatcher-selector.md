@@ -1,4 +1,4 @@
-## Espresso DataMatcher Selector 
+## Espresso DataMatcher Selector
 
 By delegating to Espresso's [Data Matcher](https://developer.android.com/reference/android/support/test/espresso/DataInteraction), we can target views that are not visible in the viewport without the need to manually scroll the Views on screen.
 
@@ -67,6 +67,26 @@ driver.findElementById("list")
   .click();
 ```
 
+```ruby
+# Ruby
+@driver.find_element(:id, 'list')
+  .find_element(:data_matcher, {
+    name: 'hasEntry',
+    args: ['title', 'TextClock']
+  }.to_json)
+  .click
+```
+
+```python
+# Python
+driver.find_element_by_id('list')
+    .find_element_by_android_data_matcher({
+        name='hasEntry',
+        args=['title', 'TextClock']
+    })
+    .click()
+```
+
 This Appium selector is equivalent to writing this matcher in Espresso:
 
 ```java
@@ -86,6 +106,22 @@ driver.findElement("-android datamatcher", JSON.stringify({
     "args": ["title", "TextClock"]
   }))
   .click();
+```
+
+```ruby
+# Ruby
+@driver.find_element(:data_matcher, {
+  name: 'hasEntry',
+  args: ['title', 'TextClock']
+}.to_json).click
+```
+
+```python
+# Python
+driver.find_element_by_android_data_matcher({
+    name='hasEntry',
+    args=['title', 'TextClock']
+}).click()
 ```
 
 ### Writing the Selector
@@ -159,7 +195,7 @@ onData(allOf(is(instanceOf(Map.class)), hasEntry(equalTo("STR"), is("item: 50"))
 ```java
 // Espresso 'cursor matchers' example
 onData(
-    is(instanceOf(Cursor.class)), 
+    is(instanceOf(Cursor.class)),
     CursorMatchers.withRowString("job_title", is("Barista"))
 );
 ```

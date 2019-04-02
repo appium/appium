@@ -46,7 +46,7 @@ the value `XCUITest`. Of course, you must also include appropriate
 `platformName`, `platformVersion`, `deviceName`, and `app` capabilities, at
 a minimum.
 
-The `platformName` shold be `iOS` for iPhone or iPad. tvOS devices are available if the `platformName` is `tvOS`.
+The `platformName` should be `iOS` for iPhone or iPad. tvOS devices are available if the `platformName` is `tvOS`.
 
 - iOS
    ```json

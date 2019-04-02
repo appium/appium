@@ -9,7 +9,7 @@ You can run tests for tvOS changing `platformName` section in capability like be
 ```json
 {
     "automationName": "XCUITest",
-    "platformName": "tvOS", // Shold change from 'iOS' to 'tvOS'
+    "platformName": "tvOS",
     "platformVersion": "12.2",
     "deviceName": "Apple TV",
     ...
@@ -17,13 +17,13 @@ You can run tests for tvOS changing `platformName` section in capability like be
 ```
 
 ## Limitations
-XCTest framwroed does not provide guesture related APIs for tvOS.
+Gesture commands do not work for tvOS. Some commands such as pasteboard also do not work.
 
 We can handle `focus` on tvOS simply pressing keys such as up/down/left/right/home.
 tvOS does actions against the _focused_ element. You can get the focus attribute as [getting attribute API](http://appium.io/docs/en/commands/element/attributes/attribute/).
 
 
-## Basic actions
+## Basic Actions
 
 ```ruby
 # Ruby
@@ -65,5 +65,5 @@ Appium calculates `up/down/left/right` and `select` automatically if the combina
 
 You can also handle a focus or play/pause player via the pressing button actions. `menu` works as _back_ in iOS context in tvOS.
 
-## Reference
-- [Related issue](https://github.com/appium/appium/pull/12401)
+## Resources
+- Related issue: https://github.com/appium/appium/pull/12401

@@ -2,7 +2,7 @@
 
 Unfortunately Apple's XCTest framework does not natively support W3C standards for
 TouchAction interface implementation. Although, it provides rich set of gestures,
-inluding these, that are unique for iOS platform. It is possible to directly invoke these
+including these, that are unique for iOS platform. It is possible to directly invoke these
 gestures in Appium starting from version 1.6.4-beta.
 
 It is important to rememeber that XCTest and WDA are being constantly changed.

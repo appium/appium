@@ -1,7 +1,7 @@
 ## Getting Started
 
 This doc will get you up and running with a simple Appium test and introduce
-you to some basic Appium ideas. For a fuller introduction to Appium concepts,
+you to some basic Appium ideas. For a more comprehensive introduction to Appium concepts,
 please check out the [conceptual introduction](/docs/en/about-appium/intro.md).
 
 ### Installing Appium
@@ -194,7 +194,7 @@ session:
 ```js
 // javascript
 const elementId = await client.findElement("accessibility id","TextField1");
-client.elementSendKeys(elementId.ELEMENT, "Hello World!"); 
+client.elementSendKeys(elementId.ELEMENT, "Hello World!");
 const elementValue = await client.findElement("accessibility id","TextField1");
 await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
 assert.equal(attr,"Hello World!");

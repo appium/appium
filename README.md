@@ -60,7 +60,7 @@ Similarly, with Google's UiAutomator or Espresso you can only write tests in
 Java. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
-If you're new to Appium, or want a fuller description of what this is all
+If you're new to Appium, or want a more comprehensive description of what this is all
 about, please read our [Introduction to Appium
 Concepts](/docs/en/about-appium/intro.md).
 

@@ -84,7 +84,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         return 'good status';
       }.bind(d);
       let cmdPromise = d.executeCommand('getStatus');
-      await B.delay(0);
+      await B.delay(10);
       d.startUnexpectedShutdown(new Error('We crashed'));
       await cmdPromise.should.be.rejectedWith(/We crashed/);
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);

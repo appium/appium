@@ -29,7 +29,7 @@ tvOS does actions on the _focused_ element. You can get the value of the `focus`
 # Ruby
 
 element = @driver.find_element :accessibility_id, 'element on the app'
-# Returns true if the element is focused or not, otherwise false
+# Returns true if the element is focused, otherwise false
 element.focused #=> 'true'
 # Appium moves the focus to the element by pressing the corresponding keys and clicking the element
 element.click
@@ -59,11 +59,11 @@ driver.executeScript("mobile: pressButton", ImmutableMap.of("name", "Home"));
 ```
 
 ## More actions
-tvOS provides [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/) based actions. Appium provides _Buttons_ actions via `mobile: pressButton`. There are `menu`, `up/down/left/right`, `home`, `playpause` and `select`. Available actions are provided in the error message if you send unavailable button name to the server.
+tvOS provides [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/) based actions. Appium provides _Buttons_ actions via `mobile: pressButton`. These are `menu`, `up/down/left/right`, `home`, `playpause` and `select`. Available actions are enumerated in the error message if you send unsupported button name to the server.
 
 Appium calculates `up/down/left/right` and `select` automatically if the combination of `find element/s` and `click` is provided. You should not care about which keys should be pressed to reach an arbitrary element every time.
 
-You can also handle a focus or play/pause player by pressing button actions. `menu` works as _back_ in iOS context in tvOS.
+You can also handle a focus or play/pause player by pressing button actions. `menu` works as _back_ for iOS context in tvOS.
 
 ## Resources
 - Related issue: https://github.com/appium/appium/pull/12401

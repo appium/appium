@@ -198,25 +198,19 @@ describe('utils', function () {
         browserName: 'bar',
       });
     });
-    it('should pull settings recursively from caps', function () {
+    it('should pull settings dict if object values are present in caps', function () {
       const caps = {
-        firstMatch: {
-          platformName: 'foo',
-          browserName: 'bar',
-          'settings[settingName]': 'baz',
-          'appium:settings[settingName2]': 'baz2',
-        }
+        platformName: 'foo',
+        browserName: 'bar',
+        'settings[settingName]': {key: 'baz'},
       };
       const settings = pullSettings(caps);
       settings.should.eql({
-        settingName: 'baz',
-        settingName2: 'baz2',
+        settingName: {key: 'baz'},
       });
       caps.should.eql({
-        firstMatch: {
-          platformName: 'foo',
-          browserName: 'bar',
-        }
+        platformName: 'foo',
+        browserName: 'bar',
       });
     });
     it('should pull empty dict if no settings are present in caps', function () {

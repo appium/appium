@@ -44,6 +44,8 @@ Note that the actual commands you would use in your test script differ based on 
 |`shouldUseCompactResponses`| Returns compact (standards-compliant) & faster responses in find element/s. Defaults to `true` | `false` or `true` |
 |`elementResponseAttributes`| The comma-separated list of fields to return with each element. It works only `shouldUseCompactResponses` is `false`. Defaults to "type,label" in iOS, "" in Android. | e.g., `"name,text,rect,attribute/name,attribute/value"` |
 
+[Image Elements](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/image-elements.md) also has image elements specific settings.
+
 ### Android Only
 
 |Name|Description|Values|

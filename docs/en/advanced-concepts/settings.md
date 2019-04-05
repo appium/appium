@@ -46,8 +46,6 @@ Note that the actual commands you would use in your test script differ based on 
 
 [Image Elements](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/image-elements.md) also has image elements specific settings.
 
-
-
 ### Android Only
 
 |Name|Description|Values|

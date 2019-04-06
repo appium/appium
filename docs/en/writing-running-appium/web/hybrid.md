@@ -87,7 +87,7 @@ driver.quit();
 @driver = Appium::Core.for(url: SERVER_URL, desired_capabilities: capabilities).start_driver
 # ruby_lib
 # opts = { caps: capabilities, appium_lib: { custom_url: SERVER_URL }}
-# @driver = Appium::Driver.new(opts, true)
+# @driver = Appium::Driver.new(opts, true).start_driver
 
 # I switch to the last context because its always the webview in our case, in other cases you may need to specify a context
 # View the appium logs while running @driver.contexts to figure out which context is the one you want and find the associated ID

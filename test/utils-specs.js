@@ -1,6 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { parseCapsForInnerDriver, insertAppiumPrefixes } from '../lib/utils';
+import {
+  parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 
@@ -176,6 +177,61 @@ describe('utils', function () {
         'appium:someOtherCap': 'someOtherCap',
         'appium:yetAnotherCap': 'yetAnotherCap',
       });
+    });
+  });
+
+  describe('pullSettings()', function () {
+    it('should pull settings from caps', function () {
+      const caps = {
+        platformName: 'foo',
+        browserName: 'bar',
+        'settings[settingName]': 'baz',
+        'settings[settingName2]': 'baz2',
+      };
+      const settings = pullSettings(caps);
+      settings.should.eql({
+        settingName: 'baz',
+        settingName2: 'baz2',
+      });
+      caps.should.eql({
+        platformName: 'foo',
+        browserName: 'bar',
+      });
+    });
+    it('should pull settings dict if object values are present in caps', function () {
+      const caps = {
+        platformName: 'foo',
+        browserName: 'bar',
+        'settings[settingName]': {key: 'baz'},
+      };
+      const settings = pullSettings(caps);
+      settings.should.eql({
+        settingName: {key: 'baz'},
+      });
+      caps.should.eql({
+        platformName: 'foo',
+        browserName: 'bar',
+      });
+    });
+    it('should pull empty dict if no settings are present in caps', function () {
+      const caps = {
+        platformName: 'foo',
+        browserName: 'bar',
+        'setting[settingName]': 'baz',
+      };
+      const settings = pullSettings(caps);
+      settings.should.eql({});
+      caps.should.eql({
+        platformName: 'foo',
+        browserName: 'bar',
+        'setting[settingName]': 'baz',
+      });
+    });
+    it('should pull empty dict if caps are empty', function () {
+      const caps = {};
+      const settings = pullSettings(caps);
+      settings.should.eql({});
+      caps.should.eql({});
     });
   });
 });

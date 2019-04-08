@@ -14,7 +14,7 @@ iOS automation is supported with two drivers:
 Please refer to these driver docs for setup instructions.
 
 * Versions: 9.0 and up (as a rule, Appium supports the latest two iOS versions)
-* Devices: iPhone Simulator, iPad Simulator, and real iPhones and iPads
+* Devices: Simulator and real device for iPhone, iPad and tvOS
 * Native app support: Yes, with debug version of .app (simulator),
   or correctly-signed .ipa (real devices). Underlying support is provided by
   Apple's [XCUITest](https://developer.apple.com/reference/xctest) (or [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) for older versions)

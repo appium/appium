@@ -46,6 +46,29 @@ the value `XCUITest`. Of course, you must also include appropriate
 `platformName`, `platformVersion`, `deviceName`, and `app` capabilities, at
 a minimum.
 
+The `platformName` should be `iOS` for iPhone or iPad. tvOS devices are available if the `platformName` is `tvOS`.
+
+- iOS
+   ```json
+   {
+      "automationName": "XCUITest",
+      "platformName": "iOS",
+      "platformVersion": "12.2",
+      "deviceName": "iPhone 8",
+      ...
+   }
+   ```
+- tvOS
+   ```json
+   {
+      "automationName": "XCUITest",
+      "platformName": "tvOS",
+      "platformVersion": "12.2",
+      "deviceName": "Apple TV",
+      ...
+   }
+   ```
+
 ### Capabilities
 
 The XCUITest driver supports a number of standard [Appium
@@ -99,10 +122,10 @@ following desired capabilities:
 * `udid` - the specific id of the device to test on. This can also be set to
    `auto` if there is only a single device, in which case Appium will determine
    the device id and use it.
-   
+
 ### Optional Setup
 
-* Install FBSimulatorControl for better handling of various iOS Simulator operations, 
+* Install FBSimulatorControl for better handling of various iOS Simulator operations,
 such as: biometrics, geolocation setting and window focussing.
 
 ```

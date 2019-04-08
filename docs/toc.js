@@ -237,6 +237,7 @@ module.exports = {
         ['iOS Predicate Guide', 'ios-predicate.md'],
         ['iOS Touch ID Guide', 'ios-touch-id.md'],
         ['iOS Install Certificate', 'ios-xctest-install-certificate.md'],
+        ['tvOS support', 'ios-tvos.md'],
       ]],
       ['Android', ['android',
         ['UiSelector Guide', 'uiautomator-uiselector.md'],

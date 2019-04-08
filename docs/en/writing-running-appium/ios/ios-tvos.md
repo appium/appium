@@ -4,7 +4,7 @@ Appium 1.13.0+ has tvOS support via XCUITest driver.
 
 ## Setup
 
-You can run tests for tvOS by changing the `platformName` section in the corresponding capability like it is done below.
+You can run tests for tvOS by changing the `platformName` capability like it is done below.
 
 ```json
 {
@@ -61,9 +61,9 @@ driver.executeScript("mobile: pressButton", ImmutableMap.of("name", "Home"));
 ## More actions
 tvOS provides [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/) based actions. Appium provides _Buttons_ actions via `mobile: pressButton`. These are `menu`, `up/down/left/right`, `home`, `playpause` and `select`. Available actions are enumerated in the error message if you send unsupported button name to the server.
 
-Appium calculates `up/down/left/right` and `select` automatically if the combination of `find element/s` and `click` is provided. You should not care about which keys should be pressed to reach an arbitrary element every time.
+Appium calculates `up/down/left/right` and `select` sequence automatically if the combination of `find element/s` and `click` is provided. You should not care about which keys should be pressed to reach an arbitrary element every time.
 
-You can also handle a focus or play/pause player by pressing button actions. `menu` works as _back_ for iOS context in tvOS.
+You can also handle setting a focus or starting/pausing a playback pressing button actions. `menu` button works as _back_ for iOS context in tvOS.
 
 ## Resources
 - Related issue: https://github.com/appium/appium/pull/12401

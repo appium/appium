@@ -2,7 +2,7 @@
 /* global describe:true, it:true */
 
 import _ from 'lodash';
-import ProtocolConverter from '../../lib/jsonwp-proxy/protocol-converter';
+import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../lib/jsonwp-proxy/protocol-converter';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import BaseDriver from '../../lib/basedriver/driver';
@@ -110,6 +110,27 @@ describe('Protocol Converter', function () {
         text: 'bla',
         value: ['b', 'l', 'a'],
       });
+    });
+  });
+  describe('getProperty', function () {
+    let jsonwpConverter, w3cConverter;
+    before(function () {
+      for (let command of COMMAND_URLS_CONFLICTS) {
+        if (command.commandNames.includes('getProperty')) {
+          jsonwpConverter = command.jsonwpConverter;
+          w3cConverter = command.w3cConverter;
+        }
+      }
+    });
+    it('should convert "property/value" to "attribute/value"', function () {
+      jsonwpConverter('/session/123/element/456/property/value').should.equal('/session/123/element/456/attribute/value');
+    });
+    it('should convert "property/:somePropName" to "attribute/:somePropName"', function () {
+      jsonwpConverter('/session/123/element/456/property/somePropName').should.equal('/session/123/element/456/attribute/somePropName');
+    });
+    it('should not convert from JSONWP to W3C', function () {
+      w3cConverter('/session/123/element/456/attribute/someAttr').should.equal('/session/123/element/456/attribute/someAttr');
+      w3cConverter('/session/123/element/456/property/someProp').should.equal('/session/123/element/456/property/someProp');
     });
   });
 });

@@ -82,9 +82,12 @@ driver.quit();
 ```
 
 ```ruby
-# ruby
+# ruby_lib_core
 # assuming we have a set of capabilities
-@driver = Selenium::WebDriver.for(:remote, :desired_capabilities => capabilities, :url => SERVER_URL)
+@driver = Appium::Core.for(url: SERVER_URL, desired_capabilities: capabilities).start_driver
+# ruby_lib
+# opts = { caps: capabilities, appium_lib: { custom_url: SERVER_URL }}
+# @driver = Appium::Driver.new(opts, true).start_driver
 
 # I switch to the last context because its always the webview in our case, in other cases you may need to specify a context
 # View the appium logs while running @driver.contexts to figure out which context is the one you want and find the associated ID

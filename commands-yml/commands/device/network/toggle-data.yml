@@ -1,6 +1,12 @@
 ---
 name: Toggle Data
 short_description: Switch the state of data service
+description:
+  |
+    Switch the state of data service.
+    
+    (For Android) This API does not work for Android API level 21+
+    because it requires system or carrier privileged permission, and Android <= 21 does not support granting permissions.
 
 example_usage:
   java:

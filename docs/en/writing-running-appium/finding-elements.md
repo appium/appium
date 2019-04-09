@@ -41,7 +41,7 @@ image, or locating it in the source tree.
 Appium Desktop has a simple layout, complete with a source tree,
 a screenshot, and record and refresh buttons, and interaction tools.
 
-![](https://github.com/appium/appium-desktop/blob/master/docs/images/screen-inspector-and-logs.png)
+![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector-and-logs.png)
 
 ### Example
 

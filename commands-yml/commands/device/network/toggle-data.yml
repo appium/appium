@@ -5,7 +5,8 @@ description:
   |
     Switch the state of data service.
     
-    (For Android) This API does not work on over Android API level 21+ because it requires system or carrier privileged permission.
+    (For Android) This API does not work for Android API level 21+
+    because it requires system or carrier privileged permission, and Android <= 21 does not support granting permissions.
 
 example_usage:
   java:

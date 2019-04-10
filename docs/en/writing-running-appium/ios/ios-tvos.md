@@ -1,6 +1,7 @@
 ## tvOS support
 
-Appium 1.13.0+ has tvOS support via XCUITest driver.
+- Appium 1.13.0+ has tvOS support via XCUITest driver.
+    - Apple TV 4K does not support since ios-deploy does not work for wireless devices
 
 ## Setup
 

@@ -60,4 +60,4 @@ interactive language shell. You can invoke various command interactively. It
 will help you to make sure your scenarios interactively with Appium server.
 
 - [Appium Ruby Console](https://github.com/appium/ruby_console)
-- [WebDriverIO with debug mode](http://webdriver.io/api/utility/debug.html)
+- [WebDriverIO with debug mode](https://webdriver.io/docs/api/browser/debug.html)

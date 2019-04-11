@@ -4,17 +4,17 @@ Appium 1.13.0+ has tvOS support via XCUITest driver.
 
 ## Setup
 
-You can run tests for tvOS by changing the `platformName` capability like it is done below.
+You can run tests for tvOS by adding devic type as  `tv` capability like it is done below.
 
 ```json
 {
     "automationName": "XCUITest",
-    "platformName": "tvOS",
+    "platformName": "iOS",
     "platformVersion": "12.2",
     "deviceName": "Apple TV",
+    "deviceType": "tv",
     ...
 }
-```
 
 ## Limitations
 Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.

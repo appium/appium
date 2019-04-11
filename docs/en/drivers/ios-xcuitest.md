@@ -46,7 +46,7 @@ the value `XCUITest`. Of course, you must also include appropriate
 `platformName`, `platformVersion`, `deviceName`, and `app` capabilities, at
 a minimum.
 
-The `platformName` should be `iOS` for iPhone or iPad. tvOS devices are available if the `platformName` is `tvOS`.
+The `platformName` should be `iOS` for iPhone or iPad. `deviceType` should be `tv` for tvOS.
 
 - iOS
    ```json
@@ -62,9 +62,10 @@ The `platformName` should be `iOS` for iPhone or iPad. tvOS devices are availabl
    ```json
    {
       "automationName": "XCUITest",
-      "platformName": "tvOS",
+      "platformName": "iOS",
       "platformVersion": "12.2",
       "deviceName": "Apple TV",
+      "deviceType": "tv"
       ...
    }
    ```

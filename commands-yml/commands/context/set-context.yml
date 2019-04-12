@@ -34,10 +34,10 @@ example_usage:
       await driver.context('NATIVE_APP');
   javascript_wdio:
     |
-      let contexts = driver.contexts();
-      driver.context(contexts[1]);
+      let contexts = driver.getContexts();
+      driver.setContext(contexts[1]);
       // ...
-      driver.context('NATIVE_APP');
+      driver.setContext('NATIVE_APP');
   ruby:
     |
       webview = available_contexts[1]

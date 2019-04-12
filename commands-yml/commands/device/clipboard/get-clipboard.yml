@@ -17,9 +17,6 @@ example_usage:
   javascript_wd:
     |
       await driver.getClipboard();
-  javascript_wdio:
-    |
-      await driver.getClipboard();
   ruby:
     |
       get_clipboard

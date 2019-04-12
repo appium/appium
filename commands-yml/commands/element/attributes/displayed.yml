@@ -14,10 +14,9 @@ example_usage:
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
       let isDisplayed = await element.isDisplayed();
 
-  # Note that elementIdDisplayed is not a typo in this document, it's a WDIO typo
   javascript_wdio:
     |
-      let isDisplayed = driver.elementIdDisplayed("~SomeAccessibilityId");
+      let isDisplayed = $("~SomeAccessibilityId").isDisplayed();
   ruby:
     |
       find_element(:accessibility_id, "SomeAccessibilityID").displayed?

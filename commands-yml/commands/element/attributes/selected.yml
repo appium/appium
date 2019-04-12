@@ -15,7 +15,7 @@ example_usage:
       let isSelected = await element.isSelected();
   javascript_wdio:
     |
-      let isSelected = driver.isSelected("~SomeAccessibilityId");
+      let isSelected = $("~SomeAccessibilityId").isSelected();
   ruby:
     |
       find_element(:accessibility_id, "SomeAccessibilityID").selected?

@@ -15,8 +15,7 @@ example_usage:
       await driver.maximize(); // Set current window
   javascript_wdio:
     |
-      driver.windowHandleMaximize("handleName"); // Set by window handle hame
-      driver.windowHandleMaximize(); // Current window
+      driver.maximizeWindow();
   ruby:
     |
       resize_to(10, 10)

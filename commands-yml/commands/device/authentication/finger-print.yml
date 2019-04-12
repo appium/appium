@@ -21,7 +21,7 @@ example_usage:
       await driver.fingerprint(1);
   javascript_wdio:
     |
-      await driver.fingerprint(1);
+      await driver.fingerPrint(1);
   ruby:
     |
       finger_print 1

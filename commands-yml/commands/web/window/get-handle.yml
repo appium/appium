@@ -14,7 +14,7 @@ example_usage:
       let windowHandle = await driver.windowHandle();
   javascript_wdio:
     |
-      let handle = driver.windowHandle();
+      let handle = driver.getWindowHandle();
   ruby:
     |
       window_handle

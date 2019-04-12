@@ -11,7 +11,7 @@ example_usage:
       self.driver.set_location(49, 123, 10)
   javascript_wdio:
     |
-      driver.location({latitude: 121.21, longitude: 11.56, altitude: 94.23});
+      driver.setGeoLocation({latitude: "121.21", longitude: "11.56", altitude: "94.23"});
   javascript_wd:
     |
       await driver.setGeoLocation(121.21, 11.56, 10);

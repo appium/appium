@@ -193,11 +193,10 @@ session:
 
 ```js
 // javascript
-const elementId = await client.findElement("accessibility id","TextField1");
-client.elementSendKeys(elementId.ELEMENT, "Hello World!");
-const elementValue = await client.findElement("accessibility id","TextField1");
-await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
-assert.equal(attr,"Hello World!");
+const field = await client.$("~TextField1");
+await field.setValue("Hello World!");
+const value = await field.getValue();
+assert.equal(value,"Hello World!");
 });
 ```
 
@@ -230,12 +229,10 @@ const opts = {
 
 const client = wdio.remote(opts);
 
-const elementId = await client.findElement("accessibility id","TextField1");
-await client.elementSendKeys(elementId.ELEMENT, "Hello World!");
-const elementValue = await client.findElement("accessibility id","TextField1");
-await client.getElementAttribute(elementValue.ELEMENT,"value").then((attr) => {
-assert.equal(attr,"Hello World!");
-});
+const field = await client.$("~TextField1");
+await field.setValue("Hello World!");
+const value = await field.getValue();
+assert.equal(value,"Hello World!");
 ```
 
 You can try and run this test on your own. Simply save it and execute it using

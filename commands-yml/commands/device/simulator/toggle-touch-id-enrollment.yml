@@ -21,7 +21,7 @@ example_usage:
       await driver.toggleTouchIdEnrollment();
   javascript_wdio:
     |
-      driver.toggleTouchIdEnrollment(true);
+      driver.toggleEnrollTouchId(true);
   ruby:
     |
       toggle_touch_id_enrollment

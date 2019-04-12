@@ -15,7 +15,7 @@ example_usage:
       self.driver.switch_to.parent()
   javascript_wdio:
     |
-      driver.frameParent();
+      driver.switchToParentFrame();
   ruby:
     |
       parent_frame

@@ -14,7 +14,7 @@ example_usage:
       await driver.close();
   javascript_wdio:
     |
-      driver.close();
+      driver.closeWindow();
   ruby:
     |
       close

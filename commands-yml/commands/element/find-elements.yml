@@ -40,7 +40,7 @@ example_usage:
       let elementsTwo = await driver.elements("id", "SomeID");
   javascript_wdio:
     |
-      driver.elements("~SomeAccessibilityId");
+      $$("~SomeAccessibilityId");
   ruby:
     |
       find_elements(:accessibility_id, "~SomeAccessibilityID")

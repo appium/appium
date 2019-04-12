@@ -10,7 +10,7 @@ example_usage:
       await driver.settings();
   javascript_wdio:
     |
-      let settings = driver.settings();
+      let settings = driver.getSettings();
   ruby:
     |
       get_settings

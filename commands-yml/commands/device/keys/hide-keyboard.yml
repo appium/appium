@@ -14,7 +14,7 @@ example_usage:
       await driver.hideDeviceKeyboard();
   javascript_wdio:
     |
-      driver.hideDeviceKeyboard();
+      driver.hideKeyboard();
   ruby:
     |
       hide_keyboard

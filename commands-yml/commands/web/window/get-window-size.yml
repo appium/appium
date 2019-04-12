@@ -16,8 +16,7 @@ example_usage:
       let handleTwoSize = await driver.getWindowSize("handleName");
   javascript_wdio:
     |
-      let handleOneSize = driver.windowHandleSize();
-      let handleTwoSize = driver.windowHandleSize("handleName");
+      let handleTwoSize = driver.getWindowSize("handleName");
   ruby:
     |
       window_size

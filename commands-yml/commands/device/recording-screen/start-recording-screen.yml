@@ -10,6 +10,9 @@ example_usage:
   javascript_wd:
     |
       await driver.startRecordingScreen();
+  javascript_wdio:
+    |
+      driver.startRecordingScreen();
   ruby:
     |
       start_recording_screen

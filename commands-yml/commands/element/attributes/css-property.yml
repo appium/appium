@@ -22,7 +22,7 @@ example_usage:
       let cssProperty = await element.getComputedCss();
   javascript_wdio:
     |
-      let cssProperty = driver.getCssProperty("~SomeId", "style");
+      let cssProperty = $("~SomeId").getCSSProperty("style");
   ruby:
     |
       find_element(:id, 'SomeId').css_value

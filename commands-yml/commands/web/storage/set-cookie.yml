@@ -14,10 +14,10 @@ example_usage:
       let cookies = await driver.setCookie({name: 'foo', value: 'bar'});
   javascript_wdio:
     |
-      driver.cookie('post', {
+      driver.setCookies([{
         name: 'myCookie',
         value: 'some content'
-      });
+      }]);
   ruby:
     |
       add_cookie(:name => 'foo', :value => 'bar')

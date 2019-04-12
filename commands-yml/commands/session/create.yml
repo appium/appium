@@ -54,7 +54,7 @@ example_usage:
         automationName: 'UiAutomator2',
         app: path.resolve('path', 'to', 'app.apk')
       }};
-      let client = webdriverio.remote(options);
+      let client = driver.newSession(options);
   ruby:
     |
       APP_PATH = '../../path/to/app.app'

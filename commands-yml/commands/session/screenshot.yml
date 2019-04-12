@@ -22,7 +22,7 @@ example_usage:
       let screenshot = await driver.takeScreenshot();
   javascript_wdio:
     |
-      let screenshot = driver.screenshot();
+      let screenshot = driver.takeScreenshot();
   ruby:
     |
       driver.screenshot_as(:base64) # via core_lib

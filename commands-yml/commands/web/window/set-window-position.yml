@@ -15,8 +15,7 @@ example_usage:
       await driver.setWindowPosition(10, 10); // Set current window
   javascript_wdio:
     |
-      driver.windowHandlePosition("handleName", {x: 10, y: 10}); // Set by window handle hame
-      driver.windowHandlePosition({x: 10, y: 10}); // Current window
+      driver.setWindowPosition(10, 10);
   ruby:
     |
       reposition_window(10, 10)

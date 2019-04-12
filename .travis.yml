@@ -14,8 +14,8 @@ jobs:
     - stage: Tests
       os: linux
       script: |
-        npx nyc npm test && npm run e2e-test
-        npx nyc report --reporter=text-lcov > coverage.lcov
+        npm run e2e-test
+        npx gulp coverage
         npx codecov
       node_js: "11"
       after_script: npm run coverage

@@ -13,7 +13,10 @@ jobs:
   include:
     - stage: Tests
       os: linux
-      script: npm run test && npm run e2e-test
+      script: |
+        npx nyc npm test && npm run e2e-test
+        npx nyc report --reporter=text-lcov > coverage.lcov
+        npx codecov
       node_js: "11"
       after_script: npm run coverage
     - stage:

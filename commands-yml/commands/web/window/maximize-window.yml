@@ -19,10 +19,10 @@ example_usage:
       driver.windowHandleMaximize(); // Current window
   ruby:
     |
-      resize_to(10, 10)
+      maximize_window
   ruby_core:
     |
-      @driver.resize_to(10, 10)
+      @driver.maximize_window
   php:
     |
       // TODO PHP sample

@@ -70,7 +70,8 @@
     "semver": "^6.0.0",
     "source-map-support": "0.x",
     "teen_process": "1.x",
-    "winston": "3.x"
+    "winston": "3.x",
+    "word-wrap": "^1.2.3"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",

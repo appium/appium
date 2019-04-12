@@ -18,9 +18,6 @@ example_usage:
   javascript_wd:
     |
       await driver.setClipboard('happy testing', 'plaintext')
-  javascript_wdio:
-    |
-      await driver.setClipboard('happy testing', 'plaintext')
   ruby:
     |
       set_clipboard content: 'happy testing'

@@ -26,7 +26,7 @@ example_usage:
       await driver.safeExecuteAsync('document.title');
   javascript_wdio:
     |
-      browser.timeoutsAsyncScript(5000);
+      driver.setAsyncTimeout(5000)
       var result = browser.executeAsync(function(a, b, c, d, done) {
           // browser context - you may access neither client nor console
           setTimeout(function() {
@@ -35,7 +35,7 @@ example_usage:
       }, 1, 2, 3, 4)
 
       // node.js context - client and console are available
-      console.log(result.value); // outputs: 10
+      console.log(result); // outputs: 10
   ruby:
     |
       execute_async_script("document.title")

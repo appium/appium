@@ -13,7 +13,7 @@ example_usage:
       await driver.closeApp();
   javascript_wdio:
     |
-      driver.close_app();
+      driver.closeApp();
   ruby:
     |
       close_app

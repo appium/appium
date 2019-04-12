@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       Map<String, String> systemBars = driver.getSystemBars();
+  javascript_wdio:
+    |
+      driver.getSystemBars();
   ruby:
     |
       get_system_bars
@@ -46,7 +49,7 @@ client_support:
   php: false
   csharp: false
   javascript_wd: false
-  javascript_wdio: false
+  javascript_wdio: true
 
 # Information about the HTTP endpoints
 endpoint:

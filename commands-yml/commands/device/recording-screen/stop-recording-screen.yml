@@ -10,6 +10,9 @@ example_usage:
   javascript_wd:
     |
       await driver.stopRecordingScreen();
+  javascript_wdio:
+    |
+      driver.stopRecordingScreen();
   ruby:
     |
       stop_recording_screen

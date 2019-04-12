@@ -19,7 +19,7 @@ example_usage:
 
   javascript_wdio:
     |
-      driver.timeouts('pageLoad', 5000)
+      driver.setTimeouts(5000)
   ruby:
     |
       timeout('pageLoad', 5) # Ruby translates it to seconds

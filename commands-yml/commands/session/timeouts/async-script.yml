@@ -15,7 +15,7 @@ example_usage:
 
   javascript_wdio:
     |
-      driver.timeoutsAsyncScript(5000)
+      driver.setAsyncTimeout(5000)
   ruby:
     |
       script_timeout(5) # Ruby translates it to seconds

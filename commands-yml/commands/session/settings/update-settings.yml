@@ -10,7 +10,7 @@ example_usage:
       await driver.updateSettings({nativeWebTap: true});
   javascript_wdio:
     |
-      driver.settings({nativeWebTap: true});
+      driver.updateSettings({nativeWebTap: true});
   ruby:
     |
       update_settings(sample: 'value')

@@ -9,6 +9,9 @@ example_usage:
   javascript_wd:
     |
       await driver.gsmVoice('Voice state');
+  javascript_wdio:
+    |
+      driver.gsmVoice('home');
   ruby:
     |
       gsm_voice :home

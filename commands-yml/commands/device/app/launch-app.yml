@@ -4,8 +4,8 @@ short_description: Launch the app-under-test on the device
 description:
   >
     If the app-under-test (AUT) is closed, or backgrounded, it will launch it.
-    If the AUT is already open, it will background it and re-launch it. 
-  
+    If the AUT is already open, it will background it and re-launch it.
+
     iOS tests with XCUITest can also use the `mobile: launchApp` method. See
     detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-launchapp).
 
@@ -21,7 +21,7 @@ example_usage:
       await driver.launchApp();
   javascript_wdio:
     |
-      driver.launch();
+      driver.launchApp();
   ruby:
     |
       launch_app

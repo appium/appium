@@ -24,6 +24,8 @@ example_usage:
       let action = new wd.TouchAction();
       action.tap({el: element});
       await action.perform();
+  javascript_wdio:
+      driver.touchDoubleClick(element);
   ruby:
     |
       touch_action.double_tap(element).perform

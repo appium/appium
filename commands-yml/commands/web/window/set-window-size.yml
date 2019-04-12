@@ -15,8 +15,7 @@ example_usage:
       await driver.setWindowSize(10, 10); // Set current window
   javascript_wdio:
     |
-      driver.windowHandleSize("handleName", {height: 10, width: 10}); // Set by window handle hame
-      driver.windowHandleSize({height: 10, width: 10}); // Current window
+      driver.setWindowSize(10, 10});
   ruby:
     |
       resize_to(10, 10)

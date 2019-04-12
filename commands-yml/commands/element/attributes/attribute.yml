@@ -16,7 +16,7 @@ example_usage:
       let tagName = await element.getAttribute("content-desc");
   javascript_wdio:
     |
-      let attribute = driver.getAttribute("~SomeAccessibilityId", "content-desc");
+      let attribute = $("~SomeAccessibilityId").getAttribute("content-desc");
   ruby:
     |
       find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")

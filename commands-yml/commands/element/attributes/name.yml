@@ -16,7 +16,7 @@ example_usage:
       let tagName = await element.getTagName();
   javascript_wdio:
     |
-      let tagName = driver.getTagName("~SomeAccessibilityId");
+      let tagName = $("~SomeAccessibilityId").getTagName();
   ruby:
     |
       find_element(:accessibility_id, 'SomeAccessibilityID').tag_name

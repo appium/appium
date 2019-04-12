@@ -9,6 +9,9 @@ example_usage:
   javascript_wd:
     |
       await driver.getSupportedPerformanceDataTypes();
+  javascript_wdio:
+    |
+      driver.getPerformanceDataTypes();
   ruby:
     |
       get_performance_data_types

@@ -9,6 +9,9 @@ example_usage:
   javascript_wd:
     |
       await driver.gsmSignal(3);
+  javascript_wdio:
+    |
+      driver.gsmSignal(3);
   ruby:
     |
       gsm_signal :good

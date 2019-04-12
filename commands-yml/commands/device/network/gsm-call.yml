@@ -9,6 +9,9 @@ example_usage:
   javascript_wd:
     |
       await driver.gsmCall('555-123-4567', 'Phone');
+  javascript_wdio:
+    |
+      driver.gsmCall('555-123-4567', 'call');
   ruby:
     |
       gsm_call(phone_number: '5551234567', action: :call)

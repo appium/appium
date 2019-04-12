@@ -16,8 +16,7 @@ example_usage:
       let handleTwoPosition = await driver.getWindowPosition("handleName");
   javascript_wdio:
     |
-      let handleOnePosition = driver.windowHandlePosition();
-      let handleTwoPosition = driver.windowHandlePosition("handleName");
+      let handleOnePosition = driver.getWindowPosition();
   ruby:
     |
       window_position

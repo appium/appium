@@ -9,6 +9,9 @@ example_usage:
   javascript_wd:
     |
       await driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
+  javascript_wdio:
+    |
+      driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
   ruby:
     |
       get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo', data_read_timeout: 10

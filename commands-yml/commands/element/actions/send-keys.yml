@@ -21,7 +21,7 @@ example_usage:
       await element.type("Hello world!")
   javascript_wdio:
     |
-      driver.setValue("~SomeAccessibilityId");
+      $("~SomeAccessibilityId").addValue("Enter");
   ruby:
     |
       find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")

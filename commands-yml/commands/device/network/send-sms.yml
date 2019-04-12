@@ -9,6 +9,9 @@ example_usage:
   javascript_wd:
     |
       await driver.sendSms('555-123-4567', 'Hey lol');
+  javascript_wdio:
+    |
+      driver.sendSms('555-123-4567', 'Hey lol');
   ruby:
     |
       send_sms(phone_number: '555-123-4567', message: 'Hey lol')

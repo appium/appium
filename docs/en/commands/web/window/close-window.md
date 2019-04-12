@@ -20,7 +20,7 @@ self.driver.close()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.close();
+driver.closeWindow();
 
 // wd example
 await driver.close();

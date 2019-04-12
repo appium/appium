@@ -20,7 +20,7 @@ self.driver.switch_to.window("handle")
 ```javascript
 // Javascript
 // webdriver.io example
-driver.window("handle");
+driver.switchToWindow("handle");
 
 // wd example
 await driver.window("handle");

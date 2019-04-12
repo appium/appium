@@ -20,7 +20,7 @@ driver.orientation = "LANDSCAPE"
 ```javascript
 // Javascript
 // webdriver.io example
-driver.orientation("LANDSCAPE");
+driver.setOrientation("LANDSCAPE");
 
 // wd example
 await driver.setOrientation('LANDSCAPE');

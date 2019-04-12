@@ -20,7 +20,7 @@ element = driver.switch_to.active_element
 ```javascript
 // Javascript
 // webdriver.io example
-driver.elementActive();
+driver.getActiveElement();
 
 // wd example
 let element = await driver.active();

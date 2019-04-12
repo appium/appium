@@ -20,7 +20,7 @@ appStrings = self.driver.app_strings("en", "/path/to/file")
 ```javascript
 // Javascript
 // webdriver.io example
-let appStrings = driver.getAppStrings("en");
+let appStrings = driver.getStrings("en");
 
 // wd example
 let appStrings = await driver.getAppStrings();

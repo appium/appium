@@ -20,7 +20,7 @@ self.driver.set_script_timeout(5000)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.timeoutsAsyncScript(5000)
+driver.setAsyncTimeout(5000)
 
 // wd example
 await driver.setAsyncScriptTimeout(5000);

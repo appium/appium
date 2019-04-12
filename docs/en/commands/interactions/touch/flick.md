@@ -26,7 +26,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.touchFlick('<ELEMENT_ID>', 1, 10, 10);
+driver.touchFlick(10, 10, element, 1);
 
 // wd example
 await element.flick(1, 10, 10);

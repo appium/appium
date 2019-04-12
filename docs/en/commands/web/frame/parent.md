@@ -20,7 +20,7 @@ self.driver.switch_to.parent()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.frameParent();
+driver.switchToParentFrame();
 
 // Not supported
 ```

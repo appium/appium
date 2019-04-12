@@ -21,7 +21,7 @@ self.driver.find_element_by_accessibility_id('SomeAccessibilityID').clear()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.clearElement("~SomeAccessibilityId");
+$("~SomeAccessibilityId").clearValue();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

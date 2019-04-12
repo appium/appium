@@ -20,7 +20,7 @@ desired_caps = self.driver.desired_capabilities()
 ```javascript
 // Javascript
 // webdriver.io example
-let caps = driver.session('c8db88a0-47a6-47a1-802d-164d746c06aa');
+let caps = driver.capabilities;
 
 // wd example
 let caps = await driver.sessionCapabilities();

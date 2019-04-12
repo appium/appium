@@ -19,7 +19,7 @@ Rectangle rect = element.getRect();
 ```javascript
 // Javascript
 // webdriver.io example
-let rect = driver.elementIdRect("~SomeAccessibilityId");
+let rect = driver.getElementRect("~SomeAccessibilityId");
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

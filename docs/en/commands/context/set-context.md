@@ -26,10 +26,10 @@ driver.switch_to.context('NATIVE_APP')
 ```javascript
 // Javascript
 // webdriver.io example
-let contexts = driver.contexts();
-driver.context(contexts[1]);
+let contexts = driver.getContexts();
+driver.setContext(contexts[1]);
 // ...
-driver.context('NATIVE_APP');
+driver.setContext('NATIVE_APP');
 
 // wd example
 let contexts = await driver.contexts();

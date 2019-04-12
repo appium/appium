@@ -20,7 +20,7 @@ self.driver.set_location(49, 123, 10)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.location({latitude: 121.21, longitude: 11.56, altitude: 94.23});
+driver.setGeoLocation({latitude: "121.21", longitude: "11.56", altitude: "94.23"});
 
 // wd example
 await driver.setGeoLocation(121.21, 11.56, 10);

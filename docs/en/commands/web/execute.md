@@ -26,7 +26,7 @@ var result = browser.execute(function(a, b, c, d) {
 }, 1, 2, 3, 4)
 
 // node.js context - client and console are available
-console.log(result.value); // outputs: 10
+console.log(result); // outputs: 10
 
 // wd example
 await driver.execute('document.title');

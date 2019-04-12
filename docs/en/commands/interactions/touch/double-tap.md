@@ -24,7 +24,9 @@ actions.perform()
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.touchDoubleClick(element);
 // wd example
 // Using tapElement method
 await driver.tapElement(elementOne);

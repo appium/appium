@@ -24,7 +24,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.moveTo(element, 10, 10);
+$(element).moveTo(10, 10);
 
 // wd example
 await driver.moveTo(element, 10, 10);

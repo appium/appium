@@ -20,7 +20,7 @@ self.driver.finger_print(1)
 ```javascript
 // Javascript
 // webdriver.io example
-await driver.fingerprint(1);
+await driver.fingerPrint(1);
 
 // wd example
 await driver.fingerprint(1);

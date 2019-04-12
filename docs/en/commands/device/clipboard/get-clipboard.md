@@ -20,10 +20,7 @@ self.driver.get_clipboard_text()
 ```
 
 ```javascript
-// Javascript
-// webdriver.io example
-await driver.getClipboard();
-
+// Not supported
 // wd example
 await driver.getClipboard();
 

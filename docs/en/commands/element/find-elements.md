@@ -21,7 +21,7 @@ el = self.driver.find_elements_by_accessibility_id('SomeAccessibilityID')
 ```javascript
 // Javascript
 // webdriver.io example
-driver.elements("~SomeAccessibilityId");
+$$("~SomeAccessibilityId");
 
 // wd example
 let elementsOne = await driver.elementsByAccessibilityId("SomeAccessibilityID");

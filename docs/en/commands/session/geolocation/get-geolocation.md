@@ -20,7 +20,7 @@ location = self.driver.location()
 ```javascript
 // Javascript
 // webdriver.io example
-let location = driver.location();
+let location = driver.getGeoLocation();
 
 // wd example
 let location = await driver.getGeoLocation();

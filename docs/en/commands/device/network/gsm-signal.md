@@ -16,7 +16,10 @@ driver.setGsmSignalStrength(GsmSignalStrength.GOOD);
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.gsmSignal(3);
+
 // wd example
 await driver.gsmSignal(3);
 

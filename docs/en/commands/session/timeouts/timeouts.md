@@ -20,7 +20,7 @@ self.driver.set_page_load_timeout(5000)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.timeouts('pageLoad', 5000)
+driver.setTimeouts(5000)
 
 // wd example
 await driver.setPageLoadTimeout(5000);

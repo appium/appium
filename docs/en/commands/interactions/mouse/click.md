@@ -26,8 +26,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.moveTo(element)
-  .click();
+$("~SomeId").click();
 
 // wd example
 await driver.moveTo(element);

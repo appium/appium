@@ -20,7 +20,7 @@ source = self.driver.page_source
 ```javascript
 // Javascript
 // webdriver.io example
-let source = driver.source();
+let source = driver.getPageSource();
 
 // wd example
 let pageSource = await driver.source();

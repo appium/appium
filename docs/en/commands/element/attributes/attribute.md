@@ -21,7 +21,7 @@ tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').ge
 ```javascript
 // Javascript
 // webdriver.io example
-let attribute = driver.getAttribute("~SomeAccessibilityId", "content-desc");
+let attribute = $("~SomeAccessibilityId").getAttribute("content-desc");
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

@@ -22,7 +22,7 @@ context = driver.context
 ```javascript
 // Javascript
 // webdriver.io example
-let context = driver.context();
+let context = driver.getContext();
 
 // wd example
 let context = await driver.currentContext();

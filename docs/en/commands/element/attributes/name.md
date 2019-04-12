@@ -21,7 +21,7 @@ tagName = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').ta
 ```javascript
 // Javascript
 // webdriver.io example
-let tagName = driver.getTagName("~SomeAccessibilityId");
+let tagName = $("~SomeAccessibilityId").getTagName();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

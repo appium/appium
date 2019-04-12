@@ -20,7 +20,7 @@ log_types = driver.log_types();
 ```javascript
 // Javascript
 // webdriver.io example
-driver.log()
+driver.getLogTypes()
 
 // wd example
 const logTypes = await driver.logTypes();

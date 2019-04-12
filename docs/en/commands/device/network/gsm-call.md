@@ -16,7 +16,10 @@ driver.makeGsmCall("5551234567", GsmCallActions.CALL);
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.gsmCall('555-123-4567', 'call');
+
 // wd example
 await driver.gsmCall('555-123-4567', 'Phone');
 

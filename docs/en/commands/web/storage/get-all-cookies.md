@@ -20,7 +20,7 @@ cookies = self.driver.get_cookies()
 ```javascript
 // Javascript
 // webdriver.io example
-let cookies = driver.cookie();
+let cookies = driver.getCookies():
 
 // wd example
 let cookies = await driver.allCookies();

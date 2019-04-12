@@ -20,7 +20,7 @@ self.driver.hide_keyboard()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.hideDeviceKeyboard();
+driver.hideKeyboard();
 
 // wd example
 await driver.hideDeviceKeyboard();

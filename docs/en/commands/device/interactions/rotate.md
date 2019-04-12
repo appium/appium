@@ -18,7 +18,7 @@ driver.rotate(new DeviceRotation(10, 10, 10));
 ```javascript
 // Javascript
 // webdriver.io example
-driver.rotate(100, 100);
+driver.rotateDevice(100, 100);
 
 // wd example
 driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touchCount: 2});

@@ -20,7 +20,7 @@ self.driver.execute_async_script(‘document.title’)
 ```javascript
 // Javascript
 // webdriver.io example
-browser.timeoutsAsyncScript(5000);
+driver.setAsyncTimeout(5000)
 var result = browser.executeAsync(function(a, b, c, d, done) {
     // browser context - you may access neither client nor console
     setTimeout(function() {
@@ -29,7 +29,7 @@ var result = browser.executeAsync(function(a, b, c, d, done) {
 }, 1, 2, 3, 4)
 
 // node.js context - client and console are available
-console.log(result.value); // outputs: 10
+console.log(result); // outputs: 10
 
 // wd example
 await driver.safeExecuteAsync('document.title');

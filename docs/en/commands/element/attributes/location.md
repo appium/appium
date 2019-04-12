@@ -21,7 +21,7 @@ location = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').l
 ```javascript
 // Javascript
 // webdriver.io example
-let location = driver.getLocation("~SomeAccessibilityId");
+let location = $("~SomeAccessibilityId").getLocation();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

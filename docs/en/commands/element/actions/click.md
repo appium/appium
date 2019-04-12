@@ -22,7 +22,7 @@ el.click();
 ```javascript
 // Javascript
 // webdriver.io example
-driver.click('#SomeId');
+$('#SomeId').click();
 
 // wd example
 let element = await driver.elementByAccessibilityId('id', 'SomeId');

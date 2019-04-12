@@ -20,7 +20,7 @@ logs = driver.get_log('driver');
 ```javascript
 // Javascript
 // webdriver.io example
-let logs = driver.log('driver')
+let logs = driver.getLogs('driver')
 
 // wd example
 const logs = await driver.log('driver');

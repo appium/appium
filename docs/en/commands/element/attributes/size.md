@@ -21,7 +21,7 @@ size = self.driver.find_element_by_accessibility_id('SomeAccessibilityID').size
 ```javascript
 // Javascript
 // webdriver.io example
-let size = driver.getElementSize("~SomeAccessibilityId");
+let size = $("~SomeAccessibilityId").getSize();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

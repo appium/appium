@@ -20,8 +20,7 @@ self.driver.maximize_window();
 ```javascript
 // Javascript
 // webdriver.io example
-driver.windowHandleMaximize("handleName"); // Set by window handle hame
-driver.windowHandleMaximize(); // Current window
+driver.maximizeWindow();
 
 // wd example
 await driver.maximize("handleName"); // Set size of window by handle name
@@ -32,10 +31,10 @@ await driver.maximize(); // Set current window
 ```ruby
 # Ruby
 # ruby_lib example
-resize_to(10, 10)
+maximize_window
 
 # ruby_lib_core example
-@driver.resize_to(10, 10)
+@driver.maximize_window
 
 ```
 

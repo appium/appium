@@ -21,7 +21,7 @@ self.driver.find_element_by_accessibility_id('SomeAccessibilityID').is_displayed
 ```javascript
 // Javascript
 // webdriver.io example
-let isDisplayed = driver.elementIdDisplayed("~SomeAccessibilityId");
+let isDisplayed = $("~SomeAccessibilityId").isDisplayed();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

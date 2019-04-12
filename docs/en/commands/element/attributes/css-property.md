@@ -21,7 +21,7 @@ cssProperty = self.driver.find_element_by_accessibility_id('SomeId').value_of_cs
 ```javascript
 // Javascript
 // webdriver.io example
-let cssProperty = driver.getCssProperty("~SomeId", "style");
+let cssProperty = $("~SomeId").getCSSProperty("style");
 
 // wd example
 let element = await driver.elementById("SomeId");

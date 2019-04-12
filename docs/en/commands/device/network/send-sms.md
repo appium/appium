@@ -16,7 +16,10 @@ driver.sendSMS("555-123-4567", "Hey lol");
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.sendSms('555-123-4567', 'Hey lol');
+
 // wd example
 await driver.sendSms('555-123-4567', 'Hey lol');
 

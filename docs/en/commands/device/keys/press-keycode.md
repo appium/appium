@@ -23,7 +23,7 @@ self.driver.press_keycode(10);
 driver.pressKeycode(10);
 
 // wd example
-await driver.pressKeycode(10);
+await driver.pressKeyCode(10);
 
 ```
 

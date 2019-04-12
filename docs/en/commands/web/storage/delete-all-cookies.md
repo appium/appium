@@ -20,7 +20,7 @@ self.driver.delete_all_cookies()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.cookie("delete");
+driver.deleteCookies();
 
 // wd example
 await driver.deleteAllCookies();

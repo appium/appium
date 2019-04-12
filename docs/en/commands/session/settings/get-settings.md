@@ -20,7 +20,7 @@ self.driver.get_settings
 ```javascript
 // Javascript
 // webdriver.io example
-let settings = driver.settings();
+let settings = driver.getSettings();
 
 // wd example
 await driver.settings();

@@ -20,7 +20,7 @@ orientation = self.driver.orientation()
 ```javascript
 // Javascript
 // webdriver.io example
-let orientation = driver.orientation();
+let orientation = driver.getOrientation();
 
 // wd example
 let orientation = await driver.getOrientation();

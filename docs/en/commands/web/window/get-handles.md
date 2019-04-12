@@ -20,7 +20,7 @@ window_handles = self.driver.window_handles()
 ```javascript
 // Javascript
 // webdriver.io example
-let handles = driver.windowHandles();
+let handles = driver.getWindowHandles();
 
 // wd example
 let windowHandle = await driver.windowHandles();

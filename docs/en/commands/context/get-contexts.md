@@ -20,7 +20,7 @@ contexts = driver.contexts
 ```javascript
 // Javascript
 // webdriver.io example
-let contexts = driver.contexts();
+let contexts = driver.getContexts();
 
 // wd example
 let contexts = await driver.contexts();

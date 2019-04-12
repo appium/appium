@@ -20,7 +20,7 @@ self.driver.toggle_touch_id_enrollment()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.toggleTouchIdEnrollment(true);
+driver.toggleEnrollTouchId(true);
 
 // wd example
 await driver.toggleTouchIdEnrollment();

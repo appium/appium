@@ -20,10 +20,10 @@ self.driver.add_cookie({name: 'foo', value: 'bar'})
 ```javascript
 // Javascript
 // webdriver.io example
-driver.cookie('post', {
+driver.setCookies([{
   name: 'myCookie',
   value: 'some content'
-});
+}]);
 
 // wd example
 let cookies = await driver.setCookie({name: 'foo', value: 'bar'});

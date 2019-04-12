@@ -19,7 +19,10 @@ self.driver.stop_recording_screen()
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.stopRecordingScreen();
+
 // wd example
 await driver.stopRecordingScreen();
 

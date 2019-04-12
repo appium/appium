@@ -22,7 +22,7 @@ el.submit();
 ```javascript
 // Javascript
 // webdriver.io example
-driver.submitForm("~SomeAccessibilityId");
+$("~SomeAccessibilityId").click();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

@@ -42,7 +42,7 @@ let options = { desiredCapabilities: {
   automationName: 'UiAutomator2',
   app: path.resolve('path', 'to', 'app.apk')
 }};
-let client = webdriverio.remote(options);
+let client = driver.newSession(options);
 
 // wd example
 let driver = await wd.promiseChainRemote({

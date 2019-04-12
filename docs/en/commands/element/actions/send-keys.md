@@ -21,7 +21,7 @@ self.driver.find_element_by_accessibility_id('SomeAccessibilityID').send_keys('H
 ```javascript
 // Javascript
 // webdriver.io example
-driver.setValue("~SomeAccessibilityId");
+$("~SomeAccessibilityId").addValue("Enter");
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

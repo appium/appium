@@ -20,7 +20,7 @@ activity = self.driver.current_activity;
 ```javascript
 // Javascript
 // webdriver.io example
-let activity = driver.currentActivity();
+let activity = driver.getCurrentActivity();
 
 // wd example
 let activity = await driver.getCurrentActivity();

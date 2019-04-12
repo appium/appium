@@ -26,8 +26,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.moveTo(element)
-  .doubleClick();
+$("~SomeId").doubleClick();
 
 // wd example
 await driver.moveTo(element);

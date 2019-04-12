@@ -20,7 +20,7 @@ self.driver.switch_to.frame(3)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.frame(3);
+driver.switchToFrame(3);
 
 // wd example
 await driver.frame(3);

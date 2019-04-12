@@ -16,7 +16,10 @@ List<String> performanceTypes = driver.getSupportedPerformanceDataTypes();
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.getPerformanceDataTypes();
+
 // wd example
 await driver.getSupportedPerformanceDataTypes();
 

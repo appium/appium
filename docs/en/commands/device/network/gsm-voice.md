@@ -16,7 +16,10 @@ driver.setGsmVoice(GsmVoiceState.HOME);
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.gsmVoice('home');
+
 // wd example
 await driver.gsmVoice('Voice state');
 

@@ -16,7 +16,10 @@ List<List<Object>> performanceData = driver.getPerformanceData("my.app.package",
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
+
 // wd example
 await driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
 

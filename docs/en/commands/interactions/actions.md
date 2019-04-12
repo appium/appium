@@ -39,7 +39,7 @@ actions.perform()
 // webdriver.io example
 // Example: expressing a 1-second pinch-and-zoom
 // with a 500ms wait after the fingers first touch:
-browser.actions([{
+browser.performActions([{
     "type": "pointer",
     "id": "finger1",
     "parameters": {"pointerType": "touch"},

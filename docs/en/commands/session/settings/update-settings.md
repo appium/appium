@@ -20,7 +20,7 @@ self.driver.update_settings({"sample": "value"}))
 ```javascript
 // Javascript
 // webdriver.io example
-driver.settings({nativeWebTap: true});
+driver.updateSettings({nativeWebTap: true});
 
 // wd example
 await driver.updateSettings({nativeWebTap: true});

@@ -20,8 +20,7 @@ self.driver.set_window_position(10, 10)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.windowHandlePosition("handleName", {x: 10, y: 10}); // Set by window handle hame
-driver.windowHandlePosition({x: 10, y: 10}); // Current window
+driver.setWindowPosition(10, 10);
 
 // wd example
 await driver.setWindowPosition(10, 10, "handleName"); // Set position of window by handle name

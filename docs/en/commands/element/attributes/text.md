@@ -22,7 +22,7 @@ text = el.text
 ```javascript
 // Javascript
 // webdriver.io example
-driver.getText("~SomeAccessibilityId");
+$("~SomeAccessibilityId").getText();
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

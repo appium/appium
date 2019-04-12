@@ -20,7 +20,7 @@ screenshotBase64 = self.driver.get_screenshot_as_base64()
 ```javascript
 // Javascript
 // webdriver.io example
-let screenshot = driver.screenshot();
+let screenshot = driver.takeScreenshot();
 
 // wd example
 let screenshot = await driver.takeScreenshot();

@@ -31,7 +31,11 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      driver.StartRecordingScreen(
+          AndroidStartScreenRecordingOptions.GetAndroidStartScreenRecordingOptions()
+              .WithTimeLimit(TimeSpan.FromSeconds(10))
+              .WithBitRate(500000)
+              .WithVideoSize("720x1280"));
 
 client_docs:
   java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-"

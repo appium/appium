@@ -1,18 +1,23 @@
 import wd from 'wd';
 import chai from 'chai';
-import { iosCaps, serverConfig } from '../helpers/caps';
+import {
+  iosCaps, serverConfig, iosTestApp, SAUCE_TESTING, SAUCE_USERNAME,
+  SAUCE_ACCESS_KEY
+} from '../helpers/config';
 
 const {assert} = chai;
 
 describe('Create session', function () {
   it('should create and destroy IOS sessions', async function () {
     // Connect to Appium server
-    const driver = await wd.promiseChainRemote(serverConfig);
+    const driver = SAUCE_TESTING
+      ? await wd.promiseChainRemote(serverConfig)
+      : await wd.promiseChainRemote(serverConfig, SAUCE_USERNAME, SAUCE_ACCESS_KEY);
 
     // Start the session
     await driver.init({
       ...iosCaps,
-      app: require('../helpers/apps').iosTestApp
+      app: iosTestApp
     });
 
     // Check that the XCUIElementTypeApplication was what we expect it to be

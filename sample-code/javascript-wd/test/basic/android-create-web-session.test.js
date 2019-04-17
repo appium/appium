@@ -1,6 +1,8 @@
 import wd from 'wd';
 import chai from 'chai';
-import { androidCaps, serverConfig } from '../helpers/caps';
+import {
+  androidCaps, serverConfig, SAUCE_TESTING, SAUCE_USERNAME, SAUCE_ACCESS_KEY
+} from '../helpers/config';
 
 const {assert} = chai;
 
@@ -8,7 +10,9 @@ describe('Create Chrome web session', function () {
   let driver;
   before(async function () {
     // Connect to Appium server
-    driver = await wd.promiseChainRemote(serverConfig);
+    driver = SAUCE_TESTING
+      ? await wd.promiseChainRemote(serverConfig)
+      : await wd.promiseChainRemote(serverConfig, SAUCE_USERNAME, SAUCE_ACCESS_KEY);
 
     // Start the session
     await driver.init({

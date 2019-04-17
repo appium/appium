@@ -104,7 +104,8 @@ jobs:
       if: tag
       os: osx
       env:
-        - HUB_VERBOSE=true GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
+        - HUB_VERBOSE=true
+        - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
       before_script:
         - brew install hub
         - pip install mkdocs==0.16.3
@@ -121,3 +122,14 @@ jobs:
         - git commit -a -n -m 'Updated docs for latest Appium version'
         - git push origin docs-$TRAVIS_TAG
         - hub pull-request -b "appium:gh-pages" -h "appium:docs-$TRAVIS_TAG" -m "Update documentation for latest version" | exit 0 # The PR command works but always returns non-negative
+
+    - stage: Sample Code
+      name: JavaScript (wd)
+      node_js: "8"
+      env:
+        - SAUCE_LABS=1
+      install:
+        - cd sample-code/javascript-wd
+        - npm install
+      script:
+        - npm run test

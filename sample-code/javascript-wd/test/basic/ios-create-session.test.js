@@ -8,24 +8,46 @@ import {
 const {assert} = chai;
 
 describe('Create session', function () {
-  it('should create and destroy IOS sessions', async function () {
-    // Connect to Appium server
-    const driver = SAUCE_TESTING
-      ? await wd.promiseChainRemote(serverConfig)
-      : await wd.promiseChainRemote(serverConfig, SAUCE_USERNAME, SAUCE_ACCESS_KEY);
+  let driver;
+  let allPassed = true;
+  afterEach(function () {
+    // keep track of whether all the tests have passed, since mocha does not do this
+    allPassed = allPassed && (this.currentTest.state === 'passed');
+  });
+  after(async function () {
+    if (SAUCE_TESTING && driver) {
+      await driver.sauceJobStatus(allPassed);
+    }
+  });
 
-    // Start the session
-    await driver.init({
-      ...iosCaps,
-      app: iosTestApp
-    });
+  it('should create and destroy iOS sessions', async function () {
+    try {
+      // Connect to Appium server
+      driver = SAUCE_TESTING
+        ? await wd.promiseChainRemote(serverConfig)
+        : await wd.promiseChainRemote(serverConfig, SAUCE_USERNAME, SAUCE_ACCESS_KEY);
 
-    // Check that the XCUIElementTypeApplication was what we expect it to be
-    const applicationElement = await driver.elementByClassName('XCUIElementTypeApplication');
-    const applicationName = await applicationElement.getAttribute('name');
-    assert.equal(applicationName, 'TestApp');
+      // add the name to the desired capabilities
+      const sauceCaps = SAUCE_TESTING
+        ? {
+          name: 'iOS Create Session Test',
+        }
+        : {};
 
-    // Quit the session
-    await driver.quit();
+      // Start the session
+      await driver.init({
+        ...iosCaps,
+        ...sauceCaps,
+        app: iosTestApp,
+      });
+
+      // Check that the XCUIElementTypeApplication was what we expect it to be
+      const applicationElement = await driver.elementByClassName('XCUIElementTypeApplication');
+      const applicationName = await applicationElement.getAttribute('name');
+      assert.equal(applicationName, 'TestApp');
+    } finally {
+      // Quit the session, no matter what happens
+      await driver.quit();
+    }
   });
 });

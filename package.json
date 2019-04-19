@@ -80,7 +80,7 @@
     "appium-gulp-plugins": "^3.1.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "chromedriver": "^2.34.0",
+    "chromedriver": "^73.0.0",
     "content-disposition": "^0.5.0",
     "eslint-config-appium": "^4.0.1",
     "finalhandler": "^1.1.1",

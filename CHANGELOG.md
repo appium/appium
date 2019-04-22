@@ -1,3 +1,35 @@
+CHANGES IN VERSION 1.13.0 (FROM 1.12.1)
+===================================
+
+Appium 1.13.0 is a minor release
+
+#### General
+* Appium 1.13 will be the last minor version to use [UiAutomator1](https://github.com/appium/appium-android-driver) as the default Android automation. As of Appium 1.14, the default Android driver will be [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver). If you don't set the `automationName` for an Android session a big [warning](https://github.com/appium/appium/pull/12481) will be displayed notifying you of the change. This will be a breaking change, and it's recommended if you wish to keep the same behavior, add the capability `automationName=UiAutomator1` to your scripts
+* Appium 1.13 will be the last minor version to support Node v8. As of Appium 1.14 the supported Node versions will be v10 and v12.
+
+#### Android
+* New capabilities:
+  * `remoteAppsCacheLimit`that sets the limit for how many APKs will be cached on a device [#523](https://github.com/appium/appium-android-driver/pull/523)
+  * `chromedriverPorts` which allows specifying multiple ports or a range of Chromedriver ports to use for web tests [#529](https://github.com/appium/appium-android-driver/pull/529)
+  * `buildToolsVersion` which allows you to set the Android `build-tools` version to be something different than the platform version [#532](https://github.com/appium/appium-android-driver/pull/532)
+* Fixes:
+  * Past version had a problem with emulators going offline when root/unroot was being called. Only affected unrooted emulators. Fix was to check if a device went offline after root/unroot was called and then restarting the ADB server [#443](https://github.com/appium/appium-adb/pull/443)
+  * Calls to `mobile:` endpoints weren't being called in web context. Defaults now is that in a web context, the native mobile endpoint is always called [#527](https://github.com/appium/appium-android-driver/pull/527)
+  * `pushFile` wasn't working on some later Android SDK's due to permission errors [#439](https://github.com/appium/appium-adb/pull/439)
+  * `network_connection` wasn't usable [#531](https://github.com/appium/appium-android-driver/pull/531)
+  * Default values in caps not being set correctly [#436](https://github.com/appium/appium-adb/pull/436)
+* No longer uninstalls apps when session is terminated if `dontStopAppOnReset` is set [#530](https://github.com/appium/appium-android-driver/pull/530)
+* Allow touch acitons in a web context [#534](https://github.com/appium/appium-android-driver/pull/534/files)
+
+#### Android (UiAutomator2)
+* Use UiAutomator's screenshot method when default screenshoter fails [#264](https://github.com/appium/appium-uiautomator2-server/pull/264)
+* Add default network to the device information endpoint (appium/device/info) [#265](https://github.com/appium/appium-uiautomator2-server/pull/265). Addresses [Issue #12502](https://github.com/appium/appium/issues/12502)
+
+#### iOS
+* Support webview testing for iOS real devices (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122)
+* Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151)
+
+
 CHANGES IN VERSION 1.12.1 (FROM 1.12.0)
 ===================================
 

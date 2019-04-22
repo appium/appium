@@ -9,25 +9,30 @@ Appium 1.13.0 is a minor release
 
 #### Android
 * New capabilities:
-  * `remoteAppsCacheLimit`that sets the limit for how many APKs will be cached on a device [#523](https://github.com/appium/appium-android-driver/pull/523)
-  * `chromedriverPorts` which allows specifying multiple ports or a range of Chromedriver ports to use for web tests [#529](https://github.com/appium/appium-android-driver/pull/529)
-  * `buildToolsVersion` which allows you to set the Android `build-tools` version to be something different than the platform version [#532](https://github.com/appium/appium-android-driver/pull/532)
+  * `remoteAppsCacheLimit`: sets the limit for how many APKs will be cached on a device [#523](https://github.com/appium/appium-android-driver/pull/523)
+  * `chromedriverPorts`: allows specifying multiple ports or a range of Chromedriver ports to use for web tests [#529](https://github.com/appium/appium-android-driver/pull/529)
+  * `buildToolsVersion`: allows you to set the Android `build-tools` version to be something different than the default, which is to use the most recent version [#532](https://github.com/appium/appium-android-driver/pull/532)
 * Fixes:
-  * Past version had a problem with emulators going offline when root/unroot was being called. Only affected unrooted emulators. Fix was to check if a device went offline after root/unroot was called and then restarting the ADB server [#443](https://github.com/appium/appium-adb/pull/443)
+  * Emulators have a bug where they sometimes go offline when root/unroot is called. Only affected unrooted emulators. Workaround is to check if a device went offline after root/unroot was called and then restarting the ADB server [#443](https://github.com/appium/appium-adb/pull/443)
   * Calls to `mobile:` endpoints weren't being called in web context. Defaults now is that in a web context, the native mobile endpoint is always called [#527](https://github.com/appium/appium-android-driver/pull/527)
   * `pushFile` wasn't working on some later Android SDK's due to permission errors [#439](https://github.com/appium/appium-adb/pull/439)
   * `network_connection` wasn't usable [#531](https://github.com/appium/appium-android-driver/pull/531)
   * Default values in caps not being set correctly [#436](https://github.com/appium/appium-adb/pull/436)
 * No longer uninstalls apps when session is terminated if `dontStopAppOnReset` is set [#530](https://github.com/appium/appium-android-driver/pull/530)
-* Allow touch acitons in a web context [#534](https://github.com/appium/appium-android-driver/pull/534/files)
+* Allow touch actions in a web context. Only works for absolute coordinates. JSONWP only, does not affect behaviour of W3C Actions implementation [#534](https://github.com/appium/appium-android-driver/pull/534/files)
 
 #### Android (UiAutomator2)
 * Use UiAutomator's screenshot method when default screenshoter fails [#264](https://github.com/appium/appium-uiautomator2-server/pull/264)
-* Add default network to the device information endpoint (appium/device/info) [#265](https://github.com/appium/appium-uiautomator2-server/pull/265). Addresses [Issue #12502](https://github.com/appium/appium/issues/12502)
+* Add detailed network information to the device information endpoint (appium/device/info) [#265](https://github.com/appium/appium-uiautomator2-server/pull/265). Addresses [Issue #12502](https://github.com/appium/appium/issues/12502)
+
 
 #### iOS
 * Support webview testing for iOS real devices (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122)
 * Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151)
+* Fixes:
+  * Make start video recording asynchronous so to improve performance [#12486](https://github.com/appium/appium/issues/12486)
+  * Not able to change video recording parameters in IOS [#12463](https://github.com/appium/appium/issues/12463)
+* New capability. `showXcodeLog` when explicitly set to false doesn't log Xcode logs [#12466](https://github.com/appium/appium/issues/12466)
 
 
 CHANGES IN VERSION 1.12.1 (FROM 1.12.0)

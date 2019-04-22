@@ -122,6 +122,7 @@ These Capabilities are available only on Android-based drivers (like
 |`skipLogcatCapture`|Skips to start capturing logcat. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`uninstallOtherPackages`| A package, list of packages or `*` to uninstall package/s before installing apks for test. `'*'` uninstall all of thrid-party packages except for packages which is necessary for Appium to test such as `io.appium.settings` or `io.appium.uiautomator2.server` since Appium already contains the logic to manage them. | e.g. `"io.appium.example"`, `["io.appium.example1", "io.appium.example2"]`, `'*'` |
 |`disableWindowAnimation`|Set device animation scale zero if the value is `true`. After session is complete, Appium restores the animation scale to it's original value. Defaults to `false` | `true`, `false` |
+| `remoteAppsCacheLimit` | Change the limit of the number of remote cached apks which are pushed to test device local storage. It improves performance to install apks to the device by preventing push them everytime. Installation needs `push` and `install` process. Defaults to `10`. `0` means Appium does not cache. | e.g. `0`, `5`, `20` |
 
 #### UIAutomator (1 & 2)
 

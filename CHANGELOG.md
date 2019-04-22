@@ -15,8 +15,8 @@ Appium 1.13.0 is a minor release
 * Fixes:
   * Emulators have a bug where they sometimes go offline when root/unroot is called. Only affected unrooted emulators. Workaround is to check if a device went offline after root/unroot was called and then restarting the ADB server [#443](https://github.com/appium/appium-adb/pull/443)
   * Calls to `mobile:` endpoints weren't being called in web context. Defaults now is that in a web context, the native mobile endpoint is always called [#527](https://github.com/appium/appium-android-driver/pull/527)
-  * `pushFile` wasn't working on some later Android SDK's due to permission errors [#439](https://github.com/appium/appium-adb/pull/439)
-  * `network_connection` wasn't usable [#531](https://github.com/appium/appium-android-driver/pull/531)
+  * `pushFile` was not working on some later Android SDK's due to permission errors [#439](https://github.com/appium/appium-adb/pull/439)
+  * `network_connection` was not usable from web context [#531](https://github.com/appium/appium-android-driver/pull/531)
   * Default values in caps not being set correctly [#436](https://github.com/appium/appium-adb/pull/436)
 * No longer uninstalls apps when session is terminated if `dontStopAppOnReset` is set [#530](https://github.com/appium/appium-android-driver/pull/530)
 * Allow touch actions in a web context. Only works for absolute coordinates. JSONWP only, does not affect behaviour of W3C Actions implementation [#534](https://github.com/appium/appium-android-driver/pull/534/files)
@@ -27,16 +27,16 @@ Appium 1.13.0 is a minor release
 
 #### Android (Espresso)
 * Fixes: 
-  * Incorrect naming of Espresso argument `installTimeout` to the correct `androidInstallTimeout` [#426](https://github.com/appium/appium-espresso-driver/pull/426/files)
-  * Use ADB instead of Espresso to start activities for better reliability [#425](https://github.com/appium/appium-espresso-driver/pull/425/files)
+  * Changed incorrect naming of Espresso argument `installTimeout` to the correct `androidInstallTimeout` [#426](https://github.com/appium/appium-espresso-driver/pull/426/files)
+  * Use ADB instead of Espresso to verify activities for better reliability [#425](https://github.com/appium/appium-espresso-driver/pull/425/files)
 
 #### iOS
-* Support webview testing for iOS real devices (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122)
+* Support webview testing for real devices running iOS 12.2+ (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122)
 * Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151)
 * Fixes:
-  * Make start video recording asynchronous so to improve performance [#12486](https://github.com/appium/appium/issues/12486)
+  * Improve performance of video recording by using superior startup detection tools [#12486](https://github.com/appium/appium/issues/12486)
   * Not able to change video recording parameters in IOS [#12463](https://github.com/appium/appium/issues/12463)
-* New capability. `showXcodeLog` when explicitly set to false doesn't log Xcode logs [#12466](https://github.com/appium/appium/issues/12466)
+* Change behavior of capability `showXcodeLog` so that when it is explicitly set to false, don't print any Xcode logs, even error logs [#12466](https://github.com/appium/appium/issues/12466)
 
 
 CHANGES IN VERSION 1.12.1 (FROM 1.12.0)

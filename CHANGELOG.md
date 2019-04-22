@@ -25,6 +25,10 @@ Appium 1.13.0 is a minor release
 * Use UiAutomator's screenshot method when default screenshoter fails [#264](https://github.com/appium/appium-uiautomator2-server/pull/264)
 * Add detailed network information to the device information endpoint (appium/device/info) [#265](https://github.com/appium/appium-uiautomator2-server/pull/265). Addresses [Issue #12502](https://github.com/appium/appium/issues/12502)
 
+#### Android (Espresso)
+* Fixes: 
+  * Incorrect naming of Espresso argument `installTimeout` to the correct `androidInstallTimeout` [#426](https://github.com/appium/appium-espresso-driver/pull/426/files)
+  * Use ADB instead of Espresso to start activities for better reliability [#425](https://github.com/appium/appium-espresso-driver/pull/425/files)
 
 #### iOS
 * Support webview testing for iOS real devices (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122)

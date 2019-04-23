@@ -6,6 +6,8 @@ Appium 1.13.0 is a minor release
 #### General
 * Appium 1.13 will be the last minor version to use [UiAutomator1](https://github.com/appium/appium-android-driver) as the default Android automation. As of Appium 1.14, the default Android driver will be [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver). If you don't set the `automationName` for an Android session a big [warning](https://github.com/appium/appium/pull/12481) will be displayed notifying you of the change. This will be a breaking change, and it's recommended if you wish to keep the same behavior, add the capability `automationName=UiAutomator1` to your scripts
 * Appium 1.13 will be the last minor version to support Node v8. As of Appium 1.14 the supported Node versions will be v10 and v12.
+* Fixes:
+  * Treat W3C /property and /attribute as aliases in a web context [#311](https://github.com/appium/appium-base-driver/pull/311)
 
 #### Android
 * New capabilities:
@@ -20,6 +22,7 @@ Appium 1.13.0 is a minor release
   * Default values in caps not being set correctly [#436](https://github.com/appium/appium-adb/pull/436)
 * No longer uninstalls apps when session is terminated if `dontStopAppOnReset` is set [#530](https://github.com/appium/appium-android-driver/pull/530)
 * Allow touch actions in a web context. Only works for absolute coordinates. JSONWP only, does not affect behaviour of W3C Actions implementation [#534](https://github.com/appium/appium-android-driver/pull/534/files)
+* Update Chromedriver to 73.0.0 [#318](https://github.com/appium/appium-base-driver/pull/318)
 
 #### Android (UiAutomator2)
 * Use UiAutomator's screenshot method when default screenshoter fails [#264](https://github.com/appium/appium-uiautomator2-server/pull/264)
@@ -32,7 +35,7 @@ Appium 1.13.0 is a minor release
 
 #### iOS
 * Support webview testing for real devices running iOS 12.2+ (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122)
-* Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151)
+* Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151). See [documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-tvos.md) for details.
 * Fixes:
   * Improve performance of video recording by using superior startup detection tools [#12486](https://github.com/appium/appium/issues/12486)
   * Not able to change video recording parameters in IOS [#12463](https://github.com/appium/appium/issues/12463)

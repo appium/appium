@@ -52,6 +52,7 @@
       | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
       | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
       | mobile:siriCommand| Sends a command to Siri | `{text}` | `{text: "What time is it?"}` |
+      | mobile:getFocusedElement| Get focused element on tvOS | | |
 
       ### Android
       | Command | Description | Argument | Argument Example |

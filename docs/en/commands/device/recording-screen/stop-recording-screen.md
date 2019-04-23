@@ -42,7 +42,7 @@ stop_recording_screen remote_path: 'https://example.com', user: 'example', pass:
 
 ```php
 # PHP
-// TODO PHP sample
+driver.StopRecordingScreen();
 
 ```
 

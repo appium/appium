@@ -50,7 +50,11 @@ start_recording_screen video_type: 'h264', time_limit: '260' # iOS
 
 ```csharp
 // C#
-// TODO C# sample
+driver.StartRecordingScreen(
+    AndroidStartScreenRecordingOptions.GetAndroidStartScreenRecordingOptions()
+        .WithTimeLimit(TimeSpan.FromSeconds(10))
+        .WithBitRate(500000)
+        .WithVideoSize("720x1280"));
 
 ```
 

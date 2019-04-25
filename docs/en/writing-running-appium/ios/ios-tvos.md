@@ -19,6 +19,8 @@ You can run tests for tvOS by changing the `platformName` capability like it is 
 }
 ```
 
+Please update to the latest Carthage if you face building issues in tvOS related librareis.
+
 ## Limitations
 Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.
 
@@ -27,6 +29,8 @@ tvOS does actions on the _focused_ element. You can get the value of the `focus`
 
 
 ## Basic Actions
+
+_pressButton_ and get focused element by _get active element_ are basic actions in tvOS.
 
 ```ruby
 # Ruby
@@ -41,7 +45,8 @@ element.click
 @driver.execute_script 'mobile: pressButton', { name: 'Home' }
 # Move focus and get the focused element
 @driver.execute_script 'mobile: pressButton', { name: 'Up' }
-element = @driver.execute_script 'mobile: getFocusedElement'
+# Get a focused element
+element = @driver.switch_to.active_element
 element.label #=> "Settings"
 ```
 
@@ -53,7 +58,7 @@ element.click()
 driver.query_app_state('test.package.name')
 execute_script('mobile: pressButton', { 'name': 'Home' })
 execute_script('mobile: pressButton', { 'name': 'Up' })
-element = execute_script('mobile: getFocusedElement')
+element = driver.switch_to.active_element
 element.get_attribute('label')
 ```
 
@@ -65,7 +70,7 @@ element.click();
 driver.queryAppState("test.package.name");
 driver.executeScript("mobile: pressButton", ImmutableMap.of("name", "Home"));
 driver.executeScript("mobile: pressButton", ImmutableMap.of("name", "Up"));
-element = driver.executeScript("mobile: getFocusedElement");
+element = driver.switchTo().activeElement();
 element.getAttribute("label");
 ```
 
@@ -77,10 +82,10 @@ Appium calculates `up/down/left/right` and `select` sequence automatically if th
 You can also handle setting a focus or starting/pausing a playback pressing button actions. `menu` button works as _back_ for iOS context in tvOS.
 
 ## Test Environment
-- Simulators or real devices on your machine
+- Simulators on your machine or real devices connected to your machine
 - Testing and development on real tvOS devices supported by [HeadSpin](https://headspin.io)
 
 ## Resources
 - Related issue:
     - https://github.com/appium/appium/pull/12401
-    - [appium-xcuitest-driver#911](https://github.com/appium/appium-xcuitest-driver/pull/911), [appium-xcuitest-driver#939](https://github.com/appium/appium-xcuitest-driver/pull/939), [appium-xcuitest-driver#931](https://github.com/appium/appium-xcuitest-driver/pull/931)
+    - e.g. [appium-xcuitest-driver#911](https://github.com/appium/appium-xcuitest-driver/pull/911), [appium-xcuitest-driver#939](https://github.com/appium/appium-xcuitest-driver/pull/939), [appium-xcuitest-driver#931](https://github.com/appium/appium-xcuitest-driver/pull/931)

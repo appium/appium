@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.13.0-beta.3",
+  "version": "1.13.0-rc.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -2614,9 +2614,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "2.112.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.112.0.tgz",
-      "integrity": "sha512-hwCcKrytPLT0G0kA6kTjm44jhzHmWMHsldNVvIEf6gtXy2ie3BJcnWA8x+SYrOpqXCgakPx3syKPBUTd0Wpqtw==",
+      "version": "2.113.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.113.0.tgz",
+      "integrity": "sha512-Z+cp95WFQHiivZLnSKZWbbQbHI65dFzCgrcXwwkS9/jEWSTkNChuLmn+Sc2Td8nuntUw0jTSBabSSBbXebaVjg==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^3.0.0",

@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       driver.sendSMS("555-123-4567", "Hey lol");
+  python:
+    |
+      self.driver.send_sms('555-123-4567', 'Hey lol')
   javascript_wd:
     |
       await driver.sendSms('555-123-4567', 'Hey lol');

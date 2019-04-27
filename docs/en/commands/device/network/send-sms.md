@@ -12,7 +12,9 @@ driver.sendSMS("555-123-4567", "Hey lol");
 ```
 
 ```python
-# Not supported
+# Python
+self.driver.send_sms('555-123-4567', 'Hey lol')
+
 ```
 
 ```javascript

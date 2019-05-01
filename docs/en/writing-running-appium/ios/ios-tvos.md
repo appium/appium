@@ -19,13 +19,16 @@ You can run tests for tvOS by changing the `platformName` capability like it is 
 }
 ```
 
-Please update to the latest Carthage if you face building issues in tvOS related librareis.
+Tips to build WDA for tvOS
+- Update to the latest Carthage
+- Be sure tvOS simulator exists in your simulator list if you would like to run for tvOS simulator
+    - e.g. `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` shows results
 
 ## Limitations
 Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.
 
 We can handle `focus` on tvOS by simply pressing keys such as up/down/left/right/home.
-tvOS does actions on the _focused_ element. You can get the value of the `focus` attribute via [Attributes API](http://appium.io/docs/en/commands/element/attributes/attribute/).
+tvOS does actions on the _focused_ element. You can get the value of the `focus` attribute via [Attributes API](http://appium.io/docs/en/commands/element/attributes/attribute/). _Get active element_ API returns the focused element.
 
 
 ## Basic Actions
@@ -74,6 +77,16 @@ element = driver.switchTo().activeElement();
 element.getAttribute("label");
 ```
 
+```javascript
+// WD
+const element = await driver.elementByAccessibilityId("element on the app");
+await element.click();
+await driver.execute('mobile: pressButton', {name: "Home"});
+await driver.execute('mobile: pressButton', {name: "Up"});
+const activeElement = await driver.active();
+await activeElement.getAttribute("label")
+```
+
 ## More actions
 tvOS provides [remote controller](https://developer.apple.com/design/human-interface-guidelines/tvos/remote-and-controllers/remote/) based actions. Appium provides _Buttons_ actions via `mobile: pressButton`. These are `menu`, `up/down/left/right`, `home`, `playpause` and `select`. Available actions are enumerated in the error message if you send unsupported button name to the server.
 
@@ -81,7 +94,7 @@ Appium calculates `up/down/left/right` and `select` sequence automatically if th
 
 You can also handle setting a focus or starting/pausing a playback pressing button actions. `menu` button works as _back_ for iOS context in tvOS.
 
-## Test Environment
+## Test Running Environment
 - Simulators on your machine or real devices connected to your machine
 - Testing and development on real tvOS devices supported by [HeadSpin](https://headspin.io)
 

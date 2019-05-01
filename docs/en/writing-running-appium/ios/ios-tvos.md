@@ -21,7 +21,7 @@ You can run tests for tvOS by changing the `platformName` capability like it is 
 
 Tips to build WDA for tvOS
 - Update to the latest Carthage
-- Be sure tvOS simulator exists in your simulator list if you would like to run for tvOS simulator
+- Be sure tvOS simulator exists in your simulator list if you would like to run on tvOS simulators
     - e.g. `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` shows results
 
 ## Limitations
@@ -101,4 +101,4 @@ You can also handle setting a focus or starting/pausing a playback pressing butt
 ## Resources
 - Related issue:
     - https://github.com/appium/appium/pull/12401
-    - e.g. [appium-xcuitest-driver#911](https://github.com/appium/appium-xcuitest-driver/pull/911), [appium-xcuitest-driver#939](https://github.com/appium/appium-xcuitest-driver/pull/939), [appium-xcuitest-driver#931](https://github.com/appium/appium-xcuitest-driver/pull/931)
+    - e.g. [appium-xcuitest-driver#911](https://github.com/appium/appium-xcuitest-driver/pull/911), [appium-xcuitest-driver#939](https://github.com/appium/appium-xcuitest-driver/pull/939), [appium-xcuitest-driver#931](https://github.com/appium/appium-xcuitest-driver/pull/931), [appium/WebDriverAgent/pull/163](https://github.com/appium/WebDriverAgent#163)

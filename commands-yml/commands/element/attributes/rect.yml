@@ -79,7 +79,7 @@ endpoint:
     - name: height
       type: number
       description: Height of the bounding rectangle
-    - name: weight
+    - name: width
       type: number
       description: Width of the bounding rectangle
 # Links to specifications. Should link to at least one specification

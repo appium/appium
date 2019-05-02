@@ -129,10 +129,17 @@ following desired capabilities:
 such as: biometrics, geolocation setting and window focussing.
 
 ```
-# Get the Facebook Tap.
-brew tap facebook/fb
-# Install fbsimctl from master
-brew install fbsimctl --HEAD
+# Get the code from FB repository. The repository has been renamed to `idb`.
+# We should build it via source code.
+git clone git@github.com:facebook/idb.git
+cd idb
+git checkout v1.0.0 # We can build fbsimctl directly
+./build.sh fbsimctl build ./
+# Then, `bin` directory is generated in `./bin`
+# Set the `./bin` into your PATH
+
+# Make sure you can get output by below command
+fbsimctl help
 ```
 
 * Install [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils)

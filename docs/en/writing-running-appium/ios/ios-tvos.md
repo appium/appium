@@ -21,7 +21,7 @@ You can run tests for tvOS by changing the `platformName` capability like it is 
 
 Tips to build WDA for tvOS
 - Update to the latest Carthage
-- Be sure tvOS simulator exists in your simulator list if you would like to run on tvOS simulators
+- Be sure tvOS simulator exists in your simulator list if you would like to run your test on tvOS simulators
     - e.g. `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` shows results
 
 ## Limitations

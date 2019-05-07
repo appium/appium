@@ -133,7 +133,12 @@ own items in the SDK manager. Make sure you install the build-tools and platform
      [pool release];
      return exitCode;
   }
-```
+  ```
+* Get `Unable to launch WebDriverAgent because of xcodebuild failure: Command 'Scripts/bootstrap.sh -d' exited with code 1` error message in failing xcodebuild
+    - Make sure `xcodebuild -checkFirstLaunchStatus` returns status code `0`
+    - If it returns `69`, you should call `xcodebuild -runFirstLaunch` once to prevent the root error, `Install Started
+Install Failed: Error Domain=DVTDownloadableErrors Code=3 "The authorization was denied since no user interaction was possible." UserInfo={AuthorizationErrorCode=-60007, NSLocalizedDescription=The authorization was denied since no user interaction was possible.}`
+    - example: https://github.com/appium/WebDriverAgent/pull/165#discussion_r281458167
 
 
 ### Webview/Hybrid/Safari app support

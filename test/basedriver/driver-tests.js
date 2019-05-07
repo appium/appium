@@ -80,7 +80,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     it('should fulfill an unexpected driver quit promise', async function () {
       // make a command that will wait a bit so we can crash while it's running
       d.getStatus = async function () {
-        await B.delay(100);
+        await B.delay(1000);
         return 'good status';
       }.bind(d);
       let cmdPromise = d.executeCommand('getStatus');

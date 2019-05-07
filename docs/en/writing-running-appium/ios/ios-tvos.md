@@ -78,13 +78,23 @@ element.getAttribute("label");
 ```
 
 ```javascript
-// WD
-const element = await driver.elementByAccessibilityId("element on the app");
+// webdriver.io example
+const element = $('~SomeAccessibilityId');
+element.getAttribute('focused');
+element.click();
+driver.execute('mobile: pressButton', {name: 'Home'});
+driver.execute('mobile: pressButton', {name: 'Up'});
+const activeElement = driver.getActiveElement();
+activeElement.getAttribute('label');
+
+// WD example
+const element = await driver.elementByAccessibilityId('element on the app');
+await element.getAttribute('focused');
 await element.click();
-await driver.execute('mobile: pressButton', {name: "Home"});
-await driver.execute('mobile: pressButton', {name: "Up"});
+await driver.execute('mobile: pressButton', {name: 'Home'});
+await driver.execute('mobile: pressButton', {name: 'Up'});
 const activeElement = await driver.active();
-await activeElement.getAttribute("label")
+await activeElement.getAttribute('label');
 ```
 
 ## More actions

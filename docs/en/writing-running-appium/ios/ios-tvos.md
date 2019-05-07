@@ -12,7 +12,7 @@ You can run tests for tvOS by changing the `platformName` capability like it is 
 ```json
 {
     "automationName": "XCUITest",
-    "platformName": "tvOS",
+    "platformName": "tvOS", // here
     "platformVersion": "12.2",
     "deviceName": "Apple TV",
     ...

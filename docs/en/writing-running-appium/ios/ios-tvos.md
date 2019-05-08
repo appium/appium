@@ -23,6 +23,7 @@ Tips to build WDA for tvOS
 - Update to the latest Carthage
 - Be sure tvOS simulator exists in your simulator list if you would like to run your test on tvOS simulators
     - e.g. `xcrun simctl list | grep "com.apple.CoreSimulator.SimRuntime.tvOS"` shows results
+    - Newer Carthage raises an error like `Could not find any available simulators for tvOS` if tvOS simulators do not exist in tvOS build
 
 ## Limitations
 Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.

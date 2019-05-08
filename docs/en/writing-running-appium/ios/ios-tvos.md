@@ -35,7 +35,7 @@ tvOS does actions on the _focused_ element. You can get the value of the `focus`
 ## Basic Actions
 
 _pressButton_ and get focused element by _get active element_ are basic actions in tvOS.
-Consider adding `wait` methods in calling `find_element` since tvOS also has animation.
+Consider adding `wait` methods since tvOS also has animation.
 
 ```ruby
 # Ruby

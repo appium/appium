@@ -65,13 +65,13 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: package_name
+    - name: packageName
       type: string
       description: The package name of the application
-    - name: data_type
+    - name: dataType
       type: string
       description: The type of system state which wants to read. It should be one of the supported performance data types.
-    - name: data_read_timeout
+    - name: dataReadTimeout
       type: number
       description: The number of attempts to read (optional)
   response:

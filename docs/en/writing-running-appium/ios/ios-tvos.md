@@ -35,6 +35,7 @@ tvOS does actions on the _focused_ element. You can get the value of the `focus`
 ## Basic Actions
 
 _pressButton_ and get focused element by _get active element_ are basic actions in tvOS.
+Consider adding `wait` methods in calling `find_element` since tvOS also has animation.
 
 ```ruby
 # Ruby
@@ -60,8 +61,8 @@ element = driver.find_element_by_accessibility_id('element on the app')
 element.get_attribute('focused')
 element.click()
 driver.query_app_state('test.package.name')
-execute_script('mobile: pressButton', { 'name': 'Home' })
-execute_script('mobile: pressButton', { 'name': 'Up' })
+driver.execute_script('mobile: pressButton', { 'name': 'Home' })
+driver.execute_script('mobile: pressButton', { 'name': 'Up' })
 element = driver.switch_to.active_element
 element.get_attribute('label')
 ```

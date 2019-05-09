@@ -92,5 +92,4 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keep-keychains`|false|[DEPRECATED] - (iOS-only) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--localizable-strings-dir`|en.lproj|[DEPRECATED] - (IOS-only) the relative path of the dir where Localizable.strings file resides |`--localizable-strings-dir en.lproj`|
 |`--show-ios-log`|false|[DEPRECATED] - (IOS-only) if set, the iOS system log will be written to the console||
-|`--enable-heapdump`|false|Enables NodeJS memory dumps collection feature. This feature is extremely useful for finding memory leaks. See [memory collection docs](../advanced-concepts/memory-collection.md) for more information.||
 |`--relaxed-security`|false|Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it is not the case if a client could potentially break out of the session sandbox.||

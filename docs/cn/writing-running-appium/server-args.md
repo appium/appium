@@ -90,7 +90,6 @@ Appium v1.5里某些服务器参数已被弃用，取而代之使用的-default-
 | `--native-instruments-lib`      | false                            | [弃用] - (仅iOS) iOS 内建了一个怪异的不可能避免的延迟，我们在Appium里修复了它，如果你想用原来的，你可以使用这个参数 |                                          |
 | `--keep-keychains`              | false                            | [弃用] - (仅iOS) 当Appium启动或者关闭的时候，是否保留keychains(Library/Keychains) |                                          |
 | `--localizable-strings-dir`     | en.lproj                         | [弃用] - (仅iOS)定位.strings所在目录的相对路径         | `--localizable-strings-dir en.lproj`     |
-| `--show-ios-log`                | false                            | [弃用] - (仅iOS) 如果设置了，iOS系统日志会输出到终端        |                                          |
-|`--enable-heapdump`|false|激活 NodeJS 内存 dumps 收集功能。这个功能对找到内存泄露非常有用。用 'kill -SIGUSR2 &lt;PID&gt;' 命令来创建 node 进程的内存堆栈dump，只有在 *nix 系统有效。dump 文件会被创建在 appium 运行的目录，文件使用 *.heapsnapshot 做后缀。如果后续想要深入研究，这个快照可以被加载到 Chrome Inspector 里去。参加 [Rising Stack article](https://blog.risingstack.com/finding-a-memory-leak-in-node-js/) for more details.||
+| `--show-ios-log`                | false                            | [弃用] - (仅iOS) 如果设置了，iOS系统日志会输出到终端        |
 
 本文由 [testly](https://github.com/testly) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。

@@ -2600,9 +2600,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "2.113.2",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.113.2.tgz",
-      "integrity": "sha512-dhid34cx99AG61O69gbIgvW51RUKtd9uQkKziQe0/XGApAozjwlxgMJo/pjshpuz2rXCMz3ilRcrLnscT36qmQ==",
+      "version": "2.114.1",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.114.1.tgz",
+      "integrity": "sha512-ksYy6LyF83DBigjcG+J2Y1XtKI9uYX9cIvfpZsA/0ClWZh5Frtwk9NQehialGtaDM0lzxPQXQL2EEXnqLhJyPA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^3.0.0",
@@ -2620,12 +2620,20 @@
         "portscanner": "2.2.0",
         "request": "^2.79.0",
         "request-promise": "^4.1.1",
+        "semver": "^5.6.0",
         "source-map-support": "^0.5.5",
         "teen_process": "^1.14.0",
         "uuid-js": "^0.7.5",
         "ws": "^6.0.0",
         "xmldom": "^0.1.27",
         "yargs": "^13.1.0"
+      },
+      "dependencies": {
+        "semver": {
+          "version": "5.7.0",
+          "resolved": "https://registry.npmjs.org/semver/-/semver-5.7.0.tgz",
+          "integrity": "sha512-Ya52jSX2u7QKghxeoFGpLwCtGlt7j0oY9DYb5apt9nPlJ42ID+ulTXESnt/qAQcoSERyZ5sl3LDIOw0nAn/5DA=="
+        }
       }
     },
     "appium-youiengine-driver": {

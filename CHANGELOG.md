@@ -3,6 +3,9 @@ CHANGES IN VERSION 1.13.1 (FROM 1.13.0)
 
 Appium 1.13.1 is a patch release. This [addresses problems with long startup times for Safari WebViews on iOS 12.2](https://github.com/appium/appium/issues/12590)
 
+#### General
+* Minimum Node version is bumped up to v10
+
 #### Android (Espresso)
 * Fix problems with activity startup not working when the package name value in `appActivity` is different from the one in `appPackage` [#441](https://github.com/appium/appium-espresso-driver/pull/441)
 

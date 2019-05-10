@@ -9,7 +9,8 @@ example_usage:
       Rectangle rect = element.getRect();
   python:
     |
-      // TODO Python sample
+      element = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+      element.rect
   javascript_wd:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

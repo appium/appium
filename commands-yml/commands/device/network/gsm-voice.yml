@@ -8,7 +8,7 @@ example_usage:
       driver.setGsmVoice(GsmVoiceState.HOME);
   python:
     |
-      // TODO Python sample
+      self.driver.set_gsm_voice(GsmVoiceState.HOME)
   javascript_wd:
     |
       await driver.gsmVoice('Voice state');
@@ -51,7 +51,7 @@ driver_support:
     windows: false
 client_support:
   java: true
-  python: false
+  python: true
   ruby: true
   php: false
   csharp: false

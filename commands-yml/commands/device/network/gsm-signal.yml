@@ -8,7 +8,7 @@ example_usage:
       driver.setGsmSignalStrength(GsmSignalStrength.GOOD);
   python:
     |
-      // TODO Python sample
+      self.driver.set_gsm_signal(GsmSignalStrength.GOOD)
   javascript_wd:
     |
       await driver.gsmSignal(3);
@@ -51,7 +51,7 @@ driver_support:
     windows: false
 client_support:
   java: true
-  python: false
+  python: true
   ruby: true
   php: false
   csharp: false

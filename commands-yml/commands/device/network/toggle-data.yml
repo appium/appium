@@ -12,9 +12,6 @@ example_usage:
   java:
     |
       driver.toggleData();
-  python:
-    |
-      // TODO Python sample
   javascript_wd:
     |
       await driver.toggleData();

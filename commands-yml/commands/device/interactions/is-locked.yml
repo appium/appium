@@ -8,7 +8,7 @@ example_usage:
       boolean isLocked = driver.isDeviceLocked();
   python:
     |
-      // TODO Python sample
+      self.driver.is_locked()
   javascript_wd:
     |
       let isLocked = await driver.isLocked();

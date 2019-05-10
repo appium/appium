@@ -12,7 +12,9 @@ List<List<Object>> performanceData = driver.getPerformanceData("my.app.package",
 ```
 
 ```python
-# Not supported
+# Python
+self.driver.get_performance_data('my.app.package', 'cpuinfo', 5)
+
 ```
 
 ```javascript
@@ -71,7 +73,7 @@ get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/android/HasSupportedPerformanceDataType.html#getSupportedPerformanceDataTypes--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| None |  |
+|[Python](https://github.com/appium/python-client/releases/latest)| None | [github.com](https://github.com/appium/python-client) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3412) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#get_performance_data-instance_method) |

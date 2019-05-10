@@ -12,7 +12,9 @@ boolean isLocked = driver.isDeviceLocked();
 ```
 
 ```python
-# Not supported
+# Python
+self.driver.is_locked()
+
 ```
 
 ```javascript
@@ -71,7 +73,7 @@ device_locked?
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](http://appium.github.io/java-client/io/appium/java_client/LocksDevice.html#isDeviceLocked--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All |  |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2407) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#device_locked%3F-instance_method) |

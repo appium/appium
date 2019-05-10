@@ -7,6 +7,10 @@ example_usage:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
       let location = await element.getLocationInView();
+  python:
+    |
+      element = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+      element.location_in_view
   javascript_wdio:
     |
       let location = driver.getLocationInView("~SomeAccessibilityId");

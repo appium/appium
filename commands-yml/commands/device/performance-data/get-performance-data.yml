@@ -8,7 +8,7 @@ example_usage:
       List<List<Object>> performanceData = driver.getPerformanceData("my.app.package", "cpuinfo", 5);
   python:
     |
-      // TODO Python sample
+      self.driver.get_performance_data('my.app.package', 'cpuinfo', 5)
   javascript_wd:
     |
       await driver.getPerformanceData('my.app.package', 'cpuinfo', 5);

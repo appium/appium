@@ -8,7 +8,7 @@ example_usage:
       List<String> performanceTypes = driver.getSupportedPerformanceDataTypes();
   python:
     |
-      // TODO Python sample
+      self.driver.get_performance_data_types()
   javascript_wd:
     |
       await driver.getSupportedPerformanceDataTypes();

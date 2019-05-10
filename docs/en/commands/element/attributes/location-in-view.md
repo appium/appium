@@ -10,7 +10,10 @@ Determine an element's location on the screen once it has been scrolled into vie
 ```
 
 ```python
-# Not supported
+# Python
+element = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+element.location_in_view
+
 ```
 
 ```javascript

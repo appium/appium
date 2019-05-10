@@ -13,7 +13,10 @@ Rectangle rect = element.getRect();
 ```
 
 ```python
-# Not supported
+# Python
+element = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+element.rect
+
 ```
 
 ```javascript

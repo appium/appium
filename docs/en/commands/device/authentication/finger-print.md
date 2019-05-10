@@ -81,7 +81,7 @@ Touch ID by iOS is [here](http://appium.io/docs/en/commands/device/simulator/tou
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [seleniumhq.github.io](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client/blob/07180f7547ffcd13c212de21d027ea0355f9ab96/appium/webdriver/webdriver.py#L1390) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/appium/appium-android-driver/blob/d16c7161d92ab6f6c9cec3f22218219ac3659716/lib/commands/actions.js#L260) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device#finger_print-instance_method) |

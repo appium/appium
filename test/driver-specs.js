@@ -9,7 +9,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
 import { IosDriver } from 'appium-ios-driver';
-import { AndroidDriver } from 'appium-android-driver';
+import { AndroidUiautomator2Driver } from 'appium-uiautomator2-driver';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes } from '../lib/utils';
 
@@ -290,7 +290,7 @@ describe('AppiumDriver', function () {
           automationName: 'Appium'
         });
         driver.should.be.an.instanceof(Function);
-        driver.should.equal(AndroidDriver);
+        driver.should.equal(AndroidUiautomator2Driver);
       });
       it('should get XCUITestDriver driver for automationName of XCUITest', function () {
         const appium = new AppiumDriver({});

@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       driver.setGsmSignalStrength(GsmSignalStrength.GOOD);
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       await driver.gsmSignal(3);

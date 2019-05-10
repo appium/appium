@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       boolean isLocked = driver.isDeviceLocked();
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       let isLocked = await driver.isLocked();

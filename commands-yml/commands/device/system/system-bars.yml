@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       Map<String, String> systemBars = driver.getSystemBars();
+  python:
+    |
+      // TODO Python sample
   javascript_wdio:
     |
       driver.getSystemBars();

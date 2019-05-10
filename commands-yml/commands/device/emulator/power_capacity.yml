@@ -11,6 +11,9 @@ example_usage:
   java:
     |
       driver.setPowerCapacity(100);
+  python:
+    |
+      // TODO Python sample
   ruby:
     |
       set_power_capacity 50

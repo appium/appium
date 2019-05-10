@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       List<List<Object>> performanceData = driver.getPerformanceData("my.app.package", "cpuinfo", 5);
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       await driver.getPerformanceData('my.app.package', 'cpuinfo', 5);

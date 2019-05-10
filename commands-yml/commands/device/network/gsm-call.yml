@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       driver.makeGsmCall("5551234567", GsmCallActions.CALL);
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       await driver.gsmCall('555-123-4567', 'Phone');

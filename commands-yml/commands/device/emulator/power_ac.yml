@@ -11,6 +11,9 @@ example_usage:
   java:
     |
       driver.setPowerAC(PowerACState.OFF);
+  python:
+    |
+      // TODO Python sample
   ruby:
     |
       set_power_ac :on

@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       List<String> performanceTypes = driver.getSupportedPerformanceDataTypes();
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       await driver.getSupportedPerformanceDataTypes();

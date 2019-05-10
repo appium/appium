@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       driver.rotate(new DeviceRotation(10, 10, 10));
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       driver.rotateDevice({x: 114, y: 198, duration: 5, radius: 3, rotation: 220, touchCount: 2});

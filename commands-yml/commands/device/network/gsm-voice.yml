@@ -6,6 +6,9 @@ example_usage:
   java:
     |
       driver.setGsmVoice(GsmVoiceState.HOME);
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       await driver.gsmVoice('Voice state');

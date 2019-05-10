@@ -7,6 +7,9 @@ example_usage:
     |
       List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
       Rectangle rect = element.getRect();
+  python:
+    |
+      // TODO Python sample
   javascript_wd:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

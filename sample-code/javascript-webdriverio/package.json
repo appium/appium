@@ -10,7 +10,7 @@
   "author": "Daniel Graham",
   "license": "Apache-2.0",
   "devDependencies": {
-    "assert": "^1.4.1",
+    "assert": "^2.0.0",
     "chai": "^4.1.2",
     "mocha": "^6.0.0",
     "webdriverio": "^5.1.0"

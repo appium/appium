@@ -93,10 +93,6 @@ These Capabilities are available only on Android-based drivers (like
 |`autoWebviewTimeout`| Amount of time to wait for Webview context to become active, in ms. Defaults to `2000`| e.g. `4`|
 |`chromedriverPort`| Numeric port to start Chromedriver on. Note that use of this capability is discouraged as it will cause undefined behavior in case there are multiple webviews present. By default Appium will find a free port.|e.g. `8000`|
 |`chromedriverPorts`| A list of valid ports for Appium to use for communication with Chromedrivers. This capability supports multiple webview scenarios. The form of this capability is an array of numeric ports, where array items can themselves be arrays of length 2, where the first element is the start of an inclusive range and the second is the end. By default, Appium will use any free port.|e.g. `[8000, [9000, 9005]]`|
-|`intentAction`| Intent action which will be used to start activity (default `android.intent.action.MAIN`)| e.g.`android.intent.action.MAIN`, `android.intent.action.VIEW`|
-|`intentCategory`| Intent category which will be used to start activity (default `android.intent.category.LAUNCHER`)| e.g. `android.intent.category.LAUNCHER`, `android.intent.category.APP_CONTACTS`
-|`intentFlags`| Flags that will be used to start activity (default `0x10200000`)| e.g. `0x10200000`
-|`optionalIntentArguments`| Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/reference/android/content/Intent.html) | e.g. `--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`, etc.
 |`dontStopAppOnReset`| Doesn't stop the process of the app under test, before starting the app using adb. If the app under test is created by another anchor app, setting this false, allows the process of the anchor app to be still alive, during the start of the test app using adb. In other words, with `dontStopAppOnReset` set to `true`, we will not include the `-S` flag in the `adb shell am start` call. With this capability omitted or set to `false`, we include the `-S` flag. Default `false`| `true` or `false`|
 |`unicodeKeyboard`| Enable Unicode input, default `false`| `true` or `false`|
 |`resetKeyboard`| Reset keyboard to its original state, after running Unicode tests with `unicodeKeyboard` capability. Ignored if used alone. Default `false`| `true` or `false`|
@@ -131,6 +127,10 @@ These Capabilities are available on UIA 1 and 2
 |Capability|Description|Values|
 |----|-----------|-------|
 |`otherApps`|App or list of apps (as a JSON array) to install prior to running tests|e.g., `"/path/to/app.apk"`, `https://www.example.com/url/to/app.apk`, `["/path/to/app-a.apk", "/path/to/app-b.apk"]`|
+|`intentAction`| Intent action which will be used to start activity (default `android.intent.action.MAIN`)| e.g.`android.intent.action.MAIN`, `android.intent.action.VIEW`|
+|`intentCategory`| Intent category which will be used to start activity (default `android.intent.category.LAUNCHER`)| e.g. `android.intent.category.LAUNCHER`, `android.intent.category.APP_CONTACTS`
+|`intentFlags`| Flags that will be used to start activity (default `0x10200000`)| e.g. `0x10200000`
+|`optionalIntentArguments`| Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/reference/android/content/Intent.html) | e.g. `--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`, etc.
 
 #### UIAutomator2 Only
 

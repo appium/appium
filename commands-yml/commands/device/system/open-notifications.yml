@@ -44,7 +44,7 @@ driver_support:
     xcuitest: false
     uiautomation: false
   android:
-    espresso: true
+    espresso: false
     uiautomator2: true
     uiautomator: true
   mac:

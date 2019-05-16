@@ -123,6 +123,7 @@ These Capabilities are available only on Android-based drivers (like
 |`uninstallOtherPackages`| A package, list of packages or `*` to uninstall package/s before installing apks for test. `'*'` uninstall all of thrid-party packages except for packages which is necessary for Appium to test such as `io.appium.settings` or `io.appium.uiautomator2.server` since Appium already contains the logic to manage them. | e.g. `"io.appium.example"`, `["io.appium.example1", "io.appium.example2"]`, `'*'` |
 |`disableWindowAnimation`|Set device animation scale zero if the value is `true`. After session is complete, Appium restores the animation scale to it's original value. Defaults to `false` | `true`, `false` |
 |`remoteAppsCacheLimit`| Set the maximum number of remote cached apks (default is 10) which are pushed to the device-under-test's local storage. Caching apks remotely speeds up the execution of sequential test cases, when using the same set of apks, by avoiding the need to be push an apk to the remote file system every time a reinstall is needed. Set this capability to `0` to disable caching. | e.g. `0`, `5`, `20` |
+|`buildToolsVersion`| Specify the Android `build-tools` version to be something different than the default, which is to use the most recent version. It is helpful to use a non-default version if your environment uses alpha/beta build tools. | e.g. `'28.0.3'` |
 
 #### UIAutomator (1 & 2)
 

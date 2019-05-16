@@ -29,13 +29,13 @@ Tips to build WDA for tvOS
 Gesture commands do not work for tvOS. Some commands such as pasteboard do not work as well.
 
 We can handle `focus` on tvOS by simply pressing keys such as up/down/left/right/home.
-tvOS does actions on the _focused_ element. You can get the value of the `focus` attribute via [Attributes API](http://appium.io/docs/en/commands/element/attributes/attribute/). _Get active element_ API returns the focused element.
+tvOS performs actions on the _focused_ element. You can get the value of the `focus` attribute via [Attributes API](http://appium.io/docs/en/commands/element/attributes/attribute/). _Get active element_ API returns the focused element.
 
 
 ## Basic Actions
 
-_pressButton_ and get focused element by _get active element_ are basic actions in tvOS.
-Consider adding `wait` methods since tvOS also has animation.
+_pressButton_ and getting the focused element by _get active element_ are basic actions for tvOS.
+Consider using `wait` methods since tvOS also has animation.
 
 ```ruby
 # Ruby

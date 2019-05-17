@@ -1,34 +1,34 @@
 jobs:
-  - job: release_appium
-    pool:
-      vmImage: 'macOS 10.14'
-    steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '12.x'
-    - script: |
-        git config --global user.name "triager"
-        git remote add triager https://${GH_TOKEN}@github.com/appium/appium.git > /dev/null 2>&1
-      displayName: Set TRIAGER as Git user
-    - script: npm install
-      displayName: Install the Node dependencies
-    - script: |
-        export MINOR_VERSION = $(node ./ci-jobs/scripts/output-minor-version.js)
-        echo $MINOR_VERSION
-      displayName: Set MINOR_VERSION as an environment variable
-    - script: node ./ci-jobs/scripts/set-rc-tag.js
-      displayName: Update version to rc
-    - script: npm shrinkwrap
-      displayName: Create the shrinkwrap
-    - script: |
-        git checkout -b ${MINOR_VERSION}
-        git add .
-        git commit -m 'Release branch ${MINOR_VERSION}'
-        git push --set-upstream triager ${MINOR_VERSION}
-      displayName: Create the MINOR_VERSION branch
-    - script: |
-        git tag v${MINOR_VERSION}.0-rc.0
-        git push --tags triager
-      displayName: Tag the release candidate
-    - script: npm publish --tag rc
-      displayName: Publish the release candidate
+- job: create_release_branch
+  pool:
+    vmImage: 'macOS 10.14'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
+  - script: |
+      git config --global user.name "triager"
+      git remote add triager https://${GH_TOKEN}@github.com/appium/appium.git > /dev/null 2>&1
+    displayName: Set TRIAGER as Git user
+  - script: npm install
+    displayName: Install the Node dependencies
+  - script: |
+      export MINOR_VERSION = $(node ./ci-jobs/scripts/output-minor-version.js)
+      echo $MINOR_VERSION
+    displayName: Set MINOR_VERSION as an environment variable
+  - script: node ./ci-jobs/scripts/set-rc-tag.js
+    displayName: Update version to rc
+  - script: npm shrinkwrap
+    displayName: Create the shrinkwrap
+  - script: |
+      git checkout -b ${MINOR_VERSION}
+      git add .
+      git commit -m 'Release branch ${MINOR_VERSION}'
+      git push --set-upstream triager ${MINOR_VERSION}
+    displayName: Create the MINOR_VERSION branch
+  - script: |
+      git tag v${MINOR_VERSION}.0-rc.0
+      git push --tags triager
+    displayName: Git Tag the release candidate
+  - script: npm publish --tag rc
+    displayName: Publish the release candidate

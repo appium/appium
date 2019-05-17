@@ -1,0 +1,30 @@
+jobs:
+  - job: release_appium
+    pool:
+      vmImage: 'macOS 10.14'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '12.x'
+    - script: |
+        export MINOR_VERSION = $(node ./scripts/output-minor-version.js)
+        echo $MINOR_VERSION
+      displayName: Set MINOR_VERSION as an environment variable
+    - script: node ./scripts/set-rc-tag.js
+      displayName: Update version to rc
+    - script: npm install
+      displayName: Install the Node dependencies
+    - script: npm shrinkwrap
+      displayName: Create the shrinkwrap
+    - script: |
+        git checkout -b ${MINOR_VERSION}
+        git add .
+        git commit -m 'Release branch ${MINOR_VERSION}'
+        git push --set-upstream origin ${MINOR_VERSION}
+      displayName: Create the MINOR_VERSION branch
+    - script: |
+        git tag v${MINOR_VERSION}.0-rc.0
+        git push --tags origin
+      displayName: Tag the release candidate
+    - script: npm publish --tag rc
+      displayName: Publish the release candidate

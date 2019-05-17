@@ -3,7 +3,7 @@ jobs:
     TAG: beta
   - job: release_appium
     pool:
-      vmImage: 'macOS 10.13'
+      vmImage: 'macOS 10.14'
     steps:
     #- script: |
         #git config --global user.name "triager"
@@ -19,4 +19,4 @@ jobs:
     - script: npm publish --tag $(TAG)
       displayName: Publish to Appium as $(TAG)
     # TODO: Zip it and bundle it with Node binary in the root
-    
+    # TODO: Make the git tag here

@@ -9,6 +9,7 @@ jobs:
   - script: |
       git config --global user.name "triager"
       git remote add triager https://${GH_TOKEN}@github.com/appium/appium.git > /dev/null 2>&1
+      git remote show triager
     displayName: Set TRIAGER as Git user
   - script: npm install
     displayName: Install the Node dependencies

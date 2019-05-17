@@ -12,6 +12,7 @@ function outputNextMinorVersion () {
   const major = semver.major(version);
   const minor = semver.minor(version);
   const minorVersionName = `${major}.${minor}`;
+  // eslint-disable-next-line no-console
   console.log(minorVersionName);
 }
 

@@ -1,0 +1,22 @@
+jobs:
+  variables:
+    TAG: beta
+  - job: release_appium
+    pool:
+      vmImage: 'macOS 10.13'
+    steps:
+    #- script: |
+        #git config --global user.name "triager"
+      #displayName: Set Up Git
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '12.x'
+    - script: npm run prune-shrinkwrap
+      displayName: Prune the NPM shrinkwrap
+    - script: npx gulp once
+      displayName: Do a Gulp build
+    # TODO: We should have some E2E tests here
+    - script: npm publish --tag $(TAG)
+      displayName: Publish to Appium as $(TAG)
+    # TODO: Zip it and bundle it with Node binary in the root
+    

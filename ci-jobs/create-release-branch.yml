@@ -22,7 +22,7 @@ jobs:
       echo "Creating branch ${MINOR_VERSION}"
       git checkout -b ${MINOR_VERSION}
       git add .
-      git commit -m 'Release branch ${MINOR_VERSION}'
+      git commit -n -m 'Release branch ${MINOR_VERSION}'
       git push --set-upstream triager HEAD:${MINOR_VERSION}
     displayName: Create the MINOR_VERSION branch
   - script: |

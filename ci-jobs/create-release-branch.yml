@@ -13,16 +13,13 @@ jobs:
     displayName: Set TRIAGER as Git user
   - script: npm install
     displayName: Install the Node dependencies
-  - script: |
-      export MINOR_VERSION=$(node ./ci-jobs/scripts/output-minor-version.js)
-      echo $MINOR_VERSION
-    displayName: Set MINOR_VERSION as an environment variable
   - script: node ./ci-jobs/scripts/set-rc-tag.js
     displayName: Update version to rc
   - script: npm shrinkwrap
     displayName: Create the shrinkwrap
   - script: |
-      echo "Creating branch ${MINOR_VERSION}"
+      export MINOR_VERSION=$(node ./ci-jobs/scripts/output-minor-version.js)
+      echo "Creating branch $MINOR_VERSION"
       git checkout -b ${MINOR_VERSION}
       git add .
       git commit -m 'Release branch ${MINOR_VERSION}'

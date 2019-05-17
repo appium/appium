@@ -7,7 +7,7 @@ jobs:
       inputs:
         versionSpec: '12.x'
     - script: |
-        export MINOR_VERSION = $(node ./scripts/output-minor-version.js)
+        export MINOR_VERSION = $(node ./ci-jobs/scripts/output-minor-version.js)
         echo $MINOR_VERSION
       displayName: Set MINOR_VERSION as an environment variable
     - script: node scripts/set-rc-tag.js

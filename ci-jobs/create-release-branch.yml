@@ -19,7 +19,7 @@ jobs:
     displayName: Create the shrinkwrap
   - script: |
       export MINOR_VERSION=$(node ./ci-jobs/scripts/output-minor-version.js)
-      echo "Creating branch $MINOR_VERSION"
+      echo "Creating branch ${MINOR_VERSION}"
       git checkout -b ${MINOR_VERSION}
       git add .
       git commit -m 'Release branch ${MINOR_VERSION}'

@@ -6,14 +6,14 @@ jobs:
     - task: NodeTool@0
       inputs:
         versionSpec: '12.x'
+    - script: npm install
+      displayName: Install the Node dependencies
     - script: |
         export MINOR_VERSION = $(node ./ci-jobs/scripts/output-minor-version.js)
         echo $MINOR_VERSION
       displayName: Set MINOR_VERSION as an environment variable
     - script: node ./ci-jobs/scripts/set-rc-tag.js
       displayName: Update version to rc
-    - script: npm install
-      displayName: Install the Node dependencies
     - script: npm shrinkwrap
       displayName: Create the shrinkwrap
     - script: |

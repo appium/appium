@@ -10,7 +10,7 @@ jobs:
         export MINOR_VERSION = $(node ./scripts/output-minor-version.js)
         echo $MINOR_VERSION
       displayName: Set MINOR_VERSION as an environment variable
-    - script: node ./scripts/set-rc-tag.js
+    - script: node scripts/set-rc-tag.js
       displayName: Update version to rc
     - script: npm install
       displayName: Install the Node dependencies

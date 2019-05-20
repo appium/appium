@@ -11,7 +11,7 @@ example_usage:
       // TODO Java sample
   python:
     |
-      // TODO: Python example
+      self.driver.set_value('some')
   javascript_wd:
     |
       // TODO JavaScript sample
@@ -46,8 +46,8 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: true
-    uiautomation: true
+    xcuitest: false
+    uiautomation: false
   android:
     espresso: true
     uiautomator2: true

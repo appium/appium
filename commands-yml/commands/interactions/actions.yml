@@ -233,4 +233,4 @@ endpoint:
 
 # Links to specifications. Should link to at least one specification
 specifications:
-  w3c: https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html
+  w3c: https://www.w3.org/TR/webdriver/#actions

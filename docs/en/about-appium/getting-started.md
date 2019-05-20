@@ -131,10 +131,9 @@ For this example, we'll use [Webdriver.io](http://webdriver.io) as our Appium
 client. Create a directory for this example, then run:
 
 ```
-npm init
+npm init -y
 ```
-Once you've answered the questions (the defaults are fine) to initialize the
-project, run:
+Once the project has been initialized, install `webdriverio`:
 ```
 npm install webdriverio
 ```

@@ -131,12 +131,16 @@ For this example, we'll use [Webdriver.io](http://webdriver.io) as our Appium
 client. Create a directory for this example, then run:
 
 ```
+npm init -y
+```
+Once the project has been initialized, install `webdriverio`:
+```
 npm install webdriverio
 ```
 
 #### Session Initialization
 
-Now we can create our test file (name it whatever you like) and initialize the
+Now we can create our test file, named `index.js`, and initialize the
 client object:
 
 ```js
@@ -170,14 +174,22 @@ const opts = {
   port: 4723,
   capabilities: {
     platformName: "Android",
-    platformVersion: "8.0",
+    platformVersion: "8",
     deviceName: "Android Emulator",
     app: "/path/to/the/downloaded/ApiDemos.apk",
+    appPackage: "io.appium.android.apis",
+    appActivity: ".view.TextFields",
     automationName: "UiAutomator2"
   }
 };
 
-const client = wdio.remote(opts);
+async function main () {
+  const client = await wdio.remote(opts);
+
+  await client.deleteSession();
+}
+
+main();
 ```
 
 #### Running Test Commands
@@ -185,7 +197,7 @@ const client = wdio.remote(opts);
 You can see that we've specified our Appium port and also constructed our
 Desired Capabilities to match our requirements (but don't forget to replace the
 path with the actual download path for your system). We've registered this fact
-with webdriverio and now have a client object which will represent the
+with `webdriverio` and now have a client object which will represent the
 connection to the Appium server. From here, we can go ahead and start the
 session, perform some test commands, and end the session. In our case, we will
 simply tap into a few menus and then back out the way we came before ending the
@@ -193,16 +205,16 @@ session:
 
 ```js
 // javascript
-const field = await client.$("~TextField1");
+
+const field = await client.$("android.widget.EditText");
 await field.setValue("Hello World!");
-const value = await field.getValue();
-assert.equal(value,"Hello World!");
-});
+const value = await field.getText();
+assert.equal(value, "Hello World!");
 ```
 
 What's going on here is that after creating a session and launching our app,
 we're instructing Appium to find an element in the app hierarchy and click on
-it. Specifically, webdriverio has a convention where the `~` prefix means to
+it. Specifically, `webdriverio` has a convention where the `~` prefix means to
 find an element by its "accessbility id", which in the case of Android means an
 element's "content description". So we find and tap on these elements in order
 to navigate through the app's menu system. Then we can use the `back()` method
@@ -215,28 +227,41 @@ Putting it all together, the file should look like:
 // javascript
 
 const wdio = require("webdriverio");
+const assert = require("assert");
 
 const opts = {
   port: 4723,
   capabilities: {
     platformName: "Android",
-    platformVersion: "8.0",
+    platformVersion: "8",
     deviceName: "Android Emulator",
     app: "/path/to/the/downloaded/ApiDemos.apk",
+    appPackage: "io.appium.android.apis",
+    appActivity: ".view.TextFields",
     automationName: "UiAutomator2"
   }
 };
 
-const client = wdio.remote(opts);
+async function main () {
+  const client = await wdio.remote(opts);
 
-const field = await client.$("~TextField1");
-await field.setValue("Hello World!");
-const value = await field.getValue();
-assert.equal(value,"Hello World!");
+  const field = await client.$("android.widget.EditText");
+  await field.setValue("Hello World!");
+  const value = await field.getText();
+  assert.equal(value,"Hello World!");
+
+  await client.deleteSession();
+}
+
+main();
 ```
 
 You can try and run this test on your own. Simply save it and execute it using
-`node`. If everything is set up correctly, you'll see Appium begin spitting out
+`node`:
+```
+node index.js
+```
+If everything is set up correctly, you'll see Appium begin spitting out
 lots of logs and eventually the app will pop up on the screen and start
 behaving as if an invisible user were tapping on it!
 

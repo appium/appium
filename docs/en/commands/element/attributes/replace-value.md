@@ -13,7 +13,7 @@ Replace the value to element directly
 
 ```python
 # Python
-// TODO: Python example
+self.driver.set_value('some')
 
 ```
 
@@ -65,8 +65,8 @@ Replace the value to element directly.
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
-|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | All | All |
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
+|  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
 | Android | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.9.0+ | All |
 |  | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |

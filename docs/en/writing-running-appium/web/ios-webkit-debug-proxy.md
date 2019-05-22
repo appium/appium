@@ -18,16 +18,8 @@ Homebrew, run the following commands in the terminal:
 
 #### Building ios-webkit-debug-proxy from source
 
-Open the command terminal on your mac. You can find instructions on how to open the
-terminal via your favorite search engine. Once that is open, verify you have
-[Homebew](http://brew.sh/) installed:
-
-```shell
-$ brew -v
-```
-
-When you're certain you have Homebrew, do the following (the $ indicates the command
-line prompt, do not enter it):
+Open the command terminal on your linux machine. You can find instructions on how to open the
+terminal via your favorite search engine.
 
 ```shell
 $ cd  ~

@@ -107,6 +107,7 @@ module.exports = {
           ['GSM Call', 'gsm-call.md'],
           ['GSM Signal', 'gsm-signal.md'],
           ['GSM Voice', 'gsm-voice.md'],
+          ['Network Speed', 'network-speed.md'],
         ]],
         ['Performance Data', ['performance-data',
           ['Get Performance Data', 'get-performance-data.md'],

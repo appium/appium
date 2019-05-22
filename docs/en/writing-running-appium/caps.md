@@ -7,6 +7,9 @@ test to work. Each Appium client builds capabilities in a way specific to the
 client's language, but at the end of the day, they are sent over to Appium as
 JSON objects.
 
+Desired Capabilities can be scripted in the webDriver test or set within the
+Appium Server GUI (via an Inspector Session)
+
 Some important capabilities are demonstrated in the following example:
 
 ```json

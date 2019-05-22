@@ -9,7 +9,7 @@ const SAUCE_ACCESS_KEY = process.env.SAUCE_ACCESS_KEY;
 const sauceCaps = SAUCE_TESTING
   ? {
     name: undefined, // will be added in tests
-    build: `JavaScript (wd) Sample Code ${new Date()}`,
+    build: `JavaScript (wd) Sample Code ${process.env.TRAVIS_BUILD_ID ? process.env.TRAVIS_BUILD_ID : new Date()}`,
     tags: ['e2e', 'appium', 'sample-code'],
   }
   : {};

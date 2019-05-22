@@ -47,6 +47,7 @@ sample-code/php/composer.lock
 sample-code/java/out/
 sample-code/ruby/Gemfile.lock
 sample-code/python/test/results/
+sample-code/python/test/input
 sample-code/python/.pytest_cache/
 sample-code/csharp/test/bin
 sample-code/csharp/test/obj

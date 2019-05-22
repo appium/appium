@@ -129,3 +129,21 @@ jobs:
         - npm install
       script:
         - npm run test
+
+    - stage:
+      name: Python
+      # only want to run this on the main master branch
+      if: branch = master AND type != pull_request
+      os: linux
+      language: python
+      python: "2.7"
+      env:
+        - SAUCE_LABS=1
+      before_install:
+        - pip install --upgrade pip
+      install:
+        - cd sample-code/python
+        - pip install -r requirements.txt
+        - pip install pytest-xdist
+      script:
+        - py.test -v -n 30 test

@@ -1,6 +1,6 @@
 ---
-name: Navigate to URL
-short_description: Navigate to a new URL (Web context only)
+name: Go to URL
+short_description: Navigate to a new URL (Web context) or open an Appium [deep link](https://appiumpro.com/editions/7) (Native)
 
 example_usage:
   java:
@@ -41,12 +41,12 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: false
-    uiautomation: false
+    xcuitest: true
+    uiautomation: true
   android:
-    uiautomator2: false
-    espresso: false
-    uiautomator: false
+    uiautomator2: true
+    espresso: true
+    uiautomator: true
   mac:
     mac: false
   windows:

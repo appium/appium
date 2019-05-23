@@ -60,8 +60,8 @@ gsm_voice :home
 |--------|----------------|------|--------------|--------------|
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
-|  | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
+|  | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.9.0+ | All |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
 | Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
 | Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |

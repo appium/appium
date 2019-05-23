@@ -55,6 +55,7 @@
     <li><a href='/docs/en/commands/device/network/gsm-call.md'>GSM Call</a></li>
     <li><a href='/docs/en/commands/device/network/gsm-signal.md'>GSM Signal</a></li>
     <li><a href='/docs/en/commands/device/network/gsm-voice.md'>GSM Voice</a></li>
+    <li><a href='/docs/en/commands/device/network/network-speed.md'>Network Speed</a></li>
 </ul></li>
     <li><a href='/docs/en/commands/device/performance-data'>Performance Data</a><ul>    <li><a href='/docs/en/commands/device/performance-data/get-performance-data.md'>Get Performance Data</a></li>
     <li><a href='/docs/en/commands/device/performance-data/performance-data-types.md'>Performance Data Types</a></li>

@@ -125,6 +125,7 @@ module.exports = {
           ['Open Notifications', 'open-notifications.md'],
           ['System Bars', 'system-bars.md'],
           ['System Time', 'system-time.md'],
+          ['Display density', 'display-density.md'],
         ]],
         ['Authentication', ['authentication',
           ['Finger Print', 'finger-print.md'],

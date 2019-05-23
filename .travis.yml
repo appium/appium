@@ -6,17 +6,12 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+      - build-essential
 env:
   global:
     - CXX=g++-4.8
 jobs:
   include:
-    - stage: check shit out
-      os: linux
-      install:
-        - brew install hello
-      script:
-        - echo hi
     # - stage: Tests
     #   os: linux
     #   script: npm run test && npm run e2e-test
@@ -33,17 +28,53 @@ jobs:
     #   script:
     #     - npm run generate-docs
 
+    - stage: Sample Code
+      name: JavaScript (wd)
+      # only want to run this on the main master branch
+      if: branch = master AND type != pull_request
+      env:
+        - SAUCE_LABS=1
+      install:
+        - cd sample-code/javascript-wd
+        - npm install
+      script:
+        - npm run test
+
+    - stage:
+      name: Python
+      # only want to run this on the main master branch
+      if: branch = master AND type != pull_request
+      os: linux
+      language: python
+      python: "2.7"
+      env:
+        - SAUCE_LABS=1
+      before_install:
+        - pip install --upgrade pip
+      install:
+        - cd sample-code/python
+        - pip install -r requirements.txt
+        - pip install pytest-xdist
+      script:
+        - py.test -v -n 30 test
+
     - stage: Update assets
       name: Documentation
-      os: osx
-      if: branch = master AND type != pull_request AND !tag
+      os: linux
+      # if: branch = master AND type != pull_request AND !tag
       env:
         - GITHUB_TOKEN=$TRIAGER_BOT_TOKEN
-      before_script:
+      before_install:
+        # install linuxbrew
+        - sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+        - test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+        - echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
+        # do git stuff
         - brew install hub
         - hub --version
         - git remote set-url origin https://triager:$TRIAGER_BOT_TOKEN@github.com/appium/appium
         - git checkout -b generate-docs-$TRAVIS_COMMIT
+      install:
         - npm install
       script:
         # Generate the docs
@@ -123,33 +154,3 @@ jobs:
         - git commit -a -n -m 'Updated docs for latest Appium version'
         - git push origin docs-$TRAVIS_TAG
         - hub pull-request -b "appium:gh-pages" -h "appium:docs-$TRAVIS_TAG" -m "Update documentation for latest version" | exit 0 # The PR command works but always returns non-negative
-
-    - stage: Sample Code
-      name: JavaScript (wd)
-      # only want to run this on the main master branch
-      if: branch = master AND type != pull_request
-      env:
-        - SAUCE_LABS=1
-      install:
-        - cd sample-code/javascript-wd
-        - npm install
-      script:
-        - npm run test
-
-    - stage:
-      name: Python
-      # only want to run this on the main master branch
-      if: branch = master AND type != pull_request
-      os: linux
-      language: python
-      python: "2.7"
-      env:
-        - SAUCE_LABS=1
-      before_install:
-        - pip install --upgrade pip
-      install:
-        - cd sample-code/python
-        - pip install -r requirements.txt
-        - pip install pytest-xdist
-      script:
-        - py.test -v -n 30 test

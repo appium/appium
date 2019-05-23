@@ -11,21 +11,27 @@ env:
     - CXX=g++-4.8
 jobs:
   include:
-    - stage: Tests
+    - stage: check shit out
       os: linux
-      script: npm run test && npm run e2e-test
-      after_script: npm run coverage
-    - stage:
-      os: linux
-      script: npm run test && npm run e2e-test
-      node_js: "12"
-    - stage:
-      name: test documentation generation
-      os: linux
-      before_script:
-        - npm install
+      install:
+        - brew install hello
       script:
-        - npm run generate-docs
+        - echo hi
+    # - stage: Tests
+    #   os: linux
+    #   script: npm run test && npm run e2e-test
+    #   after_script: npm run coverage
+    # - stage:
+    #   os: linux
+    #   script: npm run test && npm run e2e-test
+    #   node_js: "12"
+    # - stage:
+    #   name: test documentation generation
+    #   os: linux
+    #   before_script:
+    #     - npm install
+    #   script:
+    #     - npm run generate-docs
 
     - stage: Update assets
       name: Documentation

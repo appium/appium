@@ -1,7 +1,6 @@
 ## --default-capabilities 标识
 
-Appium 1.5 移除了大部分旧版本遗留的 CLI 标识；其余部分可转换成 JSON 并成为 `--default-capabilities` 标识的一部分。
-举个例子:
+Appium 1.5 移除了大部分旧版本遗留的 CLI 标识；其余部分可转换成 JSON 并成为 `--default-capabilities` 标识的一部分。举个例子:
 
 ```
 # 未处理的 JSON 作为一个参数
@@ -54,4 +53,9 @@ Appium 1.5 移除了大部分旧版本遗留的 CLI 标识；其余部分可转�
 | --show-ios-log            | showIOSLog              |
 | --reboot                  | reboot                  |
 
+---
+EOF.
+
 本文由 [thanksdanny](https://testerhome.com/thanksdanny) 翻译
+
+Last english version: a4dd79b8144864cbc034eb97a8f0b5d744e3435c, Oct 24, 2017

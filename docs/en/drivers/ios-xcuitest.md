@@ -125,22 +125,9 @@ following desired capabilities:
 
 ### Optional Setup
 
-* Install FBSimulatorControl for better handling of various iOS Simulator operations,
+* Install idb for better handling of various iOS Simulator operations,
 such as: biometrics, geolocation setting and window focussing.
-
-```
-# Get the code from FB repository. The repository has been renamed to `idb`.
-# We should build it via source code.
-git clone git@github.com:facebook/idb.git
-cd idb
-git checkout v1.0.0 # We can build fbsimctl directly
-./build.sh fbsimctl build ./
-# Then, `bin` directory is generated in `./bin`
-# Set the `./bin` into your PATH
-
-# Make sure you can get output by below command
-fbsimctl help
-```
+    * Read https://github.com/appium/appium-idb#installation to install necessary libraries
 
 * Install [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils)
 to use the [permissions capability](https://github.com/appium/appium-xcuitest-driver#desired-capabilities)

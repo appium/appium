@@ -92,6 +92,7 @@
     <li><a href='/docs/en/commands/device/system'>System</a><ul>    <li><a href='/docs/en/commands/device/system/open-notifications.md'>Open Notifications</a></li>
     <li><a href='/docs/en/commands/device/system/system-bars.md'>System Bars</a></li>
     <li><a href='/docs/en/commands/device/system/system-time.md'>System Time</a></li>
+    <li><a href='/docs/en/commands/device/system/display-density.md'>Display density</a></li>
 </ul></li>
     <li><a href='/docs/en/commands/device/authentication'>Authentication</a><ul>    <li><a href='/docs/en/commands/device/authentication/finger-print.md'>Finger Print</a></li>
 </ul></li>

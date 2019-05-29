@@ -44,7 +44,7 @@ To access these settings, you should use the Appium [Settings API](/docs/en/adva
 
 Note that each language-specific Appium client may make these settings available via special constants which could differ slightly from the exact setting names mentioned above.
 
-## Debug
+### Debug
 
 `getMatchedImageResult` might help for debugging if Appium find provided image expectedly. `visual` attribute retuns base64 data if `getMatchedImageResult` is `true`.
 

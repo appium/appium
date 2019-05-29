@@ -161,7 +161,8 @@ describe('ImageElement', function () {
   });
 
   describe('#execute', function () {
-    const imgEl = new ImageElement(defTemplate, defRect);
+    // aGFwcHkgdGVzdGluZw== is 'happy testing'
+    const imgEl = new ImageElement(defTemplate, defRect, 'aGFwcHkgdGVzdGluZw==');
     const clickStub = sinon.stub(imgEl, 'click');
 
     before(function () {
@@ -201,6 +202,20 @@ describe('ImageElement', function () {
     it('should get rect of element', async function () {
       await ImageElement.execute(driver, 'getElementRect', imgEl.id)
         .should.eventually.eql(defRect);
+    });
+    it('should get visual of element', async function () {
+      await ImageElement.execute(driver, 'getAttribute', imgEl.id, 'visual')
+        .should.eventually.eql('aGFwcHkgdGVzdGluZw==');
+    });
+    it('should get null as visual of element by default', async function () {
+      const imgElement = new ImageElement(defTemplate, defRect);
+      driver._imgElCache.set(imgElement.id, imgElement);
+      await ImageElement.execute(driver, 'getAttribute', imgElement.id, 'visual')
+        .should.eventually.eql(null);
+    });
+    it('should not get other attribute', async function () {
+      await ImageElement.execute(driver, 'getAttribute', imgEl.id, 'content-desc')
+        .should.eventually.rejectedWith('Method has not yet been implemented');
     });
     it('should click element', async function () {
       await ImageElement.execute(driver, 'click', imgEl.id)

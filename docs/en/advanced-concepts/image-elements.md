@@ -46,7 +46,7 @@ Note that each language-specific Appium client may make these settings available
 
 ### Debug
 
-`getMatchedImageResult` might help for debugging if Appium find provided image expectedly. `visual` attribute retuns base64 data if `getMatchedImageResult` is `true`.
+`getMatchedImageResult` might help for debugging if Appium found the provided image expectedly. `visual` attribute returns base64 data if `getMatchedImageResult` is `true`.
 
 ```ruby
 # Ruby core

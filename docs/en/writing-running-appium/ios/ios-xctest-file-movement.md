@@ -13,7 +13,7 @@ $ brew cask install osxfuse
 $ brew install ifuse --HEAD # newer iOS versions need the latest codebase
 ```
 
-### Format
+#### Format
 
 The format should be like below.
 
@@ -29,6 +29,8 @@ The format should be like below.
 // webdriver.io
 let data = driver.pullFolder('@io.appium.example:Documents/appium.png');
 ```
+
+#### Example
 
 If you would like to pull _Presentation.key_ form Keynote app, you can get it as below.
 
@@ -50,4 +52,14 @@ If the file is in deeper place like _On My iPhone/Keynote/Dir1/Dir2_, then the R
 # ruby_lib_core
 file = @driver.pull_file '@com.apple.Keynote/Documents/Dir1/Dir2/Presentation.key'
 File.open('presentation.key', 'wb') { |f| f<< file }
+```
+
+### Simulator
+
+Simulators case is easier than the real device.
+Files are in the `.app` container. If you would like to get `/some/file` in the app, you can get them as the below.
+
+```java
+// Java
+byte[] fileBase64 = driver.pullFile("Appium.app/some/file");
 ```

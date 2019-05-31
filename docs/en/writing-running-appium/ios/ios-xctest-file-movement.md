@@ -23,7 +23,7 @@ The format should be like below.
         - If your target app exists in the result of `ifuse -u <udid> --list-apps`, it can be mounted by this way
         - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not in the result of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio:Documents/appium.png`
     - Appium tries to mount with `--container` flag in ifuse except for the `Documents` case
-        - In this case, the target app must has `UIFileSharingEnabled` flag in its `info.plist`
+        - In this case, the target app must have `UIFileSharingEnabled` flag in its `info.plist`
 
 ```javascript
 // webdriver.io

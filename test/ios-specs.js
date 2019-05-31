@@ -234,13 +234,36 @@ describe('ios', function () {
       mocks.verify();
     });
   }));
-  describe('CarthageCheck', withMocks({CarthageDetector}, (mocks) => {
+  describe('CarthageCheck', withMocks({CarthageDetector, tp}, (mocks) => {
     let check = new CarthageCheck();
     it('autofix', function () {
       check.autofix.should.not.be.ok;
     });
     it('diagnose - success', async function () {
       mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
+      mocks.tp.expects('exec').once().returns(
+        B.resolve({stdout: 'Please update to the latest Carthage version: 0.33.0. You currently are on 0.32.0\n0.32.0\n', stderr: ''}));
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: false,
+        message: 'Carthage was found at: /usr/local/bin/carthage. Installed version is: 0.32.0'
+      });
+      mocks.verify();
+    });
+    it('diagnose - success - one line carthage version', async function () {
+      mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
+      mocks.tp.expects('exec').once().returns(
+        B.resolve({stdout: '0.32.0\n', stderr: ''}));
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: false,
+        message: 'Carthage was found at: /usr/local/bin/carthage. Installed version is: 0.32.0'
+      });
+      mocks.verify();
+    });
+    it('diagnose - success - but error happens', async function () {
+      mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
+      mocks.tp.expects('exec').once().throws(new Error());
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: false,

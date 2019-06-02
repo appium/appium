@@ -25,13 +25,13 @@ $ brew install ifuse --HEAD # newer iOS versions need the latest codebase
 
 The format of method argument should be the following:
 
-- `@<app_bundle_id>` is a bundle id
-- `optional_container_type` is container type
-    - `documents` is only available
-        - BundleIds which can get by `ifuse -u <udid> --list-apps` can specify `documents` type
+- `@<app_bundle_id>` is the application bundle identifier
+- `optional_container_type` is the container type
+    - `documents` is the only available option
+        - You may specify `documents` container type only for bundle ids returned by `ifuse -u <udid> --list-apps`
         - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in the output of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio@documents/appium.png`
-    - The others works as _format 2_
-        - Can be mounted apps which have `UIFileSharingEnabled` flag in its `info.plist`
+    - The others work as _format 2_
+        - Only apps having the flag `UIFileSharingEnabled` in their `info.plist` can be mounted
 - `path_to_the_file_or_folder_inside_container` is the target to push/pull to/from them.
     - If the `optional_container_type` is `documents`, this path will be mapped to
       `On My iPhone/<app name>` in Files app
@@ -55,7 +55,7 @@ file = @driver.pull_file '@com.apple.Keynote:documents/Presentation.key'
 File.open('presentation.key', 'wb') { |f| f<< file }
 ```
 
-The file is in _On My iPhone/Keynote_ on Files app.
+The file is in _On My iPhone/Keynote_ of _Files_ app.
 
 |Top | On  My iPhone | Keynote |
 |:----:|:----:|:----:|
@@ -76,7 +76,7 @@ File.open('presentation.key', 'wb') { |f| f<< file }
 
 - Pull folder
 
-You can pull root of _On My iPhone/Keynote_ as `@driver.pull_folder '@com.apple.Keynote:documents/'`.
+You can pull documents root of _On My iPhone/Keynote_ as `@driver.pull_folder '@com.apple.Keynote:documents/'`.
 
 ```javascript
 // webdriver.io
@@ -90,7 +90,7 @@ file = @driver.pull_folder '@com.apple.Keynote:documents/'
 
 - Push file
 
-As same as pull files
+Same as pull:
 
 ```javascript
 // webdriver.io
@@ -108,8 +108,8 @@ driver.pushFile('@com.apple.Keynote:documents/text.txt', new Buffer("Hello World
 
 The format of method argument should be the following:
 
-- `@<app_bundle_id>` is a bundle id.
-- `optional_container_type` is container type
+- `@<app_bundle_id>` is the application bundle identifier
+- `optional_container_type` is the container type
     - `app`, `data`, `groups` or `<A specific App Group container>`
     - _format 2_ case is handled as `app` container
 - `path_to_the_file_or_folder_inside_container` is the target to push/pull to/from them

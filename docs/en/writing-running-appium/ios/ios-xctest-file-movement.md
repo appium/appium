@@ -1,11 +1,11 @@
 ## Pushing/Pulling files
 
 Appium provides [Pull Folder](http://appium.io/docs/en/commands/device/files/pull-folder/), [Pull File](http://appium.io/docs/en/commands/device/files/pull-file/) and [Push File](http://appium.io/docs/en/commands/device/files/push-file/) to move files.
-This documentation aims to help to understand how they work for iOS since iOS is a bit complicated.
+This documentation aims to help to understand how they work for iOS.
 
 ### Format
 
-In iOS case, below is the basic format.
+Below is the basic format.
 
 1. `@<app_bundle_id>:<optional_container_type>/<path_to_the_file_or_folder_inside_container>`
 2. `@<app_bundle_id>/<path_to_the_file_or_folder_inside_container>`
@@ -25,12 +25,12 @@ $ brew install ifuse --HEAD # newer iOS versions need the latest codebase
 
 The format of method argument should be the following:
 
-- `@<app_bundle_id>` is a bundle id.
+- `@<app_bundle_id>` is a bundle id
 - `optional_container_type` is container type
-    - `documents` is only available. Others work as _format 2_
+    - `documents` is only available
         - BundleIds which can get by `ifuse -u <udid> --list-apps` can specify `documents` type
         - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in the output of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio@documents/appium.png`
-    - No case (Other container types are also handles as no case), _format 2_ or _format 1_
+    - The others works as _format 2_
         - Can be mounted apps which have `UIFileSharingEnabled` flag in its `info.plist`
 - `path_to_the_file_or_folder_inside_container` is the target to push/pull to/from them.
     - If the `optional_container_type` is `documents`, this path will be mapped to

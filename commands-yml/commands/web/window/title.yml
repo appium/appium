@@ -8,7 +8,7 @@ example_usage:
       String title = driver.getTitle();
   python:
     |
-      title = self.driver.title()
+      title = self.driver.title
   javascript_wd:
     |
       let title = await driver.title();

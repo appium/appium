@@ -29,7 +29,9 @@ The format of method argument should be the following:
 - `optional_container_type` is the container type
     - `documents` is the only available option
         - You may specify `documents` container type only for bundle ids returned by `ifuse -u <udid> --list-apps`
-        - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in the output of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio@documents/appium.png`
+        - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in the output of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio@documents/`
+
+            <img src='./ios-xctest-file-movement/on_my_iphone.png' width=100>
     - The others work as _format 2_
         - Only apps having the flag `UIFileSharingEnabled` in their `info.plist` can be mounted
 - `path_to_the_file_or_folder_inside_container` is the target to push/pull to/from them.
@@ -47,6 +49,7 @@ If you would like to pull _Presentation.key_ form Keynote app, you can get it as
 ```javascript
 // webdriver.io
 let data = driver.pullFile('@io.appium.example:documents/Presentation.key');
+await fs.writeFile('presentation.key', Buffer.from(data, 'base64'), 'binary');
 ```
 
 ```ruby
@@ -66,6 +69,7 @@ If the file is in deeper place like _On My iPhone/Keynote/Dir1/Dir2_, then the R
 ```javascript
 // webdriver.io
 let data = driver.pullFile('@io.appium.example:documents/Dir1/Dir2/Presentation.key');
+await fs.writeFile('presentation.key', Buffer.from(data, 'base64'), 'binary');
 ```
 
 ```ruby
@@ -81,11 +85,13 @@ You can pull documents root of _On My iPhone/Keynote_ as `@driver.pull_folder '@
 ```javascript
 // webdriver.io
 let data = driver.pullFolder('@io.appium.example:documents/');
+await fs.writeFile('documents.zip', Buffer.from(data, 'base64'), 'binary');
 ```
 
 ```ruby
 # ruby_lib_core
 file = @driver.pull_folder '@com.apple.Keynote:documents/'
+File.open('documents.zip', 'wb') { |f| f<< file }
 ```
 
 - Push file
@@ -121,7 +127,9 @@ _format 3_ format handles as `app` container
 ```java
 // Java
 // Get AddressBook.sqlitedb in test app package ('app' container)
-byte[] fileBase64 = driver.pullFile("Library/AddressBook/AddressBook.sqlitedb");
+byte[] fileContent = driver.pullFile("Library/AddressBook/AddressBook.sqlitedb");
+Path dstPath = Paths.get(new File("/local/path/AddressBook.sqlitedb"));
+Files.write(dstPath, fileContent);
 ```
 
 ### references

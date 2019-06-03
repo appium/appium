@@ -13,7 +13,7 @@ String title = driver.getTitle();
 
 ```python
 # Python
-title = self.driver.title()
+title = self.driver.title
 
 ```
 

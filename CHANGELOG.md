@@ -48,9 +48,11 @@ Appium 1.13.0 is a minor release
 CHANGES IN VERSION 1.12.1 (FROM 1.12.0)
 ===================================
 
-Appium 1.12.1 is a patch release that addresses iOS Simulator 12.2 WebView issues
+* Appium 1.12.1 is a patch release that addresses iOS Simulator 12.2 WebView issues
+* `platformVersion` becomes a required capability
 
 #### iOS
+* `platformVersion` is necessary for real devices
 * Updated Appium Remote Debugger so that Safari webview tests are compatible with Xcode 10.2 (addresses [issue #12239](https://github.com/appium/appium/issues/12239)) [#118](https://github.com/appium/appium-remote-debugger/pull/118)
 * Fix `screenshotQuality` cap not being forwarded to WebDriverAgent [#907](https://github.com/appium/appium-xcuitest-driver/pull/907)
 * Fix xctestrun file detection when `useXctestrunFile` is true [#903](https://github.com/appium/appium-xcuitest-driver/pull/903)

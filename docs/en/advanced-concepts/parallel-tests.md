@@ -18,13 +18,14 @@ The important capabilities:
 #### RealDevice
 - `udid` the device id
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
- 
+
 #### Simulator
 
 - `udid` simulator UDID,this can be retrieved from xcrun simctl list.
 - `deviceName` Simulator Name
 - `platformVersion` Simulator OS version
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
+- `derivedDataPath` set the unique derived data path root for each driver instance. This will help to avoid possible conflicts and to speed up the parallel execution.
 
 Parallel Safari/Webview sessions are not working due to an Apple bug
 
@@ -35,6 +36,7 @@ Refer: https://github.com/appium/appium/issues/9209
 - `udid` the device id
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
 - `webkitDebugProxyPort` unique webKitProxy, as IWDP defaults to 27753
+- `derivedDataPath` set the unique derived data path root for each driver instance. This will help to avoid possible conflicts and to speed up the parallel execution.
 
 ### Troubleshooting
 

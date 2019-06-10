@@ -154,5 +154,5 @@ Over Appium 1.14.0, Appium configures keyboard preferences by default to make te
 
 - Turn `Auto-Correction` in _Keyboards_ off
 - Turn `Predictive` in _Keyboards_ off
-- Mark as did for keyboard tutorial
+- Mark keyboard tutorial as complete
 - (Only for Simulator) Toggle software keyboard on

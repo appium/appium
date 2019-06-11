@@ -37,6 +37,7 @@ driver.touchMultiPerform([
 // wd example
 let action = new wd.TouchAction(driver);
 action.press({x: 10, y: 10})
+      .wait(1000)
       .moveTo({x: 50, y: 50})
       .release();
 await action.perform();

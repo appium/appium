@@ -16,6 +16,9 @@ hybrid and mobile web and desktop apps. We support simulators (iOS), emulators
 Want to skip straight to the action? Check out our [getting
 started](/docs/en/about-appium/getting-started.md) doc.
 
+### Changes by pradeep
+Pradeep changed this file.
+
 ### Supported Platforms
 
 Appium supports app automation across a variety of platforms, like iOS,

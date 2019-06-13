@@ -1,3 +1,5 @@
+BE A COMMITTER!
+
 ## Appium
 
 [![NPM version](https://badge.fury.io/js/appium.svg)](https://npmjs.org/package/appium)

@@ -71,7 +71,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /session/:session_id/doubledoubleClick
+  url: /session/:session_id/doubleClick
   method: POST
   url_parameters:
     - name: session_id

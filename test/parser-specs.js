@@ -5,6 +5,9 @@ import chai from 'chai';
 
 const should = chai.should();
 
+const ALLOW_FIXTURE = 'test/fixtures/allow-feat.txt';
+const DENY_FIXTURE = 'test/fixtures/deny-feat.txt';
+
 describe('Parser', function () {
   let p = getParser();
   p.debug = true; // throw instead of exit on error; pass as option instead?
@@ -43,5 +46,26 @@ describe('Parser', function () {
     let defaultCapabilities = {localizableStringsDir: '/my/dir'};
     let args = p.parseArgs(['--localizable-strings-dir', '/my/dir']);
     args.defaultCapabilities.should.eql(defaultCapabilities);
+  });
+  it('should parse --allow-insecure correctly', function () {
+    p.parseArgs([]).allowInsecure.should.eql([]);
+    p.parseArgs(['--allow-insecure', '']).allowInsecure.should.eql([]);
+    p.parseArgs(['--allow-insecure', 'foo']).allowInsecure.should.eql(['foo']);
+    p.parseArgs(['--allow-insecure', 'foo,bar']).allowInsecure.should.eql(['foo', 'bar']);
+    p.parseArgs(['--allow-insecure', 'foo ,bar']).allowInsecure.should.eql(['foo', 'bar']);
+  });
+  it('should parse --deny-insecure correctly', function () {
+    p.parseArgs([]).denyInsecure.should.eql([]);
+    p.parseArgs(['--deny-insecure', '']).denyInsecure.should.eql([]);
+    p.parseArgs(['--deny-insecure', 'foo']).denyInsecure.should.eql(['foo']);
+    p.parseArgs(['--deny-insecure', 'foo,bar']).denyInsecure.should.eql(['foo', 'bar']);
+    p.parseArgs(['--deny-insecure', 'foo ,bar']).denyInsecure.should.eql(['foo', 'bar']);
+  });
+  it('should parse --allow and --deny insecure from files', function () {
+    const parsed = p.parseArgs([
+      '--allow-insecure', ALLOW_FIXTURE, '--deny-insecure', DENY_FIXTURE
+    ]);
+    parsed.allowInsecure.should.eql(['feature1', 'feature2', 'feature3']);
+    parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
   });
 });

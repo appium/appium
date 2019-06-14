@@ -56,6 +56,12 @@ These Capabilities span multiple drivers.
 |`enablePerformanceLogging`| (Web and webview only) Enable Chromedriver's (on Android) or Safari's (on iOS) performance logging (default `false`)| `true`, `false`|
 |`printPageSourceOnFindFailure`| When a find operation fails, print the current page source. Defaults to `false`.|e.g., `true`|
 
+- Update settings
+
+|Capability|Description|Values|
+|----|-----------|-------|
+|`settings[theNameOfettingsAPI]`| Update [Settings API](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) in a session creation step. |e.g., `'settings[mjpegScalingFactor]': 10`, `'settings[shouldUseCompactResponses]': true`|
+
 ### Android Only
 
 These Capabilities are available only on Android-based drivers (like

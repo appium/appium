@@ -12,7 +12,6 @@
 
 where `2>&1` will redirect standard error to standard out. 
 
-## How to read the logs
 
 
  

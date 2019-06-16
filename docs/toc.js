@@ -256,7 +256,8 @@ module.exports = {
         ['Reset Strategies', 'reset-strategies.md'],
         ['Network Connection Guide', 'network-connection.md'],
         ['Using Unicode with Appium', 'unicode.md'],
-        ['Troubleshooting', 'troubleshooting.md']
+        ['Troubleshooting', 'troubleshooting.md'],
+        ['How to get the Appium server logs','how_to_get_appium_server_logs.md']
       ]],
     ]],
     ['Advanced', ['advanced-concepts',

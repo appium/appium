@@ -1,6 +1,6 @@
 ---
 name: Execute Script
-short_description: Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame (Web context only)
+short_description: Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame (Web context). Run a native [mobile command](/docs/en/commands/mobile-command.md) (Native Context).
 
 description:
   |

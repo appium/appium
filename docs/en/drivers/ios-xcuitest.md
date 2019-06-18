@@ -127,7 +127,7 @@ following desired capabilities:
 
 * Install idb for better handling of various iOS Simulator operations,
 such as: biometrics, geolocation setting and window focussing.
-    * Read https://github.com/appium/appium-idb#installation to install necessary libraries
+    * Read https://github.com/appium/appium-idb#installation to install necessary libraries (since Appium 1.14.0)
 
 * Install [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils)
 to use the [permissions capability](https://github.com/appium/appium-xcuitest-driver#desired-capabilities)

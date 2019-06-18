@@ -81,6 +81,7 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
+    The following parameters should be passed inside "options" key.
     - name: remotePath
       type: string
       description: The path to the remote location, where the resulting video should be uploaded.

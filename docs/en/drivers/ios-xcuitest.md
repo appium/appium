@@ -125,15 +125,9 @@ following desired capabilities:
 
 ### Optional Setup
 
-* Install FBSimulatorControl for better handling of various iOS Simulator operations,
+* Install idb for better handling of various iOS Simulator operations,
 such as: biometrics, geolocation setting and window focussing.
-
-```
-# Get the Facebook Tap.
-brew tap facebook/fb
-# Install fbsimctl from master
-brew install fbsimctl --HEAD
-```
+    * Read https://github.com/appium/appium-idb#installation to install necessary libraries (since Appium 1.14.0)
 
 * Install [AppleSimulatorUtils](https://github.com/wix/AppleSimulatorUtils)
 to use the [permissions capability](https://github.com/appium/appium-xcuitest-driver#desired-capabilities)

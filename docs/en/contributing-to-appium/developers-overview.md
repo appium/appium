@@ -188,7 +188,7 @@ converted into the `npm-shrinkwrap.json` file.
 1. Update `package.json` with the appropriate new version.
 1. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
 1. Run `npm shrinkwrap` to generate the `npm-shrinkwrap.json`
-1. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a v1.5.0`, `git tag -a v1.5.-rc.1`. This is not necessary for beta versions.
+1. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a v1.5.0`, `git tag -a v1.5.0-rc.1`. This is not necessary for beta versions.
 1. Push the tag to upstream: `git push --tags <remote> <branch>`
 1. Run `npm publish` (with `--tag rc` if this isn't a GA release).
 1. Remove the NPM shrinkwrap JSON file from Git and push the changes

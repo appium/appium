@@ -18,9 +18,9 @@ The [server args](/docs/en/writing-running-appium/server-args.md) doc outlines t
 
 Each Appium driver is responsible for its own security, and can create its own feature names. These are the features and names we know about for the officially-supported Appium drivers.
 
-|Feature Name|Description|Support|
+|Feature Name|Description|AutomationName|
 |------------|-----------|-------|
-|`get_server_logs`|Allows retrieving of Appium server logs via the Webdriver log interface|IOSDriver, XCUITestDriver, AndroidDriver, UiAutomator2Driver, EspressoDriver|
-|`adb_shell`|Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command|AndroidDriver, UiAutomator2Driver, EspressoDriver|
-|`shutdown_other_sims`|Allow any session to use a capability to shutdown any running simulators on the host|XCUITestDriver|
-|`perf_record`|Allow recording the system performance and other metrics of the simulator|XCUITestDriver|
+|`get_server_logs`|Allows retrieving of Appium server logs via the Webdriver log interface|IOS, XCUITest, Android, UiAutomator2, Espresso|
+|`adb_shell`|Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command|Android, UiAutomator2, Espresso|
+|`shutdown_other_sims`|Allow any session to use a capability to shutdown any running simulators on the host|XCUITest|
+|`perf_record`|Allow recording the system performance and other metrics of the simulator|XCUITest|

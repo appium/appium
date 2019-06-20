@@ -226,6 +226,7 @@ module.exports = {
       ['Finding Elements', 'finding-elements.md'],
       ['Touch Actions', 'touch-actions.md'],
       ['CLI Arguments', 'server-args.md'],
+      ['Server Security', 'security.md'],
       ['Web/Web Views', ['web',
         ['Mobile Web Testing', 'mobile-web.md'],
         ['Automating Hybrid Apps', 'hybrid.md'],

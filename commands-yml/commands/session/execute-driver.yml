@@ -1,0 +1,128 @@
+---
+name: Execute Driver Script
+short_description: Run a WebdriverIO script against the current session, allowing execution of many commands in one Appium request.
+
+description:
+  |
+    One downside of Appium's client-server architecture is that each command must travel across a network with potentially high latency. This is especially the case in situations where the Appium session takes place on a service provider's host machine rather than locally.
+
+    This command enables the batching of many commands together, to be executed in one go on the Appium server. The way this is accomplished is on the model of `executeScript`: the client will send in a string representing code to be executed. The Appium server will execute that code in the context of the current session, and return any values specified by the script.
+
+    There are three parameters accepted by this command (which may be collected by each client in its own way):
+      * `script`: the string consisting of the script itself
+      * `timeout`: a number representing the number of milliseconds to wait before killing the process running the driver script. Default is equivalent to 1 hour.
+      * `type`: a string representing the script language/API. Currently only one type, `webdriverio`, is supported (and it is the default).
+
+    Not just any code can run in this context. The code must be written in Javascript, and it will have access to a context with three objects
+      * `driver`: a [WebdriverIO](https://webdriver.io/) driver object. It may be assumed this driver has already connected with the Appium server and is ready to run commands. The version of WebdriverIO used is the one installed according to the specification in `appium-base-driver`'s `package.json` file.
+      * `console`: a custom `console` object, with methods `log`, `warn`, and `error`, so that logging may take place.
+      * `Promise`: a Promise library ([Bluebird](http://bluebirdjs.com/docs/getting-started.html)), to make asynchronous work easier.
+
+    The code will be placed inside an `async` function, as below, so you are free to use `await`:
+
+    ```js
+    (async function (driver, console, Promise) {
+      // --> your script here <--
+    })()
+    ```
+
+    Any errors will result in an error response to the call to this command. Any return values will be wrapped up and sent back to your client in the following form:
+
+    ```js
+    {result: <return value>, logs: {log: [], warn: [], error: []}}
+    ```
+
+    Using this response object you can gather the return value as well as the output of any log statements you made.
+
+    The advantage of this approach of using WebdriverIO code is that you have access to a full programming language and Appium API, and can use any language or API features you need, including loops, conditionals, and explicit waits. The WebdriverIO API cannot be enumerated here, so visit the [WebdriverIO documentation](https://webdriver.io/docs/api.html) for more info.
+
+example_usage:
+  java:
+    |
+      // TODO fill out once client code is written 
+
+  python:
+    |
+      # TODO fill out once client code is written
+  javascript_wd:
+    |
+      const script = `
+        const el = await driver.$('~foo');
+        await el.click();
+      `;
+      driver.executeDriver(script, {timeout: 200});
+  javascript_wdio:
+    |
+      // TODO fill out once client code is written 
+  ruby:
+    |
+      # TODO fill out once client code is written
+  ruby_core:
+    |
+      # TODO fill out once client code is written
+  php:
+    |
+      // TODO PHP sample
+  csharp:
+    |
+      // TODO C# sample
+
+client_docs:
+  java: ""
+  python: ""
+  javascript_wdio: ""
+  javascript_wd: ""
+  ruby: ""
+  ruby_core: ""
+  php: "" # TODO PHP documentation link
+  csharp: "" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: true
+  android:
+    uiautomator2: true
+    espresso: true
+    uiautomator: true
+  mac:
+    mac: true
+  windows:
+    windows: true
+client_support:
+  java: false
+  python: false
+  ruby: false
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/appium/execute_driver
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: script
+      type: string
+      description: The webdriverio script to execute
+    - name: type
+      type: string
+      description: The name of the script type. Currently only 'webdriverio' is supported
+    - name: timeout
+      type: number
+      description: The number of ms Appium should wait for the script to finish before killing it due to timeout
+  response:
+    - type: any
+      description: >-
+        The script result. It will have two fields: `result` and `logs`. Result will be the return value of the script. Logs will contain the content of anything logged from the `console` object by the script.
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  w3c: false
+  jsonwp: false

@@ -24,3 +24,10 @@ Each Appium driver is responsible for its own security, and can create its own f
 |`adb_shell`|Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command|Android, UiAutomator2, Espresso|
 |`shutdown_other_sims`|Allow any session to use a capability to shutdown any running simulators on the host|XCUITest|
 |`perf_record`|Allow recording the system performance and other metrics of the simulator|XCUITest|
+
+## For Driver Developers
+
+2 methods exist on objects of classes which extend `BaseDriver`, which make the life of the driver developer easier when checking availability of insecure features:
+
+* `this.isFeatureEnabled(name)`: returns true or false depending on whether the server security flags combine to allow the feature in question.
+* `this.ensureFeatureEnabled(name)`: throws an error with the feature name and a link to this doc if the feature in question is not allowed.

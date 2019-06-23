@@ -7,6 +7,9 @@ jobs:
       CC: gcc
       CXX: g++
     steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '12.x'
     - script: |
         brew install hub
         pip install mkdocs==0.16.3

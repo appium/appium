@@ -12,6 +12,8 @@ jobs:
         pip install mkdocs==0.16.3
         git clone https://triager:$GITHUB_TOKEN@github.com/appium/appium.io.git --branch=gh-pages && cd appium.io/
         git checkout -b docs-$BUILD_SOURCEBRANCH
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
       displayName: Clone Appium IO Repo
     - script: |
         bundle install

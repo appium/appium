@@ -1,6 +1,6 @@
 # parameters: # No params yet, but may add later
 jobs:
-  - job: update_appium_io
+  - job: generate_docs
     variables:
       CC: gcc
       CXX: g++
@@ -21,6 +21,9 @@ jobs:
         hub --version
         git remote set-url origin https://triager:$GITHUB_TOKEN@github.com/appium/appium
         git checkout -b generate-docs-$BUILD_SOURCEBRANCH
+      displayName: Checkout Generate Docs Branch
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
     - script: |
         # Generate the docs
         npm run generate-docs

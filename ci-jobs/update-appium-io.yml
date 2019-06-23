@@ -24,6 +24,7 @@ jobs:
         npm install
       displayName: Install Dependencies
     - script: |
+        pushd appium.io
         npm run build:docs
         git commit -a -n -m 'Updated docs for latest Appium version'
         git push origin docs-$TRAVIS_TAG

@@ -34,8 +34,11 @@ jobs:
 
         # If docs were generated, make a PR to update the docs
         if [[ -n $(git status -s) ]]; then
+          git remote set-url origin https://triager:$GITHUB_TOKEN@github.com/appium/appium
           git commit -a -n -m 'Update generated docs [ci skip]';
           git push origin generate-docs-$BUILD_SOURCEBRANCH;
           hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEBRANCH" -m "Update auto-generated docs";
         fi
       displayName: Generate Docs and Make PR
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)

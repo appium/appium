@@ -9,18 +9,19 @@ jobs:
       inputs:
         versionSpec: '12.x'
     - script: |
+        echo $BUILD_SOURCEVERSION
         # install linuxbrew
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
         test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
         echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
-      displayName: Install Linux Brew
+        displayName: Install Linux Brew
     - script: |
         # do git stuff
         npm install
         brew install hub
         hub --version
         git remote set-url origin https://triager:$GITHUB_TOKEN@github.com/appium/appium
-        git checkout -b generate-docs-$BUILD_SOURCEBRANCH
+        git checkout -b generate-docs-$BUILD_SOURCEVERSION
       displayName: Checkout Generate Docs Branch
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
@@ -36,8 +37,8 @@ jobs:
         # If docs were generated, make a PR to update the docs
         if [[ -n $(git status -s) ]]; then
           git commit -a -n -m 'Update generated docs [ci skip]';
-          git push origin generate-docs-$BUILD_SOURCEBRANCH;
-          hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEBRANCH" -m "Update auto-generated docs";
+          git push origin generate-docs-$BUILD_SOURCEVERSION;
+          hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEVERSION" -m "Update auto-generated docs";
         fi
       displayName: Generate Docs and Make PR
       env:

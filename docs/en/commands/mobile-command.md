@@ -104,7 +104,7 @@ List of available commands:
 ### Android
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
-| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [server flag](/docs/en/writing-running-appium/server-args.md#server-flags) `--relaxed-security` to be set) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
+| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [insecure feature](/docs/en/writing-running-appium/security.md) `adb_shell` to be enabled) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
 | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/device/logcat` endpoint | <none> | <none> |
 | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
 | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | `{action}` | `{action: "previous"}`|

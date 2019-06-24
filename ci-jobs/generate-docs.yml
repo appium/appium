@@ -20,7 +20,7 @@ jobs:
         npm install
         brew install hub
         hub --version
-        git remote set-url origin https://triager:$GITHUB_TOKEN@github.com/appium/appium
+        git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium-desktop
         git checkout -b generate-docs-$BUILD_SOURCEVERSION
       displayName: Checkout Generate Docs Branch
       env:
@@ -28,7 +28,6 @@ jobs:
     - script: |
         # Generate the docs
         npm run generate-docs
-        git remote set-url origin https://triager:$GITHUB_TOKEN@github.com/appium/appium
         git add .
 
         # log the status so we know what is going on, on failure

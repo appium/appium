@@ -24,3 +24,5 @@ jobs:
         git push triager docs-$BUILD_SOURCEVERSION
         hub pull-request -b "appium:gh-pages" -h "appium:docs-$BUILD_SOURCEVERSION" -m "Update documentation for latest version"
       displayName: Make branch with Updated Docs and make PR
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)

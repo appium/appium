@@ -1,6 +1,8 @@
 # parameters: # No params yet, but may add later
 jobs:
   - job: generate_docs
+    pool: 
+      vmImage: "macOS 10.14"
     variables:
       CC: gcc
       CXX: g++
@@ -8,13 +10,6 @@ jobs:
     - task: NodeTool@0
       inputs:
         versionSpec: '12.x'
-    - script: |
-        echo $BUILD_SOURCEVERSION
-        # install linuxbrew
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-        test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-        echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
-      displayName: Install Linux Brew
     - script: |
         # do git stuff
         npm install

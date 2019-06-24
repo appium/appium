@@ -27,5 +27,6 @@ jobs:
         npm run build:docs
         git commit -a -n -m 'Updated docs for latest Appium version'
         git push triager docs-$BUILD_SOURCEVERSION
-        hub pull-request -b "appium:gh-pages" -h "appium:docs-$BUILD_SOURCEVERSION" -m "Update documentation for latest version"
-      displayName: Make PR with Updated Docs
+      displayName: Make branch with Updated Docs
+    - script: hub pull-request -b "appium:gh-pages" -h "appium:docs-$BUILD_SOURCEVERSION" -m "Update documentation for latest version"
+      displayName: Make the PR

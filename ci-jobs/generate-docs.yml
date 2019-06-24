@@ -36,9 +36,9 @@ jobs:
 
         # If docs were generated, make a PR to update the docs
         if [[ -n $(git status -s) ]]; then
-          git commit -a -n -m 'Update generated docs [ci skip]';
-          git push origin generate-docs-$BUILD_SOURCEVERSION;
-          hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEVERSION" -m "Update auto-generated docs";
+          git commit -a -n -m 'Update generated docs [ci skip]'
+          git push origin generate-docs-$BUILD_SOURCEVERSION
+          hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEVERSION" -m "Update auto-generated docs"
         fi
       displayName: Generate Docs and Make PR
       env:

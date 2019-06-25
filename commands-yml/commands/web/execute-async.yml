@@ -85,7 +85,7 @@ client_support:
 # Information about the HTTP endpoints
 endpoint:
   url: /wd/hub/session/:session_id/execute_async
-  method: GET
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to

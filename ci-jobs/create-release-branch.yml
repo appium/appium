@@ -4,6 +4,8 @@
 # https://aka.ms/yaml
 pool:
   vmImage: 'macOS 10.14'
+variables:
+  MINOR_BRANCH_NAME: ''
 steps:
 - task: NodeTool@0
   inputs:

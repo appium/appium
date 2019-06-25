@@ -11,7 +11,7 @@ jobs:
       displayName: Print GCC Version
     - task: NodeTool@0
       inputs:
-        versionSpec: '11.x'
+        versionSpec: '12.x'
     - script: npm ci || npm install # "npm ci" if shrinkwrap is present
       displayName: Install NPM Dependencies
     - script: |

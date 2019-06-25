@@ -18,7 +18,7 @@ steps:
     rm -rf package-lock.json
     npm shrinkwrap
     git add .
-    git commit -n -m "Set version to $(MINOR_BRANCH_NAME).0-rc.0" # TODO: <- Change to rc
+    git commit -n -m "Set version to $(MINOR_BRANCH_NAME).0-rc.0"
     git push -u triager $MINOR_BRANCH_NAME
   displayName: Create branch
   env:

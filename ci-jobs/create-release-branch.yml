@@ -25,3 +25,4 @@ steps:
   displayName: Create branch
   env:
     GITHUB_TOKEN: $(GITHUB_TOKEN)
+    MINOR_BRANCH_NAME: $(MINOR_BRANCH_NAME)

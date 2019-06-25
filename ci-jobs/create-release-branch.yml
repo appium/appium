@@ -1,5 +1,3 @@
-pool:
-  vmImage: 'macOS 10.14'
 steps:
 - task: NodeTool@0
   inputs:

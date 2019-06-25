@@ -487,6 +487,51 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       d1._settings.should.not.eql(d2._settings);
     });
   });
+
+  describe('.isFeatureEnabled', function () {
+    const d = new DriverClass();
+
+    afterEach(function () {
+      d.denyInsecure = null;
+      d.allowInsecure = null;
+      d.relaxedSecurityEnabled = null;
+    });
+
+    it('should say a feature is enabled when it is explicitly allowed', function () {
+      d.allowInsecure = ['foo', 'bar'];
+      d.isFeatureEnabled('foo').should.be.true;
+      d.isFeatureEnabled('bar').should.be.true;
+      d.isFeatureEnabled('baz').should.be.false;
+    });
+
+    it('should say a feature is not enabled if it is not enabled', function () {
+      d.allowInsecure = [];
+      d.isFeatureEnabled('foo').should.be.false;
+    });
+
+    it('should prefer denyInsecure to allowInsecure', function () {
+      d.allowInsecure = ['foo', 'bar'];
+      d.denyInsecure = ['foo'];
+      d.isFeatureEnabled('foo').should.be.false;
+      d.isFeatureEnabled('bar').should.be.true;
+      d.isFeatureEnabled('baz').should.be.false;
+    });
+
+    it('should allow global setting for insecurity', function () {
+      d.relaxedSecurityEnabled = true;
+      d.isFeatureEnabled('foo').should.be.true;
+      d.isFeatureEnabled('bar').should.be.true;
+      d.isFeatureEnabled('baz').should.be.true;
+    });
+
+    it('global setting should be overrideable', function () {
+      d.relaxedSecurityEnabled = true;
+      d.denyInsecure = ['foo', 'bar'];
+      d.isFeatureEnabled('foo').should.be.false;
+      d.isFeatureEnabled('bar').should.be.false;
+      d.isFeatureEnabled('baz').should.be.true;
+    });
+  });
 }
 
 export default baseDriverUnitTests;

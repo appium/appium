@@ -53,6 +53,7 @@
     "source-map-support": "^0.5.5",
     "uuid-js": "^0.7.5",
     "validate.js": "^0.13.0",
+    "webdriverio": "^5.10.9",
     "ws": "^7.0.0"
   },
   "scripts": {

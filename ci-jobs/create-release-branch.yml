@@ -23,3 +23,5 @@ steps:
     git commit -n -m 'Set version to $MINOR_BRANCH_NAME.0-rc.0'
     git push --set-upstream $MINOR_BRANCH_NAME triager
   displayName: Create branch
+  env:
+    GITHUB_TOKEN: $(GITHUB_TOKEN)

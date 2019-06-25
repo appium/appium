@@ -80,8 +80,8 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/execute_async
-  method: GET
+  url: /wd/hub/session/:session_id/execute
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
@@ -99,4 +99,4 @@ endpoint:
 # Links to specifications. Should link to at least one specification
 specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-execute-script
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute

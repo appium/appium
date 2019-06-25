@@ -18,14 +18,14 @@ steps:
     rm -rf package-lock.json
     npm shrinkwrap
     git add .
-    git commit -n -m "Set version to $(MINOR_BRANCH_NAME).0-fake.0" # TODO: <- Change to rc
+    git commit -n -m "Set version to $(MINOR_BRANCH_NAME).0-rc.0" # TODO: <- Change to rc
     git push -u triager $MINOR_BRANCH_NAME
   displayName: Create branch
   env:
     GITHUB_TOKEN: $(GITHUB_TOKEN)
     MINOR_BRANCH_NAME: $(MINOR_BRANCH_NAME)
 - script: |
-    git tag $MINOR_BRANCH_NAME.0-fake.0
+    git tag $MINOR_BRANCH_NAME.0-rc.0
     git push --tags -u triager
     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
     npm publish --tag $(node ./ci-jobs/scripts/parse-tag)

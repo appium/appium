@@ -14,12 +14,12 @@ steps:
   displayName: NPM install
 - script: |
     git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium
-    git checkout -b $(MINOR_BRANCH_NAME)
+    git checkout -b $MINOR_BRANCH_NAME
     git status
     node ./ci-jobs/scripts/set-package-json-version
     rm -rf package-lock.json
     npm shrinkwrap
     git add .
-    git commit -n -m 'Set version to $(MINOR_BRANCH_NAME).0-rc.0'
-    git push --set-upstream $(MINOR_BRANCH_NAME) triager
+    git commit -n -m 'Set version to $MINOR_BRANCH_NAME.0-rc.0'
+    git push --set-upstream $MINOR_BRANCH_NAME triager
   displayName: Create branch

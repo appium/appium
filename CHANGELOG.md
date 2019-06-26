@@ -1,3 +1,19 @@
+CHANGES IN VERSION 1.14.10 (FROM 1.13.0)
+===================================
+
+ Appium 1.14.0 is a minor release.
+
+ #### General
+* Minimum Node version is bumped up to v10
+
+ #### Android (Espresso)
+* Fix problems with activity startup not working when the package name value in `appActivity` is different from the one in `appPackage` [#441](https://github.com/appium/appium-espresso-driver/pull/441)
+
+ #### iOS (XCUITest)
+* Make `platformVersion` a required capability for iOS Simulators [#954](https://github.com/appium/appium-xcuitest-driver/pull/954)
+* Enforce Simulator shutdown if `resetOnSessionStartOnly` is set to false [#950](https://github.com/appium/appium-xcuitest-driver/pull/950)
+* Fixed the issue with [addresses problems with long startup times for Safari WebViews on iOS 12.2](https://github.com/appium/appium/issues/12590)
+
 CHANGES IN VERSION 1.13.0 (FROM 1.12.1)
 ===================================
 

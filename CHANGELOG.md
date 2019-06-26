@@ -5,6 +5,7 @@ CHANGES IN VERSION 1.14.10 (FROM 1.13.0)
 
  #### General
 * Minimum Node version is bumped up to v10
+* The default driver for Android is now set to [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver). If the [UiAutomator1](https://github.com/appium/appium-android-driver) driver is desired, then this can be achived by setting `automationName=UiAutomator1` in the capabilities
 
  #### Android (Espresso)
 * Fix problems with activity startup not working when the package name value in `appActivity` is different from the one in `appPackage` [#441](https://github.com/appium/appium-espresso-driver/pull/441)

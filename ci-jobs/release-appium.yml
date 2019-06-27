@@ -7,6 +7,8 @@ steps:
   displayName: NPM Clean Install
 - script: |
     git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium
+    git checkout -b $RELEASE_BRANCH
+    git pull -u triager origin $RELEASE_BRANCH
     node ./ci-jobs/scripts/set-package-json-version
     git add .
     git commit -n -m "Set version to $APPIUM_VERSION"

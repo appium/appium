@@ -3,7 +3,7 @@ const { fs, logger } = require('appium-support');
 const { asyncify } = require('asyncbox');
 const packageJson = require('../../package.json');
 
-const log = new logger.getLogger('Create Release Branch:');
+const log = new logger.getLogger('CI:');
 
 async function setPackageJsonVersion (version) {
   if (!version) {

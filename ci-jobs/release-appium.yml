@@ -14,7 +14,7 @@ steps:
     node ./ci-jobs/scripts/set-package-json-version
     git add .
     git status
-    git commit -u triager -n -m "Set version to $APPIUM_VERSION"
+    git commit -n -m "Set version to $APPIUM_VERSION"
     git push -u triager $RELEASE_BRANCH
   displayName: Create branch
   env:

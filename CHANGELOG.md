@@ -14,6 +14,10 @@ CHANGES IN VERSION 1.14.10 (FROM 1.13.0)
  #### Android (Espresso)
 * Fix problems with activity startup not working when the package name value in `appActivity` is different from the one in `appPackage` [#441](https://github.com/appium/appium-espresso-driver/pull/441)
 * Add a mobile helper to disable autofill dialog in Android O [#456](https://github.com/appium/appium-espresso-driver/pull/456)
+ 
+ #### Android (UIAutomator2)
+ * Remove the extra wait for idle calls to speed up element queries [#279](https://github.com/appium/appium-uiautomator2-server/pull/279)
+ * Added a new capability `trackScrollEvents` to configurate the tracking of scroll movement. This improves performance of touch actions significantly[#284](https://github.com/appium/appium-uiautomator2-server/pull/284) 
 
  #### iOS (XCUITest)
 * Make `platformVersion` a required capability for iOS Simulators [#954](https://github.com/appium/appium-xcuitest-driver/pull/954)

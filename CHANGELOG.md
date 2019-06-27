@@ -6,14 +6,28 @@ CHANGES IN VERSION 1.14.10 (FROM 1.13.0)
  #### General
 * Minimum Node version is bumped up to v10
 * The default driver for Android is now set to [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver). If the [UiAutomator1](https://github.com/appium/appium-android-driver) driver is desired, then this can be achived by setting `automationName=UiAutomator1` in the capabilities
+* `--allow-insecure` and `--deny-insecure` server flags are added to deprecate `--relaxed-security` in the future releases [#12778](https://github.com/appium/appium/pull/12778). Please check the [documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md) for further information
+* Drop `--enable-heapdump` for debugging [#12609](https://github.com/appium/appium/pull/12609)
+* Fix `--tmp` server arg [#12585](https://github.com/appium/appium/pull/12585)
+* Can get selected image by `find element by image` for debugging [#327](https://github.com/appium/appium-base-driver/pull/327)
 
  #### Android (Espresso)
 * Fix problems with activity startup not working when the package name value in `appActivity` is different from the one in `appPackage` [#441](https://github.com/appium/appium-espresso-driver/pull/441)
+* Add a mobile helper to disable autofill dialog in Android O [#456](https://github.com/appium/appium-espresso-driver/pull/456)
 
  #### iOS (XCUITest)
 * Make `platformVersion` a required capability for iOS Simulators [#954](https://github.com/appium/appium-xcuitest-driver/pull/954)
 * Enforce Simulator shutdown if `resetOnSessionStartOnly` is set to false [#950](https://github.com/appium/appium-xcuitest-driver/pull/950)
 * Fixed the issue with [addresses problems with long startup times for Safari WebViews on iOS 12.2](https://github.com/appium/appium/issues/12590)
+* `platformVersion` capability is now mandatory for Simulators and optional for real devices (but only if Appium can determine the version from ideviceinfo output)[#954](https://github.com/appium/appium-xcuitest-driver/pull/954)
+* Update to call `idb` instead of `fbsimctl` which is used for some commands for simulator environment [#12574](https://github.com/appium/appium/pull/12574)
+* Configure keyboard preference [#12737](https://github.com/appium/appium/pull/12737):
+  * Disable `Auto-Correction` and `Predictive` in `Keyboards` preference by default
+  * Disable keyboard tutorial for iOS 13
+  * Force toggle software keyboard on for simulator
+* Fixed the file translation for real device [#12710](https://github.com/appium/appium/pull/12710)
+  * Read https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md about the rule
+* Fixed the WDA manual code signing issue which happens in some cases [#961](https://github.com/appium/appium-xcuitest-driver/pull/961)
 
 CHANGES IN VERSION 1.13.0 (FROM 1.12.1)
 ===================================

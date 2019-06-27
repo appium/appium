@@ -13,7 +13,7 @@ steps:
     npm shrinkwrap
     git add .
     git commit -n -m "Set version to $(MINOR_BRANCH_NAME).0-rc.0"
-    git push triager $MINOR_BRANCH_NAME
+    git push -u triager $MINOR_BRANCH_NAME
   displayName: Create branch
   env:
     GITHUB_TOKEN: $(GITHUB_TOKEN)

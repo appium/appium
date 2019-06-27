@@ -1,0 +1,26 @@
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x'
+# Do a clean install. NPM install causes shrinkwrap to change
+- script: npm ci
+  displayName: NPM Clean Install
+- script: |
+    git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium
+    node ./ci-jobs/scripts/set-package-json-version
+    git add .
+    git commit -n -m "Set version to $APPIUM_VERSION"
+    git push -u triager $RELEASE_BRANCH
+  displayName: Create branch
+  env:
+    RELEASE_BRANCH: $(RELEASE_BRANCH)
+    GITHUB_TOKEN: $(GITHUB_TOKEN)
+    APPIUM_VERSION: $(APPIUM_VERSION)
+- script: |
+    git tag $MINOR_BRANCH_NAME.0-rc.0
+    git push --tags -u triager
+    echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+    npm publish --tag $(node ./ci-jobs/scripts/parse-tag)
+  env:
+    NPM_TOKEN: $(NPM_TOKEN)
+  displayName: Tag and Publish

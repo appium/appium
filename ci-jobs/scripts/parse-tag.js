@@ -1,3 +1,5 @@
 const semver = require('semver');
 const { version } = require('../../package.json');
-console.log(semver(version).prerelease[0]); //eslint-disable-line no-console
+const { prerelease } = semver(version);
+const tag = prerelease.length > 0 ? prerelease[0] : 'latest';
+console.log(tag); //eslint-disable-line no-console

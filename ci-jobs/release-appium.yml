@@ -2,6 +2,8 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '12.x'
+- script: node ./ci-jobs/scripts/assert-valid-release-environment-variables
+  displayName: Assert Release Tag Names
 # Do a clean install. NPM install causes shrinkwrap to change
 - script: npm ci
   displayName: NPM Clean Install

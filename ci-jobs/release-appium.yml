@@ -13,7 +13,8 @@ steps:
     git pull -u triager origin $RELEASE_BRANCH
     node ./ci-jobs/scripts/set-package-json-version
     git add .
-    git commit -n -m "Set version to $APPIUM_VERSION"
+    git status
+    git commit -u triager -n -m "Set version to $APPIUM_VERSION"
     git push -u triager $RELEASE_BRANCH
   displayName: Create branch
   env:

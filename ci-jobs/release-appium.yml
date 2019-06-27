@@ -2,11 +2,11 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '12.x'
-- script: node ./ci-jobs/scripts/assert-valid-release-environment-variables
-  displayName: Assert Release Tag Names
 # Do a clean install. NPM install causes shrinkwrap to change
 - script: npm ci
   displayName: NPM Clean Install
+- script: node ./ci-jobs/scripts/assert-valid-release-environment-variables
+  displayName: Assert Release Tag Names
 - script: |
     git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium
     git checkout -b $RELEASE_BRANCH

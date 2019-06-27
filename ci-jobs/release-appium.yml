@@ -15,7 +15,7 @@ steps:
     git add .
     git status
     git commit -n -m "Set version to $APPIUM_VERSION"
-    git push triager $RELEASE_BRANCH
+    git push -u triager $RELEASE_BRANCH
   displayName: Create branch
   env:
     RELEASE_BRANCH: $(RELEASE_BRANCH)

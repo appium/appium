@@ -24,6 +24,7 @@ Each Appium driver is responsible for its own security, and can create its own f
 |`adb_shell`|Allows execution of arbitrary shell commands via ADB, using the `mobile: shell` command|Android, UiAutomator2, Espresso|
 |`shutdown_other_sims`|Allow any session to use a capability to shutdown any running simulators on the host|XCUITest|
 |`perf_record`|Allow recording the system performance and other metrics of the simulator|XCUITest|
+|`chromedriver_autodownload`|Allow to downalod ChromeDriver automatically if Appium does not have proper the version |Android, UiAutomator2, Espresso|
 
 ## For Driver Developers
 

@@ -4,8 +4,8 @@ CHANGES IN VERSION 1.14.10 (FROM 1.13.0)
  Appium 1.14.0 is a minor release.
 
  #### General
-* IMPORTANT: The default driver for Android is now set to [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver) instead of [UiAutomator1](https://github.com/appium/appium-android-driver). If the [UiAutomator1](https://github.com/appium/appium-android-driver) driver is still desired, then this can be achieved by setting `automationName=UiAutomator1` in the capabilities
-* IMPORTANT: Minimum Node version is bumped up to v10
+* **IMPORTANT**: The default driver for Android is now set to [UiAutomator2](https://github.com/appium/appium-uiautomator2-driver) instead of [UiAutomator1](https://github.com/appium/appium-android-driver). If the [UiAutomator1](https://github.com/appium/appium-android-driver) driver is still desired, then this can be achieved by setting `automationName=UiAutomator1` in the capabilities
+* **IMPORTANT**: Minimum Node version is bumped up to v10
 * `--allow-insecure` and `--deny-insecure` server flags are added to deprecate `--relaxed-security` in the future releases [#12778](https://github.com/appium/appium/pull/12778). Please check the [documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md) for further information
 * Drop `--enable-heapdump` for debugging [#12609](https://github.com/appium/appium/pull/12609)
 * Fix `--tmp` server arg [#12585](https://github.com/appium/appium/pull/12585)

@@ -1,4 +1,4 @@
-function resFixture (url, method, json) {
+function resFixture (url, method) {
   if (/\/status$/.test(url)) {
     return [200, {status: 0, value: {foo: 'bar'}}];
   }
@@ -12,11 +12,7 @@ function resFixture (url, method, json) {
     return [200, {status: 0, sessionId: 'innersessionid', value: 'foobar'}];
   }
   if (/\/session$/.test(url) && method === 'POST') {
-    if (json.desiredCapabilities && json.desiredCapabilities.redirect) {
-      return [303, 'http://localhost:4444/wd/hub/session/123'];
-    } else {
-      return [200, {status: 0, sessionId: '123', value: {browserName: 'boo'}}];
-    }
+    return [200, {status: 0, sessionId: '123', value: {browserName: 'boo'}}];
   }
   if (/\/nochrome$/.test(url)) {
     return [100, {status: 0, value: {message: 'chrome not reachable'}}];

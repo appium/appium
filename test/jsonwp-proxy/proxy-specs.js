@@ -49,13 +49,6 @@ describe('proxy', function () {
     body.should.eql({status: 0, sessionId: '123', value: {browserName: 'boo'}});
     j.sessionId.should.equal('123');
   });
-  it('should save session id on session creation with 303', async function () {
-    let j = mockProxy();
-    let [res, body] = await j.proxy('/session', 'POST', {desiredCapabilities: {redirect: true}});
-    res.statusCode.should.equal(303);
-    body.should.eql('http://localhost:4444/wd/hub/session/123');
-    j.sessionId.should.equal('123');
-  });
   describe('getUrlForProxy', function () {
     it('should modify session id, host, and port', function () {
       let j = mockProxy({sessionId: '123'});

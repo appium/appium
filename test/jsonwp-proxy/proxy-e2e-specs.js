@@ -18,7 +18,6 @@ describe('proxy', function () {
 
   it('should proxy status straight', async function () {
     let [res, resBody] = await jwproxy.proxy('/status', 'GET');
-    resBody = JSON.parse(resBody);
     res.statusCode.should.equal(200);
     resBody.status.should.equal(0);
     resBody.value.should.equal(`I'm fine`);

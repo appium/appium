@@ -31,7 +31,8 @@ example_usage:
       $el = $this->byAccessibilityId('SomeAccessibilityID');
   csharp:
     |
-      // TODO C# sample
+      AndroidElement elementOne = driver.FindElementByAccessibilityID("Some ID");
+      AndroidElement elementTwo = driver.FindElementByClassName("Some class");
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#findElement-org.openqa.selenium.By-"

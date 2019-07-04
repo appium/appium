@@ -1,8 +1,11 @@
 ---
-name: Launch an App
-short_description: Launch an app on device
+name: Launch App
+short_description: Launch the app-under-test on the device
 description:
   >
+    If the app-under-test (AUT) is closed, or backgrounded, it will launch it.
+    If the AUT is already open, it will background it and re-launch it.
+
     iOS tests with XCUITest can also use the `mobile: launchApp` method. See
     detailed [documentation](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-launchapp).
 
@@ -18,8 +21,11 @@ example_usage:
       await driver.launchApp();
   javascript_wdio:
     |
-      driver.launch();
+      driver.launchApp();
   ruby:
+    |
+      launch_app
+  ruby_core:
     |
       @driver.launch_app
   php:
@@ -31,10 +37,11 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#launchApp--"
-  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L578"
+  python: "https://github.com/appium/python-client/blob/master/README.md#closing-and-launching-an-application"
   javascript_wdio: "http://webdriver.io/api/mobile/launch.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2798"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#launch_app-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#launch_app-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

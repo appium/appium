@@ -10,16 +10,24 @@ example_usage:
       await driver.settings();
   javascript_wdio:
     |
-      let settings = driver.settings();
+      let settings = driver.getSettings();
   ruby:
     |
+      get_settings
+  ruby_core:
+    |
       @driver.get_settings
+  python:
+    |
+      self.driver.get_settings
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/HasSettings.html#getSettings--"
   javascript_wdio: "http://webdriver.io/api/mobile/settings.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3018"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#get_settings-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#get_settings-instance_method"
+  python: "https://github.com/appium/python-client/blob/af1988e55e9856cff3a918e901f92d065195b904/appium/webdriver/webdriver.py#L1131"
 
 # Driver support by platform
 driver_support:

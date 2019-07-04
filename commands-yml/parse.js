@@ -35,7 +35,7 @@ const appiumRanges = {
 const rootFolder = findRoot(__dirname);
 
 // Create Handlebars helper that shows a version range
-Handlebars.registerHelper('versions', (object, name, driverName) => {
+Handlebars.registerHelper('versions', function versionHelper (object, name, driverName) {
   if (!object) {
     return 'None';
   }
@@ -77,7 +77,7 @@ Handlebars.registerHelper('versions', (object, name, driverName) => {
 Handlebars.registerHelper('hyphenate', (str) => str.replace('_', '-'));
 Handlebars.registerHelper('uppercase', (str) => str.toUpperCase());
 
-Handlebars.registerHelper('capitalize', function (driverName) {
+Handlebars.registerHelper('capitalize', function capitalizeDriver (driverName) {
   switch (driverName.toLowerCase()) {
     case 'xcuitest':
       return 'XCUITest';
@@ -94,7 +94,7 @@ Handlebars.registerHelper('capitalize', function (driverName) {
   }
 });
 
-Handlebars.registerHelper('if_eq', function (a, b, opts) {
+Handlebars.registerHelper('if_eq', function ifEq (a, b, opts) {
   if (a === b) {
     return opts.fn(this);
   } else {
@@ -107,11 +107,11 @@ function getBaseHostname (fullUrl) {
   return baseUrl.hostname;
 }
 
-Handlebars.registerHelper('base_url', function (fullUrl) {
+Handlebars.registerHelper('base_url', function baseUrl (fullUrl) {
   return getBaseHostname(fullUrl);
 });
 
-Handlebars.registerHelper('client_url', function (clientUrl) {
+Handlebars.registerHelper('client_url', function clientUrl (clientUrl) {
   if (!clientUrl) {
     return;
   }
@@ -141,7 +141,7 @@ async function registerSpecUrlHelper () {
   const routesFile = await fs.readFile(path.resolve(rootFolder, 'node_modules', 'appium-base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
   const routesFileLines = routesFile.split('\n');
 
-  Handlebars.registerHelper('spec_url', function (specUrl, endpoint) {
+  Handlebars.registerHelper('spec_url', function specUrl (specUrl, endpoint) {
     // return the url if it is not a link to our routes doc
     if (!specUrl.includes('routes.js')) {
       return specUrl;

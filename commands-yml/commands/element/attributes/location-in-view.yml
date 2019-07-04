@@ -7,6 +7,10 @@ example_usage:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
       let location = await element.getLocationInView();
+  python:
+    |
+      element = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+      element.location_in_view
   javascript_wdio:
     |
       let location = driver.getLocationInView("~SomeAccessibilityId");
@@ -36,7 +40,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -56,5 +60,5 @@ endpoint:
       description: Y coordinate
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidlocation_in_view

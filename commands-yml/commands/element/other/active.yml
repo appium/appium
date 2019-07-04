@@ -14,8 +14,11 @@ example_usage:
       let element = await driver.active();
   javascript_wdio:
     |
-      driver.elementActive();
+      driver.getActiveElement();
   ruby:
+    |
+      switch_to.active_element
+  ruby_core:
     |
       @driver.switch_to.active_element
   php:
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/elementActive.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1934"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -67,6 +71,6 @@ endpoint:
       description: A JSON object for the located element
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#get-active-element
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementactive

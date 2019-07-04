@@ -16,11 +16,14 @@ example_usage:
       let handleTwoPosition = await driver.getWindowPosition("handleName");
   javascript_wdio:
     |
-      let handleOnePosition = driver.windowHandlePosition();
-      let handleTwoPosition = driver.windowHandlePosition("handleName");
+      let handleOnePosition = driver.getWindowPosition();
   ruby:
     |
-      @driver.window_position()
+      window_position
+      window_position("handleName")
+  ruby_core:
+    |
+      @driver.window_position
       @driver.window_position("handleName")
   php:
     |
@@ -35,6 +38,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandlePosition.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L586"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_position"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_position"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -59,7 +63,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -79,5 +83,5 @@ endpoint:
       description: The y coordinate relative to the top left corner of the window
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#get-sessionsessionidwindowwindowhandleposition

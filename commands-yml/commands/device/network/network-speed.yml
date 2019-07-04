@@ -1,0 +1,68 @@
+---
+name: Network speed
+short_description: Set network speed (Emulator only)
+
+example_usage:
+  java:
+    |
+      driver.setNetworkSpeed(NetworkSpeed.LTE);
+  python:
+    |
+      self.driver.set_network_speed(NetSpeed.LTE)
+  javascript_wd:
+    |
+      await driver.networkSpeed('Network type');
+  javascript_wdio:
+    |
+      driver.networkSpeed('lte');
+  ruby:
+    |
+      set_network_speed :lte
+  ruby_core:
+    |
+      @driver.set_network_speed :lte
+
+client_docs:
+  java: "https://appium.github.io/java-client/io/appium/java_client/android/SupportsSpecialEmulatorCommands.html#setNetworkSpeed-io.appium.java_client.android.NetworkSpeed-"
+  python: "https://github.com/appium/python-client"
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3411"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device/Emulator#set_network_speed-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device/Emulator#set_network_speed-instance_method"
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: false
+    uiautomation: false
+  android:
+    uiautomator2: true
+    espresso: true
+    uiautomator: true
+  mac:
+    mac: false
+  windows:
+    windows: false
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: false
+  csharp: false
+  javascript_wd: true
+  javascript_wdio: true
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/device/network_speed
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: netspeed
+      type: string
+      description: Network type - 'full','gsm', 'edge', 'hscsd', 'gprs', 'umts', 'hsdpa', 'lte', 'evdo'
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L346

@@ -1,6 +1,6 @@
 # Appium server arguments
 
-Many Appium 1.5 server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).
+Since Appium 1.5, many server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).
 
 Usage: `node . [flags]`
 
@@ -14,6 +14,7 @@ All flags are optional, but some are required in conjunction with certain others
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
 |`--shell`|null|Enter REPL mode||
+|`--allow-cors`|false|Turn on CORS compatibility mode, which will allow connections to the Appium server from within websites hosted on any domain. Be careful when enabling this feature, since there is a potential security risk if you visit a website that uses a cross-domain request to initiate or introspect sessions on your running Appium server.||
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
@@ -91,5 +92,6 @@ All flags are optional, but some are required in conjunction with certain others
 |`--keep-keychains`|false|[DEPRECATED] - (iOS-only) Whether to keep keychains (Library/Keychains) when reset app between sessions||
 |`--localizable-strings-dir`|en.lproj|[DEPRECATED] - (IOS-only) the relative path of the dir where Localizable.strings file resides |`--localizable-strings-dir en.lproj`|
 |`--show-ios-log`|false|[DEPRECATED] - (IOS-only) if set, the iOS system log will be written to the console||
-|`--enable-heapdump`|false|Enables NodeJS memory dumps collection feature. This feature is extremely useful for finding memory leaks. Use the 'kill -SIGUSR2 &lt;PID&gt;' command to create a dump of memory heap for _node_ process with the particular PID (this works for *nix systems only). The dump file will be created in the same folder, where main Appium script was executed and will have *.heapsnapshot extension. These snapshot can be then loaded to Chrome Inspector for further investigation. Read the [Rising Stack article](https://blog.risingstack.com/finding-a-memory-leak-in-node-js/) for more details.||
-|`--relaxed-security`|false|Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it is not the case if a client could potentially break out of the session sandbox.||
+|`--relaxed-security`|false|Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it is not the case if a client could potentially break out of the session sandbox. Can override enabling of specific features with --deny-insecure. See also the [security doc](/docs/en/writing-running-appium/security.md)||
+|`--allow-insecure`|[]|Allow a list of features which are considered insecure and must be turned on explicitly by system administrators. Feature names are documented by the relevant server/driver. Should be a comma-separated list, or a path to a filename containing one feature name per line. Features listed in --deny-insecure will override anything listed here. Does not make sense to use in conjunction with --relaxed-security. See also the [security doc](/docs/en/writing-running-appium/security.md)|`--allow-insecure=foo,bar`|
+|`--deny-insecure`|[]|Specify a list of features which will never be allowed to run, even if --relaxed-security is turned on, and even if feature names are listed with --allow-insecure. Should be a comma-separated list, or a path to a filename containing one feature name per line. See also the [security doc](/docs/en/writing-running-appium/security.md)|`--deny-insecure=foo,bar`|

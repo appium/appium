@@ -8,12 +8,12 @@
 
 在终端执行以下命令使用 Homebrew 安装最新版本的 ios-webkit-debug-proxy：
 
- ``` center
+``` center
  # 没有安装 brew 时才需要第一条命令。
  > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
  > brew update
  > brew install ios-webkit-debug-proxy
- ```
+```
 
 #### 从源码构建 ios-webkit-debug-proxy
 

@@ -16,8 +16,11 @@ example_usage:
       let tagName = await element.getTagName();
   javascript_wdio:
     |
-      let tagName = driver.getTagName("~SomeAccessibilityId");
+      let tagName = $("~SomeAccessibilityId").getTagName();
   ruby:
+    |
+      find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
   php:
@@ -33,6 +36,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/property/getTagName.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1336"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -57,7 +61,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -73,6 +77,6 @@ endpoint:
       description: The tag name of the element
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-element-tag-name
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidname

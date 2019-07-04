@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.9.2-beta.2",
+  "version": "1.14.0-beta.2",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -27,7 +27,8 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js"
+    "appium": "./build/lib/main.js",
+    "authorize-ios": "./node_modules/.bin/authorize-ios"
   },
   "directories": {
     "lib": "./lib",
@@ -36,7 +37,8 @@
   "files": [
     "bin",
     "lib",
-    "build/lib"
+    "build/lib",
+    "npm-shrinkwrap.json"
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
@@ -44,15 +46,15 @@
     "appium-base-driver": "3.x",
     "appium-espresso-driver": "^1.0.0",
     "appium-fake-driver": "^0.x",
-    "appium-ios-driver": "2.x",
+    "appium-ios-driver": "4.x",
     "appium-mac-driver": "1.x",
     "appium-selendroid-driver": "1.x",
     "appium-support": "2.x",
-    "appium-tizen-driver": "1.1.1-beta.2",
+    "appium-tizen-driver": "^1.1.1-beta.3",
     "appium-uiautomator2-driver": "1.x",
     "appium-windows-driver": "1.x",
-    "appium-xcuitest-driver": "2.x",
-    "appium-youiengine-driver": "1.x",
+    "appium-xcuitest-driver": "^2.116.3",
+    "appium-youiengine-driver": "^1.2.0",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
@@ -60,19 +62,24 @@
     "continuation-local-storage": "3.x",
     "dateformat": "^3.0.3",
     "find-root": "^1.1.0",
-    "lodash": "^4.17.9",
+    "lodash": "^4.17.11",
     "longjohn": "^0.2.12",
     "npmlog": "4.x",
+    "semver": "^6.1.2",
     "request": "^2.81.0",
     "request-promise": "4.x",
-    "semver": "^5.5.0",
     "source-map-support": "0.x",
     "teen_process": "1.x",
-    "winston": "3.x"
+    "winston": "3.x",
+    "word-wrap": "^1.2.3"
   },
   "scripts": {
-    "prepare": "gulp prepublish",
-    "publish": "gulp prepublish",
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
+    "prepublish": "gulp prepublish",
+    "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
+    "postpublish": "npm run restore-shrinkwrap",
+    "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm shrinkwrap && npm install --only=dev --no-shrinkwrap)",
+    "restore-shrinkwrap": "git checkout HEAD -- npm-shrinkwrap.json",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
     "watch": "gulp watch",
@@ -80,48 +87,37 @@
     "mocha": "mocha",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp once",
-    "lint": "gulp eslint",
+    "lint": "gulp lint",
+    "lint:fix": "gulp lint --fix",
     "coverage": "gulp coveralls",
     "generate-docs": "node ./build/commands-yml/parse.js",
-    "clean": "rm -rf node_modules && rm -rf package-lock.json && npm install",
-    "clean:prod": "rm -rf node_modules && rm -rf package-lock.json && npm install --production",
     "zip": "zip -qr appium.zip .",
-    "upload": "node ./build/test/scripts/bintray-upload.js",
+    "upload": "gulp github-upload",
     "zip-and-upload": "npm run zip && npm run upload",
-    "release-beta": "release pre beta && npm publish --tag beta"
+    "authorize-ios": "authorize-ios"
   },
   "pre-commit": [
     "precommit-msg",
     "precommit-test"
   ],
   "devDependencies": {
-    "ajv": "^6.5.3",
-    "appium-gulp-plugins": "^3.1.0",
-    "babel-eslint": "^10.0.0",
+    "appium-gulp-plugins": "^4.1.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",
-    "eslint": "^5.2.0",
-    "eslint-config-appium": "3.x",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-mocha": "^5.0.0",
-    "eslint-plugin-promise": "^4.0.0",
+    "eslint-config-appium": "^4.0.1",
     "fancy-log": "^1.3.2",
     "gulp": "^4.0.0",
     "handlebars": "^4.0.10",
-    "mocha": "5.x",
+    "mocha": "^6.0.0",
     "pre-commit": "1.x",
-    "release": "^4.0.2",
     "replace-ext": "^1.0.0",
-    "sinon": "^6.0.0",
-    "validate.js": "^0.12.0",
+    "rimraf": "^2.6.2",
+    "sinon": "^7.2.3",
+    "validate.js": "^0.13.0",
     "wd": "^1.10.0",
     "yaml-js": "^0.2.0"
   },
   "optionalDependencies": {
-    "fsevents": "1.x",
-    "heapdump": "0.x"
-  },
-  "greenkeeper": {
-    "ignore": []
+    "fsevents": "2.x"
   }
 }

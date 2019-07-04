@@ -14,10 +14,13 @@ example_usage:
       await driver.close();
   javascript_wdio:
     |
-      driver.close();
+      driver.closeWindow();
   ruby:
     |
-      @driver.close()
+      close
+  ruby_core:
+    |
+      @driver.close
   php:
     |
       // TODO PHP sample
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/window/close.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L260"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:close"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:close"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -66,6 +70,6 @@ endpoint:
       description: ID of the session to route the command to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#close-window
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindow

@@ -9,6 +9,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { XCUITestDriver } from 'appium-xcuitest-driver';
 import { IosDriver } from 'appium-ios-driver';
+import { AndroidUiautomator2Driver } from 'appium-uiautomator2-driver';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes } from '../lib/utils';
 
@@ -20,12 +21,15 @@ const SESSION_ID = 1;
 describe('AppiumDriver', function () {
   describe('AppiumDriver', function () {
     function getDriverAndFakeDriver () {
-      let appium = new AppiumDriver({});
-      let fakeDriver = new FakeDriver();
-      let mockFakeDriver = sinon.mock(fakeDriver);
-      appium.getDriverForCaps = function (/*args*/) {
-        return function Driver () {
-          return fakeDriver;
+      const appium = new AppiumDriver({});
+      const fakeDriver = new FakeDriver();
+      const mockFakeDriver = sinon.mock(fakeDriver);
+      appium.getDriverAndVersionForCaps = function (/*args*/) {
+        return {
+          driver: function Driver () {
+            return fakeDriver;
+          },
+          version: '1.2.3',
         };
       };
       return [appium, mockFakeDriver];
@@ -42,7 +46,7 @@ describe('AppiumDriver', function () {
       });
 
       it(`should call inner driver's createSession with desired capabilities`, async function () {
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
@@ -52,7 +56,7 @@ describe('AppiumDriver', function () {
         let defaultCaps = {deviceName: 'Emulator'};
         let allCaps = _.extend(_.clone(defaultCaps), BASE_CAPS);
         appium.args.defaultCapabilities = defaultCaps;
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withArgs(allCaps)
           .returns([SESSION_ID, allCaps]);
         await appium.createSession(BASE_CAPS);
@@ -63,7 +67,7 @@ describe('AppiumDriver', function () {
         // should do nothing
         let defaultCaps = {platformName: 'Ersatz'};
         appium.args.defaultCapabilities = defaultCaps;
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withArgs(BASE_CAPS)
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
@@ -93,7 +97,7 @@ describe('AppiumDriver', function () {
         let sessions = await appium.getSessions();
         sessions.should.have.length(3);
 
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withExactArgs(BASE_CAPS, undefined, null, [])
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(BASE_CAPS);
@@ -107,7 +111,7 @@ describe('AppiumDriver', function () {
         mockFakeDriver.verify();
       });
       it('should call "createSession" with W3C capabilities argument, if provided', async function () {
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withArgs(null, undefined, W3C_CAPS)
           .returns([SESSION_ID, BASE_CAPS]);
         await appium.createSession(undefined, undefined, W3C_CAPS);
@@ -121,7 +125,7 @@ describe('AppiumDriver', function () {
             'appium:someOtherParm': 'someOtherParm',
           },
         };
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withArgs(null, undefined, {
             alwaysMatch: {
               ...w3cCaps.alwaysMatch,
@@ -158,7 +162,7 @@ describe('AppiumDriver', function () {
           },
         };
 
-        mockFakeDriver.expects("createSession")
+        mockFakeDriver.expects('createSession')
           .once().withArgs(jsonwpCaps, undefined, expectedW3cCaps)
           .returns([SESSION_ID, jsonwpCaps]);
 
@@ -185,7 +189,7 @@ describe('AppiumDriver', function () {
       });
       it('should call inner driver\'s deleteSession method', async function () {
         const [sessionId] = (await appium.createSession(BASE_CAPS)).value;
-        mockFakeDriver.expects("deleteSession")
+        mockFakeDriver.expects('deleteSession')
           .once().withExactArgs(sessionId, [])
           .returns();
         await appium.deleteSession(sessionId);
@@ -252,7 +256,7 @@ describe('AppiumDriver', function () {
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
         let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
-        appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error("Oops"));
+        appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error('Oops'));
         // let event loop spin so rejection is handled
         await sleep(1);
         _.keys(appium.sessions).should.not.contain(sessionId);
@@ -274,14 +278,23 @@ describe('AppiumDriver', function () {
         _.keys(appium.sessions).should.contain(sessionId);
       });
     });
-    describe('getDriverForCaps', function () {
+    describe('getDriverAndVersionForCaps', function () {
       it('should not blow up if user does not provide platformName', function () {
-        let appium = new AppiumDriver({});
-        (() => { appium.getDriverForCaps({}); }).should.throw(/platformName/);
+        const appium = new AppiumDriver({});
+        (() => { appium.getDriverAndVersionForCaps({}); }).should.throw(/platformName/);
+      });
+      it('should ignore automationName Appium', function () {
+        const appium = new AppiumDriver({});
+        const {driver} = appium.getDriverAndVersionForCaps({
+          platformName: 'Android',
+          automationName: 'Appium'
+        });
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(AndroidUiautomator2Driver);
       });
       it('should get XCUITestDriver driver for automationName of XCUITest', function () {
-        let appium = new AppiumDriver({});
-        let driver = appium.getDriverForCaps({
+        const appium = new AppiumDriver({});
+        const {driver} = appium.getDriverAndVersionForCaps({
           platformName: 'iOS',
           automationName: 'XCUITest'
         });
@@ -289,55 +302,76 @@ describe('AppiumDriver', function () {
         driver.should.equal(XCUITestDriver);
       });
       it('should get iosdriver for ios < 10', function () {
-        let appium = new AppiumDriver({});
-        let caps = {
+        const appium = new AppiumDriver({});
+        const caps = {
           platformName: 'iOS',
           platformVersion: '8.0',
         };
-        let driver = appium.getDriverForCaps(caps);
+        let {driver} = appium.getDriverAndVersionForCaps(caps);
         driver.should.be.an.instanceof(Function);
         driver.should.equal(IosDriver);
 
         caps.platformVersion = '8.1';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(IosDriver);
 
         caps.platformVersion = '9.4';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(IosDriver);
 
         caps.platformVersion = '';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(IosDriver);
 
         caps.platformVersion = 'foo';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(IosDriver);
 
         delete caps.platformVersion;
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(IosDriver);
       });
       it('should get xcuitestdriver for ios >= 10', function () {
-        let appium = new AppiumDriver({});
-        let caps = {
+        const appium = new AppiumDriver({});
+        const caps = {
           platformName: 'iOS',
           platformVersion: '10',
         };
-        let driver = appium.getDriverForCaps(caps);
+        let {driver} = appium.getDriverAndVersionForCaps(caps);
         driver.should.be.an.instanceof(Function);
         driver.should.equal(XCUITestDriver);
 
         caps.platformVersion = '10.0';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(XCUITestDriver);
 
         caps.platformVersion = '10.1';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
         driver.should.equal(XCUITestDriver);
 
         caps.platformVersion = '12.14';
-        driver = appium.getDriverForCaps(caps);
+        ({driver} = appium.getDriverAndVersionForCaps(caps));
+        driver.should.equal(XCUITestDriver);
+      });
+      it('should be able to handle different cases in automationName', function () {
+        const appium = new AppiumDriver({});
+        const caps = {
+          platformName: 'iOS',
+          platformVersion: '10',
+          automationName: 'XcUiTeSt',
+        };
+        let {driver} = appium.getDriverAndVersionForCaps(caps);
+        driver.should.be.an.instanceof(Function);
+        driver.should.equal(XCUITestDriver);
+      });
+      it('should be able to handle different case in platformName', function () {
+        const appium = new AppiumDriver({});
+        const caps = {
+          platformName: 'IoS',
+          platformVersion: '10',
+        };
+        let {driver} = appium.getDriverAndVersionForCaps(caps);
+        driver.should.be.an.instanceof(Function);
         driver.should.equal(XCUITestDriver);
       });
     });

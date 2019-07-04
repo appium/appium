@@ -14,8 +14,11 @@ example_usage:
       let cookies = await driver.allCookies();
   javascript_wdio:
     |
-      let cookies = driver.cookie();
+      let cookies = driver.getCookies():
   ruby:
+    |
+      all_cookies
+  ruby_core:
     |
       @driver.all_cookies
   php:
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/cookie.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1957"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:all_cookies"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:all_cookies"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -69,6 +73,6 @@ endpoint:
       description: A list of cookies
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-all-cookies
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#get-sessionsessionidcookie

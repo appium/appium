@@ -1,6 +1,6 @@
 ---
 name: Execute Script
-short_description: Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame (Web context only)
+short_description: Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame (Web context). Run a native [mobile command](/docs/en/commands/mobile-command.md) (Native Context).
 
 description:
   |
@@ -31,8 +31,11 @@ example_usage:
       }, 1, 2, 3, 4)
 
       // node.js context - client and console are available
-      console.log(result.value); // outputs: 10
+      console.log(result); // outputs: 10
   ruby:
+    |
+      execute_script("document.title")
+  ruby_core:
     |
       @driver.execute_script("document.title")
   php:
@@ -48,6 +51,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/execute.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -76,8 +80,8 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/execute_async
-  method: GET
+  url: /wd/hub/session/:session_id/execute
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
@@ -95,4 +99,4 @@ endpoint:
 # Links to specifications. Should link to at least one specification
 specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-execute-script
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async
+  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute

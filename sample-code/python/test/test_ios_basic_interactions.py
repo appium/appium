@@ -1,8 +1,9 @@
 import pytest
 import os
+import copy
 
 from appium import webdriver
-from helpers import take_screenhot_and_syslog, IOS_APP_PATH, EXECUTOR
+from helpers import report_to_sauce, take_screenshot_and_syslog, IOS_BASE_CAPS, EXECUTOR
 
 
 class TestIOSBasicInteractions():
@@ -10,19 +11,18 @@ class TestIOSBasicInteractions():
     @pytest.fixture(scope='function')
     def driver(self, request, device_logger):
         calling_request = request._pyfuncitem.name
+
+        caps = copy.copy(IOS_BASE_CAPS)
+        caps['name'] = calling_request
+
         driver = webdriver.Remote(
             command_executor=EXECUTOR,
-            desired_capabilities={
-                'app': IOS_APP_PATH,
-                'platformName': 'iOS',
-                'automationName': 'XCUITest',
-                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '11.1',
-                'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
-            }
+            desired_capabilities=caps
         )
 
         def fin():
-            take_screenhot_and_syslog(driver, device_logger, calling_request)
+            report_to_sauce(driver.session_id)
+            take_screenshot_and_syslog(driver, device_logger, calling_request)
             driver.quit()
 
         request.addfinalizer(fin)

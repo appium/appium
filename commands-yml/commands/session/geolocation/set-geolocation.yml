@@ -1,7 +1,7 @@
 ---
 name: Set Geolocation
 short_description: Set the current geo location
-   
+
 example_usage:
   java:
     |
@@ -11,11 +11,14 @@ example_usage:
       self.driver.set_location(49, 123, 10)
   javascript_wdio:
     |
-      driver.location({latitude: 121.21, longitude: 11.56, altitude: 94.23});
+      driver.setGeoLocation({latitude: "121.21", longitude: "11.56", altitude: "94.23"});
   javascript_wd:
     |
       await driver.setGeoLocation(121.21, 11.56, 10);
   ruby:
+    |
+      set_location(121.21, 11.56, 94.23)
+  ruby_core:
     |
       @driver.set_location(121.21, 11.56, 94.23)
   php:
@@ -23,7 +26,9 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      driver.Location.Altitude = 94.23;
+      driver.Location.Latitude = 121.21;
+      driver.Location.Longitude = 11.56;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/html5/LocationContext.html#location--"
@@ -31,6 +36,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/location.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L407"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +61,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -76,5 +82,5 @@ endpoint:
       description: The desired geolocation altitude (optional)
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#post-sessionsessionidlocation

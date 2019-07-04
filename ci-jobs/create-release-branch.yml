@@ -1,0 +1,29 @@
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '12.x'
+- script: npm install
+  displayName: NPM install
+- script: |
+    git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium
+    git checkout -b $MINOR_BRANCH_NAME
+    git status
+    node ./ci-jobs/scripts/set-package-json-version
+    rm -rf package-lock.json
+    npm shrinkwrap
+    git add .
+    git commit -n -m "Set version to $(MINOR_BRANCH_NAME).0-rc.0"
+    git push -u triager $MINOR_BRANCH_NAME
+  displayName: Create branch
+  env:
+    GITHUB_TOKEN: $(GITHUB_TOKEN)
+    MINOR_BRANCH_NAME: $(MINOR_BRANCH_NAME)
+- script: |
+    git tag $MINOR_BRANCH_NAME.0-rc.0
+    git push --tags -u triager
+    echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+    npm publish --tag $(node ./ci-jobs/scripts/parse-tag)
+  env:
+    NPM_TOKEN: $(NPM_TOKEN)
+  displayName: Tag and Publish
+

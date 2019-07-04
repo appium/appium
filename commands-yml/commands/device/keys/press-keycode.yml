@@ -1,7 +1,9 @@
 ---
 name: Press Key Code
-short_description: Press a particular key on the device
-  
+short_description: Press a particular key on an Android Device
+
+description: See https://developer.android.com/reference/android/view/KeyEvent.html for reference of available Android key code values
+
 example_usage:
   java:
     |
@@ -14,8 +16,11 @@ example_usage:
       driver.pressKeycode(10);
   javascript_wd:
     |
-      await driver.pressKeycode(10);
+      await driver.pressKeyCode(10);
   ruby:
+    |
+      press_keycode(10)
+  ruby_core:
     |
       @driver.press_keycode(10)
   php:
@@ -27,10 +32,11 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/windows/PressesKeyCode.html#pressKeyCode-int-"
-  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L415"
+  python: "https://github.com/appium/python-client/blob/master/README.md#sending-a-key-event-to-an-android-device"
   javascript_wdio: "http://webdriver.io/api/mobile/longPressKeycode.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2457"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#press_keycode-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#press_keycode-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +61,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

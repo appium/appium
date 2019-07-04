@@ -14,8 +14,11 @@ example_usage:
       let windowHandle = await driver.windowHandles();
   javascript_wdio:
     |
-      let handles = driver.windowHandles();
+      let handles = driver.getWindowHandles();
   ruby:
+    |
+      window_handles
+  ruby_core:
     |
       @driver.window_handles
   php:
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandles.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L379"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handles"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handles"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -69,6 +73,6 @@ endpoint:
       description: A list of window handles
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-window-handles
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindow_handles

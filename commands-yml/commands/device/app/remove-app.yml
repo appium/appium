@@ -22,6 +22,9 @@ example_usage:
       driver.removeApp('com.example.AppName')
   ruby:
     |
+      remove_app('com.example.AppName')
+  ruby_core:
+    |
       @driver.remove_app('com.example.AppName')
   php:
     |
@@ -32,10 +35,11 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#removeApp-java.lang.String-"
-  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/webdriver.py#L566"
+  python: "https://github.com/appium/python-client/blob/master/README.md#removing-an-application"
   javascript_wdio: "http://webdriver.io/api/mobile/removeApp.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2563"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#remove_app-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#remove_app-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

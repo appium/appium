@@ -1,6 +1,6 @@
 ---
-name: Navigate to URL
-short_description: Navigate to a new URL (Web context only)
+name: Go to URL
+short_description: Navigate to a new URL (Web context) or open an Appium [deep link](https://appiumpro.com/editions/7) (Native)
 
 example_usage:
   java:
@@ -17,6 +17,9 @@ example_usage:
       driver.url("http://appium.io");
   ruby:
     |
+      get("http://appium.io")
+  ruby_core:
+    |
       @driver.get("http://appium.io")
   php:
     |
@@ -31,18 +34,19 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/url.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L486"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:get"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:get"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: false
-    uiautomation: false
+    xcuitest: true
+    uiautomation: true
   android:
-    uiautomator2: false
-    espresso: false
-    uiautomator: false
+    uiautomator2: true
+    espresso: true
+    uiautomator: true
   mac:
     mac: false
   windows:
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -70,6 +74,6 @@ endpoint:
       description: The URL to navigate to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-go
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidurl

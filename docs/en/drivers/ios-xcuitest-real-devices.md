@@ -7,7 +7,7 @@ Appium iOS real device support depends on a central third-party software suite,
 with [Homebrew](http://brew.sh/):
 
 ```
-brew install libimobiledevice
+brew install libimobiledevice --HEAD
 ```
 
 In addition to the dependency on `libimobiledevice`, Appium support for real
@@ -30,6 +30,8 @@ application called `WebDriverAgent-Runner` onto the device, through which the
 application under test is automated. While this is simple in theory, the hoops
 of code signing and provisioning applications for development and testing can
 make this a bit of a headache.
+
+The documentation on [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) is also helpful to resolve dependencies.
 
 ### Basic (automatic) configuration
 
@@ -228,7 +230,7 @@ the same: to have a build of your app (an `.ipa` file) signed with
 a development provisioning profile. A good overview of the process can be found
 [here](https://medium.com/ios-os-x-development/ios-code-signing-provisioning-in-a-nutshell-d5b247760bef#.5hirl92tn)
 and
-[here](https://engineering.nodesagency.com/articles/iOS/Understanding-code-signing-for-iOS-apps/).
+[here](https://engineering.nodesagency.com/categories/ios/2016/10/28/Understanding-code-signing-for-iOS-apps).
 
 In a little more detail, to get started on a real device, you will need the following:
 

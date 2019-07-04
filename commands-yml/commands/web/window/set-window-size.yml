@@ -15,11 +15,13 @@ example_usage:
       await driver.setWindowSize(10, 10); // Set current window
   javascript_wdio:
     |
-      driver.windowHandleSize("handleName", {height: 10, width: 10}); // Set by window handle hame
-      driver.windowHandleSize({height: 10, width: 10}); // Current window
+      driver.setWindowSize(10, 10});
   ruby:
     |
-      @driver.maximize_window()
+      resize_to(10, 10)
+  ruby_core:
+    |
+      @driver.resize_to(10, 10)
   php:
     |
       // TODO PHP sample
@@ -33,6 +35,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandleSize.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L564"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:maximize_window"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:maximize_window"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -57,7 +60,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -77,5 +80,5 @@ endpoint:
       description: The new window height
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#post-sessionsessionidwindowwindowhandlesize

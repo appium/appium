@@ -3,17 +3,21 @@
   "version": "1.0.0",
   "description": "Appium sample code using 'wd'",
   "scripts": {
-    "test": "mocha test/**/*.test.js"
+    "test": "mocha test/**/*.test.js",
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
   "author": "Dan Graham",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=6",
+    "npm": ">=6"
+  },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "@babel/register": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "chai": "^4.1.2",
-    "mocha": "^4.1.0",
+    "mocha": "^6.0.0",
     "wd": "^1.5.0"
   }
 }

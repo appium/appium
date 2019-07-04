@@ -15,8 +15,8 @@ import sinon from 'sinon';
 chai.use(chaiAsPromised);
 
 const should = chai.should();
-const shouldStartServer = process.env.USE_RUNNING_SERVER !== "0";
-const caps = {platformName: "Fake", deviceName: "Fake", app: TEST_FAKE_APP};
+const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
+const caps = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
 
 describe('FakeDriver - via HTTP', function () {
   let server = null;
@@ -136,12 +136,12 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should accept a combo of W3C and JSONWP capabilities but default to W3C', async function () {
       const combinedCaps = {
-        "desiredCapabilities": {
+        'desiredCapabilities': {
           ...caps,
         },
-        "capabilities": {
-          "alwaysMatch": {...caps},
-          "firstMatch": [{
+        'capabilities': {
+          'alwaysMatch': {...caps},
+          'firstMatch': [{
             w3cParam: 'w3cParam',
           }],
         }
@@ -162,14 +162,14 @@ describe('FakeDriver - via HTTP', function () {
 
     it('should accept a combo of W3C and JSONWP and if JSONWP has extraneous keys, they should be merged into W3C capabilities', async function () {
       const combinedCaps = {
-        "desiredCapabilities": {
+        'desiredCapabilities': {
           ...caps,
           automationName: 'Fake',
           anotherParam: 'Hello',
         },
-        "capabilities": {
-          "alwaysMatch": {...caps},
-          "firstMatch": [{
+        'capabilities': {
+          'alwaysMatch': {...caps},
+          'firstMatch': [{
             w3cParam: 'w3cParam',
           }],
         }
@@ -195,7 +195,7 @@ describe('FakeDriver - via HTTP', function () {
         capabilities: {
           alwaysMatch: {
             ...caps,
-            automationName: "BadAutomationName",
+            automationName: 'BadAutomationName',
           },
         },
       };
@@ -271,6 +271,9 @@ describe('FakeDriver - via HTTP', function () {
       value.should.deep.equal(caps);
 
       createSessionStub.restore();
+
+      // End session
+      await request.delete({ url: `${baseUrl}/${sessionId}` });
     });
 
     it('should handle concurrent MJSONWP and W3C sessions', async function () {

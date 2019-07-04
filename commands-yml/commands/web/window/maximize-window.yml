@@ -15,11 +15,13 @@ example_usage:
       await driver.maximize(); // Set current window
   javascript_wdio:
     |
-      driver.windowHandleMaximize("handleName"); // Set by window handle hame
-      driver.windowHandleMaximize(); // Current window
+      driver.maximizeWindow();
   ruby:
     |
-      @driver.resize_to(10, 10)
+      maximize_window
+  ruby_core:
+    |
+      @driver.maximize_window
   php:
     |
       // TODO PHP sample
@@ -33,6 +35,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandleMaximize.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L517"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Window:maximize"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Window:maximize"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -57,7 +60,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -70,6 +73,6 @@ endpoint:
       description: Handle of the window to maximize. If 'current' it will maximize current window
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-maximize-window
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidwindowwindowhandlemaximize

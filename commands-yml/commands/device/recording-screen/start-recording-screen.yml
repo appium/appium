@@ -10,7 +10,15 @@ example_usage:
   javascript_wd:
     |
       await driver.startRecordingScreen();
+  javascript_wdio:
+    |
+      driver.startRecordingScreen();
   ruby:
+    |
+      start_recording_screen
+      start_recording_screen video_size: '1280x720', time_limit: '180', bit_rate: '5000000' # Android
+      start_recording_screen video_type: 'h264', time_limit: '260' # iOS
+  ruby_core:
     |
       @driver.start_recording_screen
       @driver.start_recording_screen video_size: '1280x720', time_limit: '180', bit_rate: '5000000' # Android
@@ -23,12 +31,20 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      driver.StartRecordingScreen(
+          AndroidStartScreenRecordingOptions.GetAndroidStartScreenRecordingOptions()
+              .WithTimeLimit(TimeSpan.FromSeconds(10))
+              .WithBitRate(500000)
+              .WithVideoSize("720x1280"));
 
 client_docs:
   java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-"
+  python: "https://github.com/appium/python-client"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3412"
   ruby:
+    - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method"
+      ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method"
+  ruby_core:
     - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method"
       ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
@@ -65,53 +81,61 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: remotePath
+    - name: options 
+      type: object
+      description: The following parameters of the action
+    - name: options.remotePath
       type: string
       description: The path to the remote location, where the resulting video should be uploaded.
                    The following protocols are supported http/https, ftp.
                    Null or empty string value (the default setting) means the content of resulting
-                   file should be encoded as Base64 and passed as the endpount response value.
+                   file should be encoded as Base64 and passed as the endpoint response value.
                    An exception will be thrown if the generated media file is too big to
                    fit into the available process memory.
-                   This option only has an effect if there is screen recording process in progreess
+                   This option only has an effect if there is screen recording process in progress
                    and `forceRestart` parameter is not set to `true`.
-    - name: username
+    - name: options.username
       type: string
       description: The name of the user for the remote authentication.
-    - name: password
+    - name: options.password
       type: string
       description: The password for the remote authentication.
-    - name: method
+    - name: options.method
       type: string
       description: The http multipart upload method name. The 'PUT' one is used by default.
-    - name: forceRestart
+    - name: options.forceRestart
       type: boolean
       description: Whether to try to catch and upload/return the currently running screen recording
                    (`false`, the default setting on server) or ignore the result of it
                    and start a new recording immediately (`true`).
-    - name: timeLimit
+    - name: options.timeLimit
       type: string
       description: Recording time. 180 seconds is by default.
-    - name: videoType
+    - name: options.videoType
       type: string
       description: (iOS Only) The format of the screen capture to be recorded.
                    Available formats "h264", "mp4" or "fmp4". Default is "mp4".
                    Only works for Simulator.
-    - name: videoQuality
+    - name: options.videoQuality
       type: string
-      description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). Only works for real devices.
-    - name: bitRate
+      description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium).
+    - name: options.videoFps
+      type: string
+      description: (iOS Only) The Frames Per Second rate of the recorded video.
+                   Change this value if the resulting video is too slow or too fast. Defaults to 10.
+                   This can decrease the resulting file size.
+    - name: options.bitRate
       type: string
       description: (iOS Only) The video bit rate for the video, in megabits per second.
                    4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above.
-    - name: videoSize
+    - name: options.videoSize
       type: string
       description: (Android Only) The format is widthxheight.
                    The default value is the device's native display resolution (if supported),
                    1280x720 if not. For best results,
                    use a size supported by your device's Advanced Video Coding (AVC) encoder.
                    For example, "1280x720"
-    - name: bugReport
+    - name: options.bugReport
       type: string
       description: (Android Only) Set it to `true` in order to display additional information on the video overlay,
                    such as a timestamp, that is helpful in videos captured to illustrate bugs.

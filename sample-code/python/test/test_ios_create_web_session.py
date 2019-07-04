@@ -1,42 +1,41 @@
-import pytest
+import unittest
 import os
+import copy
+import sys
+
+from time import sleep
 
 from appium import webdriver
-from helpers import take_screenhot_and_syslog, EXECUTOR
-from selenium.common.exceptions import InvalidSessionIdException
+from helpers import report_to_sauce, IOS_BASE_CAPS, EXECUTOR
+from selenium.common.exceptions import WebDriverException
 
 
-class TestIOSCreateWebSession():
+class TestIOSCreateWebSession(unittest.TestCase):
+    def tearDown(self):
+        report_to_sauce(self.driver.session_id)
 
-    @pytest.fixture(scope='function')
-    def driver(self, request, device_logger):
-        calling_request = request._pyfuncitem.name
-        driver = webdriver.Remote(
+    def test_should_create_and_destroy_ios_web_session(self):
+        caps = copy.copy(IOS_BASE_CAPS)
+        caps['name'] = self.id()
+        # can only specify one of `app` and `browserName`
+        caps['browserName'] = 'Safari'
+        caps.pop('app')
+
+        self.driver = webdriver.Remote(
             command_executor=EXECUTOR,
-            desired_capabilities={
-                'platformName': 'iOS',
-                'automationName': 'XCUITest',
-                'platformVersion': os.getenv('IOS_PLATFORM_VERSION') or '10.3',
-                'deviceName': os.getenv('IOS_DEVICE_NAME') or 'iPhone 6s',
-                'browserName': 'Safari'
-            }
+            desired_capabilities=caps
         )
 
-        def fin():
-            take_screenhot_and_syslog(driver, device_logger, calling_request)
+        self.driver.get('https://www.google.com')
+        assert 'Google' == self.driver.title
 
-        request.addfinalizer(fin)
+        self.driver.quit()
 
-        driver.implicitly_wait(10)
-        return driver
+        sleep(5)
 
-    def test_should_create_and_destroy_android_session(self, driver):
-        driver.get('https://www.google.com')
-        title = driver.title
-
-        assert 'Google' == title
-        driver.quit()
-
-        with pytest.raises(InvalidSessionIdException) as excinfo:
-            driver.title
-        assert 'A session is either terminated or not started' == excinfo.value.msg
+        with self.assertRaises(WebDriverException) as excinfo:
+            self.driver.title
+        self.assertTrue(
+            'has already finished' in str(excinfo.exception.msg) or
+            'Unhandled endpoint' in str(excinfo.exception.msg)
+        )

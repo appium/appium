@@ -2,13 +2,13 @@ import validate from 'validate.js';
 import _ from 'lodash';
 
 
-validate.validators.array = function (value, options, key, attributes) {
+validate.validators.array = function array (value, options, key, attributes) {
   if (attributes[key] && !validate.isArray(attributes[key])) {
     return `must be an array`;
   }
 };
 
-validate.validators.hasAttributes = function (value, options) {
+validate.validators.hasAttributes = function hasAttributes (value, options) {
   if (!value) {
     return;
   }
@@ -26,7 +26,7 @@ validate.validators.hasAttributes = function (value, options) {
   }
 };
 
-validate.validators.hasPossibleAttributes = function (value, options) {
+validate.validators.hasPossibleAttributes = function hasPossibleAttributes (value, options) {
   if (!value) {
     return;
   }
@@ -59,6 +59,7 @@ const validator = {
   'example_usage.javascript_wdio': {},
   'example_usage.javascript_wd': {},
   'example_usage.ruby': {},
+  'example_usage.ruby_core': {},
   'example_usage.csharp': {},
   'example_usage.php': {},
   'description': {},
@@ -66,6 +67,7 @@ const validator = {
   'client_docs.javascript_wdio': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'client_docs.javascript_wd': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'client_docs.ruby': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
+  'client_docs.ruby_core': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'client_docs.csharp': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'client_docs.php': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'endpoint': {presence: true},

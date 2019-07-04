@@ -3,11 +3,11 @@ name: Create New Session
 short_description: Create a new session
 description:
   |
-    The server should attempt to create a session that most closely matches the desired and required capabilities. 
-    
+    The server should attempt to create a session that most closely matches the desired and required capabilities.
+
     * [JSONWP Spec](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1) Required capabilities have higher priority than desired capabilities and must be set for the session to be created
     * [W3C Spec](https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)
-    
+
 example_usage:
   java:
     |
@@ -21,7 +21,7 @@ example_usage:
 
         IOSDriver driver = new IOSDriver(url, desiredCapabilities);
         String sessionId = driver.getSessionId().toString();
-        
+
   python:
     |
       desired_caps = desired_caps = {
@@ -48,13 +48,13 @@ example_usage:
 
   javascript_wdio:
     |
-      let options = { desiredCapabilities: { 
+      let options = { desiredCapabilities: {
         platformName: 'Android',
         platformVersion: '7.0',
         automationName: 'UiAutomator2',
         app: path.resolve('path', 'to', 'app.apk')
       }};
-      let client = webdriverio.remote(options);
+      let client = driver.newSession(options);
   ruby:
     |
       APP_PATH = '../../path/to/app.app'
@@ -70,12 +70,22 @@ example_usage:
       }
 
       Appium::Driver.new(desired_caps).start_driver
+  ruby_core:
+    |
+      ::Appium::Core.for(desired_caps).start_driver
   php:
     |
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      DesiredCapabilities capabilities = new DesiredCapabilities();
+      capabilities.SetCapability(MobileCapabilityType.PlatformName, "Android");
+      capabilities.SetCapability(MobileCapabilityType.PlatformVersion, "7.1.1");
+      capabilities.SetCapability(MobileCapabilityType.DeviceName, "Android Device");
+      capabilities.SetCapability("appPackage", "com.instagram.android");
+      capabilities.SetCapability("appActivity", "com.instagram.android.activity.MainTabActivity");
+
+      AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/wd/hub/"), capabilities);
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/DefaultSession.html#createSession-org.openqa.selenium.remote.server.DriverFactory-org.openqa.selenium.remote.server.Clock-org.openqa.selenium.remote.SessionId-org.openqa.selenium.Capabilities-"
@@ -83,6 +93,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/action/clearElement.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1780"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -107,7 +118,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -134,6 +145,6 @@ endpoint:
       description: An object describing the session's capabilities
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-new-session
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1

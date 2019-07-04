@@ -6,7 +6,7 @@ description:
   |
     Takes a screenshot of the viewport in a native context (iOS, Android) and takes a screenshot of the window in web context
 
-    Note that some platforms may have settings that prevent screenshots from being taken, for security reason. One such feature is 
+    Note that some platforms may have settings that prevent screenshots from being taken, for security reason. One such feature is
     the [Android FLAG_SECURE layout parameter](https://developer.android.com/reference/android/view/WindowManager.LayoutParams.html#FLAG_SECURE)
 
 example_usage:
@@ -22,8 +22,11 @@ example_usage:
       let screenshot = await driver.takeScreenshot();
   javascript_wdio:
     |
-      let screenshot = driver.screenshot();
+      let screenshot = driver.takeScreenshot();
   ruby:
+    |
+      driver.screenshot_as(:base64) # via core_lib
+  ruby_core:
     |
       @driver.screenshot_as(:base64)
   php:
@@ -31,14 +34,15 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Screenshot screenshot = driver.GetScreenshot();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#getScreenshotAs-org.openqa.selenium.OutputType-"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_screenshot_as_base64"
   javascript_wdio: "http://webdriver.io/api/protocol/screenshot.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1089"
-  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/TakesScreenshot"
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/TakeScreenshot#screenshot_as-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/TakeScreenshot#screenshot_as-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -63,7 +67,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -77,6 +81,6 @@ endpoint:
       description: The screenshot as a base64 encoded PNG
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-take-screenshot
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidscreenshot

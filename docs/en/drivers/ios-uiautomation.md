@@ -60,7 +60,6 @@ support, you will need to upgrade to the [XCUITest driver](ios-xcuitest.md)).
    way to do this by installing and running an authorization script:
 
     ```
-    npm install -g authorize-ios
     sudo authorize-ios
     ```
 

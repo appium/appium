@@ -1,7 +1,7 @@
 ---
 name: Get Geolocation
 short_description: Get the current geo location
-   
+
 example_usage:
   java:
     |
@@ -11,11 +11,14 @@ example_usage:
       location = self.driver.location()
   javascript_wdio:
     |
-      let location = driver.location();
+      let location = driver.getGeoLocation();
   javascript_wd:
     |
       let location = await driver.getGeoLocation();
   ruby:
+    |
+      location
+  ruby_core:
     |
       @driver.location
   php:
@@ -23,7 +26,7 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Location location = driver.Location;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/html5/LocationContext.html#location--"
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/location.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L393"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasLocation#set_location-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/HasLocation#set_location-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -76,5 +80,5 @@ endpoint:
       description: The current geolocation altitude
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidlocation

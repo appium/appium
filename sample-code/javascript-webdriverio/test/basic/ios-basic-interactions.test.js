@@ -1,40 +1,35 @@
-const webdriverio = require("webdriverio");
-const iosOptions = require("../../helpers/caps").iosOptions;
-const app = require("../../helpers/apps").iosTestApp;
-const assert = require("chai").assert;
+const webdriverio = require('webdriverio');
+const iosOptions = require('../../helpers/caps').iosOptions;
+const app = require('../../helpers/apps').iosTestApp;
+const assert = require('chai').assert;
 
-iosOptions.desiredCapabilities.app = app;
+iosOptions.capabilities.app = app;
 
-describe("Basic IOS interactions", function() {
+describe('Basic IOS interactions', function () {
   let client;
 
-  beforeEach(function() {
-    client = webdriverio.remote(iosOptions);
-    return client.init();
+  beforeEach(async function () {
+    client = await webdriverio.remote(iosOptions);
   });
 
-  afterEach(function() {
-    return client.end();
+  afterEach(async function () {
+    await client.deleteSession();
   });
 
-  it("should send keys to inputs", function() {
-    return client
-      .waitForExist("~TextField1", 5000)
-      .element("~TextField1")
-      .setValue("Hello World!")
-      .getText("~TextField1", function(result) {
-        assert.equal(result.value, "Hello World!");
-      });
+  it('should send keys to inputs', async function () {
+    const elementId = await client.findElement('accessibility id', 'TextField1');
+    client.elementSendKeys(elementId.ELEMENT, 'Hello World!');
+
+    const elementValue = await client.findElement('accessibility id', 'TextField1');
+    await client.getElementAttribute(elementValue.ELEMENT, 'value').then((attr) => {
+      assert.equal(attr, 'Hello World!');
+    });
   });
 
-  it("should click a button that opens an alert", async function() {
-    return client
-      .waitForExist("~show alert", 5000)
-      .element("~show alert")
-      .click()
-      .waitForExist("~Cool title", 5000)
-      .getText("~Cool title", function(result) {
-        assert.equal(result.value, "Cool title");
-      });
+  it('should click a button that opens an alert', async function () {
+    const element = await client.findElement('accessibility id', 'show alert');
+    await client.elementClick(element.ELEMENT);
+
+    assert.equal(await client.getAlertText(), 'Cool title\nthis alert is so cool.');
   });
 });

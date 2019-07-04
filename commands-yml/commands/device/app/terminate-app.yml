@@ -1,0 +1,89 @@
+---
+name: Terminate App
+short_description: Terminate the given app on the device
+description:
+  >
+    iOS tests with XCUITest can also use the `mobile: terminateApp` method. See
+    detailed [documentation](http://appium.io/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management/index.html#mobile-terminateapp).
+
+example_usage:
+  java:
+    |
+      driver.terminateApp('com.apple.Preferences');
+      driver.terminateApp('io.appium.android.apis');
+  python:
+    |
+      driver.terminate_app('com.apple.Preferences')
+      driver.terminate_app('io.appium.android.apis')
+  javascript_wd:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+  javascript_wdio:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+  ruby:
+    |
+      terminate_app('com.apple.Preferences')
+      terminate_app('io.appium.android.apis')
+  ruby_core:
+    |
+      @driver.terminate_app('com.apple.Preferences')
+      @driver.terminate_app('io.appium.android.apis')
+  php:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+  csharp:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+
+client_docs:
+  java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#terminateApp-java.lang.String-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/extensions/applications.py"
+  javascript_wdio: "https://webdriver.io/docs/api/appium.html" # TODO wdio documentation link
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js" # TODO wd documentation link
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#terminate_app-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#terminate_app-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: false
+  android:
+    espresso: true
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO: Verify this
+  windows:
+    windows: false # TODO: Verify this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/appium/device/terminate_app
+  method: POST
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: bundleId or appId
+      type: string
+      description: BundleId for iOS. Package name for Android.
+    - name: timeout
+      type: number
+      description: (Only Android) Timeout to retry terminate the app.
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L445

@@ -8,10 +8,12 @@ The Appium server itself defines custom extensions to the official protocols, gi
 
 Language/Framework | Github Repo and Installation Instructions |
 ----- | ----- |
-Ruby | [https://github.com/appium/ruby_lib](https://github.com/appium/ruby_lib)
+Ruby | [https://github.com/appium/ruby_lib](https://github.com/appium/ruby_lib), [https://github.com/appium/ruby_lib_core](https://github.com/appium/ruby_lib_core)
 Python | [https://github.com/appium/python-client](https://github.com/appium/python-client)
 Java | [https://github.com/appium/java-client](https://github.com/appium/java-client)
 JavaScript (Node.js) | [https://github.com/admc/wd](https://github.com/admc/wd)
+JavaScript (Node.js) | [https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio)
+JavaScript (Browser) | [https://github.com/projectxyzio/web2driver](https://github.com/projectxyzio/web2driver)
 Objective C | [https://github.com/appium/selenium-objective-c](https://github.com/appium/selenium-objective-c)
 PHP | [https://github.com/appium/php-client](https://github.com/appium/php-client)
 C# (.NET) | [https://github.com/appium/appium-dotnet-driver](https://github.com/appium/appium-dotnet-driver)

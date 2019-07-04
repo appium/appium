@@ -5,10 +5,7 @@
 [![devDependency Status](https://david-dm.org/appium/appium/dev-status.svg)](https://david-dm.org/appium/appium#info=devDependencies)
 
 [![Monthly Downloads](https://img.shields.io/npm/dm/appium.svg)](https://npmjs.org/package/appium)
-[![Pull Requests](http://issuestats.com/github/appium/appium/badge/pr?style=flat)](http://issuestats.com/github/appium/appium)
-[![Issues Closed](http://issuestats.com/github/appium/appium/badge/issue?style=flat)](http://issuestats.com/github/appium/appium)
 
-[![Build Status](https://team-appium.ci.cloudbees.com/job/Appium/badge/icon)](https://team-appium.ci.cloudbees.com/job/Appium/)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_shield)
 [![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium.svg)](https://greenkeeper.io/)
 
@@ -63,7 +60,7 @@ Similarly, with Google's UiAutomator or Espresso you can only write tests in
 Java. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
-If you're new to Appium, or want a fuller description of what this is all
+If you're new to Appium, or want a more comprehensive description of what this is all
 about, please read our [Introduction to Appium
 Concepts](/docs/en/about-appium/intro.md).
 

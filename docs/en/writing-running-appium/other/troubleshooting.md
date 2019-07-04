@@ -40,6 +40,9 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * After setting power state to `off` (e.g.: `driver.setPowerAC(PowerACState.OFF);`) you must create a new session.
 * When using `-wipe-data` in `avdArgs` the `noReset` capability will be ignored if set to true.
 
+### Android Espresso
+* Appium is supposed to disable animations by default, but if it doesn't work try following the [Espresso setup instructions](https://developer.android.com/training/testing/espresso/setup) which advises that "To avoid flakiness, we highly recommend that you turn off system animations on the virtual or physical devices used for testing. On your device, under Settings > Developer options, disable the following 3 settings: Window animation scale, Transition animation scale, Animator Duration scale"
+
 ### Windows
 
 * Make sure developer mode is on
@@ -130,7 +133,12 @@ own items in the SDK manager. Make sure you install the build-tools and platform
      [pool release];
      return exitCode;
   }
-```
+  ```
+* Get `Unable to launch WebDriverAgent because of xcodebuild failure: Command 'Scripts/bootstrap.sh -d' exited with code 1` error message in failing xcodebuild
+    - Make sure `xcodebuild -checkFirstLaunchStatus` returns status code `0`
+    - If it returns `69`, you should call `xcodebuild -runFirstLaunch` once to prevent the root error, `Install Started
+Install Failed: Error Domain=DVTDownloadableErrors Code=3 "The authorization was denied since no user interaction was possible." UserInfo={AuthorizationErrorCode=-60007, NSLocalizedDescription=The authorization was denied since no user interaction was possible.}`
+    - example: https://github.com/appium/WebDriverAgent/pull/165#discussion_r281458167
 
 
 ### Webview/Hybrid/Safari app support

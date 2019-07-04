@@ -2,7 +2,7 @@
 name: Get Element CSS Value
 short_description: Query the value of a web element's computed CSS property
 
-description: 
+description:
   |
     The CSS property to query should be specified using the CSS property name, not the JavaScript property name (e.g. background-color instead of backgroundColor).
 
@@ -22,8 +22,11 @@ example_usage:
       let cssProperty = await element.getComputedCss();
   javascript_wdio:
     |
-      let cssProperty = driver.getCssProperty("~SomeId", "style");
+      let cssProperty = $("~SomeId").getCSSProperty("style");
   ruby:
+    |
+      find_element(:id, 'SomeId').css_value
+  ruby_core:
     |
       @driver.find_element(:id, 'SomeId').css_value
   php:
@@ -39,8 +42,9 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/property/getCssProperty.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1447"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link  
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # TODO: Confirm if all the drivers support this
 driver_support:
@@ -63,7 +67,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

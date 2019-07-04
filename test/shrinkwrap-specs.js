@@ -20,7 +20,7 @@ describe.skip('shrinkwrap checks', function () {
     expect(shrinkwrap.dependencies, 'no shrinkwrap file found. run `npm shrinkwrap`').to.exist;
     _.values(shrinkwrap.dependencies).length.should.be.above(10);
     let message = "'fsevents' entry found in shrinkwrap. It causes problems " +
-                  "on non-Mac systems. run `gulp fixShrinkwrap` and try again";
+                  'on non-Mac systems. run `gulp fixShrinkwrap` and try again';
     expect(shrinkwrap.dependencies.fsevents, message).to.not.exist;
   });
 });

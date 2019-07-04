@@ -21,8 +21,11 @@ example_usage:
       await element.type("Hello world!")
   javascript_wdio:
     |
-      driver.setValue("~SomeAccessibilityId");
+      $("~SomeAccessibilityId").addValue("Enter");
   ruby:
+    |
+      find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
   php:
@@ -39,6 +42,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/action/setValue.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1700"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#send_keys-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#send_keys-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -67,7 +71,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/value
+  url: /wd/hub/session/:session_id/element/:element_id/value
   method: 'POST'
   url_parameters:
     - name: session_id

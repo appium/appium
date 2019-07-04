@@ -58,64 +58,64 @@ describe('Config', function () {
       it('should get a configuration object if the local git metadata is not present', async function () {
         getStub.onCall(0).returns([
           {
-            "name": `v${APPIUM_VER}`,
-            "zipball_url": "https://api.github.com/repos/appium/appium/zipball/v1.9.0-beta.1",
-            "tarball_url": "https://api.github.com/repos/appium/appium/tarball/v1.9.0-beta.1",
-            "commit": {
-              "sha": "3c2752f9f9c56000705a4ae15b3ba68a5d2e644c",
-              "url": "https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c"
+            'name': `v${APPIUM_VER}`,
+            'zipball_url': 'https://api.github.com/repos/appium/appium/zipball/v1.9.0-beta.1',
+            'tarball_url': 'https://api.github.com/repos/appium/appium/tarball/v1.9.0-beta.1',
+            'commit': {
+              'sha': '3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
+              'url': 'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c'
             },
-            "node_id": "MDM6UmVmNzUzMDU3MDp2MS45LjAtYmV0YS4x"
+            'node_id': 'MDM6UmVmNzUzMDU3MDp2MS45LjAtYmV0YS4x'
           },
           {
-            "name": "v1.8.2-beta",
-            "zipball_url": "https://api.github.com/repos/appium/appium/zipball/v1.8.2-beta",
-            "tarball_url": "https://api.github.com/repos/appium/appium/tarball/v1.8.2-beta",
-            "commit": {
-              "sha": "5b98b9197e75aa85e7507d21d3126c1a63d1ce8f",
-              "url": "https://api.github.com/repos/appium/appium/commits/5b98b9197e75aa85e7507d21d3126c1a63d1ce8f"
+            'name': 'v1.8.2-beta',
+            'zipball_url': 'https://api.github.com/repos/appium/appium/zipball/v1.8.2-beta',
+            'tarball_url': 'https://api.github.com/repos/appium/appium/tarball/v1.8.2-beta',
+            'commit': {
+              'sha': '5b98b9197e75aa85e7507d21d3126c1a63d1ce8f',
+              'url': 'https://api.github.com/repos/appium/appium/commits/5b98b9197e75aa85e7507d21d3126c1a63d1ce8f'
             },
-            "node_id": "MDM6UmVmNzUzMDU3MDp2MS44LjItYmV0YQ=="
+            'node_id': 'MDM6UmVmNzUzMDU3MDp2MS44LjItYmV0YQ=='
           }
         ]);
         getStub.onCall(1).returns({
-          "sha": "3c2752f9f9c56000705a4ae15b3ba68a5d2e644c",
-          "node_id": "MDY6Q29tbWl0NzUzMDU3MDozYzI3NTJmOWY5YzU2MDAwNzA1YTRhZTE1YjNiYTY4YTVkMmU2NDRj",
-          "commit": {
-            "author": {
-              "name": "Isaac Murchie",
-              "email": "isaac@saucelabs.com",
-              "date": "2018-08-17T19:48:00Z"
+          'sha': '3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
+          'node_id': 'MDY6Q29tbWl0NzUzMDU3MDozYzI3NTJmOWY5YzU2MDAwNzA1YTRhZTE1YjNiYTY4YTVkMmU2NDRj',
+          'commit': {
+            'author': {
+              'name': 'Isaac Murchie',
+              'email': 'isaac@saucelabs.com',
+              'date': '2018-08-17T19:48:00Z'
             },
-            "committer": {
-              "name": "Isaac Murchie",
-              "email": "isaac@saucelabs.com",
-              "date": "2018-08-17T19:48:00Z"
+            'committer': {
+              'name': 'Isaac Murchie',
+              'email': 'isaac@saucelabs.com',
+              'date': '2018-08-17T19:48:00Z'
             },
-            "message": "v1.9.0-beta.1",
-            "tree": {
-              "sha": "2c0974727470eba419ea0b9951c52f72f8036b18",
-              "url": "https://api.github.com/repos/appium/appium/git/trees/2c0974727470eba419ea0b9951c52f72f8036b18"
+            'message': 'v1.9.0-beta.1',
+            'tree': {
+              'sha': '2c0974727470eba419ea0b9951c52f72f8036b18',
+              'url': 'https://api.github.com/repos/appium/appium/git/trees/2c0974727470eba419ea0b9951c52f72f8036b18'
             },
-            "url": "https://api.github.com/repos/appium/appium/git/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c",
-            "comment_count": 0,
-            "verification": {
-              "verified": false,
-              "reason": "unsigned",
-              "signature": null,
-              "payload": null
+            'url': 'https://api.github.com/repos/appium/appium/git/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
+            'comment_count': 0,
+            'verification': {
+              'verified': false,
+              'reason': 'unsigned',
+              'signature': null,
+              'payload': null
             }
           },
-          "url": "https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c",
-          "html_url": "https://github.com/appium/appium/commit/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c",
-          "comments_url": "https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c/comments",
+          'url': 'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
+          'html_url': 'https://github.com/appium/appium/commit/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
+          'comments_url': 'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c/comments',
         });
         await verifyBuildInfoUpdate(false);
       });
     });
     describe('showConfig', function () {
       before(function () {
-        sinon.spy(console, "log");
+        sinon.spy(console, 'log');
       });
       it('should log the config to console', async function () {
         const config = getBuildInfo();
@@ -142,50 +142,46 @@ describe('Config', function () {
       process = _process; // eslint-disable-line no-global-assign
     });
     describe('checkNodeOk', function () {
-      it('should fail if node is below 6', function () {
-        process.version = 'v4.4.7';
-        checkNodeOk.should.throw();
-        process.version = 'v0.9.12';
-        checkNodeOk.should.throw();
-        process.version = 'v0.1';
-        checkNodeOk.should.throw();
-        process.version = 'v0.10.36';
-        checkNodeOk.should.throw();
-        process.version = 'v0.12.14';
-        checkNodeOk.should.throw();
-        process.version = 'v5.7.0';
-        checkNodeOk.should.throw();
+      describe('unsupported nodes', function () {
+        const unsupportedVersions = [
+          'v0.1', 'v0.9.12', 'v0.10.36', 'v0.12.14',
+          'v4.4.7', 'v5.7.0', 'v6.3.1', 'v7.1.1',
+        ];
+        for (const version of unsupportedVersions) {
+          it(`should fail if node is ${version}`, function () {
+            process.version = version;
+            checkNodeOk.should.throw();
+          });
+        }
       });
-      it('should succeed if node is 6+', function () {
-        process.version = 'v6.3.1';
-        checkNodeOk.should.not.throw();
-      });
-      it('should succeed if node is 7+', function () {
-        process.version = 'v7.1.1';
-        checkNodeOk.should.not.throw();
-      });
-      it('should succeed if node is 8+', function () {
-        process.version = 'v8.1.2';
-        checkNodeOk.should.not.throw();
-      });
-      it('should succeed if node is 9+', function () {
-        process.version = 'v9.1.2';
-        checkNodeOk.should.not.throw();
+
+      describe('supported nodes', function () {
+        it('should succeed if node is 8+', function () {
+          process.version = 'v8.1.2';
+          checkNodeOk.should.not.throw();
+        });
+        it('should succeed if node is 9+', function () {
+          process.version = 'v9.1.2';
+          checkNodeOk.should.not.throw();
+        });
+        it('should succeed if node is 10+', function () {
+          process.version = 'v10.0.1';
+          checkNodeOk.should.not.throw();
+        });
+        it('should succeed if node is 11+', function () {
+          process.version = 'v11.6.0';
+          checkNodeOk.should.not.throw();
+        });
       });
     });
 
     describe('warnNodeDeprecations', function () {
       let spy;
       before(function () {
-        spy = sinon.spy(logger, "warn");
+        spy = sinon.spy(logger, 'warn');
       });
       beforeEach(function () {
         spy.resetHistory();
-      });
-      it('should log a warning if node is below 8', function () {
-        process.version = 'v7.10.1';
-        warnNodeDeprecations();
-        logger.warn.callCount.should.equal(1);
       });
       it('should not log a warning if node is 8+', function () {
         process.version = 'v8.0.0';

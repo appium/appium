@@ -15,11 +15,13 @@ using the [iOS Predicate](/docs/en/writing-running-appium/ios/ios-predicate.md) 
     * `-ios uiautomation` for iOS 9.3 and below
 * `-android uiautomator`: a string corresponding to a recursive element
 search using the [UiAutomator Api](/docs/en/writing-running-appium/android/uiautomator-uiselector.md) (Android-only)
+* `-android datamatcher`: a string corresponding to an [Espresso DataMatcher json](/docs/en/writing-running-appium/android/espresso-datamatcher-uiselector.md) (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search
 using the Id/Name that the native Accessibility options utilize.
 
-Finally, Appium supports an additional experimental locator strategy:
+Finally, Appium supports several additional experimental locator strategies:
 
+* `-image`: a string corresponding to a base64-encoded version of an image which should be used by Appium as a template to find a matching screen region, which can then be tapped as if it were an element. For more information on this locator strategy, see the [Finding Image Elements](/docs/en/advanced-concepts/image-elements.md) doc.
 * `-custom`: a string which will be sent to an element finding plugin registered via the `customFindModules` capability. For more information on this strategy, check out the [Element Finding Plugin](/docs/en/advanced-concepts/element-finding-plugins.md) docs.
 
 ### Issues
@@ -39,7 +41,7 @@ image, or locating it in the source tree.
 Appium Desktop has a simple layout, complete with a source tree,
 a screenshot, and record and refresh buttons, and interaction tools.
 
-![](https://github.com/appium/appium-desktop/blob/master/docs/images/screen-inspector-and-logs.png)
+![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector-and-logs.png)
 
 ### Example
 
@@ -53,8 +55,9 @@ I can see the accessibility id.
 ![](https://github.com/appium/appium-desktop/raw/master/docs/images/screen-inspector.png)
 
 ### REPL
-A [REPL](https://en.wikipedia.org/wiki/Read–eval–print_loop) is a simple interactive language shell.
-You can invoke various command interactively. It will help you to make sure your scenarios interactively with Appium server.
+A [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) is a simple
+interactive language shell. You can invoke various command interactively. It
+will help you to make sure your scenarios interactively with Appium server.
 
 - [Appium Ruby Console](https://github.com/appium/ruby_console)
-- [WebDriverIO with debug mode](http://webdriver.io/api/utility/debug.html)
+- [WebDriverIO with debug mode](https://webdriver.io/docs/api/browser/debug.html)

@@ -6,7 +6,16 @@ example_usage:
   java:
     |
       Map<String, String> systemBars = driver.getSystemBars();
+  python:
+    |
+      self.driver.get_system_bars()
+  javascript_wdio:
+    |
+      driver.getSystemBars();
   ruby:
+    |
+      get_system_bars
+  ruby_core:
     |
       @driver.get_system_bars
   php:
@@ -18,7 +27,9 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/android/HasAndroidDeviceDetails.html#getSystemBars--"
+  python: "https://github.com/appium/python-client"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#get_system_bars-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#get_system_bars-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
@@ -37,12 +48,12 @@ driver_support:
     windows: false
 client_support:
   java: true
-  python: false
+  python: true
   ruby: true
   php: false
   csharp: false
   javascript_wd: false
-  javascript_wdio: false
+  javascript_wdio: true
 
 # Information about the HTTP endpoints
 endpoint:
@@ -56,5 +67,5 @@ endpoint:
       description: Information about visibility and bounds of status and navigation bar
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L418

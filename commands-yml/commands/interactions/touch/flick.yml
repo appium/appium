@@ -20,8 +20,11 @@ example_usage:
       await element.flick(1, 10, 10);
   javascript_wdio:
     |
-      driver.touchFlick('<ELEMENT_ID>', 1, 10, 10);
+      driver.touchFlick(10, 10, element, 1);
   ruby:
+    |
+      touch_action.flick(element, 1, 10, 10).perform
+  ruby_core:
     |
       @driver.touch_action.flick(element, 1, 10, 10).perform
   php:
@@ -37,6 +40,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/touchFlick.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1513"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -46,7 +50,6 @@ driver_support:
     xcuitest: true
     uiautomation: true
   android:
-    uiautomator2: false
     espresso: false
     uiautomator2: true
     uiautomator: true

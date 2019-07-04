@@ -44,6 +44,9 @@ example_usage:
       ]);
   ruby:
     |
+      touch_action.down(element).move_to(10, 100).up(50, 50).perform
+  ruby_core:
+    |
       @driver.touch_action.down(element).move_to(10, 100).up(50, 50).perform
   php:
     |
@@ -58,6 +61,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/performTouchAction.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib/Appium/TouchAction"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib/Appium/TouchAction"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -94,7 +98,7 @@ endpoint:
   json_parameters:
     - name: action
       type: string
-      description: The type of action to perform (moveTo|release|press|tap|wait)
+      description: The type of action to perform (moveTo\|release\|press\|tap\|wait)
     - name: options
       type: object
       description: The parameters of the action

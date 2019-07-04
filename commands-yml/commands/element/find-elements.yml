@@ -21,6 +21,8 @@ selector_strategies:
     description: Use the UI Automator API, in particular the [UiSelector](https://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html) class to locate elements. In Appium you send the Java code, as a string, to the server, which executes it in the application’s environment, returning the element or elements.
   - name: Android View Tag (Espresso only)
     description: Locate an element by its [view tag](https://developer.android.com/reference/android/support/test/espresso/matcher/ViewMatchers.html#withTagValue(org.hamcrest.Matcher%3Cjava.lang.Object%3E))
+  - name: Android Data Matcher (Espresso only)
+    description: Locate an element using [Espresso DataMatcher](https://developer.android.com/reference/android/support/test/espresso/Espresso#ondata)
   - name: IOS UIAutomation
     description: When automating an iOS application, Apple’s [Instruments](/docs/en/drivers/ios-uiautomation.md) framework can be used to find elements
 
@@ -38,8 +40,11 @@ example_usage:
       let elementsTwo = await driver.elements("id", "SomeID");
   javascript_wdio:
     |
-      driver.elements("~SomeAccessibilityId");
+      $$("~SomeAccessibilityId");
   ruby:
+    |
+      find_elements(:accessibility_id, "~SomeAccessibilityID")
+  ruby_core:
     |
       @driver.find_elements(:accessibility_id, "~SomeAccessibilityID")
   php:
@@ -55,6 +60,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/elements.html#Usage"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L798"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

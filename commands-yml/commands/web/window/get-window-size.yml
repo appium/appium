@@ -16,11 +16,14 @@ example_usage:
       let handleTwoSize = await driver.getWindowSize("handleName");
   javascript_wdio:
     |
-      let handleOneSize = driver.windowHandleSize();
-      let handleTwoSize = driver.windowHandleSize("handleName");
+      let handleTwoSize = driver.getWindowSize("handleName");
   ruby:
     |
-      @driver.window_size()
+      window_size
+      window_size("handleName")
+  ruby_core:
+    |
+      @driver.window_size
       @driver.window_size("handleName")
   php:
     |
@@ -35,6 +38,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/windowHandleSize.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L546"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_size"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_size"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -59,7 +63,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -79,5 +83,5 @@ endpoint:
       description: The height of the window
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#get-sessionsessionidwindowwindowhandlesize

@@ -10,7 +10,14 @@ example_usage:
   javascript_wd:
     |
       await driver.stopRecordingScreen();
+  javascript_wdio:
+    |
+      driver.stopRecordingScreen();
   ruby:
+    |
+      stop_recording_screen
+      stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
+  ruby_core:
     |
       @driver.stop_recording_screen
       @driver.stop_recording_screen remote_path: 'https://example.com', user: 'example', pass: 'pass', method: 'POST'
@@ -19,15 +26,17 @@ example_usage:
       self.driver.stop_recording_screen()
   php:
     |
-      // TODO PHP sample
+      driver.StopRecordingScreen();
   csharp:
     |
       // TODO C# sample
 
 client_docs:
   java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#stopRecordingScreen--"
+  python: "https://github.com/appium/python-client"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3398"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#stop_recording_screen-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#stop_recording_screen-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

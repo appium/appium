@@ -14,11 +14,13 @@ example_usage:
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");
       let isDisplayed = await element.isDisplayed();
 
-  # Note that elementIdDisplayed is not a typo in this document, it's a WDIO typo
   javascript_wdio:
     |
-      let isDisplayed = driver.elementIdDisplayed("~SomeAccessibilityId");
+      let isDisplayed = $("~SomeAccessibilityId").isDisplayed();
   ruby:
+    |
+      find_element(:accessibility_id, "SomeAccessibilityID").displayed?
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?
   php:
@@ -35,6 +37,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/elementIdDisplayed.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1370"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

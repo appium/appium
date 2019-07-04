@@ -16,8 +16,11 @@ example_usage:
       let tagName = await element.getAttribute("content-desc");
   javascript_wdio:
     |
-      let attribute = driver.getAttribute("~SomeAccessibilityId", "content-desc");
+      let attribute = $("~SomeAccessibilityId").getAttribute("content-desc");
   ruby:
+    |
+      find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID').attribute("content-desc")
   php:
@@ -34,6 +37,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/property/getAttribute.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1350"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

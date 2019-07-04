@@ -28,7 +28,10 @@ example_usage:
       });
   ruby:
     |
-      @driver.touch_action.scroll(element, 10, 100).perform
+      touch_actions.scroll(element, 10, 100).perform
+  ruby_core:
+    |
+      @driver.touch_actions.scroll(element, 10, 100).perform
   php:
     |
       // TODO PHP sample
@@ -42,6 +45,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/touchScroll.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

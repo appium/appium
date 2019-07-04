@@ -18,10 +18,10 @@ example_usage:
   javascript_wd:
     |
       await driver.setClipboard('happy testing', 'plaintext')
-  javascript_wdio:
-    |
-      await driver.setClipboard('happy testing', 'plaintext')
   ruby:
+    |
+      set_clipboard content: 'happy testing'
+  ruby_core:
     |
       @driver.set_clipboard content: 'happy testing'
   php:
@@ -36,8 +36,13 @@ client_docs:
   python: "https://github.com/appium/python-client"
   javascript_wdio: "http://webdriver.io/index.html"
   javascript_wd: "https://github.com/admc/wd/releases"
-  ruby: "https://github.com/appium/ruby_lib/releases/latest"
-  php: "https://github.com/appium/php-client/releases/latest-"
+  ruby:
+    - ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#set_clipboard-instance_method"
+    - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#set_clipboard-instance_method"
+  ruby_core:
+    - ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#set_clipboard-instance_method"
+    - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#set_clipboard-instance_method"
+  php: "https://github.com/appium/php-client/releases/latest"
   csharp: "https://github.com/appium/appium" # TODO
 
 # Driver support by platform

@@ -6,10 +6,9 @@ from helpers import ensure_dir
 
 
 def pytest_configure(config):
-    if not hasattr(config, 'slaveinput'):
+    if not hasattr(config, 'input'):
         current_day = '{:%Y_%m_%d_%H_%S}'.format(datetime.datetime.now())
-        ensure_dir('results')
-        ensure_dir(os.path.join('slaveinput', current_day))
+        ensure_dir(os.path.join(os.path.dirname(__file__), 'input', current_day))
         result_dir = os.path.join(os.path.dirname(__file__), 'results', current_day)
         ensure_dir(result_dir)
         result_dir_test_run = result_dir

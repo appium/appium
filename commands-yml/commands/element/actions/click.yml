@@ -21,8 +21,12 @@ example_usage:
       await element.click();
   javascript_wdio:
     |
-      driver.click('#SomeId');
+      $('#SomeId').click();
   ruby:
+    |
+      find_element(:accessibility_id, 'SomeId').click
+
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, 'SomeId').click
   php:
@@ -38,6 +42,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/action/click.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1672"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#click-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#click-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 

@@ -18,7 +18,7 @@
  *     brew install --HEAD ideviceinstaller
  */
 
-"use strict";
+'use strict';
 
 const spawn = require('child_process').spawn;
 const _ = require('lodash');
@@ -39,29 +39,29 @@ const handleKillProcess = function (exitCode) {
 };
 
 const startProxy = function () {
-  console.log('RUNNING:', PROXY_CMD, args.join(' '));
+  console.log(`RUNNING: ${PROXY_CMD} ${args.join(' ')}`);
 
   proxy = spawn(PROXY_CMD, args);
 
-  proxy.stdout.on('data', function (data) {
-    console.log('stdout: ' + data);
+  proxy.stdout.on('data', function onStdout (data) {
+    console.log(`stdout: ${data}`);
   });
 
-  proxy.stderr.on('data', function (data) {
-    console.log('stderr: ' + data);
-    const restartMessage = _(RESTART_ON_MESSAGES).find(function (message) {
+  proxy.stderr.on('data', function onStderr (data) {
+    console.log(`stderr: ${data}`);
+    const restartMessage = _(RESTART_ON_MESSAGES).find(function findMessage (message) {
       return ('' + data).indexOf(message) >= 0;
     });
     if (restartMessage) {
-      console.log('Detected error message:', restartMessage);
+      console.log(`Detected error message: ${restartMessage}`);
       console.log('Killing proxy!');
       proxy.kill('SIGTERM');
       process.nextTick(startProxy);
     }
   });
 
-  proxy.on('close', function (code) {
-    console.log('child process exited with code ' + code);
+  proxy.on('close', function onClose (code) {
+    console.log(`Child process exited with code ${code}`);
   });
 };
 

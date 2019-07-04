@@ -15,8 +15,11 @@ example_usage:
       let isEnabled = await element.isEnabled();
   javascript_wdio:
     |
-      let isEnabled = driver.isEnabled("~SomeAccessibilityId");
+      let isEnabled = $("~SomeAccessibilityId").isEnabled();
   ruby:
+    |
+      find_element(:accessibility_id, "SomeAccessibilityID").enabled?
+  ruby_core:
     |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").enabled?
   php:
@@ -32,6 +35,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/state/isEnabled.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1386"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#enabled%3F-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -56,7 +60,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -72,6 +76,6 @@ endpoint:
       description: Whether the element is enabled
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-is-element-enabled
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidenabled

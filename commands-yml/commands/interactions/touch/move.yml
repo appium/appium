@@ -1,5 +1,5 @@
 ---
-name: Move
+name: Move To
 short_description: Finger move on the screen
 description:
   >
@@ -9,7 +9,7 @@ example_usage:
     |
       TouchActions action = new TouchActions(driver);
       action.down(10, 10);
-      action.move(50, 50);
+      action.moveTo(50, 50);
       action.perform();
   python:
     |
@@ -17,12 +17,13 @@ example_usage:
       # ...
       actions = TouchAction(driver)
       actions.tap_and_hold(element)
-      actions.move(50, 50)
+      actions.move_to(element, 50, 50)
       actions.perform()
   javascript_wd:
     |
-      let action = new wd.TouchAction();
+      let action = new wd.TouchAction(driver);
       action.press({x: 10, y: 10})
+            .wait(1000)
             .moveTo({x: 50, y: 50})
             .release();
       await action.perform();
@@ -35,7 +36,10 @@ example_usage:
       ]);
   ruby:
     |
-      @driver.touch_action.down(element).move().perform
+      touch_action.down(element).move_to().perform
+  ruby_core:
+    |
+      @driver.touch_action.down(element).move_to().perform
   php:
     |
       // TODO PHP sample
@@ -49,6 +53,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/touchPerform.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1531"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:move"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:move"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

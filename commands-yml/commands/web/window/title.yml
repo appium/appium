@@ -8,14 +8,17 @@ example_usage:
       String title = driver.getTitle();
   python:
     |
-      title = self.driver.title()
+      title = self.driver.title
   javascript_wd:
     |
       let title = await driver.title();
   javascript_wdio:
     |
-      let handle = driver.title();
+      let handle = driver.getTitle();
   ruby:
+    |
+      title
+  ruby_core:
     |
       @driver.title
   php:
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/title.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1794"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:title"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:title"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -66,6 +70,6 @@ endpoint:
       description: The current page title
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-get-title
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidtitle

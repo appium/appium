@@ -14,11 +14,14 @@ example_usage:
       let cookies = await driver.setCookie({name: 'foo', value: 'bar'});
   javascript_wdio:
     |
-      driver.cookie('post', {
+      driver.setCookies([{
         name: 'myCookie',
         value: 'some content'
-      });
+      }]);
   ruby:
+    |
+      add_cookie(:name => 'foo', :value => 'bar')
+  ruby_core:
     |
       @driver.add_cookie(:name => 'foo', :value => 'bar')
   php:
@@ -34,6 +37,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/cookie.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1971"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:add_cookie"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:add_cookie"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -58,7 +62,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -73,6 +77,6 @@ endpoint:
       description: The cookie to add
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-delete-cookie
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidcookie

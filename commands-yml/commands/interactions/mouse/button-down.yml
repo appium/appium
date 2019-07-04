@@ -1,7 +1,7 @@
 ---
 name: Button Down
 short_description: Click and hold the left mouse button at the current mouse coordinates
-   
+
 description:
   |
     Note that the next mouse-related command that should follow is buttonup . Any other mouse command (such as click or another call to buttondown) will yield undefined behavior
@@ -30,6 +30,9 @@ example_usage:
         .buttonDown();
   ruby:
     |
+      action.move_to(element).click_and_hold.perform
+  ruby_core:
+    |
       @driver.action.move_to(element).click_and_hold.perform
   php:
     |
@@ -44,6 +47,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/buttonDown.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1625"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:click_and_hold"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:click_and_hold"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -68,7 +72,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

@@ -1,0 +1,94 @@
+---
+name: Get app state
+short_description: Get the given app status on the device
+description:
+  >
+    iOS tests with XCUITest can also use the `mobile: queryAppState` method. See
+    detailed [documentation](http://appium.io/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management/index.html#mobile-queryappstate).
+
+example_usage:
+  java:
+    |
+      driver.queryAppState('com.apple.Preferences');
+      driver.queryAppState('io.appium.android.apis');
+  python:
+    |
+      driver.query_app_state('com.apple.Preferences')
+      driver.query_app_state('io.appium.android.apis')
+  javascript_wd:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+  javascript_wdio:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+  ruby:
+    |
+      app_state('com.apple.Preferences')
+      query_app_state('io.appium.android.apis') # `query_` prefix is also available
+  ruby_core:
+    |
+      @driver.app_state('com.apple.Preferences')
+      @driver.query_app_state('io.appium.android.apis') # `query_` prefix is also available
+  php:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+  csharp:
+    |
+      // Supports only `mobile: queryAppState` for iOS, XCUITest
+
+client_docs:
+  java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#queryAppState-java.lang.String-"
+  python: "https://github.com/appium/python-client/blob/master/appium/webdriver/extensions/applications.py"
+  javascript_wdio: "https://webdriver.io/docs/api/appium.html" # TODO wdio documentation link
+  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js" # TODO wd documentation link
+  ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#app_state-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#app_state-instance_method"
+  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest: true
+    uiautomation: false
+  android:
+    espresso: true
+    uiautomator2: true
+    uiautomator: true
+  mac:
+    mac: false # TODO: Verify this
+  windows:
+    windows: false # TODO: Verify this
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: true
+  csharp: true
+  javascript_wd: true
+  javascript_wdio: true
+
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /wd/hub/session/:session_id/appium/device/app_state
+  method: GET
+  url_parameters:
+    - name: session_id
+      description: ID of the session to route the command to
+  json_parameters:
+    - name: bundleId or appId
+      type: string
+      description: BundleId for iOS. Package name for Android.
+  response:
+    - type: number
+      description: Current the target app status. (Clients wrap the response properly)
+                  `0` is not installed.
+                  `1` is not running.
+                  `2` is running in background or suspended.
+                  `3` is running in background.
+                  `4` is running in foreground.
+
+# Links to specifications. Should link to at least one specification
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L462

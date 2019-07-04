@@ -1,9 +1,9 @@
 ---
 name: Move Mouse To
 short_description: Move the mouse by an offset of the specificed element
-   
+
 description:
-  | 
+  |
     If no element is specified, the move is relative to the current mouse cursor. If an element is provided but no offset, the mouse will be moved to the center of the element. If the element is not visible, it will be scrolled into view.
 
 example_usage:
@@ -23,8 +23,12 @@ example_usage:
 
   javascript_wdio:
     |
-      driver.moveTo(element, 10, 10);
+      $(element).moveTo(10, 10);
   ruby:
+    |
+      mouse.move_to(element)
+      mouse.move_to(element, 5, 5)
+  ruby_core:
     |
       @driver.mouse.move_to(element)
       @driver.mouse.move_to(element, 5, 5)
@@ -33,7 +37,11 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Actions action = new Actions(driver);
+      action.MoveToElement(element, 10, 10);
+      action.Perform();
+
+
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html#moveToElement-org.openqa.selenium.WebElement-"
@@ -41,6 +49,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/moveTo.html#description"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1600"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Mouse:move_to"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Mouse:move_to"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -65,7 +74,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

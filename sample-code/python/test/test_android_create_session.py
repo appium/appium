@@ -1,35 +1,40 @@
 import unittest
 import os
+import copy
+import sys
+
+from time import sleep
 
 from appium import webdriver
-from helpers import take_screenhot_and_logcat, ANDROID_APP_PATH, EXECUTOR
-from selenium.common.exceptions import InvalidSessionIdException
+from helpers import report_to_sauce, ANDROID_BASE_CAPS, EXECUTOR
+from selenium.common.exceptions import WebDriverException
 
 # Run standard unittest base.
 
 
-class TestAndroidSelectors(unittest.TestCase):
+class TestAndroidCreateSession(unittest.TestCase):
+    def tearDown(self):
+        report_to_sauce(self.driver.session_id)
 
-    def setUp(self):
+    def test_should_create_and_destroy_android_session(self):
+        caps = copy.copy(ANDROID_BASE_CAPS)
+        caps['name'] = 'test_should_create_and_destroy_android_session'
+
         self.driver = webdriver.Remote(
             command_executor=EXECUTOR,
-            desired_capabilities={
-                'app': ANDROID_APP_PATH,
-                'platformName': 'Android',
-                'automationName': 'UIAutomator2',
-                'platformVersion': os.getenv('ANDROID_PLATFORM_VERSION') or '7.1',
-                'deviceName': os.getenv('ANDROID_DEVICE_VERSION') or 'Android',
-            }
+            desired_capabilities=caps
         )
         self.driver.implicitly_wait(10)
 
-    def test_should_create_and_destroy_android_session(self):
-        activity = self.driver.current_activity
-        pkg = self.driver.current_package
+        # make sure the right package and activity were started
+        self.assertEquals('io.appium.android.apis', self.driver.current_package)
+        self.assertEquals('.ApiDemos', self.driver.current_activity)
 
-        self.assertEquals('io.appium.android.apis.ApiDemos', '{}{}'.format(pkg, activity))
         self.driver.quit()
 
-        with self.assertRaises(InvalidSessionIdException) as excinfo:
+        sleep(5)
+
+        # should not be able to use the driver anymore
+        with self.assertRaises(WebDriverException) as excinfo:
             self.driver.title
-        self.assertEquals('A session is either terminated or not started', excinfo.exception.msg)
+        self.assertTrue('has already finished' in str(excinfo.exception.msg))

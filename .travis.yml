@@ -1,65 +1,60 @@
 language: node_js
+node_js: "10"
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+      - build-essential
 env:
   global:
     - CXX=g++-4.8
-node_js: "10"
 jobs:
   include:
     - stage: Tests
-      os:
-        - linux
-        - sudo: false
+      name: node 10
+      os: linux
       script: npm run test && npm run e2e-test
-      node_js: "11"
+      after_script: npm run coverage
     - stage:
-      os:
-        - linux
-        - sudo: false
+      name: node 12
+      os: linux
       script: npm run test && npm run e2e-test
-      node_js: "10"
+      node_js: "12"
     - stage:
-      os:
-        - linux
-        - sudo: false
-      script: npm run test && npm run e2e-test
-      node_js: "8"
-    - stage:
-      os:
-        - linux
-        - sudo: false
-      env:
-        # this is just to indicate in the Travis job list that this is generating docs
-        - GENERATE_DOCS=true
-      script: npm run generate-docs
-    - stage: BinTray Bundle Build and Upload
+      name: test documentation generation
+      os: linux
+      before_script:
+        - npm install
+      script:
+        - npm run generate-docs
+
+    - stage: Sample Code
+      name: JavaScript (wd)
       # only want to run this on the main master branch
       if: branch = master AND type != pull_request
-      os:
-        - osx
-        - osx_image: xcode9.4
       env:
-        - NODE_ENV=production
-        - CC=gcc
-        - CXX=g++
-      before_install:
-        - gcc --version
+        - SAUCE_LABS=1
       install:
-        # Install prod dependencies
+        - cd sample-code/javascript-wd
         - npm install
-
-        # Install only the dev dependencies that we need
-        - npm install --only=dev gulp
-        - npm install --only=dev appium-gulp-plugins
-      before_script:
-        # Build the assets
-        - npm run build
-
-        # Remove the dev depenedencies
-        - npm prune
-      script: npm run zip-and-upload
+      script:
+        - npm run test
+    - stage:
+      name: Python
+      # only want to run this on the main master branch
+      if: branch = master AND type != pull_request
+      os: linux
+      language: python
+      python: "2.7"
+      env:
+        - SAUCE_LABS=1
+      before_install:
+        - pip install --upgrade pip
+      install:
+        - cd sample-code/python
+        - pip install -r requirements.txt
+        - pip install pytest-xdist
+      script:
+        - py.test -v -n 30 test

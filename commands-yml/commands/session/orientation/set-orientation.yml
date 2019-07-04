@@ -1,7 +1,7 @@
 ---
 name: Set Orientation
 short_description: Set the current device/browser orientation
-   
+
 example_usage:
   java:
     |
@@ -14,8 +14,11 @@ example_usage:
       await driver.setOrientation('LANDSCAPE');
   javascript_wdio:
     |
-      driver.orientation("LANDSCAPE");
+      driver.setOrientation("LANDSCAPE");
   ruby:
+    |
+      rotation = :landscape
+  ruby_core:
     |
       @driver.rotation = :landscape
   php:
@@ -31,6 +34,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/mobile/orientation.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2042"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/Rotatable:orientation"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/DriverExtensions/Rotatable:orientation"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -55,7 +59,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -70,5 +74,5 @@ endpoint:
       description: The desired orientation - {LANDSCAPE|PORTRAIT}.
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#post-sessionsessionidorientation

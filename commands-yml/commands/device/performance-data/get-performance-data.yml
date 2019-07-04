@@ -6,10 +6,20 @@ example_usage:
   java:
     |
       List<List<Object>> performanceData = driver.getPerformanceData("my.app.package", "cpuinfo", 5);
+  python:
+    |
+      self.driver.get_performance_data('my.app.package', 'cpuinfo', 5)
   javascript_wd:
     |
       await driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
+  javascript_wdio:
+    |
+      driver.getPerformanceData('my.app.package', 'cpuinfo', 5);
   ruby:
+    |
+      get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo', data_read_timeout: 10
+
+  ruby_core:
     |
       @driver.get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo', data_read_timeout: 10
   php:
@@ -21,8 +31,10 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/android/HasSupportedPerformanceDataType.html#getSupportedPerformanceDataTypes--"
+  python: "https://github.com/appium/python-client"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3412"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#get_performance_data-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#get_performance_data-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -57,13 +69,13 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: package_name
+    - name: packageName
       type: string
       description: The package name of the application
-    - name: data_type
+    - name: dataType
       type: string
       description: The type of system state which wants to read. It should be one of the supported performance data types.
-    - name: data_read_timeout
+    - name: dataReadTimeout
       type: number
       description: The number of attempts to read (optional)
   response:

@@ -26,7 +26,7 @@ example_usage:
       await driver.safeExecuteAsync('document.title');
   javascript_wdio:
     |
-      browser.timeoutsAsyncScript(5000);
+      driver.setAsyncTimeout(5000)
       var result = browser.executeAsync(function(a, b, c, d, done) {
           // browser context - you may access neither client nor console
           setTimeout(function() {
@@ -35,8 +35,11 @@ example_usage:
       }, 1, 2, 3, 4)
 
       // node.js context - client and console are available
-      console.log(result.value); // outputs: 10
+      console.log(result); // outputs: 10
   ruby:
+    |
+      execute_async_script("document.title")
+  ruby_core:
     |
       @driver.execute_async_script("document.title")
   php:
@@ -52,6 +55,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/protocol/executeAsync.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L182"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_async_script"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_async_script"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -76,12 +80,12 @@ client_support:
   csharp: false
   javascript_wd: false
   javascript_wdio: false
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
   url: /wd/hub/session/:session_id/execute_async
-  method: GET
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to
@@ -97,6 +101,6 @@ endpoint:
       description: The script result
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-execute-async-script
   jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidexecute_async

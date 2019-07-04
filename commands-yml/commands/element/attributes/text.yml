@@ -9,7 +9,7 @@ example_usage:
   java:
     |
       MobileElement element = (MobileElement) driver.findElementByClassName("SomeClassName");
-      let elText = element.getText();
+      String elText = element.getText();
   python:
     |
       el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
@@ -20,8 +20,12 @@ example_usage:
       await element.text();
   javascript_wdio:
     |
-      driver.getText("~SomeAccessibilityId");
+      $("~SomeAccessibilityId").getText();
   ruby:
+    |
+      element = find_element :accessibility_id, "SomeAccessibilityID"
+      element.text
+  ruby_core:
     |
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       element.text
@@ -39,6 +43,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/property/getText.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1832"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#text-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#text-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

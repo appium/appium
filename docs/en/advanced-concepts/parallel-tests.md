@@ -18,13 +18,14 @@ The important capabilities:
 #### RealDevice
 - `udid` the device id
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
- 
+
 #### Simulator
 
 - `udid` simulator UDID,this can be retrieved from xcrun simctl list.
 - `deviceName` Simulator Name
 - `platformVersion` Simulator OS version
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
+- `derivedDataPath` set the unique derived data path root for each driver instance. This will help to avoid possible conflicts and to speed up the parallel execution.
 
 Parallel Safari/Webview sessions are not working due to an Apple bug
 
@@ -35,3 +36,11 @@ Refer: https://github.com/appium/appium/issues/9209
 - `udid` the device id
 - `wdaLocalPort` unique wdaPort, as WDA defaults to 8100
 - `webkitDebugProxyPort` unique webKitProxy, as IWDP defaults to 27753
+- `derivedDataPath` set the unique derived data path root for each driver instance. This will help to avoid possible conflicts and to speed up the parallel execution.
+
+### Troubleshooting
+
+When running on Jenkins, watch out for the [ProcessTreeKiller](https://wiki.jenkins.io/display/JENKINS/ProcessTreeKiller) when running multiple parallel test jobs on the same machine. If you are spawning simulators in one test job, Jenkins might kill all your simulators when the first test ends - causing errors in the remaining test jobs!
+
+Use `BUILD_ID=dontKillMe` to prevent this from happening.
+

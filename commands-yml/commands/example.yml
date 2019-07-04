@@ -22,13 +22,16 @@ example_usage:
       await driver.status();
   ruby:
     |
-      # Ruby Code here
+      # Ruby Code in ruby_lib here
+  ruby_core:
+    |
+      # Ruby Code in ruby_lib_core here
   php:
     |
       // PHP Code here
   csharp:
     |
-      // CSharp Code here
+      driver.FindElementById("elementId").Click();
 
 client_docs:
   java:
@@ -39,7 +42,8 @@ client_docs:
   javascript_wdio: "http://webdriver.io/index.html"
   javascript_wd: "https://github.com/admc/wd/releases"
   ruby: "https://github.com/appium/ruby_lib/releases/latest"
-  php: "https://github.com/appium/php-client/releases/latest-"
+  ruby_core: "https://github.com/appium/ruby_lib/releases/latest"
+  php: "https://github.com/appium/php-client/releases/latest"
   csharp: "https://github.com/appium/appium" # TODO
 
 # Driver support by platform

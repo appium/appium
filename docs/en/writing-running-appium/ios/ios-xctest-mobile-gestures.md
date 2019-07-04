@@ -2,7 +2,7 @@
 
 Unfortunately Apple's XCTest framework does not natively support W3C standards for
 TouchAction interface implementation. Although, it provides rich set of gestures,
-inluding these, that are unique for iOS platform. It is possible to directly invoke these
+including these, that are unique for iOS platform. It is possible to directly invoke these
 gestures in Appium starting from version 1.6.4-beta.
 
 It is important to rememeber that XCTest and WDA are being constantly changed.
@@ -14,7 +14,7 @@ without any preliminary notice.
 
 This gesture performs a simple "swipe" gesture on the particular screen element or
 on the application element, which is usually the whole screen. This method does not
-accept coordnates and siply emulates single swipe with one finger. It might be
+accept coordinates and simply emulates single swipe with one finger. It might be
 useful for such cases like album pagination, switching views, etc. More advanced
 cases may require to call "mobile: dragFromToForDuration", where one can supply
 coordinates and duration.

@@ -1,7 +1,7 @@
 ---
 name: Click
 short_description: Click any mouse button at the current mouse coordinates
-   
+
 example_usage:
   java:
     |
@@ -22,9 +22,11 @@ example_usage:
 
   javascript_wdio:
     |
-      driver.moveTo(element)
-        .click();
+      $("~SomeId").click();
   ruby:
+    |
+      action.move_to(element).click.perform
+  ruby_core:
     |
       @driver.action.move_to(element).click.perform
   php:
@@ -32,7 +34,12 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Actions action = new Actions(driver);
+      action.MoveToElement(element);
+      action.Click();
+      action.Perform();
+
+
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html#click--"
@@ -40,6 +47,7 @@ client_docs:
   javascript_wdio: "http://webdriver.io/api/action/click.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1665"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Mouse:click"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Mouse:click"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
@@ -64,7 +72,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:

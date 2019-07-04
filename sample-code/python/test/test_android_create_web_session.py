@@ -1,41 +1,40 @@
-import pytest
+import unittest
 import os
+import copy
+import sys
+
+from time import sleep
 
 from appium import webdriver
-from helpers import take_screenhot_and_logcat, EXECUTOR
-from selenium.common.exceptions import InvalidSessionIdException
+from helpers import report_to_sauce, ANDROID_BASE_CAPS, EXECUTOR
+from selenium.common.exceptions import WebDriverException
 
 
-class TestAndroidCreateWebSession():
+class TestAndroidCreateWebSession(unittest.TestCase):
+    def tearDown(self):
+        report_to_sauce(self.driver.session_id)
 
-    @pytest.fixture(scope='function')
-    def driver(self, request, device_logger):
-        calling_request = request._pyfuncitem.name
-        driver = webdriver.Remote(
+    def test_should_create_and_destroy_android_web_session(self):
+        caps = copy.copy(ANDROID_BASE_CAPS)
+        caps['name'] = 'test_should_create_and_destroy_android_web_session'
+        # can only specify one of `app` and `browserName`
+        caps['browserName'] = 'Chrome'
+        caps.pop('app')
+
+        self.driver = webdriver.Remote(
             command_executor=EXECUTOR,
-            desired_capabilities={
-                'platformName': 'Android',
-                'automationName': 'UIAutomator2',
-                'platformVersion': os.getenv('ANDROID_PLATFORM_VERSION') or '7.1',
-                'deviceName': os.getenv('ANDROID_DEVICE_VERSION') or 'Android',
-                'browserName': 'Chrome'
-            }
+            desired_capabilities=caps
         )
+        self.driver.implicitly_wait(10)
 
-        def fin():
-            take_screenhot_and_logcat(driver, device_logger, calling_request)
+        self.driver.get('https://www.google.com')
 
-        request.addfinalizer(fin)
+        assert 'Google' == self.driver.title
 
-        driver.implicitly_wait(10)
-        return driver
+        self.driver.quit()
 
-    def test_should_create_and_destroy_android_session(self, driver):
-        driver.get('https://www.google.com')
-        title = driver.title
+        sleep(5)
 
-        assert 'Google' == title
-
-        with pytest.raises(InvalidSessionIdException) as excinfo:
-            driver.title
-        assert 'A session is either terminated or not started' == excinfo.value.msg
+        with self.assertRaises(WebDriverException) as excinfo:
+            self.driver.title
+        self.assertTrue('has already finished' in str(excinfo.exception.msg))

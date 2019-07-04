@@ -24,7 +24,12 @@ example_usage:
       let action = new wd.TouchAction();
       action.tap({el: element});
       await action.perform();
+  javascript_wdio:
+      driver.touchDoubleClick(element);
   ruby:
+    |
+      touch_action.double_tap(element).perform
+  ruby_core:
     |
       @driver.touch_action.double_tap(element).perform
   php:
@@ -39,6 +44,7 @@ client_docs:
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.double_tap"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

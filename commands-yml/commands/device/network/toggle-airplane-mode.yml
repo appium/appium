@@ -3,6 +3,9 @@ name: Toggle Airplane Mode
 short_description: Toggle airplane mode on device
 
 example_usage:
+  java:
+    |
+      driver.toggleAirplaneMode();
   javascript_wd:
     |
       await driver.toggleAirplaneMode();
@@ -10,6 +13,9 @@ example_usage:
     |
       driver.toggleAirplaneMode();
   ruby:
+    |
+      toggle_flight_mode
+  ruby_core:
     |
       @driver.toggle_flight_mode
   php:
@@ -20,9 +26,11 @@ example_usage:
       // TODO
 
 client_docs:
+  java: "https://appium.github.io/java-client/io/appium/java_client/android/SupportsNetworkStateManagement.html#toggleAirplaneMode--"
   javascript_wdio: "http://webdriver.io/api/mobile/toggleAirplaneMode.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2712"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#toggle_flight_mode-instance_method"
+  ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#toggle_flight_mode-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
@@ -40,7 +48,7 @@ driver_support:
   windows:
     windows: false
 client_support:
-  java: false
+  java: true
   python: false
   ruby: true
   php: true
@@ -57,5 +65,5 @@ endpoint:
       description: ID of the session to route the command to
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L396

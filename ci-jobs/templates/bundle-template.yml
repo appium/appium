@@ -32,7 +32,7 @@ jobs:
     - task: PublishPipelineArtifact@0
       inputs:
         targetPath: appium.zip
-        artifactName: ${{ parameters.name }}
+        artifactName: appium
     - script: npm run upload
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)

@@ -29,14 +29,14 @@ jobs:
       displayName: Create the bundle zip
     - script: npm install 
       displayName: Reinstall dev dependencies
-    - script: npm run upload
-      env:
-        GITHUB_TOKEN: $(GITHUB_TOKEN)
-      displayName: Upload to appium/appium-build-store Github Releases
     - task: PublishPipelineArtifact@0
       inputs:
         targetPath: appium.zip
         artifactName: ${{ parameters.name }}
+    - script: npm run upload
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
+      displayName: Upload to appium/appium-build-store Github Releases
     - script: npx gulp sauce-storage-upload
       displayName: Upload to Sauce Storage as sauce-storage:appium.zip
       env:

@@ -52,6 +52,7 @@
       | mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
       | mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
       | mobile:siriCommand| Sends a command to Siri | `{text}` | `{text: "What time is it?"}` |
+      | mobile:deviceInfo | Gets device information like locale and timezone. The timezone is TZ database format like `America/New_York` by default, fallback to Apple name like `US/New_York` | <none> | <none> |
 
       ### Android
       | Command | Description | Argument | Argument Example |
@@ -72,7 +73,7 @@
       | mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
       | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
       | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
-      | mobile:deviceInfo | Gets device information like manufacturer and model. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
+      | mobile:deviceInfo | Gets device information like manufacturer, model, timezone and locale. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
 
       ### Android (Espresso only)
       | Command | Description | Argument | Argument Example |
@@ -92,7 +93,8 @@
       | mobile:uiautomator | Drive areas which are not part of App Under Test, using uiautomator2 APIs. `strategy` can be one of: "clazz", "res", "text", "textContains", "textEndsWith", "textStartsWith","desc", "descContains", "descEndsWith", "descStartsWith" and "pkg", taken from uiautomator [By class](https://developer.android.com/reference/androidx/test/uiautomator/By). `action` can be one of: "click", "longClick", "getText", "getContentDescription", "getClassName","getResourceName", "getVisibleBounds", "getVisibleCenter", "getApplicationPackage","getChildCount", "clear", "isCheckable", "isChecked", "isClickable", "isEnabled","isFocusable", "isFocused", "isLongClickable", "isScrollable" and "isSelected", taken from uiautomator [UiObject2](https://developer.android.com/reference/androidx/test/uiautomator/UiObject2). `index` is optional, if not given, will return all matching results  | `{strategy, locator, index, action}` | `{strategy: 'clazz', locator: 'android.widget.TextView', index: 2, action: "getText"}` |
       | mobile:webAtoms | Runs a chain of [webatoms](https://developer.android.com/training/testing/espresso/web). `withElement` and `perform` are basic chain items. Please refer [issue](https://github.com/appium/appium-espresso-driver/pull/380) and [Sample test code](https://github.com/appium/ruby_lib_core/blob/c9062c4b744263d790c7de17263cbd4645cdefc6/test/functional/android/android/mobile_commands_test.rb#L196-L239) as references. | `{webviewElement, forceJavascriptEnabled, methodChain}` | (webdriverio) `{ webviewElement: webviewEl.value, forceJavascriptEnabled: true, methodChain: [...]}`  |
       | mobile:dismissAutofill | Disable autofill dialog in Android O+ | `{element}` | `{element: elementId}` |
-      
+      | mobile:deviceInfo | Gets device information like manufacturer, model, timezone and locale. Read [GetDeviceInfo](https://github.com/appium/appium-espresso-driver/blob/master/espresso-server/app/src/androidTest/java/io/appium/espressoserver/lib/handlers/GetDeviceInfo.kt) for more details. | <none> | <none> |
+
 
   example_usage:
     java:

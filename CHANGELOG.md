@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.14.10 (FROM 1.13.0)
+CHANGES IN VERSION 1.14.0 (FROM 1.13.0)
 ===================================
 
  Appium 1.14.0 is a minor release.

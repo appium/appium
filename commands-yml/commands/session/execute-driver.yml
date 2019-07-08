@@ -39,8 +39,9 @@ description:
 example_usage:
   java:
     |
-      // TODO fill out once client code is written 
-
+      String script = "const el = await driver.$('~foo');\n"
+                    + "await el.click();"
+      driver.executeDriverScript(script, new ScriptOptions().withTimeout(200));
   python:
     |
       # TODO fill out once client code is written
@@ -68,7 +69,7 @@ example_usage:
       // TODO C# sample
 
 client_docs:
-  java: ""
+  java: "https://javadoc.io/page/io.appium/java-client/latest/io/appium/java_client/ExecutesDriverScript.html#executeDriverScript-java.lang.String-io.appium.java_client.driverscripts.ScriptOptions-"
   python: ""
   javascript_wdio: ""
   javascript_wd: ""
@@ -91,7 +92,7 @@ driver_support:
   windows:
     windows: true
 client_support:
-  java: false
+  java: true
   python: false
   ruby: false
   php: false

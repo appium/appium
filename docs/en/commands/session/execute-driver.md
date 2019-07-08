@@ -7,7 +7,9 @@ Run a WebdriverIO script against the current session, allowing execution of many
 
 ```java
 // Java
-// TODO fill out once client code is written 
+String script = "const el = await driver.$('~foo');\n"
+              + "await el.click();"
+driver.executeDriverScript(script, new ScriptOptions().withTimeout(200));
 
 ```
 
@@ -111,7 +113,7 @@ The advantage of this approach of using WebdriverIO code is that you have access
 
 |Language|Support|Documentation|
 |--------|-------|-------------|
-|[Java](https://github.com/appium/java-client/releases/latest)| None |  |
+|[Java](https://github.com/appium/java-client/releases/latest)| All | [javadoc.io](https://javadoc.io/page/io.appium/java-client/latest/io/appium/java_client/ExecutesDriverScript.html#executeDriverScript-java.lang.String-io.appium.java_client.driverscripts.ScriptOptions-) |
 |[Python](https://github.com/appium/python-client/releases/latest)| None |  |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None |  |

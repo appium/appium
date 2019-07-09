@@ -7,7 +7,7 @@ import * as tp from 'teen_process';
 import chai from 'chai';
 import { withMocks, stubEnv } from 'appium-test-support';
 import B from 'bluebird';
-
+import {removeColors} from './helper';
 
 chai.should();
 
@@ -49,7 +49,7 @@ describe('android', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Manually configure ANDROID_HOME.');
+      removeColors(await check.fix()).should.equal('Manually configure ANDROID_HOME.');
     });
   }));
   describe('AndroidToolCheck', withMocks({fs}, (mocks) => {
@@ -89,12 +89,12 @@ describe('android', function () {
     });
     it('fix - ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;
-      (await check.fix()).should.equal('Manually configure ANDROID_HOME ' +
+      removeColors(await check.fix()).should.equal('Manually configure ANDROID_HOME ' +
         'and run appium-doctor again.');
     });
     it('fix - install', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      (await check.fix()).should.equal('Manually install adb and add it to PATH.');
+      removeColors(await check.fix()).should.equal('Manually install adb and add it to PATH.');
     });
   }));
 
@@ -122,7 +122,7 @@ describe('android', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('bundletool.jar is used to handle Android App Bundle. Please read http://appium.io/docs/en/writing-running-appium/android/android-appbundle/ to install it');
+      removeColors(await check.fix()).should.equal('bundletool.jar is used to handle Android App Bundle. Please read http://appium.io/docs/en/writing-running-appium/android/android-appbundle/ to install it');
     });
   }));
 });

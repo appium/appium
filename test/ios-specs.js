@@ -15,7 +15,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { withMocks, withSandbox, stubLog } from 'appium-test-support';
-
+import {removeColors} from './helper';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -81,7 +81,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal("Manually install Xcode, and make sure 'xcode-select -p' command shows proper path like '/Applications/Xcode.app/Contents/Developer'");
+      removeColors(await check.fix()).should.equal("Manually install Xcode, and make sure 'xcode-select -p' command shows proper path like '/Applications/Xcode.app/Contents/Developer'");
     });
   }));
   describe('XcodeCmdLineToolsCheck', withSandbox({mocks: {tp, utils, prompter, system}}, (S) => {
@@ -281,7 +281,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
+      removeColors(await check.fix()).should.equal('Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
     });
   }));
 
@@ -331,7 +331,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Why idb is needed and how to install it: https://github.com/appium/appium-idb');
+      removeColors(await check.fix()).should.equal('Why idb is needed and how to install it: https://github.com/appium/appium-idb');
     });
   }));
 
@@ -360,7 +360,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Why applesimutils is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/');
+      removeColors(await check.fix()).should.equal('Why applesimutils is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/');
     });
   }));
 
@@ -388,7 +388,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('idevicelocation is used to set geolocation for real device. Please read https://github.com/JonGabilondoAngulo/idevicelocation to install it');
+      removeColors(await check.fix()).should.equal('idevicelocation is used to set geolocation for real device. Please read https://github.com/JonGabilondoAngulo/idevicelocation to install it');
     });
   }));
 
@@ -417,7 +417,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('ios-deploy is used to install iOS applications to real device. Please read http://appium.io/docs/en/drivers/ios-xcuitest-real-devices/ to install it');
+      removeColors(await check.fix()).should.equal('ios-deploy is used to install iOS applications to real device. Please read http://appium.io/docs/en/drivers/ios-xcuitest-real-devices/ to install it');
     });
   }));
 
@@ -447,7 +447,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('ios_webkit_debug_proxy is used to proxy requets from Appium to MobileSafari running on real device. Please read https://github.com/google/ios-webkit-debug-proxy to install it');
+      removeColors(await check.fix()).should.equal('ios_webkit_debug_proxy is used to proxy requests from Appium to MobileSafari running on real device. Please read https://github.com/google/ios-webkit-debug-proxy to install it');
     });
   }));
 
@@ -488,7 +488,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('ifuse is used to manage files/folders against a real device. Please read https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md to install it');
+      removeColors(await check.fix()).should.equal('ifuse is used to manage files/folders against a real device. Please read https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md to install it');
     });
   }));
 });

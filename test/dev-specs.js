@@ -6,7 +6,7 @@ import * as tp from 'teen_process';
 import chai from 'chai';
 import { withMocks, stubEnv } from 'appium-test-support';
 import B from 'bluebird';
-
+import { removeColors } from './helper';
 
 chai.should();
 
@@ -52,7 +52,7 @@ describe('dev', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Manually install the mvn binary and add it to PATH.');
+      removeColors(await check.fix()).should.equal('Manually install the mvn binary and add it to PATH.');
     });
   }));
   describe('AndroidSdkExists', withMocks({fs}, (mocks) => {
@@ -92,11 +92,11 @@ describe('dev', function () {
     });
     it('fix - ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;
-      (await check.fix()).should.equal('Manually configure ANDROID_HOME.');
+      removeColors(await check.fix()).should.equal('Manually configure ANDROID_HOME.');
     });
     it('fix - install', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      (await check.fix()).should.equal('Manually install the android-16 sdk.');
+      removeColors(await check.fix()).should.equal('Manually install the android-16 sdk.');
     });
   }));
 });

@@ -9,7 +9,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { withMocks } from 'appium-test-support';
 import B from 'bluebird';
-
+import { removeColors } from './helper';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -39,7 +39,7 @@ describe('general', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Manually setup Node.js.');
+      removeColors(await check.fix()).should.equal('Manually setup Node.js.');
     });
   }));
 
@@ -79,7 +79,7 @@ describe('general', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('Manually upgrade Node.js.');
+      removeColors(await check.fix()).should.equal('Manually upgrade Node.js.');
     });
   }));
 
@@ -118,7 +118,7 @@ describe('general', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.
+      removeColors(await check.fix()).should.
         equal('Why opencv4nodejs is needed and how to install it: https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/image-comparison.md');
     });
   }));
@@ -152,7 +152,7 @@ describe('general', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.equal('ffmpeg is needed to record screen features. Please read https://www.ffmpeg.org/ to install it');
+      removeColors(await check.fix()).should.equal('ffmpeg is needed to record screen features. Please read https://www.ffmpeg.org/ to install it');
     });
   }));
 
@@ -191,8 +191,8 @@ describe('general', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      (await check.fix()).should.
-        equal('mjpeg-consumer module is required to use MJPEG-over-HTTP features. Please install it with `npm i -g mjpeg-consumer`.');
+      removeColors(await check.fix()).should.
+        equal("mjpeg-consumer module is required to use MJPEG-over-HTTP features. Please install it with 'npm i -g mjpeg-consumer'.");
     });
   }));
 });

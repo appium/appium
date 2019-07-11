@@ -8,14 +8,15 @@ steps:
 - script: node ./ci-jobs/scripts/assert-valid-release-environment-variables
   displayName: Assert Release Tag Names
 - script: |
-    git remote set-url origin https://triager:$GITHUB_TOKEN@github.com/appium/appium
+    git remote set-url triager https://triager:$GITHUB_TOKEN@github.com/appium/appium
+    git remote -v
     git checkout -b $RELEASE_BRANCH
-    git pull origin $RELEASE_BRANCH
+    git pull triager $RELEASE_BRANCH
     node ./ci-jobs/scripts/set-package-json-version
     git add .
     git status
     git commit -n -m "Set version to $APPIUM_VERSION"
-    git push -u origin $RELEASE_BRANCH
+    git push -u triager $RELEASE_BRANCH
   displayName: Create branch
   env:
     RELEASE_BRANCH: $(RELEASE_BRANCH)

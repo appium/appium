@@ -47,7 +47,8 @@ $el = $this->byAccessibilityId('SomeAccessibilityID');
 
 ```csharp
 // C#
-// TODO C# sample
+AndroidElement elementOne = driver.FindElementByAccessibilityID("Some ID");
+AndroidElement elementTwo = driver.FindElementByClassName("Some class");
 
 ```
 

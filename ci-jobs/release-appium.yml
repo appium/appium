@@ -15,7 +15,7 @@ steps:
     git pull origin $RELEASE_BRANCH
     node ./ci-jobs/scripts/set-package-json-version
 
-    #git config --global user.name "triager"
+    git config --global user.name "triager"
     git add .
     git status
     git commit -n -m "Set version to $APPIUM_VERSION"

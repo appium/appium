@@ -1,6 +1,6 @@
 ---
 name: Set Geolocation
-short_description: Set the current geo location. (altitude for Android real device only)
+short_description: Set the current geo location. (altitude works on only Android real devices)
 
 example_usage:
   java:

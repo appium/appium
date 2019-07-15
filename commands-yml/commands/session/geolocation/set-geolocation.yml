@@ -1,6 +1,6 @@
 ---
 name: Set Geolocation
-short_description: Set the current geo location. (altitude works on only Android real devices)
+short_description: Set the current geo location
 
 example_usage:
   java:
@@ -79,7 +79,7 @@ endpoint:
       description: The desired geolocation longitude
     - name: altitude
       type: number
-      description: The desired geolocation altitude (optional)
+      description: The desired geolocation altitude (optional. altitude works on real Android devices only)
 
 # Links to specifications. Should link to at least one specification
 specifications:

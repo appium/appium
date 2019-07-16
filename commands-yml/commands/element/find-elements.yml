@@ -29,8 +29,8 @@ selector_strategies:
 example_usage:
   java:
     |
-      List<MobileElement> elementsOne = (MobileElement) driver.findElementsByAccessibilityId("SomeAccessibilityID");
-      List<MobileElement> elementsTwo = (MobileElement) driver.findElementsByClassName("SomeClassName");
+      List<MobileElement> elementsOne = (List<MobileElement>) driver.findElementsByAccessibilityId("SomeAccessibilityID");
+      List<MobileElement> elementsTwo = (List<MobileElement>) driver.findElementsByClassName("SomeClassName");
   python:
     |
       el = self.driver.find_elements_by_accessibility_id('SomeAccessibilityID')

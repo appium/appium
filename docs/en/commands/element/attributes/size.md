@@ -7,7 +7,7 @@ Determine an element's size in pixels
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
 Dimension elementSize = element.getSize();
 
 ```

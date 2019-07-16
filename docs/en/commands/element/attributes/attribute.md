@@ -7,7 +7,7 @@ Get the value of an element's attribute
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
 String tagName = element.getAttribute("content-desc");
 
 ```

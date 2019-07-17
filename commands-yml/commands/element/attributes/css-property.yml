@@ -11,7 +11,7 @@ description:
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementById("SomeId");
+      MobileElement element = (MobileElement) driver.findElementById("SomeId");
       String cssProperty = element.getCssValue("style");
   python:
     |

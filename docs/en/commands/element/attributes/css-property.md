@@ -7,7 +7,7 @@ Query the value of a web element's computed CSS property
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementById("SomeId");
+MobileElement element = (MobileElement) driver.findElementById("SomeId");
 String cssProperty = element.getCssValue("style");
 
 ```

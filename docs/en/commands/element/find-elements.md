@@ -7,8 +7,8 @@ Search for multiple elements
 
 ```java
 // Java
-List<MobileElement> elementsOne = (MobileElement) driver.findElementsByAccessibilityId("SomeAccessibilityID");
-List<MobileElement> elementsTwo = (MobileElement) driver.findElementsByClassName("SomeClassName");
+List<MobileElement> elementsOne = (List<MobileElement>) driver.findElementsByAccessibilityId("SomeAccessibilityID");
+List<MobileElement> elementsTwo = (List<MobileElement>) driver.findElementsByClassName("SomeClassName");
 
 ```
 

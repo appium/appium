@@ -7,7 +7,7 @@ Determine an element's location on the page or screen
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
 Point location = element.getLocation();
 
 ```

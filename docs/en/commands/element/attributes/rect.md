@@ -7,7 +7,7 @@ Gets dimensions and coordinates of an element
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
 Rectangle rect = element.getRect();
 
 ```

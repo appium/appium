@@ -5,7 +5,7 @@ short_description: Get an element's tag name
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
       String tagName = element.getTagName();
   python:
     |

@@ -7,7 +7,7 @@ Get an element's tag name
 
 ```java
 // Java
-List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
 String tagName = element.getTagName();
 
 ```

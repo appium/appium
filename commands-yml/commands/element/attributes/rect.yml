@@ -5,7 +5,7 @@ short_description: Gets dimensions and coordinates of an element
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
       Rectangle rect = element.getRect();
   python:
     |

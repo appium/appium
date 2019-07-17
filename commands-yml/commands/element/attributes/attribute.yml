@@ -5,7 +5,7 @@ short_description: Get the value of an element's attribute
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
       String tagName = element.getAttribute("content-desc");
   python:
     |

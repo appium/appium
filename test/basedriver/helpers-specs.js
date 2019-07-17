@@ -1,4 +1,4 @@
-import { isPackageOrBundle, duplicateKeys } from '../../lib/basedriver/helpers';
+import { isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -91,5 +91,18 @@ describe('helpers', function () {
       ];
       duplicateKeys(input, 'foo', 'FOO').should.deep.equal(expectedOutput);
     });
+  });
+});
+
+describe('parseCapsArray', function () {
+  it('should parse string into array', function () {
+    parseCapsArray('/tmp/my/app.zip').should.eql(['/tmp/my/app.zip']);
+  });
+  it('should parse array into array', function () {
+    parseCapsArray('["/tmp/my/app.zip"]').should.eql(['/tmp/my/app.zip']);
+    parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]').should.eql([
+      '/tmp/my/app.zip',
+      '/tmp/my/app2.zip'
+    ]);
   });
 });

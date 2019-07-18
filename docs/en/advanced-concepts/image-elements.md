@@ -50,7 +50,7 @@ Note that each language-specific Appium client may make these settings available
 
 ```ruby
 # Ruby core
-@driver.update_settings({ getMatchedImageResult: false })
+@driver.update_settings({ getMatchedImageResult: true })
 el = @driver.find_element_by_image 'path/to/img.ong'
 img_el.visual # returns base64 encoded string
 ```

@@ -8,7 +8,7 @@ example_usage:
       ScreenOrientation orientation = driver.getOrientation();
   python:
     |
-      orientation = self.driver.orientation()
+      orientation = self.driver.orientation
   javascript_wd:
     |
       let orientation = await driver.getOrientation();

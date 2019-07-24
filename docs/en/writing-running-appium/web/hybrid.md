@@ -159,10 +159,7 @@ public function testThings()
 ### Automating hybrid Android apps
 
 Appium comes with [built-in hybrid support via Chromedriver](/docs/en/writing-running-appium/web/chromedriver.md),
-which allow the automation of any Chrome-backed Android web views. Appium also
-uses [Selendroid](http://selendroid.io/) under the hood for webview support on
-devices older than 4.4. (in which case you will need to specify
-`"automationName": "selendroid"` as a desired capability).
+which allow the automation of any Chrome-backed Android web views.
 
 There is an additional step necessary within your app build, unfortunately. As
 described in the Android [remote debugging docs](https://developers.google.com/web/tools/chrome-devtools/remote-debugging/webviews)

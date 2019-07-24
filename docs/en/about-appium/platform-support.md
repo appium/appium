@@ -38,17 +38,15 @@ Android automation is supported with two drivers:
 
 * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
 * The (deprecated) [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
-* The (deprecated) [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 
 Please refer to these driver docs for setup instructions.
 
-* Versions: 2.3 and up
-  * Versions 2.3 through 4.2 are supported via Appium's [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
+* Versions: 4.2 and up
   * Versions 4.2 and up are supported via Appium's [UiAutomator and UiAutomator2](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)
       libraries. UiAutomator is the default driver.
 * Devices: Android emulators and real Android devices
 * Native app support: Yes
-* Mobile web support: Yes (but not when using Selendroid backend). Automation
+* Mobile web support: Yes. Automation
   is effected using a bundled [Chromedriver](https://code.google.com/p/selenium/wiki/ChromeDriver)
   server as a proxy. With 4.2 and 4.3, automation works on official Chrome
   browser or Chromium only. With 4.4+, automation also works on the built-in
@@ -56,16 +54,13 @@ Please refer to these driver docs for setup instructions.
   device under test. See the [mobile web doc](/docs/en/writing-running-appium/web/mobile-web.md) for instructions.
 * Hybrid support: Yes. See the [hybrid doc](/docs/en/writing-running-appium/web/hybrid.md) for instructions.
   * With default Appium automation backend: versions 4.4 and up
-  * With Selendroid automation backend: versions 2.3 and up
-* Support for automating multiple apps in one session: Yes (but not when
-  using the Selendroid backend)
+* Support for automating multiple apps in one session: Yes
 * Support for automating multiple devices simultaneously: Yes,
   though Appium must be started using different ports for the server
-   parameters `--port`, `--bootstrap-port` (or `--selendroid-port`) and/or
+   parameters `--port`, `--bootstrap-port` and/or
   `--chromedriver-port`. See the [server args doc](/docs/en/writing-running-appium/server-args.md) for more
   information on these parameters.
-* Support for automating vendor-provided or third-party apps: Yes (but not
-  when using the Selendroid backend)
+* Support for automating vendor-provided or third-party apps: Yes
 * Support for automating custom, non-standard UI controls: No
 
 ### Windows Desktop Support

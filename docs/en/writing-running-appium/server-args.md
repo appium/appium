@@ -39,7 +39,6 @@ All flags are optional, but some are required in conjunction with certain others
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
-|`--selendroid-port`|8080|Local port used for communication with Selendroid|`--selendroid-port 8080`|
 |`--chromedriver-port`|9515|Port upon which ChromeDriver will run|`--chromedriver-port 9515`|
 |`--chromedriver-executable`|null|ChromeDriver executable full path||
 |`--show-config`|false|Show info about the appium server configuration and exit||
@@ -58,7 +57,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`-k`, `--keep-artifacts`|false|[DEPRECATED] - no effect, trace is now in tmp dir by default and is cleared before each run. Please also refer to the --trace-dir flag.||
 |`--platform-name`|null|[DEPRECATED] - Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|
 |`--platform-version`|null|[DEPRECATED] - Version of the mobile platform|`--platform-version 7.1`|
-|`--automation-name`|null|[DEPRECATED] - Name of the automation tool: Appium or Selendroid|`--automation-name Appium`|
+|`--automation-name`|null|[DEPRECATED] - Name of the automation tool: Appium, XCUITest, etc.|`--automation-name Appium`|
 |`--device-name`|null|[DEPRECATED] - Name of the mobile device to use|`--device-name iPhone Retina (4-inch), Android Emulator`|
 |`--browser-name`|null|[DEPRECATED] - Name of the mobile browser: Safari or Chrome|`--browser-name Safari`|
 |`--app`|null|[DEPRECATED] - IOS: abs path to simulator-compiled .app file or the bundle_id of the desired target on device; Android: abs path to .apk file|`--app /abs/path/to/my.app`|

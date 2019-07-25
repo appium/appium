@@ -30,7 +30,6 @@ specific information about how that driver works and how to set it up:
     * (BETA) The [Espresso Driver](/docs/en/drivers/android-espresso.md)
     * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
     * (DEPRECATED) The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
-    * (DEPRECATED) The [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 * The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
 * The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
 

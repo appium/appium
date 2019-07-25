@@ -229,7 +229,15 @@ capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
 ```
 
 ```ruby
-# TODO: Ruby exmaple
+#ruby
+{ 
+  platformName: 'Android',
+	platformVersion: '4.4',
+	deviceName: 'Android Emulator',
+	browserName: 'Chrome'
+}
+
+
 ```
 
 Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to

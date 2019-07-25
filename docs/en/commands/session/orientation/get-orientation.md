@@ -13,7 +13,7 @@ ScreenOrientation orientation = driver.getOrientation();
 
 ```python
 # Python
-orientation = self.driver.orientation()
+orientation = self.driver.orientation
 
 ```
 

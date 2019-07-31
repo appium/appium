@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
+===================================
+
+Appium 1.14.1 is a patch release. You.I Engine Driver is the only affected driver.
+
+#### General
+* Updates You.I Engine Driver from version 1.2.0 to 1.2.1
+
 CHANGES IN VERSION 1.14.0 (FROM 1.13.0)
 ===================================
 

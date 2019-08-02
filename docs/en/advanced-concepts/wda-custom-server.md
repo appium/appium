@@ -62,8 +62,9 @@ We use [appium-ios-device](https://github.com/appium/appium-ios-device) to route
 to a real device from _localhost_ via USB, which means one can use this tool to unify WDA network
 address for Simulator and for real device.
 
-Alternatively, we can use _iproxy_ to handle WebDriverAgent outside Appium
-instead of [appium-ios-device](https://github.com/appium/appium-ios-device).
+You can use [appium-ios-device](https://github.com/appium/appium-ios-device) to connect to
+a remote device requiring the module from your JavaScript code as same as Appium.
+Alternatively, you can also use _iproxy_ to handle WebDriverAgent outside Appium.
 It is available via `node install -g iproxy`.
 
 This helper class written in Java illustrates the main implementation details

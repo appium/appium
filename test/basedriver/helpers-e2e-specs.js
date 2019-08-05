@@ -1,5 +1,6 @@
 import chai from 'chai';
 import path from 'path';
+import url from 'url';
 import chaiAsPromised from 'chai-as-promised';
 import { fs } from 'appium-support';
 import { configureApp } from '../../lib/basedriver/helpers';
@@ -84,10 +85,9 @@ describe('app download and configuration', function () {
               return;
             }
             // for testing zip file content types
-            if (req.url.indexOf('mime-zip') !== -1) {
-              res.setHeader('content-type', 'application/zip');
-            } else if (req.url.indexOf('mime-bip') !== 1) {
-              res.setHeader('content-type', 'application/bip');
+            const contentType = new URLSearchParams(url.parse(req.url).search).get('content-type');
+            if (contentType !== null) {
+              res.setHeader('content-type', contentType);
             }
             serve(req, res, finalhandler(req, res));
           });
@@ -153,21 +153,28 @@ describe('app download and configuration', function () {
             .should.eventually.be.rejectedWith(/does not exist or is not accessible/);
         });
         it('should recognize zip mime types and unzip the downloaded file', async function () {
-          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?mime-zip`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?content-type=${encodeURIComponent('application/zip')}`, '.apk');
+          newAppPath.should.contain('FakeAndroidApp.apk');
+          newAppPath.should.not.contain('.asd');
+          let contents = await fs.readFile(newAppPath, 'utf8');
+          contents.should.eql('this is not really an apk\n');
+        });
+        it('should recognize zip mime types with parameter and unzip the downloaded file', async function () {
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?content-type=${encodeURIComponent('application/zip; parameter=value')}`, '.apk');
           newAppPath.should.contain('FakeAndroidApp.apk');
           newAppPath.should.not.contain('.asd');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');
         });
         it('should recognize zip mime types and unzip the downloaded file with query string', async function () {
-          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?mime-zip&sv=abc&sr=def`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.asd?content-type=${encodeURIComponent('application/zip')}&sv=abc&sr=def`, '.apk');
           newAppPath.should.contain('FakeAndroidApp.apk');
           newAppPath.should.not.contain('.asd');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');
         });
         it('should treat an unknown mime type as an app', async function () {
-          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?mime-bip`, '.apk');
+          let newAppPath = await configureApp(`${serverUrl}/FakeAndroidApp.apk?content-type=${encodeURIComponent('application/bip')}`, '.apk');
           newAppPath.should.contain('.apk');
           let contents = await fs.readFile(newAppPath, 'utf8');
           contents.should.eql('this is not really an apk\n');

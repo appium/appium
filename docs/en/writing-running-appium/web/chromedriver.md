@@ -42,6 +42,8 @@ Chrome version that is automatable:
 
 | Version | Minimum Chrome Version | Link to Chromedriver                                                              |
 |---------|------------------------|-----------------------------------------------------------------------------------|
+| 2.46    | 71                     | [v2.46 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.46/) |
+| 2.45    | 70                     | [v2.45 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.45/) |
 | 2.44    | 69.0.3497.0            | [v2.44 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.44/) |
 | 2.43    | 69.0.3497.0            | [v2.43 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.43/) |
 | 2.42    | 68.0.3440.0            | [v2.42 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.42/) |
@@ -88,12 +90,14 @@ Chrome version that is automatable:
 | 2.1     | 27.0.1453.0            | [v2.1 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.1/)   |
 | 2.0     | 27.0.1453.0            | [v2.0 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.0/)   |
 
-The complete list of available Chromedriver releases is [here](https://chromedriver.storage.googleapis.com/index.html). To find
-the minimum supported version for any particular version, get the [Chromium](https://www.chromium.org/Home)
-[source code](https://chromium.googlesource.com/chromium/src/+/master/docs/get_the_code.md),
-check out the release commit, and check the variable `kMinimumSupportedChromeVersion`
+Since version *2.46* Google has changed the rules for Chromedriver versioning, so now the major Chromedriver version corresponds to the major web view/browser version, that it can automate. Follow the [Version Selection](https://chromedriver.chromium.org/downloads/version-selection) document in order to manually find the Chromedriver, that supports your current browser/web view if its major version is equal or above *73*.
+
+To find the minimum supported browsers for older Chromedriver versions (below *73*), get the [Chromium](https://www.chromium.org/Home)
+[source code](https://chromium.googlesource.com/chromium/src/+/master/docs/get_the_code.md), check out the release commit, and check the variable `kMinimumSupportedChromeVersion`
 in the file `src/chrome/test/chromedriver/chrome/version.cc`. (To find the
 release commits, you can use `git log --pretty=format:'%h | %s%d' | grep -i "Release Chromedriver version"`.)
+
+The complete list of available Chromedriver releases and release notes is [here](https://chromedriver.storage.googleapis.com/index.html).
 
 ### Automatic discovery of compatible Chromedriver
 
@@ -117,6 +121,8 @@ in it. The contents of the file need to be parsable as a JSON object, like:
   "2.41": "62.0.3202"
 }
 ```
+
+Since Appium 1.15.0 there is a possibility to automatically download the necessary chromedriver(s) into `chromedriverExecutableDir` from the official Google storage. The script will automatically search for the newest chromedriver version that supports the given browser/web view, download it (the hash sum is verified as well for the downloaded archive) and add to the `chromedriverChromeMappingFile` mapping. Everything, which is needed to be done from your side is to execute the server with `chromedriver_autodownload` feature enabled (like `appium --allow-insecure chromedriver_autodownload`).
 
 ### Installing an network issues
 
@@ -146,6 +152,7 @@ It may also be necessary to adjust network proxy and firewall settings to allow
 the download to occur.
 
 ### W3C support
-Chromedriver hasn't followed the W3C standard yet. If you encounter proxy command error like [this issue](https://github.com/appium/python-client/issues/234), please update your Chromedriver version.
+Chromedriver didn't follow the W3C standard until version 75. If you encounter proxy command error like [this issue](https://github.com/appium/python-client/issues/234), please update your Chromedriver version.
 Old Android devices can't use newer chrome drivers. You can avoid the error if you run tests with the Mobile JSON Wire Protocol.
+Since major version *75* W3C mode is the default one for Chromedriver, although it could be still switched to JSONWP one depending on the passed session capabilities.
 You can read the history of W3C support in Chromedriver from [downloads](https://sites.google.com/a/chromium.org/chromedriver/downloads).

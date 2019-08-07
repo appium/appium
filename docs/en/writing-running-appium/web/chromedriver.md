@@ -152,6 +152,7 @@ It may also be necessary to adjust network proxy and firewall settings to allow
 the download to occur.
 
 ### W3C support
+
 Chromedriver didn't follow the W3C standard until version 75. If you encounter proxy command error like [this issue](https://github.com/appium/python-client/issues/234), please update your Chromedriver version.
 Old Android devices can't use newer chrome drivers. You can avoid the error if you run tests with the Mobile JSON Wire Protocol.
 Since major version *75* W3C mode is the default one for Chromedriver, although it could be still switched to JSONWP one depending on the passed session capabilities.

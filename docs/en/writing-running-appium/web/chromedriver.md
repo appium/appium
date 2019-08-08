@@ -123,6 +123,7 @@ in it. The contents of the file need to be parsable as a JSON object, like:
 ```
 
 Since Appium 1.15.0 there is a possibility to automatically download the necessary chromedriver(s) into `chromedriverExecutableDir` from the official Google storage. The script will automatically search for the newest chromedriver version that supports the given browser/web view, download it (the hash sum is verified as well for the downloaded archive) and add to the `chromedriverChromeMappingFile` mapping. Everything, which is needed to be done from your side is to execute the server with `chromedriver_autodownload` feature enabled (like `appium --allow-insecure chromedriver_autodownload`).
+You can also check the [Security](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md) document for more details on how to control potentially insecure server features.
 
 ### Troubleshooting network issues
 

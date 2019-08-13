@@ -34,7 +34,12 @@ example_usage:
       $el->setText('Hello world!');
   csharp:
     |
-      // TODO C# sample
+      MobileElement el = driver.FindElement(MobileByAccessibilityID("Some ID");
+      el.SendKeys("Some Text");
+
+      //Example
+      MobileElement el = driver.FindElement(MobileById("Some ID");
+      el.SendKeys("Hello World");
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#sendKeys-java.lang.CharSequence...-"

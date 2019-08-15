@@ -126,7 +126,7 @@ endpoint:
                    This can decrease the resulting file size.
     - name: options.bitRate
       type: string
-      description: (iOS Only) The video bit rate for the video, in megabits per second.
+      description: (Android Only) The video bit rate for the video, in megabits per second.
                    4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above.
     - name: options.videoSize
       type: string

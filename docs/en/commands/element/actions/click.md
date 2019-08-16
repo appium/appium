@@ -48,7 +48,12 @@ $driver->byAccessibilityId('SomeId')->click();
 
 ```csharp
 // C#
-// TODO
+MobileElement el = driver.FindElement(MobileByAccessibilityID("Some ID");
+el.click();
+
+//Example
+MobileElement el = driver.FindElement(MobileById("Some ID");
+el.click();
 
 ```
 

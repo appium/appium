@@ -48,7 +48,12 @@ $el->setText('Hello world!');
 
 ```csharp
 // C#
-// TODO C# sample
+MobileElement el = driver.FindElement(MobileByAccessibilityID("Some ID");
+el.SendKeys("Some Text");
+
+//Example
+MobileElement el = driver.FindElement(MobileById("Some ID");
+el.SendKeys("Hello World");
 
 ```
 

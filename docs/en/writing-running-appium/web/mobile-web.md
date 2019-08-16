@@ -61,14 +61,13 @@ capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 8");
 ```
 
 ```ruby
-{ 
-	platformName: 'iOS',
-	platformVersion: '11.0',
-	deviceName: 'iPhone 8',
-	browserName: 'Safari'
+{
+  platformName: 'iOS',
+  platformVersion: '11.0',
+  deviceName: 'iPhone 8',
+  browserName: 'Safari'
 }
 ```
-
 
 ### Mobile Safari on Simulator
 
@@ -234,8 +233,8 @@ capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
 ```
 
 ```ruby
-{ 
-	platformName: 'Android',
+{
+  platformName: 'Android',
   platformVersion: '4.4',
   deviceName: 'Android Emulator',
   browserName: 'Chrome'

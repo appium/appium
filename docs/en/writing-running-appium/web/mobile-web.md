@@ -61,7 +61,12 @@ capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 8");
 ```
 
 ```ruby
-# TODO: ruby example of these caps
+{ 
+	platformName: 'iOS',
+	platformVersion: '11.0',
+	deviceName: 'iPhone 8',
+	browserName: 'Safari'
+}
 ```
 
 
@@ -229,7 +234,12 @@ capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
 ```
 
 ```ruby
-# TODO: Ruby exmaple
+{ 
+	platformName: 'Android',
+  platformVersion: '4.4',
+  deviceName: 'Android Emulator',
+  browserName: 'Chrome'
+}
 ```
 
 Note that on 4.4+ devices, you can also use the 'Browser' `browserName` cap to

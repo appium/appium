@@ -124,6 +124,11 @@ endpoint:
       description: (iOS Only) The Frames Per Second rate of the recorded video.
                    Change this value if the resulting video is too slow or too fast. Defaults to 10.
                    This can decrease the resulting file size.
+    - name: options.videoScale
+      type: string
+      description: (iOS Only) The scaling value to apply. Read https://trac.ffmpeg.org/wiki/Scaling for possible values.
+                   Example value of 720p scaling is '1280:720'. This can decrease/increase the resulting file size.
+                   No scale is applied by default.
     - name: options.bitRate
       type: string
       description: (Android Only) The video bit rate for the video, in megabits per second.

@@ -86,7 +86,10 @@ endpoint:
   json_parameters:
     - name: value
       type: array<string>
-      description: The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed.
+      description: (MJSONWP) The sequence of keys to type. An array must be provided. The server should flatten the array items to a single string to be typed
+    - name: text
+      type: string
+      description: (W3C) A single string to be typed
 
 # Links to specifications. Should link to at least one specification
 specifications:

@@ -49,8 +49,8 @@ export { statusCodes, getSummaryByCode };
 
 // W3C capabilities parser
 import * as caps from './lib/basedriver/capabilities';
-const { processCapabilities } = caps;
-export { processCapabilities };
+const { processCapabilities, isStandardCap } = caps;
+export { processCapabilities, isStandardCap };
 
 // Web socket helpers
 import * as ws from './lib/express/websocket';

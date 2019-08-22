@@ -1,6 +1,6 @@
 ## Introduction to Appium
 
-Appium is an open-source tool for automating native, mobile web, and hybrid
+Appium is an open-source tool for automating testing of native, mobile web, and hybrid
 applications on iOS mobile, Android mobile, and Windows desktop platforms.
 **Native apps** are those written using the iOS, Android, or Windows SDKs.
 **Mobile web apps** are web apps accessed using a mobile browser (Appium

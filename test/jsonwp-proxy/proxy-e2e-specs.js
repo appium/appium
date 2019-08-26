@@ -10,7 +10,10 @@ describe('proxy', function () {
   const jwproxy = new JWProxy();
   let baseServer;
   before(async function () {
-    baseServer = await server(routeConfiguringFunction(new FakeDriver()), 4444);
+    baseServer = await server({
+      routeConfiguringFunction: routeConfiguringFunction(new FakeDriver()),
+      port: 4444,
+    });
   });
   after(async function () {
     await baseServer.close();

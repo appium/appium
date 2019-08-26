@@ -19,7 +19,10 @@ describe('Websockets (e2e)', function () {
   before(async function () {
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
-    baseServer = await server(routeConfiguringFunction(driver), PORT);
+    baseServer = await server({
+      routeConfiguringFunction: routeConfiguringFunction(driver),
+      port: PORT,
+    });
   });
   after(async function () {
     await baseServer.close();

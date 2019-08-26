@@ -17,7 +17,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
   describe('BaseDriver (e2e)', function () {
     let baseServer, d = new DriverClass(DEFAULT_ARGS);
     before(async function () {
-      baseServer = await server(routeConfiguringFunction(d), DEFAULT_ARGS.port);
+      baseServer = await server({
+        routeConfiguringFunction: routeConfiguringFunction(d),
+        port: DEFAULT_ARGS.port,
+      });
     });
     after(async function () {
       await baseServer.close();

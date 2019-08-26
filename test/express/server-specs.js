@@ -20,10 +20,12 @@ describe('server configuration', function () {
   });
 
   it('should reject if error thrown in configureRoutes parameter', async function () {
-    let configureRoutes = () => {
+    const configureRoutes = () => {
       throw new Error('I am Mr. MeeSeeks look at me!');
     };
-    await server(configureRoutes, 8181).should.be.rejectedWith('MeeSeeks');
+    await server({
+      routeConfiguringFunction: configureRoutes,
+      port: 8181,
+    }).should.be.rejectedWith('MeeSeeks');
   });
 });
-

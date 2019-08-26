@@ -33,7 +33,10 @@ describe('server', function () {
         res.status(200).send('We have waited!');
       });
     }
-    hwServer = await server(configureRoutes, 8181);
+    hwServer = await server({
+      routeConfiguringFunction: configureRoutes,
+      port: 8181,
+    });
   });
   after(async function () {
     await hwServer.close();
@@ -59,7 +62,10 @@ describe('server', function () {
       .should.be.rejectedWith(/hahaha/);
   });
   it('should error if we try to start again on a port that is used', async function () {
-    await server(() => {}, 8181).should.be.rejectedWith(/EADDRINUSE/);
+    await server({
+      routeConfiguringFunction () {},
+      port: 8181,
+    }).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should wait for the server close connections before finishing closing', async function () {
     let bodyPromise = request('http://localhost:8181/pause');
@@ -76,7 +82,15 @@ describe('server', function () {
   });
   it('should error if we try to start on a bad hostname', async function () {
     this.timeout(60000);
-    await server(_.noop, 8181, 'lolcathost').should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL/);
-    await server(_.noop, 8181, '1.1.1.1').should.be.rejectedWith(/EADDRNOTAVAIL/);
+    await server({
+      routeConfiguringFunction: _.noop,
+      port: 8181,
+      hostname: 'lolcathost',
+    }).should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL/);
+    await server({
+      routeConfiguringFunction: _.noop,
+      port: 8181,
+      hostname: '1.1.1.1',
+    }).should.be.rejectedWith(/EADDRNOTAVAIL/);
   });
 });

@@ -37,7 +37,10 @@ describe('Protocol', function () {
     before(async function () {
       driver = new FakeDriver();
       driver.sessionId = 'foo';
-      mjsonwpServer = await server(routeConfiguringFunction(driver), serverPort);
+      mjsonwpServer = await server({
+        routeConfiguringFunction: routeConfiguringFunction(driver),
+        port: serverPort,
+      });
     });
 
     after(async function () {
@@ -805,7 +808,10 @@ describe('Protocol', function () {
     let mjsonwpServer;
 
     before(async function () {
-      mjsonwpServer = await server(routeConfiguringFunction(driver), serverPort);
+      mjsonwpServer = await server({
+        routeConfiguringFunction: routeConfiguringFunction(driver),
+        port: serverPort,
+      });
     });
 
     after(async function () {
@@ -921,7 +927,10 @@ describe('Protocol', function () {
       driver.proxyActive = () => { return true; };
       driver.canProxy = () => { return true; };
 
-      mjsonwpServer = await server(routeConfiguringFunction(driver), serverPort);
+      mjsonwpServer = await server({
+        routeConfiguringFunction: routeConfiguringFunction(driver),
+        port: serverPort,
+      });
     });
 
     afterEach(async function () {

@@ -13,7 +13,8 @@ The `appium-express` server comes configured with:
 4. default error handling
 5. fix for invalid content types sent by certain clients
 
-To configure routes, a function that takes an Express server is passed into the server. This function can add whatever routes are wanted.
+To configure routes, a function that takes an Express server is passed into the
+server. This function can add whatever routes are wanted.
 
 
 ### Usage
@@ -34,10 +35,14 @@ function configureRoutes (app) {
   });
 }
 
-let port = 5000;
-let host = 'localhost';
+const port = 5000;
+const host = 'localhost';
 
-let appiumServer = await server(configureRoutes, port, host);
+const appiumServer = await server({
+  routeConfiguringFunction,
+  port,
+  host,
+});
 ```
 
 

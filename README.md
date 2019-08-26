@@ -56,7 +56,7 @@ a web standard. Don't lock yourself into a proprietary stack.
 For example, if you use Apple's XCUITest library without Appium you can only
 write tests using Obj-C/Swift, and you can only run tests through Xcode.
 Similarly, with Google's UiAutomator or Espresso you can only write tests in
-Java. Appium opens up the possibility of true cross-platform native app
+Java/Kotlin. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
 If you're new to Appium, or want a more comprehensive description of what this is all

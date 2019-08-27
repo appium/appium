@@ -17,16 +17,19 @@ export default BaseDriver;
 import * as protocol from './lib/protocol';
 
 const {
-  Protocol, routeConfiguringFunction, errors, isErrorType,
+  Protocol, routeConfiguringFunction, errors, isErrorType, PROTOCOLS,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
-  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
+  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand, DEFAULT_BASE_PATH,
+  normalizeBasePath, determineProtocol
 } = protocol;
 
 export {
-  Protocol, routeConfiguringFunction, errors, isErrorType,
-  errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
+  Protocol, routeConfiguringFunction, errors, isErrorType, PROTOCOLS,
+  errorFromMJSONWPStatusCode, errorFromW3CJsonCode, determineProtocol,
   errorFromMJSONWPStatusCode as errorFromCode, ALL_COMMANDS, METHOD_MAP,
-  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand };
+  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
+  DEFAULT_BASE_PATH, normalizeBasePath
+};
 
 // Express exports
 import * as staticIndex from './lib/express/static';

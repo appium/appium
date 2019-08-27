@@ -2,12 +2,12 @@
 /* global describe:true, it:true */
 
 import _ from 'lodash';
+import { PROTOCOLS } from '../../lib/protocol';
 import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../lib/jsonwp-proxy/protocol-converter';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import BaseDriver from '../../lib/basedriver/driver';
 
-const {MJSONWP, W3C} = BaseDriver.DRIVER_PROTOCOL;
+const {MJSONWP, W3C} = PROTOCOLS;
 
 chai.use(chaiAsPromised);
 

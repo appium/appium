@@ -5,13 +5,14 @@ Proxy middleware for the Selenium [JSON Wire Protocol](https://github.com/Seleni
 
 ### Usage
 
-The proxy is used by instantiating with the details of the Selenium server to which to proxy. The options for the constructor are passed as a hash with the following possible member:
+The proxy is used by instantiating with the details of the Selenium server to which to proxy. The options for the constructor are passed as a hash with the following possible members:
 
 - `scheme` - defaults to 'http'
 - `server` - defaults to 'localhost'
 - `port` - defaults to `4444`
 - `base` - defaults to '/wd/hub'
 - `sessionId` - the session id of the session on the remote server
+- `reqBasePath` - the base path of the server which the request was originally sent to (defaults to '/wd/hub')
 
 Once the proxy is created, there are two `async` methods:
 

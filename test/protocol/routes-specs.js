@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { _ } from 'lodash';
-import { METHOD_MAP, routeToCommandName } from '../../lib/protocol/routes';
+import { METHOD_MAP, routeToCommandName } from '../../lib/protocol';
 import crypto from 'crypto';
 import chai from 'chai';
 
@@ -40,7 +40,7 @@ describe('Protocol', function () {
       }
       let hash = shasum.digest('hex').substring(0, 8);
       // Modify the hash whenever the protocol has intentionally been modified.
-      hash.should.equal('009052aa');
+      hash.should.equal('f46dc0b1');
     });
   });
 

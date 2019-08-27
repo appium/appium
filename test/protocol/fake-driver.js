@@ -1,5 +1,5 @@
 /* eslint-disable require-await */
-import { errors, BaseDriver } from '../..';
+import { errors, BaseDriver, determineProtocol, PROTOCOLS } from '../..';
 import _ from 'lodash';
 import UUID from 'uuid-js';
 
@@ -7,7 +7,7 @@ class FakeDriver extends BaseDriver {
 
   constructor () {
     super();
-    this.protocol = BaseDriver.DRIVER_PROTOCOL.MJSONWP;
+    this.protocol = PROTOCOLS.MJSONWP;
     this.sessionId = null;
     this.jwpProxyActive = false;
   }
@@ -40,7 +40,7 @@ class FakeDriver extends BaseDriver {
       throw new errors.NotYetImplementedError();
     }
     if (cmd === 'createSession') {
-      this.protocol = BaseDriver.determineProtocol.apply(null, args);
+      this.protocol = determineProtocol(...args);
     }
     return await this[cmd](...args);
   }

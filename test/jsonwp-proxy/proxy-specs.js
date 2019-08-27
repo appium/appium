@@ -60,6 +60,15 @@ describe('proxy', function () {
       j.getUrlForProxy('/wd/hub/session/456/element/200/value')
        .should.eql('http://localhost:4444/wd/hub/session/123/element/200/value');
     });
+    it('should respect nonstandard incoming request base path', function () {
+      let j = mockProxy({sessionId: '123', reqBasePath: ''});
+      j.getUrlForProxy('/session/456/element/200/value')
+       .should.eql('http://localhost:4444/wd/hub/session/123/element/200/value');
+
+      j = mockProxy({sessionId: '123', reqBasePath: '/my/base/path'});
+      j.getUrlForProxy('/my/base/path/session/456/element/200/value')
+       .should.eql('http://localhost:4444/wd/hub/session/123/element/200/value');
+    });
     it('should work with urls which do not have session ids', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('http://host.com:1234/wd/hub/session')

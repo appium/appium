@@ -1,13 +1,13 @@
 // transpile:mocha
 
 import { server } from '../..';
-import { configureServer } from '../../lib/express/server';
+import { configureServer, normalizeBasePath } from '../../lib/express/server';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
 
-chai.should();
+const should = chai.should();
 chai.use(chaiAsPromised);
 
 describe('server configuration', function () {
@@ -27,5 +27,26 @@ describe('server configuration', function () {
       routeConfiguringFunction: configureRoutes,
       port: 8181,
     }).should.be.rejectedWith('MeeSeeks');
+  });
+
+  describe('#normalizeBasePath', function () {
+    it('should throw an error for paths of the wrong type', function () {
+      should.throw(() => {
+        normalizeBasePath(null);
+      });
+      should.throw(() => {
+        normalizeBasePath(1);
+      });
+    });
+    it('should remove trailing slashes', function () {
+      normalizeBasePath('/wd/hub/').should.eql('/wd/hub');
+      normalizeBasePath('/foo/').should.eql('/foo');
+      normalizeBasePath('/').should.eql('');
+    });
+    it('should ensure a leading slash is present', function () {
+      normalizeBasePath('foo').should.eql('/foo');
+      normalizeBasePath('wd/hub').should.eql('/wd/hub');
+      normalizeBasePath('wd/hub/').should.eql('/wd/hub');
+    });
   });
 });

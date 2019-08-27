@@ -66,7 +66,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:sessionId/cookie
+  url: /session/:sessionId/cookie
   method: POST
   url_parameters:
     - name: session_id

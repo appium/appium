@@ -68,7 +68,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/status
+  url: /status
   method: GET
   response:
     - name: build.version

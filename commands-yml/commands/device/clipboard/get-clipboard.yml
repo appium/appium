@@ -67,7 +67,7 @@ client_support:
   javascript_wdio: true
 
 endpoint:
-  url: /wd/hub/session/:session_id/appium/device/get_clipboard
+  url: /session/:session_id/appium/device/get_clipboard
   method: 'POST'
   url_parameters:
     - name: session_id

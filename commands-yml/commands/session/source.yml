@@ -71,7 +71,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/source
+  url: /session/:session_id/source
   method: GET
   url_parameters:
     - name: session_id

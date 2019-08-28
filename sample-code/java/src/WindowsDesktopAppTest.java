@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 import io.appium.java_client.windows.WindowsDriver;
 
-public class WindowsDesktopAppTest extends BaseTest{
+public class WindowsDesktopAppTest extends BaseTest {
 	
 	public static WindowsDriver<?> driver;
 

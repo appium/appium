@@ -9,11 +9,11 @@ For accessing web views on real iOS device appium uses [ios_webkit_debug_proxy](
 To install the latest tagged version of the ios-webkit-debug-proxy using
 Homebrew, run the following commands in the terminal:
 
- ``` center
+ ``` shell
  # The first command is only required if you don't have brew installed.
- > ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
- > brew update
- > brew install ios-webkit-debug-proxy
+ $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+ $ brew update
+ $ brew install ios-webkit-debug-proxy
  ```
 
 #### Building ios-webkit-debug-proxy from source

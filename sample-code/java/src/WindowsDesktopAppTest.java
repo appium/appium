@@ -7,10 +7,11 @@ import org.testng.annotations.Test;
 import io.appium.java_client.windows.WindowsDriver;
 
 public class WindowsDesktopAppTest extends BaseTest{
+	
 	public static WindowsDriver<?> driver;
 
 	@BeforeTest
-	public void setup( ){
+	public void setup( ) {
 		DesiredCapabilities caps = new DesiredCapabilities();
 		caps.setCapability("platformVersion", "10");
 		caps.setCapability("platformName","Windows");
@@ -21,14 +22,12 @@ public class WindowsDesktopAppTest extends BaseTest{
 	}
 
 	@AfterTest
-	public void tearDown( ) 
-	{
+	public void tearDown( ) {
 		driver.quit();
 	}
 
 	@Test
-	public void test() 
-	{
+	public void test() {
 		driver.findElementByName("One").click();
 		driver.findElementByName("Plus").click();
 		driver.findElementByName("Two").click();

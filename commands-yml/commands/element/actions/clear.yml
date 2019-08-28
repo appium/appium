@@ -64,7 +64,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/:element_id/clear
+  url: /session/:session_id/element/:element_id/clear
   method: 'POST'
   url_parameters:
     - name: session_id

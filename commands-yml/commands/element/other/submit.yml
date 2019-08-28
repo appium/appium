@@ -71,7 +71,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/:element_id/submit
+  url: /session/:session_id/element/:element_id/submit
   method: 'POST'
   url_parameters:
     - name: session_id

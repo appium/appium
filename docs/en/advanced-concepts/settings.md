@@ -66,6 +66,8 @@ Note that the actual commands you would use in your test script differ based on 
 |`normalizeTagNames`| Translate all class names used as XML tags to the limited set of ASCII characters supported by Apache Harmony library. Used by default in Android to avoid possible XML parsing exceptions caused by XPath lookup. The translation is based on [junidecode](https://github.com/gcardone/junidecode). This prevents [this error case](https://github.com/appium/appium/issues/11854). Defaults to `false`. | `false` or `true` |
 |`shutdownOnPowerDisconnect`| Shutdown the server through the broadcast receiver on [ACTION_POWER_DISCONNECTED](https://developer.android.com/reference/android/content/Intent.html#ACTION_POWER_DISCONNECTED). Defaults to `true` | `false` or `true` |
 |`trackScrollEvents`| Turn on or off the tracking of scroll events as they happen. If `true`, a field, `lastScrollData`, is added to the results of `getSession`, which can then be used to check on scroll progress. Turning this feature off significantly increases touch action performance. Defaults to `true` | `true` or `false` |
+|`WakeLockTimeout`| Change the wake lock timeout. It can allow the display sleep during the test run, for example. Defaults to '24 * 60 * 60 * 1000' milliseconds. | e.g. `60000` (1 min) |
+
 
 ### iOS Only
 

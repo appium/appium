@@ -2598,17 +2598,17 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "2.128.2",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.128.2.tgz",
-      "integrity": "sha512-dBpwUSBVNKnTKkFxR3qV60ZN6djCQ4SprifuMr7QOT6VLSmKJKEwvl2io9yOFP+4Utw03Bora6gqRXEwieX1uQ==",
+      "version": "2.129.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.129.0.tgz",
+      "integrity": "sha512-6ME3PQl7RPY2R45diOiUyV4qo4jdOj6FnHNGFxloE83yCpXBuuPIySkNZYu2OKwDh4oPX+7XZk2Ki5qdoOQBFw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^4.0.0",
         "appium-idb": "^0",
-        "appium-ios-device": "^0.10.2",
+        "appium-ios-device": "^0.10.5",
         "appium-ios-driver": "^4.0.0",
         "appium-ios-simulator": "^3.14.0",
-        "appium-remote-debugger": "^5.1.0",
+        "appium-remote-debugger": "^5.3.0",
         "appium-support": "^2.32.0",
         "appium-webdriveragent": "^1.1.0",
         "appium-xcode": "^3.8.0",
@@ -2653,9 +2653,9 @@
           }
         },
         "appium-remote-debugger": {
-          "version": "5.3.0",
-          "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-5.3.0.tgz",
-          "integrity": "sha512-8eP/CYeH4plE5htekAwAEcjWqx+n3RjokeQ9AsOkyyPmXIn2XOKjYQlUx9cAgv5b7VLtQA0N/J6MJSYPCHYhTQ==",
+          "version": "5.4.0",
+          "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-5.4.0.tgz",
+          "integrity": "sha512-hoWfkdLzErVrpPuZYeI9Ziz/lRcWHH2F28gAccJkjDIbu781bYFglALf75gto7iKjPm4XIrbVCAcbVCYUCYMPA==",
           "requires": {
             "@babel/runtime": "^7.0.0",
             "appium-base-driver": "^4.0.0",
@@ -11176,17 +11176,17 @@
       }
     },
     "sinon": {
-      "version": "7.4.1",
-      "resolved": "https://registry.npmjs.org/sinon/-/sinon-7.4.1.tgz",
-      "integrity": "sha512-7s9buHGHN/jqoy/v4bJgmt0m1XEkCEd/tqdHXumpBp0JSujaT4Ng84JU5wDdK4E85ZMq78NuDe0I3NAqXY8TFg==",
+      "version": "7.4.2",
+      "resolved": "https://registry.npmjs.org/sinon/-/sinon-7.4.2.tgz",
+      "integrity": "sha512-pY5RY99DKelU3pjNxcWo6XqeB1S118GBcVIIdDi6V+h6hevn1izcg2xv1hTHW/sViRXU7sUOxt4wTUJ3gsW2CQ==",
       "dev": true,
       "requires": {
         "@sinonjs/commons": "^1.4.0",
         "@sinonjs/formatio": "^3.2.1",
-        "@sinonjs/samsam": "^3.3.2",
+        "@sinonjs/samsam": "^3.3.3",
         "diff": "^3.5.0",
         "lolex": "^4.2.0",
-        "nise": "^1.5.1",
+        "nise": "^1.5.2",
         "supports-color": "^5.5.0"
       }
     },

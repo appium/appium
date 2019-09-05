@@ -13,7 +13,7 @@ desiredCapabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simu
 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
 desiredCapabilities.setCapability(MobileCapabilityType.APP, "/path/to/ios/app.zip");
 
-URL url = new URL("http://127.0.0.1:4723/wd/hub");
+URL url = new URL("http://127.0.0.1:4723");
 
 IOSDriver driver = new IOSDriver(url, desiredCapabilities);
 String sessionId = driver.getSessionId().toString();
@@ -29,7 +29,7 @@ desired_caps = desired_caps = {
   'automationName': 'UiAutomator2',
   'app': PATH('/path/to/app')
 }
-self.driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
+self.driver = webdriver.Remote('http://127.0.0.1:4723', desired_caps)
 
 ```
 
@@ -96,7 +96,7 @@ capabilities.SetCapability(MobileCapabilityType.DeviceName, "Android Device");
 capabilities.SetCapability("appPackage", "com.instagram.android");
 capabilities.SetCapability("appActivity", "com.instagram.android.activity.MainTabActivity");
 
-AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/wd/hub/"), capabilities);
+AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/"), capabilities);
 
 ```
 

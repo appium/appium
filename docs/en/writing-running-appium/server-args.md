@@ -18,6 +18,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--ipa`|null|(IOS-only) abs path to compiled .ipa file|`--ipa /abs/path/to/my.ipa`|
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
+|`-pa`, `--base-path`|/wd/hub|Initial path segment where the Appium/WebDriver API will be hosted. Every endpoint will be behind this segment.|`--base-path /my/path/prefix`|
 |`-ca`, `--callback-address`|null|callback IP Address (default: same as --address)|`--callback-address 127.0.0.1`|
 |`-cp`, `--callback-port`|null|callback port (default: same as port)|`--callback-port 4723`|
 |`-bp`, `--bootstrap-port`|4724|(Android-only) port to use on device to talk to Appium|`--bootstrap-port 4724`|

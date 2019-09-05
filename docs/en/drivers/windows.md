@@ -60,6 +60,15 @@ You could begin by taking a look at some existing samples:
 2. In Visual Studio 2015 with the test solution open build the test and select
    **Test > Run > All Tests**
 
+**Javascript/node Samples**
+
+1. Using selenium-webdriver
+
+    [Examples on selenium-appium](https://github.com/react-native-windows/selenium-appium/tree/master/example)
+
+    [selenium-webdriver-winappdriver-example](https://github.com/react-native-windows/selenium-webdriver-winappdriver-example)
+
+
 If you want to write tests from scratch, you can choose any programming
 language or tools supported by Appium/Selenium to write your test scripts. In
 the example below, we will author the test script in C# using Microsoft Visual

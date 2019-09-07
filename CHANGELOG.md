@@ -1,3 +1,12 @@
+CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
+===================================
+
+Appium 1.14.1 is a patch release. You.I Engine Driver is the only affected driver.
+
+#### YouI Engine Driver
+* Added support for YIKeyEvents (all supported key events) via Execute Mobile Command when using `mobile:PressButton`
+* Added new default port for You.i Engine socket server on PS4 and ability to make it configurable.
+
 CHANGES IN VERSION 1.14.0 (FROM 1.13.0)
 ===================================
 

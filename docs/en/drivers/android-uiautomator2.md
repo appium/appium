@@ -12,7 +12,6 @@ repo.
 
 Older Android-based drivers include:
 * The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
-* The [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 
 ### Requirements and Support
 

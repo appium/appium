@@ -34,7 +34,12 @@ example_usage:
       $driver->byAccessibilityId('SomeId')->click();
   csharp:
     |
-      // TODO
+      MobileElement el = driver.FindElement(MobileByAccessibilityID("Some ID");
+      el.click();
+
+      //Example
+      MobileElement el = driver.FindElement(MobileById("Some ID");
+      el.click();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--"
@@ -71,7 +76,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/:element_id/click
+  url: /session/:session_id/element/:element_id/click
   method: 'POST'
   url_parameters:
     - name: session_id

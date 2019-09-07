@@ -30,7 +30,6 @@ specific information about how that driver works and how to set it up:
     * (BETA) The [Espresso Driver](/docs/en/drivers/android-espresso.md)
     * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
     * (DEPRECATED) The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
-    * (DEPRECATED) The [Selendroid Driver](/docs/en/drivers/android-selendroid.md)
 * The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
 * The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
 
@@ -57,7 +56,7 @@ a web standard. Don't lock yourself into a proprietary stack.
 For example, if you use Apple's XCUITest library without Appium you can only
 write tests using Obj-C/Swift, and you can only run tests through Xcode.
 Similarly, with Google's UiAutomator or Espresso you can only write tests in
-Java. Appium opens up the possibility of true cross-platform native app
+Java/Kotlin. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
 If you're new to Appium, or want a more comprehensive description of what this is all

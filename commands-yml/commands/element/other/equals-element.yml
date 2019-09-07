@@ -73,7 +73,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/element/:element_id/equals/:other_element_id
+  url: /session/:session_id/element/:element_id/equals/:other_element_id
   method: 'GET'
   url_parameters:
     - name: session_id

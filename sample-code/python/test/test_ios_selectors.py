@@ -48,4 +48,4 @@ class TestIOSSelectors():
 
     def test_should_find_elements_by_xpath(self, driver):
         action_bar_container_elements = driver.find_elements_by_xpath('//XCUIElementTypeWindow//XCUIElementTypeButton')
-        assert 7 == len(action_bar_container_elements)
+        assert 7 <= len(action_bar_container_elements) <= 8

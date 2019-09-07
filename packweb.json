@@ -17,7 +17,6 @@
             "appium-ios-simulator",
             "appium-mac-driver",
             "appium-remote-debugger",
-            "appium-selendroid-driver",
             "appium-support",
             "appium-uiautomator2-driver",
             "appium-uiautomator2-server",

@@ -116,7 +116,7 @@ driver.StartRecordingScreen(
 | options.method | `string` | The http multipart upload method name. The 'PUT' one is used by default. |
 | options.forceRestart | `boolean` | Whether to try to catch and upload/return the currently running screen recording (`false`, the default setting on server) or ignore the result of it and start a new recording immediately (`true`). |
 | options.timeLimit | `string` | Recording time. 180 seconds is by default. |
-| options.videoType | `string` | (iOS Only) The format of the screen capture to be recorded. Available formats "h264", "mp4" or "fmp4". Default is "mp4". Only works for Simulator. |
+| options.videoType | `string` | (iOS Only) The format of the screen capture to be recorded. Available formats "h264", "mpeg4", "mp4" or "fmp4". Default is "mp4". If you have difficulties try "mpeg4" |
 | options.videoQuality | `string` | (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). |
 | options.videoFps | `string` | (iOS Only) The Frames Per Second rate of the recorded video. Change this value if the resulting video is too slow or too fast. Defaults to 10. This can decrease the resulting file size. |
 | options.videoScale | `string` | (iOS Only) The scaling value to apply. Read https://trac.ffmpeg.org/wiki/Scaling for possible values. Example value of 720p scaling is '1280:720'. This can decrease/increase the resulting file size. No scale is applied by default. |

@@ -91,7 +91,7 @@ Now your Appium instance is ready to go. Run `node .` to kick up the Appium serv
 
 To work on Android, make sure you have `ant`, `maven`, and `adb` installed
 and added to system `PATH` environment variable. Also you would need the
-android-16 sdk (for `Selendroid`) and android-19+ sdk installed.
+android-19+ sdk installed.
 From your local repo's command prompt, install/run the following:
 
 Set up Appium by running:

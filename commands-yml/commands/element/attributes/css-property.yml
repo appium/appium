@@ -11,7 +11,7 @@ description:
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementById("SomeId");
+      MobileElement element = (MobileElement) driver.findElementById("SomeId");
       String cssProperty = element.getCssValue("style");
   python:
     |
@@ -71,7 +71,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/elements/:element_id/css/:property_name
+  url: /session/:session_id/elements/:element_id/css/:property_name
   method: GET
   url_parameters:
     - name: session_id

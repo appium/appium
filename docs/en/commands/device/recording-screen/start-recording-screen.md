@@ -119,7 +119,8 @@ driver.StartRecordingScreen(
 | options.videoType | `string` | (iOS Only) The format of the screen capture to be recorded. Available formats "h264", "mp4" or "fmp4". Default is "mp4". Only works for Simulator. |
 | options.videoQuality | `string` | (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium). |
 | options.videoFps | `string` | (iOS Only) The Frames Per Second rate of the recorded video. Change this value if the resulting video is too slow or too fast. Defaults to 10. This can decrease the resulting file size. |
-| options.bitRate | `string` | (iOS Only) The video bit rate for the video, in megabits per second. 4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above. |
+| options.videoScale | `string` | (iOS Only) The scaling value to apply. Read https://trac.ffmpeg.org/wiki/Scaling for possible values. Example value of 720p scaling is '1280:720'. This can decrease/increase the resulting file size. No scale is applied by default. |
+| options.bitRate | `string` | (Android Only) The video bit rate for the video, in megabits per second. 4 Mbp/s(4000000) is by default for Android API level below 27. 20 Mb/s(20000000) for API level 27 and above. |
 | options.videoSize | `string` | (Android Only) The format is widthxheight. The default value is the device's native display resolution (if supported), 1280x720 if not. For best results, use a size supported by your device's Advanced Video Coding (AVC) encoder. For example, "1280x720" |
 | options.bugReport | `string` | (Android Only) Set it to `true` in order to display additional information on the video overlay, such as a timestamp, that is helpful in videos captured to illustrate bugs. This option is only supported since API level 27 (Android O). |
 

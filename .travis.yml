@@ -47,7 +47,7 @@ jobs:
       if: branch = master AND type != pull_request
       os: linux
       language: python
-      python: "2.7"
+      python: "3.6"
       env:
         - SAUCE_LABS=1
       before_install:

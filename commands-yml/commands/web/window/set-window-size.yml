@@ -64,7 +64,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/window/:window_handle/size
+  url: /session/:session_id/window/:window_handle/size
   method: POST
   url_parameters:
     - name: session_id

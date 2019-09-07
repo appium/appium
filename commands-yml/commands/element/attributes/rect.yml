@@ -5,7 +5,7 @@ short_description: Gets dimensions and coordinates of an element
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
       Rectangle rect = element.getRect();
   python:
     |
@@ -66,7 +66,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/elements/:element_id/rect
+  url: /session/:session_id/elements/:element_id/rect
   method: GET
   url_parameters:
     - name: session_id

@@ -16,7 +16,7 @@ example_usage:
       driver.pressKeycode(10);
   javascript_wd:
     |
-      await driver.pressKeyCode(10);
+      await driver.pressKeycode(10);
   ruby:
     |
       press_keycode(10)

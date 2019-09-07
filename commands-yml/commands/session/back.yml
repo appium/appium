@@ -63,7 +63,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/back
+  url: /session/:session_id/back
   method: POST
   url_parameters:
     - name: session_id

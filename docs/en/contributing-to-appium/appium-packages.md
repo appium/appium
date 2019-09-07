@@ -11,7 +11,7 @@
 - put logging together
   - mixture out of npmlog, winston and a custom logger
 - initiates AppiumDriver (extends Basedriver)
-  - assigns iOS/Android/Selendroid/Fake driver to session
+  - assigns iOS/Android/Fake driver to session
   - creates/deletes Appium session
 - starts baseServer (appium-express)
   - passes routes given by driver
@@ -144,7 +144,7 @@
 - allows to send json wire protocol commands to a server that understands it (browser drivers)
 - parses response into json
 - allows to proxy requests to a proxied server
-- used for communication in appium-chromedriver and appium-selendroid-driver
+- used for communication in appium-chromedriver
 
 ## appium-android-driver
 - similar to appium-ios-driver it can run as standalone server
@@ -183,26 +183,10 @@
 - command flow is like
   - appium-android-bootstrap:start -> appium-uiautomator:start -> appium-adb:install bootstrap
 
-## appium-selendroid-driver
-- similar to appium-android-driver it can run as standalone server
-- downloads and installs Selendroid using appium-selendroid-installer
-- contains several Selendroid specific logic to ensure a seamless integration
-- contains a more specific set of capability constraints
-- uses jsonwp-proxy to talk to the server
-- used appium-adb to enable commands not implemented in Selendroid
-
-## appium-selendroid-installer
-- contains and exports a setup logic to
-  - download Selendroid
-  - determine AndroidManifest location
-  - determine Server APK location
-  - extracting both files
-  - copying and cleaning files
-
 ## appium-android-ime
 - allows to send and receive unicode characters from/to the Android device
 - encodes text into UTF-7 sends it to the device and recodes it as Unicode
-- used by appium-android-driver and appium-selendroid-driver
+- used by appium-android-driver
 
 ## appium-doctor
 - diagnoses, reports and fixes common Node, iOS and Android configuration issues before starting Appium

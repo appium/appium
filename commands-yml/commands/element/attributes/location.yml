@@ -7,7 +7,7 @@ description: The point (0, 0) refers to the upper-left corner of the page. The e
 example_usage:
   java:
     |
-      List<MobileElement> element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
+      MobileElement element = (MobileElement) driver.findElementByAccessibilityId("SomeAccessibilityID");
       Point location = element.getLocation();
   python:
     |
@@ -68,7 +68,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/elements/:element_id/location
+  url: /session/:session_id/elements/:element_id/location
   method: GET
   url_parameters:
     - name: session_id

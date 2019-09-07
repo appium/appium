@@ -63,7 +63,7 @@ client_support:
 
 # Information about the HTTP endpoints
 endpoint:
-  url: /wd/hub/session/:session_id/appium/device/pull_folder
+  url: /session/:session_id/appium/device/pull_folder
   method: POST
   url_parameters:
     - name: session_id

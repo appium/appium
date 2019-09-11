@@ -80,3 +80,6 @@ Note that the actual commands you would use in your test script differ based on 
 |`mjpegScalingFactor`| Changes the scale of screenshots. Defaults to `100`, no scaling. Integer between `1` and `100` are available. | e.g. `1`, `50`, `100` |1.12.0+|
 |`keyboardAutocorrection`| Changes the 'Auto-Correction' preference in _Keyboards_ setting. Defaults to `false` when WDA starts as xctest. | `true`, `false` |1.14.0+|
 |`keyboardPrediction`| Changes the 'Predictive' preference in _Keyboards_ setting. Defaults to `false` when WDA starts as xctest. | `true`, `false` |1.14.0+|
+|`reduceMotion`| Changes the 'reduce motion' preference of accessibility feature. | `true`, `false` |1.16.0+?|
+|`defaultActiveApplication`| Set the default active application explicitly. It helps to handle active applications in split screen, for example. Defaults to `auto` which handles on screen application as active application. | e.g., `com.apple.Preferences` |1.16.0+?|
+|`screenPoint`| Change the current screen point to get the element on current screen. It affects getting current active application. You can change this point when you test split screen, for example. The format is comma separate like `x,y` as string. | e.g. `100,300` |1.16.0+?|

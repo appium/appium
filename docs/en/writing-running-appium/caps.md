@@ -212,3 +212,6 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 ### You.i Engine Only
 
 (For You.i Engine-specific capabilities, please refer to the documentation on the [You.i Engine driver](https://github.com/YOU-i-Labs/appium-youiengine-driver#desired-capabilities) itself.)
+
+### WinAppDriver Only
+(For WinAppDriver specific capabilities, please refer to the documentation on the [Appium Windows Driver repo](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) itself.)

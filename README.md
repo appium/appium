@@ -76,7 +76,7 @@ Check out our [Getting Started](/docs/en/about-appium/getting-started.md) guide
 to get going with Appium.
 
 There is also sample code that contains [many examples of tests in a variety
-of different languages](https://github.com/appium/sample-code/tree/master/sample-code)!
+of different languages](https://github.com/appium/appium/tree/master/sample-code)!
 
 ### Documentation
 

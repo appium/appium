@@ -78,7 +78,7 @@
     "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
     "postpublish": "npm run restore-shrinkwrap",
     "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap && npm install --only=dev --no-shrinkwrap) && npm run check-pruned-shrinkwrap",
-    "restore-shrinkwrap": "mv npm-shrinkwrap-backup.json npm-shrinkwrap.json",
+    "restore-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
     "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
     "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",
     "test": "gulp once",

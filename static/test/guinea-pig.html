@@ -69,11 +69,13 @@ I am some page content
       <label for="comments">Comments:</label><br>
       <textarea id="comments" style="width:400px;height:100px" name="comments" placeholder="Thanks in advance, this is really helpful."></textarea>
     </p>
-    <div style="float:right">
+    <div style="float:left">
       <input class="jumpButton" type="submit" name="submit" id="submit" value="send" />
     </div>
   </form>
   </div>
+
+  <br/>
 
   <p>Server time: <span id="servertime"><%= serverTime %></span></p>
   <p>Client time: <span id="clienttime"><%= parseInt(new Date().getTime() / 1000, 10) %></span></p>

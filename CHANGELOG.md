@@ -11,6 +11,7 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 [#348](https://github.com/appium/appium-base-driver/pull/348) [#351](https://github.com/appium/appium-base-driver/pull/351)
 [#353](https://github.com/appium/appium-base-driver/pull/353) [#355](https://github.com/appium/appium-base-driver/pull/355)
 * Fix handling of timezone when getting the device data/time [#392](https://github.com/appium/appium-ios-driver/pull/392) [#557](https://github.com/appium/appium-android-driver/pull/557)
+* Fix handling of globally installed `opencv4nodejs` and `mjpeg-consumer` modules [#105](https://github.com/appium/appium-support/pull/105)
 
 #### IOS (XCUITest):
 * Support iOS 13/Xcode 11

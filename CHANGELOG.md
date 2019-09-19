@@ -53,6 +53,14 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix tap point calculation logic [#217](https://github.com/appium/WebDriverAgent/pull/217)
 * Fix calculation of touch coordinates in landscape orientation for iOS 13.1 [#220](https://github.com/appium/WebDriverAgent/pull/220)
 
+#### Android (UiAutomator2)
+* Make it possible to start server without an app or a package id [#337](https://github.com/appium/appium-uiautomator2-driver/pull/337)
+* New capabilities
+  * `waitForLaunch` [#327](https://github.com/appium/appium-uiautomator2-driver/pull/327)
+  * `gpsEnabled` [#320](https://github.com/appium/appium-uiautomator2-driver/pull/320)
+* Fix server package install by enabling replace option [#336](https://github.com/appium/appium-uiautomator2-driver/pull/336)
+* Fix server package install by copying apks to temporary writeable location if they cannot be written where they are [#338](https://github.com/appium/appium-uiautomator2-driver/pull/338)
+
 #### Android (Espresso)
 * Add timezone and locale in `deviceinfo` [#465](https://github.com/appium/appium-espresso-driver/pull/)
 * Fix `sendKey` to allow multi byte strings [#474](https://github.com/appium/appium-espresso-driver/pull/)

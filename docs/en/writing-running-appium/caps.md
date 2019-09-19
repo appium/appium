@@ -134,6 +134,7 @@ These Capabilities are available only on Android-based drivers (like
 |`remoteAppsCacheLimit`| Set the maximum number of remote cached apks (default is 10) which are pushed to the device-under-test's local storage. Caching apks remotely speeds up the execution of sequential test cases, when using the same set of apks, by avoiding the need to be push an apk to the remote file system every time a reinstall is needed. Set this capability to `0` to disable caching. | e.g. `0`, `5`, `20` |
 |`buildToolsVersion`| Specify the Android `build-tools` version to be something different than the default, which is to use the most recent version. It is helpful to use a non-default version if your environment uses alpha/beta build tools. | e.g. `'28.0.3'` |
 |`androidNaturalOrientation`| Allow for correct handling of orientation on landscape-oriented devices. Set to `true` to basically flip the meaning of `PORTRAIT` and `LANDSCAPE`. Defaults to `false` | `true`, `false` |
+| `enforceAppInstall` | By default application installation is skipped if newer or the same version of this app is already present on the device under test. Setting this option to `true` will enforce Appium to always install the current application build independently of the currently installed version of it. Defaults to `false`. | `true` , `false` |
 
 #### UIAutomator (1 & 2)
 

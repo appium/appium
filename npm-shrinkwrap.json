@@ -2861,9 +2861,9 @@
       "integrity": "sha512-4LVABbCfK+PAXzWkgqRYtdWMy9UtRtiMIykgBFOaGigSx6iD76AQy3aDbDDULb8Hw+WIZ6mCjob2jKnfulkmRA=="
     },
     "appium-webdriveragent": {
-      "version": "1.3.1",
-      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-1.3.1.tgz",
-      "integrity": "sha512-fqDjCYSMfiGUkvCac/eRq7e5Z8w1FIOXGaB8hFWk2p2ngPoKrwP//j7bA52n1vCOeqwoKLRxUH6Dw1DM1n7wNQ==",
+      "version": "1.3.2",
+      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-1.3.2.tgz",
+      "integrity": "sha512-tmolKphc4j65ZTHzveB3K1wJDeJsZFI82KE2bhXegeCX0tGK82/Vo62iTBoGJbU+fmjl10mIGPmyNqr3Wi698Q==",
       "requires": {
         "appium-support": "^2.29.0",
         "asyncbox": "^2.5.3",
@@ -2908,9 +2908,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "2.133.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.133.0.tgz",
-      "integrity": "sha512-hpcK2UWyKgOT4Z1kimFZTftak9dQ3eV9vAH8TWqVIICk3K6F97G/eZRQkw/xEsyTLCl9FNlnvuVFBNX+hM0OKA==",
+      "version": "2.133.1",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-2.133.1.tgz",
+      "integrity": "sha512-IVoSHqkkTYRkzdZFLWNn7P7LHwum+5Xp3lI/IixxVURtCjIeJYMerk++mBvGEw4mpC/F536P6i0L3PFyxMGQ0w==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^4.0.0",

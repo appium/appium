@@ -3,7 +3,13 @@ CHANGES IN VERSION 1.15.0 (FROM 1.14.1)
 
 Appium 1.15.0 is a minor release, with support for iOS 13.0.
 
-
+#### General
+* Add `--base-path` server argument to set a custom route prefix [13079](https://github.com/appium/appium/pull/13079)
+* Store the image element for retrieval [#327](https://github.com/appium/appium-base-driver/pull/327)
+* Fix handling of W3C/MJSONWP protocols [331](https://github.com/appium/appium-base-driver/pull/331),
+[336](https://github.com/appium/appium-base-driver/pull/336), [337](https://github.com/appium/appium-base-driver/pull/337),
+[348](https://github.com/appium/appium-base-driver/pull/348), [351](https://github.com/appium/appium-base-driver/pull/351),
+[353](https://github.com/appium/appium-base-driver/pull/353), [355](https://github.com/appium/appium-base-driver/pull/355)
 
 CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
 ===================================

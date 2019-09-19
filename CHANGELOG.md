@@ -4,12 +4,40 @@ CHANGES IN VERSION 1.15.0 (FROM 1.14.1)
 Appium 1.15.0 is a minor release, with support for iOS 13.0.
 
 #### General
-* Add `--base-path` server argument to set a custom route prefix [13079](https://github.com/appium/appium/pull/13079)
+* Add `--base-path` server argument to set a custom route prefix [#13079](https://github.com/appium/appium/pull/13079)
 * Store the image element for retrieval [#327](https://github.com/appium/appium-base-driver/pull/327)
-* Fix handling of W3C/MJSONWP protocols [331](https://github.com/appium/appium-base-driver/pull/331),
-[336](https://github.com/appium/appium-base-driver/pull/336), [337](https://github.com/appium/appium-base-driver/pull/337),
-[348](https://github.com/appium/appium-base-driver/pull/348), [351](https://github.com/appium/appium-base-driver/pull/351),
-[353](https://github.com/appium/appium-base-driver/pull/353), [355](https://github.com/appium/appium-base-driver/pull/355)
+* Fix handling of W3C/MJSONWP protocols [#331](https://github.com/appium/appium-base-driver/pull/331),
+[#336](https://github.com/appium/appium-base-driver/pull/336), [#337](https://github.com/appium/appium-base-driver/pull/337),
+[#348](https://github.com/appium/appium-base-driver/pull/348), [#351](https://github.com/appium/appium-base-driver/pull/351),
+[#353](https://github.com/appium/appium-base-driver/pull/353), [#355](https://github.com/appium/appium-base-driver/pull/355)
+
+####IOS (XCUITest):
+* Support iOS 13/Xcode 11
+* Bump generic `"iphone simulator"` device name for iOS 13.0 from `iPhone 8` to `iPhone X` [#1068](https://github.com/appium/appium-xcuitest-driver/pull/1068)
+* Add support for `otherApps` capability on iOS like we have on Android [#988](https://github.com/appium/appium-xcuitest-driver/pull/988)
+* Add `"mobile: activeAppInfo"` feature [#1025](https://github.com/appium/appium-xcuitest-driver/pull/1025)
+* Settings
+  * `mjpegScalingFactor` [#983](https://github.com/appium/appium-xcuitest-driver/pull/983)
+* New capabilities
+  * `includeSafariInWebviews` [#1060](https://github.com/appium/appium-xcuitest-driver/pull/1060)
+  * `safariGlobalPreferences` [#1057](https://github.com/appium/appium-xcuitest-driver/pull/1057)
+* Remove some third-party dependencies
+  * `idevicedate` [#1042](https://github.com/appium/appium-xcuitest-driver/pull/1042)
+  *  `iproxy` [#996](https://github.com/appium/appium-xcuitest-driver/pull/996)
+  * `idevicesyslog` [#1000](https://github.com/appium/appium-xcuitest-driver/pull/1000)
+  * `idevicelocation` [#1006](https://github.com/appium/appium-xcuitest-driver/pull/1006)
+  * `ifuse`  [#1019](https://github.com/appium/appium-xcuitest-driver/pull/1019)
+  * `ios-webkit-debug-proxy` [#1023](https://github.com/appium/appium-xcuitest-driver/pull/1023)
+* Get only user apps in file-movement for performance aspect [#1014](https://github.com/appium/appium-xcuitest-driver/pull/1014)
+* Switch `reduceMotion` via settings API instead of update simulator pref [#1065](https://github.com/appium/appium-xcuitest-driver/pull/1065)
+* Fix `GET` `/timeouts` [#1067](https://github.com/appium/appium-xcuitest-driver/pull/1067)
+* Switch `async execute` to not need CORS (works for real and simulated devices) [#1063](https://github.com/appium/appium-xcuitest-driver/pull/1063)
+* Fix uninstalling of `WDA` with '.xctrunner' suffix for real device [#1052](https://github.com/appium/appium-xcuitest-driver/pull/1052)
+* Fix caching issues [#1053](https://github.com/appium/appium-xcuitest-driver/pull/1053)
+* Fix `mjpegstream` logic for returning screenshots [#1039](https://github.com/appium/appium-xcuitest-driver/pull/1039)
+* Fix Node bug when ending session [#1040](https://github.com/appium/appium-xcuitest-driver/pull/1040)
+* Fix launching `WDA` multiple times [#999](https://github.com/appium/appium-xcuitest-driver/pull/999)
+* Fix "get active element" [#1011](https://github.com/appium/appium-xcuitest-driver/pull/1011)
 
 CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
 ===================================

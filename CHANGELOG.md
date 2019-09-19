@@ -35,7 +35,6 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Add the necessary primitives to be able to automate split-screen apps [#209](https://github.com/appium/webdriveragent/pull/209)
 * Add a new endpoint for element rotation [#213](https://github.com/appium/webdriveragent/pull/213)
 * Add `processArguments` and other useful information in `"mobile: deviceInfo"` [#194](https://github.com/appium/webdriveragent/pull/194) [#210](https://github.com/appium/webdriveragent/pull/210)
-* Add the necessary primitives to be able to automate split-screen apps [#209](https://github.com/appium/webdriveragent/pull/209)
 * Consider active application based on the current screen element [#214](https://github.com/appium/webdriveragent/pull/214)
 * Make the coordinates of the screen point configurable [#215](https://github.com/appium/webdriveragent/pull/215)
 * Allow setting compression quality and scaling factor for `mjpeg-stream` [#196](https://github.com/appium/WebDriverAgent/pull/196)

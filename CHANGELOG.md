@@ -53,6 +53,17 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix tap point calculation logic [#217](https://github.com/appium/WebDriverAgent/pull/217)
 * Fix calculation of touch coordinates in landscape orientation for iOS 13.1 [#220](https://github.com/appium/WebDriverAgent/pull/220)
 
+#### Android (Espresso)
+* Add timezone and locale in `deviceinfo` [#465](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix `sendKey` to allow multi byte strings [#474](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix clipboard get/set `contentType` [#478](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix current context when creating session [#483](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix set value immediately, replace value [#484](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix printing of the original stack trace rather than the wrapped one [#488](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix raise an error for launch app, close app, and reset since they do not apply to Espresso [#485](https://github.com/appium/appium-espresso-driver/pull/485) [#491](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix `createSession` to fulfill W3C spec [#490](https://github.com/appium/appium-espresso-driver/pull/)
+* Fix raise an error for reset as they do not apply to Espresso [#491](https://github.com/appium/appium-espresso-driver/pull/)
+
 CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
 ===================================
 

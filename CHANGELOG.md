@@ -10,6 +10,7 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 [#336](https://github.com/appium/appium-base-driver/pull/336) [#337](https://github.com/appium/appium-base-driver/pull/337)
 [#348](https://github.com/appium/appium-base-driver/pull/348) [#351](https://github.com/appium/appium-base-driver/pull/351)
 [#353](https://github.com/appium/appium-base-driver/pull/353) [#355](https://github.com/appium/appium-base-driver/pull/355)
+* Fix handling of timezone when getting the device data/time [#392](https://github.com/appium/appium-ios-driver/pull/392) [#557](https://github.com/appium/appium-android-driver/pull/557)
 
 #### IOS (XCUITest):
 * Support iOS 13/Xcode 11
@@ -53,10 +54,18 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix tap point calculation logic [#217](https://github.com/appium/WebDriverAgent/pull/217)
 * Fix calculation of touch coordinates in landscape orientation for iOS 13.1 [#220](https://github.com/appium/WebDriverAgent/pull/220)
 
+#### Android General
+* Default Chromedriver version is `77.0.3865.40` [#143](https://github.com/appium/appium-chromedriver/pull/143)
+* Add server feature to enable automated Chromedriver downloads [#548](https://github.com/appium/appium-android-driver/pull/548)
+* New capabilities
+  * `waitForLaunch` [#556](https://github.com/appium/appium-android-driver/pull/556) [#327](https://github.com/appium/appium-uiautomator2-driver/pull/327)
+  * `ensureWebviewsHavePages` [#553](https://github.com/appium/appium-android-driver/pull/553)
+  * `enforceAppInstall` [#573](https://github.com/appium/appium-android-driver/pull/573)
+* Fix partial platform version matching [#567](https://github.com/appium/appium-android-driver/pull/567)
+
 #### Android (UiAutomator2)
 * Make it possible to start server without an app or a package id [#337](https://github.com/appium/appium-uiautomator2-driver/pull/337)
 * New capabilities
-  * `waitForLaunch` [#327](https://github.com/appium/appium-uiautomator2-driver/pull/327)
   * `gpsEnabled` [#320](https://github.com/appium/appium-uiautomator2-driver/pull/320)
 * Fix server package install by enabling replace option [#336](https://github.com/appium/appium-uiautomator2-driver/pull/336)
 * Fix server package install by copying apks to temporary writeable location if they cannot be written where they are [#338](https://github.com/appium/appium-uiautomator2-driver/pull/338)

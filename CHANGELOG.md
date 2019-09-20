@@ -12,6 +12,8 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 [#353](https://github.com/appium/appium-base-driver/pull/353) [#355](https://github.com/appium/appium-base-driver/pull/355)
 * Fix handling of timezone when getting the device data/time [#392](https://github.com/appium/appium-ios-driver/pull/392) [#557](https://github.com/appium/appium-android-driver/pull/557)
 * Fix handling of globally installed `opencv4nodejs` and `mjpeg-consumer` modules [#105](https://github.com/appium/appium-support/pull/105)
+* Make it possible to start server without an app or a package id using UiAutomator2 and XCUITest [#337](https://github.com/appium/appium-uiautomator2-driver/pull/337) [#195](https://github.com/appium/WebDriverAgent/pull/195)
+* Internally, WebDriverAgent, UiAutomator2 and Espresso servers operate only through W3C spec protocol 
 
 #### IOS (XCUITest):
 * Support iOS 13/Xcode 11
@@ -20,6 +22,10 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Add `"mobile: activeAppInfo"` feature [#1025](https://github.com/appium/appium-xcuitest-driver/pull/1025)
 * Settings
   * `mjpegScalingFactor` [#983](https://github.com/appium/appium-xcuitest-driver/pull/983)
+  * `snapshotTimeout` [#181](https://github.com/appium/WebDriverAgent/pull/181)
+  * `useFirstMatch` [#187](https://github.com/appium/WebDriverAgent/pull/187)
+  * `defaultActiveApplication` [#209](https://github.com/appium/WebDriverAgent/pull/209)
+  * `activeAppDetectionPoint` [#215](https://github.com/appium/WebDriverAgent/pull/215)  [#218](https://github.com/appium/WebDriverAgent/pull/218)
 * New capabilities
   * `includeSafariInWebviews` [#1060](https://github.com/appium/appium-xcuitest-driver/pull/1060)
   * `safariGlobalPreferences` [#1057](https://github.com/appium/appium-xcuitest-driver/pull/1057)
@@ -34,9 +40,8 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Switch `reduceMotion` via settings API instead of update simulator pref [#1065](https://github.com/appium/appium-xcuitest-driver/pull/1065)
 * Add the necessary primitives to be able to automate split-screen apps [#209](https://github.com/appium/webdriveragent/pull/209)
 * Add a new endpoint for element rotation [#213](https://github.com/appium/webdriveragent/pull/213)
-* Add `processArguments` and other useful information in `"mobile: deviceInfo"` [#194](https://github.com/appium/webdriveragent/pull/194) [#210](https://github.com/appium/webdriveragent/pull/210)
-* Consider active application based on the current screen element [#214](https://github.com/appium/webdriveragent/pull/214)
-* Make the coordinates of the screen point configurable [#215](https://github.com/appium/webdriveragent/pull/215)
+* Add useful information in `"mobile: deviceInfo"` [#210](https://github.com/appium/webdriveragent/pull/210)
+* Add ability to automate split screen applications [#214](https://github.com/appium/webdriveragent/pull/214) [#215](https://github.com/appium/webdriveragent/pull/215) [#204](https://github.com/appium/WebDriverAgent/pull/204)
 * Allow setting compression quality and scaling factor for `mjpeg-stream` [#196](https://github.com/appium/WebDriverAgent/pull/196)
 * Fix `GET` `/timeouts` [#1067](https://github.com/appium/appium-xcuitest-driver/pull/1067)
 * Switch `async execute` to not need CORS (works for real and simulated devices) [#1063](https://github.com/appium/appium-xcuitest-driver/pull/1063)
@@ -47,11 +52,8 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix launching `WDA` multiple times [#999](https://github.com/appium/appium-xcuitest-driver/pull/999)
 * Fix "get active element" [#1011](https://github.com/appium/appium-xcuitest-driver/pull/1011)
 * Fix screenshot taking for iOS below 11 [#193](https://github.com/appium/WebDriverAgent/pull/193)
-* Fix Filter out system app when there are multiple active apps [#204](https://github.com/appium/WebDriverAgent/pull/204)
-* Fix getting source outside of session [#208](https://github.com/appium/WebDriverAgent/pull/208)
 * Fix to not throw exception if the app is not in foreground after a timeout [#211](https://github.com/appium/WebDriverAgent/pull/211)
-* Fix `tap` and `tapByCoordinate` to use their native implementations [#212](https://github.com/appium/WebDriverAgent/pull/212)
-* Fix tap point calculation logic [#217](https://github.com/appium/WebDriverAgent/pull/217)
+* Fix `tap` and `tapByCoordinate` to use their native implementations since iOS 13.0 [#212](https://github.com/appium/WebDriverAgent/pull/212) [#217](https://github.com/appium/WebDriverAgent/pull/217)
 * Fix calculation of touch coordinates in landscape orientation for iOS 13.1 [#220](https://github.com/appium/WebDriverAgent/pull/220)
 
 #### Android General
@@ -64,9 +66,10 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix partial platform version matching [#567](https://github.com/appium/appium-android-driver/pull/567)
 
 #### Android (UiAutomator2)
-* Make it possible to start server without an app or a package id [#337](https://github.com/appium/appium-uiautomator2-driver/pull/337)
 * New capabilities
   * `gpsEnabled` [#320](https://github.com/appium/appium-uiautomator2-driver/pull/320)
+* New settings
+  * `wakeLockTimeout` [#298](https://github.com/appium/appium-uiautomator2-server/pull/298)
 * Fix server package install by enabling replace option [#336](https://github.com/appium/appium-uiautomator2-driver/pull/336)
 * Fix server package install by copying apks to temporary writeable location if they cannot be written where they are [#338](https://github.com/appium/appium-uiautomator2-driver/pull/338)
 

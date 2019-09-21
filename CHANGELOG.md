@@ -13,7 +13,7 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix handling of timezone when getting the device data/time [#392](https://github.com/appium/appium-ios-driver/pull/392) [#557](https://github.com/appium/appium-android-driver/pull/557)
 * Fix handling of globally installed `opencv4nodejs` and `mjpeg-consumer` modules [#105](https://github.com/appium/appium-support/pull/105)
 * Make it possible to start server without an app or a package id using UiAutomator2 and XCUITest [#337](https://github.com/appium/appium-uiautomator2-driver/pull/337) [#195](https://github.com/appium/WebDriverAgent/pull/195)
-* Internally, WebDriverAgent, UiAutomator2 and Espresso servers operate only through W3C spec protocol 
+* Internally, WebDriverAgent, UiAutomator2 and Espresso servers operate only through W3C spec protocol
 
 #### IOS (XCUITest):
 * Support iOS 13/Xcode 11
@@ -74,15 +74,15 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
 * Fix server package install by copying apks to temporary writeable location if they cannot be written where they are [#338](https://github.com/appium/appium-uiautomator2-driver/pull/338)
 
 #### Android (Espresso)
-* Add timezone and locale in `deviceinfo` [#465](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix `sendKey` to allow multi byte strings [#474](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix clipboard get/set `contentType` [#478](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix current context when creating session [#483](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix set value immediately, replace value [#484](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix printing of the original stack trace rather than the wrapped one [#488](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix raise an error for launch app, close app, and reset since they do not apply to Espresso [#485](https://github.com/appium/appium-espresso-driver/pull/485) [#491](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix `createSession` to fulfill W3C spec [#490](https://github.com/appium/appium-espresso-driver/pull/)
-* Fix raise an error for reset as they do not apply to Espresso [#491](https://github.com/appium/appium-espresso-driver/pull/)
+* Add timezone and locale in `deviceinfo` [#465](https://github.com/appium/appium-espresso-driver/pull/465)
+* Fix `sendKey` to allow multi byte strings [#474](https://github.com/appium/appium-espresso-driver/pull/474)
+* Fix clipboard get/set `contentType` [#478](https://github.com/appium/appium-espresso-driver/pull/478)
+* Fix current context when creating session [#483](https://github.com/appium/appium-espresso-driver/pull/483)
+* Fix set value immediately, replace value [#484](https://github.com/appium/appium-espresso-driver/pull/484)
+* Fix printing of the original stack trace rather than the wrapped one [#488](https://github.com/appium/appium-espresso-driver/pull/488)
+* Fix raise an error for launch app, close app, and reset since they do not apply to Espresso [#485](https://github.com/appium/appium-espresso-driver/pull/485) [#491](https://github.com/appium/appium-espresso-driver/pull/491)
+* Fix `createSession` to fulfill W3C spec [#490](https://github.com/appium/appium-espresso-driver/pull/490)
+* Fix raise an error for reset as they do not apply to Espresso [#491](https://github.com/appium/appium-espresso-driver/pull/491)
 
 CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
 ===================================

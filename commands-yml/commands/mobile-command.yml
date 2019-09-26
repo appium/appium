@@ -54,6 +54,7 @@
       | mobile:siriCommand| Sends a command to Siri | `{text}` | `{text: "What time is it?"}` |
       | mobile:activeAppInfo | Gets current active application's information such as bundleId and process arguments | <none> | <none> |
       | mobile:deviceInfo | Gets device information like locale and timezone. The timezone is TZ database format like `America/New_York` by default, fallback to Apple name like `US/New_York` | <none> | <none> |
+      | mobile:rotateElement | Rotates the element id with the velocity.  | `{element, rotation, velocity}` | `{element: 2, rotation: 90, velocity: 1.5}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |

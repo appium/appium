@@ -1,3 +1,89 @@
+CHANGES IN VERSION 1.15.0 (FROM 1.14.1)
+===================================
+
+Appium 1.15.0 is a minor release, with support for iOS 13.0.
+
+#### General
+* Add `--base-path` server argument to set a custom route prefix [#13079](https://github.com/appium/appium/pull/13079)
+* Store the image element for retrieval [#327](https://github.com/appium/appium-base-driver/pull/327)
+* Fix handling of W3C/MJSONWP protocols [#331](https://github.com/appium/appium-base-driver/pull/331)
+[#336](https://github.com/appium/appium-base-driver/pull/336) [#337](https://github.com/appium/appium-base-driver/pull/337)
+[#348](https://github.com/appium/appium-base-driver/pull/348) [#351](https://github.com/appium/appium-base-driver/pull/351)
+[#353](https://github.com/appium/appium-base-driver/pull/353) [#355](https://github.com/appium/appium-base-driver/pull/355)
+* Fix handling of timezone when getting the device data/time [#392](https://github.com/appium/appium-ios-driver/pull/392) [#557](https://github.com/appium/appium-android-driver/pull/557)
+* Fix handling of globally installed `opencv4nodejs` and `mjpeg-consumer` modules [#105](https://github.com/appium/appium-support/pull/105)
+* Make it possible to start server without an app or a package id using UiAutomator2 and XCUITest [#337](https://github.com/appium/appium-uiautomator2-driver/pull/337) [#195](https://github.com/appium/WebDriverAgent/pull/195)
+* Internally, WebDriverAgent, UiAutomator2 and Espresso servers operate only through W3C spec protocol
+
+#### IOS (XCUITest):
+* Support iOS 13/Xcode 11
+* Bump generic `"iphone simulator"` device name for iOS 13.0 from `iPhone 8` to `iPhone X` [#1068](https://github.com/appium/appium-xcuitest-driver/pull/1068)
+* Add support for `otherApps` capability on iOS like we have on Android [#988](https://github.com/appium/appium-xcuitest-driver/pull/988)
+* Add `"mobile: activeAppInfo"` feature [#1025](https://github.com/appium/appium-xcuitest-driver/pull/1025)
+* Settings
+  * `mjpegScalingFactor` [#983](https://github.com/appium/appium-xcuitest-driver/pull/983)
+  * `snapshotTimeout` [#181](https://github.com/appium/WebDriverAgent/pull/181)
+  * `useFirstMatch` [#187](https://github.com/appium/WebDriverAgent/pull/187)
+  * `defaultActiveApplication` [#209](https://github.com/appium/WebDriverAgent/pull/209)
+  * `activeAppDetectionPoint` [#215](https://github.com/appium/WebDriverAgent/pull/215)  [#218](https://github.com/appium/WebDriverAgent/pull/218)
+* New capabilities
+  * `includeSafariInWebviews` [#1060](https://github.com/appium/appium-xcuitest-driver/pull/1060)
+  * `safariGlobalPreferences` [#1057](https://github.com/appium/appium-xcuitest-driver/pull/1057)
+* Remove some third-party dependencies
+  * `idevicedate` [#1042](https://github.com/appium/appium-xcuitest-driver/pull/1042)
+  * `iproxy` [#996](https://github.com/appium/appium-xcuitest-driver/pull/996)
+  * `idevicesyslog` [#1000](https://github.com/appium/appium-xcuitest-driver/pull/1000)
+  * `idevicelocation` [#1006](https://github.com/appium/appium-xcuitest-driver/pull/1006)
+  * `ifuse` [#1019](https://github.com/appium/appium-xcuitest-driver/pull/1019)
+  * `ios-webkit-debug-proxy` [#1023](https://github.com/appium/appium-xcuitest-driver/pull/1023)
+* Get only user apps in file-movement for performance aspect [#1014](https://github.com/appium/appium-xcuitest-driver/pull/1014)
+* Switch `reduceMotion` via settings API instead of update simulator pref [#1065](https://github.com/appium/appium-xcuitest-driver/pull/1065)
+* Add the necessary primitives to be able to automate split-screen apps [#209](https://github.com/appium/webdriveragent/pull/209)
+* Add a new endpoint for element rotation [#213](https://github.com/appium/webdriveragent/pull/213)
+* Add useful information in `"mobile: deviceInfo"` [#210](https://github.com/appium/webdriveragent/pull/210)
+* Add ability to automate split screen applications [#214](https://github.com/appium/webdriveragent/pull/214) [#215](https://github.com/appium/webdriveragent/pull/215) [#204](https://github.com/appium/WebDriverAgent/pull/204)
+* Allow setting compression quality and scaling factor for `mjpeg-stream` [#196](https://github.com/appium/WebDriverAgent/pull/196)
+* Fix `GET` `/timeouts` [#1067](https://github.com/appium/appium-xcuitest-driver/pull/1067)
+* Switch `async execute` to not need CORS (works for real and simulated devices) [#1063](https://github.com/appium/appium-xcuitest-driver/pull/1063)
+* Fix uninstalling of `WDA` with '.xctrunner' suffix for real device [#1052](https://github.com/appium/appium-xcuitest-driver/pull/1052)
+* Fix caching issues [#1053](https://github.com/appium/appium-xcuitest-driver/pull/1053)
+* Fix `mjpegstream` logic for returning screenshots [#1039](https://github.com/appium/appium-xcuitest-driver/pull/1039)
+* Fix Node bug when ending session [#1040](https://github.com/appium/appium-xcuitest-driver/pull/1040)
+* Fix launching `WDA` multiple times [#999](https://github.com/appium/appium-xcuitest-driver/pull/999)
+* Fix "get active element" [#1011](https://github.com/appium/appium-xcuitest-driver/pull/1011)
+* Fix screenshot taking for iOS below 11 [#193](https://github.com/appium/WebDriverAgent/pull/193)
+* Fix to not throw exception if the app is not in foreground after a timeout [#211](https://github.com/appium/WebDriverAgent/pull/211)
+* Fix `tap` and `tapByCoordinate` to use their native implementations since iOS 13.0 [#212](https://github.com/appium/WebDriverAgent/pull/212) [#217](https://github.com/appium/WebDriverAgent/pull/217)
+* Fix calculation of touch coordinates in landscape orientation for iOS 13.1 [#220](https://github.com/appium/WebDriverAgent/pull/220)
+
+#### Android General
+* Default Chromedriver version is `77.0.3865.40` [#143](https://github.com/appium/appium-chromedriver/pull/143)
+* Add server feature to enable automated Chromedriver downloads [#548](https://github.com/appium/appium-android-driver/pull/548)
+* New capabilities
+  * `waitForLaunch` [#556](https://github.com/appium/appium-android-driver/pull/556) [#327](https://github.com/appium/appium-uiautomator2-driver/pull/327)
+  * `ensureWebviewsHavePages` [#553](https://github.com/appium/appium-android-driver/pull/553)
+  * `enforceAppInstall` [#573](https://github.com/appium/appium-android-driver/pull/573)
+* Fix partial platform version matching [#567](https://github.com/appium/appium-android-driver/pull/567)
+
+#### Android (UiAutomator2)
+* New capabilities
+  * `gpsEnabled` [#320](https://github.com/appium/appium-uiautomator2-driver/pull/320)
+* New settings
+  * `wakeLockTimeout` [#298](https://github.com/appium/appium-uiautomator2-server/pull/298)
+* Fix server package install by enabling replace option [#336](https://github.com/appium/appium-uiautomator2-driver/pull/336)
+* Fix server package install by copying apks to temporary writeable location if they cannot be written where they are [#338](https://github.com/appium/appium-uiautomator2-driver/pull/338)
+
+#### Android (Espresso)
+* Add timezone and locale in `deviceinfo` [#465](https://github.com/appium/appium-espresso-driver/pull/465)
+* Fix `sendKey` to allow multi byte strings [#474](https://github.com/appium/appium-espresso-driver/pull/474)
+* Fix clipboard get/set `contentType` [#478](https://github.com/appium/appium-espresso-driver/pull/478)
+* Fix current context when creating session [#483](https://github.com/appium/appium-espresso-driver/pull/483)
+* Fix set value immediately, replace value [#484](https://github.com/appium/appium-espresso-driver/pull/484)
+* Fix printing of the original stack trace rather than the wrapped one [#488](https://github.com/appium/appium-espresso-driver/pull/488)
+* Fix raise an error for launch app, close app, and reset since they do not apply to Espresso [#485](https://github.com/appium/appium-espresso-driver/pull/485) [#491](https://github.com/appium/appium-espresso-driver/pull/491)
+* Fix `createSession` to fulfill W3C spec [#490](https://github.com/appium/appium-espresso-driver/pull/490)
+* Fix raise an error for reset as they do not apply to Espresso [#491](https://github.com/appium/appium-espresso-driver/pull/491)
+
 CHANGES IN VERSION 1.14.1 (FROM 1.14.0)
 ===================================
 
@@ -23,10 +109,10 @@ CHANGES IN VERSION 1.14.0 (FROM 1.13.0)
  #### Android (Espresso)
 * Fix problems with activity startup not working when the package name value in `appActivity` is different from the one in `appPackage` [#441](https://github.com/appium/appium-espresso-driver/pull/441)
 * Add a mobile helper to disable autofill dialog in Android O [#456](https://github.com/appium/appium-espresso-driver/pull/456)
- 
+
  #### Android (UIAutomator2)
  * Remove the extra wait for idle calls to speed up element queries [#279](https://github.com/appium/appium-uiautomator2-server/pull/279)
- * Added a new capability `trackScrollEvents` to configurate the tracking of scroll movement. This improves performance of touch actions significantly[#284](https://github.com/appium/appium-uiautomator2-server/pull/284) 
+ * Added a new capability `trackScrollEvents` to configurate the tracking of scroll movement. This improves performance of touch actions significantly[#284](https://github.com/appium/appium-uiautomator2-server/pull/284)
 
  #### iOS (XCUITest)
 * Make `platformVersion` a required capability for iOS Simulators [#954](https://github.com/appium/appium-xcuitest-driver/pull/954)
@@ -70,13 +156,13 @@ Appium 1.13.0 is a minor release
 * Add detailed network information to the device information endpoint (appium/device/info) [#265](https://github.com/appium/appium-uiautomator2-server/pull/265). Addresses [Issue #12502](https://github.com/appium/appium/issues/12502)
 
 #### Android (Espresso)
-* Fixes: 
+* Fixes:
   * Changed incorrect naming of Espresso argument `installTimeout` to the correct `androidInstallTimeout` [#426](https://github.com/appium/appium-espresso-driver/pull/426/files)
   * Use ADB instead of Espresso to verify activities for better reliability [#425](https://github.com/appium/appium-espresso-driver/pull/425/files)
 
 #### iOS
 * Support webview testing for real devices running iOS 12.2+ (1.12.1 already added support for iOS Simulators) [#122](https://github.com/appium/appium-remote-debugger/pull/122). Make sure your ios-webkit-debug-proxy is [up-to-date](https://github.com/google/ios-webkit-debug-proxy/releases/latest) for real devices.
-* Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151). 
+* Supports tvOS [#151](https://github.com/appium/WebDriverAgent/pull/151).
   * See [documentation](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/ios/ios-tvos.md) for details.
   * Be sure to update Carthage to the [latest](https://github.com/Carthage/Carthage/releases) to handle TVOs dependencies
 * Fixes:
@@ -132,7 +218,7 @@ Appium 1.12.0 is a minor release
 
 #### iOS
 * Add `eventLoopIdleDelaySec` capability. Delays the invocation of `-[XCUIApplicationProcess setEventLoopHasIdled:]` by the number of seconds specified with this capability. This can help quiescence apps that fail to do so for no obvious reason (and creating a session fails for that reason) [#881](https://github.com/appium/appium-xcuitest-driver/pull/881)
-* Add `-r` flag for video recording to make screen video recording more flexible [#867](https://github.com/appium/appium-xcuitest-driver/pull/867)` 
+* Add `-r` flag for video recording to make screen video recording more flexible [#867](https://github.com/appium/appium-xcuitest-driver/pull/867)`
 * Add `enforceFreshSimulatorCreation` capability [#859](https://github.com/appium/appium-xcuitest-driver/pull/859)
 * More helpful logging
 * Add `mjpegScalingFactor` settings that change image scale of mjpeg server to stream screen [#138](https://github.com/appium/WebDriverAgent/pull/138)
@@ -161,7 +247,7 @@ CHANGES IN VERSION 1.11.0 (from 1.10.0)
 Appium 1.11.0 is a minor release
 
 #### iOS
-* Fix issues with MJPEG video streaming [#134](https://github.com/appium/WebDriverAgent/pull/134) 
+* Fix issues with MJPEG video streaming [#134](https://github.com/appium/WebDriverAgent/pull/134)
 * Xcode 10.2 device list support [appium/node-simctl#77](https://github.com/appium/node-simctl/pull/77)
 
 #### Android
@@ -199,7 +285,7 @@ Appium 1.11.0 is a minor release
 CHANGES IN VERSION 1.10.0 (from 1.9.1)
 ===================================
 
-Appium 1.10.0 is a minor release. 
+Appium 1.10.0 is a minor release.
 
 #### General
 * Bring Espresso Driver out of beta and into general availability

@@ -52,7 +52,7 @@
     "appium-tizen-driver": "^1.1.1-beta.4",
     "appium-uiautomator2-driver": "1.x",
     "appium-windows-driver": "1.x",
-    "appium-xcuitest-driver": "^2.116.3",
+    "appium-xcuitest-driver": "^3.0.0",
     "appium-youiengine-driver": "^1.2.0",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",

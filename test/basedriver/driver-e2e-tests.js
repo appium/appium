@@ -418,11 +418,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           json: {script},
           simple: false,
         });
-        res.should.eql({
-          sessionId,
-          status: 13,
-          value: {message: 'An unknown server-side error occurred while processing the command. Original error: Could not execute driver script. Original error was: Error: Unexpected token ;'}
-        });
+        res.sessionId.should.eql(sessionId);
+        res.status.should.eql(13);
+        res.value.should.have.property('message');
+        res.value.message.should.match(/An unknown server-side error occurred while processing the command. Original error: Could not execute driver script. Original error was: Error: Unexpected token '?;'?/);
       });
 
       it('should be able to set a timeout on a driver script', async function () {

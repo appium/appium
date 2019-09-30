@@ -26,6 +26,7 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
   * `useFirstMatch` [#187](https://github.com/appium/WebDriverAgent/pull/187)
   * `defaultActiveApplication` [#209](https://github.com/appium/WebDriverAgent/pull/209)
   * `activeAppDetectionPoint` [#215](https://github.com/appium/WebDriverAgent/pull/215)  [#218](https://github.com/appium/WebDriverAgent/pull/218)
+  * `includeNonModalElements` [#222](https://github.com/appium/WebDriverAgent/pull/222)
 * New capabilities
   * `includeSafariInWebviews` [#1060](https://github.com/appium/appium-xcuitest-driver/pull/1060)
   * `safariGlobalPreferences` [#1057](https://github.com/appium/appium-xcuitest-driver/pull/1057)
@@ -36,6 +37,7 @@ Appium 1.15.0 is a minor release, with support for iOS 13.0.
   * `idevicelocation` [#1006](https://github.com/appium/appium-xcuitest-driver/pull/1006)
   * `ifuse` [#1019](https://github.com/appium/appium-xcuitest-driver/pull/1019)
   * `ios-webkit-debug-proxy` [#1023](https://github.com/appium/appium-xcuitest-driver/pull/1023)
+  * `ios-deploy` [#1009](https://github.com/appium/appium-xcuitest-driver/pull/1009)
 * Get only user apps in file-movement for performance aspect [#1014](https://github.com/appium/appium-xcuitest-driver/pull/1014)
 * Switch `reduceMotion` via settings API instead of update simulator pref [#1065](https://github.com/appium/appium-xcuitest-driver/pull/1065)
 * Add the necessary primitives to be able to automate split-screen apps [#209](https://github.com/appium/webdriveragent/pull/209)

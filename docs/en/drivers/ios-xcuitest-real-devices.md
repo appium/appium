@@ -126,8 +126,13 @@ installed, and is _not_ recommended):
     $ which appium
     /path/where/installed/bin/appium
 ```
+```
+    From appium v1.15, WebDriverAgent.bundle will be created automatically in Resources directory under 
+    `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent'. 
+    Proceed with below step if appium version is below 1.15
+```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
-    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent`.
+    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent`.
     Open a terminal and go to that location, then run the following in order to
     set the project up:
 ```

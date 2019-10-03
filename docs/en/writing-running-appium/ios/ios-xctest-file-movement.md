@@ -13,14 +13,6 @@ Below is the basic format.
 
 ### Real device
 
-For real devices, Appium relies on [ifuse](https://github.com/libimobiledevice/ifuse) to achieve the feature.
-You may compile ifuse from the source code or via brew.
-
-```
-$ brew cask install osxfuse
-$ brew install ifuse --HEAD # newer iOS versions need the latest codebase
-```
-
 #### Format
 
 The format of method argument should be the following:

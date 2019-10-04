@@ -10,6 +10,15 @@ Appium can be installed in one of two ways: via [NPM](https://npmjs.com) or by
 downloading [Appium Desktop](https://github.com/appium/appium-desktop), which
 is a graphical, desktop-based way to launch the Appium server.
 
+#### Installation via Homebrew
+
+With [Homebrew](https://brew.sh) installed, you can run the following:
+
+```sh
+brew update
+brew install appium
+```
+
 #### Installation via NPM
 
 If you want to run Appium via an `npm install`, hack with Appium, or contribute

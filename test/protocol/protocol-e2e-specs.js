@@ -184,7 +184,7 @@ describe('Protocol', function () {
 
       res.statusCode.should.equal(501);
       res.body.should.eql({
-        status: 13,
+        status: 405,
         value: {
           message: 'Method has not yet been implemented'
         },
@@ -203,7 +203,7 @@ describe('Protocol', function () {
 
       res.statusCode.should.equal(501);
       res.body.should.eql({
-        status: 13,
+        status: 405,
         value: {
           message: 'Method is not implemented'
         },
@@ -484,13 +484,13 @@ describe('Protocol', function () {
           w3cError.should.equal(errors.InvalidArgumentError.error());
         });
 
-        it(`should throw 404 Not Found exception if the command hasn't been implemented yet`, async function () {
+        it(`should throw 405 exception if the command hasn't been implemented yet`, async function () {
           const {statusCode, error} = await request.post(`${sessionUrl}/actions`, {
             json: {
               actions: [],
             }
           }).should.eventually.be.rejected;
-          statusCode.should.equal(404);
+          statusCode.should.equal(405);
 
           const {error: w3cError, message, stacktrace} = error.value;
           message.should.match(/Method has not yet been implemented/);

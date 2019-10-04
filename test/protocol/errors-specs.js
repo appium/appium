@@ -202,7 +202,7 @@ let errorsList = [
     errorName: 'NotYetImplementedError',
     errorMsg: 'Method has not yet been implemented',
     error: 'unknown method',
-    errorCode: 13
+    errorCode: 405
   },
   {
     errorName: 'UnknownCommandError',

@@ -15,8 +15,8 @@ These classes, which are constructed with a string message (defaulting to the "D
 | 11   | `ElementNotVisibleError`         | An element command could not be completed because the element is not visible on the page
 | 12   | `InvalidElementStateError`       | An element command could not be completed because the element is in an invalid state (e.g., attempting to click a disabled element)
 | 13   | `UnknownError`                   | An unknown server-side error occurred while processing the command
-| 13   | `NotYetImplementedError`         | The operation requested is not yet implemented by the driver
-| 13   | `NotImplementedError`            | The operation requested will not be implemented by the driver
+| 405   | `NotYetImplementedError`        | The operation requested is not yet implemented by the driver
+| 405   | `NotImplementedError`           | The operation requested will not be implemented by the driver
 | 15   | `ElementIsNotSelectableError`    | An attempt was made to select an element that cannot be selected
 | 17   | `JavaScriptError`                | An error occurred while executing user supplied JavaScript
 | 19   | `XPathLookupError`               | An error occurred while searching for an element by XPath

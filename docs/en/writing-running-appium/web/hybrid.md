@@ -189,8 +189,8 @@ and started an Appium session, follow the generalized instructions above.
 
 When executing against an iOS real device, Appium is unable to access the web view
 directly. Therefore the connection has to be established through the USB cable.
-Appium can establish the connection natively with Appium 1.15+ via [appium-ios-device](https://github.com/appium/appium-ios-device).
-[ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy) is necessary for Appium under 1.14.
+Appium can establish the connection natively since version 1.15 via [appium-ios-device](https://github.com/appium/appium-ios-device).
+[ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy) is necessary for Appium below version 1.15.
 
 For instruction on how to install and run `ios-webkit-debugger-proxy` see the
 [iOS webkit debug proxy](/writing-running-appium/web/ios-webkit-debug-proxy.md)

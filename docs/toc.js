@@ -352,7 +352,7 @@ module.exports = {
     ['捐赠', ['contributing-to-appium',
       ['从源代码运行 Appium', 'appium-from-source.md'],
       ['开发者概述', 'developers-overview.md'],
-      ['标准开发命令', 'dev-tools.md'],
+      //['标准开发命令', 'dev-tools.md'],
       ['Appium 风格指南', 'style-guide.md'],
       ['如何编写文档', 'how-to-write-docs.md'],
       ['Appium 包结构', 'appium-packages.md'],

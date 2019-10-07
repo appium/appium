@@ -68,7 +68,7 @@ Concepts](/docs/en/about-appium/intro.md).
 Your environment needs to be set up for the particular platforms that you want
 to run tests on. Each of the drivers above documents the requirements for their
 particular brand of automation. At a minimum, you will need to be able to run
-Node.js 6+.
+Node.js 10+.
 
 ### Get Started
 

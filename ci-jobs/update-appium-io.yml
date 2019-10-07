@@ -11,7 +11,6 @@ jobs:
       inputs:
         versionSpec: '10.x'
     - script: |
-        export LOCAL_APPIUM=$(pwd)
         brew install hub
         pip install mkdocs==0.16.3
         git clone https://triager:$GITHUB_TOKEN@github.com/appium/appium.io.git --branch=gh-pages
@@ -20,7 +19,7 @@ jobs:
         git checkout -b docs-$BUILD_SOURCEVERSION
         bundle install
         npm install
-        npm run build:docs:local
+        npm run build:docs
         git commit -a -n -m 'Updated docs for latest Appium version'
         git push triager docs-$BUILD_SOURCEVERSION
         hub pull-request -b "appium:gh-pages" -h "appium:docs-$BUILD_SOURCEVERSION" -m "Update documentation for latest version"

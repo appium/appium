@@ -111,7 +111,7 @@ describe('FakeDriver - via HTTP', function () {
 
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
       const {statusCode, error} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
-      statusCode.should.equal(404);
+      statusCode.should.equal(405);
       const {error: errorMessage, message, stacktrace} = error.value;
       errorMessage.should.match(/unknown method/);
       message.should.match(/Method has not yet been implemented/);

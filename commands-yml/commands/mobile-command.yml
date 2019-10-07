@@ -160,7 +160,7 @@
   # Information about the HTTP endpoints
   endpoint:
     url: /session/:session_id/execute
-    method: GET
+    method: POST
     url_parameters:
       - name: session_id
         description: ID of the session to route the command to

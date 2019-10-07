@@ -347,7 +347,8 @@ module.exports = {
       ['Event Timings API', 'event-timings.md'],
       //['并行测试的设置', 'parallel-tests.md'],
       ['Settings API', 'settings.md'],
-      //['内存转储', 'memory-collection.md']]],
+      //['内存转储', 'memory-collection.md']]
+    ]],
     ['捐赠', ['contributing-to-appium',
       ['从源代码运行 Appium', 'appium-from-source.md'],
       ['开发者概述', 'developers-overview.md'],

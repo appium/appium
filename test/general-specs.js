@@ -50,11 +50,11 @@ describe('general', function () {
     });
     it('diagnose - success', async function () {
       mocks.NodeDetector.expects('detect').once().returns(B.resolve('/a/b/c/d'));
-      mocks.tp.expects('exec').once().returns(B.resolve({stdout: 'v4.5.6', stderr: ''}));
+      mocks.tp.expects('exec').once().returns(B.resolve({stdout: 'v10.0.0', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: false,
-        message: 'Node version is 4.5.6'
+        message: 'Node version is 10.0.0'
       });
       mocks.verify();
     });
@@ -64,7 +64,7 @@ describe('general', function () {
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
-        message: 'Node version should be at least 4!'
+        message: 'Node version should be at least 10.0.0!'
       });
       mocks.verify();
     });

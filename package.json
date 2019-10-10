@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.15.0",
+  "version": "1.15.1",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -48,7 +48,7 @@
     "appium-fake-driver": "^0.x",
     "appium-ios-driver": "4.x",
     "appium-mac-driver": "1.x",
-    "appium-support": "2.x",
+    "appium-support": "^2.33.1",
     "appium-tizen-driver": "^1.1.1-beta.4",
     "appium-uiautomator2-driver": "^1.37.1",
     "appium-webdriveragent": "^1.3.5",

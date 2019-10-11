@@ -77,11 +77,15 @@ Reference](#TODO).
 
    On Windows, this will be done by setting the environment variable in the
    control panel, using the same strategy as for setting PATH above.
+   [Android Studio](https://developer.android.com/studio/index.html) also has JDK
+   in the path like `/Applications/Android Studio.app/Contents/jre/jdk/Contents/Home` (Mac).
+   You could use this path, too.
 
 1. Install the [Android SDK](http://developer.android.com/sdk/index.html). The
    supported way of doing this nowadays is to use [Android
    Studio](https://developer.android.com/studio/index.html). Use the provided
    GUI to install the Android SDK to a path of your choosing.
+
 
 1. Set the `ANDROID_HOME` environment variable to match this path. For example,
    if you installed the SDK to `/usr/local/adt`, then there will typically be

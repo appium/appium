@@ -69,7 +69,7 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
-    - name: name
+    - name: handle
       type: string
       description: The window to change focus to
 

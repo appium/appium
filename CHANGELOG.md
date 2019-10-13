@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.15.1 (FROM 1.15.0)
+===================================
+
+Appium 1.15.1 is a patch release that addresses incompatibilities with Node < 10.10
+
+#### General
+* Fix: support older nodejs version by just using stat [#130](https://github.com/appium/appium-support/commit/12396d7db50206e70d7f8f633d7e9a5a6f14553a)
+
 CHANGES IN VERSION 1.15.0 (FROM 1.14.1)
 ===================================
 

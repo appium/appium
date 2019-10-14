@@ -69,9 +69,12 @@ endpoint:
     - name: session_id
       description: ID of the session to route the command to
   json_parameters:
+    - name: name
+      type: string
+      description: (For MJSONWP) The window to change focus to
     - name: handle
       type: string
-      description: The window to change focus to
+      description: (For W3C) The window to change focus to
 
 # Links to specifications. Should link to at least one specification
 specifications:

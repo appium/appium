@@ -111,12 +111,15 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         await B.delay(100);
         await this.oldDeleteSession();
       }.bind(d);
+
       let caps = _.clone(defaultCaps);
       await d.createSession(caps);
       d.startUnexpectedShutdown(new Error('We crashed'));
       await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+
       await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
-      await B.delay(100);
+      await B.delay(500);
+
       await d.executeCommand('createSession', caps);
       await d.deleteSession();
     });

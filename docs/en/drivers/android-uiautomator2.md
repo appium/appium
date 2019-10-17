@@ -17,7 +17,7 @@ Older Android-based drivers include:
 
 In addition to Appium's general requirements:
 
-* Java 7 installed and configured correctly for your platform
+* Java 8 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
 
 ### Usage
@@ -77,6 +77,9 @@ Reference](#TODO).
 
    On Windows, this will be done by setting the environment variable in the
    control panel, using the same strategy as for setting PATH above.
+   [Android Studio](https://developer.android.com/studio/index.html) also has JDK
+   in the path like `/Applications/Android Studio.app/Contents/jre/jdk/Contents/Home` (Mac).
+   You can specify the path, too.
 
 1. Install the [Android SDK](http://developer.android.com/sdk/index.html). The
    supported way of doing this nowadays is to use [Android

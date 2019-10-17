@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-support": "^2.24.0",
+    "appium-support": "^2.33.1",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
     "bluebird": "^3.5.3",

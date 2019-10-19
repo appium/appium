@@ -25,26 +25,14 @@ describe('Desired Capabilities', function () {
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
       e.message.should.contain('platformName');
-      e.message.should.contain('deviceName');
       return;
     }
 
     should.fail('error should have been thrown');
   });
+
 
   it('should require platformName', async function () {
-    try {
-      await d.createSession({'platformName': 'iOS'});
-    } catch (e) {
-      e.should.be.instanceof(errors.SessionNotCreatedError);
-      e.message.should.contain('deviceName');
-      return;
-    }
-
-    should.fail('error should have been thrown');
-  });
-
-  it('should require deviceName', async function () {
     try {
       await d.createSession({'deviceName': 'Delorean'});
     } catch (e) {
@@ -112,7 +100,6 @@ describe('Desired Capabilities', function () {
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
       e.message.should.contain('platformName');
-      e.message.should.contain('deviceName');
       return;
     }
 

@@ -350,13 +350,6 @@ describe('caps', function () {
         processCapabilities(caps, constraints).should.deep.equal(matchingCaps);
       });
 
-      it('should fail when deviceName is blank', function () {
-        caps = {
-          alwaysMatch: _.omit(matchingCaps, ['deviceName']),
-        };
-        (() => processCapabilities(caps, constraints)).should.throw(/'deviceName' can't be blank/);
-      });
-
       it('should fail when bad parameters are passed in more than one firstMatch capability', function () {
         caps = {
           alwaysMatch: {},

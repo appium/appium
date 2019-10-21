@@ -42,18 +42,8 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.6.0",
-    "appium-android-driver": "^4.20.0",
     "appium-base-driver": "^4.1.0",
-    "appium-espresso-driver": "^1.0.0",
-    "appium-fake-driver": "^0.x",
-    "appium-ios-driver": "4.x",
-    "appium-mac-driver": "1.x",
     "appium-support": "2.x",
-    "appium-tizen-driver": "^1.1.1-beta.4",
-    "appium-uiautomator2-driver": "^1.37.1",
-    "appium-windows-driver": "1.x",
-    "appium-xcuitest-driver": "^3.0.0",
-    "appium-youiengine-driver": "^1.2.0",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
@@ -102,6 +92,7 @@
     "precommit-test"
   ],
   "devDependencies": {
+    "appium-fake-driver": "^0.7.0",
     "appium-gulp-plugins": "^4.1.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",

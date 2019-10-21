@@ -53,3 +53,4 @@ sample-code/csharp/test/obj
 sample-code/csharp/test/bin
 sample-code/csharp/packages
 appium.zip
+.drivers.json

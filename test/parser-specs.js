@@ -9,8 +9,7 @@ const ALLOW_FIXTURE = 'test/fixtures/allow-feat.txt';
 const DENY_FIXTURE = 'test/fixtures/deny-feat.txt';
 
 describe('Parser', function () {
-  let p = getParser();
-  p.debug = true; // throw instead of exit on error; pass as option instead?
+  let p = getParser(true);
   it('should return an arg parser', function () {
     should.exist(p.parseArgs);
     p.parseArgs([]).should.have.property('port');
@@ -41,11 +40,6 @@ describe('Parser', function () {
     (() => {p.parseArgs(['-dc', 'false']);}).should.throw();
     (() => {p.parseArgs(['-dc', 'null']);}).should.throw();
     (() => {p.parseArgs(['-dc', 'does/not/exist.json']);}).should.throw();
-  });
-  it('should parse args that are caps into default capabilities', function () {
-    let defaultCapabilities = {localizableStringsDir: '/my/dir'};
-    let args = p.parseArgs(['--localizable-strings-dir', '/my/dir']);
-    args.defaultCapabilities.should.eql(defaultCapabilities);
   });
   it('should parse --allow-insecure correctly', function () {
     p.parseArgs([]).allowInsecure.should.eql([]);

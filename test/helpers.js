@@ -25,7 +25,12 @@ function initSession (caps) {
   });
 }
 
-const BASE_CAPS = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
+const BASE_CAPS = {
+  automationName: 'Fake',
+  platformName: 'Fake',
+  deviceName: 'Fake',
+  app: TEST_FAKE_APP
+};
 const W3C_PREFIXED_CAPS = {...insertAppiumPrefixes(BASE_CAPS)};
 const W3C_CAPS = {
   alwaysMatch: {...W3C_PREFIXED_CAPS},

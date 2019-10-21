@@ -5,7 +5,7 @@ import chai from 'chai';
 import sinon from 'sinon';
 import chaiAsPromised from 'chai-as-promised';
 import { getGitRev, getBuildInfo, checkNodeOk, warnNodeDeprecations,
-         getNonDefaultArgs, getDeprecatedArgs, validateServerArgs,
+         getNonDefaultArgs, validateServerArgs,
          validateTmpDir, showConfig, checkValidPort, updateBuildInfo,
          APPIUM_VER } from '../lib/config';
 import getParser from '../lib/parser';
@@ -212,31 +212,13 @@ describe('Config', function () {
         _.keys(nonDefaultArgs).length.should.equal(0);
       });
       it('should catch a non-default argument', function () {
-        args.isolateSimDevice = true;
+        args.allowCors = true;
         let nonDefaultArgs = getNonDefaultArgs(parser, args);
         _.keys(nonDefaultArgs).length.should.equal(1);
-        should.exist(nonDefaultArgs.isolateSimDevice);
+        should.exist(nonDefaultArgs.allowCors);
       });
     });
 
-    describe('getDeprecatedArgs', function () {
-      it('should show none if we have no deprecated arguments', function () {
-        let deprecatedArgs = getDeprecatedArgs(parser, args);
-        _.keys(deprecatedArgs).length.should.equal(0);
-      });
-      it('should catch a deprecated argument', function () {
-        args.showIOSLog = true;
-        let deprecatedArgs = getDeprecatedArgs(parser, args);
-        _.keys(deprecatedArgs).length.should.equal(1);
-        should.exist(deprecatedArgs['--show-ios-log']);
-      });
-      it('should catch a non-boolean deprecated argument', function () {
-        args.calendarFormat = 'orwellian';
-        let deprecatedArgs = getDeprecatedArgs(parser, args);
-        _.keys(deprecatedArgs).length.should.equal(1);
-        should.exist(deprecatedArgs['--calendar-format']);
-      });
-    });
   });
 
   describe('checkValidPort', function () {
@@ -280,7 +262,7 @@ describe('Config', function () {
     it('should not fail if process.argv[1] is undefined', function () {
       process.argv[1] = undefined;
       let args = getParser();
-      args.prog.should.be.equal('Appium');
+      args.prog.should.be.equal('appium');
     });
 
     it('should set "prog" to process.argv[1]', function () {
@@ -395,24 +377,6 @@ describe('Config', function () {
             args.defaultDevice = true;
             validateServerArgs(parser, args);
           }).should.not.throw();
-        });
-      });
-    });
-    describe('validated arguments', function () {
-      // checking ports is already done.
-      // the only argument left is `backendRetries`
-      describe('backendRetries', function () {
-        it('should fail with value less than 0', function () {
-          args.backendRetries = -1;
-          (() => {validateServerArgs(parser, args);}).should.throw();
-        });
-        it('should succeed with value of 0', function () {
-          args.backendRetries = 0;
-          (() => {validateServerArgs(parser, args);}).should.not.throw();
-        });
-        it('should succeed with value above 0', function () {
-          args.backendRetries = 100;
-          (() => {validateServerArgs(parser, args);}).should.not.throw();
         });
       });
     });

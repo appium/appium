@@ -16,7 +16,12 @@ chai.use(chaiAsPromised);
 
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
-const caps = {platformName: 'Fake', deviceName: 'Fake', app: TEST_FAKE_APP};
+const caps = {
+  automationName: 'Fake',
+  platformName: 'Fake',
+  deviceName: 'Fake',
+  app: TEST_FAKE_APP
+};
 
 describe('FakeDriver - via HTTP', function () {
   let server = null;
@@ -87,7 +92,7 @@ describe('FakeDriver - via HTTP', function () {
       // Try with valid capabilities and check that it returns a session ID
       const w3cCaps = {
         capabilities: {
-          alwaysMatch: {platformName: 'Fake'},
+          alwaysMatch: {automationName: 'Fake', platformName: 'Fake'},
           firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
         }
       };
@@ -99,6 +104,7 @@ describe('FakeDriver - via HTTP', function () {
       value.sessionId.should.be.a.string;
       value.should.exist;
       value.capabilities.should.deep.equal({
+        automationName: 'Fake',
         platformName: 'Fake',
         deviceName: 'Fake',
         app: TEST_FAKE_APP,
@@ -190,7 +196,7 @@ describe('FakeDriver - via HTTP', function () {
       await request.delete({ url: `${baseUrl}/${value.sessionId}` });
     });
 
-    it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {
+    it('should reject bad automation name with an appropriate error', async function () {
       const w3cCaps = {
         capabilities: {
           alwaysMatch: {
@@ -203,8 +209,8 @@ describe('FakeDriver - via HTTP', function () {
       response.headers['content-type'].should.match(/application\/json/);
 
       const {message} = error.value;
-      message.should.match(/BadAutomationName not part of/);
-      statusCode.should.equal(400);
+      message.should.match(/Could not find a driver for.+BadAutomationName/);
+      statusCode.should.equal(500);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -235,6 +241,8 @@ describe('FakeDriver - via HTTP', function () {
           firstMatch: [{}, {
             ...caps,
             platformName: null,
+            automationName: null,
+            deviceName: null,
           }],
         },
       };

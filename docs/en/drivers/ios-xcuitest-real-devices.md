@@ -126,8 +126,8 @@ installed, and is _not_ recommended):
     $ which appium
     /path/where/installed/bin/appium
 ```
-*   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent`
-    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent/WebDriverAgent`.
+*   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent` project
+    will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent`.
     Open a terminal and go to that location, then run the following in order to
     set the project up:
 ```

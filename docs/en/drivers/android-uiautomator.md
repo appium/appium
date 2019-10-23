@@ -27,7 +27,9 @@ The way to start a session using the UiAutomator driver is to include the
 `platformName` [capability](#TODO) in your [new session request](#TODO), with
 the value `Android`. Of course, you must also include appropriate
 `platformVersion`, `deviceName`, and `app` capabilities, at a minimum. In the
-case of this driver, no `automationName` capability should be used.
+case of this driver, for Appium versions below `1.14.0` no `automationName`
+capability should be used, while for version `1.14.0` and above the `automationName`
+should be set to `UiAutomator1`.
 
 It is highly recommended to also set the `appPackage` and `appActivity`
 capabilities in order to let Appium know exactly which package and activity

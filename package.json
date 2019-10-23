@@ -70,7 +70,8 @@
     "source-map-support": "0.x",
     "teen_process": "1.x",
     "winston": "3.x",
-    "word-wrap": "^1.2.3"
+    "word-wrap": "^1.2.3",
+    "yaml": "^1.7.2"
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
@@ -103,6 +104,7 @@
   ],
   "devDependencies": {
     "appium-gulp-plugins": "^5.2.1",
+    "appium-fake-driver": "0.x",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "eslint-config-appium": "^4.0.1",

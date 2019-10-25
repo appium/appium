@@ -23,10 +23,10 @@ example_usage:
       @driver.get("http://appium.io")
   php:
     |
-      // TODO PHP sample
+      $this->driver->get("http://appium.io");
   csharp:
     |
-      // TODO C# sample
+      driver.Navigate().GoToUrl("http://appium.io");
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.html#get-java.lang.String-"

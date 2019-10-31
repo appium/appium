@@ -15,7 +15,7 @@ Another example of a use-case for settings would be telling appium to ignore ele
 
 Settings are implemented via the following API endpoints:
 
-### [Update Device Settings](http://appium.io/docs/en/commands/session/settings/update-settings/)
+### [Update Device Settings](/docs/en/commands/session/settings/update-settings.md)
 
 **POST** /session/:sessionId/appium/settings
 
@@ -28,7 +28,7 @@ Settings are implemented via the following API endpoints:
 }
 ```
 
-### [Retrieve Device Settings](http://appium.io/docs/en/commands/session/settings/get-settings/)
+### [Retrieve Device Settings](/docs/en/commands/session/settings/get-settings.md)
 
 **GET** /session/:sessionId/appium/settings
 

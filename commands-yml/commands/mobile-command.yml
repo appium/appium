@@ -55,6 +55,8 @@
       | mobile:activeAppInfo | Gets current active application's information such as bundleId and process arguments | <none> | <none> |
       | mobile:deviceInfo | Gets device information like locale and timezone. The timezone is TZ database format like `America/New_York` by default, fallback to Apple name like `US/New_York` | <none> | <none> |
       | mobile:rotateElement | Sends a rotation gesture with two touches to the given element. See [rotate:withVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate) for more details.  | `{element, rotation, velocity}` | `{element: 2, rotation: π/2, velocity: 1.5}` |
+      | mobile:deleteFile | Delete a file on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial. | `{remotePath}` | `{remotePath: 'path/to/file'}` |
+      | mobile:deleteFolder | Delete a folder on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial.  | `{remotePath}` | `{remotePath: '@io.appium.example:documents/path/to/folder'}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |

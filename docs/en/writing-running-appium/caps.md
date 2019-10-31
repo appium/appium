@@ -58,7 +58,7 @@ These Capabilities span multiple drivers.
 |`printPageSourceOnFindFailure`| When a find operation fails, print the current page source. Defaults to `false`.|e.g., `true`|
 |`clearSystemFiles`| Delete any generated files at the end of a session. Default to `false`. | `true`, `false`|
 
-- Update settings
+- [Update settings](#update-settings)
 
 |Capability|Description|Values|
 |----|-----------|-------|

@@ -26,6 +26,8 @@ Settings are implemented via the following API endpoints:
 }
 ```
 
+The command documentation is [Update Device Settings](http://appium.io/docs/en/commands/session/settings/update-settings/).
+
 **GET** /session/:sessionId/appium/settings
 
 >Returns a JSON hash of all the currently specified settings.
@@ -35,7 +37,8 @@ Settings are implemented via the following API endpoints:
 }
 ```
 
-Note that the actual commands you would use in your test script differ based on the language; see the specific Appium client documention for more information.
+The command documentation is [Retrieve Device Settings](http://appium.io/docs/en/commands/session/settings/get-settings/).
+
 
 ## General Supported Settings
 

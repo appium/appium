@@ -20,6 +20,10 @@ In addition to Appium's general requirements:
 * Java 8 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
 
+Further, the UiAutomator2 driver does not support Android versions below 5.0
+(Lollipop, API level 21). If you are automating such versions, consider using
+the [UiAutomator driver](/docs/en/drivers/android-uiautomator.md);
+
 ### Usage
 
 The way to start a session using the UiAutomator2 driver is to include the

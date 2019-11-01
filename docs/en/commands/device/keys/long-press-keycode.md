@@ -23,7 +23,7 @@ self.driver.long_press_keycode(10);
 driver.longPressKeyCode(10);
 
 // wd example
-await driver.longPressKeyCode(10);
+await driver.longPressKeycode(10);
 
 ```
 

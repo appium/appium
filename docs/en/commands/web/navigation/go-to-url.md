@@ -39,13 +39,13 @@ get("http://appium.io")
 
 ```php
 # PHP
-// TODO PHP sample
+$this->driver->get("http://appium.io");
 
 ```
 
 ```csharp
 // C#
-// TODO C# sample
+driver.Navigate().GoToUrl("http://appium.io");
 
 ```
 

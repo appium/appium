@@ -13,7 +13,7 @@ Map<String, Object> caps = driver.getSessionDetails();
 
 ```python
 # Python
-desired_caps = self.driver.desired_capabilities()
+desired_caps = self.driver.desired_capabilities
 
 ```
 

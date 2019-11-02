@@ -20,7 +20,7 @@ self.driver.press_keycode(10);
 ```javascript
 // Javascript
 // webdriver.io example
-driver.pressKeycode(10);
+driver.pressKeyCode(10);
 
 // wd example
 await driver.pressKeycode(10);

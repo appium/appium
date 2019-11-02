@@ -13,7 +13,7 @@ driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 
 ```python
 # Python
-self.driver.implicitly_wait(5000)
+self.driver.implicitly_wait(5) # waits 5 seconds
 
 ```
 

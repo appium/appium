@@ -15,6 +15,8 @@ Another example of a use-case for settings would be telling appium to ignore ele
 
 Settings are implemented via the following API endpoints:
 
+### [Update Device Settings](/docs/en/commands/session/settings/update-settings.md)
+
 **POST** /session/:sessionId/appium/settings
 
 >Expects a JSON hash of settings, where keys correspond to setting names, and values to the value of the setting.
@@ -26,6 +28,8 @@ Settings are implemented via the following API endpoints:
 }
 ```
 
+### [Retrieve Device Settings](/docs/en/commands/session/settings/get-settings.md)
+
 **GET** /session/:sessionId/appium/settings
 
 >Returns a JSON hash of all the currently specified settings.
@@ -34,8 +38,6 @@ Settings are implemented via the following API endpoints:
   ignoreUnimportantViews : true
 }
 ```
-
-Note that the actual commands you would use in your test script differ based on the language; see the specific Appium client documention for more information.
 
 ## General Supported Settings
 

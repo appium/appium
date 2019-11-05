@@ -225,7 +225,7 @@ describe('FakeDriver - via HTTP', function () {
       await request.delete({ url: `${baseUrl}/${value.sessionId}` });
     });
 
-    it('should try to match capabilities to W3C protocol if possible', async function () {
+    it('should fall back to MJSONWP if w3c caps are invalid', async function () {
       const combinedCaps = {
         desiredCapabilities: {
           ...caps,
@@ -239,9 +239,9 @@ describe('FakeDriver - via HTTP', function () {
         },
       };
       const {value, sessionId, status} = await request.post({url: baseUrl, json: combinedCaps});
-      should.not.exist(status);
-      should.not.exist(sessionId);
-      value.capabilities.should.deep.equal(caps);
+      status.should.exist;
+      sessionId.should.exist;
+      value.should.deep.equal(caps);
 
       // End session
       await request.delete({ url: `${baseUrl}/${sessionId}` });

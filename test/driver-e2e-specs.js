@@ -234,7 +234,7 @@ describe('FakeDriver - via HTTP', function () {
           alwaysMatch: {},
           firstMatch: [{}, {
             ...caps,
-            deviceName: null,
+            platformName: null,
           }],
         },
       };

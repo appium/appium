@@ -33,7 +33,7 @@ jobs:
         if [[ -n $(git status -s) ]]; then
           git commit -a -n -m 'Update generated docs [ci skip]'
           git push triager generate-docs-$BUILD_SOURCEVERSION
-          hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEVERSION" -m "Update auto-generated docs"
+          hub pull-request -b "appium:master" -h "appium:generate-docs-$BUILD_SOURCEVERSION" -m "docs: Update auto-generated docs"
         fi
       displayName: Generate Docs and Make PR
       env:

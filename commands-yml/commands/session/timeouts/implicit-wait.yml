@@ -20,7 +20,7 @@ example_usage:
       self.driver.implicitly_wait(5) # waits 5 seconds
   javascript_wd:
     |
-      await driver.setImplicitWaitTimeout(5000);
+      await driver.setImplicitWaitTimeout(5);
 
   javascript_wdio:
     |

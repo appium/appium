@@ -1,5 +1,6 @@
 language: node_js
 node_js: "10"
+os: linux
 addons:
   apt:
     sources:
@@ -10,25 +11,23 @@ addons:
 env:
   global:
     - CXX=g++-4.8
+cache:
+  npm: false
 jobs:
   include:
     - stage: Tests
       name: node 10
-      os: linux
+      before_script: npm outdated || true
       script: npm run test && npm run e2e-test
       after_script: npm run coverage
     - stage:
       name: node 12
-      os: linux
+      before_script: npm outdated || true
       script: npm run test && npm run e2e-test
       node_js: "12"
     - stage:
       name: test documentation generation
-      os: linux
-      before_script:
-        - npm install
-      script:
-        - npm run generate-docs
+      script: npm run generate-docs
 
     - stage: Sample Code
       name: JavaScript (wd)
@@ -45,7 +44,6 @@ jobs:
       name: Python
       # only want to run this on the main master branch
       if: branch = master AND type != pull_request
-      os: linux
       language: python
       python: "3.6"
       env:

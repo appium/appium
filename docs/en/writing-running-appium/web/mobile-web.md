@@ -21,9 +21,10 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 // javascript
 {
   platformName: 'iOS'
-  , platformVersion: '11.10'
+  , platformVersion: '13.2'
+  , automationName: 'XCUITest'
   , browserName: 'Safari'
-  , deviceName: 'iPhone 8'
+  , deviceName: 'iPhone '
 }
 ```
 
@@ -31,9 +32,10 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 # python
 {
   'platformName': 'iOS',
-  'platformVersion': '11.0',
+  'platformVersion': '13.2',
+  'automationName': 'XCUITest',
   'browserName': 'Safari',
-  'deviceName': 'iPhone 8'
+  'deviceName': 'iPhone '
 }
 ```
 
@@ -43,9 +45,10 @@ public static $browsers = array(
     array(
         'desiredCapabilities' => array(
             'platformName' => 'iOS',
-            'platformVersion' => '11.0',
+            'platformVersion' => '13.2',
+            'automationName' => 'XCUITest',
             'browserName' => 'Safari',
-            'deviceName' => 'iPhone 8'
+            'deviceName' => 'iPhone '
         )
     )
 );
@@ -55,16 +58,18 @@ public static $browsers = array(
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
-capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "11.0");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "13.2");
+capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
 capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
-capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 8");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone ");
 ```
 
 ```ruby
 {
   platformName: 'iOS',
-  platformVersion: '11.0',
-  deviceName: 'iPhone 8',
+  platformVersion: '13.2',
+  automationName: 'XCUITest',
+  deviceName: 'iPhone ',
   browserName: 'Safari'
 }
 ```
@@ -76,6 +81,13 @@ preferences so that the remote debugger port is open.
 
 
 ### Mobile Safari on a Real iOS Device
+
+#### For `XCUITest`
+
+We use [appium-ios-device](https://github.com/appium/appium-ios-device) to handle Safari.
+You no longer need to install additional dependencies.
+
+#### For `Instruments`
 
 For [iOS 9.3 and below](/docs/en/drivers/ios-uiautomation.md) (pre-XCUITest), we
 use the [SafariLauncher App](https://github.com/snevesbarros/SafariLauncher) app
@@ -94,12 +106,14 @@ documentation.
 
 Before you can run your tests against Safari on a real device you will need to:
 
-* Have the `ios-webkit-debug-proxy` installed, running and listening on port
-  27753 (see the [hybrid docs](/docs/en/writing-running-appium/web/hybrid.md#execution-against-an-ios-real-device)
-  for instructions)
-* Turn on **web inspector** on iOS device (**settings > safari > advanced**)
-* Make sure that `SafariLauncher` will work (see the [SafariLauncher docs](/docs/en/drivers/ios-uiautomation-safari-launcher.md)
-  for instructions)
+* Both
+    * Turn on **web inspector** on iOS device (**settings > safari > advanced**)
+* Only for `Instruments`
+    * Have the `ios-webkit-debug-proxy` installed, running and listening on port
+      27753 (see the [hybrid docs](/docs/en/writing-running-appium/web/hybrid.md#execution-against-an-ios-real-device)
+      for instructions)
+    * Make sure that `SafariLauncher` will work (see the [SafariLauncher docs](/docs/en/drivers/ios-uiautomation-safari-launcher.md)
+      for instructions)
 
 
 ### Running your test
@@ -113,6 +127,7 @@ To configure you test to run against safari simply set the `"browserName"` to be
 //setup the web driver and launch the webview app.
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 desiredCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
+desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
 URL url = new URL("http://127.0.0.1:4723/wd/hub");
 AppiumDriver driver = new AppiumDriver(url, desiredCapabilities);
 
@@ -129,7 +144,7 @@ driver.quit();
 ```python
 # python
 # setup the web driver and launch the webview app.
-capabilities = { 'browserName': 'Safari' }
+capabilities = { 'browserName': 'Safari', 'automationName': 'XCUITest' }
 driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 
 # Navigate to the page and interact with the elements on the guinea-pig page using id.
@@ -154,6 +169,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
             'desiredCapabilities' => array(
                 'platformName' => 'iOS',
                 'platformVersion' => '7.1',
+                'automationName' => 'XCUITest',
                 'browserName' => 'Safari',
                 'deviceName' => 'iPhone Simulator'
             )
@@ -193,8 +209,9 @@ these to run your test in Chrome:
 // javascript
 {
   platformName: 'Android'
-  , platformVersion: '4.4'
+  , platformVersion: '9.0'
   , deviceName: 'Android Emulator'
+  , automationName: 'UIAutomator2'
   , browserName: 'Chrome'
 };
 ```
@@ -203,8 +220,9 @@ these to run your test in Chrome:
 # python
 {
   'platformName': 'Android',
-  'platformVersion': '4.4',
+  'platformVersion': '9.0',
   'deviceName': 'Android Emulator',
+  'automationName': 'UIAutomator2',
   'browserName': 'Chrome'
 }
 ```
@@ -215,8 +233,9 @@ public static $browsers = array(
     array(
         'desiredCapabilities' => array(
             'platformName' => 'Android',
-            'platformVersion' => '4.4',
+            'platformVersion' => '9.0',
             'browserName' => 'Chrome',
+            'automationName' => 'UIAutomator2',
             'deviceName' => 'Android Emulator'
         )
     )
@@ -227,16 +246,18 @@ public static $browsers = array(
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
 capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "Android");
-capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "4.4");
+capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "9.0");
 capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "Android Emulator");
+capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "UIAutomator2");
 capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
 ```
 
 ```ruby
 {
   platformName: 'Android',
-  platformVersion: '4.4',
+  platformVersion: '9.0',
   deviceName: 'Android Emulator',
+  automationName: 'UIAutomator2',
   browserName: 'Chrome'
 }
 ```
@@ -247,6 +268,12 @@ automate the built-in browser. On all devices you can use the 'Chromium'
 
 
 #### Troubleshooting Chromedriver
+
+If your test target requires newer chrome driver version,
+[chromedriver_autodownload](docs/en/writing-running-appium/web/chromedriver.md#automatic-discovery-of-compatible-chromedriver) feature will help.
+It has been available since Appium 1.15.0 with security option.
+Read the linked documentation to learn how to use it.
+`chromedriverExecutableDir` capability also helps when you need specific Chromedriver version.
 
 As of Chrome version 33, a rooted device is no longer required. If running tests
 on older versions of Chrome, devices needed to be rooted as Chromedriver

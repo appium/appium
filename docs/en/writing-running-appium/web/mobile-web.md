@@ -106,7 +106,7 @@ documentation.
 
 Before you can run your tests against Safari on a real device you will need to:
 
-* Both
+* `XCUITest` and `Instruments`
     * Turn on **web inspector** on iOS device (**settings > safari > advanced**)
 * Only for `Instruments`
     * Have the `ios-webkit-debug-proxy` installed, running and listening on port

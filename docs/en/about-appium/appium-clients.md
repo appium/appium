@@ -17,4 +17,4 @@ JavaScript (Browser) | [https://github.com/projectxyzio/web2driver](https://gith
 Objective C | [https://github.com/appium/selenium-objective-c](https://github.com/appium/selenium-objective-c)
 PHP | [https://github.com/appium/php-client](https://github.com/appium/php-client)
 C# (.NET) | [https://github.com/appium/appium-dotnet-driver](https://github.com/appium/appium-dotnet-driver)
-RobotFramework | [https://github.com/jollychang/robotframework-appiumlibrary](https://github.com/jollychang/robotframework-appiumlibrary)
+RobotFramework | [https://github.com/serhatbolsu/robotframework-appiumlibrary](https://github.com/serhatbolsu/robotframework-appiumlibrary)

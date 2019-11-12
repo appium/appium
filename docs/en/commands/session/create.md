@@ -22,7 +22,7 @@ String sessionId = driver.getSessionId().toString();
 
 ```python
 # Python
-desired_caps = desired_caps = {
+desired_caps = {
   'platformName': 'Android',
   'platformVersion': '7.0',
   'deviceName': 'Android Emulator',

@@ -200,8 +200,7 @@ path with the actual download path for your system). We've registered this fact
 with `webdriverio` and now have a client object which will represent the
 connection to the Appium server. From here, we can go ahead and start the
 session, perform some test commands, and end the session. In our case, we will
-simply tap into a few menus and then back out the way we came before ending the
-session:
+simply type into a text field and check that the correct text was entered:
 
 ```js
 // javascript
@@ -213,13 +212,9 @@ assert.equal(value, "Hello World!");
 ```
 
 What's going on here is that after creating a session and launching our app,
-we're instructing Appium to find an element in the app hierarchy and click on
-it. Specifically, `webdriverio` has a convention where the `~` prefix means to
-find an element by its "accessbility id", which in the case of Android means an
-element's "content description". So we find and tap on these elements in order
-to navigate through the app's menu system. Then we can use the `back()` method
-to trigger the Android "back" behavior and get back to where we started before
-ending the session.
+we're instructing Appium to find an element in the app hierarchy and type into
+it. The same field is then queried for its text, which is asserted to be what we
+expect.
 
 Putting it all together, the file should look like:
 

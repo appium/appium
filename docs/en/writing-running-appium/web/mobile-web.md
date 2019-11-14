@@ -24,7 +24,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
   , platformVersion: '13.2'
   , automationName: 'XCUITest'
   , browserName: 'Safari'
-  , deviceName: 'iPhone '
+  , deviceName: 'iPhone 11'
 }
 ```
 
@@ -35,7 +35,7 @@ Then, use desired capabilities like these to run your test in mobile Safari:
   'platformVersion': '13.2',
   'automationName': 'XCUITest',
   'browserName': 'Safari',
-  'deviceName': 'iPhone '
+  'deviceName': 'iPhone 11'
 }
 ```
 
@@ -48,7 +48,7 @@ public static $browsers = array(
             'platformVersion' => '13.2',
             'automationName' => 'XCUITest',
             'browserName' => 'Safari',
-            'deviceName' => 'iPhone '
+            'deviceName' => 'iPhone 11'
         )
     )
 );
@@ -61,7 +61,7 @@ capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, "iOS");
 capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, "13.2");
 capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
 capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
-capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone ");
+capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 11");
 ```
 
 ```ruby
@@ -69,7 +69,7 @@ capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone ");
   platformName: 'iOS',
   platformVersion: '13.2',
   automationName: 'XCUITest',
-  deviceName: 'iPhone ',
+  deviceName: 'iPhone 11',
   browserName: 'Safari'
 }
 ```
@@ -84,7 +84,7 @@ preferences so that the remote debugger port is open.
 
 #### For `XCUITest`
 
-We use [appium-ios-device](https://github.com/appium/appium-ios-device) to handle Safari.
+We use [appium-ios-device](https://github.com/appium/appium-ios-device) to handle Safari since Appium 1.15.
 You no longer need to install additional dependencies.
 
 #### For `Instruments`
@@ -171,7 +171,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
                 'platformVersion' => '7.1',
                 'automationName' => 'XCUITest',
                 'browserName' => 'Safari',
-                'deviceName' => 'iPhone Simulator'
+                'deviceName' => 'iPhone 11Simulator'
             )
         )
     );
@@ -269,7 +269,7 @@ automate the built-in browser. On all devices you can use the 'Chromium'
 
 #### Troubleshooting Chromedriver
 
-If your test target requires newer chrome driver version,
+If your test target requires newer Chromedriver version,
 [chromedriver_autodownload](docs/en/writing-running-appium/web/chromedriver.md#automatic-discovery-of-compatible-chromedriver) feature will help.
 It has been available since Appium 1.15.0 with the security option.
 Read the linked documentation to learn how to use it.

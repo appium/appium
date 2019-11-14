@@ -11,8 +11,8 @@ Development of the Espresso driver happens at the
 [appium-espresso-driver](https://github.com/appium/appium-espresso-driver)
 repo.
 
-(If you don't want a beta driver, Appium's current standard Android automation
-driver is the [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md).)
+Appium also supports Android automation using the
+[UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md).)
 
 ### Requirements and Support
 

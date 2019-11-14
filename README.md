@@ -27,7 +27,7 @@ specific information about how that driver works and how to set it up:
     * The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
     * (DEPRECATED) The [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)
 * Android
-    * (BETA) The [Espresso Driver](/docs/en/drivers/android-espresso.md)
+    * The [Espresso Driver](/docs/en/drivers/android-espresso.md)
     * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
     * (DEPRECATED) The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
 * The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)

@@ -171,7 +171,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
                 'platformVersion' => '7.1',
                 'automationName' => 'XCUITest',
                 'browserName' => 'Safari',
-                'deviceName' => 'iPhone 11Simulator'
+                'deviceName' => 'iPhone 11'
             )
         )
     );

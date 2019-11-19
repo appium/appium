@@ -17,10 +17,10 @@ example_usage:
       driver.refresh();
   ruby:
     |
-      refresh
+      navigate.refresh
   ruby_core:
     |
-      @driver.refresh
+      @driver.navigate.refresh
   php:
     |
       // TODO PHP sample

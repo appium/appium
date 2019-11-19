@@ -17,10 +17,10 @@ example_usage:
       driver.deleteCookies();
   ruby:
     |
-      delete_all_cookies
+      manage.delete_all_cookies
   ruby_core:
     |
-      @driver.delete_all_cookies
+      @driver.manage.delete_all_cookies
   php:
     |
       // TODO PHP sample

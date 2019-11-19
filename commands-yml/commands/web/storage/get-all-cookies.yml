@@ -17,10 +17,10 @@ example_usage:
       let cookies = driver.getCookies():
   ruby:
     |
-      all_cookies
+      manage.all_cookies
   ruby_core:
     |
-      @driver.all_cookies
+      @driver.manage.all_cookies
   php:
     |
       // TODO PHP sample

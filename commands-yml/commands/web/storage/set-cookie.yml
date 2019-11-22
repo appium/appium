@@ -20,10 +20,10 @@ example_usage:
       }]);
   ruby:
     |
-      add_cookie(:name => 'foo', :value => 'bar')
+      manage.add_cookie(:name => 'foo', :value => 'bar')
   ruby_core:
     |
-      @driver.add_cookie(:name => 'foo', :value => 'bar')
+      @driver.manage.add_cookie(:name => 'foo', :value => 'bar')
   php:
     |
       // TODO PHP sample

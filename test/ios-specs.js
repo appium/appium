@@ -2,7 +2,7 @@
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
          AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck,
-         OptionalIdbCommandCheck } from '../lib/ios';
+         OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -360,6 +360,35 @@ describe('ios', function () {
     });
     it('fix', async function () {
       removeColors(await check.fix()).should.equal('Why applesimutils is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/');
+    });
+  }));
+
+  describe('OptionalIOSDeployCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalIOSDeployCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/ios-deploy');
+      mocks.tp.expects('exec').once().returns({stdout: '1.9.4', stderr: ''});
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'ios-deploy is installed at: path/to/ios-deploy. Installed version is: 1.9.4'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'ios-deploy cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      removeColors(await check.fix()).should.equal('ios-deploy is used as a fallback command to install iOS applications to real device. Please read https://github.com/ios-control/ios-deploy/ to install it');
     });
   }));
 });

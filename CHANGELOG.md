@@ -1,3 +1,16 @@
+CHANGES IN VERSION 1.16.0 (FROM 1.15.1)
+===================================
+
+Appium 1.16.0 is a patch release
+
+#### General
+#### IOS (XCUITest):
+#### Android General
+#### Android (UiAutomator2)
+#### Android (Espresso)
+
+
+
 CHANGES IN VERSION 1.15.1 (FROM 1.15.0)
 ===================================
 

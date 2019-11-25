@@ -236,11 +236,15 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         });
         // make sure that the request gets to the server before our shutdown
         await B.delay(100);
+        const shutdownEventPromise = new B((resolve, reject) => {
+          setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+          d.onUnexpectedShutdown(resolve);
+        });
         d.startUnexpectedShutdown(new Error('Crashytimes'));
         let res = await p;
         res.status.should.equal(13);
         res.value.message.should.contain('Crashytimes');
-        await d.onUnexpectedShutdown.should.be.rejectedWith('Crashytimes');
+        await shutdownEventPromise;
         d.getStatus = d._oldGetStatus;
       });
     });

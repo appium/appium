@@ -85,9 +85,13 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       }.bind(d);
       let cmdPromise = d.executeCommand('getStatus');
       await B.delay(10);
+      const p = new B((resolve, reject) => {
+        setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+        d.onUnexpectedShutdown(resolve);
+      });
       d.startUnexpectedShutdown(new Error('We crashed'));
       await cmdPromise.should.be.rejectedWith(/We crashed/);
-      await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+      await p;
     });
 
     it('should not allow commands in middle of unexpected shutdown', async function () {
@@ -99,8 +103,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       }.bind(d);
       let caps = _.clone(defaultCaps);
       await d.createSession(caps);
+      const p = new B((resolve, reject) => {
+        setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+        d.onUnexpectedShutdown(resolve);
+      });
       d.startUnexpectedShutdown(new Error('We crashed'));
-      await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+      await p;
       await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
     });
 
@@ -114,8 +122,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
       let caps = _.clone(defaultCaps);
       await d.createSession(caps);
+      const p = new B((resolve, reject) => {
+        setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+        d.onUnexpectedShutdown(resolve);
+      });
       d.startUnexpectedShutdown(new Error('We crashed'));
-      await d.onUnexpectedShutdown.should.be.rejectedWith(/We crashed/);
+      await p;
 
       await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
       await B.delay(500);

@@ -256,7 +256,7 @@ describe('AppiumDriver', function () {
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
         let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
-        appium.sessions[sessionId].unexpectedShutdownDeferred.reject(new Error('Oops'));
+        appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
         // let event loop spin so rejection is handled
         await sleep(1);
         _.keys(appium.sessions).should.not.contain(sessionId);
@@ -264,18 +264,10 @@ describe('AppiumDriver', function () {
       it('should remove session if inner driver unexpectedly exits with no error', async function () {
         let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
-        appium.sessions[sessionId].unexpectedShutdownDeferred.resolve();
+        appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown');
         // let event loop spin so rejection is handled
         await sleep(1);
         _.keys(appium.sessions).should.not.contain(sessionId);
-      });
-      it('should not remove session if inner driver cancels unexpected exit', async function () {
-        let [sessionId,] = (await appium.createSession(_.clone(BASE_CAPS))).value; // eslint-disable-line comma-spacing
-        _.keys(appium.sessions).should.contain(sessionId);
-        appium.sessions[sessionId].onUnexpectedShutdown.cancel();
-        // let event loop spin so rejection is handled
-        await sleep(1);
-        _.keys(appium.sessions).should.contain(sessionId);
       });
     });
     describe('getDriverAndVersionForCaps', function () {

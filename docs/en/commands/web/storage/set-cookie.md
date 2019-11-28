@@ -33,10 +33,10 @@ let cookies = await driver.setCookie({name: 'foo', value: 'bar'});
 ```ruby
 # Ruby
 # ruby_lib example
-add_cookie(:name => 'foo', :value => 'bar')
+manage.add_cookie(:name => 'foo', :value => 'bar')
 
 # ruby_lib_core example
-@driver.add_cookie(:name => 'foo', :value => 'bar')
+@driver.manage.add_cookie(:name => 'foo', :value => 'bar')
 
 ```
 

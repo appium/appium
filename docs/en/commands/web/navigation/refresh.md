@@ -30,10 +30,10 @@ await driver.refresh();
 ```ruby
 # Ruby
 # ruby_lib example
-refresh
+navigate.refresh
 
 # ruby_lib_core example
-@driver.refresh
+@driver.navigate.refresh
 
 ```
 

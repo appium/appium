@@ -30,10 +30,10 @@ let cookies = await driver.allCookies();
 ```ruby
 # Ruby
 # ruby_lib example
-all_cookies
+manage.all_cookies
 
 # ruby_lib_core example
-@driver.all_cookies
+@driver.manage.all_cookies
 
 ```
 

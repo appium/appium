@@ -21,11 +21,7 @@ example_usage:
       await driver.scroll(10, 100);
   javascript_wdio:
     |
-      driver.touchScroll({
-        el: element,
-        xOffset: 10,
-        yOffset: 100
-      });
+      driver.touchScroll(10, 100, element);
   ruby:
     |
       touch_actions.scroll(element, 10, 100).perform

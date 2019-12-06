@@ -1,10 +1,25 @@
 CHANGES IN VERSION 1.16.0 (FROM 1.15.1)
 ===================================
 
-Appium 1.16.0 is a patch release
+Appium 1.16.0 is a minor release
 
 #### General
+
 #### IOS (XCUITest):
+* Allow execution of WDA without app under test (https://github.com/appium/appium-xcuitest-driver/pull/1093)
+* Add `mobile: deleteFile` command for removing files/folders from the device (https://github.com/appium/appium-xcuitest-driver/pull/1095)
+* Fall back to `ios-deploy` if native install fails (https://github.com/appium/appium-xcuitest-driver/pull/1098)
+* Make sure ports are properly closed when cleaning up (https://github.com/appium/appium-xcuitest-driver/pull/1094)
+* Handle socket errors on session start (https://github.com/appium/appium-xcuitest-driver/pull/1101)
+* Properly handle creating simulators with patch versions (https://github.com/appium/node-simctl/pull/89)
+* Fix handling of Safari console log (https://github.com/appium/appium-remote-debugger/pull/176)
+* Add ability to interact with Shadow DOM in Safari (https://github.com/appium/appium-remote-debugger/commit/559395a16088142b27289dbac6d3a5ab36caa716)
+* New capabilities
+  * `safariLogAllCommunication` - log all plists passed to and received from the Web Inspector (https://github.com/appium/appium-xcuitest-driver/pull/1105)
+  * `safariLogAllCommunicationHexDump` - log the raw data passed to and received from the Web Inspector (https://github.com/appium/appium-xcuitest-driver/pull/1105)
+  * `safariSocketChunkSize` - change the size of the data passed to the Web Inspector on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1105)
+  * `appPushTimeout` - timeout for application upload in millisecond, on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1104)
+
 #### Android General
 #### Android (UiAutomator2)
 #### Android (Espresso)

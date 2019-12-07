@@ -30,7 +30,7 @@ example_usage:
       // PHP Code here
   csharp:
     |
-      driver.FindElementById("elementId").Click();
+      // csharp code here
 
 client_docs:
   java:

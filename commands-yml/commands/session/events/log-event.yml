@@ -21,10 +21,10 @@ example_usage:
       driver.log_event('appium', 'funEvent')
   javascript_wd:
     |
-      await driver.status();
+      // WD code here
   javascript_wdio:
     |
-      await driver.status();
+      // wdio code here
   ruby:
     |
       driver.log_event vendor: 'appium', event: 'funEvent'
@@ -38,7 +38,7 @@ example_usage:
       // PHP Code here
   csharp:
     |
-      driver.FindElementById("elementId").Click();
+      // csharp Code here
 
 client_docs:
   java:

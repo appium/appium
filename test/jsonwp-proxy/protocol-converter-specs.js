@@ -1,6 +1,3 @@
-// transpile:mocha
-/* global describe:true, it:true */
-
 import _ from 'lodash';
 import { PROTOCOLS } from '../../lib/protocol';
 import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../lib/jsonwp-proxy/protocol-converter';

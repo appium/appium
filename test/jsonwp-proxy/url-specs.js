@@ -1,5 +1,4 @@
 // transpile:mocha
-/* global describe:true, it:true */
 
 import { JWProxy } from '../..';
 import chai from 'chai';

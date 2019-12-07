@@ -1,6 +1,3 @@
-// transpile:mocha
-/* global describe:true, it:true */
-
 import _ from 'lodash';
 import { statusCodes, getSummaryByCode } from '../..';
 import chai from 'chai';

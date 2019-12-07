@@ -98,11 +98,14 @@ describe('parseCapsArray', function () {
   it('should parse string into array', function () {
     parseCapsArray('/tmp/my/app.zip').should.eql(['/tmp/my/app.zip']);
   });
-  it('should parse array into array', function () {
+  it('should parse array as string into array', function () {
     parseCapsArray('["/tmp/my/app.zip"]').should.eql(['/tmp/my/app.zip']);
     parseCapsArray('["/tmp/my/app.zip","/tmp/my/app2.zip"]').should.eql([
       '/tmp/my/app.zip',
       '/tmp/my/app2.zip'
     ]);
+  });
+  it('should return an array without change', function () {
+    parseCapsArray(['a', 'b']).should.eql(['a', 'b']);
   });
 });

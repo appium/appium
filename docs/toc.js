@@ -46,7 +46,7 @@ module.exports = {
           ['Get Log Types', 'get-log-types.md'],
           ['Get Logs', 'get-log.md'],
         ]],
-        ['Events', ['event',
+        ['Events', ['events',
           ['Log event', 'log-event.md'],
           ['Get events', 'get-events.md'],
         ]],

@@ -95,6 +95,9 @@ endpoint:
       type: string
       description: The name of event. It will be `event` in `vendor:event`.
 
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L600
+
 links:
   - name: add new route to allow logging of custom events
     url: https://github.com/appium/appium-base-driver/pull/364

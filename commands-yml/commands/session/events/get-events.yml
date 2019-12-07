@@ -88,6 +88,9 @@ endpoint:
         A JSON hash of events like `{'commands' => [{'cmd' => 123455, ....}], 'startTime' => 1572954894127, }`.
         A filtered by `type` item if it is provided.
 
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L597
+
 links:
   - name: add ability to retrieve log events as a new api route
     url: https://github.com/appium/appium-base-driver/pull/365

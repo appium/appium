@@ -40,7 +40,8 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      var touchAction = new TouchAction(Driver);
+      touchAction.LongPress(element).Perform();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#longPress-org.openqa.selenium.WebElement-"

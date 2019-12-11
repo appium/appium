@@ -4,8 +4,18 @@ CHANGES IN VERSION 1.16.0 (FROM 1.15.1)
 Appium 1.16.0 is a minor release
 
 #### General
+* Fix handling of unexpected shutdown (https://github.com/appium/appium-base-driver/pull/370) (https://github.com/appium/appium/pull/13635) (https://github.com/appium/appium/pull/13662)
+* Beta support for Flutter (https://github.com/appium/appium/pull/12945)
+* Add log a custom event and get events (https://github.com/appium/appium-base-driver/pull/364, https://github.com/appium/appium-base-driver/pull/365)
+* Improve memory usage
+
+#### IOS General
+* Fix creation of simulators on Xcode patch versions (https://github.com/appium/node-simctl/pull/89)
+* Support setting geolocation on simulators using [Lyft's set-simulator-location CLI](https://github.com/lyft/set-simulator-location) (https://github.com/appium/appium-ios-simulator/pull/249)
 
 #### IOS (XCUITest):
+* Add support for shadow DOM elements (https://github.com/appium/appium-remote-debugger/commit/559395a16088142b27289dbac6d3a5ab36caa716)
+* fix problem in webview asynchronous execute on older versions of iOS, when low timeouts would cause the return value to never be returned (https://github.com/appium/appium-remote-debugger/pull/185)
 * Allow execution of WDA without app under test (https://github.com/appium/appium-xcuitest-driver/pull/1093)
 * Add `mobile: deleteFile` command for removing files/folders from the device (https://github.com/appium/appium-xcuitest-driver/pull/1095)
 * Fall back to `ios-deploy` if native install fails (https://github.com/appium/appium-xcuitest-driver/pull/1098)
@@ -18,12 +28,33 @@ Appium 1.16.0 is a minor release
   * `safariLogAllCommunication` - log all plists passed to and received from the Web Inspector (https://github.com/appium/appium-xcuitest-driver/pull/1105)
   * `safariLogAllCommunicationHexDump` - log the raw data passed to and received from the Web Inspector (https://github.com/appium/appium-xcuitest-driver/pull/1105)
   * `safariSocketChunkSize` - change the size of the data passed to the Web Inspector on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1105)
+  * `additionalWebviewBundleIds` - accept an array of bundle identifiers to poll for during webview app selection (https://github.com/appium/appium-xcuitest-driver/pull/1117)
   * `appPushTimeout` - timeout for application upload in millisecond, on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1104)
 
 #### Android General
-#### Android (UiAutomator2)
-#### Android (Espresso)
+* Add `mobile: sensorSet` to gain access to setting device sensor data (https://github.com/appium/appium-android-driver/pull/555)
+* Speed up manifest parsing (https://github.com/appium/appium-adb/pull/471)
+* Fix process identification on older Android versions (https://github.com/appium/appium-adb/pull/472)
+* Fix batch permission setting (https://github.com/appium/appium-adb/pull/477)
+* Allow `appWaitDuration` to be set as low as `0` (https://github.com/appium/appium-adb/pull/479)
 
+#### Android (UiAutomator2)
+* Add get clipboard for Android 10+ (https://github.com/appium/appium-uiautomator2-driver/pull/348)
+* Fix prefer IPv4 address to the host name (https://github.com/appium/appium-uiautomator2-driver/pull/343)
+* Fix Turn write access verification on Windows environment (https://github.com/appium/appium-uiautomator2-driver/pull/340)
+* Add bluetooth state as deviceInfo (https://github.com/appium/appium-uiautomator2-server/pull/312)
+* Allow session creation without starting an application (https://github.com/appium/appium-uiautomator2-driver/pull/337)
+
+#### Android (Espresso)
+* Allow configuring Gradle, AGP, various SDK and Kotlin versions for Espresso server (https://github.com/appium/appium-espresso-driver/pull/496)
+  * Many thanks to @tinder-ktarasov
+* Add get clipboard for Android 10+ (https://github.com/appium/appium-espresso-driver/pull/512)
+
+#### Windows
+* Support WinAppDriver 1.2 release candidate (https://github.com/appium/appium-windows-driver/pull/60)
+  * Important capabilities: `ms:waitForAppLaunch`, `ms:experimental-webdriver`
+* Add a possibility to customize application startup timeout (https://github.com/appium/appium-windows-driver/pull/59)
+  * `createSessionTimeout` (https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities)
 
 
 CHANGES IN VERSION 1.15.1 (FROM 1.15.0)

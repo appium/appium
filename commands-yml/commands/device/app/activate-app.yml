@@ -34,7 +34,8 @@ example_usage:
       // Supports only `mobile: queryAppState` for iOS, XCUITest
   csharp:
     |
-      // Supports only `mobile: queryAppState` for iOS, XCUITest
+      driver.activateApp('com.apple.Preferences');
+      driver.activateApp('io.appium.android.apis');
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#activateApp-java.lang.String-"

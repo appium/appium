@@ -77,8 +77,7 @@ Studio 2015.
 #### Create Test Project
 
 1. Open **Microsoft Visual Studio 2015**
-2. Create the test project and solution. I.e. select **New Project > Templates
-   > Visual C# > Test > Unit Test Project**
+2. Create the test project and solution. I.e. select **New Project > Templates > Visual C# > Test > Unit Test Project**
 3. Once created, select **Project > Manage NuGet Packages... > Browse** and
    search for **Appium.WebDriver**
 4. Install the **Appium.WebDriver** NuGet packages for the test project
@@ -101,7 +100,7 @@ AlarmClockSession.FindElementByAccessibilityId("AddAlarmButton").Click();
 AlarmClockSession.FindElementByAccessibilityId("AlarmNameTextBox").Clear();
 ```
 
-When testing the application you authored yourself, you can find the **Application Id** in the generetated `AppX\vs.appxrecipe` file under `RegisteredUserNmodeAppID` node. E.g. ```c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App```
+When testing the application you authored yourself, you can find the **Application Id** in the generated `AppX\vs.appxrecipe` file under `RegisteredUserNmodeAppID` node. E.g. ```c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App```
 
 #### Classic Windows App Testing
 
@@ -135,7 +134,7 @@ great tool to inspect the application you are testing. This tool allows you to
 see every UI element/node that you can query using Windows Application Driver.
 This **inspect.exe** tool can be found under the Windows SDK folder such as
 `C:\Program Files (x86)\Windows Kits\10\bin\x86`. The tool will show various
-element attributes. The table below shows you witch Appium locator strategy you
+element attributes. The table below shows you which Appium locator strategy you
 should use to find elements with the corresponding attributes.
 
 | Locator Strategy| Matched Attribute|

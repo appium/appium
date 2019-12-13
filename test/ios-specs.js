@@ -2,7 +2,8 @@
 
 import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
          AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck,
-         OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck } from '../lib/ios';
+         OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck,
+         OptionalLyftCommandCheck } from '../lib/ios';
 import { fs, system } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -281,6 +282,35 @@ describe('ios', function () {
     });
     it('fix', async function () {
       removeColors(await check.fix()).should.equal('Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
+    });
+  }));
+
+  describe('OptionalLyftCommandCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalLyftCommandCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/set-simulator-location');
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'set-simulator-location is installed'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'set-simulator-location is not installed'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      removeColors(await check.fix()).should.equal('set-simulator-location is needed to set location for Simulator. ' +
+        'Please real https://github.com/lyft/set-simulator-location to install it');
     });
   }));
 

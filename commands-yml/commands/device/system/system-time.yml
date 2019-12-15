@@ -29,7 +29,7 @@ example_usage:
       $time = $driver->getDeviceTime();
   csharp:
     |
-      // TODO
+      string result = driver.DeviceTime;
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/HasDeviceTime.html#getDeviceTime--"

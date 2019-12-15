@@ -49,7 +49,8 @@ activate_app('io.appium.android.apis')
 
 ```csharp
 // C#
-// Supports only `mobile: queryAppState` for iOS, XCUITest
+driver.activateApp('com.apple.Preferences');
+driver.activateApp('io.appium.android.apis');
 
 ```
 

@@ -59,7 +59,8 @@ touch_action.long_press(element).perform
 
 ```csharp
 // C#
-// TODO C# sample
+var touchAction = new TouchAction(Driver);
+touchAction.LongPress(element).Perform();
 
 ```
 

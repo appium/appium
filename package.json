@@ -67,7 +67,7 @@
     "npmlog": "4.x",
     "request": "^2.81.0",
     "request-promise": "4.x",
-    "semver": "^6.1.2",
+    "semver": "^7.0.0",
     "source-map-support": "0.x",
     "teen_process": "1.x",
     "winston": "3.x",

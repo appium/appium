@@ -3,7 +3,7 @@
 *NOTE*: iOS predicates are usable in iOS 9.3 and below using the `-ios uiautomation` locator strategy and they are usable in iOS 10 and above using the `-ios predicate string` locator strategy
 
 It is worth looking at *'-ios uiautomation'* search strategy with **Predicates**.
-[UIAutomation JavaScript API](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) has following methods which can are very useful.
+[UIAutomation JavaScript API](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) which has the following useful methods:
 
 ```center
 (UIAElement) UIAElementArray.firstWithPredicate(PredicateString predicateString)

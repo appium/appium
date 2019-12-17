@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-support": "^2.33.1",
+    "appium-support": "^2.36.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
     "bluebird": "^3.5.3",
@@ -48,7 +48,6 @@
     "morgan": "^1.9.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
-    "rimraf": "^3.0.0",
     "sanitize-filename": "^1.6.1",
     "serve-favicon": "^2.4.5",
     "source-map-support": "^0.5.5",

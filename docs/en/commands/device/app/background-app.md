@@ -45,7 +45,7 @@ $driver->backgroundApp(10);
 
 ```csharp
 // C#
-// TODO C# sample
+driver.BackgroundApp(10)
 
 ```
 

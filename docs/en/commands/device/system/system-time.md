@@ -48,7 +48,7 @@ $time = $driver->getDeviceTime();
 
 ```csharp
 // C#
-// TODO
+string result = driver.DeviceTime;
 
 ```
 

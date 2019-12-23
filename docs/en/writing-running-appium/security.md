@@ -27,6 +27,12 @@ Each Appium driver is responsible for its own security, and can create its own f
 |`chromedriver_autodownload`|Allow to downalod ChromeDriver automatically if Appium does not have proper the version |Android, UiAutomator2, Espresso|
 |`execute_driver_script`| Allows to send a request which has multiple Appium commands. Read [documentation](https://github.com/appium/appium/blob/master/docs/en/commands/session/execute-driver.md) for more details|All|
 
+Please see also below links. They might have additional flags.
+
+- [appium-android-driver](https://github.com/appium/appium-android-driver#opt-in-features-with-security-risk)
+- [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver#opt-in-features-with-security-risk)
+- [appium-mac-driver](https://github.com/appium/appium-mac-driver#opt-in-features-with-security-risk)
+
 ## For Driver Developers
 
 2 methods exist on objects of classes which extend `BaseDriver`, which make the life of the driver developer easier when checking availability of insecure features:

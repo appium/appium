@@ -165,7 +165,51 @@ These Capabilities are available only on the [Espresso Driver](/docs/en/drivers/
 |Capability|Description|Values|
 |----|-----------|-------|
 |`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for an espresso server to launch. Defaults to `30000` |e.g., `50000`|
+|`espressoBuildConfig`|Path to an espresso server build configuration JSON (see below)|e.g., `/projects/myapp-tests/buildconfig.json`|
+|`showGradleLog`|Always output Gradle build log for an espresso server in the server log. Defaults to `false`|e.g., `true`|
 
+##### Espresso server build configuration JSON
+Passing this configuration file using `espressoBuildConfig` desired capability allows changing how an espresso server is built. It is mostly useful in cases where the default espresso server settings are not compatible with your application under test.
+
+Configuration example:
+```json
+{
+  "toolsVersions": {
+    "gradle": "5.1.1",
+    "androidGradlePlugin": "3.4.2",
+    "compileSdk": 28,
+    "buildTools": "28.0.3",
+    "minSdk": 18,
+    "targetSdk": 28,
+    "kotlin": "1.3.31"
+  },
+  "additionalAppDependencies": [
+    "com.google.android.material:material:1.0.0"
+  ]
+}
+```
+
+***Version settings***
+
+`toolsVersion` specifies versions of various tools and SDKs used during building espresso server. Default versions are the versions used to build an espresso driver without build configuration JSON.
+
+Note that these versions are used only to build the server and they are not copied into espresso server Android manifest file. Versions in the server manifest are still copied from the manifest of your application under test.
+
+|Setting|Description|Values|
+|----|-----------|-------|
+|`gradle`|Gradle versions|`5.1.1`|
+|`androidGradlePlugin`|Android Gradle Plugin version|e.g., `3.4.2`|
+|`buildTools`|Version of the Android SDK build tools that should be used to compile espresso server (corresponds to `buildToolsVersion` in Gradle build files)|e.g., `28.0.3`|
+|`compileSdk`|Android API level that should be used to compile espresso server (corresponds to `compileSdkVersion` in Gradle build files)|e.g., `28`|
+|`minSdk`|Minimum Android API level required to run the application under tests, affects compatibility libraries used to build espresso server (corresponds to `minSdk` in Gradle build files)|e.g., `18`|
+|`targetSdk`|Android API level used to test the app (corresponds to `targetSdk` in Gradle build files)|e.g., `28`|
+|`kotlin`|Version of Kotlin compiler and official libraries|e.g., `1.3.311`|
+
+***Application dependencies***
+
+`additionalAppDependencies` array specifies additional dependencies of the test app that build tools should know about. For example: `[ "com.google.android.material:material:1.0.0" ]`.
+
+Items of the array correspond to `implementation` lines in Gradle build files and cannot be overridden with `androidTestImplementation` lines.
 
 ### iOS Only
 

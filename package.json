@@ -114,7 +114,7 @@
     "pre-commit": "1.x",
     "replace-ext": "^1.0.0",
     "rimraf": "^3.0.0",
-    "sinon": "^7.4.2",
+    "sinon": "^8.0.0",
     "validate.js": "^0.13.0",
     "wd": "^1.10.0",
     "yaml-js": "^0.2.0"

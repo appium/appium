@@ -89,14 +89,14 @@ Appium::Driver.new(desired_caps).start_driver
 
 ```csharp
 // C#
-DesiredCapabilities capabilities = new DesiredCapabilities();
-capabilities.SetCapability(MobileCapabilityType.PlatformName, "Android");
-capabilities.SetCapability(MobileCapabilityType.PlatformVersion, "7.1.1");
-capabilities.SetCapability(MobileCapabilityType.DeviceName, "Android Device");
-capabilities.SetCapability("appPackage", "com.instagram.android");
-capabilities.SetCapability("appActivity", "com.instagram.android.activity.MainTabActivity");
+AppiumOptions capabilities = new AppiumOptions();
+appiumOptions.AddAdditionalCapability(MobileCapabilityType.PlatformName, "Android");
+appiumOptions.AddAdditionalCapability(MobileCapabilityType.PlatformVersion, "7.1.1");
+appiumOptions.AddAdditionalCapability(MobileCapabilityType.DeviceName, "Android Device");
+appiumOptions.AddAdditionalCapability("appPackage", "com.instagram.android");
+appiumOptions.AddAdditionalCapability("appActivity", "com.instagram.android.activity.MainTabActivity");
 
-AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/"), capabilities);
+AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/"), appiumOptions);
 
 ```
 

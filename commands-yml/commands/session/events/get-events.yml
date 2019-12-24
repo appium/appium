@@ -1,0 +1,96 @@
+---
+name: Get events
+short_description: Get events stored in appium server
+example_usage:
+  java:
+    |
+      driver.getEvents();
+  python:
+    |
+      driver.get_events()
+      driver.get_events(['event1', 'event2'])
+  javascript_wd:
+    |
+      // WD code here
+  javascript_wdio:
+    |
+      // wdio code here
+  ruby:
+    |
+      driver.log_events
+      driver.log_events('event')
+      driver.log_events(['event1', 'event2'])
+  ruby_core:
+    |
+      @driver.logs.events
+      @driver.logs.events('event')
+      @driver.logs.events(['event1', 'event2'])
+  php:
+    |
+      // PHP Code here
+  csharp:
+    |
+      // csharp code here
+
+client_docs:
+  java:
+    - url: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--"
+  python:
+    - android: "https://github.com/appium/python-client/android-command"
+      ios: "https://github.com/appium/python-client/ios-command"
+  javascript_wdio: "http://webdriver.io/index.html"
+  javascript_wd: "https://github.com/admc/wd/releases"
+  ruby: "https://www.rubydoc.info/gems/appium_lib/Appium/Driver#log_event-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/appium_lib_core/Appium/Core/Logs#events-instance_method"
+  php: "https://github.com/appium/php-client/releases/latest"
+  csharp: "https://github.com/appium/appium" # TODO
+
+# Driver support by platform
+driver_support:
+  ios:
+    xcuitest:
+      appium_min: '1.16.0'
+    uiautomation:
+      appium_min: '1.16.0'
+  android:
+    espresso:
+      appium_min: '1.16.0'
+    uiautomator2:
+      appium_min: '1.16.0'
+    uiautomator:
+      appium_min: '1.16.0'
+  mac:
+    mac:
+      appium_min: '1.16.0'
+  windows:
+    windows:
+      appium_min: '1.16.0'
+client_support:
+  java: true
+  python: true
+  ruby: true
+  php: false
+  csharp: false
+  javascript_wd: false
+  javascript_wdio: false
+
+# Information about the HTTP endpoints
+endpoint:
+  url: /session/:session_id/appium/events
+  method: 'POST'
+  json_parameters:
+    - name: type
+      type: string|array<string>
+      description: (Option) Get events which are filtered with the type if the type is provided
+  response:
+    - type: object
+      description:
+        A JSON hash of events like `{'commands' => [{'cmd' => 123455, ....}], 'startTime' => 1572954894127, }`.
+        A filtered by `type` item if it is provided.
+
+specifications:
+  jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L597
+
+links:
+  - name: add ability to retrieve log events as a new api route
+    url: https://github.com/appium/appium-base-driver/pull/365

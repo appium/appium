@@ -55,3 +55,8 @@ right before quitting it.
 The Appium team maintains an event timings parser tool that can be used to
 generate various kinds of reports from event timings output:
 [appium/appium-event-parser](https://github.com/appium/appium-event-parser).
+
+## Add a custom event
+
+Since Appium 1.16.0, you can add a custom event.
+You can send a custom event name to the Appium server using the [Log Event API](docs/commands/session/events/log-event), and the server will store the timestamp. The [Get events](docs/commands/session/events/get-events) command can be used to retrieve named events' timestamps later on.

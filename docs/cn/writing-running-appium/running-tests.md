@@ -173,9 +173,9 @@ capabilities.setCapability(MobileCapabilityType.APP, myApp);
 
 用你选择的 WebDriver 库，将远程会话（session）设置为使用以上功能，并连接到服务器所监听的 localhost 4723 （或任何在启动 Appium 时指定的主机和端口）。现在你应该全都设置好了！
 
-### 使用 Appium 运行你的测试程序（Android 设备 &lt; 4.2，和混合测试）
+### 使用 Appium 运行你的测试程序（Android 设备 &lt; 4.3，和混合测试）
 
-Android 设备在 4.2 版本（API 级别 17）之前没有安装谷歌的 [UiAutomator 框架](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)。UiAutomator 是 Appium 用于在设备上执行自动化的部分。对于早期的设备或混合（基于 webview）应用程序，Appium 与另一个名为 [Selendroid](http://selendroid.io/) 自动化后端进行绑定。
+Android 设备在 4.3  版本（API 级别 17）之前没有安装谷歌的 [UiAutomator 框架](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator)。UiAutomator 是 Appium 用于在设备上执行自动化的部分。对于早期的设备或混合（基于 webview）应用程序，Appium 与另一个名为 [Selendroid](http://selendroid.io/) 自动化后端进行绑定。
 
 要使用 Selendroid，只需稍微改动上述提到的预期功能（Desired capabilities），添加 `automationName` 并指定 Selendroid 为自动化后端。通常，你还需要在 activity 名前加一个 `.`（例如，对于 `appActivity` 这个功能需要使用 `.MainActivity` 替代 `MainActivity`)。
 

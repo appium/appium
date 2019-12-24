@@ -28,6 +28,9 @@
     <li><a href='/docs/en/commands/session/logs'>Logs</a><ul>    <li><a href='/docs/en/commands/session/logs/get-log-types.md'>Get Log Types</a></li>
     <li><a href='/docs/en/commands/session/logs/get-log.md'>Get Logs</a></li>
 </ul></li>
+    <li><a href='/docs/en/commands/session/events'>Events</a><ul>    <li><a href='/docs/en/commands/session/events/log-event.md'>Log event</a></li>
+    <li><a href='/docs/en/commands/session/events/get-events.md'>Get events</a></li>
+</ul></li>
     <li><a href='/docs/en/commands/session/settings'>Settings</a><ul>    <li><a href='/docs/en/commands/session/settings/update-settings.md'>Update Settings</a></li>
     <li><a href='/docs/en/commands/session/settings/get-settings.md'>Get Device Settings</a></li>
 </ul></li>

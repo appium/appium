@@ -103,7 +103,7 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "^4.1.0",
+    "appium-gulp-plugins": "^5.0.0",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "eslint-config-appium": "^4.0.1",

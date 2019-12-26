@@ -7,7 +7,7 @@ Note, that it is not possible to have more than one session running on the *same
 The important capabilities:
 
 - `udid` the device id
-- `chromeDriverPort` the chromedriver port (if using webviews or chrome)
+- `chromedriverPort` the chromedriver port (if using webviews or chrome)
 - `systemPort` If you are using [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver), set a unique system port for each parallel session. Otherwise you might get a port conflict such as in [this issue](https://github.com/appium/appium/issues/7745).
 
 

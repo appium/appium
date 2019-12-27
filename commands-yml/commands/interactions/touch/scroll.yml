@@ -38,7 +38,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#scroll-int-int-"
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.scroll"
-  javascript_wdio: "http://webdriver.io/api/protocol/touchScroll.html"
+  javascript_wdio: "https://webdriver.io/docs/api/jsonwp.html#touchscroll"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"

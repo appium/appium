@@ -18,7 +18,7 @@ const platformRanges = {
   uiautomation: ['8.0', '9.3'],
   espresso: ['?'],
   uiautomator2: ['?'],
-  uiautomator: ['4.2'],
+  uiautomator: ['4.3'],
   windows: ['10'],
   mac: ['?'], // TODO
 };

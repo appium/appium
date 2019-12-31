@@ -68,7 +68,7 @@ An indepth description of what this command does
 | iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 1.2 to 9.3 | 1.7 to 1.9 | 1.1 to 9.9 |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 1.0 to 9.3 | All | All |
 | Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | 8.0+ | 1.6.0+ | All |
-|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.3+ | All | All |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 
 

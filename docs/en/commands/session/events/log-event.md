@@ -74,7 +74,7 @@ This custom event feature allow users to store a custom event as the feature.
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | 8.0 to 9.3 | 1.16.0+ | All |
 | Android | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.16.0+ | All |
 |  | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.16.0+ | All |
-|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | 1.16.0+ | All |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.3+ | 1.16.0+ | All |
 | Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.16.0+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | 10+ | 1.16.0+ | All |
 

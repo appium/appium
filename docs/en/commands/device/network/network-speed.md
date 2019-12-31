@@ -58,7 +58,7 @@ set_network_speed :lte
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
 | Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
 |  | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.9.0+ | All |
-|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.2+ | All | All |
+|  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | 4.3+ | All | All |
 | Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
 | Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
 

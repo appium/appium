@@ -165,6 +165,7 @@ These Capabilities are available only on the [Espresso Driver](/docs/en/drivers/
 |Capability|Description|Values|
 |----|-----------|-------|
 |`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for an espresso server to launch. Defaults to `30000` |e.g., `50000`|
+|`skipServerInstallation`|Skip Espresso server build and apk installation. Can be used to improve startup performance when an Espresso server and the proper the app under test is already installed on the device. Defaults to `false` | `true` or `false`|
 
 
 ### iOS Only

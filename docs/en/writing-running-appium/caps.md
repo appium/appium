@@ -170,6 +170,7 @@ These Capabilities are available only on the [Espresso Driver](/docs/en/drivers/
 
 ##### Espresso server build configuration JSON
 Passing this configuration file using `espressoBuildConfig` desired capability allows to fine-tune the build process of the Espresso server. It is mostly useful in cases where the default Espresso server settings are not compatible with your application under test.
+  One example of such a case is tests crashing due to `Resource <name> is not a Drawable` error (see https://github.com/appium/appium-espresso-driver/issues/449 for discussion).
 
 Configuration example:
 ```json

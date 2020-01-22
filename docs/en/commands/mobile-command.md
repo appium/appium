@@ -92,7 +92,7 @@ List of available commands:
 | mobile:setPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-setpasteboard)  | | |
 | mobile:getPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-getpasteboard)  | | |
 | mobile:installCertificate | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-install-certificate.md)  | | |
-| mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)) | | |
+| mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)). If `waitForWebviewMs` is provided, Appium will wait for available WebViews up to the number since Appium 1.17.0.  | `{waitForWebviewMs}` | `{waitForWebviewMs: 5000}` |
 | mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
 | mobile:pressButton | Press a physical button. The available button options are: _home_, _volumeup_ and _volumedown_. Real devices support all three buttons whereas simulator only supports _home_. | `{name}` | `{name: "home"}` |
 | mobile:enrollBiometric | Enroll (or unenroll) an iOS Simulator to use [biometrics](https://developer.apple.com/design/human-interface-guidelines/ios/user-interaction/authentication/#face-id-and-touch-id) | `{isEnabled}` | `{isEnabled: true}` |

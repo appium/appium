@@ -12,7 +12,7 @@
   "devDependencies": {
     "assert": "^2.0.0",
     "chai": "^4.1.2",
-    "mocha": "^6.0.0",
+    "mocha": "^7.0.1",
     "webdriverio": "^5.1.0"
   }
 }

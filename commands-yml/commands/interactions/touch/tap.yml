@@ -26,12 +26,7 @@ example_usage:
       await action.perform();
   javascript_wdio:
     |
-      driver.touchPerform({
-        action: 'tap',
-        options: {
-          element: element
-        }
-      });
+      driver.touchAction('tap');
   ruby:
     |
       touch_action.single_tap(element).perform

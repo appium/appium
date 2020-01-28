@@ -3,11 +3,7 @@ node_js:
   - "10"
   - "12"
 addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+  chrome: stable
 env:
   - COMMAND="npm test"
   - COMMAND="npm run e2e-test" _FORCE_LOGS=1

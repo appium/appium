@@ -38,7 +38,8 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      TouchAction touchAction = new TouchAction(driver);
+      touchAction.Tap(element).Perform();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#singleTap-org.openqa.selenium.WebElement-"

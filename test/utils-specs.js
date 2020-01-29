@@ -33,10 +33,47 @@ describe('utils', function () {
       protocol.should.equal('W3C');
     });
     it('should include default capabilities in results', function () {
-      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, {foo: 'bar'});
-      desiredCaps.should.deep.equal({foo: 'bar', ...BASE_CAPS});
-      processedJsonwpCapabilities.should.deep.equal({foo: 'bar', ...BASE_CAPS});
-      processedW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'bar', ...insertAppiumPrefixes(BASE_CAPS)});
+      const defaultCaps = {
+        foo: 'bar',
+        baz: 'bla',
+      };
+      const {
+        desiredCaps,
+        processedJsonwpCapabilities,
+        processedW3CCapabilities
+      } = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, defaultCaps);
+      desiredCaps.should.deep.equal({
+        ...defaultCaps,
+        ...BASE_CAPS,
+      });
+      processedJsonwpCapabilities.should.deep.equal({
+        ...defaultCaps,
+        ...BASE_CAPS
+      });
+      processedW3CCapabilities.alwaysMatch.should.deep.equal({
+        ...insertAppiumPrefixes(defaultCaps),
+        ...insertAppiumPrefixes(BASE_CAPS)
+      });
+    });
+    it('should include default capabilities into incomplete W3C caps', function () {
+      const defaultCaps = {
+        foo: 'bar',
+        baz: 'bla',
+      };
+      const {
+        desiredCaps,
+        processedJsonwpCapabilities,
+        processedW3CCapabilities
+      } = parseCapsForInnerDriver({}, {
+        alwaysMatch: {},
+      }, {}, defaultCaps);
+      desiredCaps.should.deep.equal({
+        ...defaultCaps,
+      });
+      processedJsonwpCapabilities.should.deep.equal(defaultCaps);
+      processedW3CCapabilities.alwaysMatch.should.deep.equal(
+        insertAppiumPrefixes(defaultCaps)
+      );
     });
     it('should rewrite default capabilities in results', function () {
       const baseCapsWithDefault = Object.assign({}, BASE_CAPS, {

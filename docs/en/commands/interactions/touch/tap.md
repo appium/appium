@@ -26,12 +26,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.touchPerform({
-  action: 'tap',
-  options: {
-    element: element
-  }
-});
+driver.touchAction('tap');
 
 // wd example
 // Using tapElement method
@@ -62,7 +57,8 @@ touch_action.single_tap(element).perform
 
 ```csharp
 // C#
-// TODO C# sample
+TouchAction touchAction = new TouchAction(driver);
+touchAction.Tap(element).Perform();
 
 ```
 

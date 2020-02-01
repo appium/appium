@@ -255,6 +255,11 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 
 (For XCUITest-specific capabilities, please refer to the documentation on the [XCUITest Driver repo](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) itself.)
 
+
+### MacDriver Only
+
+(For MacDriver capabilities, please refer to the documentation on the [Appium Mac Driver repo](https://github.com/appium/appium-mac-driver#desired-capabilities) itself.)
+
 ### You.i Engine Only
 
 (For You.i Engine-specific capabilities, please refer to the documentation on the [You.i Engine driver](https://github.com/YOU-i-Labs/appium-youiengine-driver#desired-capabilities) itself.)

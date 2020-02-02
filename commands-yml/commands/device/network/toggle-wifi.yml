@@ -1,6 +1,14 @@
 ---
 name: Toggle WiFi
-short_description: Switch the state of the wifi service
+short_description: Switch the state of the WiFi service
+
+description:
+  >
+    Switch the state of the WiFi service.
+
+    Since Android Q, a method to change the WiFi service state has been restricted. [#12327](https://github.com/appium/appium/issues/12327)
+    Please toggle the state via UI instead of this method.
+    The UI flow depends on devices. Please make sure to encode the correct UI flow on your target device under test.
 
 example_usage:
   java:

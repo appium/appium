@@ -76,7 +76,7 @@ describe('ios', function () {
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
-        message: 'Xcode is NOT installed!'
+        message: 'Error running xcrun simctl'
       });
       mocks.verify();
     });

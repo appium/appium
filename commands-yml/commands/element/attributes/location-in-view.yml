@@ -13,10 +13,11 @@ example_usage:
       element.location_in_view
   javascript_wdio:
     |
-      let location = driver.getLocationInView("~SomeAccessibilityId");
+      let element = $("~SomeAccessibilityId")
+      let location = driver.getElementLocationInView(element.elementId);
 
 client_docs:
-  javascript_wdio: "http://webdriver.io/api/property/getLocationInView.html"
+  javascript_wdio: "https://webdriver.io/docs/api/jsonwp.html#getelementlocationinview"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2189"
 
 # TODO: Confirm if all the drivers support this

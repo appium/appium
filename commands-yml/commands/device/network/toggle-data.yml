@@ -4,7 +4,7 @@ short_description: Switch the state of data service
 description:
   |
     Switch the state of data service.
-    
+
     (For Android) This API does not work for Android API level 21+
     because it requires system or carrier privileged permission, and Android <= 21 does not support granting permissions.
 
@@ -33,7 +33,7 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/android/SupportsNetworkStateManagement.html#toggleData--"
-  javascript_wdio: "http://webdriver.io/api/mobile/toggleData.html"
+  javascript_wdio: "https://webdriver.io/docs/api/appium.html#toggledata"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2771"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Device#toggle_data-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Device#toggle_data-instance_method"

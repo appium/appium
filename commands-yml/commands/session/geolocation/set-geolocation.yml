@@ -33,7 +33,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/html5/LocationContext.html#location--"
   python: "http://selenium-python.readthedocs.io/api.html"
-  javascript_wdio: "http://webdriver.io/api/protocol/location.html"
+  javascript_wdio: "https://webdriver.io/docs/api/jsonwp.html#setgeolocation"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L407"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"

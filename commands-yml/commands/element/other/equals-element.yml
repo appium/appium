@@ -20,7 +20,9 @@ example_usage:
       let isEqual = await elementOne.equalsElement(elementTwo);
   javascript_wdio:
     |
-      # TODO WDIO example
+      let elementOne = $("someClass");
+      let elementTwo = $("someOtherClass");
+      let isEqual = elementOne.isEqual(elementTwo);
   ruby:
     |
       element1 = find_element :class_name, "someClass"
@@ -41,7 +43,7 @@ example_usage:
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/MobileElement.html"
   python: "http://selenium-python.readthedocs.io/api.html" # TODO Python documentation link
-  javascript_wdio: "http://webdriver.io/api/state/isEnabled.html"
+  javascript_wdio: "https://webdriver.io/docs/api/element/isEqual.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1463"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"

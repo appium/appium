@@ -26,7 +26,11 @@ example_usage:
       await action.perform();
   javascript_wdio:
     |
-      driver.touchAction('tap');
+      browser.touchAction({
+        action: 'tap',
+        x: 30,
+        y:20
+      })
   ruby:
     |
       touch_action.single_tap(element).perform
@@ -44,7 +48,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#singleTap-org.openqa.selenium.WebElement-"
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.tap"
-  javascript_wdio: "http://webdriver.io/api/mobile/touchPerform.html"
+  javascript_wdio: "https://webdriver.io/docs/api/browser/touchAction.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1531"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:single_tap"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:single_tap"

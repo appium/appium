@@ -39,7 +39,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getCssValue--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.value_of_css_property"
-  javascript_wdio: "http://webdriver.io/api/property/getCssProperty.html"
+  javascript_wdio: "https://webdriver.io/docs/api/element/getCSSProperty.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1447"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:css_value"

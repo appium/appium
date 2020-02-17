@@ -39,7 +39,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html#doubleClick--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.common.action_chains.ActionChains.double_click"
-  javascript_wdio: "http://webdriver.io/api/action/doubleClick.html"
+  javascript_wdio: "https://webdriver.io/docs/api/element/doubleClick.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1686"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:double_click"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:double_click"

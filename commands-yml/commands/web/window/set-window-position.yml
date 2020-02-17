@@ -15,7 +15,7 @@ example_usage:
       await driver.setWindowPosition(10, 10); // Set current window
   javascript_wdio:
     |
-      driver.setWindowPosition(10, 10);
+      driver.setWindowRect(10, 10);
   ruby:
     |
       reposition_window(10, 10)
@@ -32,7 +32,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.Window.html#setPosition-org.openqa.selenium.Point-"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.set_window_position"
-  javascript_wdio: "http://webdriver.io/api/protocol/windowHandlePosition.html"
+  javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#setwindowrect"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L604"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:reposition_window"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:reposition_window"

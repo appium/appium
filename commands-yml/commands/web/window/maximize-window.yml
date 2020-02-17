@@ -32,7 +32,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.Window.html"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.maximize_window"
-  javascript_wdio: "http://webdriver.io/api/protocol/windowHandleMaximize.html"
+  javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#maximizewindow"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L517"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Window:maximize"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Window:maximize"

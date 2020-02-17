@@ -48,7 +48,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#executeScript-java.lang.String-java.lang.Object...-"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.execute_script"
-  javascript_wdio: "http://webdriver.io/api/protocol/execute.html"
+  javascript_wdio: "https://webdriver.io/docs/api/browser/execute.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"

@@ -34,7 +34,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getAttribute"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.get_attribute"
-  javascript_wdio: "http://webdriver.io/api/property/getAttribute.html"
+  javascript_wdio: "https://webdriver.io/docs/api/element/getAttribute.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1350"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"

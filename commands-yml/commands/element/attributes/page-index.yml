@@ -14,7 +14,7 @@ example_usage:
       // TODO javascript_wd sample
   javascript_wdio:
     |
-      // TODO javascript_wdio sample
+      driver.getPageIndex()
   ruby:
     |
       // TODO Ruby sample
@@ -28,7 +28,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getTagName--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.tag_name"
-  javascript_wdio: "http://webdriver.io/api/property/getTagName.html"
+  javascript_wdio: "https://webdriver.io/docs/api/mjsonwp.html#getpageindex"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1336"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
@@ -55,7 +55,7 @@ client_support:
   csharp: true
   javascript_wd: true
   javascript_wdio: true
-  
+
 
 # Information about the HTTP endpoints
 endpoint:
@@ -71,5 +71,5 @@ endpoint:
       description: The tag name of the element
 
 # Links to specifications. Should link to at least one specification
-specifications: 
+specifications:
   jsonwp: https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js#L285

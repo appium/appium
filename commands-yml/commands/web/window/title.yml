@@ -31,7 +31,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.html#getTitle--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.title"
-  javascript_wdio: "http://webdriver.io/api/protocol/title.html"
+  javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#gettitle"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1794"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:title"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:title"

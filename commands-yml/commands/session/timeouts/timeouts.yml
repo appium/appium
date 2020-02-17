@@ -36,7 +36,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.RemoteTimeouts.html#pageLoadTimeout-long-java.util.concurrent.TimeUnit-"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.set_page_load_timeout"
-  javascript_wdio: "http://webdriver.io/guide/testrunner/timeouts.html#Selenium-timeouts"
+  javascript_wdio: "https://webdriver.io/docs/api/jsonwp.html#settimeouts"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L714"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/OSS/Bridge#timeout-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/OSS/Bridge#timeout-instance_method"

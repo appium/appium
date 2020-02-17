@@ -25,7 +25,7 @@ example_usage:
       action.tap({el: element});
       await action.perform();
   javascript_wdio:
-      driver.touchDoubleClick(element);
+      driver.touchDoubleClick(element.elementId);
   ruby:
     |
       touch_action.double_tap(element).perform
@@ -43,6 +43,7 @@ client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#doubleTap-org.openqa.selenium.WebElement-"
   python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.double_tap"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
+  javascript_wdio: "https://webdriver.io/docs/api/jsonwp.html#touchdoubleclick"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link

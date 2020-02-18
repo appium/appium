@@ -29,7 +29,7 @@ example_usage:
       browser.touchAction({
         action: 'tap',
         x: 30,
-        y:20
+        y: 20
       })
   ruby:
     |

@@ -27,9 +27,12 @@
     "lib",
     "static",
     "test/basedriver",
+    "!test/basedriver/fixtures",
     "build/index.js",
     "build/lib",
-    "build/test/basedriver"
+    "build/test/basedriver",
+    "!build/test/basedriver/fixtures"
+
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",

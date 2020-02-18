@@ -36,7 +36,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getSize--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.size"
-  javascript_wdio: "http://webdriver.io/api/property/getElementSize.html"
+  javascript_wdio: "https://webdriver.io/docs/api/element/getSize.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2203"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:size"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:size"

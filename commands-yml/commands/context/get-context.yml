@@ -42,7 +42,7 @@ example_usage:
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#getContext--"
   python: "https://github.com/appium/python-client/blob/master/README.md#switching-between-native-and-webview"
-  javascript_wdio: "http://webdriver.io/api/mobile/context.html"
+  javascript_wdio: "https://webdriver.io/docs/api/mjsonwp.html#getcontext"
   javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"

@@ -20,7 +20,8 @@ example_usage:
       // Supports only `mobile: queryAppState` for iOS, XCUITest
   javascript_wdio:
     |
-      // Supports only `mobile: queryAppState` for iOS, XCUITest
+      driver.activateApp(null, 'com.apple.Preferences')
+      driver.activateApp('io.appium.android.apis')
   ruby:
     |
       activate_app('com.apple.Preferences')
@@ -40,7 +41,7 @@ example_usage:
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#activateApp-java.lang.String-"
   python: "https://github.com/appium/python-client/blob/master/appium/webdriver/extensions/applications.py"
-  javascript_wdio: "https://webdriver.io/docs/api/appium.html" # TODO wdio documentation link
+  javascript_wdio: "https://webdriver.io/docs/api/appium.html#activateapp"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js" # TODO wd documentation link
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#activate_app-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#activate_app-instance_method"

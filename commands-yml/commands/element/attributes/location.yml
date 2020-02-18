@@ -36,7 +36,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getLocation--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.location"
-  javascript_wdio: "http://webdriver.io/api/property/getLocation.html"
+  javascript_wdio: "https://webdriver.io/docs/api/element/getLocation.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2175"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:location"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:location"

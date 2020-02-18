@@ -31,7 +31,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.html#getCookies--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_cookies"
-  javascript_wdio: "http://webdriver.io/api/protocol/cookie.html"
+  javascript_wdio: "https://webdriver.io/docs/api/browser/getCookies.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1957"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:all_cookies"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:all_cookies"

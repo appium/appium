@@ -58,7 +58,7 @@ example_usage:
     |
       // Example: expressing a 1-second pinch-and-zoom
       // with a 500ms wait after the fingers first touch:
-      browser.performActions([{
+      driver.performActions([{
           "type": "pointer",
           "id": "finger1",
           "parameters": {"pointerType": "touch"},
@@ -83,7 +83,7 @@ example_usage:
       }]);
 
       // release an action
-      browser.actions();
+      driver.releaseActions();
   ruby:
     |
       # Send keys to an element

@@ -14,7 +14,7 @@ example_usage:
       let url = await driver.url();
   javascript_wdio:
     |
-      let url = driver.url();
+      let url = driver.getUrl();
   ruby:
     |
       current_url
@@ -31,7 +31,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.html#getCurrentUrl--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_url"
-  javascript_wdio: "http://webdriver.io/api/protocol/url.html"
+  javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#geturl"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1943"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:current_url"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:current_url"

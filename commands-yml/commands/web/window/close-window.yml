@@ -31,7 +31,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.html#close--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.close"
-  javascript_wdio: "http://webdriver.io/api/window/close.html"
+  javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#closewindow"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L260"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:close"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:close"

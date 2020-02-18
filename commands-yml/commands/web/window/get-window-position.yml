@@ -16,7 +16,7 @@ example_usage:
       let handleTwoPosition = await driver.getWindowPosition("handleName");
   javascript_wdio:
     |
-      let handleOnePosition = driver.getWindowPosition();
+      let position = driver.getWindowRect();
   ruby:
     |
       window_position
@@ -35,7 +35,7 @@ example_usage:
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.Window.html#getPosition--"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_window_position"
-  javascript_wdio: "http://webdriver.io/api/protocol/windowHandlePosition.html"
+  javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#getwindowrect"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L586"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_position"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_position"

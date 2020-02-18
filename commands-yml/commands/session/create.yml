@@ -18,7 +18,8 @@ example_usage:
         desiredCapabilities.setCapability(MobileCapabilityType.APP, "/path/to/ios/app.zip");
 
         URL url = new URL("http://127.0.0.1:4723");
-
+        //platform- android : windows
+        //URL url = new URL("http://127.0.0.1:4723/wd/hub");         
         IOSDriver driver = new IOSDriver(url, desiredCapabilities);
         String sessionId = driver.getSessionId().toString();
 

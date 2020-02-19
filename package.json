@@ -4,7 +4,7 @@
   "keywords": [
     "appium"
   ],
-  "version": "5.2.1",
+  "version": "5.3.0",
   "author": "appium",
   "license": "Apache-2.0",
   "repository": {
@@ -32,7 +32,6 @@
     "build/lib",
     "build/test/basedriver",
     "!build/test/basedriver/fixtures"
-
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",

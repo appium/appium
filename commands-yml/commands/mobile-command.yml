@@ -57,6 +57,10 @@
       | mobile:rotateElement | Sends a rotation gesture with two touches to the given element. See [rotate:withVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate) for more details.  | `{element, rotation, velocity}` | `{element: 2, rotation: π/2, velocity: 1.5}` |
       | mobile:deleteFile | Delete a file on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial. | `{remotePath}` | `{remotePath: 'path/to/file'}` |
       | mobile:deleteFolder | Delete a folder on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial.  | `{remotePath}` | `{remotePath: '@io.appium.example:documents/path/to/folder'}` |
+      | mobile:getPermission | Gets application permission state on a simulator. It requires https://github.com/wix/AppleSimulatorUtils |||
+      | mobile:setPermission | Set a permission for the given bundleId via `xcrun simctl privacy` which is available since Xcode 11.4. `key` is 'service' in the list of `xcrun simctl privacy`. `value` is `yes`(grant), `no`(revoke) or `unset`(reset). It works on simulator. | `{bundleId, {key: value}}`| `{bundleId: 'io.appium.example', {'location-always': 'yes', calendar: 'no'}` |
+      | mobile:getAppearance | Get the device's UI appearance style via `xcrun simctl ui`. |||
+      | mobile:setAppearance | Set the device's UI appearance style via `xcrun simctl ui` or Siri command. | `{style}` | `{style: 'dark'}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |

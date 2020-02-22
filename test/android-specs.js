@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck } from '../lib/android';
+import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck, OptionalGstreamerCheck } from '../lib/android';
 import { fs } from 'appium-support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
@@ -123,6 +123,36 @@ describe('android', function () {
     });
     it('fix', async function () {
       removeColors(await check.fix()).should.equal('bundletool.jar is used to handle Android App Bundle. Please read http://appium.io/docs/en/writing-running-appium/android/android-appbundle/ to install it');
+    });
+  }));
+
+  describe('OptionalGstreamerCheck', withMocks({tp, utils}, (mocks) => {
+    let check = new OptionalGstreamerCheck();
+    it('autofix', function () {
+      check.autofix.should.not.be.ok;
+    });
+    it('diagnose - success', async function () {
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/gst-launch');
+      mocks.utils.expects('resolveExecutablePath').once().returns('path/to/gst-inspect');
+      (await check.diagnose()).should.deep.equal({
+        ok: true,
+        optional: true,
+        message: 'gst-launch-1.0 and gst-inspect-1.0 are installed at: path/to/gst-launch and path/to/gst-inspect'
+      });
+      mocks.verify();
+    });
+    it('diagnose - failure', async function () {
+      mocks.utils.expects('resolveExecutablePath').twice().returns(false);
+      (await check.diagnose()).should.deep.equal({
+        ok: false,
+        optional: true,
+        message: 'gst-launch-1.0 and/or gst-inspect-1.0 cannot be found'
+      });
+      mocks.verify();
+    });
+    it('fix', async function () {
+      removeColors(await check.fix()).should.equal('gst-launch-1.0 and gst-inspect-1.0 are used to stream the screen of the device under test. ' +
+        'Please read https://appium.io/docs/en/writing-running-appium/android/android-screen-streaming/ to install them and for more details');
     });
   }));
 });

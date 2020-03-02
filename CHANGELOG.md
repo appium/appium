@@ -1,3 +1,43 @@
+CHANGES IN VERSION 1.17.0 (FROM 1.16.0)
+===================================
+
+Appium 1.17.0 is a minor release.
+
+#### General
+
+#### iOS General
+
+#### iOS (XCUITest)
+* Fix app installation on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1139) (https://github.com/appium/appium-xcuitest-driver/pull/1138) (https://github.com/appium/appium-xcuitest-driver/pull/1140) (https://github.com/appium/appium-xcuitest-driver/pull/1152) (https://github.com/appium/appium-ios-device/pull/67)
+* Fix temporary log file to be more efficient (https://github.com/appium/appium-xcuitest-driver/pull/1147)
+* Fix closing of proxies during shutdown (https://github.com/appium/appium-xcuitest-driver/pull/1153)
+* Fix starting of `idb` when used (https://github.com/appium/appium-idb/pull/20)
+* Capabilities:
+  * `simulatorStartupTimeout` change the default timeout for simulator startup (https://github.com/appium/appium-xcuitest-driver/pull/1163)
+  * `simulatorPasteboardAutomaticSync` turn on/off simulator pasteboard synching at launch (https://github.com/appium/appium-xcuitest-driver/pull/1168)
+  * `simulatorTracePointer` turn on/off pointer highlighting in simulators (https://github.com/appium/appium-xcuitest-driver/pull/1169)
+* Add `mobile:` functions for new `simctl` functionality (https://github.com/appium/appium-xcuitest-driver/pull/1162) (https://github.com/appium/appium-ios-simulator/pull/260) (https://github.com/appium/node-simctl/pull/96)
+  * `mobile: setPermission`
+  * `mobile: getAppearance`
+  * `mobile: setAppearance`
+* Webviews/Safari:
+  * Add webview bundle identifier to data returned with `fullContextList`
+  * Add `waitForWebviewMs` option to `mobile:getContexts` endpoint, to block for a period while waiting for webview report (https://github.com/appium/appium-xcuitest-driver/pull/1135)
+  * Allow SafariViewController webviews to be reached automatically (https://github.com/appium/appium-remote-debugger/pull/189) (https://github.com/appium/appium-remote-debugger/pull/197)
+  * Fix asynchronous execution in webview context for iOS 12.1 and below (https://github.com/appium/appium-remote-debugger/pull/199)
+  * Fix handling of React components whose state is handled by React (https://github.com/appium/appium-remote-debugger/pull/202)
+  * Fix webviews for iOS 13.3 and 13.4 (https://github.com/appium/appium-remote-debugger/pull/203) (https://github.com/appium/appium-remote-debugger/pull/204) (https://github.com/appium/appium-remote-debugger/pull/205) (https://github.com/appium/appium-remote-debugger/commit/e067f0eab012b5ef67f1ce67eb85479c4abe440b) (https://github.com/appium/appium-xcuitest-driver/pull/1174)
+  * Fix handling of alerts opened from webview (https://github.com/appium/appium-xcuitest-driver/pull/1176)
+
+#### Android General
+
+#### Android (UiAutomator2)
+
+#### Android (Espresso)
+
+#### Windows
+
+
 CHANGES IN VERSION 1.16.0 (FROM 1.15.1)
 ===================================
 

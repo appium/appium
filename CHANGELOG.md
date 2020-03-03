@@ -4,6 +4,8 @@ CHANGES IN VERSION 1.17.0 (FROM 1.16.0)
 Appium 1.17.0 is a minor release.
 
 #### General
+* Add `mobile:` functions:
+  * `mobile: startScreenStreaming`, `mobile: stopScreenStreaming` (https://github.com/appium/appium-espresso-driver/pull/521)
 
 #### iOS General
 
@@ -12,6 +14,7 @@ Appium 1.17.0 is a minor release.
 * Fix temporary log file to be more efficient (https://github.com/appium/appium-xcuitest-driver/pull/1147)
 * Fix closing of proxies during shutdown (https://github.com/appium/appium-xcuitest-driver/pull/1153)
 * Fix starting of `idb` when used (https://github.com/appium/appium-idb/pull/20)
+* Add `screenshotOrientation` as Settings API to customize screenshot orientation (https://github.com/appium/WebDriverAgent/pull/277)
 * Capabilities:
   * `simulatorStartupTimeout` change the default timeout for simulator startup (https://github.com/appium/appium-xcuitest-driver/pull/1163)
   * `simulatorPasteboardAutomaticSync` turn on/off simulator pasteboard synching at launch (https://github.com/appium/appium-xcuitest-driver/pull/1168)
@@ -30,12 +33,35 @@ Appium 1.17.0 is a minor release.
   * Fix handling of alerts opened from webview (https://github.com/appium/appium-xcuitest-driver/pull/1176)
 
 #### Android General
+* Add `mobile:` functions:
+  * `mobile: listSms` to get the list of SMS (https://github.com/appium/appium-android-driver/pull/602 https://github.com/appium/appium-espresso-driver/pull/548)
+  * `mobile: getNotifications` to get the list of notifications (https://github.com/appium/appium-android-driver/pull/598)
+* Fix `toggle_location_services` on Android 9.0 (https://github.com/appium/appium-android-driver/pull/594)
+* Add to allow letter as a `platformVersion` like `R` in preview/beta Android OS release ( https://github.com/appium/appium-android-driver/pull/607 )
+* Updated emulator detection logic (https://github.com/appium/appium/pull/14015)
+* Allow `mobile:` functions to perform actions in WebView contexts (https://github.com/appium/appium-uiautomator2-driver/pull/366) (https://github.com/appium/appium-espresso-driver/pull/549)
 
 #### Android (UiAutomator2)
+* Added `mobile: type` endpoint (https://github.com/appium/appium-uiautomator2-driver/pull/365)
+* Tuned `sendKeys` endpoint (https://github.com/appium/appium-uiautomator2-server/pull/329)
 
 #### Android (Espresso)
+* Capabilities:
+  * `espressoBuildConfig` customize the espresso server build configuration (https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md#espresso-server-build-configuration-json)
+  * `intentOptions` customize intent for launching activities (https://github.com/appium/appium-espresso-driver/pull/542)
+  * `skipServerInstallation` skip espresso driver preparation (https://github.com/appium/appium-espresso-driver/pull/526)
+* Add `-android viewmatcher` selector (https://github.com/appium/appium-espresso-driver/pull/516)
+* Add `noMultilineButtons`, `noEllipsizedText` and `noOverlaps` as available attributes as element attributes to help view assertions (https://github.com/appium/appium-espresso-driver/pull/544)
+* Support `open_notifications` endpoint (https://github.com/appium/appium-espresso-driver/pull/536/files)
+
 
 #### Windows
+
+#### MacOS
+* Capabilities:
+  * `a4mHost`, `a4mPort`, `a4mAppPath` and `killAllA4MAppBeforeStart` make mac driver configurable (https://github.com/appium/appium-mac-driver/pull/42) (https://github.com/appium/appium-mac-driver/pull/44)
+* Added the possibility to autodetect the location of the server app: https://github.com/appium/appium-mac-driver/pull/44
+
 
 
 CHANGES IN VERSION 1.16.0 (FROM 1.15.1)

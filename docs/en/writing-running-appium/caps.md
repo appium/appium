@@ -157,6 +157,7 @@ These Capabilities are available only on the [UiAutomator2 Driver](/docs/en/driv
 |`uiautomator2ServerLaunchTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
 |`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
 |`skipServerInstallation`|Skip uiAutomator2 server installation and use uiAutomator2 server from the device. Can be used to improve startup performance when an uiAutomator2 server in proper version is already installed on the device. Defaults to `false` | `true` or `false`|
+|`userProfile`| Enforce user profile as the given parameter if the value was provided. It should be an integer. | e.g., `11` |
 
 #### Espresso Only
 

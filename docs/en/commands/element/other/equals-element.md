@@ -23,7 +23,9 @@ boolean isEqual = elementOne.equals(elementTwo);
 ```javascript
 // Javascript
 // webdriver.io example
-# TODO WDIO example
+let elementOne = $("someClass");
+let elementTwo = $("someOtherClass");
+let isEqual = elementOne.isEqual(elementTwo);
 
 // wd example
 let elementOne = await driver.elementByClassName("someClass");

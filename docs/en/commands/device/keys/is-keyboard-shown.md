@@ -18,7 +18,10 @@ driver.is_keyboard_shown()
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.isKeyboardShown();
+
 // wd example
 await driver.isKeyboardShown();
 

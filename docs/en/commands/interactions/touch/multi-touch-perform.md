@@ -46,7 +46,7 @@ ma.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.touchMultiPerform([
+driver.multiTouchPerform([
   { action: 'press', options: { x: 100, y: 250 }},
   { action: 'moveTo', options: { x: 300, y: 100 }},
   { action: 'release' }

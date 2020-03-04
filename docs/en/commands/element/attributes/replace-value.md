@@ -20,7 +20,8 @@ self.driver.set_value('some')
 ```javascript
 // Javascript
 // webdriver.io example
-// TODO JavaScript sample
+let element = $("~SomeAccessibilityId")
+driver.replaceValue(element.elementId, 'some')
 
 // wd example
 // TODO JavaScript sample

@@ -26,7 +26,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.touchDoubleClick(element);
+driver.touchDoubleClick(element.elementId);
 // wd example
 // Using tapElement method
 await driver.tapElement(elementOne);

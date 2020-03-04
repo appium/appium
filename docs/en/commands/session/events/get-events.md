@@ -21,7 +21,7 @@ driver.get_events(['event1', 'event2'])
 ```javascript
 // Javascript
 // webdriver.io example
-// wdio code here
+browser.getEvents(['event'])
 
 // wd example
 // WD code here

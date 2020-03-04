@@ -23,7 +23,7 @@ driver.log_event('appium', 'funEvent')
 ```javascript
 // Javascript
 // webdriver.io example
-// wdio code here
+driver.logEvent('appium', 'funEvent')
 
 // wd example
 // WD code here

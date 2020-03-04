@@ -21,7 +21,7 @@ handle_two_size = self.driver.get_window_size("handleName")
 ```javascript
 // Javascript
 // webdriver.io example
-let handleTwoSize = driver.getWindowSize("handleName");
+let position = driver.getWindowRect();
 
 // wd example
 let handleOneSize = await driver.getWindowSize();

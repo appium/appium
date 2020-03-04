@@ -30,10 +30,10 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.moveTo(element)
-  .buttonDown()
-  .moveTo(element, 10, 10)
-  .buttonUp();
+driver.moveTo(element);
+driver.buttonDown();
+driver.moveTo(element, 10, 10);
+driver.buttonUp();
 
 // wd example
 await driver.moveTo(element);

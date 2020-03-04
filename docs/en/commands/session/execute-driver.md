@@ -22,14 +22,18 @@ driver.executeDriverScript(script, new ScriptOptions().withTimeout(200));
 ```javascript
 // Javascript
 // webdriver.io example
-// TODO fill out once client code is written 
+const script = `
+  const el = await driver.$('~foo');
+  await el.click();
+`;
+await driver.executeDriver(script);
 
 // wd example
 const script = `
   const el = await driver.$('~foo');
   await el.click();
 `;
-driver.executeDriver(script, {timeout: 200});
+await driver.executeDriver(script, {timeout: 200});
 
 ```
 

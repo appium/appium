@@ -18,7 +18,10 @@ self.driver.set_power_capacity(50)
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.powerCapacity(50)
+
 // Not supported
 ```
 

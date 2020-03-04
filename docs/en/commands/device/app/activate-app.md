@@ -22,7 +22,8 @@ driver.activate_app('io.appium.android.apis')
 ```javascript
 // Javascript
 // webdriver.io example
-// Supports only `mobile: queryAppState` for iOS, XCUITest
+driver.activateApp(null, 'com.apple.Preferences')
+driver.activateApp('io.appium.android.apis')
 
 // wd example
 // Supports only `mobile: queryAppState` for iOS, XCUITest

@@ -109,12 +109,13 @@ List of available commands:
 ### Android
 | Command | Description | Argument | Argument Example |
 | ------- | ----------- | -------- | ---------------- |
-| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [insecure feature](/docs/en/writing-running-appium/security.md) `adb_shell` to be enabled) | ADB shell string | `am start -n com.example.demo/com.example.test.MainActivity` |
+| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [insecure feature](/docs/en/writing-running-appium/security.md) `adb_shell` to be enabled) | Read [this page](/docs/en/writing-running-appium/android/android-shell.md) | `{'command': 'echo', 'args': ['arg1', 'arg2']}` |
 | mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/device/logcat` endpoint | <none> | <none> |
 | mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
 | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | `{action}` | `{action: "previous"}`|
 | mobile:getPermissions | Gets a list of permissions which are `denied`, `granted` or `requested`. | `{type, appPackage}` | `{type: "granted", appPackage: "io.appium.android.apis"}`|
 | mobile:changePermissions | Grants or revokes permissions. | `{action, appPackage, permissions}` |  `{action: "grant", appPackage: "io.appium.android.apis", permissions: "android.permission.READ_CONTACTS"}`, `{action: "revoke", appPackage: "io.appium.android.apis", permissions: ["android.permission.READ_CONTACTS", "android.permission.CAMERA"]}` |
+| mobile:type | Send Unicode text to a focused element. | `{text}` |  `{text: "happy testing"}` |
 
 ### Android (UiAutomator2 only)
 | Command | Description | Argument | Argument Example |

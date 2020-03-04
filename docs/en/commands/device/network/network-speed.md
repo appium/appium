@@ -20,7 +20,7 @@ self.driver.set_network_speed(NetSpeed.LTE)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.networkSpeed('lte');
+driver.toggleNetworkSpeed('lte');
 
 // wd example
 await driver.networkSpeed('Network type');

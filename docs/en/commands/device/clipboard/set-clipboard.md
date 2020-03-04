@@ -21,7 +21,10 @@ self.driver.set_clipboard_text('happy testing')
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.setClipboard('happy testing', 'plaintext')
+
 // wd example
 await driver.setClipboard('happy testing', 'plaintext')
 

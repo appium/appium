@@ -18,7 +18,10 @@ package = self.driver.current_package;
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+let package = driver.getCurrentPackage();
+
 // wd example
 let package = await driver.getCurrentPackage();
 

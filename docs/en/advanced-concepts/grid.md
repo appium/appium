@@ -40,7 +40,7 @@ you will see your device on the grid console page:
     "timeout":30000,
     "proxy": "org.openqa.grid.selenium.proxy.DefaultRemoteProxy",
     "url":"http://<host_name_appium_server_or_ip-address_appium_server>:<appium_port>/wd/hub",
-    "host": <host_name_appium_server_or_ip-address_appium_server>,
+    "host": "<host_name_appium_server_or_ip-address_appium_server>",
     "port": <appium_port>,
     "maxSession": 1,
     "register": true,

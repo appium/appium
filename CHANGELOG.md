@@ -4,22 +4,23 @@ CHANGES IN VERSION 1.17.0 (FROM 1.16.0)
 Appium 1.17.0 is a minor release.
 
 #### General
-* Add `mobile:` functions:
-  * `mobile: startScreenStreaming`, `mobile: stopScreenStreaming` (https://github.com/appium/appium-espresso-driver/pull/521)
+* Active driver sessions are now properly cleaned up upon main Appium process termination (https://github.com/appium/appium/pull/13913)
+* Preliminary support for iOS 13.4
 
 #### iOS General
 
 #### iOS (XCUITest)
 * Fix app installation on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1139) (https://github.com/appium/appium-xcuitest-driver/pull/1138) (https://github.com/appium/appium-xcuitest-driver/pull/1140) (https://github.com/appium/appium-xcuitest-driver/pull/1152) (https://github.com/appium/appium-ios-device/pull/67)
 * Fix temporary log file to be more efficient (https://github.com/appium/appium-xcuitest-driver/pull/1147)
-* Fix closing of proxies during shutdown (https://github.com/appium/appium-xcuitest-driver/pull/1153)
+* Fix port cleanup during shutdown (https://github.com/appium/appium-xcuitest-driver/pull/1153)
 * Fix starting of `idb` when used (https://github.com/appium/appium-idb/pull/20)
 * Add `screenshotOrientation` as Settings API to customize screenshot orientation (https://github.com/appium/WebDriverAgent/pull/277)
 * Capabilities:
   * `simulatorStartupTimeout` change the default timeout for simulator startup (https://github.com/appium/appium-xcuitest-driver/pull/1163)
   * `simulatorPasteboardAutomaticSync` turn on/off simulator pasteboard synching at launch (https://github.com/appium/appium-xcuitest-driver/pull/1168)
   * `simulatorTracePointer` turn on/off pointer highlighting in simulators (https://github.com/appium/appium-xcuitest-driver/pull/1169)
-* Add `mobile:` functions for new `simctl` functionality (https://github.com/appium/appium-xcuitest-driver/pull/1162) (https://github.com/appium/appium-ios-simulator/pull/260) (https://github.com/appium/node-simctl/pull/96)
+* Add `snapshotMaxDepth` as Settings API to restrict the depth of getting the elements source tree (https://github.com/appium/WebDriverAgent/pull/273)
+* Add `mobile:` functions for new `simctl` functionality in Xcode 11.4+ (https://github.com/appium/appium-xcuitest-driver/pull/1162) (https://github.com/appium/appium-ios-simulator/pull/260) (https://github.com/appium/node-simctl/pull/96)
   * `mobile: setPermission`
   * `mobile: getAppearance`
   * `mobile: setAppearance`
@@ -35,6 +36,7 @@ Appium 1.17.0 is a minor release.
 #### Android General
 * Add `mobile:` functions:
   * `mobile: listSms` to get the list of SMS (https://github.com/appium/appium-android-driver/pull/602 https://github.com/appium/appium-espresso-driver/pull/548)
+  * `mobile: startScreenStreaming`, `mobile: stopScreenStreaming` (https://github.com/appium/appium-espresso-driver/pull/521)
   * `mobile: getNotifications` to get the list of notifications (https://github.com/appium/appium-android-driver/pull/598)
 * Fix `toggle_location_services` on Android 9.0 (https://github.com/appium/appium-android-driver/pull/594)
 * Add to allow letter as a `platformVersion` like `R` in preview/beta Android OS release ( https://github.com/appium/appium-android-driver/pull/607 )
@@ -51,7 +53,7 @@ Appium 1.17.0 is a minor release.
   * `intentOptions` customize intent for launching activities (https://github.com/appium/appium-espresso-driver/pull/542)
   * `skipServerInstallation` skip espresso driver preparation (https://github.com/appium/appium-espresso-driver/pull/526)
 * Add `-android viewmatcher` selector (https://github.com/appium/appium-espresso-driver/pull/516)
-* Add `noMultilineButtons`, `noEllipsizedText` and `noOverlaps` as available attributes as element attributes to help view assertions (https://github.com/appium/appium-espresso-driver/pull/544)
+* Add `noMultilineButtons`, `noEllipsizedText` and `noOverlaps` as available attributes as element attributes to extend available view assertions (https://github.com/appium/appium-espresso-driver/pull/544)
 * Support `open_notifications` endpoint (https://github.com/appium/appium-espresso-driver/pull/536/files)
 
 

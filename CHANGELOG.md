@@ -53,7 +53,7 @@ Appium 1.17.0 is a minor release.
   * `intentOptions` customize intent for launching activities (https://github.com/appium/appium-espresso-driver/pull/542)
   * `skipServerInstallation` skip espresso driver preparation (https://github.com/appium/appium-espresso-driver/pull/526)
 * Add `-android viewmatcher` selector (https://github.com/appium/appium-espresso-driver/pull/516)
-* Add `noMultilineButtons`, `noEllipsizedText` and `noOverlaps` as available attributes as element attributes to extend available view assertions (https://github.com/appium/appium-espresso-driver/pull/544)
+* Add `noMultilineButtons`, `noEllipsizedText` and `noOverlaps` as available element attributes to extend available view assertions (https://github.com/appium/appium-espresso-driver/pull/544)
 * Support `open_notifications` endpoint (https://github.com/appium/appium-espresso-driver/pull/536/files)
 
 

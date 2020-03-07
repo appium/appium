@@ -57,6 +57,10 @@
       | mobile:rotateElement | Sends a rotation gesture with two touches to the given element. See [rotate:withVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate) for more details.  | `{element, rotation, velocity}` | `{element: 2, rotation: π/2, velocity: 1.5}` |
       | mobile:deleteFile | Delete a file on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial. | `{remotePath}` | `{remotePath: 'path/to/file'}` |
       | mobile:deleteFolder | Delete a folder on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial.  | `{remotePath}` | `{remotePath: '@io.appium.example:documents/path/to/folder'}` |
+      | mobile:getPermission | Gets application permission state on a simulator. It requires https://github.com/wix/AppleSimulatorUtils |||
+      | mobile:setPermission | Set a permission for the given bundleId via `xcrun simctl privacy` which is available since Xcode 11.4. `key` is 'service' in the list of `xcrun simctl privacy`. `value` is `yes`(grant), `no`(revoke) or `unset`(reset). It works on simulator. | `{bundleId, {key: value}}`| `{bundleId: 'io.appium.example', {'location-always': 'yes', calendar: 'no'}` |
+      | mobile:getAppearance | Get the device's UI appearance style via `xcrun simctl ui`. It returns `light`, `dark`, `unknown` or `unsupported` (below iOS 12). |||
+      | mobile:setAppearance | Set the device's UI appearance style via `xcrun simctl ui` or Siri command. | `{style}` | `{style: 'dark'}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |
@@ -67,6 +71,8 @@
       | mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | `{action}` | `{action: "previous"}`|
       | mobile:getPermissions | Gets a list of permissions which are `denied`, `granted` or `requested`. | `{type, appPackage}` | `{type: "granted", appPackage: "io.appium.android.apis"}`|
       | mobile:changePermissions | Grants or revokes permissions. | `{action, appPackage, permissions}` |  `{action: "grant", appPackage: "io.appium.android.apis", permissions: "android.permission.READ_CONTACTS"}`, `{action: "revoke", appPackage: "io.appium.android.apis", permissions: ["android.permission.READ_CONTACTS", "android.permission.CAMERA"]}` |
+      | mobile:getNotifications | Get the list of items as JSON format in the status bar notifications. Please turn 'Notification access' on via _Settings > App & notifications > Special app access_ (the actual path depends on the device model). Please read [Appium Pro](https://appiumpro.com/editions/106) for more details. | <none> | <none> |
+      | mobile: listSms | Get the list of SMS messages as [JSON format](https://github.com/appium/io.appium.settings#sms). |  <none> | <none> |
       | mobile:type | Send Unicode text to a focused element. | `{text}` |  `{text: "happy testing"}` |
 
       ### Android (UiAutomator2 only)
@@ -79,6 +85,7 @@
       | mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
       | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
       | mobile:deviceInfo | Gets device information like manufacturer, model, timezone and locale. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
+      | mobile:type | Types the given Unicode string into focused field. The combination of `unicodeKeyboard` capability and the [send keys](https://appium.io/docs/en/commands/element/actions/send-keys/) works as _replacing_ the text field content. The send key in W3C action works only for ASCII. This command helps such cases to append unicode text content against the focused field. | `{text}` | `{text: 'happy testing'}` |
 
       ### Android (Espresso only)
       | Command | Description | Argument | Argument Example |

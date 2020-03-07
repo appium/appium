@@ -22,7 +22,8 @@ driver.terminate_app('io.appium.android.apis')
 ```javascript
 // Javascript
 // webdriver.io example
-// Supports only `mobile: queryAppState` for iOS, XCUITest
+driver.terminateApp(null, 'com.apple.Preferences')
+driver.terminateApp('io.appium.android.apis')
 
 // wd example
 // Supports only `mobile: queryAppState` for iOS, XCUITest

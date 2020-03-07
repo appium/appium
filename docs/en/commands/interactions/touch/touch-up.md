@@ -28,11 +28,7 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.touchMultiPerform([
-  { action: 'press', options: { x: 100, y: 250 }},
-  { action: 'moveTo', options: { x: 300, y: 100 }},
-  { action: 'release' }
-]);
+driver.touchUp(10, 10);
 
 // wd example
 // Using tapElement method

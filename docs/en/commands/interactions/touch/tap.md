@@ -26,7 +26,11 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.touchAction('tap');
+browser.touchAction({
+  action: 'tap',
+  x: 30,
+  y: 20
+})
 
 // wd example
 // Using tapElement method

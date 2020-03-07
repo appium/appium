@@ -26,8 +26,8 @@ actions.perform()
 ```javascript
 // Javascript
 // webdriver.io example
-driver.moveTo(element)
-  .buttonDown();
+driver.moveTo(element);
+driver.buttonDown();
 
 // wd example
 await driver.moveTo(element);

@@ -25,9 +25,17 @@ jobs:
       displayName: npm run build
     - script: npm prune --production
       displayName: Get rid of dev dependencies
+    - script: |
+        curl -o node-darwin.tar.gz https://nodejs.org/dist/v12.16.1/node-v12.16.1-darwin-x64.tar.gz
+        mkdir node-darwin-unpacked
+        tar -xzf node-darwin.tar.gz -C node-darwin-unpacked/ --strip-components 1
+        rm -f node-darwin.tar.gz
+        cp node-darwin-unpacked/bin/node node-darwin
+        rm -rf node-darwin-unpacked
+      displayName: Download NodeJS
     - script: npm run zip
       displayName: Create the bundle zip
-    - script: npm install 
+    - script: npm install
       displayName: Reinstall dev dependencies
     - task: PublishPipelineArtifact@0
       inputs:

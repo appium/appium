@@ -18,7 +18,10 @@ self.driver.end_test_coverage("Intent", "/path")
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.endCoverage("Intent", "/path");
+
 // wd example
 await driver.endTestCoverageForApp("Intent", "/path");
 

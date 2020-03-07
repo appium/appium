@@ -21,7 +21,7 @@ handle_two_position = self.driver.get_window_position("handleName")
 ```javascript
 // Javascript
 // webdriver.io example
-let handleOnePosition = driver.getWindowPosition();
+let position = driver.getWindowRect();
 
 // wd example
 let handleOnePosition = await driver.getWindowPosition();

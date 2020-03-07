@@ -73,6 +73,7 @@
       | mobile:changePermissions | Grants or revokes permissions. | `{action, appPackage, permissions}` |  `{action: "grant", appPackage: "io.appium.android.apis", permissions: "android.permission.READ_CONTACTS"}`, `{action: "revoke", appPackage: "io.appium.android.apis", permissions: ["android.permission.READ_CONTACTS", "android.permission.CAMERA"]}` |
       | mobile:getNotifications | Get the list of items as JSON format in the status bar notifications. Please turn 'Notification access' on via _Settings > App & notifications > Special app access_ (the actual path depends on the device model). Please read [Appium Pro](https://appiumpro.com/editions/106) for more details. | <none> | <none> |
       | mobile: listSms | Get the list of SMS messages as [JSON format](https://github.com/appium/io.appium.settings#sms). |  <none> | <none> |
+      | mobile:type | Send Unicode text to a focused element. | `{text}` |  `{text: "happy testing"}` |
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |

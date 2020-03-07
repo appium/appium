@@ -20,7 +20,7 @@ Get an element's tag name
 ```javascript
 // Javascript
 // webdriver.io example
-// TODO javascript_wdio sample
+driver.getPageIndex()
 
 // wd example
 // TODO javascript_wd sample

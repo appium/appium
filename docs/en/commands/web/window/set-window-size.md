@@ -20,7 +20,7 @@ self.driver.set_window_size(10, 10)
 ```javascript
 // Javascript
 // webdriver.io example
-driver.setWindowSize(10, 10});
+driver.setWindowRect(0, 0, 800, 600});
 
 // wd example
 await driver.setWindowSize(10, 10, "handleName"); // Set size of window by handle name

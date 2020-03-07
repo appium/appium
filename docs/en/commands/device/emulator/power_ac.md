@@ -18,7 +18,10 @@ self.driver.set_power_ac(Power.AC_OFF)
 ```
 
 ```javascript
-// Not supported
+// Javascript
+// webdriver.io example
+driver.powerAC('on')
+
 // Not supported
 ```
 

@@ -20,7 +20,7 @@ url = self.driver.current_url()
 ```javascript
 // Javascript
 // webdriver.io example
-let url = driver.url();
+let url = driver.getUrl();
 
 // wd example
 let url = await driver.url();

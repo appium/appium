@@ -22,7 +22,8 @@ el.submit();
 ```javascript
 // Javascript
 // webdriver.io example
-$("~SomeAccessibilityId").click();
+let formElement = $("~SomeAccessibilityId");
+driver.elementSubmit(formElement.elementId);
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

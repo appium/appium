@@ -19,7 +19,8 @@ element.location_in_view
 ```javascript
 // Javascript
 // webdriver.io example
-let location = driver.getLocationInView("~SomeAccessibilityId");
+let element = $("~SomeAccessibilityId")
+let location = driver.getElementLocationInView(element.elementId);
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

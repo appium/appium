@@ -22,7 +22,8 @@ element.rect
 ```javascript
 // Javascript
 // webdriver.io example
-let rect = driver.getElementRect("~SomeAccessibilityId");
+let element = $("~SomeAccessibilityId")
+let rect = driver.getElementRect(element.elementId);
 
 // wd example
 let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

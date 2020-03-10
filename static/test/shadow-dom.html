@@ -13,7 +13,14 @@
 customElements.define('appium-form', class extends HTMLElement {
   connectedCallback () {
     this.attachShadow({mode: 'open'});
+    // add html with style, which _will_ cause a circular reference when parsed
+    // by Selenium
     this.shadowRoot.innerHTML = `<p>
+      <style>
+        :host {
+          display: block;
+        }
+      </style>
       <button id="shadowButton">Click me</button>
     </p>`;
     this.shadowRoot.firstElementChild.onclick = (e) => alert(`Inner target: ${e.target.tagName}`);

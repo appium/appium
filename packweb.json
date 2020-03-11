@@ -29,7 +29,6 @@
             "node-simctl"
         ],
         "appium-tools": [
-            "appium-ci",
             "appium-gulp-plugins",
             "appium-test-support",
             "teen_process",

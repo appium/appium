@@ -57,7 +57,7 @@ img_el.visual # returns base64 encoded string
 
 ```python
 # Python
-self.driver.update_settings({"getMatchedImageResult": True}))
+self.driver.update_settings({"getMatchedImageResult": True})
 el = self.driver.find_element_by_image('path/to/img.ong')
 el.get_attribute('visual') # returns base64 encoded string
 ```

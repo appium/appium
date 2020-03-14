@@ -1,7 +1,8 @@
 /* eslint-disable require-await */
 import { errors, BaseDriver, determineProtocol, PROTOCOLS } from '../..';
 import _ from 'lodash';
-import UUID from 'uuid-js';
+import { util } from 'appium-support';
+
 
 class FakeDriver extends BaseDriver {
 
@@ -25,7 +26,7 @@ class FakeDriver extends BaseDriver {
 
   async createSession (desiredCapabilities, requiredCapabilities, capabilities) {
     // Use a counter to make sure each session has a unique id
-    this.sessionId = `fakeSession_${UUID.create().hex}`;
+    this.sessionId = `fakeSession_${util.uuidV4()}`;
     if (capabilities) {
       return [this.sessionId, capabilities];
     } else {

@@ -35,7 +35,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-support": "^2.39.0",
+    "appium-support": "^2.41.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
     "bluebird": "^3.5.3",
@@ -53,7 +53,6 @@
     "sanitize-filename": "^1.6.1",
     "serve-favicon": "^2.4.5",
     "source-map-support": "^0.5.5",
-    "uuid-js": "^0.7.5",
     "validate.js": "^0.13.0",
     "webdriverio": "^5.10.9",
     "ws": "^7.0.0"

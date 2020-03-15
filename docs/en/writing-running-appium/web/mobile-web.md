@@ -270,7 +270,7 @@ automate the built-in browser. On all devices you can use the 'Chromium'
 #### Troubleshooting Chromedriver
 
 If your test target requires newer Chromedriver version,
-[chromedriver_autodownload](docs/en/writing-running-appium/web/chromedriver.md#automatic-discovery-of-compatible-chromedriver) feature will help.
+[chromedriver_autodownload](/docs/en/writing-running-appium/web/chromedriver.md#automatic-discovery-of-compatible-chromedriver) feature will help.
 It has been available since Appium 1.15.0 with the security option.
 Read the linked documentation to learn how to use it.
 `chromedriverExecutableDir` capability also helps when you need

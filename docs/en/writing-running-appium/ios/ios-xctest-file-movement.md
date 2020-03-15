@@ -54,7 +54,7 @@ The file is in _On My iPhone/Keynote_ of _Files_ app.
 
 |Top | On  My iPhone | Keynote |
 |:----:|:----:|:----:|
-|![](/docs/en/writing-running-appium/ios-xctest-file-movement/top_files.png)|![](/docs/en/writing-running-appium/ios-xctest-file-movement/on_my_iphone.png)|![](/docs/en/writing-running-appium/ios-xctest-file-movement/keynote.png)|
+|![](/docs/en/writing-running-appium/ios/ios-xctest-file-movement/top_files.png)|![](/docs/en/writing-running-appium/ios/ios-xctest-file-movement/on_my_iphone.png)|![](/docs/en/writing-running-appium/ios/ios-xctest-file-movement/keynote.png)|
 
 If the file is in deeper place like _On My iPhone/Keynote/Dir1/Dir2_, then the Ruby command should be:
 

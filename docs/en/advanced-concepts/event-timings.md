@@ -59,4 +59,4 @@ generate various kinds of reports from event timings output:
 ## Add a custom event
 
 Since Appium 1.16.0, you can add a custom event.
-You can send a custom event name to the Appium server using the [Log Event API](/docs/en/commands/session/events/log-event), and the server will store the timestamp. The [Get events](/docs/en/session/events/get-events) command can be used to retrieve named events' timestamps later on.
+You can send a custom event name to the Appium server using the [Log Event API](/commands/session/events/log-event), and the server will store the timestamp. The [Get events](/commands/session/events/get-events) command can be used to retrieve named events' timestamps later on.

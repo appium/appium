@@ -33,8 +33,8 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.delete_cookie"
   javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#deletecookie"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2007"
-  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:delete_cookie"
-  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Options:delete_cookie"
+  ruby: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#delete-cookie"
+  ruby_core: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#delete-cookie"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

@@ -1,3 +1,71 @@
+CHANGES IN VERSION 1.17.0 (FROM 1.16.0)
+===================================
+
+Appium 1.17.0 is a minor release.
+
+#### General
+* Active driver sessions are now properly cleaned up upon main Appium process termination (https://github.com/appium/appium/pull/13913)
+* Preliminary support for iOS 13.4
+
+#### iOS General
+
+#### iOS (XCUITest)
+* Fix app installation on real devices (https://github.com/appium/appium-xcuitest-driver/pull/1139) (https://github.com/appium/appium-xcuitest-driver/pull/1138) (https://github.com/appium/appium-xcuitest-driver/pull/1140) (https://github.com/appium/appium-xcuitest-driver/pull/1152) (https://github.com/appium/appium-ios-device/pull/67)
+* Fix temporary log file to be more efficient (https://github.com/appium/appium-xcuitest-driver/pull/1147)
+* Fix port cleanup during shutdown (https://github.com/appium/appium-xcuitest-driver/pull/1153)
+* Fix starting of `idb` when used (https://github.com/appium/appium-idb/pull/20)
+* Add `screenshotOrientation` as Settings API to customize screenshot orientation (https://github.com/appium/WebDriverAgent/pull/277)
+* Capabilities:
+  * `simulatorStartupTimeout` change the default timeout for simulator startup (https://github.com/appium/appium-xcuitest-driver/pull/1163)
+  * `simulatorPasteboardAutomaticSync` turn on/off simulator pasteboard synching at launch (https://github.com/appium/appium-xcuitest-driver/pull/1168)
+  * `simulatorTracePointer` turn on/off pointer highlighting in simulators (https://github.com/appium/appium-xcuitest-driver/pull/1169)
+* Add `snapshotMaxDepth` as Settings API to restrict the depth of getting the elements source tree (https://github.com/appium/WebDriverAgent/pull/273)
+* Add `mobile:` functions for new `simctl` functionality in Xcode 11.4+ (https://github.com/appium/appium-xcuitest-driver/pull/1162) (https://github.com/appium/appium-ios-simulator/pull/260) (https://github.com/appium/node-simctl/pull/96)
+  * `mobile: setPermission`
+  * `mobile: getAppearance`
+  * `mobile: setAppearance`
+* Webviews/Safari:
+  * Add webview bundle identifier to data returned with `fullContextList`
+  * Add `waitForWebviewMs` option to `mobile:getContexts` endpoint, to block for a period while waiting for webview report (https://github.com/appium/appium-xcuitest-driver/pull/1135)
+  * Allow SafariViewController webviews to be reached automatically (https://github.com/appium/appium-remote-debugger/pull/189) (https://github.com/appium/appium-remote-debugger/pull/197)
+  * Fix asynchronous execution in webview context for iOS 12.1 and below (https://github.com/appium/appium-remote-debugger/pull/199)
+  * Fix handling of React components whose state is handled by React (https://github.com/appium/appium-remote-debugger/pull/202)
+  * Fix webviews for iOS 13.3 and 13.4 (https://github.com/appium/appium-remote-debugger/pull/203) (https://github.com/appium/appium-remote-debugger/pull/204) (https://github.com/appium/appium-remote-debugger/pull/205) (https://github.com/appium/appium-remote-debugger/commit/e067f0eab012b5ef67f1ce67eb85479c4abe440b) (https://github.com/appium/appium-xcuitest-driver/pull/1174)
+  * Fix handling of alerts opened from webview (https://github.com/appium/appium-xcuitest-driver/pull/1176)
+
+#### Android General
+* Add `mobile:` functions:
+  * `mobile: listSms` to get the list of SMS (https://github.com/appium/appium-android-driver/pull/602 https://github.com/appium/appium-espresso-driver/pull/548)
+  * `mobile: startScreenStreaming`, `mobile: stopScreenStreaming` (https://github.com/appium/appium-espresso-driver/pull/521)
+  * `mobile: getNotifications` to get the list of notifications (https://github.com/appium/appium-android-driver/pull/598)
+* Fix `toggle_location_services` on Android 9.0 (https://github.com/appium/appium-android-driver/pull/594)
+* Add to allow letter as a `platformVersion` like `R` in preview/beta Android OS release ( https://github.com/appium/appium-android-driver/pull/607 )
+* Updated emulator detection logic (https://github.com/appium/appium/pull/14015)
+* Allow `mobile:` functions to perform actions in WebView contexts (https://github.com/appium/appium-uiautomator2-driver/pull/366) (https://github.com/appium/appium-espresso-driver/pull/549)
+
+#### Android (UiAutomator2)
+* Added `mobile: type` endpoint (https://github.com/appium/appium-uiautomator2-driver/pull/365)
+* Tuned `sendKeys` endpoint (https://github.com/appium/appium-uiautomator2-server/pull/329)
+
+#### Android (Espresso)
+* Capabilities:
+  * `espressoBuildConfig` customize the espresso server build configuration (https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/caps.md#espresso-server-build-configuration-json)
+  * `intentOptions` customize intent for launching activities (https://github.com/appium/appium-espresso-driver/pull/542)
+  * `skipServerInstallation` skip espresso driver preparation (https://github.com/appium/appium-espresso-driver/pull/526)
+* Add `-android viewmatcher` selector (https://github.com/appium/appium-espresso-driver/pull/516)
+* Add `noMultilineButtons`, `noEllipsizedText` and `noOverlaps` as available element attributes to extend available view assertions (https://github.com/appium/appium-espresso-driver/pull/544)
+* Support `open_notifications` endpoint (https://github.com/appium/appium-espresso-driver/pull/536/files)
+
+
+#### Windows
+
+#### MacOS
+* Capabilities:
+  * `a4mHost`, `a4mPort`, `a4mAppPath` and `killAllA4MAppBeforeStart` make mac driver configurable (https://github.com/appium/appium-mac-driver/pull/42) (https://github.com/appium/appium-mac-driver/pull/44)
+* Added the possibility to autodetect the location of the server app: https://github.com/appium/appium-mac-driver/pull/44
+
+
+
 CHANGES IN VERSION 1.16.0 (FROM 1.15.1)
 ===================================
 

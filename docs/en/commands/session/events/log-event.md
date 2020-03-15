@@ -58,7 +58,7 @@ driver.log_event vendor: 'appium', event: 'funEvent'
 
 This API allows us to store a custom event.
 
-Appium provides [Appium Event Timing](docs/en/advanced-concepts/event-timings/) to track when events happen.
+Appium provides [Appium Event Timing](/docs/en/advanced-concepts/event-timings/) to track when events happen.
 This custom event feature allow users to store a custom event as the feature.
 
 

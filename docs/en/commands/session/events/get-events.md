@@ -78,7 +78,7 @@ driver.log_events(['event1', 'event2'])
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [seleniumhq.github.io](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [Android](https://github.com/appium/python-client/android-command) [iOS](https://github.com/appium/python-client/ios-command) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/extensions/log_event.py#L22) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None | [github.com](https://github.com/admc/wd/releases) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/gems/appium_lib/Appium/Driver#log_event-instance_method) |

@@ -284,7 +284,8 @@ module.exports = {
       ['How to Write Docs', 'how-to-write-docs.md'],
       ['Appium Package Structure', 'appium-packages.md'],
       ['Credits', 'credits.md']]]
-  ], 'cn': [
+  ],
+  cn: [
     ['关于', ['about-appium',
       ['简介', 'intro.md'],
       ['Appium 客户端', 'appium-clients.md'],

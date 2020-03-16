@@ -9,7 +9,7 @@
 
 某些驱动也可以使用[W3C 操作](https://www.w3.org/TR/webdriver1/#actions)，例如 XCUITest、UIA2、Espresso 和 Windows。W3C 操作是在操作系统测试框架的最大限制下实现的。例如 WDA 无法处理零等待 [PR](https://github.com/appium/appium-xcuitest-driver/pull/753)。
 
-[API 文档](http://appium.io/docs/cn/commands/interactions/actions/)，及每个客户端的 API文档可以帮助理解如何调用它们。
+[API 文档](http://appium.io/docs/en/commands/interactions/actions/)(English)，及每个客户端的 API文档可以帮助理解如何调用它们。
 
 ### 触摸操作（TouchAction） / 多点触控（MultiAction） API 概述
 

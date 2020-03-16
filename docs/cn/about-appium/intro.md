@@ -60,7 +60,7 @@ Appium 的 `beta` 版本可以通过 NPM 使用 `npm install -g appium@beta` 指
 
 ### 入门指南
 
-恭喜！你现在有足够的知识来使用 Appium 了。 为什么不前往 [入门指南](/docs/cn/about-appium/getting-started.md) 了解更多详细的要求和指南呢？
+恭喜！你现在有足够的知识来使用 Appium 了。 为什么不前往 [入门指南](/docs/en/about-appium/getting-started.md)(English) 了解更多详细的要求和指南呢？
 
 ---
 EOF.

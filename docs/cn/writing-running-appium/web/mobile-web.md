@@ -60,15 +60,14 @@ capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator")
 这是因为Safari是苹果公司的应用，Instruments 不能在真机上拉起 Safari。SafariLuncher 可以帮助打开 Safari 浏览器，浏览器一旦打开，Remote Debugger 会通过 [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy) 自动连接。在 `ios-webkit-debug-proxy` 运行时，
 必须在你的iOS设备测试前，信任这台设备
 
-指导如何安装和运行 ios-webkit-debugger-proxy ，可以查阅 [iOS WebKit debug proxy](/docs/cn/advanced-concepts/ios-webkit-debug-proxy.md)
+指导如何安装和运行 ios-webkit-debugger-proxy ，可以查阅 [iOS WebKit debug proxy](/docs/cn/writing-running-appium/web/ios-webkit-debug-proxy.md)
 
 ### 安装
 
 在真实上运行测试前，你需要：
 
-* 安装好 **ios-webkit-debug-proxy**，运行并在 27753 接口开启监听。（查阅 [hybrid 文档](/docs/cn/advanced-concepts/hybrid.md#execution-against-a-real-ios-device) 作为指导）
+* 安装好 **ios-webkit-debug-proxy**，运行并在 27753 接口开启监听。（查阅 [hybrid 文档](/docs/cn/writing-running-appium/web/hybrid.md#execution-against-a-real-ios-device) 作为指导）
 * 在 iOS 设备上开启 **web inspector**（设置>safari>高级）
-* 确保 `SafariLauncher` 正常工作 (参考 [SafariLauncher docs](safari-launcher.md))
 
 
 ### 运行你的测试
@@ -148,7 +147,7 @@ class ContextTests extends PHPUnit_Extensions_AppiumTestCase
 前提设置:
 
 *  确保 Chrome (应用包名 `com.android.chrome`) 在设备或者模拟器上安装好了。不编译 Chromium，在 x86 版本的模拟器上安装 Chrome 已经不可能了。所以你需要运行一个 ARM 版本的模拟器，然后从真机上复制一个 Chrome APK 到模拟器上。
-*  在特定版本的 Chrome 上进行自动化，需要安装和配置不同版本的 Chromedriver，更多信息参考[文档](/docs/cn/advanced-concepts/chromedriver.md) 
+*  在特定版本的 Chrome 上进行自动化，需要安装和配置不同版本的 Chromedriver，更多信息参考[文档](chromedriver.md)
 
 然后，使用如下设置，在你的Chrome下运行你的测试：
 

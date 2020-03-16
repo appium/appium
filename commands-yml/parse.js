@@ -210,6 +210,11 @@ async function generateCommands () {
     await mkdirp(path.dirname(outfile));
     await fs.writeFile(outfile, markdown, 'utf8');
 
+    const outfile_cn = path.resolve(rootFolder, 'docs', 'cn', markdownPath);
+    log(`    Writing to: ${outfile_cn}`);
+    await mkdirp(path.dirname(outfile));
+    await fs.writeFile(outfile_cn, markdown, 'utf8');
+
     fileCount++;
   }
   log(`Done writing ${fileCount} command documents`);
@@ -255,6 +260,10 @@ async function generateCommandIndex () {
 
   const apiIndex = path.resolve(rootFolder, 'docs', 'en', 'about-appium', 'api.md');
   await writeIndex(apiIndex, commands);
+
+  const apiIndexCn = path.resolve(rootFolder, 'docs', 'cn', 'about-appium', 'api.md');
+  await writeIndex(apiIndexCn, commands);
+
   log(`Done writing main API index`);
 
   async function writeIndividualIndexes (command) {
@@ -277,6 +286,9 @@ async function generateCommandIndex () {
   // go through the full tree and generate readme files
   const index = path.resolve(rootFolder, 'docs', 'en', 'commands', 'README.md');
   await writeIndex(index, commands);
+  const indexCn = path.resolve(rootFolder, 'docs', 'cn', 'commands', 'README.md');
+  await writeIndex(indexCn, commands);
+
   for (const el of commands) {
     await writeIndividualIndexes(el);
   }

@@ -289,7 +289,7 @@ module.exports = {
       ['简介', 'intro.md'],
       ['Appium 客户端', 'appium-clients.md'],
       // ['入门指南', 'getting-started.md'],
-      // ['已支持的平台', 'platform-support.md'],
+      ['已支持的平台', 'platform-support.md'],
       // ['API 文档', 'api.md'],
     ]],
     ['驱动程序', ['drivers',

@@ -4,9 +4,9 @@ Appium 支持多种平台以及各种测试方式（native，hybrid，web，真�
 
 ### iOS 平台支持
 
-获取 iOS 平台下所需的必备条件和安装说明，请查阅 [Running on OS X: iOS](running-on-osx.md)
+获取 iOS 平台下所需的必备条件和安装说明，请查阅 [XCUITest Driver](/docs/cn/drivers/ios-xcuitest.md)
 
-* 版本：7.1 及以上版本
+* 版本：9.0 及以上版本
 * 设备：iPhone 模拟器，iPad 模拟器，以及 iPhone 和 iPad 的真机
 * 是否支持 Native 应用：支持。如在模拟器执行，需要 debug 版本的 .app 包，在真机上运行则需要已签名的 .ipa 包。底层的框架是由苹果的 [XCUITest](https://developer.apple.com/reference/xctest) (或 [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) 支持更旧的版本) 所提供支持
 * 是否支持移动端浏览器：支持。我们通过移动端的 Safari 进行自动化测试。对于真机，`ios-webkit-remote-debugger` 工具是必须的。可惜的是对于 Safari 的 native 部分的自动化目前还不支持。更多介绍请查看 [mobile web doc](/docs/cn/writing-running-appium/mobile-web.md)。
@@ -18,10 +18,7 @@ Appium 支持多种平台以及各种测试方式（native，hybrid，web，真�
 
 ### Android 平台支持
 
-查阅[Running on OS X: Android](running-on-osx.md)，[Running on Windows](running-on-windows.md) 或者 [Running on Linux](running-on-linux.md) 查看更多的设备信息以及安装说明。
-
-* 版本：2.3 及以上版本
-  * 2.3 至 4.2 版本是通过 Appium 绑定的基于 [Instrumentation](http://developer.android.com/reference/android/app/Instrumentation.html)框架的 [Selendroid](http://selendroid.io)实现的自动化。Selendroid 的命令设置与默认的 Appium 有点不同， 支持的配置文件也同样不同。要获得在后台运行自动化的权限，需要环境配置中将 `automationName` 的值为 `Selendroid`。
+* 版本：4.3 及以上版本
   * 4.3 以及更高的版本是通过 Appium 自己的 [UiAutomator](http://developer.android.com/tools/testing-support-library/index.html#UIAutomator) 库实现。这是默认的自动化后台。
 * 设备：Android 模拟器以及 Android 真机
 * 是否支持 Native 应用：支持
@@ -36,9 +33,6 @@ Appium 支持多种平台以及各种测试方式（native，hybrid，web，真�
 
 ### Windows 桌面支持
 
-查看以下文档获取更多信息：
-
-* [Running on Windows](running-on-windows.md)
 * [Windows App Testing](/docs/cn/writing-running-appium/windows-app-testing.md)
 
 

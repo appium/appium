@@ -35,7 +35,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "appium-support": "^2.41.0",
+    "appium-support": "^2.42.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
     "bluebird": "^3.5.3",
@@ -50,7 +50,6 @@
     "morgan": "^1.9.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
-    "sanitize-filename": "^1.6.1",
     "serve-favicon": "^2.4.5",
     "source-map-support": "^0.5.5",
     "validate.js": "^0.13.0",

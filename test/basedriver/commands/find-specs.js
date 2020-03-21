@@ -44,6 +44,7 @@ describe('finding elements by image', function () {
 
   describe('findByImage', function () {
     const rect = {x: 10, y: 20, width: 30, height: 40};
+    const score = 0.9;
     const size = {width: 100, height: 200};
     const screenshot = 'iVBORfoo';
     const template = 'iVBORbar';
@@ -51,7 +52,7 @@ describe('finding elements by image', function () {
     function basicStub (driver) {
       const sizeStub = sinon.stub(driver, 'getWindowSize').returns(size);
       const screenStub = sinon.stub(driver, 'getScreenshotForImageFind').returns(screenshot);
-      const compareStub = sinon.stub(driver, 'compareImages').returns({rect});
+      const compareStub = sinon.stub(driver, 'compareImages').returns({rect, score});
       return {sizeStub, screenStub, compareStub};
     }
 
@@ -61,6 +62,7 @@ describe('finding elements by image', function () {
       const imgEl = driver._imgElCache.get(imgElId);
       (imgEl instanceof ImageElement).should.be.true;
       imgEl.rect.should.eql(rect);
+      imgEl.score.should.eql(score);
       return imgEl;
     }
 

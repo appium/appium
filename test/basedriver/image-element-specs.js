@@ -162,7 +162,7 @@ describe('ImageElement', function () {
 
   describe('#execute', function () {
     // aGFwcHkgdGVzdGluZw== is 'happy testing'
-    const imgEl = new ImageElement(defTemplate, defRect, 'aGFwcHkgdGVzdGluZw==');
+    const imgEl = new ImageElement(defTemplate, defRect, 0, 'aGFwcHkgdGVzdGluZw==');
     const clickStub = sinon.stub(imgEl, 'click');
 
     before(function () {
@@ -202,6 +202,10 @@ describe('ImageElement', function () {
     it('should get rect of element', async function () {
       await ImageElement.execute(driver, 'getElementRect', imgEl.id)
         .should.eventually.eql(defRect);
+    });
+    it('should get score of element', async function () {
+      await ImageElement.execute(driver, 'getAttribute', imgEl.id, 'score')
+        .should.eventually.eql(0);
     });
     it('should get visual of element', async function () {
       await ImageElement.execute(driver, 'getAttribute', imgEl.id, 'visual')

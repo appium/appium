@@ -7,7 +7,6 @@
 [![Monthly Downloads](https://img.shields.io/npm/dm/appium.svg)](https://npmjs.org/package/appium)
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_shield)
-[![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium.svg)](https://greenkeeper.io/)
 
 Appium is an open source, cross-platform test automation tool for native,
 hybrid and mobile web and desktop apps. We support simulators (iOS), emulators

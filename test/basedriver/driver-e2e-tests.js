@@ -53,6 +53,67 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     }
 
     describe('session handling', function () {
+      it('should handle idempotency while creating sessions', async function () {
+        const sessionIds = [];
+        let times = 0;
+        do {
+          const res = await request({
+            url: 'http://localhost:8181/wd/hub/session',
+            headers: {
+              'X-Idempotency-Key': '123456',
+            },
+            method: 'POST',
+            json: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
+            simple: false,
+            resolveWithFullResponse: true
+          });
+
+          sessionIds.push(res.body.sessionId);
+          times++;
+        } while (times < 2);
+        _.uniq(sessionIds).length.should.equal(1);
+
+        const res = await request({
+          url: `http://localhost:8181/wd/hub/session/${sessionIds[0]}`,
+          method: 'DELETE',
+          json: true,
+          simple: false,
+          resolveWithFullResponse: true
+        });
+        res.statusCode.should.equal(200);
+        res.body.status.should.equal(0);
+      });
+
+      it('should handle idempotency while creating parallel sessions', async function () {
+        const reqs = [];
+        let times = 0;
+        do {
+          reqs.push(request({
+            url: 'http://localhost:8181/wd/hub/session',
+            headers: {
+              'X-Idempotency-Key': '12345',
+            },
+            method: 'POST',
+            json: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
+            simple: false,
+            resolveWithFullResponse: true
+          }));
+          times++;
+        } while (times < 2);
+        const sessionIds = (await B.all(reqs)).map((x) => x.body.sessionId);
+        _.uniq(sessionIds).length.should.equal(1);
+
+        const res = await request({
+          url: `http://localhost:8181/wd/hub/session/${sessionIds[0]}`,
+          method: 'DELETE',
+          json: true,
+          simple: false,
+          resolveWithFullResponse: true
+        });
+        res.statusCode.should.equal(200);
+        res.body.status.should.equal(0);
+      });
+
       it('should create session and retrieve a session id, then delete it', async function () {
         let res = await request({
           url: 'http://localhost:8181/wd/hub/session',

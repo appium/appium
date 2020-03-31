@@ -225,7 +225,7 @@ describe('finding elements by image', function () {
 
   describe('ensureTemplateSize', function () {
     it('should not resize the template if it is smaller than the screen', async function () {
-      const screen = TINY_PNG_DIMS.map(n => n * 2);
+      const screen = TINY_PNG_DIMS.map((n) => n * 2);
       const d = new TestDriver();
       await d.ensureTemplateSize(TINY_PNG, ...screen)
         .should.eventually.eql(TINY_PNG);
@@ -237,7 +237,7 @@ describe('finding elements by image', function () {
     });
     it('should resize the template if it is bigger than the screen', async function () {
       const d = new TestDriver();
-      const screen = TINY_PNG_DIMS.map(n => n / 2);
+      const screen = TINY_PNG_DIMS.map((n) => n / 2);
       const newTemplate = await d.ensureTemplateSize(TINY_PNG, ...screen);
       newTemplate.should.not.eql(TINY_PNG);
       newTemplate.length.should.be.below(TINY_PNG.length);
@@ -254,7 +254,7 @@ describe('finding elements by image', function () {
       const d = new TestDriver();
       sinon.stub(d, 'getScreenshot').returns(TINY_PNG);
       d.settings.update({fixImageFindScreenshotDims: false});
-      const screen = TINY_PNG_DIMS.map(n => n + 1);
+      const screen = TINY_PNG_DIMS.map((n) => n + 1);
       const {b64Screenshot, scale} = await d.getScreenshotForImageFind(...screen);
       b64Screenshot.should.eql(TINY_PNG);
       should.equal(scale, undefined);
@@ -269,7 +269,7 @@ describe('finding elements by image', function () {
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
       const d = new TestDriver();
       sinon.stub(d, 'getScreenshot').returns(TINY_PNG);
-      const screen = TINY_PNG_DIMS.map(n => n * 1.5);
+      const screen = TINY_PNG_DIMS.map((n) => n * 1.5);
       const {b64Screenshot, scale} = await d.getScreenshotForImageFind(...screen);
       b64Screenshot.should.not.eql(TINY_PNG);
       const screenshotObj = await imageUtil.getJimpImage(b64Screenshot);

@@ -924,8 +924,8 @@ describe('Protocol', function () {
     beforeEach(async function () {
       driver = new FakeDriver();
       driver.sessionId = sessionId;
-      driver.proxyActive = () => { return true; };
-      driver.canProxy = () => { return true; };
+      driver.proxyActive = () => true;
+      driver.canProxy = () => true;
 
       mjsonwpServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(driver),
@@ -938,7 +938,7 @@ describe('Protocol', function () {
     });
 
     it('should give a nice error if proxying is set but no proxy function exists', async function () {
-      driver.canProxy = () => { return false; };
+      driver.canProxy = () => false;
       let res = await request({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
@@ -1023,7 +1023,7 @@ describe('Protocol', function () {
     });
 
     it('should avoid jsonwp proxying when path matches avoidance list', async function () {
-      driver.getProxyAvoidList = () => { return [['POST', new RegExp('^/session/[^/]+/url$')]]; };
+      driver.getProxyAvoidList = () => [['POST', new RegExp('^/session/[^/]+/url$')]];
       let res = await request({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
@@ -1042,7 +1042,7 @@ describe('Protocol', function () {
 
     it('should fail if avoid proxy list is malformed in some way', async function () {
       async function badProxyAvoidanceList (list) {
-        driver.getProxyAvoidList = () => { return list; };
+        driver.getProxyAvoidList = () => list;
         let res = await request({
           url: `${baseUrl}/session/${sessionId}/url`,
           method: 'POST',
@@ -1067,7 +1067,7 @@ describe('Protocol', function () {
     });
 
     it('should avoid proxying non-session commands even if not in the list', async function () {
-      driver.getProxyAvoidList = () => { return [['POST', new RegExp('')]]; };
+      driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
       let res = await request({
         url: `${baseUrl}/status`,
@@ -1086,7 +1086,7 @@ describe('Protocol', function () {
     });
 
     it('should avoid proxying deleteSession commands', async function () {
-      driver.getProxyAvoidList = () => { return [['POST', new RegExp('')]]; };
+      driver.getProxyAvoidList = () => [['POST', new RegExp('')]];
 
       driver.sessionId.should.equal(sessionId);
       let res = await request({

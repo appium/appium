@@ -61,7 +61,7 @@
     "prepare": "gulp prepublish",
     "test": "gulp once",
     "watch": "gulp watch",
-    "lint": "gulp eslint",
+    "lint": "gulp lint",
     "lint:fix": "gulp eslint --fix",
     "coverage": "gulp coveralls",
     "mocha": "mocha",

@@ -122,7 +122,7 @@ I am some page content
   <br/>
 
   <p>Server time: <span id="servertime"><%= serverTime %></span></p>
-  <p>Client time: <span id="clienttime"><%= parseInt(new Date().getTime() / 1000, 10) %></span></p>
+  <p>Client time: <span id="clienttime"><%= new Date() %></span></p>
   <script type="text/javascript">
     var uuid;
     try {uuid = window.location.toString().match(/\?(.*)$/)[1]; } catch (ign) {}

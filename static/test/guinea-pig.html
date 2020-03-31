@@ -30,7 +30,6 @@ I am some page content
 <div id="popuplink" onclick="setTimeout(function() { window.open('/test/guinea-pig2.html', 'popupwin'); }, 500);">i cause a popup window</div>
 <div id="guinea pig 5 popup link" onclick="setTimeout(function() { window.open('/test/guinea-pig5.html', 'popupwin'); }, 500);">i cause a popup window with page 5</div>
 <div id="invisible div" style="display:none;">i am invisible</div>
-<div>
   <a id="alert1" href="javascript:void(0);" onclick="alert('I am an alert')">I cause an alert</a>
   <a id="prompt1" href="javascript:void(0);" onclick="$('#promptVal').val(prompt('Do you like javascript?'));">I cause a prompt</a>
   <input type="text" value="" id="promptVal" /></div>
@@ -78,7 +77,7 @@ I am some page content
   <br/>
 
   <p>Server time: <span id="servertime"><%= serverTime %></span></p>
-  <p>Client time: <span id="clienttime"><%= parseInt(new Date().getTime() / 1000, 10) %></span></p>
+  <p>Client time: <span id="clienttime"><%= new Date() %></span></p>
   <script type="text/javascript">
     var uuid;
     try {uuid = window.location.toString().match(/\?(.*)$/)[1]; } catch (ign) {}

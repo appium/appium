@@ -30,7 +30,7 @@ describe('doctor', function () {
     it('should detect all issues', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       let {doctor, checks} = configure();
-      S.mocks.checks = checks.map((check) => { return S.sandbox.mock(check); });
+      S.mocks.checks = checks.map((check) => S.sandbox.mock(check));
       S.mocks.checks[0].expects('diagnose').once().returns({ok: true, message: 'All Good!'});
       S.mocks.checks[1].expects('diagnose').twice().returns({ok: true, optional: true, message: 'All Good Option!'});
       S.mocks.checks[2].expects('diagnose').once().returns({ok: false, message: 'Oh No!'});

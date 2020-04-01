@@ -7,7 +7,6 @@ appium-base-driver
 
 [![Build Status](https://travis-ci.org/appium/appium-base-driver.svg?branch=master)](https://travis-ci.org/appium/appium-base-driver)
 [![Coverage Status](https://coveralls.io/repos/appium/appium-base-driver/badge.svg?branch=master)](https://coveralls.io/r/appium/appium-base-driver?branch=master)
-[![Greenkeeper badge](https://badges.greenkeeper.io/appium/appium-base-driver.svg)](https://greenkeeper.io/)
 
 This is the parent class that all [appium](appium.io) drivers inherit from, along with a collection of globally-used Appium driver utilities. Each utility is documented in its own README in the code:
 

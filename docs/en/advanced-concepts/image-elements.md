@@ -18,7 +18,9 @@ If the image match is successful, Appium will cache information about the match 
 * `getLocation`
 * `getLocationInView`
 * `getElementRect`
-* `getAttribute` (only `visual` attribute)
+* `getAttribute`
+    * `visual` returns matched image as base64 data if `getMatchedImageResult` is `true`
+    * `score` returns the similarity score as a float number in range `[0.0, 1.0]` sine Appium 1.18.0
 
 These actions are supported on "Image Elements" because they are the actions which involve only use of screen position for their functioning. Other actions (like `sendKeys`, for example) are not supported, because all Appium can know based on your template image is whether or not there is a screen region which visually matches it--Appium has no way of turning that information into a driver-specific UI element object, which would be necessary for the use of other actions.
 

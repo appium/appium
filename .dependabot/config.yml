@@ -3,10 +3,9 @@ update_configs:
   - package_manager: "javascript"
     directory: "/"
     update_schedule: "live"
-
-    # Apply default reviewer and label to created
-    # pull requests
-    default_reviewers:
-      - "github-username"
-    default_labels:
-      - "label-name"
+  - package_manager: "javascript"
+    directory: "/sample-code/javascript-wd"
+    update_schedule: "live"
+  - package_manager: "javascript"
+    directory: "/sample-code/javascript-webdriverio"
+    update_schedule: "live"

@@ -171,6 +171,7 @@ So here is how we begin to construct a session in our test file:
 ```js
 // javascript
 const opts = {
+  path: '/wd/hub',
   port: 4723,
   capabilities: {
     platformName: "Android",

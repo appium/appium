@@ -61,7 +61,7 @@
       | mobile:setPermission | Set a permission for the given bundleId via `xcrun simctl privacy` which is available since Xcode 11.4. `key` is 'service' in the list of `xcrun simctl privacy`. `value` is `yes`(grant), `no`(revoke) or `unset`(reset). It works on simulator. | `{bundleId, {key: value}}`| `{bundleId: 'io.appium.example', {'location-always': 'yes', calendar: 'no'}` |
       | mobile:getAppearance | Get the device's UI appearance style via `xcrun simctl ui`. It returns `light`, `dark`, `unknown` or `unsupported` (below iOS 12). |||
       | mobile:setAppearance | Set the device's UI appearance style via `xcrun simctl ui` or Siri command. | `{style}` | `{style: 'dark'}` |
-      | mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
+      | mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format specifiers. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |

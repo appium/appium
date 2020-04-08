@@ -94,7 +94,9 @@ describe('android', function () {
     });
     it('fix - install', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      removeColors(await check.fix()).should.equal('Manually install adb and add it to PATH.');
+      removeColors(await check.fix()).should.equal('Manually install adb and add it to PATH. ' +
+        'https://developer.android.com/studio#cmdline-tools and ' +
+        'https://developer.android.com/studio/intro/update#sdk-manager may help to setup.');
     });
   }));
 

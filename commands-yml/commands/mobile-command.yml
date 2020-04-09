@@ -61,6 +61,7 @@
       | mobile:setPermission | Set a permission for the given bundleId via `xcrun simctl privacy` which is available since Xcode 11.4. `key` is 'service' in the list of `xcrun simctl privacy`. `value` is `yes`(grant), `no`(revoke) or `unset`(reset). It works on simulator. | `{bundleId, {key: value}}`| `{bundleId: 'io.appium.example', {'location-always': 'yes', calendar: 'no'}` |
       | mobile:getAppearance | Get the device's UI appearance style via `xcrun simctl ui`. It returns `light`, `dark`, `unknown` or `unsupported` (below iOS 12). |||
       | mobile:setAppearance | Set the device's UI appearance style via `xcrun simctl ui` or Siri command. | `{style}` | `{style: 'dark'}` |
+      | mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format specifiers. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
 
       ### Android
       | Command | Description | Argument | Argument Example |
@@ -74,6 +75,7 @@
       | mobile:getNotifications | Get the list of items as JSON format in the status bar notifications. Please turn 'Notification access' on via _Settings > App & notifications > Special app access_ (the actual path depends on the device model). Please read [Appium Pro](https://appiumpro.com/editions/106) for more details. | <none> | <none> |
       | mobile: listSms | Get the list of SMS messages as [JSON format](https://github.com/appium/io.appium.settings#sms). |  <none> | <none> |
       | mobile:type | Send Unicode text to a focused element. | `{text}` |  `{text: "happy testing"}` |
+      | mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |

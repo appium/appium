@@ -4,7 +4,7 @@ short_description: Update the current setting on the device
 example_usage:
   java:
     |
-      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, Duration.ofSeconds(5));
+      driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, 5000);
   javascript_wd:
     |
       await driver.updateSettings({nativeWebTap: true});

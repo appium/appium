@@ -209,7 +209,7 @@ the same: to have a build of your app (an `.ipa` file) signed with
 a development provisioning profile. A good overview of the process can be found
 [here](https://medium.com/ios-os-x-development/ios-code-signing-provisioning-in-a-nutshell-d5b247760bef#.5hirl92tn)
 and
-[here](https://engineering.nodesagency.com/categories/ios/2016/10/28/Understanding-code-signing-for-iOS-apps).
+[here](https://www.nodesagency.com/understanding-code-signing-for-ios-apps).
 
 In a little more detail, to get started on a real device, you will need the following:
 

@@ -10,13 +10,13 @@ Appium 的核心理念之一是，你不应该为了测试而改变被测的应�
 在你的 Appium 测试中，以下是与 Web 视图通信所必须的几个步骤：
 
 1. 导航到你的应用程序中的 Web 视图的部分
-1. [取得当前可用的上下文](/docs/cn/commands/context/get-contexts.md)
+1. [取得当前可用的上下文](/docs/en/commands/context/get-contexts.md)(English)
     * 这将返回一个包含我们可以访问的上下文的列表，例如 `'NATIVE_APP'` 或 `'WEBVIEW_1'`
-1. 使用想要访问的上下文的 id [设置上下文](/docs/cn/commands/context/set-context.md)
+1. 使用想要访问的上下文的 id [设置上下文](/docs/en/commands/context/set-context.md)(English)
     * 这会使你的 Appium 会话进入一个模式，处于该模式时所有命令被解释为意图自动化 Web 视图，而不是应用程序的原生部分。例如，如果你运行 `getElementByTagName`，它将操作 Web 视图中的 DOM，而不是返回原生元素。当然，某些 WebDriver 方法只在一个或另一个上下文中有效，所以在错误的上下文中执行时你会收到一个报错信息。
-1. 想要停止对 Web 视图的上下文中自动化，并返回到应用程序的原生部分，简单的 [设置上下文](/docs/cn/commands/context/set-context.md) 即可。将上下文赋值为原生上下文的 id（通常是 `'NATIVE_APP'`）便可离开 Web 上下文，重新使用原生指令。
+1. 想要停止对 Web 视图的上下文中自动化，并返回到应用程序的原生部分，简单的 [设置上下文](/docs/en/commands/context/set-context.md) (English)即可。将上下文赋值为原生上下文的 id（通常是 `'NATIVE_APP'`）便可离开 Web 上下文，重新使用原生指令。
 
-### 在会话（session）开启时自动进入 Web 视图上下文（context） 
+### 在会话（session）开启时自动进入 Web 视图上下文（context）
 如果你的应用程序在 web 视图中开始，并且你不想在自动化应用程序的原生部分后，再进入 Web 视图，你可以通过设置「[预期功能（desired capability）](/docs/en/writing-running-appium/caps.md)」中的 `autoWebview` 为 `true` 使得 Appium 在会话初始化时自动进入 Web 视图上下文。
 
 

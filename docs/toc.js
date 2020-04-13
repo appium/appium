@@ -284,13 +284,14 @@ module.exports = {
       ['How to Write Docs', 'how-to-write-docs.md'],
       ['Appium Package Structure', 'appium-packages.md'],
       ['Credits', 'credits.md']]]
-  ], 'cn': [
+  ],
+  cn: [
     ['关于', ['about-appium',
       ['简介', 'intro.md'],
       ['Appium 客户端', 'appium-clients.md'],
-      //['入门指南', 'getting-started.md'],
-      //['已支持的平台', 'platform-support.md'],
-      //['API 文档', 'api.md'],
+      // ['入门指南', 'getting-started.md'],
+      ['已支持的平台', 'platform-support.md'],
+      // ['API 文档', 'api.md'],
     ]],
     /*['驱动程序', ['drivers',
       ['XCUITest (iOS)', 'ios-xcuitest.md'],
@@ -313,8 +314,8 @@ module.exports = {
       ['Web / Web 视图', ['web',
         ['自动化 Web 测试', 'mobile-web.md'],
         ['自动化混合应用', 'hybrid.md'],
-        //['使用 ios-webkit-debug-proxy', 'ios-webkit-debug-proxy.md'],
-        //['使用 Chromedriver', 'chromedriver.md'],
+        ['使用 ios-webkit-debug-proxy', 'ios-webkit-debug-proxy.md'],
+        ['使用 Chromedriver', 'chromedriver.md'],
       ]],
       ['iOS', ['ios',
         ['XCUITest 移动手势', 'ios-xctest-mobile-gestures.md'],
@@ -350,7 +351,7 @@ module.exports = {
       ['使用自定义 WDA 服务器', 'wda-custom-server.md'],
       //['使用指定版本的 Xcode 运行', 'multiple-xcode-versions.md'],
       ['Event Timings API', 'event-timings.md'],
-      //['并行测试的设置', 'parallel-tests.md'],
+      ['并行测试的设置', 'parallel-tests.md'],
       ['Settings API', 'settings.md'],
       //['内存转储', 'memory-collection.md']]
     ]],

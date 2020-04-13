@@ -47,7 +47,7 @@ Please refer to these driver docs for setup instructions.
 * Devices: Android emulators and real Android devices
 * Native app support: Yes
 * Mobile web support: Yes. Automation
-  is effected using a bundled [Chromedriver](https://code.google.com/p/selenium/wiki/ChromeDriver)
+  is effected using a bundled [Chromedriver](http://chromedriver.chromium.org)
   server as a proxy. With 4.3, automation works on official Chrome
   browser or Chromium only. With 4.4+, automation also works on the built-in
   "Browser" app. Chrome/Chromium/Browser must already be installed on the

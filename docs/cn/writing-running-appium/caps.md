@@ -119,26 +119,16 @@
 |`wdaLaunchTimeout`|等待 WebDriverAgent 可 ping 同的时间（以毫秒为单位）。默认设置为 60000ms。|例如  `30000`|
 |`calendarAccessAuthorized`|若设置为 `true`，则允许在 iOS 模拟器上访问日历。若设置为 `false`，则不被允许。否则，日历的 authorizationStatus 会保持不变。 | - |
 
+### MacDriver 独有
 
+[Appium Mac Driver repo](https://github.com/appium/appium-mac-driver#desired-capabilities)
 
 ### You.i 引擎独有
 
 <expand_table>
 
-|键|描述|值|
-|----|-----------|-------|
-|`youiEngineAppAddress`| 正在运行的应用的设备的 IP 地址。使用 `localhost` 作为模拟地址。使用 `localhost` 作为模拟器地址。使用设备的 IP 地址作为真机的 IP。|例如  `localhost` 或 `192.168.1.203`|
-
-
+[You.i Engine driver](https://github.com/YOU-i-Labs/appium-youiengine-driver#desired-capabilities) itself.)
 
 ### WinAppDriver 独有
 
-<expand_table>
-
-|键|描述|值|
-|----|-----------|-------|
-|`platformName`| 运行测试时所在的平台  |例如  `Windows`|
-|`deviceName`| 运行测试时所使用设备的名字 | 例如  `WindowsPC`|
-|`app`| 被测 windows 应用的 appID 或被测的 .exe 文件的路径。 查阅[该文档](/docs/cn/writing-running-appium/windows-app-testing.md)可了解更多查找 appID 的详细方法。 | 例如  `c24c8163-548e-4b84-a466-530178fc0580_scyf5npe3hv32!App`|
-
-本文由 [thanksdanny](https://testerhome.com/thanksdanny) 翻译。由 [lihuazhang](https://github.com/lihuazhang) 校验。
+[Appium Windows Driver repo](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities)

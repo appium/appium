@@ -1,6 +1,6 @@
 ## Selenium Grid
 
-通过服务器参数 `--nodeconfig`，可以将 appium 服务器注册到本地的 [Selenium grid](https://github.com/SeleniumHQ/selenium/wiki/Grid2) ([Grid 的配置文档](http://docs.seleniumhq.org/docs/07_selenium_grid.jsp))
+通过服务器参数 `--nodeconfig`，可以将 appium 服务器注册到本地的 [Selenium grid](https://github.com/SeleniumHQ/selenium/wiki/Grid2)
 
 ```center
 > appium --nodeconfig /path/to/nodeconfig.json
@@ -44,8 +44,6 @@
   }
 }
 ```
-
-[这里](http://www.seleniumhq.org/about/platforms.jsp) 列出了可用的平台。
 
 如果没有给出 `url`、`host` 和 `port`，配置会自动指向 `localhost:whatever-port-Appium-started-on`。
 

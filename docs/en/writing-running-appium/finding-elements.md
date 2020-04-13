@@ -15,7 +15,7 @@ using the [iOS Predicate](/docs/en/writing-running-appium/ios/ios-predicate.md) 
     * `-ios uiautomation` for iOS 9.3 and below
 * `-android uiautomator`: a string corresponding to a recursive element
 search using the [UiAutomator Api](/docs/en/writing-running-appium/android/uiautomator-uiselector.md) (Android-only)
-* `-android datamatcher`: a string corresponding to an [Espresso DataMatcher json](/docs/en/writing-running-appium/android/espresso-datamatcher-uiselector.md) (Android-only)
+* `-android datamatcher`: a string corresponding to an [Espresso DataMatcher json](/docs/en/writing-running-appium/android/espresso-datamatcher-selector.md) (Android-only)
 * `accessibility id`: a string corresponding to a recursive element search
 using the Id/Name that the native Accessibility options utilize.
 

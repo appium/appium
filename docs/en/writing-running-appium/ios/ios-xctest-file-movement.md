@@ -23,7 +23,7 @@ The format of method argument should be the following:
         - You may specify `documents` container type only for bundle ids returned by `ifuse -u <udid> --list-apps`
         - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in the output of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio@documents/`
 
-            <img src='./ios-xctest-file-movement/on_my_iphone.png' width=100>
+            <img src='/docs/en/writing-running-appium/ios/ios-xctest-file-movement/on_my_iphone.png' width=100>
     - The others work as _format 2_
         - Only apps having the flag `UIFileSharingEnabled` in their `info.plist` can be mounted
 - `path_to_the_file_or_folder_inside_container` is the target to push/pull to/from them.
@@ -54,7 +54,7 @@ The file is in _On My iPhone/Keynote_ of _Files_ app.
 
 |Top | On  My iPhone | Keynote |
 |:----:|:----:|:----:|
-|![](./ios-xctest-file-movement/top_files.png)|![](./ios-xctest-file-movement/on_my_iphone.png)|![](./ios-xctest-file-movement/keynote.png)|
+|![](/writing-running-appium/ios/ios-xctest-file-movement/top_files.png)|![](/writing-running-appium/ios/ios-xctest-file-movement/on_my_iphone.png)|![](/writing-running-appium/ios/ios-xctest-file-movement/keynote.png)|
 
 If the file is in deeper place like _On My iPhone/Keynote/Dir1/Dir2_, then the Ruby command should be:
 

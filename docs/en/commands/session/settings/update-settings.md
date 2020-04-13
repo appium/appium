@@ -7,7 +7,7 @@ Update the current setting on the device
 
 ```java
 // Java
-driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, Duration.ofSeconds(5));
+driver.setSetting(Setting.WAIT_FOR_IDLE_TIMEOUT, 5000);
 
 ```
 

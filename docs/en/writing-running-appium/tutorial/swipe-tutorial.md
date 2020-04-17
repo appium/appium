@@ -2,13 +2,14 @@
 
 ### Android vs iOS UI differences
 
-Appium uses 'XCUITest' driver for iOS and 'UIAutomator2','Espresso' for
-Android. Default driver for Android is 'UIAutomator2'.
+Appium uses XCUITest driver for iOS and UIAutomator2, Espresso for
+Android. Default driver for Android is UIAutomator2.
 
-Using default driver settings, we can see elements outside screen with
-iOS, but can't interact with them. We can check their values, but we
-can't touch them. Android 'UIAutomator2' with default settings allows
-you to see only elements on screen. Android 'Espresso' `TODO`.
+With default driver setting we can see elements outside screen on iOS,
+but cannot interact with them. We can check their values, but touch
+works unreliable. Android UIAutomator2 with default settings allows you
+to see only elements located in the current view port. Android
+'Espresso' `TODO`.
 
 While interacting with elements you should always keep in mind these
 differences.

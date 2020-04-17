@@ -226,6 +226,7 @@ const wdio = require("webdriverio");
 const assert = require("assert");
 
 const opts = {
+  path: '/wd/hub',
   port: 4723,
   capabilities: {
     platformName: "Android",

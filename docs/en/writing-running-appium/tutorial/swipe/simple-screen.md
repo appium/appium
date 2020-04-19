@@ -1,13 +1,14 @@
 ## Simple Screen swipe
 
-Start of swipe is important. We can met following elements:
-- application interface/menu e.g. header or footer menu
+Swipe has start and end points. The start point of swipe is most
+important. Following elements may prevent swipe start:
+- application interface/menu e.g. header or footer
 - elements that waiting tap and do not pass touch to scroll view
 
 It is better to start swipe actions at the center of the screen to make
 them more reliable.
 
-![swipe_screen](simple-screen.png)
+![swipe_screen](images/simple-screen.png)
 
 ```java
 /**
@@ -27,30 +28,27 @@ public void swipeScreen(String dir) {
 
     final int PRESS_TIME = 200; // ms
 
-    int screenHeight, screenWidth;
     int edgeBorder = 10; // better avoid edges
     PointOption pointOptionStart, pointOptionEnd;
 
     // init screen variables
     Dimension dims = driver.manage().window().getSize();
-    screenHeight = dims.height;
-    screenWidth = dims.width;
 
     // init start point = center of screen
-    pointOptionStart = PointOption.point(screenWidth / 2, screenHeight / 2);
+    pointOptionStart = PointOption.point(dims.width / 2, dims.height / 2);
 
     switch (dir) {
         case "d": // center of footer
-            pointOptionEnd = PointOption.point(screenWidth / 2, screenHeight - edgeBorder);
+            pointOptionEnd = PointOption.point(dims.width / 2, dims.height - edgeBorder);
             break;
         case "u": // center of header
-            pointOptionEnd = PointOption.point(screenWidth / 2, edgeBorder);
+            pointOptionEnd = PointOption.point(dims.width / 2, edgeBorder);
             break;
         case "l": // center of left side
-            pointOptionEnd = PointOption.point(edgeBorder, screenHeight / 2);
+            pointOptionEnd = PointOption.point(edgeBorder, dims.height / 2);
             break;
         case "r": // center of right side
-            pointOptionEnd = PointOption.point(screenWidth - edgeBorder, screenHeight / 2);
+            pointOptionEnd = PointOption.point(dims.width - edgeBorder, dims.height / 2);
             break;
         default:
             throw new IllegalArgumentException("swipeScreen(): dir: '" + dir + "' NOT supported");

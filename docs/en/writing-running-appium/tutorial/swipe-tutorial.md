@@ -25,8 +25,9 @@ differences.
 1. [Simple example](swipe/android-simple.md)
 2. [Multiple scroll views example](swipe/android-multiple.md)
 3. [Add scroll layout and direction](swipe/android-layout-direction.md)
+4. [Tricks and Tips](swipe/android-tricks.md)
 
-### iOS: 'mobile:scroll' swipe
+### iOS: 'mobile:scroll', 'mobile:swipe' swipe
 
 1. [Direction example](swipe/ios-direction.md)
 2. [Element example](swipe/ios-element.md)

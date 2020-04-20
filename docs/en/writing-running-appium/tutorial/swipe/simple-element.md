@@ -137,7 +137,7 @@ public void swipeElementIOS(MobileElement el, String dir) {
     upBorder = 0;
     downBorder = 0;
 
-    // find rect that overlap screen
+    // find rect that overlaps screen
     if (rect.x < 0) {
         rect.width = rect.width + rect.x;
         rect.x = 0;

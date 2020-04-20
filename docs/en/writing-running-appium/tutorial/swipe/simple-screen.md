@@ -12,12 +12,12 @@ them more reliable.
 
 ```java
 /**
- * Performs screen swipe from center
+ * Performs swipe from the center of screen
  *
- * @param dir d - down, u - up, l - left, r - right
+ * @param dir the direction of swipe
  * @version java-client: 7.3.0
  **/
-public void swipeScreen(String dir) {
+public void swipeScreen(Direction dir) {
     System.out.println("swipeScreen(): dir: '" + dir + "'"); // always log your actions
 
     // Animation default time:
@@ -38,16 +38,16 @@ public void swipeScreen(String dir) {
     pointOptionStart = PointOption.point(dims.width / 2, dims.height / 2);
 
     switch (dir) {
-        case "d": // center of footer
+        case DOWN: // center of footer
             pointOptionEnd = PointOption.point(dims.width / 2, dims.height - edgeBorder);
             break;
-        case "u": // center of header
+        case UP: // center of header
             pointOptionEnd = PointOption.point(dims.width / 2, edgeBorder);
             break;
-        case "l": // center of left side
+        case LEFT: // center of left side
             pointOptionEnd = PointOption.point(edgeBorder, dims.height / 2);
             break;
-        case "r": // center of right side
+        case RIGHT: // center of right side
             pointOptionEnd = PointOption.point(dims.width - edgeBorder, dims.height / 2);
             break;
         default:
@@ -73,6 +73,13 @@ public void swipeScreen(String dir) {
     } catch (InterruptedException e) {
         // ignore
     }
+}
+
+public enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT;
 }
 ```
 

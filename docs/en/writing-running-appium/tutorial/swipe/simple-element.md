@@ -11,10 +11,11 @@ element continues outside screen, then this part will be hidden.
 /**
  * Performs swipe inside element
  *
- * @param dir d - down, u - up, l - left, r - right
+ * @param el  the swipe element
+ * @param dir the direction of swipe
  * @version java-client: 7.3.0
  **/
-public void swipeElementAndroid(MobileElement el, String dir) {
+public void swipeElementAndroid(MobileElement el, Direction dir) {
     System.out.println("swipeElementAndroid(): dir: '" + dir + "'"); // always log your actions
 
     // Animation default time:
@@ -36,25 +37,25 @@ public void swipeElementAndroid(MobileElement el, String dir) {
     edgeBorder = 0;
 
     switch (dir) {
-        case "d": // from up to down
+        case DOWN: // from up to down
             pointOptionStart = PointOption.point(rect.x + rect.width / 2,
                     rect.y + edgeBorder);
             pointOptionEnd = PointOption.point(rect.x + +rect.width / 2,
                     rect.y + rect.height - edgeBorder);
             break;
-        case "u": // from down to up
+        case UP: // from down to up
             pointOptionStart = PointOption.point(rect.x + rect.width / 2,
                     rect.y + rect.height - edgeBorder);
             pointOptionEnd = PointOption.point(rect.x + rect.width / 2,
                     rect.y + edgeBorder);
             break;
-        case "l": // from right to left
+        case LEFT: // from right to left
             pointOptionStart = PointOption.point(rect.x + rect.width - edgeBorder,
                     rect.y + rect.height / 2);
             pointOptionEnd = PointOption.point(rect.x + edgeBorder,
                     rect.y + rect.height / 2);
             break;
-        case "r": // from left to right
+        case RIGHT: // from left to right
             pointOptionStart = PointOption.point(rect.x + edgeBorder,
                     rect.y + rect.height / 2);
             pointOptionEnd = PointOption.point(rect.x + rect.width - edgeBorder,
@@ -102,10 +103,11 @@ moments:
 /**
  * Performs swipe inside element
  *
- * @param dir d - down, u - up, l - left, r - right
+ * @param el  the swipe element
+ * @param dir the direction of swipe
  * @version java-client: 7.3.0
  **/
-public void swipeElementIOS(MobileElement el, String dir) {
+public void swipeElementIOS(MobileElement el, Direction dir) {
     System.out.println("swipeElementIOS(): dir: '" + dir + "'"); // always log your actions
 
     // Animation default time:
@@ -137,7 +139,7 @@ public void swipeElementIOS(MobileElement el, String dir) {
     upBorder = 0;
     downBorder = 0;
 
-    // find rect that overlaps screen
+    // find rect that overlap screen
     if (rect.x < 0) {
         rect.width = rect.width + rect.x;
         rect.x = 0;
@@ -152,25 +154,25 @@ public void swipeElementIOS(MobileElement el, String dir) {
         rect.height = dims.height;
 
     switch (dir) {
-        case "d": // from up to down
+        case DOWN: // from up to down
             pointOptionStart = PointOption.point(rect.x + rect.width / 2,
                     rect.y + upBorder);
             pointOptionEnd = PointOption.point(rect.x + rect.width / 2,
                     rect.y + rect.height - downBorder);
             break;
-        case "u": // from down to up
+        case UP: // from down to up
             pointOptionStart = PointOption.point(rect.x + rect.width / 2,
                     rect.y + rect.height - downBorder);
             pointOptionEnd = PointOption.point(rect.x + rect.width / 2,
                     rect.y + upBorder);
             break;
-        case "l": // from right to left
+        case LEFT: // from right to left
             pointOptionStart = PointOption.point(rect.x + rect.width - rightBorder,
                     rect.y + rect.height / 2);
             pointOptionEnd = PointOption.point(rect.x + leftBorder,
                     rect.y + rect.height / 2);
             break;
-        case "r": // from left to right
+        case RIGHT: // from left to right
             pointOptionStart = PointOption.point(rect.x + leftBorder,
                     rect.y + rect.height / 2);
             pointOptionEnd = PointOption.point(rect.x + rect.width - rightBorder,

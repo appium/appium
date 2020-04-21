@@ -7,7 +7,7 @@ Android. The default driver for Android is UIAutomator2.
 
 With default driver settings we can see elements outside of the view
 port on iOS, but cannot interact with them. We can check their values,
-but touch works unreliable. Android UIAutomator2 with default settings
+but touches are not reliable. Android UIAutomator2 with default settings
 allows you to see only elements located in the current view port.
 Android 'Espresso' `TODO`.
 

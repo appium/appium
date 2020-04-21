@@ -3,15 +3,16 @@
 ### Android: UIAutomator2
 
 With UIAutomator2 driver, by default, we see only elements on screen. If
-element continues outside screen, then this part will be hidden.
+an elements container covers the area inside and outside of the current
+view port then a part of its content won't be visible.
 
 ![simple-element-swipe.png](images/simple-element-swipe.png)
 
 ```java
 /**
- * Performs swipe inside element
+ * Performs swipe inside an element
  *
- * @param el  the swipe element
+ * @param el  the element to swipe
  * @param dir the direction of swipe
  * @version java-client: 7.3.0
  **/
@@ -21,7 +22,7 @@ public void swipeElementAndroid(MobileElement el, Direction dir) {
     // Animation default time:
     //  - Android: 300 ms
     //  - iOS: 200 ms
-    // final value depends on your app and could be larger
+    // final value depends on your app and could be greater
     final int ANIMATION_TIME = 200; // ms
 
     final int PRESS_TIME = 200; // ms
@@ -40,7 +41,7 @@ public void swipeElementAndroid(MobileElement el, Direction dir) {
         case DOWN: // from up to down
             pointOptionStart = PointOption.point(rect.x + rect.width / 2,
                     rect.y + edgeBorder);
-            pointOptionEnd = PointOption.point(rect.x + +rect.width / 2,
+            pointOptionEnd = PointOption.point(rect.x + rect.width / 2,
                     rect.y + rect.height - edgeBorder);
             break;
         case UP: // from down to up
@@ -89,21 +90,21 @@ public void swipeElementAndroid(MobileElement el, Direction dir) {
 
 ### iOS: XCUITest
 
-XCUITest shows elements outside screen. It is strongly suggested to use
+XCUITest shows elements outside screen. It is strongly advised to use
 either screen swipe or 'mobile:scroll' / 'mobile:swipe' methods. If you
-still need or prefer to try element method you should catch following
-moments:
-1. Check that start and end points are on screen.
+still need or prefer to try element method you should consider the
+following:
+1. Check that both start and end points are on screen.
 2. Scrollview is often a background element. Any header/footer or other
-   elements overlap it and limit swipe possibilities. Try to fix it
-   configuring correct borders. When borders differ per screen - make
-   them configurable via swipe function variables.
+   elements overlap it and limit swipe possibilities. Try to fix it by
+   configuring correct borders. If borders differ per screen - make them
+   configurable via swipe function variables.
 
 ```java
 /**
- * Performs swipe inside element
+ * Performs swipe inside an element
  *
- * @param el  the swipe element
+ * @param el  the element to swipe
  * @param dir the direction of swipe
  * @version java-client: 7.3.0
  **/
@@ -113,7 +114,7 @@ public void swipeElementIOS(MobileElement el, Direction dir) {
     // Animation default time:
     //  - Android: 300 ms
     //  - iOS: 200 ms
-    // final value depends on your app and could be larger
+    // final value depends on your app and could be greater
     final int ANIMATION_TIME = 200; // ms
 
     final int PRESS_TIME = 200; // ms
@@ -128,8 +129,7 @@ public void swipeElementIOS(MobileElement el, Direction dir) {
     // check element overlaps screen
     if (rect.x >= dims.width || rect.x + rect.width <= 0
             || rect.y >= dims.height || rect.y + rect.height <= 0) {
-        System.err.println("swipeElementIOS(): Element outside screen");
-        return;
+        throw new IllegalArgumentException("swipeElementIOS(): Element outside screen");
     }
 
     // init borders per your app screen

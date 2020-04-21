@@ -23,7 +23,7 @@ public void swipeScreen(Direction dir) {
     // Animation default time:
     //  - Android: 300 ms
     //  - iOS: 200 ms
-    // final value depends on your app and could be larger
+    // final value depends on your app and could be greater
     final int ANIMATION_TIME = 200; // ms
 
     final int PRESS_TIME = 200; // ms

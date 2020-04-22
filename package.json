@@ -43,7 +43,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.0",
     "appium-base-driver": "^5.0.0",
-    "appium-support": "2.x",
+    "appium-support": "^2.44.0",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",

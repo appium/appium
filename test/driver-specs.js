@@ -79,7 +79,7 @@ describe('AppiumDriver', function () {
           new FakeDriver(),
           new FakeDriver(),
         ];
-        let mockFakeDrivers = _.map(fakeDrivers, (fd) => {return sinon.mock(fd);});
+        let mockFakeDrivers = _.map(fakeDrivers, (fd) => sinon.mock(fd));
         mockFakeDrivers[0].expects('deleteSession')
           .once();
         mockFakeDrivers[1].expects('deleteSession')

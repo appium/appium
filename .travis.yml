@@ -19,14 +19,14 @@ jobs:
       name: node 10
       before_script:
         - npm outdated || true
-        - node . driver install --npm appium-fake-driver@0.8.0
+        - node . driver install --source=npm appium-fake-driver@0.8.0
       script: npm run test && npm run e2e-test
       after_script: npm run coverage
     - stage:
       name: node 12
       before_script:
         - npm outdated || true
-        - node . driver install --npm appium-fake-driver@0.8.0
+        - node . driver install --source=npm appium-fake-driver@0.8.0
       script: npm run test && npm run e2e-test
       node_js: "12"
     - stage:

@@ -1,7 +1,7 @@
 ## Low-Level Insights on Android Input Events
 
 
-### What Are Events
+### What Are Input Events
 
 Android OS uses events concept to handle signals received from different input devices.
 It supports a wide range of different devices, such as touch screen, light pen, mouse, keyboard,
@@ -10,7 +10,7 @@ We are particularly interested in the part of these APIs, which are responsible 
 keyboard events generation/emulation.
 
 
-### How Events Are Working
+### How Input Events Are Working
 
 An event is an object, which is generated in response to a signal from an input device.
 These objects are then delivered to the corresponding kernel subsystem, which processes them
@@ -29,9 +29,10 @@ In order to perform events sequence, which is recognized as single tap, it is ne
 the following motion events:
  - `ACTION_POINTER_DOWN`
  - wait 125ms
- - `ACTION_POINTER_UP`. The `startTime` property should be set to the same timestamp as for `ACTION_POINTER_DOWN`
+ - `ACTION_POINTER_UP`. The `downTime` property should be set to the same timestamp as for `ACTION_POINTER_DOWN`
 
-It is also important, that coordinates and other properties of both the starting and the closing event should be equal. The `MotionEvent` object itself could be created via [obtain](https://developer.android.com/reference/android/view/MotionEvent#obtain(long,%20long,%20int,%20float,%20float,%20int)) API, where parameters are the corresponding event properties.
+It is also important, that coordinates and other properties of both the starting and the closing event should be equal except of the `eventTime` one, which is always equal to the current system timestamp in milliseconds (`SystemClock.uptimeMillis()`).
+The `MotionEvent` object itself could be created via [obtain](https://developer.android.com/reference/android/view/MotionEvent#obtain(long,%20long,%20int,%20float,%20float,%20int)) API, where parameters are the corresponding event properties.
 
 After events are created they must be passed to the system for execution.
 Such action is not secure, so it is only possible in instrumented tests via [injectInputEvent](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/IUiAutomationConnection.aidl) method of `IUiAutomationConnection` interface.
@@ -46,18 +47,17 @@ Although, some actions, like multi-finger swipe,
 are really complicated and require a lot of events to be generated
 with correct properties and timings. The OS simply ignores given events if they don't follow
 internal action requirements. There is also a little assistance from UiAutomator framework,
-because Google only has wrappers for a limited set of simple actions,
-like `tap`, `drag` or `swipe` there.
+because Google only has wrappers for a limited set of simple actions, like `tap`, `drag` or `swipe`.
 So, in order to generate two-finger symmetric swipe we need to supply the following events chain:
  - `ACTION_POINTER_DOWN` (finger1)
  - `ACTION_POINTER_DOWN` (finger2)
- - start a loop, that generates `ACTION_POINTER_MOVE` event each 20 ms for both `finger1` and `finger2` until `ACTION_POINTER_UP` is done. The `startTime` should be set to the same timestamp as for the corresponding `ACTION_POINTER_DOWN`. The coordinates of each move event should be points belonging to the path between the corresponding start and end point coordinates normalized by the current timestamp.
- - `ACTION_POINTER_UP` (finger1) The `startTime` property should be set to the same timestamp as for the corresponding `ACTION_POINTER_DOWN`
- - `ACTION_POINTER_UP` (finger2) The `startTime` property should be set to the same timestamp as for the corresponding `ACTION_POINTER_DOWN`
+ - start a loop, that generates `ACTION_POINTER_MOVE` event each `20ms` for both `finger1` and `finger2` until `ACTION_POINTER_UP` is performed. The `downTime` should be set to the same timestamp as for the corresponding `ACTION_POINTER_DOWN`. The coordinates of each move event should be points belonging to the path between the corresponding start and end point coordinates normalized by the current timestamp (x0 + sqrt(sqr(x0) + sqr(x1))) * k, y0 + sqrt(sqr(y0) + sqr(y1))) * k).
+ - `ACTION_POINTER_UP` (finger1) The `downTime` property should be set to the same timestamp as for the corresponding `ACTION_POINTER_DOWN`
+ - `ACTION_POINTER_UP` (finger2) The `downTime` property should be set to the same timestamp as for the corresponding `ACTION_POINTER_DOWN`
 
-Google uses 5ms as interval duration in UiAutomator code,
-but according to our observation this value is too little,
-which causes noticeable delays in action execution.
+Google uses 5ms as interval duration between move events in UiAutomator code,
+but according to our observations this value is too little,
+which causes noticeable delays in actions execution.
 
 
 ### Further Reading

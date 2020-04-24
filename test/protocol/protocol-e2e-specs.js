@@ -205,7 +205,7 @@ describe('Protocol', function () {
       res.body.should.eql({
         status: 405,
         value: {
-          message: 'Method is not implemented'
+          message: 'Method has not yet been implemented'
         },
         sessionId: 'foo'
       });

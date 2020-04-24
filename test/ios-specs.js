@@ -310,7 +310,7 @@ describe('ios', function () {
     });
     it('fix', async function () {
       removeColors(await check.fix()).should.equal('set-simulator-location is needed to set location for Simulator. ' +
-        'Please real https://github.com/lyft/set-simulator-location to install it');
+        'Please read https://github.com/lyft/set-simulator-location to install it');
     });
   }));
 

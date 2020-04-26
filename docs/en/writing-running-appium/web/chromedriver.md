@@ -37,8 +37,8 @@ appium --chromedriver-executable /path/to/my/chromedriver
 
 ### Chromedriver/Chrome compatibility
 
-The list of Chromedriver versions and their corresponding minimum
-Chrome version that is automatable could be found at https://raw.githubusercontent.com/appium/appium-chromedriver/master/config/mapping.json
+The list of Chromedriver versions and their matching minimum
+Chrome versions could be found at https://raw.githubusercontent.com/appium/appium-chromedriver/master/config/mapping.json
 
 Since version *2.46* Google has changed the rules for Chromedriver versioning, so now the major Chromedriver version corresponds to the major web view/browser version, that it can automate. Follow the [Version Selection](https://chromedriver.chromium.org/downloads/version-selection) document in order to manually find the Chromedriver, that supports your current browser/web view if its major version is equal or above *73*.
 

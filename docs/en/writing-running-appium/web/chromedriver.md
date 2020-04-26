@@ -37,58 +37,8 @@ appium --chromedriver-executable /path/to/my/chromedriver
 
 ### Chromedriver/Chrome compatibility
 
-The following is a list of Chromedriver versions and their corresponding minimum
-Chrome version that is automatable:
-
-| Version | Minimum Chrome Version | Link to Chromedriver                                                              |
-|---------|------------------------|-----------------------------------------------------------------------------------|
-| 2.46    | 71                     | [v2.46 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.46/) |
-| 2.45    | 70                     | [v2.45 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.45/) |
-| 2.44    | 69.0.3497.0            | [v2.44 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.44/) |
-| 2.43    | 69.0.3497.0            | [v2.43 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.43/) |
-| 2.42    | 68.0.3440.0            | [v2.42 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.42/) |
-| 2.41    | 67.0.3360.0            | [v2.41 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.41/) |
-| 2.40    | 66.0.3359.0            | [v2.40 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.40/) |
-| 2.39    | 66.0.3359.0            | [v2.39 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.39/) |
-| 2.38    | 65.0.3325.0            | [v2.38 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.38/) |
-| 2.37    | 64.0.3282.0            | [v2.37 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.37/) |
-| 2.36    | 63.0.3239.0            | [v2.36 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.36/) |
-| 2.35    | 62.0.3202.0            | [v2.35 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.35/) |
-| 2.34    | 61.0.3163.0            | [v2.34 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.34/) |
-| 2.33    | 60.0.3112.0            | [v2.33 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.33/) |
-| 2.32    | 59.0.3071.0            | [v2.32 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.32/) |
-| 2.31    | 58.0.3029.0            | [v2.31 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.31/) |
-| 2.30    | 58.0.3029.0            | [v2.30 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.30/) |
-| 2.29    | 57.0.2987.0            | [v2.29 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.29/) |
-| 2.28    | 55.0.2883.0            | [v2.28 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.28/) |
-| 2.27    | 54.0.2840.0            | [v2.27 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.27/) |
-| 2.26    | 53.0.2785.0            | [v2.26 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.26/) |
-| 2.25    | 53.0.2785.0            | [v2.25 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.25/) |
-| 2.24    | 52.0.2743.0            | [v2.24 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.24/) |
-| 2.23    | 51.0.2704.0            | [v2.23 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.23/) |
-| 2.22    | 49.0.2623.0            | [v2.22 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.22/) |
-| 2.21    | 46.0.2490.0            | [v2.21 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.21/) |
-| 2.20    | 43.0.2357.0            | [v2.20 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.20/) |
-| 2.19    | 43.0.2357.0            | [v2.19 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.19/) |
-| 2.18    | 43.0.2357.0            | [v2.18 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.18/) |
-| 2.17    | 42.0.2311.0            | [v2.17 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.17/) |
-| 2.16    | 42.0.2311.0            | [v2.16 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.16/) |
-| 2.15    | 40.0.2214.0            | [v2.15 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.15/) |
-| 2.14    | 39.0.2171.0            | [v2.14 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.14/) |
-| 2.13    | 38.0.2125.0            | [v2.13 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.13/) |
-| 2.12    | 36.0.1985.0            | [v2.12 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.12/) |
-| 2.11    | 36.0.1985.0            | [v2.11 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.11/) |
-| 2.10    | 33.0.1751.0            | [v2.10 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.10/) |
-| 2.9     | 31.0.1650.59           | [v2.9 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.9/)   |
-| 2.8     | 30.0.1573.2            | [v2.8 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.8/)   |
-| 2.7     | 30.0.1573.2            | [v2.7 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.7/)   |
-| 2.6     | 29.0.1545.0            | [v2.6 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.6/)   |
-| 2.5     | 29.0.1545.0            | [v2.5 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.5/)   |
-| 2.4     | 29.0.1545.0            | [v2.4 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.4/)   |
-| 2.3     | 28.0.1500.0            | [v2.3 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.3/)   |
-| 2.2     | 27.0.1453.0            | [v2.2 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.2/)   |
-| 2.1     | 27.0.1453.0            | [v2.1 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.1/)   |
-| 2.0     | 27.0.1453.0            | [v2.0 (link)](https://chromedriver.storage.googleapis.com/index.html?path=2.0/)   |
+The list of Chromedriver versions and their matching minimum
+Chrome versions could be found at https://raw.githubusercontent.com/appium/appium-chromedriver/master/config/mapping.json
 
 Since version *2.46* Google has changed the rules for Chromedriver versioning, so now the major Chromedriver version corresponds to the major web view/browser version, that it can automate. Follow the [Version Selection](https://chromedriver.chromium.org/downloads/version-selection) document in order to manually find the Chromedriver, that supports your current browser/web view if its major version is equal or above *73*.
 

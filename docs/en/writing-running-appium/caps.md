@@ -157,12 +157,13 @@ These Capabilities are available only on the [UiAutomator2 Driver](/docs/en/driv
 
 |Capability|Description|Values|
 |----|-----------|-------|
-|`appWaitForLaunch`| Tries to launch the app under test without [-W](https://developer.android.com/studio/command-line/adb#am) option in session creation. It might help when the session creation does not proceed since `shell am start` does not respond. Defaults to `true` | `false` or `true` |
-|`uiautomator2ServerLaunchTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
-|`uiautomator2ServerInstallTimeout`|Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
-|`skipServerInstallation`|Skip uiAutomator2 server installation and use uiAutomator2 server from the device. Can be used to improve startup performance when an uiAutomator2 server in proper version is already installed on the device. Defaults to `false` | `true` or `false`|
+|`appWaitForLaunch`| Tries to launch the app under test without [-W](https://developer.android.com/studio/command-line/adb#am) option in session creation. It might help when the session creation does not proceed since `shell am start` does not respond. Defaults to `true`. | `false` or `true` |
+|`disableSuppressAccessibilityService`| Set [FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES](https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES) to allow existing accessibility service continue to run, and a new one may start for Appium. It helps to test the app under test which has accessibility feature such as TalkBack. Appium will not specify the flag if nothing is provided. The flag requires Android API Level 24+. | `false` or `true` |
+|`mjpegServerPort`| If specified this is the local port that will be bound to the `appium-uiautomator2-server`'s MJPEG screenshot stream. This can be used in conjunction with `mjpegScreenshotUrl`. `Integer` value default `null`. | any `Integer`, recommend: `9200` -> `9299` for consistency w/ `serverPort` range |
+|`skipServerInstallation`| Skip uiAutomator2 server installation and use uiAutomator2 server from the device. Can be used to improve startup performance when an uiAutomator2 server in proper version is already installed on the device. Defaults to `false`. | `false` or `true` |
+|`uiautomator2ServerInstallTimeout`| Timeout in milliseconds used to wait for an uiAutomator2 server to be installed. Defaults to `20000` |e.g., `20000`|
+|`uiautomator2ServerLaunchTimeout`| Timeout in milliseconds used to wait for an uiAutomator2 server to launch. Defaults to `20000` |e.g., `20000`|
 |`userProfile`| Enforce user profile as the given parameter if the value was provided. It should be an integer. | e.g., `11` |
-|`disableSuppressAccessibilityService`| Set [FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES](https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES) to allow existing accessibility service continue to run, and a new one may start for Appium. It helps to test the app under test which has accessibility feature such as TalkBack. Appium will not specify the flag if nothing is provided. The flag requires Android API Level 24+. | `true`, `false` |
 
 #### Espresso Only
 

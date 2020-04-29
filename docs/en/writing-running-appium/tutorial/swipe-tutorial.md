@@ -29,8 +29,9 @@ differences.
 
 ### iOS: 'mobile:scroll', 'mobile:swipe' swipe
 
-1. [Direction example](swipe/ios-direction.md)
-2. [Element example](swipe/ios-element.md)
+1. [Screen swipe](swipe/ios-mobile-screen.md)
+2. [Element swipe](swipe/ios-mobile-element.md)
+3. [Element search swipe](swipe/ios-mobile-element-search.md)
 
 ### iOS: 'pickerWheels' swipe
 

@@ -261,6 +261,7 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 |`enableAsyncExecuteFromHttps`| capability to allow simulators to execute asynchronous JavaScript on pages using HTTPS. Defaults to `false` | `true` or `false` |
 |`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
 |`webkitDebugProxyPort`| (Real device only) Port to which `ios-webkit-debug-proxy` is connected, during real device tests. Default is `27753`.|`12021`|
+|`fullContextList` | Returns the details available context information for the [get available context](docs/en/commands/context/get-contexts.md) command. It includes WebView name, title, URL and the bundle identifier. Defaults to `false`. | `true` or `false` |
 
 #### iOS Only, using XCUITest
 

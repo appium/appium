@@ -60,8 +60,8 @@ MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAut
 MobileElement element;
 
 // FindElement
-MobileElement element = (MobileElement) driver.findElement(
-        MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+        "new UiScrollable(new UiSelector().scrollable(true))" +
          ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\"))"));
 
 ```
@@ -75,8 +75,8 @@ MobileElement element = (MobileElement) driver.findElement(
 MobileElement element;
 
 // FindElement
-MobileElement element = (MobileElement) driver.findElement(
-        MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+        "new UiScrollable(new UiSelector().scrollable(true))" +
          ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\").text(\"exact_text\"))"));
 
 ```
@@ -90,8 +90,8 @@ value sets search swipes tries after which search will be stopped.
 ```java
 // set max swipes to 10
 // FindElement
-MobileElement element = (MobileElement) driver.findElement(
-        MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(10)" +
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+        "new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(10)" +
          ".scrollIntoView(new UiSelector().text(\"exact_text\"))"));
 
 ```

@@ -87,6 +87,7 @@ public void mobileSwipeElementIOS(MobileElement el, Direction dir) {
         default:
             throw new IllegalArgumentException("mobileSwipeElementIOS(): dir: '" + dir + "' NOT supported");
     }
+    scrollObject.put("element", el.getId());
     try {
         driver.executeScript("mobile:swipe", scrollObject);
         Thread.sleep(ANIMATION_TIME); // always allow swipe action to complete

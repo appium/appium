@@ -7,13 +7,13 @@ To swipe inside element you need add element id into swipe methods.
 MobileElement el = (MobileElement) driver.findElement(MobileBy.id("my_id"));
 
 // execute scroll
-mobileScrollElementIOS(el, SwipeExamples.Direction.RIGHT);
-mobileScrollElementIOS(el, SwipeExamples.Direction.LEFT);
+mobileScrollElementIOS(el, Direction.RIGHT);
+mobileScrollElementIOS(el, Direction.LEFT);
 
 // execute swipe
 // !remember! to execute swipe in same direction as scroll use reverse direction
-mobileSwipeElementIOS(el, SwipeExamples.Direction.LEFT);
-mobileSwipeElementIOS(el, SwipeExamples.Direction.RIGHT);
+mobileSwipeElementIOS(el, Direction.LEFT);
+mobileSwipeElementIOS(el, Direction.RIGHT);
 
 /**
  * Performs scroll inside element

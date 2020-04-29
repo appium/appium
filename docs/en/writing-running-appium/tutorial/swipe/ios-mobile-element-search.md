@@ -53,7 +53,7 @@ Example of screen scroll and element visibility check.
 
 ```java
 String pre = "label == 'exact_text'";
-mobileScrollScreenByPredicateIOS(pre, SwipeExamples.Direction.DOWN);
+mobileScrollScreenByPredicateIOS(pre, Direction.DOWN);
 
 /**
  * Performs screen scroll by predicate string

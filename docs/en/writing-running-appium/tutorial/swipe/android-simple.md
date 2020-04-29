@@ -34,19 +34,21 @@ direction from bottom to top screen.
 ```java
 // Page object
 @AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().text(\"exact_text\"))")
+        ".scrollIntoView(new UiSelector().text(\"exact_text\"))")
 MobileElement element;
 
 @AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().textContains(\"part_text\"))")
+        ".scrollIntoView(new UiSelector().textContains(\"part_text\"))")
 MobileElement element;
 
 // FindElement
-MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().text(\"exact_text\"))"));
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+        "new UiScrollable(new UiSelector().scrollable(true))" +
+         ".scrollIntoView(new UiSelector().text(\"exact_text\"))"));
 
-MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().textContains(\"part_text\"))"));
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+        "new UiScrollable(new UiSelector().scrollable(true))" +
+         ".scrollIntoView(new UiSelector().textContains(\"part_text\"))"));
 ```
 
 ### Search by id
@@ -54,12 +56,13 @@ MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAut
 ```java
 // Page object
 @AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\"))")
+        ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\"))")
 MobileElement element;
 
 // FindElement
-MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\"))"));
+MobileElement element = (MobileElement) driver.findElement(
+        MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
+         ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\"))"));
 
 ```
 
@@ -68,12 +71,28 @@ MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAut
 ```java
 // Page object
 @AndroidFindBy(uiAutomator = "new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\").text(\"exact_text\"))")
+        ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\").text(\"exact_text\"))")
 MobileElement element;
 
 // FindElement
-MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
-    ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\").text(\"exact_text\"))"));
+MobileElement element = (MobileElement) driver.findElement(
+        MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true))" +
+         ".scrollIntoView(new UiSelector().resourceIdMatches(\".*part_id.*\").text(\"exact_text\"))"));
+
+```
+
+
+### Long view problem
+
+With some long views we need to increase "setMaxSearchSwipes". This
+value sets search swipes tries after which search will be stopped.
+
+```java
+// set max swipes to 10
+// FindElement
+MobileElement element = (MobileElement) driver.findElement(
+        MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(10)" +
+         ".scrollIntoView(new UiSelector().text(\"exact_text\"))"));
 
 ```
 

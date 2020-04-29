@@ -18,6 +18,7 @@ mobileSwipeElementIOS(el, SwipeExamples.Direction.RIGHT);
 /**
  * Performs scroll inside element
  *
+ * @param el  the element to scroll
  * @param dir the direction of scroll
  * @version java-client: 7.3.0
  **/
@@ -59,6 +60,7 @@ public void mobileScrollElementIOS(MobileElement el, Direction dir) {
 /**
  * Performs swipe inside element
  *
+ * @param el  the element to swipe
  * @param dir the direction of swipe
  * @version java-client: 7.3.0
  **/

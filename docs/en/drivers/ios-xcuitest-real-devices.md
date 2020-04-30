@@ -238,3 +238,4 @@ for this).
 1. Make sure that you can run your tests against the Simulator.
 1. Make sure UI Automation is enabled on your device. Settings -> Developer ->
    Enable UI Automation
+1. Consider generating a provisioning profile with `.xctrunner` identifier if you do not want to generate a wildcard one for manual configuration. The `.xctrunner` config support has been added since Xcode 11. [A reference](https://github.com/appium/appium/issues/13610)

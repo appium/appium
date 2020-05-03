@@ -1,8 +1,9 @@
 ## Android 'UIScrollable' swipe: Multiple scroll views example
 
-With more then one scrollView on screen, there is a chance, that
-UIScrollable fails to make scroll of needed view. In such case we need
-specify needed view with "new UiSelector().scrollable(true)".
+With more then one scrollView on the screen, there is a chance, that
+UIScrollable fails to scroll to the destination subview. In such case we
+would need to specify the locator of the destination subview as "new
+UiSelector().scrollable(true)".
 
 ### By instance
 

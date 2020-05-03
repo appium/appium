@@ -1,9 +1,10 @@
 ## Android 'UIScrollable' swipe: Add scroll layout
 
-ScrollView can be horizontal and vertical. When UIAutomator fails
-automatically scroll, specifying scrollView layout can solve problem.
+There are horizontal or vertical scroll views. If UIAutomator fails to
+automatically perform the scroll then explicitly specifying the layout
+could solve the issue.
 
-### Add scrollView layout
+### Set scroll view layout
 
 ```java
 // setAsVerticalList
@@ -19,3 +20,4 @@ MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAut
          ".scrollIntoView(new UiSelector().text(\"exact_text\"))"));
 
 ```
+

@@ -1,31 +1,33 @@
 ## Android 'UIScrollable' swipe: Simple example
 
-UIScrollable is powerful Android class that searching elements in
-scrollable layout. In most cases you should use "scrollIntoView" class
-which performs scroll action until needed element will be found on
-screen.
+UIScrollable is a powerful Android class that performs element lookups
+in scrollable layouts. In most cases you should use "scrollIntoView"
+class which performs scroll action until the destination element is
+found on the screen.
 
 Android developer
 [documentation](https://developer.android.com/reference/androidx/test/uiautomator/UiScrollable)
 for UIScrollable.
 
-We can use it with following:
-- elements in list (e.g. country list)
-- any element outside screen (e.g. input field, text or button)
+We can use UIScrollable swipe in following cases:
+- search elements in a list (e.g. country list)
+- search elements outside of the screen (e.g. input field, text or
+  button)
 
-ScrollIntoView has UiSelector, as search criteria input, that allows you
+ScrollIntoView has UiSelector as search criteria input that allows you
 to find elements by:
 - by text (exact, contains, match, starts with or regex)
 - id (exact or regex)
-- some other methods (less used) see in Android developer documentation
-- combination of available search methods
+- some other methods (rarely used) see in Android developer
+  documentation
+- a combination of available search methods
 
 Android developer
 [documentation](https://developer.android.com/reference/androidx/test/uiautomator/UiSelector)
 for UiSelector.
 
-With simple example we assume that we have one scrolling view and scroll
-direction from bottom to top screen.
+In a simple example we assume that we have one scrolling view and scroll
+direction from the bottom to the top of the screen.
 
 ![android-simple](images/android-simple.png)
 
@@ -82,10 +84,11 @@ MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAut
 ```
 
 
-### Long view problem
+### Long view issue
 
-With some long views we need to increase "setMaxSearchSwipes". This
-value sets search swipes tries after which search will be stopped.
+For some longer views it is necessary to increase "setMaxSearchSwipes".
+This value allows to set the maximum count of swipe retries made until
+the search is stopped.
 
 ```java
 // set max swipes to 10

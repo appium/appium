@@ -11,7 +11,7 @@ import { getGitRev, getBuildInfo, checkNodeOk, warnNodeDeprecations,
 import getParser from '../lib/parser';
 import logger from '../lib/logger';
 import { fs } from 'appium-support';
-import request from 'request-promise';
+import axios from 'axios';
 
 let should = chai.should();
 chai.use(chaiAsPromised);
@@ -45,7 +45,7 @@ describe('Config', function () {
       let getStub;
       beforeEach(function () {
         mockFs = sinon.mock(fs);
-        getStub = sinon.stub(request, 'get');
+        getStub = sinon.stub(axios, 'get');
       });
       afterEach(function () {
         getStub.restore();

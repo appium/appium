@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.17.1-beta.0",
+  "version": "1.18.0-beta.0",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -53,7 +53,7 @@
     "appium-tizen-driver": "^1.1.1-beta.4",
     "appium-uiautomator2-driver": "^1.37.1",
     "appium-windows-driver": "1.x",
-    "appium-xcuitest-driver": "^3.0.0",
+    "appium-xcuitest-driver": "^3.22.0",
     "appium-youiengine-driver": "^1.2.0",
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
@@ -78,7 +78,7 @@
     "prepare": "gulp prepublish",
     "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
     "postpublish": "npm run restore-shrinkwrap",
-    "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap && npm install --only=dev --no-shrinkwrap) && npm run check-pruned-shrinkwrap",
+    "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap && npm install --only=dev --no-shrinkwrap)",
     "restore-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
     "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
     "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",

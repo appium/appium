@@ -1,3 +1,22 @@
+CHANGES IN VERSION 1.17.1 (FROM 1.17.0)
+===================================
+
+Appium 1.17.1 is a patch release
+
+### iOS (XCUITest)
+* feature: get idb working under launchWithIDB cap (#1193)
+* feature: Add mobile command to get device time (#1190)
+* feature: Add mobile command for tapWithNumberOfTaps (#1184)
+* fix: datetime retrieval for real devices (#1189) (#1192)
+
+## iOS (Web)
+* feature: allow safari alert with block/allow buttons to be handled (#1185)
+* fix: cookie functions should not get proxied to wda ever (#1182)
+* fix: wait for atom finish before checking for alerts (#1183)
+* fix: properly handle promise during wait for atom (#1187) …
+* fix: do not send Target.exists on iOS 13.4 (#219)
+
+
 CHANGES IN VERSION 1.17.0 (FROM 1.16.0)
 ===================================
 

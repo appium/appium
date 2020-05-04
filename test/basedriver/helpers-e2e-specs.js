@@ -140,7 +140,7 @@ describe('app download and configuration', function () {
         });
         it('should handle zip file that cannot be downloaded', async function () {
           await configureApp(`${serverUrl}/missing/FakeIOSApp.app.zip`, '.app')
-            .should.eventually.be.rejectedWith(/Problem downloading app from url/);
+            .should.eventually.be.rejected;
         });
         it('should handle invalid protocol', async function () {
           await configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')

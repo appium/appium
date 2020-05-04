@@ -7,8 +7,7 @@ Appium 1.17.1 is a patch release
 * feature: get idb working under launchWithIDB cap (#1193)
 * feature: Add mobile command to get device time (#1190)
 * feature: Add mobile command for tapWithNumberOfTaps (#1184)
-* fix: ensure unix timestamp is in utc (#1189)
-* fix: Tune the usage of timeZone value retrieved from lockdown (#1192)
+* fix: datetime retrieval for real devices (#1189) (#1192)
 
 ## iOS (Web)
 * feature: allow safari alert with block/allow buttons to be handled (#1185)

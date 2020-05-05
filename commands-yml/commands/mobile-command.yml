@@ -30,6 +30,7 @@
       | mobile:doubleTap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-doubleTap)  | | |
       | mobile:touchAndHold | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-touchAndHold)  | | |
       | mobile:twoFingerTap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-twoFingerTap)  |  | |
+      | mobile:tapWithNumberOfTaps | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-tapWithNumberOfTaps)  |  | |
       | mobile:tap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-tap)  | | |
       | mobile:dragFromToForDuration | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-dragFromToForDuration)  | | |
       | mobile:selectPickerWheelValue | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-selectPickerWheelValue)  | | |

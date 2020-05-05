@@ -49,8 +49,6 @@
     "lru-cache": "^5.0.0",
     "method-override": "^3.0.0",
     "morgan": "^1.9.0",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.5",
     "serve-favicon": "^2.4.5",
     "source-map-support": "^0.5.5",
     "validate.js": "^0.13.0",

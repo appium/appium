@@ -396,7 +396,6 @@ describe('Protocol', function () {
         }).should.eventually.be.rejectedWith(/400/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
-        // let {status, value, sessionId} = await request({
         const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',

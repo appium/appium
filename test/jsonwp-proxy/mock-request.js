@@ -21,17 +21,17 @@ function resFixture (url, method) {
 }
 
 async function request (opts) { // eslint-disable-line require-await
-  if (/badurl$/.test(opts.url)) {
+  const {url, method, json} = opts;
+  if (/badurl$/.test(url)) {
     throw new Error('noworky');
   }
 
-  let [statusCode, body] = resFixture(opts.url, opts.method, opts.json);
-  let response = {
-    statusCode,
+  const [status, data] = resFixture(url, method, json);
+  return {
+    status,
     headers: {'content-type': 'application/json; charset=utf-8'},
-    body
+    data,
   };
-  return response;
 }
 
 export default request;

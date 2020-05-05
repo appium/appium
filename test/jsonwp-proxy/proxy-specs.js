@@ -4,6 +4,7 @@ import { JWProxy } from '../..';
 import request from './mock-request';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import { isErrorType, errors } from '../../lib/protocol/errors';
 
 
 const should = chai.should();
@@ -107,9 +108,11 @@ describe('proxy', function () {
     });
     it('should proxy error responses and codes', async function () {
       let j = mockProxy({sessionId: '123'});
-      let [res, body] = await j.proxy('/element/bad/text', 'GET');
-      res.statusCode.should.equal(500);
-      body.should.eql({status: 11, value: {message: 'Invisible element'}});
+      try {
+        await j.proxy('/element/bad/text', 'GET');
+      } catch (e) {
+        isErrorType(e.getActualError(), errors.ElementNotVisibleError).should.be.true;
+      }
     });
   });
   describe('command proxy', function () {

@@ -5,7 +5,7 @@ import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
-import request from 'request-promise';
+import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
@@ -93,7 +93,7 @@ describe('FakeDriver - via HTTP', function () {
       };
 
       // Create the session
-      const {status, value, sessionId} = await request.post({url: baseUrl, json: w3cCaps});
+      const {status, value, sessionId} = (await axios.post(baseUrl, w3cCaps)).data;
       should.not.exist(status); // Test that it's a W3C session by checking that 'status' is not in the response
       should.not.exist(sessionId);
       value.sessionId.should.be.a.string;
@@ -105,20 +105,17 @@ describe('FakeDriver - via HTTP', function () {
       });
 
       // Now use that sessionId to call /screenshot
-      const {status: screenshotStatus, value: screenshotValue} = await request({url: `${baseUrl}/${value.sessionId}/screenshot`, json: true});
+      const {status: screenshotStatus, value: screenshotValue} = (await axios({url: `${baseUrl}/${value.sessionId}/screenshot`})).data;
       should.not.exist(screenshotStatus);
       screenshotValue.should.equal('hahahanotreallyascreenshot');
 
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
-      const {statusCode, error} = await request.post({url: `${baseUrl}/${value.sessionId}/execute/async`, json: {script: '', args: ['a']}}).should.eventually.be.rejected;
-      statusCode.should.equal(405);
-      const {error: errorMessage, message, stacktrace} = error.value;
-      errorMessage.should.match(/unknown method/);
-      message.should.match(/Method has not yet been implemented/);
-      stacktrace.should.match(/FakeDriver.executeCommand/);
+      await axios.post(
+        `${baseUrl}/${value.sessionId}/execute/async`,
+        {script: '', args: ['a']}).should.eventually.be.rejectedWith(/405/);
 
       // End session
-      await request.delete({url: `${baseUrl}/${value.sessionId}`});
+      await axios.delete(`${baseUrl}/${value.sessionId}`);
     });
 
     it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function () {
@@ -129,9 +126,7 @@ describe('FakeDriver - via HTTP', function () {
         }
       };
 
-      const {statusCode, error} = await request.post({url: baseUrl, json: badW3Ccaps}).should.eventually.be.rejected;
-      statusCode.should.equal(400);
-      error.value.message.should.match(/can't be blank/);
+      await axios.post(baseUrl, badW3Ccaps).should.eventually.be.rejectedWith(/400/);
     });
 
     it('should accept a combo of W3C and JSONWP capabilities but default to W3C', async function () {
@@ -147,7 +142,7 @@ describe('FakeDriver - via HTTP', function () {
         }
       };
 
-      const {status, value, sessionId} = await request.post({url: baseUrl, json: combinedCaps});
+      const {status, value, sessionId} = (await axios.post(baseUrl, combinedCaps)).data;
       should.not.exist(status); // If it's a W3C session, should not respond with 'status'
       should.not.exist(sessionId);
       value.sessionId.should.exist;
@@ -157,7 +152,7 @@ describe('FakeDriver - via HTTP', function () {
       });
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` });
+      await axios.delete(`${baseUrl}/${value.sessionId}`);
     });
 
     it('should accept a combo of W3C and JSONWP and if JSONWP has extraneous keys, they should be merged into W3C capabilities', async function () {
@@ -175,7 +170,7 @@ describe('FakeDriver - via HTTP', function () {
         }
       };
 
-      const {sessionId, status, value} = await request.post({url: baseUrl, json: combinedCaps});
+      const {sessionId, status, value} = (await axios.post(baseUrl, combinedCaps)).data;
       should.not.exist(sessionId);
       should.not.exist(status);
       value.sessionId.should.exist;
@@ -187,7 +182,7 @@ describe('FakeDriver - via HTTP', function () {
       });
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` });
+      await axios.delete(`${baseUrl}/${value.sessionId}`);
     });
 
     it('should reject bad W3C capabilities with a BadParametersError (400)', async function () {
@@ -199,12 +194,7 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      const {error, statusCode, response} = await request.post({url: baseUrl, json: w3cCaps}).should.eventually.be.rejected;
-      response.headers['content-type'].should.match(/application\/json/);
-
-      const {message} = error.value;
-      message.should.match(/BadAutomationName not part of/);
-      statusCode.should.equal(400);
+      await axios.post(baseUrl, w3cCaps).should.eventually.be.rejectedWith(/400/);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -216,13 +206,13 @@ describe('FakeDriver - via HTTP', function () {
           }],
         },
       };
-      const {value, sessionId, status} = await request.post({url: baseUrl, json: w3cCaps});
+      const {value, sessionId, status} = (await axios.post(baseUrl, w3cCaps)).data;
       should.not.exist(status);
       should.not.exist(sessionId);
       value.capabilities.should.deep.equal(caps);
 
       // End session
-      await request.delete({ url: `${baseUrl}/${value.sessionId}` });
+      await axios.delete(`${baseUrl}/${value.sessionId}`);
     });
 
     it('should fall back to MJSONWP if w3c caps are invalid', async function () {
@@ -238,13 +228,13 @@ describe('FakeDriver - via HTTP', function () {
           }],
         },
       };
-      const {value, sessionId, status} = await request.post({url: baseUrl, json: combinedCaps});
+      const {value, sessionId, status} = (await axios.post(baseUrl, combinedCaps)).data;
       status.should.exist;
       sessionId.should.exist;
       value.should.deep.equal(caps);
 
       // End session
-      await request.delete({ url: `${baseUrl}/${sessionId}` });
+      await axios.delete(`${baseUrl}/${sessionId}`);
     });
 
     it('should fall back to MJSONWP if Inner Driver is not ready for W3C', async function () {
@@ -265,7 +255,7 @@ describe('FakeDriver - via HTTP', function () {
         return res;
       });
 
-      const {value, sessionId, status} = await request.post({url: baseUrl, json: combinedCaps});
+      const {value, sessionId, status} = (await axios.post(baseUrl, combinedCaps)).data;
       status.should.exist;
       sessionId.should.exist;
       value.should.deep.equal(caps);
@@ -273,7 +263,7 @@ describe('FakeDriver - via HTTP', function () {
       createSessionStub.restore();
 
       // End session
-      await request.delete({ url: `${baseUrl}/${sessionId}` });
+      await axios.delete(`${baseUrl}/${sessionId}`);
     });
 
     it('should handle concurrent MJSONWP and W3C sessions', async function () {
@@ -290,30 +280,30 @@ describe('FakeDriver - via HTTP', function () {
       };
 
       // Have an MJSONWP and W3C session running concurrently
-      const {sessionId: mjsonwpSessId, value: mjsonwpValue, status} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'capabilities')});
+      const {sessionId: mjsonwpSessId, value: mjsonwpValue, status} = (await axios.post(baseUrl, _.omit(combinedCaps, 'capabilities'))).data;
       status.should.exist;
       mjsonwpValue.should.eql(caps);
       mjsonwpSessId.should.exist;
 
-      const {value} = await request.post({url: baseUrl, json: _.omit(combinedCaps, 'desiredCapabilities')});
+      const {value} = (await axios.post(baseUrl, _.omit(combinedCaps, 'desiredCapabilities'))).data;
       const w3cSessId = value.sessionId;
       w3cSessId.should.exist;
       value.capabilities.should.eql(caps);
 
       // Test that both return the proper payload based on their protocol
-      const mjsonwpPayload = await request(`${baseUrl}/${mjsonwpSessId}`, {json: true});
+      const mjsonwpPayload = (await axios.get(`${baseUrl}/${mjsonwpSessId}`)).data;
       mjsonwpPayload.sessionId.should.exist;
       mjsonwpPayload.status.should.exist;
       mjsonwpPayload.value.should.eql(caps);
 
-      const w3cPayload = await request(`${baseUrl}/${w3cSessId}`, {json: true});
+      const w3cPayload = (await axios.get(`${baseUrl}/${w3cSessId}`)).data;
       should.not.exist(w3cPayload.sessionId);
       should.not.exist(w3cPayload.status);
       w3cPayload.value.should.eql(caps);
 
       // End sessions
-      await request.delete({url: `${baseUrl}/${mjsonwpSessId}`});
-      await request.delete({url: `${baseUrl}/${w3cSessId}`});
+      await axios.delete(`${baseUrl}/${mjsonwpSessId}`);
+      await axios.delete(`${baseUrl}/${w3cSessId}`);
     });
   });
 });

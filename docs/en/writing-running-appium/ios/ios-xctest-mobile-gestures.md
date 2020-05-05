@@ -260,7 +260,7 @@ driver.execute_script('mobile: alert', {'action': 'accept', 'buttonLabel': 'My C
 
 ### mobile: tapWithNumberOfTaps
 
-Sends one or more taps with one or more touch points  since Appium 1.17.1.
+Sends one or more taps with one or more touch points since Appium 1.17.1.
 
 #### Supported arguments
 

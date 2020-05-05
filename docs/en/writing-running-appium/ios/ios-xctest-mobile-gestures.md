@@ -258,6 +258,27 @@ Performs operations on NSAlert instance.
 driver.execute_script('mobile: alert', {'action': 'accept', 'buttonLabel': 'My Cool Alert Button'});
 ```
 
+### mobile: tapWithNumberOfTaps
+
+Sends one or more taps with one or more touch points since Appium 1.17.1.
+
+#### Supported arguments
+
+* _element_: The internal element identifier (as hexadecimal hash string) to perform one or more taps.
+* _numberOfTaps_: The number of taps
+* _numberOfTouches_: The number of touch points
+
+#### Usage examples
+
+```ruby
+# Ruby
+e = @driver.find_element :id, 'target element'
+# Taps the element with a single touch point twice
+@driver.execute_script 'mobile: tapWithNumberOfTaps', {element: e.ref, numberOfTaps: 2, numberOfTouches: 1}
+```
+
+#### Reference
+[tapWithNumberOfTaps:numberOfTouches:](https://developer.apple.com/documentation/xctest/xcuielement/1618671-tapwithnumberoftaps)
 
 ### Advanced Topics
 

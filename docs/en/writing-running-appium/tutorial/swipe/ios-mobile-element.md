@@ -1,6 +1,7 @@
 ## iOS 'mobile:': Element swipe
 
-To swipe inside element you need add element id into swipe methods.
+To swipe inside of an element you need to add the id of this element
+into swipe methods.
 
 ```java
 // find element to swipe inside
@@ -33,16 +34,10 @@ public void mobileScrollElementIOS(MobileElement el, Direction dir) {
 
     switch (dir) {
         case DOWN: // from down to up (! differs from mobile:swipe)
-            scrollObject.put("direction", "down");
-            break;
         case UP: // from up to down (! differs from mobile:swipe)
-            scrollObject.put("direction", "up");
-            break;
         case LEFT: // from left to right (! differs from mobile:swipe)
-            scrollObject.put("direction", "left");
-            break;
         case RIGHT: // from right to left (! differs from mobile:swipe)
-            scrollObject.put("direction", "right");
+            scrollObject.put("direction", dir.name().toLowerCase());
             break;
         default:
             throw new IllegalArgumentException("mobileScrollElementIOS(): dir: '" + dir + "' NOT supported");
@@ -75,16 +70,10 @@ public void mobileSwipeElementIOS(MobileElement el, Direction dir) {
 
     switch (dir) {
         case DOWN: // from up to down (! differs from mobile:scroll)
-            scrollObject.put("direction", "down");
-            break;
         case UP: // from down to up  (! differs from mobile:scroll)
-            scrollObject.put("direction", "up");
-            break;
         case LEFT: // from right to left  (! differs from mobile:scroll)
-            scrollObject.put("direction", "left");
-            break;
         case RIGHT: // from left to right  (! differs from mobile:scroll)
-            scrollObject.put("direction", "right");
+            scrollObject.put("direction", dir.name().toLowerCase());
             break;
         default:
             throw new IllegalArgumentException("mobileSwipeElementIOS(): dir: '" + dir + "' NOT supported");
@@ -98,6 +87,5 @@ public void mobileSwipeElementIOS(MobileElement el, Direction dir) {
         return;
     }
 }
-
 ```
 

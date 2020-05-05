@@ -1,10 +1,13 @@
 ## iOS 'mobile:': Element search swipe
 
-To search the element on screen or scrollView use:
-- element id with 'name' argument
-- or specify NSPredicate string using 'predicateString' argument
+To search an element or a scroll view use:
+- element id with <code>name</code> argument
+- or specify NSPredicate string using <code>predicateString</code>
+  argument
 
-NSPredicate examples available [here](../../ios/ios-predicate.md)
+NSPredicate examples available [here](../../ios/ios-predicate.md) or
+[https://kapeli.com/cheat_sheets/NSPredicate.docset/Contents/Resources/Documents/index](https://kapeli.com/cheat_sheets/NSPredicate.docset/Contents/Resources/Documents/index)
+is a good NSPredicate cheat sheet.
 
 NSPredicate covers element id search with 'name ==
 accessibilityIdentifier' predicate string.
@@ -43,11 +46,11 @@ public void mobileScrollToElementIOS(MobileElement el, String pre) {
 ```
 
 'mobileScrollToElementIOS' works UNRELIABLE and often missing needed
-element while scrolling. Specially in complex views. Sometimes helps set
-'simpleIsVisibleCheck' capability to true.
+element while scrolling (especially in complex views). Sometimes helps
+set <code>simpleIsVisibleCheck'</code> capability to true.
 
 As workaround use combination of simple scroll(screen or element) and
-check that needed element is visible.
+check that the destination element is visible on each step.
 
 Example of screen scroll and element visibility check.
 

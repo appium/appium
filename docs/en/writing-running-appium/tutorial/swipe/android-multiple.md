@@ -27,7 +27,7 @@ MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAut
 ```java
 // FindElement
 MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
-        "new UiScrollable(new UiSelector().scrollable(true).resourceIdMatches((\".*part_id.*\")))" +
+        "new UiScrollable(new UiSelector().resourceIdMatches(\".*part_id.*\").scrollable(true))" +
          ".scrollIntoView(new UiSelector().text(\"exact_text\"))"));
 
 ```

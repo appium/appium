@@ -1,7 +1,7 @@
 ## Android 'UIScrollable' swipe: Tricks and Tips
 
-While Appium does not allow you to use all power of 'UIScrollable'
-directly, it is possible to ignore errors and do a trick.
+While Appium does not allow you to use the full power 'UIScrollable'
+directly, it is possible to ignore errors and do the trick.
 
 ### Scroll forward
 
@@ -69,7 +69,7 @@ try {
 // scrollToEnd (moves exactly by one view)
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
-            "new UiScrollable(new UiSelector().scrollable(true)).scrollToBeginning()"));
+            "new UiScrollable(new UiSelector().scrollable(true)).scrollToEnd()"));
 } catch (Exception e) {
     // ignore
 }
@@ -82,3 +82,4 @@ try {
     // ignore
 }
 ```
+

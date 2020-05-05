@@ -9,7 +9,7 @@
 * [Mechanic.js](https://github.com/jaykz52/mechanic)
 * [node-webkit](https://github.com/rogerwang/node-webkit)
 * [Remote Debug](https://github.com/leftlogic/remote-debug)
-* [Selenium Project](http://code.google.com/p/selenium/)
+* [Selenium Project](https://www.selenium.dev/)
 * [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy)
 * [instruments-without-delay](https://github.com/facebook/instruments-without-delay)
 * [deviceconsole](https://github.com/rpetrich/deviceconsole)

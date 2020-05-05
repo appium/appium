@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { server, routeConfiguringFunction, DeviceSettings, errors } from '../..';
 import { W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY } from '../../lib/protocol/protocol';
-import request from 'request-promise';
+import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
@@ -26,30 +26,26 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       await baseServer.close();
     });
 
-    function startSession (caps) {
-      return request({
+    async function startSession (caps) {
+      return (await axios({
         url: 'http://localhost:8181/wd/hub/session',
         method: 'POST',
-        json: {desiredCapabilities: caps, requiredCapabilities: {}},
-      });
+        data: {desiredCapabilities: caps, requiredCapabilities: {}},
+      })).data;
     }
 
-    function endSession (id) {
-      return request({
+    async function endSession (id) {
+      return (await axios({
         url: `http://localhost:8181/wd/hub/session/${id}`,
         method: 'DELETE',
-        json: true,
-        simple: false
-      });
+        validateStatus: null,
+      })).data;
     }
 
-    function getSession (id) {
-      return request({
+    async function getSession (id) {
+      return (await axios({
         url: `http://localhost:8181/wd/hub/session/${id}`,
-        method: 'GET',
-        json: true,
-        simple: false
-      });
+      })).data;
     }
 
     describe('session handling', function () {
@@ -57,87 +53,74 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         const sessionIds = [];
         let times = 0;
         do {
-          const res = await request({
+          const {sessionId} = (await axios({
             url: 'http://localhost:8181/wd/hub/session',
             headers: {
               'X-Idempotency-Key': '123456',
             },
             method: 'POST',
-            json: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
+            data: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
             simple: false,
             resolveWithFullResponse: true
-          });
+          })).data;
 
-          sessionIds.push(res.body.sessionId);
+          sessionIds.push(sessionId);
           times++;
         } while (times < 2);
         _.uniq(sessionIds).length.should.equal(1);
 
-        const res = await request({
+        const {status, data} = await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionIds[0]}`,
           method: 'DELETE',
-          json: true,
-          simple: false,
-          resolveWithFullResponse: true
         });
-        res.statusCode.should.equal(200);
-        res.body.status.should.equal(0);
+        status.should.equal(200);
+        data.status.should.equal(0);
       });
 
       it('should handle idempotency while creating parallel sessions', async function () {
         const reqs = [];
         let times = 0;
         do {
-          reqs.push(request({
+          reqs.push(axios({
             url: 'http://localhost:8181/wd/hub/session',
             headers: {
               'X-Idempotency-Key': '12345',
             },
             method: 'POST',
-            json: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
-            simple: false,
-            resolveWithFullResponse: true
+            data: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
           }));
           times++;
         } while (times < 2);
-        const sessionIds = (await B.all(reqs)).map((x) => x.body.sessionId);
+        const sessionIds = (await B.all(reqs)).map((x) => x.data.sessionId);
         _.uniq(sessionIds).length.should.equal(1);
 
-        const res = await request({
+        const {status, data} = await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionIds[0]}`,
           method: 'DELETE',
-          json: true,
-          simple: false,
-          resolveWithFullResponse: true
         });
-        res.statusCode.should.equal(200);
-        res.body.status.should.equal(0);
+        status.should.equal(200);
+        data.status.should.equal(0);
       });
 
       it('should create session and retrieve a session id, then delete it', async function () {
-        let res = await request({
+        let {status, data} = await axios({
           url: 'http://localhost:8181/wd/hub/session',
           method: 'POST',
-          json: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
-          simple: false,
-          resolveWithFullResponse: true
+          data: {desiredCapabilities: defaultCaps, requiredCapabilities: {}},
         });
 
-        res.statusCode.should.equal(200);
-        res.body.status.should.equal(0);
-        should.exist(res.body.sessionId);
-        res.body.value.should.eql(defaultCaps);
+        status.should.equal(200);
+        data.status.should.equal(0);
+        should.exist(data.sessionId);
+        data.value.should.eql(defaultCaps);
 
-        res = await request({
+        ({status, data} = await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
           method: 'DELETE',
-          json: true,
-          simple: false,
-          resolveWithFullResponse: true
-        });
+        }));
 
-        res.statusCode.should.equal(200);
-        res.body.status.should.equal(0);
+        status.should.equal(200);
+        data.status.should.equal(0);
         should.equal(d.sessionId, null);
       });
     });
@@ -147,10 +130,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
     describe('command timeouts', function () {
       let originalFindElement, originalFindElements;
-      function startTimeoutSession (timeout) {
+      async function startTimeoutSession (timeout) {
         let caps = _.clone(defaultCaps);
         caps.newCommandTimeout = timeout;
-        return startSession(caps);
+        return await startSession(caps);
       }
 
       before(function () {
@@ -181,34 +164,32 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should timeout on commands using commandTimeout cap', async function () {
         let newSession = await startTimeoutSession(0.25);
 
-        await request({
+        await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
           method: 'POST',
-          json: {using: 'name', value: 'foo'},
+          data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
-        let res = await request({
+        const {data} = await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
-          method: 'GET',
-          json: true,
-          simple: false
+          validateStatus: null,
         });
-        res.status.should.equal(6);
+        data.status.should.equal(6);
         should.equal(d.sessionId, null);
-        res = await endSession(newSession.sessionId);
-        res.status.should.equal(6);
+        const {status} = await endSession(newSession.sessionId);
+        status.should.equal(6);
       });
 
       it('should not timeout with commandTimeout of false', async function () {
         let newSession = await startTimeoutSession(0.1);
         let start = Date.now();
-        let res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/elements`,
           method: 'POST',
-          json: {using: 'name', value: 'foo'},
-        });
+          data: {using: 'name', value: 'foo'},
+        })).data;
         (Date.now() - start).should.be.above(150);
-        res.value.should.eql(['foo']);
+        value.should.eql(['foo']);
         await endSession(newSession.sessionId);
       });
 
@@ -216,43 +197,38 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         d.newCommandTimeoutMs = 2;
         let newSession = await startTimeoutSession(0);
 
-        await request({
+        await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
           method: 'POST',
-          json: {using: 'name', value: 'foo'},
+          data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
-        let res = await request({
+        let {status} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
-          method: 'GET',
-          json: true,
-          simple: false
-        });
-        res.status.should.equal(0);
-        res = await endSession(newSession.sessionId);
-        res.status.should.equal(0);
+        })).data;
+        status.should.equal(0);
+        ({status} = await endSession(newSession.sessionId));
+        status.should.equal(0);
 
         d.newCommandTimeoutMs = 60 * 1000;
       });
 
       it('should not timeout if its just the command taking awhile', async function () {
         let newSession = await startTimeoutSession(0.25);
-        await request({
+        await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}/element`,
           method: 'POST',
-          json: {using: 'name', value: 'foo'},
+          data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
-        let res = await request({
+        let {status} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${d.sessionId}`,
-          method: 'GET',
-          json: true,
-          simple: false
-        });
-        res.status.should.equal(6);
+          validateStatus: null,
+        })).data;
+        status.should.equal(6);
         should.equal(d.sessionId, null);
-        res = await endSession(newSession.sessionId);
-        res.status.should.equal(6);
+        ({status} = await endSession(newSession.sessionId));
+        status.should.equal(6);
       });
 
       it('should not have a timer running before or after a session', async function () {
@@ -286,27 +262,28 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     describe('unexpected exits', function () {
       it('should reject a current command when the driver crashes', async function () {
         d._oldGetStatus = d.getStatus;
-        d.getStatus = async function () {
-          await B.delay(5000);
-        }.bind(d);
-        let p = request({
-          url: 'http://localhost:8181/wd/hub/status',
-          method: 'GET',
-          json: true,
-          simple: false
-        });
-        // make sure that the request gets to the server before our shutdown
-        await B.delay(100);
-        const shutdownEventPromise = new B((resolve, reject) => {
-          setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
-          d.onUnexpectedShutdown(resolve);
-        });
-        d.startUnexpectedShutdown(new Error('Crashytimes'));
-        let res = await p;
-        res.status.should.equal(13);
-        res.value.message.should.contain('Crashytimes');
-        await shutdownEventPromise;
-        d.getStatus = d._oldGetStatus;
+        try {
+          d.getStatus = async function () {
+            await B.delay(5000);
+          }.bind(d);
+          const reqPromise = axios({
+            url: 'http://localhost:8181/wd/hub/status',
+            validateStatus: null,
+          });
+          // make sure that the request gets to the server before our shutdown
+          await B.delay(100);
+          const shutdownEventPromise = new B((resolve, reject) => {
+            setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+            d.onUnexpectedShutdown(resolve);
+          });
+          d.startUnexpectedShutdown(new Error('Crashytimes'));
+          const {status, value} = (await reqPromise).data;
+          status.should.equal(13);
+          value.message.should.contain('Crashytimes');
+          await shutdownEventPromise;
+        } finally {
+          d.getStatus = d._oldGetStatus;
+        }
       });
     });
 
@@ -360,15 +337,18 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
       it('should not work unless the allowInsecure feature flag is set', async function () {
         d._allowInsecure = d.allowInsecure;
-        d.allowInsecure = [];
-        const script = `return 'foo'`;
-        await request({
-          url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
-          method: 'POST',
-          json: {script, type: 'wd'},
-        }).should.eventually.be.rejectedWith(/allow-insecure/);
-        await endSession(sessionId);
-        d.allowInsecure = d._allowInsecure;
+        try {
+          d.allowInsecure = [];
+          const script = `return 'foo'`;
+          await axios({
+            url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
+            method: 'POST',
+            data: {script, type: 'wd'},
+          }).should.eventually.be.rejected;
+          await endSession(sessionId);
+        } finally {
+          d.allowInsecure = d._allowInsecure;
+        }
       });
 
       it('should execute a webdriverio script in the context of session', async function () {
@@ -377,35 +357,35 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           const status = await driver.status();
           return [timeouts, status];
         `;
-        const res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script, type: 'webdriverio'},
-        });
+          data: {script, type: 'webdriverio'},
+        })).data;
         const expectedTimeouts = {command: 250, implicit: 0};
         const expectedStatus = {};
-        res.value.result.should.eql([expectedTimeouts, expectedStatus]);
+        value.result.should.eql([expectedTimeouts, expectedStatus]);
       });
 
       it('should fail with any script type other than webdriverio currently', async function () {
         const script = `return 'foo'`;
-        await request({
+        await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script, type: 'wd'},
-        }).should.eventually.be.rejectedWith(/script type/);
+          data: {script, type: 'wd'},
+        }).should.eventually.be.rejected;
       });
 
       it('should execute a webdriverio script that returns elements correctly', async function () {
         const script = `
           return await driver.$("~amazing");
         `;
-        const res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script},
-        });
-        res.value.result.should.eql({
+          data: {script},
+        })).data;
+        value.result.should.eql({
           [W3C_ELEMENT_KEY]: 'element-id-1',
           [MJSONWP_ELEMENT_KEY]: 'element-id-1'
         });
@@ -416,16 +396,16 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           const el = await driver.$("~amazing");
           return {element: el, elements: [el, el]};
         `;
-        const res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script},
-        });
+          data: {script},
+        })).data;
         const elObj = {
           [W3C_ELEMENT_KEY]: 'element-id-1',
           [MJSONWP_ELEMENT_KEY]: 'element-id-1'
         };
-        res.value.result.should.eql({element: elObj, elements: [elObj, elObj]});
+        value.result.should.eql({element: elObj, elements: [elObj, elObj]});
       });
 
       it('should store and return logs to the user', async function () {
@@ -436,37 +416,37 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           console.error("baz");
           return null;
         `;
-        const res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script},
-        });
-        res.value.logs.should.eql({log: ['foo', 'foo2'], warn: ['bar'], error: ['baz']});
+          data: {script},
+        })).data;
+        value.logs.should.eql({log: ['foo', 'foo2'], warn: ['bar'], error: ['baz']});
       });
 
       it('should have appium specific commands available', async function () {
         const script = `
           return typeof driver.lock;
         `;
-        const res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script},
-        });
-        res.value.result.should.eql('function');
+          data: {script},
+        })).data;
+        value.result.should.eql('function');
       });
 
       it('should correctly handle errors that happen in a webdriverio script', async function () {
         const script = `
           return await driver.$("~notfound");
         `;
-        const res = await request({
+        const {data} = await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script},
-          simple: false,
+          validateStatus: null,
+          data: {script},
         });
-        res.should.eql({
+        data.should.eql({
           sessionId,
           status: 13,
           value: {message: 'An unknown server-side error occurred while processing the command. Original error: Could not execute driver script. Original error was: Error: not found'}
@@ -477,16 +457,16 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         const script = `
           return {;
         `;
-        const res = await request({
+        const {data} = await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script},
-          simple: false,
+          validateStatus: null,
+          data: {script},
         });
-        res.sessionId.should.eql(sessionId);
-        res.status.should.eql(13);
-        res.value.should.have.property('message');
-        res.value.message.should.match(/An unknown server-side error occurred while processing the command. Original error: Could not execute driver script. Original error was: Error: Unexpected token '?;'?/);
+        sessionId.should.eql(data.sessionId);
+        data.status.should.eql(13);
+        data.value.should.have.property('message');
+        data.value.message.should.match(/An unknown server-side error occurred while processing the command. Original error: Could not execute driver script. Original error was: Error: Unexpected token '?;'?/);
       });
 
       it('should be able to set a timeout on a driver script', async function () {
@@ -494,13 +474,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           await Promise.delay(1000);
           return true;
         `;
-        const res = await request({
+        const {value} = (await axios({
           url: `http://localhost:8181/wd/hub/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
-          json: {script, timeout: 50},
-          simple: false,
-        });
-        res.value.message.should.match(/.+50.+timeout.+/);
+          validateStatus: null,
+          data: {script, timeout: 50},
+        })).data;
+        value.message.should.match(/.+50.+timeout.+/);
       });
     });
   });

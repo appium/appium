@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { server } from '../..';
-import request from 'request-promise';
+import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
@@ -44,22 +44,21 @@ describe('server', function () {
   });
 
   it('should start up with our middleware', async function () {
-    let body = await request('http://localhost:8181/');
-    body.should.eql('Hello World!');
+    const {data} = await axios.get('http://localhost:8181/');
+    data.should.eql('Hello World!');
   });
   it('should fix broken context type', async function () {
-    let body = await request({
+    const {data} = await axios({
       url: 'http://localhost:8181/wd/hub/python',
       headers: {
         'user-agent': 'Python',
         'content-type': 'application/x-www-form-urlencoded'
       }
     });
-    body.should.eql('application/json; charset=utf-8');
+    data.should.eql('application/json; charset=utf-8');
   });
   it('should catch errors in the catchall', async function () {
-    await request('http://localhost:8181/error')
-      .should.be.rejectedWith(/hahaha/);
+    await axios.get('http://localhost:8181/error').should.be.rejected;
   });
   it('should error if we try to start again on a port that is used', async function () {
     await server({
@@ -68,7 +67,7 @@ describe('server', function () {
     }).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = request('http://localhost:8181/pause');
+    let bodyPromise = axios.get('http://localhost:8181/pause');
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
@@ -78,7 +77,7 @@ describe('server', function () {
     // expect slightly less than the request waited, since we paused above
     (Date.now() - before).should.be.above(800);
 
-    (await bodyPromise).should.equal('We have waited!');
+    (await bodyPromise).data.should.equal('We have waited!');
   });
   it('should error if we try to start on a bad hostname', async function () {
     this.timeout(60000);

@@ -31,8 +31,6 @@ const appiumRanges = {
   mac: ['1.6.4'],
 };
 
-const FILENAME_PATTERN = /(.*)\.[^.]+$/;
-
 const rootFolder = findRoot(__dirname);
 
 // Create Handlebars helper that shows a version range
@@ -205,7 +203,8 @@ async function generateCommands () {
     const markdown = template(inputJSON);
 
     // Write the markdown to its right place
-    const markdownPath = `${relativeFilename.replace(FILENAME_PATTERN, '$1')}.md`;
+    const ext = path.extname(relativeFilename);
+    const markdownPath = `${relativeFilename.substring(0, relativeFilename.length - ext.length)}.md`;
     const outfile = path.resolve(rootFolder, 'docs', 'en', markdownPath);
     log(`    Writing to: ${outfile}`);
     await mkdirp(path.dirname(outfile));

@@ -10,7 +10,7 @@ directly, it is possible to ignore errors and do the trick.
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
             "new UiScrollable(new UiSelector().scrollable(true)).scrollForward()"));
-} catch (Exception e) {
+} catch (InvalidSelectorException e) {
     // ignore
 }
 
@@ -18,7 +18,7 @@ try {
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
             "new UiScrollable(new UiSelector().scrollable(true)).flingForward()"));
-} catch (Exception e) {
+} catch (InvalidSelectorException e) {
     // ignore
 }
 ```
@@ -30,7 +30,7 @@ try {
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
             "new UiScrollable(new UiSelector().scrollable(true)).scrollBackward()"));
-} catch (Exception e) {
+} catch (InvalidSelectorException e) {
     // ignore
 }
 
@@ -38,7 +38,7 @@ try {
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
             "new UiScrollable(new UiSelector().scrollable(true)).flingBackward()"));
-} catch (Exception e) {
+} catch (InvalidSelectorException e) {
     // ignore
 }
 ```
@@ -46,19 +46,19 @@ try {
 ### Scroll to beginning
 
 ```java
-// scrollToBeginning (moves exactly by one view)
+// scrollToBeginning (moves exactly by one view. 10 scrolls max)
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
-            "new UiScrollable(new UiSelector().scrollable(true)).scrollToBeginning()"));
-} catch (Exception e) {
+            "new UiScrollable(new UiSelector().scrollable(true)).scrollToBeginning(10)"));
+} catch (InvalidSelectorException e) {
     // ignore
 }
 
-// flingToBeginning (performs quick swipes)
+// flingToBeginning (performs quick swipes. 10 swipes max)
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
-            "new UiScrollable(new UiSelector().scrollable(true)).flingToBeginning()"));
-} catch (Exception e) {
+            "new UiScrollable(new UiSelector().scrollable(true)).flingToBeginning(10)"));
+} catch (InvalidSelectorException e) {
     // ignore
 }
 ```
@@ -66,19 +66,19 @@ try {
 ### Scroll to end
 
 ```java
-// scrollToEnd (moves exactly by one view)
+// scrollToEnd (moves exactly by one view. 10 scrolls max)
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
-            "new UiScrollable(new UiSelector().scrollable(true)).scrollToEnd()"));
-} catch (Exception e) {
+            "new UiScrollable(new UiSelector().scrollable(true)).scrollToEnd(10)"));
+} catch (InvalidSelectorException e) {
     // ignore
 }
 
-// flingToEnd (performs quick swipes)
+// flingToEnd (performs quick swipes. 10 swipes max)
 try {
     driver.findElement(MobileBy.AndroidUIAutomator(
-            "new UiScrollable(new UiSelector().scrollable(true)).flingToEnd()"));
-} catch (Exception e) {
+            "new UiScrollable(new UiSelector().scrollable(true)).flingToEnd(10)"));
+} catch (InvalidSelectorException e) {
     // ignore
 }
 ```

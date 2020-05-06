@@ -3,7 +3,6 @@ import yaml from 'yaml-js';
 import { fs, mkdirp, util } from 'appium-support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
-import replaceExt from 'replace-ext';
 import _ from 'lodash';
 import { asyncify } from 'asyncbox';
 import { validator, CLIENT_URL_TYPES } from './validator';
@@ -204,7 +203,8 @@ async function generateCommands () {
     const markdown = template(inputJSON);
 
     // Write the markdown to its right place
-    const markdownPath = replaceExt(relativeFilename, '.md');
+    const ext = path.extname(relativeFilename);
+    const markdownPath = `${relativeFilename.substring(0, relativeFilename.length - ext.length)}.md`;
     const outfile = path.resolve(rootFolder, 'docs', 'en', markdownPath);
     log(`    Writing to: ${outfile}`);
     await mkdirp(path.dirname(outfile));

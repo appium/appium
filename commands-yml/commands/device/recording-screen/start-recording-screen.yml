@@ -39,7 +39,7 @@ example_usage:
 
 client_docs:
   java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-"
-  python: "https://github.com/appium/python-client"
+  python: "https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.screen_record.ScreenRecord.start_recording_screen"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3412"
   javascript_wdio: "https://webdriver.io/docs/api/appium.html#startrecordingscreen"
   ruby:

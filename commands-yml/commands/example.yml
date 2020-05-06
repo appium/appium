@@ -36,9 +36,7 @@ example_usage:
 client_docs:
   java:
     - url: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--"
-  python:
-    - android: "https://github.com/appium/python-client/android-command"
-      ios: "https://github.com/appium/python-client/ios-command"
+  python: "https://appium.github.io/python-client-sphinx"
   javascript_wdio: "http://webdriver.io/index.html"
   javascript_wd: "https://github.com/admc/wd/releases"
   ruby: "https://github.com/appium/ruby_lib/releases/latest"

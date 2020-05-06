@@ -34,7 +34,7 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#isAppInstalled-java.lang.String-"
-  python: "https://github.com/appium/python-client/blob/master/README.md#checking-if-an-application-is-installed"
+  python: "https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.applications.Applications.is_app_installed"
   javascript_wdio: "https://webdriver.io/docs/api/appium.html#isappinstalled"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2586"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#app_installed%3F-instance_method"

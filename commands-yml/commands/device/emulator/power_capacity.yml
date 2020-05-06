@@ -26,7 +26,7 @@ example_usage:
 
 client_docs:
   java: "https://appium.github.io/java-client/" # TODO: Link
-  python: "https://github.com/appium/python-client"
+  python: "https://appium.github.io/python-client-sphinx/webdriver.extensions.android.html#webdriver.extensions.android.power.Power.set_power_capacity"
   javascript_wdio: "https://webdriver.io/docs/api/appium.html#powercapacity"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device/Emulator#set_power_capacity-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device/Emulator#set_power_capacity-instance_method"

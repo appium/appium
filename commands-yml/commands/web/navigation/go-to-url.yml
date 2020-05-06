@@ -1,6 +1,6 @@
 ---
 name: Go to URL
-short_description: Navigate to a new URL (Web context) or open an Appium [deep link](https://appiumpro.com/editions/7) (Native)
+short_description: Navigate to a new URL (Web context) or open an Appium [deep link](https://appiumpro.com/editions/7-speeding-up-tests-with-deep-links) (Native)
 
 example_usage:
   java:

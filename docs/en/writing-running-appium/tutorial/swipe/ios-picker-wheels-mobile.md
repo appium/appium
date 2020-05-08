@@ -7,7 +7,7 @@ This mobile method allows to select next or previous value.
 You should change pickerWheel to next/previous and check it new value in
 loop until required appears.
 
-[documentation](../../ios/ios-xctest-mobile-gestures/index.html#mobile-selectPickerWheelValue)
+[documentation](../../ios/ios-xctest-mobile-gestures.md#mobile-selectPickerWheelValue)
 
 ### Select PickerWheel example
 

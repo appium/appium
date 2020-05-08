@@ -35,8 +35,8 @@ differences.
 
 ### iOS: 'pickerWheels' swipe
 
-1. [Fast '.setValue()' example](swipe/ios-picker-wheels-set-value.md)
-2. [Slow 'mobile:selectPickerWheelValue' example](swipe/ios-picker-wheels-mobile.md)
+1. [Fast '.setValue()'](swipe/ios-picker-wheels-set-value.md)
+2. [Slow 'mobile:selectPickerWheelValue'](swipe/ios-picker-wheels-mobile.md)
 
 ### Swipe troubleshoot guide
 

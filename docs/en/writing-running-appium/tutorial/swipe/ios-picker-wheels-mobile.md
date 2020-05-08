@@ -24,10 +24,12 @@ Assert.assertTrue(setPickerWheel("my_text", Order.NEXT), "setPickerWheel(): FAIL
  * @version java-client: 7.3.0
  **/
 private boolean setPickerWheel(String text, Order order) {
-    System.out.println("setPickerWheel(): text: '" + text + "',order: '" + order + "'"); // always log your actions
+    System.out.println("setPickerWheel(): text: '" + text
+        + "',order: '" + order + "'"); // always log your actions
 
     // find pickerWheel
-    MobileElement pickerWheel = (MobileElement) driver.findElement(MobileBy.className("XCUIElementTypePickerWheel"));
+    MobileElement pickerWheel =
+        (MobileElement) driver.findElement(MobileBy.className("XCUIElementTypePickerWheel"));
 
     // limit search time to avoid infinite loops
     String resultText;

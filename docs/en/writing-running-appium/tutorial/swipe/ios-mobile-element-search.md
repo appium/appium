@@ -49,8 +49,8 @@ public void mobileScrollToElementIOS(MobileElement el, String pre) {
 element while scrolling (especially in complex views). Sometimes helps
 set <code>simpleIsVisibleCheck'</code> capability to true.
 
-As workaround use combination of simple scroll(screen or element) and
-check that the destination element is visible on each step.
+As workaround try use combination of simple scroll(screen or element)
+and check that the destination element is visible on each step.
 
 Example of screen scroll and element visibility check.
 

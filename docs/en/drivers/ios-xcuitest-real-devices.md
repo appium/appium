@@ -236,6 +236,8 @@ for this).
 1. Make sure UDID is correct by checking it in Xcode Organizer or iTunes. It
    is a long string (20+ chars).
 1. Make sure that you can run your tests against the Simulator.
-1. Make sure UI Automation is enabled on your device. Settings -> Developer ->
-   Enable UI Automation
+1. Make sure the following settings are **enabled** on your device:
+    1. Settings -> Developer -> **Enable UI Automation**
+    1. Settings -> Safari -> Advanced -> **Web Inspector** and **Remote Automation**
+        1. Please read [Automating mobile web apps](docs/en/writing-running-appium/web/mobile-web/) for more details about WebView
 1. Consider generating a provisioning profile with `.xctrunner` identifier if you do not want to generate a wildcard one for manual configuration. The `.xctrunner` config support has been added since Xcode 11. [A reference](https://github.com/appium/appium/issues/13610)

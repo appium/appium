@@ -12,7 +12,7 @@ the host machine, where it could be captured.
 
 #### Requirements
 
-It is mandatory that the host machine has [FFPMEG](https://www.ffmpeg.org/download.html) installed and available in PATH.
+It is mandatory that the host machine has [FFMPEG](https://www.ffmpeg.org/download.html) installed and available in PATH.
 
 Mac OS since version 10.15 requires applications that record Microphone audio to be explicitly enabled in System Preferences->Security & Privacy->Privacy->Microphone tab.
 Make sure either FFMPEG itself or the parent Appium process (e.g. Terminal) is present in that list.

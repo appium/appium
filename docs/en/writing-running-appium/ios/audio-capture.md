@@ -9,20 +9,6 @@ Apple does not provide any API to directly retrieve the audio stream from a
 Simulator or a real device, but it is possible to redirect that stream to
 the host machine, where it could be captured.
 
-
-#### Requirements
-
-It is mandatory that the host machine has [FFMPEG](https://www.ffmpeg.org/download.html) installed and available in PATH.
-
-Mac OS since version 10.15 requires applications that record Microphone audio to be explicitly enabled in System Preferences->Security & Privacy->Privacy->Microphone tab.
-Make sure either FFMPEG itself or the parent Appium process (e.g. Terminal) is present in that list.
-
-The feature is potentially unsecure, so it must be explicitly allowed
-on the server side.
-The feature name is `audio_record`.
-See https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md for more details.
-
-
 #### mobile: startAudioRecording
 
 Starts audio recording process on the given host audio input with the given
@@ -54,6 +40,19 @@ try (FileOutputStream fos = new FileOutputStream("out.mp4")) {
    fos.write(mp4Data);
 }
 ```
+
+
+### Server Requirements
+
+It is mandatory that the host machine has [FFMPEG](https://www.ffmpeg.org/download.html) installed and available in PATH.
+
+Mac OS since version 10.15 requires applications that record Microphone audio to be explicitly enabled in System Preferences->Security & Privacy->Privacy->Microphone tab.
+Make sure either FFMPEG itself or the parent Appium process (e.g. Terminal) is present in that list.
+
+The feature is potentially unsecure, so it must be explicitly allowed
+on the server side.
+The feature name is `audio_record`.
+See https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md for more details.
 
 
 ### Simulator Setup

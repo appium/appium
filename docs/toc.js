@@ -247,6 +247,7 @@ module.exports = {
         ['iOS Install Certificate', 'ios-xctest-install-certificate.md'],
         ['tvOS support', 'ios-tvos.md'],
         ['Pushing/Pulling files', 'ios-xctest-file-movement.md'],
+        ['Record Audio', 'record-audio.md'],
       ]],
       ['Android', ['android',
         ['Low-Level Insights on Android Input Events', 'actions.md'],

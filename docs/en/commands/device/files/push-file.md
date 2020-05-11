@@ -74,7 +74,7 @@ $driver->pushFile('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/android/PushesFiles.html#pushFile-java.lang.String-java.io.File-) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client/blob/master/README.md#place-a-file-on-the-device) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [appium.github.io](https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.remote_fs.RemoteFS.push_file) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L2640) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#push_file-instance_method) |

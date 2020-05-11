@@ -83,7 +83,7 @@ iOS tests with XCUITest can also use the `mobile: queryAppState` method. See det
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/InteractsWithApps.html#queryAppState-java.lang.String-) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client/blob/master/appium/webdriver/extensions/applications.py) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [appium.github.io](https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.applications.Applications.query_app_state) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#app_state-instance_method) |

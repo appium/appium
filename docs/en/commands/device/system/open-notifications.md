@@ -73,7 +73,7 @@ $driver->openNotifications();
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [appium.github.io](https://appium.github.io/java-client/io/appium/java_client/android/AndroidDriver.html#openNotifications--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [appium.github.io](https://appium.github.io/python-client-sphinx/webdriver.extensions.android.html#webdriver.extensions.android.common.Common.open_notifications) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L3004) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#open_notifications-instance_method) |

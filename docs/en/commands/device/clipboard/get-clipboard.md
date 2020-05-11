@@ -80,7 +80,7 @@ Get the content of the system clipboard
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [seleniumhq.github.io](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [github.com](https://github.com/appium/python-client) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [appium.github.io](https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.clipboard.Clipboard.get_clipboard) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/releases) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [Android](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#get_clipboard-instance_method) [iOS](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#get_clipboard-instance_method) |

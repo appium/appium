@@ -78,7 +78,7 @@ An indepth description of what this command does
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [seleniumhq.github.io](https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#click--) |
-|[Python](https://github.com/appium/python-client/releases/latest)| All | [Android](https://github.com/appium/python-client/android-command) [iOS](https://github.com/appium/python-client/ios-command) |
+|[Python](https://github.com/appium/python-client/releases/latest)| All | [appium.github.io](https://appium.github.io/python-client-sphinx) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None | [github.com](https://github.com/admc/wd/releases) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [github.com](https://github.com/appium/ruby_lib/releases/latest) |

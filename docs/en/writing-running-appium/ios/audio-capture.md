@@ -42,6 +42,24 @@ try (FileOutputStream fos = new FileOutputStream("out.mp4")) {
 }
 ```
 
+```ruby
+# Ruby
+@driver.execute_script 'mobile: startAudioRecording', audioInput: ':0'
+sleep 10000
+base64_str = @driver.execute_script 'mobile: stopAudioRecording'
+File.write 'out.mp4', Base64.decode64(base64_str)
+```
+driver.execute_script("mobile: scroll", {"direction": "down", "element": element.id})
+
+
+```python
+# Python
+driver.execute_script('mobile: startAudioRecording', {'audioInput': ':1'})
+time.sleep(10000)
+base64_str = driver.execute_script('mobile: stopAudioRecording')
+with open('out.mp4', 'wb') as f:
+    f.write(base64.b64decode(base64_str))
+```
 
 ### Server Requirements
 

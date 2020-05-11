@@ -35,7 +35,8 @@ If `startAudioRecording` was not called before then an empty string is returned.
 // Java
 driver.executeScript("mobile: startAudioRecording", ImmutableMap.of("audioInput", ":1"));
 Thread.sleep(10000);
-byte[] mp4Data = Base64.getMimeDecoder().decode(driver.executeScript("mobile: stopAudioRecording"));
+byte[] mp4Data = Base64.getMimeDecoder()
+  .decode((String) driver.executeScript("mobile: stopAudioRecording"));
 try (FileOutputStream fos = new FileOutputStream("out.mp4")) {
    fos.write(mp4Data);
 }

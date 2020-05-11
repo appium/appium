@@ -46,13 +46,13 @@ try (FileOutputStream fos = new FileOutputStream("out.mp4")) {
 
 It is mandatory that the host machine has [FFMPEG](https://www.ffmpeg.org/download.html) installed and available in PATH.
 
-Mac OS since version 10.15 requires applications that record Microphone audio to be explicitly enabled in System Preferences->Security & Privacy->Privacy->Microphone tab.
+macOS since version 10.15 requires applications that record Microphone audio to be explicitly enabled in System Preferences->Security & Privacy->Privacy->Microphone tab.
 Make sure either FFMPEG itself or the parent Appium process (e.g. Terminal) is present in that list.
 
 The feature is potentially unsecure, so it must be explicitly allowed
 on the server side.
 The feature name is `audio_record`.
-See https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md for more details.
+See [Security](docs/en/writing-running-appium/security.md) for more details.
 
 
 ### Simulator Setup
@@ -69,7 +69,7 @@ The following steps are necessary to setup iOS Simulator audio capture:
 
 The following steps are necessary to setup iOS Real Device audio capture:
 
-* Connect you device to the Mac host with a cable
+* Connect your device to the Mac host with a cable
 * Run `open -a /System/Applications/Utilities/Audio\ MIDI\ Setup.app` application
 * Find your phone in the list of devices there and click `Enable` button next to it
 * Run `ffmpeg -f avfoundation -list_devices true -i ""` command in Terminal and find the identifier of your device in the `AVFoundation audio devices` list. This identifier prefixed with `:` will be then used as `audioInput` argument to `mobile: startAudioRecording` call

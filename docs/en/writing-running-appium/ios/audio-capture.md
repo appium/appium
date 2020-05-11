@@ -55,7 +55,7 @@ Make sure either FFMPEG itself or the parent Appium process (e.g. Terminal) is p
 The feature is potentially unsecure, so it must be explicitly allowed
 on the server side.
 The feature name is `audio_record`.
-See [Security](docs/en/writing-running-appium/security.md) for more details.
+See [Security](/writing-running-appium/security.md) for more details.
 
 
 ### Simulator Setup

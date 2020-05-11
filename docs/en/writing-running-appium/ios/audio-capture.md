@@ -53,7 +53,7 @@ File.write 'out.mp4', Base64.decode64(base64_str)
 ```python
 # Python
 driver.execute_script('mobile: startAudioRecording', {'audioInput': ':1'})
-time.sleep(10000)
+time.sleep(10)
 base64_str = driver.execute_script('mobile: stopAudioRecording')
 with open('out.mp4', 'wb') as f:
     f.write(base64.b64decode(base64_str))

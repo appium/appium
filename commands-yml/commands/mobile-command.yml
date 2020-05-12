@@ -63,6 +63,8 @@
       | mobile:getAppearance | Get the device's UI appearance style via `xcrun simctl ui`. It returns `light`, `dark`, `unknown` or `unsupported` (below iOS 12). |||
       | mobile:setAppearance | Set the device's UI appearance style via `xcrun simctl ui` or Siri command. | `{style}` | `{style: 'dark'}` |
       | mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format specifiers. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
+      | mobile:startAudioRecording | Start recording audio stream. Read [Audio Capture From iOS Simulators and Real Devices](/docs/en/writing-running-appium/ios/audio-capture.md) for more details | | |
+      | mobile:stopAudioRecording | Stop and store the recording audio stream. Read [Audio Capture From iOS Simulators and Real Devices](/docs/en/writing-running-appium/ios/audio-capture.md) for more details | | |
 
       ### Android
       | Command | Description | Argument | Argument Example |

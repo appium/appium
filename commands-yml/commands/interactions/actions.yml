@@ -143,7 +143,29 @@ example_usage:
       // TODO
   csharp:
     |
-      // TODO
+      // Single tap
+      var singleTap = new TouchAction(driver)
+          .Tap(element)
+          .Perform();
+
+      // Swipe from element1 to element2
+      var swipe = new TouchAction(driver)
+          .LongPress(element1)
+          .MoveTo(element2)
+          .Release();
+
+      // Scroll downwards
+      var scroll = new TouchAction(driver)
+          .Press(500, 800)
+          .Wait(500) // Milliseconds
+          .MoveTo(500, 200)
+          .Release();
+      
+      // Both actions will be performed at the same time
+      new MultiAction(driver)
+          .Add(swipe)
+          .Add(scroll)
+          .Perform();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html"

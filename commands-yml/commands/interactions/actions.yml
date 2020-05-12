@@ -143,29 +143,15 @@ example_usage:
       // TODO
   csharp:
     |
-      // Single tap
-      var singleTap = new TouchAction(driver)
-          .Tap(element)
-          .Perform();
+      var inputDevice = new PointerInputDevice(PointerKind.Touch);
+      var actionSequence = new ActionSequence(inputDevice, 0);
 
-      // Swipe from element1 to element2
-      var swipe = new TouchAction(driver)
-          .LongPress(element1)
-          .MoveTo(element2)
-          .Release();
+      actionSequence.AddAction(inputDevice.CreatePointerMove(element));
+      actionSequence.AddAction(inputDevice.CreatePointerDown(PointerButton.TouchContact));
+      actionSequence.AddAction(inputDevice.CreatePause(TimeSpan.FromSeconds(1)));
+      actionSequence.AddAction(inputDevice.CreatePointerUp(PointerButton.TouchContact));
 
-      // Scroll downwards
-      var scroll = new TouchAction(driver)
-          .Press(500, 800)
-          .Wait(500) // Milliseconds
-          .MoveTo(500, 200)
-          .Release();
-      
-      // Both actions will be performed at the same time
-      new MultiAction(driver)
-          .Add(swipe)
-          .Add(scroll)
-          .Perform();
+      driver.PerformActions(new List<ActionSequence> {actionSequence});
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html"

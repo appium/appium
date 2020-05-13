@@ -143,7 +143,15 @@ example_usage:
       // TODO
   csharp:
     |
-      // TODO
+      var inputDevice = new PointerInputDevice(PointerKind.Touch);
+      var actionSequence = new ActionSequence(inputDevice, 0);
+
+      actionSequence.AddAction(inputDevice.CreatePointerMove(element));
+      actionSequence.AddAction(inputDevice.CreatePointerDown(PointerButton.TouchContact));
+      actionSequence.AddAction(inputDevice.CreatePause(TimeSpan.FromSeconds(1)));
+      actionSequence.AddAction(inputDevice.CreatePointerUp(PointerButton.TouchContact));
+
+      driver.PerformActions(new List<ActionSequence> {actionSequence});
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html"

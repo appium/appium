@@ -263,6 +263,9 @@ module.exports = {
         ['Using Unicode with Appium', 'unicode.md'],
         ['Troubleshooting', 'troubleshooting.md']
       ]],
+      ['Tutorial', ['tutorial',
+        ['Swipe Tutorial', 'swipe-tutorial.md']
+      ]],
     ]],
     ['Advanced', ['advanced-concepts',
       ['Finding Image Elements', 'image-elements.md'],

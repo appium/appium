@@ -23,7 +23,7 @@ Assert.assertTrue(setPickerWheel("my_text", Order.NEXT), "setPickerWheel(): FAIL
  * @return result of set
  * @version java-client: 7.3.0
  **/
-private boolean setPickerWheel(String text, Order order) {
+public boolean setPickerWheel(String text, Order order) {
     System.out.println("setPickerWheel(): text: '" + text
         + "',order: '" + order + "'"); // always log your actions
 

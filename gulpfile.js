@@ -25,7 +25,7 @@ gulp.task('fixShrinkwrap', function fixShrinkwrap (done) {
     return done();
   }
 
-  if (!shrinkwrap?.dependencies?.fsevents) {
+  if (!(shrinkwrap.dependencies || {}).fsevents) {
     return done();
   }
 

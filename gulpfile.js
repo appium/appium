@@ -25,6 +25,10 @@ gulp.task('fixShrinkwrap', function fixShrinkwrap (done) {
     return done();
   }
 
+  if (!shrinkwrap?.dependencies?.fsevents) {
+    return done();
+  }
+
   delete shrinkwrap.dependencies.fsevents;
   const shrinkwrapString = JSON.stringify(shrinkwrap, null, '  ') + '\n';
   fs.writeFile('./npm-shrinkwrap.json', shrinkwrapString, done);

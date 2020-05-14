@@ -102,7 +102,7 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "^5.0.0",
+    "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "eslint-config-appium": "^4.0.1",
@@ -111,13 +111,9 @@
     "handlebars": "^4.2.0",
     "mocha": "^7.0.1",
     "pre-commit": "1.x",
-    "rimraf": "^3.0.0",
     "sinon": "^9.0.0",
     "validate.js": "^0.13.0",
     "wd": "^1.10.0",
     "yaml-js": "^0.2.0"
-  },
-  "optionalDependencies": {
-    "fsevents": "2.x"
   }
 }

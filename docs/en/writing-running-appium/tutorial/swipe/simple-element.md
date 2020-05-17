@@ -2,9 +2,9 @@
 
 ### Android: UIAutomator2
 
-With UIAutomator2 driver, by default, we see only elements on screen. If
-an elements container covers the area inside and outside of the current
-view port then a part of its content won't be visible.
+By default UIAutomator2 driver only returns element, which are visible
+on the screen. If a container is split between the visible and invisible
+parts of the viewport then a part of its content won't be visible.
 
 ![simple-element-swipe.png](images/simple-element-swipe.png)
 

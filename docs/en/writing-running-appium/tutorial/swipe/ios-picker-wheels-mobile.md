@@ -1,11 +1,13 @@
 ## iOS pickerWheels: Slow 'mobile:selectPickerWheelValue' example
 
-When '.setValue()' fails we can use 'mobile:selectPickerWheelValue' way.
+If '.setValue()' fails then 'mobile: selectPickerWheelValue' helper
+could be used as a workaround.
 
-This mobile method allows to select next or previous value.
+This mobile method allows to select the next or the previous picker
+value.
 
-You should change pickerWheel to next/previous and check it new value in
-loop until required appears.
+It is necessary to keep changing picker wheel values until the current
+one is equal the desired one or the count of retries exceeds.
 
 [documentation](../../ios/ios-xctest-mobile-gestures.md#mobile-selectPickerWheelValue)
 

@@ -1,14 +1,13 @@
 ## iOS pickerWheels: Fast '.setValue()' example
 
-PickerWheels in XCTest framework is powerful and weak side. Powerful
-when '.setValue()' works and weak when not. It is breaking and restoring
-quite often.
+Unfortunately, XCTest cannot always properly interact with picker wheel
+controls. Sometimes the setValue() call might not have any effect.
 
-General rules:
-- when PickerWheel view is simple e.g. any text: month name, date or
+How to make picker wheel controls more compatible to XCTest:
+- if PickerWheel view is simple e.g. any text: month name, date or
   country name in most cases '.setValue()' works.
-- when PickerWheel value complex e.g. country flag image and country
-  text then possibility of fail increases.
+- if PickerWheel value complicated e.g. country flag image and country
+  text then the probability of failure increases.
 
 ### One PickerWheel
 

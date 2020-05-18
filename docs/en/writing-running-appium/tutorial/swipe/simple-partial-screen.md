@@ -1,11 +1,11 @@
 ## Simple Partial Screen swipe
 
 There are some situations when we need just a small screen swipe.
-1. iOS: 'mobile:scroll' that used for precise scroll fails.
-2. Speed concern: Touch action scroll times faster any other swipe
+1. iOS: 'mobile:scroll' that is used for precise scroll fails.
+2. Speed concern: Touch action scroll is faster than any other swipe
    method.
 
-We can use existing swipe from screen center and reduce move action.
+We could use existing swipe from screen center and reduce move action.
 
 ```java
 /**

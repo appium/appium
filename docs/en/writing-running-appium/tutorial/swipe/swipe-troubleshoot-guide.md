@@ -80,7 +80,7 @@ public void swipeScreenWithLogs(Direction dir) {
 }
 ```
 
-Example of output:
+Example output:
 
 ```
 swipeScreen(): dir: 'DOWN'
@@ -93,9 +93,9 @@ swipeScreen(): pointEnd: {187,10}
 swipeScreen(): screenSize: {375,667}
 ```
 
-2. With Android enable 'Show Taps' and 'Pointer location' in 'Settings
+2. In Android enable 'Show Taps' and 'Pointer location' in 'Settings
    -> System -> Developer options -> Input tab' to see touches visually.
-3. Check swipe manually using same start and end points.
+3. Check swipe manually using the same start and end points.
 
 ### Android: 'UIScrollable' swipe
 

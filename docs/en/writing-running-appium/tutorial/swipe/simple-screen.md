@@ -1,9 +1,9 @@
 ## Simple Screen swipe
 
 Swipe has start and end points. The start point of swipe is most
-important. Following elements may prevent swipe start:
+important. The following elements may prevent swipe start:
 - application interface/menu e.g. header or footer
-- elements that waiting tap and do not pass touch to scroll view
+- elements that are waiting tap and do not pass touch to scroll view
 
 It is better to start swipe actions at the center of the screen to make
 them more reliable.

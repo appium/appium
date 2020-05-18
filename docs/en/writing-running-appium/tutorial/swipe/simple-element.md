@@ -2,7 +2,7 @@
 
 ### Android: UIAutomator2
 
-By default UIAutomator2 driver only returns element, which are visible
+By default UIAutomator2 driver only returns elements, which are visible
 on the screen. If a container is split between the visible and invisible
 parts of the viewport then a part of its content won't be visible.
 
@@ -117,10 +117,7 @@ public void swipeElementIOS(MobileElement el, Direction dir) {
     // final value depends on your app and could be greater
     final int ANIMATION_TIME = 200; // ms
 
-    final int PRESS_TIME = 200; // ms
-
-    int leftBorder, rightBorder, upBorder, downBorder;
-    PointOption pointOptionStart, pointOptionEnd;
+    final int PRESS_TIME = 500; // ms
 
     // init screen variables
     Dimension dims = driver.manage().window().getSize();
@@ -134,6 +131,7 @@ public void swipeElementIOS(MobileElement el, Direction dir) {
 
     // init borders per your app screen
     // or make them configurable with function variables
+    int leftBorder, rightBorder, upBorder, downBorder;
     leftBorder = 0;
     rightBorder = 0;
     upBorder = 0;
@@ -152,7 +150,8 @@ public void swipeElementIOS(MobileElement el, Direction dir) {
         rect.width = dims.width;
     if (rect.height > dims.height)
         rect.height = dims.height;
-
+    
+    PointOption pointOptionStart, pointOptionEnd;
     switch (dir) {
         case DOWN: // from up to down
             pointOptionStart = PointOption.point(rect.x + rect.width / 2,

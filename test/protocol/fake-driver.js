@@ -1,5 +1,6 @@
 /* eslint-disable require-await */
-import { errors, BaseDriver, determineProtocol, PROTOCOLS } from '../..';
+import { errors, BaseDriver, determineProtocol } from '../..';
+import { PROTOCOLS } from '../../lib/constants';
 import _ from 'lodash';
 import { util } from 'appium-support';
 

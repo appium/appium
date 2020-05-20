@@ -15,11 +15,14 @@ export default BaseDriver;
 
 // MJSONWP exports
 import * as protocol from './lib/protocol';
+import {
+  DEFAULT_BASE_PATH, PROTOCOLS
+} from './lib/constants';
 
 const {
-  Protocol, routeConfiguringFunction, errors, isErrorType, PROTOCOLS,
+  Protocol, routeConfiguringFunction, errors, isErrorType,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
-  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand, DEFAULT_BASE_PATH,
+  routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
   normalizeBasePath, determineProtocol
 } = protocol;
 

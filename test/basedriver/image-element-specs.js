@@ -3,7 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import BaseDriver, { ImageElement } from '../..';
 import { makeImageElementCache, getImgElFromArgs } from '../../lib/basedriver/image-element';
-import { IMAGE_ELEMENT_PREFIX } from '../../lib/protocol/protocol';
+import { IMAGE_ELEMENT_PREFIX } from '../../lib/constants';
 import sinon from 'sinon';
 
 

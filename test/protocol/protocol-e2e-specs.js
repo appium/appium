@@ -9,7 +9,9 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import HTTPStatusCodes from 'http-status-codes';
 import { createProxyServer } from './helpers';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../../lib/protocol/protocol';
+import {
+  MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
+} from '../../lib/constants';
 import qs from 'querystring';
 
 

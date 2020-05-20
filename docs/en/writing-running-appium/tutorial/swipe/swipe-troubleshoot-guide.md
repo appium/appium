@@ -93,18 +93,53 @@ swipeScreen(): pointEnd: {187,10}
 swipeScreen(): screenSize: {375,667}
 ```
 
-2. In Android enable 'Show Taps' and 'Pointer location' in 'Settings
-   -> System -> Developer options -> Input tab' to see touches visually.
+2. In Android enable 'Show Taps' and 'Pointer location' in 'Settings ->
+   System -> Developer options -> Input tab' to see touches visually.
 3. Check swipe manually using the same start and end points.
 
 ### Android: 'UIScrollable' swipe
 
-`under construction`
+#### Scroll does not start:
+
+1. Check number of scrollViews on screen. If more then one -> specify
+   scrollView by instance/resource-id/classname/...
+2. Check scrollView layout and use 'setAsVerticalList' or
+   'setAsHorizontalList'.
+3. Use combination of specifying scrollView element and layout.
+4. All fails -> switch to simple element swipe.
+
+#### Missed the search element:
+
+1. Add pause in test before search and manually swipe to needed element
+   while test in pause. After pause add code to check element search.
+   E.g. if you specified search element by text:
+
+```java
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+         "new UiSelector().text(\"exact_text\")"));
+// or
+MobileElement element = (MobileElement) driver.findElement(MobileBy.AndroidUIAutomator(
+         "new UiSelector().textContains(\"part_text\")"));
+
+try {
+    System.out.println("Element found: " + !element.getId().isEmpty());
+} catch (Exception e) {
+    System.out.println("Element found: false");
+}
+```
 
 ### iOS: 'mobile:scroll', 'mobile:swipe' swipe
 
-`under construction`
+#### Scroll does not start:
 
-### iOS: 'pickerWheels' swipe
+1. Check direction. Note that 'scroll' and 'swipe' method directions
+   differ!
+2. All fails -> switch to simple element swipe.
 
-`under construction`
+#### Missed the search element:
+
+1. If you need precise swipe prefer scroll method.
+2. Sometimes when search element appeared partly tap on it will fail.
+   Use strategy of simple-partial-element swipe (like
+   simple-partial-screen example) on tap fail and repeat tap again after
+   partial element swipe.

@@ -154,7 +154,15 @@ f2.create_pointer_up(:left)
 
 ```csharp
 // C#
-// TODO
+var inputDevice = new PointerInputDevice(PointerKind.Touch);
+var actionSequence = new ActionSequence(inputDevice, 0);
+
+actionSequence.AddAction(inputDevice.CreatePointerMove(element));
+actionSequence.AddAction(inputDevice.CreatePointerDown(PointerButton.TouchContact));
+actionSequence.AddAction(inputDevice.CreatePause(TimeSpan.FromSeconds(1)));
+actionSequence.AddAction(inputDevice.CreatePointerUp(PointerButton.TouchContact));
+
+driver.PerformActions(new List<ActionSequence> {actionSequence});
 
 ```
 

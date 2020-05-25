@@ -2,6 +2,7 @@
 
 import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck, OptionalGstreamerCheck } from '../lib/android';
 import { fs } from 'appium-support';
+import * as adb from 'appium-adb';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import chai from 'chai';
@@ -52,19 +53,19 @@ describe('android', function () {
       removeColors(await check.fix()).should.equal('Manually configure ANDROID_HOME.');
     });
   }));
-  describe('AndroidToolCheck', withMocks({fs}, (mocks) => {
+  describe('AndroidToolCheck', withMocks({adb}, (mocks) => {
     stubEnv();
-    let check = new AndroidToolCheck('adb', 'platform-tools/adb');
+    const check = new AndroidToolCheck();
     it('autofix', function () {
       check.autofix.should.not.be.ok;
     });
     it('diagnose - success', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(B.resolve(true));
+      mocks.adb.expects('getAndroidBinaryPath').exactly(3).returns(B.resolve('/path/to/binary'));
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: false,
-        message: 'adb exists at: /a/b/c/d/platform-tools/adb'
+        message: 'adb, android, emulator exist: /a/b/c/d'
       });
       mocks.verify();
     });
@@ -73,17 +74,17 @@ describe('android', function () {
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
-        message: 'adb could not be found because ANDROID_HOME is NOT set!'
+        message: 'adb, android, emulator could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!'
       });
       mocks.verify();
     });
     it('diagnose - failure - path not valid', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      mocks.fs.expects('exists').once().returns(B.resolve(false));
+      mocks.adb.expects('getAndroidBinaryPath').exactly(3).throws();
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
-        message: 'adb could NOT be found at \'/a/b/c/d/platform-tools/adb\'!'
+        message: 'adb, android, emulator could NOT be found in /a/b/c/d!'
       });
       mocks.verify();
     });
@@ -94,7 +95,7 @@ describe('android', function () {
     });
     it('fix - install', async function () {
       process.env.ANDROID_HOME = '/a/b/c/d';
-      removeColors(await check.fix()).should.equal('Manually install adb and add it to PATH. ' +
+      removeColors(await check.fix()).should.equal('Manually install adb, android, emulator and add it to PATH. ' +
         'https://developer.android.com/studio#cmdline-tools and ' +
         'https://developer.android.com/studio/intro/update#sdk-manager may help to setup.');
     });

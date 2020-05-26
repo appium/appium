@@ -4,6 +4,10 @@ XCTest framework supports unique gestures like "mobile:scroll" and
 "mobile:swipe". They are not so flexible as UIScrollable but still
 useful.
 
+More info
+[https://developer.apple.com/documentation/xctest/xcuielement]() in
+'Scrolling' and 'Performing Gestures' sections.
+
 As usual swipe performs swipe action while scroll tries to change one
 visible view port only.
 
@@ -90,3 +94,4 @@ public void mobileSwipeScreenIOS(Direction dir) {
     }
 }
 ```
+

@@ -9,7 +9,8 @@ With default driver settings we can see elements outside of the view
 port on iOS, but cannot interact with them. We can check their values,
 but touches are not reliable. Android UIAutomator2 with default settings
 allows you to see only elements located in the current view port.
-Android 'Espresso' `TODO`.
+Android 'Espresso' `TODO`. These behaviors/limitations coming from Apple
+XCUITest and Google UIAutomator2 frameworks.
 
 While interacting with elements you should always keep in mind these
 differences.

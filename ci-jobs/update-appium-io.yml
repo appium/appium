@@ -2,7 +2,7 @@
 jobs:
   - job: update_appium_io
     pool:
-      vmImage: 'macOS 10.14'
+      vmImage: 'Ubuntu-18.04'
     variables:
       CC: gcc
       CXX: g++

@@ -12,6 +12,8 @@ jobs:
         versionSpec: '10.x'
     - script: |
         pip install mkdocs==0.16.3
+        git config --global user.email "maintainers@appium.io"
+        git config --global user.name "Appium Triager"
         git clone https://triager:$GITHUB_TOKEN@github.com/appium/appium.io.git --branch=gh-pages
         pushd appium.io
         git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium.io

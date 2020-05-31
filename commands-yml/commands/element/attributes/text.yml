@@ -35,7 +35,8 @@ example_usage:
       $text = $el->text();
   csharp:
     |
-      // TODO C# sample
+      var element = driver.FindElementByClassName("SomeClassName");
+      string elText = element.Text;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getText--"
@@ -45,7 +46,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#text-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#text-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs#L81"
 
 # Driver support by platform
 driver_support:

@@ -41,7 +41,10 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      TouchActions action = new TouchActions(driver);
+      action.Down(10, 10);
+      action.Up(20, 20);
+      action.Perform();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#up-int-int-"
@@ -51,7 +54,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/TouchActions.cs#L76"
 
 # Driver support by platform
 driver_support:

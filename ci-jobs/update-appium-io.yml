@@ -6,6 +6,7 @@ jobs:
     variables:
       CC: gcc
       CXX: g++
+      COMMIT_MSG: "'docs: Update documentation for latest version'"
     steps:
     - task: NodeTool@0
       inputs:
@@ -22,9 +23,9 @@ jobs:
         npm install
         npm run build:docs
         git add docs
-        git commit -a -n -m "docs: Update documentation for latest version"
+        git commit -a -n -m $COMMIT_MSG
         git push triager docs-$BUILD_SOURCEVERSION
-        hub pull-request -b "appium:gh-pages" -h "appium:docs-$BUILD_SOURCEVERSION" -m "docs: Update documentation for latest version"
+        hub pull-request -b "appium:gh-pages" -h "appium:docs-$BUILD_SOURCEVERSION" -m $COMMIT_MSG
         popd
       displayName: Make branch with Updated Docs and make PR
       env:

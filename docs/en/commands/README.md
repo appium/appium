@@ -9,7 +9,6 @@
 <ul>
     <li><a href='/docs/en/commands/status.md'>Status</a></li>
     <li><a href='/docs/en/commands/mobile-command.md'>Execute Mobile Command</a></li>
-    <li><a href='/docs/en/commands/execute-driver.md'>Execute Driver Script</a></li>
     <li><a href='/docs/en/commands/session'>Session</a><ul>    <li><a href='/docs/en/commands/session/create.md'>Create</a></li>
     <li><a href='/docs/en/commands/session/delete.md'>End</a></li>
     <li><a href='/docs/en/commands/session/get.md'>Get Session Capabilities</a></li>
@@ -35,6 +34,7 @@
     <li><a href='/docs/en/commands/session/settings'>Settings</a><ul>    <li><a href='/docs/en/commands/session/settings/update-settings.md'>Update Settings</a></li>
     <li><a href='/docs/en/commands/session/settings/get-settings.md'>Get Device Settings</a></li>
 </ul></li>
+    <li><a href='/docs/en/commands/session/execute-driver.md'>Execute Driver Script</a></li>
 </ul></li>
     <li><a href='/docs/en/commands/device'>Device</a><ul>    <li><a href='/docs/en/commands/device/activity'>Activity</a><ul>    <li><a href='/docs/en/commands/device/activity/start-activity.md'>Start Activity</a></li>
     <li><a href='/docs/en/commands/device/activity/current-activity.md'>Current Activity</a></li>

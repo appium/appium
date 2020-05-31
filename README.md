@@ -83,6 +83,12 @@ For prettily-rendered docs, please visit [appium.io](http://appium.io). You can
 always find the full list of Appium doc pages at [Appium's GitHub
 Repo](https://github.com/appium/appium/tree/master/docs/en/) as well.
 
+[update-appium-io.yml](https://github.com/appium/appium/blob/master/ci-jobs/update-appium-io.yml) creates a PR
+by [CI job](https://dev.azure.com/AppiumCI/Appium%20CI/_build?definitionId=37).
+in the appium.io repository with the documentation update.
+
+Once the PR has been merged, the latest documentation will be in [appium.io](http://appium.io)
+
 ### Contributing
 
 Please take a look at our [contribution documentation](CONTRIBUTING.md)

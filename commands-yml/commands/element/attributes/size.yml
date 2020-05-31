@@ -31,7 +31,8 @@ example_usage:
       $size = $el->size();
   csharp:
     |
-      // TODO C# sample
+      var element = driver.FindElementByAccessibilityId("SomeAccessibilityID");
+      Size elementSize = element.Size;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getSize--"
@@ -41,7 +42,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:size"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:size"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs#L91"
 
 # TODO: Confirm if all the drivers support this
 driver_support:

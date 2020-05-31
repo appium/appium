@@ -9,6 +9,7 @@
 <ul>
     <li><a href='/docs/en/commands/status.md'>Status</a></li>
     <li><a href='/docs/en/commands/mobile-command.md'>Execute Mobile Command</a></li>
+    <li><a href='/docs/en/commands/execute-driver.md'>Execute Driver Script</a></li>
     <li><a href='/docs/en/commands/session'>Session</a><ul>    <li><a href='/docs/en/commands/session/create.md'>Create</a></li>
     <li><a href='/docs/en/commands/session/delete.md'>End</a></li>
     <li><a href='/docs/en/commands/session/get.md'>Get Session Capabilities</a></li>

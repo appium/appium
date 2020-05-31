@@ -39,7 +39,10 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      Actions action = new Actions(driver);
+      action.MoveToElement(element);
+      action.ClickAndHold();
+      action.Perform();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/Actions.html#clickAndHold--"
@@ -49,7 +52,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:click_and_hold"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:click_and_hold"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/Actions.cs#L219"
 
 # Driver support by platform
 driver_support:

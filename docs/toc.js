@@ -22,6 +22,7 @@ module.exports = {
     ['Commands', ['commands',
       ['Status', 'status.md'],
       ['Execute Mobile Command', 'mobile-command.md'],
+      ['Execute Driver Script', 'execute-driver.md'],
       ['Session', ['session',
         ['Create', 'create.md'],
         ['End', 'delete.md'],

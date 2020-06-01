@@ -17,14 +17,14 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      driver.Rotate(new Dictionary<string, int> { { "x", 114 }, { "y", 198 }, { "duration", 5 }, { "radius", 3 }, { "rotation", 220 }, { "touchCount", 2 } });
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/AppiumDriver.html#rotate-org.openqa.selenium.DeviceRotation-"
   javascript_wdio: "https://webdriver.io/docs/api/appium.html#rotatedevice"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2470"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumDriver.cs#L216"
 
 # Driver support by platform
 driver_support:

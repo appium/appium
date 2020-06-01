@@ -26,7 +26,7 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      IEnumerable<Cookie> allCookies = driver.Manage().Cookies.AllCookies;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/RemoteWebDriver.RemoteWebDriverOptions.html#getCookies--"
@@ -36,7 +36,7 @@ client_docs:
   ruby: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#get-all-cookies"
   ruby_core: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#get-all-cookies"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteCookieJar.cs#L41-L47"
 
 # Driver support by platform
 driver_support:

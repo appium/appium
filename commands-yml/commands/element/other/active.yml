@@ -37,7 +37,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
-  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteTargetLocator.cs#L210"
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteTargetLocator.cs"
 
 # Driver support by platform
 driver_support:

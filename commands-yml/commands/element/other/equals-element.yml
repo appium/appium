@@ -50,7 +50,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebElement.cs#L807"
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebElement.cs"
 
 # TODO: Confirm support for these per platform
 driver_support:

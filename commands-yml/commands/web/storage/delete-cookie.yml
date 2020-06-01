@@ -36,7 +36,7 @@ client_docs:
   ruby: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#delete-cookie"
   ruby_core: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#delete-cookie"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteCookieJar.cs#L60-L81"
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteCookieJar.cs"
 
 # Driver support by platform
 driver_support:

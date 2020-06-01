@@ -36,7 +36,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handles"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:window_handles"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebDriver.cs#L250"
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebDriver.cs"
 
 # Driver support by platform
 driver_support:

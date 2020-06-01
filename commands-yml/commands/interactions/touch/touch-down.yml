@@ -54,7 +54,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TouchActionBuilder#down-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TouchActionBuilder#down-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/TouchActions.cs#L63"
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/TouchActions.cs"
 
 # Driver support by platform
 driver_support:

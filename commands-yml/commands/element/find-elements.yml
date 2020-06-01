@@ -63,7 +63,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_elements"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs#L208"
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs"
 
 # Driver support by platform
 driver_support:

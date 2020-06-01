@@ -41,7 +41,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:attribute"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs#L126"
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs"
 
 # TODO: Confirm if all the drivers support this
 driver_support:

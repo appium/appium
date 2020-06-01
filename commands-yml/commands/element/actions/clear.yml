@@ -39,7 +39,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebElement.cs#L257"
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebElement.cs"
 
 # Driver support by platform
 driver_support:

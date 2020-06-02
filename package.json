@@ -14,9 +14,10 @@
   "bugs": {
     "url": "https://github.com/appium/appium-doctor/issues"
   },
-  "engines": [
-    "node"
-  ],
+  "engines": {
+    "node": ">=10",
+    "npm": ">=6"
+  },
   "main": "./appium-doctor.js",
   "bin": {
     "appium-doctor": "./appium-doctor.js"

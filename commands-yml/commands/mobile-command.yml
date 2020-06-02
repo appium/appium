@@ -81,6 +81,8 @@
       | mobile:type | Send Unicode text to a focused element. | `{text}` |  `{text: "happy testing"}` |
       | mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
       | mobile:deleteFile | Delete a file on the device under test. The remote path value should be the full path or a file inside an application bundle.  | `{remotePath}` | `{remotePath: '@io.appium.example/path/in/bundle'}`, `{remotePath: '/tmp/data/file'}` |
+      | mobile:startService | Starts the given service by calling `am start-service` or `am start-foreground-service` under the hood since Appium 1.18.0. The `intent` argument is mandatory. `user` is the ID of the user the service should be started for (the current user ID is used by default). If `foreground` is set to `true` then the service will be started in foreground. | `{intent, user, foreground}` | `{intent: 'my.app/my.activity', foreground: true}` |
+      | mobile:stopService | Stops the given service by calling `am stop-service` under the hood since Appium 1.18.0. The `intent` argument is mandatory. `user` is the ID of the user the service should be stopped for (the current user ID is used by default). | `{intent, user}` | `{intent: 'my.app/my.activity'}` |
 
       ### Android (UiAutomator2 only)
       | Command | Description | Argument | Argument Example |

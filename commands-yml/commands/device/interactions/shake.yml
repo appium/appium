@@ -27,7 +27,7 @@ example_usage:
       $driver->shake();
   csharp:
     |
-      // TODO C# sample
+      driver.ShakeDevice();
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/ios/ShakesDevice.html#shake--"
@@ -37,7 +37,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#shake-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#shake-instance_method"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/iOS/IOSDriver.cs"
 
 # Driver support by platform
 driver_support:

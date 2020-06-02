@@ -31,7 +31,8 @@ example_usage:
       $location = $el->location();
   csharp:
     |
-      // TODO C# sample
+      var element = driver.FindElementByAccessibilityId("SomeAccessibilityID");
+      Point location = element.Location;
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html#getLocation--"
@@ -41,7 +42,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:location"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:location"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs"
 
 # TODO: Confirm if all the drivers support this
 driver_support:

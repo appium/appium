@@ -32,7 +32,9 @@ example_usage:
       // TODO PHP sample
   csharp:
     |
-      // TODO C# sample
+      TouchActions action = new TouchActions(driver);
+      action.Flick(element, 10, 10, 1);
+      action.Perform();
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#flick-org.openqa.selenium.WebElement-int-int-int-"
@@ -42,7 +44,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:flick"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/TouchActions.cs"
 
 # Driver support by platform
 driver_support:

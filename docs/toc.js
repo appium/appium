@@ -267,6 +267,32 @@ module.exports = {
         ['Using Unicode with Appium', 'unicode.md'],
         ['Troubleshooting', 'troubleshooting.md']
       ]],
+      ['Tutorial', ['tutorial',
+        ['Swipe Tutorial', 'swipe-tutorial.md'],
+        ['Simple swipe', ['swipe',
+          ['Screen', 'simple-screen.md'],
+          ['Element', 'simple-element.md'],
+          ['Partial screen', 'simple-partial-screen.md']
+        ]],
+        ['Android swipe', ['swipe',
+          ['Simple', 'android-simple.md'],
+          ['Multiple scroll views', 'android-multiple.md'],
+          ['Add scroll layout', 'android-layout-direction.md'],
+          ['Tricks and Tips', 'android-tricks.md']
+        ]],
+        ['iOS swipe', ['swipe',
+          ['Screen', 'ios-mobile-screen.md'],
+          ['Element', 'ios-mobile-element.md'],
+          ['Element search', 'ios-mobile-element-search.md']
+        ]],
+        ['iOS pickerWheels', ['swipe',
+          ['Fast', 'ios-picker-wheels-set-value.md'],
+          ['Slow', 'ios-picker-wheels-mobile.md']
+        ]],
+        ['Troubleshoot', ['swipe',
+          ['Guide', 'swipe-troubleshoot-guide.md']
+        ]]
+      ]],
     ]],
     ['Advanced', ['advanced-concepts',
       ['Finding Image Elements', 'image-elements.md'],

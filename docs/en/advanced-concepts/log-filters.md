@@ -41,7 +41,7 @@ Replace all occurrences of `my.magic.<any char>` string with a custom replacer (
 ]
 ```
 
-Replace all occurrences of `my.magic.<any char>` and/or `your.magic` strings with a custom replacer (case insensitive):
+Replace all occurrences of `my.magic.<any chars>` and/or `your.magic` strings with a custom replacer (case insensitive):
 
 ```json
 [

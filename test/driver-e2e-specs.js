@@ -7,6 +7,7 @@ import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
+import { DEFAULT_APPIUM_HOME } from '../lib/parser';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
 import { FakeDriver } from 'appium-fake-driver';
@@ -28,7 +29,7 @@ describe('FakeDriver - via HTTP', function () {
   const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async function () {
     if (shouldStartServer) {
-      let args = {port: TEST_PORT, host: TEST_HOST};
+      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome: DEFAULT_APPIUM_HOME};
       server = await appiumServer(args);
     }
   });
@@ -200,7 +201,7 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      await axios.post(baseUrl, w3cCaps).should.eventually.be.rejectedWith(/Could not find a driver for/);
+      await axios.post(baseUrl, w3cCaps).should.eventually.be.rejectedWith(/500/);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -253,7 +254,7 @@ describe('FakeDriver - via HTTP', function () {
         capabilities: {
           alwaysMatch: {
             ...caps,
-            deviceName: null,
+            deviceName: 'Fake',
           },
         },
       };
@@ -263,10 +264,10 @@ describe('FakeDriver - via HTTP', function () {
         return res;
       });
 
-      const {value, sessionId, status} = (await axios.post(baseUrl, combinedCaps)).data;
-      status.should.exist;
+      const {value} = (await axios.post(baseUrl, combinedCaps)).data;
+      const {capabilities, sessionId} = value;
       sessionId.should.exist;
-      value.should.deep.equal(caps);
+      capabilities.should.deep.equal(caps);
 
       createSessionStub.restore();
 
@@ -325,6 +326,7 @@ describe('Logsink', function () {
   let args = {
     port: TEST_PORT,
     host: TEST_HOST,
+    appiumHome: DEFAULT_APPIUM_HOME,
     logHandler,
   };
 

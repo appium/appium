@@ -45,7 +45,7 @@ get_performance_data package_name: 'io.appium.android.apis', data_type: 'cpuinfo
 
 ```csharp
 // C#
-// TODO C# sample
+// Not supported
 
 ```
 

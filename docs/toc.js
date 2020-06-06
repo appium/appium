@@ -299,6 +299,7 @@ module.exports = {
       ['Using Element Finding Plugins', 'element-finding-plugins.md'],
       ['Migrating to XCUITest', 'migrating-to-xcuitest.md'],
       ['Using Selenium Grid with Appium', 'grid.md'],
+      ['Appium Logs Filtering', 'log-filters.md'],
       ['Cross-domain iframes', 'cross-domain-iframes.md'],
       ['Using a custom WDA server', 'wda-custom-server.md'],
       ['Running with multiple versions of Xcode', 'multiple-xcode-versions.md'],

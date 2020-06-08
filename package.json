@@ -55,6 +55,7 @@
     "lodash": "^4.17.11",
     "longjohn": "^0.2.12",
     "npmlog": "4.x",
+    "ora": "^4.0.4",
     "semver": "^7.0.0",
     "source-map-support": "0.x",
     "teen_process": "1.x",

@@ -1,7 +1,7 @@
 // transpile:mocha
 
-import { getParser, DEFAULT_APPIUM_HOME } from '../lib/parser';
-import { INSTALL_TYPES } from '../lib/driver-config';
+import { getParser } from '../lib/parser';
+import { INSTALL_TYPES, DEFAULT_APPIUM_HOME } from '../lib/driver-config';
 import chai from 'chai';
 
 const should = chai.should();

@@ -8,7 +8,7 @@ import { getGitRev, getBuildInfo, checkNodeOk, warnNodeDeprecations,
          getNonDefaultArgs, validateServerArgs,
          validateTmpDir, showConfig, checkValidPort, updateBuildInfo,
          APPIUM_VER } from '../lib/config';
-import getParser from '../lib/parser';
+import getParser from '../lib/cli/parser';
 import logger from '../lib/logger';
 import { fs } from 'appium-support';
 import axios from 'axios';

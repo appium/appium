@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { getParser } from '../lib/parser';
+import { getParser } from '../lib/cli/parser';
 import { INSTALL_TYPES, DEFAULT_APPIUM_HOME } from '../lib/driver-config';
 import chai from 'chai';
 

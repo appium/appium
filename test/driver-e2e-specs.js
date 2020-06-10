@@ -7,10 +7,11 @@ import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
-import { DEFAULT_APPIUM_HOME } from '../lib/driver-config';
+import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_NPM } from '../lib/driver-config';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
 import { FakeDriver } from 'appium-fake-driver';
+import { runDriverCommand } from '../lib/cli/driver';
 import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
@@ -26,13 +27,31 @@ const caps = {
 
 describe('FakeDriver - via HTTP', function () {
   let server = null;
+  const appiumHome = DEFAULT_APPIUM_HOME;
   const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async function () {
+    // first ensure we have fakedriver installed
+    const driverList = await runDriverCommand({
+      appiumHome,
+      driverCommand: 'list',
+      showInstalled: true,
+    });
+    if (!_.has(driverList, 'fake')) {
+      await runDriverCommand({
+        appiumHome,
+        driverCommand: 'install',
+        driver: 'appium-fake-driver',
+        installType: INSTALL_TYPE_NPM,
+      });
+    }
+
+    // then start server if we need to
     if (shouldStartServer) {
-      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome: DEFAULT_APPIUM_HOME};
+      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome};
       server = await appiumServer(args);
     }
   });
+
   after(async function () {
     if (server) {
       await server.close();

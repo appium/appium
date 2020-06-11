@@ -45,7 +45,7 @@
     "appium-android-driver": "^4.20.0",
     "appium-base-driver": "^6.0.1",
     "appium-espresso-driver": "^1.0.0",
-    "appium-fake-driver": "^0.x",
+    "appium-fake-driver": "^1.x",
     "appium-flutter-driver": "^0",
     "appium-ios-driver": "4.x",
     "appium-mac-driver": "1.x",

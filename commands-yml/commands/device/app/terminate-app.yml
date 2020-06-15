@@ -81,7 +81,7 @@ endpoint:
     - name: bundleId or appId
       type: string
       description: BundleId for iOS. Package name for Android.
-    - name: timeout
+    - name: options.timeout
       type: number
       description: (Only Android) Timeout to retry terminate the app.
 

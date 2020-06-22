@@ -40,6 +40,7 @@ const androidWebCaps = {
 };
 
 const serverConfig = {
+  path: '/wd/hub',
   host: process.env.APPIUM_HOST || 'localhost',
   port: process.env.APPIUM_PORT || 4723,
   logLevel: 'info'

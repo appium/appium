@@ -13,7 +13,9 @@ driver.pushFile("/path/to/device/foo.bar", new File("/Users/johndoe/files/foo.ba
 
 ```python
 # Python
-self.driver.push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+dest_path = '/data/local/tmp/test_push_file.txt'
+data = bytes('This is the contents of the file to push to the device.', 'utf-8')
+self.driver.push_file(dest_path, base64.b64encode(data).decode('utf-8'))
 
 ```
 
@@ -31,10 +33,10 @@ await driver.pushFileToDevice('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2
 ```ruby
 # Ruby
 # ruby_lib example
-push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
+push_file('/path/to/device/foo.bar', File.read('path/to/file.png'))
 
 # ruby_lib_core example
-@driver.push_file('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=')
+@driver.push_file('/path/to/device/foo.bar', File.read('path/to/file.png'))
 
 ```
 

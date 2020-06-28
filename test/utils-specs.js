@@ -1,7 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {
-  parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings } from '../lib/utils';
+  parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
+  removeAppiumPrefixes,
+} from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 
@@ -169,6 +171,20 @@ describe('utils', function () {
       desiredCaps.should.eql({...BASE_CAPS, propertyName: 'PROP_NAME'});
       processedJsonwpCapabilities.should.eql(BASE_CAPS);
       protocol.should.equal('W3C');
+    });
+  });
+
+  describe('removeAppiumPrefixes()', function () {
+    it('should remove appium prefixes from cap names', function () {
+      removeAppiumPrefixes({
+        'appium:cap1': 'value1',
+        'ms:cap2': 'value2',
+        someCap: 'someCap',
+      }).should.eql({
+        'cap1': 'value1',
+        'ms:cap2': 'value2',
+        someCap: 'someCap',
+      });
     });
   });
 

@@ -90,7 +90,7 @@ describe('utils', function () {
         'appium:foo2': 'bar2',
       });
       desiredCaps.should.deep.equal({foo: 'baz', foo2: 'baz2', ...BASE_CAPS});
-      processedJsonwpCapabilities.should.deep.equal({foo: 'baz', foo2: 'baz2', ...BASE_CAPS});
+      processedJsonwpCapabilities.should.deep.equal({foo: 'baz', foo2: 'bar2', 'appium:foo2': 'baz2', ...BASE_CAPS});
       processedW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'baz', 'appium:foo2': 'baz2', ...insertAppiumPrefixes(BASE_CAPS)});
     });
     it('should reject if W3C caps are not passing constraints', function () {

@@ -8,7 +8,7 @@ example_usage:
       Set<String> logTypes = driver.manage().logs().getAvailableLogTypes();
   python:
     |
-      log_types = driver.log_types;
+      log_types = driver.log_types
   javascript_wd:
     |
       const logTypes = await driver.logTypes();

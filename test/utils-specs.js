@@ -1,7 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import {
-  parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings } from '../lib/utils';
+  parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
+  removeAppiumPrefixes,
+} from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 
@@ -88,7 +90,7 @@ describe('utils', function () {
         'appium:foo2': 'bar2',
       });
       desiredCaps.should.deep.equal({foo: 'baz', foo2: 'baz2', ...BASE_CAPS});
-      processedJsonwpCapabilities.should.deep.equal({foo: 'baz', foo2: 'baz2', ...BASE_CAPS});
+      processedJsonwpCapabilities.should.deep.equal({foo: 'baz', foo2: 'bar2', 'appium:foo2': 'baz2', ...BASE_CAPS});
       processedW3CCapabilities.alwaysMatch.should.deep.equal({'appium:foo': 'baz', 'appium:foo2': 'baz2', ...insertAppiumPrefixes(BASE_CAPS)});
     });
     it('should reject if W3C caps are not passing constraints', function () {
@@ -169,6 +171,20 @@ describe('utils', function () {
       desiredCaps.should.eql({...BASE_CAPS, propertyName: 'PROP_NAME'});
       processedJsonwpCapabilities.should.eql(BASE_CAPS);
       protocol.should.equal('W3C');
+    });
+  });
+
+  describe('removeAppiumPrefixes()', function () {
+    it('should remove appium prefixes from cap names', function () {
+      removeAppiumPrefixes({
+        'appium:cap1': 'value1',
+        'ms:cap2': 'value2',
+        someCap: 'someCap',
+      }).should.eql({
+        'cap1': 'value1',
+        'ms:cap2': 'value2',
+        someCap: 'someCap',
+      });
     });
   });
 

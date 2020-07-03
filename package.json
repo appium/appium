@@ -27,8 +27,7 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js",
-    "authorize-ios": "./node_modules/.bin/authorize-ios"
+    "appium": "./build/lib/main.js"
   },
   "directories": {
     "lib": "./lib",

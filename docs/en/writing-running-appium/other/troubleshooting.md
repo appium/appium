@@ -141,12 +141,13 @@ own items in the SDK manager. Make sure you install the build-tools and platform
     - If it returns `69`, you should call `xcodebuild -runFirstLaunch` once to prevent the root error, `Install Started
 Install Failed: Error Domain=DVTDownloadableErrors Code=3 "The authorization was denied since no user interaction was possible." UserInfo={AuthorizationErrorCode=-60007, NSLocalizedDescription=The authorization was denied since no user interaction was possible.}`
     - example: https://github.com/appium/WebDriverAgent/pull/165#discussion_r281458167
-* Make sure your `.ipa` had no unicode file names
-    - Appium unzip `.ipa` to install packed the application under test, but the unzip logic depends on the language flag. `.ipa` does not have language encoding flag, so the unzip generates wrong file names.
+* Make sure your `.ipa` had no Unicode file names
+    - Appium unzip `.ipa` to install packed the application under test, but [the macOS's Archive Utils has an issue](https://stackoverflow.com/questions/13261347/correctly-decoding-zip-entry-file-names-cp437-utf-8-or). So, unzip generates could generate wrong file names.
     - As another workaround, you can follow below step.
       1. Rename `your_test.ipa` to `your_test.zip`
       2. Unzip it (by Archive Utils by Apple for example). Then, `Payload/your_test.app` is generated
       3. Set `your_test.app` as `app` capability
+        - Or zip the `your_test.app` again properly
     - For more context https://github.com/appium/appium/issues/14100
 
 

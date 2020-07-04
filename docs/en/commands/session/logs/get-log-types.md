@@ -13,7 +13,7 @@ Set<String> logTypes = driver.manage().logs().getAvailableLogTypes();
 
 ```python
 # Python
-log_types = driver.log_types();
+log_types = driver.log_types
 
 ```
 

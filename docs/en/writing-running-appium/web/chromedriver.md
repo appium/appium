@@ -24,11 +24,11 @@ There are several ways to provide a customized Chromedriver to Appium:
 
 #### When installing the server
 
-Provide `--chromedriver_version` command line containing the actual version number
+Provide `--chromedriver_version` command line argument containing the actual version number
 ```
 npm install appium --chromedriver_version="2.16"
 ```
-Or specify the version in the `CHROMEDRIVER_VERSION` environment variable,
+Or specify the Chromedriver version in the `CHROMEDRIVER_VERSION` environment variable,
 e.g,
 ```
 CHROMEDRIVER_VERSION=2.20 npm install appium
@@ -48,12 +48,12 @@ appium --chromedriver-executable /path/to/my/chromedriver
 
 Chromedriver version can be specified in session capabilities, by providing the
 `chromedriverExecutable` cap, containing the full path to a matching
-Chromedriver executable which must be manually downloaded and put to the server file system.
+Chromedriver executable, which must be manually downloaded and put to the server file system.
 See http://appium.io/docs/en/writing-running-appium/caps/ for more details
 
 #### When starting a session (automated discovery)
 
-Appium could also try to detect the version of the target Chrome engine automatically and
+Appium could also try to detect the version of the target Chrome engine and
 download matching chromedriver for it automatically if it does not exist on the local file system.
 Read the `Automatic discovery of compatible Chromedriver` topic below for more details.
 

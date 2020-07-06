@@ -10,7 +10,7 @@ and handles the application under test via it.
 While this is simple in theory, the hoops of code signing and provisioning applications for
 development and testing can make this a bit of a headache.
 
-The device should be available by Xcode. Please make sure the device under test can connect to Xcode without problems. You can confirm it on _Devices and Simulators_ window by Xcode.
+The device should be available to Xcode. Please make sure the device under test can connect to Xcode without issues. You could confirm it on _Devices and Simulators_ window by Xcode.
 
 The documentation on [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) is also helpful to resolve dependencies.
 
@@ -243,5 +243,5 @@ for this).
     1. Settings -> Safari -> Advanced -> **Web Inspector** and **Remote Automation**
         1. Please read [Automating mobile web apps](/writing-running-appium/web/mobile-web) for more details about WebView
 1. Consider generating a provisioning profile with `.xctrunner` identifier if you do not want to generate a wildcard one for manual configuration. The `.xctrunner` config support has been added since Xcode 11. [A reference](https://github.com/appium/appium/issues/13610)
-1. Make sure the device under test is not Jaibreak device
+1. Make sure the device under test is not a jaibroken one
     - `com.apple.mobile.installation_proxy` service to manage Apps on the device [does not work](https://github.com/appium/appium-desktop/issues/1447)

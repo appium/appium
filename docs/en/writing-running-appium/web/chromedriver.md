@@ -7,7 +7,7 @@ instance and proxying commands to it when necessary. It comes bundled with the
 npm package [appium-chromedriver](https://www.npmjs.com/package/appium-chromedriver)
 (Github: [appium-chromedriver](https://github.com/appium/appium-chromedriver)).
 
-Unfortunately, with each update to Chromedriver there is an increase in the minimum
+With each update to Chromedriver there is an increase in the minimum
 supported version of Chrome, such that older devices are often unable to be automated
 with the bundled version. In the Appium server logs there will be an error like:
 ```
@@ -15,25 +15,48 @@ An unknown server-side error occurred while processing the command.
 Original error: unknown error: Chrome version must be >= 55.0.2883.0
 ```
 
-To get around this, Appium can be configured to use a particular Chromedriver
-version, either at install time, by either passing the `--chromedriver_version`
-config property, e.g.,
+To get around this it is necessary to provide Appium with a proper Chromedriver binary,
+that [matches](https://raw.githubusercontent.com/appium/appium-chromedriver/master/config/mapping.json)
+to the Chrome engine version running on the device under test.
+Read the `Chromedriver/Chrome compatibility` topic below to know more about finding a matching Chromedriver executable.
+
+There are several ways to provide a customized Chromedriver to Appium:
+
+#### When installing the server
+
+Provide `--chromedriver_version` command line containing the actual version number
 ```
 npm install appium --chromedriver_version="2.16"
 ```
-Or specifying the version in the `CHROMEDRIVER_VERSION` environment variable,
+Or specify the version in the `CHROMEDRIVER_VERSION` environment variable,
 e.g,
 ```
 CHROMEDRIVER_VERSION=2.20 npm install appium
 ```
 This can also be set to `LATEST` to get the most recent version.
 
-Finally, a version can be specified at runtime, by specifying the
+#### When starting the server
+
+Chromedriver version can be specified at runtime, by specifying the
 `--chromedriver-executable` server flag, along with the full path to the
-Chromedriver executable which was manually downloaded, e.g.,
+Chromedriver executable which was manually downloaded and put to the server file system, e.g.,
 ```
 appium --chromedriver-executable /path/to/my/chromedriver
 ```
+
+#### When starting a session (manual discovery)
+
+Chromedriver version can be specified in session capabilities, by providing the
+`chromedriverExecutable` cap, containing the full path to a matching
+Chromedriver executable which must be manually downloaded and put to the server file system.
+See http://appium.io/docs/en/writing-running-appium/caps/ for more details
+
+#### When starting a session (automated discovery)
+
+Appium could also try to detect the version of the target Chrome engine automatically and
+download matching chromedriver for it automatically if it does not exist on the local file system.
+Read the `Automatic discovery of compatible Chromedriver` topic below for more details.
+
 
 ### Chromedriver/Chrome compatibility
 
@@ -48,6 +71,7 @@ in the file `src/chrome/test/chromedriver/chrome/version.cc`. (To find the
 release commits, you can use `git log --pretty=format:'%h | %s%d' | grep -i "Release Chromedriver version"`.)
 
 The complete list of available Chromedriver releases and release notes is [here](https://chromedriver.storage.googleapis.com/index.html).
+
 
 ### Automatic discovery of compatible Chromedriver
 
@@ -75,6 +99,7 @@ in it. The contents of the file need to be parsable as a JSON object, like:
 Since Appium 1.15.0 there is a possibility to automatically download the necessary chromedriver(s) into `chromedriverExecutableDir` from the official Google storage. The script will automatically search for the newest chromedriver version that supports the given browser/web view, download it (the hash sum is verified as well for the downloaded archive) and add to the `chromedriverChromeMappingFile` mapping. Everything, which is needed to be done from your side is to execute the server with `chromedriver_autodownload` feature enabled (like `appium --allow-insecure chromedriver_autodownload`).
 You can also check the [Security](https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/security.md) document for more details on how to control potentially insecure server features.
 
+
 ### Troubleshooting network issues
 
 When Appium is installed it needs to download Chromedriver, so there is the possibility
@@ -101,6 +126,7 @@ CHROMEDRIVER_CDNURL=http://npm.taobao.org/mirrors/chromedriver npm install appiu
 
 It may also be necessary to adjust network proxy and firewall settings to allow
 the download to occur.
+
 
 ### W3C support
 

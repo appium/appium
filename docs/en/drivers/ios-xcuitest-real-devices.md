@@ -10,7 +10,7 @@ and handles the application under test via it.
 While this is simple in theory, the hoops of code signing and provisioning applications for
 development and testing can make this a bit of a headache.
 
-The device should be available to Xcode. Please make sure the device under test can connect to Xcode without issues. You could confirm it on _Devices and Simulators_ window by Xcode.
+The device should be available to Xcode. Please make sure the device under test can connect to Xcode without issues. You could confirm it with _Devices and Simulators_ Xcode dialog.
 
 The documentation on [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) is also helpful to resolve dependencies.
 

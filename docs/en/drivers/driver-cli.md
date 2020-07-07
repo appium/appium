@@ -49,8 +49,8 @@ Note that for any drivers installed via NPM (which counts official drivers, as w
 |`appium driver install xcuitest`|Install the official XCUITest driver|
 |`appium driver install xcuitest@2.1.2`|Install the official XCUITest driver at a certain version|
 |`appium driver install --source=npm appium-fake-driver`|Install the `appium-fake-driver` package from NPM|
-|`appium driver install --source=github appium/appium-fake-driver|Install the driver located on GitHub at the 'appium' org and 'appium-fake-driver' repo|
-|`appium driver install --source=local /path/to/driver/directory|Install a driver unpacked on your filesystem|
+|`appium driver install --source=github appium/appium-fake-driver`|Install the driver located on GitHub at the 'appium' org and 'appium-fake-driver' repo|
+|`appium driver install --source=local /path/to/driver/directory`|Install a driver unpacked on your filesystem|
 
 ### `update`
 

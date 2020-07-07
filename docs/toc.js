@@ -9,6 +9,7 @@ module.exports = {
       ['API Documentation', 'api.md'],
     ]],
     ['Drivers', ['drivers',
+      ['Driver CLI', 'driver-cli.md'],
       ['XCUITest (iOS)', 'ios-xcuitest.md'],
       ['XCUITest Real Devices (iOS)', 'ios-xcuitest-real-devices.md'],
       ['UIAutomation (iOS)', 'ios-uiautomation.md'],

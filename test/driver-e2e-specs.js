@@ -7,11 +7,11 @@ import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
-import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_NPM } from '../lib/extension-config';
+import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_NPM, DRIVER_TYPE } from '../lib/extension-config';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
 import { FakeDriver } from 'appium-fake-driver';
-import { runDriverCommand } from '../lib/cli/driver';
+import { runExtensionCommand } from '../lib/cli/extension';
 import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
@@ -31,18 +31,18 @@ describe('FakeDriver - via HTTP', function () {
   const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async function () {
     // first ensure we have fakedriver installed
-    const driverList = await runDriverCommand({
+    const driverList = await runExtensionCommand({
       appiumHome,
       driverCommand: 'list',
       showInstalled: true,
-    });
+    }, DRIVER_TYPE);
     if (!_.has(driverList, 'fake')) {
-      await runDriverCommand({
+      await runExtensionCommand({
         appiumHome,
         driverCommand: 'install',
         driver: 'appium-fake-driver',
         installType: INSTALL_TYPE_NPM,
-      });
+      }, DRIVER_TYPE);
     }
 
     // then start server if we need to

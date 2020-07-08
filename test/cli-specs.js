@@ -2,7 +2,7 @@
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import DriverConfig, { DEFAULT_APPIUM_HOME } from '../lib/driver-config';
+import { DriverConfig, DEFAULT_APPIUM_HOME } from '../lib/extension-config';
 import { DriverCommand } from '../lib/cli/driver';
 import sinon from 'sinon';
 
@@ -13,7 +13,7 @@ describe('DriverCommand', function () {
   const config = new DriverConfig(DEFAULT_APPIUM_HOME);
   const driver = 'fake';
   const pkgName = 'appium-fake-driver';
-  config.installedDrivers = {[driver]: {version: '1.0.0', pkgName}};
+  config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
   const dc = new DriverCommand({config, json: true});
 
   describe('#checkForDriverUpdate', function () {

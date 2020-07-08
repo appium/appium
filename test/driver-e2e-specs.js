@@ -7,7 +7,7 @@ import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
-import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_NPM } from '../lib/driver-config';
+import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_NPM } from '../lib/extension-config';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
 import { FakeDriver } from 'appium-fake-driver';

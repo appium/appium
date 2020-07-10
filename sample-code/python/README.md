@@ -33,3 +33,13 @@ py.test test/test_ios_selectors.py
 
 ### pytest based
 - Rest of the above
+
+# Tutorial
+
+## Portuguese
+
+The brazilian testing community has a complete and free tutorial teaching from 0 to advanced how to use Appium with Python to do software automation.
+
+If you can read Portuguese from Brazil, see the tutorial below:
+
+[Automação de teste de software com Appium e Python - Por Maria Clara Bezerra (Github)](https://github.com/clarabez/appium)

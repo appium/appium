@@ -1,6 +1,6 @@
-# 获取当前的页面名称
+# 获取当前的Activity名称
 
-得到当前的Android页面名称
+得到当前的Android Activity名称
 ## 使用样例
 
 ```java
@@ -92,7 +92,7 @@ None
 
 ### 响应
 
-当前[页面](https://developer.android.com/reference/android/app/Activity.html)的名称 (`string`)
+当前[activity](https://developer.android.com/reference/android/app/Activity.html)的名称 (`string`)
 
 ## 参考
 

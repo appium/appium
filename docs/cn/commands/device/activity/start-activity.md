@@ -1,6 +1,6 @@
-# 启动页面
+# 启动Activity
 
-通过提供包名和活动名来启动一个Android应用页面
+通过提供package名和Activity名来启动一个Android Activity
 ## 使用样例
 
 ```java
@@ -96,10 +96,10 @@ driver.StartActivity("com.example", "ActivityName");
 |name|类型|描述|
 |----|----|-----------|
 | appPackage | `string` | [包](https://developer.android.com/reference/java/lang/Package.html)名 |
-| appActivity | `string` | [活动](https://developer.android.com/reference/android/app/Activity.html)名 |
+| appActivity | `string` | [Activity](https://developer.android.com/reference/android/app/Activity.html)名 |
 | appWaitPackage | `string` | 在这个参数指定的包启动后，自动化才会开始 |
-| intentAction | `string` | 启动活动时使用的[操作](https://developer.android.com/reference/android/content/Intent.html) |
-| intentCategory | `string` | 启动活动时使用的分类（Category） |
+| intentAction | `string` | 启动活动时使用的[action](https://developer.android.com/reference/android/content/Intent.html) |
+| intentCategory | `string` | 启动活动时使用的Category |
 | intentFlags | `string` | 启动活动时使用的标记 |
 | optionalIntentArguments | `string` | 启动活动时使用的附加参数 |
 | dontStopAppOnReset | `boolean` | 重置活动时是否需要杀掉App |

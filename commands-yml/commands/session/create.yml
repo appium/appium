@@ -8,7 +8,7 @@ description:
     * [JSONWP Spec](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#session-1) Required capabilities have higher priority than desired capabilities and must be set for the session to be created
     * [W3C Spec](https://www.w3.org/TR/webdriver/#dfn-new-session) capabilities.alwaysMatch must be set for session to be created; capabilities.firstMatch must match at least one (the first one to match will be used)
 
-    Please do not forget to call [delete command](/docs/en/commands/session/delete.md) at the end of the session so that Appium can cleanup the session properly.
+    Please do not forget to call [delete command](/docs/en/commands/session/delete.md) at the end of the session so that Appium could cleanup the downstream resources properly. Refusing to do so could corrupt the following session creation attempts or to break the stability of your tests in general.
 
 example_usage:
   java:

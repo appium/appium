@@ -38,7 +38,7 @@ should be used specifically with the Windows driver.
 ### Setup
 
 To test a Windows app, simply make sure you have turned [developer
-mode](https://msdn.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development)
+mode](https://docs.microsoft.com/en-us/windows/uwp/get-started/enable-your-device-for-development)
 on.
 
 When running Appium (whether Appium Desktop or from the command line), ensure

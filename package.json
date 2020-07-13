@@ -93,8 +93,9 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "appium-gulp-plugins": "^5.2.1",
+    "@appium/fake-plugin": "^0.2.0",
     "appium-fake-driver": "0.x",
+    "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "eslint-config-appium": "^4.0.1",

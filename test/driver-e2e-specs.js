@@ -1,13 +1,14 @@
 // transpile:mocha
 
 import _ from 'lodash';
+import path from 'path';
 import B from 'bluebird';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import wd from 'wd';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
-import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_NPM, DRIVER_TYPE } from '../lib/extension-config';
+import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE } from '../lib/extension-config';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
 import { FakeDriver } from 'appium-fake-driver';
@@ -15,6 +16,8 @@ import { runExtensionCommand } from '../lib/cli/extension';
 import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
+
+const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
 
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
@@ -40,8 +43,8 @@ describe('FakeDriver - via HTTP', function () {
       await runExtensionCommand({
         appiumHome,
         driverCommand: 'install',
-        driver: 'appium-fake-driver',
-        installType: INSTALL_TYPE_NPM,
+        driver: FAKE_DRIVER_DIR,
+        installType: INSTALL_TYPE_LOCAL,
       }, DRIVER_TYPE);
     }
 
@@ -283,10 +286,10 @@ describe('FakeDriver - via HTTP', function () {
         return res;
       });
 
-      const {value} = (await axios.post(baseUrl, combinedCaps)).data;
-      const {capabilities, sessionId} = value;
+      const {value, sessionId, status} = (await axios.post(baseUrl, combinedCaps)).data;
+      status.should.exist;
       sessionId.should.exist;
-      capabilities.should.deep.equal(caps);
+      value.should.deep.equal(caps);
 
       createSessionStub.restore();
 

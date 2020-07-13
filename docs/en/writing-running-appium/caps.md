@@ -64,6 +64,8 @@ These Capabilities span multiple drivers.
 |----|-----------|-------|
 |`settings[settingsKey]`| Update [Appium Settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) on session creation. |e.g., `'settings[mjpegScalingFactor]': 10`, `'settings[shouldUseCompactResponses]': true`|
 
+
+
 ### Android Only
 
 These Capabilities are available only on Android-based drivers (like
@@ -280,3 +282,11 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 
 ### WinAppDriver Only
 (For WinAppDriver specific capabilities, please refer to the documentation on the [Appium Windows Driver repo](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) itself.)
+
+### Flutter driver only 
+(For FlutterDriver specific capabilities, examples please refer to the documentation on the [Appium Windows Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
+
+| Capability | Description | Example Values |
+| - | - | -|
+| retryBackoffTime | the time wait for socket connection retry for get flutter session (default 300000ms)|500|
+| maxRetryCount    | the count for socket connection retry for get flutter session (default 10)          | 20|

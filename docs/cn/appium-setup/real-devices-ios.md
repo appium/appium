@@ -4,6 +4,7 @@ Appium 已支持真机的测试。
 
 ### 用 Appium 去运行你的测试
 
+
 Once your device and app are configured, you can run tests on that device by
 passing the `udid` desired capability, and the bundle ID (via the `bundleId`
 capability, if the app is installed on the device) or the path to the `.ipa` or

@@ -1,4 +1,4 @@
-﻿#Windows Setup
+# Windows Setup
 
 Appium on Windows supports both Windows and Android app automation!
 

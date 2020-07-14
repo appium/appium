@@ -284,5 +284,5 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 (For WinAppDriver specific capabilities, please refer to the documentation on the [Appium Windows Driver repo](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) itself.)
 
 ### Flutter driver only 
-(For FlutterDriver specific capabilities, examples please refer to the documentation on the [Appium Windows Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
+(For FlutterDriver specific capabilities, examples please refer to the documentation on the [Flutter Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
 

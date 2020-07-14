@@ -1,12 +1,6 @@
-## Appium on Android Real Devices
+## 在 Android 真机上运行 Appium
 
-Hooray! There is nothing extra to know about testing real Android devices: it
-works exactly the same as testing on emulators. Make sure that your device
-can connect to ADB and has Developer Mode enabled (the process for this differs
-for different vendors, so check their documentation). For testing Chrome on a real
-device, you are responsible for ensuring that Chrome of an appropriate version
-is installed.
+谢天谢地！在 Android 真机上做测试没有额外注意的地方：在模拟器上能运行的测试同样适用在真机上。只需确保你的设备可以与 ADB 连接并且开启了开发者模式（该步骤不同手机厂商都有不同的开启方式，可以查看他们的说明书去了解）。若要在真机上的 Chrome 进行测试，你只需确保安装相应的版本即可。
 
-Also, you will want to make sure that "Verify Apps" in settings is
-disabled/unchecked, otherwise it can prevent some of Appium's helper apps from
-launching and doing their job correctly.
+同样，你大概会想在设置中确保“已验证应用”在不可用状态还是未检查状态。除此意外他还可以防止一些 Appium 的辅助应用去自行启动，并检查他们是否正常运行。
+

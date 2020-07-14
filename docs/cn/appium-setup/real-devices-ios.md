@@ -1,8 +1,9 @@
-## Appium on iOS Real Devices
+## 在 iOS 真机上运行 Appium
 
-Appium has support for iOS real device testing.
+Appium 已支持真机的测试。
 
-### Running your tests with Appium
+### 用 Appium 去运行你的测试
+
 
 Once your device and app are configured, you can run tests on that device by
 passing the `udid` desired capability, and the bundle ID (via the `bundleId`

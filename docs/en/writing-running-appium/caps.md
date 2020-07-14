@@ -286,7 +286,3 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 ### Flutter driver only 
 (For FlutterDriver specific capabilities, examples please refer to the documentation on the [Appium Windows Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
 
-| Capability | Description | Example Values |
-| - | - | -|
-| retryBackoffTime | the time wait for socket connection retry for get flutter session (default 300000ms)|500|
-| maxRetryCount    | the count for socket connection retry for get flutter session (default 10)          | 20|

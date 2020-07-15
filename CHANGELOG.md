@@ -4,56 +4,56 @@ CHANGES IN VERSION 1.18.0 (FROM 1.17.1)
 Appium 1.18.0 is a patch release
 
 #### Android General
-* Capabilities
-  * `mockLocationApp`: Make location mock configurable [appium-android-driver#632](https://github.com/appium/appium-android-driver/pull/632)
-  * `logcatFormat`, `logcatFilterSpecs`: Allow to customise logcat format [appium-adb#528](https://github.com/appium/appium-adb/pull/528)
-  * `ignoreHiddenApiPolicyError`: Ignore permission error when hidden api policy change happenes [appium-adb#507](https://github.com/appium/appium-adb/pull/507)
-* feature: mobile command
-  * `mobile:getDeviceTime`: Get the device time [appium-android-driver#623](https://github.com/appium/appium-android-driver/pull/623)
-  * `mobile:execEmuConsoleCommand`: Sends [emulator console commands](https://developer.android.com/studio/run/emulator-console) [appium-android-driver#517](https://github.com/appium/appium-adb/pull/517) [#630](https://github.com/appium/appium-android-driver/pull/630)
-  * `mobile:deleteFile`: Delete a file [appium-android-driver#634](https://github.com/appium/appium-android-driver/pull/634)
-  * `mobile:startService`, `mobile:stopService`: Start or stop services via [adb shell commands](https://stackoverflow.com/questions/7415997/how-to-start-and-stop-android-service-from-a-adb-shell) [appium-android-driver#647](https://github.com/appium/appium-android-driver/pull/647)
-* feature: Includes native context log for getLog command [appium-android-driver#646](https://github.com/appium/appium-android-driver/pull/646)
-* fix: Tap by element coordinate [appium-android-driver#355](https://github.com/appium/appium-android-driver/pull/355)
+* Add capabilities:
+  * `mockLocationApp` to make location mock configurable [appium-android-driver#632](https://github.com/appium/appium-android-driver/pull/632)
+  * `logcatFormat`, `logcatFilterSpecs` to allow to customise logcat format [appium-adb#528](https://github.com/appium/appium-adb/pull/528)
+  * `ignoreHiddenApiPolicyError` to ignore permission error when hidden api policy change happenes [appium-adb#507](https://github.com/appium/appium-adb/pull/507)
+* Add `mobile:` functions:
+  * `mobile: getDeviceTime` to get the device time [appium-android-driver#623](https://github.com/appium/appium-android-driver/pull/623)
+  * `mobile: execEmuConsoleCommand` to send [emulator console commands](https://developer.android.com/studio/run/emulator-console) [appium-android-driver#517](https://github.com/appium/appium-adb/pull/517) [#630](https://github.com/appium/appium-android-driver/pull/630)
+  * `mobile: deleteFile` to delete a file [appium-android-driver#634](https://github.com/appium/appium-android-driver/pull/634)
+  * `mobile: startService` and `mobile: stopService` to start or stop services via [adb shell commands](https://stackoverflow.com/questions/7415997/how-to-start-and-stop-android-service-from-a-adb-shell) [appium-android-driver#647](https://github.com/appium/appium-android-driver/pull/647)
+* Add including native context log for getLog command [appium-android-driver#646](https://github.com/appium/appium-android-driver/pull/646)
+* Fix tapping by element coordinate [appium-android-driver#355](https://github.com/appium/appium-android-driver/pull/355)
 
 #### Android (UiAutomator2)
-* Capabilities
-  * `disableSuppressAccessibilityService`: Whether enable [FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES]((https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)) flag [appium-uiautomator2-driver#376](https://github.com/appium/appium-uiautomator2-driver/pull/376)
+* Add capabilities:
+  * `disableSuppressAccessibilityService` to control [FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES]((https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)) flag [appium-uiautomator2-driver#376](https://github.com/appium/appium-uiautomator2-driver/pull/376)
 waitForLaunch
-  * `mjpegServerPort`: Can customize MJPEG server port [appium-uiautomator2-driver#386](https://github.com/appium/appium-uiautomator2-driver/pull/386)
-* feature: mobile command
-  * `mobile:sensorSet`: Set sensor [appium-uiautomator2-driver#378](https://github.com/appium/appium-uiautomator2-driver/pull/378)
-  * `mobile:scroll`: Allow scroll action in some ways. Please read [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver/blob/master/lib/commands/general.js) for more details. [appium-uiautomator2-driver#385](https://github.com/appium/appium-uiautomator2-driver/pull/385)
-  * `mobile:deepLink`: Added `waitForLaunch` option to handle the wait for logic [appium-uiautomator2-driver#389](https://github.com/appium/appium-uiautomator2-driver/pull/389)
-  * `mobile:viewportRect`: Returns view port rectangle [appium-uiautomator2-driver#404](https://github.com/appium/appium-uiautomator2-driver/pull/404)
+  * `mjpegServerPort` to customize MJPEG server port [appium-uiautomator2-driver#386](https://github.com/appium/appium-uiautomator2-driver/pull/386)
+* Add `mobile:` functions:
+  * `mobile: sensorSet` to set sensor [appium-uiautomator2-driver#378](https://github.com/appium/appium-uiautomator2-driver/pull/378)
+  * `mobile: scroll` to allow to scroll action in some ways. Please read [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver/blob/master/lib/commands/general.js) for more details. [appium-uiautomator2-driver#385](https://github.com/appium/appium-uiautomator2-driver/pull/385)
+  * `mobile: deepLink` to send deeplink command with `waitForLaunch` option to handle the wait for logic [appium-uiautomator2-driver#389](https://github.com/appium/appium-uiautomator2-driver/pull/389)
+  * `mobile: viewportRect` to return view port rectangle [appium-uiautomator2-driver#404](https://github.com/appium/appium-uiautomator2-driver/pull/404)
 
 #### Android (Espresso)
-* Capabilities
-  * `disableSuppressAccessibilityService`: Whether enable [FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES]((https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)) flag [appium-espresso-driver#559](https://github.com/appium/appium-espresso-driver/pull/559)
-  * `appLocale`: Set [Locale](https://developer.android.com/reference/java/util/Locale) for [the target context](https://developer.android.com/reference/androidx/test/core/app/ApplicationProvider#getApplicationContext()) [appium-espresso-driver#580](https://github.com/appium/appium-espresso-driver/pull/580)
-* feature: mobile command
-  * `mobile:sensorSet`: Set sensor [appium-espresso-driver](https://github.com/appium/appium-espresso-driver/pull/560)
+* Add capabilities:
+  * `disableSuppressAccessibilityService` to control [FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES]((https://developer.android.com/reference/android/app/UiAutomation#FLAG_DONT_SUPPRESS_ACCESSIBILITY_SERVICES)) flag [appium-espresso-driver#559](https://github.com/appium/appium-espresso-driver/pull/559)
+  * `appLocale` to set [Locale](https://developer.android.com/reference/java/util/Locale) for [the target context](https://developer.android.com/reference/androidx/test/core/app/ApplicationProvider#getApplicationContext()) [appium-espresso-driver#580](https://github.com/appium/appium-espresso-driver/pull/580)
+* Add `mobile:` functions:
+  * `mobile: sensorSet` to set sensor [appium-espresso-driver](https://github.com/appium/appium-espresso-driver/pull/560)
 
 ### iOS (XCUITest)
-* Feature: Xcode 12 beta support
-* Settings:
-  * `boundElementsByIndex`: Bounding strategy for element lookup [#357](https://github.com/appium/WebDriverAgent/pull/357)
-* fix: Remove unnecessary dependencies [#348](https://github.com/appium/WebDriverAgent/pull/348) [#350](https://github.com/appium/WebDriverAgent/pull/350) [#351](https://github.com/appium/WebDriverAgent/pull/351)
-* fix: Respect `webDriverAgentUrl` in favor of `wdaLocalPort` and `wdaBaseUrl` for real devices [#342](https://github.com/appium/WebDriverAgent/pull/342)
-* fix: Ignore the case where process locking the socket is not alive [#339](https://github.com/appium/WebDriverAgent/pull/339)
-* fix: Improve alert buttons detection [#322](https://github.com/appium/WebDriverAgent/pull/322)
-* feature: mobile commands for XCTest bundles [#1205](https://github.com/appium/appium-xcuitest-driver/pull/1205). Please read [test code](https://github.com/appium/appium-xcuitest-driver/blob/master/test/functional/device/xctest-e2e-specs.js) as an example.
-  * `mobile:runXCTest`: Runs XCTest bundle
-  * `mobile:installXCTestBundle`:  Install the xctest bundle
-  * `mobile:listXCTestBundles`:  Get list of xctests within bundle
-  * `mobile:listXCTestsInTestBundle`: Returns the list of XCTest bundles
-* feature: Audio recording for simulators and real devices [#1207](https://github.com/appium/appium-xcuitest-driver/pull/1207)
+* Add for Xcode 12 beta support
+* Add settings:
+  * `boundElementsByIndex` for bounding strategy to lookup elements [WebDriverAgent#357](https://github.com/appium/WebDriverAgent/pull/357)
+* Fix removing unnecessary dependencies [WebDriverAgent#348](https://github.com/appium/WebDriverAgent/pull/348) [WebDriverAgent#350](https://github.com/appium/WebDriverAgent/pull/350) [#351](https://github.com/appium/WebDriverAgent/pull/351)
+* Fix respecting `webDriverAgentUrl` in favor of `wdaLocalPort` and `wdaBaseUrl` for real devices [WebDriverAgent#342](https://github.com/appium/WebDriverAgent/pull/342)
+* Fix ignoring the case where process locking the socket is not alive [WebDriverAgent#339](https://github.com/appium/WebDriverAgent/pull/339)
+* Fix to improve alert buttons detection [WebDriverAgent#322](https://github.com/appium/WebDriverAgent/pull/322)
+* Add XCTest `mobile:` functions: [appium-xcuitest-driver#1205](https://github.com/appium/appium-xcuitest-driver/pull/1205). Please read [test code](https://github.com/appium/appium-xcuitest-driver/blob/master/test/functional/device/xctest-e2e-specs.js) as an example.
+  * `mobile: runXCTest` to run XCTest bundle
+  * `mobile: installXCTestBundle` to install the xctest bundle
+  * `mobile: listXCTestBundles` to get list of xctests within bundle
+  * `mobile: listXCTestsInTestBundle` to return the list of XCTest bundles
+* Add audio recording for simulators and real devices [appium-xcuitest-driver#1207](https://github.com/appium/appium-xcuitest-driver/pull/1207)
   * Read [Audio Capture From iOS Simulators and Real Devices](https://appium.io/docs/en/writing-running-appium/ios/audio-capture/)
 
 
 ### Windows
-* feature: Support video recording [appium-windows-driver#66](https://github.com/appium/appium-windows-driver/pull/66)
-* feature: Support findByImage [appium-windows-driver#67](https://github.com/appium/appium-windows-driver/pull/67)
+* Add video recording [appium-windows-driver#66](https://github.com/appium/appium-windows-driver/pull/66)
+* Add findByImage [appium-windows-driver#67](https://github.com/appium/appium-windows-driver/pull/67)
 
 
 CHANGES IN VERSION 1.17.1 (FROM 1.17.0)

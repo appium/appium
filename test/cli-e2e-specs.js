@@ -94,7 +94,8 @@ describe('Driver CLI', function () {
     });
     it('should install a driver from github', async function () {
       await clear();
-      const ret = JSON.parse(await run('install', ['appium/appium-fake-driver', '--source', 'github', '--json']));
+      const ret = JSON.parse(await run('install', ['appium/appium-fake-driver', '--source',
+        'github', '--package', 'appium-fake-driver', '--json']));
       ret.fake.pkgName.should.eql('appium-fake-driver');
       ret.fake.installType.should.eql('github');
       ret.fake.installSpec.should.eql('appium/appium-fake-driver');
@@ -104,7 +105,8 @@ describe('Driver CLI', function () {
     });
     it('should install a driver from git', async function () {
       await clear();
-      const ret = JSON.parse(await run('install', ['git+https://github.com/appium/appium-fake-driver.git', '--source', 'git', '--json']));
+      const ret = JSON.parse(await run('install', ['git+https://github.com/appium/appium-fake-driver.git',
+        '--source', 'git', '--package', 'appium-fake-driver', '--json']));
       ret.fake.pkgName.should.eql('appium-fake-driver');
       ret.fake.installType.should.eql('git');
       ret.fake.installSpec.should.eql('git+https://github.com/appium/appium-fake-driver');

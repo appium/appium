@@ -1,13 +1,21 @@
 CHANGES IN VERSION 1.18.0 (FROM 1.17.1)
 ===================================
 
-Appium 1.18.0 is a patch release
+Appium 1.18.0 is a minor release
+
+#### General
+* Fix socket leak by handling connections in a shared pool [appium-base-driver#416](https://github.com/appium/appium-base-driver/pull/416)
+* Fix to encode filenames with UTF-8 in extracting files from `.ipa` [appium-base-driver#419](https://github.com/appium/appium-base-driver/pull/419)
+  * This change fixes installing `.ipa` which bundles UTF-8 file names such as [this issue](https://github.com/appium/appium/issues/14100)
+* Add `score` attribute for ImageElement [appium-base-driver#396](https://github.com/appium/appium-base-driver/pull/396)
+* Add to proxy Chrome DevTools endpoint to downstream drivers [appium-base-driver#405](https://github.com/appium/appium-base-driver/pull/405)
+  * e.g. Clients can send `/session/:sessionId/goog/cdp/execute` command to Chromedriver
 
 #### Android General
 * Add capabilities:
   * `mockLocationApp` to make location mock configurable [appium-android-driver#632](https://github.com/appium/appium-android-driver/pull/632)
-  * `logcatFormat`, `logcatFilterSpecs` to allow to customise logcat format [appium-adb#528](https://github.com/appium/appium-adb/pull/528)
-  * `ignoreHiddenApiPolicyError` to ignore permission error when hidden api policy change happenes [appium-adb#507](https://github.com/appium/appium-adb/pull/507)
+  * `logcatFormat`, `logcatFilterSpecs` to allow logcat output format customization [appium-adb#528](https://github.com/appium/appium-adb/pull/528)
+  * `ignoreHiddenApiPolicyError` to ignore permission error when hidden api policy change happens [appium-adb#507](https://github.com/appium/appium-adb/pull/507)
 * Add `mobile:` functions:
   * `mobile: getDeviceTime` to get the device time [appium-android-driver#623](https://github.com/appium/appium-android-driver/pull/623)
   * `mobile: execEmuConsoleCommand` to send [emulator console commands](https://developer.android.com/studio/run/emulator-console) [appium-android-driver#517](https://github.com/appium/appium-adb/pull/517) [#630](https://github.com/appium/appium-android-driver/pull/630)
@@ -35,7 +43,7 @@ waitForLaunch
   * `mobile: sensorSet` to set sensor [appium-espresso-driver](https://github.com/appium/appium-espresso-driver/pull/560)
 
 ### iOS (XCUITest)
-* Add for Xcode 12 beta support
+* Add Xcode 12 beta support
 * Add settings:
   * `boundElementsByIndex` for bounding strategy to lookup elements [WebDriverAgent#357](https://github.com/appium/WebDriverAgent/pull/357)
 * Fix removing unnecessary dependencies [WebDriverAgent#348](https://github.com/appium/WebDriverAgent/pull/348) [WebDriverAgent#350](https://github.com/appium/WebDriverAgent/pull/350) [#351](https://github.com/appium/WebDriverAgent/pull/351)

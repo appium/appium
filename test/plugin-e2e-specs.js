@@ -11,11 +11,11 @@ import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE, PLUGIN_TYPE } fro
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { runExtensionCommand } from '../lib/cli/extension';
 
+chai.should();
 chai.use(chaiAsPromised);
 const FAKE_PLUGIN_DIR = path.resolve(__dirname, '..', '..', 'node_modules', '@appium', 'fake-plugin');
 const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
 
-const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = {
   automationName: 'Fake',
   platformName: 'Fake',
@@ -24,7 +24,6 @@ const caps = {
 };
 
 describe('FakePlugin', function () {
-  let server = null;
   const appiumHome = DEFAULT_APPIUM_HOME;
   const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async function () {
@@ -56,53 +55,91 @@ describe('FakePlugin', function () {
         installType: INSTALL_TYPE_LOCAL,
       }, PLUGIN_TYPE);
     }
-    // then start server if we need to
-    if (shouldStartServer) {
-      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome};
+  });
+
+  describe('without plugin registered', function () {
+    let server = null;
+    before(async function () {
+      // then start server if we need to
+      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['other1', 'other2']};
       server = await appiumServer(args);
-    }
+    });
+    after(async function () {
+      if (server) {
+        await server.close();
+      }
+    });
+    it('should not update the server if plugin is not activated', async function () {
+      await axios.post(`http://${TEST_HOST}:${TEST_PORT}/fake`).should.eventually.be.rejectedWith(/404/);
+    });
+    it('should not update method map if plugin is not activated', async function () {
+      const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      const [sessionId] = await driver.init(caps);
+      try {
+        await axios.post(`${baseUrl}/${sessionId}/fake_data`, {data: {fake: 'data'}}).should.eventually.be.rejectedWith(/404/);
+      } finally {
+        await driver.quit();
+      }
+    });
+    it('should not handle commands if plugin is not activated', async function () {
+      const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      const [sessionId] = await driver.init(caps);
+      try {
+        const el = (await axios.post(`${baseUrl}/${sessionId}/element`, {using: 'xpath', value: '//MockWebView'})).data.value;
+        el.should.not.have.property('fake');
+      } finally {
+        await driver.quit();
+      }
+    });
   });
 
-  after(async function () {
-    if (server) {
-      await server.close();
-    }
-  });
+  describe('with plugin registered', function () {
+    let server = null;
+    before(async function () {
+      // then start server if we need to
+      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake']};
+      server = await appiumServer(args);
+    });
+    after(async function () {
+      if (server) {
+        await server.close();
+      }
+    });
+    it('should update the server', async function () {
+      const res = {fake: 'fakeResponse'};
+      (await axios.post(`http://${TEST_HOST}:${TEST_PORT}/fake`)).data.should.eql(res);
+    });
 
-  it('should update the server', async function () {
-    const res = {fake: 'fakeResponse'};
-    (await axios.post(`http://${TEST_HOST}:${TEST_PORT}/fake`)).data.should.eql(res);
-  });
+    it('should modify the method map with new commands', async function () {
+      const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      const [sessionId] = await driver.init(caps);
+      try {
+        await axios.post(`${baseUrl}/${sessionId}/fake_data`, {data: {fake: 'data'}});
+        (await axios.get(`${baseUrl}/${sessionId}/fake_data`)).data.value.should.eql({fake: 'data'});
+      } finally {
+        await driver.quit();
+      }
+    });
 
-  it('should modify the method map with new commands', async function () {
-    const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
-    const [sessionId] = await driver.init(caps);
-    try {
-      await axios.post(`${baseUrl}/${sessionId}/fake_data`, {data: {fake: 'data'}});
-      (await axios.get(`${baseUrl}/${sessionId}/fake_data`)).data.value.should.eql({fake: 'data'});
-    } finally {
-      await driver.quit();
-    }
-  });
+    it('should handle commands and not call the original', async function () {
+      const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      const [sessionId] = await driver.init(caps);
+      try {
+        await driver.source().should.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
+      } finally {
+        await driver.quit();
+      }
+    });
 
-  it('should handle commands and not call the original', async function () {
-    const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
-    const [sessionId] = await driver.init(caps);
-    try {
-      await driver.source().should.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
-    } finally {
-      await driver.quit();
-    }
-  });
-
-  it('should handle commands and call the original if designed', async function () {
-    const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
-    const [sessionId] = await driver.init(caps);
-    try {
-      const el = (await axios.post(`${baseUrl}/${sessionId}/element`, {using: 'xpath', value: '//MockWebView'})).data.value;
-      el.should.have.property('fake');
-    } finally {
-      await driver.quit();
-    }
+    it('should handle commands and call the original if designed', async function () {
+      const driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      const [sessionId] = await driver.init(caps);
+      try {
+        const el = (await axios.post(`${baseUrl}/${sessionId}/element`, {using: 'xpath', value: '//MockWebView'})).data.value;
+        el.should.have.property('fake');
+      } finally {
+        await driver.quit();
+      }
+    });
   });
 });

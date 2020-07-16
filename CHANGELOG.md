@@ -53,6 +53,7 @@ waitForLaunch
   * `mobile: listXCTestsInTestBundle` to return the list of XCTest bundles
 * Add audio recording for simulators and real devices [appium-xcuitest-driver#1207](https://github.com/appium/appium-xcuitest-driver/pull/1207)
   * Read [Audio Capture From iOS Simulators and Real Devices](https://appium.io/docs/en/writing-running-appium/ios/audio-capture/)
+* Fix a memory leak with removing unnecessary dependencies [WebDriverAgent#348](https://github.com/appium/WebDriverAgent/pull/348) [WebDriverAgent#350](https://github.com/appium/WebDriverAgent/pull/350) [WebDriverAgent#351](https://github.com/appium/WebDriverAgent/pull/351)
 * Fix respecting `webDriverAgentUrl` in favor of `wdaLocalPort` and `wdaBaseUrl` for real devices [WebDriverAgent#342](https://github.com/appium/WebDriverAgent/pull/342)
 * Fix ignoring the case where process locking the socket is not alive [WebDriverAgent#339](https://github.com/appium/WebDriverAgent/pull/339)
 * Fix to improve alert buttons detection [WebDriverAgent#322](https://github.com/appium/WebDriverAgent/pull/322)

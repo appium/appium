@@ -36,9 +36,6 @@ Appium团队根据轻量化的scrum版本来运行开发。每两个星期我们
 
 我们使用[Zoom](https://zoom.us)视讯来举行会议
 
-关于项目管理，我们使用[ZenHub](http://zenhub.com) 浏览器插件，它向GitHub接口提供了例如
-Kanban boards 和 Epics 这些功能。要完全参与到Appium SCRUM，你需要安装上述的这些浏览器插件。
-
 如果你有意参加sprint，你可以在Appium Slack群组里联系`@jlipps` 或者 `@isaac`，又或者直接在推特
 上联系`@jlipps`，我们将会在下一次sprint里分享如何加入视频聊天。
 

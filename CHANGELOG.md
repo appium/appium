@@ -5,11 +5,11 @@ Appium 1.18.0 is a minor release
 
 #### General
 * Add `score` attribute for ImageElement [appium-base-driver#396](https://github.com/appium/appium-base-driver/pull/396)
-* Add to proxy Chrome DevTools endpoint to downstream drivers [appium-base-driver#405](https://github.com/appium/appium-base-driver/pull/405)
+* Add a route to be able to execute Chrome DevTools commands to downstream drivers [appium-base-driver#405](https://github.com/appium/appium-base-driver/pull/405)
   * e.g. Clients can send `/session/:sessionId/goog/cdp/execute` command to Chromedriver
 * Fix socket leak by handling connections in a shared pool [appium-base-driver#416](https://github.com/appium/appium-base-driver/pull/416)
-* Fix to encode filenames with UTF-8 in extracting files from `.ipa` [appium-base-driver#419](https://github.com/appium/appium-base-driver/pull/419)
-  * This change fixes installing `.ipa` which bundles UTF-8 file names such as [this issue](https://github.com/appium/appium/issues/14100)
+* Fix to encode filenames with UTF-8 while extracting `.ipa` packages [appium-base-driver#419](https://github.com/appium/appium-base-driver/pull/419)
+  * The change fixes `.ipa` packages deployment that contain file names containing non-ASCII characters like [this issue](https://github.com/appium/appium/issues/14100)
 
 #### Android General
 * Add capabilities:
@@ -43,7 +43,7 @@ waitForLaunch
   * `mobile: sensorSet` to set sensor [appium-espresso-driver](https://github.com/appium/appium-espresso-driver/pull/560)
 
 ### iOS (XCUITest)
-* Add Xcode 12 beta support
+* Add Xcode 12 beta and iOS 14 support
 * Add settings:
   * `boundElementsByIndex` for bounding strategy to lookup elements [WebDriverAgent#357](https://github.com/appium/WebDriverAgent/pull/357)
 * Add XCTest `mobile:` functions: [appium-xcuitest-driver#1205](https://github.com/appium/appium-xcuitest-driver/pull/1205). Please read [test code](https://github.com/appium/appium-xcuitest-driver/blob/master/test/functional/device/xctest-e2e-specs.js) as an example.
@@ -53,7 +53,7 @@ waitForLaunch
   * `mobile: listXCTestsInTestBundle` to return the list of XCTest bundles
 * Add audio recording for simulators and real devices [appium-xcuitest-driver#1207](https://github.com/appium/appium-xcuitest-driver/pull/1207)
   * Read [Audio Capture From iOS Simulators and Real Devices](https://appium.io/docs/en/writing-running-appium/ios/audio-capture/)
-* Fix a memory leak with removing unnecessary dependencies [WebDriverAgent#348](https://github.com/appium/WebDriverAgent/pull/348) [WebDriverAgent#350](https://github.com/appium/WebDriverAgent/pull/350) [WebDriverAgent#351](https://github.com/appium/WebDriverAgent/pull/351)
+* Fix a memory leak by removing unnecessary dependencies [WebDriverAgent#348](https://github.com/appium/WebDriverAgent/pull/348) [WebDriverAgent#350](https://github.com/appium/WebDriverAgent/pull/350) [WebDriverAgent#351](https://github.com/appium/WebDriverAgent/pull/351)
 * Fix respecting `webDriverAgentUrl` in favor of `wdaLocalPort` and `wdaBaseUrl` for real devices [WebDriverAgent#342](https://github.com/appium/WebDriverAgent/pull/342)
 * Fix ignoring the case where process locking the socket is not alive [WebDriverAgent#339](https://github.com/appium/WebDriverAgent/pull/339)
 * Fix to improve alert buttons detection [WebDriverAgent#322](https://github.com/appium/WebDriverAgent/pull/322)

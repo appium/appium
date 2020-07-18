@@ -5,6 +5,8 @@ description:
   >
     Get the content of the system clipboard
 
+    For iOS real device, it might work when WebDriverAgentRunner is in [foreground](https://github.com/appium/WebDriverAgent/issues/330).
+
 example_usage:
   java:
     |

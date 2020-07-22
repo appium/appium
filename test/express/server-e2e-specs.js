@@ -93,3 +93,65 @@ describe('server', function () {
     }).should.be.rejectedWith(/EADDRNOTAVAIL/);
   });
 });
+
+describe('server plugins', function () {
+  let hwServer;
+  afterEach(async function () {
+    try {
+      await hwServer.close();
+    } catch (ign) {}
+  });
+
+  function updaterWithGetRoute (route, reply) {
+    return async (app, httpServer) => { // eslint-disable-line require-await
+      app.get(`/${route}`, (req, res) => {
+        res.header['content-type'] = 'text/html';
+        res.status(200).send(reply);
+      });
+      httpServer[`_updated_${route}`] = true;
+    };
+  }
+
+  it('should not allow a plugin to update server if it has updatesServer set to false', async function () {
+    hwServer = await server({
+      routeConfiguringFunction: _.noop,
+      port: 8181,
+      plugins: [
+        {
+          updatesServer: false,
+          updateServer: updaterWithGetRoute('no', 'Should never see this'),
+        }
+      ]
+    });
+    await axios.get('http://localhost:8181/no').should.eventually.be.rejectedWith(/404/);
+  });
+  it('should allow one or more plugins to update the server', async function () {
+    hwServer = await server({
+      routeConfiguringFunction: _.noop,
+      port: 8181,
+      plugins: [{
+        updatesServer: true,
+        updateServer: updaterWithGetRoute('plugin1', 'res from plugin1 route'),
+      }, {
+        updatesServer: true,
+        updateServer: updaterWithGetRoute('plugin2', 'res from plugin2 route'),
+      }]
+    });
+    let {data} = await axios.get('http://localhost:8181/plugin1');
+    data.should.eql('res from plugin1 route');
+    ({data} = await axios.get('http://localhost:8181/plugin2'));
+    data.should.eql('res from plugin2 route');
+    hwServer._updated_plugin1.should.be.true;
+    hwServer._updated_plugin2.should.be.true;
+  });
+  it('should not allow a plugin to update server if it has incorrect updateServer method', async function () {
+    await server({
+      routeConfiguringFunction: _.noop,
+      port: 8181,
+      plugins: [{
+        updatesServer: true,
+        updateServer: false
+      }]
+    }).should.eventually.be.rejectedWith(/is not a function/);
+  });
+});

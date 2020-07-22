@@ -94,7 +94,7 @@
   ],
   "devDependencies": {
     "@appium/fake-plugin": "^0.2.0",
-    "appium-fake-driver": "0.x",
+    "appium-fake-driver": "^1.0.1",
     "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",
     "chai-as-promised": "7.x",

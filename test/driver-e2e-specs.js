@@ -11,7 +11,7 @@ import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE } from '../lib/extension-config';
 import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
 import { BaseDriver } from 'appium-base-driver';
-import { FakeDriver } from 'appium-fake-driver';
+import DriverConfig from '../lib/driver-config';
 import { runExtensionCommand } from '../lib/cli/extension';
 import sinon from 'sinon';
 
@@ -31,8 +31,14 @@ const caps = {
 describe('FakeDriver - via HTTP', function () {
   let server = null;
   const appiumHome = DEFAULT_APPIUM_HOME;
+  // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
+  // actually going to be required by Appium
+  let FakeDriver = null;
   const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
   before(async function () {
+    const config = new DriverConfig(appiumHome);
+    await config.read();
+    FakeDriver = config.require('fake');
     // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
       appiumHome,
@@ -286,7 +292,8 @@ describe('FakeDriver - via HTTP', function () {
         return res;
       });
 
-      const {value, sessionId, status} = (await axios.post(baseUrl, combinedCaps)).data;
+      const res = (await axios.post(baseUrl, combinedCaps)).data;
+      const {value, sessionId, status} = res;
       status.should.exist;
       sessionId.should.exist;
       value.should.deep.equal(caps);

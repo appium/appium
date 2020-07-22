@@ -246,6 +246,4 @@ for this).
 1. Make sure the device under test is not a jaibroken one
     - `com.apple.mobile.installation_proxy` service to manage Apps on the device [does not work](https://github.com/appium/appium-desktop/issues/1447)
 1. Make sure provisioning profile has [_iOS Distribution_ certificate](https://developer.apple.com/support/certificates/)
-    - An active Xcode/xcodebuild connection/session is necessary to interact with WebDriverAgentRunner because of Apple's security design
-    - The certificate affects the limitation ([hint](https://github.com/appium/appium/issues/14577#issuecomment-660997827)
-)
+    - An active Xcode/xcodebuild connection/session is necessary to interact with WebDriverAgentRunner because of Apple's security design. The certificate affects the limitation ([issue](https://github.com/appium/appium/issues/14577#issuecomment-660997827))

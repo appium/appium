@@ -217,7 +217,7 @@ In a little more detail, to get started on a real device, you will need the foll
 
 * An [Apple Developer ID](https://developer.apple.com/programs/ios/) and a valid
 Developer Account with a configured development certificate and provisioning
-profile.
+profile. (Please make sure the provisioning profile has [iOS Distribution](https://developer.apple.com/support/certificates/) type)
 * A valid iOS Development Certificate and Provisioning Profile are necessary to
 test on a real device. Your app will also need to be signed. You can find
 information about this in the [Apple documentation](https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/TestingYouriOSApp/TestingYouriOSApp.html).
@@ -245,3 +245,7 @@ for this).
 1. Consider generating a provisioning profile with `.xctrunner` identifier if you do not want to generate a wildcard one for manual configuration. The `.xctrunner` config support has been added since Xcode 11. [A reference](https://github.com/appium/appium/issues/13610)
 1. Make sure the device under test is not a jaibroken one
     - `com.apple.mobile.installation_proxy` service to manage Apps on the device [does not work](https://github.com/appium/appium-desktop/issues/1447)
+1. Make sure provisioning profile has [_iOS Distribution_ certificate](https://developer.apple.com/support/certificates/)
+    - An active Xcode/xcodebuild connection/session is necessary to interact with WebDriverAgentRunner because of Apple's security design
+    - The certificate affects the limitation ([hint](https://github.com/appium/appium/issues/14577#issuecomment-660997827)
+)

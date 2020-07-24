@@ -35,7 +35,7 @@ waitForLaunch
   * `mobile: deepLink` to send deeplink command with `waitForLaunch` option to handle the wait for logic [appium-uiautomator2-driver#389](https://github.com/appium/appium-uiautomator2-driver/pull/389)
   * `mobile: viewportRect` to return view port rectangle [appium-uiautomator2-driver#404](https://github.com/appium/appium-uiautomator2-driver/pull/404)
 * Known issue
-  * [#14586](https://github.com/appium/appium/issues/14586): [Root element fix](https://github.com/appium/appium-uiautomator2-server/pull/363) might affect XPath locator path which is related to root element
+  * [#14586](https://github.com/appium/appium/issues/14586): [Root element fix](https://github.com/appium/appium-uiautomator2-server/pull/363) might affect XPath locators executed on elements, retrieved from nested lookup requests (the document root for such elements is now the element itself rather than a fake `hierarchy` root)
 
 #### Android (Espresso)
 * Add capabilities:
@@ -55,7 +55,7 @@ waitForLaunch
   * `mobile: listXCTestsInTestBundle` to return the list of XCTest bundles
 * Add audio recording for simulators and real devices [appium-xcuitest-driver#1207](https://github.com/appium/appium-xcuitest-driver/pull/1207)
   * Read [Audio Capture From iOS Simulators and Real Devices](https://appium.io/docs/en/writing-running-appium/ios/audio-capture/)
-* Add `WebDriverAgentRunner-Runner.app` for simulators in `appium-webdriveragend` npm package to improve build time [WebDriverAgent#331](https://github.com/appium/WebDriverAgent/pull/331)
+* Add prebuilt WebDriverAgentRunner snapshots to speed up tests execution on iOS Simulator in `appium-webdriveragend` npm package [WebDriverAgent#331](https://github.com/appium/WebDriverAgent/pull/331)
   * The path is `appium/node_modules/appium-webdriveragend/WebDriverAgentRunner-Runner.app.zip`
   * The usage is:
     ```bash

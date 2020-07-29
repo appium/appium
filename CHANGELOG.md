@@ -34,6 +34,8 @@ waitForLaunch
   * `mobile: scroll` to allow to scroll action in some ways. Please read [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver/blob/master/lib/commands/general.js) for more details. [appium-uiautomator2-driver#385](https://github.com/appium/appium-uiautomator2-driver/pull/385)
   * `mobile: deepLink` to send deeplink command with `waitForLaunch` option to handle the wait for logic [appium-uiautomator2-driver#389](https://github.com/appium/appium-uiautomator2-driver/pull/389)
   * `mobile: viewportRect` to return view port rectangle [appium-uiautomator2-driver#404](https://github.com/appium/appium-uiautomator2-driver/pull/404)
+* Known issue
+  * [#14586](https://github.com/appium/appium/issues/14586): [Root element fix](https://github.com/appium/appium-uiautomator2-server/pull/363) might affect XPath locators executed on elements, retrieved from nested lookup requests (the document root for such elements is now the element itself rather than a fake `hierarchy` root)
 
 #### Android (Espresso)
 * Add capabilities:
@@ -53,6 +55,13 @@ waitForLaunch
   * `mobile: listXCTestsInTestBundle` to return the list of XCTest bundles
 * Add audio recording for simulators and real devices [appium-xcuitest-driver#1207](https://github.com/appium/appium-xcuitest-driver/pull/1207)
   * Read [Audio Capture From iOS Simulators and Real Devices](https://appium.io/docs/en/writing-running-appium/ios/audio-capture/)
+* Add prebuilt WebDriverAgentRunner snapshots to speed up tests execution on iOS Simulator in `appium-webdriveragend` npm package [WebDriverAgent#331](https://github.com/appium/WebDriverAgent/pull/331)
+  * The path is `appium/node_modules/appium-webdriveragend/WebDriverAgentRunner-Runner.app.zip`
+  * The usage is:
+    ```bash
+    idb install /WebDriverAgentRunner-Runner.app --udid <device-udid>
+    idb launch com.facebook.WebDriverAgentRunner.xctrunner
+    ```
 * Fix a memory leak by removing unnecessary dependencies [WebDriverAgent#348](https://github.com/appium/WebDriverAgent/pull/348) [WebDriverAgent#350](https://github.com/appium/WebDriverAgent/pull/350) [WebDriverAgent#351](https://github.com/appium/WebDriverAgent/pull/351)
 * Fix respecting `webDriverAgentUrl` in favor of `wdaLocalPort` and `wdaBaseUrl` for real devices [WebDriverAgent#342](https://github.com/appium/WebDriverAgent/pull/342)
 * Fix ignoring the case where process locking the socket is not alive [WebDriverAgent#339](https://github.com/appium/WebDriverAgent/pull/339)

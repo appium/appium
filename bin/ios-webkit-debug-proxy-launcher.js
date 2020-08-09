@@ -3,7 +3,7 @@
 /* eslint no-console:0 */
 
 /*
- * Small tool, launching and monitoring ios-web-kit-proxy, and relauching
+ * Small tool, launching and monitoring ios-web-kit-proxy, and relaunching
  * on predefined errors.
  *
  * Usage:

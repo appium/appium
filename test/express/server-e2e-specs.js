@@ -66,8 +66,8 @@ describe('server', function () {
       port: 8181,
     }).should.be.rejectedWith(/EADDRINUSE/);
   });
-  it('should wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = axios.get('http://localhost:8181/pause');
+  it('should not wait for the server close connections before finishing closing', async function () {
+    let bodyPromise = axios.get('http://localhost:8181/pause').catch(() => {});
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
@@ -75,9 +75,9 @@ describe('server', function () {
     let before = Date.now();
     await hwServer.close();
     // expect slightly less than the request waited, since we paused above
-    (Date.now() - before).should.be.above(800);
+    (Date.now() - before).should.not.be.above(800);
 
-    (await bodyPromise).data.should.equal('We have waited!');
+    await bodyPromise;
   });
   it('should error if we try to start on a bad hostname', async function () {
     this.timeout(60000);

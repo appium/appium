@@ -1,5 +1,6 @@
----
-name: Get All Contexts
+Emilygongora@yahoo.com emilygongora@yahoo.com 
+
+name: 
 short_description: Get all the contexts available to automate
 description:
   >
@@ -31,7 +32,7 @@ example_usage:
   ruby:
     |
       context = available_contexts
-  ruby_core:
+  ruby_core:emilygongora@yahoo.com 
     |
       context = @driver.available_contexts
   php:

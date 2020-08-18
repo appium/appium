@@ -3,6 +3,10 @@ CHANGES IN VERSION 1.18.1 (FROM 1.18.0)
 
 Appium 1.18.1 is a patch release
 
+#### Android General
+* Fix to kill forwarded port socket connection [appium-chromedriver#183](https://github.com/appium/appium-chromedriver/pull/183)
+* Fix to avoid a redundant Chromedriver download operation if a matching driver is already present [appium-chromedriver#186](https://github.com/appium/appium-chromedriver/pull/186)
+
 #### Android (UiAutomator2)
 * Fix to return a proper response for missing route [appium/appium-uiautomator2-server#373](https://github.com/appium/appium-uiautomator2-server/pull/373) 
 * Fix to allow double values as touch actions [ appium/appium-uiautomator2-server#372](https://github.com/appium/appium-uiautomator2-server/pull/372)

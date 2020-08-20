@@ -79,7 +79,7 @@ up a lot of possibilities: we can write our test code in any language that has
 a http client API, but it is easier to use one of the [Appium client
 libraries](http://appium.io/downloads). We can put the server on a different
 machine than our tests are running on. We can write test code and rely on
-a cloud service like [Sauce Labs](https://saucelabs.com/products/mobile-app-testing) to receive and
+a cloud service like [Sauce Labs](https://saucelabs.com/products/mobile-app-testing) & [LambdaTest](https://www.lambdatest.com/feature) to receive and
 interpret the commands.
 
 **Session**<br/>

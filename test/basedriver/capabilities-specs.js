@@ -248,11 +248,24 @@ describe('caps', function () {
       }).should.deep.equal({hello: 'world', foo: 'bar'});
     });
 
-    it('should throw an exception if a standard capability (https://www.w3.org/TR/webdriver/#dfn-table-of-standard-capabilities) is prefixed', function () {
-      (() => processCapabilities({
+    it('should still accept prefixed caps even if they are standard capabilities (https://www.w3.org/TR/webdriver/#dfn-table-of-standard-capabilities)', function () {
+      processCapabilities({
         alwaysMatch: {'appium:platformName': 'Whatevz'},
         firstMatch: [{'appium:browserName': 'Anything'}],
-      })).should.throw(/standard capabilities/);
+      }).should.deep.equal({platformName: 'Whatevz', browserName: 'Anything'});
+    });
+
+    it('should prefer standard caps that are non-prefixed to prefixed', function () {
+      processCapabilities({
+        alwaysMatch: {'appium:platformName': 'Foo', 'platformName': 'Bar'},
+        firstMatch: [{'appium:browserName': 'FOO', 'browserName': 'BAR'}],
+      }).should.deep.equal({platformName: 'Bar', browserName: 'BAR'});
+    });
+    it('should throw exception if duplicates in alwaysMatch and firstMatch', function () {
+      (() => processCapabilities({
+        alwaysMatch: {'platformName': 'Fake', 'appium:fakeCap': 'foobar'},
+        firstMatch: [{'appium:platformName': 'bar'}],
+      })).should.throw(/should not exist on both primary/);
     });
 
     it('should not throw an exception if presence constraint is not met on a firstMatch capability', function () {

@@ -58,7 +58,7 @@
     "argparse": "^1.0.10",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "bluebird": "3.x",
     "continuation-local-storage": "3.x",
     "dateformat": "^3.0.3",

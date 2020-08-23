@@ -71,7 +71,7 @@ example_usage:
       return status;
       SCRIPT
       driver.execute_driver script: script
-ruby_core:
+  ruby_core:
     |
       script = <<-SCRIPT
       const status = await driver.status();

@@ -1,13 +1,15 @@
 // transpile:mocha
 
-import { server, routeConfiguringFunction, errors, JWProxy, BaseDriver } from '../..';
+import {
+  server, routeConfiguringFunction, errors, JWProxy, BaseDriver
+} from '../..';
 import { FakeDriver } from './fake-driver';
 import _ from 'lodash';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import HTTPStatusCodes from 'http-status-codes';
+import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 import { createProxyServer } from './helpers';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY

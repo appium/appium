@@ -1,9 +1,11 @@
-import { errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType } from '../..';
+import {
+  errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType
+} from '../..';
 import { getResponseForW3CError } from '../../lib/protocol/errors';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import HTTPStatusCodes from 'http-status-codes';
+import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 
 chai.use(chaiAsPromised);
 chai.should();

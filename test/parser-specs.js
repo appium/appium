@@ -16,10 +16,10 @@ describe('Parser', function () {
     p.parseArgs([]).should.have.property('port');
   });
   it('should keep the raw server flags array', function () {
-    should.exist(p.rawArgs);
+    should.exist(p.raw_args);
   });
   it('should have help for every arg', function () {
-    for (let arg of p.rawArgs) {
+    for (let arg of p.raw_args) {
       arg[1].should.have.property('help');
     }
   });

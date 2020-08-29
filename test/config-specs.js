@@ -202,8 +202,8 @@ describe('Config', function () {
     let args = {};
     beforeEach(function () {
       // give all the defaults
-      for (let rawArg of parser.rawArgs) {
-        args[rawArg[1].dest] = rawArg[1].defaultValue;
+      for (let rawArg of parser.raw_args) {
+        args[rawArg[1].dest] = rawArg[1].default;
       }
     });
     describe('getNonDefaultArgs', function () {
@@ -295,8 +295,8 @@ describe('Config', function () {
     parser.debug = true; // throw instead of exit on error; pass as option instead?
     const defaultArgs = {};
     // give all the defaults
-    for (let rawArg of parser.rawArgs) {
-      defaultArgs[rawArg[1].dest] = rawArg[1].defaultValue;
+    for (let rawArg of parser.raw_args) {
+      defaultArgs[rawArg[1].dest] = rawArg[1].default;
     }
     let args = {};
     beforeEach(function () {

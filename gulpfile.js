@@ -53,7 +53,7 @@ boilerplate({
 // generates server arguments readme
 gulp.task('docs', gulp.series(['transpile']), function parseDocs () {
   const parser = require('./build/lib/parser.js');
-  const appiumArguments = parser.getParser().rawArgs;
+  const appiumArguments = parser.getParser().raw_args;
   const docFile = path.resolve(__dirname, 'docs/en/writing-running-appium/server-args.md');
   let md = '# Appium server arguments\n\n';
   md += 'Many Appium 1.5 server arguments have been deprecated in favor of the ';
@@ -70,20 +70,20 @@ gulp.task('docs', gulp.series(['transpile']), function parseDocs () {
     const exampleArg = typeof arg[0][1] === 'undefined' ? arg[0][0] : arg[0][1];
     const argOpts = arg[1];
 
-    // --keystore-path defaultValue contains a user-specific path,
+    // --keystore-path default contains a user-specific path,
     // let's replace it with <user>/...
     if (arg[0][0] === '--keystore-path') {
       const userPath = process.env.HOME || process.env.USERPROFILE;
-      argOpts.defaultValue = argOpts.defaultValue.replace(userPath, '&lt;user&gt;');
+      argOpts.default = argOpts.default.replace(userPath, '&lt;user&gt;');
     }
 
     // handle empty objects
-    if (JSON.stringify(argOpts.defaultValue) === '{}') {
-      argOpts.defaultValue = '{}';
+    if (JSON.stringify(argOpts.default) === '{}') {
+      argOpts.default = '{}';
     }
 
     md += '|`' + argNames.join('`, `') + '`';
-    md += '|' + ((typeof argOpts.defaultValue === 'undefined') ? '' : argOpts.defaultValue);
+    md += '|' + ((typeof argOpts.default === 'undefined') ? '' : argOpts.default);
     md += '|' + argOpts.help;
     md += '|' + ((typeof argOpts.example === 'undefined') ? '' : '`' + exampleArg + ' ' + argOpts.example + '`');
     md += '|\n';

@@ -53,7 +53,7 @@ boilerplate({
 // generates server arguments readme
 gulp.task('docs', gulp.series(['transpile']), function parseDocs () {
   const parser = require('./build/lib/parser.js');
-  const appiumArguments = parser.getParser().raw_args;
+  const appiumArguments = parser.getParser().rawArgs;
   const docFile = path.resolve(__dirname, 'docs/en/writing-running-appium/server-args.md');
   let md = '# Appium server arguments\n\n';
   md += 'Many Appium 1.5 server arguments have been deprecated in favor of the ';

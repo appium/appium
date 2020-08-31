@@ -8,7 +8,7 @@
 > node . --nodeconfig /path/to/nodeconfig.json
 ```
 
-在 Selenium 节点（Node）的配置文件里，你需要定义 `browserName`、`version` 和 `platform`，然后 Grid 会通过这些参数将你的测试重定向到正确的设备上。你还需要配置 `host` 和 `selenium grid` 的详细信息。详细的参数列表和描述信息，请查看 [这里](https://www.selenium.dev/documentation/en/grid/setting_up_your_own_grid/) 。
+在 Selenium 节点（Node）的配置文件里，你需要定义 `browserName`、`version` 和 `platform`，然后 Grid 会通过这些参数将你的测试重定向到正确的设备上。你还需要配置 `host` 和 `selenium grid` 的详细信息。详细的参数列表和描述信息，请查看 这里。
 
 一旦你启动了 appium 服务器并且在 grid 里注册了信息，就可以在 grid 控制台看到你的设备：
 

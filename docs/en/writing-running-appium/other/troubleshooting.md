@@ -39,6 +39,8 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 * After setting power state to `off` (e.g.: `driver.setPowerAC(PowerACState.OFF);`) you must create a new session.
 * When using `-wipe-data` in `avdArgs` the `noReset` capability will be ignored if set to true.
+* Make sure proper developer options are enabled. Some devices have [custom options](https://github.com/appium/appium/issues/13802#issuecomment-587802222) to make the device testable.
+
 
 ### Android Espresso
 * Appium is supposed to disable animations by default, but if it doesn't work try following the [Espresso setup instructions](https://developer.android.com/training/testing/espresso/setup) which advises that "To avoid flakiness, we highly recommend that you turn off system animations on the virtual or physical devices used for testing. On your device, under Settings > Developer options, disable the following 3 settings: Window animation scale, Transition animation scale, Animator Duration scale"

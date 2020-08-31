@@ -26,7 +26,8 @@ example_usage:
       // TODO PHP example
   csharp:
     |
-      // TODO C# example
+      IWebElement currentElement = driver.SwitchTo().ActiveElement();
+
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebDriver.TargetLocator.html#activeElement--"
@@ -36,7 +37,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   php: "https://github.com/appium/php-client/" # TODO
-  csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
+  csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteTargetLocator.cs"
 
 # Driver support by platform
 driver_support:

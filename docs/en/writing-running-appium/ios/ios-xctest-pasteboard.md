@@ -3,8 +3,7 @@
 There is a possibility in Appium to set the content of the iOS Simulator pasteboard
 and read the content from there if needed. Each Simulator maintains its own pasteboard.
 This feature is only available since Xcode SDK 8.1.
-
-It might work when WebDriverAgentRunner is in [foreground on real devices](https://github.com/appium/WebDriverAgent/issues/330).
+On real devices this functionaliry is available with several security limitations. Please check [Get Clipboard](/docs/en/commands/device/clipboard/get-clipboard.md)/[Set Clipboard](/docs/en/commands/device/clipboard/set-clipboard.md) for more details.
 
 ### mobile: setPasteboard
 

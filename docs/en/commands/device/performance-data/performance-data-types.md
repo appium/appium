@@ -45,7 +45,7 @@ get_performance_data_types
 
 ```csharp
 // C#
-// TODO C# sample
+// Not supported
 
 ```
 

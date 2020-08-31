@@ -1,0 +1,26 @@
+{
+  "name": "@appium/images-plugin",
+  "version": "1.0.0",
+  "description": "Plugin for working with images and image elements in Appium",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/appium/appium-plugins.git"
+  },
+  "keywords": [
+    "appium",
+    "opencv",
+    "automation",
+    "image",
+    "webdriver"
+  ],
+  "author": "Appium <maintainers@appium.io>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/appium/appium-plugins/issues"
+  },
+  "homepage": "https://github.com/appium/appium-plugins#readme"
+}

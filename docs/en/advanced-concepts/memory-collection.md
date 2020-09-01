@@ -21,6 +21,21 @@ kill -SIGUSR2 &lt;nodePID&gt;
 Dump files are created in the same folder where the main Appium script has been executed.
 They have the `.heapsnapshot` extension, and can be loaded into the Chrome Inspector for further investigation.
 
+#### Examples
+```shell
+# Go to the directory where appium is installed via npm. 
+cd /home/k/.npm-global/lib/node_modules/appium/
+# start appium server
+node --heapsnapshot-signal=SIGUSR2 . # don't miss the dot in the end
+
+# Get the PID
+ps a | grep node 
+# Output: 557795 pts/7    Sl+    0:31 node --heapsnapshot-signal=SIGUSR2 .
+
+# When it's time to dump the heap, issue a SIGUSR2 signal. 557798 is the PID found above.
+kill -SIGUSR2 557795
+# Then the heap dump file is created /home/k/.npm-global/lib/node_modules/appium/Heap.20200901.185347.557795.0.002.heapsnapshot
+```
 
 ### Dump file analysis
 

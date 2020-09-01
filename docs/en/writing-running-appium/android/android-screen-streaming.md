@@ -41,7 +41,7 @@ driver.executeScript("mobile: startScreenStreaming", args);
 
 ```python
 # Python
-driver.execute_script('mobile: shell', {
+driver.execute_script('mobile: startScreenStreaming', {
     'width': 1080,
     'height': 1920,
     'considerRotation': True,

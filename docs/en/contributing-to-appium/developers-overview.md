@@ -52,11 +52,6 @@ Current meeting times:
 
 We hold meetings using [Zoom](https://zoom.us) video chat.
 
-For project management, we use the [ZenHub](http://zenhub.com) browser plugin,
-which adds various features like Kanban boards and Epics to the GitHub
-interface. To fully participate in Appium SCRUM, you'll need to have this
-browser plugin installed.
-
 If you are interested in participating a sprint, ping `@jlipps` or `@isaac` in
 the Appium Slack Group, or DM `@jlipps` on Twitter, and we'll share how to join
 the video chat for the next sprint.

@@ -15,7 +15,12 @@ driver.executeDriverScript(script, new ScriptOptions().withTimeout(200));
 
 ```python
 # Python
-# TODO fill out once client code is written
+import textwrap
+script = """
+    const el = await driver.$('~foo');
+    await el.click();
+"""
+response = driver.execute_driver(script=textwrap.dedent(script))
 
 ```
 
@@ -40,10 +45,18 @@ await driver.executeDriver(script, {timeout: 200});
 ```ruby
 # Ruby
 # ruby_lib example
-# TODO fill out once client code is written
+script = <<-SCRIPT
+const status = await driver.status();
+return status;
+SCRIPT
+driver.execute_driver script: script
 
 # ruby_lib_core example
-# TODO fill out once client code is written
+script = <<-SCRIPT
+const status = await driver.status();
+return status;
+SCRIPT
+@driver.execute_driver script: script
 
 ```
 
@@ -118,10 +131,10 @@ The advantage of this approach of using WebdriverIO code is that you have access
 |Language|Support|Documentation|
 |--------|-------|-------------|
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [javadoc.io](https://javadoc.io/page/io.appium/java-client/latest/io/appium/java_client/ExecutesDriverScript.html#executeDriverScript-java.lang.String-io.appium.java_client.driverscripts.ScriptOptions-) |
-|[Python](https://github.com/appium/python-client/releases/latest)| None |  |
+|[Python](https://github.com/appium/python-client/releases/latest)| None | [appium.github.io](https://appium.github.io/python-client-sphinx/webdriver.extensions.html#module-webdriver.extensions.execute_driver) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| None |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| None |  |
-|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None |  |
+|[Ruby](https://github.com/appium/ruby_lib/releases/latest)| None | [www.rubydoc.info](https://www.rubydoc.info/github/appium/ruby_lib/master/Appium/Driver#execute_driver-instance_method) |
 |[PHP](https://github.com/appium/php-client/releases/latest)| None |  |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None |  |
 

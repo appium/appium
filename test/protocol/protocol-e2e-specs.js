@@ -164,15 +164,13 @@ describe('Protocol', function () {
       }).should.eventually.be.rejectedWith(/404/);
     });
 
-    // TODO pass this test
-    // https://github.com/appium/node-mobile-json-wire-protocol/issues/3
-    it('4xx responses should have content-type of text/plain', async function () {
+    it('4xx responses should have content-type of application/json', async function () {
       const {headers} = await axios({
         url: `${baseUrl}/blargimargarita`,
         validateStatus: null,
       });
 
-      headers['content-type'].should.include('text/plain');
+      headers['content-type'].should.include('application/json');
     });
 
     it('should throw not yet implemented for unfilledout commands', async function () {

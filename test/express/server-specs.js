@@ -51,8 +51,8 @@ describe('server configuration', function () {
     const app = fakeApp();
     const configureRoutes = () => {};
     configureServer({app, addRoutes: configureRoutes});
-    app.use.callCount.should.equal(15);
-    app.all.callCount.should.equal(4);
+    app.use.callCount.should.equal(14);
+    app.all.callCount.should.equal(5);
   });
 
   it('should apply new methods in plugins to the standard method map', function () {

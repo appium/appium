@@ -9,6 +9,4 @@ env:
   - COMMAND="npm run e2e-test" _FORCE_LOGS=1
 services:
   - xvfb
-after_success:
-  - npm run coverage
 script: $COMMAND

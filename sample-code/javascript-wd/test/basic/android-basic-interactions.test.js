@@ -6,7 +6,6 @@ import {
 } from '../helpers/config';
 const {assert} = chai;
 
-
 const PACKAGE = 'io.appium.android.apis';
 const SEARCH_ACTIVITY = '.app.SearchInvoke';
 const ALERT_DIALOG_ACTIVITY = '.app.AlertDialogSamples';
@@ -78,7 +77,7 @@ describe('Basic Android interactions', function () {
     // Check that the dialog is there
     const alertElement = await driver.waitForElementById('android:id/alertTitle');
     const alertText = await alertElement.text();
-    assert.equal(alertText, `Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop.`);
+    assert.equal(alertText, 'Lorem ipsum dolor sit aie consectetur adipiscing\nPlloaso mako nuto siwuf cakso dodtos anr koop.');
     const closeDialogButton = await driver.elementById('android:id/button1');
 
     // Close the dialog

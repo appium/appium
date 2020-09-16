@@ -67,7 +67,7 @@ describe('Basic Android selectors', function () {
 
   it('should find elements by XPath', async function () {
     // Find elements by XPath
-    const linearLayoutElements = await driver.elementsByXPath(`//*[@class='android.widget.FrameLayout']`);
+    const linearLayoutElements = await driver.elementsByXPath('//*[@class=\'android.widget.FrameLayout\']');
     assert.isAbove(linearLayoutElements.length, 1);
   });
 });

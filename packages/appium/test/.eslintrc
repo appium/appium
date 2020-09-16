@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "func-names": 0
+  },
+  "env": {
+    "jest": true
+  }
+}

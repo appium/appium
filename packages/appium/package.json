@@ -1,0 +1,96 @@
+{
+  "name": "appium",
+  "version": "2.0.0-beta.1",
+  "description": "Appium is an open source, cross-platform test automation tool for native, hybrid and mobile web and desktop apps.",
+  "author": "https://github.com/appium",
+  "license": "Apache-2.0",
+  "tags": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=6"
+  },
+  "main": "./build/main.js",
+  "bin": {
+    "appium": "./build/main.js"
+  },
+  "directories": {
+    "lib": "./lib",
+    "doc": "./docs"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "build/lib",
+    "npm-shrinkwrap.json"
+  ],
+  "dependencies": {
+    "@appium/base-plugin": "^1.0.0",
+    "@babel/runtime": "^7.6.0",
+    "appium-base-driver": "^7.0.0",
+    "appium-support": "2.x",
+    "argparse": "^1.0.10",
+    "async-lock": "^1.0.0",
+    "asyncbox": "2.x",
+    "axios": "^0.20.0",
+    "bluebird": "3.x",
+    "continuation-local-storage": "3.x",
+    "dateformat": "^3.0.3",
+    "find-root": "^1.1.0",
+    "lodash": "^4.17.11",
+    "longjohn": "^0.2.12",
+    "npmlog": "4.x",
+    "ora": "^4.0.4",
+    "semver": "^7.0.0",
+    "source-map-support": "0.x",
+    "teen_process": "1.x",
+    "winston": "3.x",
+    "word-wrap": "^1.2.3",
+    "yaml": "^1.7.2"
+  },
+  "scripts": {
+    "watch": "gulp watch",
+    "zip": "zip -qr appium.zip .",
+    "upload": "gulp github-upload",
+    "zip-and-upload": "npm run zip && npm run upload",
+    "authorize-ios": "authorize-ios",
+    "setup": "npm run postpublish",
+    "transpile": "babel src/ -d build/ --config-file ../../babel.config.js"
+  },
+  "pre-commit": [
+    "precommit-msg",
+    "precommit-test"
+  ],
+  "devDependencies": {
+    "@appium/fake-plugin": "^0.2.0",
+    "appium-fake-driver": "^1.0.1",
+    "appium-gulp-plugins": "^5.2.1",
+    "chai": "4.x",
+    "chai-as-promised": "7.x",
+    "eslint-config-appium": "^4.0.1",
+    "fancy-log": "^1.3.2",
+    "gulp": "^4.0.0",
+    "handlebars": "^4.2.0",
+    "mocha": "^8.0.1",
+    "pre-commit": "1.x",
+    "sinon": "^9.0.0",
+    "validate.js": "^0.13.0",
+    "wd": "^1.10.0",
+    "yaml-js": "^0.2.0"
+  }
+}

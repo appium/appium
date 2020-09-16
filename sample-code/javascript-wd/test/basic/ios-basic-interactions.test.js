@@ -49,7 +49,7 @@ describe('Basic IOS interactions', function () {
 
   it('should send keys to inputs', async function () {
     // Find TextField input element
-    const textInputId = `TextField1`;
+    const textInputId = 'TextField1';
     const textViewsEl = await driver.waitForElementByAccessibilityId(textInputId);
 
     // Check that it doesn't have a value
@@ -66,16 +66,16 @@ describe('Basic IOS interactions', function () {
 
   it('should click a button that opens an alert', async function () {
     // Find Button element and click on it
-    const buttonElementId = `show alert`;
+    const buttonElementId = 'show alert';
     const buttonElement = await driver.waitForElementByAccessibilityId(buttonElementId);
     await buttonElement.click();
 
     // Wait for the alert to show up
-    const alertTitleId = `Cool title`;
+    const alertTitleId = 'Cool title';
     const alertTitleElement = await driver.waitForElementByAccessibilityId(alertTitleId);
 
     // Check the text
     const alertTitle = await alertTitleElement.text();
-    assert.equal(alertTitle, `Cool title`);
+    assert.equal(alertTitle, 'Cool title');
   });
 });

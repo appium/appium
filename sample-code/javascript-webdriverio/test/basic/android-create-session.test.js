@@ -16,10 +16,10 @@ describe('Create Android session', function () {
     const res = await client.status();
     assert.isObject(res.build);
 
-    const current_package = await client.getCurrentPackage();
-    assert.equal(current_package, 'io.appium.android.apis');
+    const currentPackage = await client.getCurrentPackage();
+    assert.equal(currentPackage, 'io.appium.android.apis');
 
-    const delete_session = await client.deleteSession();
-    assert.isNull(delete_session);
+    const deleteSession = await client.deleteSession();
+    assert.isNull(deleteSession);
   });
 });

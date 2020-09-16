@@ -1,5 +1,9 @@
 {
-    "rules": {
-        "func-names": 0
-    }
+  "rules": {
+    "func-names": 0,
+    "import/no-unresolved": 0
+  },
+  "env": {
+    "mocha": true
+  }
 }

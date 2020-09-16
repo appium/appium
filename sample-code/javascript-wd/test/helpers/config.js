@@ -1,10 +1,8 @@
 import path from 'path';
 
-
 const SAUCE_TESTING = process.env.SAUCE_LABS;
 const SAUCE_USERNAME = process.env.SAUCE_USERNAME;
 const SAUCE_ACCESS_KEY = process.env.SAUCE_ACCESS_KEY;
-
 
 const sauceCaps = SAUCE_TESTING
   ? {
@@ -51,7 +49,6 @@ const serverConfig = SAUCE_TESTING
     host: process.env.APPIUM_HOST || 'localhost',
     port: process.env.APPIUM_PORT || 4723
   };
-
 
 // figure out the location of the apps under test
 const GITHUB_ASSET_BASE = 'http://appium.github.io/appium/assets';

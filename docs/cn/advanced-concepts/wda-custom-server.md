@@ -6,7 +6,7 @@ Appium 的 iOS 版本的后端用的是[Facebook's WebDriverAgent](https://githu
  * 如果使用了Appium的默认设置，则不需要如下的步骤。服务器将为您搞定一切，当然你也不能对WDA做太多控制。
  * 对连接的被测设备必须有SSH或物理访问权限。
 
-### 安装WDA 
+### 安装WDA
 
 Appium 会自动下载 WebDriverAgent 源码。如果使用 npm 命令（`npm install -g appium`） 安装Appium的话，通常情况下会保存在/usr/local/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent 目录下。
 如果是首次安装的话，还需要下载一些第三方依赖("carthage"工具就是为此准备的: `brew install carthage`):
@@ -33,7 +33,7 @@ npm install -g iproxy
 
 Xcode 会成功构建项目并安装到真机/模拟器上，所以您将在苹果系统的桌面上看到 WebDriverAgentRunner 应用程序的图标。
 
-### 启动WDA 
+### 启动WDA
 
 WebDriverAgent 应用程序扮演一个 REST 服务的角色，接收外部 API 请求，然后传递给被测应用的原生 XCTest 调用。如果在模拟器上运行你的测试，REST 服务的地址将是localhost，如果在有实际的 IP 地址的真实设备上运行，REST 服务的地址将是实际的 ip 地址。我们使用 iproxy 将网络请求路由到通过 USB 连接的真实设备上，这意味着可以使用这个工具将模拟器和真实设备上的 WDA 网络地址统一。
 
@@ -282,5 +282,5 @@ public class WDAServer {
  * 模拟器ID可以从 `xcrun simctl list` 输出中解析
  * UrlChecker 类是从 org.openqa.selenium.net 包导入的
 
- 
-本文由 [simple](https://testerhome.com/simple) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+
+本文由 simple 翻译，由 lihuazhang 校验。

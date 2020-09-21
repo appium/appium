@@ -32,4 +32,4 @@ Appium 给用户提供了在一个机器上启动多个 Android sessions 的方�
 如果你想运行 iOS 的并发测试，你需要使用 Sauce 上传你的 Appium 测试脚本，然后就可以运行多台 iOS 和 Android 的并发测试，只要你的账号允许。查看更多相关信息可以查看 [这里](https://docs.saucelabs.com/tutorials/appium/)。
 
 
-本文由 [thanksdanny](https://testerhome.com/thanksdanny) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 thanksdanny 翻译，由 lihuazhang 校验。

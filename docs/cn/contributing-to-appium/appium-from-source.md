@@ -146,4 +146,4 @@ npm run e2e-test
 
 在提交代码之前，请运行 `npm run test` 一些基本测试，并根据代码质量标准检查您的更改。
 
-本文由 [校长](https://testerhome.com/xushizhao) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 校长 翻译，由 lihuazhang 校验。

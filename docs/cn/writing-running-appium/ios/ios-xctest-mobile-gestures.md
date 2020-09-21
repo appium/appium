@@ -94,7 +94,7 @@ driver.execute('mobile: doubleTap', {element: element.value.ELEMENT});
  * _duration_: 长按的持续时间（秒），浮点型。强制性参数
  * _x_: 屏幕x轴坐标点，浮点型. 仅当`element`未设置时才是强制参数
  * _y_: 屏幕y轴坐标点，浮点型. 仅当`element`未设置时才是强制参数
- 
+
 #### 用法示例
 
 ```csharp
@@ -217,4 +217,4 @@ driver.execute_script('mobile: alert', {'action': 'accept', 'buttonLabel': 'My C
 查看 [WDA Element Commands API](https://github.com/facebook/WebDriverAgent/blob/master/WebDriverAgentLib/Commands/FBElementCommands.m)
 以获取有关在Facebook WebDriverAgent中实现的手势的信息。
 
-本文由 [大东](https://testerhome.com/Anikikun) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 大东 翻译，由 lihuazhang 校验。

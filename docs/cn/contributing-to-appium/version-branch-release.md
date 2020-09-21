@@ -42,7 +42,7 @@ Appium 使用 [Trunk Based Development](http://paulhammant.com/2013/04/05/what-i
    2. 在接下来的六个星期里，这个团队将他们的代码提交到 `master`.
    3. 7月15日，执行 RE 创建 20.1-branch。第一个节点被标记为 “20.1.0 Beta”。
    4. 一个团队成员开始修复测试版中的错误。这些修复会被提交到 `master`.
-   5. 其他贡献者开始按计划提交代码到 `20.2` 中去。这些内容也会被提交到 `master`。 
+   5. 其他贡献者开始按计划提交代码到 `20.2` 中去。这些内容也会被提交到 `master`。
    6. RE把修复的内容cherry picks到 `20.1-branch`, 并保留 `master` 的其他变更。
    7. 该团队庆祝 8 月 1 日发布的所有测试版本都已修复。
    8. RE 标签的 HEAD 20.1-branch 为 20.1.0 发布版本。
@@ -50,6 +50,4 @@ Appium 使用 [Trunk Based Development](http://paulhammant.com/2013/04/05/what-i
    10. 执行 RE 将主机的崩溃修复程序拉入 20.1-branch，将 HEAD 标记为 20.1.1 并发布修补程序。
    11. 一旦 20.2 发布完毕，循环就会重复。
 
-本文由 [大东](https://testerhome.com/Anikikun) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
-
-
+本文由 大东 翻译，由 lihuazhang 校验。

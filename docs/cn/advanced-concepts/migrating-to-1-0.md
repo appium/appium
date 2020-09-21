@@ -21,7 +21,7 @@ from appium import webdriver
 ```center
 from selenium import webdriver
 ```
- 
+
 ### 新的 desired capabilities
 
 不再使用以下的 capabilities：
@@ -165,4 +165,4 @@ set_context "WEBVIEW"
 
 就是这样！快乐的迁移！
 
-本文由 [高鹏](https://testerhome.com/026) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 高鹏 翻译，由 lihuazhang 校验。

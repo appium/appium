@@ -36,4 +36,4 @@ Appium 支持多种平台以及各种测试方式（native，hybrid，web，真�
 * [Windows App Testing](/docs/en/drivers/windows.md)(English)
 
 
-本文由 [thanksdanny](https://testerhome.com/thanksdanny) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 thanksdanny 翻译，由 lihuazhang 校验。

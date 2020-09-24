@@ -13,39 +13,39 @@ We can get distributed apk files from the `.aab` file via the CLI. Using the gen
     - The `.aab` is available over Android Studio 3.2
     - You must sign correctly when you generate `.apks` from `.aab`. This step requires data signing.
 
-        ```bash
-        $ java -jar apks/bundletool.jar build-apks \
-          --bundle apks/release/release/app.aab \ # A generated aab file
-          --output apks/AppBundleSample.apks \    # An apks file you'd like to out put to
-          --ks apks/sign \                        # Signing keystore
-          --ks-key-alias key0 \                   # Alias of the keytstore
-          --ks-pass pass:kazucocoa \              # Password of the keystore
-          --overwrite                             # Overwrite any existing apks files
-        ```
+```bash
+$ java -jar apks/bundletool.jar build-apks \
+    --bundle apks/release/release/app.aab \ # A generated aab file
+    --output apks/AppBundleSample.apks \    # An apks file you'd like to out put to
+    --ks apks/sign \                        # Signing keystore
+    --ks-key-alias key0 \                   # Alias of the keytstore
+    --ks-pass pass:kazucocoa \              # Password of the keystore
+    --overwrite                             # Overwrite any existing apks files
+```
 
 3. Use the path to the `.apks` file as your `app` capability.
 
-    ```ruby
-    desired_capability = caps: {
-        platformName: :android,
-        automationName: 'uiautomator2',
-        platformVersion: '8.1',
-        deviceName: 'Android Emulator',
-        app: "path/to/your.apks",   # This line is important
-        fullReset: true,
-        ...
-    }
+```ruby
+desired_capability = caps: {
+    platformName: :android,
+    automationName: 'uiautomator2',
+    platformVersion: '8.1',
+    deviceName: 'Android Emulator',
+    app: "path/to/your.apks",   # This line is important
+    fullReset: true,
+    ...
+}
 
-    core = ::Appium::Core.for(desired_capability)
-    driver = core.start_driver
-    ```
+core = ::Appium::Core.for(desired_capability)
+driver = core.start_driver
+```
 
 You can find another way to get test APKs in https://developer.android.com/guide/app-bundle/
 
 ## Tips
 ### Make `bundletool.jar` executable
 
-Make sure the bundletool is executable.  
+Make sure the bundletool is executable.
 `$ chmod 655 /path/to/bundletool.jar` can make it executable, for example.
 
 ### Test with different languages

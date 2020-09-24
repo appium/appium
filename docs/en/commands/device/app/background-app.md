@@ -55,7 +55,7 @@ driver.BackgroundApp(10)
 Send the currently active app to the background, and either return after a certain amount of time, or leave the app deactivated.
 There are 3 types of parameters which may be passed to this method:
 
-1. An object that looks like `{"timeout": secs}`, where `secs` is an
+1. An object that looks like `{"seconds": secs}`, where `secs` is an
    integer designating how long, in seconds, to background the app for. -1
    means to deactivate the app entirely.
 

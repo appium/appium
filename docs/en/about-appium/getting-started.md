@@ -184,7 +184,7 @@ So here is how we begin to construct a session in our test file:
 ```js
 // javascript
 const opts = {
-  path: '/wd/hub',
+  path: '',
   port: 4723,
   capabilities: {
     platformName: "Android",
@@ -239,7 +239,7 @@ const wdio = require("webdriverio");
 const assert = require("assert");
 
 const opts = {
-  path: '/wd/hub',
+  path: '',
   port: 4723,
   capabilities: {
     platformName: "Android",

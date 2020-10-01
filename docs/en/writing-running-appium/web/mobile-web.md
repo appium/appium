@@ -128,7 +128,7 @@ To configure you test to run against safari simply set the `"browserName"` to be
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 desiredCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
-URL url = new URL("http://127.0.0.1:4723/wd/hub");
+URL url = new URL("http://127.0.0.1:4723");
 AppiumDriver driver = new AppiumDriver(url, desiredCapabilities);
 
 // Navigate to the page and interact with the elements on the guinea-pig page using id.
@@ -145,7 +145,7 @@ driver.quit();
 # python
 # setup the web driver and launch the webview app.
 capabilities = { 'browserName': 'Safari', 'automationName': 'XCUITest' }
-driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
+driver = webdriver.Remote('http://localhost:4723', capabilities)
 
 # Navigate to the page and interact with the elements on the guinea-pig page using id.
 driver.get('http://saucelabs.com/test/guinea-pig');

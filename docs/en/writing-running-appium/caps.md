@@ -173,7 +173,7 @@ These Capabilities are available only on the [Espresso Driver](/docs/en/drivers/
 |Capability|Description|Values|
 |----|-----------|-------|
 |`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for the Espresso server to launch. Defaults to `30000` |e.g., `50000`|
-|`espressoBuildConfig`|Path to the Espresso server build configuration JSON (see below)|e.g., `/projects/myapp-tests/buildconfig.json`|
+|`espressoBuildConfig`|Path to the Espresso server build configuration JSON (see below) or a stringified JSON itself (only supported since server version 1.19)|e.g., `/projects/myapp-tests/buildconfig.json`|
 |`showGradleLog`|Whether to pipe Gradle build log for the Espresso server to the Appium log. Defaults to `false`|e.g., `true`|
 |`skipServerInstallation`|Skip Espresso server build and apk installation. This option could break proper Espresso server setup for the particular Appium version, but it can improve startup performance when the proper Espresso server and the proper app under test are already installed on the device. Please, make sure not to enable this option if the Espresso server or the application under test needs an update. Defaults to `false` | `true` or `false`|
 |`intentOptions`|Intent options which will be used to start the application under test. It can set intent options such as `action`, `categories` and `component` as JSON format. Please read [#538](https://github.com/appium/appium-espresso-driver/issues/538) as an example usage. | e.g. `{"action": "android.intent.action.MAIN", "categories": "android.intent.category.LAUNCHER", "component": "com.appium/.launcher.MainActivity"` |
@@ -281,6 +281,6 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 ### WinAppDriver Only
 (For WinAppDriver specific capabilities, please refer to the documentation on the [Appium Windows Driver repo](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) itself.)
 
-### Flutter driver only 
+### Flutter driver only
 (For FlutterDriver specific capabilities, examples please refer to the documentation on the [Flutter Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
 

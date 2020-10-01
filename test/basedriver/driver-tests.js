@@ -380,7 +380,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         it('should strip away any wd/hub prefix', function () {
           const avoidStub = sinon.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /^\/foo/]]);
-          d.proxyRouteIsAvoided(null, 'POST', '/wd/hub/foo/bar').should.be.true;
+          d.proxyRouteIsAvoided(null, 'POST', '/foo/bar').should.be.true;
           avoidStub.restore();
         });
         it('should return false for routes not in the avoid list', function () {

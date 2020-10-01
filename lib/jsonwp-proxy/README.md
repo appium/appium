@@ -10,9 +10,9 @@ The proxy is used by instantiating with the details of the Selenium server to wh
 - `scheme` - defaults to 'http'
 - `server` - defaults to 'localhost'
 - `port` - defaults to `4444`
-- `base` - defaults to '/wd/hub'
+- `base` - defaults to ''
 - `sessionId` - the session id of the session on the remote server
-- `reqBasePath` - the base path of the server which the request was originally sent to (defaults to '/wd/hub')
+- `reqBasePath` - the base path of the server which the request was originally sent to (defaults to '')
 
 Once the proxy is created, there are two `async` methods:
 

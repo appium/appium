@@ -66,12 +66,12 @@ describe('Protocol', function () {
     });
 
     it('should properly lookup correct command name for fully specified endpoint', function () {
-      const cmdName = routeToCommandName('/wd/hub/status', 'GET');
+      const cmdName = routeToCommandName('/status', 'GET');
       cmdName.should.equal('getStatus');
     });
 
     it('should not find command name if incorrect input data has been specified', function () {
-      for (let [route, method] of [['/wd/hub/status', 'POST'], ['/xstatus', 'GET'], ['status', 'POST']]) {
+      for (let [route, method] of [['/status', 'POST'], ['/xstatus', 'GET'], ['status', 'POST']]) {
         const cmdName = routeToCommandName(route, method);
         chai.should().equal(cmdName, undefined);
       }

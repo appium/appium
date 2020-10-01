@@ -21,18 +21,18 @@ describe('Protocol', function () {
       sinon.stub(d, 'proxyActive').returns(true);
       sinon.stub(d, 'proxyRouteIsAvoided').returns(false);
       const hasImageElements = [
-        `/wd/hub/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}bar`,
-        `/wd/hub/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}bar/click`,
-        `/wd/hub/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}bar/submit`,
-        `/wd/hub/session/:sessionId/screenshot/${IMAGE_ELEMENT_PREFIX}bar`,
+        `/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}bar`,
+        `/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}bar/click`,
+        `/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}bar/submit`,
+        `/session/:sessionId/screenshot/${IMAGE_ELEMENT_PREFIX}bar`,
       ];
       const noImageElements = [
-        `/wd/hub/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}`,
-        `/wd/hub/session/:sessionId/screenshot/${IMAGE_ELEMENT_PREFIX}`,
-        `/wd/hub/session/:sessionId/element/bar${IMAGE_ELEMENT_PREFIX}`,
-        '/wd/hub/session/:sessionId/element/element123',
-        '/wd/hub/session/:sessionId/title',
-        `/wd/hub/session/:sessionId/notelement/${IMAGE_ELEMENT_PREFIX}bar`,
+        `/session/:sessionId/element/${IMAGE_ELEMENT_PREFIX}`,
+        `/session/:sessionId/screenshot/${IMAGE_ELEMENT_PREFIX}`,
+        `/session/:sessionId/element/bar${IMAGE_ELEMENT_PREFIX}`,
+        '/session/:sessionId/element/element123',
+        '/session/:sessionId/title',
+        `/session/:sessionId/notelement/${IMAGE_ELEMENT_PREFIX}bar`,
       ];
       for (let testCase of hasImageElements) {
         const req = {body: {}, params: {}, originalUrl: testCase};

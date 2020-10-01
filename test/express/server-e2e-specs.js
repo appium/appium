@@ -21,7 +21,7 @@ describe('server', function () {
         res.header['content-type'] = 'text/html';
         res.status(200).send('Hello World!');
       });
-      app.get('/wd/hub/python', (req, res) => {
+      app.get('/python', (req, res) => {
         res.status(200).send(req.headers['content-type']);
       });
       app.get('/error', () => {
@@ -49,7 +49,7 @@ describe('server', function () {
   });
   it('should fix broken context type', async function () {
     const {data} = await axios({
-      url: 'http://localhost:8181/wd/hub/python',
+      url: 'http://localhost:8181/python',
       headers: {
         'user-agent': 'Python',
         'content-type': 'application/x-www-form-urlencoded'

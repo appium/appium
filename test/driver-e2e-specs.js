@@ -17,6 +17,7 @@ import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
+const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
 const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
 
 const should = chai.should();
@@ -34,7 +35,7 @@ describe('FakeDriver - via HTTP', function () {
   // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
   // actually going to be required by Appium
   let FakeDriver = null;
-  const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/wd/hub/session`;
+  const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/session`;
   before(async function () {
     const config = new DriverConfig(appiumHome);
     await config.read();
@@ -69,7 +70,7 @@ describe('FakeDriver - via HTTP', function () {
 
   describe('session handling', function () {
     it('should start and stop a session', async function () {
-      let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let driver = wd.promiseChainRemote(TEST_SERVER);
       let [sessionId] = await driver.init(caps);
       should.exist(sessionId);
       sessionId.should.be.a('string');
@@ -78,11 +79,11 @@ describe('FakeDriver - via HTTP', function () {
     });
 
     it('should be able to run two FakeDriver sessions simultaneously', async function () {
-      let driver1 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let driver1 = wd.promiseChainRemote(TEST_SERVER);
       let [sessionId1] = await driver1.init(caps);
       should.exist(sessionId1);
       sessionId1.should.be.a('string');
-      let driver2 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let driver2 = wd.promiseChainRemote(TEST_SERVER);
       let [sessionId2] = await driver2.init(caps);
       should.exist(sessionId2);
       sessionId2.should.be.a('string');
@@ -94,17 +95,17 @@ describe('FakeDriver - via HTTP', function () {
     it('should not be able to run two FakeDriver sessions simultaneously when one is unique', async function () {
       let uniqueCaps = _.clone(caps);
       uniqueCaps.uniqueApp = true;
-      let driver1 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let driver1 = wd.promiseChainRemote(TEST_SERVER);
       let [sessionId1] = await driver1.init(uniqueCaps);
       should.exist(sessionId1);
       sessionId1.should.be.a('string');
-      let driver2 = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let driver2 = wd.promiseChainRemote(TEST_SERVER);
       await driver2.init(caps).should.eventually.be.rejected;
       await driver1.quit();
     });
 
     it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
-      let driver = wd.promiseChainRemote(TEST_HOST, TEST_PORT);
+      let driver = wd.promiseChainRemote(TEST_SERVER);
 
       let localCaps = Object.assign({
         newCommandTimeout: 0.25,

@@ -1,11 +1,11 @@
-# Contributing to Appium
+# Contributing to Appium  ---------------***********--------------------------
 
 There are a lot of different ways to contribute to Appium. See below for
 everything you can do and the processes to follow for each contribution method.
 Note that no matter how you contribute, your participation is governed by our
 [Code of Conduct](CONDUCT.md).
 
-### Make changes to the Appium code or docs
+### Make changes to the Appium code or docs ------------*****---------------------
 
 Fork the project, make a change, and send a pull request! Please have a look at
 our [Style Guide](/docs/en/contributing-to-appium/style-guide.md) before
@@ -26,7 +26,7 @@ Finally, before we accept your code, you will need to have signed our
 [Contributor License
 Agreement](https://cla.js.foundation/appium/appium).
 
-### Become an Appium Triager
+### Become an Appium Triager. -------------------********--------------------
 
 You can help us manage our issue tracker! All you need is enough familiarity
 with Appium to try and reproduce bugs. We triage issues by having conversations
@@ -51,13 +51,13 @@ If you're interested in joining our triage rotation, contact
 [@jlipps](https://github.com/jlipps) or
 [@imurchie](https://github.com/imurchie).
 
-### Help out on our forums
+### Help out on our forums -----------------***********-----------------------
 
 We can always use help on our forums at
 [discuss.appium.io](https://discuss.appium.io)! Hop on over and see if there
 are any questions that you can answer.
 
-### Submit bug reports or feature requests
+### Submit bug reports or feature requests  --------------*********------------------
 
 Just use the GitHub issue tracker to submit your bug reports and feature
 requests. If you are submitting a bug report, please follow the [issue template](https://github.com/appium/appium/issues/new).

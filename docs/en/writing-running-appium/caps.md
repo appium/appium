@@ -221,7 +221,7 @@ The module versions enumerated under `toolsVersion` are only used to build the s
 
 ***Application dependencies***
 
-`additionalAppDependencies` and `additionalAndroidTestDependencies` array specifies additional dependencies of the application under test that build tools should know about when building the Espresso server.
+`additionalAppDependencies` and `additionalAndroidTestDependencies` array specify additional dependencies of the application under test that build tools should know about when building the Espresso server.
 For example: `[ "com.google.android.material:material:1.0.0" ]`.
 
 Items belonging to `additionalAppDependencies` array are translated to `implementation` lines in Gradle build files of the Espresso server. `additionalAndroidTestDependencies` are `androidTestImplementation`.

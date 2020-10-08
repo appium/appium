@@ -22,7 +22,8 @@ coordinates and duration.
 #### Supported arguments
 
  * _direction_: Either 'up', 'down', 'left' or 'right'. The argument is mandatory
- * _velocity_: This argument is optional and is only supported since Appium server version 1.19 and Xcode SDK version 11.4+. The value is measured in pixels per second and same values could behave differently on different devices depending on their display density. Higher values make
+ * _velocity_: This argument is optional and is only supported since Appium server version 1.19 and Xcode SDK version 11.4+.
+ The value is measured in pixels per second and same values could behave differently on different devices depending on their display density. Higher values make
  swipe gesture faster (which usually scrolls larger areas if we apply it to a list) and lower
  values slow it down. Only values greater than zero have effect.
  * _element_: The internal element identifier (as hexadecimal hash string) to swipe on.

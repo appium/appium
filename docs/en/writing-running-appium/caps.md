@@ -221,9 +221,10 @@ The module versions enumerated under `toolsVersion` are only used to build the s
 
 ***Application dependencies***
 
-`additionalAppDependencies` array specifies additional dependencies of the application under test that build tools should know about when building the Espresso server. For example: `[ "com.google.android.material:material:1.0.0" ]`.
+`additionalAppDependencies` and `additionalAndroidTestDependencies` array specify additional dependencies of the application under test that build tools should know about when building the Espresso server.
+For example: `"additionalAndroidTestDependencies": [ "com.google.android.material:material:1.0.0" ]`.
 
-Items belonging to this array are translated to `implementation` lines in Gradle build files of the Espresso server.
+Items belonging to `additionalAppDependencies` array are translated to `implementation` lines in Gradle build files of the Espresso server. `additionalAndroidTestDependencies` are translated to `androidTestImplementation`.
 
 ### iOS Only
 
@@ -283,4 +284,3 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 
 ### Flutter driver only
 (For FlutterDriver specific capabilities, examples please refer to the documentation on the [Flutter Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
-

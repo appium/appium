@@ -2441,9 +2441,9 @@
       }
     },
     "appium-espresso-driver": {
-      "version": "1.38.1",
-      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.38.1.tgz",
-      "integrity": "sha512-8cX4dPKYZIlKOmYpr/F2wwf1WlmrPaVorfNBDewMme1ADlXkUaFqUOEg+W1adoV52nOQo/V6UDhlVeQCshV0jg==",
+      "version": "1.38.2",
+      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.38.2.tgz",
+      "integrity": "sha512-TskW6PIClXcPP7UGyD8j2WTRjJCWoAfgZjNrAnUVONHR/omc5gpi7Cx7H5Rqq48Zn7mD0glFCpqs57NoyMyKVA==",
       "requires": {
         "@babel/runtime": "^7.4.3",
         "appium-adb": "^8.0.0",

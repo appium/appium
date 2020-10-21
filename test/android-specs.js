@@ -31,11 +31,10 @@ describe('android', function () {
     });
     it('failure - not set', async function () {
       delete process.env.ANDROID_HOME;
-      (await check.diagnose()).should.deep.equal({
-        ok: false,
-        optional: false,
-        message: 'ANDROID_HOME is NOT set!'
-      });
+      const {ok, optional, message} = await check.diagnose();
+      ok.should.be.false;
+      optional.should.be.false;
+      message.should.not.be.empty;
       mocks.verify();
     });
     it('failure - file not exists', async function () {
@@ -50,7 +49,7 @@ describe('android', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      removeColors(await check.fix()).should.equal('Manually configure ANDROID_HOME.');
+      removeColors(await check.fix()).should.contain('ANDROID_HOME');
     });
   }));
   describe('AndroidToolCheck', withMocks({adb}, (mocks) => {

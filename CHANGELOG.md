@@ -39,10 +39,15 @@ Thanks
 * Fix privacy for calender access on simulators [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
 * Fix the value in location script on simulators [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
 
-### iOS(XCTest)
+### iOS(XCUITest)
+
+# TODO: check new features which haven't addressed since 1.18.2 and 1.18.3
 
 * Add capabilities:
   * `simulatorDevicesSetPath` allows to set an alternative path to the simulator devices [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)
+  * `allowProvisioningDeviceRegistration` adds `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flag in xcodebuild [appium-xcuitest-driver#1241](https://github.com/appium/appium-xcuitest-driver/pull/1241)
+* Add mobile functions:
+  * `mobile:resetPermission` to reset all authorizations [https://github.com/appium/appium-xcuitest-driver#1239](https://github.com/appium/appium-xcuitest-driver/pull/1239)
 
 ### Flutter
 

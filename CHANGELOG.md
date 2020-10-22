@@ -1,3 +1,17 @@
+CHANGES IN VERSION 1.19.0 (FROM 1.18.1)
+===================================
+
+Appium 1.19.0 is a minor release
+
+
+CHANGES IN VERSION 1.18.2 and 1.18.3 (FROM 1.18.1)
+===================================
+
+Appium 1.18.2 and 1.18.3 is patch releases
+
+* Supports Xcode 12 + iOS 14
+
+
 CHANGES IN VERSION 1.18.1 (FROM 1.18.0)
 ===================================
 
@@ -8,7 +22,7 @@ Appium 1.18.1 is a patch release
 * Fix to avoid a redundant Chromedriver download operation if a matching driver is already present [appium-chromedriver#186](https://github.com/appium/appium-chromedriver/pull/186)
 
 #### Android (UiAutomator2)
-* Fix to return a proper response for missing route [appium/appium-uiautomator2-server#373](https://github.com/appium/appium-uiautomator2-server/pull/373) 
+* Fix to return a proper response for missing route [appium/appium-uiautomator2-server#373](https://github.com/appium/appium-uiautomator2-server/pull/373)
 * Fix to allow double values as touch action coordinates [ appium/appium-uiautomator2-server#372](https://github.com/appium/appium-uiautomator2-server/pull/372)
 * Fix [#14586](https://github.com/appium/appium/issues/14586) which might affect XPath locators executed on elemetns, retrieved from nested lookup requests [appium/appium-uiautomator2-server#372](https://github.com/appium/appium-uiautomator2-server/pull/371)
     * A known issue in 1.18.0

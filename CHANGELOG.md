@@ -33,6 +33,21 @@ Thanks
 @grzegorz-jarosz
 
 
+### iOS(general)
+
+* Improves state check of simulators [appium-ios-simulator#284](https://github.com/appium/appium-ios-simulator/pull/284)
+* Fix privacy for calender access on simulators [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
+* Fix the value in location script on simulators [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
+
+### iOS(XCTest)
+
+* Add capabilities:
+  * `simulatorDevicesSetPath` allows to set an alternative path to the simulator devices [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)
+
+### Flutter
+
+The version is `0.0.25`
+
 CHANGES IN VERSION 1.18.2 and 1.18.3 (FROM 1.18.1)
 ===================================
 

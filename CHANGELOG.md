@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.19.0 (FROM 1.18.1)
+CHANGES IN VERSION 1.19.0 (FROM 1.18.3)
 ===================================
 
 Appium 1.19.0 is a minor release
@@ -41,8 +41,6 @@ Appium 1.19.0 is a minor release
 * Fix the value in location script on simulators [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
 
 ### iOS(XCUITest)
-
-# TODO: check new features which haven't addressed since 1.18.2 and 1.18.3
 
 * Add capabilities:
   * `simulatorDevicesSetPath` allows to set an alternative path to the simulator devices [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)

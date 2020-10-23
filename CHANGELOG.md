@@ -12,6 +12,15 @@ Appium 1.19.0 is a minor release
 * Change to enable `ensureWebviewsHavePages` by default [appium-android-driver#652](https://github.com/appium/appium-android-driver/pull/652)
 * Fix CPU performance data parsing [appium-android-driver#659](https://github.com/appium/appium-android-driver/pull/659)
 
+### Android(UIAutomator2)
+
+* Add `mobile:` functions:
+  * `mobile:dragGesture`, `mobile:flingGesture`, `mobile:longClickGesture`, `mobile:pinchCloseGesture`, `mobile:pinchOpenGesture`, `mobile:swipeGesture` and `mobile:scrollGesture`: [Automating Mobile Gestures With UiAutomator2 Backend](https://appium.io/docs/en/writing-running-appium/android/android-mobile-gestures/)
+* Add css selector support [appium-uiautomator2-driver#410](https://github.com/appium/appium-uiautomator2-driver/pull/410)
+  * `css selector` will be converted to `-android uiautomator` selector in UIAutomator2. Read [appium-uiautomator2-driver#410](https://github.com/appium/appium-uiautomator2-driver/pull/410) for more details.
+* Enhance XPath lookup performance [appium-uiautomator2-server#386](https://github.com/appium/appium-uiautomator2-server/pull/386)
+* Fix port guard logic to avoid port conflict [appium-uiautomator2-driver#409](https://github.com/appium/appium-uiautomator2-driver/pull/409)
+
 ### Android(Espresso)
 
 * Add to raise `InvalidContextError` error when the app under test stops because of instrumentation process crashes (appium-espresso-driver#591)[https://github.com/appium/appium-espresso-driver/pull/591]
@@ -24,14 +33,6 @@ Appium 1.19.0 is a minor release
   * Please add `"espressoBuildConfig": "{\"additionalAndroidTestDependencies\":[\"com.google.android.material:material:1.2.1\"]}"` as your capabilities if needed
 * Fix to exclude transitive dependencies of espresso-contrib[appium-espresso-driver#596](https://github.com/appium/appium-espresso-driver/pull/596)
 * Fix to be able to build with SDK 29 [appium-espresso-driver#604](https://github.com/appium/appium-espresso-driver/pull/604)
-
-Thanks
-@mwakizaka
-@rasim-sitmanbetov
-@rajdeepv
-@tinder-ktarasov
-@grzegorz-jarosz
-
 
 ### iOS(general)
 
@@ -47,11 +48,20 @@ Thanks
   * `simulatorDevicesSetPath` allows to set an alternative path to the simulator devices [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)
   * `allowProvisioningDeviceRegistration` adds `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flag in xcodebuild [appium-xcuitest-driver#1241](https://github.com/appium/appium-xcuitest-driver/pull/1241)
 * Add mobile functions:
-  * `mobile:resetPermission` to reset all authorizations [https://github.com/appium/appium-xcuitest-driver#1239](https://github.com/appium/appium-xcuitest-driver/pull/1239)
+  * `mobile:resetPermission` to reset all authorizations [https://github.com/appium/appium-xcuitest-driver#1239](https://github.com/appium/appium-xcuitest-driver/pull/1239), [WebDriverAgent#392](https://github.com/appium/WebDriverAgent/pull/392)
+* Add `velocity` argument for over Xcode 11.4 in `mobile:swipe` [appium#14793](https://github.com/appium/appium/pull/14793)
+* Enhance performance
+  * e.g. improve taking snapshot to get elements [WebDriverAgent#393](https://github.com/appium/WebDriverAgent/pull/393)
+* Fix alert handling in some cases [WebDriverAgent#400](https://github.com/appium/WebDriverAgent/pull/400)
 
 ### Flutter
 
 The version is `0.0.25`
+
+### You.i Engine Driver
+
+The version is `1.2.7`
+
 
 CHANGES IN VERSION 1.18.2 and 1.18.3 (FROM 1.18.1)
 ===================================

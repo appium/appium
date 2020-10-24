@@ -6,7 +6,7 @@ Appium 1.19.0 is a minor release
 ### Android General
 
 * Add capabilities:
-  * `allowDelayAdb` to enable or disable `'-delay-adb` option on emulator startup
+  * `allowDelayAdb` to enable or disable `'-delay-adb` option on emulator startup if the options was supported
 * Add `mobile:` functions:
   * `mobile:getContexts` to get WebView details [appium-android-driver#662](https://github.com/appium/appium-android-driver/pull/662)
 * Change to enable `ensureWebviewsHavePages` by default [appium-android-driver#652](https://github.com/appium/appium-android-driver/pull/652)
@@ -24,21 +24,21 @@ Appium 1.19.0 is a minor release
 ### Android(Espresso)
 
 * Add to raise `InvalidContextError` error when the app under test stops because of instrumentation process crashes (appium-espresso-driver#591)[https://github.com/appium/appium-espresso-driver/pull/591]
-* Add to allow JSON formatted file as `espressoBuildConfig` capability [appium-espresso-driver#609](https://github.com/appium/appium-espresso-driver/pull/609)
+* Add a possibility to allow JSON formatted file as `espressoBuildConfig` capability [appium-espresso-driver#609](https://github.com/appium/appium-espresso-driver/pull/609)
 * Add `mobile:` functions:
   * `mobile:registerIdlingResources`, `mobile:unregisterIdlingResources` and `mobile:listIdlingResources` to customize idling resources [appium-espresso-driver#597](https://github.com/appium/appium-espresso-driver/pull/597)
-* Change to raise `InvalidElementStateException` error instead of `AppNotIdleException` the app under test is not idle [appium-espresso-driver#589](https://github.com/appium/appium-espresso-driver/pull/589)
-* Change to `com.google.android.material` dependency for `mobile:navigateTo` command optional to be able to specify the version [appium-espresso-driver#616](https://github.com/appium/appium-espresso-driver/pull/616)
-  * Now, `espressoBuildConfig` has two part, `additionalAppDependencies` and `additionalAndroidTestDependencies`. Please check [caps](https://appium.io/docs/en/writing-running-appium/caps/).
-  * Please add `"espressoBuildConfig": "{\"additionalAndroidTestDependencies\":[\"com.google.android.material:material:1.2.1\"]}"` as your capabilities if needed
+* Change to raise `InvalidElementStateException` error instead of `AppNotIdleException` if the app under test is not idling [appium-espresso-driver#589](https://github.com/appium/appium-espresso-driver/pull/589)
+* The `com.google.android.material` dependency became optional [appium-espresso-driver#616](https://github.com/appium/appium-espresso-driver/pull/616)
+  * Now, `espressoBuildConfig` has two parts, `additionalAppDependencies` and `additionalAndroidTestDependencies`. Please check [caps](https://appium.io/docs/en/writing-running-appium/caps/).
+  * `mobile:navigateTo` requires `com.google.android.material`, so please add `"espressoBuildConfig": "{\"additionalAndroidTestDependencies\":[\"com.google.android.material:material:1.2.1\"]}"` as your capabilities if needed
 * Fix to exclude transitive dependencies of espresso-contrib[appium-espresso-driver#596](https://github.com/appium/appium-espresso-driver/pull/596)
 * Fix to be able to build with SDK 29 [appium-espresso-driver#604](https://github.com/appium/appium-espresso-driver/pull/604)
 
 ### iOS(general)
 
 * Improves state check of simulators [appium-ios-simulator#284](https://github.com/appium/appium-ios-simulator/pull/284)
-* Fix privacy for calender access on simulators [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
-* Fix the value in location script on simulators [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
+* Fix privacy for calendar access on simulators [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
+* Adjust the decimal separator in the Simulator location setting script according to system locale settings [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
 
 ### iOS(XCUITest)
 
@@ -64,7 +64,7 @@ The version is `1.2.7`
 CHANGES IN VERSION 1.18.2 and 1.18.3 (FROM 1.18.1)
 ===================================
 
-Appium 1.18.2 and 1.18.3 is patch releases
+Appium 1.18.2 and 1.18.3 are patch releases
 
 * Supports Xcode 12 + iOS 14
 

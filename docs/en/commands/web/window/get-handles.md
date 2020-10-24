@@ -13,7 +13,7 @@ Set<String> windowHandles = driver.getWindowHandles();
 
 ```python
 # Python
-window_handles = self.driver.window_handles()
+window_handles = self.driver.window_handles
 
 ```
 

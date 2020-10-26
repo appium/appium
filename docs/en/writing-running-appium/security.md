@@ -33,6 +33,7 @@ Please see also below links. They might have additional flags.
 - [appium-android-driver](https://github.com/appium/appium-android-driver#opt-in-features-with-security-risk)
 - [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver#opt-in-features-with-security-risk)
 - [appium-mac-driver](https://github.com/appium/appium-mac-driver#opt-in-features-with-security-risk)
+- [appium-windows-driver](https://github.com/appium/appium-windows-driver#power-shell-commands-execution)
 
 ## For Driver Developers
 

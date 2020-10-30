@@ -6,7 +6,7 @@ Appium 1.19.0 is a minor release
 ### Android General
 
 * Add capabilities:
-  * `allowDelayAdb` to enable or disable `'-delay-adb` option on emulator startup if the options was supported
+  * `allowDelayAdb` to prevent `-delay-adb` command line option to detect emulator startup [#14773](https://github.com/appium/appium/issues/14773)
 * Add `mobile:` functions:
   * `mobile:getContexts` to get WebView details [appium-android-driver#662](https://github.com/appium/appium-android-driver/pull/662)
 * Change to enable `ensureWebviewsHavePages` by default [appium-android-driver#652](https://github.com/appium/appium-android-driver/pull/652)
@@ -23,30 +23,30 @@ Appium 1.19.0 is a minor release
 
 ### Android(Espresso)
 
-* Add to raise `InvalidContextError` error when the app under test stops because of instrumentation process crashes (appium-espresso-driver#591)[https://github.com/appium/appium-espresso-driver/pull/591]
-* Add a possibility to allow JSON formatted file as `espressoBuildConfig` capability [appium-espresso-driver#609](https://github.com/appium/appium-espresso-driver/pull/609)
+* Raise `InvalidContextError` error when the app under test stops because of instrumentation process crashes (appium-espresso-driver#591)[https://github.com/appium/appium-espresso-driver/pull/591]
+* Add a possibility to allow JSON formatted string as `espressoBuildConfig` capability [appium-espresso-driver#609](https://github.com/appium/appium-espresso-driver/pull/609)
 * Add `mobile:` functions:
   * `mobile:registerIdlingResources`, `mobile:unregisterIdlingResources` and `mobile:listIdlingResources` to customize idling resources [appium-espresso-driver#597](https://github.com/appium/appium-espresso-driver/pull/597)
-* Change to raise `InvalidElementStateException` error instead of `AppNotIdleException` if the app under test is not idling [appium-espresso-driver#589](https://github.com/appium/appium-espresso-driver/pull/589)
+* Add a custom exception description, which helps to debug issues when the application under test is not idling long enough [appium-espresso-driver#589](https://github.com/appium/appium-espresso-driver/pull/589)
 * The `com.google.android.material` dependency became optional [appium-espresso-driver#616](https://github.com/appium/appium-espresso-driver/pull/616)
-  * Now, `espressoBuildConfig` has two parts, `additionalAppDependencies` and `additionalAndroidTestDependencies`. Please check [caps](https://appium.io/docs/en/writing-running-appium/caps/).
+  * `espressoBuildConfig` now allows to prevent custom dependencies for both categories: `additionalAppDependencies` and `additionalAndroidTestDependencies`. Please check [caps](https://appium.io/docs/en/writing-running-appium/caps/).
   * `mobile:navigateTo` requires `com.google.android.material`, so please add `"espressoBuildConfig": "{\"additionalAndroidTestDependencies\":[\"com.google.android.material:material:1.2.1\"]}"` as your capabilities if needed
 * Fix to exclude transitive dependencies of espresso-contrib[appium-espresso-driver#596](https://github.com/appium/appium-espresso-driver/pull/596)
 * Fix to be able to build with SDK 29 [appium-espresso-driver#604](https://github.com/appium/appium-espresso-driver/pull/604)
 
 ### iOS(general)
 
-* Improves state check of simulators [appium-ios-simulator#284](https://github.com/appium/appium-ios-simulator/pull/284)
-* Fix privacy for calendar access on simulators [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
+* Improve the performane of simulator state state checks [appium-ios-simulator#284](https://github.com/appium/appium-ios-simulator/pull/284)
+* Fix granting access to Calendar on Xcode 11.4 and later [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
 * Adjust the decimal separator in the Simulator location setting script according to system locale settings [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
 
 ### iOS(XCUITest)
 
 * Add capabilities:
-  * `simulatorDevicesSetPath` allows to set an alternative path to the simulator devices [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)
-  * `allowProvisioningDeviceRegistration` adds `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flag in xcodebuild [appium-xcuitest-driver#1241](https://github.com/appium/appium-xcuitest-driver/pull/1241)
+  * `simulatorDevicesSetPath` allows to set an alternative path to a Simulator devices set [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)
+  * `allowProvisioningDeviceRegistration` adds `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flag to the list of xcodebuild arguments [appium-xcuitest-driver#1241](https://github.com/appium/appium-xcuitest-driver/pull/1241)
 * Add mobile functions:
-  * `mobile:resetPermission` to reset all authorizations [https://github.com/appium/appium-xcuitest-driver#1239](https://github.com/appium/appium-xcuitest-driver/pull/1239), [WebDriverAgent#392](https://github.com/appium/WebDriverAgent/pull/392)
+  * `mobile:resetPermission` to reset all previous allowed or denied permissions for the application under test. It requires Xcode 11.4 and later [https://github.com/appium/appium-xcuitest-driver#1239](https://github.com/appium/appium-xcuitest-driver/pull/1239), [WebDriverAgent#392](https://github.com/appium/WebDriverAgent/pull/392)
 * Add `velocity` argument for over Xcode 11.4 in `mobile:swipe` [appium#14793](https://github.com/appium/appium/pull/14793)
 * Enhance performance
   * e.g. improve taking snapshot to get elements [WebDriverAgent#393](https://github.com/appium/WebDriverAgent/pull/393)
@@ -67,6 +67,9 @@ CHANGES IN VERSION 1.18.2 and 1.18.3 (FROM 1.18.1)
 Appium 1.18.2 and 1.18.3 are patch releases
 
 * Supports Xcode 12 + iOS 14
+
+### iOS(XCUITest)
+* Allow to input text by send keys API without focus check for newer Xcode versions [WebDriverAgent#379](https://github.com/appium/WebDriverAgent/pull/379)
 
 
 CHANGES IN VERSION 1.18.1 (FROM 1.18.0)

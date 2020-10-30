@@ -242,7 +242,7 @@ The returned value is a boolean one and equals to `true` if the object can still
 
 ```java
 // Java
-boolean canScrollMore = (Boolean) ((JavascriptExecutor) driver).executeScript("mobile: scroll", ImmutableMap.of(
+boolean canScrollMore = (Boolean) ((JavascriptExecutor) driver).executeScript("mobile: scrollGesture", ImmutableMap.of(
     "left", 100, "top", 100, "width", 200, "height", 200,
     "direction", "down",
     "percent", 3.0
@@ -251,7 +251,7 @@ boolean canScrollMore = (Boolean) ((JavascriptExecutor) driver).executeScript("m
 
 ```python
 # Python
-can_scroll_more = driver.execute_script('mobile: scroll', {
+can_scroll_more = driver.execute_script('mobile: scrollGesture', {
     'left': 100, 'top': 100, 'width': 200, 'height': 200,
     'direction': 'down',
     'percent': 3.0

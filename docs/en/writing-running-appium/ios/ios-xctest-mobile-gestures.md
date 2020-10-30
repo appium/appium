@@ -21,9 +21,13 @@ coordinates and duration.
 
 #### Supported arguments
 
- * _direction_: Either 'up', 'down', 'left' or 'right'. The parameter is mandatory
+ * _direction_: Either 'up', 'down', 'left' or 'right'. The argument is mandatory
+ * _velocity_: This argument is optional and is only supported since Appium server version 1.19 and Xcode SDK version 11.4+.
+ The value is measured in pixels per second and same values could behave differently on different devices depending on their display density. Higher values make
+ swipe gesture faster (which usually scrolls larger areas if we apply it to a list) and lower
+ values slow it down. Only values greater than zero have effect.
  * _element_: The internal element identifier (as hexadecimal hash string) to swipe on.
- Application element will be used instead if this parameter is not provided
+ Application element will be used instead if this argument is not provided
 
 #### Usage examples
 
@@ -32,6 +36,7 @@ coordinates and duration.
 JavascriptExecutor js = (JavascriptExecutor) driver;
 Map<String, Object> params = new HashMap<>();
 params.put("direction", "down");
+params.put("velocity", 2500);
 params.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: swipe", params);
 ```

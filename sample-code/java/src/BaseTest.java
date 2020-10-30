@@ -17,7 +17,9 @@ public abstract class BaseTest {
 
     @AfterSuite
     public void globalTearDown () {
-        service.stop();
+        if (service != null) {
+            service.stop();
+        }
     }
 
     public URL getServiceUrl () {

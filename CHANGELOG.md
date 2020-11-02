@@ -9,8 +9,12 @@ Appium 1.19.0 is a minor release
   * `allowDelayAdb` to prevent `-delay-adb` command line option to detect emulator startup [#14773](https://github.com/appium/appium/issues/14773)
 * Add `mobile:` functions:
   * `mobile:getContexts` to get WebView details [appium-android-driver#662](https://github.com/appium/appium-android-driver/pull/662)
+* Accept Web Authentication routes (they are part of W3C) [appium-base-driver#433](https://github.com/appium/appium-base-driver/pull/433)
 * Change to enable `ensureWebviewsHavePages` by default [appium-android-driver#652](https://github.com/appium/appium-android-driver/pull/652)
+* Change to close pending requests on the server side if the server is terminated [appium-base-driver#424](https://github.com/appium/appium-base-driver/pull/424)
 * Fix CPU performance data parsing [appium-android-driver#659](https://github.com/appium/appium-android-driver/pull/659)
+* Fix possible memory leak [appium-base-driver#430](https://github.com/appium/appium-base-driver/pull/430)
+* Fix responses to unexpected server errors [appium-base-driver#432](https://github.com/appium/appium-base-driver/pull/432)
 
 ### Android(UIAutomator2)
 
@@ -70,6 +74,7 @@ Appium 1.18.2 and 1.18.3 are patch releases
 
 ### iOS(XCUITest)
 * Allow to input text by send keys API without focus check for newer Xcode versions [WebDriverAgent#379](https://github.com/appium/WebDriverAgent/pull/379)
+* Add supports `xcrun xctrace` instead of `instruments` command for Xcode 12+ [appium-xcuitest-driver#1223](https://github.com/appium/appium-xcuitest-driver/pull/1223)
 
 
 CHANGES IN VERSION 1.18.1 (FROM 1.18.0)

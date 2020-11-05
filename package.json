@@ -49,6 +49,7 @@
     "appium-flutter-driver": "^0",
     "appium-ios-driver": "4.x",
     "appium-mac-driver": "1.x",
+    "appium-safari-driver": "2.x",
     "appium-support": "2.x",
     "appium-tizen-driver": "^1.1.1-beta.4",
     "appium-uiautomator2-driver": "^1.37.1",

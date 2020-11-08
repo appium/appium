@@ -18,6 +18,7 @@ module.exports = {
       ['Espresso (Android)', 'android-espresso.md'],
       ['Windows', 'windows.md'],
       ['Safari (Mac/iOS)', 'safari.md'],
+      ['Gecko (Firefox)', 'gecko.md'],
       ['Mac', 'mac.md'],
     ]],
     ['Commands', ['commands',

@@ -2,7 +2,7 @@
 
 Safari driver has been added to Appium since version 1.20. This driver
 is a wrapper over Apple's [safaridriver](https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari?language=objc)
-binary, which is included to the standard Mac OS distribution and implements communication with either
+binary, which is included to the standard macOS distribution and implements communication with either
 desktop or mobile Safari browser via [W3C WebDriver protocol](https://www.w3.org/TR/webdriver/).
 
 Development of the Safari driver happens at the
@@ -27,10 +27,10 @@ then the obvious choice would be either [XCUITest Driver](/docs/en/drivers/ios-x
 
 In addition to Appium's general requirements:
 
-* Run the `safaridriver --enable` command from the Mac OS terminal and provide your administrator password before any automated session will be executed. This only should be done once.
+* Run the `safaridriver --enable` command from the macOS terminal and provide your administrator password before any automated session will be executed. This only should be done once.
 * In order to automate Safari on real devices it is necessary to enable Remote Automation switch in `Settings → Safari → Advanced → Remote Automation` for these particular devices and trust them on the target host. The device's screen must not be locked while starting tests.
-* Only Mac OS (High Sierra or newer) is supported as the host platform.
-* Only iOS 13 and newer is supported for mobile browser automation.
+* Only macOS (High Sierra or newer) is supported as the host platform.
+* Only iOS 13 and newer is supported for mobile browser automation. As it is stated in the WebKit blog [article](https://webkit.org/blog/9395/webdriver-is-coming-to-safari-in-ios-13/), Safari for iOS does not allow WebDriver-initiated navigations to be handled outside of Safari. In other words, clicking a tel:// link will not offer to place a phone call, and clicking an app store link will not redirect the user to the App Store. Similarly, non-Safari content displayed by the system–such as update dialogs, app notifications, incoming calls, etc.–are suppressed while a WebDriver session is active.
 
 ### Usage
 

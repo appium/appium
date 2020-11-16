@@ -140,6 +140,7 @@ These Capabilities are available only on Android-based drivers (like
 | `mockLocationApp` | Sets the package identifier of the app, which is used as a system mock location provider since Appium 1.18.0+. This capability has no effect on emulators. If the value is set to `null` or an empty string, then Appium will skip the mocked location provider setup procedure. Defaults to Appium Setting package identifier (`io.appium.settings`). | e.g., `null`, `io.appium.settings`, `example.your.app` |
 | logcatFormat | Set the output format for logcat messages since Appium 1.18.0. Supported formats are listed in [here](https://github.com/appium/appium-adb/blob/master/lib/logcat.js). Please read [logcat#outputFormat](https://developer.android.com/studio/command-line/logcat#outputFormat) for more details about each format. Defaults to `threadtime`. | e.g., `process`|
 | logcatFilterSpecs | Set the output filter rule for logcat messages since Appium 1.18.0. Please read [logcat#filteringOutput](https://developer.android.com/studio/command-line/logcat#filteringOutput) for more details about the rule. [Write and View Logs with Logcat](https://developer.android.com/studio/debug/am-logcat) is also helpful. | e.g., `['*:W', 'MyActivity:D']` (`MyActivity` is a tag)|
+| allowDelayAdb | Whether enable `-delay-adb` on emulator startup. Defaults to `true` | `true`, `false` |
 
 #### UIAutomator (1 & 2)
 

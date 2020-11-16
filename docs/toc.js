@@ -17,6 +17,8 @@ module.exports = {
       ['UIAutomator2 (Android)', 'android-uiautomator2.md'],
       ['Espresso (Android)', 'android-espresso.md'],
       ['Windows', 'windows.md'],
+      ['Safari (Mac/iOS)', 'safari.md'],
+      ['Gecko (Firefox)', 'gecko.md'],
       ['Mac', 'mac.md'],
     ]],
     ['Commands', ['commands',

@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.19.0-rc.2",
+  "version": "1.19.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {

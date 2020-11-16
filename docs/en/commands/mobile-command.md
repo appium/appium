@@ -146,6 +146,13 @@ List of available commands:
 | mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
 | mobile:deviceInfo | Gets device information like manufacturer, model, timezone and locale. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
 | mobile:type | Types the given Unicode string into focused field. The combination of `unicodeKeyboard` capability and the [send keys](https://appium.io/docs/en/commands/element/actions/send-keys/) works as _replacing_ the text field content. The send key in W3C action works only for ASCII. This command helps such cases to append unicode text content against the focused field. | `{text}` | `{text: 'happy testing'}` |
+| mobile:longClickGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-longclickgesture) since Appium 1.19.0 |  | |
+| mobile:dragGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-draggesture) since Appium 1.19.0 |  | |
+| mobile:flingGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-flinggesture) since Appium 1.19.0 |  | |
+| mobile:pinchOpenGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-pinchopengesture) since Appium 1.19.0 |  | |
+| mobile:pinchCloseGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-pinchclosegesture) since Appium 1.19.0 |  | |
+| mobile:swipeGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-swipegesture) since Appium 1.19.0 |  | |
+| mobile:scrollGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-scrollgesture) since Appium 1.19.0 |  | |
 
 ### Android (Espresso only)
 | Command | Description | Argument | Argument Example |

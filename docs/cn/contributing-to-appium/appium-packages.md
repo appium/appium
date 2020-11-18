@@ -253,4 +253,4 @@
   - 一堆fs方法
   - plist帮助解析和更新plist文件
 
-本文由 [校长](https://testerhome.com/xushizhao) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 校长 翻译，由 lihuazhang 校验。

@@ -18,6 +18,8 @@ module.exports = {
       ['UIAutomator2 (Android)', 'android-uiautomator2.md'],
       ['Espresso (Android)', 'android-espresso.md'],
       ['Windows', 'windows.md'],
+      ['Safari (Mac/iOS)', 'safari.md'],
+      ['Gecko (Firefox)', 'gecko.md'],
       ['Mac', 'mac.md'],
     ]],
     ['Commands', ['commands',
@@ -259,6 +261,7 @@ module.exports = {
         ['Activities Startup Troubleshooting Guide', 'activity-startup.md'],
         ['How To Execute Shell Commands On The Remote Device', 'android-shell.md'],
         ['Android Device Screen Streaming', 'android-screen-streaming.md'],
+        ['Automating Mobile Gestures With UiAutomator2 Backend', 'android-mobile-gestures.md'],
         ['How To Emulate IME Actions Generation', 'android-ime.md'],
         ['How To Test Android App Bundle', 'android-appbundle.md']
       ]],

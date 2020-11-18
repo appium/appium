@@ -25,7 +25,7 @@ Each Appium driver is responsible for its own security, and can create its own f
 |`shutdown_other_sims`|Allow any session to use a capability to shutdown any running simulators on the host|XCUITest|
 |`perf_record`|Allow recording the system performance and other metrics of the simulator|XCUITest|
 |`record_audio`|Allow recording of host machine audio inputs|XCUITest|
-|`chromedriver_autodownload`|Allow to downalod ChromeDriver automatically if Appium does not have proper the version |Android, UiAutomator2, Espresso|
+|`chromedriver_autodownload`|Allow to download ChromeDriver automatically if Appium does not have proper the version |Android, UiAutomator2, Espresso|
 |`execute_driver_script`| Allows to send a request which has multiple Appium commands. Read [documentation](https://github.com/appium/appium/blob/master/docs/en/commands/session/execute-driver.md) for more details|All|
 
 Please see also below links. They might have additional flags.
@@ -33,6 +33,7 @@ Please see also below links. They might have additional flags.
 - [appium-android-driver](https://github.com/appium/appium-android-driver#opt-in-features-with-security-risk)
 - [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver#opt-in-features-with-security-risk)
 - [appium-mac-driver](https://github.com/appium/appium-mac-driver#opt-in-features-with-security-risk)
+- [appium-windows-driver](https://github.com/appium/appium-windows-driver#power-shell-commands-execution)
 
 ## For Driver Developers
 

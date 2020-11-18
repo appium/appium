@@ -122,5 +122,5 @@ Finally, a list of known issues with the initial 1.6 release (we'll strike throu
 
 我们将尽可能添加缺失的功能，并在以后的 Appium 版本中修复其他已知问题。
 
- 
-本文由 [校长](https://testerhome.com/xushizhao) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+
+本文由 校长 翻译，由 lihuazhang 校验。

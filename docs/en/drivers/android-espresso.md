@@ -18,7 +18,7 @@ Appium also supports Android automation using the
 
 In addition to Appium's general requirements:
 
-* Java 7 installed and configured correctly for your platform
+* Java 8 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
 
 ### Usage

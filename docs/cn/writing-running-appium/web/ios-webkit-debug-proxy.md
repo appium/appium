@@ -70,4 +70,4 @@ $ sudo make install
 **注意：** 为了允许建立连接，设备上需要打开 **"Web 检查器"**。在 **设置 >
 safari > 高级** 中打开。Web 检查器作为 iOS6 的一部分被添加，不在之前的版本中提供，请知悉。
 
-本文由 [sanlengjingvv](https://testerhome.com/sanlengjingvv) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 sanlengjingvv 翻译，由 lihuazhang 校验。

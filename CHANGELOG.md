@@ -58,7 +58,7 @@ Appium 1.19.0 is a minor release
 
 ### Flutter
 
-The version is `0.0.25`
+The version is `0.25`
 
 ### You.i Engine Driver
 

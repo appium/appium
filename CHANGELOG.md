@@ -1,3 +1,82 @@
+CHANGES IN VERSION 1.19.0 (FROM 1.18.3)
+===================================
+
+Appium 1.19.0 is a minor release
+
+### Android General
+
+* Add capabilities:
+  * `allowDelayAdb` to prevent `-delay-adb` command line option to detect emulator startup [#14773](https://github.com/appium/appium/issues/14773)
+* Add `mobile:` functions:
+  * `mobile:getContexts` to get WebView details [appium-android-driver#662](https://github.com/appium/appium-android-driver/pull/662)
+* Accept Web Authentication routes (they are part of W3C) [appium-base-driver#433](https://github.com/appium/appium-base-driver/pull/433)
+* Change to enable `ensureWebviewsHavePages` by default [appium-android-driver#652](https://github.com/appium/appium-android-driver/pull/652)
+* Change to close pending requests on the server side if the server is terminated [appium-base-driver#424](https://github.com/appium/appium-base-driver/pull/424)
+* Fix CPU performance data parsing [appium-android-driver#659](https://github.com/appium/appium-android-driver/pull/659)
+* Fix possible memory leak [appium-base-driver#430](https://github.com/appium/appium-base-driver/pull/430)
+* Fix responses to unexpected server errors [appium-base-driver#432](https://github.com/appium/appium-base-driver/pull/432)
+
+### Android(UIAutomator2)
+
+* Add `mobile:` functions:
+  * `mobile:dragGesture`, `mobile:flingGesture`, `mobile:longClickGesture`, `mobile:pinchCloseGesture`, `mobile:pinchOpenGesture`, `mobile:swipeGesture` and `mobile:scrollGesture`: [Automating Mobile Gestures With UiAutomator2 Backend](https://appium.io/docs/en/writing-running-appium/android/android-mobile-gestures/)
+* Add css selector support [appium-uiautomator2-driver#410](https://github.com/appium/appium-uiautomator2-driver/pull/410)
+  * `css selector` will be converted to `-android uiautomator` selector in UIAutomator2. Read [appium-uiautomator2-driver#410](https://github.com/appium/appium-uiautomator2-driver/pull/410) for more details.
+* Enhance XPath lookup performance [appium-uiautomator2-server#386](https://github.com/appium/appium-uiautomator2-server/pull/386)
+* Fix port guard logic to avoid port conflict [appium-uiautomator2-driver#409](https://github.com/appium/appium-uiautomator2-driver/pull/409)
+
+### Android(Espresso)
+
+* Raise `InvalidContextError` error when the app under test stops because of instrumentation process crashes (appium-espresso-driver#591)[https://github.com/appium/appium-espresso-driver/pull/591]
+* Add a possibility to allow JSON formatted string as `espressoBuildConfig` capability [appium-espresso-driver#609](https://github.com/appium/appium-espresso-driver/pull/609)
+* Add `mobile:` functions:
+  * `mobile:registerIdlingResources`, `mobile:unregisterIdlingResources` and `mobile:listIdlingResources` to customize idling resources [appium-espresso-driver#597](https://github.com/appium/appium-espresso-driver/pull/597)
+* Add a custom exception description, which helps to debug issues when the application under test is not idling long enough [appium-espresso-driver#589](https://github.com/appium/appium-espresso-driver/pull/589)
+* The `com.google.android.material` dependency became optional [appium-espresso-driver#616](https://github.com/appium/appium-espresso-driver/pull/616)
+  * `espressoBuildConfig` now allows to prevent custom dependencies for both categories: `additionalAppDependencies` and `additionalAndroidTestDependencies`. Please check [caps](https://appium.io/docs/en/writing-running-appium/caps/).
+  * `mobile:navigateTo` requires `com.google.android.material`, so please add `"espressoBuildConfig": "{\"additionalAndroidTestDependencies\":[\"com.google.android.material:material:1.2.1\"]}"` as your capabilities if needed
+* Fix to exclude transitive dependencies of espresso-contrib[appium-espresso-driver#596](https://github.com/appium/appium-espresso-driver/pull/596)
+* Fix to be able to build with SDK 29 [appium-espresso-driver#604](https://github.com/appium/appium-espresso-driver/pull/604)
+
+### iOS(general)
+
+* Improve the performane of simulator state state checks [appium-ios-simulator#284](https://github.com/appium/appium-ios-simulator/pull/284)
+* Fix granting access to Calendar on Xcode 11.4 and later [appium-ios-simulator#288](https://github.com/appium/appium-ios-simulator/pull/288)
+* Adjust the decimal separator in the Simulator location setting script according to system locale settings [appium-ios-simulator#295](https://github.com/appium/appium-ios-simulator/pull/295)
+
+### iOS(XCUITest)
+
+* Add capabilities:
+  * `simulatorDevicesSetPath` allows to set an alternative path to a Simulator devices set [appium-ios-simulator#290](https://github.com/appium/appium-ios-simulator/pull/290)
+  * `allowProvisioningDeviceRegistration` adds `-allowProvisioningUpdates` and `-allowProvisioningDeviceRegistration` flag to the list of xcodebuild arguments [appium-xcuitest-driver#1241](https://github.com/appium/appium-xcuitest-driver/pull/1241)
+* Add mobile functions:
+  * `mobile:resetPermission` to reset all previous allowed or denied permissions for the application under test. It requires Xcode 11.4 and later [https://github.com/appium/appium-xcuitest-driver#1239](https://github.com/appium/appium-xcuitest-driver/pull/1239), [WebDriverAgent#392](https://github.com/appium/WebDriverAgent/pull/392)
+* Add `velocity` argument for over Xcode 11.4 in `mobile:swipe` [appium#14793](https://github.com/appium/appium/pull/14793)
+* Enhance performance
+  * e.g. improve taking snapshot to get elements [WebDriverAgent#393](https://github.com/appium/WebDriverAgent/pull/393)
+* Fix alert handling in some cases [WebDriverAgent#400](https://github.com/appium/WebDriverAgent/pull/400)
+
+### Flutter
+
+The version is `0.0.25`
+
+### You.i Engine Driver
+
+The version is `1.2.7`
+
+
+CHANGES IN VERSION 1.18.2 and 1.18.3 (FROM 1.18.1)
+===================================
+
+Appium 1.18.2 and 1.18.3 are patch releases
+
+* Supports Xcode 12 + iOS 14
+
+### iOS(XCUITest)
+* Allow to input text by send keys API without focus check for newer Xcode versions [WebDriverAgent#379](https://github.com/appium/WebDriverAgent/pull/379)
+* Add supports `xcrun xctrace` instead of `instruments` command for Xcode 12+ [appium-xcuitest-driver#1223](https://github.com/appium/appium-xcuitest-driver/pull/1223)
+
+
 CHANGES IN VERSION 1.18.1 (FROM 1.18.0)
 ===================================
 
@@ -8,7 +87,7 @@ Appium 1.18.1 is a patch release
 * Fix to avoid a redundant Chromedriver download operation if a matching driver is already present [appium-chromedriver#186](https://github.com/appium/appium-chromedriver/pull/186)
 
 #### Android (UiAutomator2)
-* Fix to return a proper response for missing route [appium/appium-uiautomator2-server#373](https://github.com/appium/appium-uiautomator2-server/pull/373) 
+* Fix to return a proper response for missing route [appium/appium-uiautomator2-server#373](https://github.com/appium/appium-uiautomator2-server/pull/373)
 * Fix to allow double values as touch action coordinates [ appium/appium-uiautomator2-server#372](https://github.com/appium/appium-uiautomator2-server/pull/372)
 * Fix [#14586](https://github.com/appium/appium/issues/14586) which might affect XPath locators executed on elemetns, retrieved from nested lookup requests [appium/appium-uiautomator2-server#372](https://github.com/appium/appium-uiautomator2-server/pull/371)
     * A known issue in 1.18.0

@@ -1,6 +1,6 @@
 ## Selenium Grid
 
-You are able to register your appium server with a local [Selenium grid](https://github.com/SeleniumHQ/selenium/wiki/Grid2) ([setup docs](http://docs.seleniumhq.org/docs/07_selenium_grid.jsp)) by using the
+You are able to register your appium server with a local [Selenium grid](https://github.com/SeleniumHQ/selenium/wiki/Grid2) ([setup docs](https://www.selenium.dev/documentation/en/grid/grid_3/setting_up_your_own_grid/)) by using the
 `--nodeconfig` server parameter.
 
 ```center

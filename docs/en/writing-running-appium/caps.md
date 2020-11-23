@@ -140,6 +140,7 @@ These Capabilities are available only on Android-based drivers (like
 | `mockLocationApp` | Sets the package identifier of the app, which is used as a system mock location provider since Appium 1.18.0+. This capability has no effect on emulators. If the value is set to `null` or an empty string, then Appium will skip the mocked location provider setup procedure. Defaults to Appium Setting package identifier (`io.appium.settings`). | e.g., `null`, `io.appium.settings`, `example.your.app` |
 | logcatFormat | Set the output format for logcat messages since Appium 1.18.0. Supported formats are listed in [here](https://github.com/appium/appium-adb/blob/master/lib/logcat.js). Please read [logcat#outputFormat](https://developer.android.com/studio/command-line/logcat#outputFormat) for more details about each format. Defaults to `threadtime`. | e.g., `process`|
 | logcatFilterSpecs | Set the output filter rule for logcat messages since Appium 1.18.0. Please read [logcat#filteringOutput](https://developer.android.com/studio/command-line/logcat#filteringOutput) for more details about the rule. [Write and View Logs with Logcat](https://developer.android.com/studio/debug/am-logcat) is also helpful. | e.g., `['*:W', 'MyActivity:D']` (`MyActivity` is a tag)|
+| allowDelayAdb | Whether enable `-delay-adb` on emulator startup. Defaults to `true` | `true`, `false` |
 
 #### UIAutomator (1 & 2)
 
@@ -173,7 +174,7 @@ These Capabilities are available only on the [Espresso Driver](/docs/en/drivers/
 |Capability|Description|Values|
 |----|-----------|-------|
 |`espressoServerLaunchTimeout`|Timeout in milliseconds used to wait for the Espresso server to launch. Defaults to `30000` |e.g., `50000`|
-|`espressoBuildConfig`|Path to the Espresso server build configuration JSON (see below)|e.g., `/projects/myapp-tests/buildconfig.json`|
+|`espressoBuildConfig`|Path to the Espresso server build configuration JSON (see below) or a stringified JSON itself (only supported since server version 1.19)|e.g., `/projects/myapp-tests/buildconfig.json`|
 |`showGradleLog`|Whether to pipe Gradle build log for the Espresso server to the Appium log. Defaults to `false`|e.g., `true`|
 |`skipServerInstallation`|Skip Espresso server build and apk installation. This option could break proper Espresso server setup for the particular Appium version, but it can improve startup performance when the proper Espresso server and the proper app under test are already installed on the device. Please, make sure not to enable this option if the Espresso server or the application under test needs an update. Defaults to `false` | `true` or `false`|
 |`intentOptions`|Intent options which will be used to start the application under test. It can set intent options such as `action`, `categories` and `component` as JSON format. Please read [#538](https://github.com/appium/appium-espresso-driver/issues/538) as an example usage. | e.g. `{"action": "android.intent.action.MAIN", "categories": "android.intent.category.LAUNCHER", "component": "com.appium/.launcher.MainActivity"` |
@@ -221,9 +222,10 @@ The module versions enumerated under `toolsVersion` are only used to build the s
 
 ***Application dependencies***
 
-`additionalAppDependencies` array specifies additional dependencies of the application under test that build tools should know about when building the Espresso server. For example: `[ "com.google.android.material:material:1.0.0" ]`.
+`additionalAppDependencies` and `additionalAndroidTestDependencies` array specify additional dependencies of the application under test that build tools should know about when building the Espresso server.
+For example: `"additionalAndroidTestDependencies": [ "com.google.android.material:material:1.0.0" ]`.
 
-Items belonging to this array are translated to `implementation` lines in Gradle build files of the Espresso server.
+Items belonging to `additionalAppDependencies` array are translated to `implementation` lines in Gradle build files of the Espresso server. `additionalAndroidTestDependencies` are translated to `androidTestImplementation`.
 
 ### iOS Only
 
@@ -281,6 +283,5 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 ### WinAppDriver Only
 (For WinAppDriver specific capabilities, please refer to the documentation on the [Appium Windows Driver repo](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) itself.)
 
-### Flutter driver only 
+### Flutter driver only
 (For FlutterDriver specific capabilities, examples please refer to the documentation on the [Flutter Driver repo](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) itself.)
-

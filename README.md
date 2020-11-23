@@ -8,8 +8,8 @@
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_shield)
 
-Appium is an open source, cross-platform test automation tool for native,
-hybrid and mobile web and desktop apps. We support simulators (iOS), emulators
+Appium is an open-source, cross-platform test automation tool for native,
+hybrid, and mobile web and desktop apps. We support simulators (iOS), emulators
 (Android), and real devices (iOS, Android, Windows, Mac).
 
 Want to skip straight to the action? Check out our [getting
@@ -35,7 +35,7 @@ specific information about how that driver works and how to set it up:
 ### Why Appium?
 
 1. You don't have to recompile your app or modify it in any way, due
-   to use of standard automation APIs on all platforms.
+   to the use of standard automation APIs on all platforms.
 2. You can write tests with your favorite dev tools using any
    [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html)-compatible
    language such as Java, Objective-C, JavaScript (Node), PHP, Python, Ruby,
@@ -43,22 +43,22 @@ specific information about how that driver works and how to set it up:
    client libraries](/docs/en/about-appium/appium-clients.md).
 3. You can use any testing framework.
 4. Appium has built-in mobile web and hybrid app support. Within the same
-   script you can switch seamlessly between native app automation and webview
+   script, you can switch seamlessly between native app automation and webview
    automation, all using the WebDriver model that's already the standard for
    web automation.
 
 Investing in the
 [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) protocol means
-you are betting on a single, free and open protocol for testing that has become
+you are betting on a single, free, and open protocol for testing that has become
 a web standard. Don't lock yourself into a proprietary stack.
 
 For example, if you use Apple's XCUITest library without Appium you can only
 write tests using Obj-C/Swift, and you can only run tests through Xcode.
-Similarly, with Google's UiAutomator or Espresso you can only write tests in
+Similarly, with Google's UiAutomator or Espresso, you can only write tests in
 Java/Kotlin. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
-If you're new to Appium, or want a more comprehensive description of what this is all
+If you're new to Appium or want a more comprehensive description of what this is all
 about, please read our [Introduction to Appium
 Concepts](/docs/en/about-appium/intro.md).
 
@@ -74,7 +74,7 @@ Node.js 10+.
 Check out our [Getting Started](/docs/en/about-appium/getting-started.md) guide
 to get going with Appium.
 
-There is also sample code that contains [many examples of tests in a variety
+There is also a sample code that contains [many examples of tests in a variety
 of different languages](https://github.com/appium/appium/tree/master/sample-code)!
 
 ### Documentation
@@ -92,7 +92,7 @@ Once the PR has been merged, the latest documentation will be in [appium.io](htt
 ### Contributing
 
 Please take a look at our [contribution documentation](CONTRIBUTING.md)
-for instructions on how to build, test and run Appium from source.
+for instructions on how to build, test, and run Appium from the source.
 
 ### Roadmap
 

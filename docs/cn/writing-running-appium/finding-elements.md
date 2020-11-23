@@ -48,7 +48,7 @@ Appium Desktop 有一个简洁的布局，由源代码树、屏幕截图、记�
 ---
 EOF.
 
-本文由 [thanksdanny](https://testerhome.com/thanksdanny) 翻译。由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 thanksdanny 翻译。由 lihuazhang 校验。
 
 翻译：@[Pandorym](https://github.com/Pandorym)
 Last english version: 438d6c3b38e785edc701354cf660aa9f76baceaf, Apr 11, 2019

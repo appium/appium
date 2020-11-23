@@ -91,4 +91,4 @@ git clone https://github.com/snevesbarros/SafariLauncher.git
 }
 ```
 
-本文由 [高鹏](https://testerhome.com/026) 翻译，由 [lihuazhang](https://github.com/lihuazhang) 校验。
+本文由 高鹏 翻译，由 lihuazhang 校验。

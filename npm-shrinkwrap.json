@@ -3634,9 +3634,9 @@
       }
     },
     "appium-remote-debugger": {
-      "version": "8.13.1",
-      "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-8.13.1.tgz",
-      "integrity": "sha512-kVFDrRx84itAwiM0Cng2KR/rQca1PWGDIrzu7GUSixF4ARvGLl7K4L6st5NcSufjsJk87HojPitbCxkleajFlw==",
+      "version": "8.13.2",
+      "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-8.13.2.tgz",
+      "integrity": "sha512-ke418dyTWUYt9tsMnrhq0DpDfsVUofmPR0lkq3OWY3Jov46Myype2Hl8PwjJFMBn9wFcxNv1sghcLhoWYenSzA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",

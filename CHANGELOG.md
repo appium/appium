@@ -1,3 +1,29 @@
+CHANGES IN VERSION 1.20.0 (FROM 1.19.0)
+
+### iOS(XCUITest)
+- Breaking changes
+    - Support over Xcode 10.2
+        - Stop supporting Xcode 10.0 and 10.1
+    - `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source
+        - Previously, they found elements by `name`(`wdName`) and `value`(`wdValue`)
+        - Please use `predicate` strategy to find `value`(`wdValue`) attribute like [this change](https://github.com/appium/ruby_lib_core/pull/282)
+
+### iOS(Safari)
+
+https://github.com/appium/appium-safari-driver
+
+
+### macOS
+
+https://github.com/appium/appium-mac2-driver
+
+### Firefox
+
+https://github.com/appium/appium-geckodriver
+
+
+===================================
+
 CHANGES IN VERSION 1.19.0 (FROM 1.18.3)
 ===================================
 

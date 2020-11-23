@@ -3634,9 +3634,9 @@
       }
     },
     "appium-remote-debugger": {
-      "version": "8.13.2",
-      "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-8.13.2.tgz",
-      "integrity": "sha512-ke418dyTWUYt9tsMnrhq0DpDfsVUofmPR0lkq3OWY3Jov46Myype2Hl8PwjJFMBn9wFcxNv1sghcLhoWYenSzA==",
+      "version": "8.13.1",
+      "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-8.13.1.tgz",
+      "integrity": "sha512-kVFDrRx84itAwiM0Cng2KR/rQca1PWGDIrzu7GUSixF4ARvGLl7K4L6st5NcSufjsJk87HojPitbCxkleajFlw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4570,9 +4570,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.32.1",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.32.1.tgz",
-      "integrity": "sha512-U3uiODHcJV3z3jusAKb6+r06waYjrAv8UCOR6zbe1afdPWKguuezZkKxByA5z+MTUFNJT6tzaRpEkXnxQ/EWJg==",
+      "version": "3.32.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.32.0.tgz",
+      "integrity": "sha512-pfVIVurgUq+RKOZx1naUoe35n4DVS5aA/ODzvER1uKRGVN0MJVulD+1CHikIbC2G7TvSEfl293WUGP2NubzLNA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4580,7 +4580,7 @@
         "appium-ios-device": "^1.5.0",
         "appium-ios-driver": "^4.8.0",
         "appium-ios-simulator": "^3.25.1",
-        "appium-remote-debugger": "^8.13.2",
+        "appium-remote-debugger": "^8.13.0",
         "appium-support": "^2.47.1",
         "appium-webdriveragent": "^2.30.1",
         "appium-xcode": "^3.8.0",

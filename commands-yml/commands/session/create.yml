@@ -90,12 +90,12 @@ example_usage:
       AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/wd/hub"), appiumOptions);
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/remote/server/DefaultSession.html#createSession-org.openqa.selenium.remote.server.DriverFactory-org.openqa.selenium.remote.server.Clock-org.openqa.selenium.remote.SessionId-org.openqa.selenium.Capabilities-"
+  java: "https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/WebDriver.html"
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webelement.WebElement.clear"
   javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#newsession"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1780"
-  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
-  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element:clear"
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver"
   php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 

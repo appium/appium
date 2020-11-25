@@ -2,6 +2,8 @@
 
 Mac2Driver has been added to Appium since version 1.20.
 This driver is for automating macOS applications using Apple's [XCTest](https://developer.apple.com/documentation/xctest) framework.
+It provides more flexibility and features in comparison to the legacy
+[MacDriver](mac.md) and is better compatible with operating system internals.
 The driver operates in scope of [W3C WebDriver protocol](https://www.w3.org/TR/webdriver/) with several custom extensions to cover operating-system specific scenarios.
 The original idea and parts of the source code are borrowed from the Facebook's [WebDriverAgent](https://github.com/facebookarchive/WebDriverAgent) project.
 

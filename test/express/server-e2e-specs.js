@@ -85,7 +85,7 @@ describe('server', function () {
       routeConfiguringFunction: _.noop,
       port: 8181,
       hostname: 'lolcathost',
-    }).should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL/);
+    }).should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
     await server({
       routeConfiguringFunction: _.noop,
       port: 8181,

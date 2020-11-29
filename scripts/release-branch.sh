@@ -8,3 +8,6 @@ git add npm-shrinkwrap.json package.json
 git commit -m 'add shrinkwrap'
 echo "* npm version $1.0-rc.0"
 npm version $1.0-rc.0
+git push origin releases/$1
+git push --tags origin
+

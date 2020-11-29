@@ -139,7 +139,7 @@ for e2e test files to end in `-e2e-specs.js`.
 The release process for any Appium module other than the main Appium package is
 pretty straightforward (note that you will need to be an NPM owner for the
 package if you want to publish it. Ownership is managed by the Appium
-committers; talk to @jlipps or @imurchie if you believe you should be an owner
+committers; talk to @jlipps, @kazucocoa, @dang, @mmokhnach if you believe you should be an owner
 and are not):
 
 1. `rm -rf node_modules && rm -rf package-lock.json && npm install` and run tests to make sure a clean install works.
@@ -149,7 +149,7 @@ and are not):
 1. Push the appropriate branch to GitHub, and don't forget to include the `--tags` flag to include the tag just created by `npm version`.
 1. Run `npm publish` (with `--tag beta` if this isn't an official release).
 
-For the main Appium packages, all the above steps must be taken, but with
+For the main Appium package, all the above steps must be taken, but with
 several changes. One reason is that for the main package we use NPM shrinkwrap
 to ensure dependencies don't change between installations. Another reason is
 that we develop on master and release on various branches. The way it works is

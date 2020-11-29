@@ -5,5 +5,6 @@ npm install
 npm shrinkwrap
 echo "* git add ."
 git add npm-shrinkwrap.json package.json
+git commit -m 'add shrinkwrap'
 echo "* npm version $1.0-rc.0"
 npm version $1.0-rc.0

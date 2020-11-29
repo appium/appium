@@ -1,3 +1,4 @@
+git fetch
 echo "* Creating release branch $1"
 git checkout -b releases/$1
 rm -rf node_modules/ npm-shrinkwrap.json package-lock.json

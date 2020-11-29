@@ -139,7 +139,7 @@ for e2e test files to end in `-e2e-specs.js`.
 The release process for any Appium module other than the main Appium package is
 pretty straightforward (note that you will need to be an NPM owner for the
 package if you want to publish it. Ownership is managed by the Appium
-committers; talk to @jlipps, @kazucocoa, @dang, @mmokhnach if you believe you should be an owner
+committers; talk to @jlipps, @kazucocoa, @dang, @mykola-mokhnach if you believe you should be an owner
 and are not):
 
 1. `rm -rf node_modules && rm -rf package-lock.json && npm install` and run tests to make sure a clean install works.

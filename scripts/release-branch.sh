@@ -1,0 +1,9 @@
+echo "* Creating release branch $1"
+git checkout -b releases/$1
+rm -rf node_modules/ npm-shrinkwrap.json package-lock.json
+npm install
+npm shrinkwrap
+echo "* git add ."
+git add npm-shrinkwrap.json package.json
+echo "* npm version $1.0-rc.0"
+npm version $1.0-rc.0

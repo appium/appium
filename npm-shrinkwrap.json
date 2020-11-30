@@ -2720,6 +2720,19 @@
         "yargs": "^16.0.0"
       }
     },
+    "appium-ios-device": {
+      "version": "1.7.1",
+      "resolved": "https://registry.npmjs.org/appium-ios-device/-/appium-ios-device-1.7.1.tgz",
+      "integrity": "sha512-kMsj/jjYqNRNgKpl7waXzWv9ydioMmGy1hGvdbhLHFI8oNMw71KJlK0rQtJ2Abw1H2zf92bpjpmoCBmO+UyICQ==",
+      "requires": {
+        "@babel/runtime": "^7.0.0",
+        "appium-support": "^2.35.0",
+        "bluebird": "^3.1.1",
+        "lodash": "^4.17.15",
+        "semver": "^7.0.0",
+        "source-map-support": "^0.5.5"
+      }
+    },
     "appium-ios-driver": {
       "version": "4.8.0",
       "resolved": "https://registry.npmjs.org/appium-ios-driver/-/appium-ios-driver-4.8.0.tgz",
@@ -3064,6 +3077,22 @@
         "source-map-support": "^0.5.5",
         "teen_process": "^1.15.0",
         "yargs": "^16.0.3"
+      }
+    },
+    "appium-remote-debugger": {
+      "version": "8.13.2",
+      "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-8.13.2.tgz",
+      "integrity": "sha512-ke418dyTWUYt9tsMnrhq0DpDfsVUofmPR0lkq3OWY3Jov46Myype2Hl8PwjJFMBn9wFcxNv1sghcLhoWYenSzA==",
+      "requires": {
+        "@babel/runtime": "^7.0.0",
+        "appium-base-driver": "^7.0.0",
+        "appium-ios-device": "^1.7.0",
+        "appium-support": "^2.41.0",
+        "async-lock": "^1.2.2",
+        "asyncbox": "^2.6.0",
+        "bluebird": "^3.4.7",
+        "lodash": "^4.17.11",
+        "source-map-support": "^0.5.5"
       }
     },
     "appium-sdb": {
@@ -4138,9 +4167,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.31.4",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.31.4.tgz",
-      "integrity": "sha512-za+GEAZblXjLHorGH3ore5EItTDkhbNDnjXnUvTsSxoJjpcrVE957AmsuSBY2pN06XtgvUpITGX83q0pdloQqQ==",
+      "version": "3.31.5",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.31.5.tgz",
+      "integrity": "sha512-qn8+3J/ME+0GzNTB+Y0DvntVBuPneuCm2oj5uojdE5yHzJF0YCzSE4K+SzyJfGsRlGSCZXszZ+9KmmfXlVPvgA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4148,7 +4177,7 @@
         "appium-ios-device": "^1.5.0",
         "appium-ios-driver": "^4.8.0",
         "appium-ios-simulator": "^3.25.1",
-        "appium-remote-debugger": "^8.13.0",
+        "appium-remote-debugger": "8.13.2",
         "appium-support": "^2.47.1",
         "appium-webdriveragent": "2.27.2",
         "appium-xcode": "^3.8.0",
@@ -5109,22 +5138,6 @@
             "semver": "^7.0.0",
             "source-map-support": "^0.5.3",
             "teen_process": "^1.3.0"
-          }
-        },
-        "appium-remote-debugger": {
-          "version": "8.13.0",
-          "resolved": "https://registry.npmjs.org/appium-remote-debugger/-/appium-remote-debugger-8.13.0.tgz",
-          "integrity": "sha512-wFhEVnicky0n1frPEj5zGIbv2M9cUmG0TvK1+TkOk8avK5yO8jZUFpL5hHfppoBasIf68BzfcFNcksI5szD9XA==",
-          "requires": {
-            "@babel/runtime": "^7.0.0",
-            "appium-base-driver": "^7.0.0",
-            "appium-ios-device": "^1.7.0",
-            "appium-support": "^2.41.0",
-            "async-lock": "^1.2.2",
-            "asyncbox": "^2.6.0",
-            "bluebird": "^3.4.7",
-            "lodash": "^4.17.11",
-            "source-map-support": "^0.5.5"
           }
         },
         "appium-support": {

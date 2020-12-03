@@ -177,4 +177,4 @@ checked in to GitHub along with changes to `package.json`. With npm 5+ there is
 also a `package-lock.json` file produced. During the shrinkwrap process this is
 converted into the `npm-shrinkwrap.json` file.
 
-Follow directions in [Release Appium Doc](docs/release-appium.md)
+Follow directions in [Release Appium Doc](docs/contributing-to-appium/release-appium.md)

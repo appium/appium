@@ -139,7 +139,7 @@ for e2e test files to end in `-e2e-specs.js`.
 The release process for any Appium module other than the main Appium package is
 pretty straightforward (note that you will need to be an NPM owner for the
 package if you want to publish it. Ownership is managed by the Appium
-committers; talk to @jlipps or @imurchie if you believe you should be an owner
+committers; talk to @jlipps, @kazucocoa, @dang, @mykola-mokhnach if you believe you should be an owner
 and are not):
 
 1. `rm -rf node_modules && rm -rf package-lock.json && npm install` and run tests to make sure a clean install works.
@@ -149,7 +149,7 @@ and are not):
 1. Push the appropriate branch to GitHub, and don't forget to include the `--tags` flag to include the tag just created by `npm version`.
 1. Run `npm publish` (with `--tag beta` if this isn't an official release).
 
-For the main Appium packages, all the above steps must be taken, but with
+For the main Appium package, all the above steps must be taken, but with
 several changes. One reason is that for the main package we use NPM shrinkwrap
 to ensure dependencies don't change between installations. Another reason is
 that we develop on master and release on various branches. The way it works is
@@ -177,18 +177,4 @@ checked in to GitHub along with changes to `package.json`. With npm 5+ there is
 also a `package-lock.json` file produced. During the shrinkwrap process this is
 converted into the `npm-shrinkwrap.json` file.
 
-1. Remove the NPM shrinkwrap and package-lock JSON files if they exists.
-1. `rm -rf node_modules && npm install` and run tests to make sure a clean install works.
-1. Determine whether we have a `patch` (bugfix), `minor` (feature), or `major` (breaking) release according to the principles of SemVer.
-1. Update `package.json` with the appropriate new version.
-1. Update the CHANGELOG/README with appropriate changes and submit for review as a PR, along with shrinkwrap and `package.json` changes. Wait for it to be merged, then pull it into the release branch.
-1. Run `npm shrinkwrap` to generate the `npm-shrinkwrap.json`
-1. Create a tag of the form `v<version>` on the release branch (usually a minor branch like `1.5` or `1.4`), with: `git tag -a v<version>`, e.g., `git tag -a v1.5.0`, `git tag -a v1.5.0-rc.1`. This is not necessary for beta versions.
-1. Push the tag to upstream: `git push --tags <remote> <branch>`
-1. Run `npm publish` (with `--tag rc` if this isn't a GA release).
-1. Remove the NPM shrinkwrap JSON file from Git and push the changes
-1. Update the site docs by going to https://github.com/appium/appium.io/pulls and merging the latest pull request that was opened by the Triager bot. Close any other pull requests opened by Triager bot.
-1. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.
-1. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
-1. Begin process of releasing `appium-desktop`.
-1. Notify @jlipps to so he can tweet a link to the discuss post.
+Follow directions in [Release Appium Doc](docs/release-appium.md)

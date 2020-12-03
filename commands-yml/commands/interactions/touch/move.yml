@@ -52,7 +52,7 @@ example_usage:
 
 client_docs:
   java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#down-int-int-"
-  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.move"
+  python: "https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.touch_actions"
   javascript_wdio: "https://webdriver.io/docs/api/mjsonwp.html#multitouchperform"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1531"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:move"

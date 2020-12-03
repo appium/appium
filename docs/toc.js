@@ -21,6 +21,7 @@ module.exports = {
       ['Safari (Mac/iOS)', 'safari.md'],
       ['Gecko (Firefox)', 'gecko.md'],
       ['Mac', 'mac.md'],
+      ['Mac2', 'mac2.md'],
     ]],
     ['Commands', ['commands',
       ['Status', 'status.md'],

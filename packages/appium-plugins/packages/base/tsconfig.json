@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "sourceRoot": "."
+  },
+  "include": [
+    "./index.js",
+    "./lib/**/*",
+    "./test/**/*"
+  ],
+  "exclude": [
+    "build/*",
+    "./node_modules"
+  ]
+}

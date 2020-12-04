@@ -1,4 +1,4 @@
-import BasePlugin from '..';
+import BasePlugin from '../../index';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

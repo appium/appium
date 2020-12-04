@@ -29,11 +29,14 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Install main dependencies
+      - name: Install
         run: npm install
 
-      - name: Bootstrap project
+      - name: Bootstrap
         run: npm run bootstrap
+
+      - name: Transpile
+        run: npm run build
 
       - name: Lint
         run: npm run test:lint

@@ -9,10 +9,10 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appium/appium-base-plugin.git"
+    "url": "https://github.com/appium/appium-plugins.git"
   },
   "bugs": {
-    "url": "https://github.com/appium/appium-base-plugin/issues"
+    "url": "https://github.com/appium/appium-plugins/issues"
   },
   "engines": {
     "node": ">=10",
@@ -38,25 +38,8 @@
     "e2e-test": "gulp e2e-test",
     "watch": "gulp watch",
     "build": "gulp transpile",
-    "mocha": "mocha",
-    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "precommit-test": "REPORTER=dot gulp once",
     "lint": "gulp lint",
     "lint:fix": "gulp lint --fix",
     "coverage": "gulp coveralls"
-  },
-  "pre-commit": [
-    "precommit-msg",
-    "precommit-test"
-  ],
-  "devDependencies": {
-    "appium-gulp-plugins": "^5.2.1",
-    "chai": "4.x",
-    "chai-as-promised": "7.x",
-    "eslint-config-appium": "^4.0.1",
-    "gulp": "^4.0.0",
-    "mocha": "^7.0.1",
-    "pre-commit": "1.x",
-    "sinon": "^9.0.0"
   }
 }

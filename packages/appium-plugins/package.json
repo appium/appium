@@ -2,6 +2,24 @@
   "name": "appium-plugins-monorepo",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.22.1"
-  }
+    "appium-gulp-plugins": "^5.2.1",
+    "eslint": "^7.14.0",
+    "eslint-config-appium": "^4.5.0",
+    "lerna": "^3.22.1",
+    "chai": "4.x",
+    "chai-as-promised": "7.x",
+    "gulp": "^4.0.0",
+    "mocha": "^7.0.1",
+    "pre-commit": "1.x",
+    "sinon": "^9.0.0"
+  },
+  "scripts": {
+    "lint": "lerna run lint",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "precommit-test": "lerna run test"
+  },
+  "pre-commit": [
+    "precommit-msg",
+    "precommit-test"
+  ]
 }

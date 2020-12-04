@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Plugin for working with images and image elements in Appium",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/appium/appium-plugins.git"
@@ -22,5 +19,15 @@
   "bugs": {
     "url": "https://github.com/appium/appium-plugins/issues"
   },
-  "homepage": "https://github.com/appium/appium-plugins#readme"
+  "homepage": "https://github.com/appium/appium-plugins#readme",
+  "dependencies": {
+    "@appium/base-plugin": "^1.5.0"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
+    "prepare": "npm run build",
+    "test": "mocha test/unit/*-specs.js",
+    "e2e-test": "mocha test/e2e/*-specs.js",
+    "lint": "eslint **/*.js"
+  }
 }

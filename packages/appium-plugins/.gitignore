@@ -1,0 +1,16 @@
+.irb-history
+*.swp
+.DS_Store
+node_modules
+package-lock.json
+*.sublime-*
+*.iml
+*.autosave
+.idea/
+*.log
+*.t
+.*~
+*~
+build/
+.idea
+*DerivedData

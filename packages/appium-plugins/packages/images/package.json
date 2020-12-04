@@ -24,8 +24,8 @@
     "@appium/base-plugin": "^1.5.0"
   },
   "scripts": {
-    "test:unit": "ts-mocha test/unit/*-specs.js",
-    "test:e2e": "ts-mocha test/e2e/*-specs.js"
+    "test:unit": "mocha ./build/test/unit/*-specs.js",
+    "test:e2e": "mocha -t 160000 test/e2e/*-specs.js"
   },
   "devDependencies": {
   }

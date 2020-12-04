@@ -1,22 +1,26 @@
 {
-  "name": "@appium/base-plugin",
-  "description": "The base plugin used to create Appium 2.0 plugins",
+  "name": "@appium/fake-plugin",
+  "description": "A fake Appium 2.0 plugin",
   "tags": [
     "appium"
   ],
-  "version": "1.5.0",
+  "version": "0.2.0",
   "author": "Appium <maintainers@appium.io>",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appium/appium-plugins.git"
+    "url": "https://github.com/appium/appium-fake-plugin.git"
   },
   "bugs": {
-    "url": "https://github.com/appium/appium-plugins/issues"
+    "url": "https://github.com/appium/appium-fake-plugin/issues"
   },
   "engines": {
     "node": ">=10",
     "npm": ">=6"
+  },
+  "appium": {
+    "pluginName": "fake",
+    "mainClass": "FakePlugin"
   },
   "main": "./build/index.js",
   "directories": {
@@ -27,7 +31,10 @@
     "build"
   ],
   "dependencies": {
-    "appium-support": "^2.48.0"
+    "@appium/base-plugin": "^1.5.0",
+    "appium-support": "2.x",
+    "bluebird": "^3.7.2",
+    "lodash": "^4.17.11"
   },
   "scripts": {
     "test:unit": "mocha ./build/test/unit/*-specs.js",

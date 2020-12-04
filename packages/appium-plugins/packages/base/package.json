@@ -1,0 +1,62 @@
+{
+  "name": "@appium/base-plugin",
+  "description": "The base plugin used to create Appium 2.0 plugins",
+  "tags": [
+    "appium"
+  ],
+  "version": "1.5.0",
+  "author": "https://github.com/appium",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium-base-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium-base-plugin/issues"
+  },
+  "engines": {
+    "node": ">=10",
+    "npm": ">=6"
+  },
+  "main": "./build/index.js",
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "lib",
+    "build"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.6.0",
+    "appium-support": "^2.48.0",
+    "source-map-support": "0.x"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
+    "prepare": "gulp prepublish",
+    "test": "gulp once",
+    "e2e-test": "gulp e2e-test",
+    "watch": "gulp watch",
+    "build": "gulp transpile",
+    "mocha": "mocha",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
+    "precommit-test": "REPORTER=dot gulp once",
+    "lint": "gulp lint",
+    "lint:fix": "gulp lint --fix",
+    "coverage": "gulp coveralls"
+  },
+  "pre-commit": [
+    "precommit-msg",
+    "precommit-test"
+  ],
+  "devDependencies": {
+    "appium-gulp-plugins": "^5.2.1",
+    "chai": "4.x",
+    "chai-as-promised": "7.x",
+    "eslint-config-appium": "^4.0.1",
+    "gulp": "^4.0.0",
+    "mocha": "^7.0.1",
+    "pre-commit": "1.x",
+    "sinon": "^9.0.0"
+  }
+}

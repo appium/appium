@@ -37,8 +37,7 @@
     "lodash": "^4.17.11"
   },
   "scripts": {
-    "test:unit": "mocha ./build/test/unit/*-specs.js",
-    "test:e2e": "mocha -t 160000 test/e2e/*-specs.js"
+    "test:unit": "mocha ./build/test/unit/*-specs.js"
   },
   "devDependencies": {
   }

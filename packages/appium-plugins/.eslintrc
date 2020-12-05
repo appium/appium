@@ -1,5 +1,0 @@
-{
-  "extends": "appium",
-  "root": true,
-  "ignorePatterns": ["node_modules", "packages/*/node_modules", "packages/*/build"]
-}

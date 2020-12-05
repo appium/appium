@@ -2,10 +2,14 @@
   "name": "@appium/images-plugin",
   "version": "1.0.0",
   "description": "Plugin for working with images and image elements in Appium",
-  "main": "index.js",
+  "main": "./build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/appium/appium-plugins.git"
+  },
+  "appium": {
+    "pluginName": "images",
+    "mainClass": "ImageElementPlugin"
   },
   "keywords": [
     "appium",
@@ -21,12 +25,14 @@
   },
   "homepage": "https://github.com/appium/appium-plugins#readme",
   "dependencies": {
-    "@appium/base-plugin": "^1.5.0"
+    "@appium/base-plugin": "^1.5.0",
+    "appium-base-driver": "^8.0.0-beta.0",
+    "lru-cache": "^6.0.0"
   },
   "scripts": {
     "test:unit": "mocha ./build/test/unit/*-specs.js",
-    "test:e2e": "mocha -t 160000 test/e2e/*-specs.js"
+    "test:e2e": "mocha -t 160000 ./build/test/e2e/*-specs.js",
+    "copyfiles": "copyfiles ./test/fixtures/*.png ./build"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

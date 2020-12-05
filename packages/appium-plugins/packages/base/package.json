@@ -30,9 +30,7 @@
     "appium-support": "^2.48.0"
   },
   "scripts": {
-    "test:unit": "mocha ./build/test/unit/*-specs.js",
-    "test:e2e": "mocha -t 160000 test/e2e/*-specs.js"
+    "test:unit": "mocha ./build/test/unit/*-specs.js"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

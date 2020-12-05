@@ -15,3 +15,4 @@ build/
 .idea
 *DerivedData
 .eslintcache
+local_appium_home

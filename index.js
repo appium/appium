@@ -2,14 +2,12 @@
 
 // BaseDriver exports
 import * as driver from './lib/basedriver/driver';
-import * as image from './lib/basedriver/image-element';
 import * as deviceSettings from './lib/basedriver/device-settings';
 
 const { BaseDriver } = driver;
-const { ImageElement } = image;
 const { DeviceSettings, BASEDRIVER_HANDLED_SETTINGS } = deviceSettings;
 
-export { BaseDriver, DeviceSettings, ImageElement, BASEDRIVER_HANDLED_SETTINGS };
+export { BaseDriver, DeviceSettings, BASEDRIVER_HANDLED_SETTINGS };
 export default BaseDriver;
 
 

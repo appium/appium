@@ -107,3 +107,6 @@ Settings are implemented via the following API endpoints:
 | `boundElementsByIndex` | Whether to look up elements with [`allElementsBoundByAccessibilityElement`](https://developer.apple.com/documentation/xctest/xcuielementquery/1500816-allelementsboundbyaccessibilitye) (default) or [`allElementsBoundByIndex`](https://developer.apple.com/documentation/xctest/xcuielementquery/1500945-allelementsboundbyindex). [This Stack Overflow topic](https://stackoverflow.com/questions/49307513/meaning-of-allelementsboundbyaccessibilityelement) explains the differences. Defaults to `false` | `true`, `false` | 1.18.0+ |
 
 
+### Mac2
+
+Please refer to the documentation on the [mac2 driver repository](https://github.com/appium/appium-mac2-driver#settings-api)

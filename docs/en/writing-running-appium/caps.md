@@ -274,12 +274,12 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 
 ### MacDriver Only
 
-(For MacDriver capabilities, please refer to the documentation on the [Appium Mac Driver repo](https://github.com/appium/appium-mac-driver#desired-capabilities) itself.)
+(For MacDriver capabilities, please refer to the documentation on the [Appium MacDriver repo](https://github.com/appium/appium-mac-driver#desired-capabilities) itself.)
 
 
-### Mac2 Driver Only
+### Mac2Driver Only
 
-(For Mac2 Driver capabilities, please refer to the documentation on the [Appium Mac2 Driver repo](https://github.com/appium/appium-mac2-driver#capabilities) itself.)
+(For Mac2 Driver capabilities, please refer to the documentation on the [Appium Mac2Driver repo](https://github.com/appium/appium-mac2-driver#capabilities) itself.)
 
 ### You.i Engine Only
 

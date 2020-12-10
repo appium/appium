@@ -109,4 +109,4 @@ Settings are implemented via the following API endpoints:
 
 ### Mac2
 
-Please refer to the documentation on the [mac2 driver repository](https://github.com/appium/appium-mac2-driver#settings-api)
+Please refer to the documentation on the [Mac2Driver repository](https://github.com/appium/appium-mac2-driver#settings-api)

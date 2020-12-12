@@ -27,8 +27,7 @@
   },
   "main": "./build/lib/main.js",
   "bin": {
-    "appium": "./build/lib/main.js",
-    "authorize-ios": "./node_modules/.bin/authorize-ios"
+    "appium": "./build/lib/main.js"
   },
   "directories": {
     "lib": "./lib",
@@ -96,8 +95,7 @@
     "generate-docs": "node ./build/commands-yml/parse.js",
     "zip": "zip -qr appium.zip .",
     "upload": "gulp github-upload",
-    "zip-and-upload": "npm run zip && npm run upload",
-    "authorize-ios": "authorize-ios"
+    "zip-and-upload": "npm run zip && npm run upload"
   },
   "pre-commit": [
     "precommit-msg",

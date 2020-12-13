@@ -2,7 +2,7 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.0)
 
 ### iOS(XCUITest)
 - Breaking changes
-    - Support over Xcode 10.2
+    - Support over Xcode 10.2, iOS 12.2
         - Stop supporting Xcode 10.0 and 10.1
     - `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source
         - Previously, they found elements by `name`(`wdName`) and `value`(`wdValue`)

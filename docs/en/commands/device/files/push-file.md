@@ -7,7 +7,7 @@ Place a file onto the device in a particular place
 
 ```java
 // Java
-driver.pushFile("/path/to/device/foo.bar", new File("/Users/johndoe/files/foo.bar"));
+driver.pushFile("/data/local/tmp/foo.bar", new File("/Users/johndoe/files/foo.bar"));
 
 ```
 
@@ -26,29 +26,29 @@ let data = new Buffer("Hello World").toString('base64');
 driver.pushFile('/data/local/tmp/file.txt', data);
 
 // wd example
-await driver.pushFileToDevice('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+await driver.pushFileToDevice('/data/local/tmp/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
 
 ```
 
 ```ruby
 # Ruby
 # ruby_lib example
-push_file('/path/to/device/foo.bar', File.read('path/to/file.png'))
+push_file('/data/local/tmp/foo.bar', File.read('path/to/file.png'))
 
 # ruby_lib_core example
-@driver.push_file('/path/to/device/foo.bar', File.read('path/to/file.png'))
+@driver.push_file('/data/local/tmp/foo.bar', File.read('path/to/file.png'))
 
 ```
 
 ```php
 # PHP
-$driver->pushFile('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+$driver->pushFile('/data/local/tmp/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
 
 ```
 
 ```csharp
 // C#
-driver.PushFile("/path/to/device/foo.bar", new FileInfo("/Users/johndoe/files/foo.bar"))
+driver.PushFile("/data/local/tmp/foo.bar", new FileInfo("/Users/johndoe/files/foo.bar"))
 
 ```
 

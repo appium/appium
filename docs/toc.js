@@ -20,6 +20,7 @@ module.exports = {
       ['Safari (Mac/iOS)', 'safari.md'],
       ['Gecko (Firefox)', 'gecko.md'],
       ['Mac', 'mac.md'],
+      ['Mac2', 'mac2.md'],
     ]],
     ['Commands', ['commands',
       ['Status', 'status.md'],
@@ -317,6 +318,7 @@ module.exports = {
       ['Appium Style Guide', 'style-guide.md'],
       ['How to Write Docs', 'how-to-write-docs.md'],
       ['Appium Package Structure', 'appium-packages.md'],
+      ['Release Appium', 'release-appium.md'],
       ['Credits', 'credits.md']]]
   ],
   cn: [

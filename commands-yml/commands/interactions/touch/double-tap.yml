@@ -42,8 +42,8 @@ example_usage:
       action.Perform();
 
 client_docs:
-  java: "https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/interactions/touch/TouchActions.html#doubleTap-org.openqa.selenium.WebElement-"
-  python: "https://seleniumhq.github.io/selenium/docs/api/py/webdriver/selenium.webdriver.common.touch_actions.html#selenium.webdriver.common.touch_actions.TouchActions.double_tap"
+  java: "https://www.selenium.dev/selenium/docs/api/java/overview-summary.html"
+  python: "https://selenium-python.readthedocs.io/api.html?highlight=tap_and_hold#selenium.webdriver.common.touch_actions.TouchActions.double_tap"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
   javascript_wdio: "https://webdriver.io/docs/api/jsonwp.html#touchdoubleclick"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:double_tap"

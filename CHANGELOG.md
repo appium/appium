@@ -1,6 +1,9 @@
 CHANGES IN VERSION 1.20.0 (FROM 1.19.0)
 
+Appium 1.20.0 is a minor release
+
 ### iOS(XCUITest)
+- Support M1 chip based Mac, Xcode 12.3
 - Breaking changes
     - Support over Xcode 10.2, iOS 12.2
         - Stop supporting Xcode 10.0 and 10.1

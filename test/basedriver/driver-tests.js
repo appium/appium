@@ -12,18 +12,18 @@ chai.use(chaiAsPromised);
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
 function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
-  const w3cCaps = {
-    alwaysMatch: Object.assign({}, defaultCaps, {
-      platformName: 'Fake',
-      deviceName: 'Commodore 64',
-    }),
-    firstMatch: [{}],
-  };
-
   describe('BaseDriver', function () {
-    let d;
+    let d, w3cCaps;
+
     beforeEach(function () {
       d = new DriverClass();
+      w3cCaps = {
+        alwaysMatch: Object.assign({}, defaultCaps, {
+          platformName: 'Fake',
+          'appium:deviceName': 'Commodore 64',
+        }),
+        firstMatch: [{}],
+      };
     });
     afterEach(async function () {
       await d.deleteSession();
@@ -35,27 +35,27 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
 
     it('should return a sessionId from createSession', async function () {
-      let [sessId] = await d.createSession(defaultCaps);
+      let [sessId] = await d.createSession(null, null, w3cCaps);
       should.exist(sessId);
       sessId.should.be.a('string');
       sessId.length.should.be.above(5);
     });
 
     it('should not be able to start two sessions without closing the first', async function () {
-      await d.createSession(defaultCaps);
-      await d.createSession(defaultCaps).should.eventually.be.rejectedWith('session');
+      await d.createSession(null, null, _.cloneDeep(w3cCaps));
+      await d.createSession(null, null, _.cloneDeep(w3cCaps)).should.eventually.be.rejectedWith('session');
     });
 
     it('should be able to delete a session', async function () {
-      let sessionId1 = await d.createSession(defaultCaps);
+      let sessionId1 = await d.createSession(null, null, _.cloneDeep(w3cCaps));
       await d.deleteSession();
       should.equal(d.sessionId, null);
-      let sessionId2 = await d.createSession(defaultCaps);
+      let sessionId2 = await d.createSession(null, null, _.cloneDeep(w3cCaps));
       sessionId1.should.not.eql(sessionId2);
     });
 
     it('should get the current session', async function () {
-      let [, caps] = await d.createSession(defaultCaps);
+      let [, caps] = await d.createSession(null, null, w3cCaps);
       caps.should.equal(await d.getSession());
     });
 
@@ -65,15 +65,18 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
 
     it('should return sessions', async function () {
-      let caps = _.clone(defaultCaps);
+      const caps = _.clone(w3cCaps);
       caps.a = 'cap';
-      await d.createSession(caps);
+      await d.createSession(null, null, caps);
       let sessions = await d.getSessions();
 
       sessions.length.should.equal(1);
       sessions[0].should.eql({
         id: d.sessionId,
-        capabilities: caps
+        capabilities: {
+          'deviceName': 'Commodore 64',
+          'platformName': 'Fake'
+        }
       });
     });
 
@@ -101,8 +104,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         await B.delay(100);
         await this.oldDeleteSession();
       }.bind(d);
-      let caps = _.clone(defaultCaps);
-      await d.createSession(caps);
+      await d.createSession(null, null, w3cCaps);
       const p = new B((resolve, reject) => {
         setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
         d.onUnexpectedShutdown(resolve);
@@ -120,8 +122,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         await this.oldDeleteSession();
       }.bind(d);
 
-      let caps = _.clone(defaultCaps);
-      await d.createSession(caps);
+      await d.createSession(null, null, _.cloneDeep(w3cCaps));
       const p = new B((resolve, reject) => {
         setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
         d.onUnexpectedShutdown(resolve);
@@ -132,25 +133,16 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       await d.executeCommand('getSession').should.be.rejectedWith(/shut down/);
       await B.delay(500);
 
-      await d.executeCommand('createSession', caps);
+      await d.executeCommand('createSession', null, null, _.cloneDeep(w3cCaps));
       await d.deleteSession();
     });
 
     it('should distinguish between W3C and JSONWP session', async function () {
-      // Test JSONWP
-      await d.executeCommand('createSession', Object.assign({}, defaultCaps, {
-        platformName: 'Fake',
-        deviceName: 'Commodore 64',
-      }));
-
-      d.protocol.should.equal('MJSONWP');
-      await d.executeCommand('deleteSession');
-
       // Test W3C (leave first 2 args null because those are the JSONWP args)
       await d.executeCommand('createSession', null, null, {
         alwaysMatch: Object.assign({}, defaultCaps, {
           platformName: 'Fake',
-          deviceName: 'Commodore 64',
+          'appium:deviceName': 'Commodore 64',
         }),
         firstMatch: [{}],
       });
@@ -159,19 +151,14 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
 
     describe('protocol detection', function () {
-      it('should use MJSONWP if only JSONWP caps are provided', async function () {
-        await d.createSession(defaultCaps);
-        d.protocol.should.equal('MJSONWP');
-      });
-
       it('should use W3C if only W3C caps are provided', async function () {
-        await d.createSession(null, null, {alwaysMatch: defaultCaps, firstMatch: [{}]});
+        await d.createSession(null, null, {alwaysMatch: _.clone(defaultCaps), firstMatch: [{}]});
         d.protocol.should.equal('W3C');
       });
     });
 
     it('should have a method to get driver for a session', async function () {
-      let [sessId] = await d.createSession(defaultCaps);
+      let [sessId] = await d.createSession(null, null, w3cCaps);
       d.driverForSession(sessId).should.eql(d);
     });
 
@@ -253,7 +240,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
     describe('timeouts', function () {
       before(async function () {
-        await d.createSession(defaultCaps);
+        await d.createSession(null, null, w3cCaps);
       });
       describe('command', function () {
         it('should exist by default', function () {
@@ -300,11 +287,15 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
     describe('reset compatibility', function () {
       it('should not allow both fullReset and noReset to be true', async function () {
-        let newCaps = Object.assign({}, defaultCaps, {
-          fullReset: true,
-          noReset: true
-        });
-        await d.createSession(newCaps).should.eventually.be.rejectedWith(
+        const newCaps = {
+          alwaysMatch: Object.assign({}, defaultCaps, {
+            platformName: 'Fake',
+            'appium:deviceName': 'Commodore 64',
+            'appium:fullReset': true,
+            'appium:noReset': true
+          }),
+        };
+        await d.createSession(null, null, newCaps).should.eventually.be.rejectedWith(
             /noReset.+fullReset/);
       });
     });
@@ -312,7 +303,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     describe('proxying', function () {
       let sessId;
       beforeEach(async function () {
-        [sessId] = await d.createSession(defaultCaps);
+        [sessId] = await d.createSession(null, null, w3cCaps);
       });
       describe('#proxyActive', function () {
         it('should exist', function () {
@@ -398,7 +389,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       beforeEach(async function () {
         beforeStartTime = Date.now();
         d.shouldValidateCaps = false;
-        await d.executeCommand('createSession', defaultCaps);
+        await d.executeCommand('createSession', null, null, defaultCaps);
       });
       describe('#eventHistory', function () {
         it('should have an eventHistory property', function () {
@@ -466,9 +457,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       it('should reset as W3C if the original session was W3C', async function () {
         const caps = {
           alwaysMatch: Object.assign({}, {
-            app: 'Fake',
-            deviceName: 'Fake',
-            automationName: 'Fake',
+            'appium:app': 'Fake',
+            'appium:deviceName': 'Fake',
+            'appium:automationName': 'Fake',
             platformName: 'Fake',
           }, defaultCaps),
           firstMatch: [{}],
@@ -477,18 +468,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         d.protocol.should.equal('W3C');
         await d.reset();
         d.protocol.should.equal('W3C');
-      });
-      it('should reset as MJSONWP if the original session was MJSONWP', async function () {
-        const caps = Object.assign({}, {
-          app: 'Fake',
-          deviceName: 'Fake',
-          automationName: 'Fake',
-          platformName: 'Fake',
-        }, defaultCaps);
-        await d.createSession(caps);
-        d.protocol.should.equal('MJSONWP');
-        await d.reset();
-        d.protocol.should.equal('MJSONWP');
       });
     });
   });

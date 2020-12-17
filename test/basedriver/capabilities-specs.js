@@ -112,7 +112,7 @@ describe('caps', function () {
     });
 
     it('sets "requiredCaps" to property named "alwaysMatch" (2)', function () {
-      caps.alwaysMatch = {hello: 'world'};
+      caps.alwaysMatch = {'appium:hello': 'world'};
       parseCaps(caps).requiredCaps.should.deep.equal(caps.alwaysMatch);
     });
 
@@ -121,7 +121,7 @@ describe('caps', function () {
     });
 
     it('returns invalid argument error if "requiredCaps" don\'t match "constraints" (2.2)', function () {
-      caps.alwaysMatch = {foo: 1};
+      caps.alwaysMatch = {'appium:foo': 1};
       (() => parseCaps(caps, {foo: {isString: true}})).should.throw(/'foo' must be of type string/);
     });
 
@@ -157,12 +157,12 @@ describe('caps', function () {
 
       it(`should return capabilities if presence constraint is matched in at least one of the 'firstMatch' capabilities objects`, function () {
         caps.alwaysMatch = {
-          foo: 'bar',
+          'appium:foo': 'bar',
         };
         caps.firstMatch = [{
-          hello: 'world',
+          'appium:hello': 'world',
         }, {
-          goodbye: 'world',
+          'appium:goodbye': 'world',
         }];
         parseCaps(caps, {goodbye: {presence: true}}).matchedCaps.should.deep.equal({
           foo: 'bar',
@@ -172,23 +172,23 @@ describe('caps', function () {
 
       it(`throws invalid argument if presence constraint is not met on any capabilities`, function () {
         caps.alwaysMatch = {
-          foo: 'bar',
+          'appium:foo': 'bar',
         };
         caps.firstMatch = [{
-          hello: 'world',
+          'appium:hello': 'world',
         }, {
-          goodbye: 'world',
+          'appium:goodbye': 'world',
         }];
         should.equal(parseCaps(caps, {someAttribute: {presence: true}}).matchedCaps, null);
       });
 
       it('that equals firstMatch if firstMatch contains two objects that pass the provided constraints', function () {
         caps.alwaysMatch = {
-          foo: 'bar'
+          'appium:foo': 'bar'
         };
         caps.firstMatch = [
-          {foo: 'bar1'},
-          {foo: 'bar2'},
+          {'appium:foo': 'bar1'},
+          {'appium:foo': 'bar2'},
         ];
 
         let constraints = {
@@ -201,16 +201,16 @@ describe('caps', function () {
         parseCaps(caps, constraints).validatedFirstMatchCaps.should.deep.equal(caps.firstMatch);
       });
 
-      it('returns invalid argument error if the firstMatch[2] is not an object', function () {
-        caps.alwaysMatch = 'Not an object and not undefined';
-        caps.firstMatch = [{foo: 'bar'}, 'foo'];
-        (() => parseCaps(caps, {})).should.throw(/must be a JSON object/);
+      it('returns no vendor prefix error if the firstMatch[2] does not have it because of no bject', function () {
+        caps.alwaysMatch = {};
+        caps.firstMatch = [{'appium:foo': 'bar'}, 'foo'];
+        (() => parseCaps(caps, {})).should.throw(/All non-standard capabilities should have a vendor prefix/);
       });
     });
 
     describe('returns a matchedCaps object (6)', function () {
       beforeEach(function () {
-        caps.alwaysMatch = {hello: 'world'};
+        caps.alwaysMatch = {'appium:hello': 'world'};
       });
 
       it('which is same as alwaysMatch if firstMatch array is not provided', function () {
@@ -218,12 +218,12 @@ describe('caps', function () {
       });
 
       it('merges caps together', function () {
-        caps.firstMatch = [{foo: 'bar'}];
+        caps.firstMatch = [{'appium:foo': 'bar'}];
         parseCaps(caps).matchedCaps.should.deep.equal({hello: 'world', foo: 'bar'});
       });
 
       it('with merged caps', function () {
-        caps.firstMatch = [{hello: 'bar', foo: 'foo'}, {foo: 'bar'}];
+        caps.firstMatch = [{'appium:hello': 'bar', 'appium:foo': 'foo'}, {'appium:foo': 'bar'}];
         parseCaps(caps).matchedCaps.should.deep.equal({hello: 'world', foo: 'bar'});
       });
     });
@@ -236,8 +236,8 @@ describe('caps', function () {
 
     it('should return merged caps', function () {
       processCapabilities({
-        alwaysMatch: {hello: 'world'},
-        firstMatch: [{foo: 'bar'}]
+        alwaysMatch: {'appium:hello': 'world'},
+        firstMatch: [{'appium:foo': 'bar'}]
       }).should.deep.equal({hello: 'world', foo: 'bar'});
     });
 
@@ -271,7 +271,7 @@ describe('caps', function () {
     it('should not throw an exception if presence constraint is not met on a firstMatch capability', function () {
       const caps = processCapabilities({
         alwaysMatch: {'platformName': 'Fake', 'appium:fakeCap': 'foobar'},
-        firstMatch: [{'foo': 'bar'}],
+        firstMatch: [{'appium:foo': 'bar'}],
       }, {
         platformName: {
           presence: true,
@@ -289,7 +289,7 @@ describe('caps', function () {
     it('should throw an exception if no matching caps were found', function () {
       (() => processCapabilities({
         alwaysMatch: {'platformName': 'Fake', 'appium:fakeCap': 'foobar'},
-        firstMatch: [{'foo': 'bar'}],
+        firstMatch: [{'appium:foo': 'bar'}],
       }, {
         platformName: {
           presence: true,
@@ -304,17 +304,26 @@ describe('caps', function () {
     });
 
     describe('validate Appium constraints', function () {
-      let constraints = {...desiredCapabilityConstraints};
+      const constraints = {...desiredCapabilityConstraints};
+      const expectedMatchingCaps = {'platformName': 'Fake', 'automationName': 'Fake', 'deviceName': 'Fake'};
 
-      let matchingCaps = {'platformName': 'Fake', 'automationName': 'Fake', 'deviceName': 'Fake'};
+      let matchingCaps;
       let caps;
+
+      beforeEach(function () {
+        matchingCaps = {
+          'platformName': 'Fake',
+          'appium:automationName': 'Fake',
+          'appium:deviceName': 'Fake'
+        };
+      });
 
       it('should validate when alwaysMatch has the proper caps', function () {
         caps = {
           alwaysMatch: matchingCaps,
           firstMatch: [{}],
         };
-        processCapabilities(caps, constraints).should.deep.equal(matchingCaps);
+        processCapabilities(caps, constraints).should.deep.equal(expectedMatchingCaps);
       });
 
 
@@ -323,22 +332,22 @@ describe('caps', function () {
           alwaysMatch: {},
           firstMatch: [matchingCaps],
         };
-        processCapabilities(caps, constraints).should.deep.equal(matchingCaps);
+        processCapabilities(caps, constraints).should.deep.equal(expectedMatchingCaps);
       });
 
       it('should validate when alwaysMatch and firstMatch[0] have the proper caps when merged together', function () {
         caps = {
-          alwaysMatch: _.omit(matchingCaps, ['deviceName']),
+          alwaysMatch: _.omit(matchingCaps, ['appium:deviceName']),
           firstMatch: [{'appium:deviceName': 'Fake'}],
         };
-        processCapabilities(caps, constraints).should.deep.equal(matchingCaps);
+        processCapabilities(caps, constraints).should.deep.equal(expectedMatchingCaps);
       });
 
       it('should validate when automationName is omitted', function () {
         caps = {
-          alwaysMatch: _.omit(matchingCaps, ['automationName']),
+          alwaysMatch: _.omit(matchingCaps, ['appium:automationName']),
         };
-        processCapabilities(caps, constraints).should.deep.equal(_.omit(matchingCaps, 'automationName'));
+        processCapabilities(caps, constraints).should.deep.equal(_.omit(expectedMatchingCaps, 'automationName'));
       });
 
       it('should pass if first element in "firstMatch" does validate and second element does not', function () {
@@ -346,30 +355,30 @@ describe('caps', function () {
           alwaysMatch: {},
           firstMatch: [
             matchingCaps,
-            {badCaps: 'badCaps'},
+            {'appium:badCaps': 'badCaps'},
           ],
         };
-        processCapabilities(caps, constraints).should.deep.equal(matchingCaps);
+        processCapabilities(caps, constraints).should.deep.equal(expectedMatchingCaps);
       });
 
       it('should pass if first element in "firstMatch" does not validate and second element does', function () {
         caps = {
           alwaysMatch: {},
           firstMatch: [
-            {badCaps: 'badCaps'},
+            {'appium:badCaps': 'badCaps'},
             matchingCaps,
           ],
         };
-        processCapabilities(caps, constraints).should.deep.equal(matchingCaps);
+        processCapabilities(caps, constraints).should.deep.equal(expectedMatchingCaps);
       });
 
       it('should fail when bad parameters are passed in more than one firstMatch capability', function () {
         caps = {
           alwaysMatch: {},
           firstMatch: [{
-            bad: 'params',
+            'appium:bad': 'params',
           }, {
-            more: 'bad-params',
+            'appium:more': 'bad-params',
           }],
         };
         (() => processCapabilities(caps, constraints)).should.throw(/Could not find matching capabilities/);

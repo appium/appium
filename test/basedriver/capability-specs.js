@@ -21,7 +21,7 @@ describe('Desired Capabilities', function () {
 
   it('should require platformName and deviceName', async function () {
     try {
-      await d.createSession({});
+      await d.createSession(null, null, {});
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
       e.message.should.contain('platformName');
@@ -34,7 +34,7 @@ describe('Desired Capabilities', function () {
 
   it('should require platformName', async function () {
     try {
-      await d.createSession({'deviceName': 'Delorean'});
+      await d.createSession(null, null, {'deviceName': 'Delorean'});
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
       e.message.should.contain('platformName');
@@ -46,9 +46,11 @@ describe('Desired Capabilities', function () {
 
   it('should not care about cap order', async function () {
 
-    await d.createSession({
-      deviceName: 'Delorean',
-      platformName: 'iOS'
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        'appium:deviceName': 'Delorean',
+        platformName: 'iOS'
+      }
     });
 
   });
@@ -66,9 +68,11 @@ describe('Desired Capabilities', function () {
     };
 
     try {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean'
+        }
       });
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
@@ -93,9 +97,10 @@ describe('Desired Capabilities', function () {
     };
 
     try {
-      await d.createSession({
-        necessary: 'yup',
-        proper: 'yup, your highness'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'appium:necessary': 'yup'
+        }
       });
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
@@ -107,22 +112,26 @@ describe('Desired Capabilities', function () {
   });
 
   it('should accept extra capabilities', async function () {
-    await d.createSession({
-      'platformName': 'iOS',
-      'deviceName': 'Delorean',
-      'extra': 'cheese',
-      'hold the': 'sauce'
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        'platformName': 'iOS',
+        'appium:deviceName': 'Delorean',
+        'appium:extra': 'cheese',
+        'appium:hold the': 'sauce'
+      }
     });
   });
 
   it('should log the use of extra caps', async function () {
     this.timeout(500);
 
-    await d.createSession({
-      'platformName': 'iOS',
-      'deviceName': 'Delorean',
-      'extra': 'cheese',
-      'hold the': 'sauce'
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        'platformName': 'iOS',
+        'appium:deviceName': 'Delorean',
+        'appium:extra': 'cheese',
+        'appium:hold the': 'sauce'
+      }
     });
 
     logger.warn.callCount.should.be.above(0);
@@ -130,9 +139,11 @@ describe('Desired Capabilities', function () {
 
   it('should be sensitive to the case of caps', async function () {
     try {
-      await d.createSession({
-        'platformname': 'iOS',
-        'deviceName': 'Delorean'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformname': 'iOS',
+          'appium:deviceName': 'Delorean'
+        }
       });
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
@@ -145,10 +156,12 @@ describe('Desired Capabilities', function () {
 
   describe('boolean capabilities', function () {
     it('should allow a string "false"', async function () {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean',
-        'noReset': 'false'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:noReset': 'false'
+        }
       });
       logger.warn.callCount.should.be.above(0);
 
@@ -157,10 +170,12 @@ describe('Desired Capabilities', function () {
     });
 
     it('should allow a string "true"', async function () {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean',
-        'noReset': 'true'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:noReset': 'true'
+        }
       });
       logger.warn.callCount.should.be.above(0);
 
@@ -169,10 +184,12 @@ describe('Desired Capabilities', function () {
     });
 
     it('should allow a string "true" in string capabilities', async function () {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean',
-        'language': 'true'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:language': 'true'
+        }
       });
       logger.warn.callCount.should.equal(0);
 
@@ -183,10 +200,12 @@ describe('Desired Capabilities', function () {
 
   describe('number capabilities', function () {
     it('should allow a string "1"', async function () {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean',
-        'newCommandTimeout': '1'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:newCommandTimeout': '1'
+        }
       });
       logger.warn.callCount.should.be.above(0);
 
@@ -195,10 +214,12 @@ describe('Desired Capabilities', function () {
     });
 
     it('should allow a string "1.1"', async function () {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean',
-        'newCommandTimeout': '1.1'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:newCommandTimeout': '1.1'
+        }
       });
       logger.warn.callCount.should.be.above(0);
 
@@ -207,10 +228,12 @@ describe('Desired Capabilities', function () {
     });
 
     it('should allow a string "1" in string capabilities', async function () {
-      await d.createSession({
-        'platformName': 'iOS',
-        'deviceName': 'Delorean',
-        'language': '1'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:language': '1'
+        }
       });
       logger.warn.callCount.should.equal(0);
 
@@ -221,9 +244,11 @@ describe('Desired Capabilities', function () {
 
   it ('should error if objects in caps', async function () {
     try {
-      await d.createSession({
-        'platformName': {a: 'iOS'},
-        'deviceName': 'Delorean'
+      await d.createSession(null, null, {
+        alwaysMatch: {
+          'platformName': {a: 'iOS'},
+          'appium:deviceName': 'Delorean'
+        }
       });
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
@@ -243,10 +268,12 @@ describe('Desired Capabilities', function () {
       }
     };
 
-    await d.createSession({
-      'platformName': 'iOS',
-      'deviceName': 'Delorean',
-      'lynx-version': 5
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        'platformName': 'iOS',
+        'appium:deviceName': 'Delorean',
+        'appium:lynx-version': 5
+      }
     });
 
     logger.warn.callCount.should.be.above(0);
@@ -261,10 +288,12 @@ describe('Desired Capabilities', function () {
       }
     };
 
-    await d.createSession({
-      'platformName': 'iOS',
-      'deviceName': 'Delorean',
-      'lynx-version': 5
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        'platformName': 'iOS',
+        'appium:deviceName': 'Delorean',
+        'appium:lynx-version': 5
+      }
     });
 
     logger.warn.callCount.should.equal(0);
@@ -277,30 +306,38 @@ describe('Desired Capabilities', function () {
       }
     };
 
-    await d.createSession({
-      platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: null
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': null
+      }
     });
     await d.deleteSession();
 
-    await d.createSession({
-      platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: 1
-    }).should.eventually.be.rejectedWith(/was not valid/);
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': 1
+      }
+    }).should.eventually.be.rejectedWith(/'foo' must be of type string/);
 
-    await d.createSession({
-      platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: undefined
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': undefined
+      }
     });
     await d.deleteSession();
 
-    await d.createSession({
-      platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: ''
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': ''
+      }
     });
     await d.deleteSession();
   });
@@ -312,34 +349,36 @@ describe('Desired Capabilities', function () {
       },
     };
 
-    await d.createSession({
-      platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: null
+    await d.createSession(null, null, {
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': null
+      }
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession({
+    await d.createSession(null, null, {
       platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: ''
+      'appium:deviceName': 'Dumb',
+      'appium:foo': ''
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession({
+    await d.createSession(null, null, {
       platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: {}
+      'appium:deviceName': 'Dumb',
+      'appium:foo': {}
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession({
+    await d.createSession(null, null, {
       platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: []
+      'appium:deviceName': 'Dumb',
+      'appium:foo': []
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession({
+    await d.createSession(null, null, {
       platformName: 'iOS',
-      deviceName: 'Dumb',
-      foo: '  '
+      'appium:deviceName': 'Dumb',
+      'appium:foo': '  '
     }).should.eventually.be.rejectedWith(/blank/);
   });
 
@@ -348,7 +387,7 @@ describe('Desired Capabilities', function () {
       const [sessionId, caps] = await d.createSession(null, null, {
         alwaysMatch: {
           platformName: 'iOS',
-          deviceName: 'Delorean'
+          'appium:deviceName': 'Delorean'
         }, firstMatch: [{}],
       });
       sessionId.should.exist;
@@ -359,18 +398,15 @@ describe('Desired Capabilities', function () {
       await d.deleteSession();
     });
 
-    it('should ignore w3c capabilities if it is not a plain JSON object', async function () {
-      for (let val of [true, 'string', [], 100]) {
-        const [sessionId, caps] = await d.createSession({
-          platformName: 'iOS',
-          deviceName: 'Delorean'
-        }, null, val);
-        sessionId.should.exist;
-        caps.should.eql({
-          platformName: 'iOS',
-          deviceName: 'Delorean',
-        });
-        await d.deleteSession();
+    it('should raise an error if w3c capabilities is not a plain JSON object', async function () {
+      for (const val of [true, 'string', [], 100]) {
+        try {
+          await d.createSession(null, null, val);
+        } catch (e) {
+          e.should.be.instanceof(errors.SessionNotCreatedError);
+          continue;
+        }
+        should.fail('error should have been thrown');
       }
     });
   });

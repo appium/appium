@@ -35,8 +35,8 @@ describe('proxy', function () {
     });
     it('should start a new session', async function () {
       const caps = {browserName: 'fake'};
-      const res = await jwproxy.command('/session', 'POST', {desiredCapabilities: caps});
-      res.should.have.property('browserName');
+      const res = await jwproxy.command('/session', 'POST', {capabilities: {alwaysMatch: caps}});
+      res.capabilities.alwaysMatch.should.have.property('browserName');
       jwproxy.sessionId.should.have.length(48);
     });
   });

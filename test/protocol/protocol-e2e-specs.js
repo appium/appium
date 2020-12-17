@@ -4,7 +4,6 @@ import {
   server, routeConfiguringFunction, errors, JWProxy, BaseDriver
 } from '../..';
 import { FakeDriver } from './fake-driver';
-import _ from 'lodash';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -350,10 +349,6 @@ describe('Protocol', function () {
     });
 
     describe('create sessions via HTTP endpoint', function () {
-      let desiredCapabilities = {a: 'b'};
-      let requiredCapabilities = {c: 'd'};
-      let capabilities = {e: 'f'};
-
       let sessionId;
 
       beforeEach(function () {
@@ -365,32 +360,16 @@ describe('Protocol', function () {
         }
       });
 
-      it('should allow create session with desired caps (MJSONWP)', async function () {
+      it('should not allow create session with desired caps (MJSONWP)', async function () {
+        const desiredCapabilities = {a: 'b'};
         const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
           data: {desiredCapabilities}
         });
-        sessionId = data.sessionId;
-
-        data.status.should.equal(0);
-        data.value.should.eql(desiredCapabilities);
+        should.equal(data.value, null);
       });
-      it('should allow create session with desired and required caps', async function () {
-        const {data} = await axios({
-          url: `${baseUrl}/session`,
-          method: 'POST',
-          data: {
-            desiredCapabilities,
-            requiredCapabilities
-          }
-        });
-        sessionId = data.sessionId;
-
-        data.status.should.equal(0);
-        data.value.should.eql(_.extend({}, desiredCapabilities, requiredCapabilities));
-      });
-      it('should fail to create session without capabilities or desiredCapabilities', async function () {
+      it('should fail to create session without capabilities', async function () {
         await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
@@ -398,61 +377,45 @@ describe('Protocol', function () {
         }).should.eventually.be.rejectedWith(/400/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
+        const w3cCapabilities = {'appium:e': 'f'};
         const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
-          data: {
-            capabilities,
-          }
+          data: {capabilities: w3cCapabilities}
         });
         sessionId = data.sessionId;
 
         should.not.exist(data.status);
         should.not.exist(data.sessionId);
-        data.value.capabilities.should.eql(capabilities);
+        data.value.capabilities.should.eql(w3cCapabilities);
         data.value.sessionId.should.exist;
       });
-      it('should fall back to MJSONWP if driver does not support W3C yet', async function () {
+      it('should raise an error if the driver does not support W3C yet', async function () {
         const createSessionStub = sinon.stub(driver, 'createSession').callsFake(function (capabilities) {
           driver.sessionId = null;
           return BaseDriver.prototype.createSession.call(driver, capabilities);
         });
         try {
-          let caps = {
-            ...desiredCapabilities,
-            platformName: 'Fake',
-            deviceName: 'Fake',
-          };
           // let {status, value, sessionId} = await request({
-          const {data} = await axios({
+          await axios({
             url: `${baseUrl}/session`,
             method: 'POST',
             data: {
-              desiredCapabilities: caps,
               capabilities: {
-                alwaysMatch: caps,
+                alwaysMatch: {
+                  platformName: 'Fake',
+                  'appium:deviceName': 'Fake',
+                },
                 firstMatch: [{}],
               },
             }
-          });
-          sessionId = data.sessionId;
-
-          should.exist(data.status);
-          should.exist(data.sessionId);
-          data.value.should.eql(caps);
+          }).should.eventually.be.rejectedWith(/500/);
         } finally {
           createSessionStub.restore();
         }
       });
 
       describe('w3c endpoints', function () {
-        let w3cCaps = {
-          alwaysMatch: {
-            platformName: 'Fake',
-            deviceName: 'Commodore 64',
-          },
-          firstMatch: [{}],
-        };
         let sessionUrl;
 
         beforeEach(async function () {
@@ -461,7 +424,13 @@ describe('Protocol', function () {
             url: `${baseUrl}/session`,
             method: 'POST',
             data: {
-              capabilities: w3cCaps,
+              capabilities: {
+                alwaysMatch: {
+                  platformName: 'Fake',
+                  'appium:deviceName': 'Commodore 64',
+                },
+                firstMatch: [{}],
+              },
             },
           })).data;
           sessionId = value.sessionId;
@@ -904,12 +873,12 @@ describe('Protocol', function () {
       const {data} = await axios({
         url: `${baseUrl}/session`,
         method: 'POST',
-        data: {desiredCapabilities: {greeting: 'hello'}, requiredCapabilities: {valediction: 'bye'}}
+        data: {capabilities: {alwaysMatch: {'appium:greeting': 'hello'}, firstMatch: [{}]}}
       });
 
-      should.exist(data.sessionId);
-      data.sessionId.indexOf('fakeSession_').should.equal(0);
-      data.value.should.eql({greeting: 'hello', valediction: 'bye'});
+      should.exist(data.value.sessionId);
+      data.value.sessionId.indexOf('fakeSession_').should.equal(0);
+      data.value.capabilities.should.eql({alwaysMatch: {'appium:greeting': 'hello'}, firstMatch: [{}]});
     });
   });
 

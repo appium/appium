@@ -70,6 +70,7 @@ describe('android', function () {
     });
     it('diagnose - failure - no ANDROID_HOME', async function () {
       delete process.env.ANDROID_HOME;
+      delete process.env.ANDROID_SDK_ROOT;
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,

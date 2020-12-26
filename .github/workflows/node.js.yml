@@ -24,7 +24,7 @@ jobs:
     - run: npm run e2e-test
 
   generate_docs:
-
+    needs: [build]
     runs-on: ubuntu-latest
 
     steps:

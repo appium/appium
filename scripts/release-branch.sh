@@ -10,4 +10,4 @@ git commit -m 'add shrinkwrap'
 echo "* npm version $1.0-rc.0"
 npm version $1.0-rc.0
 git push origin releases/$1
-bash ./scripts/release-candidate.sh
+bash ./scripts/release.sh

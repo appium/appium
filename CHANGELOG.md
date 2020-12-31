@@ -2,13 +2,21 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 ===================================
 
 ### Android General
+* `InvalidContextError` error is thrown if running instrumentation process was dead
+* Fix Android paths on Windows [appium-adb#558](https://github.com/appium/appium-adb/pull/558)
 
 ### Android(UIAutomator2)
+* Appium adds `io.appium.settings`, `io.appium.uiautomator2.server` and `io.appium.uiautomator2.server.test` as the device's Doze whitelist to keep working [appium-uiautomator2-driver#420](https://github.com/appium/appium-uiautomator2-driver/pull/420)
+* Add capabilities:
 
 ### Android(Espresso)
+* Appium adds `io.appium.settings` and `io.appium.espressoserver.test` as the device's Doze whitelist to keep working [appium-espresso-driver#627](https://github.com/appium/appium-espresso-driver/pull/627)
+* Add `mobile:` functions:
+    * `uiautomatorPageSource` returns the page source dump by UIAutomator [appium-espresso-driver#628](https://github.com/appium/appium-espresso-driver/pull/628)
+* Improves XPath lookup performance [appium-espresso-driver#637](https://github.com/appium/appium-espresso-driver/pull/637)
 
 ### iOS(XCUITest)
-- Support M1 chip based Mac, Xcode 12.3
+* Support M1 chip based Mac, Xcode 12.3
 * Breaking changes
     * Support over Xcode 10.2, iOS 12.2 (Drop supporting Xcode 10.0 and 10.1)
     * `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source: [WebDriverAgent#414](https://github.com/appium/WebDriverAgent/pull/414)

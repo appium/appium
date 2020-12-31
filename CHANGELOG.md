@@ -27,7 +27,7 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 
 https://github.com/appium/appium-safari-driver
 
-### macOS2
+### Mac2
 
 https://github.com/appium/appium-mac2-driver
 

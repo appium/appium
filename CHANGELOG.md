@@ -3,17 +3,51 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 
 Appium 1.20.0 is a minor release
 
-#### General
+### General
+* Does not destory sockets explicitly against a client [appium-base-driver#437](https://github.com/appium/appium-base-driver/pull/437)
+* Connection timeout to each driver respects `--keep-alive-timeout` configuration [appium-base-driver#443](https://github.com/appium/appium-base-driver/pull/443). Default to 10 minutes
 
-#### Android General
+### Android General
+* `InvalidContextError` error is thrown if running instrumentation process was dead
+* Fix Android paths on Windows [appium-adb#558](https://github.com/appium/appium-adb/pull/558)
 
-#### Android (UiAutomator2)
+### Android(UIAutomator2)
+* Appium adds `io.appium.settings`, `io.appium.uiautomator2.server` and `io.appium.uiautomator2.server.test` as the device's Doze whitelist to keep working [appium-uiautomator2-driver#420](https://github.com/appium/appium-uiautomator2-driver/pull/420)
+* Add capabilities:
 
-#### Android (Espresso)
+### Android(Espresso)
+* Appium adds `io.appium.settings` and `io.appium.espressoserver.test` as the device's Doze whitelist to keep working [appium-espresso-driver#627](https://github.com/appium/appium-espresso-driver/pull/627)
+* Add `mobile:` functions:
+    * `uiautomatorPageSource` returns the page source dump by UIAutomator [appium-espresso-driver#628](https://github.com/appium/appium-espresso-driver/pull/628)
+* Improves XPath lookup performance [appium-espresso-driver#637](https://github.com/appium/appium-espresso-driver/pull/637)
 
-### iOS (XCUITest)
+### iOS(XCUITest)
+* Support M1 chip based Mac, Xcode 12.3
+* Breaking changes
+    * Support over Xcode 10.2, iOS 12.2 (Drop supporting Xcode 10.0 and 10.1)
+    * `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source: [WebDriverAgent#414](https://github.com/appium/WebDriverAgent/pull/414)
+        * Previously, they found elements by `name`(`wdName`) and `value`(`wdValue`)
+        * Please use `predicate` strategy to find `value`(`wdValue`) attribute like [this change](https://github.com/appium/ruby_lib_core/pull/282)
+* Add capabilities:
+    * `resultBundlePath` and `resultBundleVersion` to allow to specify the path to the result bundle of WebDriverAgent xcodebuild [WebDriverAgent#410](https://github.com/appium/WebDriverAgent/pull/410)
+    * `safariIgnoreWebHostnames` to provide a list of hostnames that the Safari automation tools should ignore [appium-xcuitest-driver#1258](https://github.com/appium/appium-xcuitest-driver/pull/1258)
+* Add capabilities:
+    * `customSnapshotTimeout` which was renamed from `snapshotTimeout`
+* Snapshot/quiescence improvements e.g. [WebDriverAgent#404](https://github.com/appium/WebDriverAgent/pull/404), [WebDriverAgent#407](https://github.com/appium/WebDriverAgent/pull/407)
+* Add a possibility to select elements by indexes [WebDriverAgent#417](https://github.com/appium/WebDriverAgent/pull/417)
+* Fix parsing SSL output from OpenSSL output [appium-xcuitest-driver#1256](https://github.com/appium/appium-xcuitest-driver/pull/1256)
 
-### Windows
+### iOS(Safari)
+
+https://github.com/appium/appium-safari-driver
+
+### Mac2
+
+https://github.com/appium/appium-mac2-driver
+
+### Gecko
+
+https://github.com/appium/appium-geckodriver
 
 CHANGES IN VERSION 1.19.1(FROM 1.19.0)
 ===================================
@@ -84,7 +118,7 @@ Appium 1.19.0 is a minor release
 
 ### Flutter
 
-The version is `0.0.25`
+The version is `0.25`
 
 ### You.i Engine Driver
 

@@ -18,7 +18,6 @@ In addition to Appium's general requirements:
 - macOS 10.15 or later
 - Xcode 12 or later should be installed
 - Xcode Helper app should be enabled for Accessibility access. The app itself could be usually found at `/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Xcode/Agents/Xcode Helper.app`. In order to enable Accessibility access for it simply open the parent folder in Finder: `open /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Xcode/Agents/` and drag & drop the `Xcode Helper` app to `Security & Privacy -> Privacy -> Accessibility` list of your `System Preferences`. This action must only be done once.
-- [Carthage](https://github.com/Carthage/Carthage) should be present. On macOS the utility could be installed via [Brew](https://brew.sh/): `brew install carthage`
 
 
 ### Usage

@@ -8,6 +8,7 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 ### Android(Espresso)
 
 ### iOS(XCUITest)
+- Support M1 chip based Mac, Xcode 12.3
 * Breaking changes
     * Support over Xcode 10.2, iOS 12.2 (Drop supporting Xcode 10.0 and 10.1)
     * `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source: [WebDriverAgent#414](https://github.com/appium/WebDriverAgent/pull/414)

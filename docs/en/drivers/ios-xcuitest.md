@@ -95,12 +95,6 @@ dependencies)_
 
 1. Ensure that you have Appium's general dependencies (e.g., Node
    & NPM) installed and configured.
-2. Install the [Carthage](https://github.com/Carthage/Carthage) dependency
-   manager:
-
-    ```bash
-    brew install carthage
-    ```
 
 If you don't need to automate real devices, you're done! To automate an app on
 the simulator, the `app` capability should be set to an absolute path or url

@@ -8,9 +8,6 @@ Appium 的 iOS 版本的后端用的是[Facebook's WebDriverAgent](https://githu
 
 ### 安装WDA
 
-Appium 会自动下载 WebDriverAgent 源码。如果使用 npm 命令（`npm install -g appium`） 安装Appium的话，通常情况下会保存在/usr/local/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent 目录下。
-如果是首次安装的话，还需要下载一些第三方依赖("carthage"工具就是为此准备的: `brew install carthage`):
-
 ```bash
 cd /usr/local/lib/node_modules/appium/node_modules/appium-xcuitest-driver/WebDriverAgent
 ./Scripts/bootstrap.sh -d

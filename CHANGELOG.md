@@ -1,6 +1,12 @@
 CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 ===================================
 
+### Android General
+
+### Android(UIAutomator2)
+
+### Android(Espresso)
+
 ### iOS(XCUITest)
 * Breaking changes
     * Support over Xcode 10.2, iOS 12.2 (Drop supporting Xcode 10.0 and 10.1)
@@ -20,12 +26,11 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 
 https://github.com/appium/appium-safari-driver
 
-
-### macOS
+### macOS2
 
 https://github.com/appium/appium-mac2-driver
 
-### Firefox
+### Gecko
 
 https://github.com/appium/appium-geckodriver
 

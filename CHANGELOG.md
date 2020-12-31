@@ -2,12 +2,19 @@ CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 ===================================
 
 ### iOS(XCUITest)
-- Breaking changes
-    - Support over Xcode 10.2, iOS 12.2
-        - Stop supporting Xcode 10.0 and 10.1
-    - `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source
-        - Previously, they found elements by `name`(`wdName`) and `value`(`wdValue`)
-        - Please use `predicate` strategy to find `value`(`wdValue`) attribute like [this change](https://github.com/appium/ruby_lib_core/pull/282)
+* Breaking changes
+    * Support over Xcode 10.2, iOS 12.2 (Drop supporting Xcode 10.0 and 10.1)
+    * `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source: [WebDriverAgent#414](https://github.com/appium/WebDriverAgent/pull/414)
+        * Previously, they found elements by `name`(`wdName`) and `value`(`wdValue`)
+        * Please use `predicate` strategy to find `value`(`wdValue`) attribute like [this change](https://github.com/appium/ruby_lib_core/pull/282)
+* Add capabilities:
+    * `resultBundlePath` and `resultBundleVersion` to allow to specify the path to the result bundle of WebDriverAgent xcodebuild [WebDriverAgent#410](https://github.com/appium/WebDriverAgent/pull/410)
+    * `safariIgnoreWebHostnames` to provide a list of hostnames that the Safari automation tools should ignore [appium-xcuitest-driver#1258](https://github.com/appium/appium-xcuitest-driver/pull/1258)
+* Add capabilities:
+    * `customSnapshotTimeout` which was renamed from `snapshotTimeout`
+* Snapshot/quiescence improvements e.g. [WebDriverAgent#404](https://github.com/appium/WebDriverAgent/pull/404), [WebDriverAgent#407](https://github.com/appium/WebDriverAgent/pull/407)
+* Add a possibility to select elements by indexes [WebDriverAgent#417](https://github.com/appium/WebDriverAgent/pull/417)
+* Fix parsing SSL output from OpenSSL output [appium-xcuitest-driver#1256](https://github.com/appium/appium-xcuitest-driver/pull/1256)
 
 ### iOS(Safari)
 

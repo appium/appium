@@ -1,3 +1,20 @@
+CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
+===================================
+
+Appium 1.20.0 is a minor release
+
+#### General
+
+#### Android General
+
+#### Android (UiAutomator2)
+
+#### Android (Espresso)
+
+### iOS (XCUITest)
+
+### Windows
+
 CHANGES IN VERSION 1.19.1(FROM 1.19.0)
 ===================================
 

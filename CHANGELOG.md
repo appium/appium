@@ -1,6 +1,12 @@
 CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 ===================================
 
+
+### General
+
+* Does not destory sockets explicitly against a client [appium-base-driver#437](https://github.com/appium/appium-base-driver/pull/437)
+* Connection timeout to each driver respects `--keep-alive-timeout` configuration [appium-base-driver#443](https://github.com/appium/appium-base-driver/pull/443). Default to 10 minutes
+
 ### Android General
 * `InvalidContextError` error is thrown if running instrumentation process was dead
 * Fix Android paths on Windows [appium-adb#558](https://github.com/appium/appium-adb/pull/558)

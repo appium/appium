@@ -64,29 +64,6 @@ node .
 See [the server documentation](/docs/en/writing-running-appium/server-args.md)
 for a full list of command line arguments that can be used.
 
-#### Hacking with Appium for iOS
-
-To avoid a security dialog that may appear when launching your iOS apps you'll
-have to modify your `/etc/authorization` file in one of two ways:
-
-1. Manually modify the element following `<allow-root>` under `<key>system.privilege.taskport</key>`
-   in your `/etc/authorization` file to `<true/>`.
-
-2. Run the following command which automatically modifies your
-   `/etc/authorization` file for you:
-
-    ```
-    sudo npm run authorize-ios
-	```
-
-At this point, run:
-
-```
-rm -rf node_modules && rm -rf package-lock.json && npm install
-```
-
-Now your Appium instance is ready to go. Run `node .` to kick up the Appium server.
-
 #### Hacking with Appium for Android
 
 To work on Android, make sure you have `ant`, `maven`, and `adb` installed

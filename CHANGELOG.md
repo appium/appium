@@ -1,4 +1,5 @@
-CHANGES IN VERSION 1.20.0 (FROM 1.19.0)
+CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
+===================================
 
 ### iOS(XCUITest)
 - Breaking changes
@@ -22,7 +23,14 @@ https://github.com/appium/appium-mac2-driver
 https://github.com/appium/appium-geckodriver
 
 
+CHANGES IN VERSION 1.19.1(FROM 1.19.0)
 ===================================
+
+Appium 1.19.1 is a patch release
+
+### iOS(XCUITest)
+
+Patches "missing target for targetId" bug in Safari tests (see [#14867](https://github.com/appium/appium/issues/14867))
 
 CHANGES IN VERSION 1.19.0 (FROM 1.18.3)
 ===================================

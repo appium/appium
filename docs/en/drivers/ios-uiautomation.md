@@ -55,32 +55,6 @@ Reference](#TODO).
 simulator may be open, and automated, at any given time. For multiple simulator
 support, you will need to upgrade to the [XCUITest driver](ios-xcuitest.md)).
 
-1. To allow the iOS simulator to be automated by Instruments, you need to
-   modify the authorization database for the system. Appium provides an easy
-   way to do this by installing and running an authorization script:
-
-    ```
-    sudo authorize-ios
-    ```
-
-1. By default, Instruments-based automation is limited by the inclusion of
-   a 1-second hard-coded delay between commands, implemented for obscure
-   reasons by Apple's engineers. There is a way around this limitation called
-   [instruments-without-delay](https://github.com/facebookarchive/instruments-without-delay)
-   (IWD). IWD ships with Appium for Xcode versions < 7. For 7.x and up, IWD
-   must be installed manually by the user in advance of using Appium. The way
-   to do this is as follows:
-
-    * Clone the [appium-ios-driver](https://github.com/appium/appium-ios-driver)
-      repository.
-    * Inside the repo, run the `xcode-iwd.sh` script included in the `bin` dir,
-      passing it several arguments: (1) the path to the Xcode app you are
-      using. (2) The path to the appium-instruments directory. For example:
-
-        ```
-        sh ./bin/xcode-iwd.sh /Applications/Xcode.app /Users/me/appium-instruments/
-        ```
-
 1. For best results, launch each simulator you wish to use and ensure the following:
 
     * The soft keyboard is enabled (Command+K in the Simulator app)
@@ -163,8 +137,7 @@ $HOME/Library/Logs/CoreSimulator/*
 ### Running iOS tests using Jenkins
 
 First download the `jenkins-cli.jar` and verify that the Mac successfully
-connects to Jenkins master. Ensure you've run the `authorize-ios` command
-mentioned above.
+connects to Jenkins master.
 
 ```
 wget https://jenkins.ci.cloudbees.com/jnlpJars/jenkins-cli.jar

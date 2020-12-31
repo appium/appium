@@ -5,7 +5,7 @@ short_description: Place a file onto the device in a particular place
 example_usage:
   java:
     |
-      driver.pushFile("/path/to/device/foo.bar", new File("/Users/johndoe/files/foo.bar"));
+      driver.pushFile("/data/local/tmp/foo.bar", new File("/Users/johndoe/files/foo.bar"));
   python:
     |
       dest_path = '/data/local/tmp/test_push_file.txt'
@@ -13,23 +13,23 @@ example_usage:
       self.driver.push_file(dest_path, base64.b64encode(data).decode('utf-8'))
   javascript_wd:
     |
-      await driver.pushFileToDevice('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+      await driver.pushFileToDevice('/data/local/tmp/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
   javascript_wdio:
     |
       let data = new Buffer("Hello World").toString('base64');
       driver.pushFile('/data/local/tmp/file.txt', data);
   ruby:
     |
-      push_file('/path/to/device/foo.bar', File.read('path/to/file.png'))
+      push_file('/data/local/tmp/foo.bar', File.read('path/to/file.png'))
   ruby_core:
     |
-      @driver.push_file('/path/to/device/foo.bar', File.read('path/to/file.png'))
+      @driver.push_file('/data/local/tmp/foo.bar', File.read('path/to/file.png'))
   php:
     |
-      $driver->pushFile('/path/to/device/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
+      $driver->pushFile('/data/local/tmp/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
   csharp:
     |
-      driver.PushFile("/path/to/device/foo.bar", new FileInfo("/Users/johndoe/files/foo.bar"))
+      driver.PushFile("/data/local/tmp/foo.bar", new FileInfo("/Users/johndoe/files/foo.bar"))
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/android/PushesFiles.html#pushFile-java.lang.String-java.io.File-"

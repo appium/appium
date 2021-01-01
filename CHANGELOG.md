@@ -32,15 +32,17 @@ Appium 1.20.0 is a minor release
         * Please use `predicate` strategy to find `value`(`wdValue`) attribute like [this change](https://github.com/appium/ruby_lib_core/pull/282)
 * Add capabilities:
     * `resultBundlePath` and `resultBundleVersion` to allow to specify the path to the result bundle of WebDriverAgent xcodebuild [WebDriverAgent#410](https://github.com/appium/WebDriverAgent/pull/410)
-    * `safariIgnoreWebHostnames` to provide a list of hostnames that the Safari automation tools should ignore [appium-xcuitest-driver#1258](https://github.com/appium/appium-xcuitest-driver/pull/1258)
-* Add settings: # TODO: Update
-    * `customSnapshotTimeout` which was renamed from `snapshotTimeout`
-    * `waitForIdleTimeout`
-    * `animationCoolOffTimeout`
-
+    * `safariIgnoreWebHostnames` to provide a list of hostnames that the Safari automation tools should ignore [appium-xcuitest-driver#1258](https://github.com/appium/appium-xcuitest-driver/pull/
+    1258)
+    * `waitForIdleTimeout` (Please read the below settings section)
+* Add settings: (Please read [Settings API](http://appium.io/docs/en/advanced-concepts/settings/index.html) for more details)
+    * `customSnapshotTimeout` which was renamed from `snapshotTimeout` sets how much time is allowed to resolve a single accessibility snapshot with custom attributes
+    * `waitForIdleTimeout` to customize the time for waiting until the application under test is idling
+        * The value `zero` (not recommended) is equal to `waitForQuiescence` to `false`
+        * **Important**: this is still a workaround, so there is no guarantee it is going to always work. Please consider rather fixing your application source code, because XCTest uses idle intervals to send commands to the accessibility manager. You may get unexpected testing results or application crashes if such intervals don't exist or are too tiny.
+    * `animationCoolOffTimeout` tells WDA for how long to block after a single touch action was performed.
 * Add a possibility to select elements by indexes [WebDriverAgent#417](https://github.com/appium/WebDriverAgent/pull/417)
 * Fix parsing SSL output from OpenSSL output [appium-xcuitest-driver#1256](https://github.com/appium/appium-xcuitest-driver/pull/1256)
-
 ### iOS(Safari)
 
 TODO: Update

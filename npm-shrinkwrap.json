@@ -4651,9 +4651,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.33.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.33.0.tgz",
-      "integrity": "sha512-51dWNALi/x1fMaAnBIzl3kPebneaG/aBkXXY6pss9gl+th8zmGRNdAXEiOCyQuajHUOFkDy7mPkdBghAH/1vcg==",
+      "version": "3.33.1",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.33.1.tgz",
+      "integrity": "sha512-9HK5nxyrM5bOqwKNFv2J5pHkTIROaWwYwX0w/6odoREkr8x4B99Q0l86bjCE72xXAlLbBfdjukVu2nLGSlOcdA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4663,7 +4663,7 @@
         "appium-ios-simulator": "^3.25.1",
         "appium-remote-debugger": "^8.13.2",
         "appium-support": "^2.47.1",
-        "appium-webdriveragent": "^2.30.1",
+        "appium-webdriveragent": "^2.32.2",
         "appium-xcode": "^3.8.0",
         "async-lock": "^1.0.0",
         "asyncbox": "^2.3.1",
@@ -4671,29 +4671,21 @@
         "js2xmlparser2": "^0.2.0",
         "lodash": "^4.17.10",
         "moment": "^2.24.0",
-        "moment-timezone": "0.5.31",
+        "moment-timezone": "0.5.32",
         "node-simctl": "^6.4.0",
         "portscanner": "2.2.0",
         "semver": "^7.0.0",
         "source-map-support": "^0.5.5",
         "teen_process": "^1.14.0",
         "ws": "^7.0.0",
-        "xmldom": "^0.3.0",
+        "xmldom": "^0.4.0",
         "yargs": "^16.0.3"
       },
       "dependencies": {
-        "moment-timezone": {
-          "version": "0.5.31",
-          "resolved": "https://registry.npmjs.org/moment-timezone/-/moment-timezone-0.5.31.tgz",
-          "integrity": "sha512-+GgHNg8xRhMXfEbv81iDtrVeTcWt0kWmTEY1XQK14dICTXnWJnT0dxdlPspwqF3keKMVPXwayEsk1DI0AA/jdA==",
-          "requires": {
-            "moment": ">= 2.9.0"
-          }
-        },
         "xmldom": {
-          "version": "0.3.0",
-          "resolved": "https://registry.npmjs.org/xmldom/-/xmldom-0.3.0.tgz",
-          "integrity": "sha512-z9s6k3wxE+aZHgXYxSTpGDo7BYOUfJsIRyoZiX6HTjwpwfS2wpQBQKa2fD+ShLyPkqDYo5ud7KitmLZ2Cd6r0g=="
+          "version": "0.4.0",
+          "resolved": "https://registry.npmjs.org/xmldom/-/xmldom-0.4.0.tgz",
+          "integrity": "sha512-2E93k08T30Ugs+34HBSTQLVtpi6mCddaY8uO+pMNk1pqSjV5vElzn4mmh6KLxN3hki8rNcHSYzILoh3TEWORvA=="
         }
       }
     },

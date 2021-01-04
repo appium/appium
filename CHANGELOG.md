@@ -22,7 +22,7 @@ Appium 1.20.0 is a minor release
     * `uiautomatorPageSource` returns the page source dump by UIAutomator [appium-espresso-driver#628](https://github.com/appium/appium-espresso-driver/pull/628)
 * Improves XPath lookup performance [appium-espresso-driver#637](https://github.com/appium/appium-espresso-driver/pull/637)
 
-### iOS Genral
+### iOS General
 * Fix updating simulator preference method [appium-ios-simulator#298](https://github.com/appium/appium-ios-simulator/pull/298)
 
 ### iOS(XCUITest)

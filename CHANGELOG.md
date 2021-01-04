@@ -49,9 +49,10 @@ Appium 1.20.0 is a minor release
 
 ### iOS(Safari)
 
-TODO: Update
+This driver provides you to communicate with Apple's `safaridriver` binary via Appium.
+It only supports Safari browser automation on macOS and iOS (Simulator/Real Device).
 
-https://github.com/appium/appium-safari-driver
+Read https://github.com/appium/appium-safari-driver for more details.
 
 ### Mac2
 

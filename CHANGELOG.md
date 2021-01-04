@@ -22,6 +22,9 @@ Appium 1.20.0 is a minor release
     * `uiautomatorPageSource` returns the page source dump by UIAutomator [appium-espresso-driver#628](https://github.com/appium/appium-espresso-driver/pull/628)
 * Improves XPath lookup performance [appium-espresso-driver#637](https://github.com/appium/appium-espresso-driver/pull/637)
 
+### iOS Genral
+* Fix updating simulator preference method [appium-ios-simulator#298](https://github.com/appium/appium-ios-simulator/pull/298)
+
 ### iOS(XCUITest)
 * Support M1 chip based Mac, Xcode 12.3
 * Snapshots caching logic has been rewritten to improve lookup performance e.g. [WebDriverAgent#404](https://github.com/appium/WebDriverAgent/pull/404), [WebDriverAgent#407](https://github.com/appium/WebDriverAgent/pull/407)
@@ -40,9 +43,10 @@ Appium 1.20.0 is a minor release
     * `waitForIdleTimeout` to customize the time for waiting until the application under test is idling
         * The value `zero` (not recommended) is equal to `waitForQuiescence` to `false`
         * **Important**: this is still a workaround, so there is no guarantee it is going to always work. Please consider rather fixing your application source code, because XCTest uses idle intervals to send commands to the accessibility manager. You may get unexpected testing results or application crashes if such intervals don't exist or are too tiny.
-    * `animationCoolOffTimeout` tells WDA for how long to block after a single touch action was performed.
+    * `animationCoolOffTimeout` customize the timeout to wait until the application under test has no animation
 * Add a possibility to select elements by indexes [WebDriverAgent#417](https://github.com/appium/WebDriverAgent/pull/417)
 * Fix parsing SSL output from OpenSSL output [appium-xcuitest-driver#1256](https://github.com/appium/appium-xcuitest-driver/pull/1256)
+
 ### iOS(Safari)
 
 TODO: Update

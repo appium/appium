@@ -56,15 +56,13 @@ Read https://github.com/appium/appium-safari-driver for more details.
 
 ### Mac2
 
-TODO: Update
-
-https://github.com/appium/appium-mac2-driver
+This driver provides you to handle macOS native applications with Apple's `XCTest` framework.
+Read https://github.com/appium/appium-mac2-driver for more details.
 
 ### Gecko
 
-TODO: Update
-
-https://github.com/appium/appium-geckodriver
+This driver provides you to communicate with Firefox browsers on macOS, Windows, Linux and Android with geckodriver binary via Appium.
+Read https://github.com/appium/appium-geckodriver for more details to set the environment up.
 
 CHANGES IN VERSION 1.19.1(FROM 1.19.0)
 ===================================

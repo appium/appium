@@ -14,13 +14,6 @@ jobs:
         versionSpec: '12.x'
     - script: npm ci || npm install # "npm ci" if shrinkwrap is present
       displayName: Install NPM Dependencies
-    - script: |
-        pushd node_modules/appium-webdriveragent
-        carthage bootstrap --no-use-binaries
-        cp Cartfile.resolved Carthage
-        mkdir -p ./Resources/WebDriverAgent.bundle
-        popd
-      displayName: Fully build XCUITestDriver
     - script: npm run build
       displayName: npm run build
     - script: npm prune --production

@@ -1,3 +1,69 @@
+CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
+===================================
+
+Appium 1.20.0 is a minor release
+
+### General
+* Does not destory sockets explicitly against a client [appium-base-driver#437](https://github.com/appium/appium-base-driver/pull/437)
+* Connection timeout to each driver respects `--keep-alive-timeout` configuration [appium-base-driver#443](https://github.com/appium/appium-base-driver/pull/443). Default to 10 minutes
+
+### Android General
+* `InvalidContextError` error is thrown if running instrumentation process was dead
+* Fix Android emulator config paths on Windows [appium-adb#558](https://github.com/appium/appium-adb/pull/558)
+
+### Android(UIAutomator2)
+* Appium adds `io.appium.settings`, `io.appium.uiautomator2.server` and `io.appium.uiautomator2.server.test` as the device's Doze whitelist to keep working [appium-uiautomator2-driver#420](https://github.com/appium/appium-uiautomator2-driver/pull/420)
+* Add settings:
+    * `useResourcesForOrientationDetection` to use application resource propertires to determine the current device orientation [appium-uiautomator2-server#389](https://github.com/appium/appium-uiautomator2-server/pull/389)
+
+### Android(Espresso)
+* Appium adds `io.appium.settings` and `io.appium.espressoserver.test` as the device's Doze whitelist to keep working [appium-espresso-driver#627](https://github.com/appium/appium-espresso-driver/pull/627)
+* Add `mobile:` extensions:
+    * `uiautomatorPageSource` returns the page source dump by UIAutomator [appium-espresso-driver#628](https://github.com/appium/appium-espresso-driver/pull/628)
+* Improves XPath lookup performance [appium-espresso-driver#637](https://github.com/appium/appium-espresso-driver/pull/637)
+
+### iOS General
+* Fix updating simulator preference method [appium-ios-simulator#298](https://github.com/appium/appium-ios-simulator/pull/298)
+
+### iOS(XCUITest)
+* Support M1 chip based Mac, Xcode 12.3
+* Snapshots caching logic has been rewritten to improve lookup performance e.g. [WebDriverAgent#404](https://github.com/appium/WebDriverAgent/pull/404), [WebDriverAgent#407](https://github.com/appium/WebDriverAgent/pull/407)
+* Breaking changes
+    * Support over Xcode 10.2, iOS 12.2 (Drop supporting Xcode 10.0 and 10.1)
+    * `accessibility id`, `name` and `id` lookup strategies now find elements by `name`(`wdName`) attributes in page source: [WebDriverAgent#414](https://github.com/appium/WebDriverAgent/pull/414)
+        * Previously, they found elements by `name`(`wdName`) and `value`(`wdValue`)
+        * Please use `predicate` strategy to find `value`(`wdValue`) attribute like [this change](https://github.com/appium/ruby_lib_core/pull/282)
+* Add capabilities:
+    * `resultBundlePath` and `resultBundleVersion` to allow to specify the path to the result bundle of WebDriverAgent xcodebuild [WebDriverAgent#410](https://github.com/appium/WebDriverAgent/pull/410)
+    * `safariIgnoreWebHostnames` to provide a list of hostnames that the Safari automation tools should ignore [appium-xcuitest-driver#1258](https://github.com/appium/appium-xcuitest-driver/pull/
+    1258)
+    * `waitForIdleTimeout` (Please read the below settings section)
+* Add settings: (Please read [Settings API](http://appium.io/docs/en/advanced-concepts/settings/index.html) for more details)
+    * `customSnapshotTimeout` which was renamed from `snapshotTimeout` sets how much time is allowed to resolve a single accessibility snapshot with custom attributes
+    * `waitForIdleTimeout` to customize the time for waiting until the application under test is idling
+        * The value `zero` (not recommended) is equal to `waitForQuiescence` to `false`
+        * **Important**: this is still a workaround, so there is no guarantee it is going to always work. Please consider rather fixing your application source code, because XCTest uses idle intervals to send commands to the accessibility manager. You may get unexpected testing results or application crashes if such intervals don't exist or are too tiny.
+    * `animationCoolOffTimeout` customize the timeout to wait until the application under test has no animation
+* Add a possibility to select elements by indexes [WebDriverAgent#417](https://github.com/appium/WebDriverAgent/pull/417)
+* Fix parsing SSL output from OpenSSL output [appium-xcuitest-driver#1256](https://github.com/appium/appium-xcuitest-driver/pull/1256)
+
+### iOS(Safari)
+
+This driver provides you to communicate with Apple's `safaridriver` binary via Appium.
+It only supports Safari browser automation on macOS and iOS (Simulator/Real Device).
+
+Read https://github.com/appium/appium-safari-driver for more details.
+
+### Mac2
+
+This driver provides you to handle macOS native applications with Apple's `XCTest` framework.
+Read https://github.com/appium/appium-mac2-driver for more details.
+
+### Gecko
+
+This driver provides you to communicate with Firefox browsers on macOS, Windows, Linux and Android with geckodriver binary via Appium.
+Read https://github.com/appium/appium-geckodriver for more details to set the environment up.
+
 CHANGES IN VERSION 1.19.1(FROM 1.19.0)
 ===================================
 
@@ -67,7 +133,7 @@ Appium 1.19.0 is a minor release
 
 ### Flutter
 
-The version is `0.0.25`
+The version is `0.25`
 
 ### You.i Engine Driver
 

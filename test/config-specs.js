@@ -145,7 +145,8 @@ describe('Config', function () {
       describe('unsupported nodes', function () {
         const unsupportedVersions = [
           'v0.1', 'v0.9.12', 'v0.10.36', 'v0.12.14',
-          'v4.4.7', 'v5.7.0', 'v6.3.1', 'v7.1.1',
+          'v4.4.7', 'v5.7.0', 'v6.3.1', 'v7.1.1', 'v8.1.2',
+          'v9.1.2', 'v10.0.1', 'v11.6.0'
         ];
         for (const version of unsupportedVersions) {
           it(`should fail if node is ${version}`, function () {
@@ -156,20 +157,20 @@ describe('Config', function () {
       });
 
       describe('supported nodes', function () {
-        it('should succeed if node is 8+', function () {
-          process.version = 'v8.1.2';
+        it('should succeed if node is 12+', function () {
+          process.version = '12.20.1';
           checkNodeOk.should.not.throw();
         });
-        it('should succeed if node is 9+', function () {
-          process.version = 'v9.1.2';
+        it('should succeed if node is 13+', function () {
+          process.version = '13.14.0';
           checkNodeOk.should.not.throw();
         });
-        it('should succeed if node is 10+', function () {
-          process.version = 'v10.0.1';
+        it('should succeed if node is 14+', function () {
+          process.version = '14.15.4';
           checkNodeOk.should.not.throw();
         });
-        it('should succeed if node is 11+', function () {
-          process.version = 'v11.6.0';
+        it('should succeed if node is 15+', function () {
+          process.version = '15.5.1';
           checkNodeOk.should.not.throw();
         });
       });

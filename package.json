@@ -11,7 +11,7 @@
     "firefoxos",
     "testing"
   ],
-  "version": "1.20.0-beta.0",
+  "version": "1.21.0-beta.0",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -22,8 +22,8 @@
     "url": "https://github.com/appium/appium/issues"
   },
   "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+    "node": ">=12",
+    "npm": ">=6.9"
   },
   "main": "./build/lib/main.js",
   "bin": {

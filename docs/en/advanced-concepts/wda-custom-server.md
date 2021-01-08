@@ -20,8 +20,6 @@ Important points:
 WebDriverAgent source is automatically downloaded with Appium. The usual folder location
 in case Appium is installed via npm tool (`npm install -g appium`) is
 `/usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent`
-If this was a fresh install then it is also necessary to download third-party dependencies
-(_carthage_ tool is mandatory for this purpose: `brew install carthage`):
 
 ```bash
 cd /usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent

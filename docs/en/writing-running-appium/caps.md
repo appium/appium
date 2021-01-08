@@ -271,10 +271,21 @@ Driver](/docs/en/drivers/ios-uiautomation.md).
 
 (For XCUITest-specific capabilities, please refer to the documentation on the [XCUITest Driver repo](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) itself.)
 
+### Safaridriver Only
+
+(For safaridriver capabilities, please refer to the documentation on the [safaridriver repo](https://github.com/appium/appium-safari-driver) itself.)
+
+### Geckodriver Only
+
+(For geckodriver capabilities, please refer to the documentation on the [geckodriver repo](https://github.com/appium/appium-geckodriver) itself.)
 
 ### MacDriver Only
 
-(For MacDriver capabilities, please refer to the documentation on the [Appium Mac Driver repo](https://github.com/appium/appium-mac-driver#desired-capabilities) itself.)
+(For MacDriver capabilities, please refer to the documentation on the [Appium MacDriver repo](https://github.com/appium/appium-mac-driver#desired-capabilities) itself.)
+
+### Mac2Driver Only
+
+(For Mac2 Driver capabilities, please refer to the documentation on the [Appium Mac2Driver repo](https://github.com/appium/appium-mac2-driver#capabilities) itself.)
 
 ### You.i Engine Only
 

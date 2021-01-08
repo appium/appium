@@ -6,7 +6,7 @@ By delegating to Espresso's [Data Matcher](https://developer.android.com/referen
 
 Android apps have special types of Views called [AdapterViews](https://developer.android.com/reference/android/widget/AdapterView) (e.g.: `ScrollView`, `ListView`, `GridView`) which have child views, but only render that child views that are on-screen. The AdapterView has "adapter" object which stores all the data for that view's children, including the views that aren't being rendered.
 
-When using Espresso's Data Matcher, you can target views that are off-screen by writing a [Hamcrest matcher](http://hamcrest.org/JavaHamcrest/javadoc/1.3/org/hamcrest/Matchers.html) that selects an item from an adapter. If the item is not in the view hierarchy, Espresso automatically scrolls it into view.
+When using Espresso's Data Matcher, you can target views that are off-screen by writing a [Hamcrest matcher](https://junit.org/junit4/javadoc/latest/org/hamcrest/class-use/Matcher.html) that selects an item from an adapter. If the item is not in the view hierarchy, Espresso automatically scrolls it into view.
 
 ### Example
 

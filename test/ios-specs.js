@@ -281,7 +281,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      removeColors(await check.fix()).should.equal('Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
+      removeColors(await check.fix()).should.equal('[For lower than Appium 1.20.0] Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
     });
   }));
 

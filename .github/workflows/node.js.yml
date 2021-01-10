@@ -20,6 +20,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm run clean
+    - run: node . driver install --source=npm appium-fake-driver
     - run: npm run test
     - run: npm run e2e-test
 

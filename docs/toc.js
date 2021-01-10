@@ -319,6 +319,7 @@ module.exports = {
       ['Appium Style Guide', 'style-guide.md'],
       ['How to Write Docs', 'how-to-write-docs.md'],
       ['Appium Package Structure', 'appium-packages.md'],
+      ['Release Appium', 'release-appium.md'],
       ['Credits', 'credits.md']]]
   ],
   cn: [

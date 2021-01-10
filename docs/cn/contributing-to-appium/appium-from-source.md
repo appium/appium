@@ -23,7 +23,6 @@ git clone https://github.com/appium/appium.git
 cd appium
 npm install
 npm run build
-npm run authorize-ios                # for ios only
 node .
 ```
 ```center
@@ -31,7 +30,6 @@ git clone https://github.com/appium/appium.git
 cd appium
 npm install
 npm run build # 需要gulp，往下看
-npm run authorize-ios                # 仅iOS
 node .
 ```
 
@@ -73,31 +71,6 @@ node .
 ```
 
 完整的参数列表，请参考[the server documentation](/docs/cn/writing-running-appium/server-args.md)
-
-
-#### Hacking with Appium for iOS
-
-#### 鼓捣 iOS 上的Appium
-
-为了避免启动iOS应用程序时可能出现的安全对话框，您必须通过以下两种方式之一修改 `/etc/authorization` 文件：
-
-1. 手动修改 `/etc/authorization` 文件中的 `<key>system.privilege.taskport</key>` 下的 `<allow-root>`的值为 `<true/>`。
-2. 运行以下命令，为您自动修改 `/etc/authorization` 文件：
-
-    ```center
-    sudo npm run authorize-ios
-	```
-
-
-此时，运行：
-
-```center
-rm -rf node-modules
-npm install
-npm run build
-```
-
-现在你的 Appium 实例已经准备好了。运行 `node .` 以启动Appium服务器。
 
 #### 鼓捣 Android 上的Appium
 

@@ -222,7 +222,7 @@ simply type into a text field and check that the correct text was entered:
 const field = await client.$("android.widget.EditText");
 await field.setValue("Hello World!");
 const value = await field.getText();
-assert.equal(value, "Hello World!");
+assert.strictEqual(value, "Hello World!");
 ```
 
 What's going on here is that after creating a session and launching our app,
@@ -258,7 +258,7 @@ async function main () {
   const field = await client.$("android.widget.EditText");
   await field.setValue("Hello World!");
   const value = await field.getText();
-  assert.equal(value,"Hello World!");
+  assert.strictEqual(value,"Hello World!");
 
   await client.deleteSession();
 }

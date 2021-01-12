@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "1.20.0-rc.1",
+  "version": "1.20.1-rc.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -4562,9 +4562,9 @@
       }
     },
     "appium-uiautomator2-driver": {
-      "version": "1.60.0",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-driver/-/appium-uiautomator2-driver-1.60.0.tgz",
-      "integrity": "sha512-hd8YWGUQ1EF8CrA87JhE/hIz8PmobDvryvtuo8cPl0cO/Bd72usto5snzhktDuXS03O1AHXYMb04/z+/IpZMkQ==",
+      "version": "1.61.1",
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-driver/-/appium-uiautomator2-driver-1.61.1.tgz",
+      "integrity": "sha512-lJyeO20WA9+6f4HP6LnsWZa1xn2VMb/wg8sIrxm/PFl4JdIcxJza7iftvfIf0BYECr25+NyNfcjQqo+RW+Z+4Q==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-adb": "^8.9.0",
@@ -4572,9 +4572,9 @@
         "appium-base-driver": "^7.0.0",
         "appium-chromedriver": "^4.23.1",
         "appium-support": "^2.49.0",
-        "appium-uiautomator2-server": "^4.13.0",
+        "appium-uiautomator2-server": "^4.17.3",
         "asyncbox": "^2.3.1",
-        "axios": "^0.20.0",
+        "axios": "^0.21.0",
         "bluebird": "^3.5.1",
         "css-selector-parser": "^1.4.1",
         "lodash": "^4.17.4",
@@ -4582,22 +4582,12 @@
         "source-map-support": "^0.5.5",
         "teen_process": "^1.3.1",
         "yargs": "^16.0.0"
-      },
-      "dependencies": {
-        "axios": {
-          "version": "0.20.0",
-          "resolved": "https://registry.npmjs.org/axios/-/axios-0.20.0.tgz",
-          "integrity": "sha512-ANA4rr2BDcmmAQLOKft2fufrtuvlqR+cXNNinUmvfeSNCOF98PZL+7M/v1zIdGo7OLjEA9J2gXJL+j4zGsl0bA==",
-          "requires": {
-            "follow-redirects": "^1.10.0"
-          }
-        }
       }
     },
     "appium-uiautomator2-server": {
-      "version": "4.17.2",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-4.17.2.tgz",
-      "integrity": "sha512-nlY3CVGYqHY5PVIFswvKrJVb/xUPeenCYU9KskGT7O8w/S6JSZuv9cw15yaE7eHpHW9qQ4EfvpEpDR3uJluAyg=="
+      "version": "4.17.3",
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-4.17.3.tgz",
+      "integrity": "sha512-qbMO0FqyqmRptS0njHvd8zzV4f45CpdABWimTtQi4TL4G5uAF0lyy7KowTOYGXEMqzG2vuM11+o4ZwKAE+FIEQ=="
     },
     "appium-webdriveragent": {
       "version": "2.32.2",

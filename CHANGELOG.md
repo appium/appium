@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.20.1 (FROM 1.20.0)
+===================================
+
+Appium 1.20.1 is a patch release
+
+### Android(UIAutomator2)
+* Fix setting the session capabilities [appium-uiautomator2-server#404](https://github.com/appium/appium-uiautomator2-server/pull/404)
+
 CHANGES IN VERSION 1.20.0 (FROM 1.19.1)
 ===================================
 

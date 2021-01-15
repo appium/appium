@@ -22,7 +22,7 @@
     "url": "https://github.com/appium/appium/issues"
   },
   "engines": {
-    "node": ">=8",
+    "node": ">=12",
     "npm": ">=6"
   },
   "main": "./build/lib/main.js",

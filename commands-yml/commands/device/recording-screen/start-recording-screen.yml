@@ -115,7 +115,7 @@ endpoint:
     - name: options.videoType
       type: string
       description: (iOS Only) The format of the screen capture to be recorded.
-                   Available formats are the output of `ffmpeg -codecs` such as `libx264` and `mpeg4`. Defaults to `mpeg4`.
+                   Available formats are the output of `ffmpeg -codecs` such as `libx264` and `mpeg4`. Defaults to `mjpeg`.
     - name: options.videoQuality
       type: string
       description: (iOS Only) The video encoding quality (low, medium, high, photo - defaults to medium).

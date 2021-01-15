@@ -37,7 +37,8 @@
     "bin",
     "lib",
     "build/lib",
-    "npm-shrinkwrap.json"
+    "npm-shrinkwrap.json",
+    "postinstall.js"
   ],
   "dependencies": {
     "@appium/base-plugin": "^1.0.0",
@@ -71,6 +72,7 @@
     "restore-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
     "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
     "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",
+    "postinstall": "node ./postinstall.js",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
     "watch": "gulp watch",

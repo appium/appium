@@ -143,7 +143,7 @@ describe('FakeDriver - via HTTP', function () {
       // Now use that sessionId to call /screenshot
       const {status: screenshotStatus, value: screenshotValue} = (await axios({url: `${baseUrl}/${value.sessionId}/screenshot`})).data;
       should.not.exist(screenshotStatus);
-      screenshotValue.should.equal('hahahanotreallyascreenshot');
+      screenshotValue.should.match(/^iVBOR/); // should be a png
 
       // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
       await axios.post(

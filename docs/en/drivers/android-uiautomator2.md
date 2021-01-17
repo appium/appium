@@ -19,6 +19,7 @@ In addition to Appium's general requirements:
 
 * Java 8 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
+   * The minimum required Android SDK Build Tools version is 24
 
 Further, the UiAutomator2 driver does not support Android versions below 5.0
 (Lollipop, API level 21). If you are automating such versions, consider using

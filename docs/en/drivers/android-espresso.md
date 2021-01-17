@@ -20,7 +20,7 @@ In addition to Appium's general requirements:
 
 * Java 8 installed and configured correctly for your platform
 * Mac, Windows, or Linux OS with the ability to run the Android SDK
-   * Android SDK Build Tools Version requires over 24
+   * The minimum required Android SDK Build Tools version is 24
 
 ### Usage
 

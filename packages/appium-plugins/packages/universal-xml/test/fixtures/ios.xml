@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><AppiumAUT><XCUIElementTypeApplication type="XCUIElementTypeApplication" name="TheApp" label="TheApp" enabled="true" visible="true" x="0" y="0" width="414" height="896" index="0">
+  <XCUIElementTypeWindow type="XCUIElementTypeWindow" enabled="true" visible="true" x="0" y="0" width="414" height="896" index="0">
+    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" x="0" y="0" width="414" height="896" index="0">
+      <XCUIElementTypeNavigationBar type="XCUIElementTypeNavigationBar" name="RCCView" enabled="true" visible="true" x="0" y="48" width="414" height="44" index="0">
+        <XCUIElementTypeButton type="XCUIElementTypeButton" name="The App" label="The App" enabled="true" visible="true" x="0" y="48" width="96" height="44" index="0"/>
+      </XCUIElementTypeNavigationBar>
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" x="0" y="0" width="414" height="896" index="1">
+        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" x="0" y="0" width="414" height="896" index="0">
+          <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="true" x="0" y="92" width="414" height="804" index="0">
+            <XCUIElementTypeOther type="XCUIElementTypeOther" name="Login username password loginBtn" label="Login username password loginBtn" enabled="true" visible="true" x="0" y="92" width="414" height="804" index="0">
+              <XCUIElementTypeOther type="XCUIElementTypeOther" name="Login username password loginBtn" label="Login username password loginBtn" enabled="true" visible="true" x="0" y="92" width="414" height="804" index="0">
+                <XCUIElementTypeOther type="XCUIElementTypeOther" name="Login username password loginBtn" label="Login username password loginBtn" enabled="true" visible="true" x="0" y="92" width="414" height="804" index="0">
+                  <XCUIElementTypeOther type="XCUIElementTypeOther" name="Login username password loginBtn" label="Login username password loginBtn" enabled="true" visible="true" x="0" y="92" width="414" height="273" index="0">
+                    <XCUIElementTypeStaticText type="XCUIElementTypeStaticText" value="Login" name="Login" label="Login" enabled="true" visible="true" x="157" y="132" width="101" height="51" index="0"/>
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" name="username" label="username" enabled="true" visible="true" x="50" y="183" width="314" height="40" index="1">
+                      <XCUIElementTypeOther type="XCUIElementTypeOther" name="username" label="username" enabled="true" visible="true" x="50" y="183" width="314" height="40" index="0">
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" name="username" label="username" enabled="true" visible="true" x="50" y="185" width="314" height="51" index="0">
+                          <XCUIElementTypeTextField type="XCUIElementTypeTextField" value="alice" name="username" label="username" enabled="true" visible="true" x="50" y="185" width="314" height="51" index="0"/>
+                        </XCUIElementTypeOther>
+                      </XCUIElementTypeOther>
+                    </XCUIElementTypeOther>
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" name="password" label="password" enabled="true" visible="true" x="50" y="223" width="314" height="40" index="2">
+                      <XCUIElementTypeOther type="XCUIElementTypeOther" name="password" label="password" enabled="true" visible="true" x="50" y="223" width="314" height="40" index="0">
+                        <XCUIElementTypeOther type="XCUIElementTypeOther" name="password" label="password" enabled="true" visible="true" x="50" y="225" width="314" height="51" index="0">
+                          <XCUIElementTypeSecureTextField type="XCUIElementTypeSecureTextField" value="•••••••••" name="password" label="password" enabled="true" visible="true" x="50" y="225" width="314" height="51" index="0"/>
+                        </XCUIElementTypeOther>
+                      </XCUIElementTypeOther>
+                    </XCUIElementTypeOther>
+                    <XCUIElementTypeOther type="XCUIElementTypeOther" name="loginBtn" label="loginBtn" enabled="true" visible="true" x="177" y="263" width="60" height="102" index="3">
+                      <XCUIElementTypeOther type="XCUIElementTypeOther" name="loginBtn" label="loginBtn" enabled="true" visible="true" x="177" y="327" width="60" height="38" index="0"/>
+                    </XCUIElementTypeOther>
+                  </XCUIElementTypeOther>
+                </XCUIElementTypeOther>
+              </XCUIElementTypeOther>
+            </XCUIElementTypeOther>
+          </XCUIElementTypeOther>
+        </XCUIElementTypeOther>
+      </XCUIElementTypeOther>
+    </XCUIElementTypeOther>
+  </XCUIElementTypeWindow>
+  <XCUIElementTypeWindow type="XCUIElementTypeWindow" enabled="true" visible="false" x="0" y="0" width="414" height="896" index="1">
+    <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" x="0" y="0" width="414" height="896" index="0">
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" x="0" y="0" width="414" height="896" index="0"/>
+      <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" x="0" y="896" width="414" height="71" index="1">
+        <XCUIElementTypeOther type="XCUIElementTypeOther" enabled="true" visible="false" x="0" y="896" width="414" height="71" index="0"/>
+      </XCUIElementTypeOther>
+    </XCUIElementTypeOther>
+  </XCUIElementTypeWindow>
+</XCUIElementTypeApplication></AppiumAUT>

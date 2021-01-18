@@ -1,0 +1,51 @@
+<UI>
+  <App visible="true" x="0" y="0" width="414" height="896" axId="TheApp" text="TheApp">
+    <Window visible="true" x="0" y="0" width="414" height="896">
+      <Element visible="true" x="0" y="0" width="414" height="896">
+        <Nav visible="true" x="0" y="48" width="414" height="44" axId="RCCView">
+          <Button visible="true" x="0" y="48" width="96" height="44" axId="The App" text="The App"></Button>
+        </Nav>
+        <Element visible="true" x="0" y="0" width="414" height="896">
+          <Element visible="true" x="0" y="0" width="414" height="896">
+            <Element visible="true" x="0" y="92" width="414" height="804">
+              <Element visible="true" x="0" y="92" width="414" height="804" axId="Login username password loginBtn" text="Login username password loginBtn">
+                <Element visible="true" x="0" y="92" width="414" height="804" axId="Login username password loginBtn" text="Login username password loginBtn">
+                  <Element visible="true" x="0" y="92" width="414" height="804" axId="Login username password loginBtn" text="Login username password loginBtn">
+                    <Element visible="true" x="0" y="92" width="414" height="273" axId="Login username password loginBtn" text="Login username password loginBtn">
+                      <Text value="Login" visible="true" x="157" y="132" width="101" height="51" axId="Login" text="Login"></Text>
+                      <Element visible="true" x="50" y="183" width="314" height="40" axId="username" text="username">
+                        <Element visible="true" x="50" y="183" width="314" height="40" axId="username" text="username">
+                          <Element visible="true" x="50" y="185" width="314" height="51" axId="username" text="username">
+                            <TextInput value="alice" visible="true" x="50" y="185" width="314" height="51" axId="username" text="username"></TextInput>
+                          </Element>
+                        </Element>
+                      </Element>
+                      <Element visible="true" x="50" y="223" width="314" height="40" axId="password" text="password">
+                        <Element visible="true" x="50" y="223" width="314" height="40" axId="password" text="password">
+                          <Element visible="true" x="50" y="225" width="314" height="51" axId="password" text="password">
+                            <TextInput value="•••••••••" visible="true" x="50" y="225" width="314" height="51" axId="password" text="password"></TextInput>
+                          </Element>
+                        </Element>
+                      </Element>
+                      <Element visible="true" x="177" y="263" width="60" height="102" axId="loginBtn" text="loginBtn">
+                        <Element visible="true" x="177" y="327" width="60" height="38" axId="loginBtn" text="loginBtn"></Element>
+                      </Element>
+                    </Element>
+                  </Element>
+                </Element>
+              </Element>
+            </Element>
+          </Element>
+        </Element>
+      </Element>
+    </Window>
+    <Window visible="false" x="0" y="0" width="414" height="896">
+      <Element visible="false" x="0" y="0" width="414" height="896">
+        <Element visible="false" x="0" y="0" width="414" height="896"></Element>
+        <Element visible="false" x="0" y="896" width="414" height="71">
+          <Element visible="false" x="0" y="896" width="414" height="71"></Element>
+        </Element>
+      </Element>
+    </Window>
+  </App>
+</UI>

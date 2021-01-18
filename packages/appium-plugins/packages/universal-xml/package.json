@@ -25,10 +25,12 @@
   "homepage": "https://github.com/appium/appium-plugins#readme",
   "dependencies": {
     "@appium/base-plugin": "^1.5.0",
-    "appium-base-driver": "^8.0.0-beta.0"
+    "appium-base-driver": "^8.0.0-beta.0",
+    "fast-xml-parser": "^3.17.6"
   },
   "scripts": {
-    "test:unit": "mocha ./build/test/unit/*-specs.js"
+    "test:unit": "mocha ./build/test/unit/*-specs.js",
+    "copyfiles": "copyfiles ./test/fixtures/*.xml ./build"
   },
   "devDependencies": {}
 }

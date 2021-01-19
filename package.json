@@ -106,7 +106,7 @@
     "pre-commit": "1.x",
     "sinon": "^9.0.0",
     "validate.js": "^0.13.0",
-    "wd": "^1.10.0",
+    "webdriverio": "^6.12.0",
     "yaml-js": "^0.2.0"
   }
 }

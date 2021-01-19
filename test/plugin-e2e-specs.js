@@ -4,11 +4,11 @@ import _ from 'lodash';
 import path from 'path';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import wd from 'wd';
+import { remote as wdio } from 'webdriverio';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE, PLUGIN_TYPE } from '../lib/extension-config';
-import { TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
+import { W3C_PREFIXED_CAPS, TEST_HOST, TEST_PORT } from './helpers';
 import { runExtensionCommand } from '../lib/cli/extension';
 
 chai.should();
@@ -17,16 +17,16 @@ const FAKE_PLUGIN_DIR = path.resolve(__dirname, '..', '..', 'node_modules', '@ap
 const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
 const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
 
-const caps = {
-  automationName: 'Fake',
-  platformName: 'Fake',
-  deviceName: 'Fake',
-  app: TEST_FAKE_APP
+const wdOpts = {
+  hostname: TEST_HOST,
+  port: TEST_PORT,
+  connectionRetryCount: 0,
+  capabilities: W3C_PREFIXED_CAPS,
 };
 
 describe('FakePlugin', function () {
   const appiumHome = DEFAULT_APPIUM_HOME;
-  const baseUrl = `http://${TEST_HOST}:${TEST_PORT}/session`;
+  const baseUrl = `${TEST_SERVER}/session`;
   before(async function () {
     // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
@@ -74,22 +74,22 @@ describe('FakePlugin', function () {
       await axios.post(`http://${TEST_HOST}:${TEST_PORT}/fake`).should.eventually.be.rejectedWith(/404/);
     });
     it('should not update method map if plugin is not activated', async function () {
-      const driver = wd.promiseChainRemote(TEST_SERVER);
-      const [sessionId] = await driver.init(caps);
+      const driver = await wdio(wdOpts);
+      const {sessionId} = driver;
       try {
         await axios.post(`${baseUrl}/${sessionId}/fake_data`, {data: {fake: 'data'}}).should.eventually.be.rejectedWith(/404/);
       } finally {
-        await driver.quit();
+        await driver.deleteSession();
       }
     });
     it('should not handle commands if plugin is not activated', async function () {
-      const driver = wd.promiseChainRemote(TEST_SERVER);
-      const [sessionId] = await driver.init(caps);
+      const driver = await wdio(wdOpts);
+      const {sessionId} = driver;
       try {
         const el = (await axios.post(`${baseUrl}/${sessionId}/element`, {using: 'xpath', value: '//MockWebView'})).data.value;
         el.should.not.have.property('fake');
       } finally {
-        await driver.quit();
+        await driver.deleteSession();
       }
     });
   });
@@ -114,34 +114,34 @@ describe('FakePlugin', function () {
       });
 
       it('should modify the method map with new commands', async function () {
-        const driver = wd.promiseChainRemote(TEST_SERVER);
-        const [sessionId] = await driver.init(caps);
+        const driver = await wdio(wdOpts);
+        const {sessionId} = driver;
         try {
           await axios.post(`${baseUrl}/${sessionId}/fake_data`, {data: {fake: 'data'}});
           (await axios.get(`${baseUrl}/${sessionId}/fake_data`)).data.value.should.eql({fake: 'data'});
         } finally {
-          await driver.quit();
+          await driver.deleteSession();
         }
       });
 
       it('should handle commands and not call the original', async function () {
-        const driver = wd.promiseChainRemote(TEST_SERVER);
-        const [sessionId] = await driver.init(caps);
+        const driver = await wdio(wdOpts);
+        const {sessionId} = driver;
         try {
-          await driver.source().should.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
+          await driver.getPageSource().should.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
         } finally {
-          await driver.quit();
+          await driver.deleteSession();
         }
       });
 
       it('should handle commands and call the original if designed', async function () {
-        const driver = wd.promiseChainRemote(TEST_SERVER);
-        const [sessionId] = await driver.init(caps);
+        const driver = await wdio(wdOpts);
+        const {sessionId} = driver;
         try {
           const el = (await axios.post(`${baseUrl}/${sessionId}/element`, {using: 'xpath', value: '//MockWebView'})).data.value;
           el.should.have.property('fake');
         } finally {
-          await driver.quit();
+          await driver.deleteSession();
         }
       });
     });

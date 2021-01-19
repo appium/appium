@@ -91,8 +91,8 @@ describe('finding elements by image', function () {
       basicImgElVerify(els[0], f);
     });
     it('should fail if driver does not support getWindowSize', async function () {
-      const d = new BaseDriver();
-      await d.findByImage(template, {multiple: false})
+      d.getWindowSize = null;
+      await f.findByImage(template, {multiple: false})
         .should.eventually.be.rejectedWith(/driver does not support/);
     });
     it('should fix template size if requested', async function () {
@@ -238,7 +238,7 @@ describe('finding elements by image', function () {
     });
     it('should resize the template if it is bigger than the screen', async function () {
       const screen = TINY_PNG_DIMS.map((n) => n / 2);
-      const newTemplate = await d.ensureTemplateSize(TINY_PNG, ...screen);
+      const newTemplate = await f.ensureTemplateSize(TINY_PNG, ...screen);
       newTemplate.should.not.eql(TINY_PNG);
       newTemplate.length.should.be.below(TINY_PNG.length);
     });

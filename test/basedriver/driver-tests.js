@@ -29,6 +29,10 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       await d.deleteSession();
     });
 
+    it('should report the version of BaseDriver used', function () {
+      should.exist(DriverClass.baseVersion);
+    });
+
     it('should return an empty status object', async function () {
       let status = await d.getStatus();
       status.should.eql({});

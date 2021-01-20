@@ -38,5 +38,6 @@
   },
   "scripts": {
     "test:unit": "mocha ./build/test/unit/*-specs.js"
-  }
+  },
+  "gitHead": "b5bc9d9142ba583f5c3f6ca230473d159cc4fb94"
 }

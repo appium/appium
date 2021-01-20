@@ -24,6 +24,12 @@
     "url": "https://github.com/appium/appium-plugins/issues"
   },
   "homepage": "https://github.com/appium/appium-plugins#readme",
+  "files": [
+    "build",
+    "docs",
+    "lib",
+    "index.js"
+  ],
   "dependencies": {
     "@appium/base-plugin": "^1.6.0",
     "appium-base-driver": "^8.0.0-beta.0",

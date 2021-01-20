@@ -93,7 +93,7 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "@appium/fake-plugin": "^0.2.0",
+    "@appium/fake-plugin": ">=0.3.0",
     "appium-fake-driver": "^1.0.1",
     "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",

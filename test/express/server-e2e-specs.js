@@ -112,29 +112,13 @@ describe('server plugins', function () {
     };
   }
 
-  // TODO: Fix plugins configuration for the tests
-  it.skip('should not allow a plugin to update server if it has updatesServer set to false', async function () {
-    hwServer = await server({
-      routeConfiguringFunction: _.noop,
-      port: 8181,
-      plugins: [
-        {
-          updatesServer: false,
-          updateServer: updaterWithGetRoute('no', 'Should never see this'),
-        }
-      ]
-    });
-    await axios.get('http://localhost:8181/no').should.eventually.be.rejectedWith(/404/);
-  });
-  it.skip('should allow one or more plugins to update the server', async function () {
+  it('should allow one or more plugins to update the server', async function () {
     hwServer = await server({
       routeConfiguringFunction: _.noop,
       port: 8181,
       plugins: [{
-        updatesServer: true,
         updateServer: updaterWithGetRoute('plugin1', 'res from plugin1 route'),
       }, {
-        updatesServer: true,
         updateServer: updaterWithGetRoute('plugin2', 'res from plugin2 route'),
       }]
     });
@@ -145,14 +129,13 @@ describe('server plugins', function () {
     hwServer._updated_plugin1.should.be.true;
     hwServer._updated_plugin2.should.be.true;
   });
-  it('should not allow a plugin to update server if it has incorrect updateServer method', async function () {
+  it('should pass on errors from the plugin updateServer method', async function () {
     await server({
       routeConfiguringFunction: _.noop,
       port: 8181,
       plugins: [{
-        updatesServer: true,
-        updateServer: false
+        updateServer: () => { throw new Error('ugh'); }
       }]
-    }).should.eventually.be.rejectedWith(/is not a function/);
+    }).should.eventually.be.rejectedWith(/ugh/);
   });
 });

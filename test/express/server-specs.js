@@ -34,7 +34,6 @@ function fakePlugin () {
         POST: {command: 'fakePost', payloadParams: {required: ['fakeParam']}}
       },
     },
-    updatesServer: true,
     updateServer: (app, httpServer) => {
       app.updated = true;
       httpServer.updated = true;
